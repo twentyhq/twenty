@@ -5,7 +5,10 @@ description: إخطار أعضاء الفريق تلقائيًا بمهامهم 
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 إرسال تذكيرات يومية عبر البريد الإلكتروني لكل عضو في الفريق بشأن المهام المستحقة اليوم.
 
@@ -45,8 +48,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 1. داخل المكرّر، أضف إجراء **Search Records**
 2. حدّد **Tasks** كالكائن
 3. أضف فلاتر:
-   * **Assignee** = عضو مساحة العمل الحالي (من المكرّر)
-   * **Due Date** = اليوم
+   - **Assignee** = عضو مساحة العمل الحالي (من المكرّر)
+   - **Due Date** = اليوم
 
 ### الخطوة 5: تنسيق المهام ضمن محتوى البريد الإلكتروني (داخل المكرّر)
 
@@ -78,9 +81,7 @@ export const main = async (params: {
 };
 ```
 
-<Note>
-استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.
-</Note>
+<Note>استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.</Note>
 
 ### الخطوة 6: إرسال بريد إلكتروني (داخل المكرّر)
 
@@ -101,6 +102,6 @@ export const main = async (params: {
 
 ## ذات صلة
 
-* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+- [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -10,14 +10,16 @@ description: الدليل للمساهمين (أو المطورين الفضول
 <Tab title="Linux و macOS">
 
 قبل أن تتمكن من تثبيت واستخدام Twenty، تأكد من تثبيت الأمور التالية على جهاز الكمبيوتر الخاص بك:
-* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
-* [yarn v4](https://yarnpkg.com/getting-started/install)
-* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. يأتي Yarn الآن مع Node.js، لذا لست بحاجة إلى تثبيته بشكل منفصل.
-عليك فقط تشغيل `corepack enable` لتفعيل Yarn إذا لم تقم بذلك بعد.
+  لن يعمل `npm` ، يجب عليك استخدام `yarn` بدلًا من ذلك. يأتي Yarn الآن مع
+  Node.js، لذا لست بحاجة إلى تثبيته بشكل منفصل. عليك فقط تشغيل `corepack enable`
+  لتفعيل Yarn إذا لم تقم بذلك بعد.
 </Warning>
 
 </Tab>
@@ -26,9 +28,11 @@ description: الدليل للمساهمين (أو المطورين الفضول
 
 1. ثبّت WSL
    افتح PowerShell كمسؤول ثم نفّذ:
+
 ```powershell
 wsl --install
 ```
+
 يجب أن ترى الآن مطالبة لإعادة تشغيل جهاز الكمبيوتر الخاص بك. إذا لم يكن كذلك، فأعد تشغيله يدويًا.
 
 عند إعادة التشغيل، ستُفتح نافذة PowerShell وسيتم تثبيت Ubuntu. قد يستغرق هذا وقتًا طويلاً.
@@ -47,7 +51,8 @@ git config --global user.email "youremail@domain.com"
 3. تثبيت nvm و node.js و yarn
 
 <Warning>
-استخدم `nvm` لتثبيت نسخة `node` الصحيحة. الملف `.nvmrc` يضمن استخدام جميع المشاركين لنفس النسخة.
+  استخدم `nvm` لتثبيت نسخة `node` الصحيحة. الملف `.nvmrc` يضمن استخدام جميع
+  المشاركين لنفس النسخة.
 </Warning>
 
 ```bash
@@ -55,6 +60,7 @@ sudo apt-get install curl
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
+
 أغلق وأعد فتح برنامجك الطرفي لاستخدام nvm. ثم قم بتشغيل الأوامر التالية.
 
 ```bash
@@ -114,6 +120,7 @@ cd twenty
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="نظام Mac OS">
     **الخيار 1 (المفضل):** لتوفير قاعدة بياناتك محليًا مع `brew`:
@@ -170,6 +177,7 @@ cd twenty
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="ويندوز (WSL)">
     يجب أن تُنفذ جميع الخطوات التالية في تيرمينال WSL (داخل جهازك الافتراضي)
@@ -187,6 +195,7 @@ cd twenty
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -207,6 +216,7 @@ cd twenty
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **الخيار 1 (المفضل):** لتوفير Redis الخاص بك محليًا مع `brew`:
@@ -222,6 +232,7 @@ cd twenty
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="ويندوز (WSL)">
     **الخيار 1:** لتوفير Redis الخاص بك محليًا:
@@ -231,6 +242,7 @@ cd twenty
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -248,7 +260,12 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-**وضع تعدد مساحات العمل:** بشكل افتراضي، يعمل Twenty في وضع مساحة عمل واحدة حيث يمكن إنشاء مساحة عمل واحدة فقط. لتمكين دعم تعدد مساحات العمل (مفيد لاختبار الميزات المعتمدة على النطاقات الفرعية)، عيّن `IS_MULTIWORKSPACE_ENABLED=true` في ملف الخادم `.env`. راجع [وضع تعدد مساحات العمل](/l/ar/developers/self-host/capabilities/setup#multi-workspace-mode) للحصول على التفاصيل.
+  **وضع تعدد مساحات العمل:** بشكل افتراضي، يعمل Twenty في وضع مساحة عمل واحدة
+  حيث يمكن إنشاء مساحة عمل واحدة فقط. لتمكين دعم تعدد مساحات العمل (مفيد لاختبار
+  الميزات المعتمدة على النطاقات الفرعية)، عيّن `IS_MULTIWORKSPACE_ENABLED=true`
+  في ملف الخادم `.env`. راجع [وضع تعدد مساحات
+  العمل](/l/ar/developers/self-host/capabilities/setup#multi-workspace-mode)
+  للحصول على التفاصيل.
 </Info>
 
 ## الخطوة 6: تثبيت التبعيات
@@ -265,18 +282,20 @@ yarn
 
 <Tabs>
   <Tab title="Linux">
-    اعتمادًا على توزيعة Linux الخاصة بك، قد يتم بدء خادم Redis تلقائيًا.
-    إذا لم يكن كذلك، تحقق من [دليل تثبيت Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) لتوزيعتك.
+    اعتمادًا على توزيعة Linux الخاصة بك، قد يتم بدء خادم Redis تلقائيًا. إذا لم
+    يكن كذلك، تحقق من [دليل تثبيت
+    Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    لتوزيعتك.
   </Tab>
   <Tab title="نظام Mac OS">
-  من المفترض أن يكون Redis قد تم تشغيله بالفعل. إذا لم يكن كذلك، قم بتشغيل:
-    ```bash
-    brew services start redis
-    ```
+    من المفترض أن يكون Redis قد تم تشغيله بالفعل. إذا لم يكن كذلك، قم بتشغيل:
+    ```bash brew services start redis ```
   </Tab>
   <Tab title="ويندوز (WSL)">
-    اعتمادًا على توزيعة Linux الخاصة بك، قد يتم بدء خادم Redis تلقائيًا.
-    إذا لم يكن كذلك، تحقق من [دليل تثبيت ريديس](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) لتوزيعتك.
+    اعتمادًا على توزيعة Linux الخاصة بك، قد يتم بدء خادم Redis تلقائيًا. إذا لم
+    يكن كذلك، تحقق من [دليل تثبيت
+    ريديس](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    لتوزيعتك.
   </Tab>
 </Tabs>
 
@@ -304,14 +323,14 @@ npx nx start
 
 **الواجهة الأمامية**
 
-ستكون واجهة Twenty الأمامية تعمل على  [http://localhost:3001](http://localhost:3001).
+ستكون واجهة Twenty الأمامية تعمل على [http://localhost:3001](http://localhost:3001).
 يمكنك تسجيل الدخول باستخدام حساب العرض التوضيحي الافتراضي: `tim@apple.dev` (كلمة المرور: `tim@apple.dev`)
 
 **الخلفية**
 
-* سيكون خادم Twenty متصلاً ويعمل على [http://localhost:3000](http://localhost:3000)
-* يمكن الوصول إلى واجهة برمجة التطبيقات GraphQL في [http://localhost:3000/graphql](http://localhost:3000/graphql)
-* يمكن الوصول إلى واجهة برمجة التطبيقات REST في [http://localhost:3000/rest](http://localhost:3000/rest)
+- سيكون خادم Twenty متصلاً ويعمل على [http://localhost:3000](http://localhost:3000)
+- يمكن الوصول إلى واجهة برمجة التطبيقات GraphQL في [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- يمكن الوصول إلى واجهة برمجة التطبيقات REST في [http://localhost:3000/rest](http://localhost:3000/rest)
 
 ## استكشاف الأخطاء وإصلاحها
 

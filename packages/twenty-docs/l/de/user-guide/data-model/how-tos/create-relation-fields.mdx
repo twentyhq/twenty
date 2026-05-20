@@ -6,17 +6,18 @@ description: Schritt-für-Schritt-Anleitung zum Verbinden von Objekten mit Relat
 Relationsfelder verbinden Datensätze aus verschiedenen Objekten — zum Beispiel Personen mit Unternehmen.
 
 <Note>
-**Relationsnamen können nach dem Erstellen nicht geändert werden** (sie wirken sich auf die API aus). Planen Sie Ihre Namen sorgfältig.
+  **Relationsnamen können nach dem Erstellen nicht geändert werden** (sie wirken
+  sich auf die API aus). Planen Sie Ihre Namen sorgfältig.
 </Note>
 
 ## Bevor Sie beginnen
 
 Entscheiden Sie:
 
-* Welche Objekte verbinden Sie? (z. B. Personen → Unternehmen)
-* Welche ist die "One"-Seite? (z. B. Unternehmen)
-* Welche ist die "Many"-Seite? (z. B. Personen — viele Personen arbeiten bei einem Unternehmen)
-* Wie soll das Feld auf beiden Seiten heißen?
+- Welche Objekte verbinden Sie? (z. B. Personen → Unternehmen)
+- Welche ist die "One"-Seite? (z. B. Unternehmen)
+- Welche ist die "Many"-Seite? (z. B. Personen — viele Personen arbeiten bei einem Unternehmen)
+- Wie soll das Feld auf beiden Seiten heißen?
 
 Siehe [Relationsfelder](/l/de/user-guide/data-model/capabilities/relation-fields) für Erläuterungen zu Relationstypen.
 
@@ -33,12 +34,12 @@ Siehe [Relationsfelder](/l/de/user-guide/data-model/capabilities/relation-fields
 
 ## Beispiel: Personen → Unternehmen
 
-* Gehen Sie zu **Einstellungen → Datenmodell → Personen**
-* Fügen Sie ein Relationsfeld hinzu
-* Ziel: **Unternehmen**
-* Typ: **Many-to-One**
-* Feld bei Personen: **Unternehmen**
-* Feld bei Unternehmen: **Mitarbeitende**
+- Gehen Sie zu **Einstellungen → Datenmodell → Personen**
+- Fügen Sie ein Relationsfeld hinzu
+- Ziel: **Unternehmen**
+- Typ: **Many-to-One**
+- Feld bei Personen: **Unternehmen**
+- Feld bei Unternehmen: **Mitarbeitende**
 
 Jetzt kann jede Person mit einem Unternehmen verknüpft werden, und jedes Unternehmen zeigt seine Mitarbeitenden.
 
@@ -51,10 +52,11 @@ Jetzt kann jede Person mit einem Unternehmen verknüpft werden, und jedes Untern
 Verknüpfungen bleiben erhalten, sind jedoch verborgen. Reaktivieren, um wiederherzustellen.
 
 <Note>
-**Das Löschen einer Relation löscht keine Datensätze.** Es wird nur die Verknüpfung zwischen ihnen entfernt.
+  **Das Löschen einer Relation löscht keine Datensätze.** Es wird nur die
+  Verknüpfung zwischen ihnen entfernt.
 </Note>
 
 ## Verwandt
 
-* [Relationsfelder](/l/de/user-guide/data-model/capabilities/relation-fields) — Typen und Einschränkungen
-* [Relationen importieren](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — verknüpfte Datensätze im Stapel importieren
+- [Relationsfelder](/l/de/user-guide/data-model/capabilities/relation-fields) — Typen und Einschränkungen
+- [Relationen importieren](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — verknüpfte Datensätze im Stapel importieren

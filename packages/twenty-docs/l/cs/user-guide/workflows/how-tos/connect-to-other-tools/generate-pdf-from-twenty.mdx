@@ -29,7 +29,9 @@ Než nastavíte pracovní postup:
 3. Zvolte objekt, ke kterému chcete připojovat PDF (např. **Společnost** nebo **Příležitost**)
 
 <Tip>
-S **Ručním spouštěčem** mohou uživatelé spustit tento pracovní postup pomocí tlačítka, které se zobrazí vpravo nahoře po výběru záznamu, aby vygenerovali a připojili PDF.
+  S **Ručním spouštěčem** mohou uživatelé spustit tento pracovní postup pomocí
+  tlačítka, které se zobrazí vpravo nahoře po výběru záznamu, aby vygenerovali a
+  připojili PDF.
 </Tip>
 
 ### Krok 2: Přidejte logickou funkci
@@ -45,15 +47,15 @@ S **Ručním spouštěčem** mohou uživatelé spustit tento pracovní postup po
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-Pokud připojujete k jinému objektu (Osoba, Příležitost apod.), přejmenujte parametr podle toho (např. `personId`, `opportunityId`) a aktualizujte logickou funkci.
+  Pokud připojujete k jinému objektu (Osoba, Příležitost apod.), přejmenujte
+  parametr podle toho (např. `personId`, `opportunityId`) a aktualizujte
+  logickou funkci.
 </Note>
 
 #### Kód logické funkce
 
 ```typescript
-export const main = async (
-  params: { companyId: string },
-) => {
+export const main = async (params: { companyId: string }) => {
   const { companyId } = params;
   // Replace with your Twenty GraphQL endpoints (/metadata for metadata and files or /graphql for your records)
   // Cloud: https://api.twenty.com/graphql
@@ -98,16 +100,18 @@ export const main = async (
 
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
   const response = await fetch(metadataGraphqlEndpoint, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      },
-      body: {
-        query: fieldMetadataIdQuery,
-      }
-    });
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: {
+      query: fieldMetadataIdQuery,
+    },
+  });
   const result = await response.json();
-  const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
+  const uploadFileFieldMetadataId = result.data.objects.edges
+    .find((object) => object.node.nameSingular === 'attachment')
+    .node.fieldsList.find((field) => field.name === 'file').id;
 
   // Step 3: Upload the file via GraphQL multipart upload
   const uploadMutation = `
@@ -119,10 +123,13 @@ export const main = async (
   `;
 
   const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
-  }));
+  uploadForm.append(
+    'operations',
+    JSON.stringify({
+      query: uploadMutation,
+      variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
+    }),
+  );
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
@@ -169,9 +176,9 @@ export const main = async (
           file: [
             {
               fileId: fileId,
-              label: filename
-            }
-          ]
+              label: filename,
+            },
+          ],
         },
       },
     }),
@@ -180,7 +187,9 @@ export const main = async (
   const attachmentResult = await attachmentResponse.json();
 
   if (attachmentResult.errors?.length) {
-    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+    throw new Error(
+      `Attachment creation failed: ${attachmentResult.errors[0].message}`,
+    );
   }
 
   return attachmentResult.data?.createAttachment;
@@ -210,9 +219,11 @@ Pokud používáte službu pro generování PDF, můžete:
 2. Předejte vrácenou adresu URL PDF logické funkci jako parametr
 
 ```typescript
-export const main = async (
-  params: { companyId: string; pdfUrl: string; filename: string },
-) => {
+export const main = async (params: {
+  companyId: string;
+  pdfUrl: string;
+  filename: string;
+}) => {
   const { companyId, pdfUrl, filename } = params;
   // ... rest of the function
 };
@@ -241,10 +252,10 @@ Pro vytváření dynamických nabídek nebo faktur:
 
 ### Oblíbené služby pro generování PDF
 
-* **Carbone** - Generování dokumentů založené na šablonách
-* **PDFMonkey** - Dynamické vytváření PDF ze šablon
-* **DocuSeal** - Platforma pro automatizaci dokumentů
-* **Documint** - Generování dokumentů primárně přes API
+- **Carbone** - Generování dokumentů založené na šablonách
+- **PDFMonkey** - Dynamické vytváření PDF ze šablon
+- **DocuSeal** - Platforma pro automatizaci dokumentů
+- **Documint** - Generování dokumentů primárně přes API
 
 Každá služba poskytuje API, které vrací adresu URL PDF, kterou pak můžete předat logické funkci.
 
@@ -258,6 +269,6 @@ Každá služba poskytuje API, které vrací adresu URL PDF, kterou pak můžete
 
 ## Související
 
-* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
-* [Logické funkce](/l/cs/user-guide/workflows/capabilities/workflow-actions#code)
-* [Vygenerujte nabídku nebo fakturu z Twenty](/l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+- [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+- [Logické funkce](/l/cs/user-guide/workflows/capabilities/workflow-actions#code)
+- [Vygenerujte nabídku nebo fakturu z Twenty](/l/cs/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

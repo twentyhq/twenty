@@ -13,15 +13,15 @@ icon: square-check
 <Tab title="استخدام">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="المحددات">
 
-
 | المحددات                 | النوع       | الوصف                                                                         |
 | ------------------------ | ----------- | ----------------------------------------------------------------------------- |
 | مختار                    | قيمة منطقية | يشير إلى ما إذا كان مربع الاختيار محددًا                                      |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | نموذج                    | نص          | النمط البصري للصندوق. تتضمن الخيارات: 'أساسي'، 'ثانوي'، و 'ثالثي'             |
 | الحجم                    | نص          | حجم مربع الاختيار. له خياران: `small` و `large`                               |
 | الشكل                    | نص          | شكل مربع الاختيار. لديه خياران: 'مربع' و 'مدور'                               |
-
-
 
 </Tab>
 </Tabs>

@@ -51,11 +51,11 @@ export default definePageLayout({
 
 ### Puncte cheie
 
-* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
-* `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
-* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
-* Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
-* `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+- `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+- `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
+- Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
+- Fiecare `widget` dintr-o filă poate reda un [front component](/l/ro/developers/extend/apps/layout/front-components), o listă de relații sau alte tipuri de widgeturi integrate.
+- `position` pe file le controlează ordinea. Folosește valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
 
 ## definePageLayoutTab
 
@@ -96,7 +96,7 @@ export default definePageLayoutTab({
 
 ### Puncte cheie
 
-* `pageLayoutUniversalIdentifier` este **obligatoriu** și trebuie să indice către un layout de pagină care există deja la momentul instalării — fie un layout standard Twenty, fie unul definit de propria ta aplicație. Referințele cross-app către layouturi deținute de o altă aplicație instalată nu sunt acceptate în prezent. Când lipsește layoutul părinte, instalarea eșuează cu o eroare clară de validare.
-* `widgets` sunt limitate doar la această filă — fac referire la [front components](/l/ro/developers/extend/apps/layout/front-components), vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
-* `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
-* Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.
+- `pageLayoutUniversalIdentifier` este **obligatoriu** și trebuie să indice către un layout de pagină care există deja la momentul instalării — fie un layout standard Twenty, fie unul definit de propria ta aplicație. Referințele cross-app către layouturi deținute de o altă aplicație instalată nu sunt acceptate în prezent. Când lipsește layoutul părinte, instalarea eșuează cu o eroare clară de validare.
+- `widgets` sunt limitate doar la această filă — fac referire la [front components](/l/ro/developers/extend/apps/layout/front-components), vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
+- `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
+- Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.

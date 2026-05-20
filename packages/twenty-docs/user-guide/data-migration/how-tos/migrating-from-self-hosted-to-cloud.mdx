@@ -7,7 +7,10 @@ description: Step-by-step guide to migrate your Twenty self-hosted instance to T
 
 This guide walks you through migrating your data from a Twenty self-hosted instance to Twenty Cloud. The process involves setting up your cloud workspace, exporting your data, and re-importing it.
 
-<Note>Views, workflows, and roles must be recreated manually after migration. Plan time for this configuration work.</Note>
+<Note>
+  Views, workflows, and roles must be recreated manually after migration. Plan
+  time for this configuration work.
+</Note>
 
 ## Step 1: Create Your Cloud Workspace
 
@@ -24,7 +27,10 @@ Before importing data, recreate your custom objects and fields:
 3. Add custom fields to standard and custom objects
 4. Configure field settings (unique, required, etc.)
 
-<Note>Take screenshots of your self-hosted data model for reference, or keep both instances open side by side.</Note>
+<Note>
+  Take screenshots of your self-hosted data model for reference, or keep both
+  instances open side by side.
+</Note>
 
 ## Step 3: Invite All Users
 
@@ -32,6 +38,7 @@ Before importing data, recreate your custom objects and fields:
 **Critical: Invite users BEFORE importing data.**
 
 Users must accept their invitations before you import any records that reference them (like Account Owner fields). If users don't exist yet, those relations cannot be mapped.
+
 </Warning>
 
 1. Go to **Settings → Members** in your cloud instance
@@ -49,6 +56,7 @@ Export each object from your self-hosted instance:
 4. Save each CSV file with a clear name (e.g., `companies-export.csv`)
 
 **Export in this order** (for reference when importing):
+
 1. Companies
 2. People
 3. Opportunities
@@ -69,18 +77,23 @@ The exported CSVs contain user IDs from your self-hosted instance. These IDs won
 **Example:**
 
 Before:
+
 ```csv
 name,domain,accountOwnerId
 Acme Corp,https://acme.com,old-uuid-123
 ```
 
 After:
+
 ```csv
 name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Use the same email addresses that users used to accept their cloud workspace invitation.</Note>
+<Note>
+  Use the same email addresses that users used to accept their cloud workspace
+  invitation.
+</Note>
 
 ## Step 6: Plan Your Import Order
 
@@ -113,18 +126,22 @@ For each CSV file, in order:
 After importing data, manually recreate:
 
 ### Views
+
 - Recreate saved views with filters, sorts, and column configurations
 - Set up any kanban or calendar views
 
 ### Workflows
+
 - Recreate automations in **Settings → Workflows**
 - Test each workflow before relying on it
 
 ### Roles and Permissions
+
 - Configure roles in **Settings → Members → Roles**
 - Assign users to appropriate roles
 
 ### Integrations
+
 - Reconnect email and calendar sync for each user
 - Reconfigure any API integrations with new API keys
 
@@ -146,13 +163,17 @@ After importing data, manually recreate:
     Not currently. Workflows must be recreated manually in your cloud instance.
   </Accordion>
 
-  <Accordion title="What about file attachments and images?">
-    File attachments are not included in CSV exports. You'll need to re-upload any attachments manually, migrate them via API or contact our team for assistance with large migrations.
-  </Accordion>
+<Accordion title="What about file attachments and images?">
+  File attachments are not included in CSV exports. You'll need to re-upload any
+  attachments manually, migrate them via API or contact our team for assistance
+  with large migrations.
+</Accordion>
 
-  <Accordion title="Can I keep both instances running during migration?">
-    Yes, we recommend keeping your self-hosted instance running until you've verified the cloud migration is complete. Just be careful not to create new data in both places.
-  </Accordion>
+<Accordion title="Can I keep both instances running during migration?">
+  Yes, we recommend keeping your self-hosted instance running until you've
+  verified the cloud migration is complete. Just be careful not to create new
+  data in both places.
+</Accordion>
 
   <Accordion title="What if a user hasn't accepted their invitation yet?">
     Records referencing that user will fail to import or the relation will be empty. Ensure all users accept invitations before importing data.
@@ -162,4 +183,3 @@ After importing data, manually recreate:
 ## Need Help?
 
 For complex migrations or large datasets, contact us at [contact@twenty.com](mailto:contact@twenty.com) or explore our [Implementation Services](/user-guide/getting-started/capabilities/implementation-services).
-

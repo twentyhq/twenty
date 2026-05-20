@@ -13,7 +13,8 @@ React y Jotai manejan la gestión de estado en la base de código.
 Es buena práctica crear tantos átomos como necesites para almacenar tu estado.
 
 <Warning>
-  Es mejor usar átomos adicionales que intentar ser demasiado concisos con la perforación de props.
+  Es mejor usar átomos adicionales que intentar ser demasiado concisos con la
+  perforación de props.
 </Warning>
 
 ```tsx
@@ -30,13 +31,10 @@ export const MyComponent = () => {
 
   return (
     <div>
-      <input
-        value={myAtom}
-        onChange={(e) => setMyAtom(e.target.value)}
-      />
+      <input value={myAtom} onChange={(e) => setMyAtom(e.target.value)} />
     </div>
   );
-}
+};
 ```
 
 ### No uses `useRef` para almacenar el estado
@@ -87,7 +85,7 @@ export const PageComponent = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -95,9 +93,7 @@ export const PageComponent = () => {
   return <div>{data}</div>;
 };
 
-export const App = () => (
-  <PageComponent />
-);
+export const App = () => <PageComponent />;
 ```
 
 ```tsx
@@ -114,7 +110,7 @@ export const PageData = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -181,7 +177,7 @@ const [email, setEmail] = useState('');
 
 #### Algunas palabras a evitar en los nombres de variables
 
-* ficticio
+- ficticio
 
 ### Manejadores de eventos
 
@@ -287,12 +283,8 @@ Al importar, opta por los alias designados en lugar de especificar rutas complet
 
 ```tsx
 // ❌ Malo, especifica toda la ruta relativa
-import {
-  CatalogDecorator
-} from '../../../../../testing/decorators/CatalogDecorator';
-import {
-  ComponentDecorator
-} from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx

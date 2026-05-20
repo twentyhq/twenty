@@ -10,8 +10,8 @@ I componenti front-end sono componenti React che vengono renderizzati direttamen
 
 I componenti front possono essere renderizzati in due posizioni all'interno di Twenty:
 
-* **Pannello laterale** — I componenti front non headless si aprono nel pannello laterale destro. Questo è il comportamento predefinito quando un componente front viene avviato dal menu comandi.
-* **Widget (dashboard e pagine dei record)** — I componenti front possono essere incorporati come widget all'interno dei layout di pagina. Quando si configura una dashboard o il layout di una pagina record, gli utenti possono aggiungere un widget del componente front.
+- **Pannello laterale** — I componenti front non headless si aprono nel pannello laterale destro. Questo è il comportamento predefinito quando un componente front viene avviato dal menu comandi.
+- **Widget (dashboard e pagine dei record)** — I componenti front possono essere incorporati come widget all'interno dei layout di pagina. Quando si configura una dashboard o il layout di una pagina record, gli utenti possono aggiungere un widget del componente front.
 
 ## Esempio di base
 
@@ -47,8 +47,11 @@ export default defineFrontComponent({
 
 Dopo la sincronizzazione con `yarn twenty dev` (o eseguendo una volta sola `yarn twenty dev --once`), l'azione rapida appare nell'angolo in alto a destra della pagina:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Pulsante di azione rapida nell'angolo in alto a destra" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Pulsante di azione rapida nell'angolo in alto a destra"
+  />
 </div>
 
 Fai clic per renderizzare il componente in linea.
@@ -85,7 +88,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -108,10 +114,10 @@ Il pacchetto `twenty-sdk` fornisce quattro componenti di supporto Command proget
 
 Importali da `twenty-sdk/command`:
 
-* **`Command`** — Esegue una callback asincrona tramite la prop `execute`.
-* **`CommandLink`** — Naviga verso un percorso dell'app. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Apre una finestra modale di conferma. Se l'utente conferma, esegue la callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Apre una specifica pagina del pannello laterale. Props: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — Esegue una callback asincrona tramite la prop `execute`.
+- **`CommandLink`** — Naviga verso un percorso dell'app. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Apre una finestra modale di conferma. Se l'utente conferma, esegue la callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Apre una specifica pagina del pannello laterale. Props: `page`, `pageTitle`, `pageIcon`.
 
 Ecco un esempio completo di componente front headless che usa `Command` per eseguire un'azione dal menu comandi:
 
@@ -390,12 +396,12 @@ Vedi la [sezione sugli asset pubblici](/l/it/developers/extend/apps/cli-and-test
 
 I componenti front-end supportano diversi approcci di styling. Puoi usare:
 
-* **Stili inline** — `style={{ color: 'red' }}`
-* **Componenti Twenty UI** — importali da `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e altro)
-* **Emotion** — CSS-in-JS con `@emotion/react`
-* **Styled-components** — pattern `styled.div`
-* **Tailwind CSS** — classi di utilità
-* **Qualsiasi libreria CSS-in-JS** compatibile con React
+- **Stili inline** — `style={{ color: 'red' }}`
+- **Componenti Twenty UI** — importali da `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e altro)
+- **Emotion** — CSS-in-JS con `@emotion/react`
+- **Styled-components** — pattern `styled.div`
+- **Tailwind CSS** — classi di utilità
+- **Qualsiasi libreria CSS-in-JS** compatibile con React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

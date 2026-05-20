@@ -20,12 +20,15 @@ Um basierend auf bestimmten Bedingungen nur eine Verzweigung auszuführen, **fü
 3. Legen Sie für jeden Filter Bedingungen fest, um zu bestimmen, wann diese Verzweigung fortgesetzt werden soll
 4. Nur die Verzweigung(en), deren Filterbedingungen erfüllt sind, wird/werden weiter ausgeführt
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Wie Filter funktionieren
 
-* Wenn die Filterbedingung **erfüllt** ist: Die Verzweigung wird weiter ausgeführt
-* Wenn die Filterbedingung **nicht erfüllt** ist: Die Verzweigung stoppt am Filter-Knoten
+- Wenn die Filterbedingung **erfüllt** ist: Die Verzweigung wird weiter ausgeführt
+- Wenn die Filterbedingung **nicht erfüllt** ist: Die Verzweigung stoppt am Filter-Knoten
 
 Dadurch entsteht effektiv eine bedingte Logik, bei der basierend auf Ihren Daten nur die passende Verzweigung ausgeführt wird.
 
@@ -42,7 +45,9 @@ Beide Verzweigungen starten, aber nur diejenige, die dem Dealbetrag entspricht, 
 ## Verzweigungen erstellen
 
 <Note>
-Um aus einem bestehenden Schritt eine neue Verzweigung zu erstellen, klicken Sie im Schritt auf die Schaltfläche **+** und fügen Sie Ihre Aktion hinzu. Sie können mehrere Verzweigungen hinzufügen, indem Sie **+** mehrmals klicken.
+  Um aus einem bestehenden Schritt eine neue Verzweigung zu erstellen, klicken
+  Sie im Schritt auf die Schaltfläche **+** und fügen Sie Ihre Aktion hinzu. Sie
+  können mehrere Verzweigungen hinzufügen, indem Sie **+** mehrmals klicken.
 </Note>
 
 1. Wählen Sie im Workflow-Editor den Schritt aus, von dem Sie verzweigen möchten
@@ -78,13 +83,13 @@ Die Bestätigungs-E-Mail wird erst gesendet, nachdem sowohl die Aktualisierung d
 
 ## Beste Praktiken
 
-* Verwenden Sie am Anfang von Verzweigungen immer **Filter-Knoten**, wenn Sie eine bedingte Ausführung möchten
-* Halten Sie Verzweigungsbedingungen **gegenseitig ausschließend**, um doppelte Aktionen zu vermeiden
-* Testen Sie Ihre Workflows mit unterschiedlichen Daten, um sicherzustellen, dass die richtigen Verzweigungen ausgeführt werden
-* **Benennen Sie Verzweigungsschritte um** und verwenden Sie aussagekräftige Bezeichnungen, damit klar ist, was jeder Pfad tut
-* **Verzweigungen zusammenführen**, wenn Sie nach paralleler Verarbeitung eine abschließende Aktion benötigen
+- Verwenden Sie am Anfang von Verzweigungen immer **Filter-Knoten**, wenn Sie eine bedingte Ausführung möchten
+- Halten Sie Verzweigungsbedingungen **gegenseitig ausschließend**, um doppelte Aktionen zu vermeiden
+- Testen Sie Ihre Workflows mit unterschiedlichen Daten, um sicherzustellen, dass die richtigen Verzweigungen ausgeführt werden
+- **Benennen Sie Verzweigungsschritte um** und verwenden Sie aussagekräftige Bezeichnungen, damit klar ist, was jeder Pfad tut
+- **Verzweigungen zusammenführen**, wenn Sie nach paralleler Verarbeitung eine abschließende Aktion benötigen
 
 ## Verwandt
 
-* [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq) — Antworten zur parallelen Ausführung
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) — verfügbare Aktionen für Verzweigungen
+- [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq) — Antworten zur parallelen Ausführung
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) — verfügbare Aktionen für Verzweigungen

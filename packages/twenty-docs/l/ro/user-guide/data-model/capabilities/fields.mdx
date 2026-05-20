@@ -19,7 +19,10 @@ Nu puteți șterge câmpurile standard, dar le puteți dezactiva dacă nu aveți
 
 De asemenea, puteți personaliza opțiunile câmpurilor standard de tip `SELECT`, de exemplu opțiunile pentru `Etapa` la Oportunități.
 
-<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/standard-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ### Câmpuri personalizate
 
@@ -27,7 +30,10 @@ Câmpurile personalizate pot fi adăugate la orice obiect. Puteți stoca text, n
 
 De exemplu, un câmp personalizat pentru SpaceX ar putea fi `Starea de funcționare a rachetei`, indicând dacă o rachetă este operațională.
 
-<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/custom-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ## Tipuri de câmp
 
@@ -69,7 +75,10 @@ Noul câmp creat de dumneavoastră este acum disponibil în cadrul câmpurilor a
 
 **Cale rapidă:** Faceți clic pe butonul **+** în colțul dreapta sus al oricărui tabel de obiecte, apoi selectați `Personalizați câmpurile`. Aceasta vă duce direct la setările Modelului de Date.
 
-<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/quick-new-field.png"
+  style={{ width: '100%' }}
+/>
 
 ## Dezactivați un câmp
 
@@ -83,7 +92,10 @@ Iată cum puteți face acest lucru:
 
 3. Selectați `Dezactivează` din lista derulantă.
 
-<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/deactivate-field.png"
+  style={{ width: '100%' }}
+/>
 
 Ce se întâmplă când dezactivați un câmp?
 
@@ -105,18 +117,18 @@ Dacă primiți o eroare când setați unicitatea, verificați prezența valorilo
 
 ### Convenții de denumire și limitări
 
-* **Numele la singular și plural trebuie să fie distincte**: API-ul nostru GraphQL necesită nume distincte pentru mutații
-* **Nume de câmpuri protejate**: unele nume sunt rezervate pentru uzul sistemului (de ex., `Tip`, `Aplicație`)
+- **Numele la singular și plural trebuie să fie distincte**: API-ul nostru GraphQL necesită nume distincte pentru mutații
+- **Nume de câmpuri protejate**: unele nume sunt rezervate pentru uzul sistemului (de ex., `Tip`, `Aplicație`)
 
 ### Câmpuri valută și telefon
 
-* **Valută implicită**: poate fi configurată prin modelul de date
-* **Coduri de țară implicite**: pot fi configurate pentru câmpurile de telefon prin modelul de date
+- **Valută implicită**: poate fi configurată prin modelul de date
+- **Coduri de țară implicite**: pot fi configurate pentru câmpurile de telefon prin modelul de date
 
 ### Câmpuri de selectare
 
-* **Se poate selecta o opțiune implicită** pentru fiecare câmp de tip Select
+- **Se poate selecta o opțiune implicită** pentru fiecare câmp de tip Select
 
 ### Câmpuri de text pentru înregistrări
 
-* **Fiecare obiect are un câmp principal de afișare**: Acest câmp apare în coloana din stânga și reprezintă înregistrarea atunci când este legată de alte obiecte. Trebuie să fie un câmp text. De exemplu, Persoane utilizează `Nume` ca câmp principal, astfel încât atunci când legați o persoană de o companie, veți vedea numele ei în vizualizarea companiei.
+- **Fiecare obiect are un câmp principal de afișare**: Acest câmp apare în coloana din stânga și reprezintă înregistrarea atunci când este legată de alte obiecte. Trebuie să fie un câmp text. De exemplu, Persoane utilizează `Nume` ca câmp principal, astfel încât atunci când legați o persoană de o companie, veți vedea numele ei în vizualizarea companiei.

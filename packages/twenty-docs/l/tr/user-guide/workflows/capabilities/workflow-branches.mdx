@@ -5,7 +5,10 @@ description: İş akışlarınızda paralel yollar ve koşullu mantık oluşturu
 
 Dallar, iş akışınızı verilerinize bağlı olarak eşzamanlı veya koşullu olarak çalışabilen birden çok yola ayırmanıza olanak tanır.
 
-<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches.png"
+  style={{ width: '100%' }}
+/>
 
 ## Dallar Nasıl Çalışır
 
@@ -22,7 +25,8 @@ Tek bir düğümden birden fazla bağlantı oluşturduğunuzda, her yol bir dala
 5. Aynı düğümden daha fazla dal eklemek için tekrarlayın
 
 <Note>
-Her dal bağımsızdır. Bir dal eklemek, o düğümdeki diğer mevcut yolları etkilemez.
+  Her dal bağımsızdır. Bir dal eklemek, o düğümdeki diğer mevcut yolları
+  etkilemez.
 </Note>
 
 ### Görsel Düzen
@@ -50,17 +54,20 @@ Yalnızca filtre koşulunun sağlandığı dallar yürütülmeye devam eder.
 
 **Dallar otomatik olarak birleştirilmez.** Her dal, bitene kadar bağımsız olarak çalışır. Bunu nasıl ele alacağınız konusunda tam esnekliğe sahipsiniz:
 
-* **Seçenek 1: Dalları ayrı tutun**
+- **Seçenek 1: Dalları ayrı tutun**
   Her dal, kendi takip eylemlerini bağımsız olarak yürütür. Dalların birleşmesi gerekmiyorsa bu en basit yaklaşımdır.
 
-* **Seçenek 2: Dalları el ile birleştirin**
+- **Seçenek 2: Dalları el ile birleştirin**
   İş akışınızı oluştururken birden fazla dalı aynı sonraki eyleme manuel olarak bağlayabilirsiniz. Her dalın sonundan ortak bir düğüme okları sürüklemeniz yeterlidir.
 
 <Note>
-Yürütmeyi duraklatmak için bir [Delay](/l/tr/user-guide/workflows/capabilities/workflow-actions#delay) düğümü kullanabilirsiniz, ancak şu anda "başka bir dal bitene kadar" bekleyecek şekilde yapılandırılamaz.
+  Yürütmeyi duraklatmak için bir
+  [Delay](/l/tr/user-guide/workflows/capabilities/workflow-actions#delay) düğümü
+  kullanabilirsiniz, ancak şu anda "başka bir dal bitene kadar" bekleyecek
+  şekilde yapılandırılamaz.
 </Note>
 
 ## İlgili
 
-* [İş Akışlarında Dallar Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/use-branches-in-workflows) - Adım adım kılavuz
-* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions) - Filtre de dahil olmak üzere kullanılabilir eylemler
+- [İş Akışlarında Dallar Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/use-branches-in-workflows) - Adım adım kılavuz
+- [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions) - Filtre de dahil olmak üzere kullanılabilir eylemler

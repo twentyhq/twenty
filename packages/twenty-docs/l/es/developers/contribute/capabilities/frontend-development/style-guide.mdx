@@ -31,7 +31,7 @@ export default MyComponent;
 // ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
-};
+}
 ```
 
 ### "Props"
@@ -49,7 +49,9 @@ type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => (
+  <div>Hello {name}</div>
+);
 ```
 
 #### Evita usar `React.FC` o `React.FunctionComponent` para definir tipos de props
@@ -90,7 +92,7 @@ Evita usar la propagación de una sola variable de props en elementos JSX, como 
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
-}
+};
 ```
 
 ```tsx
@@ -104,9 +106,9 @@ const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
 
 Razonamiento:
 
-* A simple vista, es más claro qué props se está pasando, lo que hace que sea más fácil de entender y mantener.
-* Ayuda a prevenir el acoplamiento estricto entre componentes mediante sus props.
-* Las herramientas de linting facilitan la identificación de props mal escritas o sin uso al listar props explícitamente.
+- A simple vista, es más claro qué props se está pasando, lo que hace que sea más fácil de entender y mantener.
+- Ayuda a prevenir el acoplamiento estricto entre componentes mediante sus props.
+- Las herramientas de linting facilitan la identificación de props mal escritas o sin uso al listar props explícitamente.
 
 ## JavaScript
 
@@ -157,9 +159,9 @@ Puedes ver por qué TypeScript recomienda evitar enums [aquí](https://www.types
 ```tsx
 // ❌ Bad, utilizes an enum
 enum Color {
-  Red = "red",
-  Green = "green",
-  Blue = "blue",
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
 }
 
 let color = Color.Red;
@@ -168,7 +170,7 @@ let color = Color.Red;
 ```tsx
 // ✅ Good, utilizes a string literal
 
-let color: "red" | "green" | "blue" = "red";
+let color: 'red' | 'green' | 'blue' = 'red';
 ```
 
 #### GraphQL y bibliotecas internas
@@ -254,7 +256,7 @@ const StyledButton = styled.button`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  border-radius:  ${({ theme }) => theme.border.rounded};
+  border-radius: ${({ theme }) => theme.border.rounded};
 `;
 ```
 
@@ -275,11 +277,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### Por qué No-Type Imports
 
-* **Consistencia**: Al evitar las importaciones de tipo y usar un solo enfoque tanto para las importaciones de tipo como de valor, la base de código se mantiene consistente en su estilo de importación de módulos.
+- **Consistencia**: Al evitar las importaciones de tipo y usar un solo enfoque tanto para las importaciones de tipo como de valor, la base de código se mantiene consistente en su estilo de importación de módulos.
 
-* **Legibilidad**: Las no-importaciones de tipo mejoran la legibilidad del código al dejar claro cuándo se están importando valores o tipos. Esto reduce la ambigüedad y hace más fácil entender el propósito de los símbolos importados.
+- **Legibilidad**: Las no-importaciones de tipo mejoran la legibilidad del código al dejar claro cuándo se están importando valores o tipos. Esto reduce la ambigüedad y hace más fácil entender el propósito de los símbolos importados.
 
-* **Mantenibilidad**: Mejora la mantenibilidad de la base de código porque los desarrolladores pueden identificar y localizar importaciones solo de tipo al revisar o modificar el código.
+- **Mantenibilidad**: Mejora la mantenibilidad de la base de código porque los desarrolladores pueden identificar y localizar importaciones solo de tipo al revisar o modificar el código.
 
 ### regla de Oxlint
 

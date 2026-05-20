@@ -13,16 +13,15 @@ Kullanıcıların bir listeden simge seçmesine olanak tanıyan bir açılır me
 <Tab title="Kullanım">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MyComponent = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Seçilen Simge:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Seçilen Simge:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Özellikler">
-
 
 | Özellikler      | Tür       | Açıklama                                                                                                           |
 | --------------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
@@ -49,9 +46,6 @@ export const MyComponent = () => {
 | onClose         | fonksiyon | Açılır menü kapatıldığında tetiklenen geri çağırma işlevi                                                          |
 | onOpen          | fonksiyon | Açılır menü açıldığında tetiklenen geri çağırma işlevi                                                             |
 | variant         | dize      | Tıklanabilir simgenin görsel stil varyantı. Seçenekler şunları içerir: `primary`, `secondary` ve `tertiary`        |
-
-
-
 
 </Tab>
 </Tabs>

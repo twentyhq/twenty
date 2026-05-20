@@ -11,13 +11,16 @@ Twenty wurde so entwickelt, dass es entwicklerfreundlich ist und leistungsstarke
 
 Twenty generiert APIs speziell für Ihr Datenmodell:
 
-* **Keine langen IDs erforderlich**: Verwenden Sie Ihre Objekt- und Feldnamen direkt in Endpunkten
-* **Standard- und benutzerdefinierte Objekte werden gleich behandelt**: Ihre benutzerdefinierten Objekte erhalten dieselbe API-Behandlung wie integrierte
-* **Dedizierte Endpunkte**: Jedes Objekt und Feld erhält seinen eigenen API-Endpunkt
-* **Benutzerdefinierte Dokumentation**: Speziell für das Datenmodell Ihres Arbeitsplatzes generiert
+- **Keine langen IDs erforderlich**: Verwenden Sie Ihre Objekt- und Feldnamen direkt in Endpunkten
+- **Standard- und benutzerdefinierte Objekte werden gleich behandelt**: Ihre benutzerdefinierten Objekte erhalten dieselbe API-Behandlung wie integrierte
+- **Dedizierte Endpunkte**: Jedes Objekt und Feld erhält seinen eigenen API-Endpunkt
+- **Benutzerdefinierte Dokumentation**: Speziell für das Datenmodell Ihres Arbeitsplatzes generiert
 
 <Note>
-Ihre personalisierte API-Dokumentation ist nach dem Erstellen eines API-Schlüssels unter **Einstellungen → API & Webhooks** verfügbar. Da Twenty APIs erzeugt, die Ihrem benutzerdefinierten Datenmodell entsprechen, ist die Dokumentation für Ihren Arbeitsbereich einzigartig.
+  Ihre personalisierte API-Dokumentation ist nach dem Erstellen eines
+  API-Schlüssels unter **Einstellungen → API & Webhooks** verfügbar. Da Twenty
+  APIs erzeugt, die Ihrem benutzerdefinierten Datenmodell entsprechen, ist die
+  Dokumentation für Ihren Arbeitsbereich einzigartig.
 </Note>
 
 ## Die beiden API-Typen
@@ -28,9 +31,9 @@ Zugriff auf `/rest/` oder `/graphql/`
 
 Arbeiten Sie mit Ihren tatsächlichen **Datensätzen** (den Daten):
 
-* Personen, Unternehmen, Opportunities usw. erstellen, lesen, aktualisieren und löschen
-* Daten abfragen und filtern
-* Verwalten von Datensatzbeziehungen
+- Personen, Unternehmen, Opportunities usw. erstellen, lesen, aktualisieren und löschen
+- Daten abfragen und filtern
+- Verwalten von Datensatzbeziehungen
 
 ### Metadata API
 
@@ -38,9 +41,9 @@ Zugriff auf `/rest/metadata/` oder `/metadata/`
 
 Verwalten Sie Ihren **Arbeitsbereich und Ihr Datenmodell**:
 
-* Objekte und Felder erstellen, ändern oder löschen
-* Konfigurieren der Arbeitsbereichseinstellungen
-* Beziehungen zwischen Objekten definieren
+- Objekte und Felder erstellen, ändern oder löschen
+- Konfigurieren der Arbeitsbereichseinstellungen
+- Beziehungen zwischen Objekten definieren
 
 ## REST vs GraphQL
 
@@ -73,15 +76,17 @@ Authorization: Bearer YOUR_API_KEY
 1. Gehen Sie zu **Einstellungen → APIs & Webhooks**
 2. Klicken Sie auf **+ Schlüssel erstellen**
 3. Konfigurieren:
-   * **Name**: Beschreibender Name für den Schlüssel
-   * **Ablaufdatum**: Wann der Schlüssel abläuft
+   - **Name**: Beschreibender Name für den Schlüssel
+   - **Ablaufdatum**: Wann der Schlüssel abläuft
 4. Klicken Sie auf **Speichern**
 5. **Sofort kopieren** — der Schlüssel wird nur einmal angezeigt
 
 <VimeoEmbed videoId="928786722" title="API-Schlüssel erstellen" />
 
 <Warning>
-Ihr API-Schlüssel gewährt Zugriff auf sensible Daten. Teilen Sie ihn nicht mit nicht vertrauenswürdigen Diensten. Wenn er kompromittiert wurde, deaktivieren Sie ihn umgehend und erstellen Sie einen neuen.
+  Ihr API-Schlüssel gewährt Zugriff auf sensible Daten. Teilen Sie ihn nicht mit
+  nicht vertrauenswürdigen Diensten. Wenn er kompromittiert wurde, deaktivieren
+  Sie ihn umgehend und erstellen Sie einen neuen.
 </Warning>
 
 ### Einem API-Schlüssel eine Rolle zuweisen
@@ -114,10 +119,10 @@ Testen Sie Ihre APIs direkt im Browser mit unserem integrierten Playground — v
 
 ### Was Sie erhalten
 
-* **Interaktive Dokumentation**: Für Ihr spezifisches Datenmodell generiert
-* **Live-Tests**: Führen Sie echte API-Aufrufe gegen Ihren Arbeitsbereich aus
-* **Schema-Explorer**: Verfügbare Objekte, Felder und Beziehungen durchsuchen
-* **Request-Builder**: Abfragen mit Autovervollständigung erstellen
+- **Interaktive Dokumentation**: Für Ihr spezifisches Datenmodell generiert
+- **Live-Tests**: Führen Sie echte API-Aufrufe gegen Ihren Arbeitsbereich aus
+- **Schema-Explorer**: Verfügbare Objekte, Felder und Beziehungen durchsuchen
+- **Request-Builder**: Abfragen mit Autovervollständigung erstellen
 
 Der Playground spiegelt Ihre benutzerdefinierten Objekte und Felder wider, sodass die Dokumentation für Ihren Arbeitsbereich stets korrekt ist.
 
@@ -125,13 +130,13 @@ Der Playground spiegelt Ihre benutzerdefinierten Objekte und Felder wider, sodas
 
 Sowohl REST als auch GraphQL unterstützen Batch-Vorgänge:
 
-* **Batch-Größe**: Bis zu 60 Datensätze pro Anfrage
-* **Vorgänge**: Mehrere Datensätze erstellen, aktualisieren, löschen
+- **Batch-Größe**: Bis zu 60 Datensätze pro Anfrage
+- **Vorgänge**: Mehrere Datensätze erstellen, aktualisieren, löschen
 
 **GraphQL-Exklusivfunktionen:**
 
-* **Batch-Upsert**: Erstellen oder Aktualisieren in einem Aufruf
-* Verwenden Sie Pluralobjektnamen (z. B. `CreateCompanies` statt `CreateCompany`)
+- **Batch-Upsert**: Erstellen oder Aktualisieren in einem Aufruf
+- Verwenden Sie Pluralobjektnamen (z. B. `CreateCompanies` statt `CreateCompany`)
 
 ## Rate Limits
 
@@ -143,5 +148,7 @@ API-Anfragen werden gedrosselt, um die Stabilität der Plattform zu gewährleist
 | **Batch-Größe** | 60 Datensätze pro Aufruf |
 
 <Tip>
-Verwenden Sie Batch-Vorgänge, um den Durchsatz zu maximieren — verarbeiten Sie bis zu 60 Datensätze in einem einzelnen API-Aufruf, statt einzelne Anfragen zu senden.
+  Verwenden Sie Batch-Vorgänge, um den Durchsatz zu maximieren — verarbeiten Sie
+  bis zu 60 Datensätze in einem einzelnen API-Aufruf, statt einzelne Anfragen zu
+  senden.
 </Tip>

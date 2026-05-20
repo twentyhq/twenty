@@ -20,12 +20,15 @@ Per eseguire una sola diramazione in base a condizioni specifiche, **aggiungi un
 3. Imposta le condizioni su ciascun Filtro per determinare quando quella diramazione deve continuare
 4. Procederanno solo le diramazioni per cui le condizioni del Filtro sono soddisfatte
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Come funzionano i filtri
 
-* Se la condizione del Filtro è **soddisfatta**: la diramazione continua l'esecuzione
-* Se la condizione del Filtro **non è soddisfatta**: la diramazione si ferma al nodo Filtro
+- Se la condizione del Filtro è **soddisfatta**: la diramazione continua l'esecuzione
+- Se la condizione del Filtro **non è soddisfatta**: la diramazione si ferma al nodo Filtro
 
 Questo crea di fatto una logica condizionale in cui, in base ai tuoi dati, viene eseguita solo la diramazione appropriata.
 
@@ -42,7 +45,9 @@ Entrambe le diramazioni iniziano, ma solo quella che corrisponde all'importo del
 ## Creare le diramazioni
 
 <Note>
-Per creare una nuova diramazione da un passaggio esistente, fai clic sul pulsante **+** nel passaggio e aggiungi la tua azione. Puoi aggiungere più diramazioni facendo clic su **+** più volte.
+  Per creare una nuova diramazione da un passaggio esistente, fai clic sul
+  pulsante **+** nel passaggio e aggiungi la tua azione. Puoi aggiungere più
+  diramazioni facendo clic su **+** più volte.
 </Note>
 
 1. Nell'editor dei flussi di lavoro, seleziona il passaggio da cui vuoi creare la diramazione
@@ -78,13 +83,13 @@ L'email di conferma viene inviata solo dopo che sia l'aggiornamento del cliente 
 
 ## Migliori Pratiche
 
-* Usa sempre i **nodi Filtro** all'inizio delle diramazioni quando desideri un'esecuzione condizionale
-* Mantieni le condizioni delle diramazioni **mutuamente esclusive** per evitare azioni duplicate
-* Testa i tuoi flussi di lavoro con dati diversi per assicurarti che vengano eseguite le diramazioni corrette
-* **Rinomina i passaggi delle diramazioni** in modo descrittivo, così è chiaro cosa fa ogni percorso
-* **Riunisci le diramazioni** quando ti serve un'azione finale dopo l'elaborazione parallela
+- Usa sempre i **nodi Filtro** all'inizio delle diramazioni quando desideri un'esecuzione condizionale
+- Mantieni le condizioni delle diramazioni **mutuamente esclusive** per evitare azioni duplicate
+- Testa i tuoi flussi di lavoro con dati diversi per assicurarti che vengano eseguite le diramazioni corrette
+- **Rinomina i passaggi delle diramazioni** in modo descrittivo, così è chiaro cosa fa ogni percorso
+- **Riunisci le diramazioni** quando ti serve un'azione finale dopo l'elaborazione parallela
 
 ## Correlati
 
-* [Domande frequenti sui flussi di lavoro](/l/it/user-guide/workflows/how-tos/need-more-help/workflows-faq) — risposte sull'esecuzione parallela
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions) — azioni disponibili per le diramazioni
+- [Domande frequenti sui flussi di lavoro](/l/it/user-guide/workflows/how-tos/need-more-help/workflows-faq) — risposte sull'esecuzione parallela
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions) — azioni disponibili per le diramazioni

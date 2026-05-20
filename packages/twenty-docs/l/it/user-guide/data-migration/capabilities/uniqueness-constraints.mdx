@@ -17,7 +17,11 @@ Twenty applica l'unicità su determinati campi per prevenire record duplicati e 
 | **Aziende**                | `id`, `domain`                           |
 | **Oggetti personalizzati** | Solo `id` (per impostazione predefinita) |
 
-<Note>Il campo `id` è l'identificatore interno di Twenty, generato automaticamente per ciascun record. Utilizza il formato UUID (ad es., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>
+  Il campo `id` è l'identificatore interno di Twenty, generato automaticamente
+  per ciascun record. Utilizza il formato UUID (ad es.,
+  `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).
+</Note>
 
 ## Campi univoci personalizzati
 
@@ -30,11 +34,14 @@ Puoi definire campi univoci aggiuntivi in **Impostazioni → Modello dati**:
 
 ### Casi d'uso per campi univoci personalizzati
 
-* **ID esterni**: Memorizza ID provenienti da altri sistemi (Salesforce ID, HubSpot ID)
-* **Identificativi aziendali**: numeri dei dipendenti, codici cliente
-* **Informazioni di contatto alternative**: profilo LinkedIn, numero di telefono
+- **ID esterni**: Memorizza ID provenienti da altri sistemi (Salesforce ID, HubSpot ID)
+- **Identificativi aziendali**: numeri dei dipendenti, codici cliente
+- **Informazioni di contatto alternative**: profilo LinkedIn, numero di telefono
 
-<Note>Il nome del campo `id` è riservato all'ID interno di Twenty. Usa un nome diverso come `externalId` o `legacyId` per gli identificatori esterni.</Note>
+<Note>
+  Il nome del campo `id` è riservato all'ID interno di Twenty. Usa un nome
+  diverso come `externalId` o `legacyId` per gli identificatori esterni.
+</Note>
 
 ## Comportamento dell'importazione
 
@@ -45,7 +52,11 @@ Se il valore di un campo univoco non esiste, viene creato un nuovo record.
 ### Aggiornamento dei record esistenti
 
 Se il valore di un campo univoco corrisponde a un record esistente, quel record viene **aggiornato** con i nuovi dati.
-<Warning>Per **aggiornare i record esistenti**, si consiglia di **associare un solo campo univoco**.</Warning>
+
+<Warning>
+  Per **aggiornare i record esistenti**, si consiglia di **associare un solo
+  campo univoco**.
+</Warning>
 
 ### Record eliminati in modo non definitivo
 
@@ -53,14 +64,15 @@ Se il valore di un campo univoco corrisponde a un record esistente, quel record 
 **I record eliminati contano ai fini dell'unicità.**
 
 I record eliminati in modo non definitivo (visibili in Menu Comandi → Vedi record eliminati) sono inclusi nei controlli di unicità. Se importi un record con lo stesso valore univoco di un record eliminato, il record eliminato verrà **ripristinato** con i nuovi dati.
+
 </Warning>
 
 ## Rilevamento dei duplicati durante l'importazione
 
 Durante la fase di convalida:
 
-* I duplicati presenti nel tuo file sono evidenziati in giallo
-* Puoi modificare o rimuovere le righe duplicate dall'interfaccia utente prima di avviare l'importazione
+- I duplicati presenti nel tuo file sono evidenziati in giallo
+- Puoi modificare o rimuovere le righe duplicate dall'interfaccia utente prima di avviare l'importazione
 
 <VimeoEmbed videoId="1145246326" title="Dimostrazione video" />
 

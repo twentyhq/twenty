@@ -9,10 +9,10 @@ description: 当机会成交后，自动化处理赢单后的活动。
 
 当一个机会移动到 "Closed Won"：
 
-* 公司类型需要从 "Prospect" 变更为 "Customer"
-* 需要创建客户入门任务
-* 需要通知客户成功团队
-* 销售代表需要收到确认
+- 公司类型需要从 "Prospect" 变更为 "Customer"
+- 需要创建客户入门任务
+- 需要通知客户成功团队
+- 销售代表需要收到确认
 
 手动执行这些操作既耗时又容易出错。
 
@@ -44,40 +44,40 @@ description: 当机会成交后，自动化处理赢单后的活动。
 1. 添加 **更新记录** 操作
 2. 配置:
 
-| 字段         | 值                               |
-| ---------- | ------------------------------- |
-| **对象**     | 公司                              |
-| **记录**     | `{{trigger.object.company.id}}` |
-| **类型**     | 客户                              |
+| 字段             | 值                              |
+| ---------------- | ------------------------------- |
+| **对象**         | 公司                            |
+| **记录**         | `{{trigger.object.company.id}}` |
+| **类型**         | 客户                            |
 | **首次交易日期** | `{{trigger.object.closedAt}}`   |
-| **账户所有者**  | `{{trigger.object.owner.id}}`   |
+| **账户所有者**   | `{{trigger.object.owner.id}}`   |
 
 ### 步骤 5：创建客户入门任务
 
 1. 添加 **创建记录** 操作
 2. 配置:
 
-| 字段       | 值                                                                          |
-| -------- | -------------------------------------------------------------------------- |
-| **对象**   | 任务                                                                         |
-| **标题**   | `Onboarding: {{trigger.object.name}}`                                      |
-| **受托人**  | 客户成功团队成员                                                                   |
-| **到期日**  | 3 天后                                                                       |
-| **优先级**  | 高                                                                          |
-| **关联公司** | `{{trigger.object.company.id}}`                                            |
-| **关联机会** | `{{trigger.object.id}}`                                                    |
-| **描述**   | `为 {{trigger.object.company.name}} 的新客户入门。 交易金额：{{trigger.object.amount}}` |
+| 字段         | 值                                                                                      |
+| ------------ | --------------------------------------------------------------------------------------- |
+| **对象**     | 任务                                                                                    |
+| **标题**     | `Onboarding: {{trigger.object.name}}`                                                   |
+| **受托人**   | 客户成功团队成员                                                                        |
+| **到期日**   | 3 天后                                                                                  |
+| **优先级**   | 高                                                                                      |
+| **关联公司** | `{{trigger.object.company.id}}`                                                         |
+| **关联机会** | `{{trigger.object.id}}`                                                                 |
+| **描述**     | `为 {{trigger.object.company.name}} 的新客户入门。 交易金额：{{trigger.object.amount}}` |
 
 ### 步骤 6：通知客户成功团队
 
 1. 添加 **Send Email** 操作
 2. 配置:
 
-| 字段      | 值                                                  |
-| ------- | -------------------------------------------------- |
+| 字段       | 值                                                 |
+| ---------- | -------------------------------------------------- |
 | **收件人** | customer-success@yourcompany.com                   |
-| **主题**  | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **正文**  | 请参见下方示例                                            |
+| **主题**   | `🎉 New Customer: {{trigger.object.company.name}}` |
+| **正文**   | 请参见下方示例                                     |
 
 **电子邮件正文示例**：
 
@@ -102,20 +102,20 @@ description: 当机会成交后，自动化处理赢单后的活动。
 1. 再添加一个 **Send Email** 操作
 2. 配置:
 
-| 字段      | 值                                        |
-| ------- | ---------------------------------------- |
-| **收件人** | `{{trigger.object.owner.email}}`         |
-| **主题**  | `✅ Deal Closed: {{trigger.object.name}}` |
-| **正文**  | 恭喜！ 您的交易已处理。 客户成功团队已被通知，入门流程已开始。         |
+| 字段       | 值                                                             |
+| ---------- | -------------------------------------------------------------- |
+| **收件人** | `{{trigger.object.owner.email}}`                               |
+| **主题**   | `✅ Deal Closed: {{trigger.object.name}}`                      |
+| **正文**   | 恭喜！ 您的交易已处理。 客户成功团队已被通知，入门流程已开始。 |
 
 ### 步骤 8：测试并启用
 
 1. 通过将测试机会移动到 "Closed Won" 进行测试
 2. 验证:
-   * 公司类型已更改为 "Customer"
-   * 已创建客户入门任务
-   * 客户成功团队已收到电子邮件
-   * 销售代表已收到确认
+   - 公司类型已更改为 "Customer"
+   - 已创建客户入门任务
+   - 客户成功团队已收到电子邮件
+   - 销售代表已收到确认
 3. 准备就绪后启用
 
 ## 处理 Closed Lost
@@ -124,7 +124,7 @@ description: 当机会成交后，自动化处理赢单后的活动。
 
 ### 触发器
 
-* 记录已更新（Opportunities，Stage = "Closed Lost"）
+- 记录已更新（Opportunities，Stage = "Closed Lost"）
 
 ### 操作
 
@@ -139,10 +139,10 @@ description: 当机会成交后，自动化处理赢单后的活动。
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ export const main = async (params) => {
 
 ### 使其他工具保持最新状态
 
-* 使用 **HTTP 请求** 在计费系统中创建客户
+- 使用 **HTTP 请求** 在计费系统中创建客户
 
 ### 条件操作
 
 使用 **过滤** 操作以：
 
-* 针对企业与中小企业（SMB）采用不同的入门流程
-* 根据地区指定不同的负责人
-* 对小额交易跳过通知
+- 针对企业与中小企业（SMB）采用不同的入门流程
+- 根据地区指定不同的负责人
+- 对小额交易跳过通知
 
 ### 包含交易详细信息
 
 使用 **Code** 操作来格式化：
 
-* 交易摘要文档
-* 面向客户成功团队的交接备注
-* 自定义入门检查清单
+- 交易摘要文档
+- 面向客户成功团队的交接备注
+- 自定义入门检查清单
 
 ## 相关内容
 
-* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+- [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)

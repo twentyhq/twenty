@@ -3,7 +3,10 @@ title: Radio
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="En-tête" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="En-tête"
+  />
 </Frame>
 
 Utilisé lorsque les utilisateurs peuvent choisir une seule option parmi une série d'options.
@@ -38,6 +41,7 @@ Utilisé lorsque les utilisateurs peuvent choisir une seule option parmi une sé
     };
 
     ```
+
   </Tab>
 
   <Tab title="Propriétés">
@@ -72,7 +76,7 @@ Regroupe ensemble des boutons radio associés.
       const handleChange = (event) => {
         setSelectedValue(event.target.value);
       };
-      
+
       return (
         <RadioGroup value={selectedValue} onChange={handleChange}>
           <Radio value="Option 1" />
@@ -83,6 +87,7 @@ Regroupe ensemble des boutons radio associés.
     };
 
     ```
+
   </Tab>
 
   <Tab title="Propriétés">

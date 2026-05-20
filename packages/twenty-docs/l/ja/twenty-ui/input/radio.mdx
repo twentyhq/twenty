@@ -3,10 +3,13 @@ title: ラジオ
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="ヘッダー" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="ヘッダー"
+  />
 </Frame>
 
-ユーザーが一連の選択肢の中から  1 つのオプションのみを選ぶことができるときに使用されます。
+ユーザーが一連の選択肢の中から 1 つのオプションのみを選ぶことができるときに使用されます。
 
 <Tabs>
   <Tab title="使用方法">
@@ -38,6 +41,7 @@ title: ラジオ
     };
 
     ```
+
   </Tab>
 
   <Tab title="プロパティ">
@@ -72,7 +76,7 @@ title: ラジオ
       const handleChange = (event) => {
         setSelectedValue(event.target.value);
       };
-      
+
       return (
         <RadioGroup value={selectedValue} onChange={handleChange}>
           <Radio value="Option 1" />
@@ -83,6 +87,7 @@ title: ラジオ
     };
 
     ```
+
   </Tab>
 
   <Tab title="プロパティ">

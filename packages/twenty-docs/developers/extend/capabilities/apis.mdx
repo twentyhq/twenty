@@ -10,29 +10,36 @@ Twenty was built to be developer-friendly, offering powerful APIs that adapt to 
 ## Developer-First Approach
 
 Twenty generates APIs specifically for your data model:
+
 - **No long IDs required**: Use your object and field names directly in endpoints
 - **Standard and custom objects treated equally**: Your custom objects get the same API treatment as built-in ones
 - **Dedicated endpoints**: Each object and field gets its own API endpoint
 - **Custom documentation**: Generated specifically for your workspace's data model
 
 <Note>
-Your personalized API documentation is available under **Settings → API & Webhooks** after creating an API key. Since Twenty generates APIs that match your custom data model, the documentation is unique to your workspace.
+  Your personalized API documentation is available under **Settings → API &
+  Webhooks** after creating an API key. Since Twenty generates APIs that match
+  your custom data model, the documentation is unique to your workspace.
 </Note>
 
 ## The Two API Types
 
 ### Core API
+
 Accessed on `/rest/` or `/graphql/`
 
 Work with your actual **records** (the data):
+
 - Create, read, update, delete People, Companies, Opportunities, etc.
 - Query and filter data
 - Manage record relationships
 
 ### Metadata API
+
 Accessed on `/rest/metadata/` or `/metadata/`
 
 Manage your **workspace and data model**:
+
 - Create, modify, or delete objects and fields
 - Configure workspace settings
 - Define relationships between objects
@@ -41,19 +48,19 @@ Manage your **workspace and data model**:
 
 Both Core and Metadata APIs are available in REST and GraphQL formats:
 
-| Format | Available Operations |
-|--------|---------------------|
-| **REST** | CRUD, batch operations, upserts |
+| Format      | Available Operations                                       |
+| ----------- | ---------------------------------------------------------- |
+| **REST**    | CRUD, batch operations, upserts                            |
 | **GraphQL** | Same + **batch upserts**, relationship queries in one call |
 
 Choose based on your needs — both formats access the same data.
 
 ## API Endpoints
 
-| Environment | Base URL |
-|-------------|----------|
-| **Cloud** | `https://api.twenty.com/` |
-| **Self-Hosted** | `https://{your-domain}/` |
+| Environment     | Base URL                  |
+| --------------- | ------------------------- |
+| **Cloud**       | `https://api.twenty.com/` |
+| **Self-Hosted** | `https://{your-domain}/`  |
 
 ## Authentication
 
@@ -76,7 +83,8 @@ Authorization: Bearer YOUR_API_KEY
 <VimeoEmbed videoId="928786722" title="Creating API key" />
 
 <Warning>
-Your API key grants access to sensitive data. Don't share it with untrusted services. If compromised, disable it immediately and generate a new one.
+  Your API key grants access to sensitive data. Don't share it with untrusted
+  services. If compromised, disable it immediately and generate a new one.
 </Warning>
 
 ### Assign a Role to an API Key
@@ -119,10 +127,12 @@ The playground reflects your custom objects and fields, so documentation is alwa
 ## Batch Operations
 
 Both REST and GraphQL support batch operations:
+
 - **Batch size**: Up to 60 records per request
 - **Operations**: Create, update, delete multiple records
 
 **GraphQL-only features:**
+
 - **Batch Upsert**: Create or update in one call
 - Use plural object names (e.g., `CreateCompanies` instead of `CreateCompany`)
 
@@ -130,12 +140,12 @@ Both REST and GraphQL support batch operations:
 
 API requests are throttled to ensure platform stability:
 
-| Limit | Value |
-|-------|-------|
-| **Requests** | 100 calls per minute |
-| **Batch size** | 60 records per call |
+| Limit          | Value                |
+| -------------- | -------------------- |
+| **Requests**   | 100 calls per minute |
+| **Batch size** | 60 records per call  |
 
 <Tip>
-Use batch operations to maximize throughput — process up to 60 records in a single API call instead of making individual requests.
+  Use batch operations to maximize throughput — process up to 60 records in a
+  single API call instead of making individual requests.
 </Tip>
-

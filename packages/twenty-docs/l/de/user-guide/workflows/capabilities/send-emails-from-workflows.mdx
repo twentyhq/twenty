@@ -25,9 +25,9 @@ Bevor Sie E-Mails aus Workflows senden können:
 2. **Auslöser hinzufügen**: Wählen Sie **Datensatz wird erstellt** → **Personen**
 
 3. **Aktion "E-Mail senden" hinzufügen**:
-   * Klicken Sie auf **+**, um eine Aktion hinzuzufügen
-   * Wählen Sie **E-Mail senden**
-   * Konfigurieren Sie die E-Mail:
+   - Klicken Sie auf **+**, um eine Aktion hinzuzufügen
+   - Wählen Sie **E-Mail senden**
+   - Konfigurieren Sie die E-Mail:
 
 | Feld        | Wert                                   |
 | ----------- | -------------------------------------- |
@@ -71,12 +71,12 @@ Das Team
 1. **Auslöser**: Datensatz wird erstellt (Personen)
 
 2. **Aktion "Filter" hinzufügen**:
-   * Bedingung: `{{trigger.object.source}}` ist gleich `"Website"`
-   * Wenn wahr → mit der Website-Willkommens-E-Mail fortfahren
+   - Bedingung: `{{trigger.object.source}}` ist gleich `"Website"`
+   - Wenn wahr → mit der Website-Willkommens-E-Mail fortfahren
 
 3. **Verzweigung für andere Quellen**:
-   * Erstellen Sie parallele Verzweigungen für verschiedene Quellen
-   * Jede Verzweigung hat ihre eigene Aktion "E-Mail senden"
+   - Erstellen Sie parallele Verzweigungen für verschiedene Quellen
+   - Jede Verzweigung hat ihre eigene Aktion "E-Mail senden"
 
 ## E-Mails an mehrere Empfänger senden
 
@@ -91,12 +91,12 @@ Das Team
 2. **Datensätze durchsuchen**: Finden Sie den Manager des Eigentümers der Verkaufschance
 
 3. **E-Mail senden #1**: An den Eigentümer der Verkaufschance
-   * An: `{{trigger.object.owner.email}}`
-   * Betreff: `Glückwunsch zum Abschluss von {{trigger.object.name}}!`
+   - An: `{{trigger.object.owner.email}}`
+   - Betreff: `Glückwunsch zum Abschluss von {{trigger.object.name}}!`
 
 4. **E-Mail senden #2**: An den Manager
-   * An: `{{searchRecords.manager.email}}`
-   * Betreff: `Deal gewonnen: {{trigger.object.name}}`
+   - An: `{{searchRecords.manager.email}}`
+   - Betreff: `Deal gewonnen: {{trigger.object.name}}`
 
 ## Geplante Nachfass-E-Mails
 
@@ -111,9 +111,9 @@ Das Team
 2. **Verzögerungsaktion**: 3 Tage warten
 
 3. **E-Mail senden**:
-   * An: Besprechungsteilnehmer
-   * Betreff: Rückmeldung zu unserem Gespräch
-   * Text: Verweisen Sie auf Besprechungsdetails aus dem Auslöser
+   - An: Besprechungsteilnehmer
+   - Betreff: Rückmeldung zu unserem Gespräch
+   - Text: Verweisen Sie auf Besprechungsdetails aus dem Auslöser
 
 ## E-Mail-Anhänge
 
@@ -135,33 +135,36 @@ Sie können Dateien an E-Mails anhängen, die von Workflows gesendet werden. Der
 | **Veranstaltungsbestätigungen** | Veranstaltungsdetails oder Agenda |
 
 <Note>
-Anhänge sind statisch—dieselbe Datei wird an alle Empfänger gesendet. For dynamic documents (like personalized quotes), generate and attach files using a [Logic Function](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+  Anhänge sind statisch—dieselbe Datei wird an alle Empfänger gesendet. For
+  dynamic documents (like personalized quotes), generate and attach files using
+  a [Logic
+  Function](/l/de/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
 ## Beste Praktiken
 
 ### E-Mail-Inhalt
 
-* Formulieren Sie Betreffzeilen prägnant und relevant
-* Personalisieren Sie mit dem Namen des Empfängers
-* Fügen Sie eine klare Handlungsaufforderung hinzu
-* Testen Sie E-Mails vor der Aktivierung
+- Formulieren Sie Betreffzeilen prägnant und relevant
+- Personalisieren Sie mit dem Namen des Empfängers
+- Fügen Sie eine klare Handlungsaufforderung hinzu
+- Testen Sie E-Mails vor der Aktivierung
 
 ### Zustellbarkeit
 
-* Senden Sie nicht zu viele E-Mails in zu kurzer Zeit
-* Verwenden Sie professionelle E-Mail-Signaturen
-* Vermeiden Sie Spam-Trigger-Wörter
-* Stellen Sie sicher, dass Marketing-E-Mails eine Abmeldemöglichkeit enthalten
+- Senden Sie nicht zu viele E-Mails in zu kurzer Zeit
+- Verwenden Sie professionelle E-Mail-Signaturen
+- Vermeiden Sie Spam-Trigger-Wörter
+- Stellen Sie sicher, dass Marketing-E-Mails eine Abmeldemöglichkeit enthalten
 
 ### Fehlerbehebung
 
-* Überprüfen Sie, dass das E-Mail-Konto verbunden und aktiv ist
-* Prüfen Sie, ob die E-Mail-Adresse des Empfängers gültig ist
-* Überprüfen Sie Workflow-Ausführungen auf Fehlermeldungen
-* Testen Sie zunächst mit Ihrer eigenen E-Mail-Adresse
+- Überprüfen Sie, dass das E-Mail-Konto verbunden und aktiv ist
+- Prüfen Sie, ob die E-Mail-Adresse des Empfängers gültig ist
+- Überprüfen Sie Workflow-Ausführungen auf Fehlermeldungen
+- Testen Sie zunächst mit Ihrer eigenen E-Mail-Adresse
 
 ## Verwandt
 
-* [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+- [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers)
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)

@@ -10,27 +10,30 @@ A **Run** is a record of a workflow execution. Every time a workflow is triggere
 ## Viewing Runs
 
 ### From the Workflow Editor
+
 1. Open the workflow you want to monitor
 2. Click the **Runs** panel on the right side
 3. See a list of recent runs with their status
 
 ### From the Workflow Runs View
+
 1. Go to **Workflow Runs** in the sidebar
 2. View runs across all workflows
 3. Filter by status, workflow, or date
 
 ## Run Statuses
 
-| Status | Description |
-|--------|-------------|
-| **Running** | Workflow is currently executing |
-| **Completed** | Workflow finished successfully |
-| **Failed** | Workflow encountered an error and stopped |
-| **Waiting** | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
+| Status        | Description                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| **Running**   | Workflow is currently executing                                          |
+| **Completed** | Workflow finished successfully                                           |
+| **Failed**    | Workflow encountered an error and stopped                                |
+| **Waiting**   | Workflow is paused (e.g., waiting for a Delay action or Form submission) |
 
 ## Run Details
 
 Click on any run to see:
+
 - **Status**: Current state of the run
 - **Started at**: When the run began
 - **Duration**: How long the run took
@@ -41,6 +44,7 @@ Click on any run to see:
 ## Step-by-Step Execution
 
 Each run shows the progression through your workflow:
+
 1. See which steps completed successfully
 2. Identify where failures occurred
 3. View the data passed between steps
@@ -49,6 +53,7 @@ Each run shows the progression through your workflow:
 ## Error Handling
 
 When a run fails:
+
 1. Open the failed run
 2. Find the step that caused the failure
 3. Check the error message for details
@@ -61,6 +66,7 @@ When a run fails:
 ## Re-running Workflows
 
 If a run fails, you can:
+
 - Fix the underlying issue and wait for the next trigger
 - For manual workflows, trigger again with the same or updated data
 - Review the workflow logic to prevent future failures
@@ -68,11 +74,13 @@ If a run fails, you can:
 ## Performance Tips
 
 ### Managing Run History
+
 - Runs are retained for historical reference
 - Very old runs may be archived automatically
 - Export run data if you need to keep records
 
 ### Monitoring Best Practices
+
 - Check runs regularly after activating new workflows
 - Review failed runs to identify patterns
 

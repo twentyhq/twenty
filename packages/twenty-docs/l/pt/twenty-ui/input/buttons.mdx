@@ -16,7 +16,7 @@ Uma lista de botões e grupos de botões usados em todo o aplicativo.
 <Tab title="Uso">
 
 ```jsx
-import { Button } from "@/ui/input/button/components/Button";
+import { Button } from '@/ui/input/button/components/Button';
 
 export const MyComponent = () => {
   return (
@@ -32,15 +32,15 @@ export const MyComponent = () => {
       soon={false}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
+
 </Tab>
 
 <Tab title="Propriedades">
-
 
 | Propriedades    | Tipo                  | Descrição                                                                                                        |
 | --------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -56,9 +56,6 @@ export const MyComponent = () => {
 | desativado      | booleano              | Especifica se o botão está desativado ou não                                                                     |
 | foco            | booleano              | Determina se o botão está em foco                                                                                |
 | aoClicar        | função                | Uma função de callback que é acionada quando o usuário clica no botão                                            |
-
-
-
 
 </Tab>
 
@@ -87,7 +84,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -101,7 +98,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -115,13 +112,13 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
     </ButtonGroup>
   );
 };
 
-```
+````
 </Tab>
 
 <Tab title="Propriedades">
@@ -164,12 +161,11 @@ export const MyComponent = () => {
     />
   );
 };
-```
+````
 
 </Tab>
 
 <Tab title="Propriedades">
-
 
 | Propriedades    | Tipo                  | Descrição                                                                                                       |
 | --------------- | --------------------- | --------------------------------------------------------------------------------------------------------------- |
@@ -183,8 +179,6 @@ export const MyComponent = () => {
 | desativado      | booleano              | Determina se o botão está desativado                                                                            |
 | foco            | booleano              | Indica se o botão está em foco                                                                                  |
 
-
-
 </Tab>
 </Tabs>
 
@@ -194,9 +188,9 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
-import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
+import { FloatingButtonGroup } from '@/ui/input/button/components/FloatingButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -231,13 +225,10 @@ export const MyComponent = () => {
 
 <Tab title="Propriedades">
 
-
 | Propriedades | Tipo      | Descrição                                                                  | Padrão  |
 | ------------ | --------- | -------------------------------------------------------------------------- | ------- |
 | tamanho      | string    | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                   | pequeno |
 | filhos       | ReactNode | Um array de elementos React que representam os botões individuais no grupo |         |
-
-
 
 </Tab>
 
@@ -249,8 +240,8 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -263,7 +254,7 @@ export const MyComponent = () => {
       applyBlur={true}
       disabled={false}
       focus={false}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
       isActive={true}
     />
   );
@@ -273,7 +264,6 @@ export const MyComponent = () => {
 </Tab>
 
 <Tab title="Propriedades">
-
 
 | Propriedades    | Tipo                  | Descrição                                                                                                        |
 | --------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
@@ -288,8 +278,6 @@ export const MyComponent = () => {
 | aoClicar        | função                | Uma função de callback que é acionada quando o usuário clica no botão                                            |
 | estáAtivo       | booleano              | Determina se o botão está em um estado ativo                                                                     |
 
-
-
 </Tab>
 
 </Tabs>
@@ -300,45 +288,38 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   const iconButtons = [
     {
       Icon: IconClipboardText,
-      onClick: () => console.log("Button 1 clicked"),
+      onClick: () => console.log('Button 1 clicked'),
       isActive: true,
     },
     {
       Icon: IconCheckbox,
-      onClick: () => console.log("Button 2 clicked"),
+      onClick: () => console.log('Button 2 clicked'),
       isActive: true,
     },
   ];
 
   return (
-    <FloatingIconButtonGroup
-    className
-    size="small"
-    iconButtons={iconButtons} />
+    <FloatingIconButtonGroup className size="small" iconButtons={iconButtons} />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Propriedades">
 
-
 | Propriedades  | Tipo   | Descrição                                                                                                                                                                                                                                             |
 | ------------- | ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | className     | string | Nome opcional para estilo adicional                                                                                                                                                                                                                   |
 | tamanho       | string | O tamanho do botão. Tem duas opções: `pequeno` e `médio`                                                                                                                                                                                              |
 | botõesDeÍcone | array  | Um array de objetos, cada um representando um botão de ícone no grupo. Cada objeto deve incluir o componente de ícone que você deseja exibir no botão, a função a ser chamada quando um usuário clica no botão, e se o botão deve estar ativo ou não. |
-
-
 
 </Tab>
 
@@ -350,27 +331,27 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { LightButton } from "@/ui/input/button/components/LightButton";
+import { LightButton } from '@/ui/input/button/components/LightButton';
 
 export const MyComponent = () => {
-  return <LightButton
-  className
-  icon={null}
-  title="Title"
-  accent="secondary"
-  active={false}
-  disabled={false}
-  focus={true}
-  onClick={()=>console.log('click')}
-  />;
+  return (
+    <LightButton
+      className
+      icon={null}
+      title="Title"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log('click')}
+    />
+  );
 };
 ```
-
 
 </Tab>
 
 <Tab title="Propriedades">
-
 
 | Propriedades | Tipo              | Descrição                                                              |
 | ------------ | ----------------- | ---------------------------------------------------------------------- |
@@ -383,9 +364,6 @@ export const MyComponent = () => {
 | foco         | booleano          | Indica se o botão está em foco                                         |
 | onClick      | função            | Uma função de callback que é acionada quando o usuário clica no botão  |
 
-
-
-
 </Tab>
 
 </Tabs>
@@ -396,8 +374,8 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -411,17 +389,15 @@ export const MyComponent = () => {
       active={true}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Propriedades">
-
 
 | Propriedades | Tipo                  | Descrição                                                              |
 | ------------ | --------------------- | ---------------------------------------------------------------------- |
@@ -436,8 +412,6 @@ export const MyComponent = () => {
 | foco         | booleano              | Indica se o botão está em foco                                         |
 | aoClicar     | função                | Uma função de callback que é acionada quando o usuário clica no botão  |
 
-
-
 </Tab>
 
 </Tabs>
@@ -448,8 +422,8 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { MainButton } from "@/ui/input/button/components/MainButton";
-import { IconCheckbox } from "@tabler/icons-react";
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -464,11 +438,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Propriedades">
-
 
 | Propriedades         | Tipo                             | Descrição                                                                       |
 | -------------------- | -------------------------------- | ------------------------------------------------------------------------------- |
@@ -478,9 +450,6 @@ export const MyComponent = () => {
 | em breve             | booleano                         | Indica se o botão está marcado como "em breve" (como para recursos futuros)     |
 | Ícone                | `React.ComponentType`            | Um componente de ícone opcional que é exibido dentro do botão                   |
 | React `button` props | `React.ComponentProps<'button'>` | Todos os props padrão de botão HTML são suportados                              |
-
-
-
 
 </Tab>
 
@@ -492,30 +461,22 @@ export const MyComponent = () => {
 <Tab title="Uso">
 
 ```jsx
-import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
-  return (
-    <RoundedIconButton
-      Icon={IconSearch}
-    />
-  );
+  return <RoundedIconButton Icon={IconSearch} />;
 };
 ```
-
 
 </Tab>
 
 <Tab title="Propriedades">
 
-
 | Propriedades         | Tipo                                            | Descrição |
 | -------------------- | ----------------------------------------------- | --------- |
 | Ícone                | `React.ComponentType`                           |           |
 | React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |           |
-
-
 
 </Tab>
 

@@ -13,15 +13,18 @@ Utilisez ce modèle pour garder Twenty synchronisé avec les données produits d
 4. **Iterator** : Parcourir chaque produit
 5. **Upsert Record** : Créer ou mettre à jour dans Twenty
 
-<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/create_users_workflow.png"
+  style={{ width: '100%' }}
+/>
 
 ## Étape 1 : Planifier le déclencheur
 
 Définissez le flux de travail pour s'exécuter à une fréquence correspondant à vos besoins d'actualisation des données :
 
-* Toutes les 5 minutes pour une synchronisation quasi en temps réel
-* Toutes les heures pour des données moins critiques
-* Quotidiennement pour des mises à jour par lots
+- Toutes les 5 minutes pour une synchronisation quasi en temps réel
+- Toutes les heures pour des données moins critiques
+- Quotidiennement pour des mises à jour par lots
 
 ## Étape 2 : Interroger votre entrepôt de données
 
@@ -30,22 +33,24 @@ Ajoutez une action **Code** pour récupérer les données récentes :
 ```javascript
 export const main = async () => {
   const intervalMinutes = 10; // Match your schedule frequency
-  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+  const cutoffTime = new Date(
+    Date.now() - intervalMinutes * 60 * 1000,
+  ).toISOString();
 
   // Replace with your actual data warehouse connection
-  const response = await fetch("https://your-warehouse-api.com/query", {
-    method: "POST",
+  const response = await fetch('https://your-warehouse-api.com/query', {
+    method: 'POST',
     headers: {
-      "Authorization": "Bearer YOUR_API_KEY",
-      "Content-Type": "application/json"
+      Authorization: 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       query: `
         SELECT id, name, sku, price, stock_quantity, updated_at
         FROM products
         WHERE updated_at >= '${cutoffTime}'
-      `
-    })
+      `,
+    }),
   });
 
   const data = await response.json();
@@ -146,7 +151,7 @@ export const main = async (params: { deals: any }) => {
 
 Ajoutez une action **Itérateur** :
 
-* Entrée : `{{code.products}}`
+- Entrée : `{{code.products}}`
 
 Cela parcourt chaque produit du tableau.
 
@@ -163,7 +168,9 @@ Cela parcourt chaque produit du tableau.
 | **Prix**               | `{{iterator.item.price}}`              |
 
 <Tip>
-  Utilisez **Upsert** (mettre à jour ou créer) au lieu de construire des branches distinctes pour la création et la mise à jour. C'est plus rapide à construire et plus facile à déboguer.
+  Utilisez **Upsert** (mettre à jour ou créer) au lieu de construire des
+  branches distinctes pour la création et la mise à jour. C'est plus rapide à
+  construire et plus facile à déboguer.
 </Tip>
 
 ## Exemples de cas d'utilisation
@@ -177,6 +184,6 @@ Cela parcourt chaque produit du tableau.
 
 ## Articles connexes
 
-* [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
-* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
-* [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+- [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+- [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

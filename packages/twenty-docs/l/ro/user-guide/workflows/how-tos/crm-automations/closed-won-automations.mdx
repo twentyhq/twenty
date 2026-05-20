@@ -9,10 +9,10 @@ Când o tranzacție se închide, trebuie să se întâmple mai multe lucruri: ac
 
 Atunci când o oportunitate trece la "Closed Won":
 
-* Tipul companiei trebuie să se schimbe din "Prospect" în "Customer"
-* Trebuie create sarcini de onboarding
-* Echipa de Customer Success trebuie notificată
-* Reprezentantul de vânzări are nevoie de confirmare
+- Tipul companiei trebuie să se schimbe din "Prospect" în "Customer"
+- Trebuie create sarcini de onboarding
+- Echipa de Customer Success trebuie notificată
+- Reprezentantul de vânzări are nevoie de confirmare
 
 Efectuarea manuală a acestor pași consumă timp și este predispusă la erori.
 
@@ -105,17 +105,17 @@ Să le oferim un început grozav!
 | Câmp        | Valoare                                                                                                           |
 | ----------- | ----------------------------------------------------------------------------------------------------------------- |
 | **Către**   | `{{trigger.object.owner.email}}`                                                                                  |
-| **Subiect** | `✅ Tranzacție închisă: {{trigger.object.name}}`                                                                   |
+| **Subiect** | `✅ Tranzacție închisă: {{trigger.object.name}}`                                                                  |
 | **Corp**    | Felicitări! Tranzacția a fost procesată. Echipa de Customer Success a fost notificată și onboarding-ul a început. |
 
 ### Pasul 8: Testați și activați
 
 1. Testați mutând o oportunitate de test la "Closed Won"
 2. Verifică:
-   * Tipul companiei schimbat la "Customer"
-   * Sarcină de onboarding creată
-   * Echipa de Customer Success a primit e-mailul
-   * Reprezentantul de vânzări a primit confirmarea
+   - Tipul companiei schimbat la "Customer"
+   - Sarcină de onboarding creată
+   - Echipa de Customer Success a primit e-mailul
+   - Reprezentantul de vânzări a primit confirmarea
 3. Activați când sunteți gata
 
 ## Gestionarea Closed Lost
@@ -124,7 +124,7 @@ Creați un flux de lucru similar pentru tranzacțiile pierdute:
 
 ### Declanșator
 
-* Record is Updated (Oportunități, Stage = "Closed Lost")
+- Record is Updated (Oportunități, Stage = "Closed Lost")
 
 ### Acțiuni
 
@@ -139,10 +139,10 @@ Pentru onboarding complex, creați mai multe sarcini:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Utilizați **Iterator** pentru a crea fiecare sarcină din array.
 
 ### Mențineți celelalte instrumente actualizate
 
-* Creați un client în sistemul de facturare cu un **HTTP Request**
+- Creați un client în sistemul de facturare cu un **HTTP Request**
 
 ### Acțiuni condiționale
 
 Utilizați acțiunile **Filter** pentru:
 
-* Onboarding diferit pentru enterprise vs IMM
-* Responsabili diferiți în funcție de regiune
-* Omiteți notificările pentru tranzacții mici
+- Onboarding diferit pentru enterprise vs IMM
+- Responsabili diferiți în funcție de regiune
+- Omiteți notificările pentru tranzacții mici
 
 ### Includeți detaliile tranzacției
 
 Utilizați acțiunea **Code** pentru a formata:
 
-* Documente cu rezumatul tranzacției
-* Note de predare pentru echipa de Customer Success
-* Liste de verificare personalizate pentru onboarding
+- Documente cu rezumatul tranzacției
+- Note de predare pentru echipa de Customer Success
+- Liste de verificare personalizate pentru onboarding
 
 ## Conexe
 
-* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+- [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)

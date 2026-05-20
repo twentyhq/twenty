@@ -4,7 +4,9 @@ icon: docker
 ---
 
 <Warning>
-Docker-Container sind für produktives Hosting oder Selbsthosting vorgesehen. Zum Mitwirken siehe [Lokale Einrichtung](/l/de/developers/contribute/capabilities/local-setup).
+  Docker-Container sind für produktives Hosting oder Selbsthosting vorgesehen.
+  Zum Mitwirken siehe [Lokale
+  Einrichtung](/l/de/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Überblick
@@ -17,8 +19,8 @@ Siehe die Dokumentation [Umgebungsvariablen einrichten](/l/de/developers/self-ho
 
 ## Systemanforderungen
 
-* RAM: Stellen Sie sicher, dass Ihre Umgebung mindestens 2 GB RAM hat. Unzureichender Speicher kann dazu führen, dass Prozesse abstürzen.
-* Docker & Docker Compose: Stellen Sie sicher, dass beide installiert und aktuell sind.
+- RAM: Stellen Sie sicher, dass Ihre Umgebung mindestens 2 GB RAM hat. Unzureichender Speicher kann dazu führen, dass Prozesse abstürzen.
+- Docker & Docker Compose: Stellen Sie sicher, dass beide installiert und aktuell sind.
 
 ## Option 1: Einzeiliges Skript
 
@@ -34,8 +36,8 @@ Um eine spezifische Version oder Zweig zu installieren:
 VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Ersetzen Sie x.y.z mit der gewünschten Versionsnummer.
-* Ersetzen Sie branch-name durch den Namen des Zweigs, den Sie installieren möchten.
+- Ersetzen Sie x.y.z mit der gewünschten Versionsnummer.
+- Ersetzen Sie branch-name durch den Namen des Zweigs, den Sie installieren möchten.
 
 ## Option 2: Manuelle Schritte
 
@@ -113,11 +115,11 @@ Standardmäßig läuft Twenty auf `localhost` an Port `3000`. Um über eine exte
 
 #### Erläuterung von `SERVER_URL`
 
-* **Protokoll:** Verwenden Sie `http` oder `https` je nach Konfiguration.
-  * Verwenden Sie `http`, wenn Sie kein SSL eingerichtet haben.
-  * Verwenden Sie `https`, wenn Sie SSL konfiguriert haben.
-* **Domain/IP:** Dies ist der Domainname oder die IP-Adresse, unter der Ihre Anwendung zugänglich ist.
-* **Port:** Geben Sie die Portnummer an, wenn Sie nicht die Standardports verwenden (`80` für `http`, `443` für `https`).
+- **Protokoll:** Verwenden Sie `http` oder `https` je nach Konfiguration.
+  - Verwenden Sie `http`, wenn Sie kein SSL eingerichtet haben.
+  - Verwenden Sie `https`, wenn Sie SSL konfiguriert haben.
+- **Domain/IP:** Dies ist der Domainname oder die IP-Adresse, unter der Ihre Anwendung zugänglich ist.
+- **Port:** Geben Sie die Portnummer an, wenn Sie nicht die Standardports verwenden (`80` für `http`, `443` für `https`).
 
 ### SSL-Anforderungen
 
@@ -130,7 +132,7 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
 #### Konfiguration der `SERVER_URL`
 
 1. **Bestimmen Sie Ihre Zugriffs-URL**
-   * **Ohne Reverse-Proxy (Direkter Zugriff):**
+   - **Ohne Reverse-Proxy (Direkter Zugriff):**
 
      Wenn Sie direkt ohne Reverse-Proxy auf die Anwendung zugreifen:
 
@@ -138,7 +140,7 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
      SERVER_URL=http://your-domain-or-ip:3000
      ```
 
-   * **Mit Reverse-Proxy (Standard-Ports):**
+   - **Mit Reverse-Proxy (Standard-Ports):**
 
      Wenn Sie einen Reverse-Proxy wie Nginx oder Traefik verwenden und SSL konfiguriert haben:
 
@@ -146,7 +148,7 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
      SERVER_URL=https://your-domain-or-ip
      ```
 
-   * **Mit Reverse-Proxy (Benutzerdefinierte Ports):**
+   - **Mit Reverse-Proxy (Benutzerdefinierte Ports):**
 
      Wenn Sie nicht standardisierte Ports verwenden:
 
@@ -163,12 +165,11 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
    ```
 
    **Beispiele:**
-
-   * Direkter Zugriff ohne SSL:
+   - Direkter Zugriff ohne SSL:
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * Zugriff über Domain mit SSL:
+   - Zugriff über Domain mit SSL:
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
@@ -184,25 +185,25 @@ Wir empfehlen dringend, Twenty hinter einem Reverse-Proxy mit SSL-Beendigung fü
 
 #### Überlegungen
 
-* **Reverse Proxy-Konfiguration:**
+- **Reverse Proxy-Konfiguration:**
 
   Stellen Sie sicher, dass Ihr Reverse-Proxy Anfragen an den richtigen internen Port weiterleitet (`3000` standardmäßig). Konfigurieren Sie die SSL-Terminierung und alle erforderlichen Header.
 
-* **Firewall-Einstellungen:**
+- **Firewall-Einstellungen:**
 
   Öffnen Sie die notwendigen Ports in Ihrer Firewall, um externen Zugriff zu ermöglichen.
 
-* **Konsistenz:**
+- **Konsistenz:**
 
   Die `SERVER_URL` muss mit der Art und Weise übereinstimmen, wie Nutzer in ihren Browsern auf Ihre Anwendung zugreifen.
 
 #### Persistenz
 
-* **Daten-Volumes:**
+- **Daten-Volumes:**
 
   Die Docker-Compose-Konfiguration verwendet Volumes, um Daten für die Datenbank und den Serverspeicher persistent zu speichern.
 
-* **Zustandslose Umgebungen:**
+- **Zustandslose Umgebungen:**
 
   Wenn Sie in einer zustandslosen Umgebung bereitstellen (z. B. bei bestimmten Cloud-Diensten), konfigurieren Sie externen Speicher, um Daten persistent zu speichern.
 
@@ -246,10 +247,10 @@ docker compose up -d
 
 ### Best Practices für Sicherungen
 
-* **Wiederherstellungen regelmäßig testen** — überprüfen Sie, dass die Sicherungen tatsächlich funktionieren
-* **Sicherungen extern aufbewahren** — Cloud-Speicher verwenden (S3, GCS usw.)
-* **Sensible Daten verschlüsseln** — Sicherungen mit Verschlüsselung schützen
-* **Mehrere Kopien aufbewahren** — tägliche, wöchentliche und monatliche Sicherungen vorhalten
+- **Wiederherstellungen regelmäßig testen** — überprüfen Sie, dass die Sicherungen tatsächlich funktionieren
+- **Sicherungen extern aufbewahren** — Cloud-Speicher verwenden (S3, GCS usw.)
+- **Sensible Daten verschlüsseln** — Sicherungen mit Verschlüsselung schützen
+- **Mehrere Kopien aufbewahren** — tägliche, wöchentliche und monatliche Sicherungen vorhalten
 
 ## Fehlerbehebung
 

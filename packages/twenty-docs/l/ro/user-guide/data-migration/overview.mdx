@@ -14,13 +14,22 @@ Twenty acceptă două metode principale de importare a datelor:
 | **Import CSV**      | Migrații standard, actualizări regulate | 10.000 de înregistrări pe fișier |
 | **Import prin API** | Migrații la scară mare, automatizare    | Nelimitat                        |
 
-<Note>Pentru seturi de date foarte mari (sute de mii de înregistrări), utilizați API-ul. Partenerii noștri de [implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services) vă pot ajuta să rulați aceste scripturi, dacă este nevoie.</Note>
+<Note>
+  Pentru seturi de date foarte mari (sute de mii de înregistrări), utilizați
+  API-ul. Partenerii noștri de
+  [implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services)
+  vă pot ajuta să rulați aceste scripturi, dacă este nevoie.
+</Note>
 
 ## Noțiuni de bază despre importul CSV
 
 Puteți importa date pentru orice obiect folosind fișiere CSV, XLSX sau XLS. Fiecare fișier ar trebui să conțină **doar un singur tip de obiect** (de exemplu, doar înregistrări ale Persoanelor).
 
-<Note>**Câmpurile trebuie să existe înainte de import.** Încărcarea unui fișier CSV creează înregistrări, dar nu creează câmpuri. Dacă aveți nevoie de câmpuri personalizate, creați-le mai întâi în **Settings → Data Model**.</Note>
+<Note>
+  **Câmpurile trebuie să existe înainte de import.** Încărcarea unui fișier CSV
+  creează înregistrări, dar nu creează câmpuri. Dacă aveți nevoie de câmpuri
+  personalizate, creați-le mai întâi în **Settings → Data Model**.
+</Note>
 
 ### Pași
 
@@ -36,18 +45,25 @@ Puteți importa date pentru orice obiect folosind fișiere CSV, XLSX sau XLS. Fi
 
 Puteți importa relații între obiecte folosind funcția de import CSV. Trebuie să faceți referire la obiectul înrudit folosind un câmp unic al acestuia: `id`, `email` pentru Persoane și membri ai spațiului de lucru, `domain` pentru companii, orice alt câmp setat ca unic în modelul de date pentru orice alt obiect.
 
-<Note>**Înregistrările șterse contează pentru unicitate.** Înregistrările șterse soft (vizibile în Command Menu → See deleted records) sunt incluse în verificările de unicitate. Dacă importați o înregistrare cu aceeași valoare unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi restaurată.</Note>
+<Note>
+  **Înregistrările șterse contează pentru unicitate.** Înregistrările șterse
+  soft (vizibile în Command Menu → See deleted records) sunt incluse în
+  verificările de unicitate. Dacă importați o înregistrare cu aceeași valoare
+  unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi restaurată.
+</Note>
 
 <Warning>
 **Ordinea importului contează!**
 
 Când importați obiecte înrudite, încărcați fișierele în această ordine:
+
 1. **Companiile** mai întâi (partea "one" a relațiilor)
 2. **Persoanele** în al doilea rând (legate de companii prin companyId)
 3. **Oportunitățile** în al treilea rând (legate de companii/persoane)
 4. **Obiectele personalizate** cu relații, la final
 
 De ce? Partea "one" a unei relații unul-la-mulți trebuie să existe înainte de a o putea referi. De exemplu, înregistrarea Companiei trebuie să existe înainte de a importa o Persoană cu ID-ul acelei companii.
+
 </Warning>
 
 Consultați [acest articol](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) pentru un ghid pas cu pas despre cum să procedați.
@@ -63,7 +79,11 @@ Exportați datele spațiului de lucru pentru copii de siguranță, raportare sau
 3. Faceți clic pe **⋮** → **Export view**
 4. Salvați fișierul CSV
 
-<Note>**Se exportă doar coloanele vizibile.** Fișierul CSV va conține doar coloanele afișate în vizualizarea curentă. Adăugați sau ascundeți coloane înainte de export pentru a controla ce date sunt incluse.</Note>
+<Note>
+  **Se exportă doar coloanele vizibile.** Fișierul CSV va conține doar coloanele
+  afișate în vizualizarea curentă. Adăugați sau ascundeți coloane înainte de
+  export pentru a controla ce date sunt incluse.
+</Note>
 
 <Note>**Limite de export**: Până la 20.000 de înregistrări pe export.</Note>
 
@@ -71,13 +91,13 @@ Exportați datele spațiului de lucru pentru copii de siguranță, raportare sau
 
 Importul și exportul de date necesită permisiuni specifice:
 
-* **Import**: Necesită permisiunea "Import CSV"
-* **Export**: Necesită permisiunea "Export CSV"
+- **Import**: Necesită permisiunea "Import CSV"
+- **Export**: Necesită permisiunea "Export CSV"
 
 Contactați administratorul spațiului de lucru dacă nu aveți aceste permisiuni.
 
 ## Pașii următori
 
-* [Pregătiți fișierele CSV](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files)
-* [Importați relații între obiecte](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Importați prin API pentru seturi mari de date](/l/ro/user-guide/data-migration/how-tos/import-data-via-api)
+- [Pregătiți fișierele CSV](/l/ro/user-guide/data-migration/how-tos/prepare-your-csv-files)
+- [Importați relații între obiecte](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [Importați prin API pentru seturi mari de date](/l/ro/user-guide/data-migration/how-tos/import-data-via-api)

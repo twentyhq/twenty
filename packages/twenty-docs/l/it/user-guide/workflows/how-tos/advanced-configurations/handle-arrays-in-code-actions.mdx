@@ -14,9 +14,9 @@ Entrambi i casi si possono risolvere con un nodo Code.
 
 Gli array vengono spesso passati tra i passaggi del workflow come stringhe o JSON invece che come array nativi. Ciò accade quando:
 
-* Ricezione di dati da API esterne tramite HTTP Request
-* Elaborazione dei payload dei webhook
-* Passaggio di dati tra i passaggi del workflow
+- Ricezione di dati da API esterne tramite HTTP Request
+- Elaborazione dei payload dei webhook
+- Passaggio di dati tra i passaggi del workflow
 
 **Soluzione**: aggiungi questo pattern all'inizio della tua azione Code:
 
@@ -74,9 +74,12 @@ export const main = async (params: {
 Il nodo Code restituisce un oggetto strutturato invece di un array. Nei passaggi successivi, ora puoi selezionare campi individuali come `answer.firstname` e `answer.name` dal selettore delle variabili.
 
 <Note>
-Stiamo lavorando attivamente per rendere la gestione degli array più semplice nei prossimi aggiornamenti.
+  Stiamo lavorando attivamente per rendere la gestione degli array più semplice
+  nei prossimi aggiornamenti.
 </Note>
 
 <Tip>
-Fai clic sull'icona quadrata in alto a destra dell'editor di codice per visualizzarlo a tutto schermo — utile poiché la larghezza predefinita dell'editor è limitata.
+  Fai clic sull'icona quadrata in alto a destra dell'editor di codice per
+  visualizzarlo a tutto schermo — utile poiché la larghezza predefinita
+  dell'editor è limitata.
 </Tip>

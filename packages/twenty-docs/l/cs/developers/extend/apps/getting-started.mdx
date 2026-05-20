@@ -12,9 +12,9 @@ Aplikace vám umožňují rozšířit Twenty o vlastní objekty, pole, logické 
 
 Než začnete, ujistěte se, že máte ve svém počítači nainstalováno následující:
 
-* **Node.js 24+** — [Stáhnout zde](https://nodejs.org/)
-* **Yarn 4** — Dodává se s Node.js prostřednictvím Corepacku. Povolte jej spuštěním `corepack enable`
-* **Docker** — [Stáhnout zde](https://www.docker.com/products/docker-desktop/). Nutné pro spuštění lokální instance Twenty. Není potřeba, pokud už máte spuštěný server Twenty.
+- **Node.js 24+** — [Stáhnout zde](https://nodejs.org/)
+- **Yarn 4** — Dodává se s Node.js prostřednictvím Corepacku. Povolte jej spuštěním `corepack enable`
+- **Docker** — [Stáhnout zde](https://www.docker.com/products/docker-desktop/). Nutné pro spuštění lokální instance Twenty. Není potřeba, pokud už máte spuštěný server Twenty.
 
 ## Vytvořte svou první aplikaci
 
@@ -36,22 +36,28 @@ Generátor kostry se zeptá:
 
 > **Chcete nastavit lokální instanci Twenty?**
 
-* **Zadejte `yes`** (doporučeno) — Stáhne image Dockeru `twenty-app-dev` a spustí lokální server Twenty na portu `2020`. Než budete pokračovat, ujistěte se, že Docker běží.
-* **Zadejte `no`** — Zvolte, pokud už máte lokálně spuštěný server Twenty.
+- **Zadejte `yes`** (doporučeno) — Stáhne image Dockeru `twenty-app-dev` a spustí lokální server Twenty na portu `2020`. Než budete pokračovat, ujistěte se, že Docker běží.
+- **Zadejte `no`** — Zvolte, pokud už máte lokálně spuštěný server Twenty.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Spustit lokální instanci?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Spustit lokální instanci?"
+  />
 </div>
 
 ### Přihlaste se do svého pracovního prostoru
 
 Poté se otevře okno prohlížeče se stránkou přihlášení do Twenty. Přihlaste se předpřipraveným demo účtem:
 
-* **E-mail:** `tim@apple.dev`
-* **Heslo:** `tim@apple.dev`
+- **E-mail:** `tim@apple.dev`
+- **Heslo:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Přihlašovací obrazovka Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Přihlašovací obrazovka Twenty"
+  />
 </div>
 
 ### Autorizujte aplikaci
@@ -60,14 +66,20 @@ Po přihlášení uvidíte autorizační obrazovku. Tím umožníte vaší aplik
 
 Pokračujte kliknutím na **Authorize**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Autorizační obrazovka Twenty CLI" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Autorizační obrazovka Twenty CLI"
+  />
 </div>
 
 Po autorizaci váš terminál potvrdí, že je vše nastaveno.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplikace byla úspěšně vygenerována" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Aplikace byla úspěšně vygenerována"
+  />
 </div>
 
 ### Začněte vyvíjet
@@ -88,11 +100,18 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-Vývojový režim je k dispozici pouze na instancích Twenty běžících v režimu development (`NODE_ENV=development`). Produkční instance odmítají požadavky na vývojovou synchronizaci. Pro nasazení na produkční servery použijte `yarn twenty deploy` — podrobnosti viz [Publikování aplikací](/l/cs/developers/extend/apps/publishing).
+  Vývojový režim je k dispozici pouze na instancích Twenty běžících v režimu
+  development (`NODE_ENV=development`). Produkční instance odmítají požadavky na
+  vývojovou synchronizaci. Pro nasazení na produkční servery použijte `yarn
+  twenty deploy` — podrobnosti viz [Publikování
+  aplikací](/l/cs/developers/extend/apps/publishing).
 </Warning>
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Výstup terminálu ve vývojovém režimu" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.jpg"
+    alt="Výstup terminálu ve vývojovém režimu"
+  />
 </div>
 
 #### Jednorázová synchronizace pomocí `yarn twenty dev --once`
@@ -114,26 +133,38 @@ Oba režimy vyžadují server Twenty běžící v režimu vývoje a autentizovan
 
 Otevřete ve svém prohlížeči [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Přejděte do **Settings > Apps** a vyberte kartu **Developer**. Vaše aplikace by měla být uvedena v části **Your Apps**:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Seznam Your Apps zobrazující My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Seznam Your Apps zobrazující My twenty app"
+  />
 </div>
 
 Klikněte na **My twenty app** a otevřete její **registraci aplikace**. Registrace je záznam na úrovni serveru, který popisuje vaši aplikaci — její název, jedinečný identifikátor, přihlašovací údaje OAuth a zdroj (lokální, npm nebo tarball). Existuje na serveru, ne uvnitř žádného konkrétního pracovního prostoru. Když nainstalujete aplikaci do pracovního prostoru, Twenty vytvoří **aplikaci** v rozsahu pracovního prostoru, která odkazuje zpět na tuto registraci. Jedna registrace může být nainstalována ve více pracovních prostorech na stejném serveru.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Podrobnosti registrace aplikace" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Podrobnosti registrace aplikace"
+  />
 </div>
 
 Klikněte na **View installed app**, abyste zobrazili nainstalovanou aplikaci. Karta **About** zobrazuje aktuální verzi a možnosti správy:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Nainstalovaná aplikace — karta About" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Nainstalovaná aplikace — karta About"
+  />
 </div>
 
 Přepněte na kartu **Content**, abyste viděli vše, co vaše aplikace poskytuje — objekty, pole, logické funkce a agenty:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="Nainstalovaná aplikace — karta Content" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-4.png"
+    alt="Nainstalovaná aplikace — karta Content"
+  />
 </div>
 
 Vše je připraveno! Upravte libovolný soubor v `src/` a změny se automaticky projeví.
@@ -241,7 +272,8 @@ Předejte volbu `--test` libovolnému příkazu `server` pro správu druhé, pln
 Testovací instance běží ve vlastním kontejneru Docker (`twenty-app-dev-test`) s vyhrazenými svazky (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) a konfigurací, takže může běžet paralelně s vaší hlavní instancí bez konfliktů. Zkombinujte `--test` s `--port` pro změnu výchozího portu 2021.
 
 <Note>
-  Server vyžaduje, aby **Docker** běžel. Pokud vidíte chybu "Docker not running", ujistěte se, že je spuštěný Docker Desktop (nebo démon Dockeru).
+  Server vyžaduje, aby **Docker** běžel. Pokud vidíte chybu "Docker not
+  running", ujistěte se, že je spuštěný Docker Desktop (nebo démon Dockeru).
 </Note>
 
 ## Ruční nastavení (bez scaffolderu)
@@ -267,16 +299,17 @@ yarn add twenty-sdk twenty-client-sdk
 Nyní můžete spouštět `yarn twenty dev`, `yarn twenty help` a všechny ostatní příkazy.
 
 <Note>
-Neinstalujte `twenty-sdk` globálně. Vždy jej používejte jako lokální závislost projektu, aby si každý projekt mohl připnout svou vlastní verzi.
+  Neinstalujte `twenty-sdk` globálně. Vždy jej používejte jako lokální závislost
+  projektu, aby si každý projekt mohl připnout svou vlastní verzi.
 </Note>
 
 ## Řešení potíží
 
 Pokud narazíte na potíže:
 
-* Před spuštěním generátoru kostry s lokální instancí se ujistěte, že **Docker běží**.
-* Ujistěte se, že používáte **Node.js 24+** (ověříte příkazem `node -v`).
-* Ujistěte se, že je **Corepack povolen** (`corepack enable`), aby byl k dispozici Yarn 4.
-* Zkuste smazat `node_modules` a znovu spustit `yarn install`, pokud se zdají závislosti poškozené.
+- Před spuštěním generátoru kostry s lokální instancí se ujistěte, že **Docker běží**.
+- Ujistěte se, že používáte **Node.js 24+** (ověříte příkazem `node -v`).
+- Ujistěte se, že je **Corepack povolen** (`corepack enable`), aby byl k dispozici Yarn 4.
+- Zkuste smazat `node_modules` a znovu spustit `yarn install`, pokud se zdají závislosti poškozené.
 
 Pořád se nedaří? Požádejte o pomoc na [Discordu Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

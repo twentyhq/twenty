@@ -11,51 +11,42 @@ description: 将人员/联系人导入 Twenty 的完整分步指南。
 
 ### 先决条件清单
 
-<Check>
-您的文件为 CSV、XLSX 或 XLS 格式
-</Check>
+<Check>您的文件为 CSV、XLSX 或 XLS 格式</Check>
 
-<Check>
-文件包含少于 10,000 条记录
-</Check>
+<Check>文件包含少于 10,000 条记录</Check>
 
-<Check>
-您的文件中没有重复的电子邮件地址
-</Check>
+<Check>您的文件中没有重复的电子邮件地址</Check>
 
-<Check>
-**先导入公司**（如果要将 People 关联到公司）
-</Check>
+<Check>**先导入公司**（如果要将 People 关联到公司）</Check>
 
-<Check>
-所有自定义字段已存在于 **设置 → 数据模型**
-</Check>
+<Check>所有自定义字段已存在于 **设置 → 数据模型**</Check>
 
 <Warning>
 **先导入公司，再导入 People**
 
 如果您想将 People 关联到公司，请先导入公司。 在引用之前，公司必须已存在。
+
 </Warning>
 
 ## 步骤 1：准备您的联系人数据
 
 ### 必填与推荐字段
 
-| 字段        | 是否必填？ | 格式                | 备注         |
-| --------- | ----- | ----------------- | ---------- |
-| **电子邮件**  | 推荐    | `name@domain.com` | 必须唯一       |
-| **名字**    | 推荐    | 文本                |            |
-| **姓氏**    | 推荐    | 文本                |            |
-| **公司**    | 可选    | 域名或 ID            | 链接到现有公司    |
-| **电话**    | 可选    | 多列                | 详见下文       |
-| **职位**    | 可选    | 文本                |            |
-| **自定义字段** | 可选    | 因情况而异             | 必须存在于数据模型中 |
+| 字段           | 是否必填？ | 格式              | 备注                 |
+| -------------- | ---------- | ----------------- | -------------------- |
+| **电子邮件**   | 推荐       | `name@domain.com` | 必须唯一             |
+| **名字**       | 推荐       | 文本              |                      |
+| **姓氏**       | 推荐       | 文本              |                      |
+| **公司**       | 可选       | 域名或 ID         | 链接到现有公司       |
+| **电话**       | 可选       | 多列              | 详见下文             |
+| **职位**       | 可选       | 文本              |                      |
+| **自定义字段** | 可选       | 因情况而异        | 必须存在于数据模型中 |
 
 ### 电子邮件格式
 
-* 必须为有效的电子邮件格式：`name@domain.com`
-* **必须唯一** — 您的文件或 Twenty 中不得重复
-* 对于附加电子邮件，请使用 **Emails / Additional Emails** 列：
+- 必须为有效的电子邮件格式：`name@domain.com`
+- **必须唯一** — 您的文件或 Twenty 中不得重复
+- 对于附加电子邮件，请使用 **Emails / Additional Emails** 列：
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
@@ -65,7 +56,7 @@ description: 将人员/联系人导入 Twenty 的完整分步指南。
 
 电话是一个 **嵌套字段**，需要多列：
 
-| 列                                       | 示例           |
+| 列                                      | 示例         |
 | --------------------------------------- | ------------ |
 | **Phones / Primary Phone Number**       | `4159095555` |
 | **Phones / Primary Phone Country Code** | `US`         |
@@ -75,13 +66,14 @@ description: 将人员/联系人导入 Twenty 的完整分步指南。
 
 添加包含公司唯一标识符的列：
 
-| 列名              | 格式     | 示例                                     |
-| --------------- | ------ | -------------------------------------- |
+| 列名            | 格式     | 示例                                   |
+| --------------- | -------- | -------------------------------------- |
 | `companyDomain` | URL 格式 | `https://acme.com`                     |
-| `companyId`     | UUID   | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
+| `companyId`     | UUID     | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-**使用域名 URL 格式**（`https://acme.com`），而不是标签。 这与公司在 Twenty 中的存储方式一致。
+  **使用域名 URL 格式**（`https://acme.com`），而不是标签。 这与公司在 Twenty
+  中的存储方式一致。
 </Note>
 
 ### 示例 CSV 结构
@@ -93,7 +85,8 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-**专业提示：** 在导入过程中单击 **Download sample file**，或导出现有的一些 People，以查看 Twenty 期望的确切列名。
+  **专业提示：** 在导入过程中单击 **Download sample file**，或导出现有的一些
+  People，以查看 Twenty 期望的确切列名。
 </Note>
 
 ## 步骤 2：进入导入功能
@@ -127,14 +120,17 @@ Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
 
 ### 重要的映射规则
 
-| 列类型    | 映射到                            | 备注                 |
-| ------ | ------------------------------ | ------------------ |
-| 公司引用   | **Company** 关系字段               | 仅使用域名或 ID，不要同时使用二者 |
-| 电子邮件   | **电子邮件**                       | 主要电子邮件地址           |
-| 附加电子邮件 | **Emails / Additional Emails** | 数组格式               |
-| 电话     | 分列                             | 号码、国家代码、拨号代码       |
+| 列类型       | 映射到                         | 备注                              |
+| ------------ | ------------------------------ | --------------------------------- |
+| 公司引用     | **Company** 关系字段           | 仅使用域名或 ID，不要同时使用二者 |
+| 电子邮件     | **电子邮件**                   | 主要电子邮件地址                  |
+| 附加电子邮件 | **Emails / Additional Emails** | 数组格式                          |
+| 电话         | 分列                           | 号码、国家代码、拨号代码          |
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ### 映射公司关系
 
@@ -148,6 +144,7 @@ Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
 **仅为关系映射一个唯一标识符。**
 
 不要同时映射 `companyId` 和 `companyDomain`。 选择其一——最好使用域名，因为它更易读。
+
 </Warning>
 
 ## 步骤 5：映射选择字段的值
@@ -159,7 +156,8 @@ Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
 3. 或在需要时创建新选项
 
 <Note>
-选择型选项使用 **API 名称**，而不是显示标签。 在 **Settings → Data Model** 中启用 **Advanced mode** 以查看 API 名称。
+  选择型选项使用 **API 名称**，而不是显示标签。 在 **Settings → Data Model**
+  中启用 **Advanced mode** 以查看 API 名称。
 </Note>
 
 ## 步骤 6：检查并修复错误
@@ -173,12 +171,12 @@ Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
 
 ### 常见联系人导入错误
 
-| 错误           | 原因                   | 解决方案                  |
-| ------------ | -------------------- | --------------------- |
-| **电子邮件重复**   | 电子邮件在 Twenty 或文件中已存在 | 删除重复项或更新现有记录          |
-| **电子邮件格式无效** | 电子邮件格式不正确            | 更正为 `name@domain.com` |
-| **未找到关系**    | 公司不存在                | 先导入公司，或修复引用           |
-| **缺少必填字段**   | 必填字段为空               | 填写该值或删除该行             |
+| 错误                 | 原因                             | 解决方案                 |
+| -------------------- | -------------------------------- | ------------------------ |
+| **电子邮件重复**     | 电子邮件在 Twenty 或文件中已存在 | 删除重复项或更新现有记录 |
+| **电子邮件格式无效** | 电子邮件格式不正确               | 更正为 `name@domain.com` |
+| **未找到关系**       | 公司不存在                       | 先导入公司，或修复引用   |
+| **缺少必填字段**     | 必填字段为空                     | 填写该值或删除该行       |
 
 ## 步骤 7：完成导入
 
@@ -212,21 +210,24 @@ Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
     在 Twenty 中，电子邮件是唯一标识符。 这可防止重复联系人，并确保电子邮件同步将邮件正确关联到对应的人。
   </Accordion>
 
-  <Accordion title="如果有人员没有电子邮件怎么办？">
-    您可以将电子邮件留空。 不过，我们建议在可能的情况下添加电子邮件，以获得更好的数据质量和电子邮件同步功能。
-  </Accordion>
+<Accordion title="如果有人员没有电子邮件怎么办？">
+  您可以将电子邮件留空。
+  不过，我们建议在可能的情况下添加电子邮件，以获得更好的数据质量和电子邮件同步功能。
+</Accordion>
 
-  <Accordion title="在导入过程中如何将 People 关联到 Companies？">
-    添加包含公司域名（例如 `https://acme.com`）或 ID 的列。 在映射过程中，将此列连接到 Company 关系字段。
-  </Accordion>
+<Accordion title="在导入过程中如何将 People 关联到 Companies？">
+  添加包含公司域名（例如 `https://acme.com`）或 ID 的列。
+  在映射过程中，将此列连接到 Company 关系字段。
+</Accordion>
 
-  <Accordion title="如果该 Company 还不存在怎么办？">
-    先导入 Companies，再导入 People。 在引用之前，该 Company 必须已存在。
-  </Accordion>
+<Accordion title="如果该 Company 还不存在怎么办？">
+  先导入 Companies，再导入 People。 在引用之前，该 Company 必须已存在。
+</Accordion>
 
-  <Accordion title="我可以导入之前 CRM 中的 ID 吗？">
-    是! 在您的数据模型中创建一个标记为“唯一”的自定义字段，用于存储外部 ID。 注意：字段名 `id` 保留给 Twenty 的内部 ID。
-  </Accordion>
+<Accordion title="我可以导入之前 CRM 中的 ID 吗？">
+  是! 在您的数据模型中创建一个标记为“唯一”的自定义字段，用于存储外部 ID。
+  注意：字段名 `id` 保留给 Twenty 的内部 ID。
+</Accordion>
 
   <Accordion title="如何修复“未找到关系”的错误？">
     您引用的 Company 不存在。 先导入该 Company，或检查域名/ID 是否与现有 Company 完全匹配。
@@ -237,6 +238,6 @@ Twenty 会自动尝试将您的列与字段匹配。 检查并调整：
 
 遇到问题？ 请查看：
 
-* [如何修复导入错误](/l/zh/user-guide/data-migration/how-tos/fix-import-errors)
-* [如何导入关系](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [字段映射参考](/l/zh/user-guide/data-migration/capabilities/field-mapping)
+- [如何修复导入错误](/l/zh/user-guide/data-migration/how-tos/fix-import-errors)
+- [如何导入关系](/l/zh/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [字段映射参考](/l/zh/user-guide/data-migration/capabilities/field-mapping)

@@ -11,20 +11,23 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 **使用场景：**
 
-* **定期备份** — 保留您的数据副本
-* **外部报表** — 在 Excel、Google 表格或 BI 工具中分析数据
-* **迁移** — 将数据迁移到其他系统
-* **批量更新** — 通过导出、编辑并重新导入来更新记录
+- **定期备份** — 保留您的数据副本
+- **外部报表** — 在 Excel、Google 表格或 BI 工具中分析数据
+- **迁移** — 将数据迁移到其他系统
+- **批量更新** — 通过导出、编辑并重新导入来更新记录
 
 ## 您需要了解的内容
 
 ### 导出限制
 
-* **每次导出最多 20,000 条记录**
-* 仅导出**可见列**
-* 仅导出**筛选后的记录**（基于您当前视图）
+- **每次导出最多 20,000 条记录**
+- 仅导出**可见列**
+- 仅导出**筛选后的记录**（基于您当前视图）
 
-<Note>对于更大的导出（20,000+ 条记录），请使用筛选器分批导出，或使用 [API](/l/zh/developers/extend/api)。</Note>
+<Note>
+  对于更大的导出（20,000+ 条记录），请使用筛选器分批导出，或使用
+  [API](/l/zh/developers/extend/api)。
+</Note>
 
 ### 权限
 
@@ -34,10 +37,10 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 前往您要导出的对象：
 
-* **People** — 用于联系人
-* **Companies** — 用于组织
-* **Opportunities** — 用于商机
-* **自定义对象** — 您创建的任意对象
+- **People** — 用于联系人
+- **Companies** — 用于组织
+- **Opportunities** — 用于商机
+- **自定义对象** — 您创建的任意对象
 
 ## 步骤 2：配置您的视图
 
@@ -62,7 +65,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 1. 单击列标题进行排序
 2. 导出将遵循您的排序顺序
 
-<Note>**创建专用的导出视图。** 保存一个专为导出配置的视图，这样每次就无需重新配置。</Note>
+<Note>
+  **创建专用的导出视图。** 保存一个专为导出配置的视图，这样每次就无需重新配置。
+</Note>
 
 ## 步骤 3：导出数据
 
@@ -73,20 +78,20 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 ## 导出内容
 
-| 包含           | 不包含      |
-| ------------ | -------- |
-| 所有可见列        | 隐藏列      |
-| 与当前筛选条件匹配的记录 | 被过滤掉的记录  |
-| 自定义字段值       | 不在视图中的字段 |
-| 记录 ID        | 文件附件     |
-| 关系 ID        | 图片       |
+| 包含                     | 不包含           |
+| ------------------------ | ---------------- |
+| 所有可见列               | 隐藏列           |
+| 与当前筛选条件匹配的记录 | 被过滤掉的记录   |
+| 自定义字段值             | 不在视图中的字段 |
+| 记录 ID                  | 文件附件         |
+| 关系 ID                  | 图片             |
 
 ### 关系字段
 
 关系 ID 仅在关系的\*\*“多”端\*\*导出：
 
-* **People 导出** 包含一个 `companyId` 列（People → Company 关系）
-* **Companies 导出** 不包含 `peopleIds`（Companies 是“一”端）
+- **People 导出** 包含一个 `companyId` 列（People → Company 关系）
+- **Companies 导出** 不包含 `peopleIds`（Companies 是“一”端）
 
 这意味着您可以使用 People 的导出来重新导入并保持与 Company 的链接，但您需要在导入 Companies 之后再次导入 People 以重新创建这些关系。
 
@@ -136,9 +141,9 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 **用于分批的示例筛选器：**
 
-* 按日期范围（1 月、2 月、3 月……）
-* 按所有者（团队成员 A、团队成员 B……）
-* 按状态（活跃、非活跃……）
+- 按日期范围（1 月、2 月、3 月……）
+- 按所有者（团队成员 A、团队成员 B……）
+- 按状态（活跃、非活跃……）
 
 ### 选项 2：使用 API
 
@@ -164,9 +169,9 @@ API 没有记录数量限制：
 
 导出的文件可能包含敏感数据：
 
-* 存放在安全位置
-* 不再需要时删除旧的导出文件
-* 共享导出文件时请谨慎
+- 存放在安全位置
+- 不再需要时删除旧的导出文件
+- 共享导出文件时请谨慎
 
 ### 导出前检查
 
@@ -181,21 +186,23 @@ API 没有记录数量限制：
     仅导出可见列。 在导出之前通过 **Options → Fields** 添加所需的列。
   </Accordion>
 
-  <Accordion title="为什么我的导出没有包含所有记录？">
-    检查您的筛选器。 导出仅包含与您当前视图筛选条件匹配的记录。 移除筛选器以导出所有记录。
-  </Accordion>
+<Accordion title="为什么我的导出没有包含所有记录？">
+  检查您的筛选器。 导出仅包含与您当前视图筛选条件匹配的记录。
+  移除筛选器以导出所有记录。
+</Accordion>
 
-  <Accordion title="我可以导出超过 20,000 条记录吗？">
-    单次导出不可以。 使用筛选器分批导出，或使用 API 处理更大的数据集。
-  </Accordion>
+<Accordion title="我可以导出超过 20,000 条记录吗？">
+  单次导出不可以。 使用筛选器分批导出，或使用 API 处理更大的数据集。
+</Accordion>
 
-  <Accordion title="导出文件是什么格式？">
-    CSV（逗号分隔值）。 可在 Excel、Google 表格或任何电子表格应用中打开。
-  </Accordion>
+<Accordion title="导出文件是什么格式？">
+  CSV（逗号分隔值）。 可在 Excel、Google 表格或任何电子表格应用中打开。
+</Accordion>
 
-  <Accordion title="是否包含关系 ID？">
-    包含，但仅限于关系的“多”端。 例如，People 的导出包含 `companyId`，但 Companies 的导出不包含人员 ID。
-  </Accordion>
+<Accordion title="是否包含关系 ID？">
+  包含，但仅限于关系的“多”端。 例如，People 的导出包含 `companyId`，但 Companies
+  的导出不包含人员 ID。
+</Accordion>
 
   <Accordion title="我可以自动化导出吗？">
     无法直接通过 UI 实现。 使用 API 构建自动化的导出工作流。
@@ -204,6 +211,6 @@ API 没有记录数量限制：
 
 ## 下一步
 
-* [如何更新现有记录](/l/zh/user-guide/data-migration/how-tos/update-existing-records-via-import) — 编辑并重新导入您的导出文件
-* [如何通过 API 导入数据](/l/zh/user-guide/data-migration/how-tos/import-data-via-api) — 适用于大型数据集
-* [API 文档](/l/zh/developers/extend/api) — 构建自定义导出工作流
+- [如何更新现有记录](/l/zh/user-guide/data-migration/how-tos/update-existing-records-via-import) — 编辑并重新导入您的导出文件
+- [如何通过 API 导入数据](/l/zh/user-guide/data-migration/how-tos/import-data-via-api) — 适用于大型数据集
+- [API 文档](/l/zh/developers/extend/api) — 构建自定义导出工作流

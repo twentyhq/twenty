@@ -30,25 +30,21 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Özellikler">
 
-
 | Özellikler   | Tür                                | Açıklama                                                                              |
 | ------------ | ---------------------------------- | ------------------------------------------------------------------------------------- |
 | linkToEntity | dize                               | Varlığın bağlantısı                                                                   |
 | entityId     | dize                               | Varlık için benzersiz tanımlayıcı                                                     |
-| i̇sim        | dize                               | Varlığın adı                                                                          |
+| i̇sim         | dize                               | Varlığın adı                                                                          |
 | resimUrl     | dize                               | s resim","                                                                            |
 | avatarTürü   | Avatar Türü                        | Göstermek istediğiniz avatarın türü. İki seçenek var: `yuvarlak` ve `kare`            |
 | varyant      | `EntityChipVariant` numaralandırma | Göstermek istediğiniz varlık çipinin varyantı. İki seçenek var: `düzenli` ve `şeffaf` |
 | Sol Simge    | IconComponent                      | Bir simgeyi temsil eden bir React bileşeni. Çipin sol tarafında görüntülenir          |
-
-
 
 </Tab>
 </Tabs>
@@ -62,7 +58,7 @@ import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Şeffaf Devre Dışı Chip"
       clickable={false}
@@ -72,10 +68,9 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
-
 ```
 
 <br />
@@ -83,11 +78,11 @@ export const MyComponent = () => {
 ### Araç İpucuyla Devre Dışı Çip
 
 ```jsx
-import { Chip } from "twenty-ui/components";
-  
+import { Chip } from 'twenty-ui/components';
+
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Taştığında araç ipucunu tetikleyen devre dışı Chip."
       clickable={false}
@@ -97,7 +92,7 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
 ```
@@ -136,18 +131,15 @@ export const MyComponent = () => {
 
 <Tab title="Özellikler">
 
-
 | Özellikler   | Tür                                | Açıklama                                                                              |
 | ------------ | ---------------------------------- | ------------------------------------------------------------------------------------- |
 | linkToEntity | dize                               | Varlığın bağlantısı                                                                   |
 | entityId     | dize                               | Varlık için benzersiz tanımlayıcı                                                     |
-| i̇sim        | dize                               | Varlığın adı                                                                          |
+| i̇sim         | dize                               | Varlığın adı                                                                          |
 | resimUrl     | dize                               | s resim","                                                                            |
 | avatarTürü   | Avatar Türü                        | Göstermek istediğiniz avatarın türü. İki seçenek var: `yuvarlak` ve `kare`            |
 | varyant      | `EntityChipVariant` numaralandırma | Göstermek istediğiniz varlık çipinin varyantı. İki seçenek var: `düzenli` ve `şeffaf` |
 | Sol Simge    | IconComponent                      | Bir simgeyi temsil eden bir React bileşeni. Çipin sol tarafında görüntülenir          |
-
-
 
 </Tab>
 </Tabs>

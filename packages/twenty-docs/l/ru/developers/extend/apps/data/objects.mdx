@@ -55,10 +55,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -76,18 +96,23 @@ export default defineObject({
 
 ## Основные моменты
 
-* `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
-* Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
-* Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
-* Встроенным полям, определённым здесь, **не** нужен `objectUniversalIdentifier` — он наследуется от родительского объекта. Используйте [`defineField()`](/l/ru/developers/extend/apps/data/extending-objects), чтобы добавить поля к объектам, которые вам не принадлежат.
-* Вы можете сгенерировать заготовки новых объектов с помощью `yarn twenty dev:add object`, который проведёт вас через настройку названий, полей и связей. См. [Architecture → Scaffolding entities](/l/ru/developers/extend/apps/getting-started/scaffolding).
+- `universalIdentifier` должен быть уникальным и стабильным между развёртываниями.
+- Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
+- Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
+- Встроенным полям, определённым здесь, **не** нужен `objectUniversalIdentifier` — он наследуется от родительского объекта. Используйте [`defineField()`](/l/ru/developers/extend/apps/data/extending-objects), чтобы добавить поля к объектам, которые вам не принадлежат.
+- Вы можете сгенерировать заготовки новых объектов с помощью `yarn twenty dev:add object`, который проведёт вас через настройку названий, полей и связей. См. [Architecture → Scaffolding entities](/l/ru/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**Базовые поля добавляются автоматически.** Когда вы определяете пользовательский объект, Twenty создаёт для вас стандартные поля, такие как `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` и `deletedAt`. Вам не нужно объявлять их в массиве `fields` — только ваши пользовательские поля. Вы можете переопределить базовое поле, объявив поле с тем же именем, но это редко бывает хорошей идеей.
+  **Базовые поля добавляются автоматически.** Когда вы определяете
+  пользовательский объект, Twenty создаёт для вас стандартные поля, такие как
+  `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` и
+  `deletedAt`. Вам не нужно объявлять их в массиве `fields` — только ваши
+  пользовательские поля. Вы можете переопределить базовое поле, объявив поле с
+  тем же именем, но это редко бывает хорошей идеей.
 </Note>
 
 ## Что дальше
 
-* **Свяжите этот объект с другими** — см. [Relations](/l/ru/developers/extend/apps/data/relations) для двунаправленного шаблона связей.
-* **Добавляйте поля к объектам из других приложений** — см. [Extending Objects](/l/ru/developers/extend/apps/data/extending-objects) о `defineField()`.
-* **Отобразите этот объект в интерфейсе** — см. [Views](/l/ru/developers/extend/apps/layout/views) и [Navigation Menu Items](/l/ru/developers/extend/apps/layout/navigation-menu-items), чтобы поместить его в боковую панель.
+- **Свяжите этот объект с другими** — см. [Relations](/l/ru/developers/extend/apps/data/relations) для двунаправленного шаблона связей.
+- **Добавляйте поля к объектам из других приложений** — см. [Extending Objects](/l/ru/developers/extend/apps/data/extending-objects) о `defineField()`.
+- **Отобразите этот объект в интерфейсе** — см. [Views](/l/ru/developers/extend/apps/layout/views) и [Navigation Menu Items](/l/ru/developers/extend/apps/layout/navigation-menu-items), чтобы поместить его в боковую панель.

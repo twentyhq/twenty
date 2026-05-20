@@ -18,10 +18,10 @@ description: Yaygın iş akışı sorunları ve bunları çözme yöntemleri.
 
 **Çözümler**:
 
-* İş akışı listesindeki iş akışı durumunu doğrulayın
-* Tetiklemesini beklediğiniz belirli işlemle test edin
-* Tetikleyici yapılandırmasını gözden geçirin
-* İzinler konusunda yöneticinizle iletişime geçin
+- İş akışı listesindeki iş akışı durumunu doğrulayın
+- Tetiklemesini beklediğiniz belirli işlemle test edin
+- Tetikleyici yapılandırmasını gözden geçirin
+- İzinler konusunda yöneticinizle iletişime geçin
 
 ### İş Akışı Çok Erken Tetikleniyor (Boş Alanlar)
 
@@ -31,17 +31,20 @@ description: Yaygın iş akışı sorunları ve bunları çözme yöntemleri.
 
 **"Record is created" ne zaman iyi çalışır**:
 
-* API çağrılarıyla oluşturulan kayıtlar (alanlar tek bir istekte doldurulur)
-* İçe aktarma yoluyla oluşturulan kayıtlar
-* Diğer iş akışlarından otomatik kayıt oluşturma
+- API çağrılarıyla oluşturulan kayıtlar (alanlar tek bir istekte doldurulur)
+- İçe aktarma yoluyla oluşturulan kayıtlar
+- Diğer iş akışlarından otomatik kayıt oluşturma
 
 **Çözüm**: UI'da manuel olarak oluşturulan kayıtlar için tetikleyici olarak **"Record is created or updated"** kullanın. Bu şekilde:
 
-* Kullanıcı alanları doldurup kaydetmeyi bitirdikten sonra iş akışı tetiklenir
-* Boş değerler yerine eksiksiz verileri alırsınız
+- Kullanıcı alanları doldurup kaydetmeyi bitirdikten sonra iş akışı tetiklenir
+- Boş değerler yerine eksiksiz verileri alırsınız
 
 <Tip>
-Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanız, `createdAt equals updatedAt` (ilk kaydetme) gibi bir alanı kontrol etmek için bir Filtre eylemi ekleyin veya iş akışının daha önce çalışıp çalışmadığını izlemek için özel bir onay kutusu alanı kullanın.
+  Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanız, `createdAt
+  equals updatedAt` (ilk kaydetme) gibi bir alanı kontrol etmek için bir Filtre
+  eylemi ekleyin veya iş akışının daha önce çalışıp çalışmadığını izlemek için
+  özel bir onay kutusu alanı kullanın.
 </Tip>
 
 ### Eylemler Başarısız Oluyor
@@ -57,10 +60,10 @@ Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanı
 
 **Çözümler**:
 
-* Hata mesajları için iş akışı çalıştırma ayrıntılarını kontrol edin
-* Gerekli tüm alanların dolu olduğunu doğrulayın
-* API bağlantılarını bağımsız olarak test edin
-* Rol izinlerini gözden geçirin
+- Hata mesajları için iş akışı çalıştırma ayrıntılarını kontrol edin
+- Gerekli tüm alanların dolu olduğunu doğrulayın
+- API bağlantılarını bağımsız olarak test edin
+- Rol izinlerini gözden geçirin
 
 ### HTTP İstek Hataları
 
@@ -68,19 +71,19 @@ Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanı
 
 **Yaygın Hata Kodları**:
 
-* **400**: Hatalı istek - istek gövdesi biçiminizi kontrol edin
-* **401**: Yetkisiz - API anahtarını doğrulayın
-* **403**: Yasak - API izinlerini kontrol edin
-* **404**: Bulunamadı - endpoint URL'sini doğrulayın
-* **429**: Çok fazla istek - hız sınırlaması uygulayın
-* **500**: Sunucu hatası - harici hizmet sorunu
+- **400**: Hatalı istek - istek gövdesi biçiminizi kontrol edin
+- **401**: Yetkisiz - API anahtarını doğrulayın
+- **403**: Yasak - API izinlerini kontrol edin
+- **404**: Bulunamadı - endpoint URL'sini doğrulayın
+- **429**: Çok fazla istek - hız sınırlaması uygulayın
+- **500**: Sunucu hatası - harici hizmet sorunu
 
 **Çözümler**:
 
-* API endpoint URL'sini doğrulayın
-* Kimlik doğrulama başlıklarını kontrol edin
-* Önce API çağrısını Twenty dışında test edin
-* Code eylemlerine hata işleme ekleyin
+- API endpoint URL'sini doğrulayın
+- Kimlik doğrulama başlıklarını kontrol edin
+- Önce API çağrısını Twenty dışında test edin
+- Code eylemlerine hata işleme ekleyin
 
 ### Code Eylemi Hataları
 
@@ -95,10 +98,10 @@ Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanı
 
 **Çözümler**:
 
-* Yerleşik kod düzenleyicisi doğrulamasını kullanın
-* Önce JavaScript konsolunda kod mantığını test edin
-* Hata ayıklama için console.log ifadeleri ekleyin
-* Karmaşık işlemleri basitleştirin
+- Yerleşik kod düzenleyicisi doğrulamasını kullanın
+- Önce JavaScript konsolunda kod mantığını test edin
+- Hata ayıklama için console.log ifadeleri ekleyin
+- Karmaşık işlemleri basitleştirin
 
 ### E-posta Gönderilmiyor
 
@@ -113,10 +116,10 @@ Kayıt başına iş akışının yalnızca bir kez çalışmasını istiyorsanı
 
 **Çözümler**:
 
-* E-posta hesabı bağlantısını doğrulayın
-* Alıcı e-posta adreslerini doğrulayın
-* E-posta sağlayıcısı limitlerini kontrol edin
-* Spam tetikleyicileri açısından e-posta içeriğini gözden geçirin
+- E-posta hesabı bağlantısını doğrulayın
+- Alıcı e-posta adreslerini doğrulayın
+- E-posta sağlayıcısı limitlerini kontrol edin
+- Spam tetikleyicileri açısından e-posta içeriğini gözden geçirin
 
 ## İş Akışlarında Hata Ayıklama
 
@@ -150,21 +153,21 @@ Her adımın beklenen giriş verilerini aldığını doğrulayın.
 
 ### Etkinleştirmeden Önce
 
-* Taslak modunda kapsamlı şekilde test edin
-* Tüm API bağlantılarını doğrulayın
-* Tetikleyici koşullarını dikkatlice gözden geçirin
-* Beklenen davranışı belgeleyin
+- Taslak modunda kapsamlı şekilde test edin
+- Tüm API bağlantılarını doğrulayın
+- Tetikleyici koşullarını dikkatlice gözden geçirin
+- Beklenen davranışı belgeleyin
 
 ### Geliştirme Sırasında
 
-* Açıklayıcı adım adları kullanın
-* Code eylemlerine yorum ekleyin
-* Gerçekçi verilerle test edin
-* Uç durumlar için plan yapın
+- Açıklayıcı adım adları kullanın
+- Code eylemlerine yorum ekleyin
+- Gerçekçi verilerle test edin
+- Uç durumlar için plan yapın
 
 ### Etkinleştirmeden Sonra
 
-* İlk çalıştırmaları yakından izleyin
-* Başarısızlıklar için uyarılar ayarlayın
-* Çalıştırma geçmişini düzenli olarak gözden geçirin
-* Mümkün olduğunda iş akışlarını basit tutun
+- İlk çalıştırmaları yakından izleyin
+- Başarısızlıklar için uyarılar ayarlayın
+- Çalıştırma geçmişini düzenli olarak gözden geçirin
+- Mümkün olduğunda iş akışlarını basit tutun

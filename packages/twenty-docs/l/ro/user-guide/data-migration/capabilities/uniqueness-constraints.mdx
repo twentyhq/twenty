@@ -17,7 +17,11 @@ Twenty impune unicitatea pentru anumite câmpuri pentru a preveni înregistrări
 | **Companii**              | `id`, `domain`       |
 | **Obiecte personalizate** | doar `id` (implicit) |
 
-<Note>Câmpul `id` este identificatorul intern al Twenty, generat automat pentru fiecare înregistrare. Acesta folosește formatul UUID (de ex., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>
+  Câmpul `id` este identificatorul intern al Twenty, generat automat pentru
+  fiecare înregistrare. Acesta folosește formatul UUID (de ex.,
+  `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).
+</Note>
 
 ## Câmpuri unice personalizate
 
@@ -30,11 +34,15 @@ Puteți defini câmpuri unice suplimentare în **Setări → Model de date**:
 
 ### Cazuri de utilizare pentru câmpuri unice personalizate
 
-* **ID-uri externe**: Stocați ID-uri din alte sisteme (Salesforce ID, HubSpot ID)
-* **Identificatori de afaceri**: Numere de angajat, coduri de client
-* **Informații de contact alternative**: Profil LinkedIn, număr de telefon
+- **ID-uri externe**: Stocați ID-uri din alte sisteme (Salesforce ID, HubSpot ID)
+- **Identificatori de afaceri**: Numere de angajat, coduri de client
+- **Informații de contact alternative**: Profil LinkedIn, număr de telefon
 
-<Note>Numele câmpului `id` este rezervat pentru ID-ul intern al Twenty. Folosiți un nume diferit, precum `externalId` sau `legacyId`, pentru identificatori externi.</Note>
+<Note>
+  Numele câmpului `id` este rezervat pentru ID-ul intern al Twenty. Folosiți un
+  nume diferit, precum `externalId` sau `legacyId`, pentru identificatori
+  externi.
+</Note>
 
 ## Comportamentul importului
 
@@ -45,7 +53,11 @@ Dacă valoarea unui câmp unic nu există, se creează o înregistrare nouă.
 ### Actualizarea înregistrărilor existente
 
 Dacă valoarea unui câmp unic se potrivește cu o înregistrare existentă, acea înregistrare este **actualizată** cu noile date.
-<Warning>Pentru a **actualiza înregistrările existente**, se recomandă să **potriviți un singur câmp unic**.</Warning>
+
+<Warning>
+  Pentru a **actualiza înregistrările existente**, se recomandă să **potriviți
+  un singur câmp unic**.
+</Warning>
 
 ### Înregistrări șterse logic
 
@@ -53,14 +65,15 @@ Dacă valoarea unui câmp unic se potrivește cu o înregistrare existentă, ace
 **Înregistrările șterse logic se iau în calcul pentru unicitate.**
 
 Înregistrările șterse logic (vizibile în Command Menu → See deleted records) sunt incluse în verificările de unicitate. Dacă importați o înregistrare cu aceeași valoare unică ca o înregistrare ștearsă, înregistrarea ștearsă va fi **restaurată** cu noile date.
+
 </Warning>
 
 ## Detectarea duplicatelor în timpul importului
 
 În timpul etapei de validare:
 
-* Duplicatele din fișier sunt evidențiate cu galben
-* Puteți edita sau elimina rândurile duplicate din interfață înainte de a începe importul
+- Duplicatele din fișier sunt evidențiate cu galben
+- Puteți edita sau elimina rândurile duplicate din interfață înainte de a începe importul
 
 <VimeoEmbed videoId="1145246326" title="Demonstrație video" />
 

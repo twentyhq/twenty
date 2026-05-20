@@ -7,7 +7,10 @@ description: Ghid pas cu pas pentru migrarea instanței Twenty auto-găzduite la
 
 Acest ghid vă ghidează prin migrarea datelor dvs. dintr-o instanță Twenty auto-găzduită către Twenty Cloud. Procesul presupune configurarea spațiului dvs. de lucru în cloud, exportarea datelor și reimportarea acestora.
 
-<Note>Vizualizările, fluxurile de lucru și rolurile trebuie recreate manual după migrare. Planificați timp pentru această muncă de configurare.</Note>
+<Note>
+  Vizualizările, fluxurile de lucru și rolurile trebuie recreate manual după
+  migrare. Planificați timp pentru această muncă de configurare.
+</Note>
 
 ## Pasul 1: Creați spațiul dvs. de lucru în cloud
 
@@ -24,7 +27,10 @@ Acest ghid vă ghidează prin migrarea datelor dvs. dintr-o instanță Twenty au
 3. Adăugați câmpuri personalizate la obiectele standard și personalizate
 4. Configurați setările câmpurilor (unic, obligatoriu etc.)
 
-<Note>Faceți capturi de ecran ale modelului de date auto-găzduit pentru referință sau păstrați ambele instanțe deschise una lângă alta.</Note>
+<Note>
+  Faceți capturi de ecran ale modelului de date auto-găzduit pentru referință
+  sau păstrați ambele instanțe deschise una lângă alta.
+</Note>
 
 ## Pasul 3: Invitați toți utilizatorii
 
@@ -32,6 +38,7 @@ Acest ghid vă ghidează prin migrarea datelor dvs. dintr-o instanță Twenty au
 **Important: Invitați utilizatorii ÎNAINTE de a importa datele.**
 
 Utilizatorii trebuie să accepte invitațiile înainte de a importa orice înregistrări care îi referențiază (cum ar fi câmpurile Account Owner). Dacă utilizatorii nu există încă, acele relații nu pot fi mapate.
+
 </Warning>
 
 1. Accesați **Setări → Membri** în instanța dvs. din cloud
@@ -83,7 +90,10 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Folosiți aceleași adrese de e-mail pe care utilizatorii le-au folosit pentru a accepta invitația la spațiul de lucru din cloud.</Note>
+<Note>
+  Folosiți aceleași adrese de e-mail pe care utilizatorii le-au folosit pentru a
+  accepta invitația la spațiul de lucru din cloud.
+</Note>
 
 ## Pasul 6: Planificați ordinea de import
 
@@ -105,8 +115,8 @@ Pentru fiecare fișier CSV, în ordine:
 2. Faceți clic pe **⋮ → Import records**
 3. Încărcați fișierul CSV
 4. Mapați coloanele la câmpuri:
-   * Mapați coloanele de e-mail ale utilizatorilor la câmpurile de relație corespunzătoare
-   * Mapați celelalte coloane ca de obicei
+   - Mapați coloanele de e-mail ale utilizatorilor la câmpurile de relație corespunzătoare
+   - Mapați celelalte coloane ca de obicei
 5. Revizuiți și remediați eventualele erori
 6. Confirmați importul
 7. Verificați câteva înregistrări înainte de a trece la următorul fișier
@@ -117,23 +127,23 @@ După importarea datelor, recreați manual:
 
 ### Vizualizări
 
-* Recreați vizualizările salvate cu filtre, sortări și configurații de coloane
-* Configurați orice vizualizări kanban sau calendar
+- Recreați vizualizările salvate cu filtre, sortări și configurații de coloane
+- Configurați orice vizualizări kanban sau calendar
 
 ### Fluxuri de lucru
 
-* Recreați automatizările în **Setări → Fluxuri de lucru**
-* Testați fiecare flux de lucru înainte de a vă baza pe el
+- Recreați automatizările în **Setări → Fluxuri de lucru**
+- Testați fiecare flux de lucru înainte de a vă baza pe el
 
 ### Roluri și permisiuni
 
-* Configurați rolurile în **Setări → Membri → Roluri**
-* Atribuiți utilizatorilor rolurile corespunzătoare
+- Configurați rolurile în **Setări → Membri → Roluri**
+- Atribuiți utilizatorilor rolurile corespunzătoare
 
 ### Integrări
 
-* Reconectați sincronizarea e-mailului și a calendarului pentru fiecare utilizator
-* Reconfigurați orice integrări API cu chei API noi
+- Reconectați sincronizarea e-mailului și a calendarului pentru fiecare utilizator
+- Reconfigurați orice integrări API cu chei API noi
 
 ## Lista de Verificare Post-Migrare
 
@@ -153,13 +163,17 @@ După importarea datelor, recreați manual:
     Momentan, nu. Fluxurile de lucru trebuie recreate manual în instanța dvs. din cloud.
   </Accordion>
 
-  <Accordion title="Cum rămâne cu atașamentele de fișiere și imaginile?">
-    Atașamentele de fișiere nu sunt incluse în exporturile CSV. Va trebui să reîncărcați manual orice atașamente, să le migrați prin API sau să contactați echipa noastră pentru asistență la migrarea de volum mare.
-  </Accordion>
+<Accordion title="Cum rămâne cu atașamentele de fișiere și imaginile?">
+  Atașamentele de fișiere nu sunt incluse în exporturile CSV. Va trebui să
+  reîncărcați manual orice atașamente, să le migrați prin API sau să contactați
+  echipa noastră pentru asistență la migrarea de volum mare.
+</Accordion>
 
-  <Accordion title="Pot păstra ambele instanțe în funcțiune în timpul migrării?">
-    Da, recomandăm să păstrați instanța auto-găzduită în funcțiune până când ați verificat că migrarea în cloud este completă. Aveți doar grijă să nu creați date noi în ambele locuri.
-  </Accordion>
+<Accordion title="Pot păstra ambele instanțe în funcțiune în timpul migrării?">
+  Da, recomandăm să păstrați instanța auto-găzduită în funcțiune până când ați
+  verificat că migrarea în cloud este completă. Aveți doar grijă să nu creați
+  date noi în ambele locuri.
+</Accordion>
 
   <Accordion title="Ce se întâmplă dacă un utilizator nu și-a acceptat încă invitația?">
     Înregistrările care fac referire la acel utilizator nu se vor importa sau relația va fi goală. Asigurați-vă că toți utilizatorii acceptă invitațiile înainte de a importa datele.

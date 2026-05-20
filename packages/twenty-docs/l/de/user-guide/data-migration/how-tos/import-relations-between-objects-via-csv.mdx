@@ -7,7 +7,12 @@ description: Vollständige Schritt-für-Schritt-Anleitung zum Verknüpfen von Da
 
 Diese Anleitung führt Sie durch den Import von Beziehungen zwischen Objekten – zum Beispiel das Verknüpfen von Personen mit Unternehmen oder von Opportunities mit Personen.
 
-<Note>**Was kann importiert werden:** Nur Eins-zu-Viele-Beziehungen, die auf einen einzelnen Objekttyp verweisen. Beziehungen, die auf mehrere Objekttypen verweisen (z. B. Notizen, die sowohl mit Personen als auch mit Unternehmen verknüpft sind), werden beim Import noch nicht unterstützt.</Note>
+<Note>
+  **Was kann importiert werden:** Nur Eins-zu-Viele-Beziehungen, die auf einen
+  einzelnen Objekttyp verweisen. Beziehungen, die auf mehrere Objekttypen
+  verweisen (z. B. Notizen, die sowohl mit Personen als auch mit Unternehmen
+  verknüpft sind), werden beim Import noch nicht unterstützt.
+</Note>
 
 ## Beziehungen verstehen
 
@@ -15,9 +20,9 @@ Diese Anleitung führt Sie durch den Import von Beziehungen zwischen Objekten �
 
 In einer Eins-zu-Viele-Beziehung:
 
-* **Ein** Unternehmen hat **viele** Personen (Mitarbeitende)
-* **Ein** Unternehmen hat **viele** Opportunities
-* **Eine** Person hat **viele** Aufgaben
+- **Ein** Unternehmen hat **viele** Personen (Mitarbeitende)
+- **Ein** Unternehmen hat **viele** Opportunities
+- **Eine** Person hat **viele** Aufgaben
 
 Die "Eins"-Seite ist die **übergeordnete**. Die "Viele"-Seite ist die **untergeordnete**.
 
@@ -36,8 +41,8 @@ Bestimmen Sie vor dem Import, welches Objekt übergeordnet und welches untergeor
 
 **Fragen Sie sich:** "Hat EIN [Objekt A] VIELE [Objekt B]?"
 
-* Ein Unternehmen → Viele Personen ✓ (Unternehmen ist übergeordnet)
-* Eine Person → Viele Unternehmen ✗ (Das ist falsch – eine Person gehört zu einem Unternehmen)
+- Ein Unternehmen → Viele Personen ✓ (Unternehmen ist übergeordnet)
+- Eine Person → Viele Unternehmen ✗ (Das ist falsch – eine Person gehört zu einem Unternehmen)
 
 ## Schritt 2: Importieren Sie zuerst die übergeordneten Datensätze
 
@@ -54,6 +59,7 @@ Das übergeordnete Objekt ("Eins"-Seite) muss in Twenty existieren, bevor Sie da
 **Wenn der übergeordnete Datensatz nicht existiert, schlägt der Import fehl.**
 
 Stellen Sie stets sicher, dass Unternehmen importiert sind, bevor Sie Personen mit Unternehmensreferenzen importieren.
+
 </Warning>
 
 ## Schritt 3: Notieren Sie den eindeutigen Bezeichner des übergeordneten Objekts
@@ -67,7 +73,10 @@ Sie müssen auf den übergeordneten Datensatz mit einem eindeutigen Bezeichner v
 | **Arbeitsbereichsmitglieder**  | `id` (UUID), `email` (nicht Name)                                                          |
 | **Benutzerdefinierte Objekte** | `id` (UUID) oder ein beliebiges als eindeutig markiertes Feld                              |
 
-<Note>**Empfehlung:** Verwenden Sie `domain` für Unternehmen und `email` für Personen. Diese sind menschenlesbar und in Ihrer Tabelle leicht zu überprüfen.</Note>
+<Note>
+  **Empfehlung:** Verwenden Sie `domain` für Unternehmen und `email` für
+  Personen. Diese sind menschenlesbar und in Ihrer Tabelle leicht zu überprüfen.
+</Note>
 
 ### Den Bezeichner finden
 
@@ -87,9 +96,9 @@ Stellen Sie vor dem Import sicher, dass das Beziehungsfeld zwischen Ihren Objekt
 2. Wählen Sie Ihr untergeordnetes Objekt aus (z. B. Personen)
 3. Suchen Sie nach einem Beziehungsfeld, das auf das übergeordnete Objekt zeigt (z. B. Unternehmen)
 4. Wenn es nicht existiert, erstellen Sie es:
-   * Klicken Sie auf **+ Feld hinzufügen**
-   * Wählen Sie den Typ **Relation**
-   * Wählen Sie das übergeordnete Objekt
+   - Klicken Sie auf **+ Feld hinzufügen**
+   - Wählen Sie den Typ **Relation**
+   - Wählen Sie das übergeordnete Objekt
 
 ## Schritt 5: Bereiten Sie Ihre CSV-Datei vor
 
@@ -120,6 +129,7 @@ Die Spalte `companyDomain` verweist auf die Domain des Unternehmens.
 **Das Domain-Format ist wichtig!**
 
 Verwenden Sie `https://domain.com` (nicht nur `domain.com`). Dies entspricht der Art, wie Twenty Unternehmensdomains speichert, und verhindert Zuordnungsfehler.
+
 </Warning>
 
 ### Wichtige Regeln
@@ -134,8 +144,8 @@ Verwenden Sie `https://domain.com` (nicht nur `domain.com`). Dies entspricht der
 2. Klicken Sie auf **⋮** → **Datensätze importieren**
 3. Laden Sie Ihre CSV-Datei hoch
 4. Im Schritt zur Feldzuordnung:
-   * Suchen Sie Ihre Beziehungsspalte (z. B. `companyDomain`)
-   * Ordnen Sie sie dem **Company**-Beziehungsfeld zu
+   - Suchen Sie Ihre Beziehungsspalte (z. B. `companyDomain`)
+   - Ordnen Sie sie dem **Company**-Beziehungsfeld zu
 5. Schließen Sie die übrige Zuordnung ab
 6. Prüfen Sie Fehler und bestätigen Sie
 
@@ -164,8 +174,8 @@ Nach dem Import:
 
 Beim Verknüpfen mit Teammitgliedern (Ihrem Team):
 
-* Verwenden Sie ihre **E-Mail-Adresse**, nicht ihren Namen
-* Beispiel: `owner@yourcompany.com`, nicht "John Smith"
+- Verwenden Sie ihre **E-Mail-Adresse**, nicht ihren Namen
+- Beispiel: `owner@yourcompany.com`, nicht "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -182,24 +192,28 @@ Review proposal,jane@yourcompany.com
     2. Erstellen Sie ein benutzerdefiniertes eindeutiges Feld in Ihrem Datenmodell, um eine externe ID aus Ihrem vorherigen System zu speichern
   </Accordion>
 
-  <Accordion title="Kann ich Beziehungen bei bestehenden Datensätzen aktualisieren?">
-    Ja! Geben Sie den eindeutigen Bezeichner des untergeordneten Datensatzes (z. B. `email` für Personen) und den neuen Beziehungswert an. Beim Import wird die Beziehung aktualisiert.
-  </Accordion>
+<Accordion title="Kann ich Beziehungen bei bestehenden Datensätzen aktualisieren?">
+  Ja! Geben Sie den eindeutigen Bezeichner des untergeordneten Datensatzes (z.
+  B. `email` für Personen) und den neuen Beziehungswert an. Beim Import wird die
+  Beziehung aktualisiert.
+</Accordion>
 
-  <Accordion title="Kann ich Viele-zu-Viele-Beziehungen importieren?">
-    Viele-zu-Viele-Beziehungen werden beim Import noch nicht unterstützt. Dies ist für H1 2026 geplant.
-  </Accordion>
+<Accordion title="Kann ich Viele-zu-Viele-Beziehungen importieren?">
+  Viele-zu-Viele-Beziehungen werden beim Import noch nicht unterstützt. Dies ist
+  für H1 2026 geplant.
+</Accordion>
 
-  <Accordion title="Kann ich mit mehreren Objekttypen verknüpfen (z. B. Notizen mit Personen UND Unternehmen)?">
-    Beziehungen, die auf mehrere Objekttypen zeigen, werden für Import/Export noch nicht unterstützt. Dies steht auf unserer Roadmap.
-  </Accordion>
+<Accordion title="Kann ich mit mehreren Objekttypen verknüpfen (z. B. Notizen mit Personen UND Unternehmen)?">
+  Beziehungen, die auf mehrere Objekttypen zeigen, werden für Import/Export noch
+  nicht unterstützt. Dies steht auf unserer Roadmap.
+</Accordion>
 
-  <Accordion title="Was passiert, wenn ein übergeordneter Datensatz nicht existiert?">
-    Der Import zeigt für diese Zeile einen Fehler an. Sie können entweder:
-    * Importieren Sie zuerst den übergeordneten Datensatz und importieren Sie dann erneut
-    * Korrigieren Sie den Referenzwert
-    * Entfernen Sie die Zeile aus dem Import
-  </Accordion>
+<Accordion title="Was passiert, wenn ein übergeordneter Datensatz nicht existiert?">
+  Der Import zeigt für diese Zeile einen Fehler an. Sie können entweder: *
+  Importieren Sie zuerst den übergeordneten Datensatz und importieren Sie dann
+  erneut * Korrigieren Sie den Referenzwert * Entfernen Sie die Zeile aus dem
+  Import
+</Accordion>
 
   <Accordion title="Warum wird meine Beziehung nicht korrekt verknüpft?">
     Häufige Ursachen:
@@ -214,12 +228,13 @@ Review proposal,jane@yourcompany.com
 **Denken Sie daran: soft gelöschte Datensätze zählen für die Eindeutigkeit.**
 
 Wenn Sie "not found"-Fehler erhalten, der Datensatz aber zu existieren scheint, prüfen Sie im Befehlsmenü → Gelöschte Datensätze anzeigen. Der übergeordnete Datensatz wurde möglicherweise soft gelöscht.
+
 </Warning>
 
 ## Fehlerbehebung
 
 Gibt es Probleme? Prüfen Sie:
 
-* [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
-* [Funktionen zum Import von Beziehungen](/l/de/user-guide/data-migration/capabilities/import-relations)
-* [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+- [Funktionen zum Import von Beziehungen](/l/de/user-guide/data-migration/capabilities/import-relations)
+- [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)

@@ -8,11 +8,11 @@ Twenty implementa OAuth 2.0 con codice di autorizzazione + PKCE per le app rivol
 
 ## Quando utilizzare OAuth
 
-| Scenario                                          | Metodo di autenticazione                                                         |
-| ------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Scenario                                          | Metodo di autenticazione                                                              |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | Script interni, automazioni                       | [Chiave API](/l/it/developers/extend/api#authentication)                              |
-| App esterna che agisce per conto di un utente     | **OAuth — Codice di autorizzazione**                                             |
-| Da server a server, nessun contesto utente        | **OAuth — Credenziali client**                                                   |
+| App esterna che agisce per conto di un utente     | **OAuth — Codice di autorizzazione**                                                  |
+| Da server a server, nessun contesto utente        | **OAuth — Credenziali client**                                                        |
 | App Twenty con estensioni dell'interfaccia utente | [App](/l/it/developers/extend/apps/getting-started) (OAuth è gestito automaticamente) |
 
 ## Registrare un client
@@ -43,7 +43,8 @@ Content-Type: application/json
 ```
 
 <Warning>
-Conserva `client_secret` in modo sicuro — non potrà essere recuperato in seguito.
+  Conserva `client_secret` in modo sicuro — non potrà essere recuperato in
+  seguito.
 </Warning>
 
 ## Ambiti

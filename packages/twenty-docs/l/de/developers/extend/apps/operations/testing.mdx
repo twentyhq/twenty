@@ -125,15 +125,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```

@@ -1,7 +1,7 @@
 ---
 title: Logic Functions
 description: Define server-side TypeScript functions with HTTP, cron, and database event triggers.
-icon: "bolt"
+icon: 'bolt'
 ---
 
 Logic functions are server-side TypeScript functions that run on the Twenty platform. They can be triggered by HTTP requests, cron schedules, or database events — and can also be exposed as tools for AI agents.
@@ -51,11 +51,12 @@ export default defineLogicFunction({
 ```
 
 Available trigger types:
+
 - **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
-> e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+  > e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
 - **cron**: Runs your function on a schedule using a CRON expression.
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
-> e.g. `person.updated`, `*.created`, `company.*`
+  > e.g. `person.updated`, `*.created`, `company.*`
 
 <Note>
 You can also manually execute a function using the CLI:
@@ -73,6 +74,7 @@ You can watch logs with:
 ```bash filename="Terminal"
 yarn twenty dev:function:logs
 ```
+
 </Note>
 
 #### Route trigger payload
@@ -94,17 +96,16 @@ const handler = async (event: RoutePayload) => {
 
 The `RoutePayload` type has the following structure:
 
-  | Property | Type | Description | Example |
-  |----------|------|-------------|---------|
-  | `headers` | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`) | see section below |
-  | `queryStringParameters` | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)  | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }`|
-  | `pathParameters` | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern | `/users/:id`, `/users/123` -> `{ id: '123' }` |
-  | `body` | `object \| null` | Parsed request body (JSON) | `{ id: 1 }` -> `{ id: 1 }` |
-  | `rawBody` | `string \| undefined` | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. | |
-  | `isBase64Encoded` | `boolean` | Whether the body is base64 encoded | |
-  | `requestContext.http.method` | `string` | HTTP method (GET, POST, PUT, PATCH, DELETE) | |
-  | `requestContext.http.path` | `string` | Raw request path | |
-
+| Property                     | Type                                  | Description                                                                                                                                                                                           | Example                                                                    |
+| ---------------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record<string, string \| undefined>` | HTTP headers (only those listed in `forwardedRequestHeaders`)                                                                                                                                         | see section below                                                          |
+| `queryStringParameters`      | `Record<string, string \| undefined>` | Query string parameters (multiple values joined with commas)                                                                                                                                          | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record<string, string \| undefined>` | Path parameters extracted from the route pattern                                                                                                                                                      | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                      | Parsed request body (JSON)                                                                                                                                                                            | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                 | Original UTF-8 request body, before JSON parsing. Useful for verifying HMAC-style webhook signatures (e.g. GitHub's `X-Hub-Signature-256`, Stripe). `undefined` when the runtime did not preserve it. |                                                                            |
+| `isBase64Encoded`            | `boolean`                             | Whether the body is base64 encoded                                                                                                                                                                    |                                                                            |
+| `requestContext.http.method` | `string`                              | HTTP method (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                           |                                                                            |
+| `requestContext.http.path`   | `string`                              | Raw request path                                                                                                                                                                                      |                                                                            |
 
 #### forwardedRequestHeaders
 
@@ -138,7 +139,8 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Header names are normalized to lowercase. Access them using lowercase keys (e.g., `event.headers['content-type']`).
+  Header names are normalized to lowercase. Access them using lowercase keys
+  (e.g., `event.headers['content-type']`).
 </Note>
 
 #### Database event trigger payload
@@ -161,35 +163,34 @@ type Person = {
 
 The payload includes:
 
-| Property | Description |
-|----------|-------------|
-| `name` | Event name, such as `person.updated`. |
-| `workspaceId` | Workspace where the event happened. |
-| `objectMetadata` | Metadata for the object that changed. |
-| `recordId` | Id of the changed record. |
-| `userId`, `userWorkspaceId`, `workspaceMemberId` | Actor fields when the event was caused by a workspace user. |
-| `properties` | Record data for the event, with `before`, `after`, `diff`, and `updatedFields` depending on the operation. |
+| Property                                         | Description                                                                                                |
+| ------------------------------------------------ | ---------------------------------------------------------------------------------------------------------- |
+| `name`                                           | Event name, such as `person.updated`.                                                                      |
+| `workspaceId`                                    | Workspace where the event happened.                                                                        |
+| `objectMetadata`                                 | Metadata for the object that changed.                                                                      |
+| `recordId`                                       | Id of the changed record.                                                                                  |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Actor fields when the event was caused by a workspace user.                                                |
+| `properties`                                     | Record data for the event, with `before`, `after`, `diff`, and `updatedFields` depending on the operation. |
 
-| Event | Record data |
-|-------|-------------|
-| `person.created` | `event.properties.after` |
-| `person.updated` | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
-| `person.destroyed` | `event.properties.before` |
+| Event              | Record data                                                                                                    |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
 
 For soft deletes, `.deleted` follows the update-style shape because the record's `deletedAt` field changes.
 For permanent deletes, use `.destroyed`.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields` filters which update events trigger the function.
-`event.properties.updatedFields` tells you which fields actually changed on the current event.
+  `databaseEventTriggerSettings.updatedFields` filters which update events
+  trigger the function. `event.properties.updatedFields` tells you which fields
+  actually changed on the current event.
 </Note>
 
 Created event example:
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -204,9 +205,7 @@ const handler = async (event: PersonCreatedEvent) => {
 Updated event example:
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -319,24 +318,29 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**Write a good `description`.** AI agents rely on the function's `description` field to decide when to use the tool. Be specific about what the tool does and when it should be called.
+  **Write a good `description`.** AI agents rely on the function's `description`
+  field to decide when to use the tool. Be specific about what the tool does and
+  when it should be called.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Install hooks** — pre-install and post-install handlers — share this runtime but are declared with their own define functions and don't take trigger settings. See [Install Hooks](/developers/extend/apps/config/install-hooks) for `definePreInstallLogicFunction` and `definePostInstallLogicFunction`.
+  **Install hooks** — pre-install and post-install handlers — share this runtime
+  but are declared with their own define functions and don't take trigger
+  settings. See [Install Hooks](/developers/extend/apps/config/install-hooks)
+  for `definePreInstallLogicFunction` and `definePostInstallLogicFunction`.
 </Note>
 
 ## Typed API clients (twenty-client-sdk)
 
 The `twenty-client-sdk` package provides two typed GraphQL clients for interacting with the Twenty API from your logic functions and front components.
 
-| Client | Import | Endpoint | Generated? |
-|--------|--------|----------|------------|
-| `CoreApiClient` | `twenty-client-sdk/core` | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
-| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads | No, ships pre-built |
+| Client              | Import                       | Endpoint                                       | Generated?             |
+| ------------------- | ---------------------------- | ---------------------------------------------- | ---------------------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql` — workspace data (records, objects) | Yes, at dev/build time |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata` — workspace config, file uploads   | No, ships pre-built    |
 
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Query and mutate workspace data (records, objects)">
@@ -381,7 +385,10 @@ const { createCompany } = await client.mutation({
 The client uses a selection-set syntax: pass `true` to include a field, use `__args` for arguments, and nest objects for relations. You get full autocompletion and type checking based on your workspace schema.
 
 <Note>
-**CoreApiClient is generated at dev/build time.** If you use it without running `yarn twenty dev` or `yarn twenty dev:build` first, it throws an error. The generation happens automatically — the CLI introspects your workspace's GraphQL schema and generates a typed client using `@genql/cli`.
+  **CoreApiClient is generated at dev/build time.** If you use it without
+  running `yarn twenty dev` or `yarn twenty dev:build` first, it throws an
+  error. The generation happens automatically — the CLI introspects your
+  workspace's GraphQL schema and generates a typed client using `@genql/cli`.
 </Note>
 
 #### Using CoreSchema for type annotations
@@ -450,36 +457,37 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+  fileBuffer, // file contents as a Buffer
+  'invoice.pdf', // filename
+  'application/pdf', // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b', // field universalIdentifier
 );
 
 console.log(uploadedFile);
 // { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
 ```
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| `fileBuffer` | `Buffer` | The raw file contents |
-| `filename` | `string` | The name of the file (used for storage and display) |
-| `contentType` | `string` | MIME type (defaults to `application/octet-stream` if omitted) |
+| Parameter                          | Type     | Description                                                     |
+| ---------------------------------- | -------- | --------------------------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | The raw file contents                                           |
+| `filename`                         | `string` | The name of the file (used for storage and display)             |
+| `contentType`                      | `string` | MIME type (defaults to `application/octet-stream` if omitted)   |
 | `fieldMetadataUniversalIdentifier` | `string` | The `universalIdentifier` of the file-type field on your object |
 
 Key points:
+
 - Uses the field's `universalIdentifier` (not its workspace-specific ID), so your upload code works across any workspace where your app is installed.
 - The returned `url` is a signed URL you can use to access the uploaded file.
 
 </Accordion>
 </AccordionGroup>
 
-
 <Note>
   When your code runs on Twenty (logic functions or front components), the platform injects credentials as environment variables:
 
-  - `TWENTY_API_URL` — Base URL of the Twenty API
-  - `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
+- `TWENTY_API_URL` — Base URL of the Twenty API
+- `TWENTY_APP_ACCESS_TOKEN` — Short-lived key scoped to your application's default function role
 
-  You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`).
+You do **not** need to pass these to the clients — they read from `process.env` automatically. The API key's permissions are determined by the role declared with `defineApplicationRole()` (or referenced via `defaultRoleUniversalIdentifier` in `application-config.ts`).
+
 </Note>

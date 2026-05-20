@@ -6,9 +6,9 @@ icon: table-columns
 
 **页面布局（page layout）** 控制记录详情页的排布方式：显示哪些选项卡，以及这些选项卡中包含哪些小部件。 使用 `definePageLayout()` 为你拥有的对象声明一个布局，或者使用 `definePageLayoutTab()` 为已存在的布局（你的自定义布局或标准的 Twenty 布局）添加单个选项卡。
 
-| 用例                           | 实体                    |
-| ---------------------------- | --------------------- |
-| 为你拥有的对象上的记录页面定义完整布局          | `definePageLayout`    |
+| 用例                                                     | 实体                  |
+| -------------------------------------------------------- | --------------------- |
+| 为你拥有的对象上的记录页面定义完整布局                   | `definePageLayout`    |
 | 向现有布局中添加一个选项卡（你自己的对象或一个标准对象） | `definePageLayoutTab` |
 
 ## definePageLayout
@@ -51,11 +51,11 @@ export default definePageLayout({
 
 ### 关键点
 
-* `type` 通常为 'RECORD_PAGE'，用于自定义特定对象的详情视图。
-* `objectUniversalIdentifier` 指定此布局适用于哪个对象。
-* 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（`CANVAS` 表示自由布局）。
-* 选项卡内的每个 `widget` 可以渲染一个[前端组件](/l/zh/developers/extend/apps/layout/front-components)、关系列表或其他内置小部件类型。
-* 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
+- `type` 通常为 'RECORD_PAGE'，用于自定义特定对象的详情视图。
+- `objectUniversalIdentifier` 指定此布局适用于哪个对象。
+- 每个 `tab` 使用 `title`、`position` 和 `layoutMode` 定义页面的一个部分（`CANVAS` 表示自由布局）。
+- 选项卡内的每个 `widget` 可以渲染一个[前端组件](/l/zh/developers/extend/apps/layout/front-components)、关系列表或其他内置小部件类型。
+- 选项卡上的 `position` 控制其顺序。 使用更高的值（例如 50）可将自定义选项卡放在内置选项卡之后。
 
 ## definePageLayoutTab
 
@@ -96,7 +96,7 @@ export default definePageLayoutTab({
 
 ### 关键点
 
-* `pageLayoutUniversalIdentifier` 是**必需的**，并且必须在安装时指向一个已存在的页面布局——可以是标准的 Twenty 布局，也可以是由你自己的应用定义的布局。 当前不支持跨应用引用由其他已安装应用拥有的布局。 当父布局缺失时，安装会失败，并给出清晰的验证错误。
-* `widgets` 仅作用于此选项卡——它们引用[前端组件](/l/zh/developers/extend/apps/layout/front-components)、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
-* `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
-* 当你只想向现有布局进行添加时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`。
+- `pageLayoutUniversalIdentifier` 是**必需的**，并且必须在安装时指向一个已存在的页面布局——可以是标准的 Twenty 布局，也可以是由你自己的应用定义的布局。 当前不支持跨应用引用由其他已安装应用拥有的布局。 当父布局缺失时，安装会失败，并给出清晰的验证错误。
+- `widgets` 仅作用于此选项卡——它们引用[前端组件](/l/zh/developers/extend/apps/layout/front-components)、视图等，其方式与在 `definePageLayout` 中内联定义的小部件完全相同。
+- `position` 控制目标布局中相对于现有选项卡的排序。 选择一个取值，使你的选项卡相对于内置选项卡位于你想要的位置。
+- 当你只想向现有布局进行添加时，请使用此功能，而不是 `definePageLayout`。 当你拥有整个布局时，请使用 `definePageLayout`。

@@ -51,11 +51,12 @@ export default defineLogicFunction({
 ```
 
 Kullanılabilir tetikleyici türleri:
-* **httpRoute**: İşlevinizi bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
-> örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
-* **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
-* **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
-> örn. `person.updated`, `*.created`, `company.*`
+
+- **httpRoute**: İşlevinizi bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
+  > örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
+- **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
+- **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
+  > örn. `person.updated`, `*.created`, `company.*`
 
 <Note>
 Bir işlevi CLI kullanarak manuel olarak da çalıştırabilirsiniz:
@@ -73,6 +74,7 @@ Günlükleri şu şekilde izleyebilirsiniz:
 ```bash filename="Terminal"
 yarn twenty dev:function:logs
 ```
+
 </Note>
 
 #### Rota tetikleyicisi yükü
@@ -94,17 +96,16 @@ const handler = async (event: RoutePayload) => {
 
 `RoutePayload` türünün yapısı şu şekildedir:
 
-  | Özellik                      | Tür                                                     | Açıklama                                                                                                                                                                                                             | Örnek                                                                      |
-  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)                                                                                                                                           | aşağıdaki bölüme bakın                                                     |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                                                                                                                                                 | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                                                                                                                                                          | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Ayrıştırılmış istek gövdesi (JSON)                                                                                                                                                                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | JSON ayrıştırılmadan önceki özgün UTF-8 istek gövdesi. HMAC tarzı webhook imzalarını doğrulamak için kullanışlıdır (ör. GitHub'ın `X-Hub-Signature-256`, Stripe). Çalışma zamanı onu korumadığında `undefined` olur. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Gövdenin base64 ile kodlanıp kodlanmadığı                                                                                                                                                                            |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                         |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Ham istek yolu                                                                                                                                                                                                       |                                                                            |
-
+| Özellik                      | Tür                                    | Açıklama                                                                                                                                                                                                             | Örnek                                                                      |
+| ---------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record\<string, string \| undefined>` | HTTP başlıkları (`forwardedRequestHeaders` içinde listelenenlerle sınırlı)                                                                                                                                           | aşağıdaki bölüme bakın                                                     |
+| `queryStringParameters`      | `Record\<string, string \| undefined>` | Sorgu dizesi parametreleri (birden çok değer virgülle birleştirilir)                                                                                                                                                 | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record\<string, string \| undefined>` | Rota deseninden çıkarılan yol parametreleri                                                                                                                                                                          | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                       | Ayrıştırılmış istek gövdesi (JSON)                                                                                                                                                                                   | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                  | JSON ayrıştırılmadan önceki özgün UTF-8 istek gövdesi. HMAC tarzı webhook imzalarını doğrulamak için kullanışlıdır (ör. GitHub'ın `X-Hub-Signature-256`, Stripe). Çalışma zamanı onu korumadığında `undefined` olur. |                                                                            |
+| `isBase64Encoded`            | `boolean`                              | Gövdenin base64 ile kodlanıp kodlanmadığı                                                                                                                                                                            |                                                                            |
+| `requestContext.http.method` | `string`                               | HTTP yöntemi (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                         |                                                                            |
+| `requestContext.http.path`   | `string`                               | Ham istek yolu                                                                                                                                                                                                       |                                                                            |
 
 #### forwardedRequestHeaders
 
@@ -138,7 +139,8 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
+  Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla
+  erişin (örneğin, `event.headers['content-type']`).
 </Note>
 
 #### Veritabanı olay tetikleyicisi yükü
@@ -180,16 +182,15 @@ Yumuşak silmeler için, kayıt `deletedAt` alanı değiştiğinden `.deleted`, 
 Kalıcı silmeler için `.destroyed` kullanın.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields`, hangi güncelleme olaylarının fonksiyonu tetikleyeceğini filtreler.
-`event.properties.updatedFields`, mevcut olayda hangi alanların gerçekten değiştiğini size bildirir.
+  `databaseEventTriggerSettings.updatedFields`, hangi güncelleme olaylarının
+  fonksiyonu tetikleyeceğini filtreler. `event.properties.updatedFields`, mevcut
+  olayda hangi alanların gerçekten değiştiğini size bildirir.
 </Note>
 
 Oluşturma olayı örneği:
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -204,9 +205,7 @@ const handler = async (event: PersonCreatedEvent) => {
 Güncelleme olayı örneği:
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -254,8 +253,8 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 Mantık işlevleri, her birinin kendi tetikleyicisi olacak şekilde iki yerde kullanılabilir hâle getirilebilir:
 
-* **`toolTriggerSettings`** — işlevi Twenty'nin yapay zekâ özellikleri (sohbet, MCP, işlev çağırma) tarafından bulunabilir hâle getirir. Standart JSON Şeması'nı kullanır; LLM'lerin doğal olarak anladığı biçimdir.
-* **`workflowActionTriggerSettings`** — işlevin görsel iş akışı oluşturucusunda bir adım olarak görünmesini sağlar. Oluşturucunun uygun alan düzenleyicilerini, değişken seçicilerini ve etiketleri oluşturabilmesi için Twenty'nin zengin `InputSchema`'sını kullanır.
+- **`toolTriggerSettings`** — işlevi Twenty'nin yapay zekâ özellikleri (sohbet, MCP, işlev çağırma) tarafından bulunabilir hâle getirir. Standart JSON Şeması'nı kullanır; LLM'lerin doğal olarak anladığı biçimdir.
+- **`workflowActionTriggerSettings`** — işlevin görsel iş akışı oluşturucusunda bir adım olarak görünmesini sağlar. Oluşturucunun uygun alan düzenleyicilerini, değişken seçicilerini ve etiketleri oluşturabilmesi için Twenty'nin zengin `InputSchema`'sını kullanır.
 
 Bir işlev bunlardan birini, diğerini veya her ikisini de tercih edebilir. Bunlar, `cronTriggerSettings`, `databaseEventTriggerSettings` ve `httpRouteTriggerSettings` ile birlikte yer alır — aynı desen, aynı biçim.
 
@@ -293,8 +292,8 @@ export default defineLogicFunction({
 
 Önemli noktalar:
 
-* Bir işlev yüzeyleri karıştırabilir — onu sohbette VE iş akışı oluşturucusunda kullanıma sunmak için hem `toolTriggerSettings` hem de `workflowActionTriggerSettings` bildirin.
-* `toolTriggerSettings.inputSchema` ve `workflowActionTriggerSettings.inputSchema` ikisi de isteğe bağlıdır. Atlandığında, manifest oluşturucu bunları işleyici kaynak kodundan çıkarır (yapay zekâ aracı için JSON Şeması, iş akışı eylemi için Twenty'nin `InputSchema`'sı). Daha zengin tipleme istediğinizde birini açıkça belirtin — örneğin, iş akışı oluşturucu için `FieldMetadataType`'ı bilen `CURRENCY` veya `RELATION` gibi alanlarla ya da yapay zekâ aracısının okuyabileceği `description` alanlarıyla:
+- Bir işlev yüzeyleri karıştırabilir — onu sohbette VE iş akışı oluşturucusunda kullanıma sunmak için hem `toolTriggerSettings` hem de `workflowActionTriggerSettings` bildirin.
+- `toolTriggerSettings.inputSchema` ve `workflowActionTriggerSettings.inputSchema` ikisi de isteğe bağlıdır. Atlandığında, manifest oluşturucu bunları işleyici kaynak kodundan çıkarır (yapay zekâ aracı için JSON Şeması, iş akışı eylemi için Twenty'nin `InputSchema`'sı). Daha zengin tipleme istediğinizde birini açıkça belirtin — örneğin, iş akışı oluşturucu için `FieldMetadataType`'ı bilen `CURRENCY` veya `RELATION` gibi alanlarla ya da yapay zekâ aracısının okuyabileceği `description` alanlarıyla:
 
 ```ts
 export default defineLogicFunction({
@@ -319,14 +318,20 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını ve ne zaman çağrılması gerektiğini açıkça belirtin.
+  **İyi bir `description` yazın.** AI ajanları, aracı ne zaman kullanacaklarına
+  karar vermek için işlevin `description` alanına güvenir. Aracın ne yaptığını
+  ve ne zaman çağrılması gerektiğini açıkça belirtin.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Yükleme kancaları** — ön yükleme ve yükleme sonrası işleyiciler — bu çalışma zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici ayarlarını almaz. `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` için [Yükleme Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
+  **Yükleme kancaları** — ön yükleme ve yükleme sonrası işleyiciler — bu çalışma
+  zamanını paylaşır ancak kendi tanımlama işlevleriyle bildirilir ve tetikleyici
+  ayarlarını almaz. `definePreInstallLogicFunction` ve
+  `definePostInstallLogicFunction` için [Yükleme
+  Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 </Note>
 
 ## Tipli API istemcileri (twenty-client-sdk)
@@ -381,7 +386,10 @@ const { createCompany } = await client.mutation({
 İstemci bir seçim kümesi sözdizimi kullanır: Bir alanı dahil etmek için `true` geçin, bağımsız değişkenler için `__args` kullanın ve ilişkiler için nesneleri iç içe yerleştirin. Çalışma alanı şemanıza göre tam otomatik tamamlama ve tip denetimi elde edersiniz.
 
 <Note>
-**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty dev:build` çalıştırmadan kullanırsanız, bir hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
+  **CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn
+  twenty dev` veya `yarn twenty dev:build` çalıştırmadan kullanırsanız, bir hata
+  verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL
+  şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
 </Note>
 
 #### Tür açıklamaları için CoreSchema'yı kullanma
@@ -450,10 +458,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+  fileBuffer, // file contents as a Buffer
+  'invoice.pdf', // filename
+  'application/pdf', // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b', // field universalIdentifier
 );
 
 console.log(uploadedFile);
@@ -468,8 +476,9 @@ console.log(uploadedFile);
 | `fieldMetadataUniversalIdentifier` | `string` | Nesnenizdeki dosya türü alanının `universalIdentifier` değeri                     |
 
 Önemli noktalar:
-* Alan için `universalIdentifier` kullanır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır.
-* Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
+
+- Alan için `universalIdentifier` kullanır (çalışma alanına özgü kimliği değil), böylece yükleme kodunuz uygulamanızın yüklü olduğu herhangi bir çalışma alanında çalışır.
+- Döndürülen `url`, yüklenen dosyaya erişmek için kullanabileceğiniz imzalı bir URL'dir.
 
 </Accordion>
 </AccordionGroup>
@@ -477,8 +486,9 @@ console.log(uploadedFile);
 <Note>
   Kodunuz Twenty üzerinde çalıştığında (mantık işlevleri veya ön uç bileşenleri), platform kimlik bilgilerini ortam değişkenleri olarak enjekte eder:
 
-  * `TWENTY_API_URL` — Twenty API'nin temel URL'si
-  * `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan işlev rolü kapsamında kısa ömürlü bir anahtar
+- `TWENTY_API_URL` — Twenty API'nin temel URL'si
+- `TWENTY_APP_ACCESS_TOKEN` — Uygulamanızın varsayılan işlev rolü kapsamında kısa ömürlü bir anahtar
 
-  Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `defineApplicationRole()` ile bildirilen role (veya `application-config.ts` içindeki `defaultRoleUniversalIdentifier` üzerinden referans verilen role) göre belirlenir.
+Bunları istemcilere iletmeniz gerekmez — otomatik olarak `process.env`'den okurlar. API anahtarının izinleri, `defineApplicationRole()` ile bildirilen role (veya `application-config.ts` içindeki `defaultRoleUniversalIdentifier` üzerinden referans verilen role) göre belirlenir.
+
 </Note>

@@ -62,7 +62,8 @@ Fiecare webhook trimite un HTTP POST cu un corp JSON:
 | `marcaj temporal` | Când a avut loc evenimentul (UTC)                             |
 
 <Note>
-Răspundeți cu un **status HTTP 2xx** (200-299) pentru a confirma primirea. Răspunsurile non-2xx sunt înregistrate ca eșecuri de livrare.
+  Răspundeți cu un **status HTTP 2xx** (200-299) pentru a confirma primirea.
+  Răspunsurile non-2xx sunt înregistrate ca eșecuri de livrare.
 </Note>
 
 ## Validarea Webhook-ului
@@ -86,19 +87,19 @@ Twenty semnează fiecare cerere webhook din motive de securitate. Validați semn
 ### Exemplu (Node.js)
 
 ```javascript
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const timestamp = req.headers['x-twenty-webhook-timestamp'];
 const payload = JSON.stringify(req.body);
-const secret = "your-webhook-secret";
+const secret = 'your-webhook-secret';
 
 const stringToSign = `${timestamp}:${payload}`;
 const expectedSignature = crypto
-  .createHmac("sha256", secret)
+  .createHmac('sha256', secret)
   .update(stringToSign)
-  .digest("hex");
+  .digest('hex');
 
-const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+const isValid = expectedSignature === req.headers['x-twenty-webhook-signature'];
 ```
 
 ## Webhook-uri vs Fluxuri de lucru

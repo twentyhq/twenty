@@ -1,7 +1,8 @@
 ---
 title: Color Scheme
-icon: "palette"
+icon: 'palette'
 ---
+
 <Frame>
   <img src="/images/user-guide/fields/field.png" alt="Header" />
 </Frame>
@@ -14,15 +15,10 @@ Represents different color schemes and is specially tailored for light and dark 
 <Tab title="Usage">
 
 ```jsx
-import { ColorSchemeCard } from "twenty-ui/display";
+import { ColorSchemeCard } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-  return (
-      <ColorSchemeCard
-      variant="Dark"
-      selected={true}
-      />
-  );
+  return <ColorSchemeCard variant="Dark" selected={true} />;
 };
 ```
 
@@ -30,14 +26,11 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-
-| Props | Type | Description | Default |
-|-------|------|-------------|--------|
-| variant | string | The color scheme variant. Options include `Dark`, `Light`, and `System` | light |
-| selected | boolean | If `true`, displays a checkmark to indicate the selected color scheme |  |
-| additional props | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props |  |
-
-
+| Props            | Type                                    | Description                                                             | Default |
+| ---------------- | --------------------------------------- | ----------------------------------------------------------------------- | ------- |
+| variant          | string                                  | The color scheme variant. Options include `Dark`, `Light`, and `System` | light   |
+| selected         | boolean                                 | If `true`, displays a checkmark to indicate the selected color scheme   |         |
+| additional props | `React.ComponentPropsWithoutRef<'div'>` | Standard HTML `div` element props                                       |         |
 
 </Tab>
 
@@ -51,13 +44,10 @@ Allows users to choose between different color schemes.
 <Tab title="Usage">
 
 ```jsx
-import { ColorSchemePicker } from "twenty-ui/display";
+import { ColorSchemePicker } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-  return <ColorSchemePicker
-  value="Dark"
-  onChange
-  />;
+  return <ColorSchemePicker value="Dark" onChange />;
 };
 ```
 
@@ -65,15 +55,11 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| value | `Color Scheme` | The currently selected color scheme |
-| onChange | function | The callback function you want to trigger when a user selects a color scheme |
-
-
+| Props    | Type           | Description                                                                  |
+| -------- | -------------- | ---------------------------------------------------------------------------- |
+| value    | `Color Scheme` | The currently selected color scheme                                          |
+| onChange | function       | The callback function you want to trigger when a user selects a color scheme |
 
 </Tab>
 
 </Tabs>
-

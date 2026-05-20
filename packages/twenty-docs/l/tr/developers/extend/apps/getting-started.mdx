@@ -6,9 +6,9 @@ description: İlk Twenty uygulamanızı dakikalar içinde oluşturun.
 
 ## Ön Gereksinimler
 
-* **Node.js 24+** — [Buradan indirin](https://nodejs.org/)
-* **Yarn 4** — Corepack aracılığıyla Node ile birlikte gelir. Etkinleştirin: `corepack enable`
-* **Docker** — [Buradan indirin](https://www.docker.com/products/docker-desktop/). Yerel bir Twenty sunucusunu çalıştırmak için gereklidir. Zaten başka bir yerde Twenty çalıştırıyorsanız atlayın.
+- **Node.js 24+** — [Buradan indirin](https://nodejs.org/)
+- **Yarn 4** — Corepack aracılığıyla Node ile birlikte gelir. Etkinleştirin: `corepack enable`
+- **Docker** — [Buradan indirin](https://www.docker.com/products/docker-desktop/). Yerel bir Twenty sunucusunu çalıştırmak için gereklidir. Zaten başka bir yerde Twenty çalıştırıyorsanız atlayın.
 
 Bir Twenty uygulaması oluşturmanın üç aşaması vardır. İskelet oluşturucu bunları tek bir sorunsuz akış komutuna indirger, ancak her aşama ayrı bir kavramdır — bir şeyler başarısız olduğunda hangi aşamada olduğunuzu bilmek neyi düzeltmeniz gerektiğini söyler.
 
@@ -42,38 +42,53 @@ Uygulamanızın eşitleme yapacağı bir Twenty sunucusuna ihtiyacı vardır. Su
 
 > **Yerel bir Twenty örneği kurmak ister misiniz?**
 
-* **Evet (önerilir)** — `twentycrm/twenty-app-dev` Docker imajını çeker ve `2020` portunda başlatır. Önce Docker'ın çalıştığından emin olun.
-* **Hayır** — Zaten bağlanmak istediğiniz bir Twenty sunucunuz varsa bunu seçin. Bunu daha sonra `yarn twenty remote add` ile bağlayabilirsiniz.
+- **Evet (önerilir)** — `twentycrm/twenty-app-dev` Docker imajını çeker ve `2020` portunda başlatır. Önce Docker'ın çalıştığından emin olun.
+- **Hayır** — Zaten bağlanmak istediğiniz bir Twenty sunucunuz varsa bunu seçin. Bunu daha sonra `yarn twenty remote add` ile bağlayabilirsiniz.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Yerel örnek başlatılsın mı?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Yerel örnek başlatılsın mı?"
+  />
 </div>
 
 Sunucu çalışır duruma geldiğinde, oturum açmak için bir tarayıcı açılır. Önceden eklenmiş demo hesabını kullanın:
 
-* **E-posta:** `tim@apple.dev`
-* **Parola:** `tim@apple.dev`
+- **E-posta:** `tim@apple.dev`
+- **Parola:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Twenty oturum açma ekranı" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Twenty oturum açma ekranı"
+  />
 </div>
 
 Sonraki ekranda **Authorize**'a tıklayın — bu işlem CLI'nin çalışma alanınıza erişmesine izin verir.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Twenty CLI yetkilendirme ekranı" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Twenty CLI yetkilendirme ekranı"
+  />
 </div>
 
 Terminaliniz her şeyin kurulduğunu onaylayacaktır.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Uygulama iskeleti başarıyla oluşturuldu" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Uygulama iskeleti başarıyla oluşturuldu"
+  />
 </div>
 
 **Bu aşamadan sonra:** [http://localhost:2020](http://localhost:2020) adresinde çalışan bir Twenty sunucunuz ve ona eşitleme yapmak için yetkilendirilmiş bir CLI'ınız olur.
 
 <Note>
-Docker yüklü değilse veya çalışmıyorsa, iskelet oluşturucu işletim sisteminiz için doğru başlatma komutunu söyleyecektir. Docker çalışır duruma geldiğinde, `yarn twenty server start` ile devam edebilirsiniz — yeniden iskelet oluşturmaya gerek yok.
+  Docker yüklü değilse veya çalışmıyorsa, iskelet oluşturucu işletim sisteminiz
+  için doğru başlatma komutunu söyleyecektir. Docker çalışır duruma geldiğinde,
+  `yarn twenty server start` ile devam edebilirsiniz — yeniden iskelet
+  oluşturmaya gerek yok.
 </Note>
 
 ---
@@ -91,26 +106,38 @@ Bu, `src/` dizinini izler, her değişiklikte yeniden oluşturur ve sonucu sunuc
 
 Daha ayrıntılı çıktı (derleme günlükleri, eşitleme istekleri, hata izleri) için `--verbose` ekleyin.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Geliştirme modu terminal çıktısı" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.png"
+    alt="Geliştirme modu terminal çıktısı"
+  />
 </div>
 
 [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) adresini açın. Uygulamanızı **Your Apps** altında görmelisiniz.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Your Apps listesinde My twenty app gösteriliyor" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Your Apps listesinde My twenty app gösteriliyor"
+  />
 </div>
 
 **My twenty app**'e tıklayarak **application registration**'ı görüntüleyin — uygulamanızı tanımlayan (ad, tanımlayıcı, OAuth kimlik bilgileri, kaynak) sunucu düzeyinde bir kayıttır. Tek bir kayıt, aynı sunucudaki birden çok çalışma alanına kurulabilir.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Uygulama kaydı ayrıntıları" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Uygulama kaydı ayrıntıları"
+  />
 </div>
 
 Çalışma alanındaki kurulumu görmek için **View installed app**'e tıklayın. **About** sekmesi sürümü ve yönetim seçeneklerini gösterir.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Yüklü uygulama" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Yüklü uygulama"
+  />
 </div>
 
 **Bu aşamadan sonra:** canlı bir geliştirme döngünüz olur. `src/` içindeki herhangi bir dosyayı düzenleyin; arayüzde görünür.
@@ -131,7 +158,11 @@ yarn twenty dev --once
 Her iki mod da geliştirme modunda bir sunucuya ve kimliği doğrulanmış bir uzak uca ihtiyaç duyar.
 
 <Warning>
-Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan Twenty örneklerinde kullanılabilir. Üretim örnekleri, geliştirme eşitleme isteklerini reddeder — üretim sunucularına dağıtmak için `yarn twenty deploy` kullanın. Bkz. [Uygulamaları Yayımlama](/l/tr/developers/extend/apps/publishing).
+  Geliştirme modu yalnızca geliştirme ortamında (`NODE_ENV=development`) çalışan
+  Twenty örneklerinde kullanılabilir. Üretim örnekleri, geliştirme eşitleme
+  isteklerini reddeder — üretim sunucularına dağıtmak için `yarn twenty deploy`
+  kullanın. Bkz. [Uygulamaları
+  Yayımlama](/l/tr/developers/extend/apps/publishing).
 </Warning>
 
 ---
@@ -258,16 +289,17 @@ yarn add twenty-sdk twenty-client-sdk
 Artık `yarn twenty dev`, `yarn twenty server start` ve diğerlerini çalıştırabilirsiniz.
 
 <Note>
-`twenty-sdk`'yi global olarak kurmayın — her uygulama kendi sürümünü kullansın diye proje bazında sabitleyin.
+  `twenty-sdk`'yi global olarak kurmayın — her uygulama kendi sürümünü kullansın
+  diye proje bazında sabitleyin.
 </Note>
 
 ---
 
 ## Sorun Giderme
 
-* **Docker hataları** — `yarn twenty server start` öncesinde Docker Desktop'ın (veya daemon'ın) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
-* **Yanlış Node sürümü** — 24+ gerekir. `node -v` ile kontrol edin.
-* **Yarn 4 eksik** — `corepack enable` çalıştırın.
-* **Bağımlılıklar bozuk** — `rm -rf node_modules && yarn install`.
+- **Docker hataları** — `yarn twenty server start` öncesinde Docker Desktop'ın (veya daemon'ın) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
+- **Yanlış Node sürümü** — 24+ gerekir. `node -v` ile kontrol edin.
+- **Yarn 4 eksik** — `corepack enable` çalıştırın.
+- **Bağımlılıklar bozuk** — `rm -rf node_modules && yarn install`.
 
 Takıldınız mı? [Twenty Discord](https://discord.com/channels/1130383047699738754/1130386664812982322) üzerinde yardım isteyin.

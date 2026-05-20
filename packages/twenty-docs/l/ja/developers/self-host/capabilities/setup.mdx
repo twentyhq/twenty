@@ -5,7 +5,8 @@ title: セットアップ
 # 構成管理
 
 <Warning>
-  **初めてインストールしますか？** [Docker Compose インストールガイド](/l/ja/developers/self-host/capabilities/docker-compose)に従ってTwentyを起動し、その後はここに戻り構成してください。
+  **初めてインストールしますか？** [Docker Compose
+  インストールガイド](/l/ja/developers/self-host/capabilities/docker-compose)に従ってTwentyを起動し、その後はここに戻り構成してください。
 </Warning>
 
 Twentyは、異なる展開ニーズに合わせて**2つの構成モード**を提供します:
@@ -26,18 +27,20 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. 変更はすぐに（マルチコンテナ展開の場合、15秒以内に）効果が出ます。
 
 <Warning>
-  **マルチコンテナ展開:** データベース構成を使用する場合 (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)、サーバーとワーカーコンテナの両方が同じデータベースから読み込みます。 管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
+  **マルチコンテナ展開:** データベース構成を使用する場合
+  (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)、サーバーとワーカーコンテナの両方が同じデータベースから読み込みます。
+  管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
   管理パネルの変更は両方に自動的に影響し、コンテナ間で環境変数を重複させる必要がなくなります（インフラストラクチャの変数を除く）。
 </Warning>
 
 **管理パネルを通じて構成できること:**
 
-* **認証** - Google/Microsoft OAuth、パスワード設定
-* **メール** - SMTP設定、テンプレート、検証
-* **ストレージ** - S3構成、ローカルストレージパス
-* **統合** - Gmail、Googleカレンダー、Microsoftサービス
-* **ワークフローとレート制限** - 実行制限、APIスロットリング
-* **さらに多くのこと...**
+- **認証** - Google/Microsoft OAuth、パスワード設定
+- **メール** - SMTP設定、テンプレート、検証
+- **ストレージ** - S3構成、ローカルストレージパス
+- **統合** - Gmail、Googleカレンダー、Microsoftサービス
+- **ワークフローとレート制限** - 実行制限、APIスロットリング
+- **さらに多くのこと...**
 
 ![管理パネル構成変数](/images/user-guide/setup/admin-panel-config-variables.png)
 
@@ -46,7 +49,8 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
   各変数は、**設定 → 管理パネル → 構成変数** で説明付きでドキュメント化されています。
   データベース接続 (`PG_DATABASE_URL`)、サーバーURL (`SERVER_URL`)、アプリの秘密キー (`APP_SECRET`) など、一部のインフラ設定は `.env` ファイルを介してのみ構成可能です。
 
-  [ 完全な技術リファレンス →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+[ 完全な技術リファレンス →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+
 </Warning>
 
 ## 2. 環境のみの構成
@@ -72,10 +76,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* Twenty の各インスタンスにつき 1 つのワークスペース
-* 最初のユーザーは自動的にフル権限の管理者になります（`canImpersonate` と `canAccessFullAdminPanel`）
-* 最初のワークスペース作成後は新規サインアップが無効になります
-* シンプルな URL 構造: `https://your-domain.com`
+- Twenty の各インスタンスにつき 1 つのワークスペース
+- 最初のユーザーは自動的にフル権限の管理者になります（`canImpersonate` と `canAccessFullAdminPanel`）
+- 最初のワークスペース作成後は新規サインアップが無効になります
+- シンプルな URL 構造: `https://your-domain.com`
 
 ### マルチワークスペースモードの有効化
 
@@ -88,14 +92,15 @@ DEFAULT_SUBDOMAIN=app  # default value
 
 **シングルワークスペースモードとの主な違い:**
 
-* 同一インスタンス上に複数のワークスペースを作成できます
-* 各ワークスペースに専用のサブドメインが割り当てられます（例: `sales.your-domain.com`、`marketing.your-domain.com`）
-* ユーザーは `{DEFAULT_SUBDOMAIN}.your-domain.com` でサインアップおよびログインします（例: `app.your-domain.com`）
-* 管理者権限は自動付与されません—各ワークスペースの最初のユーザーは一般ユーザーです
-* サブドメインやカスタムドメインなどのワークスペース固有の設定がワークスペース設定で利用可能になります
+- 同一インスタンス上に複数のワークスペースを作成できます
+- 各ワークスペースに専用のサブドメインが割り当てられます（例: `sales.your-domain.com`、`marketing.your-domain.com`）
+- ユーザーは `{DEFAULT_SUBDOMAIN}.your-domain.com` でサインアップおよびログインします（例: `app.your-domain.com`）
+- 管理者権限は自動付与されません—各ワークスペースの最初のユーザーは一般ユーザーです
+- サブドメインやカスタムドメインなどのワークスペース固有の設定がワークスペース設定で利用可能になります
 
 <Warning>
-  **環境専用の設定:** `IS_MULTIWORKSPACE_ENABLED` は `.env` ファイルでのみ設定でき、再起動が必要です。 管理パネルからは変更できません。
+  **環境専用の設定:** `IS_MULTIWORKSPACE_ENABLED` は `.env`
+  ファイルでのみ設定でき、再起動が必要です。 管理パネルからは変更できません。
 </Warning>
 
 ### マルチワークスペース向けの DNS 構成
@@ -126,40 +131,41 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 2. 新しいプロジェクトを作成するか既存のプロジェクトを選択
 3. 以下のAPIを有効にします:
 
-* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
-* [GoogleカレンダーAPI](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
-* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [GoogleカレンダーAPI](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
 
 ### OAuthの構成
 
 1. [資格情報](https://console.cloud.google.com/apis/credentials)にアクセス
 2. OAuth 2.0 クライアントIDを作成
 3. 次のリダイレクトURIを追加:
-   * `https://{your-domain}/auth/google/redirect` (SSO用)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (統合用)
+   - `https://{your-domain}/auth/google/redirect` (SSO用)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (統合用)
 
 ### Twentyで構成
 
 1. **設定 → 管理パネル → 構成変数** に移動
 2. **Google Auth** セクションを見つけます
 3. 次の変数を設定:
-   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
-   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
-   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
-   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
-   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+  を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
 **必要なスコープ** (自動的に構成される):
 [関連ソースコードを見る](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 
-* `https://www.googleapis.com/auth/calendar.events`
-* `https://www.googleapis.com/auth/gmail.readonly`
-* `https://www.googleapis.com/auth/profile.emails.read`
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
 
 ### アプリがテストモードの場合
 
@@ -170,7 +176,10 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ## Microsoft 365 統合
 
 <Warning>
-  カレンダーおよびメッセージングAPIを使用するためには、[Microsoft 365 ライセンス](https://admin.microsoft.com/Adminportal/Home)が必要です。 They will not be able to sync their account on Twenty without one. それがない場合、Twenty でアカウントを同期できません。
+  カレンダーおよびメッセージングAPIを使用するためには、[Microsoft 365
+  ライセンス](https://admin.microsoft.com/Adminportal/Home)が必要です。 They
+  will not be able to sync their account on Twenty without one.
+  それがない場合、Twenty でアカウントを同期できません。
 </Warning>
 
 ### Microsoft Azureでプロジェクトを作成
@@ -181,14 +190,14 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 
 Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にします:
 
-* Microsoft Graph: Mail.ReadWrite
-* Microsoft Graph: Mail.Send
-* Microsoft Graph: Calendars.Read
-* Microsoft Graph: User.Read
-* Microsoft Graph: openid
-* Microsoft Graph: email
-* Microsoft Graph: profile
-* Microsoft Graph: offline_access
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
 
 注: "Mail.ReadWrite" と "Mail.Send" は、ワークフローアクションを使用してメールを送信する場合に必須です。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。 メールを受信するだけの場合は、"Mail.Read"を使用できます。
 
@@ -196,37 +205,38 @@ Microsoft Azureコンソールで"権限"の欄で以下のAPIを有効にしま
 
 プロジェクトに次のリダイレクトURIを追加する必要があります:
 
-* `https://{your-domain}/auth/microsoft/redirect` マイクロソフトSSO を使用する場合
-* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+- `https://{your-domain}/auth/microsoft/redirect` マイクロソフトSSO を使用する場合
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Twentyで構成
 
 1. **設定 → 管理パネル → 構成変数** に移動
 2. **Microsoft Auth** セクションを見つけます
 3. 次の変数を設定:
-   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
-   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
-   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
-   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
-   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+  を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
 ### スコープを構成
 
 [関連ソースコードを見る](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
-* 'openid'
-* 'メール'
-* 'プロフィール'
-* 'offline_access'
-* 'Mail.ReadWrite'
-* 'Mail.Send'
-* 'Calendars.Read'
+- 'openid'
+- 'メール'
+- 'プロフィール'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### アプリがテストモードの場合
 
@@ -266,6 +276,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_PORT=465
     * EMAIL_SMTP_USER=gmail_email_address
     * EMAIL_SMTP_PASSWORD='gmail_app_password'
+
   </ArticleTab>
 
   <ArticleTab>
@@ -276,6 +287,7 @@ yarn command:prod cron:workflow:automated-cron-trigger
     * EMAIL_SMTP_PORT=587
     * EMAIL_SMTP_USER=office365_email_address
     * EMAIL_SMTP_PASSWORD='office365_password'
+
   </ArticleTab>
 
   <ArticleTab>
@@ -287,11 +299,13 @@ yarn command:prod cron:workflow:automated-cron-trigger
       * EMAIL_DRIVER=smtp
       * EMAIL_SMTP_HOST=localhost
       * EMAIL_SMTP_PORT=2525
+
   </ArticleTab>
 </ArticleTabs>
 
 <Warning>
-  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` を設定した場合、これらの変数を `.env` ファイルに追加してください。
+  **環境専用モード:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+  を設定した場合、これらの変数を `.env` ファイルに追加してください。
 </Warning>
 
 ## Logic Functions
@@ -299,16 +313,20 @@ yarn command:prod cron:workflow:automated-cron-trigger
 Twenty supports logic functions for workflows and custom logic. 実行環境は、`SERVERLESS_TYPE` 環境変数で設定されます。
 
 <Warning>
-  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. 開発では、信頼できるコードにのみ使用してください。 信頼できないコードを扱う本番デプロイでは、`SERVERLESS_TYPE=LAMBDA` または `SERVERLESS_TYPE=DISABLED` の使用を強く推奨します。
+  **Security Notice:** The local driver (`SERVERLESS_TYPE=LOCAL`) runs code
+  directly on the host in a Node.js process with no sandboxing.
+  開発では、信頼できるコードにのみ使用してください。
+  信頼できないコードを扱う本番デプロイでは、`SERVERLESS_TYPE=LAMBDA` または
+  `SERVERLESS_TYPE=DISABLED` の使用を強く推奨します。
 </Warning>
 
 ### 利用可能なドライバー
 
-| ドライバー  | 環境変数                       | ユースケース                           | セキュリティレベル       |
-| ------ | -------------------------- | -------------------------------- | --------------- |
-| 無効     | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | 該当なし            |
-| ローカル   | `SERVERLESS_TYPE=LOCAL`    | 開発および信頼できる環境                     | 低（サンドボックスなし）    |
-| Lambda | `SERVERLESS_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境                 | 高（ハードウェアレベルの分離） |
+| ドライバー | 環境変数                   | ユースケース                     | セキュリティレベル             |
+| ---------- | -------------------------- | -------------------------------- | ------------------------------ |
+| 無効       | `SERVERLESS_TYPE=DISABLED` | Disable logic functions entirely | 該当なし                       |
+| ローカル   | `SERVERLESS_TYPE=LOCAL`    | 開発および信頼できる環境         | 低（サンドボックスなし）       |
+| Lambda     | `SERVERLESS_TYPE=LAMBDA`   | 信頼できないコードを扱う本番環境 | 高（ハードウェアレベルの分離） |
 
 ### 推奨構成
 
@@ -335,5 +353,7 @@ SERVERLESS_TYPE=DISABLED
 ```
 
 <Note>
-  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function will return an error. This is useful if you want to run Twenty without logic function capabilities.
+  When using `SERVERLESS_TYPE=DISABLED`, any attempt to execute a logic function
+  will return an error. This is useful if you want to run Twenty without logic
+  function capabilities.
 </Note>

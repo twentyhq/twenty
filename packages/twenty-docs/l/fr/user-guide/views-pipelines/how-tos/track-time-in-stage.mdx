@@ -4,7 +4,9 @@ description: Surveillez la vélocité des affaires en suivant le moment où les 
 ---
 
 <Tip>
-  Voici un exemple de création de [champs de formule](/l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields) à l'aide de Workflows — plus précisément des calculs de dates.
+  Voici un exemple de création de [champs de
+  formule](/l/fr/user-guide/workflows/how-tos/crm-automations/formula-fields) à
+  l'aide de Workflows — plus précisément des calculs de dates.
 </Tip>
 
 Suivre le moment où les opportunités entrent dans chaque étape vous aide à identifier les goulots d'étranglement et à mesurer la vélocité des affaires.
@@ -15,46 +17,47 @@ Ce guide vous explique comment configurer des champs personnalisés et un workfl
 
 Vous avez besoin de deux types de champs pour chaque étape :
 
-* **Champs Date et heure** : Enregistrer le moment où l'opportunité est entrée dans chaque étape
-* **Champs numériques** : Stocker le nombre de jours que l'opportunité a passés dans chaque étape
+- **Champs Date et heure** : Enregistrer le moment où l'opportunité est entrée dans chaque étape
+- **Champs numériques** : Stocker le nombre de jours que l'opportunité a passés dans chaque étape
 
 ### Créez les champs "Dernière entrée"
 
 1. Allez dans **Paramètres → Modèle de données → Opportunités**
 2. Pour chaque étape, cliquez sur **+ Ajouter un champ** et configurez :
-   * **Nom** : Dernière entrée [Nom de l'étape] (par exemple, "Dernière entrée Nouveau", "Dernière entrée Qualifiée")
-   * **Type** : Date et heure
-   * **Description** : Horodatage du moment où l'opportunité est entrée dans cette étape
+   - **Nom** : Dernière entrée [Nom de l'étape] (par exemple, "Dernière entrée Nouveau", "Dernière entrée Qualifiée")
+   - **Type** : Date et heure
+   - **Description** : Horodatage du moment où l'opportunité est entrée dans cette étape
 3. Cliquez sur **Enregistrer**
 
 Créez ces champs :
 
-* Dernière entrée Nouveau
-* Dernière entrée Qualifiée
-* Dernière entrée Réunion
-* Dernière entrée Proposition
-* Dernière entrée Négociation
-* Dernière entrée Clôturée gagnée
-* Dernière entrée Clôturée perdue
+- Dernière entrée Nouveau
+- Dernière entrée Qualifiée
+- Dernière entrée Réunion
+- Dernière entrée Proposition
+- Dernière entrée Négociation
+- Dernière entrée Clôturée gagnée
+- Dernière entrée Clôturée perdue
 
 ### Créez les champs "Jours dans l'étape"
 
 1. Pour chaque étape, cliquez sur **+ Ajouter un champ** et configurez :
-   * **Nom** : Jours dans [Nom de l'étape] (par exemple, "Jours dans Nouveau", "Jours dans Qualifiée")
-   * **Type** : Numérique
-   * **Description** : Nombre de jours passés dans cette étape
+   - **Nom** : Jours dans [Nom de l'étape] (par exemple, "Jours dans Nouveau", "Jours dans Qualifiée")
+   - **Type** : Numérique
+   - **Description** : Nombre de jours passés dans cette étape
 2. Cliquez sur **Enregistrer**
 
 Créez ces champs :
 
-* Jours dans Nouveau
-* Jours dans Qualifiée
-* Jours dans Réunion
-* Jours dans Proposition
-* Jours dans Négociation
+- Jours dans Nouveau
+- Jours dans Qualifiée
+- Jours dans Réunion
+- Jours dans Proposition
+- Jours dans Négociation
 
 <Note>
-  Vous n'avez pas besoin de champs "Jours dans" pour Clôturée gagnée et Clôturée perdue, car ce sont des étapes finales.
+  Vous n'avez pas besoin de champs "Jours dans" pour Clôturée gagnée et Clôturée
+  perdue, car ce sont des étapes finales.
 </Note>
 
 ### Facultatif : rendre les champs en lecture seule
@@ -70,8 +73,8 @@ Si vous ne souhaitez pas que les utilisateurs modifient manuellement ces champs 
 
 Ce seul workflow gère les deux tâches :
 
-* Enregistre l'horodatage lors de l'entrée dans une nouvelle étape
-* Calcule le nombre de jours passés dans l'étape précédente
+- Enregistre l'horodatage lors de l'entrée dans une nouvelle étape
+- Calcule le nombre de jours passés dans l'étape précédente
 
 ### Créez le workflow
 
@@ -88,7 +91,10 @@ Ce seul workflow gère les deux tâches :
 ### Ajoutez des branches pour chaque étape
 
 <Note>
-  Pour créer une nouvelle branche, faites un clic droit sur le canevas du workflow et cliquez sur **Nouvelle action**. Ensuite, reliez cette action au nœud précédent en faisant glisser la flèche du nœud précédent vers cette nouvelle action.
+  Pour créer une nouvelle branche, faites un clic droit sur le canevas du
+  workflow et cliquez sur **Nouvelle action**. Ensuite, reliez cette action au
+  nœud précédent en faisant glisser la flèche du nœud précédent vers cette
+  nouvelle action.
 </Note>
 
 ---
@@ -107,9 +113,9 @@ export const main = async (): Promise<object> => {
 ```
 
 3. Ajoutez une action **Mettre à jour l'enregistrement** :
-   * Enregistrement : l'opportunité déclenchante
-   * Champ : Dernière entrée Nouveau
-   * Valeur : `now` depuis le nœud Code
+   - Enregistrement : l'opportunité déclenchante
+   - Champ : Dernière entrée Nouveau
+   - Valeur : `now` depuis le nœud Code
 
 ---
 
@@ -140,10 +146,10 @@ export const main = async (params: {
 
 3. Configurez l'entrée du nœud Code : associez `lastEnteredPreviousStage` au champ **Dernière entrée Nouveau**
 4. Ajoutez une action **Mettre à jour l'enregistrement** :
-   * Enregistrement : l'opportunité déclenchante
-   * Champs à mettre à jour:
-     * Dernière entrée Qualifiée = `now`
-     * Jours dans Nouveau = `daysInPreviousStage`
+   - Enregistrement : l'opportunité déclenchante
+   - Champs à mettre à jour:
+     - Dernière entrée Qualifiée = `now`
+     - Jours dans Nouveau = `daysInPreviousStage`
 
 ---
 
@@ -174,10 +180,10 @@ export const main = async (params: {
 
 3. Configurez l'entrée du nœud Code : associez `lastEnteredPreviousStage` au champ **Dernière entrée Qualifiée**
 4. Ajoutez une action **Mettre à jour l'enregistrement** :
-   * Enregistrement : l'opportunité déclenchante
-   * Champs à mettre à jour:
-     * Dernière entrée Réunion = `now`
-     * Jours dans Qualifiée = `daysInPreviousStage`
+   - Enregistrement : l'opportunité déclenchante
+   - Champs à mettre à jour:
+     - Dernière entrée Réunion = `now`
+     - Jours dans Qualifiée = `daysInPreviousStage`
 
 ---
 
@@ -226,6 +232,6 @@ Cela affiche le temps moyen que les affaires passent à chaque étape.
 
 ## Connexes
 
-* [Workflows](/l/fr/user-guide/workflows/overview) — principes de l'automatisation
-* [Comment créer des champs personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-fields) — configuration des champs
-* [Vues Kanban](/l/fr/user-guide/views-pipelines/capabilities/kanban-views) — agrégations
+- [Workflows](/l/fr/user-guide/workflows/overview) — principes de l'automatisation
+- [Comment créer des champs personnalisés](/l/fr/user-guide/data-model/how-tos/create-custom-fields) — configuration des champs
+- [Vues Kanban](/l/fr/user-guide/views-pipelines/capabilities/kanban-views) — agrégations

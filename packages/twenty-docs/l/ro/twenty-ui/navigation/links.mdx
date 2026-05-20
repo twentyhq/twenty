@@ -38,10 +38,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Proprietăți">
-
 
 | Proprietăți | Tip               | Descriere                                               |
 | ----------- | ----------------- | ------------------------------------------------------- |
@@ -49,9 +47,6 @@ export const MyComponent = () => {
 | href        | string            | URL-ul sau calea țintă pentru link                      |
 | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link |
 | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului             |
-
-
-
 
 </Tab>
 
@@ -65,12 +60,12 @@ Un component de link stilizat pentru afișarea linkurilor.
 <Tab title="Utilizare">
 
 ```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RawLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -81,13 +76,10 @@ export const MyComponent = () => {
     </Router>
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="Proprietăți">
-
 
 | Proprietăți | Tip               | Descriere                                               |
 | ----------- | ----------------- | ------------------------------------------------------- |
@@ -95,9 +87,6 @@ export const MyComponent = () => {
 | href        | string            | URL-ul sau calea țintă pentru link                      |
 | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link |
 | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului             |
-
-
-
 
 </Tab>
 </Tabs>
@@ -110,12 +99,12 @@ Un link stilizat cu margini rotunjite cu un component Chip pentru linkuri.
 <Tab title="Utilizare">
 
 ```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RoundedLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -132,14 +121,11 @@ export const MyComponent = () => {
 
 <Tab title="Proprietăți">
 
-
 | Proprietăți | Tip               | Descriere                                               |
 | ----------- | ----------------- | ------------------------------------------------------- |
 | href        | șir               | URL-ul sau calea țintă pentru link                      |
 | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului             |
 | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link |
-
-
 
 </Tab>
 </Tabs>
@@ -152,8 +138,8 @@ Linkuri sociale stilizate, cu suport pentru diverse tipuri de linkuri sociale, c
 <Tab title="Utilizare">
 
 ```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { SocialLink } from 'twenty-ui/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   return (
@@ -170,16 +156,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți | Tip               | Descriere                                                                  |
 | ----------- | ----------------- | -------------------------------------------------------------------------- |
 | href        | string            | URL-ul sau calea țintă pentru link                                         |
 | copii       | `React.ReactNode` | Conținutul de afișat în interiorul linkului                                |
 | tip         | string            | Tipul linkurilor sociale. Opțiunile includ: `url`, `LinkedIn` și `Twitter` |
 | laClick     | funcție           | Funcția de callback care se declanșează la clic pe link                    |
-
-
-
 
 </Tab>
 </Tabs>

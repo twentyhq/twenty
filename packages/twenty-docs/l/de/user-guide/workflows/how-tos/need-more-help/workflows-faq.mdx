@@ -11,6 +11,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     **Lösung**: Wenden Sie sich an Ihren Workspace-Administrator, damit er Ihnen unter **Einstellungen → Mitglieder → Rollen** Zugriff auf Workflows gewährt.
 
     Wenn Sie den Bereich Workflows in Ihrer Seitenleiste überhaupt nicht sehen, bestätigt dies ein Berechtigungsproblem.
+
   </Accordion>
 
   <Accordion title="Warum sehe ich die Schaltfläche für manuelle Workflows nicht in der oberen Navigationsleiste?">
@@ -23,6 +24,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     **Zum Überprüfen**: Öffnen Sie den Workflow → klicken Sie auf den Trigger → prüfen Sie, dass "Navbar placement" auf "Pinned" gesetzt ist.
 
     Unabhängig von den Navbar-Einstellungen können Sie manuelle Workflows jederzeit über **Cmd + K** (oder **Ctrl + K**) aufrufen.
+
   </Accordion>
 
   <Accordion title="Was ist der Unterschied zwischen manuellen Single-, Global- und Bulk-Triggern?">
@@ -37,6 +39,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * **Bulk**: Verwenden Sie dies, wenn Sie Datensätze gemeinsam verarbeiten oder den Credit-Verbrauch optimieren möchten (erfordert die Iterator-Aktion)
 
     Siehe [Workflow-Trigger](/l/de/user-guide/workflows/capabilities/workflow-triggers) für Details.
+
   </Accordion>
 
   <Accordion title="Ich sehe keinen If/Else-Knoten. Was sollte ich tun?">
@@ -55,6 +58,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     Nur die Verzweigung, deren Filterbedingung erfüllt ist, führt die nachfolgenden Aktionen aus.
 
     Siehe [Verzweigungen verwenden](/l/de/user-guide/workflows/capabilities/workflow-branches) für eine Schritt-für-Schritt-Anleitung.
+
   </Accordion>
 
   <Accordion title="Laufen Workflow-Verzweigungen parallel?">
@@ -65,6 +69,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Legen Sie gegensätzliche Bedingungen fest (z. B., Verzweigung A: status = "Open", Verzweigung B: status ≠ "Open")
 
     Verzweigungen, deren Filterbedingung fehlschlägt, werden nicht weiter ausgeführt; andere laufen weiter.
+
   </Accordion>
 
   <Accordion title="Kann ich Verzweigungen wieder zusammenführen?">
@@ -76,6 +81,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     3. Ziehen Sie Verbindungen vom Ende jeder Verzweigung zu diesem neuen Schritt
 
     Der zusammengeführte Schritt wird ausgeführt, nachdem alle verbundenen Verzweigungen abgeschlossen sind.
+
   </Accordion>
 
   <Accordion title="Wie lautet das Limit für die Ergebnisse von Search Records?">
@@ -87,12 +93,14 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Ziehen Sie die Verwendung der API für Massenoperationen in Betracht
 
     Für die meisten Workflows sind 200 Datensätze ausreichend. Wenn Sie dieses Limit regelmäßig erreichen, sollten Sie Ihre Automatisierung neu strukturieren.
+
   </Accordion>
 
   <Accordion title="Kann ich Personen in Workflow-E-Mails in CC setzen?">
     **Noch nicht.** CC- und BCC-Felder für die Aktion "Send Email" stehen auf unserer Roadmap.
 
     **Aktuelle Problemumgehung**: Fügen Sie mehrere "Send Email"-Aktionen hinzu, um an zusätzliche Empfänger zu senden, oder verwenden Sie einen HTTP Request, um über einen externen E-Mail-Dienst zu senden, der CC unterstützt.
+
   </Accordion>
 
   <Accordion title="Wie verwende ich Ausgaben aus vorherigen Schritten?">
@@ -108,6 +116,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Code-Ausgabe: `{{code.calculatedValue}}`
 
     Fahren Sie in der Aktionskonfiguration mit der Maus über ein beliebiges Feld, um verfügbare Variablen aus vorherigen Schritten zu sehen.
+
   </Accordion>
 
   <Accordion title="Warum schlägt mein Iterator fehl?">
@@ -122,6 +131,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     2. Filter: length > 0
     3. Iterator: Wählen Sie `{{searchRecords}}` aus
     4. Aktionen innerhalb des Iterators verwenden `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="Wie lang ist die maximale Ausführungszeit für Code-Aktionen?">
@@ -136,6 +146,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Vermeiden Sie rechenintensive Vorgänge; verwenden Sie für aufwändige Verarbeitung externe Dienste über HTTP Request
     * Optimieren Sie Ihren Code, um die Ausführungszeit zu reduzieren
     * Wenn Sie längere Verarbeitung benötigen, sollten Sie geplante Workflows verwenden, die Daten in Batches verarbeiten
+
   </Accordion>
 
   <Accordion title="Wie lese ich Workflow-Ausführungen?">
@@ -152,6 +163,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * **Daten**: Betrachten Sie Eingabe-/Ausgabedaten in jedem Schritt
 
     Siehe [Workflow-Ausführungen](/l/de/user-guide/workflows/capabilities/workflow-runs) für Details.
+
   </Accordion>
 
   <Accordion title="Warum sehe ich meine Workflow-Ausführungen nicht?">
@@ -171,6 +183,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Staffeln Sie große Batch-Vorgänge zeitlich
     * Verwenden Sie Filter, um die Triggerfrequenz zu reduzieren
     * Planen Sie umfangreiche Workflows außerhalb der Stoßzeiten
+
   </Accordion>
 
   <Accordion title="Wie lauten die Workflow-Rate-Limits?">
@@ -189,6 +202,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Verwenden Sie für große Batches Bulk-Trigger mit Iterator statt Single-Triggern
     * Kombinieren Sie verwandte Automatisierungen in weniger Workflows
     * Verwenden Sie geplante Workflows, um die Last über die Zeit zu verteilen
+
   </Accordion>
 
   <Accordion title="Kann ich eine fehlgeschlagene Workflow-Ausführung erneut ausführen?">
@@ -205,6 +219,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     * Testen Sie gründlich mit einigen Datensätzen, bevor Sie Massenoperationen durchführen
 
     Eine automatische Wiederholungsfunktion steht auf unserer Roadmap für eine zukünftige Version.
+
   </Accordion>
 
   <Accordion title="Sollte ich Workflows vor CSV-Importen deaktivieren?">
@@ -224,6 +239,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     5. **Reaktivieren** Sie die Workflows, wenn Sie fertig sind
 
     **Alternative**: Wenn die Workflows für importierte Daten ausgeführt werden sollen, importieren Sie in kleineren Batches, um innerhalb der Rate-Limits zu bleiben.
+
   </Accordion>
 
   <Accordion title="Wie bereinige ich mein Workflow-Layout?">
@@ -233,6 +249,7 @@ description: Häufig gestellte Fragen zu Workflows in Twenty.
     2. Klicken Sie auf **Tidy up workflow**
 
     Dadurch werden alle Knoten automatisch in ein übersichtliches, organisiertes Layout gebracht.
+
   </Accordion>
 
 </AccordionGroup>

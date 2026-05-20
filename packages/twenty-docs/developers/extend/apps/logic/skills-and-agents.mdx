@@ -1,11 +1,12 @@
 ---
 title: Skills & Agents
 description: Define AI skills and agents for your app.
-icon: "robot"
+icon: 'robot'
 ---
 
 <Warning>
-  Skills and agents are currently in alpha. The feature works but is still evolving.
+  Skills and agents are currently in alpha. The feature works but is still
+  evolving.
 </Warning>
 
 Apps can define AI capabilities that live inside the workspace — reusable skill instructions and agents with custom system prompts.
@@ -22,7 +23,8 @@ export default defineSkill({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'sales-outreach',
   label: 'Sales Outreach',
-  description: 'Guides the AI agent through a structured sales outreach process',
+  description:
+    'Guides the AI agent through a structured sales outreach process',
   icon: 'IconBrain',
   content: `You are a sales outreach assistant. When reaching out to a prospect:
 1. Research the company and recent news
@@ -33,6 +35,7 @@ export default defineSkill({
 ```
 
 Key points:
+
 - `name` is a unique identifier string for the skill (kebab-case recommended).
 - `label` is the human-readable display name shown in the UI.
 - `content` contains the skill instructions — this is the text the AI agent uses.
@@ -51,13 +54,16 @@ export default defineAgent({
   universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   name: 'sales-assistant',
   label: 'Sales Assistant',
-  description: 'Helps the sales team draft outreach emails and research prospects',
+  description:
+    'Helps the sales team draft outreach emails and research prospects',
   icon: 'IconRobot',
-  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+  prompt:
+    'You are a helpful sales assistant. Help users with their questions and tasks.',
 });
 ```
 
 Key points:
+
 - `name` is the unique identifier string for the agent (kebab-case recommended).
 - `label` is the display name shown in the UI.
 - `prompt` is the system prompt that defines the agent's behavior.

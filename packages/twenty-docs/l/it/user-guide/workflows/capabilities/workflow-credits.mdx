@@ -15,7 +15,10 @@ I crediti dei flussi di lavoro sono assegnati in base al ciclo di fatturazione, 
 | **Abbonamento annuale** | 50 crediti all'anno |
 
 <Note>
-5 crediti mensili sono generosi per le automazioni standard. La maggior parte dei team non supererà questo limite con un utilizzo tipico dei flussi di lavoro. I crediti aggiuntivi sono necessari principalmente per le azioni Code avanzate e i flussi di lavoro basati sull'AI.
+  5 crediti mensili sono generosi per le automazioni standard. La maggior parte
+  dei team non supererà questo limite con un utilizzo tipico dei flussi di
+  lavoro. I crediti aggiuntivi sono necessari principalmente per le azioni Code
+  avanzate e i flussi di lavoro basati sull'AI.
 </Note>
 
 ## Come Funziona il Consumo dei Crediti
@@ -24,33 +27,33 @@ I crediti vengono consumati quando i flussi di lavoro vengono eseguiti, non quan
 
 ### Consumo di Crediti per Tipo di Azione
 
-* **Operazioni interne di base**: Consumo di crediti molto basso
-  * Cerca Record
-  * Crea Record
-  * Aggiorna Record
-  * Elimina Record
-  * Azioni del modulo
+- **Operazioni interne di base**: Consumo di crediti molto basso
+  - Cerca Record
+  - Crea Record
+  - Aggiorna Record
+  - Elimina Record
+  - Azioni del modulo
 
-* **Operazioni complesse**: Consumo di crediti più alto
-  * Azioni di codice (esecuzione JavaScript)
-  * Richieste HTTP a servizi esterni
+- **Operazioni complesse**: Consumo di crediti più alto
+  - Azioni di codice (esecuzione JavaScript)
+  - Richieste HTTP a servizi esterni
 
-* **Funzionalità AI**: Consumo di crediti più elevato
-  * Le azioni dell'agente AI consumano crediti in base al modello AI utilizzato
-  * Prompt più complessi e output più lunghi utilizzano più crediti
+- **Funzionalità AI**: Consumo di crediti più elevato
+  - Le azioni dell'agente AI consumano crediti in base al modello AI utilizzato
+  - Prompt più complessi e output più lunghi utilizzano più crediti
 
-* **Azioni Delay**: Consumo di crediti minimo
-  * Il nodo Delay consuma **1 credito** quando viene eseguito
-  * **Nessun credito viene consumato** durante il periodo di attesa
-  * Un ritardo di 5 minuti costa quanto un ritardo di 5 giorni
+- **Azioni Delay**: Consumo di crediti minimo
+  - Il nodo Delay consuma **1 credito** quando viene eseguito
+  - **Nessun credito viene consumato** durante il periodo di attesa
+  - Un ritardo di 5 minuti costa quanto un ritardo di 5 giorni
 
 ### Deduzione in Tempo Reale
 
 I crediti vengono detratti in tempo reale quando i flussi di lavoro vengono eseguiti. Ciò significa:
 
-* I flussi di lavoro di bozza non consumano crediti
-* Solo i flussi di lavoro attivi e in esecuzione utilizzano la tua allocazione di crediti
-* I flussi di lavoro falliti consumano comunque crediti per i passaggi completati
+- I flussi di lavoro di bozza non consumano crediti
+- Solo i flussi di lavoro attivi e in esecuzione utilizzano la tua allocazione di crediti
+- I flussi di lavoro falliti consumano comunque crediti per i passaggi completati
 
 ## Gestione dei Crediti
 
@@ -70,7 +73,7 @@ Se hai bisogno di più crediti oltre alla tua assegnazione del piano:
 
 ## Migliori Pratiche
 
-* **Elaborazione batch**: Usa operazioni in blocco e azioni Iterator in modo efficiente
-* **Ottimizzazione del trigger manuale**: Per i trigger manuali, scegli la disponibilità `Bulk` per elaborare più record in una singola esecuzione del flusso di lavoro
-* Ottimizza le azioni di codice per l'efficienza
-* Elabora in gruppi per ridurre le chiamate individuali alle azioni
+- **Elaborazione batch**: Usa operazioni in blocco e azioni Iterator in modo efficiente
+- **Ottimizzazione del trigger manuale**: Per i trigger manuali, scegli la disponibilità `Bulk` per elaborare più record in una singola esecuzione del flusso di lavoro
+- Ottimizza le azioni di codice per l'efficienza
+- Elabora in gruppi per ridurre le chiamate individuali alle azioni

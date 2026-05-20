@@ -1,10 +1,10 @@
 ---
 title: Overview
 description: Configure the app itself — its identity, default permissions, and what runs at install time.
-icon: "screwdriver-wrench"
+icon: 'screwdriver-wrench'
 ---
 
-A Twenty app's **config layer** is what describes the app *to the platform* — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty *who the app is* and *how to set it up*.
+A Twenty app's **config layer** is what describes the app _to the platform_ — its identity, the permissions it holds, and the code that runs during install or upgrade. These declarations don't add new data shapes or runtime behavior; they tell Twenty _who the app is_ and _how to set it up_.
 
 ```text
 ┌────────────────────────────────────────────────────────┐
@@ -29,14 +29,28 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 ## In this section
 
 <CardGroup cols={2}>
-  <Card title="Application Config" icon="rocket" href="/developers/extend/apps/config/application">
-    `defineApplication` — identity, default role, variables, marketplace metadata.
+  <Card
+    title="Application Config"
+    icon="rocket"
+    href="/developers/extend/apps/config/application"
+  >
+    `defineApplication` — identity, default role, variables, marketplace
+    metadata.
   </Card>
-  <Card title="Roles & Permissions" icon="shield-halved" href="/developers/extend/apps/config/roles">
+  <Card
+    title="Roles & Permissions"
+    icon="shield-halved"
+    href="/developers/extend/apps/config/roles"
+  >
     `defineRole` — declare what your app's logic functions can read and write.
   </Card>
-  <Card title="Install Hooks" icon="wrench" href="/developers/extend/apps/config/install-hooks">
-    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back up data, seed defaults, validate upgrades.
+  <Card
+    title="Install Hooks"
+    icon="wrench"
+    href="/developers/extend/apps/config/install-hooks"
+  >
+    `definePreInstallLogicFunction` and `definePostInstallLogicFunction` — back
+    up data, seed defaults, validate upgrades.
   </Card>
 </CardGroup>
 
@@ -47,5 +61,9 @@ A Twenty app's **config layer** is what describes the app *to the platform* — 
 - **Install Hooks** run during install or upgrade — pre-install before the metadata migration (so it can refuse a risky upgrade), post-install after the migration (so it can seed default data against the new schema).
 
 <Note>
-Install hooks share the [logic function](/developers/extend/apps/logic/logic-functions) runtime — same handler signature, same environment variables, same typed API client — but they're declared with their own define functions and live outside the regular trigger model (HTTP, cron, database events).
+  Install hooks share the [logic
+  function](/developers/extend/apps/logic/logic-functions) runtime — same
+  handler signature, same environment variables, same typed API client — but
+  they're declared with their own define functions and live outside the regular
+  trigger model (HTTP, cron, database events).
 </Note>

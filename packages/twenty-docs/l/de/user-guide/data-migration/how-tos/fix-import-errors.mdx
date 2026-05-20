@@ -16,7 +16,11 @@ Nachdem Sie Ihre Datei hochgeladen und die Spalten zugeordnet haben, validiert T
 3. **Sie können direkt korrigieren** — bearbeiten Sie Zellen direkt in der Import-UI
 4. **Oder Zeilen entfernen** — problematische Datensätze vollständig überspringen
 
-<Note>**Beheben Sie Fehler in der UI.** Sie müssen nicht zu Ihrer Tabellenkalkulation zurückkehren. Bearbeiten Sie Zellen direkt während des Imports, um Zeit zu sparen.</Note>
+<Note>
+  **Beheben Sie Fehler in der UI.** Sie müssen nicht zu Ihrer
+  Tabellenkalkulation zurückkehren. Bearbeiten Sie Zellen direkt während des
+  Imports, um Zeit zu sparen.
+</Note>
 
 ## Schritt-für-Schritt-Fehlerbehebung
 
@@ -48,8 +52,8 @@ Zeilen mit doppelten Werten werden in der Import-UI **gelb hervorgehoben**, bevo
 
 Ein eindeutiges Feld (E-Mail, Domain) entweder:
 
-* Existiert bereits in Twenty
-* Kommt in Ihrer Datei doppelt vor
+- Existiert bereits in Twenty
+- Kommt in Ihrer Datei doppelt vor
 
 ### So beheben Sie den Fehler
 
@@ -73,10 +77,11 @@ Ein eindeutiges Feld (E-Mail, Domain) entweder:
 <Note>
 **Sie können eindeutige Felder ebenfalls aktualisieren.**
 
-* Wenn Sie die `id` beibehalten, aber die `email` ändern → die E-Mail wird aktualisiert
-* Wenn Sie die `email` beibehalten, aber die `id` ändern → die ID wird aktualisiert
+- Wenn Sie die `id` beibehalten, aber die `email` ändern → die E-Mail wird aktualisiert
+- Wenn Sie die `email` beibehalten, aber die `id` ändern → die ID wird aktualisiert
 
 Solange ein eindeutiger Bezeichner übereinstimmt, aktualisiert Twenty den Datensatz.
+
 </Note>
 
 ### So vermeiden Sie diesen Fehler
@@ -91,6 +96,7 @@ Vor dem Import:
 **Soft-gelöschte Datensätze zählen für die Eindeutigkeit.**
 
 Überprüfen Sie das Befehlsmenü → Gelöschte Datensätze anzeigen. Die dortigen Datensätze erzwingen weiterhin die Eindeutigkeit. Löschen Sie sie dauerhaft oder stellen Sie sie wieder her und aktualisieren Sie sie.
+
 </Warning>
 
 Weitere Details: [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -135,7 +141,11 @@ Die Daten entsprechen nicht dem erwarteten Format für diesen Feldtyp.
 ✅ https://acme.com  (empfohlen)
 ```
 
-<Note>Alle Formate sind gültig, aber `https://domain.com` wird empfohlen, da es dem von der E-Mail-/Kalendersynchronisierung verwendeten Format entspricht. Die Verwendung anderer Formate kann doppelte Unternehmen erzeugen.</Note>
+<Note>
+  Alle Formate sind gültig, aber `https://domain.com` wird empfohlen, da es dem
+  von der E-Mail-/Kalendersynchronisierung verwendeten Format entspricht. Die
+  Verwendung anderer Formate kann doppelte Unternehmen erzeugen.
+</Note>
 
 #### Datum
 
@@ -258,7 +268,11 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
 
 Das bedeutet, dass es in Twenty kein Unternehmen mit diesem spezifischen Bezeichner gibt.
 
-<Note>Im Gegensatz zu anderen Fehlern wird dieser im Schritt der Datenüberprüfung nicht erkannt. Der Import startet und schlägt dann fehl, wenn die fehlende Relation auftritt.</Note>
+<Note>
+  Im Gegensatz zu anderen Fehlern wird dieser im Schritt der Datenüberprüfung
+  nicht erkannt. Der Import startet und schlägt dann fehl, wenn die fehlende
+  Relation auftritt.
+</Note>
 
 ### Was es bedeutet
 
@@ -286,19 +300,20 @@ Sie versuchen, auf einen Datensatz zu verweisen, der in Twenty nicht existiert.
 ### So vermeiden Sie diesen Fehler
 
 1. **In der richtigen Reihenfolge importieren:**
-   * Zuerst Unternehmen
-   * Dann Personen (mit Unternehmensreferenzen)
-   * Als Drittes Opportunities
+   - Zuerst Unternehmen
+   - Dann Personen (mit Unternehmensreferenzen)
+   - Als Drittes Opportunities
 
 2. **Referenzwerte überprüfen:**
-   * Exportieren Sie übergeordnete Datensätze, um exakte Bezeichner zu erhalten
-   * Verwenden Sie das Domain-Format `https://domain.com`
-   * Prüfen Sie auf Tippfehler und Groß-/Kleinschreibung
+   - Exportieren Sie übergeordnete Datensätze, um exakte Bezeichner zu erhalten
+   - Verwenden Sie das Domain-Format `https://domain.com`
+   - Prüfen Sie auf Tippfehler und Groß-/Kleinschreibung
 
 <Warning>
 **Der Import schlägt fehl, wenn auf einen nicht vorhandenen Datensatz verwiesen wird.**
 
 Importieren Sie übergeordnete Objekte immer vor untergeordneten Objekten.
+
 </Warning>
 
 Weitere Details: [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations)
@@ -349,7 +364,10 @@ Eine Spalte in Ihrer Datei kann nicht zugeordnet werden, weil das Feld in Twenty
 4. Erstellen Sie das benutzerdefinierte Feld mit dem passenden Typ
 5. Laden Sie Ihre Datei erneut hoch
 
-<Note>Der CSV-Import erstellt Datensätze, nicht Felder. Alle Felder müssen vor dem Import vorhanden sein.</Note>
+<Note>
+  Der CSV-Import erstellt Datensätze, nicht Felder. Alle Felder müssen vor dem
+  Import vorhanden sein.
+</Note>
 
 ---
 
@@ -375,6 +393,7 @@ Sie versuchen, einen Datensatz einem Benutzer zuzuweisen (Owner, Assignee), aber
 **Benutzer müssen Einladungen vor dem Import annehmen.**
 
 Wenn ein Benutzer seine Einladung nicht angenommen hat, haben Datensätze, die auf ihn verweisen, leere Benutzerrelationen.
+
 </Warning>
 
 ---
@@ -405,13 +424,17 @@ Vermeiden Sie Fehler, indem Sie vor dem Import Folgendes prüfen:
 
 ### Beziehungen
 
-<Check>Übergeordnete Datensätze vor untergeordneten Datensätzen importiert</Check>
+<Check>
+  Übergeordnete Datensätze vor untergeordneten Datensätzen importiert
+</Check>
 <Check>Relationsspalten verweisen auf vorhandene Datensätze</Check>
 <Check>Domain-Format entspricht exakt dem Format von Twenty</Check>
 
 ### Datenmodell
 
-<Check>Alle benutzerdefinierten Felder existieren in Einstellungen → Datenmodell</Check>
+<Check>
+  Alle benutzerdefinierten Felder existieren in Einstellungen → Datenmodell
+</Check>
 <Check>Auswahloptionen existieren vor dem Import</Check>
 
 ---
@@ -424,7 +447,7 @@ Wenn Sie die obigen Lösungen ausprobiert haben:
 2. **Bestehende Datensätze exportieren** — vergleichen Sie Ihre Datei mit funktionierenden Daten
 3. **Testen Sie mit einer kleinen Stichprobe** — probieren Sie zuerst 5-10 Zeilen
 4. **Prüfen Sie die Referenzartikel:**
-   * [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)
-   * [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations)
-   * [Fehlerbehandlung](/l/de/user-guide/data-migration/capabilities/error-handling)
+   - [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)
+   - [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+   - [Beziehungen importieren](/l/de/user-guide/data-migration/capabilities/import-relations)
+   - [Fehlerbehandlung](/l/de/user-guide/data-migration/capabilities/error-handling)

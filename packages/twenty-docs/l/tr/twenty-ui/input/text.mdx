@@ -42,11 +42,9 @@ export const MyComponent = () => {
 },{
 ```
 
-
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler     | Tür           | Açıklama                                                                                                   |
 | -------------- | ------------- | ---------------------------------------------------------------------------------------------------------- |
@@ -58,9 +56,6 @@ export const MyComponent = () => {
 | hata           | dize          | Gösterilecek hata mesajını temsil eder. Sağ kenarda bir hata simgesi ekler                                 |
 | onKeyDown      | fonksiyon     | Giriş alanı odaklandığında bir tuşa basıldığında çağrılır. Bir `React.KeyboardEvent`'i argüman olarak alır |
 | RightIcon      | IconComponent | Girişin sağ tarafında görüntülenen isteğe bağlı ikon bileşeni                                              |
-
-
-
 
 Bileşen ayrıca diğer HTML giriş elemanının özelliklerini kabul eder.
 
@@ -77,15 +72,15 @@ Metni içeriğe göre otomatik olarak ayarlayan metin giriş bileşeni.
 <Tab title="Kullanım">
 
 ```jsx
-import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("onValidate fonksiyonu tetiklendi")}
+      onValidate={() => console.log('onValidate fonksiyonu tetiklendi')}
       minRows={1}
       placeholder="Bir yorum yazın"
-      onFocus={() => console.log("onFocus fonksiyonu tetiklendi")}
+      onFocus={() => console.log('onFocus fonksiyonu tetiklendi')}
       variant="icon"
       buttonTitle
       value="Görev: "
@@ -94,11 +89,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler  | Tür       | Açıklama                                                                       |
 | ----------- | --------- | ------------------------------------------------------------------------------ |
@@ -109,9 +102,6 @@ export const MyComponent = () => {
 | varyant     | dize      | Girişin varyantı. Seçenekler şunları içerir: `varsayılan`, `ikon` ve `buton`   |
 | buttonTitle | dize      | Buton varyantı için geçerli sadece buton başlığı                               |
 | değer       | dize      | Metin alanı için başlangıç değeri                                              |
-
-
-
 
 </Tab>
 
@@ -125,26 +115,24 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { TextArea } from "@/ui/input/components/TextArea";
+import { TextArea } from '@/ui/input/components/TextArea';
 
 export const MyComponent = () => {
   return (
     <TextArea
-    disabled={false}
-    minRows={4}
-    onChange={()=>console.log('onChange fonksiyonu tetiklendi')}
-    placeholder="Metni buraya girin"
-    value=""
+      disabled={false}
+      minRows={4}
+      onChange={() => console.log('onChange fonksiyonu tetiklendi')}
+      placeholder="Metni buraya girin"
+      value=""
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler | Tür       | Açıklama                                                               |
 | ---------- | --------- | ---------------------------------------------------------------------- |
@@ -153,9 +141,6 @@ export const MyComponent = () => {
 | onChange   | fonksiyon | Metin alanının içeriği değiştiğinde tetiklenen geri çağırma fonksiyonu |
 | yer tutucu | metin     | Metin alanı boşken görüntülenen yer tutucu metin                       |
 | değer      | metin     | Metin alanının mevcut değeri                                           |
-
-
-
 
 </Tab>
 </Tabs>

@@ -9,6 +9,7 @@ Visit the documentation at [docs.twenty.com](https://docs.twenty.com)
 ## 📚 Content
 
 This repository contains:
+
 - **User Guide** (46 pages) - Complete guide for Twenty users
 - **Developers** (24 pages) - Technical documentation for developers
 - **Twenty UI** (25 pages) - UI component library documentation
@@ -57,6 +58,7 @@ Your content here...
 1. Place images in the `/images/` directory
 2. Reference them in MDX: `![Alt text](/images/your-image.png)`
 3. Or use Mintlify Frame component:
+
 ```mdx
 <Frame>
   <img src="/images/your-image.png" alt="Description" />

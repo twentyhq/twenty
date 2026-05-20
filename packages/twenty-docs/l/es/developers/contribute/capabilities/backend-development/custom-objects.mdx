@@ -10,8 +10,11 @@ Los objetos personalizados son objetos que puedes crear para almacenar informaci
 
 ## Esquema de alto nivel
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/custom-object-schema.png" alt="Esquema de alto nivel" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/server/custom-object-schema.png"
+    alt="Esquema de alto nivel"
+  />
 </div>
 
 <br />
@@ -20,20 +23,26 @@ Los objetos personalizados son objetos que puedes crear para almacenar informaci
 
 Los objetos personalizados provienen de tablas de metadatos que determinan la forma, el nombre y el tipo de los objetos. Toda esta información está presente en la base de datos del esquema de metadatos, que consta de tablas:
 
-* **DataSource**: Detalles de dónde se encuentra la información.
-* **Object**: Describe el objeto y lo vincula a un DataSource.
-* **Field**: Describe los campos de un objeto y lo conecta al objeto.
+- **DataSource**: Detalles de dónde se encuentra la información.
+- **Object**: Describe el objeto y lo vincula a un DataSource.
+- **Field**: Describe los campos de un objeto y lo conecta al objeto.
 
 Para añadir un objeto personalizado, el workspaceMember consultará la API de /metadata. Esto actualiza los metadatos de acuerdo y calcula un esquema GraphQL basado en los metadatos, almacenándolo en un caché de GQL para su uso posterior.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/add-custom-objects.jpeg" alt="Consultando la API de /metadata para añadir objetos personalizados" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/server/add-custom-objects.jpeg"
+    alt="Consultando la API de /metadata para añadir objetos personalizados"
+  />
 </div>
 
 <br />
 
 Para obtener datos, el proceso implica hacer consultas a través del endpoint /graphql y pasarlos a través del Query Resolver.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/custom-object-schema.png" alt="Consulta el endpoint /graphql para obtener datos" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/server/custom-object-schema.png"
+    alt="Consulta el endpoint /graphql para obtener datos"
+  />
 </div>

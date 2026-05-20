@@ -29,7 +29,9 @@ Antes de configurar el flujo de trabajo:
 3. Elija el objeto al que desea adjuntar archivos PDF (p. ej., **Empresa** u **Oportunidad**)
 
 <Tip>
-  Con un Activador manual, los usuarios pueden ejecutar este flujo de trabajo usando un botón que aparece en la parte superior derecha una vez que se selecciona un registro, para generar y adjuntar un PDF.
+  Con un Activador manual, los usuarios pueden ejecutar este flujo de trabajo
+  usando un botón que aparece en la parte superior derecha una vez que se
+  selecciona un registro, para generar y adjuntar un PDF.
 </Tip>
 
 ### Paso 2: Añadir una Función de lógica
@@ -45,15 +47,15 @@ Antes de configurar el flujo de trabajo:
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Si va a adjuntar a un objeto diferente (Persona, Oportunidad, etc.), cambie el nombre del parámetro en consecuencia (p. ej., `personId`, `opportunityId`) y actualice la función de lógica.
+  Si va a adjuntar a un objeto diferente (Persona, Oportunidad, etc.), cambie el
+  nombre del parámetro en consecuencia (p. ej., `personId`, `opportunityId`) y
+  actualice la función de lógica.
 </Note>
 
 #### Código de la Función de lógica
 
 ```typescript
-export const main = async (
-  params: { companyId: string },
-) => {
+export const main = async (params: { companyId: string }) => {
   const { companyId } = params;
 
   // Replace with your Twenty GraphQL endpoint
@@ -89,10 +91,13 @@ export const main = async (
   `;
 
   const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fileFolder: 'Attachment' },
-  }));
+  uploadForm.append(
+    'operations',
+    JSON.stringify({
+      query: uploadMutation,
+      variables: { file: null, fileFolder: 'Attachment' },
+    }),
+  );
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
@@ -145,7 +150,9 @@ export const main = async (
   const attachmentResult = await attachmentResponse.json();
 
   if (attachmentResult.errors?.length) {
-    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+    throw new Error(
+      `Attachment creation failed: ${attachmentResult.errors[0].message}`,
+    );
   }
 
   return attachmentResult.data?.createAttachment;
@@ -175,9 +182,11 @@ Si usa un servicio de generación de PDF, puede:
 2. Pase la URL de PDF devuelta a la función de lógica como parámetro
 
 ```typescript
-export const main = async (
-  params: { companyId: string; pdfUrl: string; filename: string },
-) => {
+export const main = async (params: {
+  companyId: string;
+  pdfUrl: string;
+  filename: string;
+}) => {
   const { companyId, pdfUrl, filename } = params;
   // ... rest of the function
 };
@@ -206,10 +215,10 @@ Para crear cotizaciones o facturas dinámicas:
 
 ### Servicios populares de generación de PDF
 
-* **Carbone** - Generación de documentos basada en plantillas
-* **PDFMonkey** - Creación dinámica de PDF a partir de plantillas
-* **DocuSeal** - Plataforma de automatización de documentos
-* **Documint** - Generación de documentos con enfoque API-first
+- **Carbone** - Generación de documentos basada en plantillas
+- **PDFMonkey** - Creación dinámica de PDF a partir de plantillas
+- **DocuSeal** - Plataforma de automatización de documentos
+- **Documint** - Generación de documentos con enfoque API-first
 
 Cada servicio proporciona una API que devuelve una URL de PDF, que luego puede pasar a la función de lógica.
 
@@ -223,6 +232,6 @@ Cada servicio proporciona una API que devuelve una URL de PDF, que luego puede p
 
 ## Relacionado
 
-* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
-* [Funciones de lógica](/l/es/user-guide/workflows/capabilities/workflow-actions#code)
-* [Generar una cotización o factura desde Twenty](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+- [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+- [Funciones de lógica](/l/es/user-guide/workflows/capabilities/workflow-actions#code)
+- [Generar una cotización o factura desde Twenty](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

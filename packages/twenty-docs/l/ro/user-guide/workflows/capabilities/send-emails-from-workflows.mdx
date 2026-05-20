@@ -25,9 +25,9 @@ Trimiteți automat e-mailuri atunci când au loc evenimente specifice în CRM—
 2. **Adăugați declanșator**: Selectați **Record is Created** → **People**
 
 3. **Adăugați acțiunea Send Email**:
-   * Faceți clic pe **+** pentru a adăuga o acțiune
-   * Selectați **Send Email**
-   * Configurați e-mailul:
+   - Faceți clic pe **+** pentru a adăuga o acțiune
+   - Selectați **Send Email**
+   - Configurați e-mailul:
 
 | Câmp        | Valoare                                |
 | ----------- | -------------------------------------- |
@@ -71,12 +71,12 @@ Echipa
 1. **Declanșator**: Record is Created (People)
 
 2. **Adăugați acțiunea de filtrare**:
-   * Condiție: `{{trigger.object.source}}` este egal cu `"Website"`
-   * Dacă este adevărat → continuați către e-mailul de bun venit pentru website
+   - Condiție: `{{trigger.object.source}}` este egal cu `"Website"`
+   - Dacă este adevărat → continuați către e-mailul de bun venit pentru website
 
 3. **Ramificație pentru alte surse**:
-   * Creați ramificații paralele pentru surse diferite
-   * Fiecare ramificație are propria acțiune Send Email
+   - Creați ramificații paralele pentru surse diferite
+   - Fiecare ramificație are propria acțiune Send Email
 
 ## Trimiterea e-mailurilor către mai mulți destinatari
 
@@ -91,12 +91,12 @@ Echipa
 2. **Search Records**: Găsiți managerul proprietarului oportunității
 
 3. **Send Email #1**: Către proprietarul oportunității
-   * Către: `{{trigger.object.owner.email}}`
-   * Subiect: `Felicitări pentru închiderea {{trigger.object.name}}!`
+   - Către: `{{trigger.object.owner.email}}`
+   - Subiect: `Felicitări pentru închiderea {{trigger.object.name}}!`
 
 4. **Send Email #2**: Către manager
-   * Către: `{{searchRecords.manager.email}}`
-   * Subiect: `Tranzacție câștigată: {{trigger.object.name}}`
+   - Către: `{{searchRecords.manager.email}}`
+   - Subiect: `Tranzacție câștigată: {{trigger.object.name}}`
 
 ## E-mailuri de urmărire programate
 
@@ -111,9 +111,9 @@ Echipa
 2. **Acțiune de întârziere**: Așteptați 3 zile
 
 3. **Trimite email**:
-   * Către: Participantul la întâlnire
-   * Subiect: Revenire la discuția noastră
-   * Conținut: Faceți referire la detaliile întâlnirii din declanșator
+   - Către: Participantul la întâlnire
+   - Subiect: Revenire la discuția noastră
+   - Conținut: Faceți referire la detaliile întâlnirii din declanșator
 
 ## Atașamente pentru e-mailuri
 
@@ -135,33 +135,36 @@ Puteți atașa fișiere la e-mailurile trimise din fluxuri de lucru. Atașamentu
 | **Confirmări pentru evenimente**      | Detalii despre eveniment sau agendă     |
 
 <Note>
-Atașamentele sunt statice — același fișier este trimis tuturor destinatarilor. Pentru documente dinamice (cum ar fi ofertele personalizate), generați și atașați fișiere folosind o [Funcție logică](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+  Atașamentele sunt statice — același fișier este trimis tuturor destinatarilor.
+  Pentru documente dinamice (cum ar fi ofertele personalizate), generați și
+  atașați fișiere folosind o [Funcție
+  logică](/l/ro/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
 ## Cele mai bune practici
 
 ### Conținutul emailului
 
-* Păstrați liniile de subiect concise și relevante
-* Personalizați cu numele destinatarului
-* Includeți un apel clar la acțiune
-* Testați emailurile înainte de activare
+- Păstrați liniile de subiect concise și relevante
+- Personalizați cu numele destinatarului
+- Includeți un apel clar la acțiune
+- Testați emailurile înainte de activare
 
 ### Livrabilitate
 
-* Nu trimiteți prea multe emailuri prea repede
-* Folosiți semnături de email profesionale
-* Evitați cuvintele care declanșează filtrele de spam
-* Asigurați opțiuni de dezabonare pentru emailurile de marketing
+- Nu trimiteți prea multe emailuri prea repede
+- Folosiți semnături de email profesionale
+- Evitați cuvintele care declanșează filtrele de spam
+- Asigurați opțiuni de dezabonare pentru emailurile de marketing
 
 ### Depanare
 
-* Verificați că contul de email este conectat și activ
-* Verificați că adresa de email a destinatarului este validă
-* Revizuiți rulările fluxului de lucru pentru mesaje de eroare
-* Testați mai întâi cu propria dvs. adresă de email
+- Verificați că contul de email este conectat și activ
+- Verificați că adresa de email a destinatarului este validă
+- Revizuiți rulările fluxului de lucru pentru mesaje de eroare
+- Testați mai întâi cu propria dvs. adresă de email
 
 ## Conexe
 
-* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+- [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+- [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)

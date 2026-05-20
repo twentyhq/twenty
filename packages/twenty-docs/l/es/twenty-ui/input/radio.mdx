@@ -3,7 +3,10 @@ title: Radio
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Encabezado" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="Encabezado"
+  />
 </Frame>
 
 Usado cuando los usuarios solo pueden elegir una opción de una serie de opciones.
@@ -38,6 +41,7 @@ Usado cuando los usuarios solo pueden elegir una opción de una serie de opcione
     };
 
     ```
+
   </Tab>
 
   <Tab title="Props">
@@ -72,7 +76,7 @@ Agrupa botones de opción relacionados.
       const handleChange = (event) => {
         setSelectedValue(event.target.value);
       };
-      
+
       return (
         <RadioGroup value={selectedValue} onChange={handleChange}>
           <Radio value="Option 1" />
@@ -83,6 +87,7 @@ Agrupa botones de opción relacionados.
     };
 
     ```
+
   </Tab>
 
   <Tab title="Props">

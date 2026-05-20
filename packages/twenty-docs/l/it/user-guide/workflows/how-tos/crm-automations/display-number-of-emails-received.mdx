@@ -5,7 +5,10 @@ description: Crea un flusso di lavoro per contare e visualizzare automaticamente
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/workflow-number-of-emails-received.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/workflow-number-of-emails-received.png"
+  style={{ width: '100%' }}
+/>
 
 ## Panoramica
 
@@ -30,7 +33,11 @@ Prima di configurare questo flusso di lavoro, crea un campo personalizzato sull'
 3. Scegli **Message Participants** (disponibile sotto Oggetti avanzati)
 
 <Note>
-Un Message Participant è una combinazione di un ID messaggio e di un ID persona, che crea un record univoco per ogni messaggio. Questo è più semplice da tracciare rispetto ai Messaggi direttamente perché possiamo accedere al campo `handle`, che contiene l'indirizzo email del mittente (o del destinatario).
+  Un Message Participant è una combinazione di un ID messaggio e di un ID
+  persona, che crea un record univoco per ogni messaggio. Questo è più semplice
+  da tracciare rispetto ai Messaggi direttamente perché possiamo accedere al
+  campo `handle`, che contiene l'indirizzo email del mittente (o del
+  destinatario).
 </Note>
 
 ### Passaggio 2: Filtra per ruolo
@@ -50,7 +57,10 @@ Questo garantisce che tu conteggi solo i messaggi inviati da questa persona, non
 In questo modo si trovano tutti i messaggi provenienti da questo indirizzo email per ottenere il conteggio totale.
 
 <Note>
-L'azione Search Records è limitata a restituire al massimo 200 record. Tuttavia, poiché stai usando solo il valore `totalCount` (non i singoli record), questo passaggio restituirà il numero totale di email inviate da questa persona.
+  L'azione Search Records è limitata a restituire al massimo 200 record.
+  Tuttavia, poiché stai usando solo il valore `totalCount` (non i singoli
+  record), questo passaggio restituirà il numero totale di email inviate da
+  questa persona.
 </Note>
 
 ### Passaggio 4: Aggiorna il record Persona con un'azione Create or Update Record
@@ -58,7 +68,9 @@ L'azione Search Records è limitata a restituire al massimo 200 record. Tuttavia
 1. Aggiungi un'azione **Create or Update Record**
 
 <Warning>
-Usa **Upsert Record** invece di **Update Record** qui. Questo ti permette di identificare la persona tramite il suo indirizzo email (il campo `handle`) invece di richiedere un ID record da un passaggio precedente.
+  Usa **Upsert Record** invece di **Update Record** qui. Questo ti permette di
+  identificare la persona tramite il suo indirizzo email (il campo `handle`)
+  invece di richiedere un ID record da un passaggio precedente.
 </Warning>
 
 2. Seleziona **People** come oggetto
@@ -69,6 +81,6 @@ Il valore `totalCount` dell'azione Search Records rappresenta il numero totale d
 
 ## Correlati
 
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Crea campi personalizzati](/l/it/user-guide/data-model/how-tos/customize-your-data-model)
-* [Azione Search Records](/l/it/user-guide/workflows/capabilities/workflow-actions#search-records)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Crea campi personalizzati](/l/it/user-guide/data-model/how-tos/customize-your-data-model)
+- [Azione Search Records](/l/it/user-guide/workflows/capabilities/workflow-actions#search-records)

@@ -13,16 +13,15 @@ title: منتقى الأيقونات
 <Tab title="استخدام">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MyComponent = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Selected Icon:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="المحددات">
-
 
 | الخصائص                 | النوع       | الوصف                                                                                                        |
 | ----------------------- | ----------- | ------------------------------------------------------------------------------------------------------------ |
@@ -49,9 +46,6 @@ export const MyComponent = () => {
 | عند الإغلاق             | دالة        | الدالة الارتجاعية التي تُفعل عند إغلاق القائمة المنسدلة                                                      |
 | عند الفتح               | دالة        | الدالة الارتجاعية التي تُفعل عند فتح القائمة المنسدلة                                                        |
 | التنوع                  | نص          | متغير النمط البصري للأيقونة القابلة للنقر. تشمل الخيارات: `رئيسي`, `ثانوي`, و `ثالثي`                        |
-
-
-
 
 </Tab>
 </Tabs>

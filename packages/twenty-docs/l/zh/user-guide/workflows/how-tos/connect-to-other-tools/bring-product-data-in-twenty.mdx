@@ -13,15 +13,18 @@ description: 按计划将数据仓库中的产品目录数据同步到您的 CRM
 4. **Iterator**：遍历每个产品
 5. **Upsert Record**：在 Twenty 中创建或更新
 
-<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/create_users_workflow.png"
+  style={{ width: '100%' }}
+/>
 
 ## 步骤 1：为触发器设定计划
 
 将工作流设置为按满足数据新鲜度需求的频率运行：
 
-* 每 5 分钟一次，用于近实时同步
-* 每小时一次，适用于不太关键的数据
-* 每天一次，适用于批量更新
+- 每 5 分钟一次，用于近实时同步
+- 每小时一次，适用于不太关键的数据
+- 每天一次，适用于批量更新
 
 ## 步骤 2：查询您的数据仓库
 
@@ -30,22 +33,24 @@ description: 按计划将数据仓库中的产品目录数据同步到您的 CRM
 ```javascript
 export const main = async () => {
   const intervalMinutes = 10; // Match your schedule frequency
-  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+  const cutoffTime = new Date(
+    Date.now() - intervalMinutes * 60 * 1000,
+  ).toISOString();
 
   // Replace with your actual data warehouse connection
-  const response = await fetch("https://your-warehouse-api.com/query", {
-    method: "POST",
+  const response = await fetch('https://your-warehouse-api.com/query', {
+    method: 'POST',
     headers: {
-      "Authorization": "Bearer YOUR_API_KEY",
-      "Content-Type": "application/json"
+      Authorization: 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       query: `
         SELECT id, name, sku, price, stock_quantity, updated_at
         FROM products
         WHERE updated_at >= '${cutoffTime}'
-      `
-    })
+      `,
+    }),
   });
 
   const data = await response.json();
@@ -133,20 +138,20 @@ export const main = async (params: { deals: any }) => {
 
 ### 常见转换
 
-| 源格式                  | 目标格式             | 代码                                         |
-| -------------------- | ---------------- | ------------------------------------------ |
-| `"true"` / `"false"` | `true` / `false` | `v === true \\|\\| v === \"true\"`         |
+| 源格式               | 目标格式         | 代码                                       |
+| -------------------- | ---------------- | ------------------------------------------ | --- | --------------- |
+| `"true"` / `"false"` | `true` / `false` | `v === true \\                             | \\  | v === \"true\"` |
 | `\"123.45\"`         | `123.45`         | `parseFloat(value)`                        |
 | `\"active\"`         | `\"ACTIVE\"`     | `value.toUpperCase()`                      |
-| `1704067200` (Unix)  | ISO 日期           | `new Date(v * 1000).toISOString()`         |
+| `1704067200` (Unix)  | ISO 日期         | `new Date(v * 1000).toISOString()`         |
 | `\"$1,234.56\"`      | `1234.56`        | `parseFloat(v.replace(/[^0-9.-]/g, \"\"))` |
-| `null` / `undefined` | `\"\"`           | `value \\|\\| \"\"`                        |
+| `null` / `undefined` | `\"\"`           | `value \\                                  | \\  | \"\"`           |
 
 ## 步骤 4：遍历产品
 
 添加 **Iterator** 操作：
 
-* 输入：`{{code.products}}`
+- 输入：`{{code.products}}`
 
 这将遍历数组中的每个产品。
 
@@ -154,29 +159,30 @@ export const main = async (params: { deals: any }) => {
 
 在迭代器内，添加一个 **Upsert Record** 操作：
 
-| 设置        | 值                         |
-| --------- | ------------------------- |
-| **对象**    | 您自定义的 Product 对象          |
-| **匹配方式**  | 外部 ID 或 SKU（唯一标识符）        |
-| **Name**  | `{{iterator.item.name}}`  |
-| **SKU**   | `{{iterator.item.sku}}`   |
-| **Price** | `{{iterator.item.price}}` |
+| 设置         | 值                           |
+| ------------ | ---------------------------- |
+| **对象**     | 您自定义的 Product 对象      |
+| **匹配方式** | 外部 ID 或 SKU（唯一标识符） |
+| **Name**     | `{{iterator.item.name}}`     |
+| **SKU**      | `{{iterator.item.sku}}`      |
+| **Price**    | `{{iterator.item.price}}`    |
 
 <Tip>
-使用 **Upsert**（更新或创建），而不是为“创建”和“更新”分别构建分支。 这样构建更快，也更易于调试。
+  使用 **Upsert**（更新或创建），而不是为“创建”和“更新”分别构建分支。
+  这样构建更快，也更易于调试。
 </Tip>
 
 ## 示例用例
 
-| 来源         | 数据          |
-| ---------- | ----------- |
-| **ERP 系统** | 产品目录、定价、库存  |
-| **电商平台**   | 订单、客户、产品更新  |
-| **数据仓库**   | 汇总指标、丰富后的数据 |
-| **库存系统**   | 库存水平、补货警报   |
+| 来源         | 数据                   |
+| ------------ | ---------------------- |
+| **ERP 系统** | 产品目录、定价、库存   |
+| **电商平台** | 订单、客户、产品更新   |
+| **数据仓库** | 汇总指标、丰富后的数据 |
+| **库存系统** | 库存水平、补货警报     |
 
 ## 相关内容
 
-* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+- [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+- [在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

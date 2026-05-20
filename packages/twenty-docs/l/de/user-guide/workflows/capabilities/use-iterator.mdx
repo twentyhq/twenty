@@ -61,9 +61,9 @@ Aktionen, die nach dem Iterator platziert werden, werden für jedes Element ausg
 
 Wenn Datensätze suchen 5 Personen zurückgibt, führt der Iterator Folgendes aus:
 
-* Sendet E-Mail an Person 1
-* Sendet E-Mail an Person 2
-* ... setzt dies für alle 5 fort
+- Sendet E-Mail an Person 1
+- Sendet E-Mail an Person 2
+- ... setzt dies für alle 5 fort
 
 ## Zugriff auf Daten des aktuellen Elements
 
@@ -149,16 +149,16 @@ Filter: {{searchRecords.length}} > 0
 
 **Lösung**:
 
-* Fügen Sie der Aktion „Datensätze suchen“ spezifischere Filter hinzu
-* Legen Sie für die Aktion „Datensätze suchen“ ein Limit fest (max. 200)
-* Fügen Sie innerhalb des Iterators einen Filter für zusätzliche Bedingungen hinzu
+- Fügen Sie der Aktion „Datensätze suchen“ spezifischere Filter hinzu
+- Legen Sie für die Aktion „Datensätze suchen“ ein Limit fest (max. 200)
+- Fügen Sie innerhalb des Iterators einen Filter für zusätzliche Bedingungen hinzu
 
 ## Leistungsaspekte
 
-* **Credit-Verbrauch**: Jede Iteration verbraucht Credits für ihre Aktionen
-* **Zeit**: Große Arrays benötigen länger für die Verarbeitung
-* **Grenzwerte**: Ziehen Sie für sehr große Vorgänge eine Stapelverarbeitung in Betracht
-* **Ratenlimits**: Externe API-Aufrufe können bei vielen Iterationen auf Ratenlimits stoßen
+- **Credit-Verbrauch**: Jede Iteration verbraucht Credits für ihre Aktionen
+- **Zeit**: Große Arrays benötigen länger für die Verarbeitung
+- **Grenzwerte**: Ziehen Sie für sehr große Vorgänge eine Stapelverarbeitung in Betracht
+- **Ratenlimits**: Externe API-Aufrufe können bei vielen Iterationen auf Ratenlimits stoßen
 
 ## Beste Praktiken
 
@@ -170,6 +170,6 @@ Filter: {{searchRecords.length}} > 0
 
 ## Verwandt
 
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [So verwenden Sie Verzweigungen](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+- [So verwenden Sie Verzweigungen](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows)
+- [Workflows-FAQ](/l/de/user-guide/workflows/how-tos/need-more-help/workflows-faq)

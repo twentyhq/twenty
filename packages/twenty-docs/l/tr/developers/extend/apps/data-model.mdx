@@ -7,8 +7,10 @@ icon: database
 `twenty-sdk` paketi, uygulamanızın veri modelini tanımlamak için `defineEntity` işlevlerini sağlar. SDK'nin varlıklarınızı algılayabilmesi için `export default defineEntity({...})` kullanmanız gerekir. Bu fonksiyonlar, derleme zamanında yapılandırmanızı doğrular ve IDE otomatik tamamlama ile tür güvenliği sağlar.
 
 <Note>
-  **Dosya organizasyonu size kalmış.**
-  Varlık algılama AST tabanlıdır — dosyanın nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)` çağrılarını bulur. Dosyaları türe göre gruplamak (örn. `logic-functions/`, `roles/`) bir gereklilik değil, yalnızca bir gelenektir.
+  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın
+  nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)`
+  çağrılarını bulur. Dosyaları türe göre gruplamak (örn. `logic-functions/`,
+  `roles/`) bir gereklilik değil, yalnızca bir gelenektir.
 </Note>
 
 <AccordionGroup>
@@ -50,7 +52,8 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -64,10 +67,10 @@ export default defineRole({
 
 Her uygulamanın, şunları tanımlayan tam olarak bir adet `defineApplication` çağrısı olmalıdır:
 
-* **Kimlik**: tanımlayıcılar, görünen ad ve açıklama.
-* **İzinler**: işlevlerinin ve ön uç bileşenlerinin hangi rolü kullandığı.
-* **(İsteğe bağlı) Değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
-* **(İsteğe bağlı) Kurulum öncesi / kurulum sonrası fonksiyonlar**: kurulumdan önce veya sonra çalışan mantık fonksiyonları.
+- **Kimlik**: tanımlayıcılar, görünen ad ve açıklama.
+- **İzinler**: işlevlerinin ve ön uç bileşenlerinin hangi rolü kullandığı.
+- **(İsteğe bağlı) Değişkenler**: fonksiyonlarınıza ortam değişkenleri olarak sunulan anahtar–değer çiftleri.
+- **(İsteğe bağlı) Kurulum öncesi / kurulum sonrası fonksiyonlar**: kurulumdan önce veya sonra çalışan mantık fonksiyonları.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -90,10 +93,11 @@ export default defineApplication({
 ```
 
 Notlar:
-* `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
-* `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
-* `defaultRoleUniversalIdentifier`, `defineRole()` ile tanımlanmış bir role referans vermelidir (yukarıya bakın).
-* Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
+
+- `universalIdentifier` alanları, size ait deterministik kimliklerdir. Bunları bir kez oluşturun ve senkronizasyonlar boyunca kararlı tutun.
+- `applicationVariables`, fonksiyonlarınız ve ön uç bileşenleriniz için ortam değişkenlerine dönüşür (örn. `DEFAULT_RECIPIENT_NAME`, `process.env.DEFAULT_RECIPIENT_NAME` olarak kullanılabilir).
+- `defaultRoleUniversalIdentifier`, `defineRole()` ile tanımlanmış bir role referans vermelidir (yukarıya bakın).
+- Kurulum öncesi ve kurulum sonrası fonksiyonlar manifest derlemesi sırasında otomatik olarak algılanır — bunlara `defineApplication()` içinde referans vermeniz gerekmez.
 
 #### Pazaryeri meta verileri
 
@@ -115,9 +119,9 @@ Eğer [uygulamanızı yayımlamayı](/l/tr/developers/extend/apps/publishing) pl
 
 `application-config.ts` içindeki `defaultRoleUniversalIdentifier`, uygulamanızın mantık fonksiyonları ve ön uç bileşenleri tarafından kullanılan varsayılan rolü belirtir. Ayrıntılar için yukarıdaki `defineRole` bölümüne bakın.
 
-* `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
-* Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
-* En az ayrıcalık ilkesini izleyin: Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinlere sahip özel bir rol oluşturun.
+- `TWENTY_APP_ACCESS_TOKEN` olarak enjekte edilen çalışma zamanı belirteci bu rolden türetilir.
+- Türlendirilmiş istemci, o role tanınan izinlerle sınırlandırılır.
+- En az ayrıcalık ilkesini izleyin: Yalnızca fonksiyonlarınızın ihtiyaç duyduğu izinlere sahip özel bir rol oluşturun.
 
 ##### Varsayılan fonksiyon rolü
 
@@ -149,14 +153,15 @@ export default defineRole({
 
 Bu rolün `universalIdentifier` değeri, `application-config.ts` içinde `defaultRoleUniversalIdentifier` olarak referans verilir:
 
-* **\*.role.ts**, bir rolün neler yapabileceğini tanımlar.
-* **application-config.ts**, fonksiyonlarınızın izinlerini devralması için bu role işaret eder.
+- **\*.role.ts**, bir rolün neler yapabileceğini tanımlar.
+- **application-config.ts**, fonksiyonlarınızın izinlerini devralması için bu role işaret eder.
 
 Notlar:
-* Oluşturulan rolden başlayın ve en az ayrıcalık ilkesini izleyerek bunu aşamalı olarak kısıtlayın.
-* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın ihtiyaç duyduğu nesneler ve alanlarla değiştirin.
-* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
-* Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+- Oluşturulan rolden başlayın ve en az ayrıcalık ilkesini izleyerek bunu aşamalı olarak kısıtlayın.
+- `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın ihtiyaç duyduğu nesneler ve alanlarla değiştirin.
+- `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
+- Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
 <Accordion title="defineObject" description="Alanlara sahip özel nesneler tanımlayın">
@@ -212,10 +217,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -233,18 +258,19 @@ export default defineObject({
 
 Önemli noktalar:
 
-* Yerleşik doğrulama ve daha iyi IDE desteği için `defineObject()` kullanın.
-* `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
-* Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
-* `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
-* `yarn twenty add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
+- Yerleşik doğrulama ve daha iyi IDE desteği için `defineObject()` kullanın.
+- `universalIdentifier` dağıtımlar arasında benzersiz ve kararlı olmalıdır.
+- Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
+- `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
+- `yarn twenty add` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz.
 
 <Note>
-**Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda Twenty, standart alanları otomatik olarak ekler
-örneğin `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt`.
-Bunları `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
-`fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları geçersiz kılabilirsiniz,
-ancak bu önerilmez.
+  **Temel alanlar otomatik olarak oluşturulur.** Özel bir nesne tanımladığınızda
+  Twenty, standart alanları otomatik olarak ekler örneğin `id`, `name`,
+  `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt`. Bunları
+  `fields` dizinizde tanımlamanız gerekmez — yalnızca özel alanlarınızı ekleyin.
+  `fields` dizinizde aynı ada sahip bir alan tanımlayarak varsayılan alanları
+  geçersiz kılabilirsiniz, ancak bu önerilmez.
 </Note>
 
 </Accordion>
@@ -271,9 +297,10 @@ export default defineField({
 ```
 
 Önemli noktalar:
-* `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart nesneler için, `twenty-sdk`'den dışa aktarılan `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`'ı kullanın.
-* Alanları `defineObject()` içinde satır içi tanımlarken, `objectUniversalIdentifier`'a ihtiyacınız yoktur — üst nesneden devralınır.
-* `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
+
+- `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart nesneler için, `twenty-sdk`'den dışa aktarılan `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`'ı kullanın.
+- Alanları `defineObject()` içinde satır içi tanımlarken, `objectUniversalIdentifier`'a ihtiyacınız yoktur — üst nesneden devralınır.
+- `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
 
 </Accordion>
 <Accordion title="defineField — İlişki alanları" description="Nesneleri çift yönlü ilişkilerle birbirine bağlayın">
@@ -308,7 +335,8 @@ import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
 // Export so the other side can reference it
-export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+export const POST_CARD_RECIPIENTS_FIELD_ID =
+  'a1111111-1111-1111-1111-111111111111';
 // Import from the other side
 import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
 
@@ -319,7 +347,8 @@ export default defineField({
   name: 'postCardRecipients',
   label: 'Post Card Recipients',
   icon: 'IconUsers',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
@@ -330,7 +359,12 @@ export default defineField({
 **Adım 2: PostCardRecipient üzerinde MANY_TO_ONE tarafını tanımlayın** ("çok" taraf — yabancı anahtarı tutar):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+} from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -346,7 +380,8 @@ export default defineField({
   name: 'postCard',
   label: 'Post Card',
   icon: 'IconMail',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
@@ -357,7 +392,11 @@ export default defineField({
 ```
 
 <Note>
-**Döngüsel içe aktarmalar:** Her iki ilişki alanı da birbirlerinin `universalIdentifier` değerine referans verir. Döngüsel içe aktarma sorunlarından kaçınmak için, alan kimliklerinizi her dosyadan adlandırılmış sabitler olarak dışa aktarın ve diğer dosyada içe aktarın. Derleme sistemi bunları derleme zamanında çözer.
+  **Döngüsel içe aktarmalar:** Her iki ilişki alanı da birbirlerinin
+  `universalIdentifier` değerine referans verir. Döngüsel içe aktarma
+  sorunlarından kaçınmak için, alan kimliklerinizi her dosyadan adlandırılmış
+  sabitler olarak dışa aktarın ve diğer dosyada içe aktarın. Derleme sistemi
+  bunları derleme zamanında çözer.
 </Note>
 
 #### Standart nesnelerle ilişkilendirme
@@ -375,7 +414,8 @@ import {
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
-export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID =
+  'd4444444-4444-4444-4444-444444444444';
 
 export default defineField({
   universalIdentifier: PERSON_FIELD_ID,
@@ -387,7 +427,8 @@ export default defineField({
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_REVERSE_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
@@ -422,8 +463,10 @@ export default defineObject({
       type: FieldType.RELATION,
       name: 'postCard',
       label: 'Post Card',
-      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      relationTargetObjectMetadataUniversalIdentifier:
+        POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_ID,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,
@@ -434,6 +477,7 @@ export default defineObject({
   ],
 });
 ```
+
 </Accordion>
 </AccordionGroup>
 
@@ -457,8 +501,8 @@ yarn twenty add frontComponent
 
 ### Kullanılabilir varlık türleri
 
-| Varlık türü          | Komut                                | Oluşturulan dosya                                       |
-| -------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Varlık türü          | Komut                                | Oluşturulan dosya                      |
+| -------------------- | ------------------------------------ | -------------------------------------- |
 | Nesne                | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
 | Alan                 | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
 | Mantık işlevi        | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |

@@ -10,14 +10,17 @@ description: Twenty'i yerel olarak çalıştırmak isteyen katkıda bulunanlar (
 <Tab title="Linux ve macOS">
 
 Twenty'i yüklemeden ve kullanmadan önce bilgisayarınıza aşağıdakileri yüklediğinizden emin olun:
-* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
-* [yarn v4](https://yarnpkg.com/getting-started/install)
-* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-`npm` çalışmaz, bunun yerine `yarn` kullanmalısınız. Yarn artık Node.js ile birlikte geliyor, bu yüzden ayrı bir yüklemeye gerek yoktur.
-Eğer henüz yapmadıysanız Yarn'ı etkinleştirmek için sadece `corepack enable` komutunu çalıştırmanız gerekiyor.
+  `npm` çalışmaz, bunun yerine `yarn` kullanmalısınız. Yarn artık Node.js ile
+  birlikte geliyor, bu yüzden ayrı bir yüklemeye gerek yoktur. Eğer henüz
+  yapmadıysanız Yarn'ı etkinleştirmek için sadece `corepack enable` komutunu
+  çalıştırmanız gerekiyor.
 </Warning>
 
 </Tab>
@@ -26,9 +29,11 @@ Eğer henüz yapmadıysanız Yarn'ı etkinleştirmek için sadece `corepack enab
 
 1. WSL Kurun
    PowerShell'i Yönetici olarak açın ve çalıştırın:
+
 ```powershell
 wsl --install
 ```
+
 Şimdi bilgisayarınızı yeniden başlatmanız gerektiğine dair bir uyarı göreceksiniz. Eğer görmüyorsanız, manuel olarak yeniden başlatın.
 
 Yeniden başlatıldığında bir PowerShell penceresi açılacak ve Ubuntu yüklenecek. Bu biraz zaman alabilir.
@@ -47,7 +52,8 @@ git config --global user.email "emailiniz@alan.com"
 3. nvm, node.js ve yarn'ı Yükleyin
 
 <Warning>
-Doğru `node` versiyonunu yüklemek için `nvm` kullanın. `.nvmrc` tüm katkıda bulunanların aynı versiyonu kullanmasını sağlar.
+  Doğru `node` versiyonunu yüklemek için `nvm` kullanın. `.nvmrc` tüm katkıda
+  bulunanların aynı versiyonu kullanmasını sağlar.
 </Warning>
 
 ```bash
@@ -55,6 +61,7 @@ sudo apt-get install curl
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
+
 nvm'i kullanmak için terminalinizi kapatıp yeniden açın. Sonra aşağıdaki komutları çalıştırın.
 
 ```bash
@@ -114,6 +121,7 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Seçenek 1 (tercih edilen):** Veritabanınızı `brew` ile yerel olarak kurmak için:
@@ -169,6 +177,7 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     Aşağıdaki tüm adımlar WSL terminalinde (sanallaştırma makineniz içinde) çalıştırılmalıdır.
@@ -186,6 +195,7 @@ Sonraki adımlardaki tüm komutları projenin kök dizininden çalıştırmalıs
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -206,6 +216,7 @@ Twenty, en iyi performansı sağlamak için bir Redis önbelleği gerektirir.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Seçenek 1 (tercih edilen):** Redis'i `brew` ile yerel olarak sağlamak için:
@@ -221,6 +232,7 @@ Twenty, en iyi performansı sağlamak için bir Redis önbelleği gerektirir.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     **Seçenek 1:** Redis'i yerel olarak sağlamak için:
@@ -230,6 +242,7 @@ Twenty, en iyi performansı sağlamak için bir Redis önbelleği gerektirir.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -247,7 +260,14 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-**Çoklu Çalışma Alanı Modu:** Varsayılan olarak, Twenty yalnızca bir çalışma alanının oluşturulabildiği tek çalışma alanı modunda çalışır. Çoklu çalışma alanı desteğini etkinleştirmek için (alt alan adına dayalı özellikleri test etmek açısından kullanışlıdır), sunucunuzdaki `.env` dosyanızda `IS_MULTIWORKSPACE_ENABLED=true` değerini ayarlayın. Ayrıntılar için [Çoklu Çalışma Alanı Modu](/l/tr/developers/self-host/capabilities/setup#multi-workspace-mode) bölümüne bakın.
+  **Çoklu Çalışma Alanı Modu:** Varsayılan olarak, Twenty yalnızca bir çalışma
+  alanının oluşturulabildiği tek çalışma alanı modunda çalışır. Çoklu çalışma
+  alanı desteğini etkinleştirmek için (alt alan adına dayalı özellikleri test
+  etmek açısından kullanışlıdır), sunucunuzdaki `.env` dosyanızda
+  `IS_MULTIWORKSPACE_ENABLED=true` değerini ayarlayın. Ayrıntılar için [Çoklu
+  Çalışma Alanı
+  Modu](/l/tr/developers/self-host/capabilities/setup#multi-workspace-mode)
+  bölümüne bakın.
 </Info>
 
 ## Adım 6: Bağımlılıkların yüklenmesi
@@ -265,17 +285,19 @@ yarn
 <Tabs>
   <Tab title="Linux">
     Dağıtımınıza bağlı olarak, Redis sunucusu otomatik olarak başlatılabilir.
-    Değilse, dağıtımınız için [Redis Kurulum Kılavuzu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) üzerinden kontrol edin.
+    Değilse, dağıtımınız için [Redis Kurulum
+    Kılavuzu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    üzerinden kontrol edin.
   </Tab>
   <Tab title="Mac OS">
-  Redis zaten çalışıyor olmalıdır. Değilse, şu komutu çalıştırın:
-    ```bash
-    brew services start redis
-    ```
+    Redis zaten çalışıyor olmalıdır. Değilse, şu komutu çalıştırın: ```bash brew
+    services start redis ```
   </Tab>
   <Tab title="Windows (WSL)">
     Dağıtımınıza bağlı olarak, Redis sunucusu otomatik olarak başlatılabilir.
-    Değilse, dağıtımınız için [Redis Kurulum Kılavuzu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) üzerinden kontrol edin.
+    Değilse, dağıtımınız için [Redis Kurulum
+    Kılavuzu](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    üzerinden kontrol edin.
   </Tab>
 </Tabs>
 
@@ -308,9 +330,9 @@ Varsayılan demo hesabıyla giriş yapabilirsiniz: `tim@apple.dev` (şifre: `tim
 
 **Arka Uç**
 
-* Twenty'nin sunucusu [http://localhost:3000](http://localhost:3000) adresinde çalışır durumda olacak
-* GraphQL API'sine [http://localhost:3000/graphql](http://localhost:3000/graphql) adresinden erişebilirsiniz.
-* REST API'sine [http://localhost:3000/rest](http://localhost:3000/rest) adresinden ulaşabilirsiniz.
+- Twenty'nin sunucusu [http://localhost:3000](http://localhost:3000) adresinde çalışır durumda olacak
+- GraphQL API'sine [http://localhost:3000/graphql](http://localhost:3000/graphql) adresinden erişebilirsiniz.
+- REST API'sine [http://localhost:3000/rest](http://localhost:3000/rest) adresinden ulaşabilirsiniz.
 
 ## Sorun Giderme
 

@@ -13,15 +13,15 @@ Utilizzato quando un utente deve selezionare più valori da diverse opzioni.
 <Tab title="Utilizzo">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
 | Props           | Tipo     | Descrizione                                                                                      |
 | --------------- | -------- | ------------------------------------------------------------------------------------------------ |
 | selezionato     | booleano | Indica se la casella di controllo è selezionata                                                  |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | variante        | stringa  | Lo stile visivo della casella. Le opzioni includono: `primary`, `secondary` e `tertiary`         |
 | dimensione      | stringa  | La dimensione della casella di controllo. Ha due opzioni: `small` e `large`                      |
 | forma           | stringa  | La forma della casella di controllo. Ha due opzioni: `squared` e `rounded`                       |
-
-
 
 </Tab>
 </Tabs>

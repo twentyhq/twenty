@@ -30,13 +30,11 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="المحددات">
-
 
 | الخصائص            | النوع                   | الوصف                                                                  |
 | ------------------ | ----------------------- | ---------------------------------------------------------------------- |
@@ -47,8 +45,6 @@ export const MyComponent = () => {
 | نوع الصورة الرمزية | نوع الصورة الرمزية      | نوع الصورة الرمزية التي تريد عرضها. لديه خياران: `مستدير` و `مربع`     |
 | التنوع             | تعداد EntityChipVariant | تنوع الرقاقة الكيانية التي ترغب في عرضها. لديه خياران: `عادي` و `شفاف` |
 | الأيقونة اليسرى    | مكون رمز                | مكون React يمثل رمزًا. يظهر على الجانب الأيسر من الرقاقة               |
-
-
 
 </Tab>
 </Tabs>
@@ -62,7 +58,7 @@ import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Transparent Disabled Chip"
       clickable={false}
@@ -72,10 +68,9 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
-
 ```
 
 <br />
@@ -83,11 +78,11 @@ export const MyComponent = () => {
 ### رقاقة معطلة مع تلميح
 
 ```jsx
-import { Chip } from "twenty-ui/components";
-  
+import { Chip } from 'twenty-ui/components';
+
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Disabled chip that triggers a tooltip when overflowing."
       clickable={false}
@@ -97,7 +92,7 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
 ```
@@ -136,7 +131,6 @@ export const MyComponent = () => {
 
 <Tab title="الخصائص">
 
-
 | الخصائص            | النوع                   | الوصف                                                                  |
 | ------------------ | ----------------------- | ---------------------------------------------------------------------- |
 | linkToEntity       | نص                      | الرابط إلى الكيان                                                      |
@@ -146,8 +140,6 @@ export const MyComponent = () => {
 | نوع الصورة الرمزية | نوع الصورة الرمزية      | نوع الصورة الرمزية التي تريد عرضها. لديه خياران: `مستدير` و `مربع`     |
 | التنوع             | تعداد EntityChipVariant | تنوع الرقاقة الكيانية التي ترغب في عرضها. لديه خياران: `عادي` و `شفاف` |
 | الأيقونة اليسرى    | مكون رمز                | مكون React يمثل رمزًا. يظهر على الجانب الأيسر من الرقاقة               |
-
-
 
 </Tab>
 </Tabs>

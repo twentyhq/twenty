@@ -7,12 +7,12 @@ description: 遍历记录数组，对每个项执行操作。
 
 ## 何时使用迭代器
 
-| 场景                | 示例              |
-| ----------------- | --------------- |
-| **处理搜索结果**        | 向每位找到的人员发送电子邮件。 |
-| **处理 Webhook 数组** | 按顺序为每个项目创建记录    |
-| **批量更新**          | 使用计算得出的值更新多条记录  |
-| **通知**            | 就某个事件通知多位人员     |
+| 场景                  | 示例                           |
+| --------------------- | ------------------------------ |
+| **处理搜索结果**      | 向每位找到的人员发送电子邮件。 |
+| **处理 Webhook 数组** | 按顺序为每个项目创建记录       |
+| **批量更新**          | 使用计算得出的值更新多条记录   |
+| **通知**              | 就某个事件通知多位人员         |
 
 ## 了解迭代器
 
@@ -61,20 +61,20 @@ description: 遍历记录数组，对每个项执行操作。
 
 如果 Search Records 返回 5 个人，迭代器将：
 
-* 向第 1 个人发送电子邮件
-* 向第 2 个人发送电子邮件
-* ... 对全部 5 人继续执行
+- 向第 1 个人发送电子邮件
+- 向第 2 个人发送电子邮件
+- ... 对全部 5 人继续执行
 
 ## 访问当前项数据
 
 在迭代器内，使用 `{{iterator.currentItem}}` 访问当前记录：
 
-| 变量                                      | 描述                |
-| --------------------------------------- | ----------------- |
-| `{{iterator.currentItem}}`              | 整个当前记录对象          |
-| `{{iterator.currentItem.id}}`           | 记录 ID             |
-| `{{iterator.currentItem.email}}`        | 电子邮件字段            |
-| `{{iterator.currentItem.company.name}}` | 关联的公司名称           |
+| 变量                                    | 描述                            |
+| --------------------------------------- | ------------------------------- |
+| `{{iterator.currentItem}}`              | 整个当前记录对象                |
+| `{{iterator.currentItem.id}}`           | 记录 ID                         |
+| `{{iterator.currentItem.email}}`        | 电子邮件字段                    |
+| `{{iterator.currentItem.company.name}}` | 关联的公司名称                  |
 | `{{iterator.index}}`                    | 在数组中的当前位置（从 0 开始） |
 
 ## 常见模式
@@ -149,16 +149,16 @@ Filter: {{searchRecords.length}} > 0
 
 **修复方法**：
 
-* 在 Search Records 中添加更具体的筛选条件
-* 在 Search Records 中设置限制（最多 200）
-* 在迭代器内部添加筛选条件用于附加条件
+- 在 Search Records 中添加更具体的筛选条件
+- 在 Search Records 中设置限制（最多 200）
+- 在迭代器内部添加筛选条件用于附加条件
 
 ## 性能注意事项
 
-* **额度使用**：每次迭代都会为其操作消耗额度
-* **时间**：较大的数组处理时间更长
-* **限制**：对于非常大的操作，考虑分批处理
-* **速率限制**：大量迭代的外部 API 调用可能触发速率限制
+- **额度使用**：每次迭代都会为其操作消耗额度
+- **时间**：较大的数组处理时间更长
+- **限制**：对于非常大的操作，考虑分批处理
+- **速率限制**：大量迭代的外部 API 调用可能触发速率限制
 
 ## 最佳实践
 
@@ -170,6 +170,6 @@ Filter: {{searchRecords.length}} > 0
 
 ## 相关内容
 
-* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [如何使用分支](/l/zh/user-guide/workflows/capabilities/use-branches-in-workflows)
-* [工作流常见问题](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq)
+- [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+- [如何使用分支](/l/zh/user-guide/workflows/capabilities/use-branches-in-workflows)
+- [工作流常见问题](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq)

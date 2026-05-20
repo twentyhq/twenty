@@ -1,9 +1,8 @@
 ---
 title: Apps
-icon: "cube"
+icon: 'cube'
 description: Extend Twenty with code — custom objects, server-side logic, UI components, and AI agents, all as TypeScript packages.
 ---
-
 
 Most CRMs give you a config panel. Twenty gives you a platform. Apps are how developers extend Twenty beyond what the UI offers — defining data models, server-side logic, UI components, and AI capabilities as code, then deploying them to one or more workspaces.
 
@@ -17,13 +16,13 @@ Apps let you build these as first-class extensions — not brittle scripts talki
 
 An app is a TypeScript package that declares **entities** using the `twenty-sdk`:
 
-| Entity | What it does |
-|--------|-------------|
-| **Objects & Fields** | New data tables and fields on existing objects — same treatment as built-in ones |
-| **Logic Functions** | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events |
-| **Front Components** | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
-| **Skills & Agents** | AI capabilities — reusable instructions and autonomous assistants |
-| **Views & Navigation** | Pre-configured list views and sidebar menu items |
+| Entity                 | What it does                                                                                  |
+| ---------------------- | --------------------------------------------------------------------------------------------- |
+| **Objects & Fields**   | New data tables and fields on existing objects — same treatment as built-in ones              |
+| **Logic Functions**    | Server-side TypeScript triggered by HTTP routes, cron schedules, or database events           |
+| **Front Components**   | Sandboxed React components that render inside Twenty's UI (side panel, widgets, command menu) |
+| **Skills & Agents**    | AI capabilities — reusable instructions and autonomous assistants                             |
+| **Views & Navigation** | Pre-configured list views and sidebar menu items                                              |
 
 Everything is detected via AST analysis at build time — no config files, no registration boilerplate. Put a `export default defineObject(...)` in any `.ts` file and the SDK picks it up.
 
@@ -37,6 +36,10 @@ Everything is detected via AST analysis at build time — no config files, no re
 
 You write your app as a TypeScript project on your machine. The CLI watches your source files and live-syncs them to a running Twenty server — edit a file, see the change in the UI within a second. The typed API client regenerates automatically when the schema changes. When you're ready, `yarn twenty app:publish --private` pushes to a production server, or `yarn twenty app:publish` lists your app on npm and the Twenty marketplace.
 
-<Card title="Build your first app" icon="arrow-right" href="/developers/extend/apps/getting-started">
+<Card
+  title="Build your first app"
+  icon="arrow-right"
+  href="/developers/extend/apps/getting-started"
+>
   Three-phase walkthrough — scaffold, run a local server, sync your changes.
 </Card>

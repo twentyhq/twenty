@@ -23,23 +23,24 @@ Automatically send deal data to your invoicing system (Stripe, QuickBooks, Xero,
 
 Add a **Filter** action to only continue when the deal is won:
 
-| Setting | Value |
-|---------|-------|
-| **Field** | Stage |
-| **Condition** | Equals |
-| **Value** | `CLOSED_WON` (or your stage name) |
+| Setting       | Value                             |
+| ------------- | --------------------------------- |
+| **Field**     | Stage                             |
+| **Condition** | Equals                            |
+| **Value**     | `CLOSED_WON` (or your stage name) |
 
 <Tip>
-The trigger fires on any Opportunity update. The Filter ensures the workflow only continues when the stage changes to Closed Won.
+  The trigger fires on any Opportunity update. The Filter ensures the workflow
+  only continues when the stage changes to Closed Won.
 </Tip>
 
 ## Step 3: Get Company Details
 
 The Opportunity record may not include all Company fields you need for the invoice. Add a **Search Record** action:
 
-| Setting | Value |
-|---------|-------|
-| **Object** | Company |
+| Setting      | Value                                    |
+| ------------ | ---------------------------------------- |
+| **Object**   | Company                                  |
 | **Match by** | ID equals `{{trigger.object.companyId}}` |
 
 This retrieves the full Company record with billing address, tax ID, etc.
@@ -88,12 +89,12 @@ export const main = async (params: {
 
 Add an **HTTP Request** action:
 
-| Setting | Value |
-|---------|-------|
-| **Method** | POST |
-| **URL** | Your invoicing API endpoint |
-| **Headers** | `Authorization: Bearer YOUR_API_KEY` |
-| **Body** | `{{code.invoice}}` or map fields directly |
+| Setting     | Value                                     |
+| ----------- | ----------------------------------------- |
+| **Method**  | POST                                      |
+| **URL**     | Your invoicing API endpoint               |
+| **Headers** | `Authorization: Bearer YOUR_API_KEY`      |
+| **Body**    | `{{code.invoice}}` or map fields directly |
 
 ### Example: Stripe Invoice
 
@@ -122,13 +123,13 @@ Body: {{code.invoice}}
 
 ## Complete Workflow Summary
 
-| Step | Action | Purpose |
-|------|--------|---------|
-| 1 | Trigger: Record Updated | Fires when any Opportunity changes |
-| 2 | Filter | Only proceed if Stage = Closed Won |
-| 3 | Search Record | Get full Company details for billing |
-| 4 | Code | Format data for invoicing API |
-| 5 | HTTP Request | Create invoice in external system |
+| Step | Action                  | Purpose                              |
+| ---- | ----------------------- | ------------------------------------ |
+| 1    | Trigger: Record Updated | Fires when any Opportunity changes   |
+| 2    | Filter                  | Only proceed if Stage = Closed Won   |
+| 3    | Search Record           | Get full Company details for billing |
+| 4    | Code                    | Format data for invoicing API        |
+| 5    | HTTP Request            | Create invoice in external system    |
 
 ## Tips
 
@@ -142,4 +143,3 @@ Body: {{code.invoice}}
 - [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
 - [Closed Won Automations](/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
-

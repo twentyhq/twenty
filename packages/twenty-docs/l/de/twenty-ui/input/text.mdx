@@ -42,11 +42,9 @@ export const MyComponent = () => {
 },{
 ```
 
-
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Props          | Typ             | Beschreibung                                                                                                                                        |
 | -------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -58,9 +56,6 @@ export const MyComponent = () => {
 | fehler         | Zeichenkette    | Stellt die Fehlermeldung dar, die angezeigt werden soll. Wenn vorhanden, wird auch ein Fehler-Icon auf der rechten Seite des Eingabefelds angezeigt |
 | onKeyDown      | Funktion        | Wird aufgerufen, wenn eine Taste gedrückt gehalten wird, während das Eingabefeld fokussiert ist. Erhält ein `React.KeyboardEvent` als Argument      |
 | RightIcon      | Icon-Komponente | Eine optionale Ikonenkomponente, die auf der rechten Seite des Eingabefelds angezeigt wird                                                          |
-
-
-
 
 Die Komponente akzeptiert auch andere HTML-Eingabeelement-Eigenschaften.
 
@@ -77,15 +72,15 @@ Textkomponente, die ihre Höhe automatisch anhand des Inhalts anpasst.
 <Tab title="Verwendung">
 
 ```jsx
-import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("onValidate-Funktion ausgelöst")}
+      onValidate={() => console.log('onValidate-Funktion ausgelöst')}
       minRows={1}
       placeholder="Kommentar schreiben"
-      onFocus={() => console.log("onFocus-Funktion ausgelöst")}
+      onFocus={() => console.log('onFocus-Funktion ausgelöst')}
       variant="icon"
       buttonTitle
       value="Aufgabe: "
@@ -94,11 +89,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Props       | Typ          | Beschreibung                                                                             |
 | ----------- | ------------ | ---------------------------------------------------------------------------------------- |
@@ -109,9 +102,6 @@ export const MyComponent = () => {
 | Variante    | Zeichenkette | Die Variante der Eingabe. Optionen umfassen: `Standard`, `Ikone` und `Schaltfläche`      |
 | buttonTitle | Zeichenkette | Der Titel für die Schaltfläche (nur für die Schaltflächenvariante anwendbar)             |
 | wert        | Zeichenkette | Der Initialwert für den Textbereich                                                      |
-
-
-
 
 </Tab>
 
@@ -125,26 +115,24 @@ Ermöglicht es Ihnen, mehrzeilige Texteingaben zu erstellen.
 <Tab title="Verwendung">
 
 ```jsx
-import { TextArea } from "@/ui/input/components/TextArea";
+import { TextArea } from '@/ui/input/components/TextArea';
 
 export const MyComponent = () => {
   return (
     <TextArea
-    disabled={false}
-    minRows={4}
-    onChange={()=>console.log('On change function fired')}
-    placeholder="Enter text here"
-    value=""
+      disabled={false}
+      minRows={4}
+      onChange={() => console.log('On change function fired')}
+      placeholder="Enter text here"
+      value=""
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Props       | Typ          | Beschreibung                                                                 |
 | ----------- | ------------ | ---------------------------------------------------------------------------- |
@@ -153,9 +141,6 @@ export const MyComponent = () => {
 | onChange    | Funktion     | Rückruffunktion wird ausgelöst, wenn sich der Inhalt des Textbereichs ändert |
 | Platzhalter | Zeichenkette | Platzhaltertext, der angezeigt wird, wenn der Textbereich leer ist           |
 | wert        | Zeichenkette | Der aktuelle Wert des Textbereichs                                           |
-
-
-
 
 </Tab>
 </Tabs>

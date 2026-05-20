@@ -51,11 +51,12 @@ export default defineLogicFunction({
 ```
 
 Verfügbare Trigger-Typen:
-* **httpRoute**: Stellt Ihre Funktion unter einem HTTP-Pfad und einer Methode **unter dem Endpunkt `/s/`** bereit:
-> z. B. `path: '/post-card/create'` ist unter `https://your-twenty-server.com/s/post-card/create` aufrufbar
-* **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
-* **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
-> z. B. `person.updated`, `*.created`, `company.*`
+
+- **httpRoute**: Stellt Ihre Funktion unter einem HTTP-Pfad und einer Methode **unter dem Endpunkt `/s/`** bereit:
+  > z. B. `path: '/post-card/create'` ist unter `https://your-twenty-server.com/s/post-card/create` aufrufbar
+- **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
+- **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
+  > z. B. `person.updated`, `*.created`, `company.*`
 
 <Note>
 Sie können eine Funktion auch manuell über die CLI ausführen:
@@ -73,6 +74,7 @@ Sie können Protokolle mit folgendem Befehl ansehen:
 ```bash filename="Terminal"
 yarn twenty dev:function:logs
 ```
+
 </Note>
 
 #### Routen-Trigger-Payload
@@ -93,17 +95,16 @@ const handler = async (event: RoutePayload) => {
 
 Der Typ `RoutePayload` hat die folgende Struktur:
 
-  | Eigenschaft                  | Typ                                                     | Beschreibung                                                                                                                                                                                                                           | Beispiel                                                                   |
-  | ---------------------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | HTTP-Header (nur die in `forwardedRequestHeaders` aufgelisteten)                                                                                                                                                                       | siehe Abschnitt unten                                                      |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Query-String-Parameter (mehrere Werte mit Kommas verbunden)                                                                                                                                                                            | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Aus dem Routenmuster extrahierte Pfadparameter                                                                                                                                                                                         | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Geparster Request-Body (JSON)                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Ursprünglicher UTF-8-Request-Body vor dem JSON-Parsing. Nützlich zur Verifizierung von Webhook-Signaturen im HMAC-Stil (z. B. GitHubs `X-Hub-Signature-256`, Stripe). `undefined`, wenn die Laufzeitumgebung es nicht beibehalten hat. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Gibt an, ob der Body Base64-codiert ist                                                                                                                                                                                                |                                                                            |
-  | `requestContext.http.method` | `string`                                                | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                           |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Rohpfad der Anfrage                                                                                                                                                                                                                    |                                                                            |
-
+| Eigenschaft                  | Typ                                    | Beschreibung                                                                                                                                                                                                                           | Beispiel                                                                   |
+| ---------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record\<string, string \| undefined>` | HTTP-Header (nur die in `forwardedRequestHeaders` aufgelisteten)                                                                                                                                                                       | siehe Abschnitt unten                                                      |
+| `queryStringParameters`      | `Record\<string, string \| undefined>` | Query-String-Parameter (mehrere Werte mit Kommas verbunden)                                                                                                                                                                            | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record\<string, string \| undefined>` | Aus dem Routenmuster extrahierte Pfadparameter                                                                                                                                                                                         | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                       | Geparster Request-Body (JSON)                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                  | Ursprünglicher UTF-8-Request-Body vor dem JSON-Parsing. Nützlich zur Verifizierung von Webhook-Signaturen im HMAC-Stil (z. B. GitHubs `X-Hub-Signature-256`, Stripe). `undefined`, wenn die Laufzeitumgebung es nicht beibehalten hat. |                                                                            |
+| `isBase64Encoded`            | `boolean`                              | Gibt an, ob der Body Base64-codiert ist                                                                                                                                                                                                |                                                                            |
+| `requestContext.http.method` | `string`                               | HTTP-Methode (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                           |                                                                            |
+| `requestContext.http.path`   | `string`                               | Rohpfad der Anfrage                                                                                                                                                                                                                    |                                                                            |
 
 #### forwardedRequestHeaders
 
@@ -137,7 +138,9 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit Schlüsseln in Kleinbuchstaben darauf zu (z. B. `event.headers['content-type']`).
+  Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit
+  Schlüsseln in Kleinbuchstaben darauf zu (z. B.
+  `event.headers['content-type']`).
 </Note>
 
 #### Datenbank-Event-Trigger-Payload
@@ -179,16 +182,16 @@ Bei Soft Deletes folgt `.deleted` der Aktualisierungsstruktur, da sich das Feld 
 Für dauerhafte Löschvorgänge verwende `.destroyed`.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields` filtert, welche Aktualisierungsereignisse die Funktion auslösen.
-`event.properties.updatedFields` gibt an, welche Felder beim aktuellen Ereignis tatsächlich geändert wurden.
+  `databaseEventTriggerSettings.updatedFields` filtert, welche
+  Aktualisierungsereignisse die Funktion auslösen.
+  `event.properties.updatedFields` gibt an, welche Felder beim aktuellen
+  Ereignis tatsächlich geändert wurden.
 </Note>
 
 Beispiel für ein Created-Ereignis:
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -203,9 +206,7 @@ const handler = async (event: PersonCreatedEvent) => {
 Beispiel für ein Updated-Ereignis:
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -253,8 +254,8 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 Logikfunktionen können auf zwei Oberflächen verfügbar gemacht werden, jeweils mit eigenem Trigger:
 
-* **`toolTriggerSettings`** — macht die Funktion über die KI-Funktionen von Twenty (Chat, MCP, Funktionsaufrufe) auffindbar. Verwendet das standardmäßige JSON Schema, das Format, das LLMs nativ verstehen.
-* **`workflowActionTriggerSettings`** — lässt die Funktion als Schritt im visuellen Workflow-Builder erscheinen. Verwendet das umfangreiche `InputSchema` von Twenty, sodass der Builder geeignete Feldeditoren, Variablenauswahlen und Beschriftungen rendern kann.
+- **`toolTriggerSettings`** — macht die Funktion über die KI-Funktionen von Twenty (Chat, MCP, Funktionsaufrufe) auffindbar. Verwendet das standardmäßige JSON Schema, das Format, das LLMs nativ verstehen.
+- **`workflowActionTriggerSettings`** — lässt die Funktion als Schritt im visuellen Workflow-Builder erscheinen. Verwendet das umfangreiche `InputSchema` von Twenty, sodass der Builder geeignete Feldeditoren, Variablenauswahlen und Beschriftungen rendern kann.
 
 Eine Funktion kann sich für eine, die andere oder beide entscheiden. Sie stehen neben `cronTriggerSettings`, `databaseEventTriggerSettings` und `httpRouteTriggerSettings` — gleiches Muster, gleiche Struktur.
 
@@ -292,8 +293,8 @@ export default defineLogicFunction({
 
 Hauptpunkte:
 
-* Eine Funktion kann Oberflächen mischen — deklarieren Sie sowohl `toolTriggerSettings` als auch `workflowActionTriggerSettings`, um sie im Chat UND im Workflow-Builder bereitzustellen.
-* `toolTriggerSettings.inputSchema` und `workflowActionTriggerSettings.inputSchema` sind beide optional. Wenn sie weggelassen werden, leitet der Manifest-Builder sie aus dem Handler-Quellcode ab (JSON Schema für das KI-Tool, das `InputSchema` von Twenty für die Workflow-Aktion). Geben Sie eines explizit an, wenn Sie eine reichere Typisierung wünschen — zum Beispiel mit `FieldMetadataType`-fähigen Feldern wie `CURRENCY` oder `RELATION` für den Workflow-Builder oder mit `description`-Feldern, die der KI-Agent lesen kann:
+- Eine Funktion kann Oberflächen mischen — deklarieren Sie sowohl `toolTriggerSettings` als auch `workflowActionTriggerSettings`, um sie im Chat UND im Workflow-Builder bereitzustellen.
+- `toolTriggerSettings.inputSchema` und `workflowActionTriggerSettings.inputSchema` sind beide optional. Wenn sie weggelassen werden, leitet der Manifest-Builder sie aus dem Handler-Quellcode ab (JSON Schema für das KI-Tool, das `InputSchema` von Twenty für die Workflow-Aktion). Geben Sie eines explizit an, wenn Sie eine reichere Typisierung wünschen — zum Beispiel mit `FieldMetadataType`-fähigen Feldern wie `CURRENCY` oder `RELATION` für den Workflow-Builder oder mit `description`-Feldern, die der KI-Agent lesen kann:
 
 ```ts
 export default defineLogicFunction({
@@ -318,14 +319,21 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen werden soll.
+  **Schreiben Sie eine gute `description`.** KI-Agenten verlassen sich auf das
+  `description`-Feld der Funktion, um zu entscheiden, wann das Tool verwendet
+  werden soll. Seien Sie konkret darin, was das Tool tut und wann es aufgerufen
+  werden soll.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Installations-Hooks** – Vorinstallations- und Nachinstallations-Handler – teilen sich diese Laufzeit, werden aber mit ihren eigenen define-Funktionen deklariert und verwenden keine Trigger-Einstellungen. Siehe [Installations-Hooks](/l/de/developers/extend/apps/config/install-hooks) für `definePreInstallLogicFunction` und `definePostInstallLogicFunction`.
+  **Installations-Hooks** – Vorinstallations- und Nachinstallations-Handler –
+  teilen sich diese Laufzeit, werden aber mit ihren eigenen define-Funktionen
+  deklariert und verwenden keine Trigger-Einstellungen. Siehe
+  [Installations-Hooks](/l/de/developers/extend/apps/config/install-hooks) für
+  `definePreInstallLogicFunction` und `definePostInstallLogicFunction`.
 </Note>
 
 ## Typisierte API-Clients (twenty-client-sdk)
@@ -380,7 +388,11 @@ const { createCompany } = await client.mutation({
 Der Client verwendet eine Selection-Set-Syntax: Übergeben Sie `true`, um ein Feld einzuschließen, verwenden Sie `__args` für Argumente, und verschachteln Sie Objekte für Relationen. Sie erhalten vollständige Autovervollständigung und Typprüfung basierend auf Ihrem Arbeitsbereichsschema.
 
 <Note>
-**Der CoreApiClient wird zur Entwicklungs-/Build-Zeit generiert.** Wenn Sie ihn verwenden, ohne zuvor `yarn twenty dev` oder `yarn twenty dev:build` ausgeführt zu haben, wird ein Fehler ausgelöst. Die Generierung erfolgt automatisch — die CLI inspiziert das GraphQL-Schema Ihres Arbeitsbereichs und erzeugt mit `@genql/cli` einen typisierten Client.
+  **Der CoreApiClient wird zur Entwicklungs-/Build-Zeit generiert.** Wenn Sie
+  ihn verwenden, ohne zuvor `yarn twenty dev` oder `yarn twenty dev:build`
+  ausgeführt zu haben, wird ein Fehler ausgelöst. Die Generierung erfolgt
+  automatisch — die CLI inspiziert das GraphQL-Schema Ihres Arbeitsbereichs und
+  erzeugt mit `@genql/cli` einen typisierten Client.
 </Note>
 
 #### Verwendung von CoreSchema für Typannotationen
@@ -449,10 +461,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+  fileBuffer, // file contents as a Buffer
+  'invoice.pdf', // filename
+  'application/pdf', // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b', // field universalIdentifier
 );
 
 console.log(uploadedFile);
@@ -467,8 +479,9 @@ console.log(uploadedFile);
 | `fieldMetadataUniversalIdentifier` | `string` | Der `universalIdentifier` des Dateityp-Felds in Ihrem Objekt          |
 
 Hauptpunkte:
-* Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist.
-* Die zurückgegebene `url` ist eine signierte URL, mit der Sie auf die hochgeladene Datei zugreifen können.
+
+- Sie verwendet den `universalIdentifier` des Feldes (nicht dessen arbeitsbereichsspezifische ID), sodass Ihr Upload-Code in jedem Arbeitsbereich funktioniert, in dem Ihre App installiert ist.
+- Die zurückgegebene `url` ist eine signierte URL, mit der Sie auf die hochgeladene Datei zugreifen können.
 
 </Accordion>
 </AccordionGroup>
@@ -476,8 +489,9 @@ Hauptpunkte:
 <Note>
   Wenn Ihr Code auf Twenty ausgeführt wird (Logikfunktionen oder Frontend-Komponenten), injiziert die Plattform Anmeldedaten als Umgebungsvariablen:
 
-  * `TWENTY_API_URL` — Basis-URL der Twenty-API
-  * `TWENTY_APP_ACCESS_TOKEN` — Kurzlebiger Schlüssel, der auf die Standard-Funktionsrolle Ihrer Anwendung begrenzt ist
+- `TWENTY_API_URL` — Basis-URL der Twenty-API
+- `TWENTY_APP_ACCESS_TOKEN` — Kurzlebiger Schlüssel, der auf die Standard-Funktionsrolle Ihrer Anwendung begrenzt ist
 
-  Sie müssen diese **nicht** an die Clients übergeben — sie lesen automatisch aus `process.env`. Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, die mit `defineApplicationRole()` deklariert wird (oder über `defaultRoleUniversalIdentifier` in `application-config.ts` referenziert wird).
+Sie müssen diese **nicht** an die Clients übergeben — sie lesen automatisch aus `process.env`. Die Berechtigungen des API-Schlüssels werden durch die Rolle bestimmt, die mit `defineApplicationRole()` deklariert wird (oder über `defaultRoleUniversalIdentifier` in `application-config.ts` referenziert wird).
+
 </Note>

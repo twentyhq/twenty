@@ -18,6 +18,7 @@ description: La guía para los colaboradores (o desarrolladores curiosos) que qu
       `npm` no funcionará, deberías usar `yarn` en su lugar. Yarn ahora se envía con Node.js, por lo que no necesitas instalarlo por separado.
       Solo tienes que ejecutar `corepack enable` para habilitar Yarn si aún no lo has hecho.
     </Warning>
+
   </Tab>
 
   <Tab title="Windows (WSL)">
@@ -65,6 +66,7 @@ description: La guía para los colaboradores (o desarrolladores curiosos) que qu
 
     corepack enable
     ```
+
   </Tab>
 </Tabs>
 
@@ -81,6 +83,7 @@ En tu terminal, ejecuta el siguiente comando.
     ```bash
     git clone git@github.com:twentyhq/twenty.git
     ```
+
   </Tab>
 
   <Tab title="HTTPS">
@@ -116,6 +119,7 @@ Debes ejecutar todos los comandos de los siguientes pasos desde la raíz del pro
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 
   <Tab title="Mac OS">
@@ -182,6 +186,7 @@ Debes ejecutar todos los comandos de los siguientes pasos desde la raíz del pro
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 
   <Tab title="Windows (WSL)">
@@ -203,6 +208,7 @@ Debes ejecutar todos los comandos de los siguientes pasos desde la raíz del pro
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -222,6 +228,7 @@ Twenty requiere un caché de redis para proporcionar el mejor rendimiento
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 
   <Tab title="Mac OS">
@@ -239,6 +246,7 @@ Twenty requiere un caché de redis para proporcionar el mejor rendimiento
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 
   <Tab title="Windows (WSL)">
@@ -250,6 +258,7 @@ Twenty requiere un caché de redis para proporcionar el mejor rendimiento
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -267,7 +276,14 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-  **Modo de múltiples espacios de trabajo:** De forma predeterminada, Twenty se ejecuta en modo de un solo espacio de trabajo, donde solo se puede crear un espacio de trabajo. Para habilitar la compatibilidad con múltiples espacios de trabajo (útil para probar funciones basadas en subdominios), establece `IS_MULTIWORKSPACE_ENABLED=true` en el archivo `.env` de tu servidor. Consulta [Modo de múltiples espacios de trabajo](/l/es/developers/self-host/capabilities/setup#multi-workspace-mode) para más detalles.
+  **Modo de múltiples espacios de trabajo:** De forma predeterminada, Twenty se
+  ejecuta en modo de un solo espacio de trabajo, donde solo se puede crear un
+  espacio de trabajo. Para habilitar la compatibilidad con múltiples espacios de
+  trabajo (útil para probar funciones basadas en subdominios), establece
+  `IS_MULTIWORKSPACE_ENABLED=true` en el archivo `.env` de tu servidor. Consulta
+  [Modo de múltiples espacios de
+  trabajo](/l/es/developers/self-host/capabilities/setup#multi-workspace-mode)
+  para más detalles.
 </Info>
 
 ## Paso 6: Instalación de dependencias
@@ -294,6 +310,7 @@ Ten en cuenta que `npm` o `pnpm` no funcionarán
     ```bash
     brew services start redis
     ```
+
   </Tab>
 
   <Tab title="Windows (WSL)">
@@ -331,9 +348,9 @@ Puede iniciar sesión usando la cuenta demo por defecto: `tim@apple.dev` (contra
 
 **Backend**
 
-* El servidor de Twenty estará operativo en [http://localhost:3000](http://localhost:3000)
-* La API GraphQL puede ser accedida en [http://localhost:3000/graphql](http://localhost:3000/graphql)
-* La API REST puede ser alcanzada en [http://localhost:3000/rest](http://localhost:3000/rest)
+- El servidor de Twenty estará operativo en [http://localhost:3000](http://localhost:3000)
+- La API GraphQL puede ser accedida en [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- La API REST puede ser alcanzada en [http://localhost:3000/rest](http://localhost:3000/rest)
 
 ## Solución de Problemas
 

@@ -9,10 +9,10 @@ Potřebujete aktualizovat mnoho záznamů najednou? Místo ruční úpravy jedno
 
 **Případy použití:**
 
-* Aktualizujte pracovní pozice pro více lidí
-* Hromadně změňte informace o společnosti
-* Přidejte data do nových vlastních polí
-* Opravte chyby v datech napříč mnoha záznamy
+- Aktualizujte pracovní pozice pro více lidí
+- Hromadně změňte informace o společnosti
+- Přidejte data do nových vlastních polí
+- Opravte chyby v datech napříč mnoha záznamy
 
 ## Jak to funguje
 
@@ -30,6 +30,7 @@ Když naimportujete soubor obsahující **jedinečný identifikátor**, který o
 Pokud má záznam vybrané `Option A` a `Option B` a vy importujete `["Option C"]`, záznam bude po importu obsahovat pouze `Option C`. Import nahradí všechny předchozí volby — nepřidává k nim.
 
 Chcete-li zachovat stávající hodnoty, zahrňte je všechny do importu: `["Option A","Option B","Option C"]`
+
 </Warning>
 
 ## Krok 1: Exportujte svá aktuální data
@@ -42,13 +43,16 @@ Nejprve exportujte záznamy, které chcete aktualizovat:
 4. Klikněte na **⋮** → **Export view**
 5. Uložte soubor CSV
 
-<Note>**Proč nejdřív exportovat?** Exportovaný soubor má správný formát, obsahuje jedinečné identifikátory a během importu se mapuje automaticky.</Note>
+<Note>
+  **Proč nejdřív exportovat?** Exportovaný soubor má správný formát, obsahuje
+  jedinečné identifikátory a během importu se mapuje automaticky.
+</Note>
 
 ### Co se exportuje
 
-* Všechny viditelné sloupce v aktuálním zobrazení
-* Jedinečné identifikátory záznamu (`id`, `email`, `domain`)
-* Aktuální hodnoty polí, které můžete upravit
+- Všechny viditelné sloupce v aktuálním zobrazení
+- Jedinečné identifikátory záznamu (`id`, `email`, `domain`)
+- Aktuální hodnoty polí, které můžete upravit
 
 ## Krok 2: Upravte soubor CSV
 
@@ -83,6 +87,7 @@ id,email,firstName,lastName,jobTitle
 **Neměňte hodnoty jedinečných identifikátorů.**
 
 Pokud změníte `john@acme.com` na `john.smith@acme.com`, Twenty vytvoří nový záznam místo aktualizace stávajícího.
+
 </Warning>
 
 ## Krok 3: Importujte aktualizovaný soubor
@@ -105,7 +110,10 @@ Twenty porovnává záznamy podle jedinečného identifikátoru a aktualizuje je
 | **Společnosti**     | `doména`                | `id`        | Doména je pro lidi čitelná          |
 | **Vlastní objekty** | Jakékoli jedinečné pole | `id`        | Použijte své vlastní jedinečné pole |
 
-<Note>**Použijte pouze JEDEN jedinečný identifikátor.** Nemapujte současně `email` A `id`. To může způsobit nejasnosti a chyby.</Note>
+<Note>
+  **Použijte pouze JEDEN jedinečný identifikátor.** Nemapujte současně `email` A
+  `id`. To může způsobit nejasnosti a chyby.
+</Note>
 
 ### Použití vlastních jedinečných polí
 
@@ -160,21 +168,25 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
     Záznamy s jedinečnými identifikátory, které neodpovídají existujícím záznamům, budou vytvořeny jako nové. To vám umožní aktualizovat i vytvářet v rámci jednoho importu.
   </Accordion>
 
-  <Accordion title="Mohu vymazat/vyprázdnit hodnotu pole?">
-    Ano, v CSV nechte buňku prázdnou. Import vymaže hodnotu tohoto pole u existujícího záznamu.
-  </Accordion>
+<Accordion title="Mohu vymazat/vyprázdnit hodnotu pole?">
+  Ano, v CSV nechte buňku prázdnou. Import vymaže hodnotu tohoto pole u
+  existujícího záznamu.
+</Accordion>
 
-  <Accordion title="Co se stane s poli, která do importu nezahrnu?">
-    Pole, která nejsou ve vašem importním souboru, zůstávají u existujících záznamů beze změny. Aktualizují se pouze pole, která zahrnete.
-  </Accordion>
+<Accordion title="Co se stane s poli, která do importu nezahrnu?">
+  Pole, která nejsou ve vašem importním souboru, zůstávají u existujících
+  záznamů beze změny. Aktualizují se pouze pole, která zahrnete.
+</Accordion>
 
-  <Accordion title="Mohu aktualizovat relační pole (například Company)?">
-    Ano! Zahrňte jedinečný identifikátor relace (např. `companyDomain`) a namapujte jej na relační pole. Relace bude aktualizována.
-  </Accordion>
+<Accordion title="Mohu aktualizovat relační pole (například Company)?">
+  Ano! Zahrňte jedinečný identifikátor relace (např. `companyDomain`) a
+  namapujte jej na relační pole. Relace bude aktualizována.
+</Accordion>
 
-  <Accordion title="Jak poznám, které záznamy se aktualizují a které se vytvoří?">
-    Během kroku kontroly importu vám Twenty zobrazí, kolik záznamů bude aktualizováno a kolik vytvořeno na základě shody jedinečných identifikátorů.
-  </Accordion>
+<Accordion title="Jak poznám, které záznamy se aktualizují a které se vytvoří?">
+  Během kroku kontroly importu vám Twenty zobrazí, kolik záznamů bude
+  aktualizováno a kolik vytvořeno na základě shody jedinečných identifikátorů.
+</Accordion>
 
   <Accordion title="Lze vrátit hromadnou aktualizaci zpět?">
     Automatické vrácení zpět není k dispozici. Před provedením hromadných aktualizací doporučujeme exportovat svá data jako zálohu.
@@ -193,6 +205,6 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 
 Máte potíže? Podívejte se na:
 
-* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
-* [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)
+- [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+- [Omezení jedinečnosti](/l/cs/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)

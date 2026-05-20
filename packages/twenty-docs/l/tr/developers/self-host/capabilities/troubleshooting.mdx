@@ -114,28 +114,37 @@ Bu, kullanıcı giriş yapmadığında yetkisiz olduğundan ve kimliği doğrula
 
 #### Çalışanınızın çalışıp çalışmadığını nasıl kontrol edersiniz?
 
-* [webhook-test.com](https://webhook-test.com/) adresine gidin ve **Benzersiz Webhook URL'nizi** kopyalayın.
+- [webhook-test.com](https://webhook-test.com/) adresine gidin ve **Benzersiz Webhook URL'nizi** kopyalayın.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook testi" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Webhook testi"
+  />
 </div>
 
-* Twenty uygulamanızı açın, `/settings` sayfasına gidin ve ekranın sol alt köşesinde bulunan **Gelişmiş** seçeneğini etkinleştirin.
-* Yeni bir webhook oluşturun.
-* **Benzersiz Webhook URL'nizi** Twenty'deki **Endpoint URL** alanına yapıştırın. **Filtreleri** `Şirketler` ve `Oluşturuldu` olarak ayarlayın.
+- Twenty uygulamanızı açın, `/settings` sayfasına gidin ve ekranın sol alt köşesinde bulunan **Gelişmiş** seçeneğini etkinleştirin.
+- Yeni bir webhook oluşturun.
+- **Benzersiz Webhook URL'nizi** Twenty'deki **Endpoint URL** alanına yapıştırın. **Filtreleri** `Şirketler` ve `Oluşturuldu` olarak ayarlayın.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook ayarları" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Webhook ayarları"
+  />
 </div>
 
-* `/objects/companies` sayfasına gidin ve yeni bir şirket kaydı oluşturun.
-* [webhook-test.com](https://webhook-test.com/) adresine geri dönün ve yeni bir **POST isteği** alınıp alınmadığını kontrol edin.
+- `/objects/companies` sayfasına gidin ve yeni bir şirket kaydı oluşturun.
+- [webhook-test.com](https://webhook-test.com/) adresine geri dönün ve yeni bir **POST isteği** alınıp alınmadığını kontrol edin.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook test sonucu" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Webhook test sonucu"
+  />
 </div>
 
-* Bir **POST isteği** alıyorsanız, çalışanınız başarıyla çalışıyor demektir. Aksi halde, çalışanınızı sorun giderme yapmanız gerekir.
+- Bir **POST isteği** alıyorsanız, çalışanınız başarıyla çalışıyor demektir. Aksi halde, çalışanınızı sorun giderme yapmanız gerekir.
 
 #### Ön uç başlatılamıyor ve TS5042 hatası döndürüyor: Seçenek 'project' komut satırında kaynak dosyalarla birleştirilemez
 
@@ -199,9 +208,8 @@ Eğer Twenty'yi ters proxy'nin arkasında çalıştırıyorsanız ve bağlantı 
    `.env` dosyanızdaki `SERVER_URL`'nin dış erişim URL'nizle eşleştiğinden, SSL etkinse `https`'i de içerdiğinden emin olun.
 
 2. **Ters Proxy Ayarlarını Kontrol Edin:**
-
-   * Ters proxy'nizin Twenty sunucusuna talepleri düzgün bir şekilde yönlendirdiğinden emin olun.
-   * `X-Forwarded-For` ve `X-Forwarded-Proto` gibi başlıkların doğru şekilde ayarlandığından emin olun.
+   - Ters proxy'nizin Twenty sunucusuna talepleri düzgün bir şekilde yönlendirdiğinden emin olun.
+   - `X-Forwarded-For` ve `X-Forwarded-Proto` gibi başlıkların doğru şekilde ayarlandığından emin olun.
 
 3. **Servisleri Yeniden Başlatın:**
 
@@ -215,7 +223,7 @@ Veri klasörünün sahipliğini ana bilgisayarda root'tan başka bir kullanıcı
 
 Bu kılavuzda ele alınmayan sorunlarla karşılaşırsanız:
 
-* Günlükleri Kontrol Edin:
+- Günlükleri Kontrol Edin:
 
   Hata mesajları için konteyner günlüklerine bakın:
 
@@ -223,6 +231,6 @@ Bu kılavuzda ele alınmayan sorunlarla karşılaşırsanız:
   docker compose logs
   ```
 
-* Topluluk Desteği:
+- Topluluk Desteği:
 
   [Twenty topluluğuna](https://github.com/twentyhq/twenty/issues) veya [destek kanallarına](https://discord.gg/cx5n4Jzs57) yardım için ulaşın.

@@ -17,8 +17,8 @@ Layout-Entitäten steuern, wie Ihre App innerhalb der Benutzeroberfläche von Tw
 
 Ansichten, Navigationsmenüeinträge und Seitenlayouts verweisen über `universalIdentifier` aufeinander:
 
-* Ein **Navigationsmenüeintrag** vom Typ `VIEW` verweist auf einen `defineView`-Bezeichner, sodass der Seitenleistenlink diese gespeicherte Ansicht öffnet.
-* Ein **Seitenlayout** vom Typ `RECORD_PAGE` zielt auf ein Objekt ab und kann [Frontkomponenten](/l/de/developers/extend/apps/front-components) innerhalb seiner Tabs als Widgets einbetten.
+- Ein **Navigationsmenüeintrag** vom Typ `VIEW` verweist auf einen `defineView`-Bezeichner, sodass der Seitenleistenlink diese gespeicherte Ansicht öffnet.
+- Ein **Seitenlayout** vom Typ `RECORD_PAGE` zielt auf ein Objekt ab und kann [Frontkomponenten](/l/de/developers/extend/apps/front-components) innerhalb seiner Tabs als Widgets einbetten.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Gespeicherte Views für Objekte definieren">
@@ -50,11 +50,12 @@ export default defineView({
 ```
 
 Hauptpunkte:
-* `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird.
-* `key` bestimmt den Ansichtstyp (z. B. `ViewKey.INDEX` für die Hauptlistenansicht).
-* `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
-* Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` definieren.
-* `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
+
+- `objectUniversalIdentifier` gibt an, auf welches Objekt diese Ansicht angewendet wird.
+- `key` bestimmt den Ansichtstyp (z. B. `ViewKey.INDEX` für die Hauptlistenansicht).
+- `fields` steuert, welche Spalten erscheinen und in welcher Reihenfolge. Jedes Feld referenziert einen `fieldMetadataUniversalIdentifier`.
+- Für erweiterte Konfigurationen können Sie außerdem `filters`, `filterGroups`, `groups` und `fieldGroups` definieren.
+- `position` steuert die Reihenfolge, wenn mehrere Ansichten für dasselbe Objekt existieren.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Seitenleisten-Navigationslinks definieren">
@@ -62,7 +63,10 @@ Hauptpunkte:
 Navigationsmenüeinträge fügen der Workspace-Seitenleiste benutzerdefinierte Einträge hinzu. Verwenden Sie `defineNavigationMenuItem()`, um auf Ansichten, externe URLs oder Objekte zu verlinken:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -77,10 +81,11 @@ export default defineNavigationMenuItem({
 ```
 
 Hauptpunkte:
-* `type` bestimmt, worauf der Menüeintrag verweist: `NavigationMenuItemType.VIEW` für eine gespeicherte Ansicht oder `NavigationMenuItemType.LINK` für eine externe URL.
-* Für Ansichtslinks setzen Sie `viewUniversalIdentifier`. Für externe Links setzen Sie `link`.
-* `position` steuert die Reihenfolge in der Seitenleiste.
-* `icon` und `color` (optional) passen das Erscheinungsbild an.
+
+- `type` bestimmt, worauf der Menüeintrag verweist: `NavigationMenuItemType.VIEW` für eine gespeicherte Ansicht oder `NavigationMenuItemType.LINK` für eine externe URL.
+- Für Ansichtslinks setzen Sie `viewUniversalIdentifier`. Für externe Links setzen Sie `link`.
+- `position` steuert die Reihenfolge in der Seitenleiste.
+- `icon` und `color` (optional) passen das Erscheinungsbild an.
 
 </Accordion>
 <Accordion title="definePageLayout" description="Benutzerdefinierte Seitenlayouts für Datensatzansichten definieren">
@@ -122,11 +127,12 @@ export default definePageLayout({
 ```
 
 Hauptpunkte:
-* `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
-* `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
-* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
-* Jedes `widget` innerhalb eines Tabs kann eine Frontend-Komponente, eine Relationenliste oder andere eingebaute Widget-Typen rendern.
-* `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
+
+- `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
+- `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
+- Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
+- Jedes `widget` innerhalb eines Tabs kann eine Frontend-Komponente, eine Relationenliste oder andere eingebaute Widget-Typen rendern.
+- `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
 
 </Accordion>
 <Accordion title="definePageLayoutTab" description="Eine Registerkarte zu einem bestehenden Seitenlayout hinzufügen">
@@ -169,10 +175,11 @@ export default definePageLayoutTab({
 ```
 
 Hauptpunkte:
-* `pageLayoutUniversalIdentifier` ist **erforderlich** bei der Verwendung von `definePageLayoutTab` und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert (Standard oder das Ihrer App). Wenn das übergeordnete Seitenlayout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
-* `widgets` sind ausschließlich auf diese Registerkarte beschränkt — sie verweisen auf Frontend-Komponenten, Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
-* `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
-* Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas **hinzufügen** möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen (typischerweise eine `RECORD_PAGE` für ein Objekt, das Sie in Ihrer App ausliefern, oder eine `STANDALONE_PAGE`).
+
+- `pageLayoutUniversalIdentifier` ist **erforderlich** bei der Verwendung von `definePageLayoutTab` und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert (Standard oder das Ihrer App). Wenn das übergeordnete Seitenlayout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+- `widgets` sind ausschließlich auf diese Registerkarte beschränkt — sie verweisen auf Frontend-Komponenten, Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+- `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+- Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas **hinzufügen** möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen (typischerweise eine `RECORD_PAGE` für ein Objekt, das Sie in Ihrer App ausliefern, oder eine `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

@@ -8,6 +8,7 @@ When a deal closes, multiple things need to happen: update company status, notif
 ## The Problem
 
 When an opportunity moves to "Closed Won":
+
 - Company type needs to change from "Prospect" to "Customer"
 - Onboarding tasks need to be created
 - Customer success team needs to be notified
@@ -43,42 +44,43 @@ Create a workflow that handles all post-win activities automatically.
 1. Add **Update Record** action
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **Object** | Companies |
-| **Record** | `{{trigger.object.company.id}}` |
-| **Type** | Customer |
-| **First Deal Date** | `{{trigger.object.closedAt}}` |
-| **Account Owner** | `{{trigger.object.owner.id}}` |
+| Field               | Value                           |
+| ------------------- | ------------------------------- |
+| **Object**          | Companies                       |
+| **Record**          | `{{trigger.object.company.id}}` |
+| **Type**            | Customer                        |
+| **First Deal Date** | `{{trigger.object.closedAt}}`   |
+| **Account Owner**   | `{{trigger.object.owner.id}}`   |
 
 ### Step 5: Create Onboarding Task
 
 1. Add **Create Record** action
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **Object** | Tasks |
-| **Title** | `Onboarding: {{trigger.object.name}}` |
-| **Assignee** | Customer Success team member |
-| **Due Date** | 3 days from now |
-| **Priority** | High |
-| **Related Company** | `{{trigger.object.company.id}}` |
-| **Related Opportunity** | `{{trigger.object.id}}` |
-| **Description** | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
+| Field                   | Value                                                                                                |
+| ----------------------- | ---------------------------------------------------------------------------------------------------- |
+| **Object**              | Tasks                                                                                                |
+| **Title**               | `Onboarding: {{trigger.object.name}}`                                                                |
+| **Assignee**            | Customer Success team member                                                                         |
+| **Due Date**            | 3 days from now                                                                                      |
+| **Priority**            | High                                                                                                 |
+| **Related Company**     | `{{trigger.object.company.id}}`                                                                      |
+| **Related Opportunity** | `{{trigger.object.id}}`                                                                              |
+| **Description**         | `New customer onboarding for {{trigger.object.company.name}}. Deal value: {{trigger.object.amount}}` |
 
 ### Step 6: Notify Customer Success
 
 1. Add **Send Email** action
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **To** | customer-success@yourcompany.com |
+| Field       | Value                                              |
+| ----------- | -------------------------------------------------- |
+| **To**      | customer-success@yourcompany.com                   |
 | **Subject** | `🎉 New Customer: {{trigger.object.company.name}}` |
-| **Body** | See example below |
+| **Body**    | See example below                                  |
 
 **Email body example**:
+
 ```
 Hi CS Team,
 
@@ -100,11 +102,11 @@ Let's give them a great start!
 1. Add another **Send Email** action
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **To** | `{{trigger.object.owner.email}}` |
-| **Subject** | `✅ Deal Closed: {{trigger.object.name}}` |
-| **Body** | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
+| Field       | Value                                                                                                                |
+| ----------- | -------------------------------------------------------------------------------------------------------------------- |
+| **To**      | `{{trigger.object.owner.email}}`                                                                                     |
+| **Subject** | `✅ Deal Closed: {{trigger.object.name}}`                                                                            |
+| **Body**    | Congratulations! Your deal has been processed. The customer success team has been notified and onboarding has begun. |
 
 ### Step 8: Test and Activate
 
@@ -121,9 +123,11 @@ Let's give them a great start!
 Create a similar workflow for lost deals:
 
 ### Trigger
+
 - Record is Updated (Opportunities, Stage = "Closed Lost")
 
 ### Actions
+
 1. **Create Record**: Task for "Lost Deal Analysis"
 2. **Update Record**: Add lost reason to company record
 3. **Send Email**: Notify manager of lost deal
@@ -135,10 +139,10 @@ For complex onboarding, create multiple tasks:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -150,16 +154,21 @@ Use **Iterator** to create each task from the array.
 ## Customization Ideas
 
 ### Keep your other tools up-to-date
+
 - Create customer in billing system with an **HTTP Request**
 
 ### Conditional Actions
+
 Use **Filter** actions to:
+
 - Different onboarding for enterprise vs SMB
 - Different assignees based on region
 - Skip notifications for small deals
 
 ### Include Deal Details
+
 Use **Code** action to format:
+
 - Deal summary documents
 - Handoff notes for CS team
 - Custom onboarding checklists

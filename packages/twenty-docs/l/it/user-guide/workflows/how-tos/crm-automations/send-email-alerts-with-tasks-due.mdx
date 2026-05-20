@@ -5,7 +5,10 @@ description: Notifica automaticamente ai membri del team le attività imminenti 
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Invia promemoria email quotidiani a ciascun membro del team sulle attività in scadenza oggi.
 
@@ -45,8 +48,8 @@ Questo flusso di lavoro viene eseguito secondo una pianificazione e:
 1. All'interno dell'Iterator, aggiungi un'azione **Search Records**
 2. Seleziona **Tasks** come oggetto
 3. Aggiungi filtri:
-   * **Assignee** = membro corrente dello spazio di lavoro (dall'Iterator)
-   * **Due Date** = oggi
+   - **Assignee** = membro corrente dello spazio di lavoro (dall'Iterator)
+   - **Due Date** = oggi
 
 ### Passaggio 5: Formatta le attività nel corpo dell'email (all'interno dell'Iterator)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-Sostituisci `yourSubDomain` con il tuo effettivo sottodominio dello spazio di lavoro Twenty.
+  Sostituisci `yourSubDomain` con il tuo effettivo sottodominio dello spazio di
+  lavoro Twenty.
 </Note>
 
 ### Passaggio 6: Invia email (all'interno dell'Iterator)
@@ -101,6 +105,6 @@ Sostituisci `yourSubDomain` con il tuo effettivo sottodominio dello spazio di la
 
 ## Correlati
 
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

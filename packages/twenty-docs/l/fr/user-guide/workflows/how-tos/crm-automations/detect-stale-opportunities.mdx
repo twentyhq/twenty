@@ -9,9 +9,9 @@ Maintenez la santé de votre pipeline en alertant les responsables lorsque des o
 
 Des opportunités laissées sans mise à jour entraînent :
 
-* Affaires qui se refroidissent
-* Prévisions peu fiables
-* Perte de revenus
+- Affaires qui se refroidissent
+- Prévisions peu fiables
+- Perte de revenus
 
 ## La solution
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ Ajoutez l'action **Envoyer un e-mail** :
 
 Modifiez le filtre Rechercher des enregistrements pour changer de 7 jours à la période de votre choix :
 
-* 3 jours pour les ventes à cadence élevée
-* 14 jours pour les affaires grands comptes
-* 30 jours pour les cycles de vente longs
+- 3 jours pour les ventes à cadence élevée
+- 14 jours pour les affaires grands comptes
+- 30 jours pour les cycles de vente longs
 
 ### Alerter les commerciaux individuellement
 
@@ -132,5 +132,5 @@ Utilisez **HTTP Request** pour publier vers un webhook Slack à la place d'un e-
 
 ## Articles connexes
 
-* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
-* [Envoyer des e-mails depuis des workflows](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+- [Envoyer des e-mails depuis des workflows](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)

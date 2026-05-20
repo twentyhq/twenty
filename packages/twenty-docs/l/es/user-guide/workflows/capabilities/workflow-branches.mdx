@@ -5,7 +5,10 @@ description: Crea rutas paralelas y lógica condicional en tus flujos de trabajo
 
 Las ramas te permiten dividir tu flujo de trabajo en varias rutas que pueden ejecutarse simultáneamente o de forma condicional según tus datos.
 
-<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches.png"
+  style={{ width: '100%' }}
+/>
 
 ## Cómo funcionan las ramas
 
@@ -22,7 +25,8 @@ Cuando creas varias conexiones desde un único nodo, cada ruta se convierte en u
 5. Repite para añadir más ramas desde el mismo nodo
 
 <Note>
-  Cada rama es independiente. Añadir una rama no afecta a otras rutas existentes desde ese nodo.
+  Cada rama es independiente. Añadir una rama no afecta a otras rutas existentes
+  desde ese nodo.
 </Note>
 
 ### Diseño visual
@@ -50,17 +54,20 @@ Solo continuarán ejecutándose las ramas en las que se cumpla la condición del
 
 **Las ramas no se combinan automáticamente.** Cada rama se ejecuta de forma independiente hasta que termina. Tienes total flexibilidad para gestionar esto:
 
-* **Opción 1: Mantener las ramas separadas**
+- **Opción 1: Mantener las ramas separadas**
   Cada rama gestiona sus propias acciones de seguimiento de forma independiente. Este es el enfoque más sencillo cuando las ramas no necesitan converger.
 
-* **Opción 2: Combinar ramas manualmente**
+- **Opción 2: Combinar ramas manualmente**
   Al crear tu flujo de trabajo, puedes conectar manualmente varias ramas a la misma acción posterior. Simplemente arrastra flechas desde el final de cada rama hasta un nodo común.
 
 <Note>
-  Aunque puedes usar un nodo [Delay](/l/es/user-guide/workflows/capabilities/workflow-actions#delay) para pausar la ejecución, actualmente no se puede configurar para esperar "hasta que otra rama termine".
+  Aunque puedes usar un nodo
+  [Delay](/l/es/user-guide/workflows/capabilities/workflow-actions#delay) para
+  pausar la ejecución, actualmente no se puede configurar para esperar "hasta
+  que otra rama termine".
 </Note>
 
 ## Relacionado
 
-* [Cómo usar las ramas en flujos de trabajo](/l/es/user-guide/workflows/capabilities/use-branches-in-workflows) - Guía paso a paso
-* [Acciones de flujo de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions) - Acciones disponibles, incluyendo Filter
+- [Cómo usar las ramas en flujos de trabajo](/l/es/user-guide/workflows/capabilities/use-branches-in-workflows) - Guía paso a paso
+- [Acciones de flujo de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions) - Acciones disponibles, incluyendo Filter

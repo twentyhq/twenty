@@ -20,12 +20,15 @@ description: 了解分支如何工作，以及如何控制执行哪条路径。
 3. 在每个 Filter 上设置条件，以确定该分支何时继续
 4. 只有满足其 Filter 条件的分支会继续
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Filter 的工作方式
 
-* 如果 Filter 条件被**满足**：该分支继续执行
-* 如果 Filter 条件**未满足**：该分支会在 Filter 节点停止
+- 如果 Filter 条件被**满足**：该分支继续执行
+- 如果 Filter 条件**未满足**：该分支会在 Filter 节点停止
 
 这实际上创建了条件逻辑，使只有与您的数据相匹配的合适分支会运行。
 
@@ -42,7 +45,8 @@ description: 了解分支如何工作，以及如何控制执行哪条路径。
 ## 创建分支
 
 <Note>
-要从现有步骤创建新分支，请点击该步骤上的 **+** 按钮并添加您的操作。 您可以多次点击 **+** 来添加多个分支。
+  要从现有步骤创建新分支，请点击该步骤上的 **+** 按钮并添加您的操作。
+  您可以多次点击 **+** 来添加多个分支。
 </Note>
 
 1. 在工作流编辑器中，选择您想要从其分支出去的步骤
@@ -78,13 +82,13 @@ description: 了解分支如何工作，以及如何控制执行哪条路径。
 
 ## 最佳实践
 
-* 当您需要条件执行时，请始终在分支开始处使用**Filter 节点**
-* 使分支条件**互斥**，以避免重复操作
-* 使用不同数据测试您的工作流，以确保运行正确的分支
-* **重命名分支步骤**，使每条路径的作用清晰明了
-* **合并分支**，当您在并行处理后需要执行最终操作时
+- 当您需要条件执行时，请始终在分支开始处使用**Filter 节点**
+- 使分支条件**互斥**，以避免重复操作
+- 使用不同数据测试您的工作流，以确保运行正确的分支
+- **重命名分支步骤**，使每条路径的作用清晰明了
+- **合并分支**，当您在并行处理后需要执行最终操作时
 
 ## 相关内容
 
-* [工作流常见问题](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq) — 关于并行执行的解答
-* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions) — 分支可用的操作
+- [工作流常见问题](/l/zh/user-guide/workflows/how-tos/need-more-help/workflows-faq) — 关于并行执行的解答
+- [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions) — 分支可用的操作

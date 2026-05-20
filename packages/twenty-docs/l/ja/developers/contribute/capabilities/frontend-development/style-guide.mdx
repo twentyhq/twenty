@@ -31,7 +31,7 @@ export default MyComponent;
 // ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
-};
+}
 ```
 
 ### プロパティ
@@ -49,7 +49,9 @@ type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => (
+  <div>Hello {name}</div>
+);
 ```
 
 #### プロップス型の定義に`React.FC`または`React.FunctionComponent`を使用しない
@@ -90,7 +92,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
-}
+};
 ```
 
 ```tsx
@@ -104,9 +106,9 @@ const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
 
 根拠:
 
-* ひと目で、コードがどのプロップスを渡しているかが明確になり、理解とメンテナンスが容易になります。
-* これにより、コンポーネント間のプロップスによる密結合を防ぐのに役立ちます。
-* プロップスを明示的にリストすれば、lintingツールが綴り間違いや未使用のプロップスを特定しやすくなります。
+- ひと目で、コードがどのプロップスを渡しているかが明確になり、理解とメンテナンスが容易になります。
+- これにより、コンポーネント間のプロップスによる密結合を防ぐのに役立ちます。
+- プロップスを明示的にリストすれば、lintingツールが綴り間違いや未使用のプロップスを特定しやすくなります。
 
 ## JavaScript
 
@@ -157,9 +159,9 @@ type MyType = {
 ```tsx
 // ❌ Bad, utilizes an enum
 enum Color {
-  Red = "red",
-  Green = "green",
-  Blue = "blue",
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
 }
 
 let color = Color.Red;
@@ -168,7 +170,7 @@ let color = Color.Red;
 ```tsx
 // ✅ Good, utilizes a string literal
 
-let color: "red" | "green" | "blue" = "red";
+let color: 'red' | 'green' | 'blue' = 'red';
 ```
 
 #### GraphQLと内部ライブラリ
@@ -254,7 +256,7 @@ const StyledButton = styled.button`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  border-radius:  ${({ theme }) => theme.border.rounded};
+  border-radius: ${({ theme }) => theme.border.rounded};
 `;
 ```
 
@@ -275,11 +277,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### なぜタイプなしインポートなのか
 
-* **一貫性**: 型インポートを避け、型と値の両方に単一のアプローチを使用することで、モジュールインポートスタイルの一貫性が保たれます。
+- **一貫性**: 型インポートを避け、型と値の両方に単一のアプローチを使用することで、モジュールインポートスタイルの一貫性が保たれます。
 
-* **可読性**: 型専用インポートは、値をインポートしているのか型をインポートしているのかを明確にすることで、コードの可読性を高めます。 これにより曖昧さが減り、インポートされたシンボルの目的を理解しやすくなります。
+- **可読性**: 型専用インポートは、値をインポートしているのか型をインポートしているのかを明確にすることで、コードの可読性を高めます。 これにより曖昧さが減り、インポートされたシンボルの目的を理解しやすくなります。
 
-* **維持性**: コードベースの維持性を向上させます。開発者がコードを確認/変更する際に、タイプのみのインポートを特定して見つけることができるからです。
+- **維持性**: コードベースの維持性を向上させます。開発者がコードを確認/変更する際に、タイプのみのインポートを特定して見つけることができるからです。
 
 ### Oxlintルール
 

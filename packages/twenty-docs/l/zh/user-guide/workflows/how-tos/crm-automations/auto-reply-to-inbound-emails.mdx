@@ -23,7 +23,10 @@ description: 构建一个使用 AI 对入站邮件进行分拣，并自动以线
 
 每当有邮件进入 Twenty 时，这一步就会触发。
 
-<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/workflow-overview.png"
+  style={{ width: '100%' }}
+/>
 
 ### 步骤 3：查找发件人
 
@@ -31,16 +34,19 @@ description: 构建一个使用 AI 对入站邮件进行分拣，并自动以线
 
 发件人的地址不在消息本身上——而是在关联的 Message Participant 记录中。
 
-| 字段      | 值                              |
-| ------- | ------------------------------ |
-| **对象**  | 消息参与者                          |
+| 字段       | 值                              |
+| ---------- | ------------------------------- |
+| **对象**   | 消息参与者                      |
 | **筛选器** | Message **为** `{{trigger.id}}` |
 | **筛选器** | Role **为** From                |
-| **限制**  | 1                              |
+| **限制**   | 1                               |
 
 这会在 `handle` 中提供发件人的邮箱地址，在 `displayName` 中提供其姓名。
 
-<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/find-sender.png"
+  style={{ width: '100%' }}
+/>
 
 ### 步骤 4：AI 分流并起草回复
 
@@ -69,43 +75,56 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 AI Agent 会将其响应输出到 `response` 字段，后续步骤可以引用该字段。
 
-<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/ai-triage.png"
+  style={{ width: '100%' }}
+/>
 
 ### 步骤 5：根据 AI 的决策进行分支
 
 添加一个 **If/Else** 操作，用于检查 AI 决定是回复还是跳过。
 
-| 字段      | 值                                  |
-| ------- | ---------------------------------- |
-| **条件**  | AI Agent `response` **不包含** `SKIP` |
-| **若为真** | 继续执行 Send Email                    |
-| **否则**  | 不执行任何操作（工作流结束）                     |
+| 字段       | 值                                    |
+| ---------- | ------------------------------------- |
+| **条件**   | AI Agent `response` **不包含** `SKIP` |
+| **若为真** | 继续执行 Send Email                   |
+| **否则**   | 不执行任何操作（工作流结束）          |
 
 垃圾邮件、新闻简报以及自动生成的邮件会被丢弃。 其余内容将进入下一步。
 
-<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/should-reply.png"
+  style={{ width: '100%' }}
+/>
 
 ### 步骤 6：发送会话内回复
 
 在 "若为真" 分支上添加一个 **Send Email** 操作。 单击 **Advanced options**，然后选择 **Add In-Reply-To**。
 
-| 字段              | 值                                      |
+| 字段            | 值                                     |
 | --------------- | -------------------------------------- |
-| **收件人**         | `{{Find Sender.first.handle}}`         |
-| **主题**          | `Re: {{trigger.subject}}`              |
-| **正文**          | `{{AI Triage & Draft Reply.response}}` |
+| **收件人**      | `{{Find Sender.first.handle}}`         |
+| **主题**        | `Re: {{trigger.subject}}`              |
+| **正文**        | `{{AI Triage & Draft Reply.response}}` |
 | **In-Reply-To** | `{{trigger.headerMessageId}}`          |
 
 正是 In-Reply-To 字段使其成为一次回复，而不是一段新的会话。 收件人在 Gmail、Outlook 或任何其他客户端中，会看到它被归入原始邮件下的同一会话。
 
-<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/send-email.png"
+  style={{ width: '100%' }}
+/>
 
 <Tip>
-**In-Reply-To** 需要来自触发器的 `message.headerMessageId`——它是该邮件的唯一指纹，而不是收件人地址。 如果将其留空，邮件仍会发送，只是作为一封独立的消息。
+  **In-Reply-To** 需要来自触发器的
+  `message.headerMessageId`——它是该邮件的唯一指纹，而不是收件人地址。
+  如果将其留空，邮件仍会发送，只是作为一封独立的消息。
 </Tip>
 
 <Warning>
-Gmail 使用主题行将邮件归入同一会话。 要让 Gmail 在原始会话中显示回复，主题行**必须**以 `Re:` 开头（包括冒号和空格）。 否则，即使正确设置了 In-Reply-To 标头，回复也会显示为一个单独的会话。
+  Gmail 使用主题行将邮件归入同一会话。 要让 Gmail
+  在原始会话中显示回复，主题行**必须**以 `Re:` 开头（包括冒号和空格）。
+  否则，即使正确设置了 In-Reply-To 标头，回复也会显示为一个单独的会话。
 </Warning>
 
 ### 步骤 7：测试并启用
@@ -116,6 +135,6 @@ Gmail 使用主题行将邮件归入同一会话。 要让 Gmail 在原始会话
 
 ## 进阶构建思路
 
-* **仅回复 VIP** — 添加一个分支，用于检查发件人的域名，或他们是否在 Twenty 中作为联系人存在
-* **按意图路由** — 使用不同的 AI Agent 提示词，将销售咨询与支持请求区分处理
-* **回复前先丰富信息** — 添加一个 Search Records 步骤，将发件人的公司或交易历史拉入 AI 提示词中，以获得更个性化的回复
+- **仅回复 VIP** — 添加一个分支，用于检查发件人的域名，或他们是否在 Twenty 中作为联系人存在
+- **按意图路由** — 使用不同的 AI Agent 提示词，将销售咨询与支持请求区分处理
+- **回复前先丰富信息** — 添加一个 Search Records 步骤，将发件人的公司或交易历史拉入 AI 提示词中，以获得更个性化的回复

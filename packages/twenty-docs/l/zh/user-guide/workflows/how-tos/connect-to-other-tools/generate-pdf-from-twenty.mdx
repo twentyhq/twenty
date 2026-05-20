@@ -29,7 +29,8 @@ description: 创建一个工作流，用于生成 PDF（例如报价单）并将
 3. 选择要将 PDF 附加到的对象（例如，**公司** 或 **商机**）
 
 <Tip>
-使用手动触发器，用户在选择记录后可通过右上角出现的按钮运行此工作流，以生成并附加 PDF。
+  使用手动触发器，用户在选择记录后可通过右上角出现的按钮运行此工作流，以生成并附加
+  PDF。
 </Tip>
 
 ### Step 2: Add a Logic Function
@@ -40,20 +41,20 @@ description: 创建一个工作流，用于生成 PDF（例如报价单）并将
 
 #### 输入参数
 
-| 参数          | 值                       |
+| 参数        | 值                      |
 | ----------- | ----------------------- |
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
+  If attaching to a different object (Person, Opportunity, etc.), rename the
+  parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic
+  function.
 </Note>
 
 #### Logic Function Code
 
 ```typescript
-export const main = async (
-  params: { companyId: string },
-) => {
+export const main = async (params: { companyId: string }) => {
   const { companyId } = params;
   // Replace with your Twenty GraphQL endpoints (/metadata for metadata and files or /graphql for your records)
   // Cloud: https://api.twenty.com/graphql
@@ -98,16 +99,18 @@ export const main = async (
 
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
   const response = await fetch(metadataGraphqlEndpoint, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      },
-      body: {
-        query: fieldMetadataIdQuery,
-      }
-    });
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: {
+      query: fieldMetadataIdQuery,
+    },
+  });
   const result = await response.json();
-  const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
+  const uploadFileFieldMetadataId = result.data.objects.edges
+    .find((object) => object.node.nameSingular === 'attachment')
+    .node.fieldsList.find((field) => field.name === 'file').id;
 
   // Step 3: Upload the file via GraphQL multipart upload
   const uploadMutation = `
@@ -119,10 +122,13 @@ export const main = async (
   `;
 
   const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
-  }));
+  uploadForm.append(
+    'operations',
+    JSON.stringify({
+      query: uploadMutation,
+      variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
+    }),
+  );
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
@@ -169,9 +175,9 @@ export const main = async (
           file: [
             {
               fileId: fileId,
-              label: filename
-            }
-          ]
+              label: filename,
+            },
+          ],
         },
       },
     }),
@@ -180,7 +186,9 @@ export const main = async (
   const attachmentResult = await attachmentResponse.json();
 
   if (attachmentResult.errors?.length) {
-    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+    throw new Error(
+      `Attachment creation failed: ${attachmentResult.errors[0].message}`,
+    );
   }
 
   return attachmentResult.data?.createAttachment;
@@ -193,11 +201,11 @@ export const main = async (
 
 将 `targetCompanyId` 替换为相应的字段：
 
-| 对象    | 字段名称                       |
-| ----- | -------------------------- |
-| 公司    | `targetCompanyId`          |
-| 人员    | `targetPersonId`           |
-| 机会    | `targetOpportunityId`      |
+| 对象       | 字段名称                   |
+| ---------- | -------------------------- |
+| 公司       | `targetCompanyId`          |
+| 人员       | `targetPersonId`           |
+| 机会       | `targetOpportunityId`      |
 | 自定义对象 | `targetYourCustomObjectId` |
 
 同时更新函数参数以及附件的 mutation 中的 `variables.data` 对象。
@@ -210,9 +218,11 @@ export const main = async (
 2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
-export const main = async (
-  params: { companyId: string; pdfUrl: string; filename: string },
-) => {
+export const main = async (params: {
+  companyId: string;
+  pdfUrl: string;
+  filename: string;
+}) => {
   const { companyId, pdfUrl, filename } = params;
   // ... rest of the function
 };
@@ -232,32 +242,32 @@ export const main = async (
 
 ### 示例：生成报价单 → 附加 PDF
 
-| 步骤 | 操作        | 目的                  |
-| -- | --------- | ------------------- |
-| 1  | 手动触发器（公司） | 用户在记录上发起            |
-| 2  | 搜索记录      | 获取商机或行项目详情          |
-| 3  | HTTP请求    | 使用记录数据调用 PDF 生成 API |
-| 4  | 无服务器函数    | 下载并附加生成的 PDF        |
+| 步骤 | 操作               | 目的                          |
+| ---- | ------------------ | ----------------------------- |
+| 1    | 手动触发器（公司） | 用户在记录上发起              |
+| 2    | 搜索记录           | 获取商机或行项目详情          |
+| 3    | HTTP请求           | 使用记录数据调用 PDF 生成 API |
+| 4    | 无服务器函数       | 下载并附加生成的 PDF          |
 
 ### 常用的 PDF 生成服务
 
-* **Carbone** - 基于模板的文档生成
-* **PDFMonkey** - 基于模板的动态 PDF 创建
-* **DocuSeal** - 文档自动化平台
-* **Documint** - API 优先的文档生成
+- **Carbone** - 基于模板的文档生成
+- **PDFMonkey** - 基于模板的动态 PDF 创建
+- **DocuSeal** - 文档自动化平台
+- **Documint** - API 优先的文档生成
 
 Each service provides an API that returns a PDF URL, which you can then pass to the logic function.
 
 ## 故障排除
 
-| 问题         | 解决方案                       |
-| ---------- | -------------------------- |
+| 问题           | 解决方案                                |
+| -------------- | --------------------------------------- |
 | "无法下载 PDF" | 检查 PDF URL 是否可访问并返回有效的 PDF |
-| "上传失败"     | 验证您的 API 密钥有效且具有写入权限       |
-| "附件创建失败"   | 确保对象 ID 字段名称与您的目标对象匹配      |
+| "上传失败"     | 验证您的 API 密钥有效且具有写入权限     |
+| "附件创建失败" | 确保对象 ID 字段名称与您的目标对象匹配  |
 
 ## 相关内容
 
-* [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
-* [Logic Functions](/l/zh/user-guide/workflows/capabilities/workflow-actions#code)
-* [从 Twenty 生成报价单或发票](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+- [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)
+- [Logic Functions](/l/zh/user-guide/workflows/capabilities/workflow-actions#code)
+- [从 Twenty 生成报价单或发票](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

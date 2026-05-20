@@ -8,8 +8,8 @@ description: Veröffentlichen Sie Ihre Twenty-App auf dem Twenty-Marktplatz oder
 
 Sobald Ihre App [lokal gebaut und getestet](/l/de/developers/extend/apps/getting-started/concepts) wurde, haben Sie zwei Möglichkeiten, sie zu verteilen:
 
-* **Einen Tarball bereitstellen** — Laden Sie Ihre App direkt auf einen bestimmten Twenty-Server für die interne oder private Nutzung hoch.
-* **Auf npm veröffentlichen** — führen Sie Ihre App im Twenty-Marktplatz auf, damit jeder Arbeitsbereich sie entdecken und installieren kann.
+- **Einen Tarball bereitstellen** — Laden Sie Ihre App direkt auf einen bestimmten Twenty-Server für die interne oder private Nutzung hoch.
+- **Auf npm veröffentlichen** — führen Sie Ihre App im Twenty-Marktplatz auf, damit jeder Arbeitsbereich sie entdecken und installieren kann.
 
 Beide Pfade beginnen mit demselben **Build**-Schritt.
 
@@ -72,7 +72,10 @@ So veröffentlichen Sie ein Update:
 3. Arbeitsbereiche, die die App installiert haben, sehen in ihren Einstellungen, dass ein Upgrade verfügbar ist.
 
 <Note>
-Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `1.0.0-rc.2` ist zulässig, und eine finale Version wie `1.0.0` wird korrekt als höher als `1.0.0-rc.5` erkannt. Die Version in `package.json` muss selbst eine gültige semver-Zeichenfolge sein.
+  Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` →
+  `1.0.0-rc.2` ist zulässig, und eine finale Version wie `1.0.0` wird korrekt
+  als höher als `1.0.0-rc.5` erkannt. Die Version in `package.json` muss selbst
+  eine gültige semver-Zeichenfolge sein.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -94,20 +97,23 @@ Wenn Ihre App eine Funktion verwendet, die in einer bestimmten Twenty-Serververs
 
 Der Wert ist ein standardmäßiger [semver-Bereich](https://github.com/npm/node-semver#ranges). Häufige Muster:
 
-| Bereich                            | Bedeutung                                              |
-| ---------------------------------- | ------------------------------------------------------ |
-| `>=2.3.0`                          | Jeder Server ab 2.3.0                                  |
+| Bereich           | Bedeutung                                              |
+| ----------------- | ------------------------------------------------------ |
+| `>=2.3.0`         | Jeder Server ab 2.3.0                                  |
 | `>=2.3.0 \<3.0.0` | 2.3.0 oder höher, aber unter der nächsten Hauptversion |
-| `^2.3.0`                           | Entspricht `>=2.3.0 \<3.0.0`          |
+| `^2.3.0`          | Entspricht `>=2.3.0 \<3.0.0`                           |
 
 **Was bei Bereitstellung und Installation passiert:**
 
-* Wenn `engines.twenty` gesetzt ist und die Version des Zielservers den Bereich nicht erfüllt, wird die Bereitstellung (Tarball-Upload) oder Installation mit dem Fehler `SERVER_VERSION_INCOMPATIBLE` abgelehnt, zusammen mit einer Meldung, die sowohl den erforderlichen Bereich als auch die tatsächliche Serverversion angibt.
-* Wenn `engines.twenty` nicht gesetzt ist, wird die App auf jeder Serverversion akzeptiert (abwärtskompatibel mit bestehenden Apps).
-* Wenn auf dem Server keine `APP_VERSION` konfiguriert ist, wird die Prüfung übersprungen.
+- Wenn `engines.twenty` gesetzt ist und die Version des Zielservers den Bereich nicht erfüllt, wird die Bereitstellung (Tarball-Upload) oder Installation mit dem Fehler `SERVER_VERSION_INCOMPATIBLE` abgelehnt, zusammen mit einer Meldung, die sowohl den erforderlichen Bereich als auch die tatsächliche Serverversion angibt.
+- Wenn `engines.twenty` nicht gesetzt ist, wird die App auf jeder Serverversion akzeptiert (abwärtskompatibel mit bestehenden Apps).
+- Wenn auf dem Server keine `APP_VERSION` konfiguriert ist, wird die Prüfung übersprungen.
 
 <Note>
-Der Server ist die maßgebliche Prüfinstanz — er validiert `engines.twenty` sowohl beim Tarball-Upload als auch bei der Workspace-Installation. Auch wenn Sie einen Tarball außerhalb des regulären Prozesses bereitstellen oder aus dem Marktplatz installieren, erzwingt der Server weiterhin die Kompatibilität.
+  Der Server ist die maßgebliche Prüfinstanz — er validiert `engines.twenty`
+  sowohl beim Tarball-Upload als auch bei der Workspace-Installation. Auch wenn
+  Sie einen Tarball außerhalb des regulären Prozesses bereitstellen oder aus dem
+  Marktplatz installieren, erzwingt der Server weiterhin die Kompatibilität.
 </Note>
 
 ## Automatisiertes CI/CD (vorgefertigte Workflows)
@@ -127,8 +133,8 @@ Führt Ihre Integrationstests bei jedem Push auf `main` und bei Pull Requests au
 
 **Konfigurationsoptionen:**
 
-* `TWENTY_VERSION` (env, standardmäßig `latest`) — fixieren Sie die in CI verwendete Twenty-Server-Version, indem Sie dies in `ci.yml` anpassen.
-* Die Parallelität wird nach `github.ref` gruppiert und bricht laufende Ausführungen bei neuen Pushes ab.
+- `TWENTY_VERSION` (env, standardmäßig `latest`) — fixieren Sie die in CI verwendete Twenty-Server-Version, indem Sie dies in `ci.yml` anpassen.
+- Die Parallelität wird nach `github.ref` gruppiert und bricht laufende Ausführungen bei neuen Pushes ab.
 
 Es sind keine Secrets erforderlich — die Testinstanz ist flüchtig und existiert nur für die Dauer des Jobs.
 
@@ -150,7 +156,11 @@ Stellt Ihre App bei jedem Push auf `main` auf einem konfigurierten Twenty-Server
 | `TWENTY_DEPLOY_API_KEY` | GitHub-Repository **Settings → Secrets and variables → Actions** | API-Schlüssel mit Berechtigung zum Bereitstellen auf dem Zielserver.                                                       |
 
 <Note>
-Der Standardwert von `TWENTY_DEPLOY_URL` (`http://localhost:3000`) ist ein Platzhalter — von einem GitHub-gehosteten Runner ist er nicht erreichbar. Aktualisieren Sie sie auf die öffentliche URL Ihres Servers (oder verwenden Sie einen selbstgehosteten Runner mit Netzwerkzugriff), bevor Sie CD aktivieren.
+  Der Standardwert von `TWENTY_DEPLOY_URL` (`http://localhost:3000`) ist ein
+  Platzhalter — von einem GitHub-gehosteten Runner ist er nicht erreichbar.
+  Aktualisieren Sie sie auf die öffentliche URL Ihres Servers (oder verwenden
+  Sie einen selbstgehosteten Runner mit Netzwerkzugriff), bevor Sie CD
+  aktivieren.
 </Note>
 
 **Eine Vorschau-Bereitstellung aus einem PR auslösen:**
@@ -167,8 +177,8 @@ Die Veröffentlichung auf npm macht Ihre App im Twenty-Marktplatz auffindbar. Je
 
 ### Anforderungen
 
-* Ein [npm](https://www.npmjs.com)-Konto
-* Das Schlüsselwort `twenty-app` in Ihrem `package.json`-Array `keywords` (manuell hinzufügen — es ist in der `create-twenty-app`-Vorlage standardmäßig nicht enthalten)
+- Ein [npm](https://www.npmjs.com)-Konto
+- Das Schlüsselwort `twenty-app` in Ihrem `package.json`-Array `keywords` (manuell hinzufügen — es ist in der `create-twenty-app`-Vorlage standardmäßig nicht enthalten)
 
 ```json filename="package.json"
 {
@@ -188,10 +198,7 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logoUrl: 'public/logo.png',
-  screenshots: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  screenshots: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -202,7 +209,9 @@ Siehe das [defineApplication-Akkordeon](/l/de/developers/extend/apps/config/appl
 Der Marktplatz stellt `screenshots` in einem festen `8:5`-Container dar (zum Beispiel `1600×1000 px`).
 
 <Note>
-Screenshots mit beliebigem Seitenverhältnis werden vollständig angezeigt und niemals beschnitten, aber alles, was deutlich höher oder schmaler als `8:5` ist, zeigt an den Seiten leere Balken.
+  Screenshots mit beliebigem Seitenverhältnis werden vollständig angezeigt und
+  niemals beschnitten, aber alles, was deutlich höher oder schmaler als `8:5`
+  ist, zeigt an den Seiten leere Balken.
 </Note>
 
 ### Veröffentlichen
@@ -232,7 +241,12 @@ yarn twenty dev:catalog-sync
 Die im Marktplatz angezeigten Metadaten stammen aus Ihrer `defineApplication()`-Konfiguration — Felder wie `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` und `termsUrl`.
 
 <Note>
-Wenn Ihre App keine `aboutDescription` in `defineApplication()` definiert, verwendet der Marktplatz automatisch die `README.md` Ihres Pakets von npm als Inhalt der Über-uns-Seite. Das bedeutet, dass Sie eine einzige README sowohl für npm als auch für den Twenty-Marktplatz pflegen können. Wenn Sie im Marktplatz eine andere Beschreibung möchten, setzen Sie `aboutDescription` explizit.
+  Wenn Ihre App keine `aboutDescription` in `defineApplication()` definiert,
+  verwendet der Marktplatz automatisch die `README.md` Ihres Pakets von npm als
+  Inhalt der Über-uns-Seite. Das bedeutet, dass Sie eine einzige README sowohl
+  für npm als auch für den Twenty-Marktplatz pflegen können. Wenn Sie im
+  Marktplatz eine andere Beschreibung möchten, setzen Sie `aboutDescription`
+  explizit.
 </Note>
 
 ### CI-Veröffentlichung
@@ -256,7 +270,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
       - run: npx twenty dev:build
@@ -267,7 +281,12 @@ jobs:
 Für andere CI-Systeme (GitLab CI, CircleCI usw.) gelten die gleichen drei Befehle: `yarn install`, `yarn twenty dev:build` und anschließend `npm publish` aus `.twenty/output`.
 
 <Note>
-**npm-Provenance** ist optional, wird jedoch empfohlen. Das Veröffentlichen mit `--provenance` fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu, sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in einer öffentlichen CI-Pipeline gebaut wurde. Siehe die [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements) für Einrichtungshinweise.
+  **npm-Provenance** ist optional, wird jedoch empfohlen. Das Veröffentlichen
+  mit `--provenance` fügt Ihrem npm-Eintrag ein Vertrauensabzeichen hinzu,
+  sodass Nutzer überprüfen können, dass das Paket aus einem bestimmten Commit in
+  einer öffentlichen CI-Pipeline gebaut wurde. Siehe die
+  [npm-Provenance-Dokumentation](https://docs.npmjs.com/generating-provenance-statements)
+  für Einrichtungshinweise.
 </Note>
 
 ## Apps installieren
@@ -287,8 +306,9 @@ yarn twenty app:install
 <Note>
 Der Server erzwingt bei der Installation semver-Versionierung und spiegelt damit die Regeln beim Bereitstellen wider:
 
-* Die Installation derselben Version, die in Ihrem Arbeitsbereich bereits installiert ist, wird mit einem `APP_ALREADY_INSTALLED`-Fehler abgelehnt.
-* Die Installation einer niedrigeren Version als die aktuell installierte wird mit einem `CANNOT_DOWNGRADE_APPLICATION`-Fehler abgelehnt.
+- Die Installation derselben Version, die in Ihrem Arbeitsbereich bereits installiert ist, wird mit einem `APP_ALREADY_INSTALLED`-Fehler abgelehnt.
+- Die Installation einer niedrigeren Version als die aktuell installierte wird mit einem `CANNOT_DOWNGRADE_APPLICATION`-Fehler abgelehnt.
 
 Um eine neuere Version zu installieren, stellen Sie sie zuerst bereit oder veröffentlichen Sie sie und führen Sie dann `yarn twenty app:install` erneut aus.
+
 </Note>

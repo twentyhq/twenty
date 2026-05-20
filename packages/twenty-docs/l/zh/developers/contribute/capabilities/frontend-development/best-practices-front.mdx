@@ -33,13 +33,10 @@ export const MyComponent = () => {
 
   return (
     <div>
-      <input
-        value={myAtom}
-        onChange={(e) => setMyAtom(e.target.value)}
-      />
+      <input value={myAtom} onChange={(e) => setMyAtom(e.target.value)} />
     </div>
   );
-}
+};
 ```
 
 ### 不要使用 `useRef` 来存储状态
@@ -90,7 +87,7 @@ export const PageComponent = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -98,9 +95,7 @@ export const PageComponent = () => {
   return <div>{data}</div>;
 };
 
-export const App = () => (
-  <PageComponent />
-);
+export const App = () => <PageComponent />;
 ```
 
 ```tsx
@@ -117,7 +112,7 @@ export const PageData = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -184,7 +179,7 @@ const [email, setEmail] = useState('');
 
 #### 变量名称中应避免使用的一些词
 
-* 空壳
+- 空壳
 
 ### 事件处理
 
@@ -290,12 +285,8 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 
 ```tsx
 // ❌ 不佳：使用了完整的相对路径
-import {
-  CatalogDecorator
-} from '../../../../../testing/decorators/CatalogDecorator';
-import {
-  ComponentDecorator
-} from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx

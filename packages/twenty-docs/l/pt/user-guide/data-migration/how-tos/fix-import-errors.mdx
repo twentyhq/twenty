@@ -16,7 +16,10 @@ Depois de carregar o seu ficheiro e mapear as colunas, o Twenty valida os seus d
 3. **Pode corrigir no local** — edite as células diretamente na interface de importação
 4. **Ou remova linhas** — ignore completamente os registos problemáticos
 
-<Note>**Corrija os erros na interface.** Não precisa de voltar à sua folha de cálculo. Edite as células diretamente durante a importação para poupar tempo.</Note>
+<Note>
+  **Corrija os erros na interface.** Não precisa de voltar à sua folha de
+  cálculo. Edite as células diretamente durante a importação para poupar tempo.
+</Note>
 
 ## Resolução de problemas passo a passo
 
@@ -48,8 +51,8 @@ As linhas com valores duplicados são realçadas a amarelo na interface de impor
 
 Um campo único (email, domínio) pode:
 
-* Já existe no Twenty
-* Aparece duas vezes no seu ficheiro
+- Já existe no Twenty
+- Aparece duas vezes no seu ficheiro
 
 ### Como corrigir
 
@@ -73,10 +76,11 @@ Um campo único (email, domínio) pode:
 <Note>
 **Também pode atualizar campos únicos.**
 
-* Se mantiver o `id` mas alterar o `email` → o email será atualizado
-* Se mantiver o `email` mas alterar o `id` → o id será atualizado
+- Se mantiver o `id` mas alterar o `email` → o email será atualizado
+- Se mantiver o `email` mas alterar o `id` → o id será atualizado
 
 Desde que um identificador único corresponda, o Twenty atualiza o registo.
+
 </Note>
 
 ### Como prevenir este erro
@@ -91,6 +95,7 @@ Antes de importar:
 **Registos eliminados logicamente contam para a unicidade.**
 
 Verifique o Menu de Comandos → Ver registos eliminados. Os registos lá continuam a impor a unicidade. Elimine-os permanentemente ou restaure e atualize.
+
 </Warning>
 
 Para mais detalhes: [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -135,7 +140,11 @@ Os dados não correspondem ao formato esperado para esse tipo de campo.
 ✅ https://acme.com  (recomendado)
 ```
 
-<Note>Todos os formatos são válidos, mas `https://domain.com` é recomendado porque corresponde ao formato usado pela sincronização de email/calendário. Usar outros formatos pode criar empresas duplicadas.</Note>
+<Note>
+  Todos os formatos são válidos, mas `https://domain.com` é recomendado porque
+  corresponde ao formato usado pela sincronização de email/calendário. Usar
+  outros formatos pode criar empresas duplicadas.
+</Note>
 
 #### Data
 
@@ -258,7 +267,11 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
 
 Isto significa que não existe nenhuma Empresa no Twenty com esse identificador específico.
 
-<Note>Ao contrário de outros erros, este não é detetado durante a etapa de revisão dos dados. A importação começará e depois falhará quando encontrar a relação em falta.</Note>
+<Note>
+  Ao contrário de outros erros, este não é detetado durante a etapa de revisão
+  dos dados. A importação começará e depois falhará quando encontrar a relação
+  em falta.
+</Note>
 
 ### O que significa
 
@@ -286,19 +299,20 @@ Está a tentar ligar a um registo que não existe no Twenty.
 ### Como prevenir este erro
 
 1. **Importe na ordem correta:**
-   * Empresas primeiro
-   * Pessoas em segundo (com referências à empresa)
-   * Oportunidades em terceiro
+   - Empresas primeiro
+   - Pessoas em segundo (com referências à empresa)
+   - Oportunidades em terceiro
 
 2. **Verifique os valores de referência:**
-   * Exporte os registos pai para obter identificadores exatos
-   * Use o formato de domínio `https://domain.com`
-   * Verifique erros de digitação e sensibilidade a maiúsculas/minúsculas
+   - Exporte os registos pai para obter identificadores exatos
+   - Use o formato de domínio `https://domain.com`
+   - Verifique erros de digitação e sensibilidade a maiúsculas/minúsculas
 
 <Warning>
 **A importação falhará se for feita referência a um registo inexistente.**
 
 Importe sempre os objetos pai antes dos objetos filho.
+
 </Warning>
 
 Para mais detalhes: [Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
@@ -349,7 +363,10 @@ Uma coluna no seu ficheiro não pode ser mapeada porque o campo não existe no T
 4. Crie o campo personalizado com o tipo apropriado
 5. Carregue novamente o seu ficheiro
 
-<Note>A importação de CSV cria registos, não campos. Todos os campos devem existir antes de importar.</Note>
+<Note>
+  A importação de CSV cria registos, não campos. Todos os campos devem existir
+  antes de importar.
+</Note>
 
 ---
 
@@ -375,6 +392,7 @@ Está a tentar atribuir um registo a um utilizador (Proprietário, Responsável)
 **Os utilizadores devem aceitar os convites antes de importar.**
 
 Se um utilizador não tiver aceite o convite, os registos que o referenciem terão relações de utilizador vazias.
+
 </Warning>
 
 ---
@@ -411,7 +429,9 @@ Evite erros verificando isto antes de importar:
 
 ### Modelo de dados
 
-<Check>Todos os campos personalizados existem em Definições → Modelo de Dados</Check>
+<Check>
+  Todos os campos personalizados existem em Definições → Modelo de Dados
+</Check>
 <Check>As opções de seleção existem antes de importar</Check>
 
 ---
@@ -424,7 +444,7 @@ Se já tentou as soluções acima:
 2. **Exporte os registos existentes** — compare o seu ficheiro com dados funcionais
 3. **Teste com um pequeno lote** — experimente primeiro 5–10 linhas
 4. **Consulte os artigos de referência:**
-   * [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping)
-   * [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
-   * [Tratamento de Erros](/l/pt/user-guide/data-migration/capabilities/error-handling)
+   - [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping)
+   - [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
+   - [Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
+   - [Tratamento de Erros](/l/pt/user-guide/data-migration/capabilities/error-handling)

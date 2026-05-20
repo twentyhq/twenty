@@ -17,8 +17,8 @@ icon: table-columns
 
 تشير العروض، وعناصر التنقّل، وتخطيطات الصفحات إلى بعضها البعض عبر `universalIdentifier`:
 
-* يشير **عنصر قائمة التنقّل** من النوع `VIEW` إلى معرّف `defineView`، بحيث يفتح رابط الشريط الجانبي ذلك العرض المحفوظ.
-* يستهدف **تخطيط الصفحة** من النوع `RECORD_PAGE` كائنًا ويمكنه تضمين [مكوّنات الواجهة الأمامية](/l/ar/developers/extend/apps/front-components) داخل علامات التبويب الخاصة به بوصفها عناصر واجهة.
+- يشير **عنصر قائمة التنقّل** من النوع `VIEW` إلى معرّف `defineView`، بحيث يفتح رابط الشريط الجانبي ذلك العرض المحفوظ.
+- يستهدف **تخطيط الصفحة** من النوع `RECORD_PAGE` كائنًا ويمكنه تضمين [مكوّنات الواجهة الأمامية](/l/ar/developers/extend/apps/front-components) داخل علامات التبويب الخاصة به بوصفها عناصر واجهة.
 
 <AccordionGroup>
 <Accordion title="defineView" description="تعريف العروض المحفوظة للكائنات">
@@ -50,11 +50,12 @@ export default defineView({
 ```
 
 النقاط الرئيسية:
-* `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا العرض.
-* `key` يحدّد نوع العرض (مثل `ViewKey.INDEX` لعرض القائمة الرئيسي).
-* `fields` يتحكّم في الأعمدة الظاهرة وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`.
-* يمكنك أيضًا تعريف `filters` و`filterGroups` و`groups` و`fieldGroups` لمزيد من التكوينات المتقدمة.
-* `position` يتحكّم في الترتيب عند وجود عدة عروض لنفس الكائن.
+
+- `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا العرض.
+- `key` يحدّد نوع العرض (مثل `ViewKey.INDEX` لعرض القائمة الرئيسي).
+- `fields` يتحكّم في الأعمدة الظاهرة وترتيبها. يشير كل حقل إلى `fieldMetadataUniversalIdentifier`.
+- يمكنك أيضًا تعريف `filters` و`filterGroups` و`groups` و`fieldGroups` لمزيد من التكوينات المتقدمة.
+- `position` يتحكّم في الترتيب عند وجود عدة عروض لنفس الكائن.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="تعريف روابط التنقل في الشريط الجانبي">
@@ -62,7 +63,10 @@ export default defineView({
 تضيف عناصر قائمة التنقل إدخالات مخصّصة إلى الشريط الجانبي لمساحة العمل. استخدم `defineNavigationMenuItem()` للارتباط بالعروض أو عناوين URL خارجية أو الكائنات:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -77,10 +81,11 @@ export default defineNavigationMenuItem({
 ```
 
 النقاط الرئيسية:
-* `type` يحدّد إلى ماذا يرتبط عنصر القائمة: `NavigationMenuItemType.VIEW` لعرض محفوظ، أو `NavigationMenuItemType.LINK` لعنوان URL خارجي.
-* لروابط العروض، عيِّن `viewUniversalIdentifier`. لروابط خارجية، عيِّن `link`.
-* `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
-* `icon` و`color` (اختياريان) يخصّصان المظهر.
+
+- `type` يحدّد إلى ماذا يرتبط عنصر القائمة: `NavigationMenuItemType.VIEW` لعرض محفوظ، أو `NavigationMenuItemType.LINK` لعنوان URL خارجي.
+- لروابط العروض، عيِّن `viewUniversalIdentifier`. لروابط خارجية، عيِّن `link`.
+- `position` يتحكّم في الترتيب ضمن الشريط الجانبي.
+- `icon` و`color` (اختياريان) يخصّصان المظهر.
 
 </Accordion>
 <Accordion title="definePageLayout" description="عرّف تخطيطات صفحات مخصّصة لعرض السجلات">
@@ -122,11 +127,12 @@ export default definePageLayout({
 ```
 
 النقاط الرئيسية:
-* `type` يكون عادة `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
-* `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا التخطيط.
-* يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode` (`CANVAS` لتخطيط حرّ).
-* يمكن لكل `widget` داخل لسان أن يعرض مكوّنًا أماميًا أو قائمة علاقات أو أنواع ويدجت مدمجة أخرى.
-* `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
+
+- `type` يكون عادة `'RECORD_PAGE'` لتخصيص عرض التفاصيل لكائن محدّد.
+- `objectUniversalIdentifier` يحدّد الكائن الذي ينطبق عليه هذا التخطيط.
+- يُعرّف كل `tab` قسمًا من الصفحة مع `title` و`position` و`layoutMode` (`CANVAS` لتخطيط حرّ).
+- يمكن لكل `widget` داخل لسان أن يعرض مكوّنًا أماميًا أو قائمة علاقات أو أنواع ويدجت مدمجة أخرى.
+- `position` على الألسنة يتحكّم في ترتيبها. استخدم قيمًا أعلى (مثل 50) لوضع الألسنة المخصّصة بعد الألسنة المدمجة.
 
 </Accordion>
 <Accordion title="definePageLayoutTab" description="إضافة علامة تبويب إلى تخطيط صفحة موجود">
@@ -169,10 +175,11 @@ export default definePageLayoutTab({
 ```
 
 النقاط الرئيسية:
-* `pageLayoutUniversalIdentifier` **مطلوب** عند استخدام `definePageLayoutTab` ويجب أن يشير إلى تخطيط صفحة موجود بالفعل وقت التثبيت (سواء قياسيًا أو تابعًا لتطبيقك). عند فقدان تخطيط الصفحة الأب، يفشل التثبيت برسالة خطأ تحقق واضحة.
-* `widgets` نطاقها مقتصر على علامة التبويب هذه فقط — فهي تُشير إلى مكونات الواجهة الأمامية، والعروض، وما إلى ذلك تمامًا مثل عناصر الواجهة المعرّفة مضمّنة داخل `definePageLayout`.
-* `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
-* استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط **الإضافة** إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بأكمله (عادةً ما يكون `RECORD_PAGE` لكائن توفّره في تطبيقك، أو `STANDALONE_PAGE`).
+
+- `pageLayoutUniversalIdentifier` **مطلوب** عند استخدام `definePageLayoutTab` ويجب أن يشير إلى تخطيط صفحة موجود بالفعل وقت التثبيت (سواء قياسيًا أو تابعًا لتطبيقك). عند فقدان تخطيط الصفحة الأب، يفشل التثبيت برسالة خطأ تحقق واضحة.
+- `widgets` نطاقها مقتصر على علامة التبويب هذه فقط — فهي تُشير إلى مكونات الواجهة الأمامية، والعروض، وما إلى ذلك تمامًا مثل عناصر الواجهة المعرّفة مضمّنة داخل `definePageLayout`.
+- `position` يتحكّم في الترتيب مقارنةً بعلامات التبويب الموجودة على التخطيط المستهدف. اختر قيمة تضع علامة التبويب الخاصة بك في الموضع الذي تريده بالنسبة إلى علامات التبويب المضمنة.
+- استخدم هذا بدلًا من `definePageLayout` عندما تريد فقط **الإضافة** إلى تخطيط موجود. استخدم `definePageLayout` عندما تملك التخطيط بأكمله (عادةً ما يكون `RECORD_PAGE` لكائن توفّره في تطبيقك، أو `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

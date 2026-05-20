@@ -6,7 +6,9 @@ icon: gear
 # Gestionarea configurației
 
 <Warning>
-**Prima instalare?** Urmați [ghidul de instalare Docker Compose](/l/ro/developers/self-host/capabilities/docker-compose) pentru a rula Twenty, apoi reveniți aici pentru configurare.
+  **Prima instalare?** Urmați [ghidul de instalare Docker
+  Compose](/l/ro/developers/self-host/capabilities/docker-compose) pentru a rula
+  Twenty, apoi reveniți aici pentru configurare.
 </Warning>
 
 Twenty oferă **două moduri de configurare** pentru a se potrivi nevoilor diferite de implementare:
@@ -27,17 +29,22 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
 4. Schimbările intră în vigoare imediat (în termen de 15 secunde pentru implementări cu mai multe containere)
 
 <Warning>
-**Implementări Multi-Container:** Când utilizați configurarea bazei de date (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), atât serverul cât și containerele worker citesc din aceeași bază de date. Modificările din panoul de administrare afectează ambele automat, eliminând necesitatea duplicării variabilelor de mediu între containere (cu excepția variabilelor de infrastructură).
+  **Implementări Multi-Container:** Când utilizați configurarea bazei de date
+  (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), atât serverul cât și containerele
+  worker citesc din aceeași bază de date. Modificările din panoul de
+  administrare afectează ambele automat, eliminând necesitatea duplicării
+  variabilelor de mediu între containere (cu excepția variabilelor de
+  infrastructură).
 </Warning>
 
 **Ce puteți configura prin panoul de administrare:**
 
-* **Autentificare** - OAuth Google/Microsoft, setări parole
-* **E-mail** - setări SMTP, șabloane, verificare
-* **Stocare** - configurație S3, căi stocare locală
-* **Integrări** - Gmail, Google Calendar, servicii Microsoft
-* **Flux de lucru și limitarea ratei** - limite de execuție, limitarea ratei pentru API
-* **Și multe altele...**
+- **Autentificare** - OAuth Google/Microsoft, setări parole
+- **E-mail** - setări SMTP, șabloane, verificare
+- **Stocare** - configurație S3, căi stocare locală
+- **Integrări** - Gmail, Google Calendar, servicii Microsoft
+- **Flux de lucru și limitarea ratei** - limite de execuție, limitarea ratei pentru API
+- **Și multe altele...**
 
 ![Variabile de Configurare Panou Admin](/images/user-guide/setup/admin-panel-config-variables.png)
 
@@ -46,6 +53,7 @@ Fiecare variabilă este documentată cu descrieri în panoul dvs. de administrar
 Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`) și secretele (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) pot fi configurate doar prin fișierul `.env`.
 
 [Referință tehnică completă →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+
 </Warning>
 
 ## Chei de criptare
@@ -55,7 +63,7 @@ Twenty folosește două chei de criptare disponibile doar prin variabile de medi
 | Variabilă                 | Scop                                                                                                                                                                             | Obligatoriu                                                                                         |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
 | `ENCRYPTION_KEY`          | Cheia principală folosită pentru a cripta secretele în repaus (token-uri OAuth, variabile de aplicație, chei private de semnare, secrete TOTP, valori de configurare sensibile). | Da, pentru instalările noi (instalările vechi se pot baza în schimb pe `APP_SECRET` — vezi mai jos) |
-| `FALLBACK_ENCRYPTION_KEY` | Cheie folosită doar pentru verificare. Setată în timpul unei rotații la *precedenta* `ENCRYPTION_KEY` astfel încât rândurile existente să rămână decriptabile.                   | Doar în timpul rotației                                                                             |
+| `FALLBACK_ENCRYPTION_KEY` | Cheie folosită doar pentru verificare. Setată în timpul unei rotații la _precedenta_ `ENCRYPTION_KEY` astfel încât rândurile existente să rămână decriptabile.                   | Doar în timpul rotației                                                                             |
 
 Pentru compatibilitate cu versiunile anterioare, dacă `ENCRYPTION_KEY` nu este setată, Twenty revine la `APP_SECRET` pentru criptarea în repaus — respectând comportamentul moștenit pentru implementările mai vechi. Instalările noi ar trebui să seteze întotdeauna o `ENCRYPTION_KEY` dedicată.
 
@@ -86,10 +94,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* Un spațiu de lucru pentru fiecare instanță Twenty
-* Primul utilizator devine automat administrator cu privilegii complete (`canImpersonate` și `canAccessFullAdminPanel`)
-* Înregistrările noi sunt dezactivate după crearea primului spațiu de lucru
-* Structură URL simplă: `https://your-domain.com`
+- Un spațiu de lucru pentru fiecare instanță Twenty
+- Primul utilizator devine automat administrator cu privilegii complete (`canImpersonate` și `canAccessFullAdminPanel`)
+- Înregistrările noi sunt dezactivate după crearea primului spațiu de lucru
+- Structură URL simplă: `https://your-domain.com`
 
 ### Activarea modului cu mai multe spații de lucru
 
@@ -102,14 +110,16 @@ Activați modul cu mai multe spații de lucru pentru implementări de tip SaaS, 
 
 **Diferențe cheie față de modul cu un singur spațiu de lucru:**
 
-* Pe aceeași instanță pot fi create mai multe spații de lucru
-* Fiecare spațiu de lucru primește propriul subdomeniu (de ex., `sales.your-domain.com`, `marketing.your-domain.com`)
-* Utilizatorii se înregistrează și se autentifică la `{DEFAULT_SUBDOMAIN}.your-domain.com` (de ex., `app.your-domain.com`)
-* Fără privilegii administrative automate — primul utilizator din fiecare spațiu de lucru este un utilizator obișnuit
-* Setări specifice spațiului de lucru, precum subdomeniu și domeniu personalizat, devin disponibile în setările spațiului de lucru
+- Pe aceeași instanță pot fi create mai multe spații de lucru
+- Fiecare spațiu de lucru primește propriul subdomeniu (de ex., `sales.your-domain.com`, `marketing.your-domain.com`)
+- Utilizatorii se înregistrează și se autentifică la `{DEFAULT_SUBDOMAIN}.your-domain.com` (de ex., `app.your-domain.com`)
+- Fără privilegii administrative automate — primul utilizator din fiecare spațiu de lucru este un utilizator obișnuit
+- Setări specifice spațiului de lucru, precum subdomeniu și domeniu personalizat, devin disponibile în setările spațiului de lucru
 
 <Warning>
-**Setare exclusiv de mediu:** `IS_MULTIWORKSPACE_ENABLED` poate fi configurată doar prin fișierul `.env` și necesită o repornire. Nu poate fi modificată prin panoul de administrare.
+  **Setare exclusiv de mediu:** `IS_MULTIWORKSPACE_ENABLED` poate fi configurată
+  doar prin fișierul `.env` și necesită o repornire. Nu poate fi modificată prin
+  panoul de administrare.
 </Warning>
 
 ### Configurarea DNS pentru modul cu mai multe spații de lucru
@@ -140,40 +150,42 @@ Când este activată, doar utilizatorii cu `canAccessFullAdminPanel` pot crea sp
 2. Creați un proiect nou sau selectați unul existent
 3. Activați aceste API-uri:
 
-* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
-* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
-* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
 
 ### Configurați OAuth
 
 1. Mergeți la [Credentials](https://console.cloud.google.com/apis/credentials)
 2. Creați Client ID OAuth 2.0
 3. Adăugați aceste URI-uri de redirecționare:
-   * `https://{your-domain}/auth/google/redirect` (pentru SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (pentru integrări)
+   - `https://{your-domain}/auth/google/redirect` (pentru SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (pentru integrări)
 
 ### Configurați în Twenty
 
 1. Mergeți la **Setări → Panou Admin → Variabile de Configurare**
 2. Găsiți secțiunea **Autentificare Google**
 3. Setați aceste variabile:
-   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
-   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
-   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
-   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
-   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-**Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+  **Mod doar pentru mediu:** Dacă setați
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în
+  fișierul dvs. `.env` în schimb.
 </Warning>
 
 **Domenii necesare** (configurate automat):
 [Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 
-* `https://www.googleapis.com/auth/calendar.events`
-* `https://www.googleapis.com/auth/gmail.readonly`
-* `https://www.googleapis.com/auth/profile.emails.read`
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
 
 ### Dacă aplicația dvs. este în modul de test
 
@@ -184,7 +196,10 @@ Dacă aplicația dvs. este în modul de test, va trebui să adăugați utilizato
 ## Integrare Microsoft 365
 
 <Warning>
-Utilizatorii trebuie să aibă un [Licență Microsoft 365](https://admin.microsoft.com/Adminportal/Home) pentru a putea utiliza API-ul Calendar și Mesagerie. Nu vor putea sincroniza contul lor pe Twenty fără una.
+  Utilizatorii trebuie să aibă un [Licență Microsoft
+  365](https://admin.microsoft.com/Adminportal/Home) pentru a putea utiliza
+  API-ul Calendar și Mesagerie. Nu vor putea sincroniza contul lor pe Twenty
+  fără una.
 </Warning>
 
 ### Creați un proiect în Microsoft Azure
@@ -195,14 +210,14 @@ Va trebui să creați un proiect în [Microsoft Azure](https://portal.azure.com/
 
 În Microsoft Azure Console activați următoarele API-uri în "Permisiuni":
 
-* Graph Microsoft: Mail.ReadWrite
-* Graph Microsoft: Mail.Send
-* Graph Microsoft: Calendars.Read
-* Graph Microsoft: User.Read
-* Graph Microsoft: openid
-* Graph Microsoft: email
-* Graph Microsoft: profile
-* Graph Microsoft: offline_access
+- Graph Microsoft: Mail.ReadWrite
+- Graph Microsoft: Mail.Send
+- Graph Microsoft: Calendars.Read
+- Graph Microsoft: User.Read
+- Graph Microsoft: openid
+- Graph Microsoft: email
+- Graph Microsoft: profile
+- Graph Microsoft: offline_access
 
 Notă: "Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să trimiteți e-mailuri utilizând acțiunile noastre de flux de lucru. Puteți utiliza "Mail.Read" dacă doriți doar să primiți e-mailuri.
 
@@ -210,37 +225,39 @@ Notă: "Mail.ReadWrite" și "Mail.Send" sunt obligatorii doar dacă doriți să 
 
 Trebuie să adăugați următoarele URI-uri de redirecționare în proiectul dvs.:
 
-* `https://{your-domain}/auth/microsoft/redirect` dacă doriți să utilizați SSO Microsoft
-* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+- `https://{your-domain}/auth/microsoft/redirect` dacă doriți să utilizați SSO Microsoft
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Configurați în Twenty
 
 1. Mergeți la **Setări → Panou Admin → Variabile de Configurare**
 2. Găsiți secțiunea **Autentificare Microsoft**
 3. Setați aceste variabile:
-   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
-   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
-   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
-   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
-   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-**Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+  **Mod doar pentru mediu:** Dacă setați
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în
+  fișierul dvs. `.env` în schimb.
 </Warning>
 
 ### Configurați scopurile
 
 [Consultați codul sursă relevant](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
-* 'openid'
-* 'email'
-* 'profil'
-* 'offline_access'
-* 'Mail.ReadWrite'
-* 'Mail.Send'
-* 'Calendars.Read'
+- 'openid'
+- 'email'
+- 'profil'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### Dacă aplicația dvs. este în modul de test
 
@@ -275,48 +292,57 @@ yarn command:prod cron:workflow:automated-cron-trigger
 
   <ArticleTab>
 
-  Va trebui să provisionați o [Parolă de Aplicație](https://support.google.com/accounts/answer/185833).
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.gmail.com
-  * EMAIL_SMTP_PORT=465
-  * EMAIL_SMTP_USER=gmail_email_address
-  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+Va trebui să provisionați o [Parolă de Aplicație](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.office365.com
-  * EMAIL_SMTP_PORT=587
-  * EMAIL_SMTP_USER=office365_email_address
-  * EMAIL_SMTP_PASSWORD='office365_password'
+**smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
-  * Rulați imaginea smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-  * Accesați interfața smtp4dev aici: [http://localhost:8090](http://localhost:8090)
-  * Setați următoarele variabile:
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=localhost
-    * EMAIL_SMTP_PORT=2525
+**smtp4dev** este un server SMTP fals pentru dezvoltare și testare.
+
+- Rulați imaginea smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Accesați interfața smtp4dev aici: [http://localhost:8090](http://localhost:8090)
+- Setați următoarele variabile:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
 </ArticleTabs>
 
 <Warning>
-**Mod doar pentru mediu:** Dacă setați `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în fișierul dvs. `.env` în schimb.
+  **Mod doar pentru mediu:** Dacă setați
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adăugați aceste variabile în
+  fișierul dvs. `.env` în schimb.
 </Warning>
 
 ## Stocare S3
 
 <Warning>
-În mod implicit, Twenty stochează fișierele încărcate în sistemul de fișiere local. Pentru implementări în producție, utilizați S3 sau un serviciu compatibil cu S3 (MinIO, DigitalOcean Spaces etc.). pentru a vă asigura că fișierele persistă între repornirile containerelor și se scalează pe mai multe instanțe de server.
+  În mod implicit, Twenty stochează fișierele încărcate în sistemul de fișiere
+  local. Pentru implementări în producție, utilizați S3 sau un serviciu
+  compatibil cu S3 (MinIO, DigitalOcean Spaces etc.). pentru a vă asigura că
+  fișierele persistă între repornirile containerelor și se scalează pe mai multe
+  instanțe de server.
 </Warning>
 
 Setați `STORAGE_TYPE=S_3` și configurați variabilele `STORAGE_S3_*` prin panoul de administrare sau `.env`. Consultați [referința config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) pentru lista completă a variabilelor S3.
@@ -334,7 +360,12 @@ Twenty acceptă funcții logice pentru fluxuri de lucru și interpretorul de cod
 **În dezvoltare (NODE_ENV=development):** Ambele au implicit valoarea **LOCAL** pentru comoditate când rulezi local.
 
 <Warning>
-**Atenționare de securitate:** Driverul local (`LOGIC_FUNCTION_TYPE=LOCAL` sau `CODE_INTERPRETER_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în dezvoltare. Pentru implementări în producție care gestionează cod neverificat, folosiți `LOGIC_FUNCTION_TYPE=LAMBDA` sau `CODE_INTERPRETER_TYPE=E2B` (cu sandboxing) ori păstrați-le dezactivate.
+  **Atenționare de securitate:** Driverul local (`LOGIC_FUNCTION_TYPE=LOCAL` sau
+  `CODE_INTERPRETER_TYPE=LOCAL`) rulează codul direct pe gazdă într-un proces
+  Node.js, fără sandboxing. Ar trebui utilizat doar pentru cod de încredere, în
+  dezvoltare. Pentru implementări în producție care gestionează cod neverificat,
+  folosiți `LOGIC_FUNCTION_TYPE=LAMBDA` sau `CODE_INTERPRETER_TYPE=E2B` (cu
+  sandboxing) ori păstrați-le dezactivate.
 </Warning>
 
 ### Funcții logice - Drivere disponibile
@@ -378,5 +409,8 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 | E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Producție cu execuție în sandbox         | Ridicat (sandbox izolat) |
 
 <Note>
-Când utilizați `LOGIC_FUNCTION_TYPE=DISABLED` sau `CODE_INTERPRETER_TYPE=DISABLED`, orice încercare de execuție va returna o eroare. Acest lucru este util dacă doriți să rulați Twenty fără aceste capabilități.
+  Când utilizați `LOGIC_FUNCTION_TYPE=DISABLED` sau
+  `CODE_INTERPRETER_TYPE=DISABLED`, orice încercare de execuție va returna o
+  eroare. Acest lucru este util dacă doriți să rulați Twenty fără aceste
+  capabilități.
 </Note>

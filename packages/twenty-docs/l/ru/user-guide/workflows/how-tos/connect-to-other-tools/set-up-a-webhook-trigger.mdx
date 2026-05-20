@@ -116,8 +116,8 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
 ```json
 {
   "items": [
-    {"name": "Product A", "qty": 2},
-    {"name": "Product B", "qty": 1}
+    { "name": "Product A", "qty": 2 },
+    { "name": "Product B", "qty": 1 }
   ]
 }
 ```
@@ -161,10 +161,12 @@ export const main = async (params: { items: any }) => {
 Теперь вы можете выбирать `product.name` и `product.qty` по отдельности на следующих шагах.
 
 <Tip>
-Для получения подробностей об обработке массивов см. [Обработка массивов в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  Для получения подробностей об обработке массивов см. [Обработка массивов в
+  действиях
+  Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
 ## Связанные материалы
 
-* [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
-* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+- [Триггеры рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-triggers)
+- [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)

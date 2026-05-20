@@ -6,11 +6,13 @@ description: Her iki tarafta da çok sayıda öğenin birbirine bağlanabildiği
 Çoktan-çoka ilişkiler, her iki tarafta birden fazla kaydı bağlamanıza olanak tanır. Örneğin: Birçok kişi birçok projede çalışabilir ve her proje birçok kişiye sahip olabilir.
 
 <Warning>
-**Lab Özelliği**: Bağlantı ilişkileri şu anda Lab'de. Bu kılavuzu uygulamadan önce **Ayarlar → Güncellemeler → Lab** bölümünde bunları etkinleştirin.
+  **Lab Özelliği**: Bağlantı ilişkileri şu anda Lab'de. Bu kılavuzu uygulamadan
+  önce **Ayarlar → Güncellemeler → Lab** bölümünde bunları etkinleştirin.
 </Warning>
 
 <Note>
-Bu özellik ayrıca **Gelişmiş mod**un etkinleştirilmesini gerektirir (Ayarlar'ın sağ alt kısmındaki anahtarı kullanın).
+  Bu özellik ayrıca **Gelişmiş mod**un etkinleştirilmesini gerektirir
+  (Ayarlar'ın sağ alt kısmındaki anahtarı kullanın).
 </Note>
 
 ## Çoktan-çoka Ne Zaman Kullanılır
@@ -33,8 +35,8 @@ People ←→ Project Assignments ←→ Projects
 
 **Project Assignments** nesnesi (bağlantı) şunlara sahiptir:
 
-* People ile bir ilişki (çoktan-bire)
-* Projects ile bir ilişki (çoktan-bire)
+- People ile bir ilişki (çoktan-bire)
+- Projects ile bir ilişki (çoktan-bire)
 
 Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlantı kayıtlarını göstermeden bağlı kayıtları doğrudan görüntüler.
 
@@ -43,8 +45,8 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 1. **Lab'de Bağlantı İlişkilerini Etkinleştirin**: **Ayarlar → Güncellemeler → Lab** bölümüne gidin ve **Junction Relations**'ı etkinleştirin
 2. **Gelişmiş modu etkinleştirin**: Ayarlar kenar çubuğunun sağ alt kısmındaki **Advanced mode** anahtarını açın
 3. Veri modelinizi planlayın:
-   * Hangi iki nesneyi bağlıyorsunuz?
-   * Bağlantı nesnesinin adı ne olmalı?
+   - Hangi iki nesneyi bağlıyorsunuz?
+   - Bağlantı nesnesinin adı ne olmalı?
 
 ## Adım 1: Bağlantı Nesnesini Oluşturun
 
@@ -55,12 +57,17 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 3. Açıklayıcı bir ad verin (örn. "Project Assignment", "Team Member", "Product Order")
 4. "Ad alanı oluşturmayı atla" seçeneğini açın
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="Yeni pivot nesnesi" />
+<img
+  src="/images/user-guide/fields/new-pivot-object.png"
+  alt="Yeni pivot nesnesi"
+/>
 
 5. **Kaydet**'e tıklayın
 
 <Tip>
-**Adlandırma kuralı**: "Project Assignment" veya "Team Membership" gibi ilişkiyi tanımlayan bir ad kullanın. Bu, veri modelinin anlaşılmasını kolaylaştırır.
+  **Adlandırma kuralı**: "Project Assignment" veya "Team Membership" gibi
+  ilişkiyi tanımlayan bir ad kullanın. Bu, veri modelinin anlaşılmasını
+  kolaylaştırır.
 </Tip>
 
 ## Adım 2: Nesneler ile Bağlantı nesnesi arasında ilişkiler oluşturun
@@ -74,8 +81,8 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 3. Bağlantı nesnesini seçin (örn. "Project Assignments")
 4. İlişki türünü **Birden-Çoğa** olarak ayarlayın (bir kişi birçok atamaya bağlanabilir)
 5. Alanları adlandırın:
-   * People üzerindeki alan: örn. "Project Assignments"
-   * Bağlantı üzerindeki alan: örn. "Person"
+   - People üzerindeki alan: örn. "Project Assignments"
+   - Bağlantı üzerindeki alan: örn. "Person"
 6. **Kaydet**'e tıklayın
 
 ### İkinci İlişki (Nesne B → Bağlantı)
@@ -86,11 +93,14 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 4. İlişki türünü **Birden-Çoğa** olarak ayarlayın (bir proje birçok atamaya bağlanabilir)
 5. **"Bu, bir bağlantı nesnesine kurulan bir ilişkidir"** seçeneğini etkinleştirin
 
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/junction-relation-toggle.png"
+  style={{ width: '100%' }}
+/>
 
 6. Alanları adlandırın:
-   * Bağlantı üzerindeki alan: örn. "Project"
-   * Projects üzerindeki alan: örn. "Team Members"
+   - Bağlantı üzerindeki alan: örn. "Project"
+   - Projects üzerindeki alan: örn. "Team Members"
 7. **Kaydet**'e tıklayın
 
 ## Adım 3: Bağlantı İlişkisi Görüntüsünü Yapılandırın
@@ -109,8 +119,8 @@ Bağlantı ilişkisi anahtarını etkinleştirdiğinizde, Twenty aradaki bağlan
 
 Yapılandırmadan sonra:
 
-* Bir **Person** kaydında, "Project Assignments" alanı **Projects**'i doğrudan görüntüler (atama kayıtlarını değil)
-* Bir **Project** kaydında, "Team Members" alanı **People**'ı doğrudan görüntüler
+- Bir **Person** kaydında, "Project Assignments" alanı **Projects**'i doğrudan görüntüler (atama kayıtlarını değil)
+- Bir **Project** kaydında, "Team Members" alanı **People**'ı doğrudan görüntüler
 
 Bağlantı nesnesi hâlâ mevcuttur ve bağlantıları saklar, ancak kullanıcı arayüzü daha sade bir çoktan-çoka görünüm sunar.
 
@@ -120,56 +130,56 @@ Bağlantı nesnesi hâlâ mevcuttur ve bağlantıları saklar, ancak kullanıcı
 
 ### Bağlantı Nesnesini Oluşturun
 
-* Ad: **Project Assignment**
-* Açıklama: "Kişileri üzerinde çalıştıkları projelere bağlar"
+- Ad: **Project Assignment**
+- Açıklama: "Kişileri üzerinde çalıştıkları projelere bağlar"
 
 ### İlişkiler Ekleyin
 
 1. **People → Project Assignment**
-   * Tür: Birden-Çoğa
-   * People üzerindeki alan: "Project Assignments"
-   * Assignment üzerindeki alan: "Person"
+   - Tür: Birden-Çoğa
+   - People üzerindeki alan: "Project Assignments"
+   - Assignment üzerindeki alan: "Person"
 
 2. **Projects → Project Assignment**
-   * Tür: Birden-Çoğa
-   * Projects üzerindeki alan: "Team Members"
-   * Assignment üzerindeki alan: "Project"
+   - Tür: Birden-Çoğa
+   - Projects üzerindeki alan: "Team Members"
+   - Assignment üzerindeki alan: "Project"
 
 ### Bağlantı Görüntüsünü Yapılandırın
 
 1. **People** nesnesinde:
-   * "Project Assignments" alanını düzenleyin
-   * Bağlantı anahtarını etkinleştirin
-   * Hedef: "Project"
+   - "Project Assignments" alanını düzenleyin
+   - Bağlantı anahtarını etkinleştirin
+   - Hedef: "Project"
 
 2. **Projects** nesnesinde:
-   * "Team Members" alanını düzenleyin
-   * Bağlantı anahtarını etkinleştirin
-   * Hedef: "Person"
+   - "Team Members" alanını düzenleyin
+   - Bağlantı anahtarını etkinleştirin
+   - Hedef: "Person"
 
 ### Kullanın
 
-* Bir Person kaydını açın → Projelerini doğrudan görün
-* Bir Project kaydını açın → Ekip üyelerini doğrudan görün
-* Her iki taraftan da yeni bağlantılar oluşturun
+- Bir Person kaydını açın → Projelerini doğrudan görün
+- Bir Project kaydını açın → Ekip üyelerini doğrudan görün
+- Her iki taraftan da yeni bağlantılar oluşturun
 
 ## Bağlantılara Ek Veri Ekleme
 
 Bağlantı nesnesi gerçek bir nesne olduğundan, ilişkiyle ilgili bilgileri saklamak için özel alanlar ekleyebilirsiniz:
 
-* **Rol**: "Geliştirici", "Tasarımcı", "Yönetici"
-* **Başlangıç Tarihi**: Projeye katıldıkları tarih
-* **Ayrılan Saatler**: Bu projedeki haftalık saat sayısı
+- **Rol**: "Geliştirici", "Tasarımcı", "Yönetici"
+- **Başlangıç Tarihi**: Projeye katıldıkları tarih
+- **Ayrılan Saatler**: Bu projedeki haftalık saat sayısı
 
 Bu verilere erişmek için doğrudan bağlantı nesnesine gidin veya API aracılığıyla sorgulayın.
 
 ## Kısıtlamalar
 
-* **CSV İçe/Dışa Aktarma**: Çoktan-çoka ilişkilerin doğrudan içe aktarımı desteklenmez. Bunun yerine kayıtları bağlantı nesnesine içe aktarın.
-* **Filtreler**: Çoktan-çoka ilişkilere göre filtrelemenin seçenekleri sınırlı olabilir.
+- **CSV İçe/Dışa Aktarma**: Çoktan-çoka ilişkilerin doğrudan içe aktarımı desteklenmez. Bunun yerine kayıtları bağlantı nesnesine içe aktarın.
+- **Filtreler**: Çoktan-çoka ilişkilere göre filtrelemenin seçenekleri sınırlı olabilir.
 
 ## İlgili
 
-* [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) — ilişki türlerinin açıklaması
-* [Özel Nesneler Oluşturma](/l/tr/user-guide/data-model/how-tos/create-custom-objects) — nesneleri nasıl oluşturacağınız
-* [İlişki Alanları Oluşturma](/l/tr/user-guide/data-model/how-tos/create-relation-fields) — temel ilişki kurulumu
+- [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) — ilişki türlerinin açıklaması
+- [Özel Nesneler Oluşturma](/l/tr/user-guide/data-model/how-tos/create-custom-objects) — nesneleri nasıl oluşturacağınız
+- [İlişki Alanları Oluşturma](/l/tr/user-guide/data-model/how-tos/create-relation-fields) — temel ilişki kurulumu

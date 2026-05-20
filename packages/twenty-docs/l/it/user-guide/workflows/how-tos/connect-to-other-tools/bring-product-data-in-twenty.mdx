@@ -13,15 +13,18 @@ Usa questo modello per mantenere Twenty sincronizzato con i dati di prodotto dal
 4. **Iterator**: Itera su ciascun prodotto
 5. **Upsert Record**: Crea o aggiorna in Twenty
 
-<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/create_users_workflow.png"
+  style={{ width: '100%' }}
+/>
 
 ## Passaggio 1: Pianifica il trigger
 
 Imposta il flusso di lavoro per l'esecuzione con una frequenza che corrisponda alle tue esigenze di aggiornamento dei dati:
 
-* Ogni 5 minuti per una sincronizzazione quasi in tempo reale
-* Ogni ora per i dati meno critici
-* Ogni giorno per aggiornamenti in batch
+- Ogni 5 minuti per una sincronizzazione quasi in tempo reale
+- Ogni ora per i dati meno critici
+- Ogni giorno per aggiornamenti in batch
 
 ## Passaggio 2: Interroga il tuo data warehouse
 
@@ -30,22 +33,24 @@ Aggiungi un'azione **Code** per recuperare i dati recenti:
 ```javascript
 export const main = async () => {
   const intervalMinutes = 10; // Match your schedule frequency
-  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+  const cutoffTime = new Date(
+    Date.now() - intervalMinutes * 60 * 1000,
+  ).toISOString();
 
   // Replace with your actual data warehouse connection
-  const response = await fetch("https://your-warehouse-api.com/query", {
-    method: "POST",
+  const response = await fetch('https://your-warehouse-api.com/query', {
+    method: 'POST',
     headers: {
-      "Authorization": "Bearer YOUR_API_KEY",
-      "Content-Type": "application/json"
+      Authorization: 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       query: `
         SELECT id, name, sku, price, stock_quantity, updated_at
         FROM products
         WHERE updated_at >= '${cutoffTime}'
-      `
-    })
+      `,
+    }),
   });
 
   const data = await response.json();
@@ -146,7 +151,7 @@ export const main = async (params: { deals: any }) => {
 
 Aggiungi un'azione **Iterator**:
 
-* Input: `{{code.products}}`
+- Input: `{{code.products}}`
 
 Questo esegue un ciclo su ogni prodotto nell'array.
 
@@ -163,7 +168,9 @@ All'interno dell'Iterator, aggiungi un'azione **Upsert Record**:
 | **Prezzo**             | `{{iterator.item.price}}`                 |
 
 <Tip>
-Usa **Upsert** (aggiornare o creare) invece di creare rami separati per creazione e aggiornamento. È più veloce da costruire e più facile da eseguire il debug.
+  Usa **Upsert** (aggiornare o creare) invece di creare rami separati per
+  creazione e aggiornamento. È più veloce da costruire e più facile da eseguire
+  il debug.
 </Tip>
 
 ## Esempi di casi d'uso
@@ -177,6 +184,6 @@ Usa **Upsert** (aggiornare o creare) invece di creare rami separati per creazion
 
 ## Correlati
 
-* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

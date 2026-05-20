@@ -11,20 +11,23 @@ Exportez les données de votre espace de travail en CSV pour des sauvegardes, de
 
 **Cas d'utilisation :**
 
-* **Sauvegardes régulières** — conservez des copies de vos données
-* **Reporting externe** — analysez les données dans Excel, Google Sheets ou des outils de BI
-* **Migration** — déplacez les données vers un autre système
-* **Mises à jour en masse** — exportez, modifiez et réimportez pour mettre à jour les enregistrements
+- **Sauvegardes régulières** — conservez des copies de vos données
+- **Reporting externe** — analysez les données dans Excel, Google Sheets ou des outils de BI
+- **Migration** — déplacez les données vers un autre système
+- **Mises à jour en masse** — exportez, modifiez et réimportez pour mettre à jour les enregistrements
 
 ## Ce que vous devez savoir
 
 ### Limites d'exportation
 
-* **20 000 enregistrements maximum** par export
-* Seules les **colonnes visibles** sont exportées
-* Seuls les **enregistrements filtrés** sont exportés (selon votre vue actuelle)
+- **20 000 enregistrements maximum** par export
+- Seules les **colonnes visibles** sont exportées
+- Seuls les **enregistrements filtrés** sont exportés (selon votre vue actuelle)
 
-<Note>Pour des exports plus volumineux (plus de 20 000 enregistrements), utilisez des filtres pour exporter par lots ou utilisez l'[API](/l/fr/developers/api).</Note>
+<Note>
+  Pour des exports plus volumineux (plus de 20 000 enregistrements), utilisez
+  des filtres pour exporter par lots ou utilisez l'[API](/l/fr/developers/api).
+</Note>
 
 ### Autorisations
 
@@ -34,10 +37,10 @@ Vous avez besoin de l'autorisation **"Export CSV"** pour exporter des données. 
 
 Accédez à l'objet que vous souhaitez exporter :
 
-* **People** — pour les contacts
-* **Companies** — pour les organisations
-* **Opportunities** — pour les affaires
-* **Objets personnalisés** — tout objet que vous avez créé
+- **People** — pour les contacts
+- **Companies** — pour les organisations
+- **Opportunities** — pour les affaires
+- **Objets personnalisés** — tout objet que vous avez créé
 
 ## Étape 2 : Configurez votre vue
 
@@ -62,7 +65,10 @@ Si vous avez seulement besoin d'un sous-ensemble de données :
 1. Cliquez sur l'en-tête d'une colonne pour trier
 2. L'export respectera votre ordre de tri
 
-<Note>**Créez une vue dédiée à l'export.** Enregistrez une vue spécialement configurée pour les exports afin d'éviter de reconfigurer à chaque fois.</Note>
+<Note>
+  **Créez une vue dédiée à l'export.** Enregistrez une vue spécialement
+  configurée pour les exports afin d'éviter de reconfigurer à chaque fois.
+</Note>
 
 ## Étape 3 : Exportez les données
 
@@ -85,8 +91,8 @@ Si vous avez seulement besoin d'un sous-ensemble de données :
 
 Les ID de relations ne sont exportés que du côté **"many"** d'une relation :
 
-* **L'export People** inclut une colonne `companyId` (relation People → Company)
-* **L'export Companies** n'inclut PAS `peopleIds` (Companies est le côté "one")
+- **L'export People** inclut une colonne `companyId` (relation People → Company)
+- **L'export Companies** n'inclut PAS `peopleIds` (Companies est le côté "one")
 
 Cela signifie que vous pouvez utiliser l'export People pour réimporter et conserver le lien avec Company, mais vous devrez réimporter People après Companies pour recréer les relations.
 
@@ -136,9 +142,9 @@ La limite d'export est de 20 000 enregistrements. Pour des jeux de données plus
 
 **Exemples de filtres pour le traitement par lots :**
 
-* Par plage de dates (janvier, février, mars...)
-* Par propriétaire (membre de l'équipe A, membre de l'équipe B...)
-* Par statut (Actif, Inactif...)
+- Par plage de dates (janvier, février, mars...)
+- Par propriétaire (membre de l'équipe A, membre de l'équipe B...)
+- Par statut (Actif, Inactif...)
 
 ### Option 2 : Utiliser l'API
 
@@ -164,14 +170,16 @@ Enregistrez des vues configurées spécifiquement pour les exports :
 
 Les fichiers exportés peuvent contenir des données sensibles :
 
-* Stockez-les dans des emplacements sécurisés
-* Supprimez les anciens exports lorsqu'ils ne sont plus nécessaires
-* Soyez prudent lors du partage des fichiers d'export
+- Stockez-les dans des emplacements sécurisés
+- Supprimez les anciens exports lorsqu'ils ne sont plus nécessaires
+- Soyez prudent lors du partage des fichiers d'export
 
 ### À vérifier avant l'export
 
 <Check>Les colonnes appropriées sont visibles</Check>
-<Check>Les filtres sont correctement définis (ou supprimés pour un export complet)</Check>
+<Check>
+  Les filtres sont correctement définis (ou supprimés pour un export complet)
+</Check>
 <Check>Vous disposez de l'autorisation d'export</Check>
 
 ## FAQ
@@ -181,21 +189,27 @@ Les fichiers exportés peuvent contenir des données sensibles :
     Seules les colonnes visibles sont exportées. Ajoutez les colonnes nécessaires via **Options → Fields** avant d'exporter.
   </Accordion>
 
-  <Accordion title="Pourquoi mon export ne contient-il pas tous les enregistrements ?">
-    Vérifiez vos filtres. L'export n'inclut que les enregistrements correspondant aux filtres de votre vue actuelle. Supprimez les filtres pour exporter tous les enregistrements.
-  </Accordion>
+<Accordion title="Pourquoi mon export ne contient-il pas tous les enregistrements ?">
+  Vérifiez vos filtres. L'export n'inclut que les enregistrements correspondant
+  aux filtres de votre vue actuelle. Supprimez les filtres pour exporter tous
+  les enregistrements.
+</Accordion>
 
-  <Accordion title="Puis-je exporter plus de 20 000 enregistrements ?">
-    Pas en un seul export. Utilisez des filtres pour exporter par lots, ou utilisez l'API pour des jeux de données plus volumineux.
-  </Accordion>
+<Accordion title="Puis-je exporter plus de 20 000 enregistrements ?">
+  Pas en un seul export. Utilisez des filtres pour exporter par lots, ou
+  utilisez l'API pour des jeux de données plus volumineux.
+</Accordion>
 
-  <Accordion title="Quel est le format du fichier d'export ?">
-    CSV (valeurs séparées par des virgules). S'ouvre dans Excel, Google Sheets ou toute application de feuille de calcul.
-  </Accordion>
+<Accordion title="Quel est le format du fichier d'export ?">
+  CSV (valeurs séparées par des virgules). S'ouvre dans Excel, Google Sheets ou
+  toute application de feuille de calcul.
+</Accordion>
 
-  <Accordion title="Les ID de relations sont-ils inclus ?">
-    Oui, mais seulement du côté "many" des relations. Par exemple, un export People inclut `companyId`, mais un export Companies n'inclut pas les ID des personnes.
-  </Accordion>
+<Accordion title="Les ID de relations sont-ils inclus ?">
+  Oui, mais seulement du côté "many" des relations. Par exemple, un export
+  People inclut `companyId`, mais un export Companies n'inclut pas les ID des
+  personnes.
+</Accordion>
 
   <Accordion title="Puis-je automatiser les exports ?">
     Pas directement via l'interface utilisateur. Utilisez l'API pour créer des workflows d'export automatisés.
@@ -204,6 +218,6 @@ Les fichiers exportés peuvent contenir des données sensibles :
 
 ## Prochaines étapes
 
-* [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/data-migration/how-tos/update-existing-records-via-import) — modifiez et réimportez votre export
-* [Comment importer des données via l'API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api) — pour de grands jeux de données
-* [Documentation de l'API](/l/fr/developers/api) — créez des flux de travail d'exportation personnalisés
+- [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/data-migration/how-tos/update-existing-records-via-import) — modifiez et réimportez votre export
+- [Comment importer des données via l'API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api) — pour de grands jeux de données
+- [Documentation de l'API](/l/fr/developers/api) — créez des flux de travail d'exportation personnalisés

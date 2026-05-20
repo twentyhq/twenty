@@ -20,12 +20,15 @@ Para ejecutar solo una rama según condiciones específicas, **añade un nodo Fi
 3. Configura condiciones en cada **Filter** para determinar cuándo debe continuar esa rama
 4. Solo continuarán la(s) rama(s) cuyas condiciones del **Filter** se cumplan
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Cómo funcionan los nodos Filter
 
-* Si se cumple la condición del Filter: la rama sigue ejecutándose
-* Si la condición del Filter no se cumple: la rama se detiene en el nodo Filter
+- Si se cumple la condición del Filter: la rama sigue ejecutándose
+- Si la condición del Filter no se cumple: la rama se detiene en el nodo Filter
 
 Esto crea, en la práctica, una lógica condicional en la que solo se ejecuta la rama adecuada según tus datos.
 
@@ -42,7 +45,9 @@ Ambas ramas se inician, pero solo la que coincida con el importe del negocio con
 ## Creación de ramas
 
 <Note>
-  Para crear una nueva rama a partir de un paso existente, haz clic en el botón **+** del paso y agrega tu acción. Puedes añadir varias ramas haciendo clic en **+** varias veces.
+  Para crear una nueva rama a partir de un paso existente, haz clic en el botón
+  **+** del paso y agrega tu acción. Puedes añadir varias ramas haciendo clic en
+  **+** varias veces.
 </Note>
 
 1. En el editor de flujos de trabajo, selecciona el paso desde el que quieres ramificar
@@ -78,13 +83,13 @@ El correo de confirmación se envía solo después de que se completen tanto la 
 
 ## Mejores prácticas
 
-* Usa siempre nodos **Filter** al inicio de las ramas cuando quieras una ejecución condicional
-* Mantén las condiciones de las ramas mutuamente excluyentes para evitar acciones duplicadas
-* Prueba tus flujos de trabajo con distintos datos para asegurarte de que se ejecuten las ramas correctas
-* **Renombra los pasos de las ramas** de forma descriptiva para que quede claro qué hace cada ruta
-* **Fusiona las ramas** cuando necesites una acción final después del procesamiento en paralelo
+- Usa siempre nodos **Filter** al inicio de las ramas cuando quieras una ejecución condicional
+- Mantén las condiciones de las ramas mutuamente excluyentes para evitar acciones duplicadas
+- Prueba tus flujos de trabajo con distintos datos para asegurarte de que se ejecuten las ramas correctas
+- **Renombra los pasos de las ramas** de forma descriptiva para que quede claro qué hace cada ruta
+- **Fusiona las ramas** cuando necesites una acción final después del procesamiento en paralelo
 
 ## Relacionado
 
-* [Preguntas frecuentes sobre flujos de trabajo](/l/es/user-guide/workflows/how-tos/need-more-help/workflows-faq) — respuestas sobre la ejecución en paralelo
-* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions) — acciones disponibles para las ramas
+- [Preguntas frecuentes sobre flujos de trabajo](/l/es/user-guide/workflows/how-tos/need-more-help/workflows-faq) — respuestas sobre la ejecución en paralelo
+- [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions) — acciones disponibles para las ramas

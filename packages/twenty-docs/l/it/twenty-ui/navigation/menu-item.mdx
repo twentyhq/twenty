@@ -9,17 +9,17 @@ Una voce di menu versatile progettata per essere utilizzata in un menu o in un e
 <Tab title="Utilizzo">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
+    console.log('Icon button clicked!', event);
   };
 
   return (
@@ -37,10 +37,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Props">
-
 
 | Props         | Tipo            | Descrizione                                                                                                    |
 | ------------- | --------------- | -------------------------------------------------------------------------------------------------------------- |
@@ -52,9 +50,6 @@ export const MyComponent = () => {
 | testId        | stringa         | L'attributo data-testid per scopi di test                                                                      |
 | onClick       | funzione        | Funzione di callback attivata quando la voce di menu viene cliccata                                            |
 | nomeClasse    | stringa         | Nome opzionale per stile aggiuntivo                                                                            |
-
-
-
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ Una voce di menu in stile comando all'interno di un menu per indicare le scorcia
 <Tab title="Utilizzo">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -93,10 +88,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Proprietà">
-
 
 | Proprietà    | Tipo            | Descrizione                                                                   |
 | ------------ | --------------- | ----------------------------------------------------------------------------- |
@@ -107,8 +100,6 @@ export const MyComponent = () => {
 | isSelected   | booleano        | Indica se la voce di menu è selezionata o evidenziata                         |
 | onClick      | funzione        | Funzione di callback attivata quando la voce di menu viene cliccata           |
 | nomeClasse   | stringa         | Nome opzionale per lo stile aggiuntivo                                        |
-
-
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ Un componente di menu trascinabile progettato per essere utilizzato in un menu o
 <Tab title="Utilizzo">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -148,7 +139,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà      | Tipo            | Descrizione                                                                                         |
 | -------------- | --------------- | --------------------------------------------------------------------------------------------------- |
 | LeftIcon       | IconaComponente | Un'icona opzionale a sinistra visualizzata prima del testo nella voce di menu                       |
@@ -159,9 +149,6 @@ export const MyComponent = () => {
 | testo          | stringa         | Il contenuto di testo della voce di menu                                                            |
 | isDragDisabled | booleano        | Indica se il trascinamento è disabilitato                                                           |
 | nomeClasse     | stringa         | Nome opzionale per lo stile aggiuntivo                                                              |
-
-
-
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ Fornisce un modo per implementare la funzionalità di selezione multipla con una
 <Tab title="Utilizzo">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,7 +179,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà      | Tipo            | Descrizione                                                                     |
 | -------------- | --------------- | ------------------------------------------------------------------------------- |
 | LeftIcon       | IconaComponente | Un'icona opzionale a sinistra visualizzata prima del testo nella voce di menu   |
@@ -201,9 +186,6 @@ export const MyComponent = () => {
 | selected       | booleano        | Indica se la voce di menu è selezionata (segnata)                               |
 | onSelectChange | funzione        | Funzione di callback attivata quando cambia lo stato della casella di controllo |
 | nomeClasse     | stringa         | Nome opzionale per lo stile aggiuntivo                                          |
-
-
-
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ Una voce di menu a selezione multipla con un avatar, una casella di controllo pe
 <Tab title="Utilizzo">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,7 +218,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà      | Tipo        | Descrizione                                                                     |
 | -------------- | ----------- | ------------------------------------------------------------------------------- |
 | avatar         | `ReactNode` | L'avatar o icona da visualizzare sul lato sinistro della voce di menu           |
@@ -244,9 +225,6 @@ export const MyComponent = () => {
 | selected       | booleano    | Indica se la voce di menu è selezionata (segnata)                               |
 | onSelectChange | funzione    | Funzione di callback attivata quando cambia lo stato della casella di controllo |
 | nomeClasse     | stringa     | Nome opzionale per lo stile aggiuntivo                                          |
-
-
-
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ Una voce di menu con un'icona opzionale a sinistra, contenuto testuale e un'icon
 <Tab title="Utilizzo">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà  | Tipo            | Descrizione                                                                   |
 | ---------- | --------------- | ----------------------------------------------------------------------------- |
 | LeftIcon   | IconaComponente | Un'icona opzionale a sinistra visualizzata prima del testo nella voce di menu |
 | testo      | stringa         | Il contenuto di testo della voce di menu                                      |
 | onClick    | funzione        | Funzione di callback attivata quando la voce di menu viene cliccata           |
 | nomeClasse | stringa         | Nome opzionale per lo stile aggiuntivo                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ Una voce di menu selezionabile, con opzioni di contenuto a sinistra (icona e tes
 <Tab title="Utilizzo">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,7 +302,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà    | Tipo            | Descrizione                                                                   |
 | ------------ | --------------- | ----------------------------------------------------------------------------- |
 | LeftIcon     | IconaComponente | Un'icona opzionale a sinistra visualizzata prima del testo nella voce di menu |
@@ -338,9 +311,6 @@ export const MyComponent = () => {
 | hovered      | booleano        | Indica se la voce di menu viene attualmente evidenziata                       |
 | onClick      | funzione        | Funzione di callback attivata quando la voce di menu viene cliccata           |
 | nomeClasse   | stringa         | Nome opzionale per lo stile aggiuntivo                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ Una voce di menu selezionabile con un avatar, opzioni di contenuto a sinistra (a
 <Tab title="Utilizzo">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -376,12 +346,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Proprietà">
-
 
 | Proprietà    | Tipo        | Descrizione                                                             |
 | ------------ | ----------- | ----------------------------------------------------------------------- |
@@ -394,9 +362,6 @@ export const MyComponent = () => {
 | onClick      | funzione    | Funzione di callback attivata quando la voce di menu viene cliccata     |
 | nomeClasse   | stringa     | Nome opzionale per lo stile aggiuntivo                                  |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -408,11 +373,11 @@ Una voce di menu selezionabile con un campione di colore per scenari in cui si d
 <Tab title="Utilizzo">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,7 +397,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà    | Tipo     | Descrizione                                                                                                                                                                                        |
 | ------------ | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | colore       | stringa  | Il colore del tema che viene visualizzato come campione nella voce di menu. Le opzioni includono: `verde`, `turchese`, `cielo`, `blu`, `viola`, `rosa`, `rosso`, `arancione`, `giallo`, e `grigio` |
@@ -442,9 +406,6 @@ export const MyComponent = () => {
 | variante     | stringa  | La variante del campione di colore. Può essere `default` o `pipeline`                                                                                                                              |
 | onClick      | funzione | Funzione di callback attivata quando la voce di menu viene cliccata                                                                                                                                |
 | nomeClasse   | stringa  | Nome opzionale per lo stile aggiuntivo                                                                                                                                                             |
-
-
-
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,7 +438,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietà">
 
-
 | Proprietà              | Tipo            | Descrizione                                                                   |
 | ---------------------- | --------------- | ----------------------------------------------------------------------------- |
 | LeftIcon               | IconaComponente | Un'icona opzionale a sinistra visualizzata prima del testo nella voce di menu |
@@ -487,9 +446,6 @@ export const MyComponent = () => {
 | onToggleChange         | funzione        | Funzione di callback attivata quando cambia lo stato dell'interruttore        |
 | dimensioneInterruttore | stringa         | La dimensione dell'interruttore a levetta. Può essere \                       |
 | nomeClasse             | stringa         | Nome opzionale per lo stile aggiuntivo                                        |
-
-
-
 
 </Tab>
 </Tabs>

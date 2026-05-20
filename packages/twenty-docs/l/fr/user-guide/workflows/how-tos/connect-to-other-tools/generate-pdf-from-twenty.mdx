@@ -29,7 +29,9 @@ Avant de configurer le flux de travail :
 3. Choisissez l'objet auquel vous souhaitez joindre des PDF (par exemple, **Entreprise** ou **Opportunité**)
 
 <Tip>
-  Avec un déclencheur manuel, les utilisateurs peuvent exécuter ce flux de travail à l'aide d'un bouton qui apparaît en haut à droite une fois un enregistrement sélectionné, afin de générer et de joindre un PDF.
+  Avec un déclencheur manuel, les utilisateurs peuvent exécuter ce flux de
+  travail à l'aide d'un bouton qui apparaît en haut à droite une fois un
+  enregistrement sélectionné, afin de générer et de joindre un PDF.
 </Tip>
 
 ### Étape 2 : Ajouter une fonction logique
@@ -45,15 +47,15 @@ Avant de configurer le flux de travail :
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-  Si vous l'attachez à un objet différent (Personne, Opportunité, etc.), renommez le paramètre en conséquence (par exemple, `personId`, `opportunityId`) et mettez à jour la fonction logique.
+  Si vous l'attachez à un objet différent (Personne, Opportunité, etc.),
+  renommez le paramètre en conséquence (par exemple, `personId`,
+  `opportunityId`) et mettez à jour la fonction logique.
 </Note>
 
 #### Code de la fonction logique
 
 ```typescript
-export const main = async (
-  params: { companyId: string },
-) => {
+export const main = async (params: { companyId: string }) => {
   const { companyId } = params;
 
   // Replace with your Twenty GraphQL endpoint
@@ -89,10 +91,13 @@ export const main = async (
   `;
 
   const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fileFolder: 'Attachment' },
-  }));
+  uploadForm.append(
+    'operations',
+    JSON.stringify({
+      query: uploadMutation,
+      variables: { file: null, fileFolder: 'Attachment' },
+    }),
+  );
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
@@ -145,7 +150,9 @@ export const main = async (
   const attachmentResult = await attachmentResponse.json();
 
   if (attachmentResult.errors?.length) {
-    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+    throw new Error(
+      `Attachment creation failed: ${attachmentResult.errors[0].message}`,
+    );
   }
 
   return attachmentResult.data?.createAttachment;
@@ -175,9 +182,11 @@ Si vous utilisez un service de génération de PDF, vous pouvez :
 2. Transmettez l'URL du PDF retournée à la fonction logique en tant que paramètre
 
 ```typescript
-export const main = async (
-  params: { companyId: string; pdfUrl: string; filename: string },
-) => {
+export const main = async (params: {
+  companyId: string;
+  pdfUrl: string;
+  filename: string;
+}) => {
   const { companyId, pdfUrl, filename } = params;
   // ... rest of the function
 };
@@ -206,10 +215,10 @@ Pour créer des devis ou des factures dynamiques :
 
 ### Services populaires de génération de PDF
 
-* **Carbone** - Génération de documents basée sur des modèles
-* **PDFMonkey** - Création de PDF dynamiques à partir de modèles
-* **DocuSeal** - Plateforme d'automatisation de documents
-* **Documint** - Génération de documents axée sur l'API
+- **Carbone** - Génération de documents basée sur des modèles
+- **PDFMonkey** - Création de PDF dynamiques à partir de modèles
+- **DocuSeal** - Plateforme d'automatisation de documents
+- **Documint** - Génération de documents axée sur l'API
 
 Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensuite transmettre à la fonction logique.
 
@@ -223,6 +232,6 @@ Chaque service fournit une API qui renvoie une URL de PDF, que vous pouvez ensui
 
 ## Articles connexes
 
-* [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
-* [Fonctions logiques](/l/fr/user-guide/workflows/capabilities/workflow-actions#code)
-* [Générer un devis ou une facture depuis Twenty](/l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+- [Déclencheurs de workflows](/l/fr/user-guide/workflows/capabilities/workflow-triggers)
+- [Fonctions logiques](/l/fr/user-guide/workflows/capabilities/workflow-actions#code)
+- [Générer un devis ou une facture depuis Twenty](/l/fr/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

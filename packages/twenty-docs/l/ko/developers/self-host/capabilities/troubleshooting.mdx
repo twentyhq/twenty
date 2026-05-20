@@ -113,28 +113,37 @@ npx nx worker twenty-server
 
 #### 작업자가 작동 중인지 확인하는 방법은?
 
-* [webhook-test.com](https://webhook-test.com/)으로 이동하여 **고유한 웹훅 URL**을 복사하십시오.
+- [webhook-test.com](https://webhook-test.com/)으로 이동하여 **고유한 웹훅 URL**을 복사하십시오.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="웹훅 테스트" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="웹훅 테스트"
+  />
 </div>
 
-* Twenty 앱을 열고 `/settings`로 이동하여 화면 왼쪽 하단에 있는 **고급** 토글을 활성화하십시오.
-* 새 웹훅 생성.
-* **고유한 웹훅 URL**을 Twenty의 **엔드포인트 URL** 필드에 붙여넣습니다. **필터**를 `회사`와 `생성됨`으로 설정하십시오.
+- Twenty 앱을 열고 `/settings`로 이동하여 화면 왼쪽 하단에 있는 **고급** 토글을 활성화하십시오.
+- 새 웹훅 생성.
+- **고유한 웹훅 URL**을 Twenty의 **엔드포인트 URL** 필드에 붙여넣습니다. **필터**를 `회사`와 `생성됨`으로 설정하십시오.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="웹훅 설정" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="웹훅 설정"
+  />
 </div>
 
-* `/objects/companies`로 이동하여 새 회사 레코드를 만드십시오.
-* [webhook-test.com](https://webhook-test.com/)으로 돌아가 새 **POST 요청**이 수신되었는지 확인하십시오.
+- `/objects/companies`로 이동하여 새 회사 레코드를 만드십시오.
+- [webhook-test.com](https://webhook-test.com/)으로 돌아가 새 **POST 요청**이 수신되었는지 확인하십시오.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="웹훅 테스트 결과" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="웹훅 테스트 결과"
+  />
 </div>
 
-* **POST 요청**이 수신된 경우, 작업자가 성공적으로 실행 중입니다. 그렇지 않으면, 작업자에 대한 문제 해결이 필요합니다.
+- **POST 요청**이 수신된 경우, 작업자가 성공적으로 실행 중입니다. 그렇지 않으면, 작업자에 대한 문제 해결이 필요합니다.
 
 #### 프런트엔드 시작 실패 및 TS5042 오류: 명령줄에서 소스 파일과 함께 옵션 '프로젝트'를 사용할 수 없음
 
@@ -194,9 +203,8 @@ Twenty를 리버스 프록시 뒤에서 실행 중이며 연결 문제가 있는
    `.env` 파일의 `SERVER_URL`이 SSL이 활성화된 경우 외부 액세스 URL과 `https`까지 일치하는지 확인하십시오.
 
 2. **리버스 프록시 설정 확인:**
-
-   * 리버스 프록시가 Twenty 서버로 요청을 정확히 전달하는지 확인하십시오.
-   * `X-Forwarded-For`, `X-Forwarded-Proto`와 같은 헤더가 적절히 설정되어 있는지 확인하십시오.
+   - 리버스 프록시가 Twenty 서버로 요청을 정확히 전달하는지 확인하십시오.
+   - `X-Forwarded-For`, `X-Forwarded-Proto`와 같은 헤더가 적절히 설정되어 있는지 확인하십시오.
 
 3. **서비스 재시작:**
 
@@ -210,7 +218,7 @@ Twenty를 리버스 프록시 뒤에서 실행 중이며 연결 문제가 있는
 
 이 가이드에 다루지 않은 문제를 겪는 경우:
 
-* 로그 확인:
+- 로그 확인:
 
   컨테이너 로그에서 오류 메시지 확인:
 
@@ -218,6 +226,6 @@ Twenty를 리버스 프록시 뒤에서 실행 중이며 연결 문제가 있는
   docker compose logs
   ```
 
-* 커뮤니티 지원:
+- 커뮤니티 지원:
 
   [Twenty 커뮤니티](https://github.com/twentyhq/twenty/issues)나 [지원 채널](https://discord.gg/cx5n4Jzs57)에 문의하십시오.

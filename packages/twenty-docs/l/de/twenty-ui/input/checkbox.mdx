@@ -13,15 +13,15 @@ Wird verwendet, wenn ein Benutzer mehrere Werte aus mehreren Optionen auswählen
 <Tab title="&#x22;Verwendung&#x22;">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="&#x22;Eigenschaften&#x22;">
 
-
 | "Eigenschaften"        | Typ          | Beschreibung                                                                                                  |
 | ---------------------- | ------------ | ------------------------------------------------------------------------------------------------------------- |
 | markiert               | boolesch     | Gibt an, ob das Kontrollkästchen markiert ist                                                                 |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | Variante               | Zeichenkette | Der visuelle Stil der Box. Optionen umfassen: `primary`, `secondary` und `tertiary`                           |
 | größe                  | Zeichenkette | Die Größe des Kontrollkästchens. Hat zwei Optionen: `klein` und `groß`                                        |
 | Form                   | Zeichenkette | Die Form des Kontrollkästchens. Hat zwei Optionen: `squared` und `rounded`                                    |
-
-
 
 </Tab>
 </Tabs>

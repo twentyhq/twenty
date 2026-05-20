@@ -5,9 +5,9 @@ description: Controla el acceso a objetos, campos y ajustes con permisos basados
 
 El sistema de permisos de Twenty te permite controlar el acceso a tres áreas principales:
 
-* **Objetos y Campos**: Controla quién puede ver, editar o eliminar registros y campos individuales
-* **Configuraciones**: Gestiona el acceso a la configuración del espacio de trabajo y a las funciones administrativas
-* **Acciones**: Controla acciones generales del espacio de trabajo como importar datos o enviar correos electrónicos
+- **Objetos y Campos**: Controla quién puede ver, editar o eliminar registros y campos individuales
+- **Configuraciones**: Gestiona el acceso a la configuración del espacio de trabajo y a las funciones administrativas
+- **Acciones**: Controla acciones generales del espacio de trabajo como importar datos o enviar correos electrónicos
 
 ## Crear rol
 
@@ -29,16 +29,19 @@ Para eliminar un rol:
 4. Haz clic en **Confirmar** en el modal
 
 <Note>
-  Si se elimina un rol, cualquier miembro del espacio de trabajo asignado a él será reasignado automáticamente al rol predeterminado. Todos excepto el rol **Admin** pueden eliminarse. Siempre debe haber al menos un miembro asignado al rol **Admin**.
+  Si se elimina un rol, cualquier miembro del espacio de trabajo asignado a él
+  será reasignado automáticamente al rol predeterminado. Todos excepto el rol
+  **Admin** pueden eliminarse. Siempre debe haber al menos un miembro asignado
+  al rol **Admin**.
 </Note>
 
 ## Asignar roles a miembros
 
 ### Ver Asignaciones Actuales
 
-* Ve a **Ajustes → Roles**
-* Ver todos los roles y cuántos miembros están asignados a cada uno
-* Ver qué miembros tienen qué roles
+- Ve a **Ajustes → Roles**
+- Ver todos los roles y cuántos miembros están asignados a cada uno
+- Ver qué miembros tienen qué roles
 
 ### Asignar un rol a un miembro
 
@@ -57,7 +60,9 @@ Para eliminar un rol:
 4. Los nuevos miembros del espacio de trabajo serán asignados a este rol cuando se unan
 
 <Note>
-  Solo puedes asignar roles a miembros existentes del espacio de trabajo. Para invitar a nuevos miembros, utiliza [Gestión de Miembros](/l/es/user-guide/settings/capabilities/member-management).
+  Solo puedes asignar roles a miembros existentes del espacio de trabajo. Para
+  invitar a nuevos miembros, utiliza [Gestión de
+  Miembros](/l/es/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizar Permisos
@@ -82,7 +87,9 @@ Primero, configura los permisos base que se aplican a **todos los objetos** de f
 Selecciona o deselecciona según cuál deba ser el comportamiento predeterminado para este rol.
 
 <Note>
-  **Ejemplo — rol de becario**: Un becario debería poder ver todos los objetos, pero no editarlos de forma predeterminada. Activa "Ver registros en todos los objetos" pero deja "Editar registros en todos los objetos" sin marcar.
+  **Ejemplo — rol de becario**: Un becario debería poder ver todos los objetos,
+  pero no editarlos de forma predeterminada. Activa "Ver registros en todos los
+  objetos" pero deja "Editar registros en todos los objetos" sin marcar.
 </Note>
 
 #### Agregar excepciones a nivel de objeto
@@ -112,8 +119,8 @@ Dentro de cada regla a nivel de objeto, puedes ir más allá y configurar **perm
 
 Para el rol de becario con acceso de edición en Personas, es posible que quieras restringir ciertos campos:
 
-* Personas → Correo electrónico → solo **Ver campo** (no puede editar)
-* Personas → Dirección → **Sin acceso** (completamente oculto)
+- Personas → Correo electrónico → solo **Ver campo** (no puede editar)
+- Personas → Dirección → **Sin acceso** (completamente oculto)
 
 Esto permite que el becario edite la mayoría de los campos de Personas mientras se protege la información sensible.
 
@@ -141,19 +148,21 @@ Cuando termines, haz clic en **Finalizar**, luego en **Guardar** una vez que sea
 
 Controla el acceso a configuraciones del espacio de trabajo de dos maneras:
 
-* Activa **Acceso Completo a Configuraciones** para otorgar acceso completo
-* O habilita permisos específicos (p. ej., generación de claves de API, preferencias del espacio de trabajo, asignación de roles, configuración del modelo de datos, ajustes de seguridad y gestión de flujos de trabajo)
+- Activa **Acceso Completo a Configuraciones** para otorgar acceso completo
+- O habilita permisos específicos (p. ej., generación de claves de API, preferencias del espacio de trabajo, asignación de roles, configuración del modelo de datos, ajustes de seguridad y gestión de flujos de trabajo)
 
 <Note>
-  **Limitación actual**: Actualmente se requiere acceso a la gestión de flujos de trabajo para activar manualmente los flujos de trabajo. Este comportamiento puede cambiar en versiones futuras.
+  **Limitación actual**: Actualmente se requiere acceso a la gestión de flujos
+  de trabajo para activar manualmente los flujos de trabajo. Este comportamiento
+  puede cambiar en versiones futuras.
 </Note>
 
 ### Permisos de Acción del Espacio de Trabajo
 
 Controla el acceso a acciones generales del espacio de trabajo:
 
-* Activa **Acceso Completo a la Aplicación** para otorgar permisos completos
-* O habilita acciones individuales como **Enviar Email**, **Importar CSV** y **Exportar CSV**
+- Activa **Acceso Completo a la Aplicación** para otorgar permisos completos
+- O habilita acciones individuales como **Enviar Email**, **Importar CSV** y **Exportar CSV**
 
 ## Asignar roles a claves de API y agentes de IA
 
@@ -161,10 +170,10 @@ Además de los miembros del espacio de trabajo, los roles también se pueden asi
 
 ### ¿Por qué asignar roles a claves de API y agentes de IA?
 
-* **Seguridad**: Limita a qué pueden acceder o qué pueden modificar los procesos automatizados
-* **Cumplimiento**: Garantiza que las integraciones solo interactúen con los datos que necesitan
-* **Control**: Evita cambios accidentales de datos por automatizaciones mal configuradas
-* **Auditabilidad**: Registra qué acciones realizó cada integración o agente
+- **Seguridad**: Limita a qué pueden acceder o qué pueden modificar los procesos automatizados
+- **Cumplimiento**: Garantiza que las integraciones solo interactúen con los datos que necesitan
+- **Control**: Evita cambios accidentales de datos por automatizaciones mal configuradas
+- **Auditabilidad**: Registra qué acciones realizó cada integración o agente
 
 ### Asignar un rol a una clave de API
 
@@ -178,7 +187,9 @@ Además de los miembros del espacio de trabajo, los roles también se pueden asi
 La clave de API heredará ahora todos los permisos definidos por ese rol. Cualquier llamada a la API realizada con esta clave se restringirá en consecuencia.
 
 <Note>
-  Las claves de API sin un rol asignado utilizan los permisos predeterminados. Para mayor seguridad, asigna siempre un rol específico a las claves de API de producción.
+  Las claves de API sin un rol asignado utilizan los permisos predeterminados.
+  Para mayor seguridad, asigna siempre un rol específico a las claves de API de
+  producción.
 </Note>
 
 ### Asignar un rol a un agente de IA
@@ -193,5 +204,7 @@ La clave de API heredará ahora todos los permisos definidos por ese rol. Cualqu
 El agente de IA solo podrá acceder a los datos y realizar las acciones permitidas por el rol asignado.
 
 <Note>
-  Para los agentes de IA que se ejecutan dentro de flujos de trabajo, esto garantiza que el agente no pueda acceder ni modificar datos fuera de su alcance previsto, incluso si el flujo de trabajo tiene permisos más amplios.
+  Para los agentes de IA que se ejecutan dentro de flujos de trabajo, esto
+  garantiza que el agente no pueda acceder ni modificar datos fuera de su
+  alcance previsto, incluso si el flujo de trabajo tiene permisos más amplios.
 </Note>

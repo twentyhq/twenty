@@ -20,12 +20,15 @@ Pour exécuter une seule branche selon des conditions spécifiques, **ajoutez un
 3. Définissez des conditions sur chaque Filter pour déterminer quand cette branche doit continuer
 4. Seules les branches dont les conditions du Filter sont satisfaites continueront
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Fonctionnement des nœuds Filter
 
-* Si la condition du Filter est **remplie** : La branche continue son exécution
-* Si la condition du Filter **n'est pas remplie** : La branche s'arrête au nœud Filter
+- Si la condition du Filter est **remplie** : La branche continue son exécution
+- Si la condition du Filter **n'est pas remplie** : La branche s'arrête au nœud Filter
 
 Cela crée effectivement une logique conditionnelle où seule la branche appropriée s'exécute en fonction de vos données.
 
@@ -42,7 +45,9 @@ Les deux branches démarrent, mais seule celle qui correspond au montant de l'af
 ## Création de branches
 
 <Note>
-  Pour créer une nouvelle branche à partir d'une étape existante, cliquez sur le bouton **+** sur l'étape et ajoutez votre action. Vous pouvez ajouter plusieurs branches en cliquant plusieurs fois sur **+**.
+  Pour créer une nouvelle branche à partir d'une étape existante, cliquez sur le
+  bouton **+** sur l'étape et ajoutez votre action. Vous pouvez ajouter
+  plusieurs branches en cliquant plusieurs fois sur **+**.
 </Note>
 
 1. Dans l'éditeur de flux de travail, sélectionnez l'étape à partir de laquelle vous souhaitez créer une branche
@@ -78,13 +83,13 @@ L'e-mail de confirmation n'est envoyé qu'après la mise à jour du client et la
 
 ## Meilleures pratiques
 
-* Utilisez toujours des **nœuds Filter** au début des branches lorsque vous souhaitez une exécution conditionnelle
-* Gardez des conditions de branche **mutuellement exclusives** pour éviter les actions en double
-* Testez vos flux de travail avec différentes données pour vous assurer que les bonnes branches s'exécutent
-* **Renommez les étapes de branche** de manière descriptive afin qu'il soit clair ce que fait chaque chemin
-* **Fusionnez les branches** lorsque vous avez besoin d'une action finale après un traitement en parallèle
+- Utilisez toujours des **nœuds Filter** au début des branches lorsque vous souhaitez une exécution conditionnelle
+- Gardez des conditions de branche **mutuellement exclusives** pour éviter les actions en double
+- Testez vos flux de travail avec différentes données pour vous assurer que les bonnes branches s'exécutent
+- **Renommez les étapes de branche** de manière descriptive afin qu'il soit clair ce que fait chaque chemin
+- **Fusionnez les branches** lorsque vous avez besoin d'une action finale après un traitement en parallèle
 
 ## Articles connexes
 
-* [FAQ sur les flux de travail](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — réponses concernant l'exécution parallèle
-* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions) — actions disponibles pour les branches
+- [FAQ sur les flux de travail](/l/fr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — réponses concernant l'exécution parallèle
+- [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions) — actions disponibles pour les branches

@@ -9,9 +9,9 @@ description: إخطار المديرين تلقائيًا عند عدم تحدي
 
 الفرص التي تبقى دون تحديث تؤدي إلى:
 
-* فتور الصفقات
-* توقعات غير موثوقة
-* إيرادات مفقودة
+- فتور الصفقات
+- توقعات غير موثوقة
+- إيرادات مفقودة
 
 ## الحل
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ export const main = async (params) => {
 
 عدّل عامل تصفية Search Records لتغيير 7 أيام إلى الفترة التي تفضّلها:
 
-* 3 أيام للمبيعات سريعة الوتيرة
-* 14 يومًا لصفقات المؤسسات
-* 30 يومًا لدورات المبيعات الطويلة
+- 3 أيام للمبيعات سريعة الوتيرة
+- 14 يومًا لصفقات المؤسسات
+- 30 يومًا لدورات المبيعات الطويلة
 
 ### تنبيه المندوبين بشكل فردي
 
@@ -132,5 +132,5 @@ export const main = async (params) => {
 
 ## ذات صلة
 
-* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+- [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -114,28 +114,37 @@ npx nx worker twenty-server
 
 #### كيف يمكنك التأكد من عمل العامل الخاص بك؟
 
-* اذهب إلى [webhook-test.com](https://webhook-test.com/) ونسخ **عنوان URL الخاص بك**.
+- اذهب إلى [webhook-test.com](https://webhook-test.com/) ونسخ **عنوان URL الخاص بك**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="اختبار الويب هوك" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="اختبار الويب هوك"
+  />
 </div>
 
-* افتح تطبيق Twenty الخاص بك، انتقل إلى `/settings`، وفعل التبديل المتقدم في الجزء السفلي الأيسر من الشاشة.
-* إنشاء ويب هوك جديد.
-* الصق **عنوان URL الفريد لخطّاف الويب الخاص بك** في الحقل **عنوان URL لنقطة النهاية** في Twenty. اضبط **عوامل التصفية** على `Companies` و`Created`.
+- افتح تطبيق Twenty الخاص بك، انتقل إلى `/settings`، وفعل التبديل المتقدم في الجزء السفلي الأيسر من الشاشة.
+- إنشاء ويب هوك جديد.
+- الصق **عنوان URL الفريد لخطّاف الويب الخاص بك** في الحقل **عنوان URL لنقطة النهاية** في Twenty. اضبط **عوامل التصفية** على `Companies` و`Created`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="إعدادات الويب هوك" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="إعدادات الويب هوك"
+  />
 </div>
 
-* انتقل إلى `/objects/companies` وأنشئ سجلاً جديدًا للشركة.
-* ارجع إلى [webhook-test.com](https://webhook-test.com/) وتحقق مما إذا كانت هناك **طلب POST جديد** تم استلامه.
+- انتقل إلى `/objects/companies` وأنشئ سجلاً جديدًا للشركة.
+- ارجع إلى [webhook-test.com](https://webhook-test.com/) وتحقق مما إذا كانت هناك **طلب POST جديد** تم استلامه.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="نتيجة اختبار الويب هوك" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="نتيجة اختبار الويب هوك"
+  />
 </div>
 
-* إذا تم استلام **طلب POST**، فهذا يعني أن العامل يعمل بنجاح. وإلا، ستحتاج إلى استكشاف الأخطاء وإصلاحها لعامل التشغيل الخاص بك.
+- إذا تم استلام **طلب POST**، فهذا يعني أن العامل يعمل بنجاح. وإلا، ستحتاج إلى استكشاف الأخطاء وإصلاحها لعامل التشغيل الخاص بك.
 
 #### لا يمكن تشغيل الواجهة الأمامية وتظهر رسالة الخطأ TS5042: لا يمكن مزج خيار 'المشروع' مع ملفات المصدر في سطر الأوامר
 
@@ -198,9 +207,8 @@ plugins: [
    تأكد من أن `SERVER_URL` في ملف `.env` يتطابق مع عنوان الوصول الخارجي الخاص بك، بما في ذلك `https` إذا كان SSL مفعلاً.
 
 2. **التحقق من إعدادات البروكسي العكسي:**
-
-   * تأكد من أن البروكسي العكسي يقوم بتمرير الطلبات بشكل صحيح إلى خادم Twenty.
-   * تأكد من أن رؤوس مثل `X-Forwarded-For` و`X-Forwarded-Proto` تم ضبطها بشكل صحيح.
+   - تأكد من أن البروكسي العكسي يقوم بتمرير الطلبات بشكل صحيح إلى خادم Twenty.
+   - تأكد من أن رؤوس مثل `X-Forwarded-For` و`X-Forwarded-Proto` تم ضبطها بشكل صحيح.
 
 3. **إعادة تشغيل الخدمات:**
 
@@ -214,7 +222,7 @@ plugins: [
 
 إذا واجهت مشكلات لم يتم تغطيتها في هذا الدليل:
 
-* تفقد السجلات:
+- تفقد السجلات:
 
   اعرض سجلات الحاوية للرسائل الخطأ:
 
@@ -222,6 +230,6 @@ plugins: [
   docker compose logs
   ```
 
-* الدعم المجتمعي:
+- الدعم المجتمعي:
 
   تواصل مع [مجتمع Twenty](https://github.com/twentyhq/twenty/issues) أو [قنوات الدعم](https://discord.gg/cx5n4Jzs57) للحصول على المساعدة.

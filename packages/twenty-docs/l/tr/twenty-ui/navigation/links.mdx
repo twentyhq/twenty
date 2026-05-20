@@ -38,10 +38,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Özellikler">
-
 
 | Özellikler | Tür               | Açıklama                                              |
 | ---------- | ----------------- | ----------------------------------------------------- |
@@ -49,9 +47,6 @@ export const MyComponent = () => {
 | href       | string            | Bağlantı için hedef URL veya yol                      |
 | onClick    | function          | Bağlantıya tıklandığında tetiklenecek callback işlevi |
 | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
-
-
-
 
 </Tab>
 
@@ -65,12 +60,12 @@ Bağlantılar için stilize edilmiş bir bağlantı bileşeni.
 <Tab title="Kullanım">
 
 ```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RawLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -81,13 +76,10 @@ export const MyComponent = () => {
     </Router>
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="Özellikler">
-
 
 | Özellikler | Tür               | Açıklama                                              |
 | ---------- | ----------------- | ----------------------------------------------------- |
@@ -95,9 +87,6 @@ export const MyComponent = () => {
 | href       | string            | Bağlantı için hedef URL veya yol                      |
 | onClick    | function          | Bağlantıya tıklandığında tetiklenecek callback işlevi |
 | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
-
-
-
 
 </Tab>
 </Tabs>
@@ -110,12 +99,12 @@ Yuvarlak stil ile Chip bileşeni olan bir bağlantı.
 <Tab title="Kullanım">
 
 ```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RoundedLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -132,14 +121,11 @@ export const MyComponent = () => {
 
 <Tab title="Özellikler">
 
-
 | Özellikler | Tür               | Açıklama                                              |
 | ---------- | ----------------- | ----------------------------------------------------- |
 | href       | dize              | Bağlantı için hedef URL veya yol                      |
 | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik              |
 | onClick    | fonksiyon         | Bağlantıya tıklandığında tetiklenecek callback işlevi |
-
-
 
 </Tab>
 </Tabs>
@@ -152,8 +138,8 @@ URL'ler, LinkedIn ve X (veya Twitter) gibi çeşitli sosyal bağlantı türleri 
 <Tab title="Kullanım">
 
 ```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { SocialLink } from 'twenty-ui/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   return (
@@ -170,16 +156,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler | Tür               | Açıklama                                                                        |
 | ---------- | ----------------- | ------------------------------------------------------------------------------- |
 | href       | string            | Bağlantı için hedef URL veya yol                                                |
 | çocuklar   | `React.ReactNode` | Bağlantının içinde görüntülenecek içerik                                        |
 | tür        | string            | Sosyal bağlantı türü. Seçenekler şunları içerir: `url`, `LinkedIn` ve `Twitter` |
 | onClick    | function          | Bağlantıya tıklandığında tetiklenecek callback işlevi                           |
-
-
-
 
 </Tab>
 </Tabs>

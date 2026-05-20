@@ -5,19 +5,19 @@ description: Loop through arrays of records to perform actions on each item.
 
 Iterator lets you loop through an array of records and perform actions on each one. It's essential for workflows that need to process multiple records returned by Search Records or received via webhooks.
 
-
 ## When to Use Iterator
 
-| Scenario | Example |
-|----------|---------|
-| **Process search results** | Send email to each person found |
-| **Handle webhook arrays** | Create records for each item in order |
-| **Bulk updates** | Update multiple records with calculated values |
-| **Notifications** | Alert multiple people about an event |
+| Scenario                   | Example                                        |
+| -------------------------- | ---------------------------------------------- |
+| **Process search results** | Send email to each person found                |
+| **Handle webhook arrays**  | Create records for each item in order          |
+| **Bulk updates**           | Update multiple records with calculated values |
+| **Notifications**          | Alert multiple people about an event           |
 
 ## Understanding Iterator
 
 Iterator expects an **array** as input. It then:
+
 1. Takes the first item from the array
 2. Runs all actions inside the iterator with that item
 3. Moves to the next item
@@ -60,6 +60,7 @@ Actions placed after Iterator run for each item:
 ### Result
 
 If Search Records returns 5 people, the Iterator:
+
 - Sends email to person 1
 - Sends email to person 2
 - ... continues for all 5
@@ -68,13 +69,13 @@ If Search Records returns 5 people, the Iterator:
 
 Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 
-| Variable | Description |
-|----------|-------------|
-| `{{iterator.currentItem}}` | The entire current record object |
-| `{{iterator.currentItem.id}}` | Record ID |
-| `{{iterator.currentItem.email}}` | Email field |
-| `{{iterator.currentItem.company.name}}` | Related company name |
-| `{{iterator.index}}` | Current position in array (0-based) |
+| Variable                                | Description                         |
+| --------------------------------------- | ----------------------------------- |
+| `{{iterator.currentItem}}`              | The entire current record object    |
+| `{{iterator.currentItem.id}}`           | Record ID                           |
+| `{{iterator.currentItem.email}}`        | Email field                         |
+| `{{iterator.currentItem.company.name}}` | Related company name                |
+| `{{iterator.index}}`                    | Current position in array (0-based) |
 
 ## Common Patterns
 
@@ -137,6 +138,7 @@ Inside Iterator, use `{{iterator.currentItem}}` to access the current record:
 **Cause**: The array is empty.
 
 **Fix**: Add a Filter before Iterator to check array length:
+
 ```
 Filter: {{searchRecords.length}} > 0
 ```
@@ -146,6 +148,7 @@ Filter: {{searchRecords.length}} > 0
 **Cause**: Search Records returned more records than expected.
 
 **Fix**:
+
 - Add more specific filters to Search Records
 - Set a limit on Search Records (max 200)
 - Add Filter inside Iterator for additional conditions
@@ -170,4 +173,3 @@ Filter: {{searchRecords.length}} > 0
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions)
 - [How to Use Branches](/user-guide/workflows/capabilities/use-branches-in-workflows)
 - [Workflows FAQ](/user-guide/workflows/how-tos/need-more-help/workflows-faq)
-

@@ -9,7 +9,10 @@ import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 1. Clique no botão **Editar** no canto superior direito do seu painel
 
-<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Modo de edição" />
+<img
+  src="/images/user-guide/dashboard/dashboard-edit.png"
+  alt="Modo de edição"
+/>
 
 2. O painel entra no modo de edição
 3. Clique em qualquer widget para selecioná-lo
@@ -17,13 +20,15 @@ import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 As configurações são organizadas em seções:
 
-* **Dados**: Quais dados obter e como filtrá-los
-* **Eixo X**: Como agrupar e ordenar categorias (gráficos de barras/linhas)
-* **Eixo Y**: O que medir e como exibir (gráficos de barras/linhas)
-* **Estilo**: Cores, rótulos e opções visuais
+- **Dados**: Quais dados obter e como filtrá-los
+- **Eixo X**: Como agrupar e ordenar categorias (gráficos de barras/linhas)
+- **Eixo Y**: O que medir e como exibir (gráficos de barras/linhas)
+- **Estilo**: Cores, rótulos e opções visuais
 
 <Note>
-Algumas configurações só aparecem quando outras estão configuradas. Por exemplo, **Granularidade de data** só aparece quando você seleciona um campo de data.
+  Algumas configurações só aparecem quando outras estão configuradas. Por
+  exemplo, **Granularidade de data** só aparece quando você seleciona um campo
+  de data.
 </Note>
 
 ---
@@ -39,7 +44,10 @@ Escolha de qual objeto extrair os dados.
 
 Todos os seus objetos padrão e personalizados estão disponíveis. Alterar a fonte redefine outras configurações, pois as opções de campo dependem do objeto selecionado.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Fonte" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-source.png"
+  alt="Fonte"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filtro </span>
 
@@ -55,14 +63,19 @@ Os filtros funcionam da mesma forma que nas visualizações de tabela. Use-os pa
 
 **Exemplo**: Filtre oportunidades em que a Etapa seja igual a "Ganha" para mostrar apenas negócios fechados.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filtro" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png"
+  alt="Filtro"
+/>
 
 <Tip>
-Para campos de data, experimente **É relativo** para criar filtros dinâmicos como "Últimos 7 dias" ou "Este mês" que são atualizados automaticamente.
+  Para campos de data, experimente **É relativo** para criar filtros dinâmicos
+  como "Últimos 7 dias" ou "Este mês" que são atualizados automaticamente.
 </Tip>
 
 <Tip>
-Filtros avançados são suportados—adicione várias regras de filtro e combine-as com a lógica **E** ou **Ou**.
+  Filtros avançados são suportados—adicione várias regras de filtro e combine-as
+  com a lógica **E** ou **Ou**.
 </Tip>
 
 ---
@@ -77,7 +90,10 @@ Selecione o campo pelo qual agrupar seus dados. Isso determina as categorias exi
 
 **Exemplo**: Selecione "Etapa" para ver os dados agrupados pela etapa do pipeline, ou "Data de criação" para ver os dados ao longo do tempo.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Dados em exibição" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png"
+  alt="Dados em exibição"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Granularidade de data </span>
 
@@ -100,29 +116,35 @@ As opções "de semana/ano" agregam ao longo de todo o tempo. Use **Dia da seman
 
 Controle a ordem das categorias no eixo X.
 
-* **Posição** – Usa a ordem definida nas configurações do seu campo Select
-* **Alfabética** – De A a Z (ou cronológica para datas)
-* **Por valor** – Ordenado pela métrica (do maior para o menor ou vice-versa)
-* **Manual** – Arraste para definir sua própria ordem
+- **Posição** – Usa a ordem definida nas configurações do seu campo Select
+- **Alfabética** – De A a Z (ou cronológica para datas)
+- **Por valor** – Ordenado pela métrica (do maior para o menor ou vice-versa)
+- **Manual** – Arraste para definir sua própria ordem
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Ordenar por" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png"
+  alt="Ordenar por"
+/>
 
 **Dica**: Para etapas do pipeline, use **Posição** para mostrar as etapas na ordem do seu processo de vendas (Lead → Qualificado → Proposta → Ganha).
 
 <Note>
-As opções exibidas dependem do tipo do seu campo. Campos Select têm todas as opções; campos de data e de texto exibem menos.
+  As opções exibidas dependem do tipo do seu campo. Campos Select têm todas as
+  opções; campos de data e de texto exibem menos.
 </Note>
 
 <Tip>
-Com a ordenação **Manual**, arraste as categorias para criar uma ordem personalizada—perfeito para destacar segmentos específicos ou contar uma história com seus dados.
+  Com a ordenação **Manual**, arraste as categorias para criar uma ordem
+  personalizada—perfeito para destacar segmentos específicos ou contar uma
+  história com seus dados.
 </Tip>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omitir valores zero </span>
 
 Oculte categorias que têm zero ou nenhum dado.
 
-* **Ativado**: Categorias sem registros são ocultadas
-* **Desativado**: Todas as categorias são exibidas, mesmo que vazias
+- **Ativado**: Categorias sem registros são ocultadas
+- **Desativado**: Todas as categorias são exibidas, mesmo que vazias
 
 Use isso para limpar gráficos com dados esparsos.
 
@@ -136,18 +158,22 @@ Essas configurações controlam o que você está medindo e como isso é exibido
 
 Selecione o campo e a operação para calcular sua métrica.
 
-* **Contagens** – Contar todos, Contar vazios, Contar não vazios, Contar valores únicos
-* **Matemática** – Soma, Média, Mín., Máx. (campos numéricos)
-* **Percentuais** – Percentual vazio, Percentual não vazio
+- **Contagens** – Contar todos, Contar vazios, Contar não vazios, Contar valores únicos
+- **Matemática** – Soma, Média, Mín., Máx. (campos numéricos)
+- **Percentuais** – Percentual vazio, Percentual não vazio
 
 Campos booleanos adicionam Contar verdadeiro/falso. Gráficos agregados com campos de data exibem Mais antigo/Mais recente.
 
 **Exemplo**: Selecione "Valor" com Soma para ver o valor total de negócios por categoria, ou Contar todos para ver o número de negócios.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Dados em exibição" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png"
+  alt="Dados em exibição"
+/>
 
 <Note>
-As opções exibidas dependem do seu campo e do tipo de gráfico. Se você não vir uma operação esperada, verifique o tipo do seu campo.
+  As opções exibidas dependem do seu campo e do tipo de gráfico. Se você não vir
+  uma operação esperada, verifique o tipo do seu campo.
 </Note>
 
 ### Razão
@@ -170,7 +196,10 @@ Adicione uma segunda dimensão para criar várias séries (múltiplas barras ou 
 
 **Exemplo**: Agrupe os negócios por Etapa (Eixo X) E por Responsável (Agrupar por) para ver, lado a lado, a distribuição do pipeline de cada pessoa.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Agrupar por" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png"
+  alt="Agrupar por"
+/>
 
 Quando Agrupar por estiver definido, você verá várias cores em seu gráfico e uma legenda aparecerá.
 
@@ -188,30 +217,33 @@ Mesmas opções da ordenação do eixo X—Posição, Alfabética e Manual—exc
 
 Mostre totais acumulados em vez de valores individuais.
 
-* **Desativado**: Cada barra/ponto mostra seu próprio valor
-* **Ativado**: Cada barra/ponto mostra a soma de todos os valores anteriores mais o seu próprio
+- **Desativado**: Cada barra/ponto mostra seu próprio valor
+- **Ativado**: Cada barra/ponto mostra a soma de todos os valores anteriores mais o seu próprio
 
 **Exemplo**: janeiro = 10, fevereiro = 15
 
-* Acumulado desativado: Mostra 10 e 15
-* Acumulado ativado: Mostra 10 e 25 (10 + 15)
+- Acumulado desativado: Mostra 10 e 15
+- Acumulado ativado: Mostra 10 e 25 (10 + 15)
 
 Use o acumulado para acompanhar o progresso em direção a uma meta ao longo do tempo.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Acumulado" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png"
+  alt="Acumulado"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Faixa mínima / <ChartIcon icon="math-max" />Faixa máxima </span>
 
 Defina valores mínimos e máximos fixos para o eixo Y.
 
-* Deixe em branco para dimensionamento automático
-* Insira um número para fixar o limite
+- Deixe em branco para dimensionamento automático
+- Insira um número para fixar o limite
 
 **Quando usar:**
 
-* Defina Mín. como 0 para comparações visuais precisas
-* Defina ambos para escalas consistentes em vários gráficos
-* Foque em um intervalo de valores específico definindo ambos
+- Defina Mín. como 0 para comparações visuais precisas
+- Defina ambos para escalas consistentes em vários gráficos
+- Foque em um intervalo de valores específico definindo ambos
 
 ---
 
@@ -222,7 +254,8 @@ Defina valores mínimos e máximos fixos para o eixo Y.
 Defina o esquema de cores do seu gráfico. Escolha entre uma variedade de paletas de cores.
 
 <Note>
-Ao agrupar por um campo Select, o gráfico usa automaticamente as cores definidas para cada opção nas configurações do seu campo.
+  Ao agrupar por um campo Select, o gráfico usa automaticamente as cores
+  definidas para cada opção nas configurações do seu campo.
 </Note>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Nome do eixo </span>
@@ -233,30 +266,31 @@ Escolha quais rótulos de eixo mostrar: **Nenhum**, **Eixo X**, **Eixo Y** ou **
 
 Quando Agrupar por estiver definido, escolha como várias séries serão exibidas.
 
-* **Desativado (Agrupadas)**: As séries aparecem lado a lado. Use ao comparar valores exatos entre grupos.
-* **Ativado (Empilhadas)**: As séries são empilhadas umas sobre as outras. Use ao mostrar composição—como as partes compõem o todo.
+- **Desativado (Agrupadas)**: As séries aparecem lado a lado. Use ao comparar valores exatos entre grupos.
+- **Ativado (Empilhadas)**: As séries são empilhadas umas sobre as outras. Use ao mostrar composição—como as partes compõem o todo.
 
 **Exemplo**: Negócios por etapa, agrupados por responsável
 
-* Agrupadas: Veja os números exatos de cada responsável lado a lado
-* Empilhadas: Veja o total de negócios por etapa, com a contribuição de cada responsável empilhada
+- Agrupadas: Veja os números exatos de cada responsável lado a lado
+- Empilhadas: Veja o total de negócios por etapa, com a contribuição de cada responsável empilhada
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Rótulos de dados </span>
 
 Mostre valores diretamente nos elementos do gráfico (barras, pontos, fatias).
 
-* **Ativado**: Os valores aparecem no gráfico
-* **Desativado**: Nenhum valor exibido (visual mais limpo)
+- **Ativado**: Os valores aparecem no gráfico
+- **Desativado**: Nenhum valor exibido (visual mais limpo)
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legenda </span>
 
 Mostrar ou ocultar a legenda (só aparece quando Agrupar por está definido).
 
-* **Ativado**: A legenda mostra o que cada cor representa
-* **Desativado**: Nenhuma legenda exibida
+- **Ativado**: A legenda mostra o que cada cor representa
+- **Desativado**: Nenhuma legenda exibida
 
 <Tip>
-**Passe o mouse** sobre um item da legenda para destacar esse grupo. **Clique** para ocultá-lo temporariamente do gráfico.
+  **Passe o mouse** sobre um item da legenda para destacar esse grupo.
+  **Clique** para ocultá-lo temporariamente do gráfico.
 </Tip>
 
 ---
@@ -265,11 +299,27 @@ Mostrar ou ocultar a legenda (só aparece quando Agrupar por está definido).
 
 ### Gráficos de pizza
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Cada fatia representa** – Defina como as fatias são agrupadas
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Ocultar categoria vazia** – Remover fatias de valor zero
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Mostrar valor no centro** – Exibir o valor agregado (soma, média, contagem etc.)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="chart-pie" size={16} />
+  </span>
+  **Cada fatia representa** – Defina como as fatias são agrupadas
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="eye-off" size={16} />
+  </span>
+  **Ocultar categoria vazia** – Remover fatias de valor zero
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="number-123" size={16} />
+  </span>
+  **Mostrar valor no centro** – Exibir o valor agregado (soma, média, contagem
+  etc.)
 
 ### Gráficos agregados
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefixo** – Adicionar texto antes do número (por exemplo, `$`)
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Sufixo** – Adicionar texto após o número (por exemplo, `%`)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="caret-left" size={16} />
+  </span>
+  **Prefixo** – Adicionar texto antes do número (por exemplo, `$`)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="caret-right" size={16} />
+  </span>
+  **Sufixo** – Adicionar texto após o número (por exemplo, `%`)

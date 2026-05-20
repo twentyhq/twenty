@@ -23,14 +23,22 @@ Einige Objekte können auf einer Seite der Beziehung mit mehreren Objekttypen ve
 
 **Beispiel:** Eine Notiz kann gleichzeitig einer Person UND einem Unternehmen UND einer Opportunity zugeordnet werden. Die Notiz befindet sich auf der "Viele"-Seite und verbindet sich mit mehreren "Eins"-Seiten.
 
-<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/many-to-one-morph.png"
+  style={{ width: '100%' }}
+/>
 
 Ähnlich könnte ein Projekt (auf der "Eins"-Seite) Verknüpfungen von mehreren Personen, mehreren Unternehmen und mehreren Notizen erhalten.
 
-<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/one-to-many-morph.png"
+  style={{ width: '100%' }}
+/>
 
 <Warning>
-**Einschränkung beim Import/Export**: Beziehungen, die auf mehrere Objekttypen zeigen, werden für den CSV-Import/-Export noch nicht unterstützt. Dies steht auf unserer Roadmap.
+  **Einschränkung beim Import/Export**: Beziehungen, die auf mehrere Objekttypen
+  zeigen, werden für den CSV-Import/-Export noch nicht unterstützt. Dies steht
+  auf unserer Roadmap.
 </Warning>
 
 ### Viele-zu-Viele
@@ -41,10 +49,14 @@ Viele Datensätze in Objekt A können mit vielen Datensätzen in Objekt B verkn�
 
 Viele-zu-viele-Beziehungen verwenden ein **Verknüpfungsobjekt**-Muster: ein Zwischenobjekt, das beide Seiten verbindet. Mit der Funktion für Verknüpfungsbeziehungen zeigt Twenty die endgültig verknüpften Datensätze direkt an und blendet das Zwischenobjekt in der Benutzeroberfläche aus.
 
-<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/junction-relation-diagram.png"
+  style={{ width: '100%' }}
+/>
 
 <Warning>
-**Lab-Funktion**: Verknüpfungsbeziehungen müssen vor der Verwendung unter **Einstellungen → Updates → Lab** aktiviert werden.
+  **Lab-Funktion**: Verknüpfungsbeziehungen müssen vor der Verwendung unter
+  **Einstellungen → Updates → Lab** aktiviert werden.
 </Warning>
 
 Siehe [Viele-zu-Viele-Beziehungen erstellen](/l/de/user-guide/data-model/how-tos/create-many-to-many-relations) für eine vollständige Schritt-für-Schritt-Anleitung.
@@ -57,9 +69,9 @@ Siehe [Viele-zu-Viele-Beziehungen erstellen](/l/de/user-guide/data-model/how-tos
 4. Wählen Sie **Relation** als Feldtyp
 5. Wählen Sie die Zielobjekte aus, zu denen die Beziehung hergestellt werden soll
 6. Konfigurieren Sie die Relationseinstellungen:
-   * **Feldname am Quellobjekt**: Der Name des Beziehungsfelds im Objekt, das Sie bearbeiten
-   * **Feldname am Zielobjekt**: Der Name des Beziehungsfelds, das im Zielobjekt angezeigt wird
-   * Beziehungstyp (Eins-zu-Viele, Viele-zu-Eins)
+   - **Feldname am Quellobjekt**: Der Name des Beziehungsfelds im Objekt, das Sie bearbeiten
+   - **Feldname am Zielobjekt**: Der Name des Beziehungsfelds, das im Zielobjekt angezeigt wird
+   - Beziehungstyp (Eins-zu-Viele, Viele-zu-Eins)
 7. Klicken Sie auf **Speichern**
 
 ## Standardbeziehungen
@@ -76,21 +88,21 @@ Twenty enthält vordefinierte Beziehungen zwischen Standardobjekten:
 
 ### Beziehungen planen
 
-* **Skizzieren Sie Ihr Datenmodell**: Planen Sie Beziehungen, bevor Sie sie erstellen
-* **Berücksichtigen Sie die Richtung**: Überlegen Sie, welches Objekt die Beziehung "besitzt"
-* **Vermeiden Sie zyklische Abhängigkeiten**: Halten Sie Ihr Datenmodell sauber
+- **Skizzieren Sie Ihr Datenmodell**: Planen Sie Beziehungen, bevor Sie sie erstellen
+- **Berücksichtigen Sie die Richtung**: Überlegen Sie, welches Objekt die Beziehung "besitzt"
+- **Vermeiden Sie zyklische Abhängigkeiten**: Halten Sie Ihr Datenmodell sauber
 
 ### Beziehungen benennen
 
-* **Verwenden Sie klare Namen**: Machen Sie deutlich, was die Beziehung repräsentiert
-* **Seien Sie konsistent**: Verwenden Sie ähnliche Benennungsschemata für alle Beziehungen
-* **Berücksichtigen Sie beide Seiten**: Benennen Sie beide Seiten der Beziehung angemessen
+- **Verwenden Sie klare Namen**: Machen Sie deutlich, was die Beziehung repräsentiert
+- **Seien Sie konsistent**: Verwenden Sie ähnliche Benennungsschemata für alle Beziehungen
+- **Berücksichtigen Sie beide Seiten**: Benennen Sie beide Seiten der Beziehung angemessen
 
 ### Leistung
 
-* **Nicht übermäßig verknüpfen**: Zu viele Beziehungen können Ihren Arbeitsbereich verlangsamen
+- **Nicht übermäßig verknüpfen**: Zu viele Beziehungen können Ihren Arbeitsbereich verlangsamen
 
 ## Einschränkungen
 
-* **Das Löschen von Beziehungen** entfernt die Verknüpfung, aber nicht die zugehörigen Datensätze
-* **Zirkuläre Beziehungen** sollten zur Wahrung der Datenintegrität vermieden werden
+- **Das Löschen von Beziehungen** entfernt die Verknüpfung, aber nicht die zugehörigen Datensätze
+- **Zirkuläre Beziehungen** sollten zur Wahrung der Datenintegrität vermieden werden

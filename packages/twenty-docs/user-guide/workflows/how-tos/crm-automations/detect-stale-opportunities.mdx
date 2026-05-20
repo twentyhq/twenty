@@ -8,6 +8,7 @@ Keep your pipeline healthy by alerting managers when opportunities go stale. Thi
 ## The Problem
 
 Opportunities sitting without updates lead to:
+
 - Deals going cold
 - Unreliable forecasts
 - Lost revenue
@@ -34,12 +35,12 @@ Create a scheduled workflow that finds stale opportunities and emails their mana
 1. Add **Search Records** action
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **Object** | Opportunities |
-| **Filter** | Updated At is before (today - 7 days) |
+| Field      | Value                                           |
+| ---------- | ----------------------------------------------- |
+| **Object** | Opportunities                                   |
+| **Filter** | Updated At is before (today - 7 days)           |
 | **Filter** | Stage is not "Closed Won" AND not "Closed Lost" |
-| **Limit** | 100 |
+| **Limit**  | 100                                             |
 
 ### Step 4: Check If Any Found
 
@@ -57,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -66,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -91,11 +92,11 @@ export const main = async (params) => {
 
 Add **Send Email** action:
 
-| Field | Value |
-|-------|-------|
-| **To** | sales-manager@yourcompany.com |
+| Field       | Value                                                       |
+| ----------- | ----------------------------------------------------------- |
+| **To**      | sales-manager@yourcompany.com                               |
 | **Subject** | `🚨 {{code.totalCount}} Stale Opportunities Need Attention` |
-| **Body** | `{{code.summary}}` |
+| **Body**    | `{{code.summary}}`                                          |
 
 ### Step 7: Test and Activate
 
@@ -108,6 +109,7 @@ Add **Send Email** action:
 ### Change Staleness Threshold
 
 Modify the Search Records filter to change from 7 days to your preferred period:
+
 - 3 days for high-velocity sales
 - 14 days for enterprise deals
 - 30 days for long sales cycles
@@ -119,6 +121,7 @@ Instead of one manager email, use **Iterator** to send personalized emails to ea
 ### Add Escalation
 
 Create multiple workflows with increasing severity:
+
 1. Day 7: Email to rep
 2. Day 14: Email to rep + manager
 3. Day 21: Create task for manager to intervene

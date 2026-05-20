@@ -26,7 +26,7 @@ export default defineField({
 
 ## Puncte cheie
 
-* `objectUniversalIdentifier` identifică obiectul țintă. Pentru obiectele standard Twenty, importați constanta din `twenty-sdk`:
+- `objectUniversalIdentifier` identifică obiectul țintă. Pentru obiectele standard Twenty, importați constanta din `twenty-sdk`:
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,11 +37,11 @@ export default defineField({
   // …
   ```
 
-* Atunci când definiți câmpuri **inline în `defineObject()`**, **nu** aveți nevoie de `objectUniversalIdentifier` — acesta este moștenit de la obiectul părinte.
+- Atunci când definiți câmpuri **inline în `defineObject()`**, **nu** aveți nevoie de `objectUniversalIdentifier` — acesta este moștenit de la obiectul părinte.
 
-* `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
+- `defineField()` este singura modalitate de a adăuga câmpuri la obiecte pe care nu le-ați creat cu `defineObject()`.
 
-* Locația fișierului depinde de dumneavoastră. Convenția este `src/fields/\<name>.field.ts`, dar SDK-ul detectează câmpuri oriunde în `src/`.
+- Locația fișierului depinde de dumneavoastră. Convenția este `src/fields/\<name>.field.ts`, dar SDK-ul detectează câmpuri oriunde în `src/`.
 
 ## Adăugarea unei relații la un obiect existent
 

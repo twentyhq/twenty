@@ -29,13 +29,16 @@ your-app/
 ```
 
 <Note>
-  **Organizarea fișierelor ține de dvs.** Detectarea entităților este bazată pe AST — SDK-ul găsește apelurile `export default defineEntity(...)` indiferent unde se află fișierul. Structura de foldere de mai sus este o convenție, nu o cerință.
+  **Organizarea fișierelor ține de dvs.** Detectarea entităților este bazată pe
+  AST — SDK-ul găsește apelurile `export default defineEntity(...)` indiferent
+  unde se află fișierul. Structura de foldere de mai sus este o convenție, nu o
+  cerință.
 </Note>
 
 ## Tipuri de entități
 
-| Entitate                         | Scop                                                        | Documentație                                                     |
-| -------------------------------- | ----------------------------------------------------------- | ---------------------------------------------------------------- |
+| Entitate                         | Scop                                                        | Documentație                                                          |
+| -------------------------------- | ----------------------------------------------------------- | --------------------------------------------------------------------- |
 | **Aplicație**                    | Identitatea aplicației, permisiuni, variabile               | [Model de date](/l/ro/developers/extend/apps/data-model)              |
 | **Rol**                          | Seturi de permisiuni pentru obiecte și câmpuri              | [Model de date](/l/ro/developers/extend/apps/data-model)              |
 | **Obiect**                       | Tabele de date personalizate cu câmpuri                     | [Model de date](/l/ro/developers/extend/apps/data-model)              |
@@ -50,9 +53,9 @@ your-app/
 
 ## Izolare (sandboxing)
 
-* **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele doar prin clientul API tipizat, limitat de permisiunile rolului aplicației.
-* **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes). Acestea comunică cu Twenty printr-un API al gazdei bazat pe transmiterea de mesaje.
-* **Permisiunile** sunt aplicate la nivelul API-ului. Tokenul de rulare (`TWENTY_APP_ACCESS_TOKEN`) este derivat din rolul definit în `defineApplication()`.
+- **Funcțiile logice** rulează în procese Node.js izolate pe server. Acestea accesează datele doar prin clientul API tipizat, limitat de permisiunile rolului aplicației.
+- **Componentele front-end** rulează în Web Workers folosind Remote DOM — izolate de pagina principală, dar randând elemente DOM native (nu iframes). Acestea comunică cu Twenty printr-un API al gazdei bazat pe transmiterea de mesaje.
+- **Permisiunile** sunt aplicate la nivelul API-ului. Tokenul de rulare (`TWENTY_APP_ACCESS_TOKEN`) este derivat din rolul definit în `defineApplication()`.
 
 ## Ciclul de viață al aplicației
 
@@ -73,32 +76,61 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — monitorizează fișierele sursă și sincronizează în timp real modificările către un server Twenty conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
-* **`yarn twenty build`** — compilează TypeScript, împachetează funcțiile logice și componentele front-end cu esbuild și produce un manifest.
-* **Hook-uri pre/post-instalare** — funcții logice opționale care rulează în timpul instalării. Consultați [Funcții logice](/l/ro/developers/extend/apps/logic-functions) pentru detalii.
+- **`yarn twenty dev`** — monitorizează fișierele sursă și sincronizează în timp real modificările către un server Twenty conectat. Clientul API tipizat este regenerat automat atunci când schema se schimbă.
+- **`yarn twenty build`** — compilează TypeScript, împachetează funcțiile logice și componentele front-end cu esbuild și produce un manifest.
+- **Hook-uri pre/post-instalare** — funcții logice opționale care rulează în timpul instalării. Consultați [Funcții logice](/l/ro/developers/extend/apps/logic-functions) pentru detalii.
 
 ## Pașii următori
 
 <CardGroup cols={2}>
-  <Card title="Model de date" icon="database" href="/l/ro/developers/extend/apps/data-model">
+  <Card
+    title="Model de date"
+    icon="database"
+    href="/l/ro/developers/extend/apps/data-model"
+  >
     Definiți obiecte, câmpuri, roluri și relații.
   </Card>
-  <Card title="Funcții logice" icon="bolt" href="/l/ro/developers/extend/apps/logic-functions">
+  <Card
+    title="Funcții logice"
+    icon="bolt"
+    href="/l/ro/developers/extend/apps/logic-functions"
+  >
     Funcții pe partea de server cu declanșatoare HTTP, cron și de evenimente.
   </Card>
-  <Card title="Componente front-end" icon="window-maximize" href="/l/ro/developers/extend/apps/front-components">
+  <Card
+    title="Componente front-end"
+    icon="window-maximize"
+    href="/l/ro/developers/extend/apps/front-components"
+  >
     Componente React izolate în interfața Twenty.
   </Card>
-  <Card title="Aspect" icon="table-columns" href="/l/ro/developers/extend/apps/layout">
-    Vizualizări, elemente de navigare și layout-uri ale paginilor de înregistrare.
+  <Card
+    title="Aspect"
+    icon="table-columns"
+    href="/l/ro/developers/extend/apps/layout"
+  >
+    Vizualizări, elemente de navigare și layout-uri ale paginilor de
+    înregistrare.
   </Card>
-  <Card title="Abilități și agenți" icon="robot" href="/l/ro/developers/extend/apps/skills-and-agents">
+  <Card
+    title="Abilități și agenți"
+    icon="robot"
+    href="/l/ro/developers/extend/apps/skills-and-agents"
+  >
     Abilități și agenți AI cu prompturi personalizate.
   </Card>
-  <Card title="CLI & Testare" icon="terminal" href="/l/ro/developers/extend/apps/cli-and-testing">
+  <Card
+    title="CLI & Testare"
+    icon="terminal"
+    href="/l/ro/developers/extend/apps/cli-and-testing"
+  >
     Comenzi CLI, testare, resurse, remote-uri și CI.
   </Card>
-  <Card title="Publicare" icon="rocket" href="/l/ro/developers/extend/apps/publishing">
+  <Card
+    title="Publicare"
+    icon="rocket"
+    href="/l/ro/developers/extend/apps/publishing"
+  >
     Implementați pe un server sau publicați în marketplace.
   </Card>
 </CardGroup>

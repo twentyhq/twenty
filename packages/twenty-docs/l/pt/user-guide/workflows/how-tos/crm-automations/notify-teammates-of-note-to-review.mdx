@@ -6,7 +6,9 @@ description: Envie notificações automáticas por e-mail ao atribuir um colega 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-**Marcar colegas diretamente nas notas ainda não é suportado.** Esse recurso está planejado para o segundo semestre de 2026. Enquanto isso, este fluxo de trabalho oferece uma solução alternativa prática.
+  **Marcar colegas diretamente nas notas ainda não é suportado.** Esse recurso
+  está planejado para o segundo semestre de 2026. Enquanto isso, este fluxo de
+  trabalho oferece uma solução alternativa prática.
 </Note>
 
 ## O desafio
@@ -22,14 +24,20 @@ Em vez de marcar no texto da nota, você pode:
 3. Um fluxo de trabalho envia automaticamente um e-mail ao revisor com um link para a nota
 
 <Warning>
-**Limitação**: Esta abordagem permite atribuir um revisor por campo. Se você precisar notificar várias pessoas, crie campos de relação adicionais (por exemplo, Revisor 1, Revisor 2). Isso não escala bem se você precisar marcar muitos colaboradores de uma só vez.
+  **Limitação**: Esta abordagem permite atribuir um revisor por campo. Se você
+  precisar notificar várias pessoas, crie campos de relação adicionais (por
+  exemplo, Revisor 1, Revisor 2). Isso não escala bem se você precisar marcar
+  muitos colaboradores de uma só vez.
 </Warning>
 
 ## Configuração passo a passo
 
 ### Etapa 1: Criar o campo Revisor
 
-<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/reviewer-field-for-note.png"
+  style={{ width: '100%' }}
+/>
 
 1. Vá para **Configurações → Modelo de Dados → Notas**
 2. Clique em **Adicionar campo**
@@ -101,7 +109,8 @@ Twenty
 ```
 
 <Note>
-Substitua `yourSubDomain` pelo subdomínio real do seu espaço de trabalho Twenty.
+  Substitua `yourSubDomain` pelo subdomínio real do seu espaço de trabalho
+  Twenty.
 </Note>
 
 #### Testar e ativar
@@ -121,7 +130,7 @@ Depois de configurado, sua equipe pode usar este fluxo de trabalho:
 
 ## Relacionados
 
-* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields)
-* [Criar campos de relação](/l/pt/user-guide/data-model/how-tos/create-relation-fields)
+- [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+- [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields)
+- [Criar campos de relação](/l/pt/user-guide/data-model/how-tos/create-relation-fields)

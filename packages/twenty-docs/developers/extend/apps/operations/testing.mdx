@@ -1,7 +1,7 @@
 ---
 title: Testing
 description: Vitest setup, integration tests against a real Twenty server, type checking, and CI with GitHub Actions.
-icon: "flask"
+icon: 'flask'
 ---
 
 The SDK provides programmatic APIs that let you build, deploy, install, and uninstall your app from test code. Combined with [Vitest](https://vitest.dev/) and the typed API clients, you can write integration tests that verify your app works end-to-end against a real Twenty server.
@@ -125,15 +125,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```
@@ -142,11 +146,11 @@ beforeAll(async () => {
 
 The `twenty-sdk/cli` subpath exports functions you can call directly from test code:
 
-| Function | Description |
-|----------|-------------|
-| `appBuild` | Build the app and optionally pack a tarball |
-| `appDeploy` | Upload a tarball to the server |
-| `appInstall` | Install the app on the active workspace |
+| Function       | Description                                 |
+| -------------- | ------------------------------------------- |
+| `appBuild`     | Build the app and optionally pack a tarball |
+| `appDeploy`    | Upload a tarball to the server              |
+| `appInstall`   | Install the app on the active workspace     |
 | `appUninstall` | Uninstall the app from the active workspace |
 
 Each function returns a result object with `success: boolean` and either `data` or `error`.

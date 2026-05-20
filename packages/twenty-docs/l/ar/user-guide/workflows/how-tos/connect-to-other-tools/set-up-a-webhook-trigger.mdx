@@ -116,8 +116,8 @@ curl -X POST https://api.twenty.com/webhooks/workflow/abc123... \
 ```json
 {
   "items": [
-    {"name": "Product A", "qty": 2},
-    {"name": "Product B", "qty": 1}
+    { "name": "Product A", "qty": 2 },
+    { "name": "Product B", "qty": 1 }
   ]
 }
 ```
@@ -161,10 +161,12 @@ export const main = async (params: { items: any }) => {
 يمكنك الآن اختيار `product.name` و`product.qty` بشكل فردي في الخطوات اللاحقة.
 
 <Tip>
-لمزيد من التفاصيل حول التعامل مع المصفوفات، راجع [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  لمزيد من التفاصيل حول التعامل مع المصفوفات، راجع [التعامل مع المصفوفات في
+  إجراءات
+  Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
 ## ذات صلة
 
-* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+- [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+- [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)

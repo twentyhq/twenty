@@ -18,7 +18,9 @@ Her kullanım durumu, `MessageQueueServiceBase`'den genişletilmiş kendi kuyruk
 
 ```ts
 class Resolver {
-  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {}
+  constructor(
+    @Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService,
+  ) {}
 
   async onSomeAction() {
     //business logic
@@ -28,7 +30,9 @@ class Resolver {
 
 //async worker
 class CustomWorker {
-  constructor(@Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService) {
+  constructor(
+    @Inject(MESSAGE_QUEUES.custom) private queue: MessageQueueService,
+  ) {
     this.initWorker();
   }
 

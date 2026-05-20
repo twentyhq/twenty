@@ -5,7 +5,10 @@ description: Créez des chemins parallèles et une logique conditionnelle dans v
 
 Les branches vous permettent de scinder votre flux de travail en plusieurs chemins pouvant s’exécuter simultanément ou de façon conditionnelle selon vos données.
 
-<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches.png"
+  style={{ width: '100%' }}
+/>
 
 ## Fonctionnement des branches
 
@@ -22,7 +25,8 @@ Lorsque vous créez plusieurs connexions à partir d’un seul nœud, chaque che
 5. Répétez pour ajouter d’autres branches à partir du même nœud
 
 <Note>
-  Chaque branche est indépendante. L’ajout d’une branche n’affecte pas les autres chemins existants à partir de ce nœud.
+  Chaque branche est indépendante. L’ajout d’une branche n’affecte pas les
+  autres chemins existants à partir de ce nœud.
 </Note>
 
 ### Disposition visuelle
@@ -50,17 +54,20 @@ Seules les branches pour lesquelles la condition du filtre est remplie poursuivr
 
 **Les branches ne fusionnent pas automatiquement.** Chaque branche s’exécute indépendamment jusqu’à sa fin. Vous avez toute latitude quant à la manière de gérer cela :
 
-* **Option 1 : Garder les branches séparées**
+- **Option 1 : Garder les branches séparées**
   Chaque branche gère ses propres actions de suivi de manière indépendante. C’est l’approche la plus simple lorsque les branches n’ont pas besoin de converger.
 
-* **Option 2 : Fusionner les branches manuellement**
+- **Option 2 : Fusionner les branches manuellement**
   Lors de la création de votre flux de travail, vous pouvez connecter manuellement plusieurs branches à la même action en aval. Il suffit de faire glisser des flèches depuis la fin de chaque branche vers un nœud commun.
 
 <Note>
-  Bien que vous puissiez utiliser un nœud [Delay](/l/fr/user-guide/workflows/capabilities/workflow-actions#delay) pour mettre l’exécution en pause, il n’est pas actuellement configurable pour attendre "jusqu’à ce qu’une autre branche se termine".
+  Bien que vous puissiez utiliser un nœud
+  [Delay](/l/fr/user-guide/workflows/capabilities/workflow-actions#delay) pour
+  mettre l’exécution en pause, il n’est pas actuellement configurable pour
+  attendre "jusqu’à ce qu’une autre branche se termine".
 </Note>
 
 ## Contenus associés
 
-* [Comment utiliser les branches dans les flux de travail](/l/fr/user-guide/workflows/capabilities/use-branches-in-workflows) - Guide étape par étape
-* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions) - Actions disponibles, y compris Filtre
+- [Comment utiliser les branches dans les flux de travail](/l/fr/user-guide/workflows/capabilities/use-branches-in-workflows) - Guide étape par étape
+- [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions) - Actions disponibles, y compris Filtre

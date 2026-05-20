@@ -6,7 +6,7 @@ description: 根据阶段概率计算并显示加权交易金额。
 预期金额是一个计算值：**Amount × Probability**。 这有助于根据成交可能性为交易加权，从而预测收入。
 
 <Tip>
-这是使用工作流创建[公式字段](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields)的示例。
+  这是使用工作流创建[公式字段](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields)的示例。
 </Tip>
 
 本指南将引导您设置在管道中计算并显示预期金额所需的自定义字段和工作流。
@@ -20,18 +20,18 @@ description: 根据阶段概率计算并显示加权交易金额。
 1. 前往 **设置 → 数据模型 → 商机**
 2. 点击 **+ 添加字段**
 3. 配置:
-   * **名称**：Probability
-   * **类型**：数字
-   * **描述**：基于阶段的概率（0–100%）
+   - **名称**：Probability
+   - **类型**：数字
+   - **描述**：基于阶段的概率（0–100%）
 4. 单击 **保存**
 
 ### 创建 Expected Amount 字段
 
 1. 点击 **+ 添加字段**
 2. 配置:
-   * **名称**：Expected Amount
-   * **类型**：货币
-   * **描述**：计算值：Amount × Probability
+   - **名称**：Expected Amount
+   - **类型**：货币
+   - **描述**：计算值：Amount × Probability
 3. 单击 **保存**
 
 ### 可选：将字段设置为对用户只读
@@ -65,27 +65,28 @@ description: 根据阶段概率计算并显示加权交易金额。
 
 为每个阶段创建一个分支，并设置相应的概率：
 
-| 阶段      | 概率   |
-| ------- | ---- |
-| 新       | 10%  |
-| 合格      | 25%  |
-| 会议      | 40%  |
-| 提案      | 60%  |
-| 谈判      | 80%  |
+| 阶段           | 概率 |
+| -------------- | ---- |
+| 新             | 10%  |
+| 合格           | 25%  |
+| 会议           | 40%  |
+| 提案           | 60%  |
+| 谈判           | 80%  |
 | 已成交（赢单） | 100% |
 | 已关闭（丢单） | 0%   |
 
 <Note>
-要创建新分支，在工作流画布上单击右键，然后点击 **新建操作**。 然后，从上一个节点拖动箭头到此新操作，将其与前一个节点连接。
+  要创建新分支，在工作流画布上单击右键，然后点击 **新建操作**。
+  然后，从上一个节点拖动箭头到此新操作，将其与前一个节点连接。
 </Note>
 
 对于每个阶段：
 
 1. 添加一个 **筛选** 节点：Stage = [阶段名称]
 2. 添加一个 **更新记录** 操作：
-   * 记录：触发的商机
-   * 字段：Probability
-   * 值：[该阶段的概率]
+   - 记录：触发的商机
+   - 字段：Probability
+   - 值：[该阶段的概率]
 
 ### 计算 Expected Amount
 
@@ -93,9 +94,9 @@ description: 根据阶段概率计算并显示加权交易金额。
 
 1. 添加一个 **筛选** 节点：Amount 不为空
 2. 添加一个 **更新记录** 操作：
-   * 记录：触发的商机
-   * 字段：Expected Amount
-   * 值：Amount × Probability
+   - 记录：触发的商机
+   - 字段：Expected Amount
+   - 值：Amount × Probability
 
 ## 步骤 3：创建工作流 #2 — 当 Amount 发生变化时重新计算
 
@@ -117,9 +118,9 @@ description: 根据阶段概率计算并显示加权交易金额。
 
 1. 添加一个 **筛选** 节点：Amount 不为空
 2. 添加一个 **更新记录** 操作：
-   * 记录：触发的商机
-   * 字段：Expected Amount
-   * 值：Amount × Probability
+   - 记录：触发的商机
+   - 字段：Expected Amount
+   - 值：Amount × Probability
 
 ## 步骤 4：在您的管道中显示
 
@@ -134,16 +135,16 @@ description: 根据阶段概率计算并显示加权交易金额。
 
 ## 摘要
 
-| 组件                     | 用途                                               |
-| ---------------------- | ------------------------------------------------ |
-| **Probability 字段**     | 存储基于阶段的赢单概率                                      |
-| **Expected Amount 字段** | 存储 Amount × Probability                          |
-| **工作流 #1**             | 当 Stage 变化时更新 Probability，然后重新计算 Expected Amount |
-| **工作流 #2**             | 当 Amount 变化时重新计算 Expected Amount                 |
-| **聚合**                 | 按阶段显示 Expected Amount 的求和                        |
+| 组件                     | 用途                                                          |
+| ------------------------ | ------------------------------------------------------------- |
+| **Probability 字段**     | 存储基于阶段的赢单概率                                        |
+| **Expected Amount 字段** | 存储 Amount × Probability                                     |
+| **工作流 #1**            | 当 Stage 变化时更新 Probability，然后重新计算 Expected Amount |
+| **工作流 #2**            | 当 Amount 变化时重新计算 Expected Amount                      |
+| **聚合**                 | 按阶段显示 Expected Amount 的求和                             |
 
 ## 相关内容
 
-* [公式字段](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) — 使用工作流创建计算字段
-* [看板视图](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — 列聚合
-* [如何创建自定义字段](/l/zh/user-guide/data-model/how-tos/create-custom-fields) — 字段配置
+- [公式字段](/l/zh/user-guide/workflows/how-tos/crm-automations/formula-fields) — 使用工作流创建计算字段
+- [看板视图](/l/zh/user-guide/views-pipelines/capabilities/kanban-views) — 列聚合
+- [如何创建自定义字段](/l/zh/user-guide/data-model/how-tos/create-custom-fields) — 字段配置

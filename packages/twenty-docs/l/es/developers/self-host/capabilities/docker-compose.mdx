@@ -3,7 +3,9 @@ title: 1-Clic con Docker Compose
 ---
 
 <Warning>
-  Los contenedores de Docker son para alojamiento en producción o autoalojamiento, para la contribución por favor revise la [Configuración Local](/l/es/developers/contribute/capabilities/local-setup).
+  Los contenedores de Docker son para alojamiento en producción o
+  autoalojamiento, para la contribución por favor revise la [Configuración
+  Local](/l/es/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Resumen
@@ -16,8 +18,8 @@ Consulta los documentos [Configurar Variables de Entorno](/l/es/developers/self-
 
 ## Requisitos del sistema
 
-* RAM: Asegúrate de que tu entorno tenga al menos 2GB de RAM. La memoria insuficiente puede causar que los procesos se bloqueen.
-* Docker & Docker Compose: Asegúrate de que ambos estén instalados y actualizados.
+- RAM: Asegúrate de que tu entorno tenga al menos 2GB de RAM. La memoria insuficiente puede causar que los procesos se bloqueen.
+- Docker & Docker Compose: Asegúrate de que ambos estén instalados y actualizados.
 
 ## Opción 1: Script de una línea
 
@@ -33,8 +35,8 @@ Para instalar una versión o rama específica:
 VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Reemplace x.y.z con el número de versión deseado.
-* Reemplace branch-name con el nombre de la rama que desea instalar.
+- Reemplace x.y.z con el número de versión deseado.
+- Reemplace branch-name con el nombre de la rama que desea instalar.
 
 ## Opción 2: Pasos manuales
 
@@ -110,11 +112,11 @@ Por defecto, Twenty se ejecuta en `localhost` en el puerto `3000`. Para acceder 
 
 #### Entendiendo `SERVER_URL`
 
-* **Protocolo:** Usa `http` o `https` dependiendo de tu configuración.
-  * Usa `http` si no has configurado SSL.
-  * Usa `https` si tienes SSL configurado.
-* **Dominio/IP:** Este es el nombre de dominio o dirección IP donde tu aplicación es accesible.
-* **Puerto:** Incluye el número de puerto si no estás usando los puertos predeterminados (`80` para `http`, `443` para `https`).
+- **Protocolo:** Usa `http` o `https` dependiendo de tu configuración.
+  - Usa `http` si no has configurado SSL.
+  - Usa `https` si tienes SSL configurado.
+- **Dominio/IP:** Este es el nombre de dominio o dirección IP donde tu aplicación es accesible.
+- **Puerto:** Incluye el número de puerto si no estás usando los puertos predeterminados (`80` para `http`, `443` para `https`).
 
 ### Requisitos de SSL
 
@@ -127,7 +129,7 @@ Recomendamos encarecidamente configurar Twenty detrás de un proxy inverso con t
 #### Configurando `SERVER_URL`
 
 1. **Determine su URL de acceso**
-   * **Sin proxy inverso (Acceso directo):**
+   - **Sin proxy inverso (Acceso directo):**
 
      Si estás accediendo a la aplicación directamente sin un proxy inverso:
 
@@ -135,7 +137,7 @@ Recomendamos encarecidamente configurar Twenty detrás de un proxy inverso con t
      SERVER_URL=http://your-domain-or-ip:3000
      ```
 
-   * **Con proxy inverso (Puertos estándar):**
+   - **Con proxy inverso (Puertos estándar):**
 
      Si estás usando un proxy inverso como Nginx o Traefik y tienes SSL configurado:
 
@@ -143,7 +145,7 @@ Recomendamos encarecidamente configurar Twenty detrás de un proxy inverso con t
      SERVER_URL=https://your-domain-or-ip
      ```
 
-   * **Con proxy inverso (Puertos personalizados):**
+   - **Con proxy inverso (Puertos personalizados):**
 
      Si estás usando puertos no estándar:
 
@@ -160,12 +162,11 @@ Recomendamos encarecidamente configurar Twenty detrás de un proxy inverso con t
    ```
 
    **Ejemplos:**
-
-   * Acceso directo sin SSL:
+   - Acceso directo sin SSL:
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * Acceso vía dominio con SSL:
+   - Acceso vía dominio con SSL:
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
@@ -181,25 +182,25 @@ Recomendamos encarecidamente configurar Twenty detrás de un proxy inverso con t
 
 #### Consideraciones
 
-* **Configuración del Proxy Inverso:**
+- **Configuración del Proxy Inverso:**
 
   Asegúrese de que su proxy inverso envíe las solicitudes al puerto interno correcto (`3000` por defecto). Configure la terminación SSL y cualquier cabecera necesaria.
 
-* **Configuración del Cortafuegos:**
+- **Configuración del Cortafuegos:**
 
   Abra los puertos necesarios en su cortafuegos para permitir el acceso externo.
 
-* **Consistencia:**
+- **Consistencia:**
 
   La `SERVER_URL` debe coincidir con cómo los usuarios acceden a su aplicación en sus navegadores.
 
 #### Persistencia
 
-* **Volúmenes de Datos:**
+- **Volúmenes de Datos:**
 
   La configuración de Docker Compose utiliza volúmenes para persistir datos para la base de datos y el almacenamiento del servidor.
 
-* **Entornos Sin Estado:**
+- **Entornos Sin Estado:**
 
   Si se despliega en un entorno sin estado (por ejemplo, ciertos servicios en la nube), configure un almacenamiento externo para persistir los datos.
 
@@ -243,10 +244,10 @@ docker compose up -d
 
 ### Mejores prácticas de copias de seguridad
 
-* **Prueba las restauraciones con regularidad** — verifica que las copias de seguridad realmente funcionen
-* **Almacena las copias de seguridad fuera del sitio** — usa almacenamiento en la nube (S3, GCS, etc.)
-* **Cifra los datos sensibles** — protege las copias de seguridad con cifrado
-* **Conserva múltiples copias** — mantén copias de seguridad diarias, semanales y mensuales
+- **Prueba las restauraciones con regularidad** — verifica que las copias de seguridad realmente funcionen
+- **Almacena las copias de seguridad fuera del sitio** — usa almacenamiento en la nube (S3, GCS, etc.)
+- **Cifra los datos sensibles** — protege las copias de seguridad con cifrado
+- **Conserva múltiples copias** — mantén copias de seguridad diarias, semanales y mensuales
 
 ## Solución de Problemas
 

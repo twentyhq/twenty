@@ -15,7 +15,9 @@ description: İş akışı kredi tüketimini ve yönetimini anlayın.
 | **Yıllık abonelik**    | Yılda 50 kredi |
 
 <Note>
-Aylık 5 kredi, standart otomasyonlar için oldukça cömerttir. Çoğu ekip, tipik iş akışı kullanımıyla bu sınırı aşmayacaktır. Ek krediler, ağırlıklı olarak ileri düzey Code eylemleri ve yapay zeka destekli iş akışları için gereklidir.
+  Aylık 5 kredi, standart otomasyonlar için oldukça cömerttir. Çoğu ekip, tipik
+  iş akışı kullanımıyla bu sınırı aşmayacaktır. Ek krediler, ağırlıklı olarak
+  ileri düzey Code eylemleri ve yapay zeka destekli iş akışları için gereklidir.
 </Note>
 
 ## Kredi Tüketiminin Çalışma Prensibi
@@ -24,33 +26,33 @@ Krediler, iş akışları çalıştığında tüketilir, oluşturulduğunda değ
 
 ### Eylem Türüne Göre Kredi Tüketimi
 
-* **Temel dahili işlemler**: Çok düşük kredi tüketimi
-  * Kayıt Ara
-  * Kayıt Oluştur
-  * Kayıt Güncelle
-  * Kayıt Sil
-  * Form işlemleri
+- **Temel dahili işlemler**: Çok düşük kredi tüketimi
+  - Kayıt Ara
+  - Kayıt Oluştur
+  - Kayıt Güncelle
+  - Kayıt Sil
+  - Form işlemleri
 
-* **Karmaşık işlemler**: Daha yüksek kredi tüketimi
-  * Kod eylemleri (JavaScript yürütme)
-  * Harici hizmetlere HTTP İstekleri
+- **Karmaşık işlemler**: Daha yüksek kredi tüketimi
+  - Kod eylemleri (JavaScript yürütme)
+  - Harici hizmetlere HTTP İstekleri
 
-* **Yapay zeka özellikleri**: Daha yüksek kredi tüketimi
-  * Yapay Zeka Aracı eylemleri, kullanılan yapay zeka modeline bağlı olarak kredi tüketir
-  * Daha karmaşık istemler ve daha uzun çıktılar daha fazla kredi kullanır
+- **Yapay zeka özellikleri**: Daha yüksek kredi tüketimi
+  - Yapay Zeka Aracı eylemleri, kullanılan yapay zeka modeline bağlı olarak kredi tüketir
+  - Daha karmaşık istemler ve daha uzun çıktılar daha fazla kredi kullanır
 
-* **Gecikme eylemleri**: Minimum kredi tüketimi
-  * Gecikme düğümü çalıştığında **1 kredi** tüketir
-  * Bekleme süresi boyunca **hiç kredi tüketilmez**
-  * 5 dakikalık bir gecikme, 5 günlük bir gecikmeyle aynı maliyete sahiptir
+- **Gecikme eylemleri**: Minimum kredi tüketimi
+  - Gecikme düğümü çalıştığında **1 kredi** tüketir
+  - Bekleme süresi boyunca **hiç kredi tüketilmez**
+  - 5 dakikalık bir gecikme, 5 günlük bir gecikmeyle aynı maliyete sahiptir
 
 ### Gerçek Zamanlı Düşüm
 
 Krediler, iş akışları çalışırken gerçek zamanlı olarak düşülür. Bu şu anlama gelir:
 
-* Taslak iş akışları kredi tüketmez
-* Sadece aktif, çalışan iş akışları kredi tahsisatınızı kullanır
-* Başarısız iş akışları, tamamlanan adımlarda yine de kredi tüketir
+- Taslak iş akışları kredi tüketmez
+- Sadece aktif, çalışan iş akışları kredi tahsisatınızı kullanır
+- Başarısız iş akışları, tamamlanan adımlarda yine de kredi tüketir
 
 ## Kredilerin Yönetimi
 
@@ -70,7 +72,7 @@ Plan tahsisinizin ötesinde daha fazla krediye ihtiyacınız varsa:
 
 ## En İyi Uygulamalar
 
-* **Toplu İşleme**: Toplu işlemler ve Iterator eylemlerini verimli bir şekilde kullanın
-* **Manuel Tetikleme Optimizasyonu**: Manuel tetikleyiciler için, tek bir iş akışı çalıştırmasında birden fazla kaydı işlemek üzere `Bulk` kullanılabilirliğini seçin
-* Verimlilik için Kod eylemlerini optimize edin
-* Bireysel eylem çağrılarını azaltmak için toplu işlemler yapın
+- **Toplu İşleme**: Toplu işlemler ve Iterator eylemlerini verimli bir şekilde kullanın
+- **Manuel Tetikleme Optimizasyonu**: Manuel tetikleyiciler için, tek bir iş akışı çalıştırmasında birden fazla kaydı işlemek üzere `Bulk` kullanılabilirliğini seçin
+- Verimlilik için Kod eylemlerini optimize edin
+- Bireysel eylem çağrılarını azaltmak için toplu işlemler yapın

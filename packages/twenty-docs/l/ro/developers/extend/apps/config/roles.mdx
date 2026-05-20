@@ -82,13 +82,13 @@ export default defineApplicationRole({
 
 Notițe:
 
-* Exact **un** `defineApplicationRole(...)` este permis per aplicație — build-ul manifestului va eșua dacă găsește mai mult de unul.
-* Utilizați `defineRole()` (nu `defineApplicationRole()`) pentru orice roluri **suplimentare** cu care este livrată aplicația.
-* Setarea explicită a `defaultRoleUniversalIdentifier` în `defineApplication()` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
+- Exact **un** `defineApplicationRole(...)` este permis per aplicație — build-ul manifestului va eșua dacă găsește mai mult de unul.
+- Utilizați `defineRole()` (nu `defineApplicationRole()`) pentru orice roluri **suplimentare** cu care este livrată aplicația.
+- Setarea explicită a `defaultRoleUniversalIdentifier` în `defineApplication()` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 
 ## Cele mai bune practici
 
-* Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
-* Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
-* `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
-* Vedeți un exemplu funcțional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+- Porniți de la rolul generat de scaffolding, apoi restrângeți-l progresiv — rolul implicit acordă acces larg la citire, ceea ce rareori este de dorit în producție.
+- Înlocuiți `objectPermissions` și `fieldPermissions` cu obiectele și câmpurile de care au nevoie efectiv funcțiile dvs.
+- `permissionFlags` controlează accesul la capabilități la nivelul platformei. Mențineți-le la minimum.
+- Vedeți un exemplu funcțional: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

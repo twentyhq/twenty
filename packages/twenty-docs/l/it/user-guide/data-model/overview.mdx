@@ -15,11 +15,11 @@ Gli **oggetti** sono le principali categorie di dati nel tuo CRM. Ogni oggetto r
 
 Twenty include oggetti standard:
 
-* **Persone** — individui (contatti, lead, partner)
-* **Aziende** — organizzazioni
-* **Opportunità** — trattative o vendite
-* **Note** — note allegate ai record
-* **Attività** — attività da fare collegate ai record
+- **Persone** — individui (contatti, lead, partner)
+- **Aziende** — organizzazioni
+- **Opportunità** — trattative o vendite
+- **Note** — note allegate ai record
+- **Attività** — attività da fare collegate ai record
 
 Puoi anche creare **oggetti personalizzati** per qualsiasi aspetto specifico della tua azienda (ad es., Progetti, Abbonamenti, Eventi).
 
@@ -29,11 +29,11 @@ I **campi** sono le proprietà o gli attributi che descrivono ogni oggetto. Memo
 
 Ad esempio, l'oggetto **Persone** ha campi come:
 
-* Nome
-* Email
-* Telefono
-* Titolo di lavoro
-* Azienda (una relazione con l'oggetto Aziende)
+- Nome
+- Email
+- Telefono
+- Titolo di lavoro
+- Azienda (una relazione con l'oggetto Aziende)
 
 I campi hanno diversi **tipi**: testo, numero, data, selezione, multiselezione, relazione e altro. Puoi aggiungere campi personalizzati a qualsiasi oggetto.
 
@@ -43,8 +43,8 @@ I **record** sono le singole voci all'interno di un oggetto — i dati effettivi
 
 Ad esempio:
 
-* "John Smith" è un **record** nell'oggetto Persone
-* "Acme Corp" è un **record** nell'oggetto Aziende
+- "John Smith" è un **record** nell'oggetto Persone
+- "Acme Corp" è un **record** nell'oggetto Aziende
 
 **Un'analogia:**
 
@@ -62,9 +62,9 @@ Ogni azienda lavora in modo diverso. Personalizzare il tuo modello di dati signi
 
 Twenty offre massima flessibilità:
 
-* Crea tutti gli oggetti personalizzati di cui hai bisogno
-* Aggiungi campi personalizzati illimitati
-* Il prezzo non cambia in base alla personalizzazione
+- Crea tutti gli oggetti personalizzati di cui hai bisogno
+- Aggiungi campi personalizzati illimitati
+- Il prezzo non cambia in base alla personalizzazione
 
 ## Consigli per progettare il tuo modello di dati
 
@@ -72,15 +72,15 @@ Twenty offre massima flessibilità:
 
 Identifica i concetti principali con cui lavori. Twenty offre già:
 
-* **Persone** — i tuoi contatti
-* **Aziende** — le tue aziende
-* **Opportunità** — le tue trattative
+- **Persone** — i tuoi contatti
+- **Aziende** — le tue aziende
+- **Opportunità** — le tue trattative
 
 Pensa a cos'altro potrebbe servirti:
 
-* Stripe avrebbe bisogno di un oggetto `Subscriptions`
-* Airbnb avrebbe bisogno di un oggetto `Trips`
-* Un acceleratore avrebbe bisogno di un oggetto `Batches`
+- Stripe avrebbe bisogno di un oggetto `Subscriptions`
+- Airbnb avrebbe bisogno di un oggetto `Trips`
+- Un acceleratore avrebbe bisogno di un oggetto `Batches`
 
 ### 2. Usa i campi per le varianti, non nuovi oggetti
 
@@ -88,9 +88,9 @@ Se qualcosa è solo una caratteristica di un oggetto esistente, rendila un **cam
 
 **Usa i campi per:**
 
-* Categorie ed etichette (ad es., `Industry` per Aziende)
-* Valori di stato (ad es., `Stage` per Opportunità)
-* Attributi e proprietà
+- Categorie ed etichette (ad es., `Industry` per Aziende)
+- Valori di stato (ad es., `Stage` per Opportunità)
+- Attributi e proprietà
 
 ### 3. Crea un oggetto quando è autonomo
 
@@ -98,9 +98,9 @@ Se il concetto ha un proprio ciclo di vita, proprietà o relazioni, merita un og
 
 **Crea un oggetto per:**
 
-* **Progetti** — hanno scadenze, responsabili e attività
-* **Abbonamenti** — collegano aziende, prodotti e fatture
-* **Eventi** — coinvolgono i partecipanti e azioni di follow-up
+- **Progetti** — hanno scadenze, responsabili e attività
+- **Abbonamenti** — collegano aziende, prodotti e fatture
+- **Eventi** — coinvolgono i partecipanti e azioni di follow-up
 
 Questi vanno oltre un singolo campo perché contengono i propri dati e relazioni.
 
@@ -118,9 +118,9 @@ Crea un oggetto `Products` e collegalo ai record. In questo modo, puoi supportar
 
 Inizia dai campi. Passa a nuovi oggetti solo quando raggiungi i limiti:
 
-* Troppi campi su un unico oggetto
-* Record ripetuti che dovrebbero essere separati
-* Relazioni che non si adattano perfettamente
+- Troppi campi su un unico oggetto
+- Record ripetuti che dovrebbero essere separati
+- Relazioni che non si adattano perfettamente
 
 ## Nota speciale su Persone, Aziende e Opportunità
 
@@ -128,13 +128,14 @@ Inizia dai campi. Passa a nuovi oggetti solo quando raggiungi i limiti:
 **La sincronizzazione di email e calendario funziona solo con Persone, Aziende e Opportunità.**
 
 Questi sono gli unici oggetti in cui puoi accedere a email e riunioni sincronizzate dalla tua casella di posta/calendario. Consigliamo di usarli il più possibile.
+
 </Warning>
 
 **Migliori Pratiche:**
 
-* Se hai bisogno di categorie di Persone, usa i campi (non nuovi oggetti)
-* Esempio: usa un campo `Person Type` con i valori "Prospect" e "Partner" invece di creare oggetti separati
-* Crea diverse **visualizzazioni** per filtrare: una che mostri i partner, un'altra che mostri i prospect
+- Se hai bisogno di categorie di Persone, usa i campi (non nuovi oggetti)
+- Esempio: usa un campo `Person Type` con i valori "Prospect" e "Partner" invece di creare oggetti separati
+- Crea diverse **visualizzazioni** per filtrare: una che mostri i partner, un'altra che mostri i prospect
 
 **Va bene avere campi che non si applicano a ogni record.** Ad esempio, un campo `Referral Link` su Persone che si applica solo quando `Person Type = Partner`. Nascondi questo campo dalle visualizzazioni in cui non è pertinente.
 
@@ -142,8 +143,14 @@ Questi sono gli unici oggetti in cui puoi accedere a email e riunioni sincronizz
 
 Chiediti:
 
-<Check>È solo una proprietà di qualcosa che ho già o ha bisogno delle proprie proprietà?</Check>
-<Check>Avrò mai bisogno di tenere traccia di più elementi di questo tipo per ogni record, senza sapere quanti?</Check>
+<Check>
+  È solo una proprietà di qualcosa che ho già o ha bisogno delle proprie
+  proprietà?
+</Check>
+<Check>
+  Avrò mai bisogno di tenere traccia di più elementi di questo tipo per ogni
+  record, senza sapere quanti?
+</Check>
 <Check>Questo concetto si collega a diversi oggetti, non solo a uno?</Check>
 <Check>Avrà un proprio ciclo di vita (fasi, date di inizio/fine)?</Check>
 
@@ -160,15 +167,16 @@ Se la risposta è "sì" a una o più di queste, probabilmente è il momento di c
 **Non vedi il Modello Dati in Impostazioni?**
 
 L'accesso al modello di dati è solitamente limitato agli amministratori. Contatta l'amministratore del tuo spazio di lavoro se ti serve l'accesso.
+
 </Note>
 
 ## Prossimi Passi
 
 Una volta pianificato il tuo modello di dati:
 
-* [Come creare oggetti personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-objects)
-* [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields)
-* [Come creare campi di relazione](/l/it/user-guide/data-model/how-tos/create-relation-fields)
+- [Come creare oggetti personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-objects)
+- [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields)
+- [Come creare campi di relazione](/l/it/user-guide/data-model/how-tos/create-relation-fields)
 
 ## Hai Bisogno di Aiuto?
 

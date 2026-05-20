@@ -17,8 +17,8 @@ Prvky rozvržení řídí, jak se vaše aplikace zobrazuje v uživatelském rozh
 
 Pohledy, položky navigační nabídky a rozvržení stránek se na sebe odkazují pomocí `universalIdentifier`:
 
-* Položka **navigační nabídky** typu `VIEW` odkazuje na identifikátor `defineView`, takže odkaz v postranním panelu otevře daný uložený pohled.
-* **Rozvržení stránky** typu `RECORD_PAGE` cílí na objekt a může vkládat [front components](/l/cs/developers/extend/apps/front-components) do svých karet jako widgety.
+- Položka **navigační nabídky** typu `VIEW` odkazuje na identifikátor `defineView`, takže odkaz v postranním panelu otevře daný uložený pohled.
+- **Rozvržení stránky** typu `RECORD_PAGE` cílí na objekt a může vkládat [front components](/l/cs/developers/extend/apps/front-components) do svých karet jako widgety.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Definujte uložená zobrazení pro objekty">
@@ -50,11 +50,12 @@ export default defineView({
 ```
 
 Hlavní body:
-* `objectUniversalIdentifier` určuje, na který objekt se toto zobrazení vztahuje.
-* `key` určuje typ zobrazení (např. `ViewKey.INDEX` pro hlavní seznam).
-* `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`.
-* Pro pokročilejší konfigurace můžete definovat také `filters`, `filterGroups`, `groups` a `fieldGroups`.
-* `position` určuje pořadí, pokud pro stejný objekt existuje více zobrazení.
+
+- `objectUniversalIdentifier` určuje, na který objekt se toto zobrazení vztahuje.
+- `key` určuje typ zobrazení (např. `ViewKey.INDEX` pro hlavní seznam).
+- `fields` určuje, které sloupce se zobrazí a v jakém pořadí. Každé pole odkazuje na `fieldMetadataUniversalIdentifier`.
+- Pro pokročilejší konfigurace můžete definovat také `filters`, `filterGroups`, `groups` a `fieldGroups`.
+- `position` určuje pořadí, pokud pro stejný objekt existuje více zobrazení.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Definujte odkazy postranní navigace">
@@ -62,7 +63,10 @@ Hlavní body:
 Položky navigační nabídky přidávají vlastní položky do postranního panelu pracovního prostoru. Použijte `defineNavigationMenuItem()` k odkazování na zobrazení, externí URL nebo objekty:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -77,10 +81,11 @@ export default defineNavigationMenuItem({
 ```
 
 Hlavní body:
-* `type` určuje, na co položka menu odkazuje: `NavigationMenuItemType.VIEW` pro uložené zobrazení nebo `NavigationMenuItemType.LINK` pro externí URL.
-* Pro odkazy na zobrazení nastavte `viewUniversalIdentifier`. Pro externí odkazy nastavte `link`.
-* `position` určuje pořadí v postranním panelu.
-* `icon` a `color` (volitelné) upravují vzhled.
+
+- `type` určuje, na co položka menu odkazuje: `NavigationMenuItemType.VIEW` pro uložené zobrazení nebo `NavigationMenuItemType.LINK` pro externí URL.
+- Pro odkazy na zobrazení nastavte `viewUniversalIdentifier`. Pro externí odkazy nastavte `link`.
+- `position` určuje pořadí v postranním panelu.
+- `icon` a `color` (volitelné) upravují vzhled.
 
 </Accordion>
 <Accordion title="definePageLayout" description="Definujte vlastní rozvržení stránek pro zobrazení záznamů">
@@ -122,11 +127,12 @@ export default definePageLayout({
 ```
 
 Hlavní body:
-* `type` je obvykle `'RECORD_PAGE'` pro úpravu detailního zobrazení konkrétního objektu.
-* `objectUniversalIdentifier` určuje, na který objekt se toto rozvržení vztahuje.
-* Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode` (`CANVAS` pro volné rozvržení).
-* Každý `widget` uvnitř karty může vykreslit frontendovou komponentu, seznam relací nebo jiné vestavěné typy widgetů.
-* `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
+
+- `type` je obvykle `'RECORD_PAGE'` pro úpravu detailního zobrazení konkrétního objektu.
+- `objectUniversalIdentifier` určuje, na který objekt se toto rozvržení vztahuje.
+- Každá `tab` definuje sekci stránky s `title`, `position` a `layoutMode` (`CANVAS` pro volné rozvržení).
+- Každý `widget` uvnitř karty může vykreslit frontendovou komponentu, seznam relací nebo jiné vestavěné typy widgetů.
+- `position` na kartách určuje jejich pořadí. Použijte vyšší hodnoty (např. 50) pro umístění vlastních karet za vestavěné.
 
 </Accordion>
 <Accordion title="definePageLayoutTab" description="Přidat kartu do existujícího rozvržení stránky">
@@ -169,10 +175,11 @@ export default definePageLayoutTab({
 ```
 
 Hlavní body:
-* `pageLayoutUniversalIdentifier` je při použití `definePageLayoutTab` **povinný** a musí odkazovat na rozvržení stránky, které již existuje v době instalace (standardní nebo vaší aplikace). Pokud nadřazené rozvržení stránky chybí, instalace selže s jasnou validační chybou.
-* `widgets` mají rozsah pouze pro tuto kartu — odkazují na frontendové komponenty, zobrazení apod. úplně stejně jako widgety definované přímo v `definePageLayout`.
-* `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
-* Použijte to místo `definePageLayout`, když chcete pouze **přidat** do existujícího rozvržení. Použijte `definePageLayout`, když vlastníte celé rozvržení (typicky `RECORD_PAGE` pro objekt, který ve své aplikaci dodáváte, nebo `STANDALONE_PAGE`).
+
+- `pageLayoutUniversalIdentifier` je při použití `definePageLayoutTab` **povinný** a musí odkazovat na rozvržení stránky, které již existuje v době instalace (standardní nebo vaší aplikace). Pokud nadřazené rozvržení stránky chybí, instalace selže s jasnou validační chybou.
+- `widgets` mají rozsah pouze pro tuto kartu — odkazují na frontendové komponenty, zobrazení apod. úplně stejně jako widgety definované přímo v `definePageLayout`.
+- `position` určuje pořadí vzhledem ke stávajícím kartám v cílovém rozvržení. Zvolte hodnotu, která umístí vaši kartu tam, kde ji chcete mít, relativně k vestavěným kartám.
+- Použijte to místo `definePageLayout`, když chcete pouze **přidat** do existujícího rozvržení. Použijte `definePageLayout`, když vlastníte celé rozvržení (typicky `RECORD_PAGE` pro objekt, který ve své aplikaci dodáváte, nebo `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

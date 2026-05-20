@@ -29,13 +29,16 @@ your-app/
 ```
 
 <Note>
-  **Die Dateiorganisation liegt bei Ihnen.** Die Entitätserkennung ist AST-basiert — das SDK findet Aufrufe von `export default defineEntity(...)`, unabhängig davon, wo sich die Datei befindet. Die obige Ordnerstruktur ist eine Konvention, keine Anforderung.
+  **Die Dateiorganisation liegt bei Ihnen.** Die Entitätserkennung ist
+  AST-basiert — das SDK findet Aufrufe von `export default defineEntity(...)`,
+  unabhängig davon, wo sich die Datei befindet. Die obige Ordnerstruktur ist
+  eine Konvention, keine Anforderung.
 </Note>
 
 ## Entitätstypen
 
-| Entität                    | Zweck                                                  | Dokumentation                                                                   |
-| -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| Entität                    | Zweck                                                  | Dokumentation                                                                        |
+| -------------------------- | ------------------------------------------------------ | ------------------------------------------------------------------------------------ |
 | **Anwendung**              | App-Identität, Standardrolle, Variablen                | [Anwendungskonfiguration](/l/de/developers/extend/apps/config/application)           |
 | **Rolle**                  | Berechtigungssätze für Objekte und Felder              | [Rollen & Berechtigungen](/l/de/developers/extend/apps/config/roles)                 |
 | **Objekt**                 | Benutzerdefinierte Datensatztypen mit Feldern          | [Objekte](/l/de/developers/extend/apps/data/objects)                                 |
@@ -53,9 +56,9 @@ your-app/
 
 ## Sandboxing
 
-* **Logikfunktionen** laufen in isolierten Node.js-Prozessen auf dem Server. Sie greifen nur über den typisierten API-Client auf Daten zu, begrenzt durch die Rollenberechtigungen der App.
-* **Frontend-Komponenten** laufen in Web Workers mit Remote DOM — von der Hauptseite isoliert, rendern aber native DOM-Elemente (keine iframes). Sie kommunizieren über eine Message-Passing-Host-API mit Twenty.
-* **Berechtigungen** werden auf API-Ebene durchgesetzt. Das Laufzeit-Token (`TWENTY_APP_ACCESS_TOKEN`) wird aus der in `defineApplication()` definierten Rolle abgeleitet.
+- **Logikfunktionen** laufen in isolierten Node.js-Prozessen auf dem Server. Sie greifen nur über den typisierten API-Client auf Daten zu, begrenzt durch die Rollenberechtigungen der App.
+- **Frontend-Komponenten** laufen in Web Workers mit Remote DOM — von der Hauptseite isoliert, rendern aber native DOM-Elemente (keine iframes). Sie kommunizieren über eine Message-Passing-Host-API mit Twenty.
+- **Berechtigungen** werden auf API-Ebene durchgesetzt. Das Laufzeit-Token (`TWENTY_APP_ACCESS_TOKEN`) wird aus der in `defineApplication()` definierten Rolle abgeleitet.
 
 ## App-Lebenszyklus
 
@@ -76,26 +79,46 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — überwacht Ihre Quelldateien und synchronisiert Änderungen in Echtzeit mit einem verbundenen Twenty-Server. Der typisierte API-Client wird automatisch neu erzeugt, wenn sich das Schema ändert.
-* **`yarn twenty dev:build`** — kompiliert TypeScript, bündelt Logikfunktionen und Frontend-Komponenten mit esbuild und erzeugt ein Manifest.
-* **Pre/Post-Install-Hooks** — optionale Funktionen, die während der Installation ausgeführt werden. Details finden Sie unter [Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
+- **`yarn twenty dev`** — überwacht Ihre Quelldateien und synchronisiert Änderungen in Echtzeit mit einem verbundenen Twenty-Server. Der typisierte API-Client wird automatisch neu erzeugt, wenn sich das Schema ändert.
+- **`yarn twenty dev:build`** — kompiliert TypeScript, bündelt Logikfunktionen und Frontend-Komponenten mit esbuild und erzeugt ein Manifest.
+- **Pre/Post-Install-Hooks** — optionale Funktionen, die während der Installation ausgeführt werden. Details finden Sie unter [Install Hooks](/l/de/developers/extend/apps/config/install-hooks).
 
 ## Nächste Schritte
 
 <CardGroup cols={2}>
-  <Card title="Konfiguration" icon="screwdriver-wrench" href="/l/de/developers/extend/apps/config/overview">
+  <Card
+    title="Konfiguration"
+    icon="screwdriver-wrench"
+    href="/l/de/developers/extend/apps/config/overview"
+  >
     App-Identität, Standardrolle und Install-Hooks.
   </Card>
-  <Card title="Daten" icon="database" href="/l/de/developers/extend/apps/data/overview">
+  <Card
+    title="Daten"
+    icon="database"
+    href="/l/de/developers/extend/apps/data/overview"
+  >
     Objekte, Felder und bidirektionale Relationen.
   </Card>
-  <Card title="Logik" icon="bolt" href="/l/de/developers/extend/apps/logic/overview">
+  <Card
+    title="Logik"
+    icon="bolt"
+    href="/l/de/developers/extend/apps/logic/overview"
+  >
     Logikfunktionen, Skills, Agenten und OAuth-Verbindungen.
   </Card>
-  <Card title="Layout" icon="table-columns" href="/l/de/developers/extend/apps/layout/overview">
+  <Card
+    title="Layout"
+    icon="table-columns"
+    href="/l/de/developers/extend/apps/layout/overview"
+  >
     Ansichten, Navigation, Seiten-Layouts, Frontend-Komponenten.
   </Card>
-  <Card title="Operationen" icon="rocket" href="/l/de/developers/extend/apps/operations/overview">
+  <Card
+    title="Operationen"
+    icon="rocket"
+    href="/l/de/developers/extend/apps/operations/overview"
+  >
     CLI, Tests, Remotes, CI und das Veröffentlichen Ihrer App.
   </Card>
 </CardGroup>

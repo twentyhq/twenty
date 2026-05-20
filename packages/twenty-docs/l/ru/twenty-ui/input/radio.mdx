@@ -4,7 +4,10 @@ icon: circle-dot
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Заголовок" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="Заголовок"
+  />
 </Frame>
 
 Используется, когда пользователи могут выбрать только один вариант из серии вариантов.
@@ -13,18 +16,16 @@ icon: circle-dot
 <Tab title="Использование">
 
 ```jsx
-import { Radio } from "twenty-ui/display";
+import { Radio } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   const handleRadioChange = (event) => {
-    console.log("Radio button changed:", event.target.checked);
+    console.log('Radio button changed:', event.target.checked);
   };
 
   const handleCheckedChange = (checked) => {
-    console.log("Checked state changed:", checked);
+    console.log('Checked state changed:', checked);
   };
-
 
   return (
     <Radio
@@ -38,13 +39,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="Свойства">
-
 
 | Свойства        | Тип                  | Описание                                                                                |
 | --------------- | -------------------- | --------------------------------------------------------------------------------------- |
@@ -58,9 +56,6 @@ export const MyComponent = () => {
 | отключено       | boolean              | Если `true`, радиокнопка отключена и недоступна для нажатия                             |
 | позицияМетки    | строка               | Положение текста метки относительно радио-кнопки. Имеет два варианта: `left` и `right`. |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -72,17 +67,16 @@ export const MyComponent = () => {
 <Tab title="Использование">
 
 ```jsx
-import React, { useState } from "react";
-import { Radio, RadioGroup } from "twenty-ui/display";
+import React, { useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
-  const [selectedValue, setSelectedValue] = useState("Option 1");
+  const [selectedValue, setSelectedValue] = useState('Option 1');
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
-  
+
   return (
     <RadioGroup value={selectedValue} onChange={handleChange}>
       <Radio value="Option 1" />
@@ -91,12 +85,10 @@ export const MyComponent = () => {
     </RadioGroup>
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Свойства">
-
 
 | Свойства      | Тип               | Описание                                                                                              |
 | ------------- | ----------------- | ----------------------------------------------------------------------------------------------------- |
@@ -104,9 +96,6 @@ export const MyComponent = () => {
 | onChange      | функция           | Функция обратного вызова, вызываемая при изменении радио-кнопки.                                      |
 | onValueChange | функция           | Функция обратного вызова, вызываемая при изменении выбранного значения в группе.                      |
 | children      | `React.ReactNode` | Позволяет передавать компоненты React (например, Radio) в качестве дочерних элементов для Radio Group |
-
-
-
 
 </Tab>
 

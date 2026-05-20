@@ -12,9 +12,9 @@ Le app ti consentono di estendere Twenty con oggetti, campi, funzioni logiche, c
 
 Prima di iniziare, assicurati che quanto segue sia installato sul tuo computer:
 
-* **Node.js 24+** — [Scarica qui](https://nodejs.org/)
-* **Yarn 4** — Incluso con Node.js tramite Corepack. Abilitalo eseguendo `corepack enable`
-* **Docker** — [Scarica qui](https://www.docker.com/products/docker-desktop/). Necessario per eseguire un'istanza locale di Twenty. Non necessario se hai già un server Twenty in esecuzione.
+- **Node.js 24+** — [Scarica qui](https://nodejs.org/)
+- **Yarn 4** — Incluso con Node.js tramite Corepack. Abilitalo eseguendo `corepack enable`
+- **Docker** — [Scarica qui](https://www.docker.com/products/docker-desktop/). Necessario per eseguire un'istanza locale di Twenty. Non necessario se hai già un server Twenty in esecuzione.
 
 ## Crea la tua prima app
 
@@ -36,22 +36,28 @@ Lo strumento di scaffolding chiederà:
 
 > **Vuoi configurare un'istanza locale di Twenty?**
 
-* **Digita `yes`** (consigliato) — Questo scarica l'immagine Docker `twenty-app-dev` e avvia un server Twenty locale sulla porta `2020`. Assicurati che Docker sia in esecuzione prima di continuare.
-* **Digita `no`** — Sceglilo se hai già un server Twenty in esecuzione in locale.
+- **Digita `yes`** (consigliato) — Questo scarica l'immagine Docker `twenty-app-dev` e avvia un server Twenty locale sulla porta `2020`. Assicurati che Docker sia in esecuzione prima di continuare.
+- **Digita `no`** — Sceglilo se hai già un server Twenty in esecuzione in locale.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Avviare l'istanza locale?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Avviare l'istanza locale?"
+  />
 </div>
 
 ### Accedi al tuo spazio di lavoro
 
 Successivamente si aprirà una finestra del browser con la pagina di accesso di Twenty. Accedi con l'account demo preconfigurato:
 
-* **Email:** `tim@apple.dev`
-* **Password:** `tim@apple.dev`
+- **Email:** `tim@apple.dev`
+- **Password:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Schermata di accesso di Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Schermata di accesso di Twenty"
+  />
 </div>
 
 ### Autorizza l'app
@@ -60,14 +66,20 @@ Dopo l'accesso, vedrai una schermata di autorizzazione. Questo consente alla tua
 
 Fai clic su **Authorize** per continuare.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Schermata di autorizzazione della CLI di Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Schermata di autorizzazione della CLI di Twenty"
+  />
 </div>
 
 Una volta autorizzato, il terminale confermerà che tutto è configurato.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="App creata con successo" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="App creata con successo"
+  />
 </div>
 
 ### Inizia a sviluppare
@@ -88,11 +100,19 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-La modalità di sviluppo è disponibile solo sulle istanze di Twenty in esecuzione in modalità sviluppo (`NODE_ENV=development`). Le istanze di produzione rifiutano le richieste di sincronizzazione in modalità sviluppo. Usa `yarn twenty deploy` per distribuire sui server di produzione — vedi [Pubblicazione delle app](/l/it/developers/extend/apps/publishing) per i dettagli.
+  La modalità di sviluppo è disponibile solo sulle istanze di Twenty in
+  esecuzione in modalità sviluppo (`NODE_ENV=development`). Le istanze di
+  produzione rifiutano le richieste di sincronizzazione in modalità sviluppo.
+  Usa `yarn twenty deploy` per distribuire sui server di produzione — vedi
+  [Pubblicazione delle app](/l/it/developers/extend/apps/publishing) per i
+  dettagli.
 </Warning>
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="Output del terminale in modalità sviluppo" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.jpg"
+    alt="Output del terminale in modalità sviluppo"
+  />
 </div>
 
 #### Sincronizzazione una tantum con `yarn twenty dev --once`
@@ -114,26 +134,38 @@ Entrambe le modalità richiedono un server Twenty in esecuzione in modalità di 
 
 Apri [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) nel browser. Vai su **Settings > Apps** e seleziona la scheda **Developer**. Dovresti vedere la tua app elencata in **Your Apps**:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Elenco Your Apps che mostra My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Elenco Your Apps che mostra My twenty app"
+  />
 </div>
 
 Fai clic su **My twenty app** per aprire la sua **registrazione dell'applicazione**. Una registrazione è un record a livello di server che descrive la tua app — il suo nome, identificatore univoco, credenziali OAuth e origine (locale, npm o tarball). Risiede sul server, non all'interno di uno spazio di lavoro specifico. Quando installi un'app in uno spazio di lavoro, Twenty crea un'**applicazione** con ambito dello spazio di lavoro che rimanda a questa registrazione. Una registrazione può essere installata in più spazi di lavoro sullo stesso server.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Dettagli della registrazione dell'applicazione" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Dettagli della registrazione dell'applicazione"
+  />
 </div>
 
 Fai clic su **View installed app** per vedere l'app installata. La scheda **About** mostra la versione corrente e le opzioni di gestione:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="App installata — scheda About" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="App installata — scheda About"
+  />
 </div>
 
 Passa alla scheda **Content** per vedere tutto ciò che la tua app fornisce — oggetti, campi, funzioni logiche e agenti:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="App installata — scheda Content" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-4.png"
+    alt="App installata — scheda Content"
+  />
 </div>
 
 È tutto pronto! Modifica qualsiasi file in `src/` e le modifiche verranno rilevate automaticamente.
@@ -241,7 +273,8 @@ Passa `--test` a qualsiasi comando `server` per gestire una seconda istanza comp
 L'istanza di test viene eseguita nel proprio container Docker (`twenty-app-dev-test`) con volumi dedicati (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) e configurazione dedicata, così può essere eseguita in parallelo con la tua istanza principale senza conflitti. Combina `--test` con `--port` per sovrascrivere il valore predefinito 2021.
 
 <Note>
-  Il server richiede che **Docker** sia in esecuzione. Se vedi l'errore "Docker not running", assicurati che Docker Desktop (o il demone Docker) sia avviato.
+  Il server richiede che **Docker** sia in esecuzione. Se vedi l'errore "Docker
+  not running", assicurati che Docker Desktop (o il demone Docker) sia avviato.
 </Note>
 
 ## Configurazione manuale (senza lo scaffolder)
@@ -267,16 +300,17 @@ yarn add twenty-sdk twenty-client-sdk
 Ora puoi eseguire `yarn twenty dev`, `yarn twenty help` e tutti gli altri comandi.
 
 <Note>
-Non installare `twenty-sdk` globalmente. Usalo sempre come dipendenza locale del progetto, in modo che ogni progetto possa fissare la propria versione.
+  Non installare `twenty-sdk` globalmente. Usalo sempre come dipendenza locale
+  del progetto, in modo che ogni progetto possa fissare la propria versione.
 </Note>
 
 ## Risoluzione dei problemi
 
 Se riscontri problemi:
 
-* Assicurati che **Docker sia in esecuzione** prima di avviare lo strumento di scaffolding con un'istanza locale.
-* Assicurati di usare **Node.js 24+** (`node -v` per verificare).
-* Assicurati che **Corepack sia abilitato** (`corepack enable`) in modo che Yarn 4 sia disponibile.
-* Prova a eliminare `node_modules` ed eseguire di nuovo `yarn install` se le dipendenze sembrano danneggiate.
+- Assicurati che **Docker sia in esecuzione** prima di avviare lo strumento di scaffolding con un'istanza locale.
+- Assicurati di usare **Node.js 24+** (`node -v` per verificare).
+- Assicurati che **Corepack sia abilitato** (`corepack enable`) in modo che Yarn 4 sia disponibile.
+- Prova a eliminare `node_modules` ed eseguire di nuovo `yarn install` se le dipendenze sembrano danneggiate.
 
 Ancora bloccato? Chiedi aiuto su [Discord di Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

@@ -73,12 +73,12 @@ export default defineApplication({
 
 Pontos-chave:
 
-* `name` é a string de identificador exclusivo usada em `listConnections({ providerName })` (kebab-case, deve corresponder a `^[a-z][a-z0-9-]*$`).
-* `displayName` aparece na aba de configurações do app e na lista de ferramentas de IA.
-* `clientIdVariable` / `clientSecretVariable` são **nomes**, não valores — devem corresponder às chaves declaradas em `defineApplication.serverVariables`. Os `client_id` e `client_secret` reais são inseridos pelo administrador do servidor por meio da interface de registro do app e nunca são versionados no seu repositório.
-* Use `serverVariables` (não `applicationVariables`) — as credenciais OAuth são do servidor como um todo e há um app OAuth por servidor do Twenty.
-* Até que ambos os `serverVariables` sejam preenchidos, a aba de configurações do app mostra uma dica "precisa de administrador do servidor" e o botão "Adicionar conexão" fica desativado.
-* `type: 'oauth'` é o único valor compatível atualmente. O discriminador é compatível com versões futuras: tipos futuros (`'pat'`, `'api-key'`, ...) adicionarão novos blocos de subconfiguração ao lado de `oauth`.
+- `name` é a string de identificador exclusivo usada em `listConnections({ providerName })` (kebab-case, deve corresponder a `^[a-z][a-z0-9-]*$`).
+- `displayName` aparece na aba de configurações do app e na lista de ferramentas de IA.
+- `clientIdVariable` / `clientSecretVariable` são **nomes**, não valores — devem corresponder às chaves declaradas em `defineApplication.serverVariables`. Os `client_id` e `client_secret` reais são inseridos pelo administrador do servidor por meio da interface de registro do app e nunca são versionados no seu repositório.
+- Use `serverVariables` (não `applicationVariables`) — as credenciais OAuth são do servidor como um todo e há um app OAuth por servidor do Twenty.
+- Até que ambos os `serverVariables` sejam preenchidos, a aba de configurações do app mostra uma dica "precisa de administrador do servidor" e o botão "Adicionar conexão" fica desativado.
+- `type: 'oauth'` é o único valor compatível atualmente. O discriminador é compatível com versões futuras: tipos futuros (`'pat'`, `'api-key'`, ...) adicionarão novos blocos de subconfiguração ao lado de `oauth`.
 
 O URL de callback do OAuth que seu provedor precisa adicionar à lista de permissões é:
 
@@ -149,9 +149,9 @@ Cada conexão tem:
 
 Pontos-chave:
 
-* Passe `{ providerName }` para filtrar por provedor; omita para obter todas as conexões que este app possui em todos os provedores.
-* O servidor atualiza transparentemente o token de acesso antes de retornar. Seu handler sempre vê um token utilizável (ou `authFailedAt` definido).
-* `getConnection(id)` é o equivalente de uma única linha.
+- Passe `{ providerName }` para filtrar por provedor; omita para obter todas as conexões que este app possui em todos os provedores.
+- O servidor atualiza transparentemente o token de acesso antes de retornar. Seu handler sempre vê um token utilizável (ou `authFailedAt` definido).
+- `getConnection(id)` é o equivalente de uma única linha.
 
 </Accordion>
 
@@ -159,8 +159,8 @@ Pontos-chave:
 
 Quando um usuário clica em "Adicionar conexão", é solicitado que escolha uma visibilidade:
 
-* **Apenas para mim** — a credencial é privada para o usuário que a conectou. Qualquer função de lógica chamada em seu nome (gatilho de rota HTTP com `isAuthRequired: true`) a vê; gatilhos cron e eventos de banco de dados não.
-* **Compartilhada no workspace** — qualquer membro do workspace pode usar a credencial. Gatilhos de cron / banco de dados também a veem, pois não há um usuário da requisição.
+- **Apenas para mim** — a credencial é privada para o usuário que a conectou. Qualquer função de lógica chamada em seu nome (gatilho de rota HTTP com `isAuthRequired: true`) a vê; gatilhos cron e eventos de banco de dados não.
+- **Compartilhada no workspace** — qualquer membro do workspace pode usar a credencial. Gatilhos de cron / banco de dados também a veem, pois não há um usuário da requisição.
 
 Use a adequada para cada handler:
 

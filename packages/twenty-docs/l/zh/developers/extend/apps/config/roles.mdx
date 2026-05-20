@@ -82,13 +82,13 @@ export default defineApplicationRole({
 
 备注：
 
-* 每个应用只允许有且仅有 **一个** `defineApplicationRole(...)`——如果发现多于一个，清单构建将失败。
-* 对于你的应用随附的任何**额外**角色，请使用 `defineRole()`（而不是 `defineApplicationRole()`）。
-* 在 `defineApplication()` 上显式设置 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已经弃用，推荐使用 `defineApplicationRole()`。
+- 每个应用只允许有且仅有 **一个** `defineApplicationRole(...)`——如果发现多于一个，清单构建将失败。
+- 对于你的应用随附的任何**额外**角色，请使用 `defineRole()`（而不是 `defineApplicationRole()`）。
+- 在 `defineApplication()` 上显式设置 `defaultRoleUniversalIdentifier` 仍然受支持以保持向后兼容性，但已经弃用，推荐使用 `defineApplicationRole()`。
 
 ## 最佳实践
 
-* 从脚手架生成的角色开始，然后逐步收紧它的权限——默认角色授予广泛的读取访问权限，而这在生产环境中很少是你想要的。
-* 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
-* `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
-* 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。
+- 从脚手架生成的角色开始，然后逐步收紧它的权限——默认角色授予广泛的读取访问权限，而这在生产环境中很少是你想要的。
+- 将 `objectPermissions` 和 `fieldPermissions` 替换为你的函数实际需要的精确对象和字段。
+- `permissionFlags` 控制对平台级能力的访问。 尽量保持最小化。
+- 查看一个可运行示例：[`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts)。

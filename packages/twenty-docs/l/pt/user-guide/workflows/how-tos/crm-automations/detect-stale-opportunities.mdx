@@ -9,9 +9,9 @@ Mantenha o seu pipeline saudável alertando os gestores quando as oportunidades 
 
 Oportunidades sem atualizações levam a:
 
-* Negócios a arrefecer
-* Previsões pouco fiáveis
-* Perda de receita
+- Negócios a arrefecer
+- Previsões pouco fiáveis
+- Perda de receita
 
 ## A Solução
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ Adicione a ação **Enviar e-mail**:
 
 Modifique o filtro de Pesquisar Registos para alterar de 7 dias para o período da sua preferência:
 
-* 3 dias para vendas de alto ritmo
-* 14 dias para negócios empresariais
-* 30 dias para ciclos de vendas longos
+- 3 dias para vendas de alto ritmo
+- 14 dias para negócios empresariais
+- 30 dias para ciclos de vendas longos
 
 ### Alertar representantes individualmente
 
@@ -132,5 +132,5 @@ Use **HTTP Request** para enviar para um webhook do Slack em vez de ou além do 
 
 ## Relacionados
 
-* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+- [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)

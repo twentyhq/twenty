@@ -4,7 +4,8 @@ description: Verbinden Sie KI-Assistenten mit Ihrem Twenty-Workspace über das M
 ---
 
 <Warning>
-MCP befindet sich derzeit in **alpha** und ist nur in einigen Workspaces verfügbar. Möglicherweise ist es für Ihren Workspace noch nicht aktiviert.
+  MCP befindet sich derzeit in **alpha** und ist nur in einigen Workspaces
+  verfügbar. Möglicherweise ist es für Ihren Workspace noch nicht aktiviert.
 </Warning>
 
 Twenty stellt einen [MCP](https://modelcontextprotocol.io/)-Server bereit, damit KI-Assistenten — Claude Desktop, Claude Code, Cursor, ChatGPT und andere — Ihre CRM-Daten in natürlicher Sprache lesen und schreiben können.
@@ -25,7 +26,10 @@ Sie haben zwei Möglichkeiten, Ihren MCP-Client zu authentifizieren: **OAuth** (
 Mit OAuth öffnet Ihr MCP-Client ein Browserfenster, damit Sie sich anmelden können. Es werden keine geheimen Informationen in Konfigurationsdateien gespeichert, und Token werden automatisch erneuert.
 
 <Note>
-OAuth erfordert einen MCP-Client, der die [MCP-Autorisierungsspezifikation](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization) unterstützt. Claude Desktop, Claude Code, Cursor und ChatGPT unterstützen dies.
+  OAuth erfordert einen MCP-Client, der die
+  [MCP-Autorisierungsspezifikation](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization)
+  unterstützt. Claude Desktop, Claude Code, Cursor und ChatGPT unterstützen
+  dies.
 </Note>
 
 Fügen Sie dies zu Ihrer MCP-Client-Konfiguration hinzu und ersetzen Sie `{your-workspace-url}` durch den Host Ihrer Workspace-URL (z. B. `mycompany.twenty.com`):
@@ -69,7 +73,8 @@ Wenn Ihr MCP-Client OAuth nicht unterstützt oder Sie statische Anmeldeinformati
 ```
 
 <Warning>
-Ihr API-Schlüssel gewährt Zugriff auf Workspace-Daten. Halten Sie es von der Versionskontrolle und von gemeinsam genutzten Dotfiles fern.
+  Ihr API-Schlüssel gewährt Zugriff auf Workspace-Daten. Halten Sie es von der
+  Versionskontrolle und von gemeinsam genutzten Dotfiles fern.
 </Warning>
 
 Um einen API-Schlüssel zu erstellen, gehen Sie zu **Settings > APIs & Webhooks > + Create key**. Details finden Sie unter [APIs](/l/de/developers/extend/api#create-an-api-key).
@@ -95,9 +100,9 @@ Starten Sie Ihren MCP-Client neu (oder laden Sie die Konfiguration neu). Bei Ver
 
 Bitten Sie Ihren KI-Assistenten, mit Ihrem CRM zu interagieren:
 
-* *"Zeige mir die 5 zuletzt erstellten Unternehmen"*
-* *"Erstelle eine neue Person namens Jane Doe bei Acme Corp"*
-* *"Finde alle offenen Verkaufschancen mit einem Wert von mehr als $10k"*
+- _"Zeige mir die 5 zuletzt erstellten Unternehmen"_
+- _"Erstelle eine neue Person namens Jane Doe bei Acme Corp"_
+- _"Finde alle offenen Verkaufschancen mit einem Wert von mehr als $10k"_
 
 ## Verfügbare Tools
 
@@ -113,8 +118,8 @@ Sie müssen sich die Tool-Namen nicht merken. Fragen Sie Ihren KI-Assistenten, w
 
 MCP-Verbindungen erben die Berechtigungen des authentifizierten Benutzers (OAuth) oder die dem API-Schlüssel zugewiesene Rolle. So beschränken Sie, was der MCP-Server tun darf:
 
-* **OAuth**: Es gilt die Workspace-Rolle des Benutzers.
-* **API-Schlüssel**: Weisen Sie dem API-Schlüssel unter **Settings > Roles** eine Rolle zu. Siehe [Berechtigungen](/l/de/user-guide/permissions-access/capabilities/permissions).
+- **OAuth**: Es gilt die Workspace-Rolle des Benutzers.
+- **API-Schlüssel**: Weisen Sie dem API-Schlüssel unter **Settings > Roles** eine Rolle zu. Siehe [Berechtigungen](/l/de/user-guide/permissions-access/capabilities/permissions).
 
 ## Selbstgehostete Konfiguration
 
@@ -130,13 +135,13 @@ Der MCP-Endpunkt, die OAuth-Endpunkte und die Discovery-Metadaten leiten sich al
 
 **"Unauthorized"- oder 401-Fehler**
 
-* OAuth: Autorisieren Sie erneut, indem Sie die gespeicherten Token in Ihrem MCP-Client löschen und die Verbindung wiederherstellen.
-* API-Schlüssel: Überprüfen Sie, ob der Schlüssel gültig ist und nicht abgelaufen ist. Generieren Sie ihn bei Bedarf neu.
+- OAuth: Autorisieren Sie erneut, indem Sie die gespeicherten Token in Ihrem MCP-Client löschen und die Verbindung wiederherstellen.
+- API-Schlüssel: Überprüfen Sie, ob der Schlüssel gültig ist und nicht abgelaufen ist. Generieren Sie ihn bei Bedarf neu.
 
 **Der OAuth-Flow öffnet keinen Browser**
 
-* Stellen Sie sicher, dass Ihr MCP-Client MCP Authorization unterstützt. Wechseln Sie andernfalls zur API-Schlüssel-Methode.
+- Stellen Sie sicher, dass Ihr MCP-Client MCP Authorization unterstützt. Wechseln Sie andernfalls zur API-Schlüssel-Methode.
 
 **Verbindungszeitüberschreitung**
 
-* Stellen Sie sicher, dass die MCP-Endpunkt-URL von Ihrem Rechner aus erreichbar ist. Bei selbstgehosteten Instanzen prüfen Sie, ob der Server läuft und `SERVER_URL` korrekt gesetzt ist.
+- Stellen Sie sicher, dass die MCP-Endpunkt-URL von Ihrem Rechner aus erreichbar ist. Bei selbstgehosteten Instanzen prüfen Sie, ob der Server läuft und `SERVER_URL` korrekt gesetzt ist.

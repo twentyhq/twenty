@@ -23,7 +23,10 @@ Twenty’de, bu parmak izi Message nesnesinde `headerMessageId` olarak saklanır
 
 Her e-posta Twenty'ye ulaştığında bu tetiklenir.
 
-<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/workflow-overview.png"
+  style={{ width: '100%' }}
+/>
 
 ### Adım 3: Kimin gönderdiğini bulun
 
@@ -40,7 +43,10 @@ Gönderenin adresi iletinin üzerinde değil — ilgili Message Participant kayd
 
 Bu, size gönderenin e-posta adresini `handle` içinde ve adını `displayName` içinde verir.
 
-<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/find-sender.png"
+  style={{ width: '100%' }}
+/>
 
 ### Adım 4: Yapay zekâ triyajı ve yanıt taslağı
 
@@ -69,7 +75,10 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 AI Agent, yanıtını sonraki adımların başvurabileceği `response` alanına yazar.
 
-<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/ai-triage.png"
+  style={{ width: '100%' }}
+/>
 
 ### Adım 5: Yapay zekâ kararına göre dallandırın
 
@@ -83,7 +92,10 @@ Yapay zekânın yanıtlamaya mı yoksa atlamaya mı karar verdiğini kontrol etm
 
 Spam, bültenler ve otomatik oluşturulan iletiler atlanır. Diğer her şey bir sonraki adıma geçer.
 
-<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/should-reply.png"
+  style={{ width: '100%' }}
+/>
 
 ### Adım 6: İleti dizisine bağlı bir yanıt gönderin
 
@@ -98,14 +110,22 @@ Spam, bültenler ve otomatik oluşturulan iletiler atlanır. Diğer her şey bir
 
 In-Reply-To alanı, bunun yeni bir konuşma yerine bir yanıt olmasını sağlar. Alıcı, Gmail, Outlook veya diğer herhangi bir istemcide bunu özgün e-postanın altında dizili olarak görür.
 
-<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/send-email.png"
+  style={{ width: '100%' }}
+/>
 
 <Tip>
-**In-Reply-To**, tetikleyiciden bir `message.headerMessageId` bekler — bu bir alıcı adresi değil, e-postanın benzersiz parmak izidir. Bunu boş bırakırsanız e-posta yine de gönderilir, yalnızca bağımsız bir ileti olarak.
+  **In-Reply-To**, tetikleyiciden bir `message.headerMessageId` bekler — bu bir
+  alıcı adresi değil, e-postanın benzersiz parmak izidir. Bunu boş bırakırsanız
+  e-posta yine de gönderilir, yalnızca bağımsız bir ileti olarak.
 </Tip>
 
 <Warning>
-Gmail, iletileri diziler halinde gruplamak için konu satırını kullanır. Gmail’in yanıtı özgün dizinin içinde göstermesi için konu mutlaka `Re:` ile başlamalıdır (iki nokta ve boşluk dahil). Bu olmadan, In-Reply-To başlığı doğru ayarlanmış olsa bile yanıt ayrı bir konuşma olarak görünür.
+  Gmail, iletileri diziler halinde gruplamak için konu satırını kullanır.
+  Gmail’in yanıtı özgün dizinin içinde göstermesi için konu mutlaka `Re:` ile
+  başlamalıdır (iki nokta ve boşluk dahil). Bu olmadan, In-Reply-To başlığı
+  doğru ayarlanmış olsa bile yanıt ayrı bir konuşma olarak görünür.
 </Warning>
 
 ### Adım 7: Test Edin ve Etkinleştirin
@@ -116,6 +136,6 @@ Gmail, iletileri diziler halinde gruplamak için konu satırını kullanır. Gma
 
 ## Geliştirmek için fikirler
 
-* **Yalnızca VIP'lere yanıt verin** — gönderenin alan adını veya Twenty’de bir Contact olarak bulunup bulunmadığını kontrol eden bir dal ekleyin
-* **Niyete göre yönlendirin** — satış sorgularını destek taleplerinden farklı şekilde ele almak için ayrı AI Agent istemleri kullanın
-* **Yanıtlamadan önce zenginleştirin** — daha kişiselleştirilmiş yanıtlar için gönderenin şirketini veya anlaşma geçmişini AI istemine çekmek üzere bir Search Records adımı ekleyin
+- **Yalnızca VIP'lere yanıt verin** — gönderenin alan adını veya Twenty’de bir Contact olarak bulunup bulunmadığını kontrol eden bir dal ekleyin
+- **Niyete göre yönlendirin** — satış sorgularını destek taleplerinden farklı şekilde ele almak için ayrı AI Agent istemleri kullanın
+- **Yanıtlamadan önce zenginleştirin** — daha kişiselleştirilmiş yanıtlar için gönderenin şirketini veya anlaşma geçmişini AI istemine çekmek üzere bir Search Records adımı ekleyin

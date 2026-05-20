@@ -29,13 +29,16 @@ your-app/
 ```
 
 <Note>
-  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)` çağrılarını bulur. Yukarıdaki klasör yapısı bir gelenektir, zorunluluk değildir.
+  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın
+  nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)`
+  çağrılarını bulur. Yukarıdaki klasör yapısı bir gelenektir, zorunluluk
+  değildir.
 </Note>
 
 ## Varlık türleri
 
-| Varlık                   | Amaç                                                          | Belgeler                                                              |
-| ------------------------ | ------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Varlık                   | Amaç                                                          | Belgeler                                                                   |
+| ------------------------ | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
 | **Uygulama**             | Uygulama kimliği, izinler, değişkenler                        | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
 | **Rol**                  | Nesneler ve alanlar için izin kümeleri                        | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
 | **Object**               | Alanlara sahip özel veri tabloları                            | [Veri Modeli](/l/tr/developers/extend/apps/data-model)                     |
@@ -50,9 +53,9 @@ your-app/
 
 ## Korumalı alan
 
-* **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
-* **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
-* **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
+- **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
+- **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
+- **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
 
 ## Uygulama yaşam döngüsü
 
@@ -73,32 +76,60 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
-* **`yarn twenty build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
-* **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı mantık işlevleri. Ayrıntılar için [Mantık İşlevleri](/l/tr/developers/extend/apps/logic-functions) bölümüne bakın.
+- **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
+- **`yarn twenty build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
+- **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı mantık işlevleri. Ayrıntılar için [Mantık İşlevleri](/l/tr/developers/extend/apps/logic-functions) bölümüne bakın.
 
 ## Sonraki adımlar
 
 <CardGroup cols={2}>
-  <Card title="Veri modeli" icon="database" href="/l/tr/developers/extend/apps/data-model">
+  <Card
+    title="Veri modeli"
+    icon="database"
+    href="/l/tr/developers/extend/apps/data-model"
+  >
     Nesneleri, alanları, rolleri ve ilişkileri tanımlayın.
   </Card>
-  <Card title="Mantıksal işlevler" icon="bolt" href="/l/tr/developers/extend/apps/logic-functions">
+  <Card
+    title="Mantıksal işlevler"
+    icon="bolt"
+    href="/l/tr/developers/extend/apps/logic-functions"
+  >
     HTTP, cron ve olay tetikleyicilerine sahip sunucu tarafı işlevler.
   </Card>
-  <Card title="Ön uç bileşenleri" icon="window-maximize" href="/l/tr/developers/extend/apps/front-components">
+  <Card
+    title="Ön uç bileşenleri"
+    icon="window-maximize"
+    href="/l/tr/developers/extend/apps/front-components"
+  >
     Twenty'nin kullanıcı arayüzünde korumalı alanda React bileşenleri.
   </Card>
-  <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout">
+  <Card
+    title="Düzen"
+    icon="table-columns"
+    href="/l/tr/developers/extend/apps/layout"
+  >
     Görünümler, gezinme öğeleri ve kayıt sayfası düzenleri.
   </Card>
-  <Card title="Beceriler ve Ajanlar" icon="robot" href="/l/tr/developers/extend/apps/skills-and-agents">
+  <Card
+    title="Beceriler ve Ajanlar"
+    icon="robot"
+    href="/l/tr/developers/extend/apps/skills-and-agents"
+  >
     Özel istemlere sahip yapay zekâ becerileri ve temsilciler.
   </Card>
-  <Card title="CLI ve Testler" icon="terminal" href="/l/tr/developers/extend/apps/cli-and-testing">
+  <Card
+    title="CLI ve Testler"
+    icon="terminal"
+    href="/l/tr/developers/extend/apps/cli-and-testing"
+  >
     CLI komutları, test, varlıklar, uzak depolar ve CI.
   </Card>
-  <Card title="Yayımlama" icon="rocket" href="/l/tr/developers/extend/apps/publishing">
+  <Card
+    title="Yayımlama"
+    icon="rocket"
+    href="/l/tr/developers/extend/apps/publishing"
+  >
     Bir sunucuya dağıtın veya pazaryerine yayınlayın.
   </Card>
 </CardGroup>

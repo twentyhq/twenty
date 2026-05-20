@@ -9,7 +9,10 @@ import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 1. Klicken Sie auf die Schaltfläche **Bearbeiten** in der oberen rechten Ecke Ihres Dashboards
 
-<img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Bearbeitungsmodus" />
+<img
+  src="/images/user-guide/dashboard/dashboard-edit.png"
+  alt="Bearbeitungsmodus"
+/>
 
 2. Das Dashboard wechselt in den Bearbeitungsmodus
 3. Klicken Sie auf ein beliebiges Widget, um es auszuwählen
@@ -17,13 +20,15 @@ import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 Die Einstellungen sind in Abschnitte gegliedert:
 
-* **Daten**: Welche Daten abgerufen werden und wie sie gefiltert werden
-* **X-Achse**: Wie Kategorien gruppiert und sortiert werden (Balken-/Liniendiagramme)
-* **Y-Achse**: Was gemessen wird und wie es angezeigt wird (Balken-/Liniendiagramme)
-* **Stil**: Farben, Beschriftungen und visuelle Optionen
+- **Daten**: Welche Daten abgerufen werden und wie sie gefiltert werden
+- **X-Achse**: Wie Kategorien gruppiert und sortiert werden (Balken-/Liniendiagramme)
+- **Y-Achse**: Was gemessen wird und wie es angezeigt wird (Balken-/Liniendiagramme)
+- **Stil**: Farben, Beschriftungen und visuelle Optionen
 
 <Note>
-Einige Einstellungen erscheinen nur, wenn andere Einstellungen konfiguriert sind. Beispielsweise wird **Datumsgranularität** nur angezeigt, wenn Sie ein Datumsfeld auswählen.
+  Einige Einstellungen erscheinen nur, wenn andere Einstellungen konfiguriert
+  sind. Beispielsweise wird **Datumsgranularität** nur angezeigt, wenn Sie ein
+  Datumsfeld auswählen.
 </Note>
 
 ---
@@ -39,7 +44,10 @@ Wählen Sie, aus welchem Objekt Daten abgerufen werden sollen.
 
 Alle Ihre Standard- und benutzerdefinierten Objekte sind verfügbar. Das Ändern der Quelle setzt andere Einstellungen zurück, da Feldoptionen vom ausgewählten Objekt abhängen.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Quelle" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-source.png"
+  alt="Quelle"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter" />Filter </span>
 
@@ -55,14 +63,20 @@ Filter funktionieren genauso wie in Tabellenansichten. Verwenden Sie sie, um sic
 
 **Beispiel**: Filtern Sie Chancen, bei denen Phase "Gewonnen" ist, um nur abgeschlossene Deals anzuzeigen.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filter" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png"
+  alt="Filter"
+/>
 
 <Tip>
-Für Datumsfelder verwenden Sie **Ist relativ**, um dynamische Filter wie "Letzte 7 Tage" oder "Dieser Monat" zu erstellen, die automatisch aktualisiert werden.
+  Für Datumsfelder verwenden Sie **Ist relativ**, um dynamische Filter wie
+  "Letzte 7 Tage" oder "Dieser Monat" zu erstellen, die automatisch aktualisiert
+  werden.
 </Tip>
 
 <Tip>
-Erweiterte Filter werden unterstützt — fügen Sie mehrere Filterregeln hinzu und kombinieren Sie sie mit **Und**- oder **Oder**-Logik.
+  Erweiterte Filter werden unterstützt — fügen Sie mehrere Filterregeln hinzu
+  und kombinieren Sie sie mit **Und**- oder **Oder**-Logik.
 </Tip>
 
 ---
@@ -77,7 +91,10 @@ Wählen Sie das Feld aus, nach dem Ihre Daten gruppiert werden sollen. Dies best
 
 **Beispiel**: Wählen Sie "Phase", um Daten nach Pipeline-Phase zu gruppieren, oder "Erstellungsdatum", um Daten über die Zeit zu sehen.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Angezeigte Daten" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png"
+  alt="Angezeigte Daten"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Datumsgranularität </span>
 
@@ -100,29 +117,35 @@ Die "der Woche/des Jahres"-Optionen aggregieren über die gesamte Zeit. Verwende
 
 Steuern Sie die Reihenfolge der Kategorien auf der X-Achse.
 
-* **Position** – Verwendet die in den Einstellungen Ihres Auswahlfelds definierte Reihenfolge
-* **Alphabetisch** – A bis Z (oder chronologisch bei Daten)
-* **Nach Wert** – Nach der Kennzahl sortiert (höchste oder niedrigste zuerst)
-* **Manuell** – Ziehen Sie, um Ihre eigene Reihenfolge festzulegen
+- **Position** – Verwendet die in den Einstellungen Ihres Auswahlfelds definierte Reihenfolge
+- **Alphabetisch** – A bis Z (oder chronologisch bei Daten)
+- **Nach Wert** – Nach der Kennzahl sortiert (höchste oder niedrigste zuerst)
+- **Manuell** – Ziehen Sie, um Ihre eigene Reihenfolge festzulegen
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Sortieren nach" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png"
+  alt="Sortieren nach"
+/>
 
 **Tipp**: Für Pipeline-Phasen verwenden Sie **Position**, um Phasen in der Reihenfolge Ihres Verkaufsprozesses anzuzeigen (Lead → Qualifiziert → Angebot → Gewonnen).
 
 <Note>
-Die angezeigten Optionen hängen von Ihrem Feldtyp ab. Auswahlfelder haben alle Optionen; Datums- und Textfelder zeigen weniger.
+  Die angezeigten Optionen hängen von Ihrem Feldtyp ab. Auswahlfelder haben alle
+  Optionen; Datums- und Textfelder zeigen weniger.
 </Note>
 
 <Tip>
-Mit der Sortieroption **Manuell** können Sie Kategorien ziehen, um eine benutzerdefinierte Reihenfolge zu erstellen — ideal, um bestimmte Segmente hervorzuheben oder mit Ihren Daten eine Geschichte zu erzählen.
+  Mit der Sortieroption **Manuell** können Sie Kategorien ziehen, um eine
+  benutzerdefinierte Reihenfolge zu erstellen — ideal, um bestimmte Segmente
+  hervorzuheben oder mit Ihren Daten eine Geschichte zu erzählen.
 </Tip>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Nullwerte auslassen </span>
 
 Kategorien mit Nullwerten oder ohne Daten ausblenden.
 
-* **Ein**: Kategorien ohne Einträge werden ausgeblendet
-* **Aus**: Alle Kategorien werden angezeigt, auch wenn sie leer sind
+- **Ein**: Kategorien ohne Einträge werden ausgeblendet
+- **Aus**: Alle Kategorien werden angezeigt, auch wenn sie leer sind
 
 Verwenden Sie dies, um Diagramme mit spärlichen Daten aufzuräumen.
 
@@ -136,18 +159,22 @@ Diese Einstellungen steuern, was Sie messen und wie es angezeigt wird.
 
 Wählen Sie das Feld und die Operation zur Berechnung Ihrer Kennzahl.
 
-* **Zählungen** – Alle zählen, Leere zählen, Nicht-Leere zählen, Eindeutige Werte zählen
-* **Mathematik** – Summe, Durchschnitt, Min, Max (Zahlenfelder)
-* **Prozentsätze** – Prozent leer, Prozent nicht leer
+- **Zählungen** – Alle zählen, Leere zählen, Nicht-Leere zählen, Eindeutige Werte zählen
+- **Mathematik** – Summe, Durchschnitt, Min, Max (Zahlenfelder)
+- **Prozentsätze** – Prozent leer, Prozent nicht leer
 
 Boolesche Felder fügen „Wahr/Falsch zählen“ hinzu. Aggregierte Diagramme mit Datumsfeldern zeigen Frühestes/Spätestes.
 
 **Beispiel**: Wählen Sie „Betrag“ mit Summe, um den gesamten Deal-Wert pro Kategorie zu sehen, oder Alle zählen, um die Anzahl der Deals zu sehen.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Angezeigte Daten" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png"
+  alt="Angezeigte Daten"
+/>
 
 <Note>
-Die angezeigten Optionen hängen von Ihrem Feld- und Diagrammtyp ab. Wenn eine erwartete Operation nicht angezeigt wird, überprüfen Sie Ihren Feldtyp.
+  Die angezeigten Optionen hängen von Ihrem Feld- und Diagrammtyp ab. Wenn eine
+  erwartete Operation nicht angezeigt wird, überprüfen Sie Ihren Feldtyp.
 </Note>
 
 ### Verhältnis
@@ -170,7 +197,10 @@ Fügen Sie eine zweite Dimension hinzu, um mehrere Reihen zu erstellen (mehrere 
 
 **Beispiel**: Gruppieren Sie Deals nach Phase (X-Achse) UND nach Inhaber (Gruppieren nach), um die Pipeline-Aufschlüsselung jeder Person nebeneinander zu sehen.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Gruppieren nach" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png"
+  alt="Gruppieren nach"
+/>
 
 Wenn Gruppieren nach eingestellt ist, sehen Sie mehrere Farben in Ihrem Diagramm und eine Legende erscheint.
 
@@ -188,30 +218,33 @@ Gleiche Optionen wie bei der Sortierung der X-Achse — Position, Alphabetisch u
 
 Laufende Summen statt einzelner Werte anzeigen.
 
-* **Aus**: Jeder Balken/Punkt zeigt seinen eigenen Wert
-* **Ein**: Jeder Balken/Punkt zeigt die Summe aller vorherigen Werte plus seinen eigenen
+- **Aus**: Jeder Balken/Punkt zeigt seinen eigenen Wert
+- **Ein**: Jeder Balken/Punkt zeigt die Summe aller vorherigen Werte plus seinen eigenen
 
 **Beispiel**: Januar = 10, Februar = 15
 
-* Kumulativ aus: Zeigt 10 und 15
-* Kumulativ ein: Zeigt 10 und 25 (10 + 15)
+- Kumulativ aus: Zeigt 10 und 15
+- Kumulativ ein: Zeigt 10 und 25 (10 + 15)
 
 Verwenden Sie „Kumulativ“, um den Fortschritt zu einem Ziel im Zeitverlauf zu verfolgen.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Kumulativ" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png"
+  alt="Kumulativ"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Min-Bereich / <ChartIcon icon="math-max" />Max-Bereich </span>
 
 Legen Sie feste Mindest- und Höchstwerte für die Y-Achse fest.
 
-* Leer lassen für automatische Skalierung
-* Geben Sie eine Zahl ein, um die Grenze festzulegen
+- Leer lassen für automatische Skalierung
+- Geben Sie eine Zahl ein, um die Grenze festzulegen
 
 **Wann verwenden:**
 
-* Setzen Sie Min auf 0 für genaue visuelle Vergleiche
-* Setzen Sie beides für konsistente Skalen über mehrere Diagramme hinweg
-* Fokussieren Sie einen bestimmten Wertebereich, indem Sie beide festlegen
+- Setzen Sie Min auf 0 für genaue visuelle Vergleiche
+- Setzen Sie beides für konsistente Skalen über mehrere Diagramme hinweg
+- Fokussieren Sie einen bestimmten Wertebereich, indem Sie beide festlegen
 
 ---
 
@@ -222,7 +255,8 @@ Legen Sie feste Mindest- und Höchstwerte für die Y-Achse fest.
 Legen Sie das Farbschema für Ihr Diagramm fest. Wählen Sie aus einer Vielzahl von Farbpaletten.
 
 <Note>
-Beim Gruppieren nach einem Auswahlfeld verwendet das Diagramm automatisch die in Ihren Feldeinstellungen für jede Option definierten Farben.
+  Beim Gruppieren nach einem Auswahlfeld verwendet das Diagramm automatisch die
+  in Ihren Feldeinstellungen für jede Option definierten Farben.
 </Note>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Achsenname </span>
@@ -233,30 +267,32 @@ Wählen Sie, welche Achsenbeschriftungen angezeigt werden sollen: **Keine**, **X
 
 Wenn Gruppieren nach eingestellt ist, wählen Sie, wie mehrere Reihen angezeigt werden.
 
-* **Aus (Gruppiert)**: Reihen erscheinen nebeneinander. Verwenden Sie dies, wenn exakte Werte zwischen Gruppen verglichen werden.
-* **Ein (Gestapelt)**: Reihen werden übereinander gestapelt. Verwenden Sie dies, wenn Sie die Zusammensetzung zeigen — wie Teile ein Ganzes bilden.
+- **Aus (Gruppiert)**: Reihen erscheinen nebeneinander. Verwenden Sie dies, wenn exakte Werte zwischen Gruppen verglichen werden.
+- **Ein (Gestapelt)**: Reihen werden übereinander gestapelt. Verwenden Sie dies, wenn Sie die Zusammensetzung zeigen — wie Teile ein Ganzes bilden.
 
 **Beispiel**: Deals nach Phase, gruppiert nach Inhaber
 
-* Gruppiert: Sehen Sie die exakten Zahlen jedes Inhabers nebeneinander
-* Gestapelt: Sehen Sie die Gesamtzahl der Deals pro Phase, mit dem gestapelten Beitrag jedes Inhabers
+- Gruppiert: Sehen Sie die exakten Zahlen jedes Inhabers nebeneinander
+- Gestapelt: Sehen Sie die Gesamtzahl der Deals pro Phase, mit dem gestapelten Beitrag jedes Inhabers
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="badge-2k" />Datenbeschriftungen </span>
 
 Werte direkt auf Diagrammelementen (Balken, Punkte, Segmente) anzeigen.
 
-* **Ein**: Werte erscheinen im Diagramm
-* **Aus**: Keine Werte angezeigt (aufgeräumtere Darstellung)
+- **Ein**: Werte erscheinen im Diagramm
+- **Aus**: Keine Werte angezeigt (aufgeräumtere Darstellung)
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="text-caption" />Legende </span>
 
 Legende anzeigen oder ausblenden (erscheint nur, wenn Gruppieren nach eingestellt ist).
 
-* **Ein**: Die Legende zeigt, was jede Farbe darstellt
-* **Aus**: Keine Legende angezeigt
+- **Ein**: Die Legende zeigt, was jede Farbe darstellt
+- **Aus**: Keine Legende angezeigt
 
 <Tip>
-**Bewegen Sie den Mauszeiger** über ein Legendenelement, um diese Gruppe hervorzuheben. **Klicken** Sie, um es vorübergehend aus dem Diagramm auszublenden.
+  **Bewegen Sie den Mauszeiger** über ein Legendenelement, um diese Gruppe
+  hervorzuheben. **Klicken** Sie, um es vorübergehend aus dem Diagramm
+  auszublenden.
 </Tip>
 
 ---
@@ -265,11 +301,27 @@ Legende anzeigen oder ausblenden (erscheint nur, wenn Gruppieren nach eingestell
 
 ### Tortendiagramme
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Jedes Segment steht für** – Legen Sie fest, wie Segmente gruppiert werden
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Leere Kategorie ausblenden** – Nullwert-Segmente entfernen
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Wert in der Mitte anzeigen** – Den aggregierten Wert anzeigen (Summe, Durchschnitt, Anzahl usw.)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="chart-pie" size={16} />
+  </span>
+  **Jedes Segment steht für** – Legen Sie fest, wie Segmente gruppiert werden
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="eye-off" size={16} />
+  </span>
+  **Leere Kategorie ausblenden** – Nullwert-Segmente entfernen
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="number-123" size={16} />
+  </span>
+  **Wert in der Mitte anzeigen** – Den aggregierten Wert anzeigen (Summe,
+  Durchschnitt, Anzahl usw.)
 
 ### Aggregierte Diagramme
 
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Präfix** – Text vor der Zahl hinzufügen (z. B. `$`)
-* <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffix** – Text nach der Zahl hinzufügen (z. B. `%`)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="caret-left" size={16} />
+  </span>
+  **Präfix** – Text vor der Zahl hinzufügen (z. B. `$`)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="caret-right" size={16} />
+  </span>
+  **Suffix** – Text nach der Zahl hinzufügen (z. B. `%`)

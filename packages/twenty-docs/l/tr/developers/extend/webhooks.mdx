@@ -63,7 +63,8 @@ Her webhook, JSON gövdeli bir HTTP POST gönderir:
 | `timestamp` | Olayın ne zaman gerçekleştiği (UTC)           |
 
 <Note>
-Alındığını onaylamak için **2xx HTTP durumu** (200-299) ile yanıt verin. 2xx dışı yanıtlar teslimat hataları olarak kaydedilir.
+  Alındığını onaylamak için **2xx HTTP durumu** (200-299) ile yanıt verin. 2xx
+  dışı yanıtlar teslimat hataları olarak kaydedilir.
 </Note>
 
 ## Webhook Doğrulaması
@@ -87,22 +88,22 @@ Twenty, güvenlik için her webhook isteğini imzalar. İsteklerin gerçekliğin
 ### Örnek (Node.js)
 
 ```javascript
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const timestamp = req.headers['x-twenty-webhook-timestamp'];
 const payload = JSON.stringify(req.body);
-const secret = "your-webhook-secret";
+const secret = 'your-webhook-secret';
 
 const stringToSign = `${timestamp}:${payload}`;
 const expectedSignature = crypto
-  .createHmac("sha256", secret)
+  .createHmac('sha256', secret)
   .update(stringToSign)
-  .digest("hex");
+  .digest('hex');
 
-const receivedSignature = req.headers["x-twenty-webhook-signature"];
+const receivedSignature = req.headers['x-twenty-webhook-signature'];
 const isValid = crypto.timingSafeEqual(
-  Buffer.from(expectedSignature, "hex"),
-  Buffer.from(receivedSignature, "hex")
+  Buffer.from(expectedSignature, 'hex'),
+  Buffer.from(receivedSignature, 'hex'),
 );
 ```
 

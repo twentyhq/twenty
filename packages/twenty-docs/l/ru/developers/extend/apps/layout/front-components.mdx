@@ -10,13 +10,13 @@ icon: window-maximize
 
 Фронт-компоненты могут отображаться в двух местах внутри Twenty:
 
-* **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
-* **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в [макеты страниц](/l/ru/developers/extend/apps/layout/page-layouts). При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
+- **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
+- **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в [макеты страниц](/l/ru/developers/extend/apps/layout/page-layouts). При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
 
-Сам по себе фронт-компонент недоступен из интерфейса — его нужно *сделать доступным*. Сделать это можно двумя способами:
+Сам по себе фронт-компонент недоступен из интерфейса — его нужно _сделать доступным_. Сделать это можно двумя способами:
 
-* **Связать его с [элементом командного меню](/l/ru/developers/extend/apps/layout/command-menu-items)** — регистрирует его в командном меню (Cmd+K) и, при необходимости, как закреплённое быстрое действие.
-* **Встроить его как виджет в [макет страницы](/l/ru/developers/extend/apps/layout/page-layouts)** — размещает его на странице деталей записи или на дашборде.
+- **Связать его с [элементом командного меню](/l/ru/developers/extend/apps/layout/command-menu-items)** — регистрирует его в командном меню (Cmd+K) и, при необходимости, как закреплённое быстрое действие.
+- **Встроить его как виджет в [макет страницы](/l/ru/developers/extend/apps/layout/page-layouts)** — размещает его на странице деталей записи или на дашборде.
 
 ## Простой пример
 
@@ -58,8 +58,11 @@ export default defineCommandMenuItem({
 
 После синхронизации с помощью `yarn twenty dev` (или однократного запуска `yarn twenty dev --once`) быстрое действие появится в правом верхнем углу страницы:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Кнопка быстрого действия в правом верхнем углу" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Кнопка быстрого действия в правом верхнем углу"
+  />
 </div>
 
 Нажмите её, чтобы отобразить компонент инлайн.
@@ -95,7 +98,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -118,10 +124,10 @@ export default defineFrontComponent({
 
 Импортируйте их из `twenty-sdk/command`:
 
-* **`Command`** — запускает асинхронный колбэк через проп `execute`.
-* **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — запускает асинхронный колбэк через проп `execute`.
+- **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
 
 Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
 
@@ -248,7 +254,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -261,7 +268,11 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Секретные переменные (`isSecret: true`) **не** доступны фронтенд-компонентам. Они доступны только в [логических функциях](/l/ru/developers/extend/apps/logic/logic-functions), которые выполняются на стороне сервера. Это предотвращает отправку в браузер конфиденциальных значений, таких как ключи API.
+  Секретные переменные (`isSecret: true`) **не** доступны фронтенд-компонентам.
+  Они доступны только в [логических
+  функциях](/l/ru/developers/extend/apps/logic/logic-functions), которые
+  выполняются на стороне сервера. Это предотвращает отправку в браузер
+  конфиденциальных значений, таких как ключи API.
 </Warning>
 
 Следующие системные переменные всегда доступны через `process.env`:
@@ -336,7 +347,10 @@ export default defineFrontComponent({
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  numberOfSelectedRecords,
+} from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -408,12 +422,12 @@ export default defineFrontComponent({
 
 Компоненты фронтенда поддерживают несколько подходов к стилизации. Вы можете использовать:
 
-* **Встроенные стили** — `style={{ color: 'red' }}`
-* **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
-* **Emotion** — CSS-in-JS с `@emotion/react`
-* **Styled-components** — паттерны `styled.div`
-* **Tailwind CSS** — утилитарные классы
-* **Любая библиотека CSS-in-JS**, совместимая с React
+- **Встроенные стили** — `style={{ color: 'red' }}`
+- **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
+- **Emotion** — CSS-in-JS с `@emotion/react`
+- **Styled-components** — паттерны `styled.div`
+- **Tailwind CSS** — утилитарные классы
+- **Любая библиотека CSS-in-JS**, совместимая с React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

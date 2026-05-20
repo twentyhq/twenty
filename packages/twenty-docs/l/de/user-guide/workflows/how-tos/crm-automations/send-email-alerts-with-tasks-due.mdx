@@ -5,7 +5,10 @@ description: Benachrichtigen Sie Teammitglieder automatisch über ihre anstehend
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Senden Sie tägliche E-Mail-Erinnerungen an jedes Teammitglied zu den heute fälligen Aufgaben.
 
@@ -45,8 +48,8 @@ Dieser Workflow läuft nach einem Zeitplan und:
 1. Fügen Sie im Iterator eine **Datensätze suchen**-Aktion hinzu
 2. Wählen Sie **Aufgaben** als Objekt
 3. Filter hinzufügen:
-   * **Zuständige Person** = aktuelles Arbeitsbereichsmitglied (aus dem Iterator)
-   * **Fälligkeitsdatum** = heute
+   - **Zuständige Person** = aktuelles Arbeitsbereichsmitglied (aus dem Iterator)
+   - **Fälligkeitsdatum** = heute
 
 ### Schritt 5: Aufgaben in E-Mail-Inhalt formatieren (im Iterator)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-Ersetzen Sie `yourSubDomain` durch die tatsächliche Twenty-Arbeitsbereichs-Subdomain.
+  Ersetzen Sie `yourSubDomain` durch die tatsächliche
+  Twenty-Arbeitsbereichs-Subdomain.
 </Note>
 
 ### Schritt 6: E-Mail senden (im Iterator)
@@ -101,6 +105,6 @@ Ersetzen Sie `yourSubDomain` durch die tatsächliche Twenty-Arbeitsbereichs-Subd
 
 ## Verwandt
 
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+- [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Arrays in Code-Aktionen verarbeiten](/l/de/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

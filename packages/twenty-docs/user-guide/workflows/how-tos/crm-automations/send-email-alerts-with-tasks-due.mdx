@@ -2,15 +2,20 @@
 title: Send Email Alerts with Tasks Due
 description: Automatically notify team members about their upcoming or overdue tasks.
 ---
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}}/>
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Send daily email reminders to each team member about their tasks due today.
 
 ## Overview
 
 This workflow runs on a schedule and:
+
 1. Fetches all workspace members
 2. Loops through each member
 3. Finds their tasks due today
@@ -25,7 +30,6 @@ This workflow runs on a schedule and:
 1. Go to **Settings → Workflows** and create a new workflow
 2. Select **On a Schedule** as the trigger
 3. Use a cron expression for daily at 8:00 AM: `0 8 * * *`
-
 
 ### Step 2: Search for All Workspace Members
 
@@ -78,7 +82,7 @@ export const main = async (params: {
 ```
 
 <Note>
-Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
 </Note>
 
 ### Step 6: Send Email (Inside Iterator)
@@ -86,11 +90,11 @@ Replace `yourSubDomain` with your actual Twenty workspace subdomain.
 1. Add a **Send Email** action (still inside the iterator)
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **To** | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
-| **Subject** | Your Tasks Due Today |
-| **Body** | `{{code.formattedTasks}}` |
+| Field       | Value                                                           |
+| ----------- | --------------------------------------------------------------- |
+| **To**      | `{{iterator.currentItem.userEmail}}` (workspace member's email) |
+| **Subject** | Your Tasks Due Today                                            |
+| **Body**    | `{{code.formattedTasks}}`                                       |
 
 ### Step 7: Test and Activate
 

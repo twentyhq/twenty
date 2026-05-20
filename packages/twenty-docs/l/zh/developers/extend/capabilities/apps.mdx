@@ -3,9 +3,7 @@ title: Twenty 应用
 description: 以代码的形式构建并管理 Twenty 自定义项。
 ---
 
-<Warning>
-应用目前处于 Alpha 阶段。 该功能可用，但仍在演进中。
-</Warning>
+<Warning>应用目前处于 Alpha 阶段。 该功能可用，但仍在演进中。</Warning>
 
 ## 什么是应用？
 
@@ -13,11 +11,11 @@ description: 以代码的形式构建并管理 Twenty 自定义项。
 
 **你可以构建的内容:**
 
-* **自定义对象和字段** — 使用新实体扩展你的数据模型，或为现有对象（如 Company 或 Person）添加字段
-* **逻辑函数** — 由数据库事件、定时任务（cron）或 HTTP 路由触发的服务端函数
-* **前端组件** — 在 Twenty 的 UI 中渲染的 React 组件（记录页面、命令菜单、侧边面板）
-* **AI 技能和智能体** — 通过自定义能力扩展 Twenty 的 AI
-* **视图和导航** — 预配置的已保存视图和侧边栏链接
+- **自定义对象和字段** — 使用新实体扩展你的数据模型，或为现有对象（如 Company 或 Person）添加字段
+- **逻辑函数** — 由数据库事件、定时任务（cron）或 HTTP 路由触发的服务端函数
+- **前端组件** — 在 Twenty 的 UI 中渲染的 React 组件（记录页面、命令菜单、侧边面板）
+- **AI 技能和智能体** — 通过自定义能力扩展 Twenty 的 AI
+- **视图和导航** — 预配置的已保存视图和侧边栏链接
 
 ## 快速开始
 
@@ -31,11 +29,11 @@ yarn twenty dev
 
 ## 详细指南
 
-| 指南                                              | 描述                                                                                        |
-| ----------------------------------------------- | ----------------------------------------------------------------------------------------- |
-| [开始使用](/l/zh/developers/extend/apps/getting-started) | 搭建应用、设置本地服务器、项目结构、CI                                                                      |
+| 指南                                                     | 描述                                                                                                             |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| [开始使用](/l/zh/developers/extend/apps/getting-started) | 搭建应用、设置本地服务器、项目结构、CI                                                                           |
 | [构建应用](/l/zh/developers/extend/apps/building)        | 实体定义（`defineObject`、`defineLogicFunction`、`defineFrontComponent` 等）、API 客户端、npm 包、公共资源、测试 |
-| [发布](/l/zh/developers/extend/apps/publishing)        | 部署到服务器、发布到 npm、应用市场                                                                       |
+| [发布](/l/zh/developers/extend/apps/publishing)          | 部署到服务器、发布到 npm、应用市场                                                                               |
 
 ## 关键概念
 
@@ -45,18 +43,18 @@ SDK 通过扫描你的 TypeScript 文件中的 `export default define<Entity>({.
 
 ### 可用的实体类型
 
-| 函数                                 | 目的                      |
-| ---------------------------------- | ----------------------- |
-| `defineApplication()`              | 应用元数据（必需，每个应用一个）        |
+| 函数                               | 目的                             |
+| ---------------------------------- | -------------------------------- |
+| `defineApplication()`              | 应用元数据（必需，每个应用一个） |
 | `defineObject()`                   | 带字段的自定义对象               |
-| `defineField()`                    | 现有对象上的字段                |
-| `defineLogicFunction()`            | 带触发器的服务端逻辑              |
-| `defineFrontComponent()`           | Twenty 的 UI 中的 React 组件 |
-| `defineRole()`                     | 权限角色                    |
-| `defineView()`                     | 已保存视图配置                 |
-| `defineNavigationMenuItem()`       | 侧边栏导航链接                 |
-| `defineSkill()`                    | AI 智能体技能                |
-| `defineAgent()`                    | 带提示词的 AI 智能体            |
+| `defineField()`                    | 现有对象上的字段                 |
+| `defineLogicFunction()`            | 带触发器的服务端逻辑             |
+| `defineFrontComponent()`           | Twenty 的 UI 中的 React 组件     |
+| `defineRole()`                     | 权限角色                         |
+| `defineView()`                     | 已保存视图配置                   |
+| `defineNavigationMenuItem()`       | 侧边栏导航链接                   |
+| `defineSkill()`                    | AI 智能体技能                    |
+| `defineAgent()`                    | 带提示词的 AI 智能体             |
 | `definePageLayout()`               | 自定义记录页面布局               |
 | `definePreInstallLogicFunction()`  | 在应用安装之前运行               |
 | `definePostInstallLogicFunction()` | 在应用安装之后运行               |

@@ -55,10 +55,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -76,18 +96,23 @@ export default defineObject({
 
 ## Puncte cheie
 
-* `universalIdentifier` trebuie să fie unic și stabil între implementări.
-* Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
-* Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
-* Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
-* Puteți genera obiecte noi cu `yarn twenty dev:add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
+- `universalIdentifier` trebuie să fie unic și stabil între implementări.
+- Fiecare câmp necesită un `name`, un `type`, un `label` și propriul `universalIdentifier` stabil.
+- Tabloul `fields` este opțional — puteți defini obiecte fără câmpuri personalizate.
+- Câmpurile inline definite aici **nu** au nevoie de `objectUniversalIdentifier` — este moștenit de la obiectul părinte. Folosiți [`defineField()`](/l/ro/developers/extend/apps/data/extending-objects) pentru a adăuga câmpuri la obiecte care nu vă aparțin.
+- Puteți genera obiecte noi cu `yarn twenty dev:add object`, care vă ghidează prin denumire, câmpuri și relații. Consultați [Arhitectură → Generarea entităților](/l/ro/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
-**Câmpurile de bază sunt adăugate automat.** Când definiți un obiect personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate. Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest lucru este rareori o idee bună.
+  **Câmpurile de bază sunt adăugate automat.** Când definiți un obiect
+  personalizat, Twenty creează pentru dvs. câmpuri standard precum `id`, `name`,
+  `createdAt`, `updatedAt`, `createdBy`, `updatedBy` și `deletedAt`. Nu trebuie
+  să le declarați în tabloul `fields` — doar câmpurile dvs. personalizate.
+  Puteți suprascrie un câmp implicit declarând unul cu același nume, dar acest
+  lucru este rareori o idee bună.
 </Note>
 
 ## Ce urmează
 
-* **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
-* **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/l/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
-* **Afișați acest obiect în interfața utilizatorului** — consultați [Vizualizări](/l/ro/developers/extend/apps/layout/views) și [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a-l plasa în bara laterală.
+- **Conectați acest obiect la altele** — consultați [Relații](/l/ro/developers/extend/apps/data/relations) pentru modelul de relație bidirecțională.
+- **Adăugați câmpuri la obiecte din alte aplicații** — consultați [Extinderea obiectelor](/l/ro/developers/extend/apps/data/extending-objects) pentru `defineField()`.
+- **Afișați acest obiect în interfața utilizatorului** — consultați [Vizualizări](/l/ro/developers/extend/apps/layout/views) și [Elemente de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) pentru a-l plasa în bara laterală.

@@ -29,13 +29,16 @@ your-app/
 ```
 
 <Note>
-  **A organização de arquivos fica a seu critério.** A detecção de entidades é baseada em AST — o SDK encontra chamadas a `export default defineEntity(...)` independentemente de onde o arquivo esteja. A estrutura de pastas acima é uma convenção, não um requisito.
+  **A organização de arquivos fica a seu critério.** A detecção de entidades é
+  baseada em AST — o SDK encontra chamadas a `export default defineEntity(...)`
+  independentemente de onde o arquivo esteja. A estrutura de pastas acima é uma
+  convenção, não um requisito.
 </Note>
 
 ## Tipos de entidade
 
-| Entidade                      | Finalidade                                          | Documentação                                                                       |
-| ----------------------------- | --------------------------------------------------- | ---------------------------------------------------------------------------------- |
+| Entidade                      | Finalidade                                          | Documentação                                                                            |
+| ----------------------------- | --------------------------------------------------- | --------------------------------------------------------------------------------------- |
 | **Aplicação**                 | Identidade da aplicação, função padrão, variáveis   | [Configuração da aplicação](/l/pt/developers/extend/apps/config/application)            |
 | **Papel**                     | Conjuntos de permissões para objetos e campos       | [Papéis e permissões](/l/pt/developers/extend/apps/config/roles)                        |
 | **Objeto**                    | Tipos de registro personalizados com campos         | [Objetos](/l/pt/developers/extend/apps/data/objects)                                    |
@@ -53,9 +56,9 @@ your-app/
 
 ## Sandboxing
 
-* **Funções lógicas** são executadas em processos Node.js isolados no servidor. Elas acessam dados apenas por meio do cliente de API tipado, restrito às permissões do papel do aplicativo.
-* **Componentes de front-end** executam em Web Workers usando Remote DOM — isolados da página principal, mas renderizando elementos DOM nativos (não iframes). Eles se comunicam com o Twenty por meio de uma API de host com passagem de mensagens.
-* **Permissões** são aplicadas no nível da API. O token de tempo de execução (`TWENTY_APP_ACCESS_TOKEN`) é derivado do papel definido em `defineApplication()`.
+- **Funções lógicas** são executadas em processos Node.js isolados no servidor. Elas acessam dados apenas por meio do cliente de API tipado, restrito às permissões do papel do aplicativo.
+- **Componentes de front-end** executam em Web Workers usando Remote DOM — isolados da página principal, mas renderizando elementos DOM nativos (não iframes). Eles se comunicam com o Twenty por meio de uma API de host com passagem de mensagens.
+- **Permissões** são aplicadas no nível da API. O token de tempo de execução (`TWENTY_APP_ACCESS_TOKEN`) é derivado do papel definido em `defineApplication()`.
 
 ## Ciclo de vida do aplicativo
 
@@ -76,26 +79,46 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — observa seus arquivos-fonte e sincroniza ao vivo as alterações com um servidor Twenty conectado. O cliente de API tipado é regenerado automaticamente quando o esquema muda.
-* **`yarn twenty dev:build`** — compila TypeScript, empacota funções de lógica e componentes de front-end com o esbuild e produz um manifesto.
-* **Hooks de pré/pós-instalação** — funções opcionais que são executadas durante a instalação. Veja [Hooks de instalação](/l/pt/developers/extend/apps/config/install-hooks) para detalhes.
+- **`yarn twenty dev`** — observa seus arquivos-fonte e sincroniza ao vivo as alterações com um servidor Twenty conectado. O cliente de API tipado é regenerado automaticamente quando o esquema muda.
+- **`yarn twenty dev:build`** — compila TypeScript, empacota funções de lógica e componentes de front-end com o esbuild e produz um manifesto.
+- **Hooks de pré/pós-instalação** — funções opcionais que são executadas durante a instalação. Veja [Hooks de instalação](/l/pt/developers/extend/apps/config/install-hooks) para detalhes.
 
 ## Próximos passos
 
 <CardGroup cols={2}>
-  <Card title="Configuração" icon="screwdriver-wrench" href="/l/pt/developers/extend/apps/config/overview">
+  <Card
+    title="Configuração"
+    icon="screwdriver-wrench"
+    href="/l/pt/developers/extend/apps/config/overview"
+  >
     Identidade da aplicação, função padrão e hooks de instalação.
   </Card>
-  <Card title="Dados" icon="database" href="/l/pt/developers/extend/apps/data/overview">
+  <Card
+    title="Dados"
+    icon="database"
+    href="/l/pt/developers/extend/apps/data/overview"
+  >
     Objetos, campos e relações bidirecionais.
   </Card>
-  <Card title="Lógica" icon="bolt" href="/l/pt/developers/extend/apps/logic/overview">
+  <Card
+    title="Lógica"
+    icon="bolt"
+    href="/l/pt/developers/extend/apps/logic/overview"
+  >
     Funções lógicas, habilidades, agentes e conexões OAuth.
   </Card>
-  <Card title="Layout" icon="table-columns" href="/l/pt/developers/extend/apps/layout/overview">
+  <Card
+    title="Layout"
+    icon="table-columns"
+    href="/l/pt/developers/extend/apps/layout/overview"
+  >
     Vistas, navegação, layouts de página, componentes de front-end.
   </Card>
-  <Card title="Operações" icon="rocket" href="/l/pt/developers/extend/apps/operations/overview">
+  <Card
+    title="Operações"
+    icon="rocket"
+    href="/l/pt/developers/extend/apps/operations/overview"
+  >
     CLI, testes, remotos, CI e publicação do seu aplicativo.
   </Card>
 </CardGroup>

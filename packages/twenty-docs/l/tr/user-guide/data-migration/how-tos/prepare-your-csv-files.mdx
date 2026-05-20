@@ -18,7 +18,11 @@ Başlamadan önce dosyanızın şu gereksinimleri karşıladığından emin olun
 | **Kodlama**      | UTF-8 önerilir                  |
 | **Yapı**         | Dosya başına tek bir nesne türü |
 
-<Note>10.000 kayıttan büyük veri kümeleri için, birden çok dosyaya bölün veya [API ile içe aktarma](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) kullanın.</Note>
+<Note>
+  10.000 kayıttan büyük veri kümeleri için, birden çok dosyaya bölün veya [API
+  ile içe aktarma](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)
+  kullanın.
+</Note>
 
 ## Adım 2: Örnek Dosyayı İndirin
 
@@ -29,7 +33,11 @@ Başlamadan önce dosyanızın şu gereksinimleri karşıladığından emin olun
 3. **Örnek dosyayı indir**'e tıklayın
 4. Bu dosyayı şablonunuz olarak kullanın
 
-<Note>**İpucu:** Bunun yerine birkaç mevcut kaydı dışa aktarın. Bu, verilerin nasıl biçimlendirilmesi gerektiğine dair gerçek örnekler sağlar ve içe aktarma sırasında sütun adları otomatik olarak eşleştirilir.</Note>
+<Note>
+  **İpucu:** Bunun yerine birkaç mevcut kaydı dışa aktarın. Bu, verilerin nasıl
+  biçimlendirilmesi gerektiğine dair gerçek örnekler sağlar ve içe aktarma
+  sırasında sütun adları otomatik olarak eşleştirilir.
+</Note>
 
 ## Adım 3: Yinelenen Değerleri Kaldırın
 
@@ -47,7 +55,11 @@ Twenty bazı alanlarda benzersizliği zorunlu kılar. Yinelenenler içe aktarma 
 2. Yinelenen satırları kaldırın veya birleştirin
 3. Twenty'de zaten var olan yinelenen kayıtları kontrol edin
 
-<Warning>**Geçici olarak silinmiş kayıtlar benzersizliğe dahildir.** Komut Menüsü → Silinen kayıtları gör bölümündeki kayıtlar yinelenen hatalarına neden olur. Onları kalıcı olarak silin ya da geri yükleyip güncelleyin.</Warning>
+<Warning>
+  **Geçici olarak silinmiş kayıtlar benzersizliğe dahildir.** Komut Menüsü →
+  Silinen kayıtları gör bölümündeki kayıtlar yinelenen hatalarına neden olur.
+  Onları kalıcı olarak silin ya da geri yükleyip güncelleyin.
+</Warning>
 
 ## Adım 4: Her Alan Türünü Doğru Biçimlendirin
 
@@ -55,14 +67,14 @@ Farklı alan türleri belirli biçimler gerektirir. İşte eksiksiz başvuru:
 
 ### Metin Alanları
 
-* Özel bir biçimlendirme gerekmez
-* Baştaki/sondaki boşluklar otomatik olarak kırpılır
+- Özel bir biçimlendirme gerekmez
+- Baştaki/sondaki boşluklar otomatik olarak kırpılır
 
 ### E-posta Alanları
 
-* Geçerli e-posta biçiminde olmalıdır: `name@domain.com`
-* Benzersiz olmalıdır (dosyada veya Twenty'de yinelenen olmamalıdır)
-* Ek e-postalar için, **E-postalar / Ek E-postalar** sütununda şu biçimi kullanın:
+- Geçerli e-posta biçiminde olmalıdır: `name@domain.com`
+- Benzersiz olmalıdır (dosyada veya Twenty'de yinelenen olmamalıdır)
+- Ek e-postalar için, **E-postalar / Ek E-postalar** sütununda şu biçimi kullanın:
 
 ```
 [\"jane@twenty.com\",\"jane.doe@twenty.com\"]
@@ -70,12 +82,12 @@ Farklı alan türleri belirli biçimler gerektirir. İşte eksiksiz başvuru:
 
 ### Alan Adı Alanları
 
-* **Önerilen biçim**: `https://domain.com`
-* Bu, posta kutusu/takvim eşitlemesinde kullanılan biçimle aynıdır (yinelenenleri önler)
-* Her iki sütunu da doldurun:
-  * **Alan Adı / Alan Adı Etiketi**: `domain.com`
-  * **Alan Adı / Alan Adı URL'si**: `https://domain.com`
-* Dosyanız içinde ve Twenty'de benzersiz olmalıdır
+- **Önerilen biçim**: `https://domain.com`
+- Bu, posta kutusu/takvim eşitlemesinde kullanılan biçimle aynıdır (yinelenenleri önler)
+- Her iki sütunu da doldurun:
+  - **Alan Adı / Alan Adı Etiketi**: `domain.com`
+  - **Alan Adı / Alan Adı URL'si**: `https://domain.com`
+- Dosyanız içinde ve Twenty'de benzersiz olmalıdır
 
 ### Telefon Alanları
 
@@ -91,25 +103,25 @@ Telefon, birden çok sütun gerektiren **iç içe bir alan**dır:
 
 Adres, birden çok sütundan oluşan **iç içe bir alandır** (bazıları boş bırakılabilir):
 
-* **Address / Address 1**: Sokak adresinin 1. satırı
-* **Address / Address 2**: Sokak adresinin 2. satırı (isteğe bağlı)
-* **Address / City**: Şehir adı
-* **Address / State**: Eyalet veya il
-* **Address / Country**: Ülke adı
-* **Address / Post Code**: Posta/ZIP kodu
+- **Address / Address 1**: Sokak adresinin 1. satırı
+- **Address / Address 2**: Sokak adresinin 2. satırı (isteğe bağlı)
+- **Address / City**: Şehir adı
+- **Address / State**: Eyalet veya il
+- **Address / Country**: Ülke adı
+- **Address / Post Code**: Posta/ZIP kodu
 
 ### Tarih Alanları
 
 Dosyanızın tamamında tutarlı bir biçim kullanın:
 
-* `YYYY-MM-DD` (önerilir): `2024-03-15`
-* ISO 8601: `2024-03-15T10:30:00Z`
+- `YYYY-MM-DD` (önerilir): `2024-03-15`
+- ISO 8601: `2024-03-15T10:30:00Z`
 
 ### Sayı Alanları
 
-* Yalnızca sayılar (metin yok)
-* Ondalıklar için nokta kullanın: `1234.56`
-* Binlik ayırıcı kullanmayın (şu değil: `1,234.56`)
+- Yalnızca sayılar (metin yok)
+- Ondalıklar için nokta kullanın: `1234.56`
+- Binlik ayırıcı kullanmayın (şu değil: `1,234.56`)
 
 ### Para Birimi Alanları
 
@@ -137,7 +149,10 @@ Büyük harf kullanın: `TRUE` veya `FALSE`
 3. **Gelişmiş modu** etkinleştirin (sağ alttaki anahtarı kullanarak)
 4. API adını kopyalayın (ör., `OPTION_1`, "Option 1" değil)
 
-<Note>Yeni seçim seçenekleri otomatik olarak oluşturulmaz. İçe aktarmadan önce **Ayarlar → Veri Modeli** içinde ekleyin.</Note>
+<Note>
+  Yeni seçim seçenekleri otomatik olarak oluşturulmaz. İçe aktarmadan önce
+  **Ayarlar → Veri Modeli** içinde ekleyin.
+</Note>
 
 ### Çoklu Seçim Alanları
 
@@ -163,8 +178,8 @@ JSON dizi biçimini kullanın:
 
 Her iki sütunu da doldurun:
 
-* **Links / Link Label**: `Twenty`
-* **Links / Link URL**: `https://twenty.com`
+- **Links / Link Label**: `Twenty`
+- **Links / Link URL**: `https://twenty.com`
 
 İkincil bağlantılar için **Links / Secondary Links** sütununu kullanın:
 
@@ -182,9 +197,9 @@ Geçerli JSON biçimini kullanın:
 
 ### ID Alanları
 
-* **İsteğe bağlı**: Sağlanmazsa Twenty kimlikleri otomatik olarak oluşturur
-* **Biçim**: UUID (ör., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Kullanım durumu**: Yeni kayıtlar oluşturmak yerine mevcut kayıtları güncellemek için ID ekleyin
+- **İsteğe bağlı**: Sağlanmazsa Twenty kimlikleri otomatik olarak oluşturur
+- **Biçim**: UUID (ör., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+- **Kullanım durumu**: Yeni kayıtlar oluşturmak yerine mevcut kayıtları güncellemek için ID ekleyin
 
 ## Adım 5: İlişki Sütunları Ekleyin (Kayıtları Birbirine Bağlıyorsanız)
 
@@ -202,20 +217,22 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 
 **İlişkiler için önemli kurallar:**
 
-* Ana kaydın Twenty'de zaten mevcut olması gerekir
-* **Etiket**i değil, **Alan Adı URL'si** biçimini (`https://domain.com`) kullanın
-* Yalnızca TEK bir benzersiz tanımlayıcı eşleyin (hem `companyId` hem de `companyDomain` eklemeyin)
-* Çalışma Alanı Üyeleri için, ad yerine **e-postalarını** kullanın
+- Ana kaydın Twenty'de zaten mevcut olması gerekir
+- **Etiket**i değil, **Alan Adı URL'si** biçimini (`https://domain.com`) kullanın
+- Yalnızca TEK bir benzersiz tanımlayıcı eşleyin (hem `companyId` hem de `companyDomain` eklemeyin)
+- Çalışma Alanı Üyeleri için, ad yerine **e-postalarını** kullanın
 
 <Warning>
 **İçe Aktarma Sırası Önemlidir!**
 
 Önce "bir" tarafını, sonra "çok" tarafını içe aktarın:
+
 1. **Şirketler** önce
 2. **Kişiler** ikinci (şirket referansıyla)
 3. **Fırsatlar** üçüncü
 
 Ona referans verebilmeden önce ana kayıt mevcut olmalıdır.
+
 </Warning>
 
 Ayrıntılı talimatlar için [İlişkileri Nasıl İçe Aktarırız](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) bölümüne bakın.
@@ -238,7 +255,9 @@ Dosyanızı yüklemeden önce şunları doğrulayın:
 <Check>Dosya CSV, XLSX veya XLS biçiminde</Check>
 <Check>Dosyada 10.000'den az kayıt var</Check>
 <Check>Kodlama UTF-8</Check>
-<Check>Yinelenen e-postalar (Kişiler için) veya alan adları (Şirketler için) yok</Check>
+<Check>
+  Yinelenen e-postalar (Kişiler için) veya alan adları (Şirketler için) yok
+</Check>
 <Check>Tarihler her yerde tutarlı bir biçim kullanıyor</Check>
 <Check>Alan adları `https://domain.com` biçimini kullanıyor</Check>
 <Check>Boole alanları `TRUE` veya `FALSE` (büyük harf) kullanıyor</Check>
@@ -262,6 +281,6 @@ Dosyanızı yüklemeden önce şunları doğrulayın:
 
 Dosyanız hazır! Şimdi:
 
-* [Şirketleri İçe Aktarın](/l/tr/user-guide/data-migration/how-tos/import-companies-via-csv) (bunları önce içe aktarın)
-* [Kişileri İçe Aktarın](/l/tr/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [İçe aktarma hatalarını düzeltin](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+- [Şirketleri İçe Aktarın](/l/tr/user-guide/data-migration/how-tos/import-companies-via-csv) (bunları önce içe aktarın)
+- [Kişileri İçe Aktarın](/l/tr/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [İçe aktarma hatalarını düzeltin](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)

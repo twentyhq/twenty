@@ -42,11 +42,9 @@ export const MyComponent = () => {
 },{
 ```
 
-
 </Tab>
 
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti     | Typ                | Popis                                                                                                                     |
 | -------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------- |
@@ -58,9 +56,6 @@ export const MyComponent = () => {
 | chyba          | řetězec            | Reprezentuje chybovou zprávu, která se má zobrazit. Pokud je poskytnuta, také přidává ikonu chyby na pravou stranu vstupu |
 | onKeyDown      | funkce             | Volá se při stisknutí klávesy, když je vstupní pole ve fokusu. Přijímá `React.KeyboardEvent` jako argument                |
 | Pravá Ikona    | Ikonová komponenta | Volitelná komponenta ikony zobrazená na pravé straně vstupu                                                               |
-
-
-
 
 Komponenta také přijímá jiné vlastnosti HTML vstupního prvku.
 
@@ -77,15 +72,15 @@ Textová vstupní komponenta, která automaticky přizpůsobuje svou výšku na 
 <Tab title="Použití">
 
 ```jsx
-import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("Funkce onValidate spuštěna")}
+      onValidate={() => console.log('Funkce onValidate spuštěna')}
       minRows={1}
       placeholder="Napište komentář"
-      onFocus={() => console.log("Funkce onFocus spuštěna")}
+      onFocus={() => console.log('Funkce onFocus spuštěna')}
       variant="icon"
       buttonTitle
       value="Úkol: "
@@ -94,11 +89,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti    | Typ     | Popis                                                                   |
 | ------------- | ------- | ----------------------------------------------------------------------- |
@@ -109,9 +102,6 @@ export const MyComponent = () => {
 | varianta      | řetězec | Varianta vstupu. Možnosti zahrnují: `výchozí`, `ikona`, a `tlačítko`    |
 | buttonTitle   | řetězec | Název pro tlačítko (pouze pro variantu tlačítka)                        |
 | hodnota       | řetězec | Úvodní hodnota pro textovou oblast                                      |
-
-
-
 
 </Tab>
 
@@ -125,26 +115,24 @@ Umožňuje vytvoření víceřádkových textových vstupů.
 <Tab title="Použití">
 
 ```jsx
-import { TextArea } from "@/ui/input/components/TextArea";
+import { TextArea } from '@/ui/input/components/TextArea';
 
 export const MyComponent = () => {
   return (
     <TextArea
-    disabled={false}
-    minRows={4}
-    onChange={()=>console.log('On change function fired')}
-    placeholder="Enter text here"
-    value=""
+      disabled={false}
+      minRows={4}
+      onChange={() => console.log('On change function fired')}
+      placeholder="Enter text here"
+      value=""
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti    | Typ                | Popis                                                     |
 | ------------- | ------------------ | --------------------------------------------------------- |
@@ -153,9 +141,6 @@ export const MyComponent = () => {
 | onChange      | funkce             | Callback funkce spuštěná při změně obsahu textové oblasti |
 | zástupný text | řetězec            | Zástupný text zobrazený, když je textová oblast prázdná   |
 | hodnota       | řetězec            | Aktuální hodnota textové oblasti                          |
-
-
-
 
 </Tab>
 </Tabs>

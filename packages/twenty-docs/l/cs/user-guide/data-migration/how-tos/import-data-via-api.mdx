@@ -19,7 +19,10 @@ Twenty poskytuje pro programový import dat jak **GraphQL**, tak **REST API**. A
 | **Synchronizace v reálném čase** | **Import přes API**               |
 | **Integrace s jinými systémy**   | **Import přes API**               |
 
-<Note>Pro datové sady o stovkách tisíc záznamů je API výrazně rychlejší a spolehlivější než více importů CSV.</Note>
+<Note>
+  Pro datové sady o stovkách tisíc záznamů je API výrazně rychlejší a
+  spolehlivější než více importů CSV.
+</Note>
 
 ## Limity rychlosti API
 
@@ -35,6 +38,7 @@ Twenty uplatňuje limity rychlosti, aby zajistilo stabilitu systému:
 **Naplánujte import s ohledem na tyto limity.**
 
 Pro 100 000 záznamů při maximální propustnosti počítejte s přibližně 17 minutami importu. Přidejte rezervu na zpracování chyb a opakování.
+
 </Warning>
 
 ## Začínáme
@@ -51,21 +55,22 @@ Pro 100 000 záznamů při maximální propustnosti počítejte s přibližně 1
 **Chraňte svůj klíč API v tajnosti.**
 
 Kdokoli s vaším klíčem API může přistupovat k datům vašeho pracovního prostoru a upravovat je. Nikdy ho neukládejte do repozitářů kódu ani jej veřejně nesdílejte.
+
 </Warning>
 
 ### Krok 2: Vyberte si API
 
 Twenty podporuje dva typy API:
 
-| API         | Vhodné pro                                                        | Dokumentace                               |
-| ----------- | ----------------------------------------------------------------- | ----------------------------------------- |
+| API         | Vhodné pro                                                        | Dokumentace                                    |
+| ----------- | ----------------------------------------------------------------- | ---------------------------------------------- |
 | **GraphQL** | Flexibilní dotazy, získávání souvisejících dat, komplexní operace | [Dokumentace API](/l/cs/developers/extend/api) |
 | **REST**    | Jednoduché CRUD operace, známé postupy REST                       | [Dokumentace API](/l/cs/developers/extend/api) |
 
 Obě API podporují:
 
-* Vytváření, čtení, aktualizace a mazání záznamů
-* **Dávkové operace** — vytvoření nebo aktualizace až 60 záznamů na jedno volání
+- Vytváření, čtení, aktualizace a mazání záznamů
+- **Dávkové operace** — vytvoření nebo aktualizace až 60 záznamů na jedno volání
 
 **Pro importy používejte dávkové operace**, abyste maximalizovali propustnost v rámci limitů rychlosti.
 
@@ -83,33 +88,33 @@ Stejně jako u importů CSV na **pořadí záleží** kvůli vazbám:
 
 ### Dávkujte své požadavky
 
-* Neposílejte záznamy po jednom
-* Seskupte až **60 záznamů na jedno volání API**
-* Tím maximalizujete propustnost v rámci limitů rychlosti
+- Neposílejte záznamy po jednom
+- Seskupte až **60 záznamů na jedno volání API**
+- Tím maximalizujete propustnost v rámci limitů rychlosti
 
 ### Práce s limity rychlosti
 
-* Zaveďte prodlevy mezi požadavky (minimálně 600 ms pro dlouhodobé importy)
-* Při dosažení limitů použijte exponenciální backoff
-* Sledujte odpovědi 429 (Too Many Requests)
+- Zaveďte prodlevy mezi požadavky (minimálně 600 ms pro dlouhodobé importy)
+- Při dosažení limitů použijte exponenciální backoff
+- Sledujte odpovědi 429 (Too Many Requests)
 
 ### Nejprve ověřte data
 
-* Před importem data vyčistěte a ověřte
-* Zkontrolujte, že jsou vyplněna povinná pole
-* Ověřte, že formáty odpovídají požadavkům Twenty (viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping))
+- Před importem data vyčistěte a ověřte
+- Zkontrolujte, že jsou vyplněna povinná pole
+- Ověřte, že formáty odpovídají požadavkům Twenty (viz [Mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping))
 
 ### Zaznamenávejte vše
 
-* Zaznamenávejte každý importovaný záznam (včetně ID)
-* Zaznamenávejte chyby s plným kontextem
-* To pomáhá při ladění problémů a ověření dokončení
+- Zaznamenávejte každý importovaný záznam (včetně ID)
+- Zaznamenávejte chyby s plným kontextem
+- To pomáhá při ladění problémů a ověření dokončení
 
 ### Nejprve testujte
 
-* Testujte s malou dávkou (10–20 záznamů)
-* Ověřte, že se data v Twenty zobrazují správně
-* Poté spusťte celý import
+- Testujte s malou dávkou (10–20 záznamů)
+- Ověřte, že se data v Twenty zobrazují správně
+- Poté spusťte celý import
 
 ### Upsert pro zamezení duplicit
 
@@ -138,10 +143,10 @@ S náročnými migracemi přes API mohou pomoci naši partneři:
 
 **Vhodné pro:**
 
-* Migrace 100 000+ záznamů
-* Složité transformace dat
-* Napjaté časové plány
-* Týmy bez vývojářských kapacit
+- Migrace 100 000+ záznamů
+- Složité transformace dat
+- Napjaté časové plány
+- Týmy bez vývojářských kapacit
 
 Kontaktujte nás na [contact@twenty.com](mailto:contact@twenty.com) nebo prozkoumejte naše [Implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services).
 
@@ -152,17 +157,19 @@ Kontaktujte nás na [contact@twenty.com](mailto:contact@twenty.com) nebo prozkou
     GraphQL vám umožní vyžádat si v jediném dotazu přesně ta data, která potřebujete, a je vhodnější pro složité operace. REST používá standardní metody HTTP (GET, POST, PUT, DELETE) a může vám být bližší, pokud jste pracovali s tradičními API.
   </Accordion>
 
-  <Accordion title="Mohu aktualizovat existující záznamy přes API?">
-    Ano! Použijte aktualizační mutace (GraphQL) nebo požadavky PUT/PATCH (REST) s `id` záznamu.
-  </Accordion>
+<Accordion title="Mohu aktualizovat existující záznamy přes API?">
+  Ano! Použijte aktualizační mutace (GraphQL) nebo požadavky PUT/PATCH (REST) s
+  `id` záznamu.
+</Accordion>
 
-  <Accordion title="Jak mám řešit duplicity?">
-    Nejprve vyhledejte existující záznamy pomocí jedinečných identifikátorů (e-mail, doména). Pokud existuje, aktualizujte; pokud ne, vytvořte.
-  </Accordion>
+<Accordion title="Jak mám řešit duplicity?">
+  Nejprve vyhledejte existující záznamy pomocí jedinečných identifikátorů
+  (e-mail, doména). Pokud existuje, aktualizujte; pokud ne, vytvořte.
+</Accordion>
 
-  <Accordion title="Mohu mazat záznamy přes API?">
-    Ano, použijte mutace pro smazání (GraphQL) nebo požadavky DELETE (REST).
-  </Accordion>
+<Accordion title="Mohu mazat záznamy přes API?">
+  Ano, použijte mutace pro smazání (GraphQL) nebo požadavky DELETE (REST).
+</Accordion>
 
   <Accordion title="Existuje SDK pro Python nebo Node.js?">
     V současnosti ne, ale obě API fungují s jakýmkoli klientem HTTP v libovolném jazyce.
@@ -173,4 +180,4 @@ Kontaktujte nás na [contact@twenty.com](mailto:contact@twenty.com) nebo prozkou
 
 Úplné podrobnosti implementace, ukázky kódu a referenci schématu najdete zde:
 
-* [Dokumentace API](/l/cs/developers/extend/api)
+- [Dokumentace API](/l/cs/developers/extend/api)

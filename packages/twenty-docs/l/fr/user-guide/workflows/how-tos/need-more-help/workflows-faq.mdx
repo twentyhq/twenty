@@ -10,6 +10,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     **Solution** : Contactez l'administrateur de votre espace de travail pour vous accorder l'accès aux flux de travail dans **Paramètres → Rôles**.
 
     Si vous ne voyez pas du tout la section des flux de travail dans votre barre latérale, cela confirme qu'il s'agit d'un problème de permissions.
+
   </Accordion>
 
   <Accordion title="Pourquoi ne vois-je pas mon bouton de flux de travail manuel dans la barre de navigation supérieure ?">
@@ -22,6 +23,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     **À vérifier** : Ouvrez le flux de travail → cliquez sur le déclencheur → vérifiez que "Navbar placement" est défini sur "Pinned".
 
     Vous pouvez toujours accéder aux flux de travail manuels via **Cmd + K** (ou **Ctrl + K**), quels que soient les paramètres de la barre de navigation.
+
   </Accordion>
 
   <Accordion title="Quelle est la différence entre les déclencheurs manuels Single, Global et Bulk ?">
@@ -37,6 +39,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * **Bulk** : À utiliser lorsque vous devez traiter les enregistrements ensemble ou optimiser l'utilisation des crédits (nécessite l'action Iterator)
 
     Voir [Déclencheurs de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-triggers) pour plus de détails.
+
   </Accordion>
 
   <Accordion title="Je ne vois pas de nœud If/Else. Que dois-je faire ?">
@@ -55,6 +58,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     Seule la branche où la condition du filtre est vérifiée exécutera ses actions suivantes.
 
     Voir [Comment utiliser les branches](/l/fr/user-guide/workflows/capabilities/workflow-branches) pour un guide étape par étape.
+
   </Accordion>
 
   <Accordion title="Les branches de flux de travail s'exécutent-elles en parallèle ?">
@@ -66,6 +70,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Définissez des conditions opposées (p. ex., Branche A : status = "Open", Branche B : status ≠ "Open")
 
     Les branches qui ne satisfont pas leur condition de filtre cessent de s'exécuter, tandis que les autres continuent.
+
   </Accordion>
 
   <Accordion title="Puis-je fusionner les branches ?">
@@ -78,6 +83,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     3. Faites glisser des connexions depuis la fin de chaque branche vers cette nouvelle étape
 
     L'étape fusionnée s'exécutera après l'achèvement de toutes les branches connectées.
+
   </Accordion>
 
   <Accordion title="Quelle est la limite des résultats de Search Records ?">
@@ -90,12 +96,14 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Envisagez d'utiliser l'API pour des opérations en masse
 
     Pour la plupart des flux de travail, 200 enregistrements suffisent. Si vous atteignez régulièrement cette limite, envisagez de restructurer votre automatisation.
+
   </Accordion>
 
   <Accordion title="Puis-je mettre des personnes en CC sur les e-mails de flux de travail ?">
     **Pas encore.** Les champs CC et Cci pour l'action Send Email figurent sur notre feuille de route.
 
     **Solution de contournement actuelle** : Ajoutez plusieurs actions Send Email pour envoyer à des destinataires supplémentaires, ou utilisez une HTTP Request pour envoyer via un service de messagerie externe qui prend en charge le CC.
+
   </Accordion>
 
   <Accordion title="Comment utiliser les sorties des étapes précédentes ?">
@@ -113,6 +121,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Sortie du code : `{{code.calculatedValue}}`
 
     Survolez n'importe quel champ dans la configuration de l'action pour voir les variables disponibles provenant des étapes précédentes.
+
   </Accordion>
 
   <Accordion title="Pourquoi mon Iterator échoue-t-il ?">
@@ -128,6 +137,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     2. Filtre : length > 0
     3. Iterator : sélectionnez `{{searchRecords}}`
     4. Les actions à l'intérieur d'Iterator utilisent `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="Quel est le temps d'exécution maximal pour les actions Code ?">
@@ -143,6 +153,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Évitez les calculs lourds ; utilisez des services externes via HTTP Request pour les traitements intensifs
     * Optimisez votre code pour réduire le temps d'exécution
     * Si vous avez besoin d'un traitement plus long, envisagez d'utiliser des flux de travail planifiés qui traitent les données par lots
+
   </Accordion>
 
   <Accordion title="Comment lire les exécutions de flux de travail ?">
@@ -161,6 +172,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * **Données** : Affichez les données d'entrée/sortie à chaque étape
 
     Voir [Exécutions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-runs) pour plus de détails.
+
   </Accordion>
 
   <Accordion title="Pourquoi ne vois-je pas mes exécutions de flux de travail ?">
@@ -182,6 +194,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Espacez les opérations de traitement par lots
     * Utilisez des filtres pour réduire la fréquence des déclencheurs
     * Planifiez les flux de travail lourds pendant les heures creuses
+
   </Accordion>
 
   <Accordion title="Quelles sont les limites de débit des flux de travail ?">
@@ -202,6 +215,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Utilisez des déclencheurs Bulk avec Iterator au lieu de déclencheurs Single pour les gros lots
     * Regroupez les automatisations liées dans un nombre plus restreint de flux de travail
     * Utilisez des flux de travail planifiés pour étaler la charge dans le temps
+
   </Accordion>
 
   <Accordion title="Puis-je relancer une exécution de flux de travail ayant échoué ?">
@@ -220,6 +234,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     * Testez minutieusement avec quelques enregistrements avant les opérations en masse
 
     La fonctionnalité de nouvelle tentative automatique figure sur notre feuille de route pour une version ultérieure.
+
   </Accordion>
 
   <Accordion title="Dois-je désactiver les flux de travail avant les importations CSV ?">
@@ -241,6 +256,7 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     5. **Réactivez** les flux de travail une fois terminé
 
     **Alternative** : Si vous avez besoin que les flux de travail s'exécutent sur les données importées, importez par plus petits lots pour rester dans les limites de débit.
+
   </Accordion>
 
   <Accordion title="Comment nettoyer la disposition de mon flux de travail ?">
@@ -250,5 +266,6 @@ description: Foire aux questions sur les flux de travail dans Twenty.
     2. Cliquez sur **Tidy up workflow**
 
     Cela réorganisera automatiquement tous les nœuds dans une disposition propre et organisée.
+
   </Accordion>
 </AccordionGroup>

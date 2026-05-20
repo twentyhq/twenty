@@ -11,20 +11,23 @@ Exportați datele spațiului de lucru în CSV pentru copii de siguranță, rapor
 
 **Cazuri de utilizare:**
 
-* **Copii de siguranță regulate** — păstrați copii ale datelor dvs.
-* **Raportare externă** — analizați datele în Excel, Google Sheets sau instrumente BI
-* **Migrare** — mutați datele într-un alt sistem
-* **Actualizări în masă** — exportați, editați și reimportați pentru a actualiza înregistrările
+- **Copii de siguranță regulate** — păstrați copii ale datelor dvs.
+- **Raportare externă** — analizați datele în Excel, Google Sheets sau instrumente BI
+- **Migrare** — mutați datele într-un alt sistem
+- **Actualizări în masă** — exportați, editați și reimportați pentru a actualiza înregistrările
 
 ## Ce trebuie să știți
 
 ### Limite de export
 
-* **Maxim 20.000 de înregistrări** pentru fiecare export
-* Sunt exportate doar **coloanele vizibile**
-* Sunt exportate doar **înregistrările filtrate** (pe baza vizualizării curente)
+- **Maxim 20.000 de înregistrări** pentru fiecare export
+- Sunt exportate doar **coloanele vizibile**
+- Sunt exportate doar **înregistrările filtrate** (pe baza vizualizării curente)
 
-<Note>Pentru exporturi mai mari (20.000+ înregistrări), utilizați filtre pentru a exporta în loturi sau folosiți [API](/l/ro/developers/extend/api).</Note>
+<Note>
+  Pentru exporturi mai mari (20.000+ înregistrări), utilizați filtre pentru a
+  exporta în loturi sau folosiți [API](/l/ro/developers/extend/api).
+</Note>
 
 ### Permisiuni
 
@@ -34,10 +37,10 @@ Aveți nevoie de permisiunea **"Export CSV"** pentru a exporta date. Contactați
 
 Accesați obiectul pe care doriți să-l exportați:
 
-* **Persoane** — pentru contacte
-* **Companii** — pentru organizații
-* **Oportunități** — pentru tranzacții
-* **Obiecte personalizate** — orice obiect pe care l-ați creat
+- **Persoane** — pentru contacte
+- **Companii** — pentru organizații
+- **Oportunități** — pentru tranzacții
+- **Obiecte personalizate** — orice obiect pe care l-ați creat
 
 ## Pasul 2: Configurați vizualizarea
 
@@ -62,7 +65,11 @@ Dacă aveți nevoie doar de un subset de date:
 1. Faceți clic pe antetul unei coloane pentru a sorta
 2. Exportul va respecta ordinea de sortare
 
-<Note>**Creați o vizualizare dedicată pentru export.** Salvați o vizualizare configurată specific pentru exporturi, astfel încât să nu fie nevoie să reconfigurați de fiecare dată.</Note>
+<Note>
+  **Creați o vizualizare dedicată pentru export.** Salvați o vizualizare
+  configurată specific pentru exporturi, astfel încât să nu fie nevoie să
+  reconfigurați de fiecare dată.
+</Note>
 
 ## Pasul 3: Exportați datele
 
@@ -85,8 +92,8 @@ Dacă aveți nevoie doar de un subset de date:
 
 ID-urile relațiilor sunt exportate doar pe **partea "many"** a unei relații:
 
-* **Exportul de Persoane** include o coloană `companyId` (relația Persoane → Companie)
-* **Exportul de Companii** NU include `peopleIds` (Companii este partea "one")
+- **Exportul de Persoane** include o coloană `companyId` (relația Persoane → Companie)
+- **Exportul de Companii** NU include `peopleIds` (Companii este partea "one")
 
 Asta înseamnă că puteți folosi exportul de Persoane pentru a reimporta și menține legătura cu Compania, dar va trebui să reimportați Persoanele după Companii pentru a recrea relațiile.
 
@@ -136,9 +143,9 @@ Limita de export este de 20.000 de înregistrări. Pentru seturi de date mai mar
 
 **Exemple de filtre pentru lotizare:**
 
-* După interval de date (ianuarie, februarie, martie...)
-* După proprietar (Membru al echipei A, Membru al echipei B...)
-* După statut (Activ, Inactiv...)
+- După interval de date (ianuarie, februarie, martie...)
+- După proprietar (Membru al echipei A, Membru al echipei B...)
+- După statut (Activ, Inactiv...)
 
 ### Opțiunea 2: Utilizați API-ul
 
@@ -164,9 +171,9 @@ Salvați vizualizări configurate special pentru export:
 
 Fișierele exportate pot conține date sensibile:
 
-* Stocați în locații sigure
-* Ștergeți exporturile vechi când nu mai sunt necesare
-* Aveți grijă când partajați fișierele de export
+- Stocați în locații sigure
+- Ștergeți exporturile vechi când nu mai sunt necesare
+- Aveți grijă când partajați fișierele de export
 
 ### Verificați înainte de export
 
@@ -181,21 +188,27 @@ Fișierele exportate pot conține date sensibile:
     Sunt exportate doar coloanele vizibile. Adăugați coloanele de care aveți nevoie prin **Opțiuni → Câmpuri** înainte de export.
   </Accordion>
 
-  <Accordion title="De ce nu conține exportul meu toate înregistrările?">
-    Verificați filtrele. Exportul include doar înregistrările care se potrivesc filtrelor vizualizării curente. Eliminați filtrele pentru a exporta toate înregistrările.
-  </Accordion>
+<Accordion title="De ce nu conține exportul meu toate înregistrările?">
+  Verificați filtrele. Exportul include doar înregistrările care se potrivesc
+  filtrelor vizualizării curente. Eliminați filtrele pentru a exporta toate
+  înregistrările.
+</Accordion>
 
-  <Accordion title="Pot exporta mai mult de 20.000 de înregistrări?">
-    Nu într-un singur export. Folosiți filtre pentru a exporta în loturi sau utilizați API-ul pentru seturi de date mai mari.
-  </Accordion>
+<Accordion title="Pot exporta mai mult de 20.000 de înregistrări?">
+  Nu într-un singur export. Folosiți filtre pentru a exporta în loturi sau
+  utilizați API-ul pentru seturi de date mai mari.
+</Accordion>
 
-  <Accordion title="În ce format este fișierul de export?">
-    CSV (valori separate prin virgulă). Se deschide în Excel, Google Sheets sau orice aplicație de foi de calcul.
-  </Accordion>
+<Accordion title="În ce format este fișierul de export?">
+  CSV (valori separate prin virgulă). Se deschide în Excel, Google Sheets sau
+  orice aplicație de foi de calcul.
+</Accordion>
 
-  <Accordion title="Sunt incluse ID-urile de relație?">
-    Da, dar numai pe partea "many" a relațiilor. De exemplu, un export de Persoane include `companyId`, dar un export de Companii nu include ID-urile persoanelor.
-  </Accordion>
+<Accordion title="Sunt incluse ID-urile de relație?">
+  Da, dar numai pe partea "many" a relațiilor. De exemplu, un export de Persoane
+  include `companyId`, dar un export de Companii nu include ID-urile
+  persoanelor.
+</Accordion>
 
   <Accordion title="Pot automatiza exporturile?">
     Nu direct prin interfața de utilizator. Utilizați API-ul pentru a construi fluxuri de lucru de export automatizate.
@@ -204,6 +217,6 @@ Fișierele exportate pot conține date sensibile:
 
 ## Pașii următori
 
-* [Cum să actualizați înregistrările existente](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import) — editați și reimportați exportul
-* [Cum să importați date prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api) — pentru seturi de date mari
-* [Documentație API](/l/ro/developers/extend/api) — creați fluxuri de lucru de export personalizate
+- [Cum să actualizați înregistrările existente](/l/ro/user-guide/data-migration/how-tos/update-existing-records-via-import) — editați și reimportați exportul
+- [Cum să importați date prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api) — pentru seturi de date mari
+- [Documentație API](/l/ro/developers/extend/api) — creați fluxuri de lucru de export personalizate

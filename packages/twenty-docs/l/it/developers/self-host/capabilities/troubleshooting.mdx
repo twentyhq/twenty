@@ -115,28 +115,37 @@ Gli avvisi informano sul caricamento di dipendenze aggiuntive che non sono espli
 
 #### Come verificare se il tuo worker è in esecuzione?
 
-* Vai su [webhook-test.com](https://webhook-test.com/) e copia **Your Unique Webhook URL**.
+- Vai su [webhook-test.com](https://webhook-test.com/) e copia **Your Unique Webhook URL**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Test webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Test webhook"
+  />
 </div>
 
-* Apri la tua app Twenty, naviga su `/settings` e abilita il toggle **Avanzate** in basso a sinistra dello schermo.
-* Crea un nuovo webhook.
-* Incolla **Your Unique Webhook URL** nel campo **Endpoint Url** in Twenty. Imposta i **Filtri** su `Companies` e `Created`.
+- Apri la tua app Twenty, naviga su `/settings` e abilita il toggle **Avanzate** in basso a sinistra dello schermo.
+- Crea un nuovo webhook.
+- Incolla **Your Unique Webhook URL** nel campo **Endpoint Url** in Twenty. Imposta i **Filtri** su `Companies` e `Created`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Impostazioni webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Impostazioni webhook"
+  />
 </div>
 
-* Vai su `/objects/companies` e crea un nuovo record aziendale.
-* Ritorna su [webhook-test.com](https://webhook-test.com/) e verifica se è stata ricevuta una nuova **richiesta POST**.
+- Vai su `/objects/companies` e crea un nuovo record aziendale.
+- Ritorna su [webhook-test.com](https://webhook-test.com/) e verifica se è stata ricevuta una nuova **richiesta POST**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Risultato del test webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Risultato del test webhook"
+  />
 </div>
 
-* Se è ricevuta una **richiesta POST**, il tuo worker è in esecuzione con successo. In caso contrario, devi risolvere i problemi del tuo worker.
+- Se è ricevuta una **richiesta POST**, il tuo worker è in esecuzione con successo. In caso contrario, devi risolvere i problemi del tuo worker.
 
 #### Front-end fails to start and returns error TS5042: Option 'project' cannot be mixed with source files on a command line
 
@@ -200,9 +209,8 @@ Se stai eseguendo Twenty dietro un reverse proxy e stai riscontrando problemi di
    Assicurati che il `SERVER_URL` nel tuo file `.env` corrisponda all'URL di accesso esterno, incluso `https` se SSL è abilitato.
 
 2. **Controlla le impostazioni del reverse proxy:**
-
-   * Conferma che il tuo reverse proxy sta inoltrando correttamente le richieste al server Twenty.
-   * Assicurati che le intestazioni come `X-Forwarded-For` e `X-Forwarded-Proto` siano impostate correttamente.
+   - Conferma che il tuo reverse proxy sta inoltrando correttamente le richieste al server Twenty.
+   - Assicurati che le intestazioni come `X-Forwarded-For` e `X-Forwarded-Proto` siano impostate correttamente.
 
 3. **Riavvia i servizi:**
 
@@ -216,7 +224,7 @@ Cambiare la proprietà della cartella dei dati sull'host da root a un altro uten
 
 Se incontri problemi non coperti in questa guida:
 
-* Controlla i log:
+- Controlla i log:
 
   Visualizza i log dei container per i messaggi di errore:
 
@@ -224,6 +232,6 @@ Se incontri problemi non coperti in questa guida:
   docker compose logs
   ```
 
-* Supporto comunitario:
+- Supporto comunitario:
 
   Contatta la [comunità Twenty](https://github.com/twentyhq/twenty/issues) o [canali di supporto](https://discord.gg/cx5n4Jzs57) per assistenza.

@@ -9,10 +9,10 @@ Wenn ein Deal abgeschlossen wird, müssen mehrere Dinge geschehen: Unternehmenss
 
 Wenn eine Opportunity zu "Closed Won" wechselt:
 
-* Der Unternehmenstyp muss von "Prospect" zu "Customer" geändert werden
-* Onboarding-Aufgaben müssen erstellt werden
-* Das Customer-Success-Team muss benachrichtigt werden
-* Der Vertriebsmitarbeiter benötigt eine Bestätigung
+- Der Unternehmenstyp muss von "Prospect" zu "Customer" geändert werden
+- Onboarding-Aufgaben müssen erstellt werden
+- Das Customer-Success-Team muss benachrichtigt werden
+- Der Vertriebsmitarbeiter benötigt eine Bestätigung
 
 Dies manuell zu erledigen ist zeitaufwendig und fehleranfällig.
 
@@ -105,17 +105,17 @@ Sorgen wir für einen großartigen Start!
 | Feld        | Wert                                                                                                                                |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | **An**      | `{{trigger.object.owner.email}}`                                                                                                    |
-| **Betreff** | `✅ Deal abgeschlossen: {{trigger.object.name}}`                                                                                     |
+| **Betreff** | `✅ Deal abgeschlossen: {{trigger.object.name}}`                                                                                    |
 | **Inhalt**  | Herzlichen Glückwunsch! Ihr Deal wurde verarbeitet. Das Customer-Success-Team wurde benachrichtigt und das Onboarding hat begonnen. |
 
 ### Schritt 8: Testen und aktivieren
 
 1. Testen Sie, indem Sie eine Test-Opportunity auf "Closed Won" verschieben
 2. Verifizieren:
-   * Unternehmenstyp auf "Customer" geändert
-   * Onboarding-Aufgabe erstellt
-   * CS-Team hat E-Mail erhalten
-   * Vertriebsmitarbeiter hat Bestätigung erhalten
+   - Unternehmenstyp auf "Customer" geändert
+   - Onboarding-Aufgabe erstellt
+   - CS-Team hat E-Mail erhalten
+   - Vertriebsmitarbeiter hat Bestätigung erhalten
 3. Aktivieren Sie, sobald alles bereit ist
 
 ## Closed Lost behandeln
@@ -124,7 +124,7 @@ Erstellen Sie einen ähnlichen Workflow für verlorene Deals:
 
 ### Auslöser
 
-* Datensatz wird aktualisiert (Opportunities, Stage = "Closed Lost")
+- Datensatz wird aktualisiert (Opportunities, Stage = "Closed Lost")
 
 ### Aktionen
 
@@ -139,10 +139,10 @@ Für komplexes Onboarding mehrere Aufgaben erstellen:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Verwenden Sie **Iterator**, um jede Aufgabe aus dem Array zu erstellen.
 
 ### Halten Sie Ihre anderen Tools auf dem neuesten Stand
 
-* Kunden im Abrechnungssystem per **HTTP Request** erstellen
+- Kunden im Abrechnungssystem per **HTTP Request** erstellen
 
 ### Bedingte Aktionen
 
 Verwenden Sie **Filter**-Aktionen, um:
 
-* Unterschiedliches Onboarding für Enterprise vs. SMB
-* Unterschiedliche Zuständige je nach Region
-* Benachrichtigungen für kleine Deals überspringen
+- Unterschiedliches Onboarding für Enterprise vs. SMB
+- Unterschiedliche Zuständige je nach Region
+- Benachrichtigungen für kleine Deals überspringen
 
 ### Deal-Details einbeziehen
 
 Verwenden Sie die **Code**-Aktion, um zu formatieren:
 
-* Dokumente zur Deal-Zusammenfassung
-* Übergabenotizen für das CS-Team
-* Individuelle Onboarding-Checklisten
+- Dokumente zur Deal-Zusammenfassung
+- Übergabenotizen für das CS-Team
+- Individuelle Onboarding-Checklisten
 
 ## Verwandt
 
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+- [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)

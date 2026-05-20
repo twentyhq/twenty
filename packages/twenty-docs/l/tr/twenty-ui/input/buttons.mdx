@@ -16,7 +16,7 @@ Uygulamada kullanılan düğme ve düğme gruplarının bir listesi.
 <Tab title="Kullanım">
 
 ```jsx
-import { Button } from "@/ui/input/button/components/Button";
+import { Button } from '@/ui/input/button/components/Button';
 
 export const MyComponent = () => {
   return (
@@ -32,15 +32,15 @@ export const MyComponent = () => {
       soon={false}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
+
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler    | Tür                   | Açıklama                                                                                             |
 | ------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -56,9 +56,6 @@ export const MyComponent = () => {
 | devre dışı    | boolean               | Düğmenin devre dışı olup olmadığını belirtir                                                         |
 | odak          | boolean               | Düğmenin odaklanmış olup olmadığını belirler                                                         |
 | tıklandığında | fonksiyon             | Kullanıcı düğmeye tıkladığında tetikleyen bir geri çağırma fonksiyonu                                |
-
-
-
 
 </Tab>
 
@@ -87,7 +84,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -101,7 +98,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -115,13 +112,13 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
     </ButtonGroup>
   );
 };
 
-```
+````
 </Tab>
 
 <Tab title="Özellikler">
@@ -164,12 +161,11 @@ export const MyComponent = () => {
     />
   );
 };
-```
+````
 
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler            | Tür                   | Açıklama                                                                                          |
 | --------------------- | --------------------- | ------------------------------------------------------------------------------------------------- |
@@ -183,8 +179,6 @@ export const MyComponent = () => {
 | devre dışı            | boolean               | Düğmenin devre dışı olup olmadığını belirler                                                      |
 | odak                  | boolean               | Düğmenin odaklanmış olup olmadığını gösterir                                                      |
 
-
-
 </Tab>
 </Tabs>
 
@@ -194,9 +188,9 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
-import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
+import { FloatingButtonGroup } from '@/ui/input/button/components/FloatingButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -231,13 +225,10 @@ export const MyComponent = () => {
 
 <Tab title="Özellikler">
 
-
 | Özellikler | Tür       | Açıklama                                                            | Varsayılan |
 | ---------- | --------- | ------------------------------------------------------------------- | ---------- |
 | boyut      | dize      | Düğmenin boyutu. İki seçenek vardır: `küçük` ve `orta`              | küçük      |
 | çocuklar   | ReactNode | Grup içindeki bireysel düğmeleri temsil eden bir dizi React elemanı |            |
-
-
 
 </Tab>
 
@@ -249,8 +240,8 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -263,7 +254,7 @@ export const MyComponent = () => {
       applyBlur={true}
       disabled={false}
       focus={false}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
       isActive={true}
     />
   );
@@ -273,7 +264,6 @@ export const MyComponent = () => {
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler            | Tür                   | Açıklama                                                                                             |
 | --------------------- | --------------------- | ---------------------------------------------------------------------------------------------------- |
@@ -288,8 +278,6 @@ export const MyComponent = () => {
 | tıklandığında         | fonksiyon             | Kullanıcı düğmeye tıkladığında tetikleyen bir geri çağırma fonksiyonu                                |
 | etkin                 | boolean               | Düğmenin etkin bir durumda olup olmadığını belirler                                                  |
 
-
-
 </Tab>
 
 </Tabs>
@@ -300,45 +288,38 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   const iconButtons = [
     {
       Icon: IconClipboardText,
-      onClick: () => console.log("Buton 1 tıklandı"),
+      onClick: () => console.log('Buton 1 tıklandı'),
       isActive: true,
     },
     {
       Icon: IconCheckbox,
-      onClick: () => console.log("Buton 2 tıklandı"),
+      onClick: () => console.log('Buton 2 tıklandı'),
       isActive: true,
     },
   ];
 
   return (
-    <FloatingIconButtonGroup
-    className
-    size="small"
-    iconButtons={iconButtons} />
+    <FloatingIconButtonGroup className size="small" iconButtons={iconButtons} />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Özellikler">
 
-
 | Özellikler    | Tür  | Açıklama                                                                                                                                                                                                                                                 |
 | ------------- | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | sınıfAdı      | dize | Ek stil için isteğe bağlı ad                                                                                                                                                                                                                             |
 | boyut         | dize | Düğmenin boyutu. İki seçenek vardır: `küçük` ve `orta`                                                                                                                                                                                                   |
 | simgeDüğmeler | dizi | Her biri gruptaki bir simge düğmesini temsil eden nesnelerin bir dizisi. Her bir nesne, düğmede görüntülemek istediğiniz simge bileşenini, kullanıcı düğmeye tıkladığında çağırmak istediğiniz fonksiyonu ve düğmenin etkin olup olmadığını içermelidir. |
-
-
 
 </Tab>
 
@@ -350,27 +331,27 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { LightButton } from "@/ui/input/button/components/LightButton";
+import { LightButton } from '@/ui/input/button/components/LightButton';
 
 export const MyComponent = () => {
-  return <LightButton
-  className
-  icon={null}
-  title="Başlık"
-  accent="secondary"
-  active={false}
-  disabled={false}
-  focus={true}
-  onClick={()=>console.log('click')}
-  />;
+  return (
+    <LightButton
+      className
+      icon={null}
+      title="Başlık"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log('click')}
+    />
+  );
 };
 ```
-
 
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler    | Tür               | Açıklama                                                                   |
 | ------------- | ----------------- | -------------------------------------------------------------------------- |
@@ -383,9 +364,6 @@ export const MyComponent = () => {
 | odak          | boolean           | Düğmenin odakta olup olmadığını belirtir                                   |
 | tıklandığında | fonksiyon         | Kullanıcı düğmeye tıkladığında tetiklenen bir geri çağırma fonksiyonu      |
 
-
-
-
 </Tab>
 
 </Tabs>
@@ -396,8 +374,8 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -411,17 +389,15 @@ export const MyComponent = () => {
       active={true}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler    | Tür                   | Açıklama                                                                   |
 | ------------- | --------------------- | -------------------------------------------------------------------------- |
@@ -436,8 +412,6 @@ export const MyComponent = () => {
 | odak          | boolean               | Düğmenin odakta olup olmadığını belirtir                                   |
 | tıklandığında | fonksiyon             | Kullanıcı düğmeye tıkladığında tetiklenen bir geri çağırma fonksiyonu      |
 
-
-
 </Tab>
 
 </Tabs>
@@ -448,8 +422,8 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { MainButton } from "@/ui/input/button/components/MainButton";
-import { IconCheckbox } from "@tabler/icons-react";
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -464,11 +438,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Özellikler">
-
 
 | Özellikler                | Tür                              | Açıklama                                                                                           |
 | ------------------------- | -------------------------------- | -------------------------------------------------------------------------------------------------- |
@@ -478,9 +450,6 @@ export const MyComponent = () => {
 | yakında                   | boolean                          | Düğmenin "yakında" (örneğin gelecek özellikler için) olarak işaretlenip işaretlenmediğini belirtir |
 | Simge                     | `React.ComponentType`            | Düğme içinde görüntülenen isteğe bağlı bir simge bileşeni                                          |
 | React `düğme` özellikleri | `React.ComponentProps<'button'>` | Tüm standart HTML düğme özellikleri desteklenir                                                    |
-
-
-
 
 </Tab>
 
@@ -492,30 +461,22 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
-  return (
-    <RoundedIconButton
-      Icon={IconSearch}
-    />
-  );
+  return <RoundedIconButton Icon={IconSearch} />;
 };
 ```
-
 
 </Tab>
 
 <Tab title="Özellikler">
 
-
 | Özellikler                | Tür                                             | Açıklama |
 | ------------------------- | ----------------------------------------------- | -------- |
 | Simge                     | `React.ComponentType`                           |          |
 | React `düğme` özellikleri | `React.ButtonHTMLAttributes<HTMLButtonElement>` |          |
-
-
 
 </Tab>
 

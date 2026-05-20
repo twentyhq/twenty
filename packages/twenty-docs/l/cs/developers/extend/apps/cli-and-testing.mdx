@@ -10,12 +10,12 @@ Složka `public/` v kořenu vaší aplikace obsahuje statické soubory — obrá
 
 Soubory umístěné v `public/` jsou:
 
-* **Veřejně přístupné** — po synchronizaci na server jsou prostředky dostupné na veřejné URL. K přístupu k nim není potřeba žádná autentizace.
-* **Dostupné ve frontendových komponentách** — použijte URL prostředků k zobrazení obrázků, ikon či jiných médií uvnitř komponent Reactu.
-* **Dostupné v logických funkcích** — odkazujte na URL prostředků v e-mailech, odpovědích API či jiné serverové logice.
-* **Používány pro metadata Marketplace** — pole `logoUrl` a `screenshots` v `defineApplication()` odkazují na soubory z této složky (např. `public/logo.png`). Tyto se zobrazují v Marketplace, když je vaše aplikace zveřejněna.
-* **Automaticky synchronizované ve vývojovém režimu** — když v `public/` přidáte, aktualizujete nebo smažete soubor, je automaticky synchronizován na server. Není potřeba restartovat.
-* **Zahrnuté do buildů** — `yarn twenty build` zabalí všechny veřejné prostředky do distribučního výstupu.
+- **Veřejně přístupné** — po synchronizaci na server jsou prostředky dostupné na veřejné URL. K přístupu k nim není potřeba žádná autentizace.
+- **Dostupné ve frontendových komponentách** — použijte URL prostředků k zobrazení obrázků, ikon či jiných médií uvnitř komponent Reactu.
+- **Dostupné v logických funkcích** — odkazujte na URL prostředků v e-mailech, odpovědích API či jiné serverové logice.
+- **Používány pro metadata Marketplace** — pole `logoUrl` a `screenshots` v `defineApplication()` odkazují na soubory z této složky (např. `public/logo.png`). Tyto se zobrazují v Marketplace, když je vaše aplikace zveřejněna.
+- **Automaticky synchronizované ve vývojovém režimu** — když v `public/` přidáte, aktualizujete nebo smažete soubor, je automaticky synchronizován na server. Není potřeba restartovat.
+- **Zahrnuté do buildů** — `yarn twenty build` zabalí všechny veřejné prostředky do distribučního výstupu.
 
 ### Přístup k veřejným prostředkům pomocí `getPublicAssetUrl`
 
@@ -183,15 +183,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```
@@ -336,7 +340,9 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-To je jiné než `yarn twenty server logs`, které zobrazují logy kontejneru Docker. `yarn twenty logs` zobrazuje logy spuštění funkcí vaší aplikace ze serveru Twenty.
+  To je jiné než `yarn twenty server logs`, které zobrazují logy kontejneru
+  Docker. `yarn twenty logs` zobrazuje logy spuštění funkcí vaší aplikace ze
+  serveru Twenty.
 </Note>
 
 ### Odinstalace aplikace (`yarn twenty uninstall`)

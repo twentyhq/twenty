@@ -9,10 +9,10 @@ Cuando se cierra un negocio, deben ocurrir varias cosas: actualizar el estado de
 
 Cuando una oportunidad pasa a "Cerrado ganado":
 
-* El tipo de empresa debe cambiar de "Prospect" a "Customer"
-* Se deben crear tareas de incorporación
-* Se debe notificar al equipo de Customer Success
-* El representante de ventas necesita una confirmación
+- El tipo de empresa debe cambiar de "Prospect" a "Customer"
+- Se deben crear tareas de incorporación
+- Se debe notificar al equipo de Customer Success
+- El representante de ventas necesita una confirmación
 
 Hacer esto manualmente consume tiempo y es propenso a errores.
 
@@ -105,17 +105,17 @@ Se ha creado automáticamente una tarea de incorporación.
 | Campo      | Valor                                                                                                                       |
 | ---------- | --------------------------------------------------------------------------------------------------------------------------- |
 | **Para**   | `{{trigger.object.owner.email}}`                                                                                            |
-| **Asunto** | `✅ Negocio cerrado: {{trigger.object.name}}`                                                                                |
+| **Asunto** | `✅ Negocio cerrado: {{trigger.object.name}}`                                                                               |
 | **Cuerpo** | ¡Felicidades! Tu negocio ha sido procesado. Se ha notificado al equipo de Customer Success y la incorporación ha comenzado. |
 
 ### Paso 8: Probar y activar
 
 1. Prueba moviendo una oportunidad de prueba a "Closed Won"
 2. Verificar:
-   * El tipo de empresa cambió a "Customer"
-   * Tarea de incorporación creada
-   * El equipo de CS recibió el correo electrónico
-   * El representante de ventas recibió la confirmación
+   - El tipo de empresa cambió a "Customer"
+   - Tarea de incorporación creada
+   - El equipo de CS recibió el correo electrónico
+   - El representante de ventas recibió la confirmación
 3. Actívalo cuando esté listo
 
 ## Cómo gestionar Closed Lost
@@ -124,7 +124,7 @@ Crea un flujo de trabajo similar para negocios perdidos:
 
 ### Disparador
 
-* Record is Updated (Oportunidades, Etapa = "Closed Lost")
+- Record is Updated (Oportunidades, Etapa = "Closed Lost")
 
 ### Acciones
 
@@ -139,10 +139,10 @@ Para una incorporación compleja, crea varias tareas:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Usa **Iterator** para crear cada tarea a partir del array.
 
 ### Mantén tus otras herramientas actualizadas
 
-* Crea el cliente en el sistema de facturación con una **HTTP Request**
+- Crea el cliente en el sistema de facturación con una **HTTP Request**
 
 ### Acciones condicionales
 
 Usa acciones **Filter** para:
 
-* Incorporación diferente para empresas grandes frente a pymes
-* Asignados diferentes según la región
-* Omitir notificaciones para negocios pequeños
+- Incorporación diferente para empresas grandes frente a pymes
+- Asignados diferentes según la región
+- Omitir notificaciones para negocios pequeños
 
 ### Incluir detalles del negocio
 
 Usa la acción **Code** para formatear:
 
-* Documentos de resumen del negocio
-* Notas de traspaso para el equipo de CS
-* Listas de verificación de incorporación personalizadas
+- Documentos de resumen del negocio
+- Notas de traspaso para el equipo de CS
+- Listas de verificación de incorporación personalizadas
 
 ## Relacionado
 
-* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
-* [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+- [Enviar correos electrónicos desde flujos de trabajo](/l/es/user-guide/workflows/capabilities/send-emails-from-workflows)

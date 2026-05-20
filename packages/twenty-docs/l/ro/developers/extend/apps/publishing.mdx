@@ -8,8 +8,8 @@ description: Distribuie aplicația ta Twenty în marketplace sau implementeaz-o 
 
 După ce aplicația ta este [construită și testată local](/l/ro/developers/extend/apps/building), ai două căi pentru distribuire:
 
-* **Implementați o arhivă tar** — încărcați aplicația direct pe un server Twenty anume pentru uz intern sau privat.
-* **Publică pe npm** — listează aplicația ta în marketplace-ul Twenty pentru ca orice spațiu de lucru să o poată descoperi și instala.
+- **Implementați o arhivă tar** — încărcați aplicația direct pe un server Twenty anume pentru uz intern sau privat.
+- **Publică pe npm** — listează aplicația ta în marketplace-ul Twenty pentru ca orice spațiu de lucru să o poată descoperi și instala.
 
 Ambele căi pornesc din aceeași etapă de **build**.
 
@@ -72,7 +72,10 @@ Pentru a lansa o actualizare:
 3. Spațiile de lucru care au aplicația instalată vor vedea actualizarea disponibilă în setările lor
 
 <Note>
-Etichetele de pre-lansare funcționează conform așteptărilor: incrementarea de la `1.0.0-rc.1` la `1.0.0-rc.2` este permisă, iar o lansare finală precum `1.0.0` este recunoscută corect ca fiind mai mare decât `1.0.0-rc.5`. Versiunea din `package.json` trebuie să fie ea însăși un șir semver valid.
+  Etichetele de pre-lansare funcționează conform așteptărilor: incrementarea de
+  la `1.0.0-rc.1` la `1.0.0-rc.2` este permisă, iar o lansare finală precum
+  `1.0.0` este recunoscută corect ca fiind mai mare decât `1.0.0-rc.5`.
+  Versiunea din `package.json` trebuie să fie ea însăși un șir semver valid.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -94,20 +97,23 @@ Dacă aplicația ta folosește o funcționalitate introdusă într-o anumită ve
 
 Valoarea este un [interval semver](https://github.com/npm/node-semver#ranges) standard. Tipare comune:
 
-| Interval                           | Semnificație                                           |
-| ---------------------------------- | ------------------------------------------------------ |
-| `>=2.3.0`                          | Orice server de la 2.3.0 încolo                        |
+| Interval          | Semnificație                                           |
+| ----------------- | ------------------------------------------------------ |
+| `>=2.3.0`         | Orice server de la 2.3.0 încolo                        |
 | `>=2.3.0 \<3.0.0` | 2.3.0 sau ulterior, dar sub următoarea versiune majoră |
-| `^2.3.0`                           | La fel ca `>=2.3.0 \<3.0.0`           |
+| `^2.3.0`          | La fel ca `>=2.3.0 \<3.0.0`                            |
 
 **Ce se întâmplă în timpul implementării și instalării:**
 
-* Dacă `engines.twenty` este setat și versiunea serverului țintă nu respectă intervalul, implementarea (încărcarea arhivei tarball) sau instalarea este respinsă cu eroarea `SERVER_VERSION_INCOMPATIBLE` și cu un mesaj care indică atât intervalul necesar, cât și versiunea efectivă a serverului.
-* Dacă `engines.twenty` nu este setat, aplicația este acceptată pe orice versiune de server (retrocompatibilă cu aplicațiile existente).
-* Dacă serverul nu are nicio `APP_VERSION` configurată, verificarea este omisă.
+- Dacă `engines.twenty` este setat și versiunea serverului țintă nu respectă intervalul, implementarea (încărcarea arhivei tarball) sau instalarea este respinsă cu eroarea `SERVER_VERSION_INCOMPATIBLE` și cu un mesaj care indică atât intervalul necesar, cât și versiunea efectivă a serverului.
+- Dacă `engines.twenty` nu este setat, aplicația este acceptată pe orice versiune de server (retrocompatibilă cu aplicațiile existente).
+- Dacă serverul nu are nicio `APP_VERSION` configurată, verificarea este omisă.
 
 <Note>
-Serverul este verificarea autoritativă — validează `engines.twenty` atât la încărcarea arhivei tarball, cât și la instalarea în spațiul de lucru. Dacă implementezi un tarball în afara fluxului standard sau instalezi din marketplace, serverul impune în continuare compatibilitatea.
+  Serverul este verificarea autoritativă — validează `engines.twenty` atât la
+  încărcarea arhivei tarball, cât și la instalarea în spațiul de lucru. Dacă
+  implementezi un tarball în afara fluxului standard sau instalezi din
+  marketplace, serverul impune în continuare compatibilitatea.
 </Note>
 
 ## CI/CD automatizat (fluxuri de lucru preconfigurate)
@@ -127,8 +133,8 @@ Rulează testele de integrare la fiecare push pe `main` și la fiecare pull requ
 
 **Opțiuni de configurare:**
 
-* `TWENTY_VERSION` (variabilă de mediu, implicit `latest`) — fixează versiunea serverului Twenty folosită în CI editând acest parametru în `ci.yml`.
-* Concurența este grupată după `github.ref` și anulează execuțiile în desfășurare la noile push-uri.
+- `TWENTY_VERSION` (variabilă de mediu, implicit `latest`) — fixează versiunea serverului Twenty folosită în CI editând acest parametru în `ci.yml`.
+- Concurența este grupată după `github.ref` și anulează execuțiile în desfășurare la noile push-uri.
 
 Nu sunt necesare secrete — instanța de test este efemeră și există doar pe durata jobului.
 
@@ -150,7 +156,10 @@ Implementează aplicația pe un server Twenty configurat la fiecare push pe `mai
 | `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | Cheie API cu permisiune de implementare pe serverul țintă.                                                         |
 
 <Note>
-Valoarea implicită a `TWENTY_DEPLOY_URL`, `http://localhost:3000`, este un placeholder — nu va putea accesa nimic dintr-un runner găzduit de GitHub. Actualizează-l la URL-ul public al serverului tău (sau folosește un runner self-hosted cu acces la rețea) înainte de a activa CD.
+  Valoarea implicită a `TWENTY_DEPLOY_URL`, `http://localhost:3000`, este un
+  placeholder — nu va putea accesa nimic dintr-un runner găzduit de GitHub.
+  Actualizează-l la URL-ul public al serverului tău (sau folosește un runner
+  self-hosted cu acces la rețea) înainte de a activa CD.
 </Note>
 
 **Declanșarea unei implementări de previzualizare dintr-un PR:**
@@ -167,8 +176,8 @@ Publicarea pe npm face ca aplicația ta să poată fi descoperită în marketpla
 
 ### Cerințe
 
-* Un cont [npm](https://www.npmjs.com)
-* Cuvântul cheie `twenty-app` din array-ul `keywords` al fișierului `package.json` (adaugă-l manual — nu este inclus în mod implicit în șablonul `create-twenty-app`)
+- Un cont [npm](https://www.npmjs.com)
+- Cuvântul cheie `twenty-app` din array-ul `keywords` al fișierului `package.json` (adaugă-l manual — nu este inclus în mod implicit în șablonul `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -189,10 +198,7 @@ export default defineApplication({
   description: 'A great app',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   logoUrl: 'public/logo.png',
-  screenshots: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  screenshots: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -203,7 +209,9 @@ Vezi [acordeonul defineApplication](/l/ro/developers/extend/apps/building#define
 marketplace-ul redă `screenshots` într-un container fix cu raport `8:5` (de exemplu, `1600×1000 px`).
 
 <Note>
-Capturile de ecran cu orice raport de aspect sunt afișate integral și nu sunt niciodată decupate, însă orice este semnificativ mai înalt sau mai îngust decât `8:5` va afișa benzi goale pe laterale.
+  Capturile de ecran cu orice raport de aspect sunt afișate integral și nu sunt
+  niciodată decupate, însă orice este semnificativ mai înalt sau mai îngust
+  decât `8:5` va afișa benzi goale pe laterale.
 </Note>
 
 ### Publicare
@@ -233,7 +241,11 @@ yarn twenty server catalog-sync
 Metadatele afișate în marketplace provin din configurația `defineApplication()` — câmpuri precum `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` și `termsUrl`.
 
 <Note>
-Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()`, piața va folosi automat fișierul `README.md` al pachetului tău de pe npm drept conținut pentru pagina Despre. Acest lucru înseamnă că poți menține un singur README atât pentru npm, cât și pentru piața Twenty. Dacă vrei o descriere diferită în piață, setează explicit `aboutDescription`.
+  Dacă aplicația ta nu definește un `aboutDescription` în `defineApplication()`,
+  piața va folosi automat fișierul `README.md` al pachetului tău de pe npm drept
+  conținut pentru pagina Despre. Acest lucru înseamnă că poți menține un singur
+  README atât pentru npm, cât și pentru piața Twenty. Dacă vrei o descriere
+  diferită în piață, setează explicit `aboutDescription`.
 </Note>
 
 ### Publicare CI
@@ -257,7 +269,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
       - run: npx twenty build
@@ -268,7 +280,12 @@ jobs:
 Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `yarn twenty build`, apoi `npm publish` din `.twenty/output`.
 
 <Note>
-**npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
+  **npm provenance** este opțională, dar recomandată. Publicarea cu
+  `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând
+  utilizatorilor să verifice că pachetul a fost construit dintr-un commit
+  specific într-un pipeline CI public. Vezi [documentația npm
+  provenance](https://docs.npmjs.com/generating-provenance-statements) pentru
+  instrucțiuni de configurare.
 </Note>
 
 ## Instalarea aplicațiilor
@@ -288,8 +305,9 @@ yarn twenty install
 <Note>
 Serverul impune versionarea semver la instalare, reflectând regulile de la deploy:
 
-* Instalarea aceleiași versiuni care este deja instalată în workspace-ul tău este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
-* Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
+- Instalarea aceleiași versiuni care este deja instalată în workspace-ul tău este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
+- Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
 
 Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `yarn twenty install`.
+
 </Note>

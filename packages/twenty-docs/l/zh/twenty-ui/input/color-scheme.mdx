@@ -15,15 +15,10 @@ icon: 调色板
 <Tab title="用法">
 
 ```jsx
-import { ColorSchemeCard } from "twenty-ui/display";
+import { ColorSchemeCard } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-  return (
-      <ColorSchemeCard
-      variant="Dark"
-      selected={true}
-      />
-  );
+  return <ColorSchemeCard variant="Dark" selected={true} />;
 };
 ```
 
@@ -31,14 +26,11 @@ export const MyComponent = () => {
 
 <Tab title="属性">
 
-
-| 属性   | 类型                                      | 描述                              | 默认 |
-| ---- | --------------------------------------- | ------------------------------- | -- |
-| 变体   | 字符串                                     | 颜色方案的变体。 选项包括 `深色`, `浅色` 和 `系统` | 浅色 |
-| 已选择  | 布尔值                                     | 如果 `true`，显示一个选中标记以指示选定的颜色方案。   |    |
-| 额外属性 | `React.ComponentPropsWithoutRef<'div'>` | 标准 HTML `div` 元素属性              |    |
-
-
+| 属性     | 类型                                    | 描述                                                | 默认 |
+| -------- | --------------------------------------- | --------------------------------------------------- | ---- |
+| 变体     | 字符串                                  | 颜色方案的变体。 选项包括 `深色`, `浅色` 和 `系统`  | 浅色 |
+| 已选择   | 布尔值                                  | 如果 `true`，显示一个选中标记以指示选定的颜色方案。 |      |
+| 额外属性 | `React.ComponentPropsWithoutRef<'div'>` | 标准 HTML `div` 元素属性                            |      |
 
 </Tab>
 
@@ -52,13 +44,10 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { ColorSchemePicker } from "twenty-ui/display";
+import { ColorSchemePicker } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-  return <ColorSchemePicker
-  value="Dark"
-  onChange
-  />;
+  return <ColorSchemePicker value="Dark" onChange />;
 };
 ```
 
@@ -66,13 +55,10 @@ export const MyComponent = () => {
 
 <Tab title="属性">
 
-
-| 属性       | 类型     | 描述                     |
-| -------- | ------ | ---------------------- |
-| 值        | `配色方案` | 当前选定的颜色方案              |
-| onChange | 函数     | 当用户选择颜色方案时，触发您想要的回调函数。 |
-
-
+| 属性     | 类型       | 描述                                         |
+| -------- | ---------- | -------------------------------------------- |
+| 值       | `配色方案` | 当前选定的颜色方案                           |
+| onChange | 函数       | 当用户选择颜色方案时，触发您想要的回调函数。 |
 
 </Tab>
 

@@ -16,7 +16,11 @@ Dopo aver caricato il file e mappato le colonne, Twenty convalida i tuoi dati:
 3. **Puoi correggere direttamente** — modifica le celle direttamente nell'interfaccia di importazione
 4. **Oppure rimuovi le righe** — salta completamente i record problematici
 
-<Note>**Correggi gli errori nell'interfaccia.** Non è necessario tornare al tuo foglio di calcolo. Modifica le celle direttamente durante l'importazione per risparmiare tempo.</Note>
+<Note>
+  **Correggi gli errori nell'interfaccia.** Non è necessario tornare al tuo
+  foglio di calcolo. Modifica le celle direttamente durante l'importazione per
+  risparmiare tempo.
+</Note>
 
 ## Risoluzione dei problemi passo passo
 
@@ -48,8 +52,8 @@ Le righe con valori duplicati vengono **evidenziate in giallo** nell'interfaccia
 
 Un campo univoco (email, dominio) può:
 
-* Esistere già in Twenty
-* Comparire due volte nel tuo file
+- Esistere già in Twenty
+- Comparire due volte nel tuo file
 
 ### Come risolvere
 
@@ -73,10 +77,11 @@ Un campo univoco (email, dominio) può:
 <Note>
 **Puoi aggiornare anche i campi univoci.**
 
-* Se mantieni l'`id` ma cambi l'`email` → l'email verrà aggiornata
-* Se mantieni l'`email` ma cambi l'`id` → l'id verrà aggiornato
+- Se mantieni l'`id` ma cambi l'`email` → l'email verrà aggiornata
+- Se mantieni l'`email` ma cambi l'`id` → l'id verrà aggiornato
 
 Finché almeno un identificatore univoco corrisponde, Twenty aggiorna il record.
+
 </Note>
 
 ### Come prevenire questo errore
@@ -91,6 +96,7 @@ Prima di importare:
 **I record eliminati in modo non definitivo contano ai fini dell'unicità.**
 
 Controlla il menu Comandi → Visualizza i record eliminati. I record presenti lì impongono comunque l'unicità. Eliminali definitivamente oppure ripristinali e aggiornali.
+
 </Warning>
 
 Per maggiori dettagli: [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -135,7 +141,11 @@ I dati non corrispondono al formato previsto per quel tipo di campo.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>Tutti i formati sono validi, ma `https://domain.com` è consigliato perché corrisponde al formato utilizzato dalla sincronizzazione email/calendario. Usare altri formati può creare aziende duplicate.</Note>
+<Note>
+  Tutti i formati sono validi, ma `https://domain.com` è consigliato perché
+  corrisponde al formato utilizzato dalla sincronizzazione email/calendario.
+  Usare altri formati può creare aziende duplicate.
+</Note>
 
 #### Data
 
@@ -258,7 +268,11 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
 
 Ciò significa che non esiste alcuna Azienda in Twenty con quello specifico identificatore.
 
-<Note>A differenza di altri errori, questo non viene intercettato durante la fase di revisione dei dati. L'importazione inizierà e poi non riuscirà quando incontrerà la relazione mancante.</Note>
+<Note>
+  A differenza di altri errori, questo non viene intercettato durante la fase di
+  revisione dei dati. L'importazione inizierà e poi non riuscirà quando
+  incontrerà la relazione mancante.
+</Note>
 
 ### Cosa significa
 
@@ -286,19 +300,20 @@ Stai tentando di collegarti a un record che non esiste in Twenty.
 ### Come prevenire questo errore
 
 1. **Importa nell'ordine corretto:**
-   * Prima le Aziende
-   * Poi le Persone (con riferimenti all'Azienda)
-   * Le Opportunità al terzo posto
+   - Prima le Aziende
+   - Poi le Persone (con riferimenti all'Azienda)
+   - Le Opportunità al terzo posto
 
 2. **Verifica i valori di riferimento:**
-   * Esporta i record genitore per ottenere identificatori esatti
-   * Usa il formato dominio `https://domain.com`
-   * Verifica errori di battitura e differenze tra maiuscole/minuscole
+   - Esporta i record genitore per ottenere identificatori esatti
+   - Usa il formato dominio `https://domain.com`
+   - Verifica errori di battitura e differenze tra maiuscole/minuscole
 
 <Warning>
 **L'importazione non riuscirà se viene fatto riferimento a un record inesistente.**
 
 Importa sempre gli oggetti genitore prima degli oggetti figlio.
+
 </Warning>
 
 Per maggiori dettagli: [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
@@ -349,7 +364,10 @@ Una colonna del tuo file non può essere mappata perché il campo non esiste in 
 4. Crea il campo personalizzato con il tipo appropriato
 5. Carica di nuovo il tuo file
 
-<Note>L'importazione CSV crea record, non campi. Tutti i campi devono esistere prima dell'importazione.</Note>
+<Note>
+  L'importazione CSV crea record, non campi. Tutti i campi devono esistere prima
+  dell'importazione.
+</Note>
 
 ---
 
@@ -375,6 +393,7 @@ Stai tentando di assegnare un record a un utente (Proprietario, Assegnatario) ma
 **Gli utenti devono accettare gli inviti prima di importare.**
 
 Se un utente non ha accettato l'invito, i record che fanno riferimento a quell'utente avranno relazioni utente vuote.
+
 </Warning>
 
 ---
@@ -399,7 +418,9 @@ Evita errori verificando questi elementi prima di importare:
 ### Formati dei campi
 
 <Check>I campi booleani utilizzano `TRUE` o `FALSE` (maiuscolo)</Check>
-<Check>I campi Selezione utilizzano i nomi API, non le etichette visualizzate</Check>
+<Check>
+  I campi Selezione utilizzano i nomi API, non le etichette visualizzate
+</Check>
 <Check>I campi Telefono hanno tutte le colonne richieste</Check>
 <Check>I campi Valuta hanno sia Importo che Codice valuta</Check>
 
@@ -407,11 +428,15 @@ Evita errori verificando questi elementi prima di importare:
 
 <Check>I record genitore sono importati prima dei record figlio</Check>
 <Check>Le colonne di relazione fanno riferimento a record esistenti</Check>
-<Check>Il formato del dominio corrisponde esattamente al formato di Twenty</Check>
+<Check>
+  Il formato del dominio corrisponde esattamente al formato di Twenty
+</Check>
 
 ### Modello dati
 
-<Check>Tutti i campi personalizzati esistono in Impostazioni → Modello dati</Check>
+<Check>
+  Tutti i campi personalizzati esistono in Impostazioni → Modello dati
+</Check>
 <Check>Le opzioni Selezione esistono prima dell'importazione</Check>
 
 ---
@@ -424,7 +449,7 @@ Se hai provato le soluzioni sopra:
 2. **Esporta i record esistenti** — confronta il tuo file con i dati funzionanti
 3. **Esegui un test con un piccolo lotto** — prova prima con 5-10 righe
 4. **Consulta gli articoli di riferimento:**
-   * [Mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)
-   * [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
-   * [Gestione degli errori](/l/it/user-guide/data-migration/capabilities/error-handling)
+   - [Mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)
+   - [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
+   - [Importazione delle relazioni](/l/it/user-guide/data-migration/capabilities/import-relations)
+   - [Gestione degli errori](/l/it/user-guide/data-migration/capabilities/error-handling)

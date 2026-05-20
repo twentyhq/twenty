@@ -1,8 +1,7 @@
 ---
 title: Best Practices
-icon: "star"
+icon: 'star'
 ---
-
 
 This document outlines the best practices you should follow when working on the frontend.
 
@@ -34,13 +33,10 @@ export const MyComponent = () => {
 
   return (
     <div>
-      <input
-        value={myAtom}
-        onChange={(e) => setMyAtom(e.target.value)}
-      />
+      <input value={myAtom} onChange={(e) => setMyAtom(e.target.value)} />
     </div>
   );
-}
+};
 ```
 
 ### Do not use `useRef` to store state
@@ -91,7 +87,7 @@ export const PageComponent = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -99,9 +95,7 @@ export const PageComponent = () => {
   return <div>{data}</div>;
 };
 
-export const App = () => (
-  <PageComponent />
-);
+export const App = () => <PageComponent />;
 ```
 
 ```tsx
@@ -118,7 +112,7 @@ export const PageData = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -169,6 +163,7 @@ Make sure you remove all `console.logs` before pushing the code to production.
 Variable names ought to precisely depict the purpose or function of the variable.
 
 #### The issue with generic names
+
 Generic names in programming are not ideal because they lack specificity, leading to ambiguity and reduced code readability. Such names fail to convey the variable or function's purpose, making it challenging for developers to understand the code's intent without deeper investigation. This can result in increased debugging time, higher susceptibility to errors, and difficulties in maintenance and collaboration. Meanwhile, descriptive naming makes the code self-explanatory and easier to navigate, enhancing code quality and developer productivity.
 
 ```tsx
@@ -184,7 +179,7 @@ const [email, setEmail] = useState('');
 
 #### Some words to avoid in variable names
 
- - dummy
+- dummy
 
 ### Event handlers
 
@@ -287,14 +282,11 @@ When importing, opt for the designated aliases rather than specifying complete o
 ```
 
 **Usage**
+
 ```tsx
 // ❌ Bad, specifies the entire relative path
-import {
-  CatalogDecorator
-} from '../../../../../testing/decorators/CatalogDecorator';
-import {
-  ComponentDecorator
-} from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx
@@ -323,9 +315,6 @@ const validationSchema = z
 type Form = z.infer<typeof validationSchema>;
 ```
 
-
 ## Breaking Changes
 
 Always perform thorough manual testing before proceeding to guarantee that modifications haven’t caused disruptions elsewhere, given that tests have not yet been extensively integrated.
-
-

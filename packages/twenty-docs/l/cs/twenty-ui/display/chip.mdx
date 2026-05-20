@@ -30,13 +30,11 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti    | Typ                       | Popis                                                                                    |
 | ------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
@@ -47,8 +45,6 @@ export const MyComponent = () => {
 | typAvatara    | Typ avatara               | Typ avatara, který chcete zobrazit. Má dvě možnosti: `zaoblený` a `hranatý`              |
 | varianta      | `EntityChipVariant` výčet | Varianta čipu entity, kterou chcete zobrazit. Má dvě možnosti: `běžný` a `transparentní` |
 | Levá ikona    | Ikonová komponenta        | React komponenta představující ikonu. Zobrazeno na levé straně čipu                      |
-
-
 
 </Tab>
 </Tabs>
@@ -62,7 +58,7 @@ import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Průhledný neaktivní štítek"
       clickable={false}
@@ -72,10 +68,9 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
-
 ```
 
 <br />
@@ -83,11 +78,11 @@ export const MyComponent = () => {
 ### Deaktivovaný čip s tooltipem
 
 ```jsx
-import { Chip } from "twenty-ui/components";
-  
+import { Chip } from 'twenty-ui/components';
+
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Neaktivní štítek, který při přetečení zobrazí popisek."
       clickable={false}
@@ -97,7 +92,7 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
 ```
@@ -136,7 +131,6 @@ export const MyComponent = () => {
 
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti    | Typ                       | Popis                                                                                    |
 | ------------- | ------------------------- | ---------------------------------------------------------------------------------------- |
 | odkazNaEntitu | řetězec                   | Odkaz na entitu                                                                          |
@@ -146,8 +140,6 @@ export const MyComponent = () => {
 | typAvatara    | Typ avatara               | Typ avatara, který chcete zobrazit. Má dvě možnosti: `zaoblený` a `hranatý`              |
 | varianta      | `EntityChipVariant` výčet | Varianta čipu entity, kterou chcete zobrazit. Má dvě možnosti: `běžný` a `transparentní` |
 | Levá ikona    | Ikonová komponenta        | React komponenta představující ikonu. Zobrazeno na levé straně čipu                      |
-
-
 
 </Tab>
 </Tabs>

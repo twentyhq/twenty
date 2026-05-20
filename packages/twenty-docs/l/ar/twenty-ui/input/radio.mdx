@@ -4,7 +4,10 @@ icon: circle-dot
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="رأس الصفحة" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="رأس الصفحة"
+  />
 </Frame>
 
 تستخدم عندما يمكن للمستخدمين اختيار خيار واحد فقط من سلسلة من الخيارات.
@@ -41,10 +44,8 @@ export const MyComponent = () => {
 },{
 ```
 
-
 </Tab>
 <Tab title="المحددات">
-
 
 | المحددات                 | النوع             | الوصف                                                              |
 | ------------------------ | ----------------- | ------------------------------------------------------------------ |
@@ -58,9 +59,6 @@ export const MyComponent = () => {
 | معطل                     | قيمة منطقية       | إذا كانت `true`، فسيكون زر الاختيار معطلاً وغير قابل للنقر         |
 | موضع التسمية             | نص                | موضع نص التسمية بالنسبة لزر الراديو. يوجد خياران: `left` و `right` |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -72,17 +70,16 @@ export const MyComponent = () => {
 <Tab title="استخدام">
 
 ```jsx
-import React, { useState } from "react";
-import { Radio, RadioGroup } from "twenty-ui/display";
+import React, { useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
-  const [selectedValue, setSelectedValue] = useState("Option 1");
+  const [selectedValue, setSelectedValue] = useState('Option 1');
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
-  
+
   return (
     <RadioGroup value={selectedValue} onChange={handleChange}>
       <Radio value="Option 1" />
@@ -91,12 +88,10 @@ export const MyComponent = () => {
     </RadioGroup>
   );
 };
-
 ```
 
 </Tab>
 <Tab title="الخصائص">
-
 
 | الخصائص       | النوع             | الوصف                                                                 |
 | ------------- | ----------------- | --------------------------------------------------------------------- |
@@ -104,9 +99,6 @@ export const MyComponent = () => {
 | عند التغيير   | دالة              | دالة الاستدعاء التي يتم تشغيلها عند تغيير زر الاختيار.                |
 | onValueChange | دالة              | دالة الاستدعاء التي يتم تشغيلها عند تغيير القيمة المحددة في المجموعة. |
 | الأبناء       | `React.ReactNode` | يتيح لك تمرير مكوّنات React (مثل Radio) كعناصر فرعية إلى Radio Group  |
-
-
-
 
 </Tab>
 

@@ -1,6 +1,6 @@
 ---
 title: Publishing
-icon: "upload"
+icon: 'upload'
 description: Distribute your Twenty app to the marketplace or deploy it internally.
 ---
 
@@ -72,7 +72,10 @@ To release an update:
 3. Workspaces that have the app installed will see the upgrade available in their settings
 
 <Note>
-Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is allowed, and a final release like `1.0.0` is correctly recognized as higher than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver string.
+  Pre-release tags work as expected: bumping `1.0.0-rc.1` → `1.0.0-rc.2` is
+  allowed, and a final release like `1.0.0` is correctly recognized as higher
+  than `1.0.0-rc.5`. The version in `package.json` must itself be a valid semver
+  string.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -94,11 +97,11 @@ If your app uses a feature introduced in a specific Twenty server version (for e
 
 The value is a standard [semver range](https://github.com/npm/node-semver#ranges). Common patterns:
 
-| Range | Meaning |
-|-------|---------|
-| `>=2.3.0` | Any server from 2.3.0 onward |
+| Range            | Meaning                                  |
+| ---------------- | ---------------------------------------- |
+| `>=2.3.0`        | Any server from 2.3.0 onward             |
 | `>=2.3.0 <3.0.0` | 2.3.0 or later, but below the next major |
-| `^2.3.0` | Same as `>=2.3.0 <3.0.0` |
+| `^2.3.0`         | Same as `>=2.3.0 <3.0.0`                 |
 
 **What happens at deploy and install time:**
 
@@ -107,7 +110,9 @@ The value is a standard [semver range](https://github.com/npm/node-semver#ranges
 - If the server has no `APP_VERSION` configured, the check is skipped.
 
 <Note>
-The server is the authoritative check — it validates `engines.twenty` on both tarball upload and workspace install. If you deploy a tarball out-of-band or install from the marketplace, the server still enforces compatibility.
+  The server is the authoritative check — it validates `engines.twenty` on both
+  tarball upload and workspace install. If you deploy a tarball out-of-band or
+  install from the marketplace, the server still enforces compatibility.
 </Note>
 
 ## Automated CI/CD (scaffolded workflows)
@@ -144,13 +149,16 @@ Deploys your app to a configured Twenty server on every push to `main`, and opti
 
 **Required configuration:**
 
-| Setting | Where | Purpose |
-|---------|-------|---------|
-| `TWENTY_DEPLOY_URL` | `env` in `cd.yml` (defaults to `http://localhost:3000`) | The Twenty server to deploy to. Change this to your real server URL before first use. |
-| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server. |
+| Setting                 | Where                                                      | Purpose                                                                               |
+| ----------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| `TWENTY_DEPLOY_URL`     | `env` in `cd.yml` (defaults to `http://localhost:3000`)    | The Twenty server to deploy to. Change this to your real server URL before first use. |
+| `TWENTY_DEPLOY_API_KEY` | GitHub repo **Settings → Secrets and variables → Actions** | API key with deploy permission on the target server.                                  |
 
 <Note>
-The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder — it will not reach anything from a GitHub-hosted runner. Update it to your server's public URL (or use a self-hosted runner with network access) before enabling CD.
+  The default `TWENTY_DEPLOY_URL` of `http://localhost:3000` is a placeholder —
+  it will not reach anything from a GitHub-hosted runner. Update it to your
+  server's public URL (or use a self-hosted runner with network access) before
+  enabling CD.
 </Note>
 
 **Triggering a preview deploy from a PR:**
@@ -188,10 +196,7 @@ export default defineApplication({
   displayName: 'My App',
   description: 'A great app',
   logoUrl: 'public/logo.png',
-  screenshots: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  screenshots: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -202,7 +207,9 @@ See the [defineApplication accordion](/developers/extend/apps/config/application
 The marketplace renders `screenshots` in a fixed `8:5` container (for example, `1600×1000 px`).
 
 <Note>
-Screenshots of any aspect ratio are displayed in full and are never cropped, but anything significantly taller or narrower than `8:5` will show empty bands on the sides.
+  Screenshots of any aspect ratio are displayed in full and are never cropped,
+  but anything significantly taller or narrower than `8:5` will show empty bands
+  on the sides.
 </Note>
 
 ### Publish
@@ -232,7 +239,11 @@ yarn twenty dev:catalog-sync
 The metadata shown in the marketplace comes from your `defineApplication()` config — fields like `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, and `termsUrl`.
 
 <Note>
-If your app does not define an `aboutDescription` in `defineApplication()`, the marketplace will automatically use your package's `README.md` from npm as the about page content. This means you can maintain a single README for both npm and the Twenty marketplace. If you want a different description in the marketplace, explicitly set `aboutDescription`.
+  If your app does not define an `aboutDescription` in `defineApplication()`,
+  the marketplace will automatically use your package's `README.md` from npm as
+  the about page content. This means you can maintain a single README for both
+  npm and the Twenty marketplace. If you want a different description in the
+  marketplace, explicitly set `aboutDescription`.
 </Note>
 
 ### CI publishing
@@ -256,7 +267,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
       - run: npx twenty dev:build
@@ -267,7 +278,11 @@ jobs:
 For other CI systems (GitLab CI, CircleCI, etc.), the same three commands apply: `yarn install`, `yarn twenty dev:build`, then `npm publish` from `.twenty/output`.
 
 <Note>
-**npm provenance** is optional but recommended. Publishing with `--provenance` adds a trust badge to your npm listing, letting users verify the package was built from a specific commit in a public CI pipeline. See the [npm provenance docs](https://docs.npmjs.com/generating-provenance-statements) for setup instructions.
+  **npm provenance** is optional but recommended. Publishing with `--provenance`
+  adds a trust badge to your npm listing, letting users verify the package was
+  built from a specific commit in a public CI pipeline. See the [npm provenance
+  docs](https://docs.npmjs.com/generating-provenance-statements) for setup
+  instructions.
 </Note>
 
 ## Installing apps
@@ -291,4 +306,5 @@ The server enforces semver versioning on install, mirroring the rules on deploy:
 - Installing a lower version than the one currently installed is rejected with a `CANNOT_DOWNGRADE_APPLICATION` error.
 
 To install a newer version, deploy or publish it first, then re-run `yarn twenty app:install`.
+
 </Note>

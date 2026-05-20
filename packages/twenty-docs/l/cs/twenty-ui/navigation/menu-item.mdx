@@ -9,17 +9,17 @@ Univerzální položka menu navržená k použití v menu nebo navigačním sezn
 <Tab title="Použití">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
+    console.log('Icon button clicked!', event);
   };
 
   return (
@@ -37,10 +37,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti       | Typ                | Popis                                                                                     |
 | ---------------- | ------------------ | ----------------------------------------------------------------------------------------- |
@@ -52,9 +50,6 @@ export const MyComponent = () => {
 | testId           | řetězec            | Atribut data-testid pro testovací účely                                                   |
 | onClick          | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                              |
 | className        | řetězec            | Volitelný název pro dodatečné stylování                                                   |
-
-
-
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ Položka menu ve stylu příkazu v menu pro označení klávesových zkratek.
 <Tab title="Použití">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -93,10 +88,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti   | Typ                | Popis                                                        |
 | ------------ | ------------------ | ------------------------------------------------------------ |
@@ -107,8 +100,6 @@ export const MyComponent = () => {
 | isSelected   | booleovská hodnota | Určuje, zda je položka menu vybrána nebo zvýrazněna          |
 | onClick      | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu |
 | className    | řetězec            | Volitelný název pro dodatečné stylování                      |
-
-
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ Komponenta položky menu s možností přetahování, určená k použití v nab
 <Tab title="Použití">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -148,7 +139,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti       | Typ                | Popis                                                                        |
 | ---------------- | ------------------ | ---------------------------------------------------------------------------- |
 | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu                    |
@@ -159,9 +149,6 @@ export const MyComponent = () => {
 | text             | řetězec            | Textový obsah položky menu                                                   |
 | isDragDisabled   | booleovská hodnota | Určuje, zda je táhnutí zakázáno                                              |
 | className        | řetězec            | Volitelný název pro dodatečné stylování                                      |
-
-
-
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ Poskytuje způsob, jak implementovat funkci vícenásobného výběru s přidru�
 <Tab title="Použití">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,7 +179,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti    | Typ                | Popis                                                                 |
 | ------------- | ------------------ | --------------------------------------------------------------------- |
 | Levá ikona    | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu             |
@@ -201,9 +186,6 @@ export const MyComponent = () => {
 | vybráno       | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)                      |
 | poZměněVýběru | funkce             | Funkce zpětného volání spuštěná při změně stavu zaškrtávacího políčka |
 | className     | řetězec            | Volitelný název pro dodatečné stylování                               |
-
-
-
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ Položka menu pro vícenásobný výběr s avatarem, zaškrtávacím políčkem 
 <Tab title="Použití">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,7 +218,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti    | Typ                | Popis                                                                 |
 | ------------- | ------------------ | --------------------------------------------------------------------- |
 | avatar        | `ReactNode`        | Avatar nebo ikona, která má být zobrazena na levé straně položky menu |
@@ -244,9 +225,6 @@ export const MyComponent = () => {
 | vybráno       | booleovská hodnota | Určuje, zda je položka menu vybrána (zaškrtnuto)                      |
 | poZměněVýběru | funkce             | Funkce zpětného volání spuštěná při změně stavu zaškrtávacího políčka |
 | className     | řetězec            | Volitelný název pro dodatečné stylování                               |
-
-
-
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ Položka menu s volitelnou levou ikonou, textovým obsahem a ikonou šipky vprav
 <Tab title="Použití">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti | Typ             | Popis                                                        |
 | ---------- | --------------- | ------------------------------------------------------------ |
 | LeváIkona  | KomponentaIkony | Volitelná levá ikona zobrazená před textem v položce menu    |
 | text       | řetězec         | Textový obsah položky menu                                   |
 | poKliknutí | funkce          | Funkce zpětného volání spuštěná při kliknutí na položku menu |
 | className  | řetězec         | Volitelný název pro dodatečné stylování                      |
-
-
-
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ Výběrová položka menu, s volitelným levým obsahem (ikonou a textem) a indi
 <Tab title="Použití">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,7 +302,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti | Typ                | Popis                                                        |
 | ---------- | ------------------ | ------------------------------------------------------------ |
 | LeváIkona  | KomponentaIkony    | Volitelná levá ikona zobrazená před textem v položce menu    |
@@ -338,9 +311,6 @@ export const MyComponent = () => {
 | zvýrazněno | booleovská hodnota | Určuje, zda je položka menu aktuálně přejeta kurzorem        |
 | poKliknutí | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu |
 | className  | řetězec            | Volitelný název pro dodatečné stylování                      |
-
-
-
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ Výběrová položka menu s avatarem, s volitelným levým obsahem (avatar a tex
 <Tab title="Použití">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -376,12 +346,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti | Typ                | Popis                                                             |
 | ---------- | ------------------ | ----------------------------------------------------------------- |
@@ -394,9 +362,6 @@ export const MyComponent = () => {
 | onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu      |
 | className  | řetězec            | Volitelný název pro dodatečné stylování                           |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -408,11 +373,11 @@ Volitelná položka menu s ukázkou barvy pro situace, kdy chcete, aby uživatel
 <Tab title="Použití">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,7 +397,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti | Typ                | Popis                                                                                                                                                                   |
 | ---------- | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | barva      | řetězec            | Barva motivu, která se zobrazí jako ukázka v položce menu. Možnosti zahrnují: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow` a `gray` |
@@ -442,9 +406,6 @@ export const MyComponent = () => {
 | varianta   | řetězec            | Varianta ukázky barvy. Může být buďto `default` nebo `pipeline`                                                                                                         |
 | onClick    | funkce             | Funkce zpětného volání spuštěná při kliknutí na položku menu                                                                                                            |
 | className  | řetězec            | Volitelný název pro dodatečné stylování                                                                                                                                 |
-
-
-
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,7 +438,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti       | Typ                | Popis                                                        |
 | ---------------- | ------------------ | ------------------------------------------------------------ |
 | Levá ikona       | Ikonová komponenta | Volitelná levá ikona zobrazená před textem v položce menu    |
@@ -487,9 +446,6 @@ export const MyComponent = () => {
 | naZměnuPřepnutí  | funkce             | Funkce zpětného volání spuštěná při změně stavu přepínače    |
 | velikostPřepnutí | řetězec            | Velikost přepínače. Může být buď \                           |
 | className        | řetězec            | Volitelný název pro dodatečné stylování                      |
-
-
-
 
 </Tab>
 </Tabs>

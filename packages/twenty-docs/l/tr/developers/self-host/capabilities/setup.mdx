@@ -6,7 +6,9 @@ icon: dişli
 # Konfigürasyon Yönetimi
 
 <Warning>
-**İlk kez mi kuruyorsunuz?** Twenty'yi çalıştırmak için [Docker Compose kurulum kılavuzunu](/l/tr/developers/self-host/capabilities/docker-compose) izleyin, ardından yapılandırma için buraya dönün.
+  **İlk kez mi kuruyorsunuz?** Twenty'yi çalıştırmak için [Docker Compose
+  kurulum kılavuzunu](/l/tr/developers/self-host/capabilities/docker-compose)
+  izleyin, ardından yapılandırma için buraya dönün.
 </Warning>
 
 Twenty, farklı dağıtım ihtiyaçlarına uygun **iki yapılandırma modu** sunar:
@@ -27,17 +29,22 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
 4. Değişiklikler hemen yürürlüğe girer (çok konteynerli dağıtımlarda 15 saniye içinde)
 
 <Warning>
-**Çok Konteynerli Dağıtımlar:** Veritabanı yapılandırması (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) kullanıldığında, hem sunucu hem de worker konteynerleri aynı veritabanından okur. Yönetici panelindeki değişiklikler her ikisini de otomatik olarak etkiler ve konteynerler arasında ortam değişkenlerini çoğaltma ihtiyacını ortadan kaldırır (altyapı değişkenleri hariç).
+  **Çok Konteynerli Dağıtımlar:** Veritabanı yapılandırması
+  (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) kullanıldığında, hem sunucu hem de
+  worker konteynerleri aynı veritabanından okur. Yönetici panelindeki
+  değişiklikler her ikisini de otomatik olarak etkiler ve konteynerler arasında
+  ortam değişkenlerini çoğaltma ihtiyacını ortadan kaldırır (altyapı
+  değişkenleri hariç).
 </Warning>
 
 **Yönetici paneli aracılığıyla yapılandırabileceğiniz:**
 
-* **Kimlik Doğrulama** - Google/Microsoft OAuth, şifre ayarları
-* **E-posta** - SMTP ayarları, şablonlar, doğrulama
-* **Depolama** - S3 yapılandırması, yerel depolama yolları
-* **Entegrasyonlar** - Gmail, Google Calendar, Microsoft hizmetleri
-* **İş Akışı ve Hız Limiti** - Yürütme sınırları, API daraltma
-* **Ve daha fazlası...**
+- **Kimlik Doğrulama** - Google/Microsoft OAuth, şifre ayarları
+- **E-posta** - SMTP ayarları, şablonlar, doğrulama
+- **Depolama** - S3 yapılandırması, yerel depolama yolları
+- **Entegrasyonlar** - Gmail, Google Calendar, Microsoft hizmetleri
+- **İş Akışı ve Hız Limiti** - Yürütme sınırları, API daraltma
+- **Ve daha fazlası...**
 
 ![Yönetici Paneli Konfigürasyon Değişkenleri](/images/user-guide/setup/admin-panel-config-variables.png)
 
@@ -46,6 +53,7 @@ Her bir değişken, yönetici panelinizde **Ayarlar → Yönetici Paneli → Kon
 Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve gizli anahtarlar (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
 
 [Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+
 </Warning>
 
 ## Şifreleme anahtarları
@@ -55,7 +63,7 @@ Twenty yalnızca ortam değişkenleriyle yapılandırılan iki şifreleme anahta
 | Değişken                  | Amaç                                                                                                                                                                                                              | Zorunlu                                                                                                             |
 | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | `ENCRYPTION_KEY`          | Dinlenik durumdaki gizli verileri şifrelemek için kullanılan birincil anahtar (OAuth belirteçleri, uygulama değişkenleri, imzalama anahtarlarının özel anahtarları, TOTP sırları, hassas yapılandırma değerleri). | Yeni kurulumlar için evet (eski kurulumlar bunun yerine aşağıda açıklandığı gibi `APP_SECRET`'e dayanıyor olabilir) |
-| `FALLBACK_ENCRYPTION_KEY` | Yalnızca doğrulama için kullanılan anahtar. Döndürme sırasında, mevcut satırların şifresinin çözülebilir kalması için *önceki* `ENCRYPTION_KEY` değerine ayarlanır.                                               | Yalnızca döndürme sırasında                                                                                         |
+| `FALLBACK_ENCRYPTION_KEY` | Yalnızca doğrulama için kullanılan anahtar. Döndürme sırasında, mevcut satırların şifresinin çözülebilir kalması için _önceki_ `ENCRYPTION_KEY` değerine ayarlanır.                                               | Yalnızca döndürme sırasında                                                                                         |
 
 Geriye dönük uyumluluk için, `ENCRYPTION_KEY` ayarlanmadıysa, Twenty dinlenik durumdaki şifreleme için `APP_SECRET`'e geri döner — bu, daha eski dağıtımlardaki eski davranışla eşleşir. Yeni kurulumlarda her zaman özel bir `ENCRYPTION_KEY` ayarlanmalıdır.
 
@@ -86,10 +94,10 @@ Varsayılan olarak, Twenty **tek çalışma alanı modunda** çalışır — kur
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* Her Twenty örneği başına bir çalışma alanı
-* İlk kullanıcı otomatik olarak tam ayrıcalıklara sahip yönetici olur (`canImpersonate` ve `canAccessFullAdminPanel`)
-* İlk çalışma alanı oluşturulduktan sonra yeni kayıtlar devre dışı bırakılır
-* Basit URL yapısı: `https://your-domain.com`
+- Her Twenty örneği başına bir çalışma alanı
+- İlk kullanıcı otomatik olarak tam ayrıcalıklara sahip yönetici olur (`canImpersonate` ve `canAccessFullAdminPanel`)
+- İlk çalışma alanı oluşturulduktan sonra yeni kayıtlar devre dışı bırakılır
+- Basit URL yapısı: `https://your-domain.com`
 
 ### Çoklu Çalışma Alanı Modunu Etkinleştirme
 
@@ -102,14 +110,16 @@ Aynı Twenty örneği üzerinde birden fazla bağımsız ekibin kendi çalışma
 
 **Tek çalışma alanı modundan temel farklar:**
 
-* Aynı örnek üzerinde birden fazla çalışma alanı oluşturulabilir
-* Her çalışma alanı kendi alt alan adını alır (ör. `sales.your-domain.com`, `marketing.your-domain.com`)
-* Kullanıcılar `{DEFAULT_SUBDOMAIN}.your-domain.com` adresinde kaydolur ve oturum açar (ör. `app.your-domain.com`)
-* Otomatik yönetici ayrıcalıkları yoktur — her çalışma alanındaki ilk kullanıcı normal bir kullanıcıdır
-* Alt alan adı ve özel alan adı gibi çalışma alanına özgü ayarlar, çalışma alanı ayarlarında kullanılabilir hale gelir
+- Aynı örnek üzerinde birden fazla çalışma alanı oluşturulabilir
+- Her çalışma alanı kendi alt alan adını alır (ör. `sales.your-domain.com`, `marketing.your-domain.com`)
+- Kullanıcılar `{DEFAULT_SUBDOMAIN}.your-domain.com` adresinde kaydolur ve oturum açar (ör. `app.your-domain.com`)
+- Otomatik yönetici ayrıcalıkları yoktur — her çalışma alanındaki ilk kullanıcı normal bir kullanıcıdır
+- Alt alan adı ve özel alan adı gibi çalışma alanına özgü ayarlar, çalışma alanı ayarlarında kullanılabilir hale gelir
 
 <Warning>
-**Yalnızca ortam üzerinden ayar:** `IS_MULTIWORKSPACE_ENABLED` yalnızca `.env` dosyası üzerinden yapılandırılabilir ve yeniden başlatma gerektirir. Yönetici paneli üzerinden değiştirilemez.
+  **Yalnızca ortam üzerinden ayar:** `IS_MULTIWORKSPACE_ENABLED` yalnızca `.env`
+  dosyası üzerinden yapılandırılabilir ve yeniden başlatma gerektirir. Yönetici
+  paneli üzerinden değiştirilemez.
 </Warning>
 
 ### Çoklu Çalışma Alanı için DNS Yapılandırması
@@ -140,40 +150,41 @@ Etkinleştirildiğinde, yalnızca `canAccessFullAdminPanel` yetkisine sahip kull
 2. Yeni bir proje oluşturun veya mevcut bir projeyi seçin
 3. Bu API'leri etkinleştirin:
 
-* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
-* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
-* [Kişiler API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [Kişiler API](https://console.cloud.google.com/apis/library/people.googleapis.com)
 
 ### OAuth'u Yapılandır
 
 1. [Kimlik Bilgileri](https://console.cloud.google.com/apis/credentials) sayfasına gidin
 2. OAuth 2.0 İstemci Kimliği Oluştur
 3. Bu yönlendirme URI'lerini ekleyin:
-   * `https://{your-domain}/auth/google/redirect` (SSO için)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (entegrasyonlar için)
+   - `https://{your-domain}/auth/google/redirect` (SSO için)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (entegrasyonlar için)
 
 ### Twenty'de Yapılandır
 
 1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
 2. **Google Auth** bölümünü bulun
 3. Bu değişkenleri ayarlayın:
-   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
-   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
-   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
-   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
-   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-**Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+  ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
 **Gerekli kapsamlar** (otomatik yapılandırılmış):
 [İlgili kaynak kodunu görün](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 
-* `https://www.googleapis.com/auth/calendar.events`
-* `https://www.googleapis.com/auth/gmail.readonly`
-* `https://www.googleapis.com/auth/profile.emails.read`
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
 
 ### Uygulamanız test modunda ise
 
@@ -184,7 +195,9 @@ Uygulamanız test modunda ise, projenize test kullanıcıları eklemeniz gerekec
 ## Microsoft 365 Entegrasyonu
 
 <Warning>
-Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir [Microsoft 365 Lisansı](https://admin.microsoft.com/Adminportal/Home) olması gerekir. Biri olmadan hesaplarını Twenty'de eşitleyemeyecekler.
+  Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir
+  [Microsoft 365 Lisansı](https://admin.microsoft.com/Adminportal/Home) olması
+  gerekir. Biri olmadan hesaplarını Twenty'de eşitleyemeyecekler.
 </Warning>
 
 ### Microsoft Azure'da bir proje oluştur
@@ -195,14 +208,14 @@ Kullanıcıların Takvim ve Mesajlaşma API'sini kullanabilmesi için bir [Micro
 
 Microsoft Azure Konsolunda "İzinler" altında aşağıdaki API'leri etkinleştirin:
 
-* Microsoft Graph: Mail.ReadWrite
-* Microsoft Graph: Mail.Send
-* Microsoft Graph: Calendars.Read
-* Microsoft Graph: User.Read
-* Microsoft Graph: openid
-* Microsoft Graph: email
-* Microsoft Graph: profil
-* Microsoft Graph: offline_access
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profil
+- Microsoft Graph: offline_access
 
 Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak e-posta göndermek istiyorsanız gereklidir. Yalnızca e-posta almak istiyorsanız "Mail.Read" kullanabilirsiniz.
 
@@ -210,37 +223,38 @@ Not: "Mail.ReadWrite" ve "Mail.Send" yalnızca iş akışı eylemleri kullanarak
 
 Projenize aşağıdaki yönlendirme URI'lerini eklemeniz gerekir:
 
-* `https://{your-domain}/auth/microsoft/redirect` Microsoft SSO kullanmak istiyorsanız
-* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+- `https://{your-domain}/auth/microsoft/redirect` Microsoft SSO kullanmak istiyorsanız
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Twenty'de Yapılandır
 
 1. **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** bölümüne gidin
 2. **Microsoft Auth** bölümünü bulun
 3. Bu değişkenleri ayarlayın:
-   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
-   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
-   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
-   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
-   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-**Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+  ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
 ### Kapsamları yapılandır
 
 [İlgili kaynak kodunu görün](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
-* 'openid'
-* 'e-posta'
-* 'profil'
-* 'offline_access'
-* 'Mail.ReadWrite'
-* 'Mail.Send'
-* 'Calendars.Read'
+- 'openid'
+- 'e-posta'
+- 'profil'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### Uygulamanız test modunda ise
 
@@ -275,48 +289,56 @@ yarn command:prod cron:workflow:automated-cron-trigger
 
   <ArticleTab>
 
-  [Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.gmail.com
-  * EMAIL_SMTP_PORT=465
-  * EMAIL_SMTP_USER=gmail_e-posta_adresi
-  * EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
+[Uygulama Parolası](https://support.google.com/accounts/answer/185833) sağlamanız gerekecek.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_e-posta_adresi
+- EMAIL_SMTP_PASSWORD='gmail_uygulama_parolası'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.office365.com
-  * EMAIL_SMTP_PORT=587
-  * EMAIL_SMTP_USER=office365_e-posta_adresi
-  * EMAIL_SMTP_PASSWORD='office365_parola'
+2FA etkinleştirilmişse, [Uygulama Parolası](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9) sağlamanız gerekeceğini unutmayın.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_e-posta_adresi
+- EMAIL_SMTP_PASSWORD='office365_parola'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
-  * smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-  * smtp4dev kullanıcı arayüzüne şu adresten erişin: [http://localhost:8090](http://localhost:8090)
-  * Aşağıdaki değişkenleri ayarlayın:
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=localhost
-    * EMAIL_SMTP_PORT=2525
+**smtp4dev**, geliştirme ve test için sahte bir SMTP e-posta sunucusudur.
+
+- smtp4dev imajını çalıştırın: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- smtp4dev kullanıcı arayüzüne şu adresten erişin: [http://localhost:8090](http://localhost:8090)
+- Aşağıdaki değişkenleri ayarlayın:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
 </ArticleTabs>
 
 <Warning>
-**Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
+  **Çevre-yalnızca modu:** `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`
+  ayarlarsanız, bu değişkenleri `.env` dosyanıza ekleyin.
 </Warning>
 
 ## S3 Depolama
 
 <Warning>
-Varsayılan olarak, Twenty yüklenen dosyaları yerel dosya sisteminde depolar. Üretim dağıtımları için S3 veya S3 uyumlu bir hizmet (MinIO, DigitalOcean Spaces vb.) kullanın. dosyaların kapsayıcı yeniden başlatmaları arasında kalıcı olmasını ve birden çok sunucu örneği arasında ölçeklenmesini sağlamak için.
+  Varsayılan olarak, Twenty yüklenen dosyaları yerel dosya sisteminde depolar.
+  Üretim dağıtımları için S3 veya S3 uyumlu bir hizmet (MinIO, DigitalOcean
+  Spaces vb.) kullanın. dosyaların kapsayıcı yeniden başlatmaları arasında
+  kalıcı olmasını ve birden çok sunucu örneği arasında ölçeklenmesini sağlamak
+  için.
 </Warning>
 
 `STORAGE_TYPE=S_3` değerini ayarlayın ve `STORAGE_S3_*` değişkenlerini yönetici paneli veya `.env` üzerinden yapılandırın. S3 değişkenlerinin tam listesi için [config-variables.ts referansına](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) bakın.
@@ -334,7 +356,12 @@ Twenty, iş akışları için mantıksal işlevleri ve yapay zekâ veri analizi 
 **Geliştirmede (NODE_ENV=development):** Yerel olarak çalıştırırken kolaylık olması için her ikisinin varsayılanı **LOCAL**dır.
 
 <Warning>
-**Güvenlik Notu:** Yerel sürücü (`LOGIC_FUNCTION_TYPE=LOCAL` veya `CODE_INTERPRETER_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen kod için kullanılmalıdır. Üretim dağıtımlarında güvenilmeyen kodu işlerken, `LOGIC_FUNCTION_TYPE=LAMBDA` veya `CODE_INTERPRETER_TYPE=E2B` (korumalı alanla) kullanın ya da bunları devre dışı bırakın.
+  **Güvenlik Notu:** Yerel sürücü (`LOGIC_FUNCTION_TYPE=LOCAL` veya
+  `CODE_INTERPRETER_TYPE=LOCAL`), herhangi bir sandbox olmadan kodu ana makinede
+  doğrudan bir Node.js sürecinde çalıştırır. Yalnızca geliştirirken güvenilen
+  kod için kullanılmalıdır. Üretim dağıtımlarında güvenilmeyen kodu işlerken,
+  `LOGIC_FUNCTION_TYPE=LAMBDA` veya `CODE_INTERPRETER_TYPE=E2B` (korumalı
+  alanla) kullanın ya da bunları devre dışı bırakın.
 </Warning>
 
 ### Mantıksal İşlevler - Kullanılabilir Sürücüler
@@ -378,5 +405,7 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 | E2B        | `CODE_INTERPRETER_TYPE=E_2_B`    | Korumalı alanlı yürütmeyle üretim             | Yüksek (yalıtılmış korumalı alan) |
 
 <Note>
-`LOGIC_FUNCTION_TYPE=DISABLED` veya `CODE_INTERPRETER_TYPE=DISABLED` kullanıldığında, herhangi bir yürütme girişimi bir hata döndürür. Bu, Twenty'yi bu yetenekler olmadan çalıştırmak istiyorsanız kullanışlıdır.
+  `LOGIC_FUNCTION_TYPE=DISABLED` veya `CODE_INTERPRETER_TYPE=DISABLED`
+  kullanıldığında, herhangi bir yürütme girişimi bir hata döndürür. Bu,
+  Twenty'yi bu yetenekler olmadan çalıştırmak istiyorsanız kullanışlıdır.
 </Note>

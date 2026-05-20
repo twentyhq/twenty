@@ -10,14 +10,17 @@ description: Ghidul pentru contribuitori (sau dezvoltatori curioși) care doresc
 <Tab title="Linux și macOS">
 
 Înainte de a instala și utiliza Twenty, asigurați-vă că instalați următoarele pe computerul dvs.:
-* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
-* [yarn v4](https://yarnpkg.com/getting-started/install)
-* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-`npm` nu va funcționa, ar trebui să folosiți `yarn` în schimb. Yarn este acum livrat cu Node.js, așa că nu este nevoie să-l instalați separat.
-Trebuie doar să rulați `corepack enable` pentru a activa Yarn dacă nu ați făcut acest lucru deja.
+  `npm` nu va funcționa, ar trebui să folosiți `yarn` în schimb. Yarn este acum
+  livrat cu Node.js, așa că nu este nevoie să-l instalați separat. Trebuie doar
+  să rulați `corepack enable` pentru a activa Yarn dacă nu ați făcut acest lucru
+  deja.
 </Warning>
 
 </Tab>
@@ -26,9 +29,11 @@ Trebuie doar să rulați `corepack enable` pentru a activa Yarn dacă nu ați f�
 
 1. Instalați WSL
    Deschideți PowerShell ca Administrator și rulați:
+
 ```powershell
 wsl --install
 ```
+
 Ar trebui să vedeți acum un mesaj pentru a reporni computerul. Dacă nu, reporniți-l manual.
 
 La repornire, o fereastră PowerShell se va deschide și va instala Ubuntu. Acest lucru poate dura ceva timp.
@@ -47,7 +52,8 @@ git config --global user.email "emailul@domeniu.com"
 3. Instalați nvm, node.js și yarn
 
 <Warning>
-Folosiți `nvm` pentru a instala versiunea corectă de `node`. Fișierul `.nvmrc` asigură că toți contribuitorii folosesc aceeași versiune.
+  Folosiți `nvm` pentru a instala versiunea corectă de `node`. Fișierul `.nvmrc`
+  asigură că toți contribuitorii folosesc aceeași versiune.
 </Warning>
 
 ```bash
@@ -55,6 +61,7 @@ sudo apt-get install curl
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
+
 Închideți și redeschideți terminalul pentru a utiliza nvm. Apoi rulați următoarele comenzi.
 
 ```bash
@@ -114,6 +121,7 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Opțiunea 1 (preferată):** Pentru a configura local baza de date cu `brew`:
@@ -170,6 +178,7 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     Toți pașii următori trebuie rulați în terminalul WSL (în cadrul mașinii dvs. virtuale)
@@ -187,6 +196,7 @@ Trebuie să rulați toate comenzile în pașii următori de la rădăcina proiec
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -207,6 +217,7 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Opțiunea 1 (preferată):** Pentru a configura local Redis cu `brew`:
@@ -222,6 +233,7 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     **Opțiunea 1:** Pentru a configura local Redis:
@@ -231,6 +243,7 @@ Twenty necesită un cache Redis pentru a oferi cea mai bună performanță.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -248,7 +261,14 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-**Modul Multi-Workspace:** În mod implicit, Twenty rulează în modul cu un singur spațiu de lucru, în care poate fi creat un singur spațiu de lucru. Pentru a activa suportul multi-spațiu de lucru (util pentru testarea funcționalităților bazate pe subdomenii), setați `IS_MULTIWORKSPACE_ENABLED=true` în fișierul `.env` al serverului. Consultați [Modul Multi-Workspace](/l/ro/developers/self-host/capabilities/setup#multi-workspace-mode) pentru detalii.
+  **Modul Multi-Workspace:** În mod implicit, Twenty rulează în modul cu un
+  singur spațiu de lucru, în care poate fi creat un singur spațiu de lucru.
+  Pentru a activa suportul multi-spațiu de lucru (util pentru testarea
+  funcționalităților bazate pe subdomenii), setați
+  `IS_MULTIWORKSPACE_ENABLED=true` în fișierul `.env` al serverului. Consultați
+  [Modul
+  Multi-Workspace](/l/ro/developers/self-host/capabilities/setup#multi-workspace-mode)
+  pentru detalii.
 </Info>
 
 ## Pasul 6: Instalarea dependențelor
@@ -265,18 +285,20 @@ Rețineți că `npm` sau `pnpm` nu vor funcționa
 
 <Tabs>
   <Tab title="Linux">
-    În funcție de distribuția Linux pe care o folosiți, serverul Redis s-ar putea să fie pornit automat.
-    Dacă nu, verificați [ghidul de instalare Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pentru distribuția dvs.
+    În funcție de distribuția Linux pe care o folosiți, serverul Redis s-ar
+    putea să fie pornit automat. Dacă nu, verificați [ghidul de instalare
+    Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    pentru distribuția dvs.
   </Tab>
   <Tab title="Mac OS">
-  Redis ar trebui să fie deja pornit. Dacă nu, rulați:
-    ```bash
-    brew services start redis
-    ```
+    Redis ar trebui să fie deja pornit. Dacă nu, rulați: ```bash brew services
+    start redis ```
   </Tab>
   <Tab title="Windows (WSL)">
-    În funcție de distribuția Linux pe care o folosiți, serverul Redis s-ar putea să fie pornit automat.
-    Dacă nu, verificați [ghidul de instalare Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) pentru distribuția dvs.
+    În funcție de distribuția Linux pe care o folosiți, serverul Redis s-ar
+    putea să fie pornit automat. Dacă nu, verificați [ghidul de instalare
+    Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    pentru distribuția dvs.
   </Tab>
 </Tabs>
 
@@ -309,9 +331,9 @@ Vă puteți loga folosind contul demo implicit: `tim@apple.dev` (parolă: `tim@a
 
 **Back-end**
 
-* Serverul Twenty va fi operativ la [http://localhost:3000](http://localhost:3000)
-* API-ul GraphQL poate fi accesat la [http://localhost:3000/graphql](http://localhost:3000/graphql)
-* API-ul REST poate fi accesat la [http://localhost:3000/rest](http://localhost:3000/rest)
+- Serverul Twenty va fi operativ la [http://localhost:3000](http://localhost:3000)
+- API-ul GraphQL poate fi accesat la [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- API-ul REST poate fi accesat la [http://localhost:3000/rest](http://localhost:3000/rest)
 
 ## Depanare
 

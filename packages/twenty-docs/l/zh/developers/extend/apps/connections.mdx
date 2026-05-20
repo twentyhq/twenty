@@ -73,12 +73,12 @@ export default defineApplication({
 
 关键点：
 
-* `name` 是在 `listConnections({ providerName })` 中使用的唯一标识符字符串（短横线命名（kebab-case），必须匹配 `^[a-z][a-z0-9-]*$`）。
-* `displayName` 会显示在每个应用的设置选项卡以及 AI 工具列表中。
-* `clientIdVariable` / `clientSecretVariable` 是**名称**，而不是值——它们必须与 `defineApplication.serverVariables` 中声明的键匹配。 实际的 `client_id` 和 `client_secret` 由服务器管理员通过应用注册 UI 输入，绝不会提交到你的仓库。
-* 请使用 `serverVariables`（而非 `applicationVariables`）——OAuth 凭据是服务器范围的，并且每个 Twenty 服务器只配置一个 OAuth 应用。
-* 在两个 `serverVariables` 都填写之前，每个应用的设置选项卡会显示"需要服务器管理员"的提示，并且"添加连接"按钮将被禁用。
-* `type: 'oauth'` 是目前唯一受支持的取值。 该判别器具备前向兼容性：未来的类型（`'pat'`、`'api-key'` 等） 将会与 `oauth` 并列新增子配置块。
+- `name` 是在 `listConnections({ providerName })` 中使用的唯一标识符字符串（短横线命名（kebab-case），必须匹配 `^[a-z][a-z0-9-]*$`）。
+- `displayName` 会显示在每个应用的设置选项卡以及 AI 工具列表中。
+- `clientIdVariable` / `clientSecretVariable` 是**名称**，而不是值——它们必须与 `defineApplication.serverVariables` 中声明的键匹配。 实际的 `client_id` 和 `client_secret` 由服务器管理员通过应用注册 UI 输入，绝不会提交到你的仓库。
+- 请使用 `serverVariables`（而非 `applicationVariables`）——OAuth 凭据是服务器范围的，并且每个 Twenty 服务器只配置一个 OAuth 应用。
+- 在两个 `serverVariables` 都填写之前，每个应用的设置选项卡会显示"需要服务器管理员"的提示，并且"添加连接"按钮将被禁用。
+- `type: 'oauth'` 是目前唯一受支持的取值。 该判别器具备前向兼容性：未来的类型（`'pat'`、`'api-key'` 等） 将会与 `oauth` 并列新增子配置块。
 
 你的提供方需要加入白名单的 OAuth 回调 URL 为：
 
@@ -137,21 +137,21 @@ export const createLinearIssueHandler = async (input: {
 
 每个连接包含：
 
-| 字段                | 描述                                                   |
-| ----------------- | ---------------------------------------------------- |
-| `id`              | 唯一的行 id；传给 `getConnection(id)` 以重新获取单个连接             |
-| `可见性`             | `'user'`（仅对单个工作区成员私有）或 `'workspace'`（与所有成员共享）        |
-| `范围`              | 上游提供方授予的 OAuth 权限（不同于 `visibility`——两者不相关）           |
+| 字段              | 描述                                                                          |
+| ----------------- | ----------------------------------------------------------------------------- |
+| `id`              | 唯一的行 id；传给 `getConnection(id)` 以重新获取单个连接                      |
+| `可见性`          | `'user'`（仅对单个工作区成员私有）或 `'workspace'`（与所有成员共享）          |
+| `范围`            | 上游提供方授予的 OAuth 权限（不同于 `visibility`——两者不相关）                |
 | `userWorkspaceId` | 所有者的 userWorkspace id——在 HTTP 路由触发器中用于选择"请求用户的连接"很有用 |
-| `accessToken`     | 最新的 OAuth 访问令牌（若已过期会自动刷新）                            |
-| `name` / `handle` | 连接的显示名称（在 OAuth 回调时自动生成，用户可重命名）                      |
-| `authFailedAt`    | 当最近一次刷新失败时会设置；用户必须重新连接                               |
+| `accessToken`     | 最新的 OAuth 访问令牌（若已过期会自动刷新）                                   |
+| `name` / `handle` | 连接的显示名称（在 OAuth 回调时自动生成，用户可重命名）                       |
+| `authFailedAt`    | 当最近一次刷新失败时会设置；用户必须重新连接                                  |
 
 关键点：
 
-* 传入 `{ providerName }` 以按提供方筛选；省略它则可获取此应用在所有提供方上的全部连接。
-* 服务器会在返回前透明地刷新访问令牌。 你的处理器始终会拿到可用的令牌（或已设置 `authFailedAt`）。
-* `getConnection(id)` 是获取单行记录的对应方法。
+- 传入 `{ providerName }` 以按提供方筛选；省略它则可获取此应用在所有提供方上的全部连接。
+- 服务器会在返回前透明地刷新访问令牌。 你的处理器始终会拿到可用的令牌（或已设置 `authFailedAt`）。
+- `getConnection(id)` 是获取单行记录的对应方法。
 
 </Accordion>
 
@@ -159,8 +159,8 @@ export const createLinearIssueHandler = async (input: {
 
 当用户点击"添加连接"时，系统会提示其选择可见性：
 
-* **仅限我**——该凭据仅对连接的用户私有。 代表其调用的任何逻辑函数（带有 `isAuthRequired: true` 的 HTTP 路由触发器）都可以看到它；Cron 触发器和数据库事件则不可。
-* **工作区共享**——任何工作区成员都可以使用该凭据。 Cron / 数据库触发器也可以使用它，因为它们没有请求用户。
+- **仅限我**——该凭据仅对连接的用户私有。 代表其调用的任何逻辑函数（带有 `isAuthRequired: true` 的 HTTP 路由触发器）都可以看到它；Cron 触发器和数据库事件则不可。
+- **工作区共享**——任何工作区成员都可以使用该凭据。 Cron / 数据库触发器也可以使用它，因为它们没有请求用户。
 
 为每个处理器使用合适的类型：
 

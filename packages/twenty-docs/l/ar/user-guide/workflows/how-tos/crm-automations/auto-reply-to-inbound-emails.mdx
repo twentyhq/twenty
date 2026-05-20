@@ -23,7 +23,10 @@ description: أنشئ سير عمل يستخدم الذكاء الاصطناعي
 
 في كل مرة يصل فيها بريد إلكتروني إلى Twenty، يُشغَّل هذا.
 
-<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/workflow-overview.png"
+  style={{ width: '100%' }}
+/>
 
 ### الخطوة 3: البحث عن المُرسِل
 
@@ -40,7 +43,10 @@ description: أنشئ سير عمل يستخدم الذكاء الاصطناعي
 
 سيمنحك هذا بريد المُرسِل الإلكتروني في `handle` واسمه في `displayName`.
 
-<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/find-sender.png"
+  style={{ width: '100%' }}
+/>
 
 ### الخطوة 4: الفرز بالذكاء الاصطناعي وصياغة الرد
 
@@ -69,7 +75,10 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 يُنتِج AI Agent استجابته في الحقل `response` الذي يمكن للخطوات التالية الرجوع إليه.
 
-<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/ai-triage.png"
+  style={{ width: '100%' }}
+/>
 
 ### الخطوة 5: التفريع بناءً على قرار الذكاء الاصطناعي
 
@@ -83,7 +92,10 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 يتم تجاهل الرسائل غير المرغوب فيها والنشرات البريدية والرسائل المُنشأة تلقائيًا. كل ما عدا ذلك ينتقل إلى الخطوة التالية.
 
-<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/should-reply.png"
+  style={{ width: '100%' }}
+/>
 
 ### الخطوة 6: إرسال رد ضمن سلسلة المحادثة
 
@@ -98,14 +110,22 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 حقل In-Reply-To هو ما يجعل هذا ردًا بدلًا من محادثة جديدة. سيراه المستلِم ضمن سلسلة تحت البريد الأصلي في Gmail أو Outlook أو أي عميل آخر.
 
-<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/send-email.png"
+  style={{ width: '100%' }}
+/>
 
 <Tip>
-**In-Reply-To** يتوقّع `message.headerMessageId` من المشغّل — إنها البصمة الفريدة للبريد الإلكتروني، وليست عنوان المستلم. إذا تركته فارغًا، فسيُرسَل البريد الإلكتروني على أي حال، ولكن كرسالة مستقلة.
+  **In-Reply-To** يتوقّع `message.headerMessageId` من المشغّل — إنها البصمة
+  الفريدة للبريد الإلكتروني، وليست عنوان المستلم. إذا تركته فارغًا، فسيُرسَل
+  البريد الإلكتروني على أي حال، ولكن كرسالة مستقلة.
 </Tip>
 
 <Warning>
-يستخدم Gmail سطر الموضوع لتجميع الرسائل في سلاسل المحادثات. يجب أن يبدأ الموضوع بـ `Re:` (بما في ذلك النقطتان والمسافة) ليعرض Gmail الرد داخل سلسلة المحادثة الأصلية. بدون ذلك، سيظهر الرد كمحادثة منفصلة — حتى إذا تم تعيين ترويسة In-Reply-To بشكل صحيح.
+  يستخدم Gmail سطر الموضوع لتجميع الرسائل في سلاسل المحادثات. يجب أن يبدأ
+  الموضوع بـ `Re:` (بما في ذلك النقطتان والمسافة) ليعرض Gmail الرد داخل سلسلة
+  المحادثة الأصلية. بدون ذلك، سيظهر الرد كمحادثة منفصلة — حتى إذا تم تعيين
+  ترويسة In-Reply-To بشكل صحيح.
 </Warning>
 
 ### الخطوة 7: الاختبار والتفعيل
@@ -116,6 +136,6 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 ## أفكار للبناء عليها
 
-* **الرد على كبار الشخصيات فقط** — أضِف فرعًا يتحقق من مجال المُرسِل أو مما إذا كان موجودًا كجهة اتصال في Twenty
-* **التوجيه حسب النية** — استخدم موجهات AI Agent منفصلة للتعامل مع استفسارات المبيعات بشكل مختلف عن طلبات الدعم
-* **الإثراء قبل الرد** — أضِف خطوة Search Records لجلب شركة المُرسِل أو سجل الصفقات إلى الموجه الخاص بالذكاء الاصطناعي للحصول على ردود أكثر تخصيصًا
+- **الرد على كبار الشخصيات فقط** — أضِف فرعًا يتحقق من مجال المُرسِل أو مما إذا كان موجودًا كجهة اتصال في Twenty
+- **التوجيه حسب النية** — استخدم موجهات AI Agent منفصلة للتعامل مع استفسارات المبيعات بشكل مختلف عن طلبات الدعم
+- **الإثراء قبل الرد** — أضِف خطوة Search Records لجلب شركة المُرسِل أو سجل الصفقات إلى الموجه الخاص بالذكاء الاصطناعي للحصول على ردود أكثر تخصيصًا

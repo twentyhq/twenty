@@ -73,12 +73,12 @@ export default defineApplication({
 
 Puncte cheie:
 
-* `name` este șirul identificator unic folosit în `listConnections({ providerName })` (kebab-case, trebuie să corespundă `^[a-z][a-z0-9-]*$`).
-* `displayName` apare în fila de setări a aplicației și în lista de instrumente AI.
-* `clientIdVariable` / `clientSecretVariable` sunt **nume**, nu valori — trebuie să se potrivească cheilor declarate în `defineApplication.serverVariables`. Valorile reale `client_id` și `client_secret` sunt introduse de administratorul serverului prin interfața de înregistrare a aplicației și nu sunt niciodată comise în repo-ul tău.
-* Folosește `serverVariables` (nu `applicationVariables`) — acreditările OAuth sunt la nivel de server și există o singură aplicație OAuth pentru fiecare server Twenty.
-* Până când ambele `serverVariables` sunt completate, fila de setări a aplicației afișează un indiciu "necesită administrator de server" și butonul "Adaugă conexiune" este dezactivat.
-* `type: 'oauth'` este singura valoare acceptată în prezent. Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de `oauth`.
+- `name` este șirul identificator unic folosit în `listConnections({ providerName })` (kebab-case, trebuie să corespundă `^[a-z][a-z0-9-]*$`).
+- `displayName` apare în fila de setări a aplicației și în lista de instrumente AI.
+- `clientIdVariable` / `clientSecretVariable` sunt **nume**, nu valori — trebuie să se potrivească cheilor declarate în `defineApplication.serverVariables`. Valorile reale `client_id` și `client_secret` sunt introduse de administratorul serverului prin interfața de înregistrare a aplicației și nu sunt niciodată comise în repo-ul tău.
+- Folosește `serverVariables` (nu `applicationVariables`) — acreditările OAuth sunt la nivel de server și există o singură aplicație OAuth pentru fiecare server Twenty.
+- Până când ambele `serverVariables` sunt completate, fila de setări a aplicației afișează un indiciu "necesită administrator de server" și butonul "Adaugă conexiune" este dezactivat.
+- `type: 'oauth'` este singura valoare acceptată în prezent. Discriminatorul este compatibil cu versiuni viitoare: tipurile viitoare (`'pat'`, `'api-key'`, ...) vor adăuga blocuri noi de sub-configurație alături de `oauth`.
 
 URL-ul de callback OAuth pe care furnizorul tău trebuie să îl includă pe lista albă este:
 
@@ -149,9 +149,9 @@ Fiecare conexiune are:
 
 Puncte cheie:
 
-* Pasează `{ providerName }` pentru a filtra după furnizor; omite-l pentru a obține toate conexiunile pe care această aplicație le deține la toți furnizorii.
-* Serverul reîmprospătează transparent tokenul de acces înainte de a returna. Handlerul tău vede întotdeauna un token utilizabil (sau `authFailedAt` setat).
-* `getConnection(id)` este echivalentul pentru o singură înregistrare.
+- Pasează `{ providerName }` pentru a filtra după furnizor; omite-l pentru a obține toate conexiunile pe care această aplicație le deține la toți furnizorii.
+- Serverul reîmprospătează transparent tokenul de acces înainte de a returna. Handlerul tău vede întotdeauna un token utilizabil (sau `authFailedAt` setat).
+- `getConnection(id)` este echivalentul pentru o singură înregistrare.
 
 </Accordion>
 
@@ -159,8 +159,8 @@ Puncte cheie:
 
 Când un utilizator face clic pe "Adaugă conexiune", i se solicită să aleagă o vizibilitate:
 
-* **Doar pentru mine** — acreditarea este privată pentru utilizatorul care se conectează. Orice funcție logică apelată în numele lor (declanșator de rută HTTP cu `isAuthRequired: true`) o vede; declanșatoarele cron și evenimentele din bază de date nu.
-* **Partajată la nivel de spațiu de lucru** — orice membru al spațiului de lucru poate folosi acreditarea. Declanșatoarele cron / din bază de date o văd, de asemenea, deoarece nu au un utilizator al cererii.
+- **Doar pentru mine** — acreditarea este privată pentru utilizatorul care se conectează. Orice funcție logică apelată în numele lor (declanșator de rută HTTP cu `isAuthRequired: true`) o vede; declanșatoarele cron și evenimentele din bază de date nu.
+- **Partajată la nivel de spațiu de lucru** — orice membru al spațiului de lucru poate folosi acreditarea. Declanșatoarele cron / din bază de date o văd, de asemenea, deoarece nu au un utilizator al cererii.
 
 Folosește-o pe cea potrivită pentru fiecare handler:
 

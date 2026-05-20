@@ -32,7 +32,8 @@ import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
 // Export so the other side can reference it
-export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+export const POST_CARD_RECIPIENTS_FIELD_ID =
+  'a1111111-1111-1111-1111-111111111111';
 // Import from the other side
 import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
 
@@ -43,7 +44,8 @@ export default defineField({
   name: 'postCardRecipients',
   label: 'Post Card Recipients',
   icon: 'IconUsers',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
@@ -54,7 +56,12 @@ export default defineField({
 **Etapa 2: Defina o lado MANY_TO_ONE em PostCardRecipient** (o lado "muitos" — contém a chave estrangeira):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+} from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -70,7 +77,8 @@ export default defineField({
   name: 'postCard',
   label: 'Post Card',
   icon: 'IconMail',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
@@ -81,7 +89,11 @@ export default defineField({
 ```
 
 <Note>
-**Importações circulares:** ambos os campos de relação fazem referência ao `universalIdentifier` um do outro. Para evitar problemas de importação circular, exporte os IDs dos seus campos como constantes nomeadas de cada arquivo e importe-os no outro. O sistema de build resolve isso em tempo de compilação.
+  **Importações circulares:** ambos os campos de relação fazem referência ao
+  `universalIdentifier` um do outro. Para evitar problemas de importação
+  circular, exporte os IDs dos seus campos como constantes nomeadas de cada
+  arquivo e importe-os no outro. O sistema de build resolve isso em tempo de
+  compilação.
 </Note>
 
 ## Relacionando a objetos padrão
@@ -99,7 +111,8 @@ import {
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
-export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID =
+  'd4444444-4444-4444-4444-444444444444';
 
 export default defineField({
   universalIdentifier: PERSON_FIELD_ID,
@@ -111,7 +124,8 @@ export default defineField({
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_REVERSE_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
@@ -146,8 +160,10 @@ export default defineObject({
       type: FieldType.RELATION,
       name: 'postCard',
       label: 'Post Card',
-      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      relationTargetObjectMetadataUniversalIdentifier:
+        POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_ID,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,

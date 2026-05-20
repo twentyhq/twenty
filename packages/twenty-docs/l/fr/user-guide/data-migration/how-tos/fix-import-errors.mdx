@@ -16,7 +16,11 @@ Après avoir téléversé votre fichier et fait la correspondance des colonnes, 
 3. **Vous pouvez corriger sur place** — modifiez les cellules directement dans l'interface d'importation
 4. **Ou supprimer des lignes** — ignorez complètement les enregistrements problématiques
 
-<Note>**Corrigez les erreurs dans l'interface.** Vous n'avez pas besoin de revenir à votre feuille de calcul. Modifiez les cellules directement pendant l'importation pour gagner du temps.</Note>
+<Note>
+  **Corrigez les erreurs dans l'interface.** Vous n'avez pas besoin de revenir à
+  votre feuille de calcul. Modifiez les cellules directement pendant
+  l'importation pour gagner du temps.
+</Note>
 
 ## Dépannage étape par étape
 
@@ -48,8 +52,8 @@ Les lignes avec des valeurs en double sont **surlignées en jaune** dans l'inter
 
 Un champ unique (e-mail, domaine) :
 
-* Existe déjà dans Twenty
-* Apparaît deux fois dans votre fichier
+- Existe déjà dans Twenty
+- Apparaît deux fois dans votre fichier
 
 ### Comment corriger
 
@@ -73,10 +77,11 @@ Un champ unique (e-mail, domaine) :
 <Note>
   **Vous pouvez aussi mettre à jour les champs uniques.**
 
-  * Si vous conservez l'`id` mais changez l'`email` → l'adresse e-mail sera mise à jour
-  * Si vous conservez l'`email` mais changez l'`id` → l'id sera mis à jour
+- Si vous conservez l'`id` mais changez l'`email` → l'adresse e-mail sera mise à jour
+- Si vous conservez l'`email` mais changez l'`id` → l'id sera mis à jour
 
-  Tant qu'un identifiant unique correspond, Twenty met à jour l'enregistrement.
+Tant qu'un identifiant unique correspond, Twenty met à jour l'enregistrement.
+
 </Note>
 
 ### Comment éviter cette erreur
@@ -90,7 +95,8 @@ Avant l'importation :
 <Warning>
   **Les enregistrements supprimés de façon logique comptent pour l'unicité.**
 
-  Vérifiez le menu Commande → Voir les enregistrements supprimés. Les enregistrements qui s'y trouvent imposent toujours l'unicité. Supprimez-les définitivement ou restaurez-les et mettez-les à jour.
+Vérifiez le menu Commande → Voir les enregistrements supprimés. Les enregistrements qui s'y trouvent imposent toujours l'unicité. Supprimez-les définitivement ou restaurez-les et mettez-les à jour.
+
 </Warning>
 
 Pour plus de détails : [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -135,7 +141,11 @@ Les données ne correspondent pas au format attendu pour ce type de champ.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>Tous les formats sont valides, mais `https://domain.com` est recommandé car il correspond au format utilisé par la synchronisation e-mail/calendrier. L'utilisation d'autres formats peut créer des entreprises en double.</Note>
+<Note>
+  Tous les formats sont valides, mais `https://domain.com` est recommandé car il
+  correspond au format utilisé par la synchronisation e-mail/calendrier.
+  L'utilisation d'autres formats peut créer des entreprises en double.
+</Note>
 
 #### Date
 
@@ -258,7 +268,11 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
 
 Cela signifie qu'il n'existe aucune entreprise dans Twenty avec cet identifiant précis.
 
-<Note>Contrairement aux autres erreurs, celle-ci n'est pas détectée lors de l'étape de révision des données. L'importation commencera puis échouera lorsqu'elle rencontrera la relation manquante.</Note>
+<Note>
+  Contrairement aux autres erreurs, celle-ci n'est pas détectée lors de l'étape
+  de révision des données. L'importation commencera puis échouera lorsqu'elle
+  rencontrera la relation manquante.
+</Note>
 
 ### Ce que cela signifie
 
@@ -286,19 +300,20 @@ Vous essayez de lier un enregistrement qui n'existe pas dans Twenty.
 ### Comment éviter cette erreur
 
 1. **Importez dans le bon ordre :**
-   * Entreprises en premier
-   * Personnes ensuite (avec références à l'entreprise)
-   * Opportunités en troisième
+   - Entreprises en premier
+   - Personnes ensuite (avec références à l'entreprise)
+   - Opportunités en troisième
 
 2. **Vérifiez les valeurs de référence :**
-   * Exportez les enregistrements parents pour obtenir les identifiants exacts
-   * Utilisez le format de domaine `https://domain.com`
-   * Vérifiez les fautes de frappe et la casse
+   - Exportez les enregistrements parents pour obtenir les identifiants exacts
+   - Utilisez le format de domaine `https://domain.com`
+   - Vérifiez les fautes de frappe et la casse
 
 <Warning>
   **L'importation échouera si une référence est faite à un enregistrement inexistant.**
 
-  Importez toujours les objets parents avant les objets enfants.
+Importez toujours les objets parents avant les objets enfants.
+
 </Warning>
 
 Pour plus de détails : [Import des relations](/l/fr/user-guide/data-migration/capabilities/import-relations)
@@ -349,7 +364,10 @@ Une colonne de votre fichier ne peut pas être mise en correspondance car le cha
 4. Créez le champ personnalisé avec le type approprié
 5. Téléversez de nouveau votre fichier
 
-<Note>L'import CSV crée des enregistrements, pas des champs. Tous les champs doivent exister avant l'importation.</Note>
+<Note>
+  L'import CSV crée des enregistrements, pas des champs. Tous les champs doivent
+  exister avant l'importation.
+</Note>
 
 ---
 
@@ -374,7 +392,8 @@ Vous essayez d'assigner un enregistrement à un utilisateur (Propriétaire, Assi
 <Warning>
   **Les utilisateurs doivent accepter les invitations avant l'importation.**
 
-  Si un utilisateur n'a pas accepté son invitation, les enregistrements qui s'y réfèrent auront des relations utilisateur vides.
+Si un utilisateur n'a pas accepté son invitation, les enregistrements qui s'y réfèrent auront des relations utilisateur vides.
+
 </Warning>
 
 ---
@@ -399,19 +418,27 @@ Vous essayez d'assigner un enregistrement à un utilisateur (Propriétaire, Assi
 ### Formats des champs
 
 <Check>Les champs booléens utilisent `TRUE` ou `FALSE` (majuscules)</Check>
-<Check>Les champs de sélection utilisent les noms d'API, pas les libellés d'affichage</Check>
+<Check>
+  Les champs de sélection utilisent les noms d'API, pas les libellés d'affichage
+</Check>
 <Check>Les champs de téléphone ont toutes les colonnes requises</Check>
 <Check>Les champs de devise ont à la fois Montant et Code de devise</Check>
 
 ### Relations
 
-<Check>Enregistrements parents importés avant les enregistrements enfants</Check>
-<Check>Les colonnes de relation font référence à des enregistrements existants</Check>
+<Check>
+  Enregistrements parents importés avant les enregistrements enfants
+</Check>
+<Check>
+  Les colonnes de relation font référence à des enregistrements existants
+</Check>
 <Check>Le format de domaine correspond exactement au format de Twenty</Check>
 
 ### Modèle de données
 
-<Check>Tous les champs personnalisés existent dans Paramètres → Modèle de données</Check>
+<Check>
+  Tous les champs personnalisés existent dans Paramètres → Modèle de données
+</Check>
 <Check>Les options de sélection existent avant l'importation</Check>
 
 ---
@@ -424,7 +451,7 @@ Si vous avez essayé les solutions ci-dessus :
 2. **Exportez les enregistrements existants** — comparez votre fichier à des données fonctionnelles
 3. **Testez avec un petit lot** — essayez d'abord 5 à 10 lignes
 4. **Consultez les articles de référence :**
-   * [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)
-   * [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import des relations](/l/fr/user-guide/data-migration/capabilities/import-relations)
-   * [Gestion des erreurs](/l/fr/user-guide/data-migration/capabilities/error-handling)
+   - [Correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)
+   - [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
+   - [Import des relations](/l/fr/user-guide/data-migration/capabilities/import-relations)
+   - [Gestion des erreurs](/l/fr/user-guide/data-migration/capabilities/error-handling)

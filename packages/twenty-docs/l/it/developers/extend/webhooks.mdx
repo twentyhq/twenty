@@ -63,7 +63,8 @@ Ogni webhook invia una richiesta HTTP POST con un corpo JSON:
 | `timestamp` | Quando si è verificato l'evento (UTC)                      |
 
 <Note>
-Rispondi con uno **status HTTP 2xx** (200-299) per confermare la ricezione. Le risposte non 2xx vengono registrate come errori di consegna.
+  Rispondi con uno **status HTTP 2xx** (200-299) per confermare la ricezione. Le
+  risposte non 2xx vengono registrate come errori di consegna.
 </Note>
 
 ## Convalida del Webhook
@@ -87,22 +88,22 @@ Twenty firma ogni richiesta webhook per motivi di sicurezza. Convalida le firme 
 ### Esempio (Node.js)
 
 ```javascript
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const timestamp = req.headers['x-twenty-webhook-timestamp'];
 const payload = JSON.stringify(req.body);
-const secret = "your-webhook-secret";
+const secret = 'your-webhook-secret';
 
 const stringToSign = `${timestamp}:${payload}`;
 const expectedSignature = crypto
-  .createHmac("sha256", secret)
+  .createHmac('sha256', secret)
   .update(stringToSign)
-  .digest("hex");
+  .digest('hex');
 
-const receivedSignature = req.headers["x-twenty-webhook-signature"];
+const receivedSignature = req.headers['x-twenty-webhook-signature'];
 const isValid = crypto.timingSafeEqual(
-  Buffer.from(expectedSignature, "hex"),
-  Buffer.from(receivedSignature, "hex")
+  Buffer.from(expectedSignature, 'hex'),
+  Buffer.from(receivedSignature, 'hex'),
 );
 ```
 

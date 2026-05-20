@@ -6,17 +6,18 @@ description: Guida passo passo per collegare gli oggetti con campi di relazione.
 I campi di relazione collegano record di oggetti diversi — ad esempio, collegando Persone ad Aziende.
 
 <Note>
-**I nomi delle relazioni non possono essere modificati dopo la creazione** (influiscono sull'API). Pianifica con attenzione i nomi.
+  **I nomi delle relazioni non possono essere modificati dopo la creazione**
+  (influiscono sull'API). Pianifica con attenzione i nomi.
 </Note>
 
 ## Prima di Iniziare
 
 Decidi:
 
-* Quali oggetti stai collegando? (ad es., Persone → Aziende)
-* Qual è il lato "uno"? (ad es., Azienda)
-* Qual è il lato "molti"? (ad es., Persone — molte persone lavorano per una sola azienda)
-* Quale nome dovrebbe avere il campo su ciascun lato?
+- Quali oggetti stai collegando? (ad es., Persone → Aziende)
+- Qual è il lato "uno"? (ad es., Azienda)
+- Qual è il lato "molti"? (ad es., Persone — molte persone lavorano per una sola azienda)
+- Quale nome dovrebbe avere il campo su ciascun lato?
 
 Consulta [Campi di Relazione](/l/it/user-guide/data-model/capabilities/relation-fields) per la spiegazione dei tipi di relazione.
 
@@ -33,12 +34,12 @@ Consulta [Campi di Relazione](/l/it/user-guide/data-model/capabilities/relation-
 
 ## Esempio: Persone → Aziende
 
-* Vai a **Impostazioni → Modello dati → Persone**
-* Aggiungi un campo di relazione
-* Destinazione: **Aziende**
-* Tipo: **Molti-a-uno**
-* Campo su Persone: **Azienda**
-* Campo su Aziende: **Dipendenti**
+- Vai a **Impostazioni → Modello dati → Persone**
+- Aggiungi un campo di relazione
+- Destinazione: **Aziende**
+- Tipo: **Molti-a-uno**
+- Campo su Persone: **Azienda**
+- Campo su Aziende: **Dipendenti**
 
 Ora ogni Persona può essere collegata a un'Azienda e ogni Azienda mostra le proprie Persone.
 
@@ -51,10 +52,11 @@ Ora ogni Persona può essere collegata a un'Azienda e ogni Azienda mostra le pro
 I collegamenti vengono conservati ma nascosti. Riattiva per ripristinare.
 
 <Note>
-**Eliminare una relazione non elimina i record.** Viene rimosso solo il collegamento tra di essi.
+  **Eliminare una relazione non elimina i record.** Viene rimosso solo il
+  collegamento tra di essi.
 </Note>
 
 ## Correlati
 
-* [Campi di Relazione](/l/it/user-guide/data-model/capabilities/relation-fields) — tipi e limitazioni
-* [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importazione massiva di record collegati
+- [Campi di Relazione](/l/it/user-guide/data-model/capabilities/relation-fields) — tipi e limitazioni
+- [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — importazione massiva di record collegati

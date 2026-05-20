@@ -13,15 +13,15 @@ Utilizat atunci când un utilizator trebuie să selecteze mai multe valori din m
 <Tab title="Utilizare">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți       | Tip     | Descriere                                                                                      |
 | ----------------- | ------- | ---------------------------------------------------------------------------------------------- |
 | bifat             | boolean | Indică dacă bifa este selectată                                                                |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | variantă          | şir     | Variantele vizuale ale stilului cutiei. Opțiunile includ: `principal`, `secundar` și `terțiar` |
 | dimensiune        | şir     | Dimensiunea bifei. Are două opțiuni: `mic` și `mare`                                           |
 | formă             | șir     | Forma bifei. Are două opțiuni: `pătrată` și `rotunjită`                                        |
-
-
 
 </Tab>
 </Tabs>

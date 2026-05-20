@@ -11,24 +11,20 @@ Acest ghid vă arată cum să importați companiile în Twenty. **Companiile ar 
 
 ### Listă de verificare a condițiilor prealabile
 
-<Check>
-Fișierul este în format CSV, XLSX sau XLS
-</Check>
+<Check>Fișierul este în format CSV, XLSX sau XLS</Check>
+
+<Check>Fișierul are mai puțin de 10.000 de înregistrări</Check>
+
+<Check>Niciun domeniu duplicat în fișierul dvs.</Check>
 
 <Check>
-Fișierul are mai puțin de 10.000 de înregistrări
-</Check>
-
-<Check>
-Niciun domeniu duplicat în fișierul dvs.
-</Check>
-
-<Check>
-Toate câmpurile personalizate există în **Setări → Model de date**
+  Toate câmpurile personalizate există în **Setări → Model de date**
 </Check>
 
 <Note>
-Trebuie să importați mai mult de 10.000 de companii? Împărțiți în mai multe fișiere sau utilizați [importul prin API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api).
+  Trebuie să importați mai mult de 10.000 de companii? Împărțiți în mai multe
+  fișiere sau utilizați [importul prin
+  API](/l/ro/user-guide/data-migration/how-tos/import-data-via-api).
 </Note>
 
 ## Pasul 1: Pregătiți datele companiei
@@ -49,12 +45,13 @@ Trebuie să importați mai mult de 10.000 de companii? Împărțiți în mai mul
 **Folosiți formatul `https://domain.com` pentru domenii.**
 
 Acesta corespunde formatului folosit când Companiile sunt create automat din sincronizarea emailului/calendarului, prevenind duplicatele ulterior.
+
 </Warning>
 
 **Coloane pentru domeniu:**
 
-* **Domeniu / Etichetă de domeniu**: `acme.com`
-* **Domeniu / URL domeniu**: `https://acme.com`
+- **Domeniu / Etichetă de domeniu**: `acme.com`
+- **Domeniu / URL domeniu**: `https://acme.com`
 
 ### Formatul adresei
 
@@ -74,7 +71,9 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-**Sfat profesional:** Faceți clic pe **Download sample file** în timpul importului pentru a vedea denumirile exacte ale coloanelor pe care le așteaptă Twenty.
+  **Sfat profesional:** Faceți clic pe **Download sample file** în timpul
+  importului pentru a vedea denumirile exacte ale coloanelor pe care le așteaptă
+  Twenty.
 </Note>
 
 ## Pasul 2: Accesați funcția de import
@@ -108,11 +107,14 @@ Twenty încearcă automat să potrivească coloanele cu câmpurile. Revizuiți �
 
 ### Reguli importante de mapare
 
-* **Domeniu**: Mapați la **Domain / Domain URL** (nu la Domain Label)
-* **Adresă**: Mapați fiecare parte la coloana sa specifică (City, State etc.)
-* **Câmpuri Select**: Valorile trebuie să corespundă opțiunilor existente (sau le veți mapa în pasul următor)
+- **Domeniu**: Mapați la **Domain / Domain URL** (nu la Domain Label)
+- **Adresă**: Mapați fiecare parte la coloana sa specifică (City, State etc.)
+- **Câmpuri Select**: Valorile trebuie să corespundă opțiunilor existente (sau le veți mapa în pasul următor)
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ## Pasul 5: Mapați valorile câmpurilor Select
 
@@ -123,7 +125,9 @@ Dacă aveți câmpuri Select sau Multi-Select:
 3. Sau creați opțiuni noi, dacă este necesar
 
 <Note>
-Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele API.
+  Opțiunile Select folosesc **nume API**, nu etichete de afișare. Accesați
+  **Setări → Model de date** → activați **Mod avansat** pentru a vedea numele
+  API.
 </Note>
 
 ## Pasul 6: Revizuiți și remediați erorile
@@ -175,17 +179,22 @@ Consultați [Cum să actualizați înregistrările existente](/l/ro/user-guide/d
     Domeniul este un identificator unic în Twenty. Acest lucru previne companiile duplicate și asigură că sincronizarea emailului leagă corect emailurile de compania potrivită.
   </Accordion>
 
-  <Accordion title="Ce fac dacă am companii fără domeniu?">
-    Puteți lăsa domeniul necompletat. Totuși, recomandăm să adăugați domenii atunci când este posibil, pentru o calitate mai bună a datelor și pentru legarea automată a emailurilor.
-  </Accordion>
+<Accordion title="Ce fac dacă am companii fără domeniu?">
+  Puteți lăsa domeniul necompletat. Totuși, recomandăm să adăugați domenii
+  atunci când este posibil, pentru o calitate mai bună a datelor și pentru
+  legarea automată a emailurilor.
+</Accordion>
 
-  <Accordion title="Pot importa companii fără nicio Persoană asociată?">
-    Da! Puteți importa mai întâi companiile, apoi să importați ulterior Persoane și să le asociați folosind domeniul companiei.
-  </Accordion>
+<Accordion title="Pot importa companii fără nicio Persoană asociată?">
+  Da! Puteți importa mai întâi companiile, apoi să importați ulterior Persoane
+  și să le asociați folosind domeniul companiei.
+</Accordion>
 
-  <Accordion title="Ce se întâmplă dacă import un domeniu care există deja?">
-    Dacă includeți un identificator unic (domeniu sau id) care se potrivește unei companii existente, Twenty actualizează acea companie în loc să creeze un duplicat.
-  </Accordion>
+<Accordion title="Ce se întâmplă dacă import un domeniu care există deja?">
+  Dacă includeți un identificator unic (domeniu sau id) care se potrivește unei
+  companii existente, Twenty actualizează acea companie în loc să creeze un
+  duplicat.
+</Accordion>
 
   <Accordion title="Cum remediez erorile 'duplicate domain'?">
     Eliminați duplicatul din fișier sau includeți `id`-ul companiei pentru a actualiza în schimb înregistrarea existentă.
@@ -196,6 +205,6 @@ Consultați [Cum să actualizați înregistrările existente](/l/ro/user-guide/d
 
 Aveți probleme? Verificați:
 
-* [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
-* [Referință pentru maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping)
-* [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
+- [Referință pentru maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+- [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)

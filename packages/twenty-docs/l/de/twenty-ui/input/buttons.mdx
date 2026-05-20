@@ -16,7 +16,7 @@ Eine Liste von Schaltflächen und Schaltflächengruppen, die in der gesamten App
 <Tab title="Verwendung">
 
 ```jsx
-import { Button } from "@/ui/input/button/components/Button";
+import { Button } from '@/ui/input/button/components/Button';
 
 export const MyComponent = () => {
   return (
@@ -32,15 +32,15 @@ export const MyComponent = () => {
       soon={false}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
+
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften | Typ                   | Beschreibung                                                                                                         |
 | ------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -56,9 +56,6 @@ export const MyComponent = () => {
 | deaktiviert   | boolesch              | Gibt an, ob die Schaltfläche deaktiviert ist.                                                                        |
 | Fokus         | boolesch              | Bestimmt, ob die Schaltfläche den Fokus hat.                                                                         |
 | beiKlick      | Funktion              | Eine Rückruffunktion, die ausgelöst wird, wenn der Benutzer auf die Schaltfläche klickt                              |
-
-
-
 
 </Tab>
 
@@ -87,7 +84,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -101,7 +98,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -115,13 +112,13 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
     </ButtonGroup>
   );
 };
 
-```
+````
 </Tab>
 
 <Tab title="Eigenschaften">
@@ -164,12 +161,11 @@ export const MyComponent = () => {
     />
   );
 };
-```
+````
 
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften    | Typ                   | Beschreibung                                                                                                      |
 | ---------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -183,8 +179,6 @@ export const MyComponent = () => {
 | deaktiviert      | boolesch              | Bestimmt, ob die Schaltfläche deaktiviert ist                                                                     |
 | Fokus            | boolesch              | Gibt an, ob die Schaltfläche den Fokus hat                                                                        |
 
-
-
 </Tab>
 </Tabs>
 
@@ -194,9 +188,9 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
-import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
+import { FloatingButtonGroup } from '@/ui/input/button/components/FloatingButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -231,13 +225,10 @@ export const MyComponent = () => {
 
 <Tab title="Eigenschaften">
 
-
 | Eigenschaften | Typ       | Beschreibung                                                                                   | Standard |
 | ------------- | --------- | ---------------------------------------------------------------------------------------------- | -------- |
 | größe         | string    | Die Größe der Schaltfläche. Hat zwei Optionen: `klein` und `mittel`                            | klein    |
 | Kinder        | ReactNode | Ein Array von React-Elementen, die die einzelnen Schaltflächen innerhalb der Gruppe darstellen |          |
-
-
 
 </Tab>
 
@@ -249,8 +240,8 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -263,7 +254,7 @@ export const MyComponent = () => {
       applyBlur={true}
       disabled={false}
       focus={false}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
       isActive={true}
     />
   );
@@ -273,7 +264,6 @@ export const MyComponent = () => {
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften    | Typ                   | Beschreibung                                                                                                         |
 | ---------------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
@@ -288,8 +278,6 @@ export const MyComponent = () => {
 | onClick          | Funktion              | Eine Callback-Funktion, die ausgelöst wird, wenn der Benutzer auf den Knopf klickt.                                  |
 | isActive         | boolesch              | Bestimmt, ob der Knopf in einem aktiven Zustand ist                                                                  |
 
-
-
 </Tab>
 
 </Tabs>
@@ -300,45 +288,38 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   const iconButtons = [
     {
       Icon: IconClipboardText,
-      onClick: () => console.log("Button 1 clicked"),
+      onClick: () => console.log('Button 1 clicked'),
       isActive: true,
     },
     {
       Icon: IconCheckbox,
-      onClick: () => console.log("Button 2 clicked"),
+      onClick: () => console.log('Button 2 clicked'),
       isActive: true,
     },
   ];
 
   return (
-    <FloatingIconButtonGroup
-    className
-    size="small"
-    iconButtons={iconButtons} />
+    <FloatingIconButtonGroup className size="small" iconButtons={iconButtons} />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Eigenschaften">
 
-
 | Eigenschaften | Typ          | Beschreibung                                                                                                                                                                                                                                                                                          |
 | ------------- | ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Klassenname   | Zeichenkette | Optionaler Name für zusätzliche Stilierung                                                                                                                                                                                                                                                            |
 | größe         | Zeichenfolge | Die Größe des Knopfes. Hat zwei Optionen: `klein` und `mittel`                                                                                                                                                                                                                                        |
 | Symbolknöpfe  | Array        | Ein Array von Objekten, die jeweils einen Symbolknopf in der Gruppe darstellen. Jedes Objekt sollte die Symbolkomponente enthalten, die Sie im Knopf anzeigen möchten, die Funktion, die aufgerufen werden soll, wenn ein Benutzer auf den Knopf klickt, und ob der Knopf aktiv sein soll oder nicht. |
-
-
 
 </Tab>
 
@@ -350,27 +331,27 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { LightButton } from "@/ui/input/button/components/LightButton";
+import { LightButton } from '@/ui/input/button/components/LightButton';
 
 export const MyComponent = () => {
-  return <LightButton
-  className
-  icon={null}
-  title="Title"
-  accent="secondary"
-  active={false}
-  disabled={false}
-  focus={true}
-  onClick={()=>console.log('click')}
-  />;
+  return (
+    <LightButton
+      className
+      icon={null}
+      title="Title"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log('click')}
+    />
+  );
 };
 ```
-
 
 </Tab>
 
 <Tab title="Einstellungen">
-
 
 | Einstellungen | Typ               | Beschreibung                                                                        |
 | ------------- | ----------------- | ----------------------------------------------------------------------------------- |
@@ -383,9 +364,6 @@ export const MyComponent = () => {
 | Fokus         | boolesch          | Gibt an, ob der Knopf im Fokus steht                                                |
 | beiKlick      | Funktion          | Eine Callback-Funktion, die ausgelöst wird, wenn der Benutzer auf den Knopf klickt. |
 
-
-
-
 </Tab>
 
 </Tabs>
@@ -396,8 +374,8 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -411,17 +389,15 @@ export const MyComponent = () => {
       active={true}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Props">
-
 
 | Props       | Typ                   | Beschreibung                                                                            |
 | ----------- | --------------------- | --------------------------------------------------------------------------------------- |
@@ -436,8 +412,6 @@ export const MyComponent = () => {
 | Fokus       | boolesch              | Gibt an, ob die Schaltfläche den Fokus hat                                              |
 | beiKlick    | Funktion              | Eine Rückruffunktion, die ausgelöst wird, wenn der Benutzer auf die Schaltfläche klickt |
 
-
-
 </Tab>
 
 </Tabs>
@@ -448,8 +422,8 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { MainButton } from "@/ui/input/button/components/MainButton";
-import { IconCheckbox } from "@tabler/icons-react";
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -464,11 +438,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften        | Typ                              | Beschreibung                                                                            |
 | -------------------- | -------------------------------- | --------------------------------------------------------------------------------------- |
@@ -478,9 +450,6 @@ export const MyComponent = () => {
 | bald                 | boolesch                         | Gibt an, ob die Schaltfläche als "bald" markiert ist (z.B. für kommende Features)       |
 | Symbol               | `React.ComponentType`            | Eine optionale Symbolkomponente, die innerhalb der Schaltfläche angezeigt wird          |
 | React-`button`-Props | `React.ComponentProps<'button'>` | Alle Standard-HTML-Schaltflächeneigenschaften werden unterstützt                        |
-
-
-
 
 </Tab>
 
@@ -492,30 +461,22 @@ export const MyComponent = () => {
 <Tab title="Verwendung">
 
 ```jsx
-import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
-  return (
-    <RoundedIconButton
-      Icon={IconSearch}
-    />
-  );
+  return <RoundedIconButton Icon={IconSearch} />;
 };
 ```
-
 
 </Tab>
 
 <Tab title="Eigenschaften">
 
-
 | Eigenschaften        | Typ                                             | Beschreibung |
 | -------------------- | ----------------------------------------------- | ------------ |
 | Symbol               | `React.ComponentType`                           |              |
 | React-`button`-Props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |              |
-
-
 
 </Tab>
 

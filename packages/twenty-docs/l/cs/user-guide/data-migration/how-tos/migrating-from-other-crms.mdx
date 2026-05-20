@@ -7,7 +7,10 @@ description: Podrobný průvodce krok za krokem pro migraci vašich dat z libovo
 
 Tento průvodce vás provede migrací vašich dat z libovolného CRM do Twenty. Proces zahrnuje audit vašich dat, přípravu vašeho pracovního prostoru Twenty, export z vašeho současného systému a import do Twenty.
 
-<Note>Zobrazení, pracovní postupy a oprávnění je po migraci nutné vytvořit ručně. Naplánujte si čas na tuto konfigurační práci.</Note>
+<Note>
+  Zobrazení, pracovní postupy a oprávnění je po migraci nutné vytvořit ručně.
+  Naplánujte si čas na tuto konfigurační práci.
+</Note>
 
 ## Krok 1: Proveďte audit svých aktuálních dat
 
@@ -15,17 +18,17 @@ Migrace je příležitostí k novému začátku. Nepřenášejte balast.
 
 **Co ponechat:**
 
-* Aktivní kontakty a společnosti
-* Otevřené obchodní příležitosti a obchody
-* Důležité poznámky a aktivity
-* Vlastní pole, která skutečně používáte
+- Aktivní kontakty a společnosti
+- Otevřené obchodní příležitosti a obchody
+- Důležité poznámky a aktivity
+- Vlastní pole, která skutečně používáte
 
 **Co nechat za sebou:**
 
-* Zastaralé kontakty (bez aktivity 2 a více let)
-* Duplicitní záznamy
-* Testovací data
-* Nepoužívaná vlastní pole
+- Zastaralé kontakty (bez aktivity 2 a více let)
+- Duplicitní záznamy
+- Testovací data
+- Nepoužívaná vlastní pole
 
 ## Krok 2: Zmapujte svůj datový model
 
@@ -41,11 +44,14 @@ Vytvořte mapovací dokument mezi vaším současným CRM a Twenty:
 
 **Pro každé pole zdokumentujte:**
 
-* Název zdrojového pole
-* Cílové pole v Twenty
-* Jakékoli potřebné úpravy formátu (datumy, telefonní čísla apod.)
+- Název zdrojového pole
+- Cílové pole v Twenty
+- Jakékoli potřebné úpravy formátu (datumy, telefonní čísla apod.)
 
-<Note>Mějte tento mapovací dokument po ruce během importu — budete na něj odkazovat při mapování sloupců.</Note>
+<Note>
+  Mějte tento mapovací dokument po ruce během importu — budete na něj odkazovat
+  při mapování sloupců.
+</Note>
 
 ## Krok 3: Nastavte svůj pracovní prostor Twenty
 
@@ -62,6 +68,7 @@ Před importem dat připravte svůj pracovní prostor Twenty:
 **Všechna pole musí existovat před importem.**
 
 Import CSV vytváří záznamy, nikoli pole. Vytvořte všechna vlastní pole v Nastavení → Datový model před importem.
+
 </Warning>
 
 ### Pozvěte svůj tým
@@ -70,6 +77,7 @@ Import CSV vytváří záznamy, nikoli pole. Vytvořte všechna vlastní pole v 
 **Pozvěte uživatele PŘED importem dat.**
 
 Pokud vaše data obsahují odkazy na uživatele (vlastník účtu, přiřazený uživatel apod.), tito uživatelé musí v Twenty existovat před importem. Jinak tyto relace nelze namapovat.
+
 </Warning>
 
 1. Přejděte na **Nastavení → Členové**
@@ -119,6 +127,7 @@ Otevřete každý exportovaný soubor CSV v tabulkovém editoru a připravte jej
 **Formát domény je zásadní.**
 
 Použijte `https://domain.com` (ne `domain.com` ani `www.domain.com`). To odpovídá formátu Twenty a předchází duplicitám, když připojíte synchronizaci e-mailu/kalendáře.
+
 </Warning>
 
 Úplné požadavky na formátování pro všechny typy polí viz [Jak připravit soubory CSV](/l/cs/user-guide/data-migration/how-tos/prepare-your-csv-files).
@@ -152,6 +161,7 @@ Kompletní průvodce formátováním viz [Jak připravit soubory CSV](/l/cs/user
 **Na pořadí importu záleží!**
 
 Vždy importujte v tomto pořadí:
+
 1. **Společnosti** jako první (bez závislostí)
 2. **Lidé** jako druzí (propojení se společnostmi)
 3. **Příležitosti** jako třetí (propojení se společnostmi/lidmi)
@@ -159,6 +169,7 @@ Vždy importujte v tomto pořadí:
 5. **Vlastní objekty** podle jejich závislostí
 
 Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+
 </Warning>
 
 ### Importujte každý objekt
@@ -169,17 +180,17 @@ Pro každý soubor CSV, v daném pořadí:
 2. Klikněte na **⋮ → Import records**
 3. Nahrajte soubor CSV
 4. Namapujte sloupce na pole:
-   * Namapujte sloupce s e-maily uživatelů na příslušná relační pole
-   * Namapujte sloupce relací (např. `companyDomain`) na relační pole
+   - Namapujte sloupce s e-maily uživatelů na příslušná relační pole
+   - Namapujte sloupce relací (např. `companyDomain`) na relační pole
 5. Zkontrolujte a opravte případné chyby v uživatelském rozhraní
 6. Potvrďte import
 7. Ověřte několik záznamů, než přejdete k dalšímu souboru
 
 **Podrobné návody:**
 
-* [Jak importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv)
-* [Jak importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [Jak importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv)
+- [Jak importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 
 ## Krok 7: Rozsáhlé migrace (50 000+ záznamů)
 
@@ -193,9 +204,9 @@ Pro rozsáhlé migrace:
 
 **Pro importy přes API:**
 
-* Rychlejší a spolehlivější pro velké datové sady
-* Podporuje dávkové operace (až 60 záznamů na jedno volání)
-* Viz [Jak importovat data přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api)
+- Rychlejší a spolehlivější pro velké datové sady
+- Podporuje dávkové operace (až 60 záznamů na jedno volání)
+- Viz [Jak importovat data přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api)
 
 ## Krok 8: Nastavení po migraci
 
@@ -203,30 +214,30 @@ Po importu dat dokončete konfiguraci pracovního prostoru:
 
 ### Znovu vytvořte zobrazení
 
-* Nastavte uložená zobrazení s filtry, řazením a nastavením sloupců
-* Vytvořte případná kanbanová nebo kalendářová zobrazení
+- Nastavte uložená zobrazení s filtry, řazením a nastavením sloupců
+- Vytvořte případná kanbanová nebo kalendářová zobrazení
 
 ### Znovuvytvoření pracovních postupů
 
-* Znovu vytvořte automatizace v **Settings → Workflows**
-* Začněte s nejdůležitějšími pracovními postupy
-* Každý z nich otestujte, než se na něj spolehnete
+- Znovu vytvořte automatizace v **Settings → Workflows**
+- Začněte s nejdůležitějšími pracovními postupy
+- Každý z nich otestujte, než se na něj spolehnete
 
 ### Nakonfigurujte role a oprávnění
 
-* Nakonfigurujte role v **Settings → Roles**
-* Přiřaďte uživatele ke vhodným rolím
+- Nakonfigurujte role v **Settings → Roles**
+- Přiřaďte uživatele ke vhodným rolím
 
 ### Propojte e-mail a kalendář
 
-* Každý uživatel si připojí svůj účet v **Nastavení → Účty**
-* Twenty začne synchronizovat e-maily k záznamům kontaktů
-* Viz [E-mail a kalendář](/l/cs/user-guide/calendar-emails/overview)
+- Každý uživatel si připojí svůj účet v **Nastavení → Účty**
+- Twenty začne synchronizovat e-maily k záznamům kontaktů
+- Viz [E-mail a kalendář](/l/cs/user-guide/calendar-emails/overview)
 
 ### Vyškolte svůj tým
 
-* Společně si projděte nové rozhraní
-* Zdokumentujte procesy specifické pro tým
+- Společně si projděte nové rozhraní
+- Zdokumentujte procesy specifické pro tým
 
 ## Běžné problémy a řešení
 
@@ -244,9 +255,13 @@ Podrobné kroky pro řešení problémů viz [Jak opravit chyby importu](/l/cs/u
 
 ### Integrita dat
 
-<Check>Všechny záznamy byly importovány (porovnejte počty se zdrojovým systémem)</Check>
+<Check>
+  Všechny záznamy byly importovány (porovnejte počty se zdrojovým systémem)
+</Check>
 <Check>Relace fungují správně (lidé jsou propojeni se společnostmi)</Check>
-<Check>Přiřazení uživatelů je správně namapováno (vlastník, přiřazený uživatel)</Check>
+<Check>
+  Přiřazení uživatelů je správně namapováno (vlastník, přiřazený uživatel)
+</Check>
 <Check>Vlastní pole vyplněna</Check>
 <Check>Žádné neočekávané duplicity</Check>
 
@@ -260,7 +275,9 @@ Podrobné kroky pro řešení problémů viz [Jak opravit chyby importu](/l/cs/u
 ### Připravenost týmu
 
 <Check>Tým proškolen v novém systému</Check>
-<Check>Plán přístupu ke starému CRM rozhodnut (ponechat pro referenci? Kdy vypnout?)</Check>
+<Check>
+  Plán přístupu ke starému CRM rozhodnut (ponechat pro referenci? Kdy vypnout?)
+</Check>
 
 ## Časté dotazy
 
@@ -269,13 +286,16 @@ Podrobné kroky pro řešení problémů viz [Jak opravit chyby importu](/l/cs/u
     V tuto chvíli ne. Pracovní postupy je nutné v Twenty znovu vytvořit ručně.
   </Accordion>
 
-  <Accordion title="A co souborové přílohy?">
-    Souborové přílohy nejsou součástí exportů CSV. Budete je muset znovu nahrát ručně, migrovat je přes API, nebo požádat náš tým o pomoc.
-  </Accordion>
+<Accordion title="A co souborové přílohy?">
+  Souborové přílohy nejsou součástí exportů CSV. Budete je muset znovu nahrát
+  ručně, migrovat je přes API, nebo požádat náš tým o pomoc.
+</Accordion>
 
-  <Accordion title="Mohu během migrace ponechat oba systémy v provozu?">
-    Ano, doporučujeme ponechat vaše staré CRM v provozu, dokud neověříte, že je migrace dokončena. Jen si dejte pozor, abyste nevytvářeli nová data na obou místech.
-  </Accordion>
+<Accordion title="Mohu během migrace ponechat oba systémy v provozu?">
+  Ano, doporučujeme ponechat vaše staré CRM v provozu, dokud neověříte, že je
+  migrace dokončena. Jen si dejte pozor, abyste nevytvářeli nová data na obou
+  místech.
+</Accordion>
 
   <Accordion title="Jak dlouho obvykle migrace trvá?">
     Záleží na objemu a složitosti dat. Menší migrace (do 10 000 záznamů) lze zvládnout během několika hodin. Rozsáhlé migrace mohou trvat několik dní, včetně čištění dat a testování.
@@ -286,7 +306,7 @@ Podrobné kroky pro řešení problémů viz [Jak opravit chyby importu](/l/cs/u
 
 Pro složité migrace nebo velké datové sady:
 
-* **Průvodce nastavením:** Objednejte si 4hodinový onboardingový balíček
-* **Kompletní migrační služba:** Naši partneři mohou zajistit celou migraci
+- **Průvodce nastavením:** Objednejte si 4hodinový onboardingový balíček
+- **Kompletní migrační služba:** Naši partneři mohou zajistit celou migraci
 
 Kontaktujte [contact@twenty.com](mailto:contact@twenty.com) nebo si prohlédněte naše [Implementační služby](/l/cs/user-guide/getting-started/capabilities/implementation-services).

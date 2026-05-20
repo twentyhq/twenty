@@ -29,7 +29,9 @@ Antes de configurar o fluxo de trabalho:
 3. Escolha o objeto ao qual pretende anexar PDFs (por exemplo, **Empresa** ou **Oportunidade**)
 
 <Tip>
-Com um Gatilho Manual, os utilizadores podem executar este fluxo de trabalho utilizando um botão que aparece no canto superior direito quando um registo é selecionado, para gerar e anexar um PDF.
+  Com um Gatilho Manual, os utilizadores podem executar este fluxo de trabalho
+  utilizando um botão que aparece no canto superior direito quando um registo é
+  selecionado, para gerar e anexar um PDF.
 </Tip>
 
 ### Passo 2: Adicionar uma Função lógica
@@ -45,15 +47,15 @@ Com um Gatilho Manual, os utilizadores podem executar este fluxo de trabalho uti
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-Se estiver a anexar a um objeto diferente (Pessoa, Oportunidade, etc.), renomeie o parâmetro em conformidade (por exemplo, `personId`, `opportunityId`) e atualize a função lógica.
+  Se estiver a anexar a um objeto diferente (Pessoa, Oportunidade, etc.),
+  renomeie o parâmetro em conformidade (por exemplo, `personId`,
+  `opportunityId`) e atualize a função lógica.
 </Note>
 
 #### Código da Função lógica
 
 ```typescript
-export const main = async (
-  params: { companyId: string },
-) => {
+export const main = async (params: { companyId: string }) => {
   const { companyId } = params;
   // Replace with your Twenty GraphQL endpoints (/metadata for metadata and files or /graphql for your records)
   // Cloud: https://api.twenty.com/graphql
@@ -98,16 +100,18 @@ export const main = async (
 
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
   const response = await fetch(metadataGraphqlEndpoint, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      },
-      body: {
-        query: fieldMetadataIdQuery,
-      }
-    });
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: {
+      query: fieldMetadataIdQuery,
+    },
+  });
   const result = await response.json();
-  const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
+  const uploadFileFieldMetadataId = result.data.objects.edges
+    .find((object) => object.node.nameSingular === 'attachment')
+    .node.fieldsList.find((field) => field.name === 'file').id;
 
   // Step 3: Upload the file via GraphQL multipart upload
   const uploadMutation = `
@@ -119,10 +123,13 @@ export const main = async (
   `;
 
   const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
-  }));
+  uploadForm.append(
+    'operations',
+    JSON.stringify({
+      query: uploadMutation,
+      variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
+    }),
+  );
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
@@ -169,9 +176,9 @@ export const main = async (
           file: [
             {
               fileId: fileId,
-              label: filename
-            }
-          ]
+              label: filename,
+            },
+          ],
         },
       },
     }),
@@ -180,7 +187,9 @@ export const main = async (
   const attachmentResult = await attachmentResponse.json();
 
   if (attachmentResult.errors?.length) {
-    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+    throw new Error(
+      `Attachment creation failed: ${attachmentResult.errors[0].message}`,
+    );
   }
 
   return attachmentResult.data?.createAttachment;
@@ -210,9 +219,11 @@ Se utilizar um serviço de geração de PDF, pode:
 2. Passe o URL do PDF devolvido para a função lógica como parâmetro
 
 ```typescript
-export const main = async (
-  params: { companyId: string; pdfUrl: string; filename: string },
-) => {
+export const main = async (params: {
+  companyId: string;
+  pdfUrl: string;
+  filename: string;
+}) => {
   const { companyId, pdfUrl, filename } = params;
   // ... rest of the function
 };
@@ -241,10 +252,10 @@ Para criar orçamentos ou faturas dinâmicos:
 
 ### Serviços Populares de Geração de PDF
 
-* **Carbone** - Geração de documentos baseada em modelos
-* **PDFMonkey** - Criação dinâmica de PDF a partir de modelos
-* **DocuSeal** - Plataforma de automatização de documentos
-* **Documint** - Geração de documentos orientada a API
+- **Carbone** - Geração de documentos baseada em modelos
+- **PDFMonkey** - Criação dinâmica de PDF a partir de modelos
+- **DocuSeal** - Plataforma de automatização de documentos
+- **Documint** - Geração de documentos orientada a API
 
 Cada serviço fornece uma API que devolve um URL de PDF, que pode depois passar para a função lógica.
 
@@ -258,6 +269,6 @@ Cada serviço fornece uma API que devolve um URL de PDF, que pode depois passar 
 
 ## Relacionados
 
-* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Funções lógicas](/l/pt/user-guide/workflows/capabilities/workflow-actions#code)
-* [Gerar um Orçamento ou Fatura a partir do Twenty](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
+- [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+- [Funções lógicas](/l/pt/user-guide/workflows/capabilities/workflow-actions#code)
+- [Gerar um Orçamento ou Fatura a partir do Twenty](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)

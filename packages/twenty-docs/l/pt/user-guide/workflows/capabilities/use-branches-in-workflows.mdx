@@ -20,12 +20,15 @@ Para executar apenas uma ramificação com base em condições específicas, **a
 3. Defina condições em cada Filter para determinar quando essa ramificação deve continuar
 4. Somente as ramificações cujas condições do Filter forem atendidas prosseguirão
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Como funcionam os nós Filter
 
-* Se a condição do Filter for **atendida**: A ramificação continua em execução
-* Se a condição do Filter **não for atendida**: A ramificação para no nó Filter
+- Se a condição do Filter for **atendida**: A ramificação continua em execução
+- Se a condição do Filter **não for atendida**: A ramificação para no nó Filter
 
 Isso efetivamente cria uma lógica condicional em que apenas a ramificação apropriada é executada com base nos seus dados.
 
@@ -42,7 +45,9 @@ Ambas as ramificações iniciam, mas somente aquela que corresponder ao valor do
 ## Criando ramificações
 
 <Note>
-Para criar uma nova ramificação a partir de uma etapa existente, clique no botão **+** na etapa e adicione sua ação. Você pode adicionar várias ramificações clicando em **+** várias vezes.
+  Para criar uma nova ramificação a partir de uma etapa existente, clique no
+  botão **+** na etapa e adicione sua ação. Você pode adicionar várias
+  ramificações clicando em **+** várias vezes.
 </Note>
 
 1. No editor de fluxos de trabalho, selecione a etapa a partir da qual deseja ramificar
@@ -78,13 +83,13 @@ O e-mail de confirmação é enviado somente depois que a atualização do clien
 
 ## Melhores Práticas
 
-* Sempre use **nós Filter** no início das ramificações quando quiser execução condicional
-* Mantenha as condições das ramificações **mutuamente exclusivas** para evitar ações duplicadas
-* Teste seus fluxos de trabalho com dados diferentes para garantir que as ramificações corretas sejam executadas
-* **Renomeie as etapas das ramificações** de forma descritiva para que fique claro o que cada caminho faz
-* **Una as ramificações** quando precisar de uma ação final após o processamento em paralelo
+- Sempre use **nós Filter** no início das ramificações quando quiser execução condicional
+- Mantenha as condições das ramificações **mutuamente exclusivas** para evitar ações duplicadas
+- Teste seus fluxos de trabalho com dados diferentes para garantir que as ramificações corretas sejam executadas
+- **Renomeie as etapas das ramificações** de forma descritiva para que fique claro o que cada caminho faz
+- **Una as ramificações** quando precisar de uma ação final após o processamento em paralelo
 
 ## Relacionados
 
-* [Perguntas frequentes sobre fluxos de trabalho](/l/pt/user-guide/workflows/how-tos/need-more-help/workflows-faq) — respostas sobre execução paralela
-* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions) — ações disponíveis para ramificações
+- [Perguntas frequentes sobre fluxos de trabalho](/l/pt/user-guide/workflows/how-tos/need-more-help/workflows-faq) — respostas sobre execução paralela
+- [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions) — ações disponíveis para ramificações

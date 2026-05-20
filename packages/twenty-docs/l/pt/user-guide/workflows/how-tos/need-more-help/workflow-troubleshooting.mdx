@@ -18,10 +18,10 @@ description: Problemas comuns de fluxos de trabalho e como resolvê-los.
 
 **Soluções**:
 
-* Verifique o status do fluxo de trabalho na lista de fluxos de trabalho
-* Teste com a ação específica que você espera que o dispare
-* Revise a configuração do gatilho
-* Entre em contato com o seu administrador sobre permissões
+- Verifique o status do fluxo de trabalho na lista de fluxos de trabalho
+- Teste com a ação específica que você espera que o dispare
+- Revise a configuração do gatilho
+- Entre em contato com o seu administrador sobre permissões
 
 ### Gatilhos do fluxo de trabalho ocorrem cedo demais (campos vazios)
 
@@ -31,17 +31,20 @@ description: Problemas comuns de fluxos de trabalho e como resolvê-los.
 
 **Quando "Record is created" funciona bem**:
 
-* Registros criados por chamadas de API (os campos são preenchidos em uma única requisição)
-* Registros criados por importação
-* Criação automática de registros a partir de outros fluxos de trabalho
+- Registros criados por chamadas de API (os campos são preenchidos em uma única requisição)
+- Registros criados por importação
+- Criação automática de registros a partir de outros fluxos de trabalho
 
 **Solução**: Para registros criados manualmente na UI, use **"Record is created or updated"** como seu gatilho em vez disso. Dessa forma:
 
-* O fluxo de trabalho é acionado depois que o usuário termina de preencher e salvar os campos
-* Você obtém os dados completos em vez de valores vazios
+- O fluxo de trabalho é acionado depois que o usuário termina de preencher e salvar os campos
+- Você obtém os dados completos em vez de valores vazios
 
 <Tip>
-Se você quer que o fluxo de trabalho seja executado apenas uma vez por registro, adicione uma ação Filter para verificar um campo como `createdAt equals updatedAt` (primeiro salvamento) ou use um campo de caixa de seleção personalizado para acompanhar se o fluxo de trabalho já foi executado.
+  Se você quer que o fluxo de trabalho seja executado apenas uma vez por
+  registro, adicione uma ação Filter para verificar um campo como `createdAt
+  equals updatedAt` (primeiro salvamento) ou use um campo de caixa de seleção
+  personalizado para acompanhar se o fluxo de trabalho já foi executado.
 </Tip>
 
 ### Ações com falha
@@ -57,10 +60,10 @@ Se você quer que o fluxo de trabalho seja executado apenas uma vez por registro
 
 **Soluções**:
 
-* Verifique os detalhes da execução do fluxo de trabalho em busca de mensagens de erro
-* Verifique se todos os campos obrigatórios têm valores
-* Teste as conexões de API de forma independente
-* Revise as permissões de função
+- Verifique os detalhes da execução do fluxo de trabalho em busca de mensagens de erro
+- Verifique se todos os campos obrigatórios têm valores
+- Teste as conexões de API de forma independente
+- Revise as permissões de função
 
 ### Erros de requisição HTTP
 
@@ -68,19 +71,19 @@ Se você quer que o fluxo de trabalho seja executado apenas uma vez por registro
 
 **Códigos de erro comuns**:
 
-* **400**: Solicitação inválida - verifique o formato do corpo da requisição
-* **401**: Não autorizado - verifique a chave da API
-* **403**: Proibido - verifique as permissões da API
-* **404**: Não encontrado - verifique a URL do endpoint
-* **429**: Muitas requisições - implemente limitação de taxa
-* **500**: Erro do servidor - problema no serviço externo
+- **400**: Solicitação inválida - verifique o formato do corpo da requisição
+- **401**: Não autorizado - verifique a chave da API
+- **403**: Proibido - verifique as permissões da API
+- **404**: Não encontrado - verifique a URL do endpoint
+- **429**: Muitas requisições - implemente limitação de taxa
+- **500**: Erro do servidor - problema no serviço externo
 
 **Soluções**:
 
-* Verifique a URL do endpoint da API
-* Verifique os cabeçalhos de autenticação
-* Teste a chamada de API primeiro fora do Twenty
-* Adicione tratamento de erros em Ações de Código
+- Verifique a URL do endpoint da API
+- Verifique os cabeçalhos de autenticação
+- Teste a chamada de API primeiro fora do Twenty
+- Adicione tratamento de erros em Ações de Código
 
 ### Erros em Ações de Código
 
@@ -95,10 +98,10 @@ Se você quer que o fluxo de trabalho seja executado apenas uma vez por registro
 
 **Soluções**:
 
-* Use a validação integrada do editor de código
-* Teste a lógica do código primeiro em um console JavaScript
-* Adicione instruções console.log para depuração
-* Simplifique operações complexas
+- Use a validação integrada do editor de código
+- Teste a lógica do código primeiro em um console JavaScript
+- Adicione instruções console.log para depuração
+- Simplifique operações complexas
 
 ### E-mail não enviado
 
@@ -113,10 +116,10 @@ Se você quer que o fluxo de trabalho seja executado apenas uma vez por registro
 
 **Soluções**:
 
-* Verifique a conexão da conta de e-mail
-* Valide os endereços de e-mail dos destinatários
-* Verifique os limites do provedor de e-mail
-* Revise o conteúdo do e-mail para gatilhos de spam
+- Verifique a conexão da conta de e-mail
+- Valide os endereços de e-mail dos destinatários
+- Verifique os limites do provedor de e-mail
+- Revise o conteúdo do e-mail para gatilhos de spam
 
 ## Depuração de fluxos de trabalho
 
@@ -150,21 +153,21 @@ Confirme que cada etapa recebe os dados de entrada esperados.
 
 ### Antes da ativação
 
-* Teste cuidadosamente no modo de rascunho
-* Valide todas as conexões de API
-* Revise cuidadosamente as condições do gatilho
-* Documente o comportamento esperado
+- Teste cuidadosamente no modo de rascunho
+- Valide todas as conexões de API
+- Revise cuidadosamente as condições do gatilho
+- Documente o comportamento esperado
 
 ### Durante o desenvolvimento
 
-* Use nomes descritivos para as etapas
-* Adicione comentários nas Ações de Código
-* Teste com dados realistas
-* Planeje casos-limite
+- Use nomes descritivos para as etapas
+- Adicione comentários nas Ações de Código
+- Teste com dados realistas
+- Planeje casos-limite
 
 ### Após a ativação
 
-* Monitore de perto as execuções iniciais
-* Configure alertas para falhas
-* Revise regularmente o histórico de execuções
-* Mantenha os fluxos de trabalho simples quando possível
+- Monitore de perto as execuções iniciais
+- Configure alertas para falhas
+- Revise regularmente o histórico de execuções
+- Mantenha os fluxos de trabalho simples quando possível

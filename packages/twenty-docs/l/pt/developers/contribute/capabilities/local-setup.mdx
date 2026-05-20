@@ -10,14 +10,16 @@ description: O guia para contribuidores (ou desenvolvedores curiosos) que deseja
 <Tab title="Linux e macOS">
 
 Antes de instalar e usar o Twenty, certifique-se de instalar o seguinte em seu computador:
-* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
-* [yarn v4](https://yarnpkg.com/getting-started/install)
-* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-`npm` não funcionará, você deve usar `yarn` em vez disso. O Yarn agora vem com o Node.js, então você não precisa instalá-lo separadamente.
-Você só precisa executar `corepack enable` para habilitar o Yarn, se ainda não o fez.
+  `npm` não funcionará, você deve usar `yarn` em vez disso. O Yarn agora vem com
+  o Node.js, então você não precisa instalá-lo separadamente. Você só precisa
+  executar `corepack enable` para habilitar o Yarn, se ainda não o fez.
 </Warning>
 
 </Tab>
@@ -26,9 +28,11 @@ Você só precisa executar `corepack enable` para habilitar o Yarn, se ainda nã
 
 1. Instale o WSL
    Abra o PowerShell como Administrador e execute:
+
 ```powershell
 wsl --install
 ```
+
 Você deve agora ver um aviso para reiniciar o computador. Caso contrário, reinicie-o manualmente.
 
 Ao reiniciar, uma janela do PowerShell será aberta e instalará o Ubuntu. Isso pode levar algum tempo.
@@ -47,7 +51,8 @@ git config --global user.email "youremail@domain.com"
 3. Instale nvm, node.js e yarn
 
 <Warning>
-Use `nvm` para instalar a versão correta do `node`. O `.nvmrc` garante que todos os contribuidores usem a mesma versão.
+  Use `nvm` para instalar a versão correta do `node`. O `.nvmrc` garante que
+  todos os contribuidores usem a mesma versão.
 </Warning>
 
 ```bash
@@ -55,6 +60,7 @@ sudo apt-get install curl
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
+
 Feche e reabra o seu terminal para usar o nvm. Em seguida, execute os seguintes comandos.
 
 ```bash
@@ -114,6 +120,7 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Opção 1 (preferencial):** Para prover seu banco de dados localmente com `brew`:
@@ -170,6 +177,7 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     Todos os passos a seguir devem ser executados no terminal WSL (dentro da sua máquina virtual)
@@ -187,6 +195,7 @@ Você deve executar todos os comandos nas etapas seguintes a partir da raiz do p
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -207,6 +216,7 @@ O Twenty requer um cache Redis para oferecer o melhor desempenho.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Opção 1 (preferencial):** Para prover seu Redis localmente com `brew`:
@@ -222,6 +232,7 @@ O Twenty requer um cache Redis para oferecer o melhor desempenho.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     **Opção 1:** Para prover seu Redis localmente:
@@ -231,6 +242,7 @@ O Twenty requer um cache Redis para oferecer o melhor desempenho.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -248,7 +260,12 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-**Modo Multiworkspace:** Por padrão, o Twenty é executado no modo de workspace único, em que apenas um workspace pode ser criado. Para ativar o suporte a multiworkspace (útil para testar recursos baseados em subdomínio), defina `IS_MULTIWORKSPACE_ENABLED=true` no arquivo `.env` do seu servidor. Veja [Modo Multiworkspace](/l/pt/developers/self-host/capabilities/setup#multi-workspace-mode) para obter detalhes.
+  **Modo Multiworkspace:** Por padrão, o Twenty é executado no modo de workspace
+  único, em que apenas um workspace pode ser criado. Para ativar o suporte a
+  multiworkspace (útil para testar recursos baseados em subdomínio), defina
+  `IS_MULTIWORKSPACE_ENABLED=true` no arquivo `.env` do seu servidor. Veja [Modo
+  Multiworkspace](/l/pt/developers/self-host/capabilities/setup#multi-workspace-mode)
+  para obter detalhes.
 </Info>
 
 ## Passo 6: Instalando dependências
@@ -265,18 +282,20 @@ Note que `npm` ou `pnpm` não funcionarão
 
 <Tabs>
   <Tab title="Linux">
-    Dependendo da sua distribuição Linux, o servidor Redis pode ser iniciado automaticamente.
-    Se não, verifique o [guia de instalação do Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) para sua distro.
+    Dependendo da sua distribuição Linux, o servidor Redis pode ser iniciado
+    automaticamente. Se não, verifique o [guia de instalação do
+    Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    para sua distro.
   </Tab>
   <Tab title="Mac OS">
-  Redis já deve estar em execução. Se não, execute:
-    ```bash
-    brew services start redis
-    ```
+    Redis já deve estar em execução. Se não, execute: ```bash brew services
+    start redis ```
   </Tab>
   <Tab title="Windows (WSL)">
-    Dependendo da sua distribuição Linux, o servidor Redis pode ser iniciado automaticamente.
-    Se não, verifique o [guia de instalação do Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) para sua distro.
+    Dependendo da sua distribuição Linux, o servidor Redis pode ser iniciado
+    automaticamente. Se não, verifique o [guia de instalação do
+    Redis](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    para sua distro.
   </Tab>
 </Tabs>
 
@@ -309,9 +328,9 @@ Você pode fazer login usando a conta demo padrão: `tim@apple.dev` (senha: `tim
 
 **Backend**
 
-* O servidor do Twenty estará ativo em [http://localhost:3000](http://localhost:3000)
-* A API GraphQL pode ser acessada em [http://localhost:3000/graphql](http://localhost:3000/graphql)
-* A API REST pode ser acessada em [http://localhost:3000/rest](http://localhost:3000/rest)
+- O servidor do Twenty estará ativo em [http://localhost:3000](http://localhost:3000)
+- A API GraphQL pode ser acessada em [http://localhost:3000/graphql](http://localhost:3000/graphql)
+- A API REST pode ser acessada em [http://localhost:3000/rest](http://localhost:3000/rest)
 
 ## Resolução de Problemas
 

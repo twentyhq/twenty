@@ -20,18 +20,19 @@ Stages are defined in the Opportunities object's **Stage** field.
 
 ### Recommended Stages
 
-| Stage | Purpose |
-|-------|---------|
-| **New** | Fresh opportunities just identified |
-| **Qualified** | Confirmed as a good fit |
-| **Meeting** | Engaged in discussions |
-| **Proposal** | Proposal sent |
-| **Negotiation** | Working on terms |
-| **Closed Won** | Deal successful |
-| **Closed Lost** | Deal unsuccessful |
+| Stage           | Purpose                             |
+| --------------- | ----------------------------------- |
+| **New**         | Fresh opportunities just identified |
+| **Qualified**   | Confirmed as a good fit             |
+| **Meeting**     | Engaged in discussions              |
+| **Proposal**    | Proposal sent                       |
+| **Negotiation** | Working on terms                    |
+| **Closed Won**  | Deal successful                     |
+| **Closed Lost** | Deal unsuccessful                   |
 
 <Note>
-**5-7 stages is optimal.** Too many stages makes the pipeline hard to scan; too few loses visibility into deal progress.
+  **5-7 stages is optimal.** Too many stages makes the pipeline hard to scan;
+  too few loses visibility into deal progress.
 </Note>
 
 ## Step 2: Create a Pipeline View
@@ -47,12 +48,15 @@ The view automatically uses the Stage field for columns.
 ## Step 3: Configure Your View
 
 ### Show Key Fields
+
 1. Click **Options → Fields**
 2. Look for fields in the "Hidden Fields" section
 3. Click the **eye icon** to display: Company, Amount, Close Date, Owner
 
 ### Enable Aggregations
+
 Show totals at the top of each column:
+
 1. Click the number displayed next to a Stage name at the top of a column
 2. Select the aggregation type (Count, Sum, Average, etc.)
 3. Choose the field to aggregate (e.g., Amount)
@@ -60,21 +64,26 @@ Show totals at the top of each column:
 **Example:** Show total deal value per stage by aggregating Amount with Sum.
 
 ### Use Compact View (Optional)
+
 For a high-level overview with minimal card content:
+
 1. Click **Options**
 2. Turn on the toggle for **Compact view**
 
 ## Step 4: Create Personal and Team Views
 
 ### "My Pipeline"
+
 - **Filter**: Owner = Me
 - **Visibility**: Unlisted (personal view)
 
 ### "Team Pipeline"
+
 - **Filter**: None (show all)
 - **Visibility**: Workspace (shared view)
 
 ### "Closing This Month"
+
 - **Type**: Table
 - **Filter**: Close Date = This month, Stage ≠ Closed Won, Stage ≠ Closed Lost
 - **Sort**: Close Date ascending
@@ -82,10 +91,12 @@ For a high-level overview with minimal card content:
 ## Working with Opportunities
 
 ### Creating Opportunities
+
 - Click **+ New** in the Opportunities view
 - Or click **+** in a specific stage column
 
 ### Moving Through Stages
+
 Drag and drop opportunity cards between columns to update their stage.
 
 <VimeoEmbed videoId="927888627" title="Video demonstration" />
@@ -93,11 +104,13 @@ Drag and drop opportunity cards between columns to update their stage.
 ## Best Practices
 
 ### Pipeline Hygiene
+
 - Update deals daily as they progress
 - Move or close stale deals promptly
 - Keep close dates realistic
 
 ### Stage Discipline
+
 - Define clear criteria for each stage
 - Move deals promptly when criteria are met
 - Don't let deals sit in stages too long

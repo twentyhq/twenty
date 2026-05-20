@@ -9,9 +9,9 @@ Mantieni in salute la tua pipeline avvisando i responsabili quando le opportunit
 
 Le opportunità senza aggiornamenti comportano:
 
-* Trattative che si raffreddano
-* Previsioni inaffidabili
-* Perdita di ricavi
+- Trattative che si raffreddano
+- Previsioni inaffidabili
+- Perdita di ricavi
 
 ## La soluzione
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ Aggiungi l'azione **Send Email**:
 
 Modifica il filtro di **Search Records** per passare da 7 giorni al periodo preferito:
 
-* 3 giorni per vendite ad alta velocità
-* 14 giorni per trattative enterprise
-* 30 giorni per cicli di vendita lunghi
+- 3 giorni per vendite ad alta velocità
+- 14 giorni per trattative enterprise
+- 30 giorni per cicli di vendita lunghi
 
 ### Avvisa i singoli rappresentanti
 
@@ -132,5 +132,5 @@ Usa **HTTP Request** per inviare a un webhook Slack invece o in aggiunta all'ema
 
 ## Correlati
 
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)

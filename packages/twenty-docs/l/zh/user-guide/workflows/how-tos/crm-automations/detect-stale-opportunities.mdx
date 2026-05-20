@@ -9,9 +9,9 @@ description: 当商机未更新时自动通知经理。
 
 长期未更新的商机会导致：
 
-* 交易变冷
-* 不可靠的预测
-* 收入流失
+- 交易变冷
+- 不可靠的预测
+- 收入流失
 
 ## 解决方案
 
@@ -35,12 +35,12 @@ description: 当商机未更新时自动通知经理。
 1. 添加 **搜索记录** 操作
 2. 配置:
 
-| 字段     | 值                                   |
-| ------ | ----------------------------------- |
-| **对象** | 机会                                  |
-| **过滤** | 更新时间早于（今天 - 7 天）                    |
+| 字段     | 值                                         |
+| -------- | ------------------------------------------ |
+| **对象** | 机会                                       |
+| **过滤** | 更新时间早于（今天 - 7 天）                |
 | **过滤** | 阶段不为 "Closed Won" 且不为 "Closed Lost" |
-| **限制** | 100                                 |
+| **限制** | 100                                        |
 
 ### 步骤 4：检查是否有结果
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -92,11 +92,11 @@ export const main = async (params) => {
 
 添加 **Send Email** 操作：
 
-| 字段      | 值                                  |
-| ------- | ---------------------------------- |
-| **收件人** | sales-manager@yourcompany.com      |
-| **主题**  | `🚨 {{code.totalCount}} 个停滞商机需要关注` |
-| **正文**  | `{{code.summary}}`                 |
+| 字段       | 值                                          |
+| ---------- | ------------------------------------------- |
+| **收件人** | sales-manager@yourcompany.com               |
+| **主题**   | `🚨 {{code.totalCount}} 个停滞商机需要关注` |
+| **正文**   | `{{code.summary}}`                          |
 
 ### 步骤 7：测试并启用
 
@@ -110,9 +110,9 @@ export const main = async (params) => {
 
 修改“搜索记录”的过滤条件，将 7 天更改为你偏好的周期：
 
-* 高节奏销售：3 天
-* 企业级交易：14 天
-* 长销售周期：30 天
+- 高节奏销售：3 天
+- 企业级交易：14 天
+- 长销售周期：30 天
 
 ### 单独提醒销售代表
 
@@ -132,5 +132,5 @@ export const main = async (params) => {
 
 ## 相关内容
 
-* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+- [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)

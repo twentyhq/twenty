@@ -7,7 +7,10 @@ description: Guida passo-passo per migrare la tua istanza Twenty self-hosted ver
 
 Questa guida ti accompagna nella migrazione dei tuoi dati da un'istanza Twenty self-hosted a Twenty Cloud. Il processo prevede la configurazione dello spazio di lavoro cloud, l'esportazione dei dati e la loro reimportazione.
 
-<Note>Le viste, i flussi di lavoro e i ruoli devono essere ricreati manualmente dopo la migrazione. Pianifica il tempo per questo lavoro di configurazione.</Note>
+<Note>
+  Le viste, i flussi di lavoro e i ruoli devono essere ricreati manualmente dopo
+  la migrazione. Pianifica il tempo per questo lavoro di configurazione.
+</Note>
 
 ## Passaggio 1: Crea il tuo spazio di lavoro cloud
 
@@ -24,7 +27,10 @@ Prima di importare i dati, ricrea i tuoi oggetti e campi personalizzati:
 3. Aggiungi campi personalizzati agli oggetti standard e personalizzati
 4. Configura le impostazioni dei campi (univoche, obbligatorie, ecc.)
 
-<Note>Fai degli screenshot del tuo modello dati self-hosted come riferimento oppure tieni entrambe le istanze aperte affiancate.</Note>
+<Note>
+  Fai degli screenshot del tuo modello dati self-hosted come riferimento oppure
+  tieni entrambe le istanze aperte affiancate.
+</Note>
 
 ## Passaggio 3: Invita tutti gli utenti
 
@@ -32,6 +38,7 @@ Prima di importare i dati, ricrea i tuoi oggetti e campi personalizzati:
 **Critico: invita gli utenti PRIMA di importare i dati.**
 
 Gli utenti devono accettare i loro inviti prima di importare qualsiasi record che faccia riferimento a loro (come i campi Account Owner). Se gli utenti non esistono ancora, tali relazioni non possono essere mappate.
+
 </Warning>
 
 1. Vai a **Impostazioni → Membri** nella tua istanza cloud
@@ -83,7 +90,10 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Usa gli stessi indirizzi email che gli utenti hanno usato per accettare l'invito allo spazio di lavoro cloud.</Note>
+<Note>
+  Usa gli stessi indirizzi email che gli utenti hanno usato per accettare
+  l'invito allo spazio di lavoro cloud.
+</Note>
 
 ## Passaggio 6: Pianifica l'ordine di importazione
 
@@ -105,8 +115,8 @@ Per ogni file CSV, in ordine:
 2. Fai clic su **⋮ → Importa record**
 3. Carica il file CSV
 4. Mappa le colonne ai campi:
-   * Mappa le colonne delle email degli utenti ai campi relazione appropriati
-   * Mappa le altre colonne come al solito
+   - Mappa le colonne delle email degli utenti ai campi relazione appropriati
+   - Mappa le altre colonne come al solito
 5. Controlla e correggi eventuali errori
 6. Conferma l'importazione
 7. Verifica alcuni record prima di passare al file successivo
@@ -117,23 +127,23 @@ Dopo aver importato i dati, ricrea manualmente:
 
 ### Viste
 
-* Ricrea le viste salvate con filtri, ordinamenti e configurazioni delle colonne
-* Configura eventuali viste kanban o calendario
+- Ricrea le viste salvate con filtri, ordinamenti e configurazioni delle colonne
+- Configura eventuali viste kanban o calendario
 
 ### Flussi di Lavoro
 
-* Ricrea le automazioni in **Impostazioni → Flussi di lavoro**
-* Testa ogni flusso di lavoro prima di farci affidamento
+- Ricrea le automazioni in **Impostazioni → Flussi di lavoro**
+- Testa ogni flusso di lavoro prima di farci affidamento
 
 ### Ruoli e permessi
 
-* Configura i ruoli in **Impostazioni → Ruoli**
-* Assegna gli utenti ai ruoli appropriati
+- Configura i ruoli in **Impostazioni → Ruoli**
+- Assegna gli utenti ai ruoli appropriati
 
 ### Integrazioni
 
-* Riconnetti la sincronizzazione di email e calendario per ogni utente
-* Riconfigura eventuali integrazioni API con nuove chiavi API
+- Riconnetti la sincronizzazione di email e calendario per ogni utente
+- Riconfigura eventuali integrazioni API con nuove chiavi API
 
 ## Lista di Verifica Post-Migrazione
 
@@ -153,13 +163,17 @@ Dopo aver importato i dati, ricrea manualmente:
     Al momento no. I flussi di lavoro devono essere ricreati manualmente nella tua istanza cloud.
   </Accordion>
 
-  <Accordion title="Che cosa succede agli allegati e alle immagini?">
-    Gli allegati non sono inclusi nelle esportazioni CSV. Dovrai ricaricare manualmente gli allegati, migrarli tramite API oppure contattare il nostro team per assistenza con migrazioni di grandi dimensioni.
-  </Accordion>
+<Accordion title="Che cosa succede agli allegati e alle immagini?">
+  Gli allegati non sono inclusi nelle esportazioni CSV. Dovrai ricaricare
+  manualmente gli allegati, migrarli tramite API oppure contattare il nostro
+  team per assistenza con migrazioni di grandi dimensioni.
+</Accordion>
 
-  <Accordion title="Posso mantenere entrambe le istanze operative durante la migrazione?">
-    Sì, consigliamo di mantenere attiva la tua istanza self-hosted finché non avrai verificato che la migrazione al cloud sia completa. Fai solo attenzione a non creare nuovi dati in entrambi gli ambienti.
-  </Accordion>
+<Accordion title="Posso mantenere entrambe le istanze operative durante la migrazione?">
+  Sì, consigliamo di mantenere attiva la tua istanza self-hosted finché non
+  avrai verificato che la migrazione al cloud sia completa. Fai solo attenzione
+  a non creare nuovi dati in entrambi gli ambienti.
+</Accordion>
 
   <Accordion title="Cosa succede se un utente non ha ancora accettato l'invito?">
     I record che fanno riferimento a quell'utente non verranno importati oppure la relazione risulterà vuota. Assicurati che tutti gli utenti accettino gli inviti prima di importare i dati.

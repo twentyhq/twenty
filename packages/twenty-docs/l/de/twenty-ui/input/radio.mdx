@@ -4,7 +4,10 @@ icon: circle-dot
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Kopfzeile" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="Kopfzeile"
+  />
 </Frame>
 
 Verwendet, wenn Benutzer nur eine Option aus einer Reihe von Optionen auswählen können.
@@ -13,18 +16,16 @@ Verwendet, wenn Benutzer nur eine Option aus einer Reihe von Optionen auswählen
 <Tab title="&#x22;Verwendung&#x22;">
 
 ```jsx
-import { Radio } from "twenty-ui/display";
+import { Radio } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   const handleRadioChange = (event) => {
-    console.log("Radio button changed:", event.target.checked);
+    console.log('Radio button changed:', event.target.checked);
   };
 
   const handleCheckedChange = (checked) => {
-    console.log("Checked state changed:", checked);
+    console.log('Checked state changed:', checked);
   };
-
 
   return (
     <Radio
@@ -38,13 +39,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="&#x22;Eigenschaften&#x22;">
-
 
 | "Eigenschaften"        | Typ                       | Beschreibung                                                                                        |
 | ---------------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
@@ -58,9 +56,6 @@ export const MyComponent = () => {
 | deaktiviert            | boolesch                  | Wenn `true`, ist der Radiobutton deaktiviert und nicht anklickbar                                   |
 | labelPosition          | Zeichenkette              | Die Position des Labeltextes im Verhältnis zum Radiobutton. Hat zwei Optionen: `links` und `rechts` |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -72,17 +67,16 @@ Fasst zusammengehörige Optionsfelder zusammen.
 <Tab title="Verwendung">
 
 ```jsx
-import React, { useState } from "react";
-import { Radio, RadioGroup } from "twenty-ui/display";
+import React, { useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
-  const [selectedValue, setSelectedValue] = useState("Option 1");
+  const [selectedValue, setSelectedValue] = useState('Option 1');
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
-  
+
   return (
     <RadioGroup value={selectedValue} onChange={handleChange}>
       <Radio value="Option 1" />
@@ -91,12 +85,10 @@ export const MyComponent = () => {
     </RadioGroup>
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften   | Typ               | Beschreibung                                                                                              |
 | --------------- | ----------------- | --------------------------------------------------------------------------------------------------------- |
@@ -104,9 +96,6 @@ export const MyComponent = () => {
 | onChange        | Funktion          | Die Rückruffunktion, die ausgelöst wird, wenn sich das Optionsfeld ändert                                 |
 | beiWertÄnderung | Funktion          | Die Callback-Funktion, die ausgelöst wird, wenn sich der ausgewählte Wert in der Gruppe ändert.           |
 | Kinder          | `React.ReactNode` | Ermöglicht es, React-Komponenten (wie Radio) als untergeordnete Elemente an die Radio-Gruppe zu übergeben |
-
-
-
 
 </Tab>
 

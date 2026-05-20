@@ -15,7 +15,10 @@ Workflow-Guthaben werden basierend auf Ihrem Abrechnungszeitraum zugeteilt, nich
 | **Jährliches Abonnement**  | 50 Credits pro Jahr |
 
 <Note>
-5 Credits pro Monat sind für Standardautomatisierungen großzügig bemessen. Die meisten Teams überschreiten dieses Limit bei typischer Nutzung von Workflows nicht. Zusätzliche Guthaben werden vor allem für erweiterte Code-Aktionen und KI-gestützte Workflows benötigt.
+  5 Credits pro Monat sind für Standardautomatisierungen großzügig bemessen. Die
+  meisten Teams überschreiten dieses Limit bei typischer Nutzung von Workflows
+  nicht. Zusätzliche Guthaben werden vor allem für erweiterte Code-Aktionen und
+  KI-gestützte Workflows benötigt.
 </Note>
 
 ## Wie der Verbrauch von Guthaben funktioniert
@@ -24,33 +27,33 @@ Guthaben werden verbraucht, wenn Workflows ausgeführt werden, nicht, wenn Sie s
 
 ### Guthabenverbrauch nach Aktionstyp
 
-* **Einfache interne Vorgänge**: Sehr niedriger Guthabenverbrauch
-  * Datensätze durchsuchen
-  * Datensatz erstellen
-  * Datensatz aktualisieren
-  * Datensatz löschen
-  * Formularaktionen
+- **Einfache interne Vorgänge**: Sehr niedriger Guthabenverbrauch
+  - Datensätze durchsuchen
+  - Datensatz erstellen
+  - Datensatz aktualisieren
+  - Datensatz löschen
+  - Formularaktionen
 
-* **Komplexe Vorgänge**: Höherer Guthabenverbrauch
-  * Code-Aktionen (JavaScript-Ausführung)
-  * HTTP-Anfragen an externe Dienste
+- **Komplexe Vorgänge**: Höherer Guthabenverbrauch
+  - Code-Aktionen (JavaScript-Ausführung)
+  - HTTP-Anfragen an externe Dienste
 
-* **KI-Funktionen**: Höherer Guthabenverbrauch
-  * KI-Agent-Aktionen verbrauchen Guthaben abhängig vom verwendeten KI-Modell
-  * Komplexere Prompts und längere Ausgaben verbrauchen mehr Guthaben
+- **KI-Funktionen**: Höherer Guthabenverbrauch
+  - KI-Agent-Aktionen verbrauchen Guthaben abhängig vom verwendeten KI-Modell
+  - Komplexere Prompts und längere Ausgaben verbrauchen mehr Guthaben
 
-* **Delay-Aktionen**: Minimaler Guthabenverbrauch
-  * Der Delay-Knoten verbraucht **1 Guthaben**, wenn er ausgeführt wird
-  * **Es werden keine Guthaben verbraucht** während der Wartezeit
-  * Eine Verzögerung von 5 Minuten kostet dasselbe wie eine Verzögerung von 5 Tagen
+- **Delay-Aktionen**: Minimaler Guthabenverbrauch
+  - Der Delay-Knoten verbraucht **1 Guthaben**, wenn er ausgeführt wird
+  - **Es werden keine Guthaben verbraucht** während der Wartezeit
+  - Eine Verzögerung von 5 Minuten kostet dasselbe wie eine Verzögerung von 5 Tagen
 
 ### Echtzeitabzug
 
 Guthaben werden in Echtzeit abgezogen, sobald Workflows ausgeführt werden. Das bedeutet:
 
-* Entwurfs-Workflows verbrauchen keine Guthaben
-* Nur aktive, laufende Workflows nutzen Ihre Guthabenzuteilung
-* Fehlgeschlagene Workflows verbrauchen dennoch Guthaben für abgeschlossene Schritte
+- Entwurfs-Workflows verbrauchen keine Guthaben
+- Nur aktive, laufende Workflows nutzen Ihre Guthabenzuteilung
+- Fehlgeschlagene Workflows verbrauchen dennoch Guthaben für abgeschlossene Schritte
 
 ## Guthabenverwaltung
 
@@ -70,7 +73,7 @@ Wenn Sie mehr Guthaben über Ihre Plan-Zuteilung hinaus benötigen:
 
 ## Beste Praktiken
 
-* **Stapelverarbeitung**: Verwenden Sie Massenoperationen und Iterator-Aktionen effizient
-* **Optimierung manueller Auslöser**: Wählen Sie bei manuellen Auslösern die Verfügbarkeit `Bulk`, um mehrere Datensätze in einem einzelnen Workflow-Durchlauf zu verarbeiten
-* Optimieren Sie Code-Aktionen für Effizienz
-* Operationen bündeln, um einzelne Aktionsaufrufe zu reduzieren
+- **Stapelverarbeitung**: Verwenden Sie Massenoperationen und Iterator-Aktionen effizient
+- **Optimierung manueller Auslöser**: Wählen Sie bei manuellen Auslösern die Verfügbarkeit `Bulk`, um mehrere Datensätze in einem einzelnen Workflow-Durchlauf zu verarbeiten
+- Optimieren Sie Code-Aktionen für Effizienz
+- Operationen bündeln, um einzelne Aktionsaufrufe zu reduzieren

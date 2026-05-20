@@ -15,7 +15,10 @@ Creditele pentru fluxurile de lucru sunt alocate în funcție de ciclul de factu
 | **Abonament anual** | 50 de credite pe an |
 
 <Note>
-5 credite lunare sunt generoase pentru automatizările standard. Majoritatea echipelor nu vor depăși această limită cu utilizarea tipică a fluxurilor de lucru. Credite suplimentare sunt necesare în principal pentru acțiuni Code avansate și pentru fluxuri de lucru bazate pe AI.
+  5 credite lunare sunt generoase pentru automatizările standard. Majoritatea
+  echipelor nu vor depăși această limită cu utilizarea tipică a fluxurilor de
+  lucru. Credite suplimentare sunt necesare în principal pentru acțiuni Code
+  avansate și pentru fluxuri de lucru bazate pe AI.
 </Note>
 
 ## Cum funcționează consumul de credite
@@ -24,33 +27,33 @@ Creditele sunt consumate când fluxurile de lucru se execută, nu atunci când l
 
 ### Consumul de credite în funcție de tipul de acțiune
 
-* **Operațiuni interne de bază**: Consum foarte mic de credite
-  * Căutați Înregistrări
-  * Creează înregistrare
-  * Actualizați Înregistrarea
-  * Ștergeți Înregistrarea
-  * Acțiuni de formular
+- **Operațiuni interne de bază**: Consum foarte mic de credite
+  - Căutați Înregistrări
+  - Creează înregistrare
+  - Actualizați Înregistrarea
+  - Ștergeți Înregistrarea
+  - Acțiuni de formular
 
-* **Operațiuni complexe**: Consum mai ridicat de credite
-  * Acțiuni de cod (execuție JavaScript)
-  * Solicitări HTTP către servicii externe
+- **Operațiuni complexe**: Consum mai ridicat de credite
+  - Acțiuni de cod (execuție JavaScript)
+  - Solicitări HTTP către servicii externe
 
-* **Funcționalități AI**: Consum mai ridicat de credite
-  * Acțiunile agentului AI consumă credite în funcție de modelul AI utilizat
-  * Prompturile mai complexe și rezultatele mai lungi utilizează mai multe credite
+- **Funcționalități AI**: Consum mai ridicat de credite
+  - Acțiunile agentului AI consumă credite în funcție de modelul AI utilizat
+  - Prompturile mai complexe și rezultatele mai lungi utilizează mai multe credite
 
-* **Acțiuni Delay**: Consum minim de credite
-  * Nodul Delay consumă **1 credit** la execuție
-  * **Nu se consumă credite** în perioada de așteptare
-  * O întârziere de 5 minute costă la fel ca o întârziere de 5 zile
+- **Acțiuni Delay**: Consum minim de credite
+  - Nodul Delay consumă **1 credit** la execuție
+  - **Nu se consumă credite** în perioada de așteptare
+  - O întârziere de 5 minute costă la fel ca o întârziere de 5 zile
 
 ### Deducere în timp real
 
 Creditele sunt retrase în timp real pe măsură ce fluxurile de lucru se execută. Acest lucru înseamnă:
 
-* Fluxurile de lucru în ciornă nu consumă credite
-* Numai fluxurile de lucru active, rulate utilizează alocarea dvs. de credite
-* Fluxurile de lucru eșuate consumă totuși credite pentru pașii finalizați
+- Fluxurile de lucru în ciornă nu consumă credite
+- Numai fluxurile de lucru active, rulate utilizează alocarea dvs. de credite
+- Fluxurile de lucru eșuate consumă totuși credite pentru pașii finalizați
 
 ## Gestionarea creditelor
 
@@ -70,7 +73,7 @@ Dacă aveți nevoie de mai multe credite decât alocarea planificată:
 
 ## Cele mai bune practici
 
-* **Procesare loturi**: Utilizați operațiuni în masă și acțiuni cu Iteratoare eficient
-* **Optimizare pentru declanșatorul manual**: Pentru declanșatoarele manuale, alegeți disponibilitatea `Bulk` pentru a procesa mai multe înregistrări într-o singură rulare a fluxului de lucru
-* Optimizați acțiunile de cod pentru eficiență
-* Operațiuni în lot pentru a reduce apelurile individuale ale acțiunilor
+- **Procesare loturi**: Utilizați operațiuni în masă și acțiuni cu Iteratoare eficient
+- **Optimizare pentru declanșatorul manual**: Pentru declanșatoarele manuale, alegeți disponibilitatea `Bulk` pentru a procesa mai multe înregistrări într-o singură rulare a fluxului de lucru
+- Optimizați acțiunile de cod pentru eficiență
+- Operațiuni în lot pentru a reduce apelurile individuale ale acțiunilor

@@ -5,7 +5,10 @@ description: Notificați automat membrii echipei despre sarcinile lor care urmea
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Trimiteți mementouri zilnice prin e-mail fiecărui membru al echipei despre sarcinile sale scadente astăzi.
 
@@ -45,8 +48,8 @@ Acest flux de lucru rulează conform unui program și:
 1. În interiorul iteratorului, adăugați o acțiune **Search Records**
 2. Selectați **Tasks** ca obiect
 3. Adăugați filtre:
-   * **Assignee** = membrul curent al spațiului de lucru (din iterator)
-   * **Due Date** = astăzi
+   - **Assignee** = membrul curent al spațiului de lucru (din iterator)
+   - **Due Date** = astăzi
 
 ### Pasul 5: Formatați sarcinile în corpul e-mailului (în interiorul Iterator)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-Înlocuiți `yourSubDomain` cu subdomeniul real al spațiului dvs. de lucru Twenty.
+  Înlocuiți `yourSubDomain` cu subdomeniul real al spațiului dvs. de lucru
+  Twenty.
 </Note>
 
 ### Pasul 6: Trimiteți e-mail (în interiorul Iterator)
@@ -101,6 +105,6 @@ export const main = async (params: {
 
 ## Conexe
 
-* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+- [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Gestionați array-urile în acțiunile Code](/l/ro/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

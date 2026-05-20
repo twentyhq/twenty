@@ -125,15 +125,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```
@@ -142,12 +146,12 @@ beforeAll(async () => {
 
 子路径 `twenty-sdk/cli` 导出了可直接在测试代码中调用的函数：
 
-| 函数             | 描述                 |
-| -------------- | ------------------ |
+| 函数           | 描述                            |
+| -------------- | ------------------------------- |
 | `appBuild`     | 构建应用，并可选地打包为 tar 包 |
-| `appDeploy`    | 将 tar 包上传到服务器      |
-| `appInstall`   | 在活动工作区安装该应用        |
-| `appUninstall` | 从活动工作区卸载该应用        |
+| `appDeploy`    | 将 tar 包上传到服务器           |
+| `appInstall`   | 在活动工作区安装该应用          |
+| `appUninstall` | 从活动工作区卸载该应用          |
 
 每个函数都会返回一个结果对象，包含 `success: boolean`，以及 `data` 或 `error` 之一。
 

@@ -1,9 +1,8 @@
 ---
 title: Folder Architecture
-icon: "folder-tree"
+icon: 'folder-tree'
 info: A detailed look into our folder architecture
 ---
-
 
 In this guide, you will explore the details of the project directory structure and how it contributes to the organization and maintainability of Twenty.
 
@@ -94,7 +93,6 @@ React's built-in state management still handles state within a component.
 
 Should just contain reusable pure functions. Otherwise, create custom hooks in the `hooks` folder.
 
-
 ## UI
 
 Contains all the reusable UI components used in the application.
@@ -110,4 +108,3 @@ You can import other module code from any module except for the `ui` folder. Thi
 ### Internal
 
 Each part (hooks, states, ...) of a module can have an `internal` folder, which contains parts that are just used within the module.
-

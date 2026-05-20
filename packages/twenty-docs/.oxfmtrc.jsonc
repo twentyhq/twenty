@@ -1,0 +1,17 @@
+{
+  "$schema": "../../node_modules/oxfmt/configuration_schema.json",
+  "singleQuote": true,
+  "trailingComma": "all",
+  "endOfLine": "lf",
+  "printWidth": 80,
+  "sortPackageJson": false,
+  "ignorePatterns": [
+    "dist/**",
+    "build/**",
+    ".next/**",
+    "coverage/**",
+    "generated/**",
+    ".cache/**",
+    "node_modules/**",
+  ],
+}

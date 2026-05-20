@@ -11,13 +11,16 @@ Twenty, geliştirici dostu olacak şekilde tasarlanmıştır ve özel veri model
 
 Twenty, veri modeliniz için özel olarak API'ler oluşturur:
 
-* **Uzun kimlik numaralarına gerek yok**: Uç noktalarda nesne ve alan adlarınızı doğrudan kullanın
-* **Standart ve özel nesneler eşit şekilde ele alınır**: Özel nesneleriniz yerleşik olanlarla aynı API muamelesini görür.
-* **Özel uç noktalar**: Her nesne ve alan kendi API uç noktasına sahiptir
-* **Özel dokümantasyon**: Çalışma alanınızın veri modeli için özel olarak üretilmiştir.
+- **Uzun kimlik numaralarına gerek yok**: Uç noktalarda nesne ve alan adlarınızı doğrudan kullanın
+- **Standart ve özel nesneler eşit şekilde ele alınır**: Özel nesneleriniz yerleşik olanlarla aynı API muamelesini görür.
+- **Özel uç noktalar**: Her nesne ve alan kendi API uç noktasına sahiptir
+- **Özel dokümantasyon**: Çalışma alanınızın veri modeli için özel olarak üretilmiştir.
 
 <Note>
-Bir API anahtarı oluşturduktan sonra kişiselleştirilmiş API dokümantasyonunuz **Ayarlar → API ve Webhook'lar** altında mevcuttur. Twenty, özel veri modelinize uyan API'ler oluşturduğundan, dokümantasyon çalışma alanınıza özeldir.
+  Bir API anahtarı oluşturduktan sonra kişiselleştirilmiş API dokümantasyonunuz
+  **Ayarlar → API ve Webhook'lar** altında mevcuttur. Twenty, özel veri
+  modelinize uyan API'ler oluşturduğundan, dokümantasyon çalışma alanınıza
+  özeldir.
 </Note>
 
 ## İki API Türü
@@ -28,9 +31,9 @@ Bir API anahtarı oluşturduktan sonra kişiselleştirilmiş API dokümantasyonu
 
 Gerçek **kayıtlarınızla** (verilerin kendisiyle) çalışın:
 
-* People, Companies, Opportunities vb. oluşturun, okuyun, güncelleyin, silin.
-* Verileri sorgulayın ve filtreleyin
-* Kayıt ilişkilerini yönetin
+- People, Companies, Opportunities vb. oluşturun, okuyun, güncelleyin, silin.
+- Verileri sorgulayın ve filtreleyin
+- Kayıt ilişkilerini yönetin
 
 ### Meta Veriler API
 
@@ -38,9 +41,9 @@ Gerçek **kayıtlarınızla** (verilerin kendisiyle) çalışın:
 
 **Çalışma alanınızı ve veri modelinizi** yönetin:
 
-* Nesne ve alanlar oluşturun, değiştirin veya silin
-* Çalışma alanı ayarlarını yapılandırın
-* Nesneler arasındaki ilişkileri tanımlayın
+- Nesne ve alanlar oluşturun, değiştirin veya silin
+- Çalışma alanı ayarlarını yapılandırın
+- Nesneler arasındaki ilişkileri tanımlayın
 
 ## REST ve GraphQL
 
@@ -73,15 +76,17 @@ Authorization: Bearer YOUR_API_KEY
 1. **Ayarlar → API ve Webhook'lar**'a gidin
 2. **+ Anahtar oluştur**'a tıklayın
 3. Alanı Yapılandır:
-   * **Ad**: Anahtar için açıklayıcı bir ad
-   * **Son Kullanma Tarihi**: Anahtarın ne zaman sona ereceği
+   - **Ad**: Anahtar için açıklayıcı bir ad
+   - **Son Kullanma Tarihi**: Anahtarın ne zaman sona ereceği
 4. **Kaydet**'e tıklayın
 5. **Hemen kopyalayın** — anahtar yalnızca bir kez gösterilir
 
 <VimeoEmbed videoId="928786722" title="API anahtarı oluşturma" />
 
 <Warning>
-API anahtarınız hassas verilere erişim sağlar. Güvenilmeyen hizmetlerle paylaşmayın. Tehlikeye girerse, onu hemen devre dışı bırakın ve yenisini oluşturun.
+  API anahtarınız hassas verilere erişim sağlar. Güvenilmeyen hizmetlerle
+  paylaşmayın. Tehlikeye girerse, onu hemen devre dışı bırakın ve yenisini
+  oluşturun.
 </Warning>
 
 ### Bir API Anahtarına Rol Atama
@@ -114,10 +119,10 @@ Yerleşik oyun alanımız ile API'lerinizi doğrudan tarayıcıda test edin — 
 
 ### Elde Edecekleriniz
 
-* **Etkileşimli dokümantasyon**: Belirli veri modeliniz için oluşturulur
-* **Canlı test**: Çalışma alanınıza karşı gerçek API çağrılarını gerçekleştirin
-* **Şema gezgini**: Kullanılabilir nesnelere, alanlara ve ilişkilere göz atın
-* **İstek oluşturucu**: Otomatik tamamlama ile sorgular oluşturun
+- **Etkileşimli dokümantasyon**: Belirli veri modeliniz için oluşturulur
+- **Canlı test**: Çalışma alanınıza karşı gerçek API çağrılarını gerçekleştirin
+- **Şema gezgini**: Kullanılabilir nesnelere, alanlara ve ilişkilere göz atın
+- **İstek oluşturucu**: Otomatik tamamlama ile sorgular oluşturun
 
 Oyun alanı, özel nesnelerinizi ve alanlarınızı yansıtır, bu nedenle dokümantasyon çalışma alanınız için her zaman doğrudur.
 
@@ -125,13 +130,13 @@ Oyun alanı, özel nesnelerinizi ve alanlarınızı yansıtır, bu nedenle dokü
 
 Hem REST hem de GraphQL, toplu işlemleri destekler:
 
-* **Toplu boyut**: İstek başına 60 kayıt kadar
-* **İşlemler**: Birden çok kaydı oluşturma, güncelleme, silme
+- **Toplu boyut**: İstek başına 60 kayıt kadar
+- **İşlemler**: Birden çok kaydı oluşturma, güncelleme, silme
 
 **Yalnızca GraphQL Özellikleri:**
 
-* **Toplu Ekleme-Güncelleme**: Tek bir çağrıda oluşturun veya güncelleyin
-* Çoğul nesne adlarını kullanın (ör. `CreateCompany` yerine `CreateCompanies`)
+- **Toplu Ekleme-Güncelleme**: Tek bir çağrıda oluşturun veya güncelleyin
+- Çoğul nesne adlarını kullanın (ör. `CreateCompany` yerine `CreateCompanies`)
 
 ## Hız Sınırları
 
@@ -143,5 +148,6 @@ Platform kararlılığını sağlamak için API istekleri kısıtlanır:
 | **Toplu boyutu** | Çağrı başına 60 kayıt |
 
 <Tip>
-Verimi en üst düzeye çıkarmak için toplu işlemleri kullanın — tekil istekler yapmak yerine tek bir API çağrısında 60 kayda kadar işleyin.
+  Verimi en üst düzeye çıkarmak için toplu işlemleri kullanın — tekil istekler
+  yapmak yerine tek bir API çağrısında 60 kayda kadar işleyin.
 </Tip>

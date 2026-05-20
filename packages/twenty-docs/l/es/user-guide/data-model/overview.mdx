@@ -3,7 +3,6 @@ title: Modelo de datos
 description: Aprende qué es un modelo de datos y cómo diseñar uno que se adapte a tu empresa.
 ---
 
-
 ## ¿Qué es un modelo de datos?
 
 Un modelo de datos es la estructura que define cómo se organiza la información en tu CRM. Piénsalo como el **plano** de tus datos de clientes — lo diseñas una vez y luego lo completas con tus datos reales.
@@ -16,11 +15,11 @@ Los **objetos** son las categorías principales de datos en tu CRM. Cada objeto 
 
 Twenty incluye objetos estándar:
 
-* **Personas** — individuos (contactos, clientes potenciales, socios)
-* **Empresas** — organizaciones
-* **Oportunidades** — negocios o ventas
-* **Notas** — notas adjuntas en los registros
-* **Tareas** — tareas pendientes vinculadas a los registros
+- **Personas** — individuos (contactos, clientes potenciales, socios)
+- **Empresas** — organizaciones
+- **Oportunidades** — negocios o ventas
+- **Notas** — notas adjuntas en los registros
+- **Tareas** — tareas pendientes vinculadas a los registros
 
 También puedes crear **objetos personalizados** para cualquier aspecto específico de tu empresa (p. ej., Proyectos, Suscripciones, Eventos).
 
@@ -30,11 +29,11 @@ Los **campos** son las propiedades o atributos que describen cada objeto. Almace
 
 Por ejemplo, el objeto **Personas** tiene campos como:
 
-* Nombre
-* Correo electrónico
-* Teléfono
-* Título del puesto
-* Empresa (una relación con el objeto Empresas)
+- Nombre
+- Correo electrónico
+- Teléfono
+- Título del puesto
+- Empresa (una relación con el objeto Empresas)
 
 Los campos tienen diferentes **tipos**: texto, número, fecha, selección, selección múltiple, relación y más. Puedes añadir campos personalizados a cualquier objeto.
 
@@ -44,8 +43,8 @@ Los **registros** son las entradas individuales dentro de un objeto — los dato
 
 Por ejemplo:
 
-* "John Smith" es un **registro** en el objeto Personas
-* "Acme Corp" es un **registro** en el objeto Empresas
+- "John Smith" es un **registro** en el objeto Personas
+- "Acme Corp" es un **registro** en el objeto Empresas
 
 **Una analogía:**
 
@@ -63,9 +62,9 @@ Cada empresa funciona de manera diferente. Personalizar tu modelo de datos signi
 
 Twenty ofrece total flexibilidad:
 
-* Crea los objetos personalizados que necesites
-* Añade campos personalizados ilimitados
-* El precio no cambia en función de la personalización
+- Crea los objetos personalizados que necesites
+- Añade campos personalizados ilimitados
+- El precio no cambia en función de la personalización
 
 ## Consejos para diseñar tu modelo de datos
 
@@ -73,15 +72,15 @@ Twenty ofrece total flexibilidad:
 
 Identifica los conceptos principales con los que trabajas. Twenty ya ofrece:
 
-* **Personas** — tus contactos
-* **Empresas** — tus cuentas
-* **Oportunidades** — tus negocios
+- **Personas** — tus contactos
+- **Empresas** — tus cuentas
+- **Oportunidades** — tus negocios
 
 Piensa qué más podrías necesitar:
 
-* Stripe necesitaría un objeto `Subscriptions`
-* Airbnb necesitaría un objeto `Trips`
-* Una aceleradora necesitaría un objeto `Batches`
+- Stripe necesitaría un objeto `Subscriptions`
+- Airbnb necesitaría un objeto `Trips`
+- Una aceleradora necesitaría un objeto `Batches`
 
 ### 2. Usa campos para variaciones, no nuevos objetos
 
@@ -89,9 +88,9 @@ Si algo es solo una característica de un objeto existente, conviértelo en un *
 
 **Usa campos para:**
 
-* Categorías y etiquetas (p. ej., `Industry` para Empresas)
-* Valores de estado (p. ej., `Stage` para Oportunidades)
-* Atributos y propiedades
+- Categorías y etiquetas (p. ej., `Industry` para Empresas)
+- Valores de estado (p. ej., `Stage` para Oportunidades)
+- Atributos y propiedades
 
 ### 3. Crea un objeto cuando sea independiente
 
@@ -99,9 +98,9 @@ Si el concepto tiene su propio ciclo de vida, propiedades o relaciones, merece u
 
 **Crea un objeto para:**
 
-* **Proyectos** — tienen plazos, propietarios y tareas
-* **Suscripciones** — conectan empresas, productos y facturas
-* **Eventos** — involucran a asistentes y acciones de seguimiento
+- **Proyectos** — tienen plazos, propietarios y tareas
+- **Suscripciones** — conectan empresas, productos y facturas
+- **Eventos** — involucran a asistentes y acciones de seguimiento
 
 Estos van más allá de un solo campo porque tienen su propio conjunto de datos y relaciones.
 
@@ -119,23 +118,24 @@ Crea un objeto `Products` y relaciónalo con los registros. De esta manera, pued
 
 Empieza con los campos. Pasa a nuevos objetos solo cuando notes las limitaciones:
 
-* Demasiados campos en un solo objeto
-* Registros repetidos que deberían estar separados
-* Relaciones que no encajan bien
+- Demasiados campos en un solo objeto
+- Registros repetidos que deberían estar separados
+- Relaciones que no encajan bien
 
 ## Nota especial sobre Personas, Empresas y Oportunidades
 
 <Warning>
   **La sincronización de correo y calendario solo funciona con Personas, Empresas y Oportunidades.**
 
-  Estos son los únicos objetos en los que puedes acceder a correos y reuniones sincronizados desde tu buzón/calendario. Recomendamos usarlos tanto como sea posible.
+Estos son los únicos objetos en los que puedes acceder a correos y reuniones sincronizados desde tu buzón/calendario. Recomendamos usarlos tanto como sea posible.
+
 </Warning>
 
 **Mejores prácticas:**
 
-* Si necesitas categorías de Personas, usa campos (no nuevos objetos)
-* Ejemplo: Usa un campo `Person Type` con valores "Prospecto" y "Socio" en lugar de crear objetos separados
-* Crea diferentes **vistas** para filtrar: una que muestre socios, otra que muestre prospectos
+- Si necesitas categorías de Personas, usa campos (no nuevos objetos)
+- Ejemplo: Usa un campo `Person Type` con valores "Prospecto" y "Socio" en lugar de crear objetos separados
+- Crea diferentes **vistas** para filtrar: una que muestre socios, otra que muestre prospectos
 
 **Está bien tener campos que no se apliquen a todos los registros.** Por ejemplo, un campo `Referral Link` en Personas que solo aplica cuando `Person Type = Partner`. Oculta este campo en las vistas donde no sea relevante.
 
@@ -143,9 +143,17 @@ Empieza con los campos. Pasa a nuevos objetos solo cuando notes las limitaciones
 
 Pregúntate:
 
-<Check>¿Es esto solo una propiedad de algo que ya tengo o necesita sus propias propiedades?</Check>
-<Check>¿Alguna vez necesitaré hacer seguimiento de varios de estos por registro, sin saber cuántos?</Check>
-<Check>¿Este concepto se conecta a varios objetos diferentes, no solo a uno?</Check>
+<Check>
+  ¿Es esto solo una propiedad de algo que ya tengo o necesita sus propias
+  propiedades?
+</Check>
+<Check>
+  ¿Alguna vez necesitaré hacer seguimiento de varios de estos por registro, sin
+  saber cuántos?
+</Check>
+<Check>
+  ¿Este concepto se conecta a varios objetos diferentes, no solo a uno?
+</Check>
 <Check>¿Tendrá su propio ciclo de vida (etapas, fechas de inicio/fin)?</Check>
 
 Si la respuesta es "sí" a una o más, probablemente es hora de un nuevo objeto.
@@ -160,16 +168,17 @@ Si la respuesta es "sí" a una o más, probablemente es hora de un nuevo objeto.
 <Note>
   **¿No ves Modelo de datos en Configuración?**
 
-  El acceso al modelo de datos suele estar restringido a los administradores. Contacta con el administrador de tu espacio de trabajo si necesitas acceso.
+El acceso al modelo de datos suele estar restringido a los administradores. Contacta con el administrador de tu espacio de trabajo si necesitas acceso.
+
 </Note>
 
 ## Próximos Pasos
 
 Una vez que hayas planificado tu modelo de datos:
 
-* [Cómo crear objetos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-objects)
-* [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields)
-* [Cómo crear campos de relación](/l/es/user-guide/data-model/how-tos/create-relation-fields)
+- [Cómo crear objetos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-objects)
+- [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields)
+- [Cómo crear campos de relación](/l/es/user-guide/data-model/how-tos/create-relation-fields)
 
 ## ¿Necesitas Ayuda?
 

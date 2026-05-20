@@ -82,13 +82,13 @@ export default defineApplicationRole({
 
 Notlar:
 
-* Uygulama başına tam olarak **bir** `defineApplicationRole(...)`a izin verilir — birden fazla bulursa manifest derlemesi başarısız olur.
-* Uygulamanızın birlikte sunduğu **ek** roller için `defineApplicationRole()` değil, `defineRole()` kullanın.
-* `defineApplication()` üzerinde `defaultRoleUniversalIdentifier` değerini açıkça ayarlamak geriye dönük uyumluluk için hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
+- Uygulama başına tam olarak **bir** `defineApplicationRole(...)`a izin verilir — birden fazla bulursa manifest derlemesi başarısız olur.
+- Uygulamanızın birlikte sunduğu **ek** roller için `defineApplicationRole()` değil, `defineRole()` kullanın.
+- `defineApplication()` üzerinde `defaultRoleUniversalIdentifier` değerini açıkça ayarlamak geriye dönük uyumluluk için hâlâ desteklenmektedir, ancak `defineApplicationRole()` lehine kullanımdan kaldırılmıştır.
 
 ## En İyi Uygulamalar
 
-* Oluşturulmuş (scaffolded) rolden başlayın ve ardından giderek kısıtlayın — varsayılan rol geniş okuma erişimi verir; bu ise üretim ortamında nadiren isteyeceğiniz bir şeydir.
-* `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın gerçekten ihtiyaç duyduğu nesne ve alanlarla değiştirin.
-* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
-* Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+- Oluşturulmuş (scaffolded) rolden başlayın ve ardından giderek kısıtlayın — varsayılan rol geniş okuma erişimi verir; bu ise üretim ortamında nadiren isteyeceğiniz bir şeydir.
+- `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın gerçekten ihtiyaç duyduğu nesne ve alanlarla değiştirin.
+- `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
+- Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

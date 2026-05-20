@@ -10,8 +10,8 @@ icon: window-maximize
 
 Фронт-компоненты могут отображаться в двух местах внутри Twenty:
 
-* **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
-* **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в макеты страниц. При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
+- **Боковая панель** — фронт-компоненты с интерфейсом открываются в правой боковой панели. Это поведение по умолчанию, когда фронт-компонент запускается из меню команд.
+- **Виджеты (дашборды и страницы записей)** — фронт-компоненты можно встраивать как виджеты в макеты страниц. При настройке дашборда или макета страницы записи пользователи могут добавить виджет фронт-компонента.
 
 ## Простой пример
 
@@ -53,8 +53,11 @@ export default defineCommandMenuItem({
 
 После синхронизации с помощью `yarn twenty dev` (или однократного запуска `yarn twenty dev --once`) быстрое действие появится в правом верхнем углу страницы:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Кнопка быстрого действия в правом верхнем углу" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Кнопка быстрого действия в правом верхнем углу"
+  />
 </div>
 
 Нажмите её, чтобы отобразить компонент инлайн.
@@ -90,7 +93,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -113,10 +119,10 @@ export default defineFrontComponent({
 
 Импортируйте их из `twenty-sdk/command`:
 
-* **`Command`** — запускает асинхронный колбэк через проп `execute`.
-* **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — запускает асинхронный колбэк через проп `execute`.
+- **`CommandLink`** — переходит по пути внутри приложения. Пропы: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — открывает модальное окно подтверждения. Если пользователь подтвердит, выполняет колбэк `execute`. Пропы: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — открывает конкретную страницу боковой панели. Пропы: `page`, `pageTitle`, `pageIcon`.
 
 Полный пример headless фронт-компонента, использующего `Command` для запуска действия из меню команд:
 
@@ -299,7 +305,10 @@ export default defineFrontComponent({
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  numberOfSelectedRecords,
+} from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -384,10 +393,7 @@ export default defineCommandMenuItem({
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
-import {
-  objectPermissions,
-  everyEquals,
-} from 'twenty-sdk/front-component';
+import { objectPermissions, everyEquals } from 'twenty-sdk/front-component';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -460,12 +466,12 @@ export default defineFrontComponent({
 
 Компоненты фронтенда поддерживают несколько подходов к стилизации. Вы можете использовать:
 
-* **Встроенные стили** — `style={{ color: 'red' }}`
-* **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
-* **Emotion** — CSS-in-JS с `@emotion/react`
-* **Styled-components** — паттерны `styled.div`
-* **Tailwind CSS** — утилитарные классы
-* **Любая библиотека CSS-in-JS**, совместимая с React
+- **Встроенные стили** — `style={{ color: 'red' }}`
+- **Компоненты Twenty UI** — импорт из `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar и другие)
+- **Emotion** — CSS-in-JS с `@emotion/react`
+- **Styled-components** — паттерны `styled.div`
+- **Tailwind CSS** — утилитарные классы
+- **Любая библиотека CSS-in-JS**, совместимая с React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

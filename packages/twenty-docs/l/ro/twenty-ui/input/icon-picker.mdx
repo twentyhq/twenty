@@ -13,16 +13,15 @@ Un selector de iconițe bazat pe listă derulantă care permite utilizatorilor s
 <Tab title="Utilizare">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MyComponent = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Selected Icon:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Proprietăți">
-
 
 | Proprietăți           | Tip     | Descriere                                                                                                                   |
 | --------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------- |
@@ -49,9 +46,6 @@ export const MyComponent = () => {
 | laÎnchidere           | funcție | Funcția callback declanșată când lista derulantă este închisă                                                               |
 | laDeschidere          | funcție | Funcția callback declanșată când lista derulantă este deschisă                                                              |
 | variantă              | șir     | Varianta stilului vizual al iconiței clicabile. Opțiunile includ: `primar`, `secundar` și `terțiar`                         |
-
-
-
 
 </Tab>
 </Tabs>

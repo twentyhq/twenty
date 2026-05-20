@@ -13,20 +13,28 @@ Cuando cargas un archivo, Twenty analiza las columnas e intenta hacerlas coincid
 
 Twenty intenta hacer coincidir las columnas en función de:
 
-* Nombres de encabezados de columna (coincidencias exactas o similares)
-* Detección de tipo de datos (fechas, números, correos electrónicos)
-* Patrones de campo comunes
+- Nombres de encabezados de columna (coincidencias exactas o similares)
+- Detección de tipo de datos (fechas, números, correos electrónicos)
+- Patrones de campo comunes
 
-<Note>**Consejo rápido:** Exporta algunas filas del objeto que quieres importar. El archivo exportado tendrá los nombres de columna exactos que Twenty espera, lo que hará que la asignación automática sea fluida durante la importación.</Note>
+<Note>
+  **Consejo rápido:** Exporta algunas filas del objeto que quieres importar. El
+  archivo exportado tendrá los nombres de columna exactos que Twenty espera, lo
+  que hará que la asignación automática sea fluida durante la importación.
+</Note>
 
 ### Opciones de asignación manual
 
 Para cada columna, puedes:
 
-* **Asignar a un campo**: Selecciona el campo correspondiente de Twenty desde un menú desplegable
-* **No asignar**: Omite la columna por completo (los datos no se importarán)
+- **Asignar a un campo**: Selecciona el campo correspondiente de Twenty desde un menú desplegable
+- **No asignar**: Omite la columna por completo (los datos no se importarán)
 
-<Note>**Los campos deben existir antes de la importación.** La importación crea registros, no campos. Crea campos personalizados en **Settings → Data Model** antes de importar.</Note>
+<Note>
+  **Los campos deben existir antes de la importación.** La importación crea
+  registros, no campos. Crea campos personalizados en **Settings → Data Model**
+  antes de importar.
+</Note>
 
 ## Compatibilidad de tipos de campo
 
@@ -34,22 +42,29 @@ Todos los tipos de campo disponibles en el Data Model son compatibles con la imp
 
 También puedes importar valores de `id` para asignar un ID específico a los nuevos registros o actualizar los existentes.
 
-<img src="/images/user-guide/fields/all-field-types.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/all-field-types.png"
+  style={{ width: '100%' }}
+/>
 
 ## Requisitos de formato de datos
 
-<Note>**Algunos campos tienen una sintaxis especial.** Recomendamos descargar el archivo de muestra antes de preparar la importación para ver la sintaxis esperada para cada tipo de campo.</Note>
+<Note>
+  **Algunos campos tienen una sintaxis especial.** Recomendamos descargar el
+  archivo de muestra antes de preparar la importación para ver la sintaxis
+  esperada para cada tipo de campo.
+</Note>
 
 ### Campos de dirección
 
 Dirección es un campo anidado con múltiples columnas. Algunos se pueden dejar vacíos.
 
-* **Address / Address 1**: Primera línea de la dirección
-* **Address / Address 2**: Segunda línea de la dirección
-* **Address / City**: Nombre de la ciudad
-* **Address / State**: Estado o provincia
-* **Address / Country**: Nombre del país
-* **Address / Post Code**: Código postal/ZIP
+- **Address / Address 1**: Primera línea de la dirección
+- **Address / Address 2**: Segunda línea de la dirección
+- **Address / City**: Nombre de la ciudad
+- **Address / State**: Estado o provincia
+- **Address / Country**: Nombre del país
+- **Address / Post Code**: Código postal/ZIP
 
 ### Campos de array
 
@@ -67,31 +82,31 @@ Usa `TRUE` o `FALSE` (mayúsculas), no `true` o `false`
 
 Moneda es un campo anidado con dos columnas que **ambas deben completarse**:
 
-* **Amount / Amount**: El valor numérico (p. ej., `1234.56`)
-* **Amount / Currency**: El código de la moneda (p. ej., `USD`, `EUR`)
+- **Amount / Amount**: El valor numérico (p. ej., `1234.56`)
+- **Amount / Currency**: El código de la moneda (p. ej., `USD`, `EUR`)
 
 ### Campos de fecha
 
 Formatos admitidos:
 
-* `YYYY-MM-DD` (recomendado)
-* `MM/DD/YYYY`
-* `DD/MM/YYYY`
-* Formato ISO 8601
+- `YYYY-MM-DD` (recomendado)
+- `MM/DD/YYYY`
+- `DD/MM/YYYY`
+- Formato ISO 8601
 
 ### Campos de dominio
 
-* Se recomienda usar el formato `https://domain.com` para evitar crear duplicados, ya que este es el formato utilizado para las Companies creadas por las sincronizaciones del buzón y del calendario
-* Se pueden completar `Domain Label` y `Domain URL`: la mejor práctica es poner `domain.com` en la etiqueta y `https://domain.com` en la URL
-* Los dominios deben ser únicos dentro del objeto Companies
-* **Los dominios deben ser únicos dentro del archivo a importar**
+- Se recomienda usar el formato `https://domain.com` para evitar crear duplicados, ya que este es el formato utilizado para las Companies creadas por las sincronizaciones del buzón y del calendario
+- Se pueden completar `Domain Label` y `Domain URL`: la mejor práctica es poner `domain.com` en la etiqueta y `https://domain.com` en la URL
+- Los dominios deben ser únicos dentro del objeto Companies
+- **Los dominios deben ser únicos dentro del archivo a importar**
 
 ### Campos de correo electrónico
 
-* Debe tener un formato de correo electrónico válido
-* Los correos electrónicos deben ser únicos dentro del objeto People
-* **Los correos electrónicos deben ser únicos dentro del archivo a importar**
-* Para correos adicionales: usa **Emails / Primary Email** para el correo principal y **Emails / Additional Emails** con este formato:
+- Debe tener un formato de correo electrónico válido
+- Los correos electrónicos deben ser únicos dentro del objeto People
+- **Los correos electrónicos deben ser únicos dentro del archivo a importar**
+- Para correos adicionales: usa **Emails / Primary Email** para el correo principal y **Emails / Additional Emails** con este formato:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
@@ -103,10 +118,13 @@ Es opcional especificar un `id` durante la importación. Twenty lo genera autom�
 
 Casos de uso para asignar una columna `id`:
 
-* **Establecer un ID específico**: Elige el UUID para los registros recién creados
-* **Actualizar registros existentes**: Haz coincidir con los registros existentes para actualizarlos en lugar de crear duplicados. En ese caso, se recomienda no asignar los otros campos únicos: asignar solo un campo único garantiza una importación más fluida.
+- **Establecer un ID específico**: Elige el UUID para los registros recién creados
+- **Actualizar registros existentes**: Haz coincidir con los registros existentes para actualizarlos en lugar de crear duplicados. En ese caso, se recomienda no asignar los otros campos únicos: asignar solo un campo único garantiza una importación más fluida.
 
-<Note>Si proporcionas un `id`, debe estar en formato UUID (p. ej., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>
+  Si proporcionas un `id`, debe estar en formato UUID (p. ej.,
+  `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).
+</Note>
 
 ### Campos JSON
 
@@ -120,9 +138,9 @@ Usa un formato JSON válido:
 
 Similar a los campos de dominio:
 
-* Completa ambas columnas de etiqueta y URL: **Links / Link URL** y **Links / Link Label**
-* Usa el formato de URL completo: `https://example.com`
-* Para enlaces secundarios, usa la columna **Links / Secondary Links** con este formato:
+- Completa ambas columnas de etiqueta y URL: **Links / Link URL** y **Links / Link Label**
+- Usa el formato de URL completo: `https://example.com`
+- Para enlaces secundarios, usa la columna **Links / Secondary Links** con este formato:
 
 ```
 [{"url":"https://twenty.com","label":"Twenty"}]
@@ -138,27 +156,31 @@ Usa los **nombres de la API** (no las etiquetas visibles) con el siguiente forma
 
 Consulta [aquí](#finding-api-names-for-select-fields) dónde encontrar los nombres de la API.
 
-<Note>Las nuevas opciones de selección no se crearán automáticamente mediante la importación. Deben agregarse en **Settings → Data Model** antes de importar.</Note>
+<Note>
+  Las nuevas opciones de selección no se crearán automáticamente mediante la
+  importación. Deben agregarse en **Settings → Data Model** antes de importar.
+</Note>
 
 <Warning>
   **La importación sobrescribe; no agrega.**
 
-  Si un registro ya tiene seleccionados `VALUE2` y `VALUE3`, y importas ["VALUE1"], el registro solo tendrá `VALUE1` después de la importación. Las selecciones anteriores se reemplazan, no se fusionan.
+Si un registro ya tiene seleccionados `VALUE2` y `VALUE3`, y importas ["VALUE1"], el registro solo tendrá `VALUE1` después de la importación. Las selecciones anteriores se reemplazan, no se fusionan.
+
 </Warning>
 
 ### Campos numéricos
 
-* Solo números
-* Los decimales usan punto: `1234.56`
-* Sin separadores de miles
+- Solo números
+- Los decimales usan punto: `1234.56`
+- Sin separadores de miles
 
 ### Campos de teléfono
 
 Teléfono es un campo anidado con múltiples columnas que **deben completarse**
 
-* **Phones / Primary Phone Number**: El número de teléfono (p. ej., `4159095555`)
-* **Phones / Primary Phone Country Code**: Código de país (p. ej., `US`)
-* **Phones / Primary Phone Calling Code**: Código de marcación (p. ej., `+1`)
+- **Phones / Primary Phone Number**: El número de teléfono (p. ej., `4159095555`)
+- **Phones / Primary Phone Country Code**: Código de país (p. ej., `US`)
+- **Phones / Primary Phone Calling Code**: Código de marcación (p. ej., `+1`)
 
 ### Campos de calificación
 
@@ -177,12 +199,17 @@ VALUE1
 ```
 
 Consulta [aquí](#finding-api-names-for-select-fields) dónde encontrar los nombres de la API.
-<Note>Las nuevas opciones de Select no se crearán automáticamente mediante la importación. Deben agregarse en **Configuración → Modelo de datos** antes de importar.</Note>
+
+<Note>
+  Las nuevas opciones de Select no se crearán automáticamente mediante la
+  importación. Deben agregarse en **Configuración → Modelo de datos** antes de
+  importar.
+</Note>
 
 ### Campos de texto
 
-* No se requiere formato especial
-* Los espacios iniciales y finales se eliminan
+- No se requiere formato especial
+- Los espacios iniciales y finales se eliminan
 
 ## Encontrar nombres de la API
 

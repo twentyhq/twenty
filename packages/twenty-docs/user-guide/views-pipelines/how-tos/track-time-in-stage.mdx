@@ -4,7 +4,9 @@ description: Monitor deal velocity by tracking when opportunities enter each sta
 ---
 
 <Tip>
-This is an example of creating [Formula Fields](/user-guide/workflows/how-tos/crm-automations/formula-fields) using workflows — specifically date calculations.
+  This is an example of creating [Formula
+  Fields](/user-guide/workflows/how-tos/crm-automations/formula-fields) using
+  workflows — specifically date calculations.
 </Tip>
 
 Tracking when opportunities enter each stage helps you identify bottlenecks and measure deal velocity.
@@ -14,6 +16,7 @@ This guide walks you through setting up custom fields and a workflow to automati
 ## Step 1: Create Custom Fields
 
 You need two types of fields for each stage:
+
 - **Date & Time fields**: Record when the opportunity entered each stage
 - **Number fields**: Store how many days the opportunity spent in each stage
 
@@ -27,6 +30,7 @@ You need two types of fields for each stage:
 3. Click **Save**
 
 Create these fields:
+
 - Last Entered New
 - Last Entered Qualified
 - Last Entered Meeting
@@ -44,6 +48,7 @@ Create these fields:
 2. Click **Save**
 
 Create these fields:
+
 - Days in New
 - Days in Qualified
 - Days in Meeting
@@ -51,7 +56,8 @@ Create these fields:
 - Days in Negotiation
 
 <Note>
-You don't need "Days in" fields for Closed Won and Closed Lost since those are final stages.
+  You don't need "Days in" fields for Closed Won and Closed Lost since those are
+  final stages.
 </Note>
 
 ### Optional: Make Fields Read-Only
@@ -66,6 +72,7 @@ If you don't want users manually editing these calculated fields:
 ## Step 2: Create the Workflow
 
 This single workflow handles both tasks:
+
 - Records the timestamp when entering a new stage
 - Calculates days spent in the previous stage
 
@@ -84,7 +91,9 @@ This single workflow handles both tasks:
 ### Add Branches for Each Stage
 
 <Note>
-To create a new branch, right click on the workflow canvas and click **New action**. Then, link this action to the previous node by dragging the arrow from the previous node to this new action.
+  To create a new branch, right click on the workflow canvas and click **New
+  action**. Then, link this action to the previous node by dragging the arrow
+  from the previous node to this new action.
 </Note>
 
 ---
@@ -179,11 +188,11 @@ export const main = async (params: {
 
 **Continue for remaining stages:**
 
-| Stage | Records | Calculates |
-|-------|---------|------------|
-| Proposal | Last Entered Proposal | Days in Meeting |
-| Negotiation | Last Entered Negotiation | Days in Proposal |
-| Closed Won | Last Entered Closed Won | Days in Negotiation |
+| Stage       | Records                  | Calculates          |
+| ----------- | ------------------------ | ------------------- |
+| Proposal    | Last Entered Proposal    | Days in Meeting     |
+| Negotiation | Last Entered Negotiation | Days in Proposal    |
+| Closed Won  | Last Entered Closed Won  | Days in Negotiation |
 | Closed Lost | Last Entered Closed Lost | Days in Negotiation |
 
 The branches do not need to rejoin—each runs independently when its stage condition is met.
@@ -204,6 +213,7 @@ Deals at the top spent the most time in the previous stage.
 ### Use Aggregations
 
 In your pipeline Kanban view:
+
 1. Click the number next to a Stage name
 2. Select **Average**
 3. Choose a "Days in" field
@@ -212,12 +222,12 @@ This shows the average time deals spend in each stage.
 
 ## Summary
 
-| Component | Purpose |
-|-----------|---------|
-| **Last Entered fields** | Store when opportunity entered each stage |
-| **Days in fields** | Store how many days spent in each stage |
-| **Workflow** | Records timestamp AND calculates days in one pass |
-| **Views & Aggregations** | Analyze deal velocity and identify bottlenecks |
+| Component                | Purpose                                           |
+| ------------------------ | ------------------------------------------------- |
+| **Last Entered fields**  | Store when opportunity entered each stage         |
+| **Days in fields**       | Store how many days spent in each stage           |
+| **Workflow**             | Records timestamp AND calculates days in one pass |
+| **Views & Aggregations** | Analyze deal velocity and identify bottlenecks    |
 
 ## Related
 

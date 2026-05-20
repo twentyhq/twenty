@@ -17,8 +17,8 @@ As entidades de layout controlam como seu app aparece na UI do Twenty — o que 
 
 Vistas, itens de navegação e layouts de página referenciam-se mutuamente por `universalIdentifier`:
 
-* Um **item do menu de navegação** do tipo `VIEW` aponta para um identificador `defineView`, assim o link da barra lateral abre essa vista salva.
-* Um **layout de página** do tipo `RECORD_PAGE` destina-se a um objeto e pode incorporar [front components](/l/pt/developers/extend/apps/front-components) em suas abas como widgets.
+- Um **item do menu de navegação** do tipo `VIEW` aponta para um identificador `defineView`, assim o link da barra lateral abre essa vista salva.
+- Um **layout de página** do tipo `RECORD_PAGE` destina-se a um objeto e pode incorporar [front components](/l/pt/developers/extend/apps/front-components) em suas abas como widgets.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Defina visualizações salvas para objetos">
@@ -50,11 +50,12 @@ export default defineView({
 ```
 
 Pontos-chave:
-* `objectUniversalIdentifier` especifica a qual objeto esta visualização se aplica.
-* `key` determina o tipo de visualização (por exemplo, `ViewKey.INDEX` para a visualização de lista principal).
-* `fields` controla quais colunas aparecem e sua ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`.
-* Você também pode definir `filters`, `filterGroups`, `groups` e `fieldGroups` para configurações mais avançadas.
-* `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
+
+- `objectUniversalIdentifier` especifica a qual objeto esta visualização se aplica.
+- `key` determina o tipo de visualização (por exemplo, `ViewKey.INDEX` para a visualização de lista principal).
+- `fields` controla quais colunas aparecem e sua ordem. Cada campo referencia um `fieldMetadataUniversalIdentifier`.
+- Você também pode definir `filters`, `filterGroups`, `groups` e `fieldGroups` para configurações mais avançadas.
+- `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Defina links de navegação da barra lateral">
@@ -62,7 +63,10 @@ Pontos-chave:
 Os itens do menu de navegação adicionam entradas personalizadas à barra lateral do espaço de trabalho. Use `defineNavigationMenuItem()` para vincular a visualizações, URLs externas ou objetos:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -77,10 +81,11 @@ export default defineNavigationMenuItem({
 ```
 
 Pontos-chave:
-* `type` determina para o que o item de menu aponta: `NavigationMenuItemType.VIEW` para uma visualização salva ou `NavigationMenuItemType.LINK` para uma URL externa.
-* Para links de visualização, defina `viewUniversalIdentifier`. Para links externos, defina `link`.
-* `position` controla a ordenação na barra lateral.
-* `icon` e `color` (opcionais) personalizam a aparência.
+
+- `type` determina para o que o item de menu aponta: `NavigationMenuItemType.VIEW` para uma visualização salva ou `NavigationMenuItemType.LINK` para uma URL externa.
+- Para links de visualização, defina `viewUniversalIdentifier`. Para links externos, defina `link`.
+- `position` controla a ordenação na barra lateral.
+- `icon` e `color` (opcionais) personalizam a aparência.
 
 </Accordion>
 <Accordion title="definePageLayout" description="Defina layouts de página personalizados para visualizações de registro">
@@ -122,11 +127,12 @@ export default definePageLayout({
 ```
 
 Pontos-chave:
-* `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
-* `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
-* Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
-* Cada `widget` dentro de uma aba pode renderizar um componente de front-end, uma lista de relações ou outros tipos de widget incorporados.
-* `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
+
+- `type` geralmente é `'RECORD_PAGE'` para personalizar a visualização de detalhes de um objeto específico.
+- `objectUniversalIdentifier` especifica a qual objeto este layout se aplica.
+- Cada `tab` define uma seção da página com um `title`, `position` e `layoutMode` (`CANVAS` para layout livre).
+- Cada `widget` dentro de uma aba pode renderizar um componente de front-end, uma lista de relações ou outros tipos de widget incorporados.
+- `position` nas abas controla sua ordem. Use valores mais altos (por exemplo, 50) para colocar abas personalizadas após as nativas.
 
 </Accordion>
 <Accordion title="definePageLayoutTab" description="Adicionar uma aba a um layout de página existente">
@@ -169,10 +175,11 @@ export default definePageLayoutTab({
 ```
 
 Pontos-chave:
-* `pageLayoutUniversalIdentifier` é **obrigatório** ao usar `definePageLayoutTab` e deve apontar para um layout de página que já exista no momento da instalação (padrão ou do seu app). Quando o layout de página pai está ausente, a instalação falha com um erro de validação claro.
-* `widgets` têm escopo apenas para esta aba — eles referenciam componentes de interface, visualizações etc., exatamente como widgets definidos inline em `definePageLayout`.
-* `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
-* Use isto em vez de `definePageLayout` quando você quiser apenas **adicionar** a um layout existente. Use `definePageLayout` quando você for o proprietário de todo o layout (normalmente uma `RECORD_PAGE` para um objeto que você fornece no seu app, ou uma `STANDALONE_PAGE`).
+
+- `pageLayoutUniversalIdentifier` é **obrigatório** ao usar `definePageLayoutTab` e deve apontar para um layout de página que já exista no momento da instalação (padrão ou do seu app). Quando o layout de página pai está ausente, a instalação falha com um erro de validação claro.
+- `widgets` têm escopo apenas para esta aba — eles referenciam componentes de interface, visualizações etc., exatamente como widgets definidos inline em `definePageLayout`.
+- `position` controla a ordenação em relação às abas existentes no layout de destino. Escolha um valor que posicione sua aba onde você deseja em relação às abas nativas.
+- Use isto em vez de `definePageLayout` quando você quiser apenas **adicionar** a um layout existente. Use `definePageLayout` quando você for o proprietário de todo o layout (normalmente uma `RECORD_PAGE` para um objeto que você fornece no seu app, ou uma `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

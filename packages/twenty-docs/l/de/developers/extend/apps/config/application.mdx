@@ -6,10 +6,10 @@ icon: rocket
 
 Jede App muss genau einen Aufruf von `defineApplication` haben. Dieser deklariert:
 
-* **Identität** — universeller Bezeichner, Anzeigename, Beschreibung.
-* **Berechtigungen** — unter welcher Rolle ihre Logikfunktionen und Frontend-Komponenten ausgeführt werden.
-* **Variablen** *(optional)* — Schlüssel–Wert-Paare, die Ihrem Code als Umgebungsvariablen zur Verfügung gestellt werden.
-* **Pre-install-/Post-install-Hooks** *(optional)* — siehe [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions).
+- **Identität** — universeller Bezeichner, Anzeigename, Beschreibung.
+- **Berechtigungen** — unter welcher Rolle ihre Logikfunktionen und Frontend-Komponenten ausgeführt werden.
+- **Variablen** _(optional)_ — Schlüssel–Wert-Paare, die Ihrem Code als Umgebungsvariablen zur Verfügung gestellt werden.
+- **Pre-install-/Post-install-Hooks** _(optional)_ — siehe [Logikfunktionen](/l/de/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,19 +31,19 @@ export default defineApplication({
 
 Notizen:
 
-* `universalIdentifier`-Felder sind deterministische IDs, die Ihnen gehören. Erzeugen Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
-* `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Frontend-Komponenten. In Logikfunktionen (serverseitig) sind sie als `process.env.VARIABLE_NAME` verfügbar. In Frontend-Komponenten verwenden Sie `getApplicationVariable('VARIABLE_NAME')` aus `twenty-sdk/front-component`. Variablen, die mit `isSecret: true` gekennzeichnet sind, werden nur in Logikfunktionen injiziert. Frontend-Komponenten erhalten nur nicht-geheime Variablen.
-* Die Standardrolle wird automatisch aus der Rollen-Datei erkannt, die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) markiert ist – Sie müssen sie nicht aus `defineApplication()` referenzieren.
-* Pre- und Post-Installationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
-* Die explizite Übergabe von `defaultRoleUniversalIdentifier` wird für die Abwärtskompatibilität weiterhin unterstützt, ist jedoch zugunsten von `defineApplicationRole()` veraltet.
+- `universalIdentifier`-Felder sind deterministische IDs, die Ihnen gehören. Erzeugen Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
+- `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Frontend-Komponenten. In Logikfunktionen (serverseitig) sind sie als `process.env.VARIABLE_NAME` verfügbar. In Frontend-Komponenten verwenden Sie `getApplicationVariable('VARIABLE_NAME')` aus `twenty-sdk/front-component`. Variablen, die mit `isSecret: true` gekennzeichnet sind, werden nur in Logikfunktionen injiziert. Frontend-Komponenten erhalten nur nicht-geheime Variablen.
+- Die Standardrolle wird automatisch aus der Rollen-Datei erkannt, die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) markiert ist – Sie müssen sie nicht aus `defineApplication()` referenzieren.
+- Pre- und Post-Installationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
+- Die explizite Übergabe von `defaultRoleUniversalIdentifier` wird für die Abwärtskompatibilität weiterhin unterstützt, ist jedoch zugunsten von `defineApplicationRole()` veraltet.
 
 ## Standard-Funktionsrolle
 
 Die mit [`defineApplicationRole()`](/l/de/developers/extend/apps/config/roles) deklarierte Rolle steuert, worauf die Logikfunktionen und Frontend-Komponenten der App zugreifen können:
 
-* Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
-* Der typisierte API-Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
-* Befolgen Sie das Least-Privilege-Prinzip: Deklarieren Sie nur die Berechtigungen, die Ihre Funktionen benötigen.
+- Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
+- Der typisierte API-Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
+- Befolgen Sie das Least-Privilege-Prinzip: Deklarieren Sie nur die Berechtigungen, die Ihre Funktionen benötigen.
 
 Wenn Sie eine neue App erzeugen, erstellt die CLI eine Starter-Rolldatei unter `src/roles/default-role.ts`. Die vollständige Referenz finden Sie unter [Rollen & Berechtigungen](/l/de/developers/extend/apps/config/roles).
 

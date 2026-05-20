@@ -7,8 +7,11 @@ icon: database
 Das Paket `twenty-sdk` stellt `defineEntity`-Funktionen bereit, um das Datenmodell Ihrer App zu deklarieren. Sie müssen `export default defineEntity({...})` verwenden, damit das SDK Ihre Entitäten erkennt. Diese Funktionen validieren Ihre Konfiguration zur Build-Zeit und bieten IDE-Autovervollständigung sowie Typsicherheit.
 
 <Note>
-  **Die Dateiorganisation liegt bei Ihnen.**
-  Die Entitätserkennung ist AST-basiert — das SDK findet Aufrufe von `export default defineEntity(...)`, unabhängig davon, wo sich die Datei befindet. Das Gruppieren von Dateien nach Typ (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention, keine Voraussetzung.
+  **Die Dateiorganisation liegt bei Ihnen.** Die Entitätserkennung ist
+  AST-basiert — das SDK findet Aufrufe von `export default defineEntity(...)`,
+  unabhängig davon, wo sich die Datei befindet. Das Gruppieren von Dateien nach
+  Typ (z. B. `logic-functions/`, `roles/`) ist lediglich eine Konvention, keine
+  Voraussetzung.
 </Note>
 
 <AccordionGroup>
@@ -50,7 +53,8 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -64,10 +68,10 @@ export default defineRole({
 
 Jede App muss genau einen Aufruf von `defineApplication` haben, der Folgendes beschreibt:
 
-* **Identität**: Bezeichner, Anzeigename und Beschreibung.
-* **Berechtigungen**: welche Rolle ihre Funktionen und Frontend-Komponenten verwenden.
-* **(Optional) Variablen**: Schlüssel–Wert-Paare, die Ihren Funktionen als Umgebungsvariablen zur Verfügung gestellt werden.
-* **(Optional) Pre-/Post-Installationsfunktionen**: Logikfunktionen, die vor oder nach der Installation ausgeführt werden.
+- **Identität**: Bezeichner, Anzeigename und Beschreibung.
+- **Berechtigungen**: welche Rolle ihre Funktionen und Frontend-Komponenten verwenden.
+- **(Optional) Variablen**: Schlüssel–Wert-Paare, die Ihren Funktionen als Umgebungsvariablen zur Verfügung gestellt werden.
+- **(Optional) Pre-/Post-Installationsfunktionen**: Logikfunktionen, die vor oder nach der Installation ausgeführt werden.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -90,10 +94,11 @@ export default defineApplication({
 ```
 
 Notizen:
-* `universalIdentifier`-Felder sind deterministische IDs, die Ihnen gehören. Erzeugen Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
-* `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Frontend-Komponenten (z. B. ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
-* `defaultRoleUniversalIdentifier` muss auf eine mit `defineRole()` definierte Rolle verweisen (siehe oben).
-* Pre- und Post-Installationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
+
+- `universalIdentifier`-Felder sind deterministische IDs, die Ihnen gehören. Erzeugen Sie sie einmal und halten Sie sie über Synchronisierungen hinweg stabil.
+- `applicationVariables` werden zu Umgebungsvariablen für Ihre Funktionen und Frontend-Komponenten (z. B. ist `DEFAULT_RECIPIENT_NAME` als `process.env.DEFAULT_RECIPIENT_NAME` verfügbar).
+- `defaultRoleUniversalIdentifier` muss auf eine mit `defineRole()` definierte Rolle verweisen (siehe oben).
+- Pre- und Post-Installationsfunktionen werden während des Manifest-Builds automatisch erkannt — Sie müssen sie in `defineApplication()` nicht referenzieren.
 
 #### Marktplatz-Metadaten
 
@@ -115,9 +120,9 @@ Wenn Sie planen, [Ihre App zu veröffentlichen](/l/de/developers/extend/apps/pub
 
 Das Feld `defaultRoleUniversalIdentifier` in `application-config.ts` legt die Standardrolle fest, die von den Logikfunktionen und Frontend-Komponenten Ihrer App verwendet wird. Details finden Sie oben unter `defineRole`.
 
-* Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
-* Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
-* Befolgen Sie das Least-Privilege-Prinzip: Erstellen Sie eine dedizierte Rolle nur mit den Berechtigungen, die Ihre Funktionen benötigen.
+- Das zur Laufzeit als `TWENTY_APP_ACCESS_TOKEN` injizierte Token wird aus dieser Rolle abgeleitet.
+- Der typisierte Client ist auf die dieser Rolle gewährten Berechtigungen beschränkt.
+- Befolgen Sie das Least-Privilege-Prinzip: Erstellen Sie eine dedizierte Rolle nur mit den Berechtigungen, die Ihre Funktionen benötigen.
 
 ##### Standard-Funktionsrolle
 
@@ -149,14 +154,15 @@ export default defineRole({
 
 Der `universalIdentifier` dieser Rolle wird in `application-config.ts` als `defaultRoleUniversalIdentifier` referenziert:
 
-* **\*.role.ts** definiert, was die Rolle darf.
-* **application-config.ts** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
+- **\*.role.ts** definiert, was die Rolle darf.
+- **application-config.ts** verweist auf diese Rolle, sodass Ihre Funktionen deren Berechtigungen erben.
 
 Notizen:
-* Beginnen Sie mit der vorab erstellten Rolle und schränken Sie sie schrittweise gemäß dem Least-Privilege-Prinzip ein.
-* Ersetzen Sie `objectPermissions` und `fieldPermissions` durch die Objekte und Felder, die Ihre Funktionen tatsächlich benötigen.
-* `permissionFlags` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
-* Ein funktionierendes Beispiel finden Sie unter: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+- Beginnen Sie mit der vorab erstellten Rolle und schränken Sie sie schrittweise gemäß dem Least-Privilege-Prinzip ein.
+- Ersetzen Sie `objectPermissions` und `fieldPermissions` durch die Objekte und Felder, die Ihre Funktionen tatsächlich benötigen.
+- `permissionFlags` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
+- Ein funktionierendes Beispiel finden Sie unter: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
 <Accordion title="Objekt definieren" description="Benutzerdefinierte Objekte mit Feldern definieren">
@@ -212,10 +218,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -233,18 +259,20 @@ export default defineObject({
 
 Hauptpunkte:
 
-* Verwenden Sie `defineObject()` für eingebaute Validierung und bessere IDE-Unterstützung.
-* Der `universalIdentifier` muss eindeutig und über Deployments hinweg stabil sein.
-* Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
-* Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
-* Sie können mit `yarn twenty add` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen.
+- Verwenden Sie `defineObject()` für eingebaute Validierung und bessere IDE-Unterstützung.
+- Der `universalIdentifier` muss eindeutig und über Deployments hinweg stabil sein.
+- Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
+- Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
+- Sie können mit `yarn twenty add` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen.
 
 <Note>
-**Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, fügt Twenty automatisch Standardfelder hinzu
-wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt`.
-Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre benutzerdefinierten Felder hinzu.
-Sie können Standardfelder überschreiben, indem Sie in Ihrem `fields`-Array ein Feld mit demselben Namen definieren,
-dies wird jedoch nicht empfohlen.
+  **Basisfelder werden automatisch erstellt.** Wenn Sie ein benutzerdefiniertes
+  Objekt definieren, fügt Twenty automatisch Standardfelder hinzu wie `id`,
+  `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt`.
+  Sie müssen diese nicht in Ihrem `fields`-Array definieren — fügen Sie nur Ihre
+  benutzerdefinierten Felder hinzu. Sie können Standardfelder überschreiben,
+  indem Sie in Ihrem `fields`-Array ein Feld mit demselben Namen definieren,
+  dies wird jedoch nicht empfohlen.
 </Note>
 
 </Accordion>
@@ -271,9 +299,10 @@ export default defineField({
 ```
 
 Hauptpunkte:
-* Der `objectUniversalIdentifier` identifiziert das Zielobjekt. Für Standardobjekte verwenden Sie `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`, die aus `twenty-sdk` exportiert werden.
-* Wenn Sie Felder inline in `defineObject()` definieren, benötigen Sie `objectUniversalIdentifier` **nicht** — er wird vom übergeordneten Objekt geerbt.
-* `defineField()` ist die einzige Möglichkeit, Felder zu Objekten hinzuzufügen, die Sie nicht mit `defineObject()` erstellt haben.
+
+- Der `objectUniversalIdentifier` identifiziert das Zielobjekt. Für Standardobjekte verwenden Sie `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS`, die aus `twenty-sdk` exportiert werden.
+- Wenn Sie Felder inline in `defineObject()` definieren, benötigen Sie `objectUniversalIdentifier` **nicht** — er wird vom übergeordneten Objekt geerbt.
+- `defineField()` ist die einzige Möglichkeit, Felder zu Objekten hinzuzufügen, die Sie nicht mit `defineObject()` erstellt haben.
 
 </Accordion>
 <Accordion title="defineField — Relationsfelder" description="Objekte mit bidirektionalen Relationen verbinden">
@@ -308,7 +337,8 @@ import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
 // Export so the other side can reference it
-export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+export const POST_CARD_RECIPIENTS_FIELD_ID =
+  'a1111111-1111-1111-1111-111111111111';
 // Import from the other side
 import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
 
@@ -319,7 +349,8 @@ export default defineField({
   name: 'postCardRecipients',
   label: 'Post Card Recipients',
   icon: 'IconUsers',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
@@ -330,7 +361,12 @@ export default defineField({
 **Schritt 2: Definieren Sie die MANY_TO_ONE-Seite auf PostCardRecipient** (die "viele" Seite — hält den Fremdschlüssel):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+} from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -346,7 +382,8 @@ export default defineField({
   name: 'postCard',
   label: 'Post Card',
   icon: 'IconMail',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
@@ -357,7 +394,11 @@ export default defineField({
 ```
 
 <Note>
-**Zyklische Importe:** Beide Relationsfelder referenzieren gegenseitig den `universalIdentifier` des jeweils anderen. Um Probleme mit zyklischen Importen zu vermeiden, exportieren Sie Ihre Feld-IDs als benannte Konstanten aus jeder Datei und importieren Sie sie in der jeweils anderen Datei. Das Build-System löst dies zur Kompilierzeit auf.
+  **Zyklische Importe:** Beide Relationsfelder referenzieren gegenseitig den
+  `universalIdentifier` des jeweils anderen. Um Probleme mit zyklischen Importen
+  zu vermeiden, exportieren Sie Ihre Feld-IDs als benannte Konstanten aus jeder
+  Datei und importieren Sie sie in der jeweils anderen Datei. Das Build-System
+  löst dies zur Kompilierzeit auf.
 </Note>
 
 #### Relationen zu Standardobjekten
@@ -375,7 +416,8 @@ import {
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
-export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID =
+  'd4444444-4444-4444-4444-444444444444';
 
 export default defineField({
   universalIdentifier: PERSON_FIELD_ID,
@@ -387,7 +429,8 @@ export default defineField({
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_REVERSE_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
@@ -422,8 +465,10 @@ export default defineObject({
       type: FieldType.RELATION,
       name: 'postCard',
       label: 'Post Card',
-      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      relationTargetObjectMetadataUniversalIdentifier:
+        POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_ID,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,
@@ -434,6 +479,7 @@ export default defineObject({
   ],
 });
 ```
+
 </Accordion>
 </AccordionGroup>
 
@@ -457,8 +503,8 @@ yarn twenty add frontComponent
 
 ### Verfügbare Entitätstypen
 
-| Entitätstyp            | Befehl                               | Generierte Datei                                        |
-| ---------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Entitätstyp            | Befehl                               | Generierte Datei                       |
+| ---------------------- | ------------------------------------ | -------------------------------------- |
 | Objekt                 | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
 | Feld                   | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
 | Logikfunktion          | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |

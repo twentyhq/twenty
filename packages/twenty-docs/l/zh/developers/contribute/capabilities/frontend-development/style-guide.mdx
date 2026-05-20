@@ -32,7 +32,7 @@ export default MyComponent;
 // ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
-};
+}
 ```
 
 ### 属性
@@ -50,7 +50,9 @@ type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => (
+  <div>Hello {name}</div>
+);
 ```
 
 #### 避免使用 `React.FC` 或 `React.FunctionComponent` 适用于属性类型的定义
@@ -91,7 +93,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
-}
+};
 ```
 
 ```tsx
@@ -105,9 +107,9 @@ const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
 
 理由：
 
-* 一目了然，它更清楚哪个属性代码传递下来，这使得理解和维护更容易。
-* 这有助于防止组件间通过属性的紧密耦合。
-* Linting工具使显式列出属性时更易于识别拼写错误或未使用的属性。
+- 一目了然，它更清楚哪个属性代码传递下来，这使得理解和维护更容易。
+- 这有助于防止组件间通过属性的紧密耦合。
+- Linting工具使显式列出属性时更易于识别拼写错误或未使用的属性。
 
 ## JavaScript
 
@@ -158,9 +160,9 @@ type MyType = {
 ```tsx
 // ❌ Bad, utilizes an enum
 enum Color {
-  Red = "red",
-  Green = "green",
-  Blue = "blue",
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
 }
 
 let color = Color.Red;
@@ -169,7 +171,7 @@ let color = Color.Red;
 ```tsx
 // ✅ Good, utilizes a string literal
 
-let color: "red" | "green" | "blue" = "red";
+let color: 'red' | 'green' | 'blue' = 'red';
 ```
 
 #### GraphQL和内部库
@@ -255,7 +257,7 @@ const StyledButton = styled.button`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  border-radius:  ${({ theme }) => theme.border.rounded};
+  border-radius: ${({ theme }) => theme.border.rounded};
 `;
 ```
 
@@ -276,11 +278,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### 为什么不允许类型导入
 
-* **一致性**：通过避免类型导入并为类型和值导入使用单一方法，代码库在其模块导入风格上保持一致性。
+- **一致性**：通过避免类型导入并为类型和值导入使用单一方法，代码库在其模块导入风格上保持一致性。
 
-* **可读性**：无类型导入提高代码可读性，使得在导入值或类型时更显而易见。 这减少了歧义，并使理解导入符号的用途更容易。
+- **可读性**：无类型导入提高代码可读性，使得在导入值或类型时更显而易见。 这减少了歧义，并使理解导入符号的用途更容易。
 
-* **可维护性**：它增强了代码库的可维护性，因为开发人员可以在审查或修改代码时识别和定位仅类型导入。
+- **可维护性**：它增强了代码库的可维护性，因为开发人员可以在审查或修改代码时识别和定位仅类型导入。
 
 ### Oxlint 规则
 

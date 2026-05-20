@@ -7,7 +7,12 @@ description: Ghid complet, pas cu pas, pentru asocierea înregistrărilor în ti
 
 Acest ghid vă arată cum să importați relațiile dintre obiecte — de exemplu, să asociați Persoane la Companii sau Oportunități la Persoane.
 
-<Note>**Ce poate fi importat:** Doar relații de tip unu-la-mulți care indică către un singur tip de obiect. Relațiile care indică către mai multe tipuri de obiect (cum ar fi Notele care se leagă de Persoane ȘI Companii) nu sunt încă acceptate pentru import.</Note>
+<Note>
+  **Ce poate fi importat:** Doar relații de tip unu-la-mulți care indică către
+  un singur tip de obiect. Relațiile care indică către mai multe tipuri de
+  obiect (cum ar fi Notele care se leagă de Persoane ȘI Companii) nu sunt încă
+  acceptate pentru import.
+</Note>
 
 ## Înțelegerea relațiilor
 
@@ -15,9 +20,9 @@ Acest ghid vă arată cum să importați relațiile dintre obiecte — de exempl
 
 Într-o relație unu-la-mulți:
 
-* **O** companie are **multe** persoane (angajați)
-* **O** companie are **multe** oportunități
-* **O** persoană are **multe** sarcini
+- **O** companie are **multe** persoane (angajați)
+- **O** companie are **multe** oportunități
+- **O** persoană are **multe** sarcini
 
 Partea "unu" este **părintele**. Partea "mulți" este **copilul**.
 
@@ -36,8 +41,8 @@ Partea "unu" este **părintele**. Partea "mulți" este **copilul**.
 
 **Întrebați-vă:** "Are UN [Obiect A] MULTE [Obiect B]?"
 
-* O companie → Multe persoane ✓ (Compania este părinte)
-* O persoană → Multe companii ✗ (Greșit — o persoană aparține unei singure companii)
+- O companie → Multe persoane ✓ (Compania este părinte)
+- O persoană → Multe companii ✗ (Greșit — o persoană aparține unei singure companii)
 
 ## Pasul 2: Importați mai întâi înregistrările părinte
 
@@ -54,6 +59,7 @@ Partea "unu" este **părintele**. Partea "mulți" este **copilul**.
 **Dacă înregistrarea părinte nu există, importul va eșua.**
 
 Verificați întotdeauna că companiile au fost importate înainte de a importa persoane cu referințe la companie.
+
 </Warning>
 
 ## Pasul 3: Notați identificatorul unic al părintelui
@@ -67,7 +73,11 @@ Trebuie să faceți referire la înregistrarea părinte folosind un **identifica
 | **Membri ai Spațiului de Lucru** | `id` (UUID), `email` (nu numele)                                    |
 | **Obiecte personalizate**        | `id` (UUID) sau orice câmp marcat ca unic                           |
 
-<Note>**Recomandat:** Folosiți `domain` pentru Companii și `email` pentru Persoane. Acestea sunt ușor de citit de către oameni și ușor de verificat în foaia de calcul.</Note>
+<Note>
+  **Recomandat:** Folosiți `domain` pentru Companii și `email` pentru Persoane.
+  Acestea sunt ușor de citit de către oameni și ușor de verificat în foaia de
+  calcul.
+</Note>
 
 ### Găsirea identificatorului
 
@@ -87,9 +97,9 @@ Dacă aveți nevoie de `id`:
 2. Selectați obiectul copil (de ex., Persoane)
 3. Căutați un câmp de relație care indică către părinte (de ex., Companie)
 4. Dacă nu există, creați-l:
-   * Faceți clic pe **+ Adaugă câmp**
-   * Selectați tipul **Relație**
-   * Alegeți obiectul părinte
+   - Faceți clic pe **+ Adaugă câmp**
+   - Selectați tipul **Relație**
+   - Alegeți obiectul părinte
 
 ## Pasul 5: Pregătiți fișierul CSV
 
@@ -120,6 +130,7 @@ Coloana `companyDomain` face referire la domeniul companiei.
 **Formatul domeniului contează!**
 
 Folosiți `https://domain.com` (nu doar `domain.com`). Acest lucru corespunde modului în care Twenty stochează domeniile companiilor și previne erorile de potrivire.
+
 </Warning>
 
 ### Reguli importante
@@ -134,8 +145,8 @@ Folosiți `https://domain.com` (nu doar `domain.com`). Acest lucru corespunde mo
 2. Faceți clic pe **⋮** → **Import records**
 3. Încărcați fișierul CSV
 4. În etapa de mapare a câmpurilor:
-   * Găsiți coloana relației (de ex., `companyDomain`)
-   * Mapați-o la câmpul de relație **Company**
+   - Găsiți coloana relației (de ex., `companyDomain`)
+   - Mapați-o la câmpul de relație **Company**
 5. Finalizați maparea rămasă
 6. Revizuiți erorile și confirmați
 
@@ -164,8 +175,8 @@ După import:
 
 Când legați la membrii spațiului de lucru (echipa dvs.):
 
-* Folosiți **adresa de email**, nu numele
-* Exemplu: `owner@yourcompany.com`, nu "John Smith"
+- Folosiți **adresa de email**, nu numele
+- Exemplu: `owner@yourcompany.com`, nu "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -182,24 +193,27 @@ Review proposal,jane@yourcompany.com
     2. Creați un câmp unic personalizat în modelul dvs. de date pentru a stoca un ID extern din sistemul anterior
   </Accordion>
 
-  <Accordion title="Pot să actualizez relațiile la înregistrările existente?">
-    Da! Includeți identificatorul unic al înregistrării copil (de ex., `email` pentru Persoane) și noua valoare a relației. Importul va actualiza relația.
-  </Accordion>
+<Accordion title="Pot să actualizez relațiile la înregistrările existente?">
+  Da! Includeți identificatorul unic al înregistrării copil (de ex., `email`
+  pentru Persoane) și noua valoare a relației. Importul va actualiza relația.
+</Accordion>
 
-  <Accordion title="Pot să import relații de tip mulți-la-mulți?">
-    Relațiile mulți-la-mulți nu sunt încă acceptate pentru import. Aceasta este planificată pentru S1 2026.
-  </Accordion>
+<Accordion title="Pot să import relații de tip mulți-la-mulți?">
+  Relațiile mulți-la-mulți nu sunt încă acceptate pentru import. Aceasta este
+  planificată pentru S1 2026.
+</Accordion>
 
-  <Accordion title="Pot să leg la mai multe tipuri de obiecte (cum ar fi Note la Persoane ȘI Companii)?">
-    Relațiile care indică către mai multe tipuri de obiecte nu sunt încă acceptate pentru import/export. Această funcționalitate este în planul nostru de dezvoltare.
-  </Accordion>
+<Accordion title="Pot să leg la mai multe tipuri de obiecte (cum ar fi Note la Persoane ȘI Companii)?">
+  Relațiile care indică către mai multe tipuri de obiecte nu sunt încă acceptate
+  pentru import/export. Această funcționalitate este în planul nostru de
+  dezvoltare.
+</Accordion>
 
-  <Accordion title="Ce se întâmplă dacă o înregistrare părinte nu există?">
-    Importul va afișa o eroare pentru acel rând. Puteți fie să:
-    * Importați mai întâi înregistrarea părinte, apoi reimportați
-    * Corectați valoarea de referință
-    * Eliminați rândul din import
-  </Accordion>
+<Accordion title="Ce se întâmplă dacă o înregistrare părinte nu există?">
+  Importul va afișa o eroare pentru acel rând. Puteți fie să: * Importați mai
+  întâi înregistrarea părinte, apoi reimportați * Corectați valoarea de
+  referință * Eliminați rândul din import
+</Accordion>
 
   <Accordion title="De ce relația mea nu se leagă corect?">
     Cauze comune:
@@ -214,12 +228,13 @@ Review proposal,jane@yourcompany.com
 **Rețineți: Înregistrările șterse logic se iau în calcul pentru unicitate.**
 
 Dacă primiți erori „not found”, dar înregistrarea pare să existe, verificați Command Menu → See deleted records. Este posibil ca părintele să fi fost șters logic.
+
 </Warning>
 
 ## Depanare
 
 Aveți probleme? Verificați:
 
-* [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
-* [Capabilități de import al relațiilor](/l/ro/user-guide/data-migration/capabilities/import-relations)
-* [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Cum să remediați erorile de import](/l/ro/user-guide/data-migration/how-tos/fix-import-errors)
+- [Capabilități de import al relațiilor](/l/ro/user-guide/data-migration/capabilities/import-relations)
+- [Constrângeri de unicitate](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)

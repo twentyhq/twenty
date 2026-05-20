@@ -6,7 +6,9 @@ description: Trimiteți notificări automate prin e-mail când atribuiți unui c
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-**Etichetarea colegilor direct în note nu este încă suportată.** Această funcție este planificată pentru a doua jumătate a anului 2026. Între timp, acest flux de lucru oferă o soluție practică de ocolire.
+  **Etichetarea colegilor direct în note nu este încă suportată.** Această
+  funcție este planificată pentru a doua jumătate a anului 2026. Între timp,
+  acest flux de lucru oferă o soluție practică de ocolire.
 </Note>
 
 ## Provocarea
@@ -22,14 +24,20 @@ Doriți să etichetați un coleg într-o notă, astfel încât să primească o 
 3. Un flux de lucru trimite automat un e-mail recenzentului cu un link către notă
 
 <Warning>
-**Limitare**: Această abordare permite atribuirea unui singur recenzent per câmp. Dacă trebuie să notificați mai multe persoane, creați câmpuri de relație suplimentare (de ex., Reviewer 1, Reviewer 2). Aceasta nu scalează bine dacă trebuie să etichetați mulți colaboratori deodată.
+  **Limitare**: Această abordare permite atribuirea unui singur recenzent per
+  câmp. Dacă trebuie să notificați mai multe persoane, creați câmpuri de relație
+  suplimentare (de ex., Reviewer 1, Reviewer 2). Aceasta nu scalează bine dacă
+  trebuie să etichetați mulți colaboratori deodată.
 </Warning>
 
 ## Configurare pas cu pas
 
 ### Pasul 1: Creați câmpul Reviewer
 
-<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/reviewer-field-for-note.png"
+  style={{ width: '100%' }}
+/>
 
 1. Accesați **Setări → Model de date → Note**
 2. Faceți clic pe **Adaugă câmp**
@@ -101,7 +109,8 @@ Twenty
 ```
 
 <Note>
-Înlocuiți `yourSubDomain` cu subdomeniul real al spațiului dvs. de lucru Twenty.
+  Înlocuiți `yourSubDomain` cu subdomeniul real al spațiului dvs. de lucru
+  Twenty.
 </Note>
 
 #### Testați și activați
@@ -121,7 +130,7 @@ După configurare, echipa dvs. poate utiliza acest flux de lucru astfel:
 
 ## Conexe
 
-* [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
-* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Creați câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields)
-* [Creați câmpuri de relație](/l/ro/user-guide/data-model/how-tos/create-relation-fields)
+- [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers)
+- [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Creați câmpuri personalizate](/l/ro/user-guide/data-model/how-tos/create-custom-fields)
+- [Creați câmpuri de relație](/l/ro/user-guide/data-model/how-tos/create-relation-fields)

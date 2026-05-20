@@ -23,8 +23,8 @@ Zobrazujte data ze souvisejících záznamů přímo na svých záznamech — na
 
 Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti** před vytvořením pracovního postupu:
 
-* E-mail kontaktu (typ: E-mail)
-* Telefon kontaktu (typ: Telefon)
+- E-mail kontaktu (typ: E-mail)
+- Telefon kontaktu (typ: Telefon)
 
 ### Nastavení
 
@@ -33,14 +33,14 @@ Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti** p
 2. **Filtr**: Zkontrolujte, že pole Kontaktní osoba není prázdné
 
 3. **Vyhledat záznamy**: Najděte propojenou osobu
-   * Objekt: Lidé
-   * Filtr: ID se rovná `{{trigger.object.pointOfContact.id}}`
+   - Objekt: Lidé
+   - Filtr: ID se rovná `{{trigger.object.pointOfContact.id}}`
 
 4. **Aktualizovat záznam**:
-   * Objekt: Příležitosti
-   * Záznam: `{{trigger.object.id}}`
-   * E-mail kontaktu: `{{searchRecords[0].email}}`
-   * Telefon kontaktu: `{{searchRecords[0].phone}}`
+   - Objekt: Příležitosti
+   - Záznam: `{{trigger.object.id}}`
+   - E-mail kontaktu: `{{searchRecords[0].email}}`
+   - Telefon kontaktu: `{{searchRecords[0].phone}}`
 
 ## Kopírování více polí
 
@@ -51,20 +51,20 @@ Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti** p
 ### Nastavení
 
 1. **Spouštěč**: Záznam je aktualizován (Společnosti)
-   * Pole: Odvětví, velikost společnosti, roční tržby
+   - Pole: Odvětví, velikost společnosti, roční tržby
 
 2. **Vyhledat záznamy**: Najděte všechny příležitosti pro tuto společnost
-   * Objekt: Příležitosti
-   * Filtr: ID společnosti se rovná `{{trigger.object.id}}`
+   - Objekt: Příležitosti
+   - Filtr: ID společnosti se rovná `{{trigger.object.id}}`
 
 3. **Iterátor**: Procházejte každou příležitost
 
 4. **Aktualizovat záznam** (uvnitř iterátoru):
-   * Objekt: Příležitosti
-   * Záznam: `{{iterator.currentItem.id}}`
-   * Odvětví společnosti: `{{trigger.object.industry}}`
-   * Velikost společnosti: `{{trigger.object.companySize}}`
-   * ARR společnosti: `{{trigger.object.annualRevenue}}`
+   - Objekt: Příležitosti
+   - Záznam: `{{iterator.currentItem.id}}`
+   - Odvětví společnosti: `{{trigger.object.industry}}`
+   - Velikost společnosti: `{{trigger.object.companySize}}`
+   - ARR společnosti: `{{trigger.object.annualRevenue}}`
 
 ## Kopírování při vytvoření záznamu
 
@@ -76,26 +76,29 @@ Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti** p
 
 Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti**:
 
-* Odvětví společnosti (typ: Text)
-* Velikost společnosti (typ: Číslo)
+- Odvětví společnosti (typ: Text)
+- Velikost společnosti (typ: Číslo)
 
 ### Nastavení
 
 1. **Spouštěč**: Záznam je vytvořen (Příležitosti)
-   * Filtr: Společnost není prázdná
+   - Filtr: Společnost není prázdná
 
 2. **Vyhledat záznamy**: Získejte podrobnosti propojené společnosti
-   * Objekt: Společnosti
-   * Filtr: ID se rovná `{{trigger.object.company.id}}`
+   - Objekt: Společnosti
+   - Filtr: ID se rovná `{{trigger.object.company.id}}`
 
 3. **Aktualizovat záznam**:
-   * Objekt: Příležitosti
-   * Záznam: `{{trigger.object.id}}`
-   * Odvětví společnosti: `{{searchRecords[0].industry}}`
-   * Velikost společnosti: `{{searchRecords[0].employees}}`
+   - Objekt: Příležitosti
+   - Záznam: `{{trigger.object.id}}`
+   - Odvětví společnosti: `{{searchRecords[0].industry}}`
+   - Velikost společnosti: `{{searchRecords[0].employees}}`
 
 <Note>
-**Omezení pro Úkoly a Poznámky**: Relace u Úkolů a Poznámek jsou napevno nastaveny jako mnoho k mnoha a zatím nejsou k dispozici ve spouštěčích ani akcích pracovních postupů. Pro přístup k těmto relacím použijte místo toho [API](/l/cs/developers/extend/api).
+  **Omezení pro Úkoly a Poznámky**: Relace u Úkolů a Poznámek jsou napevno
+  nastaveny jako mnoho k mnoha a zatím nejsou k dispozici ve spouštěčích ani
+  akcích pracovních postupů. Pro přístup k těmto relacím použijte místo toho
+  [API](/l/cs/developers/extend/api).
 </Note>
 
 ## Oboustranná synchronizace
@@ -117,7 +120,9 @@ Vytvořte cílová pole v **Nastavení → Datový model → Příležitosti**:
 2. **Aktualizovat záznam**: Nastavte u společnosti Primární kontakt na tuto osobu
 
 <Note>
-Dávejte pozor u oboustranných synchronizací, abyste se vyhnuli nekonečným smyčkám. Před aktualizací použijte filtry ke kontrole, zda se hodnota skutečně změnila.
+  Dávejte pozor u oboustranných synchronizací, abyste se vyhnuli nekonečným
+  smyčkám. Před aktualizací použijte filtry ke kontrole, zda se hodnota skutečně
+  změnila.
 </Note>
 
 ## Použití kódu pro složité mapování
@@ -136,9 +141,10 @@ export const main = async (params) => {
   const digits = phone.replace(/\D/g, '');
 
   // Format as (XXX) XXX-XXXX
-  const formatted = digits.length === 10
-    ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
-    : phone;
+  const formatted =
+    digits.length === 10
+      ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`
+      : phone;
 
   return { formattedPhone: formatted };
 };
@@ -148,23 +154,23 @@ export const main = async (params) => {
 
 ### Vyhněte se smyčkám
 
-* Nevytvářejte pracovní postupy, které se navzájem spouštějí donekonečna
-* Používejte konkrétní podmínky polí
-* Přidejte kontroly, zda se hodnota skutečně změnila
+- Nevytvářejte pracovní postupy, které se navzájem spouštějí donekonečna
+- Používejte konkrétní podmínky polí
+- Přidejte kontroly, zda se hodnota skutečně změnila
 
 ### Zpracování chybějících dat
 
-* Před kopírováním vždy zkontrolujte, zda zdrojový záznam existuje
-* Poskytněte výchozí hodnoty pro volitelná pole
-* Použijte filtry k vynechání, pokud je zdrojové pole prázdné
+- Před kopírováním vždy zkontrolujte, zda zdrojový záznam existuje
+- Poskytněte výchozí hodnoty pro volitelná pole
+- Použijte filtry k vynechání, pokud je zdrojové pole prázdné
 
 ### Výkon
 
-* Pro mnoho záznamů používejte dávkové aktualizace při kopírování
-* Pro hromadné synchronizační operace použijte plánované pracovní postupy
-* Zvažte použití iterátoru pro aktualizace více záznamů
+- Pro mnoho záznamů používejte dávkové aktualizace při kopírování
+- Pro hromadné synchronizační operace použijte plánované pracovní postupy
+- Zvažte použití iterátoru pro aktualizace více záznamů
 
 ## Související
 
-* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)
+- [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+- [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers)

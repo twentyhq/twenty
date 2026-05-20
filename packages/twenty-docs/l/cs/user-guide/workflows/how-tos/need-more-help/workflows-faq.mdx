@@ -11,6 +11,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Řešení**: Kontaktujte správce pracovního prostoru, aby vám v **Settings → Roles** udělil přístup k pracovním postupům.
 
     Pokud v postranním panelu vůbec nevidíte sekci Pracovní postupy, potvrzuje to, že jde o problém s oprávněními.
+
   </Accordion>
 
   <Accordion title="Proč nevidím tlačítko ručního pracovního postupu v horní navigační liště?">
@@ -23,6 +24,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     **Jak ověřit**: Otevřete pracovní postup → klikněte na spouštěč → ověřte, že "Navbar placement" je nastaveno na "Pinned".
 
     K ručním pracovním postupům se vždy dostanete přes **Cmd + K** (nebo **Ctrl + K**) bez ohledu na nastavení navigační lišty.
+
   </Accordion>
 
   <Accordion title="Jaký je rozdíl mezi ručními spouštěči Single, Global a Bulk?">
@@ -37,6 +39,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * **Bulk**: Použijte, když potřebujete zpracovávat záznamy společně nebo optimalizovat využití kreditů (vyžaduje akci Iterator)
 
     Podrobnosti viz [Spouštěče pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-triggers).
+
   </Accordion>
 
   <Accordion title="Nevidím uzel If/Else. Co mám dělat?">
@@ -55,6 +58,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     Pouze větev, ve které podmínka filtru projde, provede své následné akce.
 
     Viz [Jak používat větve](/l/cs/user-guide/workflows/capabilities/workflow-branches) pro podrobný návod.
+
   </Accordion>
 
   <Accordion title="Běží větve pracovního postupu paralelně?">
@@ -65,6 +69,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Nastavte opačné podmínky (např. Větev A: status = "Open", Větev B: status ≠ "Open")
 
     Větve, které nesplní podmínku filtru, se zastaví, ostatní pokračují.
+
   </Accordion>
 
   <Accordion title="Mohu větve znovu sloučit dohromady?">
@@ -76,6 +81,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     3. Přetáhněte spojení z konce každé větve do tohoto nového kroku
 
     Sloučený krok se provede po dokončení všech připojených větví.
+
   </Accordion>
 
   <Accordion title="Jaký je limit výsledků akce Search Records?">
@@ -87,12 +93,14 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Zvažte použití API pro hromadné operace
 
     Pro většinu pracovních postupů je 200 záznamů dostačující. Pokud na tento limit narážíte pravidelně, zvažte přepracování své automatizace.
+
   </Accordion>
 
   <Accordion title="Mohu přidávat adresáty do kopie (CC) v e-mailech z pracovních postupů?">
     **Zatím ne.** Pole CC a BCC pro akci Send Email jsou na naší roadmapě.
 
     **Aktuální řešení**: Přidejte více akcí Send Email pro odeslání dalším příjemcům nebo použijte HTTP Request k odeslání přes externí e-mailovou službu, která podporuje CC.
+
   </Accordion>
 
   <Accordion title="Jak použiji výstupy z předchozích kroků?">
@@ -108,6 +116,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Výstup kódu: `{{code.calculatedValue}}`
 
     Najetím myší na libovolné pole v konfiguraci akce uvidíte dostupné proměnné z předchozích kroků.
+
   </Accordion>
 
   <Accordion title="Proč můj Iterator selhává?">
@@ -122,6 +131,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     2. Filtr: length > 0
     3. Iterator: vyberte `{{searchRecords}}`
     4. Akce uvnitř iteratoru používají `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="Jaký je maximální čas spuštění pro akce Code?">
@@ -136,6 +146,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Vyhněte se náročným výpočtům; pro intenzivní zpracování použijte externí služby přes HTTP Request
     * Optimalizujte svůj kód pro zkrácení doby běhu
     * Pokud potřebujete delší zpracování, zvažte použití plánovaných pracovních postupů, které zpracovávají data po dávkách
+
   </Accordion>
 
   <Accordion title="Jak číst spuštění pracovních postupů?">
@@ -152,6 +163,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * **Data**: Zobrazte vstupní/výstupní data v jednotlivých krocích
 
     Podrobnosti viz [Spuštění pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-runs).
+
   </Accordion>
 
   <Accordion title="Proč nevidím svá spuštění pracovních postupů?">
@@ -171,6 +183,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Rozložte velké dávkové operace v čase
     * Používejte filtry ke snížení frekvence spouštění
     * Náročné pracovní postupy plánujte mimo špičku
+
   </Accordion>
 
   <Accordion title="Jaké jsou limity rychlosti pro pracovní postupy?">
@@ -189,6 +202,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Pro velké dávky použijte spouštěče Bulk s Iterator místo spouštěčů Single
     * Kombinujte související automatizace do menšího počtu pracovních postupů
     * Používejte plánované pracovní postupy k rozložení zátěže v čase
+
   </Accordion>
 
   <Accordion title="Mohu znovu spustit neúspěšné spuštění pracovního postupu?">
@@ -205,6 +219,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     * Před hromadnými operacemi důkladně otestujte s několika záznamy
 
     Funkce automatického opakování je v našem plánu pro budoucí vydání.
+
   </Accordion>
 
   <Accordion title="Mám před importy CSV deaktivovat pracovní postupy?">
@@ -224,6 +239,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     5. **Znovu aktivujte** pracovní postupy po dokončení
 
     **Alternativa**: Pokud potřebujete, aby se pracovní postupy spouštěly na importovaných datech, importujte v menších dávkách, abyste zůstali v rámci limitů.
+
   </Accordion>
 
   <Accordion title="Jak vyčistit rozvržení pracovního postupu?">
@@ -233,6 +249,7 @@ description: Často kladené otázky k pracovním postupům v Twenty.
     2. Klikněte na **Tidy up workflow**
 
     Tím se všechny uzly automaticky přeuspořádají do čistého, uspořádaného rozvržení.
+
   </Accordion>
 
 </AccordionGroup>

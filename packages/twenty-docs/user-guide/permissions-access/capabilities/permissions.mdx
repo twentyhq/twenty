@@ -3,8 +3,8 @@ title: Permissions
 description: Control access to objects, fields, and settings with role-based permissions.
 ---
 
-
 Twenty's permission system allows you to control access to three main areas:
+
 - **Objects and Fields**: Control who can view, edit, or delete records and individual fields
 - **Settings**: Manage access to workspace configuration and administrative functions
 - **Actions**: Control general workspace actions like importing data or sending emails
@@ -29,17 +29,22 @@ To delete a role:
 4. Click **Confirm** in the modal
 
 <Note>
-If a role is deleted, any workspace member assigned to it will be automatically reassigned to the default role. All except the **Admin** role can be deleted. There must always be at least one member assigned to the **Admin** role.
+  If a role is deleted, any workspace member assigned to it will be
+  automatically reassigned to the default role. All except the **Admin** role
+  can be deleted. There must always be at least one member assigned to the
+  **Admin** role.
 </Note>
 
 ## Assign Roles to Members
 
 ### View Current Assignments
+
 - Go to **Settings → Members → Roles**
 - See all roles and how many members are assigned to each
 - View which members have which roles
 
 ### Assign a Role to a Member
+
 1. Go to **Settings → Members → Roles**
 2. Click on the role you want to assign
 3. Open the **Assignment** tab
@@ -48,13 +53,16 @@ If a role is deleted, any workspace member assigned to it will be automatically 
 6. Confirm the assignment
 
 ### Set Default Role
+
 1. Go to **Settings → Members → Roles**
 2. In the **Options** section, find **Default Role**
 3. Select which role new members should automatically receive
 4. New workspace members will be assigned this role when they join
 
 <Note>
-You can only assign roles to existing workspace members. To invite new members, use [Member Management](/user-guide/settings/capabilities/member-management).
+  You can only assign roles to existing workspace members. To invite new
+  members, use [Member
+  Management](/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Customize Permissions
@@ -69,17 +77,19 @@ The **Objects** section controls what this role can do with records across your 
 
 First, configure the baseline permissions that apply to **all objects** by default:
 
-| Permission | Description |
-|------------|-------------|
-| **See Records on All Objects** | View records in lists and detail pages |
-| **Edit Records on All Objects** | Modify existing records |
-| **Delete Records on All Objects** | Soft-delete records (can be restored) |
-| **Destroy Records on All Objects** | Permanently delete records |
+| Permission                         | Description                            |
+| ---------------------------------- | -------------------------------------- |
+| **See Records on All Objects**     | View records in lists and detail pages |
+| **Edit Records on All Objects**    | Modify existing records                |
+| **Delete Records on All Objects**  | Soft-delete records (can be restored)  |
+| **Destroy Records on All Objects** | Permanently delete records             |
 
 Select or unselect based on what should be the default behavior for this role.
 
 <Note>
-**Example — Intern role**: An intern should be able to see all objects but not edit them by default. Enable "See Records on All Objects" but leave "Edit Records on All Objects" unchecked.
+  **Example — Intern role**: An intern should be able to see all objects but not
+  edit them by default. Enable "See Records on All Objects" but leave "Edit
+  Records on All Objects" unchecked.
 </Note>
 
 #### Add Object-Level Exceptions
@@ -90,24 +100,25 @@ Click **+ Add rule** and select an object to create an exception.
 
 **Example rules for an Intern role:**
 
-| Rule | Effect |
-|------|--------|
-| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all |
-| People → enable "Edit Records" | Intern can edit People records (but not other objects) |
+| Rule                                  | Effect                                                 |
+| ------------------------------------- | ------------------------------------------------------ |
+| Opportunities → disable "See Records" | Intern cannot see the Opportunities object at all      |
+| People → enable "Edit Records"        | Intern can edit People records (but not other objects) |
 
 ### Field Permissions
 
 Within each object-level rule, you can go further and configure **field-level permissions** to control access to specific fields.
 
-| Permission | Description |
-|------------|-------------|
-| **See Field** | View the field value |
-| **Edit Field** | Modify the field value |
-| **No Access** | Field is completely hidden |
+| Permission     | Description                |
+| -------------- | -------------------------- |
+| **See Field**  | View the field value       |
+| **Edit Field** | Modify the field value     |
+| **No Access**  | Field is completely hidden |
 
 **Example — Restrict sensitive fields:**
 
 For the Intern role with People edit access, you might want to restrict certain fields:
+
 - People → Email → **See Field** only (cannot edit)
 - People → Address → **No Access** (completely hidden)
 
@@ -141,7 +152,8 @@ Control access to workspace settings in two ways:
 - Or enable specific permissions (e.g., API key generation, workspace preferences, role assignment, data model configuration, security settings, and workflow management)
 
 <Note>
-**Current limitation**: Access to workflow management is currently required to manually trigger workflows. This behavior may change in future releases.
+  **Current limitation**: Access to workflow management is currently required to
+  manually trigger workflows. This behavior may change in future releases.
 </Note>
 
 ### Workspace Action Permissions
@@ -174,7 +186,8 @@ Beyond workspace members, roles can also be assigned to **API Keys** and **AI Ag
 The API key will now inherit all permissions defined by that role. Any API calls made with this key will be restricted accordingly.
 
 <Note>
-API keys without an assigned role use default permissions. For tighter security, always assign a specific role to production API keys.
+  API keys without an assigned role use default permissions. For tighter
+  security, always assign a specific role to production API keys.
 </Note>
 
 ### Assign a Role to an AI Agent
@@ -189,5 +202,7 @@ API keys without an assigned role use default permissions. For tighter security,
 The AI agent will only be able to access data and perform actions allowed by its assigned role.
 
 <Note>
-For AI agents running within workflows, this ensures the agent cannot access or modify data outside its intended scope—even if the workflow has broader permissions.
+  For AI agents running within workflows, this ensures the agent cannot access
+  or modify data outside its intended scope—even if the workflow has broader
+  permissions.
 </Note>

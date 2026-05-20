@@ -19,7 +19,10 @@ A Twenty oferece tanto **GraphQL** como **APIs REST** para a importação progra
 | **Sincronização em tempo real**    | **Importação via API**                    |
 | **Integração com outros sistemas** | **Importação via API**                    |
 
-<Note>Para conjuntos de dados na casa das centenas de milhares, a API é significativamente mais rápida e mais fiável do que múltiplas importações CSV.</Note>
+<Note>
+  Para conjuntos de dados na casa das centenas de milhares, a API é
+  significativamente mais rápida e mais fiável do que múltiplas importações CSV.
+</Note>
 
 ## Limites de taxa da API
 
@@ -35,6 +38,7 @@ A Twenty impõe limites de taxa para assegurar a estabilidade do sistema:
 **Planeie a sua importação em função destes limites.**
 
 Para 100 000 registos à taxa de transferência máxima, conte com aproximadamente 17 minutos de tempo de importação. Adicione tempo de margem para tratamento de erros e novas tentativas.
+
 </Warning>
 
 ## Primeiros passos
@@ -51,21 +55,22 @@ Para 100 000 registos à taxa de transferência máxima, conte com aproximadamen
 **Mantenha a sua chave de API em segredo.**
 
 Qualquer pessoa com a sua chave de API pode aceder e modificar os dados do seu espaço de trabalho. Nunca a faça commit em repositórios de código nem a partilhe publicamente.
+
 </Warning>
 
 ### Passo 2: Escolha a sua API
 
 A Twenty suporta dois tipos de API:
 
-| API         | Melhor para                                                              | Documentação                                  |
-| ----------- | ------------------------------------------------------------------------ | --------------------------------------------- |
+| API         | Melhor para                                                              | Documentação                                       |
+| ----------- | ------------------------------------------------------------------------ | -------------------------------------------------- |
 | **GraphQL** | Consultas flexíveis, obtenção de dados relacionados, operações complexas | [Documentação da API](/l/pt/developers/extend/api) |
 | **REST**    | Operações CRUD simples, padrões REST familiares                          | [Documentação da API](/l/pt/developers/extend/api) |
 
 Ambas as APIs suportam:
 
-* Criar, ler, atualizar e eliminar registos
-* **Operações em lote** — criar ou atualizar até 60 registos por chamada
+- Criar, ler, atualizar e eliminar registos
+- **Operações em lote** — criar ou atualizar até 60 registos por chamada
 
 **Para importações, use operações em lote** para maximizar a taxa de transferência dentro dos limites de taxa.
 
@@ -83,33 +88,33 @@ Tal como nas importações por CSV, **a ordem importa** para as relações:
 
 ### Agrupe os seus pedidos
 
-* Não envie registos um de cada vez
-* Agrupe até **60 registos por chamada de API**
-* Isto maximiza a taxa de transferência dentro dos limites de taxa
+- Não envie registos um de cada vez
+- Agrupe até **60 registos por chamada de API**
+- Isto maximiza a taxa de transferência dentro dos limites de taxa
 
 ### Lide com os limites de taxa
 
-* Implemente atrasos entre pedidos (mínimo de 600 ms para importações contínuas)
-* Use backoff exponencial quando atingir os limites
-* Monitorize respostas 429 (Too Many Requests)
+- Implemente atrasos entre pedidos (mínimo de 600 ms para importações contínuas)
+- Use backoff exponencial quando atingir os limites
+- Monitorize respostas 429 (Too Many Requests)
 
 ### Valide os dados primeiro
 
-* Limpe e valide os seus dados antes de importar
-* Verifique se os campos obrigatórios estão preenchidos
-* Verifique se os formatos correspondem aos requisitos da Twenty (veja [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping))
+- Limpe e valide os seus dados antes de importar
+- Verifique se os campos obrigatórios estão preenchidos
+- Verifique se os formatos correspondem aos requisitos da Twenty (veja [Mapeamento de Campos](/l/pt/user-guide/data-migration/capabilities/field-mapping))
 
 ### Registe tudo
 
-* Registe cada registo importado (incluindo IDs)
-* Registe erros com todo o contexto
-* Isto ajuda a depurar problemas e a verificar a conclusão
+- Registe cada registo importado (incluindo IDs)
+- Registe erros com todo o contexto
+- Isto ajuda a depurar problemas e a verificar a conclusão
 
 ### Teste primeiro
 
-* Teste com um pequeno lote (10-20 registos)
-* Verifique se os dados aparecem corretamente na Twenty
-* Depois, execute a importação completa
+- Teste com um pequeno lote (10-20 registos)
+- Verifique se os dados aparecem corretamente na Twenty
+- Depois, execute a importação completa
 
 ### Upsert para evitar duplicados
 
@@ -138,10 +143,10 @@ Para migrações de API complexas, os nossos parceiros podem ajudar:
 
 **Melhor para:**
 
-* Migrações de mais de 100 000 registos
-* Transformações de dados complexas
-* Prazos apertados
-* Equipas sem recursos de programadores
+- Migrações de mais de 100 000 registos
+- Transformações de dados complexas
+- Prazos apertados
+- Equipas sem recursos de programadores
 
 Contacte-nos em [contact@twenty.com](mailto:contact@twenty.com) ou explore os nossos [Serviços de Implementação](/l/pt/user-guide/getting-started/capabilities/implementation-services).
 
@@ -152,17 +157,19 @@ Contacte-nos em [contact@twenty.com](mailto:contact@twenty.com) ou explore os no
     O GraphQL permite solicitar exatamente os dados de que precisa numa única consulta e é melhor para operações complexas. O REST utiliza métodos HTTP padrão (GET, POST, PUT, DELETE) e pode ser mais familiar se já trabalhou com APIs tradicionais.
   </Accordion>
 
-  <Accordion title="Posso atualizar registos existentes via API?">
-    Sim! Utilize mutations de atualização (GraphQL) ou pedidos PUT/PATCH (REST) com o `id` do registo.
-  </Accordion>
+<Accordion title="Posso atualizar registos existentes via API?">
+  Sim! Utilize mutations de atualização (GraphQL) ou pedidos PUT/PATCH (REST)
+  com o `id` do registo.
+</Accordion>
 
-  <Accordion title="Como devo lidar com duplicados?">
-    Pesquise primeiro por registos existentes usando identificadores únicos (email, domínio). Atualize se existir, crie se não existir.
-  </Accordion>
+<Accordion title="Como devo lidar com duplicados?">
+  Pesquise primeiro por registos existentes usando identificadores únicos
+  (email, domínio). Atualize se existir, crie se não existir.
+</Accordion>
 
-  <Accordion title="Posso eliminar registos via API?">
-    Sim, utilize mutations de eliminação (GraphQL) ou pedidos DELETE (REST).
-  </Accordion>
+<Accordion title="Posso eliminar registos via API?">
+  Sim, utilize mutations de eliminação (GraphQL) ou pedidos DELETE (REST).
+</Accordion>
 
   <Accordion title="Existe um SDK para Python ou Node.js?">
     De momento não, mas ambas as APIs funcionam com qualquer cliente HTTP em qualquer linguagem.
@@ -173,4 +180,4 @@ Contacte-nos em [contact@twenty.com](mailto:contact@twenty.com) ou explore os no
 
 Para detalhes completos de implementação, exemplos de código e referência de esquema:
 
-* [Documentação da API](/l/pt/developers/extend/api)
+- [Documentação da API](/l/pt/developers/extend/api)

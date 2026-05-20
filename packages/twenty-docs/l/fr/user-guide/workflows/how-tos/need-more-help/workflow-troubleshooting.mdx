@@ -18,10 +18,10 @@ description: Problèmes courants des flux de travail et comment les résoudre.
 
 **Solutions** :
 
-* Vérifiez le statut du flux de travail dans la liste des flux de travail
-* Testez avec l'action spécifique qui est censée le déclencher
-* Passez en revue la configuration du déclencheur
-* Contactez votre administrateur au sujet des autorisations
+- Vérifiez le statut du flux de travail dans la liste des flux de travail
+- Testez avec l'action spécifique qui est censée le déclencher
+- Passez en revue la configuration du déclencheur
+- Contactez votre administrateur au sujet des autorisations
 
 ### Déclenchement du flux de travail trop tôt (champs vides)
 
@@ -31,17 +31,20 @@ description: Problèmes courants des flux de travail et comment les résoudre.
 
 **Quand "Record is created" fonctionne bien**:
 
-* Enregistrements créés via des appels API (les champs sont renseignés en une seule requête)
-* Enregistrements créés via une importation
-* Création automatisée d'enregistrements à partir d'autres flux de travail
+- Enregistrements créés via des appels API (les champs sont renseignés en une seule requête)
+- Enregistrements créés via une importation
+- Création automatisée d'enregistrements à partir d'autres flux de travail
 
 **Solution**: Pour les enregistrements créés manuellement dans l'interface, utilisez plutôt **"Record is created or updated"** comme déclencheur. Ainsi:
 
-* Le flux de travail se déclenche après que l'utilisateur a fini de remplir et d'enregistrer les champs
-* Vous obtenez des données complètes plutôt que des valeurs vides
+- Le flux de travail se déclenche après que l'utilisateur a fini de remplir et d'enregistrer les champs
+- Vous obtenez des données complètes plutôt que des valeurs vides
 
 <Tip>
-  Si vous souhaitez que le flux de travail ne s'exécute qu'une seule fois par enregistrement, ajoutez une action Filter pour vérifier un champ comme `createdAt equals updatedAt` (première sauvegarde) ou utilisez un champ à case à cocher personnalisé pour suivre si le flux de travail s'est déjà exécuté.
+  Si vous souhaitez que le flux de travail ne s'exécute qu'une seule fois par
+  enregistrement, ajoutez une action Filter pour vérifier un champ comme
+  `createdAt equals updatedAt` (première sauvegarde) ou utilisez un champ à case
+  à cocher personnalisé pour suivre si le flux de travail s'est déjà exécuté.
 </Tip>
 
 ### Actions en échec
@@ -57,10 +60,10 @@ description: Problèmes courants des flux de travail et comment les résoudre.
 
 **Solutions** :
 
-* Examinez les détails de l'exécution du flux de travail pour trouver des messages d'erreur
-* Vérifiez que tous les champs requis ont des valeurs
-* Testez les connexions à l'API indépendamment
-* Passez en revue les autorisations des rôles
+- Examinez les détails de l'exécution du flux de travail pour trouver des messages d'erreur
+- Vérifiez que tous les champs requis ont des valeurs
+- Testez les connexions à l'API indépendamment
+- Passez en revue les autorisations des rôles
 
 ### Erreurs de requête HTTP
 
@@ -68,19 +71,19 @@ description: Problèmes courants des flux de travail et comment les résoudre.
 
 **Codes d'erreur courants**:
 
-* **400**: Mauvaise requête - vérifiez le format du corps de la requête
-* **401**: Non autorisé - vérifiez la clé API
-* **403**: Interdit - vérifiez les autorisations de l'API
-* **404**: Introuvable - vérifiez l'URL du point de terminaison
-* **429**: Trop de requêtes - mettez en place une limitation de débit
-* **500**: Erreur serveur - problème du service externe
+- **400**: Mauvaise requête - vérifiez le format du corps de la requête
+- **401**: Non autorisé - vérifiez la clé API
+- **403**: Interdit - vérifiez les autorisations de l'API
+- **404**: Introuvable - vérifiez l'URL du point de terminaison
+- **429**: Trop de requêtes - mettez en place une limitation de débit
+- **500**: Erreur serveur - problème du service externe
 
 **Solutions** :
 
-* Vérifiez l'URL du point de terminaison de l'API
-* Vérifiez les en-têtes d'authentification
-* Testez d'abord l'appel d'API en dehors de Twenty
-* Ajoutez une gestion des erreurs dans les actions Code
+- Vérifiez l'URL du point de terminaison de l'API
+- Vérifiez les en-têtes d'authentification
+- Testez d'abord l'appel d'API en dehors de Twenty
+- Ajoutez une gestion des erreurs dans les actions Code
 
 ### Erreurs des actions Code
 
@@ -95,10 +98,10 @@ description: Problèmes courants des flux de travail et comment les résoudre.
 
 **Solutions** :
 
-* Utilisez la validation intégrée de l'éditeur de code
-* Testez d'abord la logique du code dans une console JavaScript
-* Ajoutez des instructions console.log pour le débogage
-* Simplifiez les opérations complexes
+- Utilisez la validation intégrée de l'éditeur de code
+- Testez d'abord la logique du code dans une console JavaScript
+- Ajoutez des instructions console.log pour le débogage
+- Simplifiez les opérations complexes
 
 ### E-mails non envoyés
 
@@ -113,10 +116,10 @@ description: Problèmes courants des flux de travail et comment les résoudre.
 
 **Solutions** :
 
-* Vérifiez la connexion du compte e-mail
-* Validez les adresses e-mail des destinataires
-* Vérifiez les limites du fournisseur d'e-mails
-* Examinez le contenu de l'e-mail pour détecter des déclencheurs de spam
+- Vérifiez la connexion du compte e-mail
+- Validez les adresses e-mail des destinataires
+- Vérifiez les limites du fournisseur d'e-mails
+- Examinez le contenu de l'e-mail pour détecter des déclencheurs de spam
 
 ## Débogage des flux de travail
 
@@ -150,21 +153,21 @@ Assurez-vous que chaque étape reçoit les données d'entrée attendues.
 
 ### Avant l'activation
 
-* Testez minutieusement en mode brouillon
-* Validez toutes les connexions API
-* Examinez attentivement les conditions de déclenchement
-* Documentez le comportement attendu
+- Testez minutieusement en mode brouillon
+- Validez toutes les connexions API
+- Examinez attentivement les conditions de déclenchement
+- Documentez le comportement attendu
 
 ### Pendant le développement
 
-* Utilisez des noms d'étapes descriptifs
-* Ajoutez des commentaires dans les actions Code
-* Testez avec des données réalistes
-* Prévoyez les cas limites
+- Utilisez des noms d'étapes descriptifs
+- Ajoutez des commentaires dans les actions Code
+- Testez avec des données réalistes
+- Prévoyez les cas limites
 
 ### Après l'activation
 
-* Surveillez de près les premières exécutions
-* Configurez des alertes pour les échecs
-* Examinez régulièrement l'historique des exécutions
-* Gardez les flux de travail simples lorsque c'est possible
+- Surveillez de près les premières exécutions
+- Configurez des alertes pour les échecs
+- Examinez régulièrement l'historique des exécutions
+- Gardez les flux de travail simples lorsque c'est possible

@@ -11,24 +11,19 @@ Bu kılavuz, şirketlerinizi Twenty'ye içe aktarma sürecinde size yol gösteri
 
 ### Ön Koşul Kontrol Listesi
 
-<Check>
-Dosyanız CSV, XLSX veya XLS biçiminde
-</Check>
+<Check>Dosyanız CSV, XLSX veya XLS biçiminde</Check>
 
-<Check>
-Dosyada 10.000'den az kayıt var
-</Check>
+<Check>Dosyada 10.000'den az kayıt var</Check>
 
-<Check>
-Dosyanızda yinelenen alan adı yok
-</Check>
+<Check>Dosyanızda yinelenen alan adı yok</Check>
 
-<Check>
-Tüm özel alanlar **Ayarlar → Veri Modeli**'nde mevcut
-</Check>
+<Check>Tüm özel alanlar **Ayarlar → Veri Modeli**'nde mevcut</Check>
 
 <Note>
-10.000'den fazla şirketi içe aktarmanız mı gerekiyor? Birden çok dosyaya bölün veya [API ile içe aktarma](/l/tr/user-guide/data-migration/how-tos/import-data-via-api) kullanın.
+  10.000'den fazla şirketi içe aktarmanız mı gerekiyor? Birden çok dosyaya bölün
+  veya [API ile içe
+  aktarma](/l/tr/user-guide/data-migration/how-tos/import-data-via-api)
+  kullanın.
 </Note>
 
 ## Adım 1: Şirket Verinizi Hazırlayın
@@ -49,12 +44,13 @@ Tüm özel alanlar **Ayarlar → Veri Modeli**'nde mevcut
 **Alan adları için `https://domain.com` biçimini kullanın.**
 
 Bu, Şirketler e-posta/takvim eşitlemesinden otomatik olarak oluşturulduğunda kullanılan biçimle eşleşir ve daha sonra yinelenmeleri önler.
+
 </Warning>
 
 **Alan adı sütunları:**
 
-* **Domain / Domain Label**: `acme.com`
-* **Domain / Domain URL**: `https://acme.com`
+- **Domain / Domain Label**: `acme.com`
+- **Domain / Domain URL**: `https://acme.com`
 
 ### Adres Biçimi
 
@@ -74,7 +70,8 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-**İpucu:** İçe aktarma sırasında **Örnek dosyayı indir**'i tıklayın ve Twenty'nin beklediği tam sütun adlarını görün.
+  **İpucu:** İçe aktarma sırasında **Örnek dosyayı indir**'i tıklayın ve
+  Twenty'nin beklediği tam sütun adlarını görün.
 </Note>
 
 ## Adım 2: İçe Aktarma Özelliğine Erişin
@@ -108,11 +105,14 @@ Twenty, sütunlarınızı alanlarla eşleştirmeyi otomatik olarak dener. Gözde
 
 ### Önemli Eşleme Kuralları
 
-* **Alan Adı**: **Domain / Domain URL**'ye eşleyin (Domain Label değil)
-* **Adres**: Her bir bölümü ilgili özel sütununa eşleyin (Şehir, Eyalet vb.)
-* **Seçim alanları**: Değerler mevcut seçeneklerle eşleşmelidir (yoksa bir sonraki adımda eşleyeceksiniz)
+- **Alan Adı**: **Domain / Domain URL**'ye eşleyin (Domain Label değil)
+- **Adres**: Her bir bölümü ilgili özel sütununa eşleyin (Şehir, Eyalet vb.)
+- **Seçim alanları**: Değerler mevcut seçeneklerle eşleşmelidir (yoksa bir sonraki adımda eşleyeceksiniz)
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ## Adım 5: Seçim Alanı Değerlerini Eşleyin
 
@@ -123,7 +123,9 @@ Seçim veya Çoklu Seçim alanlarınız varsa:
 3. Gerekiyorsa yeni seçenekler oluşturun
 
 <Note>
-Seçim alanı seçenekleri, görüntü etiketlerini değil, **API adlarını** kullanır. API adlarını görmek için **Settings → Data Model** → **Advanced mode**'u etkinleştirin.
+  Seçim alanı seçenekleri, görüntü etiketlerini değil, **API adlarını**
+  kullanır. API adlarını görmek için **Settings → Data Model** → **Advanced
+  mode**'u etkinleştirin.
 </Note>
 
 ## Adım 6: Hataları Gözden Geçirin ve Düzeltin
@@ -175,17 +177,22 @@ Ayrıntılar için [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-
     Alan adı, Twenty'de benzersiz bir tanımlayıcıdır. Bu, yinelenen şirketleri önler ve e-posta eşitlemesinin e-postaları doğru şirketle doğru şekilde ilişkilendirmesini sağlar.
   </Accordion>
 
-  <Accordion title="Alan adı olmayan şirketlerim varsa ne yapmalıyım?">
-    Alan adını boş bırakabilirsiniz. Ancak, daha iyi veri kalitesi ve otomatik e-posta ilişkilendirmesi için mümkün olduğunda alan adlarını eklemenizi öneririz.
-  </Accordion>
+<Accordion title="Alan adı olmayan şirketlerim varsa ne yapmalıyım?">
+  Alan adını boş bırakabilirsiniz. Ancak, daha iyi veri kalitesi ve otomatik
+  e-posta ilişkilendirmesi için mümkün olduğunda alan adlarını eklemenizi
+  öneririz.
+</Accordion>
 
-  <Accordion title="Kişilerle ilişkilendirilmeden şirketleri içe aktarabilir miyim?">
-    Evet! Önce şirketleri içe aktarabilir, ardından Kişileri içe aktarabilir ve şirketin etki alanını kullanarak bunları ilişkilendirebilirsiniz.
-  </Accordion>
+<Accordion title="Kişilerle ilişkilendirilmeden şirketleri içe aktarabilir miyim?">
+  Evet! Önce şirketleri içe aktarabilir, ardından Kişileri içe aktarabilir ve
+  şirketin etki alanını kullanarak bunları ilişkilendirebilirsiniz.
+</Accordion>
 
-  <Accordion title="Zaten var olan bir etki alanını içe aktarırsam ne olur?">
-    Mevcut bir şirketle eşleşen bir benzersiz tanımlayıcı (etki alanı veya id) dahil ederseniz, Twenty yinelenen bir kayıt oluşturmak yerine o şirketi günceller.
-  </Accordion>
+<Accordion title="Zaten var olan bir etki alanını içe aktarırsam ne olur?">
+  Mevcut bir şirketle eşleşen bir benzersiz tanımlayıcı (etki alanı veya id)
+  dahil ederseniz, Twenty yinelenen bir kayıt oluşturmak yerine o şirketi
+  günceller.
+</Accordion>
 
   <Accordion title="'duplicate domain' hatalarını nasıl düzeltirim?">
     Dosyanızdan yineleneni kaldırın ya da mevcut kaydı güncellemek için şirketin `id` değerini ekleyin.
@@ -196,6 +203,6 @@ Ayrıntılar için [Mevcut Kayıtlar Nasıl Güncellenir](/l/tr/user-guide/data-
 
 Sorun mu yaşıyorsunuz? Şunları kontrol edin:
 
-* [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
-* [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)
-* [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [İçe Aktarma Hataları Nasıl Düzeltilir](/l/tr/user-guide/data-migration/how-tos/fix-import-errors)
+- [Alan Eşleme Başvurusu](/l/tr/user-guide/data-migration/capabilities/field-mapping)
+- [Benzersizlik Kısıtlamaları](/l/tr/user-guide/data-migration/capabilities/uniqueness-constraints)

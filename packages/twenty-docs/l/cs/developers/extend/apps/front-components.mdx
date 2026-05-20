@@ -10,8 +10,8 @@ Frontendové komponenty jsou React komponenty, které se vykreslují přímo v u
 
 Frontendové komponenty se mohou vykreslovat na dvou místech v rámci Twenty:
 
-* **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
-* **Widgety (nástěnky a stránky záznamů)** — Frontendové komponenty lze vkládat jako widgety do rozložení stránek. Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
+- **Postranní panel** — Frontendové komponenty, které nejsou headless, se otevírají v pravém postranním panelu. Toto je výchozí chování, když je frontendová komponenta vyvolána z příkazového menu.
+- **Widgety (nástěnky a stránky záznamů)** — Frontendové komponenty lze vkládat jako widgety do rozložení stránek. Při konfiguraci nástěnky nebo rozložení stránky záznamu mohou uživatelé přidat widget frontendové komponenty.
 
 ## Základní příklad
 
@@ -47,8 +47,11 @@ export default defineFrontComponent({
 
 Po synchronizaci pomocí `yarn twenty dev` (nebo po jednorázovém spuštění `yarn twenty dev --once`) se rychlá akce zobrazí v pravém horním rohu stránky:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Tlačítko rychlé akce v pravém horním rohu" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Tlačítko rychlé akce v pravém horním rohu"
+  />
 </div>
 
 Kliknutím na něj vykreslíte komponentu přímo ve stránce.
@@ -85,7 +88,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -108,10 +114,10 @@ Balíček `twenty-sdk` poskytuje čtyři pomocné komponenty Command navržené 
 
 Importujte je z `twenty-sdk/command`:
 
-* **`Command`** — Spustí asynchronní callback přes prop `execute`.
-* **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Otevře konkrétní stránku postranního panelu. Props: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — Spustí asynchronní callback přes prop `execute`.
+- **`CommandLink`** — Naviguje na cestu v aplikaci. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Otevře potvrzovací modální okno. Pokud uživatel potvrdí, provede callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Otevře konkrétní stránku postranního panelu. Props: `page`, `pageTitle`, `pageIcon`.
 
 Zde je kompletní příklad headless front-endové komponenty, která pomocí `Command` spouští akci z menu příkazů:
 
@@ -390,12 +396,12 @@ Podrobnosti viz [sekci veřejných souborů](/l/cs/developers/extend/apps/cli-an
 
 Frontendové komponenty podporují více přístupů ke stylování. Můžete použít:
 
-* **Inline styly** — `style={{ color: 'red' }}`
-* **Komponenty Twenty UI** — import z `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar a další)
-* **Emotion** — CSS-in-JS s `@emotion/react`
-* **Styled-components** — vzory `styled.div`
-* **Tailwind CSS** — utilitní třídy
-* **Jakákoli CSS-in-JS knihovna** kompatibilní s Reactem
+- **Inline styly** — `style={{ color: 'red' }}`
+- **Komponenty Twenty UI** — import z `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar a další)
+- **Emotion** — CSS-in-JS s `@emotion/react`
+- **Styled-components** — vzory `styled.div`
+- **Tailwind CSS** — utilitní třídy
+- **Jakákoli CSS-in-JS knihovna** kompatibilní s Reactem
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

@@ -1,7 +1,7 @@
 ---
 title: Front Components
 description: Build React components that render inside Twenty's UI with sandboxed isolation.
-icon: "window-maximize"
+icon: 'window-maximize'
 ---
 
 Front components are React components that render directly inside Twenty's UI. They run in an **isolated Web Worker** using Remote DOM — your code is sandboxed but renders natively in the page, not in an iframe.
@@ -13,7 +13,7 @@ Front components can render in two locations within Twenty:
 - **Side panel** — Non-headless front components open in the right-hand side panel. This is the default behavior when a front component is triggered from the command menu.
 - **Widgets (dashboards and record pages)** — Front components can be embedded as widgets inside [page layouts](/developers/extend/apps/layout/page-layouts). When configuring a dashboard or a record page layout, users can add a front component widget.
 
-A front component on its own isn't reachable from the UI — you need to *surface* it. The two ways to do that are:
+A front component on its own isn't reachable from the UI — you need to _surface_ it. The two ways to do that are:
 
 - **Pair it with a [command menu item](/developers/extend/apps/layout/command-menu-items)** — registers it in the command menu (Cmd+K) and, optionally, as a pinned quick-action.
 - **Embed it as a widget in a [page layout](/developers/extend/apps/layout/page-layouts)** — places it on a record's detail page or dashboard.
@@ -58,21 +58,24 @@ export default defineCommandMenuItem({
 
 After syncing with `yarn twenty dev` (or running a one-shot `yarn twenty dev --once`), the quick action appears in the top-right corner of the page:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Quick action button in the top-right corner" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Quick action button in the top-right corner"
+  />
 </div>
 
 Click it to render the component inline.
 
 ## Configuration fields
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `universalIdentifier` | Yes | Stable unique ID for this component |
-| `component` | Yes | A React component function |
-| `name` | No | Display name |
-| `description` | No | Description of what the component does |
-| `isHeadless` | No | Set to `true` if the component has no visible UI (see below) |
+| Field                 | Required | Description                                                  |
+| --------------------- | -------- | ------------------------------------------------------------ |
+| `universalIdentifier` | Yes      | Stable unique ID for this component                          |
+| `component`           | Yes      | A React component function                                   |
+| `name`                | No       | Display name                                                 |
+| `description`         | No       | Description of what the component does                       |
+| `isHeadless`          | No       | Set to `true` if the component has no visible UI (see below) |
 
 ## Placing a front component on a page
 
@@ -95,7 +98,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -231,13 +237,13 @@ export default defineFrontComponent({
 
 Available hooks:
 
-| Hook | Returns | Description |
-|------|---------|-------------|
-| `useUserId()` | `string` or `null` | The current user's ID |
-| `useSelectedRecordIds()` | `string[]` | All selected record IDs (empty array if none selected) |
-| `useRecordId()` | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead |
-| `useFrontComponentId()` | `string` | This component instance's ID |
-| `useFrontComponentExecutionContext(selector)` | varies | Access the full execution context with a selector function |
+| Hook                                          | Returns            | Description                                                |
+| --------------------------------------------- | ------------------ | ---------------------------------------------------------- |
+| `useUserId()`                                 | `string` or `null` | The current user's ID                                      |
+| `useSelectedRecordIds()`                      | `string[]`         | All selected record IDs (empty array if none selected)     |
+| `useRecordId()`                               | `string` or `null` | **Deprecated.** Use `useSelectedRecordIds()` instead       |
+| `useFrontComponentId()`                       | `string`           | This component instance's ID                               |
+| `useFrontComponentExecutionContext(selector)` | varies             | Access the full execution context with a selector function |
 
 ## Application variables
 
@@ -248,7 +254,8 @@ import { defineFrontComponent } from 'twenty-sdk/define';
 import { getApplicationVariable } from 'twenty-sdk/front-component';
 
 const Greeting = () => {
-  const recipientName = getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
+  const recipientName =
+    getApplicationVariable('DEFAULT_RECIPIENT_NAME') ?? 'World';
 
   return <p>Hello, {recipientName}!</p>;
 };
@@ -261,29 +268,33 @@ export default defineFrontComponent({
 ```
 
 <Warning>
-Secret variables (`isSecret: true`) are **not** exposed to front components. They are only available in [logic functions](/developers/extend/apps/logic/logic-functions), which run server-side. This prevents sensitive values like API keys from being sent to the browser.
+  Secret variables (`isSecret: true`) are **not** exposed to front components.
+  They are only available in [logic
+  functions](/developers/extend/apps/logic/logic-functions), which run
+  server-side. This prevents sensitive values like API keys from being sent to
+  the browser.
 </Warning>
 
 The following system variables are always available via `process.env`:
 
-| Variable | Description |
-|----------|-------------|
-| `TWENTY_API_URL` | Base URL of the Twenty API |
+| Variable                  | Description                                 |
+| ------------------------- | ------------------------------------------- |
+| `TWENTY_API_URL`          | Base URL of the Twenty API                  |
 | `TWENTY_APP_ACCESS_TOKEN` | Short-lived token scoped to your app's role |
 
 ## Host communication API
 
 Front components can trigger navigation, modals, and notifications using functions from `twenty-sdk`:
 
-| Function | Description |
-|----------|-------------|
+| Function                                        | Description                   |
+| ----------------------------------------------- | ----------------------------- |
 | `navigate(to, params?, queryParams?, options?)` | Navigate to a page in the app |
-| `openSidePanelPage(params)` | Open a side panel |
-| `closeSidePanel()` | Close the side panel |
-| `openCommandConfirmationModal(params)` | Show a confirmation dialog |
-| `enqueueSnackbar(params)` | Show a toast notification |
-| `unmountFrontComponent()` | Unmount the component |
-| `updateProgress(progress)` | Update a progress indicator |
+| `openSidePanelPage(params)`                     | Open a side panel             |
+| `closeSidePanel()`                              | Close the side panel          |
+| `openCommandConfirmationModal(params)`          | Show a confirmation dialog    |
+| `enqueueSnackbar(params)`                       | Show a toast notification     |
+| `unmountFrontComponent()`                       | Unmount the component         |
+| `updateProgress(progress)`                      | Update a progress indicator   |
 
 Here is an example that uses the host API to show a snackbar and close the side panel after an action completes:
 
@@ -336,7 +347,10 @@ Use `useSelectedRecordIds()` to handle multiple selected records. This is useful
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  numberOfSelectedRecords,
+} from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

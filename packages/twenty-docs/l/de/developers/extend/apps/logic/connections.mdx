@@ -72,12 +72,12 @@ export default defineApplication({
 
 Hauptpunkte:
 
-* `name` ist die eindeutige Bezeichner-Zeichenfolge, die in `listConnections({ providerName })` verwendet wird (kebab-case, muss `^[a-z][a-z0-9-]*$` entsprechen).
-* `displayName` wird im Einstellungs-Tab der jeweiligen App und in der KI-Toolliste angezeigt.
-* `clientIdVariable` / `clientSecretVariable` sind **Namen**, keine Werte — sie müssen den in `defineApplication.serverVariables` deklarierten Schlüsseln entsprechen. Die tatsächlichen `client_id` und `client_secret` werden vom Serveradministrator über die App-Registrierungsoberfläche eingegeben und niemals in Ihr Repository eingecheckt.
-* Verwenden Sie `serverVariables` (nicht `applicationVariables`) — OAuth-Anmeldedaten gelten serverweit und es gibt eine OAuth-App pro Twenty-Server.
-* Solange beide `serverVariables` nicht ausgefüllt sind, zeigt der Einstellungs-Tab pro App den Hinweis "Benötigt Server-Admin" an und der Button "Verbindung hinzufügen" ist deaktiviert.
-* `type: 'oauth'` ist derzeit der einzige unterstützte Wert. Der Diskriminator ist vorwärtskompatibel: zukünftige Typen (`'pat'`, `'api-key'`, ...) werden neue Unterkonfigurationsblöcke neben `oauth` hinzufügen.
+- `name` ist die eindeutige Bezeichner-Zeichenfolge, die in `listConnections({ providerName })` verwendet wird (kebab-case, muss `^[a-z][a-z0-9-]*$` entsprechen).
+- `displayName` wird im Einstellungs-Tab der jeweiligen App und in der KI-Toolliste angezeigt.
+- `clientIdVariable` / `clientSecretVariable` sind **Namen**, keine Werte — sie müssen den in `defineApplication.serverVariables` deklarierten Schlüsseln entsprechen. Die tatsächlichen `client_id` und `client_secret` werden vom Serveradministrator über die App-Registrierungsoberfläche eingegeben und niemals in Ihr Repository eingecheckt.
+- Verwenden Sie `serverVariables` (nicht `applicationVariables`) — OAuth-Anmeldedaten gelten serverweit und es gibt eine OAuth-App pro Twenty-Server.
+- Solange beide `serverVariables` nicht ausgefüllt sind, zeigt der Einstellungs-Tab pro App den Hinweis "Benötigt Server-Admin" an und der Button "Verbindung hinzufügen" ist deaktiviert.
+- `type: 'oauth'` ist derzeit der einzige unterstützte Wert. Der Diskriminator ist vorwärtskompatibel: zukünftige Typen (`'pat'`, `'api-key'`, ...) werden neue Unterkonfigurationsblöcke neben `oauth` hinzufügen.
 
 Die OAuth-Callback-URL, die Ihr Anbieter auf die Whitelist setzen muss, lautet:
 
@@ -148,9 +148,9 @@ Jede Verbindung hat:
 
 Hauptpunkte:
 
-* Übergeben Sie `{ providerName }`, um nach Anbieter zu filtern; lassen Sie es weg, um alle Verbindungen dieser App über alle Anbieter hinweg zu erhalten.
-* Der Server aktualisiert das Zugriffstoken vor der Rückgabe transparent. Ihr Handler sieht stets ein verwendbares Token (oder `authFailedAt` ist gesetzt).
-* `getConnection(id)` ist das Pendant für eine einzelne Zeile.
+- Übergeben Sie `{ providerName }`, um nach Anbieter zu filtern; lassen Sie es weg, um alle Verbindungen dieser App über alle Anbieter hinweg zu erhalten.
+- Der Server aktualisiert das Zugriffstoken vor der Rückgabe transparent. Ihr Handler sieht stets ein verwendbares Token (oder `authFailedAt` ist gesetzt).
+- `getConnection(id)` ist das Pendant für eine einzelne Zeile.
 
 </Accordion>
 
@@ -158,8 +158,8 @@ Hauptpunkte:
 
 Wenn ein Benutzer auf "Verbindung hinzufügen" klickt, wird er aufgefordert, eine Sichtbarkeit auszuwählen:
 
-* **Nur für mich** — die Anmeldedaten sind für den sich verbindenden Benutzer privat. Jede Logikfunktion, die in seinem/ihrem Auftrag aufgerufen wird (HTTP-Routen-Trigger mit `isAuthRequired: true`), sieht sie; Cron-Trigger und Datenbankereignisse nicht.
-* **Im Arbeitsbereich geteilt** — jedes Arbeitsbereichsmitglied kann die Anmeldedaten verwenden. Cron-/Datenbank-Trigger sehen sie ebenfalls, da sie keinen anfragenden Benutzer haben.
+- **Nur für mich** — die Anmeldedaten sind für den sich verbindenden Benutzer privat. Jede Logikfunktion, die in seinem/ihrem Auftrag aufgerufen wird (HTTP-Routen-Trigger mit `isAuthRequired: true`), sieht sie; Cron-Trigger und Datenbankereignisse nicht.
+- **Im Arbeitsbereich geteilt** — jedes Arbeitsbereichsmitglied kann die Anmeldedaten verwenden. Cron-/Datenbank-Trigger sehen sie ebenfalls, da sie keinen anfragenden Benutzer haben.
 
 Verwenden Sie für jeden Handler die richtige Option:
 

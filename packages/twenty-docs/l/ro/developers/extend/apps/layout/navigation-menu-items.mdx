@@ -7,7 +7,10 @@ icon: bars
 Un **element de meniu de navigare** este o intrare în bara laterală din stânga. Folosiți `defineNavigationMenuItem()` pentru a livra linkuri personalizate în bara laterală — de obicei unul pentru fiecare [vizualizare](/l/ro/developers/extend/apps/layout/views) pe care o livrați — sau pentru a indica către URL-uri externe.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -23,7 +26,7 @@ export default defineNavigationMenuItem({
 
 ## Puncte cheie
 
-* `type` determină la ce face legătura elementul de meniu. Fiecare tip este asociat cu un câmp identificator specific:
+- `type` determină la ce face legătura elementul de meniu. Fiecare tip este asociat cu un câmp identificator specific:
 
   | Tip                                  | Ce face                                          | Câmp obligatoriu                                                                     |
   | ------------------------------------ | ------------------------------------------------ | ------------------------------------------------------------------------------------ |
@@ -33,12 +36,16 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.OBJECT`      | Deschide pagina implicită de index a unui obiect | `targetObjectUniversalIdentifier`                                                    |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Deschide un aranjament de pagină independent     | `pageLayoutUniversalIdentifier`                                                      |
 
-* `position` controlează ordonarea în bara laterală.
+- `position` controlează ordonarea în bara laterală.
 
-* `icon` și `color` sunt opționale și personalizează aspectul intrării.
+- `icon` și `color` sunt opționale și personalizează aspectul intrării.
 
-* `folderUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l îmbrica într-un părinte de tip `FOLDER`.
+- `folderUniversalIdentifier` este de asemenea disponibil pe orice element pentru a-l îmbrica într-un părinte de tip `FOLDER`.
 
 <Note>
-**Capcană frecventă:** crearea unui obiect fără o vizualizare asociată + element de meniu de navigare face ca acel obiect să fie invizibil pentru utilizatori. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat ar trebui să aibă o vizualizare implicită *și* o intrare în bara laterală care să indice către aceasta.
+  **Capcană frecventă:** crearea unui obiect fără o vizualizare asociată +
+  element de meniu de navigare face ca acel obiect să fie invizibil pentru
+  utilizatori. Dacă nu este un obiect tehnic/intern, fiecare obiect personalizat
+  ar trebui să aibă o vizualizare implicită *și* o intrare în bara laterală care
+  să indice către aceasta.
 </Note>

@@ -115,28 +115,37 @@ Acest lucru este așteptat deoarece utilizatorul este neautorizat când este dec
 
 #### Cum să verificați dacă worker-ul dvs. rulează?
 
-* Accesați [webhook-test.com](https://webhook-test.com/) și copiați **Your Unique Webhook URL**.
+- Accesați [webhook-test.com](https://webhook-test.com/) și copiați **Your Unique Webhook URL**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Test de webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Test de webhook"
+  />
 </div>
 
-* Deschideți aplicația Twenty, navigați la `/settings` și activați comutatorul **Avansat** în colțul din stânga jos al ecranului.
-* Creați un nou webhook.
-* Lipiți **Your Unique Webhook URL** în câmpul **Endpoint Url** din Twenty. Setați **Filtrele** pe `Companii` și `Create`.
+- Deschideți aplicația Twenty, navigați la `/settings` și activați comutatorul **Avansat** în colțul din stânga jos al ecranului.
+- Creați un nou webhook.
+- Lipiți **Your Unique Webhook URL** în câmpul **Endpoint Url** din Twenty. Setați **Filtrele** pe `Companii` și `Create`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Setări webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Setări webhook"
+  />
 </div>
 
-* Accesați `/objects/companies` și creați un nou registru de companie.
-* Întoarceți-vă la [webhook-test.com](https://webhook-test.com/) și verificați dacă a fost primit un nou **POST request**.
+- Accesați `/objects/companies` și creați un nou registru de companie.
+- Întoarceți-vă la [webhook-test.com](https://webhook-test.com/) și verificați dacă a fost primit un nou **POST request**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Rezultatul testului webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Rezultatul testului webhook"
+  />
 </div>
 
-* Dacă este primit un **POST request**, worker-ul dvs. rulează cu succes. În caz contrar, trebuie să depanați worker-ul dvs.
+- Dacă este primit un **POST request**, worker-ul dvs. rulează cu succes. În caz contrar, trebuie să depanați worker-ul dvs.
 
 #### Front-end-ul nu pornește și returnează eroarea TS5042: Opțiunea 'project' nu poate fi amestecată cu fișiere sursă pe linia de comandă
 
@@ -200,9 +209,8 @@ Dacă rulați Twenty în spatele unui proxy invers și întâmpinați probleme d
    Asigurați-vă că `SERVER_URL` din fișierul dvs. `.env` corespunde cu URL-ul dvs. de acces extern, inclusiv `https` dacă SSL este activat.
 
 2. **Verificați Setările Proxy-ului Invers:**
-
-   * Confirmați că proxy-ul invers transmite corect cererile către serverul Twenty.
-   * Asigurați-vă că headerele precum `X-Forwarded-For` și `X-Forwarded-Proto` sunt setate corect.
+   - Confirmați că proxy-ul invers transmite corect cererile către serverul Twenty.
+   - Asigurați-vă că headerele precum `X-Forwarded-For` și `X-Forwarded-Proto` sunt setate corect.
 
 3. **Reporniți Serviciile:**
 
@@ -216,7 +224,7 @@ Schimbarea proprietății folderului de date pe gazdă de la root la un alt util
 
 Dacă întâmpinați probleme care nu sunt acoperite în acest ghid:
 
-* Verificați jurnalele:
+- Verificați jurnalele:
 
   Vizualizați jurnalele containerului pentru mesaje de eroare:
 
@@ -224,6 +232,6 @@ Dacă întâmpinați probleme care nu sunt acoperite în acest ghid:
   docker compose logs
   ```
 
-* Suport Comunitar:
+- Suport Comunitar:
 
   Contactați [comunitatea Twenty](https://github.com/twentyhq/twenty/issues) sau [canalele de suport](https://discord.gg/cx5n4Jzs57) pentru asistență.

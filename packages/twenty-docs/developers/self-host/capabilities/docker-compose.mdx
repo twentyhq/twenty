@@ -1,11 +1,12 @@
 ---
 title: Docker Compose
-icon: "docker"
+icon: 'docker'
 ---
 
-
 <Warning>
-Docker containers are for production hosting or self-hosting. For contributing, please check the [Local Setup](/developers/contribute/capabilities/local-setup).
+  Docker containers are for production hosting or self-hosting. For
+  contributing, please check the [Local
+  Setup](/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Overview
@@ -24,55 +25,61 @@ See [Setup Environment Variables](/developers/self-host/capabilities/setup) for 
 ## Option 1: One-line script
 
 Install the latest stable version of Twenty with a single command:
+
 ```bash
 bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
 To install a specific version or branch:
+
 ```bash
 VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
+
 - Replace x.y.z with the desired version number.
 - Replace branch-name with the name of the branch you want to install.
 
 ## Option 2: Manual steps
+
 Follow these steps for a manual setup.
 
 ### Step 1: Set Up the Environment File
 
 1. **Create the .env File**
 
-    Copy the example environment file to a new .env file in your working directory:
-    ```bash
-    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
-    ```
+   Copy the example environment file to a new .env file in your working directory:
+
+   ```bash
+   curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
+   ```
 
 2. **Generate an Encryption Key**
 
-    Run the following command to generate a unique random string:
+   Run the following command to generate a unique random string:
 
-    ```bash
-    openssl rand -base64 32
-    ```
-    **Important:** Keep this value secret / do not share it. Losing `ENCRYPTION_KEY` means losing access to every secret stored in the database (OAuth tokens, application variables, TOTP secrets, etc.).
+   ```bash
+   openssl rand -base64 32
+   ```
+
+   **Important:** Keep this value secret / do not share it. Losing `ENCRYPTION_KEY` means losing access to every secret stored in the database (OAuth tokens, application variables, TOTP secrets, etc.).
 
 3. **Update the `.env`**
 
-    Replace the placeholder value in your .env file with the generated token:
+   Replace the placeholder value in your .env file with the generated token:
 
-    ```ini
-    ENCRYPTION_KEY=random_string
-    ```
+   ```ini
+   ENCRYPTION_KEY=random_string
+   ```
 
-    See the [Key rotation guide](/developers/self-host/capabilities/key-rotation) for instructions on rotating it without downtime.
+   See the [Key rotation guide](/developers/self-host/capabilities/key-rotation) for instructions on rotating it without downtime.
 
 4. **Set the Postgres Password**
 
-    Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
+   Update the `PG_DATABASE_PASSWORD` value in the .env file with a strong password without special characters.
 
-    ```ini
-    PG_DATABASE_PASSWORD=my_strong_password
-    ```
+   ```ini
+   PG_DATABASE_PASSWORD=my_strong_password
+   ```
 
 ### Step 2: Obtain the Docker Compose File
 
@@ -85,6 +92,7 @@ curl -o docker-compose.yml https://raw.githubusercontent.com/twentyhq/twenty/ref
 ### Step 3: Launch the Application
 
 Start the Docker containers:
+
 ```bash
 docker compose up -d
 ```
@@ -94,6 +102,7 @@ docker compose up -d
 If you host twentyCRM on your own computer, open your browser and navigate to [http://localhost:3000](http://localhost:3000).
 
 If you host it on a server, check that the server is running and that everything is ok with
+
 ```bash
 curl http://localhost:3000
 ```
@@ -107,8 +116,8 @@ By default, Twenty runs on `localhost` at port `3000`. To access it via an exter
 #### Understanding `SERVER_URL`
 
 - **Protocol:** Use `http` or `https` depending on your setup.
-    - Use `http` if you haven't set up SSL.
-    - Use `https` if you have SSL configured.
+  - Use `http` if you haven't set up SSL.
+  - Use `https` if you have SSL configured.
 - **Domain/IP:** This is the domain name or IP address where your application is accessible.
 - **Port:** Include the port number if you're not using the default ports (`80` for `http`, `443` for `https`).
 
@@ -123,77 +132,80 @@ We strongly recommend setting up Twenty behind a reverse proxy with SSL terminat
 #### Configuring `SERVER_URL`
 
 1. **Determine Your Access URL**
-    - **Without Reverse Proxy (Direct Access):**
+   - **Without Reverse Proxy (Direct Access):**
 
-        If you're accessing the application directly without a reverse proxy:
-        ```ini
-        SERVER_URL=http://your-domain-or-ip:3000
-        ```
+     If you're accessing the application directly without a reverse proxy:
 
-    - **With Reverse Proxy (Standard Ports):**
+     ```ini
+     SERVER_URL=http://your-domain-or-ip:3000
+     ```
 
-        If you're using a reverse proxy like Nginx or Traefik and have SSL configured:
-        ```ini
-        SERVER_URL=https://your-domain-or-ip
-        ```
+   - **With Reverse Proxy (Standard Ports):**
 
-    - **With Reverse Proxy (Custom Ports):**
+     If you're using a reverse proxy like Nginx or Traefik and have SSL configured:
 
-        If you're using non-standard ports:
-        ```ini
-        SERVER_URL=https://your-domain-or-ip:custom-port
-        ````
+     ```ini
+     SERVER_URL=https://your-domain-or-ip
+     ```
+
+   - **With Reverse Proxy (Custom Ports):**
+
+     If you're using non-standard ports:
+
+     ```ini
+     SERVER_URL=https://your-domain-or-ip:custom-port
+     ```
 
 2. **Update the `.env` File**
 
-    Open your `.env` file and update the `SERVER_URL`:
+   Open your `.env` file and update the `SERVER_URL`:
 
-    ```ini
-    SERVER_URL=http(s)://your-domain-or-ip:your-port
-    ```
+   ```ini
+   SERVER_URL=http(s)://your-domain-or-ip:your-port
+   ```
 
-    **Examples:**
-    - Direct access without SSL:
-        ```ini
-        SERVER_URL=http://123.45.67.89:3000
-        ```
-    - Access via domain with SSL:
-        ```ini
-        SERVER_URL=https://mytwentyapp.com
-        ```
+   **Examples:**
+   - Direct access without SSL:
+     ```ini
+     SERVER_URL=http://123.45.67.89:3000
+     ```
+   - Access via domain with SSL:
+     ```ini
+     SERVER_URL=https://mytwentyapp.com
+     ```
 
 3. **Restart the Application**
 
-    For changes to take effect, restart the Docker containers:
-    ```bash
-    docker compose down
-    docker compose up -d
-    ```
+   For changes to take effect, restart the Docker containers:
+
+   ```bash
+   docker compose down
+   docker compose up -d
+   ```
 
 #### Considerations
 
 - **Reverse Proxy Configuration:**
 
-    Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
+  Ensure your reverse proxy forwards requests to the correct internal port (`3000` by default). Configure SSL termination and any necessary headers.
 
 - **Firewall Settings:**
 
-    Open necessary ports in your firewall to allow external access.
+  Open necessary ports in your firewall to allow external access.
 
 - **Consistency:**
 
-    The `SERVER_URL` must match how users access your application in their browsers.
+  The `SERVER_URL` must match how users access your application in their browsers.
 
 #### Persistence
 
 - **Data Volumes:**
 
-    The Docker Compose configuration uses volumes to persist data for the database and server storage.
+  The Docker Compose configuration uses volumes to persist data for the database and server storage.
 
 - **Stateless Environments:**
 
-    If deploying to a stateless environment (e.g., certain cloud services), configure external storage to persist data.
-
+  If deploying to a stateless environment (e.g., certain cloud services), configure external storage to persist data.
 
 ## Backup and Restore
 
@@ -216,16 +228,19 @@ Add to your crontab (`crontab -e`):
 ### Restore from Backup
 
 1. Stop the application:
+
 ```bash
 docker compose stop twenty-server twenty-front
 ```
 
 2. Restore the database:
+
 ```bash
 docker exec -i twenty-postgres psql -U postgres twenty < backup_20240115.sql
 ```
 
 3. Restart services:
+
 ```bash
 docker compose up -d
 ```
@@ -240,4 +255,3 @@ docker compose up -d
 ## Troubleshooting
 
 If you encounter any problem, check [Troubleshooting](/developers/self-host/capabilities/troubleshooting) for solutions.
-

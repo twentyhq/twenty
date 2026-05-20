@@ -30,13 +30,11 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Props">
-
 
 | Props          | Tipo                             | Descrizione                                                                                     |
 | -------------- | -------------------------------- | ----------------------------------------------------------------------------------------------- |
@@ -47,8 +45,6 @@ export const MyComponent = () => {
 | avatarType     | Tipo di Avatar                   | Il tipo di avatar che vuoi visualizzare. Ha due opzioni: `rounded` e `squared`                  |
 | variante       | `EntityChipVariant` enumerazione | Variante del chip dell'entità che vuoi visualizzare. Ha due opzioni: `regolare` e `trasparente` |
 | IconaSinistra  | IconaComponente                  | Un componente React che rappresenta un'icona. Visualizzato sul lato sinistro del chip           |
-
-
 
 </Tab>
 </Tabs>
@@ -62,7 +58,7 @@ import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Chip trasparente disabilitato"
       clickable={false}
@@ -72,10 +68,9 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
-
 ```
 
 <br />
@@ -83,11 +78,11 @@ export const MyComponent = () => {
 ### Chip Disabilitato con Tooltip
 
 ```jsx
-import { Chip } from "twenty-ui/components";
-  
+import { Chip } from 'twenty-ui/components';
+
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Chip disabilitato che attiva un tooltip quando va in overflow."
       clickable={false}
@@ -97,7 +92,7 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
 ```
@@ -136,7 +131,6 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-
 | Props          | Tipo                             | Descrizione                                                                                    |
 | -------------- | -------------------------------- | ---------------------------------------------------------------------------------------------- |
 | collegaAEntità | stringa                          | Il link all'entità                                                                             |
@@ -146,8 +140,6 @@ export const MyComponent = () => {
 | avatarType     | Tipo di Avatar                   | Il tipo di avatar che vuoi visualizzare. Ha due opzioni: `rounded` e `squared`                 |
 | variante       | `EntityChipVariant` enumerazione | Variante del chip dell'entità che vuoi visualizzare. Ha due opzioni: `regular` e `transparent` |
 | IconaSinistra  | IconaComponente                  | Un componente React che rappresenta un'icona. Visualizzato sul lato sinistro del chip          |
-
-
 
 </Tab>
 </Tabs>

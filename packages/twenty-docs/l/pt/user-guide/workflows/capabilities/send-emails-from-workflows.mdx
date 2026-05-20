@@ -25,9 +25,9 @@ Antes de enviar e-mails a partir de fluxos de trabalho:
 2. **Adicionar gatilho**: Selecione **Registro é Criado** → **Pessoas**
 
 3. **Adicionar ação Enviar E-mail**:
-   * Clique em **+** para adicionar uma ação
-   * Selecione **Enviar E-mail**
-   * Configure o e-mail:
+   - Clique em **+** para adicionar uma ação
+   - Selecione **Enviar E-mail**
+   - Configure o e-mail:
 
 | Campo       | Valor                                  |
 | ----------- | -------------------------------------- |
@@ -71,12 +71,12 @@ The Team
 1. **Gatilho**: Registro é Criado (Pessoas)
 
 2. **Adicionar ação de Filtro**:
-   * Condição: `{{trigger.object.source}}` é igual a `"Website"`
-   * Se verdadeiro → continue para o e-mail de boas-vindas do site
+   - Condição: `{{trigger.object.source}}` é igual a `"Website"`
+   - Se verdadeiro → continue para o e-mail de boas-vindas do site
 
 3. **Ramificação para outras origens**:
-   * Crie ramificações paralelas para origens diferentes
-   * Cada ramificação tem sua própria ação Enviar E-mail
+   - Crie ramificações paralelas para origens diferentes
+   - Cada ramificação tem sua própria ação Enviar E-mail
 
 ## Envio de e-mails para vários destinatários
 
@@ -91,12 +91,12 @@ The Team
 2. **Pesquisar Registros**: Encontre o gerente do proprietário da oportunidade
 
 3. **Enviar E-mail nº 1**: Para o proprietário da oportunidade
-   * Para: `{{trigger.object.owner.email}}`
-   * Assunto: `Congratulations on closing {{trigger.object.name}}!`
+   - Para: `{{trigger.object.owner.email}}`
+   - Assunto: `Congratulations on closing {{trigger.object.name}}!`
 
 4. **Enviar E-mail nº 2**: Para o gerente
-   * Para: `{{searchRecords.manager.email}}`
-   * Assunto: `Deal Won: {{trigger.object.name}}`
+   - Para: `{{searchRecords.manager.email}}`
+   - Assunto: `Deal Won: {{trigger.object.name}}`
 
 ## E-mails de acompanhamento agendados
 
@@ -111,9 +111,9 @@ The Team
 2. **Ação de atraso**: Aguarde 3 dias
 
 3. **Enviar E-mail**:
-   * Para: Participante da reunião
-   * Assunto: Acompanhamento da nossa conversa
-   * Corpo: Referencie detalhes da reunião a partir do gatilho
+   - Para: Participante da reunião
+   - Assunto: Acompanhamento da nossa conversa
+   - Corpo: Referencie detalhes da reunião a partir do gatilho
 
 ## Anexos de e-mail
 
@@ -135,33 +135,36 @@ Você pode anexar arquivos a e-mails enviados a partir de fluxos de trabalho. O 
 | **Confirmações de evento**    | Detalhes ou agenda do evento            |
 
 <Note>
-Os anexos são estáticos — o mesmo arquivo é enviado a todos os destinatários. Para documentos dinâmicos (como cotações personalizadas), gere e anexe arquivos usando uma [Função Lógica](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+  Os anexos são estáticos — o mesmo arquivo é enviado a todos os destinatários.
+  Para documentos dinâmicos (como cotações personalizadas), gere e anexe
+  arquivos usando uma [Função
+  Lógica](/l/pt/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
 ## Melhores Práticas
 
 ### Conteúdo do e-mail
 
-* Mantenha as linhas de assunto concisas e relevantes
-* Personalize com o nome do destinatário
-* Inclua uma chamada para ação clara
-* Teste os e-mails antes de ativar
+- Mantenha as linhas de assunto concisas e relevantes
+- Personalize com o nome do destinatário
+- Inclua uma chamada para ação clara
+- Teste os e-mails antes de ativar
 
 ### Entregabilidade
 
-* Não envie muitos e-mails muito rapidamente
-* Use assinaturas de e-mail profissionais
-* Evite palavras que acionem spam
-* Garanta opções de cancelamento de inscrição para e-mails de marketing
+- Não envie muitos e-mails muito rapidamente
+- Use assinaturas de e-mail profissionais
+- Evite palavras que acionem spam
+- Garanta opções de cancelamento de inscrição para e-mails de marketing
 
 ### Resolução de Problemas
 
-* Verifique se a conta de e-mail está conectada e ativa
-* Verifique se o endereço de e-mail do destinatário é válido
-* Revise as execuções do fluxo de trabalho em busca de mensagens de erro
-* Teste primeiro com o seu próprio endereço de e-mail
+- Verifique se a conta de e-mail está conectada e ativa
+- Verifique se o endereço de e-mail do destinatário é válido
+- Revise as execuções do fluxo de trabalho em busca de mensagens de erro
+- Teste primeiro com o seu próprio endereço de e-mail
 
 ## Relacionados
 
-* [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
-* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+- [Gatilhos de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-triggers)
+- [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)

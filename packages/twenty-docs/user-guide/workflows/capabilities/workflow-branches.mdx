@@ -4,12 +4,15 @@ description: Create parallel paths and conditional logic in your workflows.
 ---
 
 Branches allow you to split your workflow into multiple paths that can run simultaneously or conditionally based on your data.
-<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}}/>
+
+<img
+  src="/images/user-guide/workflows/branches.png"
+  style={{ width: '100%' }}
+/>
 
 ## How Branches Work
 
 When you create multiple connections from a single node, each path becomes a branch. By default, **all branches execute in parallel**—they don't wait for each other.
-
 
 ## Creating Branches
 
@@ -22,7 +25,8 @@ When you create multiple connections from a single node, each path becomes a bra
 5. Repeat to add more branches from the same node
 
 <Note>
-Each branch is independent. Adding a branch doesn't affect other existing paths from that node.
+  Each branch is independent. Adding a branch doesn't affect other existing
+  paths from that node.
 </Note>
 
 ### Visual Layout
@@ -33,12 +37,11 @@ Branches appear as parallel paths in the workflow editor. You can drag nodes to 
 
 Since all branches run by default, use **Filter** nodes to control which paths actually execute:
 
-| Branch | Filter Condition | Action |
-|--------|------------------|--------|
-| A | Stage = "Won" | Send congratulations email |
-| B | Stage = "Lost" | Create follow-up task |
-| C | Stage = "Negotiation" | Notify manager |
-
+| Branch | Filter Condition      | Action                     |
+| ------ | --------------------- | -------------------------- |
+| A      | Stage = "Won"         | Send congratulations email |
+| B      | Stage = "Lost"        | Create follow-up task      |
+| C      | Stage = "Negotiation" | Notify manager             |
 
 1. Create branches from your trigger or action
 2. Add a **Filter** node as the first step of each branch
@@ -58,12 +61,13 @@ Only the branch(es) where the filter condition is met will continue executing.
     When creating your workflow, you can manually connect multiple branches to the same downstream action. Simply drag arrows from the end of each branch to a common node.
 
 <Note>
-While you can use a [Delay](/user-guide/workflows/capabilities/workflow-actions#delay) node to pause execution, it's not currently configurable to wait "until another branch ends."
+  While you can use a
+  [Delay](/user-guide/workflows/capabilities/workflow-actions#delay) node to
+  pause execution, it's not currently configurable to wait "until another branch
+  ends."
 </Note>
-
 
 ## Related
 
 - [How to Use Branches in Workflows](/user-guide/workflows/capabilities/use-branches-in-workflows) - Step-by-step guide
 - [Workflow Actions](/user-guide/workflows/capabilities/workflow-actions) - Available actions including Filter
-

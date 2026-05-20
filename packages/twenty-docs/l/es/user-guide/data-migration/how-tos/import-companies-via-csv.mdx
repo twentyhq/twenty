@@ -11,24 +11,20 @@ Esta guía te llevará paso a paso por el proceso de importar tus empresas en Tw
 
 ### Lista de verificación de requisitos previos
 
-<Check>
-  Tu archivo está en formato CSV, XLSX o XLS
-</Check>
+<Check>Tu archivo está en formato CSV, XLSX o XLS</Check>
 
-<Check>
-  El archivo tiene menos de 10.000 registros
-</Check>
+<Check>El archivo tiene menos de 10.000 registros</Check>
 
-<Check>
-  No hay dominios duplicados en tu archivo
-</Check>
+<Check>No hay dominios duplicados en tu archivo</Check>
 
 <Check>
   Todos los campos personalizados existen en **Settings → Data Model**
 </Check>
 
 <Note>
-  ¿Necesitas importar más de 10.000 empresas? Divídelo en varios archivos o usa la [importación por API](/l/es/user-guide/data-migration/how-tos/import-data-via-api).
+  ¿Necesitas importar más de 10.000 empresas? Divídelo en varios archivos o usa
+  la [importación por
+  API](/l/es/user-guide/data-migration/how-tos/import-data-via-api).
 </Note>
 
 ## Paso 1: Preparar tus datos de empresa
@@ -48,13 +44,14 @@ Esta guía te llevará paso a paso por el proceso de importar tus empresas en Tw
 <Warning>
   **Use el formato `https://domain.com` para dominios.**
 
-  Esto coincide con el formato utilizado cuando las Empresas se crean automáticamente a partir de la sincronización de correo/calendario, lo que evita duplicados posteriormente.
+Esto coincide con el formato utilizado cuando las Empresas se crean automáticamente a partir de la sincronización de correo/calendario, lo que evita duplicados posteriormente.
+
 </Warning>
 
 **Columnas de dominio:**
 
-* **Domain / Domain Label**: `acme.com`
-* **Domain / Domain URL**: `https://acme.com`
+- **Domain / Domain Label**: `acme.com`
+- **Domain / Domain URL**: `https://acme.com`
 
 ### Formato de dirección
 
@@ -74,7 +71,8 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-  **Consejo profesional:** Haz clic en **Download sample file** durante la importación para ver los nombres de columna exactos que Twenty espera.
+  **Consejo profesional:** Haz clic en **Download sample file** durante la
+  importación para ver los nombres de columna exactos que Twenty espera.
 </Note>
 
 ## Paso 2: Acceder a la función de importación
@@ -108,11 +106,14 @@ Twenty intenta automáticamente hacer coincidir sus columnas con los campos. Rev
 
 ### Reglas importantes de asignación
 
-* **Dominio**: Asigna a **Domain / Domain URL** (no a Domain Label)
-* **Dirección**: Asigna cada parte a su columna específica (City, State, etc.)
-* **Campos Select**: los valores deben coincidir con las opciones existentes (o los mapearás en el siguiente paso)
+- **Dominio**: Asigna a **Domain / Domain URL** (no a Domain Label)
+- **Dirección**: Asigna cada parte a su columna específica (City, State, etc.)
+- **Campos Select**: los valores deben coincidir con las opciones existentes (o los mapearás en el siguiente paso)
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ## Paso 5: Mapea los valores de campos Select
 
@@ -123,7 +124,9 @@ Si tienes campos Select o Multi-Select:
 3. O crea opciones nuevas si es necesario
 
 <Note>
-  Las opciones de Select usan **nombres de API**, no las etiquetas visibles. Ve a **Settings → Data Model** → Activa el **Advanced mode** para ver los nombres de API.
+  Las opciones de Select usan **nombres de API**, no las etiquetas visibles. Ve
+  a **Settings → Data Model** → Activa el **Advanced mode** para ver los nombres
+  de API.
 </Note>
 
 ## Paso 6: Revisa y corrige errores
@@ -175,17 +178,21 @@ Consulta [Cómo actualizar registros existentes](/l/es/user-guide/data-migration
     El dominio es un identificador único en Twenty. Esto evita empresas duplicadas y garantiza que la sincronización de correo vincule correctamente los correos con la empresa adecuada.
   </Accordion>
 
-  <Accordion title="¿Qué pasa si tengo empresas sin dominio?">
-    Puedes dejar el dominio vacío. Sin embargo, recomendamos añadir dominios cuando sea posible para mejorar la calidad de los datos y el enlace automático de correos.
-  </Accordion>
+<Accordion title="¿Qué pasa si tengo empresas sin dominio?">
+  Puedes dejar el dominio vacío. Sin embargo, recomendamos añadir dominios
+  cuando sea posible para mejorar la calidad de los datos y el enlace automático
+  de correos.
+</Accordion>
 
-  <Accordion title="¿Puedo importar empresas sin ninguna Persona vinculada?">
-    ¡Sí! Puede importar primero las empresas y, más tarde, importar Personas y vincularlas usando el dominio de la empresa.
-  </Accordion>
+<Accordion title="¿Puedo importar empresas sin ninguna Persona vinculada?">
+  ¡Sí! Puede importar primero las empresas y, más tarde, importar Personas y
+  vincularlas usando el dominio de la empresa.
+</Accordion>
 
-  <Accordion title="¿Qué ocurre si importo un dominio que ya existe?">
-    Si incluye un identificador único (dominio o id) que coincida con una empresa existente, Twenty actualiza esa empresa en lugar de crear un duplicado.
-  </Accordion>
+<Accordion title="¿Qué ocurre si importo un dominio que ya existe?">
+  Si incluye un identificador único (dominio o id) que coincida con una empresa
+  existente, Twenty actualiza esa empresa en lugar de crear un duplicado.
+</Accordion>
 
   <Accordion title="¿Cómo soluciono los errores de 'dominio duplicado'?">
     Elimine el duplicado de su archivo o incluya el `id` de la empresa para actualizar el registro existente en su lugar.
@@ -196,6 +203,6 @@ Consulta [Cómo actualizar registros existentes](/l/es/user-guide/data-migration
 
 ¿Tiene problemas? Revise:
 
-* [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
-* [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping)
-* [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
+- [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping)
+- [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)

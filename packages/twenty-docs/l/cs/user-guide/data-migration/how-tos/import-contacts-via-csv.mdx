@@ -11,30 +11,24 @@ Tento průvodce vás provede importem vašich kontaktů (People) do Twenty. **Ne
 
 ### Kontrolní seznam předpokladů
 
-<Check>
-Váš soubor je ve formátu CSV, XLSX nebo XLS
-</Check>
+<Check>Váš soubor je ve formátu CSV, XLSX nebo XLS</Check>
+
+<Check>Soubor obsahuje méně než 10 000 záznamů</Check>
+
+<Check>Žádné duplicitní e-mailové adresy ve vašem souboru</Check>
 
 <Check>
-Soubor obsahuje méně než 10 000 záznamů
+  **Společnosti importovány jako první** (pokud propojujete osoby se
+  Společnostmi)
 </Check>
 
-<Check>
-Žádné duplicitní e-mailové adresy ve vašem souboru
-</Check>
-
-<Check>
-**Společnosti importovány jako první** (pokud propojujete osoby se Společnostmi)
-</Check>
-
-<Check>
-Všechna vlastní pole existují v **Settings → Data Model**
-</Check>
+<Check>Všechna vlastní pole existují v **Settings → Data Model**</Check>
 
 <Warning>
 **Importujte Společnosti před osobami**
 
 Pokud chcete propojovat osoby se Společnostmi, nejprve importujte Společnosti. Společnost musí existovat dříve, než na ni můžete odkazovat.
+
 </Warning>
 
 ## Krok 1: Připravte si data kontaktů
@@ -53,9 +47,9 @@ Pokud chcete propojovat osoby se Společnostmi, nejprve importujte Společnosti.
 
 ### Formát e-mailu
 
-* Musí mít platný formát e-mailu: `name@domain.com`
-* **Musí být jedinečná** — žádné duplicity ve vašem souboru ani v Twenty
-* Pro další e-mailové adresy použijte sloupec **Emails / Additional Emails**:
+- Musí mít platný formát e-mailu: `name@domain.com`
+- **Musí být jedinečná** — žádné duplicity ve vašem souboru ani v Twenty
+- Pro další e-mailové adresy použijte sloupec **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
@@ -81,7 +75,8 @@ Přidejte sloupec s jedinečným identifikátorem Společnosti:
 | `companyId`     | UUID       | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-**Použijte formát URL domény** (`https://acme.com`), ne název. To odpovídá způsobu, jakým jsou Společnosti uloženy v Twenty.
+  **Použijte formát URL domény** (`https://acme.com`), ne název. To odpovídá
+  způsobu, jakým jsou Společnosti uloženy v Twenty.
 </Note>
 
 ### Ukázková struktura CSV
@@ -93,7 +88,9 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-**Tip pro profíky:** Během importu klikněte na **Download sample file** nebo vyexportujte několik existujících osob, abyste viděli přesné názvy sloupců, které Twenty očekává.
+  **Tip pro profíky:** Během importu klikněte na **Download sample file** nebo
+  vyexportujte několik existujících osob, abyste viděli přesné názvy sloupců,
+  které Twenty očekává.
 </Note>
 
 ## Krok 2: Přejděte na funkci importu
@@ -134,7 +131,10 @@ Twenty se automaticky pokusí přiřadit vaše sloupce k polím. Zkontrolujte a 
 | Další e-mailové adresy  | **Emails / Additional Emails** | Formát pole                          |
 | Telefon                 | Samostatné sloupce             | Číslo, kód země, telefonní předvolba |
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ### Mapování relace Společnost
 
@@ -148,6 +148,7 @@ Při mapování sloupce společnosti:
 **Pro relace mapujte pouze JEDEN jedinečný identifikátor.**
 
 Nemapujte současně `companyId` a `companyDomain`. Vyberte jednu možnost — ideálně doménu, protože je lidsky čitelná.
+
 </Warning>
 
 ## Krok 5: Mapujte hodnoty polí typu Select
@@ -159,7 +160,9 @@ Pokud máte pole typu Select nebo Multi-Select (např. Zdroj leadu):
 3. Nebo podle potřeby vytvořte nové možnosti
 
 <Note>
-Možnosti typu Select používají **názvy API**, nikoli zobrazované štítky. V části **Nastavení → Datový model** → povolte **Pokročilý režim**, abyste viděli názvy API.
+  Možnosti typu Select používají **názvy API**, nikoli zobrazované štítky. V
+  části **Nastavení → Datový model** → povolte **Pokročilý režim**, abyste
+  viděli názvy API.
 </Note>
 
 ## Krok 6: Zkontrolujte a opravte chyby
@@ -212,21 +215,25 @@ Podrobnosti viz [Jak aktualizovat existující záznamy](/l/cs/user-guide/data-m
     E-mail je v Twenty jedinečný identifikátor. Tím se předchází duplicitním kontaktům a zajišťuje se, že synchronizace e-mailů správně propojí e-maily se správnou osobou.
   </Accordion>
 
-  <Accordion title="Co když mám osoby bez e-mailu?">
-    E-mail můžete nechat prázdný. Doporučujeme však e-maily přidat, kdykoli je to možné, pro lepší kvalitu dat a funkčnost synchronizace e-mailů.
-  </Accordion>
+<Accordion title="Co když mám osoby bez e-mailu?">
+  E-mail můžete nechat prázdný. Doporučujeme však e-maily přidat, kdykoli je to
+  možné, pro lepší kvalitu dat a funkčnost synchronizace e-mailů.
+</Accordion>
 
-  <Accordion title="Jak během importu propojit Osoby se Společnostmi?">
-    Přidejte sloupec s doménou Společnosti (např. `https://acme.com`) nebo s ID. Při mapování propojte tento sloupec s relačním polem Společnost.
-  </Accordion>
+<Accordion title="Jak během importu propojit Osoby se Společnostmi?">
+  Přidejte sloupec s doménou Společnosti (např. `https://acme.com`) nebo s ID.
+  Při mapování propojte tento sloupec s relačním polem Společnost.
+</Accordion>
 
-  <Accordion title="Co když Společnost ještě neexistuje?">
-    Importujte Společnosti před osobami. Společnost musí existovat dříve, než na ni můžete odkazovat.
-  </Accordion>
+<Accordion title="Co když Společnost ještě neexistuje?">
+  Importujte Společnosti před osobami. Společnost musí existovat dříve, než na
+  ni můžete odkazovat.
+</Accordion>
 
-  <Accordion title="Mohu importovat ID ze svého předchozího CRM?">
-    Ano! V datovém modelu vytvořte vlastní pole označené jako "unique" pro uložení externího ID. Poznámka: název pole `id` je vyhrazen pro interní ID Twenty.
-  </Accordion>
+<Accordion title="Mohu importovat ID ze svého předchozího CRM?">
+  Ano! V datovém modelu vytvořte vlastní pole označené jako "unique" pro uložení
+  externího ID. Poznámka: název pole `id` je vyhrazen pro interní ID Twenty.
+</Accordion>
 
   <Accordion title="Jak opravím chyby 'relation not found'?">
     Společnost, na kterou odkazujete, neexistuje. Buď nejprve importujte Společnost, nebo ověřte, že doména/ID přesně odpovídá existující Společnosti.
@@ -237,6 +244,6 @@ Podrobnosti viz [Jak aktualizovat existující záznamy](/l/cs/user-guide/data-m
 
 Máte potíže? Podívejte se na:
 
-* [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
-* [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)
+- [Jak opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+- [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [Referenční příručka mapování polí](/l/cs/user-guide/data-migration/capabilities/field-mapping)

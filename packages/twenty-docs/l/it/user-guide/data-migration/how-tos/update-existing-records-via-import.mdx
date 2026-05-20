@@ -9,10 +9,10 @@ Devi aggiornare molti record in una sola volta? Invece di modificarli uno per un
 
 **Casi di utilizzo:**
 
-* Aggiorna i titoli professionali per più persone
-* Modifica in blocco le informazioni sulle aziende
-* Aggiungi dati ai nuovi campi personalizzati
-* Correggi gli errori dei dati su molti record
+- Aggiorna i titoli professionali per più persone
+- Modifica in blocco le informazioni sulle aziende
+- Aggiungi dati ai nuovi campi personalizzati
+- Correggi gli errori dei dati su molti record
 
 ## Come Funziona
 
@@ -30,6 +30,7 @@ Quando importi un file che contiene un **identificatore univoco** corrispondente
 Se un record ha `Option A` e `Option B` selezionate e importi `["Option C"]`, il record avrà solo `Option C` dopo l'importazione. L'importazione sostituisce tutte le selezioni precedenti: non le aggiunge.
 
 Per mantenere i valori esistenti, includili tutti nella tua importazione: `["Option A","Option B","Option C"]`
+
 </Warning>
 
 ## Passaggio 1: Esporta i tuoi dati correnti
@@ -42,13 +43,17 @@ Per prima cosa, esporta i record che vuoi aggiornare:
 4. Fai clic su **⋮** → **Esporta vista**
 5. Salva il file CSV
 
-<Note>**Perché esportare prima?** Il file esportato ha il formato corretto, include gli identificatori univoci e viene mappato automaticamente durante l'importazione.</Note>
+<Note>
+  **Perché esportare prima?** Il file esportato ha il formato corretto, include
+  gli identificatori univoci e viene mappato automaticamente durante
+  l'importazione.
+</Note>
 
 ### Cosa viene esportato
 
-* Tutte le colonne visibili nella vista corrente
-* Gli identificatori univoci del record (`id`, `email`, `domain`)
-* Valori attuali dei campi che puoi modificare
+- Tutte le colonne visibili nella vista corrente
+- Gli identificatori univoci del record (`id`, `email`, `domain`)
+- Valori attuali dei campi che puoi modificare
 
 ## Passaggio 2: Modifica il file CSV
 
@@ -83,6 +88,7 @@ id,email,firstName,lastName,jobTitle
 **Non modificare i valori dell'identificatore univoco.**
 
 Se modifichi `john@acme.com` in `john.smith@acme.com`, Twenty creerà un nuovo record invece di aggiornare quello esistente.
+
 </Warning>
 
 ## Passaggio 3: Importa il file aggiornato
@@ -105,7 +111,10 @@ Twenty abbina i record in base all'identificatore univoco e li aggiorna con i nu
 | **Aziende**                | `dominio`               | `id`        | Il dominio è leggibile                  |
 | **Oggetti personalizzati** | Qualsiasi campo univoco | `id`        | Usa il tuo campo univoco personalizzato |
 
-<Note>**Usa un solo identificatore univoco.** Non mappare sia `email` che `id`. Questo può causare confusione ed errori.</Note>
+<Note>
+  **Usa un solo identificatore univoco.** Non mappare sia `email` che `id`.
+  Questo può causare confusione ed errori.
+</Note>
 
 ### Utilizzo di campi univoci personalizzati
 
@@ -160,21 +169,26 @@ newperson@acme.com,New,Person,Analyst      ← Crea nuovo (l'email non corrispon
     I record con identificatori univoci che non corrispondono a record esistenti verranno creati come nuovi record. Questo ti consente di aggiornare e creare nella stessa importazione.
   </Accordion>
 
-  <Accordion title="Posso svuotare il valore di un campo?">
-    Sì, lascia la cella vuota nel tuo CSV. L'importazione cancellerà il valore di quel campo nel record esistente.
-  </Accordion>
+<Accordion title="Posso svuotare il valore di un campo?">
+  Sì, lascia la cella vuota nel tuo CSV. L'importazione cancellerà il valore di
+  quel campo nel record esistente.
+</Accordion>
 
-  <Accordion title="Cosa succede ai campi che non includo nell'importazione?">
-    I campi non presenti nel file di importazione rimangono invariati nei record esistenti. Vengono aggiornati solo i campi che includi.
-  </Accordion>
+<Accordion title="Cosa succede ai campi che non includo nell'importazione?">
+  I campi non presenti nel file di importazione rimangono invariati nei record
+  esistenti. Vengono aggiornati solo i campi che includi.
+</Accordion>
 
-  <Accordion title="Posso aggiornare i campi di relazione (come Azienda)?">
-    Sì! Includi l'identificatore univoco della relazione (ad es., `companyDomain`) e mappalo sul campo di relazione. La relazione verrà aggiornata.
-  </Accordion>
+<Accordion title="Posso aggiornare i campi di relazione (come Azienda)?">
+  Sì! Includi l'identificatore univoco della relazione (ad es., `companyDomain`)
+  e mappalo sul campo di relazione. La relazione verrà aggiornata.
+</Accordion>
 
-  <Accordion title="Come faccio a sapere quali record saranno aggiornati e quali creati?">
-    Durante la fase di revisione dell'importazione, Twenty ti mostra quanti record verranno aggiornati e quanti creati in base alle corrispondenze dell'identificatore univoco.
-  </Accordion>
+<Accordion title="Come faccio a sapere quali record saranno aggiornati e quali creati?">
+  Durante la fase di revisione dell'importazione, Twenty ti mostra quanti record
+  verranno aggiornati e quanti creati in base alle corrispondenze
+  dell'identificatore univoco.
+</Accordion>
 
   <Accordion title="Posso annullare un aggiornamento in blocco?">
     Non è disponibile un annullamento automatico. Ti consigliamo di esportare i tuoi dati come backup prima di effettuare aggiornamenti in blocco.
@@ -193,6 +207,6 @@ newperson@acme.com,New,Person,Analyst      ← Crea nuovo (l'email non corrispon
 
 Hai problemi? Controlla:
 
-* [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
-* [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Riferimento alla mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)
+- [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
+- [Vincoli di unicità](/l/it/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Riferimento alla mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)

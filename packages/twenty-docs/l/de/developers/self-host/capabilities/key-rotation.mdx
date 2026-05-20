@@ -5,8 +5,8 @@ icon: rotate
 
 Twenty hat zwei unabhängige Schlüsselfamilien:
 
-* **JWT-Signaturschlüssel** — asymmetrische ES256-Schlüsselpaare (`kid`-markiert), die in `core."signingKey"` gespeichert sind und zum Signieren und Verifizieren von Access-/Refresh-Tokens verwendet werden.
-* **Verschlüsselungsschlüssel im Ruhezustand** — `ENCRYPTION_KEY`, wird verwendet, um OAuth-Tokens, Anwendungsvariablen, die privaten Schlüssel der Signierschlüssel, sensible Konfigurationswerte und TOTP-Geheimnisse innerhalb eines `enc:v2:`-Umschlags zu verschlüsseln.
+- **JWT-Signaturschlüssel** — asymmetrische ES256-Schlüsselpaare (`kid`-markiert), die in `core."signingKey"` gespeichert sind und zum Signieren und Verifizieren von Access-/Refresh-Tokens verwendet werden.
+- **Verschlüsselungsschlüssel im Ruhezustand** — `ENCRYPTION_KEY`, wird verwendet, um OAuth-Tokens, Anwendungsvariablen, die privaten Schlüssel der Signierschlüssel, sensible Konfigurationswerte und TOTP-Geheimnisse innerhalb eines `enc:v2:`-Umschlags zu verschlüsseln.
 
 `APP_SECRET` ist ein veraltetes Secret, das aus Gründen der Abwärtskompatibilität beibehalten wird: Wenn `ENCRYPTION_KEY` nicht gesetzt ist, fungiert es als Fallback für At-Rest-Verschlüsselung / Session-Cookie und verifiziert weiterhin bereits bestehende HS256-Access-Tokens. Es wird als veraltet markiert werden.
 
@@ -16,10 +16,13 @@ Jeder Schlüssel enthält einen `publicKey` (unbefristet aufbewahrt, damit er zu
 
 ### Aktuellen Schlüssel rotieren
 
-* **Manuell** — **Settings → Admin Panel → Signing keys → Revoke** in der aktuellen Zeile. Das Widerrufen löscht das verschlüsselte private Material und stuft es herab; der nächste Signieraufruf erstellt automatisch ein neues ES256-Schlüsselpaar als neuen aktuellen Schlüssel. Tokens, die unter einem anderen (nicht widerrufenen) `kid` signiert wurden, werden weiterhin verifiziert, bis sie ablaufen.
-* **Enterprise (automatisch)** — ein täglicher Cron-Job (`'15 3 * * *'` UTC) erstellt einen neuen aktuellen Schlüssel, sobald der vorhandene Schlüssel seit `SIGNING_KEY_ROTATION_DAYS` (Standard `90`) aktuell ist. Der vorherige Schlüssel wird *nicht* widerrufen, daher werden Tokens, die darunter signiert wurden, weiterhin verifiziert. Registriere ihn einmalig mit `yarn command:prod cron:register:all`.
+- **Manuell** — **Settings → Admin Panel → Signing keys → Revoke** in der aktuellen Zeile. Das Widerrufen löscht das verschlüsselte private Material und stuft es herab; der nächste Signieraufruf erstellt automatisch ein neues ES256-Schlüsselpaar als neuen aktuellen Schlüssel. Tokens, die unter einem anderen (nicht widerrufenen) `kid` signiert wurden, werden weiterhin verifiziert, bis sie ablaufen.
+- **Enterprise (automatisch)** — ein täglicher Cron-Job (`'15 3 * * *'` UTC) erstellt einen neuen aktuellen Schlüssel, sobald der vorhandene Schlüssel seit `SIGNING_KEY_ROTATION_DAYS` (Standard `90`) aktuell ist. Der vorherige Schlüssel wird _nicht_ widerrufen, daher werden Tokens, die darunter signiert wurden, weiterhin verifiziert. Registriere ihn einmalig mit `yarn command:prod cron:register:all`.
 
-  <Note>Der Enterprise-Cron-Job und `SIGNING_KEY_ROTATION_DAYS` sind ab v2.6+ enthalten.</Note>
+  <Note>
+    Der Enterprise-Cron-Job und `SIGNING_KEY_ROTATION_DAYS` sind ab v2.6+
+    enthalten.
+  </Note>
 
 ### Einen Schlüssel widerrufen (nur bei Leak / Notfall)
 
@@ -27,17 +30,22 @@ Jeder Schlüssel enthält einen `publicKey` (unbefristet aufbewahrt, damit er zu
 
 ## `ENCRYPTION_KEY` rotieren
 
-<Note>Der unten beschriebene Befehl `secret-encryption:rotate` ist ab v2.6+ enthalten.</Note>
+<Note>
+  Der unten beschriebene Befehl `secret-encryption:rotate` ist ab v2.6+
+  enthalten.
+</Note>
 
 Jeder verschlüsselte Wert wird als `enc:v2:\<keyId>:\<payload>` verpackt, wobei `\<keyId>` ein 8-stelliges Hex-Präfix ist, das aus dem Rohschlüssel abgeleitet wird. Die Rotation erfolgt online und ist fortsetzbar.
 
 1. **Einen neuen Schlüssel generieren**: `openssl rand -base64 32`.
 
 2. **Beide Schlüssel nebeneinander konfigurieren** in `.env` und dann neu starten:
+
    ```ini
    ENCRYPTION_KEY=NEW_VALUE
    FALLBACK_ENCRYPTION_KEY=OLD_VALUE
    ```
+
    Neue Schreibvorgänge verwenden den neuen Schlüssel, vorhandene Zeilen werden weiterhin über den Fallback entschlüsselt.
 
 3. **Vorhandene Zeilen erneut verschlüsseln**:
@@ -48,11 +56,11 @@ Jeder verschlüsselte Wert wird als `enc:v2:\<keyId>:\<payload>` verpackt, wobei
 
    Der Befehl durchläuft sechs Sites (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). Ein SQL-Filter überspringt Zeilen, die bereits auf dem neuen `\<keyId>` sind, sodass der Befehl idempotent ist: Unterbrechen und bei Bedarf erneut ausführen. Beendet sich mit einem von Null verschiedenen Exit-Code, wenn irgendeine Zeile fehlschlägt — zum Wiederholen erneut ausführen.
 
-   | Flag                                     | Beschreibung                                                                 |
-   | ---------------------------------------- | ---------------------------------------------------------------------------- |
+   | Flag                    | Beschreibung                                                                 |
+   | ----------------------- | ---------------------------------------------------------------------------- |
    | `-s, --site \<site>`    | Auf eine einzelne Site beschränken.                                          |
    | `-b, --batch-size \<n>` | Zeilen pro Batch (Standard `200`, Maximum `5000`).                           |
-   | `-d, --dry-run`                          | Entschlüsseln + erneut im Speicher verschlüsseln, das `UPDATE` überspringen. |
+   | `-d, --dry-run`         | Entschlüsseln + erneut im Speicher verschlüsseln, das `UPDATE` überspringen. |
 
 4. **Den Fallback entfernen**, sobald `--dry-run` null verbleibende Zeilen anzeigt: `FALLBACK_ENCRYPTION_KEY` entfernen und neu starten.
 

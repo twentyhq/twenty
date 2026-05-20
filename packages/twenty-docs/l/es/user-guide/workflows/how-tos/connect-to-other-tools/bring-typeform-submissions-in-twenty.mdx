@@ -62,9 +62,9 @@ Typeform envía una estructura JSON anidada. Aquí hay un ejemplo simplificado:
 
 Aspectos clave a tener en cuenta:
 
-* Los datos del formulario están anidados bajo `form_response`
-* **Las respuestas se devuelven como un arreglo**, no como campos con nombre
-* Cada respuesta incluye el tipo y el título del campo como referencia
+- Los datos del formulario están anidados bajo `form_response`
+- **Las respuestas se devuelven como un arreglo**, no como campos con nombre
+- Cada respuesta incluye el tipo y el título del campo como referencia
 
 ### Paso 4: Extraer campos del arreglo de respuestas
 
@@ -103,7 +103,9 @@ export const main = async (params: {
 Ahora, en los pasos posteriores, puedes seleccionar `contact.firstName`, `contact.email`, etc., desde el selector de variables.
 
 <Tip>
-  Para más detalles sobre cómo manejar arreglos en acciones de código, consulta [Cómo manejar arreglos en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  Para más detalles sobre cómo manejar arreglos en acciones de código, consulta
+  [Cómo manejar arreglos en acciones de
+  código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
 ### Paso 5: Crear el registro
@@ -126,5 +128,5 @@ Añade una acción **Create Record**:
 
 ## Relacionado
 
-* [Configurar un disparador de Webhook](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
-* [Manejar arreglos en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Configurar un disparador de Webhook](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+- [Manejar arreglos en acciones de código](/l/es/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

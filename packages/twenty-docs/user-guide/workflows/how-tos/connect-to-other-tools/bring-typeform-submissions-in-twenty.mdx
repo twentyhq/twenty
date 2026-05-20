@@ -61,6 +61,7 @@ Typeform sends a nested JSON structure. Here's a simplified example:
 ```
 
 Key things to note:
+
 - Form data is nested under `form_response`
 - **Answers are returned as an array**, not as named fields
 - Each answer includes the field type and title for reference
@@ -102,20 +103,22 @@ export const main = async (params: {
 Now in subsequent steps, you can select `contact.firstName`, `contact.email`, etc. from the variable picker.
 
 <Tip>
-For more details on handling arrays in Code actions, see [Handle Arrays in Code Actions](/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  For more details on handling arrays in Code actions, see [Handle Arrays in
+  Code
+  Actions](/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
 ### Step 5: Create the Record
 
 Add a **Create Record** action:
 
-| Field | Value |
-|-------|-------|
-| **Object** | People |
-| **First Name** | `{{code.contact.firstName}}` |
-| **Last Name** | `{{code.contact.lastName}}` |
-| **Email** | `{{code.contact.email}}` |
-| **Company** | Search or create based on `{{code.contact.company}}` |
+| Field          | Value                                                |
+| -------------- | ---------------------------------------------------- |
+| **Object**     | People                                               |
+| **First Name** | `{{code.contact.firstName}}`                         |
+| **Last Name**  | `{{code.contact.lastName}}`                          |
+| **Email**      | `{{code.contact.email}}`                             |
+| **Company**    | Search or create based on `{{code.contact.company}}` |
 
 ### Step 6: Test and Activate
 
@@ -127,4 +130,3 @@ Add a **Create Record** action:
 
 - [Set Up a Webhook Trigger](/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
 - [Handle Arrays in Code Actions](/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
-

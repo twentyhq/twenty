@@ -33,13 +33,10 @@ export const MyComponent = () => {
 
   return (
     <div>
-      <input
-        value={myAtom}
-        onChange={(e) => setMyAtom(e.target.value)}
-      />
+      <input value={myAtom} onChange={(e) => setMyAtom(e.target.value)} />
     </div>
   );
-}
+};
 ```
 
 ### Nepoužívejte `useRef` k ukládání stavu
@@ -90,7 +87,7 @@ export const PageComponent = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -98,9 +95,7 @@ export const PageComponent = () => {
   return <div>{data}</div>;
 };
 
-export const App = () => (
-  <PageComponent />
-);
+export const App = () => <PageComponent />;
 ```
 
 ```tsx
@@ -117,7 +112,7 @@ export const PageData = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -184,7 +179,7 @@ const [email, setEmail] = useState('');
 
 #### Některá slova, kterým se vyhnout v názvech proměnných
 
-* dummy
+- dummy
 
 ### Obsluhovače událostí
 
@@ -290,12 +285,8 @@ Při importu, upřednostněte určené aliasy před upřesňováním úplných �
 
 ```tsx
 // ❌ Bad, specifies the entire relative path
-import {
-  CatalogDecorator
-} from '../../../../../testing/decorators/CatalogDecorator';
-import {
-  ComponentDecorator
-} from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx

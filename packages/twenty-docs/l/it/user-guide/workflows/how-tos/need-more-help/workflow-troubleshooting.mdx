@@ -18,10 +18,10 @@ description: Problemi comuni dei flussi di lavoro e come risolverli.
 
 **Soluzioni**:
 
-* Verifica lo stato del flusso di lavoro nell'elenco dei flussi di lavoro
-* Esegui un test con l'azione specifica che dovrebbe attivarlo
-* Rivedi la configurazione del trigger
-* Contatta l'amministratore per le autorizzazioni
+- Verifica lo stato del flusso di lavoro nell'elenco dei flussi di lavoro
+- Esegui un test con l'azione specifica che dovrebbe attivarlo
+- Rivedi la configurazione del trigger
+- Contatta l'amministratore per le autorizzazioni
 
 ### Il flusso di lavoro si attiva troppo presto (campi vuoti)
 
@@ -31,17 +31,20 @@ description: Problemi comuni dei flussi di lavoro e come risolverli.
 
 **Quando "Record is created" funziona bene**:
 
-* Record creati tramite chiamate API (i campi vengono popolati in un'unica richiesta)
-* Record creati tramite importazione
-* Creazione automatizzata di record da altri flussi di lavoro
+- Record creati tramite chiamate API (i campi vengono popolati in un'unica richiesta)
+- Record creati tramite importazione
+- Creazione automatizzata di record da altri flussi di lavoro
 
 **Soluzione**: Per i record creati manualmente nell'interfaccia utente, usa **"Record is created or updated"** come trigger. In questo modo:
 
-* Il flusso di lavoro si attiva dopo che l'utente ha terminato di compilare e salvare i campi
-* Ottieni i dati completi invece di valori vuoti
+- Il flusso di lavoro si attiva dopo che l'utente ha terminato di compilare e salvare i campi
+- Ottieni i dati completi invece di valori vuoti
 
 <Tip>
-Se desideri che il flusso di lavoro venga eseguito solo una volta per record, aggiungi un'azione Filter per verificare un campo come `createdAt equals updatedAt` (primo salvataggio) oppure usa un campo casella di controllo personalizzato per tracciare se il flusso di lavoro è già stato eseguito.
+  Se desideri che il flusso di lavoro venga eseguito solo una volta per record,
+  aggiungi un'azione Filter per verificare un campo come `createdAt equals
+  updatedAt` (primo salvataggio) oppure usa un campo casella di controllo
+  personalizzato per tracciare se il flusso di lavoro è già stato eseguito.
 </Tip>
 
 ### Azioni non riuscite
@@ -57,10 +60,10 @@ Se desideri che il flusso di lavoro venga eseguito solo una volta per record, ag
 
 **Soluzioni**:
 
-* Controlla i dettagli dell'esecuzione del flusso di lavoro per eventuali messaggi di errore
-* Verifica che tutti i campi obbligatori abbiano un valore
-* Testa le connessioni API in modo indipendente
-* Rivedi le autorizzazioni del ruolo
+- Controlla i dettagli dell'esecuzione del flusso di lavoro per eventuali messaggi di errore
+- Verifica che tutti i campi obbligatori abbiano un valore
+- Testa le connessioni API in modo indipendente
+- Rivedi le autorizzazioni del ruolo
 
 ### Errori delle richieste HTTP
 
@@ -68,19 +71,19 @@ Se desideri che il flusso di lavoro venga eseguito solo una volta per record, ag
 
 **Codici di errore comuni**:
 
-* **400**: Richiesta non valida - controlla il formato del corpo della richiesta
-* **401**: Non autorizzato - verifica la chiave API
-* **403**: Vietato - controlla le autorizzazioni dell'API
-* **404**: Non trovato - verifica l'URL dell'endpoint
-* **429**: Troppe richieste - implementa la limitazione della frequenza
-* **500**: Errore del server - problema del servizio esterno
+- **400**: Richiesta non valida - controlla il formato del corpo della richiesta
+- **401**: Non autorizzato - verifica la chiave API
+- **403**: Vietato - controlla le autorizzazioni dell'API
+- **404**: Non trovato - verifica l'URL dell'endpoint
+- **429**: Troppe richieste - implementa la limitazione della frequenza
+- **500**: Errore del server - problema del servizio esterno
 
 **Soluzioni**:
 
-* Verifica l'URL dell'endpoint API
-* Controlla le intestazioni di autenticazione
-* Esegui prima il test della chiamata API al di fuori di Twenty
-* Aggiungi la gestione degli errori nelle azioni di Codice
+- Verifica l'URL dell'endpoint API
+- Controlla le intestazioni di autenticazione
+- Esegui prima il test della chiamata API al di fuori di Twenty
+- Aggiungi la gestione degli errori nelle azioni di Codice
 
 ### Errori delle azioni di Codice
 
@@ -95,10 +98,10 @@ Se desideri che il flusso di lavoro venga eseguito solo una volta per record, ag
 
 **Soluzioni**:
 
-* Usa la convalida dell'editor di codice integrato
-* Verifica prima la logica del codice in una console JavaScript
-* Aggiungi istruzioni console.log per il debug
-* Semplifica le operazioni complesse
+- Usa la convalida dell'editor di codice integrato
+- Verifica prima la logica del codice in una console JavaScript
+- Aggiungi istruzioni console.log per il debug
+- Semplifica le operazioni complesse
 
 ### Le email non vengono inviate
 
@@ -113,10 +116,10 @@ Se desideri che il flusso di lavoro venga eseguito solo una volta per record, ag
 
 **Soluzioni**:
 
-* Verifica la connessione dell'account email
-* Convalida gli indirizzi email dei destinatari
-* Controlla i limiti del provider email
-* Rivedi il contenuto dell'email per possibili trigger di spam
+- Verifica la connessione dell'account email
+- Convalida gli indirizzi email dei destinatari
+- Controlla i limiti del provider email
+- Rivedi il contenuto dell'email per possibili trigger di spam
 
 ## Debug dei flussi di lavoro
 
@@ -150,21 +153,21 @@ Verifica che ogni passaggio riceva i dati di input previsti.
 
 ### Prima dell'attivazione
 
-* Esegui test approfonditi in modalità bozza
-* Convalida tutte le connessioni API
-* Rivedi attentamente le condizioni del trigger
-* Documenta il comportamento previsto
+- Esegui test approfonditi in modalità bozza
+- Convalida tutte le connessioni API
+- Rivedi attentamente le condizioni del trigger
+- Documenta il comportamento previsto
 
 ### Durante lo sviluppo
 
-* Usa nomi di passaggio descrittivi
-* Aggiungi commenti nelle azioni di Codice
-* Testa con dati realistici
-* Pianifica i casi limite
+- Usa nomi di passaggio descrittivi
+- Aggiungi commenti nelle azioni di Codice
+- Testa con dati realistici
+- Pianifica i casi limite
 
 ### Dopo l'attivazione
 
-* Monitora attentamente le esecuzioni iniziali
-* Configura avvisi per gli errori
-* Rivedi regolarmente la cronologia delle esecuzioni
-* Mantieni i flussi di lavoro semplici quando possibile
+- Monitora attentamente le esecuzioni iniziali
+- Configura avvisi per gli errori
+- Rivedi regolarmente la cronologia delle esecuzioni
+- Mantieni i flussi di lavoro semplici quando possibile

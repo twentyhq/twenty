@@ -23,7 +23,10 @@ Wählen Sie **When a Record is Created** und dann **Messages**.
 
 Jedes Mal, wenn eine E-Mail in Twenty eingeht, wird dies ausgelöst.
 
-<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/workflow-overview.png"
+  style={{ width: '100%' }}
+/>
 
 ### Schritt 3: Absender ermitteln
 
@@ -40,7 +43,10 @@ Die Absenderadresse befindet sich nicht in der Nachricht selbst — sie steht im
 
 Dadurch erhalten Sie die E-Mail-Adresse des Absenders in `handle` und den Namen in `displayName`.
 
-<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/find-sender.png"
+  style={{ width: '100%' }}
+/>
 
 ### Schritt 4: KI-Triage und Antwortentwurf
 
@@ -69,7 +75,10 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 Der AI Agent gibt seine Antwort in einem Feld `response` aus, auf das sich die nächsten Schritte beziehen können.
 
-<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/ai-triage.png"
+  style={{ width: '100%' }}
+/>
 
 ### Schritt 5: Verzweigen anhand der KI-Entscheidung
 
@@ -83,7 +92,10 @@ Fügen Sie eine **If/Else**-Aktion hinzu, um zu prüfen, ob die KI sich entschie
 
 Spam, Newsletter und automatisch erzeugte Nachrichten werden verworfen. Alles andere geht zum nächsten Schritt über.
 
-<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/should-reply.png"
+  style={{ width: '100%' }}
+/>
 
 ### Schritt 6: Eine Antwort im Thread senden
 
@@ -98,14 +110,24 @@ Fügen Sie im "Wenn wahr"-Zweig eine **Send Email**-Aktion hinzu. Klicken Sie au
 
 Das Feld In-Reply-To sorgt dafür, dass dies eine Antwort und keine neue Unterhaltung ist. Der Empfänger sieht sie als Teil des Threads unter der ursprünglichen E-Mail in Gmail, Outlook oder jedem anderen Client.
 
-<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/send-email.png"
+  style={{ width: '100%' }}
+/>
 
 <Tip>
-**In-Reply-To** erwartet eine `message.headerMessageId` aus dem Trigger — das ist der eindeutige Fingerabdruck der E-Mail, keine Empfängeradresse. Wenn Sie es leer lassen, wird die E-Mail trotzdem gesendet, nur als eigenständige Nachricht.
+  **In-Reply-To** erwartet eine `message.headerMessageId` aus dem Trigger — das
+  ist der eindeutige Fingerabdruck der E-Mail, keine Empfängeradresse. Wenn Sie
+  es leer lassen, wird die E-Mail trotzdem gesendet, nur als eigenständige
+  Nachricht.
 </Tip>
 
 <Warning>
-Gmail verwendet die Betreffzeile, um Nachrichten in Threads zu gruppieren. Der Betreff **muss** mit `Re:` beginnen (einschließlich Doppelpunkt und Leerzeichen), damit Gmail die Antwort im ursprünglichen Thread anzeigt. Ohne dies erscheint die Antwort als separate Unterhaltung — selbst wenn der In-Reply-To-Header korrekt gesetzt ist.
+  Gmail verwendet die Betreffzeile, um Nachrichten in Threads zu gruppieren. Der
+  Betreff **muss** mit `Re:` beginnen (einschließlich Doppelpunkt und
+  Leerzeichen), damit Gmail die Antwort im ursprünglichen Thread anzeigt. Ohne
+  dies erscheint die Antwort als separate Unterhaltung — selbst wenn der
+  In-Reply-To-Header korrekt gesetzt ist.
 </Warning>
 
 ### Schritt 7: Testen und aktivieren
@@ -116,6 +138,6 @@ Aktivieren Sie ihn, wenn Sie zufrieden sind.
 
 ## Ideen zum Ausbau
 
-* **Nur an VIPs antworten** — fügen Sie einen Zweig hinzu, der die Domain des Absenders prüft oder ob er in Twenty als Kontakt existiert
-* **Nach Absicht routen** — verwenden Sie separate AI Agent-Prompts, um Vertriebsanfragen anders zu bearbeiten als Supportanfragen
-* **Vor der Antwort anreichern** — fügen Sie einen Schritt Search Records hinzu, um das Unternehmen oder die Deal-Historie des Absenders in den AI-Prompt zu übernehmen, für persönlichere Antworten
+- **Nur an VIPs antworten** — fügen Sie einen Zweig hinzu, der die Domain des Absenders prüft oder ob er in Twenty als Kontakt existiert
+- **Nach Absicht routen** — verwenden Sie separate AI Agent-Prompts, um Vertriebsanfragen anders zu bearbeiten als Supportanfragen
+- **Vor der Antwort anreichern** — fügen Sie einen Schritt Search Records hinzu, um das Unternehmen oder die Deal-Historie des Absenders in den AI-Prompt zu übernehmen, für persönlichere Antworten

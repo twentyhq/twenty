@@ -38,10 +38,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Свойства">
-
 
 | Свойства  | Тип               | Описание                                                  |
 | --------- | ----------------- | --------------------------------------------------------- |
@@ -49,9 +47,6 @@ export const MyComponent = () => {
 | href      | строка            | Целевой URL или путь для ссылки                           |
 | onClick   | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
 | children  | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
-
-
-
 
 </Tab>
 
@@ -65,12 +60,12 @@ export const MyComponent = () => {
 <Tab title="Использование">
 
 ```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RawLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -81,13 +76,10 @@ export const MyComponent = () => {
     </Router>
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="Свойства">
-
 
 | Свойства  | Тип               | Описание                                                  |
 | --------- | ----------------- | --------------------------------------------------------- |
@@ -95,9 +87,6 @@ export const MyComponent = () => {
 | href      | строка            | Целевой URL или путь для ссылки                           |
 | onClick   | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
 | children  | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
-
-
-
 
 </Tab>
 </Tabs>
@@ -110,12 +99,12 @@ export const MyComponent = () => {
 <Tab title="Использование">
 
 ```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RoundedLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -132,14 +121,11 @@ export const MyComponent = () => {
 
 <Tab title="Свойства">
 
-
 | Свойства | Тип               | Описание                                                  |
 | -------- | ----------------- | --------------------------------------------------------- |
 | href     | строка            | Целевой URL или путь для ссылки                           |
 | children | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                    |
 | onClick  | функция           | Функция обратного вызова, выполняемая при клике по ссылке |
-
-
 
 </Tab>
 </Tabs>
@@ -152,8 +138,8 @@ export const MyComponent = () => {
 <Tab title="Использование">
 
 ```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { SocialLink } from 'twenty-ui/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   return (
@@ -170,16 +156,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Свойства">
 
-
 | Свойства | Тип               | Описание                                                              |
 | -------- | ----------------- | --------------------------------------------------------------------- |
 | href     | строка            | Целевой URL или путь для ссылки                                       |
 | children | `React.ReactNode` | Содержимое, отображаемое внутри ссылки                                |
 | тип      | строка            | Тип социальных ссылок. Опции включают: `url`, `LinkedIn`, и `Twitter` |
 | onClick  | функция           | Функция обратного вызова, выполняемая при клике по ссылке             |
-
-
-
 
 </Tab>
 </Tabs>

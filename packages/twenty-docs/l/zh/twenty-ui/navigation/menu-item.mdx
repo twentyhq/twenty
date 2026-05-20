@@ -9,17 +9,17 @@ icon: bars
 <Tab title="**用法**">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
+    console.log('Icon button clicked!', event);
   };
 
   return (
@@ -37,24 +37,19 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="属性">
 
-
-| 属性            | 类型     | 描述                                                  |
-| ------------- | ------ | --------------------------------------------------- |
-| 左侧图标          | 图标组件   | 在菜单项文本之前显示的可选左图标                                    |
-| 强调色           | string | 指定菜单项的点缀颜色。 选项包括：`default`、`danger` 和 `placeholder` |
-| 文本            | 字符串    | 菜单项的文本内容                                            |
-| 图标按钮          | 数组     | 表示与菜单项关联的额外图标按钮的对象数组                                |
-| isTooltipOpen | 布尔值    | 控制与菜单项关联的工具提示的可见性                                   |
-| 测试 ID         | 字符串    | 用于测试目的的数据测试 ID 属性                                   |
-| onClick       | 函数     | 在点击菜单项时触发的回调函数                                      |
-| 类名            | 字符串    | 用于额外样式的可选名称                                         |
-
-
-
+| 属性          | 类型     | 描述                                                                  |
+| ------------- | -------- | --------------------------------------------------------------------- |
+| 左侧图标      | 图标组件 | 在菜单项文本之前显示的可选左图标                                      |
+| 强调色        | string   | 指定菜单项的点缀颜色。 选项包括：`default`、`danger` 和 `placeholder` |
+| 文本          | 字符串   | 菜单项的文本内容                                                      |
+| 图标按钮      | 数组     | 表示与菜单项关联的额外图标按钮的对象数组                              |
+| isTooltipOpen | 布尔值   | 控制与菜单项关联的工具提示的可见性                                    |
+| 测试 ID       | 字符串   | 用于测试目的的数据测试 ID 属性                                        |
+| onClick       | 函数     | 在点击菜单项时触发的回调函数                                          |
+| 类名          | 字符串   | 用于额外样式的可选名称                                                |
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -93,22 +88,18 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="属性">
 
-
-| 属性           | 类型            | 描述                |
-| ------------ | ------------- | ----------------- |
+| 属性         | 类型          | 描述                               |
+| ------------ | ------------- | ---------------------------------- |
 | LeftIcon     | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-| 文本           | 字符串           | 菜单项的文本内容          |
-| firstHotKey  | 字符串           | 与命令关联的第一个键盘快捷键    |
-| secondHotKey | 字符串           | 与命令关联的第二个键盘快捷键    |
-| isSelected   | 布尔值           | 指示菜单项是否被选中或高亮     |
-| onClick      | 功能            | 点击菜单项时触发的回调函数     |
-| className    | 字符串           | 用于额外样式的可选名称       |
-
-
+| 文本         | 字符串        | 菜单项的文本内容                   |
+| firstHotKey  | 字符串        | 与命令关联的第一个键盘快捷键       |
+| secondHotKey | 字符串        | 与命令关联的第二个键盘快捷键       |
+| isSelected   | 布尔值        | 指示菜单项是否被选中或高亮         |
+| onClick      | 功能          | 点击菜单项时触发的回调函数         |
+| className    | 字符串        | 用于额外样式的可选名称             |
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -148,20 +139,16 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性             | 类型            | 描述                                                 |
-| -------------- | ------------- | -------------------------------------------------- |
-| LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标                                  |
-| 强调色            | 字符串           | 菜单项的强调色。 可设置为 `default`, `placeholder`, 和 `danger` |
-| iconButtons    | 数组            | 表示与菜单项关联的附加图标按钮的对象数组                               |
-| isTooltipOpen  | 布尔值           | 控制与菜单项关联的工具提示的可见性                                  |
-| onClick        | 功能            | 点击链接时触发的回调函数                                       |
-| 文本             | 字符串           | 菜单项的文本内容                                           |
-| isDragDisabled | 布尔值           | 指示是否禁用拖动                                           |
-| className      | 字符串           | 用于额外样式的可选名称                                        |
-
-
-
+| 属性           | 类型          | 描述                                                            |
+| -------------- | ------------- | --------------------------------------------------------------- |
+| LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标                              |
+| 强调色         | 字符串        | 菜单项的强调色。 可设置为 `default`, `placeholder`, 和 `danger` |
+| iconButtons    | 数组          | 表示与菜单项关联的附加图标按钮的对象数组                        |
+| isTooltipOpen  | 布尔值        | 控制与菜单项关联的工具提示的可见性                              |
+| onClick        | 功能          | 点击链接时触发的回调函数                                        |
+| 文本           | 字符串        | 菜单项的文本内容                                                |
+| isDragDisabled | 布尔值        | 指示是否禁用拖动                                                |
+| className      | 字符串        | 用于额外样式的可选名称                                          |
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,17 +179,13 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性             | 类型            | 描述                |
-| -------------- | ------------- | ----------------- |
+| 属性           | 类型          | 描述                               |
+| -------------- | ------------- | ---------------------------------- |
 | LeftIcon       | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-| 文本             | 字符串           | 菜单项的文本内容          |
-| 已选择            | 布尔值           | 指示菜单项是否被选中（勾选）    |
-| onSelectChange | 功能            | 选择框状态变化时触发的回调函数   |
-| className      | 字符串           | 用于额外样式的可选名称       |
-
-
-
+| 文本           | 字符串        | 菜单项的文本内容                   |
+| 已选择         | 布尔值        | 指示菜单项是否被选中（勾选）       |
+| onSelectChange | 功能          | 选择框状态变化时触发的回调函数     |
+| className      | 字符串        | 用于额外样式的可选名称             |
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,17 +218,13 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性             | 类型          | 描述              |
-| -------------- | ----------- | --------------- |
+| 属性           | 类型        | 描述                           |
+| -------------- | ----------- | ------------------------------ |
 | avatar         | `ReactNode` | 将在菜单项左侧显示的头像或图标 |
-| 文本             | 字符串         | 菜单项的文本内容        |
-| selected       | 布尔值         | 指示菜单项是否被选中（勾选）  |
-| onSelectChange | 功能          | 选择框状态变化时触发的回调函数 |
-| className      | 字符串         | 用于额外样式的可选名称     |
-
-
-
+| 文本           | 字符串      | 菜单项的文本内容               |
+| selected       | 布尔值      | 指示菜单项是否被选中（勾选）   |
+| onSelectChange | 功能        | 选择框状态变化时触发的回调函数 |
+| className      | 字符串      | 用于额外样式的可选名称         |
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性        | 类型            | 描述                |
-| --------- | ------------- | ----------------- |
+| 属性      | 类型          | 描述                               |
+| --------- | ------------- | ---------------------------------- |
 | LeftIcon  | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-| 文本        | 字符串           | 菜单项的文本内容          |
-| onClick   | 功能            | 点击菜单项时触发的回调函数     |
-| className | 字符串           | 用于额外样式的可选名称       |
-
-
-
+| 文本      | 字符串        | 菜单项的文本内容                   |
+| onClick   | 功能          | 点击菜单项时触发的回调函数         |
+| className | 字符串        | 用于额外样式的可选名称             |
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,19 +302,15 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性       | 类型            | 描述                |
-| -------- | ------------- | ----------------- |
+| 属性     | 类型          | 描述                               |
+| -------- | ------------- | ---------------------------------- |
 | LeftIcon | IconComponent | 菜单项中显示在文本前的可选左侧图标 |
-| 文本       | 字符串           | 菜单项的文本内容          |
-| selected | 布尔值           | 指示菜单项是否被选中（勾选）    |
-| 禁用       | 布尔值           | 指示菜单项是否被禁用        |
-| hovered  | 布尔值           | 指示菜单项当前是否被悬停      |
-| onClick  | 功能            | 点击菜单项时触发的回调函数     |
-| 类名       | 字符串           | 用于额外样式的可选名称       |
-
-
-
+| 文本     | 字符串        | 菜单项的文本内容                   |
+| selected | 布尔值        | 指示菜单项是否被选中（勾选）       |
+| 禁用     | 布尔值        | 指示菜单项是否被禁用               |
+| hovered  | 布尔值        | 指示菜单项当前是否被悬停           |
+| onClick  | 功能          | 点击菜单项时触发的回调函数         |
+| 类名     | 字符串        | 用于额外样式的可选名称             |
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -376,26 +346,21 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="属性">
 
-
-| 属性      | 类型          | 描述                   |
-| ------- | ----------- | -------------------- |
-| 头像      | `ReactNode` | 用于显示在菜单项左侧的头像或图标     |
-| 文本      | 字符串         | 菜单项的文本内容             |
-| 已选择     | 布尔值         | 表示菜单项是否被选中（已选）       |
-| 禁用      | 布尔值         | 表示菜单项是否被禁用           |
-| 悬停      | 布尔值         | 表示菜单项是否正被悬停          |
-| 测试ID    | 字符串         | 用于测试目的的data-testid属性 |
-| onClick | 功能          | 点击菜单项时触发的回调函数        |
-| 类名      | 字符串         | 用于额外样式的可选名称          |
-
-
-
+| 属性    | 类型        | 描述                             |
+| ------- | ----------- | -------------------------------- |
+| 头像    | `ReactNode` | 用于显示在菜单项左侧的头像或图标 |
+| 文本    | 字符串      | 菜单项的文本内容                 |
+| 已选择  | 布尔值      | 表示菜单项是否被选中（已选）     |
+| 禁用    | 布尔值      | 表示菜单项是否被禁用             |
+| 悬停    | 布尔值      | 表示菜单项是否正被悬停           |
+| 测试ID  | 字符串      | 用于测试目的的data-testid属性    |
+| onClick | 功能        | 点击菜单项时触发的回调函数       |
+| 类名    | 字符串      | 用于额外样式的可选名称           |
 
 </Tab>
 </Tabs>
@@ -408,11 +373,11 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,19 +397,15 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性      | 类型  | 描述                                                                        |
-| ------- | --- | ------------------------------------------------------------------------- |
-| 颜色      | 字符串 | 菜单项中作为样本显示的主题颜色。 选项包括：`绿色`，`绿松石`，`天蓝`，`蓝色`，`紫色`，`粉红色`，`红色`，`橙色`，`黄色`，`灰色` |
-| 已选择     | 布尔值 | 表示菜单项是否被选中（已选）                                                            |
-| 禁用      | 布尔值 | 表示菜单项是否被禁用                                                                |
-| 悬停      | 布尔值 | 表示菜单项是否正被悬停                                                               |
-| 变体      | 字符串 | 颜色样本的变体。 可以是`默认`或`管道`                                                     |
-| onClick | 功能  | 点击菜单项时触发的回调函数                                                             |
-| 类名      | 字符串 | 用于额外样式的可选名称                                                               |
-
-
-
+| 属性    | 类型   | 描述                                                                                                                          |
+| ------- | ------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| 颜色    | 字符串 | 菜单项中作为样本显示的主题颜色。 选项包括：`绿色`，`绿松石`，`天蓝`，`蓝色`，`紫色`，`粉红色`，`红色`，`橙色`，`黄色`，`灰色` |
+| 已选择  | 布尔值 | 表示菜单项是否被选中（已选）                                                                                                  |
+| 禁用    | 布尔值 | 表示菜单项是否被禁用                                                                                                          |
+| 悬停    | 布尔值 | 表示菜单项是否正被悬停                                                                                                        |
+| 变体    | 字符串 | 颜色样本的变体。 可以是`默认`或`管道`                                                                                         |
+| onClick | 功能   | 点击菜单项时触发的回调函数                                                                                                    |
+| 类名    | 字符串 | 用于额外样式的可选名称                                                                                                        |
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,18 +438,14 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="属性">
 
-
-| 属性     | 类型            | 描述                 |
-| ------ | ------------- | ------------------ |
-| 左侧图标   | IconComponent | 在菜单项文本前显示的可选左侧图标   |
-| 文本     | 字符串           | 菜单项的文本内容           |
-| 已切换    | 布尔值           | 表示开关按钮处于“开”还是“关”状态 |
-| 切换状态变更 | 功能            | 开关状态改变时触发的回调函数     |
-| 切换尺寸   | 字符串           | 开关的尺寸。 它可以是\       |
-| 类名     | 字符串           | 用于额外样式的可选名称        |
-
-
-
+| 属性         | 类型          | 描述                             |
+| ------------ | ------------- | -------------------------------- |
+| 左侧图标     | IconComponent | 在菜单项文本前显示的可选左侧图标 |
+| 文本         | 字符串        | 菜单项的文本内容                 |
+| 已切换       | 布尔值        | 表示开关按钮处于“开”还是“关”状态 |
+| 切换状态变更 | 功能          | 开关状态改变时触发的回调函数     |
+| 切换尺寸     | 字符串        | 开关的尺寸。 它可以是\           |
+| 类名         | 字符串        | 用于额外样式的可选名称           |
 
 </Tab>
 </Tabs>

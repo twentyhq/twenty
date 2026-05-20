@@ -10,8 +10,8 @@ icon: window-maximize
 
 Ön uç bileşenler, Twenty içinde iki konumda işlenebilir:
 
-* **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
-* **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, sayfa düzenlerine widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
+- **Yan panel** — Headless olmayan ön uç bileşenler, sağ taraftaki yan panelde açılır. Bir ön uç bileşeni komut menüsünden tetiklendiğinde varsayılan davranış budur.
+- **Widget'lar (panolar ve kayıt sayfaları)** — Ön uç bileşenler, sayfa düzenlerine widget olarak gömülebilir. Bir pano veya kayıt sayfası düzeni yapılandırılırken kullanıcılar bir ön uç bileşen widget'ı ekleyebilir.
 
 ## Basit örnek
 
@@ -53,8 +53,11 @@ export default defineCommandMenuItem({
 
 `yarn twenty dev` ile senkronize ettikten sonra (veya tek seferlik bir `yarn twenty dev --once` çalıştırdıktan sonra), hızlı işlem sayfanın sağ üst köşesinde görünür:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Sağ üst köşedeki hızlı işlem düğmesi" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Sağ üst köşedeki hızlı işlem düğmesi"
+  />
 </div>
 
 Bileşeni satır içi işlemek için üzerine tıklayın.
@@ -90,7 +93,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -113,10 +119,10 @@ Bileşen `null` döndürdüğü için, Twenty bunun için bir kapsayıcı oluşt
 
 Bunları `twenty-sdk/command` içinden içe aktarın:
 
-* **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
-* **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — `execute` prop'u aracılığıyla async bir geri çağrıyı çalıştırır.
+- **`CommandLink`** — Bir uygulama yoluna gider. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Bir onay modalı açar. Kullanıcı onaylarsa `execute` geri çağrısını yürütür. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Belirli bir yan panel sayfasını açar. Props: `page`, `pageTitle`, `pageIcon`.
 
 `Command` kullanarak komut menüsünden bir eylem çalıştıran headless bir ön bileşenin tam örneği:
 
@@ -299,7 +305,10 @@ Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. B
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  numberOfSelectedRecords,
+} from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -384,10 +393,7 @@ export default defineCommandMenuItem({
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
-import {
-  objectPermissions,
-  everyEquals,
-} from 'twenty-sdk/front-component';
+import { objectPermissions, everyEquals } from 'twenty-sdk/front-component';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -460,12 +466,12 @@ Ayrıntılar için [genel varlıklar bölümüne](/l/tr/developers/extend/apps/c
 
 Ön uç bileşenleri birden fazla biçimlendirme yaklaşımını destekler. Şunları kullanabilirsiniz:
 
-* **Satır içi stiller** — `style={{ color: 'red' }}`
-* **Twenty UI bileşenleri** — `twenty-sdk/ui` içinden içe aktarın (Button, Tag, Status, Chip, Avatar ve daha fazlası)
-* **Emotion** — `@emotion/react` ile CSS-in-JS
-* **Styled-components** — `styled.div` kalıpları
-* **Tailwind CSS** — yardımcı sınıflar
-* **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
+- **Satır içi stiller** — `style={{ color: 'red' }}`
+- **Twenty UI bileşenleri** — `twenty-sdk/ui` içinden içe aktarın (Button, Tag, Status, Chip, Avatar ve daha fazlası)
+- **Emotion** — `@emotion/react` ile CSS-in-JS
+- **Styled-components** — `styled.div` kalıpları
+- **Tailwind CSS** — yardımcı sınıflar
+- **React ile uyumlu herhangi bir CSS-in-JS kitaplığı**
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

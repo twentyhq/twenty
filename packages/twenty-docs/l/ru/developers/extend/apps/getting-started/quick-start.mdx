@@ -6,9 +6,9 @@ description: Создайте своё первое приложение Twenty 
 
 ## Требования
 
-* **Node.js 24+** — [Скачать здесь](https://nodejs.org/)
-* **Yarn 4** — поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
-* **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Пропустите, если у вас уже запущен Twenty в другом месте.
+- **Node.js 24+** — [Скачать здесь](https://nodejs.org/)
+- **Yarn 4** — поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
+- **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Пропустите, если у вас уже запущен Twenty в другом месте.
 
 Создание приложения Twenty включает три фазы. Генератор каркаса объединяет их в одну команду для идеального сценария (happy path), но каждая фаза — отдельная концепция: когда что-то идёт не так, понимание того, на какой фазе вы находитесь, подскажет, что исправить.
 
@@ -42,38 +42,52 @@ npx create-twenty-app@latest my-twenty-app
 
 > **Хотите настроить локальный экземпляр Twenty?**
 
-* **Да (рекомендуется)** — скачивает Docker-образ `twentycrm/twenty-app-dev` и запускает его на порту `2020`. Сначала убедитесь, что Docker запущен.
-* **Нет** — выберите это, если у вас уже есть сервер Twenty, к которому вы хотите подключиться. Позже вы можете подключить его с помощью `yarn twenty remote:add`.
+- **Да (рекомендуется)** — скачивает Docker-образ `twentycrm/twenty-app-dev` и запускает его на порту `2020`. Сначала убедитесь, что Docker запущен.
+- **Нет** — выберите это, если у вас уже есть сервер Twenty, к которому вы хотите подключиться. Позже вы можете подключить его с помощью `yarn twenty remote:add`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Запустить локальный экземпляр?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Запустить локальный экземпляр?"
+  />
 </div>
 
 Когда сервер будет запущен, откроется браузер для входа. Используйте предварительно созданную демонстрационную учётную запись:
 
-* **Электронная почта:** `tim@apple.dev`
-* **Пароль:** `tim@apple.dev`
+- **Электронная почта:** `tim@apple.dev`
+- **Пароль:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Экран входа в Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Экран входа в Twenty"
+  />
 </div>
 
 На следующем экране нажмите **Authorize** — это даст CLI доступ к вашему рабочему пространству.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Экран авторизации Twenty CLI" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Экран авторизации Twenty CLI"
+  />
 </div>
 
 В вашем терминале появится подтверждение, что всё настроено.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Каркас приложения успешно создан" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Каркас приложения успешно создан"
+  />
 </div>
 
 **После этой фазы:** у вас запущен сервер Twenty на [http://localhost:2020](http://localhost:2020), а ваш CLI авторизован для синхронизации с ним.
 
 <Note>
-Если Docker не установлен или не запущен, генератор каркаса подскажет правильную команду запуска для вашей ОС. Когда Docker будет запущен, вы можете продолжить с `yarn twenty docker:start` — заново генерировать каркас не нужно.
+  Если Docker не установлен или не запущен, генератор каркаса подскажет
+  правильную команду запуска для вашей ОС. Когда Docker будет запущен, вы можете
+  продолжить с `yarn twenty docker:start` — заново генерировать каркас не нужно.
 </Note>
 
 ---
@@ -91,26 +105,38 @@ yarn twenty dev
 
 Для более подробного вывода (журналы сборки, запросы синхронизации, трассировки ошибок) добавьте `--verbose`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Вывод терминала в режиме разработки" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.png"
+    alt="Вывод терминала в режиме разработки"
+  />
 </div>
 
 Откройте [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Вы должны увидеть своё приложение в разделе **Your Apps**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Список Your Apps с приложением My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Список Your Apps с приложением My twenty app"
+  />
 </div>
 
 Нажмите **My twenty app**, чтобы открыть его регистрацию приложения — запись на уровне сервера, описывающую ваше приложение (имя, идентификатор, учётные данные OAuth, источник). Одну и ту же регистрацию можно установить в нескольких рабочих пространствах на одном сервере.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Сведения о регистрации приложения" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Сведения о регистрации приложения"
+  />
 </div>
 
 Нажмите **View installed app**, чтобы посмотреть установку в рабочем пространстве. Вкладка **About** показывает версию и параметры управления.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Установленное приложение" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Установленное приложение"
+  />
 </div>
 
 **После этой фазы:** у вас есть интерактивный цикл разработки. Отредактируйте любой файл в `src/`, и он появится в интерфейсе.
@@ -132,11 +158,11 @@ yarn twenty dev --once
 
 ### Параметры режима разработки
 
-| Флаг                                  | Описание                                                                              |
-| ------------------------------------- | ------------------------------------------------------------------------------------- |
-| `--once`                              | Выполнить сборку и синхронизацию один раз, затем завершить работу.                    |
-| `--debounceMs \<ms>` | Установить задержку дебаунса изменений файлов в миллисекундах (по умолчанию: `2000`). |
-| `--verbose` / `--debug`               | Показывать подробные журналы сборки, запросы синхронизации и трассировки ошибок.      |
+| Флаг                    | Описание                                                                              |
+| ----------------------- | ------------------------------------------------------------------------------------- |
+| `--once`                | Выполнить сборку и синхронизацию один раз, затем завершить работу.                    |
+| `--debounceMs \<ms>`    | Установить задержку дебаунса изменений файлов в миллисекундах (по умолчанию: `2000`). |
+| `--verbose` / `--debug` | Показывать подробные журналы сборки, запросы синхронизации и трассировки ошибок.      |
 
 ## Что вы можете создать
 
@@ -156,19 +182,40 @@ yarn twenty dev --once
 ## Следующие шаги
 
 <CardGroup cols={2}>
-  <Card title="Конфигурация" icon="screwdriver-wrench" href="/l/ru/developers/extend/apps/config/overview">
-    Идентификация приложения, роль по умолчанию, хуки установки, публичные ресурсы.
+  <Card
+    title="Конфигурация"
+    icon="screwdriver-wrench"
+    href="/l/ru/developers/extend/apps/config/overview"
+  >
+    Идентификация приложения, роль по умолчанию, хуки установки, публичные
+    ресурсы.
   </Card>
-  <Card title="Данные" icon="database" href="/l/ru/developers/extend/apps/data/overview">
+  <Card
+    title="Данные"
+    icon="database"
+    href="/l/ru/developers/extend/apps/data/overview"
+  >
     Объекты, поля и двунаправленные связи.
   </Card>
-  <Card title="Логика" icon="bolt" href="/l/ru/developers/extend/apps/logic/overview">
+  <Card
+    title="Логика"
+    icon="bolt"
+    href="/l/ru/developers/extend/apps/logic/overview"
+  >
     Логические функции, навыки, агенты и OAuth-подключения.
   </Card>
-  <Card title="Макет" icon="table-columns" href="/l/ru/developers/extend/apps/layout/overview">
+  <Card
+    title="Макет"
+    icon="table-columns"
+    href="/l/ru/developers/extend/apps/layout/overview"
+  >
     Представления, навигация, макеты страниц, фронтенд-компоненты.
   </Card>
-  <Card title="Операции" icon="rocket" href="/l/ru/developers/extend/apps/operations/overview">
+  <Card
+    title="Операции"
+    icon="rocket"
+    href="/l/ru/developers/extend/apps/operations/overview"
+  >
     CLI, тестирование, удалённые серверы, CI и публикация вашего приложения.
   </Card>
 </CardGroup>

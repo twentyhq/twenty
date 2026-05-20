@@ -5,9 +5,9 @@ description: Controlați accesul la obiecte, câmpuri și setări cu permisiuni 
 
 Sistemul de permisiuni al Twenty vă permite să controlați accesul la trei domenii principale:
 
-* **Obiecte și Câmpuri**: Controlați cine poate vizualiza, edita sau șterge înregistrările și câmpurile individuale
-* **Setări**: Gestionați accesul la configurația workspace-ului și funcțiile administrative
-* **Acțiuni**: Controlați acțiunile generale ale workspace-ului cum ar fi importarea datelor sau trimiterea e-mailurilor
+- **Obiecte și Câmpuri**: Controlați cine poate vizualiza, edita sau șterge înregistrările și câmpurile individuale
+- **Setări**: Gestionați accesul la configurația workspace-ului și funcțiile administrative
+- **Acțiuni**: Controlați acțiunile generale ale workspace-ului cum ar fi importarea datelor sau trimiterea e-mailurilor
 
 ## Creează Rol
 
@@ -29,16 +29,19 @@ Pentru a șterge un rol:
 4. Faceți clic pe **Confirmă** în fereastra modală
 
 <Note>
-Dacă un rol este șters, orice membru al workspace-ului alocat acestuia va fi reatribuit automat rolului implicit. Toate, cu excepția rolului **Admin**, pot fi șterse. Trebuie să existe întotdeauna cel puțin un membru alocat rolului **Admin**.
+  Dacă un rol este șters, orice membru al workspace-ului alocat acestuia va fi
+  reatribuit automat rolului implicit. Toate, cu excepția rolului **Admin**, pot
+  fi șterse. Trebuie să existe întotdeauna cel puțin un membru alocat rolului
+  **Admin**.
 </Note>
 
 ## Atribuiți Roluri Membrilor
 
 ### Vizualizați Atribuirile Curente
 
-* Accesați **Setări → Membri → Roluri**
-* Vedeți toate rolurile și câți membri sunt alocați fiecăruia
-* Vizualizați ce membri au ce roluri
+- Accesați **Setări → Membri → Roluri**
+- Vedeți toate rolurile și câți membri sunt alocați fiecăruia
+- Vizualizați ce membri au ce roluri
 
 ### Atribuiți un Rol unui Membru
 
@@ -57,7 +60,9 @@ Dacă un rol este șters, orice membru al workspace-ului alocat acestuia va fi r
 4. Noii membri ai workspace-ului vor primi acest rol când se alătură
 
 <Note>
-Puteți atribui roluri doar membrilor existenți ai workspace-ului. Pentru a invita noi membri, utilizați [Gestionarea Membrelor](/l/ro/user-guide/settings/capabilities/member-management).
+  Puteți atribui roluri doar membrilor existenți ai workspace-ului. Pentru a
+  invita noi membri, utilizați [Gestionarea
+  Membrelor](/l/ro/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizați Permisiunile
@@ -82,7 +87,9 @@ Mai întâi, configurați permisiunile de bază care se aplică în mod implicit
 Selectați sau deselectați în funcție de comportamentul implicit dorit pentru acest rol.
 
 <Note>
-**Exemplu — rol Intern**: Un intern ar trebui să poată vedea toate obiectele, dar să nu le poată edita în mod implicit. Activați "See Records on All Objects", dar lăsați "Edit Records on All Objects" debifat.
+  **Exemplu — rol Intern**: Un intern ar trebui să poată vedea toate obiectele,
+  dar să nu le poată edita în mod implicit. Activați "See Records on All
+  Objects", dar lăsați "Edit Records on All Objects" debifat.
 </Note>
 
 #### Adăugați excepții la nivel de obiect
@@ -112,8 +119,8 @@ Faceți clic pe **+ Add rule** și selectați un obiect pentru a crea o excepți
 
 Pentru rolul Intern cu acces de editare la People, este posibil să doriți să restricționați anumite câmpuri:
 
-* People → Email → doar **Vezi câmp** (nu poate edita)
-* People → Address → **Fără acces** (complet ascuns)
+- People → Email → doar **Vezi câmp** (nu poate edita)
+- People → Address → **Fără acces** (complet ascuns)
 
 Acest lucru îi permite internului să editeze majoritatea câmpurilor People, protejând în același timp informațiile sensibile.
 
@@ -141,19 +148,21 @@ Când ați terminat, faceți clic pe **Finalizare**, apoi **Salvare** odată ce 
 
 Controlați accesul la setările workspace-ului în două moduri:
 
-* Comutați **Setări Tot Acces** pentru a oferi acces complet
-* Sau activați permisiuni specifice (de ex., generarea de chei API, preferințele workspace-ului, atribuirea de roluri, configurația modelului de date, setările de securitate și gestionarea fluxurilor de lucru)
+- Comutați **Setări Tot Acces** pentru a oferi acces complet
+- Sau activați permisiuni specifice (de ex., generarea de chei API, preferințele workspace-ului, atribuirea de roluri, configurația modelului de date, setările de securitate și gestionarea fluxurilor de lucru)
 
 <Note>
-**Limitare actuală**: Accesul la gestionarea fluxurilor de lucru este în prezent necesar pentru a declanșa manual fluxurile de lucru. Acest comportament se poate schimba în versiunile viitoare.
+  **Limitare actuală**: Accesul la gestionarea fluxurilor de lucru este în
+  prezent necesar pentru a declanșa manual fluxurile de lucru. Acest
+  comportament se poate schimba în versiunile viitoare.
 </Note>
 
 ### Permisiuni de Acțiune în Workspace
 
 Controlați accesul la acțiunile generale ale workspace-ului:
 
-* Comutați **Aplicare Tot Acces** pentru a oferi permisiuni complete
-* Sau activați acțiuni individuale cum ar fi **Trimite E-mail**, **Importă CSV** și **Exportă CSV**
+- Comutați **Aplicare Tot Acces** pentru a oferi permisiuni complete
+- Sau activați acțiuni individuale cum ar fi **Trimite E-mail**, **Importă CSV** și **Exportă CSV**
 
 ## Atribuirea de roluri pentru chei API și agenți AI
 
@@ -161,10 +170,10 @@ Pe lângă membrii workspace-ului, rolurile pot fi atribuite și cheilor API și
 
 ### De ce să atribuiți roluri cheilor API și agenților AI?
 
-* **Securitate**: Limitați ceea ce pot accesa sau modifica procesele automate
-* **Conformitate**: Asigurați-vă că integrările accesează doar datele de care au nevoie
-* **Control**: Preveniți modificările accidentale ale datelor cauzate de automatizări configurate greșit
-* **Auditabilitate**: Urmăriți ce acțiuni au fost efectuate de fiecare integrare sau agent
+- **Securitate**: Limitați ceea ce pot accesa sau modifica procesele automate
+- **Conformitate**: Asigurați-vă că integrările accesează doar datele de care au nevoie
+- **Control**: Preveniți modificările accidentale ale datelor cauzate de automatizări configurate greșit
+- **Auditabilitate**: Urmăriți ce acțiuni au fost efectuate de fiecare integrare sau agent
 
 ### Atribuiți un rol unei chei API
 
@@ -178,7 +187,9 @@ Pe lângă membrii workspace-ului, rolurile pot fi atribuite și cheilor API și
 Cheia API va moșteni acum toate permisiunile definite de acel rol. Orice apeluri API efectuate cu această cheie vor fi restricționate în consecință.
 
 <Note>
-Cheile API fără un rol atribuit folosesc permisiunile implicite. Pentru o securitate sporită, atribuiți întotdeauna un rol specific cheilor API din producție.
+  Cheile API fără un rol atribuit folosesc permisiunile implicite. Pentru o
+  securitate sporită, atribuiți întotdeauna un rol specific cheilor API din
+  producție.
 </Note>
 
 ### Atribuiți un rol unui agent AI
@@ -193,5 +204,7 @@ Cheile API fără un rol atribuit folosesc permisiunile implicite. Pentru o secu
 Agentul AI va putea accesa date și executa doar acțiunile permise de rolul său atribuit.
 
 <Note>
-Pentru agenții AI care rulează în cadrul fluxurilor de lucru, acest lucru asigură că agentul nu poate accesa sau modifica date în afara ariei sale intenționate — chiar dacă fluxul de lucru are permisiuni mai largi.
+  Pentru agenții AI care rulează în cadrul fluxurilor de lucru, acest lucru
+  asigură că agentul nu poate accesa sau modifica date în afara ariei sale
+  intenționate — chiar dacă fluxul de lucru are permisiuni mai largi.
 </Note>

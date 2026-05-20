@@ -13,16 +13,15 @@ Un selettore di icone basato su menu a tendina che consente agli utenti di scegl
 <Tab title="Utilizzo">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MyComponent = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Selected Icon:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Props">
-
 
 | Proprietà              | Tipo     | Descrizione                                                                                                                |
 | ---------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------- |
@@ -49,9 +46,6 @@ export const MyComponent = () => {
 | onClose                | funzione | Funzione di callback attivata quando il menu a tendina viene chiuso                                                        |
 | onOpen                 | funzione | Funzione di callback attivata quando il menu a tendina viene aperto                                                        |
 | variante               | stringa  | La variante di stile visivo dell'icona cliccabile. Le opzioni includono: `primario`, `secondario` e `terziario`            |
-
-
-
 
 </Tab>
 </Tabs>

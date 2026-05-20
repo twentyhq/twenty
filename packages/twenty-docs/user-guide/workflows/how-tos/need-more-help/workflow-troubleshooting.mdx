@@ -3,7 +3,6 @@ title: Workflow Troubleshooting
 description: Common workflow issues and how to resolve them.
 ---
 
-
 ## Common Issues and Solutions
 
 ### Workflow Not Triggering
@@ -11,12 +10,14 @@ description: Common workflow issues and how to resolve them.
 **Symptoms**: Your workflow doesn't run when you expect it to.
 
 **Possible Causes**:
+
 1. **Workflow not activated**: Ensure the workflow is set to "Active" not "Draft"
 2. **Trigger conditions not met**: Verify the trigger matches your expected event
 3. **Field not monitored**: For "Record is Updated" triggers, ensure the specific field is being watched
 4. **Permissions**: Check you have permission to run workflows
 
 **Solutions**:
+
 - Verify workflow status in the workflow list
 - Test with the specific action you expect to trigger it
 - Review trigger configuration
@@ -29,16 +30,20 @@ description: Common workflow issues and how to resolve them.
 **Why this happens**: Twenty saves everything in real-time — there's no separate "edit" vs "read" mode. When you create a record, it's saved immediately, triggering the "Record is created" event before you can fill in additional fields.
 
 **When "Record is created" works well**:
+
 - Records created via API calls (fields are populated in a single request)
 - Records created via import
 - Automated record creation from other workflows
 
 **Solution**: For records created manually in the UI, use **"Record is created or updated"** as your trigger instead. This way:
+
 - The workflow triggers after the user has finished filling in and saving the fields
 - You get the complete data rather than empty values
 
 <Tip>
-If you only want the workflow to run once per record, add a Filter action to check a field like `createdAt equals updatedAt` (first save) or use a custom checkbox field to track if the workflow has already run.
+  If you only want the workflow to run once per record, add a Filter action to
+  check a field like `createdAt equals updatedAt` (first save) or use a custom
+  checkbox field to track if the workflow has already run.
 </Tip>
 
 ### Actions Failing
@@ -46,12 +51,14 @@ If you only want the workflow to run once per record, add a Filter action to che
 **Symptoms**: Workflow runs but some actions fail.
 
 **Possible Causes**:
+
 1. **Missing data**: Required fields are empty
 2. **Invalid references**: Variables from previous steps don't exist
 3. **API errors**: External services returning errors
 4. **Permission issues**: Action requires permissions you don't have
 
 **Solutions**:
+
 - Check the workflow run details for error messages
 - Verify all required fields have values
 - Test API connections independently
@@ -62,6 +69,7 @@ If you only want the workflow to run once per record, add a Filter action to che
 **Symptoms**: HTTP Request actions fail or return unexpected results.
 
 **Common Error Codes**:
+
 - **400**: Bad request - check your request body format
 - **401**: Unauthorized - verify API key
 - **403**: Forbidden - check API permissions
@@ -70,6 +78,7 @@ If you only want the workflow to run once per record, add a Filter action to che
 - **500**: Server error - external service issue
 
 **Solutions**:
+
 - Verify API endpoint URL
 - Check authentication headers
 - Test the API call outside of Twenty first
@@ -80,12 +89,14 @@ If you only want the workflow to run once per record, add a Filter action to che
 **Symptoms**: JavaScript code fails to execute.
 
 **Common Issues**:
+
 1. **Syntax errors**: Typos or invalid JavaScript
 2. **Undefined variables**: Referencing variables that don't exist
 3. **Type errors**: Operations on wrong data types
 4. **Timeouts**: Code taking too long to execute
 
 **Solutions**:
+
 - Use the built-in code editor validation
 - Test code logic in a JavaScript console first
 - Add console.log statements for debugging
@@ -96,12 +107,14 @@ If you only want the workflow to run once per record, add a Filter action to che
 **Symptoms**: Send Email action doesn't deliver emails.
 
 **Possible Causes**:
+
 1. **No email account connected**: Check Settings → Accounts
 2. **Invalid email address**: Recipient email is malformed
 3. **Sending limits**: Email provider rate limits reached
 4. **Spam filters**: Emails being blocked
 
 **Solutions**:
+
 - Verify email account connection
 - Validate recipient email addresses
 - Check email provider limits
@@ -138,18 +151,21 @@ Verify that each step receives the expected input data.
 ## Best Practices to Avoid Issues
 
 ### Before Activation
+
 - Test thoroughly in draft mode
 - Validate all API connections
 - Review trigger conditions carefully
 - Document expected behavior
 
 ### During Development
+
 - Use descriptive step names
 - Add comments in Code actions
 - Test with realistic data
 - Plan for edge cases
 
 ### After Activation
+
 - Monitor initial runs closely
 - Set up alerts for failures
 - Review run history regularly

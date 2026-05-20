@@ -7,16 +7,18 @@ Twenty doesn't yet support native formula fields yet (coming in 2026), but you c
 
 ## Common Use Cases
 
-| Use Case | Formula Example |
-|----------|-----------------|
-| **Full name** | First Name + " " + Last Name |
-| **Expected amount** | Amount × Probability |
-| **Days until due** | Due Date - Today |
-| **Days in stage** | Today - Stage Entry Date |
-| **Lead score** | Points based on multiple criteria |
+| Use Case            | Formula Example                   |
+| ------------------- | --------------------------------- |
+| **Full name**       | First Name + " " + Last Name      |
+| **Expected amount** | Amount × Probability              |
+| **Days until due**  | Due Date - Today                  |
+| **Days in stage**   | Today - Stage Entry Date          |
+| **Lead score**      | Points based on multiple criteria |
 
 <Tip>
-For a complete example of tracking time in pipeline stages, see [Track How Long Opportunities Stay in Each Stage](/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  For a complete example of tracking time in pipeline stages, see [Track How
+  Long Opportunities Stay in Each
+  Stage](/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Basic Formula: Concatenation
@@ -37,9 +39,7 @@ For a complete example of tracking time in pipeline stages, see [Track How Long 
 export const main = async (params) => {
   const { firstName, lastName } = params;
 
-  const fullName = [firstName, lastName]
-    .filter(Boolean)
-    .join(' ');
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   return { fullName };
 };
@@ -65,7 +65,7 @@ See [How to Show Expected Amount in Pipeline](/user-guide/views-pipelines/how-to
 export const main = async (params) => {
   const { amount, probability } = params;
 
-  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+  const expectedAmount = ((amount || 0) * (probability || 0)) / 100;
 
   return { expectedAmount };
 };
@@ -105,7 +105,8 @@ export const main = async (params) => {
 3. **Update Record**: Set Days Until Due to `{{code.daysUntilDue}}`
 
 <Note>
-Negative values indicate overdue tasks. You can use this field to filter or sort tasks by urgency.
+  Negative values indicate overdue tasks. You can use this field to filter or
+  sort tasks by urgency.
 </Note>
 
 ## Conditional Formula: Lead Score
@@ -178,16 +179,19 @@ export const main = async (params) => {
 ## Best Practices
 
 ### Performance
+
 - Only trigger on relevant field changes
 - Use filters to skip records that don't need calculation
 - Avoid complex calculations in high-volume workflows
 
 ### Error Handling
+
 - Check for null/undefined values before calculations
 - Use default values when data is missing
 - Return clear error messages when calculations fail
 
 ### Testing
+
 - Test with edge cases (empty fields, zero values)
 - Verify calculations manually before activating
 - Monitor workflow runs for unexpected results

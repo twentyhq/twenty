@@ -4,7 +4,10 @@ icon: circle-dot
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="Intestazione" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="Intestazione"
+  />
 </Frame>
 
 Utilizzato quando gli utenti possono scegliere solo un'opzione da una serie di opzioni.
@@ -13,18 +16,16 @@ Utilizzato quando gli utenti possono scegliere solo un'opzione da una serie di o
 <Tab title="Utilizzo">
 
 ```jsx
-import { Radio } from "twenty-ui/display";
+import { Radio } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   const handleRadioChange = (event) => {
-    console.log("Radio button changed:", event.target.checked);
+    console.log('Radio button changed:', event.target.checked);
   };
 
   const handleCheckedChange = (checked) => {
-    console.log("Checked state changed:", checked);
+    console.log('Checked state changed:', checked);
   };
-
 
   return (
     <Radio
@@ -38,13 +39,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="Props">
-
 
 | Props              | Tipo                  | Descrizione                                                                                                  |
 | ------------------ | --------------------- | ------------------------------------------------------------------------------------------------------------ |
@@ -58,9 +56,6 @@ export const MyComponent = () => {
 | disabilitato       | booleano              | Se `true`, il pulsante di opzione è disabilitato e non cliccabile                                            |
 | posizioneEtichetta | stringa               | La posizione del testo dell'etichetta rispetto al pulsante di opzione. Ha due opzioni: `sinistra` e `destra` |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -72,17 +67,16 @@ Raggruppa insieme pulsanti di opzione correlati.
 <Tab title="Utilizzo">
 
 ```jsx
-import React, { useState } from "react";
-import { Radio, RadioGroup } from "twenty-ui/display";
+import React, { useState } from 'react';
+import { Radio, RadioGroup } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
-  const [selectedValue, setSelectedValue] = useState("Option 1");
+  const [selectedValue, setSelectedValue] = useState('Option 1');
 
   const handleChange = (event) => {
     setSelectedValue(event.target.value);
   };
-  
+
   return (
     <RadioGroup value={selectedValue} onChange={handleChange}>
       <Radio value="Option 1" />
@@ -91,12 +85,10 @@ export const MyComponent = () => {
     </RadioGroup>
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Proprietà">
-
 
 | Proprietà     | Tipo              | Descrizione                                                                      |
 | ------------- | ----------------- | -------------------------------------------------------------------------------- |
@@ -104,9 +96,6 @@ export const MyComponent = () => {
 | onChange      | funzione          | La funzione di callback attivata quando il pulsante di opzione cambia            |
 | onValueChange | funzione          | La funzione di callback attivata quando cambia il valore selezionato nel gruppo. |
 | figli         | `React.ReactNode` | Consente di passare componenti React (come Radio) come figli al Gruppo di Radio  |
-
-
-
 
 </Tab>
 

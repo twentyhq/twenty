@@ -6,11 +6,14 @@ description: Collega record in cui molti elementi su entrambi i lati possono ess
 Le relazioni molti-a-molti ti consentono di collegare più record su entrambi i lati. Ad esempio: molte Persone possono lavorare su molti Progetti, e ogni Progetto può avere molte Persone.
 
 <Warning>
-**Funzionalità Lab**: Le relazioni di giunzione sono attualmente nel Lab. Abilita le in **Impostazioni → Aggiornamenti → Lab** prima di seguire questa guida.
+  **Funzionalità Lab**: Le relazioni di giunzione sono attualmente nel Lab.
+  Abilita le in **Impostazioni → Aggiornamenti → Lab** prima di seguire questa
+  guida.
 </Warning>
 
 <Note>
-Questa funzionalità richiede anche che la **Modalità avanzata** sia abilitata (tramite l'interruttore in basso a destra nelle Impostazioni).
+  Questa funzionalità richiede anche che la **Modalità avanzata** sia abilitata
+  (tramite l'interruttore in basso a destra nelle Impostazioni).
 </Note>
 
 ## Quando usare le relazioni molti-a-molti
@@ -33,8 +36,8 @@ People ←→ Project Assignments ←→ Projects
 
 L'oggetto **Assegnazioni ai progetti** (di giunzione) ha:
 
-* Una relazione con Persone (molti-a-uno)
-* Una relazione con Progetti (molti-a-uno)
+- Una relazione con Persone (molti-a-uno)
+- Una relazione con Progetti (molti-a-uno)
 
 Quando abiliti l'interruttore della relazione di giunzione, Twenty mostra direttamente i record collegati invece di visualizzare i record intermedi di giunzione.
 
@@ -43,8 +46,8 @@ Quando abiliti l'interruttore della relazione di giunzione, Twenty mostra dirett
 1. **Abilita le relazioni di giunzione in Lab**: Vai a **Impostazioni → Aggiornamenti → Lab** e abilita **Relazioni di giunzione**
 2. **Abilita la Modalità avanzata**: Attiva la **Modalità avanzata** in basso a destra nella barra laterale di Impostazioni
 3. Pianifica il tuo modello di dati:
-   * Quali due oggetti stai collegando?
-   * Come dovrebbe chiamarsi l'oggetto di giunzione?
+   - Quali due oggetti stai collegando?
+   - Come dovrebbe chiamarsi l'oggetto di giunzione?
 
 ## Passaggio 1: Crea l'oggetto di giunzione
 
@@ -55,12 +58,17 @@ Per prima cosa, crea l'oggetto intermedio che conterrà i collegamenti.
 3. Assegnagli un nome descrittivo (ad es., "Assegnazione al progetto", "Membro del team", "Ordine del prodotto")
 4. Attiva l'opzione "Salta la creazione di un campo Nome"
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="Nuovo oggetto pivot" />
+<img
+  src="/images/user-guide/fields/new-pivot-object.png"
+  alt="Nuovo oggetto pivot"
+/>
 
 5. Clicca su **Salva**
 
 <Tip>
-**Convenzione di denominazione**: Usa un nome che descriva la relazione, come "Assegnazione al progetto" o "Appartenenza al team". Questo rende il modello di dati più facile da comprendere.
+  **Convenzione di denominazione**: Usa un nome che descriva la relazione, come
+  "Assegnazione al progetto" o "Appartenenza al team". Questo rende il modello
+  di dati più facile da comprendere.
 </Tip>
 
 ## Passaggio 2: Crea relazioni tra gli oggetti e l'oggetto di giunzione
@@ -74,8 +82,8 @@ Aggiungi campi di relazione da ciascuno dei due oggetti all'oggetto di giunzione
 3. Seleziona l'oggetto di giunzione (ad es., "Assegnazioni al progetto")
 4. Imposta il tipo di relazione su **Uno-a-molti** (una persona può collegarsi a molte assegnazioni)
 5. Assegna un nome ai campi:
-   * Campo su Persone: ad es., "Assegnazioni ai progetti"
-   * Campo sull'oggetto di giunzione: ad es., "Persona"
+   - Campo su Persone: ad es., "Assegnazioni ai progetti"
+   - Campo sull'oggetto di giunzione: ad es., "Persona"
 6. Clicca su **Salva**
 
 ### Seconda relazione (Oggetto B → Oggetto di giunzione)
@@ -86,11 +94,14 @@ Aggiungi campi di relazione da ciascuno dei due oggetti all'oggetto di giunzione
 4. Imposta il tipo di relazione su **Uno-a-molti** (un progetto può collegarsi a molte assegnazioni)
 5. Abilita **"Questa è una relazione con un oggetto di giunzione"**
 
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/junction-relation-toggle.png"
+  style={{ width: '100%' }}
+/>
 
 6. Assegna un nome ai campi:
-   * Campo sull'oggetto di giunzione: ad es., "Progetto"
-   * Campo su Progetti: ad es., "Membri del team"
+   - Campo sull'oggetto di giunzione: ad es., "Progetto"
+   - Campo su Progetti: ad es., "Membri del team"
 7. Clicca su **Salva**
 
 ## Passaggio 3: Configura la visualizzazione della relazione di giunzione
@@ -109,8 +120,8 @@ Ora configura gli oggetti sorgente per visualizzare direttamente i record colleg
 
 Dopo la configurazione:
 
-* In un record **Persona**, il campo "Assegnazioni ai progetti" mostra direttamente i **Progetti** (non i record di assegnazione)
-* In un record **Progetto**, il campo "Membri del team" mostra direttamente le **Persone**
+- In un record **Persona**, il campo "Assegnazioni ai progetti" mostra direttamente i **Progetti** (non i record di assegnazione)
+- In un record **Progetto**, il campo "Membri del team" mostra direttamente le **Persone**
 
 L'oggetto di giunzione esiste ancora e memorizza i collegamenti, ma l'interfaccia utente presenta una vista molti-a-molti più pulita.
 
@@ -120,56 +131,56 @@ Ecco una procedura completa:
 
 ### Crea l'oggetto di giunzione
 
-* Nome: **Assegnazione al progetto**
-* Descrizione: "Collega le persone ai progetti su cui lavorano"
+- Nome: **Assegnazione al progetto**
+- Descrizione: "Collega le persone ai progetti su cui lavorano"
 
 ### Aggiungi relazioni
 
 1. **Persone → Assegnazione al progetto**
-   * Tipo: Uno-a-molti
-   * Campo su Persone: "Assegnazioni ai progetti"
-   * Campo su Assegnazione: "Persona"
+   - Tipo: Uno-a-molti
+   - Campo su Persone: "Assegnazioni ai progetti"
+   - Campo su Assegnazione: "Persona"
 
 2. **Progetti → Assegnazione al progetto**
-   * Tipo: Uno-a-molti
-   * Campo su Progetti: "Membri del team"
-   * Campo su Assegnazione: "Progetto"
+   - Tipo: Uno-a-molti
+   - Campo su Progetti: "Membri del team"
+   - Campo su Assegnazione: "Progetto"
 
 ### Configura la visualizzazione della giunzione
 
 1. Sull'oggetto **Persone**:
-   * Modifica il campo "Assegnazioni ai progetti"
-   * Abilita l'interruttore di giunzione
-   * Destinazione: "Progetto"
+   - Modifica il campo "Assegnazioni ai progetti"
+   - Abilita l'interruttore di giunzione
+   - Destinazione: "Progetto"
 
 2. Sull'oggetto **Progetti**:
-   * Modifica il campo "Membri del team"
-   * Abilita l'interruttore di giunzione
-   * Destinazione: "Persona"
+   - Modifica il campo "Membri del team"
+   - Abilita l'interruttore di giunzione
+   - Destinazione: "Persona"
 
 ### Usalo
 
-* Apri un record Persona → vedi direttamente i relativi Progetti
-* Apri un record Progetto → vedi direttamente i membri del team
-* Crea nuove connessioni da entrambi i lati
+- Apri un record Persona → vedi direttamente i relativi Progetti
+- Apri un record Progetto → vedi direttamente i membri del team
+- Crea nuove connessioni da entrambi i lati
 
 ## Aggiungere dati alle connessioni
 
 Poiché l'oggetto di giunzione è un vero oggetto, puoi aggiungere campi personalizzati per memorizzare informazioni sulla relazione:
 
-* **Ruolo**: "Sviluppatore", "Designer", "Responsabile"
-* **Data di inizio**: quando si sono uniti al progetto
-* **Ore assegnate**: ore settimanali su questo progetto
+- **Ruolo**: "Sviluppatore", "Designer", "Responsabile"
+- **Data di inizio**: quando si sono uniti al progetto
+- **Ore assegnate**: ore settimanali su questo progetto
 
 Per accedere a questi dati, vai direttamente all'oggetto di giunzione oppure interrogalo tramite l'API.
 
 ## Limitazioni
 
-* **Importazione/Esportazione CSV**: L'importazione diretta di relazioni molti-a-molti non è supportata. Importa invece i record nell'oggetto di giunzione.
-* **Filtri**: Il filtraggio in base a relazioni molti-a-molti potrebbe avere opzioni limitate.
+- **Importazione/Esportazione CSV**: L'importazione diretta di relazioni molti-a-molti non è supportata. Importa invece i record nell'oggetto di giunzione.
+- **Filtri**: Il filtraggio in base a relazioni molti-a-molti potrebbe avere opzioni limitate.
 
 ## Correlati
 
-* [Campi di relazione](/l/it/user-guide/data-model/capabilities/relation-fields) — tipi di relazione spiegati
-* [Crea oggetti personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-objects) — come creare oggetti
-* [Crea campi di relazione](/l/it/user-guide/data-model/how-tos/create-relation-fields) — configurazione di base della relazione
+- [Campi di relazione](/l/it/user-guide/data-model/capabilities/relation-fields) — tipi di relazione spiegati
+- [Crea oggetti personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-objects) — come creare oggetti
+- [Crea campi di relazione](/l/it/user-guide/data-model/how-tos/create-relation-fields) — configurazione di base della relazione

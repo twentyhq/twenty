@@ -18,7 +18,11 @@ Bevor du beginnst, stelle sicher, dass deine Datei diese Anforderungen erfüllt:
 | **Zeichenkodierung**   | UTF-8 empfohlen             |
 | **Struktur**           | Ein Objekttyp pro Datei     |
 
-<Note>Für Datenmengen mit mehr als 10.000 Datensätzen teile die Daten in mehrere Dateien auf oder verwende den [API-Import](/l/de/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+<Note>
+  Für Datenmengen mit mehr als 10.000 Datensätzen teile die Daten in mehrere
+  Dateien auf oder verwende den
+  [API-Import](/l/de/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
 
 ## Schritt 2: Beispieldatei herunterladen
 
@@ -29,7 +33,11 @@ Bevor du beginnst, stelle sicher, dass deine Datei diese Anforderungen erfüllt:
 3. Klicke auf **Beispieldatei herunterladen**
 4. Verwende diese Datei als Vorlage
 
-<Note>**Profi-Tipp:** Exportiere stattdessen einige vorhandene Datensätze. So erhältst du reale Beispiele dafür, wie Daten formatiert sein sollten, und die Spaltennamen werden beim Import automatisch zugeordnet.</Note>
+<Note>
+  **Profi-Tipp:** Exportiere stattdessen einige vorhandene Datensätze. So
+  erhältst du reale Beispiele dafür, wie Daten formatiert sein sollten, und die
+  Spaltennamen werden beim Import automatisch zugeordnet.
+</Note>
 
 ## Schritt 3: Doppelte Werte entfernen
 
@@ -47,7 +55,11 @@ Twenty erzwingt die Eindeutigkeit bestimmter Felder. Duplikate führen zu Import
 2. Entferne oder führe doppelte Zeilen zusammen
 3. Prüfe auf Duplikate, die in Twenty bereits existieren
 
-<Warning>**Softgelöschte Datensätze zählen für die Eindeutigkeit.** Datensätze unter Befehlsmenü → Gelöschte Datensätze anzeigen führen zu Duplikatfehlern. Lösche sie dauerhaft oder stelle sie wieder her und aktualisiere sie.</Warning>
+<Warning>
+  **Softgelöschte Datensätze zählen für die Eindeutigkeit.** Datensätze unter
+  Befehlsmenü → Gelöschte Datensätze anzeigen führen zu Duplikatfehlern. Lösche
+  sie dauerhaft oder stelle sie wieder her und aktualisiere sie.
+</Warning>
 
 ## Schritt 4: Jeden Feldtyp korrekt formatieren
 
@@ -55,14 +67,14 @@ Verschiedene Feldtypen erfordern spezifische Formate. Hier ist die vollständige
 
 ### Textfelder
 
-* Keine spezielle Formatierung erforderlich
-* Führende und nachgestellte Leerzeichen werden automatisch entfernt
+- Keine spezielle Formatierung erforderlich
+- Führende und nachgestellte Leerzeichen werden automatisch entfernt
 
 ### E-Mail-Felder
 
-* Muss ein gültiges E-Mail-Format haben: `name@domain.com`
-* Muss eindeutig sein (keine Duplikate in der Datei oder in Twenty)
-* Für zusätzliche E-Mails verwende dieses Format in der Spalte **Emails / Additional Emails**:
+- Muss ein gültiges E-Mail-Format haben: `name@domain.com`
+- Muss eindeutig sein (keine Duplikate in der Datei oder in Twenty)
+- Für zusätzliche E-Mails verwende dieses Format in der Spalte **Emails / Additional Emails**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
@@ -70,12 +82,12 @@ Verschiedene Feldtypen erfordern spezifische Formate. Hier ist die vollständige
 
 ### Domain-Felder
 
-* **Empfohlenes Format**: `https://domain.com`
-* Dies entspricht dem Format der Postfach-/Kalendersynchronisierung (verhindert Duplikate)
-* Beide Spalten ausfüllen:
-  * **Domain / Domain Label**: `domain.com`
-  * **Domain / Domain URL**: `https://domain.com`
-* Muss innerhalb deiner Datei und in Twenty eindeutig sein
+- **Empfohlenes Format**: `https://domain.com`
+- Dies entspricht dem Format der Postfach-/Kalendersynchronisierung (verhindert Duplikate)
+- Beide Spalten ausfüllen:
+  - **Domain / Domain Label**: `domain.com`
+  - **Domain / Domain URL**: `https://domain.com`
+- Muss innerhalb deiner Datei und in Twenty eindeutig sein
 
 ### Telefonfelder
 
@@ -91,25 +103,25 @@ Telefon ist ein **verschachteltes Feld**, das mehrere Spalten benötigt:
 
 Adresse ist ein **verschachteltes Feld** mit mehreren Spalten (einige können leer bleiben):
 
-* **Adresse / Adresse 1**: Straßenadresse Zeile 1
-* **Adresse / Adresse 2**: Straßenadresse Zeile 2 (optional)
-* **Adresse / Stadt**: Stadtname
-* **Adresse / Bundesland**: Bundesstaat oder Provinz
-* **Adresse / Land**: Name des Landes
-* **Adresse / Postleitzahl**: Postleitzahl/ZIP-Code
+- **Adresse / Adresse 1**: Straßenadresse Zeile 1
+- **Adresse / Adresse 2**: Straßenadresse Zeile 2 (optional)
+- **Adresse / Stadt**: Stadtname
+- **Adresse / Bundesland**: Bundesstaat oder Provinz
+- **Adresse / Land**: Name des Landes
+- **Adresse / Postleitzahl**: Postleitzahl/ZIP-Code
 
 ### Datumsfelder
 
 Verwenden Sie in Ihrer Datei ein einheitliches Format:
 
-* `YYYY-MM-DD` (empfohlen): `2024-03-15`
-* ISO 8601: `2024-03-15T10:30:00Z`
+- `YYYY-MM-DD` (empfohlen): `2024-03-15`
+- ISO 8601: `2024-03-15T10:30:00Z`
 
 ### Zahlenfelder
 
-* Nur Zahlen (kein Text)
-* Verwenden Sie den Punkt für Dezimalstellen: `1234.56`
-* Keine Tausendertrennzeichen (nicht `1,234.56`)
+- Nur Zahlen (kein Text)
+- Verwenden Sie den Punkt für Dezimalstellen: `1234.56`
+- Keine Tausendertrennzeichen (nicht `1,234.56`)
 
 ### Währungsfelder
 
@@ -137,7 +149,10 @@ Verwenden Sie den **API-Namen** der Option, nicht den Anzeigenamen.
 3. Aktivieren Sie den **Erweiterten Modus** (Schalter unten rechts)
 4. Kopieren Sie den API-Namen (z. B. `OPTION_1`, nicht "Option 1")
 
-<Note>Neue Auswahloptionen werden nicht automatisch erstellt. Fügen Sie sie vor dem Import unter **Einstellungen → Datenmodell** hinzu.</Note>
+<Note>
+  Neue Auswahloptionen werden nicht automatisch erstellt. Fügen Sie sie vor dem
+  Import unter **Einstellungen → Datenmodell** hinzu.
+</Note>
 
 ### Mehrfachauswahlfelder
 
@@ -163,8 +178,8 @@ Verwenden Sie das Format: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` oder `R
 
 Füllen Sie beide Spalten aus:
 
-* **Links / Link-Label**: `Twenty`
-* **Links / Link-URL**: `https://twenty.com`
+- **Links / Link-Label**: `Twenty`
+- **Links / Link-URL**: `https://twenty.com`
 
 Für sekundäre Links verwenden Sie die Spalte **Links / Sekundäre Links**:
 
@@ -182,9 +197,9 @@ Verwenden Sie ein gültiges JSON-Format:
 
 ### ID-Felder
 
-* **Optional**: Twenty erstellt IDs automatisch, wenn sie nicht angegeben werden
-* **Format**: UUID (z. B. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Anwendungsfall**: ID angeben, um bestehende Datensätze zu aktualisieren, statt neue zu erstellen
+- **Optional**: Twenty erstellt IDs automatisch, wenn sie nicht angegeben werden
+- **Format**: UUID (z. B. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+- **Anwendungsfall**: ID angeben, um bestehende Datensätze zu aktualisieren, statt neue zu erstellen
 
 ## Schritt 5: Beziehungsspalten hinzufügen (bei Verknüpfung von Datensätzen)
 
@@ -202,20 +217,22 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 
 **Wichtige Regeln für Beziehungen:**
 
-* Der übergeordnete Datensatz muss bereits in Twenty vorhanden sein
-* Verwenden Sie das **Domain-URL**-Format (`https://domain.com`), nicht die Bezeichnung
-* Ordnen Sie nur EINEN eindeutigen Bezeichner zu (nicht sowohl `companyId` ALS AUCH `companyDomain`)
-* Für Workspace-Mitglieder verwenden Sie deren **E-Mail** (nicht den Namen)
+- Der übergeordnete Datensatz muss bereits in Twenty vorhanden sein
+- Verwenden Sie das **Domain-URL**-Format (`https://domain.com`), nicht die Bezeichnung
+- Ordnen Sie nur EINEN eindeutigen Bezeichner zu (nicht sowohl `companyId` ALS AUCH `companyDomain`)
+- Für Workspace-Mitglieder verwenden Sie deren **E-Mail** (nicht den Namen)
 
 <Warning>
 **Die Importreihenfolge ist wichtig!**
 
 Importieren Sie die "One"-Seite vor der "Many"-Seite:
+
 1. **Unternehmen** zuerst
 2. **Personen** als Zweites (mit Unternehmensreferenz)
 3. **Opportunities** als Drittes
 
 Der übergeordnete Datensatz muss vorhanden sein, bevor Sie darauf verweisen können.
+
 </Warning>
 
 Siehe [Beziehungen importieren](/l/de/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) für detaillierte Anleitungen.
@@ -238,13 +255,19 @@ Der Import erstellt **Datensätze**, nicht **Felder**. Alle Felder, die Sie impo
 <Check>Datei ist im CSV-, XLSX- oder XLS-Format</Check>
 <Check>Datei enthält weniger als 10.000 Datensätze</Check>
 <Check>Zeichencodierung ist UTF-8</Check>
-<Check>Keine doppelten E-Mails (für Personen) oder Domains (für Unternehmen)</Check>
+<Check>
+  Keine doppelten E-Mails (für Personen) oder Domains (für Unternehmen)
+</Check>
 <Check>Datumsangaben verwenden durchgehend ein einheitliches Format</Check>
 <Check>Domains verwenden das Format `https://domain.com`</Check>
 <Check>Boolesche Felder verwenden `TRUE` oder `FALSE` (Großschreibung)</Check>
 <Check>Auswahlfelder verwenden API-Namen, nicht Anzeigenamen</Check>
-<Check>Alle benutzerdefinierten Felder existieren in Einstellungen → Datenmodell</Check>
-<Check>Übergeordnete Datensätze vor untergeordneten Datensätzen importiert</Check>
+<Check>
+  Alle benutzerdefinierten Felder existieren in Einstellungen → Datenmodell
+</Check>
+<Check>
+  Übergeordnete Datensätze vor untergeordneten Datensätzen importiert
+</Check>
 <Check>Beziehungsspalten verweisen auf vorhandene Datensätze</Check>
 
 ## Häufige Fehler, die Sie vermeiden sollten
@@ -262,6 +285,6 @@ Der Import erstellt **Datensätze**, nicht **Felder**. Alle Felder, die Sie impo
 
 Ihre Datei ist bereit! Jetzt:
 
-* [Unternehmen importieren](/l/de/user-guide/data-migration/how-tos/import-companies-via-csv) (diese zuerst importieren)
-* [Kontakte importieren](/l/de/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Importfehler beheben](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+- [Unternehmen importieren](/l/de/user-guide/data-migration/how-tos/import-companies-via-csv) (diese zuerst importieren)
+- [Kontakte importieren](/l/de/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [Importfehler beheben](/l/de/user-guide/data-migration/how-tos/fix-import-errors)

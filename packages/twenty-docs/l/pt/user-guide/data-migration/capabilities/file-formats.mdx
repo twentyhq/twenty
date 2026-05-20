@@ -24,25 +24,28 @@ O Twenty suporta três formatos de ficheiro para importação:
 
 ## Melhores Práticas para CSV
 
-* **Delimitador**: Utilize vírgula (`,`) ou ponto e vírgula (`;`)
-* **Qualificador de texto**: Utilize aspas duplas (`\"`) para texto que contenha vírgulas
-* **Finais de linha**: Windows (CRLF) ou Unix (LF), ambos são suportados
-* **Valores vazios**: Deixe as células em branco, não utilize "NULL" ou "N/A"
+- **Delimitador**: Utilize vírgula (`,`) ou ponto e vírgula (`;`)
+- **Qualificador de texto**: Utilize aspas duplas (`\"`) para texto que contenha vírgulas
+- **Finais de linha**: Windows (CRLF) ou Unix (LF), ambos são suportados
+- **Valores vazios**: Deixe as células em branco, não utilize "NULL" ou "N/A"
 
 ## Melhores Práticas para o Excel
 
 Ao exportar do Excel:
 
-* Remova as fórmulas (exporte apenas valores)
-* Elimine as linhas vazias no final
-* Garanta que não existam células combinadas
-* Utilize apenas a primeira folha
+- Remova as fórmulas (exporte apenas valores)
+- Elimine as linhas vazias no final
+- Garanta que não existam células combinadas
+- Utilize apenas a primeira folha
 
 ## Grandes Conjuntos de Dados
 
 Para conjuntos de dados com mais de 10 000 registos:
 
-* Divida em vários ficheiros
-* Ou utilize a [importação via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) para registos ilimitados
+- Divida em vários ficheiros
+- Ou utilize a [importação via API](/l/pt/user-guide/data-migration/how-tos/import-data-via-api) para registos ilimitados
 
-<Note>Para migrações muito grandes (100 000+ registos), a API é significativamente mais rápida e fiável do que as importações em CSV.</Note>
+<Note>
+  Para migrações muito grandes (100 000+ registos), a API é significativamente
+  mais rápida e fiável do que as importações em CSV.
+</Note>

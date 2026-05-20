@@ -1,15 +1,15 @@
 ---
 title: Application Config
 description: Declare your app's identity, default role, variables, and marketplace metadata with defineApplication.
-icon: "rocket"
+icon: 'rocket'
 ---
 
 Every app must have exactly one `defineApplication` call. It declares:
 
 - **Identity** — universal identifier, display name, description.
 - **Permissions** — which role its logic functions and front components run under.
-- **Variables** *(optional)* — key–value pairs exposed to your code as environment variables.
-- **Pre-install / post-install hooks** *(optional)* — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
+- **Variables** _(optional)_ — key–value pairs exposed to your code as environment variables.
+- **Pre-install / post-install hooks** _(optional)_ — see [Logic Functions](/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -30,6 +30,7 @@ export default defineApplication({
 ```
 
 Notes:
+
 - `universalIdentifier` fields are deterministic IDs you own. Generate them once and keep them stable across syncs.
 - `applicationVariables` become environment variables for your functions and front components. In logic functions (server-side), they are available as `process.env.VARIABLE_NAME`. In front components, use `getApplicationVariable('VARIABLE_NAME')` from `twenty-sdk/front-component`. Variables marked with `isSecret: true` are only injected into logic functions. Front components receive only non-secret variables.
 - The default role is detected automatically from the role file marked with [`defineApplicationRole()`](/developers/extend/apps/config/roles) — you do not need to reference it from `defineApplication()`.
@@ -50,14 +51,14 @@ When you scaffold a new app, the CLI creates a starter role file at `src/roles/d
 
 If you plan to [publish your app](/developers/extend/apps/operations/publishing), these optional fields control how it appears in the marketplace:
 
-| Field | Description |
-|-------|-------------|
-| `author` | Author or company name |
-| `category` | App category for marketplace filtering |
-| `logoUrl` | Path to your app logo (e.g., `public/logo.png`) |
-| `screenshots` | Array of screenshot paths (e.g., `public/screenshot-1.png`) |
+| Field              | Description                                                                                                          |
+| ------------------ | -------------------------------------------------------------------------------------------------------------------- |
+| `author`           | Author or company name                                                                                               |
+| `category`         | App category for marketplace filtering                                                                               |
+| `logoUrl`          | Path to your app logo (e.g., `public/logo.png`)                                                                      |
+| `screenshots`      | Array of screenshot paths (e.g., `public/screenshot-1.png`)                                                          |
 | `aboutDescription` | Longer markdown description for the "About" tab. If omitted, the marketplace uses the package's `README.md` from npm |
-| `websiteUrl` | Link to your website |
-| `termsUrl` | Link to terms of service |
-| `emailSupport` | Support email address |
-| `issueReportUrl` | Link to issue tracker |
+| `websiteUrl`       | Link to your website                                                                                                 |
+| `termsUrl`         | Link to terms of service                                                                                             |
+| `emailSupport`     | Support email address                                                                                                |
+| `issueReportUrl`   | Link to issue tracker                                                                                                |

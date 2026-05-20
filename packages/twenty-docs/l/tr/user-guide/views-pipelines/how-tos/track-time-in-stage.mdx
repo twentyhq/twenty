@@ -4,7 +4,9 @@ description: Fırsatların her aşamaya ne zaman girdiğini izleyerek anlaşma h
 ---
 
 <Tip>
-Bu, İş Akışları kullanılarak [Formül Alanları](/l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields) oluşturmaya bir örnektir — özellikle tarih hesaplamaları.
+  Bu, İş Akışları kullanılarak [Formül
+  Alanları](/l/tr/user-guide/workflows/how-tos/crm-automations/formula-fields)
+  oluşturmaya bir örnektir — özellikle tarih hesaplamaları.
 </Tip>
 
 Fırsatların her aşamaya ne zaman girdiğini izlemeniz darboğazları belirlemenize ve anlaşma hızını ölçmenize yardımcı olur.
@@ -15,46 +17,47 @@ Bu kılavuz, bir fırsatın her aşamaya ne zaman geçtiğini otomatik olarak ka
 
 Her aşama için iki tür alana ihtiyacınız var:
 
-* **Tarih ve Saat alanları**: Fırsatın her aşamaya ne zaman girdiğini kaydedin
-* **Sayı alanları**: Fırsatın her aşamada kaç gün geçirdiğini saklayın
+- **Tarih ve Saat alanları**: Fırsatın her aşamaya ne zaman girdiğini kaydedin
+- **Sayı alanları**: Fırsatın her aşamada kaç gün geçirdiğini saklayın
 
 ### "Last Entered" Alanlarını Oluşturun
 
 1. **Ayarlar → Veri Modeli → Fırsatlar** bölümüne gidin
 2. Her aşama için **+ Alan Ekle**'ye tıklayın ve yapılandırın:
-   * **Ad**: Last Entered [Aşama Adı] (örn. "Last Entered New", "Last Entered Qualified")
-   * **Tür**: Tarih ve Saat
-   * **Açıklama**: Fırsatın bu aşamaya girdiği zaman damgası
+   - **Ad**: Last Entered [Aşama Adı] (örn. "Last Entered New", "Last Entered Qualified")
+   - **Tür**: Tarih ve Saat
+   - **Açıklama**: Fırsatın bu aşamaya girdiği zaman damgası
 3. **Kaydet**'e tıklayın
 
 Bu alanları oluşturun:
 
-* Last Entered New
-* Last Entered Qualified
-* Last Entered Meeting
-* Last Entered Proposal
-* Last Entered Negotiation
-* Last Entered Closed Won
-* Last Entered Closed Lost
+- Last Entered New
+- Last Entered Qualified
+- Last Entered Meeting
+- Last Entered Proposal
+- Last Entered Negotiation
+- Last Entered Closed Won
+- Last Entered Closed Lost
 
 ### "Days in Stage" Alanlarını Oluşturun
 
 1. Her aşama için **+ Alan Ekle**'ye tıklayın ve yapılandırın:
-   * **Ad**: Days in [Aşama Adı] (örn. "Days in New", "Days in Qualified")
-   * **Tür**: Sayı
-   * **Açıklama**: Bu aşamada geçirilen gün sayısı
+   - **Ad**: Days in [Aşama Adı] (örn. "Days in New", "Days in Qualified")
+   - **Tür**: Sayı
+   - **Açıklama**: Bu aşamada geçirilen gün sayısı
 2. **Kaydet**'e tıklayın
 
 Bu alanları oluşturun:
 
-* Days in New
-* Days in Qualified
-* Days in Meeting
-* Days in Proposal
-* Days in Negotiation
+- Days in New
+- Days in Qualified
+- Days in Meeting
+- Days in Proposal
+- Days in Negotiation
 
 <Note>
-Closed Won ve Closed Lost için "Days in" alanlarına ihtiyaç yoktur; çünkü bunlar son aşamalardır.
+  Closed Won ve Closed Lost için "Days in" alanlarına ihtiyaç yoktur; çünkü
+  bunlar son aşamalardır.
 </Note>
 
 ### İsteğe bağlı: Alanları Salt Okunur Yapın
@@ -70,8 +73,8 @@ Bu hesaplanan alanların kullanıcılar tarafından manuel olarak düzenlenmesin
 
 Bu tek İş Akışı her iki görevi de gerçekleştirir:
 
-* Yeni bir aşamaya girildiğinde zaman damgasını kaydeder
-* Önceki aşamada geçirilen günleri hesaplar
+- Yeni bir aşamaya girildiğinde zaman damgasını kaydeder
+- Önceki aşamada geçirilen günleri hesaplar
 
 ### İş Akışı Oluşturun
 
@@ -88,7 +91,9 @@ Bu tek İş Akışı her iki görevi de gerçekleştirir:
 ### Her Aşama için Dallar Ekleyin
 
 <Note>
-Yeni bir dal oluşturmak için iş akışı tuvaline sağ tıklayın ve **New action**'a tıklayın. Ardından, önceki düğümden bu yeni eyleme oku sürükleyerek bu eylemi önceki düğüme bağlayın.
+  Yeni bir dal oluşturmak için iş akışı tuvaline sağ tıklayın ve **New
+  action**'a tıklayın. Ardından, önceki düğümden bu yeni eyleme oku sürükleyerek
+  bu eylemi önceki düğüme bağlayın.
 </Note>
 
 ---
@@ -107,9 +112,9 @@ export const main = async (): Promise<object> => {
 ```
 
 3. **Update Record** eylemi ekleyin:
-   * Kayıt: Tetikleyen Opportunity
-   * Alan: Last Entered New
-   * Değer: Code düğümünden `now`
+   - Kayıt: Tetikleyen Opportunity
+   - Alan: Last Entered New
+   - Değer: Code düğümünden `now`
 
 ---
 
@@ -140,10 +145,10 @@ export const main = async (params: {
 
 3. Code düğümü girdisini yapılandırın: `lastEnteredPreviousStage` değerini **Last Entered New** alanına eşleyin
 4. **Update Record** eylemi ekleyin:
-   * Kayıt: Tetikleyen Opportunity
-   * Güncellenecek alanlar:
-     * Last Entered Qualified = `now`
-     * Days in New = `daysInPreviousStage`
+   - Kayıt: Tetikleyen Opportunity
+   - Güncellenecek alanlar:
+     - Last Entered Qualified = `now`
+     - Days in New = `daysInPreviousStage`
 
 ---
 
@@ -174,10 +179,10 @@ export const main = async (params: {
 
 3. Code düğümü girdisini yapılandırın: `lastEnteredPreviousStage` değerini **Last Entered Qualified** alanına eşleyin
 4. **Update Record** eylemi ekleyin:
-   * Kayıt: Tetikleyen Opportunity
-   * Güncellenecek alanlar:
-     * Last Entered Meeting = `now`
-     * Days in Qualified = `daysInPreviousStage`
+   - Kayıt: Tetikleyen Opportunity
+   - Güncellenecek alanlar:
+     - Last Entered Meeting = `now`
+     - Days in Qualified = `daysInPreviousStage`
 
 ---
 
@@ -226,6 +231,6 @@ Bu, anlaşmaların her aşamada harcadığı ortalama süreyi gösterir.
 
 ## İlgili
 
-* [İş Akışları](/l/tr/user-guide/workflows/overview) — otomasyon temelleri
-* [Özel Alanlar Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-custom-fields) — alan yapılandırma
-* [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — toplamalar
+- [İş Akışları](/l/tr/user-guide/workflows/overview) — otomasyon temelleri
+- [Özel Alanlar Nasıl Oluşturulur](/l/tr/user-guide/data-model/how-tos/create-custom-fields) — alan yapılandırma
+- [Kanban Görünümleri](/l/tr/user-guide/views-pipelines/capabilities/kanban-views) — toplamalar

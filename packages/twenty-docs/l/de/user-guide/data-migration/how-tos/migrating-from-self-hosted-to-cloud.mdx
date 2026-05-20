@@ -7,7 +7,10 @@ description: Schritt-für-Schritt-Anleitung zur Migration Ihrer selbstgehosteten
 
 Diese Anleitung führt Sie durch die Migration Ihrer Daten von einer selbstgehosteten Twenty-Instanz zu Twenty Cloud. Der Prozess umfasst das Einrichten Ihres Cloud-Arbeitsbereichs, das Exportieren Ihrer Daten und deren erneutes Importieren.
 
-<Note>Ansichten, Workflows und Rollen müssen nach der Migration manuell neu erstellt werden. Planen Sie Zeit für diese Konfigurationsarbeiten ein.</Note>
+<Note>
+  Ansichten, Workflows und Rollen müssen nach der Migration manuell neu erstellt
+  werden. Planen Sie Zeit für diese Konfigurationsarbeiten ein.
+</Note>
 
 ## Schritt 1: Erstellen Sie Ihren Cloud-Arbeitsbereich
 
@@ -24,7 +27,10 @@ Erstellen Sie vor dem Import der Daten Ihre benutzerdefinierten Objekte und Feld
 3. Fügen Sie Standard- und benutzerdefinierten Objekten benutzerdefinierte Felder hinzu
 4. Konfigurieren Sie die Feldeinstellungen (eindeutig, erforderlich usw.)
 
-<Note>Machen Sie Screenshots Ihres selbstgehosteten Datenmodells als Referenz oder halten Sie beide Instanzen nebeneinander geöffnet.</Note>
+<Note>
+  Machen Sie Screenshots Ihres selbstgehosteten Datenmodells als Referenz oder
+  halten Sie beide Instanzen nebeneinander geöffnet.
+</Note>
 
 ## Schritt 3: Alle Benutzer einladen
 
@@ -32,6 +38,7 @@ Erstellen Sie vor dem Import der Daten Ihre benutzerdefinierten Objekte und Feld
 **Wichtig: Laden Sie Benutzer ein, BEVOR Sie Daten importieren.**
 
 Benutzer müssen ihre Einladungen annehmen, bevor Sie Datensätze importieren, die auf sie verweisen (z. B. das Feld 'Account Owner'). Wenn Benutzer noch nicht vorhanden sind, können diese Beziehungen nicht zugeordnet werden.
+
 </Warning>
 
 1. Gehen Sie in Ihrer Cloud-Instanz zu **Einstellungen → Mitglieder**
@@ -83,7 +90,10 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Verwenden Sie dieselben E-Mail-Adressen, mit denen die Benutzer die Einladung zu Ihrem Cloud-Arbeitsbereich angenommen haben.</Note>
+<Note>
+  Verwenden Sie dieselben E-Mail-Adressen, mit denen die Benutzer die Einladung
+  zu Ihrem Cloud-Arbeitsbereich angenommen haben.
+</Note>
 
 ## Schritt 6: Importreihenfolge planen
 
@@ -105,8 +115,8 @@ Führen Sie Folgendes der Reihe nach für jede CSV-Datei aus:
 2. Klicken Sie auf **⋮ → Datensätze importieren**
 3. Laden Sie die CSV-Datei hoch
 4. Ordnen Sie die Spalten den Feldern zu:
-   * Ordnen Sie die E-Mail-Spalten der Benutzer den entsprechenden Beziehungsfeldern zu
-   * Ordnen Sie andere Spalten wie üblich zu
+   - Ordnen Sie die E-Mail-Spalten der Benutzer den entsprechenden Beziehungsfeldern zu
+   - Ordnen Sie andere Spalten wie üblich zu
 5. Überprüfen und beheben Sie eventuelle Fehler
 6. Bestätigen Sie den Import
 7. Überprüfen Sie einige Datensätze, bevor Sie mit der nächsten Datei fortfahren
@@ -117,23 +127,23 @@ Erstellen Sie nach dem Import der Daten manuell neu:
 
 ### Ansichten
 
-* Erstellen Sie gespeicherte Ansichten mit Filtern, Sortierungen und Spaltenkonfigurationen neu
-* Richten Sie ggf. Kanban- oder Kalenderansichten ein
+- Erstellen Sie gespeicherte Ansichten mit Filtern, Sortierungen und Spaltenkonfigurationen neu
+- Richten Sie ggf. Kanban- oder Kalenderansichten ein
 
 ### Workflows
 
-* Erstellen Sie Automatisierungen in **Einstellungen → Workflows** neu
-* Testen Sie jeden Workflow, bevor Sie sich darauf verlassen
+- Erstellen Sie Automatisierungen in **Einstellungen → Workflows** neu
+- Testen Sie jeden Workflow, bevor Sie sich darauf verlassen
 
 ### Rollen und Berechtigungen
 
-* Richten Sie Rollen unter **Einstellungen → Mitglieder → Rollen** ein
-* Weisen Sie Benutzer den entsprechenden Rollen zu
+- Richten Sie Rollen unter **Einstellungen → Mitglieder → Rollen** ein
+- Weisen Sie Benutzer den entsprechenden Rollen zu
 
 ### Integrationen
 
-* Stellen Sie für jeden Benutzer die E-Mail- und Kalendersynchronisierung wieder her
-* Konfigurieren Sie alle API-Integrationen mit neuen API-Schlüsseln neu
+- Stellen Sie für jeden Benutzer die E-Mail- und Kalendersynchronisierung wieder her
+- Konfigurieren Sie alle API-Integrationen mit neuen API-Schlüsseln neu
 
 ## Checkliste nach der Migration
 
@@ -153,13 +163,17 @@ Erstellen Sie nach dem Import der Daten manuell neu:
     Derzeit nicht. Workflows müssen in Ihrer Cloud-Instanz manuell neu erstellt werden.
   </Accordion>
 
-  <Accordion title="Was ist mit Dateianhängen und Bildern?">
-    Dateianhänge sind in CSV-Exporten nicht enthalten. Sie müssen Anhänge manuell erneut hochladen, sie über die API migrieren oder unser Team für Unterstützung bei großen Migrationen kontaktieren.
-  </Accordion>
+<Accordion title="Was ist mit Dateianhängen und Bildern?">
+  Dateianhänge sind in CSV-Exporten nicht enthalten. Sie müssen Anhänge manuell
+  erneut hochladen, sie über die API migrieren oder unser Team für Unterstützung
+  bei großen Migrationen kontaktieren.
+</Accordion>
 
-  <Accordion title="Kann ich während der Migration beide Instanzen weiter betreiben?">
-    Ja, wir empfehlen, Ihre selbstgehostete Instanz weiter auszuführen, bis Sie überprüft haben, dass die Cloud-Migration abgeschlossen ist. Achten Sie darauf, nicht an beiden Orten neue Daten zu erstellen.
-  </Accordion>
+<Accordion title="Kann ich während der Migration beide Instanzen weiter betreiben?">
+  Ja, wir empfehlen, Ihre selbstgehostete Instanz weiter auszuführen, bis Sie
+  überprüft haben, dass die Cloud-Migration abgeschlossen ist. Achten Sie
+  darauf, nicht an beiden Orten neue Daten zu erstellen.
+</Accordion>
 
   <Accordion title="Was ist, wenn ein Benutzer seine Einladung noch nicht angenommen hat?">
     Datensätze, die sich auf diesen Benutzer beziehen, werden nicht importiert oder die Beziehung bleibt leer. Stellen Sie sicher, dass alle Benutzer ihre Einladungen annehmen, bevor Sie Daten importieren.

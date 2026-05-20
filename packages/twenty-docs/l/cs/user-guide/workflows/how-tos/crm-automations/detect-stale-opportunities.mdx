@@ -9,9 +9,9 @@ Udržujte svou obchodní pipeline zdravou tím, že budete upozorňovat manažer
 
 Příležitosti bez aktualizací vedou k:
 
-* Obchody chladnou
-* Nespolehlivé prognózy
-* Ztracené tržby
+- Obchody chladnou
+- Nespolehlivé prognózy
+- Ztracené tržby
 
 ## Řešení
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ Přidejte akci **Odeslat e-mail**:
 
 Upravte filtr akce Vyhledat záznamy a změňte ze 7 dnů na vámi preferované období:
 
-* 3 dny pro rychlé prodeje
-* 14 dní pro podnikové obchody
-* 30 dní pro dlouhé prodejní cykly
+- 3 dny pro rychlé prodeje
+- 14 dní pro podnikové obchody
+- 30 dní pro dlouhé prodejní cykly
 
 ### Upozorněte jednotlivé obchodní zástupce
 
@@ -132,5 +132,5 @@ Použijte **HTTP Request** k odeslání na webhook ve Slacku místo e-mailu nebo
 
 ## Související
 
-* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+- [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)

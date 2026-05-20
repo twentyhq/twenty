@@ -2,7 +2,6 @@
 title: Zapier App
 ---
 
-
 Effortlessly sync Twenty with 3000+ apps using [Zapier](https://zapier.com/). Automate tasks, boost productivity, and supercharge your customer relationships!
 
 ## About Zapier
@@ -36,6 +35,7 @@ From the `packages/twenty-zapier` folder, run:
 ```bash
 cp .env.example .env
 ```
+
 Run the application locally, go to [http://localhost:3000/settings/api-webhooks](http://localhost:3000/settings/api-webhooks), and generate an API key.
 
 Replace the **YOUR_API_KEY** value in the `.env` file with the API key you just generated.
@@ -49,28 +49,37 @@ Make sure to run `yarn build` before any `zapier` command.
 </Warning>
 
 ### Test
+
 ```bash
 yarn test
 ```
+
 ### Lint
+
 ```bash
 yarn format
 ```
+
 ### Watch and compile as you edit code
+
 ```bash
 yarn watch
 ```
+
 ### Validate your Zapier app
+
 ```bash
 yarn validate
 ```
+
 ### Deploy your Zapier app
+
 ```bash
 yarn deploy
 ```
+
 ### List all Zapier CLI commands
+
 ```bash
 zapier
 ```
-
-

@@ -2,7 +2,6 @@
 title: Hotkeys
 ---
 
-
 ## Introduction
 
 When you need to listen to a hotkey, you would normally use the `onKeyDown` event listener.
@@ -20,6 +19,7 @@ You place it in a component, and it will listen to the hotkeys only when the com
 ## How to listen for hotkeys in practice?
 
 There are two steps involved in setting up hotkey listening :
+
 1. Set the [hotkey scope](#what-is-a-hotkey-scope-) that will listen to hotkeys
 2. Use the `useScopedHotkeys` hook to listen to hotkeys
 
@@ -28,6 +28,7 @@ Setting up hotkey scopes is required even in simple pages, because other UI elem
 ## Use cases for hotkeys
 
 In general, you'll have two use cases that require hotkeys :
+
 1. In a page or a component mounted in a page
 2. In a modal-type component that takes the focus due to a user action
 
@@ -88,9 +89,7 @@ const ExamplePageWithModal = () => {
   const handleOpenModalClick = () => {
     // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
-    setHotkeyScopeAndMemorizePreviousScope(
-      ExampleHotkeyScopes.ExampleModal,
-    );
+    setHotkeyScopeAndMemorizePreviousScope(ExampleHotkeyScopes.ExampleModal);
   };
 
   const handleModalClose = () => {
@@ -99,11 +98,13 @@ const ExamplePageWithModal = () => {
     goBackToPreviousHotkeyScope();
   };
 
-  return <div>
-    <h1>My page with a modal</h1>
-    <button onClick={handleOpenModalClick}>Open modal</button>
-    {showModal && <MyModalComponent onClose={handleModalClose} />}
-  </div>;
+  return (
+    <div>
+      <h1>My page with a modal</h1>
+      <button onClick={handleOpenModalClick}>Open modal</button>
+      {showModal && <MyModalComponent onClose={handleModalClose} />}
+    </div>
+  );
 };
 ```
 
@@ -117,7 +118,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
   useScopedHotkeys(
     Key.Escape,
     () => {
-      onClose()
+      onClose();
     },
     ExampleHotkeyScopes.ExampleModal,
   );

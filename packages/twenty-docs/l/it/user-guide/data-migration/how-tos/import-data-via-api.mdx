@@ -19,7 +19,11 @@ Twenty offre sia **GraphQL** che **API REST** per l'importazione programmatica d
 | **Sincronizzazione in tempo reale** | **Importazione via API**                 |
 | **Integrazione con altri sistemi**  | **Importazione via API**                 |
 
-<Note>Per set di dati dell'ordine delle centinaia di migliaia, l'API è significativamente più veloce e più affidabile rispetto a importazioni CSV multiple.</Note>
+<Note>
+  Per set di dati dell'ordine delle centinaia di migliaia, l'API è
+  significativamente più veloce e più affidabile rispetto a importazioni CSV
+  multiple.
+</Note>
 
 ## Limiti di frequenza delle API
 
@@ -35,6 +39,7 @@ Twenty applica limiti di frequenza per garantire la stabilità del sistema:
 **Pianifica la tua importazione tenendo conto di questi limiti.**
 
 Per 100.000 record al throughput massimo, prevedi circa 17 minuti di tempo di importazione. Aggiungi un margine di tempo per la gestione degli errori e i nuovi tentativi.
+
 </Warning>
 
 ## Per iniziare
@@ -51,21 +56,22 @@ Per 100.000 record al throughput massimo, prevedi circa 17 minuti di tempo di im
 **Mantieni segreta la tua chiave API.**
 
 Chiunque abbia la tua chiave API può accedere ai dati del tuo spazio di lavoro e modificarli. Non inserirla mai nei repository di codice né condividerla pubblicamente.
+
 </Warning>
 
 ### Passaggio 2: Scegli la tua API
 
 Twenty supporta due tipi di API:
 
-| API         | Ideale per                                                         | Documentazione                               |
-| ----------- | ------------------------------------------------------------------ | -------------------------------------------- |
+| API         | Ideale per                                                         | Documentazione                                    |
+| ----------- | ------------------------------------------------------------------ | ------------------------------------------------- |
 | **GraphQL** | Query flessibili, recupero di dati correlati, operazioni complesse | [Documentazione API](/l/it/developers/extend/api) |
 | **REST**    | Operazioni CRUD semplici, pattern REST familiari                   | [Documentazione API](/l/it/developers/extend/api) |
 
 Entrambe le API supportano:
 
-* Creazione, lettura, aggiornamento ed eliminazione dei record
-* **Operazioni batch** — crea o aggiorna fino a 60 record per chiamata
+- Creazione, lettura, aggiornamento ed eliminazione dei record
+- **Operazioni batch** — crea o aggiorna fino a 60 record per chiamata
 
 **Per le importazioni, usa le operazioni batch** per massimizzare il throughput entro i limiti di frequenza.
 
@@ -83,33 +89,33 @@ Proprio come per le importazioni CSV, **l'ordine è importante** per le relazion
 
 ### Raggruppa le richieste in batch
 
-* Non inviare i record uno alla volta
-* Raggruppa fino a **60 record per chiamata API**
-* Questo massimizza il throughput entro i limiti di frequenza
+- Non inviare i record uno alla volta
+- Raggruppa fino a **60 record per chiamata API**
+- Questo massimizza il throughput entro i limiti di frequenza
 
 ### Gestisci i limiti di frequenza
 
-* Implementa dei ritardi tra le richieste (minimo 600 ms per importazioni prolungate)
-* Usa un backoff esponenziale quando raggiungi i limiti
-* Monitora le risposte 429 (Too Many Requests)
+- Implementa dei ritardi tra le richieste (minimo 600 ms per importazioni prolungate)
+- Usa un backoff esponenziale quando raggiungi i limiti
+- Monitora le risposte 429 (Too Many Requests)
 
 ### Convalida i dati prima
 
-* Pulisci e convalida i tuoi dati prima di importare
-* Verifica che i campi obbligatori siano compilati
-* Verifica che i formati soddisfino i requisiti di Twenty (vedi [Mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping))
+- Pulisci e convalida i tuoi dati prima di importare
+- Verifica che i campi obbligatori siano compilati
+- Verifica che i formati soddisfino i requisiti di Twenty (vedi [Mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping))
 
 ### Registra tutto
 
-* Registra ogni record importato (inclusi gli ID)
-* Registra gli errori con tutto il contesto
-* Questo aiuta a eseguire il debug dei problemi e a verificare il completamento
+- Registra ogni record importato (inclusi gli ID)
+- Registra gli errori con tutto il contesto
+- Questo aiuta a eseguire il debug dei problemi e a verificare il completamento
 
 ### Testa prima
 
-* Esegui un test con un piccolo batch (10-20 record)
-* Verifica che i dati compaiano correttamente in Twenty
-* Poi esegui l'importazione completa
+- Esegui un test con un piccolo batch (10-20 record)
+- Verifica che i dati compaiano correttamente in Twenty
+- Poi esegui l'importazione completa
 
 ### Usa l'upsert per evitare duplicati
 
@@ -138,10 +144,10 @@ Per migrazioni API complesse, i nostri partner possono aiutarti:
 
 **Ideale per:**
 
-* Migrazioni di oltre 100.000 record
-* Trasformazioni dei dati complesse
-* Tempistiche ristrette
-* Team senza risorse di sviluppo
+- Migrazioni di oltre 100.000 record
+- Trasformazioni dei dati complesse
+- Tempistiche ristrette
+- Team senza risorse di sviluppo
 
 Contattaci a [contact@twenty.com](mailto:contact@twenty.com) oppure scopri i nostri [Servizi di implementazione](/l/it/user-guide/getting-started/capabilities/implementation-services).
 
@@ -152,17 +158,19 @@ Contattaci a [contact@twenty.com](mailto:contact@twenty.com) oppure scopri i nos
     GraphQL ti consente di richiedere esattamente i dati di cui hai bisogno con una singola query ed è migliore per operazioni complesse. REST utilizza i metodi HTTP standard (GET, POST, PUT, DELETE) e può risultare più familiare se hai già lavorato con API tradizionali.
   </Accordion>
 
-  <Accordion title="Posso aggiornare i record esistenti tramite API?">
-    Sì! Usa mutation di aggiornamento (GraphQL) o richieste PUT/PATCH (REST) con l'`id` del record.
-  </Accordion>
+<Accordion title="Posso aggiornare i record esistenti tramite API?">
+  Sì! Usa mutation di aggiornamento (GraphQL) o richieste PUT/PATCH (REST) con
+  l'`id` del record.
+</Accordion>
 
-  <Accordion title="Come gestisco i duplicati?">
-    Esegui prima una query per i record esistenti usando identificatori univoci (email, dominio). Aggiorna se esiste, crea se non esiste.
-  </Accordion>
+<Accordion title="Come gestisco i duplicati?">
+  Esegui prima una query per i record esistenti usando identificatori univoci
+  (email, dominio). Aggiorna se esiste, crea se non esiste.
+</Accordion>
 
-  <Accordion title="Posso eliminare i record tramite API?">
-    Sì, usa mutation di delete (GraphQL) o richieste DELETE (REST).
-  </Accordion>
+<Accordion title="Posso eliminare i record tramite API?">
+  Sì, usa mutation di delete (GraphQL) o richieste DELETE (REST).
+</Accordion>
 
   <Accordion title="Esiste un SDK per Python o Node.js?">
     Al momento no, ma entrambe le API funzionano con qualsiasi client HTTP in qualsiasi linguaggio.
@@ -173,4 +181,4 @@ Contattaci a [contact@twenty.com](mailto:contact@twenty.com) oppure scopri i nos
 
 Per i dettagli completi di implementazione, esempi di codice e riferimento allo schema:
 
-* [Documentazione API](/l/it/developers/extend/api)
+- [Documentazione API](/l/it/developers/extend/api)

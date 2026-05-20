@@ -62,9 +62,9 @@ Typeform은 중첩된 JSON 구조를 전송합니다. 간단한 예시는 다음
 
 주요 유의 사항:
 
-* 폼 데이터는 `form_response` 아래에 중첩됩니다
-* **답변은 명명된 필드가 아니라 배열로 반환됩니다**
-* 각 답변에는 참고용으로 필드 유형과 제목이 포함됩니다
+- 폼 데이터는 `form_response` 아래에 중첩됩니다
+- **답변은 명명된 필드가 아니라 배열로 반환됩니다**
+- 각 답변에는 참고용으로 필드 유형과 제목이 포함됩니다
 
 ### 4단계: 답변 배열에서 필드 추출
 
@@ -103,20 +103,22 @@ export const main = async (params: {
 이후 단계에서는 변수 선택기에서 `contact.firstName` 및 `contact.email`과 같은 개별 필드를 선택할 수 있습니다.
 
 <Tip>
-  배열 처리에 대한 자세한 내용은 [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)를 참조하세요.
+  배열 처리에 대한 자세한 내용은 [Code 액션에서 배열
+  처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)를
+  참조하세요.
 </Tip>
 
 ### 5단계: 레코드 생성
 
 **레코드 생성** 액션을 추가합니다:
 
-| 필드      | 값                                        |
-| ------- | ---------------------------------------- |
-| **객체**  | 사람들                                      |
-| **이름**  | `{{code.contact.firstName}}`             |
-| **성**   | `{{code.contact.lastName}}`              |
-| **이메일** | `{{code.contact.email}}`                 |
-| **회사**  | `{{code.contact.company}}` 기준으로 검색 또는 생성 |
+| 필드       | 값                                                 |
+| ---------- | -------------------------------------------------- |
+| **객체**   | 사람들                                             |
+| **이름**   | `{{code.contact.firstName}}`                       |
+| **성**     | `{{code.contact.lastName}}`                        |
+| **이메일** | `{{code.contact.email}}`                           |
+| **회사**   | `{{code.contact.company}}` 기준으로 검색 또는 생성 |
 
 ### 6단계: 테스트 및 활성화
 
@@ -126,5 +128,5 @@ export const main = async (params: {
 
 ## 관련 항목
 
-* [Webhook 트리거 설정](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
-* [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Webhook 트리거 설정](/l/ko/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+- [Code 액션에서 배열 처리하기](/l/ko/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

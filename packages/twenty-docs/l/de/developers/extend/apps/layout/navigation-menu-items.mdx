@@ -7,7 +7,10 @@ icon: Balken
 Ein **Navigationsmenüeintrag** ist ein Eintrag in der linken Seitenleiste. Verwenden Sie `defineNavigationMenuItem()`, um benutzerdefinierte Seitenleistenlinks bereitzustellen – typischerweise einen pro [Ansicht](/l/de/developers/extend/apps/layout/views), die Sie bereitstellen – oder um auf externe URLs zu verweisen.
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -23,7 +26,7 @@ export default defineNavigationMenuItem({
 
 ## Hauptpunkte
 
-* `type` legt fest, worauf der Menüeintrag verweist. Jeder Typ ist einem bestimmten Bezeichnerfeld zugeordnet:
+- `type` legt fest, worauf der Menüeintrag verweist. Jeder Typ ist einem bestimmten Bezeichnerfeld zugeordnet:
 
   | Typ                                  | Was es tut                                                | Pflichtfeld                                                                                    |
   | ------------------------------------ | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------- |
@@ -33,12 +36,16 @@ export default defineNavigationMenuItem({
   | `NavigationMenuItemType.OBJECT`      | Öffnet die Standardindexseite eines Objekts               | `targetObjectUniversalIdentifier`                                                              |
   | `NavigationMenuItemType.PAGE_LAYOUT` | Öffnet ein eigenständiges Seitenlayout                    | `pageLayoutUniversalIdentifier`                                                                |
 
-* `position` steuert die Reihenfolge in der Seitenleiste.
+- `position` steuert die Reihenfolge in der Seitenleiste.
 
-* `icon` und `color` sind optional und passen das Erscheinungsbild des Eintrags an.
+- `icon` und `color` sind optional und passen das Erscheinungsbild des Eintrags an.
 
-* `folderUniversalIdentifier` ist ebenfalls bei jedem Eintrag verfügbar, um ihn innerhalb eines übergeordneten Elements vom Typ `FOLDER` zu verschachteln.
+- `folderUniversalIdentifier` ist ebenfalls bei jedem Eintrag verfügbar, um ihn innerhalb eines übergeordneten Elements vom Typ `FOLDER` zu verschachteln.
 
 <Note>
-**Häufige Falle:** Wenn Sie ein Objekt ohne zugehörige Ansicht und Navigationsmenüeintrag erstellen, ist dieses Objekt für Benutzer unsichtbar. Sofern es sich nicht um ein technisches/internes Objekt handelt, sollte jedes benutzerdefinierte Objekt eine Standardansicht *und* einen entsprechenden Eintrag in der Seitenleiste haben.
+  **Häufige Falle:** Wenn Sie ein Objekt ohne zugehörige Ansicht und
+  Navigationsmenüeintrag erstellen, ist dieses Objekt für Benutzer unsichtbar.
+  Sofern es sich nicht um ein technisches/internes Objekt handelt, sollte jedes
+  benutzerdefinierte Objekt eine Standardansicht *und* einen entsprechenden
+  Eintrag in der Seitenleiste haben.
 </Note>

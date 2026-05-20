@@ -9,17 +9,17 @@ Bir menü veya navigasyon listesinde kullanılmak üzere tasarlanmış çok yön
 <Tab title="Kullanım">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
+    console.log('Icon button clicked!', event);
   };
 
   return (
@@ -37,10 +37,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Özellikler">
-
 
 | Özellikler    | Tür           | Açıklama                                                                                      |
 | ------------- | ------------- | --------------------------------------------------------------------------------------------- |
@@ -52,9 +50,6 @@ export const MyComponent = () => {
 | testId        | string        | Test amaçları için data-testid özelliği                                                       |
 | tıklandığında | fonksiyon     | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi                                       |
 | sınıfAdı      | dize          | Ek stil için isteğe bağlı isim                                                                |
-
-
-
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ Klavye kısayollarını belirtmek için bir menü içinde komut tarzı bir menü
 <Tab title="Kullanım">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -93,10 +88,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Özellikler">
-
 
 | Özellikler   | Tür           | Açıklama                                                                      |
 | ------------ | ------------- | ----------------------------------------------------------------------------- |
@@ -107,8 +100,6 @@ export const MyComponent = () => {
 | isSelected   | boolean       | Menü öğesinin seçilip seçilmediğini veya vurgulanıp vurgulanmadığını belirtir |
 | onClick      | fonksiyon     | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi                       |
 | className    | dize          | Ek stil için isteğe bağlı isim                                                |
-
-
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ A draggable menu item component designed to be used in a menu or list where item
 <Tab title="Kullanım">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -148,7 +139,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler     | Tür           | Açıklama                                                                 |
 | -------------- | ------------- | ------------------------------------------------------------------------ |
 | LeftIcon       | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                  |
@@ -159,9 +149,6 @@ export const MyComponent = () => {
 | metin          | dize          | Menü öğesinin metin içeriği                                              |
 | isDragDisabled | boolean       | Sürükleme işleminin devre dışı olup olmadığını belirtir                  |
 | className      | dize          | Ek stil için isteğe bağlı isim                                           |
-
-
-
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ Bir onay kutusu ile birlikte çoklu seçim işlevselliği sağlanır.
 <Tab title="Kullanım">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,7 +179,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler     | Tür           | Açıklama                                                                     |
 | -------------- | ------------- | ---------------------------------------------------------------------------- |
 | LeftIcon       | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                      |
@@ -201,9 +186,6 @@ export const MyComponent = () => {
 | selected       | boolean       | Menü öğesinin seçilip seçilmediğini (işaretlenip işaretlenmediğini) belirtir |
 | onSelectChange | fonksiyon     | Onay kutusu durumu değiştiğinde tetiklenen geri çağırma işlevi               |
 | className      | dize          | Ek stil için isteğe bağlı isim                                               |
-
-
-
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ Bir avatar, bir seçim için onay kutusu ve metin içeriği ile bir çoklu seçi
 <Tab title="Kullanım">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,7 +218,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler     | Tür         | Açıklama                                                                     |
 | -------------- | ----------- | ---------------------------------------------------------------------------- |
 | avatar         | `ReactNode` | Menü öğesinin sol tarafında görüntülenecek avatar veya simge                 |
@@ -244,9 +225,6 @@ export const MyComponent = () => {
 | selected       | boolean     | Menü öğesinin seçilip seçilmediğini (işaretlenip işaretlenmediğini) belirtir |
 | onSelectChange | fonksiyon   | Onay kutusu durumu değiştiğinde tetiklenen geri çağırma işlevi               |
 | className      | dize        | Ek stil için isteğe bağlı isim                                               |
-
-
-
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ export const MyComponent = () => {
 <Tab title="Kullanım">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler | Tür           | Açıklama                                                  |
 | ---------- | ------------- | --------------------------------------------------------- |
 | LeftIcon   | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge   |
 | metin      | dize          | Menü öğesinin metin içeriği                               |
 | onClick    | fonksiyon     | Menü öğesi tıklandığında tetiklenecek geri çağırma işlevi |
 | className  | dize          | Ek stil için isteğe bağlı isim                            |
-
-
-
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ Seçilebilir bir menü öğesi, isteğe bağlı sol içerik (simgeler ve metin) 
 <Tab title="Kullanım">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,7 +302,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler | Tür           | Açıklama                                                                     |
 | ---------- | ------------- | ---------------------------------------------------------------------------- |
 | LeftIcon   | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                      |
@@ -338,9 +311,6 @@ export const MyComponent = () => {
 | hovered    | boolean       | Menü öğesinin üzerine gelinip gelinmediğini belirtir                         |
 | onClick    | fonksiyon     | Menü öğesi tıklandığında tetiklenecek geri çağırma işlevi                    |
 | className  | dize          | Ek stil için isteğe bağlı isim                                               |
-
-
-
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ Bir avatar ve seçilmiş durum için gösterge (kontrol simgesi) ile beraber ist
 <Tab title="Kullanım">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -376,12 +346,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Özellikler">
-
 
 | Özellikler | Tür         | Açıklama                                                       |
 | ---------- | ----------- | -------------------------------------------------------------- |
@@ -394,9 +362,6 @@ export const MyComponent = () => {
 | onClick    | fonksiyon   | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi        |
 | className  | dize        | Ek stil için isteğe bağlı isim                                 |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -408,11 +373,11 @@ Kullanıcıların bir menüden renk seçmelerini istediğiniz senaryolar için r
 <Tab title="Kullanım">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,7 +397,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler | Tür       | Açıklama                                                                                                                                                      |
 | ---------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | renk       | dize      | Menü öğesinde örnek olarak gösterilecek tema rengi. Seçenekler: `yeşil`, `turkuaz`, `gökyüzü`, `mavi`, `mor`, `pembe`, `kırmızı`, `turuncu`, `sarı`, ve `gri` |
@@ -442,9 +406,6 @@ export const MyComponent = () => {
 | varyant    | dize      | Renk örneğinin varyantı. Ya `varsayılan` ya da `pipeline` olabilir                                                                                            |
 | onClick    | fonksiyon | Menü öğesi tıklandığında tetiklenen geri çağırma işlevi                                                                                                       |
 | className  | dize      | Ek stil için isteğe bağlı isim                                                                                                                                |
-
-
-
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,7 +438,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler     | Tür           | Açıklama                                                                   |
 | -------------- | ------------- | -------------------------------------------------------------------------- |
 | Sol Simge      | IconComponent | Metin öncesinde görüntülenen isteğe bağlı bir sol simge                    |
@@ -487,9 +446,6 @@ export const MyComponent = () => {
 | onToggleChange | fonksiyon     | Açma/kapatma anahtarı durumu değiştiğinde tetiklenen geri çağırma işlevi   |
 | toggleSize     | dize          | Anahtar değiştirme düğmesinin boyutu. It can be either \                   |
 | className      | dize          | Ek stil için isteğe bağlı isim                                             |
-
-
-
 
 </Tab>
 </Tabs>

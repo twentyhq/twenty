@@ -13,15 +13,18 @@ Veri ambarınızdaki ürün verileriyle Twenty'yi senkron tutmak için bu kalıb
 4. **Yineleyici**: Her ürün üzerinde döngü kurun
 5. **Kaydı Ekle/Güncelle**: Twenty'de oluşturun veya güncelleyin
 
-<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/create_users_workflow.png"
+  style={{ width: '100%' }}
+/>
 
 ## Adım 1: Tetiklemeyi Zamanlayın
 
 İş akışını, veri tazelik gereksinimlerinize uygun bir sıklıkta çalışacak şekilde ayarlayın:
 
-* Neredeyse gerçek zamanlı eşitleme için her 5 dakikada bir
-* Daha az kritik veriler için saatte bir
-* Toplu güncellemeler için günlük
+- Neredeyse gerçek zamanlı eşitleme için her 5 dakikada bir
+- Daha az kritik veriler için saatte bir
+- Toplu güncellemeler için günlük
 
 ## Adım 2: Veri Ambarınızı Sorgulayın
 
@@ -30,22 +33,24 @@ En son verileri almak için bir **Kod** eylemi ekleyin:
 ```javascript
 export const main = async () => {
   const intervalMinutes = 10; // Match your schedule frequency
-  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+  const cutoffTime = new Date(
+    Date.now() - intervalMinutes * 60 * 1000,
+  ).toISOString();
 
   // Replace with your actual data warehouse connection
-  const response = await fetch("https://your-warehouse-api.com/query", {
-    method: "POST",
+  const response = await fetch('https://your-warehouse-api.com/query', {
+    method: 'POST',
     headers: {
-      "Authorization": "Bearer YOUR_API_KEY",
-      "Content-Type": "application/json"
+      Authorization: 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       query: `
         SELECT id, name, sku, price, stock_quantity, updated_at
         FROM products
         WHERE updated_at >= '${cutoffTime}'
-      `
-    })
+      `,
+    }),
   });
 
   const data = await response.json();
@@ -146,7 +151,7 @@ export const main = async (params: { deals: any }) => {
 
 Bir **Iterator** eylemi ekleyin:
 
-* Girdi: `{{code.products}}`
+- Girdi: `{{code.products}}`
 
 Bu, dizideki her ürün üzerinde döngü kurar.
 
@@ -163,7 +168,9 @@ Yineleyici içinde bir **Kaydı Ekle/Güncelle** eylemi ekleyin:
 | **Fiyat**              | `{{iterator.item.price}}`                  |
 
 <Tip>
-Oluşturma ve güncelleme için ayrı dallar oluşturmak yerine **Upsert** (güncelle veya oluştur) kullanın. Oluşturmak daha hızlı ve hata ayıklamak daha kolaydır.
+  Oluşturma ve güncelleme için ayrı dallar oluşturmak yerine **Upsert**
+  (güncelle veya oluştur) kullanın. Oluşturmak daha hızlı ve hata ayıklamak daha
+  kolaydır.
 </Tip>
 
 ## Örnek Kullanım Durumları
@@ -177,6 +184,6 @@ Oluşturma ve güncelleme için ayrı dallar oluşturmak yerine **Upsert** (gün
 
 ## İlgili
 
-* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
-* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+- [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+- [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

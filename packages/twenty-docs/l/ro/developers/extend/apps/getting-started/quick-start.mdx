@@ -6,9 +6,9 @@ description: Creați prima dvs. aplicație Twenty în câteva minute.
 
 ## Cerințe
 
-* **Node.js 24+** — [Descărcați](https://nodejs.org/)
-* **Yarn 4** — vine împreună cu Node prin Corepack. Activați-l: `corepack enable`
-* **Docker** — [Descărcați](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula un server Twenty local. Omiteți dacă rulați deja Twenty în altă parte.
+- **Node.js 24+** — [Descărcați](https://nodejs.org/)
+- **Yarn 4** — vine împreună cu Node prin Corepack. Activați-l: `corepack enable`
+- **Docker** — [Descărcați](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula un server Twenty local. Omiteți dacă rulați deja Twenty în altă parte.
 
 Crearea unei aplicații Twenty are trei faze. Generatorul le reunește într-o singură comandă pe calea optimă, dar fiecare fază este un concept separat — când ceva eșuează, dacă știți în ce fază sunteți, știți ce trebuie să corectați.
 
@@ -42,38 +42,53 @@ Generatorul de schelet vă propune să pornească unul pentru dvs.:
 
 > **Doriți să configurați o instanță Twenty locală?**
 
-* **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
-* **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote:add`.
+- **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
+- **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote:add`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Porniți instanța locală?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Porniți instanța locală?"
+  />
 </div>
 
 După ce serverul pornește, se deschide un browser pentru autentificare. Folosiți contul demo preconfigurat:
 
-* **E-mail:** `tim@apple.dev`
-* **Parolă:** `tim@apple.dev`
+- **E-mail:** `tim@apple.dev`
+- **Parolă:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Ecranul de autentificare Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Ecranul de autentificare Twenty"
+  />
 </div>
 
 Faceți clic pe **Authorize** pe ecranul următor — aceasta oferă CLI-ului acces la spațiul dvs. de lucru.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Ecranul de autorizare Twenty CLI" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Ecranul de autorizare Twenty CLI"
+  />
 </div>
 
 Terminalul va confirma că totul este configurat.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplicația a fost creată cu succes" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Aplicația a fost creată cu succes"
+  />
 </div>
 
 **După această fază:** aveți un server Twenty care rulează la [http://localhost:2020](http://localhost:2020), iar CLI-ul dvs. este autorizat să sincronizeze cu acesta.
 
 <Note>
-Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce Docker rulează, puteți continua cu `yarn twenty docker:start` — nu este nevoie să recreați scheletul.
+  Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va
+  indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce
+  Docker rulează, puteți continua cu `yarn twenty docker:start` — nu este nevoie
+  să recreați scheletul.
 </Note>
 
 ---
@@ -91,26 +106,38 @@ Aceasta monitorizează `src/`, reconstruiește la fiecare modificare și sincron
 
 Pentru o ieșire mai detaliată (jurnale de build, cereri de sincronizare, urme ale erorilor), adăugați `--verbose`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Ieșirea terminalului în modul de dezvoltare" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.png"
+    alt="Ieșirea terminalului în modul de dezvoltare"
+  />
 </div>
 
 Deschideți [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Ar trebui să vedeți aplicația dvs. listată la **Your Apps**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Lista Your Apps care afișează My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Lista Your Apps care afișează My twenty app"
+  />
 </div>
 
 Faceți clic pe **My twenty app** pentru a vedea **înregistrarea aplicației** — o înregistrare la nivel de server care descrie aplicația dvs. (nume, identificator, credențiale OAuth, sursă). O singură înregistrare poate fi instalată în mai multe spații de lucru pe același server.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Detalii despre înregistrarea aplicației" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Detalii despre înregistrarea aplicației"
+  />
 </div>
 
 Faceți clic pe **View installed app** pentru a vedea instalarea în spațiul de lucru. Fila **About** afișează versiunea și opțiunile de administrare.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Aplicație instalată" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Aplicație instalată"
+  />
 </div>
 
 **După această fază:** aveți o buclă de dezvoltare în timp real. Editați orice fișier în `src/` și acesta apare în UI.
@@ -132,11 +159,11 @@ Ambele moduri necesită o conexiune la distanță autentificată.
 
 ### Opțiuni pentru modul de dezvoltare
 
-| Opțiune                               | Descriere                                                                                        |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| `--once`                              | Construiește și sincronizează o singură dată, apoi iese.                                         |
-| `--debounceMs \<ms>` | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
-| `--verbose` / `--debug`               | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
+| Opțiune                 | Descriere                                                                                        |
+| ----------------------- | ------------------------------------------------------------------------------------------------ |
+| `--once`                | Construiește și sincronizează o singură dată, apoi iese.                                         |
+| `--debounceMs \<ms>`    | Setează întârzierea de debounce pentru modificarea fișierului în milisecunde (implicit: `2000`). |
+| `--verbose` / `--debug` | Afișează jurnale detaliate de construire, cereri de sincronizare și urme ale erorilor.           |
 
 ## Ce puteți construi
 
@@ -156,19 +183,40 @@ Referință completă: [Concepte](/l/ro/developers/extend/apps/getting-started/c
 ## Pașii următori
 
 <CardGroup cols={2}>
-  <Card title="Configurare" icon="screwdriver-wrench" href="/l/ro/developers/extend/apps/config/overview">
-    Identitatea aplicației, rolul implicit, hook-urile de instalare, resursele publice.
+  <Card
+    title="Configurare"
+    icon="screwdriver-wrench"
+    href="/l/ro/developers/extend/apps/config/overview"
+  >
+    Identitatea aplicației, rolul implicit, hook-urile de instalare, resursele
+    publice.
   </Card>
-  <Card title="Date" icon="database" href="/l/ro/developers/extend/apps/data/overview">
+  <Card
+    title="Date"
+    icon="database"
+    href="/l/ro/developers/extend/apps/data/overview"
+  >
     Obiecte, câmpuri și relații bidirecționale.
   </Card>
-  <Card title="Logică" icon="bolt" href="/l/ro/developers/extend/apps/logic/overview">
+  <Card
+    title="Logică"
+    icon="bolt"
+    href="/l/ro/developers/extend/apps/logic/overview"
+  >
     Funcții logice, abilități, agenți și conexiuni OAuth.
   </Card>
-  <Card title="Aspect" icon="table-columns" href="/l/ro/developers/extend/apps/layout/overview">
+  <Card
+    title="Aspect"
+    icon="table-columns"
+    href="/l/ro/developers/extend/apps/layout/overview"
+  >
     Vizualizări, navigare, layouturi de pagină, componente front-end.
   </Card>
-  <Card title="Operațiuni" icon="rocket" href="/l/ro/developers/extend/apps/operations/overview">
+  <Card
+    title="Operațiuni"
+    icon="rocket"
+    href="/l/ro/developers/extend/apps/operations/overview"
+  >
     CLI, testare, remote-uri, CI și publicarea aplicației.
   </Card>
 </CardGroup>

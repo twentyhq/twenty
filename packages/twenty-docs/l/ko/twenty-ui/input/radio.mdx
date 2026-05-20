@@ -3,7 +3,10 @@ title: 라디오
 ---
 
 <Frame>
-  <img src="/images/user-guide/create-workspace/workspace-cover.png" alt="헤더" />
+  <img
+    src="/images/user-guide/create-workspace/workspace-cover.png"
+    alt="헤더"
+  />
 </Frame>
 
 사용자가 여러 옵션 중에서 하나만 선택할 수 있을 때 사용됩니다.
@@ -38,6 +41,7 @@ title: 라디오
     };
 
     ```
+
   </Tab>
 
   <Tab title="프로퍼티">
@@ -72,7 +76,7 @@ title: 라디오
       const handleChange = (event) => {
         setSelectedValue(event.target.value);
       };
-      
+
       return (
         <RadioGroup value={selectedValue} onChange={handleChange}>
           <Radio value="Option 1" />
@@ -83,6 +87,7 @@ title: 라디오
     };
 
     ```
+
   </Tab>
 
   <Tab title="프로퍼티">

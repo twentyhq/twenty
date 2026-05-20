@@ -6,7 +6,9 @@ icon: ترس
 # إدارة الإعدادات
 
 <Warning>
-**هل هي المرة الأولى التي تقوم فيها بالتثبيت؟** اتبع [دليل تثبيت Docker Compose](/l/ar/developers/self-host/capabilities/docker-compose) لتشغيل Twenty، ثم عد هنا للإعداد.
+  **هل هي المرة الأولى التي تقوم فيها بالتثبيت؟** اتبع [دليل تثبيت Docker
+  Compose](/l/ar/developers/self-host/capabilities/docker-compose) لتشغيل
+  Twenty، ثم عد هنا للإعداد.
 </Warning>
 
 يوفر Twenty **وضعين للإعداد** ليلائم احتياجات النشر المختلفة:
@@ -27,17 +29,21 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # افتراضي
 4. تسري التغييرات على الفور (خلال 15 ثانية لعمليات النشر متعددة الحاويات)
 
 <Warning>
-**نشرات متعددة الحاويات:** عند استخدام إعدادات قاعدة البيانات (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)، يقوم كل من حاويات الخادم والعامل بالقراءة من نفس قاعدة البيانات. التغييرات في لوحة الإدارة تؤثر عليهما تلقائيًا، مما يلغي الحاجة إلى تكرار متغيرات البيئة بين الحاويات (باستثناء متغيرات البنية التحتية).
+  **نشرات متعددة الحاويات:** عند استخدام إعدادات قاعدة البيانات
+  (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`)، يقوم كل من حاويات الخادم والعامل
+  بالقراءة من نفس قاعدة البيانات. التغييرات في لوحة الإدارة تؤثر عليهما
+  تلقائيًا، مما يلغي الحاجة إلى تكرار متغيرات البيئة بين الحاويات (باستثناء
+  متغيرات البنية التحتية).
 </Warning>
 
 **ما يمكنك تكوينه عبر لوحة الإدارة:**
 
-* **المصادقة** - Google/Microsoft OAuth، إعدادات كلمة المرور
-* **البريد الإلكتروني** - إعدادات SMTP، القوالب، التحقق
-* **التخزين** - تكوين S3، مسارات التخزين المحلية
-* **التكاملات** - Gmail، تقويم Google، خدمات Microsoft
-* **حدود التشغيل ومعدل التكنولوجيا** - حدود التنفيذ، API الحد من السرعة
-* **والمزيد من الأمور...**
+- **المصادقة** - Google/Microsoft OAuth، إعدادات كلمة المرور
+- **البريد الإلكتروني** - إعدادات SMTP، القوالب، التحقق
+- **التخزين** - تكوين S3، مسارات التخزين المحلية
+- **التكاملات** - Gmail، تقويم Google، خدمات Microsoft
+- **حدود التشغيل ومعدل التكنولوجيا** - حدود التنفيذ، API الحد من السرعة
+- **والمزيد من الأمور...**
 
 ![متغيرات تكوين لوحة الإدارة](/images/user-guide/setup/admin-panel-config-variables.png)
 
@@ -46,6 +52,7 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # افتراضي
 بعض إعدادات البنية التحتية مثل اتصالات قاعدة البيانات (`PG_DATABASE_URL`)، عناوين الخوادم (`SERVER_URL`)، وأسرار التطبيقات (`APP_SECRET`) يمكن ضبطها فقط عبر ملف `.env`.
 
 [مرجع تقني كامل →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+
 </Warning>
 
 ## 2. إعداد بيئي فقط
@@ -71,10 +78,10 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=false
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* مساحة عمل واحدة لكل مثيل من Twenty
-* أول مستخدم يصبح تلقائيًا مشرفًا مع صلاحيات كاملة (`canImpersonate` و`canAccessFullAdminPanel`)
-* يتم تعطيل عمليات التسجيل الجديدة بعد إنشاء مساحة العمل الأولى
-* بنية URL بسيطة: `https://your-domain.com`
+- مساحة عمل واحدة لكل مثيل من Twenty
+- أول مستخدم يصبح تلقائيًا مشرفًا مع صلاحيات كاملة (`canImpersonate` و`canAccessFullAdminPanel`)
+- يتم تعطيل عمليات التسجيل الجديدة بعد إنشاء مساحة العمل الأولى
+- بنية URL بسيطة: `https://your-domain.com`
 
 ### تمكين وضع تعدد مساحات العمل
 
@@ -87,14 +94,15 @@ DEFAULT_SUBDOMAIN=app  # default value
 
 **الاختلافات الرئيسية مقارنة بوضع مساحة العمل الواحدة:**
 
-* يمكن إنشاء مساحات عمل متعددة على نفس المثيل
-* تحصل كل مساحة عمل على نطاق فرعي خاص بها (مثل: `sales.your-domain.com`، `marketing.your-domain.com`)
-* يسجل المستخدمون ويقومون بتسجيل الدخول عبر `{DEFAULT_SUBDOMAIN}.your-domain.com` (مثل: `app.your-domain.com`)
-* لا توجد صلاحيات مشرف تلقائية — أول مستخدم في كل مساحة عمل يكون مستخدمًا عاديًا
-* إعدادات خاصة بمساحة العمل مثل النطاق الفرعي والنطاق المخصص تصبح متاحة ضمن إعدادات مساحة العمل
+- يمكن إنشاء مساحات عمل متعددة على نفس المثيل
+- تحصل كل مساحة عمل على نطاق فرعي خاص بها (مثل: `sales.your-domain.com`، `marketing.your-domain.com`)
+- يسجل المستخدمون ويقومون بتسجيل الدخول عبر `{DEFAULT_SUBDOMAIN}.your-domain.com` (مثل: `app.your-domain.com`)
+- لا توجد صلاحيات مشرف تلقائية — أول مستخدم في كل مساحة عمل يكون مستخدمًا عاديًا
+- إعدادات خاصة بمساحة العمل مثل النطاق الفرعي والنطاق المخصص تصبح متاحة ضمن إعدادات مساحة العمل
 
 <Warning>
-**إعداد خاص بالبيئة فقط:** لا يمكن تكوين `IS_MULTIWORKSPACE_ENABLED` إلا عبر ملف `.env` ويتطلب إعادة تشغيل. لا يمكن تغييره عبر لوحة الإدارة.
+  **إعداد خاص بالبيئة فقط:** لا يمكن تكوين `IS_MULTIWORKSPACE_ENABLED` إلا عبر
+  ملف `.env` ويتطلب إعادة تشغيل. لا يمكن تغييره عبر لوحة الإدارة.
 </Warning>
 
 ### تكوين DNS لوضع تعدد مساحات العمل
@@ -125,40 +133,41 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 2. أنشئ مشروعًا جديدًا أو اختر أحد المشاريع الموجودة
 3. قم بتفعيل هذه الـ APIs:
 
-* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
-* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
-* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
 
 ### تكوين OAuth
 
 1. اذهب إلى [بيانات اعتماد](https://console.cloud.google.com/apis/credentials)
 2. قم بإنشاء معرف عميل OAuth 2.0
 3. أضف هذه الـ URIs لإعادة التوجيه:
-   * `https://{your-domain}/auth/google/redirect` (لتسجيل الدخول الفردي)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (للتكاملات)
+   - `https://{your-domain}/auth/google/redirect` (لتسجيل الدخول الفردي)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (للتكاملات)
 
 ### الإعداد في Twenty
 
 1. اذهب إلى **الإعدادات → لوحة الإدارة → متغيرات التكوين**
 2. ابحث بسهولة **عن قسم Google Auth**
 3. حدد هذه المتغيرات:
-   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
-   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
-   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
-   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
-   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-**وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`،
+  فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
 **النطاقات المطلوبة** (يتم تكوينها تلقائيًا):
 [انظر الشيفرة المصدرية ذات الصلة](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 
-* `https://www.googleapis.com/auth/calendar.events`
-* `https://www.googleapis.com/auth/gmail.readonly`
-* `https://www.googleapis.com/auth/profile.emails.read`
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
 
 ### إذا كان تطبيقك في وضع الاختبار
 
@@ -169,7 +178,9 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 ## تكامل Microsoft 365
 
 <Warning>
-يجب على المستخدمين الحصول على [ترخيص Microsoft 365](https://admin.microsoft.com/Adminportal/Home) ليتمكنوا من استخدام تقويم API ورسائل. لن يتمكنوا من مزامنة حسابهم في Twenty دون واحد منها.
+  يجب على المستخدمين الحصول على [ترخيص Microsoft
+  365](https://admin.microsoft.com/Adminportal/Home) ليتمكنوا من استخدام تقويم
+  API ورسائل. لن يتمكنوا من مزامنة حسابهم في Twenty دون واحد منها.
 </Warning>
 
 ### إنشاء مشروع في Microsoft Azure
@@ -180,14 +191,14 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 
 على وحدة تحكم Microsoft Azure، قم بتمكين الواجهات التالية في "أذونات":
 
-* Microsoft Graph: Mail.ReadWrite
-* Microsoft Graph: Mail.Send
-* Microsoft Graph: Calendars.Read
-* Microsoft Graph: User.Read
-* Microsoft Graph: openid
-* Microsoft Graph: email
-* Microsoft Graph: profile
-* Microsoft Graph: offline_access
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
 
 ملحوظة: "Mail.ReadWrite" و "Mail.Send" إلزاميان فقط إذا كنت ترغب في إرسال رسائل بريد إلكتروني باستخدام إجراءات سير العمل الخاصة بنا. يمكنك استخدام "Mail.Read" بدلاً من ذلك إذا كنت ترغب فقط في تلقي الرسائل الإلكترونية.
 
@@ -195,37 +206,38 @@ IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS=true
 
 ستحتاج إلى إضافة URIs التالية لإعادة التوجيه إلى مشروعك:
 
-* `https://{your-domain}/auth/microsoft/redirect` إذا كنت تريد استخدام تسجيل الدخول الفردي في Microsoft
-* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+- `https://{your-domain}/auth/microsoft/redirect` إذا كنت تريد استخدام تسجيل الدخول الفردي في Microsoft
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### الإعداد في Twenty
 
 1. اذهب إلى **الإعدادات → لوحة الإدارة → متغيرات التكوين**
 2. ابحث عن قسم **Microsoft Auth**
 3. حدد هذه المتغيرات:
-   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
-   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
-   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
-   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
-   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-**وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`،
+  فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
 ### تكوين النطاقات
 
 [انظر الشيفرة المصدرية ذات الصلة](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
-* 'openid'
-* 'البريد الإلكتروني'
-* 'profile'
-* 'offline_access'
-* 'Mail.ReadWrite'
-* 'Mail.Send'
-* 'Calendars.Read'
+- 'openid'
+- 'البريد الإلكتروني'
+- 'profile'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### إذا كان تطبيقك في وضع الاختبار
 
@@ -260,48 +272,55 @@ yarn command:prod cron:workflow:automated-cron-trigger
 
   <ArticleTab>
 
-  ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.google.com/accounts/answer/185833).
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.gmail.com
-  * EMAIL_SMTP_PORT=465
-  * EMAIL_SMTP_USER=gmail_email_address
-  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  تذكر أنه إذا كنت تشغل التحقق بعاملين، ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.office365.com
-  * EMAIL_SMTP_PORT=587
-  * EMAIL_SMTP_USER=office365_email_address
-  * EMAIL_SMTP_PASSWORD='office365_password'
+تذكر أنه إذا كنت تشغل التحقق بعاملين، ستحتاج إلى توفير [كلمة مرور التطبيق](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev** هو خادم بريد إلكتروني مزيف للتطوير والاختبار.
-  * قم بتشغيل صورة smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-  * الوصول إلى واجهة المستخدم smtp4dev هنا: [http://localhost:8090](http://localhost:8090)
-  * حدد المتغيرات التالية:
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=localhost
-    * EMAIL_SMTP_PORT=2525
+**smtp4dev** هو خادم بريد إلكتروني مزيف للتطوير والاختبار.
+
+- قم بتشغيل صورة smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- الوصول إلى واجهة المستخدم smtp4dev هنا: [http://localhost:8090](http://localhost:8090)
+- حدد المتغيرات التالية:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
 </ArticleTabs>
 
 <Warning>
-**وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`، فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
+  **وضع بيئي فقط:** إذا كنت قد ضبطت `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`،
+  فأضف هذه المتغيرات إلى ملف `.env` الخاص بك بدلاً من ذلك.
 </Warning>
 
 ## تخزين S3
 
 <Warning>
-افتراضياً، تقوم Twenty بتخزين الملفات المرفوعة على نظام الملفات المحلي. بالنسبة لعمليات النشر في بيئة الإنتاج، استخدم S3 أو خدمة متوافقة مع S3 (MinIO، DigitalOcean Spaces، إلخ) لضمان بقاء الملفات عبر إعادة تشغيل الحاويات وإتاحة التوسّع عبر مثيلات خوادم متعددة.
+  افتراضياً، تقوم Twenty بتخزين الملفات المرفوعة على نظام الملفات المحلي.
+  بالنسبة لعمليات النشر في بيئة الإنتاج، استخدم S3 أو خدمة متوافقة مع S3 (MinIO،
+  DigitalOcean Spaces، إلخ) لضمان بقاء الملفات عبر إعادة تشغيل الحاويات وإتاحة
+  التوسّع عبر مثيلات خوادم متعددة.
 </Warning>
 
 عيّن `STORAGE_TYPE=S_3` وقم بتهيئة متغيرات `STORAGE_S3_*` من خلال لوحة الإدارة أو `.env`. راجع [مرجع config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) للاطلاع على القائمة الكاملة لمتغيرات S3.
@@ -319,7 +338,12 @@ yarn command:prod cron:workflow:automated-cron-trigger
 **في بيئة التطوير (NODE_ENV=development):** يكون الإعداد الافتراضي لكليهما **LOCAL** لتسهيل التشغيل محلياً.
 
 <Warning>
-**ملاحظة أمنية:** يقوم برنامج التشغيل المحلي (`LOGIC_FUNCTION_TYPE=LOCAL` أو `CODE_INTERPRETER_TYPE=LOCAL`) بتشغيل الشيفرة مباشرة على المضيف ضمن عملية Node.js من دون عزل. يجب استخدامه فقط للشيفرة الموثوقة أثناء التطوير. لعمليات النشر الإنتاجية التي تتعامل مع شيفرة غير موثوقة، استخدم `LOGIC_FUNCTION_TYPE=LAMBDA` أو `CODE_INTERPRETER_TYPE=E2B` (مع وضع الحماية)، أو اتركهما مُعطَّلَيْن.
+  **ملاحظة أمنية:** يقوم برنامج التشغيل المحلي (`LOGIC_FUNCTION_TYPE=LOCAL` أو
+  `CODE_INTERPRETER_TYPE=LOCAL`) بتشغيل الشيفرة مباشرة على المضيف ضمن عملية
+  Node.js من دون عزل. يجب استخدامه فقط للشيفرة الموثوقة أثناء التطوير. لعمليات
+  النشر الإنتاجية التي تتعامل مع شيفرة غير موثوقة، استخدم
+  `LOGIC_FUNCTION_TYPE=LAMBDA` أو `CODE_INTERPRETER_TYPE=E2B` (مع وضع الحماية)،
+  أو اتركهما مُعطَّلَيْن.
 </Warning>
 
 ### الوظائف المنطقية - برامج التشغيل المتاحة
@@ -363,5 +387,7 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 | E2B            | `CODE_INTERPRETER_TYPE=E_2_B`    | الإنتاج مع تنفيذ ضمن صندوق رمل معزول  | مرتفعة (صندوق رمل معزول) |
 
 <Note>
-عند استخدام `LOGIC_FUNCTION_TYPE=DISABLED` أو `CODE_INTERPRETER_TYPE=DISABLED`، سترجع أي محاولة للتنفيذ خطأً. يكون هذا مفيدًا إذا كنت ترغب في تشغيل Twenty من دون هذه الإمكانات.
+  عند استخدام `LOGIC_FUNCTION_TYPE=DISABLED` أو
+  `CODE_INTERPRETER_TYPE=DISABLED`، سترجع أي محاولة للتنفيذ خطأً. يكون هذا
+  مفيدًا إذا كنت ترغب في تشغيل Twenty من دون هذه الإمكانات.
 </Note>

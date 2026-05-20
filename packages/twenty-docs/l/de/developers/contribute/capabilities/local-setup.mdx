@@ -10,14 +10,17 @@ description: Der Leitfaden für Mitwirkende (oder neugierige Entwickler), die Tw
 <Tab title="Linux und macOS">
 
 Bevor Sie Twenty installieren und verwenden können, stellen Sie sicher, dass Sie Folgendes auf Ihrem Computer installiert haben:
-* [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
-* [Node v24.5.0](https://nodejs.org/en/download)
-* [yarn v4](https://yarnpkg.com/getting-started/install)
-* [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
+
+- [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
+- [Node v24.5.0](https://nodejs.org/en/download)
+- [yarn v4](https://yarnpkg.com/getting-started/install)
+- [nvm](https://github.com/nvm-sh/nvm/blob/master/README.md)
 
 <Warning>
-`npm` wird nicht funktionieren, Sie sollten stattdessen `yarn` verwenden. Yarn wird jetzt mit Node.js geliefert, so dass Sie es nicht separat installieren müssen.
-Sie müssen nur `corepack enable` ausführen, um Yarn zu aktivieren, wenn Sie das noch nicht getan haben.
+  `npm` wird nicht funktionieren, Sie sollten stattdessen `yarn` verwenden. Yarn
+  wird jetzt mit Node.js geliefert, so dass Sie es nicht separat installieren
+  müssen. Sie müssen nur `corepack enable` ausführen, um Yarn zu aktivieren,
+  wenn Sie das noch nicht getan haben.
 </Warning>
 
 </Tab>
@@ -26,9 +29,11 @@ Sie müssen nur `corepack enable` ausführen, um Yarn zu aktivieren, wenn Sie da
 
 1. Installieren Sie WSL
    Öffnen Sie PowerShell als Administrator und führen Sie aus:
+
 ```powershell
 wsl --install
 ```
+
 Sie sollten nun eine Aufforderung sehen, Ihren Computer neu zu starten. Wenn nicht, starten Sie ihn manuell neu.
 
 Nach dem Neustart wird ein PowerShell-Fenster geöffnet und Ubuntu installiert. Dies kann einige Zeit in Anspruch nehmen.
@@ -47,7 +52,8 @@ git config --global user.email "youremail@domain.com"
 3. nvm, node.js und yarn installieren
 
 <Warning>
-Verwenden Sie `nvm`, um die korrekte `node`-Version zu installieren. Die `.nvmrc` stellt sicher, dass alle Mitwirkenden die gleiche Version verwenden.
+  Verwenden Sie `nvm`, um die korrekte `node`-Version zu installieren. Die
+  `.nvmrc` stellt sicher, dass alle Mitwirkenden die gleiche Version verwenden.
 </Warning>
 
 ```bash
@@ -55,6 +61,7 @@ sudo apt-get install curl
 
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/master/install.sh | bash
 ```
+
 Schließen und öffnen Sie Ihr Terminal erneut, um nvm zu verwenden. Führen Sie dann die folgenden Befehle aus.
 
 ```bash
@@ -114,6 +121,7 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Option 1 (bevorzugt):** Um Ihre Datenbank lokal mit `brew` bereitzustellen:
@@ -170,6 +178,7 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     Alle folgenden Schritte sind im WSL-Terminal auszuführen (innerhalb Ihrer virtuellen Maschine)
@@ -187,6 +196,7 @@ Alle folgenden Befehle innerhalb des Projekts sind vom Stammverzeichnis aus ausz
     ```bash
       make -C packages/twenty-docker postgres-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -207,6 +217,7 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Mac OS">
     **Option 1 (bevorzugt):** Bereitstellung von Redis lokal mit `brew`:
@@ -222,6 +233,7 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
   <Tab title="Windows (WSL)">
     **Option 1:** Um Redis lokal bereitzustellen:
@@ -231,6 +243,7 @@ Twenty benötigt einen Redis-Cache, um die beste Leistung zu bieten.
     ```bash
       make -C packages/twenty-docker redis-on-docker
     ```
+
   </Tab>
 </Tabs>
 
@@ -248,7 +261,13 @@ cp ./packages/twenty-server/.env.example ./packages/twenty-server/.env
 ```
 
 <Info>
-**Multi-Workspace-Modus:** Standardmäßig läuft Twenty im Einzel-Workspace-Modus, in dem nur ein Workspace erstellt werden kann. Um die Multi-Workspace-Unterstützung zu aktivieren (nützlich zum Testen von Subdomain-basierten Funktionen), setzen Sie `IS_MULTIWORKSPACE_ENABLED=true` in der `.env`-Datei Ihres Servers. Siehe [Multi-Workspace-Modus](/l/de/developers/self-host/capabilities/setup#multi-workspace-mode) für Details.
+  **Multi-Workspace-Modus:** Standardmäßig läuft Twenty im
+  Einzel-Workspace-Modus, in dem nur ein Workspace erstellt werden kann. Um die
+  Multi-Workspace-Unterstützung zu aktivieren (nützlich zum Testen von
+  Subdomain-basierten Funktionen), setzen Sie `IS_MULTIWORKSPACE_ENABLED=true`
+  in der `.env`-Datei Ihres Servers. Siehe
+  [Multi-Workspace-Modus](/l/de/developers/self-host/capabilities/setup#multi-workspace-mode)
+  für Details.
 </Info>
 
 ## Schritt 6: Abhängigkeiten installieren
@@ -265,18 +284,20 @@ Bitte beachten Sie, `npm` oder `pnpm` funktionieren nicht.
 
 <Tabs>
   <Tab title="Linux">
-    Je nach Ihrer Linux-Distribution könnte der Redis-Server automatisch gestartet werden.
-    Wenn nicht, überprüfen Sie den [Redis Installationsleitfaden](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) für Ihre Distribution.
+    Je nach Ihrer Linux-Distribution könnte der Redis-Server automatisch
+    gestartet werden. Wenn nicht, überprüfen Sie den [Redis
+    Installationsleitfaden](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    für Ihre Distribution.
   </Tab>
   <Tab title="Mac OS">
-  Redis sollte bereits laufen. Falls nicht, führen Sie aus:
-    ```bash
-    brew services start redis
-    ```
+    Redis sollte bereits laufen. Falls nicht, führen Sie aus: ```bash brew
+    services start redis ```
   </Tab>
   <Tab title="Windows (WSL)">
-    Je nach Ihrer Linux-Distribution könnte der Redis-Server automatisch gestartet werden.
-    Wenn nicht, überprüfen Sie den [Redis Installationsleitfaden](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/) für Ihre Distribution.
+    Je nach Ihrer Linux-Distribution könnte der Redis-Server automatisch
+    gestartet werden. Wenn nicht, überprüfen Sie den [Redis
+    Installationsleitfaden](https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/)
+    für Ihre Distribution.
   </Tab>
 </Tabs>
 
@@ -309,9 +330,9 @@ Sie können sich mit dem Standard-Demokonto anmelden: `tim@apple.dev` (Passwort:
 
 **Backend**
 
-* Der Server von Twenty wird unter [http://localhost:3000](http://localhost:3000) verfügbar sein.
-* Die GraphQL-API kann unter [http://localhost:3000/graphql](http://localhost:3000/graphql) erreicht werden.
-* Die REST-API ist erreichbar unter [http://localhost:3000/rest](http://localhost:3000/rest)
+- Der Server von Twenty wird unter [http://localhost:3000](http://localhost:3000) verfügbar sein.
+- Die GraphQL-API kann unter [http://localhost:3000/graphql](http://localhost:3000/graphql) erreicht werden.
+- Die REST-API ist erreichbar unter [http://localhost:3000/rest](http://localhost:3000/rest)
 
 ## Fehlerbehebung
 

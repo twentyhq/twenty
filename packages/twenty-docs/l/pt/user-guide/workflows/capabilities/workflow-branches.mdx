@@ -5,7 +5,10 @@ description: Crie caminhos paralelos e lógica condicional em seus fluxos de tra
 
 As ramificações permitem dividir seu fluxo de trabalho em vários caminhos que podem ser executados simultaneamente ou condicionalmente com base em seus dados.
 
-<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches.png"
+  style={{ width: '100%' }}
+/>
 
 ## Como as Ramificações Funcionam
 
@@ -22,7 +25,8 @@ Quando você cria várias conexões a partir de um único nó, cada caminho se t
 5. Repita para adicionar mais ramificações a partir do mesmo nó
 
 <Note>
-Cada ramificação é independente. Adicionar uma ramificação não afeta outros caminhos existentes desse nó.
+  Cada ramificação é independente. Adicionar uma ramificação não afeta outros
+  caminhos existentes desse nó.
 </Note>
 
 ### Layout Visual
@@ -50,17 +54,20 @@ Apenas as ramificações em que a condição do filtro for atendida continuarão
 
 **As ramificações não se mesclam automaticamente.** Cada ramificação é executada de forma independente até terminar. Você tem total flexibilidade em como lidar com isso:
 
-* **Opção 1: Manter ramificações separadas**
+- **Opção 1: Manter ramificações separadas**
   Cada ramificação lida com suas próprias ações de acompanhamento de forma independente. Esta é a abordagem mais simples quando as ramificações não precisam convergir.
 
-* **Opção 2: Mesclar ramificações manualmente**
+- **Opção 2: Mesclar ramificações manualmente**
   Ao criar seu fluxo de trabalho, você pode conectar manualmente várias ramificações à mesma ação subsequente. Basta arrastar setas do final de cada ramificação para um nó comum.
 
 <Note>
-Embora você possa usar um nó [Atraso](/l/pt/user-guide/workflows/capabilities/workflow-actions#delay) para pausar a execução, atualmente não é possível configurá-lo para esperar "até que outra ramificação termine".
+  Embora você possa usar um nó
+  [Atraso](/l/pt/user-guide/workflows/capabilities/workflow-actions#delay) para
+  pausar a execução, atualmente não é possível configurá-lo para esperar "até
+  que outra ramificação termine".
 </Note>
 
 ## Relacionados
 
-* [Como usar ramificações em Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/use-branches-in-workflows) - Guia passo a passo
-* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions) - Ações disponíveis, incluindo Filtro
+- [Como usar ramificações em Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/use-branches-in-workflows) - Guia passo a passo
+- [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions) - Ações disponíveis, incluindo Filtro

@@ -115,28 +115,37 @@ npx nx worker twenty-server
 
 #### Как проверить, работает ли ваш воркер?
 
-* Перейдите на [webhook-test.com](https://webhook-test.com/) и скопируйте **Ваш уникальный URL вебхука**.
+- Перейдите на [webhook-test.com](https://webhook-test.com/) и скопируйте **Ваш уникальный URL вебхука**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Тест вебхука" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Тест вебхука"
+  />
 </div>
 
-* Откройте приложение Twenty, перейдите в `/settings` и включите переключатель **Advanced** внизу слева на экране.
-* Создайте новый вебхук.
-* Вставьте **Ваш уникальный URL вебхука** в поле **Endpoint Url** в Twenty. Установите **Фильтры** на `Компании` и `Создано`.
+- Откройте приложение Twenty, перейдите в `/settings` и включите переключатель **Advanced** внизу слева на экране.
+- Создайте новый вебхук.
+- Вставьте **Ваш уникальный URL вебхука** в поле **Endpoint Url** в Twenty. Установите **Фильтры** на `Компании` и `Создано`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Настройки вебхука" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Настройки вебхука"
+  />
 </div>
 
-* Перейдите в `/objects/companies` и создайте новую запись компании.
-* Вернитесь на [webhook-test.com](https://webhook-test.com/) и проверьте, был ли получен новый **POST запрос**.
+- Перейдите в `/objects/companies` и создайте новую запись компании.
+- Вернитесь на [webhook-test.com](https://webhook-test.com/) и проверьте, был ли получен новый **POST запрос**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Результат теста вебхука" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Результат теста вебхука"
+  />
 </div>
 
-* Если **POST запрос** получен, ваш воркер успешно работает. В противном случае, вам нужно устранить неполадки вашего воркера.
+- Если **POST запрос** получен, ваш воркер успешно работает. В противном случае, вам нужно устранить неполадки вашего воркера.
 
 #### Фронтэнд не запускается и выдает ошибку TS5042: Опция 'project' не может быть использована вместе с исходными файлами на командной строке
 
@@ -200,9 +209,8 @@ plugins: [
    Убедитесь, что `SERVER_URL` в вашем файле `.env` соответствует вашему внешнему URL-адресу, включая `https`, если SSL включён.
 
 2. **Проверьте настройки обратного прокси:**
-
-   * Убедитесь, что ваш обратный прокси правильно перенаправляет запросы на сервер Twenty.
-   * Убедитесь, что заголовки, как `X-Forwarded-For` и `X-Forwarded-Proto`, корректно установлены.
+   - Убедитесь, что ваш обратный прокси правильно перенаправляет запросы на сервер Twenty.
+   - Убедитесь, что заголовки, как `X-Forwarded-For` и `X-Forwarded-Proto`, корректно установлены.
 
 3. **Перезапустите службы:**
 
@@ -216,7 +224,7 @@ plugins: [
 
 Если вы столкнулись с проблемами, не охваченными в этом руководстве:
 
-* Проверьте логи:
+- Проверьте логи:
 
   Просмотрите логи контейнера на наличие сообщений об ошибках:
 
@@ -224,6 +232,6 @@ plugins: [
   docker compose logs
   ```
 
-* Поддержка сообщества:
+- Поддержка сообщества:
 
   Обратитесь к [сообществу Twenty](https://github.com/twentyhq/twenty/issues) или [каналам поддержки](https://discord.gg/cx5n4Jzs57) за помощью.

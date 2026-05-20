@@ -186,8 +186,8 @@ yarn command:prod upgrade-0.42
 
 **環境変数**
 
-* 削除: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* 追加: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+- 削除: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- 追加: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
 
 ### v0.40.0からv0.41.0
 
@@ -200,7 +200,7 @@ yarn command:prod upgrade-0.41
 
 **環境変数**
 
-* 削除: `AUTH_MICROSOFT_TENANT_ID`
+- 削除: `AUTH_MICROSOFT_TENANT_ID`
 
 ### v0.35.0からv0.40.0
 
@@ -213,7 +213,7 @@ yarn command:prod upgrade-0.40
 
 **環境変数**
 
-* 追加: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+- 追加: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
 
 ### v0.34.0からv0.35.0
 
@@ -229,7 +229,7 @@ yarn command:prod upgrade-0.35
 
 **環境変数**
 
-* `ENABLE_DB_MIGRATIONS` を `DISABLE_DB_MIGRATIONS` に置き換えました（デフォルト値は`false`で、設定する必要はないと思われます）
+- `ENABLE_DB_MIGRATIONS` を `DISABLE_DB_MIGRATIONS` に置き換えました（デフォルト値は`false`で、設定する必要はないと思われます）
 
 ### v0.33.0からv0.34.0
 
@@ -245,8 +245,8 @@ yarn command:prod upgrade-0.34
 
 **環境変数**
 
-* 削除: `FRONT_BASE_URL`
-* 追加: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+- 削除: `FRONT_BASE_URL`
+- 追加: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
 フロントエンドURLの取り扱いを更新しました。
 フロントエンドURLの取り扱いを更新しました。
@@ -295,15 +295,15 @@ yarn command:prod upgrade-0.32
 
 Redis接続の取り扱いを更新しました。
 
-* 削除: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* 追加: `REDIS_URL`
+- 削除: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- 追加: `REDIS_URL`
 
 個々のRedis接続パラメーターの代わりに、新しい `REDIS_URL` 変数を使用するように `.env` ファイルを更新してください。
 
 JWTトークンの取り扱いも簡素化しました。
 
-* 削除: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* 追加: `APP_SECRET`
+- 削除: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- 追加: `APP_SECRET`
 
 個々のトークンシークレットの代わりに、新しい `APP_SECRET` 変数を使用するように `.env` ファイルを更新してください（以前と同じシークレットを使用するか、新しいランダム文字列を生成して使用することができます）
 

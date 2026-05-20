@@ -181,8 +181,8 @@ yarn command:prod upgrade-0.42
 
 **Variables del entorno**
 
-* Removidos: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* Agregados: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+- Removidos: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- Agregados: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
 
 ### v0.40.0 a v0.41.0
 
@@ -195,7 +195,7 @@ yarn command:prod upgrade-0.41
 
 **Variables del entorno**
 
-* Removido: `AUTH_MICROSOFT_TENANT_ID`
+- Removido: `AUTH_MICROSOFT_TENANT_ID`
 
 ### v0.35.0 a v0.40.0
 
@@ -208,7 +208,7 @@ yarn command:prod upgrade-0.40
 
 **Variables del entorno**
 
-* Agregados: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+- Agregados: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
 
 ### v0.34.0 a v0.35.0
 
@@ -224,7 +224,7 @@ El `yarn command:prod upgrade-0.35` se encarga de la migración de datos de todo
 
 **Variables del entorno**
 
-* Reemplazamos `ENABLE_DB_MIGRATIONS` por `DISABLE_DB_MIGRATIONS` (valor predeterminado ahora es `false`, probablemente no tenga que establecer nada)
+- Reemplazamos `ENABLE_DB_MIGRATIONS` por `DISABLE_DB_MIGRATIONS` (valor predeterminado ahora es `false`, probablemente no tenga que establecer nada)
 
 ### v0.33.0 a v0.34.0
 
@@ -240,8 +240,8 @@ El `yarn command:prod upgrade-0.34` se encarga de la migración de datos de todo
 
 **Variables del entorno**
 
-* Removido: `FRONT_BASE_URL`
-* Agregados: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+- Removido: `FRONT_BASE_URL`
+- Agregados: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
 Hemos actualizado la forma en que manejamos la URL del frontend.
 Ahora puede configurar la URL del frontend usando las variables `FRONT_DOMAIN`, `FRONT_PROTOCOL` y `FRONT_PORT`.
@@ -282,15 +282,15 @@ El `yarn command:prod upgrade-0.32` se encarga de la migración de datos de todo
 
 Hemos actualizado la forma en que manejamos la conexión Redis.
 
-* Removidos: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* Agregado: `REDIS_URL`
+- Removidos: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- Agregado: `REDIS_URL`
 
 Actualice su archivo `.env` para usar la nueva variable `REDIS_URL` en lugar de los parámetros de conexión individuales de Redis.
 
 También hemos simplificado la forma en que manejamos los tokens JWT.
 
-* Removidos: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* Agregado: `APP_SECRET`
+- Removidos: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- Agregado: `APP_SECRET`
 
 Actualice su archivo `.env` para usar la nueva variable `APP_SECRET` en lugar de los secretos de tokens individuales (puede usar el mismo secreto que antes o generar una nueva cadena aleatoria)
 

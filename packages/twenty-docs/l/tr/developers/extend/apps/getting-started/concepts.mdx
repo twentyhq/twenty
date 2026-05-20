@@ -29,13 +29,16 @@ your-app/
 ```
 
 <Note>
-  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)` çağrılarını bulur. Yukarıdaki klasör yapısı bir gelenektir, zorunluluk değildir.
+  **Dosya organizasyonu size kalmış.** Varlık algılama AST tabanlıdır — dosyanın
+  nerede bulunduğundan bağımsız olarak SDK `export default defineEntity(...)`
+  çağrılarını bulur. Yukarıdaki klasör yapısı bir gelenektir, zorunluluk
+  değildir.
 </Note>
 
 ## Varlık türleri
 
-| Varlık                   | Amaç                                                     | Belgeler                                                                       |
-| ------------------------ | -------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| Varlık                   | Amaç                                                     | Belgeler                                                                            |
+| ------------------------ | -------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | **Uygulama**             | Uygulama kimliği, varsayılan rol, değişkenler            | [Uygulama Yapılandırması](/l/tr/developers/extend/apps/config/application)          |
 | **Rol**                  | Nesneler ve alanlar üzerindeki izin kümeleri             | [Roller ve İzinler](/l/tr/developers/extend/apps/config/roles)                      |
 | **Nesne**                | Alanlara sahip özel kayıt türleri                        | [Nesneler](/l/tr/developers/extend/apps/data/objects)                               |
@@ -53,9 +56,9 @@ your-app/
 
 ## Korumalı alan
 
-* **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
-* **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
-* **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
+- **Mantık işlevleri** sunucuda yalıtılmış Node.js işlemlerinde çalışır. Verilere yalnızca, kapsamı uygulamanın rol izinleriyle sınırlandırılmış tipli API istemcisi üzerinden erişirler.
+- **Ön uç bileşenleri**, Remote DOM kullanan Web Worker'larda çalışır — ana sayfadan yalıtılmıştır ancak yerel DOM öğelerini (iframe'ler değil) oluşturur. Twenty ile mesaj iletimi yapan bir ana makine API'si aracılığıyla iletişim kurarlar.
+- **İzinler**, API düzeyinde uygulanır. Çalışma zamanı belirteci (`TWENTY_APP_ACCESS_TOKEN`), `defineApplication()` içinde tanımlanan rolden türetilir.
 
 ## Uygulama yaşam döngüsü
 
@@ -76,26 +79,46 @@ your-app/
 └─────────────────────────────────────────────────────────┘
 ```
 
-* **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
-* **`yarn twenty dev:build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
-* **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı işlevler. Ayrıntılar için [Kurulum Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
+- **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
+- **`yarn twenty dev:build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
+- **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı işlevler. Ayrıntılar için [Kurulum Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 
 ## Sonraki adımlar
 
 <CardGroup cols={2}>
-  <Card title="Yapılandırma" icon="screwdriver-wrench" href="/l/tr/developers/extend/apps/config/overview">
+  <Card
+    title="Yapılandırma"
+    icon="screwdriver-wrench"
+    href="/l/tr/developers/extend/apps/config/overview"
+  >
     Uygulama kimliği, varsayılan rol ve kurulum kancaları.
   </Card>
-  <Card title="Veri" icon="database" href="/l/tr/developers/extend/apps/data/overview">
+  <Card
+    title="Veri"
+    icon="database"
+    href="/l/tr/developers/extend/apps/data/overview"
+  >
     Nesneler, alanlar ve çift yönlü ilişkiler.
   </Card>
-  <Card title="Mantık" icon="bolt" href="/l/tr/developers/extend/apps/logic/overview">
+  <Card
+    title="Mantık"
+    icon="bolt"
+    href="/l/tr/developers/extend/apps/logic/overview"
+  >
     Mantık işlevleri, beceriler, temsilciler ve OAuth bağlantıları.
   </Card>
-  <Card title="Düzen" icon="table-columns" href="/l/tr/developers/extend/apps/layout/overview">
+  <Card
+    title="Düzen"
+    icon="table-columns"
+    href="/l/tr/developers/extend/apps/layout/overview"
+  >
     Görünümler, gezinme, sayfa düzenleri, ön uç bileşenleri.
   </Card>
-  <Card title="İşlemler" icon="rocket" href="/l/tr/developers/extend/apps/operations/overview">
+  <Card
+    title="İşlemler"
+    icon="rocket"
+    href="/l/tr/developers/extend/apps/operations/overview"
+  >
     CLI, test, uzak depolar, CI ve uygulamanızı yayımlama.
   </Card>
 </CardGroup>

@@ -5,7 +5,6 @@ description: Importe y exporte sus datos de CRM mediante archivos CSV o la API.
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-
 ## Métodos de importación
 
 Twenty admite dos métodos principales para importar datos:
@@ -15,13 +14,22 @@ Twenty admite dos métodos principales para importar datos:
 | **Importación CSV**          | Migraciones estándar, actualizaciones periódicas | 10.000 registros por archivo |
 | **Importación mediante API** | Migraciones a gran escala, automatización        | Ilimitado                    |
 
-<Note>Para conjuntos de datos muy grandes (cientos de miles de registros), use la API. Nuestros [socios de implementación](/l/es/user-guide/getting-started/capabilities/implementation-services) pueden ayudar a ejecutar estos scripts si es necesario.</Note>
+<Note>
+  Para conjuntos de datos muy grandes (cientos de miles de registros), use la
+  API. Nuestros [socios de
+  implementación](/l/es/user-guide/getting-started/capabilities/implementation-services)
+  pueden ayudar a ejecutar estos scripts si es necesario.
+</Note>
 
 ## Conceptos básicos de la importación CSV
 
 Puede importar datos de cualquier objeto mediante archivos CSV, XLSX o XLS. Cada archivo debe contener **solo un tipo de objeto** (por ejemplo, solo registros de Personas).
 
-<Note>**Los campos deben existir antes de la importación.** Cargar un CSV crea registros, pero no crea campos. Si necesita campos personalizados, créelos primero en **Configuración → Modelo de datos**.</Note>
+<Note>
+  **Los campos deben existir antes de la importación.** Cargar un CSV crea
+  registros, pero no crea campos. Si necesita campos personalizados, créelos
+  primero en **Configuración → Modelo de datos**.
+</Note>
 
 ### Pasos
 
@@ -37,19 +45,26 @@ Puede importar datos de cualquier objeto mediante archivos CSV, XLSX o XLS. Cada
 
 Puede importar relaciones entre objetos utilizando la función de importación CSV. Debe hacer referencia al objeto relacionado utilizando un campo único de ese objeto: el `id`, el `email` para Personas y Miembros del espacio de trabajo, el `domain` para empresas, cualquier otro campo establecido como único en el modelo de datos para cualquier otro objeto.
 
-<Note>**Los registros eliminados cuentan para la unicidad.** Los registros eliminados lógicamente (visibles en Menú de comandos → Ver registros eliminados) se incluyen en las comprobaciones de unicidad. Si importa un registro con el mismo valor único que un registro eliminado, el registro eliminado se restaurará.</Note>
+<Note>
+  **Los registros eliminados cuentan para la unicidad.** Los registros
+  eliminados lógicamente (visibles en Menú de comandos → Ver registros
+  eliminados) se incluyen en las comprobaciones de unicidad. Si importa un
+  registro con el mismo valor único que un registro eliminado, el registro
+  eliminado se restaurará.
+</Note>
 
 <Warning>
   **¡Importa el orden de importación!**
 
-  Al importar objetos relacionados, cargue los archivos en este orden:
+Al importar objetos relacionados, cargue los archivos en este orden:
 
-  1. **Empresas** primero (el lado "uno" de las relaciones)
-  2. **Personas** segundo (vinculadas a empresas mediante companyId)
-  3. **Oportunidades** tercero (vinculadas a empresas/personas)
-  4. **Objetos personalizados** con relaciones al final
+1. **Empresas** primero (el lado "uno" de las relaciones)
+2. **Personas** segundo (vinculadas a empresas mediante companyId)
+3. **Oportunidades** tercero (vinculadas a empresas/personas)
+4. **Objetos personalizados** con relaciones al final
 
-  ¿Por qué? El lado "uno" de una relación de uno a muchos debe existir antes de que pueda hacer referencia a él. Por ejemplo, el registro de Empresa debe existir antes de importar una Persona con el ID de esa empresa.
+¿Por qué? El lado "uno" de una relación de uno a muchos debe existir antes de que pueda hacer referencia a él. Por ejemplo, el registro de Empresa debe existir antes de importar una Persona con el ID de esa empresa.
+
 </Warning>
 
 Consulte [este artículo](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) para ver una guía paso a paso sobre cómo proceder.
@@ -65,7 +80,11 @@ Exporte los datos de su espacio de trabajo para copias de seguridad, informes o 
 3. Haga clic en **⋮** → **Exportar vista**
 4. Guarde el archivo CSV
 
-<Note>**Solo se exportan las columnas visibles.** El archivo CSV contendrá únicamente las columnas que se muestran en su vista actual. Agregue u oculte columnas antes de exportar para controlar qué datos se incluyen.</Note>
+<Note>
+  **Solo se exportan las columnas visibles.** El archivo CSV contendrá
+  únicamente las columnas que se muestran en su vista actual. Agregue u oculte
+  columnas antes de exportar para controlar qué datos se incluyen.
+</Note>
 
 <Note>**Límites de exportación**: hasta 20.000 registros por exportación.</Note>
 
@@ -73,13 +92,13 @@ Exporte los datos de su espacio de trabajo para copias de seguridad, informes o 
 
 La importación y exportación de datos requieren permisos específicos:
 
-* **Importación**: requiere el permiso "Importar CSV"
-* **Exportación**: requiere el permiso "Exportar CSV"
+- **Importación**: requiere el permiso "Importar CSV"
+- **Exportación**: requiere el permiso "Exportar CSV"
 
 Póngase en contacto con el administrador de su espacio de trabajo si no tiene estos permisos.
 
 ## Próximos Pasos
 
-* [Prepare sus archivos CSV](/l/es/user-guide/data-migration/how-tos/prepare-your-csv-files)
-* [Importe relaciones entre objetos](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Importe mediante API para conjuntos de datos grandes](/l/es/user-guide/data-migration/how-tos/import-data-via-api)
+- [Prepare sus archivos CSV](/l/es/user-guide/data-migration/how-tos/prepare-your-csv-files)
+- [Importe relaciones entre objetos](/l/es/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [Importe mediante API para conjuntos de datos grandes](/l/es/user-guide/data-migration/how-tos/import-data-via-api)

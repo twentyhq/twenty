@@ -13,7 +13,8 @@ React et Jotai gèrent la gestion de l'état dans la base de code.
 C'est une bonne pratique de créer autant d'atomes que nécessaire pour stocker votre état.
 
 <Warning>
-  Il vaut mieux utiliser des atomes supplémentaires plutôt que d'essayer d'être trop concis en perçant les propriétés.
+  Il vaut mieux utiliser des atomes supplémentaires plutôt que d'essayer d'être
+  trop concis en perçant les propriétés.
 </Warning>
 
 ```tsx
@@ -30,13 +31,10 @@ export const MyComponent = () => {
 
   return (
     <div>
-      <input
-        value={myAtom}
-        onChange={(e) => setMyAtom(e.target.value)}
-      />
+      <input value={myAtom} onChange={(e) => setMyAtom(e.target.value)} />
     </div>
   );
-}
+};
 ```
 
 ### Ne pas utiliser `useRef` pour stocker l'état
@@ -87,7 +85,7 @@ export const PageComponent = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -95,9 +93,7 @@ export const PageComponent = () => {
   return <div>{data}</div>;
 };
 
-export const App = () => (
-  <PageComponent />
-);
+export const App = () => <PageComponent />;
 ```
 
 ```tsx
@@ -114,7 +110,7 @@ export const PageData = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -181,7 +177,7 @@ const [email, setEmail] = useState('');
 
 #### Certains mots à éviter dans les noms de variables
 
-* factice
+- factice
 
 ### Gestionnaires d'événements
 
@@ -287,12 +283,8 @@ Lors de l'importation, optez pour les alias désignés plutôt que de spécifier
 
 ```tsx
 // ❌ Mauvais, spécifie l'intégralité du chemin relatif
-import {
-  CatalogDecorator
-} from '../../../../../testing/decorators/CatalogDecorator';
-import {
-  ComponentDecorator
-} from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx

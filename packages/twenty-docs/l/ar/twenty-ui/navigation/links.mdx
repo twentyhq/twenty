@@ -38,10 +38,8 @@ export const MyComponent = () => {
 };},{
 ```
 
-
 </Tab>
 <Tab title="خصائص">
-
 
 | خصائص     | النوع             | الوصف                                            |
 | --------- | ----------------- | ------------------------------------------------ |
@@ -49,9 +47,6 @@ export const MyComponent = () => {
 | رابط      | نص                | عنوان URL المستهدف أو المسار للرابط              |
 | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط |
 | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                    |
-
-
-
 
 </Tab>
 
@@ -65,12 +60,12 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RawLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -81,13 +76,10 @@ export const MyComponent = () => {
     </Router>
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="خصائص">
-
 
 | خصائص     | النوع             | الوصف                                            |
 | --------- | ----------------- | ------------------------------------------------ |
@@ -95,9 +87,6 @@ export const MyComponent = () => {
 | رابط      | string            | عنوان URL المستهدف أو المسار للرابط              |
 | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط |
 | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                    |
-
-
-
 
 </Tab>
 </Tabs>
@@ -110,12 +99,12 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RoundedLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -132,14 +121,11 @@ export const MyComponent = () => {
 
 <Tab title="خصائص">
 
-
 | خصائص     | النوع             | الوصف                                            |
 | --------- | ----------------- | ------------------------------------------------ |
 | رابط      | string            | عنوان URL المستهدف أو المسار للرابط              |
 | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                    |
 | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط |
-
-
 
 </Tab>
 </Tabs>
@@ -152,8 +138,8 @@ export const MyComponent = () => {
 <Tab title="استخدام">
 
 ```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { SocialLink } from 'twenty-ui/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   return (
@@ -170,16 +156,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="خصائص">
 
-
 | خصائص     | النوع             | الوصف                                                                |
 | --------- | ----------------- | -------------------------------------------------------------------- |
 | رابط      | string            | عنوان URL المستهدف أو المسار للرابط                                  |
 | الأبناء   | `React.ReactNode` | المحتوى ليتم عرضه داخل الرابط                                        |
 | النوع     | string            | نوع الروابط الاجتماعية. تشمل الخيارات: `url`, `LinkedIn`, و`Twitter` |
 | عند النقر | وظيفة             | دالة رد النداء ليتم تفعيلها عند النقر على الرابط                     |
-
-
-
 
 </Tab>
 </Tabs>

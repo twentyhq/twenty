@@ -11,13 +11,16 @@ Twenty fue creado para ser amigable con los desarrolladores, ofreciendo APIs pot
 
 Twenty genera APIs específicamente para tu modelo de datos:
 
-* **No se requieren IDs largos**: Usa los nombres de tus objetos y campos directamente en los endpoints.
-* **Objetos estándar y personalizados tratados por igual**: Tus objetos personalizados reciben el mismo tratamiento de API que los incorporados.
-* **Endpoints dedicados**: Cada objeto y campo recibe su propio endpoint de API.
-* **Documentación personalizada**: Generada específicamente para el modelo de datos de tu espacio de trabajo.
+- **No se requieren IDs largos**: Usa los nombres de tus objetos y campos directamente en los endpoints.
+- **Objetos estándar y personalizados tratados por igual**: Tus objetos personalizados reciben el mismo tratamiento de API que los incorporados.
+- **Endpoints dedicados**: Cada objeto y campo recibe su propio endpoint de API.
+- **Documentación personalizada**: Generada específicamente para el modelo de datos de tu espacio de trabajo.
 
 <Note>
-  Tu documentación personalizada de la API está disponible en **Configuración → API & Webhooks** después de crear una clave de API. Como Twenty genera APIs que coinciden con tu modelo de datos personalizado, la documentación es única para tu espacio de trabajo.
+  Tu documentación personalizada de la API está disponible en **Configuración →
+  API & Webhooks** después de crear una clave de API. Como Twenty genera APIs
+  que coinciden con tu modelo de datos personalizado, la documentación es única
+  para tu espacio de trabajo.
 </Note>
 
 ## Los dos tipos de API
@@ -28,9 +31,9 @@ Accesible en `/rest/` o `/graphql/`
 
 Trabaja con tus **registros** reales (los datos):
 
-* Crear, leer, actualizar y eliminar Personas, Empresas, Oportunidades, etc.
-* Consultar y filtrar datos
-* Gestionar relaciones de registros
+- Crear, leer, actualizar y eliminar Personas, Empresas, Oportunidades, etc.
+- Consultar y filtrar datos
+- Gestionar relaciones de registros
 
 ### API de Metadatos
 
@@ -38,9 +41,9 @@ Accesible en `/rest/metadata/` o `/metadata/`
 
 Administra tu **espacio de trabajo y modelo de datos**:
 
-* Crear, modificar o eliminar objetos y campos
-* Configurar ajustes del espacio de trabajo
-* Define relaciones entre objetos
+- Crear, modificar o eliminar objetos y campos
+- Configurar ajustes del espacio de trabajo
+- Define relaciones entre objetos
 
 ## REST vs GraphQL
 
@@ -73,15 +76,17 @@ Authorization: Bearer YOUR_API_KEY
 1. Ve a **Configuración → APIs y Webhooks**
 2. Haz clic en **+ Crear clave**
 3. Configurar:
-   * **Nombre**: Nombre descriptivo para la clave
-   * **Fecha de vencimiento**: Cuándo expira la clave
+   - **Nombre**: Nombre descriptivo para la clave
+   - **Fecha de vencimiento**: Cuándo expira la clave
 4. Haga clic en **Guardar**
 5. **Copia de inmediato** — la clave solo se muestra una vez
 
 <VimeoEmbed videoId="928786722" title="Creación de clave de API" />
 
 <Warning>
-  Tu clave de API concede acceso a datos sensibles. No la compartas con servicios no confiables. Si se ve comprometida, desactívala de inmediato y genera una nueva.
+  Tu clave de API concede acceso a datos sensibles. No la compartas con
+  servicios no confiables. Si se ve comprometida, desactívala de inmediato y
+  genera una nueva.
 </Warning>
 
 ### Asignar un rol a una clave de API
@@ -114,10 +119,10 @@ Prueba tus API directamente en el navegador con nuestro playground integrado —
 
 ### Lo que obtienes
 
-* **Documentación interactiva**: Generada para tu modelo de datos específico
-* **Pruebas en vivo**: Ejecuta llamadas reales a la API en tu espacio de trabajo
-* **Explorador de esquemas**: Navega por los objetos, campos y relaciones disponibles
-* **Constructor de solicitudes**: Crea consultas con autocompletado
+- **Documentación interactiva**: Generada para tu modelo de datos específico
+- **Pruebas en vivo**: Ejecuta llamadas reales a la API en tu espacio de trabajo
+- **Explorador de esquemas**: Navega por los objetos, campos y relaciones disponibles
+- **Constructor de solicitudes**: Crea consultas con autocompletado
 
 El playground refleja tus objetos y campos personalizados, por lo que la documentación siempre es precisa para tu espacio de trabajo.
 
@@ -125,13 +130,13 @@ El playground refleja tus objetos y campos personalizados, por lo que la documen
 
 Tanto REST como GraphQL admiten operaciones por lotes:
 
-* **Tamaño del lote**: Hasta 60 registros por solicitud
-* **Operaciones**: Crear, actualizar y eliminar múltiples registros
+- **Tamaño del lote**: Hasta 60 registros por solicitud
+- **Operaciones**: Crear, actualizar y eliminar múltiples registros
 
 **Características exclusivas de GraphQL:**
 
-* **Upsert por lotes**: Crear o actualizar en una llamada
-* Usa nombres de objetos en plural (por ejemplo, `CreateCompanies` en lugar de `CreateCompany`)
+- **Upsert por lotes**: Crear o actualizar en una llamada
+- Usa nombres de objetos en plural (por ejemplo, `CreateCompanies` en lugar de `CreateCompany`)
 
 ## Límites de tasa
 
@@ -143,5 +148,7 @@ Las solicitudes a la API se limitan para garantizar la estabilidad de la platafo
 | **Tamaño del lote** | 60 registros por llamada   |
 
 <Tip>
-  Usa operaciones por lotes para maximizar el rendimiento — procesa hasta 60 registros en una sola llamada a la API en lugar de hacer solicitudes individuales.
+  Usa operaciones por lotes para maximizar el rendimiento — procesa hasta 60
+  registros en una sola llamada a la API en lugar de hacer solicitudes
+  individuales.
 </Tip>

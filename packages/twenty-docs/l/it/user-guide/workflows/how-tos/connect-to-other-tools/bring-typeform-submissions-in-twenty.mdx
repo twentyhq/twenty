@@ -62,9 +62,9 @@ Typeform invia una struttura JSON annidata. Ecco un esempio semplificato:
 
 Punti chiave da notare:
 
-* I dati del modulo sono annidati in `form_response`
-* **Le risposte vengono restituite come array**, non come campi denominati
-* Ogni risposta include il tipo e il titolo del campo come riferimento
+- I dati del modulo sono annidati in `form_response`
+- **Le risposte vengono restituite come array**, non come campi denominati
+- Ogni risposta include il tipo e il titolo del campo come riferimento
 
 ### Passaggio 4: Estrai i campi dall'array delle risposte
 
@@ -103,7 +103,9 @@ export const main = async (params: {
 Ora, nei passaggi successivi, puoi selezionare `contact.firstName`, `contact.email`, ecc. dal selettore delle variabili.
 
 <Tip>
-Per maggiori dettagli sulla gestione degli array, vedi [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
+  Per maggiori dettagli sulla gestione degli array, vedi [Gestire gli array
+  nelle azioni
+  Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions).
 </Tip>
 
 ### Passaggio 5: Crea il record
@@ -126,5 +128,5 @@ Aggiungi un'azione **Create Record**:
 
 ## Correlati
 
-* [Configura un trigger webhook](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
-* [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Configura un trigger webhook](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+- [Gestire gli array nelle azioni Code](/l/it/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

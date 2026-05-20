@@ -51,11 +51,11 @@ export default definePageLayout({
 
 ### Hauptpunkte
 
-* `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
-* `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
-* Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
-* Jedes `widget` innerhalb eines Tabs kann eine [Frontend-Komponente](/l/de/developers/extend/apps/layout/front-components), eine Relationenliste oder andere eingebaute Widget-Typen rendern.
-* `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
+- `type` ist typischerweise `'RECORD_PAGE'`, um die Detailansicht eines bestimmten Objekts anzupassen.
+- `objectUniversalIdentifier` gibt an, auf welches Objekt dieses Layout angewendet wird.
+- Jeder `tab` definiert einen Abschnitt der Seite mit `title`, `position` und `layoutMode` (`CANVAS` für ein freies Layout).
+- Jedes `widget` innerhalb eines Tabs kann eine [Frontend-Komponente](/l/de/developers/extend/apps/layout/front-components), eine Relationenliste oder andere eingebaute Widget-Typen rendern.
+- `position` auf Tabs steuert deren Reihenfolge. Verwenden Sie höhere Werte (z. B. 50), um benutzerdefinierte Tabs hinter den integrierten zu platzieren.
 
 ## definePageLayoutTab
 
@@ -96,7 +96,7 @@ export default definePageLayoutTab({
 
 ### Hauptpunkte
 
-* `pageLayoutUniversalIdentifier` ist **erforderlich** und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert – entweder ein standardmäßiges Twenty-Layout oder eines, das von Ihrer eigenen App definiert wurde. App-übergreifende Verweise auf Layouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt. Wenn das übergeordnete Layout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
-* `widgets` sind ausschließlich auf diesen Tab beschränkt – sie verweisen auf [Frontend-Komponenten](/l/de/developers/extend/apps/layout/front-components), Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
-* `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
-* Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas hinzufügen möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen.
+- `pageLayoutUniversalIdentifier` ist **erforderlich** und muss auf ein Seitenlayout verweisen, das zum Installationszeitpunkt bereits existiert – entweder ein standardmäßiges Twenty-Layout oder eines, das von Ihrer eigenen App definiert wurde. App-übergreifende Verweise auf Layouts, die einer anderen installierten App gehören, werden derzeit nicht unterstützt. Wenn das übergeordnete Layout fehlt, schlägt die Installation mit einem eindeutigen Validierungsfehler fehl.
+- `widgets` sind ausschließlich auf diesen Tab beschränkt – sie verweisen auf [Frontend-Komponenten](/l/de/developers/extend/apps/layout/front-components), Ansichten usw., genau wie Widgets, die inline in `definePageLayout` definiert sind.
+- `position` steuert die Reihenfolge im Zielseitenlayout relativ zu den vorhandenen Registerkarten. Wählen Sie einen Wert, der Ihre Registerkarte relativ zu integrierten Registerkarten an die gewünschte Position bringt.
+- Verwenden Sie dies anstelle von `definePageLayout`, wenn Sie einem vorhandenen Layout nur etwas hinzufügen möchten. Verwenden Sie `definePageLayout`, wenn Sie das gesamte Layout besitzen.

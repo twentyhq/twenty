@@ -18,10 +18,10 @@ description: Probleme frecvente ale fluxurilor de lucru și cum să le rezolvaț
 
 **Soluții**:
 
-* Verificați starea fluxului de lucru în lista fluxurilor de lucru
-* Testați cu acțiunea specifică despre care considerați că îl declanșează
-* Revizuiți configurarea declanșatorului
-* Contactați administratorul dvs. despre permisiuni
+- Verificați starea fluxului de lucru în lista fluxurilor de lucru
+- Testați cu acțiunea specifică despre care considerați că îl declanșează
+- Revizuiți configurarea declanșatorului
+- Contactați administratorul dvs. despre permisiuni
 
 ### Declanșarea fluxului de lucru prea devreme (câmpuri goale)
 
@@ -31,17 +31,20 @@ description: Probleme frecvente ale fluxurilor de lucru și cum să le rezolvaț
 
 **Când "Record is created" funcționează bine**:
 
-* Înregistrări create prin apeluri API (câmpurile sunt populate într-o singură cerere)
-* Înregistrări create prin import
-* Crearea automată de înregistrări din alte fluxuri de lucru
+- Înregistrări create prin apeluri API (câmpurile sunt populate într-o singură cerere)
+- Înregistrări create prin import
+- Crearea automată de înregistrări din alte fluxuri de lucru
 
 **Soluție**: Pentru înregistrările create manual în UI, folosiți **"Record is created or updated"** ca declanșator. Astfel:
 
-* Fluxul de lucru se declanșează după ce utilizatorul a terminat de completat și salvat câmpurile
-* Obțineți date complete în loc de valori goale
+- Fluxul de lucru se declanșează după ce utilizatorul a terminat de completat și salvat câmpurile
+- Obțineți date complete în loc de valori goale
 
 <Tip>
-Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistrare, adăugați o acțiune Filter pentru a verifica un câmp precum `createdAt equals updatedAt` (prima salvare) sau folosiți un câmp checkbox personalizat pentru a urmări dacă fluxul de lucru a rulat deja.
+  Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistrare,
+  adăugați o acțiune Filter pentru a verifica un câmp precum `createdAt equals
+  updatedAt` (prima salvare) sau folosiți un câmp checkbox personalizat pentru a
+  urmări dacă fluxul de lucru a rulat deja.
 </Tip>
 
 ### Acțiuni eșuate
@@ -57,10 +60,10 @@ Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistr
 
 **Soluții**:
 
-* Verificați detaliile rulării fluxului de lucru pentru mesaje de eroare
-* Verificați că toate câmpurile obligatorii au valori
-* Testați conexiunile API independent
-* Revizuiți permisiunile rolurilor
+- Verificați detaliile rulării fluxului de lucru pentru mesaje de eroare
+- Verificați că toate câmpurile obligatorii au valori
+- Testați conexiunile API independent
+- Revizuiți permisiunile rolurilor
 
 ### Erori ale cererilor HTTP
 
@@ -68,19 +71,19 @@ Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistr
 
 **Coduri de eroare comune**:
 
-* **400**: Cerere incorectă - verificați formatul corpului cererii
-* **401**: Neautorizat - verificați cheia API
-* **403**: Interzis - verificați permisiunile API
-* **404**: Nu a fost găsit - verificați URL-ul punctului final
-* **429**: Prea multe cereri - implementați limitarea ratei
-* **500**: Eroare de server - problemă a serviciului extern
+- **400**: Cerere incorectă - verificați formatul corpului cererii
+- **401**: Neautorizat - verificați cheia API
+- **403**: Interzis - verificați permisiunile API
+- **404**: Nu a fost găsit - verificați URL-ul punctului final
+- **429**: Prea multe cereri - implementați limitarea ratei
+- **500**: Eroare de server - problemă a serviciului extern
 
 **Soluții**:
 
-* Verificați URL-ul punctului final API
-* Verificați antetele de autentificare
-* Testați mai întâi apelul API în afara Twenty
-* Adăugați tratare a erorilor în acțiunile Code
+- Verificați URL-ul punctului final API
+- Verificați antetele de autentificare
+- Testați mai întâi apelul API în afara Twenty
+- Adăugați tratare a erorilor în acțiunile Code
 
 ### Erori în acțiunile Code
 
@@ -95,10 +98,10 @@ Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistr
 
 **Soluții**:
 
-* Utilizați validarea integrată a editorului de cod
-* Testați mai întâi logica codului într-o consolă JavaScript
-* Adăugați instrucțiuni console.log pentru depanare
-* Simplificați operațiunile complexe
+- Utilizați validarea integrată a editorului de cod
+- Testați mai întâi logica codului într-o consolă JavaScript
+- Adăugați instrucțiuni console.log pentru depanare
+- Simplificați operațiunile complexe
 
 ### Emailul nu se trimite
 
@@ -113,10 +116,10 @@ Dacă doriți ca fluxul de lucru să ruleze doar o singură dată per înregistr
 
 **Soluții**:
 
-* Verificați conexiunea contului de email
-* Validați adresele de email ale destinatarilor
-* Verificați limitele furnizorului de email
-* Revizuiți conținutul emailului pentru posibile declanșatoare de spam
+- Verificați conexiunea contului de email
+- Validați adresele de email ale destinatarilor
+- Verificați limitele furnizorului de email
+- Revizuiți conținutul emailului pentru posibile declanșatoare de spam
 
 ## Depanarea fluxurilor de lucru
 
@@ -150,21 +153,21 @@ Verificați că fiecare pas primește datele de intrare așteptate.
 
 ### Înainte de activare
 
-* Testați temeinic în modul draft
-* Validați toate conexiunile API
-* Revizuiți cu atenție condițiile declanșatorului
-* Documentați comportamentul așteptat
+- Testați temeinic în modul draft
+- Validați toate conexiunile API
+- Revizuiți cu atenție condițiile declanșatorului
+- Documentați comportamentul așteptat
 
 ### În timpul dezvoltării
 
-* Folosiți nume descriptive pentru pași
-* Adăugați comentarii în acțiunile Code
-* Testați cu date realiste
-* Planificați pentru cazuri limită
+- Folosiți nume descriptive pentru pași
+- Adăugați comentarii în acțiunile Code
+- Testați cu date realiste
+- Planificați pentru cazuri limită
 
 ### După activare
 
-* Monitorizați îndeaproape rulările inițiale
-* Configurați alerte pentru eșecuri
-* Revizuiți în mod regulat istoricul rulărilor
-* Mențineți fluxurile de lucru simple atunci când este posibil
+- Monitorizați îndeaproape rulările inițiale
+- Configurați alerte pentru eșecuri
+- Revizuiți în mod regulat istoricul rulărilor
+- Mențineți fluxurile de lucru simple atunci când este posibil

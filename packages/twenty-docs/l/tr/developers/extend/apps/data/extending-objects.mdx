@@ -26,7 +26,7 @@ export default defineField({
 
 ## Önemli noktalar
 
-* `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart Twenty nesneleri için sabiti `twenty-sdk` içinden içe aktarın:
+- `objectUniversalIdentifier` hedef nesneyi tanımlar. Standart Twenty nesneleri için sabiti `twenty-sdk` içinden içe aktarın:
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,11 +37,11 @@ export default defineField({
   // …
   ```
 
-* Alanları **`defineObject()` içinde satır içi tanımlarken**, `objectUniversalIdentifier`'a **ihtiyaç duymazsınız** — üst nesneden devralınır.
+- Alanları **`defineObject()` içinde satır içi tanımlarken**, `objectUniversalIdentifier`'a **ihtiyaç duymazsınız** — üst nesneden devralınır.
 
-* `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
+- `defineField()`, `defineObject()` ile oluşturmadığınız nesnelere alan eklemenin tek yoludur.
 
-* Dosya konumu size bağlıdır. Genel kabul gören yapı `src/fields/\<name>.field.ts` şeklindedir, ancak SDK `src/` içinde herhangi bir yerdeki alanları algılar.
+- Dosya konumu size bağlıdır. Genel kabul gören yapı `src/fields/\<name>.field.ts` şeklindedir, ancak SDK `src/` içinde herhangi bir yerdeki alanları algılar.
 
 ## Mevcut bir nesneye ilişki ekleme
 

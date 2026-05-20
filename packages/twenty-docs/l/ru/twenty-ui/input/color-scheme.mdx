@@ -15,15 +15,10 @@ icon: палитра
 <Tab title="Использование">
 
 ```jsx
-import { ColorSchemeCard } from "twenty-ui/display";
+import { ColorSchemeCard } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-  return (
-      <ColorSchemeCard
-      variant="Dark"
-      selected={true}
-      />
-  );
+  return <ColorSchemeCard variant="Dark" selected={true} />;
 };
 ```
 
@@ -31,14 +26,11 @@ export const MyComponent = () => {
 
 <Tab title="Свойства">
 
-
 | Свойства                | Тип                                     | Описание                                                                     | По умолчанию |
 | ----------------------- | --------------------------------------- | ---------------------------------------------------------------------------- | ------------ |
 | вариант                 | строка                                  | Вариант цветовой схемы. Варианты включают `Тёмный`, `Светлый`, и `Системный` | светлый      |
 | выбран                  | boolean                                 | Если `true`, отображает галочку, чтобы указать выбранную цветовую схему      |              |
 | дополнительные свойства | `React.ComponentPropsWithoutRef<'div'>` | Стандартные свойства HTML-элемента `div`                                     |              |
-
-
 
 </Tab>
 
@@ -52,13 +44,10 @@ export const MyComponent = () => {
 <Tab title="Использование">
 
 ```jsx
-import { ColorSchemePicker } from "twenty-ui/display";
+import { ColorSchemePicker } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-  return <ColorSchemePicker
-  value="Dark"
-  onChange
-  />;
+  return <ColorSchemePicker value="Dark" onChange />;
 };
 ```
 
@@ -66,13 +55,10 @@ export const MyComponent = () => {
 
 <Tab title="Свойства">
 
-
 | Свойства | Тип              | Описание                                                                                        |
 | -------- | ---------------- | ----------------------------------------------------------------------------------------------- |
 | значение | `Цветовая Схема` | Текущая выбранная цветовая схема                                                                |
 | onChange | функция          | Функция обратного вызова, которую вы хотите вызвать, когда пользователь выбирает цветовую схему |
-
-
 
 </Tab>
 

@@ -7,16 +7,18 @@ Twenty는 아직 네이티브 수식 필드를 지원하지 않습니다(2026년
 
 ## 일반적인 사용 사례
 
-| 사용 사례           | 수식 예시                        |
-| --------------- | ---------------------------- |
-| **전체 이름**       | First Name + " " + Last Name |
-| **예상 금액**       | Amount × Probability         |
+| 사용 사례                | 수식 예시                    |
+| ------------------------ | ---------------------------- |
+| **전체 이름**            | First Name + " " + Last Name |
+| **예상 금액**            | Amount × Probability         |
 | **마감일까지 남은 일수** | Due Date - Today             |
-| **단계 경과 일수**    | Today - Stage Entry Date     |
-| **리드 점수**       | 여러 기준을 기반으로 한 점수             |
+| **단계 경과 일수**       | Today - Stage Entry Date     |
+| **리드 점수**            | 여러 기준을 기반으로 한 점수 |
 
 <Tip>
-  파이프라인 단계에서 시간을 추적하는 전체 예시는 [각 단계에서 기회가 머무는 기간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)를 참조하세요.
+  파이프라인 단계에서 시간을 추적하는 전체 예시는 [각 단계에서 기회가 머무는
+  기간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)를
+  참조하세요.
 </Tip>
 
 ## 기본 수식: 연결
@@ -37,9 +39,7 @@ Twenty는 아직 네이티브 수식 필드를 지원하지 않습니다(2026년
 export const main = async (params) => {
   const { firstName, lastName } = params;
 
-  const fullName = [firstName, lastName]
-    .filter(Boolean)
-    .join(' ');
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   return { fullName };
 };
@@ -65,7 +65,7 @@ export const main = async (params) => {
 export const main = async (params) => {
   const { amount, probability } = params;
 
-  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+  const expectedAmount = ((amount || 0) * (probability || 0)) / 100;
 
   return { expectedAmount };
 };
@@ -105,7 +105,8 @@ export const main = async (params) => {
 3. **레코드 업데이트**: Days Until Due를 `{{code.daysUntilDue}}`(으)로 설정
 
 <Note>
-  음수 값은 기한이 지난 작업을 의미합니다. 이 필드를 사용하여 긴급도에 따라 작업을 필터링하거나 정렬할 수 있습니다.
+  음수 값은 기한이 지난 작업을 의미합니다. 이 필드를 사용하여 긴급도에 따라
+  작업을 필터링하거나 정렬할 수 있습니다.
 </Note>
 
 ## 조건 수식: 리드 점수
@@ -179,24 +180,24 @@ export const main = async (params) => {
 
 ### 성능
 
-* 관련 필드 변경에만 트리거되도록 하세요.
-* 계산이 필요 없는 레코드는 필터로 건너뛰세요.
-* 대량 워크플로우에서는 복잡한 계산을 피하세요.
+- 관련 필드 변경에만 트리거되도록 하세요.
+- 계산이 필요 없는 레코드는 필터로 건너뛰세요.
+- 대량 워크플로우에서는 복잡한 계산을 피하세요.
 
 ### 오류 처리
 
-* 계산 전에 null/undefined 값을 확인하세요.
-* 데이터가 없을 때는 기본값을 사용하세요.
-* 계산이 실패하면 명확한 오류 메시지를 반환하세요.
+- 계산 전에 null/undefined 값을 확인하세요.
+- 데이터가 없을 때는 기본값을 사용하세요.
+- 계산이 실패하면 명확한 오류 메시지를 반환하세요.
 
 ### 테스트
 
-* 엣지 케이스로 테스트하세요(빈 필드, 0 값 등).
-* 활성화 전에 계산을 수동으로 검증하세요.
-* 예상치 못한 결과가 있는지 워크플로우 실행을 모니터링하세요.
+- 엣지 케이스로 테스트하세요(빈 필드, 0 값 등).
+- 활성화 전에 계산을 수동으로 검증하세요.
+- 예상치 못한 결과가 있는지 워크플로우 실행을 모니터링하세요.
 
 ## 관련 항목
 
-* [파이프라인에서 예상 금액 표시하기](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [단계에서 시간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)
+- [파이프라인에서 예상 금액 표시하기](/l/ko/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+- [단계에서 시간 추적하기](/l/ko/user-guide/views-pipelines/how-tos/track-time-in-stage)
+- [워크플로우 액션](/l/ko/user-guide/workflows/capabilities/workflow-actions)

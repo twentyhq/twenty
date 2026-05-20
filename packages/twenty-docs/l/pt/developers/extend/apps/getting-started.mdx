@@ -6,9 +6,9 @@ description: Crie seu primeiro app do Twenty em minutos.
 
 ## Pré-requisitos
 
-* **Node.js 24+** — [Baixar](https://nodejs.org/)
-* **Yarn 4** — Vem com o Node.js via Corepack. Ative-o: `corepack enable`
-* **Docker** — [Baixar](https://www.docker.com/products/docker-desktop/). Necessário para executar um servidor Twenty local. Ignore se você já tiver o Twenty em execução em outro lugar.
+- **Node.js 24+** — [Baixar](https://nodejs.org/)
+- **Yarn 4** — Vem com o Node.js via Corepack. Ative-o: `corepack enable`
+- **Docker** — [Baixar](https://www.docker.com/products/docker-desktop/). Necessário para executar um servidor Twenty local. Ignore se você já tiver o Twenty em execução em outro lugar.
 
 A criação de um aplicativo Twenty tem três fases. A ferramenta de scaffolding as reúne em um único comando do fluxo ideal, mas cada fase é um conceito separado — quando algo falha, saber em que fase você está indica o que corrigir.
 
@@ -42,38 +42,53 @@ A ferramenta de scaffolding oferece iniciar um para você:
 
 > **Você gostaria de configurar uma instância local do Twenty?**
 
-* **Sim (recomendado)** — baixa a imagem Docker `twentycrm/twenty-app-dev` e a inicia na porta `2020`. Certifique-se de que o Docker esteja em execução primeiro.
-* **Não** — escolha isto se você já tiver um servidor Twenty ao qual deseja se conectar. Você pode conectá-lo depois com `yarn twenty remote add`.
+- **Sim (recomendado)** — baixa a imagem Docker `twentycrm/twenty-app-dev` e a inicia na porta `2020`. Certifique-se de que o Docker esteja em execução primeiro.
+- **Não** — escolha isto se você já tiver um servidor Twenty ao qual deseja se conectar. Você pode conectá-lo depois com `yarn twenty remote add`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Deve iniciar instância local?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Deve iniciar instância local?"
+  />
 </div>
 
 Quando o servidor estiver ativo, um navegador será aberto para login. Use a conta de demonstração pré-configurada:
 
-* **E-mail:** `tim@apple.dev`
-* **Senha:** `tim@apple.dev`
+- **E-mail:** `tim@apple.dev`
+- **Senha:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Tela de login do Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Tela de login do Twenty"
+  />
 </div>
 
 Clique em **Authorize** na próxima tela — isso dá à CLI acesso ao seu espaço de trabalho.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Tela de autorização da CLI do Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Tela de autorização da CLI do Twenty"
+  />
 </div>
 
 Seu terminal confirmará que tudo está configurado.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Scaffold do aplicativo criado com sucesso" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Scaffold do aplicativo criado com sucesso"
+  />
 </div>
 
 **Após esta fase:** você tem um servidor Twenty em execução em [http://localhost:2020](http://localhost:2020) com sua CLI autorizada a sincronizar com ele.
 
 <Note>
-Se o Docker não estiver instalado ou em execução, a ferramenta de scaffolding informará o comando de inicialização correto para o seu sistema operacional. Quando o Docker estiver ativo, você pode retomar com `yarn twenty server start` — sem necessidade de recriar o scaffolding.
+  Se o Docker não estiver instalado ou em execução, a ferramenta de scaffolding
+  informará o comando de inicialização correto para o seu sistema operacional.
+  Quando o Docker estiver ativo, você pode retomar com `yarn twenty server
+  start` — sem necessidade de recriar o scaffolding.
 </Note>
 
 ---
@@ -91,26 +106,38 @@ Isso monitora `src/`, recompila a cada alteração e sincroniza o resultado com 
 
 Para uma saída mais detalhada (logs de build, solicitações de sincronização, rastros de erro), adicione `--verbose`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Saída do terminal no modo de desenvolvimento" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.png"
+    alt="Saída do terminal no modo de desenvolvimento"
+  />
 </div>
 
 Abra [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Você deverá ver seu aplicativo em **Your Apps**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Lista Your Apps exibindo My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Lista Your Apps exibindo My twenty app"
+  />
 </div>
 
 Clique em **My twenty app** para ver seu **registro do aplicativo** — um registro em nível de servidor que descreve seu aplicativo (nome, identificador, credenciais OAuth, origem). Um registro pode ser instalado em vários espaços de trabalho no mesmo servidor.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Detalhes do registro do aplicativo" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Detalhes do registro do aplicativo"
+  />
 </div>
 
 Clique em **View installed app** para ver a instalação no espaço de trabalho. A aba **About** mostra a versão e as opções de gerenciamento.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Aplicação instalada" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Aplicação instalada"
+  />
 </div>
 
 **Após esta fase:** você tem um ciclo de desenvolvimento em tempo real. Edite qualquer arquivo em `src/` e ele aparecerá na interface.
@@ -131,7 +158,11 @@ yarn twenty dev --once
 Ambos os modos precisam de um servidor em modo de desenvolvimento e de um remoto autenticado.
 
 <Warning>
-O modo de desenvolvimento só está disponível em instâncias do Twenty em modo de desenvolvimento (`NODE_ENV=development`). Instâncias de produção rejeitam solicitações de sincronização de desenvolvimento — use `yarn twenty deploy` para implantar em servidores de produção. Veja [Publicação de aplicativos](/l/pt/developers/extend/apps/publishing).
+  O modo de desenvolvimento só está disponível em instâncias do Twenty em modo
+  de desenvolvimento (`NODE_ENV=development`). Instâncias de produção rejeitam
+  solicitações de sincronização de desenvolvimento — use `yarn twenty deploy`
+  para implantar em servidores de produção. Veja [Publicação de
+  aplicativos](/l/pt/developers/extend/apps/publishing).
 </Warning>
 
 ---
@@ -258,16 +289,17 @@ Adicione o script ao `package.json`:
 Agora você pode executar `yarn twenty dev`, `yarn twenty server start` e o restante.
 
 <Note>
-Não instale `twenty-sdk` globalmente — fixe-o por projeto, para que cada aplicativo use sua própria versão.
+  Não instale `twenty-sdk` globalmente — fixe-o por projeto, para que cada
+  aplicativo use sua própria versão.
 </Note>
 
 ---
 
 ## Resolução de Problemas
 
-* **Erros do Docker** — Certifique-se de que o Docker Desktop (ou o daemon) esteja em execução antes de `yarn twenty server start`. A mensagem de erro mostrará o comando de inicialização correto para o seu sistema operacional.
-* **Versão errada do Node** — É necessário 24 ou superior. Verifique com `node -v`.
-* **Falta o Yarn 4** — Execute `corepack enable`.
-* **Dependências com problemas** — `rm -rf node_modules && yarn install`.
+- **Erros do Docker** — Certifique-se de que o Docker Desktop (ou o daemon) esteja em execução antes de `yarn twenty server start`. A mensagem de erro mostrará o comando de inicialização correto para o seu sistema operacional.
+- **Versão errada do Node** — É necessário 24 ou superior. Verifique com `node -v`.
+- **Falta o Yarn 4** — Execute `corepack enable`.
+- **Dependências com problemas** — `rm -rf node_modules && yarn install`.
 
 Travou? Peça ajuda no [Discord da Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

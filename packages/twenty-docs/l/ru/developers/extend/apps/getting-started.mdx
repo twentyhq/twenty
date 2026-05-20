@@ -6,9 +6,9 @@ description: Создайте своё первое приложение Twenty 
 
 ## Требования
 
-* **Node.js 24+** — [Скачать здесь](https://nodejs.org/)
-* **Yarn 4** — поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
-* **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Пропустите, если у вас уже запущен Twenty в другом месте.
+- **Node.js 24+** — [Скачать здесь](https://nodejs.org/)
+- **Yarn 4** — поставляется вместе с Node.js через Corepack. Включите его, выполнив `corepack enable`
+- **Docker** — [Скачать здесь](https://www.docker.com/products/docker-desktop/). Требуется для запуска локального экземпляра Twenty. Пропустите, если у вас уже запущен Twenty в другом месте.
 
 Создание приложения Twenty включает три фазы. Генератор каркаса объединяет их в одну команду для идеального сценария (happy path), но каждая фаза — отдельная концепция: когда что-то идёт не так, понимание того, на какой фазе вы находитесь, подскажет, что исправить.
 
@@ -42,38 +42,52 @@ npx create-twenty-app@latest my-twenty-app
 
 > **Хотите настроить локальный экземпляр Twenty?**
 
-* **Да (рекомендуется)** — скачивает Docker-образ `twentycrm/twenty-app-dev` и запускает его на порту `2020`. Сначала убедитесь, что Docker запущен.
-* **Нет** — выберите это, если у вас уже есть сервер Twenty, к которому вы хотите подключиться. Позже вы можете подключить его с помощью `yarn twenty remote add`.
+- **Да (рекомендуется)** — скачивает Docker-образ `twentycrm/twenty-app-dev` и запускает его на порту `2020`. Сначала убедитесь, что Docker запущен.
+- **Нет** — выберите это, если у вас уже есть сервер Twenty, к которому вы хотите подключиться. Позже вы можете подключить его с помощью `yarn twenty remote add`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Запустить локальный экземпляр?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Запустить локальный экземпляр?"
+  />
 </div>
 
 Когда сервер будет запущен, откроется браузер для входа. Используйте предварительно созданную демонстрационную учётную запись:
 
-* **Электронная почта:** `tim@apple.dev`
-* **Пароль:** `tim@apple.dev`
+- **Электронная почта:** `tim@apple.dev`
+- **Пароль:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Экран входа в Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Экран входа в Twenty"
+  />
 </div>
 
 На следующем экране нажмите **Authorize** — это даст CLI доступ к вашему рабочему пространству.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Экран авторизации Twenty CLI" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Экран авторизации Twenty CLI"
+  />
 </div>
 
 В вашем терминале появится подтверждение, что всё настроено.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Каркас приложения успешно создан" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Каркас приложения успешно создан"
+  />
 </div>
 
 **После этой фазы:** у вас запущен сервер Twenty на [http://localhost:2020](http://localhost:2020), а ваш CLI авторизован для синхронизации с ним.
 
 <Note>
-Если Docker не установлен или не запущен, генератор каркаса подскажет правильную команду запуска для вашей ОС. Когда Docker будет запущен, вы можете продолжить с `yarn twenty server start` — заново генерировать каркас не нужно.
+  Если Docker не установлен или не запущен, генератор каркаса подскажет
+  правильную команду запуска для вашей ОС. Когда Docker будет запущен, вы можете
+  продолжить с `yarn twenty server start` — заново генерировать каркас не нужно.
 </Note>
 
 ---
@@ -91,26 +105,38 @@ yarn twenty dev
 
 Для более подробного вывода (журналы сборки, запросы синхронизации, трассировки ошибок) добавьте `--verbose`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Вывод терминала в режиме разработки" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.png"
+    alt="Вывод терминала в режиме разработки"
+  />
 </div>
 
 Откройте [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Вы должны увидеть своё приложение в разделе **Your Apps**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Список Your Apps с приложением My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Список Your Apps с приложением My twenty app"
+  />
 </div>
 
 Нажмите **My twenty app**, чтобы открыть его регистрацию приложения — запись на уровне сервера, описывающую ваше приложение (имя, идентификатор, учётные данные OAuth, источник). Одну и ту же регистрацию можно установить в нескольких рабочих пространствах на одном сервере.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Сведения о регистрации приложения" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Сведения о регистрации приложения"
+  />
 </div>
 
 Нажмите **View installed app**, чтобы посмотреть установку в рабочем пространстве. Вкладка **About** показывает версию и параметры управления.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Установленное приложение" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Установленное приложение"
+  />
 </div>
 
 **После этой фазы:** у вас есть интерактивный цикл разработки. Отредактируйте любой файл в `src/`, и он появится в интерфейсе.
@@ -131,7 +157,11 @@ yarn twenty dev --once
 Оба режима требуют сервер в режиме разработки и аутентифицированный удалённый сервер.
 
 <Warning>
-Режим разработки доступен только на экземплярах Twenty, запущенных в режиме разработки (`NODE_ENV=development`). Экземпляры в продакшене отклоняют запросы синхронизации из режима разработки — используйте `yarn twenty deploy` для развёртывания на производственные серверы. См. [Публикация приложений](/l/ru/developers/extend/apps/publishing).
+  Режим разработки доступен только на экземплярах Twenty, запущенных в режиме
+  разработки (`NODE_ENV=development`). Экземпляры в продакшене отклоняют запросы
+  синхронизации из режима разработки — используйте `yarn twenty deploy` для
+  развёртывания на производственные серверы. См. [Публикация
+  приложений](/l/ru/developers/extend/apps/publishing).
 </Warning>
 
 ---
@@ -258,16 +288,17 @@ yarn add twenty-sdk twenty-client-sdk
 Теперь вы можете запускать `yarn twenty dev`, `yarn twenty server start` и остальные команды.
 
 <Note>
-Не устанавливайте `twenty-sdk` глобально — фиксируйте версию в каждом проекте, чтобы каждое приложение использовало свою собственную версию.
+  Не устанавливайте `twenty-sdk` глобально — фиксируйте версию в каждом проекте,
+  чтобы каждое приложение использовало свою собственную версию.
 </Note>
 
 ---
 
 ## Устранение неполадок
 
-* **Ошибки Docker** — убедитесь, что Docker Desktop (или демон) запущен перед выполнением `yarn twenty server start`. Сообщение об ошибке укажет правильную команду запуска для вашей ОС.
-* **Неподходящая версия Node** — нужна 24+. Проверьте с помощью `node -v`.
-* **Отсутствует Yarn 4** — выполните `corepack enable`.
-* **Зависимости повреждены** — `rm -rf node_modules && yarn install`.
+- **Ошибки Docker** — убедитесь, что Docker Desktop (или демон) запущен перед выполнением `yarn twenty server start`. Сообщение об ошибке укажет правильную команду запуска для вашей ОС.
+- **Неподходящая версия Node** — нужна 24+. Проверьте с помощью `node -v`.
+- **Отсутствует Yarn 4** — выполните `corepack enable`.
+- **Зависимости повреждены** — `rm -rf node_modules && yarn install`.
 
 Застряли? Попросите помощи на [Discord-сервере Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

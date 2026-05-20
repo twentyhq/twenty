@@ -18,10 +18,10 @@ description: Běžné problémy s pracovními postupy a jak je vyřešit.
 
 **Řešení**:
 
-* Ověřte stav pracovního postupu v seznamu pracovních postupů
-* Otestujte to konkrétní akcí, u které očekáváte, že jej spustí
-* Zkontrolujte konfiguraci spouštěče
-* Kontaktujte svého administrátora ohledně oprávnění
+- Ověřte stav pracovního postupu v seznamu pracovních postupů
+- Otestujte to konkrétní akcí, u které očekáváte, že jej spustí
+- Zkontrolujte konfiguraci spouštěče
+- Kontaktujte svého administrátora ohledně oprávnění
 
 ### Spouštění pracovního postupu příliš brzy (prázdná pole)
 
@@ -31,17 +31,20 @@ description: Běžné problémy s pracovními postupy a jak je vyřešit.
 
 **Kdy se "Record is created" hodí**:
 
-* Záznamy vytvořené přes volání API (pole jsou vyplněna v jednom požadavku)
-* Záznamy vytvořené pomocí importu
-* Automatické vytváření záznamů z jiných pracovních postupů
+- Záznamy vytvořené přes volání API (pole jsou vyplněna v jednom požadavku)
+- Záznamy vytvořené pomocí importu
+- Automatické vytváření záznamů z jiných pracovních postupů
 
 **Řešení**: Pro záznamy vytvořené ručně v UI použijte jako spouštěč místo toho **"Record is created or updated"**. Tímto způsobem:
 
-* Pracovní postup se spustí poté, co uživatel dokončí vyplňování polí a jejich uložení
-* Získáte kompletní data namísto prázdných hodnot
+- Pracovní postup se spustí poté, co uživatel dokončí vyplňování polí a jejich uložení
+- Získáte kompletní data namísto prázdných hodnot
 
 <Tip>
-Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte akci Filter, která zkontroluje pole jako `createdAt equals updatedAt` (první uložení), nebo použijte vlastní zaškrtávací pole ke sledování, zda už pracovní postup běžel.
+  Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte
+  akci Filter, která zkontroluje pole jako `createdAt equals updatedAt` (první
+  uložení), nebo použijte vlastní zaškrtávací pole ke sledování, zda už pracovní
+  postup běžel.
 </Tip>
 
 ### Selhávající akce
@@ -57,10 +60,10 @@ Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte a
 
 **Řešení**:
 
-* Zkontrolujte podrobnosti běhu pracovního postupu kvůli chybovým zprávám
-* Ověřte, že všechna povinná pole mají hodnoty
-* Otestujte připojení k API samostatně
-* Projděte oprávnění rolí
+- Zkontrolujte podrobnosti běhu pracovního postupu kvůli chybovým zprávám
+- Ověřte, že všechna povinná pole mají hodnoty
+- Otestujte připojení k API samostatně
+- Projděte oprávnění rolí
 
 ### Chyby požadavků HTTP
 
@@ -68,19 +71,19 @@ Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte a
 
 **Běžné chybové kódy**:
 
-* **400**: Neplatný požadavek - zkontrolujte formát těla požadavku
-* **401**: Neautorizováno - ověřte klíč API
-* **403**: Zakázáno - zkontrolujte oprávnění API
-* **404**: Nenalezeno - ověřte URL endpointu
-* **429**: Příliš mnoho požadavků - zaveďte omezení četnosti požadavků
-* **500**: Chyba serveru - problém v externí službě
+- **400**: Neplatný požadavek - zkontrolujte formát těla požadavku
+- **401**: Neautorizováno - ověřte klíč API
+- **403**: Zakázáno - zkontrolujte oprávnění API
+- **404**: Nenalezeno - ověřte URL endpointu
+- **429**: Příliš mnoho požadavků - zaveďte omezení četnosti požadavků
+- **500**: Chyba serveru - problém v externí službě
 
 **Řešení**:
 
-* Ověřte URL endpointu API
-* Zkontrolujte autentizační hlavičky
-* Nejprve otestujte volání API mimo Twenty
-* Přidejte zpracování chyb v akcích Code
+- Ověřte URL endpointu API
+- Zkontrolujte autentizační hlavičky
+- Nejprve otestujte volání API mimo Twenty
+- Přidejte zpracování chyb v akcích Code
 
 ### Chyby akcí Code
 
@@ -95,10 +98,10 @@ Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte a
 
 **Řešení**:
 
-* Použijte vestavěnou validaci editoru kódu
-* Nejprve otestujte logiku kódu v konzoli JavaScriptu
-* Přidejte výpisy console.log pro ladění
-* Zjednodušte složité operace
+- Použijte vestavěnou validaci editoru kódu
+- Nejprve otestujte logiku kódu v konzoli JavaScriptu
+- Přidejte výpisy console.log pro ladění
+- Zjednodušte složité operace
 
 ### E-mail se neodesílá
 
@@ -113,10 +116,10 @@ Pokud chcete, aby se pracovní postup spustil jen jednou na záznam, přidejte a
 
 **Řešení**:
 
-* Ověřte připojení e-mailového účtu
-* Ověřte e-mailové adresy příjemců
-* Zkontrolujte limity poskytovatele e-mailu
-* Zkontrolujte obsah e-mailu kvůli spouštěčům spamu
+- Ověřte připojení e-mailového účtu
+- Ověřte e-mailové adresy příjemců
+- Zkontrolujte limity poskytovatele e-mailu
+- Zkontrolujte obsah e-mailu kvůli spouštěčům spamu
 
 ## Ladění pracovních postupů
 
@@ -150,21 +153,21 @@ Ověřte, že každý krok dostává očekávaná vstupní data.
 
 ### Před aktivací
 
-* Důkladně testujte v režimu konceptu
-* Ověřte všechna připojení k API
-* Pečlivě zkontrolujte podmínky spouštěče
-* Zdokumentujte očekávané chování
+- Důkladně testujte v režimu konceptu
+- Ověřte všechna připojení k API
+- Pečlivě zkontrolujte podmínky spouštěče
+- Zdokumentujte očekávané chování
 
 ### Během vývoje
 
-* Používejte výstižné názvy kroků
-* Přidejte komentáře v akcích Code
-* Testujte s realistickými daty
-* Plánujte i okrajové případy
+- Používejte výstižné názvy kroků
+- Přidejte komentáře v akcích Code
+- Testujte s realistickými daty
+- Plánujte i okrajové případy
 
 ### Po aktivaci
 
-* Pečlivě sledujte počáteční běhy
-* Nastavte upozornění na selhání
-* Pravidelně procházejte historii běhů
-* Udržujte pracovní postupy co nejjednodušší
+- Pečlivě sledujte počáteční běhy
+- Nastavte upozornění na selhání
+- Pravidelně procházejte historii běhů
+- Udržujte pracovní postupy co nejjednodušší

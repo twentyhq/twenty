@@ -11,30 +11,23 @@ Questa guida ti accompagna nell'importazione dei tuoi contatti (Persone) in Twen
 
 ### Lista di controllo dei prerequisiti
 
-<Check>
-Il file è in formato CSV, XLSX o XLS
-</Check>
+<Check>Il file è in formato CSV, XLSX o XLS</Check>
+
+<Check>Il file contiene meno di 10.000 record</Check>
+
+<Check>Nessun indirizzo email duplicato nel file</Check>
+
+<Check>**Aziende importate per prime** (se colleghi Persone ad Aziende)</Check>
 
 <Check>
-Il file contiene meno di 10.000 record
-</Check>
-
-<Check>
-Nessun indirizzo email duplicato nel file
-</Check>
-
-<Check>
-**Aziende importate per prime** (se colleghi Persone ad Aziende)
-</Check>
-
-<Check>
-Tutti i campi personalizzati esistono in **Impostazioni → Modello dati**
+  Tutti i campi personalizzati esistono in **Impostazioni → Modello dati**
 </Check>
 
 <Warning>
 **Importa le Aziende prima delle Persone**
 
 Se vuoi collegare le Persone alle Aziende, importa prima le Aziende. L'Azienda deve esistere prima di potervi fare riferimento.
+
 </Warning>
 
 ## Passo 1: Prepara i tuoi dati di contatto
@@ -53,9 +46,9 @@ Se vuoi collegare le Persone alle Aziende, importa prima le Aziende. L'Azienda d
 
 ### Formato email
 
-* Deve avere un formato email valido: `name@domain.com`
-* **Deve essere univoca** — nessun duplicato nel tuo file o in Twenty
-* Per email aggiuntive, usa la colonna **Email / Email aggiuntive**:
+- Deve avere un formato email valido: `name@domain.com`
+- **Deve essere univoca** — nessun duplicato nel tuo file o in Twenty
+- Per email aggiuntive, usa la colonna **Email / Email aggiuntive**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
@@ -81,7 +74,8 @@ Aggiungi una colonna con l'identificatore univoco dell'Azienda:
 | `companyId`     | UUID        | `c776ee49-f608-4a77-8cc8-6fe96ae1e43f` |
 
 <Note>
-**Usa il formato URL del dominio** (`https://acme.com`), non l'etichetta. Questo corrisponde al modo in cui le Aziende sono memorizzate in Twenty.
+  **Usa il formato URL del dominio** (`https://acme.com`), non l'etichetta.
+  Questo corrisponde al modo in cui le Aziende sono memorizzate in Twenty.
 </Note>
 
 ### Esempio di struttura CSV
@@ -93,7 +87,9 @@ Jane,Doe,jane@widgets.co,CTO,https://widgets.co,2125551234,US
 ```
 
 <Note>
-**Suggerimento avanzato:** Fai clic su **Scarica file di esempio** durante l'importazione oppure esporta alcune Persone esistenti per vedere i nomi di colonna esatti che Twenty si aspetta.
+  **Suggerimento avanzato:** Fai clic su **Scarica file di esempio** durante
+  l'importazione oppure esporta alcune Persone esistenti per vedere i nomi di
+  colonna esatti che Twenty si aspetta.
 </Note>
 
 ## Passo 2: Accedi alla funzione di importazione
@@ -134,7 +130,10 @@ Twenty tenta automaticamente di associare le tue colonne ai campi. Verifica e re
 | Email aggiuntive        | **Email / Email aggiuntive**   | Formato array                                 |
 | Telefono                | Colonne separate               | Numero, Codice paese, Prefisso internazionale |
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ### Mappare la relazione con l'Azienda
 
@@ -148,6 +147,7 @@ Quando mappi la colonna dell'azienda:
 **Mappa un solo identificatore univoco per le relazioni.**
 
 Non mappare sia `companyId` che `companyDomain`. Scegline uno — preferibilmente il dominio, perché è facilmente leggibile.
+
 </Warning>
 
 ## Passaggio 5: Mappa i valori dei campi Selezione
@@ -159,7 +159,9 @@ Se hai campi Selezione o Multiselezione (come Origine del lead):
 3. Oppure crea nuove opzioni se necessario
 
 <Note>
-Le opzioni dei campi Selezione usano i **nomi API**, non le etichette visualizzate. Controlla **Impostazioni → Modello dati** → Abilita la **Modalità avanzata** per vedere i nomi API.
+  Le opzioni dei campi Selezione usano i **nomi API**, non le etichette
+  visualizzate. Controlla **Impostazioni → Modello dati** → Abilita la
+  **Modalità avanzata** per vedere i nomi API.
 </Note>
 
 ## Passaggio 6: Rivedi e correggi gli errori
@@ -212,21 +214,28 @@ Per i dettagli, vedi [Come aggiornare i record esistenti](/l/it/user-guide/data-
     L'email è un identificatore univoco in Twenty. Questo evita contatti duplicati e garantisce che la sincronizzazione delle email colleghi correttamente i messaggi alla persona giusta.
   </Accordion>
 
-  <Accordion title="Cosa succede se ho persone senza email?">
-    Puoi lasciare vuota l'email. Tuttavia, consigliamo di aggiungere le email quando possibile per una migliore qualità dei dati e per la funzionalità di sincronizzazione delle email.
-  </Accordion>
+<Accordion title="Cosa succede se ho persone senza email?">
+  Puoi lasciare vuota l'email. Tuttavia, consigliamo di aggiungere le email
+  quando possibile per una migliore qualità dei dati e per la funzionalità di
+  sincronizzazione delle email.
+</Accordion>
 
-  <Accordion title="Come collego Persone ad Aziende durante l'importazione?">
-    Aggiungi una colonna con il dominio dell'Azienda (ad es., `https://acme.com`) o l'ID. Durante la mappatura, collega questa colonna al campo di relazione Azienda.
-  </Accordion>
+<Accordion title="Come collego Persone ad Aziende durante l'importazione?">
+  Aggiungi una colonna con il dominio dell'Azienda (ad es., `https://acme.com`)
+  o l'ID. Durante la mappatura, collega questa colonna al campo di relazione
+  Azienda.
+</Accordion>
 
-  <Accordion title="E se l'Azienda non esiste ancora?">
-    Importa prima le Aziende, poi importa le Persone. L'Azienda deve esistere prima di potervi fare riferimento.
-  </Accordion>
+<Accordion title="E se l'Azienda non esiste ancora?">
+  Importa prima le Aziende, poi importa le Persone. L'Azienda deve esistere
+  prima di potervi fare riferimento.
+</Accordion>
 
-  <Accordion title="Posso importare l'ID dal mio precedente CRM?">
-    Sì! Crea un campo personalizzato contrassegnato come "univoco" nel tuo modello dati per archiviare l'ID esterno. Nota: il nome del campo `id` è riservato all'ID interno di Twenty.
-  </Accordion>
+<Accordion title="Posso importare l'ID dal mio precedente CRM?">
+  Sì! Crea un campo personalizzato contrassegnato come "univoco" nel tuo modello
+  dati per archiviare l'ID esterno. Nota: il nome del campo `id` è riservato
+  all'ID interno di Twenty.
+</Accordion>
 
   <Accordion title="Come risolvo gli errori &#x22;relazione non trovata&#x22;?">
     L'Azienda a cui fai riferimento non esiste. Importa prima l'Azienda oppure verifica che il dominio/ID corrisponda esattamente a un'Azienda esistente.
@@ -237,6 +246,6 @@ Per i dettagli, vedi [Come aggiornare i record esistenti](/l/it/user-guide/data-
 
 Problemi? Controlla:
 
-* [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
-* [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
-* [Riferimento alla mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)
+- [Come correggere gli errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
+- [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [Riferimento alla mappatura dei campi](/l/it/user-guide/data-migration/capabilities/field-mapping)

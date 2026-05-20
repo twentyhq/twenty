@@ -1,7 +1,8 @@
 ---
 title: Buttons
-icon: "hand-pointer"
+icon: 'hand-pointer'
 ---
+
 <Frame>
   <img src="/images/user-guide/views/filter.png" alt="Header" />
 </Frame>
@@ -15,7 +16,7 @@ A list of buttons and button groups used throughout the app.
 <Tab title="Usage">
 
 ```jsx
-import { Button } from "@/ui/input/button/components/Button";
+import { Button } from '@/ui/input/button/components/Button';
 
 export const MyComponent = () => {
   return (
@@ -31,33 +32,30 @@ export const MyComponent = () => {
       soon={false}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
+
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| className | string | Optional class name for additional styling |
-| Icon | `React.ComponentType` | An optional icon component that's displayed within the button |
-| title | string | The text content of the button |
-| fullWidth | boolean | Defines whether the button should span the whole width of its container |
-| variant | string | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary` |
-| size | string | The size of the button. Has two options: `small` and `medium` |
-| position | string | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-| accent | string | The accent color of the button. Options include: `default`, `blue`, and `danger` |
-| soon | boolean | Indicates if the button is marked as "soon" (such as for upcoming features) |
-| disabled | boolean | Specifies whether the button is disabled or not |
-| focus | boolean | Determines if the button has focus |
-| onClick | function | A callback function that triggers when the user clicks on the button |
-
-
-
+| Props     | Type                  | Description                                                                                                          |
+| --------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| className | string                | Optional class name for additional styling                                                                           |
+| Icon      | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
+| title     | string                | The text content of the button                                                                                       |
+| fullWidth | boolean               | Defines whether the button should span the whole width of its container                                              |
+| variant   | string                | The visual style variant of the button. Options include `primary`, `secondary`, and `tertiary`                       |
+| size      | string                | The size of the button. Has two options: `small` and `medium`                                                        |
+| position  | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
+| accent    | string                | The accent color of the button. Options include: `default`, `blue`, and `danger`                                     |
+| soon      | boolean               | Indicates if the button is marked as "soon" (such as for upcoming features)                                          |
+| disabled  | boolean               | Specifies whether the button is disabled or not                                                                      |
+| focus     | boolean               | Determines if the button has focus                                                                                   |
+| onClick   | function              | A callback function that triggers when the user clicks on the button                                                 |
 
 </Tab>
 
@@ -86,7 +84,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -100,7 +98,7 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
       <Button
         className
@@ -114,13 +112,13 @@ export const MyComponent = () => {
         soon={false}
         disabled={false}
         focus={false}
-        onClick={() => console.log("click")}
+        onClick={() => console.log('click')}
       />
     </ButtonGroup>
   );
 };
 
-```
+````
 </Tab>
 
 <Tab title="Props">
@@ -164,26 +162,23 @@ export const MyComponent = () => {
     />
   );
 };
-```
+````
 
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| className | string | Optional name for additional styling |
-| Icon | `React.ComponentType` | An optional icon component that's displayed within the button |
-| title | string | The text content of the button |
-| size | string | The size of the button. Has two options: `small` and `medium` |
-| position | string | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
-| applyShadow | boolean | Determines whether to apply shadow to a button |
-| applyBlur | boolean | Determines whether to apply a blur effect to the button |
-| disabled | boolean | Determines whether the button is disabled |
-| focus | boolean | Indicates if the button has focus |
-
-
+| Props       | Type                  | Description                                                                                                      |
+| ----------- | --------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| className   | string                | Optional name for additional styling                                                                             |
+| Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                    |
+| title       | string                | The text content of the button                                                                                   |
+| size        | string                | The size of the button. Has two options: `small` and `medium`                                                    |
+| position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `middle`, `right` |
+| applyShadow | boolean               | Determines whether to apply shadow to a button                                                                   |
+| applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                          |
+| disabled    | boolean               | Determines whether the button is disabled                                                                        |
+| focus       | boolean               | Indicates if the button has focus                                                                                |
 
 </Tab>
 </Tabs>
@@ -194,9 +189,9 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { FloatingButton } from "@/ui/input/button/components/FloatingButton";
-import { FloatingButtonGroup } from "@/ui/input/button/components/FloatingButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingButton } from '@/ui/input/button/components/FloatingButton';
+import { FloatingButtonGroup } from '@/ui/input/button/components/FloatingButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -231,13 +226,10 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-
-| Props | Type | Description | Default |
-|-------|------|-------------|--------|
-| size | string | The size of the button. Has two options: `small` and `medium` | small |
-| children | ReactNode | An array of React elements representing the individual buttons within the group |  |
-
-
+| Props    | Type      | Description                                                                     | Default |
+| -------- | --------- | ------------------------------------------------------------------------------- | ------- |
+| size     | string    | The size of the button. Has two options: `small` and `medium`                   | small   |
+| children | ReactNode | An array of React elements representing the individual buttons within the group |         |
 
 </Tab>
 
@@ -249,8 +241,8 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { FloatingIconButton } from "@/ui/input/button/components/FloatingIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { FloatingIconButton } from '@/ui/input/button/components/FloatingIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -263,7 +255,7 @@ export const MyComponent = () => {
       applyBlur={true}
       disabled={false}
       focus={false}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
       isActive={true}
     />
   );
@@ -274,21 +266,18 @@ export const MyComponent = () => {
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| className | string | Optional name for additional styling |
-| Icon | `React.ComponentType` | An optional icon component that's displayed within the button |
-| size | string | The size of the button. Has two options: `small` and `medium` |
-| position | string | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
-| applyShadow | boolean | Determines whether to apply shadow to a button |
-| applyBlur | boolean | Determines whether to apply a blur effect to the button |
-| disabled | boolean | Determines whether the button is disabled |
-| focus | boolean | Indicates if the button has focus |
-| onClick | function | A callback function that triggers when the user clicks on the button |
-| isActive | boolean | Determines if the button is in an active state |
-
-
+| Props       | Type                  | Description                                                                                                          |
+| ----------- | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| className   | string                | Optional name for additional styling                                                                                 |
+| Icon        | `React.ComponentType` | An optional icon component that's displayed within the button                                                        |
+| size        | string                | The size of the button. Has two options: `small` and `medium`                                                        |
+| position    | string                | The position of the button in relation to its siblings. Options include: `standalone`, `left`, `right`, and `middle` |
+| applyShadow | boolean               | Determines whether to apply shadow to a button                                                                       |
+| applyBlur   | boolean               | Determines whether to apply a blur effect to the button                                                              |
+| disabled    | boolean               | Determines whether the button is disabled                                                                            |
+| focus       | boolean               | Indicates if the button has focus                                                                                    |
+| onClick     | function              | A callback function that triggers when the user clicks on the button                                                 |
+| isActive    | boolean               | Determines if the button is in an active state                                                                       |
 
 </Tab>
 
@@ -300,45 +289,38 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { FloatingIconButtonGroup } from "@/ui/input/button/components/FloatingIconButtonGroup";
-import { IconClipboardText, IconCheckbox } from "@tabler/icons-react";
+import { FloatingIconButtonGroup } from '@/ui/input/button/components/FloatingIconButtonGroup';
+import { IconClipboardText, IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   const iconButtons = [
     {
       Icon: IconClipboardText,
-      onClick: () => console.log("Button 1 clicked"),
+      onClick: () => console.log('Button 1 clicked'),
       isActive: true,
     },
     {
       Icon: IconCheckbox,
-      onClick: () => console.log("Button 2 clicked"),
+      onClick: () => console.log('Button 2 clicked'),
       isActive: true,
     },
   ];
 
   return (
-    <FloatingIconButtonGroup
-    className
-    size="small"
-    iconButtons={iconButtons} />
+    <FloatingIconButtonGroup className size="small" iconButtons={iconButtons} />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| className | string | Optional name for additional styling |
-| size | string | The size of the button. Has two options: `small` and `medium` |
-| iconButtons | array | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
-
-
+| Props       | Type   | Description                                                                                                                                                                                                                                                          |
+| ----------- | ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| className   | string | Optional name for additional styling                                                                                                                                                                                                                                 |
+| size        | string | The size of the button. Has two options: `small` and `medium`                                                                                                                                                                                                        |
+| iconButtons | array  | An array of objects, each representing an icon button in the group. Each object should include the icon component you want to display in the button, the function you want to call when a user clicks on the button, and whether the button should be active or not. |
 
 </Tab>
 
@@ -350,46 +332,42 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { LightButton } from "@/ui/input/button/components/LightButton";
+import { LightButton } from '@/ui/input/button/components/LightButton';
 
 export const MyComponent = () => {
-  return <LightButton
-  className
-  icon={null}
-  title="Title"
-  accent="secondary"
-  active={false}
-  disabled={false}
-  focus={true}
-  onClick={()=>console.log('click')}
-  />;
+  return (
+    <LightButton
+      className
+      icon={null}
+      title="Title"
+      accent="secondary"
+      active={false}
+      disabled={false}
+      focus={true}
+      onClick={() => console.log('click')}
+    />
+  );
 };
 ```
-
 
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| className | string | Optional name for additional styling |
-| icon | `React.ReactNode` | The icon you want to display in the button |
-| title | string | The text content of the button |
-| accent | string | The accent color of the button. Options include: `secondary` and `tertiary` |
-| active | boolean | Determines if the button is in an active state |
-| disabled | boolean | Determines whether the button is disabled |
-| focus | boolean | Indicates if the button has focus |
-| onClick | function | A callback function that triggers when the user clicks on the button |
-
-
-
+| Props     | Type              | Description                                                                 |
+| --------- | ----------------- | --------------------------------------------------------------------------- |
+| className | string            | Optional name for additional styling                                        |
+| icon      | `React.ReactNode` | The icon you want to display in the button                                  |
+| title     | string            | The text content of the button                                              |
+| accent    | string            | The accent color of the button. Options include: `secondary` and `tertiary` |
+| active    | boolean           | Determines if the button is in an active state                              |
+| disabled  | boolean           | Determines whether the button is disabled                                   |
+| focus     | boolean           | Indicates if the button has focus                                           |
+| onClick   | function          | A callback function that triggers when the user clicks on the button        |
 
 </Tab>
 
 </Tabs>
-
 
 ## Light Icon Button
 
@@ -397,8 +375,8 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { LightIconButton } from "@/ui/input/button/components/LightIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { LightIconButton } from '@/ui/input/button/components/LightIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -412,32 +390,28 @@ export const MyComponent = () => {
       active={true}
       disabled={false}
       focus={true}
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| className | string | Optional name for additional styling |
-| testId | string | Test identifier for the button |
-| Icon | `React.ComponentType` | An optional icon component that's displayed within the button |
-| title | string | The text content of the button |
-| size | string | The size of the button. Has two options: `small` and `medium` |
-| accent | string | The accent color of the button. Options include: `secondary` and `tertiary` |
-| active | boolean | Determines if the button is in an active state |
-| disabled | boolean | Determines whether the button is disabled |
-| focus | boolean | Indicates if the button has focus |
-| onClick | function | A callback function that triggers when the user clicks on the button |
-
-
+| Props     | Type                  | Description                                                                 |
+| --------- | --------------------- | --------------------------------------------------------------------------- |
+| className | string                | Optional name for additional styling                                        |
+| testId    | string                | Test identifier for the button                                              |
+| Icon      | `React.ComponentType` | An optional icon component that's displayed within the button               |
+| title     | string                | The text content of the button                                              |
+| size      | string                | The size of the button. Has two options: `small` and `medium`               |
+| accent    | string                | The accent color of the button. Options include: `secondary` and `tertiary` |
+| active    | boolean               | Determines if the button is in an active state                              |
+| disabled  | boolean               | Determines whether the button is disabled                                   |
+| focus     | boolean               | Indicates if the button has focus                                           |
+| onClick   | function              | A callback function that triggers when the user clicks on the button        |
 
 </Tab>
 
@@ -449,8 +423,8 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { MainButton } from "@/ui/input/button/components/MainButton";
-import { IconCheckbox } from "@tabler/icons-react";
+import { MainButton } from '@/ui/input/button/components/MainButton';
+import { IconCheckbox } from '@tabler/icons-react';
 
 export const MyComponent = () => {
   return (
@@ -465,23 +439,18 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| title | string | The text content of the button |
-| fullWidth | boolean | Defines whether the button should span the whole width of its container |
-| variant | string | The visual style variant of the button. Options include `primary` and `secondary` |
-| soon | boolean | Indicates if the button is marked as "soon" (such as for upcoming features) |
-| Icon | `React.ComponentType` | An optional icon component that's displayed within the button |
-| React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported |
-
-
-
+| Props                | Type                             | Description                                                                       |
+| -------------------- | -------------------------------- | --------------------------------------------------------------------------------- |
+| title                | string                           | The text content of the button                                                    |
+| fullWidth            | boolean                          | Defines whether the button should span the whole width of its container           |
+| variant              | string                           | The visual style variant of the button. Options include `primary` and `secondary` |
+| soon                 | boolean                          | Indicates if the button is marked as "soon" (such as for upcoming features)       |
+| Icon                 | `React.ComponentType`            | An optional icon component that's displayed within the button                     |
+| React `button` props | `React.ComponentProps<'button'>` | All standard HTML button props are supported                                      |
 
 </Tab>
 
@@ -493,32 +462,23 @@ export const MyComponent = () => {
 <Tab title="Usage">
 
 ```jsx
-import { RoundedIconButton } from "@/ui/input/button/components/RoundedIconButton";
-import { IconSearch } from "@tabler/icons-react";
+import { RoundedIconButton } from '@/ui/input/button/components/RoundedIconButton';
+import { IconSearch } from '@tabler/icons-react';
 
 export const MyComponent = () => {
-  return (
-    <RoundedIconButton
-      Icon={IconSearch}
-    />
-  );
+  return <RoundedIconButton Icon={IconSearch} />;
 };
 ```
-
 
 </Tab>
 
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| Icon | `React.ComponentType` |  |
-| React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |  |
-
-
+| Props                | Type                                            | Description |
+| -------------------- | ----------------------------------------------- | ----------- |
+| Icon                 | `React.ComponentType`                           |             |
+| React `button` props | `React.ButtonHTMLAttributes<HTMLButtonElement>` |             |
 
 </Tab>
 
 </Tabs>
-

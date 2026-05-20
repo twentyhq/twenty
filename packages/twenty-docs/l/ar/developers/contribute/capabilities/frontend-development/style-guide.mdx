@@ -32,7 +32,7 @@ export default MyComponent;
 // ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
-};
+}
 ```
 
 ### الإزاحة
@@ -50,7 +50,9 @@ type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => (
+  <div>Hello {name}</div>
+);
 ```
 
 #### امتنع عن استخدام `React.FC` أو `React.FunctionComponent` لتحديد أنواع الخصائص
@@ -91,7 +93,7 @@ const EmailField = ({ value }: EmailFieldProps) => (
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
-}
+};
 ```
 
 ```tsx
@@ -105,9 +107,9 @@ const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
 
 المبرر:
 
-* نظرة سريعة تسهل معرفة الخصائص التي تمررها التعليمات البرمجية، مما يسهل من الفهم والصيانة.
-* يساعد على منع نشوء تعقيدات كبيرة بين المكونات من خلال خصائصها.
-* أدوات الفحص تجعل من السهل تحديد الخصائص التي بها أخطاء إملائية أو غير مستخدمة عندما تسرد الخصائص بشكل صريح.
+- نظرة سريعة تسهل معرفة الخصائص التي تمررها التعليمات البرمجية، مما يسهل من الفهم والصيانة.
+- يساعد على منع نشوء تعقيدات كبيرة بين المكونات من خلال خصائصها.
+- أدوات الفحص تجعل من السهل تحديد الخصائص التي بها أخطاء إملائية أو غير مستخدمة عندما تسرد الخصائص بشكل صريح.
 
 ## JavaScript
 
@@ -158,9 +160,9 @@ type MyType = {
 ```tsx
 // ❌ Bad, utilizes an enum
 enum Color {
-  Red = "red",
-  Green = "green",
-  Blue = "blue",
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
 }
 
 let color = Color.Red;
@@ -169,7 +171,7 @@ let color = Color.Red;
 ```tsx
 // ✅ جيد، يستخدم حرفا مشفوعا
 
-let color: "red" | "green" | "blue" = "red";
+let color: 'red' | 'green' | 'blue' = 'red';
 ```
 
 #### GraphQL والمكتبات الداخلية
@@ -255,7 +257,7 @@ const StyledButton = styled.button`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  border-radius:  ${({ theme }) => theme.border.rounded};
+  border-radius: ${({ theme }) => theme.border.rounded};
 `;
 ```
 
@@ -276,11 +278,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### لماذا لا نوع استيرادات
 
-* **الاتساق**: من خلال تجنب استيراد الأنواع واستخدام أسلوب استيراد واحد لكل من الأنواع والقيم، يبقى الكود موحدًا في أسلوب استيراد الوحدة.
+- **الاتساق**: من خلال تجنب استيراد الأنواع واستخدام أسلوب استيراد واحد لكل من الأنواع والقيم، يبقى الكود موحدًا في أسلوب استيراد الوحدة.
 
-* **القراءة**: استيرادات بلا نوع تحسن من قابلية القراءة للرمز من خلال توضيح عندما تقوم باستيراد القيم أو الأنواع. يقلل هذا من الغموض ويجعل من الأسهل فهم الهدف من الرموز المستوردة.
+- **القراءة**: استيرادات بلا نوع تحسن من قابلية القراءة للرمز من خلال توضيح عندما تقوم باستيراد القيم أو الأنواع. يقلل هذا من الغموض ويجعل من الأسهل فهم الهدف من الرموز المستوردة.
 
-* **الصيانة**: يعزز الصيانة داخل قاعدة الكود لأن المطوّرين يمكنهم تحديد مواقع استيرادات الأنواع فقط عند استعراض أو تعديل الكود.
+- **الصيانة**: يعزز الصيانة داخل قاعدة الكود لأن المطوّرين يمكنهم تحديد مواقع استيرادات الأنواع فقط عند استعراض أو تعديل الكود.
 
 ### قاعدة Oxlint
 

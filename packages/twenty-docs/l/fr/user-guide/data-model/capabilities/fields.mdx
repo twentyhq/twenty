@@ -19,7 +19,10 @@ Vous ne pouvez pas supprimer les champs standard, mais vous pouvez les désactiv
 
 Vous pouvez également personnaliser les options des champs standard de type `SELECT`, par exemple les options pour l’`Étape` des Opportunités.
 
-<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/standard-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ### Champs Personnalisés
 
@@ -27,7 +30,10 @@ Les champs personnalisés peuvent être ajoutés à n'importe quel objet. Vous p
 
 Par exemple, un champ personnalisé pour SpaceX pourrait être `Statut Actif de la Fusée`, indiquant si une fusée est opérationnelle.
 
-<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/custom-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ## Types de champs
 
@@ -69,7 +75,10 @@ Votre nouveau champ est maintenant disponible dans les champs de l'application. 
 
 **Méthode rapide:** Cliquez sur le bouton **+** en haut à droite de tout tableau d'objet, puis sélectionnez `Personnaliser les champs`. Cela vous amène directement aux paramètres du Modèle de Données.
 
-<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/quick-new-field.png"
+  style={{ width: '100%' }}
+/>
 
 ## Désactiver un champ
 
@@ -83,7 +92,10 @@ Voici comment vous pouvez le faire:
 
 3. Sélectionnez `Désactiver` dans le menu déroulant.
 
-<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/deactivate-field.png"
+  style={{ width: '100%' }}
+/>
 
 Que se passe-t-il lorsque vous désactivez un champ?
 
@@ -105,18 +117,18 @@ Si vous obtenez une erreur lors de la définition de l'unicité, vérifiez les v
 
 ### Conventions de nommage et limitations
 
-* **Les noms au singulier et au pluriel doivent être distincts** : Notre API GraphQL nécessite des noms distincts pour les mutations
-* **Noms de champs protégés** : certains noms sont réservés à l’usage du système (par exemple, `Type`, `Application`)
+- **Les noms au singulier et au pluriel doivent être distincts** : Notre API GraphQL nécessite des noms distincts pour les mutations
+- **Noms de champs protégés** : certains noms sont réservés à l’usage du système (par exemple, `Type`, `Application`)
 
 ### Champs de devise et de téléphone
 
-* **Devise par défaut** : peut être configurée via le modèle de données
-* **Codes de pays par défaut** : peuvent être configurés pour les champs téléphoniques via le modèle de données
+- **Devise par défaut** : peut être configurée via le modèle de données
+- **Codes de pays par défaut** : peuvent être configurés pour les champs téléphoniques via le modèle de données
 
 ### Champs de sélection
 
-* **Une option par défaut peut être sélectionnée** pour chaque champ de sélection
+- **Une option par défaut peut être sélectionnée** pour chaque champ de sélection
 
 ### Champs de texte d'enregistrement
 
-* **Chaque objet a un champ d'affichage principal**: Ce champ apparaît dans la colonne la plus à gauche et représente l'enregistrement lorsqu'il est lié à d'autres objets. Il doit s'agir d'un champ de texte. Par exemple, le champ `Nom` est utilisé pour les Personnes comme champ principal, donc lorsque vous liez une personne à une entreprise, vous verrez son nom dans la vue de l'entreprise.
+- **Chaque objet a un champ d'affichage principal**: Ce champ apparaît dans la colonne la plus à gauche et représente l'enregistrement lorsqu'il est lié à d'autres objets. Il doit s'agir d'un champ de texte. Par exemple, le champ `Nom` est utilisé pour les Personnes comme champ principal, donc lorsque vous liez une personne à une entreprise, vous verrez son nom dans la vue de l'entreprise.

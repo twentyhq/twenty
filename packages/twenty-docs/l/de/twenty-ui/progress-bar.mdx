@@ -9,7 +9,7 @@ Zeigt den Fortschritt oder Countdown an und bewegt sich von rechts nach links.
 <Tab title="&#x22;Verwendung&#x22;">
 
 ```jsx
-import { ProgressBar } from "twenty-ui/feedback";
+import { ProgressBar } from 'twenty-ui/feedback';
 
 export const MyComponent = () => {
   return (
@@ -29,7 +29,6 @@ export const MyComponent = () => {
 
 <Tab title="&#x22;Eigenschaften&#x22;">
 
-
 | "Eigenschaften" | Typ          | Beschreibung                                                                                                | Standard  |
 | --------------- | ------------ | ----------------------------------------------------------------------------------------------------------- | --------- |
 | Dauer           | nummer       | Die Gesamtdauer der Fortschrittsbalken-Animation in Millisekunden                                           | 3         |
@@ -38,8 +37,6 @@ export const MyComponent = () => {
 | Balkenhöhe      | nummer       | Die Höhe des Balkens in Pixeln                                                                              | 24        |
 | Balkenfarbe     | Zeichenkette | Die Farbe des Balkens                                                                                       | gray80    |
 | AutoStart       | boolesch     | Wenn `true`, startet die Animation des Fortschrittsbalkens automatisch, wenn die Komponente gemountet wird. | `wahr`    |
-
-
 
 </Tab>
 </Tabs>
@@ -53,7 +50,7 @@ Zeigt den Fortschritt einer Aufgabe an, wird häufig auf Ladebildschirmen oder i
 <Tab title="Verwendung">
 
 ```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
 
 export const MyComponent = () => {
   return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
@@ -64,14 +61,11 @@ export const MyComponent = () => {
 
 <Tab title="Eigenschaften">
 
-
 | Eigenschaften | Typ          | Beschreibung                                 | Standard     |
 | ------------- | ------------ | -------------------------------------------- | ------------ |
 | größe         | nummer       | Die Größe des zirkularen Fortschrittsbalkens | 50           |
 | Balkenbreite  | nummer       | Die Breite der Fortschrittsbalkenlinie       | 5            |
 | Balkenfarbe   | Zeichenkette | Die Farbe des Fortschrittsbalkens            | currentColor |
-
-
 
 </Tab>
 

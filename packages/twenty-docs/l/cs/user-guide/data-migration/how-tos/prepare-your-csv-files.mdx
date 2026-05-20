@@ -18,7 +18,11 @@ Než začnete, ujistěte se, že váš soubor splňuje tyto požadavky:
 | **Kódování**        | Doporučeno: UTF-8           |
 | **Struktura**       | Jeden typ objektu na soubor |
 
-<Note>U datasetů větších než 10 000 záznamů je rozdělte do více souborů nebo použijte [import přes API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+<Note>
+  U datasetů větších než 10 000 záznamů je rozdělte do více souborů nebo
+  použijte [import přes
+  API](/l/cs/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
 
 ## Krok 2: Stáhněte si ukázkový soubor
 
@@ -29,7 +33,11 @@ Než začnete, ujistěte se, že váš soubor splňuje tyto požadavky:
 3. Klikněte na **Stáhnout ukázkový soubor**
 4. Tento soubor použijte jako svou šablonu
 
-<Note>**Profesionální tip:** Místo toho exportujte několik existujících záznamů. Tím získáte reálné příklady, jak mají být data naformátována, a názvy sloupců se během importu namapují automaticky.</Note>
+<Note>
+  **Profesionální tip:** Místo toho exportujte několik existujících záznamů. Tím
+  získáte reálné příklady, jak mají být data naformátována, a názvy sloupců se
+  během importu namapují automaticky.
+</Note>
 
 ## Krok 3: Odstraňte duplicitní hodnoty
 
@@ -47,7 +55,11 @@ Twenty vynucuje jedinečnost u některých polí. Duplicity způsobí chyby při
 2. Odstraňte nebo sloučte duplicitní řádky
 3. Zkontrolujte duplicity, které už v Twenty existují
 
-<Warning>**Dočasně smazané záznamy se započítávají do jedinečnosti.** Záznamy v Command Menu → See deleted records způsobí chyby kvůli duplicitám. Trvale je smažte, nebo je obnovte a aktualizujte.</Warning>
+<Warning>
+  **Dočasně smazané záznamy se započítávají do jedinečnosti.** Záznamy v Command
+  Menu → See deleted records způsobí chyby kvůli duplicitám. Trvale je smažte,
+  nebo je obnovte a aktualizujte.
+</Warning>
 
 ## Krok 4: Správně naformátujte každý typ pole
 
@@ -55,14 +67,14 @@ Různé typy polí vyžadují specifické formáty. Zde je úplný přehled:
 
 ### Textová pole
 
-* Není vyžadováno žádné speciální formátování
-* Počáteční a koncové mezery jsou automaticky oříznuty
+- Není vyžadováno žádné speciální formátování
+- Počáteční a koncové mezery jsou automaticky oříznuty
 
 ### E‑mailová pole
 
-* Musí být ve validním formátu e‑mailu: `name@domain.com`
-* Musí být jedinečné (žádné duplicity v souboru ani v Twenty)
-* Pro další e‑maily použijte tento formát ve sloupci **E‑maily / Další e‑maily**:
+- Musí být ve validním formátu e‑mailu: `name@domain.com`
+- Musí být jedinečné (žádné duplicity v souboru ani v Twenty)
+- Pro další e‑maily použijte tento formát ve sloupci **E‑maily / Další e‑maily**:
 
 ```
 [\"jane@twenty.com\",\"jane.doe@twenty.com\"]
@@ -70,12 +82,12 @@ Různé typy polí vyžadují specifické formáty. Zde je úplný přehled:
 
 ### Doménová pole
 
-* **Doporučený formát**: `https://domain.com`
-* Odpovídá formátu používanému synchronizací schránky/kalendáře (předchází duplicitám)
-* Vyplňte oba sloupce:
-  * **Doména / Štítek domény**: `domain.com`
-  * **Doména / URL domény**: `https://domain.com`
-* Musí být jedinečné v rámci vašeho souboru i v Twenty
+- **Doporučený formát**: `https://domain.com`
+- Odpovídá formátu používanému synchronizací schránky/kalendáře (předchází duplicitám)
+- Vyplňte oba sloupce:
+  - **Doména / Štítek domény**: `domain.com`
+  - **Doména / URL domény**: `https://domain.com`
+- Musí být jedinečné v rámci vašeho souboru i v Twenty
 
 ### Telefonní pole
 
@@ -91,25 +103,25 @@ Telefon je **vnořené pole**, které vyžaduje více sloupců:
 
 Adresa je **vnořené pole** s více sloupci (některé mohou zůstat prázdné):
 
-* **Adresa / Adresa 1**: Řádek adresy 1
-* **Adresa / Adresa 2**: Řádek adresy 2 (volitelné)
-* **Adresa / Město**: Název města
-* **Adresa / Stát**: Stát nebo provincie
-* **Adresa / Země**: Název země
-* **Adresa / PSČ**: Poštovní/ZIP kód
+- **Adresa / Adresa 1**: Řádek adresy 1
+- **Adresa / Adresa 2**: Řádek adresy 2 (volitelné)
+- **Adresa / Město**: Název města
+- **Adresa / Stát**: Stát nebo provincie
+- **Adresa / Země**: Název země
+- **Adresa / PSČ**: Poštovní/ZIP kód
 
 ### Datumová pole
 
 Používejte jednotný formát v celém souboru:
 
-* `YYYY-MM-DD` (doporučeno): `2024-03-15`
-* ISO 8601: `2024-03-15T10:30:00Z`
+- `YYYY-MM-DD` (doporučeno): `2024-03-15`
+- ISO 8601: `2024-03-15T10:30:00Z`
 
 ### Číselná pole
 
-* Pouze čísla (bez textu)
-* Pro desetinná místa použijte tečku: `1234.56`
-* Bez oddělovačů tisíců (ne `1,234.56`)
+- Pouze čísla (bez textu)
+- Pro desetinná místa použijte tečku: `1234.56`
+- Bez oddělovačů tisíců (ne `1,234.56`)
 
 ### Měnová pole
 
@@ -137,7 +149,10 @@ Použijte název API možnosti, nikoli zobrazovaný štítek.
 3. Zapněte **Pokročilý režim** (přepínač vpravo dole)
 4. Zkopírujte název API (např. `OPTION_1`, nikoli "Option 1")
 
-<Note>Nové možnosti výběru se nevytvářejí automaticky. Přidejte je v **Nastavení → Datový model** před importem.</Note>
+<Note>
+  Nové možnosti výběru se nevytvářejí automaticky. Přidejte je v **Nastavení →
+  Datový model** před importem.
+</Note>
 
 ### Pole s vícenásobným výběrem
 
@@ -163,8 +178,8 @@ Použijte formát: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` nebo `RATING_5
 
 Vyplňte oba sloupce:
 
-* **Odkazy / Štítek odkazu**: `Twenty`
-* **Odkazy / URL odkazu**: `https://twenty.com`
+- **Odkazy / Štítek odkazu**: `Twenty`
+- **Odkazy / URL odkazu**: `https://twenty.com`
 
 Pro sekundární odkazy použijte sloupec **Odkazy / Sekundární odkazy**:
 
@@ -182,9 +197,9 @@ Použijte platný formát JSON:
 
 ### ID pole
 
-* **Volitelné**: Twenty automaticky generuje ID, pokud nejsou zadána
-* **Formát**: UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Využití**: Zahrňte ID pro aktualizaci existujících záznamů místo vytváření nových
+- **Volitelné**: Twenty automaticky generuje ID, pokud nejsou zadána
+- **Formát**: UUID (např. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+- **Využití**: Zahrňte ID pro aktualizaci existujících záznamů místo vytváření nových
 
 ## Krok 5: Přidejte relační sloupce (pokud propojujete záznamy)
 
@@ -202,20 +217,22 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 
 **Důležitá pravidla pro relace:**
 
-* Nadřazený záznam musí v Twenty již existovat
-* Použijte formát **Domain URL** (`https://domain.com`), nikoli štítek
-* Mapujte pouze JEDEN jedinečný identifikátor (nezahrnujte zároveň `companyId` i `companyDomain`)
-* U členů pracovního prostoru použijte jejich **e-mail** (ne jméno)
+- Nadřazený záznam musí v Twenty již existovat
+- Použijte formát **Domain URL** (`https://domain.com`), nikoli štítek
+- Mapujte pouze JEDEN jedinečný identifikátor (nezahrnujte zároveň `companyId` i `companyDomain`)
+- U členů pracovního prostoru použijte jejich **e-mail** (ne jméno)
 
 <Warning>
 **Pořadí importu je důležité!**
 
 Importujte stranu "one" před stranou "many":
+
 1. **Společnosti** jako první
 2. **Lidé** jako druzí (s odkazem na společnost)
 3. **Příležitosti** jako třetí
 
 Nadřazený záznam musí existovat dříve, než na něj můžete odkazovat.
+
 </Warning>
 
 Podrobné pokyny najdete v [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv).
@@ -262,6 +279,6 @@ Před nahráním souboru ověřte:
 
 Váš soubor je připraven! Nyní:
 
-* [Importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv) (importujte je jako první)
-* [Importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)
+- [Importovat společnosti](/l/cs/user-guide/data-migration/how-tos/import-companies-via-csv) (importujte je jako první)
+- [Importovat kontakty](/l/cs/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [Opravit chyby importu](/l/cs/user-guide/data-migration/how-tos/fix-import-errors)

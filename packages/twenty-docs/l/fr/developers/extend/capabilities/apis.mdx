@@ -11,13 +11,16 @@ Twenty a été conçu pour être convivial pour les développeurs, offrant des A
 
 Twenty génère des API spécifiquement pour votre modèle de données :
 
-* **Pas besoin d'ID longs** : Utilisez directement les noms de vos objets et champs dans les points de terminaison
-* **Objets standard et personnalisés traités à égalité** : Vos objets personnalisés bénéficient du même traitement API que ceux intégrés
-* **Points de terminaison dédiés** : Chaque objet et champ a son propre point de terminaison API
-* **Documentation personnalisée** : Générée spécifiquement pour le modèle de données de votre espace de travail
+- **Pas besoin d'ID longs** : Utilisez directement les noms de vos objets et champs dans les points de terminaison
+- **Objets standard et personnalisés traités à égalité** : Vos objets personnalisés bénéficient du même traitement API que ceux intégrés
+- **Points de terminaison dédiés** : Chaque objet et champ a son propre point de terminaison API
+- **Documentation personnalisée** : Générée spécifiquement pour le modèle de données de votre espace de travail
 
 <Note>
-  Votre documentation API personnalisée est disponible sous **Paramètres → API & Webhooks** après la création d'une clé API. Comme Twenty génère des API qui correspondent à votre modèle de données personnalisé, la documentation est propre à votre espace de travail.
+  Votre documentation API personnalisée est disponible sous **Paramètres → API &
+  Webhooks** après la création d'une clé API. Comme Twenty génère des API qui
+  correspondent à votre modèle de données personnalisé, la documentation est
+  propre à votre espace de travail.
 </Note>
 
 ## Les deux types d'API
@@ -28,9 +31,9 @@ Accessible sur `/rest/` ou `/graphql/`
 
 Travaillez avec vos **enregistrements** réels (les données) :
 
-* Créer, lire, mettre à jour, supprimer People, Companies, Opportunities, etc.
-* Interroger et filtrer les données
-* Gérer les relations entre les enregistrements
+- Créer, lire, mettre à jour, supprimer People, Companies, Opportunities, etc.
+- Interroger et filtrer les données
+- Gérer les relations entre les enregistrements
 
 ### API de métadonnées
 
@@ -38,9 +41,9 @@ Accessible sur `/rest/metadata/` ou `/metadata/`
 
 Gérez votre **espace de travail et votre modèle de données** :
 
-* Créer, modifier ou supprimer des objets et des champs
-* Configurer les paramètres de l'espace de travail
-* Définir les relations entre les objets
+- Créer, modifier ou supprimer des objets et des champs
+- Configurer les paramètres de l'espace de travail
+- Définir les relations entre les objets
 
 ## REST vs GraphQL
 
@@ -73,15 +76,17 @@ Authorization: Bearer YOUR_API_KEY
 1. Allez dans **Paramètres → API & Webhooks**
 2. Cliquez sur **+ Créer une clé**
 3. Configurer:
-   * **Nom** : Nom descriptif pour la clé
-   * **Date d'expiration** : Date à laquelle la clé expire
+   - **Nom** : Nom descriptif pour la clé
+   - **Date d'expiration** : Date à laquelle la clé expire
 4. Cliquez sur **Enregistrer**
 5. **Copiez immédiatement** — la clé n'est affichée qu'une seule fois
 
 <VimeoEmbed videoId="928786722" title="Création d'une clé API" />
 
 <Warning>
-  Votre clé API donne accès à des données sensibles. Ne la partagez pas avec des services non fiables. Si elle est compromise, désactivez-la immédiatement et générez-en une nouvelle.
+  Votre clé API donne accès à des données sensibles. Ne la partagez pas avec des
+  services non fiables. Si elle est compromise, désactivez-la immédiatement et
+  générez-en une nouvelle.
 </Warning>
 
 ### Attribuer un rôle à une clé API
@@ -114,10 +119,10 @@ Testez vos API directement dans le navigateur avec notre bac à sable intégré 
 
 ### Ce que vous obtenez
 
-* **Documentation interactive** : Générée pour votre modèle de données spécifique
-* **Tests en direct** : Exécutez de véritables appels API sur votre espace de travail
-* **Explorateur de schéma** : Parcourez les objets, champs et relations disponibles
-* **Générateur de requêtes** : Construisez des requêtes avec l'autocomplétion
+- **Documentation interactive** : Générée pour votre modèle de données spécifique
+- **Tests en direct** : Exécutez de véritables appels API sur votre espace de travail
+- **Explorateur de schéma** : Parcourez les objets, champs et relations disponibles
+- **Générateur de requêtes** : Construisez des requêtes avec l'autocomplétion
 
 Le bac à sable reflète vos objets et champs personnalisés, de sorte que la documentation est toujours précise pour votre espace de travail.
 
@@ -125,13 +130,13 @@ Le bac à sable reflète vos objets et champs personnalisés, de sorte que la do
 
 REST et GraphQL prennent en charge les opérations par lot :
 
-* **Taille du lot** : Jusqu'à 60 enregistrements par requête
-* **Opérations** : Créer, mettre à jour, supprimer plusieurs enregistrements
+- **Taille du lot** : Jusqu'à 60 enregistrements par requête
+- **Opérations** : Créer, mettre à jour, supprimer plusieurs enregistrements
 
 **Fonctionnalités spécifiques à GraphQL :**
 
-* **Upsert par lot** : Créer ou mettre à jour en un seul appel
-* Utilisez des noms d'objets au pluriel (par exemple, `CreateCompanies` au lieu de `CreateCompany`)
+- **Upsert par lot** : Créer ou mettre à jour en un seul appel
+- Utilisez des noms d'objets au pluriel (par exemple, `CreateCompanies` au lieu de `CreateCompany`)
 
 ## Limites de débit
 
@@ -143,5 +148,7 @@ Les requêtes API sont limitées pour garantir la stabilité de la plateforme :
 | **Taille du lot** | 60 enregistrements par appel |
 
 <Tip>
-  Utilisez les opérations par lot pour maximiser le débit — traitez jusqu'à 60 enregistrements dans un seul appel API au lieu d'effectuer des requêtes individuelles.
+  Utilisez les opérations par lot pour maximiser le débit — traitez jusqu'à 60
+  enregistrements dans un seul appel API au lieu d'effectuer des requêtes
+  individuelles.
 </Tip>

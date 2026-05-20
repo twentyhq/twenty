@@ -6,7 +6,9 @@ description: Calcule e exiba valores ponderados de negócios com base na probabi
 O Valor Esperado é um valor calculado: **Amount × Probability**. Isso ajuda você a prever a receita, ponderando os negócios com base na probabilidade de fechamento.
 
 <Tip>
-Este é um exemplo de criação de [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) usando fluxos de trabalho.
+  Este é um exemplo de criação de [Campos de
+  fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields)
+  usando fluxos de trabalho.
 </Tip>
 
 Este guia orienta você na configuração dos campos personalizados e fluxos de trabalho necessários para calcular e exibir valores esperados no seu pipeline.
@@ -20,18 +22,18 @@ Você precisa de dois campos personalizados no objeto Oportunidades.
 1. Acesse **Configurações → Modelo de Dados → Oportunidades**
 2. Clique em **+ Adicionar campo**
 3. Configurar:
-   * **Nome**: Probability
-   * **Tipo**: Número
-   * **Descrição**: Probabilidade baseada na etapa (0-100%)
+   - **Nome**: Probability
+   - **Tipo**: Número
+   - **Descrição**: Probabilidade baseada na etapa (0-100%)
 4. Clique em **Salvar**
 
 ### Crie o campo Expected Amount
 
 1. Clique em **+ Adicionar campo**
 2. Configurar:
-   * **Nome**: Expected Amount
-   * **Tipo**: Moeda
-   * **Descrição**: Calculado: Amount × Probability
+   - **Nome**: Expected Amount
+   - **Tipo**: Moeda
+   - **Descrição**: Calculado: Amount × Probability
 3. Clique em **Salvar**
 
 ### Opcional: tornar os campos somente leitura para os usuários
@@ -76,16 +78,18 @@ Crie uma ramificação para cada etapa com sua probabilidade:
 | Closed Lost | 0%            |
 
 <Note>
-Para criar uma nova ramificação, clique com o botão direito na tela do fluxo de trabalho e clique em **Nova ação**. Em seguida, vincule essa ação ao nó anterior arrastando a seta do nó anterior para esta nova ação.
+  Para criar uma nova ramificação, clique com o botão direito na tela do fluxo
+  de trabalho e clique em **Nova ação**. Em seguida, vincule essa ação ao nó
+  anterior arrastando a seta do nó anterior para esta nova ação.
 </Note>
 
 Para cada etapa:
 
 1. Adicione um nó **Filtro**: Stage = [nome da etapa]
 2. Adicione uma ação **Atualizar registro**:
-   * Registro: a Oportunidade que acionou
-   * Campo: Probability
-   * Valor: [probabilidade para essa etapa]
+   - Registro: a Oportunidade que acionou
+   - Campo: Probability
+   - Valor: [probabilidade para essa etapa]
 
 ### Calcular o Valor Esperado
 
@@ -93,9 +97,9 @@ Depois que as ramificações se unirem:
 
 1. Adicione um nó **Filtro**: Amount não está vazio
 2. Adicione uma ação **Atualizar registro**:
-   * Registro: a Oportunidade que acionou
-   * Campo: Expected Amount
-   * Valor: Amount × Probability
+   - Registro: a Oportunidade que acionou
+   - Campo: Expected Amount
+   - Valor: Amount × Probability
 
 ## Etapa 3: Criar o fluxo de trabalho nº 2 — Recalcular na alteração de Amount
 
@@ -117,9 +121,9 @@ Este fluxo de trabalho atualiza o campo Expected Amount quando o Amount do negó
 
 1. Adicione um nó **Filtro**: Amount não está vazio
 2. Adicione uma ação **Atualizar registro**:
-   * Registro: a Oportunidade que acionou
-   * Campo: Expected Amount
-   * Valor: Amount × Probability
+   - Registro: a Oportunidade que acionou
+   - Campo: Expected Amount
+   - Valor: Amount × Probability
 
 ## Etapa 4: Exibir no seu pipeline
 
@@ -144,6 +148,6 @@ Cada coluna agora mostra o valor total ponderado do pipeline para essa etapa.
 
 ## Relacionados
 
-* [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) — crie campos calculados usando fluxos de trabalho
-* [Visualizações de Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações por coluna
-* [Como criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — configuração de campos
+- [Campos de fórmula](/l/pt/user-guide/workflows/how-tos/crm-automations/formula-fields) — crie campos calculados usando fluxos de trabalho
+- [Visualizações de Kanban](/l/pt/user-guide/views-pipelines/capabilities/kanban-views) — agregações por coluna
+- [Como criar campos personalizados](/l/pt/user-guide/data-model/how-tos/create-custom-fields) — configuração de campos

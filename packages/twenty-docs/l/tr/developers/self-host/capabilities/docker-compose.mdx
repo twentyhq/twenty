@@ -4,7 +4,9 @@ icon: docker
 ---
 
 <Warning>
-Docker kapsayıcıları, üretim ortamında barındırma veya kendi kendine barındırma içindir. Katkıda bulunmak için lütfen [Yerel Kurulum](/l/tr/developers/contribute/capabilities/local-setup) bölümüne bakın.
+  Docker kapsayıcıları, üretim ortamında barındırma veya kendi kendine
+  barındırma içindir. Katkıda bulunmak için lütfen [Yerel
+  Kurulum](/l/tr/developers/contribute/capabilities/local-setup) bölümüne bakın.
 </Warning>
 
 ## Genel Bakış
@@ -17,8 +19,8 @@ Bu kılavuz, Docker Compose kullanarak Twenty uygulamasını kurmak ve yapıland
 
 ## Sistem Gereksinimleri
 
-* RAM: Ortamınızda en az 2GB RAM bulunduğundan emin olun. Yetersiz bellek, işlemlerin çökmesine neden olabilir.
-* Docker & Docker Compose: Her ikisinin de yüklendiğinden ve güncel olduğundan emin olun.
+- RAM: Ortamınızda en az 2GB RAM bulunduğundan emin olun. Yetersiz bellek, işlemlerin çökmesine neden olabilir.
+- Docker & Docker Compose: Her ikisinin de yüklendiğinden ve güncel olduğundan emin olun.
 
 ## Seçenek 1: Tek satırlık komut dosyası
 
@@ -34,8 +36,8 @@ Belirli bir sürüm veya dal yüklemek için:
 VERSION=vx.y.z BRANCH=dal-adı bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* x.y.z'yi istediğiniz sürüm numarasıyla değiştirin.
-* dal-adını yüklemek istediğiniz dal adıyla değiştirin.
+- x.y.z'yi istediğiniz sürüm numarasıyla değiştirin.
+- dal-adını yüklemek istediğiniz dal adıyla değiştirin.
 
 ## Seçenek 2: Manuel adımlar
 
@@ -113,11 +115,11 @@ Varsayılan olarak, Twenty `localhost` üzerinde `3000` portunda çalışır. Ha
 
 #### `SERVER_URL`'a Genel Bakış
 
-* **Protokol:** Yapılandırmanıza bağlı olarak `http` veya `https` kullanın.
-  * SSL ayarlamadıysanız `http` kullanın.
-  * SSL yapılandırıldıysa `https` kullanın.
-* **Alan Adı/IP:** Uygulamanızın erişilebilir olduğu alan adı veya IP adresi.
-* **Port:** Varsayılan portları kullanmıyorsanız, port numarasını ekleyin (`80` `http` için, `443` `https` için).
+- **Protokol:** Yapılandırmanıza bağlı olarak `http` veya `https` kullanın.
+  - SSL ayarlamadıysanız `http` kullanın.
+  - SSL yapılandırıldıysa `https` kullanın.
+- **Alan Adı/IP:** Uygulamanızın erişilebilir olduğu alan adı veya IP adresi.
+- **Port:** Varsayılan portları kullanmıyorsanız, port numarasını ekleyin (`80` `http` için, `443` `https` için).
 
 ### SSL Gereksinimleri
 
@@ -130,7 +132,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
 #### `SERVER_URL`'ı Yapılandırma
 
 1. **Erişim URL'nizi Belirleyin**
-   * **Ters Proxy Olmadan (Doğrudan Erişim):**
+   - **Ters Proxy Olmadan (Doğrudan Erişim):**
 
      Uygulamaya doğrudan bir ters proxy olmadan erişiyorsanız:
 
@@ -138,7 +140,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
      SERVER_URL=http://alan-adiniz-veya-ip:3000
      ```
 
-   * **Ters Proxy ile (Standart Portlar):**
+   - **Ters Proxy ile (Standart Portlar):**
 
      Nginx veya Traefik gibi bir ters proxy kullanıyorsanız ve SSL yapılandırıldıysa:
 
@@ -146,7 +148,7 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
      SERVER_URL=https://alan-adiniz-veya-ip
      ```
 
-   * **Ters Proxy ile (Özel Portlar):**
+   - **Ters Proxy ile (Özel Portlar):**
 
      Standart olmayan portlar kullanıyorsanız:
 
@@ -163,12 +165,11 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
    ```
 
    **Örnekler:**
-
-   * SSL olmadan doğrudan erişim:
+   - SSL olmadan doğrudan erişim:
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * SSL ile alan adı aracılığıyla erişim:
+   - SSL ile alan adı aracılığıyla erişim:
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
@@ -184,25 +185,25 @@ Optimum güvenlik ve işlevsellik için Twenty'nin SSL sonlandırma ile bir ters
 
 #### Dikkat Edilmesi Gerekenler
 
-* **Ters Proxy Yapılandırması:**
+- **Ters Proxy Yapılandırması:**
 
   Ters proxy'nin istekleri doğru iç bağlantı noktasına ilettiğinden emin olun (`3000` varsayılan olarak). SSL sonlandırmasını ve gerekli tüm başlıkları yapılandırın.
 
-* **Güvenlik Duvarı Ayarları:**
+- **Güvenlik Duvarı Ayarları:**
 
   Dış erişime izin vermek için güvenlik duvarınızdaki gerekli portları açın.
 
-* **Tutarlılık:**
+- **Tutarlılık:**
 
   `SERVER_URL`, kullanıcıların uygulamanıza tarayıcıları ile nasıl eriştiği ile eşleşmelidir.
 
 #### Süreklilik
 
-* **Veri Hacimleri:**
+- **Veri Hacimleri:**
 
   Docker Compose yapılandırması, veritabanı ve sunucu depolama için verileri kalıcı kılmak adına hacimler kullanmaktadır.
 
-* **Durumsuz Ortamlar:**
+- **Durumsuz Ortamlar:**
 
   Eğer durumsuz bir ortama (örneğin, bazı bulut hizmetleri) dağıtım yapıyorsanız, verilerin kalıcılığını sağlamak için harici depolama yapılandırın.
 
@@ -246,10 +247,10 @@ docker compose up -d
 
 ### Yedekleme En İyi Uygulamaları
 
-* **Geri yüklemeleri düzenli olarak test edin** — yedeklerin gerçekten çalıştığını doğrulayın
-* **Yedekleri farklı bir konumda saklayın** — bulut depolama kullanın (S3, GCS, vb.)
-* **Hassas verileri şifreleyin** — yedekleri şifreleme ile koruyun
-* **Birden fazla kopya saklayın** — günlük, haftalık ve aylık yedekleri tutun
+- **Geri yüklemeleri düzenli olarak test edin** — yedeklerin gerçekten çalıştığını doğrulayın
+- **Yedekleri farklı bir konumda saklayın** — bulut depolama kullanın (S3, GCS, vb.)
+- **Hassas verileri şifreleyin** — yedekleri şifreleme ile koruyun
+- **Birden fazla kopya saklayın** — günlük, haftalık ve aylık yedekleri tutun
 
 ## Sorun Giderme
 

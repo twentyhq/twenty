@@ -5,9 +5,9 @@ description: Controlla l'accesso a oggetti, campi e impostazioni con permessi ba
 
 Il sistema di permessi di Twenty ti consente di controllare l'accesso a tre aree principali:
 
-* **Oggetti e Campi**: Controlla chi può visualizzare, modificare o eliminare i record e i singoli campi
-* **Impostazioni**: Gestisci l'accesso alla configurazione dello spazio di lavoro e alle funzioni amministrative
-* **Azioni**: Controlla le azioni generali dello spazio di lavoro come importare dati o inviare e-mail
+- **Oggetti e Campi**: Controlla chi può visualizzare, modificare o eliminare i record e i singoli campi
+- **Impostazioni**: Gestisci l'accesso alla configurazione dello spazio di lavoro e alle funzioni amministrative
+- **Azioni**: Controlla le azioni generali dello spazio di lavoro come importare dati o inviare e-mail
 
 ## Crea un Ruolo
 
@@ -29,16 +29,19 @@ Per eliminare un ruolo:
 4. Clicca su **Conferma** nel modulo
 
 <Note>
-Se un ruolo viene eliminato, ogni membro dello spazio di lavoro assegnato a esso verrà automaticamente riassegnato al ruolo predefinito. Tutti i ruoli tranne quello di **Admin** possono essere eliminati. Deve sempre esserci almeno un membro assegnato al ruolo di **Admin**.
+  Se un ruolo viene eliminato, ogni membro dello spazio di lavoro assegnato a
+  esso verrà automaticamente riassegnato al ruolo predefinito. Tutti i ruoli
+  tranne quello di **Admin** possono essere eliminati. Deve sempre esserci
+  almeno un membro assegnato al ruolo di **Admin**.
 </Note>
 
 ## Assegna Ruoli ai Membri
 
 ### Visualizza Assegnazioni Correnti
 
-* Vai a **Impostazioni → Ruoli**
-* Vedi tutti i ruoli e quanti membri sono assegnati a ciascuno
-* Visualizza quali membri hanno quali ruoli
+- Vai a **Impostazioni → Ruoli**
+- Vedi tutti i ruoli e quanti membri sono assegnati a ciascuno
+- Visualizza quali membri hanno quali ruoli
 
 ### Assegna un Ruolo a un Membro
 
@@ -57,7 +60,9 @@ Se un ruolo viene eliminato, ogni membro dello spazio di lavoro assegnato a esso
 4. I nuovi membri dello spazio di lavoro riceveranno questo ruolo al momento della registrazione
 
 <Note>
-Puoi assegnare ruoli solo ai membri esistenti dello spazio di lavoro. Per invitare nuovi membri, utilizza [Gestione Membri](/l/it/user-guide/settings/capabilities/member-management).
+  Puoi assegnare ruoli solo ai membri esistenti dello spazio di lavoro. Per
+  invitare nuovi membri, utilizza [Gestione
+  Membri](/l/it/user-guide/settings/capabilities/member-management).
 </Note>
 
 ## Personalizza Permessi
@@ -82,7 +87,10 @@ Per prima cosa, configura i permessi di base che si applicano per impostazione p
 Seleziona o deseleziona in base a quello che dovrebbe essere il comportamento predefinito per questo ruolo.
 
 <Note>
-**Esempio — ruolo Tirocinante**: Un tirocinante dovrebbe poter vedere tutti gli oggetti ma non modificarli per impostazione predefinita. Abilita "Visualizza record su tutti gli oggetti" ma lascia "Modifica record su tutti gli oggetti" non selezionato.
+  **Esempio — ruolo Tirocinante**: Un tirocinante dovrebbe poter vedere tutti
+  gli oggetti ma non modificarli per impostazione predefinita. Abilita
+  "Visualizza record su tutti gli oggetti" ma lascia "Modifica record su tutti
+  gli oggetti" non selezionato.
 </Note>
 
 #### Aggiungi eccezioni a livello di oggetto
@@ -112,8 +120,8 @@ All'interno di ogni regola a livello di oggetto, puoi inoltre configurare i **pe
 
 Per il ruolo Tirocinante con accesso di modifica a People, potresti voler limitare alcuni campi:
 
-* People → Email → solo **Vedi campo** (non può modificare)
-* People → Address → **Nessun accesso** (completamente nascosto)
+- People → Email → solo **Vedi campo** (non può modificare)
+- People → Address → **Nessun accesso** (completamente nascosto)
 
 Questo consente al tirocinante di modificare la maggior parte dei campi di People proteggendo al contempo le informazioni sensibili.
 
@@ -141,19 +149,21 @@ Al termine, clicca su **Fine**, quindi **Salva** una volta reindirizzato alla pa
 
 Controlla l'accesso alle impostazioni dello spazio di lavoro in due modi:
 
-* Attiva **Accesso Completo Impostazioni** per concedere pieno accesso
-* Oppure abilita permessi specifici (ad es., generazione chiave API, preferenze dello spazio di lavoro, assegnazione ruoli, configurazione del modello di dati, impostazioni di sicurezza e gestione dei flussi di lavoro)
+- Attiva **Accesso Completo Impostazioni** per concedere pieno accesso
+- Oppure abilita permessi specifici (ad es., generazione chiave API, preferenze dello spazio di lavoro, assegnazione ruoli, configurazione del modello di dati, impostazioni di sicurezza e gestione dei flussi di lavoro)
 
 <Note>
-**Limitazione attuale**: Per attivare manualmente i workflow è attualmente richiesto l'accesso alla gestione dei workflow. Questo comportamento potrebbe cambiare nelle versioni future.
+  **Limitazione attuale**: Per attivare manualmente i workflow è attualmente
+  richiesto l'accesso alla gestione dei workflow. Questo comportamento potrebbe
+  cambiare nelle versioni future.
 </Note>
 
 ### Permessi per Azioni dello Spazio di lavoro
 
 Controlla l'accesso alle azioni generali dello spazio di lavoro:
 
-* Attiva **Accesso Completo all'Applicazione** per concedere pieni permessi
-* Oppure abilita azioni individuali come **Invia Email**, **Importa CSV** e **Esporta CSV**
+- Attiva **Accesso Completo all'Applicazione** per concedere pieni permessi
+- Oppure abilita azioni individuali come **Invia Email**, **Importa CSV** e **Esporta CSV**
 
 ## Assegnazione di ruoli a chiavi API e Agenti IA
 
@@ -161,10 +171,10 @@ Oltre ai membri dello spazio di lavoro, i ruoli possono essere assegnati anche a
 
 ### Perché assegnare ruoli a chiavi API e Agenti IA?
 
-* **Sicurezza**: Limita ciò a cui i processi automatizzati possono accedere o che possono modificare
-* **Conformità**: Garantisci che le integrazioni accedano solo ai dati di cui hanno bisogno
-* **Controllo**: Previeni modifiche accidentali ai dati dovute ad automazioni configurate in modo errato
-* **Auditabilità**: Tieni traccia di quali azioni sono state eseguite da quale integrazione o agente
+- **Sicurezza**: Limita ciò a cui i processi automatizzati possono accedere o che possono modificare
+- **Conformità**: Garantisci che le integrazioni accedano solo ai dati di cui hanno bisogno
+- **Controllo**: Previeni modifiche accidentali ai dati dovute ad automazioni configurate in modo errato
+- **Auditabilità**: Tieni traccia di quali azioni sono state eseguite da quale integrazione o agente
 
 ### Assegna un ruolo a una chiave API
 
@@ -178,7 +188,9 @@ Oltre ai membri dello spazio di lavoro, i ruoli possono essere assegnati anche a
 La chiave API erediterà ora tutti i permessi definiti da quel ruolo. Qualsiasi chiamata API effettuata con questa chiave sarà limitata di conseguenza.
 
 <Note>
-Le chiavi API senza un ruolo assegnato utilizzano i permessi predefiniti. Per una sicurezza maggiore, assegna sempre un ruolo specifico alle chiavi API di produzione.
+  Le chiavi API senza un ruolo assegnato utilizzano i permessi predefiniti. Per
+  una sicurezza maggiore, assegna sempre un ruolo specifico alle chiavi API di
+  produzione.
 </Note>
 
 ### Assegna un ruolo a un Agente IA
@@ -193,5 +205,7 @@ Le chiavi API senza un ruolo assegnato utilizzano i permessi predefiniti. Per un
 L'agente IA potrà accedere ai dati ed eseguire solo le azioni consentite dal ruolo assegnato.
 
 <Note>
-Per gli agenti IA in esecuzione all'interno dei workflow, questo garantisce che l'agente non possa accedere o modificare dati al di fuori dell'ambito previsto, anche se il workflow dispone di permessi più ampi.
+  Per gli agenti IA in esecuzione all'interno dei workflow, questo garantisce
+  che l'agente non possa accedere o modificare dati al di fuori dell'ambito
+  previsto, anche se il workflow dispone di permessi più ampi.
 </Note>

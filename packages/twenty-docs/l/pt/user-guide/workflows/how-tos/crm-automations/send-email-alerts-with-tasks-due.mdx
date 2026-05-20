@@ -5,7 +5,10 @@ description: Notifique automaticamente os membros da equipe sobre suas tarefas p
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Envie lembretes diários por e-mail para cada membro da equipe sobre suas tarefas com vencimento hoje.
 
@@ -45,8 +48,8 @@ Este fluxo de trabalho é executado conforme um cronograma e:
 1. Dentro do iterador, adicione a ação **Pesquisar Registros**
 2. Selecione **Tarefas** como o objeto
 3. Adicione filtros:
-   * **Responsável** = membro atual do espaço de trabalho (do iterador)
-   * **Data de vencimento** = hoje
+   - **Responsável** = membro atual do espaço de trabalho (do iterador)
+   - **Data de vencimento** = hoje
 
 ### Etapa 5: Formatar as tarefas no corpo do e-mail (dentro do iterador)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-Substitua `yourSubDomain` pelo subdomínio real do seu espaço de trabalho Twenty.
+  Substitua `yourSubDomain` pelo subdomínio real do seu espaço de trabalho
+  Twenty.
 </Note>
 
 ### Etapa 6: Enviar E-mail (dentro do iterador)
@@ -101,6 +105,6 @@ Substitua `yourSubDomain` pelo subdomínio real do seu espaço de trabalho Twent
 
 ## Relacionados
 
-* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+- [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Lidar com arrays em ações de código](/l/pt/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

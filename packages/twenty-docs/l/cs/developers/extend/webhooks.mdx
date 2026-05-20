@@ -63,7 +63,8 @@ Každý webhook odesílá HTTP POST s tělem ve formátu JSON:
 | `timestamp` | Kdy k události došlo (UTC)                             |
 
 <Note>
-Odpovězte se **stavem HTTP 2xx** (200–299) pro potvrzení přijetí. Odpovědi mimo 2xx se zaznamenávají jako selhání doručení.
+  Odpovězte se **stavem HTTP 2xx** (200–299) pro potvrzení přijetí. Odpovědi
+  mimo 2xx se zaznamenávají jako selhání doručení.
 </Note>
 
 ## Ověření Webhooku
@@ -87,22 +88,22 @@ Twenty kvůli bezpečnosti podepisuje každý požadavek webhooku. Ověřujte po
 ### Příklad (Node.js)
 
 ```javascript
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const timestamp = req.headers['x-twenty-webhook-timestamp'];
 const payload = JSON.stringify(req.body);
-const secret = "your-webhook-secret";
+const secret = 'your-webhook-secret';
 
 const stringToSign = `${timestamp}:${payload}`;
 const expectedSignature = crypto
-  .createHmac("sha256", secret)
+  .createHmac('sha256', secret)
   .update(stringToSign)
-  .digest("hex");
+  .digest('hex');
 
-const receivedSignature = req.headers["x-twenty-webhook-signature"];
+const receivedSignature = req.headers['x-twenty-webhook-signature'];
 const isValid = crypto.timingSafeEqual(
-  Buffer.from(expectedSignature, "hex"),
-  Buffer.from(receivedSignature, "hex")
+  Buffer.from(expectedSignature, 'hex'),
+  Buffer.from(receivedSignature, 'hex'),
 );
 ```
 

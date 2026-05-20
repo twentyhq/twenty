@@ -26,20 +26,45 @@ icon: table-columns
 ## В этом разделе
 
 <CardGroup cols={2}>
-  <Card title="Представления" icon="list" href="/l/ru/developers/extend/apps/layout/views">
-    `defineView` — сохранённые конфигурации списков: видимые столбцы, фильтры, группы.
+  <Card
+    title="Представления"
+    icon="list"
+    href="/l/ru/developers/extend/apps/layout/views"
+  >
+    `defineView` — сохранённые конфигурации списков: видимые столбцы, фильтры,
+    группы.
   </Card>
-  <Card title="Элементы меню навигации" icon="bars" href="/l/ru/developers/extend/apps/layout/navigation-menu-items">
-    `defineNavigationMenuItem` — элементы боковой панели, ссылающиеся на представления или внешние URL.
+  <Card
+    title="Элементы меню навигации"
+    icon="bars"
+    href="/l/ru/developers/extend/apps/layout/navigation-menu-items"
+  >
+    `defineNavigationMenuItem` — элементы боковой панели, ссылающиеся на
+    представления или внешние URL.
   </Card>
-  <Card title="Макеты страниц" icon="table-columns" href="/l/ru/developers/extend/apps/layout/page-layouts">
-    `definePageLayout` и `definePageLayoutTab` — вкладки и виджеты на странице деталей записи.
+  <Card
+    title="Макеты страниц"
+    icon="table-columns"
+    href="/l/ru/developers/extend/apps/layout/page-layouts"
+  >
+    `definePageLayout` и `definePageLayoutTab` — вкладки и виджеты на странице
+    деталей записи.
   </Card>
-  <Card title="Компоненты фронтенда" icon="window-maximize" href="/l/ru/developers/extend/apps/layout/front-components">
-    `defineFrontComponent` — изолированные React‑компоненты, которые отображаются внутри Twenty.
+  <Card
+    title="Компоненты фронтенда"
+    icon="window-maximize"
+    href="/l/ru/developers/extend/apps/layout/front-components"
+  >
+    `defineFrontComponent` — изолированные React‑компоненты, которые
+    отображаются внутри Twenty.
   </Card>
-  <Card title="Элементы меню команд" icon="terminal" href="/l/ru/developers/extend/apps/layout/command-menu-items">
-    `defineCommandMenuItem` — регистрирует фронтенд‑компоненты как элементы Cmd+K и быстрые действия.
+  <Card
+    title="Элементы меню команд"
+    icon="terminal"
+    href="/l/ru/developers/extend/apps/layout/command-menu-items"
+  >
+    `defineCommandMenuItem` — регистрирует фронтенд‑компоненты как элементы
+    Cmd+K и быстрые действия.
   </Card>
 </CardGroup>
 
@@ -53,4 +78,4 @@ icon: table-columns
 | **Внутри любого из перечисленного выше** | Пользовательский React‑виджет — кнопки, формы, панели мониторинга, интеграции            | `defineFrontComponent`                    |
 | **Меню команд (Cmd+K)**                  | Закреплённое быстрое действие или скрытая команда                                        | `defineCommandMenuItem`                   |
 
-Фронтенд‑компоненты выполняются внутри изолированного Web Worker с использованием Remote DOM — они отображаются *нативно* на странице (не внутри iframe), но не могут напрямую обращаться к хостовой странице или DOM. Взаимодействие с Twenty происходит через хостовый API обмена сообщениями.
+Фронтенд‑компоненты выполняются внутри изолированного Web Worker с использованием Remote DOM — они отображаются _нативно_ на странице (не внутри iframe), но не могут напрямую обращаться к хостовой странице или DOM. Взаимодействие с Twenty происходит через хостовый API обмена сообщениями.

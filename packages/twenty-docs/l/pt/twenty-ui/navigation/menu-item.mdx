@@ -9,17 +9,17 @@ Um item de menu versátil projetado para ser usado em uma lista de menu ou naveg
 <Tab title="Uso">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Item de menu clicado!", event);
+    console.log('Item de menu clicado!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Botão de ícone clicado!", event);
+    console.log('Botão de ícone clicado!', event);
   };
 
   return (
@@ -37,10 +37,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Propriedades">
-
 
 | Propriedades  | Tipo            | Descrição                                                                                             |
 | ------------- | --------------- | ----------------------------------------------------------------------------------------------------- |
@@ -52,9 +50,6 @@ export const MyComponent = () => {
 | testeId       | string          | O atributo data-testid para fins de teste                                                             |
 | onClick       | função          | Função de retorno de chamada disparada quando o item de menu é clicado                                |
 | className     | string          | Nome opcional para estilização adicional                                                              |
-
-
-
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ Um item de menu no estilo de comando dentro de um menu para indicar atalhos de t
 <Tab title="Uso">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -93,10 +88,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Propriedades">
-
 
 | Propriedades          | Tipo            | Descrição                                                              |
 | --------------------- | --------------- | ---------------------------------------------------------------------- |
@@ -107,8 +100,6 @@ export const MyComponent = () => {
 | éSelecionado          | booleano        | Indica se o item de menu está selecionado ou destacado                 |
 | onClick               | função          | Função de retorno de chamada disparada quando o item de menu é clicado |
 | className             | string          | Nome opcional para estilização adicional                               |
-
-
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ Um componente de item de menu arrastável projetado para ser usado em um menu ou
 <Tab title="Uso">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -148,7 +139,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades   | Tipo            | Descrição                                                                                  |
 | -------------- | --------------- | ------------------------------------------------------------------------------------------ |
 | ÍconeEsquerda  | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu                        |
@@ -159,9 +149,6 @@ export const MyComponent = () => {
 | texto          | string          | O conteúdo de texto do item de menu                                                        |
 | isDragDisabled | booleano        | Indica se o arrasto está desativado                                                        |
 | className      | string          | Nome opcional para estilização adicional                                                   |
-
-
-
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ Proporciona uma maneira de implementar a funcionalidade de seleção múltipla c
 <Tab title="Uso">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,7 +179,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades   | Tipo            | Descrição                                                                       |
 | -------------- | --------------- | ------------------------------------------------------------------------------- |
 | ÍconeEsquerda  | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu             |
@@ -201,9 +186,6 @@ export const MyComponent = () => {
 | selecionado    | booleano        | Indica se o item de menu está selecionado (marcado)                             |
 | aoMudarSeleção | função          | Função de retorno de chamada disparada quando o estado da caixa de seleção muda |
 | className      | string          | Nome opcional para estilização adicional                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ Um item de menu de seleção múltipla com um avatar, uma caixa de seleção par
 <Tab title="Uso">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,7 +218,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades   | Tipo        | Descrição                                                                       |
 | -------------- | ----------- | ------------------------------------------------------------------------------- |
 | avatar         | `ReactNode` | O avatar ou ícone a ser exibido no lado esquerdo do item de menu                |
@@ -244,9 +225,6 @@ export const MyComponent = () => {
 | selecionado    | booleano    | Indica se o item de menu está selecionado (marcado)                             |
 | aoMudarSeleção | função      | Função de retorno de chamada disparada quando o estado da caixa de seleção muda |
 | className      | string      | Nome opcional para estilização adicional                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ Um item de menu com um ícone opcional à esquerda, conteúdo textual e um ícon
 <Tab title="Uso">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades  | Tipo            | Descrição                                                                       |
 | ------------- | --------------- | ------------------------------------------------------------------------------- |
 | ÍconeEsquerda | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu             |
 | texto         | string          | O conteúdo de texto do item de menu                                             |
 | onClick       | função          | Função de retorno de chamada para ser disparada quando o item de menu é clicado |
 | className     | string          | Nome opcional para estilização adicional                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ Um item de menu selecionável, com conteúdo esquerdo opcional (ícone e texto) 
 <Tab title="Uso">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,7 +302,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades  | Tipo            | Descrição                                                                       |
 | ------------- | --------------- | ------------------------------------------------------------------------------- |
 | ÍconeEsquerda | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu             |
@@ -338,9 +311,6 @@ export const MyComponent = () => {
 | pairado       | booleano        | Indica se o item de menu está com o cursor sobre ele no momento                 |
 | onClick       | função          | Função de retorno de chamada para ser disparada quando o item de menu é clicado |
 | className     | string          | Nome opcional para estilização adicional                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ Um item de menu selecionável com um avatar, com conteúdo esquerdo opcional (av
 <Tab title="Uso">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -376,12 +346,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Propriedades">
-
 
 | Propriedades | Tipo        | Descrição                                                                       |
 | ------------ | ----------- | ------------------------------------------------------------------------------- |
@@ -394,9 +362,6 @@ export const MyComponent = () => {
 | onClick      | função      | Função de retorno de chamada para ser disparada quando o item de menu é clicado |
 | className    | string      | Nome opcional para estilização adicional                                        |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -408,11 +373,11 @@ Um item de menu selecionável com uma amostra de cor para cenários onde você d
 <Tab title="Uso">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,7 +397,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades | Tipo     | Descrição                                                                                                                                                                   |
 | ------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | cor          | string   | A cor do tema a ser exibida como exemplo no item do menu. As opções incluem: `verde`, `turquesa`, `céu`, `azul`, `roxo`, `pink`, `vermelho`, `laranja`, `amarelo` e `cinza` |
@@ -442,9 +406,6 @@ export const MyComponent = () => {
 | variante     | string   | A variante da amostra de cor. Pode ser `default` ou `pipeline`                                                                                                              |
 | onClick      | função   | Função de retorno de chamada disparada quando o item de menu é clicado.                                                                                                     |
 | className    | string   | Nome opcional para estilização adicional.                                                                                                                                   |
-
-
-
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,7 +438,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Propriedades">
 
-
 | Propriedades    | Tipo            | Descrição                                                                                 |
 | --------------- | --------------- | ----------------------------------------------------------------------------------------- |
 | LeftIcon        | ComponenteÍcone | Um ícone opcional à esquerda exibido antes do texto no item de menu.                      |
@@ -487,9 +446,6 @@ export const MyComponent = () => {
 | onToggleChange  | função          | Função de retorno de chamada acionada quando o estado do interruptor de alternância muda. |
 | tamanhoAlternar | string          | O tamanho do interruptor de alternância. Pode ser \                                       |
 | className       | string          | Nome opcional para estilização adicional                                                  |
-
-
-
 
 </Tab>
 </Tabs>

@@ -82,13 +82,13 @@ export default defineApplicationRole({
 
 Notizen:
 
-* Genau **eine** `defineApplicationRole(...)` ist pro App zulässig – der Manifest-Build schlägt fehl, wenn mehr als eine gefunden wird.
-* Verwenden Sie `defineRole()` (nicht `defineApplicationRole()`) für alle **zusätzlichen** Rollen, die Ihre App mitliefert.
-* Das explizite Setzen von `defaultRoleUniversalIdentifier` in `defineApplication()` wird für die Abwärtskompatibilität weiterhin unterstützt, ist aber zugunsten von `defineApplicationRole()` veraltet.
+- Genau **eine** `defineApplicationRole(...)` ist pro App zulässig – der Manifest-Build schlägt fehl, wenn mehr als eine gefunden wird.
+- Verwenden Sie `defineRole()` (nicht `defineApplicationRole()`) für alle **zusätzlichen** Rollen, die Ihre App mitliefert.
+- Das explizite Setzen von `defaultRoleUniversalIdentifier` in `defineApplication()` wird für die Abwärtskompatibilität weiterhin unterstützt, ist aber zugunsten von `defineApplicationRole()` veraltet.
 
 ## Beste Praktiken
 
-* Beginnen Sie mit der vorgegebenen Rolle und schränken Sie sie dann schrittweise ein – standardmäßig wird umfangreicher Lesezugriff gewährt, was selten das ist, was Sie in Produktionsumgebungen möchten.
-* Ersetzen Sie `objectPermissions` und `fieldPermissions` durch die genauen Objekte und Felder, die Ihre Funktionen tatsächlich benötigen.
-* `permissionFlags` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
-* Ein funktionierendes Beispiel finden Sie unter: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+- Beginnen Sie mit der vorgegebenen Rolle und schränken Sie sie dann schrittweise ein – standardmäßig wird umfangreicher Lesezugriff gewährt, was selten das ist, was Sie in Produktionsumgebungen möchten.
+- Ersetzen Sie `objectPermissions` und `fieldPermissions` durch die genauen Objekte und Felder, die Ihre Funktionen tatsächlich benötigen.
+- `permissionFlags` steuern den Zugriff auf Funktionen auf Plattformebene. Halten Sie sie minimal.
+- Ein funktionierendes Beispiel finden Sie unter: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

@@ -38,10 +38,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften | Typ               | Beschreibung                                                    |
 | ------------- | ----------------- | --------------------------------------------------------------- |
@@ -49,9 +47,6 @@ export const MyComponent = () => {
 | href          | Zeichenkette      | Die Ziel-URL oder der Pfad für den Link                         |
 | onClick       | function          | Callback-Funktion, die beim Klicken auf den Link ausgelöst wird |
 | children      | `React.ReactNode` | Der Inhalt, der innerhalb des Links angezeigt wird              |
-
-
-
 
 </Tab>
 
@@ -65,12 +60,12 @@ Eine stilisierte Link-Komponente zur Anzeige von Links.
 <Tab title="Verwendung">
 
 ```jsx
-import { RawLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RawLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -81,13 +76,10 @@ export const MyComponent = () => {
     </Router>
   );
 };
-
 ```
-
 
 </Tab>
 <Tab title="Eigenschaften">
-
 
 | Eigenschaften | Typ               | Beschreibung                                                    |
 | ------------- | ----------------- | --------------------------------------------------------------- |
@@ -95,9 +87,6 @@ export const MyComponent = () => {
 | href          | string            | Die Ziel-URL oder der Pfad für den Link                         |
 | onClick       | function          | Callback-Funktion, die beim Klicken auf den Link ausgelöst wird |
 | children      | `React.ReactNode` | Der Inhalt, der innerhalb des Links angezeigt wird              |
-
-
-
 
 </Tab>
 </Tabs>
@@ -110,12 +99,12 @@ Ein abgerundet gestalteter Link mit einer Chip-Komponente für Links.
 <Tab title="Verwendung">
 
 ```jsx
-import { RoundedLink } from "/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { RoundedLink } from '/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   const handleLinkClick = (event) => {
-    console.log("Contact link clicked!", event);
+    console.log('Contact link clicked!', event);
   };
 
   return (
@@ -132,14 +121,11 @@ export const MyComponent = () => {
 
 <Tab title="Eigenschaften">
 
-
 | Eigenschaften | Typ               | Beschreibung                                                    |
 | ------------- | ----------------- | --------------------------------------------------------------- |
 | href          | string            | Die Ziel-URL oder der Pfad für den Link                         |
 | Kinder        | `React.ReactNode` | Der Inhalt, der innerhalb des Links angezeigt wird              |
 | onClick       | Funktion          | Callback-Funktion, die beim Klicken auf den Link ausgelöst wird |
-
-
 
 </Tab>
 </Tabs>
@@ -152,8 +138,8 @@ Stilisierte soziale Links mit Unterstützung für verschiedene soziale Linktypen
 <Tab title="Verwendung">
 
 ```jsx
-import { SocialLink } from "twenty-ui/navigation";
-import { BrowserRouter as Router } from "react-router-dom";
+import { SocialLink } from 'twenty-ui/navigation';
+import { BrowserRouter as Router } from 'react-router-dom';
 
 export const MyComponent = () => {
   return (
@@ -170,16 +156,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Eigenschaften">
 
-
 | Eigenschaften | Typ               | Beschreibung                                                               |
 | ------------- | ----------------- | -------------------------------------------------------------------------- |
 | href          | string            | Die Ziel-URL oder der Pfad für den Link                                    |
 | children      | `React.ReactNode` | Der Inhalt, der innerhalb des Links angezeigt wird                         |
 | typ           | string            | Die Art der sozialen Links. Optionen sind: `url`, `LinkedIn` und `Twitter` |
 | onClick       | function          | Callback-Funktion, die beim Klicken auf den Link ausgelöst wird            |
-
-
-
 
 </Tab>
 </Tabs>

@@ -10,8 +10,8 @@ Front-Komponenten sind React-Komponenten, die direkt innerhalb der Twenty-UI ger
 
 Front-Komponenten können an zwei Stellen innerhalb von Twenty gerendert werden:
 
-* **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
-* **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in Seitenlayouts eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
+- **Seitenpanel** — Nicht-Headless-Front-Komponenten werden im rechten Seitenpanel geöffnet. Dies ist das Standardverhalten, wenn eine Front-Komponente über das Befehlsmenü ausgelöst wird.
+- **Widgets (Dashboards und Datensatzseiten)** — Front-Komponenten können als Widgets in Seitenlayouts eingebettet werden. Beim Konfigurieren eines Dashboards oder eines Datensatzseiten-Layouts können Benutzer ein Front-Komponenten-Widget hinzufügen.
 
 ## Einfaches Beispiel
 
@@ -53,8 +53,11 @@ export default defineCommandMenuItem({
 
 Nach dem Synchronisieren mit `yarn twenty dev` (oder durch einmaliges Ausführen von `yarn twenty dev --once`) erscheint die Schnellaktion oben rechts auf der Seite:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Schnellaktionsschaltfläche oben rechts" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Schnellaktionsschaltfläche oben rechts"
+  />
 </div>
 
 Klicken Sie darauf, um die Komponente inline zu rendern.
@@ -90,7 +93,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -113,10 +119,10 @@ Das Paket `twenty-sdk` stellt vier Command-Hilfskomponenten bereit, die für Hea
 
 Importieren Sie sie aus `twenty-sdk/command`:
 
-* **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
-* **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — Führt einen asynchronen Callback über das Prop `execute` aus.
+- **`CommandLink`** — Navigiert zu einem App-Pfad. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Öffnet einen Bestätigungsdialog. Bestätigt der Benutzer, wird der Callback `execute` ausgeführt. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Öffnet eine bestimmte Seite im Seitenpanel. Props: `page`, `pageTitle`, `pageIcon`.
 
 Hier ist ein vollständiges Beispiel einer Headless-Front-Komponente, die `Command` verwendet, um eine Aktion aus dem Befehlsmenü auszuführen:
 
@@ -299,7 +305,10 @@ Verwenden Sie `useSelectedRecordIds()`, um mehrere ausgewählte Datensätze zu v
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  numberOfSelectedRecords,
+} from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -384,10 +393,7 @@ Mit dem Feld `conditionalAvailabilityExpression` können Sie basierend auf dem a
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
-import {
-  objectPermissions,
-  everyEquals,
-} from 'twenty-sdk/front-component';
+import { objectPermissions, everyEquals } from 'twenty-sdk/front-component';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -460,12 +466,12 @@ Details finden Sie im Abschnitt [Öffentliche Assets](/l/de/developers/extend/ap
 
 Front-Komponenten unterstützen mehrere Styling-Ansätze. Sie können verwenden:
 
-* **Inline-Styles** — `style={{ color: 'red' }}`
-* **Twenty-UI-Komponenten** — Import aus `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar und mehr)
-* **Emotion** — CSS-in-JS mit `@emotion/react`
-* **Styled-components** — `styled.div`-Muster
-* **Tailwind CSS** — Utility-Klassen
-* **Beliebige CSS-in-JS-Bibliothek**, die mit React kompatibel ist
+- **Inline-Styles** — `style={{ color: 'red' }}`
+- **Twenty-UI-Komponenten** — Import aus `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar und mehr)
+- **Emotion** — CSS-in-JS mit `@emotion/react`
+- **Styled-components** — `styled.div`-Muster
+- **Tailwind CSS** — Utility-Klassen
+- **Beliebige CSS-in-JS-Bibliothek**, die mit React kompatibel ist
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

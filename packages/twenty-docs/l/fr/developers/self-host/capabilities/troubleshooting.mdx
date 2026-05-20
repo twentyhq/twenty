@@ -113,28 +113,37 @@ C'est attendu car l'utilisateur est non autorisé lorsqu'il est déconnecté pui
 
 #### Comment vérifier si votre worker fonctionne ?
 
-* Allez sur [webhook-test.com](https://webhook-test.com/) et copiez **Votre URL Webhook Unique**.
+- Allez sur [webhook-test.com](https://webhook-test.com/) et copiez **Votre URL Webhook Unique**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Test de Webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Test de Webhook"
+  />
 </div>
 
-* Ouvrez votre application Twenty, naviguez jusqu'à `/settings`, et activez le bouton **Avancé** en bas à gauche de l'écran.
-* Créez un nouveau webhook.
-* Collez **Votre URL Webhook Unique** dans le champ **URL de l'Endpoint** de Twenty. Réglez les **Filtres** sur `Sociétés` et `Créé`.
+- Ouvrez votre application Twenty, naviguez jusqu'à `/settings`, et activez le bouton **Avancé** en bas à gauche de l'écran.
+- Créez un nouveau webhook.
+- Collez **Votre URL Webhook Unique** dans le champ **URL de l'Endpoint** de Twenty. Réglez les **Filtres** sur `Sociétés` et `Créé`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Paramètres du Webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Paramètres du Webhook"
+  />
 </div>
 
-* Accédez à `/objects/companies` et créez un nouvel enregistrement de société.
-* Retournez sur [webhook-test.com](https://webhook-test.com/) et vérifiez si une nouvelle **requête POST** a été reçue.
+- Accédez à `/objects/companies` et créez un nouvel enregistrement de société.
+- Retournez sur [webhook-test.com](https://webhook-test.com/) et vérifiez si une nouvelle **requête POST** a été reçue.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Résultat du test du Webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Résultat du test du Webhook"
+  />
 </div>
 
-* Si une **requête POST** est reçue, votre worker fonctionne avec succès. Sinon, vous devez résoudre les problèmes de votre worker.
+- Si une **requête POST** est reçue, votre worker fonctionne avec succès. Sinon, vous devez résoudre les problèmes de votre worker.
 
 #### Le front-end échoue à démarrer et renvoie l'erreur TS5042 : L'option 'project' ne peut pas être mélangée avec les fichiers sources en ligne de commande
 
@@ -194,9 +203,8 @@ Si vous exécutez Twenty derrière un proxy inverse et rencontrez des problèmes
    Assurez-vous que `SERVER_URL` dans votre fichier `.env` correspond à l'URL d'accès externe, incluant `https` si SSL est activé.
 
 2. **Vérifiez les paramètres du proxy inverse :**
-
-   * Confirmez que votre proxy inverse transfère correctement les requêtes au serveur Twenty.
-   * Assurez-vous que les en-têtes comme `X-Forwarded-For` et `X-Forwarded-Proto` sont correctement configurés.
+   - Confirmez que votre proxy inverse transfère correctement les requêtes au serveur Twenty.
+   - Assurez-vous que les en-têtes comme `X-Forwarded-For` et `X-Forwarded-Proto` sont correctement configurés.
 
 3. **Redémarrez les services :**
 
@@ -210,7 +218,7 @@ Changer la propriété du dossier de données sur l'hôte de root à un autre ut
 
 Si vous rencontrez des problèmes non couverts par ce guide :
 
-* Vérifiez les journaux :
+- Vérifiez les journaux :
 
   Consultez les journaux de conteneur pour les messages d'erreur :
 
@@ -218,6 +226,6 @@ Si vous rencontrez des problèmes non couverts par ce guide :
   docker compose logs
   ```
 
-* Support communautaire :
+- Support communautaire :
 
   Contactez la [communauté Twenty](https://github.com/twentyhq/twenty/issues) ou les [canaux de support](https://discord.gg/cx5n4Jzs57) pour obtenir de l'aide.

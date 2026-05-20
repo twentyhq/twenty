@@ -3,7 +3,9 @@ title: 1-Clic avec Docker Compose
 ---
 
 <Warning>
-  Les conteneurs Docker sont destinés à l'hébergement en production ou à l'auto-hébergement, pour la contribution veuillez consulter le [Configuration Locale](/l/fr/developers/contribute/capabilities/local-setup).
+  Les conteneurs Docker sont destinés à l'hébergement en production ou à
+  l'auto-hébergement, pour la contribution veuillez consulter le [Configuration
+  Locale](/l/fr/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Vue d'ensemble
@@ -16,8 +18,8 @@ Consultez les documents [Configurer les Variables d’Environnement](/l/fr/devel
 
 ## Exigences du Système
 
-* RAM : Assurez-vous que votre environnement dispose d'au moins 2 Go de RAM. Une mémoire insuffisante peut provoquer des plantages des processus.
-* Docker & Docker Compose : Assurez-vous que les deux sont installés et à jour.
+- RAM : Assurez-vous que votre environnement dispose d'au moins 2 Go de RAM. Une mémoire insuffisante peut provoquer des plantages des processus.
+- Docker & Docker Compose : Assurez-vous que les deux sont installés et à jour.
 
 ## Option 1 : Script en une seule ligne
 
@@ -33,8 +35,8 @@ Pour installer une version ou une branche spécifique :
 VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Remplacez x.y.z par le numéro de version désiré.
-* Remplacez nom-branche par le nom de la branche que vous souhaitez installer.
+- Remplacez x.y.z par le numéro de version désiré.
+- Remplacez nom-branche par le nom de la branche que vous souhaitez installer.
 
 ## Option 2 : Étapes manuelles
 
@@ -110,11 +112,11 @@ Par défaut, Twenty fonctionne sur `localhost` au port `3000`. Pour y accéder v
 
 #### Comprendre `SERVER_URL`
 
-* **Protocole :** Utilisez `http` ou `https` selon votre configuration.
-  * Utilisez `http` si vous n'avez pas configuré SSL.
-  * Utilisez `https` si vous avez configuré SSL.
-* **Domaine/IP :** Il s'agit du nom de domaine ou de l'adresse IP où votre application est accessible.
-* **Port :** Incluez le numéro de port si vous n'utilisez pas les ports par défaut (`80` pour `http`, `443` pour `https`).
+- **Protocole :** Utilisez `http` ou `https` selon votre configuration.
+  - Utilisez `http` si vous n'avez pas configuré SSL.
+  - Utilisez `https` si vous avez configuré SSL.
+- **Domaine/IP :** Il s'agit du nom de domaine ou de l'adresse IP où votre application est accessible.
+- **Port :** Incluez le numéro de port si vous n'utilisez pas les ports par défaut (`80` pour `http`, `443` pour `https`).
 
 ### Exigences SSL
 
@@ -127,7 +129,7 @@ Nous vous recommandons vivement de mettre en place Twenty derrière un proxy inv
 #### Configurer `SERVER_URL`
 
 1. **Déterminez Votre URL d'Accès**
-   * **Sans Proxy Inverse (Accès Direct):**
+   - **Sans Proxy Inverse (Accès Direct):**
 
      Si vous accédez directement à l'application sans un proxy inverse :
 
@@ -135,7 +137,7 @@ Nous vous recommandons vivement de mettre en place Twenty derrière un proxy inv
      SERVER_URL=http://your-domain-or-ip:3000
      ```
 
-   * **Avec Proxy Inverse (Ports Standards):**
+   - **Avec Proxy Inverse (Ports Standards):**
 
      Si vous utilisez un proxy inverse comme Nginx ou Traefik et que vous avez SSL configuré :
 
@@ -143,7 +145,7 @@ Nous vous recommandons vivement de mettre en place Twenty derrière un proxy inv
      SERVER_URL=https://your-domain-or-ip
      ```
 
-   * **Avec Proxy Inverse (Ports Personnalisés):**
+   - **Avec Proxy Inverse (Ports Personnalisés):**
 
      Si vous utilisez des ports non standards :
 
@@ -160,12 +162,11 @@ Nous vous recommandons vivement de mettre en place Twenty derrière un proxy inv
    ```
 
    **Exemples :**
-
-   * Accès direct sans SSL :
+   - Accès direct sans SSL :
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * Accès via domaine avec SSL :
+   - Accès via domaine avec SSL :
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
@@ -181,25 +182,25 @@ Nous vous recommandons vivement de mettre en place Twenty derrière un proxy inv
 
 #### Considérations
 
-* **Configuration du Proxy Inverse :**
+- **Configuration du Proxy Inverse :**
 
   Assurez-vous que votre proxy inverse redirige les requêtes vers le port interne correct (`3000` par défaut). Configurez la terminaison SSL et tous les en-têtes nécessaires.
 
-* **Paramètres de Pare-feu :**
+- **Paramètres de Pare-feu :**
 
   Ouvrez les ports nécessaires dans votre pare-feu pour permettre l'accès externe.
 
-* **Cohérence :**
+- **Cohérence :**
 
   Le `SERVER_URL` doit correspondre à la façon dont les utilisateurs accèdent à votre application dans leurs navigateurs.
 
 #### Persistance
 
-* **Volumes de Données :**
+- **Volumes de Données :**
 
   La configuration de Docker Compose utilise des volumes pour persister les données pour la base de données et le stockage du serveur.
 
-* **Environnements sans État :**
+- **Environnements sans État :**
 
   Si vous déployez dans un environnement sans état (par exemple, certains services cloud), configurez un stockage externe pour persister les données.
 
@@ -243,10 +244,10 @@ docker compose up -d
 
 ### Bonnes pratiques de sauvegarde
 
-* **Testez les restaurations régulièrement** — vérifiez que les sauvegardes fonctionnent réellement
-* **Stockez les sauvegardes hors site** — utilisez un stockage cloud (S3, GCS, etc.)
-* **Chiffrez les données sensibles** — protégez les sauvegardes à l'aide du chiffrement
-* **Conservez plusieurs copies** — gardez des sauvegardes quotidiennes, hebdomadaires et mensuelles
+- **Testez les restaurations régulièrement** — vérifiez que les sauvegardes fonctionnent réellement
+- **Stockez les sauvegardes hors site** — utilisez un stockage cloud (S3, GCS, etc.)
+- **Chiffrez les données sensibles** — protégez les sauvegardes à l'aide du chiffrement
+- **Conservez plusieurs copies** — gardez des sauvegardes quotidiennes, hebdomadaires et mensuelles
 
 ## Résolution des problèmes
 

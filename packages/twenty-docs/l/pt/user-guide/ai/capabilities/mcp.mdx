@@ -4,7 +4,8 @@ description: Conecte assistentes de IA ao seu espaço de trabalho do Twenty usan
 ---
 
 <Warning>
-O MCP está atualmente em **alfa** e está disponível apenas em alguns espaços de trabalho. O MCP pode ainda não estar ativado no seu espaço de trabalho.
+  O MCP está atualmente em **alfa** e está disponível apenas em alguns espaços
+  de trabalho. O MCP pode ainda não estar ativado no seu espaço de trabalho.
 </Warning>
 
 O Twenty expõe um servidor [MCP](https://modelcontextprotocol.io/) para que assistentes de IA — Claude Desktop, Claude Code, Cursor, ChatGPT e outros — possam ler e escrever seus dados de CRM por meio de linguagem natural.
@@ -25,7 +26,10 @@ Você tem duas maneiras de autenticar seu cliente MCP: **OAuth** (recomendado) o
 Com o OAuth, seu cliente MCP abre uma janela do navegador para você fazer login. Nenhum segredo é armazenado em arquivos de configuração, e os tokens são atualizados automaticamente.
 
 <Note>
-O OAuth requer um cliente MCP que ofereça suporte à [especificação de Autorização MCP](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor e ChatGPT oferecem suporte.
+  O OAuth requer um cliente MCP que ofereça suporte à [especificação de
+  Autorização
+  MCP](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization).
+  Claude Desktop, Claude Code, Cursor e ChatGPT oferecem suporte.
 </Note>
 
 Adicione isto à configuração do seu cliente MCP, substituindo `{your-workspace-url}` pelo host do seu espaço de trabalho (por exemplo, `mycompany.twenty.com`):
@@ -69,7 +73,8 @@ Se o seu cliente MCP não oferecer suporte a OAuth, ou se você preferir credenc
 ```
 
 <Warning>
-Sua chave de API concede acesso aos dados do espaço de trabalho. Mantenha-a fora do controle de versão e de dotfiles compartilhados.
+  Sua chave de API concede acesso aos dados do espaço de trabalho. Mantenha-a
+  fora do controle de versão e de dotfiles compartilhados.
 </Warning>
 
 Para criar uma chave de API, vá em **Settings > APIs & Webhooks > + Create key**. Veja [APIs](/l/pt/developers/extend/api#create-an-api-key) para detalhes.
@@ -95,9 +100,9 @@ Reinicie seu cliente MCP (ou recarregue a configuração). Se estiver usando OAu
 
 Peça ao seu assistente de IA para interagir com seu CRM:
 
-* *"Mostre-me as 5 empresas criadas mais recentemente"*
-* *"Crie uma nova pessoa chamada Jane Doe na Acme Corp"*
-* *"Encontre todas as oportunidades em aberto com valor superior a $10k"*
+- _"Mostre-me as 5 empresas criadas mais recentemente"_
+- _"Crie uma nova pessoa chamada Jane Doe na Acme Corp"_
+- _"Encontre todas as oportunidades em aberto com valor superior a $10k"_
 
 ## Ferramentas disponíveis
 
@@ -113,8 +118,8 @@ Você não precisa se lembrar dos nomes das ferramentas. Pergunte ao seu assiste
 
 As conexões MCP herdam as permissões do usuário autenticado (OAuth) ou da função atribuída à chave de API. Para restringir o que o servidor MCP pode fazer:
 
-* **OAuth**: Aplica-se à função do espaço de trabalho do usuário.
-* **Chave de API**: Atribua uma função à chave de API em **Settings > Roles**. Veja [Permissões](/l/pt/user-guide/permissions-access/capabilities/permissions).
+- **OAuth**: Aplica-se à função do espaço de trabalho do usuário.
+- **Chave de API**: Atribua uma função à chave de API em **Settings > Roles**. Veja [Permissões](/l/pt/user-guide/permissions-access/capabilities/permissions).
 
 ## Configuração auto-hospedada
 
@@ -130,13 +135,13 @@ O endpoint do MCP, os endpoints de OAuth e os metadados de descoberta derivam to
 
 **Erros "Unauthorized" ou 401**
 
-* OAuth: autorize novamente limpando os tokens armazenados no seu cliente MCP e reconectando.
-* Chave de API: verifique se a chave é válida e não expirou. Gere-a novamente, se necessário.
+- OAuth: autorize novamente limpando os tokens armazenados no seu cliente MCP e reconectando.
+- Chave de API: verifique se a chave é válida e não expirou. Gere-a novamente, se necessário.
 
 **O fluxo do OAuth não abre um navegador**
 
-* Garanta que seu cliente MCP ofereça suporte à Autorização MCP. Se não oferecer, utilize o método de Chave de API.
+- Garanta que seu cliente MCP ofereça suporte à Autorização MCP. Se não oferecer, utilize o método de Chave de API.
 
 **Tempo limite de conexão**
 
-* Confirme que o URL do endpoint MCP é acessível a partir da sua máquina. Para instâncias auto-hospedadas, verifique se o servidor está em execução e se `SERVER_URL` está definido corretamente.
+- Confirme que o URL do endpoint MCP é acessível a partir da sua máquina. Para instâncias auto-hospedadas, verifique se o servidor está em execução e se `SERVER_URL` está definido corretamente.

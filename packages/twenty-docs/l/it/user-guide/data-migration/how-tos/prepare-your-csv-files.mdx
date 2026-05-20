@@ -18,7 +18,11 @@ Prima di iniziare, assicurati che il tuo file soddisfi questi requisiti:
 | **Codifica**             | Si consiglia UTF-8          |
 | **Struttura**            | Un tipo di oggetto per file |
 
-<Note>Per set di dati superiori a 10.000 record, suddividi in più file oppure usa l'[importazione tramite API](/l/it/user-guide/data-migration/how-tos/import-data-via-api).</Note>
+<Note>
+  Per set di dati superiori a 10.000 record, suddividi in più file oppure usa
+  l'[importazione tramite
+  API](/l/it/user-guide/data-migration/how-tos/import-data-via-api).
+</Note>
 
 ## Passaggio 2: Scarica il file di esempio
 
@@ -29,7 +33,11 @@ Prima di iniziare, assicurati che il tuo file soddisfi questi requisiti:
 3. Fai clic su **Scarica file di esempio**
 4. Usa questo file come modello
 
-<Note>**Suggerimento avanzato:** Esporta invece alcuni record esistenti. Questo ti fornisce esempi reali di come i dati devono essere formattati e i nomi delle colonne verranno mappati automaticamente durante l'importazione.</Note>
+<Note>
+  **Suggerimento avanzato:** Esporta invece alcuni record esistenti. Questo ti
+  fornisce esempi reali di come i dati devono essere formattati e i nomi delle
+  colonne verranno mappati automaticamente durante l'importazione.
+</Note>
 
 ## Passaggio 3: Rimuovi i valori duplicati
 
@@ -47,7 +55,11 @@ Twenty impone l'unicità su alcuni campi. I duplicati causeranno errori di impor
 2. Rimuovi o unisci le righe duplicate
 3. Verifica la presenza di duplicati già esistenti in Twenty
 
-<Warning>**I record eliminati in modo non definitivo contano ai fini dell'unicità.** I record in Menu Comandi → Vedi record eliminati causeranno errori di duplicato. Eliminali definitivamente oppure ripristinali e aggiornali.</Warning>
+<Warning>
+  **I record eliminati in modo non definitivo contano ai fini dell'unicità.** I
+  record in Menu Comandi → Vedi record eliminati causeranno errori di duplicato.
+  Eliminali definitivamente oppure ripristinali e aggiornali.
+</Warning>
 
 ## Passaggio 4: Formattta correttamente ogni tipo di campo
 
@@ -55,14 +67,14 @@ Tipi di campo diversi richiedono formati specifici. Ecco il riferimento completo
 
 ### Campi di testo
 
-* Non è richiesta una formattazione speciale
-* Gli spazi iniziali/finali vengono rimossi automaticamente
+- Non è richiesta una formattazione speciale
+- Gli spazi iniziali/finali vengono rimossi automaticamente
 
 ### Campi email
 
-* Deve avere un formato email valido: `name@domain.com`
-* Deve essere univoco (nessun duplicato nel file o in Twenty)
-* Per email aggiuntive, usa questo formato nella colonna **Email / Email aggiuntive**:
+- Deve avere un formato email valido: `name@domain.com`
+- Deve essere univoco (nessun duplicato nel file o in Twenty)
+- Per email aggiuntive, usa questo formato nella colonna **Email / Email aggiuntive**:
 
 ```
 ["jane@twenty.com","jane.doe@twenty.com"]
@@ -70,12 +82,12 @@ Tipi di campo diversi richiedono formati specifici. Ecco il riferimento completo
 
 ### Campi del dominio
 
-* **Formato consigliato**: `https://domain.com`
-* Questo corrisponde al formato usato dalla sincronizzazione della casella di posta/calendario (evita duplicati)
-* Compila entrambe le colonne:
-  * **Dominio / Etichetta dominio**: `domain.com`
-  * **Dominio / URL dominio**: `https://domain.com`
-* Deve essere univoco all'interno del tuo file e in Twenty
+- **Formato consigliato**: `https://domain.com`
+- Questo corrisponde al formato usato dalla sincronizzazione della casella di posta/calendario (evita duplicati)
+- Compila entrambe le colonne:
+  - **Dominio / Etichetta dominio**: `domain.com`
+  - **Dominio / URL dominio**: `https://domain.com`
+- Deve essere univoco all'interno del tuo file e in Twenty
 
 ### Campi telefono
 
@@ -91,25 +103,25 @@ Il telefono è un **campo annidato** che richiede più colonne:
 
 Indirizzo è un **campo annidato** con più colonne (alcune possono essere lasciate vuote):
 
-* **Indirizzo / Indirizzo 1**: Riga indirizzo 1
-* **Indirizzo / Indirizzo 2**: Riga indirizzo 2 (facoltativa)
-* **Indirizzo / Città**: Nome città
-* **Indirizzo / Stato**: Stato o provincia
-* **Indirizzo / Paese**: Nome paese
-* **Indirizzo / Codice postale**: Codice postale/CAP
+- **Indirizzo / Indirizzo 1**: Riga indirizzo 1
+- **Indirizzo / Indirizzo 2**: Riga indirizzo 2 (facoltativa)
+- **Indirizzo / Città**: Nome città
+- **Indirizzo / Stato**: Stato o provincia
+- **Indirizzo / Paese**: Nome paese
+- **Indirizzo / Codice postale**: Codice postale/CAP
 
 ### Campi data
 
 Usa un formato coerente in tutto il file:
 
-* `YYYY-MM-DD` (consigliato): `2024-03-15`
-* ISO 8601: `2024-03-15T10:30:00Z`
+- `YYYY-MM-DD` (consigliato): `2024-03-15`
+- ISO 8601: `2024-03-15T10:30:00Z`
 
 ### Campi numerici
 
-* Solo numeri (nessun testo)
-* Usa il punto per i decimali: `1234.56`
-* Nessun separatore delle migliaia (non `1,234.56`)
+- Solo numeri (nessun testo)
+- Usa il punto per i decimali: `1234.56`
+- Nessun separatore delle migliaia (non `1,234.56`)
 
 ### Campi valuta
 
@@ -137,7 +149,10 @@ Usa il **nome API** dell'opzione, non l'etichetta di visualizzazione.
 3. Abilita la **Modalità avanzata** (interruttore in basso a destra)
 4. Copia il nome API (ad es., `OPTION_1`, non "Option 1")
 
-<Note>Le nuove opzioni di selezione non vengono create automaticamente. Aggiungile in **Impostazioni → Modello dati** prima di importare.</Note>
+<Note>
+  Le nuove opzioni di selezione non vengono create automaticamente. Aggiungile
+  in **Impostazioni → Modello dati** prima di importare.
+</Note>
 
 ### Campi a selezione multipla
 
@@ -163,8 +178,8 @@ Usa il formato: `RATING_1`, `RATING_2`, `RATING_3`, `RATING_4` o `RATING_5`
 
 Compila entrambe le colonne:
 
-* **Link / Etichetta del link**: `Twenty`
-* **Link / URL del link**: `https://twenty.com`
+- **Link / Etichetta del link**: `Twenty`
+- **Link / URL del link**: `https://twenty.com`
 
 Per i link secondari, usa la colonna **Link / Link secondari**:
 
@@ -182,9 +197,9 @@ Usa un formato JSON valido:
 
 ### Campi ID
 
-* **Opzionale**: Twenty genera automaticamente gli ID se non forniti
-* **Formato**: UUID (ad es., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
-* **Caso d'uso**: Includi l'ID per aggiornare i record esistenti invece di crearne di nuovi
+- **Opzionale**: Twenty genera automaticamente gli ID se non forniti
+- **Formato**: UUID (ad es., `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`)
+- **Caso d'uso**: Includi l'ID per aggiornare i record esistenti invece di crearne di nuovi
 
 ## Passaggio 5: Aggiungi colonne di relazione (se colleghi record)
 
@@ -202,20 +217,22 @@ Jane,Doe,jane@widgets.co,https://widgets.co
 
 **Regole importanti per le relazioni:**
 
-* Il record padre deve già esistere in Twenty
-* Usa il formato **URL del dominio** (`https://domain.com`), non l'etichetta
-* Mappa un solo identificatore univoco (non includere sia `companyId` che `companyDomain`)
-* Per i membri dello spazio di lavoro, usa la loro **email** (non il nome)
+- Il record padre deve già esistere in Twenty
+- Usa il formato **URL del dominio** (`https://domain.com`), non l'etichetta
+- Mappa un solo identificatore univoco (non includere sia `companyId` che `companyDomain`)
+- Per i membri dello spazio di lavoro, usa la loro **email** (non il nome)
 
 <Warning>
 **L'ordine di importazione è importante!**
 
 Importa il lato "uno" prima del lato "molti":
+
 1. **Aziende** prima
 2. **Persone** poi (con riferimento all'azienda)
 3. **Opportunità** al terzo posto
 
 Il record padre deve esistere prima di potervi fare riferimento.
+
 </Warning>
 
 Consulta [Come importare le relazioni](/l/it/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) per istruzioni dettagliate.
@@ -242,8 +259,12 @@ Prima di caricare il file, verifica:
 <Check>Le date usano un formato coerente ovunque</Check>
 <Check>I domini usano il formato `https://domain.com`</Check>
 <Check>I campi booleani usano `TRUE` o `FALSE` (maiuscolo)</Check>
-<Check>I campi di selezione usano i nomi API, non le etichette di visualizzazione</Check>
-<Check>Tutti i campi personalizzati esistono in Impostazioni → Modello dati</Check>
+<Check>
+  I campi di selezione usano i nomi API, non le etichette di visualizzazione
+</Check>
+<Check>
+  Tutti i campi personalizzati esistono in Impostazioni → Modello dati
+</Check>
 <Check>I record padre sono importati prima dei record figlio</Check>
 <Check>Le colonne di relazione fanno riferimento a record esistenti</Check>
 
@@ -262,6 +283,6 @@ Prima di caricare il file, verifica:
 
 Il tuo file è pronto! Ora:
 
-* [Importa Aziende](/l/it/user-guide/data-migration/how-tos/import-companies-via-csv) (importale per prime)
-* [Importa Contatti](/l/it/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Correggi eventuali errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)
+- [Importa Aziende](/l/it/user-guide/data-migration/how-tos/import-companies-via-csv) (importale per prime)
+- [Importa Contatti](/l/it/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [Correggi eventuali errori di importazione](/l/it/user-guide/data-migration/how-tos/fix-import-errors)

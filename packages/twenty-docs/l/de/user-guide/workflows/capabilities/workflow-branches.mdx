@@ -5,7 +5,10 @@ description: Erstellen Sie parallele Pfade und bedingte Logik in Ihren Workflows
 
 Verzweigungen ermöglichen es Ihnen, Ihren Workflow in mehrere Pfade aufzuteilen, die abhängig von Ihren Daten gleichzeitig oder bedingt ausgeführt werden können.
 
-<img src="/images/user-guide/workflows/branches.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches.png"
+  style={{ width: '100%' }}
+/>
 
 ## So funktionieren Verzweigungen
 
@@ -22,7 +25,8 @@ Wenn Sie von einem einzelnen Knoten mehrere Verbindungen erstellen, wird jeder P
 5. Wiederholen Sie dies, um weitere Verzweigungen vom selben Knoten hinzuzufügen
 
 <Note>
-Jede Verzweigung ist unabhängig. Das Hinzufügen einer Verzweigung wirkt sich nicht auf andere bestehende Pfade von diesem Knoten aus.
+  Jede Verzweigung ist unabhängig. Das Hinzufügen einer Verzweigung wirkt sich
+  nicht auf andere bestehende Pfade von diesem Knoten aus.
 </Note>
 
 ### Visuelles Layout
@@ -50,17 +54,20 @@ Nur die Verzweigungen, bei denen die Filterbedingung erfüllt ist, werden weiter
 
 **Verzweigungen werden nicht automatisch zusammengeführt.** Jede Verzweigung wird unabhängig ausgeführt, bis sie endet. Sie haben volle Flexibilität, wie Sie dies handhaben:
 
-* **Option 1: Verzweigungen getrennt halten**
+- **Option 1: Verzweigungen getrennt halten**
   Jede Verzweigung verarbeitet ihre eigenen Nachverfolgungsaktionen unabhängig. Dies ist der einfachste Ansatz, wenn Verzweigungen nicht zusammengeführt werden müssen.
 
-* **Option 2: Verzweigungen manuell zusammenführen**
+- **Option 2: Verzweigungen manuell zusammenführen**
   Beim Erstellen Ihres Workflows können Sie mehrere Verzweigungen manuell mit derselben nachgelagerten Aktion verbinden. Ziehen Sie einfach Pfeile vom Ende jeder Verzweigung zu einem gemeinsamen Knoten.
 
 <Note>
-Obwohl Sie einen [Delay](/l/de/user-guide/workflows/capabilities/workflow-actions#delay)-Knoten verwenden können, um die Ausführung zu pausieren, lässt er sich derzeit nicht so konfigurieren, dass er wartet, "bis eine andere Verzweigung endet".
+  Obwohl Sie einen
+  [Delay](/l/de/user-guide/workflows/capabilities/workflow-actions#delay)-Knoten
+  verwenden können, um die Ausführung zu pausieren, lässt er sich derzeit nicht
+  so konfigurieren, dass er wartet, "bis eine andere Verzweigung endet".
 </Note>
 
 ## Verwandte Inhalte
 
-* [So verwenden Sie Verzweigungen in Workflows](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows) - Schritt-für-Schritt-Anleitung
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) - Verfügbare Aktionen einschließlich Filter
+- [So verwenden Sie Verzweigungen in Workflows](/l/de/user-guide/workflows/capabilities/use-branches-in-workflows) - Schritt-für-Schritt-Anleitung
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions) - Verfügbare Aktionen einschließlich Filter

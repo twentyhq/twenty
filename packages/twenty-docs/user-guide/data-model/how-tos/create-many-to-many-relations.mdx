@@ -6,21 +6,23 @@ description: Connect records where many items on both sides can be linked togeth
 Many-to-many relations let you connect multiple records on both sides. For example: many People can work on many Projects, and each Project can have many People.
 
 <Warning>
-**Lab Feature**: Junction relations are currently in the Lab. Enable them at **Settings → Updates → Lab** before following this guide.
+  **Lab Feature**: Junction relations are currently in the Lab. Enable them at
+  **Settings → Updates → Lab** before following this guide.
 </Warning>
 
 <Note>
-This feature also requires **Advanced mode** to be enabled (toggle at the bottom right of Settings).
+  This feature also requires **Advanced mode** to be enabled (toggle at the
+  bottom right of Settings).
 </Note>
 
 ## When to Use Many-to-Many
 
 Use many-to-many when both sides of a relationship can have multiple connections:
 
-| Relationship | Example |
-|-------------|---------|
+| Relationship      | Example                                                                  |
+| ----------------- | ------------------------------------------------------------------------ |
 | People ↔ Projects | A person works on multiple projects; a project has multiple team members |
-| Companies ↔ Tags | A company can have multiple tags; a tag can apply to multiple companies |
+| Companies ↔ Tags  | A company can have multiple tags; a tag can apply to multiple companies  |
 | Products ↔ Orders | A product can be in multiple orders; an order contains multiple products |
 
 ## How It Works
@@ -32,6 +34,7 @@ People ←→ Project Assignments ←→ Projects
 ```
 
 The **Project Assignments** object (junction) has:
+
 - A relation to People (many-to-one)
 - A relation to Projects (many-to-one)
 
@@ -54,12 +57,17 @@ First, create the intermediate object that will hold the connections.
 3. Name it descriptively (e.g., "Project Assignment", "Team Member", "Product Order")
 4. Toggle "Skip creating a Name field" on
 
-<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+<img
+  src="/images/user-guide/fields/new-pivot-object.png"
+  alt="New pivot object"
+/>
 
 5. Click **Save**
 
 <Tip>
-**Naming convention**: Use a name that describes the relationship, like "Project Assignment" or "Team Membership". This makes the data model easier to understand.
+  **Naming convention**: Use a name that describes the relationship, like
+  "Project Assignment" or "Team Membership". This makes the data model easier to
+  understand.
 </Tip>
 
 ## Step 2: Create Relations Between Objects and the Junction
@@ -73,8 +81,8 @@ Add relation fields from each of your two objects to the junction object.
 3. Select the junction object (e.g., "Project Assignments")
 4. Set the relation type to **One-To-Many** (one person can link to many assignments)
 5. Name the fields:
-    - Field on People: e.g., "Project Assignments"
-    - Field on junction: e.g., "Person"
+   - Field on People: e.g., "Project Assignments"
+   - Field on junction: e.g., "Person"
 6. Click **Save**
 
 ### Second Relation (Object B → Junction)
@@ -85,7 +93,10 @@ Add relation fields from each of your two objects to the junction object.
 4. Set the relation type to **One-To-Many** (one project can link to many assignments)
 5. Enable **"This is a relation to a Junction Object"**
 
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+<img
+  src="/images/user-guide/fields/junction-relation-toggle.png"
+  style={{ width: '100%' }}
+/>
 
 6. Name the fields:
    - Field on junction: e.g., "Project"
@@ -118,10 +129,12 @@ The junction object still exists and stores the connections, but the UI presents
 Here's a complete walkthrough:
 
 ### Create the Junction Object
+
 - Name: **Project Assignment**
 - Description: "Links people to projects they work on"
 
 ### Add Relations
+
 1. **People → Project Assignment**
    - Type: One-to-Many
    - Field on People: "Project Assignments"
@@ -133,6 +146,7 @@ Here's a complete walkthrough:
    - Field on Assignment: "Project"
 
 ### Configure Junction Display
+
 1. On **People** object:
    - Edit "Project Assignments" field
    - Enable junction toggle
@@ -144,6 +158,7 @@ Here's a complete walkthrough:
    - Target: "Person"
 
 ### Use It
+
 - Open a Person record → See their Projects directly
 - Open a Project record → See team members directly
 - Create new connections from either side

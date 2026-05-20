@@ -7,8 +7,10 @@ icon: database
 Balíček `twenty-sdk` poskytuje funkce `defineEntity` pro deklaraci datového modelu vaší aplikace. Abyste umožnili SDK detekovat vaše entity, musíte použít `export default defineEntity({...})`. Tyto funkce validují vaši konfiguraci v době sestavení a poskytují automatické doplňování v IDE a typovou bezpečnost.
 
 <Note>
-  **Uspořádání souborů je na vás.**
-  Detekce entit je založená na AST — SDK najde volání `export default defineEntity(...)` bez ohledu na to, kde se soubor nachází. Seskupování souborů podle typu (např. `logic-functions/`, `roles/`) je pouze konvence, nikoli požadavek.
+  **Uspořádání souborů je na vás.** Detekce entit je založená na AST — SDK najde
+  volání `export default defineEntity(...)` bez ohledu na to, kde se soubor
+  nachází. Seskupování souborů podle typu (např. `logic-functions/`, `roles/`)
+  je pouze konvence, nikoli požadavek.
 </Note>
 
 <AccordionGroup>
@@ -50,7 +52,8 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -64,10 +67,10 @@ export default defineRole({
 
 Každá aplikace musí mít právě jedno volání `defineApplication`, které popisuje:
 
-* **Identita**: identifikátory, zobrazovaný název a popis.
-* **Oprávnění**: jakou roli používají její funkce a frontendové komponenty.
-* **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
-* **(Volitelné) předinstalační / postinstalační funkce**: logické funkce, které se spouštějí před nebo po instalaci.
+- **Identita**: identifikátory, zobrazovaný název a popis.
+- **Oprávnění**: jakou roli používají její funkce a frontendové komponenty.
+- **(Volitelné) proměnné**: dvojice klíč–hodnota zpřístupněné vašim funkcím jako proměnné prostředí.
+- **(Volitelné) předinstalační / postinstalační funkce**: logické funkce, které se spouštějí před nebo po instalaci.
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -91,10 +94,11 @@ export default defineApplication({
 ```
 
 Poznámky:
-* Pole `universalIdentifier` jsou deterministické identifikátory, které vlastníte. Vygenerujte je jednou a zachovejte je stabilní napříč synchronizacemi.
-* `applicationVariables` se stanou proměnnými prostředí pro vaše funkce a frontendové komponenty (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
-* `defaultRoleUniversalIdentifier` musí odkazovat na roli definovanou pomocí `defineRole()` (viz výše).
-* Předinstalační a postinstalační funkce jsou při sestavení manifestu detekovány automaticky — není třeba na ně odkazovat v `defineApplication()`.
+
+- Pole `universalIdentifier` jsou deterministické identifikátory, které vlastníte. Vygenerujte je jednou a zachovejte je stabilní napříč synchronizacemi.
+- `applicationVariables` se stanou proměnnými prostředí pro vaše funkce a frontendové komponenty (například `DEFAULT_RECIPIENT_NAME` je dostupné jako `process.env.DEFAULT_RECIPIENT_NAME`).
+- `defaultRoleUniversalIdentifier` musí odkazovat na roli definovanou pomocí `defineRole()` (viz výše).
+- Předinstalační a postinstalační funkce jsou při sestavení manifestu detekovány automaticky — není třeba na ně odkazovat v `defineApplication()`.
 
 #### Metadata tržiště
 
@@ -116,9 +120,9 @@ Pokud plánujete [zveřejnit svou aplikaci](/l/cs/developers/extend/apps/publish
 
 Pole `defaultRoleUniversalIdentifier` v `application-config.ts` určuje výchozí roli používanou logickými funkcemi a frontendovými komponentami vaší aplikace. Podrobnosti viz výše u `defineRole`.
 
-* Běhový token vložený jako `TWENTY_APP_ACCESS_TOKEN` je odvozen z této role.
-* Typovaný klient bude omezen oprávněními udělenými této roli.
-* Dodržujte princip nejmenších oprávnění: vytvořte vyhrazenou roli pouze s oprávněními, která vaše funkce potřebují.
+- Běhový token vložený jako `TWENTY_APP_ACCESS_TOKEN` je odvozen z této role.
+- Typovaný klient bude omezen oprávněními udělenými této roli.
+- Dodržujte princip nejmenších oprávnění: vytvořte vyhrazenou roli pouze s oprávněními, která vaše funkce potřebují.
 
 ##### Výchozí role funkce
 
@@ -150,14 +154,15 @@ export default defineRole({
 
 Na `universalIdentifier` této role se v `application-config.ts` odkazuje jako na `defaultRoleUniversalIdentifier`:
 
-* **\*.role.ts** definuje, co daná role může dělat.
-* **application-config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
+- **\*.role.ts** definuje, co daná role může dělat.
+- **application-config.ts** ukazuje na tuto roli, aby vaše funkce zdědily její oprávnění.
 
 Poznámky:
-* Začněte vygenerovanou rolí a postupně ji omezujte podle principu nejmenších oprávnění.
-* Nahraďte `objectPermissions` a `fieldPermissions` objekty a poli, které vaše funkce skutečně potřebují.
-* `permissionFlags` řídí přístup k schopnostem na úrovni platformy. Udržujte je co nejmenší.
-* Podívejte se na funkční příklad: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+
+- Začněte vygenerovanou rolí a postupně ji omezujte podle principu nejmenších oprávnění.
+- Nahraďte `objectPermissions` a `fieldPermissions` objekty a poli, které vaše funkce skutečně potřebují.
+- `permissionFlags` řídí přístup k schopnostem na úrovni platformy. Udržujte je co nejmenší.
+- Podívejte se na funkční příklad: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
 
 </Accordion>
 <Accordion title="defineObject" description="Definice vlastních objektů s poli">
@@ -213,10 +218,30 @@ export default defineObject({
       icon: 'IconSend',
       defaultValue: `'${PostCardStatus.DRAFT}'`,
       options: [
-        { value: PostCardStatus.DRAFT, label: 'Draft', position: 0, color: 'gray' },
-        { value: PostCardStatus.SENT, label: 'Sent', position: 1, color: 'orange' },
-        { value: PostCardStatus.DELIVERED, label: 'Delivered', position: 2, color: 'green' },
-        { value: PostCardStatus.RETURNED, label: 'Returned', position: 3, color: 'orange' },
+        {
+          value: PostCardStatus.DRAFT,
+          label: 'Draft',
+          position: 0,
+          color: 'gray',
+        },
+        {
+          value: PostCardStatus.SENT,
+          label: 'Sent',
+          position: 1,
+          color: 'orange',
+        },
+        {
+          value: PostCardStatus.DELIVERED,
+          label: 'Delivered',
+          position: 2,
+          color: 'green',
+        },
+        {
+          value: PostCardStatus.RETURNED,
+          label: 'Returned',
+          position: 3,
+          color: 'orange',
+        },
       ],
     },
     {
@@ -234,18 +259,18 @@ export default defineObject({
 
 Hlavní body:
 
-* Použijte `defineObject()` pro vestavěnou validaci a lepší podporu v IDE.
-* Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
-* Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
-* Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
-* Nové objekty můžete vygenerovat pomocí `yarn twenty add`, který vás provede pojmenováním, poli a vztahy.
+- Použijte `defineObject()` pro vestavěnou validaci a lepší podporu v IDE.
+- Hodnota `universalIdentifier` musí být jedinečná a stabilní napříč nasazeními.
+- Každé pole vyžaduje `name`, `type`, `label` a svůj vlastní stabilní `universalIdentifier`.
+- Pole `fields` je volitelné — objekty můžete definovat i bez vlastních polí.
+- Nové objekty můžete vygenerovat pomocí `yarn twenty add`, který vás provede pojmenováním, poli a vztahy.
 
 <Note>
-**Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt, Twenty automaticky přidá standardní pole
-jako `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`.
-Nemusíte je definovat v poli `fields` — přidejte pouze svá vlastní pole.
-Výchozí pole můžete přepsat definováním pole se stejným názvem v poli `fields`,
-ale to se nedoporučuje.
+  **Základní pole jsou vytvořena automaticky.** Když definujete vlastní objekt,
+  Twenty automaticky přidá standardní pole jako `id`, `name`, `createdAt`,
+  `updatedAt`, `createdBy`, `updatedBy` a `deletedAt`. Nemusíte je definovat v
+  poli `fields` — přidejte pouze svá vlastní pole. Výchozí pole můžete přepsat
+  definováním pole se stejným názvem v poli `fields`, ale to se nedoporučuje.
 </Note>
 
 </Accordion>
@@ -272,9 +297,10 @@ export default defineField({
 ```
 
 Hlavní body:
-* `objectUniversalIdentifier` identifikuje cílový objekt. Pro standardní objekty použijte `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exportovaný z `twenty-sdk`.
-* Při definování polí inline v `defineObject()` `objectUniversalIdentifier` nepotřebujete — dědí se z nadřazeného objektu.
-* `defineField()` je jediný způsob, jak přidat pole k objektům, které jste nevytvořili pomocí `defineObject()`.
+
+- `objectUniversalIdentifier` identifikuje cílový objekt. Pro standardní objekty použijte `STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS` exportovaný z `twenty-sdk`.
+- Při definování polí inline v `defineObject()` `objectUniversalIdentifier` nepotřebujete — dědí se z nadřazeného objektu.
+- `defineField()` je jediný způsob, jak přidat pole k objektům, které jste nevytvořili pomocí `defineObject()`.
 
 </Accordion>
 <Accordion title="defineField — Relační pole" description="Propojte objekty obousměrnými relacemi">
@@ -309,7 +335,8 @@ import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
 // Export so the other side can reference it
-export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+export const POST_CARD_RECIPIENTS_FIELD_ID =
+  'a1111111-1111-1111-1111-111111111111';
 // Import from the other side
 import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
 
@@ -320,7 +347,8 @@ export default defineField({
   name: 'postCardRecipients',
   label: 'Post Card Recipients',
   icon: 'IconUsers',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
@@ -331,7 +359,12 @@ export default defineField({
 **Krok 2: Definujte stranu MANY_TO_ONE na PostCardRecipient** (strana "many" — drží cizí klíč):
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+} from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -347,7 +380,8 @@ export default defineField({
   name: 'postCard',
   label: 'Post Card',
   icon: 'IconMail',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
@@ -358,7 +392,10 @@ export default defineField({
 ```
 
 <Note>
-**Cyklické importy:** Obě relační pole odkazují na `universalIdentifier` toho druhého. Abyste předešli problémům s cyklickými importy, exportujte ID polí jako pojmenované konstanty z každého souboru a v druhém souboru je importujte. Build systém je vyřeší v době kompilace.
+  **Cyklické importy:** Obě relační pole odkazují na `universalIdentifier` toho
+  druhého. Abyste předešli problémům s cyklickými importy, exportujte ID polí
+  jako pojmenované konstanty z každého souboru a v druhém souboru je importujte.
+  Build systém je vyřeší v době kompilace.
 </Note>
 
 #### Vazby na standardní objekty
@@ -376,7 +413,8 @@ import {
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
-export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID =
+  'd4444444-4444-4444-4444-444444444444';
 
 export default defineField({
   universalIdentifier: PERSON_FIELD_ID,
@@ -388,7 +426,8 @@ export default defineField({
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_REVERSE_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
@@ -423,8 +462,10 @@ export default defineObject({
       type: FieldType.RELATION,
       name: 'postCard',
       label: 'Post Card',
-      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      relationTargetObjectMetadataUniversalIdentifier:
+        POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_ID,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,
@@ -435,6 +476,7 @@ export default defineObject({
   ],
 });
 ```
+
 </Accordion>
 </AccordionGroup>
 
@@ -458,8 +500,8 @@ yarn twenty add frontComponent
 
 ### Dostupné typy entit
 
-| Typ entity                | Příkaz                               | Vygenerovaný soubor                                     |
-| ------------------------- | ------------------------------------ | ------------------------------------------------------- |
+| Typ entity                | Příkaz                               | Vygenerovaný soubor                    |
+| ------------------------- | ------------------------------------ | -------------------------------------- |
 | Objekt                    | `yarn twenty add object`             | `src/objects/\<name>.ts`               |
 | Pole                      | `yarn twenty add field`              | `src/fields/\<name>.ts`                |
 | Logická funkce            | `yarn twenty add logicFunction`      | `src/logic-functions/\<name>.ts`       |

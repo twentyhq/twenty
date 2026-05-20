@@ -15,15 +15,15 @@ Permite utilizatorilor să introducă și să editeze text.
 <Tab title="Utilizare">
 
 ```jsx
-import { TextInput } from "@/ui/input/components/TextInput";
+import { TextInput } from '@/ui/input/components/TextInput';
 
 export const MyComponent = () => {
   const handleChange = (text) => {
-    console.log("Textul introdus s-a schimbat:", text);
+    console.log('Textul introdus s-a schimbat:', text);
   };
 
   const handleKeyDown = (event) => {
-    console.log("Tastă apăsată:", event.key);
+    console.log('Tastă apăsată:', event.key);
   };
 
   return (
@@ -39,14 +39,11 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
-
 
 </Tab>
 
 <Tab title="Proprietăți">
-
 
 | Proprietăți    | Tip              | Descriere                                                                                                                            |
 | -------------- | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
@@ -58,9 +55,6 @@ export const MyComponent = () => {
 | eroare         | șir              | Reprezintă mesajul de eroare care să fie afișat. Când este oferit, adaugă și o pictogramă de eroare pe partea dreaptă a intrării     |
 | onKeyDown      | funcție          | Apelează atunci când o tastă este apăsată în timp ce câmpul de intrare este focalizat. Primește un `React.KeyboardEvent` ca argument |
 | RightIcon      | ComponentaIcoana | An optional icon component displayed on the right side of the input                                                                  |
-
-
-
 
 Componenta acceptă și alte atribute de element HTML de intrare.
 
@@ -77,15 +71,15 @@ Componenta de intrare text care își ajustează automat înălțimea în funcț
 <Tab title="Utilizare">
 
 ```jsx
-import { AutosizeTextInput } from "@/ui/input/components/AutosizeTextInput";
+import { AutosizeTextInput } from '@/ui/input/components/AutosizeTextInput';
 
 export const MyComponent = () => {
   return (
     <AutosizeTextInput
-      onValidate={() => console.log("funcția onValidate a fost declanșată")}
+      onValidate={() => console.log('funcția onValidate a fost declanșată')}
       minRows={1}
       placeholder="Scrie un comentariu"
-      onFocus={() => console.log("funcția onFocus a fost declanșată")}
+      onFocus={() => console.log('funcția onFocus a fost declanșată')}
       variant="icon"
       buttonTitle
       value="Sarcină: "
@@ -94,11 +88,9 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 
 <Tab title="Proprietăți">
-
 
 | Proprietăți   | Tip     | Descriere                                                                   |
 | ------------- | ------- | --------------------------------------------------------------------------- |
@@ -109,9 +101,6 @@ export const MyComponent = () => {
 | variantă      | string  | Varianta intrării. Opțiuni includ: `implicit`, `icon`, și `buton`           |
 | buttonTitle   | string  | Titlul pentru buton (aplicabil doar pentru varianta butonului)              |
 | valoare       | string  | Valoarea inițială pentru aria textului                                      |
-
-
-
 
 </Tab>
 
@@ -125,26 +114,24 @@ Vă permite să creați intrări de text pe mai multe linii.
 <Tab title="Utilizare">
 
 ```jsx
-import { TextArea } from "@/ui/input/components/TextArea";
+import { TextArea } from '@/ui/input/components/TextArea';
 
 export const MyComponent = () => {
   return (
     <TextArea
-    disabled={false}
-    minRows={4}
-    onChange={()=>console.log('On change function fired')}
-    placeholder="Enter text here"
-    value=""
+      disabled={false}
+      minRows={4}
+      onChange={() => console.log('On change function fired')}
+      placeholder="Enter text here"
+      value=""
     />
   );
 };
 ```
 
-
 </Tab>
 
 <Tab title="Proprietăți">
-
 
 | Proprietăți   | Tip     | Descriere                                                      |
 | ------------- | ------- | -------------------------------------------------------------- |
@@ -153,9 +140,6 @@ export const MyComponent = () => {
 | onChange      | funcție | Callback function triggered when the text area content changes |
 | text sugestiv | șir     | Placeholder text displayed when the text area is empty         |
 | valoare       | șir     | Valoarea curentă a câmpului de text                            |
-
-
-
 
 </Tab>
 </Tabs>

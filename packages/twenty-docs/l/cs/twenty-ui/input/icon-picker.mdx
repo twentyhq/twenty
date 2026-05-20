@@ -13,16 +13,15 @@ Rozbalovací výběr ikon, který uživatelům umožňuje vybrat ikonu ze seznam
 <Tab title="Použití">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MyComponent = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Selected Icon:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Selected Icon:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Vlastnosti">
-
 
 | Vlastnosti      | Typ                | Popis                                                                                                         |
 | --------------- | ------------------ | ------------------------------------------------------------------------------------------------------------- |
@@ -49,9 +46,6 @@ export const MyComponent = () => {
 | onClose         | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka zavřena.                                        |
 | onOpen          | funkce             | Funkce zpětného volání, vyvolaná, když je rozbalovací nabídka otevřena.                                       |
 | varianta        | řetězec            | Vizuální stylová varianta klikatelné ikony. Možnosti zahrnují: "primární", "sekundární" a "terciární"         |
-
-
-
 
 </Tab>
 </Tabs>

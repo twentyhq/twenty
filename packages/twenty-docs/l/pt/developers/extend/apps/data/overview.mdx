@@ -4,7 +4,7 @@ description: Modele os dados que seu app adiciona a um workspace — objetos, ca
 icon: database
 ---
 
-A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adiciona* a um workspace — os novos tipos de registros que ele declara, as colunas que adiciona a objetos existentes e como esses registros se conectam entre si.
+A **camada de dados** de um app Twenty é o conjunto de dados que seu app _adiciona_ a um workspace — os novos tipos de registros que ele declara, as colunas que adiciona a objetos existentes e como esses registros se conectam entre si.
 
 ```text
 ┌──────────────────────────────────────────────────┐
@@ -26,13 +26,25 @@ A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adici
 ## Nesta seção
 
 <CardGroup cols={2}>
-  <Card title="Objetos" icon="tabela" href="/l/pt/developers/extend/apps/data/objects">
+  <Card
+    title="Objetos"
+    icon="tabela"
+    href="/l/pt/developers/extend/apps/data/objects"
+  >
     `defineObject` — declare novos tipos de registros com seus próprios campos.
   </Card>
-  <Card title="Estendendo objetos" icon="wand-magic-sparkles" href="/l/pt/developers/extend/apps/data/extending-objects">
+  <Card
+    title="Estendendo objetos"
+    icon="wand-magic-sparkles"
+    href="/l/pt/developers/extend/apps/data/extending-objects"
+  >
     `defineField` — adicione campos a objetos padrão ou de outros apps.
   </Card>
-  <Card title="Relações" icon="diagram-project" href="/l/pt/developers/extend/apps/data/relations">
+  <Card
+    title="Relações"
+    icon="diagram-project"
+    href="/l/pt/developers/extend/apps/data/relations"
+  >
     Conexões bidirecionais `MANY_TO_ONE` / `ONE_TO_MANY` entre objetos.
   </Card>
 </CardGroup>
@@ -48,5 +60,10 @@ A **camada de dados** de um app Twenty é o conjunto de dados que seu app *adici
 O SDK detecta esses elementos por meio de análise de AST em tempo de build, então a organização dos arquivos fica a seu critério — a convenção é `src/objects/` e `src/fields/`. UUIDs `universalIdentifier` estáveis conectam tudo em implantações diferentes.
 
 <Note>
-Procurando por **Application Config** ou **Roles & Permissions**? Esses descrevem o próprio app em vez dos dados que ele adiciona — eles ficam em [Config](/l/pt/developers/extend/apps/config/overview). Procurando por **Connections** (Linear, GitHub, Slack OAuth)? Essas existem para serem chamadas *a partir de* funções de lógica e ficam em [Logic](/l/pt/developers/extend/apps/logic/connections).
+  Procurando por **Application Config** ou **Roles & Permissions**? Esses
+  descrevem o próprio app em vez dos dados que ele adiciona — eles ficam em
+  [Config](/l/pt/developers/extend/apps/config/overview). Procurando por
+  **Connections** (Linear, GitHub, Slack OAuth)? Essas existem para serem
+  chamadas *a partir de* funções de lógica e ficam em
+  [Logic](/l/pt/developers/extend/apps/logic/connections).
 </Note>

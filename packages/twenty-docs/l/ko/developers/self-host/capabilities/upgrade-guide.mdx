@@ -181,8 +181,8 @@ yarn command:prod upgrade-0.42
 
 **환경 변수**
 
-* 삭제됨: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
-* 추가됨: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
+- 삭제됨: `FRONT_PORT`, `FRONT_PROTOCOL`, `FRONT_DOMAIN`, `PORT`
+- 추가됨: `FRONTEND_URL`, `NODE_PORT`, `MAX_NUMBER_OF_WORKSPACES_DELETED_PER_EXECUTION`, `MESSAGING_PROVIDER_MICROSOFT_ENABLED`, `CALENDAR_PROVIDER_MICROSOFT_ENABLED`, `IS_MICROSOFT_SYNC_ENABLED`
 
 ### v0.40.0 to v0.41.0
 
@@ -195,7 +195,7 @@ yarn command:prod upgrade-0.41
 
 **환경 변수**
 
-* 삭제됨: `AUTH_MICROSOFT_TENANT_ID`
+- 삭제됨: `AUTH_MICROSOFT_TENANT_ID`
 
 ### v0.35.0 to v0.40.0
 
@@ -208,7 +208,7 @@ yarn command:prod upgrade-0.40
 
 **환경 변수**
 
-* 추가됨: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
+- 추가됨: `IS_EMAIL_VERIFICATION_REQUIRED`, `EMAIL_VERIFICATION_TOKEN_EXPIRES_IN`, `WORKFLOW_EXEC_THROTTLE_LIMIT`, `WORKFLOW_EXEC_THROTTLE_TTL`
 
 ### v0.34.0 to v0.35.0
 
@@ -223,7 +223,7 @@ yarn command:prod upgrade-0.35
 
 **환경 변수**
 
-* `ENABLE_DB_MIGRATIONS`를 `DISABLE_DB_MIGRATIONS`로 교체했습니다(기본값은 이제 `false`이며, 별도의 설정이 필요하지 않을 것입니다.)
+- `ENABLE_DB_MIGRATIONS`를 `DISABLE_DB_MIGRATIONS`로 교체했습니다(기본값은 이제 `false`이며, 별도의 설정이 필요하지 않을 것입니다.)
 
 ### v0.33.0 to v0.34.0
 
@@ -238,8 +238,8 @@ yarn command:prod upgrade-0.34
 
 **환경 변수**
 
-* 삭제됨: `FRONT_BASE_URL`
-* 추가됨: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
+- 삭제됨: `FRONT_BASE_URL`
+- 추가됨: `FRONT_DOMAIN`, `FRONT_PROTOCOL`, `FRONT_PORT`
 
 프런트엔드 URL을 처리하는 방식을 업데이트했습니다.
 이제 `FRONT_DOMAIN`, `FRONT_PROTOCOL` 및 `FRONT_PORT` 변수를 사용하여 프런트엔드 URL을 설정할 수 있습니다.
@@ -278,15 +278,15 @@ yarn command:prod upgrade-0.32
 
 Redis 연결을 처리하는 방식을 업데이트했습니다.
 
-* 삭제됨: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
-* 추가됨: `REDIS_URL`
+- 삭제됨: `REDIS_HOST`, `REDIS_PORT`, `REDIS_USERNAME`, `REDIS_PASSWORD`
+- 추가됨: `REDIS_URL`
 
 `.env` 파일을 업데이트하여 개별 Redis 연결 매개변수 대신 새 `REDIS_URL` 변수를 사용하십시오.
 
 JWT 토큰을 처리하는 방식도 간소화했습니다.
 
-* 삭제됨: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
-* 추가됨: `APP_SECRET`
+- 삭제됨: `ACCESS_TOKEN_SECRET`, `LOGIN_TOKEN_SECRET`, `REFRESH_TOKEN_SECRET`, `FILE_TOKEN_SECRET`
+- 추가됨: `APP_SECRET`
 
 .env 파일을 업데이트하여 개별 토큰 비밀 대신 새로운 `APP_SECRET` 변수를 사용하십시오 (이전 비밀을 그대로 사용하거나 새 임의 문자열을 생성할 수 있습니다.)
 

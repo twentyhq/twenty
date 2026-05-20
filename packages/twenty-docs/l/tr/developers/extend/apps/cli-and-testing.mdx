@@ -10,12 +10,12 @@ Uygulamanızın kökündeki `public/` klasörü, statik dosyaları barındırır
 
 `public/` içine yerleştirilen dosyalar şunlardır:
 
-* **Herkese açık olarak erişilebilir** — sunucuya senkronize edildikten sonra varlıklar genel bir URL'den sunulur. Onlara erişmek için kimlik doğrulama gerekmez.
-* **Ön uç bileşenlerinde kullanılabilir** — React bileşenlerinizin içinde görseller, simgeler veya herhangi bir medyayı göstermek için varlık URL'lerini kullanın.
-* **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
-* **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logoUrl` ve `screenshots` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir.
-* **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
-* **Derlemelere dahil edilir** — `yarn twenty build`, tüm genel varlıkları dağıtım çıktısına paketler.
+- **Herkese açık olarak erişilebilir** — sunucuya senkronize edildikten sonra varlıklar genel bir URL'den sunulur. Onlara erişmek için kimlik doğrulama gerekmez.
+- **Ön uç bileşenlerinde kullanılabilir** — React bileşenlerinizin içinde görseller, simgeler veya herhangi bir medyayı göstermek için varlık URL'lerini kullanın.
+- **Mantık işlevlerinde kullanılabilir** — e-postalarda, API yanıtlarında veya herhangi bir sunucu tarafı mantıkta varlık URL'lerine referans verin.
+- **Pazar yeri üst verileri için kullanılır** — `defineApplication()` içindeki `logoUrl` ve `screenshots` alanları bu klasördeki dosyalara referans verir (örn. `public/logo.png`). Bunlar, uygulamanız yayımlandığında pazar yerinde görüntülenir.
+- **Geliştirme modunda otomatik senkronize edilir** — `public/` içinde bir dosya eklediğinizde, güncellediğinizde veya sildiğinizde otomatik olarak sunucuya senkronize edilir. Yeniden başlatma gerekmez.
+- **Derlemelere dahil edilir** — `yarn twenty build`, tüm genel varlıkları dağıtım çıktısına paketler.
 
 ### `getPublicAssetUrl` ile genel varlıklara erişme
 
@@ -183,15 +183,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```
@@ -336,7 +340,9 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-Bu, Docker konteyner günlüklerini gösteren `yarn twenty server logs` komutundan farklıdır. `yarn twenty logs`, uygulamanızın fonksiyon yürütme günlüklerini Twenty sunucusundan gösterir.
+  Bu, Docker konteyner günlüklerini gösteren `yarn twenty server logs`
+  komutundan farklıdır. `yarn twenty logs`, uygulamanızın fonksiyon yürütme
+  günlüklerini Twenty sunucusundan gösterir.
 </Note>
 
 ### Bir uygulamayı kaldırma (`yarn twenty uninstall`)

@@ -23,14 +23,22 @@ Alguns objetos podem ligar-se a vários tipos de objeto de um dos lados da rela�
 
 **Exemplo:** Uma Nota pode ser anexada a uma Pessoa E a uma Empresa E a uma Oportunidade em simultâneo. A Nota está no lado "muitos", ligando-se a vários lados "um".
 
-<img src="/images/user-guide/fields/many-to-one-morph.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/many-to-one-morph.png"
+  style={{ width: '100%' }}
+/>
 
 De forma semelhante, um Projeto (do lado "um") pode receber ligações de várias Pessoas, várias Empresas e várias Notas.
 
-<img src="/images/user-guide/fields/one-to-many-morph.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/one-to-many-morph.png"
+  style={{ width: '100%' }}
+/>
 
 <Warning>
-**Limitação de Importação/Exportação**: Relações que apontam para vários tipos de objeto ainda não são suportadas para importação/exportação CSV. Isto está no nosso roadmap.
+  **Limitação de Importação/Exportação**: Relações que apontam para vários tipos
+  de objeto ainda não são suportadas para importação/exportação CSV. Isto está
+  no nosso roadmap.
 </Warning>
 
 ### Muitos-para-Muitos
@@ -41,10 +49,14 @@ Muitos registos no Objeto A podem estar ligados a muitos registos no Objeto B.
 
 As relações muitos-para-muitos utilizam um padrão de **objeto de junção**: um objeto intermediário que conecta ambos os lados. Com o recurso de relação de junção, Twenty exibe diretamente os registros finais vinculados, ocultando o objeto intermediário da IU.
 
-<img src="/images/user-guide/fields/junction-relation-diagram.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/junction-relation-diagram.png"
+  style={{ width: '100%' }}
+/>
 
 <Warning>
-**Recurso de laboratório**: As relações de junção devem ser ativadas em **Configurações → Atualizações → Lab** antes do uso.
+  **Recurso de laboratório**: As relações de junção devem ser ativadas em
+  **Configurações → Atualizações → Lab** antes do uso.
 </Warning>
 
 Consulte [Como criar relações muitos-para-muitos](/l/pt/user-guide/data-model/how-tos/create-many-to-many-relations) para um guia passo a passo completo.
@@ -57,9 +69,9 @@ Consulte [Como criar relações muitos-para-muitos](/l/pt/user-guide/data-model/
 4. Selecione **Relação** como o tipo de campo
 5. Escolha o(s) objeto(s) de destino a relacionar
 6. Configure as definições da relação:
-   * **Nome do campo no objeto de origem**: O nome do campo de relação no objeto que está a editar
-   * **Nome do campo no objeto de destino**: O nome do campo de relação que aparecerá no objeto de destino
-   * Tipo de relação (um-para-muitos, muitos-para-um)
+   - **Nome do campo no objeto de origem**: O nome do campo de relação no objeto que está a editar
+   - **Nome do campo no objeto de destino**: O nome do campo de relação que aparecerá no objeto de destino
+   - Tipo de relação (um-para-muitos, muitos-para-um)
 7. Clique em **Salvar**
 
 ## Relações Padrão
@@ -76,21 +88,21 @@ O Twenty inclui relações pré-criadas entre objetos padrão:
 
 ### Planear Relações
 
-* **Mapeie o seu modelo de dados**: Planeie as relações antes de as criar
-* **Considere a direção**: Pense em que objeto "detém" a relação
-* **Evite dependências circulares**: Mantenha o seu modelo de dados limpo
+- **Mapeie o seu modelo de dados**: Planeie as relações antes de as criar
+- **Considere a direção**: Pense em que objeto "detém" a relação
+- **Evite dependências circulares**: Mantenha o seu modelo de dados limpo
 
 ### Nomear Relações
 
-* **Use nomes claros**: Torne óbvio o que a relação representa
-* **Seja consistente**: Utilize padrões de nomenclatura semelhantes em todas as relações
-* **Considere ambos os lados**: Nomeie adequadamente ambos os lados da relação
+- **Use nomes claros**: Torne óbvio o que a relação representa
+- **Seja consistente**: Utilize padrões de nomenclatura semelhantes em todas as relações
+- **Considere ambos os lados**: Nomeie adequadamente ambos os lados da relação
 
 ### Desempenho
 
-* **Não exagere nas relações**: Relações em excesso podem abrandar o seu espaço de trabalho
+- **Não exagere nas relações**: Relações em excesso podem abrandar o seu espaço de trabalho
 
 ## Limitações
 
-* **Eliminar relações** remove a ligação mas não os registos relacionados
-* **Relações circulares** devem ser evitadas para garantir a integridade dos dados
+- **Eliminar relações** remove a ligação mas não os registos relacionados
+- **Relações circulares** devem ser evitadas para garantir a integridade dos dados

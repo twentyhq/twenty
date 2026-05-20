@@ -8,6 +8,7 @@ Automatically send emails when specific events occur in your CRM—welcome new c
 ## Prerequisites
 
 Before you can send emails from workflows:
+
 1. Connect an email account under **Settings → Accounts**
 2. Ensure the account has sending permissions enabled
 
@@ -28,11 +29,11 @@ Before you can send emails from workflows:
    - Select **Send Email**
    - Configure the email:
 
-| Field | Value |
-|-------|-------|
-| **To** | `{{trigger.object.email}}` |
-| **Subject** | `Welcome to {{Your Company Name}}` |
-| **Body** | `Hi {{trigger.object.firstName}}, ...` |
+| Field       | Value                                  |
+| ----------- | -------------------------------------- |
+| **To**      | `{{trigger.object.email}}`             |
+| **Subject** | `Welcome to {{Your Company Name}}`     |
+| **Body**    | `Hi {{trigger.object.firstName}}, ...` |
 
 4. **Test and activate**: Test with a sample record, then activate
 
@@ -53,11 +54,11 @@ The Team
 
 ### Available Variables from Triggers
 
-| Trigger Type | Common Variables |
-|--------------|------------------|
-| **Record Created/Updated** | `{{trigger.object.fieldName}}` |
-| **Manual** | `{{trigger.selectedRecord.fieldName}}` |
-| **Webhook** | `{{trigger.body.fieldName}}` |
+| Trigger Type               | Common Variables                       |
+| -------------------------- | -------------------------------------- |
+| **Record Created/Updated** | `{{trigger.object.fieldName}}`         |
+| **Manual**                 | `{{trigger.selectedRecord.fieldName}}` |
+| **Webhook**                | `{{trigger.body.fieldName}}`           |
 
 ## Advanced: Conditional Emails
 
@@ -126,32 +127,37 @@ You can attach files to emails sent from workflows. The attachment is a static f
 
 ### Common Use Cases
 
-| Use Case | Example File |
-|----------|--------------|
-| **Welcome emails** | Company brochure (PDF) |
-| **Onboarding sequences** | Getting started guide |
-| **Sales follow-ups** | Product catalog or price list |
-| **Event confirmations** | Event details or agenda |
+| Use Case                 | Example File                  |
+| ------------------------ | ----------------------------- |
+| **Welcome emails**       | Company brochure (PDF)        |
+| **Onboarding sequences** | Getting started guide         |
+| **Sales follow-ups**     | Product catalog or price list |
+| **Event confirmations**  | Event details or agenda       |
 
 <Note>
-Attachments are static—the same file is sent to all recipients. For dynamic documents (like personalized quotes), generate and attach files using a [Logic Function](/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+  Attachments are static—the same file is sent to all recipients. For dynamic
+  documents (like personalized quotes), generate and attach files using a [Logic
+  Function](/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
 ## Best Practices
 
 ### Email Content
+
 - Keep subject lines concise and relevant
 - Personalize with recipient's name
 - Include a clear call to action
 - Test emails before activating
 
 ### Deliverability
+
 - Don't send too many emails too quickly
 - Use professional email signatures
 - Avoid spam trigger words
 - Ensure unsubscribe options for marketing emails
 
 ### Troubleshooting
+
 - Verify email account is connected and active
 - Check recipient email address is valid
 - Review workflow runs for error messages

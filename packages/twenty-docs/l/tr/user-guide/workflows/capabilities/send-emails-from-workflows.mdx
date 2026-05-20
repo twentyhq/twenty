@@ -25,9 +25,9 @@ CRM'inizde belirli olaylar gerçekleştiğinde e-postaları otomatik olarak gön
 2. **Tetikleyici ekleyin**: **Kayıt Oluşturuldu** → **Kişiler** öğelerini seçin
 
 3. **E-posta Gönder eylemini ekleyin**:
-   * Bir eylem eklemek için **+**'a tıklayın
-   * **E-posta Gönder**'i seçin
-   * E-postayı yapılandırın:
+   - Bir eylem eklemek için **+**'a tıklayın
+   - **E-posta Gönder**'i seçin
+   - E-postayı yapılandırın:
 
 | Alan      | Değer                                       |
 | --------- | ------------------------------------------- |
@@ -71,12 +71,12 @@ Ekip
 1. **Tetikleyici**: Kayıt Oluşturuldu (Kişiler)
 
 2. **Filtre eylemi ekleyin**:
-   * Koşul: `{{trigger.object.source}}` `"Website"` değerine eşittir
-   * Doğruysa → web sitesi hoş geldiniz e-postasıyla devam edin
+   - Koşul: `{{trigger.object.source}}` `"Website"` değerine eşittir
+   - Doğruysa → web sitesi hoş geldiniz e-postasıyla devam edin
 
 3. **Diğer kaynaklar için dal**:
-   * Farklı kaynaklar için paralel dallar oluşturun
-   * Her dalın kendi E-posta Gönder eylemi vardır
+   - Farklı kaynaklar için paralel dallar oluşturun
+   - Her dalın kendi E-posta Gönder eylemi vardır
 
 ## Birden Fazla Alıcıya E-posta Gönderme
 
@@ -91,12 +91,12 @@ Ekip
 2. **Kayıtları Ara**: Fırsat sahibinin yöneticisini bulun
 
 3. **E-posta Gönder #1**: Fırsat sahibine
-   * Kime: `{{trigger.object.owner.email}}`
-   * Konu: `{{trigger.object.name}} fırsatını kapattığınız için tebrikler!`
+   - Kime: `{{trigger.object.owner.email}}`
+   - Konu: `{{trigger.object.name}} fırsatını kapattığınız için tebrikler!`
 
 4. **E-posta Gönder #2**: Yöneticiye
-   * Kime: `{{searchRecords.manager.email}}`
-   * Konu: `Fırsat Kazanıldı: {{trigger.object.name}}`
+   - Kime: `{{searchRecords.manager.email}}`
+   - Konu: `Fırsat Kazanıldı: {{trigger.object.name}}`
 
 ## Zamanlanmış Takip E-postaları
 
@@ -111,9 +111,9 @@ Ekip
 2. **Gecikme eylemi**: 3 gün bekleyin
 
 3. **E-posta Gönder**:
-   * Kime: Toplantı katılımcısı
-   * Konu: Görüşmemize ilişkin takip
-   * Gövde: Tetikleyiciden toplantı ayrıntılarına referans verin
+   - Kime: Toplantı katılımcısı
+   - Konu: Görüşmemize ilişkin takip
+   - Gövde: Tetikleyiciden toplantı ayrıntılarına referans verin
 
 ## E-posta ekleri
 
@@ -135,33 +135,36 @@ Ekip
 | **Etkinlik onayları**     | Etkinlik ayrıntıları veya gündem |
 
 <Note>
-Ekler statiktir—aynı dosya tüm alıcılara gönderilir. Kişiselleştirilmiş teklifler gibi dinamik belgeler için, bir [Mantık İşlevi](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty) kullanarak dosyalar oluşturup ekleyin.
+  Ekler statiktir—aynı dosya tüm alıcılara gönderilir. Kişiselleştirilmiş
+  teklifler gibi dinamik belgeler için, bir [Mantık
+  İşlevi](/l/tr/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty)
+  kullanarak dosyalar oluşturup ekleyin.
 </Note>
 
 ## En İyi Uygulamalar
 
 ### E-posta İçeriği
 
-* Konu satırlarını öz ve ilgili tutun
-* Alıcının adıyla kişiselleştirin
-* Açık bir harekete geçirici mesaj ekleyin
-* Etkinleştirmeden önce e-postaları test edin
+- Konu satırlarını öz ve ilgili tutun
+- Alıcının adıyla kişiselleştirin
+- Açık bir harekete geçirici mesaj ekleyin
+- Etkinleştirmeden önce e-postaları test edin
 
 ### Teslim Edilebilirlik
 
-* Çok kısa sürede çok fazla e-posta göndermeyin
-* Profesyonel e-posta imzaları kullanın
-* Spam tetikleyici kelimelerden kaçının
-* Pazarlama e-postalarında abonelikten çıkma seçeneklerinin bulunduğundan emin olun
+- Çok kısa sürede çok fazla e-posta göndermeyin
+- Profesyonel e-posta imzaları kullanın
+- Spam tetikleyici kelimelerden kaçının
+- Pazarlama e-postalarında abonelikten çıkma seçeneklerinin bulunduğundan emin olun
 
 ### Sorun Giderme
 
-* E-posta hesabının bağlı ve aktif olduğunu doğrulayın
-* Alıcının e-posta adresinin geçerli olduğunu kontrol edin
-* Hata mesajları için iş akışı çalıştırmalarını gözden geçirin
-* Önce kendi e-posta adresinizle test edin
+- E-posta hesabının bağlı ve aktif olduğunu doğrulayın
+- Alıcının e-posta adresinin geçerli olduğunu kontrol edin
+- Hata mesajları için iş akışı çalıştırmalarını gözden geçirin
+- Önce kendi e-posta adresinizle test edin
 
 ## İlgili
 
-* [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
-* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+- [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers)
+- [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)

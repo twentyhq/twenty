@@ -13,15 +13,18 @@ description: زامِن بيانات كتالوج المنتجات من مستو
 4. **Iterator**: التكرار عبر كل منتج
 5. **Upsert Record**: أنشئ أو حدّث في Twenty
 
-<img src="/images/user-guide/workflows/create_users_workflow.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/create_users_workflow.png"
+  style={{ width: '100%' }}
+/>
 
 ## الخطوة 1: جدولة المُحفّز
 
 اضبط سير العمل ليعمل بتواتر يتوافق مع احتياجاتك من حداثة البيانات:
 
-* كل 5 دقائق لمزامنة شبه فورية
-* كل ساعة للبيانات الأقل أهمية
-* يوميًا للتحديثات الدفعية
+- كل 5 دقائق لمزامنة شبه فورية
+- كل ساعة للبيانات الأقل أهمية
+- يوميًا للتحديثات الدفعية
 
 ## الخطوة 2: الاستعلام عن مستودع البيانات لديك
 
@@ -30,22 +33,24 @@ description: زامِن بيانات كتالوج المنتجات من مستو
 ```javascript
 export const main = async () => {
   const intervalMinutes = 10; // Match your schedule frequency
-  const cutoffTime = new Date(Date.now() - intervalMinutes * 60 * 1000).toISOString();
+  const cutoffTime = new Date(
+    Date.now() - intervalMinutes * 60 * 1000,
+  ).toISOString();
 
   // Replace with your actual data warehouse connection
-  const response = await fetch("https://your-warehouse-api.com/query", {
-    method: "POST",
+  const response = await fetch('https://your-warehouse-api.com/query', {
+    method: 'POST',
     headers: {
-      "Authorization": "Bearer YOUR_API_KEY",
-      "Content-Type": "application/json"
+      Authorization: 'Bearer YOUR_API_KEY',
+      'Content-Type': 'application/json',
     },
     body: JSON.stringify({
       query: `
         SELECT id, name, sku, price, stock_quantity, updated_at
         FROM products
         WHERE updated_at >= '${cutoffTime}'
-      `
-    })
+      `,
+    }),
   });
 
   const data = await response.json();
@@ -146,7 +151,7 @@ export const main = async (params: { deals: any }) => {
 
 أضِف إجراء **Iterator**:
 
-* المدخل: `{{code.products}}`
+- المدخل: `{{code.products}}`
 
 يقوم هذا بالتكرار عبر كل منتج في المصفوفة.
 
@@ -163,7 +168,8 @@ export const main = async (params: { deals: any }) => {
 | **السعر**        | `{{iterator.item.price}}`            |
 
 <Tip>
-استخدم **Upsert** (تحديث أو إنشاء) بدلًا من إنشاء فروع منفصلة للإنشاء مقابل التحديث. إنه أسرع في الإنشاء وأسهل في استكشاف الأخطاء وإصلاحها.
+  استخدم **Upsert** (تحديث أو إنشاء) بدلًا من إنشاء فروع منفصلة للإنشاء مقابل
+  التحديث. إنه أسرع في الإنشاء وأسهل في استكشاف الأخطاء وإصلاحها.
 </Tip>
 
 ## أمثلة لحالات الاستخدام
@@ -177,6 +183,6 @@ export const main = async (params: { deals: any }) => {
 
 ## ذات صلة
 
-* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
-* [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+- [إجراءات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-actions)
+- [التعامل مع المصفوفات في إجراءات Code](/l/ar/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

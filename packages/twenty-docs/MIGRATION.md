@@ -3,18 +3,21 @@
 ## What Was Migrated
 
 ### Documentation Files
+
 - **69 MDX files** copied from twenty-website to twenty-docs
 - **45 User Guide articles**
 - **22 Developer documentation articles**
 - **2 Getting Started guides** (existing)
 
 ### Images & Assets
+
 - **81 images** copied to `public/images/`
 - User guide screenshots
 - Developer documentation images
 - Logo and branding assets
 
 ### Navigation Structure
+
 - Complete `mint.json` configuration with tabs and nested navigation
 - User Guide tab with 11 sections
 - Developers tab with 6 sections
@@ -22,12 +25,15 @@
 ## Components Converted
 
 ### Custom Components → Mintlify Equivalents
+
 - `<ArticleWarning>` → `<Warning>`
 - `<ArticleLink href="...">text</ArticleLink>` → `[text](...)`
 - `<ArticleEditContent>` → Removed (not needed)
 
 ### Still Need Manual Review
+
 Some components may need additional conversion:
+
 - `<ArticleTabs>` - Mintlify uses `<Tabs>` component
 - Embedded iframes/videos - May need adjustment
 - Custom styled elements - Review for Mintlify compatibility
@@ -63,6 +69,7 @@ packages/twenty-docs/
 ## Testing
 
 Start the local Mintlify dev server:
+
 ```bash
 npx nx run twenty-docs:dev
 ```
@@ -72,6 +79,7 @@ Open http://localhost:3000 to preview all migrated documentation.
 ## Deployment
 
 To deploy to Mintlify:
+
 1. Push changes to GitHub
 2. Connect the repo in Mintlify dashboard
 3. Set subdirectory to `packages/twenty-docs`

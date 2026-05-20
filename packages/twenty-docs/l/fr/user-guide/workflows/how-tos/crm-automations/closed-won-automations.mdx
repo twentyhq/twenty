@@ -9,10 +9,10 @@ Lorsqu'une affaire se clôture, plusieurs actions doivent avoir lieu : mettre à
 
 Lorsqu'une opportunité passe à "Closed Won":
 
-* Le type d'entreprise doit passer de "Prospect" à "Customer"
-* Des tâches d'intégration doivent être créées
-* L'équipe Customer Success doit être informée
-* Le commercial a besoin d'une confirmation
+- Le type d'entreprise doit passer de "Prospect" à "Customer"
+- Des tâches d'intégration doivent être créées
+- L'équipe Customer Success doit être informée
+- Le commercial a besoin d'une confirmation
 
 Faire cela manuellement est chronophage et sujet aux erreurs.
 
@@ -105,17 +105,17 @@ Let's give them a great start!
 | Champ                | Valeur                                                                                                             |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------ |
 | **À**                | `{{trigger.object.owner.email}}`                                                                                   |
-| **Objet**            | `✅ Deal Closed: {{trigger.object.name}}`                                                                           |
+| **Objet**            | `✅ Deal Closed: {{trigger.object.name}}`                                                                          |
 | **Corps du message** | Félicitations ! Votre affaire a été traitée. L'équipe Customer Success a été informée et l'intégration a commencé. |
 
 ### Étape 8 : Tester et activer
 
 1. Testez en déplaçant une opportunité de test vers "Closed Won"
 2. Vérifier:
-   * Type d'entreprise modifié en "Customer"
-   * Tâche d'intégration créée
-   * L'équipe CS a reçu l'e-mail
-   * Le commercial a reçu la confirmation
+   - Type d'entreprise modifié en "Customer"
+   - Tâche d'intégration créée
+   - L'équipe CS a reçu l'e-mail
+   - Le commercial a reçu la confirmation
 3. Activez lorsque vous êtes prêt
 
 ## Gestion de "Closed Lost"
@@ -124,7 +124,7 @@ Créez un flux de travail similaire pour les affaires perdues :
 
 ### Déclencheur
 
-* Enregistrement mis à jour (Opportunités, Étape = "Closed Lost")
+- Enregistrement mis à jour (Opportunités, Étape = "Closed Lost")
 
 ### Actions
 
@@ -139,10 +139,10 @@ Pour une intégration complexe, créez plusieurs tâches :
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Utilisez **Iterator** pour créer chaque tâche à partir du tableau.
 
 ### Maintenez vos autres outils à jour
 
-* Créez un client dans le système de facturation avec une action **HTTP Request**
+- Créez un client dans le système de facturation avec une action **HTTP Request**
 
 ### Actions conditionnelles
 
 Utilisez des actions **Filtre** pour :
 
-* Intégration différente pour entreprises vs PME
-* Assignés différents selon la région
-* Ignorer les notifications pour les petites affaires
+- Intégration différente pour entreprises vs PME
+- Assignés différents selon la région
+- Ignorer les notifications pour les petites affaires
 
 ### Inclure les détails de l'affaire
 
 Utilisez l'action **Code** pour formater :
 
-* Documents de synthèse de l'affaire
-* Notes de passation pour l'équipe CS
-* Listes de contrôle d'intégration personnalisées
+- Documents de synthèse de l'affaire
+- Notes de passation pour l'équipe CS
+- Listes de contrôle d'intégration personnalisées
 
 ## Articles connexes
 
-* [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)
-* [Envoyer des e-mails depuis des flux de travail](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Actions de flux de travail](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+- [Envoyer des e-mails depuis des flux de travail](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -14,9 +14,9 @@ Obojí lze vyřešit pomocí uzlu Code.
 
 Pole se mezi kroky pracovního postupu často předávají jako řetězce nebo JSON, nikoli jako nativní pole. K tomu dochází, když:
 
-* Příjem dat z externích API pomocí HTTP Request
-* Zpracování dat webhooků
-* Předávání dat mezi kroky pracovního postupu
+- Příjem dat z externích API pomocí HTTP Request
+- Zpracování dat webhooků
+- Předávání dat mezi kroky pracovního postupu
 
 **Řešení**: Přidejte tento vzor na začátek své akce Code:
 
@@ -74,9 +74,11 @@ export const main = async (params: {
 Uzel Code vrátí místo pole strukturovaný objekt. V následujících krocích nyní můžete ve výběru proměnných vybrat jednotlivá pole, jako `answer.firstname` a `answer.name`.
 
 <Note>
-Aktivně pracujeme na tom, aby bylo zacházení s poli v budoucích aktualizacích snazší.
+  Aktivně pracujeme na tom, aby bylo zacházení s poli v budoucích aktualizacích
+  snazší.
 </Note>
 
 <Tip>
-Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
+  Klikněte na čtvercovou ikonu vpravo nahoře v editoru kódu a zobrazte jej na
+  celou obrazovku — hodí se to, protože výchozí šířka editoru je omezená.
 </Tip>

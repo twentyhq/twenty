@@ -9,10 +9,10 @@ Quando una trattativa si chiude, devono succedere più cose: aggiornare lo stato
 
 Quando un'opportunità passa a "Chiusa vinta":
 
-* Il tipo di azienda deve passare da "Potenziale cliente" a "Cliente"
-* Devono essere create le attività di onboarding
-* Il team di Customer Success deve essere avvisato
-* Il rappresentante commerciale ha bisogno di una conferma
+- Il tipo di azienda deve passare da "Potenziale cliente" a "Cliente"
+- Devono essere create le attività di onboarding
+- Il team di Customer Success deve essere avvisato
+- Il rappresentante commerciale ha bisogno di una conferma
 
 Farlo manualmente richiede tempo ed è soggetto a errori.
 
@@ -105,17 +105,17 @@ Diamo loro un ottimo inizio!
 | Campo       | Valore                                                                                                                        |
 | ----------- | ----------------------------------------------------------------------------------------------------------------------------- |
 | **A**       | `{{trigger.object.owner.email}}`                                                                                              |
-| **Oggetto** | `✅ Trattativa chiusa: {{trigger.object.name}}`                                                                                |
+| **Oggetto** | `✅ Trattativa chiusa: {{trigger.object.name}}`                                                                               |
 | **Corpo**   | Congratulazioni! La tua trattativa è stata elaborata. Il team di Customer Success è stato avvisato e l'onboarding è iniziato. |
 
 ### Passaggio 8: Testa e attiva
 
 1. Esegui un test spostando un'opportunità di prova su "Chiusa vinta"
 2. Verifica:
-   * Il tipo di azienda è stato modificato in "Cliente"
-   * Attività di onboarding creata
-   * Il team di Customer Success ha ricevuto l'email
-   * Il rappresentante commerciale ha ricevuto la conferma
+   - Il tipo di azienda è stato modificato in "Cliente"
+   - Attività di onboarding creata
+   - Il team di Customer Success ha ricevuto l'email
+   - Il rappresentante commerciale ha ricevuto la conferma
 3. Attiva quando sei pronto
 
 ## Gestione di "Chiusa persa"
@@ -124,7 +124,7 @@ Crea un flusso di lavoro simile per le trattative perse:
 
 ### Scatenante
 
-* Record is Updated (Opportunità, Fase = "Chiusa persa")
+- Record is Updated (Opportunità, Fase = "Chiusa persa")
 
 ### Azioni
 
@@ -139,10 +139,10 @@ Per un onboarding complesso, crea più attività:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Usa **Iterator** per creare ogni attività a partire dall'array.
 
 ### Mantieni aggiornati gli altri strumenti
 
-* Crea il cliente nel sistema di fatturazione con una **HTTP Request**
+- Crea il cliente nel sistema di fatturazione con una **HTTP Request**
 
 ### Azioni condizionali
 
 Usa le azioni **Filter** per:
 
-* Onboarding diverso per Enterprise rispetto alle PMI
-* Assegnatari diversi in base alla regione
-* Salta le notifiche per le trattative di piccolo valore
+- Onboarding diverso per Enterprise rispetto alle PMI
+- Assegnatari diversi in base alla regione
+- Salta le notifiche per le trattative di piccolo valore
 
 ### Includi i dettagli della trattativa
 
 Usa l'azione **Code** per formattare:
 
-* Documenti riepilogativi della trattativa
-* Note di passaggio per il team di Customer Success
-* Checklist di onboarding personalizzate
+- Documenti riepilogativi della trattativa
+- Note di passaggio per il team di Customer Success
+- Checklist di onboarding personalizzate
 
 ## Correlati
 
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Inviare email dai flussi di lavoro](/l/it/user-guide/workflows/capabilities/send-emails-from-workflows)

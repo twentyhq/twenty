@@ -2,10 +2,13 @@
 title: Notify Teammates of a Note to Review
 description: Send automatic email notifications when assigning a colleague to review a note.
 ---
+
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-**Tagging teammates directly in notes is not yet supported.** This feature is planned for the second half of 2026. In the meantime, this workflow provides a practical workaround.
+  **Tagging teammates directly in notes is not yet supported.** This feature is
+  planned for the second half of 2026. In the meantime, this workflow provides a
+  practical workaround.
 </Note>
 
 ## The Challenge
@@ -15,37 +18,43 @@ You want to tag a colleague in a note so they receive a notification to review i
 ## The Workaround
 
 Instead of tagging in the note text, you can:
+
 1. Create a **Reviewer** relation field on the Notes object
 2. Assign the reviewer when creating or editing the note
 3. A workflow automatically sends an email to the reviewer with a link to the note
 
 <Warning>
-**Limitation**: This approach allows assigning one reviewer per field. If you need to notify multiple people, create additional relation fields (e.g., Reviewer 1, Reviewer 2). This won't scale well if you need to tag many collaborators at once.
+  **Limitation**: This approach allows assigning one reviewer per field. If you
+  need to notify multiple people, create additional relation fields (e.g.,
+  Reviewer 1, Reviewer 2). This won't scale well if you need to tag many
+  collaborators at once.
 </Warning>
-
 
 ## Step-by-Step Setup
 
 ### Step 1: Create the Reviewer Field
-<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}}/>
+
+<img
+  src="/images/user-guide/workflows/reviewer-field-for-note.png"
+  style={{ width: '100%' }}
+/>
 
 1. Go to **Settings → Data Model → Notes**
 2. Click **Add Field**
 3. Configure:
 
-| Setting | Value |
-|---------|-------|
-| **Name** | Reviewer |
-| **Type** | Relation |
-| **Related Object** | Workspace Member |
-| **Relation Type** | Many Notes → One Workspace Member |
+| Setting            | Value                             |
+| ------------------ | --------------------------------- |
+| **Name**           | Reviewer                          |
+| **Type**           | Relation                          |
+| **Related Object** | Workspace Member                  |
+| **Relation Type**  | Many Notes → One Workspace Member |
 
 4. Save the field
 
 ### Step 2: Create the Workflow
+
 <VimeoEmbed videoId="1151897168" title="Video demonstration" />
-
-
 
 #### Create the Workflow Trigger
 
@@ -58,8 +67,8 @@ Instead of tagging in the note text, you can:
 
 Add a **Filter** action to ensure the workflow only continues when a reviewer is assigned:
 
-| Condition | Value |
-|-----------|-------|
+| Condition    | Value        |
+| ------------ | ------------ |
 | **Reviewer** | is not empty |
 
 #### Search for the Workspace Member
@@ -68,9 +77,9 @@ Add a **Filter** action to ensure the workflow only continues when a reviewer is
 2. Select **Workspace Member** (under Advanced Objects)
 3. Add a filter:
 
-| Condition | Value |
-|-----------|-------|
-| **ID** | equals `{{note.reviewerId}}` |
+| Condition | Value                        |
+| --------- | ---------------------------- |
+| **ID**    | equals `{{note.reviewerId}}` |
 
 This retrieves the full workspace member record, including their email address and name.
 
@@ -79,11 +88,11 @@ This retrieves the full workspace member record, including their email address a
 1. Add a **Send Email** action
 2. Configure:
 
-| Field | Value |
-|-------|-------|
-| **To** | Search Record → First Workspace Member → User Email |
-| **Subject** | A note needs your review |
-| **Body** | See example below |
+| Field       | Value                                               |
+| ----------- | --------------------------------------------------- |
+| **To**      | Search Record → First Workspace Member → User Email |
+| **Subject** | A note needs your review                            |
+| **Body**    | See example below                                   |
 
 **Email body example:**
 
@@ -100,7 +109,7 @@ Twenty
 ```
 
 <Note>
-Replace `yourSubDomain` with your actual Twenty workspace subdomain.
+  Replace `yourSubDomain` with your actual Twenty workspace subdomain.
 </Note>
 
 #### Test and Activate
@@ -113,6 +122,7 @@ Replace `yourSubDomain` with your actual Twenty workspace subdomain.
 ## Usage
 
 Once set up, your team can use this workflow by:
+
 1. Creating a new note (or editing an existing one)
 2. Selecting a colleague in the **Reviewer** field
 3. The colleague automatically receives an email with a direct link to the note
@@ -123,4 +133,3 @@ Once set up, your team can use this workflow by:
 - [Send Emails from Workflows](/user-guide/workflows/capabilities/send-emails-from-workflows)
 - [Create Custom Fields](/user-guide/data-model/how-tos/create-custom-fields)
 - [Create Relation Fields](/user-guide/data-model/how-tos/create-relation-fields)
-

@@ -11,6 +11,7 @@ description: Frequently asked questions about workflows in Twenty.
     **Solution**: Contact your workspace administrator to grant you workflow access under **Settings → Members → Roles**.
 
     If you don't see the Workflows section at all in your sidebar, this confirms it's a permissions issue.
+
   </Accordion>
 
   <Accordion title="Why don't I see my manual workflow button in the top navbar?">
@@ -23,6 +24,7 @@ description: Frequently asked questions about workflows in Twenty.
     **To check**: Open the workflow → click the trigger → verify "Navbar placement" is set to "Pinned".
 
     You can always access manual workflows via **Cmd + K** (or **Ctrl + K**) regardless of navbar settings.
+
   </Accordion>
 
   <Accordion title="What's the difference between Single, Global, and Bulk manual triggers?">
@@ -37,6 +39,7 @@ description: Frequently asked questions about workflows in Twenty.
     - **Bulk**: Use when you need to process records together or optimize credit usage (requires Iterator action)
 
     See [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers) for details.
+
   </Accordion>
 
   <Accordion title="I don't see an If/Else node. What should I do?">
@@ -55,6 +58,7 @@ description: Frequently asked questions about workflows in Twenty.
     Only the branch where the filter condition passes will execute its subsequent actions.
 
     See [How to Use Branches](/user-guide/workflows/capabilities/workflow-branches) for a step-by-step guide.
+
   </Accordion>
 
   <Accordion title="Are workflow branches running in parallel?">
@@ -65,6 +69,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Set opposite conditions (e.g., Branch A: status = "Open", Branch B: status ≠ "Open")
 
     Branches that fail their filter condition stop executing, while others continue.
+
   </Accordion>
 
   <Accordion title="Can I merge branches back together?">
@@ -76,6 +81,7 @@ description: Frequently asked questions about workflows in Twenty.
     3. Drag connections from the end of each branch to this new step
 
     The merged step will execute after all connected branches complete.
+
   </Accordion>
 
   <Accordion title="What's the limit on Search Records results?">
@@ -87,12 +93,14 @@ description: Frequently asked questions about workflows in Twenty.
     - Consider using the API for bulk operations
 
     For most workflows, 200 records is sufficient. If you regularly hit this limit, consider restructuring your automation.
+
   </Accordion>
 
   <Accordion title="Can I CC people on workflow emails?">
     **Not yet.** CC and BCC fields for the Send Email action are on our roadmap.
 
     **Current workaround**: Add multiple Send Email actions to send to additional recipients, or use an HTTP Request to send via an external email service that supports CC.
+
   </Accordion>
 
   <Accordion title="How do I use outputs from previous steps?">
@@ -108,6 +116,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Code output: `{{code.calculatedValue}}`
 
     Hover over any field in the action configuration to see available variables from previous steps.
+
   </Accordion>
 
   <Accordion title="Why does my Iterator fail?">
@@ -122,6 +131,7 @@ description: Frequently asked questions about workflows in Twenty.
     2. Filter: length > 0
     3. Iterator: select `{{searchRecords}}`
     4. Actions inside iterator use `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="What's the maximum execution time for Code actions?">
@@ -136,6 +146,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Avoid heavy computations; use external services via HTTP Request for intensive processing
     - Optimize your code to reduce execution time
     - If you need longer processing, consider using scheduled workflows that process data in batches
+
   </Accordion>
 
   <Accordion title="How do I read workflow runs?">
@@ -152,6 +163,7 @@ description: Frequently asked questions about workflows in Twenty.
     - **Data**: View input/output data at each step
 
     See [Workflow Runs](/user-guide/workflows/capabilities/workflow-runs) for details.
+
   </Accordion>
 
   <Accordion title="Why don't I see my workflow runs?">
@@ -171,6 +183,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Space out large batch operations
     - Use filters to reduce trigger frequency
     - Schedule heavy workflows during off-peak hours
+
   </Accordion>
 
   <Accordion title="What are the workflow rate limits?">
@@ -189,6 +202,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Use Bulk triggers with Iterator instead of Single triggers for large batches
     - Combine related automations into fewer workflows
     - Use scheduled workflows to spread load over time
+
   </Accordion>
 
   <Accordion title="Can I retry a failed workflow run?">
@@ -205,6 +219,7 @@ description: Frequently asked questions about workflows in Twenty.
     - Test thoroughly with a few records before bulk operations
 
     Automatic retry functionality is on our roadmap for a future release.
+
   </Accordion>
 
   <Accordion title="Should I deactivate workflows before CSV imports?">
@@ -224,6 +239,7 @@ description: Frequently asked questions about workflows in Twenty.
     5. **Reactivate** the workflows when done
 
     **Alternative**: If you need the workflows to run on imported data, import in smaller batches to stay within rate limits.
+
   </Accordion>
 
   <Accordion title="How do I clean up my workflow layout?">
@@ -233,7 +249,7 @@ description: Frequently asked questions about workflows in Twenty.
     2. Click **Tidy up workflow**
 
     This will automatically rearrange all nodes into a clean, organized layout.
+
   </Accordion>
 
 </AccordionGroup>
-

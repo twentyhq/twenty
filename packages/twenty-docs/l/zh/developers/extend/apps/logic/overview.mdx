@@ -25,13 +25,25 @@ Twenty 应用的 **逻辑层** 是实际*运行*的代码——用于响应 HTTP
 ## 本节内容
 
 <CardGroup cols={2}>
-  <Card title="逻辑函数" icon="bolt" href="/l/zh/developers/extend/apps/logic/logic-functions">
+  <Card
+    title="逻辑函数"
+    icon="bolt"
+    href="/l/zh/developers/extend/apps/logic/logic-functions"
+  >
     核心构建块——触发器类型、载荷以及类型化的 API 客户端。
   </Card>
-  <Card title="技能与智能体" icon="robot" href="/l/zh/developers/extend/apps/logic/skills-and-agents">
+  <Card
+    title="技能与智能体"
+    icon="robot"
+    href="/l/zh/developers/extend/apps/logic/skills-and-agents"
+  >
     可复用的 AI 智能体指令和助手，支持自定义系统提示词。
   </Card>
-  <Card title="连接" icon="plug" href="/l/zh/developers/extend/apps/logic/connections">
+  <Card
+    title="连接"
+    icon="plug"
+    href="/l/zh/developers/extend/apps/logic/connections"
+  >
     你的应用为第三方服务（如 Linear、GitHub、Slack 等）持有的 OAuth 凭证。
   </Card>
 </CardGroup>
@@ -40,16 +52,19 @@ Twenty 应用的 **逻辑层** 是实际*运行*的代码——用于响应 HTTP
 
 逻辑函数选择一个或多个触发器——下面的每一项都是 `defineLogicFunction()` 上的一个独立字段：
 
-| 触发器         | 触发时机                                    | 设置                              |
-| ----------- | --------------------------------------- | ------------------------------- |
-| **HTTP 路由** | 请求命中你的 `/s/\<path>` 端点 | `httpRouteTriggerSettings`      |
-| **Cron**    | 匹配到一个 CRON 表达式时                         | `cronTriggerSettings`           |
-| **数据库事件**   | 当工作区记录被创建、更新或删除时                        | `databaseEventTriggerSettings`  |
-| **AI 工具**   | 某个 Twenty AI 功能决定调用你的函数时                | `toolTriggerSettings`           |
-| **工作流动作**   | 当工作流步骤调用你的函数时                           | `workflowActionTriggerSettings` |
+| 触发器         | 触发时机                              | 设置                            |
+| -------------- | ------------------------------------- | ------------------------------- |
+| **HTTP 路由**  | 请求命中你的 `/s/\<path>` 端点        | `httpRouteTriggerSettings`      |
+| **Cron**       | 匹配到一个 CRON 表达式时              | `cronTriggerSettings`           |
+| **数据库事件** | 当工作区记录被创建、更新或删除时      | `databaseEventTriggerSettings`  |
+| **AI 工具**    | 某个 Twenty AI 功能决定调用你的函数时 | `toolTriggerSettings`           |
+| **工作流动作** | 当工作流步骤调用你的函数时            | `workflowActionTriggerSettings` |
 
 函数在隔离的 Node.js 进程沙箱中运行，并通过限定在 [`defineApplication()`](/l/zh/developers/extend/apps/config/application) 上声明角色范围内的类型化 API 客户端访问工作区。
 
 <Note>
-**安装时钩子（Install-time hooks）**——在安装前或安装后运行的代码——与上述共享同一运行时，但使用它们自己的 define 函数，并位于 [Config → Install Hooks](/l/zh/developers/extend/apps/config/install-hooks) 下。
+  **安装时钩子（Install-time
+  hooks）**——在安装前或安装后运行的代码——与上述共享同一运行时，但使用它们自己的
+  define 函数，并位于 [Config → Install
+  Hooks](/l/zh/developers/extend/apps/config/install-hooks) 下。
 </Note>

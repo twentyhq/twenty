@@ -9,10 +9,10 @@ Když se obchod uzavře, je potřeba provést několik věcí: aktualizovat stav
 
 Když se příležitost přesune do stavu "Uzavřeno - Vyhráno":
 
-* Typ společnosti je třeba změnit z "Zájemce" na "Zákazník"
-* Je třeba vytvořit onboardingové úkoly
-* Je třeba upozornit tým Customer Success
-* Obchodní zástupce potřebuje potvrzení
+- Typ společnosti je třeba změnit z "Zájemce" na "Zákazník"
+- Je třeba vytvořit onboardingové úkoly
+- Je třeba upozornit tým Customer Success
+- Obchodní zástupce potřebuje potvrzení
 
 Dělat to ručně je časově náročné a náchylné k chybám.
 
@@ -105,17 +105,17 @@ Dejme jim skvělý start!
 | Pole            | Hodnota                                                                                             |
 | --------------- | --------------------------------------------------------------------------------------------------- |
 | **Komu**        | `{{trigger.object.owner.email}}`                                                                    |
-| **Předmět**     | `✅ Obchod uzavřen: {{trigger.object.name}}`                                                         |
+| **Předmět**     | `✅ Obchod uzavřen: {{trigger.object.name}}`                                                        |
 | **Text zprávy** | Gratulujeme! Váš obchod byl zpracován. Tým Customer Success byl upozorněn a onboarding byl zahájen. |
 
 ### Krok 8: Otestujte a aktivujte
 
 1. Otestujte přesunutím testovací příležitosti do stavu "Uzavřeno - Vyhráno"
 2. Ověřit:
-   * Typ společnosti změněn na "Zákazník"
-   * Onboardingový úkol vytvořen
-   * Tým Customer Success obdržel e-mail
-   * Obchodní zástupce obdržel potvrzení
+   - Typ společnosti změněn na "Zákazník"
+   - Onboardingový úkol vytvořen
+   - Tým Customer Success obdržel e-mail
+   - Obchodní zástupce obdržel potvrzení
 3. Až budete připraveni, aktivujte
 
 ## Zpracování Uzavřeno - Prohráno
@@ -124,7 +124,7 @@ Vytvořte podobný pracovní postup pro prohrané obchody:
 
 ### Spouštěč
 
-* Záznam je aktualizován (Příležitosti, Stádium = "Uzavřeno - Prohráno")
+- Záznam je aktualizován (Příležitosti, Stádium = "Uzavřeno - Prohráno")
 
 ### Akce
 
@@ -139,10 +139,10 @@ Pro složitější onboarding vytvořte více úkolů:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Použijte **Iterator** k vytvoření každého úkolu z pole.
 
 ### Udržujte své další nástroje aktuální
 
-* Vytvořte zákazníka ve fakturačním systému pomocí **HTTP Request**
+- Vytvořte zákazníka ve fakturačním systému pomocí **HTTP Request**
 
 ### Podmíněné akce
 
 Použijte akce **Filtr** k:
 
-* Odlišný onboarding pro enterprise vs SMB
-* Různé přiřazené osoby podle regionu
-* Přeskočit upozornění u malých obchodů
+- Odlišný onboarding pro enterprise vs SMB
+- Různé přiřazené osoby podle regionu
+- Přeskočit upozornění u malých obchodů
 
 ### Zahrnout podrobnosti obchodu
 
 Použijte akci **Code** k formátování:
 
-* Dokumenty se souhrnem obchodu
-* Poznámky k předání pro tým Customer Success
-* Vlastní onboardingové kontrolní seznamy
+- Dokumenty se souhrnem obchodu
+- Poznámky k předání pro tým Customer Success
+- Vlastní onboardingové kontrolní seznamy
 
 ## Související
 
-* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+- [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)

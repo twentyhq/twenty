@@ -6,10 +6,10 @@ icon: diagram-project
 
 关系用于将两个对象连接在一起。 在 Twenty 中，关系始终是 **双向的**——每个关系都有两侧，每一侧都作为一个字段声明，并引用另一侧。
 
-| 关系类型          | 描述                  | 是否有外键？              |
-| ------------- | ------------------- | ------------------- |
+| 关系类型      | 描述                                   | 是否有外键？           |
+| ------------- | -------------------------------------- | ---------------------- |
 | `MANY_TO_ONE` | 该对象的多条记录指向目标对象的一条记录 | 是（`joinColumnName`） |
-| `ONE_TO_MANY` | 该对象的一条记录拥有目标对象的多条记录 | 否（反向侧）              |
+| `ONE_TO_MANY` | 该对象的一条记录拥有目标对象的多条记录 | 否（反向侧）           |
 
 ## 关系如何工作
 
@@ -32,7 +32,8 @@ import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
 // Export so the other side can reference it
-export const POST_CARD_RECIPIENTS_FIELD_ID = 'a1111111-1111-1111-1111-111111111111';
+export const POST_CARD_RECIPIENTS_FIELD_ID =
+  'a1111111-1111-1111-1111-111111111111';
 // Import from the other side
 import { POST_CARD_FIELD_ID } from './post-card-on-post-card-recipient.field';
 
@@ -43,7 +44,8 @@ export default defineField({
   name: 'postCardRecipients',
   label: 'Post Card Recipients',
   icon: 'IconUsers',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_FIELD_ID,
   universalSettings: {
     relationType: RelationType.ONE_TO_MANY,
@@ -54,7 +56,12 @@ export default defineField({
 **步骤 2：在 PostCardRecipient 上定义 MANY_TO_ONE 侧**（“多”侧——持有外键）：
 
 ```ts src/fields/post-card-on-post-card-recipient.field.ts
-import { defineField, FieldType, RelationType, OnDeleteAction } from 'twenty-sdk/define';
+import {
+  defineField,
+  FieldType,
+  RelationType,
+  OnDeleteAction,
+} from 'twenty-sdk/define';
 import { POST_CARD_UNIVERSAL_IDENTIFIER } from '../objects/post-card.object';
 import { POST_CARD_RECIPIENT_UNIVERSAL_IDENTIFIER } from '../objects/post-card-recipient.object';
 
@@ -70,7 +77,8 @@ export default defineField({
   name: 'postCard',
   label: 'Post Card',
   icon: 'IconMail',
-  relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  relationTargetObjectMetadataUniversalIdentifier:
+    POST_CARD_UNIVERSAL_IDENTIFIER,
   relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
@@ -81,7 +89,9 @@ export default defineField({
 ```
 
 <Note>
-\*\*循环导入：\*\*两个关系字段相互引用对方的 `universalIdentifier`。 为避免循环导入问题，请在各自文件中将字段 ID 作为具名常量导出，并在另一个文件中导入它们。 构建系统会在编译时解析这些引用。
+  \*\*循环导入：\*\*两个关系字段相互引用对方的 `universalIdentifier`。
+  为避免循环导入问题，请在各自文件中将字段 ID
+  作为具名常量导出，并在另一个文件中导入它们。 构建系统会在编译时解析这些引用。
 </Note>
 
 ## 与标准对象建立关系
@@ -99,7 +109,8 @@ import {
 import { SELF_HOSTING_USER_UNIVERSAL_IDENTIFIER } from '../objects/self-hosting-user.object';
 
 export const PERSON_FIELD_ID = 'c3333333-3333-3333-3333-333333333333';
-export const SELF_HOSTING_USER_REVERSE_FIELD_ID = 'd4444444-4444-4444-4444-444444444444';
+export const SELF_HOSTING_USER_REVERSE_FIELD_ID =
+  'd4444444-4444-4444-4444-444444444444';
 
 export default defineField({
   universalIdentifier: PERSON_FIELD_ID,
@@ -111,7 +122,8 @@ export default defineField({
   isNullable: true,
   relationTargetObjectMetadataUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  relationTargetFieldMetadataUniversalIdentifier: SELF_HOSTING_USER_REVERSE_FIELD_ID,
+  relationTargetFieldMetadataUniversalIdentifier:
+    SELF_HOSTING_USER_REVERSE_FIELD_ID,
   universalSettings: {
     relationType: RelationType.MANY_TO_ONE,
     onDelete: OnDeleteAction.SET_NULL,
@@ -122,14 +134,14 @@ export default defineField({
 
 ## 关系字段属性
 
-| 属性                                                | 必填               | 描述                                                             |
-| ------------------------------------------------- | ---------------- | -------------------------------------------------------------- |
-| `type`                                            | 是                | 必须为 `FieldType.RELATION`                                       |
-| `relationTargetObjectMetadataUniversalIdentifier` | 是                | 目标对象的 `universalIdentifier`                                    |
-| `relationTargetFieldMetadataUniversalIdentifier`  | 是                | 目标对象上匹配字段的 `universalIdentifier`                               |
-| `universalSettings.relationType`                  | 是                | `RelationType.MANY_TO_ONE` 或 `RelationType.ONE_TO_MANY`        |
+| 属性                                              | 必填                 | 描述                                                                               |
+| ------------------------------------------------- | -------------------- | ---------------------------------------------------------------------------------- |
+| `type`                                            | 是                   | 必须为 `FieldType.RELATION`                                                        |
+| `relationTargetObjectMetadataUniversalIdentifier` | 是                   | 目标对象的 `universalIdentifier`                                                   |
+| `relationTargetFieldMetadataUniversalIdentifier`  | 是                   | 目标对象上匹配字段的 `universalIdentifier`                                         |
+| `universalSettings.relationType`                  | 是                   | `RelationType.MANY_TO_ONE` 或 `RelationType.ONE_TO_MANY`                           |
 | `universalSettings.onDelete`                      | 仅适用于 MANY_TO_ONE | 当被引用的记录被删除时的处理方式：`CASCADE`、`SET_NULL`、`RESTRICT` 或 `NO_ACTION` |
-| `universalSettings.joinColumnName`                | 仅适用于 MANY_TO_ONE | 外键的数据库列名（例如，`postCardId`）                                      |
+| `universalSettings.joinColumnName`                | 仅适用于 MANY_TO_ONE | 外键的数据库列名（例如，`postCardId`）                                             |
 
 ## 内联关系字段
 
@@ -146,8 +158,10 @@ export default defineObject({
       type: FieldType.RELATION,
       name: 'postCard',
       label: 'Post Card',
-      relationTargetObjectMetadataUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
-      relationTargetFieldMetadataUniversalIdentifier: POST_CARD_RECIPIENTS_FIELD_ID,
+      relationTargetObjectMetadataUniversalIdentifier:
+        POST_CARD_UNIVERSAL_IDENTIFIER,
+      relationTargetFieldMetadataUniversalIdentifier:
+        POST_CARD_RECIPIENTS_FIELD_ID,
       universalSettings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: OnDeleteAction.CASCADE,

@@ -7,7 +7,12 @@ description: Guia completo, passo a passo, para associar registos durante a impo
 
 Este guia orienta-o na importação de relações entre objetos — por exemplo, ligar Pessoas a Empresas ou Oportunidades a Pessoas.
 
-<Note>**O que pode ser importado:** Apenas relações um-para-muitos que apontem para um único tipo de objeto. Relações que apontam para vários tipos de objeto (como Notas ligadas a Pessoas E Empresas) ainda não são suportadas para importação.</Note>
+<Note>
+  **O que pode ser importado:** Apenas relações um-para-muitos que apontem para
+  um único tipo de objeto. Relações que apontam para vários tipos de objeto
+  (como Notas ligadas a Pessoas E Empresas) ainda não são suportadas para
+  importação.
+</Note>
 
 ## Compreender as Relações
 
@@ -15,9 +20,9 @@ Este guia orienta-o na importação de relações entre objetos — por exemplo,
 
 Numa relação um-para-muitos:
 
-* **Uma** Empresa tem **muitas** Pessoas (colaboradores)
-* **Uma** Empresa tem **muitas** Oportunidades
-* **Uma** Pessoa tem **muitas** Tarefas
+- **Uma** Empresa tem **muitas** Pessoas (colaboradores)
+- **Uma** Empresa tem **muitas** Oportunidades
+- **Uma** Pessoa tem **muitas** Tarefas
 
 O lado "um" é o **pai**. O lado "muitos" é o **filho**.
 
@@ -36,8 +41,8 @@ Antes de importar, determine qual objeto é o pai e qual é o filho.
 
 **Pergunte a si mesmo:** "UM [Objeto A] tem MUITOS [Objeto B]?"
 
-* Uma Empresa → Muitas Pessoas ✓ (A Empresa é o pai)
-* Uma Pessoa → Muitas Empresas ✗ (Isto está errado — uma pessoa pertence a uma empresa)
+- Uma Empresa → Muitas Pessoas ✓ (A Empresa é o pai)
+- Uma Pessoa → Muitas Empresas ✗ (Isto está errado — uma pessoa pertence a uma empresa)
 
 ## Passo 2: Importe primeiro os registos pai
 
@@ -54,6 +59,7 @@ O pai (lado "um") deve existir no Twenty antes de poder referenciá-lo.
 **Se o registo pai não existir, a importação falhará.**
 
 Verifique sempre que as Empresas são importadas antes de importar Pessoas com referências a empresas.
+
 </Warning>
 
 ## Passo 3: Anote o identificador único do pai
@@ -67,7 +73,10 @@ Precisa de referenciar o registo pai usando um **identificador único**. Opçõe
 | **Membros do Workspace**   | `id` (UUID), `email` (não o nome)                                         |
 | **Objetos personalizados** | `id` (UUID) ou qualquer campo marcado como único                          |
 
-<Note>**Recomendado:** Use `domain` para Empresas e `email` para Pessoas. São legíveis por humanos e fáceis de verificar na sua folha de cálculo.</Note>
+<Note>
+  **Recomendado:** Use `domain` para Empresas e `email` para Pessoas. São
+  legíveis por humanos e fáceis de verificar na sua folha de cálculo.
+</Note>
 
 ### Encontrar o identificador
 
@@ -87,9 +96,9 @@ Antes de importar, garanta que o campo de relação existe entre os seus objetos
 2. Selecione o seu objeto filho (por exemplo, Pessoas)
 3. Procure um campo de relação que aponte para o pai (por exemplo, Empresa)
 4. Se não existir, crie-o:
-   * Clique em **+ Adicionar campo**
-   * Selecione o tipo **Relação**
-   * Escolha o objeto pai
+   - Clique em **+ Adicionar campo**
+   - Selecione o tipo **Relação**
+   - Escolha o objeto pai
 
 ## Passo 5: Prepare o seu ficheiro CSV
 
@@ -120,6 +129,7 @@ A coluna `companyDomain` faz referência ao domínio da Empresa.
 **O formato do domínio é importante!**
 
 Use `https://domain.com` (não apenas `domain.com`). Isto corresponde à forma como a Twenty armazena domínios de Empresas e evita erros de correspondência.
+
 </Warning>
 
 ### Regras Importantes
@@ -134,8 +144,8 @@ Use `https://domain.com` (não apenas `domain.com`). Isto corresponde à forma c
 2. Clique em **⋮** → **Importar registos**
 3. Carregue o seu ficheiro CSV
 4. Na etapa de mapeamento de campos:
-   * Encontre a sua coluna de relação (por exemplo, `companyDomain`)
-   * Mapeie-a para o campo de relação **Empresa**
+   - Encontre a sua coluna de relação (por exemplo, `companyDomain`)
+   - Mapeie-a para o campo de relação **Empresa**
 5. Conclua o mapeamento restante
 6. Revise os erros e confirme
 
@@ -164,8 +174,8 @@ Após a importação:
 
 Ao ligar a Membros do Espaço de Trabalho (a sua equipa):
 
-* Use o **endereço de email** deles, não o nome
-* Exemplo: `owner@yourcompany.com`, não "John Smith"
+- Use o **endereço de email** deles, não o nome
+- Exemplo: `owner@yourcompany.com`, não "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -182,24 +192,26 @@ Review proposal,jane@yourcompany.com
     2. Crie um campo único personalizado no seu modelo de dados para armazenar um ID externo do seu sistema anterior
   </Accordion>
 
-  <Accordion title="Posso atualizar relações em registos existentes?">
-    Sim! Inclua o identificador único do registo filho (por exemplo, `email` para Pessoas) e o novo valor da relação. A importação atualizará a relação.
-  </Accordion>
+<Accordion title="Posso atualizar relações em registos existentes?">
+  Sim! Inclua o identificador único do registo filho (por exemplo, `email` para
+  Pessoas) e o novo valor da relação. A importação atualizará a relação.
+</Accordion>
 
-  <Accordion title="Posso importar relações muitos-para-muitos?">
-    Relações muitos-para-muitos ainda não são suportadas para importação. Isto está planeado para o 1.º semestre de 2026.
-  </Accordion>
+<Accordion title="Posso importar relações muitos-para-muitos?">
+  Relações muitos-para-muitos ainda não são suportadas para importação. Isto
+  está planeado para o 1.º semestre de 2026.
+</Accordion>
 
-  <Accordion title="Posso ligar a vários tipos de objeto (como Notas a Pessoas E Empresas)?">
-    Relações que apontam para vários tipos de objeto ainda não são suportadas para importação/exportação. Isto está no nosso roadmap.
-  </Accordion>
+<Accordion title="Posso ligar a vários tipos de objeto (como Notas a Pessoas E Empresas)?">
+  Relações que apontam para vários tipos de objeto ainda não são suportadas para
+  importação/exportação. Isto está no nosso roadmap.
+</Accordion>
 
-  <Accordion title="O que acontece se um registo pai não existir?">
-    A importação mostrará um erro para essa linha. Você pode:
-    * Importe primeiro o registo pai e depois volte a importar
-    * Corrija o valor de referência
-    * Remova a linha da importação
-  </Accordion>
+<Accordion title="O que acontece se um registo pai não existir?">
+  A importação mostrará um erro para essa linha. Você pode: * Importe primeiro o
+  registo pai e depois volte a importar * Corrija o valor de referência * Remova
+  a linha da importação
+</Accordion>
 
   <Accordion title="Porque é que a minha relação não está a ligar corretamente?">
     Causas comuns:
@@ -214,12 +226,13 @@ Review proposal,jane@yourcompany.com
 **Lembre-se: registos eliminados logicamente contam para a unicidade.**
 
 Se estiver a receber erros de "not found", mas o registo parece existir, verifique Menu de Comandos → Ver registos eliminados. O pai pode ter sido eliminado logicamente.
+
 </Warning>
 
 ## Resolução de Problemas
 
 Está a ter problemas? Consulte:
 
-* [Como Corrigir Erros de Importação](/l/pt/user-guide/data-migration/how-tos/fix-import-errors)
-* [Capacidades de Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
-* [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Como Corrigir Erros de Importação](/l/pt/user-guide/data-migration/how-tos/fix-import-errors)
+- [Capacidades de Importação de Relações](/l/pt/user-guide/data-migration/capabilities/import-relations)
+- [Restrições de Unicidade](/l/pt/user-guide/data-migration/capabilities/uniqueness-constraints)

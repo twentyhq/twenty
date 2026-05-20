@@ -9,10 +9,10 @@ description: Guía completa paso a paso para actualizar registros en masa median
 
 **Casos de uso:**
 
-* Actualizar cargos para varias personas
-* Cambiar información de empresas en masa
-* Añadir datos a nuevos campos personalizados
-* Corregir errores de datos en muchos registros
+- Actualizar cargos para varias personas
+- Cambiar información de empresas en masa
+- Añadir datos a nuevos campos personalizados
+- Corregir errores de datos en muchos registros
 
 ## Cómo Funciona
 
@@ -27,9 +27,10 @@ Cuando importa un archivo que contiene un **identificador único** que coincide 
 <Warning>
   **Los campos de selección múltiple se sobrescriben, no se combinan.**
 
-  Si un registro tiene `Option A` y `Option B` seleccionadas, y usted importa `["Option C"]`, el registro solo tendrá `Option C` después de la importación. La importación reemplaza todas las selecciones anteriores—no las agrega.
+Si un registro tiene `Option A` y `Option B` seleccionadas, y usted importa `["Option C"]`, el registro solo tendrá `Option C` después de la importación. La importación reemplaza todas las selecciones anteriores—no las agrega.
 
-  Para conservar los valores existentes, inclúyalos todos en su importación: `["Option A","Option B","Option C"]`
+Para conservar los valores existentes, inclúyalos todos en su importación: `["Option A","Option B","Option C"]`
+
 </Warning>
 
 ## Paso 1: Exporte sus datos actuales
@@ -42,13 +43,17 @@ Primero, exporte los registros que desea actualizar:
 4. Haga clic en **⋮** → **Exportar vista**
 5. Guarde el archivo CSV
 
-<Note>**¿Por qué exportar primero?** El archivo exportado tiene el formato correcto, incluye identificadores únicos y se asigna automáticamente durante la importación.</Note>
+<Note>
+  **¿Por qué exportar primero?** El archivo exportado tiene el formato correcto,
+  incluye identificadores únicos y se asigna automáticamente durante la
+  importación.
+</Note>
 
 ### Qué se exporta
 
-* Todas las columnas visibles en su vista actual
-* Los identificadores únicos del registro (`id`, `email`, `domain`)
-* Valores de los campos actuales que puede modificar
+- Todas las columnas visibles en su vista actual
+- Los identificadores únicos del registro (`id`, `email`, `domain`)
+- Valores de los campos actuales que puede modificar
 
 ## Paso 2: Edite el archivo CSV
 
@@ -82,7 +87,8 @@ id,email,firstName,lastName,jobTitle
 <Warning>
   **No cambie los valores del identificador único.**
 
-  Si cambia `john@acme.com` a `john.smith@acme.com`, Twenty creará un registro nuevo en lugar de actualizar el existente.
+Si cambia `john@acme.com` a `john.smith@acme.com`, Twenty creará un registro nuevo en lugar de actualizar el existente.
+
 </Warning>
 
 ## Paso 3: Importe el archivo actualizado
@@ -105,7 +111,10 @@ Twenty hace coincidir los registros mediante el identificador único y los actua
 | **Empresas**               | `dominio`             | `id`        | El dominio es legible para humanos            |
 | **Objetos personalizados** | Cualquier campo único | `id`        | Use su campo único personalizado              |
 
-<Note>**Use solo UN identificador único.** No asigne `email` Y `id`. Esto puede causar confusión y errores.</Note>
+<Note>
+  **Use solo UN identificador único.** No asigne `email` Y `id`. Esto puede
+  causar confusión y errores.
+</Note>
 
 ### Uso de campos únicos personalizados
 
@@ -160,21 +169,26 @@ newperson@acme.com,New,Person,Analyst      ← Crea nuevo (el email no coincide)
     Los registros con identificadores únicos que no coincidan con registros existentes se crearán como nuevos registros. Esto le permite actualizar y crear en la misma importación.
   </Accordion>
 
-  <Accordion title="¿Puedo borrar/vaciar el valor de un campo?">
-    Sí, deje la celda vacía en su CSV. La importación borrará el valor de ese campo en el registro existente.
-  </Accordion>
+<Accordion title="¿Puedo borrar/vaciar el valor de un campo?">
+  Sí, deje la celda vacía en su CSV. La importación borrará el valor de ese
+  campo en el registro existente.
+</Accordion>
 
-  <Accordion title="¿Qué ocurre con los campos que no incluyo en la importación?">
-    Los campos que no estén en su archivo de importación permanecen sin cambios en los registros existentes. Solo se actualizan los campos que incluya.
-  </Accordion>
+<Accordion title="¿Qué ocurre con los campos que no incluyo en la importación?">
+  Los campos que no estén en su archivo de importación permanecen sin cambios en
+  los registros existentes. Solo se actualizan los campos que incluya.
+</Accordion>
 
-  <Accordion title="¿Puedo actualizar campos de relación (como Empresa)?">
-    ¡Sí! Incluya el identificador único de la relación (p. ej., `companyDomain`) y asígnelo al campo de relación. Se actualizará la relación.
-  </Accordion>
+<Accordion title="¿Puedo actualizar campos de relación (como Empresa)?">
+  ¡Sí! Incluya el identificador único de la relación (p. ej., `companyDomain`) y
+  asígnelo al campo de relación. Se actualizará la relación.
+</Accordion>
 
-  <Accordion title="¿Cómo sé qué registros se actualizarán y cuáles se crearán?">
-    Durante el paso de revisión de la importación, Twenty le muestra cuántos registros se actualizarán frente a cuántos se crearán según las coincidencias del identificador único.
-  </Accordion>
+<Accordion title="¿Cómo sé qué registros se actualizarán y cuáles se crearán?">
+  Durante el paso de revisión de la importación, Twenty le muestra cuántos
+  registros se actualizarán frente a cuántos se crearán según las coincidencias
+  del identificador único.
+</Accordion>
 
   <Accordion title="¿Puedo deshacer una actualización masiva?">
     No hay deshacer automático. Le recomendamos exportar sus datos como copia de seguridad antes de realizar actualizaciones masivas.
@@ -193,6 +207,6 @@ newperson@acme.com,New,Person,Analyst      ← Crea nuevo (el email no coincide)
 
 ¿Tiene problemas? Revise:
 
-* [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
-* [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping)
+- [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
+- [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping)

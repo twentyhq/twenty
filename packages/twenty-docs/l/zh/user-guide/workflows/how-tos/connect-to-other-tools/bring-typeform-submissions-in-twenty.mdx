@@ -62,9 +62,9 @@ Typeform 会发送嵌套的 JSON 结构。 以下是一个简化示例：
 
 关键注意事项：
 
-* 表单数据嵌套在 `form_response` 下
-* **答案以数组形式返回**，而不是按命名字段返回
-* 每个答案都包含字段类型和标题以供参考
+- 表单数据嵌套在 `form_response` 下
+- **答案以数组形式返回**，而不是按命名字段返回
+- 每个答案都包含字段类型和标题以供参考
 
 ### 步骤 4：从 answers 数组中提取字段
 
@@ -103,20 +103,21 @@ export const main = async (params: {
 现在在后续步骤中，您可以在变量选择器中选择 `contact.firstName`、`contact.email` 等。
 
 <Tip>
-关于在 Code 操作中处理数组的更多详情，请参见[在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)。
+  关于在 Code 操作中处理数组的更多详情，请参见[在 Code
+  操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)。
 </Tip>
 
 ### 步骤 5：创建记录
 
 添加 **创建记录** 操作：
 
-| 字段       | 值                                   |
-| -------- | ----------------------------------- |
-| **对象**   | 人员                                  |
-| **名字**   | `{{code.contact.firstName}}`        |
-| **姓氏**   | `{{code.contact.lastName}}`         |
-| **电子邮件** | `{{code.contact.email}}`            |
-| **公司**   | 基于 `{{code.contact.company}}` 搜索或创建 |
+| 字段         | 值                                         |
+| ------------ | ------------------------------------------ |
+| **对象**     | 人员                                       |
+| **名字**     | `{{code.contact.firstName}}`               |
+| **姓氏**     | `{{code.contact.lastName}}`                |
+| **电子邮件** | `{{code.contact.email}}`                   |
+| **公司**     | 基于 `{{code.contact.company}}` 搜索或创建 |
 
 ### 步骤 6：测试并启用
 
@@ -126,5 +127,5 @@ export const main = async (params: {
 
 ## 相关内容
 
-* [设置 Webhook 触发器](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
-* [在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [设置 Webhook 触发器](/l/zh/user-guide/workflows/how-tos/connect-to-other-tools/set-up-a-webhook-trigger)
+- [在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

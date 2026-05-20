@@ -5,7 +5,10 @@ description: 自动通知团队成员他们即将到期或已逾期的任务。
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 每天向每位团队成员发送电子邮件提醒，告知他们今天到期的任务。
 
@@ -45,8 +48,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 1. 在迭代器内，添加一个 **搜索记录** 操作
 2. 选择 **Tasks** 作为对象
 3. 添加过滤器：
-   * **Assignee** = 当前工作区成员（来自迭代器）
-   * **Due Date** = 今天
+   - **Assignee** = 当前工作区成员（来自迭代器）
+   - **Due Date** = 今天
 
 ### 步骤 5：将任务格式化为电子邮件正文（在迭代器内）
 
@@ -78,20 +81,18 @@ export const main = async (params: {
 };
 ```
 
-<Note>
-将 `yourSubDomain` 替换为你实际的 Twenty 工作区子域名。
-</Note>
+<Note>将 `yourSubDomain` 替换为你实际的 Twenty 工作区子域名。</Note>
 
 ### 步骤 6：发送电子邮件（在迭代器内）
 
 1. 添加一个 **Send Email** 操作（仍在迭代器内）
 2. 配置：
 
-| 字段      | 值                                                |
-| ------- | ------------------------------------------------ |
+| 字段       | 值                                                           |
+| ---------- | ------------------------------------------------------------ |
 | **收件人** | `{{iterator.currentItem.userEmail}}`（工作区成员的电子邮件） |
-| **主题**  | 您今天到期的任务                                         |
-| **正文**  | `{{code.formattedTasks}}`                        |
+| **主题**   | 您今天到期的任务                                             |
+| **正文**   | `{{code.formattedTasks}}`                                    |
 
 ### 步骤 7：测试并启用
 
@@ -101,6 +102,6 @@ export const main = async (params: {
 
 ## 相关内容
 
-* [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
-* [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [工作流操作](/l/zh/user-guide/workflows/capabilities/workflow-actions)
+- [从工作流发送电子邮件](/l/zh/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [在 Code 操作中处理数组](/l/zh/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

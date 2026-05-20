@@ -114,28 +114,37 @@ Das ist zu erwarten, da der Benutzer ohne Anmeldung nicht berechtigt ist, da sei
 
 #### Wie überprüfen Sie, ob Ihr Worker läuft?
 
-* Gehen Sie zu [webhook-test.com](https://webhook-test.com/) und kopieren Sie **Ihre einzigartige Webhook-URL**.
+- Gehen Sie zu [webhook-test.com](https://webhook-test.com/) und kopieren Sie **Ihre einzigartige Webhook-URL**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhook-Test" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Webhook-Test"
+  />
 </div>
 
-* Öffnen Sie Ihre Twenty-App, navigieren Sie zu `/settings`, und aktivieren Sie den **Erweitert**-Schalter unten links auf dem Bildschirm.
-* Erstellen Sie einen neuen Webhook.
-* Fügen Sie **Ihre einzigartige Webhook-URL** in das Feld **Endpoint-Url** in Twenty ein. Stellen Sie die **Filter** auf `Companies` und `Created` ein.
+- Öffnen Sie Ihre Twenty-App, navigieren Sie zu `/settings`, und aktivieren Sie den **Erweitert**-Schalter unten links auf dem Bildschirm.
+- Erstellen Sie einen neuen Webhook.
+- Fügen Sie **Ihre einzigartige Webhook-URL** in das Feld **Endpoint-Url** in Twenty ein. Stellen Sie die **Filter** auf `Companies` und `Created` ein.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook-Einstellungen" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Webhook-Einstellungen"
+  />
 </div>
 
-* Gehen Sie zu `/objects/companies` und erstellen Sie einen neuen Unternehmenseintrag.
-* Kehren Sie zu [webhook-test.com](https://webhook-test.com/) zurück und prüfen Sie, ob ein neuer **POST-Anfrage** empfangen wurde.
+- Gehen Sie zu `/objects/companies` und erstellen Sie einen neuen Unternehmenseintrag.
+- Kehren Sie zu [webhook-test.com](https://webhook-test.com/) zurück und prüfen Sie, ob ein neuer **POST-Anfrage** empfangen wurde.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhook-Test-Ergebnis" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Webhook-Test-Ergebnis"
+  />
 </div>
 
-* Wenn eine **POST-Anfrage** empfangen wird, läuft Ihr Worker erfolgreich. Andernfalls müssen Sie Ihren Worker beheben.
+- Wenn eine **POST-Anfrage** empfangen wird, läuft Ihr Worker erfolgreich. Andernfalls müssen Sie Ihren Worker beheben.
 
 #### Front-End startet nicht und gibt Fehler TS5042 zurück: Option "project" kann nicht mit Quelldateien auf der Befehlszeile gemischt werden
 
@@ -199,9 +208,8 @@ Wenn Sie Twenty hinter einem Reverse-Proxy ausführen und Verbindungsprobleme ha
    Stellen Sie sicher, dass `SERVER_URL` in Ihrer `.env`-Datei mit Ihrer externen Zugriffs-URL übereinstimmt, einschließlich `https`, falls SSL aktiviert ist.
 
 2. **Reverse-Proxy-Einstellungen prüfen:**
-
-   * Stellen Sie sicher, dass Ihr Reverse-Proxy Anfragen korrekt an den Twenty-Server weiterleitet.
-   * Stellen Sie sicher, dass Header wie `X-Forwarded-For` und `X-Forwarded-Proto` korrekt gesetzt sind.
+   - Stellen Sie sicher, dass Ihr Reverse-Proxy Anfragen korrekt an den Twenty-Server weiterleitet.
+   - Stellen Sie sicher, dass Header wie `X-Forwarded-For` und `X-Forwarded-Proto` korrekt gesetzt sind.
 
 3. **Dienste neu starten:**
 
@@ -215,7 +223,7 @@ Das Ändern des Datenordner-Eigentums auf dem Host von root zu einem anderen Ben
 
 Wenn Sie auf Probleme stoßen, die in diesem Leitfaden nicht behandelt werden:
 
-* Protokolle überprüfen:
+- Protokolle überprüfen:
 
   Überprüfen Sie die Container-Logs auf Fehlermeldungen:
 
@@ -223,6 +231,6 @@ Wenn Sie auf Probleme stoßen, die in diesem Leitfaden nicht behandelt werden:
   docker compose logs
   ```
 
-* Unterstützung aus der Community:
+- Unterstützung aus der Community:
 
   Wenden Sie sich an die [Twenty Community](https://github.com/twentyhq/twenty/issues) oder [Support-Kanäle](https://discord.gg/cx5n4Jzs57) für Unterstützung.

@@ -10,8 +10,8 @@ Componentele front-end sunt componente React care se afișează direct în inter
 
 Componentele frontale pot fi afișate în două locații în cadrul Twenty:
 
-* **Panou lateral** — Componentele frontale care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă frontală este declanșată din meniul de comenzi.
-* **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în machetele de pagină. La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă frontală.
+- **Panou lateral** — Componentele frontale care nu sunt headless se deschid în panoul lateral din dreapta. Acesta este comportamentul implicit atunci când o componentă frontală este declanșată din meniul de comenzi.
+- **Widgeturi (tablouri de bord și pagini de înregistrare)** — Componentele frontale pot fi încorporate ca widgeturi în machetele de pagină. La configurarea unui tablou de bord sau a machetei unei pagini de înregistrare, utilizatorii pot adăuga un widget de componentă frontală.
 
 ## Exemplu de bază
 
@@ -53,8 +53,11 @@ export default defineCommandMenuItem({
 
 După sincronizarea cu `yarn twenty dev` (sau prin rularea comenzii `yarn twenty dev --once` o singură dată), acțiunea rapidă apare în colțul din dreapta sus al paginii:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Buton de acțiune rapidă în colțul din dreapta sus" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="Buton de acțiune rapidă în colțul din dreapta sus"
+  />
 </div>
 
 Faceți clic pe el pentru a afișa componenta inline.
@@ -90,7 +93,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -113,10 +119,10 @@ Pachetul `twenty-sdk` oferă patru componente ajutătoare Command, concepute pen
 
 Importă-le din `twenty-sdk/command`:
 
-* **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
-* **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
-* **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — Deschide o anumită pagină din panoul lateral. Props: `page`, `pageTitle`, `pageIcon`.
+- **`Command`** — Rulează un callback asincron prin prop-ul `execute`.
+- **`CommandLink`** — Navighează către o rută a aplicației. Props: `to`, `params`, `queryParams`, `options`.
+- **`CommandModal`** — Deschide un modal de confirmare. Dacă utilizatorul confirmă, execută callback-ul `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — Deschide o anumită pagină din panoul lateral. Props: `page`, `pageTitle`, `pageIcon`.
 
 Iată un exemplu complet de componentă front-end headless care folosește `Command` pentru a rula o acțiune din meniul de comenzi:
 
@@ -299,7 +305,10 @@ Folosiți `useSelectedRecordIds()` pentru a gestiona mai multe înregistrări se
 
 ```tsx src/front-components/bulk-export.tsx
 import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import {
+  useSelectedRecordIds,
+  numberOfSelectedRecords,
+} from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 
@@ -384,10 +393,7 @@ Câmpul `conditionalAvailabilityExpression` vă permite să controlați când es
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
 import { defineCommandMenuItem } from 'twenty-sdk/define';
-import {
-  objectPermissions,
-  everyEquals,
-} from 'twenty-sdk/front-component';
+import { objectPermissions, everyEquals } from 'twenty-sdk/front-component';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -460,12 +466,12 @@ Consultați [secțiunea despre resurse publice](/l/ro/developers/extend/apps/cli
 
 Componentele front-end acceptă mai multe abordări de stilizare. Puteți folosi:
 
-* **Stiluri inline** — `style={{ color: 'red' }}`
-* **Componente Twenty UI** — import din `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar și altele)
-* **Emotion** — CSS-in-JS cu `@emotion/react`
-* **Styled-components** — pattern-uri `styled.div`
-* **Tailwind CSS** — clase utilitare
-* **Orice bibliotecă CSS-in-JS** compatibilă cu React
+- **Stiluri inline** — `style={{ color: 'red' }}`
+- **Componente Twenty UI** — import din `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar și altele)
+- **Emotion** — CSS-in-JS cu `@emotion/react`
+- **Styled-components** — pattern-uri `styled.div`
+- **Tailwind CSS** — clase utilitare
+- **Orice bibliotecă CSS-in-JS** compatibilă cu React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

@@ -3,7 +3,6 @@ title: Folder Architecture
 info: A detailed look into our server folder architecture
 ---
 
-
 The backend directory structure is as follows:
 
 ```
@@ -84,7 +83,6 @@ workspace
   └───workspace.factory.ts
 ```
 
-
 The root of the workspace directory includes the `workspace.factory.ts`, a file containing the `createGraphQLSchema` function. This function generates workspace-specific schema by using the metadata to tailor a schema for individual workspaces. By separating the schema and resolver construction, we use the `makeExecutableSchema` function, which combines these discrete elements.
 
 This strategy is not just about organization, but also helps with optimization, such as caching generated type definitions to enhance performance and scalability.
@@ -96,6 +94,7 @@ Generates the GraphQL schema, and includes:
 #### Factories:
 
 Specialised constructors to generate GraphQL-related constructs.
+
 - The type.factory translates field metadata into GraphQL types using `TypeMapperService`.
 - The type-definition.factory creates GraphQL input or output objects derived from `objectMetadata`.
 
@@ -124,4 +123,3 @@ Each factory in this directory is responsible for producing a distinct resolver 
 ### Workspace Query Runner
 
 Runs the generated queries on the database and parses the result.
-

@@ -9,9 +9,9 @@ Mențineți pipeline-ul sănătos alertând managerii când oportunitățile dev
 
 Oportunitățile lăsate fără actualizări duc la:
 
-* Tranzacții care se răcesc
-* Previziuni nesigure
-* Venituri pierdute
+- Tranzacții care se răcesc
+- Previziuni nesigure
+- Venituri pierdute
 
 ## Soluția
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ Adăugați acțiunea **Send Email**:
 
 Modificați filtrul Search Records pentru a schimba de la 7 zile la perioada preferată:
 
-* 3 zile pentru vânzări cu ritm ridicat
-* 14 zile pentru tranzacții enterprise
-* 30 de zile pentru cicluri de vânzări lungi
+- 3 zile pentru vânzări cu ritm ridicat
+- 14 zile pentru tranzacții enterprise
+- 30 de zile pentru cicluri de vânzări lungi
 
 ### Alerte pentru reprezentanți individuali
 
@@ -132,5 +132,5 @@ Utilizați **HTTP Request** pentru a posta către un webhook Slack în locul sau
 
 ## Conexe
 
-* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
-* [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+- [Trimiteți e-mailuri din fluxuri de lucru](/l/ro/user-guide/workflows/capabilities/send-emails-from-workflows)

@@ -28,32 +28,38 @@ Consigliamo di costruire automazioni per due scopi principali:
 
 Ogni flusso di lavoro inizia con un trigger. Scegli tra:
 
-* **Eventi dei record**: quando un record viene creato, aggiornato o eliminato
-* **Pianificazione**: Esegui in orari specifici (giornalmente, settimanalmente, ecc.)
-* **Manuale**: Attivato da un'azione dell'utente
-* **Webhook**: Attivato da un webhook
+- **Eventi dei record**: quando un record viene creato, aggiornato o eliminato
+- **Pianificazione**: Esegui in orari specifici (giornalmente, settimanalmente, ecc.)
+- **Manuale**: Attivato da un'azione dell'utente
+- **Webhook**: Attivato da un webhook
 
-<img src="/images/user-guide/workflows/workflow_triggers.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/workflow_triggers.png"
+  style={{ width: '100%' }}
+/>
 
 ### Passaggio 3: Aggiungi azioni
 
 Dopo il tuo trigger, aggiungi una o più azioni:
 
-* **Crea record**: Aggiungi nuovi record a qualsiasi oggetto
-* **Aggiorna record**: Modifica i dati dei record esistenti
-* **Elimina record**: Rimuovi i record dagli oggetti
-* **Cerca record**: Trova i record che corrispondono ai criteri
-* **Upsert record**: Crea o aggiorna in base ai criteri di corrispondenza
-* **Iterator**: Itera sugli array di record
-* **Filtro**: Controlla quali record proseguono
-* **Ritardo**: Attendi prima di continuare (durata o data programmata)
-* **Invia email**: Invia email tramite il tuo account collegato
-* **Codice**: Esegui JavaScript personalizzato
-* **Richiesta HTTP**: Chiama API esterne
-* **Modulo**: Raccogli input dagli utenti all'interno di Twenty UI al momento dell'esecuzione
-* **Agente IA** (In arrivo): Esegui attività di IA intelligenti
+- **Crea record**: Aggiungi nuovi record a qualsiasi oggetto
+- **Aggiorna record**: Modifica i dati dei record esistenti
+- **Elimina record**: Rimuovi i record dagli oggetti
+- **Cerca record**: Trova i record che corrispondono ai criteri
+- **Upsert record**: Crea o aggiorna in base ai criteri di corrispondenza
+- **Iterator**: Itera sugli array di record
+- **Filtro**: Controlla quali record proseguono
+- **Ritardo**: Attendi prima di continuare (durata o data programmata)
+- **Invia email**: Invia email tramite il tuo account collegato
+- **Codice**: Esegui JavaScript personalizzato
+- **Richiesta HTTP**: Chiama API esterne
+- **Modulo**: Raccogli input dagli utenti all'interno di Twenty UI al momento dell'esecuzione
+- **Agente IA** (In arrivo): Esegui attività di IA intelligenti
 
-<img src="/images/user-guide/workflows/workflow_actions.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/workflow_actions.png"
+  style={{ width: '100%' }}
+/>
 
 ### Passaggio 4: Testa e attiva
 
@@ -63,13 +69,13 @@ Dopo il tuo trigger, aggiungi una o più azioni:
 
 ## Pratiche migliori per i flussi di lavoro
 
-* **Modifica i nomi dei passaggi**: Rinomina gli step del tuo flusso di lavoro per descrivere chiaramente cosa fa ciascuno. Ciò aiuta con la manutenzione e facilita il passaggio ai colleghi
-* **Sfrutta i dati dei passaggi precedenti**: Puoi utilizzare i campi dei record restituiti da qualsiasi passaggio precedente nel tuo flusso di lavoro
-* **Inizia in modo semplice**: Comincia con flussi di lavoro di base e aggiungi complessità nel tempo man mano che diventi più a tuo agio con il sistema
-* **Pianifica prima di costruire**: Mappa la logica del tuo flusso di lavoro prima di iniziare a costruire per evitare di rimanere bloccato a metà
+- **Modifica i nomi dei passaggi**: Rinomina gli step del tuo flusso di lavoro per descrivere chiaramente cosa fa ciascuno. Ciò aiuta con la manutenzione e facilita il passaggio ai colleghi
+- **Sfrutta i dati dei passaggi precedenti**: Puoi utilizzare i campi dei record restituiti da qualsiasi passaggio precedente nel tuo flusso di lavoro
+- **Inizia in modo semplice**: Comincia con flussi di lavoro di base e aggiungi complessità nel tempo man mano che diventi più a tuo agio con il sistema
+- **Pianifica prima di costruire**: Mappa la logica del tuo flusso di lavoro prima di iniziare a costruire per evitare di rimanere bloccato a metà
 
 ## Prossimi Passi
 
-* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
-* [Automazioni CRM](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)
+- [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Automazioni CRM](/l/it/user-guide/workflows/how-tos/crm-automations/closed-won-automations)

@@ -11,6 +11,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Çözüm**: **Ayarlar → Üyeler → Roller** altında size iş akışı erişimi vermesi için çalışma alanı yöneticinizle iletişime geçin.
 
     Kenar çubuğunuzda İş Akışları bölümünü hiç görmüyorsanız, bunun bir yetki sorunu olduğunu doğrular.
+
   </Accordion>
 
   <Accordion title="Üst gezinme çubuğunda manuel iş akışım düğmesini neden görmüyorum?">
@@ -23,6 +24,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     **Kontrol etmek için**: iş akışını açın → tetikleyiciye tıklayın → "Navbar placement" alanının "Pinned" olarak ayarlandığını doğrulayın.
 
     Üst gezinme çubuğu ayarlarından bağımsız olarak manuel iş akışlarına her zaman **Cmd + K** (veya **Ctrl + K**) ile erişebilirsiniz.
+
   </Accordion>
 
   <Accordion title="Single, Global ve Bulk manuel tetikleyiciler arasındaki fark nedir?">
@@ -37,6 +39,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * **Bulk**: Kayıtları birlikte işlemeniz veya kredi kullanımını optimize etmeniz gerektiğinde kullanın (Iterator eylemi gerektirir)
 
     Ayrıntılar için [İş Akışı Tetikleyicileri](/l/tr/user-guide/workflows/capabilities/workflow-triggers) bölümüne bakın.
+
   </Accordion>
 
   <Accordion title="Bir If/Else düğümü görmüyorum. Ne yapmalıyım?">
@@ -55,6 +58,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     Yalnızca filtre koşulu geçen dal, sonraki eylemlerini çalıştırır.
 
     Adım adım bir kılavuz için [Dalları Nasıl Kullanılır](/l/tr/user-guide/workflows/capabilities/workflow-branches) bölümüne bakın.
+
   </Accordion>
 
   <Accordion title="İş akışı dalları paralel mi çalışıyor?">
@@ -65,6 +69,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Zıt koşullar ayarlayın (ör. Dal A: status = "Open", Dal B: status ≠ "Open")
 
     Filtre koşulunu sağlamayan dallar çalışmayı durdurur, diğerleri devam eder.
+
   </Accordion>
 
   <Accordion title="Dalları yeniden birleştirebilir miyim?">
@@ -76,6 +81,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     3. Her dalın sonundan bu yeni adıma bağlantıları sürükleyin
 
     Birleştirilen adım, bağlı tüm dallar tamamlandıktan sonra çalışacaktır.
+
   </Accordion>
 
   <Accordion title="Search Records sonuçlarının sınırı nedir?">
@@ -87,12 +93,14 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Toplu işlemler için API kullanmayı düşünün
 
     Çoğu iş akışı için 200 kayıt yeterlidir. Bu sınıra düzenli olarak ulaşıyorsanız otomasyonunuzu yeniden yapılandırmayı düşünün.
+
   </Accordion>
 
   <Accordion title="İş akışı e-postalarında kişileri CC'ye ekleyebilir miyim?">
     **Henüz değil.** Send Email eylemi için CC ve BCC alanları yol haritamızda.
 
     **Geçici çözüm**: Ek alıcılara göndermek için birden fazla Send Email eylemi ekleyin veya CC'yi destekleyen harici bir e-posta hizmeti üzerinden göndermek için bir HTTP Request kullanın.
+
   </Accordion>
 
   <Accordion title="Önceki adımların çıktılarını nasıl kullanırım?">
@@ -108,6 +116,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Kod çıktısı: `{{code.calculatedValue}}`
 
     Eylem yapılandırmasında herhangi bir alanın üzerine gelerek önceki adımlardan kullanılabilir değişkenleri görebilirsiniz.
+
   </Accordion>
 
   <Accordion title="Iterator neden başarısız oluyor?">
@@ -122,6 +131,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     2. Filter: length > 0
     3. Iterator: `{{searchRecords}}` öğesini seçin
     4. Iterator içindeki eylemler `{{iterator.currentItem.fieldName}}` kullanır
+
   </Accordion>
 
   <Accordion title="Code eylemleri için en uzun yürütme süresi nedir?">
@@ -136,6 +146,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Ağır hesaplamalardan kaçının; yoğun işlemler için HTTP Request üzerinden harici hizmetler kullanın
     * Yürütme süresini azaltmak için kodunuzu optimize edin
     * Daha uzun işlemeye ihtiyacınız varsa, verileri toplu olarak işleyen zamanlanmış iş akışlarını kullanmayı düşünün
+
   </Accordion>
 
   <Accordion title="İş akışı çalıştırmalarını nasıl incelerim?">
@@ -152,6 +163,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * **Veri**: Her adımda giriş/çıkış verilerini görüntüleyin
 
     Ayrıntılar için [İş Akışı Çalıştırmaları](/l/tr/user-guide/workflows/capabilities/workflow-runs) bölümüne bakın.
+
   </Accordion>
 
   <Accordion title="İş akışı çalıştırmalarımı neden görmüyorum?">
@@ -171,6 +183,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Büyük toplu işlemleri zamana yayın
     * Tetikleyici frekansını azaltmak için filtreler kullanın
     * Ağır iş akışlarını yoğun olmayan saatlerde zamanlayın
+
   </Accordion>
 
   <Accordion title="İş akışlarına ilişkin hız sınırları nelerdir?">
@@ -189,6 +202,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Büyük toplu işlemler için Single tetikleyiciler yerine Iterator ile birlikte Bulk tetikleyicileri kullanın
     * İlgili otomasyonları daha az sayıda iş akışında birleştirin
     * Yükü zamana yaymak için zamanlanmış iş akışlarını kullanın
+
   </Accordion>
 
   <Accordion title="Başarısız olmuş bir iş akışı çalıştırmasını yeniden deneyebilir miyim?">
@@ -205,6 +219,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     * Toplu işlemlerden önce birkaç kayıtla kapsamlı şekilde test edin
 
     Otomatik yeniden deneme işlevi gelecekteki bir sürüm için yol haritamızda.
+
   </Accordion>
 
   <Accordion title="CSV içe aktarmalarından önce iş akışlarını devre dışı bırakmalı mıyım?">
@@ -224,6 +239,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     5. İşiniz bittiğinde iş akışlarını **yeniden etkinleştirin**
 
     **Alternatif**: İş akışlarının içe aktarılan veriler üzerinde çalışması gerekiyorsa, hız sınırları içinde kalmak için daha küçük partiler halinde içe aktarın.
+
   </Accordion>
 
   <Accordion title="İş akışı yerleşimimi nasıl temizlerim?">
@@ -233,6 +249,7 @@ description: Twenty'deki iş akışları hakkında sıkça sorulan sorular.
     2. **Tidy up workflow** öğesine tıklayın
 
     Bu, tüm düğümleri otomatik olarak temiz ve düzenli bir yerleşime yeniden düzenleyecektir.
+
   </Accordion>
 
 </AccordionGroup>

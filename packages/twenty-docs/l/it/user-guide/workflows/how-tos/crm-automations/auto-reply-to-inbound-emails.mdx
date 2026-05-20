@@ -23,7 +23,10 @@ Scegli **When a Record is Created** e seleziona **Messages**.
 
 Ogni volta che un'email arriva in Twenty, questo si attiva.
 
-<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/workflow-overview.png"
+  style={{ width: '100%' }}
+/>
 
 ### Passaggio 3: Cerca chi l'ha inviato
 
@@ -40,7 +43,10 @@ L'indirizzo del mittente non è presente sul messaggio stesso — si trova nel r
 
 Questo ti fornisce l'email del mittente in `handle` e il suo nome in `displayName`.
 
-<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/find-sender.png"
+  style={{ width: '100%' }}
+/>
 
 ### Passaggio 4: Triage con AI e bozza di risposta
 
@@ -69,7 +75,10 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 AI Agent produce la sua risposta in un campo `response` a cui i passaggi successivi possono fare riferimento.
 
-<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/ai-triage.png"
+  style={{ width: '100%' }}
+/>
 
 ### Passaggio 5: Ramifica in base alla decisione dell'AI
 
@@ -83,7 +92,10 @@ Aggiungi un'azione **If/Else** per verificare se l'AI ha deciso di rispondere o 
 
 Spam, newsletter e messaggi generati automaticamente vengono scartati. Tutto il resto passa al passaggio successivo.
 
-<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/should-reply.png"
+  style={{ width: '100%' }}
+/>
 
 ### Passaggio 6: Invia una risposta nello stesso thread
 
@@ -98,14 +110,23 @@ Aggiungi un'azione **Send Email** nel ramo "if true". Fai clic su **Advanced opt
 
 Il campo In-Reply-To è ciò che rende questo un messaggio di risposta invece di una nuova conversazione. Il destinatario lo vede nel thread sotto l'email originale in Gmail, Outlook o qualsiasi altro client.
 
-<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/send-email.png"
+  style={{ width: '100%' }}
+/>
 
 <Tip>
-**In-Reply-To** si aspetta un `message.headerMessageId` dal trigger — è l'impronta univoca dell'email, non un indirizzo del destinatario. Se lo lasci vuoto, l'email viene comunque inviata, solo come messaggio autonomo.
+  **In-Reply-To** si aspetta un `message.headerMessageId` dal trigger — è
+  l'impronta univoca dell'email, non un indirizzo del destinatario. Se lo lasci
+  vuoto, l'email viene comunque inviata, solo come messaggio autonomo.
 </Tip>
 
 <Warning>
-Gmail usa l'oggetto per raggruppare i messaggi nei thread. L'oggetto **deve** iniziare con `Re:` (inclusi i due punti e lo spazio) affinché Gmail visualizzi la risposta all'interno del thread originale. Senza di esso, la risposta apparirà come una conversazione separata — anche se l'intestazione In-Reply-To è impostata correttamente.
+  Gmail usa l'oggetto per raggruppare i messaggi nei thread. L'oggetto **deve**
+  iniziare con `Re:` (inclusi i due punti e lo spazio) affinché Gmail visualizzi
+  la risposta all'interno del thread originale. Senza di esso, la risposta
+  apparirà come una conversazione separata — anche se l'intestazione In-Reply-To
+  è impostata correttamente.
 </Warning>
 
 ### Passaggio 7: Testa e attiva
@@ -116,6 +137,6 @@ Attivalo quando sei soddisfatto.
 
 ## Idee per sviluppare ulteriormente
 
-* **Rispondi solo ai VIP** — aggiungi un ramo che controlli il dominio del mittente o se esiste come Contatto in Twenty
-* **Instrada in base all'intento** — usa prompt distinti di AI Agent per gestire le richieste commerciali in modo diverso rispetto a quelle di supporto
-* **Arricchisci prima di rispondere** — aggiungi un passaggio Search Records per inserire nel prompt dell'AI l'azienda del mittente o la cronologia delle trattative per risposte più personalizzate
+- **Rispondi solo ai VIP** — aggiungi un ramo che controlli il dominio del mittente o se esiste come Contatto in Twenty
+- **Instrada in base all'intento** — usa prompt distinti di AI Agent per gestire le richieste commerciali in modo diverso rispetto a quelle di supporto
+- **Arricchisci prima di rispondere** — aggiungi un passaggio Search Records per inserire nel prompt dell'AI l'azienda del mittente o la cronologia delle trattative per risposte più personalizzate

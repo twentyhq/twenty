@@ -13,14 +13,22 @@ Fiecare fișier de funcție folosește `defineLogicFunction()` pentru a exporta 
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  CronPayload,
+  RoutePayload,
+} from 'twenty-sdk/define';
 import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
-  const name = 'name' in params.queryStringParameters
-    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
-    : 'Hello world';
+  const name =
+    'name' in params.queryStringParameters
+      ? (params.queryStringParameters.name ??
+        process.env.DEFAULT_RECIPIENT_NAME ??
+        'Hello world')
+      : 'Hello world';
 
   const result = await client.mutation({
     createPostCard: {
@@ -52,11 +60,12 @@ export default defineLogicFunction({
 ```
 
 Tipuri de declanșatoare disponibile:
-* **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
-> de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
-* **cron**: Rulează funcția pe un program folosind o expresie CRON.
-* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
-> de ex. `person.updated`, `*.created`, `company.*`
+
+- **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
+  > de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
+- **cron**: Rulează funcția pe un program folosind o expresie CRON.
+- **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
+  > de ex. `person.updated`, `*.created`, `company.*`
 
 <Note>
 Puteți, de asemenea, să executați manual o funcție folosind CLI:
@@ -74,6 +83,7 @@ Puteți urmări jurnalele cu:
 ```bash filename="Terminal"
 yarn twenty logs
 ```
+
 </Note>
 
 #### Payload-ul declanșatorului de rută
@@ -95,17 +105,16 @@ const handler = async (event: RoutePayload) => {
 
 Tipul `RoutePayload` are următoarea structură:
 
-  | Proprietate                  | Tip                                                     | Descriere                                                                                                                                                                                                                                               | Exemplu                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                                                                                                                                                                                          | consultați secțiunea de mai jos                                            |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                                                                                                                                                                                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                                                                                                                                                                                                             | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Corpul cererii analizat (JSON)                                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Corpul original al cererii în UTF-8, înainte de parsarea JSON. Util pentru verificarea semnăturilor de tip HMAC pentru webhook-uri (de exemplu, `X-Hub-Signature-256` de la GitHub, Stripe). `undefined` atunci când mediul de execuție nu a păstrat-o. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Indică dacă corpul este codificat în base64                                                                                                                                                                                                             |                                                                            |
-  | `requestContext.http.method` | `string`                                                | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                                             |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Calea brută a cererii                                                                                                                                                                                                                                   |                                                                            |
-
+| Proprietate                  | Tip                                    | Descriere                                                                                                                                                                                                                                               | Exemplu                                                                    |
+| ---------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record\<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                                                                                                                                                                                          | consultați secțiunea de mai jos                                            |
+| `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                                                                                                                                                                                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record\<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                                                                                                                                                                                                             | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                       | Corpul cererii analizat (JSON)                                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                  | Corpul original al cererii în UTF-8, înainte de parsarea JSON. Util pentru verificarea semnăturilor de tip HMAC pentru webhook-uri (de exemplu, `X-Hub-Signature-256` de la GitHub, Stripe). `undefined` atunci când mediul de execuție nu a păstrat-o. |                                                                            |
+| `isBase64Encoded`            | `boolean`                              | Indică dacă corpul este codificat în base64                                                                                                                                                                                                             |                                                                            |
+| `requestContext.http.method` | `string`                               | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                                             |                                                                            |
+| `requestContext.http.path`   | `string`                               | Calea brută a cererii                                                                                                                                                                                                                                   |                                                                            |
 
 #### forwardedRequestHeaders
 
@@ -139,15 +148,16 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+  Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei
+  cu litere mici (de exemplu, `event.headers['content-type']`).
 </Note>
 
 #### Expunerea unei funcții ca instrument AI sau ca acțiune în fluxul de lucru
 
 Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșator:
 
-* **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
-* **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
+- **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
+- **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
 
 O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `databaseEventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
 
@@ -185,8 +195,8 @@ export default defineLogicFunction({
 
 Puncte cheie:
 
-* O funcție poate combina suprafețele — declară atât `toolTriggerSettings`, cât și `workflowActionTriggerSettings` pentru a o expune atât în chat, cât și în constructorul de fluxuri de lucru.
-* `toolTriggerSettings.inputSchema` și `workflowActionTriggerSettings.inputSchema` sunt ambele opționale. Când sunt omise, generatorul de manifest le deduce din codul sursă al handlerului (JSON Schema pentru instrumentul AI, `InputSchema` al Twenty pentru acțiunea de flux de lucru). Furnizează unul în mod explicit atunci când dorești o tipizare mai bogată — de exemplu, cu câmpuri compatibile cu `FieldMetadataType`, precum `CURRENCY` sau `RELATION` pentru constructorul de fluxuri de lucru, sau cu câmpuri `description` pe care agentul AI le poate citi:
+- O funcție poate combina suprafețele — declară atât `toolTriggerSettings`, cât și `workflowActionTriggerSettings` pentru a o expune atât în chat, cât și în constructorul de fluxuri de lucru.
+- `toolTriggerSettings.inputSchema` și `workflowActionTriggerSettings.inputSchema` sunt ambele opționale. Când sunt omise, generatorul de manifest le deduce din codul sursă al handlerului (JSON Schema pentru instrumentul AI, `InputSchema` al Twenty pentru acțiunea de flux de lucru). Furnizează unul în mod explicit atunci când dorești o tipizare mai bogată — de exemplu, cu câmpuri compatibile cu `FieldMetadataType`, precum `CURRENCY` sau `RELATION` pentru constructorul de fluxuri de lucru, sau cu câmpuri `description` pe care agentul AI le poate citi:
 
 ```ts
 export default defineLogicFunction({
@@ -211,7 +221,10 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+  **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul
+  `description` al funcției pentru a decide când să folosească instrumentul.
+  Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui
+  apelat.
 </Note>
 
 </Accordion>
@@ -220,10 +233,16 @@ export default defineLogicFunction({
 O funcție post-instalare este o funcție logică care rulează automat după instalarea aplicației într-un spațiu de lucru. Serverul o execută **după** ce metadatele aplicației au fost sincronizate și clientul SDK a fost generat, astfel încât spațiul de lucru este complet pregătit pentru utilizare, iar noua schemă este disponibilă. Cazuri tipice de utilizare includ popularea cu date implicite, crearea de înregistrări inițiale, configurarea setărilor spațiului de lucru sau provizionarea resurselor în cadrul serviciilor terților.
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
-  console.log('Post install logic function executed successfully!', payload.previousVersion);
+  console.log(
+    'Post install logic function executed successfully!',
+    payload.previousVersion,
+  );
 };
 
 export default definePostInstallLogicFunction({
@@ -244,18 +263,19 @@ yarn twenty exec --postInstall
 ```
 
 Puncte cheie:
-* Funcțiile de post-instalare folosesc `definePostInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
-* Handlerul primește un `InstallPayload` cu `{ previousVersion?: string; newVersion: string }` — `newVersion` este versiunea care este instalată, iar `previousVersion` este versiunea instalată anterior (sau `undefined` la o instalare nouă). Folosiți aceste valori pentru a distinge instalările noi de actualizări și pentru a rula logică de migrare specifică versiunii.
-* **Când rulează hook-ul**: doar la instalări noi, în mod implicit. Transmiteți `shouldRunOnVersionUpgrade: true` dacă doriți să ruleze și atunci când aplicația este actualizată de la o versiune anterioară. Când este omis, indicatorul are implicit valoarea `false`, iar actualizările sar peste hook.
-* **Model de execuție — implicit asincron, sincron opțional**: indicatorul `shouldRunSynchronously` controlează *modul în care* este executat post-install.
-  * `shouldRunSynchronously: false` *(implicit)* — hook-ul este **pus în coadă în message queue** cu `retryLimit: 3` și rulează asincron într-un worker. Răspunsul la instalare revine imediat ce jobul este pus în coadă, astfel încât un handler lent sau care eșuează nu blochează apelantul. Workerul va reîncerca de până la trei ori. **Folosiți acest mod pentru joburi de lungă durată** — popularea unor seturi mari de date, apelarea API-urilor lente ale terților, provizionarea resurselor externe, orice ar putea depăși o fereastră rezonabilă de răspuns HTTP.
-  * `shouldRunSynchronously: true` — hook-ul este executat **inline în timpul fluxului de instalare** (același executor ca pre-install). Cererea de instalare blochează până când handlerul se termină, iar dacă acesta aruncă o eroare, apelantul instalării primește un `POST_INSTALL_ERROR`. Fără reîncercări automate. **Folosiți acest mod pentru sarcini rapide, care trebuie să se finalizeze înainte de răspuns** — de exemplu, emiterea unei erori de validare către utilizator sau o configurare rapidă de care clientul va depinde imediat după ce apelul de instalare revine. Reține că migrarea metadatelor a fost deja aplicată până când rulează post-install, astfel încât un eșec în modul sincron **nu** anulează modificările de schemă — doar expune eroarea.
-* Asigurați-vă că handlerul dvs. este idempotent. În modul asincron, coada poate reîncerca de până la trei ori; în oricare mod, hook-ul poate rula din nou la actualizări când `shouldRunOnVersionUpgrade: true`.
-* Variabilele de mediu `APPLICATION_ID`, `APP_ACCESS_TOKEN` și `API_URL` sunt disponibile în interiorul handlerului (la fel ca în orice altă funcție logică), astfel încât puteți apela API-ul Twenty cu un token de acces al aplicației limitat la aplicația dvs.
-* Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
-* `universalIdentifier`, `shouldRunOnVersionUpgrade` și `shouldRunSynchronously` ale funcției sunt atașate automat la manifestul aplicației în câmpul `postInstallLogicFunction` în timpul build-ului — nu este nevoie să le referi în `defineApplication()`.
-* Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
-* **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
+
+- Funcțiile de post-instalare folosesc `definePostInstallLogicFunction()` — o variantă specializată care omite setările de declanșare (`cronTriggerSettings`, `databaseEventTriggerSettings`, `httpRouteTriggerSettings`, `toolTriggerSettings`, `workflowActionTriggerSettings`).
+- Handlerul primește un `InstallPayload` cu `{ previousVersion?: string; newVersion: string }` — `newVersion` este versiunea care este instalată, iar `previousVersion` este versiunea instalată anterior (sau `undefined` la o instalare nouă). Folosiți aceste valori pentru a distinge instalările noi de actualizări și pentru a rula logică de migrare specifică versiunii.
+- **Când rulează hook-ul**: doar la instalări noi, în mod implicit. Transmiteți `shouldRunOnVersionUpgrade: true` dacă doriți să ruleze și atunci când aplicația este actualizată de la o versiune anterioară. Când este omis, indicatorul are implicit valoarea `false`, iar actualizările sar peste hook.
+- **Model de execuție — implicit asincron, sincron opțional**: indicatorul `shouldRunSynchronously` controlează _modul în care_ este executat post-install.
+  - `shouldRunSynchronously: false` _(implicit)_ — hook-ul este **pus în coadă în message queue** cu `retryLimit: 3` și rulează asincron într-un worker. Răspunsul la instalare revine imediat ce jobul este pus în coadă, astfel încât un handler lent sau care eșuează nu blochează apelantul. Workerul va reîncerca de până la trei ori. **Folosiți acest mod pentru joburi de lungă durată** — popularea unor seturi mari de date, apelarea API-urilor lente ale terților, provizionarea resurselor externe, orice ar putea depăși o fereastră rezonabilă de răspuns HTTP.
+  - `shouldRunSynchronously: true` — hook-ul este executat **inline în timpul fluxului de instalare** (același executor ca pre-install). Cererea de instalare blochează până când handlerul se termină, iar dacă acesta aruncă o eroare, apelantul instalării primește un `POST_INSTALL_ERROR`. Fără reîncercări automate. **Folosiți acest mod pentru sarcini rapide, care trebuie să se finalizeze înainte de răspuns** — de exemplu, emiterea unei erori de validare către utilizator sau o configurare rapidă de care clientul va depinde imediat după ce apelul de instalare revine. Reține că migrarea metadatelor a fost deja aplicată până când rulează post-install, astfel încât un eșec în modul sincron **nu** anulează modificările de schemă — doar expune eroarea.
+- Asigurați-vă că handlerul dvs. este idempotent. În modul asincron, coada poate reîncerca de până la trei ori; în oricare mod, hook-ul poate rula din nou la actualizări când `shouldRunOnVersionUpgrade: true`.
+- Variabilele de mediu `APPLICATION_ID`, `APP_ACCESS_TOKEN` și `API_URL` sunt disponibile în interiorul handlerului (la fel ca în orice altă funcție logică), astfel încât puteți apela API-ul Twenty cu un token de acces al aplicației limitat la aplicația dvs.
+- Este permisă o singură funcție de post-instalare per aplicație. Construirea manifestului va genera o eroare dacă este detectată mai mult de una.
+- `universalIdentifier`, `shouldRunOnVersionUpgrade` și `shouldRunSynchronously` ale funcției sunt atașate automat la manifestul aplicației în câmpul `postInstallLogicFunction` în timpul build-ului — nu este nevoie să le referi în `defineApplication()`.
+- Timpul de expirare implicit este setat la 300 de secunde (5 minute) pentru a permite sarcini de configurare mai lungi, cum ar fi popularea datelor.
+- **Nu se execută în modul dev**: când o aplicație este înregistrată local (prin `yarn twenty dev`), serverul sare complet peste fluxul de instalare și sincronizează fișierele direct prin watcher-ul CLI — astfel încât post-install nu rulează niciodată în modul dev, indiferent de `shouldRunSynchronously`. Folosiți `yarn twenty exec --postInstall` pentru a-l declanșa manual într-un workspace care rulează.
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="Definește o funcție logică de pre-instalare (una per aplicație)">
@@ -263,10 +283,16 @@ Puncte cheie:
 O funcție de pre-instalare este o funcție logică ce rulează automat în timpul instalării, **înainte ca migrarea metadatelor workspace-ului să fie aplicată**. Are aceeași structură a payload-ului ca post-install (`InstallPayload`), dar este plasată mai devreme în fluxul de instalare, astfel încât poate pregăti starea de care depinde migrarea iminentă — utilizări tipice includ realizarea unui backup al datelor, validarea compatibilității cu noua schemă sau arhivarea înregistrărilor care urmează să fie restructurate sau eliminate.
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 
 const handler = async (payload: InstallPayload): Promise<void> => {
-  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+  console.log(
+    'Pre install logic function executed successfully!',
+    payload.previousVersion,
+  );
 };
 
 export default definePreInstallLogicFunction({
@@ -286,12 +312,13 @@ yarn twenty exec --preInstall
 ```
 
 Puncte cheie:
-* Funcțiile de pre-instalare folosesc `definePreInstallLogicFunction()` — aceeași configurare specializată ca pentru post-install, doar că atașată la un alt punct din ciclul de viață.
-* Atât handlerele de pre-install, cât și cele de post-install primesc același tip `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Importați-l o singură dată și reutilizați-l pentru ambele hook-uri.
-* **Când rulează hook-ul**: poziționat chiar înainte de migrarea metadatelor workspace-ului (`synchronizeFromManifest`). Înainte de execuție, serverul rulează un "sync redus", pur aditiv, care înregistrează funcția de pre-instalare a versiunii **noi** în metadatele workspace-ului — nimic altceva nu este atins — și apoi o execută. Deoarece acest sync este doar aditiv, obiectele, câmpurile și datele versiunii precedente sunt încă intacte când rulează handlerul dvs.: puteți citi și face backup în siguranță stării pre-migrare.
-* **Model de execuție**: pre-install este executat **sincron** și **blochează instalarea**. Dacă handlerul aruncă o eroare, instalarea este întreruptă înainte ca orice modificări de schemă să fie aplicate — workspace-ul rămâne la versiunea anterioară într-o stare consistentă. Acest lucru este intenționat: pre-install este ultima dvs. șansă de a refuza o actualizare riscantă.
-* La fel ca la post-install, este permisă o singură funcție de pre-instalare per aplicație. Este atașată automat la manifestul aplicației sub `preInstallLogicFunction` în timpul build-ului.
-* **Nu se execută în modul dev**: la fel ca post-install — fluxul de instalare este sărit complet pentru aplicațiile înregistrate local, astfel încât pre-install nu rulează niciodată sub `yarn twenty dev`. Folosiți `yarn twenty exec --preInstall` pentru a-l declanșa manual.
+
+- Funcțiile de pre-instalare folosesc `definePreInstallLogicFunction()` — aceeași configurare specializată ca pentru post-install, doar că atașată la un alt punct din ciclul de viață.
+- Atât handlerele de pre-install, cât și cele de post-install primesc același tip `InstallPayload`: `{ previousVersion?: string; newVersion: string }`. Importați-l o singură dată și reutilizați-l pentru ambele hook-uri.
+- **Când rulează hook-ul**: poziționat chiar înainte de migrarea metadatelor workspace-ului (`synchronizeFromManifest`). Înainte de execuție, serverul rulează un "sync redus", pur aditiv, care înregistrează funcția de pre-instalare a versiunii **noi** în metadatele workspace-ului — nimic altceva nu este atins — și apoi o execută. Deoarece acest sync este doar aditiv, obiectele, câmpurile și datele versiunii precedente sunt încă intacte când rulează handlerul dvs.: puteți citi și face backup în siguranță stării pre-migrare.
+- **Model de execuție**: pre-install este executat **sincron** și **blochează instalarea**. Dacă handlerul aruncă o eroare, instalarea este întreruptă înainte ca orice modificări de schemă să fie aplicate — workspace-ul rămâne la versiunea anterioară într-o stare consistentă. Acest lucru este intenționat: pre-install este ultima dvs. șansă de a refuza o actualizare riscantă.
+- La fel ca la post-install, este permisă o singură funcție de pre-instalare per aplicație. Este atașată automat la manifestul aplicației sub `preInstallLogicFunction` în timpul build-ului.
+- **Nu se execută în modul dev**: la fel ca post-install — fluxul de instalare este sărit complet pentru aplicațiile înregistrate local, astfel încât pre-install nu rulează niciodată sub `yarn twenty dev`. Folosiți `yarn twenty exec --preInstall` pentru a-l declanșa manual.
 
 </Accordion>
 <Accordion title="Pre-install vs post-install: când să folosești fiecare" description="Alegerea hook-ului de instalare potrivit">
@@ -313,15 +340,18 @@ Pre-install este întotdeauna **sincron** (blochează instalarea și o poate în
 
 **Folosiți `post-install` pentru orice are nevoie ca noua schemă să existe.** Acesta este cazul obișnuit:
 
-* Popularea datelor implicite (crearea înregistrărilor inițiale, a vizualizărilor implicite, a conținutului demo) pentru obiectele și câmpurile adăugate recent.
-* Înregistrarea webhook-urilor la servicii terțe, acum că aplicația are acreditările sale.
-* Apelarea propriului tău API pentru a finaliza configurarea care depinde de metadatele sincronizate.
-* Logică idempotentă de tipul "asigurați-vă că acest lucru există" care ar trebui să reconcilieze starea la fiecare actualizare — combină cu `shouldRunOnVersionUpgrade: true`.
+- Popularea datelor implicite (crearea înregistrărilor inițiale, a vizualizărilor implicite, a conținutului demo) pentru obiectele și câmpurile adăugate recent.
+- Înregistrarea webhook-urilor la servicii terțe, acum că aplicația are acreditările sale.
+- Apelarea propriului tău API pentru a finaliza configurarea care depinde de metadatele sincronizate.
+- Logică idempotentă de tipul "asigurați-vă că acest lucru există" care ar trebui să reconcilieze starea la fiecare actualizare — combină cu `shouldRunOnVersionUpgrade: true`.
 
 Exemplu — populează o înregistrare `PostCard` implicită după instalare:
 
 ```ts src/logic-functions/post-install.ts
-import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePostInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
 const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
@@ -343,20 +373,26 @@ export default definePostInstallLogicFunction({
 });
 ```
 
-**Folosiți `pre-install` atunci când o migrare altfel ar distruge sau ar corupe datele existente.** Deoarece pre-install rulează pe schema *anterioară* și eșecul său anulează actualizarea, acesta este locul potrivit pentru orice este riscant:
+**Folosiți `pre-install` atunci când o migrare altfel ar distruge sau ar corupe datele existente.** Deoarece pre-install rulează pe schema _anterioară_ și eșecul său anulează actualizarea, acesta este locul potrivit pentru orice este riscant:
 
-* **Crearea unui backup al datelor care urmează să fie eliminate sau restructurate** — de exemplu, elimini un câmp în v2 și trebuie să-i copiezi valorile într-un alt câmp sau să le exporți în stocare înainte de rularea migrării.
-* **Arhivarea înregistrărilor pe care o nouă constrângere le-ar invalida** — de exemplu, un câmp devine `NOT NULL` și trebuie mai întâi să ștergi sau să corectezi rândurile cu valori nule.
-* **Validarea compatibilității și refuzarea actualizării dacă datele curente nu pot fi migrate fără probleme** — aruncă din handler și instalarea se oprește fără ca modificări să fie aplicate. Aceasta este mai sigur decât să descoperi incompatibilitatea în mijlocul migrării.
-* **Redenumirea sau schimbarea cheilor datelor** înaintea unei modificări de schemă care ar pierde asocierile.
+- **Crearea unui backup al datelor care urmează să fie eliminate sau restructurate** — de exemplu, elimini un câmp în v2 și trebuie să-i copiezi valorile într-un alt câmp sau să le exporți în stocare înainte de rularea migrării.
+- **Arhivarea înregistrărilor pe care o nouă constrângere le-ar invalida** — de exemplu, un câmp devine `NOT NULL` și trebuie mai întâi să ștergi sau să corectezi rândurile cu valori nule.
+- **Validarea compatibilității și refuzarea actualizării dacă datele curente nu pot fi migrate fără probleme** — aruncă din handler și instalarea se oprește fără ca modificări să fie aplicate. Aceasta este mai sigur decât să descoperi incompatibilitatea în mijlocul migrării.
+- **Redenumirea sau schimbarea cheilor datelor** înaintea unei modificări de schemă care ar pierde asocierile.
 
 Exemplu — arhivează înregistrări înainte de o migrare distructivă:
 
 ```ts src/logic-functions/pre-install.ts
-import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import {
+  definePreInstallLogicFunction,
+  type InstallPayload,
+} from 'twenty-sdk/define';
 import { createClient } from './generated/client';
 
-const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+const handler = async ({
+  previousVersion,
+  newVersion,
+}: InstallPayload): Promise<void> => {
   // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
   if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
     return;
@@ -385,7 +421,8 @@ const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise
 export default definePreInstallLogicFunction({
   universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
   name: 'pre-install',
-  description: 'Backs up legacy notes into description before the v2 migration.',
+  description:
+    'Backs up legacy notes into description before the v2 migration.',
   timeoutSeconds: 300,
   shouldRunOnVersionUpgrade: true,
   handler,
@@ -405,7 +442,9 @@ export default definePreInstallLogicFunction({
 | Faceți o configurare unică doar la prima instalare                                                     | `post-install` cu `shouldRunOnVersionUpgrade: false` (implicit)                            |
 
 <Note>
-Dacă aveți dubii, alegeți implicit **post-install**. Apelați la pre-install doar când migrarea în sine este distructivă și trebuie să interceptați starea anterioară înainte să dispară.
+  Dacă aveți dubii, alegeți implicit **post-install**. Apelați la pre-install
+  doar când migrarea în sine este distructivă și trebuie să interceptați starea
+  anterioară înainte să dispară.
 </Note>
 
 </Accordion>
@@ -463,7 +502,10 @@ const { createCompany } = await client.mutation({
 Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare a tipurilor complete, pe baza schemei spațiului dvs. de lucru.
 
 <Note>
-**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
+  **CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a
+  rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare.
+  Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de
+  lucru și generează un client tipizat folosind `@genql/cli`.
 </Note>
 
 #### Folosirea CoreSchema pentru adnotări de tip
@@ -532,10 +574,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+  fileBuffer, // file contents as a Buffer
+  'invoice.pdf', // filename
+  'application/pdf', // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b', // field universalIdentifier
 );
 
 console.log(uploadedFile);
@@ -550,8 +592,9 @@ console.log(uploadedFile);
 | `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
-* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
-* `url` returnat este un URL semnat pe care îl puteți folosi pentru a accesa fișierul încărcat.
+
+- Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
+- `url` returnat este un URL semnat pe care îl puteți folosi pentru a accesa fișierul încărcat.
 
 </Accordion>
 </AccordionGroup>
@@ -559,8 +602,9 @@ Puncte cheie:
 <Note>
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
-  * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
+- `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+- `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
 
-  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul referențiat în `defaultRoleUniversalIdentifier` din `application-config.ts`.
+Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul referențiat în `defaultRoleUniversalIdentifier` din `application-config.ts`.
+
 </Note>

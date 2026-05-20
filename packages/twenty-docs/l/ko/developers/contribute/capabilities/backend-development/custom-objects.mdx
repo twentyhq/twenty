@@ -10,7 +10,7 @@ title: 사용자 지정 개체
 
 ## 고급 스키마
 
-<div style={{textAlign: 'center'}}>
+<div style={{ textAlign: 'center' }}>
   <img src="/images/docs/server/custom-object-schema.png" alt="고급 스키마" />
 </div>
 
@@ -20,20 +20,26 @@ title: 사용자 지정 개체
 
 사용자 지정 개체는 개체의 형태, 이름 및 유형을 결정하는 메타데이터 테이블에서 비롯됩니다. 이 모든 정보는 테이블로 구성된 메타데이터 스키마 데이터베이스에 있습니다.
 
-* **DataSource**: 데이터가 존재하는 위치를 설명합니다.
-* **Object**: 개체를 설명하고 DataSource와 연결됩니다.
-* **Field**: 개체의 필드를 설명하고 개체와 연결됩니다.
+- **DataSource**: 데이터가 존재하는 위치를 설명합니다.
+- **Object**: 개체를 설명하고 DataSource와 연결됩니다.
+- **Field**: 개체의 필드를 설명하고 개체와 연결됩니다.
 
 사용자 지정 개체를 추가하려면 /metadata API를 쿼리하십시오. 이는 메타데이터를 해당 API에 따라 업데이트하고, 메타데이터를 기반으로 GraphQL 스키마를 계산하여 나중에 사용할 수 있도록 GQL 캐시에 저장합니다.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/add-custom-objects.jpeg" alt="/metadata API를 쿼리하여 사용자 지정 개체를 추가하십시오." />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/server/add-custom-objects.jpeg"
+    alt="/metadata API를 쿼리하여 사용자 지정 개체를 추가하십시오."
+  />
 </div>
 
 <br />
 
 데이터를 가져오려면 /graphql 엔드포인트를 통해 쿼리를 수행하고 Query Resolver를 통해 전달하는 과정이 포함됩니다.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/server/custom-object-schema.png" alt="/graphql 엔드포인트를 쿼리하여 데이터를 가져오십시오." />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/server/custom-object-schema.png"
+    alt="/graphql 엔드포인트를 쿼리하여 데이터를 가져오십시오."
+  />
 </div>

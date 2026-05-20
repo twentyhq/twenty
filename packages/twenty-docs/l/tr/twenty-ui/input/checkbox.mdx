@@ -13,15 +13,15 @@ Bir kullanıcı birden fazla seçeneği seçmek istediğinde kullanılır.
 <Tab title="Kullanım">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Özellikler">
 
-
 | Özellikler      | Tür      | Açıklama                                                                                      |
 | --------------- | -------- | --------------------------------------------------------------------------------------------- |
 | işaretli        | boolean  | Kontrol kutusunun işaretli olup olmadığını gösterir                                           |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | varyant         | metin    | Kutunun görsel stil varyantı. Seçenekler şunları içerir: `primary`, `secondary` ve `tertiary` |
 | boyut           | string   | Kontrol kutusunun boyutu. İki seçenek vardır: `small` ve `large`                              |
 | şekil           | dize     | Kontrol kutusunun şekli. İki seçenek vardır: `squared` ve `rounded`                           |
-
-
 
 </Tab>
 </Tabs>

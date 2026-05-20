@@ -8,11 +8,11 @@ Twenty implementează OAuth 2.0 cu cod de autorizare + PKCE pentru aplicațiile 
 
 ## Când să folosiți OAuth
 
-| Scenariu                                                    | Metodă de autentificare                                                             |
-| ----------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Scenariu                                                    | Metodă de autentificare                                                                  |
+| ----------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | Scripturi interne, automatizare                             | [Cheie API](/l/ro/developers/extend/api#authentication)                                  |
-| Aplicație externă care acționează în numele unui utilizator | **OAuth — Cod de autorizare**                                                       |
-| Server-la-server, fără context de utilizator                | **OAuth — Acreditări de client**                                                    |
+| Aplicație externă care acționează în numele unui utilizator | **OAuth — Cod de autorizare**                                                            |
+| Server-la-server, fără context de utilizator                | **OAuth — Acreditări de client**                                                         |
 | Aplicație Twenty cu extensii UI                             | [Aplicații](/l/ro/developers/extend/apps/getting-started) (OAuth este gestionat automat) |
 
 ## Înregistrați un client
@@ -43,7 +43,7 @@ Content-Type: application/json
 ```
 
 <Warning>
-Stocați `client_secret` în siguranță — nu poate fi recuperat ulterior.
+  Stocați `client_secret` în siguranță — nu poate fi recuperat ulterior.
 </Warning>
 
 ## Domenii de aplicare

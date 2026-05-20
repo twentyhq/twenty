@@ -6,7 +6,9 @@ description: أرسل إشعارات بريد إلكتروني تلقائية ع
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
 <Note>
-**الإشارة إلى الزملاء مباشرةً داخل الملاحظات غير مدعومة بعد.** من المخطط طرح هذه الميزة في النصف الثاني من عام 2026. في هذه الأثناء، يوفّر سير العمل هذا حلاً عمليًا بديلاً.
+  **الإشارة إلى الزملاء مباشرةً داخل الملاحظات غير مدعومة بعد.** من المخطط طرح
+  هذه الميزة في النصف الثاني من عام 2026. في هذه الأثناء، يوفّر سير العمل هذا
+  حلاً عمليًا بديلاً.
 </Note>
 
 ## التحدّي
@@ -22,14 +24,20 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 3. سير عمل يرسل تلقائيًا بريدًا إلكترونيًا إلى المراجع يتضمّن رابطًا إلى الملاحظة
 
 <Warning>
-**قيد**: يتيح هذا الأسلوب تعيين مراجع واحد لكل حقل. إذا كنت بحاجة إلى إشعار عدة أشخاص، فأنشئ حقول علاقة إضافية (مثلًا: Reviewer 1، Reviewer 2). لن يكون ذلك قابلًا للتوسّع بشكلٍ جيد إذا احتجت إلى الإشارة إلى العديد من المتعاونين دفعةً واحدة.
+  **قيد**: يتيح هذا الأسلوب تعيين مراجع واحد لكل حقل. إذا كنت بحاجة إلى إشعار
+  عدة أشخاص، فأنشئ حقول علاقة إضافية (مثلًا: Reviewer 1، Reviewer 2). لن يكون
+  ذلك قابلًا للتوسّع بشكلٍ جيد إذا احتجت إلى الإشارة إلى العديد من المتعاونين
+  دفعةً واحدة.
 </Warning>
 
 ## إعداد خطوة بخطوة
 
 ### الخطوة 1: إنشاء حقل المراجع
 
-<img src="/images/user-guide/workflows/reviewer-field-for-note.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/reviewer-field-for-note.png"
+  style={{ width: '100%' }}
+/>
 
 1. انتقل إلى **الإعدادات → نموذج البيانات → Notes**
 2. انقر **إضافة حقل**
@@ -100,9 +108,7 @@ Best,
 Twenty
 ```
 
-<Note>
-استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.
-</Note>
+<Note>استبدل `yourSubDomain` بنطاقك الفرعي الفعلي لمساحة عمل Twenty.</Note>
 
 #### الاختبار والتفعيل
 
@@ -121,7 +127,7 @@ Twenty
 
 ## ذات صلة
 
-* [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
-* [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [إنشاء حقول مخصصة](/l/ar/user-guide/data-model/how-tos/create-custom-fields)
-* [إنشاء حقول العلاقات](/l/ar/user-guide/data-model/how-tos/create-relation-fields)
+- [مشغلات سير العمل](/l/ar/user-guide/workflows/capabilities/workflow-triggers)
+- [إرسال رسائل البريد الإلكتروني من سير العمل](/l/ar/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [إنشاء حقول مخصصة](/l/ar/user-guide/data-model/how-tos/create-custom-fields)
+- [إنشاء حقول العلاقات](/l/ar/user-guide/data-model/how-tos/create-relation-fields)

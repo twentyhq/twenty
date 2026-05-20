@@ -120,28 +120,37 @@ npx nx worker twenty-server
 
 #### ワーカーが稼働しているかどうかを確認するには?
 
-* [webhook-test.com](https://webhook-test.com/)にアクセスし、**Your Unique Webhook URL**をコピーします。
+- [webhook-test.com](https://webhook-test.com/)にアクセスし、**Your Unique Webhook URL**をコピーします。
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Webhookテスト" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Webhookテスト"
+  />
 </div>
 
-* Twentyアプリを開き、`/settings`に移動し、画面左下の**Advanced**トグルを有効にします。
-* 新しいWebhookを作成します。
-* **Your Unique Webhook URL**をTwentyの**Endpoint Url**フィールドに貼り付けます。 **Filters**を`Companies`と`Created`に設定します。
+- Twentyアプリを開き、`/settings`に移動し、画面左下の**Advanced**トグルを有効にします。
+- 新しいWebhookを作成します。
+- **Your Unique Webhook URL**をTwentyの**Endpoint Url**フィールドに貼り付けます。 **Filters**を`Companies`と`Created`に設定します。
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Webhook設定" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Webhook設定"
+  />
 </div>
 
-* `/objects/companies`にアクセスし、新しい企業レコードを作成します。
-* [webhook-test.com](https://webhook-test.com/)に戻り、新しい**POSTリクエスト**が受信されたか確認します。
+- `/objects/companies`にアクセスし、新しい企業レコードを作成します。
+- [webhook-test.com](https://webhook-test.com/)に戻り、新しい**POSTリクエスト**が受信されたか確認します。
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Webhookテスト結果" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Webhookテスト結果"
+  />
 </div>
 
-* **POSTリクエスト**が受信された場合、あなたのワーカーは正常に稼働しています。 そうでない場合は、ワーカーのトラブルシューティングが必要です。
+- **POSTリクエスト**が受信された場合、あなたのワーカーは正常に稼働しています。 そうでない場合は、ワーカーのトラブルシューティングが必要です。
 
 #### フロントエンドが起動に失敗し、エラーTS5042: オプション'プロジェクト'はコマンドライン上でソースファイルと一緒に使用できません
 
@@ -201,9 +210,8 @@ database:resetコマンドはデータベースを完全に消去し、最初か
    `.env`ファイルの`SERVER_URL`が外部アクセスURLと一致するようにし、SSLが有効なら`https`を含めます。
 
 2. **リバースプロキシ設定の確認:**
-
-   * リバースプロキシがTwentyサーバーへのリクエストを正しく転送していることを確認してください。
-   * `X-Forwarded-For`や`X-Forwarded-Proto`といったヘッダーが正しく設定されていることを確認してください。
+   - リバースプロキシがTwentyサーバーへのリクエストを正しく転送していることを確認してください。
+   - `X-Forwarded-For`や`X-Forwarded-Proto`といったヘッダーが正しく設定されていることを確認してください。
 
 3. **サービスの再起動:**
 
@@ -217,7 +225,7 @@ database:resetコマンドはデータベースを完全に消去し、最初か
 
 このガイドにカバーされていない問題がある場合:
 
-* ログを確認:
+- ログを確認:
 
   コンテナログを表示してエラーメッセージを確認します:
 
@@ -225,6 +233,6 @@ database:resetコマンドはデータベースを完全に消去し、最初か
   docker compose logs
   ```
 
-* コミュニティサポート:
+- コミュニティサポート:
 
   [Twentyコミュニティ](https://github.com/twentyhq/twenty/issues)または[サポートチャンネル](https://discord.gg/cx5n4Jzs57)に連絡してサポートを受けてください。

@@ -16,7 +16,9 @@ Twenty zatím nepodporuje nativní vzorcová pole (dostupná v roce 2026), ale s
 | **Skóre leadu**          | Body podle více kritérií       |
 
 <Tip>
-Kompletní příklad sledování času ve fázích kanálu najdete v článku [Jak dlouho zůstávají příležitosti v jednotlivých fázích](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Kompletní příklad sledování času ve fázích kanálu najdete v článku [Jak dlouho
+  zůstávají příležitosti v jednotlivých
+  fázích](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Základní vzorec: Zřetězení
@@ -37,9 +39,7 @@ Kompletní příklad sledování času ve fázích kanálu najdete v článku [J
 export const main = async (params) => {
   const { firstName, lastName } = params;
 
-  const fullName = [firstName, lastName]
-    .filter(Boolean)
-    .join(' ');
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   return { fullName };
 };
@@ -65,7 +65,7 @@ Viz [Jak zobrazit očekávanou částku v kanálu](/l/cs/user-guide/views-pipeli
 export const main = async (params) => {
   const { amount, probability } = params;
 
-  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+  const expectedAmount = ((amount || 0) * (probability || 0)) / 100;
 
   return { expectedAmount };
 };
@@ -105,7 +105,8 @@ export const main = async (params) => {
 3. **Aktualizovat záznam**: Nastavte Počet dní do termínu na `{{code.daysUntilDue}}`
 
 <Note>
-Záporné hodnoty označují úkoly po termínu. Toto pole můžete použít k filtrování nebo řazení úkolů podle naléhavosti.
+  Záporné hodnoty označují úkoly po termínu. Toto pole můžete použít k
+  filtrování nebo řazení úkolů podle naléhavosti.
 </Note>
 
 ## Podmíněný vzorec: Skóre leadu
@@ -179,24 +180,24 @@ export const main = async (params) => {
 
 ### Výkon
 
-* Spouštějte pouze při relevantních změnách polí
-* Pomocí filtrů přeskočte záznamy, které nevyžadují výpočet
-* Vyhněte se složitým výpočtům v pracovních postupech s vysokým objemem
+- Spouštějte pouze při relevantních změnách polí
+- Pomocí filtrů přeskočte záznamy, které nevyžadují výpočet
+- Vyhněte se složitým výpočtům v pracovních postupech s vysokým objemem
 
 ### Zpracování chyb
 
-* Před výpočty kontrolujte hodnoty null/undefined
-* Používejte výchozí hodnoty, když data chybí
-* Vracejte jasné chybové zprávy, když výpočty selžou
+- Před výpočty kontrolujte hodnoty null/undefined
+- Používejte výchozí hodnoty, když data chybí
+- Vracejte jasné chybové zprávy, když výpočty selžou
 
 ### Testování
 
-* Testujte okrajové případy (prázdná pole, nulové hodnoty)
-* Před aktivací ručně ověřte výpočty
-* Sledujte běhy pracovních postupů kvůli neočekávaným výsledkům
+- Testujte okrajové případy (prázdná pole, nulové hodnoty)
+- Před aktivací ručně ověřte výpočty
+- Sledujte běhy pracovních postupů kvůli neočekávaným výsledkům
 
 ## Související
 
-* [Jak zobrazit očekávanou částku v kanálu](/l/cs/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [Jak sledovat čas ve fázi](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+- [Jak zobrazit očekávanou částku v kanálu](/l/cs/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+- [Jak sledovat čas ve fázi](/l/cs/user-guide/views-pipelines/how-tos/track-time-in-stage)
+- [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)

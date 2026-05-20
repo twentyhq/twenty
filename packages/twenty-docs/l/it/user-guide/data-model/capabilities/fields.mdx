@@ -19,7 +19,10 @@ Non puoi eliminare i campi standard, ma puoi disattivarli se non ne hai bisogno.
 
 Puoi anche personalizzare le opzioni dei campi standard di tipo `SELECT`, ad esempio le opzioni della `Fase` nelle Opportunità.
 
-<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/standard-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ### Campi Personalizzati
 
@@ -27,7 +30,10 @@ I campi personalizzati possono essere aggiunti a qualsiasi oggetto. Puoi memoriz
 
 Ad esempio, un campo personalizzato per SpaceX potrebbe essere `Stato operativo razzo`, che indica se un razzo è operativo.
 
-<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/custom-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ## Tipi di campo
 
@@ -69,7 +75,10 @@ Il tuo nuovo campo è ora disponibile nei campi dell'applicazione. Per visualizz
 
 **Modo rapido:** Fai clic sul pulsante **+** in alto a destra di ogni tabella oggetto, quindi seleziona `Personalizza campi`. Ciò ti porterà direttamente alle impostazioni del Modello di Dati.
 
-<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/quick-new-field.png"
+  style={{ width: '100%' }}
+/>
 
 ## Disattiva un campo
 
@@ -83,7 +92,10 @@ Ecco come puoi farlo:
 
 3. Seleziona `Disattiva` dall'elenco a discesa.
 
-<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/deactivate-field.png"
+  style={{ width: '100%' }}
+/>
 
 Cosa succede quando disattivi un campo?
 
@@ -105,18 +117,18 @@ Se ottieni un errore impostando l'unicità, controlla i valori duplicati nei tuo
 
 ### Convenzioni e Limitazioni sui Nomi
 
-* **I nomi singolari e plurali devono essere distinti**: La nostra API GraphQL necessita di nomi distinti per le mutazioni
-* **Nomi di campo protetti**: alcuni nomi sono riservati all'uso di sistema (ad es., `Type`, `Application`)
+- **I nomi singolari e plurali devono essere distinti**: La nostra API GraphQL necessita di nomi distinti per le mutazioni
+- **Nomi di campo protetti**: alcuni nomi sono riservati all'uso di sistema (ad es., `Type`, `Application`)
 
 ### Campi Valuta e Telefono
 
-* **Valuta predefinita**: può essere configurata tramite il modello di dati
-* **Codici paesi predefiniti**: possono essere configurati per i campi telefono tramite il modello di dati
+- **Valuta predefinita**: può essere configurata tramite il modello di dati
+- **Codici paesi predefiniti**: possono essere configurati per i campi telefono tramite il modello di dati
 
 ### Campi Selezione
 
-* **Può essere selezionata un'opzione predefinita** per ogni campo Selezione
+- **Può essere selezionata un'opzione predefinita** per ogni campo Selezione
 
 ### Campi di Testo dei Record
 
-* **Ogni oggetto ha un campo di visualizzazione principale**: Questo campo appare nella colonna più a sinistra e rappresenta il record quando collegato a altri oggetti. Deve essere un campo di testo. Ad esempio, Persone usa `Nome` come campo principale, quindi quando colleghi una persona a un'azienda, vedrai il loro nome nella vista dell'azienda.
+- **Ogni oggetto ha un campo di visualizzazione principale**: Questo campo appare nella colonna più a sinistra e rappresenta il record quando collegato a altri oggetti. Deve essere un campo di testo. Ad esempio, Persone usa `Nome` come campo principale, quindi quando colleghi una persona a un'azienda, vedrai il loro nome nella vista dell'azienda.

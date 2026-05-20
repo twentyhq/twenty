@@ -6,10 +6,10 @@ icon: rocket
 
 Fiecare aplicație trebuie să aibă exact un apel `defineApplication`. Acesta declară:
 
-* **Identitate** — identificator universal, nume de afișare, descriere.
-* **Permisiuni** — sub ce rol rulează funcțiile logice și componentele front-end ale acesteia.
-* **Variabile** *(opțional)* — perechi cheie–valoare expuse codului dvs. ca variabile de mediu.
-* **Hook-uri de pre-instalare / post-instalare** *(opțional)* — vedeți [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions).
+- **Identitate** — identificator universal, nume de afișare, descriere.
+- **Permisiuni** — sub ce rol rulează funcțiile logice și componentele front-end ale acesteia.
+- **Variabile** _(opțional)_ — perechi cheie–valoare expuse codului dvs. ca variabile de mediu.
+- **Hook-uri de pre-instalare / post-instalare** _(opțional)_ — vedeți [Funcții logice](/l/ro/developers/extend/apps/logic/logic-functions).
 
 ```ts src/application-config.ts
 import { defineApplication } from 'twenty-sdk/define';
@@ -31,19 +31,19 @@ export default defineApplication({
 
 Notițe:
 
-* Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
-* `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end. În funcțiile de logică (server-side), acestea sunt disponibile ca `process.env.VARIABLE_NAME`. În componentele front-end, folosește `getApplicationVariable('VARIABLE_NAME')` din `twenty-sdk/front-component`. Variabilele marcate cu `isSecret: true` sunt injectate doar în funcțiile de logică. Componentele front-end primesc doar variabile non-secrete.
-* Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
-* Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
-* Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
+- Câmpurile `universalIdentifier` sunt ID-uri deterministe pe care le dețineți. Generați-le o singură dată și mențineți-le stabile între sincronizări.
+- `applicationVariables` devin variabile de mediu pentru funcțiile și componentele front-end. În funcțiile de logică (server-side), acestea sunt disponibile ca `process.env.VARIABLE_NAME`. În componentele front-end, folosește `getApplicationVariable('VARIABLE_NAME')` din `twenty-sdk/front-component`. Variabilele marcate cu `isSecret: true` sunt injectate doar în funcțiile de logică. Componentele front-end primesc doar variabile non-secrete.
+- Rolul implicit este detectat automat din fișierul de rol marcat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) — nu este necesar să faci referire la el în `defineApplication()`.
+- Funcțiile de pre-instalare și post-instalare sunt detectate automat în timpul construirii manifestului — nu trebuie să le referiți în `defineApplication()`.
+- Transmiterea explicită a `defaultRoleUniversalIdentifier` este în continuare acceptată pentru compatibilitate retroactivă, dar este considerată învechită în favoarea `defineApplicationRole()`.
 
 ## Rol implicit pentru funcții
 
 Rolul declarat cu [`defineApplicationRole()`](/l/ro/developers/extend/apps/config/roles) controlează la ce pot avea acces funcțiile logice și componentele de interfață ale aplicației:
 
-* Tokenul de runtime injectat ca `TWENTY_APP_ACCESS_TOKEN` este derivat din acest rol.
-* Clientul API tipizat este restricționat la permisiunile acordate acelui rol.
-* Respectați principiul celui mai mic privilegiu: declarați doar permisiunile de care au nevoie funcțiile.
+- Tokenul de runtime injectat ca `TWENTY_APP_ACCESS_TOKEN` este derivat din acest rol.
+- Clientul API tipizat este restricționat la permisiunile acordate acelui rol.
+- Respectați principiul celui mai mic privilegiu: declarați doar permisiunile de care au nevoie funcțiile.
 
 Când generați o aplicație nouă, CLI creează un fișier de rol de pornire la `src/roles/default-role.ts`. Consultați [Roluri și permisiuni](/l/ro/developers/extend/apps/config/roles) pentru referința completă.
 

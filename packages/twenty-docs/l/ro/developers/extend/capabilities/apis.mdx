@@ -11,13 +11,16 @@ Twenty a fost creat pentru a fi prietenos cu dezvoltatorii, oferind API-uri pute
 
 Twenty generează API-uri special pentru modelul dvs. de date:
 
-* **Nu sunt necesare ID-uri lungi**: Utilizați direct numele obiectelor și câmpurilor în punctele finale
-* **Obiectele standard și personalizate tratate în mod egal**: Obiectele dvs. personalizate primesc același tratament API ca și cele încorporate
-* **Puncte finale dedicate**: Fiecare obiect și câmp primește propriul său punct final API
-* **Documentație personalizată**: Generată special pentru modelul de date al spațiului dvs. de lucru
+- **Nu sunt necesare ID-uri lungi**: Utilizați direct numele obiectelor și câmpurilor în punctele finale
+- **Obiectele standard și personalizate tratate în mod egal**: Obiectele dvs. personalizate primesc același tratament API ca și cele încorporate
+- **Puncte finale dedicate**: Fiecare obiect și câmp primește propriul său punct final API
+- **Documentație personalizată**: Generată special pentru modelul de date al spațiului dvs. de lucru
 
 <Note>
-Documentația API personalizată este disponibilă la **Settings → API & Webhooks** după crearea unei chei API. Deoarece Twenty generează API-uri care se potrivesc modelului dvs. de date personalizat, documentația este unică pentru spațiul dvs. de lucru.
+  Documentația API personalizată este disponibilă la **Settings → API &
+  Webhooks** după crearea unei chei API. Deoarece Twenty generează API-uri care
+  se potrivesc modelului dvs. de date personalizat, documentația este unică
+  pentru spațiul dvs. de lucru.
 </Note>
 
 ## Cele două tipuri de API-uri
@@ -28,9 +31,9 @@ Accesibil prin `/rest/` sau `/graphql/`
 
 Lucrați cu **înregistrările** reale (datele):
 
-* Creați, citiți, actualizați, ștergeți Persoane, Companii, Oportunități etc.
-* Interogați și filtrați datele
-* Gestionați relațiile de înregistrări
+- Creați, citiți, actualizați, ștergeți Persoane, Companii, Oportunități etc.
+- Interogați și filtrați datele
+- Gestionați relațiile de înregistrări
 
 ### API Metadata
 
@@ -38,9 +41,9 @@ Accesibil prin `/rest/metadata/` sau `/metadata/`
 
 Gestionați-vă **spațiul de lucru și modelul de date**:
 
-* Creați, modificați sau ștergeți obiecte și câmpuri
-* Configurați setările spațiului de lucru
-* Definiți relațiile dintre obiecte
+- Creați, modificați sau ștergeți obiecte și câmpuri
+- Configurați setările spațiului de lucru
+- Definiți relațiile dintre obiecte
 
 ## REST vs GraphQL
 
@@ -73,15 +76,17 @@ Authorization: Bearer YOUR_API_KEY
 1. Mergeți la **Setări → API-uri & Webhook-uri**
 2. Faceți clic pe **+ Create key**
 3. Configurați:
-   * **Name**: Nume descriptiv pentru cheie
-   * **Expiration Date**: Când expiră cheia
+   - **Name**: Nume descriptiv pentru cheie
+   - **Expiration Date**: Când expiră cheia
 4. Faceți clic pe **Salvare**
 5. **Copiați imediat** — cheia este afișată o singură dată
 
 <VimeoEmbed videoId="928786722" title="Crearea unei chei API" />
 
 <Warning>
-Cheia dvs. API oferă acces la date sensibile. Nu o partajați cu servicii care nu sunt de încredere. Dacă este compromisă, dezactivați-o imediat și generați una nouă.
+  Cheia dvs. API oferă acces la date sensibile. Nu o partajați cu servicii care
+  nu sunt de încredere. Dacă este compromisă, dezactivați-o imediat și generați
+  una nouă.
 </Warning>
 
 ### Atribuiți un rol unei chei API
@@ -114,10 +119,10 @@ Testați API-urile direct în browser cu platforma noastră integrată de testar
 
 ### Ce obțineți
 
-* **Documentație interactivă**: Generată pentru modelul dvs. de date specific
-* **Testare live**: Executați apeluri API reale către spațiul dvs. de lucru
-* **Explorator de scheme**: Parcurgeți obiectele, câmpurile și relațiile disponibile
-* **Constructor de cereri**: Construiți interogări cu completare automată
+- **Documentație interactivă**: Generată pentru modelul dvs. de date specific
+- **Testare live**: Executați apeluri API reale către spațiul dvs. de lucru
+- **Explorator de scheme**: Parcurgeți obiectele, câmpurile și relațiile disponibile
+- **Constructor de cereri**: Construiți interogări cu completare automată
 
 Platforma de testare reflectă obiectele și câmpurile dvs. personalizate, astfel încât documentația este întotdeauna corectă pentru spațiul dvs. de lucru.
 
@@ -125,13 +130,13 @@ Platforma de testare reflectă obiectele și câmpurile dvs. personalizate, astf
 
 Atât REST, cât și GraphQL suportă operațiuni de grup:
 
-* **Dimensiunea grupului**: Până la 60 de înregistrări pe cerere
-* **Operațiuni**: Creați, actualizați, ștergeți mai multe înregistrări
+- **Dimensiunea grupului**: Până la 60 de înregistrări pe cerere
+- **Operațiuni**: Creați, actualizați, ștergeți mai multe înregistrări
 
 **Funcții exclusive GraphQL:**
 
-* **Upsert de grup**: Creați sau actualizați într-un singur apel
-* Folosiți nume de obiecte la plural (de exemplu, `CreateCompanies` în loc de `CreateCompany`)
+- **Upsert de grup**: Creați sau actualizați într-un singur apel
+- Folosiți nume de obiecte la plural (de exemplu, `CreateCompanies` în loc de `CreateCompany`)
 
 ## Limitări de rată
 
@@ -143,5 +148,7 @@ Solicitările API sunt limitate pentru a asigura stabilitatea platformei:
 | **Dimensiunea lotului** | 60 de înregistrări pe apel |
 
 <Tip>
-Utilizați operațiunile de grup pentru a maximiza debitul — procesați până la 60 de înregistrări într-un singur apel API în loc să faceți solicitări individuale.
+  Utilizați operațiunile de grup pentru a maximiza debitul — procesați până la
+  60 de înregistrări într-un singur apel API în loc să faceți solicitări
+  individuale.
 </Tip>

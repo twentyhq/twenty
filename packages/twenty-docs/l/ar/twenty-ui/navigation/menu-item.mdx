@@ -9,17 +9,17 @@ icon: bars
 <Tab title="استخدام">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
+    console.log('Icon button clicked!', event);
   };
 
   return (
@@ -37,10 +37,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="المحددات">
-
 
 | المحددات       | النوع         | الوصف                                                                        |
 | -------------- | ------------- | ---------------------------------------------------------------------------- |
@@ -52,9 +50,6 @@ export const MyComponent = () => {
 | معرف الفحص     | نص            | السمة data-testid لأغراض الاختبار                                            |
 | عند النقر      | function      | دالة الاستدعاء يتم تنشيطها عند النقر فوق عنصر القائمة                        |
 | اسم الفئة      | نص            | اسم اختياري لتصميم إضافي                                                     |
-
-
-
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -93,10 +88,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="الخصائص">
-
 
 | الخصائص         | النوع         | الوصف                                                 |
 | --------------- | ------------- | ----------------------------------------------------- |
@@ -107,8 +100,6 @@ export const MyComponent = () => {
 | isSelected      | قيمة منطقية   | يشير إلى ما إذا كان عنصر القائمة محددا أو مميزا       |
 | عند النقر       | دالة          | دالة الاستدعاء يتم تنشيطها عند النقر فوق عنصر القائمة |
 | اسم الفئة       | نص            | اسم اختياري لإضافة التنسيق                            |
-
-
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -148,7 +139,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="الخصائص">
 
-
 | الخصائص         | النوع         | الوصف                                                                                 |
 | --------------- | ------------- | ------------------------------------------------------------------------------------- |
 | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة                                         |
@@ -159,9 +149,6 @@ export const MyComponent = () => {
 | نص              | نص            | محتوى النص لعنصر القائمة                                                              |
 | isDragDisabled  | قيمة منطقية   | يشير إلى ما إذا كان تم تعطيل السحب                                                    |
 | اسم الفئة       | نص            | اسم اختياري لإضافة التنسيق                                                            |
-
-
-
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,7 +179,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="الخصائص">
 
-
 | الخصائص         | النوع         | الوصف                                                  |
 | --------------- | ------------- | ------------------------------------------------------ |
 | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة          |
@@ -201,9 +186,6 @@ export const MyComponent = () => {
 | المحدد          | قيمة منطقية   | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)        |
 | onSelectChange  | دالة          | وظيفة استدعاء يتم تشغيلها عند تغيير حالة مربع الاختيار |
 | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                            |
-
-
-
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,7 +218,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="الخصائص">
 
-
 | الخصائص         | النوع       | الوصف                                                                |
 | --------------- | ----------- | -------------------------------------------------------------------- |
 | الصورة الرمزبية | `ReactNode` | الصورة الرمزبية أو الأيقونة لعرضها على الجانب الأيسر من عنصر القائمة |
@@ -244,9 +225,6 @@ export const MyComponent = () => {
 | المحدد          | قيمة منطقية | يشير إلى ما إذا كان عنصر القائمة محددًا (مفحوص)                      |
 | onSelectChange  | دالة        | وظيفة استدعاء يتم تشغيلها عند تغيير حالة مربع الاختيار               |
 | اسم الفئة       | نص          | اسم اختياري لتنسيقات إضافية                                          |
-
-
-
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="العناصر">
 
-
 | العناصر         | النوع         | الوصف                                                  |
 | --------------- | ------------- | ------------------------------------------------------ |
 | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة          |
 | نص              | نص            | محتوى النص لعنصر القائمة                               |
 | عند_النقر       | دالة          | وظيفة الاستدعاء يتم تنشيطها عند النقر على عنصر القائمة |
 | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                            |
-
-
-
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,7 +302,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="الخصائص">
 
-
 | الخصائص         | النوع         | الوصف                                                      |
 | --------------- | ------------- | ---------------------------------------------------------- |
 | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تظهر قبل النص في عنصر القائمة              |
@@ -338,9 +311,6 @@ export const MyComponent = () => {
 | معطل            | قيمة منطقية   | يشير إلى ما إذا كان يتم التحويم حاليًا على عنصر القائمة    |
 | عند_النقر       | دالة          | دالة الاستدعاء التي يتم تحفيزها عند النقر على عنصر القائمة |
 | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                                |
-
-
-
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6OnqvLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6OnqvLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("تم تحديد عنصر القائمة");
+    console.log('تم تحديد عنصر القائمة');
   };
 
   return (
@@ -376,12 +346,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="الخصائص">
-
 
 | الخصائص        | النوع        | الوصف                                                                        |
 | -------------- | ------------ | ---------------------------------------------------------------------------- |
@@ -394,9 +362,6 @@ export const MyComponent = () => {
 | عند_النقر      | دالة         | دالة الاستدعاء التي يتم تحفيزها عند النقر على عنصر القائمة                   |
 | اسم الفئة      | نص           | اسم اختياري للتنسيق الإضافي.                                                 |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -408,11 +373,11 @@ export const MyComponent = () => {
 <Tab title="الاستخدام">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,7 +397,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="الخصائص">
 
-
 | الخصائص   | النوع       | الوصف                                                                                                                                             |
 | --------- | ----------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | اللون     | نص          | لون الثيم المعروض كعينة في عنصر القائمة. الخيارات تشمل: `أخضر`, `تركواز`, `سماوي`, `أزرق`, `أرجواني`, `وردي`, `أحمر`, `برتقالي`, `أصفر`, `رمادي`. |
@@ -442,9 +406,6 @@ export const MyComponent = () => {
 | البديل    | نص          | المتغير لعينة اللون. يمكن أن يكون إما `افتراضي` أو `خط أنابيب`                                                                                    |
 | عند_النقر | دالة        | دالة الاستدعاء التي يتم تحفيزها عند النقر على عنصر القائمة                                                                                        |
 | اسم الفئة | نص          | اسم اختياري للتنسيق الإضافي.                                                                                                                      |
-
-
-
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,18 +438,14 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="الخصائص">
 
-
 | الخصائص         | النوع         | الوصف                                                        |
 | --------------- | ------------- | ------------------------------------------------------------ |
 | الأيقونة اليسرى | مكون الأيقونة | أيقونة اختيارية تُعرض قبل النص في عنصر القائمة               |
 | نص              | نص            | محتوى النص في عنصر القائمة                                   |
 | مبدل            | قيمة منطقية   | يشير إلى ما إذا كان مفتاح التبديل في حالة "تشغيل" أو "إيقاف" |
 | onToggleChange  | دالة          | دالة الاستدعاء التي يتم تحفيزها عند تغيير حالة مفتاح التبديل |
-| حجم التبديل     | نص            | حجم مفتاح التبديل.  يمكن أن يكون إما \                       |
+| حجم التبديل     | نص            | حجم مفتاح التبديل. يمكن أن يكون إما \                        |
 | اسم الفئة       | نص            | اسم اختياري لتنسيقات إضافية                                  |
-
-
-
 
 </Tab>
 </Tabs>

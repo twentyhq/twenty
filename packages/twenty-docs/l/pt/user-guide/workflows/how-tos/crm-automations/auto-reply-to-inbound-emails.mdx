@@ -23,7 +23,10 @@ Escolha **When a Record is Created** e selecione **Messages**.
 
 Sempre que um e-mail chega ao Twenty, isto é acionado.
 
-<img src="/images/user-guide/workflows/auto-reply/workflow-overview.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/workflow-overview.png"
+  style={{ width: '100%' }}
+/>
 
 ### Etapa 3: Procurar quem enviou
 
@@ -40,7 +43,10 @@ O endereço do remetente não está na própria mensagem — está no registro r
 
 Isso fornece o e-mail do remetente em `handle` e o nome dele em `displayName`.
 
-<img src="/images/user-guide/workflows/auto-reply/find-sender.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/find-sender.png"
+  style={{ width: '100%' }}
+/>
 
 ### Etapa 4: Triagem por IA e rascunho de resposta
 
@@ -69,7 +75,10 @@ Respond with only the reply text, no subject line or greeting prefix.
 
 O Agente de IA produz sua resposta em um campo `response` ao qual as próximas etapas podem se referir.
 
-<img src="/images/user-guide/workflows/auto-reply/ai-triage.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/ai-triage.png"
+  style={{ width: '100%' }}
+/>
 
 ### Etapa 5: Ramificar com base na decisão da IA
 
@@ -83,7 +92,10 @@ Adicione uma ação **If/Else** para verificar se a IA decidiu responder ou pula
 
 Spam, boletins informativos e mensagens geradas automaticamente são descartados. Todo o restante segue para a próxima etapa.
 
-<img src="/images/user-guide/workflows/auto-reply/should-reply.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/should-reply.png"
+  style={{ width: '100%' }}
+/>
 
 ### Etapa 6: Enviar uma resposta encadeada
 
@@ -98,14 +110,24 @@ Adicione uma ação **Enviar e-mail** no ramo "se verdadeiro". Clique em **Opç�
 
 O campo In-Reply-To é o que faz disso uma resposta em vez de uma nova conversa. O destinatário a vê encadeada sob o e-mail original no Gmail, Outlook ou qualquer outro cliente.
 
-<img src="/images/user-guide/workflows/auto-reply/send-email.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/auto-reply/send-email.png"
+  style={{ width: '100%' }}
+/>
 
 <Tip>
-**In-Reply-To** espera um `message.headerMessageId` do acionador — é a impressão digital única do e-mail, não um endereço do destinatário. Se você deixá-lo vazio, o e-mail ainda será enviado, apenas como uma mensagem independente.
+  **In-Reply-To** espera um `message.headerMessageId` do acionador — é a
+  impressão digital única do e-mail, não um endereço do destinatário. Se você
+  deixá-lo vazio, o e-mail ainda será enviado, apenas como uma mensagem
+  independente.
 </Tip>
 
 <Warning>
-O Gmail usa a linha de assunto para agrupar mensagens em conversas. O assunto **deve** começar com `Re:` (incluindo os dois-pontos e o espaço) para que o Gmail exiba a resposta dentro da conversa original. Sem isso, a resposta aparecerá como uma conversa separada — mesmo que o cabeçalho In-Reply-To esteja definido corretamente.
+  O Gmail usa a linha de assunto para agrupar mensagens em conversas. O assunto
+  **deve** começar com `Re:` (incluindo os dois-pontos e o espaço) para que o
+  Gmail exiba a resposta dentro da conversa original. Sem isso, a resposta
+  aparecerá como uma conversa separada — mesmo que o cabeçalho In-Reply-To
+  esteja definido corretamente.
 </Warning>
 
 ### Etapa 7: Testar e ativar
@@ -116,6 +138,6 @@ Ative quando estiver satisfeito com isso.
 
 ## Ideias para desenvolver
 
-* **Responder apenas a VIPs** — adicione um ramo que verifique o domínio do remetente ou se ele existe como um Contato no Twenty
-* **Roteie por intenção** — use prompts separados do Agente de IA para lidar com consultas de vendas de forma diferente de solicitações de suporte
-* **Enriquecer antes de responder** — adicione uma etapa Pesquisar Registros para trazer a empresa do remetente ou o histórico de negócios para o prompt de IA, obtendo respostas mais personalizadas
+- **Responder apenas a VIPs** — adicione um ramo que verifique o domínio do remetente ou se ele existe como um Contato no Twenty
+- **Roteie por intenção** — use prompts separados do Agente de IA para lidar com consultas de vendas de forma diferente de solicitações de suporte
+- **Enriquecer antes de responder** — adicione uma etapa Pesquisar Registros para trazer a empresa do remetente ou o histórico de negócios para o prompt de IA, obtendo respostas mais personalizadas

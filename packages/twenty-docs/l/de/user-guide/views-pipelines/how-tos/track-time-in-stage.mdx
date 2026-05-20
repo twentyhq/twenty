@@ -4,7 +4,9 @@ description: Überwachen Sie die Deal-Geschwindigkeit, indem Sie nachverfolgen, 
 ---
 
 <Tip>
-Dies ist ein Beispiel dafür, wie man mit Workflows [Formelfelder](/l/de/user-guide/workflows/how-tos/crm-automations/formula-fields) erstellt – konkret Datumsberechnungen.
+  Dies ist ein Beispiel dafür, wie man mit Workflows
+  [Formelfelder](/l/de/user-guide/workflows/how-tos/crm-automations/formula-fields)
+  erstellt – konkret Datumsberechnungen.
 </Tip>
 
 Das Nachverfolgen, wann Opportunities eine Phase betreten, hilft, Engpässe zu erkennen und die Deal-Geschwindigkeit zu messen.
@@ -15,46 +17,47 @@ Diese Anleitung führt Sie durch das Einrichten benutzerdefinierter Felder und e
 
 Für jede Phase benötigen Sie zwei Feldtypen:
 
-* **Datums- und Uhrzeitfelder**: Erfassen, wann die Opportunity die jeweilige Phase betreten hat
-* **Zahlenfelder**: Speichern, wie viele Tage die Opportunity in jeder Phase verbracht hat
+- **Datums- und Uhrzeitfelder**: Erfassen, wann die Opportunity die jeweilige Phase betreten hat
+- **Zahlenfelder**: Speichern, wie viele Tage die Opportunity in jeder Phase verbracht hat
 
 ### Erstellen Sie die Felder "Last Entered"
 
 1. Gehen Sie zu **Settings → Data Model → Opportunities**
 2. Klicken Sie für jede Phase auf **+ Add Field** und konfigurieren Sie:
-   * **Name**: Last Entered [Phasenname] (z. B. "Last Entered New", "Last Entered Qualified")
-   * **Type**: Date & Time
-   * **Description**: Zeitstempel, wann die Opportunity diese Phase betreten hat
+   - **Name**: Last Entered [Phasenname] (z. B. "Last Entered New", "Last Entered Qualified")
+   - **Type**: Date & Time
+   - **Description**: Zeitstempel, wann die Opportunity diese Phase betreten hat
 3. Klicken Sie auf **Speichern**
 
 Erstellen Sie diese Felder:
 
-* Last Entered New
-* Last Entered Qualified
-* Last Entered Meeting
-* Last Entered Proposal
-* Last Entered Negotiation
-* Last Entered Closed Won
-* Last Entered Closed Lost
+- Last Entered New
+- Last Entered Qualified
+- Last Entered Meeting
+- Last Entered Proposal
+- Last Entered Negotiation
+- Last Entered Closed Won
+- Last Entered Closed Lost
 
 ### Erstellen Sie die Felder "Days in Stage"
 
 1. Klicken Sie für jede Phase auf **+ Add Field** und konfigurieren Sie:
-   * **Name**: Days in [Phasenname] (z. B. "Days in New", "Days in Qualified")
-   * **Type**: Number
-   * **Description**: Anzahl der in dieser Phase verbrachten Tage
+   - **Name**: Days in [Phasenname] (z. B. "Days in New", "Days in Qualified")
+   - **Type**: Number
+   - **Description**: Anzahl der in dieser Phase verbrachten Tage
 2. Klicken Sie auf **Speichern**
 
 Erstellen Sie diese Felder:
 
-* Days in New
-* Days in Qualified
-* Days in Meeting
-* Days in Proposal
-* Days in Negotiation
+- Days in New
+- Days in Qualified
+- Days in Meeting
+- Days in Proposal
+- Days in Negotiation
 
 <Note>
-Sie benötigen keine "Days in"-Felder für Closed Won und Closed Lost, da dies finale Phasen sind.
+  Sie benötigen keine "Days in"-Felder für Closed Won und Closed Lost, da dies
+  finale Phasen sind.
 </Note>
 
 ### Optional: Felder schreibgeschützt machen
@@ -70,8 +73,8 @@ Wenn Benutzer diese berechneten Felder nicht manuell bearbeiten sollen:
 
 Dieser einzelne Workflow übernimmt beide Aufgaben:
 
-* Erfasst den Zeitstempel beim Eintritt in eine neue Phase
-* Berechnet die in der vorherigen Phase verbrachten Tage
+- Erfasst den Zeitstempel beim Eintritt in eine neue Phase
+- Berechnet die in der vorherigen Phase verbrachten Tage
 
 ### Workflow erstellen
 
@@ -88,7 +91,10 @@ Dieser einzelne Workflow übernimmt beide Aufgaben:
 ### Verzweigungen für jede Phase hinzufügen
 
 <Note>
-Um eine neue Verzweigung zu erstellen, klicken Sie mit der rechten Maustaste auf den Workflow-Canvas und klicken Sie auf **New action**. Verknüpfen Sie anschließend diese Aktion mit dem vorherigen Knoten, indem Sie den Pfeil vom vorherigen Knoten zu dieser neuen Aktion ziehen.
+  Um eine neue Verzweigung zu erstellen, klicken Sie mit der rechten Maustaste
+  auf den Workflow-Canvas und klicken Sie auf **New action**. Verknüpfen Sie
+  anschließend diese Aktion mit dem vorherigen Knoten, indem Sie den Pfeil vom
+  vorherigen Knoten zu dieser neuen Aktion ziehen.
 </Note>
 
 ---
@@ -107,9 +113,9 @@ export const main = async (): Promise<object> => {
 ```
 
 3. Fügen Sie eine **Update Record**-Aktion hinzu:
-   * Datensatz: Die auslösende Opportunity
-   * Feld: Last Entered New
-   * Wert: `now` aus dem Code-Knoten
+   - Datensatz: Die auslösende Opportunity
+   - Feld: Last Entered New
+   - Wert: `now` aus dem Code-Knoten
 
 ---
 
@@ -140,10 +146,10 @@ export const main = async (params: {
 
 3. Konfigurieren Sie die Eingabe des Code-Knotens: Ordnen Sie `lastEnteredPreviousStage` dem Feld **Last Entered New** zu
 4. Fügen Sie eine **Update Record**-Aktion hinzu:
-   * Datensatz: Die auslösende Opportunity
-   * Zu aktualisierende Felder:
-     * Last Entered Qualified = `now`
-     * Days in New = `daysInPreviousStage`
+   - Datensatz: Die auslösende Opportunity
+   - Zu aktualisierende Felder:
+     - Last Entered Qualified = `now`
+     - Days in New = `daysInPreviousStage`
 
 ---
 
@@ -174,10 +180,10 @@ export const main = async (params: {
 
 3. Konfigurieren Sie die Eingabe des Code-Knotens: Ordnen Sie `lastEnteredPreviousStage` dem Feld **Last Entered Qualified** zu
 4. Fügen Sie eine **Update Record**-Aktion hinzu:
-   * Datensatz: Die auslösende Opportunity
-   * Zu aktualisierende Felder:
-     * Last Entered Meeting = `now`
-     * Days in Qualified = `daysInPreviousStage`
+   - Datensatz: Die auslösende Opportunity
+   - Zu aktualisierende Felder:
+     - Last Entered Meeting = `now`
+     - Days in Qualified = `daysInPreviousStage`
 
 ---
 
@@ -226,6 +232,6 @@ Dies zeigt die durchschnittliche Zeit, die Deals in jeder Phase verbringen.
 
 ## Verwandt
 
-* [Workflows](/l/de/user-guide/workflows/overview) — Grundlagen der Automatisierung
-* [So erstellen Sie benutzerdefinierte Felder](/l/de/user-guide/data-model/how-tos/create-custom-fields) — Feldkonfiguration
-* [Kanban-Ansichten](/l/de/user-guide/views-pipelines/capabilities/kanban-views) — Aggregationen
+- [Workflows](/l/de/user-guide/workflows/overview) — Grundlagen der Automatisierung
+- [So erstellen Sie benutzerdefinierte Felder](/l/de/user-guide/data-model/how-tos/create-custom-fields) — Feldkonfiguration
+- [Kanban-Ansichten](/l/de/user-guide/views-pipelines/capabilities/kanban-views) — Aggregationen

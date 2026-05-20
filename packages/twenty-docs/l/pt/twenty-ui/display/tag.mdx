@@ -10,7 +10,7 @@ Componente para categorizar visualmente ou rotular conteúdo.
 <Tab title="Uso">
 
 ```jsx
-import { Tag } from "@/ui/display/tag/components/Tag";
+import { Tag } from '@/ui/display/tag/components/Tag';
 
 export const MyComponent = () => {
   return (
@@ -18,7 +18,7 @@ export const MyComponent = () => {
       className
       color="red"
       text="Urgent"
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
@@ -28,15 +28,12 @@ export const MyComponent = () => {
 
 <Tab title="Propriedades">
 
-
 | Propriedades | Tipo   | Descrição                                                                                                                         |
 | ------------ | ------ | --------------------------------------------------------------------------------------------------------------------------------- |
 | className    | string | Nome opcional para estilização adicional                                                                                          |
 | cor          | string | Cor da etiqueta. As opções incluem: `verde`, `turquesa`, `céu`, `azul`, `roxo`, `rosa`, `vermelho`, `laranja`, `amarelo`, `cinza` |
 | texto        | string | O conteúdo da tag                                                                                                                 |
 | aoClicar     | função | Função opcional chamada quando um usuário clica na etiqueta                                                                       |
-
-
 
 </Tab>
 

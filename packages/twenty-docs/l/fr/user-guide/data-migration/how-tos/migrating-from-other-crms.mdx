@@ -7,7 +7,11 @@ description: Guide pas à pas pour migrer vos données de n'importe quel CRM ver
 
 Ce guide vous accompagne pour migrer vos données depuis n'importe quel CRM vers Twenty. Le processus consiste à auditer vos données, à préparer votre espace de travail sur Twenty, à exporter depuis votre système actuel et à importer dans Twenty.
 
-<Note>Les vues, les flux de travail et les autorisations doivent être recréés manuellement après la migration. Prévoyez du temps pour ce travail de configuration.</Note>
+<Note>
+  Les vues, les flux de travail et les autorisations doivent être recréés
+  manuellement après la migration. Prévoyez du temps pour ce travail de
+  configuration.
+</Note>
 
 ## Étape 1 : Auditez vos données actuelles
 
@@ -15,17 +19,17 @@ La migration est une occasion de repartir sur de bonnes bases. N'importez pas de
 
 **À conserver :**
 
-* Contacts et entreprises actifs
-* Opportunités et affaires ouvertes
-* Notes et activités importantes
-* Champs personnalisés que vous utilisez réellement
+- Contacts et entreprises actifs
+- Opportunités et affaires ouvertes
+- Notes et activités importantes
+- Champs personnalisés que vous utilisez réellement
 
 **À laisser de côté :**
 
-* Contacts obsolètes (aucune activité depuis plus de 2 ans)
-* Doublons
-* Données de test
-* Champs personnalisés inutilisés
+- Contacts obsolètes (aucune activité depuis plus de 2 ans)
+- Doublons
+- Données de test
+- Champs personnalisés inutilisés
 
 ## Étape 2 : Cartographiez votre modèle de données
 
@@ -41,11 +45,14 @@ Créez un document de correspondance entre votre CRM actuel et Twenty :
 
 **Pour chaque champ, documentez :**
 
-* Le nom du champ source
-* Le champ Twenty cible
-* Toute transformation de format nécessaire (dates, numéros de téléphone, etc.)
+- Le nom du champ source
+- Le champ Twenty cible
+- Toute transformation de format nécessaire (dates, numéros de téléphone, etc.)
 
-<Note>Gardez ce document de mappage à portée de main pendant l'importation — vous vous y référerez lors de la mise en correspondance des colonnes.</Note>
+<Note>
+  Gardez ce document de mappage à portée de main pendant l'importation — vous
+  vous y référerez lors de la mise en correspondance des colonnes.
+</Note>
 
 ## Étape 3 : Configurez votre espace de travail Twenty
 
@@ -61,7 +68,8 @@ Avant d'importer des données, préparez votre espace de travail Twenty :
 <Warning>
   **Les champs doivent exister avant l'importation.**
 
-  L'import CSV crée des enregistrements, pas des champs. Créez tous les champs personnalisés dans **Paramètres → Modèle de données** avant l'importation.
+L'import CSV crée des enregistrements, pas des champs. Créez tous les champs personnalisés dans **Paramètres → Modèle de données** avant l'importation.
+
 </Warning>
 
 ### Invitez votre équipe
@@ -69,7 +77,8 @@ Avant d'importer des données, préparez votre espace de travail Twenty :
 <Warning>
   **Invitez les utilisateurs AVANT d'importer des données.**
 
-  Si vos données incluent des références à des utilisateurs (propriétaire du compte, assigné, etc.), ces utilisateurs doivent exister dans Twenty avant l'importation. Sinon, ces relations ne pourront pas être mises en correspondance.
+Si vos données incluent des références à des utilisateurs (propriétaire du compte, assigné, etc.), ces utilisateurs doivent exister dans Twenty avant l'importation. Sinon, ces relations ne pourront pas être mises en correspondance.
+
 </Warning>
 
 1. Allez dans **Paramètres → Membres**
@@ -118,7 +127,8 @@ Ouvrez chaque CSV exporté dans une application de tableur et préparez-le pour 
 <Warning>
   **Le format du domaine est critique.**
 
-  Utilisez `https://domain.com` (pas `domain.com` ni `www.domain.com`). Cela correspond au format de Twenty et évite les doublons lorsque vous connectez la synchronisation e-mail/calendrier.
+Utilisez `https://domain.com` (pas `domain.com` ni `www.domain.com`). Cela correspond au format de Twenty et évite les doublons lorsque vous connectez la synchronisation e-mail/calendrier.
+
 </Warning>
 
 Voir [Comment préparer vos fichiers CSV](/l/fr/user-guide/data-migration/how-tos/prepare-your-csv-files) pour connaître les exigences complètes de formatage pour tous les types de champs.
@@ -151,15 +161,16 @@ Voir [Comment préparer vos fichiers CSV](/l/fr/user-guide/data-migration/how-to
 <Warning>
   **L'ordre d'importation est important !**
 
-  Importez toujours dans cet ordre :
+Importez toujours dans cet ordre :
 
-  1. **Entreprises** d'abord (aucune dépendance)
-  2. **Personnes** ensuite (liées aux Entreprises)
-  3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
-  4. **Notes et tâches** (liées aux enregistrements)
-  5. **Objets personnalisés** en suivant leurs dépendances
+1. **Entreprises** d'abord (aucune dépendance)
+2. **Personnes** ensuite (liées aux Entreprises)
+3. **Opportunités** en troisième (liées aux Entreprises/Personnes)
+4. **Notes et tâches** (liées aux enregistrements)
+5. **Objets personnalisés** en suivant leurs dépendances
 
-  L'enregistrement parent doit exister avant que vous puissiez y faire référence.
+L'enregistrement parent doit exister avant que vous puissiez y faire référence.
+
 </Warning>
 
 ### Importez chaque objet
@@ -170,17 +181,17 @@ Pour chaque fichier CSV, dans l'ordre :
 2. Cliquez sur **⋮ → Importer des enregistrements**
 3. Téléversez le fichier CSV
 4. Faites correspondre les colonnes aux champs :
-   * Faites correspondre les colonnes d'e-mail des utilisateurs aux champs de relation appropriés
-   * Faites correspondre les colonnes de relation (comme `companyDomain`) aux champs de relation
+   - Faites correspondre les colonnes d'e-mail des utilisateurs aux champs de relation appropriés
+   - Faites correspondre les colonnes de relation (comme `companyDomain`) aux champs de relation
 5. Examinez et corrigez les erreurs éventuelles dans l'interface
 6. Confirmez l'importation
 7. Vérifiez quelques enregistrements avant de passer au fichier suivant
 
 **Guides détaillés :**
 
-* [Comment importer des entreprises](/l/fr/user-guide/data-migration/how-tos/import-companies-via-csv)
-* [Comment importer des contacts](/l/fr/user-guide/data-migration/how-tos/import-contacts-via-csv)
-* [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
+- [Comment importer des entreprises](/l/fr/user-guide/data-migration/how-tos/import-companies-via-csv)
+- [Comment importer des contacts](/l/fr/user-guide/data-migration/how-tos/import-contacts-via-csv)
+- [Comment importer des relations](/l/fr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv)
 
 ## Étape 7 : Grandes migrations (50 000+ enregistrements)
 
@@ -194,9 +205,9 @@ Pour les grandes migrations :
 
 **Pour les importations via l'API :**
 
-* Plus rapide et plus fiable pour les grands jeux de données
-* Prend en charge les opérations par lots (jusqu'à 60 enregistrements par appel)
-* Voir [Comment importer des données via l'API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api)
+- Plus rapide et plus fiable pour les grands jeux de données
+- Prend en charge les opérations par lots (jusqu'à 60 enregistrements par appel)
+- Voir [Comment importer des données via l'API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api)
 
 ## Étape 8 : Configuration post-migration
 
@@ -204,30 +215,30 @@ Après l'importation des données, terminez la configuration de votre espace de 
 
 ### Recréez les vues
 
-* Configurez des vues enregistrées avec des filtres, des tris et des configurations de colonnes
-* Créez toutes les vues kanban ou calendrier dont vous avez besoin
+- Configurez des vues enregistrées avec des filtres, des tris et des configurations de colonnes
+- Créez toutes les vues kanban ou calendrier dont vous avez besoin
 
 ### Recréez les workflows
 
-* Recréez vos automatisations dans **Paramètres → Flux de travail**
-* Commencez par les flux de travail les plus critiques
-* Testez chacun d'eux avant de vous y fier
+- Recréez vos automatisations dans **Paramètres → Flux de travail**
+- Commencez par les flux de travail les plus critiques
+- Testez chacun d'eux avant de vous y fier
 
 ### Configurez les rôles et les autorisations
 
-* Configurez les rôles dans **Paramètres → Rôles**
-* Affectez les utilisateurs aux rôles appropriés
+- Configurez les rôles dans **Paramètres → Rôles**
+- Affectez les utilisateurs aux rôles appropriés
 
 ### Connectez les e-mails et le calendrier
 
-* Chaque utilisateur connecte son propre compte dans **Paramètres → Comptes**
-* Twenty commencera à synchroniser les e-mails avec les enregistrements de contacts
-* Voir [E-mails et calendrier](/l/fr/user-guide/calendar-emails/overview)
+- Chaque utilisateur connecte son propre compte dans **Paramètres → Comptes**
+- Twenty commencera à synchroniser les e-mails avec les enregistrements de contacts
+- Voir [E-mails et calendrier](/l/fr/user-guide/calendar-emails/overview)
 
 ### Formez votre équipe
 
-* Parcourez ensemble la nouvelle interface
-* Documentez tous les processus spécifiques à l'équipe
+- Parcourez ensemble la nouvelle interface
+- Documentez tous les processus spécifiques à l'équipe
 
 ## Problèmes Courants et Solutions
 
@@ -245,9 +256,17 @@ Voir [Comment corriger les erreurs d'importation](/l/fr/user-guide/data-migratio
 
 ### Intégrité des données
 
-<Check>Tous les enregistrements importés (comparez les nombres avec le système source)</Check>
-<Check>Relations fonctionnant correctement (Personnes liées aux Entreprises)</Check>
-<Check>Attributions utilisateur correctement mises en correspondance (Propriétaire, Assigné)</Check>
+<Check>
+  Tous les enregistrements importés (comparez les nombres avec le système
+  source)
+</Check>
+<Check>
+  Relations fonctionnant correctement (Personnes liées aux Entreprises)
+</Check>
+<Check>
+  Attributions utilisateur correctement mises en correspondance (Propriétaire,
+  Assigné)
+</Check>
 <Check>Champs personnalisés renseignés</Check>
 <Check>Aucun doublon inattendu</Check>
 
@@ -261,7 +280,10 @@ Voir [Comment corriger les erreurs d'importation](/l/fr/user-guide/data-migratio
 ### Préparation de l'équipe
 
 <Check>Équipe formée au nouveau système</Check>
-<Check>Plan d'accès à l'ancien CRM décidé (le conserver comme référence ? Quand le désactiver ?)</Check>
+<Check>
+  Plan d'accès à l'ancien CRM décidé (le conserver comme référence ? Quand le
+  désactiver ?)
+</Check>
 
 ## FAQ
 
@@ -270,13 +292,17 @@ Voir [Comment corriger les erreurs d'importation](/l/fr/user-guide/data-migratio
     Pas pour le moment. Les flux de travail doivent être recréés manuellement dans Twenty.
   </Accordion>
 
-  <Accordion title="Qu'en est-il des pièces jointes ?">
-    Les pièces jointes ne sont pas incluses dans les exportations CSV. Vous devrez les téléverser à nouveau manuellement, les migrer via l'API ou contacter notre équipe pour obtenir de l'aide.
-  </Accordion>
+<Accordion title="Qu'en est-il des pièces jointes ?">
+  Les pièces jointes ne sont pas incluses dans les exportations CSV. Vous devrez
+  les téléverser à nouveau manuellement, les migrer via l'API ou contacter notre
+  équipe pour obtenir de l'aide.
+</Accordion>
 
-  <Accordion title="Puis-je garder les deux systèmes actifs pendant la migration ?">
-    Oui, nous recommandons de garder votre ancien CRM actif jusqu'à ce que vous ayez vérifié que la migration est terminée. Veillez simplement à ne pas créer de nouvelles données aux deux endroits.
-  </Accordion>
+<Accordion title="Puis-je garder les deux systèmes actifs pendant la migration ?">
+  Oui, nous recommandons de garder votre ancien CRM actif jusqu'à ce que vous
+  ayez vérifié que la migration est terminée. Veillez simplement à ne pas créer
+  de nouvelles données aux deux endroits.
+</Accordion>
 
   <Accordion title="Combien de temps la migration prend-elle généralement ?">
     Cela dépend du volume et de la complexité des données. Les petites migrations (moins de 10 000 enregistrements) peuvent être effectuées en quelques heures. Les grandes migrations peuvent prendre plusieurs jours, y compris le nettoyage des données et les tests.
@@ -287,7 +313,7 @@ Voir [Comment corriger les erreurs d'importation](/l/fr/user-guide/data-migratio
 
 Pour des migrations complexes ou de grands jeux de données :
 
-* **Configuration guidée :** Réservez un forfait d'intégration de 4 heures
-* **Service de migration complet :** Nos partenaires peuvent prendre en charge l'intégralité de la migration
+- **Configuration guidée :** Réservez un forfait d'intégration de 4 heures
+- **Service de migration complet :** Nos partenaires peuvent prendre en charge l'intégralité de la migration
 
 Contactez [contact@twenty.com](mailto:contact@twenty.com) ou découvrez nos [services de mise en œuvre](/l/fr/user-guide/getting-started/capabilities/implementation-services).

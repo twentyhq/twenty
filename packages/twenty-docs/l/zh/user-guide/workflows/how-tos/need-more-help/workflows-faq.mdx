@@ -11,6 +11,7 @@ description: 关于 Twenty 中工作流的常见问题。
     **解决方法**：联系您的工作区管理员，在**设置 → 成员 → 角色**下为您授予工作流访问权限。
 
     如果您在侧边栏根本看不到工作流部分，这就说明是权限问题。
+
   </Accordion>
 
   <Accordion title="为什么我在顶部导航栏中看不到我的手动工作流按钮？">
@@ -23,6 +24,7 @@ description: 关于 Twenty 中工作流的常见问题。
     **检查方式**：打开工作流 → 点击触发器 → 确认 "Navbar placement" 设置为 "Pinned"。
 
     无论导航栏设置如何，您始终可以通过**Cmd + K**（或**Ctrl + K**）访问手动工作流。
+
   </Accordion>
 
   <Accordion title="Single、Global 和 Bulk 手动触发器有什么区别？">
@@ -37,6 +39,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * **Bulk**：当您需要一起处理记录或优化额度使用时使用（需要 Iterator 操作）
 
     详见 [工作流触发器](/l/zh/user-guide/workflows/capabilities/workflow-triggers)。
+
   </Accordion>
 
   <Accordion title="我没有看到 If/Else 节点。 我应该怎么办？">
@@ -55,6 +58,7 @@ description: 关于 Twenty 中工作流的常见问题。
     只有通过 Filter 条件的分支会执行后续操作。
 
     逐步指南请参见[如何使用分支](/l/zh/user-guide/workflows/capabilities/workflow-branches)。
+
   </Accordion>
 
   <Accordion title="工作流分支是并行运行的吗？">
@@ -65,6 +69,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * 设置相反的条件（例如，分支 A：status = "Open"，分支 B：status ≠ "Open"）
 
     未通过其 Filter 条件的分支将停止执行，其他分支会继续。
+
   </Accordion>
 
   <Accordion title="我可以将分支合并在一起吗？">
@@ -76,6 +81,7 @@ description: 关于 Twenty 中工作流的常见问题。
     3. 将每个分支末端的连接拖拽到这个新步骤
 
     合并后的步骤将在所有已连接分支完成后执行。
+
   </Accordion>
 
   <Accordion title="Search Records 的结果限制是多少？">
@@ -87,12 +93,14 @@ description: 关于 Twenty 中工作流的常见问题。
     * 考虑使用 API 进行批量操作
 
     对大多数工作流而言，200 条记录已足够。 如果您经常触及此限制，请考虑重构您的自动化。
+
   </Accordion>
 
   <Accordion title="我可以在工作流邮件中抄送他人吗？">
     \*\*还不可以。\*\*Send Email 操作的 CC 和 BCC 字段已在我们的路线图上。
 
     **当前变通方法**：添加多个 Send Email 操作以发送给其他收件人，或者使用 HTTP Request 通过支持 CC 的外部电子邮件服务发送。
+
   </Accordion>
 
   <Accordion title="如何使用前面步骤的输出？">
@@ -108,6 +116,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * 代码输出：`{{code.calculatedValue}}`
 
     在操作配置中将鼠标悬停在任意字段上，即可查看前面步骤可用的变量。
+
   </Accordion>
 
   <Accordion title="为什么我的 Iterator 会失败？">
@@ -122,6 +131,7 @@ description: 关于 Twenty 中工作流的常见问题。
     2. Filter：length > 0
     3. Iterator：选择 `{{searchRecords}}`
     4. Iterator 内的操作使用 `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="Code 操作的最大执行时间是多少？">
@@ -136,6 +146,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * 避免进行大量计算；通过 HTTP Request 使用外部服务进行密集型处理
     * 优化您的代码以减少执行时间
     * 如果您需要更长的处理时间，考虑使用计划的工作流按批次处理数据
+
   </Accordion>
 
   <Accordion title="如何查看工作流运行记录？">
@@ -152,6 +163,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * **数据**：查看每个步骤的输入/输出数据
 
     详见 [工作流运行](/l/zh/user-guide/workflows/capabilities/workflow-runs)。
+
   </Accordion>
 
   <Accordion title="为什么我看不到我的工作流运行？">
@@ -171,6 +183,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * 将大型批量操作分散进行
     * 使用筛选条件降低触发频率
     * 将繁重的工作流安排在非高峰时段
+
   </Accordion>
 
   <Accordion title="工作流的速率限制是什么？">
@@ -189,6 +202,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * 对于大型批量，使用带有 Iterator 的 Bulk 触发器，而不是 Single 触发器
     * 将相关的自动化合并为更少的工作流
     * 使用计划的工作流在一段时间内分散负载
+
   </Accordion>
 
   <Accordion title="我可以重试失败的工作流运行吗？">
@@ -205,6 +219,7 @@ description: 关于 Twenty 中工作流的常见问题。
     * 在进行批量操作之前，先用少量记录充分测试
 
     自动重试功能已在我们的路线图上，计划在未来版本中提供。
+
   </Accordion>
 
   <Accordion title="在进行 CSV 导入前，我需要停用工作流吗？">
@@ -224,6 +239,7 @@ description: 关于 Twenty 中工作流的常见问题。
     5. 完成后**重新启用**这些工作流
 
     **替代方案**：如果您需要这些工作流在导入的数据上运行，请以较小的批次导入以维持在速率限制内。
+
   </Accordion>
 
   <Accordion title="如何整理我的工作流布局？">
@@ -233,6 +249,7 @@ description: 关于 Twenty 中工作流的常见问题。
     2. 点击**整理工作流**
 
     这将自动将所有节点重新排列为整洁有序的布局。
+
   </Accordion>
 
 </AccordionGroup>

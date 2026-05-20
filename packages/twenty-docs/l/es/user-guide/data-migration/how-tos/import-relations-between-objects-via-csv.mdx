@@ -7,7 +7,12 @@ description: Guía completa paso a paso para vincular registros durante la impor
 
 Esta guía explica cómo importar relaciones entre objetos—por ejemplo, vincular Personas con Empresas u Oportunidades con Personas.
 
-<Note>**Qué se puede importar:** Solo relaciones de uno a muchos que apunten a un único tipo de objeto. Las relaciones que apuntan a varios tipos de objeto (como Notas vinculadas a Personas Y Empresas) aún no son compatibles con la importación.</Note>
+<Note>
+  **Qué se puede importar:** Solo relaciones de uno a muchos que apunten a un
+  único tipo de objeto. Las relaciones que apuntan a varios tipos de objeto
+  (como Notas vinculadas a Personas Y Empresas) aún no son compatibles con la
+  importación.
+</Note>
 
 ## Comprender las relaciones
 
@@ -15,9 +20,9 @@ Esta guía explica cómo importar relaciones entre objetos—por ejemplo, vincul
 
 En una relación de uno a muchos:
 
-* **Una** Empresa tiene **muchas** Personas (empleados)
-* **Una** Empresa tiene **muchas** Oportunidades
-* **Una** Persona tiene **muchas** Tareas
+- **Una** Empresa tiene **muchas** Personas (empleados)
+- **Una** Empresa tiene **muchas** Oportunidades
+- **Una** Persona tiene **muchas** Tareas
 
 El lado "uno" es el **padre**. El lado "muchos" es el **hijo**.
 
@@ -36,8 +41,8 @@ Antes de importar, determine qué objeto es el padre y cuál es el hijo.
 
 **Pregúntese:** "¿UNO [Objeto A] tiene MUCHOS [Objeto B]?"
 
-* Una Empresa → Muchas Personas ✓ (la Empresa es el padre)
-* Una Persona → Muchas Empresas ✗ (Esto es incorrecto: una persona pertenece a una sola empresa)
+- Una Empresa → Muchas Personas ✓ (la Empresa es el padre)
+- Una Persona → Muchas Empresas ✗ (Esto es incorrecto: una persona pertenece a una sola empresa)
 
 ## Paso 2: Importar primero los registros padre
 
@@ -53,7 +58,8 @@ El padre (lado "uno") debe existir en Twenty antes de poder hacer referencia a �
 <Warning>
   **Si el registro padre no existe, la importación fallará.**
 
-  Verifique siempre que las Empresas estén importadas antes de importar Personas con referencias a Empresas.
+Verifique siempre que las Empresas estén importadas antes de importar Personas con referencias a Empresas.
+
 </Warning>
 
 ## Paso 3: Anotar el identificador único del padre
@@ -67,7 +73,10 @@ Debe hacer referencia al registro padre mediante un **identificador único**. Op
 | **Miembros del espacio de trabajo** | `id` (UUID), `email` (no el nombre)                                       |
 | **Objetos personalizados**          | `id` (UUID) o cualquier campo marcado como único                          |
 
-<Note>**Recomendado:** Use `domain` para Empresas y `email` para Personas. Son legibles para humanos y fáciles de verificar en su hoja de cálculo.</Note>
+<Note>
+  **Recomendado:** Use `domain` para Empresas y `email` para Personas. Son
+  legibles para humanos y fáciles de verificar en su hoja de cálculo.
+</Note>
 
 ### Cómo encontrar el identificador
 
@@ -87,9 +96,9 @@ Antes de importar, asegúrese de que exista el campo de relación entre sus obje
 2. Seleccione su objeto hijo (p. ej., Personas)
 3. Busque un campo de relación que apunte al padre (p. ej., Empresa)
 4. Si no existe, créelo:
-   * Haga clic en **+ Add field**
-   * Seleccione el tipo **Relation**
-   * Elija el objeto padre
+   - Haga clic en **+ Add field**
+   - Seleccione el tipo **Relation**
+   - Elija el objeto padre
 
 ## Paso 5: Preparar su archivo CSV
 
@@ -119,7 +128,8 @@ La columna `companyDomain` hace referencia al dominio de la Empresa.
 <Warning>
   **¡El formato del dominio importa!**
 
-  Use `https://domain.com` (no solo `domain.com`). Esto coincide con cómo Twenty almacena los dominios de las Empresas y evita errores de coincidencia.
+Use `https://domain.com` (no solo `domain.com`). Esto coincide con cómo Twenty almacena los dominios de las Empresas y evita errores de coincidencia.
+
 </Warning>
 
 ### Reglas importantes
@@ -134,8 +144,8 @@ La columna `companyDomain` hace referencia al dominio de la Empresa.
 2. Haga clic en **⋮** → **Importar registros**
 3. Cargue su archivo CSV
 4. En el paso de asignación de campos:
-   * Encuentre su columna de relación (p. ej., `companyDomain`)
-   * Asígnela al campo de relación **Company**
+   - Encuentre su columna de relación (p. ej., `companyDomain`)
+   - Asígnela al campo de relación **Company**
 5. Complete las asignaciones restantes
 6. Revise los errores y confirme
 
@@ -164,8 +174,8 @@ Después de importar:
 
 Al vincular a miembros del espacio de trabajo (su equipo):
 
-* Use su **dirección de correo electrónico**, no su nombre
-* Ejemplo: `owner@yourcompany.com`, no "John Smith"
+- Use su **dirección de correo electrónico**, no su nombre
+- Ejemplo: `owner@yourcompany.com`, no "John Smith"
 
 ```csv
 taskName,assignedTo
@@ -181,19 +191,24 @@ Review proposal,jane@yourcompany.com
 
     1. Use el `id` de Twenty (exporte los registros padre para obtener sus IDs)
     2. Cree un campo único personalizado en su modelo de datos para almacenar un ID externo de su sistema anterior
+
   </Accordion>
 
-  <Accordion title="¿Puedo actualizar relaciones en registros existentes?">
-    ¡Sí! Incluya el identificador único del registro hijo (p. ej., `email` para Personas) y el nuevo valor de la relación. La importación actualizará la relación.
-  </Accordion>
+<Accordion title="¿Puedo actualizar relaciones en registros existentes?">
+  ¡Sí! Incluya el identificador único del registro hijo (p. ej., `email` para
+  Personas) y el nuevo valor de la relación. La importación actualizará la
+  relación.
+</Accordion>
 
-  <Accordion title="¿Puedo importar relaciones de muchos a muchos?">
-    Las relaciones de muchos a muchos aún no son compatibles con la importación. Está previsto para el primer semestre de 2026.
-  </Accordion>
+<Accordion title="¿Puedo importar relaciones de muchos a muchos?">
+  Las relaciones de muchos a muchos aún no son compatibles con la importación.
+  Está previsto para el primer semestre de 2026.
+</Accordion>
 
-  <Accordion title="¿Puedo vincular a varios tipos de objeto (como Notas a Personas Y Empresas)?">
-    Las relaciones que apuntan a varios tipos de objeto aún no son compatibles con la importación/exportación. Esto está en nuestra hoja de ruta.
-  </Accordion>
+<Accordion title="¿Puedo vincular a varios tipos de objeto (como Notas a Personas Y Empresas)?">
+  Las relaciones que apuntan a varios tipos de objeto aún no son compatibles con
+  la importación/exportación. Esto está en nuestra hoja de ruta.
+</Accordion>
 
   <Accordion title="¿Qué ocurre si un registro padre no existe?">
     La importación mostrará un error para esa fila. Puedes hacerlo de las siguientes maneras:
@@ -201,6 +216,7 @@ Review proposal,jane@yourcompany.com
     * Importe el registro padre primero y luego vuelva a importar
     * Corrija el valor de la referencia
     * Elimine la fila de la importación
+
   </Accordion>
 
   <Accordion title="¿Por qué mi relación no se vincula correctamente?">
@@ -210,19 +226,21 @@ Review proposal,jane@yourcompany.com
     * Diferencia de mayúsculas y minúsculas (verifique la ortografía exacta)
     * El padre no existe (importe primero los padres)
     * Asignar varios identificadores (use solo uno)
+
   </Accordion>
 </AccordionGroup>
 
 <Warning>
   **Recuerde: los registros eliminados lógicamente cuentan para la unicidad.**
 
-  Si recibe errores de "no encontrado" pero el registro parece existir, consulte Menú de comandos → Ver registros eliminados. Es posible que el padre haya sido eliminado lógicamente.
+Si recibe errores de "no encontrado" pero el registro parece existir, consulte Menú de comandos → Ver registros eliminados. Es posible que el padre haya sido eliminado lógicamente.
+
 </Warning>
 
 ## Solución de Problemas
 
 ¿Tiene problemas? Revise:
 
-* [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
-* [Capacidades de importación de relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
-* [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Cómo corregir errores de importación](/l/es/user-guide/data-migration/how-tos/fix-import-errors)
+- [Capacidades de importación de relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
+- [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)

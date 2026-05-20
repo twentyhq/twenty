@@ -9,9 +9,9 @@ Fırsatlar durağanlaştığında yöneticileri uyararak satış boru hattınız
 
 Güncellenmeden bekleyen fırsatlar şunlara yol açar:
 
-* Anlaşmaların soğuması
-* Güvenilmez tahminler
-* Kaybedilen gelir
+- Anlaşmaların soğuması
+- Güvenilmez tahminler
+- Kaybedilen gelir
 
 ## Çözüm
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ export const main = async (params) => {
 
 7 günü tercih ettiğiniz süreyle değiştirmek için Kayıt Ara filtresini düzenleyin:
 
-* Hızlı tempolu satışlar için 3 gün
-* Kurumsal anlaşmalar için 14 gün
-* Uzun satış döngüleri için 30 gün
+- Hızlı tempolu satışlar için 3 gün
+- Kurumsal anlaşmalar için 14 gün
+- Uzun satış döngüleri için 30 gün
 
 ### Bireysel Temsilcileri Uyarın
 
@@ -132,5 +132,5 @@ E-postaya ek olarak veya yerine, bir Slack webhook'una gönderi yapmak için **H
 
 ## İlgili
 
-* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+- [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)

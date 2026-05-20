@@ -113,28 +113,37 @@ Es esperado ya que el usuario no está autorizado cuando cierra sesión porque s
 
 #### ¿Cómo comprobar si su worker está funcionando?
 
-* Vaya a [webhook-test.com](https://webhook-test.com/) y copie **Su URL de Webhook Única**.
+- Vaya a [webhook-test.com](https://webhook-test.com/) y copie **Su URL de Webhook Única**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test.jpg" alt="Prueba de webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test.jpg"
+    alt="Prueba de webhook"
+  />
 </div>
 
-* Abra la aplicación Twenty, navegue a `/settings` y active el interruptor **Avanzado** en la parte inferior izquierda de la pantalla.
-* Cree un nuevo webhook.
-* Pegue **Su URL de Webhook Única** en el campo **Url de EndPoint** en Twenty. Establezca los **Filtros** en `Companies` y `Created`.
+- Abra la aplicación Twenty, navegue a `/settings` y active el interruptor **Avanzado** en la parte inferior izquierda de la pantalla.
+- Cree un nuevo webhook.
+- Pegue **Su URL de Webhook Única** en el campo **Url de EndPoint** en Twenty. Establezca los **Filtros** en `Companies` y `Created`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-settings.jpg" alt="Configuraciones del webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-settings.jpg"
+    alt="Configuraciones del webhook"
+  />
 </div>
 
-* Vaya a `/objects/companies` y cree un nuevo registro de empresa.
-* Regrese a [webhook-test.com](https://webhook-test.com/) y verifique si se ha recibido una nueva **solicitud POST**.
+- Vaya a `/objects/companies` y cree un nuevo registro de empresa.
+- Regrese a [webhook-test.com](https://webhook-test.com/) y verifique si se ha recibido una nueva **solicitud POST**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/self-hosting/webhook-test-result.jpg" alt="Resultado de la prueba del webhook" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/self-hosting/webhook-test-result.jpg"
+    alt="Resultado de la prueba del webhook"
+  />
 </div>
 
-* Si se recibe una **solicitud POST**, su worker está funcionando con éxito. De lo contrario, debe solucionar problemas de su worker.
+- Si se recibe una **solicitud POST**, su worker está funcionando con éxito. De lo contrario, debe solucionar problemas de su worker.
 
 #### El front-end no comienza y devuelve el error TS5042: La opción 'project' no se puede mezclar con archivos fuente en una línea de comando
 
@@ -194,9 +203,8 @@ Si está ejecutando Twenty detrás de un proxy inverso y experimenta problemas d
    Asegúrese de que `SERVER_URL` en su archivo `.env` coincida con su URL de acceso externa, incluyendo `https` si SSL está habilitado.
 
 2. **Verifique la configuración del Proxy Reverso:**
-
-   * Confirme que su proxy reverso está reenviando correctamente las solicitudes al servidor de Twenty.
-   * Asegúrese de que los encabezados como `X-Forwarded-For` y `X-Forwarded-Proto` estén configurados correctamente.
+   - Confirme que su proxy reverso está reenviando correctamente las solicitudes al servidor de Twenty.
+   - Asegúrese de que los encabezados como `X-Forwarded-For` y `X-Forwarded-Proto` estén configurados correctamente.
 
 3. **Reinicie los Servicios:**
 
@@ -210,7 +218,7 @@ Cambiar la propiedad de la carpeta de datos en el host de raíz a otro usuario y
 
 Si enfrenta problemas no cubiertos en esta guía:
 
-* Verifique los Registros:
+- Verifique los Registros:
 
   Vea los registros del contenedor por mensajes de error:
 
@@ -218,6 +226,6 @@ Si enfrenta problemas no cubiertos en esta guía:
   docker compose logs
   ```
 
-* Soporte Comunitario:
+- Soporte Comunitario:
 
   Póngase en contacto con la [comunidad de Twenty](https://github.com/twentyhq/twenty/issues) o [los canales de soporte](https://discord.gg/cx5n4Jzs57) para obtener asistencia.

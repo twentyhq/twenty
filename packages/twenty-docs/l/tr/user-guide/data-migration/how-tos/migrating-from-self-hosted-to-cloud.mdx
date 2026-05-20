@@ -7,7 +7,10 @@ description: Twenty kendi barındırmalı örneğinizi Twenty Cloud’a taşıma
 
 Bu kılavuz, verilerinizi Twenty kendi barındırmalı örneğinizden Twenty Cloud’a taşıma sürecinde size adım adım yol gösterir. Süreç; bulut çalışma alanınızı kurmayı, verilerinizi dışa aktarmayı ve yeniden içe aktarmayı içerir.
 
-<Note>Görünümler, iş akışları ve roller geçişten sonra manuel olarak yeniden oluşturulmalıdır. Bu yapılandırma çalışması için zaman planlayın.</Note>
+<Note>
+  Görünümler, iş akışları ve roller geçişten sonra manuel olarak yeniden
+  oluşturulmalıdır. Bu yapılandırma çalışması için zaman planlayın.
+</Note>
 
 ## Adım 1: Bulut Çalışma Alanınızı Oluşturun
 
@@ -24,7 +27,10 @@ Verileri içe aktarmadan önce özel nesnelerinizi ve alanlarınızı yeniden ol
 3. Standart ve özel nesnelere özel alanlar ekleyin
 4. Alan ayarlarını yapılandırın (benzersiz, zorunlu vb.)
 
-<Note>Referans için kendi barındırmalı veri modelinizin ekran görüntülerini alın veya her iki örneği yan yana açık tutun.</Note>
+<Note>
+  Referans için kendi barındırmalı veri modelinizin ekran görüntülerini alın
+  veya her iki örneği yan yana açık tutun.
+</Note>
 
 ## Adım 3: Tüm Kullanıcıları Davet Edin
 
@@ -32,6 +38,7 @@ Verileri içe aktarmadan önce özel nesnelerinizi ve alanlarınızı yeniden ol
 **Kritik: Kullanıcıları verileri içe aktarmadan ÖNCE davet edin.**
 
 Kullanıcılar, onları referans alan (ör. Hesap Sahibi alanları) herhangi bir kaydı içe aktarmadan önce davetlerini kabul etmelidir. Eğer kullanıcılar henüz mevcut değilse bu ilişkiler eşleştirilemez.
+
 </Warning>
 
 1. Bulut örneğinizde **Ayarlar → Üyeler**’e gidin
@@ -83,7 +90,10 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Kullanıcıların bulut çalışma alanı davetini kabul etmek için kullandıklarıyla aynı e-posta adreslerini kullanın.</Note>
+<Note>
+  Kullanıcıların bulut çalışma alanı davetini kabul etmek için kullandıklarıyla
+  aynı e-posta adreslerini kullanın.
+</Note>
 
 ## Adım 6: İçe Aktarma Sıralamanızı Planlayın
 
@@ -105,8 +115,8 @@ Her CSV dosyası için, sırayla:
 2. **⋮ → Kayıtları içe aktar**’ı tıklayın
 3. CSV dosyasını yükleyin
 4. Sütunları alanlarla eşleyin:
-   * Kullanıcı e-posta sütunlarını uygun ilişki alanlarına eşleyin
-   * Diğer sütunları her zamanki gibi eşleyin
+   - Kullanıcı e-posta sütunlarını uygun ilişki alanlarına eşleyin
+   - Diğer sütunları her zamanki gibi eşleyin
 5. Herhangi bir hatayı gözden geçirin ve düzeltin
 6. İçe aktarmayı onaylayın
 7. Sonraki dosyaya geçmeden önce birkaç kaydı doğrulayın
@@ -117,23 +127,23 @@ Verileri içe aktardıktan sonra, aşağıdakileri manuel olarak yeniden oluştu
 
 ### Görünümler
 
-* Kaydedilmiş görünümleri filtreler, sıralamalar ve sütun yapılandırmalarıyla yeniden oluşturun
-* Herhangi bir kanban veya takvim görünümünü ayarlayın
+- Kaydedilmiş görünümleri filtreler, sıralamalar ve sütun yapılandırmalarıyla yeniden oluşturun
+- Herhangi bir kanban veya takvim görünümünü ayarlayın
 
 ### İş Akışları
 
-* **Ayarlar → İş Akışları** içinde otomasyonları yeniden oluşturun
-* Her iş akışını kullanmadan önce test edin
+- **Ayarlar → İş Akışları** içinde otomasyonları yeniden oluşturun
+- Her iş akışını kullanmadan önce test edin
 
 ### Roller ve İzinler
 
-* Rolleri **Ayarlar → Üyeler → Roller** bölümünde yapılandırın
-* Kullanıcıları uygun rollere atayın
+- Rolleri **Ayarlar → Üyeler → Roller** bölümünde yapılandırın
+- Kullanıcıları uygun rollere atayın
 
 ### Entegrasyonlar
 
-* Her kullanıcı için e-posta ve takvim eşzamanlamasını yeniden bağlayın
-* Herhangi bir API entegrasyonunu yeni API anahtarlarıyla yeniden yapılandırın
+- Her kullanıcı için e-posta ve takvim eşzamanlamasını yeniden bağlayın
+- Herhangi bir API entegrasyonunu yeni API anahtarlarıyla yeniden yapılandırın
 
 ## Taşındıktan Sonra Kontrol Listesi
 
@@ -153,13 +163,17 @@ Verileri içe aktardıktan sonra, aşağıdakileri manuel olarak yeniden oluştu
     Şu anda mümkün değil. İş akışları bulut örneğinizde manuel olarak yeniden oluşturulmalıdır.
   </Accordion>
 
-  <Accordion title="Dosya ekleri ve görseller ne olacak?">
-    Dosya ekleri CSV dışa aktarmalarına dahil edilmez. Herhangi bir eki manuel olarak yeniden yüklemeniz, API aracılığıyla taşımanız ya da büyük geçişlerde yardım için ekibimizle iletişime geçmeniz gerekecek.
-  </Accordion>
+<Accordion title="Dosya ekleri ve görseller ne olacak?">
+  Dosya ekleri CSV dışa aktarmalarına dahil edilmez. Herhangi bir eki manuel
+  olarak yeniden yüklemeniz, API aracılığıyla taşımanız ya da büyük geçişlerde
+  yardım için ekibimizle iletişime geçmeniz gerekecek.
+</Accordion>
 
-  <Accordion title="Geçiş sırasında her iki örneği de çalışır halde tutabilir miyim?">
-    Evet, buluta geçişin tamamlandığını doğrulayana kadar kendi barındırmalı örneğinizi çalışır durumda tutmanızı öneririz. Sadece her iki yerde de yeni veriler oluşturmamaya dikkat edin.
-  </Accordion>
+<Accordion title="Geçiş sırasında her iki örneği de çalışır halde tutabilir miyim?">
+  Evet, buluta geçişin tamamlandığını doğrulayana kadar kendi barındırmalı
+  örneğinizi çalışır durumda tutmanızı öneririz. Sadece her iki yerde de yeni
+  veriler oluşturmamaya dikkat edin.
+</Accordion>
 
   <Accordion title="Bir kullanıcı davetini henüz kabul etmediyse ne olur?">
     O kullanıcıya referans veren kayıtların içe aktarımı başarısız olur veya ilişki boş kalır. Verileri içe aktarmadan önce tüm kullanıcıların davetleri kabul ettiğinden emin olun.

@@ -4,7 +4,9 @@ description: Monitora la velocità delle trattative tenendo traccia di quando le
 ---
 
 <Tip>
-Questo è un esempio di creazione di [Campi formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields) utilizzando i workflow — in particolare calcoli di date.
+  Questo è un esempio di creazione di [Campi
+  formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields)
+  utilizzando i workflow — in particolare calcoli di date.
 </Tip>
 
 Tenere traccia di quando le opportunità entrano in ogni fase ti aiuta a identificare i colli di bottiglia e a misurare la velocità delle trattative.
@@ -15,46 +17,47 @@ Questa guida ti accompagna nella configurazione di campi personalizzati e di un 
 
 Per ogni fase servono due tipi di campi:
 
-* **Campi Data e ora**: registrano quando l'opportunità è entrata in ciascuna fase
-* **Campi Numero**: memorizzano quanti giorni l'opportunità ha trascorso in ciascuna fase
+- **Campi Data e ora**: registrano quando l'opportunità è entrata in ciascuna fase
+- **Campi Numero**: memorizzano quanti giorni l'opportunità ha trascorso in ciascuna fase
 
 ### Crea i campi "Ultimo ingresso"
 
 1. Vai a **Impostazioni → Modello dati → Opportunità**
 2. Per ogni fase, fai clic su **+ Aggiungi campo** e configura:
-   * **Nome**: Ultimo ingresso in [Nome fase] (ad es., "Ultimo ingresso in Nuovo", "Ultimo ingresso in Qualificato")
-   * **Tipo**: Data e ora
-   * **Descrizione**: Timestamp dell'ingresso dell'opportunità in questa fase
+   - **Nome**: Ultimo ingresso in [Nome fase] (ad es., "Ultimo ingresso in Nuovo", "Ultimo ingresso in Qualificato")
+   - **Tipo**: Data e ora
+   - **Descrizione**: Timestamp dell'ingresso dell'opportunità in questa fase
 3. Clicca su **Salva**
 
 Crea questi campi:
 
-* Ultimo ingresso in Nuovo
-* Ultimo ingresso in Qualificato
-* Ultimo ingresso in Riunione
-* Ultimo ingresso in Proposta
-* Ultimo ingresso in Negoziazione
-* Ultimo ingresso in Chiuso vinto
-* Ultimo ingresso in Chiuso perso
+- Ultimo ingresso in Nuovo
+- Ultimo ingresso in Qualificato
+- Ultimo ingresso in Riunione
+- Ultimo ingresso in Proposta
+- Ultimo ingresso in Negoziazione
+- Ultimo ingresso in Chiuso vinto
+- Ultimo ingresso in Chiuso perso
 
 ### Crea i campi "Giorni nella fase"
 
 1. Per ogni fase, fai clic su **+ Aggiungi campo** e configura:
-   * **Nome**: Giorni in [Nome fase] (ad es., "Giorni in Nuovo", "Giorni in Qualificato")
-   * **Tipo**: Numero
-   * **Descrizione**: Numero di giorni trascorsi in questa fase
+   - **Nome**: Giorni in [Nome fase] (ad es., "Giorni in Nuovo", "Giorni in Qualificato")
+   - **Tipo**: Numero
+   - **Descrizione**: Numero di giorni trascorsi in questa fase
 2. Clicca su **Salva**
 
 Crea questi campi:
 
-* Giorni in Nuovo
-* Giorni in Qualificato
-* Giorni in Riunione
-* Giorni in Proposta
-* Giorni in Negoziazione
+- Giorni in Nuovo
+- Giorni in Qualificato
+- Giorni in Riunione
+- Giorni in Proposta
+- Giorni in Negoziazione
 
 <Note>
-Non servono campi "Giorni in" per Chiuso vinto e Chiuso perso, poiché sono fasi finali.
+  Non servono campi "Giorni in" per Chiuso vinto e Chiuso perso, poiché sono
+  fasi finali.
 </Note>
 
 ### Opzionale: rendi i campi di sola lettura
@@ -70,8 +73,8 @@ Se non vuoi che gli utenti modifichino manualmente questi campi calcolati:
 
 Questo singolo workflow gestisce entrambe le attività:
 
-* Registra il timestamp quando si entra in una nuova fase
-* Calcola i giorni trascorsi nella fase precedente
+- Registra il timestamp quando si entra in una nuova fase
+- Calcola i giorni trascorsi nella fase precedente
 
 ### Crea il workflow
 
@@ -88,7 +91,9 @@ Questo singolo workflow gestisce entrambe le attività:
 ### Aggiungi rami per ogni fase
 
 <Note>
-Per creare un nuovo ramo, fai clic con il tasto destro sul canvas del workflow e fai clic su **Nuova azione**. Quindi, collega questa azione al nodo precedente trascinando la freccia dal nodo precedente a questa nuova azione.
+  Per creare un nuovo ramo, fai clic con il tasto destro sul canvas del workflow
+  e fai clic su **Nuova azione**. Quindi, collega questa azione al nodo
+  precedente trascinando la freccia dal nodo precedente a questa nuova azione.
 </Note>
 
 ---
@@ -107,9 +112,9 @@ export const main = async (): Promise<object> => {
 ```
 
 3. Aggiungi un'azione **Aggiorna record**:
-   * Record: l'Opportunità che ha attivato il workflow
-   * Campo: Ultimo ingresso in Nuovo
-   * Valore: `now` dal nodo Codice
+   - Record: l'Opportunità che ha attivato il workflow
+   - Campo: Ultimo ingresso in Nuovo
+   - Valore: `now` dal nodo Codice
 
 ---
 
@@ -140,10 +145,10 @@ export const main = async (params: {
 
 3. Configura l'input del nodo Codice: mappa `lastEnteredPreviousStage` al campo **Ultimo ingresso in Nuovo**
 4. Aggiungi un'azione **Aggiorna record**:
-   * Record: l'Opportunità che ha attivato il workflow
-   * Campi da aggiornare:
-     * Ultimo ingresso in Qualificato = `now`
-     * Giorni in Nuovo = `daysInPreviousStage`
+   - Record: l'Opportunità che ha attivato il workflow
+   - Campi da aggiornare:
+     - Ultimo ingresso in Qualificato = `now`
+     - Giorni in Nuovo = `daysInPreviousStage`
 
 ---
 
@@ -174,10 +179,10 @@ export const main = async (params: {
 
 3. Configura l'input del nodo Codice: mappa `lastEnteredPreviousStage` al campo **Ultimo ingresso in Qualificato**
 4. Aggiungi un'azione **Aggiorna record**:
-   * Record: l'Opportunità che ha attivato il workflow
-   * Campi da aggiornare:
-     * Ultimo ingresso in Riunione = `now`
-     * Giorni in Qualificato = `daysInPreviousStage`
+   - Record: l'Opportunità che ha attivato il workflow
+   - Campi da aggiornare:
+     - Ultimo ingresso in Riunione = `now`
+     - Giorni in Qualificato = `daysInPreviousStage`
 
 ---
 
@@ -226,6 +231,6 @@ Questo mostra il tempo medio che le trattative trascorrono in ciascuna fase.
 
 ## Correlati
 
-* [Workflows](/l/it/user-guide/workflows/overview) — nozioni di base sull'automazione
-* [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields) — configurazione dei campi
-* [Viste Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni
+- [Workflows](/l/it/user-guide/workflows/overview) — nozioni di base sull'automazione
+- [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields) — configurazione dei campi
+- [Viste Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni

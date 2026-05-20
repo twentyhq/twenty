@@ -5,7 +5,10 @@ description: Automaticky upozorňujte členy týmu na jejich blížící se nebo
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Posílejte každému členovi týmu denní e-mailová připomenutí na úkoly, které mají termín dnes.
 
@@ -45,8 +48,8 @@ Tento pracovní postup běží podle plánu a:
 1. Uvnitř iterátoru přidejte akci **Vyhledat záznamy**
 2. Vyberte jako objekt **Úkoly**
 3. Přidejte filtry:
-   * **Přiřazený** = aktuální člen pracovního prostoru (z iterátoru)
-   * **Termín splnění** = dnes
+   - **Přiřazený** = aktuální člen pracovního prostoru (z iterátoru)
+   - **Termín splnění** = dnes
 
 ### Krok 5: Naformátujte úkoly do těla e-mailu (uvnitř iterátoru)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru Twenty.
+  Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru
+  Twenty.
 </Note>
 
 ### Krok 6: Odešlete e-mail (uvnitř iterátoru)
@@ -101,6 +105,6 @@ Nahraďte `yourSubDomain` skutečnou subdoménou vašeho pracovního prostoru Tw
 
 ## Související
 
-* [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
-* [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Práce s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Akce pracovních postupů](/l/cs/user-guide/workflows/capabilities/workflow-actions)
+- [Odesílání e-mailů z pracovních postupů](/l/cs/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Práce s poli v akcích Code](/l/cs/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

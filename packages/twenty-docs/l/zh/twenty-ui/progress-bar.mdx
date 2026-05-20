@@ -9,7 +9,7 @@ title: 反馈
 <Tab title="**用法**">
 
 ```jsx
-import { ProgressBar } from "twenty-ui/feedback";
+import { ProgressBar } from 'twenty-ui/feedback';
 
 export const MyComponent = () => {
   return (
@@ -29,17 +29,14 @@ export const MyComponent = () => {
 
 <Tab title="属性">
 
-
-| 属性        | 类型  | 描述                        | 默认        |
-| --------- | --- | ------------------------- | --------- |
-| 持续时间      | 数字  | 进度条动画的总持续时间，以毫秒为单位        | 3         |
-| delay     | 数字  | 进度条动画开始的延迟时间，以毫秒为单位       | 0         |
-| easing    | 字符串 | 进度条动画的缓动函数                | easeInOut |
-| barHeight | 数字  | 进度条的高度（以像素为单位）            | 24        |
-| barColor  | 字符串 | 进度条的颜色                    | gray80    |
-| 自动开始      | 布尔值 | 如果为“true”，则组件加载时进度条动画自动开始 | `真`       |
-
-
+| 属性      | 类型   | 描述                                         | 默认      |
+| --------- | ------ | -------------------------------------------- | --------- |
+| 持续时间  | 数字   | 进度条动画的总持续时间，以毫秒为单位         | 3         |
+| delay     | 数字   | 进度条动画开始的延迟时间，以毫秒为单位       | 0         |
+| easing    | 字符串 | 进度条动画的缓动函数                         | easeInOut |
+| barHeight | 数字   | 进度条的高度（以像素为单位）                 | 24        |
+| barColor  | 字符串 | 进度条的颜色                                 | gray80    |
+| 自动开始  | 布尔值 | 如果为“true”，则组件加载时进度条动画自动开始 | `真`      |
 
 </Tab>
 </Tabs>
@@ -53,7 +50,7 @@ export const MyComponent = () => {
 <Tab title="用法">
 
 ```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
 
 export const MyComponent = () => {
   return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
@@ -64,14 +61,11 @@ export const MyComponent = () => {
 
 <Tab title="属性">
 
-
-| 属性       | 类型  | 描述       | 默认           |
-| -------- | --- | -------- | ------------ |
-| 大小       | 数字  | 圆形进度条的大小 | 50           |
-| barWidth | 数字  | 进度条线的宽度  | 5            |
-| barColor | 字符串 | 进度条的颜色   | currentColor |
-
-
+| 属性     | 类型   | 描述             | 默认         |
+| -------- | ------ | ---------------- | ------------ |
+| 大小     | 数字   | 圆形进度条的大小 | 50           |
+| barWidth | 数字   | 进度条线的宽度   | 5            |
+| barColor | 字符串 | 进度条的颜色     | currentColor |
 
 </Tab>
 

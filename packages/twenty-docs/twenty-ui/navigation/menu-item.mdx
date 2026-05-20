@@ -1,25 +1,25 @@
 ---
 title: Menu Item
-icon: "bars"
+icon: 'bars'
 ---
 
-A versatile menu item designed to be used in a menu or navigation list. 
+A versatile menu item designed to be used in a menu or navigation list.
 
 <Tabs>
 <Tab title="Usage">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("Icon button clicked!", event);
+    console.log('Icon button clicked!', event);
   };
 
   return (
@@ -37,34 +37,28 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| accent | string | Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder` |
-| text | string | The text content of the menu item |
-| iconButtons | array | An array of objects representing additional icon buttons associated with the menu item |
-| isTooltipOpen | boolean | Controls the visibility of the tooltip associated with the menu item |
-| testId | string | The data-testid attribute for testing purposes |
-| onClick | function | Callback function triggered when the menu item is clicked |
-| className | string | Optional name for additional styling |
-
-
-
+| Props         | Type          | Description                                                                                          |
+| ------------- | ------------- | ---------------------------------------------------------------------------------------------------- |
+| LeftIcon      | IconComponent | An optional left icon displayed before the text in the menu item                                     |
+| accent        | string        | Specifies the accent color of the menu item. Options include: `default`, `danger`, and `placeholder` |
+| text          | string        | The text content of the menu item                                                                    |
+| iconButtons   | array         | An array of objects representing additional icon buttons associated with the menu item               |
+| isTooltipOpen | boolean       | Controls the visibility of the tooltip associated with the menu item                                 |
+| testId        | string        | The data-testid attribute for testing purposes                                                       |
+| onClick       | function      | Callback function triggered when the menu item is clicked                                            |
+| className     | string        | Optional name for additional styling                                                                 |
 
 </Tab>
 </Tabs>
 
+## Variants
 
-## Variants 
+The different variants of the menu item component include the following:
 
-The different variants of the menu item component include the following: 
-
-### Command 
+### Command
 
 A command-style menu item within a menu to indicate keyboard shortcuts.
 
@@ -72,12 +66,12 @@ A command-style menu item within a menu to indicate keyboard shortcuts.
 <Tab title="Usage">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("Command clicked!");
+    console.log('Command clicked!');
   };
 
   return (
@@ -94,27 +88,23 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| text | string | The text content of the menu item |
-| firstHotKey | string | The first keyboard shortcut associated with the command |
-| secondHotKey | string | The second keyboard shortcut associated with the command |
-| isSelected | boolean | Indicates whether the menu item is selected or highlighted |
-| onClick | function | Callback function triggered when the menu item is clicked |
-| className | string | Optional name for additional styling |
-
-
+| Props        | Type          | Description                                                      |
+| ------------ | ------------- | ---------------------------------------------------------------- |
+| LeftIcon     | IconComponent | An optional left icon displayed before the text in the menu item |
+| text         | string        | The text content of the menu item                                |
+| firstHotKey  | string        | The first keyboard shortcut associated with the command          |
+| secondHotKey | string        | The second keyboard shortcut associated with the command         |
+| isSelected   | boolean       | Indicates whether the menu item is selected or highlighted       |
+| onClick      | function      | Callback function triggered when the menu item is clicked        |
+| className    | string        | Optional name for additional styling                             |
 
 </Tab>
 </Tabs>
 
-### Draggable 
+### Draggable
 
 A draggable menu item component designed to be used in a menu or list where items can be dragged, and additional actions can be performed through icon buttons.
 
@@ -122,13 +112,13 @@ A draggable menu item component designed to be used in a menu or list where item
 <Tab title="Usage">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("Menu item clicked!", event);
+    console.log('Menu item clicked!', event);
   };
 
   return (
@@ -149,24 +139,19 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| accent | string | The accent color of the menu item. It can either be `default`, `placeholder`, and `danger` |
-| iconButtons | array | An array of objects representing additional icon buttons associated with the menu item |
-| isTooltipOpen | boolean | Controls the visibility of the tooltip associated with the menu item |
-| onClick | function | Callback function to be triggered when the link is clicked |
-| text | string | The text content of the menu item |
-| isDragDisabled | boolean | Indicates whether dragging is disabled |
-| className | string | Optional name for additional styling |
-
-
-
+| Props          | Type          | Description                                                                                |
+| -------------- | ------------- | ------------------------------------------------------------------------------------------ |
+| LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item                           |
+| accent         | string        | The accent color of the menu item. It can either be `default`, `placeholder`, and `danger` |
+| iconButtons    | array         | An array of objects representing additional icon buttons associated with the menu item     |
+| isTooltipOpen  | boolean       | Controls the visibility of the tooltip associated with the menu item                       |
+| onClick        | function      | Callback function to be triggered when the link is clicked                                 |
+| text           | string        | The text content of the menu item                                                          |
+| isDragDisabled | boolean       | Indicates whether dragging is disabled                                                     |
+| className      | string        | Optional name for additional styling                                                       |
 
 </Tab>
 </Tabs>
-
 
 ### Multi Select
 
@@ -176,11 +161,10 @@ Provides a way to implement multi-select functionality with an associated checkb
 <Tab title="Usage">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -195,23 +179,18 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| text | string | The text content of the menu item |
-| selected | boolean | Indicates whether the menu item is selected (checked) |
-| onSelectChange | function | Callback function triggered when the checkbox state changes |
-| className | string | Optional name for additional styling |
-
-
-
+| Props          | Type          | Description                                                      |
+| -------------- | ------------- | ---------------------------------------------------------------- |
+| LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item |
+| text           | string        | The text content of the menu item                                |
+| selected       | boolean       | Indicates whether the menu item is selected (checked)            |
+| onSelectChange | function      | Callback function triggered when the checkbox state changes      |
+| className      | string        | Optional name for additional styling                             |
 
 </Tab>
 </Tabs>
 
-
-### Multi Select Avatar 
+### Multi Select Avatar
 
 A multi-select menu item with an avatar, a checkbox for selection, and textual content.
 
@@ -219,11 +198,11 @@ A multi-select menu item with an avatar, a checkbox for selection, and textual c
 <Tab title="Usage">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -239,23 +218,18 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| avatar | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-| text | string | The text content of the menu item |
-| selected | boolean | Indicates whether the menu item is selected (checked) |
-| onSelectChange | function | Callback function triggered when the checkbox state changes |
-| className | string | Optional name for additional styling |
-
-
-
+| Props          | Type        | Description                                                          |
+| -------------- | ----------- | -------------------------------------------------------------------- |
+| avatar         | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
+| text           | string      | The text content of the menu item                                    |
+| selected       | boolean     | Indicates whether the menu item is selected (checked)                |
+| onSelectChange | function    | Callback function triggered when the checkbox state changes          |
+| className      | string      | Optional name for additional styling                                 |
 
 </Tab>
 </Tabs>
 
-
-### Navigate 
+### Navigate
 
 A menu item featuring an optional left icon, textual content, and a right-chevron icon.
 
@@ -263,12 +237,12 @@ A menu item featuring an optional left icon, textual content, and a right-chevro
 <Tab title="Usage">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -285,22 +259,17 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| text | string | The text content of the menu item |
-| onClick | function | Callback function to be triggered when the menu item is clicked |
-| className | string | Optional name for additional styling |
-
-
-
+| Props     | Type          | Description                                                      |
+| --------- | ------------- | ---------------------------------------------------------------- |
+| LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
+| text      | string        | The text content of the menu item                                |
+| onClick   | function      | Callback function to be triggered when the menu item is clicked  |
+| className | string        | Optional name for additional styling                             |
 
 </Tab>
 </Tabs>
 
-
-### Select 
+### Select
 
 A selectable menu item, featuring optional left content (icon and text) and an indicator (check icon) for the selected state.
 
@@ -308,12 +277,12 @@ A selectable menu item, featuring optional left content (icon and text) and an i
 <Tab title="Usage">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -333,24 +302,20 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| text | string | The text content of the menu item |
-| selected | boolean | Indicates whether the menu item is selected (checked) |
-| disabled | boolean | Indicates whether the menu item is disabled |
-| hovered | boolean | Indicates whether the menu item is currently being hovered over |
-| onClick | function | Callback function to be triggered when the menu item is clicked |
-| className | string | Optional name for additional styling |
-
-
-
+| Props     | Type          | Description                                                      |
+| --------- | ------------- | ---------------------------------------------------------------- |
+| LeftIcon  | IconComponent | An optional left icon displayed before the text in the menu item |
+| text      | string        | The text content of the menu item                                |
+| selected  | boolean       | Indicates whether the menu item is selected (checked)            |
+| disabled  | boolean       | Indicates whether the menu item is disabled                      |
+| hovered   | boolean       | Indicates whether the menu item is currently being hovered over  |
+| onClick   | function      | Callback function to be triggered when the menu item is clicked  |
+| className | string        | Optional name for additional styling                             |
 
 </Tab>
 </Tabs>
 
-### Select Avatar 
+### Select Avatar
 
 A selectable menu item with an avatar, featuring optional left content (avatar and text) and an indicator (check icon) for the selected state.
 
@@ -358,14 +323,14 @@ A selectable menu item with an avatar, featuring optional left content (avatar a
 <Tab title="Usage">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -381,32 +346,26 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| avatar | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
-| text | string | The text content of the menu item |
-| selected | boolean | Indicates whether the menu item is selected (checked) |
-| disabled | boolean | Indicates whether the menu item is disabled |
-| hovered | boolean | Indicates whether the menu item is currently being hovered over |
-| testId | string | The data-testid attribute for testing purposes |
-| onClick | function | Callback function to be triggered when the menu item is clicked |
-| className | string | Optional name for additional styling |
-
-
-
+| Props     | Type        | Description                                                          |
+| --------- | ----------- | -------------------------------------------------------------------- |
+| avatar    | `ReactNode` | The avatar or icon to be displayed on the left side of the menu item |
+| text      | string      | The text content of the menu item                                    |
+| selected  | boolean     | Indicates whether the menu item is selected (checked)                |
+| disabled  | boolean     | Indicates whether the menu item is disabled                          |
+| hovered   | boolean     | Indicates whether the menu item is currently being hovered over      |
+| testId    | string      | The data-testid attribute for testing purposes                       |
+| onClick   | function    | Callback function to be triggered when the menu item is clicked      |
+| className | string      | Optional name for additional styling                                 |
 
 </Tab>
 </Tabs>
 
-
-### Select Color 
+### Select Color
 
 A selectable menu item with a color sample for scenarios where you want users to choose a color from a menu.
 
@@ -414,11 +373,11 @@ A selectable menu item with a color sample for scenarios where you want users to
 <Tab title="Usage">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -438,24 +397,20 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| color | string | The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
-| selected | boolean | Indicates whether the menu item is selected (checked) |
-| disabled | boolean | Indicates whether the menu item is disabled |
-| hovered | boolean | Indicates whether the menu item is currently being hovered over |
-| variant | string | The variant of the color sample. It can either be `default` or `pipeline` |
-| onClick | function | Callback function to be triggered when the menu item is clicked |
-| className | string | Optional name for additional styling |
-
-
-
+| Props     | Type     | Description                                                                                                                                                                 |
+| --------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| color     | string   | The theme color to be displayed as a sample in the menu item. Options include: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, and `gray` |
+| selected  | boolean  | Indicates whether the menu item is selected (checked)                                                                                                                       |
+| disabled  | boolean  | Indicates whether the menu item is disabled                                                                                                                                 |
+| hovered   | boolean  | Indicates whether the menu item is currently being hovered over                                                                                                             |
+| variant   | string   | The variant of the color sample. It can either be `default` or `pipeline`                                                                                                   |
+| onClick   | function | Callback function to be triggered when the menu item is clicked                                                                                                             |
+| className | string   | Optional name for additional styling                                                                                                                                        |
 
 </Tab>
 </Tabs>
 
-### Toggle 
+### Toggle
 
 A menu item with an associated toggle switch to allow users to enable or disable a specific feature
 
@@ -468,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -484,19 +438,14 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Props">
 
-
-| Props | Type | Description |
-|-------|------|-------------|
-| LeftIcon | IconComponent | An optional left icon displayed before the text in the menu item |
-| text | string | The text content of the menu item |
-| toggled | boolean | Indicates whether the toggle switch is in the "on" or "off" state |
-| onToggleChange | function | Callback function triggered when the toggle switch state changes |
-| toggleSize | string | The size of the toggle switch. It can be either \ |
-| className | string | Optional name for additional styling |
-
-
-
+| Props          | Type          | Description                                                       |
+| -------------- | ------------- | ----------------------------------------------------------------- |
+| LeftIcon       | IconComponent | An optional left icon displayed before the text in the menu item  |
+| text           | string        | The text content of the menu item                                 |
+| toggled        | boolean       | Indicates whether the toggle switch is in the "on" or "off" state |
+| onToggleChange | function      | Callback function triggered when the toggle switch state changes  |
+| toggleSize     | string        | The size of the toggle switch. It can be either \                 |
+| className      | string        | Optional name for additional styling                              |
 
 </Tab>
 </Tabs>
-

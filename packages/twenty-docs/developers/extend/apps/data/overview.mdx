@@ -1,10 +1,10 @@
 ---
 title: Overview
 description: Shape the data your app adds to a workspace — objects, fields, and relations.
-icon: "database"
+icon: 'database'
 ---
 
-A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
+A Twenty app's **data layer** is the data your app _adds_ to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
 
 ```text
 ┌──────────────────────────────────────────────────┐
@@ -26,27 +26,43 @@ A Twenty app's **data layer** is the data your app *adds* to a workspace — the
 ## In this section
 
 <CardGroup cols={2}>
-  <Card title="Objects" icon="table" href="/developers/extend/apps/data/objects">
+  <Card
+    title="Objects"
+    icon="table"
+    href="/developers/extend/apps/data/objects"
+  >
     `defineObject` — declare new record types with their own fields.
   </Card>
-  <Card title="Extending Objects" icon="wand-magic-sparkles" href="/developers/extend/apps/data/extending-objects">
+  <Card
+    title="Extending Objects"
+    icon="wand-magic-sparkles"
+    href="/developers/extend/apps/data/extending-objects"
+  >
     `defineField` — add fields to standard or other apps' objects.
   </Card>
-  <Card title="Relations" icon="diagram-project" href="/developers/extend/apps/data/relations">
+  <Card
+    title="Relations"
+    icon="diagram-project"
+    href="/developers/extend/apps/data/relations"
+  >
     Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
   </Card>
 </CardGroup>
 
 ## Entities at a glance
 
-| Entity | Purpose | Defined with |
-|--------|---------|--------------|
-| **Object** | A new custom record type (e.g. PostCard, Invoice) with its own fields | `defineObject()` |
-| **Field** | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()` |
-| **Relation** | A bidirectional link between two objects — both sides declared as fields | `defineField()` with `FieldType.RELATION` |
+| Entity       | Purpose                                                                                                           | Defined with                              |
+| ------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Object**   | A new custom record type (e.g. PostCard, Invoice) with its own fields                                             | `defineObject()`                          |
+| **Field**    | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()`                           |
+| **Relation** | A bidirectional link between two objects — both sides declared as fields                                          | `defineField()` with `FieldType.RELATION` |
 
 The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/` and `src/fields/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
 
 <Note>
-Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/developers/extend/apps/logic/connections).
+  Looking for **Application Config** or **Roles & Permissions**? Those describe
+  the app itself rather than the data it adds — they live under
+  [Config](/developers/extend/apps/config/overview). Looking for **Connections**
+  (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions
+  and live under [Logic](/developers/extend/apps/logic/connections).
 </Note>

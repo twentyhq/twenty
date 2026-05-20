@@ -8,6 +8,7 @@ Automatically generate or fetch a PDF and attach it to a record in Twenty. This 
 ## Overview
 
 This workflow uses a **Manual Trigger** so users can generate a PDF on demand for any selected record. A **Logic Function** handles:
+
 1. Downloading the PDF from a URL (from a PDF generation service)
 2. Uploading the file to Twenty
 3. Creating an Attachment linked to the record
@@ -28,7 +29,8 @@ Before setting up the workflow:
 3. Choose the object you want to attach PDFs to (e.g., **Company** or **Opportunity**)
 
 <Tip>
-With a Manual Trigger, users can run this workflow using a button that appears on the top right once a record is selected, to generate and attach a PDF.
+  With a Manual Trigger, users can run this workflow using a button that appears
+  on the top right once a record is selected, to generate and attach a PDF.
 </Tip>
 
 ### Step 2: Add a Logic Function
@@ -39,20 +41,20 @@ With a Manual Trigger, users can run this workflow using a button that appears o
 
 #### Input Parameters
 
-| Parameter | Value |
-|-----------|-------|
+| Parameter   | Value                   |
+| ----------- | ----------------------- |
 | `companyId` | `{{trigger.object.id}}` |
 
 <Note>
-If attaching to a different object (Person, Opportunity, etc.), rename the parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic function.
+  If attaching to a different object (Person, Opportunity, etc.), rename the
+  parameter accordingly (e.g., `personId`, `opportunityId`) and update the logic
+  function.
 </Note>
 
 #### Logic Function Code
 
 ```typescript
-export const main = async (
-  params: { companyId: string },
-) => {
+export const main = async (params: { companyId: string }) => {
   const { companyId } = params;
   // Replace with your Twenty GraphQL endpoints (/metadata for metadata and files or /graphql for your records)
   // Cloud: https://api.twenty.com/graphql
@@ -97,16 +99,18 @@ export const main = async (
 
   // Step 2: Find a fieldMetadataId of "Attachment file" field in Attachments object with GraphQL API
   const response = await fetch(metadataGraphqlEndpoint, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${authToken}`
-      },
-      body: {
-        query: fieldMetadataIdQuery,
-      }
-    });
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${authToken}`,
+    },
+    body: {
+      query: fieldMetadataIdQuery,
+    },
+  });
   const result = await response.json();
-  const uploadFileFieldMetadataId = result.data.objects.edges.find(object => object.node.nameSingular === 'attachment').node.fieldsList.find(field => field.name === 'file').id;
+  const uploadFileFieldMetadataId = result.data.objects.edges
+    .find((object) => object.node.nameSingular === 'attachment')
+    .node.fieldsList.find((field) => field.name === 'file').id;
 
   // Step 3: Upload the file via GraphQL multipart upload
   const uploadMutation = `
@@ -118,10 +122,13 @@ export const main = async (
   `;
 
   const uploadForm = new FormData();
-  uploadForm.append('operations', JSON.stringify({
-    query: uploadMutation,
-    variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
-  }));
+  uploadForm.append(
+    'operations',
+    JSON.stringify({
+      query: uploadMutation,
+      variables: { file: null, fieldMetadataId: uploadFileFieldMetadataId },
+    }),
+  );
   uploadForm.append('map', JSON.stringify({ '0': ['variables.file'] }));
   uploadForm.append('0', pdfFile);
 
@@ -168,9 +175,9 @@ export const main = async (
           file: [
             {
               fileId: fileId,
-              label: filename
-            }
-          ]
+              label: filename,
+            },
+          ],
         },
       },
     }),
@@ -179,7 +186,9 @@ export const main = async (
   const attachmentResult = await attachmentResponse.json();
 
   if (attachmentResult.errors?.length) {
-    throw new Error(`Attachment creation failed: ${attachmentResult.errors[0].message}`);
+    throw new Error(
+      `Attachment creation failed: ${attachmentResult.errors[0].message}`,
+    );
   }
 
   return attachmentResult.data?.createAttachment;
@@ -192,11 +201,11 @@ export const main = async (
 
 Replace `targetCompanyId` with the appropriate field:
 
-| Object | Field Name |
-|--------|------------|
-| Company | `targetCompanyId` |
-| Person | `targetPersonId` |
-| Opportunity | `targetOpportunityId` |
+| Object        | Field Name                 |
+| ------------- | -------------------------- |
+| Company       | `targetCompanyId`          |
+| Person        | `targetPersonId`           |
+| Opportunity   | `targetOpportunityId`      |
 | Custom Object | `targetYourCustomObjectId` |
 
 Update both the function parameter and the `variables.data` object in the attachment mutation.
@@ -204,13 +213,16 @@ Update both the function parameter and the `variables.data` object in the attach
 #### To use a dynamic PDF URL
 
 If using a PDF generation service, you can:
+
 1. First make an HTTP Request action to generate the PDF
 2. Pass the returned PDF URL to the logic function as a parameter
 
 ```typescript
-export const main = async (
-  params: { companyId: string; pdfUrl: string; filename: string },
-) => {
+export const main = async (params: {
+  companyId: string;
+  pdfUrl: string;
+  filename: string;
+}) => {
   const { companyId, pdfUrl, filename } = params;
   // ... rest of the function
 };
@@ -230,12 +242,12 @@ For creating dynamic quotes or invoices:
 
 ### Example: Generate Quote → Attach PDF
 
-| Step | Action | Purpose |
-|------|--------|---------|
-| 1 | Manual Trigger (Company) | User initiates on a record |
-| 2 | Search Record | Get Opportunity or line item details |
-| 3 | HTTP Request | Call PDF generation API with record data |
-| 4 | Serverless Function | Download and attach the generated PDF |
+| Step | Action                   | Purpose                                  |
+| ---- | ------------------------ | ---------------------------------------- |
+| 1    | Manual Trigger (Company) | User initiates on a record               |
+| 2    | Search Record            | Get Opportunity or line item details     |
+| 3    | HTTP Request             | Call PDF generation API with record data |
+| 4    | Serverless Function      | Download and attach the generated PDF    |
 
 ### Popular PDF Generation Services
 
@@ -248,10 +260,10 @@ Each service provides an API that returns a PDF URL, which you can then pass to 
 
 ## Troubleshooting
 
-| Issue | Solution |
-|-------|----------|
-| "Failed to download PDF" | Check the PDF URL is accessible and returns a valid PDF |
-| "Upload failed" | Verify your API key is valid and has write permissions |
+| Issue                        | Solution                                                   |
+| ---------------------------- | ---------------------------------------------------------- |
+| "Failed to download PDF"     | Check the PDF URL is accessible and returns a valid PDF    |
+| "Upload failed"              | Verify your API key is valid and has write permissions     |
 | "Attachment creation failed" | Ensure the object ID field name matches your target object |
 
 ## Related
@@ -259,4 +271,3 @@ Each service provides an API that returns a PDF URL, which you can then pass to 
 - [Workflow Triggers](/user-guide/workflows/capabilities/workflow-triggers)
 - [Logic Functions](/user-guide/workflows/capabilities/workflow-actions#code)
 - [Generate a Quote or Invoice from Twenty](/user-guide/workflows/how-tos/connect-to-other-tools/generate-quote-or-invoice-from-twenty)
-

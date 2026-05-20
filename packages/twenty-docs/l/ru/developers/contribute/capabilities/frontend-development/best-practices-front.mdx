@@ -33,13 +33,10 @@ export const MyComponent = () => {
 
   return (
     <div>
-      <input
-        value={myAtom}
-        onChange={(e) => setMyAtom(e.target.value)}
-      />
+      <input value={myAtom} onChange={(e) => setMyAtom(e.target.value)} />
     </div>
   );
-}
+};
 ```
 
 ### Не используйте `useRef` для хранения состояния
@@ -90,7 +87,7 @@ export const PageComponent = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -98,10 +95,7 @@ export const PageComponent = () => {
   return <div>{data}</div>;
 };
 
-export const App = () => (
-  <PageComponent />
-);
-
+export const App = () => <PageComponent />;
 ```
 
 ```tsx
@@ -118,7 +112,7 @@ export const PageData = () => {
   const [someDependency] = useAtomState(someDependencyState);
 
   useEffect(() => {
-    if(someDependency !== data) {
+    if (someDependency !== data) {
       setData(someDependency);
     }
   }, [someDependency]);
@@ -132,7 +126,6 @@ export const App = () => (
     <PageComponent />
   </>
 );
-
 ```
 
 ### Используйте состояния семейства атомов и селекторы
@@ -185,7 +178,7 @@ const [email, setEmail] = useState('');
 
 #### Некоторые слова, которых стоит избегать в названиях переменных
 
-* dummy
+- dummy
 
 ### Обработчики событий
 
@@ -291,12 +284,8 @@ const MyComponent = ({ MyIcon }: { MyIcon: IconComponent }) => {
 
 ```tsx
 // ❌ Bad, specifies the entire relative path
-import {
-  CatalogDecorator
-} from '../../../../../testing/decorators/CatalogDecorator';
-import {
-  ComponentDecorator
-} from '../../../../../testing/decorators/ComponentDecorator';
+import { CatalogDecorator } from '../../../../../testing/decorators/CatalogDecorator';
+import { ComponentDecorator } from '../../../../../testing/decorators/ComponentDecorator';
 ```
 
 ```tsx

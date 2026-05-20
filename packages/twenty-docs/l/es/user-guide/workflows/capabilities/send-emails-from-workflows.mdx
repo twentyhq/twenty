@@ -25,9 +25,9 @@ Antes de poder enviar correos electrónicos desde flujos de trabajo:
 2. **Agregar disparador**: Selecciona **Se crea el registro** → **Personas**
 
 3. **Agregar la acción Enviar correo electrónico**:
-   * Haz clic en **+** para agregar una acción
-   * Selecciona **Enviar correo electrónico**
-   * Configura el correo electrónico:
+   - Haz clic en **+** para agregar una acción
+   - Selecciona **Enviar correo electrónico**
+   - Configura el correo electrónico:
 
 | Campo      | Valor                                  |
 | ---------- | -------------------------------------- |
@@ -71,12 +71,12 @@ The Team
 1. **Disparador**: Se crea el registro (Personas)
 
 2. **Agregar la acción de filtro**:
-   * Condición: `{{trigger.object.source}}` es igual a `"Website"`
-   * Si es verdadero → continúa al correo de bienvenida del sitio web
+   - Condición: `{{trigger.object.source}}` es igual a `"Website"`
+   - Si es verdadero → continúa al correo de bienvenida del sitio web
 
 3. **Rama para otras fuentes**:
-   * Crea ramas paralelas para diferentes fuentes
-   * Cada rama tiene su propia acción Enviar correo electrónico
+   - Crea ramas paralelas para diferentes fuentes
+   - Cada rama tiene su propia acción Enviar correo electrónico
 
 ## Envío de correos electrónicos a múltiples destinatarios
 
@@ -91,12 +91,12 @@ The Team
 2. **Buscar registros**: Busca al gerente del propietario de la oportunidad
 
 3. **Enviar correo electrónico #1**: Al propietario de la oportunidad
-   * Para: `{{trigger.object.owner.email}}`
-   * Asunto: `Congratulations on closing {{trigger.object.name}}!`
+   - Para: `{{trigger.object.owner.email}}`
+   - Asunto: `Congratulations on closing {{trigger.object.name}}!`
 
 4. **Enviar correo electrónico #2**: Al gerente
-   * Para: `{{searchRecords.manager.email}}`
-   * Asunto: `Deal Won: {{trigger.object.name}}`
+   - Para: `{{searchRecords.manager.email}}`
+   - Asunto: `Deal Won: {{trigger.object.name}}`
 
 ## Correos de seguimiento programados
 
@@ -111,9 +111,9 @@ The Team
 2. **Acción de retraso**: Espera 3 días
 
 3. **Enviar correo electrónico**:
-   * Para: Asistente a la reunión
-   * Asunto: Seguimiento de nuestra conversación
-   * Cuerpo: Consulta los detalles de la reunión a partir del disparador
+   - Para: Asistente a la reunión
+   - Asunto: Seguimiento de nuestra conversación
+   - Cuerpo: Consulta los detalles de la reunión a partir del disparador
 
 ## Archivos adjuntos de correo electrónico
 
@@ -135,33 +135,36 @@ Puedes adjuntar archivos a los correos electrónicos enviados desde los flujos d
 | **Confirmaciones de eventos**   | Detalles o agenda del evento             |
 
 <Note>
-  Los archivos adjuntos son estáticos—se envía el mismo archivo a todos los destinatarios. Para documentos dinámicos (como presupuestos personalizados), genera y adjunta archivos usando una [Función lógica](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+  Los archivos adjuntos son estáticos—se envía el mismo archivo a todos los
+  destinatarios. Para documentos dinámicos (como presupuestos personalizados),
+  genera y adjunta archivos usando una [Función
+  lógica](/l/es/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
 ## Mejores prácticas
 
 ### Contenido del correo electrónico
 
-* Mantén las líneas de asunto concisas y relevantes
-* Personaliza con el nombre del destinatario
-* Incluye una llamada a la acción clara
-* Prueba los correos antes de activar
+- Mantén las líneas de asunto concisas y relevantes
+- Personaliza con el nombre del destinatario
+- Incluye una llamada a la acción clara
+- Prueba los correos antes de activar
 
 ### Entregabilidad
 
-* No envíes demasiados correos demasiado rápido
-* Usa firmas de correo profesionales
-* Evita palabras que activan filtros de spam
-* Asegúrate de incluir opciones para darse de baja en los correos de marketing
+- No envíes demasiados correos demasiado rápido
+- Usa firmas de correo profesionales
+- Evita palabras que activan filtros de spam
+- Asegúrate de incluir opciones para darse de baja en los correos de marketing
 
 ### Solución de Problemas
 
-* Verifica que la cuenta de correo esté conectada y activa
-* Comprueba que la dirección de correo del destinatario sea válida
-* Revisa las ejecuciones del flujo de trabajo para ver mensajes de error
-* Prueba primero con tu propia dirección de correo electrónico
+- Verifica que la cuenta de correo esté conectada y activa
+- Comprueba que la dirección de correo del destinatario sea válida
+- Revisa las ejecuciones del flujo de trabajo para ver mensajes de error
+- Prueba primero con tu propia dirección de correo electrónico
 
 ## Relacionado
 
-* [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
-* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+- [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers)
+- [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)

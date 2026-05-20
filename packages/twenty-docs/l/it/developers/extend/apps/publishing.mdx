@@ -8,8 +8,8 @@ description: Distribuisci la tua app Twenty nel marketplace oppure distribuiscil
 
 Una volta che la tua app è stata [compilata e testata localmente](/l/it/developers/extend/apps/building), hai due modalità per distribuirla:
 
-* **Distribuisci un tarball** — carica la tua app direttamente su un server Twenty specifico per uso interno o privato.
-* **Pubblica su npm** — elenca la tua app nel marketplace di Twenty affinché qualsiasi spazio di lavoro possa scoprirla e installarla.
+- **Distribuisci un tarball** — carica la tua app direttamente su un server Twenty specifico per uso interno o privato.
+- **Pubblica su npm** — elenca la tua app nel marketplace di Twenty affinché qualsiasi spazio di lavoro possa scoprirla e installarla.
 
 Entrambi i percorsi partono dalla stessa fase di **build**.
 
@@ -72,7 +72,10 @@ Per rilasciare un aggiornamento:
 3. Gli spazi di lavoro che hanno l'app installata vedranno l'aggiornamento disponibile nelle proprie impostazioni
 
 <Note>
-I tag di pre-release funzionano come previsto: incrementare `1.0.0-rc.1` → `1.0.0-rc.2` è consentito e una release finale come `1.0.0` viene correttamente riconosciuta come superiore a `1.0.0-rc.5`. La versione in `package.json` deve essere essa stessa una stringa semver valida.
+  I tag di pre-release funzionano come previsto: incrementare `1.0.0-rc.1` →
+  `1.0.0-rc.2` è consentito e una release finale come `1.0.0` viene
+  correttamente riconosciuta come superiore a `1.0.0-rc.5`. La versione in
+  `package.json` deve essere essa stessa una stringa semver valida.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -94,8 +97,8 @@ Esegue automaticamente i test di integrazione a ogni push su `main` e sulle pull
 
 **Opzioni di configurazione:**
 
-* `TWENTY_VERSION` (variabile di ambiente, predefinito `latest`) — fissa la versione del server Twenty usata nella CI modificando questo valore in `ci.yml`.
-* La concorrenza è raggruppata per `github.ref` e annulla le esecuzioni in corso in caso di nuovi push.
+- `TWENTY_VERSION` (variabile di ambiente, predefinito `latest`) — fissa la versione del server Twenty usata nella CI modificando questo valore in `ci.yml`.
+- La concorrenza è raggruppata per `github.ref` e annulla le esecuzioni in corso in caso di nuovi push.
 
 Non sono necessari Secrets — l'istanza di test è effimera ed esiste solo per la durata del job.
 
@@ -117,7 +120,10 @@ Esegue il deploy della tua app su un server Twenty configurato a ogni push su `m
 | `TWENTY_DEPLOY_API_KEY` | Repository GitHub **Settings → Secrets and variables → Actions** | Chiave API con autorizzazione di deploy sul server di destinazione.                                               |
 
 <Note>
-Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:3000`, è un segnaposto — non raggiungerà alcuna risorsa da un runner ospitato su GitHub. Aggiornalo all'URL pubblico del tuo server (oppure usa un runner self-hosted con accesso di rete) prima di abilitare il CD.
+  Il valore predefinito di `TWENTY_DEPLOY_URL`, `http://localhost:3000`, è un
+  segnaposto — non raggiungerà alcuna risorsa da un runner ospitato su GitHub.
+  Aggiornalo all'URL pubblico del tuo server (oppure usa un runner self-hosted
+  con accesso di rete) prima di abilitare il CD.
 </Note>
 
 **Attivare un deploy di anteprima da una PR:**
@@ -134,8 +140,8 @@ La pubblicazione su npm rende la tua app scopribile nel marketplace di Twenty. Q
 
 ### Requisiti
 
-* Un account [npm](https://www.npmjs.com)
-* La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (aggiungila manualmente — non è inclusa per impostazione predefinita nel template `create-twenty-app`)
+- Un account [npm](https://www.npmjs.com)
+- La parola chiave `twenty-app` nell'array `keywords` del tuo `package.json` (aggiungila manualmente — non è inclusa per impostazione predefinita nel template `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -156,10 +162,7 @@ export default defineApplication({
   description: 'A great app',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   logoUrl: 'public/logo.png',
-  screenshots: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  screenshots: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -192,7 +195,12 @@ yarn twenty catalog-sync
 I metadati visualizzati nel marketplace provengono dalla configurazione `defineApplication()` — campi come `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` e `termsUrl`.
 
 <Note>
-Se la tua app non definisce un `aboutDescription` in `defineApplication()`, il marketplace userà automaticamente il `README.md` del tuo pacchetto su npm come contenuto della pagina Informazioni. Questo significa che puoi mantenere un unico README sia per npm sia per il marketplace di Twenty. Se desideri una descrizione diversa nel marketplace, imposta esplicitamente `aboutDescription`.
+  Se la tua app non definisce un `aboutDescription` in `defineApplication()`, il
+  marketplace userà automaticamente il `README.md` del tuo pacchetto su npm come
+  contenuto della pagina Informazioni. Questo significa che puoi mantenere un
+  unico README sia per npm sia per il marketplace di Twenty. Se desideri una
+  descrizione diversa nel marketplace, imposta esplicitamente
+  `aboutDescription`.
 </Note>
 
 ### Pubblicazione con CI
@@ -216,7 +224,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
       - run: npx twenty build
@@ -227,7 +235,13 @@ jobs:
 Per altri sistemi CI (GitLab CI, CircleCI, ecc.), si applicano gli stessi tre comandi: `yarn install`, `yarn twenty build`, quindi `npm publish` da `.twenty/output`.
 
 <Note>
-**npm provenance** è opzionale ma consigliata. La pubblicazione con `--provenance` aggiunge un badge di attendibilità alla tua scheda npm, consentendo agli utenti di verificare che il pacchetto sia stato creato a partire da uno specifico commit in una pipeline CI pubblica. Consulta la [documentazione su npm provenance](https://docs.npmjs.com/generating-provenance-statements) per le istruzioni di configurazione.
+  **npm provenance** è opzionale ma consigliata. La pubblicazione con
+  `--provenance` aggiunge un badge di attendibilità alla tua scheda npm,
+  consentendo agli utenti di verificare che il pacchetto sia stato creato a
+  partire da uno specifico commit in una pipeline CI pubblica. Consulta la
+  [documentazione su npm
+  provenance](https://docs.npmjs.com/generating-provenance-statements) per le
+  istruzioni di configurazione.
 </Note>
 
 ## Installazione delle app
@@ -247,8 +261,9 @@ yarn twenty install
 <Note>
 Il server applica il versioning semver durante l’installazione, rispecchiando le regole del deploy:
 
-* L’installazione della stessa versione già installata nel tuo spazio di lavoro viene rifiutata con un errore `APP_ALREADY_INSTALLED`.
-* L’installazione di una versione inferiore rispetto a quella attualmente installata viene rifiutata con un errore `CANNOT_DOWNGRADE_APPLICATION`.
+- L’installazione della stessa versione già installata nel tuo spazio di lavoro viene rifiutata con un errore `APP_ALREADY_INSTALLED`.
+- L’installazione di una versione inferiore rispetto a quella attualmente installata viene rifiutata con un errore `CANNOT_DOWNGRADE_APPLICATION`.
 
 Per installare una versione più recente, effettua prima il deploy o la pubblicazione, quindi riesegui `yarn twenty install`.
+
 </Note>

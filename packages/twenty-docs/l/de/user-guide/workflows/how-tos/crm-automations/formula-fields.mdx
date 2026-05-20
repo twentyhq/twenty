@@ -16,7 +16,9 @@ Twenty unterstützt derzeit noch keine nativen Formelfelder (kommt 2026), aber S
 | **Lead-Score**              | Punkte basierend auf mehreren Kriterien |
 
 <Tip>
-Ein vollständiges Beispiel für das Nachverfolgen der Zeit in Pipeline-Phasen finden Sie unter [Verfolgen, wie lange Chancen in jeder Phase bleiben](/l/de/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Ein vollständiges Beispiel für das Nachverfolgen der Zeit in Pipeline-Phasen
+  finden Sie unter [Verfolgen, wie lange Chancen in jeder Phase
+  bleiben](/l/de/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Einfache Formel: Verkettung
@@ -37,9 +39,7 @@ Ein vollständiges Beispiel für das Nachverfolgen der Zeit in Pipeline-Phasen f
 export const main = async (params) => {
   const { firstName, lastName } = params;
 
-  const fullName = [firstName, lastName]
-    .filter(Boolean)
-    .join(' ');
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   return { fullName };
 };
@@ -65,7 +65,7 @@ Den vollständigen Workflow finden Sie unter [Erwarteten Betrag in der Pipeline 
 export const main = async (params) => {
   const { amount, probability } = params;
 
-  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+  const expectedAmount = ((amount || 0) * (probability || 0)) / 100;
 
   return { expectedAmount };
 };
@@ -105,7 +105,8 @@ export const main = async (params) => {
 3. **Datensatz aktualisieren**: Tage bis zur Fälligkeit auf `{{code.daysUntilDue}}` setzen
 
 <Note>
-Negative Werte weisen auf überfällige Aufgaben hin. Sie können dieses Feld verwenden, um Aufgaben nach Dringlichkeit zu filtern oder zu sortieren.
+  Negative Werte weisen auf überfällige Aufgaben hin. Sie können dieses Feld
+  verwenden, um Aufgaben nach Dringlichkeit zu filtern oder zu sortieren.
 </Note>
 
 ## Bedingte Formel: Lead-Score
@@ -179,24 +180,24 @@ export const main = async (params) => {
 
 ### Leistung
 
-* Nur bei relevanten Feldänderungen auslösen
-* Filter verwenden, um Datensätze ohne Berechnungsbedarf zu überspringen
-* Komplexe Berechnungen in Workflows mit hohem Volumen vermeiden
+- Nur bei relevanten Feldänderungen auslösen
+- Filter verwenden, um Datensätze ohne Berechnungsbedarf zu überspringen
+- Komplexe Berechnungen in Workflows mit hohem Volumen vermeiden
 
 ### Fehlerbehandlung
 
-* Vor Berechnungen auf null/undefined-Werte prüfen
-* Standardwerte verwenden, wenn Daten fehlen
-* Klare Fehlermeldungen zurückgeben, wenn Berechnungen fehlschlagen
+- Vor Berechnungen auf null/undefined-Werte prüfen
+- Standardwerte verwenden, wenn Daten fehlen
+- Klare Fehlermeldungen zurückgeben, wenn Berechnungen fehlschlagen
 
 ### Tests
 
-* Mit Randfällen testen (leere Felder, Nullwerte)
-* Berechnungen vor der Aktivierung manuell überprüfen
-* Workflow-Ausführungen auf unerwartete Ergebnisse überwachen
+- Mit Randfällen testen (leere Felder, Nullwerte)
+- Berechnungen vor der Aktivierung manuell überprüfen
+- Workflow-Ausführungen auf unerwartete Ergebnisse überwachen
 
 ## Verwandt
 
-* [Erwarteten Betrag in der Pipeline anzeigen](/l/de/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [Zeit in der Phase nachverfolgen](/l/de/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+- [Erwarteten Betrag in der Pipeline anzeigen](/l/de/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+- [Zeit in der Phase nachverfolgen](/l/de/user-guide/views-pipelines/how-tos/track-time-in-stage)
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)

@@ -25,12 +25,12 @@
       "cache": true,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        "command": "npx oxfmt --check ."
       },
       "configurations": {
         "ci": {},
         "fix": {
-          "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+          "command": "npx oxfmt ."
         }
       }
     }

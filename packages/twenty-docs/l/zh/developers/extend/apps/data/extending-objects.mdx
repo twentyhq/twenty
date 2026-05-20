@@ -26,7 +26,7 @@ export default defineField({
 
 ## 关键点
 
-* `objectUniversalIdentifier` 用于标识目标对象。 对于标准 Twenty 对象，从 `twenty-sdk` 导入常量：
+- `objectUniversalIdentifier` 用于标识目标对象。 对于标准 Twenty 对象，从 `twenty-sdk` 导入常量：
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,11 +37,11 @@ export default defineField({
   // …
   ```
 
-* 在 **`defineObject()` 内联定义字段** 时，**不需要** `objectUniversalIdentifier`——它会从父对象继承。
+- 在 **`defineObject()` 内联定义字段** 时，**不需要** `objectUniversalIdentifier`——它会从父对象继承。
 
-* `defineField()` 是为非通过 `defineObject()` 创建的对象添加字段的唯一方式。
+- `defineField()` 是为非通过 `defineObject()` 创建的对象添加字段的唯一方式。
 
-* 文件位置由你决定。 约定是使用 `src/fields/\<name>.field.ts`，但 SDK 会在整个 `src/` 中检测字段。
+- 文件位置由你决定。 约定是使用 `src/fields/\<name>.field.ts`，但 SDK 会在整个 `src/` 中检测字段。
 
 ## 向现有对象添加关系
 

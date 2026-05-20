@@ -1,6 +1,6 @@
 ---
 title: Key rotation
-icon: "rotate"
+icon: 'rotate'
 ---
 
 Twenty has two independent key families:
@@ -17,9 +17,11 @@ Each key carries a `publicKey` (kept indefinitely so it can verify previously is
 ### Rotate the current key
 
 - **Manual** — **Settings → Admin Panel → Signing keys → Revoke** on the current row. Revoking wipes its encrypted private material and demotes it; the next sign call automatically mints a fresh ES256 keypair as the new current. Tokens signed under any other (non-revoked) `kid` keep verifying until they expire.
-- **Enterprise (automatic)** — a daily cron (`'15 3 * * *'` UTC) issues a new current key once the existing one has been current for `SIGNING_KEY_ROTATION_DAYS` (default `90`). The previous key is *not* revoked, so tokens signed under it keep verifying. Register it once with `yarn command:prod cron:register:all`.
+- **Enterprise (automatic)** — a daily cron (`'15 3 * * *'` UTC) issues a new current key once the existing one has been current for `SIGNING_KEY_ROTATION_DAYS` (default `90`). The previous key is _not_ revoked, so tokens signed under it keep verifying. Register it once with `yarn command:prod cron:register:all`.
 
-  <Note>The Enterprise cron and `SIGNING_KEY_ROTATION_DAYS` ship in v2.6+.</Note>
+  <Note>
+    The Enterprise cron and `SIGNING_KEY_ROTATION_DAYS` ship in v2.6+.
+  </Note>
 
 ### Revoke a key (leak / emergency only)
 
@@ -27,7 +29,9 @@ Each key carries a `publicKey` (kept indefinitely so it can verify previously is
 
 ## Rotate `ENCRYPTION_KEY`
 
-<Note>The `secret-encryption:rotate` command described below ships in v2.6+.</Note>
+<Note>
+  The `secret-encryption:rotate` command described below ships in v2.6+.
+</Note>
 
 Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` is an 8-hex prefix derived from the raw key. Rotation is online and resumable.
 
@@ -39,16 +43,18 @@ Every encrypted value is wrapped as `enc:v2:<keyId>:<payload>`, where `<keyId>` 
    ```
    New writes use the new key, existing rows still decrypt via the fallback.
 3. **Re-encrypt existing rows**:
+
    ```bash
    docker exec -it {server_container} yarn command:prod secret-encryption:rotate
    ```
+
    The command walks six sites (`connected-account-tokens`, `application-variable`, `application-registration-variable`, `signing-key-private-keys`, `sensitive-config-storage`, `totp-secrets`). A SQL filter skips rows already on the new `<keyId>`, so the command is idempotent: interrupt and re-run as needed. Exits non-zero if any row fails — re-run to retry.
 
-   | Flag | Description |
-   | --- | --- |
-   | `-s, --site <site>` | Limit to a single site. |
-   | `-b, --batch-size <n>` | Rows per batch (default `200`, max `5000`). |
-   | `-d, --dry-run` | Decrypt + re-encrypt in memory, skip the `UPDATE`. |
+   | Flag                   | Description                                        |
+   | ---------------------- | -------------------------------------------------- |
+   | `-s, --site <site>`    | Limit to a single site.                            |
+   | `-b, --batch-size <n>` | Rows per batch (default `200`, max `5000`).        |
+   | `-d, --dry-run`        | Decrypt + re-encrypt in memory, skip the `UPDATE`. |
 
 4. **Drop the fallback** once `--dry-run` shows zero remaining rows: remove `FALLBACK_ENCRYPTION_KEY` and restart.
 

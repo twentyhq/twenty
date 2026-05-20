@@ -51,11 +51,11 @@ export default definePageLayout({
 
 ### Önemli noktalar
 
-* `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
-* `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
-* Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
-* Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
-* Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
+- `type` genellikle belirli bir nesnenin ayrıntı görünümünü özelleştirmek için `'RECORD_PAGE'` olur.
+- `objectUniversalIdentifier`, bu düzenin hangi nesneye uygulanacağını belirtir.
+- Her `tab`, bir `title`, `position` ve `layoutMode` ile sayfanın bir bölümünü tanımlar (serbest biçimli düzen için `CANVAS`).
+- Bir sekmenin içindeki her `widget`, bir [ön uç bileşeni](/l/tr/developers/extend/apps/layout/front-components), bir ilişki listesi veya diğer yerleşik widget türlerini oluşturabilir.
+- Sekmelerdeki `position`, sıralarını kontrol eder. Özel sekmeleri yerleşik olanların sonrasına yerleştirmek için daha yüksek değerler kullanın (ör. 50).
 
 ## definePageLayoutTab
 
@@ -96,7 +96,7 @@ export default definePageLayoutTab({
 
 ### Önemli noktalar
 
-* `pageLayoutUniversalIdentifier` **zorunludur** ve kurulum anında zaten var olan bir sayfa düzenini işaret etmelidir — standart bir Twenty düzeni veya kendi uygulamanız tarafından tanımlanan bir düzen olabilir. Başka yüklü bir uygulamaya ait düzenlere uygulamalar arası referanslar bugün desteklenmemektedir. Üst düzen eksik olduğunda, kurulum net bir doğrulama hatasıyla başarısız olur.
-* `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget'larda olduğu gibi, [ön uç bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
-* `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
-* Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.
+- `pageLayoutUniversalIdentifier` **zorunludur** ve kurulum anında zaten var olan bir sayfa düzenini işaret etmelidir — standart bir Twenty düzeni veya kendi uygulamanız tarafından tanımlanan bir düzen olabilir. Başka yüklü bir uygulamaya ait düzenlere uygulamalar arası referanslar bugün desteklenmemektedir. Üst düzen eksik olduğunda, kurulum net bir doğrulama hatasıyla başarısız olur.
+- `widgets` yalnızca bu sekmeyle sınırlıdır — satır içi olarak `definePageLayout` içinde tanımlanan widget'larda olduğu gibi, [ön uç bileşenlerine](/l/tr/developers/extend/apps/layout/front-components), görünümlere vb. tam olarak aynı şekilde referans verirler.
+- `position`, hedeflenen düzende mevcut sekmelere göre sıralamayı kontrol eder. Yerleşik sekmelere göre sekmenizi istediğiniz konuma yerleştirecek bir değer seçin.
+- Yalnızca mevcut bir düzene ekleme yapmak istediğinizde `definePageLayout` yerine bunu kullanın. Tüm düzene sahip olduğunuzda `definePageLayout` kullanın.

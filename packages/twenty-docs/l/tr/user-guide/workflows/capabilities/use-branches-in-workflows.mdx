@@ -20,12 +20,15 @@ Belirli koşullara göre yalnızca bir dalı çalıştırmak için, **her dalın
 3. Her Filter üzerinde, o dalın ne zaman devam etmesi gerektiğini belirlemek için koşullar ayarlayın
 4. Yalnızca Filter koşulları sağlanan dal(lar) devam edecektir
 
-<img src="/images/user-guide/workflows/branches-with-filters.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/branches-with-filters.png"
+  style={{ width: '100%' }}
+/>
 
 ### Filter'lar Nasıl Çalışır
 
-* Filter koşulu **sağlanırsa**: Dal çalışmaya devam eder
-* Filter koşulu **sağlanmazsa**: Dal, Filter düğümünde durur
+- Filter koşulu **sağlanırsa**: Dal çalışmaya devam eder
+- Filter koşulu **sağlanmazsa**: Dal, Filter düğümünde durur
 
 Bu, verilerinize bağlı olarak yalnızca uygun dalın çalıştığı bir koşullu mantık oluşturur.
 
@@ -42,7 +45,9 @@ Her iki dal da başlar, ancak yalnızca anlaşma tutarıyla eşleşen dal, Filte
 ## Dallar Oluşturma
 
 <Note>
-Mevcut bir adımdan yeni bir dal oluşturmak için, adım üzerindeki **+** düğmesine tıklayın ve eyleminizi ekleyin. **+**'ı birden çok kez tıklayarak birden fazla dal ekleyebilirsiniz.
+  Mevcut bir adımdan yeni bir dal oluşturmak için, adım üzerindeki **+**
+  düğmesine tıklayın ve eyleminizi ekleyin. **+**'ı birden çok kez tıklayarak
+  birden fazla dal ekleyebilirsiniz.
 </Note>
 
 1. İş akışı düzenleyicisinde, dallandırmak istediğiniz adımı seçin
@@ -78,13 +83,13 @@ Onay e-postası, hem müşteri güncellemesi hem de talep oluşturma tamamlandı
 
 ## En İyi Uygulamalar
 
-* Koşullu yürütme istediğiniz durumlarda dalların başlangıcında her zaman **Filter düğümlerini** kullanın
-* Yinelenen eylemleri önlemek için dal koşullarını **birbirini dışlayıcı** tutun
-* Doğru dalların çalıştığından emin olmak için iş akışlarınızı farklı verilerle test edin
-* Her yolun ne yaptığının açık olması için dal adımlarını açıklayıcı şekilde **yeniden adlandırın**
-* Paralel işlemden sonra son bir eyleme ihtiyaç duyduğunuzda **dalları birleştirin**
+- Koşullu yürütme istediğiniz durumlarda dalların başlangıcında her zaman **Filter düğümlerini** kullanın
+- Yinelenen eylemleri önlemek için dal koşullarını **birbirini dışlayıcı** tutun
+- Doğru dalların çalıştığından emin olmak için iş akışlarınızı farklı verilerle test edin
+- Her yolun ne yaptığının açık olması için dal adımlarını açıklayıcı şekilde **yeniden adlandırın**
+- Paralel işlemden sonra son bir eyleme ihtiyaç duyduğunuzda **dalları birleştirin**
 
 ## İlgili
 
-* [İş Akışları SSS](/l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — paralel yürütme hakkında yanıtlar
-* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions) — dallar için kullanılabilir eylemler
+- [İş Akışları SSS](/l/tr/user-guide/workflows/how-tos/need-more-help/workflows-faq) — paralel yürütme hakkında yanıtlar
+- [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions) — dallar için kullanılabilir eylemler

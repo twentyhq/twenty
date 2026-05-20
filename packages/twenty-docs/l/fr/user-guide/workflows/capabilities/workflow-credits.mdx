@@ -15,7 +15,11 @@ Les crédits de flux de travail sont alloués en fonction de votre cycle de fact
 | **Abonnement annuel**  | 50 millions de crédits par an  |
 
 <Note>
-  5 millions de crédits mensuels suffisent largement pour les automatisations standard. La plupart des équipes ne dépasseront pas cette limite avec une utilisation typique des flux de travail. Des crédits supplémentaires sont principalement nécessaires pour les actions de Code avancées et les flux de travail alimentés par l'IA.
+  5 millions de crédits mensuels suffisent largement pour les automatisations
+  standard. La plupart des équipes ne dépasseront pas cette limite avec une
+  utilisation typique des flux de travail. Des crédits supplémentaires sont
+  principalement nécessaires pour les actions de Code avancées et les flux de
+  travail alimentés par l'IA.
 </Note>
 
 ## Comment fonctionne la consommation de crédits
@@ -24,33 +28,33 @@ Les crédits sont consommés lors de l'exécution des flux de travail, et non lo
 
 ### Consommation de crédits par type d'action
 
-* **Opérations internes de base** : Très faible consommation de crédits
-  * Rechercher des enregistrements
-  * Créer un enregistrement
-  * Mettre à jour un enregistrement
-  * Supprimer un enregistrement
-  * Actions de formulaire
+- **Opérations internes de base** : Très faible consommation de crédits
+  - Rechercher des enregistrements
+  - Créer un enregistrement
+  - Mettre à jour un enregistrement
+  - Supprimer un enregistrement
+  - Actions de formulaire
 
-* **Opérations complexes** : Consommation de crédits plus élevée
-  * Actions de code (exécution JavaScript)
-  * Requêtes HTTP vers des services externes
+- **Opérations complexes** : Consommation de crédits plus élevée
+  - Actions de code (exécution JavaScript)
+  - Requêtes HTTP vers des services externes
 
-* **Fonctionnalités d'IA** : Consommation de crédits plus élevée
-  * Les actions de l'agent IA consomment des crédits en fonction du modèle d'IA utilisé
-  * Des requêtes plus complexes et des réponses plus longues utilisent davantage de crédits
+- **Fonctionnalités d'IA** : Consommation de crédits plus élevée
+  - Les actions de l'agent IA consomment des crédits en fonction du modèle d'IA utilisé
+  - Des requêtes plus complexes et des réponses plus longues utilisent davantage de crédits
 
-* **Actions de type Delay** : Consommation de crédits minimale
-  * Le nœud Delay consomme **1 crédit** lors de son exécution
-  * **Aucun crédit n'est consommé** pendant la période d'attente
-  * Un délai de 5 minutes coûte autant qu'un délai de 5 jours
+- **Actions de type Delay** : Consommation de crédits minimale
+  - Le nœud Delay consomme **1 crédit** lors de son exécution
+  - **Aucun crédit n'est consommé** pendant la période d'attente
+  - Un délai de 5 minutes coûte autant qu'un délai de 5 jours
 
 ### Déduction en temps réel
 
 Les crédits sont déduits en temps réel au fur et à mesure des exécutions des flux de travail. Cela signifie :
 
-* Les flux de travail en brouillon ne consomment pas de crédits
-* Seuls les flux de travail actifs et en cours d'exécution utilisent votre allocation de crédits
-* Les flux de travail échoués consomment tout de même des crédits pour les étapes complétées
+- Les flux de travail en brouillon ne consomment pas de crédits
+- Seuls les flux de travail actifs et en cours d'exécution utilisent votre allocation de crédits
+- Les flux de travail échoués consomment tout de même des crédits pour les étapes complétées
 
 ## Gestion des crédits
 
@@ -70,7 +74,7 @@ Si vous avez besoin de plus de crédits que votre allocation de plan :
 
 ## Meilleures pratiques
 
-* **Traitement par lots** : Utilisez efficacement les opérations en masse et les actions d'itérateur
-* **Optimisation du déclencheur manuel** : Pour les déclencheurs manuels, choisissez `Bulk` pour traiter plusieurs enregistrements en une seule exécution de flux de travail
-* Optimisez les actions de code pour l'efficacité
-* Opérations par lots pour réduire les appels d'actions individuels
+- **Traitement par lots** : Utilisez efficacement les opérations en masse et les actions d'itérateur
+- **Optimisation du déclencheur manuel** : Pour les déclencheurs manuels, choisissez `Bulk` pour traiter plusieurs enregistrements en une seule exécution de flux de travail
+- Optimisez les actions de code pour l'efficacité
+- Opérations par lots pour réduire les appels d'actions individuels

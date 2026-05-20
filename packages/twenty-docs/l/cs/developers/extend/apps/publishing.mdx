@@ -8,8 +8,8 @@ description: Distribuujte svou aplikaci Twenty do Marketplace nebo ji nasaďte i
 
 Jakmile je vaše aplikace [sestavena a otestována lokálně](/l/cs/developers/extend/apps/building), máte dvě cesty, jak ji distribuovat:
 
-* **Nasaďte tarball** — nahrajte svou aplikaci přímo na konkrétní server Twenty pro interní nebo soukromé použití.
-* **Publish to npm** — uveďte svou aplikaci v Marketplace Twenty, aby ji mohl kterýkoli pracovní prostor objevit a nainstalovat.
+- **Nasaďte tarball** — nahrajte svou aplikaci přímo na konkrétní server Twenty pro interní nebo soukromé použití.
+- **Publish to npm** — uveďte svou aplikaci v Marketplace Twenty, aby ji mohl kterýkoli pracovní prostor objevit a nainstalovat.
 
 Obě cesty začínají stejným krokem **build**.
 
@@ -72,7 +72,9 @@ Chcete-li vydat aktualizaci:
 3. Pracovní prostory, které mají aplikaci nainstalovanou, uvidí dostupnou aktualizaci ve svém nastavení
 
 <Note>
-Předběžné tagy fungují podle očekávání: zvýšení z `1.0.0-rc.1` → `1.0.0-rc.2` je povoleno a finální vydání jako `1.0.0` je správně rozpoznáno jako vyšší než `1.0.0-rc.5`. Verze v `package.json` musí být platným řetězcem semver.
+  Předběžné tagy fungují podle očekávání: zvýšení z `1.0.0-rc.1` → `1.0.0-rc.2`
+  je povoleno a finální vydání jako `1.0.0` je správně rozpoznáno jako vyšší než
+  `1.0.0-rc.5`. Verze v `package.json` musí být platným řetězcem semver.
 </Note>
 
 {/* TODO: add screenshot of the Upgrade button */}
@@ -94,8 +96,8 @@ Automaticky spouští integrační testy při každém pushi do `main` a u pull 
 
 **Konfigurační volby:**
 
-* `TWENTY_VERSION` (env, výchozí hodnota `latest`) — uzamkněte v CI používanou verzi serveru Twenty úpravou této hodnoty v `ci.yml`.
-* Souběžné běhy jsou seskupeny podle `github.ref` a při nových pushích ruší právě probíhající běhy.
+- `TWENTY_VERSION` (env, výchozí hodnota `latest`) — uzamkněte v CI používanou verzi serveru Twenty úpravou této hodnoty v `ci.yml`.
+- Souběžné běhy jsou seskupeny podle `github.ref` a při nových pushích ruší právě probíhající běhy.
 
 Nejsou potřeba žádné secrety — testovací instance je efemérní a existuje pouze po dobu běhu úlohy.
 
@@ -117,7 +119,10 @@ Nasazuje vaši aplikaci na nakonfigurovaný server Twenty při každém pushi do
 | `TWENTY_DEPLOY_API_KEY` | GitHub repozitář **Settings → Secrets and variables → Actions** | API klíč s oprávněním k nasazení na cílovém serveru.                                                 |
 
 <Note>
-Výchozí `TWENTY_DEPLOY_URL` `http://localhost:3000` je pouze zástupná hodnota — z runneru hostovaného GitHubem tato adresa nebude dosažitelná. Před povolením CD ji aktualizujte na veřejnou URL vašeho serveru (nebo použijte self-hosted runner s přístupem do sítě).
+  Výchozí `TWENTY_DEPLOY_URL` `http://localhost:3000` je pouze zástupná hodnota
+  — z runneru hostovaného GitHubem tato adresa nebude dosažitelná. Před
+  povolením CD ji aktualizujte na veřejnou URL vašeho serveru (nebo použijte
+  self-hosted runner s přístupem do sítě).
 </Note>
 
 **Spuštění náhledového nasazení z PR:**
@@ -134,8 +139,8 @@ Publikování na npm zajistí, že bude vaše aplikace dohledatelná v Marketpla
 
 ### Požadavky
 
-* Účet na [npm](https://www.npmjs.com)
-* Klíčové slovo `twenty-app` ve vašem poli `keywords` v souboru `package.json` (přidejte je ručně — ve výchozím nastavení není zahrnuto v šabloně `create-twenty-app`)
+- Účet na [npm](https://www.npmjs.com)
+- Klíčové slovo `twenty-app` ve vašem poli `keywords` v souboru `package.json` (přidejte je ručně — ve výchozím nastavení není zahrnuto v šabloně `create-twenty-app`)
 
 ```json filename="package.json"
 {
@@ -156,10 +161,7 @@ export default defineApplication({
   description: 'A great app',
   defaultRoleUniversalIdentifier: DEFAULT_ROLE_UNIVERSAL_IDENTIFIER,
   logoUrl: 'public/logo.png',
-  screenshots: [
-    'public/screenshot-1.png',
-    'public/screenshot-2.png',
-  ],
+  screenshots: ['public/screenshot-1.png', 'public/screenshot-2.png'],
 });
 ```
 
@@ -192,7 +194,11 @@ yarn twenty catalog-sync
 Metadata zobrazená v tržišti pocházejí z vaší konfigurace `defineApplication()` — z polí jako `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` a `termsUrl`.
 
 <Note>
-Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`, tržiště automaticky použije soubor `README.md` vašeho balíčku z npm jako obsah stránky O aplikaci. To znamená, že můžete spravovat jediný soubor README jak pro npm, tak pro tržiště Twenty. Pokud chcete v tržišti jiný popis, explicitně nastavte `aboutDescription`.
+  Pokud vaše aplikace nedefinuje `aboutDescription` v `defineApplication()`,
+  tržiště automaticky použije soubor `README.md` vašeho balíčku z npm jako obsah
+  stránky O aplikaci. To znamená, že můžete spravovat jediný soubor README jak
+  pro npm, tak pro tržiště Twenty. Pokud chcete v tržišti jiný popis, explicitně
+  nastavte `aboutDescription`.
 </Note>
 
 ### Publikování pomocí CI
@@ -216,7 +222,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "24"
+          node-version: '24'
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
       - run: npx twenty build
@@ -227,7 +233,11 @@ jobs:
 Pro jiné systémy CI (GitLab CI, CircleCI atd.) platí stejné tři příkazy: `yarn install`, `yarn twenty build` a poté `npm publish` z `.twenty/output`.
 
 <Note>
-**npm provenance** je volitelné, ale doporučené. Publikování s `--provenance` přidá k vašemu záznamu na npm odznak důvěryhodnosti a umožní uživatelům ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline. Pokyny k nastavení najdete v [dokumentaci k npm provenance](https://docs.npmjs.com/generating-provenance-statements).
+  **npm provenance** je volitelné, ale doporučené. Publikování s `--provenance`
+  přidá k vašemu záznamu na npm odznak důvěryhodnosti a umožní uživatelům
+  ověřit, že balíček byl sestaven z konkrétního commitu ve veřejné CI pipeline.
+  Pokyny k nastavení najdete v [dokumentaci k npm
+  provenance](https://docs.npmjs.com/generating-provenance-statements).
 </Note>
 
 ## Instalace aplikací
@@ -247,8 +257,9 @@ yarn twenty install
 <Note>
 Server při instalaci vynucuje verzování semver a zrcadlí pravidla pro nasazení:
 
-* Instalace stejné verze, která je již nainstalována ve vašem pracovním prostoru, je odmítnuta s chybou `APP_ALREADY_INSTALLED`.
-* Instalace nižší verze, než je aktuálně nainstalovaná, je odmítnuta s chybou `CANNOT_DOWNGRADE_APPLICATION`.
+- Instalace stejné verze, která je již nainstalována ve vašem pracovním prostoru, je odmítnuta s chybou `APP_ALREADY_INSTALLED`.
+- Instalace nižší verze, než je aktuálně nainstalovaná, je odmítnuta s chybou `CANNOT_DOWNGRADE_APPLICATION`.
 
 K instalaci novější verze ji nejprve nasaďte nebo publikujte, poté znovu spusťte `yarn twenty install`.
+
 </Note>

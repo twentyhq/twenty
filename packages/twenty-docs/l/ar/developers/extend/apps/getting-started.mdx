@@ -12,9 +12,9 @@ description: أنشئ أول تطبيق Twenty خلال دقائق.
 
 قبل أن تبدأ، تأكّد من تثبيت ما يلي على جهازك:
 
-* **Node.js 24+** — [نزّل من هنا](https://nodejs.org/)
-* **Yarn 4** — يأتي مع Node.js عبر Corepack. قم بتمكينه عبر تشغيل `corepack enable`
-* **Docker** — [نزّل من هنا](https://www.docker.com/products/docker-desktop/). مطلوب لتشغيل مثيل محلي من Twenty. غير مطلوب إذا كان لديك خادم Twenty قيد التشغيل بالفعل.
+- **Node.js 24+** — [نزّل من هنا](https://nodejs.org/)
+- **Yarn 4** — يأتي مع Node.js عبر Corepack. قم بتمكينه عبر تشغيل `corepack enable`
+- **Docker** — [نزّل من هنا](https://www.docker.com/products/docker-desktop/). مطلوب لتشغيل مثيل محلي من Twenty. غير مطلوب إذا كان لديك خادم Twenty قيد التشغيل بالفعل.
 
 ## قم بإنشاء تطبيقك الأول
 
@@ -36,22 +36,28 @@ npx create-twenty-app@latest my-twenty-app
 
 > **هل ترغب في إعداد مثيل محلي من Twenty؟**
 
-* **اكتب `yes`** (موصى به) — سيؤدي ذلك إلى سحب صورة Docker `twenty-app-dev` وبدء تشغيل خادم Twenty محلي على المنفذ `2020`. تأكّد من أن Docker قيد التشغيل قبل المتابعة.
-* **اكتب `no`** — اختر هذا إذا كان لديك خادم Twenty يعمل محليًا بالفعل.
+- **اكتب `yes`** (موصى به) — سيؤدي ذلك إلى سحب صورة Docker `twenty-app-dev` وبدء تشغيل خادم Twenty محلي على المنفذ `2020`. تأكّد من أن Docker قيد التشغيل قبل المتابعة.
+- **اكتب `no`** — اختر هذا إذا كان لديك خادم Twenty يعمل محليًا بالفعل.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="هل يجب بدء المثيل المحلي؟" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="هل يجب بدء المثيل المحلي؟"
+  />
 </div>
 
 ### سجّل الدخول إلى مساحة العمل الخاصة بك
 
 بعد ذلك، ستُفتح نافذة متصفح تعرض صفحة تسجيل الدخول الخاصة بـ Twenty. سجّل الدخول باستخدام حساب العرض التوضيحي المُجهَّز مسبقًا:
 
-* **البريد الإلكتروني:** `tim@apple.dev`
-* **كلمة المرور:** `tim@apple.dev`
+- **البريد الإلكتروني:** `tim@apple.dev`
+- **كلمة المرور:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="شاشة تسجيل الدخول إلى Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="شاشة تسجيل الدخول إلى Twenty"
+  />
 </div>
 
 ### قم بتفويض التطبيق
@@ -60,14 +66,20 @@ npx create-twenty-app@latest my-twenty-app
 
 انقر **Authorize** للمتابعة.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="شاشة تفويض واجهة الأوامر (CLI) الخاصة بـ Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="شاشة تفويض واجهة الأوامر (CLI) الخاصة بـ Twenty"
+  />
 </div>
 
 بمجرد منح التفويض، ستؤكّد الطرفية أن كل شيء قد تم إعداده.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="تم إنشاء هيكل التطبيق بنجاح" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="تم إنشاء هيكل التطبيق بنجاح"
+  />
 </div>
 
 ### ابدأ التطوير
@@ -88,11 +100,17 @@ yarn twenty dev --verbose
 ```
 
 <Warning>
-وضع التطوير متاح فقط على مثيلات Twenty التي تعمل في وضع التطوير (`NODE_ENV=development`). المثيلات الإنتاجية ترفض طلبات مزامنة وضع التطوير. استخدم `yarn twenty deploy` للنشر إلى خوادم الإنتاج — اطّلع على [نشر التطبيقات](/l/ar/developers/extend/apps/publishing) للتفاصيل.
+  وضع التطوير متاح فقط على مثيلات Twenty التي تعمل في وضع التطوير
+  (`NODE_ENV=development`). المثيلات الإنتاجية ترفض طلبات مزامنة وضع التطوير.
+  استخدم `yarn twenty deploy` للنشر إلى خوادم الإنتاج — اطّلع على [نشر
+  التطبيقات](/l/ar/developers/extend/apps/publishing) للتفاصيل.
 </Warning>
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.jpg" alt="مخرجات الطرفية في وضع التطوير" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.jpg"
+    alt="مخرجات الطرفية في وضع التطوير"
+  />
 </div>
 
 #### مزامنة لمرة واحدة باستخدام `yarn twenty dev --once`
@@ -114,26 +132,38 @@ yarn twenty dev --once
 
 افتح [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer) في متصفحك. انتقل إلى **Settings > Apps** واختر علامة التبويب **Developer**. يُفترض أن ترى تطبيقك مُدرجًا تحت **Your Apps**:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="قائمة &#x22;Your Apps&#x22; تعرض &#x22;My twenty app&#x22;" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="قائمة &#x22;Your Apps&#x22; تعرض &#x22;My twenty app&#x22;"
+  />
 </div>
 
 انقر على **My twenty app** لفتح **تسجيل التطبيق** الخاص به. التسجيل عبارة عن سجل على مستوى الخادم يصف تطبيقك — اسمه، والمعرّف الفريد، وبيانات اعتماد OAuth، والمصدر (محلي، npm، أو tarball). يُخزَّن على الخادم، وليس داخل أي مساحة عمل محددة. عند تثبيت تطبيق في مساحة عمل، ينشئ Twenty **تطبيقًا** بنطاق مساحة العمل يُشير مرة أخرى إلى هذا التسجيل. يمكن تثبيت تسجيل واحد عبر عدة مساحات عمل على الخادم نفسه.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="تفاصيل تسجيل التطبيق" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="تفاصيل تسجيل التطبيق"
+  />
 </div>
 
 انقر **View installed app** لعرض التطبيق المثبّت. تعرض علامة التبويب **About** الإصدار الحالي وخيارات الإدارة:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="التطبيق المثبّت — علامة تبويب About" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="التطبيق المثبّت — علامة تبويب About"
+  />
 </div>
 
 انتقل إلى علامة التبويب **Content** لمشاهدة كل ما يقدمه تطبيقك — الكائنات، والحقول، ودوال المنطق، والوكلاء:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-4.png" alt="التطبيق المثبّت — علامة تبويب Content" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-4.png"
+    alt="التطبيق المثبّت — علامة تبويب Content"
+  />
 </div>
 
 أنت جاهز تمامًا! حرّر أي ملف في `src/` وسيتم التقاط التغييرات تلقائيًا.
@@ -241,7 +271,8 @@ npx create-twenty-app@latest my-twenty-app --example postcard
 يعمل مثيل الاختبار في حاوية Docker خاصة به (`twenty-app-dev-test`) مع وحدات تخزين مخصصة (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) وتهيئة مستقلة، بحيث يمكنه العمل بالتوازي مع مثيلك الرئيسي من دون تعارضات. اجمع `--test` مع `--port` لتجاوز القيمة الافتراضية 2021.
 
 <Note>
-  يتطلّب الخادم أن يكون **Docker** قيد التشغيل. إذا ظهرت لك رسالة خطأ "Docker not running"، فتأكّد من تشغيل Docker Desktop (أو خادوم Docker).
+  يتطلّب الخادم أن يكون **Docker** قيد التشغيل. إذا ظهرت لك رسالة خطأ "Docker
+  not running"، فتأكّد من تشغيل Docker Desktop (أو خادوم Docker).
 </Note>
 
 ## إعداد يدوي (بدون المهيئ)
@@ -267,16 +298,17 @@ yarn add twenty-sdk twenty-client-sdk
 يمكنك الآن تشغيل `yarn twenty dev`، و`yarn twenty help`، وجميع الأوامر الأخرى.
 
 <Note>
-لا تثبّت `twenty-sdk` عالميًا. استخدمه دائمًا كاعتماد محلي للمشروع بحيث يتمكن كل مشروع من تثبيت إصداره الخاص.
+  لا تثبّت `twenty-sdk` عالميًا. استخدمه دائمًا كاعتماد محلي للمشروع بحيث يتمكن
+  كل مشروع من تثبيت إصداره الخاص.
 </Note>
 
 ## استكشاف الأخطاء وإصلاحها
 
 إذا واجهت مشاكل:
 
-* تأكّد من أن **Docker قيد التشغيل** قبل تشغيل أداة إنشاء الهيكل مع مثيل محلي.
-* تأكّد من أنك تستخدم **Node.js 24+** (`node -v` للتحقق).
-* تأكّد من **تمكين Corepack** (`corepack enable`) حتى يتوفر Yarn 4.
-* جرّب حذف `node_modules` وتشغيل `yarn install` مرة أخرى إذا بدت الاعتمادات معطّلة.
+- تأكّد من أن **Docker قيد التشغيل** قبل تشغيل أداة إنشاء الهيكل مع مثيل محلي.
+- تأكّد من أنك تستخدم **Node.js 24+** (`node -v` للتحقق).
+- تأكّد من **تمكين Corepack** (`corepack enable`) حتى يتوفر Yarn 4.
+- جرّب حذف `node_modules` وتشغيل `yarn install` مرة أخرى إذا بدت الاعتمادات معطّلة.
 
 ما زلت عالقًا؟ اطلب المساعدة على [خادم Twenty على Discord](https://discord.com/channels/1130383047699738754/1130386664812982322).

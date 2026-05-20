@@ -11,6 +11,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Soluție**: Contactați administratorul spațiului de lucru pentru a vă acorda acces la fluxuri de lucru în **Setări → Membri → Roluri**.
 
     Dacă nu vedeți deloc secțiunea Fluxuri de lucru în bara laterală, acest lucru confirmă că este o problemă de permisiuni.
+
   </Accordion>
 
   <Accordion title="De ce nu văd butonul fluxului de lucru manual în bara de navigare de sus?">
@@ -23,6 +24,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     **Pentru a verifica**: Deschideți fluxul de lucru → faceți clic pe declanșator → verificați că "Navbar placement" este setat la "Pinned".
 
     Puteți accesa oricând fluxurile de lucru manuale prin **Cmd + K** (sau **Ctrl + K**), indiferent de setările barei de navigare.
+
   </Accordion>
 
   <Accordion title="Care este diferența dintre declanșatoarele manuale Single, Global și Bulk?">
@@ -37,6 +39,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * **Bulk**: Utilizați când aveți nevoie să procesați înregistrările împreună sau să optimizați utilizarea creditelor (necesită acțiunea Iterator)
 
     Consultați [Declanșatoare ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-triggers) pentru detalii.
+
   </Accordion>
 
   <Accordion title="Nu văd un nod If/Else. Ce ar trebui să fac?">
@@ -55,6 +58,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     Doar ramura în care condiția filtrului este îndeplinită își va executa acțiunile următoare.
 
     Consultați [Cum să utilizați ramurile](/l/ro/user-guide/workflows/capabilities/workflow-branches) pentru un ghid pas cu pas.
+
   </Accordion>
 
   <Accordion title="Rulează ramurile fluxului de lucru în paralel?">
@@ -65,6 +69,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Setați condiții opuse (de ex., Ramura A: status = "Open", Ramura B: status ≠ "Open")
 
     Ramurile care nu îndeplinesc condiția filtrului se opresc din execuție, în timp ce altele continuă.
+
   </Accordion>
 
   <Accordion title="Pot să îmbin din nou ramurile?">
@@ -76,6 +81,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     3. Trageți conexiuni de la finalul fiecărei ramuri către acest pas nou
 
     Pasul îmbinat se va executa după ce toate ramurile conectate se finalizează.
+
   </Accordion>
 
   <Accordion title="Care este limita rezultatelor pentru Search Records?">
@@ -87,12 +93,14 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Luați în considerare utilizarea API-ului pentru operațiuni în masă
 
     Pentru majoritatea fluxurilor de lucru, 200 de înregistrări sunt suficiente. Dacă atingeți frecvent această limită, luați în considerare restructurarea automatizării.
+
   </Accordion>
 
   <Accordion title="Pot adăuga persoane în CC în e-mailurile fluxurilor de lucru?">
     **Încă nu.** Câmpurile CC și BCC pentru acțiunea Send Email se află pe foaia noastră de parcurs.
 
     **Soluție temporară**: Adăugați mai multe acțiuni Send Email pentru a trimite către destinatari suplimentari sau utilizați un HTTP Request pentru a trimite printr-un serviciu extern de e-mail care acceptă CC.
+
   </Accordion>
 
   <Accordion title="Cum folosesc rezultatele din pașii anteriori?">
@@ -108,6 +116,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Rezultatul codului: `{{code.calculatedValue}}`
 
     Treceți cursorul peste orice câmp din configurația acțiunii pentru a vedea variabilele disponibile din pașii anteriori.
+
   </Accordion>
 
   <Accordion title="De ce eșuează Iteratorul?">
@@ -122,6 +131,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     2. Filter: length > 0
     3. Iterator: selectați `{{searchRecords}}`
     4. Acțiunile din interiorul iteratorului folosesc `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="Care este timpul maxim de execuție pentru acțiunile Code?">
@@ -136,6 +146,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Evitați calculele grele; utilizați servicii externe prin HTTP Request pentru procesări intensive
     * Optimizați codul pentru a reduce timpul de execuție
     * Dacă aveți nevoie de procesare mai lungă, luați în considerare utilizarea fluxurilor de lucru programate care procesează datele în loturi
+
   </Accordion>
 
   <Accordion title="Cum citesc rulările fluxului de lucru?">
@@ -152,6 +163,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * **Date**: Vizualizați datele de intrare/ieșire la fiecare pas
 
     Consultați [Rulări ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-runs) pentru detalii.
+
   </Accordion>
 
   <Accordion title="De ce nu văd rulările fluxului meu de lucru?">
@@ -171,6 +183,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Eșalonați în timp operațiunile mari efectuate în loturi
     * Folosiți filtre pentru a reduce frecvența declanșărilor
     * Programați fluxurile de lucru intensive în afara orelor de vârf
+
   </Accordion>
 
   <Accordion title="Care sunt limitele de rată pentru fluxurile de lucru?">
@@ -189,6 +202,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Utilizați declanșatoare Bulk cu Iterator în locul declanșatoarelor Single pentru loturi mari
     * Combinați automatizările înrudite în mai puține fluxuri de lucru
     * Utilizați fluxuri de lucru programate pentru a distribui încărcarea în timp
+
   </Accordion>
 
   <Accordion title="Pot reîncerca o rulare de flux de lucru eșuată?">
@@ -205,6 +219,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     * Testați temeinic cu câteva înregistrări înainte de operațiuni în masă
 
     Funcționalitatea de reîncercare automată este pe foaia noastră de parcurs pentru o versiune viitoare.
+
   </Accordion>
 
   <Accordion title="Ar trebui să dezactivez fluxurile de lucru înainte de importurile CSV?">
@@ -224,6 +239,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     5. **Reactivați** fluxurile de lucru când ați terminat
 
     **Alternativă**: Dacă aveți nevoie ca fluxurile de lucru să ruleze pe datele importate, importați în loturi mai mici pentru a rămâne în limitele de rată.
+
   </Accordion>
 
   <Accordion title="Cum îmi curăț aspectul fluxului de lucru?">
@@ -233,6 +249,7 @@ description: Întrebări frecvente despre fluxurile de lucru din Twenty.
     2. Faceți clic pe **Aranjează fluxul de lucru**
 
     Acest lucru va rearanja automat toate nodurile într-un aspect curat și organizat.
+
   </Accordion>
 
 </AccordionGroup>

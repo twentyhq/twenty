@@ -51,11 +51,12 @@ export default defineLogicFunction({
 ```
 
 Tipuri de declanșatoare disponibile:
-* **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
-> de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
-* **cron**: Rulează funcția pe un program folosind o expresie CRON.
-* **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
-> de ex. `person.updated`, `*.created`, `company.*`
+
+- **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
+  > de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
+- **cron**: Rulează funcția pe un program folosind o expresie CRON.
+- **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
+  > de ex. `person.updated`, `*.created`, `company.*`
 
 <Note>
 Puteți, de asemenea, să executați manual o funcție folosind CLI:
@@ -73,6 +74,7 @@ Puteți urmări jurnalele cu:
 ```bash filename="Terminal"
 yarn twenty dev:function:logs
 ```
+
 </Note>
 
 #### Payload-ul declanșatorului de rută
@@ -94,17 +96,16 @@ const handler = async (event: RoutePayload) => {
 
 Tipul `RoutePayload` are următoarea structură:
 
-  | Proprietate                  | Tip                                                     | Descriere                                                                                                                                                                                                                                               | Exemplu                                                                    |
-  | ---------------------------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
-  | `headers`                    | `Record\<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                                                                                                                                                                                          | consultați secțiunea de mai jos                                            |
-  | `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                                                                                                                                                                                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
-  | `pathParameters`             | `Record\<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                                                                                                                                                                                                             | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
-  | `body`                       | `object \| null`                                        | Corpul cererii analizat (JSON)                                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
-  | `rawBody`                    | `string \| undefined`                                   | Corpul original al cererii în UTF-8, înainte de parsarea JSON. Util pentru verificarea semnăturilor de tip HMAC pentru webhook-uri (de exemplu, `X-Hub-Signature-256` de la GitHub, Stripe). `undefined` atunci când mediul de execuție nu a păstrat-o. |                                                                            |
-  | `isBase64Encoded`            | `boolean`                                               | Indică dacă corpul este codificat în base64                                                                                                                                                                                                             |                                                                            |
-  | `requestContext.http.method` | `string`                                                | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                                             |                                                                            |
-  | `requestContext.http.path`   | `string`                                                | Calea brută a cererii                                                                                                                                                                                                                                   |                                                                            |
-
+| Proprietate                  | Tip                                    | Descriere                                                                                                                                                                                                                                               | Exemplu                                                                    |
+| ---------------------------- | -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `headers`                    | `Record\<string, string \| undefined>` | Anteturi HTTP (doar cele listate în `forwardedRequestHeaders`)                                                                                                                                                                                          | consultați secțiunea de mai jos                                            |
+| `queryStringParameters`      | `Record\<string, string \| undefined>` | Parametri query string (valorile multiple unite cu virgule)                                                                                                                                                                                             | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+| `pathParameters`             | `Record\<string, string \| undefined>` | Parametri de cale extrași din modelul rutei                                                                                                                                                                                                             | `/users/:id`, `/users/123` -> `{ id: '123' }`                              |
+| `body`                       | `object \| null`                       | Corpul cererii analizat (JSON)                                                                                                                                                                                                                          | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+| `rawBody`                    | `string \| undefined`                  | Corpul original al cererii în UTF-8, înainte de parsarea JSON. Util pentru verificarea semnăturilor de tip HMAC pentru webhook-uri (de exemplu, `X-Hub-Signature-256` de la GitHub, Stripe). `undefined` atunci când mediul de execuție nu a păstrat-o. |                                                                            |
+| `isBase64Encoded`            | `boolean`                              | Indică dacă corpul este codificat în base64                                                                                                                                                                                                             |                                                                            |
+| `requestContext.http.method` | `string`                               | Metoda HTTP (GET, POST, PUT, PATCH, DELETE)                                                                                                                                                                                                             |                                                                            |
+| `requestContext.http.path`   | `string`                               | Calea brută a cererii                                                                                                                                                                                                                                   |                                                                            |
 
 #### forwardedRequestHeaders
 
@@ -138,7 +139,8 @@ const handler = async (event: RoutePayload) => {
 ```
 
 <Note>
-Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei cu litere mici (de exemplu, `event.headers['content-type']`).
+  Numele anteturilor sunt normalizate la litere mici. Accesați-le folosind chei
+  cu litere mici (de exemplu, `event.headers['content-type']`).
 </Note>
 
 #### Payload-ul declanșatorului de eveniment al bazei de date
@@ -180,16 +182,15 @@ Pentru ștergeri logice (soft delete), `.deleted` urmează structura de tip upda
 Pentru ștergeri permanente, folosiți `.destroyed`.
 
 <Note>
-`databaseEventTriggerSettings.updatedFields` filtrează ce evenimente de actualizare declanșează funcția.
-`event.properties.updatedFields` vă indică ce câmpuri s-au modificat efectiv în evenimentul curent.
+  `databaseEventTriggerSettings.updatedFields` filtrează ce evenimente de
+  actualizare declanșează funcția. `event.properties.updatedFields` vă indică ce
+  câmpuri s-au modificat efectiv în evenimentul curent.
 </Note>
 
 Exemplu de eveniment de creare:
 
 ```ts
-type PersonCreatedEvent = DatabaseEventPayload<
-  ObjectRecordCreateEvent<Person>
->;
+type PersonCreatedEvent = DatabaseEventPayload<ObjectRecordCreateEvent<Person>>;
 
 const handler = async (event: PersonCreatedEvent) => {
   const person = event.properties.after;
@@ -204,9 +205,7 @@ const handler = async (event: PersonCreatedEvent) => {
 Exemplu de eveniment de actualizare:
 
 ```ts
-type PersonUpdatedEvent = DatabaseEventPayload<
-  ObjectRecordUpdateEvent<Person>
->;
+type PersonUpdatedEvent = DatabaseEventPayload<ObjectRecordUpdateEvent<Person>>;
 
 const handler = async (event: PersonUpdatedEvent) => {
   const { before, after, diff, updatedFields } = event.properties;
@@ -254,8 +253,8 @@ const handler = async (event: PersonDestroyedEvent) => {
 
 Funcțiile logice pot fi expuse în două locuri, fiecare cu propriul declanșator:
 
-* **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
-* **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
+- **`toolTriggerSettings`** — face funcția descoperibilă de către funcționalitățile AI ale Twenty (chat, MCP, apelarea de funcții). Folosește JSON Schema standard, formatul pe care LLM-urile îl înțeleg nativ.
+- **`workflowActionTriggerSettings`** — determină ca funcția să apară ca un pas în constructorul vizual de fluxuri de lucru. Folosește `InputSchema` bogat al Twenty, astfel încât constructorul să poată afișa editori de câmp adecvați, selectoare de variabile și etichete.
 
 O funcție poate opta pentru una, cealaltă sau ambele. Acestea stau alături de `cronTriggerSettings`, `databaseEventTriggerSettings` și `httpRouteTriggerSettings` — același tipar, aceeași formă.
 
@@ -293,8 +292,8 @@ export default defineLogicFunction({
 
 Puncte cheie:
 
-* O funcție poate combina suprafețele — declară atât `toolTriggerSettings`, cât și `workflowActionTriggerSettings` pentru a o expune atât în chat, cât și în constructorul de fluxuri de lucru.
-* `toolTriggerSettings.inputSchema` și `workflowActionTriggerSettings.inputSchema` sunt ambele opționale. Când sunt omise, generatorul de manifest le deduce din codul sursă al handlerului (JSON Schema pentru instrumentul AI, `InputSchema` al Twenty pentru acțiunea de flux de lucru). Furnizează unul în mod explicit atunci când dorești o tipizare mai bogată — de exemplu, cu câmpuri compatibile cu `FieldMetadataType`, precum `CURRENCY` sau `RELATION` pentru constructorul de fluxuri de lucru, sau cu câmpuri `description` pe care agentul AI le poate citi:
+- O funcție poate combina suprafețele — declară atât `toolTriggerSettings`, cât și `workflowActionTriggerSettings` pentru a o expune atât în chat, cât și în constructorul de fluxuri de lucru.
+- `toolTriggerSettings.inputSchema` și `workflowActionTriggerSettings.inputSchema` sunt ambele opționale. Când sunt omise, generatorul de manifest le deduce din codul sursă al handlerului (JSON Schema pentru instrumentul AI, `InputSchema` al Twenty pentru acțiunea de flux de lucru). Furnizează unul în mod explicit atunci când dorești o tipizare mai bogată — de exemplu, cu câmpuri compatibile cu `FieldMetadataType`, precum `CURRENCY` sau `RELATION` pentru constructorul de fluxuri de lucru, sau cu câmpuri `description` pe care agentul AI le poate citi:
 
 ```ts
 export default defineLogicFunction({
@@ -319,14 +318,21 @@ export default defineLogicFunction({
 ```
 
 <Note>
-**Scrieți o `description` bună.** Agenții AI se bazează pe câmpul `description` al funcției pentru a decide când să folosească instrumentul. Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui apelat.
+  **Scrieți o `description` bună.** Agenții AI se bazează pe câmpul
+  `description` al funcției pentru a decide când să folosească instrumentul.
+  Fiți specifici cu privire la ceea ce face instrumentul și când ar trebui
+  apelat.
 </Note>
 
 </Accordion>
 </AccordionGroup>
 
 <Note>
-**Hook-uri de instalare** — handleri pre-instalare și post-instalare — partajează acest runtime, dar sunt declarați cu propriile lor funcții `define` și nu folosesc setări de declanșare. Consultați [Hook-uri de instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru `definePreInstallLogicFunction` și `definePostInstallLogicFunction`.
+  **Hook-uri de instalare** — handleri pre-instalare și post-instalare —
+  partajează acest runtime, dar sunt declarați cu propriile lor funcții `define`
+  și nu folosesc setări de declanșare. Consultați [Hook-uri de
+  instalare](/l/ro/developers/extend/apps/config/install-hooks) pentru
+  `definePreInstallLogicFunction` și `definePostInstallLogicFunction`.
 </Note>
 
 ## Clienți API tipizați (twenty-client-sdk)
@@ -381,7 +387,10 @@ const { createCompany } = await client.mutation({
 Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare completă a tipurilor, pe baza schemei spațiului dvs. de lucru.
 
 <Note>
-**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty dev:build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
+  **CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a
+  rula mai întâi `yarn twenty dev` sau `yarn twenty dev:build`, va arunca o
+  eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului
+  dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
 </Note>
 
 #### Folosirea CoreSchema pentru adnotări de tip
@@ -450,10 +459,10 @@ const metadataClient = new MetadataApiClient();
 const fileBuffer = fs.readFileSync('./invoice.pdf');
 
 const uploadedFile = await metadataClient.uploadFile(
-  fileBuffer,                                         // file contents as a Buffer
-  'invoice.pdf',                                      // filename
-  'application/pdf',                                  // MIME type
-  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+  fileBuffer, // file contents as a Buffer
+  'invoice.pdf', // filename
+  'application/pdf', // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b', // field universalIdentifier
 );
 
 console.log(uploadedFile);
@@ -468,8 +477,9 @@ console.log(uploadedFile);
 | `fieldMetadataUniversalIdentifier` | `string` | `universalIdentifier` al câmpului de tip fișier de pe obiectul dvs. |
 
 Puncte cheie:
-* Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
-* `url` returnat este un URL semnat pe care îl puteți folosi pentru a accesa fișierul încărcat.
+
+- Folosește `universalIdentifier` al câmpului (nu ID-ul specific spațiului de lucru), astfel încât codul dvs. de încărcare funcționează în orice spațiu de lucru în care aplicația dvs. este instalată.
+- `url` returnat este un URL semnat pe care îl puteți folosi pentru a accesa fișierul încărcat.
 
 </Accordion>
 </AccordionGroup>
@@ -477,8 +487,9 @@ Puncte cheie:
 <Note>
   Când codul dvs. rulează pe Twenty (funcții de logică sau componente Front), platforma injectează acreditările ca variabile de mediu:
 
-  * `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
-  * `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
+- `TWENTY_API_URL` — URL-ul de bază al API-ului Twenty
+- `TWENTY_APP_ACCESS_TOKEN` — Cheie cu durată scurtă, limitată la rolul implicit de funcție al aplicației
 
-  Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`).
+Nu trebuie să le transmiteți clienților — aceștia citesc automat din `process.env`. Permisiunile cheii API sunt determinate de rolul declarat cu `defineApplicationRole()` (sau referențiat prin `defaultRoleUniversalIdentifier` în `application-config.ts`).
+
 </Note>

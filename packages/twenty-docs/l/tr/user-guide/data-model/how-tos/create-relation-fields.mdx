@@ -6,17 +6,18 @@ description: Nesneleri ilişki alanlarıyla bağlamaya yönelik adım adım rehb
 İlişki alanları, farklı nesnelerdeki kayıtları birbirine bağlar—örneğin, Kişileri Şirketlere bağlamak.
 
 <Note>
-**İlişki adları oluşturulduktan sonra değiştirilemez** (API’yi etkiler). Adlarınızı dikkatle planlayın.
+  **İlişki adları oluşturulduktan sonra değiştirilemez** (API’yi etkiler).
+  Adlarınızı dikkatle planlayın.
 </Note>
 
 ## Başlamadan Önce
 
 Karar verin:
 
-* Hangi nesneleri bağlıyorsunuz? (ör. Kişiler → Şirketler)
-* "bir" taraf hangisi? (ör. Şirket)
-* "çok" taraf hangisi? (ör. Kişiler — birçok kişi bir şirkette çalışır)
-* Alan her iki tarafta nasıl adlandırılmalı?
+- Hangi nesneleri bağlıyorsunuz? (ör. Kişiler → Şirketler)
+- "bir" taraf hangisi? (ör. Şirket)
+- "çok" taraf hangisi? (ör. Kişiler — birçok kişi bir şirkette çalışır)
+- Alan her iki tarafta nasıl adlandırılmalı?
 
 İlişki türlerinin açıklaması için [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) bölümüne bakın.
 
@@ -33,12 +34,12 @@ Karar verin:
 
 ## Örnek: Kişiler → Şirketler
 
-* **Ayarlar → Veri Modeli → Kişiler** bölümüne gidin
-* Bir İlişki alanı ekleyin
-* Hedef: **Şirketler**
-* Tür: **Çoktan-Bire**
-* Kişiler nesnesindeki alan: **Şirket**
-* Şirketler nesnesindeki alan: **Çalışanlar**
+- **Ayarlar → Veri Modeli → Kişiler** bölümüne gidin
+- Bir İlişki alanı ekleyin
+- Hedef: **Şirketler**
+- Tür: **Çoktan-Bire**
+- Kişiler nesnesindeki alan: **Şirket**
+- Şirketler nesnesindeki alan: **Çalışanlar**
 
 Artık her Kişi bir Şirkete bağlanabilir ve her Şirket kendi Kişilerini gösterir.
 
@@ -51,10 +52,11 @@ Artık her Kişi bir Şirkete bağlanabilir ve her Şirket kendi Kişilerini gö
 Bağlantılar korunur ancak gizlenir. Geri yüklemek için yeniden etkinleştirin.
 
 <Note>
-**Bir ilişkiyi silmek, kayıtları silmez.** Yalnızca aralarındaki bağlantı kaldırılır.
+  **Bir ilişkiyi silmek, kayıtları silmez.** Yalnızca aralarındaki bağlantı
+  kaldırılır.
 </Note>
 
 ## İlgili
 
-* [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) — türler ve sınırlamalar
-* [İlişkileri Nasıl İçe Aktarırız](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bağlantılı kayıtları toplu içe aktarma
+- [İlişki Alanları](/l/tr/user-guide/data-model/capabilities/relation-fields) — türler ve sınırlamalar
+- [İlişkileri Nasıl İçe Aktarırız](/l/tr/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — bağlantılı kayıtları toplu içe aktarma

@@ -5,7 +5,10 @@ description: Informer automatiquement les membres de l'équipe de leurs tâches 
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Envoyer des rappels quotidiens par e-mail à chaque membre de l'équipe concernant ses tâches arrivant à échéance aujourd'hui.
 
@@ -45,8 +48,8 @@ Ce workflow s'exécute selon un calendrier et :
 1. À l'intérieur de l'itérateur, ajoutez une action **Rechercher des enregistrements**
 2. Sélectionnez **Tâches** comme objet
 3. Ajoutez des filtres :
-   * **Assigné** = membre actuel de l'espace de travail (depuis l'itérateur)
-   * **Date d'échéance** = aujourd'hui
+   - **Assigné** = membre actuel de l'espace de travail (depuis l'itérateur)
+   - **Date d'échéance** = aujourd'hui
 
 ### Étape 5 : Mettre en forme les tâches dans le corps de l'e-mail (dans l'itérateur)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-  Remplacez `yourSubDomain` par le sous-domaine réel de votre espace de travail Twenty.
+  Remplacez `yourSubDomain` par le sous-domaine réel de votre espace de travail
+  Twenty.
 </Note>
 
 ### Étape 6 : Envoyer un e-mail (dans l'itérateur)
@@ -101,6 +105,6 @@ export const main = async (params: {
 
 ## Articles connexes
 
-* [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
-* [Envoyer des e-mails depuis des workflows](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Actions de workflows](/l/fr/user-guide/workflows/capabilities/workflow-actions)
+- [Envoyer des e-mails depuis des workflows](/l/fr/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Gérer les tableaux dans les actions Code](/l/fr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

@@ -19,7 +19,10 @@ Twenty, programatik veri içe aktarma için hem **GraphQL** hem de **REST API'le
 | **Gerçek zamanlı eşitleme**       | **API İçe Aktarma**               |
 | **Diğer sistemlerle entegrasyon** | **API İçe Aktarma**               |
 
-<Note>Yüz binlerce kayıttan oluşan veri kümeleri için API, birden çok CSV içe aktarımından belirgin şekilde daha hızlı ve daha güvenilirdir.</Note>
+<Note>
+  Yüz binlerce kayıttan oluşan veri kümeleri için API, birden çok CSV içe
+  aktarımından belirgin şekilde daha hızlı ve daha güvenilirdir.
+</Note>
 
 ## API Hız Sınırları
 
@@ -35,6 +38,7 @@ Twenty, sistem kararlılığını sağlamak için hız sınırlarını uygular:
 **İçe aktarmanızı bu sınırlara göre planlayın.**
 
 Maksimum aktarım hızında 100.000 kayıt için yaklaşık 17 dakikalık içe aktarma süresi bekleyin. Hata yönetimi ve yeniden denemeler için tampon süre ekleyin.
+
 </Warning>
 
 ## Başlarken
@@ -51,21 +55,22 @@ Maksimum aktarım hızında 100.000 kayıt için yaklaşık 17 dakikalık içe a
 **API anahtarınızı gizli tutun.**
 
 API anahtarınıza sahip olan herkes çalışma alanı verilerinize erişebilir ve bunları değiştirebilir. Asla kod depolarına eklemeyin ve herkese açık olarak paylaşmayın.
+
 </Warning>
 
 ### Adım 2: API'nizi Seçin
 
 Twenty iki API türünü destekler:
 
-| API         | En uygun                                                     | Dokümantasyon                           |
-| ----------- | ------------------------------------------------------------ | --------------------------------------- |
+| API         | En uygun                                                     | Dokümantasyon                                |
+| ----------- | ------------------------------------------------------------ | -------------------------------------------- |
 | **GraphQL** | Esnek sorgular, ilişkili verileri getirme, karmaşık işlemler | [API Belgeleri](/l/tr/developers/extend/api) |
 | **REST**    | Basit CRUD işlemleri, alışıldık REST kalıpları               | [API Belgeleri](/l/tr/developers/extend/api) |
 
 Her iki API de şunları destekler:
 
-* Kayıt oluşturma, okuma, güncelleme ve silme
-* **Toplu işlemler** — çağrı başına en fazla 60 kayıt oluşturma veya güncelleme
+- Kayıt oluşturma, okuma, güncelleme ve silme
+- **Toplu işlemler** — çağrı başına en fazla 60 kayıt oluşturma veya güncelleme
 
 **İçe aktarmalar için toplu işlemleri kullanın**, hız sınırları içinde aktarım hızını en üst düzeye çıkarmak için.
 
@@ -83,33 +88,33 @@ CSV içe aktarmalarda olduğu gibi, ilişkiler için **sıra önemlidir**:
 
 ### İsteklerinizi Gruplandırın
 
-* Kayıtları tek tek göndermeyin
-* API çağrısı başına **en fazla 60 kaydı** gruplandırın
-* Bu, hız sınırları içinde aktarım hızını en üst düzeye çıkarır
+- Kayıtları tek tek göndermeyin
+- API çağrısı başına **en fazla 60 kaydı** gruplandırın
+- Bu, hız sınırları içinde aktarım hızını en üst düzeye çıkarır
 
 ### Hız Sınırlarını Yönetme
 
-* İstekler arasında gecikmeler uygulayın (sürekli içe aktarmalar için en az 600 ms)
-* Sınırlara ulaştığınızda üstel geri çekilme kullanın
-* 429 (Too Many Requests) yanıtlarını izleyin
+- İstekler arasında gecikmeler uygulayın (sürekli içe aktarmalar için en az 600 ms)
+- Sınırlara ulaştığınızda üstel geri çekilme kullanın
+- 429 (Too Many Requests) yanıtlarını izleyin
 
 ### Önce Verileri Doğrulayın
 
-* İçe aktarmadan önce verilerinizi temizleyin ve doğrulayın
-* Gerekli alanların doldurulduğunu kontrol edin
-* Biçimlerin Twenty'nin gereksinimlerine uyduğunu doğrulayın (bkz. [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping))
+- İçe aktarmadan önce verilerinizi temizleyin ve doğrulayın
+- Gerekli alanların doldurulduğunu kontrol edin
+- Biçimlerin Twenty'nin gereksinimlerine uyduğunu doğrulayın (bkz. [Alan Eşleme](/l/tr/user-guide/data-migration/capabilities/field-mapping))
 
 ### Her Şeyi Günlüğe Kaydedin
 
-* İçe aktarılan her kaydı günlüğe kaydedin (ID'ler dahil)
-* Hataları tam bağlamla günlüğe kaydedin
-* Bu, sorunları ayıklamaya ve tamamlandığını doğrulamaya yardımcı olur
+- İçe aktarılan her kaydı günlüğe kaydedin (ID'ler dahil)
+- Hataları tam bağlamla günlüğe kaydedin
+- Bu, sorunları ayıklamaya ve tamamlandığını doğrulamaya yardımcı olur
 
 ### Önce Test Edin
 
-* Küçük bir grupla test edin (10-20 kayıt)
-* Verilerin Twenty'de doğru göründüğünü doğrulayın
-* Ardından tam içe aktarmayı çalıştırın
+- Küçük bir grupla test edin (10-20 kayıt)
+- Verilerin Twenty'de doğru göründüğünü doğrulayın
+- Ardından tam içe aktarmayı çalıştırın
 
 ### Yinelenenleri Önlemek İçin Upsert Kullanın
 
@@ -138,10 +143,10 @@ Karmaşık API geçişleri için iş ortaklarımız yardımcı olabilir:
 
 **En uygun:**
 
-* 100.000+ kayıttan oluşan geçişler
-* Karmaşık veri dönüşümleri
-* Sıkı zaman çizelgeleri
-* Geliştirici kaynağı olmayan ekipler
+- 100.000+ kayıttan oluşan geçişler
+- Karmaşık veri dönüşümleri
+- Sıkı zaman çizelgeleri
+- Geliştirici kaynağı olmayan ekipler
 
 [contact@twenty.com](mailto:contact@twenty.com) adresinden bizimle iletişime geçin veya [Uygulama Hizmetlerimizi](/l/tr/user-guide/getting-started/capabilities/implementation-services) keşfedin.
 
@@ -152,17 +157,19 @@ Karmaşık API geçişleri için iş ortaklarımız yardımcı olabilir:
     GraphQL, tek bir sorguda tam olarak ihtiyaç duyduğunuz verileri talep etmenizi sağlar ve karmaşık işlemler için daha uygundur. REST, standart HTTP yöntemlerini (GET, POST, PUT, DELETE) kullanır ve geleneksel API'lerle çalıştıysanız daha aşina gelebilir.
   </Accordion>
 
-  <Accordion title="API aracılığıyla mevcut kayıtları güncelleyebilir miyim?">
-    Evet! Kayıdın `id`si ile güncelleme mutasyonları (GraphQL) veya PUT/PATCH isteklerini (REST) kullanın.
-  </Accordion>
+<Accordion title="API aracılığıyla mevcut kayıtları güncelleyebilir miyim?">
+  Evet! Kayıdın `id`si ile güncelleme mutasyonları (GraphQL) veya PUT/PATCH
+  isteklerini (REST) kullanın.
+</Accordion>
 
-  <Accordion title="Yinelenenleri nasıl ele alırım?">
-    Önce benzersiz tanımlayıcıları (e-posta, etki alanı) kullanarak mevcut kayıtları sorgulayın. Varsa güncelleyin, yoksa oluşturun.
-  </Accordion>
+<Accordion title="Yinelenenleri nasıl ele alırım?">
+  Önce benzersiz tanımlayıcıları (e-posta, etki alanı) kullanarak mevcut
+  kayıtları sorgulayın. Varsa güncelleyin, yoksa oluşturun.
+</Accordion>
 
-  <Accordion title="API aracılığıyla kayıtları silebilir miyim?">
-    Evet, silme mutasyonları (GraphQL) veya DELETE isteklerini (REST) kullanın.
-  </Accordion>
+<Accordion title="API aracılığıyla kayıtları silebilir miyim?">
+  Evet, silme mutasyonları (GraphQL) veya DELETE isteklerini (REST) kullanın.
+</Accordion>
 
   <Accordion title="Python veya Node.js için bir SDK var mı?">
     Şu anda yok, ancak her iki API de herhangi bir dildeki herhangi bir HTTP istemcisiyle çalışır.
@@ -173,4 +180,4 @@ Karmaşık API geçişleri için iş ortaklarımız yardımcı olabilir:
 
 Tam uygulama ayrıntıları, kod örnekleri ve şema başvurusu için:
 
-* [API Belgeleri](/l/tr/developers/extend/api)
+- [API Belgeleri](/l/tr/developers/extend/api)

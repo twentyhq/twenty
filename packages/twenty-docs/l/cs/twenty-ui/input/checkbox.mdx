@@ -13,15 +13,15 @@ Používané, když uživatel potřebuje vybrat více hodnot z několika možnos
 <Tab title="Použití">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Vlastnosti">
 
-
 | Vlastnosti      | Typ                | Popis                                                                                       |
 | --------------- | ------------------ | ------------------------------------------------------------------------------------------- |
 | zaškrtnuté      | booleovská hodnota | Ukazuje, zda je zaškrtávací políčko zaškrtnuté                                              |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | varianta        | textový řetězec    | Vizuální stylová varianta boxu. Možnosti zahrnují: "primární", "sekundární" a "terciární"   |
 | velikost        | řetězec            | Velikost zaškrtávacího políčka. Má dvě možnosti: "malý" a "velký"                           |
 | tvar            | řetězec            | Tvar zaškrtávacího políčka. Má dvě možnosti: "čtvercový" a "zaoblený"                       |
-
-
 
 </Tab>
 </Tabs>

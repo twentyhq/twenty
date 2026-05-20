@@ -11,23 +11,29 @@ Yes, custom objects can be deleted. You can also deactivate them first, which hi
 </Accordion>
 
 <Accordion title="Can I delete standard objects (People, Companies, etc.)?">
-No, standard objects cannot be deleted. You can only deactivate them, which hides them from the interface but preserves the data.
+  No, standard objects cannot be deleted. You can only deactivate them, which
+  hides them from the interface but preserves the data.
 </Accordion>
 
 <Accordion title="How many custom objects can I create?">
-You can create as many custom objects and fields as you need — the price doesn't change.
+  You can create as many custom objects and fields as you need — the price
+  doesn't change.
 </Accordion>
 
 <Accordion title="Can I rename a standard object?">
-You can rename the label of standard objects (People, Companies, Opportunities), but not their API names. The API names are fixed for consistency across all Twenty workspaces.
+  You can rename the label of standard objects (People, Companies,
+  Opportunities), but not their API names. The API names are fixed for
+  consistency across all Twenty workspaces.
 </Accordion>
 
 <Accordion title="Can I change an object's icon?">
-Yes, you can change the icon for both standard and custom objects in **Settings → Data Model**.
+  Yes, you can change the icon for both standard and custom objects in
+  **Settings → Data Model**.
 </Accordion>
 
 <Accordion title="Can I reorder objects in the left navigation bar?">
-Not yet. Object ordering in the navigation is currently fixed, but this feature is planned for a future release.
+  Not yet. Object ordering in the navigation is currently fixed, but this
+  feature is planned for a future release.
 </Accordion>
 
 <Accordion title="Can I hide objects from the left navigation bar?">
@@ -42,42 +48,48 @@ All active objects appear in the navigation. You can deactivate objects you don'
 No, field types cannot be changed after creation. If you need a different type, create a new field with the correct type, migrate your data, then deactivate the old field.
 </Accordion>
 
-
 <Accordion title="Why do I need different singular and plural names?">
 Our GraphQL API uses both forms for different operations:
 - `createPerson` (singular) for single record actions
 - `createPeople` (plural) for bulk operations
 
 This creates limitations when singular and plural forms are the same, but it improves the developer experience.
+
 </Accordion>
 
 <Accordion title="Why are some field names protected?">
-Certain field names like `Type` or `Application` are reserved for system use. Choose alternative names like `Category` or `Classification` instead.
+  Certain field names like `Type` or `Application` are reserved for system use.
+  Choose alternative names like `Category` or `Classification` instead.
 </Accordion>
 
 <Accordion title="What happens when I deactivate a field?">
-- The field is hidden from the interface
-- Existing data is preserved
-- You can still access the field via API
-- Existing relations remain but you can't create new ones
-- You can reactivate the field later
+  - The field is hidden from the interface - Existing data is preserved - You
+  can still access the field via API - Existing relations remain but you can't
+  create new ones - You can reactivate the field later
 </Accordion>
 
 <Accordion title="Can I make a field required?">
-Currently, you cannot make custom fields required. All fields accept empty values. You can use workflows to enforce required fields by sending alerts or blocking actions when fields are empty.
+  Currently, you cannot make custom fields required. All fields accept empty
+  values. You can use workflows to enforce required fields by sending alerts or
+  blocking actions when fields are empty.
 </Accordion>
 
 <Accordion title="What's the difference between unique and required?">
-- **Unique**: No two records can have the same value in this field
-- **Required**: The field must have a value (not currently supported for custom fields)
+  - **Unique**: No two records can have the same value in this field -
+  **Required**: The field must have a value (not currently supported for custom
+  fields)
 </Accordion>
 
 <Accordion title="Can I create formula fields?">
-Formula fields are coming in **Q1 2026**. In the meantime, you can use workflows to calculate and update field values automatically.
+  Formula fields are coming in **Q1 2026**. In the meantime, you can use
+  workflows to calculate and update field values automatically.
 </Accordion>
 
 <Accordion title="Can I have nested fields in my objects?">
-Nested fields are coming in **Q1 2026**. Currently, you can use workflows to bring field values from related objects. For example, to display a company's industry on a Person record, create a custom field on People and use a workflow to synchronize the value.
+  Nested fields are coming in **Q1 2026**. Currently, you can use workflows to
+  bring field values from related objects. For example, to display a company's
+  industry on a Person record, create a custom field on People and use a
+  workflow to synchronize the value.
 </Accordion>
 
 <Accordion title="Can I reorder fields in objects?">
@@ -96,9 +108,10 @@ Yes! Self-referencing relations are supported and recommended for use cases like
 Many-to-many relationships are coming in **H1 2026**. Currently, create an intermediate object with two one-to-many relationships as a workaround.
 
 For example, to link People and Projects (many-to-many), create a "Project Assignments" object with:
+
 - A relation to People (many assignments → one person)
 - A relation to Projects (many assignments → one project)
-</Accordion>
+  </Accordion>
 
 <Accordion title="What are relations to multiple object types (Morph relationships)?">
 These allow one object to relate to multiple different object types through a single field. For example, Notes can be attached to People AND Companies AND Opportunities simultaneously.
@@ -106,14 +119,18 @@ These allow one object to relate to multiple different object types through a si
 Each Note links to one Person, one Company, and one Opportunity at the same time.
 
 Learn more in [Relation Fields](/user-guide/data-model/capabilities/relation-fields).
+
 </Accordion>
 
 <Accordion title="Can I have multiple relations between the same objects?">
-Yes, you can create multiple relations between the same two objects. For example, a Company could have both a "Primary Contact" and "Billing Contact" relation to People.
+  Yes, you can create multiple relations between the same two objects. For
+  example, a Company could have both a "Primary Contact" and "Billing Contact"
+  relation to People.
 </Accordion>
 
 <Accordion title="What happens to relations when I delete a record?">
-When you delete a record, the relation link is removed from the related records. The related records themselves are not deleted.
+  When you delete a record, the relation link is removed from the related
+  records. The related records themselves are not deleted.
 </Accordion>
 
 <Accordion title="Can I create circular relations?">
@@ -141,7 +158,9 @@ There's no hard limit on record counts. However, very large datasets may impact 
 </Accordion>
 
 <Accordion title="Can I import data into custom objects?">
-Yes, you can import CSV data into any object, including custom objects. The import process supports field mapping for custom fields. See [How to Prepare Your CSV Files](/user-guide/data-migration/how-tos/prepare-your-csv-files).
+  Yes, you can import CSV data into any object, including custom objects. The
+  import process supports field mapping for custom fields. See [How to Prepare
+  Your CSV Files](/user-guide/data-migration/how-tos/prepare-your-csv-files).
 </Accordion>
 
 <Accordion title="Can I export my data model configuration?">

@@ -6,9 +6,9 @@ description: Creați prima dvs. aplicație Twenty în câteva minute.
 
 ## Cerințe
 
-* **Node.js 24+** — [Descărcați](https://nodejs.org/)
-* **Yarn 4** — vine împreună cu Node prin Corepack. Activați-l: `corepack enable`
-* **Docker** — [Descărcați](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula un server Twenty local. Omiteți dacă rulați deja Twenty în altă parte.
+- **Node.js 24+** — [Descărcați](https://nodejs.org/)
+- **Yarn 4** — vine împreună cu Node prin Corepack. Activați-l: `corepack enable`
+- **Docker** — [Descărcați](https://www.docker.com/products/docker-desktop/). Necesar pentru a rula un server Twenty local. Omiteți dacă rulați deja Twenty în altă parte.
 
 Crearea unei aplicații Twenty are trei faze. Generatorul de schelet le reduce la o singură comandă pe happy path, dar fiecare fază este un concept separat — când ceva eșuează, dacă știți în ce fază sunteți, știți ce trebuie să corectați.
 
@@ -42,38 +42,53 @@ Generatorul de schelet vă propune să pornească unul pentru dvs.:
 
 > **Doriți să configurați o instanță Twenty locală?**
 
-* **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
-* **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote add`.
+- **Yes (recomandat)** — descarcă imaginea Docker `twentycrm/twenty-app-dev` și o pornește pe portul `2020`. Asigurați-vă mai întâi că Docker rulează.
+- **No** — alegeți această opțiune dacă aveți deja un server Twenty la care doriți să vă conectați. Îl puteți conecta ulterior cu `yarn twenty remote add`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Porniți instanța locală?" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/start-instance.png"
+    alt="Porniți instanța locală?"
+  />
 </div>
 
 După ce serverul pornește, se deschide un browser pentru autentificare. Folosiți contul demo preconfigurat:
 
-* **E-mail:** `tim@apple.dev`
-* **Parolă:** `tim@apple.dev`
+- **E-mail:** `tim@apple.dev`
+- **Parolă:** `tim@apple.dev`
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/login.png" alt="Ecranul de autentificare Twenty" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/login.png"
+    alt="Ecranul de autentificare Twenty"
+  />
 </div>
 
 Faceți clic pe **Authorize** pe ecranul următor — aceasta oferă CLI-ului acces la spațiul dvs. de lucru.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/authorize.png" alt="Ecranul de autorizare Twenty CLI" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/authorize.png"
+    alt="Ecranul de autorizare Twenty CLI"
+  />
 </div>
 
 Terminalul va confirma că totul este configurat.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/scaffolded.png" alt="Aplicația a fost creată cu succes" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/scaffolded.png"
+    alt="Aplicația a fost creată cu succes"
+  />
 </div>
 
 **După această fază:** aveți un server Twenty care rulează la [http://localhost:2020](http://localhost:2020), iar CLI-ul dvs. este autorizat să sincronizeze cu acesta.
 
 <Note>
-Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce Docker rulează, puteți continua cu `yarn twenty server start` — nu este nevoie să recreați scheletul.
+  Dacă Docker nu este instalat sau nu rulează, generatorul de schelet vă va
+  indica comanda corectă de pornire pentru sistemul dvs. de operare. După ce
+  Docker rulează, puteți continua cu `yarn twenty server start` — nu este nevoie
+  să recreați scheletul.
 </Note>
 
 ---
@@ -91,26 +106,38 @@ Aceasta monitorizează `src/`, reconstruiește la fiecare modificare și sincron
 
 Pentru un output mai detaliat (jurnale de build, cereri de sincronizare, urme ale erorilor), adăugați `--verbose`.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/dev.png" alt="Ieșirea terminalului în modul de dezvoltare" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/dev.png"
+    alt="Ieșirea terminalului în modul de dezvoltare"
+  />
 </div>
 
 Deschideți [http://localhost:2020/settings/applications#developer](http://localhost:2020/settings/applications#developer). Ar trebui să vedeți aplicația dvs. listată la **Your Apps**.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-1.png" alt="Lista Your Apps care afișează My twenty app" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-1.png"
+    alt="Lista Your Apps care afișează My twenty app"
+  />
 </div>
 
 Faceți clic pe **My twenty app** pentru a vedea **înregistrarea aplicației** — o înregistrare la nivel de server care descrie aplicația dvs. (nume, identificator, credențiale OAuth, sursă). O singură înregistrare poate fi instalată în mai multe spații de lucru pe același server.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-2.png" alt="Detalii despre înregistrarea aplicației" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-2.png"
+    alt="Detalii despre înregistrarea aplicației"
+  />
 </div>
 
 Faceți clic pe **View installed app** pentru a vedea instalarea în spațiul de lucru. Fila **About** afișează versiunea și opțiunile de administrare.
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/app-in-ui-3.png" alt="Aplicație instalată" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/app-in-ui-3.png"
+    alt="Aplicație instalată"
+  />
 </div>
 
 **După această fază:** aveți o buclă de dezvoltare în timp real. Editați orice fișier în `src/` și acesta apare în UI.
@@ -131,7 +158,11 @@ yarn twenty dev --once
 Ambele moduri necesită un server în modul de dezvoltare și un remote autentificat.
 
 <Warning>
-Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în modul development (`NODE_ENV=development`). Instanțele de producție resping cererile de sincronizare din modul de dezvoltare — folosiți `yarn twenty deploy` pentru a implementa pe serverele de producție. Consultați [Publicarea aplicațiilor](/l/ro/developers/extend/apps/publishing).
+  Modul de dezvoltare este disponibil doar pe instanțele Twenty care rulează în
+  modul development (`NODE_ENV=development`). Instanțele de producție resping
+  cererile de sincronizare din modul de dezvoltare — folosiți `yarn twenty
+  deploy` pentru a implementa pe serverele de producție. Consultați [Publicarea
+  aplicațiilor](/l/ro/developers/extend/apps/publishing).
 </Warning>
 
 ---
@@ -258,16 +289,17 @@ Adăugați scriptul în `package.json`:
 Acum puteți rula `yarn twenty dev`, `yarn twenty server start` și restul.
 
 <Note>
-Nu instalați `twenty-sdk` global — fixați-l per proiect astfel încât fiecare aplicație să folosească propria versiune.
+  Nu instalați `twenty-sdk` global — fixați-l per proiect astfel încât fiecare
+  aplicație să folosească propria versiune.
 </Note>
 
 ---
 
 ## Depanare
 
-* **Erori Docker** — Asigurați-vă că Docker Desktop (sau daemonul) rulează înainte de `yarn twenty server start`. Mesajul de eroare va afișa comanda corectă de pornire pentru sistemul dvs. de operare.
-* **Versiune Node greșită** — Aveți nevoie de 24+. Verificați cu `node -v`.
-* **Lipsește Yarn 4** — Rulați `corepack enable`.
-* **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.
+- **Erori Docker** — Asigurați-vă că Docker Desktop (sau daemonul) rulează înainte de `yarn twenty server start`. Mesajul de eroare va afișa comanda corectă de pornire pentru sistemul dvs. de operare.
+- **Versiune Node greșită** — Aveți nevoie de 24+. Verificați cu `node -v`.
+- **Lipsește Yarn 4** — Rulați `corepack enable`.
+- **Dependențe nefuncționale** — `rm -rf node_modules && yarn install`.
 
 Blocat? Întrebați pe [Discordul Twenty](https://discord.com/channels/1130383047699738754/1130386664812982322).

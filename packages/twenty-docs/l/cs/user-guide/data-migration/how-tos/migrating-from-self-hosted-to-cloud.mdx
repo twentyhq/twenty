@@ -7,7 +7,10 @@ description: Podrobný průvodce krok za krokem pro migraci vaší instance Twen
 
 Tento průvodce vás provede migrací vašich dat z instance Twenty hostované na vlastním serveru do Twenty Cloud. Proces zahrnuje zřízení vašeho cloudového pracovního prostoru, export dat a jejich opětovný import.
 
-<Note>Zobrazení, pracovní postupy a role je po migraci nutné vytvořit ručně. Naplánujte si čas na tuto konfigurační práci.</Note>
+<Note>
+  Zobrazení, pracovní postupy a role je po migraci nutné vytvořit ručně.
+  Naplánujte si čas na tuto konfigurační práci.
+</Note>
 
 ## Krok 1: Vytvořte svůj cloudový pracovní prostor
 
@@ -24,7 +27,10 @@ Před importem dat znovu vytvořte své vlastní objekty a pole:
 3. Přidejte vlastní pole ke standardním i vlastním objektům
 4. Nastavte vlastnosti polí (jedinečné, povinné apod.)
 
-<Note>Pořiďte si pro referenci snímky obrazovky vašeho datového modelu na vlastním serveru, nebo mějte obě instance otevřené vedle sebe.</Note>
+<Note>
+  Pořiďte si pro referenci snímky obrazovky vašeho datového modelu na vlastním
+  serveru, nebo mějte obě instance otevřené vedle sebe.
+</Note>
 
 ## Krok 3: Pozvěte všechny uživatele
 
@@ -32,6 +38,7 @@ Před importem dat znovu vytvořte své vlastní objekty a pole:
 **Důležité: Pozvěte uživatele PŘED importem dat.**
 
 Uživatelé musí přijmout své pozvánky, než importujete jakékoli záznamy, které na ně odkazují (například pole Account Owner). Pokud uživatelé ještě neexistují, tyto relace nelze namapovat.
+
 </Warning>
 
 1. Přejděte ve své cloudové instanci do **Settings → Members**
@@ -83,7 +90,10 @@ name,domain,accountOwnerEmail
 Acme Corp,https://acme.com,john@yourcompany.com
 ```
 
-<Note>Použijte stejné e-mailové adresy, které uživatelé použili k přijetí pozvánky do cloudového pracovního prostoru.</Note>
+<Note>
+  Použijte stejné e-mailové adresy, které uživatelé použili k přijetí pozvánky
+  do cloudového pracovního prostoru.
+</Note>
 
 ## Krok 6: Naplánujte pořadí importu
 
@@ -105,8 +115,8 @@ Pro každý soubor CSV, v daném pořadí:
 2. Klikněte na **⋮ → Import records**
 3. Nahrajte soubor CSV
 4. Namapujte sloupce na pole:
-   * Namapujte sloupce s e-maily uživatelů na příslušná relační pole
-   * Ostatní sloupce namapujte obvyklým způsobem
+   - Namapujte sloupce s e-maily uživatelů na příslušná relační pole
+   - Ostatní sloupce namapujte obvyklým způsobem
 5. Zkontrolujte a opravte případné chyby
 6. Potvrďte import
 7. Ověřte několik záznamů, než přejdete k dalšímu souboru
@@ -117,23 +127,23 @@ Po importu dat ručně znovu vytvořte:
 
 ### Zobrazení
 
-* Znovu vytvořte uložená zobrazení s filtry, řazením a nastavením sloupců
-* Nastavte případná kanbanová nebo kalendářová zobrazení
+- Znovu vytvořte uložená zobrazení s filtry, řazením a nastavením sloupců
+- Nastavte případná kanbanová nebo kalendářová zobrazení
 
 ### Pracovní postupy
 
-* Znovu vytvořte automatizace v **Settings → Workflows**
-* Otestujte každý pracovní postup, než se na něj spolehnete
+- Znovu vytvořte automatizace v **Settings → Workflows**
+- Otestujte každý pracovní postup, než se na něj spolehnete
 
 ### Role a oprávnění
 
-* Nakonfigurujte role v **Settings → Roles**
-* Přiřaďte uživatele ke vhodným rolím
+- Nakonfigurujte role v **Settings → Roles**
+- Přiřaďte uživatele ke vhodným rolím
 
 ### Integrace
 
-* Znovu připojte synchronizaci e-mailu a kalendáře pro každého uživatele
-* Znovu nakonfigurujte případné integrace API s novými klíči API
+- Znovu připojte synchronizaci e-mailu a kalendáře pro každého uživatele
+- Znovu nakonfigurujte případné integrace API s novými klíči API
 
 ## Post-migrační kontrolní seznam
 
@@ -153,13 +163,17 @@ Po importu dat ručně znovu vytvořte:
     V tuto chvíli ne. Pracovní postupy je nutné ve vaší cloudové instanci znovu vytvořit ručně.
   </Accordion>
 
-  <Accordion title="A co přílohy a obrázky?">
-    Přílohy nejsou součástí exportů CSV. Přílohy budete muset nahrát znovu ručně, migrovat je přes API nebo kontaktovat náš tým pro pomoc s rozsáhlými migracemi.
-  </Accordion>
+<Accordion title="A co přílohy a obrázky?">
+  Přílohy nejsou součástí exportů CSV. Přílohy budete muset nahrát znovu ručně,
+  migrovat je přes API nebo kontaktovat náš tým pro pomoc s rozsáhlými
+  migracemi.
+</Accordion>
 
-  <Accordion title="Mohu během migrace ponechat obě instance v provozu?">
-    Ano, doporučujeme ponechat vaši instanci na vlastním serveru v provozu, dokud neověříte, že migrace do cloudu je dokončena. Jen si dejte pozor, abyste nevytvářeli nová data na obou místech.
-  </Accordion>
+<Accordion title="Mohu během migrace ponechat obě instance v provozu?">
+  Ano, doporučujeme ponechat vaši instanci na vlastním serveru v provozu, dokud
+  neověříte, že migrace do cloudu je dokončena. Jen si dejte pozor, abyste
+  nevytvářeli nová data na obou místech.
+</Accordion>
 
   <Accordion title="Co když uživatel ještě nepřijal svou pozvánku?">
     Záznamy, které na daného uživatele odkazují, se nepodaří importovat, nebo bude relace prázdná. Ujistěte se, že všichni uživatelé přijali pozvánky před importem dat.

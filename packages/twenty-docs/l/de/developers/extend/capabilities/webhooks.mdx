@@ -62,7 +62,8 @@ Jeder Webhook sendet eine HTTP-POST-Anfrage mit einem JSON-Body:
 | `zeitstempel` | Wann das Ereignis auftrat (UTC)                                      |
 
 <Note>
-Antworten Sie mit einem **2xx-HTTP-Status** (200-299), um den Empfang zu bestätigen. Nicht-2xx-Antworten werden als Zustellfehler protokolliert.
+  Antworten Sie mit einem **2xx-HTTP-Status** (200-299), um den Empfang zu
+  bestätigen. Nicht-2xx-Antworten werden als Zustellfehler protokolliert.
 </Note>
 
 ## Webhook-Validierung
@@ -86,19 +87,19 @@ Twenty signiert jede Webhook-Anfrage zu Sicherheitszwecken. Validieren Sie die S
 ### Beispiel (Node.js)
 
 ```javascript
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const timestamp = req.headers['x-twenty-webhook-timestamp'];
 const payload = JSON.stringify(req.body);
-const secret = "your-webhook-secret";
+const secret = 'your-webhook-secret';
 
 const stringToSign = `${timestamp}:${payload}`;
 const expectedSignature = crypto
-  .createHmac("sha256", secret)
+  .createHmac('sha256', secret)
   .update(stringToSign)
-  .digest("hex");
+  .digest('hex');
 
-const isValid = expectedSignature === req.headers["x-twenty-webhook-signature"];
+const isValid = expectedSignature === req.headers['x-twenty-webhook-signature'];
 ```
 
 ## Webhooks vs Workflows

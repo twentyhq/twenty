@@ -1,6 +1,6 @@
 ---
 title: OAuth
-icon: "key"
+icon: 'key'
 description: Authorization code flow with PKCE and client credentials for server-to-server access.
 ---
 
@@ -8,12 +8,12 @@ Twenty implements OAuth 2.0 with authorization code + PKCE for user-facing apps 
 
 ## When to Use OAuth
 
-| Scenario | Auth Method |
-|----------|-------------|
-| Internal scripts, automation | [API Key](/developers/extend/api#authentication) |
-| External app acting on behalf of a user | **OAuth — Authorization Code** |
-| Server-to-server, no user context | **OAuth — Client Credentials** |
-| Twenty App with UI extensions | [Apps](/developers/extend/apps/getting-started) (OAuth is handled automatically) |
+| Scenario                                | Auth Method                                                                      |
+| --------------------------------------- | -------------------------------------------------------------------------------- |
+| Internal scripts, automation            | [API Key](/developers/extend/api#authentication)                                 |
+| External app acting on behalf of a user | **OAuth — Authorization Code**                                                   |
+| Server-to-server, no user context       | **OAuth — Client Credentials**                                                   |
+| Twenty App with UI extensions           | [Apps](/developers/extend/apps/getting-started) (OAuth is handled automatically) |
 
 ## Register a Client
 
@@ -43,15 +43,15 @@ Content-Type: application/json
 ```
 
 <Warning>
-Store the `client_secret` securely — it cannot be retrieved later.
+  Store the `client_secret` securely — it cannot be retrieved later.
 </Warning>
 
 ## Scopes
 
-| Scope | Access |
-|-------|--------|
-| `api` | Full read/write access to the Core and Metadata APIs |
-| `profile` | Read the authenticated user's profile information |
+| Scope     | Access                                               |
+| --------- | ---------------------------------------------------- |
+| `api`     | Full read/write access to the Core and Metadata APIs |
+| `profile` | Read the authenticated user's profile information    |
 
 Request scopes as a space-separated string: `scope=api profile`
 
@@ -72,15 +72,15 @@ GET /oauth/authorize?
   code_challenge_method=S256
 ```
 
-| Parameter | Required | Description |
-|-----------|----------|-------------|
-| `client_id` | Yes | Your registered client ID |
-| `response_type` | Yes | Must be `code` |
-| `redirect_uri` | Yes | Must match a registered redirect URI |
-| `scope` | No | Space-separated scopes (defaults to `api`) |
-| `state` | Recommended | Random string to prevent CSRF attacks |
-| `code_challenge` | Recommended | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
-| `code_challenge_method` | Recommended | Must be `S256` when using PKCE |
+| Parameter               | Required    | Description                                                  |
+| ----------------------- | ----------- | ------------------------------------------------------------ |
+| `client_id`             | Yes         | Your registered client ID                                    |
+| `response_type`         | Yes         | Must be `code`                                               |
+| `redirect_uri`          | Yes         | Must match a registered redirect URI                         |
+| `scope`                 | No          | Space-separated scopes (defaults to `api`)                   |
+| `state`                 | Recommended | Random string to prevent CSRF attacks                        |
+| `code_challenge`        | Recommended | PKCE challenge (SHA-256 hash of verifier, base64url-encoded) |
+| `code_challenge_method` | Recommended | Must be `S256` when using PKCE                               |
 
 The user sees a consent screen and approves or denies access.
 
@@ -166,24 +166,24 @@ This returns all endpoints, supported grant types, scopes, and capabilities — 
 
 ## API Endpoints Summary
 
-| Endpoint | Purpose |
-|----------|---------|
-| `/.well-known/oauth-authorization-server` | Server metadata discovery |
-| `/oauth/register` | Dynamic client registration |
-| `/oauth/authorize` | User authorization |
-| `/oauth/token` | Token exchange and refresh |
+| Endpoint                                  | Purpose                     |
+| ----------------------------------------- | --------------------------- |
+| `/.well-known/oauth-authorization-server` | Server metadata discovery   |
+| `/oauth/register`                         | Dynamic client registration |
+| `/oauth/authorize`                        | User authorization          |
+| `/oauth/token`                            | Token exchange and refresh  |
 
-| Environment | Base URL |
-|-------------|----------|
-| **Cloud** | `https://api.twenty.com` |
-| **Self-Hosted** | `https://{your-domain}` |
+| Environment     | Base URL                 |
+| --------------- | ------------------------ |
+| **Cloud**       | `https://api.twenty.com` |
+| **Self-Hosted** | `https://{your-domain}`  |
 
 ## OAuth vs API Keys
 
-| | API Keys | OAuth |
-|-|----------|-------|
-| **Setup** | Generate in Settings | Register a client, implement flow |
-| **User context** | None (workspace-level) | Specific user's permissions |
-| **Best for** | Scripts, internal tools | External apps, multi-user integrations |
-| **Token rotation** | Manual | Automatic via refresh tokens |
-| **Scoped access** | Full API access | Granular via scopes |
+|                    | API Keys                | OAuth                                  |
+| ------------------ | ----------------------- | -------------------------------------- |
+| **Setup**          | Generate in Settings    | Register a client, implement flow      |
+| **User context**   | None (workspace-level)  | Specific user's permissions            |
+| **Best for**       | Scripts, internal tools | External apps, multi-user integrations |
+| **Token rotation** | Manual                  | Automatic via refresh tokens           |
+| **Scoped access**  | Full API access         | Granular via scopes                    |

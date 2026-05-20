@@ -16,7 +16,9 @@ Twenty aún no admite campos de fórmula de forma nativa (llegarán en 2026), pe
 | **Puntuación del lead**       | Puntos basados en varios criterios |
 
 <Tip>
-  Para ver un ejemplo completo de seguimiento del tiempo en etapas del pipeline, consulta [Cuánto tiempo permanecen las oportunidades en cada etapa](/l/es/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Para ver un ejemplo completo de seguimiento del tiempo en etapas del pipeline,
+  consulta [Cuánto tiempo permanecen las oportunidades en cada
+  etapa](/l/es/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Fórmula básica: concatenación
@@ -37,9 +39,7 @@ Twenty aún no admite campos de fórmula de forma nativa (llegarán en 2026), pe
 export const main = async (params) => {
   const { firstName, lastName } = params;
 
-  const fullName = [firstName, lastName]
-    .filter(Boolean)
-    .join(' ');
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   return { fullName };
 };
@@ -65,7 +65,7 @@ Consulta [Cómo mostrar el importe esperado en el pipeline](/l/es/user-guide/vie
 export const main = async (params) => {
   const { amount, probability } = params;
 
-  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+  const expectedAmount = ((amount || 0) * (probability || 0)) / 100;
 
   return { expectedAmount };
 };
@@ -105,7 +105,8 @@ export const main = async (params) => {
 3. **Actualizar registro**: Establecer Días hasta el vencimiento en `{{code.daysUntilDue}}`
 
 <Note>
-  Los valores negativos indican tareas vencidas. Puedes usar este campo para filtrar o ordenar tareas por urgencia.
+  Los valores negativos indican tareas vencidas. Puedes usar este campo para
+  filtrar o ordenar tareas por urgencia.
 </Note>
 
 ## Fórmula condicional: puntuación del lead
@@ -179,24 +180,24 @@ export const main = async (params) => {
 
 ### Rendimiento
 
-* Activa solo ante cambios en campos relevantes
-* Usa filtros para omitir registros que no necesiten cálculo
-* Evita cálculos complejos en flujos de trabajo de alto volumen
+- Activa solo ante cambios en campos relevantes
+- Usa filtros para omitir registros que no necesiten cálculo
+- Evita cálculos complejos en flujos de trabajo de alto volumen
 
 ### Manejo de errores
 
-* Comprueba valores null/undefined antes de los cálculos
-* Usa valores predeterminados cuando falten datos
-* Devuelve mensajes de error claros cuando fallen los cálculos
+- Comprueba valores null/undefined antes de los cálculos
+- Usa valores predeterminados cuando falten datos
+- Devuelve mensajes de error claros cuando fallen los cálculos
 
 ### Pruebas
 
-* Prueba con casos límite (campos vacíos, valores cero)
-* Verifica los cálculos manualmente antes de activar
-* Supervisa las ejecuciones de flujos de trabajo para detectar resultados inesperados
+- Prueba con casos límite (campos vacíos, valores cero)
+- Verifica los cálculos manualmente antes de activar
+- Supervisa las ejecuciones de flujos de trabajo para detectar resultados inesperados
 
 ## Relacionado
 
-* [Cómo mostrar el importe esperado en el pipeline](/l/es/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [Cómo realizar el seguimiento del tiempo en la etapa](/l/es/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)
+- [Cómo mostrar el importe esperado en el pipeline](/l/es/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+- [Cómo realizar el seguimiento del tiempo en la etapa](/l/es/user-guide/views-pipelines/how-tos/track-time-in-stage)
+- [Acciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-actions)

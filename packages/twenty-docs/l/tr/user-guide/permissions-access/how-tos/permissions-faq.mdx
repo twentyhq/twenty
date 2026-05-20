@@ -11,15 +11,19 @@ Twenty comes with an **Admin** and **Member** roles by default. You can create a
 </Accordion>
 
 <Accordion title="Can I delete the Admin role?">
-No, the Admin role cannot be deleted. There must always be at least one member assigned to the Admin role.
+  No, the Admin role cannot be deleted. There must always be at least one member
+  assigned to the Admin role.
 </Accordion>
 
 <Accordion title="What happens when I delete a role?">
-Any workspace member assigned to that role will be automatically reassigned to the default role.
+  Any workspace member assigned to that role will be automatically reassigned to
+  the default role.
 </Accordion>
 
 <Accordion title="How do I set a default role for new members?">
-**Ayarlar → Üyeler → Roller** bölümüne gidin, **Varsayılan Rol** seçeneğini bulun ve yeni üyeler katıldıklarında otomatik olarak hangi rolü alacaklarını seçin.
+  **Ayarlar → Üyeler → Roller** bölümüne gidin, **Varsayılan Rol** seçeneğini
+  bulun ve yeni üyeler katıldıklarında otomatik olarak hangi rolü alacaklarını
+  seçin.
 </Accordion>
 
 <Accordion title="Can I assign multiple roles to one user?">
@@ -35,6 +39,7 @@ No, each user can only have one role at a time. Create a custom role if you need
 * **Field permissions**: Control access to specific fields within an object (e.g., can see but not edit the Salary field)
 
 Field permissions allow more granular control over sensitive data.
+
 </Accordion>
 
 <Accordion title="How do permission overrides work?">
@@ -44,6 +49,7 @@ Permissions cascade from global to specific:
 3. **Field-Level Permissions** can override the object setting for specific fields
 
 More specific settings always take precedence.
+
 </Accordion>
 
 <Accordion title="What do the different permission levels mean?">
@@ -54,13 +60,16 @@ For objects:
 * **Destroy Records**: Permanently delete records
 
 For fields:
-* **See Field**: View the field value
-* **Edit Field**: Modify the field value
-* **No Access**: Field is completely hidden
-</Accordion>
+
+- **See Field**: View the field value
+- **Edit Field**: Modify the field value
+- **No Access**: Field is completely hidden
+  </Accordion>
 
 <Accordion title="Can I restrict access to specific records (row-level permissions)?">
-Row-level permissions will be available on the **Organization** plan by Q1 2026. This allows you to restrict access to specific records based on criteria (e.g., only see your own opportunities).
+  Row-level permissions will be available on the **Organization** plan by Q1
+  2026. This allows you to restrict access to specific records based on criteria
+  (e.g., only see your own opportunities).
 </Accordion>
 
 <Accordion title="How do I make a field read-only for certain users?">
@@ -84,6 +93,7 @@ You can control access to:
 * Workflow management
 
 Use **Settings All Access** to grant full access, or enable specific permissions.
+
 </Accordion>
 
 <Accordion title="What action permissions are available?">
@@ -93,6 +103,7 @@ You can control:
 * **Export CSV**: Ability to export data to CSV
 
 Use **Application All Access** to grant all actions, or enable specific ones.
+
 </Accordion>
 </AccordionGroup>
 
@@ -104,14 +115,14 @@ No, SSO is a Premium feature available on the **Organization** plan only.
 </Accordion>
 
 <Accordion title="Which identity providers are supported?">
-Twenty supports:
-* **SAML 2.0** (works with most enterprise identity providers)
-* **Google Workspace**
-* **Microsoft Entra ID** (formerly Azure AD)
+  Twenty supports: * **SAML 2.0** (works with most enterprise identity
+  providers) * **Google Workspace** * **Microsoft Entra ID** (formerly Azure AD)
 </Accordion>
 
 <Accordion title="What is Just-in-Time (JIT) provisioning?">
-With JIT provisioning, user accounts are automatically created in Twenty when someone logs in via SSO for the first time. They're assigned the default role automatically.
+  With JIT provisioning, user accounts are automatically created in Twenty when
+  someone logs in via SSO for the first time. They're assigned the default role
+  automatically.
 </Accordion>
 
 <Accordion title="Can I require SSO for all users?">

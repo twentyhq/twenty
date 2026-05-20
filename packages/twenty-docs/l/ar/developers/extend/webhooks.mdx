@@ -63,7 +63,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 | `timestamp` | وقت حدوث الحدث (UTC)                            |
 
 <Note>
-استجب بحالة **HTTP 2xx** ‏(200-299) لتأكيد الاستلام. تُسجَّل الاستجابات غير 2xx كإخفاقات في التسليم.
+  استجب بحالة **HTTP 2xx** ‏(200-299) لتأكيد الاستلام. تُسجَّل الاستجابات غير
+  2xx كإخفاقات في التسليم.
 </Note>
 
 ## التحقق من صحة خطاف الويب
@@ -87,22 +88,22 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 ### مثال (Node.js)
 
 ```javascript
-const crypto = require("crypto");
+const crypto = require('crypto');
 
-const timestamp = req.headers["x-twenty-webhook-timestamp"];
+const timestamp = req.headers['x-twenty-webhook-timestamp'];
 const payload = JSON.stringify(req.body);
-const secret = "your-webhook-secret";
+const secret = 'your-webhook-secret';
 
 const stringToSign = `${timestamp}:${payload}`;
 const expectedSignature = crypto
-  .createHmac("sha256", secret)
+  .createHmac('sha256', secret)
   .update(stringToSign)
-  .digest("hex");
+  .digest('hex');
 
-const receivedSignature = req.headers["x-twenty-webhook-signature"];
+const receivedSignature = req.headers['x-twenty-webhook-signature'];
 const isValid = crypto.timingSafeEqual(
-  Buffer.from(expectedSignature, "hex"),
-  Buffer.from(receivedSignature, "hex")
+  Buffer.from(expectedSignature, 'hex'),
+  Buffer.from(receivedSignature, 'hex'),
 );
 ```
 

@@ -10,12 +10,12 @@ La cartella `public/` alla radice della tua app contiene file statici — immagi
 
 I file posizionati in `public/` sono:
 
-* **Pubblicamente accessibili** — una volta sincronizzati sul server, gli asset sono serviti a un URL pubblico. Non è necessaria alcuna autenticazione per accedervi.
-* **Disponibili nei componenti front-end** — usa gli URL degli asset per visualizzare immagini, icone o qualsiasi media all'interno dei tuoi componenti React.
-* **Disponibili nelle funzioni logiche** — fai riferimento agli URL degli asset nelle email, nelle risposte API o in qualsiasi logica lato server.
-* **Usati per i metadati del marketplace** — i campi `logoUrl` e `screenshots` in `defineApplication()` fanno riferimento a file di questa cartella (ad es., `public/logo.png`). Questi vengono visualizzati nel marketplace quando la tua app viene pubblicata.
-* **Sincronizzati automaticamente in modalità dev** — quando aggiungi, aggiorni o elimini un file in `public/`, viene sincronizzato automaticamente con il server. Nessun riavvio necessario.
-* **Inclusi nelle build** — `yarn twenty build` raggruppa tutti gli asset pubblici nell'output di distribuzione.
+- **Pubblicamente accessibili** — una volta sincronizzati sul server, gli asset sono serviti a un URL pubblico. Non è necessaria alcuna autenticazione per accedervi.
+- **Disponibili nei componenti front-end** — usa gli URL degli asset per visualizzare immagini, icone o qualsiasi media all'interno dei tuoi componenti React.
+- **Disponibili nelle funzioni logiche** — fai riferimento agli URL degli asset nelle email, nelle risposte API o in qualsiasi logica lato server.
+- **Usati per i metadati del marketplace** — i campi `logoUrl` e `screenshots` in `defineApplication()` fanno riferimento a file di questa cartella (ad es., `public/logo.png`). Questi vengono visualizzati nel marketplace quando la tua app viene pubblicata.
+- **Sincronizzati automaticamente in modalità dev** — quando aggiungi, aggiorni o elimini un file in `public/`, viene sincronizzato automaticamente con il server. Nessun riavvio necessario.
+- **Inclusi nelle build** — `yarn twenty build` raggruppa tutti gli asset pubblici nell'output di distribuzione.
 
 ### Accedere agli asset pubblici con `getPublicAssetUrl`
 
@@ -183,15 +183,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```
@@ -336,7 +340,9 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-Questo è diverso da `yarn twenty server logs`, che mostra i log del container Docker. `yarn twenty logs` mostra i log di esecuzione delle funzioni della tua app dal server Twenty.
+  Questo è diverso da `yarn twenty server logs`, che mostra i log del container
+  Docker. `yarn twenty logs` mostra i log di esecuzione delle funzioni della tua
+  app dal server Twenty.
 </Note>
 
 ### Disinstallazione di un'app (`yarn twenty uninstall`)

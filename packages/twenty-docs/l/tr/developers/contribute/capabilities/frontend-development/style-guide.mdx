@@ -32,7 +32,7 @@ export default MyComponent;
 // ✅ Good, easy to read, easy to import with code completion
 export function MyComponent() {
   return <div>Hello World</div>;
-};
+}
 ```
 
 ### Özellikler
@@ -50,7 +50,9 @@ type MyComponentProps = {
   name: string;
 };
 
-export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+export const MyComponent = ({ name }: MyComponentProps) => (
+  <div>Hello {name}</div>
+);
 ```
 
 #### Prop türlerini tanımlamak için `React.FC` veya `React.FunctionComponent` kullanmaktan kaçının
@@ -69,7 +71,7 @@ const EmailField: React.FC<{
 
 ```tsx
 /* ✅ - İyi, bileşenin prop'ları için ayrı bir tür (OwnProps) açıkça tanımlanmıştır
- *  - Bu yöntem çocuk prop'unu otomatik olarak içermez. 
+ *  - Bu yöntem çocuk prop'unu otomatik olarak içermez.
  *    Onu dahil etmek istiyorsanız, OwnProps'ta belirtmeniz gerekir.
  */
 type EmailFieldProps = {
@@ -90,7 +92,7 @@ JSX elemanlarında tek değişkenli prop yayılımını, örneğin `{...props}` 
  */
 const MyComponent = (props: OwnProps) => {
   return <OtherComponent {...props} />;
-}
+};
 ```
 
 ```tsx
@@ -104,9 +106,9 @@ const MyComponent = ({ prop1, prop2, prop3 }: MyComponentProps) => {
 
 Gerekçe:
 
-* İlk bakışta, hangi prop'ların kod tarafından geçirildiği daha açıktır, bu da anlamayı ve bakımı kolaylaştırır.
-* Prop'lar aracılığıyla bileşenler arasında sıkı bağlanmayı önlemeye yardımcı olur.
-* Linting araçları, prop'ları açıkça listelediğinizde yanlış yazılmış veya kullanılmayan prop'ları tanımlamayı kolaylaştırır.
+- İlk bakışta, hangi prop'ların kod tarafından geçirildiği daha açıktır, bu da anlamayı ve bakımı kolaylaştırır.
+- Prop'lar aracılığıyla bileşenler arasında sıkı bağlanmayı önlemeye yardımcı olur.
+- Linting araçları, prop'ları açıkça listelediğinizde yanlış yazılmış veya kullanılmayan prop'ları tanımlamayı kolaylaştırır.
 
 ## JavaScript
 
@@ -157,9 +159,9 @@ TypeScript, enum'ların neden kaçınılması gereken bir seçenek olduğunu [bu
 ```tsx
 // ❌ Bad, utilizes an enum
 enum Color {
-  Red = "red",
-  Green = "green",
-  Blue = "blue",
+  Red = 'red',
+  Green = 'green',
+  Blue = 'blue',
 }
 
 let color = Color.Red;
@@ -168,7 +170,7 @@ let color = Color.Red;
 ```tsx
 // ✅ İyi, bir string literal kullanıyor
 
-let color: "red" | "green" | "blue" = "red";
+let color: 'red' | 'green' | 'blue' = 'red';
 ```
 
 #### GraphQL ve iç kütüphaneler
@@ -254,7 +256,7 @@ const StyledButton = styled.button`
   font-size: ${({ theme }) => theme.font.size.md};
   font-weight: ${({ theme }) => theme.font.weight.regular};
   margin-left: ${({ theme }) => theme.spacing(1)};
-  border-radius:  ${({ theme }) => theme.border.rounded};
+  border-radius: ${({ theme }) => theme.border.rounded};
 `;
 ```
 
@@ -275,11 +277,11 @@ import { Meta, StoryObj } from '@storybook/react';
 
 ### Neden Tip İthalatları Yok
 
-* **Tutarlılık**: Hem tip hem de değer ithalatları için tek bir yaklaşım kullanarak, kod tabanı modül import stilinde tutarlı kalır.
+- **Tutarlılık**: Hem tip hem de değer ithalatları için tek bir yaklaşım kullanarak, kod tabanı modül import stilinde tutarlı kalır.
 
-* **Okunabilirlik**: İthalat türü olmadığında, değer veya tip ithal ettiğiniz zaman daha anlaşılır olur böylece kod okunabilirliği artırılır. Bu belirsizliği azaltır ve ithal edilen sembollerinin amacını anlamayı kolaylaştırır.
+- **Okunabilirlik**: İthalat türü olmadığında, değer veya tip ithal ettiğiniz zaman daha anlaşılır olur böylece kod okunabilirliği artırılır. Bu belirsizliği azaltır ve ithal edilen sembollerinin amacını anlamayı kolaylaştırır.
 
-* **Bakım Kolaylığı**: Kod tabanının bakımını kolaylaştırır çünkü geliştiriciler kodu incelerken veya değiştirirken yalnızca tip ithalatlarını tanımlayabilir ve bulabilirler.
+- **Bakım Kolaylığı**: Kod tabanının bakımını kolaylaştırır çünkü geliştiriciler kodu incelerken veya değiştirirken yalnızca tip ithalatlarını tanımlayabilir ve bulabilirler.
 
 ### Oxlint Kuralı
 

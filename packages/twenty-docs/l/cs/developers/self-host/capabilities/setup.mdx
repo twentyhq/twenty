@@ -6,7 +6,9 @@ icon: gear
 # Správa konfigurace
 
 <Warning>
-**Instalujete poprvé?** Postupujte podle [průvodce instalací Docker Compose](/l/cs/developers/self-host/capabilities/docker-compose) k rozchození Twenty, a poté se sem vraťte pro konfiguraci.
+  **Instalujete poprvé?** Postupujte podle [průvodce instalací Docker
+  Compose](/l/cs/developers/self-host/capabilities/docker-compose) k rozchození
+  Twenty, a poté se sem vraťte pro konfiguraci.
 </Warning>
 
 Twenty nabízí **dvě konfigurační režimy** pro různé potřeby nasazení:
@@ -27,17 +29,21 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # výchozí
 4. Změny se projeví okamžitě (u nasazení s více kontejnery do 15 sekund)
 
 <Warning>
-**Nasazení s více kontejnery:** Při použití databázové konfigurace (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) čtou oba serverové i pracovní kontejnery ze stejné databáze. Změny v administračním panelu se dotýkají obou automaticky, což eliminuje potřebu duplicitních proměnných prostředí mezi kontejnery (s výjimkou infrastrukturních proměnných).
+  **Nasazení s více kontejnery:** Při použití databázové konfigurace
+  (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`) čtou oba serverové i pracovní
+  kontejnery ze stejné databáze. Změny v administračním panelu se dotýkají obou
+  automaticky, což eliminuje potřebu duplicitních proměnných prostředí mezi
+  kontejnery (s výjimkou infrastrukturních proměnných).
 </Warning>
 
 **Co můžete konfigurovat přes administrační panel:**
 
-* **Autentizace** - Google/Microsoft OAuth, nastavení hesla
-* **E-mail** - nastavení SMTP, šablony, ověření
-* **Úložiště** - konfigurace S3, místní cesty k úložišti
-* **Integrace** - Gmail, Google Kalendář, služby Microsoft
-* **Pracovní postup & Omezení rychlosti** - limity provádění, škrcení API
-* **A ještě mnohem více...**
+- **Autentizace** - Google/Microsoft OAuth, nastavení hesla
+- **E-mail** - nastavení SMTP, šablony, ověření
+- **Úložiště** - konfigurace S3, místní cesty k úložišti
+- **Integrace** - Gmail, Google Kalendář, služby Microsoft
+- **Pracovní postup & Omezení rychlosti** - limity provádění, škrcení API
+- **A ještě mnohem více...**
 
 ![Proměnné konfigurace Admin panelu](/images/user-guide/setup/admin-panel-config-variables.png)
 
@@ -46,6 +52,7 @@ Každá proměnná je dokumentována s popisy ve vašem administračním panelu 
 Některá nastavení infrastruktury, jako připojení k databázi (`PG_DATABASE_URL`), URL serveru (`SERVER_URL`) a tajemství aplikace (`APP_SECRET`), lze konfigurovat pouze prostřednictvím souboru `.env`.
 
 [Kompletní technická referenční příručka →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+
 </Warning>
 
 ## 2. Konfigurace pouze přes prostředí
@@ -71,10 +78,10 @@ Ve výchozím nastavení běží Twenty v **režimu jednoho pracovního prostoru
 IS_MULTIWORKSPACE_ENABLED=false  # default
 ```
 
-* Jeden pracovní prostor na instanci Twenty
-* První uživatel se automaticky stává administrátorem s plnými oprávněními (`canImpersonate` a `canAccessFullAdminPanel`)
-* Po vytvoření prvního pracovního prostoru jsou nové registrace zakázány.
-* Jednoduchá struktura URL: `https://your-domain.com`
+- Jeden pracovní prostor na instanci Twenty
+- První uživatel se automaticky stává administrátorem s plnými oprávněními (`canImpersonate` a `canAccessFullAdminPanel`)
+- Po vytvoření prvního pracovního prostoru jsou nové registrace zakázány.
+- Jednoduchá struktura URL: `https://your-domain.com`
 
 ### Povolení režimu více pracovních prostorů
 
@@ -87,14 +94,16 @@ Povolte režim více pracovních prostorů pro nasazení typu SaaS, kde více ne
 
 **Klíčové rozdíly oproti režimu jednoho pracovního prostoru:**
 
-* Na téže instanci lze vytvářet více pracovních prostorů
-* Každý pracovní prostor získá vlastní subdoménu (např. `sales.your-domain.com`, `marketing.your-domain.com`)
-* Uživatelé se registrují a přihlašují na `{DEFAULT_SUBDOMAIN}.your-domain.com` (např. `app.your-domain.com`)
-* Žádná automatická administrátorská oprávnění — první uživatel v každém pracovním prostoru je běžný uživatel
-* Nastavení specifická pro pracovní prostor, jako je subdoména a vlastní doména, se zpřístupní v nastavení pracovního prostoru
+- Na téže instanci lze vytvářet více pracovních prostorů
+- Každý pracovní prostor získá vlastní subdoménu (např. `sales.your-domain.com`, `marketing.your-domain.com`)
+- Uživatelé se registrují a přihlašují na `{DEFAULT_SUBDOMAIN}.your-domain.com` (např. `app.your-domain.com`)
+- Žádná automatická administrátorská oprávnění — první uživatel v každém pracovním prostoru je běžný uživatel
+- Nastavení specifická pro pracovní prostor, jako je subdoména a vlastní doména, se zpřístupní v nastavení pracovního prostoru
 
 <Warning>
-**Nastavení pouze na úrovni prostředí:** `IS_MULTIWORKSPACE_ENABLED` lze konfigurovat pouze prostřednictvím souboru `.env` a vyžaduje restart. Nelze jej změnit prostřednictvím administračního panelu.
+  **Nastavení pouze na úrovni prostředí:** `IS_MULTIWORKSPACE_ENABLED` lze
+  konfigurovat pouze prostřednictvím souboru `.env` a vyžaduje restart. Nelze
+  jej změnit prostřednictvím administračního panelu.
 </Warning>
 
 ### Konfigurace DNS pro více pracovních prostorů
@@ -125,40 +134,42 @@ Pokud je povoleno, pouze uživatelé s `canAccessFullAdminPanel` mohou vytváře
 2. Vytvořte nový projekt nebo vyberte existující
 3. Povolte tyto API:
 
-* [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
-* [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
-* [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
+- [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
+- [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
+- [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
 
 ### Konfigurace OAuth
 
 1. Přejděte na [Pověření](https://console.cloud.google.com/apis/credentials)
 2. Vytvořte OAuth 2.0 Client ID
 3. Přidejte tyto URI přesměrování:
-   * `https://{your-domain}/auth/google/redirect` (pro SSO)
-   * `https://{your-domain}/auth/google-apis/get-access-token` (pro integrace)
+   - `https://{your-domain}/auth/google/redirect` (pro SSO)
+   - `https://{your-domain}/auth/google-apis/get-access-token` (pro integrace)
 
 ### Konfigurace v Twenty
 
 1. Jděte na **Nastavení → Admin panel → Konfigurační proměnné**
 2. Najděte sekci **Google Auth**
 3. Nastavte tyto proměnné:
-   * `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
-   * `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
-   * `AUTH_GOOGLE_CLIENT_ID={client-id}`
-   * `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
-   * `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
-   * `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
+   - `MESSAGING_PROVIDER_GMAIL_ENABLED=true`
+   - `CALENDAR_PROVIDER_GOOGLE_ENABLED=true`
+   - `AUTH_GOOGLE_CLIENT_ID={client-id}`
+   - `AUTH_GOOGLE_CLIENT_SECRET={client-secret}`
+   - `AUTH_GOOGLE_CALLBACK_URL=https://{your-domain}/auth/google/redirect`
+   - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-**Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
+  **Režim pouze s prostředím:** Pokud nastavíte
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru
+  `.env`
 </Warning>
 
 **Požadované rozsahy** (automaticky konfigurované):
 [Zobrazit relevantní zdrojový kód](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
 
-* `https://www.googleapis.com/auth/calendar.events`
-* `https://www.googleapis.com/auth/gmail.readonly`
-* `https://www.googleapis.com/auth/profile.emails.read`
+- `https://www.googleapis.com/auth/calendar.events`
+- `https://www.googleapis.com/auth/gmail.readonly`
+- `https://www.googleapis.com/auth/profile.emails.read`
 
 ### Pokud je vaše aplikace v testovacím režimu
 
@@ -169,7 +180,9 @@ V části [Obrazovka souhlasu s OAuth](https://console.cloud.google.com/apis/cre
 ## Integrace Microsoft 365
 
 <Warning>
-Uživatelé musí mít [Licence Microsoft 365](https://admin.microsoft.com/Adminportal/Home), aby mohli používat API Kalendáře a Zpráv. Bez něj nebudou moci synchronizovat svůj účet na Twenty.
+  Uživatelé musí mít [Licence Microsoft
+  365](https://admin.microsoft.com/Adminportal/Home), aby mohli používat API
+  Kalendáře a Zpráv. Bez něj nebudou moci synchronizovat svůj účet na Twenty.
 </Warning>
 
 ### Vytvořte projekt v Microsoft Azure
@@ -180,14 +193,14 @@ Budete muset vytvořit projekt v [Microsoft Azure](https://portal.azure.com/#vie
 
 Na konzoli Microsoft Azure povolte následující API v "Povoleních":
 
-* Microsoft Graph: Mail.ReadWrite
-* Microsoft Graph: Mail.Send
-* Microsoft Graph: Calendars.Read
-* Microsoft Graph: User.Read
-* Microsoft Graph: openid
-* Microsoft Graph: email
-* Microsoft Graph: profile
-* Microsoft Graph: offline_access
+- Microsoft Graph: Mail.ReadWrite
+- Microsoft Graph: Mail.Send
+- Microsoft Graph: Calendars.Read
+- Microsoft Graph: User.Read
+- Microsoft Graph: openid
+- Microsoft Graph: email
+- Microsoft Graph: profile
+- Microsoft Graph: offline_access
 
 Poznámka: "Mail.ReadWrite" a "Mail.Send" jsou povinné pouze v případě, že chcete odesílat e-maily pomocí našich pracovních postupů. Můžete použít "Mail.Read" místo toho, pokud chcete pouze přijímat e-maily.
 
@@ -195,37 +208,39 @@ Poznámka: "Mail.ReadWrite" a "Mail.Send" jsou povinné pouze v případě, že 
 
 Musíte přidat následující URI přesměrování do vašeho projektu:
 
-* `https://{your-domain}/auth/microsoft/redirect`, pokud chcete použít Microsoft SSO
-* `https://{your-domain}/auth/microsoft-apis/get-access-token`
+- `https://{your-domain}/auth/microsoft/redirect`, pokud chcete použít Microsoft SSO
+- `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 ### Konfigurace v Twenty
 
 1. Jděte na **Nastavení → Admin panel → Konfigurační proměnné**
 2. Najděte sekci **Microsoft Auth**
 3. Nastavte tyto proměnné:
-   * `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
-   * `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_ENABLED=true`
-   * `AUTH_MICROSOFT_CLIENT_ID={client-id}`
-   * `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
-   * `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
-   * `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
+   - `MESSAGING_PROVIDER_MICROSOFT_ENABLED=true`
+   - `CALENDAR_PROVIDER_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_ENABLED=true`
+   - `AUTH_MICROSOFT_CLIENT_ID={client-id}`
+   - `AUTH_MICROSOFT_CLIENT_SECRET={client-secret}`
+   - `AUTH_MICROSOFT_CALLBACK_URL=https://{your-domain}/auth/microsoft/redirect`
+   - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-**Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
+  **Režim pouze s prostředím:** Pokud nastavíte
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru
+  `.env`
 </Warning>
 
 ### Konfigurace rozsahů
 
 [Zobrazit relevantní zdrojový kód](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
 
-* 'openid'
-* 'email'
-* 'profil'
-* 'offline_access'
-* 'Mail.ReadWrite'
-* 'Mail.Send'
-* 'Calendars.Read'
+- 'openid'
+- 'email'
+- 'profil'
+- 'offline_access'
+- 'Mail.ReadWrite'
+- 'Mail.Send'
+- 'Calendars.Read'
 
 ### Pokud je vaše aplikace v testovacím režimu
 
@@ -260,48 +275,56 @@ yarn command:prod cron:workflow:automated-cron-trigger
 
   <ArticleTab>
 
-  Budete potřebovat zřídit [Heslo aplikace](https://support.google.com/accounts/answer/185833).
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.gmail.com
-  * EMAIL_SMTP_PORT=465
-  * EMAIL_SMTP_USER=gmail_email_address
-  * EMAIL_SMTP_PASSWORD='gmail_app_password'
+Budete potřebovat zřídit [Heslo aplikace](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
-  * EMAIL_DRIVER=smtp
-  * EMAIL_SMTP_HOST=smtp.office365.com
-  * EMAIL_SMTP_PORT=587
-  * EMAIL_SMTP_USER=office365_email_address
-  * EMAIL_SMTP_PASSWORD='office365_password'
+**smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
-  * Spusťte obraz smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-  * Přístup k uživatelskému rozhraní smtp4dev zde: [http://localhost:8090](http://localhost:8090)
-  * Nastavte následující proměnné:
-    * EMAIL_DRIVER=smtp
-    * EMAIL_SMTP_HOST=localhost
-    * EMAIL_SMTP_PORT=2525
+**smtp4dev** je falešný SMTP e-mailový server pro vývoj a testování.
+
+- Spusťte obraz smtp4dev: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Přístup k uživatelskému rozhraní smtp4dev zde: [http://localhost:8090](http://localhost:8090)
+- Nastavte následující proměnné:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
 </ArticleTabs>
 
 <Warning>
-**Režim pouze s prostředím:** Pokud nastavíte `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru `.env`
+  **Režim pouze s prostředím:** Pokud nastavíte
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, přidejte tyto proměnné do souboru
+  `.env`
 </Warning>
 
 ## Úložiště S3
 
 <Warning>
-Ve výchozím nastavení Twenty ukládá nahrané soubory do místního souborového systému. Pro produkční nasazení použijte S3 nebo službu kompatibilní se S3 (MinIO, DigitalOcean Spaces atd.). aby byly soubory zachovány při restartech kontejnerů a bylo možné škálovat napříč více instancemi serveru.
+  Ve výchozím nastavení Twenty ukládá nahrané soubory do místního souborového
+  systému. Pro produkční nasazení použijte S3 nebo službu kompatibilní se S3
+  (MinIO, DigitalOcean Spaces atd.). aby byly soubory zachovány při restartech
+  kontejnerů a bylo možné škálovat napříč více instancemi serveru.
 </Warning>
 
 Nastavte `STORAGE_TYPE=S_3` a nakonfigurujte proměnné `STORAGE_S3_*` prostřednictvím administračního panelu nebo `.env`. Viz [referenci config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) pro úplný seznam proměnných S3.
@@ -319,7 +342,12 @@ Twenty podporuje logické funkce pro pracovní postupy a interpret kódu pro ana
 **V prostředí vývoje (NODE_ENV=development):** Obě mají ve výchozím nastavení **LOCAL** pro pohodlí při lokálním spuštění.
 
 <Warning>
-**Upozornění na zabezpečení:** Místní ovladač (`LOGIC_FUNCTION_TYPE=LOCAL` nebo `CODE_INTERPRETER_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, použijte `LOGIC_FUNCTION_TYPE=LAMBDA` nebo `CODE_INTERPRETER_TYPE=E2B` (se sandboxem), případně je ponechte vypnuté.
+  **Upozornění na zabezpečení:** Místní ovladač (`LOGIC_FUNCTION_TYPE=LOCAL`
+  nebo `CODE_INTERPRETER_TYPE=LOCAL`) spouští kód přímo na hostiteli v procesu
+  Node.js bez sandboxu. Měl by být používán pouze pro důvěryhodný kód při
+  vývoji. Pro produkční nasazení, která pracují s nedůvěryhodným kódem, použijte
+  `LOGIC_FUNCTION_TYPE=LAMBDA` nebo `CODE_INTERPRETER_TYPE=E2B` (se sandboxem),
+  případně je ponechte vypnuté.
 </Warning>
 
 ### Logické funkce - dostupné ovladače
@@ -363,5 +391,7 @@ LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 | E2B       | `CODE_INTERPRETER_TYPE=E_2_B`    | Produkční prostředí se sandboxovaným spouštěním | Vysoká (izolovaný sandbox) |
 
 <Note>
-Při použití `LOGIC_FUNCTION_TYPE=DISABLED` nebo `CODE_INTERPRETER_TYPE=DISABLED` vrátí každý pokus o spuštění chybu. To je užitečné, pokud chcete provozovat Twenty bez těchto schopností.
+  Při použití `LOGIC_FUNCTION_TYPE=DISABLED` nebo
+  `CODE_INTERPRETER_TYPE=DISABLED` vrátí každý pokus o spuštění chybu. To je
+  užitečné, pokud chcete provozovat Twenty bez těchto schopností.
 </Note>

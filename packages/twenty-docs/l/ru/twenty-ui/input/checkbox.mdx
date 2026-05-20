@@ -13,15 +13,15 @@ icon: square-check
 <Tab title="Использование">
 
 ```jsx
-import { Checkbox } from "twenty-ui/display";
+import { Checkbox } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   return (
     <Checkbox
       checked={true}
       indeterminate={false}
-      onChange={() => console.log("onChange function fired")}
-      onCheckedChange={() => console.log("onCheckedChange function fired")}
+      onChange={() => console.log('onChange function fired')}
+      onCheckedChange={() => console.log('onCheckedChange function fired')}
       variant="primary"
       size="small"
       shape="squared"
@@ -33,7 +33,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Свойства">
 
-
 | Свойства        | Тип     | Описание                                                                               |
 | --------------- | ------- | -------------------------------------------------------------------------------------- |
 | отмечено        | булево  | Указывает, отмечен ли флажок                                                           |
@@ -43,8 +42,6 @@ export const MyComponent = () => {
 | вариант         | строка  | Визуальный стиль флажка. Варианты включают: `primary`, `secondary`, и `tertiary`       |
 | размер          | строка  | Размер флажка. Есть два варианта: `small` и `large`                                    |
 | форма           | строка  | Форма флажка. Имеет два варианта: `квадратная` и `округлая`                            |
-
-
 
 </Tab>
 </Tabs>

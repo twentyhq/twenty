@@ -11,24 +11,18 @@ description: دليل كامل خطوة بخطوة لاستيراد الشركا
 
 ### قائمة المتطلبات المسبقة
 
-<Check>
-يجب أن يكون ملفك بتنسيق CSV أو XLSX أو XLS
-</Check>
+<Check>يجب أن يكون ملفك بتنسيق CSV أو XLSX أو XLS</Check>
 
-<Check>
-يحتوي الملف على أقل من 10,000 سجل
-</Check>
+<Check>يحتوي الملف على أقل من 10,000 سجل</Check>
 
-<Check>
-لا توجد نطاقات مكررة في ملفك
-</Check>
+<Check>لا توجد نطاقات مكررة في ملفك</Check>
 
-<Check>
-جميع الحقول المخصصة موجودة في **Settings → Data Model**
-</Check>
+<Check>جميع الحقول المخصصة موجودة في **Settings → Data Model**</Check>
 
 <Note>
-هل تحتاج إلى استيراد أكثر من 10,000 شركة؟ قسّم إلى ملفات متعددة أو استخدم [استيراد عبر API](/l/ar/user-guide/data-migration/how-tos/import-data-via-api).
+  هل تحتاج إلى استيراد أكثر من 10,000 شركة؟ قسّم إلى ملفات متعددة أو استخدم
+  [استيراد عبر
+  API](/l/ar/user-guide/data-migration/how-tos/import-data-via-api).
 </Note>
 
 ## الخطوة 1: جهّز بيانات شركتك
@@ -49,12 +43,13 @@ description: دليل كامل خطوة بخطوة لاستيراد الشركا
 **استخدم التنسيق `https://domain.com` للنطاقات.**
 
 هذا يطابق التنسيق المستخدم عند إنشاء الشركات تلقائيًا من مزامنة البريد الإلكتروني/التقويم، مما يمنع التكرارات لاحقًا.
+
 </Warning>
 
 **أعمدة النطاق:**
 
-* **Domain / Domain Label**: `acme.com`
-* **Domain / Domain URL**: `https://acme.com`
+- **Domain / Domain Label**: `acme.com`
+- **Domain / Domain URL**: `https://acme.com`
 
 ### تنسيق العنوان
 
@@ -74,7 +69,8 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-**نصيحة احترافية:** انقر **Download sample file** أثناء الاستيراد للاطلاع على أسماء الأعمدة الدقيقة التي تتوقعها Twenty.
+  **نصيحة احترافية:** انقر **Download sample file** أثناء الاستيراد للاطلاع على
+  أسماء الأعمدة الدقيقة التي تتوقعها Twenty.
 </Note>
 
 ## الخطوة 2: الوصول إلى ميزة الاستيراد
@@ -108,11 +104,14 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 
 ### قواعد مطابقة مهمة
 
-* **النطاق**: طابق مع **Domain / Domain URL** (وليس Domain Label)
-* **العنوان**: طابق كل جزء مع العمود المحدد له (المدينة، الولاية، إلخ.)
-* **حقول الاختيار**: يجب أن تطابق القيم الخيارات الموجودة (أو ستقوم بمطابقتها في الخطوة التالية)
+- **النطاق**: طابق مع **Domain / Domain URL** (وليس Domain Label)
+- **العنوان**: طابق كل جزء مع العمود المحدد له (المدينة، الولاية، إلخ.)
+- **حقول الاختيار**: يجب أن تطابق القيم الخيارات الموجودة (أو ستقوم بمطابقتها في الخطوة التالية)
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ## الخطوة 5: تعيين قيم حقل الاختيار
 
@@ -123,7 +122,8 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 3. أو أنشئ خيارات جديدة عند الحاجة
 
 <Note>
-تستخدم خيارات الاختيار **أسماء API**، وليس تسميات العرض. تحقّق من **Settings → Data Model** → فعِّل **Advanced mode** لمشاهدة أسماء API.
+  تستخدم خيارات الاختيار **أسماء API**، وليس تسميات العرض. تحقّق من **Settings →
+  Data Model** → فعِّل **Advanced mode** لمشاهدة أسماء API.
 </Note>
 
 ## الخطوة 6: مراجعة الأخطاء وإصلاحها
@@ -175,17 +175,20 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
     النطاق معرّف فريد في Twenty. هذا يمنع تكرار الشركات ويضمن أن مزامنة البريد الإلكتروني تربط الرسائل بالشركة الصحيحة على نحو صحيح.
   </Accordion>
 
-  <Accordion title="ماذا لو كانت لديّ شركات بلا نطاق؟">
-    يمكنك ترك النطاق فارغًا. ومع ذلك، نوصي بإضافة النطاقات عندما يكون ذلك ممكنًا لتحسين جودة البيانات والربط التلقائي للبريد الإلكتروني.
-  </Accordion>
+<Accordion title="ماذا لو كانت لديّ شركات بلا نطاق؟">
+  يمكنك ترك النطاق فارغًا. ومع ذلك، نوصي بإضافة النطاقات عندما يكون ذلك ممكنًا
+  لتحسين جودة البيانات والربط التلقائي للبريد الإلكتروني.
+</Accordion>
 
-  <Accordion title="هل يمكنني استيراد شركات دون ربط أي أشخاص بها؟">
-    نعم! يمكنك استيراد الشركات أولاً، ثم استيراد الأشخاص لاحقًا وربطهم باستخدام نطاق الشركة.
-  </Accordion>
+<Accordion title="هل يمكنني استيراد شركات دون ربط أي أشخاص بها؟">
+  نعم! يمكنك استيراد الشركات أولاً، ثم استيراد الأشخاص لاحقًا وربطهم باستخدام
+  نطاق الشركة.
+</Accordion>
 
-  <Accordion title="ماذا يحدث إذا قمتُ باستيراد نطاق موجود بالفعل؟">
-    إذا تضمّنت معرّفًا فريدًا (نطاقًا أو id) يطابق شركةً موجودة، يقوم Twenty بتحديث تلك الشركة بدلاً من إنشاء نسخة مكررة.
-  </Accordion>
+<Accordion title="ماذا يحدث إذا قمتُ باستيراد نطاق موجود بالفعل؟">
+  إذا تضمّنت معرّفًا فريدًا (نطاقًا أو id) يطابق شركةً موجودة، يقوم Twenty
+  بتحديث تلك الشركة بدلاً من إنشاء نسخة مكررة.
+</Accordion>
 
   <Accordion title="كيف أصلِح أخطاء 'نطاق مكرر'؟">
     إمّا أن تزيل النسخة المكررة من ملفك، أو تُدرج `id` الخاصة بالشركة لتحديث السجل الموجود بدلًا من ذلك.
@@ -196,6 +199,6 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 
 هل تواجه مشكلات؟ اطّلع على:
 
-* [كيفية إصلاح أخطاء الاستيراد](/l/ar/user-guide/data-migration/how-tos/fix-import-errors)
-* [مرجع تعيين الحقول](/l/ar/user-guide/data-migration/capabilities/field-mapping)
-* [قيود التفرد](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [كيفية إصلاح أخطاء الاستيراد](/l/ar/user-guide/data-migration/how-tos/fix-import-errors)
+- [مرجع تعيين الحقول](/l/ar/user-guide/data-migration/capabilities/field-mapping)
+- [قيود التفرد](/l/ar/user-guide/data-migration/capabilities/uniqueness-constraints)

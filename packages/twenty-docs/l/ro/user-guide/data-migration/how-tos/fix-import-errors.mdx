@@ -16,7 +16,10 @@ After uploading your file and mapping columns, Twenty validates your data:
 3. **You can fix in-place** — edit cells directly in the import UI
 4. **Or remove rows** — skip problematic records entirely
 
-<Note>**Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit cells directly during import to save time.</Note>
+<Note>
+  **Fix errors in the UI.** You don't need to go back to your spreadsheet. Edit
+  cells directly during import to save time.
+</Note>
 
 ## Step-by-Step Troubleshooting
 
@@ -48,8 +51,8 @@ Rows with duplicate values are **highlighted in yellow** in the import UI before
 
 A unique field (email, domain) either:
 
-* Already exists in Twenty
-* Appears twice in your file
+- Already exists in Twenty
+- Appears twice in your file
 
 ### How to Fix
 
@@ -73,10 +76,11 @@ A unique field (email, domain) either:
 <Note>
 **You can update unique fields too.**
 
-* If you keep the `id` but change the `email` → the email will be updated
-* If you keep the `email` but change the `id` → the id will be updated
+- If you keep the `id` but change the `email` → the email will be updated
+- If you keep the `email` but change the `id` → the id will be updated
 
 As long as one unique identifier matches, Twenty updates the record.
+
 </Note>
 
 ### How to Prevent This Error
@@ -91,6 +95,7 @@ Before importing:
 **Soft-deleted records count toward uniqueness.**
 
 Check Command Menu → See deleted records. Records there still enforce uniqueness. Permanently delete them or restore and update.
+
 </Warning>
 
 For more details: [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -135,7 +140,11 @@ The data doesn't match the expected format for that field type.
 ✅ https://acme.com  (recommended)
 ```
 
-<Note>All formats are valid, but `https://domain.com` is recommended because it matches the format used by email/calendar sync. Using other formats may create duplicate companies.</Note>
+<Note>
+  All formats are valid, but `https://domain.com` is recommended because it
+  matches the format used by email/calendar sync. Using other formats may create
+  duplicate companies.
+</Note>
 
 #### Dată
 
@@ -258,7 +267,10 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
 
 This means there is no Company in Twenty with that specific identifier.
 
-<Note>Unlike other errors, this one is not caught during the data review step. The import will start and then fail when it encounters the missing relation.</Note>
+<Note>
+  Unlike other errors, this one is not caught during the data review step. The
+  import will start and then fail when it encounters the missing relation.
+</Note>
 
 ### What It Means
 
@@ -286,19 +298,20 @@ You're trying to link to a record that doesn't exist in Twenty.
 ### How to Prevent This Error
 
 1. **Import in the correct order:**
-   * Companies first
-   * People second (with company references)
-   * Opportunities third
+   - Companies first
+   - People second (with company references)
+   - Opportunities third
 
 2. **Verify reference values:**
-   * Export parent records to get exact identifiers
-   * Use domain format `https://domain.com`
-   * Check for typos and case sensitivity
+   - Export parent records to get exact identifiers
+   - Use domain format `https://domain.com`
+   - Check for typos and case sensitivity
 
 <Warning>
 **Import will fail if a reference is made to a non-existent record.**
 
 Always import parent objects before child objects.
+
 </Warning>
 
 For more details: [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
@@ -349,7 +362,10 @@ A column in your file can't be mapped because the field doesn't exist in Twenty.
 4. Create the custom field with the appropriate type
 5. Re-upload your file
 
-<Note>The CSV import creates records, not fields. All fields must exist before importing.</Note>
+<Note>
+  The CSV import creates records, not fields. All fields must exist before
+  importing.
+</Note>
 
 ---
 
@@ -375,6 +391,7 @@ You're trying to assign a record to a user (Owner, Assignee) but the relation is
 **Users must accept invitations before importing.**
 
 If a user hasn't accepted their invitation, records referencing them will have empty user relations.
+
 </Warning>
 
 ---
@@ -424,7 +441,7 @@ If you've tried the above solutions:
 2. **Export existing records** — compare your file to working data
 3. **Test with a small batch** — try 5-10 rows first
 4. **Check the reference articles:**
-   * [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
-   * [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
-   * [Error Handling](/l/ro/user-guide/data-migration/capabilities/error-handling)
+   - [Field Mapping](/l/ro/user-guide/data-migration/capabilities/field-mapping)
+   - [Uniqueness Constraints](/l/ro/user-guide/data-migration/capabilities/uniqueness-constraints)
+   - [Import Relations](/l/ro/user-guide/data-migration/capabilities/import-relations)
+   - [Error Handling](/l/ro/user-guide/data-migration/capabilities/error-handling)

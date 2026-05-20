@@ -11,19 +11,20 @@ import { ChartIcon } from '/snippets/chart-icon.mdx';
 
 <img src="/images/user-guide/dashboard/dashboard-edit.png" alt="Edit mode" />
 
-
 2. The dashboard enters edit mode
 3. Click on any widget to select it
 4. The settings panel opens on the right
 
 Settings are organized into sections:
+
 - **Data**: What data to pull and how to filter it
 - **X axis**: How to group and sort categories (bar/line charts)
 - **Y axis**: What to measure and how to display it (bar/line charts)
 - **Style**: Colors, labels, and visual options
 
 <Note>
-Some settings only appear when other settings are configured. For example, **Date granularity** only appears when you select a date field.
+  Some settings only appear when other settings are configured. For example,
+  **Date granularity** only appears when you select a date field.
 </Note>
 
 ---
@@ -39,10 +40,12 @@ Choose which object to pull data from.
 
 All your standard and custom objects are available. Changing the source resets other settings since field options depend on the selected object.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-source.png" alt="Source" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-source.png"
+  alt="Source"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="filter"  />Filter </span>
-
 
 Limit which records are included in the chart.
 
@@ -56,14 +59,19 @@ Filters work the same as in table views. Use them to focus on specific segments 
 
 **Example**: Filter opportunities where Stage equals "Won" to show only closed deals.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png" alt="Filter" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-filters.png"
+  alt="Filter"
+/>
 
 <Tip>
-For date fields, try **Is relative** to create dynamic filters like "Past 7 days" or "This month" that automatically update.
+  For date fields, try **Is relative** to create dynamic filters like "Past 7
+  days" or "This month" that automatically update.
 </Tip>
 
 <Tip>
-Advanced filters are supported—add multiple filter rules and combine them with **And** or **Or** logic.
+  Advanced filters are supported—add multiple filter rules and combine them with
+  **And** or **Or** logic.
 </Tip>
 
 ---
@@ -78,22 +86,25 @@ Select the field to group your data by. This determines the categories shown on 
 
 **Example**: Select "Stage" to see data grouped by pipeline stage, or "Created date" to see data over time.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png" alt="Data on display" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-x-data-on-display.png"
+  alt="Data on display"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="calendar" />Date granularity </span>
 
 When grouping by a date field, choose the time period for grouping.
 
-| Option | Groups data by | Example output |
-|--------|---------------|----------------|
-| **Day** | Each calendar day | Jan 1, Jan 2, Jan 3... |
-| **Week** | Calendar weeks | Week 1, Week 2, Week 3... |
-| **Month** | Calendar months | January, February, March... |
-| **Quarter** | Fiscal quarters | Q1, Q2, Q3, Q4 |
-| **Year** | Calendar years | 2023, 2024, 2025 |
-| **Day of week** | Weekday (aggregated) | Monday, Tuesday... (all Mondays combined) |
-| **Month of year** | Month (aggregated) | January, February... (all Januaries combined) |
-| **Quarter of year** | Quarter (aggregated) | Q1, Q2, Q3, Q4 (all Q1s combined) |
+| Option              | Groups data by       | Example output                                |
+| ------------------- | -------------------- | --------------------------------------------- |
+| **Day**             | Each calendar day    | Jan 1, Jan 2, Jan 3...                        |
+| **Week**            | Calendar weeks       | Week 1, Week 2, Week 3...                     |
+| **Month**           | Calendar months      | January, February, March...                   |
+| **Quarter**         | Fiscal quarters      | Q1, Q2, Q3, Q4                                |
+| **Year**            | Calendar years       | 2023, 2024, 2025                              |
+| **Day of week**     | Weekday (aggregated) | Monday, Tuesday... (all Mondays combined)     |
+| **Month of year**   | Month (aggregated)   | January, February... (all Januaries combined) |
+| **Quarter of year** | Quarter (aggregated) | Q1, Q2, Q3, Q4 (all Q1s combined)             |
 
 The "of week/year" options aggregate across all time. Use **Day of week** to see which weekday typically gets the most deals. Use **Month** to see trends month by month.
 
@@ -106,16 +117,21 @@ Control the order of categories on the X axis.
 - **By value** – Ordered by the metric (highest or lowest first)
 - **Manual** – Drag to set your own order
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png" alt="Sort by" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-x-sort.png"
+  alt="Sort by"
+/>
 
 **Tip**: For pipeline stages, use **Position** to show stages in your sales process order (Lead → Qualified → Proposal → Won).
 
 <Note>
-The options shown depend on your field type. Select fields have all options; date and text fields show fewer.
+  The options shown depend on your field type. Select fields have all options;
+  date and text fields show fewer.
 </Note>
 
 <Tip>
-With **Manual** sorting, drag categories to create a custom order—perfect for highlighting specific segments or telling a story with your data.
+  With **Manual** sorting, drag categories to create a custom order—perfect for
+  highlighting specific segments or telling a story with your data.
 </Tip>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="eye-off" />Omit zero values </span>
@@ -145,10 +161,14 @@ Boolean fields add Count true/false. Aggregate charts with date fields show Earl
 
 **Example**: Select "Amount" with Sum to see total deal value per category, or Count all to see number of deals.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png" alt="Data on display" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-data-on-display.png"
+  alt="Data on display"
+/>
 
 <Note>
-The options shown depend on your field and chart type. If you don't see an expected operation, check your field type.
+  The options shown depend on your field and chart type. If you don't see an
+  expected operation, check your field type.
 </Note>
 
 ### Ratio
@@ -171,7 +191,10 @@ Add a second dimension to create multiple series (multiple bars or lines).
 
 **Example**: Group deals by Stage (X axis) AND by Owner (Group by) to see each person's pipeline breakdown side by side.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png" alt="Group by" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-group-by.png"
+  alt="Group by"
+/>
 
 When Group by is set, you'll see multiple colors in your chart and a legend appears.
 
@@ -193,12 +216,16 @@ Show running totals instead of individual values.
 - **On**: Each bar/point shows the sum of all previous values plus its own
 
 **Example**: January = 10, February = 15
+
 - Cumulative off: Shows 10 and 15
 - Cumulative on: Shows 10 and 25 (10 + 15)
 
 Use cumulative to track progress toward a goal over time.
 
-<img src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png" alt="Cumulative" />
+<img
+  src="/images/user-guide/dashboard/dashboard-chart-settings-y-cumulative.png"
+  alt="Cumulative"
+/>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="math-min" />Min range / <ChartIcon icon="math-max" />Max range </span>
 
@@ -208,6 +235,7 @@ Set fixed minimum and maximum values for the Y axis.
 - Enter a number to fix the boundary
 
 **When to use:**
+
 - Set Min to 0 for accurate visual comparisons
 - Set both for consistent scales across multiple charts
 - Focus on a specific value range by setting both
@@ -221,7 +249,8 @@ Set fixed minimum and maximum values for the Y axis.
 Set the color scheme for your chart. Choose from a variety of color palettes.
 
 <Note>
-When grouping by a Select field, the chart automatically uses the colors defined for each option in your field settings.
+  When grouping by a Select field, the chart automatically uses the colors
+  defined for each option in your field settings.
 </Note>
 
 ### <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}> <ChartIcon icon="gizmo" />Axis name </span>
@@ -236,6 +265,7 @@ When Group by is set, choose how multiple series are displayed.
 - **On (Stacked)**: Series stack on top of each other. Use when showing composition—how parts make up a whole.
 
 **Example**: Deals by stage, grouped by owner
+
 - Grouped: See each owner's exact numbers side by side
 - Stacked: See total deals per stage, with each owner's contribution stacked
 
@@ -254,7 +284,8 @@ Show or hide the legend (only appears when Group by is set).
 - **Off**: No legend displayed
 
 <Tip>
-**Hover** over a legend item to highlight that group. **Click** to temporarily hide it from the chart.
+  **Hover** over a legend item to highlight that group. **Click** to temporarily
+  hide it from the chart.
 </Tip>
 
 ---
@@ -262,10 +293,28 @@ Show or hide the legend (only appears when Group by is set).
 ## Chart-Specific Notes
 
 ### Pie charts
-- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="chart-pie" size={16} /></span> **Each slice represents** – Define how slices are grouped
-- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="eye-off" size={16} /></span> **Hide empty category** – Remove zero-value slices
-- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="number-123" size={16} /></span> **Show value in center** – Display the aggregate value (sum, average, count, etc.)
+
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="chart-pie" size={16} />
+  </span>
+  **Each slice represents** – Define how slices are grouped
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="eye-off" size={16} />
+  </span>
+  **Hide empty category** – Remove zero-value slices
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="number-123" size={16} />
+  </span>
+  **Show value in center** – Display the aggregate value (sum, average, count,
+  etc.)
 
 ### Aggregate charts
-- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-left" size={16} /></span> **Prefix** – Add text before the number (e.g., `$`)
-- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}><ChartIcon icon="caret-right" size={16} /></span> **Suffix** – Add text after the number (e.g., `%`)
+
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="caret-left" size={16} />
+  </span>
+  **Prefix** – Add text before the number (e.g., `$`)
+- <span style={{ display: 'inline-flex', verticalAlign: 'middle' }}>
+    <ChartIcon icon="caret-right" size={16} />
+  </span>
+  **Suffix** – Add text after the number (e.g., `%`)

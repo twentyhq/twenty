@@ -1,12 +1,14 @@
 ---
 title: Setup
-icon: "gear"
+icon: 'gear'
 ---
 
 # Configuration Management
 
 <Warning>
-**First time installing?** Follow the [Docker Compose installation guide](/developers/self-host/capabilities/docker-compose) to get Twenty running, then return here for configuration.
+  **First time installing?** Follow the [Docker Compose installation
+  guide](/developers/self-host/capabilities/docker-compose) to get Twenty
+  running, then return here for configuration.
 </Warning>
 
 Twenty offers **two configuration modes** to suit different deployment needs:
@@ -27,10 +29,15 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 4. Changes take effect immediately (within 15 seconds for multi-container deployments)
 
 <Warning>
-**Multi-Container Deployments:** When using database configuration (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers read from the same database. Admin panel changes affect both automatically, eliminating the need to duplicate environment variables between containers (except for infrastructure variables).
+  **Multi-Container Deployments:** When using database configuration
+  (`IS_CONFIG_VARIABLES_IN_DB_ENABLED=true`), both server and worker containers
+  read from the same database. Admin panel changes affect both automatically,
+  eliminating the need to duplicate environment variables between containers
+  (except for infrastructure variables).
 </Warning>
 
 **What you can configure through the admin panel:**
+
 - **Authentication** - Google/Microsoft OAuth, password settings
 - **Email** - SMTP settings, templates, verification
 - **Storage** - S3 configuration, local storage paths
@@ -45,16 +52,17 @@ Each variable is documented with descriptions in your admin panel at **Settings 
 Some infrastructure settings like database connections (`PG_DATABASE_URL`), server URLs (`SERVER_URL`), and secrets (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) can only be configured via `.env` file.
 
 [Complete technical reference →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
+
 </Warning>
 
 ## Encryption keys
 
 Twenty uses two env-only encryption keys:
 
-| Variable | Purpose | Required |
-| --- | --- | --- |
-| `ENCRYPTION_KEY` | Primary key used to encrypt secrets at rest (OAuth tokens, application variables, signing-key private keys, TOTP secrets, sensitive config values). | Yes for new installs (legacy installs may instead rely on `APP_SECRET` — see below) |
-| `FALLBACK_ENCRYPTION_KEY` | Verification-only key. Set during a rotation to the *previous* `ENCRYPTION_KEY` so existing rows remain decryptable. | Only during rotation |
+| Variable                  | Purpose                                                                                                                                             | Required                                                                            |
+| ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Primary key used to encrypt secrets at rest (OAuth tokens, application variables, signing-key private keys, TOTP secrets, sensitive config values). | Yes for new installs (legacy installs may instead rely on `APP_SECRET` — see below) |
+| `FALLBACK_ENCRYPTION_KEY` | Verification-only key. Set during a rotation to the _previous_ `ENCRYPTION_KEY` so existing rows remain decryptable.                                | Only during rotation                                                                |
 
 For backward compatibility, if `ENCRYPTION_KEY` is unset, Twenty falls back to `APP_SECRET` for at-rest encryption — matching the legacy behaviour for older deployments. New installs should always set a dedicated `ENCRYPTION_KEY`.
 
@@ -100,6 +108,7 @@ DEFAULT_SUBDOMAIN=app  # default value
 Enable multi-workspace mode for SaaS-like deployments where multiple independent teams need their own workspaces on the same Twenty instance.
 
 **Key differences from single-workspace mode:**
+
 - Multiple workspaces can be created on the same instance
 - Each workspace gets its own subdomain (e.g., `sales.your-domain.com`, `marketing.your-domain.com`)
 - Users sign up and log in at `{DEFAULT_SUBDOMAIN}.your-domain.com` (e.g., `app.your-domain.com`)
@@ -107,7 +116,9 @@ Enable multi-workspace mode for SaaS-like deployments where multiple independent
 - Workspace-specific settings like subdomain and custom domain become available in workspace settings
 
 <Warning>
-**Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be configured via `.env` file and requires a restart. It cannot be changed through the admin panel.
+  **Environment-only setting:** `IS_MULTIWORKSPACE_ENABLED` can only be
+  configured via `.env` file and requires a restart. It cannot be changed
+  through the admin panel.
 </Warning>
 
 ### DNS Configuration for Multi-Workspace
@@ -137,6 +148,7 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select existing one
 3. Enable these APIs:
+
 - [Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com)
 - [Google Calendar API](https://console.cloud.google.com/apis/library/calendar-json.googleapis.com)
 - [People API](https://console.cloud.google.com/apis/library/people.googleapis.com)
@@ -162,11 +174,14 @@ When enabled, only users with `canAccessFullAdminPanel` can create additional wo
    - `AUTH_GOOGLE_APIS_CALLBACK_URL=https://{your-domain}/auth/google-apis/get-access-token`
 
 <Warning>
-**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+  **Environment-only mode:** If you set
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env`
+  file instead.
 </Warning>
 
 **Required scopes** (automatically configured):
 [See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-google-apis-oauth-scopes.ts#L4-L10)
+
 - `https://www.googleapis.com/auth/calendar.events`
 - `https://www.googleapis.com/auth/gmail.readonly`
 - `https://www.googleapis.com/auth/profile.emails.read`
@@ -180,7 +195,10 @@ Under [OAuth consent screen](https://console.cloud.google.com/apis/credentials/c
 ## Microsoft 365 Integration
 
 <Warning>
-Users must have a [Microsoft 365 Licence](https://admin.microsoft.com/Adminportal/Home) to be able to use the Calendar and Messaging API. They will not be able to sync their account on Twenty without one.
+  Users must have a [Microsoft 365
+  Licence](https://admin.microsoft.com/Adminportal/Home) to be able to use the
+  Calendar and Messaging API. They will not be able to sync their account on
+  Twenty without one.
 </Warning>
 
 ### Create a project in Microsoft Azure
@@ -205,6 +223,7 @@ Note: "Mail.ReadWrite" and "Mail.Send" are only mandatory if you want to send em
 ### Authorized redirect URIs
 
 You need to add the following redirect URIs to your project:
+
 - `https://{your-domain}/auth/microsoft/redirect` if you want to use Microsoft SSO
 - `https://{your-domain}/auth/microsoft-apis/get-access-token`
 
@@ -222,11 +241,15 @@ You need to add the following redirect URIs to your project:
    - `AUTH_MICROSOFT_APIS_CALLBACK_URL=https://{your-domain}/auth/microsoft-apis/get-access-token`
 
 <Warning>
-**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+  **Environment-only mode:** If you set
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env`
+  file instead.
 </Warning>
 
 ### Configure scopes
+
 [See relevant source code](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/auth/utils/get-microsoft-apis-oauth-scopes.ts#L2-L9)
+
 - 'openid'
 - 'email'
 - 'profile'
@@ -246,6 +269,7 @@ Add your test users to the "Users and groups" section.
 After configuring Gmail, Google Calendar, or Microsoft 365 integrations, you need to start the background jobs that sync data.
 
 Register the following recurring jobs in your worker container:
+
 ```bash
 # from your worker container
 yarn command:prod cron:messaging:messages-import
@@ -267,48 +291,56 @@ yarn command:prod cron:workflow:automated-cron-trigger
 
   <ArticleTab>
 
-  You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
-  - EMAIL_DRIVER=smtp
-  - EMAIL_SMTP_HOST=smtp.gmail.com
-  - EMAIL_SMTP_PORT=465
-  - EMAIL_SMTP_USER=gmail_email_address
-  - EMAIL_SMTP_PASSWORD='gmail_app_password'
+You will need to provision an [App Password](https://support.google.com/accounts/answer/185833).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.gmail.com
+- EMAIL_SMTP_PORT=465
+- EMAIL_SMTP_USER=gmail_email_address
+- EMAIL_SMTP_PASSWORD='gmail_app_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
-  - EMAIL_DRIVER=smtp
-  - EMAIL_SMTP_HOST=smtp.office365.com
-  - EMAIL_SMTP_PORT=587
-  - EMAIL_SMTP_USER=office365_email_address
-  - EMAIL_SMTP_PASSWORD='office365_password'
+Keep in mind that if you have 2FA enabled, you will need to provision an [App Password](https://support.microsoft.com/en-us/account-billing/manage-app-passwords-for-two-step-verification-d6dc8c6d-4bf7-4851-ad95-6d07799387e9).
+
+- EMAIL_DRIVER=smtp
+- EMAIL_SMTP_HOST=smtp.office365.com
+- EMAIL_SMTP_PORT=587
+- EMAIL_SMTP_USER=office365_email_address
+- EMAIL_SMTP_PASSWORD='office365_password'
 
   </ArticleTab>
 
   <ArticleTab>
 
-  **smtp4dev** is a fake SMTP email server for development and testing.
-  - Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
-  - Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
-  - Set the following variables:
-    - EMAIL_DRIVER=smtp
-    - EMAIL_SMTP_HOST=localhost
-    - EMAIL_SMTP_PORT=2525
+**smtp4dev** is a fake SMTP email server for development and testing.
+
+- Run the smtp4dev image: `docker run --rm -it -p 8090:80 -p 2525:25 rnwood/smtp4dev`
+- Access the smtp4dev ui here: [http://localhost:8090](http://localhost:8090)
+- Set the following variables:
+  - EMAIL_DRIVER=smtp
+  - EMAIL_SMTP_HOST=localhost
+  - EMAIL_SMTP_PORT=2525
 
   </ArticleTab>
 
 </ArticleTabs>
 
 <Warning>
-**Environment-only mode:** If you set `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env` file instead.
+  **Environment-only mode:** If you set
+  `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, add these variables to your `.env`
+  file instead.
 </Warning>
 
 ## S3 Storage
 
 <Warning>
-By default, Twenty stores uploaded files on the local filesystem. For production deployments, use S3 or an S3-compatible service (MinIO, DigitalOcean Spaces, etc.) to ensure files persist across container restarts and scale across multiple server instances.
+  By default, Twenty stores uploaded files on the local filesystem. For
+  production deployments, use S3 or an S3-compatible service (MinIO,
+  DigitalOcean Spaces, etc.) to ensure files persist across container restarts
+  and scale across multiple server instances.
 </Warning>
 
 Set `STORAGE_TYPE=S_3` and configure the `STORAGE_S3_*` variables through the admin panel or `.env`. See the [config-variables.ts reference](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) for the full list of S3 variables.
@@ -326,25 +358,32 @@ Twenty supports logic functions for workflows and the code interpreter for AI da
 **In development (NODE_ENV=development):** Both default to **LOCAL** for convenience when running locally.
 
 <Warning>
-**Security Notice:** The local driver (`LOGIC_FUNCTION_TYPE=LOCAL` or `CODE_INTERPRETER_TYPE=LOCAL`) runs code directly on the host in a Node.js process with no sandboxing. It should only be used for trusted code in development. For production deployments handling untrusted code, use `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B` (with sandboxing), or keep them disabled.
+  **Security Notice:** The local driver (`LOGIC_FUNCTION_TYPE=LOCAL` or
+  `CODE_INTERPRETER_TYPE=LOCAL`) runs code directly on the host in a Node.js
+  process with no sandboxing. It should only be used for trusted code in
+  development. For production deployments handling untrusted code, use
+  `LOGIC_FUNCTION_TYPE=LAMBDA` or `CODE_INTERPRETER_TYPE=E2B` (with sandboxing),
+  or keep them disabled.
 </Warning>
 
 ### Logic Functions - Available Drivers
 
-| Driver | Environment Variable | Use Case | Security Level |
-|--------|---------------------|----------|----------------|
-| Disabled | `LOGIC_FUNCTION_TYPE=DISABLED` | Disable logic functions entirely | N/A |
-| Local | `LOGIC_FUNCTION_TYPE=LOCAL` | Development and trusted environments | Low (no sandboxing) |
-| Lambda | `LOGIC_FUNCTION_TYPE=LAMBDA` | Production with untrusted code | High (hardware-level isolation) |
+| Driver   | Environment Variable           | Use Case                             | Security Level                  |
+| -------- | ------------------------------ | ------------------------------------ | ------------------------------- |
+| Disabled | `LOGIC_FUNCTION_TYPE=DISABLED` | Disable logic functions entirely     | N/A                             |
+| Local    | `LOGIC_FUNCTION_TYPE=LOCAL`    | Development and trusted environments | Low (no sandboxing)             |
+| Lambda   | `LOGIC_FUNCTION_TYPE=LAMBDA`   | Production with untrusted code       | High (hardware-level isolation) |
 
 ### Logic Functions - Recommended Configuration
 
 **For development:**
+
 ```bash
 LOGIC_FUNCTION_TYPE=LOCAL  # default when NODE_ENV=development
 ```
 
 **For production (AWS):**
+
 ```bash
 LOGIC_FUNCTION_TYPE=LAMBDA
 LOGIC_FUNCTION_LAMBDA_REGION=us-east-1
@@ -354,18 +393,21 @@ LOGIC_FUNCTION_LAMBDA_SECRET_ACCESS_KEY=your-secret-key
 ```
 
 **To disable logic functions:**
+
 ```bash
 LOGIC_FUNCTION_TYPE=DISABLED  # default when NODE_ENV=production
 ```
 
 ### Code Interpreter - Available Drivers
 
-| Driver | Environment Variable | Use Case | Security Level |
-|--------|---------------------|----------|----------------|
-| Disabled | `CODE_INTERPRETER_TYPE=DISABLED` | Disable AI code execution | N/A |
-| Local | `CODE_INTERPRETER_TYPE=LOCAL` | Development only | Low (no sandboxing) |
-| E2B | `CODE_INTERPRETER_TYPE=E_2_B` | Production with sandboxed execution | High (isolated sandbox) |
+| Driver   | Environment Variable             | Use Case                            | Security Level          |
+| -------- | -------------------------------- | ----------------------------------- | ----------------------- |
+| Disabled | `CODE_INTERPRETER_TYPE=DISABLED` | Disable AI code execution           | N/A                     |
+| Local    | `CODE_INTERPRETER_TYPE=LOCAL`    | Development only                    | Low (no sandboxing)     |
+| E2B      | `CODE_INTERPRETER_TYPE=E_2_B`    | Production with sandboxed execution | High (isolated sandbox) |
 
 <Note>
-When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`, any attempt to execute will return an error. This is useful if you want to run Twenty without these capabilities.
+  When using `LOGIC_FUNCTION_TYPE=DISABLED` or `CODE_INTERPRETER_TYPE=DISABLED`,
+  any attempt to execute will return an error. This is useful if you want to run
+  Twenty without these capabilities.
 </Note>

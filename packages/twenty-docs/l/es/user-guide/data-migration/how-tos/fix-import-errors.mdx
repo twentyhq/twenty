@@ -16,7 +16,11 @@ Después de cargar tu archivo y asignar las columnas, Twenty valida tus datos:
 3. **Puedes corregir en el mismo lugar** — edita las celdas directamente en la interfaz de importación
 4. **O elimina filas** — omite por completo los registros problemáticos
 
-<Note>**Corrige los errores en la interfaz.** No necesitas volver a tu hoja de cálculo. Edita las celdas directamente durante la importación para ahorrar tiempo.</Note>
+<Note>
+  **Corrige los errores en la interfaz.** No necesitas volver a tu hoja de
+  cálculo. Edita las celdas directamente durante la importación para ahorrar
+  tiempo.
+</Note>
 
 ## Solución de problemas paso a paso
 
@@ -48,8 +52,8 @@ Las filas con valores duplicados se **resaltan en amarillo** en la interfaz de i
 
 Un campo único (correo electrónico, dominio) ya sea:
 
-* Ya existe en Twenty
-* Aparece dos veces en tu archivo
+- Ya existe en Twenty
+- Aparece dos veces en tu archivo
 
 ### Cómo solucionarlo
 
@@ -73,10 +77,11 @@ Un campo único (correo electrónico, dominio) ya sea:
 <Note>
   **También puedes actualizar campos únicos.**
 
-  * Si mantienes el `id` pero cambias el `email` → se actualizará el correo electrónico
-  * Si mantienes el `email` pero cambias el `id` → se actualizará el id
+- Si mantienes el `id` pero cambias el `email` → se actualizará el correo electrónico
+- Si mantienes el `email` pero cambias el `id` → se actualizará el id
 
-  Siempre que uno de los identificadores únicos coincida, Twenty actualiza el registro.
+Siempre que uno de los identificadores únicos coincida, Twenty actualiza el registro.
+
 </Note>
 
 ### Cómo evitar este error
@@ -90,7 +95,8 @@ Antes de importar:
 <Warning>
   **Los registros eliminados lógicamente cuentan para la unicidad.**
 
-  Consulta el Menú de comandos → Ver registros eliminados. Los registros allí aún aplican la unicidad. Elimínalos permanentemente o restáuralos y actualízalos.
+Consulta el Menú de comandos → Ver registros eliminados. Los registros allí aún aplican la unicidad. Elimínalos permanentemente o restáuralos y actualízalos.
+
 </Warning>
 
 Para más detalles: [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
@@ -135,7 +141,11 @@ Los datos no coinciden con el formato esperado para ese tipo de campo.
 ✅ https://acme.com  (recomendado)
 ```
 
-<Note>Todos los formatos son válidos, pero se recomienda `https://domain.com` porque coincide con el formato utilizado por la sincronización de correo/calendario. Usar otros formatos puede crear empresas duplicadas.</Note>
+<Note>
+  Todos los formatos son válidos, pero se recomienda `https://domain.com` porque
+  coincide con el formato utilizado por la sincronización de correo/calendario.
+  Usar otros formatos puede crear empresas duplicadas.
+</Note>
 
 #### Fecha
 
@@ -258,7 +268,11 @@ Can't connect to company. No unique record found with condition: id = 7776ee49-f
 
 Esto significa que no hay ninguna empresa en Twenty con ese identificador específico.
 
-<Note>A diferencia de otros errores, este no se detecta durante el paso de revisión de datos. La importación comenzará y luego fallará cuando encuentre la relación faltante.</Note>
+<Note>
+  A diferencia de otros errores, este no se detecta durante el paso de revisión
+  de datos. La importación comenzará y luego fallará cuando encuentre la
+  relación faltante.
+</Note>
 
 ### Qué significa
 
@@ -286,19 +300,20 @@ Estás intentando vincular a un registro que no existe en Twenty.
 ### Cómo evitar este error
 
 1. **Importa en el orden correcto:**
-   * Empresas primero
-   * Personas después (con referencias a empresa)
-   * Oportunidades en tercer lugar
+   - Empresas primero
+   - Personas después (con referencias a empresa)
+   - Oportunidades en tercer lugar
 
 2. **Verifica los valores de referencia:**
-   * Exporta los registros padre para obtener identificadores exactos
-   * Usa el formato de dominio `https://domain.com`
-   * Comprueba posibles errores tipográficos y diferencias entre mayúsculas y minúsculas
+   - Exporta los registros padre para obtener identificadores exactos
+   - Usa el formato de dominio `https://domain.com`
+   - Comprueba posibles errores tipográficos y diferencias entre mayúsculas y minúsculas
 
 <Warning>
   **La importación fallará si se hace referencia a un registro inexistente.**
 
-  Importa siempre los objetos padre antes que los objetos hijo.
+Importa siempre los objetos padre antes que los objetos hijo.
+
 </Warning>
 
 Para más detalles: [Importar relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
@@ -349,7 +364,10 @@ No se puede asignar una columna de tu archivo porque el campo no existe en Twent
 4. Crea el campo personalizado con el tipo adecuado
 5. Vuelve a cargar tu archivo
 
-<Note>La importación de CSV crea registros, no campos. Todos los campos deben existir antes de importar.</Note>
+<Note>
+  La importación de CSV crea registros, no campos. Todos los campos deben
+  existir antes de importar.
+</Note>
 
 ---
 
@@ -374,7 +392,8 @@ Estás intentando asignar un registro a un usuario (Propietario, Asignado) pero 
 <Warning>
   **Los usuarios deben aceptar las invitaciones antes de importar.**
 
-  Si un usuario no ha aceptado su invitación, los registros que lo referencian tendrán relaciones de usuario vacías.
+Si un usuario no ha aceptado su invitación, los registros que lo referencian tendrán relaciones de usuario vacías.
+
 </Warning>
 
 ---
@@ -399,7 +418,9 @@ Evita errores comprobando lo siguiente antes de importar:
 ### Formatos de campos
 
 <Check>Los campos booleanos usan `TRUE` o `FALSE` (mayúsculas)</Check>
-<Check>Los campos de selección usan nombres de API, no etiquetas visibles</Check>
+<Check>
+  Los campos de selección usan nombres de API, no etiquetas visibles
+</Check>
 <Check>Los campos de teléfono tienen todas las columnas obligatorias</Check>
 <Check>Los campos de moneda tienen tanto Amount como Currency Code</Check>
 
@@ -407,11 +428,15 @@ Evita errores comprobando lo siguiente antes de importar:
 
 <Check>Registros padre importados antes que los registros hijo</Check>
 <Check>Las columnas de relación hacen referencia a registros existentes</Check>
-<Check>El formato de dominio coincide exactamente con el formato de Twenty</Check>
+<Check>
+  El formato de dominio coincide exactamente con el formato de Twenty
+</Check>
 
 ### Modelo de datos
 
-<Check>Todos los campos personalizados existen en Configuración → Modelo de datos</Check>
+<Check>
+  Todos los campos personalizados existen en Configuración → Modelo de datos
+</Check>
 <Check>Las opciones de selección existen antes de importar</Check>
 
 ---
@@ -424,7 +449,7 @@ Si ya intentaste las soluciones anteriores:
 2. **Exporta los registros existentes** — compara tu archivo con datos correctos
 3. **Prueba con un lote pequeño** — intenta primero con 5-10 filas
 4. **Consulta los artículos de referencia:**
-   * [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping)
-   * [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
-   * [Importar relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
-   * [Manejo de errores](/l/es/user-guide/data-migration/capabilities/error-handling)
+   - [Referencia de asignación de campos](/l/es/user-guide/data-migration/capabilities/field-mapping)
+   - [Restricciones de unicidad](/l/es/user-guide/data-migration/capabilities/uniqueness-constraints)
+   - [Importar relaciones](/l/es/user-guide/data-migration/capabilities/import-relations)
+   - [Manejo de errores](/l/es/user-guide/data-migration/capabilities/error-handling)

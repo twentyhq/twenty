@@ -11,20 +11,24 @@ Exportieren Sie die Daten Ihres Arbeitsbereichs als CSV für Backups, Berichte o
 
 **Anwendungsfälle:**
 
-* **Regelmäßige Backups** — behalten Sie Kopien Ihrer Daten
-* **Externe Berichterstattung** — analysieren Sie Daten in Excel, Google Sheets oder BI-Tools
-* **Migration** — übertragen Sie Daten in ein anderes System
-* **Massenaktualisierungen** — exportieren, bearbeiten und erneut importieren, um Datensätze zu aktualisieren
+- **Regelmäßige Backups** — behalten Sie Kopien Ihrer Daten
+- **Externe Berichterstattung** — analysieren Sie Daten in Excel, Google Sheets oder BI-Tools
+- **Migration** — übertragen Sie Daten in ein anderes System
+- **Massenaktualisierungen** — exportieren, bearbeiten und erneut importieren, um Datensätze zu aktualisieren
 
 ## Was Sie wissen müssen
 
 ### Exportbeschränkungen
 
-* **Maximal 20.000 Datensätze** pro Export
-* Nur **sichtbare Spalten** werden exportiert
-* Nur **gefilterte Datensätze** werden exportiert (basierend auf Ihrer aktuellen Ansicht)
+- **Maximal 20.000 Datensätze** pro Export
+- Nur **sichtbare Spalten** werden exportiert
+- Nur **gefilterte Datensätze** werden exportiert (basierend auf Ihrer aktuellen Ansicht)
 
-<Note>Für größere Exporte (mehr als 20.000 Datensätze) verwenden Sie Filter, um stapelweise zu exportieren, oder nutzen Sie die [API](/l/de/developers/extend/api).</Note>
+<Note>
+  Für größere Exporte (mehr als 20.000 Datensätze) verwenden Sie Filter, um
+  stapelweise zu exportieren, oder nutzen Sie die
+  [API](/l/de/developers/extend/api).
+</Note>
 
 ### Berechtigungen
 
@@ -34,10 +38,10 @@ Sie benötigen die Berechtigung **"Export CSV"**, um Daten zu exportieren. Konta
 
 Gehen Sie zu dem Objekt, das Sie exportieren möchten:
 
-* **People** — für Kontakte
-* **Companies** — für Organisationen
-* **Opportunities** — für Deals
-* **Benutzerdefinierte Objekte** — jedes Objekt, das Sie erstellt haben
+- **People** — für Kontakte
+- **Companies** — für Organisationen
+- **Opportunities** — für Deals
+- **Benutzerdefinierte Objekte** — jedes Objekt, das Sie erstellt haben
 
 ## Schritt 2: Ansicht konfigurieren
 
@@ -62,7 +66,11 @@ Wenn Sie nur einen Teil der Daten benötigen:
 1. Klicken Sie auf eine Spaltenüberschrift, um zu sortieren
 2. Der Export übernimmt Ihre Sortierreihenfolge
 
-<Note>**Erstellen Sie eine dedizierte Exportansicht.** Speichern Sie eine Ansicht, die speziell für Exporte konfiguriert ist, damit Sie sie nicht jedes Mal neu konfigurieren müssen.</Note>
+<Note>
+  **Erstellen Sie eine dedizierte Exportansicht.** Speichern Sie eine Ansicht,
+  die speziell für Exporte konfiguriert ist, damit Sie sie nicht jedes Mal neu
+  konfigurieren müssen.
+</Note>
 
 ## Schritt 3: Daten exportieren
 
@@ -85,8 +93,8 @@ Wenn Sie nur einen Teil der Daten benötigen:
 
 Beziehungs-IDs werden nur auf der **"Many"-Seite** einer Beziehung exportiert:
 
-* **People-Export** enthält eine `companyId`-Spalte (Beziehung People → Company)
-* **Companies-Export** enthält NICHT `peopleIds` (Companies ist die "One"-Seite)
+- **People-Export** enthält eine `companyId`-Spalte (Beziehung People → Company)
+- **Companies-Export** enthält NICHT `peopleIds` (Companies ist die "One"-Seite)
 
 Das bedeutet, Sie können den People-Export zum Re-Import verwenden und die Verknüpfung zur Company beibehalten, müssen jedoch People nach Companies erneut importieren, um die Beziehungen wiederherzustellen.
 
@@ -136,9 +144,9 @@ Das Exportlimit beträgt 20.000 Datensätze. Für größere Datensätze:
 
 **Beispielfilter für die Stapelverarbeitung:**
 
-* Nach Datumsbereich (Januar, Februar, März ...)
-* Nach Eigentümer/in (Teammitglied A, Teammitglied B ...)
-* Nach Status (Aktiv, Inaktiv ...)
+- Nach Datumsbereich (Januar, Februar, März ...)
+- Nach Eigentümer/in (Teammitglied A, Teammitglied B ...)
+- Nach Status (Aktiv, Inaktiv ...)
 
 ### Option 2: Verwenden Sie die API
 
@@ -164,9 +172,9 @@ Speichern Sie Ansichten, die speziell für Exporte konfiguriert sind:
 
 Exportierte Dateien können sensible Daten enthalten:
 
-* Speichern Sie sie an sicheren Orten
-* Löschen Sie alte Exporte, wenn sie nicht mehr benötigt werden
-* Seien Sie vorsichtig beim Teilen von Exportdateien
+- Speichern Sie sie an sicheren Orten
+- Löschen Sie alte Exporte, wenn sie nicht mehr benötigt werden
+- Seien Sie vorsichtig beim Teilen von Exportdateien
 
 ### Vor dem Export prüfen
 
@@ -181,21 +189,27 @@ Exportierte Dateien können sensible Daten enthalten:
     Es werden nur sichtbare Spalten exportiert. Fügen Sie die benötigten Spalten vor dem Export über **Optionen → Felder** hinzu.
   </Accordion>
 
-  <Accordion title="Warum enthält mein Export nicht alle Datensätze?">
-    Überprüfen Sie Ihre Filter. Der Export enthält nur Datensätze, die Ihren aktuellen Ansichtsfiltern entsprechen. Entfernen Sie Filter, um alle Datensätze zu exportieren.
-  </Accordion>
+<Accordion title="Warum enthält mein Export nicht alle Datensätze?">
+  Überprüfen Sie Ihre Filter. Der Export enthält nur Datensätze, die Ihren
+  aktuellen Ansichtsfiltern entsprechen. Entfernen Sie Filter, um alle
+  Datensätze zu exportieren.
+</Accordion>
 
-  <Accordion title="Kann ich mehr als 20.000 Datensätze exportieren?">
-    Nicht in einem einzigen Export. Verwenden Sie Filter, um stapelweise zu exportieren, oder nutzen Sie die API für größere Datensätze.
-  </Accordion>
+<Accordion title="Kann ich mehr als 20.000 Datensätze exportieren?">
+  Nicht in einem einzigen Export. Verwenden Sie Filter, um stapelweise zu
+  exportieren, oder nutzen Sie die API für größere Datensätze.
+</Accordion>
 
-  <Accordion title="Welches Format hat die Exportdatei?">
-    CSV (durch Kommas getrennte Werte). Lässt sich in Excel, Google Sheets oder jeder Tabellenkalkulationsanwendung öffnen.
-  </Accordion>
+<Accordion title="Welches Format hat die Exportdatei?">
+  CSV (durch Kommas getrennte Werte). Lässt sich in Excel, Google Sheets oder
+  jeder Tabellenkalkulationsanwendung öffnen.
+</Accordion>
 
-  <Accordion title="Sind Beziehungs-IDs enthalten?">
-    Ja, aber nur auf der "Many"-Seite von Beziehungen. Beispielsweise enthält ein People-Export `companyId`, ein Companies-Export enthält jedoch keine People-IDs.
-  </Accordion>
+<Accordion title="Sind Beziehungs-IDs enthalten?">
+  Ja, aber nur auf der "Many"-Seite von Beziehungen. Beispielsweise enthält ein
+  People-Export `companyId`, ein Companies-Export enthält jedoch keine
+  People-IDs.
+</Accordion>
 
   <Accordion title="Kann ich Exporte automatisieren?">
     Nicht direkt über die UI. Verwenden Sie die API, um automatisierte Export-Workflows zu erstellen.
@@ -204,6 +218,6 @@ Exportierte Dateien können sensible Daten enthalten:
 
 ## Nächste Schritte
 
-* [So aktualisieren Sie vorhandene Datensätze](/l/de/user-guide/data-migration/how-tos/update-existing-records-via-import) — bearbeiten Sie Ihren Export und importieren Sie ihn erneut
-* [So importieren Sie Daten über die API](/l/de/user-guide/data-migration/how-tos/import-data-via-api) — für große Datensätze
-* [API-Dokumentation](/l/de/developers/extend/api) — erstellen Sie benutzerdefinierte Export-Workflows
+- [So aktualisieren Sie vorhandene Datensätze](/l/de/user-guide/data-migration/how-tos/update-existing-records-via-import) — bearbeiten Sie Ihren Export und importieren Sie ihn erneut
+- [So importieren Sie Daten über die API](/l/de/user-guide/data-migration/how-tos/import-data-via-api) — für große Datensätze
+- [API-Dokumentation](/l/de/developers/extend/api) — erstellen Sie benutzerdefinierte Export-Workflows

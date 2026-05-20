@@ -4,7 +4,9 @@ description: 영업 기회가 각 단계에 진입한 시점을 추적하여 거
 ---
 
 <Tip>
-  이는 워크플로를 사용해 [수식 필드](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields)를 만드는 예시로, 특히 날짜 계산에 관한 내용입니다.
+  이는 워크플로를 사용해 [수식
+  필드](/l/ko/user-guide/workflows/how-tos/crm-automations/formula-fields)를
+  만드는 예시로, 특히 날짜 계산에 관한 내용입니다.
 </Tip>
 
 영업 기회가 각 단계에 진입한 시점을 추적하면 병목을 파악하고 거래 속도를 측정할 수 있습니다.
@@ -15,46 +17,47 @@ description: 영업 기회가 각 단계에 진입한 시점을 추적하여 거
 
 각 단계마다 두 가지 유형의 필드가 필요합니다:
 
-* **날짜 및 시간 필드**: 영업 기회가 각 단계에 진입한 시점을 기록
-* **숫자 필드**: 영업 기회가 각 단계에서 보낸 일수 저장
+- **날짜 및 시간 필드**: 영업 기회가 각 단계에 진입한 시점을 기록
+- **숫자 필드**: 영업 기회가 각 단계에서 보낸 일수 저장
 
 ### "Last Entered" 필드 생성
 
 1. **설정 → 데이터 모델 → Opportunities**로 이동
 2. 각 단계에서 **+ Add Field**를 클릭하고 다음을 구성합니다:
-   * **Name**: Last Entered [단계 이름] (예: "Last Entered New", "Last Entered Qualified")
-   * **Type**: Date & Time
-   * **Description**: 이 단계에 영업 기회가 진입한 시각의 타임스탬프
+   - **Name**: Last Entered [단계 이름] (예: "Last Entered New", "Last Entered Qualified")
+   - **Type**: Date & Time
+   - **Description**: 이 단계에 영업 기회가 진입한 시각의 타임스탬프
 3. **저장** 클릭
 
 다음 필드를 생성합니다:
 
-* Last Entered New
-* Last Entered Qualified
-* Last Entered Meeting
-* Last Entered Proposal
-* Last Entered Negotiation
-* Last Entered Closed Won
-* Last Entered Closed Lost
+- Last Entered New
+- Last Entered Qualified
+- Last Entered Meeting
+- Last Entered Proposal
+- Last Entered Negotiation
+- Last Entered Closed Won
+- Last Entered Closed Lost
 
 ### "Days in Stage" 필드 생성
 
 1. 각 단계에서 **+ Add Field**를 클릭하고 다음을 구성합니다:
-   * **Name**: Days in [단계 이름] (예: "Days in New", "Days in Qualified")
-   * **Type**: Number
-   * **Description**: 이 단계에서 보낸 일수
+   - **Name**: Days in [단계 이름] (예: "Days in New", "Days in Qualified")
+   - **Type**: Number
+   - **Description**: 이 단계에서 보낸 일수
 2. **저장** 클릭
 
 다음 필드를 생성합니다:
 
-* Days in New
-* Days in Qualified
-* Days in Meeting
-* Days in Proposal
-* Days in Negotiation
+- Days in New
+- Days in Qualified
+- Days in Meeting
+- Days in Proposal
+- Days in Negotiation
 
 <Note>
-  "Closed Won"과 "Closed Lost"는 마지막 단계이므로 "Days in" 필드는 필요하지 않습니다.
+  "Closed Won"과 "Closed Lost"는 마지막 단계이므로 "Days in" 필드는 필요하지
+  않습니다.
 </Note>
 
 ### 선택 사항: 필드를 읽기 전용으로 설정
@@ -70,8 +73,8 @@ description: 영업 기회가 각 단계에 진입한 시점을 추적하여 거
 
 이 단일 워크플로가 두 가지 작업을 모두 처리합니다:
 
-* 새 단계에 진입한 시각의 타임스탬프를 기록
-* 이전 단계에서 보낸 일수를 계산
+- 새 단계에 진입한 시각의 타임스탬프를 기록
+- 이전 단계에서 보낸 일수를 계산
 
 ### 워크플로 생성
 
@@ -88,7 +91,9 @@ description: 영업 기회가 각 단계에 진입한 시점을 추적하여 거
 ### 각 단계에 대한 브랜치 추가
 
 <Note>
-  새 브랜치를 만들려면 워크플로 캔버스에서 마우스 오른쪽 버튼을 클릭하고 **New action**을 클릭합니다. 그런 다음 이전 노드에서 이 새 액션으로 화살표를 끌어 이전 노드와 이 액션을 연결합니다.
+  새 브랜치를 만들려면 워크플로 캔버스에서 마우스 오른쪽 버튼을 클릭하고 **New
+  action**을 클릭합니다. 그런 다음 이전 노드에서 이 새 액션으로 화살표를 끌어
+  이전 노드와 이 액션을 연결합니다.
 </Note>
 
 ---
@@ -107,9 +112,9 @@ export const main = async (): Promise<object> => {
 ```
 
 3. **Update Record** 액션 추가:
-   * Record: 트리거된 Opportunity
-   * Field: Last Entered New
-   * Value: Code 노드의 `now`
+   - Record: 트리거된 Opportunity
+   - Field: Last Entered New
+   - Value: Code 노드의 `now`
 
 ---
 
@@ -140,10 +145,10 @@ export const main = async (params: {
 
 3. Code 노드 입력 구성: `lastEnteredPreviousStage`를 **Last Entered New** 필드에 매핑
 4. **Update Record** 액션 추가:
-   * Record: 트리거된 Opportunity
-   * 업데이트할 필드:
-     * Last Entered Qualified = `now`
-     * Days in New = `daysInPreviousStage`
+   - Record: 트리거된 Opportunity
+   - 업데이트할 필드:
+     - Last Entered Qualified = `now`
+     - Days in New = `daysInPreviousStage`
 
 ---
 
@@ -174,16 +179,16 @@ export const main = async (params: {
 
 3. Code 노드 입력 구성: `lastEnteredPreviousStage`를 **Last Entered Qualified** 필드에 매핑
 4. **Update Record** 액션 추가:
-   * Record: 트리거된 Opportunity
-   * 업데이트할 필드:
-     * Last Entered Meeting = `now`
-     * Days in Qualified = `daysInPreviousStage`
+   - Record: 트리거된 Opportunity
+   - 업데이트할 필드:
+     - Last Entered Meeting = `now`
+     - Days in Qualified = `daysInPreviousStage`
 
 ---
 
 **나머지 단계 계속:**
 
-| 단계          | 기록                       | 계산                  |
+| 단계        | 기록                     | 계산                |
 | ----------- | ------------------------ | ------------------- |
 | Proposal    | Last Entered Proposal    | Days in Meeting     |
 | Negotiation | Last Entered Negotiation | Days in Proposal    |
@@ -217,15 +222,15 @@ export const main = async (params: {
 
 ## 요약
 
-| 구성 요소               | 용도                           |
-| ------------------- | ---------------------------- |
-| **Last Entered 필드** | 영업 기회가 각 단계에 진입한 시점을 저장      |
-| **Days in 필드**      | 각 단계에서 보낸 일수를 저장             |
-| **워크플로**            | 한 번의 실행으로 타임스탬프를 기록하고 일수를 계산 |
-| **보기 및 집계**         | 거래 속도를 분석하고 병목을 식별           |
+| 구성 요소             | 용도                                               |
+| --------------------- | -------------------------------------------------- |
+| **Last Entered 필드** | 영업 기회가 각 단계에 진입한 시점을 저장           |
+| **Days in 필드**      | 각 단계에서 보낸 일수를 저장                       |
+| **워크플로**          | 한 번의 실행으로 타임스탬프를 기록하고 일수를 계산 |
+| **보기 및 집계**      | 거래 속도를 분석하고 병목을 식별                   |
 
 ## 관련
 
-* [워크플로](/l/ko/user-guide/workflows/overview) — 자동화 기본
-* [사용자 정의 필드 생성 방법](/l/ko/user-guide/data-model/how-tos/create-custom-fields) — 필드 구성
-* [칸반 보기](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — 집계
+- [워크플로](/l/ko/user-guide/workflows/overview) — 자동화 기본
+- [사용자 정의 필드 생성 방법](/l/ko/user-guide/data-model/how-tos/create-custom-fields) — 필드 구성
+- [칸반 보기](/l/ko/user-guide/views-pipelines/capabilities/kanban-views) — 집계

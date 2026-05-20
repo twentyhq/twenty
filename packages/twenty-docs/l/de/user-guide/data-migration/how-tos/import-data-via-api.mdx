@@ -19,7 +19,10 @@ Twenty stellt sowohl **GraphQL**- als auch **REST-APIs** für den programmatisch
 | **Echtzeitsynchronisierung**         | **API-Import**                    |
 | **Integration mit anderen Systemen** | **API-Import**                    |
 
-<Note>Für Datensätze im Bereich von Hunderttausenden ist die API deutlich schneller und zuverlässiger als mehrere CSV-Importe.</Note>
+<Note>
+  Für Datensätze im Bereich von Hunderttausenden ist die API deutlich schneller
+  und zuverlässiger als mehrere CSV-Importe.
+</Note>
 
 ## API-Rate-Limits
 
@@ -35,6 +38,7 @@ Twenty setzt Rate-Limits durch, um die Systemstabilität zu gewährleisten:
 **Planen Sie Ihren Import unter Berücksichtigung dieser Limits.**
 
 Für 100.000 Datensätze bei maximalem Durchsatz rechnen Sie mit etwa 17 Minuten Importzeit. Fügen Sie Pufferzeit für Fehlerbehandlung und Wiederholungen hinzu.
+
 </Warning>
 
 ## Erste Schritte
@@ -51,21 +55,22 @@ Für 100.000 Datensätze bei maximalem Durchsatz rechnen Sie mit etwa 17 Minuten
 **Halten Sie Ihren API-Schlüssel geheim.**
 
 Jeder, der Ihren API-Schlüssel besitzt, kann auf die Daten Ihres Arbeitsbereichs zugreifen und sie ändern. Checken Sie ihn niemals in Code-Repositories ein und geben Sie ihn nicht öffentlich weiter.
+
 </Warning>
 
 ### Schritt 2: Wählen Sie Ihre API
 
 Twenty unterstützt zwei API-Typen:
 
-| API         | Am besten geeignet für                                           | Dokumentation                               |
-| ----------- | ---------------------------------------------------------------- | ------------------------------------------- |
+| API         | Am besten geeignet für                                           | Dokumentation                                    |
+| ----------- | ---------------------------------------------------------------- | ------------------------------------------------ |
 | **GraphQL** | Flexible Abfragen, Abruf verknüpfter Daten, komplexe Operationen | [API-Dokumentation](/l/de/developers/extend/api) |
 | **REST**    | Einfache CRUD-Operationen, vertraute REST-Muster                 | [API-Dokumentation](/l/de/developers/extend/api) |
 
 Beide APIs unterstützen:
 
-* Erstellen, Lesen, Aktualisieren und Löschen von Datensätzen
-* **Batch-Operationen** — bis zu 60 Datensätze pro Aufruf erstellen oder aktualisieren
+- Erstellen, Lesen, Aktualisieren und Löschen von Datensätzen
+- **Batch-Operationen** — bis zu 60 Datensätze pro Aufruf erstellen oder aktualisieren
 
 **Verwenden Sie für Importe Batch-Operationen**, um den Durchsatz innerhalb der Rate-Limits zu maximieren.
 
@@ -83,33 +88,33 @@ Wie bei CSV-Importen ist die **Reihenfolge bei Relationen wichtig**:
 
 ### Anfragen bündeln
 
-* Senden Sie Datensätze nicht einzeln
-* Fassen Sie bis zu **60 Datensätze pro API-Aufruf** zusammen
-* Dies maximiert den Durchsatz innerhalb der Rate-Limits
+- Senden Sie Datensätze nicht einzeln
+- Fassen Sie bis zu **60 Datensätze pro API-Aufruf** zusammen
+- Dies maximiert den Durchsatz innerhalb der Rate-Limits
 
 ### Mit Rate-Limits umgehen
 
-* Implementieren Sie Verzögerungen zwischen den Anfragen (mindestens 600 ms für dauerhafte Importe)
-* Verwenden Sie exponentielles Backoff, wenn Sie an Grenzen stoßen
-* Überwachen Sie 429-Antworten (Too Many Requests)
+- Implementieren Sie Verzögerungen zwischen den Anfragen (mindestens 600 ms für dauerhafte Importe)
+- Verwenden Sie exponentielles Backoff, wenn Sie an Grenzen stoßen
+- Überwachen Sie 429-Antworten (Too Many Requests)
 
 ### Daten zuerst validieren
 
-* Bereinigen und validieren Sie Ihre Daten vor dem Import
-* Prüfen Sie, ob Pflichtfelder ausgefüllt sind
-* Überprüfen Sie, ob die Formate den Anforderungen von Twenty entsprechen (siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping))
+- Bereinigen und validieren Sie Ihre Daten vor dem Import
+- Prüfen Sie, ob Pflichtfelder ausgefüllt sind
+- Überprüfen Sie, ob die Formate den Anforderungen von Twenty entsprechen (siehe [Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping))
 
 ### Alles protokollieren
 
-* Protokollieren Sie jeden importierten Datensatz (einschließlich IDs)
-* Protokollieren Sie Fehler mit vollem Kontext
-* Dies hilft bei der Fehleranalyse und der Überprüfung des Abschlusses
+- Protokollieren Sie jeden importierten Datensatz (einschließlich IDs)
+- Protokollieren Sie Fehler mit vollem Kontext
+- Dies hilft bei der Fehleranalyse und der Überprüfung des Abschlusses
 
 ### Zuerst testen
 
-* Testen Sie mit einer kleinen Stichprobe (10–20 Datensätze)
-* Überprüfen Sie, ob die Daten in Twenty korrekt angezeigt werden
-* Führen Sie anschließend den vollständigen Import aus
+- Testen Sie mit einer kleinen Stichprobe (10–20 Datensätze)
+- Überprüfen Sie, ob die Daten in Twenty korrekt angezeigt werden
+- Führen Sie anschließend den vollständigen Import aus
 
 ### Upsert verwenden, um Duplikate zu vermeiden
 
@@ -138,10 +143,10 @@ Bei komplexen API-Migrationen können unsere Partner helfen:
 
 **Am besten geeignet für:**
 
-* Migrationen mit über 100.000 Datensätzen
-* Komplexe Daten-Transformationen
-* Straffe Zeitpläne
-* Teams ohne Entwicklerressourcen
+- Migrationen mit über 100.000 Datensätzen
+- Komplexe Daten-Transformationen
+- Straffe Zeitpläne
+- Teams ohne Entwicklerressourcen
 
 Kontaktieren Sie uns unter [contact@twenty.com](mailto:contact@twenty.com) oder informieren Sie sich über unsere [Implementierungsservices](/l/de/user-guide/getting-started/capabilities/implementation-services).
 
@@ -152,17 +157,19 @@ Kontaktieren Sie uns unter [contact@twenty.com](mailto:contact@twenty.com) oder 
     Mit GraphQL können Sie in einer einzelnen Abfrage genau die Daten anfordern, die Sie benötigen, und es eignet sich besser für komplexe Operationen. REST verwendet standardmäßige HTTP-Methoden (GET, POST, PUT, DELETE) und ist möglicherweise vertrauter, wenn Sie mit herkömmlichen APIs gearbeitet haben.
   </Accordion>
 
-  <Accordion title="Kann ich vorhandene Datensätze über die API aktualisieren?">
-    Ja! Verwenden Sie Update-Mutationen (GraphQL) oder PUT/PATCH-Anfragen (REST) mit der `id` des Datensatzes.
-  </Accordion>
+<Accordion title="Kann ich vorhandene Datensätze über die API aktualisieren?">
+  Ja! Verwenden Sie Update-Mutationen (GraphQL) oder PUT/PATCH-Anfragen (REST)
+  mit der `id` des Datensatzes.
+</Accordion>
 
-  <Accordion title="Wie gehe ich mit Duplikaten um?">
-    Fragen Sie zunächst nach vorhandenen Datensätzen mit eindeutigen Kennungen (E-Mail, Domain). Aktualisieren, wenn vorhanden; erstellen, wenn nicht.
-  </Accordion>
+<Accordion title="Wie gehe ich mit Duplikaten um?">
+  Fragen Sie zunächst nach vorhandenen Datensätzen mit eindeutigen Kennungen
+  (E-Mail, Domain). Aktualisieren, wenn vorhanden; erstellen, wenn nicht.
+</Accordion>
 
-  <Accordion title="Kann ich Datensätze über die API löschen?">
-    Ja, verwenden Sie Lösch-Mutationen (GraphQL) oder DELETE-Anfragen (REST).
-  </Accordion>
+<Accordion title="Kann ich Datensätze über die API löschen?">
+  Ja, verwenden Sie Lösch-Mutationen (GraphQL) oder DELETE-Anfragen (REST).
+</Accordion>
 
   <Accordion title="Gibt es ein SDK für Python oder Node.js?">
     Derzeit nicht, aber beide APIs funktionieren mit jedem HTTP-Client in jeder Sprache.
@@ -173,4 +180,4 @@ Kontaktieren Sie uns unter [contact@twenty.com](mailto:contact@twenty.com) oder 
 
 Für vollständige Implementierungsdetails, Codebeispiele und Schema-Referenz:
 
-* [API-Dokumentation](/l/de/developers/extend/api)
+- [API-Dokumentation](/l/de/developers/extend/api)

@@ -19,7 +19,10 @@ Twenty oferă atât **GraphQL**, cât și **API-uri REST** pentru importul progr
 | **Sincronizare în timp real**    | **Import prin API**              |
 | **Integrare cu alte sisteme**    | **Import prin API**              |
 
-<Note>Pentru seturi de date de ordinul sutelor de mii, API-ul este semnificativ mai rapid și mai fiabil decât importurile CSV multiple.</Note>
+<Note>
+  Pentru seturi de date de ordinul sutelor de mii, API-ul este semnificativ mai
+  rapid și mai fiabil decât importurile CSV multiple.
+</Note>
 
 ## Limitări de rată API
 
@@ -35,6 +38,7 @@ Twenty impune limitări de rată pentru a asigura stabilitatea sistemului:
 **Planificați importul în jurul acestor limite.**
 
 Pentru 100.000 de înregistrări la debit maxim, așteptați-vă la aproximativ 17 minute de timp de import. Adăugați timp tampon pentru gestionarea erorilor și reîncercări.
+
 </Warning>
 
 ## Începeți
@@ -51,21 +55,22 @@ Pentru 100.000 de înregistrări la debit maxim, așteptați-vă la aproximativ 
 **Păstrați cheia API secretă.**
 
 Oricine are cheia dvs. API poate accesa și modifica datele din spațiul dvs. de lucru. Nu o includeți niciodată în repozitorii de cod și nu o distribuiți public.
+
 </Warning>
 
 ### Pasul 2: Alegeți API-ul
 
 Twenty acceptă două tipuri de API:
 
-| API         | Cel mai potrivit pentru                                               | Documentație                               |
-| ----------- | --------------------------------------------------------------------- | ------------------------------------------ |
+| API         | Cel mai potrivit pentru                                               | Documentație                                    |
+| ----------- | --------------------------------------------------------------------- | ----------------------------------------------- |
 | **GraphQL** | Interogări flexibile, preluarea datelor asociate, operațiuni complexe | [Documentație API](/l/ro/developers/extend/api) |
 | **REST**    | Operațiuni CRUD simple, tipare REST familiare                         | [Documentație API](/l/ro/developers/extend/api) |
 
 Ambele API-uri acceptă:
 
-* Crearea, citirea, actualizarea și ștergerea înregistrărilor
-* **Operațiuni în lot** — creați sau actualizați până la 60 de înregistrări per apel
+- Crearea, citirea, actualizarea și ștergerea înregistrărilor
+- **Operațiuni în lot** — creați sau actualizați până la 60 de înregistrări per apel
 
 **Pentru importuri, utilizați operațiuni în lot** pentru a maximiza debitul în limitele de rată.
 
@@ -83,33 +88,33 @@ La fel ca la importurile CSV, **ordinea contează** pentru relații:
 
 ### Grupați cererile în loturi
 
-* Nu trimiteți înregistrările una câte una
-* Grupați până la **60 de înregistrări per apel API**
-* Aceasta maximizează debitul în limitele de rată
+- Nu trimiteți înregistrările una câte una
+- Grupați până la **60 de înregistrări per apel API**
+- Aceasta maximizează debitul în limitele de rată
 
 ### Gestionați limitările de rată
 
-* Implementați întârzieri între cereri (minim 600 ms pentru importuri susținute)
-* Utilizați backoff exponențial când atingeți limitele
-* Monitorizați răspunsurile 429 (Too Many Requests)
+- Implementați întârzieri între cereri (minim 600 ms pentru importuri susținute)
+- Utilizați backoff exponențial când atingeți limitele
+- Monitorizați răspunsurile 429 (Too Many Requests)
 
 ### Validați datele mai întâi
 
-* Curățați și validați datele înainte de import
-* Verificați ca câmpurile obligatorii să fie completate
-* Verificați că formatele corespund cerințelor Twenty (consultați [Maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping))
+- Curățați și validați datele înainte de import
+- Verificați ca câmpurile obligatorii să fie completate
+- Verificați că formatele corespund cerințelor Twenty (consultați [Maparea câmpurilor](/l/ro/user-guide/data-migration/capabilities/field-mapping))
 
 ### Jurnalizați totul
 
-* Jurnalizați fiecare înregistrare importată (inclusiv ID-urile)
-* Jurnalizați erorile cu tot contextul
-* Acest lucru ajută la depanarea problemelor și la verificarea finalizării
+- Jurnalizați fiecare înregistrare importată (inclusiv ID-urile)
+- Jurnalizați erorile cu tot contextul
+- Acest lucru ajută la depanarea problemelor și la verificarea finalizării
 
 ### Testați mai întâi
 
-* Testați cu un lot mic (10-20 de înregistrări)
-* Verificați că datele apar corect în Twenty
-* Apoi rulați importul complet
+- Testați cu un lot mic (10-20 de înregistrări)
+- Verificați că datele apar corect în Twenty
+- Apoi rulați importul complet
 
 ### Upsert pentru a evita duplicatele
 
@@ -138,10 +143,10 @@ Pentru migrații API complexe, partenerii noștri vă pot ajuta:
 
 **Cel mai potrivit pentru:**
 
-* Migrări de peste 100.000 de înregistrări
-* Transformări complexe ale datelor
-* Termene strânse
-* Echipe fără resurse de dezvoltare
+- Migrări de peste 100.000 de înregistrări
+- Transformări complexe ale datelor
+- Termene strânse
+- Echipe fără resurse de dezvoltare
 
 Contactați-ne la [contact@twenty.com](mailto:contact@twenty.com) sau explorați [Serviciile noastre de implementare](/l/ro/user-guide/getting-started/capabilities/implementation-services).
 
@@ -152,17 +157,19 @@ Contactați-ne la [contact@twenty.com](mailto:contact@twenty.com) sau explorați
     GraphQL vă permite să solicitați exact datele de care aveți nevoie într-o singură interogare și este mai potrivit pentru operațiuni complexe. REST folosește metode HTTP standard (GET, POST, PUT, DELETE) și poate fi mai familiar dacă ați lucrat cu API-uri tradiționale.
   </Accordion>
 
-  <Accordion title="Pot actualiza înregistrările existente prin API?">
-    Da! Utilizați mutații de tip update (GraphQL) sau cereri PUT/PATCH (REST) cu `id`-ul înregistrării.
-  </Accordion>
+<Accordion title="Pot actualiza înregistrările existente prin API?">
+  Da! Utilizați mutații de tip update (GraphQL) sau cereri PUT/PATCH (REST) cu
+  `id`-ul înregistrării.
+</Accordion>
 
-  <Accordion title="Cum gestionez duplicatele?">
-    Interogați mai întâi înregistrările existente folosind identificatori unici (email, domeniu). Actualizați dacă există, creați dacă nu.
-  </Accordion>
+<Accordion title="Cum gestionez duplicatele?">
+  Interogați mai întâi înregistrările existente folosind identificatori unici
+  (email, domeniu). Actualizați dacă există, creați dacă nu.
+</Accordion>
 
-  <Accordion title="Pot șterge înregistrări prin API?">
-    Da, utilizați mutații de tip delete (GraphQL) sau cereri DELETE (REST).
-  </Accordion>
+<Accordion title="Pot șterge înregistrări prin API?">
+  Da, utilizați mutații de tip delete (GraphQL) sau cereri DELETE (REST).
+</Accordion>
 
   <Accordion title="Există un SDK pentru Python sau Node.js?">
     În prezent nu, dar ambele API-uri funcționează cu orice client HTTP, în orice limbaj.
@@ -173,4 +180,4 @@ Contactați-ne la [contact@twenty.com](mailto:contact@twenty.com) sau explorați
 
 Pentru detalii complete de implementare, exemple de cod și referință de schemă:
 
-* [Documentație API](/l/ro/developers/extend/api)
+- [Documentație API](/l/ro/developers/extend/api)

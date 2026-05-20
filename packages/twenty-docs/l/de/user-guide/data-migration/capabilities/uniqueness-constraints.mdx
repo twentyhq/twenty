@@ -17,7 +17,11 @@ Twenty erzwingt die Eindeutigkeit bei bestimmten Feldern, um doppelte Datensätz
 | **Unternehmen**                | `id`, `domain`           |
 | **Benutzerdefinierte Objekte** | nur `id` (standardmäßig) |
 
-<Note>Das Feld `id` ist die interne Kennung von Twenty und wird für jeden Datensatz automatisch generiert. Es verwendet das UUID-Format (z. B. `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).</Note>
+<Note>
+  Das Feld `id` ist die interne Kennung von Twenty und wird für jeden Datensatz
+  automatisch generiert. Es verwendet das UUID-Format (z. B.
+  `c776ee49-f608-4a77-8cc8-6fe96ae1e43f`).
+</Note>
 
 ## Benutzerdefinierte eindeutige Felder
 
@@ -30,11 +34,14 @@ Sie können unter **Einstellungen → Datenmodell** zusätzliche eindeutige Feld
 
 ### Anwendungsfälle für benutzerdefinierte eindeutige Felder
 
-* **Externe IDs**: IDs aus anderen Systemen speichern (Salesforce-ID, HubSpot-ID)
-* **Geschäftskennungen**: Mitarbeiternummern, Kundencodes
-* **Alternative Kontaktinformationen**: LinkedIn-Profil, Telefonnummer
+- **Externe IDs**: IDs aus anderen Systemen speichern (Salesforce-ID, HubSpot-ID)
+- **Geschäftskennungen**: Mitarbeiternummern, Kundencodes
+- **Alternative Kontaktinformationen**: LinkedIn-Profil, Telefonnummer
 
-<Note>Der Feldname `id` ist für die interne ID von Twenty reserviert. Verwenden Sie für externe Kennungen einen anderen Namen wie `externalId` oder `legacyId`.</Note>
+<Note>
+  Der Feldname `id` ist für die interne ID von Twenty reserviert. Verwenden Sie
+  für externe Kennungen einen anderen Namen wie `externalId` oder `legacyId`.
+</Note>
 
 ## Importverhalten
 
@@ -45,7 +52,11 @@ Wenn ein eindeutiger Feldwert nicht existiert, wird ein neuer Datensatz erstellt
 ### Aktualisieren vorhandener Datensätze
 
 Wenn ein eindeutiger Feldwert mit einem vorhandenen Datensatz übereinstimmt, wird dieser Datensatz mit den neuen Daten **aktualisiert**.
-<Warning>Um **vorhandene Datensätze zu aktualisieren**, wird empfohlen, **nur ein eindeutiges Feld abzugleichen**.</Warning>
+
+<Warning>
+  Um **vorhandene Datensätze zu aktualisieren**, wird empfohlen, **nur ein
+  eindeutiges Feld abzugleichen**.
+</Warning>
 
 ### Soft-gelöschte Datensätze
 
@@ -53,14 +64,15 @@ Wenn ein eindeutiger Feldwert mit einem vorhandenen Datensatz übereinstimmt, wi
 **Gelöschte Datensätze zählen für die Eindeutigkeit.**
 
 Soft-gelöschte Datensätze (sichtbar unter Befehlsmenü → Gelöschte Datensätze anzeigen) werden in die Eindeutigkeitsprüfungen einbezogen. Wenn Sie einen Datensatz mit demselben eindeutigen Wert wie ein gelöschter Datensatz importieren, wird der gelöschte Datensatz mit den neuen Daten **wiederhergestellt**.
+
 </Warning>
 
 ## Duplikaterkennung während des Imports
 
 Während der Validierungsphase:
 
-* Duplikate in Ihrer Datei werden gelb hervorgehoben
-* Sie können doppelte Zeilen in der Benutzeroberfläche bearbeiten oder entfernen, bevor Sie den Import starten
+- Duplikate in Ihrer Datei werden gelb hervorgehoben
+- Sie können doppelte Zeilen in der Benutzeroberfläche bearbeiten oder entfernen, bevor Sie den Import starten
 
 <VimeoEmbed videoId="1145246326" title="Video-Demonstration" />
 

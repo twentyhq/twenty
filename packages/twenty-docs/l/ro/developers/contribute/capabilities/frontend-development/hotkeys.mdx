@@ -89,9 +89,7 @@ const ExamplePageWithModal = () => {
   const handleOpenModalClick = () => {
     // 1. Set the hotkey scope when user opens the modal
     setShowModal(true);
-    setHotkeyScopeAndMemorizePreviousScope(
-      ExampleHotkeyScopes.ExampleModal,
-    );
+    setHotkeyScopeAndMemorizePreviousScope(ExampleHotkeyScopes.ExampleModal);
   };
 
   const handleModalClose = () => {
@@ -100,11 +98,13 @@ const ExamplePageWithModal = () => {
     goBackToPreviousHotkeyScope();
   };
 
-  return <div>
-    <h1>My page with a modal</h1>
-    <button onClick={handleOpenModalClick}>Open modal</button>
-    {showModal && <MyModalComponent onClose={handleModalClose} />}
-  </div>;
+  return (
+    <div>
+      <h1>My page with a modal</h1>
+      <button onClick={handleOpenModalClick}>Open modal</button>
+      {showModal && <MyModalComponent onClose={handleModalClose} />}
+    </div>
+  );
 };
 ```
 
@@ -118,7 +118,7 @@ const MyDropdownComponent = ({ onClose }: { onClose: () => void }) => {
   useScopedHotkeys(
     Key.Escape,
     () => {
-      onClose()
+      onClose();
     },
     ExampleHotkeyScopes.ExampleModal,
   );

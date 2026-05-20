@@ -9,10 +9,10 @@ Müssen Sie viele Datensätze auf einmal aktualisieren? Statt sie einzeln zu bea
 
 **Anwendungsfälle:**
 
-* Positionsbezeichnungen für mehrere Personen aktualisieren
-* Unternehmensinformationen in großem Umfang ändern
-* Daten zu neuen benutzerdefinierten Feldern hinzufügen
-* Datenfehler in vielen Datensätzen korrigieren
+- Positionsbezeichnungen für mehrere Personen aktualisieren
+- Unternehmensinformationen in großem Umfang ändern
+- Daten zu neuen benutzerdefinierten Feldern hinzufügen
+- Datenfehler in vielen Datensätzen korrigieren
 
 ## Wie es funktioniert
 
@@ -30,6 +30,7 @@ Wenn Sie eine Datei importieren, die einen **eindeutigen Bezeichner** enthält, 
 Wenn in einem Datensatz `Option A` und `Option B` ausgewählt sind und Sie `[\"Option C\"]` importieren, hat der Datensatz nach dem Import nur noch `Option C`. Der Import ersetzt alle bisherigen Auswahlen — er fügt ihnen nichts hinzu.
 
 Um vorhandene Werte beizubehalten, schließen Sie sie alle in Ihren Import ein: `[\"Option A\",\"Option B\",\"Option C\"]`
+
 </Warning>
 
 ## Schritt 1: Exportieren Sie Ihre aktuellen Daten
@@ -42,13 +43,16 @@ Exportieren Sie zunächst die Datensätze, die Sie aktualisieren möchten:
 4. Klicken Sie auf **⋮** → **Ansicht exportieren**
 5. Speichern Sie die CSV-Datei
 
-<Note>**Warum zuerst exportieren?** Die exportierte Datei hat das richtige Format, enthält eindeutige Bezeichner und wird beim Import automatisch zugeordnet.</Note>
+<Note>
+  **Warum zuerst exportieren?** Die exportierte Datei hat das richtige Format,
+  enthält eindeutige Bezeichner und wird beim Import automatisch zugeordnet.
+</Note>
 
 ### Was exportiert wird
 
-* Alle sichtbaren Spalten in Ihrer aktuellen Ansicht
-* Die eindeutigen Bezeichner des Datensatzes (`id`, `email`, `domain`)
-* Aktuelle Feldwerte, die Sie ändern können
+- Alle sichtbaren Spalten in Ihrer aktuellen Ansicht
+- Die eindeutigen Bezeichner des Datensatzes (`id`, `email`, `domain`)
+- Aktuelle Feldwerte, die Sie ändern können
 
 ## Schritt 2: Bearbeiten Sie die CSV-Datei
 
@@ -83,6 +87,7 @@ id,email,firstName,lastName,jobTitle
 **Ändern Sie die Werte der eindeutigen Bezeichner nicht.**
 
 Wenn Sie `john@acme.com` in `john.smith@acme.com` ändern, erstellt Twenty einen neuen Datensatz, anstatt den vorhandenen zu aktualisieren.
+
 </Warning>
 
 ## Schritt 3: Importieren Sie die aktualisierte Datei
@@ -105,7 +110,10 @@ Twenty gleicht Datensätze anhand des eindeutigen Bezeichners ab und aktualisier
 | **Unternehmen**                | `domäne`                    | `id`        | Domain ist menschenlesbar                              |
 | **Benutzerdefinierte Objekte** | Beliebiges eindeutiges Feld | `id`        | Verwenden Sie Ihr benutzerdefiniertes eindeutiges Feld |
 
-<Note>**Verwenden Sie nur EINEN eindeutigen Bezeichner.** Ordnen Sie nicht sowohl `email` ALS AUCH `id` zu. Dies kann zu Verwirrung und Fehlern führen.</Note>
+<Note>
+  **Verwenden Sie nur EINEN eindeutigen Bezeichner.** Ordnen Sie nicht sowohl
+  `email` ALS AUCH `id` zu. Dies kann zu Verwirrung und Fehlern führen.
+</Note>
 
 ### Benutzerdefinierte eindeutige Felder verwenden
 
@@ -160,21 +168,28 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
     Datensätze mit eindeutigen Bezeichnern, die nicht mit vorhandenen Datensätzen übereinstimmen, werden als neue Datensätze erstellt. So können Sie im selben Import aktualisieren und erstellen.
   </Accordion>
 
-  <Accordion title="Kann ich einen Feldwert löschen/leeren?">
-    Ja, lassen Sie die Zelle in Ihrer CSV leer. Der Import löscht den Wert dieses Feldes im vorhandenen Datensatz.
-  </Accordion>
+<Accordion title="Kann ich einen Feldwert löschen/leeren?">
+  Ja, lassen Sie die Zelle in Ihrer CSV leer. Der Import löscht den Wert dieses
+  Feldes im vorhandenen Datensatz.
+</Accordion>
 
-  <Accordion title="Was passiert mit Feldern, die ich nicht in den Import aufnehme?">
-    Felder, die nicht in Ihrer Importdatei enthalten sind, bleiben in vorhandenen Datensätzen unverändert. Es werden nur die Felder aktualisiert, die Sie einschließen.
-  </Accordion>
+<Accordion title="Was passiert mit Feldern, die ich nicht in den Import aufnehme?">
+  Felder, die nicht in Ihrer Importdatei enthalten sind, bleiben in vorhandenen
+  Datensätzen unverändert. Es werden nur die Felder aktualisiert, die Sie
+  einschließen.
+</Accordion>
 
-  <Accordion title="Kann ich Beziehungsfelder (z. B. Unternehmen) aktualisieren?">
-    Ja! Fügen Sie den eindeutigen Bezeichner der Beziehung hinzu (z. B. `companyDomain`) und ordnen Sie ihn dem Beziehungsfeld zu. Die Beziehung wird aktualisiert.
-  </Accordion>
+<Accordion title="Kann ich Beziehungsfelder (z. B. Unternehmen) aktualisieren?">
+  Ja! Fügen Sie den eindeutigen Bezeichner der Beziehung hinzu (z. B.
+  `companyDomain`) und ordnen Sie ihn dem Beziehungsfeld zu. Die Beziehung wird
+  aktualisiert.
+</Accordion>
 
-  <Accordion title="Woher weiß ich, welche Datensätze aktualisiert bzw. erstellt werden?">
-    Im Überprüfungsschritt des Imports zeigt Twenty Ihnen anhand der Übereinstimmungen der eindeutigen Bezeichner, wie viele Datensätze aktualisiert bzw. erstellt werden.
-  </Accordion>
+<Accordion title="Woher weiß ich, welche Datensätze aktualisiert bzw. erstellt werden?">
+  Im Überprüfungsschritt des Imports zeigt Twenty Ihnen anhand der
+  Übereinstimmungen der eindeutigen Bezeichner, wie viele Datensätze
+  aktualisiert bzw. erstellt werden.
+</Accordion>
 
   <Accordion title="Kann ich eine Massenaktualisierung rückgängig machen?">
     Es gibt kein automatisches Rückgängigmachen. Wir empfehlen, Ihre Daten vor Massenaktualisierungen als Sicherung zu exportieren.
@@ -193,6 +208,6 @@ newperson@acme.com,New,Person,Analyst      ← Creates new (email doesn't match)
 
 Gibt es Probleme? Prüfen Sie:
 
-* [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
-* [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
-* [Referenz zur Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)
+- [So beheben Sie Importfehler](/l/de/user-guide/data-migration/how-tos/fix-import-errors)
+- [Eindeutigkeitsbeschränkungen](/l/de/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Referenz zur Feldzuordnung](/l/de/user-guide/data-migration/capabilities/field-mapping)

@@ -6,7 +6,9 @@ description: Calcola e visualizza i valori delle opportunità ponderati in base 
 L"Importo previsto è un valore calcolato: **Importo × Probabilità**. Questo ti aiuta a prevedere i ricavi ponderando le opportunità in base alla probabilità di chiusura.
 
 <Tip>
-Questo è un esempio di creazione di [Campi formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields) usando i workflow.
+  Questo è un esempio di creazione di [Campi
+  formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields)
+  usando i workflow.
 </Tip>
 
 Questa guida ti accompagna nella configurazione dei campi personalizzati e dei workflow necessari per calcolare e visualizzare gli importi previsti nella tua pipeline.
@@ -20,18 +22,18 @@ Hai bisogno di due campi personalizzati sull"oggetto Opportunità.
 1. Vai a **Impostazioni → Modello dati → Opportunità**
 2. Fai clic su **+ Aggiungi campo**
 3. Configura:
-   * **Nome**: Probabilità
-   * **Tipo**: Numero
-   * **Descrizione**: Probabilità basata sulla fase (0-100%)
+   - **Nome**: Probabilità
+   - **Tipo**: Numero
+   - **Descrizione**: Probabilità basata sulla fase (0-100%)
 4. Clicca su **Salva**
 
 ### Crea il campo Importo previsto
 
 1. Fai clic su **+ Aggiungi campo**
 2. Configura:
-   * **Nome**: Importo previsto
-   * **Tipo**: Valuta
-   * **Descrizione**: Calcolato: Importo × Probabilità
+   - **Nome**: Importo previsto
+   - **Tipo**: Valuta
+   - **Descrizione**: Calcolato: Importo × Probabilità
 3. Clicca su **Salva**
 
 ### Opzionale: Imposta i campi come di sola lettura per gli utenti
@@ -76,16 +78,18 @@ Crea un ramo per ogni fase con la relativa probabilità:
 | Chiuso - Persa | 0%          |
 
 <Note>
-Per creare un nuovo ramo, fai clic con il tasto destro sul canvas del workflow e fai clic su **Nuova azione**. Quindi, collega questa azione al nodo precedente trascinando la freccia dal nodo precedente a questa nuova azione.
+  Per creare un nuovo ramo, fai clic con il tasto destro sul canvas del workflow
+  e fai clic su **Nuova azione**. Quindi, collega questa azione al nodo
+  precedente trascinando la freccia dal nodo precedente a questa nuova azione.
 </Note>
 
 Per ogni fase:
 
 1. Aggiungi un nodo **Filtro**: Fase = [nome della fase]
 2. Aggiungi un"azione **Aggiorna record**:
-   * Record: l"Opportunità che ha attivato il trigger
-   * Campo: Probabilità
-   * Valore: [probabilità per quella fase]
+   - Record: l"Opportunità che ha attivato il trigger
+   - Campo: Probabilità
+   - Valore: [probabilità per quella fase]
 
 ### Calcola l"Importo previsto
 
@@ -93,9 +97,9 @@ Dopo che i rami si ricongiungono:
 
 1. Aggiungi un nodo **Filtro**: Importo non è vuoto
 2. Aggiungi un"azione **Aggiorna record**:
-   * Record: l"Opportunità che ha attivato il trigger
-   * Campo: Importo previsto
-   * Valore: Importo × Probabilità
+   - Record: l"Opportunità che ha attivato il trigger
+   - Campo: Importo previsto
+   - Valore: Importo × Probabilità
 
 ## Passaggio 3: Crea il workflow n. 2 — Ricalcola al cambio dell"Importo
 
@@ -117,9 +121,9 @@ Questo workflow aggiorna l"Importo previsto quando l"Importo dell"opportunità c
 
 1. Aggiungi un nodo **Filtro**: Importo non è vuoto
 2. Aggiungi un"azione **Aggiorna record**:
-   * Record: l"Opportunità che ha attivato il trigger
-   * Campo: Importo previsto
-   * Valore: Importo × Probabilità
+   - Record: l"Opportunità che ha attivato il trigger
+   - Campo: Importo previsto
+   - Valore: Importo × Probabilità
 
 ## Passaggio 4: Visualizza nella tua pipeline
 
@@ -144,6 +148,6 @@ Ogni colonna ora mostra il valore totale ponderato della pipeline per quella fas
 
 ## Correlati
 
-* [Campi formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields) — crea campi calcolati usando i workflow
-* [Visualizzazioni Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni di colonna
-* [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields) — configurazione dei campi
+- [Campi formula](/l/it/user-guide/workflows/how-tos/crm-automations/formula-fields) — crea campi calcolati usando i workflow
+- [Visualizzazioni Kanban](/l/it/user-guide/views-pipelines/capabilities/kanban-views) — aggregazioni di colonna
+- [Come creare campi personalizzati](/l/it/user-guide/data-model/how-tos/create-custom-fields) — configurazione dei campi

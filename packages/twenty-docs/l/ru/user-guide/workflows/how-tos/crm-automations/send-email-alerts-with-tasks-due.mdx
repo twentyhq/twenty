@@ -5,7 +5,10 @@ description: Автоматически уведомляйте членов ко
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Отправляйте ежедневные напоминания по электронной почте каждому члену команды о задачах, срок выполнения которых сегодня.
 
@@ -45,8 +48,8 @@ import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 1. Внутри итератора добавьте действие **Search Records**
 2. Выберите **Задачи** в качестве объекта
 3. Добавьте фильтры:
-   * **Assignee** = текущий участник рабочего пространства (из итератора)
-   * **Due Date** = сегодня
+   - **Assignee** = текущий участник рабочего пространства (из итератора)
+   - **Due Date** = сегодня
 
 ### Шаг 5: Отформатируйте задачи в текст письма (внутри итератора)
 
@@ -79,7 +82,7 @@ export const main = async (params: {
 ```
 
 <Note>
-Замените `yourSubDomain` на фактический поддомен рабочего пространства Twenty.
+  Замените `yourSubDomain` на фактический поддомен рабочего пространства Twenty.
 </Note>
 
 ### Шаг 6: Отправьте письмо (внутри итератора)
@@ -101,6 +104,6 @@ export const main = async (params: {
 
 ## Связанные материалы
 
-* [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
-* [Отправка писем из рабочих процессов](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Обработка массивов в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [Действия рабочего процесса](/l/ru/user-guide/workflows/capabilities/workflow-actions)
+- [Отправка писем из рабочих процессов](/l/ru/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Обработка массивов в действиях Code](/l/ru/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

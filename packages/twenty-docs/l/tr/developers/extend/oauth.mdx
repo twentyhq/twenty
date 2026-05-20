@@ -8,11 +8,11 @@ Twenty, kullanıcıya dönük uygulamalar için yetkilendirme kodu + PKCE'yi ve 
 
 ## OAuth Ne Zaman Kullanılır
 
-| Senaryo                                             | Kimlik Doğrulama Yöntemi                                                                 |
-| --------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| Senaryo                                             | Kimlik Doğrulama Yöntemi                                                                      |
+| --------------------------------------------------- | --------------------------------------------------------------------------------------------- |
 | Dahili betikler, otomasyon                          | [API Anahtarı](/l/tr/developers/extend/api#authentication)                                    |
-| Bir kullanıcının adına hareket eden harici uygulama | **OAuth — Yetkilendirme Kodu**                                                           |
-| Sunucudan sunucuya, kullanıcı bağlamı yok           | **OAuth — İstemci Kimlik Bilgileri**                                                     |
+| Bir kullanıcının adına hareket eden harici uygulama | **OAuth — Yetkilendirme Kodu**                                                                |
+| Sunucudan sunucuya, kullanıcı bağlamı yok           | **OAuth — İstemci Kimlik Bilgileri**                                                          |
 | UI uzantılarına sahip Twenty Uygulaması             | [Uygulamalar](/l/tr/developers/extend/apps/getting-started) (OAuth otomatik olarak yönetilir) |
 
 ## Bir İstemci Kaydedin
@@ -43,7 +43,8 @@ Content-Type: application/json
 ```
 
 <Warning>
-`client_secret` değerini güvenli bir şekilde saklayın — daha sonra geri alınamaz.
+  `client_secret` değerini güvenli bir şekilde saklayın — daha sonra geri
+  alınamaz.
 </Warning>
 
 ## Kapsamlar

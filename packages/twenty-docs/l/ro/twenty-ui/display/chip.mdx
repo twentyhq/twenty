@@ -30,13 +30,11 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 
 <Tab title="Proprietăți">
-
 
 | Proprietăți  | Tip                        | Descriere                                                                                               |
 | ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
@@ -47,8 +45,6 @@ export const MyComponent = () => {
 | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
 | variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
 | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
-
-
 
 </Tab>
 </Tabs>
@@ -62,7 +58,7 @@ import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Transparent Disabled Chip"
       clickable={false}
@@ -72,10 +68,9 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
-
 ```
 
 <br />
@@ -83,11 +78,11 @@ export const MyComponent = () => {
 ### Chip dezactivat cu tooltip
 
 ```jsx
-import { Chip } from "twenty-ui/components";
-  
+import { Chip } from 'twenty-ui/components';
+
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="Chip dezactivat care declanșează un tooltip când depășește spațiul."
       clickable={false}
@@ -97,7 +92,7 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
 ```
@@ -136,7 +131,6 @@ export const MyComponent = () => {
 
 <Tab title="Proprietăți">
 
-
 | Proprietăți  | Tip                        | Descriere                                                                                               |
 | ------------ | -------------------------- | ------------------------------------------------------------------------------------------------------- |
 | linkToEntity | șir                        | Legătura către entitate                                                                                 |
@@ -146,8 +140,6 @@ export const MyComponent = () => {
 | tipAvatar    | Tip Avatar                 | Tipul de avatar pe care doriți să îl afișați. Are două opțiuni: `rounded` și `squared`                  |
 | variant      | `Enumul EntityChipVariant` | Varianta chip-ului entității pe care dorești să o afișezi. Are două opțiuni: `regulat` și `transparent` |
 | IconaStânga  | ComponentaIcoana           | O componentă React care reprezintă o icona. Afișată pe partea stângă a fișei                            |
-
-
 
 </Tab>
 </Tabs>

@@ -16,7 +16,9 @@ Twenty nu oferă încă suport nativ pentru câmpuri de formulă (va veni în 20
 | **Scor lead**             | Puncte bazate pe criterii multiple |
 
 <Tip>
-Pentru un exemplu complet de urmărire a timpului în stadiile din pipeline, vezi [Urmărește cât timp rămân oportunitățile în fiecare stadiu](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage).
+  Pentru un exemplu complet de urmărire a timpului în stadiile din pipeline,
+  vezi [Urmărește cât timp rămân oportunitățile în fiecare
+  stadiu](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage).
 </Tip>
 
 ## Formulă de bază: Concatenare
@@ -37,9 +39,7 @@ Pentru un exemplu complet de urmărire a timpului în stadiile din pipeline, vez
 export const main = async (params) => {
   const { firstName, lastName } = params;
 
-  const fullName = [firstName, lastName]
-    .filter(Boolean)
-    .join(' ');
+  const fullName = [firstName, lastName].filter(Boolean).join(' ');
 
   return { fullName };
 };
@@ -65,7 +65,7 @@ Vezi [Cum să afișezi suma estimată în pipeline](/l/ro/user-guide/views-pipel
 export const main = async (params) => {
   const { amount, probability } = params;
 
-  const expectedAmount = (amount || 0) * (probability || 0) / 100;
+  const expectedAmount = ((amount || 0) * (probability || 0)) / 100;
 
   return { expectedAmount };
 };
@@ -105,7 +105,8 @@ export const main = async (params) => {
 3. **Actualizează înregistrarea**: Setează Zile până la scadență la `{{code.daysUntilDue}}`
 
 <Note>
-Valorile negative indică sarcini întârziate. Poți folosi acest câmp pentru a filtra sau sorta sarcinile după urgență.
+  Valorile negative indică sarcini întârziate. Poți folosi acest câmp pentru a
+  filtra sau sorta sarcinile după urgență.
 </Note>
 
 ## Formulă condițională: Scor lead
@@ -179,24 +180,24 @@ export const main = async (params) => {
 
 ### Performanță
 
-* Declanșează doar la modificări relevante ale câmpurilor
-* Folosește filtre pentru a omite înregistrările care nu necesită calcul
-* Evită calcule complexe în fluxurile de lucru cu volum mare
+- Declanșează doar la modificări relevante ale câmpurilor
+- Folosește filtre pentru a omite înregistrările care nu necesită calcul
+- Evită calcule complexe în fluxurile de lucru cu volum mare
 
 ### Gestionarea erorilor
 
-* Verifică valorile null/undefined înainte de calcule
-* Folosește valori implicite când lipsesc datele
-* Returnează mesaje de eroare clare când calculele eșuează
+- Verifică valorile null/undefined înainte de calcule
+- Folosește valori implicite când lipsesc datele
+- Returnează mesaje de eroare clare când calculele eșuează
 
 ### Testare
 
-* Testează cu cazuri-limită (câmpuri goale, valori zero)
-* Verifică manual calculele înainte de activare
-* Monitorizează rulările fluxurilor de lucru pentru rezultate neașteptate
+- Testează cu cazuri-limită (câmpuri goale, valori zero)
+- Verifică manual calculele înainte de activare
+- Monitorizează rulările fluxurilor de lucru pentru rezultate neașteptate
 
 ## Conexe
 
-* [Cum să afișezi suma estimată în pipeline](/l/ro/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
-* [Cum să urmărești timpul în stadiu](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage)
-* [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)
+- [Cum să afișezi suma estimată în pipeline](/l/ro/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline)
+- [Cum să urmărești timpul în stadiu](/l/ro/user-guide/views-pipelines/how-tos/track-time-in-stage)
+- [Acțiuni ale fluxurilor de lucru](/l/ro/user-guide/workflows/capabilities/workflow-actions)

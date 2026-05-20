@@ -4,7 +4,8 @@ description: Conectați asistenți AI la spațiul dvs. de lucru Twenty folosind 
 ---
 
 <Warning>
-MCP este în prezent în **alpha** și este disponibil doar în unele spații de lucru. Este posibil să nu fie activat încă pentru spațiul dvs. de lucru.
+  MCP este în prezent în **alpha** și este disponibil doar în unele spații de
+  lucru. Este posibil să nu fie activat încă pentru spațiul dvs. de lucru.
 </Warning>
 
 Twenty expune un server [MCP](https://modelcontextprotocol.io/) astfel încât asistenții AI — Claude Desktop, Claude Code, Cursor, ChatGPT și alții — să poată citi și scrie datele tale din CRM prin limbaj natural.
@@ -25,7 +26,9 @@ Ai două moduri de a-ți autentifica clientul MCP: **OAuth** (recomandat) sau **
 Cu OAuth, clientul tău MCP deschide o fereastră de browser pentru a te autentifica. Nicio informație secretă nu este stocată în fișierele de configurare, iar tokenurile se reîmprospătează automat.
 
 <Note>
-OAuth necesită un client MCP care suportă [specificația MCP Authorization](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization). Claude Desktop, Claude Code, Cursor și ChatGPT o suportă.
+  OAuth necesită un client MCP care suportă [specificația MCP
+  Authorization](https://modelcontextprotocol.io/specification/2025-03-26/basic/authorization).
+  Claude Desktop, Claude Code, Cursor și ChatGPT o suportă.
 </Note>
 
 Adaugă asta în configurația clientului tău MCP, înlocuind `{your-workspace-url}` cu gazda spațiului tău de lucru (de ex. `mycompany.twenty.com`):
@@ -69,7 +72,8 @@ Dacă clientul tău MCP nu suportă OAuth sau preferi acreditări statice, furni
 ```
 
 <Warning>
-Cheia ta API oferă acces la datele spațiului de lucru. Ține-o în afara controlului versiunilor și a dotfiles partajate.
+  Cheia ta API oferă acces la datele spațiului de lucru. Ține-o în afara
+  controlului versiunilor și a dotfiles partajate.
 </Warning>
 
 Pentru a crea o cheie API, mergi la **Settings > APIs & Webhooks > + Create key**. Vezi [API-uri](/l/ro/developers/extend/api#create-an-api-key) pentru detalii.
@@ -95,9 +99,9 @@ Repornește clientul tău MCP (sau reîncarcă configurația). Dacă folosești 
 
 Roagă-ți asistentul AI să interacționeze cu CRM-ul tău:
 
-* *"Arată-mi cele 5 companii create cel mai recent"*
-* *"Creează o persoană nouă numită Jane Doe la Acme Corp"*
-* *"Găsește toate oportunitățile deschise cu o valoare mai mare de $10k"*
+- _"Arată-mi cele 5 companii create cel mai recent"_
+- _"Creează o persoană nouă numită Jane Doe la Acme Corp"_
+- _"Găsește toate oportunitățile deschise cu o valoare mai mare de $10k"_
 
 ## Instrumente disponibile
 
@@ -113,8 +117,8 @@ Nu este nevoie să reții numele instrumentelor. Întreabă-ți asistentul AI ce
 
 Conexiunile MCP moștenesc permisiunile utilizatorului autentificat (OAuth) sau rolul atribuit cheii API. Pentru a restricționa ce poate face serverul MCP:
 
-* **OAuth**: Se aplică rolul utilizatorului din spațiul de lucru.
-* **Cheie API**: Atribuie un rol cheii API în **Settings > Roles**. Vezi [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions).
+- **OAuth**: Se aplică rolul utilizatorului din spațiul de lucru.
+- **Cheie API**: Atribuie un rol cheii API în **Settings > Roles**. Vezi [Permisiuni](/l/ro/user-guide/permissions-access/capabilities/permissions).
 
 ## Configurație pentru auto-găzduire
 
@@ -130,13 +134,13 @@ Punctul final MCP, punctele finale OAuth și metadatele de descoperire derivă t
 
 **Erori "Unauthorized" sau 401**
 
-* OAuth: reautorizează ștergând tokenurile stocate din clientul tău MCP și reconectează-te.
-* Cheie API: verifică dacă cheia este validă și nu a expirat. Regenereaz-o dacă este necesar.
+- OAuth: reautorizează ștergând tokenurile stocate din clientul tău MCP și reconectează-te.
+- Cheie API: verifică dacă cheia este validă și nu a expirat. Regenereaz-o dacă este necesar.
 
 **Fluxul OAuth nu deschide un browser**
 
-* Asigură-te că clientul tău MCP suportă MCP Authorization. Dacă nu, revino la metoda cu Cheie API.
+- Asigură-te că clientul tău MCP suportă MCP Authorization. Dacă nu, revino la metoda cu Cheie API.
 
 **Timeout de conexiune**
 
-* Confirmă că URL-ul punctului final MCP este accesibil de pe calculatorul tău. Pentru instanțele auto-găzduite, verifică faptul că serverul rulează și că `SERVER_URL` este setat corect.
+- Confirmă că URL-ul punctului final MCP este accesibil de pe calculatorul tău. Pentru instanțele auto-găzduite, verifică faptul că serverul rulează și că `SERVER_URL` este setat corect.

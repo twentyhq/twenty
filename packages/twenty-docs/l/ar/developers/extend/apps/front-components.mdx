@@ -10,8 +10,8 @@ icon: window-maximize
 
 يمكن عرض مكوّنات الواجهة الأمامية في موقعين داخل Twenty:
 
-* **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
-* **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل تخطيطات الصفحات. عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
+- **اللوحة الجانبية** — المكوّنات غير عديمة الرأس تفتح في اللوحة الجانبية اليمنى. هذا هو السلوك الافتراضي عندما يتم تشغيل مكوّن واجهة أمامية من قائمة الأوامر.
+- **الويدجت (لوحات المعلومات وصفحات السجلات)** — يمكن تضمين مكوّنات الواجهة الأمامية كويدجت داخل تخطيطات الصفحات. عند تكوين لوحة معلومات أو تخطيط صفحة سجل، يمكن للمستخدمين إضافة ويدجت لمكوّن واجهة أمامية.
 
 ## مثال أساسي
 
@@ -47,8 +47,11 @@ export default defineFrontComponent({
 
 بعد المزامنة باستخدام `yarn twenty dev` (أو تشغيل الأمر لمرة واحدة `yarn twenty dev --once`)، يظهر الإجراء السريع في الزاوية العلوية اليمنى من الصفحة:
 
-<div style={{textAlign: 'center'}}>
-  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="زر إجراء سريع في الزاوية العلوية اليمنى" />
+<div style={{ textAlign: 'center' }}>
+  <img
+    src="/images/docs/developers/extends/apps/quick-action.png"
+    alt="زر إجراء سريع في الزاوية العلوية اليمنى"
+  />
 </div>
 
 انقره لعرض المكوّن مضمنًا داخل الصفحة.
@@ -85,7 +88,10 @@ const SyncTracker = () => {
   const recordId = useRecordId();
 
   useEffect(() => {
-    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+    enqueueSnackbar({
+      message: `Tracking record ${recordId}`,
+      variant: 'info',
+    });
   }, [recordId]);
 
   return null;
@@ -108,10 +114,10 @@ export default defineFrontComponent({
 
 استوردها من `twenty-sdk/command`:
 
-* **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
-* **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
-* **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
-* **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
+- **`Command`** — يشغّل رد نداء غير متزامن عبر الخاصية `execute`.
+- **`CommandLink`** — ينتقل إلى مسار في التطبيق. الخصائص: `to`، `params`، `queryParams`، `options`.
+- **`CommandModal`** — يفتح نافذة تأكيد منبثقة. إذا أكّد المستخدم، ينفّذ رد النداء `execute`. الخصائص: `title`، `subtitle`، `execute`، `confirmButtonText`، `confirmButtonAccent`.
+- **`CommandOpenSidePanelPage`** — يفتح صفحة محدّدة في اللوحة الجانبية. الخصائص: `page`، `pageTitle`، `pageIcon`.
 
 فيما يلي مثال كامل لمكوّن واجهة أمامية عديم الرأس يستخدم `Command` لتشغيل إجراء من قائمة الأوامر:
 
@@ -390,12 +396,12 @@ export default defineFrontComponent({
 
 تدعم المكوّنات الأمامية عدة أساليب للتنسيق. يمكنك استخدام:
 
-* **أنماط مضمنة** — `style={{ color: 'red' }}`
-* **مكوّنات Twenty لواجهة المستخدم** — استورد من `twenty-sdk/ui` (Button وTag وStatus وChip وAvatar وغيرها)
-* **Emotion** — CSS-in-JS مع `@emotion/react`
-* **Styled-components** — أنماط `styled.div`
-* **Tailwind CSS** — أصناف مساعدة
-* **أي مكتبة CSS-in-JS** متوافقة مع React
+- **أنماط مضمنة** — `style={{ color: 'red' }}`
+- **مكوّنات Twenty لواجهة المستخدم** — استورد من `twenty-sdk/ui` (Button وTag وStatus وChip وAvatar وغيرها)
+- **Emotion** — CSS-in-JS مع `@emotion/react`
+- **Styled-components** — أنماط `styled.div`
+- **Tailwind CSS** — أصناف مساعدة
+- **أي مكتبة CSS-in-JS** متوافقة مع React
 
 ```tsx
 import { defineFrontComponent } from 'twenty-sdk/define';

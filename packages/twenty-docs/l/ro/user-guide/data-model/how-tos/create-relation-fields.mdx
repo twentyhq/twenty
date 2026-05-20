@@ -6,17 +6,18 @@ description: Ghid pas cu pas pentru conectarea obiectelor cu câmpuri de relați
 Câmpurile de relație conectează înregistrări din obiecte diferite — de exemplu, legând Persoane de Companii.
 
 <Note>
-**Numele relațiilor nu pot fi schimbate după creare** (afectează API-ul). Planificați cu atenție denumirile.
+  **Numele relațiilor nu pot fi schimbate după creare** (afectează API-ul).
+  Planificați cu atenție denumirile.
 </Note>
 
 ## Înainte de a începe
 
 Decideți:
 
-* Ce obiecte conectați? (de ex., Persoane → Companii)
-* Care este partea „unu”? (de ex., Companie)
-* Care este partea „mulți”? (de ex., Persoane — multe persoane lucrează la o singură companie)
-* Cum ar trebui să se numească câmpul pe fiecare parte?
+- Ce obiecte conectați? (de ex., Persoane → Companii)
+- Care este partea „unu”? (de ex., Companie)
+- Care este partea „mulți”? (de ex., Persoane — multe persoane lucrează la o singură companie)
+- Cum ar trebui să se numească câmpul pe fiecare parte?
 
 Consultați [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) pentru explicații despre tipurile de relații.
 
@@ -33,12 +34,12 @@ Consultați [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/rela
 
 ## Exemplu: Persoane → Companii
 
-* Accesați **Setări → Model de date → Persoane**
-* Adăugați un câmp Relație
-* Țintă: **Companii**
-* Tip: **Mulți-la-unu**
-* Câmp pe Persoane: **Companie**
-* Câmp pe Companii: **Angajați**
+- Accesați **Setări → Model de date → Persoane**
+- Adăugați un câmp Relație
+- Țintă: **Companii**
+- Tip: **Mulți-la-unu**
+- Câmp pe Persoane: **Companie**
+- Câmp pe Companii: **Angajați**
 
 Acum fiecare persoană poate fi legată de o companie, iar fiecare companie își afișează persoanele.
 
@@ -51,10 +52,11 @@ Acum fiecare persoană poate fi legată de o companie, iar fiecare companie îș
 Legăturile sunt păstrate, dar ascunse. Reactivați pentru a restabili.
 
 <Note>
-**Ștergerea unei relații nu șterge înregistrările.** Doar legătura dintre ele este eliminată.
+  **Ștergerea unei relații nu șterge înregistrările.** Doar legătura dintre ele
+  este eliminată.
 </Note>
 
 ## Conexe
 
-* [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) — tipuri și limitări
-* [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — import în masă a înregistrărilor legate
+- [Câmpuri de relație](/l/ro/user-guide/data-model/capabilities/relation-fields) — tipuri și limitări
+- [Cum să importați relații](/l/ro/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — import în masă a înregistrărilor legate

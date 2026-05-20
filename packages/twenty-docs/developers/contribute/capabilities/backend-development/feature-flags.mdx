@@ -2,7 +2,6 @@
 title: Feature Flags
 ---
 
-
 Feature flags are used to hide experimental features. For Twenty, they are set on workspace level and not on a user level.
 
 ## Adding a new feature flag
@@ -24,8 +23,6 @@ enum FeatureFlagKeys {
 }
 ```
 
-
-
 To apply a feature flag on a **backend** feature use:
 
 ```ts
@@ -40,12 +37,10 @@ To apply a feature flag on a **frontend** feature use:
 const isFeatureNameEnabled = useIsFeatureEnabled('IS_FEATURENAME_ENABLED');
 ```
 
-
 ## Configure feature flags for the deployment
 
 Change the corresponding record in the Table `core.featureFlag`:
 
-| id       | key                      | workspaceId   | value  |
-|----------|--------------------------|---------------|--------|
-|  Random  | `IS_FEATURENAME_ENABLED` |  WorkspaceID  | `true` |
-
+| id     | key                      | workspaceId | value  |
+| ------ | ------------------------ | ----------- | ------ |
+| Random | `IS_FEATURENAME_ENABLED` | WorkspaceID | `true` |

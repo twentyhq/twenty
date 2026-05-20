@@ -4,7 +4,8 @@ icon: docker
 ---
 
 <Warning>
-Docker 容器适用于生产环境托管或自托管。 如需参与贡献，请查看[本地设置](/l/zh/developers/contribute/capabilities/local-setup)。
+  Docker 容器适用于生产环境托管或自托管。
+  如需参与贡献，请查看[本地设置](/l/zh/developers/contribute/capabilities/local-setup)。
 </Warning>
 
 ## 概览
@@ -17,8 +18,8 @@ Docker 容器适用于生产环境托管或自托管。 如需参与贡献，请
 
 ## 系统要求
 
-* RAM：确保您的环境至少有2GB的RAM。 内存不足会导致进程崩溃。
-* Docker & Docker Compose：确保两者均已安装并是最新的。
+- RAM：确保您的环境至少有2GB的RAM。 内存不足会导致进程崩溃。
+- Docker & Docker Compose：确保两者均已安装并是最新的。
 
 ## 选项 1：单行脚本
 
@@ -34,8 +35,8 @@ bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/
 VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* 将x.y.z替换为所需的版本号。
-* 将branch-name替换为您要安装的分支名称。
+- 将x.y.z替换为所需的版本号。
+- 将branch-name替换为您要安装的分支名称。
 
 ## 选项 2：手动步骤
 
@@ -113,11 +114,11 @@ curl http://localhost:3000
 
 #### 理解`SERVER_URL`
 
-* **协议:** 根据您的设置，使用`http`或者`https`。
-  * 如果您没有设置SSL，请使用`http`。
-  * 如果已配置SSL，请使用`https`。
-* **域名/IP:** 这是您的应用程序可访问的域名或IP地址。
-* **端口:** 如果您没有使用默认端口(`http`为80，`https`为443)，请包括端口号。
+- **协议:** 根据您的设置，使用`http`或者`https`。
+  - 如果您没有设置SSL，请使用`http`。
+  - 如果已配置SSL，请使用`https`。
+- **域名/IP:** 这是您的应用程序可访问的域名或IP地址。
+- **端口:** 如果您没有使用默认端口(`http`为80，`https`为443)，请包括端口号。
 
 ### SSL要求
 
@@ -130,7 +131,7 @@ curl http://localhost:3000
 #### 配置`SERVER_URL`
 
 1. **确定您的访问URL**
-   * **没有反向代理（直接访问）：**
+   - **没有反向代理（直接访问）：**
 
      如果您直接访问应用程序而没有反向代理：
 
@@ -138,7 +139,7 @@ curl http://localhost:3000
      SERVER_URL=http://your-domain-or-ip:3000
      ```
 
-   * **有反向代理（标准端口）：**
+   - **有反向代理（标准端口）：**
 
      如果您使用像Nginx或Traefik这样的反向代理并配置了SSL：
 
@@ -146,7 +147,7 @@ curl http://localhost:3000
      SERVER_URL=https://your-domain-or-ip
      ```
 
-   * **有反向代理（自定义端口）：**
+   - **有反向代理（自定义端口）：**
 
      如果您使用非标准端口：
 
@@ -163,12 +164,11 @@ curl http://localhost:3000
    ```
 
    **示例：**
-
-   * 无需SSL的直接访问：
+   - 无需SSL的直接访问：
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * 通过域名访问使用SSL：
+   - 通过域名访问使用SSL：
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
@@ -184,25 +184,25 @@ curl http://localhost:3000
 
 #### 注意事项
 
-* **反向代理配置:**
+- **反向代理配置:**
 
   确保您的反向代理将请求转发到正确的内部端口（默认情况下为`3000`）。 配置 SSL 终止和任何必要的头信息。
 
-* **防火墙设置:**
+- **防火墙设置:**
 
   打开防火墙中的必要端口以允许外部访问。
 
-* **一致性:**
+- **一致性:**
 
   `SERVER_URL` 必须与用户在浏览器中访问您的应用程序的方式匹配。
 
 #### 数据持久化
 
-* **数据卷:**
+- **数据卷:**
 
   Docker Compose 配置使用卷来持久化数据库和服务器存储的数据。
 
-* **无状态环境:**
+- **无状态环境:**
 
   如果部署到无状态环境（例如，某些云服务），请配置外部存储以持久化数据。
 
@@ -246,10 +246,10 @@ docker compose up -d
 
 ### 备份最佳实践
 
-* **定期测试恢复** — 验证备份确实有效
-* **将备份异地存储** — 使用云存储（S3、GCS 等）
-* **加密敏感数据** — 使用加密保护备份
-* **保留多份副本** — 同时保留每日、每周和每月的备份
+- **定期测试恢复** — 验证备份确实有效
+- **将备份异地存储** — 使用云存储（S3、GCS 等）
+- **加密敏感数据** — 使用加密保护备份
+- **保留多份副本** — 同时保留每日、每周和每月的备份
 
 ## 故障排除
 

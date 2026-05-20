@@ -10,7 +10,7 @@ Komponente zur visuellen Kategorisierung oder Kennzeichnung von Inhalten.
 <Tab title="&#x22;Verwendung&#x22;">
 
 ```jsx
-import { Tag } from "@/ui/display/tag/components/Tag";
+import { Tag } from '@/ui/display/tag/components/Tag';
 
 export const MyComponent = () => {
   return (
@@ -18,7 +18,7 @@ export const MyComponent = () => {
       className
       color="red"
       text="Urgent"
-      onClick={() => console.log("click")}
+      onClick={() => console.log('click')}
     />
   );
 };
@@ -28,15 +28,12 @@ export const MyComponent = () => {
 
 <Tab title="&#x22;Eigenschaften&#x22;">
 
-
 | "Eigenschaften" | Typ          | Beschreibung                                                                                                                |
 | --------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------- |
 | Klassenname     | Zeichenkette | Optionaler Name für zusätzliche Gestaltung                                                                                  |
 | farbe           | Zeichenkette | Farbe des Tags. Optionen umfassen: `green`, `turquoise`, `sky`, `blue`, `purple`, `pink`, `red`, `orange`, `yellow`, `gray` |
 | text            | string       | Der Inhalt des Tags                                                                                                         |
 | onClick         | Funktion     | Optionale Funktion, die aufgerufen wird, wenn ein Benutzer auf das Tag klickt                                               |
-
-
 
 </Tab>
 

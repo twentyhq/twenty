@@ -9,17 +9,17 @@ Un element de meniu versatil, conceput pentru a fi utilizat într-un meniu sau l
 <Tab title="Utilizare">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItem } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItem } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("S-a făcut clic pe elementul de meniu!", event);
+    console.log('S-a făcut clic pe elementul de meniu!', event);
   };
 
   const handleButtonClick = (event) => {
-    console.log("S-a făcut clic pe butonul cu pictogramă!", event);
+    console.log('S-a făcut clic pe butonul cu pictogramă!', event);
   };
 
   return (
@@ -37,10 +37,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Proprietăți">
-
 
 | Proprietăți        | Tip              | Descriere                                                                                                     |
 | ------------------ | ---------------- | ------------------------------------------------------------------------------------------------------------- |
@@ -52,9 +50,6 @@ export const MyComponent = () => {
 | testId             | şir              | Atributul data-testid pentru scopuri de testare                                                               |
 | laClick            | funcție          | Funcție de callback declanșată când se face clic pe elementul de meniu                                        |
 | numeClasă          | string           | Nume opțional pentru stilizare suplimentară                                                                   |
-
-
-
 
 </Tab>
 </Tabs>
@@ -71,12 +66,12 @@ Un element de meniu de tip comandă într-un meniu pentru a indica scurtăturile
 <Tab title="Utilizare">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemCommand } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemCommand } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleCommandClick = () => {
-    console.log("S-a făcut clic pe comandă!");
+    console.log('S-a făcut clic pe comandă!');
   };
 
   return (
@@ -93,10 +88,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Proprietăți">
-
 
 | Proprietăți  | Tip           | Descriere                                                               |
 | ------------ | ------------- | ----------------------------------------------------------------------- |
@@ -107,8 +100,6 @@ export const MyComponent = () => {
 | isSelected   | boolean       | Indică dacă elementul de meniu este selectat sau evidențiat             |
 | onClick      | funcție       | Funcție de callback declanșată când se face clic pe elementul de meniu  |
 | className    | string        | Nume opțional pentru stilizare suplimentară                             |
-
-
 
 </Tab>
 </Tabs>
@@ -121,13 +112,13 @@ Un element de meniu drag realizat pentru a fi utilizat într-un meniu sau listă
 <Tab title="Utilizare">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { IconAlertCircle } from "@tabler/icons-react";
-import { MenuItemDraggable } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { IconAlertCircle } from '@tabler/icons-react';
+import { MenuItemDraggable } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleMenuItemClick = (event) => {
-    console.log("S-a făcut clic pe elementul de meniu!", event);
+    console.log('S-a făcut clic pe elementul de meniu!', event);
   };
 
   return (
@@ -148,7 +139,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți    | Tip           | Descriere                                                                                  |
 | -------------- | ------------- | ------------------------------------------------------------------------------------------ |
 | LeftIcon       | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu                    |
@@ -159,9 +149,6 @@ export const MyComponent = () => {
 | text           | string        | Conținutul de text al elementului de meniu                                                 |
 | isDragDisabled | boolean       | Indică dacă funcția de drag este dezactivată                                               |
 | className      | string        | Nume opțional pentru stilizare suplimentară                                                |
-
-
-
 
 </Tab>
 </Tabs>
@@ -174,11 +161,10 @@ Oferă o modalitate de a implementa funcționalitatea multi-select cu un checkbo
 <Tab title="Utilizare">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemMultiSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemMultiSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemMultiSelect
       LeftIcon={IconBell}
@@ -193,7 +179,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți    | Tip           | Descriere                                                               |
 | -------------- | ------------- | ----------------------------------------------------------------------- |
 | LeftIcon       | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
@@ -201,9 +186,6 @@ export const MyComponent = () => {
 | selected       | boolean       | Indică dacă elementul de meniu este selectat (bifat)                    |
 | onSelectChange | funcție       | Funcție de callback declanșată când starea checkbox-ului se schimbă     |
 | className      | string        | Nume opțional pentru stilizare suplimentară                             |
-
-
-
 
 </Tab>
 </Tabs>
@@ -216,11 +198,11 @@ Un element de meniu multi-select cu un avatar, un checkbox pentru selecție și 
 <Tab title="Utilizare">
 
 ```jsx
-import { MenuItemMultiSelectAvatar } from "twenty-ui/display";
+import { MenuItemMultiSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   return (
     <MenuItemMultiSelectAvatar
@@ -236,7 +218,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți    | Tip         | Descriere                                                                          |
 | -------------- | ----------- | ---------------------------------------------------------------------------------- |
 | avatar         | `ReactNode` | Avatarul sau pictograma care va fi afișată în partea stângă a elementului de meniu |
@@ -244,9 +225,6 @@ export const MyComponent = () => {
 | selected       | boolean     | Indică dacă elementul de meniu este selectat (bifat)                               |
 | onSelectChange | funcție     | Funcție de callback declanșată când starea checkbox-ului se schimbă                |
 | className      | string      | Nume opțional pentru stilizare suplimentară                                        |
-
-
-
 
 </Tab>
 </Tabs>
@@ -259,12 +237,12 @@ Un element de meniu care include o pictogramă opțională în stânga, conținu
 <Tab title="Utilizare">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemNavigate } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemNavigate } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleNavigation = () => {
-    console.log("Navigate to another page");
+    console.log('Navigate to another page');
   };
 
   return (
@@ -281,16 +259,12 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți | Tip           | Descriere                                                               |
 | ----------- | ------------- | ----------------------------------------------------------------------- |
 | LeftIcon    | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
 | text        | string        | Conținutul de text al elementului de meniu                              |
 | onClick     | funcție       | Funcție de callback declanșată când se face clic pe elementul de meniu  |
 | className   | string        | Nume opțional pentru stilizare suplimentară                             |
-
-
-
 
 </Tab>
 </Tabs>
@@ -303,12 +277,12 @@ Un element de meniu selectabil, care include opțional părți la stânga (picto
 <Tab title="Utilizare">
 
 ```jsx
-import { IconBell } from "@tabler/icons-react";
-import { MenuItemSelect } from "twenty-ui/display";
+import { IconBell } from '@tabler/icons-react';
+import { MenuItemSelect } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -328,7 +302,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți | Tip           | Descriere                                                               |
 | ----------- | ------------- | ----------------------------------------------------------------------- |
 | LeftIcon    | IconComponent | O pictogramă opțională afișată înaintea textului din elementul de meniu |
@@ -338,9 +311,6 @@ export const MyComponent = () => {
 | hovered     | boolean       | Indică dacă elementul de meniu este în prezent trecut cu mouse-ul       |
 | laClick     | funcție       | Funcție de callback declanșată când se face clic pe elementul de meniu  |
 | numeClasa   | string        | Nume opțional pentru stilizare suplimentară                             |
-
-
-
 
 </Tab>
 </Tabs>
@@ -353,14 +323,14 @@ Un element de meniu selectabil cu un avatar, care include opțional părți la s
 <Tab title="Utilizare">
 
 ```jsx
-import { MenuItemSelectAvatar } from "twenty-ui/display";
+import { MenuItemSelectAvatar } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const imageUrl =
-    "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=";
+    'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAYABgAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABgAAAAAQAAAGAAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAABSgAwAEAAAAAQAAABQAAAAA/8AAEQgAFAAUAwEiAAIRAQMRAf/EAB8AAAEFAQEBAQEBAAAAAAAAAAABAgMEBQYHCAkKC//EALUQAAIBAwMCBAMFBQQEAAABfQECAwAEEQUSITFBBhNRYQcicRQygZGhCCNCscEVUtHwJDNicoIJChYXGBkaJSYnKCkqNDU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6g4SFhoeIiYqSk5SVlpeYmZqio6Slpqeoqaqys7S1tre4ubrCw8TFxsfIycrS09TV1tfY2drh4uPk5ebn6Onq8fLz9PX29/j5+v/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EALURAAIBAgQEAwQHBQQEAAECdwABAgMRBAUhMQYSQVEHYXETIjKBCBRCkaGxwQkjM1LwFWJy0QoWJDThJfEXGBkaJicoKSo1Njc4OTpDREVGR0hJSlNUVVZXWFlaY2RlZmdoaWpzdHV2d3h5eoKDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uLj5OXm5+jp6vLz9PX29/j5+v/bAEMACwgICggHCwoJCg0MCw0RHBIRDw8RIhkaFBwpJCsqKCQnJy0yQDctMD0wJyc4TDk9Q0VISUgrNk9VTkZUQEdIRf/bAEMBDA0NEQ8RIRISIUUuJy5FRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRUVFRf/dAAQAAv/aAAwDAQACEQMRAD8Ava1q728otYY98joSCTgZrnbXWdTtrhrfVZXWLafmcAEkdgR/hVltQku9Q8+OIEBcGOT+ID0PY1ka1KH2u8ToqnPLbmIqG7u6LtbQ7RXBRec4Uck9eKXcPWsKDWVnhWSL5kYcFelSf2m3901POh8jP//QoyIAnTuKpXsY82NsksUyWPU5q/L9z8RVK++/F/uCsVsaEURwgA4HtT9x9TUcf3KfUGh//9k=';
 
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -376,12 +346,10 @@ export const MyComponent = () => {
     />
   );
 };
-
 ```
 
 </Tab>
 <Tab title="Proprietăți">
-
 
 | Proprietăți | Tip         | Descriere                                                                                     |
 | ----------- | ----------- | --------------------------------------------------------------------------------------------- |
@@ -394,9 +362,6 @@ export const MyComponent = () => {
 | laClick     | funcție     | Funcția de apel invers care urmează să fie declanșată când se face clic pe elementul de meniu |
 | numeClasa   | string      | Nume opțional pentru stilizare suplimentară                                                   |
 
-
-
-
 </Tab>
 </Tabs>
 
@@ -408,11 +373,11 @@ Un element de meniu selectabil cu un eșantion de culoare pentru situațiile în
 <Tab title="Utilizare">
 
 ```jsx
-import { MenuItemSelectColor } from "twenty-ui/display";
+import { MenuItemSelectColor } from 'twenty-ui/display';
 
 export const MyComponent = () => {
   const handleSelection = () => {
-    console.log("Menu item selected");
+    console.log('Menu item selected');
   };
 
   return (
@@ -432,7 +397,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți | Tip     | Descriere                                                                                                                                                                                       |
 | ----------- | ------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | culoare     | string  | Culoarea temei care urmează să fie afișată ca eșantion în elementul de meniu. Opțiunile includ: `verde`, `turcoaz`, `cer`, `albastru`, `violet`, `roz`, `roșu`, `portocaliu`, `galben` și `gri` |
@@ -442,9 +406,6 @@ export const MyComponent = () => {
 | variant     | string  | Varianta eșantionului de culoare. Poate fi fie `default`, fie `pipeline`                                                                                                                        |
 | laClick     | funcție | Funcția de apel invers care urmează să fie declanșată când se face clic pe elementul de meniu                                                                                                   |
 | numeClasa   | string  | Nume opțional pentru stilizare suplimentară                                                                                                                                                     |
-
-
-
 
 </Tab>
 </Tabs>
@@ -462,7 +423,6 @@ import { IconBell } from '@tabler/icons-react';
 import { MenuItemToggle } from 'twenty-ui/display';
 
 export const MyComponent = () => {
-
   return (
     <MenuItemToggle
       LeftIcon={IconBell}
@@ -478,7 +438,6 @@ export const MyComponent = () => {
 </Tab>
 <Tab title="Proprietăți">
 
-
 | Proprietăți    | Tip           | Descriere                                                                         |
 | -------------- | ------------- | --------------------------------------------------------------------------------- |
 | LeftIcon       | IconComponent | O pictogramă opțională la stânga afișată înaintea textului din elementul de meniu |
@@ -487,9 +446,6 @@ export const MyComponent = () => {
 | onToggleChange | funcție       | Funcție de callback declanșată când se schimbă starea comutatorului               |
 | toggleSize     | string        | Dimensiunea comutatorului. Poate fi fie \                                         |
 | numeClasă      | string        | Nume opțional pentru stilizare suplimentară                                       |
-
-
-
 
 </Tab>
 </Tabs>

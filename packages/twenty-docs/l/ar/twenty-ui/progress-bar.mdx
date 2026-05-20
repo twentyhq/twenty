@@ -9,7 +9,7 @@ title: التغذية الراجعة
 <Tab title="استخدام">
 
 ```jsx
-import { ProgressBar } from "twenty-ui/feedback";
+import { ProgressBar } from 'twenty-ui/feedback';
 
 export const MyComponent = () => {
   return (
@@ -29,7 +29,6 @@ export const MyComponent = () => {
 
 <Tab title="المحددات">
 
-
 | المحددات         | النوع       | الوصف                                                                           | الإعداد الافتراضي |
 | ---------------- | ----------- | ------------------------------------------------------------------------------- | ----------------- |
 | المدة            | رقم         | إجمالي مدة الرسوم المتحركة لشريط التقدم بالميلي ثانية                           | 3                 |
@@ -38,8 +37,6 @@ export const MyComponent = () => {
 | ارتفاع الشريط    | رقم         | ارتفاع الشريط بالبكسل                                                           | 24                |
 | لون الشريط       | نص          | لون الشريط                                                                      | gray80            |
 | التشغيل التلقائي | قيمة منطقية | إذا كان `true`، فإن الرسوم المتحركة لشريط التقدم تبدأ تلقائيًا عند تحميل المكون | `صحيح`            |
-
-
 
 </Tab>
 </Tabs>
@@ -53,7 +50,7 @@ export const MyComponent = () => {
 <Tab title="استخدام">
 
 ```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
 
 export const MyComponent = () => {
   return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
@@ -64,14 +61,11 @@ export const MyComponent = () => {
 
 <Tab title="الخصائص">
 
-
 | الخصائص    | النوع | الوصف                   | الإعداد الافتراضي |
 | ---------- | ----- | ----------------------- | ----------------- |
 | الحجم      | رقم   | حجم شريط التقدم الدائري | 50                |
 | عرض الشريط | رقم   | عرض خط شريط التقدم      | 5                 |
 | لون الشريط | نص    | لون شريط التقدم         | currentColor      |
-
-
 
 </Tab>
 

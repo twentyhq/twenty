@@ -11,24 +11,20 @@ Ce guide vous accompagne pour importer vos entreprises dans Twenty. **Les entrep
 
 ### Liste de vérification des prérequis
 
-<Check>
-  Votre fichier est au format CSV, XLSX ou XLS
-</Check>
+<Check>Votre fichier est au format CSV, XLSX ou XLS</Check>
 
-<Check>
-  Le fichier contient moins de 10 000 enregistrements
-</Check>
+<Check>Le fichier contient moins de 10 000 enregistrements</Check>
 
-<Check>
-  Aucun domaine en double dans votre fichier
-</Check>
+<Check>Aucun domaine en double dans votre fichier</Check>
 
 <Check>
   Tous les champs personnalisés existent dans **Paramètres → Modèle de données**
 </Check>
 
 <Note>
-  Besoin d'importer plus de 10 000 entreprises ? Divisez en plusieurs fichiers ou utilisez l’[importation via l’API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api).
+  Besoin d'importer plus de 10 000 entreprises ? Divisez en plusieurs fichiers
+  ou utilisez l’[importation via
+  l’API](/l/fr/user-guide/data-migration/how-tos/import-data-via-api).
 </Note>
 
 ## Étape 1 : Préparer vos données d'entreprises
@@ -48,13 +44,14 @@ Ce guide vous accompagne pour importer vos entreprises dans Twenty. **Les entrep
 <Warning>
   **Utilisez le format `https://domain.com` pour les domaines.**
 
-  Cela correspond au format utilisé lorsque des entreprises sont créées automatiquement à partir de la synchronisation e-mail/calendrier, ce qui évite les doublons par la suite.
+Cela correspond au format utilisé lorsque des entreprises sont créées automatiquement à partir de la synchronisation e-mail/calendrier, ce qui évite les doublons par la suite.
+
 </Warning>
 
 **Colonnes de domaine :**
 
-* **Domaine / Libellé du domaine** : `acme.com`
-* **Domaine / URL du domaine** : `https://acme.com`
+- **Domaine / Libellé du domaine** : `acme.com`
+- **Domaine / URL du domaine** : `https://acme.com`
 
 ### Format de l'adresse
 
@@ -74,7 +71,8 @@ Widget Co,https://widgets.co,widgets.co,New York,USA,50
 ```
 
 <Note>
-  **Astuce :** Cliquez sur **Télécharger le fichier d'exemple** lors de l'import pour voir les noms de colonnes exacts attendus par Twenty.
+  **Astuce :** Cliquez sur **Télécharger le fichier d'exemple** lors de l'import
+  pour voir les noms de colonnes exacts attendus par Twenty.
 </Note>
 
 ## Étape 2 : Accéder à la fonction d'importation
@@ -108,11 +106,14 @@ Twenty tente automatiquement d'associer vos colonnes aux champs. Vérifiez et aj
 
 ### Règles de mappage importantes
 
-* **Domaine** : Associez à **Domaine / URL du domaine** (et non au Libellé du domaine)
-* **Adresse** : Associez chaque partie à sa colonne spécifique (Ville, État, etc.)
-* **Champs de sélection** : les valeurs doivent correspondre aux options existantes (ou vous les associerez à l'étape suivante)
+- **Domaine** : Associez à **Domaine / URL du domaine** (et non au Libellé du domaine)
+- **Adresse** : Associez chaque partie à sa colonne spécifique (Ville, État, etc.)
+- **Champs de sélection** : les valeurs doivent correspondre aux options existantes (ou vous les associerez à l'étape suivante)
 
-<img src="/images/user-guide/import-export-data/match-columns.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/import-export-data/match-columns.png"
+  style={{ width: '100%' }}
+/>
 
 ## Étape 5 : Faire correspondre les valeurs des champs de sélection
 
@@ -123,7 +124,9 @@ Si vous avez des champs Sélection ou Multi-sélection :
 3. Ou créez de nouvelles options si nécessaire
 
 <Note>
-  Les options de sélection utilisent les **noms d'API**, pas les libellés d'affichage. Accédez à **Paramètres → Modèle de données** → activez le **Mode avancé** pour voir les noms d'API.
+  Les options de sélection utilisent les **noms d'API**, pas les libellés
+  d'affichage. Accédez à **Paramètres → Modèle de données** → activez le **Mode
+  avancé** pour voir les noms d'API.
 </Note>
 
 ## Étape 6 : Examiner et corriger les erreurs
@@ -175,17 +178,22 @@ Voir [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/dat
     Le domaine est un identifiant unique dans Twenty. Cela évite les entreprises en double et garantit que la synchronisation des e-mails associe correctement les e-mails à la bonne entreprise.
   </Accordion>
 
-  <Accordion title="Que faire si j'ai des entreprises sans domaine ?">
-    Vous pouvez laisser le domaine vide. Cependant, nous recommandons d'ajouter des domaines lorsque c'est possible pour une meilleure qualité des données et une liaison automatique des e-mails.
-  </Accordion>
+<Accordion title="Que faire si j'ai des entreprises sans domaine ?">
+  Vous pouvez laisser le domaine vide. Cependant, nous recommandons d'ajouter
+  des domaines lorsque c'est possible pour une meilleure qualité des données et
+  une liaison automatique des e-mails.
+</Accordion>
 
-  <Accordion title="Puis-je importer des entreprises sans aucune personne liée ?">
-    Oui! Vous pouvez d'abord importer des entreprises, puis importer des Personnes plus tard et les lier en utilisant le domaine de l'entreprise.
-  </Accordion>
+<Accordion title="Puis-je importer des entreprises sans aucune personne liée ?">
+  Oui! Vous pouvez d'abord importer des entreprises, puis importer des Personnes
+  plus tard et les lier en utilisant le domaine de l'entreprise.
+</Accordion>
 
-  <Accordion title="Que se passe-t-il si j'importe un domaine qui existe déjà ?">
-    Si vous incluez un identifiant unique (domaine ou id) correspondant à une entreprise existante, Twenty met à jour cette entreprise au lieu de créer un doublon.
-  </Accordion>
+<Accordion title="Que se passe-t-il si j'importe un domaine qui existe déjà ?">
+  Si vous incluez un identifiant unique (domaine ou id) correspondant à une
+  entreprise existante, Twenty met à jour cette entreprise au lieu de créer un
+  doublon.
+</Accordion>
 
   <Accordion title="Comment corriger les erreurs 'duplicate domain' ?">
     Supprimez le doublon de votre fichier ou incluez l'`id` de l'entreprise pour mettre à jour l'enregistrement existant.
@@ -196,6 +204,6 @@ Voir [Comment mettre à jour des enregistrements existants](/l/fr/user-guide/dat
 
 Vous rencontrez des problèmes ? Consultez :
 
-* [Comment corriger les erreurs d'import](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
-* [Référence de correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)
-* [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)
+- [Comment corriger les erreurs d'import](/l/fr/user-guide/data-migration/how-tos/fix-import-errors)
+- [Référence de correspondance des champs](/l/fr/user-guide/data-migration/capabilities/field-mapping)
+- [Contraintes d'unicité](/l/fr/user-guide/data-migration/capabilities/uniqueness-constraints)

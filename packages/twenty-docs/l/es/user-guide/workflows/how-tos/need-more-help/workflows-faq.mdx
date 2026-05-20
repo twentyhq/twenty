@@ -10,6 +10,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Solución**: Ponte en contacto con el administrador de tu espacio de trabajo para que te conceda acceso a flujos de trabajo en **Configuración → Roles**.
 
     Si no ves la sección de Flujos de trabajo en la barra lateral, esto confirma que es un problema de permisos.
+
   </Accordion>
 
   <Accordion title="¿Por qué no veo el botón de flujo de trabajo manual en la barra de navegación superior?">
@@ -22,6 +23,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     **Para comprobarlo**: Abre el flujo de trabajo → haz clic en el disparador → verifica que "Navbar placement" esté configurado como "Pinned".
 
     Siempre puedes acceder a los flujos de trabajo manuales con **Cmd + K** (o **Ctrl + K**) independientemente de la configuración de la barra de navegación.
+
   </Accordion>
 
   <Accordion title="¿Cuál es la diferencia entre los disparadores manuales Single, Global y Bulk?">
@@ -37,6 +39,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * **Bulk**: Úsalo cuando necesites procesar registros en conjunto u optimizar el uso de créditos (requiere la acción Iterator)
 
     Consulta [Disparadores de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-triggers) para más detalles.
+
   </Accordion>
 
   <Accordion title="No veo un nodo If/Else. ¿Qué debo hacer?">
@@ -55,6 +58,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     Solo la rama donde la condición del filtro se cumpla ejecutará sus acciones posteriores.
 
     Consulta [Cómo usar ramas](/l/es/user-guide/workflows/capabilities/workflow-branches) para ver una guía paso a paso.
+
   </Accordion>
 
   <Accordion title="¿Las ramas del flujo de trabajo se ejecutan en paralelo?">
@@ -66,6 +70,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Establece condiciones opuestas (p. ej., Rama A: status = "Open", Rama B: status ≠ "Open")
 
     Las ramas que no cumplan su condición de filtro dejan de ejecutarse, mientras que las demás continúan.
+
   </Accordion>
 
   <Accordion title="¿Puedo volver a unir las ramas?">
@@ -78,6 +83,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     3. Arrastra conexiones desde el final de cada rama a este nuevo paso
 
     El paso combinado se ejecutará después de que hayan finalizado todas las ramas conectadas.
+
   </Accordion>
 
   <Accordion title="¿Cuál es el límite en los resultados de Search Records?">
@@ -90,12 +96,14 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Considera usar la API para operaciones masivas
 
     Para la mayoría de los flujos de trabajo, 200 registros son suficientes. Si alcanzas este límite con frecuencia, considera reestructurar tu automatización.
+
   </Accordion>
 
   <Accordion title="¿Puedo poner en CC a personas en los correos electrónicos del flujo de trabajo?">
     **Aún no.** Los campos CC y BCC para la acción Send Email están en nuestra hoja de ruta.
 
     **Solución provisional actual**: Añade varias acciones Send Email para enviar a destinatarios adicionales, o usa un HTTP Request para enviar a través de un servicio de correo externo que admita CC.
+
   </Accordion>
 
   <Accordion title="¿Cómo uso las salidas de pasos anteriores?">
@@ -113,6 +121,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Resultado de código: `{{code.calculatedValue}}`
 
     Pasa el cursor sobre cualquier campo en la configuración de la acción para ver las variables disponibles de pasos anteriores.
+
   </Accordion>
 
   <Accordion title="¿Por qué falla mi Iterator?">
@@ -128,6 +137,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     2. Filter: length > 0
     3. Iterator: selecciona `{{searchRecords}}`
     4. Las acciones dentro de Iterator usan `{{iterator.currentItem.fieldName}}`
+
   </Accordion>
 
   <Accordion title="¿Cuál es el tiempo máximo de ejecución para las acciones Code?">
@@ -143,6 +153,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Evita cálculos pesados; usa servicios externos mediante HTTP Request para el procesamiento intensivo
     * Optimiza tu código para reducir el tiempo de ejecución
     * Si necesitas un procesamiento más largo, considera usar flujos de trabajo programados que procesen datos por lotes
+
   </Accordion>
 
   <Accordion title="¿Cómo leo las ejecuciones de flujos de trabajo?">
@@ -161,6 +172,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * **Datos**: Visualiza los datos de entrada/salida en cada paso
 
     Consulta [Ejecuciones de flujos de trabajo](/l/es/user-guide/workflows/capabilities/workflow-runs) para más detalles.
+
   </Accordion>
 
   <Accordion title="¿Por qué no veo mis ejecuciones de flujos de trabajo?">
@@ -182,6 +194,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Espacia las operaciones por lotes grandes
     * Usa filtros para reducir la frecuencia de los disparadores
     * Programa los flujos de trabajo pesados durante las horas de menor actividad
+
   </Accordion>
 
   <Accordion title="¿Cuáles son los límites de tasa de los flujos de trabajo?">
@@ -202,6 +215,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Usa disparadores Bulk con Iterator en lugar de disparadores Single para lotes grandes
     * Combina automatizaciones relacionadas en menos flujos de trabajo
     * Usa flujos de trabajo programados para distribuir la carga en el tiempo
+
   </Accordion>
 
   <Accordion title="¿Puedo reintentar una ejecución de flujo de trabajo que falló?">
@@ -220,6 +234,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     * Prueba exhaustivamente con unos pocos registros antes de operaciones masivas
 
     La funcionalidad de reintento automático está en nuestra hoja de ruta para una versión futura.
+
   </Accordion>
 
   <Accordion title="¿Debo desactivar los flujos de trabajo antes de las importaciones CSV?">
@@ -241,6 +256,7 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     5. **Reactiva** los flujos de trabajo al terminar
 
     **Alternativa**: Si necesitas que los flujos de trabajo se ejecuten con los datos importados, importa en lotes más pequeños para mantenerte dentro de los límites de tasa.
+
   </Accordion>
 
   <Accordion title="¿Cómo limpio el diseño de mi flujo de trabajo?">
@@ -250,5 +266,6 @@ description: Preguntas frecuentes sobre los flujos de trabajo en Twenty.
     2. Haz clic en **Tidy up workflow**
 
     Esto reorganizará automáticamente todos los nodos en un diseño limpio y organizado.
+
   </Accordion>
 </AccordionGroup>

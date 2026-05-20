@@ -13,16 +13,15 @@ title: Выбор иконки
 <Tab title="Использование">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MyComponent = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Выбранная иконка:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Выбранная иконка:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MyComponent = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Свойства">
-
 
 | Свойства        | Тип     | Описание                                                                                                                      |
 | --------------- | ------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -49,9 +46,6 @@ export const MyComponent = () => {
 | onClose         | функция | Функция обратного вызова, вызываемая при закрытии выпадающего списка                                                          |
 | onOpen          | функция | Функция обратного вызова, вызываемая при открытии выпадающего списка                                                          |
 | вариант         | строка  | Визуальный стиль варианта кликабельной иконки. Варианты включают: `primary`, `secondary`, и `tertiary`                        |
-
-
-
 
 </Tab>
 </Tabs>

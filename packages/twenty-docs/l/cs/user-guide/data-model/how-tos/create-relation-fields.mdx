@@ -6,17 +6,18 @@ description: Návod krok za krokem k propojení objektů pomocí relačních pol
 Relační pole propojují záznamy z různých objektů — například propojení lidí se společnostmi.
 
 <Note>
-**Názvy relací nelze po vytvoření změnit** (ovlivňují rozhraní API). Názvy si pečlivě naplánujte.
+  **Názvy relací nelze po vytvoření změnit** (ovlivňují rozhraní API). Názvy si
+  pečlivě naplánujte.
 </Note>
 
 ## Než začnete
 
 Rozhodněte se:
 
-* Které objekty propojujete? (např. Lidé → Společnosti)
-* Která strana je „jedna“? (např. Společnost)
-* Která strana je „mnoho“? (např. Lidé — mnoho lidí pracuje v jedné společnosti)
-* Jak se má pole jmenovat na každé straně?
+- Které objekty propojujete? (např. Lidé → Společnosti)
+- Která strana je „jedna“? (např. Společnost)
+- Která strana je „mnoho“? (např. Lidé — mnoho lidí pracuje v jedné společnosti)
+- Jak se má pole jmenovat na každé straně?
 
 Viz [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) s vysvětlením typů relací.
 
@@ -33,12 +34,12 @@ Viz [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) s
 
 ## Příklad: Lidé → Společnosti
 
-* Přejděte do **Nastavení → Datový model → Lidé**
-* Přidejte relační pole
-* Cíl: **Společnosti**
-* Typ: **Mnoho ku jedné**
-* Pole u lidí: **Společnost**
-* Pole u společností: **Zaměstnanci**
+- Přejděte do **Nastavení → Datový model → Lidé**
+- Přidejte relační pole
+- Cíl: **Společnosti**
+- Typ: **Mnoho ku jedné**
+- Pole u lidí: **Společnost**
+- Pole u společností: **Zaměstnanci**
 
 Nyní lze každou osobu propojit se společností a každá společnost zobrazuje své lidi.
 
@@ -51,10 +52,10 @@ Nyní lze každou osobu propojit se společností a každá společnost zobrazuj
 Propojení se zachovají, ale jsou skrytá. Znovu aktivujte pro obnovení.
 
 <Note>
-**Smazání relace nemaže záznamy.** Odstraní se pouze propojení mezi nimi.
+  **Smazání relace nemaže záznamy.** Odstraní se pouze propojení mezi nimi.
 </Note>
 
 ## Související
 
-* [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) — typy a omezení
-* [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — hromadný import propojených záznamů
+- [Relační pole](/l/cs/user-guide/data-model/capabilities/relation-fields) — typy a omezení
+- [Jak importovat relace](/l/cs/user-guide/data-migration/how-tos/import-relations-between-objects-via-csv) — hromadný import propojených záznamů

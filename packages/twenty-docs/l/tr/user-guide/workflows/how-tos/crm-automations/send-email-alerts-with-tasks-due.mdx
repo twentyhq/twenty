@@ -5,7 +5,10 @@ description: Takım üyelerini yaklaşan veya gecikmiş görevleri hakkında oto
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-<img src="/images/user-guide/workflows/email_tasks_due.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/workflows/email_tasks_due.png"
+  style={{ width: '100%' }}
+/>
 
 Her takım üyesine, son tarihi bugün olan görevleri hakkında günlük e-posta hatırlatmaları gönderin.
 
@@ -45,8 +48,8 @@ Bu iş akışı bir zamanlamaya göre çalışır ve:
 1. Yineleyici içinde bir **Kayıtları Ara** eylemi ekleyin
 2. Nesne olarak **Görevler**'i seçin
 3. Filtreler ekleyin:
-   * **Atanan** = mevcut çalışma alanı üyesi (yineleyiciden)
-   * **Son Tarih** = bugün
+   - **Atanan** = mevcut çalışma alanı üyesi (yineleyiciden)
+   - **Son Tarih** = bugün
 
 ### Adım 5: Görevleri E-posta Gövdesine Biçimlendirin (Yineleyici İçinde)
 
@@ -79,7 +82,8 @@ export const main = async (params: {
 ```
 
 <Note>
-`yourSubDomain` değerini, gerçek Twenty çalışma alanı alt alan adınızla değiştirin.
+  `yourSubDomain` değerini, gerçek Twenty çalışma alanı alt alan adınızla
+  değiştirin.
 </Note>
 
 ### Adım 6: E-posta Gönderin (Yineleyici İçinde)
@@ -101,6 +105,6 @@ export const main = async (params: {
 
 ## İlgili
 
-* [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
-* [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
-* [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)
+- [İş Akışı Eylemleri](/l/tr/user-guide/workflows/capabilities/workflow-actions)
+- [İş Akışlarından E-posta Gönderme](/l/tr/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Kod Eylemlerinde Dizileri Ele Alma](/l/tr/user-guide/workflows/how-tos/advanced-configurations/handle-arrays-in-code-actions)

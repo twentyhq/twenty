@@ -4,7 +4,9 @@ icon: docker
 ---
 
 <Warning>
-I container Docker sono destinati all'hosting in produzione o al self-hosting. Per contribuire, consulta [Configurazione locale](/l/it/developers/contribute/capabilities/local-setup).
+  I container Docker sono destinati all'hosting in produzione o al self-hosting.
+  Per contribuire, consulta [Configurazione
+  locale](/l/it/developers/contribute/capabilities/local-setup).
 </Warning>
 
 ## Panoramica
@@ -17,8 +19,8 @@ Consulta [Configurazione delle variabili di ambiente](/l/it/developers/self-host
 
 ## Requisiti di Sistema
 
-* RAM: Assicurati che il tuo ambiente abbia almeno 2GB di RAM. Memoria insufficiente può causare arresti anomali dei processi.
-* Docker & Docker Compose: Assicurati che entrambi siano installati e aggiornati.
+- RAM: Assicurati che il tuo ambiente abbia almeno 2GB di RAM. Memoria insufficiente può causare arresti anomali dei processi.
+- Docker & Docker Compose: Assicurati che entrambi siano installati e aggiornati.
 
 ## Opzione 1: Script a riga singola
 
@@ -34,8 +36,8 @@ Per installare una versione o un ramo specifico:
 VERSION=vx.y.z BRANCH=nome-ramo bash <(curl -sL https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-docker/scripts/install.sh)
 ```
 
-* Sostituisci x.y.z con il numero di versione desiderato.
-* Sostituisci nome-ramo con il nome del ramo che vuoi installare.
+- Sostituisci x.y.z con il numero di versione desiderato.
+- Sostituisci nome-ramo con il nome del ramo che vuoi installare.
 
 ## Opzione 2: Passaggi manuali
 
@@ -111,11 +113,11 @@ Per impostazione predefinita, Twenty gira su `localhost` alla porta `3000`. Per 
 
 #### Comprendere `SERVER_URL`
 
-* **Protocollo:** Usa `http` o `https` a seconda della tua configurazione.
-  * Usa `http` se non hai configurato SSL.
-  * Usa `https` se hai configurato SSL.
-* **Dominio/IP:** Questo è il nome del dominio o indirizzo IP dove la tua applicazione è accessibile.
-* **Porta:** Includi il numero di porta se non stai usando le porte predefinite (`80` per `http`, `443` per `https`).
+- **Protocollo:** Usa `http` o `https` a seconda della tua configurazione.
+  - Usa `http` se non hai configurato SSL.
+  - Usa `https` se hai configurato SSL.
+- **Dominio/IP:** Questo è il nome del dominio o indirizzo IP dove la tua applicazione è accessibile.
+- **Porta:** Includi il numero di porta se non stai usando le porte predefinite (`80` per `http`, `443` per `https`).
 
 ### Requisiti SSL
 
@@ -128,7 +130,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
 #### Configurare `SERVER_URL`
 
 1. **Determina il tuo URL di Accesso**
-   * **Senza Proxy Inverso (Accesso Diretto):**
+   - **Senza Proxy Inverso (Accesso Diretto):**
 
      Se accedi all'applicazione direttamente senza un proxy inverso:
 
@@ -136,7 +138,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
      SERVER_URL=http://tuo-dominio-o-ip:3000
      ```
 
-   * **Con Proxy Inverso (Porte Standard):**
+   - **Con Proxy Inverso (Porte Standard):**
 
      Se usi un proxy inverso come Nginx o Traefik e hai configurato SSL:
 
@@ -144,7 +146,7 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
      SERVER_URL=https://tuo-dominio-o-ip
      ```
 
-   * **Con Proxy Inverso (Porte Personalizzate):**
+   - **Con Proxy Inverso (Porte Personalizzate):**
 
      Se usi porte non standard:
 
@@ -161,12 +163,11 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
    ```
 
    **Esempi:**
-
-   * Accesso diretto senza SSL:
+   - Accesso diretto senza SSL:
      ```ini
      SERVER_URL=http://123.45.67.89:3000
      ```
-   * Accesso tramite dominio con SSL:
+   - Accesso tramite dominio con SSL:
      ```ini
      SERVER_URL=https://mytwentyapp.com
      ```
@@ -182,25 +183,25 @@ Raccomandiamo fortemente di configurare Twenty dietro un proxy inverso con termi
 
 #### Considerazioni
 
-* **Configurazione del Reverse Proxy:**
+- **Configurazione del Reverse Proxy:**
 
   Assicurati che il tuo reverse proxy inoltri le richieste alla porta interna corretta (`3000` per impostazione predefinita). Configura la terminazione SSL e tutte le intestazioni necessarie.
 
-* **Impostazioni Firewall:**
+- **Impostazioni Firewall:**
 
   Apri le porte necessarie nel tuo firewall per consentire l'accesso esterno.
 
-* **Coerenza:**
+- **Coerenza:**
 
   Il `SERVER_URL` deve corrispondere a come gli utenti accedono alla tua applicazione nei loro browser.
 
 #### Persistenza
 
-* **Volumi di Dati:**
+- **Volumi di Dati:**
 
   La configurazione di Docker Compose utilizza volumi per mantenere i dati per il database e l'archiviazione del server.
 
-* **Ambienti Senza Stato:**
+- **Ambienti Senza Stato:**
 
   Se si distribuisce in un ambiente senza stato (ad esempio, alcuni servizi di cloud), configura l'archiviazione esterna per mantenere i dati.
 
@@ -244,10 +245,10 @@ docker compose up -d
 
 ### Pratiche migliori per i backup
 
-* **Esegui regolarmente test di ripristino** — verifica che i backup funzionino davvero
-* **Conserva i backup off-site** — usa l'archiviazione cloud (S3, GCS, ecc.)
-* **Crittografa i dati sensibili** — proteggi i backup con la crittografia
-* **Mantieni più copie** — conserva backup giornalieri, settimanali e mensili
+- **Esegui regolarmente test di ripristino** — verifica che i backup funzionino davvero
+- **Conserva i backup off-site** — usa l'archiviazione cloud (S3, GCS, ecc.)
+- **Crittografa i dati sensibili** — proteggi i backup con la crittografia
+- **Mantieni più copie** — conserva backup giornalieri, settimanali e mensili
 
 ## Risoluzione dei problemi
 

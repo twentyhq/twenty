@@ -9,9 +9,9 @@ Halten Sie Ihre Pipeline gesund, indem Sie Manager benachrichtigen, wenn Gelegen
 
 Nicht aktualisierte Gelegenheiten führen zu:
 
-* Erkaltende Deals
-* Unzuverlässige Prognosen
-* Entgangener Umsatz
+- Erkaltende Deals
+- Unzuverlässige Prognosen
+- Entgangener Umsatz
 
 ## Die Lösung
 
@@ -58,7 +58,7 @@ export const main = async (params) => {
 
   // Group opportunities by owner
   const byOwner = {};
-  opportunities.forEach(opp => {
+  opportunities.forEach((opp) => {
     const ownerEmail = opp.owner?.email || 'unassigned';
     if (!byOwner[ownerEmail]) {
       byOwner[ownerEmail] = [];
@@ -67,23 +67,23 @@ export const main = async (params) => {
       name: opp.name,
       amount: opp.amount,
       lastUpdated: opp.updatedAt,
-      stage: opp.stage
+      stage: opp.stage,
     });
   });
 
   // Format summary for manager
-  let summary = "Stale Opportunities Report\n\n";
+  let summary = 'Stale Opportunities Report\n\n';
   Object.entries(byOwner).forEach(([owner, opps]) => {
     summary += `${owner}: ${opps.length} stale opportunities\n`;
-    opps.forEach(opp => {
+    opps.forEach((opp) => {
       summary += `  - ${opp.name} (${opp.stage})\n`;
     });
-    summary += "\n";
+    summary += '\n';
   });
 
   return {
     summary,
-    totalCount: opportunities.length
+    totalCount: opportunities.length,
   };
 };
 ```
@@ -110,9 +110,9 @@ Fügen Sie eine **E-Mail senden**-Aktion hinzu:
 
 Passen Sie den Filter der Aktion Datensätze suchen an, um statt 7 Tagen Ihren bevorzugten Zeitraum zu verwenden:
 
-* 3 Tage für schnelllebige Verkäufe
-* 14 Tage für Enterprise-Deals
-* 30 Tage für lange Verkaufszyklen
+- 3 Tage für schnelllebige Verkäufe
+- 14 Tage für Enterprise-Deals
+- 30 Tage für lange Verkaufszyklen
 
 ### Einzelne Vertriebsmitarbeiter benachrichtigen
 
@@ -132,5 +132,5 @@ Verwenden Sie **HTTP Request**, um an einen Slack-Webhook zu posten, anstelle vo
 
 ## Verwandt
 
-* [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
-* [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Workflow-Aktionen](/l/de/user-guide/workflows/capabilities/workflow-actions)
+- [E-Mails aus Workflows senden](/l/de/user-guide/workflows/capabilities/send-emails-from-workflows)

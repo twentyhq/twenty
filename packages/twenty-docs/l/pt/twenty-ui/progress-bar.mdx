@@ -9,7 +9,7 @@ Indica progresso ou contagem regressiva e move-se da direita para a esquerda.
 <Tab title="Uso">
 
 ```jsx
-import { ProgressBar } from "twenty-ui/feedback";
+import { ProgressBar } from 'twenty-ui/feedback';
 
 export const MyComponent = () => {
   return (
@@ -29,7 +29,6 @@ export const MyComponent = () => {
 
 <Tab title="Propriedades">
 
-
 | Propriedades | Tipo     | Descrição                                                                                              | Padrão       |
 | ------------ | -------- | ------------------------------------------------------------------------------------------------------ | ------------ |
 | duração      | número   | A duração total da animação da barra de progresso em milissegundos                                     | 3            |
@@ -38,8 +37,6 @@ export const MyComponent = () => {
 | barHeight    | número   | A altura da barra em pixels                                                                            | 24           |
 | barColor     | string   | A cor da barra                                                                                         | cinza80      |
 | autoStart    | booleano | Se `verdadeiro`, a animação da barra de progresso começa automaticamente quando o componente é montado | `verdadeiro` |
-
-
 
 </Tab>
 </Tabs>
@@ -53,7 +50,7 @@ Indica o progresso de uma tarefa, frequentemente usado em telas de carregamento 
 <Tab title="Uso">
 
 ```jsx
-import { CircularProgressBar } from "@/ui/feedback/progress-bar/components/CircularProgressBar";
+import { CircularProgressBar } from '@/ui/feedback/progress-bar/components/CircularProgressBar';
 
 export const MyComponent = () => {
   return <CircularProgressBar size={80} barWidth={6} barColor="green" />;
@@ -64,14 +61,11 @@ export const MyComponent = () => {
 
 <Tab title="Propriedades">
 
-
 | Propriedades | Tipo   | Descrição                                | Padrão   |
 | ------------ | ------ | ---------------------------------------- | -------- |
 | tamanho      | número | O tamanho da barra de progresso circular | 50       |
 | barWidth     | número | A largura da linha de progresso          | 5        |
 | barColor     | string | A cor da barra de progresso              | corAtual |
-
-
 
 </Tab>
 

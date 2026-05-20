@@ -13,16 +13,15 @@ Um seletor de ícones baseado em lista suspensa que permite aos usuários seleci
 <Tab title="Uso">
 
 ```jsx
-import React, { useState } from "react";
-import { IconPicker } from "@/ui/input/components/IconPicker";
+import React, { useState } from 'react';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 
 export const MeuComponente = () => {
-
-   const [selectedIcon, setSelectedIcon] = useState("");
-   const handleIconChange = ({ iconKey, Icon }) => {
-     console.log("Ícone Selecionado:", iconKey);
-     setSelectedIcon(iconKey);
-   };
+  const [selectedIcon, setSelectedIcon] = useState('');
+  const handleIconChange = ({ iconKey, Icon }) => {
+    console.log('Ícone Selecionado:', iconKey);
+    setSelectedIcon(iconKey);
+  };
 
   return (
     <IconPicker
@@ -35,10 +34,8 @@ export const MeuComponente = () => {
 };
 ```
 
-
 </Tab>
 <Tab title="Propriedades">
-
 
 | Propriedades    | Tipo     | Descrição                                                                                                                                |
 | --------------- | -------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
@@ -49,9 +46,6 @@ export const MeuComponente = () => {
 | onClose         | função   | Função de retorno de chamada acionada quando a lista suspensa é fechada                                                                  |
 | onOpen          | função   | Função de retorno de chamada acionada quando a lista suspensa é aberta                                                                   |
 | variante        | string   | A variante de estilo visual do ícone clicável. As opções incluem: `primária`, `secundária` e `terciária`                                 |
-
-
-
 
 </Tab>
 </Tabs>

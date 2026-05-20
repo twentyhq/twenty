@@ -5,7 +5,8 @@ icon: robot
 ---
 
 <Warning>
-  Beceriler ve ajanlar şu anda alfa aşamasında. Özellik işlevsel ancak hâlâ gelişmekte.
+  Beceriler ve ajanlar şu anda alfa aşamasında. Özellik işlevsel ancak hâlâ
+  gelişmekte.
 </Warning>
 
 Uygulamalar, çalışma alanı içinde yer alan yapay zekâ yeteneklerini — yeniden kullanılabilir yetenek yönergeleri ve özel sistem istemlerine sahip ajanları — tanımlayabilir.
@@ -22,7 +23,8 @@ export default defineSkill({
   universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
   name: 'sales-outreach',
   label: 'Sales Outreach',
-  description: 'Guides the AI agent through a structured sales outreach process',
+  description:
+    'Guides the AI agent through a structured sales outreach process',
   icon: 'IconBrain',
   content: `You are a sales outreach assistant. When reaching out to a prospect:
 1. Research the company and recent news
@@ -33,11 +35,12 @@ export default defineSkill({
 ```
 
 Önemli noktalar:
-* `name`, yetenek için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
-* `label`, UI'de gösterilen, insan tarafından okunabilir addır.
-* `content`, yetenek yönergelerini içerir — bu, yapay zekâ ajanının kullandığı metindir.
-* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
-* `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
+
+- `name`, yetenek için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+- `label`, UI'de gösterilen, insan tarafından okunabilir addır.
+- `content`, yetenek yönergelerini içerir — bu, yapay zekâ ajanının kullandığı metindir.
+- `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+- `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
 
 </Accordion>
 <Accordion title="defineAgent" description="Özel istemlerle yapay zekâ ajanları tanımlayın">
@@ -51,19 +54,22 @@ export default defineAgent({
   universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   name: 'sales-assistant',
   label: 'Sales Assistant',
-  description: 'Helps the sales team draft outreach emails and research prospects',
+  description:
+    'Helps the sales team draft outreach emails and research prospects',
   icon: 'IconRobot',
-  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+  prompt:
+    'You are a helpful sales assistant. Help users with their questions and tasks.',
 });
 ```
 
 Önemli noktalar:
-* `name`, ajan için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
-* `label`, UI'de gösterilen görünen addır.
-* `prompt`, ajanın davranışını tanımlayan sistem istemidir.
-* `description` (isteğe bağlı), ajanın ne yaptığı hakkında bağlam sağlar.
-* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
-* `modelId` (isteğe bağlı), ajanın kullandığı varsayılan yapay zekâ modelini geçersiz kılar.
+
+- `name`, ajan için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+- `label`, UI'de gösterilen görünen addır.
+- `prompt`, ajanın davranışını tanımlayan sistem istemidir.
+- `description` (isteğe bağlı), ajanın ne yaptığı hakkında bağlam sağlar.
+- `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+- `modelId` (isteğe bağlı), ajanın kullandığı varsayılan yapay zekâ modelini geçersiz kılar.
 
 </Accordion>
 </AccordionGroup>

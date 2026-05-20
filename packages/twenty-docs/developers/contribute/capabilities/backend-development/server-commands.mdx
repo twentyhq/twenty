@@ -1,8 +1,7 @@
 ---
 title: Backend Commands
-icon: "terminal"
+icon: 'terminal'
 ---
-
 
 ## Useful commands
 
@@ -33,6 +32,7 @@ npx nx run twenty-server:lint # pass --fix to fix lint errors
 npx nx run twenty-server:test:unit          # run unit tests
 npx nx run twenty-server:test:integration   # run integration tests
 ```
+
 Note: you can run `npx nx run twenty-server:test:integration:with-db-reset` in case you need to reset the database before running the integration tests.
 
 ### Resetting the database
@@ -59,26 +59,29 @@ Prisma was the first ORM we used. But in order to allow users to create custom f
 
 Here's what the tech stack now looks like.
 
-
 **Core**
+
 - [NestJS](https://nestjs.com/)
 - [TypeORM](https://typeorm.io/)
 - [GraphQL Yoga](https://the-guild.dev/graphql/yoga-server)
 
 **Database**
+
 - [Postgres](https://www.postgresql.org/)
 
 **Third-party integrations**
+
 - [Sentry](https://sentry.io/welcome/) for tracking bugs
 
 **Testing**
+
 - [Jest](https://jestjs.io/)
 
 **Tooling**
+
 - [Yarn](https://yarnpkg.com/)
 - [Oxlint](https://oxc.rs/docs/guide/usage/linter.html)
 
 **Development**
+
 - [AWS EKS](https://aws.amazon.com/eks/)
-
-

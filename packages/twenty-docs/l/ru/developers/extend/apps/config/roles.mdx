@@ -82,13 +82,13 @@ export default defineApplicationRole({
 
 Заметки:
 
-* Допускается ровно **один** вызов `defineApplicationRole(...)` на приложение — сборка манифеста завершится с ошибкой, если будет найдено более одного.
-* Используйте `defineRole()` (а не `defineApplicationRole()`) для любых **дополнительных** ролей, которые ставятся вместе с вашим приложением.
-* Явная установка `defaultRoleUniversalIdentifier` в `defineApplication()` всё ещё поддерживается для обратной совместимости, но считается устаревшей по сравнению с `defineApplicationRole()`.
+- Допускается ровно **один** вызов `defineApplicationRole(...)` на приложение — сборка манифеста завершится с ошибкой, если будет найдено более одного.
+- Используйте `defineRole()` (а не `defineApplicationRole()`) для любых **дополнительных** ролей, которые ставятся вместе с вашим приложением.
+- Явная установка `defaultRoleUniversalIdentifier` в `defineApplication()` всё ещё поддерживается для обратной совместимости, но считается устаревшей по сравнению с `defineApplicationRole()`.
 
 ## Лучшие практики
 
-* Начните с сгенерированной роли и постепенно ограничивайте её — роль по умолчанию предоставляет широкий доступ на чтение, что редко подходит для продакшена.
-* Замените `objectPermissions` и `fieldPermissions` на точные объекты и поля, которые действительно нужны вашим функциям.
-* `permissionFlags` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
-* См. рабочий пример: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).
+- Начните с сгенерированной роли и постепенно ограничивайте её — роль по умолчанию предоставляет широкий доступ на чтение, что редко подходит для продакшена.
+- Замените `objectPermissions` и `fieldPermissions` на точные объекты и поля, которые действительно нужны вашим функциям.
+- `permissionFlags` управляют доступом к возможностям на уровне платформы. Сведите их к минимуму.
+- См. рабочий пример: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

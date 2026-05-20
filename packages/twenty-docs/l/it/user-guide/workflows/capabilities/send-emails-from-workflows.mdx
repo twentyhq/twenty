@@ -25,9 +25,9 @@ Prima di poter inviare email dai flussi di lavoro:
 2. **Aggiungi trigger**: Seleziona **Record creato** → **Persone**
 
 3. **Aggiungi l'azione Invia email**:
-   * Fai clic su **+** per aggiungere un'azione
-   * Seleziona **Invia email**
-   * Configura l'email:
+   - Fai clic su **+** per aggiungere un'azione
+   - Seleziona **Invia email**
+   - Configura l'email:
 
 | Campo       | Valore                                 |
 | ----------- | -------------------------------------- |
@@ -71,12 +71,12 @@ Il Team
 1. **Trigger**: Record creato (Persone)
 
 2. **Aggiungi l'azione Filtro**:
-   * Condizione: `{{trigger.object.source}}` uguale a `"Website"`
-   * Se vero → continua con l'email di benvenuto per il sito web
+   - Condizione: `{{trigger.object.source}}` uguale a `"Website"`
+   - Se vero → continua con l'email di benvenuto per il sito web
 
 3. **Diramazione per altre origini**:
-   * Crea diramazioni parallele per origini diverse
-   * Ogni diramazione ha la propria azione Invia email
+   - Crea diramazioni parallele per origini diverse
+   - Ogni diramazione ha la propria azione Invia email
 
 ## Inviare email a più destinatari
 
@@ -91,12 +91,12 @@ Il Team
 2. **Cerca record**: Trova il responsabile del proprietario dell'opportunità
 
 3. **Invia email n. 1**: Al proprietario dell'opportunità
-   * A: `{{trigger.object.owner.email}}`
-   * Oggetto: `Congratulazioni per la chiusura di {{trigger.object.name}}!`
+   - A: `{{trigger.object.owner.email}}`
+   - Oggetto: `Congratulazioni per la chiusura di {{trigger.object.name}}!`
 
 4. **Invia email n. 2**: Al responsabile
-   * A: `{{searchRecords.manager.email}}`
-   * Oggetto: `Opportunità vinta: {{trigger.object.name}}`
+   - A: `{{searchRecords.manager.email}}`
+   - Oggetto: `Opportunità vinta: {{trigger.object.name}}`
 
 ## Email di follow-up programmate
 
@@ -111,9 +111,9 @@ Il Team
 2. **Azione di ritardo**: Attendi 3 giorni
 
 3. **Invia email**:
-   * A: Partecipante alla riunione
-   * Oggetto: Seguito alla nostra conversazione
-   * Corpo: Richiama i dettagli della riunione dal trigger
+   - A: Partecipante alla riunione
+   - Oggetto: Seguito alla nostra conversazione
+   - Corpo: Richiama i dettagli della riunione dal trigger
 
 ## Allegati email
 
@@ -135,33 +135,36 @@ Puoi allegare file alle email inviate dai flussi di lavoro. L'allegato è un fil
 | **Conferme degli eventi**  | Dettagli dell'evento o programma   |
 
 <Note>
-Gli allegati sono statici—lo stesso file viene inviato a tutti i destinatari. Per documenti dinamici (come i preventivi personalizzati), genera e allega i file utilizzando una [Funzione serverless](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
+  Gli allegati sono statici—lo stesso file viene inviato a tutti i destinatari.
+  Per documenti dinamici (come i preventivi personalizzati), genera e allega i
+  file utilizzando una [Funzione
+  serverless](/l/it/user-guide/workflows/how-tos/connect-to-other-tools/generate-pdf-from-twenty).
 </Note>
 
 ## Migliori Pratiche
 
 ### Contenuto dell'email
 
-* Mantieni le righe dell'oggetto concise e pertinenti
-* Personalizza con il nome del destinatario
-* Includi una chiara chiamata all'azione
-* Testa le email prima di attivare
+- Mantieni le righe dell'oggetto concise e pertinenti
+- Personalizza con il nome del destinatario
+- Includi una chiara chiamata all'azione
+- Testa le email prima di attivare
 
 ### Recapito
 
-* Non inviare troppe email troppo rapidamente
-* Usa firme email professionali
-* Evita parole che attivano i filtri antispam
-* Assicurati che le email di marketing includano opzioni di disiscrizione
+- Non inviare troppe email troppo rapidamente
+- Usa firme email professionali
+- Evita parole che attivano i filtri antispam
+- Assicurati che le email di marketing includano opzioni di disiscrizione
 
 ### Risoluzione dei problemi
 
-* Verifica che l'account email sia connesso e attivo
-* Controlla che l'indirizzo email del destinatario sia valido
-* Esamina le esecuzioni dei flussi di lavoro per eventuali messaggi di errore
-* Prova prima con il tuo indirizzo email
+- Verifica che l'account email sia connesso e attivo
+- Controlla che l'indirizzo email del destinatario sia valido
+- Esamina le esecuzioni dei flussi di lavoro per eventuali messaggi di errore
+- Prova prima con il tuo indirizzo email
 
 ## Correlati
 
-* [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
-* [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)
+- [Trigger dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-triggers)
+- [Azioni dei flussi di lavoro](/l/it/user-guide/workflows/capabilities/workflow-actions)

@@ -36,18 +36,15 @@ export const MyComponent = () => {
 
 <Tab title="属性">
 
-
-| 属性           | 类型                    | 描述                            |
-| ------------ | --------------------- | ----------------------------- |
-| linkToEntity | 字符串                   | 指向实体的链接                       |
-| entityId     | string                | 实体的唯一标识符                      |
-| 名称           | 字符串                   | 实体名称                          |
-| pictureUrl   | string                | 的图片",                         |
-| avatarType   | 头像类型                  | 您要显示的头像类型。 有两个选项：`圆形`和`方形`    |
+| 属性         | 类型                    | 描述                                                  |
+| ------------ | ----------------------- | ----------------------------------------------------- |
+| linkToEntity | 字符串                  | 指向实体的链接                                        |
+| entityId     | string                  | 实体的唯一标识符                                      |
+| 名称         | 字符串                  | 实体名称                                              |
+| pictureUrl   | string                  | 的图片",                                              |
+| avatarType   | 头像类型                | 您要显示的头像类型。 有两个选项：`圆形`和`方形`       |
 | variant      | `EntityChipVariant`枚举 | 您要显示的实体芯片的变体。 有两个选项：`普通`和`透明` |
-| LeftIcon     | IconComponent         | 一个代表图标的React组件。 显示在芯片的左侧      |
-
-
+| LeftIcon     | IconComponent           | 一个代表图标的React组件。 显示在芯片的左侧            |
 
 </Tab>
 </Tabs>
@@ -61,7 +58,7 @@ import { Chip } from 'twenty-ui/components';
 
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="透明的禁用 Chip"
       clickable={false}
@@ -71,10 +68,9 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
-
 ```
 
 <br />
@@ -82,11 +78,11 @@ export const MyComponent = () => {
 ### 带工具提示的禁用芯片
 
 ```jsx
-import { Chip } from "twenty-ui/components";
-  
+import { Chip } from 'twenty-ui/components';
+
 export const MyComponent = () => {
   return (
-      <Chip 
+    <Chip
       size="large"
       label="当内容溢出时会触发工具提示的禁用 Chip。"
       clickable={false}
@@ -96,7 +92,7 @@ export const MyComponent = () => {
       rightComponent
       maxWidth="200px"
       className
-      />    
+    />
   );
 };
 ```
@@ -135,18 +131,15 @@ export const MyComponent = () => {
 
 <Tab title="属性">
 
-
-| 属性           | 类型                    | 描述                            |
-| ------------ | --------------------- | ----------------------------- |
-| linkToEntity | string                | 指向实体的链接                       |
-| entityId     | string                | 实体的唯一标识符                      |
-| 名称           | string                | 实体名称                          |
-| pictureUrl   | string                | 的图片",                         |
-| avatarType   | 头像类型                  | 您要显示的头像类型。 有两个选项：`圆形`和`方形`    |
+| 属性         | 类型                    | 描述                                                  |
+| ------------ | ----------------------- | ----------------------------------------------------- |
+| linkToEntity | string                  | 指向实体的链接                                        |
+| entityId     | string                  | 实体的唯一标识符                                      |
+| 名称         | string                  | 实体名称                                              |
+| pictureUrl   | string                  | 的图片",                                              |
+| avatarType   | 头像类型                | 您要显示的头像类型。 有两个选项：`圆形`和`方形`       |
 | variant      | `EntityChipVariant`枚举 | 您要显示的实体芯片的变体。 有两个选项：`普通`和`透明` |
-| LeftIcon     | IconComponent         | 一个代表图标的React组件。 显示在芯片的左侧      |
-
-
+| LeftIcon     | IconComponent           | 一个代表图标的React组件。 显示在芯片的左侧            |
 
 </Tab>
 </Tabs>

@@ -4,7 +4,9 @@ description: Supervisa la velocidad de las oportunidades registrando cuándo ing
 ---
 
 <Tip>
-  Este es un ejemplo de cómo crear [Campos de fórmula](/l/es/user-guide/workflows/how-tos/crm-automations/formula-fields) usando flujos de trabajo — específicamente cálculos de fechas.
+  Este es un ejemplo de cómo crear [Campos de
+  fórmula](/l/es/user-guide/workflows/how-tos/crm-automations/formula-fields)
+  usando flujos de trabajo — específicamente cálculos de fechas.
 </Tip>
 
 Registrar cuándo las oportunidades ingresan a cada etapa te ayuda a identificar cuellos de botella y medir la velocidad de las oportunidades.
@@ -15,46 +17,47 @@ Esta guía te muestra cómo configurar campos personalizados y un flujo de traba
 
 Necesitas dos tipos de campos para cada etapa:
 
-* **Campos de fecha y hora**: Registran cuándo la oportunidad ingresó a cada etapa
-* **Campos numéricos**: Almacenan cuántos días pasó la oportunidad en cada etapa
+- **Campos de fecha y hora**: Registran cuándo la oportunidad ingresó a cada etapa
+- **Campos numéricos**: Almacenan cuántos días pasó la oportunidad en cada etapa
 
 ### Crea los campos "Última entrada"
 
 1. Ve a **Ajustes → Modelo de datos → Oportunidades**
 2. Para cada etapa, haz clic en **+ Agregar campo** y configura:
-   * **Nombre**: Última entrada en [Nombre de la etapa] (p. ej., "Última entrada en Nuevo", "Última entrada en Calificado")
-   * **Tipo**: Fecha y hora
-   * **Descripción**: Marca de tiempo cuando la oportunidad ingresó a esta etapa
+   - **Nombre**: Última entrada en [Nombre de la etapa] (p. ej., "Última entrada en Nuevo", "Última entrada en Calificado")
+   - **Tipo**: Fecha y hora
+   - **Descripción**: Marca de tiempo cuando la oportunidad ingresó a esta etapa
 3. Haga clic en **Guardar**
 
 Crea estos campos:
 
-* Última entrada en Nuevo
-* Última entrada en Calificado
-* Última entrada en Reunión
-* Última entrada en Propuesta
-* Última entrada en Negociación
-* Última entrada en Cerrado ganado
-* Última entrada en Cerrado perdido
+- Última entrada en Nuevo
+- Última entrada en Calificado
+- Última entrada en Reunión
+- Última entrada en Propuesta
+- Última entrada en Negociación
+- Última entrada en Cerrado ganado
+- Última entrada en Cerrado perdido
 
 ### Crea los campos "Días en la etapa"
 
 1. Para cada etapa, haz clic en **+ Agregar campo** y configura:
-   * **Nombre**: Días en [Nombre de la etapa] (p. ej., "Días en Nuevo", "Días en Calificado")
-   * **Tipo**: Número
-   * **Descripción**: Número de días que pasó en esta etapa
+   - **Nombre**: Días en [Nombre de la etapa] (p. ej., "Días en Nuevo", "Días en Calificado")
+   - **Tipo**: Número
+   - **Descripción**: Número de días que pasó en esta etapa
 2. Haga clic en **Guardar**
 
 Crea estos campos:
 
-* Días en Nuevo
-* Días en Calificado
-* Días en Reunión
-* Días en Propuesta
-* Días en Negociación
+- Días en Nuevo
+- Días en Calificado
+- Días en Reunión
+- Días en Propuesta
+- Días en Negociación
 
 <Note>
-  No necesitas campos "Días en" para Cerrado ganado y Cerrado perdido, ya que son etapas finales.
+  No necesitas campos "Días en" para Cerrado ganado y Cerrado perdido, ya que
+  son etapas finales.
 </Note>
 
 ### Opcional: Hacer que los campos sean de solo lectura
@@ -70,8 +73,8 @@ Si no quieres que los usuarios editen manualmente estos campos calculados:
 
 Este único flujo de trabajo gestiona ambas tareas:
 
-* Registra la marca de tiempo al entrar en una nueva etapa
-* Calcula los días que se pasaron en la etapa anterior
+- Registra la marca de tiempo al entrar en una nueva etapa
+- Calcula los días que se pasaron en la etapa anterior
 
 ### Crea el flujo de trabajo
 
@@ -88,7 +91,9 @@ Este único flujo de trabajo gestiona ambas tareas:
 ### Agrega ramas para cada etapa
 
 <Note>
-  Para crear una nueva rama, haz clic derecho en el lienzo del flujo de trabajo y haz clic en **Nueva acción**. Luego, vincula esta acción al nodo anterior arrastrando la flecha desde el nodo anterior hasta esta nueva acción.
+  Para crear una nueva rama, haz clic derecho en el lienzo del flujo de trabajo
+  y haz clic en **Nueva acción**. Luego, vincula esta acción al nodo anterior
+  arrastrando la flecha desde el nodo anterior hasta esta nueva acción.
 </Note>
 
 ---
@@ -107,9 +112,9 @@ export const main = async (): Promise<object> => {
 ```
 
 3. Agrega una acción **Actualizar registro**:
-   * Registro: la Oportunidad que activó el evento
-   * Campo: Última entrada en Nuevo
-   * Valor: `now` del nodo de Código
+   - Registro: la Oportunidad que activó el evento
+   - Campo: Última entrada en Nuevo
+   - Valor: `now` del nodo de Código
 
 ---
 
@@ -140,10 +145,10 @@ export const main = async (params: {
 
 3. Configura la entrada del nodo de Código: mapea `lastEnteredPreviousStage` al campo **Última entrada en Nuevo**
 4. Agrega una acción **Actualizar registro**:
-   * Registro: la Oportunidad que activó el evento
-   * Campos a actualizar:
-     * Última entrada en Calificado = `now`
-     * Días en Nuevo = `daysInPreviousStage`
+   - Registro: la Oportunidad que activó el evento
+   - Campos a actualizar:
+     - Última entrada en Calificado = `now`
+     - Días en Nuevo = `daysInPreviousStage`
 
 ---
 
@@ -174,10 +179,10 @@ export const main = async (params: {
 
 3. Configura la entrada del nodo de Código: mapea `lastEnteredPreviousStage` al campo **Última entrada en Calificado**
 4. Agrega una acción **Actualizar registro**:
-   * Registro: la Oportunidad que activó el evento
-   * Campos a actualizar:
-     * Última entrada en Reunión = `now`
-     * Días en Calificado = `daysInPreviousStage`
+   - Registro: la Oportunidad que activó el evento
+   - Campos a actualizar:
+     - Última entrada en Reunión = `now`
+     - Días en Calificado = `daysInPreviousStage`
 
 ---
 
@@ -226,6 +231,6 @@ Esto muestra el tiempo promedio que las oportunidades pasan en cada etapa.
 
 ## Relacionado
 
-* [Flujos de trabajo](/l/es/user-guide/workflows/overview) — conceptos básicos de automatización
-* [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields) — configuración de campos
-* [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones
+- [Flujos de trabajo](/l/es/user-guide/workflows/overview) — conceptos básicos de automatización
+- [Cómo crear campos personalizados](/l/es/user-guide/data-model/how-tos/create-custom-fields) — configuración de campos
+- [Vistas Kanban](/l/es/user-guide/views-pipelines/capabilities/kanban-views) — agregaciones

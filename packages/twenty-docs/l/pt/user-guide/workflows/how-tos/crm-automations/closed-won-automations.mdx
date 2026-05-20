@@ -9,10 +9,10 @@ Quando um negócio é encerrado, várias coisas precisam acontecer: atualizar o 
 
 Quando uma oportunidade passa para "Closed Won":
 
-* O tipo de empresa precisa mudar de "Prospect" para "Customer"
-* Tarefas de onboarding precisam ser criadas
-* A equipe de Customer Success precisa ser notificada
-* O representante de vendas precisa de confirmação
+- O tipo de empresa precisa mudar de "Prospect" para "Customer"
+- Tarefas de onboarding precisam ser criadas
+- A equipe de Customer Success precisa ser notificada
+- O representante de vendas precisa de confirmação
 
 Fazer isso manualmente consome tempo e é suscetível a erros.
 
@@ -105,17 +105,17 @@ Let's give them a great start!
 | Campo       | Valor                                                                                                          |
 | ----------- | -------------------------------------------------------------------------------------------------------------- |
 | **Para**    | `{{trigger.object.owner.email}}`                                                                               |
-| **Assunto** | `✅ Deal Closed: {{trigger.object.name}}`                                                                       |
+| **Assunto** | `✅ Deal Closed: {{trigger.object.name}}`                                                                      |
 | **Corpo**   | Parabéns! Seu negócio foi processado. A equipe de Customer Success foi notificada e o onboarding foi iniciado. |
 
 ### Etapa 8: Testar e ativar
 
 1. Teste movendo uma oportunidade de teste para "Closed Won"
 2. Verificar:
-   * Tipo de empresa alterado para "Customer"
-   * Tarefa de onboarding criada
-   * A equipe de CS recebeu o e-mail
-   * O representante de vendas recebeu a confirmação
+   - Tipo de empresa alterado para "Customer"
+   - Tarefa de onboarding criada
+   - A equipe de CS recebeu o e-mail
+   - O representante de vendas recebeu a confirmação
 3. Ative quando estiver pronto
 
 ## Tratamento de Closed Lost
@@ -124,7 +124,7 @@ Crie um fluxo de trabalho semelhante para negócios perdidos:
 
 ### Disparador
 
-* Registro é atualizado (Oportunidades, Estágio = "Closed Lost")
+- Registro é atualizado (Oportunidades, Estágio = "Closed Lost")
 
 ### Ações
 
@@ -139,10 +139,10 @@ Para um onboarding complexo, crie várias tarefas:
 ```javascript
 export const main = async (params) => {
   const tasks = [
-    { title: "Welcome call", daysFromNow: 1, assignee: "CS" },
-    { title: "Send onboarding materials", daysFromNow: 2, assignee: "CS" },
-    { title: "Technical setup", daysFromNow: 5, assignee: "Support" },
-    { title: "30-day check-in", daysFromNow: 30, assignee: "CS" }
+    { title: 'Welcome call', daysFromNow: 1, assignee: 'CS' },
+    { title: 'Send onboarding materials', daysFromNow: 2, assignee: 'CS' },
+    { title: 'Technical setup', daysFromNow: 5, assignee: 'Support' },
+    { title: '30-day check-in', daysFromNow: 30, assignee: 'CS' },
   ];
 
   return { tasks };
@@ -155,25 +155,25 @@ Use **Iterator** para criar cada tarefa a partir do array.
 
 ### Mantenha suas outras ferramentas atualizadas
 
-* Crie o cliente no sistema de faturamento com uma **Requisição HTTP**
+- Crie o cliente no sistema de faturamento com uma **Requisição HTTP**
 
 ### Ações condicionais
 
 Use ações **Filtro** para:
 
-* Onboarding diferente para enterprise vs. SMB
-* Responsáveis diferentes com base na região
-* Ignorar notificações para negócios pequenos
+- Onboarding diferente para enterprise vs. SMB
+- Responsáveis diferentes com base na região
+- Ignorar notificações para negócios pequenos
 
 ### Incluir detalhes do negócio
 
 Use a ação **Código** para formatar:
 
-* Documentos de resumo do negócio
-* Notas de repasse para a equipe de CS
-* Checklists de onboarding personalizadas
+- Documentos de resumo do negócio
+- Notas de repasse para a equipe de CS
+- Checklists de onboarding personalizadas
 
 ## Relacionados
 
-* [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
-* [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)
+- [Ações de Fluxo de Trabalho](/l/pt/user-guide/workflows/capabilities/workflow-actions)
+- [Enviar e-mails a partir de Fluxos de Trabalho](/l/pt/user-guide/workflows/capabilities/send-emails-from-workflows)

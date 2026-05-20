@@ -18,10 +18,10 @@ description: Häufige Workflow-Probleme und wie Sie sie beheben.
 
 **Lösungen**:
 
-* Überprüfen Sie den Workflow-Status in der Workflow-Liste
-* Testen Sie mit der spezifischen Aktion, von der Sie erwarten, dass sie ihn auslöst
-* Überprüfen Sie die Trigger-Konfiguration
-* Wenden Sie sich wegen der Berechtigungen an Ihren Administrator
+- Überprüfen Sie den Workflow-Status in der Workflow-Liste
+- Testen Sie mit der spezifischen Aktion, von der Sie erwarten, dass sie ihn auslöst
+- Überprüfen Sie die Trigger-Konfiguration
+- Wenden Sie sich wegen der Berechtigungen an Ihren Administrator
 
 ### Workflow-Trigger zu früh (leere Felder)
 
@@ -31,17 +31,20 @@ description: Häufige Workflow-Probleme und wie Sie sie beheben.
 
 **Wann "Record is created" gut funktioniert**:
 
-* Über API-Aufrufe erstellte Datensätze (Felder werden in einer einzigen Anfrage befüllt)
-* Über Import erstellte Datensätze
-* Automatisches Erstellen von Datensätzen aus anderen Workflows
+- Über API-Aufrufe erstellte Datensätze (Felder werden in einer einzigen Anfrage befüllt)
+- Über Import erstellte Datensätze
+- Automatisches Erstellen von Datensätzen aus anderen Workflows
 
 **Lösung**: Für Datensätze, die manuell in der UI erstellt werden, verwenden Sie stattdessen **"Record is created or updated"** als Trigger. Auf diese Weise:
 
-* Der Workflow wird ausgelöst, nachdem der Benutzer das Ausfüllen und Speichern der Felder abgeschlossen hat
-* Sie erhalten die vollständigen Daten statt leerer Werte
+- Der Workflow wird ausgelöst, nachdem der Benutzer das Ausfüllen und Speichern der Felder abgeschlossen hat
+- Sie erhalten die vollständigen Daten statt leerer Werte
 
 <Tip>
-Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie eine Filter-Aktion hinzu, um ein Feld wie `createdAt equals updatedAt` (erste Speicherung) zu prüfen, oder verwenden Sie ein benutzerdefiniertes Kontrollkästchen, um zu verfolgen, ob der Workflow bereits ausgeführt wurde.
+  Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie
+  eine Filter-Aktion hinzu, um ein Feld wie `createdAt equals updatedAt` (erste
+  Speicherung) zu prüfen, oder verwenden Sie ein benutzerdefiniertes
+  Kontrollkästchen, um zu verfolgen, ob der Workflow bereits ausgeführt wurde.
 </Tip>
 
 ### Fehlgeschlagene Aktionen
@@ -57,10 +60,10 @@ Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie e
 
 **Lösungen**:
 
-* Überprüfen Sie die Details der Workflow-Ausführung auf Fehlermeldungen
-* Stellen Sie sicher, dass alle Pflichtfelder Werte haben
-* Testen Sie die API-Verbindungen separat
-* Überprüfen Sie die Rollenberechtigungen
+- Überprüfen Sie die Details der Workflow-Ausführung auf Fehlermeldungen
+- Stellen Sie sicher, dass alle Pflichtfelder Werte haben
+- Testen Sie die API-Verbindungen separat
+- Überprüfen Sie die Rollenberechtigungen
 
 ### Fehler bei HTTP-Anfragen
 
@@ -68,19 +71,19 @@ Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie e
 
 **Häufige Fehlercodes**:
 
-* **400**: Ungültige Anfrage - überprüfen Sie das Format des Request-Body
-* **401**: Nicht autorisiert - überprüfen Sie den API-Schlüssel
-* **403**: Verboten - überprüfen Sie die API-Berechtigungen
-* **404**: Nicht gefunden - überprüfen Sie die Endpunkt-URL
-* **429**: Zu viele Anfragen - implementieren Sie eine Ratenbegrenzung
-* **500**: Serverfehler - Problem mit dem externen Dienst
+- **400**: Ungültige Anfrage - überprüfen Sie das Format des Request-Body
+- **401**: Nicht autorisiert - überprüfen Sie den API-Schlüssel
+- **403**: Verboten - überprüfen Sie die API-Berechtigungen
+- **404**: Nicht gefunden - überprüfen Sie die Endpunkt-URL
+- **429**: Zu viele Anfragen - implementieren Sie eine Ratenbegrenzung
+- **500**: Serverfehler - Problem mit dem externen Dienst
 
 **Lösungen**:
 
-* Überprüfen Sie die API-Endpunkt-URL
-* Überprüfen Sie die Authentifizierungs-Header
-* Testen Sie den API-Aufruf zunächst außerhalb von Twenty
-* Fügen Sie Fehlerbehandlung in Code-Aktionen hinzu
+- Überprüfen Sie die API-Endpunkt-URL
+- Überprüfen Sie die Authentifizierungs-Header
+- Testen Sie den API-Aufruf zunächst außerhalb von Twenty
+- Fügen Sie Fehlerbehandlung in Code-Aktionen hinzu
 
 ### Fehler in Code-Aktionen
 
@@ -95,10 +98,10 @@ Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie e
 
 **Lösungen**:
 
-* Verwenden Sie die integrierte Validierung des Code-Editors
-* Testen Sie die Code-Logik zuerst in einer JavaScript-Konsole
-* Fügen Sie console.log-Anweisungen zum Debuggen hinzu
-* Vereinfachen Sie komplexe Operationen
+- Verwenden Sie die integrierte Validierung des Code-Editors
+- Testen Sie die Code-Logik zuerst in einer JavaScript-Konsole
+- Fügen Sie console.log-Anweisungen zum Debuggen hinzu
+- Vereinfachen Sie komplexe Operationen
 
 ### E-Mail wird nicht gesendet
 
@@ -113,10 +116,10 @@ Wenn der Workflow nur einmal pro Datensatz ausgeführt werden soll, fügen Sie e
 
 **Lösungen**:
 
-* Überprüfen Sie die Verbindung des E-Mail-Kontos
-* Validieren Sie die E-Mail-Adressen der Empfänger
-* Überprüfen Sie die Limits des E-Mail-Anbieters
-* Überprüfen Sie den E-Mail-Inhalt auf Spam-Auslöser
+- Überprüfen Sie die Verbindung des E-Mail-Kontos
+- Validieren Sie die E-Mail-Adressen der Empfänger
+- Überprüfen Sie die Limits des E-Mail-Anbieters
+- Überprüfen Sie den E-Mail-Inhalt auf Spam-Auslöser
 
 ## Workflows debuggen
 
@@ -150,21 +153,21 @@ Stellen Sie sicher, dass jeder Schritt die erwarteten Eingabedaten erhält.
 
 ### Vor der Aktivierung
 
-* Testen Sie im Entwurfsmodus gründlich
-* Validieren Sie alle API-Verbindungen
-* Überprüfen Sie die Trigger-Bedingungen sorgfältig
-* Dokumentieren Sie das erwartete Verhalten
+- Testen Sie im Entwurfsmodus gründlich
+- Validieren Sie alle API-Verbindungen
+- Überprüfen Sie die Trigger-Bedingungen sorgfältig
+- Dokumentieren Sie das erwartete Verhalten
 
 ### Während der Entwicklung
 
-* Verwenden Sie aussagekräftige Schrittnamen
-* Fügen Sie Kommentare in Code-Aktionen hinzu
-* Testen Sie mit realistischen Daten
-* Planen Sie für Randfälle
+- Verwenden Sie aussagekräftige Schrittnamen
+- Fügen Sie Kommentare in Code-Aktionen hinzu
+- Testen Sie mit realistischen Daten
+- Planen Sie für Randfälle
 
 ### Nach der Aktivierung
 
-* Überwachen Sie die ersten Läufe genau
-* Richten Sie Benachrichtigungen für Fehler ein
-* Überprüfen Sie den Ausführungsverlauf regelmäßig
-* Halten Sie Workflows nach Möglichkeit einfach
+- Überwachen Sie die ersten Läufe genau
+- Richten Sie Benachrichtigungen für Fehler ein
+- Überprüfen Sie den Ausführungsverlauf regelmäßig
+- Halten Sie Workflows nach Möglichkeit einfach

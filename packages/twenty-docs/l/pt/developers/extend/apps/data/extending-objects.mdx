@@ -26,7 +26,7 @@ export default defineField({
 
 ## Pontos-chave
 
-* `objectUniversalIdentifier` identifica o objeto de destino. Para objetos padrão do Twenty, importe a constante de `twenty-sdk`:
+- `objectUniversalIdentifier` identifica o objeto de destino. Para objetos padrão do Twenty, importe a constante de `twenty-sdk`:
 
   ```ts
   import { STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
@@ -37,11 +37,11 @@ export default defineField({
   // …
   ```
 
-* Ao definir campos **inline dentro de `defineObject()`**, você **não** precisa de `objectUniversalIdentifier` — ele é herdado do objeto pai.
+- Ao definir campos **inline dentro de `defineObject()`**, você **não** precisa de `objectUniversalIdentifier` — ele é herdado do objeto pai.
 
-* `defineField()` é a única forma de adicionar campos a objetos que você não criou com `defineObject()`.
+- `defineField()` é a única forma de adicionar campos a objetos que você não criou com `defineObject()`.
 
-* A localização do arquivo fica a seu critério. A convenção é `src/fields/\<name>.field.ts`, mas o SDK detecta campos em qualquer lugar dentro de `src/`.
+- A localização do arquivo fica a seu critério. A convenção é `src/fields/\<name>.field.ts`, mas o SDK detecta campos em qualquer lugar dentro de `src/`.
 
 ## Adicionando uma relação a um objeto existente
 

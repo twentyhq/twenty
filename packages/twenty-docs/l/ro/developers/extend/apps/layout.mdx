@@ -17,8 +17,8 @@ Entitățile de layout controlează modul în care aplicația dvs. apare în UI-
 
 Vizualizările, elementele de navigare și layouturile de pagină fac referire unele la altele prin `universalIdentifier`:
 
-* Un **element de meniu de navigare** de tip `VIEW` indică către un identificator `defineView`, astfel încât linkul din bara laterală deschide acea vizualizare salvată.
-* Un **layout de pagină** de tip `RECORD_PAGE` vizează un obiect și poate încorpora [componente frontale](/l/ro/developers/extend/apps/front-components) în filele sale ca widgeturi.
+- Un **element de meniu de navigare** de tip `VIEW` indică către un identificator `defineView`, astfel încât linkul din bara laterală deschide acea vizualizare salvată.
+- Un **layout de pagină** de tip `RECORD_PAGE` vizează un obiect și poate încorpora [componente frontale](/l/ro/developers/extend/apps/front-components) în filele sale ca widgeturi.
 
 <AccordionGroup>
 <Accordion title="defineView" description="Definește vizualizări salvate pentru obiecte">
@@ -50,11 +50,12 @@ export default defineView({
 ```
 
 Puncte cheie:
-* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare.
-* `key` determină tipul vizualizării (de ex., `ViewKey.INDEX` pentru vizualizarea principală de listă).
-* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
-* Puteți defini, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații mai avansate.
-* `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
+
+- `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare.
+- `key` determină tipul vizualizării (de ex., `ViewKey.INDEX` pentru vizualizarea principală de listă).
+- `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+- Puteți defini, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații mai avansate.
+- `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
 
 </Accordion>
 <Accordion title="defineNavigationMenuItem" description="Definește linkuri de navigare în bara laterală">
@@ -62,7 +63,10 @@ Puncte cheie:
 Elementele de meniu de navigare adaugă intrări personalizate în bara laterală a spațiului de lucru. Utilizați `defineNavigationMenuItem()` pentru a crea linkuri către vizualizări, URL-uri externe sau obiecte:
 
 ```ts src/navigation-menu-items/example-navigation-menu-item.ts
-import { defineNavigationMenuItem, NavigationMenuItemType } from 'twenty-sdk/define';
+import {
+  defineNavigationMenuItem,
+  NavigationMenuItemType,
+} from 'twenty-sdk/define';
 import { EXAMPLE_VIEW_UNIVERSAL_IDENTIFIER } from '../views/example-view';
 
 export default defineNavigationMenuItem({
@@ -77,10 +81,11 @@ export default defineNavigationMenuItem({
 ```
 
 Puncte cheie:
-* `type` determină la ce face trimitere elementul de meniu: `NavigationMenuItemType.VIEW` pentru o vizualizare salvată sau `NavigationMenuItemType.LINK` pentru un URL extern.
-* Pentru link-uri către vizualizări, setați `viewUniversalIdentifier`. Pentru link-uri externe, setați `link`.
-* `position` controlează ordonarea în bara laterală.
-* `icon` și `color` (opțional) personalizează aspectul.
+
+- `type` determină la ce face trimitere elementul de meniu: `NavigationMenuItemType.VIEW` pentru o vizualizare salvată sau `NavigationMenuItemType.LINK` pentru un URL extern.
+- Pentru link-uri către vizualizări, setați `viewUniversalIdentifier`. Pentru link-uri externe, setați `link`.
+- `position` controlează ordonarea în bara laterală.
+- `icon` și `color` (opțional) personalizează aspectul.
 
 </Accordion>
 <Accordion title="definePageLayout" description="Definiți machete de pagină personalizate pentru vizualizările de înregistrare">
@@ -122,11 +127,12 @@ export default definePageLayout({
 ```
 
 Puncte cheie:
-* `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
-* `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
-* Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
-* Fiecare `widget` dintr-o filă poate reda o componentă frontend, o listă de relații sau alte tipuri de widgeturi integrate.
-* `position` pe file le controlează ordinea. Folosiți valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
+
+- `type` este de obicei `'RECORD_PAGE'` pentru a personaliza vizualizarea de detaliu a unui obiect specific.
+- `objectUniversalIdentifier` specifică la ce obiect se aplică această machetă.
+- Fiecare `tab` definește o secțiune a paginii cu un `title`, `position` și `layoutMode` (`CANVAS` pentru layout liber).
+- Fiecare `widget` dintr-o filă poate reda o componentă frontend, o listă de relații sau alte tipuri de widgeturi integrate.
+- `position` pe file le controlează ordinea. Folosiți valori mai mari (de ex., 50) pentru a plasa filele personalizate după cele integrate.
 
 </Accordion>
 <Accordion title="definePageLayoutTab" description="Adaugă o filă la un layout de pagină existent">
@@ -169,10 +175,11 @@ export default definePageLayoutTab({
 ```
 
 Puncte cheie:
-* `pageLayoutUniversalIdentifier` este **necesar** când folosești `definePageLayoutTab` și trebuie să indice către un layout de pagină care există deja la momentul instalării (standard sau al aplicației tale). Când lipsește layoutul de pagină părinte, instalarea eșuează cu o eroare clară de validare.
-* `widgets` sunt limitate doar la această filă — fac referire la componente front-end, vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
-* `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
-* Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să **adaugi** la un layout existent. Folosește `definePageLayout` când deții întregul layout (de obicei un `RECORD_PAGE` pentru un obiect pe care îl livrezi în aplicația ta sau un `STANDALONE_PAGE`).
+
+- `pageLayoutUniversalIdentifier` este **necesar** când folosești `definePageLayoutTab` și trebuie să indice către un layout de pagină care există deja la momentul instalării (standard sau al aplicației tale). Când lipsește layoutul de pagină părinte, instalarea eșuează cu o eroare clară de validare.
+- `widgets` sunt limitate doar la această filă — fac referire la componente front-end, vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
+- `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
+- Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să **adaugi** la un layout existent. Folosește `definePageLayout` când deții întregul layout (de obicei un `RECORD_PAGE` pentru un obiect pe care îl livrezi în aplicația ta sau un `STANDALONE_PAGE`).
 
 </Accordion>
 </AccordionGroup>

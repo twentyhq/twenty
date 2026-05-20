@@ -19,7 +19,10 @@ Standart alanları silemezsiniz, ancak ihtiyacınız yoksa devre dışı bıraka
 
 Ayrıca standart `SELECT` türü alanların seçeneklerini özelleştirebilirsiniz; örneğin Fırsatlar'daki `Stage` alanının seçeneklerini.
 
-<img src="/images/user-guide/fields/standard-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/standard-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ### Özel Alanlar
 
@@ -27,7 +30,10 @@ Ayrıca standart `SELECT` türü alanların seçeneklerini özelleştirebilirsin
 
 Örneğin, SpaceX için özel bir alan `Roket Aktif Durumu` olabilir, çalışır durumda olup olmadığını gösterecek.
 
-<img src="/images/user-guide/fields/custom-fields.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/custom-fields.png"
+  style={{ width: '100%' }}
+/>
 
 ## Alan Türleri
 
@@ -69,7 +75,10 @@ Yeni oluşturulan alanınız artık uygulamanın alanları içinde kullanılabil
 
 **Hızlı yol:** Herhangi bir nesne tablosunun sağ üst kısmındaki **+** düğmesine tıklayın, ardından `Alanları özelleştir`i seçin. Bu sizi doğrudan Veri Modeli ayarlarına götürür.
 
-<img src="/images/user-guide/fields/quick-new-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/quick-new-field.png"
+  style={{ width: '100%' }}
+/>
 
 ## Bir alanı devre dışı bırakın
 
@@ -83,7 +92,10 @@ Verilerinizi kaybetmeden alanı uygulamadan gizlemek için devre dışı bıraka
 
 3. Açılacak listeden `Devre Dışı Bırak`ı seçin.
 
-<img src="/images/user-guide/fields/deactivate-field.png" style={{width:'100%'}} />
+<img
+  src="/images/user-guide/fields/deactivate-field.png"
+  style={{ width: '100%' }}
+/>
 
 Bir alanı devre dışı bıraktığınızda ne olur?
 
@@ -105,18 +117,18 @@ Benzersizliği ayarlarken bir hata alırsanız, verilerinizde (silinen kayıtlar
 
 ### Adlandırma Kuralları ve Kısıtlamaları
 
-* **Tekil ve çoğul adlar farklı olmalıdır**: GraphQL API'miz için mutasyonlar için farklı adlar gerekmektedir
-* **Korunan alan adları**: bazı adlar sistem kullanımı için ayrılmıştır (ör. `Type`, `Application`)
+- **Tekil ve çoğul adlar farklı olmalıdır**: GraphQL API'miz için mutasyonlar için farklı adlar gerekmektedir
+- **Korunan alan adları**: bazı adlar sistem kullanımı için ayrılmıştır (ör. `Type`, `Application`)
 
 ### Para ve Telefon Alanları
 
-* **Varsayılan para birimi**: veri modeli aracılığıyla yapılandırılabilir
-* **Varsayılan ülke kodları**: telefon alanları için veri modeli aracılığıyla yapılandırılabilir
+- **Varsayılan para birimi**: veri modeli aracılığıyla yapılandırılabilir
+- **Varsayılan ülke kodları**: telefon alanları için veri modeli aracılığıyla yapılandırılabilir
 
 ### Seçim Alanları
 
-* **Her Seçim alanı için varsayılan bir seçenek** seçilebilir
+- **Her Seçim alanı için varsayılan bir seçenek** seçilebilir
 
 ### Kayıt Metin Alanları
 
-* **Her nesnenin bir ana gösterim alanı vardır**: Bu alan sol sütunda görünür ve diğer nesnelerle bağlantı kurulduğunda kaydı temsil eder. Bu bir metin alanı olmalıdır. Örneğin, Kişiler bir kişi bir şirkete bağlantı kurulduğunda `İsim` ana alanını kullanır, şirketin görünümünde isimlerini görürsünüz.
+- **Her nesnenin bir ana gösterim alanı vardır**: Bu alan sol sütunda görünür ve diğer nesnelerle bağlantı kurulduğunda kaydı temsil eder. Bu bir metin alanı olmalıdır. Örneğin, Kişiler bir kişi bir şirkete bağlantı kurulduğunda `İsim` ana alanını kullanır, şirketin görünümünde isimlerini görürsünüz.

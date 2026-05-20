@@ -10,12 +10,12 @@ icon: terminal
 
 放置在 `public/` 中的文件：
 
-* **公开可访问**——同步到服务器后，资源将通过公共 URL 提供服务。 访问它们无需身份验证。
-* **在前端组件中可用**——使用资源 URL 在 React 组件中显示图像、图标或任何媒体。
-* **在逻辑函数中可用**——在电子邮件、API 响应或任何服务端逻辑中引用资源 URL。
-* **用于市场元数据**——`defineApplication()` 中的 `logoUrl` 和 `screenshots` 字段引用此文件夹中的文件（例如，`public/logo.png`）。 应用发布后，这些内容会显示在市场中。
-* **在开发模式下自动同步**——当在 `public/` 中添加、更新或删除文件时，会自动同步到服务器。 无需重启。
-* **包含在构建中**——`yarn twenty build` 会将所有公共资源打包到分发产物中。
+- **公开可访问**——同步到服务器后，资源将通过公共 URL 提供服务。 访问它们无需身份验证。
+- **在前端组件中可用**——使用资源 URL 在 React 组件中显示图像、图标或任何媒体。
+- **在逻辑函数中可用**——在电子邮件、API 响应或任何服务端逻辑中引用资源 URL。
+- **用于市场元数据**——`defineApplication()` 中的 `logoUrl` 和 `screenshots` 字段引用此文件夹中的文件（例如，`public/logo.png`）。 应用发布后，这些内容会显示在市场中。
+- **在开发模式下自动同步**——当在 `public/` 中添加、更新或删除文件时，会自动同步到服务器。 无需重启。
+- **包含在构建中**——`yarn twenty build` 会将所有公共资源打包到分发产物中。
 
 ### 使用 `getPublicAssetUrl` 访问公共资源
 
@@ -183,15 +183,19 @@ beforeAll(async () => {
 
   fs.writeFileSync(
     path.join(TEST_CONFIG_DIR, 'config.json'),
-    JSON.stringify({
-      remotes: {
-        local: {
-          apiUrl: process.env.TWENTY_API_URL,
-          apiKey: process.env.TWENTY_API_KEY,
+    JSON.stringify(
+      {
+        remotes: {
+          local: {
+            apiUrl: process.env.TWENTY_API_URL,
+            apiKey: process.env.TWENTY_API_KEY,
+          },
         },
+        defaultRemote: 'local',
       },
-      defaultRemote: 'local',
-    }, null, 2),
+      null,
+      2,
+    ),
   );
 });
 ```
@@ -200,12 +204,12 @@ beforeAll(async () => {
 
 子路径 `twenty-sdk/cli` 导出了可直接在测试代码中调用的函数：
 
-| 函数             | 描述                 |
-| -------------- | ------------------ |
+| 函数           | 描述                            |
+| -------------- | ------------------------------- |
 | `appBuild`     | 构建应用，并可选地打包为 tar 包 |
-| `appDeploy`    | 将 tar 包上传到服务器      |
-| `appInstall`   | 在活动工作区安装该应用        |
-| `appUninstall` | 从活动工作区卸载该应用        |
+| `appDeploy`    | 将 tar 包上传到服务器           |
+| `appInstall`   | 在活动工作区安装该应用          |
+| `appUninstall` | 从活动工作区卸载该应用          |
 
 每个函数都会返回一个结果对象，包含 `success: boolean`，以及 `data` 或 `error` 之一。
 
@@ -336,7 +340,8 @@ yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-这与 `yarn twenty server logs` 不同，后者显示的是 Docker 容器日志。 `yarn twenty logs` 会显示来自 Twenty 服务器的应用函数执行日志。
+  这与 `yarn twenty server logs` 不同，后者显示的是 Docker 容器日志。 `yarn
+  twenty logs` 会显示来自 Twenty 服务器的应用函数执行日志。
 </Note>
 
 ### 卸载应用（`yarn twenty uninstall`）
