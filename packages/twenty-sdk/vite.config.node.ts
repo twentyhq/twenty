@@ -1,26 +1,9 @@
-import fs from 'fs';
 import path from 'path';
 import { type PackageJson } from 'type-fest';
-import { type Plugin, defineConfig } from 'vite';
+import { defineConfig } from 'vite';
 import tsconfigPaths from 'vite-tsconfig-paths';
 
 import packageJson from './package.json';
-
-const copyCliAssetsPlugin = (): Plugin => ({
-  name: 'copy-cli-assets',
-  generateBundle() {
-    this.emitFile({
-      type: 'asset',
-      fileName: 'assets/oauth-modal-header.png',
-      source: fs.readFileSync(
-        path.resolve(
-          __dirname,
-          'src/cli/utilities/auth/assets/oauth-modal-header.png',
-        ),
-      ),
-    });
-  },
-});
 
 export default defineConfig(() => {
   return {
@@ -35,7 +18,6 @@ export default defineConfig(() => {
       tsconfigPaths({
         root: __dirname,
       }),
-      copyCliAssetsPlugin(),
     ],
     build: {
       emptyOutDir: false,

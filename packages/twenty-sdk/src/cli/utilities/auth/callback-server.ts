@@ -1,7 +1,6 @@
-import fs from 'node:fs';
 import http from 'node:http';
-import path from 'node:path';
-import { fileURLToPath } from 'node:url';
+
+import { OAUTH_MODAL_HEADER_IMAGE_BASE64 } from '@/cli/constants/oauth-modal-header-image-base64';
 
 type CallbackResult =
   | { success: true; code: string }
@@ -12,20 +11,6 @@ type CallbackServer = {
   callbackUrl: string;
   waitForCallback: () => Promise<CallbackResult>;
   close: () => void;
-};
-
-let cachedHeaderImageBase64: string | undefined;
-
-const getHeaderImageBase64 = (): string => {
-  if (cachedHeaderImageBase64 === undefined) {
-    const currentDir = path.dirname(fileURLToPath(import.meta.url));
-
-    cachedHeaderImageBase64 = fs
-      .readFileSync(path.join(currentDir, 'assets', 'oauth-modal-header.png'))
-      .toString('base64');
-  }
-
-  return cachedHeaderImageBase64;
 };
 
 const pageHtml = ({
@@ -73,7 +58,7 @@ const pageHtml = ({
       align-items: center;
       gap: 8px;
       justify-content: center;
-      background-image: url('data:image/png;base64,${getHeaderImageBase64()}');
+      background-image: url('data:image/png;base64,${OAUTH_MODAL_HEADER_IMAGE_BASE64}');
       background-position: center;
       background-size: cover;
     }
