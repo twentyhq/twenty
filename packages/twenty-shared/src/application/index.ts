@@ -11,8 +11,8 @@ export type { AgentManifest } from './agentManifestType';
 export type { AppConnection } from './appConnectionType';
 export type { ApplicationManifest } from './applicationType';
 export type {
-  ApplicationVariable,
-  ApplicationVariables,
+    ApplicationVariable,
+    ApplicationVariables
 } from './applicationVariablesType';
 export type { AssetManifest } from './assetManifestType';
 export type { ConnectionProviderManifest } from './connectionProviderManifestType';
@@ -28,52 +28,40 @@ export { TWENTY_STANDARD_APPLICATION_NAME } from './constants/TwentyStandardAppl
 export { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from './constants/TwentyStandardApplicationUniversalIdentifier';
 export { SyncableEntity } from './enums/syncable-entities.enum';
 export type {
-  RegularFieldManifest,
-  RelationFieldManifest,
-  FieldManifest,
+    FieldManifest, RegularFieldManifest,
+    RelationFieldManifest
 } from './fieldManifestType';
 export type {
-  CommandMenuItemManifest,
-  FrontComponentManifest,
+    CommandMenuItemManifest,
+    FrontComponentManifest
 } from './frontComponentManifestType';
 export type {
-  LogicFunctionManifest,
-  CronTriggerSettings,
-  DatabaseEventTriggerSettings,
-  HttpRouteTriggerSettings,
+    CronTriggerSettings,
+    DatabaseEventTriggerSettings,
+    HttpRouteTriggerSettings, LogicFunctionManifest
 } from './logicFunctionManifestType';
 export type { Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';
-export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType.type';
-export type { ObjectFieldManifest } from './objectFieldManifest.type';
+export type { OAuthProviderTokenRequestContentType } from './oauthProviderTokenRequestContentType';
+export type { ObjectFieldManifest } from './objectFieldManifest';
 export type { ObjectManifest } from './objectManifestType';
 export type {
-  PageLayoutWidgetManifest,
-  PageLayoutTabManifest,
-  PageLayoutManifest,
+    PageLayoutManifest, PageLayoutTabManifest, PageLayoutWidgetManifest
 } from './pageLayoutManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
 export type {
-  ObjectPermissionManifest,
-  FieldPermissionManifest,
-  PermissionFlagManifest,
-  RoleManifest,
+    FieldPermissionManifest, ObjectPermissionManifest, PermissionFlagManifest,
+    RoleManifest
 } from './roleManifestType';
-export type { ServerVariables } from './server-variables.type';
+export type { ServerVariables } from './server-variables';
 export type { SkillManifest } from './skillManifestType';
 export type { StoredOAuthConnectionProviderConfig } from './storedOAuthConnectionProviderConfigType';
 export type { SyncableEntityOptions } from './syncableEntityOptionsType';
 export type { ToolTriggerSettings } from './toolTriggerSettingsType';
 export type {
-  ViewManifestFilterValue,
-  ViewFieldManifest,
-  ViewFilterManifest,
-  ViewFilterGroupManifest,
-  ViewGroupManifest,
-  ViewFieldGroupManifest,
-  ViewSortManifest,
-  ViewManifest,
+    ViewFieldGroupManifest, ViewFieldManifest, ViewFilterGroupManifest, ViewFilterManifest, ViewGroupManifest, ViewManifest, ViewManifestFilterValue, ViewSortManifest
 } from './viewManifestType';
 export type { WorkflowActionTriggerSettings } from './workflowActionTriggerSettingsType';
+

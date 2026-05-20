@@ -1,7 +1,7 @@
-import { type InputJsonSchema } from '@/logic-function/input-json-schema.type';
+import { type InputJsonSchema } from '@/logic-function/input-json-schema';
 import {
-  type InputSchema,
-  type InputSchemaProperty,
+    type InputSchema,
+    type InputSchemaProperty,
 } from '@/workflow/types/InputSchema';
 import { isNonEmptyString } from '@sniptt/guards';
 

@@ -1,4 +1,4 @@
-import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType.type';
+import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType';
 
 // Resolved form of `OAuthConnectionProviderConfig` as stored in the
 // `connectionProvider.oauthConfig` JSONB column — manifest defaults are

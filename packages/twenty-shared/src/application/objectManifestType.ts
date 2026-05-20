@@ -1,4 +1,4 @@
-import { type ObjectFieldManifest } from '@/application/objectFieldManifest.type';
+import { type ObjectFieldManifest } from '@/application/objectFieldManifest';
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 
 export type ObjectManifest = SyncableEntityOptions & {

@@ -1,6 +1,6 @@
 import { type Equal, type Expect } from '@/testing';
-import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
-import { type SerializedRelation } from '@/types/SerializedRelation.type';
+import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties';
+import { type SerializedRelation } from '@/types/SerializedRelation';
 
 type TestedRecord = {
   // Non-SerializedRelation fields

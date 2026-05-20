@@ -7,8 +7,8 @@
  *                              |___/
  */
 
-export type { AllowedAddressSubField } from './AddressFieldsType';
 export { ALLOWED_ADDRESS_SUBFIELDS } from './AddressFieldsType';
+export type { AllowedAddressSubField } from './AddressFieldsType';
 export { AggregateOperations } from './AggregateOperations';
 export type { AllowedFullNameSortSubField } from './AllowedFullNameSortSubField';
 export { AppBasePath } from './AppBasePath';
@@ -21,40 +21,37 @@ export { CalendarChannelSyncStatus } from './CalendarChannelSyncStatus';
 export { CalendarChannelVisibility } from './CalendarChannelVisibility';
 export type { CommandMenuContextApi } from './CommandMenuContextApi';
 export { CommandMenuItemViewType } from './CommandMenuItemViewType';
-export type { ActorMetadata } from './composite-types/actor.composite-type';
 export {
-  FieldActorSource,
-  actorCompositeType,
+  actorCompositeType, FieldActorSource
 } from './composite-types/actor.composite-type';
-export type { AddressMetadata } from './composite-types/address.composite-type';
+export type { ActorMetadata } from './composite-types/actor.composite-type';
 export { addressCompositeType } from './composite-types/address.composite-type';
+export type { AddressMetadata } from './composite-types/address.composite-type';
 export { compositeTypeDefinitions } from './composite-types/composite-type-definitions';
 export type {
   CompositeProperty,
-  CompositeType,
+  CompositeType
 } from './composite-types/composite-type.interface';
-export type { CurrencyMetadata } from './composite-types/currency.composite-type';
 export { currencyCompositeType } from './composite-types/currency.composite-type';
-export type { EmailsMetadata } from './composite-types/emails.composite-type';
+export type { CurrencyMetadata } from './composite-types/currency.composite-type';
 export { emailsCompositeType } from './composite-types/emails.composite-type';
-export type { FullNameMetadata } from './composite-types/full-name.composite-type';
+export type { EmailsMetadata } from './composite-types/emails.composite-type';
 export { fullNameCompositeType } from './composite-types/full-name.composite-type';
-export type {
-  LinkMetadata,
-  LinksMetadata,
-  LinkMetadataNullable,
-} from './composite-types/links.composite-type';
+export type { FullNameMetadata } from './composite-types/full-name.composite-type';
 export { linksCompositeType } from './composite-types/links.composite-type';
 export type {
-  AdditionalPhoneMetadata,
-  PhonesMetadata,
-} from './composite-types/phones.composite-type';
+  LinkMetadata, LinkMetadataNullable, LinksMetadata
+} from './composite-types/links.composite-type';
 export { phonesCompositeType } from './composite-types/phones.composite-type';
-export type { RichTextMetadata } from './composite-types/rich-text.composite-type';
+export type {
+  AdditionalPhoneMetadata,
+  PhonesMetadata
+} from './composite-types/phones.composite-type';
 export {
   richTextCompositeType,
-  richTextValueSchema,
+  richTextValueSchema
 } from './composite-types/rich-text.composite-type';
+export type { RichTextMetadata } from './composite-types/rich-text.composite-type';
 export type { CompositeFieldSubFieldName } from './CompositeFieldSubFieldNameType';
 export type { ConfigVariableValue } from './ConfigVariableValue';
 export type { ConfirmationModalCaller } from './ConfirmationModalCaller';
@@ -64,74 +61,54 @@ export { CoreObjectNameSingular } from './CoreObjectNameSingular';
 export { CrudOperationType } from './CrudOperationType';
 export type { EmailAttachment } from './EmailAttachment';
 export type {
-  SnackBarVariant,
-  EnqueueSnackbarParams,
+  EnqueueSnackbarParams, SnackBarVariant
 } from './EnqueueSnackbarParams';
 export type { EnumFieldMetadataType } from './EnumFieldMetadataType';
 export { EventLogTable } from './EventLogTable';
 export type { ExcludeFunctions } from './ExcludeFunctions';
 export type { ExtractPropertiesThatEndsWithId } from './ExtractPropertiesThatEndsWithId';
 export type { ExtractPropertiesThatEndsWithIds } from './ExtractPropertiesThatEndsWithIds';
-export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties.type';
+export type { ExtractSerializedRelationProperties } from './ExtractSerializedRelationProperties';
 export { FeatureFlagKey } from './FeatureFlagKey';
-export type {
-  FieldMetadataDefaultValueFunctionNames,
-  FieldMetadataDefaultValueUuidFunction,
-  FieldMetadataDefaultValueNowFunction,
-  FieldMetadataDefaultValueRichText,
-  FieldMetadataDefaultValueCurrency,
-  FieldMetadataDefaultValueFullName,
-  FieldMetadataDefaultValueAddress,
-  FieldMetadataDefaultValueLinks,
-  FieldMetadataDefaultActor,
-  FieldMetadataDefaultValueEmails,
-  FieldMetadataDefaultValuePhones,
-  FieldMetadataDefaultValueMapping,
-  FieldMetadataFunctionDefaultValue,
-  FieldMetadataDefaultValueForAnyType,
-  FieldMetadataDefaultValue,
-} from './FieldMetadataDefaultValue';
 export { fieldMetadataDefaultValueFunctionName } from './FieldMetadataDefaultValue';
-export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
+export type {
+  FieldMetadataDefaultActor, FieldMetadataDefaultValue, FieldMetadataDefaultValueAddress, FieldMetadataDefaultValueCurrency, FieldMetadataDefaultValueEmails, FieldMetadataDefaultValueForAnyType, FieldMetadataDefaultValueFullName, FieldMetadataDefaultValueFunctionNames, FieldMetadataDefaultValueLinks, FieldMetadataDefaultValueMapping, FieldMetadataDefaultValueNowFunction, FieldMetadataDefaultValuePhones, FieldMetadataDefaultValueRichText, FieldMetadataDefaultValueUuidFunction, FieldMetadataFunctionDefaultValue
+} from './FieldMetadataDefaultValue';
 export { FieldMetadataSettingsOnClickAction } from './FieldMetadataMultiItemSettings';
-export type {
-  TagColor,
-  FieldMetadataOptionForAnyType,
-  FieldMetadataOptions,
-} from './FieldMetadataOptions';
+export type { FieldMetadataMultiItemSettings } from './FieldMetadataMultiItemSettings';
 export {
-  FieldMetadataDefaultOption,
-  FieldMetadataComplexOption,
+  FieldMetadataComplexOption, FieldMetadataDefaultOption
 } from './FieldMetadataOptions';
 export type {
-  FieldNumberVariant,
-  FieldMetadataSettingsMapping,
+  FieldMetadataOptionForAnyType,
+  FieldMetadataOptions, TagColor
+} from './FieldMetadataOptions';
+export { DateDisplayFormat, NumberDataType } from './FieldMetadataSettings';
+export type {
   AllFieldMetadataSettings,
-  FieldMetadataSettings,
+  FieldMetadataSettings, FieldMetadataSettingsMapping, FieldNumberVariant
 } from './FieldMetadataSettings';
-export { NumberDataType, DateDisplayFormat } from './FieldMetadataSettings';
 export { FieldMetadataType } from './FieldMetadataType';
 export type { FieldMetadataUniversalSettings } from './FieldMetadataUniversalSettings';
 export type { FieldRatingValue } from './FieldRatingValue';
-export type { FileCategory } from './FileCategory';
 export { FILE_CATEGORIES } from './FileCategory';
+export type { FileCategory } from './FileCategory';
 export { FileFolder } from './FileFolder';
-export type {
-  FilterableFieldType,
-  FilterableAndTSVectorFieldType,
-} from './FilterableFieldType';
 export { FILTERABLE_FIELD_TYPES } from './FilterableFieldType';
+export type {
+  FilterableAndTSVectorFieldType, FilterableFieldType
+} from './FilterableFieldType';
 export { FirstDayOfTheWeek } from './FirstDayOfTheWeek';
-export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties.type';
+export type { FormatRecordSerializedRelationProperties } from './FormatRecordSerializedRelationProperties';
 export type { FromTo } from './FromToType';
 export { HTTPMethod } from './HttpMethod';
-export type { IndexOf } from './IndexOf.type';
-export type { IsEmptyObject } from './IsEmptyObject.type';
-export type { IsEmptyRecord } from './IsEmptyRecord.type';
+export type { IndexOf } from './IndexOf';
+export type { IsEmptyObject } from './IsEmptyObject';
+export type { IsEmptyRecord } from './IsEmptyRecord';
 export type { IsExactly } from './IsExactly';
-export type { IsGreaterOrEqual } from './IsGreaterOrEqual.type';
-export type { IsNever } from './IsNever.type';
-export type { IsSerializedRelation } from './IsSerializedRelation.type';
+export type { IsGreaterOrEqual } from './IsGreaterOrEqual';
+export type { IsNever } from './IsNever';
+export type { IsSerializedRelation } from './IsSerializedRelation';
 export type { LogicFunctionEvent } from './LogicFunctionEvent';
 export { MessageChannelContactAutoCreationPolicy } from './MessageChannelContactAutoCreationPolicy';
 export { MessageChannelPendingGroupEmailsAction } from './MessageChannelPendingGroupEmailsAction';
@@ -151,62 +128,32 @@ export type { Nullable } from './Nullable';
 export type { NullablePartial } from './NullablePartial';
 export type { ObjectPermissions } from './ObjectPermissions';
 export type { ObjectRecord } from './ObjectRecord';
-export type {
-  AggregateOrderByWithGroupByField,
-  ObjectRecordOrderByWithGroupByDateField,
-  OrderByWithGroupBy,
-  ObjectRecordOrderByForScalarField,
-  ObjectRecordOrderByForCompositeField,
-  ObjectRecordOrderByForRelationField,
-} from './ObjectRecordGroupBy';
 export { OrderByDirection } from './ObjectRecordGroupBy';
+export type {
+  AggregateOrderByWithGroupByField, ObjectRecordOrderByForCompositeField,
+  ObjectRecordOrderByForRelationField, ObjectRecordOrderByForScalarField, ObjectRecordOrderByWithGroupByDateField,
+  OrderByWithGroupBy
+} from './ObjectRecordGroupBy';
 export { ObjectRecordGroupByDateGranularity } from './ObjectRecordGroupByDateGranularity';
 export type { ObjectsPermissions } from './ObjectsPermissions';
 export type { ObjectsPermissionsByRoleId } from './ObjectsPermissionsByRoleId';
 export type { OrderBy } from './OrderBy';
 export type {
-  ChartRecordFilter,
-  ChartRecordFilterGroup,
-  ChartFilter,
-  UniversalChartFilter,
-} from './page-layout/chart-filter.type';
-export type { GridPosition } from './page-layout/grid-position.type';
+  ChartFilter, ChartRecordFilter,
+  ChartRecordFilterGroup, UniversalChartFilter
+} from './page-layout/chart-filter';
+export type { GridPosition } from './page-layout/grid-position';
 export type {
-  AggregateChartConfiguration,
-  GaugeChartConfiguration,
-  PieChartConfiguration,
-  BarChartConfiguration,
-  LineChartConfiguration,
-  ViewConfiguration,
-  RecordTableConfiguration,
-  FieldConfiguration,
-  FieldsConfiguration,
-  FieldRichTextConfiguration,
-  StandaloneRichTextConfiguration,
-  IframeConfiguration,
-  FrontComponentConfiguration,
-  TimelineConfiguration,
-  TasksConfiguration,
-  NotesConfiguration,
-  FilesConfiguration,
-  EmailsConfiguration,
-  EmailThreadConfiguration,
-  CalendarConfiguration,
-  WorkflowConfiguration,
-  WorkflowVersionConfiguration,
-  WorkflowRunConfiguration,
-  PageLayoutWidgetConfiguration,
-} from './page-layout/page-layout-widget-configuration.type';
+  AggregateChartConfiguration, BarChartConfiguration, CalendarConfiguration, EmailsConfiguration,
+  EmailThreadConfiguration, FieldConfiguration, FieldRichTextConfiguration, FieldsConfiguration, FilesConfiguration, FrontComponentConfiguration, GaugeChartConfiguration, IframeConfiguration, LineChartConfiguration, NotesConfiguration, PageLayoutWidgetConfiguration, PieChartConfiguration, RecordTableConfiguration, StandaloneRichTextConfiguration, TasksConfiguration, TimelineConfiguration, ViewConfiguration, WorkflowConfiguration, WorkflowRunConfiguration, WorkflowVersionConfiguration
+} from './page-layout/page-layout-widget-configuration';
 export type {
-  PageLayoutWidgetGridPosition,
-  PageLayoutWidgetVerticalListPosition,
-  PageLayoutWidgetCanvasPosition,
-  PageLayoutWidgetPosition,
-} from './page-layout/page-layout-widget-position.type';
-export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration.type';
+  PageLayoutWidgetCanvasPosition, PageLayoutWidgetGridPosition, PageLayoutWidgetPosition, PageLayoutWidgetVerticalListPosition
+} from './page-layout/page-layout-widget-position';
+export type { PageLayoutWidgetUniversalConfiguration } from './page-layout/page-layout-widget-universal-configuration';
 export { PageLayoutTabLayoutMode } from './page-layout/PageLayoutTabLayoutMode';
 export type { PageLayoutWidgetConditionalDisplay } from './page-layout/PageLayoutWidgetConditionalDisplay';
-export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config.type';
+export type { RatioAggregateConfig } from './page-layout/ratio-aggregate-config';
 export type { PartialFieldMetadataItem } from './PartialFieldMetadataItem';
 export type { PartialFieldMetadataItemOption } from './PartialFieldMetadataOption';
 export type { QueryCursorDirection } from './QueryCursorDirection';
@@ -214,38 +161,8 @@ export { RecordFilterGroupLogicalOperator } from './RecordFilterGroupLogicalOper
 export type { RecordFilterValueDependencies } from './RecordFilterValueDependencies';
 export type { RecordGqlFieldsDeprecated } from './RecordGqlFieldsDeprecated';
 export type {
-  UUIDFilterValue,
-  IsFilter,
-  UUIDFilter,
-  RelationFilter,
-  BooleanFilter,
-  StringFilter,
-  RatingFilter,
-  FloatFilter,
-  DateFilter,
-  DateTimeFilter,
-  CurrencyFilter,
-  URLFilter,
-  FullNameFilter,
-  AddressFilter,
-  LinksFilter,
-  ActorFilter,
-  EmailsFilter,
-  PhonesFilter,
-  SelectFilter,
-  MultiSelectFilter,
-  ArrayFilter,
-  RawJsonFilter,
-  FilesFilter,
-  RichTextLeafFilter,
-  RichTextFilter,
-  TSVectorFilter,
-  LeafFilter,
-  AndObjectRecordFilter,
-  OrObjectRecordFilter,
-  NotObjectRecordFilter,
-  LeafObjectRecordFilter,
-  RecordGqlOperationFilter,
+  ActorFilter, AddressFilter, AndObjectRecordFilter, ArrayFilter, BooleanFilter, CurrencyFilter, DateFilter,
+  DateTimeFilter, EmailsFilter, FilesFilter, FloatFilter, FullNameFilter, IsFilter, LeafFilter, LeafObjectRecordFilter, LinksFilter, MultiSelectFilter, NotObjectRecordFilter, OrObjectRecordFilter, PhonesFilter, RatingFilter, RawJsonFilter, RecordGqlOperationFilter, RelationFilter, RichTextFilter, RichTextLeafFilter, SelectFilter, StringFilter, TSVectorFilter, URLFilter, UUIDFilter, UUIDFilterValue
 } from './RecordGqlOperationFilter';
 export type { RecordGqlOperationGqlRecordFields } from './RecordGqlOperationGqlRecordFields';
 export type { RecordGqlOperationOrderBy } from './RecordGqlOperationOrderBy';
@@ -253,10 +170,10 @@ export type { RecordGqlOperationSignature } from './RecordGqlOperationSignature'
 export type { RecordGqlOperationVariables } from './RecordGqlOperationVariables';
 export type { RelationAndMorphRelationFieldMetadataType } from './RelationAndMorphRelationFieldMetadataType';
 export type { RelationCreationPayload } from './RelationCreationPayload';
-export { RelationOnDeleteAction } from './RelationOnDeleteAction.type';
+export { RelationOnDeleteAction } from './RelationOnDeleteAction';
 export { RelationType } from './RelationType';
 export type { RelationUpdatePayload } from './RelationUpdatePayload';
-export type { RemoveSuffix } from './RemoveSuffix.type';
+export type { RemoveSuffix } from './RemoveSuffix';
 export type { RestrictedFieldPermissions } from './RestrictedFieldPermissions';
 export type { RestrictedFieldsPermissions } from './RestrictedFieldsPermissions';
 export type { RowLevelPermissionPredicate } from './RowLevelPermissionPredicate';
@@ -265,19 +182,17 @@ export { RowLevelPermissionPredicateGroupLogicalOperator } from './RowLevelPermi
 export { RowLevelPermissionPredicateOperand } from './RowLevelPermissionPredicateOperand';
 export type {
   RelationPredicateValue,
-  RowLevelPermissionPredicateValue,
+  RowLevelPermissionPredicateValue
 } from './RowLevelPermissionPredicateValue';
-export type { SerializedRelation } from './SerializedRelation.type';
-export { SERIALIZED_RELATION_BRAND } from './SerializedRelation.type';
+export { SERIALIZED_RELATION_BRAND } from './SerializedRelation';
+export type { SerializedRelation } from './SerializedRelation';
 export { SettingsPath } from './SettingsPath';
 export { SidePanelPages } from './SidePanelPages';
 export type { Sources } from './SourcesType';
-export type {
-  StepFilterGroup,
-  StepFilter,
-  StepFilterWithPotentiallyDeprecatedOperand,
-} from './StepFilters';
 export { StepLogicalOperator } from './StepFilters';
+export type {
+  StepFilter, StepFilterGroup, StepFilterWithPotentiallyDeprecatedOperand
+} from './StepFilters';
 export { TwoFactorAuthenticationStrategy } from './TwoFactorAuthenticationStrategy';
 export { UpgradeHealthEnum } from './UpgradeHealthEnum';
 export { IsValidGraphQLEnumName } from './validators/is-valid-graphql-enum-name.validator';
@@ -290,3 +205,4 @@ export { ViewOpenRecordIn } from './ViewOpenRecordIn';
 export { ViewSortDirection } from './ViewSortDirection';
 export { ViewType } from './ViewType';
 export { ViewVisibility } from './ViewVisibility';
+

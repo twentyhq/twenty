@@ -1,6 +1,6 @@
 import { type Equal, type Expect } from '@/testing';
 
-import { type IsGreaterOrEqual } from '@/types/IsGreaterOrEqual.type';
+import { type IsGreaterOrEqual } from '@/types/IsGreaterOrEqual';
 
 // oxlint-disable-next-line unused-imports/no-unused-vars
 type Assertions = [

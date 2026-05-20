@@ -1,4 +1,4 @@
-import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType.type';
+import { type OAuthProviderTokenRequestContentType } from '@/application/oauthProviderTokenRequestContentType';
 
 export type OAuthConnectionProviderConfig = {
   authorizationEndpoint: string;

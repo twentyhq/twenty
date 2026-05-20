@@ -1,13 +1,13 @@
 import {
-  type InputSchema,
-  type InputSchemaProperty,
+    type InputSchema,
+    type InputSchemaProperty,
 } from '@/workflow/types/InputSchema';
 import {
-  type BaseOutputSchemaV2,
-  type Leaf,
-  type LeafType,
-  type Node,
-} from '@/workflow/workflow-schema/types/base-output-schema.type';
+    type BaseOutputSchemaV2,
+    type Leaf,
+    type LeafType,
+    type Node,
+} from '@/workflow/workflow-schema/types/base-output-schema';
 import { isObject } from '@sniptt/guards';
 
 const LEAF_TYPES: LeafType[] = [

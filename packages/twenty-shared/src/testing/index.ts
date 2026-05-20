@@ -8,10 +8,9 @@
  */
 
 export { eachTestingContextFilter } from './EachTestingContextFilter';
-export type { EachTestingContext } from './types/EachTestingContext.type';
+export type { EachTestingContext } from './types/EachTestingContext';
 export type { SuccessfulAndFailingTestCases } from './types/SuccessfulAndFailingTestCases';
 export type {
-  Expect,
-  Equal,
-  HasAllProperties,
-} from './types/TestingGenerics.type';
+    Equal, Expect, HasAllProperties
+} from './types/TestingGenerics';
+

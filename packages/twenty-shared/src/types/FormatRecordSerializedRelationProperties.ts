@@ -1,6 +1,6 @@
-import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties.type';
-import { type IsSerializedRelation } from '@/types/IsSerializedRelation.type';
-import { type RemoveSuffix } from '@/types/RemoveSuffix.type';
+import { type ExtractSerializedRelationProperties } from '@/types/ExtractSerializedRelationProperties';
+import { type IsSerializedRelation } from '@/types/IsSerializedRelation';
+import { type RemoveSuffix } from '@/types/RemoveSuffix';
 
 // Determines if a property should be transformed to a universal identifier
 // A property is transformed only if:
