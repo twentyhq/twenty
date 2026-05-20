@@ -4,6 +4,7 @@ import { WorkflowSendEmailAttachments } from '@/advanced-text-editor/components/
 import { FormAdvancedTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput';
 import { FormMultiTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput';
 import { FormTextFieldInput } from '@/object-record/record-field/ui/form-types/components/FormTextFieldInput';
+import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { useTriggerApisOAuth } from '@/settings/accounts/hooks/useTriggerApiOAuth';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -109,6 +110,8 @@ export const WorkflowEditActionEmailBase = ({
     handleFieldChange('connectedAccountId', connectedAccountId);
   };
 
+  const apolloCoreClient = useApolloCoreClient();
+
   const { accounts: myAccounts, loading: myAccountsLoading } =
     useMyConnectedAccounts();
 
@@ -123,6 +126,7 @@ export const WorkflowEditActionEmailBase = ({
       'id' | 'handle' | 'provider'
     > | null;
   }>(WORKFLOW_STEP_CONNECTED_ACCOUNT_HANDLE, {
+    client: apolloCoreClient,
     variables: { connectedAccountId: configuredAccountId },
     skip:
       !isDefined(configuredAccountId) ||
