@@ -66,12 +66,12 @@ export class DropFavoriteObjectsCommand extends ActiveOrSuspendedWorkspaceComman
         { workspaceId },
       );
 
-    for (const { universalIdentifier, label } of LEGACY_FAVORITE_OBJECTS) {
-      const { flatObjectMetadataMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-        ]);
+    const { flatObjectMetadataMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'flatObjectMetadataMaps',
+      ]);
 
+    for (const { universalIdentifier, label } of LEGACY_FAVORITE_OBJECTS) {
       const flatObjectMetadata =
         findFlatEntityByUniversalIdentifier<FlatObjectMetadata>({
           flatEntityMaps: flatObjectMetadataMaps,
