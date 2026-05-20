@@ -88,13 +88,6 @@ export class CalendarFetchEventsService {
           const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
 
           if (!calendarEvents || calendarEvents?.length === 0) {
-            await this.calendarChannelRepository.update(
-              { id: calendarChannel.id, workspaceId },
-              {
-                syncCursor: nextSyncCursor,
-              },
-            );
-
             await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
               [calendarChannel.id],
               workspaceId,
