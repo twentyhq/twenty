@@ -31,7 +31,7 @@ type LegacyConnectedAccountWorkspaceEntity = {
   lastCredentialsRefreshedAt: Date | null;
   authFailedAt: Date | null;
   accountOwnerId: string;
-  handleAliases: string[] | null;
+  handleAliases: string | null;
   scopes: string[] | null;
   connectionParameters: Record<string, unknown> | null;
 };
