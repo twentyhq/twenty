@@ -32,7 +32,14 @@ const SECURITY_HEADERS = [
   { key: 'Content-Security-Policy', value: "frame-ancestors 'none'" },
 ] as const;
 
+// Skew protection: CI sets DEPLOYMENT_ID at build time so it's baked into
+// prerendered HTML + the RSC payloads. The Worker reads the same value at
+// runtime (via the worker env var) and routes mismatched requests to the
+// matching older Worker version via its preview URL.
+const deploymentId = process.env.DEPLOYMENT_ID;
+
 const nextConfig: LinariaConfig = {
+  deploymentId,
   images: {
     formats: ['image/avif', 'image/webp'],
     remotePatterns: [

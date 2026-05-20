@@ -13,8 +13,8 @@ Jede Funktionsdatei verwendet `defineLogicFunction()`, um eine Konfiguration mit
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
-import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -78,10 +78,10 @@ yarn twenty logs
 #### Routen-Trigger-Payload
 
 Wenn ein Route-Trigger Ihre Logikfunktion aufruft, erhält sie ein `RoutePayload`-Objekt, das dem [AWS-HTTP-API-v2-Format](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) folgt.
-Importieren Sie den Typ `RoutePayload` aus `twenty-sdk`:
+Importieren Sie den Typ `RoutePayload` aus `twenty-sdk/logic-function`:
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -139,6 +139,115 @@ const handler = async (event: RoutePayload) => {
 <Note>
 Header-Namen werden in Kleinbuchstaben normalisiert. Greifen Sie mit Schlüsseln in Kleinbuchstaben darauf zu (z. B. `event.headers['content-type']`).
 </Note>
+
+#### Datenbank-Event-Trigger-Payload
+
+Wenn ein Datenbank-Event-Trigger Ihre Logic Function aufruft, erhält sie eine `DatabaseEventPayload` pro geändertem Datensatz. Die Payload kombiniert Metadaten über den Quell-Workspace und das Objekt mit dem Ereignis auf Datensatzebene.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+Die Nutzlast umfasst:
+
+| Eigenschaft                                      | Beschreibung                                                                                                   |
+| ------------------------------------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `name`                                           | Ereignisname, z. B. `person.updated`.                                                                          |
+| `workspaceId`                                    | Arbeitsbereich, in dem das Ereignis stattgefunden hat.                                                         |
+| `objectMetadata`                                 | Metadaten für das Objekt, das geändert wurde.                                                                  |
+| `recordId`                                       | ID des geänderten Datensatzes.                                                                                 |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Akteurfelder, wenn das Ereignis von einem Benutzer des Arbeitsbereichs ausgelöst wurde.                        |
+| `properties`                                     | Datensatzdaten für das Ereignis mit `before`, `after`, `diff` und `updatedFields`, abhängig von der Operation. |
+
+| Ereignis           | Datensatzdaten                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+Bei Soft Deletes folgt `.deleted` der Aktualisierungsstruktur, da sich das Feld `deletedAt` des Datensatzes ändert.
+Für dauerhafte Löschvorgänge verwende `.destroyed`.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` filtert, welche Aktualisierungsereignisse die Funktion auslösen.
+`event.properties.updatedFields` gibt an, welche Felder beim aktuellen Ereignis tatsächlich geändert wurden.
+</Note>
+
+Beispiel für ein Created-Ereignis:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+Beispiel für ein Updated-Ereignis:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+Nur bei E-Mail-Aktualisierungen auslösen:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+Beispiel für ein Destroyed-Ereignis:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
 
 #### Eine Funktion als KI-Tool oder Workflow-Aktion verfügbar machen
 

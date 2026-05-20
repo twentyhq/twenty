@@ -92,7 +92,7 @@ export class MessagingAccountAuthenticationService {
     messageChannelId,
   }: ValidateAndRefreshConnectedAccountAuthenticationParams): Promise<ConnectedAccountTokens> {
     try {
-      return await this.connectedAccountRefreshTokensService.refreshAndSaveTokens(
+      return await this.connectedAccountRefreshTokensService.resolveTokens(
         connectedAccount,
         workspaceId,
       );
