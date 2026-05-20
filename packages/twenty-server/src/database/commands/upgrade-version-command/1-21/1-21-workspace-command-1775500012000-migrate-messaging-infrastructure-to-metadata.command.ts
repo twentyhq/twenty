@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Command } from 'nest-commander';
 import { type FeatureFlagKey } from 'twenty-shared/types';
+import { type DeepPartial } from 'typeorm';
 import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
@@ -16,9 +17,25 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
+
+type LegacyConnectedAccountWorkspaceEntity = {
+  id: string;
+  createdAt: Date;
+  updatedAt: Date;
+  handle: string | null;
+  provider: string;
+  accessToken: string | null;
+  refreshToken: string | null;
+  lastSyncHistoryId: string | null;
+  lastCredentialsRefreshedAt: Date | null;
+  authFailedAt: Date | null;
+  accountOwnerId: string;
+  handleAliases: string[] | null;
+  scopes: string[] | null;
+  connectionParameters: Record<string, unknown> | null;
+};
 
 @RegisteredWorkspaceCommand('1.21.0', 1775500012000)
 @Command({
@@ -65,7 +82,7 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     const isDryRun = options.dryRun ?? false;
 
     const connectedAccountWorkspaceRepository =
-      await this.twentyORMGlobalManager.getRepository<ConnectedAccountWorkspaceEntity>(
+      await this.twentyORMGlobalManager.getRepository<LegacyConnectedAccountWorkspaceEntity>(
         workspaceId,
         'connectedAccount',
       );
@@ -203,7 +220,9 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
         });
 
       if (coreConnectedAccounts.length > 0) {
-        await this.connectedAccountRepository.save(coreConnectedAccounts);
+        await this.connectedAccountRepository.save(
+          coreConnectedAccounts as DeepPartial<ConnectedAccountEntity>[],
+        );
         this.logger.log(
           `Migrated ${coreConnectedAccounts.length} connected accounts for workspace ${workspaceId}`,
         );
