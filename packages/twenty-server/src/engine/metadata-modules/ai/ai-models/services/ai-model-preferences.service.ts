@@ -1,8 +1,8 @@
 import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { aiModelPreferencesSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.schema';
 import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
@@ -27,10 +27,17 @@ export class AiModelPreferencesService implements OnModuleInit {
       return;
     }
 
-    this.filePreferences = await this.fetchPreferences(storagePath);
-    this.logger.log(
-      `AI_MODEL_PREF - Loaded AI model preferences from storage: ${storagePath}`,
-    );
+    try {
+      this.filePreferences = await this.fetchPreferences(storagePath);
+      this.logger.log(
+        `AI_MODEL_PREF - Loaded AI model preferences from storage: ${storagePath}`,
+      );
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : String(error);
+      this.logger.error(
+        `AI_MODEL_PREF - Failed to load AI model preferences from storage: ${message}`,
+      );
+    }
   }
 
   getPreferences(): AiModelPreferences {
