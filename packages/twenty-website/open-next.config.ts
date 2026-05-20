@@ -14,7 +14,10 @@ export default {
     ...baseConfig.cloudflare,
     skewProtection: {
       enabled: true,
-      maxNumberOfVersions: 10,
+      // Bumped from 10 to make room for PR-preview versions (each open PR
+      // holds one slot, plus one per push within the PR until cleanup).
+      // Cleanup-on-close + maxVersionAgeDays keep the window from drifting.
+      maxNumberOfVersions: 50,
       maxVersionAgeDays: 14,
     },
   },

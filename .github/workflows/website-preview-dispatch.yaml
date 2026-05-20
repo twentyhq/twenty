@@ -1,0 +1,59 @@
+name: 'Website Preview Dispatch'
+
+permissions:
+  contents: read
+
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened, closed, labeled]
+    paths:
+      - packages/twenty-website/**
+      - packages/twenty-shared/**
+      - .github/workflows/website-preview-dispatch.yaml
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  trigger-build:
+    if: |
+      github.event.action != 'closed' && (
+        (github.event.action == 'labeled' && github.event.label.name == 'preview-website') ||
+        (
+          (
+            github.event.pull_request.author_association == 'MEMBER' ||
+            github.event.pull_request.author_association == 'OWNER' ||
+            github.event.pull_request.author_association == 'COLLABORATOR'
+          ) && contains(fromJSON('["opened","synchronize","reopened"]'), github.event.action)
+        )
+      )
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch website-preview-build to ci-privileged
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          PR_HEAD_REF: ${{ github.event.pull_request.head.ref }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=website-preview-build \
+            -f "client_payload[pr_number]=$PR_NUMBER" \
+            -f "client_payload[pr_head_sha]=$PR_HEAD_SHA" \
+            -f "client_payload[pr_head_ref]=$PR_HEAD_REF"
+
+  trigger-cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch website-preview-cleanup to ci-privileged
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            -f event_type=website-preview-cleanup \
+            -f "client_payload[pr_number]=$PR_NUMBER"
