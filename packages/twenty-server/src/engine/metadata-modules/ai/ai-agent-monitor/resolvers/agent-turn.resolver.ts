@@ -80,7 +80,7 @@ export class AgentTurnResolver {
     });
     const savedTurn = await this.turnRepository.save(turn);
 
-    this.messageQueueService.add<{
+    await this.messageQueueService.add<{
       turnId: string;
       threadId: string;
       agentId: string;

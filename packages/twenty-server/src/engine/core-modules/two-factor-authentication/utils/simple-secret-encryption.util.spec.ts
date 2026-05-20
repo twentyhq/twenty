@@ -1,9 +1,35 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { createCipheriv, createHash, randomBytes } from 'crypto';
+
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 
 import { SimpleSecretEncryptionUtil } from './simple-secret-encryption.util';
+
+// Mirrors the production write path the util used to perform; kept inside
+// the spec so the deprecated decryptSecret can still be exercised end-to-end
+// without shipping an encrypt method.
+const encryptLegacySecret = ({
+  plaintext,
+  appSecret,
+}: {
+  plaintext: string;
+  appSecret: string;
+}): string => {
+  const encryptionKey = createHash('sha256')
+    .update(appSecret)
+    .digest()
+    .slice(0, 32);
+  const iv = randomBytes(16);
+  const cipher = createCipheriv('aes-256-cbc', encryptionKey, iv);
+  const encrypted = Buffer.concat([
+    cipher.update(plaintext, 'utf8'),
+    cipher.final(),
+  ]);
+
+  return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
+};
 
 describe('SimpleSecretEncryptionUtil', () => {
   let util: SimpleSecretEncryptionUtil;
@@ -22,10 +48,9 @@ describe('SimpleSecretEncryptionUtil', () => {
           useValue: {
             generateAppSecret: jest
               .fn()
-              .mockImplementation((_type, purpose) => {
-                // Return different secrets for different purposes to simulate real behavior
-                return `${mockAppSecret}-${purpose}`;
-              }),
+              .mockImplementation(
+                (_type, purpose) => `${mockAppSecret}-${purpose}`,
+              ),
           },
         },
       ],
@@ -41,31 +66,27 @@ describe('SimpleSecretEncryptionUtil', () => {
     expect(util).toBeDefined();
   });
 
-  describe('encryptSecret and decryptSecret', () => {
-    it('should encrypt and decrypt a secret correctly', async () => {
-      const encrypted = await util.encryptSecret(testSecret, testPurpose);
+  describe('decryptSecret', () => {
+    it('decrypts a legacy ciphertext produced with the matching purpose', async () => {
+      const appSecret = `${mockAppSecret}-${testPurpose}`;
+      const encrypted = encryptLegacySecret({
+        plaintext: testSecret,
+        appSecret,
+      });
+
       const decrypted = await util.decryptSecret(encrypted, testPurpose);
 
       expect(decrypted).toBe(testSecret);
-      expect(encrypted).not.toBe(testSecret);
-      expect(encrypted).toContain(':'); // Should contain IV separator
     });
 
-    it('should generate different encrypted values for the same secret', async () => {
-      const encrypted1 = await util.encryptSecret(testSecret, testPurpose);
-      const encrypted2 = await util.encryptSecret(testSecret, testPurpose);
+    it('uses the KEY_ENCRYPTION_KEY JWT token type and the provided purpose', async () => {
+      const appSecret = `${mockAppSecret}-${testPurpose}`;
+      const encrypted = encryptLegacySecret({
+        plaintext: testSecret,
+        appSecret,
+      });
 
-      expect(encrypted1).not.toBe(encrypted2); // Different IVs should produce different results
-
-      const decrypted1 = await util.decryptSecret(encrypted1, testPurpose);
-      const decrypted2 = await util.decryptSecret(encrypted2, testPurpose);
-
-      expect(decrypted1).toBe(testSecret);
-      expect(decrypted2).toBe(testSecret);
-    });
-
-    it('should use the correct JWT token type and purpose', async () => {
-      await util.encryptSecret(testSecret, testPurpose);
+      await util.decryptSecret(encrypted, testPurpose);
 
       expect(jwtWrapperService.generateAppSecret).toHaveBeenCalledWith(
         JwtTokenTypeEnum.KEY_ENCRYPTION_KEY,
@@ -73,43 +94,42 @@ describe('SimpleSecretEncryptionUtil', () => {
       );
     });
 
-    it('should handle special characters in secrets', async () => {
+    it('handles special characters in plaintext', async () => {
       const specialSecret = 'SECRET-WITH_SPECIAL@CHARS#123!';
+      const appSecret = `${mockAppSecret}-${testPurpose}`;
+      const encrypted = encryptLegacySecret({
+        plaintext: specialSecret,
+        appSecret,
+      });
 
-      const encrypted = await util.encryptSecret(specialSecret, testPurpose);
       const decrypted = await util.decryptSecret(encrypted, testPurpose);
 
       expect(decrypted).toBe(specialSecret);
     });
 
-    it('should not recover original secret with wrong purpose', async () => {
-      const encrypted = await util.encryptSecret(testSecret, testPurpose);
+    it('does not recover the plaintext when the purpose is wrong', async () => {
+      const appSecret = `${mockAppSecret}-${testPurpose}`;
+      const encrypted = encryptLegacySecret({
+        plaintext: testSecret,
+        appSecret,
+      });
 
-      // AES-256-CBC may either throw (invalid padding) or produce garbage.
-      // Both outcomes are acceptable — the key property is that the original
-      // secret is never returned.
+      // AES-256-CBC with a different key may either throw (invalid padding)
+      // or produce garbage. Both outcomes are acceptable - the key property is
+      // that the original secret is never returned.
       try {
         const decrypted = await util.decryptSecret(encrypted, 'wrong-purpose');
 
         expect(decrypted).not.toBe(testSecret);
       } catch {
-        // Expected: wrong key produced invalid padding
+        // Expected: wrong key produced invalid padding.
       }
     });
 
-    it('should fail to decrypt malformed encrypted data', async () => {
+    it('throws on malformed ciphertext', async () => {
       await expect(
         util.decryptSecret('invalid-encrypted-data', testPurpose),
       ).rejects.toThrow();
-    });
-
-    it('should handle empty secrets', async () => {
-      const emptySecret = '';
-
-      const encrypted = await util.encryptSecret(emptySecret, testPurpose);
-      const decrypted = await util.decryptSecret(encrypted, testPurpose);
-
-      expect(decrypted).toBe(emptySecret);
     });
   });
 });

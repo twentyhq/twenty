@@ -147,11 +147,6 @@ export class ApiKeyService {
 
     await this.validateApiKey(apiKeyId, workspaceId);
 
-    const secret = this.jwtWrapperService.generateAppSecret(
-      JwtTokenTypeEnum.API_KEY,
-      workspaceId,
-    );
-
     let expiresIn: string | number;
 
     if (expiresAt) {
@@ -162,14 +157,13 @@ export class ApiKeyService {
       expiresIn = '100y';
     }
 
-    const token = this.jwtWrapperService.sign(
+    const token = await this.jwtWrapperService.signAsyncOrThrow(
       {
         sub: workspaceId,
         type: JwtTokenTypeEnum.API_KEY,
         workspaceId,
       },
       {
-        secret,
         expiresIn,
         jwtid: apiKeyId,
       },

@@ -32,6 +32,7 @@ const mockConnectedAccount: Pick<
   | 'id'
   | 'handle'
   | 'connectionParameters'
+  | 'workspaceId'
 > = {
   id: 'connected-account-id',
   provider: ConnectedAccountProvider.MICROSOFT,
@@ -39,6 +40,7 @@ const mockConnectedAccount: Pick<
   refreshToken: refreshToken,
   handle: 'test@gmail.com',
   connectionParameters: {},
+  workspaceId: 'workspace-id',
 };
 
 const mockMessageChannel: Pick<
@@ -103,6 +105,7 @@ xdescribe('Microsoft dev tests : get message list service', () => {
       refreshToken: 'invalid-token',
       handle: 'test@microsoft.com',
       connectionParameters: {},
+      workspaceId: 'workspace-id',
     };
 
     await expect(

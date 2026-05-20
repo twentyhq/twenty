@@ -53,6 +53,7 @@ export const fromCreateViewSortInputToFlatViewSortToCreate = ({
     deletedAt: null,
     universalIdentifier: createViewSortInput.universalIdentifier ?? v4(),
     direction: createViewSortInput.direction ?? ViewSortDirection.ASC,
+    subFieldName: createViewSortInput.subFieldName ?? null,
     applicationUniversalIdentifier: flatApplication.universalIdentifier,
   };
 };

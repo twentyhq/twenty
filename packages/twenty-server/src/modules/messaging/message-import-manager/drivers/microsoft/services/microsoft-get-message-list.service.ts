@@ -73,7 +73,7 @@ export class MicrosoftGetMessageListService {
   public async getMessageList(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'provider' | 'accessToken' | 'id'
+      'provider' | 'accessToken' | 'id' | 'workspaceId'
     >,
     messageFolder: Pick<
       MessageFolderEntity,

@@ -15,8 +15,6 @@ export default defineConnectionProvider({
     clientIdVariable: 'LINEAR_CLIENT_ID',
     clientSecretVariable: 'LINEAR_CLIENT_SECRET',
     tokenRequestContentType: 'form-urlencoded',
-    // Linear supports PKCE but doesn't require it for confidential clients.
-    // Disabled to keep the test surface minimal.
-    usePkce: false,
+    usePkce: true,
   },
 });

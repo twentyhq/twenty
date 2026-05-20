@@ -89,13 +89,13 @@ export class CallWebhookJob {
 
       const success = response.status >= 200 && response.status < 300;
 
-      auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      void auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         status: response.status,
         success,
         ...commonPayload,
       });
 
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounter({
         key: MetricsKeys.JobWebhookCallCompleted,
         shouldStoreInCache: false,
       });
@@ -105,7 +105,7 @@ export class CallWebhookJob {
         err.message.includes('internal IP address') &&
         err.message.includes('is not allowed');
 
-      auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
+      void auditService.insertWorkspaceEvent(WEBHOOK_RESPONSE_EVENT, {
         success: false,
         ...commonPayload,
         ...(err.response && { status: err.response.status }),

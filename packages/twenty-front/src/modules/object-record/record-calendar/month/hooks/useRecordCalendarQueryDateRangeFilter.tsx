@@ -1,3 +1,4 @@
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useRecordCalendarContextOrThrow } from '@/object-record/record-calendar/contexts/RecordCalendarContext';
 import { useRecordCalendarMonthDaysRange } from '@/object-record/record-calendar/month/hooks/useRecordCalendarMonthDaysRange';
 import { currentRecordFilterGroupsComponentState } from '@/object-record/record-filter-group/states/currentRecordFilterGroupsComponentState';
@@ -8,6 +9,7 @@ import { type RecordFilter } from '@/object-record/record-filter/types/RecordFil
 import { RecordFilterOperand } from '@/object-record/record-filter/types/RecordFilterOperand';
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import { t } from '@lingui/core/macro';
 import { type Temporal } from 'temporal-polyfill';
@@ -45,6 +47,10 @@ export const useRecordCalendarQueryDateRangeFilter = (
   );
 
   const { filterValueDependencies } = useFilterValueDependencies();
+
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
 
   const anyFieldFilterValue = useAtomComponentStateValue(
     anyFieldFilterValueComponentState,
@@ -94,15 +100,17 @@ export const useRecordCalendarQueryDateRangeFilter = (
     displayValue: `${lastDayOfLastWeek.toString()}`,
   };
 
+  const calendarRecordFilters = [
+    ...currentRecordFilters,
+    dateRangeFilterAfter,
+    dateRangeFilterBefore,
+  ];
+
   const dateRangeFilter = computeRecordGqlOperationFilter({
     filterValueDependencies,
-    recordFilters: [
-      ...currentRecordFilters,
-      dateRangeFilterAfter,
-      dateRangeFilterBefore,
-    ],
+    recordFilters: calendarRecordFilters,
     recordFilterGroups: currentRecordFilterGroups,
-    fields: objectMetadataItem.fields,
+    fieldMetadataItems: flattenedFieldMetadataItems,
   });
 
   const { recordGqlOperationFilter: anyFieldFilter } =

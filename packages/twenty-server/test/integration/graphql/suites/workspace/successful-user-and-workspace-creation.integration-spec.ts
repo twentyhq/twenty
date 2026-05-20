@@ -217,6 +217,7 @@ describe('Successful user and workspace creation', () => {
       'objectPermission',
       'fieldPermission',
       'permissionFlag',
+      'rolePermissionFlag',
       'logicFunction',
       'agent',
       'view',

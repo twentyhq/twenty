@@ -1,7 +1,10 @@
 #!/usr/bin/env node
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
-import { CreateAppCommand } from '@/create-app.command';
+import {
+  type AuthenticationMethod,
+  CreateAppCommand,
+} from '@/create-app.command';
 import packageJson from '../package.json';
 
 const program = new Command(packageJson.name)
@@ -12,32 +15,29 @@ const program = new Command(packageJson.name)
     'Output the current version of create-twenty-app.',
   )
   .argument('[directory]')
-  .option('--example <name>', 'Initialize from an example')
-  .option('-n, --name <name>', 'Application name (skips prompt)')
+  .option('-n, --name <name>', 'Application name')
+  .option('-d, --display-name <displayName>', 'Application display name')
+  .option('--description <description>', 'Application description')
   .option(
-    '-d, --display-name <displayName>',
-    'Application display name (skips prompt)',
+    '--workspace-url <workspaceUrl>',
+    'Twenty workspace URL (default: http://localhost:2020)',
   )
+  .option('--api-url <apiUrl>', '[deprecated: use --workspace-url]')
   .option(
-    '--description <description>',
-    'Application description (skips prompt)',
+    '--authentication-method <method>',
+    'Authentication method: oauth or apiKey (default: apiKey for local, oauth for remote)',
   )
-  .option(
-    '--skip-local-instance',
-    'Skip the local Twenty instance setup prompt',
-  )
-  .option('-y, --yes', 'Auto-confirm prompts (e.g. start existing container)')
   .helpOption('-h, --help', 'Display this help message.')
   .action(
     async (
       directory?: string,
       options?: {
-        example?: string;
         name?: string;
         displayName?: string;
         description?: string;
-        skipLocalInstance?: boolean;
-        yes?: boolean;
+        workspaceUrl?: string;
+        apiUrl?: string;
+        authenticationMethod?: AuthenticationMethod;
       },
     ) => {
       if (directory && !/^[a-z0-9-]+$/.test(directory)) {
@@ -54,14 +54,38 @@ const program = new Command(packageJson.name)
         process.exit(1);
       }
 
+      if (
+        options?.authenticationMethod &&
+        !['oauth', 'apiKey'].includes(options.authenticationMethod)
+      ) {
+        console.error(
+          chalk.red(
+            'Error: --authentication-method must be "oauth" or "apiKey".',
+          ),
+        );
+        process.exit(1);
+      }
+
+      if (options?.apiUrl) {
+        console.warn(
+          chalk.yellow(
+            'Warning: --api-url is deprecated. Use --workspace-url instead.',
+          ),
+        );
+      }
+
+      const workspaceUrl = (options?.workspaceUrl ?? options?.apiUrl)?.replace(
+        /\/+$/,
+        '',
+      );
+
       await new CreateAppCommand().execute({
         directory,
-        example: options?.example,
         name: options?.name,
         displayName: options?.displayName,
         description: options?.description,
-        skipLocalInstance: options?.skipLocalInstance,
-        yes: options?.yes,
+        workspaceUrl,
+        authenticationMethod: options?.authenticationMethod,
       });
     },
   );

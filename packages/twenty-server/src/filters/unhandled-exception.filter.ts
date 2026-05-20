@@ -35,6 +35,6 @@ export class UnhandledExceptionFilter implements ExceptionFilter {
     const status =
       exception instanceof HttpException ? exception.getStatus() : 500;
 
-    response.status(status).json(exception.response);
+    response.status(status).json(exception.response ?? exception.message);
   }
 }

@@ -137,7 +137,7 @@ describe('SettingsApplicationConnectionDetail', () => {
     mockedUseMyAppConnectedAccounts.mockReturnValue({
       accounts: [
         {
-          __typename: 'ConnectedAccountDTO',
+          __typename: 'ConnectedAccountPublicDTO',
           id: 'account-1',
           handle: 'workspace@example.com',
           provider: 'app',

@@ -7,6 +7,7 @@ import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
+import { normalizeUrl } from 'twenty-shared/utils';
 
 const deriveRemoteName = (url: string): string => {
   try {
@@ -41,13 +42,7 @@ const authenticate = async (
 const runOAuthWithApiKeyFallback = async (
   apiUrl: string,
 ): Promise<AuthMethod> => {
-  await inquirer.prompt([
-    {
-      type: 'input',
-      name: 'confirm',
-      message: 'Press Enter to open the browser for authentication...',
-    },
-  ]);
+  console.log(chalk.gray('Opening browser for authentication...'));
 
   const oauthResult = await authLoginOAuth({ apiUrl });
 
@@ -123,7 +118,7 @@ export const registerRemoteCommands = (program: Command): void => {
           return;
         }
 
-        let apiUrl = options.apiUrl;
+        let apiUrl = options.apiUrl ? normalizeUrl(options.apiUrl) : undefined;
 
         if (!apiUrl) {
           const detectedUrl = await detectLocalServer();
@@ -142,24 +137,26 @@ export const registerRemoteCommands = (program: Command): void => {
             console.log(chalk.gray(`Found local server at ${detectedUrl}`));
             apiUrl = detectedUrl;
           } else {
-            apiUrl = (
-              await inquirer.prompt<{ apiUrl: string }>([
-                {
-                  type: 'input',
-                  name: 'apiUrl',
-                  message: 'Twenty server URL:',
-                  validate: (input: string) => {
-                    try {
-                      new URL(input);
+            apiUrl = normalizeUrl(
+              (
+                await inquirer.prompt<{ apiUrl: string }>([
+                  {
+                    type: 'input',
+                    name: 'apiUrl',
+                    message: 'Twenty server URL:',
+                    validate: (input: string) => {
+                      try {
+                        new URL(input);
 
-                      return true;
-                    } catch {
-                      return 'Please enter a valid URL';
-                    }
+                        return true;
+                      } catch {
+                        return 'Please enter a valid URL';
+                      }
+                    },
                   },
-                },
-              ])
-            ).apiUrl;
+                ])
+              ).apiUrl,
+            );
           }
         }
 

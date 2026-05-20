@@ -1,5 +1,5 @@
 import { type CalendarChannel } from '@/accounts/types/CalendarChannel';
-import { type ImapSmtpCaldavAccount } from '@/accounts/types/ImapSmtpCaldavAccount';
+import { type ImapSmtpCaldavAccountInput } from '@/accounts/types/ImapSmtpCaldavAccountInput';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 import { type MessageChannel } from './MessageChannel';
 
@@ -18,7 +18,7 @@ export type ConnectedAccount = {
   // (those are upstream-granted OAuth permissions).
   visibility: 'user' | 'workspace';
   lastCredentialsRefreshedAt: string | null;
-  connectionParameters: ImapSmtpCaldavAccount | null;
+  connectionParameters: ImapSmtpCaldavAccountInput | null;
   createdAt: string;
   updatedAt: string;
   messageChannels: MessageChannel[];

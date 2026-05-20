@@ -2,22 +2,23 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { ConnectedAccountProvider } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import {
-  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-  ConnectedAccountTokenEncryptionService,
-} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
-import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
+import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
+
+const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
 
 describe('ConnectedAccountRefreshTokensService', () => {
   let service: ConnectedAccountRefreshTokensService;
@@ -36,8 +37,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
   const mockRefreshTokenPlaintext = 'valid-refresh-token';
   const mockNewAccessTokenPlaintext = 'new-access-token';
 
-  const mockEncryptedAccessToken = `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockAccessTokenPlaintext})`;
-  const mockEncryptedRefreshToken = `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`;
+  const mockEncryptedAccessToken = `${FAKE_CIPHER_PREFIX}CIPHER(${mockAccessTokenPlaintext})`;
+  const mockEncryptedRefreshToken = `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`;
 
   // Real prefix/round-trip invariants are asserted in
   // connected-account-token-encryption.service.spec.ts.
@@ -45,25 +46,24 @@ describe('ConnectedAccountRefreshTokensService', () => {
     decrypt: jest.Mock;
     encryptTokenPair: jest.Mock;
   } => {
-    const wrap = (value: string) =>
-      `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${value})`;
+    const wrap = (value: string) => `${FAKE_CIPHER_PREFIX}CIPHER(${value})`;
 
     return {
-      decrypt: jest.fn((value: string) => {
-        const match = value.match(
-          new RegExp(
-            `^${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER\\((.*)\\)$`,
-          ),
-        );
-
-        if (match === null) {
-          throw new Error(
-            `fake encryption stub: decrypt called with a non-CIPHER value: ${value}`,
+      decrypt: jest.fn(
+        ({ ciphertext }: { ciphertext: string; workspaceId: string }) => {
+          const match = ciphertext.match(
+            new RegExp(`^${FAKE_CIPHER_PREFIX}CIPHER\\((.*)\\)$`),
           );
-        }
 
-        return match[1];
-      }),
+          if (!isDefined(match)) {
+            throw new Error(
+              `fake encryption stub: decrypt called with a non-CIPHER value: ${ciphertext}`,
+            );
+          }
+
+          return match[1];
+        },
+      ),
       encryptTokenPair: jest.fn(
         ({
           accessToken,
@@ -71,10 +71,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
         }: {
           accessToken: string;
           refreshToken: string | null;
+          workspaceId: string;
         }) => ({
           encryptedAccessToken: wrap(accessToken),
-          encryptedRefreshToken:
-            refreshToken === null ? null : wrap(refreshToken),
+          encryptedRefreshToken: isDefined(refreshToken)
+            ? wrap(refreshToken)
+            : null,
         }),
       ),
     };
@@ -146,7 +148,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
     jest.clearAllMocks();
   });
 
-  describe('refreshAndSaveTokens', () => {
+  describe('resolveTokens', () => {
     it('should reuse the cached token, decrypt before returning to the caller, and skip the refresh call entirely', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
@@ -156,7 +158,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         lastCredentialsRefreshedAt: new Date(Date.now() - 30 * 60 * 1000), // 30 minutes ago
       } as ConnectedAccountEntity;
 
-      const result = await service.refreshAndSaveTokens(
+      const result = await service.resolveTokens(
         connectedAccount,
         mockWorkspaceId,
       );
@@ -167,10 +169,16 @@ describe('ConnectedAccountRefreshTokensService', () => {
       });
       expect(
         connectedAccountTokenEncryptionService.decrypt,
-      ).toHaveBeenCalledWith(mockEncryptedAccessToken);
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedAccessToken,
+        workspaceId: mockWorkspaceId,
+      });
       expect(
         connectedAccountTokenEncryptionService.decrypt,
-      ).toHaveBeenCalledWith(mockEncryptedRefreshToken);
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedRefreshToken,
+        workspaceId: mockWorkspaceId,
+      });
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).not.toHaveBeenCalled();
@@ -195,7 +203,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue(newTokens);
 
-      const result = await service.refreshAndSaveTokens(
+      const result = await service.resolveTokens(
         connectedAccount,
         mockWorkspaceId,
       );
@@ -207,8 +215,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
+          accessToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
+          refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
           lastCredentialsRefreshedAt: expect.any(Date),
         }),
       );
@@ -232,7 +240,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .spyOn(googleAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue(newTokens);
 
-      const result = await service.refreshAndSaveTokens(
+      const result = await service.resolveTokens(
         connectedAccount,
         mockWorkspaceId,
       );
@@ -244,8 +252,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
+          accessToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
+          refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
           lastCredentialsRefreshedAt: expect.any(Date),
         }),
       );
@@ -269,7 +277,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .spyOn(microsoftAPIRefreshAccessTokenService, 'refreshTokens')
         .mockResolvedValue(newTokens);
 
-      const result = await service.refreshAndSaveTokens(
+      const result = await service.resolveTokens(
         connectedAccount,
         mockWorkspaceId,
       );
@@ -281,14 +289,44 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
+          accessToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockNewAccessTokenPlaintext})`,
+          refreshToken: `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`,
           lastCredentialsRefreshedAt: expect.any(Date),
         }),
       );
     });
 
-    it('should throw when refresh token is missing', async () => {
+    it('should return decrypted access token and null refresh token when access token is valid but no refresh token exists', async () => {
+      const connectedAccount = {
+        id: mockConnectedAccountId,
+        provider: ConnectedAccountProvider.APP,
+        accessToken: mockEncryptedAccessToken,
+        refreshToken: null,
+        lastCredentialsRefreshedAt: new Date(Date.now() - 30 * 60 * 1000),
+      } as unknown as ConnectedAccountEntity;
+
+      const result = await service.resolveTokens(
+        connectedAccount,
+        mockWorkspaceId,
+      );
+
+      expect(result).toEqual({
+        accessToken: mockAccessTokenPlaintext,
+        refreshToken: null,
+      });
+      expect(
+        connectedAccountTokenEncryptionService.decrypt,
+      ).toHaveBeenCalledWith({
+        ciphertext: mockEncryptedAccessToken,
+        workspaceId: mockWorkspaceId,
+      });
+      expect(
+        connectedAccountTokenEncryptionService.decrypt,
+      ).toHaveBeenCalledTimes(1);
+      expect(connectedAccountRepository.update).not.toHaveBeenCalled();
+    });
+
+    it('should throw when refresh token is missing and access token is expired', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
         provider: ConnectedAccountProvider.GOOGLE,
@@ -298,7 +336,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as unknown as ConnectedAccountEntity;
 
       await expect(
-        service.refreshAndSaveTokens(connectedAccount, mockWorkspaceId),
+        service.resolveTokens(connectedAccount, mockWorkspaceId),
       ).rejects.toThrow(
         new ConnectedAccountRefreshAccessTokenException(
           `No refresh token found for connected account ${mockConnectedAccountId} in workspace ${mockWorkspaceId}`,
@@ -326,7 +364,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .mockRejectedValue(invalidGrantError);
 
       await expect(
-        service.refreshAndSaveTokens(connectedAccount, mockWorkspaceId),
+        service.resolveTokens(connectedAccount, mockWorkspaceId),
       ).rejects.toMatchObject({
         message: expect.stringContaining(
           'Microsoft OAuth error: invalid_grant - Token has been revoked',
@@ -354,7 +392,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         .mockRejectedValue(networkError);
 
       await expect(
-        service.refreshAndSaveTokens(connectedAccount, mockWorkspaceId),
+        service.resolveTokens(connectedAccount, mockWorkspaceId),
       ).rejects.toMatchObject({
         code: ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR,
       });
@@ -435,7 +473,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
     });
   });
 
-  describe('refreshAndSaveTokens - OIDC/SAML', () => {
+  describe('resolveTokens - OIDC/SAML', () => {
     it('should decrypt and return existing tokens for OIDC without attempting a refresh', async () => {
       const connectedAccount = {
         id: mockConnectedAccountId,
@@ -445,7 +483,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         lastCredentialsRefreshedAt: null,
       } as unknown as ConnectedAccountEntity;
 
-      const result = await service.refreshAndSaveTokens(
+      const result = await service.resolveTokens(
         connectedAccount,
         mockWorkspaceId,
       );
@@ -472,7 +510,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
         lastCredentialsRefreshedAt: null,
       } as unknown as ConnectedAccountEntity;
 
-      const result = await service.refreshAndSaveTokens(
+      const result = await service.resolveTokens(
         connectedAccount,
         mockWorkspaceId,
       );

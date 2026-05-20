@@ -13,12 +13,10 @@ import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
 import { PlansTags } from '@/settings/billing/components/internal/PlansTags';
 import { useBillingWording } from '@/settings/billing/hooks/useBillingWording';
 import { useCurrentBillingFlags } from '@/settings/billing/hooks/useCurrentBillingFlags';
-import { useCurrentMetered } from '@/settings/billing/hooks/useCurrentMetered';
 import { useCurrentPlan } from '@/settings/billing/hooks/useCurrentPlan';
 import { useCurrentResourceCredit } from '@/settings/billing/hooks/useCurrentResourceCredit';
 import { useEndSubscriptionTrialPeriod } from '@/settings/billing/hooks/useEndSubscriptionTrialPeriod';
 import { useGetResourceCreditUsage } from '@/settings/billing/hooks/useGetResourceCreditUsage';
-import { useGetWorkflowNodeExecutionUsage } from '@/settings/billing/hooks/useGetWorkflowNodeExecutionUsage';
 import { useHasNextBillingPhase } from '@/settings/billing/hooks/useHasNextBillingPhase';
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { useNextBillingSeats } from '@/settings/billing/hooks/useNextBillingSeats';
@@ -29,7 +27,6 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useSubscriptionStatus } from '@/workspace/hooks/useSubscriptionStatus';
 import { useMutation } from '@apollo/client/react';
 import { styled } from '@linaria/react';
@@ -55,8 +52,7 @@ import {
   BillingProductKey,
   CancelSwitchBillingIntervalDocument,
   CancelSwitchBillingPlanDocument,
-  CancelSwitchMeteredPriceDocument,
-  FeatureFlagKey,
+  CancelSwitchResourceCreditPriceDocument,
   PermissionFlagType,
   SubscriptionInterval,
   SubscriptionStatus,
@@ -107,18 +103,10 @@ export const SettingsBillingSubscriptionInfo = ({
 
   const { openModal } = useModal();
 
-  const isV2 = useIsFeatureEnabled(FeatureFlagKey.IS_BILLING_V2_ENABLED);
-
-  const { refetchMeteredProductsUsage } = useGetWorkflowNodeExecutionUsage();
   const { refetchResourceCreditUsage } = useGetResourceCreditUsage();
-
-  const refetchUsage = isV2
-    ? refetchResourceCreditUsage
-    : refetchMeteredProductsUsage;
 
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
-  const { currentMeteredBillingPrice } = useCurrentMetered();
   const { currentResourceCreditBillingPrice } = useCurrentResourceCredit();
 
   const { currentPlan, oppositPlan } = useCurrentPlan();
@@ -132,23 +120,16 @@ export const SettingsBillingSubscriptionInfo = ({
   const { nextBillingPhase } = useNextBillingPhase();
   const nextInterval =
     splitedPhaseItemsInPrices?.nextBasePrice?.recurringInterval;
-  const nextMeteredBillingPrice = splitedPhaseItemsInPrices.nextMeteredPrice;
   const nextResourceCreditPrice =
     splitedPhaseItemsInPrices.nextResourceCreditPrice;
   const subscriptionStatus = useSubscriptionStatus();
 
-  const currentInterval = isV2
-    ? currentBillingSubscription.interval
-    : currentMeteredBillingPrice?.recurringInterval;
+  const currentInterval = currentBillingSubscription.interval;
 
-  const currentCreditsByPeriod = isV2
-    ? (currentResourceCreditBillingPrice?.creditAmount ?? null)
-    : ((currentMeteredBillingPrice as { tiers?: { upTo: number }[] } | null)
-        ?.tiers?.[0]?.upTo ?? null);
+  const currentCreditsByPeriod =
+    currentResourceCreditBillingPrice?.creditAmount ?? null;
 
-  const nextCreditsByPeriod = isV2
-    ? (nextResourceCreditPrice?.creditAmount ?? null)
-    : (nextMeteredBillingPrice?.tiers?.[0]?.upTo ?? null);
+  const nextCreditsByPeriod = nextResourceCreditPrice?.creditAmount ?? null;
 
   const {
     getIntervalLabelAsAdjectiveCapitalize,
@@ -175,8 +156,8 @@ export const SettingsBillingSubscriptionInfo = ({
     CancelSwitchBillingPlanDocument,
   );
 
-  const [cancelSwitchMeteredPrice] = useMutation(
-    CancelSwitchMeteredPriceDocument,
+  const [cancelSwitchResourceCreditPrice] = useMutation(
+    CancelSwitchResourceCreditPriceDocument,
   );
 
   const setCurrentWorkspace = useSetAtomState(currentWorkspaceState);
@@ -237,7 +218,7 @@ export const SettingsBillingSubscriptionInfo = ({
       currentBillingSubscription,
       billingSubscriptions,
     });
-    refetchUsage();
+    refetchResourceCreditUsage();
   };
 
   const switchInterval = async () => {
@@ -351,28 +332,26 @@ export const SettingsBillingSubscriptionInfo = ({
     }
   };
 
-  const cancelMeteredSwitching = async () => {
+  const cancelResourceCreditSwitching = async () => {
     if (isAnyActionLoading || isCancellingMeteredSwitch) return;
     setIsCancellingMeteredSwitch(true);
     try {
-      const { data } = await cancelSwitchMeteredPrice();
+      const { data } = await cancelSwitchResourceCreditPrice();
 
       if (
-        isDefined(data?.cancelSwitchMeteredPrice?.currentBillingSubscription)
+        isDefined(
+          data?.cancelSwitchResourceCreditPrice?.currentBillingSubscription,
+        )
       ) {
-        refreshWorkspace(data.cancelSwitchMeteredPrice);
+        refreshWorkspace(data.cancelSwitchResourceCreditPrice);
       }
 
       enqueueSuccessSnackBar({
-        message: isV2
-          ? t`Credit pack switching has been cancelled.`
-          : t`Metered tier switching has been cancelled.`,
+        message: t`Credit pack switching has been cancelled.`,
       });
     } catch {
       enqueueErrorSnackBar({
-        message: isV2
-          ? t`Error while cancelling credit pack switching.`
-          : t`Error while cancelling metered tier switching.`,
+        message: t`Error while cancelling credit pack switching.`,
       });
     } finally {
       setIsCancellingMeteredSwitch(false);
@@ -529,26 +508,16 @@ export const SettingsBillingSubscriptionInfo = ({
             disabled={!canSwitchSubscription || isAnyActionLoading}
           />
         )}
-        {/*@todo: find a way to check if the metered tier match when interval change too*/}
-        {(isV2
-          ? nextResourceCreditPrice &&
-            currentCreditsByPeriod !== nextCreditsByPeriod
-          : isDefined(nextInterval) &&
-            isDefined(nextCreditsByPeriod) &&
-            currentInterval === nextInterval &&
-            currentCreditsByPeriod !== nextCreditsByPeriod) && (
-          <Button
-            Icon={IconCircleX}
-            title={
-              isV2
-                ? t`Cancel credit pack switching`
-                : t`Cancel metered tier switching`
-            }
-            variant="secondary"
-            onClick={() => openModal(CANCEL_SWITCH_METERED_PRICE_MODAL_ID)}
-            disabled={!canSwitchSubscription || isAnyActionLoading}
-          />
-        )}
+        {nextResourceCreditPrice &&
+          currentCreditsByPeriod !== nextCreditsByPeriod && (
+            <Button
+              Icon={IconCircleX}
+              title={t`Cancel credit pack switching`}
+              variant="secondary"
+              onClick={() => openModal(CANCEL_SWITCH_METERED_PRICE_MODAL_ID)}
+              disabled={!canSwitchSubscription || isAnyActionLoading}
+            />
+          )}
       </StyledSwitchButtonContainer>
       <ConfirmationModal
         modalInstanceId={SWITCH_BILLING_INTERVAL_TO_YEARLY_MODAL_ID}
@@ -615,17 +584,9 @@ export const SettingsBillingSubscriptionInfo = ({
       />
       <ConfirmationModal
         modalInstanceId={CANCEL_SWITCH_METERED_PRICE_MODAL_ID}
-        title={
-          isV2
-            ? t`Cancel credit pack switching?`
-            : t`Cancel metered tier switching?`
-        }
-        subtitle={
-          isV2
-            ? t`You have scheduled a credit pack change. Do you want to cancel it?`
-            : t`You have scheduled a metered tier change. Do you want to cancel it?`
-        }
-        onConfirmClick={cancelMeteredSwitching}
+        title={t`Cancel credit pack switching?`}
+        subtitle={t`You have scheduled a credit pack change. Do you want to cancel it?`}
+        onConfirmClick={cancelResourceCreditSwitching}
         confirmButtonText={t`Confirm`}
         confirmButtonAccent="blue"
         loading={isCancellingMeteredSwitch}

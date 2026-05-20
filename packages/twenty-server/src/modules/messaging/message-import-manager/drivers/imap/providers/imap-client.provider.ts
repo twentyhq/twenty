@@ -2,17 +2,16 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { ImapFlow } from 'imapflow';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { CustomError, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { MessageImportDriverExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
+import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { parseImapAuthenticationError } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/parse-imap-authentication-error.util';
 
 type ConnectedAccountIdentifier = Pick<
   ConnectedAccountEntity,
-  'id' | 'provider' | 'connectionParameters' | 'handle'
+  'id' | 'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
 >;
 
 @Injectable()
@@ -24,6 +23,7 @@ export class ImapClientProvider {
 
   constructor(
     private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async getClient(
@@ -60,31 +60,24 @@ export class ImapClientProvider {
       throw new Error('Connected account is not an IMAP provider');
     }
 
-    const connectionParameters: ImapSmtpCaldavParams =
-      (connectedAccount.connectionParameters as unknown as ImapSmtpCaldavParams) ||
-      {};
-
-    if (!isDefined(connectedAccount.handle)) {
-      throw new CustomError(
-        'Handle is required',
-        MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
-      );
-    }
+    const imapParams =
+      this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
+        protocolParams: connectedAccount.connectionParameters.IMAP,
+        workspaceId: connectedAccount.workspaceId,
+      });
 
     const validatedImapHost =
-      await this.secureHttpClientService.getValidatedHost(
-        connectionParameters.IMAP?.host || '',
-      );
+      await this.secureHttpClientService.getValidatedHost(imapParams.host);
 
     const client = new ImapFlow({
       host: validatedImapHost,
-      port: connectionParameters.IMAP?.port || 993,
-      secure: connectionParameters.IMAP?.secure,
+      port: imapParams.port || 993,
+      secure: imapParams.secure,
       auth: {
-        user: isDefined(connectionParameters.IMAP?.username)
-          ? connectionParameters.IMAP?.username
+        user: isDefined(imapParams.username)
+          ? imapParams.username
           : connectedAccount.handle,
-        pass: connectionParameters.IMAP?.password || '',
+        pass: imapParams.password,
       },
       logger: false,
       tls: {
@@ -92,6 +85,14 @@ export class ImapClientProvider {
       },
       connectionTimeout: ImapClientProvider.CONNECTION_TIMEOUT_MS,
       greetingTimeout: ImapClientProvider.GREETING_TIMEOUT_MS,
+    });
+
+    // ImapFlow is long-lived EventEmitter — missing 'error' listener crashes process on socket timeout.
+    client.on('error', (error) => {
+      this.logger.error(
+        `IMAP client error for ${connectedAccount.handle}: ${error.message}`,
+        error.stack,
+      );
     });
 
     try {

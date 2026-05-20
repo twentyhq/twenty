@@ -38,6 +38,7 @@ export class UpdateConnectedAccountOnReconnectService {
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
         accessToken,
         refreshToken,
+        workspaceId,
       });
 
     const authContext = buildSystemAuthContext(workspaceId);

@@ -384,7 +384,7 @@ export class SignInUpService {
       undefined,
     );
 
-    this.metricsService.incrementCounter({
+    void this.metricsService.incrementCounter({
       key: MetricsKeys.SignUpSuccess,
       shouldStoreInCache: false,
     });
@@ -502,113 +502,110 @@ export class SignInUpService {
 
     const workspaceId = v4();
     const workspaceCustomApplicationId = v4();
-    const queryRunner = this.dataSource.createQueryRunner();
-
-    await queryRunner.connect();
-    await queryRunner.startTransaction();
 
     try {
-      const workspaceToCreate = this.workspaceRepository.create({
-        id: workspaceId,
-        subdomain: await this.subdomainManagerService.generateSubdomain(
-          isWorkEmailFound ? { userEmail: email } : {},
-        ),
-        workspaceCustomApplicationId,
-        displayName: '',
-        inviteHash: v4(),
-        activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
-      });
+      const { user, workspace } = await this.dataSource.transaction(
+        async (entityManager) => {
+          const queryRunner = entityManager.queryRunner as QueryRunner;
 
-      const workspace = await queryRunner.manager.save(
-        WorkspaceEntity,
-        workspaceToCreate,
-      );
-
-      const customApplication =
-        await this.applicationService.createWorkspaceCustomApplication(
-          {
-            workspaceId,
-            applicationId: workspaceCustomApplicationId,
-          },
-          queryRunner,
-        );
-
-      if (isWorkEmailFound) {
-        const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
-        const logoFile =
-          await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
-            imageUrl: logoUrl,
-            workspaceId,
-            applicationUniversalIdentifier:
-              customApplication.universalIdentifier,
-            queryRunner,
+          const workspaceToCreate = this.workspaceRepository.create({
+            id: workspaceId,
+            subdomain: await this.subdomainManagerService.generateSubdomain(
+              isWorkEmailFound ? { userEmail: email } : {},
+            ),
+            workspaceCustomApplicationId,
+            displayName: '',
+            inviteHash: v4(),
+            activationStatus: WorkspaceActivationStatus.PENDING_CREATION,
           });
 
-        if (isDefined(logoFile)) {
-          await queryRunner.manager.update(
+          const workspace = await queryRunner.manager.save(
             WorkspaceEntity,
-            { id: workspaceId },
-            { logoFileId: logoFile.id },
+            workspaceToCreate,
           );
-        }
-      }
 
-      const isExistingUser = userData.type === 'existingUser';
-      const user = isExistingUser
-        ? userData.existingUser
-        : await this.saveNewUser(
-            userData.newUserWithPicture,
+          const customApplication =
+            await this.applicationService.createWorkspaceCustomApplication(
+              {
+                workspaceId,
+                applicationId: workspaceCustomApplicationId,
+              },
+              queryRunner,
+            );
+
+          if (isWorkEmailFound) {
+            const logoUrl = `${TWENTY_ICONS_BASE_URL}/${getDomainNameByEmail(email)}`;
+            const logoFile =
+              await this.fileCorePictureService.uploadWorkspaceLogoFromUrl({
+                imageUrl: logoUrl,
+                workspaceId,
+                applicationUniversalIdentifier:
+                  customApplication.universalIdentifier,
+                queryRunner,
+              });
+
+            if (isDefined(logoFile)) {
+              await queryRunner.manager.update(
+                WorkspaceEntity,
+                { id: workspaceId },
+                { logoFileId: logoFile.id },
+              );
+            }
+          }
+
+          const isExistingUser = userData.type === 'existingUser';
+          const user = isExistingUser
+            ? userData.existingUser
+            : await this.saveNewUser(
+                userData.newUserWithPicture,
+                {
+                  canImpersonate: shouldGrantServerAdmin,
+                  canAccessFullAdminPanel: shouldGrantServerAdmin,
+                },
+                queryRunner,
+              );
+
+          await this.userWorkspaceService.create(
             {
-              canImpersonate: shouldGrantServerAdmin,
-              canAccessFullAdminPanel: shouldGrantServerAdmin,
+              userId: user.id,
+              workspaceId: workspace.id,
+              isExistingUser,
+              pictureUrl: isExistingUser
+                ? undefined
+                : userData.newUserWithPicture.picture,
+              applicationUniversalIdentifier:
+                customApplication.universalIdentifier,
             },
             queryRunner,
           );
 
-      await this.userWorkspaceService.create(
-        {
-          userId: user.id,
-          workspaceId: workspace.id,
-          isExistingUser,
-          pictureUrl: isExistingUser
-            ? undefined
-            : userData.newUserWithPicture.picture,
-          applicationUniversalIdentifier: customApplication.universalIdentifier,
+          await this.activateOnboardingForUser(
+            {
+              user,
+              workspace,
+              shouldShowConnectAccountStep: true,
+            },
+            queryRunner,
+          );
+
+          await this.onboardingService.setOnboardingInviteTeamPending(
+            {
+              workspaceId: workspace.id,
+              value: true,
+            },
+            queryRunner,
+          );
+
+          return { user, workspace };
         },
-        queryRunner,
       );
 
-      await this.activateOnboardingForUser(
-        {
-          user,
-          workspace,
-          shouldShowConnectAccountStep: true,
-        },
-        queryRunner,
-      );
-
-      await this.onboardingService.setOnboardingInviteTeamPending(
-        {
-          workspaceId: workspace.id,
-          value: true,
-        },
-        queryRunner,
-      );
-
-      await queryRunner.commitTransaction();
-
-      this.auditService
+      void this.auditService
         .createContext({ workspaceId })
         .insertWorkspaceEvent(WORKSPACE_CREATED_EVENT, {});
 
       return { user, workspace };
-    } catch (error) {
-      if (queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction();
-      }
-      throw error;
     } finally {
-      await queryRunner.release();
       await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
         'flatApplicationMaps',
       ]);

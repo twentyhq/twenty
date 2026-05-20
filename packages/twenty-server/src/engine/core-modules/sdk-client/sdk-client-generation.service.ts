@@ -11,19 +11,28 @@ import { Repository } from 'typeorm';
 
 import { WorkspaceSchemaFactory } from 'src/engine/api/graphql/workspace-schema.factory';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SDK_CLIENT_PACKAGE_DIRNAME } from 'src/engine/core-modules/sdk-client/constants/sdk-client-package-dirname';
 import {
   SdkClientException,
   SdkClientExceptionCode,
 } from 'src/engine/core-modules/sdk-client/exceptions/sdk-client.exception';
+import {
+  GENERATE_SDK_CLIENT_JOB_NAME,
+  type GenerateSdkClientJobData,
+} from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job-constants';
 import { fromWorkspaceEntityToFlat } from 'src/engine/core-modules/workspace/utils/from-workspace-entity-to-flat.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 const SDK_CLIENT_ARCHIVE_NAME = 'twenty-client-sdk.zip';
+const SDK_CLIENT_GENERATION_RETRY_LIMIT = 3;
 
 @Injectable()
 export class SdkClientGenerationService {
@@ -37,7 +46,37 @@ export class SdkClientGenerationService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceSchemaFactory: WorkspaceSchemaFactory,
+    private readonly applicationService: ApplicationService,
+    @InjectMessageQueue(MessageQueue.workspaceQueue)
+    private readonly messageQueueService: MessageQueueService,
   ) {}
+
+  async enqueueSdkClientGenerationForWorkspace(
+    workspaceId: string,
+  ): Promise<void> {
+    const { twentyStandardFlatApplication, workspaceCustomFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    await Promise.all(
+      [twentyStandardFlatApplication, workspaceCustomFlatApplication].map(
+        (application) =>
+          this.messageQueueService.add<GenerateSdkClientJobData>(
+            GENERATE_SDK_CLIENT_JOB_NAME,
+            {
+              workspaceId,
+              applicationId: application.id,
+              applicationUniversalIdentifier: application.universalIdentifier,
+            },
+            {
+              id: `sdk-client:${workspaceId}:${application.id}`,
+              retryLimit: SDK_CLIENT_GENERATION_RETRY_LIMIT,
+            },
+          ),
+      ),
+    );
+  }
 
   async generateSdkClientForApplication({
     workspaceId,

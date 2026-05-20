@@ -90,7 +90,7 @@ describe('MessagingMessagesImportService', () => {
       {
         provide: ConnectedAccountRefreshTokensService,
         useValue: {
-          refreshAndSaveTokens: jest.fn().mockResolvedValue({
+          resolveTokens: jest.fn().mockResolvedValue({
             accessToken: 'new-access-token',
             refreshToken: 'new-refresh-token',
           }),
@@ -246,7 +246,7 @@ describe('MessagingMessagesImportService', () => {
     mockMessageChannel.syncStage =
       MessageChannelSyncStage.MESSAGES_IMPORT_PENDING;
 
-    expect(
+    await expect(
       service.processMessageBatchImport(
         mockMessageChannel as MessageChannelEntity,
         mockConnectedAccount,
@@ -266,17 +266,12 @@ describe('MessagingMessagesImportService', () => {
     ).toHaveBeenCalledWith([mockMessageChannel.id], workspaceId);
 
     expect(
-      connectedAccountRefreshTokensService.refreshAndSaveTokens,
+      connectedAccountRefreshTokensService.resolveTokens,
     ).toHaveBeenCalledWith(mockConnectedAccount, workspaceId);
 
-    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith(
-      {
-        ...mockConnectedAccount,
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-      },
-      workspaceId,
-    );
+    expect(
+      emailAliasManagerService.refreshHandleAliases,
+    ).not.toHaveBeenCalled();
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
       {

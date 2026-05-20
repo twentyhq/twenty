@@ -1,20 +1,22 @@
+import { isDefined } from 'twenty-shared/utils';
 import { type DataSource } from 'typeorm';
 
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
-import {
-  CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-  type ConnectedAccountTokenEncryptionService,
-} from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { type ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 
 type FakeRow = {
   id: string;
+  workspaceId: string;
   accessToken: string | null;
   refreshToken: string | null;
 };
 
-// In-memory stand-in that mimics the slow command's exact SELECT / UPDATE
-// shape (LIKE filter, cursor, batch) — anything looser would let regressions
-// in the SQL slip past these tests.
+const FAKE_V2_KEY_ID = 'deadbeef';
+
+const wrapAsV2 = (plaintext: string, workspaceId: string): string =>
+  `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${FAKE_V2_KEY_ID}:CIPHER(${plaintext}|${workspaceId})`;
+
 const buildFakeDataSource = (
   initialRows: FakeRow[],
   { batchSize }: { batchSize: number } = { batchSize: 500 },
@@ -26,23 +28,29 @@ const buildFakeDataSource = (
   const rows = [...initialRows].sort((a, b) => a.id.localeCompare(b.id));
   let queryCallCount = 0;
 
+  const matchesLikePattern = (value: string, pattern: string): boolean => {
+    const escaped = pattern.replace(/[-/\\^$+?.()|[\]{}]/g, '\\$&');
+    const expr = escaped.replace(/%/g, '.*').replace(/_/g, '.');
+
+    return new RegExp(`^${expr}$`).test(value);
+  };
+
   const fakeDataSource = {
     query: jest.fn(async (sql: string, params?: unknown[]) => {
       queryCallCount++;
 
       if (sql.includes('SELECT id')) {
         const cursor = params?.[0] as string;
-        const prefixPattern = params?.[1] as string;
-        const prefix = prefixPattern.replace(/%$/, '');
+        const likePattern = params?.[1] as string;
 
         return rows
           .filter((row) => row.id > cursor)
           .filter(
             (row) =>
-              (row.accessToken !== null &&
-                !row.accessToken.startsWith(prefix)) ||
-              (row.refreshToken !== null &&
-                !row.refreshToken.startsWith(prefix)),
+              (isDefined(row.accessToken) &&
+                !matchesLikePattern(row.accessToken, likePattern)) ||
+              (isDefined(row.refreshToken) &&
+                !matchesLikePattern(row.refreshToken, likePattern)),
           )
           .slice(0, batchSize);
       }
@@ -51,20 +59,19 @@ const buildFakeDataSource = (
         const id = params?.[0] as string;
         const target = rows.find((row) => row.id === id);
 
-        if (!target) {
+        if (!isDefined(target)) {
           return;
         }
 
-        // Mirror the SQL: SET "accessToken" = $N, "refreshToken" = $M WHERE id = $1
         const accessTokenMatch = sql.match(/"accessToken" = \$(\d+)/);
         const refreshTokenMatch = sql.match(/"refreshToken" = \$(\d+)/);
 
-        if (accessTokenMatch) {
+        if (isDefined(accessTokenMatch)) {
           target.accessToken = params?.[
             Number(accessTokenMatch[1]) - 1
           ] as string;
         }
-        if (refreshTokenMatch) {
+        if (isDefined(refreshTokenMatch)) {
           target.refreshToken = params?.[
             Number(refreshTokenMatch[1]) - 1
           ] as string;
@@ -84,109 +91,118 @@ const buildFakeDataSource = (
   };
 };
 
+const buildFakeTokenEncryptionService =
+  (): ConnectedAccountTokenEncryptionService =>
+    ({
+      encrypt: jest.fn(
+        ({
+          plaintext,
+          workspaceId,
+        }: {
+          plaintext: string;
+          workspaceId: string;
+        }): string => wrapAsV2(plaintext, workspaceId),
+      ),
+    }) as unknown as ConnectedAccountTokenEncryptionService;
+
+const buildCommand = (): {
+  command: EncryptConnectedAccountTokensSlowInstanceCommand;
+} => {
+  const command = new EncryptConnectedAccountTokensSlowInstanceCommand(
+    buildFakeTokenEncryptionService(),
+  );
+
+  return { command };
+};
+
 describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
-  // Real AES round-trip is asserted in ConnectedAccountTokenEncryptionService's
-  // own spec; here we use a CIPHER(...) wrapper so assertions match exact strings.
-  const buildFakeTokenEncryptionService =
-    (): ConnectedAccountTokenEncryptionService =>
-      ({
-        encrypt: jest.fn(
-          (plaintext: string): string =>
-            `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(${plaintext})`,
-        ),
-      }) as unknown as ConnectedAccountTokenEncryptionService;
-
-  const buildCommand = (): {
-    command: EncryptConnectedAccountTokensSlowInstanceCommand;
-    connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService;
-  } => {
-    const connectedAccountTokenEncryptionService =
-      buildFakeTokenEncryptionService();
-    const command = new EncryptConnectedAccountTokensSlowInstanceCommand(
-      connectedAccountTokenEncryptionService,
-    );
-
-    return { command, connectedAccountTokenEncryptionService };
-  };
-
   describe('runDataMigration', () => {
-    it('should encrypt every legacy plaintext row and leave already-prefixed rows untouched', async () => {
-      const alreadyEncrypted = `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}preexisting-ciphertext`;
+    it('upgrades plaintext rows to v2 with workspaceId threaded through, and leaves v2 rows untouched', async () => {
+      const wsA = '11111111-1111-1111-1111-111111111111';
+      const wsB = '22222222-2222-2222-2222-222222222222';
+      const alreadyV2 = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}cafebabe:preexisting-v2-ciphertext`;
 
       const { dataSource, rows } = buildFakeDataSource([
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
+          workspaceId: wsA,
           accessToken: 'plaintext-access-1',
           refreshToken: 'plaintext-refresh-1',
         },
         {
           id: 'bbbbbbbb-0000-0000-0000-000000000002',
-          accessToken: alreadyEncrypted,
-          refreshToken: alreadyEncrypted,
+          workspaceId: wsB,
+          accessToken: alreadyV2,
+          refreshToken: alreadyV2,
         },
         {
           id: 'cccccccc-0000-0000-0000-000000000003',
+          workspaceId: wsB,
           accessToken: 'plaintext-access-3',
           refreshToken: null,
         },
       ]);
 
-      const { command } = buildCommand();
-
-      await command.runDataMigration(dataSource);
+      await buildCommand().command.runDataMigration(dataSource);
 
       expect(rows()).toEqual([
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-access-1)`,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-refresh-1)`,
+          workspaceId: wsA,
+          accessToken: wrapAsV2('plaintext-access-1', wsA),
+          refreshToken: wrapAsV2('plaintext-refresh-1', wsA),
         },
         {
           id: 'bbbbbbbb-0000-0000-0000-000000000002',
-          accessToken: alreadyEncrypted,
-          refreshToken: alreadyEncrypted,
+          workspaceId: wsB,
+          accessToken: alreadyV2,
+          refreshToken: alreadyV2,
         },
         {
           id: 'cccccccc-0000-0000-0000-000000000003',
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-access-3)`,
+          workspaceId: wsB,
+          accessToken: wrapAsV2('plaintext-access-3', wsB),
           refreshToken: null,
         },
       ]);
     });
 
-    // Regression guard: the SELECT filter is per-row (one column unencrypted is
-    // enough to fetch the row), so the loop body sees rows where one column is
-    // already prefixed and the other isn't. The per-cell prefix check inside
-    // the loop is what prevents the prefixed column from being double-encrypted
-    // into `enc:v1:CIPHER(enc:v1:...)`. If that check ever regresses, this is
-    // the test that should fail.
-    it('should only encrypt the plaintext column when a row mixes encrypted and plaintext tokens', async () => {
-      const alreadyEncryptedAccess = `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}preexisting-access-cipher`;
+    // Regression guard: the SELECT filter is per-row (one non-v2 column is
+    // enough to fetch the row), so the loop sees rows where one column is
+    // already v2 and the other is plaintext. The per-cell guard inside the
+    // loop is what prevents the v2 column from being double-encrypted.
+    it('only rewrites the non-v2 column when a row mixes v2 and plaintext', async () => {
+      const ws = '33333333-3333-3333-3333-333333333333';
+      const alreadyV2 = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}cafebabe:preexisting-v2-access`;
 
       const { dataSource, rows } = buildFakeDataSource([
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
-          accessToken: alreadyEncryptedAccess,
+          workspaceId: ws,
+          accessToken: alreadyV2,
           refreshToken: 'plaintext-refresh-mixed',
         },
       ]);
 
-      const { command } = buildCommand();
-
-      await command.runDataMigration(dataSource);
+      await buildCommand().command.runDataMigration(dataSource);
 
       expect(rows()).toEqual([
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
-          accessToken: alreadyEncryptedAccess,
-          refreshToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-refresh-mixed)`,
+          workspaceId: ws,
+          accessToken: alreadyV2,
+          refreshToken: wrapAsV2('plaintext-refresh-mixed', ws),
         },
       ]);
     });
-    it('should be idempotent — re-running on already-migrated data leaves it unchanged', async () => {
+
+    it('is idempotent — a second run leaves already-migrated data unchanged', async () => {
+      const ws = '44444444-4444-4444-4444-444444444444';
+
       const { dataSource, rows } = buildFakeDataSource([
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
+          workspaceId: ws,
           accessToken: 'plaintext-token',
           refreshToken: null,
         },
@@ -197,7 +213,8 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
       const expectedFinalState = [
         {
           id: 'aaaaaaaa-0000-0000-0000-000000000001',
-          accessToken: `${CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX}CIPHER(plaintext-token)`,
+          workspaceId: ws,
+          accessToken: wrapAsV2('plaintext-token', ws),
           refreshToken: null,
         },
       ];
@@ -209,11 +226,11 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
       expect(rows()).toEqual(expectedFinalState);
     });
 
-    it('should paginate through more rows than the batch size', async () => {
-      // 1100 rows + batch size 500 → at least 3 SELECT batches.
+    it('paginates through more rows than the batch size', async () => {
+      const ws = '55555555-5555-5555-5555-555555555555';
       const initialRows: FakeRow[] = Array.from({ length: 1100 }, (_, idx) => ({
-        // Lex-sortable hex IDs so the cursor advance works the way the SQL does.
         id: `${idx.toString(16).padStart(12, '0')}-0000-0000-0000-000000000000`,
+        workspaceId: ws,
         accessToken: `plaintext-${idx}`,
         refreshToken: null,
       }));
@@ -223,21 +240,15 @@ describe('EncryptConnectedAccountTokensSlowInstanceCommand', () => {
         { batchSize: 500 },
       );
 
-      const { command } = buildCommand();
+      await buildCommand().command.runDataMigration(dataSource);
 
-      await command.runDataMigration(dataSource);
-
-      // Every row got encrypted
       expect(
         rows().every((row) =>
-          row.accessToken!.startsWith(
-            CONNECTED_ACCOUNT_TOKEN_ENCRYPTION_PREFIX,
-          ),
+          row.accessToken!.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX),
         ),
       ).toBe(true);
 
-      // Sanity check: at least the expected number of SELECT batches happened
-      // (3 SELECTs for 500/500/100 + 1 final empty SELECT + 1100 UPDATEs)
+      // 3 SELECT batches (500/500/100) + 1 final empty SELECT + 1100 UPDATEs.
       expect(queryCallCount()).toBeGreaterThanOrEqual(1100 + 4);
     });
   });
