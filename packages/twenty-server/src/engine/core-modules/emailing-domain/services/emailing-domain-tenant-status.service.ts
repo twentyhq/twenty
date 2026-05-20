@@ -1,9 +1,9 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 
-import { type EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
+import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 
 @Injectable()
@@ -20,12 +20,15 @@ export class EmailingDomainTenantStatusService {
     tenantStatus: EmailingDomainTenantStatus,
   ): Promise<void> {
     const { affected } = await this.emailingDomainRepository.update(
-      { workspaceId },
+      {
+        workspaceId,
+        tenantStatus: Not(EmailingDomainTenantStatus.PERMANENTLY_SUSPENDED),
+      },
       { tenantStatus },
     );
 
     this.logger.log(
-      `Set tenantStatus=${tenantStatus} on ${affected ?? 0} emailing domain row(s) for workspace ${workspaceId}`,
+      `Workspace ${workspaceId}: ${affected ?? 0} domain(s) -> ${tenantStatus}`,
     );
   }
 }
