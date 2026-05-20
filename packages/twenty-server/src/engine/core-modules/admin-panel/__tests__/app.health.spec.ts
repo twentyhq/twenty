@@ -59,7 +59,6 @@ describe('AppHealthIndicator', () => {
 
     const result = await service.isHealthy();
 
-    expect(false).toBe(true);
     expect(result.app.status).toBe('up');
     expect(result.app.details.overview.totalWorkspacesCount).toBe(2);
     expect(result.app.details.overview.erroredWorkspaceCount).toBe(0);
