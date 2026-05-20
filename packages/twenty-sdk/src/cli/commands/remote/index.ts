@@ -7,6 +7,7 @@ import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
 import chalk from 'chalk';
 import type { Command } from 'commander';
 import inquirer from 'inquirer';
+import { normalizeUrl } from 'twenty-shared/utils';
 
 const deriveRemoteName = (url: string): string => {
   try {
@@ -111,7 +112,9 @@ const addAction = async (options: {
 
   let apiUrl = options.workspaceUrl ?? options.apiUrl;
 
-  if (!apiUrl) {
+  if (apiUrl) {
+    apiUrl = normalizeUrl(apiUrl);
+  } else {
     const detectedUrl = await detectLocalServer();
 
     if (options.local) {
@@ -128,24 +131,26 @@ const addAction = async (options: {
       console.log(chalk.gray(`Found local server at ${detectedUrl}`));
       apiUrl = detectedUrl;
     } else {
-      apiUrl = (
-        await inquirer.prompt<{ apiUrl: string }>([
-          {
-            type: 'input',
-            name: 'apiUrl',
-            message: 'Twenty server URL:',
-            validate: (input: string) => {
-              try {
-                new URL(input);
+      apiUrl = normalizeUrl(
+        (
+          await inquirer.prompt<{ apiUrl: string }>([
+            {
+              type: 'input',
+              name: 'apiUrl',
+              message: 'Twenty server URL:',
+              validate: (input: string) => {
+                try {
+                  new URL(input);
 
-                return true;
-              } catch {
-                return 'Please enter a valid URL';
-              }
+                  return true;
+                } catch {
+                  return 'Please enter a valid URL';
+                }
+              },
             },
-          },
-        ])
-      ).apiUrl;
+          ])
+        ).apiUrl,
+      );
     }
   }
 
