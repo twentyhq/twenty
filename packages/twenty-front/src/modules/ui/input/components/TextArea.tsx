@@ -9,8 +9,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { turnIntoEmptyStringIfWhitespacesOnly } from '~/utils/string/turnIntoEmptyStringIfWhitespacesOnly';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const MAX_ROWS = 5;
-
 type TextAreaVariant = 'default' | 'transparent';
 
 export type TextAreaProps = {
@@ -19,7 +17,7 @@ export type TextAreaProps = {
   disabled?: boolean;
   height?: number;
   minRows?: number;
-  maxRows?: number | null;
+  maxRows?: number;
   onChange?: (value: string) => void;
   placeholder?: string;
   value?: string;
@@ -100,7 +98,7 @@ export const TextArea = ({
   height,
   placeholder,
   minRows = 1,
-  maxRows = MAX_ROWS,
+  maxRows,
   value = '',
   className,
   onChange,
@@ -144,7 +142,7 @@ export const TextArea = ({
         <TextareaAutosize
           id={instanceId}
           placeholder={placeholder}
-          maxRows={isDefined(maxRows) ? maxRows : undefined}
+          maxRows={maxRows}
           minRows={computedMinRows}
           value={value}
           onChange={(event) =>

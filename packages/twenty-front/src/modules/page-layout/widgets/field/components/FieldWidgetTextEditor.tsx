@@ -1,11 +1,9 @@
-import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { modifyRecordFromCache } from '@/object-record/cache/utils/modifyRecordFromCache';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useIsRecordFieldReadOnly } from '@/object-record/read-only/hooks/useIsRecordFieldReadOnly';
-import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { isFieldTextValue } from '@/object-record/record-field/ui/types/guards/isFieldTextValue';
+import { recordStoreFamilySelector } from '@/object-record/record-store/states/selectors/recordStoreFamilySelector';
 import { TextArea } from '@/ui/input/components/TextArea';
 import { useAtomFamilySelectorState } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorState';
 import { styled } from '@linaria/react';
@@ -31,7 +29,6 @@ export const FieldWidgetTextEditor = ({
   recordId,
 }: FieldWidgetTextEditorProps) => {
   const fieldName = fieldMetadataItem.name;
-  const cache = useApolloCoreClient().cache;
   const { updateOneRecord } = useUpdateOneRecord();
 
   const [fieldValue, setFieldValue] = useAtomFamilySelectorState(
@@ -74,26 +71,9 @@ export const FieldWidgetTextEditor = ({
 
       setFieldValue(text);
 
-      modifyRecordFromCache({
-        recordId,
-        fieldModifiers: {
-          [fieldName]: () => text,
-        },
-        cache,
-        objectMetadataItem,
-      });
-
       persistTextDebounced(text);
     },
-    [
-      cache,
-      fieldName,
-      isRecordFieldReadOnly,
-      objectMetadataItem,
-      persistTextDebounced,
-      recordId,
-      setFieldValue,
-    ],
+    [isRecordFieldReadOnly, persistTextDebounced, setFieldValue],
   );
 
   const handleBlur = useCallback(() => {
@@ -107,7 +87,6 @@ export const FieldWidgetTextEditor = ({
       <TextArea
         textAreaId={textAreaId}
         value={fieldTextValue}
-        maxRows={null}
         readOnly={isRecordFieldReadOnly}
         onChange={handleChange}
         onBlur={handleBlur}
