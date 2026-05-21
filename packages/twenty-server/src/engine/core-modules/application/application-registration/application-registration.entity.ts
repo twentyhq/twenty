@@ -138,14 +138,14 @@ export class ApplicationRegistrationEntity {
   @Column({ nullable: true, type: 'text' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.7.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779368091869',
+      '2.8.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779387505162',
   })
   logo: string | null;
 
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:
-      '2.7.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779368091869',
+      '2.8.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779387505162',
   })
   logoFileId: string | null;
 
