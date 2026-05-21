@@ -6,6 +6,7 @@ import { ApplicationConnectionsController } from 'src/engine/core-modules/applic
 import { ApplicationConnectionsListService } from 'src/engine/core-modules/application/connection-provider/connections/services/application-connections-list.service';
 import { TokenModule } from 'src/engine/core-modules/auth/token/token.module';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { RefreshTokensManagerModule } from 'src/modules/connected-account/refresh-tokens-manager/connected-account-refresh-tokens-manager.module';
 
@@ -22,6 +23,7 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     TokenModule,
     WorkspaceCacheStorageModule,
     RefreshTokensManagerModule,
+    ConnectedAccountTokenEncryptionModule,
   ],
   providers: [ApplicationConnectionsListService],
   controllers: [ApplicationConnectionsController],
