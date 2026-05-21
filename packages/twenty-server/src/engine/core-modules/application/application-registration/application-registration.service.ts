@@ -223,6 +223,7 @@ export class ApplicationRegistrationService {
   async updateFromManifest(
     applicationRegistrationId: string,
     manifest: Manifest,
+    sourceType?: ApplicationRegistrationSourceType,
   ): Promise<void> {
     const existing = await this.applicationRegistrationRepository.findOneOrFail(
       { where: { id: applicationRegistrationId } },
@@ -233,6 +234,7 @@ export class ApplicationRegistrationService {
       name: manifest.application.displayName,
       logo: manifest.application.logoUrl ?? null,
       manifest,
+      ...(sourceType !== undefined && { sourceType }),
     });
   }
 
