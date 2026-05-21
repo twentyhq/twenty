@@ -89,6 +89,33 @@ const FAILING_UPDATE_TEST_CASES: EachTestingContext<TestContext>[] = [
       }),
     },
   },
+  {
+    title:
+      'when builtComponentPath is updated with invalid extension (.js instead of .mjs)',
+    context: {
+      manifest: buildManifest({
+        builtComponentPath: 'src/front-components/test.js',
+      }),
+    },
+  },
+  {
+    title:
+      'when sourceComponentPath is updated with invalid extension (.mjs instead of .ts/.tsx)',
+    context: {
+      manifest: buildManifest({
+        sourceComponentPath: 'src/front-components/test.mjs',
+      }),
+    },
+  },
+  {
+    title:
+      'when builtComponentPath is updated with a completely unrelated extension (.pdf)',
+    context: {
+      manifest: buildManifest({
+        builtComponentPath: 'src/front-components/test.pdf',
+      }),
+    },
+  },
 ];
 
 describe('Front component update via manifest sync should fail for path traversal', () => {

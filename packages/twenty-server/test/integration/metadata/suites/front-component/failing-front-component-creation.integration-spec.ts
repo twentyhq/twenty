@@ -74,6 +74,45 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
     },
   },
+  {
+    title:
+      'when builtComponentPath has an invalid extension (.js instead of .mjs)',
+    context: {
+      input: {
+        name: 'InvalidExtTest',
+        componentName: 'InvalidExtTest',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.js',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
+  {
+    title:
+      'when sourceComponentPath has an invalid extension (.mjs instead of .ts/.tsx)',
+    context: {
+      input: {
+        name: 'InvalidSourceExtTest',
+        componentName: 'InvalidSourceExtTest',
+        sourceComponentPath: 'src/front-components/index.mjs',
+        builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
+  {
+    title:
+      'when builtComponentPath has a completely unrelated extension (.pdf)',
+    context: {
+      input: {
+        name: 'PdfExtTest',
+        componentName: 'PdfExtTest',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: 'src/front-components/index.pdf',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
 ];
 
 describe('Front component creation should fail', () => {

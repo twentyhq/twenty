@@ -84,6 +84,50 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       filePath: 'src/components/legit.mjs',
     },
   },
+  {
+    title:
+      'when filePath has an invalid extension for BuiltFrontComponent (.js instead of .mjs)',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
+      filePath: 'src/components/component.js',
+    },
+  },
+  {
+    title:
+      'when filePath has an invalid extension for BuiltLogicFunction (.html)',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltLogicFunction',
+      filePath: 'src/handlers/handler.html',
+    },
+  },
+  {
+    title: 'when filePath has an invalid extension for Source (.js instead of .ts)',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'Source',
+      filePath: 'src/index.js',
+    },
+  },
+  {
+    title:
+      'when filePath has an invalid extension for Dependencies (.sh instead of .json/.lock)',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'Dependencies',
+      filePath: 'install.sh',
+    },
+  },
+  {
+    title:
+      'when filePath has an invalid extension for PublicAsset (.js is not allowed)',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'PublicAsset',
+      filePath: 'assets/script.js',
+    },
+  },
 ];
 
 describe('Upload application file should fail', () => {
