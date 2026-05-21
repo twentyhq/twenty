@@ -16,9 +16,9 @@ const FIXTURE: MarketplacePartner = {
   slug: 'test-partner',
   name: 'Test Partner',
   introduction: 'A reliable partner for testing purposes.',
-  calendlyLink: 'https://calendly.com/test-partner',
+  calendarLink: 'https://calendly.com/test-partner',
   deploymentExpertise: ['CLOUD', 'SELF_HOST'],
-  servedGeos: ['EUROPE', 'US'],
+  region: ['EUROPE', 'US'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
 };
 
@@ -37,7 +37,7 @@ describe('PartnerCard', () => {
 
   it('renders the geo eyebrow with the first served region', () => {
     const html = renderCard();
-    expect(html).toContain(FIXTURE.servedGeos[0]);
+    expect(html).toContain(FIXTURE.region[0]);
   });
 
   it('renders the full introduction text', () => {
@@ -48,7 +48,7 @@ describe('PartnerCard', () => {
   it('renders one chip per value across the three chip rows', () => {
     const html = renderCard();
     const expectedChipCount =
-      FIXTURE.servedGeos.length +
+      FIXTURE.region.length +
       FIXTURE.languagesSpoken.length +
       FIXTURE.deploymentExpertise.length;
     const liMatches = html.match(/<li[^>]*>/g) ?? [];
@@ -57,7 +57,7 @@ describe('PartnerCard', () => {
 
   it('renders the Calendly CTA pointing at the partner link in a new tab', () => {
     const html = renderCard();
-    expect(html).toContain(`href="${FIXTURE.calendlyLink}"`);
+    expect(html).toContain(`href="${FIXTURE.calendarLink}"`);
     expect(html).toContain('target="_blank"');
     expect(html).toContain('noopener');
   });

@@ -28,7 +28,7 @@ export const filterPartners = (
 ): readonly MarketplacePartner[] =>
   partners.filter(
     (p) =>
-      facetMatches(p.servedGeos, criteria.regions) &&
+      facetMatches(p.region, criteria.regions) &&
       facetMatches(p.languagesSpoken, criteria.languages) &&
       facetMatches(p.deploymentExpertise, criteria.deployments),
   );

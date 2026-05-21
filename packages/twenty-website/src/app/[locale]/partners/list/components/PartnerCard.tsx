@@ -137,7 +137,7 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
   const headingId = `partner-card-heading-${partner.slug}`;
   const style: PartnerCardStyle = { '--partner-card-index': index };
 
-  const firstGeo = partner.servedGeos[0];
+  const firstGeo = partner.region[0];
   const countryLine = firstGeo
     ? i18n._(SERVED_GEO_LABELS[firstGeo]).toUpperCase()
     : '';
@@ -159,7 +159,7 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
       <ChipRows>
         <PartnerChipRow
           label={msg`Regions`}
-          values={partner.servedGeos}
+          values={partner.region}
           valueLabels={SERVED_GEO_LABELS}
         />
         <PartnerChipRow
@@ -177,7 +177,7 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
       <CtaWrapper>
         <LinkButton
           color="primary"
-          href={partner.calendlyLink}
+          href={partner.calendarLink}
           label={i18n._(msg`Book a call`)}
           variant="contained"
         />

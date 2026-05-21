@@ -8,8 +8,8 @@ export type MarketplacePartner = {
   slug: string;
   name: string;
   introduction: string;
-  calendlyLink: string;
+  calendarLink: string;
   deploymentExpertise: readonly DeploymentExpertise[];
-  servedGeos: readonly ServedGeo[];
+  region: readonly ServedGeo[];
   languagesSpoken: readonly SpokenLanguage[];
 };

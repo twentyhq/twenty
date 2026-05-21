@@ -11,8 +11,8 @@ const make = (overrides: Partial<MarketplacePartner>): MarketplacePartner => ({
   slug: 'p',
   name: 'Partner',
   introduction: 'intro',
-  calendlyLink: 'https://calendly.com/p',
-  servedGeos: [],
+  calendarLink: 'https://calendly.com/p',
+  region: [],
   languagesSpoken: [],
   deploymentExpertise: [],
   ...overrides,
@@ -20,19 +20,19 @@ const make = (overrides: Partial<MarketplacePartner>): MarketplacePartner => ({
 
 const felix = make({
   slug: 'felix',
-  servedGeos: ['EUROPE', 'US', 'APAC'],
+  region: ['EUROPE', 'US', 'APAC'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
   deploymentExpertise: ['CLOUD', 'SELF_HOST'],
 });
 const rashad = make({
   slug: 'rashad',
-  servedGeos: ['US', 'EUROPE'],
+  region: ['US', 'EUROPE'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
   deploymentExpertise: ['CLOUD'],
 });
 const acme = make({
   slug: 'acme',
-  servedGeos: ['MENA'],
+  region: ['MENA'],
   languagesSpoken: ['ENGLISH'],
   deploymentExpertise: ['SELF_HOST'],
 });

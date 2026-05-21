@@ -8,8 +8,8 @@ type ApiPartner = {
   introduction: string;
   languagesSpoken: MarketplacePartner['languagesSpoken'][number][];
   deploymentExpertise: MarketplacePartner['deploymentExpertise'][number][];
-  servedGeos: MarketplacePartner['servedGeos'][number][];
-  calendlyLink: { primaryLinkUrl: string };
+  region: MarketplacePartner['region'][number][];
+  calendarLink: { primaryLinkUrl: string };
 };
 
 type ApiResponse = { ok: boolean; count: number; partners: ApiPartner[] };
@@ -23,8 +23,8 @@ export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
       introduction: p.introduction,
       languagesSpoken: p.languagesSpoken,
       deploymentExpertise: p.deploymentExpertise,
-      servedGeos: p.servedGeos,
-      calendlyLink: p.calendlyLink.primaryLinkUrl,
+      region: p.region,
+      calendarLink: p.calendarLink.primaryLinkUrl,
     }));
   } catch (error) {
     console.error('[partners-api] getPartners failed:', error);
