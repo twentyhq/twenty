@@ -342,34 +342,6 @@ end`;
     }) as Promise<number>;
   }
 
-  async hashSetWithExpire({
-    key,
-    field,
-    value,
-    ttlMs,
-  }: {
-    key: string;
-    field: string;
-    value: string;
-    ttlMs: Milliseconds;
-  }): Promise<number> {
-    if (!this.isRedisCache()) {
-      throw new Error('hashSetWithExpire is only supported with Redis cache');
-    }
-
-    const redisClient = (this.cache as RedisCache).store.client;
-
-    const script = `
-local result = redis.call('HSET', KEYS[1], ARGV[1], ARGV[2])
-redis.call('PEXPIRE', KEYS[1], ARGV[3])
-return result`;
-
-    return redisClient.eval(script, {
-      keys: [this.getKey(key)],
-      arguments: [field, value, String(ttlMs)],
-    }) as Promise<number>;
-  }
-
   async hashDelete({
     key,
     field,
