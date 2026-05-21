@@ -110,7 +110,7 @@ export class MessagingMessageListFetchService {
               },
             );
 
-          const messageChannelAfterAuth = {
+          const messageChannelWithFreshTokens = {
             ...freshMessageChannel,
             connectedAccount: {
               ...freshMessageChannel.connectedAccount,
@@ -121,7 +121,7 @@ export class MessagingMessageListFetchService {
 
           const messageFolders =
             await this.syncMessageFoldersService.syncMessageFolders({
-              messageChannel: messageChannelAfterAuth,
+              messageChannel: messageChannelWithFreshTokens,
               workspaceId,
             });
 
@@ -132,7 +132,7 @@ export class MessagingMessageListFetchService {
 
           const messageLists =
             await this.messagingGetMessageListService.getMessageLists(
-              messageChannelAfterAuth,
+              messageChannelWithFreshTokens,
               messageFoldersToSync,
             );
 
@@ -201,7 +201,7 @@ export class MessagingMessageListFetchService {
               totalMessagesToImportCount += messageExternalIdsToImport.length;
 
               await this.cacheStorage.setAdd(
-                `messages-to-import:${workspaceId}:${messageChannelAfterAuth.id}`,
+                `messages-to-import:${workspaceId}:${messageChannelWithFreshTokens.id}`,
                 messageExternalIdsToImport,
                 ONE_WEEK_IN_MILLISECONDS,
               );
@@ -212,7 +212,7 @@ export class MessagingMessageListFetchService {
             const { nextSyncCursor, folderId } = messageList;
 
             await this.messagingCursorService.updateCursor(
-              messageChannelAfterAuth,
+              messageChannelWithFreshTokens,
               nextSyncCursor,
               workspaceId,
               folderId,
@@ -253,7 +253,7 @@ export class MessagingMessageListFetchService {
                   messageExternalIds: toDeleteChunk.filter(
                     (messageExternalId) => isNonEmptyString(messageExternalId),
                   ),
-                  messageChannelId: messageChannelAfterAuth.id,
+                  messageChannelId: messageChannelWithFreshTokens.id,
                 },
               );
             }
@@ -265,7 +265,7 @@ export class MessagingMessageListFetchService {
 
           if (totalMessagesToImportCount === 0) {
             await this.messageChannelSyncStatusService.markAsCompletedAndMarkAsMessagesListFetchPending(
-              [messageChannelAfterAuth.id],
+              [messageChannelWithFreshTokens.id],
               workspaceId,
             );
 
@@ -277,16 +277,16 @@ export class MessagingMessageListFetchService {
           );
 
           await this.messageChannelSyncStatusService.markAsMessagesImportScheduled(
-            [messageChannelAfterAuth.id],
+            [messageChannelWithFreshTokens.id],
             workspaceId,
           );
 
           await this.messagingMessagesImportService.processMessageBatchImport(
             {
-              ...messageChannelAfterAuth,
+              ...messageChannelWithFreshTokens,
               syncStage: MessageChannelSyncStage.MESSAGES_IMPORT_SCHEDULED,
             },
-            messageChannelAfterAuth.connectedAccount,
+            messageChannelWithFreshTokens.connectedAccount,
             workspaceId,
           );
         } catch (error) {
