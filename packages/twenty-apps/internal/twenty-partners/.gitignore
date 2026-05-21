@@ -25,6 +25,7 @@ generated
 
 # internal planning docs
 docs/superpowers/
+**/docs/superpowers/
 *.pem
 
 # debug
