@@ -1,7 +1,7 @@
-import { useQuery } from '@apollo/client/react';
 import { useCallback, useEffect, useState } from 'react';
 
 import { fetchAllThreadMessagesOperationSignatureFactory } from '@/activities/emails/graphql/operation-signatures/factories/fetchAllThreadMessagesOperationSignatureFactory';
+import { useReplyConnectedAccount } from '@/activities/emails/hooks/useReplyConnectedAccount';
 import { type EmailThread } from '@/activities/emails/types/EmailThread';
 import { type EmailThreadMessage } from '@/activities/emails/types/EmailThreadMessage';
 import { type EmailThreadMessageParticipant } from '@/activities/emails/types/EmailThreadMessageParticipant';
@@ -10,10 +10,7 @@ import { type MessageChannelMessageAssociation } from '@/activities/emails/types
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
-import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import {
-  type ConnectedAccountProvider,
   CoreObjectNameSingular,
   MessageParticipantRole,
 } from 'twenty-shared/types';
@@ -106,7 +103,7 @@ export const useEmailThread = (threadId: string | null) => {
     });
 
   const {
-    records: messageChannelMessageAssociationData,
+    records: messageChannelMessageAssociations,
     loading: messageChannelMessageAssociationLoading,
   } = useFindManyRecords<MessageChannelMessageAssociation>({
     filter: {
@@ -125,14 +122,19 @@ export const useEmailThread = (threadId: string | null) => {
     skip: !lastMessageId || !isMessagesFetchComplete,
   });
 
+  const lastMessageAssociation = messageChannelMessageAssociations[0];
   const messageThreadExternalId =
-    messageChannelMessageAssociationData.length > 0
-      ? messageChannelMessageAssociationData[0].messageThreadExternalId
-      : null;
+    lastMessageAssociation?.messageThreadExternalId ?? null;
   const lastMessageExternalId =
-    messageChannelMessageAssociationData.length > 0
-      ? messageChannelMessageAssociationData[0].messageExternalId
-      : null;
+    lastMessageAssociation?.messageExternalId ?? null;
+  const lastMessageChannelId = lastMessageAssociation?.messageChannelId ?? null;
+
+  const {
+    connectedAccountId,
+    connectedAccountHandle,
+    connectedAccountProvider,
+    loading: replyConnectedAccountLoading,
+  } = useReplyConnectedAccount(lastMessageChannelId);
 
   const messagesWithSender: EmailThreadMessageWithSender[] = messages
     .map((message) => {
@@ -151,47 +153,8 @@ export const useEmailThread = (threadId: string | null) => {
     })
     .filter(isDefined);
 
-  const { data: myConnectedAccountsData, loading: connectedAccountsLoading } =
-    useQuery<{
-      myConnectedAccounts: {
-        id: string;
-        handle: string;
-        provider: ConnectedAccountProvider;
-      }[];
-    }>(GET_MY_CONNECTED_ACCOUNTS);
-
-  const { data: myMessageChannelsData, loading: messageChannelsLoading } =
-    useQuery<{
-      myMessageChannels: {
-        id: string;
-        connectedAccountId: string;
-      }[];
-    }>(GET_MY_MESSAGE_CHANNELS);
-
-  const lastMessageChannelId =
-    messageChannelMessageAssociationData.length > 0
-      ? messageChannelMessageAssociationData[0].messageChannelId
-      : null;
-
-  const threadMessageChannel =
-    myMessageChannelsData?.myMessageChannels.find(
-      (messageChannel) => messageChannel.id === lastMessageChannelId,
-    ) ?? null;
-
-  const resolvedConnectedAccount =
-    myConnectedAccountsData?.myConnectedAccounts.find(
-      (connectedAccount) =>
-        connectedAccount.id === threadMessageChannel?.connectedAccountId,
-    ) ?? null;
-
   const messageChannelLoading =
-    connectedAccountsLoading ||
-    messageChannelsLoading ||
-    messageChannelMessageAssociationLoading;
-
-  const connectedAccountId = resolvedConnectedAccount?.id ?? null;
-  const connectedAccountHandle = resolvedConnectedAccount?.handle ?? null;
-  const connectedAccountProvider = resolvedConnectedAccount?.provider ?? null;
+    replyConnectedAccountLoading || messageChannelMessageAssociationLoading;
 
   return {
     thread,
