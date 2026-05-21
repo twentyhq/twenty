@@ -23,12 +23,29 @@ Built on [Twenty](https://twenty.com) with [`twenty-sdk`](https://www.npmjs.com/
 - **Views** (`src/views/`)
   - `Waiting for match` — opportunities awaiting human action (`matchStatus` is `TO_BE_MATCHED` or `MANUAL_MATCH`).
   - `Matches overview` — full matching funnel grouped by `matchStatus` (configure Kanban
-    grouping manually in the UI; see `BACKLOG.md`).
+    grouping manually in the UI).
   - `Opportunities` — replacement of the native opportunities view with the partner columns.
   - `Partners` and `All matched deals` — partner-side index and deal log.
 - **Sidebar nav** — surfaced in workflow order: `Waiting for match`, `All partner deals`,
   `Matches overview`, `Partners`, `Opportunities`.
 - **Seed scripts** (`src/scripts/`) — populate a fresh workspace with realistic demo data.
+
+## Match status pipeline
+
+`matchStatus` is a non-nullable SELECT field with a default of `TO_BE_MATCHED`. The 10 states follow the deal lifecycle:
+
+| Status | Meaning |
+| --- | --- |
+| `TO_BE_MATCHED` | Default — deal entered, awaiting assignment |
+| `MANUAL_MATCH` | Needs a human to pick a partner |
+| `AUTO_MATCH` | Triggers automatic partner assignment |
+| `MATCHED` | Partner assigned |
+| `INTRODUCED_TO_A_PARTNER` | Customer intro sent |
+| `WORKING_WITH_A_PARTNER` | Engagement underway |
+| `IMPLEMENTING` | Active implementation |
+| `WON` | Deal closed won |
+| `RECONNECT_LATER` | Paused — reconnect in future |
+| `LOST` | Deal closed lost |
 
 ## Getting started
 
@@ -61,7 +78,7 @@ the global app uninstall/reinstall.
 # 1. Marketplace partners (run first — pipeline seed wires opportunities to these by slug)
 yarn vitest run --config vitest.seed.config.ts src/scripts/seed-marketplace-partners.ts
 
-# 2. Pipeline demo: 3 companies, 3 people, 15 opportunities across 9 matchStatus values
+# 2. Pipeline demo: 3 companies, 3 people, 15 opportunities spread across matchStatus values
 yarn vitest run --config vitest.seed.config.ts src/scripts/seed-pipeline-demo.ts
 ```
 
@@ -70,7 +87,7 @@ so they are safe to re-run.
 
 ## Known limitations
 
-See [`BACKLOG.md`](./BACKLOG.md) for current SDK gaps blocking further polish:
+Current SDK gaps blocking further polish:
 
 - Custom Partner record page layout (RECORD_TABLE has no relation scoping).
 - Native Opportunities view column-order override.
