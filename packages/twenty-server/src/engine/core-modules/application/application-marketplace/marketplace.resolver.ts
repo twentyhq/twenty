@@ -48,7 +48,9 @@ export class MarketplaceResolver {
     );
   }
 
-  @Mutation(() => Boolean, { deprecationReason: 'Use installApplication instead' })
+  @Mutation(() => Boolean, {
+    deprecationReason: 'Use installApplication instead',
+  })
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
   async installMarketplaceApp(
     @Args('universalIdentifier') universalIdentifier: string,
