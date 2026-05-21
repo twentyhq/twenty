@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { batchFetchImplementation } from '@jrmdayn/googleapis-batcher';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type gmail_v1 as gmailV1, google } from 'googleapis';
+import pLimit from 'p-limit';
 import { isDefined } from 'twenty-shared/utils';
 
 import { MessageFolderImportPolicy } from 'twenty-shared/types';
@@ -15,6 +16,8 @@ import { parseAndFormatGmailMessage } from 'src/modules/messaging/message-import
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 
 const GMAIL_BATCH_REQUEST_MAX_SIZE = 50;
+const GMAIL_MESSAGES_GET_CONCURRENCY = 10;
+const GMAIL_THREADS_GET_CONCURRENCY = 10;
 
 @Injectable()
 export class GmailGetMessagesService {
@@ -106,44 +109,48 @@ export class GmailGetMessagesService {
     const matchingThreadIds = new Set<string>();
     const missingMessageIds: string[] = [];
 
+    const threadLimit = pLimit(GMAIL_THREADS_GET_CONCURRENCY);
+
     await Promise.all(
       threadIds.map((threadId) =>
-        batchedGmailClient.users.threads
-          .get({
-            userId: 'me',
-            id: threadId,
-            format: 'metadata',
-            metadataHeaders: [],
-          })
-          .then((response) => {
-            const threadMessages = response.data.messages ?? [];
+        threadLimit(() =>
+          batchedGmailClient.users.threads
+            .get({
+              userId: 'me',
+              id: threadId,
+              format: 'metadata',
+              metadataHeaders: [],
+            })
+            .then((response) => {
+              const threadMessages = response.data.messages ?? [];
 
-            const threadHasSyncedLabel = threadMessages.some(
-              (threadMessage) =>
-                !excludedMessageIds.has(threadMessage.id ?? '') &&
-                (threadMessage.labelIds ?? []).some((labelId) =>
-                  syncedLabelIds.includes(labelId),
-                ),
-            );
+              const threadHasSyncedLabel = threadMessages.some(
+                (threadMessage) =>
+                  !excludedMessageIds.has(threadMessage.id ?? '') &&
+                  (threadMessage.labelIds ?? []).some((labelId) =>
+                    syncedLabelIds.includes(labelId),
+                  ),
+              );
 
-            if (!threadHasSyncedLabel) {
-              return;
-            }
-
-            matchingThreadIds.add(threadId);
-
-            for (const threadMessage of threadMessages) {
-              if (
-                isNonEmptyString(threadMessage.id) &&
-                !fetchedMessageIds.has(threadMessage.id)
-              ) {
-                missingMessageIds.push(threadMessage.id);
+              if (!threadHasSyncedLabel) {
+                return;
               }
-            }
-          })
-          .catch((error) => {
-            this.gmailMessagesImportErrorHandler.handleError(error, threadId);
-          }),
+
+              matchingThreadIds.add(threadId);
+
+              for (const threadMessage of threadMessages) {
+                if (
+                  isNonEmptyString(threadMessage.id) &&
+                  !fetchedMessageIds.has(threadMessage.id)
+                ) {
+                  missingMessageIds.push(threadMessage.id);
+                }
+              }
+            })
+            .catch((error) => {
+              this.gmailMessagesImportErrorHandler.handleError(error, threadId);
+            }),
+        ),
       ),
     );
 
@@ -170,12 +177,20 @@ export class GmailGetMessagesService {
     messageIds: string[],
     connectedAccount: Pick<ConnectedAccountEntity, 'handle' | 'handleAliases'>,
   ): Promise<MessageWithParticipants[]> {
+    const messageLimit = pLimit(GMAIL_MESSAGES_GET_CONCURRENCY);
+
     const results = await Promise.all(
       messageIds.map((messageId) =>
-        gmailClient.users.messages
-          .get({ userId: 'me', id: messageId })
-          .then((response) => ({ messageId, data: response.data, error: null }))
-          .catch((error) => ({ messageId, data: null, error })),
+        messageLimit(() =>
+          gmailClient.users.messages
+            .get({ userId: 'me', id: messageId })
+            .then((response) => ({
+              messageId,
+              data: response.data,
+              error: null,
+            }))
+            .catch((error) => ({ messageId, data: null, error })),
+        ),
       ),
     );
 

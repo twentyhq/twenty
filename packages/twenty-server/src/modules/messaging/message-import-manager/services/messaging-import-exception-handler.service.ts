@@ -101,6 +101,24 @@ export class MessageImportExceptionHandlerService {
     }
   }
 
+  public isTemporaryException(
+    exception: MessageImportDriverException | Error | TwentyORMException,
+  ): boolean {
+    if (!('code' in exception)) {
+      return false;
+    }
+
+    return (
+      exception.code === TwentyORMExceptionCode.QUERY_READ_TIMEOUT ||
+      exception.code === MessageImportDriverExceptionCode.TEMPORARY_ERROR ||
+      exception.code === MessageNetworkExceptionCode.ECONNABORTED ||
+      exception.code === MessageNetworkExceptionCode.ENOTFOUND ||
+      exception.code === MessageNetworkExceptionCode.ECONNRESET ||
+      exception.code === MessageNetworkExceptionCode.ETIMEDOUT ||
+      exception.code === MessageNetworkExceptionCode.ERR_NETWORK
+    );
+  }
+
   private async handleSyncCursorErrorException(
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     workspaceId: string,

@@ -21,6 +21,10 @@ import { MessagingGetMessagesService } from 'src/modules/messaging/message-impor
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
 import { MessagingSaveMessagesAndEnqueueContactCreationService } from 'src/modules/messaging/message-import-manager/services/messaging-save-messages-and-enqueue-contact-creation.service';
+import {
+  MessageImportDriverException,
+  MessageImportDriverExceptionCode,
+} from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
@@ -35,6 +39,10 @@ describe('MessagingMessagesImportService', () => {
   let emailAliasManagerService: EmailAliasManagerService;
   let messagingGetMessagesService: MessagingGetMessagesService;
   let saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService;
+  let messageImportExceptionHandlerService: {
+    isTemporaryException: jest.Mock;
+    handleDriverException: jest.Mock;
+  };
 
   const workspaceId = 'workspace-id';
   let mockMessageChannel: Pick<
@@ -172,6 +180,7 @@ describe('MessagingMessagesImportService', () => {
         provide: MessageImportExceptionHandlerService,
         useValue: {
           handleDriverException: jest.fn().mockResolvedValue(undefined),
+          isTemporaryException: jest.fn().mockReturnValue(false),
         },
       },
       {
@@ -240,6 +249,13 @@ describe('MessagingMessagesImportService', () => {
       module.get<MessagingSaveMessagesAndEnqueueContactCreationService>(
         MessagingSaveMessagesAndEnqueueContactCreationService,
       );
+
+    messageImportExceptionHandlerService = module.get(
+      MessageImportExceptionHandlerService,
+    ) as {
+      isTemporaryException: jest.Mock;
+      handleDriverException: jest.Mock;
+    };
   });
 
   it('should fails if SyncStage is not MESSAGES_IMPORT_SCHEDULED', async () => {
@@ -287,6 +303,45 @@ describe('MessagingMessagesImportService', () => {
     expect(
       messageChannelSyncStatusService.markAsMessagesImportPending,
     ).toHaveBeenCalledTimes(0);
+  });
+
+  it('should log temporary errors as warnings while preserving retries', async () => {
+    const loggerWarnSpy = jest
+      .spyOn(Logger.prototype, 'warn')
+      .mockImplementation(jest.fn());
+    const loggerErrorSpy = jest
+      .spyOn(Logger.prototype, 'error')
+      .mockImplementation(jest.fn());
+
+    const temporaryException = new MessageImportDriverException(
+      'temporary error',
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+    );
+
+    (messagingGetMessagesService.getMessages as jest.Mock).mockRejectedValueOnce(
+      temporaryException,
+    );
+
+    messageImportExceptionHandlerService.isTemporaryException.mockReturnValue(
+      true,
+    );
+
+    await service.processMessageBatchImport(
+      mockMessageChannel as MessageChannelEntity,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(loggerWarnSpy).toHaveBeenCalledTimes(1);
+    expect(loggerErrorSpy).toHaveBeenCalledTimes(0);
+    expect(
+      messageImportExceptionHandlerService.handleDriverException,
+    ).toHaveBeenCalledWith(
+      temporaryException,
+      expect.any(String),
+      mockMessageChannel,
+      workspaceId,
+    );
   });
 
   it('should process message batch import of more than MESSAGING_GMAIL_USERS_MESSAGES_GET_BATCH_SIZE successfully', async () => {

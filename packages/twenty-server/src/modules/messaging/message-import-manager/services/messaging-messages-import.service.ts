@@ -256,9 +256,16 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
         } catch (error) {
-          this.logger.error(
-            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error (${error.code}) importing messages: ${error.message}`,
+          const isTemporaryException =
+            this.messageImportErrorHandlerService.isTemporaryException(error);
+          const loggerMethod = isTemporaryException
+            ? this.logger.warn.bind(this.logger)
+            : this.logger.error.bind(this.logger);
+
+          loggerMethod(
+            `WorkspaceId: ${workspaceId}, MessageChannelId: ${messageChannel.id} - Error importing messages: ${error.message}`,
           );
+
           await this.cacheStorage.setAdd(
             `messages-to-import:${workspaceId}:${messageChannel.id}`,
             messageIdsToFetch,
