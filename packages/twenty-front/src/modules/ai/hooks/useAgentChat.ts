@@ -46,7 +46,6 @@ export const useAgentChat = (
 
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
-
   const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
   );
