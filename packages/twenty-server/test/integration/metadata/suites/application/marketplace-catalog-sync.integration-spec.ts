@@ -21,8 +21,10 @@ const MARKETPLACE_QUERY = `
 `;
 
 const INSTALL_MUTATION = `
-  mutation InstallMarketplaceApp($universalIdentifier: String!) {
-    installMarketplaceApp(universalIdentifier: $universalIdentifier)
+  mutation InstallApplication($universalIdentifier: String!) {
+    installApplication(universalIdentifier: $universalIdentifier) {
+      id
+    }
   }
 `;
 
