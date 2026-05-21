@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { ConnectionParametersRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connection-parameters-rotation.handler';
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
 import { RotateSecretEncryptionCommand } from 'src/database/commands/secret-encryption-rotation/rotate-secret-encryption.command';
 import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
@@ -27,6 +28,7 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
     ]),
   ],
   providers: [
+    ConnectionParametersRotationHandler,
     SensitiveConfigStorageRotationHandler,
     SecretEncryptionRotationRunnerService,
     RotateSecretEncryptionCommand,
