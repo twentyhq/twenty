@@ -4,15 +4,15 @@ import { assertResourcePathIsSafe } from 'src/engine/core-modules/file-storage/u
 
 describe('assertResourcePathIsSafe', () => {
   it('should accept valid relative paths', () => {
-    expect(() => assertResourcePathIsSafe('src/components/test.mjs')).not.toThrow();
+    expect(() =>
+      assertResourcePathIsSafe('src/components/test.mjs'),
+    ).not.toThrow();
     expect(() => assertResourcePathIsSafe('file.mjs')).not.toThrow();
     expect(() => assertResourcePathIsSafe('a/b/c/d.txt')).not.toThrow();
   });
 
   it('should reject paths with .. traversal', () => {
-    expect(() =>
-      assertResourcePathIsSafe('../../../other-ws/file.js'),
-    ).toThrow(
+    expect(() => assertResourcePathIsSafe('../../../other-ws/file.js')).toThrow(
       expect.objectContaining({
         code: FileStorageExceptionCode.ACCESS_DENIED,
       }),

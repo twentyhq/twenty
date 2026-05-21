@@ -194,8 +194,8 @@ describe('FileStorageService', () => {
       'workspace-123/app-456/built-front-component/src/components/my-component.mjs';
 
     describe('readFile', () => {
-      it('should allow valid relative paths', () => {
-        service.readFile(validResourceIdentifier);
+      it('should allow valid relative paths', async () => {
+        await service.readFile(validResourceIdentifier);
 
         expect(mockDriver.readFile).toHaveBeenCalledWith({
           filePath: expectedValidPath,
@@ -218,15 +218,14 @@ describe('FileStorageService', () => {
         expect(mockDriver.readFile).not.toHaveBeenCalled();
       });
 
-      it('should neutralize absolute paths (path.join strips leading /)', () => {
-        service.readFile({
+      it('should neutralize absolute paths (path.join strips leading /)', async () => {
+        await service.readFile({
           ...validResourceIdentifier,
           resourcePath: '/etc/passwd',
         });
 
         expect(mockDriver.readFile).toHaveBeenCalledWith({
-          filePath:
-            'workspace-123/app-456/built-front-component/etc/passwd',
+          filePath: 'workspace-123/app-456/built-front-component/etc/passwd',
         });
       });
 
@@ -247,8 +246,8 @@ describe('FileStorageService', () => {
     });
 
     describe('checkFileExists', () => {
-      it('should allow valid relative paths', () => {
-        service.checkFileExists(validResourceIdentifier);
+      it('should allow valid relative paths', async () => {
+        await service.checkFileExists(validResourceIdentifier);
 
         expect(mockDriver.checkFileExists).toHaveBeenCalledWith({
           filePath: expectedValidPath,
@@ -402,8 +401,8 @@ describe('FileStorageService', () => {
         );
       });
 
-      it('should accept deeply nested valid paths', () => {
-        service.readFile({
+      it('should accept deeply nested valid paths', async () => {
+        await service.readFile({
           ...validResourceIdentifier,
           resourcePath: 'a/b/c/d/e/f/deep-file.mjs',
         });
@@ -428,8 +427,8 @@ describe('FileStorageService', () => {
         );
       });
 
-      it('should accept paths with dots that are not traversal', () => {
-        service.readFile({
+      it('should accept paths with dots that are not traversal', async () => {
+        await service.readFile({
           ...validResourceIdentifier,
           resourcePath: '.hidden/file.name.ext',
         });
