@@ -8594,6 +8594,11 @@ msgstr "workflowVersionId no s'ha d'establir quan engineComponentKey és FRONT_C
 msgid "Workspace {workspaceId} is not found."
 msgstr "No s'ha trobat l'espai de treball {workspaceId}."
 
+#. js-lingui-id: lNgTSN
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace cannot be deleted: subscription is not yet canceled."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
