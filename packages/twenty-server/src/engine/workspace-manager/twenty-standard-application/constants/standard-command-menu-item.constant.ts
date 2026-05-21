@@ -193,7 +193,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     shortLabel: 'Import',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
-      'not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
+      'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView and permissionFlags.IMPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.IMPORT_RECORDS,
@@ -207,7 +207,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 14,
     shortLabel: 'Export',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-    conditionalAvailabilityExpression: 'permissionFlags.EXPORT_CSV',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and permissionFlags.EXPORT_CSV',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.EXPORT_VIEW,
@@ -221,7 +222,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 15,
     shortLabel: 'Deleted ${capitalize(objectMetadataItem.labelPlural)}',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-    conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.SEE_DELETED_RECORDS,
@@ -235,7 +237,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 16,
     shortLabel: 'Create View',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-    conditionalAvailabilityExpression: 'not hasAnySoftDeleteFilterOnView',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and not hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.CREATE_NEW_VIEW,
@@ -249,7 +252,8 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     position: 17,
     shortLabel: 'Hide deleted',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
-    conditionalAvailabilityExpression: 'hasAnySoftDeleteFilterOnView',
+    conditionalAvailabilityExpression:
+      'pageType == "INDEX_PAGE" and hasAnySoftDeleteFilterOnView',
     availabilityObjectMetadataUniversalIdentifier: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.HIDE_DELETED_RECORDS,

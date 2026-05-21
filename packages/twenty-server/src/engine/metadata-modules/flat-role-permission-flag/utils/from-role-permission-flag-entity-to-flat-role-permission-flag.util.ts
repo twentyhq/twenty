@@ -1,4 +1,3 @@
-import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { isDefined, removePropertiesFromRecord } from 'twenty-shared/utils';
 
 import {
@@ -43,13 +42,10 @@ export const fromRolePermissionFlagEntityToFlatRolePermissionFlag = ({
     );
   }
 
-  const permissionFlagUniversalIdentifier = isDefined(
-    rolePermissionFlagEntity.permissionFlagId,
-  )
-    ? permissionFlagIdToUniversalIdentifierMap.get(
-        rolePermissionFlagEntity.permissionFlagId,
-      )
-    : SystemPermissionFlag[rolePermissionFlagEntity.flag];
+  const permissionFlagUniversalIdentifier =
+    permissionFlagIdToUniversalIdentifierMap.get(
+      rolePermissionFlagEntity.permissionFlagId,
+    );
 
   if (!isDefined(permissionFlagUniversalIdentifier)) {
     throw new FlatEntityMapsException(

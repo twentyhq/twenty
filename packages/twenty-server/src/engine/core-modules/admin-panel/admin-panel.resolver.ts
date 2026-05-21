@@ -44,6 +44,8 @@ import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -66,6 +68,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
@@ -104,10 +107,12 @@ export class AdminPanelResolver {
     private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly adminPanelSigningKeyService: AdminPanelSigningKeyService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly aiModelPreferencesService: AiModelPreferencesService,
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
@@ -263,7 +268,7 @@ export class AdminPanelResolver {
         }),
       );
 
-    const prefs = this.twentyConfigService.get('AI_MODEL_PREFERENCES');
+    const prefs = this.aiModelPreferencesService.getPreferences();
 
     return {
       models,
@@ -708,6 +713,16 @@ export class AdminPanelResolver {
     @Args('id') id: string,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.findOneByIdGlobal(id);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => [ApplicationRegistrationVariableDTO])
+  async findAdminApplicationRegistrationVariables(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
+    return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValuesGlobal(
+      applicationRegistrationId,
+    );
   }
 
   @UseGuards(AdminPanelGuard)

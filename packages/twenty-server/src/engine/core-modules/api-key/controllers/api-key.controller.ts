@@ -23,6 +23,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 /**
  * rest/apiKeys is deprecated, use rest/metadata/apiKeys instead
@@ -34,7 +35,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
 )
-@UseFilters(RestApiExceptionFilter)
+@UseFilters(PermissionsRestApiExceptionFilter, RestApiExceptionFilter)
 export class ApiKeyController {
   constructor(private readonly apiKeyService: ApiKeyService) {}
 

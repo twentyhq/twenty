@@ -19,31 +19,22 @@ export class GoogleEmailAliasManagerService {
         connectedAccount,
       );
 
-    const peopleClient = google.people({
+    const gmailClient = google.gmail({
       version: 'v1',
       auth: oAuth2Client,
     });
 
-    const emailsResponse = await peopleClient.people
-      .get({
-        resourceName: 'people/me',
-        personFields: 'emailAddresses',
-      })
+    const sendAsResponse = await gmailClient.users.settings.sendAs
+      .list({ userId: 'me' })
       .catch((error) => {
         throw this.gmailEmailAliasErrorHandlerService.handleError(error);
       });
 
-    const emailAddresses = emailsResponse.data.emailAddresses;
-
-    const handleAliases =
-      emailAddresses
-        ?.filter((emailAddress) => {
-          return emailAddress.metadata?.primary !== true;
-        })
-        .map((emailAddress) => {
-          return emailAddress.value || '';
-        }) || [];
-
-    return handleAliases;
+    return (
+      sendAsResponse.data.sendAs
+        ?.filter((alias) => alias.isPrimary !== true)
+        .map((alias) => alias.sendAsEmail || '')
+        .filter((email) => email.length > 0) ?? []
+    );
   }
 }

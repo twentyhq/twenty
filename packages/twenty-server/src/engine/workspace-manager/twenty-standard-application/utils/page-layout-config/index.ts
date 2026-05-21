@@ -3,7 +3,6 @@ export { STANDARD_CALENDAR_CHANNEL_EVENT_ASSOCIATION_PAGE_LAYOUT_CONFIG } from '
 export { STANDARD_CALENDAR_CHANNEL_PAGE_LAYOUT_CONFIG } from './standard-calendar-channel-page-layout.config';
 export { STANDARD_CALENDAR_EVENT_PARTICIPANT_PAGE_LAYOUT_CONFIG } from './standard-calendar-event-participant-page-layout.config';
 export { STANDARD_COMPANY_PAGE_LAYOUT_CONFIG } from './standard-company-page-layout.config';
-export { STANDARD_CONNECTED_ACCOUNT_PAGE_LAYOUT_CONFIG } from './standard-connected-account-page-layout.config';
 export { STANDARD_DASHBOARD_PAGE_LAYOUT_CONFIG } from './standard-dashboard-page-layout.config';
 export { STANDARD_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_MESSAGE_FOLDER_PAGE_LAYOUT_CONFIG } from './standard-message-channel-message-association-message-folder-page-layout.config';
 export { STANDARD_MESSAGE_CHANNEL_MESSAGE_ASSOCIATION_PAGE_LAYOUT_CONFIG } from './standard-message-channel-message-association-page-layout.config';
