@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddColorToObjectMetadata1773655278357
-  implements MigrationInterface
-{
+export class AddColorToObjectMetadata1773655278357 implements MigrationInterface {
   name = 'AddColorToObjectMetadata1773655278357';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

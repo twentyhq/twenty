@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUsesSdkClientToFrontComponent1773100000000
-  implements MigrationInterface
-{
+export class AddUsesSdkClientToFrontComponent1773100000000 implements MigrationInterface {
   name = 'AddUsesSdkClientToFrontComponent1773100000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

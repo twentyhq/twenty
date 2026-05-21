@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveContentFromAgentChatMessage1757991657472
-  implements MigrationInterface
-{
+export class RemoveContentFromAgentChatMessage1757991657472 implements MigrationInterface {
   name = 'RemoveContentFromAgentChatMessage1757991657472';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

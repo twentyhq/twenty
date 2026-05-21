@@ -15,7 +15,8 @@ const RootSection = styled.section`
   color: ${theme.colors.primary.text[100]};
 
   &[data-variant='index'] {
-    background: radial-gradient(
+    background:
+      radial-gradient(
         circle at 14% 8%,
         rgba(255, 255, 255, 0.76),
         transparent 30%

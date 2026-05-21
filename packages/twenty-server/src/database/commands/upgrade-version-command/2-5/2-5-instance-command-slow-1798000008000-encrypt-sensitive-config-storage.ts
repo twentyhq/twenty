@@ -14,9 +14,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 type SensitiveConfigRow = { id: string; value: unknown };
 
 @RegisteredInstanceCommand('2.5.0', 1798000008000, { type: 'slow' })
-export class EncryptSensitiveConfigStorageSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}

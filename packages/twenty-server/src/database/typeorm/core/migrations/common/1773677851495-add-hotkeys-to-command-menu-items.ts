@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddHotkeysToCommandMenuItems1773677851495
-  implements MigrationInterface
-{
+export class AddHotkeysToCommandMenuItems1773677851495 implements MigrationInterface {
   name = 'AddHotkeysToCommandMenuItems1773677851495';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

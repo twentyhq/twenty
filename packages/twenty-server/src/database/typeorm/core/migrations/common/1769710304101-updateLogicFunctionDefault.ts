@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UpdateLogicFunctionDefault1769710304101
-  implements MigrationInterface
-{
+export class UpdateLogicFunctionDefault1769710304101 implements MigrationInterface {
   name = 'UpdateLogicFunctionDefault1769710304101';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

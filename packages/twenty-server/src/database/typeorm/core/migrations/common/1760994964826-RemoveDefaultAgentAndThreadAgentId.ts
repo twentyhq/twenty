@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveDefaultAgentAndThreadAgentId1760994964826
-  implements MigrationInterface
-{
+export class RemoveDefaultAgentAndThreadAgentId1760994964826 implements MigrationInterface {
   name = 'RemoveDefaultAgentAndThreadAgentId1760994964826';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
