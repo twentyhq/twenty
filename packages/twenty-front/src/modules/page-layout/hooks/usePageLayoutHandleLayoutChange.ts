@@ -10,6 +10,10 @@ import { useCallback } from 'react';
 import { type Layout, type Layouts } from 'react-grid-layout';
 import { isDefined } from 'twenty-shared/utils';
 
+const areLayoutsEqual = (firstLayouts: Layouts, secondLayouts: Layouts) => {
+  return JSON.stringify(firstLayouts) === JSON.stringify(secondLayouts);
+};
+
 export const usePageLayoutHandleLayoutChange = ({
   pageLayoutId: pageLayoutIdFromProps,
   tabListInstanceId,
@@ -45,11 +49,18 @@ export const usePageLayoutHandleLayoutChange = ({
       if (!isDefined(activeTabId)) return;
 
       const currentTabLayouts = store.get(pageLayoutCurrentLayoutsState);
+      const activeTabLayouts = currentTabLayouts[activeTabId];
 
-      store.set(pageLayoutCurrentLayoutsState, {
-        ...currentTabLayouts,
-        [activeTabId]: structuredClone(allLayouts),
-      });
+      const hasLayoutChanged =
+        !isDefined(activeTabLayouts) ||
+        !areLayoutsEqual(activeTabLayouts, allLayouts);
+
+      if (hasLayoutChanged) {
+        store.set(pageLayoutCurrentLayoutsState, {
+          ...currentTabLayouts,
+          [activeTabId]: structuredClone(allLayouts),
+        });
+      }
 
       const pageLayoutDraft = store.get(pageLayoutDraftState);
 

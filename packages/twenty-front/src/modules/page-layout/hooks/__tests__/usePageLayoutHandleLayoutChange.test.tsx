@@ -129,4 +129,50 @@ describe('usePageLayoutHandleLayoutChange', () => {
 
     expect(Object.keys(result.current.layouts)).toHaveLength(0);
   });
+
+  it('should not rewrite tab layouts when new layout is identical', () => {
+    const { result } = renderHook(
+      () => ({
+        handler: usePageLayoutHandleLayoutChange({
+          pageLayoutId: PAGE_LAYOUT_TEST_INSTANCE_ID,
+          tabListInstanceId: getTabListInstanceIdFromPageLayoutId(
+            PAGE_LAYOUT_TEST_INSTANCE_ID,
+          ),
+        }),
+        layouts: useAtomComponentStateValue(
+          pageLayoutCurrentLayoutsComponentState,
+          PAGE_LAYOUT_TEST_INSTANCE_ID,
+        ),
+        setActiveTabId: useSetAtom(
+          activeTabIdComponentState.atomFamily({
+            instanceId: `${PAGE_LAYOUT_TEST_INSTANCE_ID}-tab-list`,
+          }),
+        ),
+      }),
+      {
+        wrapper: PageLayoutTestWrapper,
+      },
+    );
+
+    act(() => {
+      result.current.setActiveTabId('tab-1');
+    });
+
+    const newLayouts = {
+      desktop: [{ i: 'widget-1', x: 1, y: 0, w: 2, h: 2 }],
+      mobile: [{ i: 'widget-1', x: 0, y: 0, w: 1, h: 2 }],
+    };
+
+    act(() => {
+      result.current.handler.handleLayoutChange([], newLayouts);
+    });
+
+    const firstStoredLayouts = result.current.layouts['tab-1'];
+
+    act(() => {
+      result.current.handler.handleLayoutChange([], newLayouts);
+    });
+
+    expect(result.current.layouts['tab-1']).toBe(firstStoredLayouts);
+  });
 });
