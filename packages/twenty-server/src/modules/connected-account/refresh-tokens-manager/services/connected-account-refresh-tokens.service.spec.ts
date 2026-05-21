@@ -12,6 +12,7 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
@@ -24,6 +25,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
   let googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService;
   let microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService;
   let connectedAccountRepository: { update: jest.Mock };
+  let globalWorkspaceOrmManager: { executeInWorkspaceContext: jest.Mock };
   let connectedAccountTokenEncryptionService: {
     decrypt: jest.Mock;
     encryptTokenPair: jest.Mock;
@@ -115,6 +117,14 @@ describe('ConnectedAccountRefreshTokensService', () => {
           provide: ConnectedAccountTokenEncryptionService,
           useValue: connectedAccountTokenEncryptionService,
         },
+        {
+          provide: GlobalWorkspaceOrmManager,
+          useValue: {
+            executeInWorkspaceContext: jest.fn(
+              async (operation: () => Promise<void>) => await operation(),
+            ),
+          },
+        },
       ],
     }).compile();
 
@@ -132,6 +142,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
     connectedAccountRepository = module.get(
       getRepositoryToken(ConnectedAccountEntity),
     );
+    globalWorkspaceOrmManager = module.get(GlobalWorkspaceOrmManager);
   });
 
   afterEach(() => {
@@ -199,6 +210,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshTokenPlaintext);
+      expect(globalWorkspaceOrmManager.executeInWorkspaceContext).toHaveBeenCalledTimes(
+        1,
+      );
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
@@ -242,6 +256,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         googleAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshTokenPlaintext);
+      expect(globalWorkspaceOrmManager.executeInWorkspaceContext).toHaveBeenCalledTimes(
+        1,
+      );
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({
@@ -285,6 +302,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       expect(
         microsoftAPIRefreshAccessTokenService.refreshTokens,
       ).toHaveBeenCalledWith(mockRefreshTokenPlaintext);
+      expect(globalWorkspaceOrmManager.executeInWorkspaceContext).toHaveBeenCalledTimes(
+        1,
+      );
       expect(connectedAccountRepository.update).toHaveBeenCalledWith(
         { id: mockConnectedAccountId, workspaceId: mockWorkspaceId },
         expect.objectContaining({

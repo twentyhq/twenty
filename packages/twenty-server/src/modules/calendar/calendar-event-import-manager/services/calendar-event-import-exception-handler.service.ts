@@ -37,11 +37,22 @@ export class CalendarEventImportErrorHandlerService {
   ) {}
 
   public async handleDriverException(
-    exception: CalendarEventImportDriverException | TwentyORMException,
+    exception: CalendarEventImportDriverException | TwentyORMException | Error,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<CalendarChannelEntity, 'id' | 'throttleFailureCount'>,
     workspaceId: string,
   ): Promise<void> {
+    if (!('code' in exception)) {
+      await this.handleUnknownException(
+        exception,
+        syncStep,
+        calendarChannel,
+        workspaceId,
+      );
+
+      return;
+    }
+
     switch (exception.code) {
       case CalendarEventImportDriverExceptionCode.NOT_FOUND:
         await this.handleNotFoundException(
@@ -68,11 +79,19 @@ export class CalendarEventImportErrorHandlerService {
         await this.handleSyncCursorErrorException(calendarChannel, workspaceId);
         break;
       case CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
+        await this.handleChannelMisconfiguredException(
+          exception,
+          syncStep,
+          calendarChannel,
+          workspaceId,
+        );
+        break;
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
       case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
       default:
         await this.handleUnknownException(
           exception,
+          syncStep,
           calendarChannel,
           workspaceId,
         );
@@ -168,7 +187,8 @@ export class CalendarEventImportErrorHandlerService {
   }
 
   private async handleUnknownException(
-    exception: { message: string },
+    exception: Error,
+    syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<CalendarChannelEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
@@ -182,21 +202,40 @@ export class CalendarEventImportErrorHandlerService {
       CalendarEventImportExceptionCode.UNKNOWN,
     );
 
-    this.logger.error(exception);
-    this.exceptionHandlerService.captureExceptions(
-      [calendarEventImportException],
-      {
-        additionalData: {
-          calendarChannelId: calendarChannel.id,
-          exceptionMessage: exception.message,
-        },
-        workspace: {
-          id: workspaceId,
-        },
-      },
+    this.logger.error(
+      exception.message,
+      exception.stack,
+      `CalendarChannelId: ${calendarChannel.id}, WorkspaceId: ${workspaceId}, SyncStep: ${syncStep}`,
     );
 
+    this.exceptionHandlerService.captureExceptions([exception], {
+      additionalData: {
+        calendarChannelId: calendarChannel.id,
+        exceptionMessage: exception.message,
+        syncStep,
+      },
+      workspace: {
+        id: workspaceId,
+      },
+    });
+
     throw calendarEventImportException;
+  }
+
+  private async handleChannelMisconfiguredException(
+    exception: CalendarEventImportDriverException,
+    syncStep: CalendarEventImportSyncStep,
+    calendarChannel: Pick<CalendarChannelEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    await this.calendarChannelSyncStatusService.markAsFailedUnknownAndFlushCalendarEventsToImport(
+      [calendarChannel.id],
+      workspaceId,
+    );
+
+    this.logger.warn(
+      `Calendar channel ${calendarChannel.id} in workspace ${workspaceId} is misconfigured during ${syncStep}: ${exception.message}`,
+    );
   }
 
   private async handleNotFoundException(

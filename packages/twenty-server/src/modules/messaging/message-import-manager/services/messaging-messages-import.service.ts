@@ -2,7 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
@@ -179,9 +179,10 @@ export class MessagingMessagesImportService {
             );
 
           const workspaceMember = userWorkspace
-            ? await workspaceMemberRepository.findOne({
-                where: { userId: userWorkspace.userId },
-              })
+            ? await this.findWorkspaceMemberWithRetry(
+                workspaceMemberRepository,
+                userWorkspace.userId,
+              )
             : null;
 
           const blocklist = workspaceMember
@@ -280,6 +281,27 @@ export class MessagingMessagesImportService {
       authContext,
       { lite: true },
     );
+  }
+
+  private async findWorkspaceMemberWithRetry(
+    workspaceMemberRepository: Repository<WorkspaceMemberWorkspaceEntity>,
+    userId: string,
+  ): Promise<WorkspaceMemberWorkspaceEntity | null> {
+    for (let attempt = 0; attempt < 2; attempt += 1) {
+      try {
+        return await workspaceMemberRepository.findOne({
+          where: { userId },
+        });
+      } catch (error) {
+        const isLastAttempt = attempt === 1;
+
+        if (!(error instanceof QueryFailedError) || isLastAttempt) {
+          throw error;
+        }
+      }
+    }
+
+    return null;
   }
 
   private async trackMessageImportCompleted(

@@ -27,6 +27,7 @@ import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/ser
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { QueryFailedError } from 'typeorm';
 
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
@@ -48,8 +49,21 @@ describe('MessagingMessagesImportService', () => {
   >;
   let mockConnectedAccount: ConnectedAccountEntity;
   let providersBase: Provider[];
+  const mockWorkspaceMemberRepository = {
+    update: jest.fn().mockResolvedValue(undefined),
+    findOne: jest.fn().mockResolvedValue({
+      id: 'workspace-member-id',
+      userId: 'user-id',
+    }),
+  };
 
   beforeEach(async () => {
+    mockWorkspaceMemberRepository.findOne.mockReset();
+    mockWorkspaceMemberRepository.findOne.mockResolvedValue({
+      id: 'workspace-member-id',
+      userId: 'user-id',
+    });
+
     mockConnectedAccount = {
       id: 'connected-account-id',
       provider: ConnectedAccountProvider.GOOGLE,
@@ -125,13 +139,9 @@ describe('MessagingMessagesImportService', () => {
       {
         provide: GlobalWorkspaceOrmManager,
         useValue: {
-          getRepository: jest.fn().mockResolvedValue({
-            update: jest.fn().mockResolvedValue(undefined),
-            findOne: jest.fn().mockResolvedValue({
-              id: 'workspace-member-id',
-              userId: 'user-id',
-            }),
-          }),
+          getRepository: jest
+            .fn()
+            .mockResolvedValue(mockWorkspaceMemberRepository),
           executeInWorkspaceContext: jest
             .fn()
             .mockImplementation((fn: () => any, _authContext?: any) => fn()),
@@ -240,6 +250,32 @@ describe('MessagingMessagesImportService', () => {
       module.get<MessagingSaveMessagesAndEnqueueContactCreationService>(
         MessagingSaveMessagesAndEnqueueContactCreationService,
       );
+  });
+
+  it('should retry workspace member lookup when first query fails', async () => {
+    mockWorkspaceMemberRepository.findOne
+      .mockRejectedValueOnce(
+        new QueryFailedError(
+          'SELECT * FROM workspaceMember',
+          [],
+          new Error('Connection terminated unexpectedly'),
+        ),
+      )
+      .mockResolvedValueOnce({
+        id: 'workspace-member-id',
+        userId: 'user-id',
+      });
+
+    await service.processMessageBatchImport(
+      mockMessageChannel as MessageChannelEntity,
+      mockConnectedAccount,
+      workspaceId,
+    );
+
+    expect(mockWorkspaceMemberRepository.findOne).toHaveBeenCalledTimes(2);
+    expect(
+      saveMessagesService.saveMessagesAndEnqueueContactCreation,
+    ).toHaveBeenCalled();
   });
 
   it('should fails if SyncStage is not MESSAGES_IMPORT_SCHEDULED', async () => {

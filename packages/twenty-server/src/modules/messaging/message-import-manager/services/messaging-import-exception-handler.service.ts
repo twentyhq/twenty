@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { QueryFailedError, Repository } from 'typeorm';
 
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
@@ -24,6 +24,19 @@ export enum MessageImportSyncStep {
   MESSAGES_IMPORT_PENDING = 'MESSAGES_IMPORT_PENDING',
   MESSAGES_IMPORT_ONGOING = 'MESSAGES_IMPORT_ONGOING',
 }
+
+const TRANSIENT_POSTGRES_CONNECTION_ERROR_CODES = new Set<string>([
+  '08000',
+  '08001',
+  '08003',
+  '08004',
+  '08006',
+  '08007',
+  '08P01',
+  '57P01',
+  '57P02',
+  '57P03',
+]);
 
 @Injectable()
 export class MessageImportExceptionHandlerService {
@@ -49,6 +62,17 @@ export class MessageImportExceptionHandlerService {
       };
     }
 
+    if (this.isTemporaryException(exception)) {
+      await this.handleTemporaryException(
+        syncStep,
+        messageChannel,
+        workspaceId,
+        exception,
+      );
+
+      return;
+    }
+
     if ('code' in exception) {
       switch (exception.code) {
         case MessageImportDriverExceptionCode.NOT_FOUND:
@@ -56,20 +80,6 @@ export class MessageImportExceptionHandlerService {
             syncStep,
             messageChannel,
             workspaceId,
-          );
-          break;
-        case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
-        case MessageImportDriverExceptionCode.TEMPORARY_ERROR:
-        case MessageNetworkExceptionCode.ECONNABORTED:
-        case MessageNetworkExceptionCode.ENOTFOUND:
-        case MessageNetworkExceptionCode.ECONNRESET:
-        case MessageNetworkExceptionCode.ETIMEDOUT:
-        case MessageNetworkExceptionCode.ERR_NETWORK:
-          await this.handleTemporaryException(
-            syncStep,
-            messageChannel,
-            workspaceId,
-            exception,
           );
           break;
         case MessageImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
@@ -93,12 +103,47 @@ export class MessageImportExceptionHandlerService {
             exception,
             messageChannel,
             workspaceId,
+            syncStep,
           );
           break;
       }
     } else {
-      await this.handleUnknownException(exception, messageChannel, workspaceId);
+      await this.handleUnknownException(
+        exception,
+        messageChannel,
+        workspaceId,
+        syncStep,
+      );
     }
+  }
+
+  public isTemporaryException(
+    exception: MessageImportDriverException | Error | TwentyORMException,
+  ): boolean {
+    if (exception instanceof QueryFailedError) {
+      const queryFailedError = exception as QueryFailedError & {
+        code?: string;
+      };
+
+      return (
+        isDefined(queryFailedError.code) &&
+        TRANSIENT_POSTGRES_CONNECTION_ERROR_CODES.has(queryFailedError.code)
+      );
+    }
+
+    if (!('code' in exception)) {
+      return false;
+    }
+
+    return [
+      TwentyORMExceptionCode.QUERY_READ_TIMEOUT,
+      MessageImportDriverExceptionCode.TEMPORARY_ERROR,
+      MessageNetworkExceptionCode.ECONNABORTED,
+      MessageNetworkExceptionCode.ENOTFOUND,
+      MessageNetworkExceptionCode.ECONNRESET,
+      MessageNetworkExceptionCode.ETIMEDOUT,
+      MessageNetworkExceptionCode.ERR_NETWORK,
+    ].includes(exception.code);
   }
 
   private async handleSyncCursorErrorException(
@@ -203,8 +248,19 @@ export class MessageImportExceptionHandlerService {
     exception: Error,
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     workspaceId: string,
+    syncStep: MessageImportSyncStep,
   ): Promise<void> {
+    const exceptionCode =
+      'code' in exception && typeof exception.code === 'string'
+        ? exception.code
+        : undefined;
+
     this.exceptionHandlerService.captureExceptions([exception], {
+      additionalData: {
+        messageChannelId: messageChannel.id,
+        syncStep,
+        exceptionCode,
+      },
       workspace: { id: workspaceId },
     });
     await this.messageChannelSyncStatusService.markAsFailed(
