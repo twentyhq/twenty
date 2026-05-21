@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type CaseStudyData } from '@/lib/customers';
+import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
@@ -8,8 +8,7 @@ import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 
-const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1756830231350-3b501f63c5c1?w=1600&q=80';
+const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.w3villa;
 
 const META_TITLE = msg`When your CRM is the product: W3Grads on Twenty | W3villa Technologies`;
 const META_DESCRIPTION = msg`How W3villa Technologies shipped W3Grads, an AI mock interview platform for institutions, on Twenty as the operational backbone.`;
@@ -51,7 +50,7 @@ export default async function W3villaCaseStudyPage({
       authorAvatarSrc: '/images/partner/testimonials/amrendra-singh.webp',
       authorRole: msg`VP of Engineering, W3villa Technologies`,
       clientIcon: 'w3villa',
-      heroImageSrc: PLACEHOLDER_HERO,
+      heroImageSrc: HERO_IMAGE,
       industry: msg`EdTech`,
       kpis: [{ value: msg`Zero`, label: msg`Manual work at core` }],
     },
