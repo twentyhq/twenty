@@ -62,8 +62,8 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
 
     while (true) {
       const rows = await this.buildRowToSelectQuery({ currentEncryptionKeyId })
-        .andWhere('connectedAccount.id > :cursor', { cursor })
-        .orderBy('connectedAccount.id', 'ASC')
+        .andWhere('connected_account.id > :cursor', { cursor })
+        .orderBy('connected_account.id', 'ASC')
         .take(batchSize)
         .getMany();
 
@@ -179,16 +179,16 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
       buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
 
     return this.connectedAccountRepository
-      .createQueryBuilder('connectedAccount')
-      .where('connectedAccount."connectionParameters" IS NOT NULL')
+      .createQueryBuilder('connected_account')
+      .where('connected_account."connectionParameters" IS NOT NULL')
       .andWhere(
         `(
-          (connectedAccount."connectionParameters"->'IMAP'->>'password' IS NOT NULL
-            AND connectedAccount."connectionParameters"->'IMAP'->>'password' NOT LIKE :currentEnvelopePattern)
-          OR (connectedAccount."connectionParameters"->'SMTP'->>'password' IS NOT NULL
-            AND connectedAccount."connectionParameters"->'SMTP'->>'password' NOT LIKE :currentEnvelopePattern)
-          OR (connectedAccount."connectionParameters"->'CALDAV'->>'password' IS NOT NULL
-            AND connectedAccount."connectionParameters"->'CALDAV'->>'password' NOT LIKE :currentEnvelopePattern)
+          (connected_account."connectionParameters"->'IMAP'->>'password' IS NOT NULL
+            AND connected_account."connectionParameters"->'IMAP'->>'password' NOT LIKE :currentEnvelopePattern)
+          OR (connected_account."connectionParameters"->'SMTP'->>'password' IS NOT NULL
+            AND connected_account."connectionParameters"->'SMTP'->>'password' NOT LIKE :currentEnvelopePattern)
+          OR (connected_account."connectionParameters"->'CALDAV'->>'password' IS NOT NULL
+            AND connected_account."connectionParameters"->'CALDAV'->>'password' NOT LIKE :currentEnvelopePattern)
         )`,
         { currentEnvelopePattern },
       );
