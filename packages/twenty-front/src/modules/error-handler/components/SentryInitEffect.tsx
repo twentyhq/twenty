@@ -59,7 +59,7 @@ export const SentryInitEffect = () => {
           setIsSentryInitialized(true);
         } catch (error) {
           // oxlint-disable-next-line no-console
-          console.error('Failed to initialize Sentry:', error);
+          console.warn('Failed to initialize Sentry:', error);
         } finally {
           setIsSentryInitializing(false);
         }
@@ -83,7 +83,7 @@ export const SentryInitEffect = () => {
           setIsSentryUserDefined(true);
         } catch (error) {
           // oxlint-disable-next-line no-console
-          console.error('Failed to set Sentry user:', error);
+          console.warn('Failed to set Sentry user:', error);
         }
       } else if (!isDefined(currentUser) && isSentryInitialized) {
         try {
@@ -91,7 +91,7 @@ export const SentryInitEffect = () => {
           setUser(null);
         } catch (error) {
           // oxlint-disable-next-line no-console
-          console.error('Failed to clear Sentry user:', error);
+          console.warn('Failed to clear Sentry user:', error);
         }
       }
     };

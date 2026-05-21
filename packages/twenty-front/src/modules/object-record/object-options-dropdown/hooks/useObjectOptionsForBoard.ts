@@ -114,7 +114,14 @@ export const useObjectOptionsForBoard = ({
               updatedRecordField.fieldMetadataItemId,
           );
 
-          draftRecordIndexFieldDefinitions[indexToModify].position =
+          const recordIndexFieldDefinitionToModify =
+            draftRecordIndexFieldDefinitions[indexToModify];
+
+          if (!isDefined(recordIndexFieldDefinitionToModify)) {
+            return;
+          }
+
+          recordIndexFieldDefinitionToModify.position =
             updatedRecordField.position;
         },
       );
@@ -222,7 +229,14 @@ export const useObjectOptionsForBoard = ({
                 updatedRecordField.fieldMetadataItemId,
             );
 
-            draftRecordIndexFieldDefinitions[indexToModify].isVisible =
+            const recordIndexFieldDefinitionToModify =
+              draftRecordIndexFieldDefinitions[indexToModify];
+
+            if (!isDefined(recordIndexFieldDefinitionToModify)) {
+              return;
+            }
+
+            recordIndexFieldDefinitionToModify.isVisible =
               shouldShowFieldMetadataItem;
           },
         );

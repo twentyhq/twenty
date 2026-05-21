@@ -50,19 +50,38 @@ export const PromiseRejectionEffect = () => {
         );
       }
 
-      try {
-        const { captureException } = await import('@sentry/react');
-        captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+      if (isAbortError) {
+        return;
+      }
 
-          const fingerprint = hasErrorCode(error) ? error.code : error.message;
-          scope.setFingerprint([fingerprint]);
-          error.name = error.message;
-          return scope;
+      try {
+        const { captureException, captureMessage } = await import('@sentry/react');
+
+        if (error instanceof Error) {
+          captureException(error, (scope) => {
+            scope.setExtras({ mechanism: 'onUnhandledRejection' });
+
+            const fingerprint = hasErrorCode(error)
+              ? error.code
+              : error.message;
+            scope.setFingerprint([fingerprint]);
+
+            return scope;
+          });
+
+          return;
+        }
+
+        captureMessage('Unhandled promise rejection with non-error reason', {
+          level: 'warning',
+          extra: {
+            mechanism: 'onUnhandledRejection',
+            reasonType: typeof error,
+          },
         });
       } catch (sentryError) {
         // oxlint-disable-next-line no-console
-        console.error('Failed to capture exception with Sentry:', sentryError);
+        console.warn('Failed to capture exception with Sentry:', sentryError);
       }
     },
     [enqueueErrorSnackBar],
