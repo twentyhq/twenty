@@ -52,6 +52,9 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 - Validate assumptions before making changes
 `,
 
+  // Browsing context hint
+  BROWSING_CONTEXT_INSTRUCTION: `A <browsing_context> tag may appear in the user's last message. Only use it when directly relevant to the question.`,
+
   // Response formatting and record references
   RESPONSE_FORMAT: `
 Format responses with markdown for clarity (headings, lists, code blocks, tables).
