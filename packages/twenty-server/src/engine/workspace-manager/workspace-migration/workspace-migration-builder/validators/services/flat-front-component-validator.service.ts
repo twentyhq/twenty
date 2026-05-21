@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
+import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/has-allowed-extension.util';
 import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
@@ -49,6 +52,20 @@ export class FlatFrontComponentValidatorService {
     }
 
     if (
+      isDefined(flatFrontComponent.builtComponentPath) &&
+      !hasAllowedExtension(
+        flatFrontComponent.builtComponentPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
+      )
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Built component path must have a .mjs extension`,
+        userFriendlyMessage: msg`Built component path must have a .mjs extension`,
+      });
+    }
+
+    if (
       isDefined(flatFrontComponent.sourceComponentPath) &&
       !isSafeRelativePath(flatFrontComponent.sourceComponentPath)
     ) {
@@ -56,6 +73,20 @@ export class FlatFrontComponentValidatorService {
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
         message: t`Source component path contains unsafe characters`,
         userFriendlyMessage: msg`Source component path contains unsafe characters`,
+      });
+    }
+
+    if (
+      isDefined(flatFrontComponent.sourceComponentPath) &&
+      !hasAllowedExtension(
+        flatFrontComponent.sourceComponentPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      )
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Source component path must have a .ts or .tsx extension`,
+        userFriendlyMessage: msg`Source component path must have a .ts or .tsx extension`,
       });
     }
 
@@ -141,6 +172,20 @@ export class FlatFrontComponentValidatorService {
     }
 
     if (
+      isDefined(flatEntityUpdate.builtComponentPath) &&
+      !hasAllowedExtension(
+        flatEntityUpdate.builtComponentPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
+      )
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Built component path must have a .mjs extension`,
+        userFriendlyMessage: msg`Built component path must have a .mjs extension`,
+      });
+    }
+
+    if (
       isDefined(flatEntityUpdate.sourceComponentPath) &&
       !isSafeRelativePath(flatEntityUpdate.sourceComponentPath)
     ) {
@@ -148,6 +193,20 @@ export class FlatFrontComponentValidatorService {
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
         message: t`Source component path contains unsafe characters`,
         userFriendlyMessage: msg`Source component path contains unsafe characters`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.sourceComponentPath) &&
+      !hasAllowedExtension(
+        flatEntityUpdate.sourceComponentPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      )
+    ) {
+      validationResult.errors.push({
+        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+        message: t`Source component path must have a .ts or .tsx extension`,
+        userFriendlyMessage: msg`Source component path must have a .ts or .tsx extension`,
       });
     }
 

@@ -2,8 +2,11 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
+import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/has-allowed-extension.util';
 import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
@@ -60,6 +63,20 @@ export class FlatLogicFunctionValidatorService {
     }
 
     if (
+      isDefined(flatEntityUpdate.builtHandlerPath) &&
+      !hasAllowedExtension(
+        flatEntityUpdate.builtHandlerPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
+      )
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Built handler path must have a .mjs extension`,
+        userFriendlyMessage: msg`Built handler path must have a .mjs extension`,
+      });
+    }
+
+    if (
       isDefined(flatEntityUpdate.sourceHandlerPath) &&
       !isSafeRelativePath(flatEntityUpdate.sourceHandlerPath)
     ) {
@@ -67,6 +84,20 @@ export class FlatLogicFunctionValidatorService {
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
         message: t`Source handler path contains unsafe characters`,
         userFriendlyMessage: msg`Source handler path contains unsafe characters`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.sourceHandlerPath) &&
+      !hasAllowedExtension(
+        flatEntityUpdate.sourceHandlerPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      )
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Source handler path must have a .ts or .tsx extension`,
+        userFriendlyMessage: msg`Source handler path must have a .ts or .tsx extension`,
       });
     }
 
@@ -148,6 +179,20 @@ export class FlatLogicFunctionValidatorService {
     }
 
     if (
+      isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
+      !hasAllowedExtension(
+        flatLogicFunctionToValidate.builtHandlerPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
+      )
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Built handler path must have a .mjs extension`,
+        userFriendlyMessage: msg`Built handler path must have a .mjs extension`,
+      });
+    }
+
+    if (
       isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
       !isSafeRelativePath(flatLogicFunctionToValidate.sourceHandlerPath)
     ) {
@@ -155,6 +200,20 @@ export class FlatLogicFunctionValidatorService {
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
         message: t`Source handler path contains unsafe characters`,
         userFriendlyMessage: msg`Source handler path contains unsafe characters`,
+      });
+    }
+
+    if (
+      isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
+      !hasAllowedExtension(
+        flatLogicFunctionToValidate.sourceHandlerPath,
+        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      )
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Source handler path must have a .ts or .tsx extension`,
+        userFriendlyMessage: msg`Source handler path must have a .ts or .tsx extension`,
       });
     }
 
