@@ -90,16 +90,22 @@ const nextConfig: LinariaConfig = {
     ];
   },
   async rewrites() {
+    const localeAlternation = DEPLOYED_LOCALE_URL_SEGMENTS.join('|');
+
     return {
       beforeFiles: [
         // Root rewrites to the source locale.
         { source: '/', destination: '/en' },
-        // Any path that isn't already locale-prefixed (en/, fr/), an internal
-        // Next.js path, a static asset folder, or a file with an extension
-        // rewrites to the source locale prefix. Mirrors proxy.ts Rule 4.
+        // Multi-segment paths (e.g. /customers/9dots, /articles/my-post).
+        // The Worker's path-to-regexp does not allow :param(regex) to match
+        // across "/" boundaries, so we split multi-segment into :first/:rest+.
         {
-          source:
-            '/:rest((?!en$|en/|fr$|fr/|api|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|illustrations|lottie|fonts|.+\\..+).+)',
+          source: `/:first((?!${localeAlternation}|api|_next|images|illustrations|halftone|lottie|fonts)[^/.]+)/:rest+`,
+          destination: '/en/:first/:rest+',
+        },
+        // Single-segment paths (e.g. /pricing, /customers, /why-twenty).
+        {
+          source: `/:rest((?!${DEPLOYED_LOCALE_URL_SEGMENTS.map((s) => `${s}$|${s}/`).join('|')}|api|_next/static|_next/image|favicon\\.ico|robots\\.txt|sitemap\\.xml|images|illustrations|lottie|fonts|.+\\..+).+)`,
           destination: '/en/:rest',
         },
       ],
