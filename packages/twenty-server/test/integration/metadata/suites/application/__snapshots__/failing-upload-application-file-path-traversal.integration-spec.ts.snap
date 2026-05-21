@@ -1,5 +1,17 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`Upload application file should fail for path traversal when applicationUniversalIdentifier does not match any installed application 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_NOT_FOUND",
+    "userFriendlyMessage": "Application not found.",
+  },
+  "message": "Application "ef83f54a-db09-4afd-aeb1-23f1eae0616e" not found in workspace "20202020-1c25-4d02-bf25-6aeccf7ea419". Run createDevelopmentApplication first.",
+  "name": "NotFoundError",
+}
+`;
+
 exports[`Upload application file should fail for path traversal when filePath contains backslash path traversal 1`] = `
 {
   "extensions": {

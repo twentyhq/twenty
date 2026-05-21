@@ -219,6 +219,19 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
+    const application =
+      await this.applicationService.findByUniversalIdentifier({
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      });
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        `Application "${applicationUniversalIdentifier}" not found in workspace "${workspaceId}". Run createDevelopmentApplication first.`,
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
     const buffer = await streamToBuffer(createReadStream());
 
     return await this.fileStorageService.writeFile({
