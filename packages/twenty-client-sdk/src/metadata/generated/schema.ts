@@ -52,7 +52,7 @@ export interface ApplicationRegistration {
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    logoUrl?: Scalars['String']
+    logo?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     isConfigured: Scalars['Boolean']
@@ -236,7 +236,7 @@ export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     sourceType: ApplicationRegistrationSourceType
-    logoUrl?: Scalars['String']
+    logo?: Scalars['String']
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -1598,7 +1598,7 @@ export interface CreateApplicationRegistration {
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
     name: Scalars['String']
-    logoUrl?: Scalars['String']
+    logo?: Scalars['String']
     websiteUrl?: Scalars['String']
     oAuthScopes: Scalars['String'][]
     __typename: 'PublicApplicationRegistration'
@@ -2034,6 +2034,7 @@ export interface MarketplaceAppDetail {
     sourceType: ApplicationRegistrationSourceType
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
+    logo?: Scalars['String']
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
     manifest?: Scalars['JSON']
@@ -2922,7 +2923,7 @@ export interface ApplicationRegistrationGenqlSelection{
     isListed?: boolean | number
     isFeatured?: boolean | number
     isPreInstalled?: boolean | number
-    logoUrl?: boolean | number
+    logo?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     isConfigured?: boolean | number
@@ -3099,7 +3100,7 @@ export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     sourceType?: boolean | number
-    logoUrl?: boolean | number
+    logo?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4540,7 +4541,7 @@ export interface CreateApplicationRegistrationGenqlSelection{
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
-    logoUrl?: boolean | number
+    logo?: boolean | number
     websiteUrl?: boolean | number
     oAuthScopes?: boolean | number
     __typename?: boolean | number
@@ -5029,6 +5030,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     sourceType?: boolean | number
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
+    logo?: boolean | number
     isListed?: boolean | number
     isFeatured?: boolean | number
     manifest?: boolean | number

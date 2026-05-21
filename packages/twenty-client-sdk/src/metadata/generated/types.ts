@@ -204,7 +204,7 @@ export default {
             "isPreInstalled": [
                 6
             ],
-            "logoUrl": [
+            "logo": [
                 1
             ],
             "createdAt": [
@@ -615,7 +615,7 @@ export default {
             "sourceType": [
                 8
             ],
-            "logoUrl": [
+            "logo": [
                 1
             ],
             "__typename": [
@@ -3851,7 +3851,7 @@ export default {
             "name": [
                 1
             ],
-            "logoUrl": [
+            "logo": [
                 1
             ],
             "websiteUrl": [
@@ -4638,6 +4638,9 @@ export default {
                 1
             ],
             "latestAvailableVersion": [
+                1
+            ],
+            "logo": [
                 1
             ],
             "isListed": [

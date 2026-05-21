@@ -48,7 +48,7 @@ type ApplicationRegistration {
   isListed: Boolean!
   isFeatured: Boolean!
   isPreInstalled: Boolean!
-  logoUrl: String
+  logo: String
   createdAt: DateTime!
   updatedAt: DateTime!
   isConfigured: Boolean!
@@ -287,7 +287,7 @@ type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   sourceType: ApplicationRegistrationSourceType!
-  logoUrl: String
+  logo: String
 }
 
 type ApplicationVariable {
@@ -1959,7 +1959,7 @@ type CreateApplicationRegistration {
 type PublicApplicationRegistration {
   id: UUID!
   name: String!
-  logoUrl: String
+  logo: String
   websiteUrl: String
   oAuthScopes: [String!]!
 }
@@ -2357,6 +2357,7 @@ type MarketplaceAppDetail {
   sourceType: ApplicationRegistrationSourceType!
   sourcePackage: String
   latestAvailableVersion: String
+  logo: String
   isListed: Boolean!
   isFeatured: Boolean!
   manifest: JSON
