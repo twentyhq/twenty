@@ -218,15 +218,19 @@ describe('FileStorageService', () => {
         expect(mockDriver.readFile).not.toHaveBeenCalled();
       });
 
-      it('should neutralize absolute paths (path.join strips leading /)', async () => {
-        await service.readFile({
-          ...validResourceIdentifier,
-          resourcePath: '/etc/passwd',
-        });
+      it('should reject absolute paths', () => {
+        expect(() =>
+          service.readFile({
+            ...validResourceIdentifier,
+            resourcePath: '/etc/passwd',
+          }),
+        ).toThrow(
+          expect.objectContaining({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          }),
+        );
 
-        expect(mockDriver.readFile).toHaveBeenCalledWith({
-          filePath: 'workspace-123/app-456/built-front-component/etc/passwd',
-        });
+        expect(mockDriver.readFile).not.toHaveBeenCalled();
       });
 
       it('should reject single-level traversal escaping fileFolder', () => {
