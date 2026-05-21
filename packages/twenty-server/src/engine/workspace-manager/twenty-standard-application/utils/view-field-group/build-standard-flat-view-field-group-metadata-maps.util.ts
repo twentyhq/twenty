@@ -8,7 +8,6 @@ import { computeStandardCalendarChannelViewFieldGroups } from 'src/engine/worksp
 import { computeStandardCalendarChannelEventAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-channel-event-association-view-field-groups.util';
 import { computeStandardCalendarEventParticipantViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-event-participant-view-field-groups.util';
 import { computeStandardCompanyViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-company-view-field-groups.util';
-import { computeStandardConnectedAccountViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-connected-account-view-field-groups.util';
 import { computeStandardMessageChannelViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-view-field-groups.util';
 import { computeStandardMessageChannelMessageAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-message-association-view-field-groups.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-message-association-message-folder-view-field-groups.util';
@@ -35,7 +34,6 @@ const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
   calendarEventParticipant:
     computeStandardCalendarEventParticipantViewFieldGroups,
   company: computeStandardCompanyViewFieldGroups,
-  connectedAccount: computeStandardConnectedAccountViewFieldGroups,
   messageChannel: computeStandardMessageChannelViewFieldGroups,
   messageChannelMessageAssociation:
     computeStandardMessageChannelMessageAssociationViewFieldGroups,

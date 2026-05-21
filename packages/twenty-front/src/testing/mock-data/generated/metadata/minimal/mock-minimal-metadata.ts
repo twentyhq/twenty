@@ -201,18 +201,6 @@ export const mockedMinimalMetadata: MinimalMetadata =
       "isRemote": false
     },
     {
-      "id": "adbffcd0-bb69-408a-bbd1-1ee7264689d5",
-      "nameSingular": "connectedAccount",
-      "namePlural": "connectedAccounts",
-      "labelSingular": "Connected Account",
-      "labelPlural": "Connected Accounts",
-      "icon": "IconAt",
-      "isCustom": false,
-      "isActive": true,
-      "isSystem": true,
-      "isRemote": false
-    },
-    {
       "id": "3d3605e7-f61c-4abe-9886-a485b4450bf9",
       "nameSingular": "messageChannelMessageAssociationMessageFolder",
       "namePlural": "messageChannelMessageAssociationMessageFolders",
