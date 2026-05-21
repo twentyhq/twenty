@@ -8,10 +8,12 @@
 // Credentials from shell env or a gitignored .env.local (TWENTY_PARTNERS_API_URL/KEY).
 //
 //   yarn twenty dev --once
-//   yarn vitest run --config vitest.seed.config.ts src/scripts/seed.ts
+//   tsx src/scripts/seed.ts
+
+import { config } from 'dotenv';
+config({ path: '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
-import { describe, it } from 'vitest';
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -97,92 +99,95 @@ const QUOTES: Quote[] = [
 
 const nodes = (r: any, key: string): any[] => (r?.[key]?.edges ?? []).map((e: any) => e.node);
 
-describe('seed twenty-partners demo data', () => {
-  it('upserts partners, companies, people, opportunities and quotes (all states)', async () => {
-    const client = new CoreApiClient({
-      url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
-      headers: { Authorization: `Bearer ${requireEnv('TWENTY_PARTNERS_API_KEY')}` },
-    });
-
-    // -- Partners (upsert by slug) --
-    const existingPartners = nodes(
-      await client.query({ partners: { __args: { filter: { slug: { in: PARTNERS.map((p) => p.slug) } }, first: 100 }, edges: { node: { id: true, slug: true } } } } as any),
-      'partners',
-    );
-    const partnerIdBySlug = new Map<string, string>(existingPartners.map((n: any) => [n.slug, n.id]));
-    for (const p of PARTNERS) {
-      const data = {
-        name: p.name, slug: p.slug, validationStage: p.validationStage, availability: p.availability,
-        introduction: p.introduction, calendarLink: { primaryLinkUrl: p.calendarLink },
-        deploymentExpertise: p.deploymentExpertise, region: p.region, languagesSpoken: p.languagesSpoken,
-        partnerTier: p.partnerTier, partnerScope: p.partnerScope, typeOfTeam: p.typeOfTeam,
-      };
-      const id = partnerIdBySlug.get(p.slug);
-      if (id) {
-        await client.mutation({ updatePartner: { __args: { id, data }, id: true } } as any);
-      } else {
-        const r: any = await client.mutation({ createPartner: { __args: { data }, id: true } } as any);
-        partnerIdBySlug.set(p.slug, r.createPartner.id);
-      }
-    }
-    console.log(`[seed] partners: ${partnerIdBySlug.size}`);
-
-    // -- Companies (upsert by name) --
-    const companyIdByName = new Map<string, string>();
-    for (const c of COMPANIES) {
-      const existing = nodes(await client.query({ companies: { __args: { filter: { name: { eq: c.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'companies');
-      let id = existing[0]?.id;
-      if (!id) {
-        const r: any = await client.mutation({ createCompany: { __args: { data: { name: c.name, domainName: { primaryLinkUrl: c.domain } } }, id: true } } as any);
-        id = r.createCompany.id;
-      }
-      companyIdByName.set(c.name, id);
-    }
-
-    // -- People (upsert by firstName+lastName) --
-    for (const person of PERSONS) {
-      const existing = nodes(await client.query({ people: { __args: { filter: { name: { firstName: { eq: person.firstName } } }, first: 10 }, edges: { node: { id: true, name: { firstName: true, lastName: true } } } } } as any), 'people');
-      const match = existing.find((n: any) => n.name?.firstName === person.firstName && n.name?.lastName === person.lastName);
-      if (!match) {
-        await client.mutation({ createPerson: { __args: { data: { name: { firstName: person.firstName, lastName: person.lastName }, emails: { primaryEmail: person.email }, city: person.city, companyId: companyIdByName.get(person.companyName) } }, id: true } } as any);
-      }
-    }
-
-    // -- Opportunities (upsert by name) --
-    const oppIdByName = new Map<string, string>();
-    for (const o of OPPORTUNITIES) {
-      const data: Record<string, unknown> = {
-        name: o.name, matchStatus: o.matchStatus, companyId: companyIdByName.get(o.companyName),
-        ...(o.partnerSlug ? { partnerId: partnerIdBySlug.get(o.partnerSlug) } : {}),
-        ...(o.numberOfSeats != null ? { numberOfSeats: o.numberOfSeats } : {}),
-        ...(o.hostingType ? { hostingType: o.hostingType } : {}),
-        ...(o.subscriptionType ? { subscriptionType: o.subscriptionType } : {}),
-        ...(o.subscriptionFrequency ? { subscriptionFrequency: o.subscriptionFrequency } : {}),
-      };
-      const existing = nodes(await client.query({ opportunities: { __args: { filter: { name: { eq: o.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'opportunities');
-      let id = existing[0]?.id;
-      if (id) {
-        await client.mutation({ updateOpportunity: { __args: { id, data }, id: true } } as any);
-      } else {
-        const r: any = await client.mutation({ createOpportunity: { __args: { data }, id: true } } as any);
-        id = r.createOpportunity.id;
-      }
-      oppIdByName.set(o.name, id);
-    }
-    console.log(`[seed] opportunities: ${oppIdByName.size}`);
-
-    // -- Partner quotes (upsert by name) --
-    let quoteCount = 0;
-    for (const q of QUOTES) {
-      const data = { name: q.name, status: q.status, partnerId: partnerIdBySlug.get(q.partnerSlug), opportunityId: oppIdByName.get(q.oppName) };
-      const existing = nodes(await client.query({ partnerQuotes: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerQuotes');
-      if (existing[0]?.id) {
-        await client.mutation({ updatePartnerQuote: { __args: { id: existing[0].id, data }, id: true } } as any);
-      } else {
-        await client.mutation({ createPartnerQuote: { __args: { data }, id: true } } as any);
-      }
-      quoteCount++;
-    }
-    console.log(`[seed] partner quotes: ${quoteCount}`);
+async function main() {
+  const client = new CoreApiClient({
+    url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
+    headers: { Authorization: `Bearer ${requireEnv('TWENTY_PARTNERS_API_KEY')}` },
   });
+
+  // -- Partners (upsert by slug) --
+  const existingPartners = nodes(
+    await client.query({ partners: { __args: { filter: { slug: { in: PARTNERS.map((p) => p.slug) } }, first: 100 }, edges: { node: { id: true, slug: true } } } } as any),
+    'partners',
+  );
+  const partnerIdBySlug = new Map<string, string>(existingPartners.map((n: any) => [n.slug, n.id]));
+  for (const p of PARTNERS) {
+    const data = {
+      name: p.name, slug: p.slug, validationStage: p.validationStage, availability: p.availability,
+      introduction: p.introduction, calendarLink: { primaryLinkUrl: p.calendarLink },
+      deploymentExpertise: p.deploymentExpertise, region: p.region, languagesSpoken: p.languagesSpoken,
+      partnerTier: p.partnerTier, partnerScope: p.partnerScope, typeOfTeam: p.typeOfTeam,
+    };
+    const id = partnerIdBySlug.get(p.slug);
+    if (id) {
+      await client.mutation({ updatePartner: { __args: { id, data }, id: true } } as any);
+    } else {
+      const r: any = await client.mutation({ createPartner: { __args: { data }, id: true } } as any);
+      partnerIdBySlug.set(p.slug, r.createPartner.id);
+    }
+  }
+  console.log(`[seed] partners: ${partnerIdBySlug.size}`);
+
+  // -- Companies (upsert by name) --
+  const companyIdByName = new Map<string, string>();
+  for (const c of COMPANIES) {
+    const existing = nodes(await client.query({ companies: { __args: { filter: { name: { eq: c.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'companies');
+    let id = existing[0]?.id;
+    if (!id) {
+      const r: any = await client.mutation({ createCompany: { __args: { data: { name: c.name, domainName: { primaryLinkUrl: c.domain } } }, id: true } } as any);
+      id = r.createCompany.id;
+    }
+    companyIdByName.set(c.name, id);
+  }
+
+  // -- People (upsert by firstName+lastName) --
+  for (const person of PERSONS) {
+    const existing = nodes(await client.query({ people: { __args: { filter: { name: { firstName: { eq: person.firstName } } }, first: 10 }, edges: { node: { id: true, name: { firstName: true, lastName: true } } } } } as any), 'people');
+    const match = existing.find((n: any) => n.name?.firstName === person.firstName && n.name?.lastName === person.lastName);
+    if (!match) {
+      await client.mutation({ createPerson: { __args: { data: { name: { firstName: person.firstName, lastName: person.lastName }, emails: { primaryEmail: person.email }, city: person.city, companyId: companyIdByName.get(person.companyName) } }, id: true } } as any);
+    }
+  }
+
+  // -- Opportunities (upsert by name) --
+  const oppIdByName = new Map<string, string>();
+  for (const o of OPPORTUNITIES) {
+    const data: Record<string, unknown> = {
+      name: o.name, matchStatus: o.matchStatus, companyId: companyIdByName.get(o.companyName),
+      ...(o.partnerSlug ? { partnerId: partnerIdBySlug.get(o.partnerSlug) } : {}),
+      ...(o.numberOfSeats != null ? { numberOfSeats: o.numberOfSeats } : {}),
+      ...(o.hostingType ? { hostingType: o.hostingType } : {}),
+      ...(o.subscriptionType ? { subscriptionType: o.subscriptionType } : {}),
+      ...(o.subscriptionFrequency ? { subscriptionFrequency: o.subscriptionFrequency } : {}),
+    };
+    const existing = nodes(await client.query({ opportunities: { __args: { filter: { name: { eq: o.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'opportunities');
+    let id = existing[0]?.id;
+    if (id) {
+      await client.mutation({ updateOpportunity: { __args: { id, data }, id: true } } as any);
+    } else {
+      const r: any = await client.mutation({ createOpportunity: { __args: { data }, id: true } } as any);
+      id = r.createOpportunity.id;
+    }
+    oppIdByName.set(o.name, id);
+  }
+  console.log(`[seed] opportunities: ${oppIdByName.size}`);
+
+  // -- Partner quotes (upsert by name) --
+  let quoteCount = 0;
+  for (const q of QUOTES) {
+    const data = { name: q.name, status: q.status, partnerId: partnerIdBySlug.get(q.partnerSlug), opportunityId: oppIdByName.get(q.oppName) };
+    const existing = nodes(await client.query({ partnerQuotes: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerQuotes');
+    if (existing[0]?.id) {
+      await client.mutation({ updatePartnerQuote: { __args: { id: existing[0].id, data }, id: true } } as any);
+    } else {
+      await client.mutation({ createPartnerQuote: { __args: { data }, id: true } } as any);
+    }
+    quoteCount++;
+  }
+  console.log(`[seed] partner quotes: ${quoteCount}`);
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
 });
