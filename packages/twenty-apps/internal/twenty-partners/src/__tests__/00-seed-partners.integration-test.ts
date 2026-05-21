@@ -14,7 +14,7 @@ describe('seed: marketplace partners', () => {
     const existingResult = await client.query({
       partners: {
         __args: {
-          filter: { status: { eq: 'ACTIVE' }, availability: { eq: 'AVAILABLE' } },
+          filter: { validationStage: { eq: 'VALIDATED' }, availability: { eq: 'AVAILABLE' } },
           first: 1,
         },
         edges: { node: { id: true } },
@@ -56,11 +56,11 @@ describe('seed: marketplace partners', () => {
               name: p.name,
               slug: p.slug,
               introduction: p.introduction,
-              calendlyLink: { primaryLinkUrl: p.calendlyLink },
+              calendarLink: { primaryLinkUrl: p.calendlyLink },
               deploymentExpertise: p.deploymentExpertise,
-              servedGeos: p.servedGeos,
+              region: p.servedGeos,
               languagesSpoken: p.languagesSpoken,
-              status: 'ACTIVE',
+              validationStage: 'VALIDATED',
               availability: 'AVAILABLE',
             },
           },

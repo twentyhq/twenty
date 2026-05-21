@@ -31,11 +31,11 @@ type OpportunitySeed = {
     | 'MANUAL_MATCH'
     | 'AUTO_MATCH'
     | 'MATCHED'
-    | 'INTRO_SENT'
-    | 'ENGAGED'
+    | 'INTRODUCED_TO_A_PARTNER'
+    | 'WORKING_WITH_A_PARTNER'
     | 'IMPLEMENTING'
-    | 'COMPLETED'
-    | 'STALLED';
+    | 'WON'
+    | 'RECONNECT_LATER';
   partnerSlug?: string;
   introSentDaysAgo?: number;
 };
@@ -70,21 +70,21 @@ const OPPORTUNITIES: OpportunitySeed[] = [
   { name: 'Helix Bio — Sales ops migration',    companyName: 'Helix Bio',        personFirstName: 'Maya',    matchStatus: 'MATCHED',      partnerSlug: 'meridian-craft' },
 
   // 2 × INTRO_SENT (3 + 5 days ago)
-  { name: 'Sunrise — APAC fleet CRM',           companyName: 'Sunrise Logistics', personFirstName: 'Wei',     matchStatus: 'INTRO_SENT',   partnerSlug: 'nine-dots-ventures',   introSentDaysAgo: 3 },
-  { name: 'Acme RE — WhatsApp integration',     companyName: 'Acme Real Estate',  personFirstName: 'Camille', matchStatus: 'INTRO_SENT',   partnerSlug: 'w3villa-technologies', introSentDaysAgo: 5 },
+  { name: 'Sunrise — APAC fleet CRM',           companyName: 'Sunrise Logistics', personFirstName: 'Wei',     matchStatus: 'INTRODUCED_TO_A_PARTNER',   partnerSlug: 'nine-dots-ventures',   introSentDaysAgo: 3 },
+  { name: 'Acme RE — WhatsApp integration',     companyName: 'Acme Real Estate',  personFirstName: 'Camille', matchStatus: 'INTRODUCED_TO_A_PARTNER',   partnerSlug: 'w3villa-technologies', introSentDaysAgo: 5 },
 
   // 2 × ENGAGED
-  { name: 'Helix Bio — clinical trials CRM',    companyName: 'Helix Bio',         personFirstName: 'Maya',    matchStatus: 'ENGAGED',      partnerSlug: 'netzero-systems',      introSentDaysAgo: 10 },
-  { name: 'Sunrise — warehouse rollout',         companyName: 'Sunrise Logistics', personFirstName: 'Wei',     matchStatus: 'ENGAGED',      partnerSlug: 'elevate-consulting',   introSentDaysAgo: 14 },
+  { name: 'Helix Bio — clinical trials CRM',    companyName: 'Helix Bio',         personFirstName: 'Maya',    matchStatus: 'WORKING_WITH_A_PARTNER',      partnerSlug: 'netzero-systems',      introSentDaysAgo: 10 },
+  { name: 'Sunrise — warehouse rollout',         companyName: 'Sunrise Logistics', personFirstName: 'Wei',     matchStatus: 'WORKING_WITH_A_PARTNER',      partnerSlug: 'elevate-consulting',   introSentDaysAgo: 14 },
 
   // 1 × IMPLEMENTING
   { name: 'Helix Bio — Self-host evaluation',   companyName: 'Helix Bio',         personFirstName: 'Maya',    matchStatus: 'IMPLEMENTING', partnerSlug: 'meridian-craft',       introSentDaysAgo: 30 },
 
   // 1 × COMPLETED
-  { name: 'Sunrise — LATAM expansion',           companyName: 'Sunrise Logistics', personFirstName: 'Wei',     matchStatus: 'COMPLETED',    partnerSlug: 'nine-dots-ventures',   introSentDaysAgo: 60 },
+  { name: 'Sunrise — LATAM expansion',           companyName: 'Sunrise Logistics', personFirstName: 'Wei',     matchStatus: 'WON',    partnerSlug: 'nine-dots-ventures',   introSentDaysAgo: 60 },
 
   // 1 × STALLED
-  { name: 'Acme RE — annual review',             companyName: 'Acme Real Estate',  personFirstName: 'Camille', matchStatus: 'STALLED',      partnerSlug: 'w3villa-technologies', introSentDaysAgo: 45 },
+  { name: 'Acme RE — annual review',             companyName: 'Acme Real Estate',  personFirstName: 'Camille', matchStatus: 'RECONNECT_LATER',      partnerSlug: 'w3villa-technologies', introSentDaysAgo: 45 },
 ];
 
 describe('seed demo opportunities (companies + persons + opportunities)', () => {

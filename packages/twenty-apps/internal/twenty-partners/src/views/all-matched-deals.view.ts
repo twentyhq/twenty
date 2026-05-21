@@ -30,7 +30,7 @@ export default defineView({
       fieldMetadataUniversalIdentifier: MATCH_STATUS_FIELD_UNIVERSAL_IDENTIFIER,
       // See filter-syntax note in Task 8.1.
       operand: ViewFilterOperand.IS,
-      value: ['MATCHED', 'INTRO_SENT', 'ENGAGED', 'IMPLEMENTING', 'COMPLETED', 'STALLED', 'CANCELLED'],
+      value: ['MATCHED', 'INTRODUCED_TO_A_PARTNER', 'WORKING_WITH_A_PARTNER', 'IMPLEMENTING', 'WON', 'RECONNECT_LATER', 'LOST'],
     },
   ],
 });

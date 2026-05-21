@@ -9,11 +9,11 @@ const handler = async (_payload: InstallPayload) => {
       __args: {
         data: {
           name: 'Test Partner Alpha',
-          status: 'ACTIVE',
+          validationStage: 'VALIDATED',
           availability: 'AVAILABLE',
           languagesSpoken: ['ENGLISH', 'FRENCH'],
           deploymentExpertise: ['CLOUD', 'SELF_HOST'],
-          servedGeos: ['EUROPE', 'MENA'],
+          region: 'EUROPE',
         },
       },
       id: true,

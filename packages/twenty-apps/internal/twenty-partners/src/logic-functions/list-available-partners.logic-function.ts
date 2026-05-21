@@ -11,8 +11,8 @@ type Partner = {
   introduction: string | null;
   languagesSpoken: string[] | null;
   deploymentExpertise: string[] | null;
-  servedGeos: string[] | null;
-  calendlyLink: { primaryLinkUrl: string | null } | null;
+  region: string[] | null;
+  calendarLink: { primaryLinkUrl: string | null } | null;
 };
 
 type ListAvailablePartnersResult =
@@ -27,7 +27,7 @@ const handler = async (): Promise<ListAvailablePartnersResult> => {
       partners: {
         __args: {
           filter: {
-            status: { eq: 'ACTIVE' },
+            validationStage: { eq: 'VALIDATED' },
             availability: { eq: 'AVAILABLE' },
           },
           orderBy: [{ name: 'AscNullsLast' }],
@@ -41,8 +41,8 @@ const handler = async (): Promise<ListAvailablePartnersResult> => {
             introduction: true,
             languagesSpoken: true,
             deploymentExpertise: true,
-            servedGeos: true,
-            calendlyLink: { primaryLinkUrl: true },
+            region: true,
+            calendarLink: { primaryLinkUrl: true },
           },
         },
       },
@@ -64,7 +64,7 @@ const handler = async (): Promise<ListAvailablePartnersResult> => {
 export default defineLogicFunction({
   universalIdentifier: LIST_AVAILABLE_PARTNERS_LOGIC_FUNCTION_ID,
   name: 'list-available-partners',
-  description: 'Returns all partners with status=ACTIVE and availability=AVAILABLE.',
+  description: 'Returns all partners with validationStage=VALIDATED and availability=AVAILABLE.',
   timeoutSeconds: 10,
   handler,
   httpRouteTriggerSettings: {

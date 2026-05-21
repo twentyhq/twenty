@@ -24,7 +24,7 @@ const handler = async (payload: DatabaseEventPayload) => {
     partners: {
       __args: {
         filter: {
-          status: { eq: 'ACTIVE' },
+          validationStage: { eq: 'VALIDATED' },
           availability: { eq: 'AVAILABLE' },
         },
         orderBy: [{ lastMatchAt: 'AscNullsFirst' }],

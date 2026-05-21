@@ -50,7 +50,7 @@ describe('on-opportunity-auto-match (success path)', () => {
     const existing = await client.query({
       partners: {
         __args: {
-          filter: { status: { eq: 'ACTIVE' }, availability: { eq: 'AVAILABLE' } },
+          filter: { validationStage: { eq: 'VALIDATED' }, availability: { eq: 'AVAILABLE' } },
           first: 1,
         },
         edges: { node: { id: true } },
@@ -63,7 +63,7 @@ describe('on-opportunity-auto-match (success path)', () => {
             data: {
               name: '[test] auto-match seed partner',
               slug: 'test-auto-match-seed',
-              status: 'ACTIVE',
+              validationStage: 'VALIDATED',
               availability: 'AVAILABLE',
             },
           },

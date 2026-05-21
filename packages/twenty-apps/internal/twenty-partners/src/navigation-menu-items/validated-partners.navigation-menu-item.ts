@@ -1,0 +1,14 @@
+import { NavigationMenuItemType, defineNavigationMenuItem } from 'twenty-sdk/define';
+
+import {
+  VALIDATED_PARTNERS_NAV_UNIVERSAL_IDENTIFIER,
+  VALIDATED_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER,
+} from 'src/constants/universal-identifiers';
+
+export default defineNavigationMenuItem({
+  universalIdentifier: VALIDATED_PARTNERS_NAV_UNIVERSAL_IDENTIFIER,
+  type: NavigationMenuItemType.VIEW,
+  icon: 'IconCircleCheck',
+  position: 7,
+  viewUniversalIdentifier: VALIDATED_PARTNERS_VIEW_UNIVERSAL_IDENTIFIER,
+});

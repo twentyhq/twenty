@@ -1,6 +1,7 @@
 // Seed: marketplace partners — the partner records the website's
-// /partners-marketplace page lists, and that seed-pipeline-demo wires
-// opportunities to by slug. Idempotent: skips partners that already exist by slug.
+// /partners marketplace page lists, and that seed-pipeline-demo wires
+// opportunities to by slug. Idempotent UPSERT: existing partners (by slug) are
+// updated to the latest fields (incl. validationStage=VALIDATED); new ones created.
 //
 // Run from this app directory, against a running Twenty server with the app
 // installed. Credentials come from the shell env or a gitignored .env.local
@@ -14,16 +15,19 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, it } from 'vitest';
 
-const CALENDLY_PLACEHOLDER = 'https://calendly.com/placeholder';
+const CALENDAR_PLACEHOLDER = 'https://calendly.com/placeholder';
 
 type MarketplacePartner = {
   slug: string;
   name: string;
   introduction: string;
-  calendlyLink: string;
+  calendarLink: string;
   deploymentExpertise: string[];
-  servedGeos: string[];
+  region: string[];
   languagesSpoken: string[];
+  partnerTier: string;
+  partnerScope: string[];
+  typeOfTeam: string;
 };
 
 const MARKETPLACE_PARTNERS: readonly MarketplacePartner[] = [
@@ -32,116 +36,136 @@ const MARKETPLACE_PARTNERS: readonly MarketplacePartner[] = [
     name: 'Nine Dots Ventures',
     introduction:
       'Boutique CRM implementer specialising in real-estate workflows and WhatsApp inbox automation. Hands-on deployments across France and the Mediterranean.',
-    calendlyLink: CALENDLY_PLACEHOLDER,
+    calendarLink: CALENDAR_PLACEHOLDER,
     deploymentExpertise: ['CLOUD', 'SELF_HOST'],
-    servedGeos: ['EUROPE', 'MENA'],
+    region: ['EUROPE', 'MENA'],
     languagesSpoken: ['ENGLISH', 'FRENCH'],
+    partnerTier: 'ADVANCED',
+    partnerScope: ['DATA_MODEL', 'WORKFLOWS', 'APPS'],
+    typeOfTeam: 'AGENCY',
   },
   {
     slug: 'elevate-consulting',
     name: 'Elevate Consulting',
     introduction:
       'Revenue-operations partner for B2B SaaS teams scaling from seed to Series C. Migrates legacy CRMs onto Twenty without losing pipeline history.',
-    calendlyLink: CALENDLY_PLACEHOLDER,
+    calendarLink: CALENDAR_PLACEHOLDER,
     deploymentExpertise: ['CLOUD'],
-    servedGeos: ['US', 'LATAM'],
+    region: ['US', 'LATAM'],
     languagesSpoken: ['ENGLISH', 'SPANISH'],
+    partnerTier: 'INTERMEDIATE',
+    partnerScope: ['DATA_MIGRATION', 'DATA_MODEL'],
+    typeOfTeam: 'AGENCY',
   },
   {
     slug: 'w3villa-technologies',
     name: 'W3Villa Technologies',
     introduction:
       'Engineering-heavy partner running large self-hosted Twenty deployments. Strong on custom objects, RLP, and bespoke logic functions.',
-    calendlyLink: CALENDLY_PLACEHOLDER,
+    calendarLink: CALENDAR_PLACEHOLDER,
     deploymentExpertise: ['CLOUD', 'SELF_HOST'],
-    servedGeos: ['APAC', 'MENA'],
+    region: ['APAC', 'MENA'],
     languagesSpoken: ['ENGLISH'],
+    partnerTier: 'ADVANCED',
+    partnerScope: ['HOSTING_ENVIRONMENT', 'APPS', 'WORKFLOWS'],
+    typeOfTeam: 'AGENCY',
   },
   {
     slug: 'act-education',
     name: 'Act Education',
     introduction:
       'CRM partner for European education providers. Compliance-first self-hosted deployments with German data-residency requirements.',
-    calendlyLink: CALENDLY_PLACEHOLDER,
+    calendarLink: CALENDAR_PLACEHOLDER,
     deploymentExpertise: ['SELF_HOST'],
-    servedGeos: ['EUROPE'],
+    region: ['EUROPE'],
     languagesSpoken: ['ENGLISH', 'GERMAN'],
+    partnerTier: 'NEW',
+    partnerScope: ['HOSTING_ENVIRONMENT', 'DATA_MODEL'],
+    typeOfTeam: 'SOLO',
   },
   {
     slug: 'netzero-systems',
     name: 'NetZero Systems',
     introduction:
       'Latin America go-to-market partner for climate-tech and renewable-energy companies. Bilingual deal desks running on Twenty Cloud.',
-    calendlyLink: CALENDLY_PLACEHOLDER,
+    calendarLink: CALENDAR_PLACEHOLDER,
     deploymentExpertise: ['CLOUD'],
-    servedGeos: ['LATAM', 'US'],
+    region: ['LATAM', 'US'],
     languagesSpoken: ['ENGLISH', 'SPANISH'],
+    partnerTier: 'INTERMEDIATE',
+    partnerScope: ['DATA_MODEL'],
+    typeOfTeam: 'AGENCY',
   },
   {
     slug: 'meridian-craft',
     name: 'Meridian Craft',
     introduction:
       'APAC implementation studio for fintech and logistics. Multilingual support across English and Chinese, with on-the-ground delivery teams in Singapore and Cape Town.',
-    calendlyLink: CALENDLY_PLACEHOLDER,
+    calendarLink: CALENDAR_PLACEHOLDER,
     deploymentExpertise: ['CLOUD', 'SELF_HOST'],
-    servedGeos: ['APAC', 'AFRICA'],
+    region: ['APAC', 'AFRICA'],
     languagesSpoken: ['ENGLISH', 'CHINESE'],
+    partnerTier: 'ADVANCED',
+    partnerScope: ['APPS', 'WORKFLOWS'],
+    typeOfTeam: 'AGENCY',
   },
 ];
 
 describe('seed marketplace partners', () => {
-  it('creates partners that do not already exist (slug-idempotent)', async () => {
+  it('upserts marketplace partners (by slug)', async () => {
     const client = new CoreApiClient();
 
-    // Fetch existing slugs to skip duplicates
     const existingResult = await client.query({
       partners: {
         __args: {
-          filter: {
-            slug: { in: MARKETPLACE_PARTNERS.map((p) => p.slug) },
-          },
+          filter: { slug: { in: MARKETPLACE_PARTNERS.map((p) => p.slug) } },
           first: 100,
         },
-        edges: { node: { slug: true } },
+        edges: { node: { id: true, slug: true } },
       },
     } as any);
 
-    const existingSlugs = new Set<string>(
+    const idBySlug = new Map<string, string>(
       (
         (existingResult?.partners?.edges ?? []) as Array<{
-          node: { slug: string };
+          node: { id: string; slug: string };
         }>
-      ).map((e) => e.node.slug),
+      ).map((e) => [e.node.slug, e.node.id]),
     );
 
     for (const partner of MARKETPLACE_PARTNERS) {
-      if (existingSlugs.has(partner.slug)) {
-        console.log(`[seed] skip  ${partner.name} (already exists)`);
-        continue;
-      }
+      const data = {
+        name: partner.name,
+        slug: partner.slug,
+        introduction: partner.introduction,
+        calendarLink: { primaryLinkUrl: partner.calendarLink },
+        deploymentExpertise: partner.deploymentExpertise,
+        region: partner.region,
+        languagesSpoken: partner.languagesSpoken,
+        partnerTier: partner.partnerTier,
+        partnerScope: partner.partnerScope,
+        typeOfTeam: partner.typeOfTeam,
+        validationStage: 'VALIDATED',
+        availability: 'AVAILABLE',
+      };
 
-      const result = await client.mutation({
-        createPartner: {
-          __args: {
-            data: {
-              name: partner.name,
-              slug: partner.slug,
-              introduction: partner.introduction,
-              calendlyLink: { primaryLinkUrl: partner.calendlyLink },
-              deploymentExpertise: partner.deploymentExpertise,
-              servedGeos: partner.servedGeos,
-              languagesSpoken: partner.languagesSpoken,
-              status: 'ACTIVE',
-              availability: 'AVAILABLE',
-            },
+      const existingId = idBySlug.get(partner.slug);
+      if (existingId) {
+        await client.mutation({
+          updatePartner: {
+            __args: { id: existingId, data },
+            id: true,
+            name: true,
           },
-          id: true,
-          name: true,
-        },
-      } as any);
-
-      const created = (result as any).createPartner;
-      console.log(`[seed] created ${created.name} (${created.id})`);
+        } as any);
+        console.log(`[seed] updated ${partner.name} (${existingId})`);
+      } else {
+        const result = await client.mutation({
+          createPartner: { __args: { data }, id: true, name: true },
+        } as any);
+        const created = (result as any).createPartner;
+        console.log(`[seed] created ${created.name} (${created.id})`);
+      }
     }
   });
 });
