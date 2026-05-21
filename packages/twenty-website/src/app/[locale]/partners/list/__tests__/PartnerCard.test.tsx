@@ -61,4 +61,22 @@ describe('PartnerCard', () => {
     expect(html).toContain('target="_blank"');
     expect(html).toContain('noopener');
   });
+
+  it.each([
+    'javascript:alert(document.cookie)',
+    'data:text/html,<script>alert(1)</script>',
+    'vbscript:msgbox(1)',
+    '',
+    'not-a-url',
+  ])('suppresses the CTA when calendarLink is %s', (unsafeLink) => {
+    const html = renderToStaticMarkup(
+      <I18nProvider i18n={i18n}>
+        <PartnerCard
+          partner={{ ...FIXTURE, calendarLink: unsafeLink }}
+          index={0}
+        />
+      </I18nProvider>,
+    );
+    expect(html).not.toContain('href=');
+  });
 });

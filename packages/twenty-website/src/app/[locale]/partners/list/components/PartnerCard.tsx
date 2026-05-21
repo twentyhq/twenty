@@ -127,6 +127,14 @@ const CtaWrapper = styled.div`
   margin-top: auto;
 `;
 
+const isSafeHttpUrl = (raw: string) => {
+  try {
+    return ['https:', 'http:'].includes(new URL(raw).protocol);
+  } catch {
+    return false;
+  }
+};
+
 type PartnerCardProps = {
   partner: MarketplacePartner;
   index: number;
@@ -174,14 +182,16 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
         />
       </ChipRows>
 
-      <CtaWrapper>
-        <LinkButton
-          color="primary"
-          href={partner.calendarLink}
-          label={i18n._(msg`Book a call`)}
-          variant="contained"
-        />
-      </CtaWrapper>
+      {isSafeHttpUrl(partner.calendarLink) && (
+        <CtaWrapper>
+          <LinkButton
+            color="primary"
+            href={partner.calendarLink}
+            label={i18n._(msg`Book a call`)}
+            variant="contained"
+          />
+        </CtaWrapper>
+      )}
     </CardArticle>
   );
 }
