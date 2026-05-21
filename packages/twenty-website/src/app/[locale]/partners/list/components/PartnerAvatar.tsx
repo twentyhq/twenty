@@ -4,7 +4,6 @@ import { styled } from '@linaria/react';
 const AVATAR_PALETTE = [
   theme.colors.accent.blue[100],
   theme.colors.accent.pink[100],
-  theme.colors.accent.yellow[100],
   theme.colors.accent.green[100],
 ];
 
