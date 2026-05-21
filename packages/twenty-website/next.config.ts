@@ -100,7 +100,7 @@ const nextConfig: LinariaConfig = {
         // The Worker's path-to-regexp does not allow :param(regex) to match
         // across "/" boundaries, so we split multi-segment into :first/:rest+.
         {
-          source: `/:first((?!${localeAlternation}|api|_next|images|illustrations|halftone|lottie|fonts)[^/.]+)/:rest+`,
+          source: `/:first((?!(?:${localeAlternation}|api|_next|images|illustrations|halftone|lottie|fonts)(?=/))[^/.]+)/:rest+`,
           destination: '/en/:first/:rest+',
         },
         // Single-segment paths (e.g. /pricing, /customers, /why-twenty).
