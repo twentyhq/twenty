@@ -136,7 +136,6 @@ export class SystemPromptBuilderService {
     toolCatalog: ToolIndexEntry[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
-    contextString?: string,
     storedFiles?: Array<{
       filename: string;
       fileId: string;
@@ -146,6 +145,7 @@ export class SystemPromptBuilderService {
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
+      CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
@@ -162,12 +162,6 @@ export class SystemPromptBuilderService {
 
     if (storedFiles && storedFiles.length > 0) {
       parts.push(this.buildUploadedFilesSection(storedFiles));
-    }
-
-    if (contextString) {
-      parts.push(
-        `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
-      );
     }
 
     return parts.join('\n');
