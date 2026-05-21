@@ -11,9 +11,7 @@ import {
 export const useInstallMarketplaceApp = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
-  const [installApplicationMutation] = useMutation(
-    InstallApplicationDocument,
-  );
+  const [installApplicationMutation] = useMutation(InstallApplicationDocument);
 
   const install = async (variables: {
     universalIdentifier: string;
