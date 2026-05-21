@@ -837,9 +837,6 @@ describe('upsertViewWidget', () => {
       const filterGroupId = uuidv4();
       const filterId = uuidv4();
       const sortId = uuidv4();
-      // Use labelIdentifier (always TEXT name field) — fieldMetadataIds[2..N]
-      // order is non-deterministic (sorted by id) and may land on a field type
-      // that's incompatible with the operand below.
       const fieldMetadataId = testSetup.fieldMetadataIds[0];
       const targetField = testSetup.viewFields.find(
         (field) =>
