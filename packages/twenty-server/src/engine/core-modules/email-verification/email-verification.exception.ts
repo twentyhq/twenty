@@ -13,6 +13,7 @@ export enum EmailVerificationExceptionCode {
   EMAIL_ALREADY_VERIFIED = 'EMAIL_ALREADY_VERIFIED',
   INVALID_EMAIL = 'INVALID_EMAIL',
   RATE_LIMIT_EXCEEDED = 'RATE_LIMIT_EXCEEDED',
+  USER_NOT_FOUND = 'USER_NOT_FOUND',
 }
 
 const getEmailVerificationExceptionUserFriendlyMessage = (
@@ -33,6 +34,8 @@ const getEmailVerificationExceptionUserFriendlyMessage = (
       return msg`Invalid email address.`;
     case EmailVerificationExceptionCode.RATE_LIMIT_EXCEEDED:
       return msg`Too many requests. Please try again later.`;
+    case EmailVerificationExceptionCode.USER_NOT_FOUND:
+      return msg`No user found for this email.`;
     default:
       assertUnreachable(code);
   }

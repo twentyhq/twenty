@@ -38,6 +38,7 @@ export class EmailVerificationExceptionFilter implements ExceptionFilter {
           userFriendlyMessage: msg`Email verification not required.`,
         });
       case EmailVerificationExceptionCode.INVALID_EMAIL:
+      case EmailVerificationExceptionCode.USER_NOT_FOUND:
         throw new UserInputError(exception);
       default: {
         assertUnreachable(exception.code);
