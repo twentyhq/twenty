@@ -300,7 +300,7 @@ export class FlatViewFilterValidatorService {
 
     return {
       code: ViewFilterExceptionCode.INVALID_VIEW_FILTER_DATA,
-      message: `Operand "${operand}" is not supported on field type "${effectiveFieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
+      message: t`Operand "${operand}" is not supported on field type "${effectiveFieldType}". Supported operands: ${allowedOperands.join(', ')}.`,
       userFriendlyMessage: msg`Filter operand is not supported for this field type`,
     };
   }

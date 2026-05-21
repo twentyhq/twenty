@@ -146,7 +146,7 @@ describe('View Filter Resolver', () => {
       });
     });
 
-    it('should create a view filter with numeric value', async () => {
+    it('should create a view filter with a numeric value payload', async () => {
       const { data, errors } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
@@ -166,7 +166,7 @@ describe('View Filter Resolver', () => {
       });
     });
 
-    it('should create a view filter with boolean value', async () => {
+    it('should create a view filter with a boolean value payload', async () => {
       const { data, errors } = await createOneViewFilter({
         input: {
           fieldMetadataId: testFieldMetadataId,
@@ -184,6 +184,20 @@ describe('View Filter Resolver', () => {
         value: true,
         viewId: testViewId,
       });
+    });
+
+    it('should reject a view filter with an operand incompatible with the field type', async () => {
+      const { errors } = await createOneViewFilter({
+        input: {
+          fieldMetadataId: testFieldMetadataId,
+          viewId: testViewId,
+          operand: ViewFilterOperand.IS,
+          value: 'test',
+        },
+        expectToFail: true,
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
     });
   });
 
