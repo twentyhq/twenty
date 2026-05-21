@@ -22,6 +22,9 @@ generated
 
 # misc
 .DS_Store
+
+# internal planning docs
+docs/superpowers/
 *.pem
 
 # debug
