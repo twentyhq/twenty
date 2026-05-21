@@ -15,6 +15,7 @@ import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
 import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
@@ -44,6 +45,7 @@ export const useAgentChat = (
   const store = useStore();
 
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
+
 
   const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
@@ -96,6 +98,17 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
+    const lastSentBrowsingContextAtom =
+      agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
+    const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
+    const browsingContextChanged =
+      lastSentBrowsingContext === undefined
+        ? browsingContext !== null
+        : JSON.stringify(browsingContext) !==
+          JSON.stringify(lastSentBrowsingContext);
+    const browsingContextToSend = browsingContextChanged
+      ? browsingContext
+      : null;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
     const rollbackOptimisticUnarchive = applyOptimisticUnarchive(
@@ -151,12 +164,16 @@ export const useAgentChat = (
           threadId,
           text: contentToSend,
           messageId,
-          browsingContext: browsingContext ?? null,
+          browsingContext: browsingContextToSend ?? null,
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
+
+      if (browsingContextChanged) {
+        store.set(lastSentBrowsingContextAtom, browsingContext);
+      }
 
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);
