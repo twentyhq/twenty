@@ -8600,6 +8600,11 @@ msgstr "workflowVersionId får inte anges när engineComponentKey är FRONT_COMP
 msgid "Workspace {workspaceId} is not found."
 msgstr "Arbetsyta {workspaceId} hittades inte."
 
+#. js-lingui-id: lNgTSN
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace cannot be deleted: subscription is not yet canceled."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
