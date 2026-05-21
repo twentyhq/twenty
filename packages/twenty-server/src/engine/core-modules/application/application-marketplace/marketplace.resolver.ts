@@ -55,7 +55,7 @@ export class MarketplaceResolver {
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,
     @AuthWorkspace() workspace: WorkspaceEntity,
-  ): Promise<ApplicationDTO> {
+  ) {
     const registration =
       await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
         universalIdentifier,
