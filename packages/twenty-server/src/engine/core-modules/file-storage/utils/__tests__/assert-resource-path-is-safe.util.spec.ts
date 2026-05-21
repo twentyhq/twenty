@@ -42,4 +42,12 @@ describe('assertResourcePathIsSafe', () => {
       }),
     );
   });
+
+  it('should reject empty strings', () => {
+    expect(() => assertResourcePathIsSafe('')).toThrow(
+      expect.objectContaining({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      }),
+    );
+  });
 });

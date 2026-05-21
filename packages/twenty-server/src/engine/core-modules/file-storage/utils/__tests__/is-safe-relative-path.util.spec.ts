@@ -35,4 +35,8 @@ describe('isSafeRelativePath', () => {
     expect(isSafeRelativePath('folder\\file.txt')).toBe(false);
     expect(isSafeRelativePath('..\\..\\etc\\passwd')).toBe(false);
   });
+
+  it('should reject empty strings', () => {
+    expect(isSafeRelativePath('')).toBe(false);
+  });
 });

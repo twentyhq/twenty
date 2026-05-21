@@ -1,6 +1,10 @@
 import { isAbsolute, normalize, sep } from 'path';
 
 export const isSafeRelativePath = (filePath: string): boolean => {
+  if (filePath.length === 0) {
+    return false;
+  }
+
   if (filePath.includes('\0')) {
     return false;
   }

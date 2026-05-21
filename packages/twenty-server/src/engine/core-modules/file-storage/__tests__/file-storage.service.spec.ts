@@ -439,6 +439,21 @@ describe('FileStorageService', () => {
 
         expect(mockDriver.readFile).toHaveBeenCalled();
       });
+
+      it('should reject empty resource path', () => {
+        expect(() =>
+          service.readFile({
+            ...validResourceIdentifier,
+            resourcePath: '',
+          }),
+        ).toThrow(
+          expect.objectContaining({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          }),
+        );
+
+        expect(mockDriver.readFile).not.toHaveBeenCalled();
+      });
     });
   });
 });
