@@ -170,7 +170,7 @@ export class WorkspaceResolver {
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
     await this.workspaceService.suspendWorkspace(id);
-    return  this.workspaceService.deleteWorkspace(id, true);
+    return this.workspaceService.deleteWorkspace(id, true);
   }
 
   @ResolveField(() => [BillingSubscriptionEntity])
