@@ -140,11 +140,7 @@ export const FILTER_OPERANDS_MAP = {
   ],
   BOOLEAN: [RecordFilterOperand.IS],
   TS_VECTOR: [RecordFilterOperand.VECTOR_SEARCH],
-  UUID: [
-    RecordFilterOperand.IS,
-    RecordFilterOperand.IS_NOT,
-    ...emptyOperands,
-  ],
+  UUID: [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT, ...emptyOperands],
 } as const satisfies FilterOperandMap;
 
 export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {

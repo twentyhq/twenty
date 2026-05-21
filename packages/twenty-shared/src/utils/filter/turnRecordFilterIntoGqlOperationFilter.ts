@@ -507,6 +507,14 @@ const buildDirectFieldGqlOperationFilter = ({
               eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
             } as RatingFilter,
           };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
+              } as RatingFilter,
+            },
+          };
         case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
@@ -1535,6 +1543,14 @@ const buildDirectFieldGqlOperationFilter = ({
             [fieldMetadataItem.name]: {
               in: recordIds,
             } as UUIDFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                in: recordIds,
+              } as UUIDFilter,
+            },
           };
         default:
           throw new Error(
