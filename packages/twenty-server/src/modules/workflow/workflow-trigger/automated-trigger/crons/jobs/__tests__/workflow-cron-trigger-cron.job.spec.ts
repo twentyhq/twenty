@@ -32,7 +32,7 @@ const mockExceptionHandlerService = {
 const mockCacheStorageService = {
   hashGetValues: jest.fn(),
   hashSet: jest.fn(),
-  expire: jest.fn(),
+  hashSetWithExpire: jest.fn(),
 };
 
 describe('WorkflowCronTriggerCronJob', () => {
@@ -156,7 +156,7 @@ describe('WorkflowCronTriggerCronJob', () => {
       await job.handle();
 
       expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
-      expect(mockCacheStorageService.expire).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.hashSetWithExpire).not.toHaveBeenCalled();
     });
   });
 
@@ -176,7 +176,7 @@ describe('WorkflowCronTriggerCronJob', () => {
       expect(mockCoreDataSource.query).toHaveBeenCalledTimes(3);
     });
 
-    it('should write all triggers to cache and set TTL exactly once, right after the first write', async () => {
+    it('should use hashSetWithExpire for the first trigger and hashSet for the rest', async () => {
       mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([
         { id: WORKSPACE_1 },
@@ -203,17 +203,21 @@ describe('WorkflowCronTriggerCronJob', () => {
 
       const callOrder: string[] = [];
 
+      mockCacheStorageService.hashSetWithExpire.mockImplementation(
+        ({ field }) => {
+          callOrder.push(`hashSetWithExpire:${field}`);
+        },
+      );
       mockCacheStorageService.hashSet.mockImplementation(({ field }) => {
         callOrder.push(`hashSet:${field}`);
-      });
-      mockCacheStorageService.expire.mockImplementation(() => {
-        callOrder.push('expire');
       });
 
       await job.handle();
 
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledTimes(2);
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledTimes(
+        1,
+      );
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledWith({
         key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
         field: 'workflow-1',
         value: JSON.stringify({
@@ -221,7 +225,10 @@ describe('WorkflowCronTriggerCronJob', () => {
           workflowId: 'workflow-1',
           pattern: '* * * * *',
         }),
+        ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
       });
+
+      expect(mockCacheStorageService.hashSet).toHaveBeenCalledTimes(1);
       expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
         key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
         field: 'workflow-2',
@@ -232,17 +239,10 @@ describe('WorkflowCronTriggerCronJob', () => {
         }),
       });
 
-      expect(mockCacheStorageService.expire).toHaveBeenCalledTimes(1);
-      expect(mockCacheStorageService.expire).toHaveBeenCalledWith(
-        WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
-      );
-
-      // Guarantees the key is never observable without a TTL for more than
-      // a single Redis round-trip: expire must follow the very first hashSet.
+      // Guarantees the cache key is never observable without a TTL: the very
+      // first write (the one that creates the key) is atomic with PEXPIRE.
       expect(callOrder).toEqual([
-        'hashSet:workflow-1',
-        'expire',
+        'hashSetWithExpire:workflow-1',
         'hashSet:workflow-2',
       ]);
     });
@@ -255,7 +255,7 @@ describe('WorkflowCronTriggerCronJob', () => {
       await job.handle();
 
       expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
-      expect(mockCacheStorageService.expire).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.hashSetWithExpire).not.toHaveBeenCalled();
     });
   });
 
