@@ -25,7 +25,7 @@ jobs:
     runs-on: ubuntu-latest-8-cores
     timeout-minutes: 30
     env:
-      NODE_OPTIONS: "--max-old-space-size=10240"
+      NODE_OPTIONS: '--max-old-space-size=10240'
     services:
       postgres:
         image: postgres:18

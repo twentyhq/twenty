@@ -81,11 +81,10 @@ export const RelationOneToManyFieldInput = () => {
 
   const { updateReverseActivityTarget } =
     useUpdateReverseActivityTargetFromCell({
-      sourceObjectNameSingular:
-        objectMetadataNameSingular as
-          | CoreObjectNameSingular.Person
-          | CoreObjectNameSingular.Company
-          | CoreObjectNameSingular.Opportunity,
+      sourceObjectNameSingular: objectMetadataNameSingular as
+        | CoreObjectNameSingular.Person
+        | CoreObjectNameSingular.Company
+        | CoreObjectNameSingular.Opportunity,
       sourceRecordId: recordId,
       fieldName: fieldName as 'noteTargets' | 'taskTargets',
     });
@@ -319,7 +318,9 @@ export const RelationOneToManyFieldInput = () => {
   // Disable "Add New" for activity targets, reverse activity targets, and MORPH junction relations
   // (For MORPH, we don't know which object type to create)
   const canCreateNew =
-    !isRelationFromActivityTargets && !isReverseActivityTarget && !isMorphJunction;
+    !isRelationFromActivityTargets &&
+    !isReverseActivityTarget &&
+    !isMorphJunction;
 
   // For junction relations, use the target object for "Add New", not the junction object
   const objectMetadataItemIdForCreate =

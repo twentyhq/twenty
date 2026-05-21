@@ -65,32 +65,29 @@ export const useOpenReverseActivityTargetFromManyFieldInput = () => {
 
       openMultipleRecordPicker(recordPickerInstanceId);
 
-      const pickableMorphItems: RecordPickerPickableMorphItem[] =
-        fieldValue
-          .map((junctionRecord) => {
-            const activityRecord = isNoteField
-              ? (junctionRecord as NoteTarget).note
-              : (junctionRecord as TaskTarget).task;
+      const pickableMorphItems: RecordPickerPickableMorphItem[] = fieldValue
+        .map((junctionRecord) => {
+          const activityRecord = isNoteField
+            ? (junctionRecord as NoteTarget).note
+            : (junctionRecord as TaskTarget).task;
 
-            if (!activityRecord?.id) {
-              return null;
-            }
+          if (!activityRecord?.id) {
+            return null;
+          }
 
-            return {
-              objectMetadataId: activityObjectMetadataItem.id,
-              recordId: activityRecord.id,
-              isSelected: true,
-              isMatchingSearchFilter: true,
-            };
-          })
-          .filter(Boolean) as RecordPickerPickableMorphItem[];
+          return {
+            objectMetadataId: activityObjectMetadataItem.id,
+            recordId: activityRecord.id,
+            isSelected: true,
+            isMatchingSearchFilter: true,
+          };
+        })
+        .filter(Boolean) as RecordPickerPickableMorphItem[];
 
       for (const item of pickableMorphItems) {
         const record = fieldValue
           .map((j) =>
-            isNoteField
-              ? (j as NoteTarget).note
-              : (j as TaskTarget).task,
+            isNoteField ? (j as NoteTarget).note : (j as TaskTarget).task,
           )
           .find((r) => r?.id === item.recordId);
 

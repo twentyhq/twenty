@@ -100,18 +100,17 @@ export const RecordDetailRelationSection = ({
 
   const isNoteField = fieldName === 'noteTargets';
 
-  const relationRecords: ObjectRecord[] =
-    isReverseActivityTarget
-      ? ((fieldValue as (NoteTarget | TaskTarget)[] | null) ?? [])
-          .map((junction) =>
-            isNoteField
-              ? (junction as NoteTarget).note
-              : (junction as TaskTarget).task,
-          )
-          .filter(isDefined)
-      : fieldValue && isToOneObject
-        ? [fieldValue as ObjectRecord]
-        : ((fieldValue as ObjectRecord[]) ?? []);
+  const relationRecords: ObjectRecord[] = isReverseActivityTarget
+    ? ((fieldValue as (NoteTarget | TaskTarget)[] | null) ?? [])
+        .map((junction) =>
+          isNoteField
+            ? (junction as NoteTarget).note
+            : (junction as TaskTarget).task,
+        )
+        .filter(isDefined)
+    : fieldValue && isToOneObject
+      ? [fieldValue as ObjectRecord]
+      : ((fieldValue as ObjectRecord[]) ?? []);
 
   const reverseActivityObjectMetadataItem = isReverseActivityTarget
     ? objectMetadataItems.find(

@@ -1,4 +1,4 @@
-name: "Release: on merge"
+name: 'Release: on merge'
 
 permissions:
   contents: write

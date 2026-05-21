@@ -159,25 +159,24 @@ export const RecordDetailRelationSectionDropdownToMany = ({
 
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
-  const pickerRecords =
-    isReverseActivityTarget
-      ? relationRecords
-          .map((record) => {
-            const activityRecord = isNoteField
-              ? (record as NoteTarget).note
-              : (record as TaskTarget).task;
-            if (!activityRecord?.id) {
-              return null;
-            }
-            return {
-              recordId: activityRecord.id,
-              objectMetadataId: pickerObjectMetadataItem.id,
-            };
-          })
-          .filter(Boolean) as { recordId: string; objectMetadataId: string }[]
-      : isJunctionRelation &&
-    isDefined(junctionConfig) &&
-    isDefined(junctionTargetObjectMetadata)
+  const pickerRecords = isReverseActivityTarget
+    ? (relationRecords
+        .map((record) => {
+          const activityRecord = isNoteField
+            ? (record as NoteTarget).note
+            : (record as TaskTarget).task;
+          if (!activityRecord?.id) {
+            return null;
+          }
+          return {
+            recordId: activityRecord.id,
+            objectMetadataId: pickerObjectMetadataItem.id,
+          };
+        })
+        .filter(Boolean) as { recordId: string; objectMetadataId: string }[])
+    : isJunctionRelation &&
+        isDefined(junctionConfig) &&
+        isDefined(junctionTargetObjectMetadata)
       ? extractTargetRecordsFromJunction({
           junctionRecords: relationRecords,
           targetFields: junctionConfig.targetFields,
