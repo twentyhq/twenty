@@ -1764,6 +1764,18 @@ type WorkspaceUrls {
   subdomainUrl: String!
 }
 
+type ApplicationRegistrationVariableDTO {
+  id: UUID!
+  key: String!
+  value: String
+  description: String!
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isFilled: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -1966,18 +1978,6 @@ type PublicApplicationRegistration {
 
 type RotateClientSecret {
   clientSecret: String!
-}
-
-type ApplicationRegistrationVariableDTO {
-  id: UUID!
-  key: String!
-  value: String
-  description: String!
-  isSecret: Boolean!
-  isRequired: Boolean!
-  isFilled: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Relation {
