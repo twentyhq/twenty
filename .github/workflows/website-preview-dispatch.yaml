@@ -3,6 +3,9 @@ name: 'Website Preview Dispatch'
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 on:
   pull_request:
     types: [opened, synchronize, reopened, closed, labeled]

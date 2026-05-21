@@ -1,5 +1,8 @@
 name: CI Example App Hello World
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 on:
   push:
     branches:

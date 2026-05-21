@@ -4,6 +4,9 @@ name: Visual Regression Dispatch
 # This runs in the context of the base repo (not the fork), so it has
 # access to secrets — making it work for external contributor PRs.
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 on:
   workflow_run:
     workflows: ['CI Front', 'CI UI']

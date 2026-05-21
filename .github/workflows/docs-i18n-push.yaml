@@ -3,6 +3,9 @@ name: 'Push docs to Crowdin'
 permissions:
   contents: write
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 on:
   workflow_dispatch:
   workflow_call:

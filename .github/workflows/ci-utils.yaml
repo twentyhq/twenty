@@ -1,5 +1,8 @@
 name: CI Utils
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 on:
   # it's usually not recommended to use pull_request_target
   # but we consider it's safe here if we keep the same steps

@@ -11,6 +11,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
   SERVER_SETUP_CACHE_KEY: server-setup
 
 jobs:

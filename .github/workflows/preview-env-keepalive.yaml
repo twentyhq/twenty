@@ -3,6 +3,9 @@ name: 'Preview Environment Keep Alive'
 permissions:
   contents: read
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 on:
   repository_dispatch:
     types: [preview-environment]
