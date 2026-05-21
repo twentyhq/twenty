@@ -9,10 +9,16 @@ type ApiPartner = {
   languagesSpoken: MarketplacePartner['languagesSpoken'][number][];
   deploymentExpertise: MarketplacePartner['deploymentExpertise'][number][];
   region: MarketplacePartner['region'][number][];
-  calendarLink: { primaryLinkUrl: string };
+  calendarLink: { primaryLinkUrl: string | null } | null;
 };
 
 type ApiResponse = { ok: boolean; count: number; partners: ApiPartner[] };
+
+// Bare domains stored in the CRM (e.g. "calendly.com/x") lack a scheme.
+// Prepend https:// so the URL is absolute; isSafeHttpUrl in PartnerCard will
+// still reject anything that doesn't parse as a valid http(s) URL.
+const normalizeUrl = (raw: string): string =>
+  raw && !raw.includes('://') ? `https://${raw}` : raw;
 
 export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
   try {
@@ -29,7 +35,7 @@ export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
       languagesSpoken: p.languagesSpoken,
       deploymentExpertise: p.deploymentExpertise,
       region: p.region,
-      calendarLink: p.calendarLink.primaryLinkUrl,
+      calendarLink: normalizeUrl(p.calendarLink?.primaryLinkUrl ?? ''),
     }));
   } catch (error) {
     console.error('[partners-api] getPartners failed:', error);
