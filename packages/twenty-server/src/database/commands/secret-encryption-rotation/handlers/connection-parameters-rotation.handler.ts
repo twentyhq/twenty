@@ -1,7 +1,7 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { ACCOUNT_TYPES, type AccountType } from 'twenty-shared/constants';
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
@@ -12,31 +12,16 @@ import {
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
-import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
-import {
-  type ConnectionParameters,
-  type ImapSmtpCaldavParams,
-} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
-// connectedAccount.connectionParameters is a JSONB column shaped as
-// { IMAP?: { password: enc:v2:…, … }, SMTP?: …, CALDAV?: … }. Each protocol's
-// password is encrypted independently with the workspace id threaded into HKDF,
-// matching how `EncryptConnectionParametersSlowInstanceCommand` backfilled it.
-// The generic ColumnRotationSiteHandler cannot be reused because the envelope
-// lives at `connectionParameters->'<PROTOCOL>'->>'password'`, not the whole
-// column, and up to three independent envelopes may need rotating per row.
 @Injectable()
 export class ConnectionParametersRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName =
     SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_CONNECTION_PARAMETERS;
-  private readonly logger = new Logger(
-    ConnectionParametersRotationHandler.name,
-  );
 
   constructor(
     @InjectRepository(ConnectedAccountEntity)
@@ -78,15 +63,45 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
       }
 
       for (const row of rows) {
-        const rowOutcome = await this.rotateRow({
-          row,
-          currentEncryptionKeyId,
-          dryRun,
-        });
+        const originalConnectionParameters = row.connectionParameters;
 
-        outcome.rotated += rowOutcome.rotated;
-        outcome.skipped += rowOutcome.skipped;
-        outcome.errors += rowOutcome.errors;
+        if (!isDefined(originalConnectionParameters)) {
+          outcome.skipped += 1;
+          continue;
+        }
+
+        const reEncryptedConnectionParameters =
+          this.reEncryptConnectionParameters({
+            connectionParameters: originalConnectionParameters,
+            workspaceId: row.workspaceId,
+          });
+
+        if (dryRun) {
+          outcome.rotated += 1;
+          continue;
+        }
+
+        const updateResult = await this.connectedAccountRepository
+          .createQueryBuilder()
+          .update()
+          .set({ connectionParameters: reEncryptedConnectionParameters })
+          .where('id = :rowId', { rowId: row.id })
+          .andWhere(
+            '"connectionParameters" IS NOT DISTINCT FROM CAST(:originalConnectionParametersJson AS jsonb)',
+            {
+              originalConnectionParametersJson: JSON.stringify(
+                originalConnectionParameters,
+              ),
+            },
+          )
+          .execute();
+
+        if ((updateResult.affected ?? 0) === 0) {
+          outcome.skipped += 1;
+          continue;
+        }
+
+        outcome.rotated += 1;
       }
 
       cursor = rows[rows.length - 1].id;
@@ -95,129 +110,36 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     return outcome;
   }
 
-  private async rotateRow({
-    row,
-    currentEncryptionKeyId,
-    dryRun,
+  private reEncryptConnectionParameters({
+    connectionParameters,
+    workspaceId,
   }: {
-    row: ConnectedAccountEntity;
-    currentEncryptionKeyId: string;
-    dryRun: boolean;
-  }): Promise<SecretEncryptionRotationOutcome> {
-    const rowId = row.id;
-    const originalParams = row.connectionParameters;
+    connectionParameters: ImapSmtpCaldavParams;
+    workspaceId: string;
+  }): ImapSmtpCaldavParams {
+    const result: ImapSmtpCaldavParams = { ...connectionParameters };
 
-    if (!isDefined(originalParams)) {
-      // The WHERE clause already excludes NULL rows, but guard defensively in
-      // case TypeORM hydration ever surprises us.
-      return { rotated: 0, skipped: 1, errors: 0 };
-    }
+    for (const protocol of ACCOUNT_TYPES) {
+      const params = connectionParameters[protocol];
 
-    const nextParams: ImapSmtpCaldavParams = { ...originalParams };
-    let rotatedAtLeastOneProtocol = false;
-
-    try {
-      for (const protocol of ACCOUNT_TYPES) {
-        const protocolParams = originalParams[protocol];
-
-        if (!isDefined(protocolParams)) {
-          continue;
-        }
-
-        const rotatedProtocolParams = this.rotateProtocolPassword({
-          row,
-          protocol,
-          protocolParams,
-          currentEncryptionKeyId,
-        });
-
-        if (rotatedProtocolParams === protocolParams) {
-          continue;
-        }
-
-        nextParams[protocol] = rotatedProtocolParams;
-        rotatedAtLeastOneProtocol = true;
+      if (!isDefined(params)) {
+        continue;
       }
-    } catch (error) {
-      this.logger.error(buildRotationErrorMessage(this.siteName, rowId, error));
 
-      return { rotated: 0, skipped: 0, errors: 1 };
-    }
-
-    if (!rotatedAtLeastOneProtocol) {
-      return { rotated: 0, skipped: 1, errors: 0 };
-    }
-
-    if (dryRun) {
-      return { rotated: 1, skipped: 0, errors: 0 };
-    }
-
-    // jsonb-level equality (not ::text) so the guard is independent of
-    // Postgres's internal jsonb key ordering vs. JSON.stringify's ordering.
-    const originalParamsJson = JSON.stringify(originalParams);
-    const updateResult = await this.connectedAccountRepository
-      .createQueryBuilder()
-      .update()
-      .set({ connectionParameters: nextParams })
-      .where('id = :rowId', { rowId })
-      .andWhere(
-        '"connectionParameters" IS NOT DISTINCT FROM CAST(:originalParamsJson AS jsonb)',
-        { originalParamsJson },
-      )
-      .execute();
-
-    if ((updateResult.affected ?? 0) === 0) {
-      this.logger.warn(
-        `[${this.siteName}] row ${rowId}: connectionParameters changed during rotation, skipping. It will be picked up by a subsequent run.`,
+      const plaintext = this.secretEncryptionService.decryptVersioned(
+        params.password,
+        { workspaceId },
       );
 
-      return { rotated: 0, skipped: 1, errors: 0 };
+      result[protocol] = {
+        ...params,
+        password: this.secretEncryptionService.encryptVersioned(plaintext, {
+          workspaceId,
+        }),
+      };
     }
 
-    return { rotated: 1, skipped: 0, errors: 0 };
-  }
-
-  // Returns the input reference unchanged when the password is already on the
-  // current key id, so the caller can cheaply detect a no-op via identity
-  // equality. Throws (which the caller maps to `errors++`) when the password is
-  // missing the versioned envelope prefix — operators must run the slow
-  // instance command first to backfill plaintext passwords.
-  private rotateProtocolPassword({
-    row,
-    protocol,
-    protocolParams,
-    currentEncryptionKeyId,
-  }: {
-    row: ConnectedAccountEntity;
-    protocol: AccountType;
-    protocolParams: ConnectionParameters;
-    currentEncryptionKeyId: string;
-  }): ConnectionParameters {
-    const { password } = protocolParams;
-
-    if (!password.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-      throw new Error(
-        `${protocol} password is not a versioned envelope (expected '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}…'), refusing to rotate.`,
-      );
-    }
-
-    const currentEnvelopePrefix = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}${currentEncryptionKeyId}:`;
-
-    if (password.startsWith(currentEnvelopePrefix)) {
-      return protocolParams;
-    }
-
-    const cryptoOptions = { workspaceId: row.workspaceId };
-    const plaintext = this.secretEncryptionService.decryptVersioned(
-      password,
-      cryptoOptions,
-    );
-    const reEncrypted = this.secretEncryptionService.encryptVersioned(
-      plaintext,
-      cryptoOptions,
-    );
-
-    return { ...protocolParams, password: reEncrypted };
+    return result;
   }
 
   private buildRotationQuery({
@@ -228,9 +150,6 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     const currentEnvelopePattern =
       buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
 
-    // Row needs rotation when ANY non-null protocol password is not yet on the
-    // current key id. The CHK constraint guarantees non-null passwords match
-    // `enc:v2:%`, so we only have to compare against the current-kid prefix.
     return this.connectedAccountRepository
       .createQueryBuilder('connectedAccount')
       .where('connectedAccount."connectionParameters" IS NOT NULL')

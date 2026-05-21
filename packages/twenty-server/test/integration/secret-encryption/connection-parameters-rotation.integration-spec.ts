@@ -113,7 +113,6 @@ describe('secret-encryption:rotate command — connection-parameters site (integ
   });
 
   it('keeps every protocol password decryptable after running the rotation', async () => {
-    // Sanity: passwords were encrypted under the current key before rotation.
     const beforeRotation = await readConnectionParameters(
       dataSource,
       connectedAccountId,
@@ -146,7 +145,6 @@ describe('secret-encryption:rotate command — connection-parameters site (integ
       },
     });
 
-    // Non-secret fields must survive rotation untouched.
     expect(afterRotation.connectionParameters.IMAP?.host).toBe(
       'imap.fastmail.com',
     );
