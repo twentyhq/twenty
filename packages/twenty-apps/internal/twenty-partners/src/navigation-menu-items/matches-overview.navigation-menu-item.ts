@@ -9,6 +9,7 @@ export default defineNavigationMenuItem({
   universalIdentifier: MATCHES_OVERVIEW_NAV_UNIVERSAL_IDENTIFIER,
   type: NavigationMenuItemType.VIEW,
   icon: 'IconLayoutKanban',
-  position: 2,
+  position: 1,
+  folderUniversalIdentifier: '0b2e499a-ae74-45e0-af08-243e19fc56aa',
   viewUniversalIdentifier: MATCHES_OVERVIEW_VIEW_UNIVERSAL_IDENTIFIER,
 });

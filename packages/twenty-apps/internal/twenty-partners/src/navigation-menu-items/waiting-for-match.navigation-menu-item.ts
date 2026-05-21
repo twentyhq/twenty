@@ -10,5 +10,6 @@ export default defineNavigationMenuItem({
   type: NavigationMenuItemType.VIEW,
   icon: 'IconClockHour4',
   position: 0,
+  folderUniversalIdentifier: '0b2e499a-ae74-45e0-af08-243e19fc56aa',
   viewUniversalIdentifier: WAITING_FOR_MATCH_VIEW_UNIVERSAL_IDENTIFIER,
 });

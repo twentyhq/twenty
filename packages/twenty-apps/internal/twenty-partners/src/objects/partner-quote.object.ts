@@ -18,6 +18,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'name',
       label: 'Name',
+      icon: 'IconTag',
       defaultValue: "''",
     },
     {
@@ -25,6 +26,7 @@ export default defineObject({
       type: FieldType.SELECT,
       name: 'status',
       label: 'Status',
+      icon: 'IconProgressCheck',
       defaultValue: "'WIP'",
       options: [
         { id: '5d41450b-8efb-41e8-81b7-b534429ec1b4', value: 'WIP', label: 'WIP', position: 0, color: 'gray' },
@@ -39,6 +41,7 @@ export default defineObject({
       type: FieldType.DATE_TIME,
       name: 'approvalDate',
       label: 'Approval Date',
+      icon: 'IconCalendarCheck',
       isNullable: true,
     },
     {
@@ -46,7 +49,17 @@ export default defineObject({
       type: FieldType.CURRENCY,
       name: 'amount',
       label: 'Amount',
+      icon: 'IconCoin',
       isNullable: true,
+    },
+    {
+      universalIdentifier: 'f303369e-288c-4a48-9920-c1de0ad9a159',
+      type: FieldType.FILES,
+      name: 'quoteFile',
+      label: 'Quote File',
+      icon: 'IconPaperclip',
+      isNullable: true,
+      universalSettings: { maxNumberOfValues: 1 },
     },
   ],
 });

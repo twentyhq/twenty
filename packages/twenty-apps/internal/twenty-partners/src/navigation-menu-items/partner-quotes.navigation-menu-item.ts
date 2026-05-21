@@ -9,6 +9,7 @@ export default defineNavigationMenuItem({
   universalIdentifier: PARTNER_QUOTES_NAV_UNIVERSAL_IDENTIFIER,
   type: NavigationMenuItemType.VIEW,
   icon: 'IconFileDollar',
-  position: 8,
+  position: 3,
+  folderUniversalIdentifier: '857be3b5-82c6-45f7-b546-e20a8a97be8d',
   viewUniversalIdentifier: PARTNER_QUOTES_VIEW_UNIVERSAL_IDENTIFIER,
 });

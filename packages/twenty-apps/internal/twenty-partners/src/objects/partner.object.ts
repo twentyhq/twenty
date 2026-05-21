@@ -18,6 +18,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'name',
       label: 'Name',
+      icon: 'IconTag',
       defaultValue: "''",
     },
     {
@@ -25,6 +26,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'slug',
       label: 'Slug',
+      icon: 'IconLink',
       isNullable: true,
     },
     {
@@ -32,6 +34,7 @@ export default defineObject({
       type: FieldType.SELECT,
       name: 'validationStage',
       label: 'Validation Stage',
+      icon: 'IconProgressCheck',
       defaultValue: "'APPLICATION'",
       options: [
         { id: '1b4f8b0b-68ec-4c02-a7e6-fbd0cda2f3b9', value: 'APPLICATION', label: 'Application', position: 0, color: 'gray' },
@@ -46,6 +49,7 @@ export default defineObject({
       type: FieldType.BOOLEAN,
       name: 'reviewed',
       label: 'Reviewed',
+      icon: 'IconChecks',
       isNullable: true,
     },
     {
@@ -53,6 +57,7 @@ export default defineObject({
       type: FieldType.RATING,
       name: 'ranking',
       label: 'Ranking',
+      icon: 'IconStar',
       isNullable: true,
       options: [
         { id: 'e4c784f0-7e2b-4eca-94dc-fc447266f252', value: 'RATING_1', label: '1', position: 0 },
@@ -67,6 +72,7 @@ export default defineObject({
       type: FieldType.SELECT,
       name: 'partnerTier',
       label: 'Partner Tier',
+      icon: 'IconMedal',
       isNullable: true,
       options: [
         { id: '63806cc0-02a8-4fe9-b2ba-0efe43a33109', value: 'NEW', label: 'New', position: 0, color: 'gray' },
@@ -79,6 +85,7 @@ export default defineObject({
       type: FieldType.MULTI_SELECT,
       name: 'partnerScope',
       label: 'Partner Scope',
+      icon: 'IconListCheck',
       isNullable: true,
       options: [
         { id: '00f05e1c-0fd9-4214-a461-554b7c9e7eb5', value: 'APPS', label: 'Apps', position: 0, color: 'blue' },
@@ -93,6 +100,7 @@ export default defineObject({
       type: FieldType.SELECT,
       name: 'typeOfTeam',
       label: 'Type of Team',
+      icon: 'IconUsersGroup',
       isNullable: true,
       options: [
         { id: '0f59b781-5a81-4025-92ad-4b93b2c62df0', value: 'SOLO', label: 'Solo', position: 0, color: 'blue' },
@@ -104,6 +112,7 @@ export default defineObject({
       type: FieldType.ARRAY,
       name: 'skills',
       label: 'Skills',
+      icon: 'IconTags',
       isNullable: true,
     },
     {
@@ -111,6 +120,7 @@ export default defineObject({
       type: FieldType.SELECT,
       name: 'availability',
       label: 'Availability',
+      icon: 'IconCalendarCheck',
       defaultValue: "'AVAILABLE'",
       options: [
         { id: '639d74c3-5d38-407b-b0e4-81f3930db451', value: 'AVAILABLE', label: 'Available', position: 0, color: 'green' },
@@ -122,6 +132,7 @@ export default defineObject({
       type: FieldType.MULTI_SELECT,
       name: 'deploymentExpertise',
       label: 'Deployment Expertise',
+      icon: 'IconCloud',
       isNullable: true,
       options: [
         { id: 'f2f53365-d909-4a97-bb81-efab43f0a17e', value: 'CLOUD', label: 'Cloud', position: 0, color: 'sky' },
@@ -133,6 +144,7 @@ export default defineObject({
       type: FieldType.MULTI_SELECT,
       name: 'languagesSpoken',
       label: 'Languages Spoken',
+      icon: 'IconLanguage',
       isNullable: true,
       options: [
         { id: '3fe94a92-5f64-46f4-8697-1a44e06e939f', value: 'ENGLISH', label: 'English', position: 0, color: 'blue' },
@@ -147,6 +159,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'city',
       label: 'City',
+      icon: 'IconMapPin',
       isNullable: true,
     },
     {
@@ -154,6 +167,7 @@ export default defineObject({
       type: FieldType.SELECT,
       name: 'country',
       label: 'Country',
+      icon: 'IconFlag',
       isNullable: true,
       options: [
         { id: '96c25936-6cb1-4288-a8cb-d583354eab50', value: 'SINGAPORE', label: 'Singapore', position: 0, color: 'blue' },
@@ -165,6 +179,7 @@ export default defineObject({
       type: FieldType.MULTI_SELECT,
       name: 'region',
       label: 'Region',
+      icon: 'IconWorld',
       isNullable: true,
       options: [
         { id: '735d7a75-c032-48b3-8480-c46e15b7e511', value: 'EUROPE', label: 'Europe', position: 0, color: 'blue' },
@@ -180,6 +195,7 @@ export default defineObject({
       type: FieldType.CURRENCY,
       name: 'projectBudgetMin',
       label: 'Project Budget Min',
+      icon: 'IconCoin',
       isNullable: true,
     },
     {
@@ -187,6 +203,7 @@ export default defineObject({
       type: FieldType.CURRENCY,
       name: 'projectBudgetTypical',
       label: 'Project Budget Typical',
+      icon: 'IconCoins',
       isNullable: true,
     },
     {
@@ -194,6 +211,7 @@ export default defineObject({
       type: FieldType.CURRENCY,
       name: 'hourlyRate',
       label: 'Hourly Rate',
+      icon: 'IconCurrencyDollar',
       isNullable: true,
     },
     {
@@ -201,6 +219,7 @@ export default defineObject({
       type: FieldType.LINKS,
       name: 'linkedin',
       label: 'LinkedIn',
+      icon: 'IconBrandLinkedin',
       isNullable: true,
     },
     {
@@ -208,6 +227,7 @@ export default defineObject({
       type: FieldType.LINKS,
       name: 'profilePicture',
       label: 'Profile Picture',
+      icon: 'IconPhoto',
       isNullable: true,
     },
     {
@@ -215,6 +235,7 @@ export default defineObject({
       type: FieldType.LINKS,
       name: 'calendarLink',
       label: 'Calendar Link',
+      icon: 'IconCalendar',
       isNullable: true,
     },
     {
@@ -222,6 +243,7 @@ export default defineObject({
       type: FieldType.TEXT,
       name: 'introduction',
       label: 'Introduction',
+      icon: 'IconFileText',
       isNullable: true,
     },
     {
@@ -229,6 +251,7 @@ export default defineObject({
       type: FieldType.DATE_TIME,
       name: 'lastMatchAt',
       label: 'Last Match At',
+      icon: 'IconClock',
       isNullable: true,
     },
   ],
