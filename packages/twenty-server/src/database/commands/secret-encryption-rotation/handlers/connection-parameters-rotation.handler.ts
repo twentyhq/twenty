@@ -40,7 +40,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
   }: {
     currentEncryptionKeyId: string;
   }): Promise<number> {
-    return this.buildRotationQuery({ currentEncryptionKeyId }).getCount();
+    return this.buildRowToSelectQuery({ currentEncryptionKeyId }).getCount();
   }
 
   async rotate({
@@ -56,7 +56,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     let cursor = ZERO_UUID;
 
     while (true) {
-      const rows = await this.buildRotationQuery({ currentEncryptionKeyId })
+      const rows = await this.buildRowToSelectQuery({ currentEncryptionKeyId })
         .andWhere('connectedAccount.id > :cursor', { cursor })
         .orderBy('connectedAccount.id', 'ASC')
         .take(batchSize)
@@ -156,7 +156,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     return result;
   }
 
-  private buildRotationQuery({
+  private buildRowToSelectQuery({
     currentEncryptionKeyId,
   }: {
     currentEncryptionKeyId: string;
