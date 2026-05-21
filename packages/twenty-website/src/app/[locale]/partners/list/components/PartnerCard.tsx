@@ -185,7 +185,7 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
       {isSafeHttpUrl(partner.calendarLink) && (
         <CtaWrapper>
           <LinkButton
-            color="primary"
+            color="secondary"
             href={partner.calendarLink}
             label={i18n._(msg`Book a call`)}
             variant="contained"
