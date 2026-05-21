@@ -17940,12 +17940,12 @@ __metadata:
   linkType: hard
 
 "@recallai/desktop-sdk@npm:^2.0.0":
-  version: 2.0.8
-  resolution: "@recallai/desktop-sdk@npm:2.0.8"
+  version: 2.0.15
+  resolution: "@recallai/desktop-sdk@npm:2.0.15"
   dependencies:
     tar: "npm:^7.4.3"
     uuid: "npm:^11.1.0"
-  checksum: 10c0/65fa6da758fd36efb4b2396b6f23fb6c3f0bdcf4f7c74fa8a814342f59085eeaebb98f3072c5313ed22981958896d8d4b00a0f68df60d2a60335b6296a7549d8
+  checksum: 10c0/f85be8d1181ab2f41002d647d24851394e0a38bee38cf77345e586669e0e97d87e5d3cdbeccb42eb1c8fe38fb9e7c3b62650df398d04e3355ec71816588710cb
   languageName: node
   linkType: hard
 
