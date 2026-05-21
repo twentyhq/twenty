@@ -23,7 +23,6 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
@@ -56,7 +55,6 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
     private readonly billingUsageService: BillingUsageService,
@@ -151,10 +149,7 @@ export class BillingWebhookSubscriptionService {
 
     if (shouldSuspend) {
       if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
-        await this.workspaceRepository.update(workspaceId, {
-          activationStatus: WorkspaceActivationStatus.SUSPENDED,
-          suspendedAt: new Date(),
-        });
+        await this.workspaceService.suspendWorkspace(workspaceId);
       } else if (
         workspace.activationStatus ===
         WorkspaceActivationStatus.PENDING_CREATION

@@ -169,8 +169,8 @@ export class WorkspaceResolver {
     SettingsPermissionGuard(PermissionFlagType.WORKSPACE),
   )
   async deleteCurrentWorkspace(@AuthWorkspace() { id }: WorkspaceEntity) {
-    await this.workspaceService.deleteWorkspace(id, true);
-    return await this.workspaceService.suspendWorkspace(id);
+    await this.workspaceService.suspendWorkspace(id);
+    return await this.workspaceService.deleteWorkspace(id, true);
   }
 
   @ResolveField(() => [BillingSubscriptionEntity])

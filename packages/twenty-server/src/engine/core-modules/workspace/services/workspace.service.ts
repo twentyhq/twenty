@@ -444,12 +444,6 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       activationStatus: WorkspaceActivationStatus.SUSPENDED,
       suspendedAt: new Date(),
     });
-
-    const updatedWorkspace = await this.workspaceRepository.findOne({
-      where: { id },
-    });
-
-    return updatedWorkspace;
   }
 
   async deleteWorkspace(id: string, softDelete = false) {
