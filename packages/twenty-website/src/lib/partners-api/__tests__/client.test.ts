@@ -78,7 +78,7 @@ describe('partnersApiFetch', () => {
     expect(init.headers).toMatchObject({
       Authorization: 'Bearer test-key-123',
       Accept: 'application/json',
-      'X-Custom': 'yes',
+      'x-custom': 'yes',
     });
   });
 });

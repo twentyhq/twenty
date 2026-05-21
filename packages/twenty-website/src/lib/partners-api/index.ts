@@ -1,4 +1,3 @@
-export { getPartners } from '@/lib/partners-api/get-partners';
 export {
   DEPLOYMENT_EXPERTISES,
   SERVED_GEOS,

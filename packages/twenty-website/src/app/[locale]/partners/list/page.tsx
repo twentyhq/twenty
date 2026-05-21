@@ -1,7 +1,5 @@
 import { Suspense } from 'react';
 
-import type { Metadata } from 'next';
-
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import {
   getRouteI18n,
@@ -11,25 +9,12 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
-import { getPartners } from '@/lib/partners-api';
+import { getPartners } from '@/lib/partners-api/get-partners';
 
 import { MarketplaceHeader } from './components';
 import { MarketplaceClient } from './MarketplaceClient';
 
-const baseGenerateMetadata = buildRouteMetadata('partnersList');
-
-export const generateMetadata = async (
-  ...args: Parameters<typeof baseGenerateMetadata>
-): Promise<Metadata> => {
-  const base = await baseGenerateMetadata(...args);
-  return {
-    ...base,
-    alternates: {
-      ...base.alternates,
-      canonical: '/partners/list',
-    },
-  };
-};
+export const generateMetadata = buildRouteMetadata('partnersList');
 
 type PartnersMarketplacePageProps = {
   params: Promise<LocaleRouteParams>;

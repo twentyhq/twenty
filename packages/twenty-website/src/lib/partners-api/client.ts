@@ -11,12 +11,12 @@ export const partnersApiFetch = async (
     throw new Error('Missing TWENTY_PARTNERS_API_KEY env var');
   }
 
-  const callerHeaders =
-    init.headers instanceof Headers
-      ? Object.fromEntries(init.headers.entries())
-      : ((init.headers as Record<string, string> | undefined) ?? {});
+  const callerHeaders = Object.fromEntries(
+    new Headers(init.headers ?? {}).entries(),
+  );
 
-  const response = await fetch(`${baseUrl}${path}`, {
+  const base = baseUrl.replace(/\/$/, '');
+  const response = await fetch(`${base}${path}`, {
     cache: 'no-store',
     ...init,
     headers: {

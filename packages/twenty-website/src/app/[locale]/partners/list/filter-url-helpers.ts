@@ -28,7 +28,7 @@ export const parseCriteriaFromParams = (
 });
 
 const encodeFacet = (set: ReadonlySet<string>): string | null =>
-  set.size === 0 ? null : Array.from(set).join(',');
+  set.size === 0 ? null : Array.from(set).sort().join(',');
 
 export const buildQueryString = (criteria: FilterCriteria): string => {
   const params = new URLSearchParams();

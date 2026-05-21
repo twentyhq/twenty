@@ -17,6 +17,9 @@ type ApiResponse = { ok: boolean; count: number; partners: ApiPartner[] };
 export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
   try {
     const data = (await partnersApiFetch('/s/partners')) as ApiResponse;
+    if (!Array.isArray(data.partners)) {
+      throw new Error('[partners-api] Unexpected API shape: missing partners array');
+    }
     return data.partners.map((p) => ({
       slug: p.slug,
       name: p.name,
