@@ -2136,7 +2136,7 @@ msgid "Application details"
 msgstr "Dettagli dell'applicazione"
 
 #. js-lingui-id: lGEBD4
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Application installed successfully."
 msgstr "Applicazione installata con successo."
 
@@ -6977,7 +6977,7 @@ msgid "Failed to get response"
 msgstr "Impossibile ottenere una risposta"
 
 #. js-lingui-id: qZwtAi
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr "Installazione dell'applicazione non riuscita."
 

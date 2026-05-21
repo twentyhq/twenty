@@ -8602,7 +8602,7 @@ export default {
                 }
             ],
             "installMarketplaceApp": [
-                6,
+                58,
                 {
                     "universalIdentifier": [
                         1,

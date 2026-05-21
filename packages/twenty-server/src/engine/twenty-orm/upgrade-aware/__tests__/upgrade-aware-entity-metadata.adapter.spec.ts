@@ -151,5 +151,7 @@ describe('UpgradeAwareEntityMetadataAdapter', () => {
     expect(visibleColumn.isSelect).toBe(true);
     expect(visibleColumn.isInsert).toBe(true);
     expect(visibleColumn.isUpdate).toBe(true);
+
+    expect(metadata.columns).toEqual([visibleColumn]);
   });
 });
