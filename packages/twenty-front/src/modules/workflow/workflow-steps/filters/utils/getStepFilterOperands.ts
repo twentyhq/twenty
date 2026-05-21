@@ -62,7 +62,7 @@ export const FILTER_OPERANDS_MAP = {
     ...emptyOperands,
   ],
   BOOLEAN: [ViewFilterOperand.IS],
-  UUID: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT],
+  UUID: [ViewFilterOperand.IS, ViewFilterOperand.IS_NOT, ...emptyOperands],
   NUMERIC: [
     ViewFilterOperand.IS,
     ViewFilterOperand.IS_NOT,
