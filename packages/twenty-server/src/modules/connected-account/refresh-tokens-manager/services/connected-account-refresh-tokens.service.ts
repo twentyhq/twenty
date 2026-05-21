@@ -12,8 +12,6 @@ import {
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
@@ -34,7 +32,6 @@ export class ConnectedAccountRefreshTokensService {
     private readonly googleAPIRefreshAccessTokenService: GoogleAPIRefreshAccessTokenService,
     private readonly microsoftAPIRefreshAccessTokenService: MicrosoftAPIRefreshAccessTokenService,
     private readonly appOAuthRefreshAccessTokenService: AppOAuthRefreshAccessTokenService,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
@@ -119,18 +116,14 @@ export class ConnectedAccountRefreshTokensService {
       workspaceId,
     });
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.connectedAccountRepository.update(
-        { id: connectedAccount.id, workspaceId },
-        {
-          accessToken: encryptedAccessToken,
-          refreshToken: reEncryptedRefreshToken,
-          lastCredentialsRefreshedAt: new Date(),
-        },
-      );
-    }, authContext);
+    await this.connectedAccountRepository.update(
+      { id: connectedAccount.id, workspaceId },
+      {
+        accessToken: encryptedAccessToken,
+        refreshToken: reEncryptedRefreshToken,
+        lastCredentialsRefreshedAt: new Date(),
+      },
+    );
 
     return {
       accessToken: encryptedAccessToken,
