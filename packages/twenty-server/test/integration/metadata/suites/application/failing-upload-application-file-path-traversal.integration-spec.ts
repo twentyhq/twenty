@@ -103,4 +103,22 @@ describe('Upload application file should fail for path traversal', () => {
 
     expectOneNotInternalServerErrorSnapshot({ errors });
   }, 60000);
+
+  it('when fileFolder is not an allowed application file folder', async () => {
+    jest.useRealTimers();
+
+    const { errors } = await uploadApplicationFile({
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'core-picture',
+      filePath: 'src/components/legit.mjs',
+      fileBuffer: Buffer.from('content'),
+      filename: 'legit.mjs',
+      contentType: 'application/javascript',
+      expectToFail: true,
+    });
+
+    jest.useFakeTimers();
+
+    expectOneNotInternalServerErrorSnapshot({ errors });
+  }, 60000);
 });

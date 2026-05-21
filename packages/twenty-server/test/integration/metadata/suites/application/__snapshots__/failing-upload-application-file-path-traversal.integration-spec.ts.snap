@@ -7,8 +7,22 @@ exports[`Upload application file should fail for path traversal when application
     "subCode": "APPLICATION_NOT_FOUND",
     "userFriendlyMessage": "Application not found.",
   },
-  "message": "Application "ef83f54a-db09-4afd-aeb1-23f1eae0616e" not found in workspace "20202020-1c25-4d02-bf25-6aeccf7ea419". Run createDevelopmentApplication first.",
+  "message": "Application not found in workspace.",
   "name": "NotFoundError",
+}
+`;
+
+exports[`Upload application file should fail for path traversal when fileFolder is not an allowed application file folder 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "http": {
+      "status": 400,
+    },
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "Value "core-picture" does not exist in "FileFolder" enum. Did you mean the enum value "CorePicture" or "PersonPicture"?",
+  "name": "GraphQLError",
 }
 `;
 
