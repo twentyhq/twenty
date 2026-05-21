@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { ACCOUNT_TYPES } from 'twenty-shared/constants';
@@ -12,6 +12,7 @@ import {
   type SecretEncryptionRotationOutcome,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
+import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
 import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -22,6 +23,9 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 export class ConnectionParametersRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName =
     SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_CONNECTION_PARAMETERS;
+  private readonly logger = new Logger(
+    ConnectionParametersRotationHandler.name,
+  );
 
   constructor(
     @InjectRepository(ConnectedAccountEntity)
@@ -70,11 +74,21 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
           continue;
         }
 
-        const reEncryptedConnectionParameters =
-          this.reEncryptConnectionParameters({
-            connectionParameters: originalConnectionParameters,
-            workspaceId: row.workspaceId,
-          });
+        let reEncryptedConnectionParameters: ImapSmtpCaldavParams;
+
+        try {
+          reEncryptedConnectionParameters =
+            this.reEncryptConnectionParametersOrThrow({
+              connectionParameters: originalConnectionParameters,
+              workspaceId: row.workspaceId,
+            });
+        } catch (error) {
+          this.logger.error(
+            buildRotationErrorMessage(this.siteName, row.id, error),
+          );
+          outcome.errors += 1;
+          continue;
+        }
 
         if (dryRun) {
           outcome.rotated += 1;
@@ -110,7 +124,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     return outcome;
   }
 
-  private reEncryptConnectionParameters({
+  private reEncryptConnectionParametersOrThrow({
     connectionParameters,
     workspaceId,
   }: {
