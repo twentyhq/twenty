@@ -125,27 +125,12 @@ export class WorkflowCronTriggerCronJob {
       );
 
       for (const trigger of triggersToCache) {
-        if (triggerCount === 0) {
-          // First write creates the cache key — use atomic HSET + PEXPIRE
-          // (MULTI/EXEC transaction) so the key is never observable without
-          // a TTL. Otherwise a worker crash between a plain hashSet and a
-          // follow-up expire() would leave the key alive forever, every
-          // subsequent tick would take the cache-hit branch, and the DB-scan
-          // path would never run again. Subsequent HSETs preserve the TTL,
-          // so we only need atomicity on the first write.
-          await this.cacheStorageService.hashSetWithExpire({
-            key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-            field: trigger.workflowId,
-            value: JSON.stringify(trigger),
-            ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
-          });
-        } else {
-          await this.cacheStorageService.hashSet({
-            key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-            field: trigger.workflowId,
-            value: JSON.stringify(trigger),
-          });
-        }
+        await this.cacheStorageService.hashSetWithExpire({
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: trigger.workflowId,
+          value: JSON.stringify(trigger),
+          ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
+        });
 
         triggerCount++;
       }

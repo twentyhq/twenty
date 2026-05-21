@@ -176,7 +176,7 @@ describe('WorkflowCronTriggerCronJob', () => {
       expect(mockCoreDataSource.query).toHaveBeenCalledTimes(3);
     });
 
-    it('should use hashSetWithExpire for the first trigger and hashSet for the rest', async () => {
+    it('should use hashSetWithExpire for every trigger so the TTL is always set', async () => {
       mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([
         { id: WORKSPACE_1 },
@@ -201,50 +201,42 @@ describe('WorkflowCronTriggerCronJob', () => {
           },
         ]);
 
-      const callOrder: string[] = [];
-
-      mockCacheStorageService.hashSetWithExpire.mockImplementation(
-        ({ field }) => {
-          callOrder.push(`hashSetWithExpire:${field}`);
-        },
-      );
-      mockCacheStorageService.hashSet.mockImplementation(({ field }) => {
-        callOrder.push(`hashSet:${field}`);
-      });
-
       await job.handle();
 
+      // hashSet must never be called during a rebuild: any non-atomic write
+      // could recreate the key without a TTL if it was flushed/evicted
+      // mid-rebuild, leaving cron workflows permanently stuck.
+      expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
+
       expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledTimes(
-        1,
+        2,
       );
-      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledWith({
-        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        field: 'workflow-1',
-        value: JSON.stringify({
-          workspaceId: WORKSPACE_1,
-          workflowId: 'workflow-1',
-          pattern: '* * * * *',
-        }),
-        ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
-      });
-
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledTimes(1);
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
-        key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        field: 'workflow-2',
-        value: JSON.stringify({
-          workspaceId: WORKSPACE_3,
-          workflowId: 'workflow-2',
-          pattern: '* * * * *',
-        }),
-      });
-
-      // Guarantees the cache key is never observable without a TTL: the very
-      // first write (the one that creates the key) is atomic with PEXPIRE.
-      expect(callOrder).toEqual([
-        'hashSetWithExpire:workflow-1',
-        'hashSet:workflow-2',
-      ]);
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenNthCalledWith(
+        1,
+        {
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: 'workflow-1',
+          value: JSON.stringify({
+            workspaceId: WORKSPACE_1,
+            workflowId: 'workflow-1',
+            pattern: '* * * * *',
+          }),
+          ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
+        },
+      );
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenNthCalledWith(
+        2,
+        {
+          key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
+          field: 'workflow-2',
+          value: JSON.stringify({
+            workspaceId: WORKSPACE_3,
+            workflowId: 'workflow-2',
+            pattern: '* * * * *',
+          }),
+          ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
+        },
+      );
     });
 
     it('should not write to cache when no workspaces have cron triggers', async () => {
