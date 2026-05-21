@@ -49,6 +49,15 @@ export const STATIC_WEBSITE_ROUTES = [
     indexed: true,
   },
   {
+    id: 'partnersList',
+    path: '/partners/list',
+    title: msg`Find a Twenty Partner — Certified Open Source CRM Implementers`,
+    description: msg`Browse Twenty's certified partner network: regional coverage, languages, deployment expertise, and direct booking links.`,
+    changeFrequency: 'weekly',
+    priority: 0.7,
+    indexed: true,
+  },
+  {
     id: 'releases',
     path: '/releases',
     title: msg`Twenty Releases — What's New in the Open Source CRM`,
