@@ -43,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # varsayılan
 
 <Warning>
 Her bir değişken, yönetici panelinizde **Ayarlar → Yönetici Paneli → Konfigürasyon Değişkenleri** altında açıklamalarla belgelenir.
-Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve uygulama gizli anahtarları (`APP_SECRET`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
+Veritabanı bağlantıları (`PG_DATABASE_URL`), sunucu URL'leri (`SERVER_URL`) ve gizli anahtarlar (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) gibi bazı altyapı ayarları yalnızca `.env` dosyası aracılığıyla yapılandırılabilir.
 
 [Tam teknik referans →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Şifreleme anahtarları
+
+Twenty yalnızca ortam değişkenleriyle yapılandırılan iki şifreleme anahtarı kullanır:
+
+| Değişken                  | Amaç                                                                                                                                                                                                              | Zorunlu                                                                                                             |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Dinlenik durumdaki gizli verileri şifrelemek için kullanılan birincil anahtar (OAuth belirteçleri, uygulama değişkenleri, imzalama anahtarlarının özel anahtarları, TOTP sırları, hassas yapılandırma değerleri). | Yeni kurulumlar için evet (eski kurulumlar bunun yerine aşağıda açıklandığı gibi `APP_SECRET`'e dayanıyor olabilir) |
+| `FALLBACK_ENCRYPTION_KEY` | Yalnızca doğrulama için kullanılan anahtar. Döndürme sırasında, mevcut satırların şifresinin çözülebilir kalması için *önceki* `ENCRYPTION_KEY` değerine ayarlanır.                                               | Yalnızca döndürme sırasında                                                                                         |
+
+Geriye dönük uyumluluk için, `ENCRYPTION_KEY` ayarlanmadıysa, Twenty dinlenik durumdaki şifreleme için `APP_SECRET`'e geri döner — bu, daha eski dağıtımlardaki eski davranışla eşleşir. Yeni kurulumlarda her zaman özel bir `ENCRYPTION_KEY` ayarlanmalıdır.
+
+Değerleri `openssl rand -base64 32` ile oluşturun ve onları güvenli bir yerde saklayın (bir gizli yönetim sistemi, mühürlü yapılandırma vb.). `ENCRYPTION_KEY`'in kaybedilmesi, veritabanında saklanan tüm gizli bilgilere erişimin kaybedilmesi anlamına gelir.
+
+`ENCRYPTION_KEY`'i kesinti olmadan döndürmek için [Anahtar döndürme rehberi](/l/tr/developers/self-host/capabilities/key-rotation) bölümüne bakın.
 
 ## 2. Yalnızca Ortam Değişkenleriyle Yapılandırma
 

@@ -37,6 +37,43 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
     },
   },
+  {
+    title: 'when builtComponentPath contains path traversal',
+    context: {
+      input: {
+        name: 'TraversalTest',
+        componentName: 'TraversalTest',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath:
+          '../../../other-workspace/other-app/BuiltFrontComponent/stolen.mjs',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
+  {
+    title: 'when sourceComponentPath contains path traversal',
+    context: {
+      input: {
+        name: 'TraversalTest',
+        componentName: 'TraversalTest',
+        sourceComponentPath: '../../etc/passwd',
+        builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
+  {
+    title: 'when builtComponentPath is an absolute path',
+    context: {
+      input: {
+        name: 'AbsolutePathTest',
+        componentName: 'AbsolutePathTest',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: '/etc/passwd',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
 ];
 
 describe('Front component creation should fail', () => {

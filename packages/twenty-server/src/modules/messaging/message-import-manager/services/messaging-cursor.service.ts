@@ -26,37 +26,41 @@ export class MessagingCursorService {
   ) {
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      if (!folderId) {
-        await this.messageChannelRepository.update(
-          { id: messageChannel.id, workspaceId },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-            syncCursor:
-              !messageChannel.syncCursor ||
-              nextSyncCursor > messageChannel.syncCursor
-                ? nextSyncCursor
-                : messageChannel.syncCursor,
-          },
-        );
-      } else {
-        await this.messageFolderRepository.update(
-          { id: folderId, workspaceId },
-          {
-            syncCursor: nextSyncCursor,
-          },
-        );
-        await this.messageChannelRepository.update(
-          { id: messageChannel.id, workspaceId },
-          {
-            throttleFailureCount: 0,
-            throttleRetryAfter: null,
-            syncStageStartedAt: null,
-          },
-        );
-      }
-    }, authContext);
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        if (!folderId) {
+          await this.messageChannelRepository.update(
+            { id: messageChannel.id, workspaceId },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+              syncCursor:
+                !messageChannel.syncCursor ||
+                nextSyncCursor > messageChannel.syncCursor
+                  ? nextSyncCursor
+                  : messageChannel.syncCursor,
+            },
+          );
+        } else {
+          await this.messageFolderRepository.update(
+            { id: folderId, workspaceId },
+            {
+              syncCursor: nextSyncCursor,
+            },
+          );
+          await this.messageChannelRepository.update(
+            { id: messageChannel.id, workspaceId },
+            {
+              throttleFailureCount: 0,
+              throttleRetryAfter: null,
+              syncStageStartedAt: null,
+            },
+          );
+        }
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

@@ -43,7 +43,7 @@ Das Scaffolding-Tool bietet an, einen für Sie zu starten:
 > **Möchten Sie eine lokale Twenty-Instanz einrichten?**
 
 * **Ja (empfohlen)** — lädt das Docker-Image `twentycrm/twenty-app-dev` herunter und startet es auf Port `2020`. Stellen Sie sicher, dass Docker läuft.
-* **Nein** — wählen Sie dies, wenn Sie bereits einen Twenty-Server haben, mit dem Sie sich verbinden möchten. Sie können die Verbindung später mit `yarn twenty remote add` herstellen.
+* **Nein** — wählen Sie dies, wenn Sie bereits einen Twenty-Server haben, mit dem Sie sich verbinden möchten. Sie können die Verbindung später mit `yarn twenty remote:add` herstellen.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Soll die lokale Instanz gestartet werden?" />
@@ -73,7 +73,7 @@ Ihr Terminal bestätigt, dass alles eingerichtet ist.
 **Nach dieser Phase:** Sie haben einen laufenden Twenty-Server unter [http://localhost:2020](http://localhost:2020), und Ihre CLI ist autorisiert, mit ihm zu synchronisieren.
 
 <Note>
-Wenn Docker nicht installiert ist oder nicht läuft, zeigt das Scaffolding-Tool den richtigen Startbefehl für Ihr Betriebssystem an. Sobald Docker läuft, können Sie mit `yarn twenty server start` fortfahren — ein erneutes Scaffolding ist nicht nötig.
+Wenn Docker nicht installiert ist oder nicht läuft, zeigt das Scaffolding-Tool den richtigen Startbefehl für Ihr Betriebssystem an. Sobald Docker läuft, können Sie mit `yarn twenty docker:start` fortfahren — ein erneutes Scaffolding ist nicht nötig.
 </Note>
 
 ---
@@ -137,20 +137,6 @@ Beide Modi benötigen ein authentifiziertes Remote-Repository.
 | `--once`                              | Einmal erstellen und synchronisieren, dann beenden.                                 |
 | `--debounceMs \<ms>` | Legt die Entprellzeit für Dateiänderungen in Millisekunden fest (Standard: `2000`). |
 | `--verbose` / `--debug`               | Zeigt ausführliche Build-Protokolle, Sync-Anfragen und Fehler-Traces an.            |
-
----
-
-## Mit einem Beispiel beginnen
-
-Verwenden Sie `--example`, um mit einem vollständigeren Projekt zu starten (benutzerdefinierte Objekte, Felder, Logikfunktionen, Frontend-Komponenten):
-
-```bash filename="Terminal"
-npx create-twenty-app@latest my-twenty-app --example postcard
-```
-
-Die Beispiele befinden sich unter [twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples). Sie können auch einzelne Entitäten in einem bestehenden Projekt mit `yarn twenty add` erzeugen — siehe [Scaffolding](/l/de/developers/extend/apps/getting-started/scaffolding).
-
----
 
 ## Was Sie erstellen können
 

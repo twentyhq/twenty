@@ -31,6 +31,18 @@ Twenty, **v1.22** sürümünden itibaren sürümler arası yükseltmeleri destek
 
 Örneğin, v1.22'den doğrudan v2.0'a yükseltme tamamen desteklenir.
 
+## v2.5+ sürümüne yükseltme — bekleme hâlindeki şifreleme zarfı
+
+**v2.5** ile birlikte, Twenty beklemede olan gizli verileri (OAuth belirteçleri, uygulama değişkenleri, imzalama için kullanılan özel anahtarlar, hassas yapılandırma değerleri, TOTP sırları) sürümlendirilmiş ve `ENCRYPTION_KEY` (veya `ENCRYPTION_KEY` ayarlı değilse `APP_SECRET`) ile şifrelenmiş bir `enc:v2:` zarfının içinde saklar.
+
+v2.5 sürümündeki ilk açılış, mevcut satırları yeni zarfa **geri dolduran** yavaş yükseltme komutlarını çalıştırır. Bunlar idempotandır — sunucuyu durdurup yeniden başlattığınızda kaldığı yerden devam eder — ancak büyük veritabanlarında biraz zaman alabilirler. İlerlemeyi `upgrade:status` ile izleyebilirsiniz.
+
+Geri doldurmanın, en başından itibaren satırları onun altında yazabilmesi için, v2.5 yükseltmesinden **önce** özel bir `ENCRYPTION_KEY` ayarlamalısınız. Geri doldurmadan sonra anahtarları değiştirmek bir [anahtar döndürme](/l/tr/developers/self-host/capabilities/key-rotation) gerektirir.
+
+## Gizli verilerin ve imzalama anahtarlarının döndürülmesi
+
+`ENCRYPTION_KEY` döndürme, JWT imzalama anahtarını döndürme veya sızdırılmış bir imzalama anahtarını iptal etme gibi günlük operasyonel görevler için özel [Anahtar döndürme kılavuzu](/l/tr/developers/self-host/capabilities/key-rotation) bölümüne bakın.
+
 ## Yükseltme durumunu kontrol etme
 
 `upgrade:status` komutu, örneğinizin ve çalışma alanı migrasyonlarının mevcut durumunu incelemenizi sağlar. Yükseltme sorunlarında hata ayıklamak veya bir destek talebi oluştururken kullanışlıdır.

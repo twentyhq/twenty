@@ -207,7 +207,7 @@ export class ApplicationConnectionsListService {
     }
 
     try {
-      const tokens = await this.refreshTokensService.refreshAndSaveTokens(
+      const tokens = await this.refreshTokensService.resolveTokens(
         account,
         workspaceId,
       );

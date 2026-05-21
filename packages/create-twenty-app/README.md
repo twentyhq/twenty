@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://twenty.com">
     <picture>
-      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-website-new/public/images/core/logo.svg" height="128">
+      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-website/public/images/core/logo.svg" height="128">
     </picture>
   </a>
   <h1>Create Twenty App</h1>
@@ -32,20 +32,11 @@ The scaffolder will:
 
 | Flag                               | Description                                                           |
 | ---------------------------------- | --------------------------------------------------------------------- |
-| `--example <name>`                 | Initialize from an example                                            |
 | `--name <name>`                    | Set the app name                                                      |
 | `--display-name <displayName>`     | Set the display name                                                  |
 | `--description <description>`      | Set the description                                                   |
-| `--api-url <url>`                  | Twenty instance URL (default: `http://localhost:2020`)                |
+| `--url <url>`                      | Twenty workspace URL (default: `http://localhost:2020`)               |
 | `--authentication-method <method>` | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote) |
-
-By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
-
-```bash
-npx create-twenty-app@latest my-twenty-app --example hello-world
-```
-
-Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples).
 
 ## Documentation
 
@@ -57,8 +48,8 @@ Full documentation is available at **[docs.twenty.com/developers/extend/apps](ht
 
 ## Troubleshooting
 
-- Server not starting: check Docker is running (`docker info`), then try `yarn twenty server logs`.
-- Auth not working: run `yarn twenty remote add --local` to re-authenticate.
+- Server not starting: check Docker is running (`docker info`), then try `yarn twenty docker:logs`.
+- Auth not working: run `yarn twenty remote:add --local` to re-authenticate.
 - Types not generated: ensure `yarn twenty dev` is running — it auto-generates the typed client.
 
 ## Contributing

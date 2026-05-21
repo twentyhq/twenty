@@ -65,142 +65,146 @@ export class CalendarEventsImportService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      let calendarEvents: FetchedCalendarEvent[] = [];
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        let calendarEvents: FetchedCalendarEvent[] = [];
 
-      try {
-        if (fetchedCalendarEvents) {
-          calendarEvents = fetchedCalendarEvents;
-        } else {
-          const eventIdsToFetch: string[] = await this.cacheStorage.setPop(
-            `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
-            CALENDAR_EVENT_IMPORT_BATCH_SIZE,
-          );
+        try {
+          if (fetchedCalendarEvents) {
+            calendarEvents = fetchedCalendarEvents;
+          } else {
+            const eventIdsToFetch: string[] = await this.cacheStorage.setPop(
+              `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
+              CALENDAR_EVENT_IMPORT_BATCH_SIZE,
+            );
 
-          if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
-            await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
+            if (!eventIdsToFetch || eventIdsToFetch.length === 0) {
+              await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
+                [calendarChannel.id],
+                workspaceId,
+              );
+
+              return;
+            }
+
+            switch (connectedAccount.provider) {
+              case 'microsoft':
+                calendarEvents =
+                  await this.microsoftCalendarImportEventService.getCalendarEvents(
+                    connectedAccount,
+                    eventIdsToFetch,
+                  );
+                break;
+              default:
+                break;
+            }
+          }
+
+          if (!calendarEvents || calendarEvents?.length === 0) {
+            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
               [calendarChannel.id],
               workspaceId,
             );
-
-            return;
           }
 
-          switch (connectedAccount.provider) {
-            case 'microsoft':
-              calendarEvents =
-                await this.microsoftCalendarImportEventService.getCalendarEvents(
-                  connectedAccount,
-                  eventIdsToFetch,
-                );
-              break;
-            default:
-              break;
-          }
-        }
+          const userWorkspace = await this.userWorkspaceRepository.findOne({
+            where: {
+              id: (connectedAccount as unknown as { userWorkspaceId: string })
+                .userWorkspaceId,
+            },
+          });
 
-        if (!calendarEvents || calendarEvents?.length === 0) {
-          await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
+          const workspaceMemberRepository =
+            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+              workspaceId,
+              'workspaceMember',
+              { shouldBypassPermissionChecks: true },
+            );
+
+          const workspaceMember = userWorkspace
+            ? await workspaceMemberRepository.findOne({
+                where: { userId: userWorkspace.userId },
+              })
+            : null;
+
+          const blocklist = workspaceMember
+            ? await this.blocklistRepository.getByWorkspaceMemberId(
+                workspaceMember.id,
+                workspaceId,
+              )
+            : [];
+
+          if (!isDefined(connectedAccount.handleAliases)) {
+            connectedAccount.handleAliases =
+              await this.emailAliasManagerService.refreshHandleAliases(
+                connectedAccount,
+                workspaceId,
+              );
+          }
+
+          if (
+            !isDefined(connectedAccount.handleAliases) ||
+            !isDefined(calendarChannel.handle)
+          ) {
+            throw new CalendarEventImportDriverException(
+              'Calendar channel handle or Handle aliases are required',
+              CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
+            );
+          }
+
+          const { filteredEvents, cancelledEvents } =
+            filterEventsAndReturnCancelledEvents(
+              [calendarChannel.handle, ...connectedAccount.handleAliases],
+              calendarEvents,
+              blocklist.map((blocklist) => blocklist.handle ?? ''),
+            );
+
+          const cancelledEventExternalIds = cancelledEvents.map(
+            (event) => event.id,
+          );
+
+          const BATCH_SIZE = 1000;
+
+          for (let i = 0; i < filteredEvents.length; i = i + BATCH_SIZE) {
+            const eventsBatch = filteredEvents.slice(i, i + BATCH_SIZE);
+
+            await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
+              eventsBatch,
+              calendarChannel,
+              connectedAccount,
+              workspaceId,
+            );
+          }
+          const calendarChannelEventAssociationRepository =
+            await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
+              workspaceId,
+              'calendarChannelEventAssociation',
+            );
+
+          await calendarChannelEventAssociationRepository.delete({
+            eventExternalId: Any(cancelledEventExternalIds),
+            calendarChannelId: calendarChannel.id,
+          });
+
+          await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
+            workspaceId,
+          );
+
+          await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
             [calendarChannel.id],
             workspaceId,
           );
-        }
-
-        const userWorkspace = await this.userWorkspaceRepository.findOne({
-          where: {
-            id: (connectedAccount as unknown as { userWorkspaceId: string })
-              .userWorkspaceId,
-          },
-        });
-
-        const workspaceMemberRepository =
-          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-            workspaceId,
-            'workspaceMember',
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const workspaceMember = userWorkspace
-          ? await workspaceMemberRepository.findOne({
-              where: { userId: userWorkspace.userId },
-            })
-          : null;
-
-        const blocklist = workspaceMember
-          ? await this.blocklistRepository.getByWorkspaceMemberId(
-              workspaceMember.id,
-              workspaceId,
-            )
-          : [];
-
-        const refreshedHandleAliases =
-          await this.emailAliasManagerService.refreshHandleAliases(
-            connectedAccount,
-            workspaceId,
-          );
-
-        connectedAccount.handleAliases = refreshedHandleAliases;
-
-        if (
-          !isDefined(connectedAccount.handleAliases) ||
-          !isDefined(calendarChannel.handle)
-        ) {
-          throw new CalendarEventImportDriverException(
-            'Calendar channel handle or Handle aliases are required',
-            CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
-          );
-        }
-
-        const { filteredEvents, cancelledEvents } =
-          filterEventsAndReturnCancelledEvents(
-            [calendarChannel.handle, ...connectedAccount.handleAliases],
-            calendarEvents,
-            blocklist.map((blocklist) => blocklist.handle ?? ''),
-          );
-
-        const cancelledEventExternalIds = cancelledEvents.map(
-          (event) => event.id,
-        );
-
-        const BATCH_SIZE = 1000;
-
-        for (let i = 0; i < filteredEvents.length; i = i + BATCH_SIZE) {
-          const eventsBatch = filteredEvents.slice(i, i + BATCH_SIZE);
-
-          await this.calendarSaveEventsService.saveCalendarEventsAndEnqueueContactCreationJob(
-            eventsBatch,
+        } catch (error) {
+          await this.calendarEventImportErrorHandlerService.handleDriverException(
+            error,
+            CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT,
             calendarChannel,
-            connectedAccount,
             workspaceId,
           );
         }
-        const calendarChannelEventAssociationRepository =
-          await this.globalWorkspaceOrmManager.getRepository<CalendarChannelEventAssociationWorkspaceEntity>(
-            workspaceId,
-            'calendarChannelEventAssociation',
-          );
-
-        await calendarChannelEventAssociationRepository.delete({
-          eventExternalId: Any(cancelledEventExternalIds),
-          calendarChannelId: calendarChannel.id,
-        });
-
-        await this.calendarEventCleanerService.cleanWorkspaceCalendarEvents(
-          workspaceId,
-        );
-
-        await this.calendarChannelSyncStatusService.markAsCompletedAndMarkAsCalendarEventListFetchPending(
-          [calendarChannel.id],
-          workspaceId,
-        );
-      } catch (error) {
-        await this.calendarEventImportErrorHandlerService.handleDriverException(
-          error,
-          CalendarEventImportSyncStep.CALENDAR_EVENTS_IMPORT,
-          calendarChannel,
-          workspaceId,
-        );
-      }
-    }, authContext);
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

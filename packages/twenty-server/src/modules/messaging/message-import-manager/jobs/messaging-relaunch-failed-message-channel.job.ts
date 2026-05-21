@@ -36,32 +36,36 @@ export class MessagingRelaunchFailedMessageChannelJob {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const messageChannel = await this.messageChannelRepository.findOne({
-        where: {
-          id: messageChannelId,
-          workspaceId,
-        },
-      });
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const messageChannel = await this.messageChannelRepository.findOne({
+          where: {
+            id: messageChannelId,
+            workspaceId,
+          },
+        });
 
-      if (
-        !messageChannel ||
-        messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
-        messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
-      ) {
-        return;
-      }
+        if (
+          !messageChannel ||
+          messageChannel.syncStage !== MessageChannelSyncStage.FAILED ||
+          messageChannel.syncStatus !== MessageChannelSyncStatus.FAILED_UNKNOWN
+        ) {
+          return;
+        }
 
-      await this.messageChannelRepository.update(
-        { id: messageChannelId, workspaceId },
-        {
-          syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
-          syncStatus: MessageChannelSyncStatus.ACTIVE,
-          throttleFailureCount: 0,
-          throttleRetryAfter: null,
-          syncStageStartedAt: null,
-        },
-      );
-    }, authContext);
+        await this.messageChannelRepository.update(
+          { id: messageChannelId, workspaceId },
+          {
+            syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+            syncStatus: MessageChannelSyncStatus.ACTIVE,
+            throttleFailureCount: 0,
+            throttleRetryAfter: null,
+            syncStageStartedAt: null,
+          },
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

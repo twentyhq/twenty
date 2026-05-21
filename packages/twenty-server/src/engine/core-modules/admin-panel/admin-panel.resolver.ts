@@ -66,6 +66,7 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { MODEL_FAMILY_LABELS } from 'src/engine/metadata-modules/ai/ai-models/constants/model-family-labels.const';
+import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { DefaultAiCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/default-ai-catalog.service';
 import { ModelsDevCatalogService } from 'src/engine/metadata-modules/ai/ai-models/services/models-dev-catalog.service';
@@ -108,6 +109,7 @@ export class AdminPanelResolver {
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly aiModelRegistryService: AiModelRegistryService,
+    private readonly aiModelPreferencesService: AiModelPreferencesService,
     private readonly defaultAiCatalogService: DefaultAiCatalogService,
     private readonly modelsDevCatalogService: ModelsDevCatalogService,
     private readonly usageAnalyticsService: UsageAnalyticsService,
@@ -263,7 +265,7 @@ export class AdminPanelResolver {
         }),
       );
 
-    const prefs = this.twentyConfigService.get('AI_MODEL_PREFERENCES');
+    const prefs = this.aiModelPreferencesService.getPreferences();
 
     return {
       models,

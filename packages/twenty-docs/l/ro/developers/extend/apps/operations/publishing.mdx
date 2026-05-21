@@ -18,10 +18,10 @@ Ambele căi pornesc din aceeași etapă de **build**.
 Rulează comanda `build` pentru a compila aplicația și a genera un `manifest.json` pregătit pentru distribuire:
 
 ```bash filename="Terminal"
-yarn twenty build
+yarn twenty dev:build
 ```
 
-Aceasta compilează sursele TypeScript, transpilează funcțiile de logică și componentele de front-end și scrie totul în `.twenty/output/`. Adaugă `--tarball` pentru a produce și un pachet `.tgz` pentru distribuire manuală sau pentru comanda de deploy.
+Aceasta compilează sursele TypeScript, transpilează funcțiile de logică și componentele de front-end și scrie totul în `.twenty/output/`. Adaugă `--tarball` pentru a produce și un pachet `.tgz` pentru distribuire manuală sau pentru comanda de publish.
 
 ## Implementare pe un server (tarball)
 
@@ -34,7 +34,7 @@ Pentru aplicațiile pe care nu le dorești disponibile public — instrumente pr
 Adaugă un remote:
 
 ```bash filename="Terminal"
-yarn twenty remote add --api-url https://your-twenty-server.com --as production
+yarn twenty remote:add --url https://your-twenty-server.com --as production
 ```
 
 ### Implementare
@@ -42,9 +42,9 @@ yarn twenty remote add --api-url https://your-twenty-server.com --as production
 Construiește și încarcă aplicația ta pe server într-un singur pas:
 
 ```bash filename="Terminal"
-yarn twenty deploy
+yarn twenty app:publish --private
 # To deploy to a specific remote:
-# yarn twenty deploy --remote production
+# yarn twenty app:publish --private --remote production
 ```
 
 ### Partajarea unei aplicații implementate
@@ -68,7 +68,7 @@ Când actualizezi o aplicație tarball deja implementată, serverul solicită ca
 Pentru a lansa o actualizare:
 
 1. Incrementează câmpul `version` din `package.json` (de ex. `1.2.3` → `1.2.4`, `1.3.0` sau `2.0.0`)
-2. Rulează `yarn twenty deploy` (sau `yarn twenty deploy --remote production`)
+2. Rulează `yarn twenty app:publish --private` (sau `yarn twenty app:publish --private --remote production`)
 3. Spațiile de lucru care au aplicația instalată vor vedea actualizarea disponibilă în setările lor
 
 <Note>
@@ -121,7 +121,7 @@ Rulează testele de integrare la fiecare push pe `main` și la fiecare pull requ
 **Ce face:**
 
 1. Preia codul sursă al aplicației.
-2. Pornește o instanță de test Twenty izolată folosind acțiunea compozită `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (echivalentul din CI al `yarn twenty server start --test`).
+2. Pornește o instanță de test Twenty izolată folosind acțiunea compozită `twentyhq/twenty/.github/actions/spawn-twenty-app-dev-test@main` (echivalentul din CI al `yarn twenty docker:start --test`).
 3. Activează Corepack, configurează Node.js pe baza fișierului `.nvmrc` și instalează dependențele cu `yarn install --immutable`.
 4. Rulează `yarn test`, transmitând `TWENTY_API_URL` și `TWENTY_API_KEY` din instanța pornită, astfel încât testele să poată comunica cu un server real.
 
@@ -139,7 +139,7 @@ Implementează aplicația pe un server Twenty configurat la fiecare push pe `mai
 **Ce face:**
 
 1. Preia head-ul PR-ului (pentru PR-urile etichetate) sau commitul împins.
-2. Rulează `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — echivalentul din CI al `yarn twenty deploy`.
+2. Rulează `twentyhq/twenty/.github/actions/deploy-twenty-app@main` — echivalentul din CI al `yarn twenty app:publish --private`.
 3. Rulează `twentyhq/twenty/.github/actions/install-twenty-app@main` astfel încât versiunea nou implementată să fie instalată în spațiul de lucru țintă.
 
 **Configurare necesară:**
@@ -208,13 +208,13 @@ Capturile de ecran cu orice raport de aspect sunt afișate integral și nu sunt 
 ### Publicare
 
 ```bash filename="Terminal"
-yarn twenty publish
+yarn twenty app:publish
 ```
 
 Pentru a publica sub un dist-tag specific (de ex., `beta` sau `next`):
 
 ```bash filename="Terminal"
-yarn twenty publish --tag beta
+yarn twenty app:publish --tag beta
 ```
 
 ### Cum funcționează descoperirea în marketplace
@@ -224,9 +224,9 @@ Serverul Twenty sincronizează catalogul marketplace-ului din registrul npm **la
 Poți declanșa sincronizarea imediat, în loc să aștepți:
 
 ```bash filename="Terminal"
-yarn twenty server catalog-sync
+yarn twenty dev:catalog-sync
 # To target a specific remote:
-# yarn twenty server catalog-sync --remote production
+# yarn twenty dev:catalog-sync --remote production
 ```
 
 Metadatele afișate în marketplace provin din configurația `defineApplication()` — câmpuri precum `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` și `termsUrl`.
@@ -259,12 +259,12 @@ jobs:
           node-version: "24"
           registry-url: https://registry.npmjs.org
       - run: yarn install --immutable
-      - run: npx twenty build
+      - run: npx twenty dev:build
       - run: npm publish --provenance --access public
         working-directory: .twenty/output
 ```
 
-Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `yarn twenty build`, apoi `npm publish` din `.twenty/output`.
+Pentru alte sisteme CI (GitLab CI, CircleCI etc.), se aplică aceleași trei comenzi: `yarn install`, `yarn twenty dev:build`, apoi `npm publish` din `.twenty/output`.
 
 <Note>
 **npm provenance** este opțională, dar recomandată. Publicarea cu `--provenance` adaugă un badge de încredere la listarea ta în npm, permițând utilizatorilor să verifice că pachetul a fost construit dintr-un commit specific într-un pipeline CI public. Vezi [documentația npm provenance](https://docs.npmjs.com/generating-provenance-statements) pentru instrucțiuni de configurare.
@@ -281,7 +281,7 @@ Mergi la pagina **Setări > Aplicații** din Twenty, unde pot fi parcurse și in
 Poți instala aplicații și din linia de comandă:
 
 ```bash filename="Terminal"
-yarn twenty install
+yarn twenty app:install
 ```
 
 <Note>
@@ -290,5 +290,5 @@ Serverul impune versionarea semver la instalare, reflectând regulile de la depl
 * Instalarea aceleiași versiuni care este deja instalată în spațiul tău de lucru este respinsă cu o eroare `APP_ALREADY_INSTALLED`.
 * Instalarea unei versiuni mai mici decât cea instalată în prezent este respinsă cu o eroare `CANNOT_DOWNGRADE_APPLICATION`.
 
-Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `yarn twenty install`.
+Pentru a instala o versiune mai nouă, fă mai întâi deploy sau public-o, apoi rulează din nou `yarn twenty app:install`.
 </Note>

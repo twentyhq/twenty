@@ -3,7 +3,6 @@ import {
   MessageChannelType,
   MessageChannelVisibility,
 } from 'twenty-shared/types';
-import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
 
 type MessageChannelDataSeed = {
   id: string;
@@ -12,7 +11,6 @@ type MessageChannelDataSeed = {
   deletedAt: Date | null;
   isContactAutoCreationEnabled: boolean;
   type: MessageChannelType;
-  connectedAccountId: string;
   handle: string;
   isSyncEnabled: boolean;
   visibility: MessageChannelVisibility;
@@ -27,7 +25,6 @@ export const MESSAGE_CHANNEL_DATA_SEED_COLUMNS: (keyof MessageChannelDataSeed)[]
     'deletedAt',
     'isContactAutoCreationEnabled',
     'type',
-    'connectedAccountId',
     'handle',
     'isSyncEnabled',
     'visibility',
@@ -57,7 +54,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     deletedAt: null,
     isContactAutoCreationEnabled: true,
     type: MessageChannelType.EMAIL,
-    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM,
     handle: 'tim@apple.dev',
     isSyncEnabled: false,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -70,7 +66,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     deletedAt: null,
     isContactAutoCreationEnabled: true,
     type: MessageChannelType.EMAIL,
-    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JONY,
     handle: 'jony.ive@apple.dev',
     isSyncEnabled: false,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -83,7 +78,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     deletedAt: null,
     isContactAutoCreationEnabled: true,
     type: MessageChannelType.EMAIL,
-    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.PHIL,
     handle: 'phil.schiler@apple.dev',
     isSyncEnabled: false,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -96,7 +90,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     deletedAt: null,
     isContactAutoCreationEnabled: true,
     type: MessageChannelType.EMAIL,
-    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.JANE,
     handle: 'jane.austen@apple.dev',
     isSyncEnabled: false,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -109,7 +102,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     deletedAt: null,
     isContactAutoCreationEnabled: true,
     type: MessageChannelType.EMAIL,
-    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM, // Use TIM's connected account for shared inbox
     handle: 'support@apple.dev',
     isSyncEnabled: false,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
@@ -122,7 +114,6 @@ export const MESSAGE_CHANNEL_DATA_SEEDS: MessageChannelDataSeed[] = [
     deletedAt: null,
     isContactAutoCreationEnabled: true,
     type: MessageChannelType.EMAIL,
-    connectedAccountId: CONNECTED_ACCOUNT_DATA_SEED_IDS.TIM, // Use TIM's connected account for shared inbox
     handle: 'sales@apple.dev',
     isSyncEnabled: false,
     visibility: MessageChannelVisibility.SHARE_EVERYTHING,
