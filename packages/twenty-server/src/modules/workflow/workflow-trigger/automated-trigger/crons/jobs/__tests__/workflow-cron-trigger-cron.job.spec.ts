@@ -31,8 +31,7 @@ const mockExceptionHandlerService = {
 
 const mockCacheStorageService = {
   hashGetValues: jest.fn(),
-  hashSet: jest.fn(),
-  expire: jest.fn(),
+  hashSetWithExpire: jest.fn(),
 };
 
 describe('WorkflowCronTriggerCronJob', () => {
@@ -155,7 +154,7 @@ describe('WorkflowCronTriggerCronJob', () => {
 
       await job.handle();
 
-      expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.hashSetWithExpire).not.toHaveBeenCalled();
     });
   });
 
@@ -175,7 +174,7 @@ describe('WorkflowCronTriggerCronJob', () => {
       expect(mockCoreDataSource.query).toHaveBeenCalledTimes(3);
     });
 
-    it('should write each trigger to cache immediately and set TTL', async () => {
+    it('should write each trigger to cache atomically with TTL', async () => {
       mockCacheStorageService.hashGetValues.mockResolvedValue([]);
       mockWorkspaceRepository.find.mockResolvedValue([
         { id: WORKSPACE_1 },
@@ -202,8 +201,10 @@ describe('WorkflowCronTriggerCronJob', () => {
 
       await job.handle();
 
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledTimes(2);
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledTimes(
+        2,
+      );
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledWith({
         key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
         field: 'workflow-1',
         value: JSON.stringify({
@@ -211,8 +212,9 @@ describe('WorkflowCronTriggerCronJob', () => {
           workflowId: 'workflow-1',
           pattern: '* * * * *',
         }),
+        ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
       });
-      expect(mockCacheStorageService.hashSet).toHaveBeenCalledWith({
+      expect(mockCacheStorageService.hashSetWithExpire).toHaveBeenCalledWith({
         key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
         field: 'workflow-2',
         value: JSON.stringify({
@@ -220,11 +222,8 @@ describe('WorkflowCronTriggerCronJob', () => {
           workflowId: 'workflow-2',
           pattern: '* * * * *',
         }),
+        ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
       });
-      expect(mockCacheStorageService.expire).toHaveBeenCalledWith(
-        WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
-      );
     });
 
     it('should not write to cache when no workspaces have cron triggers', async () => {
@@ -234,8 +233,7 @@ describe('WorkflowCronTriggerCronJob', () => {
 
       await job.handle();
 
-      expect(mockCacheStorageService.hashSet).not.toHaveBeenCalled();
-      expect(mockCacheStorageService.expire).not.toHaveBeenCalled();
+      expect(mockCacheStorageService.hashSetWithExpire).not.toHaveBeenCalled();
     });
   });
 

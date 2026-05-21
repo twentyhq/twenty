@@ -125,20 +125,18 @@ export class WorkflowCronTriggerCronJob {
       );
 
       for (const trigger of triggersToCache) {
-        await this.cacheStorageService.hashSet({
+        // Atomic HSET + PEXPIRE so the cache key can never exist without a
+        // TTL. If the worker crashed between hashSet and a separate expire(),
+        // the key would persist forever, every subsequent tick would take the
+        // cache-hit branch, and the DB-scan path would never run again.
+        await this.cacheStorageService.hashSetWithExpire({
           key: WORKFLOW_CRON_TRIGGER_CACHE_KEY,
           field: trigger.workflowId,
           value: JSON.stringify(trigger),
+          ttlMs: WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
         });
         triggerCount++;
       }
-    }
-
-    if (triggerCount > 0) {
-      await this.cacheStorageService.expire(
-        WORKFLOW_CRON_TRIGGER_CACHE_KEY,
-        WORKFLOW_CRON_TRIGGER_CACHE_TTL_MS,
-      );
     }
 
     this.logger.log(`Cache rebuilt with ${triggerCount} cron triggers`);
