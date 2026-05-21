@@ -3,12 +3,14 @@ import { useStore } from 'jotai';
 import { v4 } from 'uuid';
 
 import { useActivityTargetObjectRecords } from '@/activities/hooks/useActivityTargetObjectRecords';
+import { isReverseActivityTargetField } from '@/activities/utils/isReverseActivityTargetField';
+import { useUpdateReverseActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateReverseActivityTargetFromCell';
 import { useUpdateActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateActivityTargetFromCell';
 import { type NoteTarget } from '@/activities/types/NoteTarget';
 import { type TaskTarget } from '@/activities/types/TaskTarget';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { type CoreObjectNameSingular } from 'twenty-shared/types';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { isActivityTargetField } from '@/object-record/record-field-list/utils/categorizeRelationFields';
@@ -65,12 +67,28 @@ export const RelationOneToManyFieldInput = () => {
   const objectMetadataNameSingular =
     fieldDefinition.metadata.objectMetadataNameSingular;
 
+  const isReverseActivityTarget = isReverseActivityTargetField(
+    fieldName,
+    objectMetadataNameSingular ?? '',
+  );
+
   const { updateActivityTargetFromCell } = useUpdateActivityTargetFromCell({
     activityObjectNameSingular: objectMetadataNameSingular as
       | CoreObjectNameSingular.Note
       | CoreObjectNameSingular.Task,
     activityId: recordId,
   });
+
+  const { updateReverseActivityTarget } =
+    useUpdateReverseActivityTargetFromCell({
+      sourceObjectNameSingular:
+        objectMetadataNameSingular as
+          | CoreObjectNameSingular.Person
+          | CoreObjectNameSingular.Company
+          | CoreObjectNameSingular.Opportunity,
+      sourceRecordId: recordId,
+      fieldName: fieldName as 'noteTargets' | 'taskTargets',
+    });
 
   const { fieldValue } = useRelationField();
 
@@ -298,9 +316,10 @@ export const RelationOneToManyFieldInput = () => {
     ],
   );
 
-  // Disable "Add New" for activity targets and MORPH junction relations
+  // Disable "Add New" for activity targets, reverse activity targets, and MORPH junction relations
   // (For MORPH, we don't know which object type to create)
-  const canCreateNew = !isRelationFromActivityTargets && !isMorphJunction;
+  const canCreateNew =
+    !isRelationFromActivityTargets && !isReverseActivityTarget && !isMorphJunction;
 
   // For junction relations, use the target object for "Add New", not the junction object
   const objectMetadataItemIdForCreate =
@@ -314,7 +333,15 @@ export const RelationOneToManyFieldInput = () => {
       componentInstanceId={instanceId}
       onSubmit={handleSubmit}
       onChange={(morphItem) => {
-        if (isRelationFromActivityTargets) {
+        if (isReverseActivityTarget) {
+          const junctionRecords = Array.isArray(fieldValue)
+            ? (fieldValue as (NoteTarget | TaskTarget)[])
+            : [];
+          updateReverseActivityTarget({
+            morphItem,
+            junctionRecords,
+          });
+        } else if (isRelationFromActivityTargets) {
           updateActivityTargetFromCell({
             morphItem,
             activityTargetWithTargetRecords: activityTargetObjectRecords,

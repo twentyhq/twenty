@@ -11,6 +11,7 @@ import { useOpenJunctionRelationFieldInput } from '@/object-record/record-field/
 import { useOpenFilesFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenFilesFieldInput';
 import { useOpenMorphRelationManyToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationManyToOneFieldInput';
 import { useOpenMorphRelationOneToManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenMorphRelationOneToManyFieldInput';
+import { useOpenReverseActivityTargetFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenReverseActivityTargetFromManyFieldInput';
 import { useOpenRelationFromManyFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationFromManyFieldInput';
 import { useOpenRelationToOneFieldInput } from '@/object-record/record-field/ui/meta-types/input/hooks/useOpenRelationToOneFieldInput';
 import { type FieldDefinition } from '@/object-record/record-field/ui/types/FieldDefinition';
@@ -42,6 +43,9 @@ export const useOpenFieldInputEditMode = () => {
   const { openRelationToOneFieldInput } = useOpenRelationToOneFieldInput();
   const { openRelationFromManyFieldInput } =
     useOpenRelationFromManyFieldInput();
+
+  const { openReverseActivityTargetFromManyFieldInput } =
+    useOpenReverseActivityTargetFromManyFieldInput();
 
   const { openMorphRelationOneToManyFieldInput } =
     useOpenMorphRelationOneToManyFieldInput();
@@ -123,6 +127,25 @@ export const useOpenFieldInputEditMode = () => {
         openJunctionRelationFieldInput({
           fieldDefinition:
             fieldDefinition as FieldDefinition<FieldRelationMetadata>,
+          recordId,
+          prefix,
+        });
+        return;
+      }
+
+      // Reverse activity target: Person/Company/Opportunity with noteTargets/taskTargets
+      if (
+        isFieldRelationOneToMany(fieldDefinition) &&
+        ['noteTargets', 'taskTargets'].includes(
+          fieldDefinition.metadata.fieldName,
+        ) &&
+        fieldDefinition.metadata.objectMetadataNameSingular &&
+        !['note', 'task'].includes(
+          fieldDefinition.metadata.objectMetadataNameSingular,
+        )
+      ) {
+        openReverseActivityTargetFromManyFieldInput({
+          fieldName: fieldDefinition.metadata.fieldName,
           recordId,
           prefix,
         });
@@ -236,6 +259,7 @@ export const useOpenFieldInputEditMode = () => {
       openMorphRelationManyToOneFieldInput,
       openMorphRelationOneToManyFieldInput,
       openRelationFromManyFieldInput,
+      openReverseActivityTargetFromManyFieldInput,
       openRelationToOneFieldInput,
       pushFocusItemToFocusStack,
       store,

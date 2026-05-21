@@ -1,3 +1,7 @@
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { isReverseActivityTargetField } from '@/activities/utils/isReverseActivityTargetField';
+import { useUpdateReverseActivityTargetFromCell } from '@/activities/inline-cell/hooks/useUpdateReverseActivityTargetFromCell';
 import { useStore } from 'jotai';
 import { type ReactNode, useCallback, useContext } from 'react';
 import { v4 } from 'uuid';
@@ -40,6 +44,7 @@ import {
   CustomError,
   isDefined,
 } from 'twenty-shared/utils';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 
@@ -56,6 +61,7 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const { fieldMetadataId } = fieldDefinition;
   const {
     fieldName,
+    objectMetadataNameSingular,
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
@@ -74,6 +80,10 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   }
 
   const isJunctionRelation = hasJunctionConfig(fieldMetadataItem.settings);
+
+  const isReverseActivityTarget = isDefined(objectMetadataNameSingular)
+    ? isReverseActivityTargetField(fieldName, objectMetadataNameSingular)
+    : false;
 
   const relationFieldDefinition =
     fieldDefinition as FieldDefinition<FieldRelationMetadata>;
@@ -113,10 +123,24 @@ export const RecordDetailRelationSectionDropdownToMany = ({
       objectNameSingular: relationObjectMetadataNameSingular,
     });
 
+  const isNoteField = fieldName === 'noteTargets';
+
+  const reverseActivityObjectMetadataItem = isReverseActivityTarget
+    ? objectMetadataItems.find(
+        (item) =>
+          item.nameSingular ===
+          (isNoteField
+            ? CoreObjectNameSingular.Note
+            : CoreObjectNameSingular.Task),
+      )
+    : undefined;
+
   const pickerObjectMetadataItem =
-    isJunctionRelation && isDefined(junctionTargetObjectMetadata)
-      ? junctionTargetObjectMetadata
-      : relationObjectMetadataItem;
+    isReverseActivityTarget && isDefined(reverseActivityObjectMetadataItem)
+      ? reverseActivityObjectMetadataItem
+      : isJunctionRelation && isDefined(junctionTargetObjectMetadata)
+        ? junctionTargetObjectMetadata
+        : relationObjectMetadataItem;
 
   const relationFieldMetadataItem = relationObjectMetadataItem.fields.find(
     ({ id }) => id === relationFieldMetadataId,
@@ -136,7 +160,22 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   const relationRecords: ObjectRecord[] = (fieldValue as ObjectRecord[]) ?? [];
 
   const pickerRecords =
-    isJunctionRelation &&
+    isReverseActivityTarget
+      ? relationRecords
+          .map((record) => {
+            const activityRecord = isNoteField
+              ? (record as NoteTarget).note
+              : (record as TaskTarget).task;
+            if (!activityRecord?.id) {
+              return null;
+            }
+            return {
+              recordId: activityRecord.id,
+              objectMetadataId: pickerObjectMetadataItem.id,
+            };
+          })
+          .filter(Boolean) as { recordId: string; objectMetadataId: string }[]
+      : isJunctionRelation &&
     isDefined(junctionConfig) &&
     isDefined(junctionTargetObjectMetadata)
       ? extractTargetRecordsFromJunction({
@@ -197,6 +236,16 @@ export const RecordDetailRelationSectionDropdownToMany = ({
   }, [setMultipleRecordPickerSearchFilter]);
 
   const { updateRelation } = useUpdateRelationOneToManyFieldInput();
+
+  const { updateReverseActivityTarget } =
+    useUpdateReverseActivityTargetFromCell({
+      sourceObjectNameSingular: objectMetadataNameSingular as
+        | CoreObjectNameSingular.Person
+        | CoreObjectNameSingular.Company
+        | CoreObjectNameSingular.Opportunity,
+      sourceRecordId: recordId,
+      fieldName: fieldName as 'noteTargets' | 'taskTargets',
+    });
 
   const { createNewRecordAndOpenSidePanel } = useAddNewRecordAndOpenSidePanel({
     fieldMetadataItem,
@@ -362,22 +411,32 @@ export const RecordDetailRelationSectionDropdownToMany = ({
     ],
   );
 
-  const canCreateNew = !isMorphJunction;
+  const canCreateNew = !isReverseActivityTarget && !isMorphJunction;
 
   const objectMetadataItemIdForCreate =
-    isJunctionRelation && isDefined(junctionTargetObjectMetadata)
-      ? junctionTargetObjectMetadata.id
-      : relationObjectMetadataItem.id;
+    isReverseActivityTarget && isDefined(reverseActivityObjectMetadataItem)
+      ? reverseActivityObjectMetadataItem.id
+      : isJunctionRelation && isDefined(junctionTargetObjectMetadata)
+        ? junctionTargetObjectMetadata.id
+        : relationObjectMetadataItem.id;
 
   const handleChange = useCallback(
     (morphItem: Parameters<typeof updateRelation>[0]) => {
-      if (isJunctionRelation && isJunctionConfigValid) {
+      if (isReverseActivityTarget) {
+        updateReverseActivityTarget({
+          morphItem,
+          junctionRecords: relationRecords as (NoteTarget | TaskTarget)[],
+        });
+      } else if (isJunctionRelation && isJunctionConfigValid) {
         updateJunctionRelationFromCell({ morphItem });
       } else {
         updateRelation(morphItem);
       }
     },
     [
+      isReverseActivityTarget,
+      updateReverseActivityTarget,
+      relationRecords,
       isJunctionRelation,
       isJunctionConfigValid,
       updateJunctionRelationFromCell,

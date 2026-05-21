@@ -1,5 +1,8 @@
 import { useContext } from 'react';
 
+import { type NoteTarget } from '@/activities/types/NoteTarget';
+import { type TaskTarget } from '@/activities/types/TaskTarget';
+import { isReverseActivityTargetField } from '@/activities/utils/isReverseActivityTargetField';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { useAggregateRecords } from '@/object-record/hooks/useAggregateRecords';
@@ -26,6 +29,7 @@ import { indexViewIdFromObjectMetadataItemFamilySelector } from '@/views/states/
 import { useLingui } from '@lingui/react/macro';
 import {
   AppPath,
+  CoreObjectNameSingular,
   FieldMetadataType,
   ViewFilterOperand,
   type RecordGqlOperationFilter,
@@ -52,10 +56,10 @@ export const RecordDetailRelationSection = ({
 
   const {
     fieldName,
+    objectMetadataNameSingular,
     relationFieldMetadataId,
     relationObjectMetadataNameSingular,
     relationType,
-    objectMetadataNameSingular,
   } = fieldDefinition.metadata as FieldRelationMetadata;
 
   const isMobile = useIsMobile();
@@ -90,10 +94,38 @@ export const RecordDetailRelationSection = ({
   const isToOneObject = relationType === RelationType.MANY_TO_ONE;
   const isToManyObjects = relationType === RelationType.ONE_TO_MANY;
 
+  const isReverseActivityTarget = isDefined(objectMetadataNameSingular)
+    ? isReverseActivityTargetField(fieldName, objectMetadataNameSingular)
+    : false;
+
+  const isNoteField = fieldName === 'noteTargets';
+
   const relationRecords: ObjectRecord[] =
-    fieldValue && isToOneObject
-      ? [fieldValue as ObjectRecord]
-      : ((fieldValue as ObjectRecord[]) ?? []);
+    isReverseActivityTarget
+      ? ((fieldValue as (NoteTarget | TaskTarget)[] | null) ?? [])
+          .map((junction) =>
+            isNoteField
+              ? (junction as NoteTarget).note
+              : (junction as TaskTarget).task,
+          )
+          .filter(isDefined)
+      : fieldValue && isToOneObject
+        ? [fieldValue as ObjectRecord]
+        : ((fieldValue as ObjectRecord[]) ?? []);
+
+  const reverseActivityObjectMetadataItem = isReverseActivityTarget
+    ? objectMetadataItems.find(
+        (item) =>
+          item.nameSingular ===
+          (isNoteField
+            ? CoreObjectNameSingular.Note
+            : CoreObjectNameSingular.Task),
+      )
+    : undefined;
+
+  const displayRelationObjectMetadataItem = isReverseActivityTarget
+    ? (reverseActivityObjectMetadataItem ?? relationObjectMetadataItem)
+    : relationObjectMetadataItem;
 
   const dropdownId = getRecordFieldCardRelationPickerDropdownId({
     fieldDefinition,
@@ -212,7 +244,8 @@ export const RecordDetailRelationSection = ({
             recordsWithObjectNameSingular={relationRecords.map(
               (relationRecord) => ({
                 value: relationRecord,
-                objectNameSingular: relationObjectMetadataNameSingular,
+                objectNameSingular:
+                  displayRelationObjectMetadataItem.nameSingular,
                 fieldMetadataId: relationFieldMetadataId,
               }),
             )}
