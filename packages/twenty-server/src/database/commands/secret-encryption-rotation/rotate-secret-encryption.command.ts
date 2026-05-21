@@ -1,10 +1,15 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { CommandLogger } from 'src/database/commands/logger';
+import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
 
 const DEFAULT_BATCH_SIZE = 200;
 const MAX_BATCH_SIZE = 5000;
+
+const KNOWN_SITE_NAMES = Object.values(
+  SECRET_ENCRYPTION_ROTATION_SITE_NAME,
+).join(', ');
 
 type RotateSecretEncryptionCommandOptions = {
   site?: string;
@@ -32,8 +37,7 @@ export class RotateSecretEncryptionCommand extends CommandRunner {
 
   @Option({
     flags: '-s, --site <site>',
-    description:
-      'Limit rotation to a single site. Omit to run all sites. Known sites: connected-account-tokens, application-variable, application-registration-variable, signing-key-private-keys, sensitive-config-storage, totp-secrets.',
+    description: `Limit rotation to a single site. Omit to run all sites. Known sites: ${KNOWN_SITE_NAMES}.`,
     required: false,
   })
   parseSite(value: string): string {

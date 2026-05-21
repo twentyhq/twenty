@@ -10,6 +10,7 @@ import {
   type SecretEncryptionRotationSiteName,
 } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import { ColumnRotationSiteHandler } from 'src/database/commands/secret-encryption-rotation/handlers/column-rotation-site.handler';
+import { ConnectionParametersRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connection-parameters-rotation.handler';
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
 import {
   SecretEncryptionRotationHandler,
@@ -52,6 +53,7 @@ export class SecretEncryptionRotationRunnerService {
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
     secretEncryptionService: SecretEncryptionService,
+    connectionParametersRotationHandler: ConnectionParametersRotationHandler,
     sensitiveConfigStorageRotationHandler: SensitiveConfigStorageRotationHandler,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
@@ -85,6 +87,7 @@ export class SecretEncryptionRotationRunnerService {
         },
         secretEncryptionService,
       ),
+      connectionParametersRotationHandler,
       new ColumnRotationSiteHandler(
         {
           siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_VARIABLE,
