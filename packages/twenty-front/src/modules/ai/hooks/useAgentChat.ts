@@ -100,12 +100,12 @@ export const useAgentChat = (
     const lastSentBrowsingContextAtom =
       agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
     const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
-    const browsingContextChanged =
+    const isBrowsingContextChanged =
       lastSentBrowsingContext === undefined
         ? browsingContext !== null
         : JSON.stringify(browsingContext) !==
           JSON.stringify(lastSentBrowsingContext);
-    const browsingContextToSend = browsingContextChanged
+    const browsingContextToSend = isBrowsingContextChanged
       ? browsingContext
       : null;
     const messageId = v4();
@@ -163,14 +163,14 @@ export const useAgentChat = (
           threadId,
           text: contentToSend,
           messageId,
-          browsingContext: browsingContextToSend ?? null,
+          browsingContext: browsingContextToSend,
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
 
-      if (isDefined(browsingContextChanged)) {
+      if (isBrowsingContextChanged) {
         store.set(lastSentBrowsingContextAtom, browsingContext);
       }
 
