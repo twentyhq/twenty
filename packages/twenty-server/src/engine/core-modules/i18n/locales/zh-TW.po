@@ -8594,6 +8594,11 @@ msgstr "當 engineComponentKey 為 FRONT_COMPONENT_RENDERER 時，不得設定 w
 msgid "Workspace {workspaceId} is not found."
 msgstr "找不到工作區 {workspaceId}。"
 
+#. js-lingui-id: lNgTSN
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace cannot be deleted: subscription is not yet canceled."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"
