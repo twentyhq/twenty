@@ -26,7 +26,6 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
@@ -39,7 +38,6 @@ export class EmailComposerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
@@ -276,27 +274,6 @@ export class EmailComposerService {
     );
   }
 
-  private async refreshConnectedAccountTokens(
-    connectedAccount: ConnectedAccountEntity,
-    workspaceId: string,
-    messageChannelId: string,
-  ): Promise<ConnectedAccountEntity> {
-    const { accessToken, refreshToken } =
-      await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-        {
-          connectedAccount,
-          workspaceId,
-          messageChannelId,
-        },
-      );
-
-    return {
-      ...connectedAccount,
-      accessToken,
-      refreshToken,
-    };
-  }
-
   async composeEmail(
     parameters: ComposeEmailParams,
     context: ToolExecutionContext,
@@ -375,14 +352,6 @@ export class EmailComposerService {
       );
     }
 
-    const connectedAccountWithFreshTokens = isDefined(messageChannel)
-      ? await this.refreshConnectedAccountTokens(
-          connectedAccount,
-          workspaceId,
-          messageChannel.id,
-        )
-      : connectedAccount;
-
     const attachments = await this.getAttachments(
       files || [],
       workspaceId,
@@ -416,7 +385,7 @@ export class EmailComposerService {
         plainTextBody,
         sanitizedHtmlBody,
         attachments,
-        connectedAccount: connectedAccountWithFreshTokens,
+        connectedAccount,
         messageChannelId: messageChannel?.id,
         shouldPersistMessage: isDefined(messageChannel),
         inReplyTo,

@@ -1,68 +1,59 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { createTransport, type Transporter } from 'nodemailer';
-
-import type SMTPConnection from 'nodemailer/lib/smtp-connection';
-
+import { DAVClient } from 'tsdav';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
-import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
+import {
+  CalendarEventImportDriverException,
+  CalendarEventImportDriverExceptionCode,
+} from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
 
 @Injectable()
-export class SmtpClientProvider {
+export class CalDavClientProvider {
   constructor(
-    private readonly secureHttpClientService: SecureHttpClientService,
+    private readonly calDavClientService: CalDavClientService,
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  public async getClient(connectedAccountId: string): Promise<Transporter> {
+  async getClient(connectedAccountId: string): Promise<DAVClient> {
     const connectedAccount = await this.connectedAccountRepository.findOne({
       where: { id: connectedAccountId },
     });
 
     if (!isDefined(connectedAccount)) {
       throw new Error(
-        `Connected account ${connectedAccountId} not found while opening SMTP client`,
+        `Connected account ${connectedAccountId} not found while opening CalDAV client`,
       );
     }
 
     if (
       connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
-      !isDefined(connectedAccount.connectionParameters?.SMTP)
+      !isDefined(connectedAccount.connectionParameters?.CALDAV)
     ) {
-      throw new Error('Connected account is not an SMTP provider');
+      throw new CalendarEventImportDriverException(
+        `Missing CalDAV credentials for connected account ${connectedAccountId}`,
+        CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      );
     }
 
-    const smtpParams =
+    const params =
       this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
-        protocolParams: connectedAccount.connectionParameters.SMTP,
+        protocolParams: connectedAccount.connectionParameters.CALDAV,
         workspaceId: connectedAccount.workspaceId,
       });
 
-    const validatedSmtpHost =
-      await this.secureHttpClientService.getValidatedHost(smtpParams.host);
-
-    const options: SMTPConnection.Options = {
-      host: validatedSmtpHost,
-      port: smtpParams.port,
-      auth: {
-        user: smtpParams.username ?? connectedAccount.handle ?? '',
-        pass: smtpParams.password,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    };
-
-    const transporter = createTransport(options);
-
-    return transporter;
+    return this.calDavClientService.getClient({
+      serverUrl: params.host,
+      username: params.username ?? connectedAccount.handle,
+      password: params.password,
+    });
   }
 }

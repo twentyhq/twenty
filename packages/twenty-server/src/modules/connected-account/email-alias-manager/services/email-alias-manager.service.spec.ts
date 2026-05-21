@@ -8,7 +8,7 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { GoogleEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/google/services/google-email-alias-manager.service';
 import { microsoftGraphMeResponseWithProxyAddresses } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/mocks/microsoft-api-examples';
 import { MicrosoftEmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/drivers/microsoft/services/microsoft-email-alias-manager.service';
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 
 import { EmailAliasManagerService } from './email-alias-manager.service';
 
@@ -42,9 +42,9 @@ describe('Email Alias Manager Service', () => {
         },
         MicrosoftEmailAliasManagerService,
         {
-          provide: OAuth2ClientManagerService,
+          provide: MicrosoftOAuth2ClientProvider,
           useValue: {
-            getMicrosoftOAuth2Client: jest.fn().mockResolvedValue({
+            getClient: jest.fn().mockResolvedValue({
               api: jest.fn().mockReturnValue({
                 get: jest
                   .fn()
@@ -76,7 +76,6 @@ describe('Email Alias Manager Service', () => {
       const mockConnectedAccount: Partial<ConnectedAccountEntity> = {
         id: 'test-id',
         provider: ConnectedAccountProvider.MICROSOFT,
-        refreshToken: 'test-refresh-token',
       };
 
       const expectedAliases = [
