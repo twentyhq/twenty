@@ -6,8 +6,8 @@
 // in the SDK's generated (local) genql schema, so CoreApiClient cannot build
 // queries for them. The local (target) workspace is written via CoreApiClient,
 // exactly like seed.ts. Two separate credential sets, no collision:
-//   TFT  -> TFT_API_URL / TFT_API_KEY      (raw fetch, explicit Bearer)
-//   local-> TWENTY_API_URL / TWENTY_API_KEY (CoreApiClient reads these from env)
+//   TFT  -> TFT_API_URL / TFT_API_KEY                         (raw fetch)
+//   local-> TWENTY_PARTNERS_API_URL / TWENTY_PARTNERS_API_KEY (CoreApiClient)
 //
 // The local server rate-limits API calls (~100 / 60s), so existence checks are
 // batched into one `in` query per object (like seed.ts) and writes are paced.
@@ -18,7 +18,7 @@
 // Set IMPORT_APPLY=1 to actually write to the local workspace.
 //
 //   TFT_API_URL=https://twentyfortwenty.twenty.com TFT_API_KEY=<tft key> \
-//   TWENTY_API_URL=http://localhost:2020 TWENTY_API_KEY=<local key> \
+//   TWENTY_PARTNERS_API_URL=http://localhost:2020 TWENTY_PARTNERS_API_KEY=<local key> \
 //   [IMPORT_APPLY=1] \
 //   yarn vitest run --config vitest.seed.config.ts src/scripts/import-from-tft.ts
 
@@ -102,7 +102,10 @@ const uniq = (values: (string | undefined | null)[]): string[] =>
 describe('import from TFT', () => {
   it('imports partners, opportunities and partner quotes (idempotent)', async () => {
     console.log(`[import] mode: ${APPLY ? 'APPLY (writing to local)' : 'DRY-RUN (no writes)'}`);
-    const local = new CoreApiClient();
+    const local = new CoreApiClient({
+      url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
+      headers: { Authorization: `Bearer ${requireEnv('TWENTY_PARTNERS_API_KEY')}` },
+    });
 
     // Pace writes to stay under the local server's ~100 req/60s limit.
     let writes = 0;

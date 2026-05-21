@@ -5,13 +5,19 @@
 //
 // Run from this app directory, against a running Twenty server with the app
 // installed (deploy first; do NOT run `yarn test` after — its teardown wipes the app).
-// Credentials from the shell env or a gitignored .env.local (TWENTY_API_URL/KEY).
+// Credentials from shell env or a gitignored .env.local (TWENTY_PARTNERS_API_URL/KEY).
 //
 //   yarn twenty dev --once
 //   yarn vitest run --config vitest.seed.config.ts src/scripts/seed.ts
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { describe, it } from 'vitest';
+
+const requireEnv = (name: string): string => {
+  const value = process.env[name];
+  if (!value) throw new Error(`Missing ${name} env var`);
+  return value;
+};
 
 const CAL = 'https://calendly.com/placeholder';
 
@@ -93,7 +99,10 @@ const nodes = (r: any, key: string): any[] => (r?.[key]?.edges ?? []).map((e: an
 
 describe('seed twenty-partners demo data', () => {
   it('upserts partners, companies, people, opportunities and quotes (all states)', async () => {
-    const client = new CoreApiClient();
+    const client = new CoreApiClient({
+      url: `${requireEnv('TWENTY_PARTNERS_API_URL').replace(/\/$/, '')}/graphql`,
+      headers: { Authorization: `Bearer ${requireEnv('TWENTY_PARTNERS_API_KEY')}` },
+    });
 
     // -- Partners (upsert by slug) --
     const existingPartners = nodes(
