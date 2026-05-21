@@ -1401,6 +1401,19 @@ export interface WorkspaceUrls {
     __typename: 'WorkspaceUrls'
 }
 
+export interface ApplicationRegistrationVariableDTO {
+    id: Scalars['UUID']
+    key: Scalars['String']
+    value?: Scalars['String']
+    description: Scalars['String']
+    isSecret: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
+    isFilled: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'ApplicationRegistrationVariableDTO'
+}
+
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1607,19 +1620,6 @@ export interface PublicApplicationRegistration {
 export interface RotateClientSecret {
     clientSecret: Scalars['String']
     __typename: 'RotateClientSecret'
-}
-
-export interface ApplicationRegistrationVariableDTO {
-    id: Scalars['UUID']
-    key: Scalars['String']
-    value?: Scalars['String']
-    description: Scalars['String']
-    isSecret: Scalars['Boolean']
-    isRequired: Scalars['Boolean']
-    isFilled: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'ApplicationRegistrationVariableDTO'
 }
 
 export interface Relation {
@@ -4332,6 +4332,20 @@ export interface WorkspaceUrlsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationRegistrationVariableDTOGenqlSelection{
+    id?: boolean | number
+    key?: boolean | number
+    value?: boolean | number
+    description?: boolean | number
+    isSecret?: boolean | number
+    isRequired?: boolean | number
+    isFilled?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -4549,20 +4563,6 @@ export interface PublicApplicationRegistrationGenqlSelection{
 
 export interface RotateClientSecretGenqlSelection{
     clientSecret?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationVariableDTOGenqlSelection{
-    id?: boolean | number
-    key?: boolean | number
-    value?: boolean | number
-    description?: boolean | number
-    isSecret?: boolean | number
-    isRequired?: boolean | number
-    isFilled?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -7183,6 +7183,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApplicationRegistrationVariableDTO_possibleTypes: string[] = ['ApplicationRegistrationVariableDTO']
+    export const isApplicationRegistrationVariableDTO = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariableDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariableDTO"')
+      return ApplicationRegistrationVariableDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
     export const isBillingTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingTrialPeriod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
@@ -7363,14 +7371,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isRotateClientSecret = (obj?: { __typename?: any } | null): obj is RotateClientSecret => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRotateClientSecret"')
       return RotateClientSecret_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistrationVariableDTO_possibleTypes: string[] = ['ApplicationRegistrationVariableDTO']
-    export const isApplicationRegistrationVariableDTO = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariableDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariableDTO"')
-      return ApplicationRegistrationVariableDTO_possibleTypes.includes(obj.__typename)
     }
     
 
