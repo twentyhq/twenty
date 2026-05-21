@@ -1,0 +1,56 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Upload application file should fail for path traversal when filePath contains backslash path traversal 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail for path traversal when filePath contains relative path traversal (../) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail for path traversal when filePath contains upward traversal (../../) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail for path traversal when filePath is an absolute path 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail for path traversal when filePath is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal, filePath should not be empty",
+  "name": "UserInputError",
+}
+`;
