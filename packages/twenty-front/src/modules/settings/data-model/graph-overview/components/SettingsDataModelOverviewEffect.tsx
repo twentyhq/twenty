@@ -1,5 +1,5 @@
 import { type Edge, type Node } from '@xyflow/react';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { isDefined } from 'twenty-shared/utils';
@@ -17,8 +17,12 @@ export const SettingsDataModelOverviewEffect = ({
 }: SettingsDataModelOverviewEffectProps) => {
   const { activeNonSystemObjectMetadataItems: items } =
     useFilteredObjectMetadataItems();
+  const latestLayoutVersionRef = useRef(0);
 
   useEffect(() => {
+    latestLayoutVersionRef.current += 1;
+    const currentLayoutVersion = latestLayoutVersionRef.current;
+
     const loadDagreAndLayout = async () => {
       const dagre = await import('@dagrejs/dagre');
 
@@ -95,6 +99,10 @@ export const SettingsDataModelOverviewEffect = ({
           y: nodeWithPosition.y - (node.height ?? 0) / 2,
         };
       });
+
+      if (currentLayoutVersion !== latestLayoutVersionRef.current) {
+        return;
+      }
 
       setNodes(nodes);
       setEdges(edges);
