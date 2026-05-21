@@ -112,6 +112,7 @@ export const FILTER_OPERANDS_MAP = {
   ],
   RATING: [
     RecordFilterOperand.IS,
+    RecordFilterOperand.IS_NOT,
     RecordFilterOperand.GREATER_THAN_OR_EQUAL,
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
     ...emptyOperands,
@@ -139,7 +140,7 @@ export const FILTER_OPERANDS_MAP = {
   ],
   BOOLEAN: [RecordFilterOperand.IS],
   TS_VECTOR: [RecordFilterOperand.VECTOR_SEARCH],
-  UUID: [RecordFilterOperand.IS],
+  UUID: [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT, ...emptyOperands],
 } as const satisfies FilterOperandMap;
 
 export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
