@@ -23,6 +23,7 @@ type EntityMetadataSnapshot = {
   tableName: string;
   tablePath: string;
   givenTableName: string | undefined;
+  canonicalColumns: ReadonlyArray<ColumnMetadata>;
   columnDatabaseNamesByPropertyName: ReadonlyMap<string, string>;
   columnSelectByPropertyName: ReadonlyMap<string, boolean>;
   columnInsertByPropertyName: ReadonlyMap<string, boolean>;
@@ -135,6 +136,7 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
         tableName: metadata.tableName,
         tablePath: metadata.tablePath,
         givenTableName: metadata.givenTableName,
+        canonicalColumns: [...metadata.columns],
         columnDatabaseNamesByPropertyName,
         columnSelectByPropertyName,
         columnInsertByPropertyName,
@@ -277,9 +279,15 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       metadata.givenTableName = resolved.effectiveTableName;
     }
 
+    metadata.columns = [...snapshot.canonicalColumns];
+
     for (const column of metadata.columns) {
       this.applyColumnShape({ column, snapshot, resolved });
     }
+
+    metadata.columns = metadata.columns.filter(
+      (column) => !resolved.hiddenPropertyNames.has(column.propertyName),
+    );
   }
 
   private applyColumnShape({

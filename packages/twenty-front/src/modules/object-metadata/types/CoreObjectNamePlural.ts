@@ -8,7 +8,6 @@ export enum CoreObjectNamePlural {
   CalendarEvent = 'calendarEvents',
   Comment = 'comments',
   Company = 'companies',
-  ConnectedAccount = 'connectedAccounts',
   Dashboard = 'dashboards',
   TimelineActivity = 'timelineActivities',
   Message = 'messages',

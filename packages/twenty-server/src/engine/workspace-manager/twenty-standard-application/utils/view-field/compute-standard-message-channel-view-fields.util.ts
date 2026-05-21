@@ -20,18 +20,6 @@ export const computeStandardMessageChannelViewFields = (
         size: 150,
       },
     }),
-    allMessageChannelsConnectedAccount: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'messageChannel',
-      context: {
-        viewName: 'allMessageChannels',
-        viewFieldName: 'connectedAccount',
-        fieldName: 'connectedAccount',
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
-    }),
     allMessageChannelsType: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageChannel',
@@ -93,20 +81,6 @@ export const computeStandardMessageChannelViewFields = (
       },
     }),
 
-    messageChannelRecordPageFieldsConnectedAccount:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'messageChannel',
-        context: {
-          viewName: 'messageChannelRecordPageFields',
-          viewFieldName: 'connectedAccount',
-          fieldName: 'connectedAccount',
-          position: 1,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      }),
     messageChannelRecordPageFieldsType: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'messageChannel',

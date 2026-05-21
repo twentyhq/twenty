@@ -51,11 +51,11 @@ export default {
         163,
         167,
         169,
-        173,
         174,
-        181,
-        184,
-        187,
+        175,
+        182,
+        185,
+        188,
         201,
         226,
         262,
@@ -3434,6 +3434,38 @@ export default {
                 1
             ]
         },
+        "ApplicationRegistrationVariableDTO": {
+            "id": [
+                3
+            ],
+            "key": [
+                1
+            ],
+            "value": [
+                1
+            ],
+            "description": [
+                1
+            ],
+            "isSecret": [
+                6
+            ],
+            "isRequired": [
+                6
+            ],
+            "isFilled": [
+                6
+            ],
+            "createdAt": [
+                4
+            ],
+            "updatedAt": [
+                4
+            ],
+            "__typename": [
+                1
+            ]
+        },
         "BillingTrialPeriod": {
             "duration": [
                 11
@@ -3453,10 +3485,10 @@ export default {
                 1
             ],
             "type": [
-                173
+                174
             ],
             "status": [
-                174
+                175
             ],
             "issuer": [
                 1
@@ -3469,7 +3501,7 @@ export default {
         "SSOIdentityProviderStatus": {},
         "AuthProviders": {
             "sso": [
-                172
+                173
             ],
             "google": [
                 6
@@ -3506,10 +3538,10 @@ export default {
                 3
             ],
             "authProviders": [
-                175
+                176
             ],
             "authBypassProviders": [
-                176
+                177
             ],
             "logo": [
                 1
@@ -3557,7 +3589,7 @@ export default {
                 1
             ],
             "modelFamily": [
-                181
+                182
             ],
             "modelFamilyLabel": [
                 1
@@ -3572,7 +3604,7 @@ export default {
                 11
             ],
             "nativeCapabilities": [
-                179
+                180
             ],
             "isDeprecated": [
                 6
@@ -3608,7 +3640,7 @@ export default {
                 1
             ],
             "trialPeriods": [
-                171
+                172
             ],
             "__typename": [
                 1
@@ -3616,7 +3648,7 @@ export default {
         },
         "Support": {
             "supportDriver": [
-                184
+                185
             ],
             "supportFrontChatId": [
                 1
@@ -3642,7 +3674,7 @@ export default {
         },
         "Captcha": {
             "provider": [
-                187
+                188
             ],
             "siteKey": [
                 1
@@ -3679,7 +3711,7 @@ export default {
                 169
             ],
             "metadata": [
-                189
+                190
             ],
             "__typename": [
                 1
@@ -3704,13 +3736,13 @@ export default {
                 1
             ],
             "authProviders": [
-                175
+                176
             ],
             "billing": [
-                182
+                183
             ],
             "aiModels": [
-                180
+                181
             ],
             "signInPrefilled": [
                 6
@@ -3731,25 +3763,25 @@ export default {
                 6
             ],
             "support": [
-                183
+                184
             ],
             "isAttachmentPreviewEnabled": [
                 6
             ],
             "sentry": [
-                185
-            ],
-            "captcha": [
                 186
             ],
+            "captcha": [
+                187
+            ],
             "api": [
-                188
+                189
             ],
             "canManageFeatureFlags": [
                 6
             ],
             "publicFeatureFlags": [
-                190
+                191
             ],
             "isMicrosoftMessagingEnabled": [
                 6
@@ -3788,7 +3820,7 @@ export default {
                 6
             ],
             "maintenance": [
-                191
+                192
             ],
             "__typename": [
                 1
@@ -3827,7 +3859,7 @@ export default {
                 1
             ],
             "versionDistribution": [
-                194
+                195
             ],
             "__typename": [
                 1
@@ -3867,38 +3899,6 @@ export default {
         "RotateClientSecret": {
             "clientSecret": [
                 1
-            ],
-            "__typename": [
-                1
-            ]
-        },
-        "ApplicationRegistrationVariableDTO": {
-            "id": [
-                3
-            ],
-            "key": [
-                1
-            ],
-            "value": [
-                1
-            ],
-            "description": [
-                1
-            ],
-            "isSecret": [
-                6
-            ],
-            "isRequired": [
-                6
-            ],
-            "isFilled": [
-                6
-            ],
-            "createdAt": [
-                4
-            ],
-            "updatedAt": [
-                4
             ],
             "__typename": [
                 1
@@ -4095,7 +4095,7 @@ export default {
                 3
             ],
             "type": [
-                173
+                174
             ],
             "issuer": [
                 1
@@ -4104,7 +4104,7 @@ export default {
                 1
             ],
             "status": [
-                174
+                175
             ],
             "__typename": [
                 1
@@ -4123,7 +4123,7 @@ export default {
         },
         "FindAvailableSSOIDP": {
             "type": [
-                173
+                174
             ],
             "id": [
                 3
@@ -4135,7 +4135,7 @@ export default {
                 1
             ],
             "status": [
-                174
+                175
             ],
             "workspace": [
                 218
@@ -4149,7 +4149,7 @@ export default {
                 3
             ],
             "type": [
-                173
+                174
             ],
             "issuer": [
                 1
@@ -4158,7 +4158,7 @@ export default {
                 1
             ],
             "status": [
-                174
+                175
             ],
             "__typename": [
                 1
@@ -4166,7 +4166,7 @@ export default {
         },
         "SSOConnection": {
             "type": [
-                173
+                174
             ],
             "id": [
                 3
@@ -4178,7 +4178,7 @@ export default {
                 1
             ],
             "status": [
-                174
+                175
             ],
             "__typename": [
                 1
@@ -4529,13 +4529,13 @@ export default {
         },
         "UsageAnalytics": {
             "usageByUser": [
-                193
+                194
             ],
             "usageByOperationType": [
-                193
+                194
             ],
             "usageByModel": [
-                193
+                194
             ],
             "timeSeries": [
                 251
@@ -6296,7 +6296,7 @@ export default {
                 }
             ],
             "findApplicationRegistrationByClientId": [
-                197,
+                198,
                 {
                     "clientId": [
                         1,
@@ -6326,7 +6326,7 @@ export default {
                 }
             ],
             "findApplicationRegistrationStats": [
-                195,
+                196,
                 {
                     "id": [
                         1,
@@ -6335,7 +6335,7 @@ export default {
                 }
             ],
             "findApplicationRegistrationVariables": [
-                199,
+                171,
                 {
                     "applicationRegistrationId": [
                         1,
@@ -6359,7 +6359,7 @@ export default {
                 75
             ],
             "getPublicWorkspaceDataByDomain": [
-                177,
+                178,
                 {
                     "origin": [
                         1
@@ -6367,7 +6367,7 @@ export default {
                 }
             ],
             "getPublicWorkspaceDataById": [
-                178,
+                179,
                 {
                     "id": [
                         3,
@@ -8200,7 +8200,7 @@ export default {
                 }
             ],
             "createApplicationRegistration": [
-                196,
+                197,
                 {
                     "input": [
                         443,
@@ -8227,7 +8227,7 @@ export default {
                 }
             ],
             "rotateApplicationRegistrationClientSecret": [
-                198,
+                199,
                 {
                     "id": [
                         1,
@@ -8605,7 +8605,7 @@ export default {
                 }
             ],
             "installMarketplaceApp": [
-                6,
+                58,
                 {
                     "universalIdentifier": [
                         1,
@@ -11013,7 +11013,7 @@ export default {
                 3
             ],
             "status": [
-                174
+                175
             ],
             "__typename": [
                 1

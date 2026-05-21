@@ -1764,6 +1764,18 @@ type WorkspaceUrls {
   subdomainUrl: String!
 }
 
+type ApplicationRegistrationVariableDTO {
+  id: UUID!
+  key: String!
+  value: String
+  description: String!
+  isSecret: Boolean!
+  isRequired: Boolean!
+  isFilled: Boolean!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
 type BillingTrialPeriod {
   duration: Float!
   isCreditCardRequired: Boolean!
@@ -1966,18 +1978,6 @@ type PublicApplicationRegistration {
 
 type RotateClientSecret {
   clientSecret: String!
-}
-
-type ApplicationRegistrationVariableDTO {
-  id: UUID!
-  key: String!
-  value: String
-  description: String!
-  isSecret: Boolean!
-  isRequired: Boolean!
-  isFilled: Boolean!
-  createdAt: DateTime!
-  updatedAt: DateTime!
 }
 
 type Relation {
@@ -3316,7 +3316,7 @@ type Mutation {
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
+  installMarketplaceApp(universalIdentifier: String!, version: String): Application!
   syncMarketplaceCatalog: Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!

@@ -1,15 +1,14 @@
-import { msg } from '@lingui/core/macro';
-import { type CaseStudyData } from '@/lib/customers';
+import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { Heading, HeadingPart } from '@/design-system/components';
+import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
 } from '@/lib/i18n/utils/get-route-i18n';
 import { buildLocalizedMetadata } from '@/lib/seo';
-import { Heading, HeadingPart } from '@/design-system/components';
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { msg } from '@lingui/core/macro';
 
-const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1733244766159-f58f4184fd38?w=1600&q=80';
+const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.nineDots;
 
 const META_TITLE = msg`Homeseller, WhatsApp, and a CRM built around the business | Nine Dots & Twenty`;
 const META_DESCRIPTION = msg`How Nine Dots Ventures rebuilt a Singapore real estate agency on Twenty with APIs, n8n, Grafana, and AI on top of 2,000+ WhatsApp messages a day.`;
@@ -51,7 +50,7 @@ export default async function NineDotsCaseStudyPage({
       authorAvatarSrc: '/images/partner/testimonials/mike-babiy.webp',
       authorRole: msg`Founder, Nine Dots Ventures`,
       clientIcon: 'nine-dots',
-      heroImageSrc: PLACEHOLDER_HERO,
+      heroImageSrc: HERO_IMAGE,
       industry: msg`Real Estate`,
       kpis: [
         { value: msg`150 hrs`, label: msg`Saved / month` },

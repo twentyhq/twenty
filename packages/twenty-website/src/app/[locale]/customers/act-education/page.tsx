@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type CaseStudyData } from '@/lib/customers';
+import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
@@ -8,8 +8,7 @@ import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 
-const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1687600154329-150952c73169?w=1600&q=80';
+const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.actEducation;
 
 const META_TITLE = msg`Burned by vendor lock-in, AC&T built a CRM they actually own | Twenty`;
 const META_DESCRIPTION = msg`How AC&T Education Migration and Flycoder replaced a shuttered vendor CRM with self-hosted Twenty, with 90%+ lower cost and full ownership.`;
@@ -51,7 +50,7 @@ export default async function ActEducationCaseStudyPage({
       authorAvatarSrc: '/images/partner/testimonials/joseph-chiang.webp',
       authorRole: msg`CRM Engineer, AC&T Education Migration`,
       clientIcon: 'act-education',
-      heroImageSrc: PLACEHOLDER_HERO,
+      heroImageSrc: HERO_IMAGE,
       industry: msg`Education`,
       kpis: [{ value: msg`90%+`, label: msg`Lower CRM cost` }],
     },
