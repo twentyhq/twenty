@@ -141,17 +141,29 @@ export class BillingSubscriptionService {
     return billingSubscriptionItem;
   }
 
-  async deleteSubscriptions(workspaceId: string) {
-    const subscriptionToCancel = await this.getCurrentBillingSubscription({
+  async cancelSubscription(workspaceId: string): Promise<void> {
+    const subscription = await this.getCurrentBillingSubscription({
       workspaceId,
     });
 
-    if (isDefined(subscriptionToCancel)) {
+    if (isDefined(subscription)) {
       await this.stripeSubscriptionService.cancelSubscription(
-        subscriptionToCancel.stripeSubscriptionId,
+        subscription.stripeSubscriptionId,
       );
     }
-    await this.billingSubscriptionRepository.delete({ workspaceId });
+  }
+
+  async assertSubscriptionCanceledOrNone(workspaceId: string): Promise<void> {
+    const activeSubscription = await this.getCurrentBillingSubscription({
+      workspaceId,
+    });
+
+    if (isDefined(activeSubscription)) {
+      throw new BillingException(
+        `Subscription for workspace ${workspaceId} is not canceled`,
+        BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED,
+      );
+    }
   }
 
   async handleUnpaidInvoices(data: Stripe.SetupIntentSucceededEvent.Data) {

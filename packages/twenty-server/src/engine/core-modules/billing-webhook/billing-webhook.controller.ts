@@ -15,7 +15,6 @@ import {
 import { type Response } from 'express';
 import Stripe from 'stripe';
 
-import { BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
@@ -46,7 +45,6 @@ export class BillingWebhookController {
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly billingWebhookProductService: BillingWebhookProductService,
     private readonly billingWebhookPriceService: BillingWebhookPriceService,
-    private readonly billingWebhookAlertService: BillingWebhookAlertService,
     private readonly billingWebhookInvoiceService: BillingWebhookInvoiceService,
     private readonly billingWebhookCustomerService: BillingWebhookCustomerService,
     private readonly billingWebhookSubscriptionScheduleService: BillingWebhookSubscriptionScheduleService,
@@ -118,10 +116,6 @@ export class BillingWebhookController {
           event.data,
         );
 
-      case BillingWebhookEvent.ALERT_TRIGGERED:
-        return await this.billingWebhookAlertService.processStripeEvent(
-          event.data,
-        );
 
       case BillingWebhookEvent.INVOICE_FINALIZED:
       case BillingWebhookEvent.INVOICE_PAID:

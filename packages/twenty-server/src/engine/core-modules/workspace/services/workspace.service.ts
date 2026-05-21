@@ -465,17 +465,23 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     this.logger.log(`workspace ${id} cache flushed`);
 
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
-    }
-
     if (softDelete) {
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingSubscriptionService.cancelSubscription(workspace.id);
+      }
+
       await this.workspaceRepository.softDelete({ id });
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
 
       this.logger.log(`workspace ${id} soft deleted`);
 
       return workspace;
+    }
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
+        workspace.id,
+      );
     }
 
     await this.deleteWorkspaceSyncableMetadataEntities(workspace);
