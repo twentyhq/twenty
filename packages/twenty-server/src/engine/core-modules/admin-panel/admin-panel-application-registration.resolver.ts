@@ -25,8 +25,7 @@ export class AdminPanelApplicationRegistrationResolver {
     @Parent() registration: ApplicationRegistrationEntity,
   ): Promise<string | null> {
     if (
-      registration.sourceType ===
-        ApplicationRegistrationSourceType.TARBALL &&
+      registration.sourceType === ApplicationRegistrationSourceType.TARBALL &&
       registration.logoFileId
     ) {
       return this.fileUrlService.signFileByIdUrl({
@@ -37,9 +36,7 @@ export class AdminPanelApplicationRegistrationResolver {
     }
 
     const logo =
-      registration.logo ??
-      registration.manifest?.application?.logoUrl ??
-      null;
+      registration.logo ?? registration.manifest?.application?.logoUrl ?? null;
 
     if (
       registration.sourceType === ApplicationRegistrationSourceType.LOCAL &&

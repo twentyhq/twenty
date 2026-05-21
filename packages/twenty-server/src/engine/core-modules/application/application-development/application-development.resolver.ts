@@ -169,10 +169,7 @@ export class ApplicationDevelopmentResolver {
       });
     }
 
-    await this.syncRegistrationMetadata(
-      applicationRegistrationId,
-      manifest,
-    );
+    await this.syncRegistrationMetadata(applicationRegistrationId, manifest);
 
     return {
       applicationUniversalIdentifier:
