@@ -3,15 +3,18 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
-export const useInstallApp = <TVariables extends Record<string, unknown>>(
+export const useInstallApp = <
+  TVariables extends Record<string, unknown>,
+  TData extends Record<string, unknown> = Record<string, unknown>,
+>(
   mutationFn: (options: {
     variables: TVariables;
-  }) => Promise<{ data?: Record<string, unknown> | null }>,
+  }) => Promise<{ data?: TData | null }>,
 ) => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
 
-  const install = async (variables: TVariables) => {
+  const install = async (variables: TVariables): Promise<TData | null> => {
     setIsInstalling(true);
 
     try {
@@ -22,10 +25,10 @@ export const useInstallApp = <TVariables extends Record<string, unknown>>(
           message: t`Application installed successfully.`,
         });
 
-        return true;
+        return result.data;
       }
 
-      return false;
+      return null;
     } catch (error) {
       const graphqlMessage = error instanceof Error ? error.message : undefined;
 
@@ -33,7 +36,7 @@ export const useInstallApp = <TVariables extends Record<string, unknown>>(
         message: graphqlMessage ?? t`Failed to install the application.`,
       });
 
-      return false;
+      return null;
     } finally {
       setIsInstalling(false);
     }

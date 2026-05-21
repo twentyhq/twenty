@@ -52,7 +52,7 @@ export const SettingsAvailableApplicationDetails = () => {
     PermissionFlagType.MARKETPLACE_APPS,
   );
 
-  const { data: applicationData, refetch: refetchApplication } = useQuery(
+  const { data: applicationData } = useQuery(
     FindOneApplicationByUniversalIdentifierDocument,
     {
       variables: { universalIdentifier: availableApplicationId },
@@ -100,19 +100,16 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const handleInstall = async () => {
     if (isDefined(detail)) {
-      const success = await install({
+      const data = await install({
         universalIdentifier: detail.universalIdentifier,
       });
 
-      if (success) {
-        const { data } = await refetchApplication();
-        const applicationId = data?.findOneApplication?.id;
+      const applicationId = data?.installMarketplaceApp?.id;
 
-        if (isDefined(applicationId)) {
-          navigateSettings(SettingsPath.ApplicationDetail, {
-            applicationId,
-          });
-        }
+      if (isDefined(applicationId)) {
+        navigateSettings(SettingsPath.ApplicationDetail, {
+          applicationId,
+        });
       }
     }
   };
