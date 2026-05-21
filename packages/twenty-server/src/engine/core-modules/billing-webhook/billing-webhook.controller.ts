@@ -116,7 +116,6 @@ export class BillingWebhookController {
           event.data,
         );
 
-
       case BillingWebhookEvent.INVOICE_FINALIZED:
       case BillingWebhookEvent.INVOICE_PAID:
         return await this.billingWebhookInvoiceService.processStripeEvent(
