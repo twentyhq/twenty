@@ -61,6 +61,8 @@ export const getStepFilterOperands = ({
       return FILTER_OPERANDS_MAP.BOOLEAN;
     case 'UUID':
       return FILTER_OPERANDS_MAP.UUID;
+    case 'NUMERIC':
+      return FILTER_OPERANDS_MAP.NUMBER;
     case 'ACTOR': {
       if (subFieldName === 'source') {
         return FILTER_OPERANDS_MAP.SELECT;
