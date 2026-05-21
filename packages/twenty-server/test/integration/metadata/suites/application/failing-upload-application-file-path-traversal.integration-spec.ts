@@ -9,8 +9,11 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
+const UNKNOWN_APP_ID = uuidv4();
 
 type TestContext = {
+  applicationUniversalIdentifier: string;
+  fileFolder: string;
   filePath: string;
 };
 
@@ -18,6 +21,8 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'when filePath contains relative path traversal (../)',
     context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
       filePath:
         '../../../other-workspace/other-app/BuiltFrontComponent/stolen.mjs',
     },
@@ -25,30 +30,63 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'when filePath contains upward traversal (../../)',
     context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
       filePath: '../../etc/passwd',
     },
   },
   {
     title: 'when filePath is an absolute path',
     context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
       filePath: '/etc/passwd',
     },
   },
   {
     title: 'when filePath contains backslash path traversal',
     context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
       filePath: '..\\..\\..\\etc\\passwd',
     },
   },
   {
     title: 'when filePath is empty',
     context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
       filePath: '',
+    },
+  },
+  {
+    title:
+      'when applicationUniversalIdentifier does not match any installed application',
+    context: {
+      applicationUniversalIdentifier: UNKNOWN_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
+      filePath: 'src/components/legit.mjs',
+    },
+  },
+  {
+    title: 'when applicationUniversalIdentifier is empty',
+    context: {
+      applicationUniversalIdentifier: '',
+      fileFolder: 'BuiltFrontComponent',
+      filePath: 'src/components/legit.mjs',
+    },
+  },
+  {
+    title: 'when fileFolder is not an allowed application file folder',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'CorePicture',
+      filePath: 'src/components/legit.mjs',
     },
   },
 ];
 
-describe('Upload application file should fail for path traversal', () => {
+describe('Upload application file should fail', () => {
   beforeAll(async () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_ID,
@@ -70,11 +108,11 @@ describe('Upload application file should fail for path traversal', () => {
       jest.useRealTimers();
 
       const { errors } = await uploadApplicationFile({
-        applicationUniversalIdentifier: TEST_APP_ID,
-        fileFolder: 'BuiltFrontComponent',
+        applicationUniversalIdentifier: context.applicationUniversalIdentifier,
+        fileFolder: context.fileFolder,
         filePath: context.filePath,
-        fileBuffer: Buffer.from('malicious content'),
-        filename: 'exploit.mjs',
+        fileBuffer: Buffer.from('content'),
+        filename: 'test-file.mjs',
         contentType: 'application/javascript',
         expectToFail: true,
       });
@@ -85,40 +123,4 @@ describe('Upload application file should fail for path traversal', () => {
     },
     60000,
   );
-
-  it('when applicationUniversalIdentifier does not match any installed application', async () => {
-    jest.useRealTimers();
-
-    const { errors } = await uploadApplicationFile({
-      applicationUniversalIdentifier: uuidv4(),
-      fileFolder: 'BuiltFrontComponent',
-      filePath: 'src/components/legit.mjs',
-      fileBuffer: Buffer.from('content'),
-      filename: 'legit.mjs',
-      contentType: 'application/javascript',
-      expectToFail: true,
-    });
-
-    jest.useFakeTimers();
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  }, 60000);
-
-  it('when fileFolder is not an allowed application file folder', async () => {
-    jest.useRealTimers();
-
-    const { errors } = await uploadApplicationFile({
-      applicationUniversalIdentifier: TEST_APP_ID,
-      fileFolder: 'core-picture',
-      filePath: 'src/components/legit.mjs',
-      fileBuffer: Buffer.from('content'),
-      filename: 'legit.mjs',
-      contentType: 'application/javascript',
-      expectToFail: true,
-    });
-
-    jest.useFakeTimers();
-
-    expectOneNotInternalServerErrorSnapshot({ errors });
-  }, 60000);
 });

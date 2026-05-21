@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Upload application file should fail for path traversal when applicationUniversalIdentifier does not match any installed application 1`] = `
+exports[`Upload application file should fail when applicationUniversalIdentifier does not match any installed application 1`] = `
 {
   "extensions": {
     "code": "NOT_FOUND",
@@ -12,21 +12,30 @@ exports[`Upload application file should fail for path traversal when application
 }
 `;
 
-exports[`Upload application file should fail for path traversal when fileFolder is not an allowed application file folder 1`] = `
+exports[`Upload application file should fail when applicationUniversalIdentifier is empty 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
     "userFriendlyMessage": "An error occurred.",
   },
-  "message": "Value "core-picture" does not exist in "FileFolder" enum. Did you mean the enum value "CorePicture" or "PersonPicture"?",
-  "name": "GraphQLError",
+  "message": "applicationUniversalIdentifier should not be empty",
+  "name": "UserInputError",
 }
 `;
 
-exports[`Upload application file should fail for path traversal when filePath contains backslash path traversal 1`] = `
+exports[`Upload application file should fail when fileFolder is not an allowed application file folder 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid fileFolder for application file upload. Allowed values: built-logic-function, built-front-component, public-asset, source, dependencies",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath contains backslash path traversal 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -37,7 +46,7 @@ exports[`Upload application file should fail for path traversal when filePath co
 }
 `;
 
-exports[`Upload application file should fail for path traversal when filePath contains relative path traversal (../) 1`] = `
+exports[`Upload application file should fail when filePath contains relative path traversal (../) 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -48,7 +57,7 @@ exports[`Upload application file should fail for path traversal when filePath co
 }
 `;
 
-exports[`Upload application file should fail for path traversal when filePath contains upward traversal (../../) 1`] = `
+exports[`Upload application file should fail when filePath contains upward traversal (../../) 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -59,7 +68,7 @@ exports[`Upload application file should fail for path traversal when filePath co
 }
 `;
 
-exports[`Upload application file should fail for path traversal when filePath is an absolute path 1`] = `
+exports[`Upload application file should fail when filePath is an absolute path 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
@@ -70,7 +79,7 @@ exports[`Upload application file should fail for path traversal when filePath is
 }
 `;
 
-exports[`Upload application file should fail for path traversal when filePath is empty 1`] = `
+exports[`Upload application file should fail when filePath is empty 1`] = `
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
