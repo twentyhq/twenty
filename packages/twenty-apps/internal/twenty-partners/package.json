@@ -14,7 +14,10 @@
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json .",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "seed": "tsx src/scripts/seed.ts",
+    "import:dryrun": "tsx src/scripts/import-from-tft.ts",
+    "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts"
   },
   "dependencies": {
     "twenty-client-sdk": "2.4.0",
