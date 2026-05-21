@@ -142,6 +142,17 @@ export class ApplicationRegistrationEntity {
   })
   logo: string | null;
 
+  @Column({ nullable: true, type: 'uuid' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.7.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779368091869',
+  })
+  logoFileId: string | null;
+
+  @OneToOne(() => FileEntity, { onDelete: 'SET NULL', nullable: true })
+  @JoinColumn({ name: 'logoFileId' })
+  logoFile: Relation<FileEntity> | null;
+
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,
     (variable) => variable.applicationRegistration,

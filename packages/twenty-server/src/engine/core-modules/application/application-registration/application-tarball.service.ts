@@ -28,6 +28,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import type { ApplicationManifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 
 @Injectable()
 export class ApplicationTarballService {
@@ -202,10 +204,22 @@ export class ApplicationTarballService {
         },
       });
 
+      const logoFileId = await this.uploadLogoFromTarball({
+        contentDir,
+        logoPath: manifest.application?.logoUrl ?? null,
+        registrationId: appRegistration.id,
+        existingLogoFileId: appRegistration.logoFileId ?? undefined,
+        applicationUniversalIdentifier:
+          workspaceCustomFlatApplication.universalIdentifier,
+        workspaceId: params.ownerWorkspaceId,
+      });
+
       await this.appRegistrationRepository.update(appRegistration.id, {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
+        logo: manifest.application?.logoUrl ?? null,
+        logoFileId,
         manifest,
         latestAvailableVersion: packageJson?.version ?? null,
         isListed: false,
@@ -230,5 +244,57 @@ export class ApplicationTarballService {
     } finally {
       await fs.rm(tempDir, { recursive: true, force: true });
     }
+  }
+
+  private async uploadLogoFromTarball(params: {
+    contentDir: string;
+    logoPath: string | null;
+    registrationId: string;
+    existingLogoFileId?: string;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+  }): Promise<string | null> {
+    if (
+      !params.logoPath ||
+      params.logoPath.startsWith('http://') ||
+      params.logoPath.startsWith('https://')
+    ) {
+      return null;
+    }
+
+    const absolutePath = join(params.contentDir, params.logoPath);
+
+    if (!absolutePath.startsWith(params.contentDir)) {
+      return null;
+    }
+
+    let content: Buffer;
+
+    try {
+      content = await fs.readFile(absolutePath);
+    } catch {
+      this.logger.warn(`Logo file not found in tarball: ${params.logoPath}`);
+
+      return null;
+    }
+
+    const { mimeType, ext } = await extractFileInfo({
+      file: content,
+      filename: params.logoPath,
+    });
+    const sanitizedContent = sanitizeFile({ file: content, ext, mimeType });
+
+    const savedLogoFile = await this.fileStorageService.writeFile({
+      sourceFile: sanitizedContent,
+      mimeType,
+      fileFolder: FileFolder.AppTarball,
+      applicationUniversalIdentifier: params.applicationUniversalIdentifier,
+      workspaceId: params.workspaceId,
+      resourcePath: `${params.registrationId}/logo${ext}`,
+      fileId: params.existingLogoFileId ?? v4(),
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
+
+    return savedLogoFile.id;
   }
 }

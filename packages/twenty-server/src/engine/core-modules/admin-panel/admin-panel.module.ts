@@ -19,6 +19,7 @@ import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
@@ -72,6 +73,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     ImpersonationModule,
     PermissionsModule,
     SecureHttpClientModule,
+    ApplicationModule,
     ApplicationRegistrationModule,
     UsageModule,
     KeyValuePairModule,

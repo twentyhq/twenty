@@ -16,7 +16,6 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { resolveApplicationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-logo-url.util';
 import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
@@ -224,28 +223,15 @@ export class ApplicationRegistrationService {
   async updateFromManifest(
     applicationRegistrationId: string,
     manifest: Manifest,
-    applicationContext?: { workspaceId: string; applicationId: string },
   ): Promise<void> {
     const existing = await this.applicationRegistrationRepository.findOneOrFail(
       { where: { id: applicationRegistrationId } },
     );
 
-    const rawLogo = manifest.application.logoUrl ?? null;
-
-    const resolvedLogo =
-      applicationContext && rawLogo
-        ? resolveApplicationLogoUrl({
-            logo: rawLogo,
-            serverUrl: this.twentyConfigService.get('SERVER_URL'),
-            workspaceId: applicationContext.workspaceId,
-            applicationId: applicationContext.applicationId,
-          })
-        : rawLogo;
-
     await this.applicationRegistrationRepository.save({
       ...existing,
       name: manifest.application.displayName,
-      logo: resolvedLogo,
+      logo: manifest.application.logoUrl ?? null,
       manifest,
     });
   }

@@ -25,6 +25,8 @@ import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { resolveApplicationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-logo-url.util';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
@@ -67,6 +69,7 @@ export class ApplicationRegistrationResolver {
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
+    private readonly applicationService: ApplicationService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -332,9 +335,49 @@ export class ApplicationRegistrationResolver {
   }
 
   @ResolveField(() => String, { nullable: true })
-  logo(@Parent() registration: ApplicationRegistrationEntity): string | null {
+  async logo(
+    @Parent() registration: ApplicationRegistrationEntity,
+  ): Promise<string | null> {
+    if (
+      registration.sourceType ===
+        ApplicationRegistrationSourceType.TARBALL &&
+      registration.logoFileId
+    ) {
+      return this.fileUrlService.signFileByIdUrl({
+        fileId: registration.logoFileId,
+        workspaceId: registration.ownerWorkspaceId ?? '',
+        fileFolder: FileFolder.AppTarball,
+      });
+    }
+
+    const logo =
+      registration.logo ??
+      registration.manifest?.application?.logoUrl ??
+      null;
+
+    if (
+      registration.sourceType === ApplicationRegistrationSourceType.LOCAL &&
+      logo &&
+      registration.ownerWorkspaceId
+    ) {
+      const application =
+        await this.applicationService.findByUniversalIdentifier({
+          universalIdentifier: registration.universalIdentifier,
+          workspaceId: registration.ownerWorkspaceId,
+        });
+
+      if (application) {
+        return resolveApplicationLogoUrl({
+          logo,
+          serverUrl: this.twentyConfigService.get('SERVER_URL'),
+          workspaceId: registration.ownerWorkspaceId,
+          applicationId: application.id,
+        });
+      }
+    }
+
     return resolveApplicationRegistrationLogoUrl({
-      logo: registration.logo,
+      logo,
       sourceType: registration.sourceType,
       sourcePackage: registration.sourcePackage,
       latestAvailableVersion: registration.latestAvailableVersion,

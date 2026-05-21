@@ -172,8 +172,6 @@ export class ApplicationDevelopmentResolver {
     await this.syncRegistrationMetadata(
       applicationRegistrationId,
       manifest,
-      workspaceId,
-      application.id,
     );
 
     return {
@@ -262,13 +260,10 @@ export class ApplicationDevelopmentResolver {
   private async syncRegistrationMetadata(
     applicationRegistrationId: string,
     manifest: ApplicationInput['manifest'],
-    workspaceId: string,
-    applicationId: string,
   ): Promise<void> {
     await this.applicationRegistrationService.updateFromManifest(
       applicationRegistrationId,
       manifest,
-      { workspaceId, applicationId },
     );
 
     if (manifest.application.serverVariables) {
