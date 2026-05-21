@@ -48,9 +48,31 @@ export class MarketplaceResolver {
     );
   }
 
-  @Mutation(() => ApplicationDTO)
+  @Mutation(() => Boolean)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
   async installMarketplaceApp(
+    @Args('universalIdentifier') universalIdentifier: string,
+    @Args('version', { type: () => String, nullable: true })
+    version: string | undefined,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+  ): Promise<boolean> {
+    const registration =
+      await this.marketplaceQueryService.findRegistrationByUniversalIdentifier(
+        universalIdentifier,
+      );
+
+    await this.applicationInstallService.installApplication({
+      appRegistrationId: registration.id,
+      version,
+      workspaceId: workspace.id,
+    });
+
+    return true;
+  }
+
+  @Mutation(() => ApplicationDTO)
+  @UseGuards(SettingsPermissionGuard(PermissionFlagType.MARKETPLACE_APPS))
+  async installApplication(
     @Args('universalIdentifier') universalIdentifier: string,
     @Args('version', { type: () => String, nullable: true })
     version: string | undefined,

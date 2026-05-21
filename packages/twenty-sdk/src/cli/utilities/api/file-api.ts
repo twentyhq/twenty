@@ -140,9 +140,7 @@ export class FileApi {
     try {
       const mutation = `
         mutation InstallMarketplaceApp($universalIdentifier: String!) {
-          installMarketplaceApp(universalIdentifier: $universalIdentifier) {
-            id
-          }
+          installMarketplaceApp(universalIdentifier: $universalIdentifier)
         }
       `;
 

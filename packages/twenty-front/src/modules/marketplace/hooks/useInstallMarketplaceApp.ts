@@ -4,25 +4,25 @@ import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import {
-  InstallMarketplaceAppDocument,
-  type InstallMarketplaceAppMutation,
+  InstallApplicationDocument,
+  type InstallApplicationMutation,
 } from '~/generated-metadata/graphql';
 
 export const useInstallMarketplaceApp = () => {
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const [isInstalling, setIsInstalling] = useState(false);
-  const [installMarketplaceAppMutation] = useMutation(
-    InstallMarketplaceAppDocument,
+  const [installApplicationMutation] = useMutation(
+    InstallApplicationDocument,
   );
 
   const install = async (variables: {
     universalIdentifier: string;
     version?: string;
-  }): Promise<InstallMarketplaceAppMutation | null> => {
+  }): Promise<InstallApplicationMutation | null> => {
     setIsInstalling(true);
 
     try {
-      const result = await installMarketplaceAppMutation({ variables });
+      const result = await installApplicationMutation({ variables });
 
       if (isDefined(result.data)) {
         enqueueSuccessSnackBar({
