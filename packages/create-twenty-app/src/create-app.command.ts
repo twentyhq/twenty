@@ -17,7 +17,7 @@ import {
   DEV_API_URL,
   serverStart,
 } from 'twenty-sdk/cli';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeUrl } from 'twenty-shared/utils';
 import {
   getDockerInstallInstructions,
   isDockerInstalled,
@@ -33,7 +33,7 @@ type CreateAppOptions = {
   name?: string;
   displayName?: string;
   description?: string;
-  workspaceUrl?: string;
+  serverUrl?: string;
   authenticationMethod?: AuthenticationMethod;
 };
 
@@ -45,9 +45,9 @@ export class CreateAppCommand {
     const { appName, appDisplayName, appDirectory, appDescription } =
       this.getAppInfos(options);
 
-    const workspaceUrl = options.workspaceUrl ?? DEV_API_URL;
+    const serverUrl = options.serverUrl ?? DEV_API_URL;
 
-    const skipLocalInstance = workspaceUrl !== DEV_API_URL;
+    const skipLocalInstance = serverUrl !== DEV_API_URL;
 
     if (!skipLocalInstance && !isDockerInstalled()) {
       console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
@@ -118,7 +118,7 @@ export class CreateAppCommand {
       console.log('');
 
       let authSucceeded = false;
-      let resolvedWorkspaceUrl = workspaceUrl;
+      let resolvedServerUrl = serverUrl;
       let serverReady = skipLocalInstance;
 
       if (!skipLocalInstance) {
@@ -126,7 +126,7 @@ export class CreateAppCommand {
         const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
         if (isDefined(serverResult.url)) {
-          resolvedWorkspaceUrl = serverResult.url;
+          resolvedServerUrl = serverResult.url;
           serverReady = true;
         }
       }
@@ -134,18 +134,16 @@ export class CreateAppCommand {
       if (serverReady) {
         this.logNextStep('Authenticating');
 
-        authSucceeded = await this.tryExistingAuth(resolvedWorkspaceUrl);
+        authSucceeded = await this.tryExistingAuth(resolvedServerUrl);
 
         if (authSucceeded) {
           this.logDetail('Reusing existing credentials');
         } else if (authenticationMethod === 'oauth') {
           this.logDetail('Starting OAuth flow');
-          authSucceeded =
-            await this.authenticateWithOAuth(resolvedWorkspaceUrl);
+          authSucceeded = await this.authenticateWithOAuth(resolvedServerUrl);
         } else {
           this.logDetail('Using development API key');
-          authSucceeded =
-            await this.authenticateWithDevKey(resolvedWorkspaceUrl);
+          authSucceeded = await this.authenticateWithDevKey(resolvedServerUrl);
         }
       }
 
@@ -165,10 +163,10 @@ export class CreateAppCommand {
       }
 
       if (syncSucceeded) {
-        await this.openMainPage(appDirectory, resolvedWorkspaceUrl);
+        await this.openMainPage(appDirectory, resolvedServerUrl);
       }
 
-      this.logSuccess(appDirectory, resolvedWorkspaceUrl, authSucceeded);
+      this.logSuccess(appDirectory, resolvedServerUrl, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -315,7 +313,7 @@ export class CreateAppCommand {
 
   private async openMainPage(
     appDirectory: string,
-    workspaceUrl: string,
+    serverUrl: string,
   ): Promise<void> {
     try {
       const configService = new ConfigService();
@@ -328,7 +326,7 @@ export class CreateAppCommand {
 
       const [universalIdentifier, frontUrl] = await Promise.all([
         this.readMainPageLayoutUniversalIdentifier(appDirectory),
-        this.resolveWorkspaceFrontUrl(workspaceUrl, token),
+        this.resolveWorkspaceFrontUrl(serverUrl, token),
       ]);
 
       if (!universalIdentifier || !frontUrl) {
@@ -336,7 +334,7 @@ export class CreateAppCommand {
       }
 
       const pageLayoutId = await this.resolvePageLayoutId(
-        workspaceUrl,
+        serverUrl,
         universalIdentifier,
         token,
       );
@@ -355,12 +353,12 @@ export class CreateAppCommand {
   }
 
   private async resolveWorkspaceFrontUrl(
-    workspaceUrl: string,
+    serverUrl: string,
     token: string,
   ): Promise<string | null> {
     const query = `{ currentWorkspace { workspaceUrls { subdomainUrl customUrl } } }`;
 
-    const response = await fetch(`${workspaceUrl}/metadata`, {
+    const response = await fetch(`${serverUrl}/metadata`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -389,7 +387,7 @@ export class CreateAppCommand {
 
     const frontUrl = urls.customUrl ?? urls.subdomainUrl;
 
-    return frontUrl?.replace(/\/+$/, '') ?? null;
+    return frontUrl ? normalizeUrl(frontUrl) : null;
   }
 
   private async readMainPageLayoutUniversalIdentifier(
@@ -410,13 +408,13 @@ export class CreateAppCommand {
   }
 
   private async resolvePageLayoutId(
-    workspaceUrl: string,
+    serverUrl: string,
     universalIdentifier: string,
     token: string,
   ): Promise<string | null> {
     const query = `{ getPageLayouts { id universalIdentifier } }`;
 
-    const response = await fetch(`${workspaceUrl}/metadata`, {
+    const response = await fetch(`${serverUrl}/metadata`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -503,7 +501,7 @@ export class CreateAppCommand {
     });
   }
 
-  private async tryExistingAuth(workspaceUrl: string): Promise<boolean> {
+  private async tryExistingAuth(serverUrl: string): Promise<boolean> {
     try {
       const configService = new ConfigService();
       const remoteNames = await configService.getRemotes();
@@ -511,7 +509,7 @@ export class CreateAppCommand {
       for (const remoteName of remoteNames) {
         const remoteConfig = await configService.getConfigForRemote(remoteName);
 
-        if (remoteConfig.apiUrl !== workspaceUrl) {
+        if (remoteConfig.apiUrl !== serverUrl) {
           continue;
         }
 
@@ -521,7 +519,7 @@ export class CreateAppCommand {
           continue;
         }
 
-        const response = await fetch(`${workspaceUrl}/metadata`, {
+        const response = await fetch(`${serverUrl}/metadata`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -555,11 +553,11 @@ export class CreateAppCommand {
     }
   }
 
-  private async authenticateWithDevKey(workspaceUrl: string): Promise<boolean> {
+  private async authenticateWithDevKey(serverUrl: string): Promise<boolean> {
     try {
       const result = await authLogin({
         apiKey: DEV_API_KEY,
-        apiUrl: workspaceUrl,
+        apiUrl: serverUrl,
         remote: 'local',
       });
 
@@ -574,7 +572,7 @@ export class CreateAppCommand {
 
       console.log(
         chalk.yellow(
-          '  Authentication failed. Run `yarn twenty remote add --local` manually.',
+          '  Authentication failed. Run `yarn twenty remote:add --local` manually.',
         ),
       );
 
@@ -582,7 +580,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          '  Authentication failed. Run `yarn twenty remote add --local` manually.',
+          '  Authentication failed. Run `yarn twenty remote:add --local` manually.',
         ),
       );
 
@@ -598,21 +596,21 @@ export class CreateAppCommand {
     }
   }
 
-  private async authenticateWithOAuth(workspaceUrl: string): Promise<boolean> {
+  private async authenticateWithOAuth(serverUrl: string): Promise<boolean> {
     try {
-      const remoteName = this.deriveRemoteName(workspaceUrl);
+      const remoteName = this.deriveRemoteName(serverUrl);
 
       ConfigService.setActiveRemote(remoteName);
 
       this.logDetail('Opening browser for OAuth...');
 
-      const result = await authLoginOAuth({ apiUrl: workspaceUrl });
+      const result = await authLoginOAuth({ apiUrl: serverUrl });
 
       if (result.success) {
         const configService = new ConfigService();
 
         await configService.setDefaultRemote(remoteName);
-        this.logDetail(`Authenticated via OAuth to ${workspaceUrl}`);
+        this.logDetail(`Authenticated via OAuth to ${serverUrl}`);
 
         return true;
       }
@@ -620,7 +618,7 @@ export class CreateAppCommand {
       console.log(
         chalk.yellow(
           `  OAuth failed: ${result.error.message}\n` +
-            `  Run \`yarn twenty remote add --api-url ${workspaceUrl}\` manually.`,
+            `  Run \`yarn twenty remote:add --url ${serverUrl}\` manually.`,
         ),
       );
 
@@ -628,7 +626,7 @@ export class CreateAppCommand {
     } catch {
       console.log(
         chalk.yellow(
-          `  Authentication failed. Run \`yarn twenty remote add --api-url ${workspaceUrl}\` manually.`,
+          `  Authentication failed. Run \`yarn twenty remote:add --url ${serverUrl}\` manually.`,
         ),
       );
 
@@ -638,7 +636,7 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    workspaceUrl: string,
+    serverUrl: string,
     authSucceeded: boolean,
   ): void {
     const dirName = basename(appDirectory);
@@ -656,9 +654,7 @@ export class CreateAppCommand {
     if (!authSucceeded) {
       console.log(chalk.white(`  ${stepNumber}. Connect to a Twenty instance`));
       console.log(
-        chalk.cyan(
-          '     yarn twenty remote add --api-url <your-instance-url>\n',
-        ),
+        chalk.cyan('     yarn twenty remote:add --url <your-instance-url>\n'),
       );
       stepNumber++;
     }
@@ -668,7 +664,7 @@ export class CreateAppCommand {
     stepNumber++;
 
     console.log(chalk.white(`  ${stepNumber}. Open your twenty instance`));
-    console.log(chalk.cyan(`     ${workspaceUrl}\n`));
+    console.log(chalk.cyan(`     ${serverUrl}\n`));
 
     console.log(
       chalk.gray(

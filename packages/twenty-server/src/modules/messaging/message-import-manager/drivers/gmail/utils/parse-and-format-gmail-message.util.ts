@@ -1,6 +1,8 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
 import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
@@ -29,43 +31,36 @@ export const parseAndFormatGmailMessage = (
     labelIds,
   } = parseGmailMessage(message);
 
-  if (
-    !from ||
-    (!to && !deliveredTo && !bcc && !cc) ||
-    !headerMessageId ||
-    !threadId
-  ) {
+  if (!isDefined(from) || !isDefined(headerMessageId) || !isDefined(threadId)) {
     return null;
   }
 
-  const toParticipants = to ?? deliveredTo;
+  const toParticipants = isNonEmptyArray(to)
+    ? to
+    : isNonEmptyString(deliveredTo)
+      ? [{ address: deliveredTo }]
+      : [];
 
   const participants = [
-    ...(from
-      ? formatAddressObjectAsParticipants(
-          [{ address: from }],
-          MessageParticipantRole.FROM,
-        )
-      : []),
-    ...(toParticipants
-      ? formatAddressObjectAsParticipants(
-          [{ address: toParticipants, name: '' }],
-          MessageParticipantRole.TO,
-        )
-      : []),
-    ...(cc
-      ? formatAddressObjectAsParticipants(
-          [{ address: cc }],
-          MessageParticipantRole.CC,
-        )
-      : []),
-    ...(bcc
-      ? formatAddressObjectAsParticipants(
-          [{ address: bcc }],
-          MessageParticipantRole.BCC,
-        )
-      : []),
+    ...formatAddressObjectAsParticipants(
+      [{ address: from }],
+      MessageParticipantRole.FROM,
+    ),
+    ...formatAddressObjectAsParticipants(
+      toParticipants,
+      MessageParticipantRole.TO,
+    ),
+    ...formatAddressObjectAsParticipants(cc, MessageParticipantRole.CC),
+    ...formatAddressObjectAsParticipants(bcc, MessageParticipantRole.BCC),
   ];
+
+  const hasRecipientParticipant = participants.some(
+    (participant) => participant.role !== MessageParticipantRole.FROM,
+  );
+
+  if (!hasRecipientParticipant) {
+    return null;
+  }
 
   const textWithoutReplyQuotations = text
     ? planer.extractFrom(text, 'text/plain')

@@ -2998,8 +2998,6 @@ type Query {
   myMessageFolders(messageChannelId: UUID): [MessageFolder!]!
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
-  connectedAccountById(id: UUID!): ConnectedAccountPublicDTO
-  connectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   webhooks: [Webhook!]!
   webhook(id: UUID!): Webhook
@@ -3317,7 +3315,7 @@ type Mutation {
   deleteEmailingDomain(id: String!): Boolean!
   verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
-  installMarketplaceApp(universalIdentifier: String!, version: String): Boolean!
+  installMarketplaceApp(universalIdentifier: String!, version: String): Application!
   syncMarketplaceCatalog: Boolean!
   createDevelopmentApplication(universalIdentifier: String!, name: String!): DevelopmentApplication!
   generateApplicationToken(applicationId: UUID!): ApplicationTokenPair!

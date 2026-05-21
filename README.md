@@ -63,7 +63,7 @@ export default defineObject({
 Then ship it to your workspace:
 
 ```bash
-npx twenty deploy
+npx twenty app:publish --private
 ```
 
 See the [app development guide](https://docs.twenty.com/developers/extend/apps/getting-started) for objects, views, agents, and logic functions.

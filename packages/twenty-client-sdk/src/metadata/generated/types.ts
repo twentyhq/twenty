@@ -6176,18 +6176,6 @@ export default {
             "myConnectedAccounts": [
                 269
             ],
-            "connectedAccountById": [
-                269,
-                {
-                    "id": [
-                        3,
-                        "UUID!"
-                    ]
-                }
-            ],
-            "connectedAccounts": [
-                269
-            ],
             "myCalendarChannels": [
                 300,
                 {
@@ -8614,7 +8602,7 @@ export default {
                 }
             ],
             "installMarketplaceApp": [
-                6,
+                58,
                 {
                     "universalIdentifier": [
                         1,

@@ -43,7 +43,7 @@ A ferramenta de scaffolding oferece iniciar um para você:
 > **Você gostaria de configurar uma instância local do Twenty?**
 
 * **Sim (recomendado)** — baixa a imagem Docker `twentycrm/twenty-app-dev` e a inicia na porta `2020`. Certifique-se de que o Docker esteja em execução primeiro.
-* **Não** — escolha isto se você já tiver um servidor Twenty ao qual deseja se conectar. Você pode conectá-lo depois com `yarn twenty remote add`.
+* **Não** — escolha isto se você já tiver um servidor Twenty ao qual deseja se conectar. Você pode conectá-lo depois com `yarn twenty remote:add`.
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="Deve iniciar instância local?" />
@@ -73,7 +73,7 @@ Seu terminal confirmará que tudo está configurado.
 **Após esta fase:** você tem um servidor Twenty em execução em [http://localhost:2020](http://localhost:2020) com sua CLI autorizada a sincronizar com ele.
 
 <Note>
-Se o Docker não estiver instalado ou em execução, a ferramenta de scaffolding informará o comando de inicialização correto para o seu sistema operacional. Quando o Docker estiver ativo, você pode retomar com `yarn twenty server start` — sem necessidade de recriar o scaffolding.
+Se o Docker não estiver instalado ou em execução, a ferramenta de scaffolding informará o comando de inicialização correto para o seu sistema operacional. Quando o Docker estiver ativo, você pode retomar com `yarn twenty docker:start` — sem necessidade de recriar o scaffolding.
 </Note>
 
 ---

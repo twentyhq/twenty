@@ -11,8 +11,8 @@ Run `yarn twenty help` to list all available commands.
 ## Useful Commands
 
 - `yarn twenty dev` - Start the development server and sync your app
-- `yarn twenty server status` - Check the local Twenty server status
-- `yarn twenty server start` - Start the local Twenty server
+- `yarn twenty docker:status` - Check the local Twenty server status
+- `yarn twenty docker:start` - Start the local Twenty server
 - `yarn test` - Run integration tests
 
 ## Learn More

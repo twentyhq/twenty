@@ -26,11 +26,13 @@ import { type PageLayoutDTO } from 'src/engine/metadata-modules/page-layout/dtos
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
 import { PageLayoutRestApiExceptionFilter } from 'src/engine/metadata-modules/page-layout/filters/page-layout-rest-api-exception.filter';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 import { WorkspaceMigrationRunnerRestApiExceptionFilter } from 'src/engine/workspace-manager/workspace-migration/filters/workspace-migration-runner-rest-api-exception.filter';
 
 @Controller('rest/metadata/pageLayouts')
 @UseGuards(WorkspaceAuthGuard)
 @UseFilters(
+  PermissionsRestApiExceptionFilter,
   PageLayoutRestApiExceptionFilter,
   FlatEntityMapsRestApiExceptionFilter,
   WorkspaceMigrationRunnerRestApiExceptionFilter,

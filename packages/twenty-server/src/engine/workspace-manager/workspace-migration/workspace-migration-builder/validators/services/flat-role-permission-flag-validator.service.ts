@@ -80,24 +80,18 @@ export class FlatRolePermissionFlagValidatorService {
       }
     }
 
-    if (
-      isDefined(
+    const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
+      universalIdentifier:
         flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
-      )
-    ) {
-      const referencedPermissionFlag = findFlatEntityByUniversalIdentifier({
-        universalIdentifier:
-          flatRolePermissionFlagToValidate.permissionFlagUniversalIdentifier,
-        flatEntityMaps: flatPermissionFlagMaps,
-      });
+      flatEntityMaps: flatPermissionFlagMaps,
+    });
 
-      if (!isDefined(referencedPermissionFlag)) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.INVALID_SETTING,
-          message: t`Permission flag not found`,
-          userFriendlyMessage: msg`Invalid permission setting`,
-        });
-      }
+    if (!isDefined(referencedPermissionFlag)) {
+      validationResult.errors.push({
+        code: PermissionsExceptionCode.INVALID_SETTING,
+        message: t`Permission flag not found`,
+        userFriendlyMessage: msg`Invalid permission setting`,
+      });
     }
 
     const duplicateForSameRole = Object.values(

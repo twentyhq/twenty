@@ -1,0 +1,141 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Front component update via manifest sync should fail for path traversal when builtComponentPath is updated with absolute path via manifest sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Built component path contains unsafe characters",
+              "userFriendlyMessage": "Built component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path contains unsafe characters",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component update via manifest sync should fail for path traversal when builtComponentPath is updated with backslash path via manifest sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Built component path contains unsafe characters",
+              "userFriendlyMessage": "Built component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path contains unsafe characters",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component update via manifest sync should fail for path traversal when builtComponentPath is updated with path traversal via manifest sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Built component path contains unsafe characters",
+              "userFriendlyMessage": "Built component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path contains unsafe characters",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component update via manifest sync should fail for path traversal when sourceComponentPath is updated with path traversal via manifest sync 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Source component path contains unsafe characters",
+              "userFriendlyMessage": "Source component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Source component path contains unsafe characters",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;

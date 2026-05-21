@@ -314,7 +314,7 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
       metadataName: 'permissionFlag',
       foreignKey: 'permissionFlagId',
       inverseOneToManyProperty: 'rolePermissionFlags',
-      isNullable: true,
+      isNullable: false,
       universalForeignKey: 'permissionFlagUniversalIdentifier',
     },
   },

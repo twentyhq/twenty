@@ -80,7 +80,7 @@ export default defineObject({
 - Each field requires a `name`, `type`, `label`, and its own stable `universalIdentifier`.
 - The `fields` array is optional — you can define objects without custom fields.
 - Inline fields defined here do **not** need an `objectUniversalIdentifier` — it's inherited from the parent object. Use [`defineField()`](/developers/extend/apps/data/extending-objects) to add fields to objects you don't own.
-- You can scaffold new objects with `yarn twenty add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/developers/extend/apps/getting-started/scaffolding).
+- You can scaffold new objects with `yarn twenty dev:add object`, which guides you through naming, fields, and relationships. See [Architecture → Scaffolding entities](/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
 **Base fields are added automatically.** When you define a custom object, Twenty creates standard fields like `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy`, and `deletedAt` for you. You don't need to declare them in your `fields` array — only your custom fields. You can override a default field by declaring one with the same name, but this is rarely a good idea.
