@@ -1,3 +1,5 @@
+import { FileFolder } from 'twenty-shared/types';
+
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { assertStoragePathIsWithinWorkspace } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-within-workspace.util';
@@ -5,7 +7,7 @@ import { assertStoragePathIsWithinWorkspace } from 'src/engine/core-modules/file
 const primitives = {
   workspaceId: 'workspace-id',
   applicationUniversalIdentifier: 'app-uid',
-  fileFolder: 'BuiltFrontComponent' as const,
+  fileFolder: FileFolder.BuiltFrontComponent,
 };
 
 describe('assertStoragePathIsWithinWorkspace', () => {

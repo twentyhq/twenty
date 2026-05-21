@@ -33,6 +33,7 @@ export const logicFunctionGraphQLApiExceptionHandler = (error: any) => {
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED:
         throw error;
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED:
+      case LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT:
         throw new UserInputError(error);
       case LogicFunctionExceptionCode.LOGIC_FUNCTION_DISABLED:
         throw new ForbiddenError(error);
