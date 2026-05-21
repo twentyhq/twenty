@@ -1,4 +1,9 @@
-import { UseFilters, UseGuards, UseInterceptors, UsePipes, } from '@nestjs/common';
+import {
+  UseFilters,
+  UseGuards,
+  UseInterceptors,
+  UsePipes,
+} from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
 
 import GraphQLUpload from 'graphql-upload/GraphQLUpload.mjs';
@@ -10,37 +15,17 @@ import type { FileUpload } from 'graphql-upload/processRequest.mjs';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/application.input';
-import {
-  CreateDevelopmentApplicationInput
-} from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
-import {
-  DevelopmentApplicationDTO
-} from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
-import {
-  GenerateApplicationTokenInput
-} from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
-import {
-  UploadApplicationFileInput
-} from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
-import {
-  WorkspaceMigrationDTO
-} from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { CreateDevelopmentApplicationInput } from 'src/engine/core-modules/application/application-development/dtos/create-development-application.input';
+import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/application-development/dtos/development-application.dto';
+import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
+import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
+import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
-import {
-  ApplicationSyncService
-} from 'src/engine/core-modules/application/application-manifest/application-sync.service';
-import {
-  ApplicationTokenPairDTO
-} from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
-import {
-  ApplicationRegistrationVariableService
-} from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import {
-  ApplicationRegistrationService
-} from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import {
-  ApplicationRegistrationSourceType
-} from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
   ApplicationExceptionCode,
@@ -58,9 +43,7 @@ import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import {
-  WorkspaceMigrationGraphqlApiExceptionInterceptor
-} from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
+import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 const APP_DEV_RATE_LIMIT_MAX = 30;
