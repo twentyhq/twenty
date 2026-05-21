@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
@@ -6,6 +6,7 @@ import { Repository } from 'typeorm';
 
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { SecretEncryptionExceptionCode } from 'src/engine/core-modules/secret-encryption/exceptions/secret-encryption.exception';
 import {
   type TwentyORMException,
   TwentyORMExceptionCode,
@@ -27,6 +28,8 @@ export enum MessageImportSyncStep {
 
 @Injectable()
 export class MessageImportExceptionHandlerService {
+  private readonly logger = new Logger(MessageImportExceptionHandlerService.name);
+
   constructor(
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -88,16 +91,37 @@ export class MessageImportExceptionHandlerService {
         case MessageImportDriverExceptionCode.ACCESS_TOKEN_MISSING:
         case MessageImportDriverExceptionCode.UNKNOWN:
         case MessageImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
+          await this.handleUnknownException(
+            exception,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+          break;
+        case SecretEncryptionExceptionCode.MALFORMED_ENVELOPE:
+          await this.handleMalformedEnvelopeException(
+            exception,
+            syncStep,
+            messageChannel,
+            workspaceId,
+          );
+          break;
         default:
           await this.handleUnknownException(
             exception,
+            syncStep,
             messageChannel,
             workspaceId,
           );
           break;
       }
     } else {
-      await this.handleUnknownException(exception, messageChannel, workspaceId);
+      await this.handleUnknownException(
+        exception,
+        syncStep,
+        messageChannel,
+        workspaceId,
+      );
     }
   }
 
@@ -201,10 +225,15 @@ export class MessageImportExceptionHandlerService {
 
   private async handleUnknownException(
     exception: Error,
+    syncStep: MessageImportSyncStep,
     messageChannel: Pick<MessageChannelEntity, 'id'>,
     workspaceId: string,
   ): Promise<void> {
     this.exceptionHandlerService.captureExceptions([exception], {
+      additionalData: {
+        messageChannelId: messageChannel.id,
+        syncStep,
+      },
       workspace: { id: workspaceId },
     });
     await this.messageChannelSyncStatusService.markAsFailed(
@@ -212,6 +241,19 @@ export class MessageImportExceptionHandlerService {
       workspaceId,
       MessageChannelSyncStatus.FAILED_UNKNOWN,
     );
+  }
+
+  private async handleMalformedEnvelopeException(
+    exception: Error,
+    syncStep: MessageImportSyncStep,
+    messageChannel: Pick<MessageChannelEntity, 'id'>,
+    workspaceId: string,
+  ): Promise<void> {
+    this.logger.warn(
+      `Skipping Sentry capture for malformed connected account token envelope while importing messages for message channel ${messageChannel.id} in workspace ${workspaceId} at ${syncStep}: ${exception.message}`,
+    );
+
+    await this.handlePermanentException(messageChannel, workspaceId);
   }
 
   private async handlePermanentException(
