@@ -21,6 +21,7 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { type Manifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -134,9 +135,12 @@ export class ApplicationRegistrationEntity {
   manifest: Manifest | null;
 
   @Field(() => String, { nullable: true })
-  get logoUrl(): string | null {
-    return this.manifest?.application?.logoUrl ?? null;
-  }
+  @Column({ nullable: true, type: 'text' })
+  @WasIntroducedInUpgrade({
+    upgradeCommandName:
+      '2.7.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779368091869',
+  })
+  logo: string | null;
 
   @OneToMany(
     () => ApplicationRegistrationVariableEntity,

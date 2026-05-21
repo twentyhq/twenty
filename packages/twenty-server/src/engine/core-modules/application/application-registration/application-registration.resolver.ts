@@ -53,6 +53,7 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
+import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -327,6 +328,17 @@ export class ApplicationRegistrationResolver {
       applicationRegistrationId,
       targetWorkspaceSubdomain,
       currentOwnerWorkspaceId: workspaceId,
+    });
+  }
+
+  @ResolveField(() => String, { nullable: true })
+  logo(@Parent() registration: ApplicationRegistrationEntity): string | null {
+    return resolveApplicationRegistrationLogoUrl({
+      logo: registration.logo,
+      sourceType: registration.sourceType,
+      sourcePackage: registration.sourcePackage,
+      latestAvailableVersion: registration.latestAvailableVersion,
+      cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
     });
   }
 

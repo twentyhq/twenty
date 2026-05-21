@@ -21,5 +21,5 @@ export class ApplicationRegistrationSummaryDTO {
   @IsOptional()
   @IsString()
   @Field(() => String, { nullable: true })
-  logoUrl?: string | null;
+  logo?: string | null;
 }

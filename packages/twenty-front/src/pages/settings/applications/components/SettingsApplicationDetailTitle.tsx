@@ -9,10 +9,11 @@ import { useApplicationChipData } from '@/applications/hooks/useApplicationChipD
 type SettingsApplicationDetailTitleProps = {
   displayName: string;
   description?: string;
-  logoUrl?: string;
   applicationId?: string;
-  applicationName?: string;
-  universalIdentifier?: string;
+  fallbackApplicationData?: {
+    logo?: string | null;
+    name?: string | null;
+  };
   isUnlisted?: boolean;
 };
 
@@ -73,12 +74,14 @@ export const SettingsApplicationDetailTitle = ({
   displayName,
   description,
   applicationId,
+  fallbackApplicationData,
   isUnlisted = false,
 }: SettingsApplicationDetailTitleProps) => {
   const descriptionSummary = getApplicationDescriptionSummary(description);
 
   const { applicationChipData } = useApplicationChipData({
     applicationId,
+    fallbackApplicationData,
   });
 
   return (

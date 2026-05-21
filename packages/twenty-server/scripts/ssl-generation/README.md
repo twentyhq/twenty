@@ -3,12 +3,14 @@
 This Bash script helps generate self-signed SSL certificates for local development. It uses OpenSSL to create a root certificate authority, a domain certificate, and configures them for local usage.
 
 ## Features
+
 - Generates a private key and root certificate.
 - Creates a signed certificate for a specified domain.
 - Adds the root certificate to the macOS keychain for trusted usage (macOS only).
 - Customizable with default values for easier use.
 
 ## Requirements
+
 - OpenSSL
 
 ## Usage
@@ -30,24 +32,27 @@ To generate certificates using the default values:
 #### Examples:
 
 1. **Using Default Values**:
-    ```sh
-    ./script.sh
-    ```
+
+   ```sh
+   ./script.sh
+   ```
 
 2. **Custom Domain Name**:
-    ```sh
-    ./script.sh example.com
-    ```
+
+   ```sh
+   ./script.sh example.com
+   ```
 
 3. **Custom Domain Name and Root Certificate Name**:
-    ```sh
-    ./script.sh example.com customRootCertificate
-    ```
+
+   ```sh
+   ./script.sh example.com customRootCertificate
+   ```
 
 4. **Custom Domain Name, Root Certificate Name, and Validity Days**:
-    ```sh
-    ./script.sh example.com customRootCertificate 398
-    ```
+   ```sh
+   ./script.sh example.com customRootCertificate 398
+   ```
 
 ## Script Details
 

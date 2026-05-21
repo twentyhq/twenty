@@ -8,6 +8,7 @@ export const MARKETPLACE_APP_DETAIL_FRAGMENT = gql`
     sourceType
     sourcePackage
     latestAvailableVersion
+    logo
     isListed
     isFeatured
     manifest

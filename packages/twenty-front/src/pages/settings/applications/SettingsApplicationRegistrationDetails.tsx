@@ -8,18 +8,27 @@ import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/components';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { styled } from '@linaria/react';
 import {
+  Avatar,
   IconInfoCircle,
   IconKey,
   IconSettings,
   IconWorld,
 } from 'twenty-ui/display';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
 import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
 import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
 import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+
+const StyledTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'application-registration-detail-tab-list';
@@ -86,7 +95,18 @@ export const SettingsApplicationRegistrationDetails = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={registration.name}
+      title={
+        <StyledTitleContainer>
+          <Avatar
+            type="app"
+            size="md"
+            avatarUrl={registration.logo ?? undefined}
+            placeholder={registration.name}
+            placeholderColorSeed={registration.name}
+          />
+          {registration.name}
+        </StyledTitleContainer>
+      }
       tag={<Tag text={t`Owner`} color={'gray'} />}
       links={[
         {

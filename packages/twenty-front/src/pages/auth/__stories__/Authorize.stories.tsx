@@ -20,7 +20,7 @@ const buildHandlers = (
   application: {
     id: string;
     name: string;
-    logoUrl: string | null;
+    logo: string | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
   } | null,
@@ -90,7 +90,7 @@ export const Default: Story = {
       handlers: buildHandlers({
         id: 'application-id-default',
         name: 'ChatGPT',
-        logoUrl: null,
+        logo: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
       }),
@@ -116,7 +116,7 @@ export const WithApiScopeOnly: Story = {
       handlers: buildHandlers({
         id: 'application-id-api-only',
         name: 'Internal Tool',
-        logoUrl: null,
+        logo: null,
         oAuthScopes: ['api'],
         websiteUrl: null,
       }),
@@ -144,7 +144,7 @@ export const WithLongAppName: Story = {
       handlers: buildHandlers({
         id: 'application-id-long-name',
         name: 'Custom Workspace Automation Suite',
-        logoUrl: null,
+        logo: null,
         oAuthScopes: ['api', 'profile'],
         websiteUrl: null,
       }),

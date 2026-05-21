@@ -29,9 +29,7 @@ export class AddWorkspaceIdToTotoFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
-    await queryRunner.query(
-      `ALTER TABLE "core"."toto" ADD "workspaceId" uuid`,
-    );
+    await queryRunner.query(`ALTER TABLE "core"."toto" ADD "workspaceId" uuid`);
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
@@ -81,12 +79,9 @@ Workspace commands run per-workspace logic across all active or suspended worksp
 @RegisteredWorkspaceCommand('1.22.0', 1780000002000)
 @Command({
   name: 'upgrade:1-22:backfill-standard-skills',
-  description:
-    'Backfill standard skills for existing workspaces',
+  description: 'Backfill standard skills for existing workspaces',
 })
-export class BackfillStandardSkillsCommand
-  extends ActiveOrSuspendedWorkspaceCommandRunner
-{
+export class BackfillStandardSkillsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     // inject any services you need

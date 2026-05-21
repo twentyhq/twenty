@@ -179,7 +179,7 @@ const SettingsAdminAppsTableRow = ({
         <AppChip
           size="md"
           fallbackApplicationData={{
-            logo: registration.logoUrl,
+            logo: registration.logo,
             name: registration.name,
           }}
         />

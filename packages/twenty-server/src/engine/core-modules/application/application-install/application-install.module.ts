@@ -9,6 +9,7 @@ import { ApplicationManifestModule } from 'src/engine/core-modules/application/a
 import { ApplicationPackageModule } from 'src/engine/core-modules/application/application-package/application-package.module';
 import { ApplicationInstallResolver } from 'src/engine/core-modules/application/application-install/application-install.resolver';
 import { ApplicationInstallService } from 'src/engine/core-modules/application/application-install/application-install.service';
+import { ApplicationLogoResolver } from 'src/engine/core-modules/application/application-install/application-logo.resolver';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
@@ -29,7 +30,11 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FileStorageModule,
     WorkspaceCacheModule,
   ],
-  providers: [ApplicationInstallResolver, ApplicationInstallService],
+  providers: [
+    ApplicationInstallResolver,
+    ApplicationInstallService,
+    ApplicationLogoResolver,
+  ],
   exports: [ApplicationInstallService],
 })
 export class ApplicationInstallModule {}

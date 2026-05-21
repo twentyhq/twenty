@@ -12,9 +12,11 @@ import { ApplicationRegistrationService } from 'src/engine/core-modules/applicat
 import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/application/application-marketplace/crons/marketplace-catalog-sync.cron.job';
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
+import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class MarketplaceQueryService {
@@ -24,6 +26,7 @@ export class MarketplaceQueryService {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
+    private readonly twentyConfigService: TwentyConfigService,
     @InjectMessageQueue(MessageQueue.cronQueue)
     private readonly messageQueueService: MessageQueueService,
   ) {}
@@ -96,7 +99,14 @@ export class MarketplaceQueryService {
       description: app?.description ?? '',
       author: `${app?.author ?? 'Unknown'}`,
       category: app?.category ?? '',
-      logo: app?.logoUrl ?? undefined,
+      logo:
+        resolveApplicationRegistrationLogoUrl({
+          logo: registration.logo,
+          sourceType: registration.sourceType,
+          sourcePackage: registration.sourcePackage,
+          latestAvailableVersion: registration.latestAvailableVersion,
+          cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
+        }) ?? undefined,
       sourcePackage: registration.sourcePackage ?? undefined,
       isFeatured: registration.isFeatured,
     };
@@ -112,6 +122,14 @@ export class MarketplaceQueryService {
       sourceType: registration.sourceType,
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
+      logo:
+        resolveApplicationRegistrationLogoUrl({
+          logo: registration.logo,
+          sourceType: registration.sourceType,
+          sourcePackage: registration.sourcePackage,
+          latestAvailableVersion: registration.latestAvailableVersion,
+          cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
+        }) ?? undefined,
       isListed: registration.isListed,
       isFeatured: registration.isFeatured,
       manifest: registration.manifest ?? undefined,

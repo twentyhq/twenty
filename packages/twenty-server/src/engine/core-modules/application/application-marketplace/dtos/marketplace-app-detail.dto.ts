@@ -36,6 +36,11 @@ export class MarketplaceAppDetailDTO {
   @Field({ nullable: true })
   latestAvailableVersion?: string;
 
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  logo?: string;
+
   @IsBoolean()
   @Field(() => Boolean)
   isListed: boolean;

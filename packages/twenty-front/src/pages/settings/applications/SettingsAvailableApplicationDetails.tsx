@@ -235,7 +235,7 @@ export const SettingsAvailableApplicationDetails = () => {
             manifestContent={manifest}
             applicationInfo={{
               name: displayName,
-              logo: app?.logoUrl,
+              logo: detail?.logo,
               universalIdentifier: detail.universalIdentifier,
             }}
           />
@@ -276,6 +276,10 @@ export const SettingsAvailableApplicationDetails = () => {
             displayName={displayName}
             description={description}
             applicationId={application?.id}
+            fallbackApplicationData={{
+              logo: detail?.logo,
+              name: displayName,
+            }}
             isUnlisted={isUnlisted}
           />
         }

@@ -11,7 +11,7 @@ export class PublicApplicationRegistrationDTO {
   name: string;
 
   @Field(() => String, { nullable: true })
-  logoUrl: string | null;
+  logo: string | null;
 
   @Field(() => String, { nullable: true })
   websiteUrl: string | null;
