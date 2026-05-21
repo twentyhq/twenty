@@ -21,6 +21,7 @@
     "**/*.md",
     "**/*.mdx",
     "**/seed-project/**/*.mjs",
-    "packages/twenty-zapier/build/**"
+    "packages/twenty-zapier/build/**",
+    "**/upgrade-version-command/**"
   ]
 }
