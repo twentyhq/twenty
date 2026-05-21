@@ -376,11 +376,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
         workspace.id,
       );
     } catch (error) {
-      this.logger.error(
-        `failed to enqueue SDK client generation jobs for workspace ${workspace.id}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
+      this.logAndCaptureNonCriticalWorkspaceError({
+        workspaceId: workspace.id,
+        operation: 'enqueue-sdk-client-generation',
+        error: error as Error,
+      });
     }
 
     await this.coreEntityCacheService.invalidate(
@@ -830,22 +830,45 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
           this.workspaceMigrationValidateBuildAndRunService,
       });
     } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to prefill workflow command menu items for workspace ${workspaceId}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
+      this.logAndCaptureNonCriticalWorkspaceError({
+        workspaceId,
+        operation: 'prefill-workflow-command-menu-items',
+        error: error as Error,
+      });
     }
 
     try {
       await this.preInstalledAppsService.installOnWorkspace(workspaceId);
     } catch (error) {
-      this.logger.error(
-        `Non-critical: failed to install pre-installed apps for workspace ${workspaceId}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
+      this.logAndCaptureNonCriticalWorkspaceError({
+        workspaceId,
+        operation: 'install-pre-installed-apps',
+        error: error as Error,
+      });
     }
+  }
+
+  private logAndCaptureNonCriticalWorkspaceError({
+    workspaceId,
+    operation,
+    error,
+  }: {
+    workspaceId: string;
+    operation: string;
+    error: Error;
+  }): void {
+    this.logger.warn(
+      `Non-critical: workspace ${workspaceId} failed during ${operation}`,
+      error,
+    );
+
+    this.exceptionHandlerService.captureExceptions([error], {
+      workspace: { id: workspaceId },
+      additionalData: {
+        operation,
+        isNonCritical: true,
+      },
+    });
   }
 
   async findOneWorkspaceById(id: string) {
