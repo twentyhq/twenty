@@ -219,11 +219,12 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
-    const application =
-      await this.applicationService.findByUniversalIdentifier({
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
         universalIdentifier: applicationUniversalIdentifier,
         workspaceId,
-      });
+      },
+    );
 
     if (!isDefined(application)) {
       throw new ApplicationException(
