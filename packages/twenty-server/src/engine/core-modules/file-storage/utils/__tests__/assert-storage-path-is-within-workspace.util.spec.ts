@@ -15,7 +15,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
     expect(() =>
       assertStoragePathIsWithinWorkspace({
         onStoragePath:
-          'workspace-id/app-uid/BuiltFrontComponent/src/component.mjs',
+          'workspace-id/app-uid/built-front-component/src/component.mjs',
         ...primitives,
       }),
     ).not.toThrow();
@@ -24,7 +24,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
   it('should accept paths directly under the prefix', () => {
     expect(() =>
       assertStoragePathIsWithinWorkspace({
-        onStoragePath: 'workspace-id/app-uid/BuiltFrontComponent/file.mjs',
+        onStoragePath: 'workspace-id/app-uid/built-front-component/file.mjs',
         ...primitives,
       }),
     ).not.toThrow();
@@ -34,7 +34,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
     expect(() =>
       assertStoragePathIsWithinWorkspace({
         onStoragePath:
-          'other-workspace/other-app/BuiltFrontComponent/stolen.mjs',
+          'other-workspace/other-app/built-front-component/stolen.mjs',
         ...primitives,
       }),
     ).toThrow(
@@ -60,7 +60,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
   it('should reject the prefix itself without a trailing file', () => {
     expect(() =>
       assertStoragePathIsWithinWorkspace({
-        onStoragePath: 'workspace-id/app-uid/BuiltFrontComponent',
+        onStoragePath: 'workspace-id/app-uid/built-front-component',
         ...primitives,
       }),
     ).toThrow(
@@ -74,7 +74,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
     expect(() =>
       assertStoragePathIsWithinWorkspace({
         onStoragePath:
-          'workspace-id/app-uid/BuiltFrontComponentMalicious/file.mjs',
+          'workspace-id/app-uid/built-front-componentMalicious/file.mjs',
         ...primitives,
       }),
     ).toThrow(
