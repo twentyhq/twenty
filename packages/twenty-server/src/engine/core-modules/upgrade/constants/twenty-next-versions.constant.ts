@@ -7,4 +7,4 @@
  *                              |___/
  */
 
-export const TWENTY_NEXT_VERSIONS = ['2.8.0'] as const;
+export const TWENTY_NEXT_VERSIONS = ['2.9.0'] as const;

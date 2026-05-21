@@ -8,6 +8,8 @@ export const INSTALL_MARKETPLACE_APP = gql`
     installMarketplaceApp(
       universalIdentifier: $universalIdentifier
       version: $version
-    )
+    ) {
+      id
+    }
   }
 `;

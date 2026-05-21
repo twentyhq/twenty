@@ -827,17 +827,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "gemini-1.5-flash",
-        "label": "Gemini 1.5 Flash",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.075,
-        "outputCostPerMillionTokens": 0.3,
-        "cachedInputCostPerMillionTokens": 0.01875,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video"]
-      },
-      {
         "name": "gemini-3.1-flash-lite",
         "label": "Gemini 3.1 Flash Lite",
         "modelFamily": "GEMINI",
@@ -847,18 +836,6 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.5-flash-preview-09-2025",
-        "label": "Gemini 2.5 Flash Preview 09-25",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.3,
-        "outputCostPerMillionTokens": 2.5,
-        "cachedInputCostPerMillionTokens": 0.075,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -880,89 +857,8 @@
         "supportsReasoning": true
       },
       {
-        "name": "gemini-2.5-flash-preview-04-17",
-        "label": "Gemini 2.5 Flash Preview 04-17",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.15,
-        "outputCostPerMillionTokens": 0.6,
-        "cachedInputCostPerMillionTokens": 0.0375,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemma-3-27b-it",
-        "label": "Gemma 3 27B",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0,
-        "outputCostPerMillionTokens": 0,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192,
-        "modalities": ["image"]
-      },
-      {
-        "name": "gemini-2.5-flash-preview-05-20",
-        "label": "Gemini 2.5 Flash Preview 05-20",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.15,
-        "outputCostPerMillionTokens": 0.6,
-        "cachedInputCostPerMillionTokens": 0.0375,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-live-2.5-flash-preview-native-audio",
-        "label": "Gemini Live 2.5 Flash Preview Native Audio",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 65536,
-        "modalities": ["audio", "video"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.5-pro-preview-06-05",
-        "label": "Gemini 2.5 Pro Preview 06-05",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.25,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 0.31,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.5-pro-preview-05-06",
-        "label": "Gemini 2.5 Pro Preview 05-06",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.25,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 0.31,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.5-flash-lite-preview-09-2025",
-        "label": "Gemini 2.5 Flash Lite Preview 09-25",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
-        "supportsReasoning": true
-      },
-      {
         "name": "gemini-2.5-flash-lite",
-        "label": "Gemini 2.5 Flash Lite",
+        "label": "Gemini 2.5 Flash-Lite",
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 0.1,
         "outputCostPerMillionTokens": 0.4,
@@ -997,14 +893,14 @@
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 64000,
+        "contextWindowTokens": 1048576,
+        "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
         "supportsReasoning": true
       },
       {
         "name": "gemini-2.0-flash-lite",
-        "label": "Gemini 2.0 Flash Lite",
+        "label": "Gemini 2.0 Flash-Lite",
         "modelFamily": "GEMINI",
         "inputCostPerMillionTokens": 0.075,
         "outputCostPerMillionTokens": 0.3,
@@ -1028,18 +924,6 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 65536,
         "modalities": ["image", "video", "audio", "pdf"],
-        "supportsReasoning": true
-      },
-      {
-        "name": "gemini-2.5-flash-lite-preview-06-17",
-        "label": "Gemini 2.5 Flash Lite Preview 06-17",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.1,
-        "outputCostPerMillionTokens": 0.4,
-        "cachedInputCostPerMillionTokens": 0.025,
-        "contextWindowTokens": 1048576,
-        "maxOutputTokens": 65536,
-        "modalities": ["image", "audio", "video", "pdf"],
         "supportsReasoning": true
       },
       {
@@ -1085,17 +969,6 @@
         "supportsReasoning": true
       },
       {
-        "name": "gemini-live-2.5-flash",
-        "label": "Gemini Live 2.5 Flash",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.5,
-        "outputCostPerMillionTokens": 2,
-        "contextWindowTokens": 128000,
-        "maxOutputTokens": 8000,
-        "modalities": ["image", "audio", "video"],
-        "supportsReasoning": true
-      },
-      {
         "name": "gemini-2.5-flash",
         "label": "Gemini 2.5 Flash",
         "modelFamily": "GEMINI",
@@ -1117,28 +990,6 @@
         "contextWindowTokens": 1048576,
         "maxOutputTokens": 8192,
         "modalities": ["image", "audio", "video", "pdf"]
-      },
-      {
-        "name": "gemini-1.5-pro",
-        "label": "Gemini 1.5 Pro",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 1.25,
-        "outputCostPerMillionTokens": 5,
-        "cachedInputCostPerMillionTokens": 0.3125,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video"]
-      },
-      {
-        "name": "gemini-1.5-flash-8b",
-        "label": "Gemini 1.5 Flash-8B",
-        "modelFamily": "GEMINI",
-        "inputCostPerMillionTokens": 0.0375,
-        "outputCostPerMillionTokens": 0.15,
-        "cachedInputCostPerMillionTokens": 0.01,
-        "contextWindowTokens": 1000000,
-        "maxOutputTokens": 8192,
-        "modalities": ["image", "audio", "video"]
       }
     ]
   },
@@ -1419,8 +1270,8 @@
         "name": "grok-4.20-0309-non-reasoning",
         "label": "Grok 4.20 (Non-Reasoning)",
         "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 6,
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 2.5,
         "cachedInputCostPerMillionTokens": 0.2,
         "longContextCost": {
           "inputCostPerMillionTokens": 4,
@@ -1430,14 +1281,14 @@
         },
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": ["image"]
+        "modalities": ["image", "pdf"]
       },
       {
         "name": "grok-4.20-0309-reasoning",
         "label": "Grok 4.20 (Reasoning)",
         "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 6,
+        "inputCostPerMillionTokens": 1.25,
+        "outputCostPerMillionTokens": 2.5,
         "cachedInputCostPerMillionTokens": 0.2,
         "longContextCost": {
           "inputCostPerMillionTokens": 4,
@@ -1447,71 +1298,20 @@
         },
         "contextWindowTokens": 2000000,
         "maxOutputTokens": 30000,
-        "modalities": ["image"],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
       },
       {
-        "name": "grok-vision-beta",
-        "label": "Grok Vision Beta",
+        "name": "grok-build-0.1",
+        "label": "Grok Build 0.1",
         "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 5,
-        "contextWindowTokens": 8192,
-        "maxOutputTokens": 4096,
-        "modalities": ["image"]
-      },
-      {
-        "name": "grok-2-vision-1212",
-        "label": "Grok 2 Vision (1212)",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 2,
-        "contextWindowTokens": 8192,
-        "maxOutputTokens": 4096,
-        "modalities": ["image"]
-      },
-      {
-        "name": "grok-2-1212",
-        "label": "Grok 2 (1212)",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 2,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
-      },
-      {
-        "name": "grok-beta",
-        "label": "Grok Beta",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 5,
-        "outputCostPerMillionTokens": 15,
-        "cachedInputCostPerMillionTokens": 5,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 4096
-      },
-      {
-        "name": "grok-2",
-        "label": "Grok 2",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 2,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
-      },
-      {
-        "name": "grok-2-vision-latest",
-        "label": "Grok 2 Vision Latest",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 2,
-        "contextWindowTokens": 8192,
-        "maxOutputTokens": 4096,
-        "modalities": ["image"]
+        "inputCostPerMillionTokens": 1,
+        "outputCostPerMillionTokens": 2,
+        "cachedInputCostPerMillionTokens": 0.2,
+        "contextWindowTokens": 256000,
+        "maxOutputTokens": 256000,
+        "modalities": ["image", "pdf"],
+        "supportsReasoning": true
       },
       {
         "name": "grok-4.3",
@@ -1528,29 +1328,8 @@
         },
         "contextWindowTokens": 1000000,
         "maxOutputTokens": 30000,
-        "modalities": ["image"],
+        "modalities": ["image", "pdf"],
         "supportsReasoning": true
-      },
-      {
-        "name": "grok-2-vision",
-        "label": "Grok 2 Vision",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 2,
-        "contextWindowTokens": 8192,
-        "maxOutputTokens": 4096,
-        "modalities": ["image"]
-      },
-      {
-        "name": "grok-2-latest",
-        "label": "Grok 2 Latest",
-        "modelFamily": "GROK",
-        "inputCostPerMillionTokens": 2,
-        "outputCostPerMillionTokens": 10,
-        "cachedInputCostPerMillionTokens": 2,
-        "contextWindowTokens": 131072,
-        "maxOutputTokens": 8192
       }
     ]
   }

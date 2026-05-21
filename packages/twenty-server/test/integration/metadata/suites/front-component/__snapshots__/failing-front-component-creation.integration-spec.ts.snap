@@ -1,4 +1,76 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Front component creation should fail when builtComponentPath contains path traversal 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Built component path contains unsafe characters",
+              "userFriendlyMessage": "Built component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "TraversalTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path contains unsafe characters",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when builtComponentPath is an absolute path 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Built component path contains unsafe characters",
+              "userFriendlyMessage": "Built component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "AbsolutePathTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path contains unsafe characters",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
 
 exports[`Front component creation should fail when name is empty 1`] = `
 {
@@ -66,6 +138,42 @@ exports[`Front component creation should fail when name is whitespace-only 1`] =
       "totalErrors": 1,
     },
     "userFriendlyMessage": "Front component name is required",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when sourceComponentPath contains path traversal 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Source component path contains unsafe characters",
+              "userFriendlyMessage": "Source component path contains unsafe characters",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "TraversalTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Source component path contains unsafe characters",
   },
   "message": "Multiple validation errors occurred while creating front component",
   "name": "GraphQLError",
