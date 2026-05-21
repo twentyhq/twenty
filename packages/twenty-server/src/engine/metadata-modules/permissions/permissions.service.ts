@@ -260,8 +260,7 @@ export class PermissionsService {
 
     return rolePermissionFlags.some(
       (rolePermissionFlag) =>
-        (rolePermissionFlag.permissionFlag?.universalIdentifier ??
-          SystemPermissionFlag[rolePermissionFlag.flag]) ===
+        rolePermissionFlag.permissionFlag.universalIdentifier ===
         permissionFlagUniversalIdentifier,
     );
   }

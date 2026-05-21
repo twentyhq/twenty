@@ -2136,7 +2136,7 @@ msgid "Application details"
 msgstr "Toepassing besonderhede"
 
 #. js-lingui-id: lGEBD4
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Application installed successfully."
 msgstr "Toepassing suksesvol geïnstalleer."
 
@@ -6977,7 +6977,7 @@ msgid "Failed to get response"
 msgstr "Kon nie antwoord kry nie"
 
 #. js-lingui-id: qZwtAi
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr "Kon nie die toepassing installeer nie."
 

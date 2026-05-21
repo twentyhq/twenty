@@ -61,17 +61,17 @@ export default defineLogicFunction({
 你也可以使用 CLI 手动执行函数：
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 你可以通过以下方式查看日志：
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
@@ -341,7 +341,7 @@ export default defineLogicFunction({
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="查询和变更工作区数据（记录、对象）">
 
-`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty build` 时**根据你的工作区架构生成**，因此完全类型化以匹配你的对象和字段。
+`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty dev:build` 时**根据你的工作区架构生成**，因此具有完整的类型定义以匹配你的对象和字段。
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -381,7 +381,7 @@ const { createCompany } = await client.mutation({
 该客户端使用选择集语法：传入 `true` 以包含某字段，使用 `__args` 传递参数，并通过嵌套对象表示关系。 你将基于工作区架构获得完整的自动补全和类型检查。
 
 <Note>
-**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
+**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty dev:build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
 </Note>
 
 #### 使用 CoreSchema 进行类型标注

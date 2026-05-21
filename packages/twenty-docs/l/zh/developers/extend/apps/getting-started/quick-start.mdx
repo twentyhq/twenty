@@ -43,7 +43,7 @@ npx create-twenty-app@latest my-twenty-app
 > **是否要设置本地 Twenty 实例？**
 
 * **是（推荐）** — 将拉取 `twentycrm/twenty-app-dev` Docker 镜像，并在端口 `2020` 上启动它。 请先确保 Docker 正在运行。
-* **否** — 如果你已经有一个想要连接的 Twenty 服务器，请选择此项。 你可以稍后通过 `yarn twenty remote add` 将其连接起来。
+* **否** — 如果你已经有一个想要连接的 Twenty 服务器，请选择此项。 你可以稍后通过 `yarn twenty remote:add` 将其连接起来。
 
 <div style={{textAlign: 'center'}}>
   <img src="/images/docs/developers/extends/apps/start-instance.png" alt="是否启动本地实例？" />
@@ -73,7 +73,7 @@ npx create-twenty-app@latest my-twenty-app
 **完成此阶段后：** 你在 [http://localhost:2020](http://localhost:2020) 上拥有一个正在运行的 Twenty 服务器，且你的 CLI 已获授权可与其同步。
 
 <Note>
-如果未安装或未运行 Docker，脚手架工具会告诉你在所用操作系统上正确的启动命令。 Docker 启动后，你可以通过 `yarn twenty server start` 继续——无需重新生成脚手架。
+如果未安装或未运行 Docker，脚手架工具会告诉你在所用操作系统上正确的启动命令。 Docker 启动后，你可以通过 `yarn twenty docker:start` 继续——无需重新生成脚手架。
 </Note>
 
 ---

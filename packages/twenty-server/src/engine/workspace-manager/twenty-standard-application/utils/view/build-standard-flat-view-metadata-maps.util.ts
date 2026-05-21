@@ -10,7 +10,6 @@ import { computeStandardCalendarChannelEventAssociationViews } from 'src/engine/
 import { computeStandardCalendarEventParticipantViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-participant-views.util';
 import { computeStandardCalendarEventViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-calendar-event-views.util';
 import { computeStandardCompanyViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-company-views.util';
-import { computeStandardConnectedAccountViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-connected-account-views.util';
 import { computeStandardDashboardViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-dashboard-views.util';
 import { computeStandardMessageChannelMessageAssociationMessageFolderViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-message-folder-views.util';
 import { computeStandardMessageChannelMessageAssociationViews } from 'src/engine/workspace-manager/twenty-standard-application/utils/view/compute-standard-message-channel-message-association-views.util';
@@ -46,7 +45,6 @@ const STANDARD_FLAT_VIEW_METADATA_BUILDERS_BY_OBJECT_NAME = {
   calendarEvent: computeStandardCalendarEventViews,
   calendarEventParticipant: computeStandardCalendarEventParticipantViews,
   company: computeStandardCompanyViews,
-  connectedAccount: computeStandardConnectedAccountViews,
   dashboard: computeStandardDashboardViews,
   message: computeStandardMessageViews,
   messageChannel: computeStandardMessageChannelViews,

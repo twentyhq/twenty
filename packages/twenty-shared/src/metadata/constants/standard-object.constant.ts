@@ -310,9 +310,6 @@ export const STANDARD_OBJECTS = {
       deletedAt: {
         universalIdentifier: '20202020-c02d-4034-9d34-4d5f6e7f8a9b',
       },
-      connectedAccount: {
-        universalIdentifier: '20202020-95b1-4f44-82dc-61b042ae2414',
-      },
       handle: {
         universalIdentifier: '20202020-1d08-420a-9aa7-22e0f298232d',
       },
@@ -359,20 +356,13 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'bc9a982c-c314-49d6-818a-2661ce7e918f',
       },
     },
-    indexes: {
-      connectedAccountIdIndex: {
-        universalIdentifier: '58b4d9e3-0a25-4c7f-9d6e-2b3c4a5f6d70',
-      },
-    },
+    indexes: {},
     views: {
       allCalendarChannels: {
         universalIdentifier: '2d11659c-68ae-4ff2-882f-f1cccde372d0',
         viewFields: {
           handle: {
             universalIdentifier: 'dc7ea888-79d6-4b8c-acdd-a72abe8e6326',
-          },
-          connectedAccount: {
-            universalIdentifier: '0fff693f-2149-4fdb-a85c-52f2d89322f2',
           },
           visibility: {
             universalIdentifier: 'a308409d-ee09-4588-b3b2-31b71bced64d',
@@ -399,9 +389,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          connectedAccount: {
-            universalIdentifier: 'bdb40f41-f9ba-4b59-a8cf-878c23701ab3',
-          },
           visibility: {
             universalIdentifier: '2d9f8c64-12be-4bb1-b0d4-977d89853498',
           },
@@ -827,127 +814,6 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  connectedAccount: {
-    universalIdentifier: '20202020-977e-46b2-890b-c3002ddfd5c5',
-    fields: {
-      id: { universalIdentifier: '20202020-c06a-4071-8a71-5c6d7e8f9aab' },
-      createdAt: {
-        universalIdentifier: '20202020-c06b-4072-9b72-6d7e8f9aabbc',
-      },
-      updatedAt: {
-        universalIdentifier: '20202020-c06c-4073-8c73-7e8f9aabbccd',
-      },
-      deletedAt: {
-        universalIdentifier: '20202020-c06d-4074-9d74-8f9aabbccdde',
-      },
-      handle: {
-        universalIdentifier: '20202020-c804-4a50-bb05-b3a9e24f1dec',
-      },
-      provider: {
-        universalIdentifier: '20202020-ebb0-4516-befc-a9e95935efd5',
-      },
-      accessToken: {
-        universalIdentifier: '20202020-707b-4a0a-8753-2ad42efe1e29',
-      },
-      refreshToken: {
-        universalIdentifier: '20202020-532d-48bd-80a5-c4be6e7f6e49',
-      },
-      accountOwner: {
-        universalIdentifier: '20202020-3517-4896-afac-b1d0aa362af6',
-      },
-      lastSyncHistoryId: {
-        universalIdentifier: '20202020-115c-4a87-b50f-ac4367a971b9',
-      },
-      authFailedAt: {
-        universalIdentifier: '20202020-d268-4c6b-baff-400d402b430a',
-      },
-      lastCredentialsRefreshedAt: {
-        universalIdentifier: '20202020-aa5e-4e85-903b-fdf90a941941',
-      },
-      messageChannels: {
-        universalIdentifier: '20202020-24f7-4362-8468-042204d1e445',
-      },
-      calendarChannels: {
-        universalIdentifier: '20202020-af4a-47bb-99ec-51911c1d3977',
-      },
-      handleAliases: {
-        universalIdentifier: '20202020-8a3d-46be-814f-6228af16c47b',
-      },
-      scopes: {
-        universalIdentifier: '20202020-8a3d-46be-814f-6228af16c47c',
-      },
-      connectionParameters: {
-        universalIdentifier: '20202020-a1b2-46be-814f-6228af16c481',
-      },
-      createdBy: {
-        universalIdentifier: 'e09c2463-9ca6-4004-97ce-6039e3161a5d',
-      },
-      updatedBy: {
-        universalIdentifier: '0a84c0e1-f9fc-47d5-8ac9-58538e50a9f9',
-      },
-      position: {
-        universalIdentifier: '66b7bc3e-c99e-42b6-82e6-6f43142c0f2f',
-      },
-      searchVector: {
-        universalIdentifier: '140767fe-0aa4-4573-a0bd-67cb657c9452',
-      },
-    },
-    indexes: {
-      accountOwnerIdIndex: {
-        universalIdentifier: '8e7ca28e-6002-4304-9dcc-0a8da93ca198',
-      },
-    },
-    views: {
-      allConnectedAccounts: {
-        universalIdentifier: '0f47f1d8-63bf-443a-a29a-319ff4543abb',
-        viewFields: {
-          handle: {
-            universalIdentifier: '84515ac3-6154-4860-8b29-10316ba3b6fb',
-          },
-          provider: {
-            universalIdentifier: 'dde13525-685c-4476-adba-6d4fd3c92672',
-          },
-          accountOwner: {
-            universalIdentifier: '7b5b84e1-8441-4c8c-a113-4fc184b24ba8',
-          },
-          authFailedAt: {
-            universalIdentifier: '66c8d3d4-3505-46a4-85ec-8bad314aa257',
-          },
-          createdAt: {
-            universalIdentifier: '8ff5aa14-69d3-4294-b266-d141d7e12dae',
-          },
-        },
-      },
-      connectedAccountRecordPageFields: {
-        universalIdentifier: '1cc895ca-fe99-44bc-bc1e-19c935ef2595',
-        viewFieldGroups: {
-          general: {
-            universalIdentifier: '428a9949-71f4-4ebf-9160-1da43f1113ff',
-          },
-          system: {
-            universalIdentifier: 'ce9f7f72-583e-4415-a82f-e1f4b2cc8e2f',
-          },
-        },
-        viewFields: {
-          provider: {
-            universalIdentifier: '83171d2a-0d11-42b1-991d-8d4346b02cff',
-          },
-          accountOwner: {
-            universalIdentifier: '399a5e57-abab-42b1-b3f6-029a33d62e30',
-          },
-          authFailedAt: {
-            universalIdentifier: 'ad52cc4e-fd75-4b11-8915-c8a7c96ce500',
-          },
-          createdAt: {
-            universalIdentifier: 'eda84724-d30e-406d-9858-016dcd46ac49',
-          },
-          createdBy: {
-            universalIdentifier: '1335696e-31cf-4a5e-aabf-89b45dd80b33',
-          },
-        },
-      },
-    },
-  },
   dashboard: {
     universalIdentifier: '20202020-3840-4b6d-9425-0c5188b05ca8',
     fields: {
@@ -1227,9 +1093,6 @@ export const STANDARD_OBJECTS = {
       handle: {
         universalIdentifier: '20202020-2c96-43c3-93e3-ed6b1acb69bc',
       },
-      connectedAccount: {
-        universalIdentifier: '20202020-49a2-44a4-b470-282c0440d15d',
-      },
       type: { universalIdentifier: '20202020-ae95-42d9-a3f1-797a2ea22122' },
       isContactAutoCreationEnabled: {
         universalIdentifier: '20202020-fabd-4f14-b7c6-3310f6d132c6',
@@ -1286,20 +1149,13 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '5e84794c-6f14-4bdf-81a6-76ee11cda51f',
       },
     },
-    indexes: {
-      connectedAccountIdIndex: {
-        universalIdentifier: 'ab09a386-4dcc-41f7-8dc6-a6071e9c64b7',
-      },
-    },
+    indexes: {},
     views: {
       allMessageChannels: {
         universalIdentifier: '95f57f8e-eaac-46f7-b364-4ef8208f165f',
         viewFields: {
           handle: {
             universalIdentifier: 'f71a30b0-ee4a-4d36-847a-d0c99134fbb8',
-          },
-          connectedAccount: {
-            universalIdentifier: '0128fd40-7958-4cc5-9c73-7ddb7820d3ec',
           },
           type: {
             universalIdentifier: 'fa480cec-938c-4216-95fe-ba4335e20a41',
@@ -1329,9 +1185,6 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          connectedAccount: {
-            universalIdentifier: '19079cf6-2a9c-40b9-b6c2-58d63c6e37ad',
-          },
           type: {
             universalIdentifier: '280b9097-0bcf-4389-9ee7-fa89990d1369',
           },
@@ -3135,9 +2988,6 @@ export const STANDARD_OBJECTS = {
       },
       accountOwnerForCompanies: {
         universalIdentifier: '20202020-dc29-4bd4-a3c1-29eafa324bee',
-      },
-      connectedAccounts: {
-        universalIdentifier: '20202020-e322-4bde-a525-727079b4a100',
       },
       messageParticipants: {
         universalIdentifier: '20202020-8f99-48bc-a5eb-edd33dd54188',
