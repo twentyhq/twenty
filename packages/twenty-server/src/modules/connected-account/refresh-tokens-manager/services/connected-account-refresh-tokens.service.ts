@@ -37,7 +37,6 @@ export class ConnectedAccountRefreshTokensService {
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
   ) {}
 
-  // Returns encrypted tokens safe to store on in-memory entities
   async resolveTokens(
     connectedAccount: ConnectedAccountEntity,
     workspaceId: string,
