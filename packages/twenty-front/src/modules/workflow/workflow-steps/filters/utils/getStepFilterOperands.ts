@@ -1,8 +1,8 @@
+import { ViewFilterOperand } from 'twenty-shared/types';
 import {
   COMPOSITE_FIELD_FILTER_OPERANDS_MAP,
   FILTER_OPERANDS_MAP,
-} from '@/object-record/record-filter/utils/getRecordFilterOperands';
-import { ViewFilterOperand } from 'twenty-shared/types';
+} from 'twenty-shared/utils';
 
 const defaultOperands = [
   ViewFilterOperand.IS,

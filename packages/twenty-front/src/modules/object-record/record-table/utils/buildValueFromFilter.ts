@@ -5,10 +5,7 @@ import {
   type RecordFilter,
   type RecordFilterToRecordInputOperand,
 } from '@/object-record/record-filter/types/RecordFilter';
-import {
-  FILTER_OPERANDS_MAP,
-  getRecordFilterOperands,
-} from '@/object-record/record-filter/utils/getRecordFilterOperands';
+import { getRecordFilterOperands } from '@/object-record/record-filter/utils/getRecordFilterOperands';
 import { COMPOSITE_FIELD_TYPE_SUB_FIELDS_NAMES } from 'twenty-shared/constants';
 import {
   compositeTypeDefinitions,
@@ -16,7 +13,11 @@ import {
   ViewFilterOperand,
   type FieldMetadataOptions,
 } from 'twenty-shared/types';
-import { assertUnreachable, parseJson } from 'twenty-shared/utils';
+import {
+  assertUnreachable,
+  FILTER_OPERANDS_MAP,
+  parseJson,
+} from 'twenty-shared/utils';
 import { RelationType } from '~/generated-metadata/graphql';
 import { convertCurrencyAmountToCurrencyMicros } from '~/utils/convertCurrencyToCurrencyMicros';
 
