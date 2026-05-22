@@ -283,8 +283,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   ): Promise<Buffer> {
     const headers: Record<string, string> = {};
 
-    const isSameHost =
-      new URL(tarballUrl).host === new URL(registryUrl).host;
+    const isSameHost = new URL(tarballUrl).host === new URL(registryUrl).host;
 
     if (authToken && isSameHost) {
       headers['Authorization'] = `Bearer ${authToken}`;
