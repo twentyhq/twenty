@@ -76,8 +76,7 @@ export const SettingsObjectIndexFieldsForm = ({
               // own value so the dropdown still reflects the current choice.
               const availableOptions: SelectOption<string>[] = indexableFields
                 .filter(
-                  (field) =>
-                    field.id === fieldId || !value.includes(field.id),
+                  (field) => field.id === fieldId || !value.includes(field.id),
                 )
                 .map<SelectOption<string>>((field) => ({
                   Icon: getIcon(field.icon),
@@ -95,9 +94,7 @@ export const SettingsObjectIndexFieldsForm = ({
                       value={fieldId ?? ''}
                       options={availableOptions}
                       emptyOption={emptyFieldOption}
-                      onChange={(newValue) =>
-                        handleSelect(rowIndex, newValue)
-                      }
+                      onChange={(newValue) => handleSelect(rowIndex, newValue)}
                       fullWidth
                       withSearchInput
                     />
