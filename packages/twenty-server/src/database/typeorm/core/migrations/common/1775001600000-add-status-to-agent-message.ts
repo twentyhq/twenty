@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddStatusToAgentMessage1775001600000
-  implements MigrationInterface
-{
+export class AddStatusToAgentMessage1775001600000 implements MigrationInterface {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE TYPE "core"."agentMessage_status_enum" AS ENUM ('queued', 'sent')`,

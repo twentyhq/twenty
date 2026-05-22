@@ -11,11 +11,11 @@ import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/t
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const CommandMenuItemWithAddToNavigationDragDndKit = lazy(() =>
-  import(
-    '@/command-menu/components/CommandMenuItemWithAddToNavigationDragDndKit'
-  ).then((m) => ({
-    default: m.CommandMenuItemWithAddToNavigationDragDndKit,
-  })),
+  import('@/command-menu/components/CommandMenuItemWithAddToNavigationDragDndKit').then(
+    (m) => ({
+      default: m.CommandMenuItemWithAddToNavigationDragDndKit,
+    }),
+  ),
 );
 
 type SidePanelItemWithAddToNavigationDragProps = {

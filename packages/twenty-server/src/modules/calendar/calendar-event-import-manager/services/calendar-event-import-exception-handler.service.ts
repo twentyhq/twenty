@@ -8,6 +8,10 @@ import {
   type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import {
   type CalendarEventImportDriverException,
@@ -37,7 +41,10 @@ export class CalendarEventImportErrorHandlerService {
   ) {}
 
   public async handleDriverException(
-    exception: CalendarEventImportDriverException | TwentyORMException,
+    exception:
+      | CalendarEventImportDriverException
+      | TwentyORMException
+      | ConnectedAccountRefreshAccessTokenException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<CalendarChannelEntity, 'id' | 'throttleFailureCount'>,
     workspaceId: string,
@@ -52,6 +59,7 @@ export class CalendarEventImportErrorHandlerService {
         break;
       case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         await this.handleTemporaryException(
           syncStep,
           calendarChannel,
@@ -59,6 +67,8 @@ export class CalendarEventImportErrorHandlerService {
         );
         break;
       case CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
         await this.handleInsufficientPermissionsException(
           calendarChannel,
           workspaceId,
@@ -70,6 +80,8 @@ export class CalendarEventImportErrorHandlerService {
       case CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
       case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
       default:
         await this.handleUnknownException(
           exception,

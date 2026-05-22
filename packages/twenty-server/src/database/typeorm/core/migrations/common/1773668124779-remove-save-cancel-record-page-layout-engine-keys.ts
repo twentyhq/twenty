@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class RemoveSaveCancelRecordPageLayoutEngineKeys1773668124779
-  implements MigrationInterface
-{
+export class RemoveSaveCancelRecordPageLayoutEngineKeys1773668124779 implements MigrationInterface {
   name = 'RemoveSaveCancelRecordPageLayoutEngineKeys1773668124779';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

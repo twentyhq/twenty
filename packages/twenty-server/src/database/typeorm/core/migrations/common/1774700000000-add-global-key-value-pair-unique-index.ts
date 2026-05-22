@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { addGlobalKeyValuePairUniqueIndexQueries } from 'src/database/typeorm/core/migrations/utils/1774700000000-add-global-key-value-pair-unique-index.util';
 
-export class AddGlobalKeyValuePairUniqueIndex1774700000000
-  implements MigrationInterface
-{
+export class AddGlobalKeyValuePairUniqueIndex1774700000000 implements MigrationInterface {
   name = 'AddGlobalKeyValuePairUniqueIndex1774700000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

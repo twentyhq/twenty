@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUniversalIdentifierToServerlessFunction1758793689363
-  implements MigrationInterface
-{
+export class AddUniversalIdentifierToServerlessFunction1758793689363 implements MigrationInterface {
   name = 'AddUniversalIdentifierToServerlessFunction1758793689363';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

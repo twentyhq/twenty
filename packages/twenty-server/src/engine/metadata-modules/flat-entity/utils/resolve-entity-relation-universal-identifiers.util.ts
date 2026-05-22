@@ -55,10 +55,8 @@ type ResolvedUniversalIdentifiers<
 
 export const resolveEntityRelationUniversalIdentifiers = <
   T extends AllMetadataName,
-  TProvidedKeys extends Extract<
-    MetadataManyToOneJoinColumn<T>,
-    string
-  > = Extract<MetadataManyToOneJoinColumn<T>, string>,
+  TProvidedKeys extends Extract<MetadataManyToOneJoinColumn<T>, string> =
+    Extract<MetadataManyToOneJoinColumn<T>, string>,
 >({
   metadataName,
   foreignKeyValues,

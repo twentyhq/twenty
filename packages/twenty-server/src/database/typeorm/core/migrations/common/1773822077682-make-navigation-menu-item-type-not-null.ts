@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeNavigationMenuItemTypeNotNullQueries } from 'src/database/typeorm/core/migrations/utils/1773681736596-makeNavigationMenuItemTypeNotNull.util';
 
-export class MakeNavigationMenuItemTypeNotNull1773822077682
-  implements MigrationInterface
-{
+export class MakeNavigationMenuItemTypeNotNull1773822077682 implements MigrationInterface {
   name = 'MakeNavigationMenuItemTypeNotNull1773822077682';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -9,9 +9,7 @@ import {
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @WorkspaceQueryHook(`workflow.updateMany`)
-export class WorkflowUpdateManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowUpdateManyPreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(): Promise<UpdateManyResolverArgs<WorkflowWorkspaceEntity>> {
     throw new WorkflowQueryValidationException(
       'Method not allowed.',

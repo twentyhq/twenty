@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RenameApplicationStandardIdToUniversalIdentifier1759341941773
-  implements MigrationInterface
-{
+export class RenameApplicationStandardIdToUniversalIdentifier1759341941773 implements MigrationInterface {
   name = 'RenameApplicationStandardIdToUniversalIdentifier1759341941773';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

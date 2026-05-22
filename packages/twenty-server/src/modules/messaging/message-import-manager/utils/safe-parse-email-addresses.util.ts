@@ -10,7 +10,7 @@ export const safeParseEmailAddresses = (header: string): EmailAddress[] => {
         address: parsed.address,
         name: parsed.name ?? '',
       }));
-  } catch (error) {
+  } catch {
     return [];
   }
 };

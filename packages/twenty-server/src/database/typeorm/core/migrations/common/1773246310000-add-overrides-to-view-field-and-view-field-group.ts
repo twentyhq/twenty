@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddOverridesToViewFieldAndViewFieldGroup1773246310000
-  implements MigrationInterface
-{
+export class AddOverridesToViewFieldAndViewFieldGroup1773246310000 implements MigrationInterface {
   name = 'AddOverridesToViewFieldAndViewFieldGroup1773246310000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

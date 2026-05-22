@@ -22,6 +22,7 @@ import {
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
 import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
@@ -96,6 +97,17 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
+    const lastSentBrowsingContextAtom =
+      agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
+    const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
+    const isBrowsingContextChanged =
+      lastSentBrowsingContext === undefined
+        ? browsingContext !== null
+        : JSON.stringify(browsingContext) !==
+          JSON.stringify(lastSentBrowsingContext);
+    const browsingContextToSend = isBrowsingContextChanged
+      ? browsingContext
+      : null;
     const messageId = v4();
     const optimisticMessageCreatedAt = new Date().toISOString();
     const rollbackOptimisticUnarchive = applyOptimisticUnarchive(
@@ -151,12 +163,16 @@ export const useAgentChat = (
           threadId,
           text: contentToSend,
           messageId,
-          browsingContext: browsingContext ?? null,
+          browsingContext: browsingContextToSend,
           modelId: modelIdForRequest ?? undefined,
           fileAttachments:
             fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
+
+      if (isBrowsingContextChanged) {
+        store.set(lastSentBrowsingContextAtom, browsingContext);
+      }
 
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);

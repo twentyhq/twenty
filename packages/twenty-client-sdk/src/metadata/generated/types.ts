@@ -8388,18 +8388,6 @@ export default {
             "checkCustomDomainValidRecords": [
                 228
             ],
-            "installApplication": [
-                6,
-                {
-                    "appRegistrationId": [
-                        1,
-                        "String!"
-                    ],
-                    "version": [
-                        1
-                    ]
-                }
-            ],
             "runWorkspaceMigration": [
                 6,
                 {
@@ -8602,6 +8590,18 @@ export default {
                 }
             ],
             "installMarketplaceApp": [
+                6,
+                {
+                    "universalIdentifier": [
+                        1,
+                        "String!"
+                    ],
+                    "version": [
+                        1
+                    ]
+                }
+            ],
+            "installApplication": [
                 58,
                 {
                     "universalIdentifier": [

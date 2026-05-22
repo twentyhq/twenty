@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddFallbackToCommandMenuItemAvailabilityType1772832588833
-  implements MigrationInterface
-{
+export class AddFallbackToCommandMenuItemAvailabilityType1772832588833 implements MigrationInterface {
   name = 'AddFallbackToCommandMenuItemAvailabilityType1772832588833';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
