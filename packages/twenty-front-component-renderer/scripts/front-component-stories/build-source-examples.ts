@@ -71,43 +71,58 @@ const storyAlias = {
   ...twentySharedAliases,
 };
 
-const STORY_COMPONENTS = [
-  'static.front-component',
-  'interactive.front-component',
-  'lifecycle.front-component',
-  'chakra-example.front-component',
-  'tailwind-example.front-component',
-  'emotion-example.front-component',
-  'styled-components-example.front-component',
-  'shadcn-example.front-component',
-  'mui-example.front-component',
-  'twenty-ui-example.front-component',
-  'sdk-context-example.front-component',
-  'form-events.front-component',
-  'keyboard-events.front-component',
-  'host-api-calls.front-component',
-  'caret-preservation.front-component',
-  'file-input.front-component',
+const ENTRY_POINT_PATTERNS = [
+  /\.front-component\.tsx$/,
+  /\.probe\.front-component\.tsx$/,
 ];
 
-const resolveEntryPoints = (): Record<string, string> => {
-  const entryPoints: Record<string, string> = {};
+const findEntryPointFiles = (directory: string): string[] => {
+  const result: string[] = [];
 
-  for (const name of STORY_COMPONENTS) {
-    const filePath = path.join(exampleSourcesDir, `${name}.tsx`);
+  for (const dirent of fs.readdirSync(directory, { withFileTypes: true })) {
+    const absolutePath = path.join(directory, dirent.name);
 
-    if (!fs.existsSync(filePath)) {
-      throw new Error(
-        `Story component source file not found: ${filePath}\n` +
-          `Ensure the file exists in ${exampleSourcesDir} and the name in STORY_COMPONENTS is correct.`,
-      );
+    if (dirent.isDirectory()) {
+      if (dirent.name === 'shared') {
+        continue;
+      }
+
+      result.push(...findEntryPointFiles(absolutePath));
+      continue;
     }
 
-    entryPoints[name] = filePath;
+    if (!dirent.isFile()) {
+      continue;
+    }
+
+    if (ENTRY_POINT_PATTERNS.some((pattern) => pattern.test(dirent.name))) {
+      result.push(absolutePath);
+    }
+  }
+
+  return result;
+};
+
+const resolveEntryPoints = (): Record<string, string> => {
+  const files = findEntryPointFiles(exampleSourcesDir);
+  const entryPoints: Record<string, string> = {};
+
+  for (const filePath of files) {
+    const relative = path.relative(exampleSourcesDir, filePath);
+    const entryName = relative.replace(/\.tsx$/, '');
+    entryPoints[entryName] = filePath;
+  }
+
+  if (Object.keys(entryPoints).length === 0) {
+    throw new Error(
+      `No story component source files found in ${exampleSourcesDir}`,
+    );
   }
 
   return entryPoints;
 };
+
+const STORY_COMPONENTS = Object.keys(resolveEntryPoints());
 
 type BundleSizeEntry = {
   name: string;

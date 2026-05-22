@@ -122,9 +122,7 @@ const generateCommonEventsType = (
               'dispatchEvent(this: Element, eventData: SerializedEventData) {',
             );
             writer.indent(() => {
-              writer.writeLine(
-                'applySerializedEventTargetProperties(',
-              );
+              writer.writeLine('applySerializedEventTargetProperties(');
               writer.indent(() => {
                 writer.writeLine('this as unknown as Record<string, unknown>,');
                 writer.writeLine('eventData,');
