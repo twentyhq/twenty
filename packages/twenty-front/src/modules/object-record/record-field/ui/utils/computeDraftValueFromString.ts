@@ -3,6 +3,7 @@ import { type FieldInputDraftValue } from '@/object-record/record-field/ui/types
 import { type FieldMetadata } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldAddress } from '@/object-record/record-field/ui/types/guards/isFieldAddress';
 import { isFieldCurrency } from '@/object-record/record-field/ui/types/guards/isFieldCurrency';
+import { isFieldDate } from '@/object-record/record-field/ui/types/guards/isFieldDate';
 import { isFieldDateTime } from '@/object-record/record-field/ui/types/guards/isFieldDateTime';
 import { isFieldEmails } from '@/object-record/record-field/ui/types/guards/isFieldEmails';
 import { isFieldFullName } from '@/object-record/record-field/ui/types/guards/isFieldFullName';
@@ -30,6 +31,7 @@ export const computeDraftValueFromString = <FieldValue>({
   if (
     isFieldUuid(fieldDefinition) ||
     isFieldText(fieldDefinition) ||
+    isFieldDate(fieldDefinition) ||
     isFieldDateTime(fieldDefinition) ||
     isFieldNumber(fieldDefinition) ||
     isFieldRelation(fieldDefinition)
@@ -83,7 +85,7 @@ export const computeDraftValueFromString = <FieldValue>({
   }
 
   throw new CustomError(
-    `Record field type not supported : ${fieldDefinition.type}}`,
+    `Record field type not supported : ${fieldDefinition.type}`,
     'RECORD_FIELD_TYPE_NOT_SUPPORTED',
   );
 };

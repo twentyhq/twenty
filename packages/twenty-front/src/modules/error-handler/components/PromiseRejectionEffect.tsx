@@ -10,7 +10,7 @@ import {
   ServerParseError,
   UnconventionalError,
 } from '@apollo/client/errors';
-import { isDefined, type CustomError } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyString, type CustomError } from 'twenty-shared/utils';
 
 const isApolloError = (error: unknown): boolean =>
   CombinedGraphQLErrors.is(error) ||
@@ -44,25 +44,45 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
 
-      try {
-        const { captureException } = await import('@sentry/react');
-        captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
-          const fingerprint = hasErrorCode(error) ? error.code : error.message;
-          scope.setFingerprint([fingerprint]);
-          error.name = error.message;
-          return scope;
+      try {
+        const { captureException, captureMessage } = await import('@sentry/react');
+
+        if (error instanceof Error) {
+          captureException(error, (scope) => {
+            scope.setExtras({ mechanism: 'onUnhandledRejection' });
+
+            const fingerprint = hasErrorCode(error)
+              ? error.code
+              : isNonEmptyString(error.message)
+                ? error.message
+                : 'unknown-unhandled-rejection';
+
+            scope.setFingerprint([fingerprint]);
+
+            return scope;
+          });
+
+          return;
+        }
+
+        captureMessage('Unhandled promise rejection with non-error reason', {
+          level: 'warning',
+          extra: {
+            mechanism: 'onUnhandledRejection',
+            reasonType: typeof error,
+          },
         });
       } catch (sentryError) {
         // oxlint-disable-next-line no-console
-        console.error('Failed to capture exception with Sentry:', sentryError);
+        console.warn('Failed to capture exception with Sentry:', sentryError);
       }
     },
     [enqueueErrorSnackBar],
