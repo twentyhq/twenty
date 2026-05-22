@@ -36,29 +36,22 @@ export class FileStorageService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
-  private buildOnStoragePath({
+   private buildStoragePathWithinWorkspaceOrThrow({
     workspaceId,
     applicationUniversalIdentifier,
     fileFolder,
-    resourcePath,
-  }: ResourceIdentifier): string {
-    const validationResult = validateResourcePath({
-      resourcePath,
-      fileFolder,
-    });
-
-    if (!validationResult.isValid) {
-      throw new FileStorageException(
-        validationResult.error,
-        FileStorageExceptionCode.ACCESS_DENIED,
-      );
-    }
-
+    relativePath,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+    fileFolder: FileFolder;
+    relativePath: string;
+  }): string {
     const onStoragePath = join(
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder,
-      resourcePath,
+      relativePath,
     ).replace(/\/+/g, '/');
 
     validateStoragePathIsWithinWorkspaceOrThrow({
@@ -69,6 +62,45 @@ export class FileStorageService {
     });
 
     return onStoragePath;
+  }
+
+  private validateAndBuildFileStoragePath(params: ResourceIdentifier): string {
+    const validationResult = validateResourcePath({
+      resourcePath: params.resourcePath,
+      fileFolder: params.fileFolder,
+    });
+
+    if (!validationResult.isValid) {
+      throw new FileStorageException(
+        validationResult.error,
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
+
+    return this.buildStoragePathWithinWorkspaceOrThrow({
+      ...params,
+      relativePath: params.resourcePath,
+    });
+  }
+
+  private validateAndBuildFolderStoragePath(
+    params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
+  ): string {
+    const safePathResult = validateSafeRelativePath({
+      resourcePath: params.folderPath,
+    });
+
+    if (!safePathResult.isValid) {
+      throw new FileStorageException(
+        safePathResult.error,
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
+
+    return this.buildStoragePathWithinWorkspaceOrThrow({
+      ...params,
+      relativePath: params.folderPath,
+    });
   }
 
   async writeFile({
@@ -104,7 +136,7 @@ export class FileStorageService {
       },
     });
 
-    const onStoragePath = this.buildOnStoragePath({
+    const onStoragePath = this.validateAndBuildFileStoragePath({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder,
@@ -150,7 +182,7 @@ export class FileStorageService {
     },
   ): Promise<string | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
+    const onStoragePath = this.validateAndBuildFileStoragePath(params);
 
     return driver.getPresignedUrl({
       filePath: onStoragePath,
@@ -163,7 +195,7 @@ export class FileStorageService {
   readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const onStoragePath = this.buildOnStoragePath(params);
+    const onStoragePath = this.validateAndBuildFileStoragePath(params);
 
     return driver.readFile({ filePath: onStoragePath });
   }
@@ -172,7 +204,7 @@ export class FileStorageService {
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
+    const onStoragePath = this.validateAndBuildFileStoragePath(params);
 
     return driver.downloadFile({
       onStoragePath,
@@ -202,7 +234,7 @@ export class FileStorageService {
 
   async delete(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
+    const onStoragePath = this.validateAndBuildFileStoragePath(params);
 
     const deleteResult = driver.delete({ folderPath: onStoragePath });
 
@@ -233,29 +265,11 @@ export class FileStorageService {
     const { workspaceId, applicationUniversalIdentifier, fileFolder, folderPath } =
       params;
 
-    const safePathResult = validateSafeRelativePath({
-      resourcePath: folderPath,
-    });
-
-    if (!safePathResult.isValid) {
-      throw new FileStorageException(
-        safePathResult.error,
-        FileStorageExceptionCode.ACCESS_DENIED,
-      );
-    }
-
-    const onStoragePath = join(
+    const onStoragePath = this.validateAndBuildFolderStoragePath({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder,
       folderPath,
-    ).replace(/\/+/g, '/');
-
-    validateStoragePathIsWithinWorkspaceOrThrow({
-      onStoragePath,
-      workspaceId,
-      applicationUniversalIdentifier,
-      fileFolder,
     });
 
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
@@ -341,8 +355,8 @@ export class FileStorageService {
   }): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const fromPath = this.buildOnStoragePath(from);
-    const toPath = this.buildOnStoragePath(to);
+    const fromPath = this.validateAndBuildFileStoragePath(from);
+    const toPath = this.validateAndBuildFileStoragePath(to);
 
     const isFile = await driver.checkFileExists({ filePath: fromPath });
 
@@ -361,7 +375,7 @@ export class FileStorageService {
 
   checkFileExists(params: ResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const onStoragePath = this.buildOnStoragePath(params);
+    const onStoragePath = this.validateAndBuildFileStoragePath(params);
 
     return driver.checkFileExists({ filePath: onStoragePath });
   }
