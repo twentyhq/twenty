@@ -655,21 +655,59 @@ jobs:
           if [ "${{ steps.graphql-diff.outputs.core_breaking }}" = "true" ]; then
             echo "❌ GraphQL core schema has breaking changes"
             breaking=true
+            if [ -f graphql-schema-diff.md ]; then
+              echo ""
+              cat graphql-schema-diff.md
+              echo ""
+            fi
           fi
 
           if [ "${{ steps.graphql-diff.outputs.metadata_breaking }}" = "true" ]; then
             echo "❌ GraphQL metadata schema has breaking changes"
             breaking=true
+            if [ -f graphql-metadata-diff.md ]; then
+              echo ""
+              cat graphql-metadata-diff.md
+              echo ""
+            fi
           fi
 
           if [ "${{ steps.rest-diff.outputs.breaking }}" = "true" ]; then
             echo "❌ REST core API has breaking changes"
             breaking=true
+            if [ -f rest-api-diff.json ]; then
+              echo ""
+              jq -r '
+                (if (.missingEndpoints | length) > 0 then
+                  "  Removed endpoints:\n" +
+                  (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end),
+                (if (.changedOperations | length) > 0 then
+                  "  Changed operations:\n" +
+                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end)
+              ' rest-api-diff.json | sed '/^$/d'
+              echo ""
+            fi
           fi
 
           if [ "${{ steps.rest-metadata-diff.outputs.breaking }}" = "true" ]; then
             echo "❌ REST metadata API has breaking changes"
             breaking=true
+            if [ -f rest-metadata-api-diff.json ]; then
+              echo ""
+              jq -r '
+                (if (.missingEndpoints | length) > 0 then
+                  "  Removed endpoints:\n" +
+                  (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end),
+                (if (.changedOperations | length) > 0 then
+                  "  Changed operations:\n" +
+                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end)
+              ' rest-metadata-api-diff.json | sed '/^$/d'
+              echo ""
+            fi
           fi
 
           if [ "$breaking" = "true" ]; then
