@@ -78,7 +78,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 2 indexs",
+    "message": "Validation failed for 2 fieldMetadatas, 2 indexes",
     "summary": {
       "fieldMetadata": 2,
       "index": 2,

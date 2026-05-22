@@ -28,6 +28,12 @@ export class WorkspaceSchemaIndexManagerService {
     concurrently?: boolean;
   }): Promise<void> {
     if (concurrently) {
+      if (queryRunner.isTransactionActive) {
+        throw new Error(
+          'CREATE INDEX CONCURRENTLY cannot run inside a transaction block. Pass a QueryRunner with no active transaction.',
+        );
+      }
+
       await this.dropInvalidIndexIfExists({
         queryRunner,
         schemaName,
