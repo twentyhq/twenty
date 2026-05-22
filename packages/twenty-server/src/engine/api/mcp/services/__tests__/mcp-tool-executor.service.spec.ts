@@ -12,7 +12,7 @@ describe('McpToolExecutorService', () => {
 
   beforeEach(() => {
     const metricsService = {
-      incrementCounterForEvent: jest.fn().mockResolvedValue(undefined),
+      incrementCounterBy: jest.fn().mockResolvedValue(undefined),
     } as unknown as MetricsService;
 
     service = new McpToolExecutorService(metricsService);
