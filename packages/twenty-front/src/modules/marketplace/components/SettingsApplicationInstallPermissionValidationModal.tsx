@@ -1,7 +1,7 @@
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
-  type PermissionSummaryItem,
   buildPermissionSummaryFromRoleManifest,
+  type PermissionSummaryItem,
 } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -11,6 +11,7 @@ import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import {
   Avatar,
+  IconChevronLeft,
   IconEye,
   IconHierarchy,
   IconListDetails,
@@ -19,12 +20,9 @@ import {
   IconTool,
   IconTrash,
 } from 'twenty-ui/display';
-import { Button } from 'twenty-ui/input';
+import { Button, LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import {
-  StyledAppModal,
-  StyledAppModalTitle,
-} from '~/pages/settings/applications/components/SettingsAppModalLayout';
+import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
 type SettingsApplicationInstallPermissionValidationModalProps = {
   modalInstanceId: string;
@@ -34,6 +32,42 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
   onAuthorize: () => void;
   isInstalling?: boolean;
 };
+
+const StyledFullscreenContainer = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: center;
+  position: relative;
+  width: 100%;
+`;
+
+const StyledBackLink = styled.button`
+  align-items: center;
+  background: none;
+  border: none;
+  color: ${themeCssVariables.font.color.secondary};
+  cursor: pointer;
+  display: flex;
+  font-size: ${themeCssVariables.font.size.md};
+  gap: ${themeCssVariables.spacing[1]};
+  left: ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[2]};
+  position: absolute;
+  top: ${themeCssVariables.spacing[4]};
+
+  &:hover {
+    color: ${themeCssVariables.font.color.primary};
+  }
+`;
+
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  max-width: 400px;
+  width: 100%;
+`;
 
 const StyledLogosContainer = styled.div`
   align-items: center;
@@ -46,6 +80,13 @@ const StyledLogosContainer = styled.div`
 const StyledSyncIcon = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
   display: flex;
+`;
+
+const StyledTitle = styled.div`
+  font-size: ${themeCssVariables.font.size.lg};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+  margin-bottom: ${themeCssVariables.spacing[6]};
+  text-align: center;
 `;
 
 const StyledPermissionsCard = styled.div`
@@ -86,13 +127,6 @@ const StyledButtonWrapper = styled.div`
   flex: 1;
 `;
 
-const StyledTitle = styled.div`
-  font-size: ${themeCssVariables.font.size.lg};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  margin-bottom: ${themeCssVariables.spacing[6]};
-  text-align: center;
-`;
-
 export const SettingsApplicationInstallPermissionValidationModal = ({
   modalInstanceId,
   appDisplayName,
@@ -124,77 +158,93 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
     onAuthorize();
   };
 
+  const handleClose = () => {
+    closeModal(modalInstanceId);
+  };
+
   return (
     <StyledAppModal
       modalId={modalInstanceId}
       isClosable
-      onClose={() => closeModal(modalInstanceId)}
-      padding="large"
+      onClose={handleClose}
+      size="fullscreen"
+      padding="none"
+      overlay="transparent"
     >
-      <StyledLogosContainer>
-        <Avatar
-          type="squared"
-          size="xl"
-          avatarUrl={currentWorkspace?.logo}
-          placeholder={currentWorkspace?.displayName ?? ''}
-          placeholderColorSeed={currentWorkspace?.displayName ?? ''}
-        />
-        <StyledSyncIcon>
-          <IconRefresh size={16} />
-        </StyledSyncIcon>
-        <Avatar
-          type="squared"
-          size="xl"
-          avatarUrl={appLogoUrl}
-          placeholder={appDisplayName}
-          placeholderColorSeed={appDisplayName}
-        />
-      </StyledLogosContainer>
-
-      <StyledAppModalTitle>
-        <StyledTitle>
-          {t`Install ${appDisplayName} on your workspace`}
-        </StyledTitle>
-      </StyledAppModalTitle>
-
-      {permissionItems.length > 0 && (
-        <StyledPermissionsCard>
-          <StyledPermissionsTitle>
-            {t`${appDisplayName} would like to:`}
-          </StyledPermissionsTitle>
-          {permissionItems.map((item) => (
-            <StyledPermissionRow key={item.label}>
-              <StyledPermissionIcon>
-                <item.Icon size={16} />
-              </StyledPermissionIcon>
-              {item.label}
-            </StyledPermissionRow>
-          ))}
-        </StyledPermissionsCard>
-      )}
-
-      <StyledButtonsContainer>
-        <StyledButtonWrapper>
-          <Button
-            onClick={() => closeModal(modalInstanceId)}
-            variant="secondary"
-            title={t`Cancel`}
-            fullWidth
-            justify="center"
+      <StyledFullscreenContainer>
+        <StyledBackLink onClick={handleClose}>
+          <LightButton
+            Icon={IconChevronLeft}
+            title={t`Back to settings`}
+            onClick={handleClose}
           />
-        </StyledButtonWrapper>
-        <StyledButtonWrapper>
-          <Button
-            onClick={handleAuthorize}
-            variant="primary"
-            accent="default"
-            title={isInstalling ? t`Installing...` : t`Authorize`}
-            disabled={isInstalling}
-            fullWidth
-            justify="center"
-          />
-        </StyledButtonWrapper>
-      </StyledButtonsContainer>
+        </StyledBackLink>
+
+        <StyledContent>
+          <StyledLogosContainer>
+            <Avatar
+              type="squared"
+              size="xl"
+              avatarUrl={currentWorkspace?.logo}
+              placeholder={currentWorkspace?.displayName ?? ''}
+              placeholderColorSeed={currentWorkspace?.displayName ?? ''}
+            />
+            <StyledSyncIcon>
+              <IconRefresh size={16} />
+            </StyledSyncIcon>
+            <Avatar
+              type="squared"
+              size="xl"
+              avatarUrl={appLogoUrl}
+              placeholder={appDisplayName}
+              placeholderColorSeed={appDisplayName}
+            />
+          </StyledLogosContainer>
+
+          <StyledTitle>
+            {t`Install ${appDisplayName} on your workspace`}
+          </StyledTitle>
+
+          {permissionItems.length > 0 && (
+            <StyledPermissionsCard>
+              <StyledPermissionsTitle>
+                {t`${appDisplayName} would like to:`}
+              </StyledPermissionsTitle>
+              {permissionItems.map((item) => (
+                <StyledPermissionRow key={item.label}>
+                  <StyledPermissionIcon>
+                    <item.Icon size={16} />
+                  </StyledPermissionIcon>
+                  {item.label}
+                </StyledPermissionRow>
+              ))}
+            </StyledPermissionsCard>
+          )}
+
+          <StyledButtonsContainer>
+            <StyledButtonWrapper>
+              <Button
+                onClick={handleClose}
+                variant="secondary"
+                title={t`Cancel`}
+                fullWidth
+                justify="center"
+              />
+            </StyledButtonWrapper>
+            <StyledButtonWrapper>
+              <Button
+                onClick={handleAuthorize}
+                variant="primary"
+                accent="default"
+                title={isInstalling ? t`Installing...` : t`Authorize`}
+                disabled={isInstalling}
+                fullWidth
+                justify="center"
+              />
+            </StyledButtonWrapper>
+          </StyledButtonsContainer>
+        </StyledContent>
+      </StyledFullscreenContainer>
     </StyledAppModal>
   );
 };
