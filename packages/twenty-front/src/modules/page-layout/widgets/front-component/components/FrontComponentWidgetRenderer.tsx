@@ -11,7 +11,6 @@ import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingC
 
 const StyledContainer = styled.div<{ isInEditMode: boolean }>`
   height: 100%;
-  overflow: auto;
   pointer-events: ${({ isInEditMode }) => (isInEditMode ? 'none' : 'auto')};
   width: 100%;
 `;
