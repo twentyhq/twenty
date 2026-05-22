@@ -66,7 +66,7 @@ const tableRowWrapper: Wrapper = (children) => (
 
 const tableColgroupWrapper: Wrapper = (children) => (
   <table style={{ width: 200 }}>
-    <colgroup>{children}</colgroup>
+    {children}
     <tbody>
       <tr>
         <td>cell</td>
@@ -116,9 +116,7 @@ const datalistInputWrapper: Wrapper = (children) => (
 );
 
 const optgroupWrapper: Wrapper = (children) => (
-  <select defaultValue="x">
-    <optgroup label="group">{children}</optgroup>
-  </select>
+  <select defaultValue="x">{children}</select>
 );
 
 type SubjectRenderer = (subject: SubjectProps) => ReactNode;
@@ -394,15 +392,15 @@ const ELEMENT_REGISTRY: Record<HtmlElementName, ElementSpec> = {
     wrapper: optgroupWrapper,
     render(props) {
       return (
-        <option
+        <optgroup
           data-testid={props.testId}
-          value="x"
+          label="group"
           onClick={props.onClick}
           onFocus={props.onFocus}
           onBlur={props.onBlur}
         >
-          inside
-        </option>
+          <option value="x">inside</option>
+        </optgroup>
       );
     },
   },
@@ -555,13 +553,15 @@ const ELEMENT_REGISTRY: Record<HtmlElementName, ElementSpec> = {
     wrapper: tableColgroupWrapper,
     render(props) {
       return (
-        <col
+        <colgroup
           data-testid={props.testId}
           onClick={props.onClick}
           onFocus={props.onFocus}
           onBlur={props.onBlur}
           tabIndex={props.tabIndex}
-        />
+        >
+          <col />
+        </colgroup>
       );
     },
   },
