@@ -63,9 +63,9 @@ export class McpToolExecutorService {
         messages: [],
       });
 
-      void this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterBy({
         key: MetricsKeys.McpToolExecutionSucceeded,
-        shouldStoreInCache: false,
+        amount: 1,
       });
 
       return wrapJsonRpcResponse(id, {
@@ -75,9 +75,9 @@ export class McpToolExecutorService {
         },
       });
     } catch (executionError) {
-      void this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterBy({
         key: MetricsKeys.McpToolExecutionFailed,
-        shouldStoreInCache: false,
+        amount: 1,
       });
 
       return wrapJsonRpcResponse(id, {

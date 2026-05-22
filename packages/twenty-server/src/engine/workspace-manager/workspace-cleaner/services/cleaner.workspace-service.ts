@@ -356,7 +356,7 @@ export class CleanerWorkspaceService {
     }
 
     await this.workspaceService.deleteWorkspace(workspace.id);
-    void this.metricsService.incrementCounter({
+    void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.CronJobDeletedWorkspace,
       shouldStoreInCache: false,
     });

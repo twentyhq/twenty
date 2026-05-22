@@ -245,7 +245,7 @@ export class MessageChannelSyncStatusService {
       { lite: true },
     );
 
-    await this.metricsService.batchIncrementCounter({
+    await this.metricsService.incrementCounterForEvents({
       key: MetricsKeys.MessageChannelSyncJobActive,
       eventIds: messageChannelIds,
     });
@@ -331,7 +331,7 @@ export class MessageChannelSyncStatusService {
             ? MetricsKeys.MessageChannelSyncJobFailedInsufficientPermissions
             : MetricsKeys.MessageChannelSyncJobFailedUnknown;
 
-        await this.metricsService.batchIncrementCounter({
+        await this.metricsService.incrementCounterForEvents({
           key: metricsKey,
           eventIds: messageChannelIds,
         });

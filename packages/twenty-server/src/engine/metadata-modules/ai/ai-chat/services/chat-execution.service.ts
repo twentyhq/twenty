@@ -448,7 +448,7 @@ export class ChatExecutionService {
             continue;
           }
 
-          void this.metricsService.incrementCounter({
+          void this.metricsService.incrementCounterForEvent({
             key: output.success
               ? MetricsKeys.AiChatToolExecutionSucceeded
               : MetricsKeys.AiChatToolExecutionFailed,

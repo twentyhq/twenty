@@ -86,7 +86,7 @@ const createSignInUpServiceForTests = () => {
       markEmailAsVerified: jest.fn(),
     } as any,
     {
-      incrementCounter: jest.fn(),
+      incrementCounterForEvent: jest.fn(),
     } as any,
     {
       invalidateAndRecompute: jest.fn(),

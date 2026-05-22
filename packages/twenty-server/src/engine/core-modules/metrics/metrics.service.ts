@@ -80,7 +80,7 @@ export class MetricsService {
     return gauge;
   }
 
-  async incrementCounter({
+  async incrementCounterForEvent({
     key,
     eventId,
     attributes,
@@ -110,7 +110,7 @@ export class MetricsService {
     }
   }
 
-  async batchIncrementCounter({
+  async incrementCounterForEvents({
     key,
     eventIds,
     attributes,
