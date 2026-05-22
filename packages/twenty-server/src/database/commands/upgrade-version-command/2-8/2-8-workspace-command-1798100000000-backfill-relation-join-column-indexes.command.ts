@@ -8,11 +8,14 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { generateIndexForFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/generate-index-for-flat-field-metadata.util';
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { WorkspaceSchemaManagerService } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const POLYMORPHIC_STANDARD_OBJECT_NAMES_SINGULAR: ReadonlySet<string> = new Set(
@@ -23,7 +26,7 @@ const POLYMORPHIC_STANDARD_OBJECT_NAMES_SINGULAR: ReadonlySet<string> = new Set(
 @Command({
   name: 'upgrade:2-8:backfill-relation-join-column-indexes',
   description:
-    'Backfill missing BTREE indexes on target<X>Id join columns added to polymorphic standard objects (timelineActivity, attachment, noteTarget, taskTarget) when custom objects were created before the auto-index fix.',
+    'Backfill missing BTREE indexes on target<X>Id join columns added to polymorphic standard objects (timelineActivity, attachment, noteTarget, taskTarget) when custom objects were created before the auto-index fix. Indexes are created with CONCURRENTLY so writes are not blocked.',
 })
 export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
@@ -31,15 +34,23 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
     private readonly applicationService: ApplicationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
+    private readonly workspaceSchemaManagerService: WorkspaceSchemaManagerService,
   ) {
     super(workspaceIteratorService);
   }
 
   override async runOnWorkspace({
     workspaceId,
+    dataSource,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
+
+    if (!dataSource) {
+      this.logger.log(`No data source for workspace ${workspaceId}, skipping`);
+
+      return;
+    }
 
     const { flatObjectMetadataMaps, flatFieldMetadataMaps, flatIndexMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -101,25 +112,76 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
       return;
     }
 
-    const flatIndexMetadatasToCreate = fieldsNeedingIndex.map((flatField) => {
+    const flatIndexBuildPlans = fieldsNeedingIndex.map((flatField) => {
       const flatObjectMetadata =
         findFlatEntityByIdInFlatEntityMapsOrThrow<FlatObjectMetadata>({
           flatEntityId: flatField.objectMetadataId,
           flatEntityMaps: flatObjectMetadataMaps,
         });
 
-      return generateIndexForFlatFieldMetadata({
+      const universalFlatIndexMetadata = generateIndexForFlatFieldMetadata({
         flatFieldMetadata: flatField,
         flatObjectMetadata,
       });
+
+      const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+        name: flatField.name,
+      });
+
+      return {
+        flatObjectMetadata,
+        universalFlatIndexMetadata,
+        joinColumnName,
+      };
     });
 
     this.logger.log(
-      `${isDryRun ? '[DRY RUN] ' : ''}Found ${flatIndexMetadatasToCreate.length} missing relation join column index(es) for workspace ${workspaceId}: ${flatIndexMetadatasToCreate.map((flatIndex) => flatIndex.name).join(', ')}`,
+      `${isDryRun ? '[DRY RUN] ' : ''}Found ${flatIndexBuildPlans.length} missing relation join column index(es) for workspace ${workspaceId}: ${flatIndexBuildPlans.map(({ universalFlatIndexMetadata }) => universalFlatIndexMetadata.name).join(', ')}`,
     );
 
     if (isDryRun) {
       return;
+    }
+
+    const queryRunner = dataSource.createQueryRunner();
+    let isQueryRunnerConnected = false;
+
+    try {
+      await queryRunner.connect();
+      isQueryRunnerConnected = true;
+
+      for (const {
+        flatObjectMetadata,
+        universalFlatIndexMetadata,
+        joinColumnName,
+      } of flatIndexBuildPlans) {
+        const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
+          workspaceId,
+          objectMetadata: flatObjectMetadata,
+        });
+
+        await this.workspaceSchemaManagerService.indexManager.createIndex({
+          queryRunner,
+          schemaName,
+          tableName,
+          index: {
+            name: universalFlatIndexMetadata.name,
+            columns: [joinColumnName],
+            isUnique: universalFlatIndexMetadata.isUnique,
+            type: universalFlatIndexMetadata.indexType,
+            where: universalFlatIndexMetadata.indexWhereClause ?? undefined,
+          },
+          concurrently: true,
+        });
+
+        this.logger.log(
+          `Created index ${universalFlatIndexMetadata.name} on workspace ${workspaceId}`,
+        );
+      }
+    } finally {
+      if (isQueryRunnerConnected) {
+        await queryRunner.release();
+      }
     }
 
     const { twentyStandardFlatApplication } =
@@ -133,7 +195,9 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
           isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             index: {
-              flatEntityToCreate: flatIndexMetadatasToCreate,
+              flatEntityToCreate: flatIndexBuildPlans.map(
+                ({ universalFlatIndexMetadata }) => universalFlatIndexMetadata,
+              ),
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -146,16 +210,16 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
 
     if (validateAndBuildResult.status === 'fail') {
       this.logger.error(
-        `Failed to backfill relation join column indexes:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
+        `Failed to persist relation join column index metadata:\n${JSON.stringify(validateAndBuildResult, null, 2)}`,
       );
 
       throw new Error(
-        `Failed to backfill relation join column indexes for workspace ${workspaceId}`,
+        `Failed to persist relation join column index metadata for workspace ${workspaceId}`,
       );
     }
 
     this.logger.log(
-      `Successfully created ${flatIndexMetadatasToCreate.length} relation join column index(es) for workspace ${workspaceId}`,
+      `Successfully backfilled ${flatIndexBuildPlans.length} relation join column index(es) for workspace ${workspaceId}`,
     );
   }
 }

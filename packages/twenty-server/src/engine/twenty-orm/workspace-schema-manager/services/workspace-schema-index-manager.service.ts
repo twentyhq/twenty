@@ -19,11 +19,13 @@ export class WorkspaceSchemaIndexManagerService {
     schemaName,
     tableName,
     index,
+    concurrently = false,
   }: {
     queryRunner: QueryRunner;
     schemaName: string;
     tableName: string;
     index: WorkspaceSchemaIndexDefinition;
+    concurrently?: boolean;
   }): Promise<void> {
     const quotedColumns = index.columns.map((column) =>
       escapeIdentifier(column),
@@ -47,7 +49,9 @@ export class WorkspaceSchemaIndexManagerService {
     const sql = [
       'CREATE',
       isUnique && 'UNIQUE',
-      'INDEX IF NOT EXISTS',
+      'INDEX',
+      concurrently && 'CONCURRENTLY',
+      'IF NOT EXISTS',
       escapeIdentifier(index.name),
       'ON',
       `${escapeIdentifier(schemaName)}.${escapeIdentifier(tableName)}`,
