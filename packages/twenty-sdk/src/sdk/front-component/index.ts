@@ -12,6 +12,8 @@ export {
   featureFlags,
   targetObjectReadPermissions,
   targetObjectWritePermissions,
+  canImpersonate,
+  canAccessFullAdminPanel,
   isDefined,
   isNonEmptyString,
   includes,
