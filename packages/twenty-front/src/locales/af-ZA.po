@@ -533,13 +533,6 @@ msgstr "{workspaceMemberName} sal ontkoppel word van die volgende rol:"
 msgid "#"
 msgstr ""
 
-#. js-lingui-id: CwstSL
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
-msgid "••••••••"
-msgstr "••••••••"
-
 #. js-lingui-id: n9nj+X
 #. placeholder {0}: aiChatThreadPendingDelete?.threadTitle ?? ''
 #: src/modules/ai/components/AiChatThreadDeleteConfirmationModal.tsx
@@ -2143,7 +2136,7 @@ msgid "Application details"
 msgstr "Toepassing besonderhede"
 
 #. js-lingui-id: lGEBD4
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Application installed successfully."
 msgstr "Toepassing suksesvol geïnstalleer."
 
@@ -3179,6 +3172,11 @@ msgstr "Verander e-pos"
 msgid "Change node type"
 msgstr "Verander nodustipe"
 
+#. js-lingui-id: GptGxg
+#: src/modules/settings/accounts/components/SettingsAccountsPasswordController.tsx
+msgid "Change password"
+msgstr ""
+
 #. js-lingui-id: VhMDMg
 #: src/pages/auth/PasswordReset.tsx
 #: src/modules/settings/profile/components/SetOrChangePassword.tsx
@@ -3461,6 +3459,11 @@ msgstr "Maak toe"
 #: src/modules/information-banner/components/InformationBanner.tsx
 msgid "Close banner"
 msgstr "Sluit banier"
+
+#. js-lingui-id: vcpc5o
+#: src/modules/blocknote-editor/components/BlockEditor.tsx
+msgid "Close menu"
+msgstr ""
 
 #. js-lingui-id: saip/v
 #: src/modules/side-panel/components/SidePanelToggleButton.tsx
@@ -6974,7 +6977,7 @@ msgid "Failed to get response"
 msgstr "Kon nie antwoord kry nie"
 
 #. js-lingui-id: qZwtAi
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr "Kon nie die toepassing installeer nie."
 
@@ -9458,7 +9461,7 @@ msgstr "Teken 'n nuwe transaksie aan (maatskappy, bedrag, stadium, verwagte slui
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 msgid "Log out"
 msgstr "Teken uit"
 

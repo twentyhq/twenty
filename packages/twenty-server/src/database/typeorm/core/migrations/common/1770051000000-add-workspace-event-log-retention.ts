@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddWorkspaceEventLogRetention1770051000000
-  implements MigrationInterface
-{
+export class AddWorkspaceEventLogRetention1770051000000 implements MigrationInterface {
   name = 'AddWorkspaceEventLogRetention1770051000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

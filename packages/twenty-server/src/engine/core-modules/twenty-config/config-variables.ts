@@ -44,7 +44,7 @@ import {
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
 import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { loadDefaultModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
+import { DEFAULT_MODEL_PREFERENCES } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -174,6 +174,15 @@ export class ConfigVariables {
     type: ConfigVariableType.BOOLEAN,
   })
   IS_IMAP_SMTP_CALDAV_ENABLED = true;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
+    description:
+      'Enable or disable the connection test when saving IMAP/SMTP/CALDAV accounts',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_IMAP_SMTP_CALDAV_CONNECTION_TEST_ENABLED = true;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
@@ -520,6 +529,16 @@ export class ConfigVariables {
   @CastToPositiveNumber()
   @IsOptional()
   STORAGE_S3_PRESIGNED_URL_EXPIRES_IN: number = 900;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.STORAGE_CONFIG,
+    description:
+      'Maximum tarball upload size in bytes for application registration',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  MAX_TARBALL_UPLOAD_SIZE_BYTES: number = 100 * 1024 * 1024;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
@@ -1166,6 +1185,16 @@ export class ConfigVariables {
   FALLBACK_ENCRYPTION_KEY: string;
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Number of days after which the Enterprise auto-rotation cron issues a new current JWT signing key. When unset, the cron is a no-op. Previous keys remain in the database to keep verifying tokens they signed; revocation stays a manual admin action.',
+    type: ConfigVariableType.NUMBER,
+  })
+  @CastToPositiveNumber()
+  @IsOptional()
+  SIGNING_KEY_ROTATION_DAYS?: number;
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.RATE_LIMITING,
     description: 'Maximum number of records affected by mutations',
     type: ConfigVariableType.NUMBER,
@@ -1410,7 +1439,16 @@ export class ConfigVariables {
     type: ConfigVariableType.JSON,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES: AiModelPreferences = loadDefaultModelPreferences();
+  AI_MODEL_PREFERENCES: AiModelPreferences = DEFAULT_MODEL_PREFERENCES;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'Storage path for AI model preferences fallback (e.g. config/ai-model-preferences.json). Loaded at startup and used only when no value is set via AI_MODEL_PREFERENCES env var or the database.',
+    type: ConfigVariableType.STRING,
+  })
+  @IsOptional()
+  AI_MODEL_PREFERENCES_STORAGE_PATH?: string;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

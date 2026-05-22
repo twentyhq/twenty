@@ -213,36 +213,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  connectedAccount: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'connectedAccount'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'connectedAccount',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.connectedAccount.universalIdentifier,
-        nameSingular: 'connectedAccount',
-        namePlural: 'connectedAccounts',
-        labelSingular: i18nLabel(msg`Connected Account`),
-        labelPlural: i18nLabel(msg`Connected Accounts`),
-        description: i18nLabel(msg`A connected account`),
-        icon: 'IconAt',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'handle',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   dashboard: ({
     now,
     workspaceId,

@@ -49,11 +49,7 @@ export const createApp = async (
   const stripeSDKMockService = new StripeSDKMockService();
   const mockExceptionHandlerService = new ExceptionHandlerMockService();
   let moduleBuilder: TestingModuleBuilder = Test.createTestingModule({
-    imports: [
-      AppModule,
-      JobsModule,
-      MessageQueueModule.registerExplorer(),
-    ],
+    imports: [AppModule, JobsModule, MessageQueueModule.registerExplorer()],
     providers: [
       {
         provide: APP_FILTER,

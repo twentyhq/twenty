@@ -5,7 +5,6 @@ import { currentRecordFilterGroupsComponentState } from '@/object-record/record-
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { anyFieldFilterValueComponentState } from '@/object-record/record-filter/states/anyFieldFilterValueComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
-import { augmentFieldsWithRelationTargets } from '@/object-record/record-filter/utils/augmentFieldsWithRelationTargets';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -38,11 +37,7 @@ export const useGetRecordIndexTotalCount = () => {
     filterValueDependencies,
     recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
     recordFilterGroups: currentRecordFilterGroups,
-    fields: augmentFieldsWithRelationTargets({
-      baseFields: objectMetadataItem.fields,
-      recordFilters: [...currentRecordFilters, ...recordGroupsVisibilityFilter],
-      allFieldMetadataItems: flattenedFieldMetadataItems,
-    }),
+    fieldMetadataItems: flattenedFieldMetadataItems,
   });
 
   const anyFieldFilterValue = useAtomComponentStateValue(

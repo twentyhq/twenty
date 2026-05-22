@@ -1,0 +1,116 @@
+{
+  "name": "twenty-website",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "packages/twenty-website/src",
+  "projectType": "application",
+  "tags": ["scope:website"],
+  "targets": {
+    "build": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": ["production", "^production"],
+      "outputs": ["{projectRoot}/.next"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next build"
+      },
+      "dependsOn": ["^build"]
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next dev --port 3002"
+      }
+    },
+    "start": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "dependsOn": ["build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx next start --port 3002"
+      }
+    },
+    "check-boundaries": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/**/*",
+        "{projectRoot}/scripts/check-boundaries.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-boundaries.mjs"
+      }
+    },
+    "check-section-shape": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/sections/**/*",
+        "{projectRoot}/scripts/check-section-shape.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-section-shape.mjs"
+      }
+    },
+    "check-lottie-frames": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/public/lottie/stepper/stepper.lottie",
+        "{projectRoot}/src/sections/HomeStepper/utils/home-stepper-lottie-frame-map.ts",
+        "{projectRoot}/scripts/check-lottie-frames.mjs"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/check-lottie-frames.mjs"
+      }
+    },
+    "lint": {
+      "dependsOn": [
+        "check-boundaries",
+        "check-section-shape",
+        "check-lottie-frames",
+        "^build",
+        "twenty-oxlint-rules:build"
+      ]
+    },
+    "lint:diff-with-main": {
+      "dependsOn": [
+        "check-boundaries",
+        "check-section-shape",
+        "check-lottie-frames"
+      ]
+    },
+    "typecheck": {},
+    "test": {},
+    "fmt": {
+      "options": {
+        "files": "."
+      },
+      "configurations": {
+        "fix": {}
+      }
+    },
+    "lingui:extract": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui extract --overwrite --clean"
+      }
+    },
+    "lingui:compile": {
+      "executor": "nx:run-commands",
+      "dependsOn": ["^build"],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "lingui compile --typescript"
+      }
+    }
+  }
+}

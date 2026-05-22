@@ -1,4 +1,4 @@
-import { DEFAULT_WIDGET_SIZE } from '@/page-layout/constants/DefaultWidgetSize';
+import { DEFAULT_WIDGET_SIZE } from 'twenty-shared/constants';
 import { type PageLayout } from '@/page-layout/types/PageLayout';
 import { type TabLayouts } from '@/page-layout/types/TabLayouts';
 import { getWidgetSize } from '@/page-layout/utils/getWidgetSize';
@@ -45,10 +45,10 @@ export const convertPageLayoutToTabLayouts = (
 
       return {
         i: widget.id,
-        x: gridPos.column,
-        y: gridPos.row,
-        w: gridPos.columnSpan,
-        h: gridPos.rowSpan,
+        x: gridPos?.column ?? 0,
+        y: gridPos?.row ?? 0,
+        w: gridPos?.columnSpan ?? DEFAULT_WIDGET_SIZE.default.w,
+        h: gridPos?.rowSpan ?? DEFAULT_WIDGET_SIZE.default.h,
         minW,
         minH,
       };

@@ -23,8 +23,11 @@ type EntityMetadataSnapshot = {
   tableName: string;
   tablePath: string;
   givenTableName: string | undefined;
+  canonicalColumns: ReadonlyArray<ColumnMetadata>;
   columnDatabaseNamesByPropertyName: ReadonlyMap<string, string>;
   columnSelectByPropertyName: ReadonlyMap<string, boolean>;
+  columnInsertByPropertyName: ReadonlyMap<string, boolean>;
+  columnUpdateByPropertyName: ReadonlyMap<string, boolean>;
 };
 
 @Injectable()
@@ -116,6 +119,8 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
     for (const metadata of this.coreDataSource.entityMetadatas) {
       const columnDatabaseNamesByPropertyName = new Map<string, string>();
       const columnSelectByPropertyName = new Map<string, boolean>();
+      const columnInsertByPropertyName = new Map<string, boolean>();
+      const columnUpdateByPropertyName = new Map<string, boolean>();
 
       for (const column of metadata.columns) {
         columnDatabaseNamesByPropertyName.set(
@@ -123,14 +128,19 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
           column.databaseName,
         );
         columnSelectByPropertyName.set(column.propertyName, column.isSelect);
+        columnInsertByPropertyName.set(column.propertyName, column.isInsert);
+        columnUpdateByPropertyName.set(column.propertyName, column.isUpdate);
       }
 
       this.snapshotByMetadata.set(metadata, {
         tableName: metadata.tableName,
         tablePath: metadata.tablePath,
         givenTableName: metadata.givenTableName,
+        canonicalColumns: [...metadata.columns],
         columnDatabaseNamesByPropertyName,
         columnSelectByPropertyName,
+        columnInsertByPropertyName,
+        columnUpdateByPropertyName,
       });
     }
   }
@@ -269,9 +279,15 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
       metadata.givenTableName = resolved.effectiveTableName;
     }
 
+    metadata.columns = [...snapshot.canonicalColumns];
+
     for (const column of metadata.columns) {
       this.applyColumnShape({ column, snapshot, resolved });
     }
+
+    metadata.columns = metadata.columns.filter(
+      (column) => !resolved.hiddenPropertyNames.has(column.propertyName),
+    );
   }
 
   private applyColumnShape({
@@ -297,12 +313,18 @@ export class UpgradeAwareEntityMetadataAdapter implements OnModuleInit {
 
     column.databaseName = remappedName ?? canonicalName;
 
+    const isHidden = resolved.hiddenPropertyNames.has(column.propertyName);
+
     const canonicalIsSelect =
       snapshot.columnSelectByPropertyName.get(column.propertyName) ?? true;
+    const canonicalIsInsert =
+      snapshot.columnInsertByPropertyName.get(column.propertyName) ?? true;
+    const canonicalIsUpdate =
+      snapshot.columnUpdateByPropertyName.get(column.propertyName) ?? true;
 
-    column.isSelect = resolved.hiddenPropertyNames.has(column.propertyName)
-      ? false
-      : canonicalIsSelect;
+    column.isSelect = isHidden ? false : canonicalIsSelect;
+    column.isInsert = isHidden ? false : canonicalIsInsert;
+    column.isUpdate = isHidden ? false : canonicalIsUpdate;
   }
 
   private computeTablePath({

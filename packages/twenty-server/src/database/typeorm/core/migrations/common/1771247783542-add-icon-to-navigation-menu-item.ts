@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddIconToNavigationMenuItem1771247783542
-  implements MigrationInterface
-{
+export class AddIconToNavigationMenuItem1771247783542 implements MigrationInterface {
   name = 'AddIconToNavigationMenuItem1771247783542';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

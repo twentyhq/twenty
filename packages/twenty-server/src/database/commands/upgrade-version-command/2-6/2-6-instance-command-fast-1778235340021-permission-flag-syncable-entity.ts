@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.6.0', 1778235340021)
-export class PermissionFlagSyncableEntityFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class PermissionFlagSyncableEntityFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE TABLE "core"."permissionFlag" (

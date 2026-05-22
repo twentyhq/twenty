@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class ChangeAgentDescriptionToText1764672601466
-  implements MigrationInterface
-{
+export class ChangeAgentDescriptionToText1764672601466 implements MigrationInterface {
   name = 'ChangeAgentDescriptionToText1764672601466';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

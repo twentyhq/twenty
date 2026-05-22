@@ -87,6 +87,7 @@ export const SettingsRoleSettings = ({
         <TextArea
           textAreaId={descriptionTextAreaId}
           minRows={4}
+          maxRows={5}
           placeholder={t`Write a description`}
           value={settingsDraftRole.description || ''}
           onChange={(value: string) => {

@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveLogicFunctionVersion1769681396664
-  implements MigrationInterface
-{
+export class RemoveLogicFunctionVersion1769681396664 implements MigrationInterface {
   name = 'RemoveLogicFunctionVersion1769681396664';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

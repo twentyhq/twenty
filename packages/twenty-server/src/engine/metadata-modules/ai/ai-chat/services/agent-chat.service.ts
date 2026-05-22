@@ -23,8 +23,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
 import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
+import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
 const serializeThreadForBroadcast = (
   thread: AgentChatThreadEntity,
@@ -38,8 +40,8 @@ const serializeThreadForBroadcast = (
   totalCacheCreationTokens: thread.totalCacheCreationTokens,
   contextWindowTokens: thread.contextWindowTokens,
   conversationSize: thread.conversationSize,
-  totalInputCredits: thread.totalInputCredits,
-  totalOutputCredits: thread.totalOutputCredits,
+  totalInputCredits: toDisplayCredits(thread.totalInputCredits),
+  totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
   deletedAt: thread.deletedAt,
   lastMessageAt,
   createdAt: thread.createdAt,
@@ -538,9 +540,32 @@ export class AgentChatService {
     );
   }
 
+  async notifyThreadUsageUpdated({
+    threadId,
+    userWorkspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(
+      thread,
+      [
+        'totalInputTokens',
+        'totalOutputTokens',
+        'totalInputCredits',
+        'totalOutputCredits',
+        'conversationSize',
+        'contextWindowTokens',
+      ],
+      userWorkspaceId,
+    );
+  }
+
   private async broadcastThreadUpdated(
     thread: AgentChatThreadEntity,
-    updatedFields: string[],
+    updatedFields: (keyof AgentChatThreadDTO)[],
     userWorkspaceId: string,
   ): Promise<void> {
     const lastMessageAt = await this.getLastMessageAtForThread(thread.id);

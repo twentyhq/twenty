@@ -4,6 +4,7 @@ import {
   getWasIntroducedInUpgradeClassMetadata,
   getWasIntroducedInUpgradePropertyMetadata,
 } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { getWasRemovedInUpgradePropertyMetadata } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import {
   getWasRenamedInUpgradeClassMetadata,
   getWasRenamedInUpgradePropertyMetadata,
@@ -43,6 +44,8 @@ export const resolveEntityShapeAtUpgradeCursor = ({
 
   const propertyIntroductionMap =
     getWasIntroducedInUpgradePropertyMetadata(entityClass);
+  const propertyRemovalMap =
+    getWasRemovedInUpgradePropertyMetadata(entityClass);
   const propertyRenameMap = getWasRenamedInUpgradePropertyMetadata(entityClass);
 
   const hiddenPropertyNames = new Set<string>();
@@ -55,6 +58,13 @@ export const resolveEntityShapeAtUpgradeCursor = ({
       isDefined(introduced) &&
       !isStepApplied(introduced.upgradeCommandName)
     ) {
+      hiddenPropertyNames.add(column.propertyName);
+      continue;
+    }
+
+    const removed = propertyRemovalMap[column.propertyName];
+
+    if (isDefined(removed) && isStepApplied(removed.upgradeCommandName)) {
       hiddenPropertyNames.add(column.propertyName);
       continue;
     }

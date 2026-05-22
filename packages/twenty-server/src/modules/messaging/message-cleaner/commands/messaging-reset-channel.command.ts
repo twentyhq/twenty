@@ -42,44 +42,48 @@ export class MessagingResetChannelCommand extends CommandRunner {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      this.logger.log(
-        `No message channel ID provided, resetting all message channels in workspace ${workspaceId}`,
-      );
-
-      const messageChannels = await this.messageChannelRepository.find({
-        where: {
-          ...(isDefined(messageChannelId) ? { id: messageChannelId } : {}),
-          workspaceId,
-        },
-      });
-
-      if (messageChannels.length === 0) {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
         this.logger.log(
-          `No message channels found in workspace ${workspaceId}`,
+          `No message channel ID provided, resetting all message channels in workspace ${workspaceId}`,
         );
 
-        return;
-      }
+        const messageChannels = await this.messageChannelRepository.find({
+          where: {
+            ...(isDefined(messageChannelId) ? { id: messageChannelId } : {}),
+            workspaceId,
+          },
+        });
 
-      this.logger.log(
-        `Found ${messageChannels.length} message channels to reset`,
-      );
+        if (messageChannels.length === 0) {
+          this.logger.log(
+            `No message channels found in workspace ${workspaceId}`,
+          );
 
-      for (const messageChannel of messageChannels) {
-        await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
-          [messageChannel.id],
-          workspaceId,
+          return;
+        }
+
+        this.logger.log(
+          `Found ${messageChannels.length} message channels to reset`,
         );
-        await this.messagingMessageCleanerService.cleanOrphanMessagesAndThreads(
-          workspaceId,
-        );
-      }
 
-      this.logger.log(
-        `Successfully reset all ${messageChannels.length} message channels in workspace ${workspaceId}`,
-      );
-    }, authContext);
+        for (const messageChannel of messageChannels) {
+          await this.messagingChannelSyncStatusService.resetAndMarkAsMessagesListFetchPending(
+            [messageChannel.id],
+            workspaceId,
+          );
+          await this.messagingMessageCleanerService.cleanOrphanMessagesAndThreads(
+            workspaceId,
+          );
+        }
+
+        this.logger.log(
+          `Successfully reset all ${messageChannels.length} message channels in workspace ${workspaceId}`,
+        );
+      },
+      authContext,
+      { lite: true },
+    );
   }
 
   @Option({

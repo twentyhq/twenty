@@ -5,9 +5,7 @@ import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.
 import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
 import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
 
-export class ClickHouseApplicationLogDriver
-  implements ApplicationLogDriverInterface
-{
+export class ClickHouseApplicationLogDriver implements ApplicationLogDriverInterface {
   private readonly logger = new Logger(ClickHouseApplicationLogDriver.name);
 
   constructor(private readonly clickHouseService: ClickHouseService) {}

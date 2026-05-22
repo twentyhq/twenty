@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class ForeignKeyIndexStandardization1768750308557
-  implements MigrationInterface
-{
+export class ForeignKeyIndexStandardization1768750308557 implements MigrationInterface {
   name = 'ForeignKeyIndexStandardization1768750308557';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

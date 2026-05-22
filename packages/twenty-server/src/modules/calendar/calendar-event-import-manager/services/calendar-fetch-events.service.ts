@@ -55,38 +55,52 @@ export class CalendarFetchEventsService {
 
     const authContext = buildSystemAuthContext(workspaceId);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      try {
-        const { accessToken, refreshToken } =
-          await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-            {
-              connectedAccount,
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        try {
+          const { accessToken, refreshToken } =
+            await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
+              {
+                connectedAccount,
+                workspaceId,
+                calendarChannelId: calendarChannel.id,
+              },
+            );
+
+          const connectedAccountWithFreshTokens = {
+            ...connectedAccount,
+            accessToken,
+            refreshToken,
+          };
+
+          const getCalendarEventsResponse =
+            await this.getCalendarEventsService.getCalendarEvents(
+              connectedAccountWithFreshTokens,
+              calendarChannel.syncCursor || undefined,
+            );
+
+          const hasFullEvents = getCalendarEventsResponse.fullEvents;
+
+          const calendarEvents = hasFullEvents
+            ? getCalendarEventsResponse.calendarEvents
+            : null;
+          const calendarEventIds = getCalendarEventsResponse.calendarEventIds;
+          const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
+
+          if (!calendarEvents || calendarEvents?.length === 0) {
+            await this.calendarChannelRepository.update(
+              { id: calendarChannel.id, workspaceId },
+              {
+                syncCursor: nextSyncCursor,
+              },
+            );
+
+            await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
+              [calendarChannel.id],
               workspaceId,
-              calendarChannelId: calendarChannel.id,
-            },
-          );
+            );
+          }
 
-        const connectedAccountWithFreshTokens = {
-          ...connectedAccount,
-          accessToken,
-          refreshToken,
-        };
-
-        const getCalendarEventsResponse =
-          await this.getCalendarEventsService.getCalendarEvents(
-            connectedAccountWithFreshTokens,
-            calendarChannel.syncCursor || undefined,
-          );
-
-        const hasFullEvents = getCalendarEventsResponse.fullEvents;
-
-        const calendarEvents = hasFullEvents
-          ? getCalendarEventsResponse.calendarEvents
-          : null;
-        const calendarEventIds = getCalendarEventsResponse.calendarEventIds;
-        const nextSyncCursor = getCalendarEventsResponse.nextSyncCursor;
-
-        if (!calendarEvents || calendarEvents?.length === 0) {
           await this.calendarChannelRepository.update(
             { id: calendarChannel.id, workspaceId },
             {
@@ -94,53 +108,43 @@ export class CalendarFetchEventsService {
             },
           );
 
-          await this.calendarChannelSyncStatusService.markAsCalendarEventListFetchPending(
-            [calendarChannel.id],
-            workspaceId,
+          if (hasFullEvents && calendarEvents) {
+            await this.calendarEventsImportService.processCalendarEventsImport(
+              calendarChannel,
+              connectedAccount,
+              workspaceId,
+              calendarEvents,
+            );
+          } else if (!hasFullEvents && calendarEventIds) {
+            await this.cacheStorage.setAdd(
+              `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
+              calendarEventIds,
+            );
+
+            await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
+              [calendarChannel.id],
+              workspaceId,
+            );
+          } else {
+            throw new CalendarEventImportDriverException(
+              "Expected 'calendarEvents' or 'calendarEventIds' to be present",
+              CalendarEventImportDriverExceptionCode.UNKNOWN,
+            );
+          }
+        } catch (error) {
+          this.logger.error(
+            `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Calendar event fetch error: ${error.message}`,
           );
-        }
-
-        await this.calendarChannelRepository.update(
-          { id: calendarChannel.id, workspaceId },
-          {
-            syncCursor: nextSyncCursor,
-          },
-        );
-
-        if (hasFullEvents && calendarEvents) {
-          await this.calendarEventsImportService.processCalendarEventsImport(
+          await this.calendarEventImportErrorHandlerService.handleDriverException(
+            error,
+            CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH,
             calendarChannel,
-            connectedAccount,
             workspaceId,
-            calendarEvents,
-          );
-        } else if (!hasFullEvents && calendarEventIds) {
-          await this.cacheStorage.setAdd(
-            `calendar-events-to-import:${workspaceId}:${calendarChannel.id}`,
-            calendarEventIds,
-          );
-
-          await this.calendarChannelSyncStatusService.markAsCalendarEventsImportPending(
-            [calendarChannel.id],
-            workspaceId,
-          );
-        } else {
-          throw new CalendarEventImportDriverException(
-            "Expected 'calendarEvents' or 'calendarEventIds' to be present",
-            CalendarEventImportDriverExceptionCode.UNKNOWN,
           );
         }
-      } catch (error) {
-        this.logger.error(
-          `WorkspaceId: ${workspaceId}, CalendarChannelId: ${calendarChannel.id} - Calendar event fetch error: ${error.message}`,
-        );
-        await this.calendarEventImportErrorHandlerService.handleDriverException(
-          error,
-          CalendarEventImportSyncStep.CALENDAR_EVENT_LIST_FETCH,
-          calendarChannel,
-          workspaceId,
-        );
-      }
-    }, authContext);
+      },
+      authContext,
+      { lite: true },
+    );
   }
 }

@@ -12,12 +12,12 @@ Twenty are două familii de chei independente:
 
 ## Chei de semnare JWT
 
-Fiecare cheie conține un `publicKey` (păstrată pe termen nelimitat pentru a putea verifica token-urile emise anterior), un `privateKey` criptat (folosit doar cât timp cheia este curentă), un indicator `isCurrent` (exact un rând la un moment dat) și un câmp opțional `revokedAt`.
+Fiecare cheie are un `publicKey` (păstrat pe termen nelimitat pentru a putea verifica token-urile emise anterior), un `privateKey` criptat (folosit doar cât timp cheia este curentă), un indicator `isCurrent` (exact un rând la un moment dat) și un câmp opțional `revokedAt`.
 
 ### Rotește cheia curentă
 
 * **Manual** — **Settings → Admin Panel → Signing keys → Revoke** pe rândul curent. Revocarea șterge materialul privat criptat și o retrogradează; următorul apel de semnare generează automat o nouă pereche de chei ES256 ca noua cheie curentă. Token-urile semnate sub orice alt `kid` (nerevocat) continuă să fie verificate până la expirare.
-* **Enterprise (automat)** — un cron zilnic (`'15 3 * * *'` UTC) emite o nouă cheie curentă după ce cea existentă a fost curentă timp de `SIGNING_KEY_ROTATION_DAYS` (implicit `90`). Cheia anterioară *nu* este revocată, astfel încât token-urile semnate cu ea continuă să fie verificate. Înregistreaz-o o singură dată cu `yarn command:prod cron:register:all`.
+* **Enterprise (automat)** — un cron zilnic (`'15 3 * * *'` UTC) emite o nouă cheie curentă după ce cea existentă a fost curentă timp de `SIGNING_KEY_ROTATION_DAYS` (implicit `90`). Cheia anterioară *nu* este revocată, astfel încât token-urile semnate cu ea continuă să fie verificate. Înregistrează-l o singură dată cu `yarn command:prod cron:register:all`.
 
   <Note>Cron-ul Enterprise și `SIGNING_KEY_ROTATION_DAYS` sunt disponibile în v2.6+.</Note>
 

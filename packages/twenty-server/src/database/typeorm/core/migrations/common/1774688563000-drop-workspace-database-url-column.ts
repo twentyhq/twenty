@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class DropWorkspaceDatabaseUrlColumn1774688563000
-  implements MigrationInterface
-{
+export class DropWorkspaceDatabaseUrlColumn1774688563000 implements MigrationInterface {
   name = 'DropWorkspaceDatabaseUrlColumn1774688563000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

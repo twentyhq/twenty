@@ -38,10 +38,6 @@ import {
   COMPANY_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/company-data-seeds.constant';
 import {
-  CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
-  CONNECTED_ACCOUNT_DATA_SEEDS,
-} from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
-import {
   DASHBOARD_DATA_SEED_COLUMNS,
   getDashboardDataSeeds,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/dashboard-data-seeds.constant';
@@ -163,14 +159,9 @@ const getRecordSeedsBatches = (
       pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
       recordSeeds: getDashboardDataSeeds(workspaceId),
     },
-    {
-      tableName: 'connectedAccount',
-      pgColumns: CONNECTED_ACCOUNT_DATA_SEED_COLUMNS,
-      recordSeeds: CONNECTED_ACCOUNT_DATA_SEEDS,
-    },
   ];
 
-  // Batch 3: Depends on company, connectedAccount
+  // Batch 3: Depends on company
   const batch3: RecordSeedConfig[] = [
     {
       tableName: 'person',

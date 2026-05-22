@@ -22,6 +22,8 @@ import { AddCacheTokensToAgentChatThreadFastInstanceCommand } from 'src/database
 import { AddLogoToApplicationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-2/2-2-instance-command-fast-1777539664664-add-logo-to-application';
 import { AddSubFieldNameToViewSortEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234200000-add-sub-field-name-to-view-sort';
 import { AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1747234300000-add-relation-target-field-metadata-id-to-view-filter';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-4/2-4-instance-command-fast-1747234400000-add-relation-target-field-metadata-id-to-view-filter';
+import { AddRelationTargetFieldMetadataIdToViewFilterEarly2_5FastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1747234500000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777308014234-add-upgrade-migration-workspace-id-index';
 import { AddDeletedAtToAgentChatThreadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777682000000-add-deleted-at-to-agent-chat-thread';
 import { ConnectionProviderSyncableEntityFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-3/2-3-instance-command-fast-1777896012579-connection-provider-syncable-entity';
@@ -45,10 +47,12 @@ import { EncryptApplicationRegistrationVariableSlowInstanceCommand } from 'src/d
 import { EncryptSigningKeyPrivateKeysSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000007000-encrypt-signing-key-private-keys';
 import { EncryptSensitiveConfigStorageSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000008000-encrypt-sensitive-config-storage';
 import { EncryptTotpSecretsSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000009000-encrypt-totp-secrets';
+import { EncryptConnectionParametersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-slow-1798000010000-encrypt-connection-parameters';
 import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
 import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
 import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
+import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1779600000000-finalize-role-permission-flag-cutover';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -68,6 +72,8 @@ export const INSTANCE_COMMANDS = [
   AddConditionalAvailabilityExpressionToPageLayoutWidgetFastInstanceCommand,
   AddSubFieldNameToViewSortEarlyFastInstanceCommand,
   AddRelationTargetFieldMetadataIdToViewFilterEarlyFastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterEarly2_5FastInstanceCommand,
   AddUpgradeMigrationWorkspaceIdIndexFastInstanceCommand,
   AddIsPreInstalledToApplicationRegistrationFastInstanceCommand,
   AddProviderExecutedToAgentMessagePartFastInstanceCommand,
@@ -96,8 +102,10 @@ export const INSTANCE_COMMANDS = [
   EncryptSigningKeyPrivateKeysSlowInstanceCommand,
   EncryptSensitiveConfigStorageSlowInstanceCommand,
   EncryptTotpSecretsSlowInstanceCommand,
+  EncryptConnectionParametersSlowInstanceCommand,
   AddSubFieldNameToViewSortFastInstanceCommand,
   DropPostgresCredentialsTableFastInstanceCommand,
   AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddChannelSyncStageIndexesFastInstanceCommand,
+  FinalizeRolePermissionFlagCutoverFastInstanceCommand,
 ];

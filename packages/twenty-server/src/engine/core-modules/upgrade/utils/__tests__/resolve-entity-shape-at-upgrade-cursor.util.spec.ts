@@ -1,4 +1,5 @@
 import { WasIntroducedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-introduced-in-upgrade.decorator';
+import { WasRemovedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-removed-in-upgrade.decorator';
 import { WasRenamedInUpgrade } from 'src/engine/core-modules/upgrade/decorators/was-renamed-in-upgrade.decorator';
 import { resolveEntityShapeAtUpgradeCursor } from 'src/engine/core-modules/upgrade/utils/resolve-entity-shape-at-upgrade-cursor.util';
 
@@ -6,6 +7,7 @@ const INTRODUCE_CMD = '2.7.0_IntroduceCommand_1800000000000';
 const RENAME_CMD = '2.6.0_RenameCommand_1700000000000';
 const PROP_INTRODUCE_CMD = '2.7.0_AddColumnCommand_1800000000001';
 const PROP_RENAME_CMD = '2.6.0_RenameColumnCommand_1700000000001';
+const PROP_REMOVE_CMD = '2.7.0_DropColumnCommand_1800000000002';
 
 const buildPredicate = (applied: string[]) => {
   const set = new Set(applied);
@@ -164,6 +166,100 @@ describe('resolveEntityShapeAtUpgradeCursor', () => {
 
       expect(result.hiddenPropertyNames.has('untouchedColumn')).toBe(false);
       expect(result.columnDatabaseNameRemap.has('untouchedColumn')).toBe(false);
+    });
+  });
+
+  describe('property-level @WasRemovedInUpgrade', () => {
+    class EntityWithRemovedColumn {
+      @WasRemovedInUpgrade({ upgradeCommandName: PROP_REMOVE_CMD })
+      removedColumn!: string;
+
+      untouchedColumn!: string;
+    }
+
+    const currentColumns = [
+      { propertyName: 'removedColumn', databaseName: 'removedColumn' },
+      { propertyName: 'untouchedColumn', databaseName: 'untouchedColumn' },
+    ];
+
+    it('should not hide the column before its removal step applied', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithRemovedColumn,
+        currentTableName: 'entityWithRemovedColumn',
+        currentColumns,
+        isStepApplied: buildPredicate([]),
+      });
+
+      expect(result.hiddenPropertyNames.size).toBe(0);
+    });
+
+    it('should hide the column once its removal step applied', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithRemovedColumn,
+        currentTableName: 'entityWithRemovedColumn',
+        currentColumns,
+        isStepApplied: buildPredicate([PROP_REMOVE_CMD]),
+      });
+
+      expect(result.hiddenPropertyNames).toEqual(new Set(['removedColumn']));
+    });
+
+    it('should leave undecorated siblings untouched at every cursor', () => {
+      for (const applied of [[], [PROP_REMOVE_CMD]] as string[][]) {
+        const result = resolveEntityShapeAtUpgradeCursor({
+          entityClass: EntityWithRemovedColumn,
+          currentTableName: 'entityWithRemovedColumn',
+          currentColumns,
+          isStepApplied: buildPredicate(applied),
+        });
+
+        expect(result.hiddenPropertyNames.has('untouchedColumn')).toBe(false);
+      }
+    });
+  });
+
+  describe('property-level intro + remove combined', () => {
+    class EntityWithIntroAndRemove {
+      @WasIntroducedInUpgrade({ upgradeCommandName: PROP_INTRODUCE_CMD })
+      @WasRemovedInUpgrade({ upgradeCommandName: PROP_REMOVE_CMD })
+      transientColumn!: string;
+    }
+
+    const currentColumns = [
+      { propertyName: 'transientColumn', databaseName: 'transientColumn' },
+    ];
+
+    it('hides the column before intro applied', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithIntroAndRemove,
+        currentTableName: 'entityWithIntroAndRemove',
+        currentColumns,
+        isStepApplied: buildPredicate([]),
+      });
+
+      expect(result.hiddenPropertyNames).toEqual(new Set(['transientColumn']));
+    });
+
+    it('exposes the column between intro and removal', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithIntroAndRemove,
+        currentTableName: 'entityWithIntroAndRemove',
+        currentColumns,
+        isStepApplied: buildPredicate([PROP_INTRODUCE_CMD]),
+      });
+
+      expect(result.hiddenPropertyNames.size).toBe(0);
+    });
+
+    it('hides the column once removal applied', () => {
+      const result = resolveEntityShapeAtUpgradeCursor({
+        entityClass: EntityWithIntroAndRemove,
+        currentTableName: 'entityWithIntroAndRemove',
+        currentColumns,
+        isStepApplied: buildPredicate([PROP_INTRODUCE_CMD, PROP_REMOVE_CMD]),
+      });
+
+      expect(result.hiddenPropertyNames).toEqual(new Set(['transientColumn']));
     });
   });
 
