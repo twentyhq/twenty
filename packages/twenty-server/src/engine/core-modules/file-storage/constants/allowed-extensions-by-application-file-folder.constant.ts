@@ -20,6 +20,7 @@ export const ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER = {
     '.ttf': true,
     '.otf': true,
     '.eot': true,
+    '.html': true,
     '.css': true,
     '.json': true,
     '.txt': true,
