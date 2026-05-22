@@ -62,9 +62,7 @@ export class DropChannelStandardObjectsCommand extends ActiveOrSuspendedWorkspac
           flatEntityMaps: flatObjectMetadataMaps,
           universalIdentifier,
         }),
-    ).filter(
-      (object): object is FlatObjectMetadata => object !== undefined,
-    );
+    ).filter((object): object is FlatObjectMetadata => object !== undefined);
 
     if (objectsToDelete.length === 0) {
       this.logger.log(
