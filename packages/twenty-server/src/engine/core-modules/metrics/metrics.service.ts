@@ -18,6 +18,17 @@ import { type MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-
 const METER_NAME = 'twenty-server';
 const METRICS_CACHE_TTL = 60 * 1000; // 1 minute
 
+/**
+ * Returned by an observable-gauge callback when the metric needs to
+ * carry attributes (labels) alongside its numeric value. Used for the
+ * Prometheus "info metric" pattern (value = 1, labels carry the
+ * interesting string), e.g. `twenty_upgrade_instance_info { version }`.
+ */
+export type GaugeObservation = {
+  value: number;
+  attributes?: Attributes;
+};
+
 @Injectable()
 export class MetricsService {
   private readonly logger = new Logger(MetricsService.name);
@@ -40,7 +51,21 @@ export class MetricsService {
   }: {
     metricName: string;
     options: MetricOptions;
-    callback: () => number | Promise<number>;
+    /**
+     * Return a bare `number` for a plain gauge, or `{ value, attributes }`
+     * to attach labels (e.g. a version/build string on an info metric).
+     */
+    callback: () =>
+      | number
+      | GaugeObservation
+      | Promise<number | GaugeObservation>;
+    /**
+     * Cache the observed value in Redis for 1 minute so scrape cadence
+     * doesn't repeatedly hit the underlying callback. Only supported
+     * for callbacks that return a bare number — attribute-bearing
+     * observations are not cached at this layer (callers needing it
+     * should cache upstream).
+     */
     cacheValue?: boolean;
   }): ObservableGauge {
     const gauge = this.getMeter().createObservableGauge(metricName, options);
@@ -60,14 +85,18 @@ export class MetricsService {
       try {
         const result = await callback();
 
-        observableResult.observe(result);
+        if (typeof result === 'number') {
+          observableResult.observe(result);
 
-        if (cacheValue) {
-          await this.healthCacheStorage.set(
-            metricName,
-            result,
-            METRICS_CACHE_TTL,
-          );
+          if (cacheValue) {
+            await this.healthCacheStorage.set(
+              metricName,
+              result,
+              METRICS_CACHE_TTL,
+            );
+          }
+        } else {
+          observableResult.observe(result.value, result.attributes);
         }
       } catch (error) {
         this.logger.error(
