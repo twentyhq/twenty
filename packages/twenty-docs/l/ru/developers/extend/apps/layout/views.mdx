@@ -38,6 +38,60 @@ export default defineView({
 * Также вы можете определить `filters`, `filterGroups`, `groups` и `fieldGroups` для более продвинутых конфигураций.
 * `position` управляет порядком, когда для одного и того же объекта существует несколько представлений.
 
+## Фильтры
+
+Представление может поставляться с заранее примененными фильтрами. У каждого фильтра есть три координаты: **поле**, по которому выполняется фильтрация, **операнд** (как сравнивать) и **значение** (с чем сравнивать). Все три должны совпадать — использование операнда, который не подходит для типа поля, будет отклонено во время синхронизации.
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Поддерживаемые операнды по типу поля
+
+| Тип поля                                                                                           | Поддерживаемые операнды                                                                                            |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`                                                                                                               |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Типы полей с похожими названиями могут использовать совершенно разные операнды — типичный пример: `SELECT` и `MULTI_SELECT`.
+
+### Форма значения для каждого операнда
+
+Поле `value` всегда содержит значение, сериализуемое в JSON, но ожидаемая форма зависит от операнда:
+
+| Семейство операндов                                    | Форма значения                        | Пример                   |
+| ------------------------------------------------------ | ------------------------------------- | ------------------------ |
+| `IS`, `IS_NOT` для `SELECT`                            | массив ключей опций (строки)          | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` для `MULTI_SELECT`      | массив ключей опций (строки)          | `['TAG_A']`              |
+| `IS`, `IS_NOT` для `RELATION`                          | массив идентификаторов записей (uuid) | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` для текстовых полей     | строка                                | `'acme'`                 |
+| `IS`, `IS_NOT` для `NUMBER`                            | строка (значение)                     | `'5'`                    |
+| `IS` для `RATING` / `UUID`                             | строка (значение)                     | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`          | строка (граница)                      | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` для `DATE` / `DATE_TIME` | строка в формате ISO 8601             | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                             | пустая строка                         | `''`                     |
+| `IS` для `BOOLEAN`                                     | `'true'` или `'false'`                | `'истина'`               |
+
 ## Как представления отображаются в интерфейсе
 
 Само по себе представление недоступно из боковой панели. Чтобы оно появилось там, свяжите его с [пунктом навигационного меню](/l/ru/developers/extend/apps/layout/navigation-menu-items) типа `VIEW`, который указывает на `universalIdentifier` представления. Это канонический шаблон: каждый пользовательский объект обычно поставляется с представлением по умолчанию и пунктом боковой панели, который его открывает.

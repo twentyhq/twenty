@@ -18,6 +18,8 @@ import { theme } from '@/theme';
 import { buildReleaseListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { Fragment } from 'react';
 
+export const dynamic = 'force-static';
+
 export const generateMetadata = buildRouteMetadata('releases');
 
 type ReleasesPageProps = {
