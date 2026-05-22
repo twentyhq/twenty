@@ -1,7 +1,7 @@
 import { type FileFolder } from 'twenty-shared/types';
 
 import { type ResourcePathValidationResult } from 'src/engine/core-modules/file-storage/types/resource-path-validation-result.type';
-import { validateFilenameIntegrity } from 'src/engine/core-modules/file-storage/utils/validate-filename-integrity.util';
+import { validatePathSegmentsIntegrity } from 'src/engine/core-modules/file-storage/utils/validate-path-segments-integrity.util';
 import { validateResourceExtension } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension.util';
 import { validateSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/validate-safe-relative-path.util';
 
@@ -18,7 +18,7 @@ export const validateResourcePath = ({
     return safePathResult;
   }
 
-  const integrityResult = validateFilenameIntegrity({ resourcePath });
+  const integrityResult = validatePathSegmentsIntegrity({ resourcePath });
 
   if (!integrityResult.isValid) {
     return integrityResult;

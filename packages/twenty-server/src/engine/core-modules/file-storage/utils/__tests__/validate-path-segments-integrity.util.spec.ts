@@ -1,6 +1,6 @@
-import { validateFilenameIntegrity } from 'src/engine/core-modules/file-storage/utils/validate-filename-integrity.util';
+import { validatePathSegmentsIntegrity } from 'src/engine/core-modules/file-storage/utils/validate-path-segments-integrity.util';
 
-describe('validateFilenameIntegrity', () => {
+describe('validatePathSegmentsIntegrity', () => {
   it.each([
     { title: 'simple filename', resourcePath: 'index.mjs' },
     { title: 'nested path', resourcePath: 'src/handlers/index.mjs' },
@@ -10,7 +10,7 @@ describe('validateFilenameIntegrity', () => {
     { title: 'multiple dots in filename', resourcePath: 'module.config.mjs' },
     { title: 'numeric segments', resourcePath: '123/456.json' },
   ])('should return isValid: true for $title', ({ resourcePath }) => {
-    expect(validateFilenameIntegrity({ resourcePath })).toEqual({
+    expect(validatePathSegmentsIntegrity({ resourcePath })).toEqual({
       isValid: true,
     });
   });
@@ -38,7 +38,7 @@ describe('validateFilenameIntegrity', () => {
       resourcePath: `${'a/'.repeat(512)}file.mjs`,
     },
   ])('should return isValid: false for $title', ({ resourcePath }) => {
-    const result = validateFilenameIntegrity({ resourcePath });
+    const result = validatePathSegmentsIntegrity({ resourcePath });
 
     expect(result.isValid).toBe(false);
 
