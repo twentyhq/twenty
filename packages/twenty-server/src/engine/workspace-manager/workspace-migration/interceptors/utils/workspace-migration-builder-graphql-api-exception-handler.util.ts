@@ -1,8 +1,7 @@
-import {
-  ALL_METADATA_NAME,
-  type AllMetadataName,
-} from 'twenty-shared/metadata';
+import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
+
+import { plural } from 'pluralize';
 
 import {
   BaseGraphQLError,
@@ -10,21 +9,6 @@ import {
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { type WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { buildMetadataValidationErrorPayload } from 'src/engine/workspace-manager/workspace-migration/interceptors/utils/build-metadata-validation-error-payload.util';
-
-const IRREGULAR_PLURALS: Partial<Record<AllMetadataName, string>> = {
-  index: 'indexes',
-};
-
-const pluralizeMetadataName = (
-  metadataName: AllMetadataName,
-  count: number,
-): string => {
-  if (count <= 1) {
-    return metadataName;
-  }
-
-  return IRREGULAR_PLURALS[metadataName] ?? `${metadataName}s`;
-};
 
 export const workspaceMigrationBuilderGraphqlApiExceptionHandler = (
   exception: WorkspaceMigrationBuilderException,
@@ -41,7 +25,7 @@ export const workspaceMigrationBuilderGraphqlApiExceptionHandler = (
         return [];
       }
 
-      return [`${count} ${pluralizeMetadataName(metadataName, count)}`];
+      return [`${count} ${count === 1 ? metadataName : plural(metadataName)}`];
     })
     .join(', ')}`;
 
