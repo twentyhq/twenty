@@ -38,6 +38,13 @@ export const buildNavigationInterpolationContext = ({
     i18nInstance,
   );
 
+  const resolvedLabelSingular = resolveObjectMetadataStandardOverride(
+    overrideInput,
+    'labelSingular',
+    locale,
+    i18nInstance,
+  );
+
   const resolvedIcon = resolveObjectMetadataStandardOverride(
     overrideInput,
     'icon',
@@ -48,6 +55,15 @@ export const buildNavigationInterpolationContext = ({
   return {
     navigateToObjectMetadataItem: {
       labelPlural: resolvedLabelPlural,
+      icon: resolvedIcon,
+    },
+    createObjectMetadataItem: {
+      labelSingular: resolvedLabelSingular,
+      icon: resolvedIcon,
+    },
+    targetObjectMetadataItem: {
+      labelPlural: resolvedLabelPlural,
+      labelSingular: resolvedLabelSingular,
       icon: resolvedIcon,
     },
   };

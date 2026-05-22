@@ -26,7 +26,12 @@ export const enrichCommandMenuItemEventWithResolvedNavigation = ({
   locale,
   i18nInstance,
 }: EnrichCommandMenuItemEventArgs): FlatCommandMenuItem => {
-  if (record.engineComponentKey !== EngineComponentKey.NAVIGATION) {
+  if (
+    ![
+      EngineComponentKey.NAVIGATION,
+      EngineComponentKey.CREATE_NEW_RECORD,
+    ].includes(record.engineComponentKey)
+  ) {
     return record;
   }
 

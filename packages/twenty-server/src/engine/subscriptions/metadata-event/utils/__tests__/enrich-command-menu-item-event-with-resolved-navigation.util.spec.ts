@@ -5,6 +5,11 @@ import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-ite
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import {
+  CREATE_RECORD_INTERPOLATED_ICON,
+  CREATE_RECORD_INTERPOLATED_LABEL,
+  CREATE_RECORD_INTERPOLATED_SHORT_LABEL,
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-create-record-flat-command-menu-item.util';
+import {
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
@@ -81,7 +86,31 @@ describe('enrichCommandMenuItemEventWithResolvedNavigation', () => {
     expect(result.icon).toBe('IconUser');
   });
 
-  it('should return record unchanged for non-NAVIGATION items', () => {
+  it('should resolve label, shortLabel, and icon templates for CREATE_NEW_RECORD items', () => {
+    const flatObjectMetadata = makeFlatObjectMetadata();
+    const flatObjectMetadataMaps =
+      makeFlatObjectMetadataMaps(flatObjectMetadata);
+
+    const record = makeNavigationRecord({
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      label: CREATE_RECORD_INTERPOLATED_LABEL,
+      shortLabel: CREATE_RECORD_INTERPOLATED_SHORT_LABEL,
+      icon: CREATE_RECORD_INTERPOLATED_ICON,
+    });
+
+    const result = enrichCommandMenuItemEventWithResolvedNavigation({
+      record,
+      flatObjectMetadataMaps,
+      locale: SOURCE_LOCALE,
+      i18nInstance: mockI18nInstance,
+    });
+
+    expect(result.label).toBe('Create Person');
+    expect(result.shortLabel).toBe('Create Person');
+    expect(result.icon).toBe('IconUser');
+  });
+
+  it('should return record unchanged for CREATE_NEW_RECORD items without object metadata payloads', () => {
     const flatObjectMetadata = makeFlatObjectMetadata();
     const flatObjectMetadataMaps =
       makeFlatObjectMetadataMaps(flatObjectMetadata);

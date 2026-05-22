@@ -1,3 +1,5 @@
+import { MANUAL_RECORD_CREATION_DISABLED_OBJECT_NAME_SINGULARS } from '@/metadata/utils/is-object-metadata-manually-creatable.util';
+
 export const canObjectBeManagedByWorkflow = ({
   nameSingular,
   isSystem,
@@ -5,15 +7,9 @@ export const canObjectBeManagedByWorkflow = ({
   nameSingular: string;
   isSystem: boolean;
 }) => {
-  const excludedNonSystemObjectMetadataItemNames = [
-    'workflow',
-    'workflowVersion',
-    'workflowRun',
-    'dashboard',
-  ];
-
   return (
-    !excludedNonSystemObjectMetadataItemNames.includes(nameSingular) &&
-    !isSystem
+    !MANUAL_RECORD_CREATION_DISABLED_OBJECT_NAME_SINGULARS.includes(
+      nameSingular,
+    ) && !isSystem
   );
 };

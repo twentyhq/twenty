@@ -232,6 +232,27 @@ export class FlatCommandMenuItemValidatorService {
 
         break;
       }
+      case EngineComponentKey.CREATE_NEW_RECORD: {
+        this.validateCreateNewRecordPayload({ payload, validationResult });
+
+        if (isNonEmptyString(workflowVersionId)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`workflowVersionId must not be set for engine component key ${engineComponentKey}`,
+            userFriendlyMessage: msg`Workflow version must not be set for this item type`,
+          });
+        }
+
+        if (isNonEmptyString(frontComponentUniversalIdentifier)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`frontComponentId must not be set for engine component key ${engineComponentKey}`,
+            userFriendlyMessage: msg`Front component must not be set for this item type`,
+          });
+        }
+
+        break;
+      }
       default: {
         if (isNonEmptyString(workflowVersionId)) {
           validationResult.errors.push({
@@ -284,6 +305,33 @@ export class FlatCommandMenuItemValidatorService {
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
         message: t`payload must contain either a "path" or "objectMetadataItemId" property`,
         userFriendlyMessage: msg`Payload must contain either a path or an object metadata item identifier`,
+      });
+    }
+  }
+
+  private validateCreateNewRecordPayload({
+    payload,
+    validationResult,
+  }: {
+    payload: CommandMenuItemPayload | null;
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }): void {
+    if (!isDefined(payload)) {
+      return;
+    }
+
+    const hasObjectMetadataItemId =
+      'objectMetadataItemId' in payload &&
+      isNonEmptyString(payload.objectMetadataItemId);
+
+    if (!hasObjectMetadataItemId) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`payload for CREATE_NEW_RECORD must be null or contain an "objectMetadataItemId" property`,
+        userFriendlyMessage: msg`Payload for create record items must be empty or contain an object metadata item identifier`,
       });
     }
   }

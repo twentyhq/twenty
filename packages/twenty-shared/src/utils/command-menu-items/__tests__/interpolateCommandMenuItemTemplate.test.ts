@@ -109,10 +109,10 @@ describe('interpolateCommandMenuItemTemplate', () => {
 
       expect(
         interpolateCommandMenuItemTemplate({
-          label: 'Create new ${objectMetadataItem.labelSingular}',
+          label: 'Create ${objectMetadataItem.labelSingular}',
           context,
         }),
-      ).toBe('Create new person');
+      ).toBe('Create person');
     });
 
     it('should interpolate objectMetadataItem.labelPlural', () => {
@@ -183,10 +183,10 @@ describe('interpolateCommandMenuItemTemplate', () => {
 
       expect(
         interpolateCommandMenuItemTemplate({
-          label: 'Create new ${objectMetadataItem.labelSingular}',
+          label: 'Create ${objectMetadataItem.labelSingular}',
           context,
         }),
-      ).toBe('Create new ');
+      ).toBe('Create ');
     });
   });
 
@@ -240,10 +240,10 @@ describe('interpolateCommandMenuItemTemplate', () => {
 
       expect(
         interpolateCommandMenuItemTemplate({
-          label: 'Create new ${objectMetadataItem.labelSingular}',
+          label: 'Create ${objectMetadataItem.labelSingular}',
           context,
         }),
-      ).toBe('Create new Person');
+      ).toBe('Create Person');
     });
   });
 

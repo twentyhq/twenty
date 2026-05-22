@@ -12,6 +12,11 @@ import { buildNavigationInterpolationContext } from 'src/engine/metadata-modules
 import { isObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/utils/is-object-metadata-command-menu-item-payload.util';
 import { type ObjectMetadataDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata.dto';
 
+const OBJECT_METADATA_TEMPLATE_ENGINE_COMPONENT_KEYS = [
+  EngineComponentKey.NAVIGATION,
+  EngineComponentKey.CREATE_NEW_RECORD,
+];
+
 export const interpolateNavigationCommandMenuItemField = ({
   commandMenuItem,
   fieldName,
@@ -28,7 +33,9 @@ export const interpolateNavigationCommandMenuItemField = ({
   const rawValue = commandMenuItem[fieldName];
 
   if (
-    commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
+    !OBJECT_METADATA_TEMPLATE_ENGINE_COMPONENT_KEYS.includes(
+      commandMenuItem.engineComponentKey,
+    ) ||
     !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
   ) {
     return rawValue;

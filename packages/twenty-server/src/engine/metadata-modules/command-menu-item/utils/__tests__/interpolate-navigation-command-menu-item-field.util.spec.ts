@@ -4,6 +4,11 @@ import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/com
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { interpolateNavigationCommandMenuItemField } from 'src/engine/metadata-modules/command-menu-item/utils/interpolate-navigation-command-menu-item-field.util';
 import {
+  CREATE_RECORD_INTERPOLATED_ICON,
+  CREATE_RECORD_INTERPOLATED_LABEL,
+  CREATE_RECORD_INTERPOLATED_SHORT_LABEL,
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-create-record-flat-command-menu-item.util';
+import {
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
   NAVIGATION_INTERPOLATED_SHORT_LABEL,
@@ -93,6 +98,46 @@ describe('interpolateNavigationCommandMenuItemField', () => {
     });
 
     expect(result).toBe('Create New Record');
+  });
+
+  it('should resolve templates for CREATE_NEW_RECORD items with object metadata payloads', () => {
+    const createRecordItem = {
+      ...baseCommandMenuItem,
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      label: CREATE_RECORD_INTERPOLATED_LABEL,
+      shortLabel: CREATE_RECORD_INTERPOLATED_SHORT_LABEL,
+      icon: CREATE_RECORD_INTERPOLATED_ICON,
+    };
+
+    expect(
+      interpolateNavigationCommandMenuItemField({
+        commandMenuItem: createRecordItem,
+        fieldName: 'label',
+        objectMetadata: mockObjectMetadata,
+        locale: undefined,
+        i18nInstance: mockI18nInstance,
+      }),
+    ).toBe('Create Person');
+
+    expect(
+      interpolateNavigationCommandMenuItemField({
+        commandMenuItem: createRecordItem,
+        fieldName: 'shortLabel',
+        objectMetadata: mockObjectMetadata,
+        locale: undefined,
+        i18nInstance: mockI18nInstance,
+      }),
+    ).toBe('Create Person');
+
+    expect(
+      interpolateNavigationCommandMenuItemField({
+        commandMenuItem: createRecordItem,
+        fieldName: 'icon',
+        objectMetadata: mockObjectMetadata,
+        locale: undefined,
+        i18nInstance: mockI18nInstance,
+      }),
+    ).toBe('IconUser');
   });
 
   it('should return undefined when object metadata is null for a NAVIGATION item', () => {

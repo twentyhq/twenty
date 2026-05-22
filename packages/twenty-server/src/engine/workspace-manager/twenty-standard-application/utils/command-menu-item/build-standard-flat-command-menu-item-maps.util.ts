@@ -1,7 +1,9 @@
+import { isObjectMetadataManuallyCreatable } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { type FlatCommandMenuItemMaps } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item-maps.type';
+import { buildCreateRecordFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-create-record-flat-command-menu-item.util';
 import { buildNavigationFlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
@@ -79,6 +81,26 @@ export const buildStandardFlatCommandMenuItemMaps = ({
 
     addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
       flatEntity: navigationItem,
+      flatEntityMapsToMutate: flatCommandMenuItemMaps,
+    });
+  }
+
+  const manuallyCreatableActiveObjects = activeObjects.filter((flatObject) =>
+    isObjectMetadataManuallyCreatable(flatObject),
+  );
+
+  for (const flatObject of manuallyCreatableActiveObjects) {
+    const createRecordItem = buildCreateRecordFlatCommandMenuItem({
+      objectMetadata: flatObject,
+      commandMenuItemId: v4(),
+      applicationId: twentyStandardApplicationId,
+      workspaceId,
+      position: nextPosition++,
+      now,
+    });
+
+    addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
+      flatEntity: createRecordItem,
       flatEntityMapsToMutate: flatCommandMenuItemMaps,
     });
   }

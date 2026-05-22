@@ -10,7 +10,7 @@ import { RestoreRecordsCommand } from '@/command-menu-item/engine-command/record
 import { TriggerWorkflowVersionEngineCommand } from '@/command-menu-item/engine-command/record/components/TriggerWorkflowVersionEngineCommand';
 import { MergeMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/MergeMultipleRecordsCommand';
 import { UpdateMultipleRecordsCommand } from '@/command-menu-item/engine-command/record/multiple-records/components/UpdateMultipleRecordsCommand';
-import { CreateNewIndexRecordNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewIndexRecordNoSelectionRecordCommand';
+import { CreateNewRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewRecordCommand';
 import { CreateNewViewNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewViewNoSelectionRecordCommand';
 import { HideDeletedRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/HideDeletedRecordsNoSelectionRecordCommand';
 import { ImportRecordsNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/ImportRecordsNoSelectionRecordCommand';
@@ -53,9 +53,7 @@ export const ENGINE_COMPONENT_KEY_COMPONENT_MAP: Record<
   EngineComponentKey,
   React.ReactNode
 > = {
-  [EngineComponentKey.CREATE_NEW_RECORD]: (
-    <CreateNewIndexRecordNoSelectionRecordCommand />
-  ),
+  [EngineComponentKey.CREATE_NEW_RECORD]: <CreateNewRecordCommand />,
   [EngineComponentKey.DELETE_RECORDS]: <DeleteRecordsCommand />,
   [EngineComponentKey.RESTORE_RECORDS]: <RestoreRecordsCommand />,
   [EngineComponentKey.DESTROY_RECORDS]: <DestroyRecordsCommand />,

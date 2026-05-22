@@ -33,6 +33,69 @@ const buildContext = (
 });
 
 describe('evaluateConditionalAvailabilityExpression', () => {
+  describe('object metadata context', () => {
+    const createCompanyExpression =
+      'targetObjectWritePermissions.company and not (pageType == "INDEX_PAGE" and objectMetadataItem.nameSingular == "company")';
+
+    it('hides object create command on the matching object index page', () => {
+      const context = buildContext({
+        targetObjectWritePermissions: { company: true },
+        objectMetadataItem: { nameSingular: 'company' },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          createCompanyExpression,
+          context,
+        ),
+      ).toBe(false);
+    });
+
+    it('keeps object create command available outside the matching index page', () => {
+      const context = buildContext({
+        targetObjectWritePermissions: { company: true },
+        pageType: ContextStorePageType.Record,
+        objectMetadataItem: { nameSingular: 'company' },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          createCompanyExpression,
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('keeps object create command available without current object context', () => {
+      const context = buildContext({
+        targetObjectWritePermissions: { company: true },
+        pageType: ContextStorePageType.Record,
+        objectMetadataItem: {},
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          createCompanyExpression,
+          context,
+        ),
+      ).toBe(true);
+    });
+
+    it('gates object create command on target object write permission', () => {
+      const context = buildContext({
+        targetObjectWritePermissions: { company: false },
+        objectMetadataItem: { nameSingular: 'person' },
+      });
+
+      expect(
+        evaluateConditionalAvailabilityExpression(
+          createCompanyExpression,
+          context,
+        ),
+      ).toBe(false);
+    });
+  });
+
   describe('arrayLength for favoriteRecordIds', () => {
     it('should evaluate arrayLength(favoriteRecordIds) < numberOfSelectedRecords when some selected are not favorites', () => {
       const expression =

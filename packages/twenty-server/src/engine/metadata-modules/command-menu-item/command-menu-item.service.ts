@@ -318,7 +318,10 @@ export class CommandMenuItemService {
     workspaceId: string;
   }): Promise<ObjectMetadataDTO | null> {
     if (
-      commandMenuItem.engineComponentKey !== EngineComponentKey.NAVIGATION ||
+      ![
+        EngineComponentKey.NAVIGATION,
+        EngineComponentKey.CREATE_NEW_RECORD,
+      ].includes(commandMenuItem.engineComponentKey) ||
       !isObjectMetadataCommandMenuItemPayload(commandMenuItem.payload)
     ) {
       return null;

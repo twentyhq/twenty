@@ -8,6 +8,7 @@ import {
   ViewType,
   ViewVisibility,
 } from 'twenty-shared/types';
+import { isObjectMetadataManuallyCreatable } from 'twenty-shared/metadata';
 import { fromArrayToUniqueKeyRecord, isDefined } from 'twenty-shared/utils';
 import { FindManyOptions, FindOneOptions, Repository } from 'typeorm';
 import { v4, v5 } from 'uuid';
@@ -15,6 +16,10 @@ import { v4, v5 } from 'uuid';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
+import {
+  buildCreateRecordFlatCommandMenuItem,
+  CREATE_RECORD_COMMAND_UUID_NAMESPACE,
+} from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-create-record-flat-command-menu-item.util';
 import {
   buildNavigationFlatCommandMenuItem,
   NAVIGATION_COMMAND_UUID_NAMESPACE,
@@ -404,13 +409,18 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     );
 
     const flatCommandMenuItemsToDelete = flatObjectMetadatasToDelete
-      .map((flatObjectMetadataToDelete) =>
+      .flatMap((flatObjectMetadataToDelete) => [
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             flatObjectMetadataToDelete.universalIdentifier,
           flatCommandMenuItemMaps,
         }),
-      )
+        this.findCreateRecordCommandMenuItemForObject({
+          objectUniversalIdentifier:
+            flatObjectMetadataToDelete.universalIdentifier,
+          flatCommandMenuItemMaps,
+        }),
+      ])
       .filter(isDefined);
 
     const validateAndBuildResult =
@@ -520,14 +530,13 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         },
       );
 
-    const flatCommandMenuItemToCreate = this.buildFlatNavigationCommandMenuItem(
-      {
+    const flatCommandMenuItemsToCreate =
+      this.buildFlatCommandMenuItemsForObject({
         objectMetadata: flatObjectMetadataToCreate,
         workspaceId,
         applicationId: twentyStandardFlatApplication.id,
         flatCommandMenuItemMaps,
-      },
-    );
+      });
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -590,7 +599,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
         {
           allFlatEntityOperationByMetadataName: {
             commandMenuItem: {
-              flatEntityToCreate: [flatCommandMenuItemToCreate],
+              flatEntityToCreate: flatCommandMenuItemsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -845,6 +854,7 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     workspaceId,
     applicationId,
     flatCommandMenuItemMaps,
+    position,
   }: {
     objectMetadata: {
       id: string;
@@ -859,24 +869,112 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     flatCommandMenuItemMaps: {
       byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
     };
+    position?: number;
   }): FlatCommandMenuItem {
-    const existingItems = Object.values(
-      flatCommandMenuItemMaps.byUniversalIdentifier,
-    ).filter(isDefined);
-
-    const nextPosition =
-      existingItems.length > 0
-        ? Math.max(...existingItems.map((item) => item.position)) + 1
-        : 0;
-
     return buildNavigationFlatCommandMenuItem({
       objectMetadata,
       commandMenuItemId: v4(),
       applicationId,
       workspaceId,
-      position: nextPosition,
+      position:
+        position ??
+        this.computeNextCommandMenuItemPosition(flatCommandMenuItemMaps),
       now: new Date().toISOString(),
     });
+  }
+
+  private buildFlatCreateRecordCommandMenuItem({
+    objectMetadata,
+    workspaceId,
+    applicationId,
+    flatCommandMenuItemMaps,
+    position,
+  }: {
+    objectMetadata: {
+      id: string;
+      universalIdentifier: string;
+      nameSingular: string;
+    };
+    workspaceId: string;
+    applicationId: string;
+    flatCommandMenuItemMaps: {
+      byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
+    };
+    position?: number;
+  }): FlatCommandMenuItem {
+    return buildCreateRecordFlatCommandMenuItem({
+      objectMetadata,
+      commandMenuItemId: v4(),
+      applicationId,
+      workspaceId,
+      position:
+        position ??
+        this.computeNextCommandMenuItemPosition(flatCommandMenuItemMaps),
+      now: new Date().toISOString(),
+    });
+  }
+
+  private buildFlatCommandMenuItemsForObject({
+    objectMetadata,
+    workspaceId,
+    applicationId,
+    flatCommandMenuItemMaps,
+  }: {
+    objectMetadata: {
+      id: string;
+      universalIdentifier: string;
+      labelPlural: string;
+      icon: string | null;
+      nameSingular: string;
+      shortcut: string | null;
+      isActive: boolean;
+      isSystem: boolean;
+    };
+    workspaceId: string;
+    applicationId: string;
+    flatCommandMenuItemMaps: {
+      byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
+    };
+  }): FlatCommandMenuItem[] {
+    let nextPosition = this.computeNextCommandMenuItemPosition(
+      flatCommandMenuItemMaps,
+    );
+
+    const commandMenuItems = [
+      this.buildFlatNavigationCommandMenuItem({
+        objectMetadata,
+        workspaceId,
+        applicationId,
+        flatCommandMenuItemMaps,
+        position: nextPosition++,
+      }),
+    ];
+
+    if (isObjectMetadataManuallyCreatable(objectMetadata)) {
+      commandMenuItems.push(
+        this.buildFlatCreateRecordCommandMenuItem({
+          objectMetadata,
+          workspaceId,
+          applicationId,
+          flatCommandMenuItemMaps,
+          position: nextPosition++,
+        }),
+      );
+    }
+
+    return commandMenuItems;
+  }
+
+  private computeNextCommandMenuItemPosition(flatCommandMenuItemMaps: {
+    byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
+  }): number {
+    const existingItems = Object.values(
+      flatCommandMenuItemMaps.byUniversalIdentifier,
+    ).filter(isDefined);
+
+    return existingItems.length > 0
+      ? Math.max(...existingItems.map((item) => item.position)) + 1
+      : 0;
   }
 
   private findNavigationCommandMenuItemForObject({
@@ -891,6 +989,26 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     const commandMenuItemUniversalIdentifier = v5(
       objectUniversalIdentifier,
       NAVIGATION_COMMAND_UUID_NAMESPACE,
+    );
+
+    return findFlatEntityByUniversalIdentifier({
+      flatEntityMaps: flatCommandMenuItemMaps,
+      universalIdentifier: commandMenuItemUniversalIdentifier,
+    });
+  }
+
+  private findCreateRecordCommandMenuItemForObject({
+    objectUniversalIdentifier,
+    flatCommandMenuItemMaps,
+  }: {
+    objectUniversalIdentifier: string;
+    flatCommandMenuItemMaps: {
+      byUniversalIdentifier: Record<string, FlatCommandMenuItem | undefined>;
+    };
+  }): FlatCommandMenuItem | undefined {
+    const commandMenuItemUniversalIdentifier = v5(
+      objectUniversalIdentifier,
+      CREATE_RECORD_COMMAND_UUID_NAMESPACE,
     );
 
     return findFlatEntityByUniversalIdentifier({
@@ -924,40 +1042,86 @@ export class ObjectMetadataService extends TypeOrmQueryService<ObjectMetadataEnt
     }
 
     if (isBeingEnabled) {
-      const existingCommandMenuItem =
+      const commandMenuItemsToCreate: FlatCommandMenuItem[] = [];
+      let nextPosition = this.computeNextCommandMenuItemPosition(
+        flatCommandMenuItemMaps,
+      );
+
+      const existingNavigationCommandMenuItem =
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,
           flatCommandMenuItemMaps,
         });
 
-      if (!isDefined(existingCommandMenuItem)) {
+      if (!isDefined(existingNavigationCommandMenuItem)) {
+        commandMenuItemsToCreate.push(
+          this.buildFlatNavigationCommandMenuItem({
+            objectMetadata: existingFlatObjectMetadata,
+            workspaceId,
+            applicationId,
+            flatCommandMenuItemMaps,
+            position: nextPosition++,
+          }),
+        );
+      }
+
+      const existingCreateRecordCommandMenuItem =
+        this.findCreateRecordCommandMenuItemForObject({
+          objectUniversalIdentifier:
+            existingFlatObjectMetadata.universalIdentifier,
+          flatCommandMenuItemMaps,
+        });
+
+      if (
+        isObjectMetadataManuallyCreatable({
+          ...existingFlatObjectMetadata,
+          isActive: true,
+        }) &&
+        !isDefined(existingCreateRecordCommandMenuItem)
+      ) {
+        commandMenuItemsToCreate.push(
+          this.buildFlatCreateRecordCommandMenuItem({
+            objectMetadata: existingFlatObjectMetadata,
+            workspaceId,
+            applicationId,
+            flatCommandMenuItemMaps,
+            position: nextPosition++,
+          }),
+        );
+      }
+
+      if (commandMenuItemsToCreate.length > 0) {
         return {
-          commandMenuItemsToCreate: [
-            this.buildFlatNavigationCommandMenuItem({
-              objectMetadata: existingFlatObjectMetadata,
-              workspaceId,
-              applicationId,
-              flatCommandMenuItemMaps,
-            }),
-          ],
+          commandMenuItemsToCreate,
           commandMenuItemsToDelete: [],
         };
       }
     }
 
     if (isBeingDisabled) {
-      const commandMenuItemToDelete =
+      const navigationCommandMenuItemToDelete =
         this.findNavigationCommandMenuItemForObject({
           objectUniversalIdentifier:
             existingFlatObjectMetadata.universalIdentifier,
           flatCommandMenuItemMaps,
         });
+      const createRecordCommandMenuItemToDelete =
+        this.findCreateRecordCommandMenuItemForObject({
+          objectUniversalIdentifier:
+            existingFlatObjectMetadata.universalIdentifier,
+          flatCommandMenuItemMaps,
+        });
 
-      if (isDefined(commandMenuItemToDelete)) {
+      const commandMenuItemsToDelete = [
+        navigationCommandMenuItemToDelete,
+        createRecordCommandMenuItemToDelete,
+      ].filter(isDefined);
+
+      if (commandMenuItemsToDelete.length > 0) {
         return {
           commandMenuItemsToCreate: [],
-          commandMenuItemsToDelete: [commandMenuItemToDelete],
+          commandMenuItemsToDelete,
         };
       }
     }

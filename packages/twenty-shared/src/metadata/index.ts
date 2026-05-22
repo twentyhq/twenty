@@ -27,3 +27,7 @@ export { WorkspaceMigrationV2ExceptionCode } from './types/MetadataValidationErr
 export { addCustomSuffixIfIsReserved } from './utils/add-custom-suffix-if-reserved.util';
 export { computeMetadataNameFromLabel } from './utils/compute-metadata-name-from-label.util';
 export { computeMetadataNamesFromLabelsOrThrow } from './utils/compute-metadata-names-from-labels-or-throw.util';
+export {
+  MANUAL_RECORD_CREATION_DISABLED_OBJECT_NAME_SINGULARS,
+  isObjectMetadataManuallyCreatable,
+} from './utils/is-object-metadata-manually-creatable.util';

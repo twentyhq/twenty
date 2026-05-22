@@ -37,11 +37,11 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
   },
   createNewRecord: {
     universalIdentifier: '08d255bf-58cd-47a5-bd82-78c5c58592f1',
-    label: 'Create new ${capitalize(objectMetadataItem.labelSingular)}',
+    label: 'Create ${capitalize(objectMetadataItem.labelSingular)}',
     icon: 'IconPlus',
     isPinned: true,
     position: 3,
-    shortLabel: 'New ${capitalize(objectMetadataItem.labelSingular)}',
+    shortLabel: 'Create ${capitalize(objectMetadataItem.labelSingular)}',
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
     conditionalAvailabilityExpression:
       'pageType == "INDEX_PAGE" and objectPermissions.canUpdateObjectRecords and not hasAnySoftDeleteFilterOnView',
