@@ -144,6 +144,9 @@ jobs:
 
           npx nx run twenty-server:database:init:prod
 
+      - name: Flush cache before seeding current branch
+        run: npx nx command-no-deps twenty-server -- cache:flush
+
       - name: Seed current branch database with test data
         run: |
           npx nx command-no-deps twenty-server -- workspace:seed:dev
@@ -310,6 +313,9 @@ jobs:
           set_env_var "CLICKHOUSE_PASSWORD" "clickhousePassword"
 
           npx nx run twenty-server:database:init:prod
+
+      - name: Flush cache before seeding main branch
+        run: npx nx command-no-deps twenty-server -- cache:flush
 
       - name: Seed main branch database with test data
         run: |
