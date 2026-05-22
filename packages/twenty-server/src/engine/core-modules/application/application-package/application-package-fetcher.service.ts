@@ -5,6 +5,7 @@ import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
 import { join } from 'path';
 
+import { isAxiosError } from 'axios';
 import { type Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -26,6 +27,7 @@ import { resolvePackageContentDir } from 'src/engine/core-modules/application/ap
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -46,6 +48,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
+    private readonly secureHttpClientService: SecureHttpClientService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     @InjectRepository(ApplicationEntity)
@@ -249,22 +252,24 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    const response = await fetch(metadataUrl, {
-      headers,
-      signal: AbortSignal.timeout(RESOLUTION_TIMEOUT_MS),
+    const httpClient = this.secureHttpClientService.getHttpClient({
+      timeout: RESOLUTION_TIMEOUT_MS,
     });
 
-    if (!response.ok) {
+    let response;
+
+    try {
+      response = await httpClient.get<{
+        dist?: { tarball?: string };
+      }>(metadataUrl, { headers });
+    } catch (error) {
       throw new ApplicationException(
-        `Registry returned ${response.status} for ${packageName}@${versionSpec}`,
+        `Registry returned ${isAxiosError(error) ? error.response?.status : 'unknown error'} for ${packageName}@${versionSpec}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }
 
-    const metadata = (await response.json()) as {
-      dist?: { tarball?: string };
-    };
-    const tarballUrl = metadata?.dist?.tarball;
+    const tarballUrl = response.data?.dist?.tarball;
 
     if (!tarballUrl) {
       throw new ApplicationException(
@@ -289,18 +294,22 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
       headers['Authorization'] = `Bearer ${authToken}`;
     }
 
-    const response = await fetch(tarballUrl, {
-      headers,
-      signal: AbortSignal.timeout(RESOLUTION_TIMEOUT_MS),
+    const httpClient = this.secureHttpClientService.getHttpClient({
+      timeout: RESOLUTION_TIMEOUT_MS,
     });
 
-    if (!response.ok) {
+    try {
+      const response = await httpClient.get(tarballUrl, {
+        headers,
+        responseType: 'arraybuffer',
+      });
+
+      return Buffer.from(response.data);
+    } catch (error) {
       throw new ApplicationException(
-        `Failed to download tarball: ${response.status}`,
+        `Failed to download tarball: ${isAxiosError(error) ? error.response?.status : error}`,
         ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED,
       );
     }
-
-    return Buffer.from(await response.arrayBuffer());
   }
 }
