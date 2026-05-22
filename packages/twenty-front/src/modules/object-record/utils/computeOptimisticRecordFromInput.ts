@@ -32,6 +32,47 @@ type ComputeOptimisticCacheRecordInputArgs = {
   GetRecordFromCacheArgs,
   'cache' | 'objectMetadataItems' | 'objectPermissionsByObjectMetadataId'
 >;
+
+export const getUnknownOptimisticRecordInputFields = ({
+  objectMetadataItem,
+  recordInput,
+}: Pick<ComputeOptimisticCacheRecordInputArgs, 'objectMetadataItem' | 'recordInput'>) => {
+  return Object.keys(recordInput).filter((recordKey) => {
+    const correspondingFieldMetadataItem = objectMetadataItem.fields.find(
+      (field) => field.name === recordKey,
+    );
+
+    const potentialRelationJoinColumnNameFieldMetadataItem =
+      objectMetadataItem.fields.find(
+        (field) =>
+          field.type === FieldMetadataType.RELATION &&
+          computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
+            recordKey,
+      );
+
+    const potentialMorphRelationJoinColumnNameFieldMetadataItem =
+      objectMetadataItem.fields.find((field) => {
+        if (!isFieldMorphRelation(field)) return false;
+
+        return isDefined(
+          getFieldMetadataFromGqlField({
+            objectMetadataItem,
+            gqlField: recordKey,
+          }),
+        );
+      });
+
+    const isUnknownField =
+      !isDefined(correspondingFieldMetadataItem) &&
+      !isDefined(potentialRelationJoinColumnNameFieldMetadataItem) &&
+      !isDefined(potentialMorphRelationJoinColumnNameFieldMetadataItem);
+
+    const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
+
+    return isUnknownField && !isTypenameField;
+  });
+};
+
 export const computeOptimisticRecordFromInput = ({
   objectMetadataItem,
   recordInput,
@@ -40,41 +81,11 @@ export const computeOptimisticRecordFromInput = ({
   currentWorkspaceMember,
   objectPermissionsByObjectMetadataId,
 }: ComputeOptimisticCacheRecordInputArgs) => {
-  const unknownRecordInputFields = Object.keys(recordInput).filter(
-    (recordKey) => {
-      const correspondingFieldMetadataItem = objectMetadataItem.fields.find(
-        (field) => field.name === recordKey,
-      );
+  const unknownRecordInputFields = getUnknownOptimisticRecordInputFields({
+    objectMetadataItem,
+    recordInput,
+  });
 
-      const potentialRelationJoinColumnNameFieldMetadataItem =
-        objectMetadataItem.fields.find(
-          (field) =>
-            field.type === FieldMetadataType.RELATION &&
-            computeRelationGqlFieldJoinColumnName({ name: field.name }) ===
-              recordKey,
-        );
-
-      const potentialMorphRelationJoinColumnNameFieldMetadataItem =
-        objectMetadataItem.fields.find((field) => {
-          if (!isFieldMorphRelation(field)) return false;
-
-          return isDefined(
-            getFieldMetadataFromGqlField({
-              objectMetadataItem,
-              gqlField: recordKey,
-            }),
-          );
-        });
-
-      const isUnknownField =
-        !isDefined(correspondingFieldMetadataItem) &&
-        !isDefined(potentialRelationJoinColumnNameFieldMetadataItem) &&
-        !isDefined(potentialMorphRelationJoinColumnNameFieldMetadataItem);
-
-      const isTypenameField = recordKey === GRAPHQL_TYPENAME_KEY;
-      return isUnknownField && !isTypenameField;
-    },
-  );
   if (unknownRecordInputFields.length > 0) {
     throw new Error(
       `Should never occur, encountered unknown fields ${unknownRecordInputFields.join(', ')} in objectMetadataItem ${objectMetadataItem.nameSingular}`,

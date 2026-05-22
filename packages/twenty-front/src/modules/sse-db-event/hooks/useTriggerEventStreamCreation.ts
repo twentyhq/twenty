@@ -12,6 +12,7 @@ import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamRe
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { print, type ExecutionResult } from 'graphql';
 
@@ -131,6 +132,19 @@ export const useTriggerEventStreamCreation = () => {
           dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
         },
         error: (error) => {
+          if (CombinedGraphQLErrors.is(error)) {
+            const extensions = getGraphqlErrorExtensionsFromError(error);
+
+            if (
+              isGracefullyHandledEventStreamError({
+                subCode: extensions?.subCode,
+                code: extensions?.code,
+              })
+            ) {
+              return;
+            }
+          }
+
           captureException(error);
         },
         complete: () => {},

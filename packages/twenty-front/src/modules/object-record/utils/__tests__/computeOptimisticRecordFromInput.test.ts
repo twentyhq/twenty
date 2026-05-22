@@ -4,7 +4,10 @@ import { getRecordFromRecordNode } from '@/object-record/cache/utils/getRecordFr
 import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordFromCache';
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
-import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import {
+  computeOptimisticRecordFromInput,
+  getUnknownOptimisticRecordInputFields,
+} from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { InMemoryCache } from '@apollo/client';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
@@ -250,6 +253,22 @@ describe('computeOptimisticRecordFromInput', () => {
       companyId: null,
       company: null,
     });
+  });
+
+  it('should compute unknown record input fields unrelated to the current object metadata', () => {
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+    const unknownRecordInputFields = getUnknownOptimisticRecordInputFields({
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        unknwon: 'unknown',
+        foo: 'foo',
+        bar: 'bar',
+        city: 'Paris',
+      },
+    });
+
+    expect(unknownRecordInputFields).toEqual(['unknwon', 'foo', 'bar']);
   });
 
   it('should throw an error if recordInput contains fields unrelated to the current objectMetadata', () => {

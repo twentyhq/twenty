@@ -10,7 +10,11 @@ import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { useRefetchAggregateQueriesForObjectMetadataItem } from '@/object-record/hooks/useRefetchAggregateQueriesForObjectMetadataItem';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
-import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import {
+  computeOptimisticRecordFromInput,
+  getUnknownOptimisticRecordInputFields,
+} from '@/object-record/utils/computeOptimisticRecordFromInput';
 import { useCallback } from 'react';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import {
@@ -45,18 +49,31 @@ export const useTriggerOptimisticEffectFromSseUpdateEvents = () => {
           continue;
         }
 
-        upsertRecordsInStore({ partialRecords: [updatedRecord] });
+        const unknownRecordInputFields = getUnknownOptimisticRecordInputFields({
+          objectMetadataItem,
+          recordInput: updatedRecord,
+        });
+
+        const sanitizedUpdatedRecord = Object.fromEntries(
+          Object.entries(updatedRecord).filter(
+            ([recordKey]) => !unknownRecordInputFields.includes(recordKey),
+          ),
+        ) as Partial<ObjectRecord>;
+
+        upsertRecordsInStore({
+          partialRecords: [sanitizedUpdatedRecord],
+        });
 
         const computedOptimisticRecord = {
           ...computeOptimisticRecordFromInput({
             cache: apolloCoreClient.cache,
             objectMetadataItem,
             objectMetadataItems,
-            recordInput: updatedRecord,
+            recordInput: sanitizedUpdatedRecord,
             objectPermissionsByObjectMetadataId,
             currentWorkspaceMember: null,
           }),
-          id: updatedRecord.id,
+          id: sanitizedUpdatedRecord.id,
           __typename: getObjectTypename(objectMetadataItem.nameSingular),
         };
 
