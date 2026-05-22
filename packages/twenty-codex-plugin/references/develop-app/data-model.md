@@ -8,7 +8,7 @@ Objects and fields define the records users will create, view, search, and autom
 
 When adding or modifying data model entities:
 
-- Prefer generated app entity patterns from `yarn twenty add`.
+- Prefer generated app entity patterns from `yarn twenty dev:add`.
 - Use clear object and field names that map to user-facing language.
 - Add relations only when users need to navigate or report across records.
 - Avoid duplicating data that already exists on core Twenty objects.

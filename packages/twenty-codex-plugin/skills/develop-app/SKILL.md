@@ -25,7 +25,7 @@ For app shape and entity file structure, read `../../references/develop-app/app-
 Prefer the app CLI for new entities when an interactive prompt is acceptable:
 
 ```bash
-yarn twenty add
+yarn twenty dev:add
 ```
 
 For agent/non-interactive work, it is usually faster to create the files directly using the SDK patterns in `twenty-sdk/define`. Use the generated CLI templates or local SDK typings as reference instead of getting stuck in prompts.

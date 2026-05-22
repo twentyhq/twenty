@@ -517,7 +517,7 @@ const assertFrontComponentGuidance = () => {
   }
 
   const requiredAppStructureFragments = [
-    'yarn twenty typecheck',
+    'yarn twenty dev:typecheck',
     'yarn lint',
     'yarn twenty dev --once',
   ];
@@ -611,7 +611,7 @@ const assertCliGuidanceSplit = () => {
     '../manage-app/cli-and-sync.md',
     '## Entity Creation',
     '## Validation Checklist',
-    'yarn twenty typecheck',
+    'yarn twenty dev:typecheck',
     'yarn lint',
     'yarn twenty dev --once',
   ];
@@ -628,7 +628,7 @@ const assertCliGuidanceSplit = () => {
     'Use watch mode for interactive development',
     'Use one-shot mode for agents',
     'yarn twenty dev --once --verbose',
-    'yarn twenty remote list',
+    'yarn twenty remote:list',
   ];
 
   for (const fragment of forbiddenAppStructureFragments) {
@@ -639,16 +639,16 @@ const assertCliGuidanceSplit = () => {
 
   const requiredCliFragments = [
     '# CLI And Sync',
-    'yarn twenty typecheck',
+    'yarn twenty dev:typecheck',
     'yarn lint',
     'yarn twenty dev --once',
     'Use watch mode for interactive development',
     'Use one-shot mode for agents, scripts, CI, and quick verification',
     'yarn twenty dev --once --verbose',
-    'yarn twenty remote list',
-    'yarn twenty build',
-    'yarn twenty deploy',
-    'yarn twenty logs',
+    'yarn twenty remote:list',
+    'yarn twenty dev:build',
+    'yarn twenty app:publish',
+    'yarn twenty dev:function:logs',
   ];
 
   for (const fragment of requiredCliFragments) {

@@ -12,7 +12,7 @@ Before running operational commands, confirm the current directory is a Twenty a
 test -f package.json
 test -f src/application-config.ts
 sed -n '1,220p' package.json
-yarn twenty remote list
+yarn twenty remote:list
 ```
 
 Treat deploys, uninstalls, production remote changes, and production syncs as externally visible actions. Ask for explicit confirmation before running them when the target is production or user data could be affected.
@@ -22,12 +22,12 @@ Treat deploys, uninstalls, production remote changes, and production syncs as ex
 Use these commands to validate an app after changes:
 
 ```bash
-yarn twenty typecheck
+yarn twenty dev:typecheck
 yarn lint
 yarn twenty dev --once
 ```
 
-`yarn twenty typecheck` checks generated app types and TypeScript compatibility. `yarn lint` checks local lint rules. `yarn twenty dev --once` performs a bounded build/sync against the active remote.
+`yarn twenty dev:typecheck` checks generated app types and TypeScript compatibility. `yarn lint` checks local lint rules. `yarn twenty dev --once` performs a bounded build/sync against the active remote.
 
 If a validation command fails because of entity definitions, switch to `develop-app` for the fix. If it fails because of remotes, authentication, build tooling, sync, logs, deploys, or CI/CD, stay in `manage-app`.
 
@@ -39,19 +39,19 @@ Common commands:
 
 ```bash
 # Add a remote interactively.
-yarn twenty remote add
+yarn twenty remote:add
 
 # Connect to a local Twenty server.
-yarn twenty remote add --local
+yarn twenty remote:add --local
 
 # Add a remote non-interactively.
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as production
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as production
 
 # List configured remotes.
-yarn twenty remote list
+yarn twenty remote:list
 
 # Switch the active remote.
-yarn twenty remote switch <name>
+yarn twenty remote:use <name>
 ```
 
 When the user says "prod", "production", or "workspace de prod", identify the target remote before syncing or deploying. If it is missing, add it with `--as production` or the user-provided name.
@@ -94,15 +94,15 @@ Collect the minimum useful context before changing configuration:
 ```bash
 sed -n '1,220p' package.json
 sed -n '1,220p' src/application-config.ts
-yarn twenty remote list
+yarn twenty remote:list
 yarn twenty dev --once --verbose
 ```
 
 For remote or authentication issues:
 
 - Check that the active remote is the intended workspace or server.
-- Re-run `yarn twenty remote add --local` for local app-dev servers.
-- Re-run `yarn twenty remote add --api-url <url> --as <name>` for remote servers.
+- Re-run `yarn twenty remote:add --local` for local app-dev servers.
+- Re-run `yarn twenty remote:add --url <url> --as <name>` for remote servers.
 - Avoid overwriting a production remote until the target URL is confirmed.
 
 For sync issues:
@@ -116,37 +116,38 @@ For sync issues:
 Build before deploy when the user asks for release readiness or when debugging packaging issues:
 
 ```bash
-yarn twenty build
+yarn twenty dev:build
 ```
 
-Deploy a tarball app to a configured server:
+Publish an app to npm, or publish privately to a configured Twenty server registry:
 
 ```bash
-yarn twenty deploy
-yarn twenty deploy --remote production
+yarn twenty app:publish
+yarn twenty app:publish --private --remote production
+yarn twenty app:install --remote production
 ```
 
-Before deploying an update, check that `package.json` has a strictly higher semver `version` than the currently deployed version. Re-deploying the same version is rejected.
+Before deploying an update, check that `package.json` has a strictly higher semver `version` than the currently deployed version. Re-deploying the same version is rejected. After a private publish, install the deployed version with `yarn twenty app:install` when the target workspace should use it.
 
 Use function logs when debugging runtime behavior on the connected server:
 
 ```bash
-yarn twenty logs
-yarn twenty logs -n <function-name>
+yarn twenty dev:function:logs
+yarn twenty dev:function:logs -n <function-name>
 ```
 
 Run a logic function manually when testing behavior without its trigger:
 
 ```bash
-yarn twenty exec -n <function-name>
-yarn twenty exec -n <function-name> -p '{"key":"value"}'
+yarn twenty dev:function:exec -n <function-name>
+yarn twenty dev:function:exec -n <function-name> -p '{"key":"value"}'
 ```
 
 Uninstall only after confirmation:
 
 ```bash
-yarn twenty uninstall
-yarn twenty uninstall --yes
+yarn twenty app:uninstall
+yarn twenty app:uninstall --yes
 ```
 
 ## CI/CD

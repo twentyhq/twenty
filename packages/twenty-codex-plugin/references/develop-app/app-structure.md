@@ -36,7 +36,7 @@ find public -maxdepth 2 -type f | sort
 Prefer the app CLI for new entities when interactive prompts are acceptable:
 
 ```bash
-yarn twenty add
+yarn twenty dev:add
 ```
 
 For non-interactive agent work, direct file creation is often better. Use generated CLI templates, local SDK typings, or existing app files as the source of truth for imports and config shape.
@@ -54,7 +54,7 @@ Use official Twenty docs or local SDK source when exact imports, entity fields, 
 After entity changes, run these before handing off when practical:
 
 ```bash
-yarn twenty typecheck
+yarn twenty dev:typecheck
 yarn lint
 yarn twenty dev --once
 ```

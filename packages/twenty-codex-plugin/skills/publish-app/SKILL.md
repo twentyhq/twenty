@@ -14,7 +14,7 @@ Keep the skill workflow concise:
 - In `defineApplication()`, verify marketplace-facing fields such as `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl`, `termsUrl`, `emailSupport`, and `issueReportUrl`.
 - Keep `logoUrl` and `screenshots` pointed at files in `public/`. Public assets must not contain secrets, private data, customer records, real tokens, or unreleased confidential material.
 - Remember that if `aboutDescription` is omitted, the marketplace uses the package `README.md` from npm for the About content.
-- Validate with `yarn twenty build`; publish with `yarn twenty publish` or `yarn twenty publish --tag <tag>`.
+- Validate with `yarn twenty dev:build`; publish with `yarn twenty app:publish` or `yarn twenty app:publish --tag <tag>`.
 
 # Boundaries
 

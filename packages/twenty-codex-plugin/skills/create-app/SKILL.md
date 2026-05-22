@@ -7,47 +7,9 @@ description: Use when the user wants to create or scaffold a new Twenty app
 
 Use this as the default way to start an app unless the user gives different instructions.
 
-First, ask the user for:
+First, ask the user for the app name if they did not provide one.
 
-- The app name. 
-- Its Twenty workspace URL.
-
-The directory name must contain only lowercase letters, numbers, and hyphens (you can transform the entered name to lowercase and replace spaces with hyphens).
-
-Remove any trailing `/` from the workspace URL, then run:
-
-Then run:
-
-```bash
-npx create-twenty-app@latest <app-name> --api-url <workspace-url>
-cd <app-name>
-yarn twenty dev
-```
-
-If the user says they do not have a Twenty Cloud account or workspace URL, explain that they can create one at https://app.twenty.com/welcome.
-
-Tell them to send back the workspace URL once it is ready.
-
-At the bottom of that answer, add:
-You can also start locally with Docker instead if you prefer (advanced setup)
-
-Then continue with the default flow:
-
-``` bash
-npx create-twenty-app@latest <app-name> --api-url <workspace-url>
-cd <app-name>
-yarn twenty dev
-```
-
-# Create an App with Local Docker
-
-Use this only when the user explicitly wants a local Twenty app-dev server.
-
-
-First, ask the user for its app name
-"How do you want to name your app?"
-
-Then run:
+The directory name must contain only lowercase letters, numbers, and hyphens. Transform the entered name to lowercase and replace spaces with hyphens when needed.
 
 ```bash
 npx create-twenty-app@latest <app-name>
@@ -55,13 +17,54 @@ cd <app-name>
 yarn twenty dev
 ```
 
-If Docker is missing or not running, ask whether the user wants to install Docker Desktop. Share this download link: `https://www.docker.com/products/docker-desktop/`.
+The scaffolder creates the project, installs dependencies, initializes Git, starts a local Twenty server through Docker, authenticates with the development API key, runs an initial one-shot sync, and opens the generated app page when possible.
 
-Ask him to open Docker Desktop and ensure it is running.
+If the user provides a package name, display name, or description, pass them through:
 
-then try to launch the command again.
+```bash
+npx create-twenty-app@latest <app-directory> --name "<package-name>" --display-name "<display-name>" --description "<description>"
+```
 
-Finally open the app in the browser. The default URL is `http://localhost:2020/`.
+Supported create-time options are `--name`, `--display-name`, `--description`, `--url`, and `--authentication-method`.
+
+# Create an App Against an Existing Server
+
+Use this only when the user explicitly wants to connect the new app to an existing Twenty Cloud, self-hosted, or remote development server.
+
+First, ask the user for:
+
+- The app name.
+- The Twenty server or workspace URL.
+
+Remove any trailing `/` from the server URL, then run:
+
+```bash
+npx create-twenty-app@latest <app-name> --url <server-url>
+cd <app-name>
+yarn twenty dev
+```
+
+For remote URLs, the scaffolder uses OAuth authentication by default. Do not use `--api-url`; it is deprecated. Do not pass `--authentication-method apiKey` for remote servers because create-time API key authentication is only supported for the local Docker instance.
+
+# Docker Troubleshooting
+
+Use this when the default local flow fails because Docker is missing or not running.
+
+If scaffolding fails before project creation, check the runtime first: `create-twenty-app@2.7.0` declares Node.js `^24.5.0` and Yarn `^4.0.2`. Use `corepack enable` when Yarn is missing.
+
+If Docker is missing, share this download link: `https://www.docker.com/products/docker-desktop/`. Ask the user to install Docker Desktop, open it, and ensure it is running before retrying the scaffold command.
+
+If Docker is installed but not running, the app may already have been created without server authentication or sync. Ask the user to open Docker Desktop, then resume from the generated app directory:
+
+```bash
+cd <app-name>
+yarn twenty docker:start
+yarn twenty remote:add --local
+yarn twenty dev --once
+yarn twenty dev
+```
+
+The default local Twenty URL is `http://localhost:2020/`.
 
 
 # Next Steps

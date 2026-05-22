@@ -197,7 +197,7 @@ Before considering README and visuals done:
 
 ```bash
 yarn twenty dev --once
-yarn twenty build
+yarn twenty dev:build
 ```
 
 Then check:
