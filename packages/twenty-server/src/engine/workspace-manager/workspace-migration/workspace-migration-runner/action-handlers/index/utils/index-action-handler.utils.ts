@@ -106,6 +106,7 @@ export const createIndexInWorkspaceSchema = async ({
   workspaceSchemaManagerService,
   queryRunner,
   workspaceId,
+  concurrently = false,
 }: {
   flatIndexMetadata: FlatIndexMetadata;
   flatObjectMetadata: FlatObjectMetadata;
@@ -113,6 +114,7 @@ export const createIndexInWorkspaceSchema = async ({
   workspaceSchemaManagerService: WorkspaceSchemaManagerService;
   queryRunner: QueryRunner;
   workspaceId: string;
+  concurrently?: boolean;
 }): Promise<void> => {
   const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
     workspaceId,
@@ -135,6 +137,7 @@ export const createIndexInWorkspaceSchema = async ({
     queryRunner,
     schemaName,
     tableName,
+    concurrently,
   });
 };
 
