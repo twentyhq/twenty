@@ -163,7 +163,7 @@ jobs:
       - name: Wait for current branch server to be ready
         run: |
           echo "Waiting for current branch server to start..."
-          timeout=300
+          timeout=60
           interval=5
           elapsed=0
 
@@ -188,9 +188,10 @@ jobs:
           done
 
           if [ $elapsed -ge $timeout ]; then
-            echo "::warning::Timed out waiting for current branch server to serve a valid schema. Validation will skip the API diff."
+            echo "❌ Timed out waiting for current branch server to serve a valid schema."
             echo "Current server log:"
             cat /tmp/current-server.log || echo "No current server log found"
+            exit 1
           fi
 
       - name: Download GraphQL and REST responses from current branch
@@ -358,9 +359,10 @@ jobs:
           done
 
           if [ $elapsed -ge $timeout ]; then
-            echo "::warning::Timed out waiting for main branch server to serve a valid schema. Validation will skip the API diff."
+            echo "❌ Timed out waiting for main branch server to serve a valid schema."
             echo "Main server log:"
             cat /tmp/main-server.log || echo "No main server log found"
+            exit 1
           fi
 
       - name: Download GraphQL and REST responses from main branch
