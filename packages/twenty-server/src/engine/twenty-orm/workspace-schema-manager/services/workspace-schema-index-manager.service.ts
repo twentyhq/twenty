@@ -31,19 +31,11 @@ export class WorkspaceSchemaIndexManagerService {
     index: WorkspaceSchemaIndexDefinition;
     concurrently?: boolean;
   }): Promise<void> {
-    if (concurrently) {
-      if (queryRunner.isTransactionActive) {
-        throw new WorkspaceSchemaManagerException(
-          'CREATE INDEX CONCURRENTLY cannot run inside a transaction block. Pass a QueryRunner with no active transaction.',
-          WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_CREATION_IN_TRANSACTION,
-        );
-      }
-
-      await this.dropInvalidIndexIfExists({
-        queryRunner,
-        schemaName,
-        indexName: index.name,
-      });
+    if (concurrently && queryRunner.isTransactionActive) {
+      throw new WorkspaceSchemaManagerException(
+        'CREATE INDEX CONCURRENTLY cannot run inside a transaction block. Pass a QueryRunner with no active transaction.',
+        WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_CREATION_IN_TRANSACTION,
+      );
     }
 
     const quotedColumns = index.columns.map((column) =>
@@ -83,34 +75,6 @@ export class WorkspaceSchemaIndexManagerService {
       .trim();
 
     await queryRunner.query(sql);
-  }
-
-  private async dropInvalidIndexIfExists({
-    queryRunner,
-    schemaName,
-    indexName,
-  }: {
-    queryRunner: QueryRunner;
-    schemaName: string;
-    indexName: string;
-  }): Promise<void> {
-    const invalidIndex = await queryRunner.query(
-      `SELECT 1
-         FROM pg_class c
-         JOIN pg_namespace n ON c.relnamespace = n.oid
-         JOIN pg_index i ON i.indexrelid = c.oid
-         WHERE c.relname = $1 AND n.nspname = $2 AND NOT i.indisvalid
-         LIMIT 1`,
-      [indexName, schemaName],
-    );
-
-    if (invalidIndex.length === 0) {
-      return;
-    }
-
-    await queryRunner.query(
-      `DROP INDEX CONCURRENTLY IF EXISTS ${escapeIdentifier(schemaName)}.${escapeIdentifier(indexName)}`,
-    );
   }
 
   async dropIndex({
