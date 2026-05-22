@@ -1,8 +1,11 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { Select } from '@/ui/input/components/Select';
+import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { Checkbox } from 'twenty-ui/input';
+import { IconTrash } from 'twenty-ui/display';
+import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndex';
 
@@ -10,97 +13,113 @@ type SettingsObjectIndexFieldsFormProps = {
   indexableFields: FieldMetadataItem[];
 };
 
-const StyledFieldList = styled.div`
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: ${themeCssVariables.border.radius.md};
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-`;
+// Mirrors SettingsDatabaseEventsForm dimensions so the rows visually match the
+// webhook trigger form.
+const FIELD_DROPDOWN_WIDTH = 240;
+const FIELD_MOBILE_WIDTH = 180;
 
-const StyledFieldRow = styled.label`
+const StyledFieldRow = styled.div<{ isMobile: boolean }>`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  cursor: pointer;
-  display: flex;
+  display: grid;
   gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-
-  &:last-child {
-    border-bottom: none;
-  }
+  grid-template-columns: ${({ isMobile }) =>
+    isMobile ? `${FIELD_MOBILE_WIDTH}px auto` : `${FIELD_DROPDOWN_WIDTH}px auto`};
+  margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledFieldLabel = styled.span`
-  color: ${themeCssVariables.font.color.primary};
-  flex: 1;
-  font-size: ${themeCssVariables.font.size.md};
-`;
-
-const StyledOrderBadge = styled.span`
-  background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  color: ${themeCssVariables.font.color.secondary};
-  font-size: ${themeCssVariables.font.size.xs};
-  font-weight: ${themeCssVariables.font.weight.semiBold};
-  min-width: 18px;
-  padding: 1px 6px;
-  text-align: center;
-`;
-
-const StyledEmpty = styled.div`
-  color: ${themeCssVariables.font.color.light};
-  font-size: ${themeCssVariables.font.size.md};
-  padding: ${themeCssVariables.spacing[3]};
-  text-align: center;
+const StyledPlaceholder = styled.div`
+  height: ${themeCssVariables.spacing[8]};
+  width: ${themeCssVariables.spacing[8]};
 `;
 
 export const SettingsObjectIndexFieldsForm = ({
   indexableFields,
 }: SettingsObjectIndexFieldsFormProps) => {
   const { t } = useLingui();
+  const isMobile = useIsMobile();
   const { control } = useFormContext<SettingsObjectNewIndexFormValues>();
+
+  const emptyFieldOption: SelectOption<string> = {
+    label: t`Select a field`,
+    value: '',
+  };
 
   return (
     <Controller
       name="fieldMetadataIds"
       control={control}
       render={({ field: { value, onChange } }) => {
-        const handleToggle = (fieldId: string) => {
-          if (value.includes(fieldId)) {
-            onChange(value.filter((id) => id !== fieldId));
+        // Render one row per picked field plus one trailing empty row that
+        // acts as the implicit "add another field" affordance (same approach
+        // as the webhook operations form).
+        const rows: (string | null)[] = [...value, null];
+
+        const handleSelect = (rowIndex: number, newFieldId: string) => {
+          if (newFieldId === '') return;
+
+          const next = [...value];
+
+          if (rowIndex < value.length) {
+            next[rowIndex] = newFieldId;
           } else {
-            onChange([...value, fieldId]);
+            next.push(newFieldId);
           }
+
+          onChange(next);
         };
 
-        if (indexableFields.length === 0) {
-          return (
-            <StyledFieldList>
-              <StyledEmpty>{t`No indexable fields on this object yet.`}</StyledEmpty>
-            </StyledFieldList>
-          );
-        }
+        const handleRemove = (rowIndex: number) => {
+          onChange(value.filter((_, index) => index !== rowIndex));
+        };
 
         return (
-          <StyledFieldList>
-            {indexableFields.map((indexableField) => {
-              const orderIndex = value.indexOf(indexableField.id);
-              const isSelected = orderIndex !== -1;
+          <>
+            {rows.map((fieldId, rowIndex) => {
+              // Exclude fields already used by other rows; keep this row's
+              // own value so the dropdown still reflects the current choice.
+              const availableOptions: SelectOption<string>[] = indexableFields
+                .filter(
+                  (field) =>
+                    field.id === fieldId || !value.includes(field.id),
+                )
+                .map((field) => ({
+                  label: field.label,
+                  value: field.id,
+                }));
+
+              const isEmptyRow = fieldId === null;
+
               return (
-                <StyledFieldRow key={indexableField.id}>
-                  <Checkbox
-                    checked={isSelected}
-                    onCheckedChange={() => handleToggle(indexableField.id)}
+                <StyledFieldRow
+                  key={`${rowIndex}-${fieldId ?? 'empty'}`}
+                  isMobile={isMobile}
+                >
+                  <Select
+                    dropdownId={`settings-object-new-index-field-${rowIndex}`}
+                    value={fieldId ?? ''}
+                    options={availableOptions}
+                    emptyOption={emptyFieldOption}
+                    onChange={(newValue) =>
+                      handleSelect(rowIndex, newValue)
+                    }
+                    fullWidth
+                    withSearchInput
                   />
-                  <StyledFieldLabel>{indexableField.label}</StyledFieldLabel>
-                  {isSelected && (
-                    <StyledOrderBadge>{orderIndex + 1}</StyledOrderBadge>
+                  {isEmptyRow ? (
+                    <StyledPlaceholder />
+                  ) : (
+                    <IconButton
+                      Icon={IconTrash}
+                      variant="tertiary"
+                      size="medium"
+                      onClick={() => handleRemove(rowIndex)}
+                      ariaLabel={t`Remove field`}
+                    />
                   )}
                 </StyledFieldRow>
               );
             })}
-          </StyledFieldList>
+          </>
         );
       }}
     />
