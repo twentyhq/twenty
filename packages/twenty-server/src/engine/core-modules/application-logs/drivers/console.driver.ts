@@ -3,9 +3,7 @@ import { Logger } from '@nestjs/common';
 import { type ApplicationLogDriverInterface } from 'src/engine/core-modules/application-logs/interfaces/application-log-driver.interface';
 import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
 
-export class ConsoleApplicationLogDriver
-  implements ApplicationLogDriverInterface
-{
+export class ConsoleApplicationLogDriver implements ApplicationLogDriverInterface {
   private readonly logger = new Logger(ConsoleApplicationLogDriver.name);
 
   async writeLogs(entries: ApplicationLogEntry[]): Promise<void> {

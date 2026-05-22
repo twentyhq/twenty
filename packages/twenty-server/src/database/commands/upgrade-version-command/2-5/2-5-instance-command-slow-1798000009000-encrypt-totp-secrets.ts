@@ -22,9 +22,7 @@ type TwoFactorMethodRow = {
 };
 
 @RegisteredInstanceCommand('2.5.0', 1798000009000, { type: 'slow' })
-export class EncryptTotpSecretsSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptTotpSecretsSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly simpleSecretEncryptionUtil: SimpleSecretEncryptionUtil,

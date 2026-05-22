@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RenameRichTextToFieldRichTextAndAddStandaloneRichText1764846384501
-  implements MigrationInterface
-{
+export class RenameRichTextToFieldRichTextAndAddStandaloneRichText1764846384501 implements MigrationInterface {
   name = 'RenameRichTextToFieldRichTextAndAddStandaloneRichText1764846384501';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -30,9 +30,7 @@ const parseBlocknoteJsonSafely = (
   }
 };
 
-export class RichTextFieldQueryResultGetterHandler
-  implements QueryResultGetterHandlerInterface
-{
+export class RichTextFieldQueryResultGetterHandler implements QueryResultGetterHandlerInterface {
   constructor(private readonly fileUrlService: FileUrlService) {}
 
   async handle(

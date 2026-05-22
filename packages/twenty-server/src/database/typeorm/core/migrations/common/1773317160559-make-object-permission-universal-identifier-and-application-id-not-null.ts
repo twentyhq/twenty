@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeObjectPermissionUniversalIdentifierAndApplicationIdNotNullQueries } from 'src/database/typeorm/core/migrations/utils/1773317160558-make-object-permission-universal-identifier-and-application-id-not-null.util';
 
-export class MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNull1773317160559
-  implements MigrationInterface
-{
+export class MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNull1773317160559 implements MigrationInterface {
   name =
     'MakeObjectPermissionUniversalIdentifierAndApplicationIdNotNull1773317160559';
 

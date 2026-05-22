@@ -1274,8 +1274,8 @@
         "outputCostPerMillionTokens": 2.5,
         "cachedInputCostPerMillionTokens": 0.2,
         "longContextCost": {
-          "inputCostPerMillionTokens": 4,
-          "outputCostPerMillionTokens": 12,
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 5,
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
@@ -1291,8 +1291,8 @@
         "outputCostPerMillionTokens": 2.5,
         "cachedInputCostPerMillionTokens": 0.2,
         "longContextCost": {
-          "inputCostPerMillionTokens": 4,
-          "outputCostPerMillionTokens": 12,
+          "inputCostPerMillionTokens": 2.5,
+          "outputCostPerMillionTokens": 5,
           "thresholdTokens": 200000,
           "cachedInputCostPerMillionTokens": 0.4
         },
@@ -1308,6 +1308,12 @@
         "inputCostPerMillionTokens": 1,
         "outputCostPerMillionTokens": 2,
         "cachedInputCostPerMillionTokens": 0.2,
+        "longContextCost": {
+          "inputCostPerMillionTokens": 2,
+          "outputCostPerMillionTokens": 4,
+          "thresholdTokens": 200000,
+          "cachedInputCostPerMillionTokens": 0.4
+        },
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
         "modalities": ["image", "pdf"],

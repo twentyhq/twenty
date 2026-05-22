@@ -16,9 +16,7 @@ import {
 
 @Injectable()
 @Catch(WorkspaceMigrationRunnerException)
-export class WorkspaceMigrationRunnerRestApiExceptionFilter
-  implements ExceptionFilter
-{
+export class WorkspaceMigrationRunnerRestApiExceptionFilter implements ExceptionFilter {
   constructor(
     private readonly httpExceptionHandlerService: HttpExceptionHandlerService,
   ) {}

@@ -41,6 +41,7 @@ export const SettingsDataModelFieldDescriptionForm = ({
           textAreaId={descriptionTextAreaId}
           placeholder={t`Write a description`}
           minRows={4}
+          maxRows={5}
           value={value ?? undefined}
           onChange={onChange}
           disabled={disabled}

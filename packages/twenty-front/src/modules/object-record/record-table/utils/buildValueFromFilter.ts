@@ -167,6 +167,7 @@ const computeValueFromFilterRating = (
       )?.value;
       return minusOne ?? option.value;
     }
+    case ViewFilterOperand.IS_NOT:
     case ViewFilterOperand.IS_EMPTY:
       return undefined;
     default:
@@ -275,6 +276,10 @@ const computeValueFromFilterUUID = (
   switch (operand) {
     case ViewFilterOperand.IS:
       return value;
+    case ViewFilterOperand.IS_NOT:
+    case ViewFilterOperand.IS_EMPTY:
+    case ViewFilterOperand.IS_NOT_EMPTY:
+      return undefined;
     default:
       assertUnreachable(operand);
   }
