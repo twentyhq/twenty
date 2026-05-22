@@ -7,32 +7,45 @@ import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { type TableMetadata } from '@/ui/layout/table/types/TableMetadata';
+import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
+import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyArray } from '@sniptt/guards';
-import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { useEffect, useMemo, useState } from 'react';
-import { IconSquareKey } from 'twenty-ui/display';
-import { SearchInput } from 'twenty-ui/input';
+import { IconSquareKey, IconTrash } from 'twenty-ui/display';
+import { LightIconButton, SearchInput } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
-const OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '350px 70px 80px';
+// Last column is the row-action slot (delete). It's only populated for custom
+// rows, but reserved across all rows so the grid stays aligned.
+const OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 70px 80px 32px';
 
 const StyledSearchInputContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
 
+const StyledActionCell = styled(TableCell)`
+  justify-content: flex-end;
+  padding-right: 0;
+`;
+
 export type SettingsObjectIndexTableProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
+  showSystemIndexes: boolean;
+  isReadOnly: boolean;
+  onDeleteIndex: (item: SettingsObjectIndexesTableItem) => void;
 };
 
 export const SettingsObjectIndexTable = ({
   objectMetadataItem,
+  showSystemIndexes,
+  isReadOnly,
+  onDeleteIndex,
 }: SettingsObjectIndexTableProps) => {
   const { t } = useLingui();
   const [searchTerm, setSearchTerm] = useState('');
@@ -83,9 +96,12 @@ export const SettingsObjectIndexTable = ({
     return (
       settingsObjectIndexes?.map((indexMetadataItem) => {
         return {
+          id: indexMetadataItem.id,
           name: indexMetadataItem.name,
           isUnique: indexMetadataItem.isUnique,
+          isCustom: indexMetadataItem.isCustom ?? false,
           indexType: indexMetadataItem.indexType,
+          indexWhereClause: indexMetadataItem.indexWhereClause,
           indexFields: indexMetadataItem.indexFieldMetadatas
             ?.map((indexField) => {
               const fieldMetadataItem = objectMetadataItem.fields.find(
@@ -106,14 +122,17 @@ export const SettingsObjectIndexTable = ({
 
   const filteredActiveItems = useMemo(
     () =>
-      sortedActiveObjectSettingsDetailItems.filter((item) => {
-        const searchNormalized = normalizeSearchText(searchTerm);
-        return (
-          normalizeSearchText(item.name).includes(searchNormalized) ||
-          normalizeSearchText(item.indexType).includes(searchNormalized)
-        );
-      }),
-    [sortedActiveObjectSettingsDetailItems, searchTerm],
+      sortedActiveObjectSettingsDetailItems
+        .filter((item) => (showSystemIndexes ? true : item.isCustom))
+        .filter((item) => {
+          const searchNormalized = normalizeSearchText(searchTerm);
+          return (
+            normalizeSearchText(item.name).includes(searchNormalized) ||
+            normalizeSearchText(item.indexType).includes(searchNormalized) ||
+            normalizeSearchText(item.indexFields).includes(searchNormalized)
+          );
+        }),
+    [sortedActiveObjectSettingsDetailItems, searchTerm, showSystemIndexes],
   );
 
   return (
@@ -145,7 +164,7 @@ export const SettingsObjectIndexTable = ({
           filteredActiveItems.map((objectSettingsIndex) => (
             <TableRow
               gridTemplateColumns={OBJECT_INDEX_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
-              key={objectSettingsIndex.name}
+              key={objectSettingsIndex.id}
             >
               <TableCell>{objectSettingsIndex.indexFields}</TableCell>
               <TableCell>
@@ -156,6 +175,15 @@ export const SettingsObjectIndexTable = ({
                 )}
               </TableCell>
               <TableCell>{objectSettingsIndex.indexType}</TableCell>
+              <StyledActionCell>
+                {objectSettingsIndex.isCustom && !isReadOnly && (
+                  <LightIconButton
+                    Icon={IconTrash}
+                    accent="tertiary"
+                    onClick={() => onDeleteIndex(objectSettingsIndex)}
+                  />
+                )}
+              </StyledActionCell>
             </TableRow>
           ))}
       </Table>

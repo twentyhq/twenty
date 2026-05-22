@@ -6,6 +6,7 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
 import { AdvancedSettingsWrapper } from '@/settings/components/AdvancedSettingsWrapper';
 import { SettingsUpdateDataModelObjectAboutForm } from '@/settings/data-model/object-details/components/SettingsUpdateDataModelObjectAboutForm';
+import { SettingsObjectIndexesSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection';
 import { SettingsObjectSearchSection } from '@/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection';
 import { SettingsDataModelObjectSettingsFormCard } from '@/settings/data-model/objects/forms/components/SettingsDataModelObjectSettingsFormCard';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -129,6 +130,18 @@ export const ObjectSettings = ({
               description={t`Configure how this object appears in search results`}
             />
             <SettingsObjectSearchSection
+              objectMetadataItem={objectMetadataItem}
+              isReadOnly={isReadOnly}
+            />
+          </Section>
+        </StyledFormSectionContainer>
+        <StyledFormSectionContainer>
+          <Section>
+            <H2Title
+              title={t`Indexes`}
+              description={t`Improve query performance by adding database indexes on the fields you filter or sort by most.`}
+            />
+            <SettingsObjectIndexesSection
               objectMetadataItem={objectMetadataItem}
               isReadOnly={isReadOnly}
             />
