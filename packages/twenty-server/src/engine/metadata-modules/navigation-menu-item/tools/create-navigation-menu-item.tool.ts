@@ -26,6 +26,7 @@ const commonOptionalFields = {
 
 const nameField = z
   .string()
+  .trim()
   .min(1)
   .describe(
     'Label shown in the sidebar. The target entity name is NOT auto-derived — provide the label you want the user to see.',
