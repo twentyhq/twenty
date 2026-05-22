@@ -5,6 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -120,6 +121,27 @@ export class IndexMetadataService {
 
       return flatField;
     });
+
+    // Composite types (Address, Currency, Links, ...) can't be indexed as a
+    // single field. computeFlatIndexFieldColumnNames filters their properties
+    // by isIncludedInUniqueConstraint — which is false for everything in
+    // Address/Currency — and returns []. That leaves the CREATE INDEX SQL
+    // with an empty `()` column list and Postgres errors out with a syntax
+    // error, leaving an orphaned indexMetadata row behind. Reject up front.
+    for (const flatField of objectFlatFieldMetadatas) {
+      if (isCompositeFieldMetadataType(flatField.type)) {
+        const fieldType = flatField.type;
+        const fieldLabel = flatField.label;
+
+        throw new IndexMetadataException(
+          `Cannot create index for composite field ${flatField.name} of type ${fieldType}`,
+          IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
+          {
+            userFriendlyMessage: msg`The field "${fieldLabel}" (${fieldType}) is a composite type and can't be indexed directly. Index the underlying sub-fields instead, or pick a scalar field.`,
+          },
+        );
+      }
+    }
 
     const existingCustomIndexCount = Object.values(
       existingFlatIndexMaps.byUniversalIdentifier,

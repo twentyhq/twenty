@@ -2,7 +2,9 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreateOneIndexMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
+import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectIndexFieldsForm } from '@/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm';
@@ -34,10 +36,13 @@ export type SettingsObjectNewIndexFormValues = z.infer<
   typeof settingsObjectNewIndexFormSchema
 >;
 
+// Composite types (Address, Currency, Links, ...) can't be indexed as a
+// single column — see server-side IndexMetadataService for details.
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
   if (field.isSystem === true) return false;
   if (field.isActive !== true) return false;
+  if (isCompositeFieldType(field.type as FieldType)) return false;
   return true;
 };
 

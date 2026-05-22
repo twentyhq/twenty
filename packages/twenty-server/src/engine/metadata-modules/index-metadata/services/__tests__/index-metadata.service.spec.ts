@@ -1,5 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { FieldMetadataType } from 'twenty-shared/types';
+
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
@@ -40,7 +42,12 @@ const buildFlatObjectMetadataMaps = () => {
 };
 
 const buildFlatFieldMetadataMaps = (
-  fields: { id: string; universalIdentifier: string; name: string }[],
+  fields: {
+    id: string;
+    universalIdentifier: string;
+    name: string;
+    type?: FieldMetadataType;
+  }[],
 ) => {
   const maps = createEmptyFlatEntityMaps() as ReturnType<
     typeof createEmptyFlatEntityMaps
@@ -54,6 +61,8 @@ const buildFlatFieldMetadataMaps = (
       id: field.id,
       universalIdentifier: field.universalIdentifier,
       name: field.name,
+      label: field.name,
+      type: field.type ?? FieldMetadataType.TEXT,
       objectMetadataId: OBJECT_ID,
       isUnique: false,
       isCustom: true,
@@ -237,6 +246,39 @@ describe('IndexMetadataService', () => {
       ).rejects.toMatchObject({
         code: IndexMetadataExceptionCode.INDEX_OBJECT_NOT_FOUND,
       });
+    });
+
+    it('rejects composite-type fields (Currency, Address, …)', async () => {
+      // Composite fields produce 0 columns via computeFlatIndexFieldColumnNames
+      // (none of their properties have isIncludedInUniqueConstraint=true),
+      // which crashes the migration with "syntax error at or near ')'".
+      setupCacheReturn({
+        fieldIds: [
+          {
+            id: 'field-currency',
+            universalIdentifier: 'field-currency-universal',
+            name: 'annualRecurringRevenue',
+            type: FieldMetadataType.CURRENCY,
+          },
+        ],
+      });
+
+      await expect(
+        service.createOne({
+          workspaceId: WORKSPACE_ID,
+          createIndexInput: {
+            objectMetadataId: OBJECT_ID,
+            fieldMetadataIds: ['field-currency'],
+            indexType: IndexType.BTREE,
+          },
+        }),
+      ).rejects.toMatchObject({
+        code: IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
+      });
+
+      expect(
+        migrationService.validateBuildAndRunWorkspaceMigration,
+      ).not.toHaveBeenCalled();
     });
 
     it('rejects when a field does not belong to the object', async () => {
