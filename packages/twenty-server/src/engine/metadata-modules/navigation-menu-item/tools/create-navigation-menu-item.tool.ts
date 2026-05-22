@@ -24,24 +24,24 @@ const commonOptionalFields = {
     .describe('Parent folder id, if the item should live inside a folder.'),
 };
 
-const optionalName = z
+const nameField = z
   .string()
-  .optional()
+  .min(1)
   .describe(
-    'Display name. Leave unset for OBJECT/VIEW/RECORD/PAGE_LAYOUT to use the target entity name.',
+    'Label shown in the sidebar. The target entity name is NOT auto-derived — provide the label you want the user to see.',
   );
 
 const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
-    name: z.string().describe('Folder name'),
+    name: nameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.LINK),
     scope: navigationMenuItemScopeSchema,
-    name: z.string().describe('Link label'),
+    name: nameField,
     link: z.string().url().describe('Target URL'),
     ...commonOptionalFields,
   }),
@@ -52,14 +52,14 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
       .string()
       .uuid()
       .describe('Id of the object to pin'),
-    name: optionalName,
+    name: nameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.VIEW),
     scope: navigationMenuItemScopeSchema,
     viewId: z.string().uuid().describe('Id of the view to pin'),
-    name: optionalName,
+    name: nameField,
     ...commonOptionalFields,
   }),
   z.object({
@@ -70,14 +70,14 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
       .string()
       .uuid()
       .describe("Id of the record's object metadata"),
-    name: optionalName,
+    name: nameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.PAGE_LAYOUT),
     scope: navigationMenuItemScopeSchema,
     pageLayoutId: z.string().uuid().describe('Id of the page layout to pin'),
-    name: optionalName,
+    name: nameField,
     ...commonOptionalFields,
   }),
 ]);
@@ -109,22 +109,22 @@ const toServiceInput = (
     case NavigationMenuItemType.OBJECT:
       return {
         ...base,
-        name: params.name ?? null,
+        name: params.name,
         targetObjectMetadataId: params.targetObjectMetadataId,
       };
     case NavigationMenuItemType.VIEW:
-      return { ...base, name: params.name ?? null, viewId: params.viewId };
+      return { ...base, name: params.name, viewId: params.viewId };
     case NavigationMenuItemType.RECORD:
       return {
         ...base,
-        name: params.name ?? null,
+        name: params.name,
         targetRecordId: params.targetRecordId,
         targetObjectMetadataId: params.targetObjectMetadataId,
       };
     case NavigationMenuItemType.PAGE_LAYOUT:
       return {
         ...base,
-        name: params.name ?? null,
+        name: params.name,
         pageLayoutId: params.pageLayoutId,
       };
   }
