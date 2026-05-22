@@ -61,13 +61,8 @@ export class ImapClientProvider {
       where: { id: connectedAccountId },
     });
 
-    if (!isDefined(connectedAccount)) {
-      throw new Error(
-        `Connected account ${connectedAccountId} not found while opening IMAP client`,
-      );
-    }
-
     if (
+      !isDefined(connectedAccount) ||
       connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
       !isDefined(connectedAccount.connectionParameters?.IMAP)
     ) {

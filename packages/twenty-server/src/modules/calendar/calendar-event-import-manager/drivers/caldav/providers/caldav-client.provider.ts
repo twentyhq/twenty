@@ -28,13 +28,8 @@ export class CalDavClientProvider {
       where: { id: connectedAccountId },
     });
 
-    if (!isDefined(connectedAccount)) {
-      throw new Error(
-        `Connected account ${connectedAccountId} not found while opening CalDAV client`,
-      );
-    }
-
     if (
+      !isDefined(connectedAccount) ||
       connectedAccount.provider !== ConnectedAccountProvider.IMAP_SMTP_CALDAV ||
       !isDefined(connectedAccount.connectionParameters?.CALDAV)
     ) {

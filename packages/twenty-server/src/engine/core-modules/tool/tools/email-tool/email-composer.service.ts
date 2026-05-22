@@ -30,6 +30,7 @@ import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/module
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+
 @Injectable()
 export class EmailComposerService {
   private readonly logger = new Logger(EmailComposerService.name);
