@@ -98,6 +98,22 @@ Varsayılanları ayarladıktan sonra, belirli nesneler için varsayılanları ge
 | Fırsatlar → "Kayıtları Gör"ü devre dışı bırakın | Stajyer Fırsatlar nesnesini hiç göremez                                         |
 | Kişiler → "Kayıtları Düzenle"yi etkinleştirin   | Stajyer Kişiler kayıtlarını düzenleyebilir (ancak diğer nesneleri düzenleyemez) |
 
+### Satır Seviyesi İzinleri
+
+<Note>
+Satır seviyesi izinler, **Organization** planında (Bulut ve Kendi Sunucunuzda) sunulan bir **Premium özellik**tir.
+</Note>
+
+Satır seviyesi izinler, bir rolün dinamik ölçütlere göre hangi tekil kayıtları görebileceğini veya düzenleyebileceğini kısıtlamanıza olanak tanır. Nesne izinlerinden (tüm bir nesne türüne uygulanan) farklı olarak, satır seviyesi izinler her kaydı bağımsız olarak değerlendirir.
+
+**Örnek Kullanım Durumları:**
+
+* Satış temsilcileri yalnızca kendi fırsatlarını görebilir
+* Yöneticiler kendi bölgelerindeki tüm kayıtları görebilir
+* Destek temsilcileri yalnızca kendilerine atanmış talepleri görüntüleyebilir
+
+Satır seviyesi izinleri yapılandırmak için bir rol açın, **Nesneler** sekmesine gidin ve belirli bir nesne için filtre koşullarını tanımlamak üzere **Satır Seviyesi** bölümünü kullanın.
+
 ### Alan İzinleri
 
 Her nesne düzeyi kuralın içinde, belirli alanlara erişimi denetlemek için **alan düzeyi izinlerini** yapılandırabilirsiniz.

@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { Heading, HeadingPart } from '@/design-system/components';
-import type { CaseStudyData } from '@/lib/customers';
+import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
@@ -8,8 +8,7 @@ import {
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 
-const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1702047149248-a6049168a2a8?w=1600&q=80';
+const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.alternativePartners;
 
 const META_TITLE = msg`From Salesforce to self-hosted Twenty, powered by AI | Alternative Partners`;
 const META_DESCRIPTION = msg`How Alternative Partners migrated from Salesforce to self-hosted Twenty using agentic AI in the implementation loop: fast migration, durable ownership.`;
@@ -51,7 +50,7 @@ export default async function AlternativePartnersCaseStudyPage({
       authorAvatarSrc: '/images/partner/testimonials/benjamin-reynolds.webp',
       authorRole: msg`Principal and Founder, Alternative Partners`,
       clientIcon: 'alternative-partners',
-      heroImageSrc: PLACEHOLDER_HERO,
+      heroImageSrc: HERO_IMAGE,
       industry: msg`Consulting`,
       kpis: [
         { value: msg`AI-assisted`, label: msg`Salesforce migration` },

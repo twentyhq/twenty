@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationEntityAndRelationships1757491357122
-  implements MigrationInterface
-{
+export class AddApplicationEntityAndRelationships1757491357122 implements MigrationInterface {
   name = 'AddApplicationEntityAndRelationships1757491357122';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

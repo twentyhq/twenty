@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveMessageIdFromFileTable1759378531410
-  implements MigrationInterface
-{
+export class RemoveMessageIdFromFileTable1759378531410 implements MigrationInterface {
   name = 'RemoveMessageIdFromFileTable1759378531410';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

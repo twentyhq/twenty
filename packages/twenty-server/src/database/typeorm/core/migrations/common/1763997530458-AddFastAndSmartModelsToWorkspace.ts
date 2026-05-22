@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFastAndSmartModelsToWorkspace1763997530458
-  implements MigrationInterface
-{
+export class AddFastAndSmartModelsToWorkspace1763997530458 implements MigrationInterface {
   name = 'AddFastAndSmartModelsToWorkspace1763997530458';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

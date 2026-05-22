@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class KanbanFieldMetadataIdentifierView1760965667836
-  implements MigrationInterface
-{
+export class KanbanFieldMetadataIdentifierView1760965667836 implements MigrationInterface {
   name = 'KanbanFieldMetadataIdentifierView1760965667836';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

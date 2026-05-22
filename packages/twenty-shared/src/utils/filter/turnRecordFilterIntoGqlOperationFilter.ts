@@ -507,6 +507,14 @@ const buildDirectFieldGqlOperationFilter = ({
               eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
             } as RatingFilter,
           };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
+              } as RatingFilter,
+            },
+          };
         case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
@@ -1525,9 +1533,16 @@ const buildDirectFieldGqlOperationFilter = ({
       };
     }
     case 'UUID': {
-      const recordIds = arrayOfUuidOrVariableSchema.parse(recordFilter.value);
+      const parsedRecordIds = arrayOfUuidOrVariableSchema.parse(
+        recordFilter.value,
+      );
 
-      if (!isDefined(recordIds) || recordIds.length === 0) return;
+      // Fall back to a sentinel v4 UUID when the input isn't a valid UUID so the
+      // filter compiles to a guaranteed no-match instead of being silently dropped.
+      const recordIds =
+        isDefined(parsedRecordIds) && parsedRecordIds.length > 0
+          ? parsedRecordIds
+          : ['00000000-0000-4000-8000-000000000000'];
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
@@ -1535,6 +1550,14 @@ const buildDirectFieldGqlOperationFilter = ({
             [fieldMetadataItem.name]: {
               in: recordIds,
             } as UUIDFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                in: recordIds,
+              } as UUIDFilter,
+            },
           };
         default:
           throw new Error(

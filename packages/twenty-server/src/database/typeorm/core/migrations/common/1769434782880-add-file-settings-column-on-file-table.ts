@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFileSettingsColumnOnFileTable1769434782880
-  implements MigrationInterface
-{
+export class AddFileSettingsColumnOnFileTable1769434782880 implements MigrationInterface {
   name = 'AddFileSettingsColumnOnFileTable1769434782880';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

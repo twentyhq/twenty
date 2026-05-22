@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddColorToNavigationMenuItem1771146443209
-  implements MigrationInterface
-{
+export class AddColorToNavigationMenuItem1771146443209 implements MigrationInterface {
   name = 'AddColorToNavigationMenuItem1771146443209';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

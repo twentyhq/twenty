@@ -73,7 +73,10 @@ const restoreCheckConstraint = async (
 // CBC key derivation matches what production rows were sealed with.
 const buildJwtWrapperServiceStub = (appSecret: string): JwtWrapperService => {
   return {
-    generateAppSecret: (type: JwtTokenTypeEnum, appSecretBody: string): string =>
+    generateAppSecret: (
+      type: JwtTokenTypeEnum,
+      appSecretBody: string,
+    ): string =>
       createHash('sha256')
         .update(`${appSecret}${appSecretBody}${type}`)
         .digest('hex'),

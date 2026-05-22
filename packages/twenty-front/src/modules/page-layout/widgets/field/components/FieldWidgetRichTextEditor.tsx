@@ -11,11 +11,11 @@ import { isUndefined } from '@sniptt/guards';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 const RichTextFieldEditor = lazy(() =>
-  import(
-    '@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor'
-  ).then((module) => ({
-    default: module.RichTextFieldEditor,
-  })),
+  import('@/object-record/record-field/ui/meta-types/input/components/RichTextFieldEditor').then(
+    (module) => ({
+      default: module.RichTextFieldEditor,
+    }),
+  ),
 );
 
 const StyledContainer = styled.div`

@@ -1,0 +1,91 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Upload application file should fail when applicationUniversalIdentifier does not match any installed application 1`] = `
+{
+  "extensions": {
+    "code": "NOT_FOUND",
+    "subCode": "APPLICATION_NOT_FOUND",
+    "userFriendlyMessage": "Application not found.",
+  },
+  "message": "Application not found in workspace.",
+  "name": "NotFoundError",
+}
+`;
+
+exports[`Upload application file should fail when applicationUniversalIdentifier is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "applicationUniversalIdentifier should not be empty",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when fileFolder is not an allowed application file folder 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Invalid fileFolder for application file upload. Allowed values: built-logic-function, built-front-component, public-asset, source, dependencies",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath contains backslash path traversal 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath contains relative path traversal (../) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath contains upward traversal (../../) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath is an absolute path 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath is empty 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "userFriendlyMessage": "An error occurred.",
+  },
+  "message": "filePath contains unsafe characters or path traversal, filePath should not be empty",
+  "name": "UserInputError",
+}
+`;

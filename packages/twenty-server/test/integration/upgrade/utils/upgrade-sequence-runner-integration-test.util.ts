@@ -265,7 +265,14 @@ export const seedInstanceMigration = async (
     values.push(
       `($${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, $${paramIndex++}, false)`,
     );
-    args.push(name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt);
+    args.push(
+      name,
+      status,
+      attempt,
+      EXECUTED_BY_VERSION,
+      workspaceId,
+      createdAt,
+    );
   }
 
   await dataSource.query(
@@ -309,7 +316,15 @@ export const seedWorkspaceMigration = async (
     await dataSource.query(
       `INSERT INTO core."upgradeMigration" (name, status, attempt, "executedByVersion", "workspaceId", "createdAt", "isInitial")
        VALUES ($1, $2, $3, $4, $5, $6, $7)`,
-      [name, status, attempt, EXECUTED_BY_VERSION, workspaceId, createdAt, isInitial],
+      [
+        name,
+        status,
+        attempt,
+        EXECUTED_BY_VERSION,
+        workspaceId,
+        createdAt,
+        isInitial,
+      ],
     );
   }
 };

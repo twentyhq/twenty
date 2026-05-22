@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddAiModelAvailabilityColumns1771768847449
-  implements MigrationInterface
-{
+export class AddAiModelAvailabilityColumns1771768847449 implements MigrationInterface {
   name = 'AddAiModelAvailabilityColumns1771768847449';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

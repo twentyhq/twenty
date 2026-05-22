@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeAgentUniversalIdentifierAndApplicationIdNotNullableQueries } from 'src/database/typeorm/core/migrations/utils/1768213174274-makeAgentUniversalIdentifierAndApplicationIdNotNullable.util';
 
-export class MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274
-  implements MigrationInterface
-{
+export class MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274 implements MigrationInterface {
   name = 'MakeAgentUniversalIdentifierAndApplicationIdNotNullable1768213174274';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

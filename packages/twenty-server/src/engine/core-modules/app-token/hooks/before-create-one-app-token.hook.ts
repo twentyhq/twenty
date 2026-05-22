@@ -5,9 +5,9 @@ import {
 
 import { type AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 
-export class BeforeCreateOneAppToken<T extends AppTokenEntity>
-  implements BeforeCreateOneHook<T>
-{
+export class BeforeCreateOneAppToken<
+  T extends AppTokenEntity,
+> implements BeforeCreateOneHook<T> {
   async run(
     instance: CreateOneInputType<T>,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any

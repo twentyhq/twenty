@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddNativeCapabilitesToAgent1759200603485
-  implements MigrationInterface
-{
+export class AddNativeCapabilitesToAgent1759200603485 implements MigrationInterface {
   name = 'AddNativeCapabilitesToAgent1759200603485';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type CaseStudyData } from '@/lib/customers';
+import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
@@ -8,8 +8,7 @@ import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 
-const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1758873269035-aae0e1fd3422?w=1600&q=80';
+const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.elevateConsulting;
 
 const META_TITLE = msg`Twenty as the API backbone of a go-to-market stack | Elevate Consulting`;
 const META_DESCRIPTION = msg`How Elevate Consulting moved off documents and spreadsheets to Twenty as the API-connected CRM at the center of their stack.`;
@@ -53,7 +52,7 @@ export default async function ElevateConsultingCaseStudyPage({
       author: 'Justin Beadle',
       authorRole: msg`Director of Digital and Information, Elevate Consulting`,
       clientIcon: 'elevate-consulting',
-      heroImageSrc: PLACEHOLDER_HERO,
+      heroImageSrc: HERO_IMAGE,
       industry: msg`Management Consulting`,
       kpis: [
         { value: msg`1 click`, label: msg`Proposal automation` },
