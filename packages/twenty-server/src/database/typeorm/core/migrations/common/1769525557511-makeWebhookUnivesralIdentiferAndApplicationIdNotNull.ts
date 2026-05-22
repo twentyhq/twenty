@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeWebhookUniversalIdentifierAndApplicationIdNotNullQueries } from 'src/database/typeorm/core/migrations/utils/1769525557511-makeWebhookUniversalIdentifierAndApplicationIdNotNull.util';
 
-export class MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511
-  implements MigrationInterface
-{
+export class MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511 implements MigrationInterface {
   name = 'MakeWebhookUnivesralIdentiferAndApplicationIdNotNull1769525557511';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

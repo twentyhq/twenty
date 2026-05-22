@@ -34,9 +34,7 @@ const looksLikeLegacyCtrCiphertext = (value: string): boolean =>
   LEGACY_CTR_LOOKS_LIKE_BASE64_RE.test(value);
 
 @RegisteredInstanceCommand('2.5.0', 1798000005000, { type: 'slow' })
-export class EncryptApplicationVariableSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstanceCommand {
   private readonly logger = new Logger(
     EncryptApplicationVariableSlowInstanceCommand.name,
   );

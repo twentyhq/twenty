@@ -35,6 +35,14 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
+    return this.findVariablesWithObfuscatedValuesGlobal(
+      applicationRegistrationId,
+    );
+  }
+
+  async findVariablesWithObfuscatedValuesGlobal(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
     const variables = await this.variableRepository.find({
       where: { applicationRegistrationId },
       order: { key: 'ASC' },

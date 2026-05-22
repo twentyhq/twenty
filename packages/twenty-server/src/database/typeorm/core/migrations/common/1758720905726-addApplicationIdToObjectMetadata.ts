@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationIdToObjectMetadata1758720905726
-  implements MigrationInterface
-{
+export class AddApplicationIdToObjectMetadata1758720905726 implements MigrationInterface {
   name = 'AddApplicationIdToObjectMetadata1758720905726';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

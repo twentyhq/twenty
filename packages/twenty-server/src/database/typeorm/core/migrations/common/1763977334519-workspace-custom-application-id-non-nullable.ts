@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class WorkspaceCustomApplicationIdNonNullable1763977334519
-  implements MigrationInterface
-{
+export class WorkspaceCustomApplicationIdNonNullable1763977334519 implements MigrationInterface {
   name = 'WorkspaceCustomApplicationIdNonNullable1763977334519';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

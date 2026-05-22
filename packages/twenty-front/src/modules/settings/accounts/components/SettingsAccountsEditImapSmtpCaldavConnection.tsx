@@ -13,6 +13,7 @@ import { Loader } from 'twenty-ui/feedback';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
+import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { NotFound } from '~/pages/not-found/NotFound';
 import { useImapSmtpCaldavConnectionForm } from '@/settings/accounts/hooks/useImapSmtpCaldavConnectionForm';
 import { SettingsAccountsConnectionForm } from './SettingsAccountsConnectionForm';
@@ -56,6 +57,10 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
     return <NotFound />;
   }
 
+  const existingProtocols = ACCOUNT_TYPES.filter(
+    (protocol) => connectedAccount?.connectionParameters?.[protocol]?.host,
+  );
+
   const renderForm = () => (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...formMethods}>
@@ -83,7 +88,11 @@ export const SettingsAccountsEditImapSmtpCaldavConnection = () => {
         }
       >
         <SettingsPageContainer>
-          <SettingsAccountsConnectionForm control={control} isEditing />
+          <SettingsAccountsConnectionForm
+            control={control}
+            isEditing
+            existingProtocols={existingProtocols}
+          />
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
     </FormProvider>

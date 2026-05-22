@@ -570,7 +570,7 @@ describe('upsertViewWidget', () => {
             {
               id: filterId,
               fieldMetadataId,
-              operand: ViewFilterOperand.IS,
+              operand: ViewFilterOperand.DOES_NOT_CONTAIN,
               value: 'updated',
             },
           ],
@@ -588,7 +588,7 @@ describe('upsertViewWidget', () => {
       );
 
       expect(updatedFilter).toBeDefined();
-      expect(updatedFilter!.operand).toBe(ViewFilterOperand.IS);
+      expect(updatedFilter!.operand).toBe(ViewFilterOperand.DOES_NOT_CONTAIN);
       expect(updatedFilter!.value).toBe('updated');
     });
 
@@ -837,7 +837,7 @@ describe('upsertViewWidget', () => {
       const filterGroupId = uuidv4();
       const filterId = uuidv4();
       const sortId = uuidv4();
-      const fieldMetadataId = testSetup.fieldMetadataIds[2];
+      const fieldMetadataId = testSetup.fieldMetadataIds[0];
       const targetField = testSetup.viewFields.find(
         (field) =>
           field.fieldMetadataId !== testSetup.labelIdentifierFieldMetadataId,

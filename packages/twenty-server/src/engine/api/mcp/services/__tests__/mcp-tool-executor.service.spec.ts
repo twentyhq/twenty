@@ -1,4 +1,5 @@
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
 import {
   MCP_PROGRESS_NOTIFICATION_METHOD,
   TOOL_CALL_PROGRESS_TOKEN_PREFIX,
@@ -24,6 +25,7 @@ describe('McpToolExecutorService', () => {
               required: ['query'],
             },
           },
+          annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
         },
       } as any;
 
@@ -42,6 +44,7 @@ describe('McpToolExecutorService', () => {
                 properties: { query: { type: 'string' } },
                 required: ['query'],
               },
+              annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
             },
           ],
         },

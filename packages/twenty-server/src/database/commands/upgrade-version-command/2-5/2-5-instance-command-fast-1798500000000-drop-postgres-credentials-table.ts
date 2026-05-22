@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.5.0', 1798500000000)
-export class DropPostgresCredentialsTableFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class DropPostgresCredentialsTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE IF EXISTS "core"."postgresCredentials" DROP CONSTRAINT IF EXISTS "FK_9494639abc06f9c8c3691bf5d22"`,

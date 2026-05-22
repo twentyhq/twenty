@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUniversalIdentifierAndApplicationIdToObjectPermission1773317160558
-  implements MigrationInterface
-{
+export class AddUniversalIdentifierAndApplicationIdToObjectPermission1773317160558 implements MigrationInterface {
   name =
     'AddUniversalIdentifierAndApplicationIdToObjectPermission1773317160558';
 

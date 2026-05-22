@@ -10,19 +10,19 @@ import { lazy, Suspense } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const FavoritesSectionDispatcher = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher'
-  ).then((module) => ({
-    default: module.FavoritesSectionDispatcher,
-  })),
+  import('@/navigation-menu-item/display/sections/favorites/components/FavoritesSectionDispatcher').then(
+    (module) => ({
+      default: module.FavoritesSectionDispatcher,
+    }),
+  ),
 );
 
 const WorkspaceSectionDispatcher = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher'
-  ).then((module) => ({
-    default: module.WorkspaceSectionDispatcher,
-  })),
+  import('@/navigation-menu-item/display/sections/workspace/components/WorkspaceSectionDispatcher').then(
+    (module) => ({
+      default: module.WorkspaceSectionDispatcher,
+    }),
+  ),
 );
 
 const StyledScrollableItemsContainer = styled.div`

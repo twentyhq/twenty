@@ -30,6 +30,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
+import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UpgradeMigrationService } from 'src/engine/core-modules/upgrade/services/upgrade-migration.service';
 import { UpgradeSequenceReaderService } from 'src/engine/core-modules/upgrade/services/upgrade-sequence-reader.service';
@@ -58,7 +59,6 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
-import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
@@ -439,6 +439,13 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     }
   }
 
+  async suspendWorkspace(id: string) {
+    await this.workspaceRepository.update(id, {
+      activationStatus: WorkspaceActivationStatus.SUSPENDED,
+      suspendedAt: new Date(),
+    });
+  }
+
   async deleteWorkspace(id: string, softDelete = false) {
     const workspace = await this.workspaceRepository.findOne({
       where: { id },
@@ -465,17 +472,23 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     this.logger.log(`workspace ${id} cache flushed`);
 
-    if (this.billingService.isBillingEnabled()) {
-      await this.billingSubscriptionService.deleteSubscriptions(workspace.id);
-    }
-
     if (softDelete) {
+      if (this.billingService.isBillingEnabled()) {
+        await this.billingSubscriptionService.cancelSubscription(workspace.id);
+      }
+
       await this.workspaceRepository.softDelete({ id });
       await this.coreEntityCacheService.invalidate('workspaceEntity', id);
 
       this.logger.log(`workspace ${id} soft deleted`);
 
       return workspace;
+    }
+
+    if (this.billingService.isBillingEnabled()) {
+      await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
+        workspace.id,
+      );
     }
 
     await this.deleteWorkspaceSyncableMetadataEntities(workspace);

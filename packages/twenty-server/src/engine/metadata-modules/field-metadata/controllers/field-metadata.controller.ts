@@ -53,6 +53,7 @@ import {
   toLegacyFieldMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/field-metadata/utils/to-legacy-field-metadata-response.util';
 import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-flat-field-metadata-to-field-metadata-dto.util';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller('rest/metadata/fields')
 @UseGuards(
@@ -60,7 +61,10 @@ import { fromFlatFieldMetadataToFieldMetadataDto } from 'src/engine/metadata-mod
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
-@UseFilters(FieldMetadataRestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  FieldMetadataRestApiExceptionFilter,
+)
 @UsePipes(new ValidationPipe())
 export class FieldMetadataController {
   constructor(

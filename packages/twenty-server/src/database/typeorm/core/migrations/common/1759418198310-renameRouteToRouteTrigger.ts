@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RenameRouteToRouteTrigger1759418198310
-  implements MigrationInterface
-{
+export class RenameRouteToRouteTrigger1759418198310 implements MigrationInterface {
   name = 'RenameRouteToRouteTrigger1759418198310';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

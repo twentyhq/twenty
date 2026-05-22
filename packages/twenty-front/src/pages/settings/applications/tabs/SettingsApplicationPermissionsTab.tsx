@@ -123,7 +123,7 @@ const buildSyntheticRole = (
   })),
   permissionFlags: (defaultRole.permissionFlags ?? []).map(
     (permissionFlag) => ({
-      __typename: 'PermissionFlag' as const,
+      __typename: 'RolePermissionFlag' as const,
       id: uuidv4(),
       roleId: defaultRole.universalIdentifier,
       flag: permissionFlag.flag,

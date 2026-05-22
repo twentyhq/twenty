@@ -80,7 +80,7 @@ export default defineObject({
 * Jedes Feld benötigt `name`, `type`, `label` und einen eigenen stabilen `universalIdentifier`.
 * Das Array `fields` ist optional — Sie können Objekte ohne benutzerdefinierte Felder definieren.
 * Inline definierte Felder benötigen **kein** `objectUniversalIdentifier` – er wird vom übergeordneten Objekt geerbt. Verwenden Sie [`defineField()`](/l/de/developers/extend/apps/data/extending-objects), um Objekten Felder hinzuzufügen, die Ihnen nicht gehören.
-* Sie können mit `yarn twenty add object` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen. Siehe [Architektur → Gerüste für Entitäten](/l/de/developers/extend/apps/getting-started/scaffolding).
+* Sie können mit `yarn twenty dev:add object` neue Objekte erzeugen; der Assistent führt Sie durch Benennung, Felder und Beziehungen. Siehe [Architektur → Gerüste für Entitäten](/l/de/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
 **Basisfelder werden automatisch hinzugefügt.** Wenn Sie ein benutzerdefiniertes Objekt definieren, erstellt Twenty Standardfelder wie `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` und `deletedAt` für Sie. Sie müssen diese nicht in Ihrem `fields`-Array deklarieren – nur Ihre benutzerdefinierten Felder. Sie können ein Standardfeld überschreiben, indem Sie eines mit demselben Namen deklarieren, aber das ist nur selten eine gute Idee.

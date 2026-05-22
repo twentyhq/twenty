@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddAiAdditionalInstructions1770311652940
-  implements MigrationInterface
-{
+export class AddAiAdditionalInstructions1770311652940 implements MigrationInterface {
   name = 'AddAiAdditionalInstructions1770311652940';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

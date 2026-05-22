@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { registerCommands } from '@/cli/commands/app-command';
+import { registerCommands } from '@/cli/commands';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import chalk from 'chalk';
 import { Command, CommanderError } from 'commander';
@@ -17,7 +17,7 @@ program
 
 program.option(
   '-r, --remote <name>',
-  'Use a specific remote (overrides the default set by remote switch)',
+  'Use a specific remote (overrides the default set by remote:use)',
 );
 
 program.hook('preAction', async (thisCommand) => {

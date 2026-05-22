@@ -17,7 +17,7 @@ import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
-import { fromPermissionFlagToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-permission-flag.util';
+import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
 import { computeSearchVectorUniversalSettingsFromObjectManifest } from 'src/engine/core-modules/application/application-manifest/utils/compute-search-vector-universal-settings-from-object-manifest.util';
@@ -214,14 +214,15 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
 
     for (const permissionFlag of roleManifest.permissionFlags ?? []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
-        universalFlatEntity: fromPermissionFlagToUniversalFlatPermissionFlag({
-          permissionFlag,
-          roleUniversalIdentifier: roleManifest.universalIdentifier,
-          applicationUniversalIdentifier,
-          now,
-        }),
+        universalFlatEntity:
+          fromPermissionFlagToUniversalFlatRolePermissionFlag({
+            permissionFlag,
+            roleUniversalIdentifier: roleManifest.universalIdentifier,
+            applicationUniversalIdentifier,
+            now,
+          }),
         universalFlatEntityMapsToMutate:
-          allUniversalFlatEntityMaps.flatPermissionFlagMaps,
+          allUniversalFlatEntityMaps.flatRolePermissionFlagMaps,
       });
     }
   }

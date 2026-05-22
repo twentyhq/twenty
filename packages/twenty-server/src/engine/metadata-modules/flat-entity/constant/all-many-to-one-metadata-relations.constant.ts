@@ -300,16 +300,27 @@ export const ALL_MANY_TO_ONE_METADATA_RELATIONS = {
     workspace: null,
     application: null,
   },
-  permissionFlag: {
+  rolePermissionFlag: {
     workspace: null,
     application: null,
     role: {
       metadataName: 'role',
       foreignKey: 'roleId',
-      inverseOneToManyProperty: 'permissionFlags',
+      inverseOneToManyProperty: 'rolePermissionFlags',
       isNullable: false,
       universalForeignKey: 'roleUniversalIdentifier',
     },
+    permissionFlag: {
+      metadataName: 'permissionFlag',
+      foreignKey: 'permissionFlagId',
+      inverseOneToManyProperty: 'rolePermissionFlags',
+      isNullable: false,
+      universalForeignKey: 'permissionFlagUniversalIdentifier',
+    },
+  },
+  permissionFlag: {
+    workspace: null,
+    application: null,
   },
   objectPermission: {
     workspace: null,

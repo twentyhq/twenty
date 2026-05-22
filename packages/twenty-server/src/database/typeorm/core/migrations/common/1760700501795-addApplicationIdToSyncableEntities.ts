@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationIdToSyncableEntities1760700501795
-  implements MigrationInterface
-{
+export class AddApplicationIdToSyncableEntities1760700501795 implements MigrationInterface {
   name = 'AddApplicationIdToSyncableEntities1760700501795';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

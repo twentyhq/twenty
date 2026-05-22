@@ -66,6 +66,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationConfigTab
             registration={registration}
+            fromAdmin
           />
         );
       case 'oauth':

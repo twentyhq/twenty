@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class ActivateUnaccentExtension1758117800000
-  implements MigrationInterface
-{
+export class ActivateUnaccentExtension1758117800000 implements MigrationInterface {
   name = 'ActivateUnaccentExtension1758117800000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

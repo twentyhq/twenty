@@ -56,12 +56,15 @@ export class BillingUsageService {
       return true;
     }
 
-    const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
-      });
+    const { billingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
 
-    return !!billingSubscription;
+    return (
+      isDefined(billingSubscription) &&
+      billingSubscription.status !== SubscriptionStatus.Canceled
+    );
   }
 
   async getResourceCreditProductUsage(

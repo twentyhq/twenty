@@ -20,18 +20,6 @@ export const computeStandardCalendarChannelViewFields = (
         size: 150,
       },
     }),
-    allCalendarChannelsConnectedAccount: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'calendarChannel',
-      context: {
-        viewName: 'allCalendarChannels',
-        viewFieldName: 'connectedAccount',
-        fieldName: 'connectedAccount',
-        position: 1,
-        isVisible: true,
-        size: 150,
-      },
-    }),
     allCalendarChannelsVisibility: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'calendarChannel',
@@ -81,20 +69,6 @@ export const computeStandardCalendarChannelViewFields = (
       },
     }),
 
-    calendarChannelRecordPageFieldsConnectedAccount:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'calendarChannel',
-        context: {
-          viewName: 'calendarChannelRecordPageFields',
-          viewFieldName: 'connectedAccount',
-          fieldName: 'connectedAccount',
-          position: 1,
-          isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'general',
-        },
-      }),
     calendarChannelRecordPageFieldsVisibility:
       createStandardViewFieldFlatMetadata({
         ...args,

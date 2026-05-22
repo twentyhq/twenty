@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddEngineComponentKeyToCommandMenuItem1773311456455
-  implements MigrationInterface
-{
+export class AddEngineComponentKeyToCommandMenuItem1773311456455 implements MigrationInterface {
   name = 'AddEngineComponentKeyToCommandMenuItem1773311456455';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
