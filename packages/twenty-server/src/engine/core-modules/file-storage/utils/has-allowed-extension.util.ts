@@ -6,5 +6,5 @@ export const hasAllowedExtension = (
 ): boolean => {
   const ext = extname(filePath).toLowerCase();
 
-  return ext in allowedExtensions;
+  return allowedExtensions[ext] === true;
 };

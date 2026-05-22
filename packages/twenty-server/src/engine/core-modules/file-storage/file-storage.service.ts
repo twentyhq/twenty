@@ -9,8 +9,9 @@ import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { assertStoragePathIsWithinWorkspace } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-within-workspace.util';
+import { assertResourceExtensionIsAllowed } from 'src/engine/core-modules/file-storage/utils/assert-resource-extension-is-allowed.util';
 import { assertResourcePathIsSafe } from 'src/engine/core-modules/file-storage/utils/assert-resource-path-is-safe.util';
+import { assertStoragePathIsWithinWorkspace } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-within-workspace.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 
@@ -38,6 +39,7 @@ export class FileStorageService {
     resourcePath,
   }: ResourceIdentifier): string {
     assertResourcePathIsSafe(resourcePath);
+    assertResourceExtensionIsAllowed(resourcePath, fileFolder);
 
     const onStoragePath = join(
       workspaceId,
