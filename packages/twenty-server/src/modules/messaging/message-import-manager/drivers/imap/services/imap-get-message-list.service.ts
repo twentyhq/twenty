@@ -52,7 +52,7 @@ export class ImapGetMessageListService {
       return [];
     }
 
-    const client = await this.imapClientProvider.getClient(connectedAccount);
+    const client = await this.imapClientProvider.getClient(connectedAccount.id);
 
     try {
       const results: GetMessageListsResponse = [];

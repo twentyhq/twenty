@@ -12,7 +12,6 @@ import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
-import { CalendarAccountAuthenticationService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-account-authentication.service';
 import {
   CalendarEventImportErrorHandlerService,
   CalendarEventImportSyncStep,
@@ -36,7 +35,6 @@ export class CalendarFetchEventsService {
     private readonly getCalendarEventsService: CalendarGetCalendarEventsService,
     private readonly calendarEventImportErrorHandlerService: CalendarEventImportErrorHandlerService,
     private readonly calendarEventsImportService: CalendarEventsImportService,
-    private readonly calendarAccountAuthenticationService: CalendarAccountAuthenticationService,
   ) {}
 
   public async fetchCalendarEvents(
@@ -58,24 +56,9 @@ export class CalendarFetchEventsService {
     await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         try {
-          const { accessToken, refreshToken } =
-            await this.calendarAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-              {
-                connectedAccount,
-                workspaceId,
-                calendarChannelId: calendarChannel.id,
-              },
-            );
-
-          const connectedAccountWithFreshTokens = {
-            ...connectedAccount,
-            accessToken,
-            refreshToken,
-          };
-
           const getCalendarEventsResponse =
             await this.getCalendarEventsService.getCalendarEvents(
-              connectedAccountWithFreshTokens,
+              connectedAccount,
               calendarChannel.syncCursor || undefined,
             );
 
