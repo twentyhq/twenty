@@ -13,30 +13,20 @@ import { type PackageJson } from 'type-fest';
 import { Repository } from 'typeorm';
 import { v4 } from 'uuid';
 
-import {
-  ApplicationRegistrationEntity
-} from 'src/engine/core-modules/application/application-registration/application-registration.entity';
-import {
-  ApplicationRegistrationSourceType
-} from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import {
-  assertValidNpmPackageName
-} from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
-import {
-  extractTarballSecurely
-} from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
+import { assertValidNpmPackageName } from 'src/engine/core-modules/application/application-package/utils/assert-valid-npm-package-name.util';
+import { extractTarballSecurely } from 'src/engine/core-modules/application/application-package/utils/extract-tarball-securely.util';
 import { readJsonFileOrThrow } from 'src/engine/core-modules/application/application-package/utils/read-json-file.util';
 import { resolvePackageContentDir } from 'src/engine/core-modules/application/application-package/utils/tarball-utils';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import {
-  removeFileFolderFromFileEntityPath
-} from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
@@ -71,13 +61,6 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     } catch {
       // best-effort cleanup of stale temp files from previous runs
     }
-  }
-
-  async resolveNpmPackage(
-    packageName: string,
-    targetVersion?: string,
-  ): Promise<ResolvedPackage> {
-    return this.resolveFromNpm(packageName, targetVersion);
   }
 
   async resolvePackage(
@@ -260,7 +243,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
 
     const httpClient = this.secureHttpClientService.getHttpClient({
       timeout: RESOLUTION_TIMEOUT_MS,
-      ...(authToken
+      ...(isDefined(authToken)
         ? {
             headers: {
               Authorization: `Bearer ${authToken}`,
