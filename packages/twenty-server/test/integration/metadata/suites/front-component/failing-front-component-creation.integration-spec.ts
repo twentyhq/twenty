@@ -76,6 +76,32 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
   },
   {
     title:
+      'when builtComponentPath is a folder path without extension (bare UUID)',
+    context: {
+      input: {
+        name: 'FolderPathTest',
+        componentName: 'FolderPathTest',
+        sourceComponentPath: 'src/front-components/index.tsx',
+        builtComponentPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
+  {
+    title:
+      'when sourceComponentPath is a folder path without extension',
+    context: {
+      input: {
+        name: 'FolderSourcePathTest',
+        componentName: 'FolderSourcePathTest',
+        sourceComponentPath: 'src/front-components/my-component',
+        builtComponentPath: 'src/front-components/index.mjs',
+        builtComponentChecksum: 'abc123',
+      },
+    },
+  },
+  {
+    title:
       'when builtComponentPath has an invalid extension (.js instead of .mjs)',
     context: {
       input: {

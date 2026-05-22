@@ -108,6 +108,42 @@ exports[`Front component creation should fail when builtComponentPath has an inv
 }
 `;
 
+exports[`Front component creation should fail when builtComponentPath is a folder path without extension (bare UUID) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Filename must have an extension",
+              "userFriendlyMessage": "Built component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "FolderPathTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Front component creation should fail when builtComponentPath is an absolute path 1`] = `
 {
   "extensions": {
@@ -268,6 +304,42 @@ exports[`Front component creation should fail when sourceComponentPath has an in
           ],
           "flatEntityMinimalInformation": {
             "name": "InvalidSourceExtTest",
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "frontComponent",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 frontComponent",
+    "summary": {
+      "frontComponent": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Source component path is invalid",
+  },
+  "message": "Multiple validation errors occurred while creating front component",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Front component creation should fail when sourceComponentPath is a folder path without extension 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "frontComponent": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_FRONT_COMPONENT_INPUT",
+              "message": "Filename must have an extension",
+              "userFriendlyMessage": "Source component path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "name": "FolderSourcePathTest",
             "universalIdentifier": Any<String>,
           },
           "metadataName": "frontComponent",

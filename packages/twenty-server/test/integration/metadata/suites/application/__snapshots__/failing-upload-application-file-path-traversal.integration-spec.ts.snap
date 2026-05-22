@@ -128,6 +128,30 @@ exports[`Upload application file should fail when filePath has an invalid extens
 }
 `;
 
+exports[`Upload application file should fail when filePath is a folder path without extension (bare UUID) 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Filename must have an extension",
+  "name": "UserInputError",
+}
+`;
+
+exports[`Upload application file should fail when filePath is a nested folder path without extension 1`] = `
+{
+  "extensions": {
+    "code": "BAD_USER_INPUT",
+    "subCode": "INVALID_INPUT",
+    "userFriendlyMessage": "Invalid input provided.",
+  },
+  "message": "Filename must have an extension",
+  "name": "UserInputError",
+}
+`;
+
 exports[`Upload application file should fail when filePath is an absolute path 1`] = `
 {
   "extensions": {

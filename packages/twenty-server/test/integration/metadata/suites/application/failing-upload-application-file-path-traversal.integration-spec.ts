@@ -86,6 +86,24 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
   },
   {
     title:
+      'when filePath is a folder path without extension (bare UUID)',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'BuiltFrontComponent',
+      filePath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+    },
+  },
+  {
+    title:
+      'when filePath is a nested folder path without extension',
+    context: {
+      applicationUniversalIdentifier: TEST_APP_ID,
+      fileFolder: 'Source',
+      filePath: 'src/logic-functions/my-handler',
+    },
+  },
+  {
+    title:
       'when filePath has an invalid extension for BuiltFrontComponent (.js instead of .mjs)',
     context: {
       applicationUniversalIdentifier: TEST_APP_ID,

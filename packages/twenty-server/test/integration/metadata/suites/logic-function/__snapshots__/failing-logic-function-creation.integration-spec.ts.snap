@@ -140,6 +140,41 @@ exports[`Logic function creation via manifest sync should fail for path traversa
 }
 `;
 
+exports[`Logic function creation via manifest sync should fail for path traversal when builtHandlerPath is a folder path without extension (bare UUID) 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "logicFunction": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_LOGIC_FUNCTION_INPUT",
+              "message": "Filename must have an extension",
+              "userFriendlyMessage": "Built handler path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "logicFunction",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 logicFunction",
+    "summary": {
+      "logicFunction": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Built handler path is invalid",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
 exports[`Logic function creation via manifest sync should fail for path traversal when builtHandlerPath is an absolute path 1`] = `
 {
   "extensions": {
@@ -221,6 +256,41 @@ exports[`Logic function creation via manifest sync should fail for path traversa
             {
               "code": "INVALID_LOGIC_FUNCTION_INPUT",
               "message": "Invalid file extension. Allowed extensions: .ts, .tsx, .json",
+              "userFriendlyMessage": "Source handler path is invalid",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "logicFunction",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 logicFunction",
+    "summary": {
+      "logicFunction": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Source handler path is invalid",
+  },
+  "message": "Validation errors occurred while syncing application manifest metadata",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`Logic function creation via manifest sync should fail for path traversal when sourceHandlerPath is a folder path without extension 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "logicFunction": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_LOGIC_FUNCTION_INPUT",
+              "message": "Filename must have an extension",
               "userFriendlyMessage": "Source handler path is invalid",
             },
           ],
