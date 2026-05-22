@@ -36,7 +36,7 @@ export class FileStorageService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
-   private buildStoragePathWithinWorkspaceOrThrow({
+  private buildStoragePathWithinWorkspaceOrThrow({
     workspaceId,
     applicationUniversalIdentifier,
     fileFolder,
@@ -262,8 +262,12 @@ export class FileStorageService {
   async deleteFolder(
     params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
   ): Promise<void> {
-    const { workspaceId, applicationUniversalIdentifier, fileFolder, folderPath } =
-      params;
+    const {
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      folderPath,
+    } = params;
 
     const onStoragePath = this.validateAndBuildFolderStoragePath({
       workspaceId,
