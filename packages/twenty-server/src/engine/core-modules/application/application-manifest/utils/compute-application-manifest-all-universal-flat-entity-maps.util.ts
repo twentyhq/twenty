@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -212,8 +213,18 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       });
     }
 
-    for (const permissionFlagUniversalIdentifier of roleManifest.permissionFlagUniversalIdentifiers ??
-      []) {
+    const legacyPermissionFlagIdentifiers = (
+      roleManifest.permissionFlags ?? []
+    ).map((permissionFlag) => SystemPermissionFlag[permissionFlag.flag]);
+
+    const mergedPermissionFlagIdentifiers = [
+      ...new Set([
+        ...(roleManifest.permissionFlagUniversalIdentifiers ?? []),
+        ...legacyPermissionFlagIdentifiers,
+      ]),
+    ];
+
+    for (const permissionFlagUniversalIdentifier of mergedPermissionFlagIdentifiers) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity:
           fromPermissionFlagToUniversalFlatRolePermissionFlag({
