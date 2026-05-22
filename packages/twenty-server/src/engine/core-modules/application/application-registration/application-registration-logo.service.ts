@@ -7,6 +7,7 @@ import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/appli
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { resolveApplicationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-logo-url.util';
 import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
@@ -14,6 +15,7 @@ export class ApplicationRegistrationLogoService {
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly applicationService: ApplicationService,
+    private readonly fileUrlService: FileUrlService,
   ) {}
 
   async resolveLogoUrl(
@@ -23,9 +25,11 @@ export class ApplicationRegistrationLogoService {
       registration.sourceType === ApplicationRegistrationSourceType.TARBALL &&
       registration.logoFileId
     ) {
-      const serverUrl = this.twentyConfigService.get('SERVER_URL');
-
-      return `${serverUrl}/file/${FileFolder.AppTarball}/${registration.logoFileId}`;
+      return this.fileUrlService.signFileByIdUrl({
+        fileId: registration.logoFileId,
+        workspaceId: registration.ownerWorkspaceId ?? '',
+        fileFolder: FileFolder.AppTarball,
+      });
     }
 
     const logo =
