@@ -92,6 +92,34 @@ export class UpgradeGaugeService implements OnModuleInit {
       },
       cacheValue: true,
     });
+
+    // Info-style gauge: value is always 1; the inferred instance version
+    // (semver-ish, derived from the last applied upgrade migration) is
+    // carried as the `version` attribute. Bypasses the MetricsService
+    // wrapper because that wrapper's callback contract returns a bare
+    // number — emitting attributes requires `observableResult.observe`
+    // with a second argument, which only the raw OTel API exposes.
+    this.metricsService
+      .getMeter()
+      .createObservableGauge('twenty_upgrade_instance_info', {
+        description:
+          'Instance info (value always 1; `version` attribute carries the inferred instance version)',
+      })
+      .addCallback(async (observableResult) => {
+        try {
+          const upgradeStatus = await this.getCachedUpgradeStatus();
+
+          observableResult.observe(1, {
+            version:
+              upgradeStatus?.instanceUpgradeStatus.inferredVersion ?? 'unknown',
+          });
+        } catch (error) {
+          this.logger.error(
+            'Failed to collect twenty_upgrade_instance_info gauge',
+            error,
+          );
+        }
+      });
   }
 
   private async getCachedUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus | null> {
