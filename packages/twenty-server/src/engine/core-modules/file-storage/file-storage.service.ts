@@ -14,6 +14,7 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
+import { validateSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/validate-safe-relative-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
@@ -221,6 +222,59 @@ export class FileStorageService {
       path: Like(`${basePath}%`),
       applicationId: application.id,
       workspaceId: params.workspaceId,
+    });
+
+    return deleteResult;
+  }
+
+  async deleteFolder(
+    params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
+  ): Promise<void> {
+    const { workspaceId, applicationUniversalIdentifier, fileFolder, folderPath } =
+      params;
+
+    const safePathResult = validateSafeRelativePath({
+      resourcePath: folderPath,
+    });
+
+    if (!safePathResult.isValid) {
+      throw new FileStorageException(
+        safePathResult.error,
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
+
+    const onStoragePath = join(
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+      folderPath,
+    ).replace(/\/+/g, '/');
+
+    validateStoragePathIsWithinWorkspaceOrThrow({
+      onStoragePath,
+      workspaceId,
+      applicationUniversalIdentifier,
+      fileFolder,
+    });
+
+    const driver = this.fileStorageDriverFactory.getCurrentDriver();
+
+    const deleteResult = driver.delete({ folderPath: onStoragePath });
+
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    });
+
+    const basePath = `${join(fileFolder, folderPath)}`.replace(/\/+/g, '/');
+
+    await this.fileRepository.delete({
+      path: Like(`${basePath}%`),
+      applicationId: application.id,
+      workspaceId,
     });
 
     return deleteResult;

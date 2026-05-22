@@ -357,6 +357,56 @@ describe('FileStorageService', () => {
       });
     });
 
+    describe('deleteFolder', () => {
+      const validFolderIdentifier = {
+        workspaceId: 'workspace-123',
+        applicationUniversalIdentifier: 'app-456',
+        fileFolder: FileFolder.BuiltFrontComponent,
+      };
+
+      it('should reject path traversal on deleteFolder', async () => {
+        await expect(
+          service.deleteFolder({
+            ...validFolderIdentifier,
+            folderPath: '../../../other-ws/other-app/folder',
+          }),
+        ).rejects.toMatchObject({
+          code: FileStorageExceptionCode.ACCESS_DENIED,
+        });
+
+        expect(mockDriver.delete).not.toHaveBeenCalled();
+      });
+
+      it('should accept extension-less folder paths (e.g. UUIDs)', async () => {
+        mockApplicationRepository.findOneOrFail.mockResolvedValue({
+          id: 'app-id',
+        });
+
+        await service.deleteFolder({
+          ...validFolderIdentifier,
+          folderPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+        });
+
+        expect(mockDriver.delete).toHaveBeenCalledWith({
+          folderPath:
+            'workspace-123/app-456/built-front-component/8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+        });
+      });
+
+      it('should reject empty folder path', async () => {
+        await expect(
+          service.deleteFolder({
+            ...validFolderIdentifier,
+            folderPath: '',
+          }),
+        ).rejects.toMatchObject({
+          code: FileStorageExceptionCode.ACCESS_DENIED,
+        });
+
+        expect(mockDriver.delete).not.toHaveBeenCalled();
+      });
+    });
+
     describe('copy', () => {
       it('should reject path traversal in source', async () => {
         await expect(
