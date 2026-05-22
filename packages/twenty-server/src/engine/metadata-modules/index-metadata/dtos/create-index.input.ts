@@ -6,8 +6,6 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsEnum,
-  IsOptional,
-  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -34,12 +32,12 @@ export class CreateIndexInput {
   @Field(() => IndexType, { defaultValue: IndexType.BTREE })
   indexType!: IndexType;
 
-  // Optional partial-index predicate (e.g. "active = true"). Server stores it
-  // raw and Postgres validates it when the index is created.
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  indexWhereClause?: string;
+  // Partial-index WHERE clause is intentionally NOT exposed on this input.
+  // The server-side validateAndReturnIndexWhereClause util only allows a
+  // hardcoded allowlist (currently just `"deletedAt" IS NULL`), so a
+  // free-text WHERE field on the user-facing API would mislead callers.
+  // System indexes that legitimately use WHERE clauses go through other
+  // code paths that bypass this DTO.
 }
 
 @InputType()

@@ -156,7 +156,8 @@ export class IndexMetadataService {
         createdAt,
         updatedAt: createdAt,
         indexType: createIndexInput.indexType,
-        indexWhereClause: createIndexInput.indexWhereClause ?? null,
+        // WHERE clause is system-only — see CreateIndexInput for rationale.
+        indexWhereClause: null,
         isCustom: true,
         isUnique: false,
         objectMetadataUniversalIdentifier:

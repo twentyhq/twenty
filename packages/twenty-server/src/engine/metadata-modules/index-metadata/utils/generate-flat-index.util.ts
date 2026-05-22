@@ -63,6 +63,7 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
     flatObjectMetadata,
     orderedIndexColumnNames,
     isUnique,
+    indexWhereClause: flatIndex.indexWhereClause,
   });
 
   return {

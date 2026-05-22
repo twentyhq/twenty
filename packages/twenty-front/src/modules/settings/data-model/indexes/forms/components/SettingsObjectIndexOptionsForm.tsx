@@ -1,5 +1,4 @@
 import { Select } from '@/ui/input/components/Select';
-import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
@@ -47,22 +46,6 @@ export const SettingsObjectIndexOptionsForm = () => {
               dropdownId="settings-object-new-index-type"
               value={value}
               options={indexTypeOptions}
-              onChange={onChange}
-              fullWidth
-            />
-          )}
-        />
-      </div>
-      <div>
-        <StyledFieldLabel>{t`Partial WHERE clause (optional)`}</StyledFieldLabel>
-        <Controller
-          name="indexWhereClause"
-          control={control}
-          render={({ field: { value, onChange } }) => (
-            <SettingsTextInput
-              instanceId="settings-object-new-index-where"
-              placeholder={t`active = true`}
-              value={value ?? ''}
               onChange={onChange}
               fullWidth
             />

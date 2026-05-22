@@ -28,7 +28,6 @@ import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/const
 const settingsObjectNewIndexFormSchema = z.object({
   fieldMetadataIds: z.array(z.string().uuid()).min(1),
   indexType: z.nativeEnum(IndexType),
-  indexWhereClause: z.string().optional(),
 });
 
 export type SettingsObjectNewIndexFormValues = z.infer<
@@ -62,7 +61,6 @@ export const SettingsObjectNewIndex = () => {
     defaultValues: {
       fieldMetadataIds: [],
       indexType: IndexType.BTREE,
-      indexWhereClause: '',
     },
   });
 
@@ -89,11 +87,6 @@ export const SettingsObjectNewIndex = () => {
       objectMetadataId: activeObjectMetadataItem.id,
       fieldMetadataIds: formValues.fieldMetadataIds,
       indexType: formValues.indexType,
-      indexWhereClause:
-        formValues.indexWhereClause &&
-        formValues.indexWhereClause.trim().length > 0
-          ? formValues.indexWhereClause.trim()
-          : null,
     });
 
     if (result.status === 'successful') {
@@ -152,7 +145,7 @@ export const SettingsObjectNewIndex = () => {
           <Section>
             <H2Title
               title={t`Options`}
-              description={t`Pick the index type and optionally narrow it to a subset of rows.`}
+              description={t`Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB.`}
             />
             <SettingsObjectIndexOptionsForm />
           </Section>

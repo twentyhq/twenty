@@ -52,6 +52,7 @@ export const generateCustomFlatIndexMetadata = ({
     flatObjectMetadata,
     orderedIndexColumnNames,
     isUnique: false,
+    indexWhereClause: flatIndex.indexWhereClause,
   });
 
   return {

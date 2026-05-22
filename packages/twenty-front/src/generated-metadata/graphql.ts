@@ -1065,7 +1065,6 @@ export type CreateFrontComponentInput = {
 export type CreateIndexInput = {
   fieldMetadataIds: Array<Scalars['UUID']>;
   indexType?: IndexType;
-  indexWhereClause?: InputMaybe<Scalars['String']>;
   objectMetadataId: Scalars['UUID'];
 };
 
