@@ -91,15 +91,13 @@ export class ApiClient {
   }
 
   async getWorkspaceFrontendUrl(): Promise<string | null> {
-    const frontendUrl = await this.getFrontendUrl();
-
-    if (!isDefined(frontendUrl)) {
-      return null;
-    }
-
     const workspaceFrontendUrl = await this.getCurrentWorkspaceFrontendUrl();
 
-    return workspaceFrontendUrl ?? frontendUrl;
+    if (isDefined(workspaceFrontendUrl)) {
+      return workspaceFrontendUrl;
+    }
+
+    return this.getFrontendUrl();
   }
 
   private async getCurrentWorkspaceFrontendUrl(): Promise<string | null> {
