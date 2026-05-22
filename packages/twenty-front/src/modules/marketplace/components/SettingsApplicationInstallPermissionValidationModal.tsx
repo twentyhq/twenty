@@ -10,15 +10,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
-import {
-  IconChevronLeft,
-  IconEye,
-  IconHierarchy,
-  IconListDetails,
-  IconSettings,
-  IconTool,
-  IconTrash,
-} from 'twenty-ui/display';
+import { IconChevronLeft } from 'twenty-ui/display';
 import { Button, LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
@@ -103,7 +95,7 @@ const StyledPermissionRow = styled.div`
 `;
 
 const StyledPermissionIcon = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
+  color: ${themeCssVariables.color.blue9};
   display: flex;
 `;
 
@@ -133,14 +125,7 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       return [];
     }
 
-    return buildPermissionSummaryFromRoleManifest(defaultRole, {
-      IconListDetails,
-      IconHierarchy,
-      IconSettings,
-      IconTool,
-      IconEye,
-      IconTrash,
-    });
+    return buildPermissionSummaryFromRoleManifest(defaultRole);
   }, [defaultRole]);
 
   const handleAuthorize = () => {

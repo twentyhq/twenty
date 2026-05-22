@@ -1,6 +1,17 @@
 import { type RoleManifest } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
-import { type IconComponent } from 'twenty-ui/display';
+import {
+  IconCode,
+  type IconComponent,
+  IconCurrencyDollar,
+  IconDatabase,
+  IconHierarchy,
+  IconKey,
+  IconSettings,
+  IconSettingsAutomation,
+  IconTool,
+  IconUsers,
+} from 'twenty-ui/display';
 
 export type PermissionSummaryItem = {
   Icon: IconComponent;
@@ -9,14 +20,6 @@ export type PermissionSummaryItem = {
 
 export const buildPermissionSummaryFromRoleManifest = (
   defaultRole: RoleManifest,
-  icons: {
-    IconListDetails: IconComponent;
-    IconHierarchy: IconComponent;
-    IconSettings: IconComponent;
-    IconTool: IconComponent;
-    IconEye: IconComponent;
-    IconTrash: IconComponent;
-  },
 ): PermissionSummaryItem[] => {
   const items: PermissionSummaryItem[] = [];
 
@@ -48,17 +51,14 @@ export const buildPermissionSummaryFromRoleManifest = (
           capabilities[capabilities.length - 1];
 
     items.push({
-      Icon: icons.IconListDetails,
+      Icon: IconDatabase,
       label: label.charAt(0).toUpperCase() + label.slice(1) + ' records',
     });
   }
 
-  if (
-    (defaultRole.objectPermissions ?? []).length > 0 &&
-    items.length === 0
-  ) {
+  if ((defaultRole.objectPermissions ?? []).length > 0 && items.length === 0) {
     items.push({
-      Icon: icons.IconEye,
+      Icon: IconDatabase,
       label: 'Access specific object records',
     });
   }
@@ -69,21 +69,21 @@ export const buildPermissionSummaryFromRoleManifest = (
 
   if (hasDataModelFlag) {
     items.push({
-      Icon: icons.IconHierarchy,
+      Icon: IconHierarchy,
       label: 'Read and write data model configuration',
     });
   }
 
   if (defaultRole.canUpdateAllSettings) {
     items.push({
-      Icon: icons.IconSettings,
+      Icon: IconSettings,
       label: 'Update workspace settings',
     });
   }
 
   if (defaultRole.canAccessAllTools) {
     items.push({
-      Icon: icons.IconTool,
+      Icon: IconTool,
       label: 'Access all tools',
     });
   }
@@ -93,16 +93,16 @@ export const buildPermissionSummaryFromRoleManifest = (
   );
 
   const flagLabels: Record<string, { label: string; Icon: IconComponent }> = {
-    WORKFLOWS: { label: 'Manage workflows', Icon: icons.IconSettings },
-    SECURITY: { label: 'Manage security settings', Icon: icons.IconSettings },
+    WORKFLOWS: { label: 'Manage workflows', Icon: IconSettingsAutomation },
+    SECURITY: { label: 'Manage security settings', Icon: IconKey },
     WORKSPACE_MEMBERS: {
       label: 'Manage workspace members',
-      Icon: icons.IconSettings,
+      Icon: IconUsers,
     },
-    BILLING: { label: 'Manage billing', Icon: icons.IconSettings },
+    BILLING: { label: 'Manage billing', Icon: IconCurrencyDollar },
     API_KEYS_AND_WEBHOOKS: {
       label: 'Manage API keys and webhooks',
-      Icon: icons.IconTool,
+      Icon: IconCode,
     },
   };
 
