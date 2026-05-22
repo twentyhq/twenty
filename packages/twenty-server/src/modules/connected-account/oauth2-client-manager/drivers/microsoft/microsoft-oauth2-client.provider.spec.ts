@@ -126,7 +126,7 @@ describe('MicrosoftOAuth2ClientProvider', () => {
       await expect(
         provider.getClient(mockConnectedAccountId),
       ).rejects.toMatchObject({
-        code: ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+        code: ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
       });
     });
 
