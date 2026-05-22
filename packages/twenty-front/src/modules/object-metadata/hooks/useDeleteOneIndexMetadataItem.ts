@@ -5,12 +5,14 @@ import { CrudOperationType } from 'twenty-shared/types';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
-import { DELETE_ONE_INDEX_METADATA_ITEM } from '@/object-metadata/graphql/mutations';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { DeleteOneIndexMetadataItemDocument } from '~/generated-metadata/graphql';
 
 export const useDeleteOneIndexMetadataItem = () => {
-  const [deleteOneIndexMutation] = useMutation(DELETE_ONE_INDEX_METADATA_ITEM);
+  const [deleteOneIndexMetadataItemMutation] = useMutation(
+    DeleteOneIndexMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -21,10 +23,12 @@ export const useDeleteOneIndexMetadataItem = () => {
   }: {
     idToDelete: string;
   }): Promise<
-    MetadataRequestResult<Awaited<ReturnType<typeof deleteOneIndexMutation>>>
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof deleteOneIndexMetadataItemMutation>>
+    >
   > => {
     try {
-      const response = await deleteOneIndexMutation({
+      const response = await deleteOneIndexMetadataItemMutation({
         variables: {
           idToDelete,
         },

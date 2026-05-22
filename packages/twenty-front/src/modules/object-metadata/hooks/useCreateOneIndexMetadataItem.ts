@@ -7,22 +7,17 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMetadataItem';
-import { CREATE_ONE_INDEX_METADATA_ITEM } from '@/object-metadata/graphql/mutations';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { type IndexType } from '~/generated-metadata/graphql';
-
-// Input shape mirrors CreateIndexInput on the server. We don't expose
-// isUnique — unique indexes are owned by the field-creation flow.
-export type CreateIndexInput = {
-  objectMetadataId: string;
-  fieldMetadataIds: string[];
-  indexType: IndexType;
-  indexWhereClause?: string;
-};
+import {
+  type CreateIndexInput,
+  CreateOneIndexMetadataItemDocument,
+} from '~/generated-metadata/graphql';
 
 export const useCreateOneIndexMetadataItem = () => {
-  const [createOneIndexMutation] = useMutation(CREATE_ONE_INDEX_METADATA_ITEM);
+  const [createOneIndexMetadataItemMutation] = useMutation(
+    CreateOneIndexMetadataItemDocument,
+  );
 
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -31,10 +26,12 @@ export const useCreateOneIndexMetadataItem = () => {
   const createOneIndexMetadataItem = async (
     input: CreateIndexInput,
   ): Promise<
-    MetadataRequestResult<Awaited<ReturnType<typeof createOneIndexMutation>>>
+    MetadataRequestResult<
+      Awaited<ReturnType<typeof createOneIndexMetadataItemMutation>>
+    >
   > => {
     try {
-      const response = await createOneIndexMutation({
+      const response = await createOneIndexMetadataItemMutation({
         variables: {
           input: {
             index: input,
@@ -42,21 +39,16 @@ export const useCreateOneIndexMetadataItem = () => {
         },
       });
 
-      const createdIndex = (
-        response.data as
-          | {
-              createOneIndex?: Omit<FlatIndexMetadataItem, 'objectMetadataId'>;
-            }
-          | null
-          | undefined
-      )?.createOneIndex;
+      const createdIndex = response.data?.createOneIndex;
 
       if (isDefined(createdIndex)) {
+        const { __typename, ...indexData } = createdIndex;
+
         addToDraft({
           key: 'indexMetadataItems',
           items: [
             {
-              ...createdIndex,
+              ...indexData,
               indexFieldMetadatas: [],
               objectMetadataId: input.objectMetadataId,
             } as FlatIndexMetadataItem,

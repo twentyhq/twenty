@@ -135,6 +135,8 @@ export const ObjectSettings = ({
             />
           </Section>
         </StyledFormSectionContainer>
+      </AdvancedSettingsWrapper>
+      <AdvancedSettingsWrapper>
         <StyledFormSectionContainer>
           <Section>
             <H2Title

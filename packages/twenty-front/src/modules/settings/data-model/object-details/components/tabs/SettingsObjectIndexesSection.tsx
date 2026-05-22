@@ -1,15 +1,21 @@
 import { useDeleteOneIndexMetadataItem } from '@/object-metadata/hooks/useDeleteOneIndexMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { SettingsObjectCreateIndexModal } from '@/settings/data-model/object-details/components/tabs/SettingsObjectCreateIndexModal';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
-import { IconPlus } from 'twenty-ui/display';
-import { Button, Toggle } from 'twenty-ui/input';
+import { type ReactNode, useMemo, useState } from 'react';
+import { IconEyeOff, IconPlus } from 'twenty-ui/display';
+import { Button, SearchInput } from 'twenty-ui/input';
+import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/constants/MaxCustomIndexesPerObject';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
@@ -25,24 +31,15 @@ const StyledContent = styled.div`
   gap: ${themeCssVariables.spacing[3]};
 `;
 
-const StyledHeader = styled.div`
-  align-items: center;
+const StyledButtonContainer = styled.div`
   display: flex;
-  gap: ${themeCssVariables.spacing[4]};
-  justify-content: space-between;
+  justify-content: flex-end;
+  padding-top: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledToggleLabel = styled.label`
-  align-items: center;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.sm};
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
-const CREATE_INDEX_MODAL_ID = 'create-index-modal';
 const DELETE_INDEX_MODAL_ID = 'delete-index-modal';
+const HIDE_SYSTEM_INDEXES_DROPDOWN_ID =
+  'settings-object-indexes-filter-dropdown';
 
 export const SettingsObjectIndexesSection = ({
   objectMetadataItem,
@@ -53,21 +50,51 @@ export const SettingsObjectIndexesSection = ({
   const { enqueueSuccessSnackBar } = useSnackBar();
   const { deleteOneIndexMetadataItem } = useDeleteOneIndexMetadataItem();
 
-  const [showSystemIndexes, setShowSystemIndexes] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [hideSystemIndexes, setHideSystemIndexes] = useState(false);
   const [pendingDelete, setPendingDelete] =
     useState<SettingsObjectIndexesTableItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const customIndexCount = objectMetadataItem.indexMetadatas.filter(
-    (indexMetadata) => indexMetadata.isCustom,
-  ).length;
+  const tableItems = useMemo<SettingsObjectIndexesTableItem[]>(
+    () =>
+      objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
+        id: indexMetadataItem.id,
+        name: indexMetadataItem.name,
+        isUnique: indexMetadataItem.isUnique,
+        isCustom: indexMetadataItem.isCustom ?? false,
+        indexType: indexMetadataItem.indexType,
+        indexWhereClause: indexMetadataItem.indexWhereClause,
+        indexFields:
+          indexMetadataItem.indexFieldMetadatas
+            ?.map((indexField) => {
+              const fieldMetadataItem = objectMetadataItem.fields.find(
+                (field) => field.id === indexField.fieldMetadataId,
+              );
+              return fieldMetadataItem?.label;
+            })
+            .filter((label): label is string => Boolean(label))
+            .join(', ') ?? '',
+      })),
+    [objectMetadataItem],
+  );
 
+  const filteredItems = useMemo(() => {
+    const searchNormalized = normalizeSearchText(searchTerm);
+
+    return tableItems
+      .filter((item) => (hideSystemIndexes ? item.isCustom : true))
+      .filter((item) =>
+        searchNormalized.length === 0
+          ? true
+          : normalizeSearchText(item.indexFields).includes(searchNormalized) ||
+            normalizeSearchText(item.indexType).includes(searchNormalized),
+      );
+  }, [tableItems, searchTerm, hideSystemIndexes]);
+
+  const customIndexCount = tableItems.filter((item) => item.isCustom).length;
   const reachedCap = customIndexCount >= MAX_CUSTOM_INDEXES_PER_OBJECT;
   const canCreate = !isReadOnly && !reachedCap;
-
-  const handleClickAdd = () => {
-    openModal(CREATE_INDEX_MODAL_ID);
-  };
 
   const handleRequestDelete = (item: SettingsObjectIndexesTableItem) => {
     setPendingDelete(item);
@@ -86,50 +113,72 @@ export const SettingsObjectIndexesSection = ({
     closeModal(DELETE_INDEX_MODAL_ID);
 
     if (result.status === 'successful') {
-      enqueueSuccessSnackBar({
-        message: t`Index deleted`,
-      });
+      enqueueSuccessSnackBar({ message: t`Index deleted` });
       setPendingDelete(null);
     }
   };
 
   return (
     <StyledContent>
-      <StyledHeader>
-        <StyledToggleLabel>
-          <Toggle
-            value={showSystemIndexes}
-            onChange={setShowSystemIndexes}
-            toggleSize="small"
-          />
-          {t`Show system indexes`}
-        </StyledToggleLabel>
-        {!isReadOnly && (
-          <Button
-            Icon={IconPlus}
-            title={t`Add Index`}
-            size="small"
-            variant="secondary"
-            onClick={handleClickAdd}
-            disabled={!canCreate}
-            ariaLabel={
-              reachedCap
-                ? t`Custom index limit of ${MAX_CUSTOM_INDEXES_PER_OBJECT} reached. Delete one to add another.`
-                : undefined
+      <SearchInput
+        placeholder={t`Search an index...`}
+        value={searchTerm}
+        onChange={setSearchTerm}
+        filterDropdown={(filterButton: ReactNode) => (
+          <Dropdown
+            dropdownId={HIDE_SYSTEM_INDEXES_DROPDOWN_ID}
+            dropdownPlacement="bottom-end"
+            dropdownOffset={{ x: 0, y: 8 }}
+            clickableComponent={filterButton}
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItemToggle
+                    LeftIcon={IconEyeOff}
+                    onToggleChange={() =>
+                      setHideSystemIndexes(!hideSystemIndexes)
+                    }
+                    toggled={hideSystemIndexes}
+                    text={t`Hide system indexes`}
+                    toggleSize="small"
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
             }
           />
         )}
-      </StyledHeader>
+      />
       <SettingsObjectIndexTable
-        objectMetadataItem={objectMetadataItem}
-        showSystemIndexes={showSystemIndexes}
+        items={filteredItems}
         isReadOnly={isReadOnly}
         onDeleteIndex={handleRequestDelete}
       />
-      <SettingsObjectCreateIndexModal
-        modalInstanceId={CREATE_INDEX_MODAL_ID}
-        objectMetadataItem={objectMetadataItem}
-      />
+      {!isReadOnly && (
+        <StyledButtonContainer>
+          {canCreate ? (
+            <UndecoratedLink
+              to={getSettingsPath(SettingsPath.ObjectNewIndex, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            >
+              <Button
+                Icon={IconPlus}
+                title={t`Add Index`}
+                size="small"
+                variant="secondary"
+              />
+            </UndecoratedLink>
+          ) : (
+            <Button
+              Icon={IconPlus}
+              title={t`Add Index`}
+              size="small"
+              variant="secondary"
+              disabled
+            />
+          )}
+        </StyledButtonContainer>
+      )}
       <ConfirmationModal
         modalInstanceId={DELETE_INDEX_MODAL_ID}
         title={t`Delete this index?`}
