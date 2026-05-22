@@ -4,13 +4,64 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 
 import { isSystemSearchVectorField } from '@/object-record/utils/isSystemSearchVectorField';
 import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { captureException } from '@sentry/react';
 import {
   convertViewFilterValueToString,
   getFilterTypeFromFieldType,
   isDefined,
+  isValidVariable,
 } from 'twenty-shared/utils';
 import { type ViewFilter as GqlViewFilter } from '~/generated-metadata/graphql';
 import { type ViewFilter } from '@/views/types/ViewFilter';
+
+const capturedMalformedSelectFilterById = new Set<string>();
+
+const isStringArrayJson = (value: string) => {
+  try {
+    const parsedValue = JSON.parse(value);
+
+    return (
+      Array.isArray(parsedValue) &&
+      parsedValue.every((item) => typeof item === 'string')
+    );
+  } catch {
+    return false;
+  }
+};
+
+const captureMalformedSelectFilterValue = ({
+  filterId,
+  filterType,
+  operand,
+  fieldMetadataId,
+  relationTargetFieldMetadataId,
+}: {
+  filterId: string;
+  filterType: string;
+  operand: string;
+  fieldMetadataId: string;
+  relationTargetFieldMetadataId: string | null | undefined;
+}) => {
+  if (capturedMalformedSelectFilterById.has(filterId)) {
+    return;
+  }
+
+  capturedMalformedSelectFilterById.add(filterId);
+
+  captureException(new Error('Legacy scalar value detected for select filter'), {
+    tags: {
+      domain: 'view-filter',
+      filterType,
+      operand,
+    },
+    extra: {
+      filterId,
+      fieldMetadataId,
+      relationTargetFieldMetadataId,
+    },
+    level: 'warning',
+  });
+};
 
 export const mapViewFiltersToFilters = (
   viewFilters: ViewFilter[] | GqlViewFilter[],
@@ -62,6 +113,22 @@ export const mapViewFiltersToFilters = (
       const operand = viewFilter.operand;
 
       const stringValue = convertViewFilterValueToString(viewFilter.value);
+
+      if (
+        (filterType === 'SELECT' || filterType === 'MULTI_SELECT') &&
+        stringValue !== '' &&
+        !isValidVariable(stringValue) &&
+        !isStringArrayJson(stringValue)
+      ) {
+        captureMalformedSelectFilterValue({
+          filterId: viewFilter.id,
+          filterType,
+          operand,
+          fieldMetadataId: viewFilter.fieldMetadataId,
+          relationTargetFieldMetadataId:
+            viewFilter.relationTargetFieldMetadataId,
+        });
+      }
 
       return {
         id: viewFilter.id,
