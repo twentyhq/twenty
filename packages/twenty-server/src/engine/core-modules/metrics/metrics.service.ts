@@ -130,6 +130,32 @@ export class MetricsService {
     }
   }
 
+  incrementCounterBy({
+    key,
+    amount,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    amount: number;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createCounter(key).add(amount, attributes);
+  }
+
+  recordHistogram({
+    key,
+    value,
+    unit,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    value: number;
+    unit?: string;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createHistogram(key, { unit }).record(value, attributes);
+  }
+
   async groupMetrics(
     metrics: { name: string; cacheKey: MetricsKeys }[],
   ): Promise<Record<string, number>> {
