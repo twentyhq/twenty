@@ -53,10 +53,10 @@ export class FlatFrontComponentValidatorService {
 
     if (
       isDefined(flatFrontComponent.builtComponentPath) &&
-      !hasAllowedExtension(
-        flatFrontComponent.builtComponentPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
-      )
+      !hasAllowedExtension({
+        filePath: flatFrontComponent.builtComponentPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
+      })
     ) {
       validationResult.errors.push({
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
@@ -78,10 +78,10 @@ export class FlatFrontComponentValidatorService {
 
     if (
       isDefined(flatFrontComponent.sourceComponentPath) &&
-      !hasAllowedExtension(
-        flatFrontComponent.sourceComponentPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      )
+      !hasAllowedExtension({
+        filePath: flatFrontComponent.sourceComponentPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      })
     ) {
       validationResult.errors.push({
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
@@ -173,10 +173,10 @@ export class FlatFrontComponentValidatorService {
 
     if (
       isDefined(flatEntityUpdate.builtComponentPath) &&
-      !hasAllowedExtension(
-        flatEntityUpdate.builtComponentPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
-      )
+      !hasAllowedExtension({
+        filePath: flatEntityUpdate.builtComponentPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
+      })
     ) {
       validationResult.errors.push({
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
@@ -198,10 +198,10 @@ export class FlatFrontComponentValidatorService {
 
     if (
       isDefined(flatEntityUpdate.sourceComponentPath) &&
-      !hasAllowedExtension(
-        flatEntityUpdate.sourceComponentPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      )
+      !hasAllowedExtension({
+        filePath: flatEntityUpdate.sourceComponentPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      })
     ) {
       validationResult.errors.push({
         code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,

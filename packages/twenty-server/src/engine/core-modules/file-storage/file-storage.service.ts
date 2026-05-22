@@ -39,7 +39,7 @@ export class FileStorageService {
     resourcePath,
   }: ResourceIdentifier): string {
     assertResourcePathIsSafe(resourcePath);
-    validateResourceExtensionOrThrow(resourcePath, fileFolder);
+    validateResourceExtensionOrThrow({ resourcePath, fileFolder });
 
     const onStoragePath = join(
       workspaceId,

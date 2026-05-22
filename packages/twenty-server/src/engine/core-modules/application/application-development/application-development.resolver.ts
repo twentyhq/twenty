@@ -220,7 +220,7 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
-    validateApplicationFileExtensionOrThrow(fileFolder, filePath);
+    validateApplicationFileExtensionOrThrow({ fileFolder, filePath });
 
     const application = await this.applicationService.findByUniversalIdentifier(
       {

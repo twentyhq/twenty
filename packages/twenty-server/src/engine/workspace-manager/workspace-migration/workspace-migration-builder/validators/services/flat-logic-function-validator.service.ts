@@ -64,10 +64,10 @@ export class FlatLogicFunctionValidatorService {
 
     if (
       isDefined(flatEntityUpdate.builtHandlerPath) &&
-      !hasAllowedExtension(
-        flatEntityUpdate.builtHandlerPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
-      )
+      !hasAllowedExtension({
+        filePath: flatEntityUpdate.builtHandlerPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
+      })
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
@@ -89,10 +89,10 @@ export class FlatLogicFunctionValidatorService {
 
     if (
       isDefined(flatEntityUpdate.sourceHandlerPath) &&
-      !hasAllowedExtension(
-        flatEntityUpdate.sourceHandlerPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      )
+      !hasAllowedExtension({
+        filePath: flatEntityUpdate.sourceHandlerPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      })
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
@@ -180,10 +180,10 @@ export class FlatLogicFunctionValidatorService {
 
     if (
       isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
-      !hasAllowedExtension(
-        flatLogicFunctionToValidate.builtHandlerPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
-      )
+      !hasAllowedExtension({
+        filePath: flatLogicFunctionToValidate.builtHandlerPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
+      })
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
@@ -205,10 +205,10 @@ export class FlatLogicFunctionValidatorService {
 
     if (
       isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
-      !hasAllowedExtension(
-        flatLogicFunctionToValidate.sourceHandlerPath,
-        ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      )
+      !hasAllowedExtension({
+        filePath: flatLogicFunctionToValidate.sourceHandlerPath,
+        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+      })
     ) {
       validationResult.errors.push({
         code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
