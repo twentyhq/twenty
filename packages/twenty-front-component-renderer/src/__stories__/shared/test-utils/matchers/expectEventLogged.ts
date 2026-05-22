@@ -1,7 +1,7 @@
 import { expect, waitFor, within } from 'storybook/test';
 import { isDefined } from 'twenty-shared/utils';
 
-import { INTERACTION_TIMEOUT } from '../timeouts';
+import { INTERACTION_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 
 type Canvas = ReturnType<typeof within>;
 

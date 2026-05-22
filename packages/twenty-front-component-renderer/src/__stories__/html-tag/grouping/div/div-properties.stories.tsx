@@ -1,11 +1,11 @@
 import { type Meta } from '@storybook/react-vite';
 
-import { FrontComponentRenderer } from '../../../../host/components/FrontComponentRenderer';
+import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
-} from '../../../shared/test-utils/createFrontComponentStoryMeta';
-import { createPropertyReflectionStory } from '../../../shared/test-utils/createPropertyReflectionStory';
+} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { createPropertyReflectionStory } from '@/__stories__/shared/test-utils/createPropertyReflectionStory';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/HtmlTag/Grouping/Div/Properties',
@@ -18,6 +18,5 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 
 export const Properties = createPropertyReflectionStory({
-  frontComponentBundleName: 'div',
-  scenarioId: 'div:properties',
+  frontComponentBundleName: 'div-properties',
 });

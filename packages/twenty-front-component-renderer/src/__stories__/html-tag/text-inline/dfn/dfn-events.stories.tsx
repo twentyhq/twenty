@@ -1,11 +1,14 @@
 import { type Meta } from '@storybook/react-vite';
 
-import { FrontComponentRenderer } from '../../../../host/components/FrontComponentRenderer';
+import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
-} from '../../../shared/test-utils/createFrontComponentStoryMeta';
-import { createHtmlTagClickStory } from '../../../shared/test-utils/createHtmlElementStory';
+} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import {
+  createHtmlTagClickStory,
+  createHtmlTagFocusStory,
+} from '@/__stories__/shared/test-utils/createHtmlElementStory';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/HtmlTag/TextInline/Dfn/Events',
@@ -18,6 +21,9 @@ const meta: Meta<typeof FrontComponentRenderer> = {
 export default meta;
 
 export const Click = createHtmlTagClickStory({
-  frontComponentBundleName: 'dfn',
-  tag: 'dfn',
+  frontComponentBundleName: 'dfn-click',
+});
+
+export const FocusBlur = createHtmlTagFocusStory({
+  frontComponentBundleName: 'dfn-focus-blur',
 });

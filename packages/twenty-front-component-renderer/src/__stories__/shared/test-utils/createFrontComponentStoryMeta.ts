@@ -1,7 +1,7 @@
 import { type Meta } from '@storybook/react-vite';
 import { fn } from 'storybook/test';
 
-import { type FrontComponentRenderer } from '../../../host/components/FrontComponentRenderer';
+import { type FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 
 export const errorHandler = fn();
 

@@ -19,53 +19,26 @@ const HEADING_STYLE = {
   margin: 0,
 };
 
-const SCENARIO_ID_STYLE = {
+const MOUNTED_STYLE = {
   fontSize: 11,
   color: '#6b7280',
   fontFamily: 'monospace',
 };
 
-const UNKNOWN_STYLE = {
-  padding: 16,
-  border: '2px dashed #f87171',
-  borderRadius: 8,
-  color: '#991b1b',
-  fontFamily: 'monospace',
-  fontSize: 13,
-};
-
 type FrontComponentCardProps = {
-  scenarioId: string;
+  title: string;
   children: ReactNode;
 };
 
 export const FrontComponentCard = ({
-  scenarioId,
+  title,
   children,
 }: FrontComponentCardProps) => (
-  <div
-    data-testid="front-component-root"
-    data-scenario-id={scenarioId}
-    style={CARD_STYLE}
-  >
-    <h2 style={HEADING_STYLE}>{scenarioId}</h2>
-    <span data-testid="front-component-mounted" style={SCENARIO_ID_STYLE}>
+  <div data-testid="front-component-root" style={CARD_STYLE}>
+    <h2 style={HEADING_STYLE}>{title}</h2>
+    <span data-testid="front-component-mounted" style={MOUNTED_STYLE}>
       mounted
     </span>
     {children}
-  </div>
-);
-
-type UnknownScenarioProps = {
-  scenarioId: string;
-};
-
-export const UnknownScenario = ({ scenarioId }: UnknownScenarioProps) => (
-  <div
-    data-testid="front-component-unknown-scenario"
-    data-scenario-id={scenarioId}
-    style={UNKNOWN_STYLE}
-  >
-    Unknown scenario: {scenarioId}
   </div>
 );

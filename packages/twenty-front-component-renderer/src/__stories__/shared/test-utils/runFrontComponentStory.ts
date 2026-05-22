@@ -1,19 +1,17 @@
 import { type StoryObj } from '@storybook/react-vite';
 
-import { type FrontComponentRenderer } from '../../../host/components/FrontComponentRenderer';
-import { getBuiltStoryComponentPathForRender } from '../../utils/getBuiltStoryComponentPathForRender';
+import { type FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 
 type FrontComponentStory = StoryObj<typeof FrontComponentRenderer>;
 
 type RunFrontComponentStoryParams = {
   frontComponentBundleName: string;
-  scenarioId: string;
   play: NonNullable<FrontComponentStory['play']>;
 };
 
 export const runFrontComponentStory = ({
   frontComponentBundleName,
-  scenarioId,
   play,
 }: RunFrontComponentStoryParams): FrontComponentStory => ({
   args: {
@@ -21,7 +19,7 @@ export const runFrontComponentStory = ({
       `${frontComponentBundleName}.front-component`,
     ),
     executionContext: {
-      frontComponentId: scenarioId,
+      frontComponentId: frontComponentBundleName,
       userId: null,
       recordId: null,
       selectedRecordIds: [],

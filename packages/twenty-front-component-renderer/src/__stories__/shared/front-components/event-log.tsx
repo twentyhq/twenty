@@ -55,7 +55,7 @@ const isBooleanValue = (value: unknown): value is boolean =>
 const isUnknownRecord = (value: unknown): value is Record<string, unknown> =>
   isDefined(value) && typeof value === 'object';
 
-const isHtmlElement = (value: unknown): value is HTMLElement =>
+const isElement = (value: unknown): value is Element =>
   isUnknownRecord(value) && typeof value.getAttribute === 'function';
 
 const isFileLike = (value: unknown): value is LoggedEventFile =>
@@ -109,7 +109,7 @@ const readTestId = (
   source: unknown,
   target: Record<string, unknown>,
 ): string => {
-  if (isHtmlElement(source)) {
+  if (isElement(source)) {
     const testId = source.getAttribute('data-testid');
     if (isDefined(testId)) {
       return testId;
@@ -130,7 +130,7 @@ const toUnknownRecord = (value: unknown): Record<string, unknown> =>
 export const useEventLog = () => {
   const [entries, setEntries] = useState<LoggedEventEntry[]>([]);
 
-  const pushEvent = (event: SyntheticEvent<HTMLElement>) => {
+  const pushEvent = (event: SyntheticEvent<Element>) => {
     setEntries((previousEntries) => {
       const eventRecord = event as unknown as Record<string, unknown>;
       const target = toUnknownRecord(eventRecord.target);

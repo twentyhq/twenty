@@ -1,17 +1,17 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
 
-import { FrontComponentRenderer } from '../../../../host/components/FrontComponentRenderer';
+import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
 import {
   FRONT_COMPONENT_STORY_DEFAULT_ARGS,
   resetFrontComponentStoryMocks,
-} from '../../../shared/test-utils/createFrontComponentStoryMeta';
-import { expectFrontComponentMounted } from '../../../shared/test-utils/matchers/expectFrontComponentMounted';
-import { runFrontComponentStory } from '../../../shared/test-utils/runFrontComponentStory';
+} from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
+import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
+import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
 import {
   INTERACTION_TIMEOUT,
   TYPING_TIMEOUT,
-} from '../../../shared/test-utils/timeouts';
+} from '@/__stories__/shared/test-utils/timeouts';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
   title: 'FrontComponent/HtmlTag/Form/Input/Caret',
@@ -26,8 +26,7 @@ export default meta;
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
 export const CaretPreservedMidString: Story = runFrontComponentStory({
-  frontComponentBundleName: 'input',
-  scenarioId: 'input:text:caret',
+  frontComponentBundleName: 'input-caret',
   play: async ({ canvasElement }) => {
     const canvas = within(canvasElement);
 

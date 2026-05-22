@@ -1,15 +1,14 @@
 import { type StoryObj } from '@storybook/react-vite';
 import { within } from 'storybook/test';
 
-import { type FrontComponentRenderer } from '../../../host/components/FrontComponentRenderer';
-import { PROPERTY_FIXTURE } from '../front-components/property-fixture';
-
-import { expectFrontComponentMounted } from './matchers/expectFrontComponentMounted';
+import { type FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { PROPERTY_FIXTURE } from '@/__stories__/shared/front-components/property-fixture';
+import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
 import {
   expectAttributesReflected,
   expectPropertiesReflected,
-} from './matchers/expectPropertyReflected';
-import { runFrontComponentStory } from './runFrontComponentStory';
+} from '@/__stories__/shared/test-utils/matchers/expectPropertyReflected';
+import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
@@ -24,20 +23,17 @@ const COMMON_ATTRIBUTES = {
 
 type CreatePropertyReflectionStoryParams = {
   frontComponentBundleName: string;
-  scenarioId: string;
   extraAttributes?: Record<string, string>;
   extraProperties?: Record<string, string | number | boolean>;
 };
 
 export const createPropertyReflectionStory = ({
   frontComponentBundleName,
-  scenarioId,
   extraAttributes = {},
   extraProperties = {},
 }: CreatePropertyReflectionStoryParams): Story =>
   runFrontComponentStory({
     frontComponentBundleName,
-    scenarioId,
     play: async ({ canvasElement }) => {
       const canvas = within(canvasElement);
 

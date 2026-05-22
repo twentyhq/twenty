@@ -1,6 +1,6 @@
 import { type within } from 'storybook/test';
 
-import { MOUNT_TIMEOUT } from '../timeouts';
+import { MOUNT_TIMEOUT } from '@/__stories__/shared/test-utils/timeouts';
 
 type Canvas = ReturnType<typeof within>;
 
