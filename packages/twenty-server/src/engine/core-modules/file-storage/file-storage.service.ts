@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { basename, dirname, join } from 'path';
+import { basename, dirname, extname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -93,6 +93,15 @@ export class FileStorageService {
     if (!safePathResult.isValid) {
       throw new FileStorageException(
         safePathResult.error,
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
+
+    const extension = extname(params.folderPath);
+
+    if (/^\.[a-zA-Z]+$/.test(extension)) {
+      throw new FileStorageException(
+        'Folder path must not contain a file extension — use deleteFile for file paths',
         FileStorageExceptionCode.ACCESS_DENIED,
       );
     }

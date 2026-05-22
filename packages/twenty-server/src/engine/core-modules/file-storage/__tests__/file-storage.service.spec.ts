@@ -405,6 +405,19 @@ describe('FileStorageService', () => {
 
         expect(mockDriver.delete).not.toHaveBeenCalled();
       });
+
+      it('should reject file paths passed as folder path', async () => {
+        await expect(
+          service.deleteFolder({
+            ...validFolderIdentifier,
+            folderPath: 'src/logic-functions/handler.mjs',
+          }),
+        ).rejects.toMatchObject({
+          code: FileStorageExceptionCode.ACCESS_DENIED,
+        });
+
+        expect(mockDriver.delete).not.toHaveBeenCalled();
+      });
     });
 
     describe('copy', () => {
