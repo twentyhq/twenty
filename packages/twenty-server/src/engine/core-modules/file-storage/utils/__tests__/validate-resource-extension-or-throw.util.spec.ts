@@ -4,121 +4,117 @@ import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/i
 import { validateResourceExtensionOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension-or-throw.util';
 
 describe('validateResourceExtensionOrThrow', () => {
-  it('should accept valid extensions for BuiltLogicFunction', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'src/handlers/index.mjs',
-        FileFolder.BuiltLogicFunction,
-      ),
-    ).not.toThrow();
-  });
+  it.each([
+    {
+      title: 'BuiltLogicFunction with .mjs',
+      resourcePath: 'src/handlers/index.mjs',
+      fileFolder: FileFolder.BuiltLogicFunction,
+    },
+    {
+      title: 'BuiltFrontComponent with .mjs',
+      resourcePath: 'src/components/card.mjs',
+      fileFolder: FileFolder.BuiltFrontComponent,
+    },
+    {
+      title: 'Source with .ts',
+      resourcePath: 'src/index.ts',
+      fileFolder: FileFolder.Source,
+    },
+    {
+      title: 'Source with .tsx',
+      resourcePath: 'src/app.tsx',
+      fileFolder: FileFolder.Source,
+    },
+    {
+      title: 'Dependencies with .json',
+      resourcePath: 'package.json',
+      fileFolder: FileFolder.Dependencies,
+    },
+    {
+      title: 'Dependencies with .lock',
+      resourcePath: 'yarn.lock',
+      fileFolder: FileFolder.Dependencies,
+    },
+    {
+      title: 'PublicAsset with .svg',
+      resourcePath: 'assets/logo.svg',
+      fileFolder: FileFolder.PublicAsset,
+    },
+    {
+      title: 'PublicAsset with .woff2',
+      resourcePath: 'fonts/roboto.woff2',
+      fileFolder: FileFolder.PublicAsset,
+    },
+  ])(
+    'should accept valid extension for $title',
+    ({ resourcePath, fileFolder }) => {
+      expect(() =>
+        validateResourceExtensionOrThrow(resourcePath, fileFolder),
+      ).not.toThrow();
+    },
+  );
 
-  it('should accept valid extensions for BuiltFrontComponent', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'src/components/card.mjs',
-        FileFolder.BuiltFrontComponent,
-      ),
-    ).not.toThrow();
-  });
+  it.each([
+    {
+      title: 'BuiltLogicFunction with .js',
+      resourcePath: 'handler.js',
+      fileFolder: FileFolder.BuiltLogicFunction,
+    },
+    {
+      title: 'BuiltFrontComponent with .html',
+      resourcePath: 'component.html',
+      fileFolder: FileFolder.BuiltFrontComponent,
+    },
+    {
+      title: 'BuiltLogicFunction with .pdf',
+      resourcePath: 'handler.pdf',
+      fileFolder: FileFolder.BuiltLogicFunction,
+    },
+    {
+      title: 'PublicAsset with .js',
+      resourcePath: 'assets/script.js',
+      fileFolder: FileFolder.PublicAsset,
+    },
+    {
+      title: 'Source with .mjs',
+      resourcePath: 'src/index.mjs',
+      fileFolder: FileFolder.Source,
+    },
+    {
+      title: 'Dependencies with .sh',
+      resourcePath: 'install.sh',
+      fileFolder: FileFolder.Dependencies,
+    },
+  ])(
+    'should reject invalid extension for $title',
+    ({ resourcePath, fileFolder }) => {
+      expect(() =>
+        validateResourceExtensionOrThrow(resourcePath, fileFolder),
+      ).toThrow(
+        expect.objectContaining({
+          code: FileStorageExceptionCode.INVALID_EXTENSION,
+        }),
+      );
+    },
+  );
 
-  it('should accept valid extensions for Source', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow('src/index.ts', FileFolder.Source),
-    ).not.toThrow();
-    expect(() =>
-      validateResourceExtensionOrThrow('src/app.tsx', FileFolder.Source),
-    ).not.toThrow();
-  });
-
-  it('should accept valid extensions for Dependencies', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'package.json',
-        FileFolder.Dependencies,
-      ),
-    ).not.toThrow();
-    expect(() =>
-      validateResourceExtensionOrThrow('yarn.lock', FileFolder.Dependencies),
-    ).not.toThrow();
-  });
-
-  it('should accept valid extensions for PublicAsset', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'assets/logo.svg',
-        FileFolder.PublicAsset,
-      ),
-    ).not.toThrow();
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'fonts/roboto.woff2',
-        FileFolder.PublicAsset,
-      ),
-    ).not.toThrow();
-  });
-
-  it('should reject invalid extensions for BuiltLogicFunction', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'handler.js',
-        FileFolder.BuiltLogicFunction,
-      ),
-    ).toThrow(
-      expect.objectContaining({
-        code: FileStorageExceptionCode.INVALID_EXTENSION,
-      }),
-    );
-  });
-
-  it('should reject invalid extensions for BuiltFrontComponent', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'component.html',
-        FileFolder.BuiltFrontComponent,
-      ),
-    ).toThrow(
-      expect.objectContaining({
-        code: FileStorageExceptionCode.INVALID_EXTENSION,
-      }),
-    );
-  });
-
-  it('should reject unrelated extensions like .pdf for built paths', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'handler.pdf',
-        FileFolder.BuiltLogicFunction,
-      ),
-    ).toThrow(
-      expect.objectContaining({
-        code: FileStorageExceptionCode.INVALID_EXTENSION,
-      }),
-    );
-  });
-
-  it('should reject executable extensions for PublicAsset', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'assets/script.js',
-        FileFolder.PublicAsset,
-      ),
-    ).toThrow(
-      expect.objectContaining({
-        code: FileStorageExceptionCode.INVALID_EXTENSION,
-      }),
-    );
-  });
-
-  it('should not throw for file folders without configured extensions', () => {
-    expect(() =>
-      validateResourceExtensionOrThrow('photo.png', FileFolder.CorePicture),
-    ).not.toThrow();
-    expect(() =>
-      validateResourceExtensionOrThrow(
-        'document.pdf',
-        FileFolder.FilesField,
-      ),
-    ).not.toThrow();
-  });
+  it.each([
+    {
+      title: 'CorePicture',
+      resourcePath: 'photo.png',
+      fileFolder: FileFolder.CorePicture,
+    },
+    {
+      title: 'FilesField',
+      resourcePath: 'document.pdf',
+      fileFolder: FileFolder.FilesField,
+    },
+  ])(
+    'should not throw for unconfigured file folder $title',
+    ({ resourcePath, fileFolder }) => {
+      expect(() =>
+        validateResourceExtensionOrThrow(resourcePath, fileFolder),
+      ).not.toThrow();
+    },
+  );
 });
