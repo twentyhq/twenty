@@ -1,3 +1,4 @@
+import { t } from '@lingui/core/macro';
 import { type FileFolder } from 'twenty-shared/types';
 
 import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
@@ -28,7 +29,7 @@ export const validateResourceExtension = ({
   ) {
     return {
       isValid: false,
-      error: `Invalid file extension for ${fileFolder}. Allowed extensions: ${Object.keys(allowedExtensions).join(', ')}`,
+      error: t`Invalid file extension. Allowed extensions: ${Object.keys(allowedExtensions).join(', ')}`,
     };
   }
 

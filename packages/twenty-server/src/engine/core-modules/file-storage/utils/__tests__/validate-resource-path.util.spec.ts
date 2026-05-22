@@ -47,7 +47,7 @@ describe('validateResourcePath', () => {
     expect(result.isValid).toBe(false);
 
     if (!result.isValid) {
-      expect(result.error).toContain('unsafe characters or path traversal');
+      expect(result.error).toContain('path traversal');
     }
   });
 
@@ -99,7 +99,7 @@ describe('validateResourcePath', () => {
     expect(result.isValid).toBe(false);
 
     if (!result.isValid) {
-      expect(result.error).toContain('unsafe characters or path traversal');
+      expect(result.error).toContain('must not be empty');
     }
   });
 });

@@ -47,7 +47,7 @@ export class FlatFrontComponentValidatorService {
       if (!builtPathResult.isValid) {
         validationResult.errors.push({
           code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-          message: t`Built component path is invalid: ${builtPathResult.error}`,
+          message: builtPathResult.error,
           userFriendlyMessage: msg`Built component path is invalid`,
         });
       }
@@ -62,7 +62,7 @@ export class FlatFrontComponentValidatorService {
       if (!sourcePathResult.isValid) {
         validationResult.errors.push({
           code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-          message: t`Source component path is invalid: ${sourcePathResult.error}`,
+          message: sourcePathResult.error,
           userFriendlyMessage: msg`Source component path is invalid`,
         });
       }
@@ -147,7 +147,7 @@ export class FlatFrontComponentValidatorService {
       if (!builtPathResult.isValid) {
         validationResult.errors.push({
           code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-          message: t`Built component path is invalid: ${builtPathResult.error}`,
+          message: builtPathResult.error,
           userFriendlyMessage: msg`Built component path is invalid`,
         });
       }
@@ -162,7 +162,7 @@ export class FlatFrontComponentValidatorService {
       if (!sourcePathResult.isValid) {
         validationResult.errors.push({
           code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-          message: t`Source component path is invalid: ${sourcePathResult.error}`,
+          message: sourcePathResult.error,
           userFriendlyMessage: msg`Source component path is invalid`,
         });
       }

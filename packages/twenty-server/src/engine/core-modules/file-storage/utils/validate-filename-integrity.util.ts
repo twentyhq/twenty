@@ -1,3 +1,5 @@
+import { t } from '@lingui/core/macro';
+
 import { type ResourcePathValidationResult } from 'src/engine/core-modules/file-storage/types/resource-path-validation-result.type';
 
 const MAX_SEGMENT_LENGTH = 255;
@@ -12,7 +14,7 @@ export const validateFilenameIntegrity = ({
   if (resourcePath.length > MAX_PATH_LENGTH) {
     return {
       isValid: false,
-      error: `Resource path exceeds maximum length of ${MAX_PATH_LENGTH} characters`,
+      error: t`Resource path exceeds maximum length of ${MAX_PATH_LENGTH} characters`,
     };
   }
 
@@ -22,14 +24,14 @@ export const validateFilenameIntegrity = ({
     if (segment.length > MAX_SEGMENT_LENGTH) {
       return {
         isValid: false,
-        error: `Path segment "${segment.slice(0, 50)}..." exceeds maximum length of ${MAX_SEGMENT_LENGTH} characters`,
+        error: t`A path segment exceeds the maximum length of 255 characters`,
       };
     }
 
     if (!SAFE_SEGMENT_PATTERN.test(segment)) {
       return {
         isValid: false,
-        error: `Path segment "${segment}" contains invalid characters. Only alphanumeric, dots, dashes and underscores are allowed`,
+        error: t`A path segment contains invalid characters. Only alphanumeric, dots, dashes and underscores are allowed`,
       };
     }
   }
@@ -39,7 +41,7 @@ export const validateFilenameIntegrity = ({
   if (!filename.includes('.')) {
     return {
       isValid: false,
-      error: `Filename "${filename}" must have an extension`,
+      error: t`Filename must have an extension`,
     };
   }
 

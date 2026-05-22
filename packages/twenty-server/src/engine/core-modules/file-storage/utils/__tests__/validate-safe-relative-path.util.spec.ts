@@ -15,20 +15,40 @@ describe('validateSafeRelativePath', () => {
   );
 
   it.each([
-    { title: '.. traversal', resourcePath: '../../../other-ws/file.js' },
-    { title: 'absolute path', resourcePath: '/etc/passwd' },
-    { title: 'null bytes', resourcePath: 'file\0.txt' },
-    { title: 'backslashes', resourcePath: '..\\..\\etc\\passwd' },
-    { title: 'empty string', resourcePath: '' },
+    {
+      title: 'empty string',
+      resourcePath: '',
+      expectedError: 'must not be empty',
+    },
+    {
+      title: 'null bytes',
+      resourcePath: 'file\0.txt',
+      expectedError: 'contains null bytes',
+    },
+    {
+      title: 'absolute path',
+      resourcePath: '/etc/passwd',
+      expectedError: 'must be relative',
+    },
+    {
+      title: 'backslashes',
+      resourcePath: '..\\..\\etc\\passwd',
+      expectedError: 'must not contain backslashes',
+    },
+    {
+      title: '.. traversal',
+      resourcePath: '../../../other-ws/file.js',
+      expectedError: 'path traversal',
+    },
   ])(
     'should return isValid: false for $title',
-    ({ resourcePath }) => {
+    ({ resourcePath, expectedError }) => {
       const result = validateSafeRelativePath({ resourcePath });
 
       expect(result.isValid).toBe(false);
 
       if (!result.isValid) {
-        expect(result.error).toBeDefined();
+        expect(result.error).toContain(expectedError);
       }
     },
   );

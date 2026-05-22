@@ -58,7 +58,7 @@ export class FlatLogicFunctionValidatorService {
       if (!builtPathResult.isValid) {
         validationResult.errors.push({
           code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-          message: t`Built handler path is invalid: ${builtPathResult.error}`,
+          message: builtPathResult.error,
           userFriendlyMessage: msg`Built handler path is invalid`,
         });
       }
@@ -73,7 +73,7 @@ export class FlatLogicFunctionValidatorService {
       if (!sourcePathResult.isValid) {
         validationResult.errors.push({
           code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-          message: t`Source handler path is invalid: ${sourcePathResult.error}`,
+          message: sourcePathResult.error,
           userFriendlyMessage: msg`Source handler path is invalid`,
         });
       }
@@ -154,7 +154,7 @@ export class FlatLogicFunctionValidatorService {
       if (!builtPathResult.isValid) {
         validationResult.errors.push({
           code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-          message: t`Built handler path is invalid: ${builtPathResult.error}`,
+          message: builtPathResult.error,
           userFriendlyMessage: msg`Built handler path is invalid`,
         });
       }
@@ -169,7 +169,7 @@ export class FlatLogicFunctionValidatorService {
       if (!sourcePathResult.isValid) {
         validationResult.errors.push({
           code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-          message: t`Source handler path is invalid: ${sourcePathResult.error}`,
+          message: sourcePathResult.error,
           userFriendlyMessage: msg`Source handler path is invalid`,
         });
       }
