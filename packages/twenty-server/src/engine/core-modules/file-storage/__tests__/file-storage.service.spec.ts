@@ -434,7 +434,7 @@ describe('FileStorageService', () => {
       it('should accept paths with dots that are not traversal', async () => {
         await service.readFile({
           ...validResourceIdentifier,
-          resourcePath: '.hidden/file.name.ext',
+          resourcePath: 'v1.0.0/file.name.mjs',
         });
 
         expect(mockDriver.readFile).toHaveBeenCalled();
