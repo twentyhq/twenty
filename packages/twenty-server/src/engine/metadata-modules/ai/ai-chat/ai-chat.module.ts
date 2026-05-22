@@ -20,7 +20,6 @@ import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
-import { WorkflowRunToolsModule } from 'src/modules/workflow/workflow-run-tools/workflow-run-tools.module';
 import { WorkflowToolsModule } from 'src/modules/workflow/workflow-tools/workflow-tools.module';
 
 import { AgentChatThreadEntity } from './entities/agent-chat-thread.entity';
@@ -60,7 +59,6 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     ToolProviderModule,
     DashboardToolsModule,
     WorkflowToolsModule,
-    WorkflowRunToolsModule,
   ],
   providers: [
     AgentChatCancelSubscriberService,

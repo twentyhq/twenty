@@ -322,10 +322,6 @@ ${tools
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
-      case ToolCategory.VIEW_FIELD:
-        return 'View Field Tools (manage view columns)';
-      case ToolCategory.PAGE_LAYOUT:
-        return 'Page Layout Tools (record-page, record-index, and standalone layouts)';
       case ToolCategory.NAVIGATION_MENU_ITEM:
         return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
       case ToolCategory.WEBHOOK:

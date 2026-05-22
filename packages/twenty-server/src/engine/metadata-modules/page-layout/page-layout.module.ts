@@ -9,8 +9,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { FlatPageLayoutTabModule } from 'src/engine/metadata-modules/flat-page-layout-tab/flat-page-layout-tab.module';
 import { FlatPageLayoutWidgetModule } from 'src/engine/metadata-modules/flat-page-layout-widget/flat-page-layout-widget.module';
 import { FlatPageLayoutModule } from 'src/engine/metadata-modules/flat-page-layout/flat-page-layout.module';
-import { PageLayoutTabModule } from 'src/engine/metadata-modules/page-layout-tab/page-layout-tab.module';
-import { PageLayoutWidgetModule } from 'src/engine/metadata-modules/page-layout-widget/page-layout-widget.module';
 import { PageLayoutController } from 'src/engine/metadata-modules/page-layout/controllers/page-layout.controller';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
 import { PageLayoutResolver } from 'src/engine/metadata-modules/page-layout/resolvers/page-layout.resolver';
@@ -18,7 +16,6 @@ import { PageLayoutDuplicationService } from 'src/engine/metadata-modules/page-l
 import { PageLayoutResetService } from 'src/engine/metadata-modules/page-layout/services/page-layout-reset.service';
 import { PageLayoutUpdateService } from 'src/engine/metadata-modules/page-layout/services/page-layout-update.service';
 import { PageLayoutService } from 'src/engine/metadata-modules/page-layout/services/page-layout.service';
-import { PageLayoutToolWorkspaceService } from 'src/engine/metadata-modules/page-layout/tools/services/page-layout-tool.workspace-service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
@@ -43,8 +40,6 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     ApplicationModule,
     DashboardSyncModule,
     ViewModule,
-    PageLayoutTabModule,
-    PageLayoutWidgetModule,
   ],
   controllers: [PageLayoutController],
   providers: [
@@ -54,12 +49,7 @@ import { DashboardSyncModule } from 'src/modules/dashboard-sync/dashboard-sync.m
     PageLayoutResetService,
     PageLayoutUpdateService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
-    PageLayoutToolWorkspaceService,
   ],
-  exports: [
-    PageLayoutService,
-    PageLayoutDuplicationService,
-    PageLayoutToolWorkspaceService,
-  ],
+  exports: [PageLayoutService, PageLayoutDuplicationService],
 })
 export class PageLayoutModule {}

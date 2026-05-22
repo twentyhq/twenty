@@ -10,11 +10,9 @@ import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
-import { PageLayoutToolProvider } from 'src/engine/core-modules/tool-provider/providers/page-layout-tool.provider';
 import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
-import { WorkflowRunToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-run-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -26,7 +24,6 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
-import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
@@ -39,15 +36,15 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule, DashboardToolsModule,
-// or WorkflowRunToolsModule directly: their service graphs transitively reach
-// AiAgentExecutionModule which forwardRef's back into ToolProviderModule.
-// Those three @Global() modules provide a service token that their respective
-// providers consume via @Optional() @Inject, breaking the cycle.
+// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule
+// directly: their service graphs transitively reach AiAgentExecutionModule which
+// forwardRef's back into ToolProviderModule. Those two @Global() modules provide
+// a service token that their respective providers consume via @Optional()
+// @Inject, breaking the cycle.
 //
-// Webhook, NavigationMenuItem, and PageLayout do NOT have that cycle, so we
-// import their entity modules directly and the providers inject the services
-// the normal way (same pattern as views/objects/metadata).
+// Webhook and NavigationMenuItem do NOT have that cycle, so we import their
+// entity modules directly and the providers inject the services the normal way
+// (same pattern as views/objects/metadata).
 
 @Module({
   imports: [
@@ -66,7 +63,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
     NavigationMenuItemModule,
-    PageLayoutModule,
     WebhookModule,
     UserRoleModule,
     TypeOrmModule.forFeature([UserEntity]),
@@ -80,13 +76,11 @@ import { ToolRegistryService } from './services/tool-registry.service';
     MetadataToolProvider,
     NativeToolBinderService,
     NavigationMenuItemToolProvider,
-    PageLayoutToolProvider,
     LogicFunctionToolProvider,
     ViewFieldToolProvider,
     ViewToolProvider,
     WebhookToolProvider,
     WorkflowToolProvider,
-    WorkflowRunToolProvider,
     {
       // TOOL_PROVIDERS contains only providers implementing ToolProvider
       // (registry tools with descriptors). The native tool binder is a
@@ -100,12 +94,10 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
-        pageLayoutProvider: PageLayoutToolProvider,
         viewFieldProvider: ViewFieldToolProvider,
         viewProvider: ViewToolProvider,
         webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
-        workflowRunProvider: WorkflowRunToolProvider,
       ) => [
         actionProvider,
         dashboardProvider,
@@ -113,12 +105,10 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider,
         logicFunctionProvider,
         navigationMenuItemProvider,
-        pageLayoutProvider,
         viewFieldProvider,
         viewProvider,
         webhookProvider,
         workflowProvider,
-        workflowRunProvider,
       ],
       inject: [
         ActionToolProvider,
@@ -127,12 +117,10 @@ import { ToolRegistryService } from './services/tool-registry.service';
         MetadataToolProvider,
         LogicFunctionToolProvider,
         NavigationMenuItemToolProvider,
-        PageLayoutToolProvider,
         ViewFieldToolProvider,
         ViewToolProvider,
         WebhookToolProvider,
         WorkflowToolProvider,
-        WorkflowRunToolProvider,
       ],
     },
     ToolRegistryService,

@@ -18,7 +18,7 @@ import { ViewFieldToolsFactory } from 'src/engine/metadata-modules/view-field/to
 
 @Injectable()
 export class ViewFieldToolProvider implements ToolProvider {
-  readonly category = ToolCategory.VIEW_FIELD;
+  readonly category = ToolCategory.VIEW;
 
   constructor(
     private readonly viewFieldToolsFactory: ViewFieldToolsFactory,
@@ -35,7 +35,7 @@ export class ViewFieldToolProvider implements ToolProvider {
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const toolSet = await this.buildToolSet(context);
 
-    return toolSetToDescriptors(toolSet, ToolCategory.VIEW_FIELD, {
+    return toolSetToDescriptors(toolSet, ToolCategory.VIEW, {
       includeSchemas: options?.includeSchemas ?? true,
       icon: 'IconTable',
     });
@@ -48,12 +48,7 @@ export class ViewFieldToolProvider implements ToolProvider {
   ): Promise<ToolOutput> {
     const toolSet = await this.buildToolSet(context);
 
-    return executeToolFromToolSet(
-      toolSet,
-      toolName,
-      args,
-      ToolCategory.VIEW_FIELD,
-    );
+    return executeToolFromToolSet(toolSet, toolName, args, ToolCategory.VIEW);
   }
 
   private async buildToolSet(context: ToolProviderContext): Promise<ToolSet> {
