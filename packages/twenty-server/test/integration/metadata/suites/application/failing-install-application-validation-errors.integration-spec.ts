@@ -141,11 +141,13 @@ describe('Install application should return structured validation errors', () =>
     expect(uploadResult.errors).toBeUndefined();
     expect(uploadResult.data?.uploadAppTarball.id).toBeDefined();
 
+    const registrationId = uploadResult.data!.uploadAppTarball.id;
+
     createdApplicationUniversalIdentifiers.push(universalIdentifier);
 
     const { errors } = await installApplication({
       input: {
-        universalIdentifier,
+        appRegistrationId: registrationId,
       },
       expectToFail: true,
     });

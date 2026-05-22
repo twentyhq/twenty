@@ -139,8 +139,8 @@ export class FileApi {
   }): Promise<ApiResponse<boolean>> {
     try {
       const mutation = `
-        mutation InstallApplication($universalIdentifier: String!) {
-          installApplication(universalIdentifier: $universalIdentifier) {
+        mutation InstallMarketplaceApp($universalIdentifier: String!) {
+          installMarketplaceApp(universalIdentifier: $universalIdentifier) {
             id
           }
         }
@@ -169,7 +169,7 @@ export class FileApi {
 
       return {
         success: true,
-        data: response.data.data.installApplication,
+        data: response.data.data.installMarketplaceApp,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

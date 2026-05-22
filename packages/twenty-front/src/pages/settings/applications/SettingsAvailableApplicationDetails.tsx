@@ -104,7 +104,7 @@ export const SettingsAvailableApplicationDetails = () => {
         universalIdentifier: detail.universalIdentifier,
       });
 
-      const applicationId = data?.installApplication?.id;
+      const applicationId = data?.installMarketplaceApp?.id;
 
       if (isDefined(applicationId)) {
         navigateSettings(SettingsPath.ApplicationDetail, {
