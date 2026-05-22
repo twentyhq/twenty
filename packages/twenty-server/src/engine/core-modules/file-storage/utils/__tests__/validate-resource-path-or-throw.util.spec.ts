@@ -7,14 +7,9 @@ describe('validateResourcePathOrThrow', () => {
     { title: 'nested relative path', resourcePath: 'src/components/test.mjs' },
     { title: 'simple filename', resourcePath: 'file.mjs' },
     { title: 'deeply nested path', resourcePath: 'a/b/c/d.txt' },
-  ])(
-    'should accept valid relative path: $title',
-    ({ resourcePath }) => {
-      expect(() =>
-        validateResourcePathOrThrow({ resourcePath }),
-      ).not.toThrow();
-    },
-  );
+  ])('should accept valid relative path: $title', ({ resourcePath }) => {
+    expect(() => validateResourcePathOrThrow({ resourcePath })).not.toThrow();
+  });
 
   it.each([
     {
@@ -37,16 +32,11 @@ describe('validateResourcePathOrThrow', () => {
       title: 'empty string',
       resourcePath: '',
     },
-  ])(
-    'should reject unsafe path: $title',
-    ({ resourcePath }) => {
-      expect(() =>
-        validateResourcePathOrThrow({ resourcePath }),
-      ).toThrow(
-        expect.objectContaining({
-          code: FileStorageExceptionCode.ACCESS_DENIED,
-        }),
-      );
-    },
-  );
+  ])('should reject unsafe path: $title', ({ resourcePath }) => {
+    expect(() => validateResourcePathOrThrow({ resourcePath })).toThrow(
+      expect.objectContaining({
+        code: FileStorageExceptionCode.ACCESS_DENIED,
+      }),
+    );
+  });
 });

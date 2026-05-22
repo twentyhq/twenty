@@ -21,17 +21,14 @@ describe('validateStoragePathIsWithinWorkspaceOrThrow', () => {
       title: 'file directly under prefix',
       onStoragePath: 'workspace-id/app-uid/built-front-component/file.mjs',
     },
-  ])(
-    'should accept valid path: $title',
-    ({ onStoragePath }) => {
-      expect(() =>
-        validateStoragePathIsWithinWorkspaceOrThrow({
-          onStoragePath,
-          ...primitives,
-        }),
-      ).not.toThrow();
-    },
-  );
+  ])('should accept valid path: $title', ({ onStoragePath }) => {
+    expect(() =>
+      validateStoragePathIsWithinWorkspaceOrThrow({
+        onStoragePath,
+        ...primitives,
+      }),
+    ).not.toThrow();
+  });
 
   it.each([
     {

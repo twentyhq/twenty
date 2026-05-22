@@ -50,9 +50,9 @@ describe('hasAllowedExtension', () => {
     expect(
       hasAllowedExtension({ filePath: 'Makefile', allowedExtensions }),
     ).toBe(false);
-    expect(
-      hasAllowedExtension({ filePath: 'README', allowedExtensions }),
-    ).toBe(false);
+    expect(hasAllowedExtension({ filePath: 'README', allowedExtensions })).toBe(
+      false,
+    );
   });
 
   it('should be case-insensitive', () => {
@@ -83,8 +83,8 @@ describe('hasAllowedExtension', () => {
   });
 
   it('should return false for empty file path', () => {
-    expect(
-      hasAllowedExtension({ filePath: '', allowedExtensions }),
-    ).toBe(false);
+    expect(hasAllowedExtension({ filePath: '', allowedExtensions })).toBe(
+      false,
+    );
   });
 });

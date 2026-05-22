@@ -66,7 +66,10 @@ export class FlatLogicFunctionValidatorService {
       isDefined(flatEntityUpdate.builtHandlerPath) &&
       !hasAllowedExtension({
         filePath: flatEntityUpdate.builtHandlerPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
+            FileFolder.BuiltLogicFunction
+          ],
       })
     ) {
       validationResult.errors.push({
@@ -91,7 +94,8 @@ export class FlatLogicFunctionValidatorService {
       isDefined(flatEntityUpdate.sourceHandlerPath) &&
       !hasAllowedExtension({
         filePath: flatEntityUpdate.sourceHandlerPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
       })
     ) {
       validationResult.errors.push({
@@ -182,7 +186,10 @@ export class FlatLogicFunctionValidatorService {
       isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
       !hasAllowedExtension({
         filePath: flatLogicFunctionToValidate.builtHandlerPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltLogicFunction],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
+            FileFolder.BuiltLogicFunction
+          ],
       })
     ) {
       validationResult.errors.push({
@@ -207,7 +214,8 @@ export class FlatLogicFunctionValidatorService {
       isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
       !hasAllowedExtension({
         filePath: flatLogicFunctionToValidate.sourceHandlerPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
       })
     ) {
       validationResult.errors.push({

@@ -58,14 +58,11 @@ describe('validateApplicationFileExtensionOrThrow', () => {
       fileFolder: FileFolder.PublicAsset,
       filePath: 'styles/main.css',
     },
-  ])(
-    'should accept valid extension for $title',
-    ({ fileFolder, filePath }) => {
-      expect(() =>
-        validateApplicationFileExtensionOrThrow({ fileFolder, filePath }),
-      ).not.toThrow();
-    },
-  );
+  ])('should accept valid extension for $title', ({ fileFolder, filePath }) => {
+    expect(() =>
+      validateApplicationFileExtensionOrThrow({ fileFolder, filePath }),
+    ).not.toThrow();
+  });
 
   it.each([
     {

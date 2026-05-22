@@ -55,7 +55,10 @@ export class FlatFrontComponentValidatorService {
       isDefined(flatFrontComponent.builtComponentPath) &&
       !hasAllowedExtension({
         filePath: flatFrontComponent.builtComponentPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
+            FileFolder.BuiltFrontComponent
+          ],
       })
     ) {
       validationResult.errors.push({
@@ -80,7 +83,8 @@ export class FlatFrontComponentValidatorService {
       isDefined(flatFrontComponent.sourceComponentPath) &&
       !hasAllowedExtension({
         filePath: flatFrontComponent.sourceComponentPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
       })
     ) {
       validationResult.errors.push({
@@ -175,7 +179,10 @@ export class FlatFrontComponentValidatorService {
       isDefined(flatEntityUpdate.builtComponentPath) &&
       !hasAllowedExtension({
         filePath: flatEntityUpdate.builtComponentPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.BuiltFrontComponent],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
+            FileFolder.BuiltFrontComponent
+          ],
       })
     ) {
       validationResult.errors.push({
@@ -200,7 +207,8 @@ export class FlatFrontComponentValidatorService {
       isDefined(flatEntityUpdate.sourceComponentPath) &&
       !hasAllowedExtension({
         filePath: flatEntityUpdate.sourceComponentPath,
-        allowedExtensions: ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
+        allowedExtensions:
+          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
       })
     ) {
       validationResult.errors.push({
