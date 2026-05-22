@@ -17,7 +17,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { H2Title } from 'twenty-ui/display';
+import { Callout, H2Title, IconAlertTriangle } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { z } from 'zod';
 import { IndexType } from '~/generated-metadata/graphql';
@@ -135,6 +135,14 @@ export const SettingsObjectNewIndex = () => {
         }
       >
         <SettingsPageContainer>
+          <Section>
+            <Callout
+              variant="warning"
+              Icon={IconAlertTriangle}
+              title={t`Indexes are not free`}
+              description={t`Each index speeds up reads on the fields it covers, but slows down every insert and update, and uses disk space. Only add an index when you know which queries it serves.`}
+            />
+          </Section>
           <Section>
             <H2Title
               title={t`Fields`}

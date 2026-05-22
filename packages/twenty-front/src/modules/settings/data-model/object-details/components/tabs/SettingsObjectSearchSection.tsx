@@ -135,8 +135,8 @@ export const SettingsObjectSearchSection = ({
         <Card rounded>
           <SettingsOptionCardContentToggle
             Icon={IconEye}
-            title={t`Include in default search`}
-            description={t`If disabled, use advanced search filters to find these records`}
+            title={t`Global search`}
+            description={t`When enabled, records of this object appear in the command menu (⌘K) search results.`}
             checked={isSearchable}
             advancedMode
             onChange={handleToggleSearchable}

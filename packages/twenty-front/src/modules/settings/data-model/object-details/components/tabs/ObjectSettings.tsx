@@ -141,7 +141,7 @@ export const ObjectSettings = ({
           <Section>
             <H2Title
               title={t`Indexes`}
-              description={t`Improve query performance by adding database indexes on the fields you filter or sort by most.`}
+              description={t`Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent.`}
             />
             <SettingsObjectIndexesSection
               objectMetadataItem={objectMetadataItem}
