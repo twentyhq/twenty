@@ -48,42 +48,20 @@ export const createListNavigationMenuItemsTool = (
   inputSchema: listNavigationMenuItemsSchema,
   execute: async (parameters: ListNavigationMenuItemsParams) => {
     try {
-      const scope = parameters.scope ?? 'all';
-      const all = await deps.navigationMenuItemService.findAll({
+      const items = await deps.navigationMenuItemService.findAll({
         workspaceId: context.workspaceId,
         userWorkspaceId: context.userWorkspaceId,
+        scope: parameters.scope,
+        folderId: parameters.folderId,
+        type: parameters.type as NavigationMenuItemType | undefined,
+        limit: parameters.limit,
       });
-
-      const filtered = all.filter((item) => {
-        if (scope === 'workspace' && isDefined(item.userWorkspaceId)) {
-          return false;
-        }
-        if (scope === 'user' && !isDefined(item.userWorkspaceId)) {
-          return false;
-        }
-        if (
-          isDefined(parameters.folderId) &&
-          item.folderId !== parameters.folderId
-        ) {
-          return false;
-        }
-        if (
-          isDefined(parameters.type) &&
-          item.type !== (parameters.type as NavigationMenuItemType)
-        ) {
-          return false;
-        }
-
-        return true;
-      });
-
-      const limited = filtered.slice(0, parameters.limit ?? 100);
 
       return {
         success: true,
-        message: `Found ${limited.length} navigation menu item(s)`,
+        message: `Found ${items.length} navigation menu item(s)`,
         result: {
-          items: limited.map((item) => ({
+          items: items.map((item) => ({
             id: item.id,
             type: item.type,
             name: item.name,
@@ -98,7 +76,7 @@ export const createListNavigationMenuItemsTool = (
             viewId: item.viewId,
             pageLayoutId: item.pageLayoutId,
           })),
-          count: limited.length,
+          count: items.length,
         },
       };
     } catch (error) {
