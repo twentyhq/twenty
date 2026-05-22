@@ -1,3 +1,4 @@
+import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   buildPermissionSummaryFromRoleManifest,
@@ -10,12 +11,10 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import {
-  Avatar,
   IconChevronLeft,
   IconEye,
   IconHierarchy,
   IconListDetails,
-  IconRefresh,
   IconSettings,
   IconTool,
   IconTrash,
@@ -69,17 +68,8 @@ const StyledContent = styled.div`
   width: 100%;
 `;
 
-const StyledLogosContainer = styled.div`
-  align-items: center;
-  display: flex;
-  gap: ${themeCssVariables.spacing[3]};
-  justify-content: center;
+const StyledAppConnectionHeaderContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
-`;
-
-const StyledSyncIcon = styled.div`
-  color: ${themeCssVariables.font.color.tertiary};
-  display: flex;
 `;
 
 const StyledTitle = styled.div`
@@ -181,25 +171,14 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
         </StyledBackLink>
 
         <StyledContent>
-          <StyledLogosContainer>
-            <Avatar
-              type="squared"
-              size="xl"
-              avatarUrl={currentWorkspace?.logo}
-              placeholder={currentWorkspace?.displayName ?? ''}
-              placeholderColorSeed={currentWorkspace?.displayName ?? ''}
+          <StyledAppConnectionHeaderContainer>
+            <AppConnectionHeader
+              workspaceLogoUrl={currentWorkspace?.logo ?? undefined}
+              workspaceName={currentWorkspace?.displayName ?? ''}
+              appLogoUrl={appLogoUrl}
+              appName={appDisplayName}
             />
-            <StyledSyncIcon>
-              <IconRefresh size={16} />
-            </StyledSyncIcon>
-            <Avatar
-              type="squared"
-              size="xl"
-              avatarUrl={appLogoUrl}
-              placeholder={appDisplayName}
-              placeholderColorSeed={appDisplayName}
-            />
-          </StyledLogosContainer>
+          </StyledAppConnectionHeaderContainer>
 
           <StyledTitle>
             {t`Install ${appDisplayName} on your workspace`}
