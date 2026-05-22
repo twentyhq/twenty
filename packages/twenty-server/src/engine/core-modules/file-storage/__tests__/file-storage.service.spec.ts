@@ -342,10 +342,10 @@ describe('FileStorageService', () => {
       });
     });
 
-    describe('delete', () => {
-      it('should reject path traversal on delete', async () => {
+    describe('deleteFile', () => {
+      it('should reject path traversal on deleteFile', async () => {
         await expect(
-          service.delete({
+          service.deleteFile({
             ...validResourceIdentifier,
             resourcePath: '../../../other-ws/other-app/folder',
           }),

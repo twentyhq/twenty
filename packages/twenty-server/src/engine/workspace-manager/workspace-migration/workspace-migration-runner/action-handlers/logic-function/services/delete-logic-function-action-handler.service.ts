@@ -69,7 +69,7 @@ export class DeleteLogicFunctionActionHandlerService extends WorkspaceMigrationR
       ),
     });
 
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.BuiltLogicFunction,

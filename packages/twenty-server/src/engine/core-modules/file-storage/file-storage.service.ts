@@ -232,7 +232,7 @@ export class FileStorageService {
     });
   }
 
-  async delete(params: ResourceIdentifier): Promise<void> {
+  async deleteFile(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const onStoragePath = this.validateAndBuildFileStoragePath(params);
 
