@@ -68,7 +68,11 @@ const buildFlatFieldMetadataMaps = (
 };
 
 const buildFlatIndexMaps = (
-  indexes: Array<{ id: string; universalIdentifier: string; isCustom: boolean }>,
+  indexes: Array<{
+    id: string;
+    universalIdentifier: string;
+    isCustom: boolean;
+  }>,
 ) => {
   const maps = createEmptyFlatEntityMaps() as ReturnType<
     typeof createEmptyFlatEntityMaps
@@ -329,7 +333,9 @@ describe('IndexMetadataService', () => {
       ).toHaveBeenCalledTimes(1);
       const call =
         migrationService.validateBuildAndRunWorkspaceMigration.mock.calls[0][0];
-      expect(call.allFlatEntityOperationByMetadataName.index?.flatEntityToDelete).toHaveLength(1);
+      expect(
+        call.allFlatEntityOperationByMetadataName.index?.flatEntityToDelete,
+      ).toHaveLength(1);
     });
   });
 
