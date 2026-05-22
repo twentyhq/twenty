@@ -9,7 +9,7 @@ const createWebhookSchema = z.object({
   targetUrl: z
     .string()
     .url()
-    .describe('Absolute HTTPS URL the webhook payload should be POSTed to'),
+    .describe('Absolute URL the webhook payload should be POSTed to'),
   operations: webhookOperationSchema,
   description: z
     .string()

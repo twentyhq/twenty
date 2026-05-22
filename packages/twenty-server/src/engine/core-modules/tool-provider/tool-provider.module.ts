@@ -10,7 +10,6 @@ import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
-import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
@@ -77,7 +76,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     NativeToolBinderService,
     NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,
-    ViewFieldToolProvider,
     ViewToolProvider,
     WebhookToolProvider,
     WorkflowToolProvider,
@@ -94,7 +92,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
         navigationMenuItemProvider: NavigationMenuItemToolProvider,
-        viewFieldProvider: ViewFieldToolProvider,
         viewProvider: ViewToolProvider,
         webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
@@ -105,7 +102,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         metadataProvider,
         logicFunctionProvider,
         navigationMenuItemProvider,
-        viewFieldProvider,
         viewProvider,
         webhookProvider,
         workflowProvider,
@@ -117,7 +113,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
         MetadataToolProvider,
         LogicFunctionToolProvider,
         NavigationMenuItemToolProvider,
-        ViewFieldToolProvider,
         ViewToolProvider,
         WebhookToolProvider,
         WorkflowToolProvider,
