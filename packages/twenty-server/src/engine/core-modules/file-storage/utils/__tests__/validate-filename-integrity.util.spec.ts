@@ -9,14 +9,11 @@ describe('validateFilenameIntegrity', () => {
     { title: 'dots in directory name', resourcePath: 'v1.0/bundle.mjs' },
     { title: 'multiple dots in filename', resourcePath: 'module.config.mjs' },
     { title: 'numeric segments', resourcePath: '123/456.json' },
-  ])(
-    'should return isValid: true for $title',
-    ({ resourcePath }) => {
-      expect(validateFilenameIntegrity({ resourcePath })).toEqual({
-        isValid: true,
-      });
-    },
-  );
+  ])('should return isValid: true for $title', ({ resourcePath }) => {
+    expect(validateFilenameIntegrity({ resourcePath })).toEqual({
+      isValid: true,
+    });
+  });
 
   it.each([
     { title: 'filename without extension', resourcePath: 'Makefile' },
@@ -40,16 +37,13 @@ describe('validateFilenameIntegrity', () => {
       title: 'total path exceeding 1024 characters',
       resourcePath: `${'a/'.repeat(512)}file.mjs`,
     },
-  ])(
-    'should return isValid: false for $title',
-    ({ resourcePath }) => {
-      const result = validateFilenameIntegrity({ resourcePath });
+  ])('should return isValid: false for $title', ({ resourcePath }) => {
+    const result = validateFilenameIntegrity({ resourcePath });
 
-      expect(result.isValid).toBe(false);
+    expect(result.isValid).toBe(false);
 
-      if (!result.isValid) {
-        expect(result.error).toBeDefined();
-      }
-    },
-  );
+    if (!result.isValid) {
+      expect(result.error).toBeDefined();
+    }
+  });
 });

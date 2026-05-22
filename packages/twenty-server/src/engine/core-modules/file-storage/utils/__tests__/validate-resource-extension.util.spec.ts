@@ -47,9 +47,9 @@ describe('validateResourceExtension', () => {
   ])(
     'should return isValid: true for $title',
     ({ resourcePath, fileFolder }) => {
-      expect(
-        validateResourceExtension({ resourcePath, fileFolder }),
-      ).toEqual({ isValid: true });
+      expect(validateResourceExtension({ resourcePath, fileFolder })).toEqual({
+        isValid: true,
+      });
     },
   );
 
@@ -111,9 +111,9 @@ describe('validateResourceExtension', () => {
   ])(
     'should return isValid: true for unconfigured file folder $title',
     ({ resourcePath, fileFolder }) => {
-      expect(
-        validateResourceExtension({ resourcePath, fileFolder }),
-      ).toEqual({ isValid: true });
+      expect(validateResourceExtension({ resourcePath, fileFolder })).toEqual({
+        isValid: true,
+      });
     },
   );
 });

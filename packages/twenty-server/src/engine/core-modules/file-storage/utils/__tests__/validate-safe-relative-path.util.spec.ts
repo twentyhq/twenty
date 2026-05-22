@@ -5,14 +5,11 @@ describe('validateSafeRelativePath', () => {
     { title: 'nested relative path', resourcePath: 'src/components/test.mjs' },
     { title: 'simple filename', resourcePath: 'file.mjs' },
     { title: 'deeply nested path', resourcePath: 'a/b/c/d.txt' },
-  ])(
-    'should return isValid: true for $title',
-    ({ resourcePath }) => {
-      expect(validateSafeRelativePath({ resourcePath })).toEqual({
-        isValid: true,
-      });
-    },
-  );
+  ])('should return isValid: true for $title', ({ resourcePath }) => {
+    expect(validateSafeRelativePath({ resourcePath })).toEqual({
+      isValid: true,
+    });
+  });
 
   it.each([
     {
