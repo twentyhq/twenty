@@ -123,10 +123,7 @@ const KeyboardScenario = () => {
           data-testid="subject"
           type="text"
           onKeyDown={(event) => {
-            setLastKey(
-              (event as unknown as { detail?: { key?: string } }).detail?.key ??
-                event.key,
-            );
+            setLastKey(event.key);
             pushEvent(event);
           }}
           onKeyUp={(event) => pushEvent(event)}
