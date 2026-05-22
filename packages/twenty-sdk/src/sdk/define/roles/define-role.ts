@@ -1,12 +1,9 @@
-import { SystemPermissionFlag } from 'twenty-shared/constants';
-
 import { createValidationResult } from '@/sdk/define/common/utils/create-validation-result';
 import { type DefineEntity } from '@/sdk/define/common/types/define-entity.type';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 
 export const defineRole: DefineEntity<RoleConfig> = (config) => {
   const errors = [];
-  const warnings: string[] = [];
 
   if (!config.universalIdentifier) {
     errors.push('Role must have a universalIdentifier');
@@ -36,33 +33,5 @@ export const defineRole: DefineEntity<RoleConfig> = (config) => {
     }
   }
 
-  const legacyPermissionFlags = config.permissionFlags ?? [];
-  const legacyAsUniversalIdentifiers = legacyPermissionFlags.map(
-    (flag) => SystemPermissionFlag[flag],
-  );
-
-  if (legacyPermissionFlags.length > 0) {
-    warnings.push(
-      'Role config uses deprecated `permissionFlags`. Migrate to `permissionFlagUniversalIdentifiers` with `SystemPermissionFlag.*`.',
-    );
-  }
-
-  const mergedUniversalIdentifiers = [
-    ...new Set([
-      ...(config.permissionFlagUniversalIdentifiers ?? []),
-      ...legacyAsUniversalIdentifiers,
-    ]),
-  ];
-
-  const normalizedConfig: RoleConfig = {
-    ...config,
-    permissionFlags: undefined,
-    permissionFlagUniversalIdentifiers: mergedUniversalIdentifiers,
-  };
-
-  return createValidationResult({
-    config: normalizedConfig,
-    errors,
-    warnings,
-  });
+  return createValidationResult({ config, errors });
 };

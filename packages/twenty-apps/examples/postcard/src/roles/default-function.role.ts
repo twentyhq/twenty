@@ -1,4 +1,5 @@
-import { PermissionFlag, defineRole } from 'twenty-sdk/define';
+import { defineRole } from 'twenty-sdk/define';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
@@ -36,5 +37,5 @@ export default defineRole({
       canUpdateFieldValue: true,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });

@@ -1,5 +1,4 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
-import { type PermissionFlagType } from '@/constants';
 
 export type ObjectPermissionManifest = SyncableEntityOptions & {
   objectUniversalIdentifier: string;
@@ -14,10 +13,6 @@ export type FieldPermissionManifest = SyncableEntityOptions & {
   fieldUniversalIdentifier: string;
   canReadFieldValue?: boolean;
   canUpdateFieldValue?: boolean;
-};
-
-export type PermissionFlagManifest = SyncableEntityOptions & {
-  flag: PermissionFlagType;
 };
 
 export type RoleManifest = SyncableEntityOptions & {
@@ -36,8 +31,4 @@ export type RoleManifest = SyncableEntityOptions & {
   objectPermissions?: ObjectPermissionManifest[];
   fieldPermissions?: FieldPermissionManifest[];
   permissionFlagUniversalIdentifiers?: string[];
-  /**
-   * @deprecated Use `permissionFlagUniversalIdentifiers`.
-   */
-  permissionFlags?: PermissionFlagManifest[];
 };

@@ -17,5 +17,5 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
