@@ -13,10 +13,6 @@ import { toolSetToDescriptors } from 'src/engine/core-modules/tool-provider/util
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { NavigationMenuItemToolWorkspaceService } from 'src/engine/metadata-modules/navigation-menu-item/tools/services/navigation-menu-item-tool.workspace-service';
 
-// Navigation tools cover both workspace navigation (gated by LAYOUTS at
-// service level) and user favorites (available to any authenticated user).
-// We expose all tools and let the underlying NavigationMenuItemAccessService
-// raise on disallowed writes.
 @Injectable()
 export class NavigationMenuItemToolProvider implements ToolProvider {
   readonly category = ToolCategory.NAVIGATION_MENU_ITEM;
