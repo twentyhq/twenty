@@ -6,10 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { getFrontComponentBuildPlugins } from 'twenty-sdk/front-component-renderer/build';
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
-const exampleSourcesDir = path.resolve(
-  dirname,
-  '../../src/__stories__/example-sources',
-);
+const storiesDir = path.resolve(dirname, '../../src/__stories__');
 const exampleSourcesBuiltDir = path.resolve(
   dirname,
   '../../src/__stories__/example-sources-built',
@@ -18,6 +15,8 @@ const exampleSourcesBuiltPreactDir = path.resolve(
   dirname,
   '../../src/__stories__/example-sources-built-preact',
 );
+
+const SOURCE_SCAN_ROOTS = ['html', 'host-api', 'showcase'];
 
 const rootNodeModules = path.resolve(dirname, '../../../../node_modules');
 
@@ -71,13 +70,14 @@ const storyAlias = {
   ...twentySharedAliases,
 };
 
-const ENTRY_POINT_PATTERNS = [
-  /\.front-component\.tsx$/,
-  /\.probe\.front-component\.tsx$/,
-];
+const ENTRY_POINT_PATTERN = /\.front-component\.tsx$/;
 
 const findEntryPointFiles = (directory: string): string[] => {
   const result: string[] = [];
+
+  if (!fs.existsSync(directory)) {
+    return result;
+  }
 
   for (const dirent of fs.readdirSync(directory, { withFileTypes: true })) {
     const absolutePath = path.join(directory, dirent.name);
@@ -95,7 +95,7 @@ const findEntryPointFiles = (directory: string): string[] => {
       continue;
     }
 
-    if (ENTRY_POINT_PATTERNS.some((pattern) => pattern.test(dirent.name))) {
+    if (ENTRY_POINT_PATTERN.test(dirent.name)) {
       result.push(absolutePath);
     }
   }
@@ -104,18 +104,27 @@ const findEntryPointFiles = (directory: string): string[] => {
 };
 
 const resolveEntryPoints = (): Record<string, string> => {
-  const files = findEntryPointFiles(exampleSourcesDir);
+  const files = SOURCE_SCAN_ROOTS.flatMap((root) =>
+    findEntryPointFiles(path.join(storiesDir, root)),
+  );
+
   const entryPoints: Record<string, string> = {};
 
   for (const filePath of files) {
-    const relative = path.relative(exampleSourcesDir, filePath);
-    const entryName = relative.replace(/\.tsx$/, '');
-    entryPoints[entryName] = filePath;
+    const basename = path.basename(filePath).replace(/\.tsx$/, '');
+
+    if (entryPoints[basename] !== undefined) {
+      throw new Error(
+        `Duplicate front-component basename "${basename}" found at ${filePath} and ${entryPoints[basename]}`,
+      );
+    }
+
+    entryPoints[basename] = filePath;
   }
 
   if (Object.keys(entryPoints).length === 0) {
     throw new Error(
-      `No story component source files found in ${exampleSourcesDir}`,
+      `No front-component source files found under ${storiesDir} (scanned: ${SOURCE_SCAN_ROOTS.join(', ')})`,
     );
   }
 
