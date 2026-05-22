@@ -24,24 +24,30 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
+import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PageLayoutModule } from 'src/engine/metadata-modules/page-layout/page-layout.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-field.module';
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
 // NOTE: This module does NOT import WorkflowToolsModule, DashboardToolsModule,
-// NavigationMenuItemToolsModule, PageLayoutToolsModule, WebhookToolsModule, or
-// WorkflowRunToolsModule to avoid circular dependencies. Instead, those
-// @Global() modules each provide their service token, which becomes available
-// to their respective providers via @Optional() injection once the module is
-// imported anywhere in the app (e.g. AiChatModule).
+// or WorkflowRunToolsModule directly: their service graphs transitively reach
+// AiAgentExecutionModule which forwardRef's back into ToolProviderModule.
+// Those three @Global() modules provide a service token that their respective
+// providers consume via @Optional() @Inject, breaking the cycle.
+//
+// Webhook, NavigationMenuItem, and PageLayout do NOT have that cycle, so we
+// import their entity modules directly and the providers inject the services
+// the normal way (same pattern as views/objects/metadata).
 
 @Module({
   imports: [
@@ -59,6 +65,9 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
+    NavigationMenuItemModule,
+    PageLayoutModule,
+    WebhookModule,
     UserRoleModule,
     TypeOrmModule.forFeature([UserEntity]),
   ],

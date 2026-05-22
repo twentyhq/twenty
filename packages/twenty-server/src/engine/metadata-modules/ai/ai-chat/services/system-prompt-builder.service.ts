@@ -326,12 +326,10 @@ ${tools
         return 'View Field Tools (manage view columns)';
       case ToolCategory.PAGE_LAYOUT:
         return 'Page Layout Tools (record-page, record-index, and standalone layouts)';
-      case ToolCategory.NAVIGATION:
-        return 'Navigation Tools (workspace navigation and user favorites)';
+      case ToolCategory.NAVIGATION_MENU_ITEM:
+        return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
       case ToolCategory.WEBHOOK:
         return 'Webhook Tools (outgoing webhooks)';
-      case ToolCategory.WORKFLOW_RUN:
-        return 'Workflow Run Tools (inspect, trigger, and stop runs)';
       default:
         return assertUnreachable(category);
     }

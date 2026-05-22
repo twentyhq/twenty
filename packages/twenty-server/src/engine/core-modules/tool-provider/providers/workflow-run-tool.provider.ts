@@ -18,7 +18,7 @@ import type { WorkflowRunToolWorkspaceService } from 'src/modules/workflow/workf
 
 @Injectable()
 export class WorkflowRunToolProvider implements ToolProvider {
-  readonly category = ToolCategory.WORKFLOW_RUN;
+  readonly category = ToolCategory.WORKFLOW;
 
   constructor(
     @Optional()
@@ -49,7 +49,7 @@ export class WorkflowRunToolProvider implements ToolProvider {
       return [];
     }
 
-    return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW_RUN, {
+    return toolSetToDescriptors(toolSet, ToolCategory.WORKFLOW, {
       includeSchemas: options?.includeSchemas ?? true,
     });
   }
@@ -71,7 +71,7 @@ export class WorkflowRunToolProvider implements ToolProvider {
       toolSet,
       toolName,
       args,
-      ToolCategory.WORKFLOW_RUN,
+      ToolCategory.WORKFLOW,
     );
   }
 
