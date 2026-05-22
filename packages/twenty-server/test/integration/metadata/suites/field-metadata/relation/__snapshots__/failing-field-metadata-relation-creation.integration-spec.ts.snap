@@ -422,7 +422,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,
@@ -576,7 +576,7 @@ exports[`Field metadata relation creation should fail relation MANY_TO_ONE when 
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,
@@ -1165,7 +1165,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
           },
         ],
       },
-      "message": "Validation failed for 2 fieldMetadatas, 1 index",
+      "message": "Validation failed for 2 fieldMetadata, 1 index",
       "summary": {
         "fieldMetadata": 2,
         "index": 1,
@@ -1325,7 +1325,7 @@ exports[`Field metadata relation creation should fail relation ONE_TO_MANY when 
           },
         ],
       },
-      "message": "Validation failed for 2 fieldMetadatas, 1 index",
+      "message": "Validation failed for 2 fieldMetadata, 1 index",
       "summary": {
         "fieldMetadata": 2,
         "index": 1,
@@ -1537,7 +1537,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,
@@ -1611,7 +1611,7 @@ exports[`Field metadata relation creation should fail should fail when creating 
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,
