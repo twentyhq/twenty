@@ -104,12 +104,14 @@ describe('CalDavClientProvider', () => {
       expect(client).toBeDefined();
     });
 
-    it('should throw when the connected account does not exist', async () => {
+    it('should throw INSUFFICIENT_PERMISSIONS when the connected account does not exist', async () => {
       connectedAccountRepository.findOne.mockResolvedValue(null);
 
-      await expect(provider.getClient(mockConnectedAccountId)).rejects.toThrow(
-        `Connected account ${mockConnectedAccountId} not found while opening CalDAV client`,
-      );
+      await expect(
+        provider.getClient(mockConnectedAccountId),
+      ).rejects.toMatchObject({
+        code: CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
+      });
     });
 
     it('should throw INSUFFICIENT_PERMISSIONS when CalDAV credentials are missing', async () => {

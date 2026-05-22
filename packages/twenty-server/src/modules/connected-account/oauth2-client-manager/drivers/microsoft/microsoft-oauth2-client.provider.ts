@@ -32,7 +32,7 @@ export class MicrosoftOAuth2ClientProvider {
     if (!isDefined(connectedAccount)) {
       throw new ConnectedAccountRefreshAccessTokenException(
         `Connected account ${connectedAccountId} not found`,
-        ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND,
+        ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND,
       );
     }
 
