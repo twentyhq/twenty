@@ -25,9 +25,9 @@ const OBJECT_UNIVERSAL_IDENTIFIERS = [
   MESSAGE_FOLDER_OBJECT_UNIVERSAL_IDENTIFIER,
 ];
 
-@RegisteredWorkspaceCommand('2.7.0', 1798000050000)
+@RegisteredWorkspaceCommand('2.8.0', 1798000050000)
 @Command({
-  name: 'upgrade:2-7:drop-channel-standard-objects',
+  name: 'upgrade:2-8:drop-channel-standard-objects',
   description:
     'Drop calendarChannel, messageChannel, messageFolder standard objects from workspace schemas (moved to core metadata)',
 })

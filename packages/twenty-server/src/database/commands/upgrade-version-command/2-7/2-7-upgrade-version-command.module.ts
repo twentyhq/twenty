@@ -4,7 +4,6 @@ import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/w
 import { SyncCommandMenuItemAvailabilityExpressionsCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-workspace-command-1798000020000-sync-command-menu-item-availability-expressions.command';
 import { DropFavoriteObjectsCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-workspace-command-1798000030000-drop-favorite-objects.command';
 import { DropConnectedAccountStandardObjectCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-workspace-command-1798000040000-drop-connected-account-standard-object.command';
-import { DropChannelStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-workspace-command-1798000050000-drop-channel-standard-objects.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
@@ -22,7 +21,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     DropFavoriteObjectsCommand,
     SyncCommandMenuItemAvailabilityExpressionsCommand,
     DropConnectedAccountStandardObjectCommand,
-    DropChannelStandardObjectsCommand,
   ],
 })
 export class V2_7_UpgradeVersionCommandModule {}
