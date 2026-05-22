@@ -101,6 +101,7 @@ export class DropConnectedAccountStandardObjectCommand extends ActiveOrSuspended
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
+          isSystemBuild: true,
           allFlatEntityOperationByMetadataName: {
             ...(connectedAccountObjectMetadata
               ? {

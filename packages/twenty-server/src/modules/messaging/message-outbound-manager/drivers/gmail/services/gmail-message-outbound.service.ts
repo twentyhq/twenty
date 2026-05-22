@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { mimeEncode } from 'src/modules/messaging/message-import-manager/utils/mime-encode.util';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
@@ -17,7 +17,7 @@ import { toMailComposerOptions } from 'src/modules/messaging/message-outbound-ma
 @Injectable()
 export class GmailMessageOutboundService implements MessageOutboundDriver {
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly googleOAuth2ClientProvider: GoogleOAuth2ClientProvider,
   ) {}
 
   async sendMessage(
@@ -71,10 +71,9 @@ export class GmailMessageOutboundService implements MessageOutboundDriver {
     encodedMessage: string;
     messageBuffer: Buffer;
   }> {
-    const oAuth2Client =
-      await this.oAuth2ClientManagerService.getGoogleOAuth2Client(
-        connectedAccount,
-      );
+    const oAuth2Client = await this.googleOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     const gmailClient = google.gmail({
       version: 'v1',

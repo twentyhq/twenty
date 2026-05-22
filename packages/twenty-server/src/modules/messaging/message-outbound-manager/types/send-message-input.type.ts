@@ -14,4 +14,5 @@ export type SendMessageInput = {
   }[];
   inReplyTo?: string;
   threadExternalId?: string;
+  references?: string[];
 };

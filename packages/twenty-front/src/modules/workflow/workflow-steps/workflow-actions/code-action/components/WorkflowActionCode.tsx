@@ -15,19 +15,19 @@ type WorkflowActionCodeProps = {
 };
 
 const WorkflowEditActionCode = lazy(() =>
-  import(
-    '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode'
-  ).then((module) => ({
-    default: module.WorkflowEditActionCode,
-  })),
+  import('@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCode').then(
+    (module) => ({
+      default: module.WorkflowEditActionCode,
+    }),
+  ),
 );
 
 const WorkflowReadonlyActionCode = lazy(() =>
-  import(
-    '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowReadonlyActionCode'
-  ).then((module) => ({
-    default: module.WorkflowReadonlyActionCode,
-  })),
+  import('@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowReadonlyActionCode').then(
+    (module) => ({
+      default: module.WorkflowReadonlyActionCode,
+    }),
+  ),
 );
 
 export const WorkflowActionCode = ({

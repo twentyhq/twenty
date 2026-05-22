@@ -6,12 +6,14 @@ import { ApplicationVersionValidationService } from 'src/engine/core-modules/app
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageModule } from 'src/engine/core-modules/file-storage/file-storage.module';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
 import { UpgradeModule } from 'src/engine/core-modules/upgrade/upgrade.module';
 
 @Module({
   imports: [
     FileStorageModule,
+    SecureHttpClientModule,
     TwentyConfigModule,
     UpgradeModule,
     TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),

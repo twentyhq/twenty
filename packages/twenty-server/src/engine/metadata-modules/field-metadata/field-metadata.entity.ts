@@ -57,8 +57,8 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 ])
 @Index('IDX_FIELD_METADATA_WORKSPACE_ID', ['workspaceId'])
 export class FieldMetadataEntity<
-    TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
-  >
+  TFieldMetadataType extends FieldMetadataType = FieldMetadataType,
+>
   extends SyncableEntity
   implements Required<FieldMetadataEntity>
 {

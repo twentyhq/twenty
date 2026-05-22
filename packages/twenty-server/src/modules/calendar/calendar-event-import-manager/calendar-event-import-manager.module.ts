@@ -29,7 +29,6 @@ import { CalendarEventListFetchJob } from 'src/modules/calendar/calendar-event-i
 import { CalendarEventsImportJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-events-import.job';
 import { CalendarOngoingStaleJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-ongoing-stale.job';
 import { CalendarRelaunchFailedCalendarChannelJob } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-relaunch-failed-calendar-channel.job';
-import { CalendarAccountAuthenticationService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-account-authentication.service';
 import { CalendarEventImportErrorHandlerService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-event-import-exception-handler.service';
 import { CalendarEventsImportService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-events-import.service';
 import { CalendarFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-fetch-events.service';
@@ -67,7 +66,6 @@ import { RefreshTokensManagerModule } from 'src/modules/connected-account/refres
     FeatureFlagModule,
   ],
   providers: [
-    CalendarAccountAuthenticationService,
     CalendarChannelSyncStatusService,
     CalendarEventsImportService,
     CalendarFetchEventsService,

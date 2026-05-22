@@ -5,9 +5,7 @@ import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 
 @Injectable()
-export class ExceptionHandlerMockService
-  implements ExceptionHandlerDriverInterface
-{
+export class ExceptionHandlerMockService implements ExceptionHandlerDriverInterface {
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: readonly any[],

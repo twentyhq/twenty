@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.4.0', 1798000003000)
-export class AddApplicationIdToPublicDomainFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddApplicationIdToPublicDomainFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."publicDomain" ADD "applicationId" uuid`,

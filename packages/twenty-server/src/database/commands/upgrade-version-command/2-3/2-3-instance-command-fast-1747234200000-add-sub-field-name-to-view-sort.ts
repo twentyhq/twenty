@@ -20,9 +20,7 @@ import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/
 // `IF NOT EXISTS`), so cross-upgrade callers see it as a no-op while
 // fresh-from-2.5 install paths still create the column there as before.
 @RegisteredInstanceCommand('2.3.0', 1747234200000)
-export class AddSubFieldNameToViewSortEarlyFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddSubFieldNameToViewSortEarlyFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."viewSort" ADD COLUMN IF NOT EXISTS "subFieldName" character varying`,

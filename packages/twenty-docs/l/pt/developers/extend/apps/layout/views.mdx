@@ -38,6 +38,60 @@ export default defineView({
 * Você também pode declarar `filters`, `filterGroups`, `groups` e `fieldGroups` para configurações avançadas.
 * `position` controla a ordenação quando existem várias visualizações para o mesmo objeto.
 
+## Filtros
+
+Uma visualização pode vir com filtros pré-aplicados. Cada filtro tem três coordenadas: o **campo** a ser filtrado, o **operador** (como comparar) e o **valor** (com o que comparar). As três precisam estar alinhadas — usar um operador que não se aplica a um tipo de campo será rejeitado no momento da sincronização.
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Operadores compatíveis por tipo de campo
+
+| Tipo de campo                                                                                      | Operandos suportados                                                                                               |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`                                                                                                               |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Tipos de campos com nomes semelhantes podem usar operandos completamente diferentes — `SELECT` e `MULTI_SELECT` sendo um caso comum.
+
+### Formato do valor por operando
+
+O campo `value` é sempre um valor serializável em JSON, mas o seu formato esperado depende do operando:
+
+| Família do operando                                   | Formato do valor                    | Exemplo                  |
+| ----------------------------------------------------- | ----------------------------------- | ------------------------ |
+| `IS`, `IS_NOT` em `SELECT`                            | array de chaves de opções (strings) | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` em `MULTI_SELECT`      | array de chaves de opções (strings) | `['TAG_A']`              |
+| `IS`, `IS_NOT` em `RELATION`                          | array de IDs de registros (uuids)   | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` em campos de texto     | string                              | `'acme'`                 |
+| `IS`, `IS_NOT` em `NUMBER`                            | string (o valor)                    | `'5'`                    |
+| `IS` em `RATING` / `UUID`                             | string (o valor)                    | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | string (o limite)                   | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` em `DATE` / `DATE_TIME` | string ISO 8601                     | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                            | string vazia                        | `''`                     |
+| `IS` em `BOOLEAN`                                     | `'true'` ou `'false'`               | `'true'`                 |
+
 ## Como as visualizações aparecem na UI
 
 Uma visualização por si só não é acessível a partir da barra lateral. Para fazê-la aparecer lá, associe-a a um [item de menu de navegação](/l/pt/developers/extend/apps/layout/navigation-menu-items) do tipo `VIEW` que aponte para o `universalIdentifier` da visualização. Esse é o padrão canônico: cada objeto personalizado normalmente inclui uma visualização padrão + uma entrada na barra lateral que a abre.

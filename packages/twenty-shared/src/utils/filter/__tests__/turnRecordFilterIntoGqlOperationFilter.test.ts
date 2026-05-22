@@ -484,6 +484,18 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
 
       expect(result).toHaveProperty('rating.in');
     });
+
+    it('should handle IS_NOT operand as wrapped eq', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter('f-rating', RecordFilterOperand.IS_NOT, '3'),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: { rating: { eq: 'RATING_3' } },
+      });
+    });
   });
 
   describe('BOOLEAN filter', () => {
@@ -919,6 +931,24 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toHaveProperty('recordId.in');
+    });
+
+    it('should handle IS_NOT operand as wrapped in', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-uuid',
+          RecordFilterOperand.IS_NOT,
+          '["550e8400-e29b-41d4-a716-446655440000"]',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        not: {
+          recordId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+        },
+      });
     });
   });
 

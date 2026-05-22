@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddIsActiveToOverridableEntities1774966727625
-  implements MigrationInterface
-{
+export class AddIsActiveToOverridableEntities1774966727625 implements MigrationInterface {
   name = 'AddIsActiveToOverridableEntities1774966727625';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

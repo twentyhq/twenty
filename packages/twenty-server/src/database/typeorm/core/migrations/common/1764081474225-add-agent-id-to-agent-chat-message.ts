@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddAgentIdToAgentChatMessage1764081474225
-  implements MigrationInterface
-{
+export class AddAgentIdToAgentChatMessage1764081474225 implements MigrationInterface {
   name = 'AddAgentIdToAgentChatMessage1764081474225';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

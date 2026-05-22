@@ -23,7 +23,6 @@ import {
   MessageImportDriverException,
   MessageImportDriverExceptionCode,
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import {
   MessageImportExceptionHandlerService,
@@ -53,7 +52,6 @@ export class MessagingMessagesImportService {
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly messagingGetMessagesService: MessagingGetMessagesService,
     private readonly messageImportErrorHandlerService: MessageImportExceptionHandlerService,
-    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -96,25 +94,10 @@ export class MessagingMessagesImportService {
             workspaceId,
           );
 
-          const { accessToken, refreshToken } =
-            await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-              {
-                connectedAccount,
-                workspaceId,
-                messageChannelId: messageChannel.id,
-              },
-            );
-
-          const connectedAccountWithFreshTokens = {
-            ...connectedAccount,
-            accessToken,
-            refreshToken,
-          };
-
-          if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
-            connectedAccountWithFreshTokens.handleAliases =
+          if (!isDefined(connectedAccount.handleAliases)) {
+            connectedAccount.handleAliases =
               await this.emailAliasManagerService.refreshHandleAliases(
-                connectedAccountWithFreshTokens,
+                connectedAccount,
                 workspaceId,
               );
           }
@@ -139,7 +122,7 @@ export class MessagingMessagesImportService {
           const allMessages =
             await this.messagingGetMessagesService.getMessages(
               messageIdsToFetch,
-              connectedAccountWithFreshTokens,
+              connectedAccount,
               messageChannel,
             );
 
@@ -167,7 +150,7 @@ export class MessagingMessagesImportService {
 
           const userWorkspace = await this.userWorkspaceRepository.findOne({
             where: {
-              id: connectedAccountWithFreshTokens.userWorkspaceId,
+              id: connectedAccount.userWorkspaceId,
             },
           });
 
@@ -198,7 +181,7 @@ export class MessagingMessagesImportService {
             );
           }
 
-          if (!isDefined(connectedAccountWithFreshTokens.handleAliases)) {
+          if (!isDefined(connectedAccount.handleAliases)) {
             throw new MessageImportDriverException(
               'Message channel handle is required',
               MessageImportDriverExceptionCode.CHANNEL_MISCONFIGURED,
@@ -212,7 +195,7 @@ export class MessagingMessagesImportService {
 
           const messagesToSave = filterEmails(
             messageChannel.handle,
-            [...connectedAccountWithFreshTokens.handleAliases],
+            [...connectedAccount.handleAliases],
             allMessages,
             blocklist
               .map((blocklistItem) => blocklistItem.handle)
@@ -225,7 +208,7 @@ export class MessagingMessagesImportService {
             await this.saveMessagesAndEnqueueContactCreationService.saveMessagesAndEnqueueContactCreation(
               messagesToSave,
               messageChannel,
-              connectedAccountWithFreshTokens,
+              connectedAccount,
               workspaceId,
             );
           }

@@ -3,7 +3,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { google } from 'googleapis';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { GmailMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/gmail/services/gmail-message-outbound.service';
 
 jest.mock('nodemailer/lib/mail-composer', () => {
@@ -54,11 +54,9 @@ describe('GmailMessageOutboundService', () => {
       providers: [
         GmailMessageOutboundService,
         {
-          provide: OAuth2ClientManagerService,
+          provide: GoogleOAuth2ClientProvider,
           useValue: {
-            getGoogleOAuth2Client: jest
-              .fn()
-              .mockResolvedValue(mockOAuth2Client),
+            getClient: jest.fn().mockResolvedValue(mockOAuth2Client),
           },
         },
       ],
@@ -84,9 +82,8 @@ describe('GmailMessageOutboundService', () => {
     };
 
     const connectedAccount = {
+      id: 'connected-account-id',
       provider: ConnectedAccountProvider.GOOGLE,
-      accessToken: 'access-token',
-      refreshToken: 'refresh-token',
     } as any;
 
     await service.sendMessage(sendMessageInput, connectedAccount);
@@ -116,9 +113,8 @@ describe('GmailMessageOutboundService', () => {
     };
 
     const connectedAccount = {
+      id: 'connected-account-id',
       provider: ConnectedAccountProvider.GOOGLE,
-      accessToken: 'access-token',
-      refreshToken: 'refresh-token',
     } as any;
 
     await service.sendMessage(sendMessageInput, connectedAccount);

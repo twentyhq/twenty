@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddIsHeadlessToFrontComponent1771509478665
-  implements MigrationInterface
-{
+export class AddIsHeadlessToFrontComponent1771509478665 implements MigrationInterface {
   name = 'AddIsHeadlessToFrontComponent1771509478665';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

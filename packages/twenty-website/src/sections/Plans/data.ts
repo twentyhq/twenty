@@ -23,6 +23,7 @@ const PRO_BULLETS_YEARLY = [
 const PRO_BULLETS_SELF_HOST = [
   msg`Full customization`,
   msg`Create custom apps`,
+  msg`Up to 5 workspaces`,
   msg`Community support`,
 ];
 
@@ -48,7 +49,6 @@ const ORGANIZATION_BULLETS_SELF_HOST = [
   msg`Row-level permissions`,
   msg`SAML/OIDC SSO`,
   msg`Twenty team support`,
-  msg`Up to 5 workspaces`,
 ];
 
 export const PLANS_DATA = {

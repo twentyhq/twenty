@@ -1,10 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isDefined } from 'twenty-shared/utils';
-
-import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
-import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
+import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
 import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
@@ -18,36 +14,19 @@ export class CalDavGetEventsService {
   private static readonly FUTURE_DAYS_WINDOW = 365;
 
   constructor(
-    private readonly clientService: CalDavClientService,
+    private readonly calDavClientProvider: CalDavClientProvider,
     private readonly fetchEventsService: CalDavFetchEventsService,
-    private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
 
   async getCalendarEvents(
-    connectedAccount: Pick<
-      ConnectedAccountEntity,
-      'provider' | 'id' | 'connectionParameters' | 'handle' | 'workspaceId'
-    >,
+    connectedAccountId: string,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
-    this.logger.debug(`Getting calendar events for ${connectedAccount.handle}`);
+    this.logger.debug(`Getting calendar events for ${connectedAccountId}`);
 
     try {
-      if (!isDefined(connectedAccount.connectionParameters?.CALDAV)) {
-        throw new Error('CalDAV settings not configured for this account');
-      }
-
-      const params =
-        this.connectedAccountTokenEncryptionService.decryptProtocolPassword({
-          protocolParams: connectedAccount.connectionParameters.CALDAV,
-          workspaceId: connectedAccount.workspaceId,
-        });
-
-      const client = await this.clientService.getClient({
-        serverUrl: params.host,
-        username: params.username ?? connectedAccount.handle,
-        password: params.password,
-      });
+      const client =
+        await this.calDavClientProvider.getClient(connectedAccountId);
 
       const startDate = new Date(
         Date.now() -
@@ -67,7 +46,7 @@ export class CalDavGetEventsService {
       });
 
       this.logger.debug(
-        `Found ${result.events.length} calendar events for ${connectedAccount.handle}`,
+        `Found ${result.events.length} calendar events for ${connectedAccountId}`,
       );
 
       return {

@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('1.23.0', 1776090711153)
-export class AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddGlobalObjectContextToCommandMenuItemAvailabilityTypeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'ALTER TYPE "core"."commandMenuItem_availabilitytype_enum" RENAME TO "commandMenuItem_availabilitytype_enum_old"',

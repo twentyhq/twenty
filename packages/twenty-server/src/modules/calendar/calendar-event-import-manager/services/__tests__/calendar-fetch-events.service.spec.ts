@@ -16,15 +16,6 @@ const mockCalendarChannelRepository = {
   update: jest.fn(),
 };
 
-const mockCalendarAccountAuthenticationService = {
-  validateAndRefreshConnectedAccountAuthentication: jest
-    .fn()
-    .mockResolvedValue({
-      accessToken: 'fresh-access-token',
-      refreshToken: 'fresh-refresh-token',
-    }),
-};
-
 const mockCalendarEventsImportService = {
   processCalendarEventsImport: jest.fn(),
 };
@@ -82,7 +73,6 @@ describe('CalendarFetchEventsService', () => {
       mockGetCalendarEventsService as any,
       mockCalendarEventImportErrorHandlerService as any,
       mockCalendarEventsImportService as any,
-      mockCalendarAccountAuthenticationService as any,
     );
   });
 
