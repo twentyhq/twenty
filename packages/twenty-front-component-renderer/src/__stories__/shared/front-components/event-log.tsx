@@ -1,4 +1,5 @@
 import { type SyntheticEvent, useState } from 'react';
+import { isDefined } from 'twenty-shared/utils';
 
 export type LoggedEventFile = {
   name: string;
@@ -42,37 +43,41 @@ const EVENT_LOG_STYLE = {
   overflow: 'auto',
 };
 
-const isFileLike = (
+const isStringValue = (value: unknown): value is string =>
+  typeof value === 'string';
+
+const isNumberValue = (value: unknown): value is number =>
+  typeof value === 'number';
+
+const isBooleanValue = (value: unknown): value is boolean =>
+  typeof value === 'boolean';
+
+const isUnknownRecord = (value: unknown): value is Record<string, unknown> =>
+  isDefined(value) && typeof value === 'object';
+
+const isHtmlElement = (value: unknown): value is HTMLElement =>
+  isUnknownRecord(value) && typeof value.getAttribute === 'function';
+
+const isFileLike = (value: unknown): value is LoggedEventFile =>
+  isUnknownRecord(value) &&
+  isStringValue(value.name) &&
+  isNumberValue(value.size) &&
+  isStringValue(value.type);
+
+const isFileListLike = (
   value: unknown,
-): value is { name: string; size: number; type: string } => {
-  if (value === null || typeof value !== 'object') {
-    return false;
-  }
-
-  const candidate = value as Record<string, unknown>;
-
-  return (
-    typeof candidate.name === 'string' &&
-    typeof candidate.size === 'number' &&
-    typeof candidate.type === 'string'
-  );
-};
+): value is { length: number } & Record<number, unknown> =>
+  isUnknownRecord(value) && isNumberValue(value.length);
 
 const serializeFiles = (value: unknown): LoggedEventFile[] | undefined => {
-  if (value === null || typeof value !== 'object') {
-    return undefined;
-  }
-
-  const fileListLike = value as { length?: unknown } & Record<number, unknown>;
-
-  if (typeof fileListLike.length !== 'number') {
+  if (!isFileListLike(value)) {
     return undefined;
   }
 
   const serialized: LoggedEventFile[] = [];
 
-  for (let fileIndex = 0; fileIndex < fileListLike.length; fileIndex++) {
-    const candidate = fileListLike[fileIndex];
+  for (let fileIndex = 0; fileIndex < value.length; fileIndex++) {
+    const candidate = value[fileIndex];
 
     if (isFileLike(candidate)) {
       serialized.push({
@@ -86,130 +91,129 @@ const serializeFiles = (value: unknown): LoggedEventFile[] | undefined => {
   return serialized;
 };
 
+const pickFromRecords = <TValue,>(
+  records: Record<string, unknown>[],
+  key: string,
+  guard: (value: unknown) => value is TValue,
+): TValue | undefined => {
+  for (const record of records) {
+    const value = record[key];
+    if (guard(value)) {
+      return value;
+    }
+  }
+  return undefined;
+};
+
+const readTestId = (
+  source: unknown,
+  target: Record<string, unknown>,
+): string => {
+  if (isHtmlElement(source)) {
+    const testId = source.getAttribute('data-testid');
+    if (isDefined(testId)) {
+      return testId;
+    }
+  }
+
+  const targetTestId = target['data-testid'];
+  if (isStringValue(targetTestId)) {
+    return targetTestId;
+  }
+
+  return 'unknown';
+};
+
+const toUnknownRecord = (value: unknown): Record<string, unknown> =>
+  isUnknownRecord(value) ? value : {};
+
 export const useEventLog = () => {
   const [entries, setEntries] = useState<LoggedEventEntry[]>([]);
 
   const pushEvent = (event: SyntheticEvent<HTMLElement>) => {
     setEntries((previousEntries) => {
       const eventRecord = event as unknown as Record<string, unknown>;
-      const target =
-        typeof eventRecord.target === 'object' && eventRecord.target !== null
-          ? (eventRecord.target as Record<string, unknown>)
-          : {};
-      const detailRecord =
-        typeof eventRecord.detail === 'object' && eventRecord.detail !== null
-          ? (eventRecord.detail as Record<string, unknown>)
-          : {};
-      const targetElement = eventRecord.target as HTMLElement | null;
-      const testIdSource =
-        (eventRecord.currentTarget as HTMLElement | null) ?? targetElement;
-      const pickString = (key: string): string | undefined => {
-        if (typeof eventRecord[key] === 'string') {
-          return eventRecord[key] as string;
-        }
-        if (typeof detailRecord[key] === 'string') {
-          return detailRecord[key] as string;
-        }
-        return undefined;
-      };
-      const pickBoolean = (key: string): boolean | undefined => {
-        if (typeof eventRecord[key] === 'boolean') {
-          return eventRecord[key] as boolean;
-        }
-        if (typeof detailRecord[key] === 'boolean') {
-          return detailRecord[key] as boolean;
-        }
-        return undefined;
-      };
-      const pickNumber = (key: string): number | undefined => {
-        if (typeof eventRecord[key] === 'number') {
-          return eventRecord[key] as number;
-        }
-        if (typeof detailRecord[key] === 'number') {
-          return detailRecord[key] as number;
-        }
-        return undefined;
-      };
+      const target = toUnknownRecord(eventRecord.target);
+      const detail = toUnknownRecord(eventRecord.detail);
+      const records = [eventRecord, detail];
 
       const entry: LoggedEventEntry = {
         index: previousEntries.length,
-        type: typeof event.type === 'string' ? event.type : 'unknown',
-        testId:
-          (typeof testIdSource?.getAttribute === 'function'
-            ? testIdSource.getAttribute('data-testid')
-            : null) ??
-          (typeof target['data-testid'] === 'string'
-            ? (target['data-testid'] as string)
-            : 'unknown'),
+        type: isStringValue(event.type) ? event.type : 'unknown',
+        testId: readTestId(
+          eventRecord.currentTarget ?? eventRecord.target,
+          target,
+        ),
       };
 
-      if (typeof target.value === 'string') {
-        entry.value = target.value;
-      } else if (typeof detailRecord.value === 'string') {
-        entry.value = detailRecord.value as string;
+      const value = pickFromRecords([target, detail], 'value', isStringValue);
+      if (isDefined(value)) {
+        entry.value = value;
       }
 
-      if (typeof target.checked === 'boolean') {
-        entry.checked = target.checked;
-      } else if (typeof detailRecord.checked === 'boolean') {
-        entry.checked = detailRecord.checked as boolean;
+      const checked = pickFromRecords(
+        [target, detail],
+        'checked',
+        isBooleanValue,
+      );
+      if (isDefined(checked)) {
+        entry.checked = checked;
       }
 
       const files =
-        serializeFiles(target.files) ?? serializeFiles(detailRecord.files);
-
-      if (files !== undefined) {
+        serializeFiles(target.files) ?? serializeFiles(detail.files);
+      if (isDefined(files)) {
         entry.files = files;
       }
 
-      const keyValue = pickString('key');
-      if (keyValue !== undefined) {
-        entry.key = keyValue;
+      const key = pickFromRecords(records, 'key', isStringValue);
+      if (isDefined(key)) {
+        entry.key = key;
       }
 
-      const codeValue = pickString('code');
-      if (codeValue !== undefined) {
-        entry.code = codeValue;
+      const code = pickFromRecords(records, 'code', isStringValue);
+      if (isDefined(code)) {
+        entry.code = code;
       }
 
-      const shiftKeyValue = pickBoolean('shiftKey');
-      if (shiftKeyValue !== undefined) {
-        entry.shiftKey = shiftKeyValue;
+      const shiftKey = pickFromRecords(records, 'shiftKey', isBooleanValue);
+      if (isDefined(shiftKey)) {
+        entry.shiftKey = shiftKey;
       }
 
-      const ctrlKeyValue = pickBoolean('ctrlKey');
-      if (ctrlKeyValue !== undefined) {
-        entry.ctrlKey = ctrlKeyValue;
+      const ctrlKey = pickFromRecords(records, 'ctrlKey', isBooleanValue);
+      if (isDefined(ctrlKey)) {
+        entry.ctrlKey = ctrlKey;
       }
 
-      const metaKeyValue = pickBoolean('metaKey');
-      if (metaKeyValue !== undefined) {
-        entry.metaKey = metaKeyValue;
+      const metaKey = pickFromRecords(records, 'metaKey', isBooleanValue);
+      if (isDefined(metaKey)) {
+        entry.metaKey = metaKey;
       }
 
-      const altKeyValue = pickBoolean('altKey');
-      if (altKeyValue !== undefined) {
-        entry.altKey = altKeyValue;
+      const altKey = pickFromRecords(records, 'altKey', isBooleanValue);
+      if (isDefined(altKey)) {
+        entry.altKey = altKey;
       }
 
-      const scrollTopValue = pickNumber('scrollTop');
-      if (scrollTopValue !== undefined) {
-        entry.scrollTop = scrollTopValue;
+      const scrollTop = pickFromRecords(records, 'scrollTop', isNumberValue);
+      if (isDefined(scrollTop)) {
+        entry.scrollTop = scrollTop;
       }
 
-      const scrollLeftValue = pickNumber('scrollLeft');
-      if (scrollLeftValue !== undefined) {
-        entry.scrollLeft = scrollLeftValue;
+      const scrollLeft = pickFromRecords(records, 'scrollLeft', isNumberValue);
+      if (isDefined(scrollLeft)) {
+        entry.scrollLeft = scrollLeft;
       }
 
-      const deltaXValue = pickNumber('deltaX');
-      if (deltaXValue !== undefined) {
-        entry.deltaX = deltaXValue;
+      const deltaX = pickFromRecords(records, 'deltaX', isNumberValue);
+      if (isDefined(deltaX)) {
+        entry.deltaX = deltaX;
       }
 
-      const deltaYValue = pickNumber('deltaY');
-      if (deltaYValue !== undefined) {
-        entry.deltaY = deltaYValue;
+      const deltaY = pickFromRecords(records, 'deltaY', isNumberValue);
+      if (isDefined(deltaY)) {
+        entry.deltaY = deltaY;
       }
 
       return [...previousEntries, entry];

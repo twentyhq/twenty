@@ -1,5 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, userEvent, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { FrontComponentRenderer } from '../../host/components/FrontComponentRenderer';
 import {
@@ -32,7 +33,7 @@ export const Snackbar: Story = runFrontComponentStory({
     const canvas = within(canvasElement);
     const api = args.frontComponentHostCommunicationApi;
 
-    if (api === undefined) {
+    if (!isDefined(api)) {
       throw new Error('frontComponentHostCommunicationApi is required');
     }
 

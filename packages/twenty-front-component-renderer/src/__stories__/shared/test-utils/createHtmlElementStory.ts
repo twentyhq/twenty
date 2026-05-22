@@ -9,12 +9,18 @@ import { runFrontComponentStory } from './runFrontComponentStory';
 
 type Story = StoryObj<typeof FrontComponentRenderer>;
 
-const ELEMENT_COVERAGE_BUNDLE_NAME = 'element-coverage';
+type CreateHtmlTagStoryParams = {
+  frontComponentBundleName: string;
+  tag: string;
+};
 
-export const createHtmlElementClickStory = (elementName: string): Story =>
+export const createHtmlTagClickStory = ({
+  frontComponentBundleName,
+  tag,
+}: CreateHtmlTagStoryParams): Story =>
   runFrontComponentStory({
-    frontComponentBundleName: ELEMENT_COVERAGE_BUNDLE_NAME,
-    scenarioId: `baseline:${elementName}:click`,
+    frontComponentBundleName,
+    scenarioId: `${tag}:click`,
     play: async ({ canvasElement }) => {
       const canvas = within(canvasElement);
 
@@ -28,10 +34,13 @@ export const createHtmlElementClickStory = (elementName: string): Story =>
     },
   });
 
-export const createHtmlElementFocusStory = (elementName: string): Story =>
+export const createHtmlTagFocusStory = ({
+  frontComponentBundleName,
+  tag,
+}: CreateHtmlTagStoryParams): Story =>
   runFrontComponentStory({
-    frontComponentBundleName: ELEMENT_COVERAGE_BUNDLE_NAME,
-    scenarioId: `baseline:${elementName}:focus-blur`,
+    frontComponentBundleName,
+    scenarioId: `${tag}:focus-blur`,
     play: async ({ canvasElement }) => {
       const canvas = within(canvasElement);
 

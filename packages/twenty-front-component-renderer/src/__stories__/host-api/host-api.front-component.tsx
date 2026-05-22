@@ -11,6 +11,7 @@ import {
   updateProgress,
   useFrontComponentExecutionContext,
 } from 'twenty-sdk/front-component';
+import { isDefined } from 'twenty-shared/utils';
 
 import {
   FrontComponentCard,
@@ -149,7 +150,7 @@ const HostApiFrontComponent = () => {
 
   const Scenario = SCENARIOS[scenarioId];
 
-  if (Scenario === undefined) {
+  if (!isDefined(Scenario)) {
     return <UnknownScenario scenarioId={scenarioId} />;
   }
 

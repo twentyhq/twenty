@@ -23,18 +23,20 @@ const COMMON_ATTRIBUTES = {
 };
 
 type CreatePropertyReflectionStoryParams = {
+  frontComponentBundleName: string;
   scenarioId: string;
   extraAttributes?: Record<string, string>;
   extraProperties?: Record<string, string | number | boolean>;
 };
 
 export const createPropertyReflectionStory = ({
+  frontComponentBundleName,
   scenarioId,
   extraAttributes = {},
   extraProperties = {},
 }: CreatePropertyReflectionStoryParams): Story =>
   runFrontComponentStory({
-    frontComponentBundleName: 'property-reflection',
+    frontComponentBundleName,
     scenarioId,
     play: async ({ canvasElement }) => {
       const canvas = within(canvasElement);

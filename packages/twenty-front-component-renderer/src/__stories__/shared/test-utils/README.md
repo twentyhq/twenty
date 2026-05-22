@@ -1,39 +1,44 @@
 # Front-component Storybook test utilities
 
 This folder contains the shared plumbing used by the Storybook stories under
-`src/__stories__/html` and `src/__stories__/host-api`. The stories exercise how
-front components (rendered inside a sandboxed worker via `remote-dom`) forward
-events and properties to the host page.
+`src/__stories__/html-tag` and `src/__stories__/host-api`. The stories exercise
+how front components (rendered inside a sandboxed worker via `remote-dom`)
+forward events and properties to the host page.
 
 ## Folder layout
 
 ```
 __stories__/
-├── html/                                # one folder per HTML element / category
+├── html-tag/                            # one folder per HTML tag, grouped by category
 │   ├── form/
-│   │   ├── input/                       # <input>: events, caret, properties, …
+│   │   ├── input/                       # <input>: events, caret, file, properties, …
 │   │   │   ├── input.front-component.tsx
-│   │   │   ├── input.stories.tsx
+│   │   │   ├── input-events.stories.tsx
 │   │   │   ├── input-caret.stories.tsx
 │   │   │   ├── input-checkbox.stories.tsx
 │   │   │   ├── input-file.stories.tsx
-│   │   │   └── input-keyboard.stories.tsx
-│   │   ├── textarea/                    # <textarea>: events, caret
-│   │   ├── select/                      # <select>: events
-│   │   ├── button/                      # <button>: events
-│   │   └── form/                        # <form>: submit
-│   ├── div/                             # <div>: click, double-click, hover, …
-│   ├── element-coverage/                # baseline click/focus on every HTML element
-│   │   ├── element-coverage.front-component.tsx
-│   │   ├── click-*.stories.tsx
-│   │   └── focus-blur.stories.tsx
-│   └── property-reflection/             # attributes & properties cross the bridge
-├── host-api/                            # twenty-sdk host API calls (navigate, …)
+│   │   │   ├── input-keyboard.stories.tsx
+│   │   │   └── input-properties.stories.tsx
+│   │   ├── textarea/                    # <textarea>: events, caret, properties
+│   │   ├── select/                      # <select>: events, properties
+│   │   ├── button/                      # <button>: events, properties
+│   │   ├── form/                        # <form>: events (submit), properties
+│   │   ├── fieldset/, legend/, label/, output/, progress/, meter/, option/, …
+│   ├── sectioning/                      # header, footer, nav, section, h1-h6, …
+│   ├── text/                            # p, blockquote, pre, hr
+│   ├── text-inline/                     # span, strong, em, code, b, i, …
+│   ├── list/                            # ul, ol, li, dl, dt, dd, menu
+│   ├── grouping/                        # div, figure, figcaption, ruby, rt, rp
+│   ├── interactive/                     # a, details, summary, dialog
+│   ├── table/                           # table, thead, tbody, tfoot, tr, th, td, …
+│   ├── embedded/                        # img, picture, iframe
+│   └── svg/                             # svg, g, circle, ellipse, rect, line, …
+├── host-api/                            # twenty-sdk host API calls (navigate, snackbar, …)
 │   ├── host-api.front-component.tsx
 │   └── *.stories.tsx
 ├── showcase/                            # standalone showcase front components
 └── shared/
-    ├── front-components/                # event-log, card, fixtures, styles
+    ├── front-components/                # event-log, card, element-coverage, property-reflection, fixtures
     └── test-utils/                      # this folder
         ├── createFrontComponentStoryMeta.ts
         ├── createHtmlElementStory.ts
@@ -43,15 +48,17 @@ __stories__/
         └── timeouts.ts
 ```
 
-Each element folder ships its own `*.front-component.tsx` fixture (the sandboxed
-worker bundle) alongside one stories file per concern (events, caret,
-properties, …).
+Each tag owns its own folder with `<tag>.front-component.tsx` (the sandboxed
+worker bundle) alongside one stories file per concern (`<tag>-events`,
+`<tag>-properties`, `<tag>-caret`, …). Cross-tag rendering helpers live in
+`shared/front-components/` (`ElementCoverageScenario`,
+`PropertyReflectionScenario`) and are imported by the per-tag bundles.
 
 ## How a story is wired up
 
-1. A front component (e.g. `input.front-component.tsx`) declares a map of
-   scenarios keyed by string id. The `frontComponentId` from the execution
-   context picks which scenario to render.
+1. A front component (e.g. `input.front-component.tsx`) declares scenarios
+   keyed by string id. The `frontComponentId` from the execution context picks
+   which scenario to render.
 2. `runFrontComponentStory({ frontComponentBundleName, scenarioId, play })`
    returns a Storybook story that:
    - sets the bundled front component as `componentUrl`
@@ -73,19 +80,18 @@ properties, …).
   `expectPropertiesReflected({ canvas, properties })` — used by
   property-reflection stories to assert host DOM mirror values.
 
-## Adding a new scenario
+## Adding a new tag
 
-1. Pick the matching front component under `html/...` / `host-api/...` (or
-   create a new one — the bundler picks up `*.front-component.tsx` files
-   automatically; basenames must be unique).
-2. Add a scenario to the fixture's `SCENARIOS` map under a new id
-   (e.g. `input:text:new-case`).
-3. Create a story file in the same element folder. Reuse
-   `FRONT_COMPONENT_STORY_DEFAULT_ARGS` and `resetFrontComponentStoryMocks` from
-   `shared/test-utils/createFrontComponentStoryMeta.ts`.
-4. Use `runFrontComponentStory(...)` (or `createHtmlElementClickStory`,
-   `createHtmlElementFocusStory`, `createPropertyReflectionStory`) to wire the
-   scenario into a Storybook story.
+1. Add an entry to `scripts/front-component-stories/generate-per-tag-coverage.ts`
+   (or create the files by hand under `html-tag/<category>/<tag>/`).
+2. The per-tag `<tag>.front-component.tsx` typically delegates to
+   `<ElementCoverageScenario tag="..." eventName="..." />` and
+   `<PropertyReflectionScenario variant="..." />`. Rich tags inline their own
+   scenarios (e.g. `input.front-component.tsx` has caret/file/keyboard).
+3. Write `<tag>-events.stories.tsx` using `createHtmlTagClickStory` /
+   `createHtmlTagFocusStory` and (if applicable) `<tag>-properties.stories.tsx`
+   using `createPropertyReflectionStory`. The `frontComponentBundleName` always
+   matches the tag name.
 
 ## Running the tests
 
@@ -94,10 +100,11 @@ properties, …).
 npx vitest run --config vitest.storybook.config.ts <pattern>
 
 # Run all HTML stories
-npx vitest run --config vitest.storybook.config.ts html
+npx vitest run --config vitest.storybook.config.ts html-tag
 ```
 
 The bundles consumed by the renderer are produced by the
 `build-source-examples` script. It discovers any `*.front-component.tsx` file
-under `html/`, `host-api/` and `showcase/` (skipping `shared/` directories) and
-emits one `.mjs` bundle per file, using the file basename as the bundle name.
+under `html-tag/`, `host-api/` and `showcase/` (skipping `shared/` directories)
+and emits one `.mjs` bundle per file, using the file basename as the bundle
+name.

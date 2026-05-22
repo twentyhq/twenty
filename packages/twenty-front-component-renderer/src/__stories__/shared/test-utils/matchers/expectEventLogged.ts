@@ -1,4 +1,5 @@
 import { expect, waitFor, within } from 'storybook/test';
+import { isDefined } from 'twenty-shared/utils';
 
 import { INTERACTION_TIMEOUT } from '../timeouts';
 
@@ -27,7 +28,7 @@ type ParsedLogEntry = Record<string, unknown> & {
 const parseEntries = (canvas: Canvas): ParsedLogEntry[] => {
   const log = canvas.queryByTestId('event-log');
 
-  if (log === null) {
+  if (!isDefined(log)) {
     return [];
   }
 
@@ -56,7 +57,7 @@ const matchesEntry = (
         | undefined;
 
       if (
-        actualFiles === undefined ||
+        !isDefined(actualFiles) ||
         actualFiles.length < expectedFiles.length
       ) {
         return false;
@@ -67,9 +68,9 @@ const matchesEntry = (
         const actualFile = actualFiles[fileIndex];
 
         if (
-          (expectedFile.name !== undefined &&
+          (isDefined(expectedFile.name) &&
             actualFile.name !== expectedFile.name) ||
-          (expectedFile.type !== undefined &&
+          (isDefined(expectedFile.type) &&
             actualFile.type !== expectedFile.type)
         ) {
           return false;
