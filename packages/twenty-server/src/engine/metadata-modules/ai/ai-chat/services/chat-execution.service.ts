@@ -123,10 +123,6 @@ export class ChatExecutionService {
       onCodeExecutionUpdate,
     };
 
-    const contextString = browsingContext
-      ? this.buildContextFromBrowsingContext(workspace, browsingContext)
-      : undefined;
-
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspace.id,
       roleId,
@@ -226,11 +222,22 @@ export class ChatExecutionService {
       }
     }
 
+    if (isDefined(browsingContext)) {
+      const contextString = this.buildContextFromBrowsingContext(
+        workspace,
+        browsingContext,
+      );
+
+      processedMessages = this.injectBrowsingContextIntoLastUserMessage(
+        processedMessages,
+        contextString,
+      );
+    }
+
     const systemPrompt = this.systemPromptBuilder.buildFullPrompt(
       toolCatalog,
       skillCatalog,
       preloadedToolNames,
-      contextString,
       storedFiles,
       workspace.aiAdditionalInstructions ?? undefined,
       userContext,
@@ -415,6 +422,34 @@ export class ChatExecutionService {
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private injectBrowsingContextIntoLastUserMessage(
+    messages: UIMessage[],
+    contextString: string,
+  ): UIMessage[] {
+    const lastUserIndex = messages
+      .map((message) => message.role)
+      .lastIndexOf('user');
+
+    if (lastUserIndex === -1) {
+      return messages;
+    }
+
+    const lastUserMessage = messages[lastUserIndex];
+    const browsingContextPart = {
+      type: 'text' as const,
+      text: `<browsing_context note="Only use this if the user explicitly asks about the current page, record, or view. Do not call any tools based on this context.">\n${contextString}\n</browsing_context>`,
+    };
+
+    return [
+      ...messages.slice(0, lastUserIndex),
+      {
+        ...lastUserMessage,
+        parts: [...lastUserMessage.parts, browsingContextPart],
+      },
+      ...messages.slice(lastUserIndex + 1),
+    ];
   }
 
   private buildContextFromBrowsingContext(

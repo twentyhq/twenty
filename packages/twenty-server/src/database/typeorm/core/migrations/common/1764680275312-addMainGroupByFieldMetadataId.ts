@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddMainGroupByFieldMetadataId1764680275312
-  implements MigrationInterface
-{
+export class AddMainGroupByFieldMetadataId1764680275312 implements MigrationInterface {
   name = 'AddMainGroupByFieldMetadataId1764680275312';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

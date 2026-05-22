@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddCommandMenuItemEntity1768503887441
-  implements MigrationInterface
-{
+export class AddCommandMenuItemEntity1768503887441 implements MigrationInterface {
   name = 'AddCommandMenuItemEntity1768503887441';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

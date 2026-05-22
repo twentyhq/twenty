@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
 
 @RegisteredInstanceCommand('2.1.0', 1795000002000, { type: 'slow' })
-export class BackfillPageLayoutWidgetPositionSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class BackfillPageLayoutWidgetPositionSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     await dataSource.query(
       `UPDATE "core"."pageLayoutWidget"

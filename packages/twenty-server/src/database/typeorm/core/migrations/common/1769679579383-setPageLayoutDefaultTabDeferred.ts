@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class SetPageLayoutDefaultTabDeferred1769679579383
-  implements MigrationInterface
-{
+export class SetPageLayoutDefaultTabDeferred1769679579383 implements MigrationInterface {
   name = 'SetPageLayoutDefaultTabDeferred1769679579383';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

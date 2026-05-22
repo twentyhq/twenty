@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class CreateEmailingDomainEntity1758388517321
-  implements MigrationInterface
-{
+export class CreateEmailingDomainEntity1758388517321 implements MigrationInterface {
   name = 'CreateEmailingDomainEntity1758388517321';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

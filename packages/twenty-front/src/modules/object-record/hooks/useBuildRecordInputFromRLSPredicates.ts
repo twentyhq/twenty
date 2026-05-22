@@ -17,10 +17,7 @@ import { isUndefined } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
-const mergeCompositeValues = (
-  existingValue: unknown,
-  incomingValue: unknown,
-) =>
+const mergeCompositeValues = (existingValue: unknown, incomingValue: unknown) =>
   isPlainObject(existingValue) && isPlainObject(incomingValue)
     ? { ...existingValue, ...incomingValue }
     : incomingValue;

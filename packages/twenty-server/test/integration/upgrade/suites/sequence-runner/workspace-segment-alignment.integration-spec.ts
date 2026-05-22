@@ -574,5 +574,4 @@ describe('UpgradeSequenceRunnerService — workspace segment alignment (integrat
       `Wc1:${WS_3}:completed:1`,
     ]);
   });
-
 });

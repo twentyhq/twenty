@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUniversalIdentifierToIndexMetadata1758038863448
-  implements MigrationInterface
-{
+export class AddUniversalIdentifierToIndexMetadata1758038863448 implements MigrationInterface {
   name = 'AddUniversalIdentifierToIndexMetadata1758038863448';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

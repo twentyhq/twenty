@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUniversalIdentifierAndApplicationIdToPermissionFlag1773232418467
-  implements MigrationInterface
-{
+export class AddUniversalIdentifierAndApplicationIdToPermissionFlag1773232418467 implements MigrationInterface {
   name = 'AddUniversalIdentifierAndApplicationIdToPermissionFlag1773232418467';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

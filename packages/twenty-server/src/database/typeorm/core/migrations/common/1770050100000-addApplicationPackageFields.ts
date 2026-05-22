@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationPackageFields1770050100000
-  implements MigrationInterface
-{
+export class AddApplicationPackageFields1770050100000 implements MigrationInterface {
   name = 'AddApplicationPackageFields1770050100000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
