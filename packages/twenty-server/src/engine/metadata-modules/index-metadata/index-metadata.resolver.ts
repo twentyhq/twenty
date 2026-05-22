@@ -67,9 +67,7 @@ export class IndexMetadataResolver {
 
       return fromFlatIndexMetadataToIndexMetadataDto(flatIndexMetadata);
     } catch (error) {
-      indexMetadataGraphqlApiExceptionHandler(error);
-
-      throw error;
+      return indexMetadataGraphqlApiExceptionHandler(error);
     }
   }
 
@@ -87,9 +85,7 @@ export class IndexMetadataResolver {
 
       return fromFlatIndexMetadataToIndexMetadataDto(flatIndexMetadata);
     } catch (error) {
-      indexMetadataGraphqlApiExceptionHandler(error);
-
-      throw error;
+      return indexMetadataGraphqlApiExceptionHandler(error);
     }
   }
 }

@@ -7,6 +7,7 @@ import { CrudOperationType } from 'twenty-shared/types';
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatIndexMetadataItem } from '@/metadata-store/types/FlatIndexMetadataItem';
+import { type IndexFieldMetadataItem } from '@/object-metadata/types/IndexFieldMetadataItem';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
@@ -42,14 +43,21 @@ export const useCreateOneIndexMetadataItem = () => {
       const createdIndex = response.data?.createOneIndex;
 
       if (isDefined(createdIndex)) {
-        const { __typename, ...indexData } = createdIndex;
+        const { __typename, indexFieldMetadataList, ...indexData } =
+          createdIndex;
 
+        // Mirror the indexFieldMetadataList → indexFieldMetadatas renaming done
+        // by mapPaginatedObjectMetadataItemsToObjectMetadataItems so the cached
+        // item shape matches what consumers expect (and the row renders its
+        // fields immediately, no refetch needed).
         addToDraft({
           key: 'indexMetadataItems',
           items: [
             {
               ...indexData,
-              indexFieldMetadatas: [],
+              indexFieldMetadatas: indexFieldMetadataList.map(
+                ({ __typename: _, ...rest }) => rest as IndexFieldMetadataItem,
+              ),
               objectMetadataId: input.objectMetadataId,
             } as FlatIndexMetadataItem,
           ],

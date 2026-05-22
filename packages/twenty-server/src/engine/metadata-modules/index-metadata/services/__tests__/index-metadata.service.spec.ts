@@ -288,6 +288,23 @@ describe('IndexMetadataService', () => {
   });
 
   describe('deleteOne validation', () => {
+    it('throws INDEX_NOT_FOUND (not the generic flat-entity error) for an unknown id', async () => {
+      cacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue({
+        flatIndexMaps: buildFlatIndexMaps([]),
+        // oxlint-disable-next-line @typescript-eslint/no-explicit-any
+      } as any);
+
+      await expect(
+        service.deleteOne({ id: 'unknown-idx', workspaceId: WORKSPACE_ID }),
+      ).rejects.toMatchObject({
+        code: IndexMetadataExceptionCode.INDEX_NOT_FOUND,
+      });
+
+      expect(
+        migrationService.validateBuildAndRunWorkspaceMigration,
+      ).not.toHaveBeenCalled();
+    });
+
     it('refuses to delete a system index', async () => {
       cacheService.getOrRecomputeManyOrAllFlatEntityMaps.mockResolvedValue({
         flatIndexMaps: buildFlatIndexMaps([

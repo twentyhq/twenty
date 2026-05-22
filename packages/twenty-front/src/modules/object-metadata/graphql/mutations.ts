@@ -272,6 +272,13 @@ export const CREATE_ONE_INDEX_METADATA_ITEM = gql`
       indexWhereClause
       createdAt
       updatedAt
+      indexFieldMetadataList {
+        id
+        fieldMetadataId
+        createdAt
+        updatedAt
+        order
+      }
     }
   }
 `;

@@ -6,7 +6,6 @@ import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
@@ -229,10 +228,22 @@ export class IndexMetadataService {
         },
       );
 
-    const flatIndexToDelete = findFlatEntityByIdInFlatEntityMapsOrThrow({
+    const flatIndexToDelete = findFlatEntityByIdInFlatEntityMaps({
       flatEntityMaps: existingFlatIndexMaps,
       flatEntityId: id,
     });
+
+    // Map "no such index" to a domain-specific error so the GraphQL handler
+    // can return a NotFoundError instead of leaking a FlatEntityMapsException.
+    if (!isDefined(flatIndexToDelete)) {
+      throw new IndexMetadataException(
+        `Index ${id} not found`,
+        IndexMetadataExceptionCode.INDEX_NOT_FOUND,
+        {
+          userFriendlyMessage: msg`This index does not exist or has already been deleted.`,
+        },
+      );
+    }
 
     // Protect system indexes — they back uniqueness constraints, FK lookups,
     // and search performance. Dropping one corrupts the data model.
