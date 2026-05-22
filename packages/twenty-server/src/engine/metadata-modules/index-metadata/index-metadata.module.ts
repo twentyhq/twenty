@@ -14,12 +14,14 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { IndexMetadataResolver } from 'src/engine/metadata-modules/index-metadata/index-metadata.resolver';
 import { IndexMetadataService } from 'src/engine/metadata-modules/index-metadata/services/index-metadata.service';
 import { ObjectMetadataGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/object-metadata/interceptors/object-metadata-graphql-api-exception.interceptor';
+import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([IndexMetadataEntity]),
     ApplicationModule,
+    PermissionsModule,
     WorkspaceMigrationModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     NestjsQueryGraphQLModule.forFeature({
