@@ -6,7 +6,14 @@ import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-mod
 
 const updateNavigationMenuItemSchema = z.object({
   id: z.string().uuid().describe('Id of the navigation menu item to update'),
-  name: z.string().optional().describe('New display name'),
+  name: z
+    .string()
+    .trim()
+    .min(1)
+    .optional()
+    .describe(
+      "New display name. For OBJECT/VIEW/RECORD items the sidebar normally shows the target entity's own name — only set this if the user wants a custom label.",
+    ),
   icon: z.string().optional().describe('New icon identifier'),
   color: z.string().optional().describe('New hex colour'),
   position: z.number().optional().describe('New position among siblings'),

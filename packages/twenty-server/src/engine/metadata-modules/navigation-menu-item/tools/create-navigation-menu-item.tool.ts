@@ -24,25 +24,32 @@ const commonOptionalFields = {
     .describe('Parent folder id, if the item should live inside a folder.'),
 };
 
-const nameField = z
+const requiredNameField = z
   .string()
   .trim()
   .min(1)
+  .describe('Label shown in the sidebar.');
+
+const derivedNameField = z
+  .string()
+  .trim()
+  .min(1)
+  .optional()
   .describe(
-    'Label shown in the sidebar. The target entity name is NOT auto-derived — provide the label you want the user to see.',
+    "Optional custom label. If omitted, the sidebar shows the target's own name (object's plural label / view name / record identifier). Only pass this if the user explicitly wants a different label.",
   );
 
 const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
   z.object({
     type: z.literal(NavigationMenuItemType.FOLDER),
     scope: navigationMenuItemScopeSchema,
-    name: nameField,
+    name: requiredNameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.LINK),
     scope: navigationMenuItemScopeSchema,
-    name: nameField,
+    name: requiredNameField,
     link: z.string().url().describe('Target URL'),
     ...commonOptionalFields,
   }),
@@ -53,14 +60,14 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
       .string()
       .uuid()
       .describe('Id of the object to pin'),
-    name: nameField,
+    name: derivedNameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.VIEW),
     scope: navigationMenuItemScopeSchema,
     viewId: z.string().uuid().describe('Id of the view to pin'),
-    name: nameField,
+    name: derivedNameField,
     ...commonOptionalFields,
   }),
   z.object({
@@ -71,14 +78,14 @@ const createNavigationMenuItemSchema = z.discriminatedUnion('type', [
       .string()
       .uuid()
       .describe("Id of the record's object metadata"),
-    name: nameField,
+    name: derivedNameField,
     ...commonOptionalFields,
   }),
   z.object({
     type: z.literal(NavigationMenuItemType.PAGE_LAYOUT),
     scope: navigationMenuItemScopeSchema,
     pageLayoutId: z.string().uuid().describe('Id of the page layout to pin'),
-    name: nameField,
+    name: requiredNameField,
     ...commonOptionalFields,
   }),
 ]);
@@ -141,10 +148,10 @@ export const createCreateNavigationMenuItemTool = (
 Type chooses the variant:
 - FOLDER: a group to nest other items into (name required).
 - LINK: an external URL pinned in the sidebar (name + link required).
-- OBJECT: pins an object's standard view to the sidebar.
-- VIEW: pins a saved view of an object.
-- RECORD: pins a single record (e.g. an important company or contact).
-- PAGE_LAYOUT: pins a page layout (e.g. a dashboard).
+- OBJECT: pins an object's standard view (label auto-derived from the object's plural name; only pass 'name' if the user wants a custom label).
+- VIEW: pins a saved view (label auto-derived from the view's name; only pass 'name' for a custom label).
+- RECORD: pins a single record (label auto-derived from the record's identifier; only pass 'name' for a custom label).
+- PAGE_LAYOUT: pins a page layout, e.g. a dashboard (name required — no auto-derivation).
 
 Note: creating a new custom object via create_object_metadata already auto-creates an OBJECT navigation menu item — do not double-create.`,
   inputSchema: createNavigationMenuItemSchema,
