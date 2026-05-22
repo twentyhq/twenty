@@ -283,7 +283,8 @@ export class WorkspaceRolesPermissionsCacheService extends WorkspaceCacheProvide
     const hasPermissionFromSettingPermissions = isDefined(
       rolePermissionFlags.find(
         (rolePermissionFlag) =>
-          rolePermissionFlag.permissionFlag.universalIdentifier ===
+          (rolePermissionFlag.permissionFlag?.universalIdentifier ??
+            SystemPermissionFlag[rolePermissionFlag.flag]) ===
           permissionFlagUniversalIdentifier,
       ),
     );

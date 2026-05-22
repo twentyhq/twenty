@@ -194,6 +194,31 @@ describe('WorkspaceRolesPermissionsCacheService', () => {
       expect(workspaceMemberPermissions.canDestroyObjectRecords).toBe(true);
     });
 
+    it('should grant all record permissions from legacy flag when permissionFlag relation is unavailable', async () => {
+      rolePermissionFlagRepository.find.mockResolvedValue([
+        {
+          roleId: ROLE_ID,
+          flag: PermissionFlagType.WORKSPACE_MEMBERS,
+        } as RolePermissionFlagEntity,
+      ]);
+
+      roleRepository.find.mockResolvedValue([
+        createBaseRole({
+          rolePermissionFlags: [],
+          objectPermissions: [],
+        }),
+      ]);
+
+      const result = await service.computeForCache(WORKSPACE_ID);
+      const workspaceMemberPermissions =
+        result[ROLE_ID][WORKSPACE_MEMBER_OBJECT_METADATA_ID];
+
+      expect(workspaceMemberPermissions.canReadObjectRecords).toBe(true);
+      expect(workspaceMemberPermissions.canUpdateObjectRecords).toBe(true);
+      expect(workspaceMemberPermissions.canSoftDeleteObjectRecords).toBe(true);
+      expect(workspaceMemberPermissions.canDestroyObjectRecords).toBe(true);
+    });
+
     it('should grant all record permissions when role has canUpdateAllSettings', async () => {
       roleRepository.find.mockResolvedValue([
         createBaseRole({
