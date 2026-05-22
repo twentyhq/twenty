@@ -95,7 +95,7 @@ export class CallWebhookJob {
         ...commonPayload,
       });
 
-      void this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobWebhookCallCompleted,
         shouldStoreInCache: false,
       });

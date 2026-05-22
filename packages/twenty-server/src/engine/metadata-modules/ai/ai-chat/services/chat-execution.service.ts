@@ -15,6 +15,9 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
@@ -95,6 +98,7 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async streamChat({
@@ -275,6 +279,9 @@ export class ChatExecutionService {
     const modelMessages = pruningResult.messages;
 
     let hasNoMoreAvailableCredits = false;
+    const streamStartedAt = performance.now();
+    let stepStartedAt = streamStartedAt;
+    let ttftRecorded = false;
 
     const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
@@ -347,6 +354,35 @@ export class ChatExecutionService {
         workspace.id,
         userWorkspaceId,
       );
+
+      const modelAttr = { model: registeredModel.modelId };
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatInputTokens,
+        amount: usage.inputTokens ?? 0,
+        attributes: modelAttr,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatOutputTokens,
+        amount: usage.outputTokens ?? 0,
+        attributes: modelAttr,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatCacheReadTokens,
+        amount: usage.inputTokenDetails?.cacheReadTokens ?? 0,
+        attributes: modelAttr,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatCacheWriteTokens,
+        amount: cacheCreationTokens,
+        attributes: modelAttr,
+      });
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.AiChatTurnLatencyMs,
+        value: performance.now() - streamStartedAt,
+        unit: 'ms',
+        attributes: modelAttr,
+      });
     };
 
     const stream = streamText({
@@ -360,10 +396,35 @@ export class ChatExecutionService {
       providerOptions: getCallLevelCacheProviderOptions(
         registeredModel.sdkPackage,
       ),
-      prepareStep: ({ messages }) => ({
-        messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
-      }),
+      prepareStep: ({ messages }) => {
+        stepStartedAt = performance.now();
+
+        return {
+          messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+        };
+      },
+      onChunk: ({ chunk }) => {
+        if (
+          !ttftRecorded &&
+          (chunk.type === 'text-delta' || chunk.type === 'tool-call')
+        ) {
+          ttftRecorded = true;
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.AiChatTtftMs,
+            value: performance.now() - streamStartedAt,
+            unit: 'ms',
+            attributes: { model: registeredModel.modelId },
+          });
+        }
+      },
       onStepFinish: async (step) => {
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.AiChatStepLatencyMs,
+          value: performance.now() - stepStartedAt,
+          unit: 'ms',
+          attributes: { model: registeredModel.modelId },
+        });
+
         const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
           await this.aiBillingService.decrementAndCheckAvailableCredits(
             registeredModel.modelId,
@@ -378,6 +439,22 @@ export class ChatExecutionService {
 
         if (stepHasNoMoreAvailableCredits) {
           hasNoMoreAvailableCredits = true;
+        }
+
+        for (const toolResult of step.toolResults) {
+          const output = toolResult.output as ToolOutput | undefined;
+
+          if (!isDefined(output?.success)) {
+            continue;
+          }
+
+          void this.metricsService.incrementCounterForEvent({
+            key: output.success
+              ? MetricsKeys.AiChatToolExecutionSucceeded
+              : MetricsKeys.AiChatToolExecutionFailed,
+            attributes: { model: registeredModel.modelId },
+            shouldStoreInCache: false,
+          });
         }
       },
       onAbort: async ({ steps }) => {
