@@ -7,7 +7,7 @@ import {
 import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
 import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/has-allowed-extension.util';
 
-export const assertApplicationFileExtensionIsValid = (
+export const validateApplicationFileExtensionOrThrow = (
   fileFolder: FileFolder,
   filePath: string,
 ): void => {

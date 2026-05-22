@@ -1,12 +1,12 @@
 import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { assertResourceExtensionIsAllowed } from 'src/engine/core-modules/file-storage/utils/assert-resource-extension-is-allowed.util';
+import { validateResourceExtensionOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension-or-throw.util';
 
-describe('assertResourceExtensionIsAllowed', () => {
+describe('validateResourceExtensionOrThrow', () => {
   it('should accept valid extensions for BuiltLogicFunction', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'src/handlers/index.mjs',
         FileFolder.BuiltLogicFunction,
       ),
@@ -15,7 +15,7 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should accept valid extensions for BuiltFrontComponent', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'src/components/card.mjs',
         FileFolder.BuiltFrontComponent,
       ),
@@ -24,34 +24,34 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should accept valid extensions for Source', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed('src/index.ts', FileFolder.Source),
+      validateResourceExtensionOrThrow('src/index.ts', FileFolder.Source),
     ).not.toThrow();
     expect(() =>
-      assertResourceExtensionIsAllowed('src/app.tsx', FileFolder.Source),
+      validateResourceExtensionOrThrow('src/app.tsx', FileFolder.Source),
     ).not.toThrow();
   });
 
   it('should accept valid extensions for Dependencies', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'package.json',
         FileFolder.Dependencies,
       ),
     ).not.toThrow();
     expect(() =>
-      assertResourceExtensionIsAllowed('yarn.lock', FileFolder.Dependencies),
+      validateResourceExtensionOrThrow('yarn.lock', FileFolder.Dependencies),
     ).not.toThrow();
   });
 
   it('should accept valid extensions for PublicAsset', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'assets/logo.svg',
         FileFolder.PublicAsset,
       ),
     ).not.toThrow();
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'fonts/roboto.woff2',
         FileFolder.PublicAsset,
       ),
@@ -60,7 +60,7 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should reject invalid extensions for BuiltLogicFunction', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'handler.js',
         FileFolder.BuiltLogicFunction,
       ),
@@ -73,7 +73,7 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should reject invalid extensions for BuiltFrontComponent', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'component.html',
         FileFolder.BuiltFrontComponent,
       ),
@@ -86,7 +86,7 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should reject unrelated extensions like .pdf for built paths', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'handler.pdf',
         FileFolder.BuiltLogicFunction,
       ),
@@ -99,7 +99,7 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should reject executable extensions for PublicAsset', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'assets/script.js',
         FileFolder.PublicAsset,
       ),
@@ -112,10 +112,10 @@ describe('assertResourceExtensionIsAllowed', () => {
 
   it('should not throw for file folders without configured extensions', () => {
     expect(() =>
-      assertResourceExtensionIsAllowed('photo.png', FileFolder.CorePicture),
+      validateResourceExtensionOrThrow('photo.png', FileFolder.CorePicture),
     ).not.toThrow();
     expect(() =>
-      assertResourceExtensionIsAllowed(
+      validateResourceExtensionOrThrow(
         'document.pdf',
         FileFolder.FilesField,
       ),

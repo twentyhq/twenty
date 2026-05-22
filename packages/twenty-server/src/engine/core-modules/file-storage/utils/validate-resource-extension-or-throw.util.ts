@@ -7,7 +7,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/has-allowed-extension.util';
 
-export const assertResourceExtensionIsAllowed = (
+export const validateResourceExtensionOrThrow = (
   resourcePath: string,
   fileFolder: FileFolder,
 ): void => {

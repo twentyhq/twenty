@@ -4,13 +4,13 @@ import {
   ApplicationException,
   ApplicationExceptionCode,
 } from 'src/engine/core-modules/application/application.exception';
-import { assertApplicationFileExtensionIsValid } from 'src/engine/core-modules/application/application-development/utils/assert-application-file-extension-is-valid.util';
+import { validateApplicationFileExtensionOrThrow } from 'src/engine/core-modules/application/application-development/utils/validate-application-file-extension-or-throw.util';
 
-describe('assertApplicationFileExtensionIsValid', () => {
+describe('validateApplicationFileExtensionOrThrow', () => {
   describe('BuiltLogicFunction', () => {
     it('should accept .mjs files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.BuiltLogicFunction,
           'src/handlers/index.mjs',
         ),
@@ -19,7 +19,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should reject .js files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.BuiltLogicFunction,
           'src/handlers/index.js',
         ),
@@ -28,7 +28,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should reject .html files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.BuiltLogicFunction,
           'index.html',
         ),
@@ -39,7 +39,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
   describe('BuiltFrontComponent', () => {
     it('should accept .mjs files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.BuiltFrontComponent,
           'src/components/card.mjs',
         ),
@@ -48,7 +48,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should reject .tsx files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.BuiltFrontComponent,
           'src/components/card.tsx',
         ),
@@ -59,7 +59,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
   describe('Source', () => {
     it('should accept .ts files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.Source,
           'src/index.ts',
         ),
@@ -68,7 +68,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should accept .tsx files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.Source,
           'src/component.tsx',
         ),
@@ -77,7 +77,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should reject .js files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.Source,
           'src/index.js',
         ),
@@ -88,7 +88,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
   describe('Dependencies', () => {
     it('should accept .json files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.Dependencies,
           'package.json',
         ),
@@ -97,7 +97,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should accept .lock files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.Dependencies,
           'yarn.lock',
         ),
@@ -106,7 +106,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should reject .sh files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.Dependencies,
           'install.sh',
         ),
@@ -117,13 +117,13 @@ describe('assertApplicationFileExtensionIsValid', () => {
   describe('PublicAsset', () => {
     it('should accept image files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'assets/logo.png',
         ),
       ).not.toThrow();
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'assets/icon.svg',
         ),
@@ -132,7 +132,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should accept font files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'fonts/roboto.woff2',
         ),
@@ -141,7 +141,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should accept css files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'styles/main.css',
         ),
@@ -150,19 +150,19 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
     it('should reject executable files', () => {
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'assets/script.js',
         ),
       ).toThrow(ApplicationException);
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'assets/page.html',
         ),
       ).toThrow(ApplicationException);
       expect(() =>
-        assertApplicationFileExtensionIsValid(
+        validateApplicationFileExtensionOrThrow(
           FileFolder.PublicAsset,
           'assets/run.sh',
         ),
@@ -172,7 +172,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
   it('should throw for a file folder with no configured extensions', () => {
     expect(() =>
-      assertApplicationFileExtensionIsValid(
+      validateApplicationFileExtensionOrThrow(
         FileFolder.CorePicture,
         'photo.png',
       ),
@@ -181,7 +181,7 @@ describe('assertApplicationFileExtensionIsValid', () => {
 
   it('should include allowed extensions in error message', () => {
     try {
-      assertApplicationFileExtensionIsValid(
+      validateApplicationFileExtensionOrThrow(
         FileFolder.BuiltLogicFunction,
         'index.js',
       );

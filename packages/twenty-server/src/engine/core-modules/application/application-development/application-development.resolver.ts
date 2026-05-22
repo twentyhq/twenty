@@ -20,7 +20,7 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
-import { assertApplicationFileExtensionIsValid } from 'src/engine/core-modules/application/application-development/utils/assert-application-file-extension-is-valid.util';
+import { validateApplicationFileExtensionOrThrow } from 'src/engine/core-modules/application/application-development/utils/validate-application-file-extension-or-throw.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -220,7 +220,7 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
-    assertApplicationFileExtensionIsValid(fileFolder, filePath);
+    validateApplicationFileExtensionOrThrow(fileFolder, filePath);
 
     const application = await this.applicationService.findByUniversalIdentifier(
       {
