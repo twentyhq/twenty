@@ -8,8 +8,11 @@ const ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE =
 export const fromRoleConfigToRoleManifest = (
   roleConfig: RoleConfig,
 ): RoleManifest => {
+  const { permissionFlags: _legacyPermissionFlags, ...roleConfigRest } =
+    roleConfig;
+
   return {
-    ...roleConfig,
+    ...roleConfigRest,
     objectPermissions: (roleConfig.objectPermissions ?? []).map(
       (objectPermission) => ({
         ...objectPermission,
@@ -28,14 +31,7 @@ export const fromRoleConfigToRoleManifest = (
         ),
       }),
     ),
-    permissionFlags: (roleConfig.permissionFlags ?? []).map(
-      (permissionFlag) => ({
-        universalIdentifier: uuidv5(
-          `${roleConfig.universalIdentifier}:${permissionFlag}`,
-          ROLE_UNIVERSAL_IDENTIFIER_NAMESPACE,
-        ),
-        flag: permissionFlag,
-      }),
-    ),
+    permissionFlagUniversalIdentifiers:
+      roleConfig.permissionFlagUniversalIdentifiers ?? [],
   };
 };
