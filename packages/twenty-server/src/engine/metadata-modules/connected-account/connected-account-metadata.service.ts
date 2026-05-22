@@ -1,10 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { Repository } from 'typeorm';
 
-import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import {
@@ -12,12 +10,9 @@ import {
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -31,8 +26,6 @@ export class ConnectedAccountMetadataService {
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
-    private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
   ) {}
 
@@ -193,58 +186,6 @@ export class ConnectedAccountMetadataService {
         workspaceId,
       });
     }, authContext);
-
-    const { flatObjectMetadataMaps } =
-      await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
-        {
-          workspaceId,
-          flatMapsKeys: ['flatObjectMetadataMaps'],
-        },
-      );
-
-    if (messageChannels.length > 0) {
-      const flatMessageChannelMetadata =
-        findFlatEntityByUniversalIdentifierOrThrow({
-          flatEntityMaps: flatObjectMetadataMaps,
-          universalIdentifier:
-            STANDARD_OBJECTS.messageChannel.universalIdentifier,
-        });
-
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'messageChannel',
-        action: DatabaseEventAction.DESTROYED,
-        objectMetadata: flatMessageChannelMetadata,
-        events: messageChannels.map((messageChannel) => ({
-          recordId: messageChannel.id,
-          properties: {
-            before: messageChannel,
-          },
-        })),
-        workspaceId,
-      });
-    }
-
-    if (calendarChannels.length > 0) {
-      const flatCalendarChannelMetadata =
-        findFlatEntityByUniversalIdentifierOrThrow({
-          flatEntityMaps: flatObjectMetadataMaps,
-          universalIdentifier:
-            STANDARD_OBJECTS.calendarChannel.universalIdentifier,
-        });
-
-      this.workspaceEventEmitter.emitDatabaseBatchEvent({
-        objectMetadataNameSingular: 'calendarChannel',
-        action: DatabaseEventAction.DESTROYED,
-        objectMetadata: flatCalendarChannelMetadata,
-        events: calendarChannels.map((calendarChannel) => ({
-          recordId: calendarChannel.id,
-          properties: {
-            before: calendarChannel,
-          },
-        })),
-        workspaceId,
-      });
-    }
 
     return connectedAccount;
   }
