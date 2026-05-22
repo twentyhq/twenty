@@ -148,17 +148,17 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
-    const [messageChannels, calendarChannels] = await Promise.all([
-      this.messageChannelRepository.find({
+    const [messageChannelCount, calendarChannelCount] = await Promise.all([
+      this.messageChannelRepository.count({
         where: { connectedAccountId: id, workspaceId },
       }),
-      this.calendarChannelRepository.find({
+      this.calendarChannelRepository.count({
         where: { connectedAccountId: id, workspaceId },
       }),
     ]);
 
     this.logger.log(
-      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
+      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannelCount} message channel(s) and ${calendarChannelCount} calendar channel(s)`,
     );
 
     await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
