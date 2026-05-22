@@ -15,6 +15,7 @@ const mockEnqueueInfoSnackBar = jest.fn();
 const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
+const mockCopyToClipboard = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 
@@ -81,6 +82,12 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomState', () => ({
 
 jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
   useSetAtomFamilyState: () => mockSetCommandMenuItemProgress,
+}));
+
+jest.mock('~/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({
+    copyToClipboard: mockCopyToClipboard,
+  }),
 }));
 
 const FRONT_COMPONENT_ID = 'fc-test-id';
@@ -407,6 +414,24 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockSetCommandMenuItemProgress).toHaveBeenCalledWith(100);
+    });
+  });
+
+  describe('copyToClipboard', () => {
+    it('should call useCopyToClipboard with the provided text', async () => {
+      const { result } = renderHook(() =>
+        useFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+        }),
+      );
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          'hello clipboard',
+        );
+      });
+
+      expect(mockCopyToClipboard).toHaveBeenCalledWith('hello clipboard');
     });
   });
 });

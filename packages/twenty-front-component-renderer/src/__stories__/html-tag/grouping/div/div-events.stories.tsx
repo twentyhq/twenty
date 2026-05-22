@@ -72,3 +72,20 @@ export const MouseEnterLeave: Story = runFrontComponentStory({
     await expectEventLogged({ canvas, matcher: { type: 'mouseleave' } });
   },
 });
+
+export const PointerMove: Story = runFrontComponentStory({
+  frontComponentBundleName: 'div-pointermove',
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+
+    await expectFrontComponentMounted(canvas);
+
+    const subject = await canvas.findByTestId('subject');
+
+    await userEvent.pointer({ target: subject, coords: { x: 10, y: 10 } });
+    await userEvent.pointer({ target: subject, coords: { x: 50, y: 30 } });
+
+    await expectEventLogged({ canvas, matcher: { type: 'pointermove' } });
+    await expectEventLogged({ canvas, matcher: { type: 'mousemove' } });
+  },
+});

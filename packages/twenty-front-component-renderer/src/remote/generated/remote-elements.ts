@@ -27,10 +27,19 @@ export type HtmlCommonEvents = {
   dblclick(event: RemoteEvent<SerializedEventData>): void;
   mousedown(event: RemoteEvent<SerializedEventData>): void;
   mouseup(event: RemoteEvent<SerializedEventData>): void;
+  mousemove(event: RemoteEvent<SerializedEventData>): void;
   mouseover(event: RemoteEvent<SerializedEventData>): void;
   mouseout(event: RemoteEvent<SerializedEventData>): void;
   mouseenter(event: RemoteEvent<SerializedEventData>): void;
   mouseleave(event: RemoteEvent<SerializedEventData>): void;
+  pointerdown(event: RemoteEvent<SerializedEventData>): void;
+  pointerup(event: RemoteEvent<SerializedEventData>): void;
+  pointermove(event: RemoteEvent<SerializedEventData>): void;
+  pointerover(event: RemoteEvent<SerializedEventData>): void;
+  pointerout(event: RemoteEvent<SerializedEventData>): void;
+  pointerenter(event: RemoteEvent<SerializedEventData>): void;
+  pointerleave(event: RemoteEvent<SerializedEventData>): void;
+  pointercancel(event: RemoteEvent<SerializedEventData>): void;
   keydown(event: RemoteEvent<SerializedEventData>): void;
   keyup(event: RemoteEvent<SerializedEventData>): void;
   keypress(event: RemoteEvent<SerializedEventData>): void;
@@ -50,10 +59,19 @@ const HTML_COMMON_EVENTS_ARRAY = [
   'dblclick',
   'mousedown',
   'mouseup',
+  'mousemove',
   'mouseover',
   'mouseout',
   'mouseenter',
   'mouseleave',
+  'pointerdown',
+  'pointerup',
+  'pointermove',
+  'pointerover',
+  'pointerout',
+  'pointerenter',
+  'pointerleave',
+  'pointercancel',
   'keydown',
   'keyup',
   'keypress',

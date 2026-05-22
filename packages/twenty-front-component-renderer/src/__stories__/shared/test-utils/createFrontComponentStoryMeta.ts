@@ -14,6 +14,7 @@ export const hostApiMocks = {
   updateProgress: fn().mockResolvedValue(undefined),
   requestAccessTokenRefresh: fn().mockResolvedValue('refreshed-token'),
   openCommandConfirmationModal: fn().mockResolvedValue(undefined),
+  copyToClipboard: fn().mockResolvedValue(undefined),
 };
 
 export const FRONT_COMPONENT_STORY_DEFAULT_ARGS: NonNullable<
@@ -41,4 +42,5 @@ export const resetFrontComponentStoryMocks = () => {
   hostApiMocks.updateProgress.mockClear();
   hostApiMocks.requestAccessTokenRefresh.mockClear();
   hostApiMocks.openCommandConfirmationModal.mockClear();
+  hostApiMocks.copyToClipboard.mockClear();
 };

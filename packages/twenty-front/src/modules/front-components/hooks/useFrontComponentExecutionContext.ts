@@ -18,6 +18,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
+import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 
 export const useFrontComponentExecutionContext = ({
@@ -49,6 +50,7 @@ export const useFrontComponentExecutionContext = ({
     enqueueWarningSnackBar,
   } = useSnackBar();
   const { closeSidePanelMenu } = useSidePanelMenu();
+  const { copyToClipboard: copyToClipboardWithSnackbar } = useCopyToClipboard();
   const setCommandMenuItemProgress = useSetAtomFamilyState(
     commandMenuItemProgressFamilyState,
     commandMenuItemId ?? '',
@@ -152,6 +154,11 @@ export const useFrontComponentExecutionContext = ({
       setCommandMenuItemProgress(Math.max(0, Math.min(100, progress)));
     };
 
+  const copyToClipboard: FrontComponentHostCommunicationApi['copyToClipboard'] =
+    async (text) => {
+      await copyToClipboardWithSnackbar(text);
+    };
+
   const frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi =
     {
       navigate,
@@ -162,6 +169,7 @@ export const useFrontComponentExecutionContext = ({
       unmountFrontComponent,
       closeSidePanel,
       updateProgress,
+      copyToClipboard,
     };
 
   return {
