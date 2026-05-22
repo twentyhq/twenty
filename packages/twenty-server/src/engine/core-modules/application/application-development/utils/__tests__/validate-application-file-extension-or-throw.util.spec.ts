@@ -62,7 +62,7 @@ describe('validateApplicationFileExtensionOrThrow', () => {
     'should accept valid extension for $title',
     ({ fileFolder, filePath }) => {
       expect(() =>
-        validateApplicationFileExtensionOrThrow(fileFolder, filePath),
+        validateApplicationFileExtensionOrThrow({ fileFolder, filePath }),
       ).not.toThrow();
     },
   );
@@ -112,26 +112,26 @@ describe('validateApplicationFileExtensionOrThrow', () => {
     'should reject invalid extension for $title',
     ({ fileFolder, filePath }) => {
       expect(() =>
-        validateApplicationFileExtensionOrThrow(fileFolder, filePath),
+        validateApplicationFileExtensionOrThrow({ fileFolder, filePath }),
       ).toThrow(ApplicationException);
     },
   );
 
   it('should throw for a file folder with no configured extensions', () => {
     expect(() =>
-      validateApplicationFileExtensionOrThrow(
-        FileFolder.CorePicture,
-        'photo.png',
-      ),
+      validateApplicationFileExtensionOrThrow({
+        fileFolder: FileFolder.CorePicture,
+        filePath: 'photo.png',
+      }),
     ).toThrow(ApplicationException);
   });
 
   it('should include allowed extensions in error message', () => {
     try {
-      validateApplicationFileExtensionOrThrow(
-        FileFolder.BuiltLogicFunction,
-        'index.js',
-      );
+      validateApplicationFileExtensionOrThrow({
+        fileFolder: FileFolder.BuiltLogicFunction,
+        filePath: 'index.js',
+      });
       fail('Expected an error to be thrown');
     } catch (error) {
       expect(error).toBeInstanceOf(ApplicationException);

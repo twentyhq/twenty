@@ -7,7 +7,7 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-export const assertStoragePathIsWithinWorkspace = ({
+export const validateStoragePathIsWithinWorkspaceOrThrow = ({
   onStoragePath,
   workspaceId,
   applicationUniversalIdentifier,

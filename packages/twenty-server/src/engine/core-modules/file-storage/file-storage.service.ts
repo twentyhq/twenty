@@ -10,8 +10,8 @@ import { Like, Repository, type QueryRunner } from 'typeorm';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { validateResourceExtensionOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension-or-throw.util';
-import { assertResourcePathIsSafe } from 'src/engine/core-modules/file-storage/utils/assert-resource-path-is-safe.util';
-import { assertStoragePathIsWithinWorkspace } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-within-workspace.util';
+import { validateResourcePathOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-path-or-throw.util';
+import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 
@@ -38,7 +38,7 @@ export class FileStorageService {
     fileFolder,
     resourcePath,
   }: ResourceIdentifier): string {
-    assertResourcePathIsSafe(resourcePath);
+    validateResourcePathOrThrow({ resourcePath });
     validateResourceExtensionOrThrow({ resourcePath, fileFolder });
 
     const onStoragePath = join(
@@ -48,7 +48,7 @@ export class FileStorageService {
       resourcePath,
     ).replace(/\/+/g, '/');
 
-    assertStoragePathIsWithinWorkspace({
+    validateStoragePathIsWithinWorkspaceOrThrow({
       onStoragePath,
       workspaceId,
       applicationUniversalIdentifier,

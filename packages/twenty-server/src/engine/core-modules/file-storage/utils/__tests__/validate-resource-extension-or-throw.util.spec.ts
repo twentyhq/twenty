@@ -49,7 +49,7 @@ describe('validateResourceExtensionOrThrow', () => {
     'should accept valid extension for $title',
     ({ resourcePath, fileFolder }) => {
       expect(() =>
-        validateResourceExtensionOrThrow(resourcePath, fileFolder),
+        validateResourceExtensionOrThrow({ resourcePath, fileFolder }),
       ).not.toThrow();
     },
   );
@@ -89,7 +89,7 @@ describe('validateResourceExtensionOrThrow', () => {
     'should reject invalid extension for $title',
     ({ resourcePath, fileFolder }) => {
       expect(() =>
-        validateResourceExtensionOrThrow(resourcePath, fileFolder),
+        validateResourceExtensionOrThrow({ resourcePath, fileFolder }),
       ).toThrow(
         expect.objectContaining({
           code: FileStorageExceptionCode.INVALID_EXTENSION,
@@ -113,7 +113,7 @@ describe('validateResourceExtensionOrThrow', () => {
     'should not throw for unconfigured file folder $title',
     ({ resourcePath, fileFolder }) => {
       expect(() =>
-        validateResourceExtensionOrThrow(resourcePath, fileFolder),
+        validateResourceExtensionOrThrow({ resourcePath, fileFolder }),
       ).not.toThrow();
     },
   );

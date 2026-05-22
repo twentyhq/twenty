@@ -2,7 +2,7 @@ import { FileFolder } from 'twenty-shared/types';
 
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
-import { assertStoragePathIsWithinWorkspace } from 'src/engine/core-modules/file-storage/utils/assert-storage-path-is-within-workspace.util';
+import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 
 const primitives = {
   workspaceId: 'workspace-id',
@@ -10,10 +10,10 @@ const primitives = {
   fileFolder: FileFolder.BuiltFrontComponent,
 };
 
-describe('assertStoragePathIsWithinWorkspace', () => {
+describe('validateStoragePathIsWithinWorkspaceOrThrow', () => {
   it('should accept paths within the expected prefix', () => {
     expect(() =>
-      assertStoragePathIsWithinWorkspace({
+      validateStoragePathIsWithinWorkspaceOrThrow({
         onStoragePath:
           'workspace-id/app-uid/built-front-component/src/component.mjs',
         ...primitives,
@@ -23,7 +23,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
 
   it('should accept paths directly under the prefix', () => {
     expect(() =>
-      assertStoragePathIsWithinWorkspace({
+      validateStoragePathIsWithinWorkspaceOrThrow({
         onStoragePath: 'workspace-id/app-uid/built-front-component/file.mjs',
         ...primitives,
       }),
@@ -32,7 +32,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
 
   it('should reject paths that escape via .. traversal', () => {
     expect(() =>
-      assertStoragePathIsWithinWorkspace({
+      validateStoragePathIsWithinWorkspaceOrThrow({
         onStoragePath:
           'other-workspace/other-app/built-front-component/stolen.mjs',
         ...primitives,
@@ -46,7 +46,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
 
   it('should reject paths that escape by one level', () => {
     expect(() =>
-      assertStoragePathIsWithinWorkspace({
+      validateStoragePathIsWithinWorkspaceOrThrow({
         onStoragePath: 'workspace-id/app-uid/other-folder/file.mjs',
         ...primitives,
       }),
@@ -59,7 +59,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
 
   it('should reject the prefix itself without a trailing file', () => {
     expect(() =>
-      assertStoragePathIsWithinWorkspace({
+      validateStoragePathIsWithinWorkspaceOrThrow({
         onStoragePath: 'workspace-id/app-uid/built-front-component',
         ...primitives,
       }),
@@ -72,7 +72,7 @@ describe('assertStoragePathIsWithinWorkspace', () => {
 
   it('should reject paths where prefix is a partial match', () => {
     expect(() =>
-      assertStoragePathIsWithinWorkspace({
+      validateStoragePathIsWithinWorkspaceOrThrow({
         onStoragePath:
           'workspace-id/app-uid/built-front-componentMalicious/file.mjs',
         ...primitives,
