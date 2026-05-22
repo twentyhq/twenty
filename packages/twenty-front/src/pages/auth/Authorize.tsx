@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
+import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { useQuery, useMutation } from '@apollo/client/react';
@@ -15,9 +16,7 @@ import {
   IconUserCircle,
   type IconComponent,
 } from 'twenty-ui/display';
-import { MainButton } from 'twenty-ui/input';
 import { ModalContent } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   AuthorizeAppDocument,
@@ -63,29 +62,6 @@ const StyledOAuthTitle = styled(H1Title)`
   padding-bottom: ${themeCssVariables.spacing[1]};
   text-wrap: balance;
   width: max-content;
-`;
-
-const StyledButtonContainer = styled.div`
-  display: grid;
-  gap: ${themeCssVariables.spacing[3]};
-  grid-template-columns: repeat(
-    2,
-    minmax(${themeCssVariables.spacing[0]}, 1fr)
-  );
-  margin-top: ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
-
-const StyledCancelLinkContainer = styled.div`
-  min-width: 0;
-
-  a {
-    display: block;
-  }
-`;
-
-const StyledAuthorizeButton = styled(MainButton)`
-  box-shadow: none;
 `;
 
 const StyledPermissionSection = styled.div`
@@ -292,24 +268,11 @@ export const Authorize = () => {
           {authorizeError && (
             <StyledErrorText>{authorizeError}</StyledErrorText>
           )}
-          <StyledButtonContainer>
-            <StyledCancelLinkContainer>
-              <UndecoratedLink to={AppPath.Index} fullWidth>
-                <MainButton
-                  title={t`Cancel`}
-                  variant="secondary"
-                  fullWidth
-                  disabled={isAuthorizing}
-                />
-              </UndecoratedLink>
-            </StyledCancelLinkContainer>
-            <StyledAuthorizeButton
-              title={isAuthorizing ? t`Authorizing...` : t`Authorize`}
-              onClick={handleAuthorize}
-              disabled={isAuthorizing}
-              fullWidth
-            />
-          </StyledButtonContainer>
+          <AuthorizeActionButtons
+            cancelTo={AppPath.Index}
+            onAuthorize={handleAuthorize}
+            isLoading={isAuthorizing}
+          />
         </ModalContent>
       </StyledCardWrapper>
     </ModalContent>

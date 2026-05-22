@@ -1,4 +1,5 @@
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
+import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   buildPermissionSummaryFromRoleManifest,
@@ -11,7 +12,7 @@ import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
 import { type RoleManifest } from 'twenty-shared/application';
 import { IconChevronLeft } from 'twenty-ui/display';
-import { Button, LightButton } from 'twenty-ui/input';
+import { LightButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { StyledAppModal } from '~/pages/settings/applications/components/SettingsAppModalLayout';
 
@@ -99,16 +100,6 @@ const StyledPermissionIcon = styled.div`
   display: flex;
 `;
 
-const StyledButtonsContainer = styled.div`
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  width: 100%;
-`;
-
-const StyledButtonWrapper = styled.div`
-  flex: 1;
-`;
-
 export const SettingsApplicationInstallPermissionValidationModal = ({
   modalInstanceId,
   appDisplayName,
@@ -185,28 +176,11 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
             </StyledPermissionsCard>
           )}
 
-          <StyledButtonsContainer>
-            <StyledButtonWrapper>
-              <Button
-                onClick={handleClose}
-                variant="secondary"
-                title={t`Cancel`}
-                fullWidth
-                justify="center"
-              />
-            </StyledButtonWrapper>
-            <StyledButtonWrapper>
-              <Button
-                onClick={handleAuthorize}
-                variant="primary"
-                accent="default"
-                title={isInstalling ? t`Installing...` : t`Authorize`}
-                disabled={isInstalling}
-                fullWidth
-                justify="center"
-              />
-            </StyledButtonWrapper>
-          </StyledButtonsContainer>
+          <AuthorizeActionButtons
+            onCancel={handleClose}
+            onAuthorize={handleAuthorize}
+            isLoading={isInstalling}
+          />
         </StyledContent>
       </StyledFullscreenContainer>
     </StyledAppModal>
