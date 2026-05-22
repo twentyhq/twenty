@@ -1,4 +1,7 @@
-import { ALL_METADATA_NAME, type AllMetadataName } from 'twenty-shared/metadata';
+import {
+  ALL_METADATA_NAME,
+  type AllMetadataName,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
