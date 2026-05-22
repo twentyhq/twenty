@@ -30,6 +30,7 @@ import { shouldRunNow } from 'src/utils/should-run-now.utils';
 
 export const WORKFLOW_CRON_TRIGGER_CRON_PATTERN = '* * * * *';
 
+
 @Processor(MessageQueue.cronQueue)
 export class WorkflowCronTriggerCronJob {
   private readonly logger = new Logger(WorkflowCronTriggerCronJob.name);
@@ -74,7 +75,10 @@ export class WorkflowCronTriggerCronJob {
   }
 
   private async getAndRunTriggersFromCache(cachedValues: string[], now: Date) {
-    for (const serialized of cachedValues) {
+    const failedCachedTriggerReferences: string[] = [];
+    let firstCachedTriggerError: unknown;
+
+    for (const [index, serialized] of cachedValues.entries()) {
       try {
         const trigger = JSON.parse(serialized) as CachedCronTrigger;
 
@@ -100,9 +104,29 @@ export class WorkflowCronTriggerCronJob {
           { retryLimit: 3 },
         );
       } catch (error) {
-        this.logger.error(`Error processing cached trigger: ${error}`);
-        this.exceptionHandlerService.captureExceptions([error]);
+        failedCachedTriggerReferences.push(`cacheIndex:${index}`);
+        firstCachedTriggerError ??= error;
       }
+    }
+
+    if (failedCachedTriggerReferences.length > 0) {
+      this.logger.warn(
+        `Failed to process ${failedCachedTriggerReferences.length} cached cron trigger(s)`,
+      );
+
+      this.exceptionHandlerService.captureExceptions(
+        [
+          firstCachedTriggerError instanceof Error
+            ? firstCachedTriggerError
+            : new Error('Failed to process cached cron trigger'),
+        ],
+        {
+          additionalData: {
+            failedCachedTriggerCount: failedCachedTriggerReferences.length,
+            failedCachedTriggerReferences,
+          },
+        },
+      );
     }
   }
 
@@ -197,9 +221,12 @@ export class WorkflowCronTriggerCronJob {
 
       return triggersToCache;
     } catch (error) {
-      this.logger.error(`Error processing workspace ${workspaceId}: ${error}`);
+      this.logger.warn(`Error processing workspace ${workspaceId}: ${error}`);
       this.exceptionHandlerService.captureExceptions([error], {
         workspace: { id: workspaceId },
+        additionalData: {
+          operation: 'workflow-cron-trigger-database-scan',
+        },
       });
 
       return [];

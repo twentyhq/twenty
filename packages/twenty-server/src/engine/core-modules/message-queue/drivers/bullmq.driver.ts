@@ -148,6 +148,18 @@ export class BullMQDriver
         return;
       }
 
+      Sentry.addBreadcrumb({
+        category: 'queue-worker.failed',
+        level: 'warning',
+        message: `Job ${job.id} (${job.name}) failed on queue ${queueName}`,
+        data: {
+          queueName,
+          jobId: job.id,
+          jobName: job.name,
+          errorName: error.name,
+        },
+      });
+
       void this.metricsService.incrementCounter({
         key: MetricsKeys.JobFailed,
         attributes: {
@@ -156,6 +168,37 @@ export class BullMQDriver
           error_type: error.name,
         },
         shouldStoreInCache: false,
+      });
+    });
+
+    this.workerMap[queueName].on('stalled', (jobId) => {
+      this.logger.warn(`Job ${jobId} stalled on queue ${queueName}`);
+
+      Sentry.addBreadcrumb({
+        category: 'queue-worker.stalled',
+        level: 'warning',
+        message: `Job ${jobId} stalled on queue ${queueName}`,
+        data: {
+          queueName,
+          jobId,
+        },
+      });
+    });
+
+    this.workerMap[queueName].on('error', (error) => {
+      this.logger.warn(
+        `BullMQ worker error on queue ${queueName}: ${error.message}`,
+      );
+
+      Sentry.addBreadcrumb({
+        category: 'queue-worker.error',
+        level: 'warning',
+        message: `BullMQ worker error on queue ${queueName}`,
+        data: {
+          queueName,
+          errorName: error.name,
+          errorMessage: error.message,
+        },
       });
     });
   }

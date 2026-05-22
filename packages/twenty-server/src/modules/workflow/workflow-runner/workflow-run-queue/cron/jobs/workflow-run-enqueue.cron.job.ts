@@ -26,6 +26,7 @@ export const WORKFLOW_RUN_ENQUEUE_CRON_PATTERN = '* * * * *';
 const LAST_PARTITION_CACHE_KEY = 'workflow-run-enqueue:last-partition';
 const NUMBER_OF_PARTITIONS = 10;
 const WORKSPACE_BATCH_SIZE = 10;
+const ACTIVE_WORKSPACES_FETCH_WARNING_THRESHOLD_MS = 5000;
 
 @Processor(MessageQueue.cronQueue)
 export class WorkflowRunEnqueueCronJob {
@@ -51,13 +52,7 @@ export class WorkflowRunEnqueueCronJob {
   async handle() {
     this.logger.log('Starting WorkflowRunEnqueueCronJob cron');
 
-    const allActiveWorkspaces = await this.workspaceRepository.find({
-      where: {
-        activationStatus: WorkspaceActivationStatus.ACTIVE,
-      },
-      select: ['id'],
-      order: { id: 'ASC' },
-    });
+    const allActiveWorkspaces = await this.getAllActiveWorkspaces();
 
     const partition = await this.getAndIncrementPartition();
     const workspacesForThisRun = allActiveWorkspaces.filter(
@@ -80,22 +75,94 @@ export class WorkflowRunEnqueueCronJob {
         batch.map((workspace) => this.checkAndEnqueue(workspace.id)),
       );
 
+      const failedWorkspaceIds: string[] = [];
+      let firstRejectedReason: unknown;
+
       for (const [index, result] of results.entries()) {
         if (result.status === 'fulfilled' && result.value) {
           enqueuedCount++;
         }
 
         if (result.status === 'rejected') {
-          this.exceptionHandlerService.captureExceptions([result.reason], {
-            workspace: { id: batch[index].id },
-          });
+          failedWorkspaceIds.push(batch[index].id);
+          firstRejectedReason ??= result.reason;
         }
+      }
+
+      if (failedWorkspaceIds.length > 0) {
+        this.logger.warn(
+          `WorkflowRunEnqueueCronJob failed for ${failedWorkspaceIds.length} workspace(s) in current batch`,
+        );
+
+        this.exceptionHandlerService.captureExceptions(
+          [
+            firstRejectedReason instanceof Error
+              ? firstRejectedReason
+              : new Error('Workflow run enqueue batch failed'),
+          ],
+          {
+            workspace: { id: failedWorkspaceIds[0] },
+            additionalData: {
+              failedWorkspaceIds,
+              failedWorkspaceCount: failedWorkspaceIds.length,
+            },
+          },
+        );
       }
     }
 
     this.logger.log(
       `Completed WorkflowRunEnqueueCronJob cron (partition ${partition}/${NUMBER_OF_PARTITIONS}), enqueued ${enqueuedCount} jobs`,
     );
+  }
+
+  private async getAllActiveWorkspaces(): Promise<Array<{ id: string }>> {
+    const activeWorkspacesFetchStartTime = performance.now();
+
+    try {
+      const activeWorkspaces = await this.workspaceRepository.find({
+        where: {
+          activationStatus: WorkspaceActivationStatus.ACTIVE,
+        },
+        select: ['id'],
+        order: { id: 'ASC' },
+      });
+
+      const activeWorkspacesFetchDurationMs =
+        performance.now() - activeWorkspacesFetchStartTime;
+
+      if (
+        activeWorkspacesFetchDurationMs >=
+        ACTIVE_WORKSPACES_FETCH_WARNING_THRESHOLD_MS
+      ) {
+        this.logger.warn(
+          `Active workspace fetch is slow (${activeWorkspacesFetchDurationMs.toFixed(2)}ms for ${activeWorkspaces.length} workspaces)`,
+        );
+      }
+
+      return activeWorkspaces;
+    } catch (error) {
+      this.logger.error(
+        'Failed to fetch active workspaces in WorkflowRunEnqueueCronJob',
+        error instanceof Error ? error.stack : undefined,
+      );
+
+      this.exceptionHandlerService.captureExceptions(
+        [
+          error instanceof Error
+            ? error
+            : new Error('Failed to fetch active workspaces'),
+        ],
+        {
+          additionalData: {
+            cronJobName: WorkflowRunEnqueueCronJob.name,
+            operation: 'fetch-active-workspaces',
+          },
+        },
+      );
+
+      throw error;
+    }
   }
 
   private async checkAndEnqueue(workspaceId: string): Promise<boolean> {
