@@ -2,10 +2,8 @@ import { z } from 'zod';
 
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type WorkflowRunWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
-import {
-  type WorkflowRunToolContext,
-  type WorkflowRunToolDependencies,
-} from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
+import { type WorkflowRunToolContext } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-context.type';
+import { type WorkflowRunToolDependencies } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
 
 const getWorkflowRunSchema = z.object({
   workflowRunId: z.string().uuid().describe('The id of the workflow run'),

@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-import {
-  type PageLayoutToolContext,
-  type PageLayoutToolDependencies,
-} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { type PageLayoutToolContext } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-context.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const deletePageLayoutWidgetSchema = z.object({
   widgetId: z.string().uuid().describe('Id of the widget to delete'),

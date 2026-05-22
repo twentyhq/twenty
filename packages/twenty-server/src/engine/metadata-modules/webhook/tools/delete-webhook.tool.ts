@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-import {
-  type WebhookToolContext,
-  type WebhookToolDependencies,
-} from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
+import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-context.type';
+import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
 
 const deleteWebhookSchema = z.object({
   id: z.string().uuid().describe('The id of the webhook to delete'),

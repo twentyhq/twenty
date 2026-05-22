@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-import {
-  type NavigationMenuItemToolContext,
-  type NavigationMenuItemToolDependencies,
-} from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
+import { type NavigationMenuItemToolContext } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-context.type';
+import { type NavigationMenuItemToolDependencies } from 'src/engine/metadata-modules/navigation-menu-item/tools/types/navigation-menu-item-tool-dependencies.type';
 
 const deleteNavigationMenuItemSchema = z.object({
   id: z.string().uuid().describe('Id of the navigation menu item to delete'),

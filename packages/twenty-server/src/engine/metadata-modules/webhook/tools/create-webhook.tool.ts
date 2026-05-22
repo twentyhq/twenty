@@ -1,13 +1,9 @@
 import { z } from 'zod';
 
-import {
-  compileWebhookOperations,
-  webhookOperationSchema,
-} from 'src/engine/metadata-modules/webhook/tools/schemas/webhook.schema';
-import {
-  type WebhookToolContext,
-  type WebhookToolDependencies,
-} from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
+import { webhookOperationSchema } from 'src/engine/metadata-modules/webhook/tools/schemas/webhook-operation.schema';
+import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-context.type';
+import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
+import { compileWebhookOperations } from 'src/engine/metadata-modules/webhook/tools/utils/compile-webhook-operations.util';
 
 const createWebhookSchema = z.object({
   targetUrl: z

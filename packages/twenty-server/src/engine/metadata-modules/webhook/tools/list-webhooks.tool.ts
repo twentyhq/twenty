@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-import {
-  type WebhookToolContext,
-  type WebhookToolDependencies,
-} from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
+import { type WebhookToolContext } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-context.type';
+import { type WebhookToolDependencies } from 'src/engine/metadata-modules/webhook/tools/types/webhook-tool-dependencies.type';
 
 const listWebhooksSchema = z.object({});
 

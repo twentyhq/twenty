@@ -1,11 +1,9 @@
 import { z } from 'zod';
 
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import { pageLayoutTypeSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-widget.schema';
-import {
-  type PageLayoutToolContext,
-  type PageLayoutToolDependencies,
-} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { pageLayoutTypeSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-type.schema';
+import { type PageLayoutToolContext } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-context.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const listPageLayoutsSchema = z.object({
   type: pageLayoutTypeSchema

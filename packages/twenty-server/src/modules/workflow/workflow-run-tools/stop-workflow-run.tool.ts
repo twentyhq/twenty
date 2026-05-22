@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-import {
-  type WorkflowRunToolContext,
-  type WorkflowRunToolDependencies,
-} from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
+import { type WorkflowRunToolContext } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-context.type';
+import { type WorkflowRunToolDependencies } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
 
 const stopWorkflowRunSchema = z.object({
   workflowRunId: z.string().uuid().describe('The id of the run to stop'),

@@ -43,16 +43,3 @@ export const webhookOperationSchema = z
   .describe(
     "Events that trigger the webhook. Record events compile to '<object>.<event>' (e.g. 'person.created'). Metadata events compile to 'metadata.<metadataName>.<operation>' (e.g. 'metadata.workflow.updated'). Use [{kind:'record',object:'*',event:'*'}] to subscribe to all record events.",
   );
-
-export type WebhookOperationInput = z.infer<typeof webhookOperationSchema>;
-
-export const compileWebhookOperations = (
-  operations: WebhookOperationInput,
-): string[] =>
-  operations.map((operation) => {
-    if (operation.kind === 'record') {
-      return `${operation.object}.${operation.event}`;
-    }
-
-    return `metadata.${operation.metadataName}.${operation.operation}`;
-  });

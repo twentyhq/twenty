@@ -1,11 +1,9 @@
 import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 import { z } from 'zod';
 
-import { pageLayoutTabLayoutModeSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-widget.schema';
-import {
-  type PageLayoutToolContext,
-  type PageLayoutToolDependencies,
-} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { pageLayoutTabLayoutModeSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-tab-layout-mode.schema';
+import { type PageLayoutToolContext } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-context.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
 
 const addPageLayoutTabSchema = z.object({
   pageLayoutId: z

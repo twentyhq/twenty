@@ -6,10 +6,8 @@ import {
   type WorkflowRunWorkspaceEntity,
 } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
 import { workflowRunStatusSchema } from 'src/modules/workflow/workflow-run-tools/schemas/workflow-run.schema';
-import {
-  type WorkflowRunToolContext,
-  type WorkflowRunToolDependencies,
-} from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
+import { type WorkflowRunToolContext } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-context.type';
+import { type WorkflowRunToolDependencies } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
 
 const listWorkflowRunsSchema = z.object({
   workflowId: z

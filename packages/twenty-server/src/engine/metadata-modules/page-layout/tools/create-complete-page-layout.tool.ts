@@ -4,15 +4,11 @@ import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { PageLayoutType } from 'src/engine/metadata-modules/page-layout/enums/page-layout-type.enum';
-import {
-  deriveGridPositionForWidget,
-  pageLayoutTabInputSchema,
-  pageLayoutTypeSchema,
-} from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-widget.schema';
-import {
-  type PageLayoutToolContext,
-  type PageLayoutToolDependencies,
-} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { pageLayoutTabInputSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-tab-input.schema';
+import { pageLayoutTypeSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-type.schema';
+import { type PageLayoutToolContext } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-context.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { deriveGridPositionForWidget } from 'src/engine/metadata-modules/page-layout/tools/utils/derive-grid-position-for-widget.util';
 
 const createCompletePageLayoutSchema = z.object({
   name: z.string().describe('Layout name'),

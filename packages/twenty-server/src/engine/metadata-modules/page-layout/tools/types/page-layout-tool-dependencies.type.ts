@@ -7,7 +7,3 @@ export type PageLayoutToolDependencies = {
   pageLayoutTabService: PageLayoutTabService;
   pageLayoutWidgetService: PageLayoutWidgetService;
 };
-
-export type PageLayoutToolContext = {
-  workspaceId: string;
-};

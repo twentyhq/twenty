@@ -1,9 +1,7 @@
 import { z } from 'zod';
 
-import {
-  type WorkflowRunToolContext,
-  type WorkflowRunToolDependencies,
-} from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
+import { type WorkflowRunToolContext } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-context.type';
+import { type WorkflowRunToolDependencies } from 'src/modules/workflow/workflow-run-tools/types/workflow-run-tool-dependencies.type';
 
 const runWorkflowVersionSchema = z.object({
   workflowVersionId: z

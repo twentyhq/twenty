@@ -1,16 +1,12 @@
 import { z } from 'zod';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
-import {
-  deriveGridPositionForWidget,
-  widgetConfigurationPassthroughSchema,
-  widgetPositionSchema,
-  widgetTypeSchema,
-} from 'src/engine/metadata-modules/page-layout/tools/schemas/page-layout-widget.schema';
-import {
-  type PageLayoutToolContext,
-  type PageLayoutToolDependencies,
-} from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { widgetConfigurationPassthroughSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/widget-configuration-passthrough.schema';
+import { widgetPositionSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/widget-position.schema';
+import { widgetTypeSchema } from 'src/engine/metadata-modules/page-layout/tools/schemas/widget-type.schema';
+import { type PageLayoutToolContext } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-context.type';
+import { type PageLayoutToolDependencies } from 'src/engine/metadata-modules/page-layout/tools/types/page-layout-tool-dependencies.type';
+import { deriveGridPositionForWidget } from 'src/engine/metadata-modules/page-layout/tools/utils/derive-grid-position-for-widget.util';
 
 const addPageLayoutWidgetSchema = z.object({
   pageLayoutTabId: z

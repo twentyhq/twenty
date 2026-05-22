@@ -3,8 +3,3 @@ import type { NavigationMenuItemService } from 'src/engine/metadata-modules/navi
 export type NavigationMenuItemToolDependencies = {
   navigationMenuItemService: NavigationMenuItemService;
 };
-
-export type NavigationMenuItemToolContext = {
-  workspaceId: string;
-  userWorkspaceId?: string;
-};
