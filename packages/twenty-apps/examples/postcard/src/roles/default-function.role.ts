@@ -1,5 +1,4 @@
-import { defineRole } from 'twenty-sdk/define';
-import { SystemPermissionFlag } from 'twenty-shared/constants';
+import { SystemPermissionFlag, defineRole } from 'twenty-sdk/define';
 import {
   CONTENT_FIELD_UNIVERSAL_IDENTIFIER,
   POST_CARD_UNIVERSAL_IDENTIFIER,
