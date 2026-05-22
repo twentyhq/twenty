@@ -13,12 +13,16 @@ export class ApplicationLogoResolver {
   logo(
     @Parent() application: ApplicationDTO & { workspaceId?: string },
   ): string | null {
+    if (!application.workspaceId) {
+      return application.logo ?? null;
+    }
+
     const serverUrl = this.twentyConfigService.get('SERVER_URL');
 
     return resolveApplicationLogoUrl({
       logo: application.logo,
       serverUrl,
-      workspaceId: application.workspaceId ?? '',
+      workspaceId: application.workspaceId,
       applicationId: application.id,
     });
   }

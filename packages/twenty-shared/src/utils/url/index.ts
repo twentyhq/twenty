@@ -1,4 +1,5 @@
 export * from './absoluteUrlSchema';
+export * from './buildPublicAssetUrl';
 export * from './getSafeUrl';
 export * from './isSafeUrl';
 export * from './ensureAbsoluteUrl';

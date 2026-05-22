@@ -199,6 +199,7 @@ export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationS
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
 export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
+export { buildPublicAssetUrl } from './url/buildPublicAssetUrl';
 export { buildSignedPath } from './url/buildSignedPath';
 export { ensureAbsoluteUrl } from './url/ensureAbsoluteUrl';
 export { getAbsoluteUrlOrThrow } from './url/getAbsoluteUrlOrThrow';

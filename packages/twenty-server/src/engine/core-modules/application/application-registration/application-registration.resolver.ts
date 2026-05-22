@@ -24,9 +24,8 @@ import { CreateApplicationRegistrationVariableInput } from 'src/engine/core-modu
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationExceptionFilter } from 'src/engine/core-modules/application/application-registration/application-registration-exception-filter';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
+import { ApplicationRegistrationLogoService } from 'src/engine/core-modules/application/application-registration/application-registration-logo.service';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import { resolveApplicationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-logo-url.util';
 import { ApplicationTarballService } from 'src/engine/core-modules/application/application-registration/application-tarball.service';
 import { ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { CreateApplicationRegistrationDTO } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.dto';
@@ -55,7 +54,6 @@ import {
   ApplicationRegistrationException,
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
-import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
 
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => ApplicationRegistrationEntity)
@@ -67,9 +65,9 @@ import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/a
 export class ApplicationRegistrationResolver {
   constructor(
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationLogoService: ApplicationRegistrationLogoService,
     private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private readonly applicationTarballService: ApplicationTarballService,
-    private readonly applicationService: ApplicationService,
     private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
@@ -338,48 +336,7 @@ export class ApplicationRegistrationResolver {
   async logo(
     @Parent() registration: ApplicationRegistrationEntity,
   ): Promise<string | null> {
-    if (
-      registration.sourceType === ApplicationRegistrationSourceType.TARBALL &&
-      registration.logoFileId
-    ) {
-      return this.fileUrlService.signFileByIdUrl({
-        fileId: registration.logoFileId,
-        workspaceId: registration.ownerWorkspaceId ?? '',
-        fileFolder: FileFolder.AppTarball,
-      });
-    }
-
-    const logo =
-      registration.logo ?? registration.manifest?.application?.logoUrl ?? null;
-
-    if (
-      registration.sourceType === ApplicationRegistrationSourceType.LOCAL &&
-      logo &&
-      registration.ownerWorkspaceId
-    ) {
-      const application =
-        await this.applicationService.findByUniversalIdentifier({
-          universalIdentifier: registration.universalIdentifier,
-          workspaceId: registration.ownerWorkspaceId,
-        });
-
-      if (application) {
-        return resolveApplicationLogoUrl({
-          logo,
-          serverUrl: this.twentyConfigService.get('SERVER_URL'),
-          workspaceId: registration.ownerWorkspaceId,
-          applicationId: application.id,
-        });
-      }
-    }
-
-    return resolveApplicationRegistrationLogoUrl({
-      logo,
-      sourceType: registration.sourceType,
-      sourcePackage: registration.sourcePackage,
-      latestAvailableVersion: registration.latestAvailableVersion,
-      cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
-    });
+    return this.applicationRegistrationLogoService.resolveLogoUrl(registration);
   }
 
   @ResolveField(() => Boolean)

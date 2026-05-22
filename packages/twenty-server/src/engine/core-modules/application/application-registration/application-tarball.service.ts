@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 
 import { promises as fs } from 'fs';
 import { tmpdir } from 'os';
-import { join } from 'path';
+import { join, resolve, sep } from 'path';
 
 import semver from 'semver';
 import { FileFolder } from 'twenty-shared/types';
@@ -262,9 +262,12 @@ export class ApplicationTarballService {
       return null;
     }
 
-    const absolutePath = join(params.contentDir, params.logoPath);
+    const absolutePath = resolve(params.contentDir, params.logoPath);
+    const safePrefx = params.contentDir.endsWith(sep)
+      ? params.contentDir
+      : params.contentDir + sep;
 
-    if (!absolutePath.startsWith(params.contentDir)) {
+    if (!absolutePath.startsWith(safePrefx)) {
       return null;
     }
 

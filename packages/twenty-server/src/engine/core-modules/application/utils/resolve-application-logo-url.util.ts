@@ -1,5 +1,4 @@
-const isAbsoluteUrl = (url: string): boolean =>
-  url.startsWith('http://') || url.startsWith('https://');
+import { buildPublicAssetUrl } from 'twenty-shared/utils';
 
 export const resolveApplicationLogoUrl = ({
   logo,
@@ -12,13 +11,10 @@ export const resolveApplicationLogoUrl = ({
   workspaceId: string;
   applicationId: string;
 }): string | null => {
-  if (!logo) {
-    return null;
-  }
-
-  if (isAbsoluteUrl(logo)) {
-    return logo;
-  }
-
-  return `${serverUrl}/public-assets/${workspaceId}/${applicationId}/${logo}`;
+  return buildPublicAssetUrl({
+    path: logo,
+    serverUrl,
+    workspaceId,
+    applicationId,
+  });
 };

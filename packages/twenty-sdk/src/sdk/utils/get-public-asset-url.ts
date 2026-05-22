@@ -2,6 +2,7 @@ import {
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application';
+import { buildPublicAssetUrl } from 'twenty-shared/utils';
 
 const decodeTokenPayload = (
   token: string,
@@ -38,5 +39,16 @@ export const getPublicAssetUrl = (path: string): string => {
     .map(encodeURIComponent)
     .join('/');
 
-  return `${apiUrl}/public-assets/${workspaceId}/${applicationId}/${encodedPath}`;
+  const url = buildPublicAssetUrl({
+    path: encodedPath,
+    serverUrl: apiUrl,
+    workspaceId,
+    applicationId,
+  });
+
+  if (!url) {
+    throw new Error('Failed to build public asset URL');
+  }
+
+  return url;
 };
