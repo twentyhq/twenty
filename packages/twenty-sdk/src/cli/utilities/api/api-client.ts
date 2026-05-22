@@ -1,6 +1,8 @@
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { isNonEmptyString } from '@sniptt/guards';
 import axios, { type AxiosInstance } from 'axios';
 import chalk from 'chalk';
+import { isDefined } from 'twenty-shared/utils';
 
 export class ApiClient {
   readonly client: AxiosInstance;
@@ -78,11 +80,63 @@ export class ApiClient {
       );
       const authorizationEndpoint = response.data?.authorization_endpoint;
 
-      if (typeof authorizationEndpoint !== 'string') {
+      if (!isNonEmptyString(authorizationEndpoint)) {
         return null;
       }
 
       return new URL(authorizationEndpoint).origin;
+    } catch {
+      return null;
+    }
+  }
+
+  async getWorkspaceFrontendUrl(): Promise<string | null> {
+    const frontendUrl = await this.getFrontendUrl();
+
+    if (!isDefined(frontendUrl)) {
+      return null;
+    }
+
+    const workspaceFrontendUrl = await this.getCurrentWorkspaceFrontendUrl();
+
+    return workspaceFrontendUrl ?? frontendUrl;
+  }
+
+  private async getCurrentWorkspaceFrontendUrl(): Promise<string | null> {
+    try {
+      const query = `
+        query CurrentWorkspaceForFrontendUrl {
+          currentWorkspace {
+            workspaceUrls {
+              subdomainUrl
+              customUrl
+            }
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        { query },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      const workspaceUrls =
+        response.data?.data?.currentWorkspace?.workspaceUrls;
+      const workspaceFrontendUrl = isNonEmptyString(workspaceUrls?.customUrl)
+        ? workspaceUrls.customUrl
+        : workspaceUrls?.subdomainUrl;
+
+      if (!isNonEmptyString(workspaceFrontendUrl)) {
+        return null;
+      }
+
+      return new URL(workspaceFrontendUrl).origin;
     } catch {
       return null;
     }

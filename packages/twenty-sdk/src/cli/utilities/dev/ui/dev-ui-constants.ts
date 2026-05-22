@@ -157,14 +157,13 @@ export const groupEntitiesByType = (
 };
 
 export const getApplicationUrl = (state: OrchestratorState): string | null => {
-  if (
-    !state.frontendUrl ||
-    !state.steps.resolveApplication.output.universalIdentifier
-  ) {
+  const applicationId = state.steps.resolveApplication.output.applicationId;
+
+  if (!state.frontendUrl || !applicationId) {
     return null;
   }
 
-  return `${state.frontendUrl}/settings/applications`;
+  return `${state.frontendUrl}/settings/applications/${applicationId}`;
 };
 
 export const mergeStepStatuses = (

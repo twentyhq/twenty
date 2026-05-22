@@ -2,6 +2,7 @@ import { type ApiService } from '@/cli/utilities/api/api-service';
 import { ConfigService } from '@/cli/utilities/config/config-service';
 import { type OrchestratorState } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { detectLocalServer } from '@/cli/utilities/server/detect-local-server';
+import { isDefined } from 'twenty-shared/utils';
 
 export type CheckServerOrchestratorStepOutput = {
   isReady: boolean;
@@ -28,7 +29,6 @@ export class CheckServerOrchestratorStep {
   }
 
   private hasRetried = false;
-  private hasFetchedFrontendUrl = false;
 
   async execute(): Promise<boolean> {
     const step = this.state.steps.checkServer;
@@ -89,11 +89,10 @@ export class CheckServerOrchestratorStep {
     step.output = { isReady: true, errorLogged: false };
     step.status = 'done';
 
-    if (!this.hasFetchedFrontendUrl) {
-      this.hasFetchedFrontendUrl = true;
-      const frontendUrl = await this.apiService.getFrontendUrl();
+    if (!isDefined(this.state.frontendUrl)) {
+      const frontendUrl = await this.apiService.getWorkspaceFrontendUrl();
 
-      if (frontendUrl) {
+      if (isDefined(frontendUrl)) {
         this.state.frontendUrl = frontendUrl;
       }
     }

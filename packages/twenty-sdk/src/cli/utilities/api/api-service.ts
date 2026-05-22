@@ -32,8 +32,8 @@ export class ApiService {
     return this.apiClient.validateAuth();
   }
 
-  getFrontendUrl(): Promise<string | null> {
-    return this.apiClient.getFrontendUrl();
+  getWorkspaceFrontendUrl(): Promise<string | null> {
+    return this.apiClient.getWorkspaceFrontendUrl();
   }
 
   refreshToken(): Promise<string | null> {
