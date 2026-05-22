@@ -237,7 +237,7 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     versionSpec: string,
     authToken?: string,
   ): Promise<string> {
-    const encodedName = packageName.replace('/', '%2f');
+    const encodedName = encodeURIComponent(packageName);
     const baseUrl = registryUrl.replace(/\/$/, '');
     const metadataUrl = `${baseUrl}/${encodedName}/${versionSpec}`;
 
