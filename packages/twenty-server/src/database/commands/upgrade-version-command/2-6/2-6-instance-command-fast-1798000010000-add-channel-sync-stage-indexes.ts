@@ -9,9 +9,7 @@ const CALENDAR_CHANNEL_INDEX_NAME =
   'IDX_CALENDAR_CHANNEL_WORKSPACE_ID_SYNC_ENABLED_SYNC_STAGE';
 
 @RegisteredInstanceCommand('2.6.0', 1798000010000)
-export class AddChannelSyncStageIndexesFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddChannelSyncStageIndexesFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE INDEX IF NOT EXISTS "${MESSAGE_CHANNEL_INDEX_NAME}" ON "core"."messageChannel" ("workspaceId", "isSyncEnabled", "syncStage")`,

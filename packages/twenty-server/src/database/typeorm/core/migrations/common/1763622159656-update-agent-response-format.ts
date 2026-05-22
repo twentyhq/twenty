@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UpdateAgentResponseFormat1763622159656
-  implements MigrationInterface
-{
+export class UpdateAgentResponseFormat1763622159656 implements MigrationInterface {
   name = 'UpdateAgentResponseFormat1763622159656';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

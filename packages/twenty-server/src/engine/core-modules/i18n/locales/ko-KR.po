@@ -8594,6 +8594,11 @@ msgstr "engineComponentKey가 FRONT_COMPONENT_RENDERER인 경우 workflowVersion
 msgid "Workspace {workspaceId} is not found."
 msgstr "워크스페이스 {workspaceId}를 찾을 수 없음."
 
+#. js-lingui-id: lNgTSN
+#: src/engine/core-modules/billing/billing.exception.ts
+msgid "Workspace cannot be deleted: subscription is not yet canceled."
+msgstr ""
+
 #. js-lingui-id: XsSVrR
 #: src/engine/core-modules/auth/services/sign-in-up.service.ts
 msgid "Workspace creation is restricted to admins"

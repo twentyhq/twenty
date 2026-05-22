@@ -10,9 +10,7 @@ import { WorkflowVersionValidationWorkspaceService } from 'src/modules/workflow/
 import { WorkspaceNotFoundDefaultError } from 'src/engine/core-modules/workspace/workspace.exception';
 
 @WorkspaceQueryHook(`workflowVersion.updateOne`)
-export class WorkflowVersionUpdateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowVersionUpdateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   constructor(
     private readonly workflowVersionValidationWorkspaceService: WorkflowVersionValidationWorkspaceService,
   ) {}

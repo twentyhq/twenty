@@ -14,9 +14,7 @@ import { isApplicationAuthContext } from 'src/engine/core-modules/auth/guards/is
   key: `calendarEvent.findOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class CalendarEventFindOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class CalendarEventFindOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly applyCalendarEventsVisibilityRestrictionsService: ApplyCalendarEventsVisibilityRestrictionsService,
   ) {}
