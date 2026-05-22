@@ -38,6 +38,60 @@ export default defineView({
 * Daha gelişmiş yapılandırmalar için `filters`, `filterGroups`, `groups` ve `fieldGroups` da tanımlayabilirsiniz.
 * `position`, aynı nesne için birden fazla görünüm olduğunda sıralamayı kontrol eder.
 
+## Filtreler
+
+Bir görünüm, önceden uygulanmış filtrelerle birlikte gönderilebilir. Her filtrenin üç koordinatı vardır: filtrelenen **alan**, **işleç** (nasıl karşılaştırılacağı) ve **değer** (neyle karşılaştırılacağı). Üçünün de hizalı olması gerekir — bir alan türüne uygulanmayan bir işlecin kullanılması, senkronizasyon sırasında reddedilir.
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Alan türüne göre desteklenen işleçler
+
+| Alan tipi                                                                                          | Desteklenen işlenenler                                                                                             |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`                                                                                                               |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Benzer adlara sahip alan türleri tamamen farklı işlenenler kullanabilir — yaygın bir durum `SELECT` ve `MULTI_SELECT` içindir.
+
+### Her işlenene göre değer şekli
+
+`value` alanı her zaman JSON-serileştirilebilir bir değerdir, ancak beklenen şekli işlenene bağlıdır:
+
+| İşlenen ailesi                                                | Değer şekli                            | Örnek                    |
+| ------------------------------------------------------------- | -------------------------------------- | ------------------------ |
+| `SELECT` üzerinde `IS`, `IS_NOT`                              | seçenek anahtarları dizisi (stringler) | `['ACTIVE', 'PENDING']`  |
+| `MULTI_SELECT` üzerinde `CONTAINS`, `DOES_NOT_CONTAIN`        | seçenek anahtarları dizisi (stringler) | `['TAG_A']`              |
+| `RELATION` üzerinde `IS`, `IS_NOT`                            | kayıt kimlikleri dizisi (uuid'ler)     | `['c5a1...']`            |
+| metin benzeri alanlar üzerinde `CONTAINS`, `DOES_NOT_CONTAIN` | metin                                  | `'acme'`                 |
+| `NUMBER` üzerinde `IS`, `IS_NOT`                              | string (değer)                         | `'5'`                    |
+| `RATING` / `UUID` üzerinde `IS`                               | string (değer)                         | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`                 | string (sınır)                         | `'10'`                   |
+| `DATE` / `DATE_TIME` üzerinde `IS`, `IS_BEFORE`, `IS_AFTER`   | ISO 8601 stringi                       | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                                    | empty string                           | `''`                     |
+| `IS` on `BOOLEAN`                                             | `'true'` or `'false'`                  | `'doğru'`                |
+
 ## Görünümlerin kullanıcı arayüzünde görüntülenme şekli
 
 Tek başına bir görünüm, kenar çubuğundan erişilebilir değildir. Orada görünmesini sağlamak için, türü `VIEW` olan ve görünümün `universalIdentifier` değerini işaret eden bir [navigasyon menüsü öğesi](/l/tr/developers/extend/apps/layout/navigation-menu-items) ile eşleştirin. Bu, standart örüntüdür: her özel nesne genellikle varsayılan bir görünüm ve bunu açan bir kenar çubuğu girdisiyle birlikte sunulur.
