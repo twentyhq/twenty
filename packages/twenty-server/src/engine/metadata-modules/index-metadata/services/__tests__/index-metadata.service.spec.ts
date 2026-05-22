@@ -116,7 +116,12 @@ describe('IndexMetadataService', () => {
     fieldIds = [],
     customIndexCount = 0,
   }: {
-    fieldIds?: { id: string; universalIdentifier: string; name: string }[];
+    fieldIds?: {
+      id: string;
+      universalIdentifier: string;
+      name: string;
+      type?: FieldMetadataType;
+    }[];
     customIndexCount?: number;
   } = {}) => {
     const indexes = Array.from({ length: customIndexCount }).map((_, i) => ({
