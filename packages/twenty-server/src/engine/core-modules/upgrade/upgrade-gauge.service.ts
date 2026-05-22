@@ -93,26 +93,18 @@ export class UpgradeGaugeService implements OnModuleInit {
       cacheValue: true,
     });
 
-    // Info-style gauge — value is always 1; the inferred instance
-    // version (semver-ish, derived from the last applied upgrade
-    // migration) is carried as the `version` attribute. Same shape
-    // Prometheus uses for `node_uname_info`, `go_info`, etc.: the
-    // gauge value is meaningless on its own, the label is the data.
-    this.metricsService.createObservableGauge({
-      metricName: 'twenty_upgrade_instance_info',
+    this.metricsService.createInfoGauge({
+      metricName: 'twenty_upgrade_instance',
       options: {
         description:
-          'Instance info; `version` attribute carries the inferred instance version',
+          'Inferred instance version (semver-ish, derived from the last applied upgrade migration), carried as the `version` attribute',
       },
-      callback: async () => {
+      attributesCallback: async () => {
         const upgradeStatus = await this.getCachedUpgradeStatus();
 
         return {
-          value: 1,
-          attributes: {
-            version:
-              upgradeStatus?.instanceUpgradeStatus.inferredVersion ?? 'unknown',
-          },
+          version:
+            upgradeStatus?.instanceUpgradeStatus.inferredVersion ?? 'unknown',
         };
       },
     });

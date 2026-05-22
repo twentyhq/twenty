@@ -52,13 +52,19 @@ export class MetricsService {
     metricName: string;
     options: MetricOptions;
     /**
-     * Return a bare `number` for a plain gauge, or `{ value, attributes }`
-     * to attach labels (e.g. a version/build string on an info metric).
+     * Return shape — three forms, pick whichever fits:
+     * - Bare `number`: simple gauge with no labels (existing behavior).
+     * - `{ value, attributes }`: single observation with labels.
+     *   Common for "info" metrics, see `createInfoGauge` for sugar.
+     * - `GaugeObservation[]`: emit several values from one callback,
+     *   each with its own attribute set (e.g. per-queue depth from
+     *   one bullmq registry walk). Empty array is a valid no-op.
      */
     callback: () =>
       | number
       | GaugeObservation
-      | Promise<number | GaugeObservation>;
+      | GaugeObservation[]
+      | Promise<number | GaugeObservation | GaugeObservation[]>;
     /**
      * Cache the observed value in Redis for 1 minute so scrape cadence
      * doesn't repeatedly hit the underlying callback. Only supported
@@ -95,6 +101,10 @@ export class MetricsService {
               METRICS_CACHE_TTL,
             );
           }
+        } else if (Array.isArray(result)) {
+          for (const observation of result) {
+            observableResult.observe(observation.value, observation.attributes);
+          }
         } else {
           observableResult.observe(result.value, result.attributes);
         }
@@ -107,6 +117,47 @@ export class MetricsService {
     });
 
     return gauge;
+  }
+
+  /**
+   * Sugar for the Prometheus "info metric" pattern — a gauge whose
+   * value is always `1`, used to carry stable string metadata (version,
+   * build SHA, region, ...) as labels. The metric name is auto-suffixed
+   * with `_info` if not already, matching the Prometheus naming
+   * convention (`node_uname_info`, `go_info`, `kube_pod_info`).
+   *
+   * Consumers join against the info metric via PromQL `group_left` to
+   * project its labels onto other metrics — the `1` value is load-
+   * bearing because multiplication by 1 is a no-op:
+   *
+   *   twenty_upgrade_workspaces_behind_total
+   *     * on() group_left(version) twenty_upgrade_instance_info
+   *
+   * Best practice: keep one info metric per dimension cluster
+   * (instance-wide, per-workspace, per-deployment, …) and only put
+   * stable, bounded-cardinality strings in the attributes.
+   */
+  createInfoGauge({
+    metricName,
+    options,
+    attributesCallback,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    attributesCallback: () => Attributes | Promise<Attributes>;
+  }): ObservableGauge {
+    const normalizedName = metricName.endsWith('_info')
+      ? metricName
+      : `${metricName}_info`;
+
+    return this.createObservableGauge({
+      metricName: normalizedName,
+      options,
+      callback: async () => ({
+        value: 1,
+        attributes: await attributesCallback(),
+      }),
+    });
   }
 
   async incrementCounter({
