@@ -63,7 +63,7 @@ describe('getWidgetCardVariant', () => {
     });
   });
 
-  describe("side-column context for record pages", () => {
+  describe('side-column context for record pages', () => {
     it.each([
       ['isInPinnedTab', { isInPinnedTab: true }],
       ['isMobile', { isMobile: true }],
