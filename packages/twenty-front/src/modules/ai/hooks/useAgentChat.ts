@@ -11,6 +11,7 @@ import { AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME } from '@/ai/constants/AgentChat
 import { AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME } from '@/ai/constants/AgentChatRestoreEditorContentEventName';
 import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSendMessageEventName';
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
+import { DELETE_CHAT_THREAD } from '@/ai/graphql/mutations/deleteChatThread';
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
 import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
@@ -29,9 +30,13 @@ import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesS
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
+
+const AI_THREAD_NOT_FOUND_ERROR_CODE = 'THREAD_NOT_FOUND';
 
 export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
@@ -42,6 +47,7 @@ export const useAgentChat = (
   const apolloClient = useApolloClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
+  const { removeFromDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const store = useStore();
 
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
@@ -193,8 +199,20 @@ export const useAgentChat = (
         return null;
       });
     } catch (error) {
-      const restoredDraftKey =
-        draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
+      const isFirstSendForNewThread =
+        draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY;
+      const isThreadMissing = isGraphqlErrorOfType(
+        error,
+        AI_THREAD_NOT_FOUND_ERROR_CODE,
+      );
+      const shouldResetToNewThread = isFirstSendForNewThread || isThreadMissing;
+
+      const restoredDraftKey = shouldResetToNewThread
+        ? AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+        : draftKey;
+      const errorTargetThreadId = shouldResetToNewThread
+        ? AGENT_CHAT_NEW_THREAD_DRAFT_KEY
+        : threadId;
 
       rollbackOptimisticUnarchive?.();
 
@@ -202,9 +220,6 @@ export const useAgentChat = (
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
         [restoredDraftKey]: contentToSend,
-        ...(draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY
-          ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
-          : {}),
       }));
       setAgentChatUploadedFiles(uploadedFilesSnapshot);
 
@@ -215,19 +230,38 @@ export const useAgentChat = (
         latestMessages.filter((message) => message.id !== messageId),
       );
 
-      store.set(
-        errorAtom,
+      const normalizedError =
         CombinedGraphQLErrors.is(error) || error instanceof Error
           ? error
-          : new Error('An unexpected error occurred'),
+          : new Error('An unexpected error occurred');
+
+      store.set(
+        agentChatErrorComponentFamilyState.atomFamily({
+          instanceId: AGENT_CHAT_INSTANCE_ID,
+          familyKey: { threadId: errorTargetThreadId },
+        }),
+        normalizedError,
       );
 
       dispatchBrowserEvent(AGENT_CHAT_RESTORE_EDITOR_CONTENT_EVENT_NAME, {
         content: contentToSend,
       });
 
-      if (draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY) {
-        setCurrentAiChatThread(threadId);
+      if (shouldResetToNewThread) {
+        removeFromDraft({ key: 'agentChatThreads', itemIds: [threadId] });
+        applyChanges();
+        setCurrentAiChatThread(AGENT_CHAT_NEW_THREAD_DRAFT_KEY);
+
+        if (isFirstSendForNewThread) {
+          // Best-effort orphan cleanup; safe to ignore failure because
+          // currentAiChatThreadState is already reset.
+          apolloClient
+            .mutate({
+              mutation: DELETE_CHAT_THREAD,
+              variables: { id: threadId },
+            })
+            .catch(() => undefined);
+        }
       }
 
       setPendingThreadIdAfterFirstSend(null);
