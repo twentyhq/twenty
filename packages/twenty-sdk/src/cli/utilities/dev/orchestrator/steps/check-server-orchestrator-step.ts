@@ -28,6 +28,7 @@ export class CheckServerOrchestratorStep {
   }
 
   private hasRetried = false;
+  private hasFetchedFrontendUrl = false;
 
   async execute(): Promise<boolean> {
     const step = this.state.steps.checkServer;
@@ -87,6 +88,15 @@ export class CheckServerOrchestratorStep {
 
     step.output = { isReady: true, errorLogged: false };
     step.status = 'done';
+
+    if (!this.hasFetchedFrontendUrl) {
+      this.hasFetchedFrontendUrl = true;
+      const frontendUrl = await this.apiService.getFrontendUrl();
+
+      if (frontendUrl) {
+        this.state.frontendUrl = frontendUrl;
+      }
+    }
 
     if (!wasReady) {
       this.notify();

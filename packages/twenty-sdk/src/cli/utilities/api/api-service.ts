@@ -32,6 +32,10 @@ export class ApiService {
     return this.apiClient.validateAuth();
   }
 
+  getFrontendUrl(): Promise<string | null> {
+    return this.apiClient.getFrontendUrl();
+  }
+
   refreshToken(): Promise<string | null> {
     return this.apiClient.refreshToken();
   }

@@ -70,6 +70,24 @@ export class ApiClient {
     );
   }
 
+  async getFrontendUrl(): Promise<string | null> {
+    try {
+      const response = await this.client.get(
+        '/.well-known/oauth-authorization-server',
+        { headers: { Accept: 'application/json' } },
+      );
+      const authorizationEndpoint = response.data?.authorization_endpoint;
+
+      if (typeof authorizationEndpoint !== 'string') {
+        return null;
+      }
+
+      return new URL(authorizationEndpoint).origin;
+    } catch {
+      return null;
+    }
+  }
+
   async validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {
     try {
       const query = `
