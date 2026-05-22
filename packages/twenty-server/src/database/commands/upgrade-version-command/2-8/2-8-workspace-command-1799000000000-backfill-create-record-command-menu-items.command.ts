@@ -11,6 +11,7 @@ import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/deco
 import {
   CREATE_RECORD_COMMAND_UUID_NAMESPACE,
   buildCreateRecordFlatCommandMenuItem,
+  buildUpdatedCreateRecordFlatCommandMenuItem,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-create-record-flat-command-menu-item.util';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import { seedCompareObjectMetadataForNavigationPosition } from 'src/engine/metadata-modules/flat-command-menu-item/utils/seed-compare-object-metadata-for-navigation-position.util';
@@ -117,26 +118,15 @@ export class BackfillCreateRecordCommandMenuItemsCommand extends ActiveOrSuspend
         });
 
         if (isDefined(existingCreateCommand)) {
-          if (
-            existingCreateCommand.label !== expectedCreateCommand.label ||
-            existingCreateCommand.shortLabel !==
-              expectedCreateCommand.shortLabel ||
-            existingCreateCommand.icon !== expectedCreateCommand.icon ||
-            existingCreateCommand.conditionalAvailabilityExpression !==
-              expectedCreateCommand.conditionalAvailabilityExpression ||
-            JSON.stringify(existingCreateCommand.payload) !==
-              JSON.stringify(expectedCreateCommand.payload)
-          ) {
-            commandMenuItemsToUpdate.push({
-              ...existingCreateCommand,
-              label: expectedCreateCommand.label,
-              shortLabel: expectedCreateCommand.shortLabel,
-              icon: expectedCreateCommand.icon,
-              conditionalAvailabilityExpression:
-                expectedCreateCommand.conditionalAvailabilityExpression,
-              payload: expectedCreateCommand.payload,
-              updatedAt: now,
+          const updatedCreateCommand =
+            buildUpdatedCreateRecordFlatCommandMenuItem({
+              existingCommandMenuItem: existingCreateCommand,
+              objectMetadata: flatObjectMetadata,
+              now,
             });
+
+          if (isDefined(updatedCreateCommand)) {
+            commandMenuItemsToUpdate.push(updatedCreateCommand);
           }
 
           return undefined;

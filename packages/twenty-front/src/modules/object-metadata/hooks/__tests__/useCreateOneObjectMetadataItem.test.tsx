@@ -20,6 +20,10 @@ import {
   responseData as findManyObjectMetadataItemsResponseData,
 } from '@/object-metadata/hooks/__mocks__/useFindManyObjectMetadataItems';
 
+const findManyObjectMetadataItemsResult = jest.fn(() => ({
+  data: findManyObjectMetadataItemsResponseData,
+}));
+
 const mocks = [
   {
     request: {
@@ -48,9 +52,7 @@ const mocks = [
       query: findManyObjectMetadataItemsQuery,
       variables: {},
     },
-    result: jest.fn(() => ({
-      data: findManyObjectMetadataItemsResponseData,
-    })),
+    result: findManyObjectMetadataItemsResult,
   },
   {
     request: {
@@ -109,6 +111,7 @@ describe('useCreateOneObjectMetadataItem', () => {
       });
       jestExpectSuccessfulMetadataRequestResult(res);
       expect(res.response).toEqual({ data: { createOneObject: responseData } });
+      expect(findManyObjectMetadataItemsResult).toHaveBeenCalledTimes(1);
     });
   });
 });

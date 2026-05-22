@@ -55,6 +55,11 @@ export const useSidePanelContextChips = () => {
       (page) => page.page !== SidePanelPages.CommandMenuDisplay,
     );
 
+    const getPageIconColor = (pageIconColor: string | undefined) =>
+      isDefined(pageIconColor) && pageIconColor !== 'currentColor'
+        ? pageIconColor
+        : themeCssVariables.font.color.tertiary;
+
     return filteredSidePanelNavigationStack
       .map((page, index) => {
         const isLastChip =
@@ -109,17 +114,17 @@ export const useSidePanelContextChips = () => {
         return {
           page,
           Icons: isLastChip
-            ? [<page.pageIcon size={iconSizeSm} />]
+            ? [
+                <page.pageIcon
+                  size={iconSizeSm}
+                  color={getPageIconColor(page.pageIconColor)}
+                />,
+              ]
             : [
                 <SidePanelContextChipIconWrapper>
                   <page.pageIcon
                     size={iconSizeSm}
-                    color={
-                      isDefined(page.pageIconColor) &&
-                      page.pageIconColor !== 'currentColor'
-                        ? page.pageIconColor
-                        : themeCssVariables.font.color.tertiary
-                    }
+                    color={getPageIconColor(page.pageIconColor)}
                   />
                 </SidePanelContextChipIconWrapper>,
               ],

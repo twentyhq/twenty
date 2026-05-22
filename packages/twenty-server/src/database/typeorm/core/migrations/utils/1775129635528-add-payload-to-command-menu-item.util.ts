@@ -1,13 +1,18 @@
 import { type QueryRunner } from 'typeorm';
 
+import {
+  COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT,
+  COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT_SQL,
+} from 'src/engine/metadata-modules/command-menu-item/constants/command-menu-item-engine-key-coherence-constraint-sql.constant';
+
 export const addPayloadCheckConstraintToCommandMenuItem = async (
   queryRunner: QueryRunner,
 ): Promise<void> => {
   await queryRunner.query(
-    `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT IF EXISTS "CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE"`,
+    `ALTER TABLE "core"."commandMenuItem" DROP CONSTRAINT IF EXISTS "${COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT}"`,
   );
 
   await queryRunner.query(
-    `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE" CHECK (("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'CREATE_NEW_RECORD' AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION', 'CREATE_NEW_RECORD') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL))`,
+    `ALTER TABLE "core"."commandMenuItem" ADD CONSTRAINT "${COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT}" CHECK (${COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT_SQL})`,
   );
 };

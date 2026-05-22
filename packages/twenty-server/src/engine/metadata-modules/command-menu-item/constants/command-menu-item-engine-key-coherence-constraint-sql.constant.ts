@@ -1,0 +1,6 @@
+export const COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT =
+  'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE';
+
+const CREATE_NEW_RECORD_PAYLOAD_SQL = `("payload" IS NULL OR (jsonb_typeof("payload") = 'object' AND "payload" ? 'objectMetadataItemId' AND jsonb_typeof("payload" -> 'objectMetadataItemId') = 'string' AND "payload" ->> 'objectMetadataItemId' <> '' AND NOT ("payload" ? 'path')))`;
+
+export const COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT_SQL = `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'CREATE_NEW_RECORD' AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND ${CREATE_NEW_RECORD_PAYLOAD_SQL}) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION', 'CREATE_NEW_RECORD') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL)`;

@@ -120,6 +120,15 @@ export const SidePanelPageInfo = ({ pageChip }: SidePanelPageInfoProps) => {
     return <SidePanelAskAiInfo />;
   }
 
+  if (pageChip.page?.page === SidePanelPages.CreateRecord) {
+    return (
+      <SidePanelPageInfoLayout
+        icon={pageChip.Icons[0]}
+        title={<OverflowingTextWithTooltip text={pageChip.text ?? ''} />}
+      />
+    );
+  }
+
   if (pageChip.page?.page === SidePanelPages.NavigationMenuAddItem) {
     return (
       <SidePanelPageInfoLayout

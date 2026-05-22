@@ -1,3 +1,4 @@
+import isEqual from 'lodash.isequal';
 import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
@@ -64,6 +65,51 @@ export const buildCreateRecordFlatCommandMenuItem = ({
     pageLayoutId: null,
     pageLayoutUniversalIdentifier: null,
     createdAt: now,
+    updatedAt: now,
+  };
+};
+
+export const buildUpdatedCreateRecordFlatCommandMenuItem = ({
+  existingCommandMenuItem,
+  objectMetadata,
+  now,
+}: {
+  existingCommandMenuItem: FlatCommandMenuItem;
+  objectMetadata: {
+    id: string;
+    universalIdentifier: string;
+    nameSingular: string;
+  };
+  now: string;
+}): FlatCommandMenuItem | undefined => {
+  const expectedCommandMenuItem = buildCreateRecordFlatCommandMenuItem({
+    objectMetadata,
+    commandMenuItemId: existingCommandMenuItem.id,
+    applicationId: existingCommandMenuItem.applicationId,
+    workspaceId: existingCommandMenuItem.workspaceId,
+    position: existingCommandMenuItem.position,
+    now,
+  });
+
+  if (
+    existingCommandMenuItem.label === expectedCommandMenuItem.label &&
+    existingCommandMenuItem.shortLabel === expectedCommandMenuItem.shortLabel &&
+    existingCommandMenuItem.icon === expectedCommandMenuItem.icon &&
+    existingCommandMenuItem.conditionalAvailabilityExpression ===
+      expectedCommandMenuItem.conditionalAvailabilityExpression &&
+    isEqual(existingCommandMenuItem.payload, expectedCommandMenuItem.payload)
+  ) {
+    return undefined;
+  }
+
+  return {
+    ...existingCommandMenuItem,
+    label: expectedCommandMenuItem.label,
+    shortLabel: expectedCommandMenuItem.shortLabel,
+    icon: expectedCommandMenuItem.icon,
+    conditionalAvailabilityExpression:
+      expectedCommandMenuItem.conditionalAvailabilityExpression,
+    payload: expectedCommandMenuItem.payload,
     updatedAt: now,
   };
 };

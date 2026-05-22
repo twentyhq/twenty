@@ -11,6 +11,10 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import {
+  COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT,
+  COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT_SQL,
+} from 'src/engine/metadata-modules/command-menu-item/constants/command-menu-item-engine-key-coherence-constraint-sql.constant';
 import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
@@ -36,8 +40,8 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   'workspaceId',
 ])
 @Check(
-  'CHK_CMD_MENU_ITEM_ENGINE_KEY_COHERENCE',
-  `("engineComponentKey" = 'TRIGGER_WORKFLOW_VERSION' AND "workflowVersionId" IS NOT NULL AND "frontComponentId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'FRONT_COMPONENT_RENDERER' AND "frontComponentId" IS NOT NULL AND "workflowVersionId" IS NULL AND "payload" IS NULL) OR ("engineComponentKey" = 'NAVIGATION' AND "payload" IS NOT NULL AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" = 'CREATE_NEW_RECORD' AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL) OR ("engineComponentKey" NOT IN ('TRIGGER_WORKFLOW_VERSION', 'FRONT_COMPONENT_RENDERER', 'NAVIGATION', 'CREATE_NEW_RECORD') AND "workflowVersionId" IS NULL AND "frontComponentId" IS NULL AND "payload" IS NULL)`,
+  COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT,
+  COMMAND_MENU_ITEM_ENGINE_KEY_COHERENCE_CONSTRAINT_SQL,
 )
 export class CommandMenuItemEntity
   extends SyncableEntity

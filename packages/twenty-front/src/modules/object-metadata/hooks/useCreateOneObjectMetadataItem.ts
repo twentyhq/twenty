@@ -5,13 +5,16 @@ import {
   FindManyCommandMenuItemsDocument,
   FindManyNavigationMenuItemsDocument,
   FindManyViewsDocument,
+  type ObjectMetadataItemsQuery,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { splitObjectMetadataGqlResponse } from '@/metadata-store/utils/splitObjectMetadataGqlResponse';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
+import { FIND_MANY_OBJECT_METADATA_ITEMS } from '@/object-metadata/graphql/queries';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
@@ -60,7 +63,7 @@ export const useCreateOneObjectMetadataItem = () => {
           items: [objectData as FlatObjectMetadataItem],
         });
 
-        const flatFields = fieldsList.map((field) => {
+        const createdObjectFlatFields = fieldsList.map((field) => {
           const { __typename: _fieldTypename, ...fieldData } = field;
 
           return {
@@ -69,28 +72,46 @@ export const useCreateOneObjectMetadataItem = () => {
           } as FlatFieldMetadataItem;
         });
 
-        addToDraft({ key: 'fieldMetadataItems', items: flatFields });
+        addToDraft({
+          key: 'fieldMetadataItems',
+          items: createdObjectFlatFields,
+        });
 
         applyChanges();
 
-        const [viewsResult, navItemsResult, commandMenuItemsResult] =
-          await Promise.all([
-            client.query({
-              query: FindManyViewsDocument,
-              variables: { objectMetadataId: createdObject.id },
-              fetchPolicy: 'network-only',
-            }),
-            client.query({
-              query: FindManyNavigationMenuItemsDocument,
-              fetchPolicy: 'network-only',
-            }),
-            client.query({
-              query: FindManyCommandMenuItemsDocument,
-              fetchPolicy: 'network-only',
-            }),
-          ]);
+        const [
+          objectMetadataItemsResult,
+          viewsResult,
+          navItemsResult,
+          commandMenuItemsResult,
+        ] = await Promise.all([
+          client.query<ObjectMetadataItemsQuery>({
+            query: FIND_MANY_OBJECT_METADATA_ITEMS,
+            fetchPolicy: 'network-only',
+          }),
+          client.query({
+            query: FindManyViewsDocument,
+            variables: { objectMetadataId: createdObject.id },
+            fetchPolicy: 'network-only',
+          }),
+          client.query({
+            query: FindManyNavigationMenuItemsDocument,
+            fetchPolicy: 'network-only',
+          }),
+          client.query({
+            query: FindManyCommandMenuItemsDocument,
+            fetchPolicy: 'network-only',
+          }),
+        ]);
 
         const fetchedViews = viewsResult.data?.getViews ?? [];
+
+        const { flatObjects, flatFields, flatIndexes } =
+          splitObjectMetadataGqlResponse(objectMetadataItemsResult.data);
+
+        replaceDraft('objectMetadataItems', flatObjects);
+        replaceDraft('fieldMetadataItems', flatFields);
+        replaceDraft('indexMetadataItems', flatIndexes);
 
         const {
           flatViews,

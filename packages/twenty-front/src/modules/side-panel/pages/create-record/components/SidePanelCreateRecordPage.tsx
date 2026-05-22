@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { type KeyboardEvent, useCallback, useMemo, useState } from 'react';
 
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -8,17 +8,14 @@ import { FormFieldInput } from '@/object-record/record-field/ui/components/FormF
 import { isFieldRelation } from '@/object-record/record-field/ui/types/guards/isFieldRelation';
 import { isUpdateRecordValueEmpty } from '@/object-record/record-update-multiple/utils/isUpdateRecordValueEmpty';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
-import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
 import { useOpenRecordInSidePanel } from '@/side-panel/hooks/useOpenRecordInSidePanel';
 import { createRecordObjectMetadataItemIdComponentState } from '@/side-panel/pages/create-record/states/createRecordObjectMetadataItemIdComponentState';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotkeysOnFocusedElement';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useViewOrDefaultView } from '@/views/hooks/useViewOrDefaultView';
 import { shouldDisplayFormField } from '@/workflow/workflow-steps/workflow-actions/utils/shouldDisplayFormField';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { Key } from 'ts-key-enum';
 import { isObjectMetadataManuallyCreatable } from 'twenty-shared/metadata';
 import { FieldMetadataType } from 'twenty-shared/types';
 import {
@@ -200,19 +197,29 @@ const SidePanelCreateRecordForm = ({
     t,
   ]);
 
-  useHotkeysOnFocusedElement({
-    keys: [`${Key.Control}+${Key.Enter}`, `${Key.Meta}+${Key.Enter}`],
-    callback: () => {
+  const handleFormKeyDown = useCallback(
+    (event: KeyboardEvent<HTMLDivElement>) => {
+      const isSubmitShortcut =
+        (event.metaKey || event.ctrlKey) &&
+        (event.key === 'Enter' || event.code === 'NumpadEnter');
+
+      if (!isSubmitShortcut) {
+        return;
+      }
+
+      event.preventDefault();
+      event.stopPropagation();
+      event.nativeEvent.stopImmediatePropagation();
+
       if (!isSubmitting) {
         handleSave();
       }
     },
-    focusId: SIDE_PANEL_FOCUS_ID,
-    dependencies: [handleSave, isSubmitting],
-  });
+    [handleSave, isSubmitting],
+  );
 
   return (
-    <StyledPage>
+    <StyledPage onKeyDownCapture={handleFormKeyDown}>
       <StyledSectionContainer>
         <Section>
           {fieldsWithDefinitions.map(

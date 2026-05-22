@@ -3,7 +3,7 @@ import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command
 import { CreateNewIndexRecordNoSelectionRecordCommand } from '@/command-menu-item/engine-command/record/no-selection/components/CreateNewIndexRecordNoSelectionRecordCommand';
 import { isObjectMetadataCommandMenuItemPayload } from '@/command-menu-item/engine-command/utils/isObjectMetadataCommandMenuItemPayload';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { getIconColorForObjectType } from '@/object-metadata/utils/getIconColorForObjectType';
+import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { createRecordObjectMetadataItemIdComponentState } from '@/side-panel/pages/create-record/states/createRecordObjectMetadataItemIdComponentState';
 import { t } from '@lingui/core/macro';
@@ -11,7 +11,7 @@ import { useStore } from 'jotai';
 import { isObjectMetadataManuallyCreatable } from 'twenty-shared/metadata';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { useIcons } from 'twenty-ui/display';
+import { getIconTileColorShades, useIcons } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 export const CreateNewRecordCommand = () => {
@@ -58,7 +58,9 @@ export const CreateNewRecordCommand = () => {
       page: SidePanelPages.CreateRecord,
       pageTitle: t`New ${objectMetadataItem.labelSingular}`,
       pageIcon: Icon,
-      pageIconColor: getIconColorForObjectType(objectMetadataItem.nameSingular),
+      pageIconColor: getIconTileColorShades(
+        getObjectColorWithFallback(objectMetadataItem),
+      ).iconColor,
       pageId: pageComponentInstanceId,
     });
   };
