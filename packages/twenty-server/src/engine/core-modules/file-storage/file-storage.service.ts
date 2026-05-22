@@ -266,13 +266,13 @@ export class FileStorageService {
       },
     });
 
-    const basePath = `${join(params.fileFolder, params.resourcePath)}`.replace(
+    const filePath = `${join(params.fileFolder, params.resourcePath)}`.replace(
       /\/+/g,
       '/',
     );
 
     await this.fileRepository.delete({
-      path: Like(`${basePath}%`),
+      path: filePath,
       applicationId: application.id,
       workspaceId: params.workspaceId,
     });
