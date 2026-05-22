@@ -13,7 +13,8 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
+import { validatePathSegmentsSafety } from 'src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/validate-safe-relative-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -65,7 +66,7 @@ export class FileStorageService {
   }
 
   private validateAndBuildFileStoragePath(params: ResourceIdentifier): string {
-    const validationResult = validateResourcePath({
+    const validationResult = validateFilePath({
       resourcePath: params.resourcePath,
       fileFolder: params.fileFolder,
     });
@@ -93,6 +94,17 @@ export class FileStorageService {
     if (!safePathResult.isValid) {
       throw new FileStorageException(
         safePathResult.error,
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
+
+    const segmentsSafetyResult = validatePathSegmentsSafety({
+      resourcePath: params.folderPath,
+    });
+
+    if (!segmentsSafetyResult.isValid) {
+      throw new FileStorageException(
+        segmentsSafetyResult.error,
         FileStorageExceptionCode.ACCESS_DENIED,
       );
     }

@@ -6,7 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -39,7 +39,7 @@ export class FlatFrontComponentValidatorService {
     }
 
     if (isDefined(flatFrontComponent.builtComponentPath)) {
-      const builtPathResult = validateResourcePath({
+      const builtPathResult = validateFilePath({
         resourcePath: flatFrontComponent.builtComponentPath,
         fileFolder: FileFolder.BuiltFrontComponent,
       });
@@ -54,7 +54,7 @@ export class FlatFrontComponentValidatorService {
     }
 
     if (isDefined(flatFrontComponent.sourceComponentPath)) {
-      const sourcePathResult = validateResourcePath({
+      const sourcePathResult = validateFilePath({
         resourcePath: flatFrontComponent.sourceComponentPath,
         fileFolder: FileFolder.Source,
       });
@@ -139,7 +139,7 @@ export class FlatFrontComponentValidatorService {
     }
 
     if (isDefined(flatEntityUpdate.builtComponentPath)) {
-      const builtPathResult = validateResourcePath({
+      const builtPathResult = validateFilePath({
         resourcePath: flatEntityUpdate.builtComponentPath,
         fileFolder: FileFolder.BuiltFrontComponent,
       });
@@ -154,7 +154,7 @@ export class FlatFrontComponentValidatorService {
     }
 
     if (isDefined(flatEntityUpdate.sourceComponentPath)) {
-      const sourcePathResult = validateResourcePath({
+      const sourcePathResult = validateFilePath({
         resourcePath: flatEntityUpdate.sourceComponentPath,
         fileFolder: FileFolder.Source,
       });

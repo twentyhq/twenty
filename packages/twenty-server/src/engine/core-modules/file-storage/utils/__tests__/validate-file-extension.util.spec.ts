@@ -1,8 +1,8 @@
 import { FileFolder } from 'twenty-shared/types';
 
-import { validateResourceExtension } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension.util';
+import { validateFileExtension } from 'src/engine/core-modules/file-storage/utils/validate-file-extension.util';
 
-describe('validateResourceExtension', () => {
+describe('validateFileExtension', () => {
   it.each([
     {
       title: 'BuiltLogicFunction with .mjs',
@@ -47,7 +47,7 @@ describe('validateResourceExtension', () => {
   ])(
     'should return isValid: true for $title',
     ({ resourcePath, fileFolder }) => {
-      expect(validateResourceExtension({ resourcePath, fileFolder })).toEqual({
+      expect(validateFileExtension({ resourcePath, fileFolder })).toEqual({
         isValid: true,
       });
     },
@@ -87,7 +87,7 @@ describe('validateResourceExtension', () => {
   ])(
     'should return isValid: false for $title',
     ({ resourcePath, fileFolder }) => {
-      const result = validateResourceExtension({ resourcePath, fileFolder });
+      const result = validateFileExtension({ resourcePath, fileFolder });
 
       expect(result.isValid).toBe(false);
 
@@ -111,7 +111,7 @@ describe('validateResourceExtension', () => {
   ])(
     'should return isValid: true for unconfigured file folder $title',
     ({ resourcePath, fileFolder }) => {
-      expect(validateResourceExtension({ resourcePath, fileFolder })).toEqual({
+      expect(validateFileExtension({ resourcePath, fileFolder })).toEqual({
         isValid: true,
       });
     },

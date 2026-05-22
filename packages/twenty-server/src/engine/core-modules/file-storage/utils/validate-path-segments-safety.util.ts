@@ -6,7 +6,7 @@ const MAX_SEGMENT_LENGTH = 255;
 const MAX_PATH_LENGTH = 1024;
 const SAFE_SEGMENT_PATTERN = /^[a-zA-Z0-9._-]+$/;
 
-export const validatePathSegmentsIntegrity = ({
+export const validatePathSegmentsSafety = ({
   resourcePath,
 }: {
   resourcePath: string;
@@ -21,6 +21,10 @@ export const validatePathSegmentsIntegrity = ({
   const segments = resourcePath.split('/');
 
   for (const segment of segments) {
+    if (segment.length === 0) {
+      continue;
+    }
+
     if (segment.length > MAX_SEGMENT_LENGTH) {
       return {
         isValid: false,
@@ -34,15 +38,6 @@ export const validatePathSegmentsIntegrity = ({
         error: t`A path segment contains invalid characters. Only alphanumeric, dots, dashes and underscores are allowed`,
       };
     }
-  }
-
-  const filename = segments[segments.length - 1];
-
-  if (!filename.includes('.')) {
-    return {
-      isValid: false,
-      error: t`Filename must have an extension`,
-    };
   }
 
   return { isValid: true };

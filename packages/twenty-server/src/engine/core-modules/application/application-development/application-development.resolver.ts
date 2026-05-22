@@ -20,7 +20,7 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
-import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -220,7 +220,7 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
-    const pathValidationResult = validateResourcePath({
+    const pathValidationResult = validateFilePath({
       resourcePath: filePath,
       fileFolder,
     });

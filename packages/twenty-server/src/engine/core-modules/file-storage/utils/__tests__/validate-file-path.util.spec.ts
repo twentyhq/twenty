@@ -1,8 +1,8 @@
 import { FileFolder } from 'twenty-shared/types';
 
-import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 
-describe('validateResourcePath', () => {
+describe('validateFilePath', () => {
   it.each([
     {
       title: 'valid built logic function path',
@@ -32,14 +32,14 @@ describe('validateResourcePath', () => {
   ])(
     'should return isValid: true for $title',
     ({ resourcePath, fileFolder }) => {
-      expect(validateResourcePath({ resourcePath, fileFolder })).toEqual({
+      expect(validateFilePath({ resourcePath, fileFolder })).toEqual({
         isValid: true,
       });
     },
   );
 
   it('should fail on path traversal (safe relative path check)', () => {
-    const result = validateResourcePath({
+    const result = validateFilePath({
       resourcePath: '../../../etc/passwd',
       fileFolder: FileFolder.BuiltLogicFunction,
     });
@@ -52,7 +52,7 @@ describe('validateResourcePath', () => {
   });
 
   it('should fail on invalid characters (filename integrity check)', () => {
-    const result = validateResourcePath({
+    const result = validateFilePath({
       resourcePath: 'my folder/file.mjs',
       fileFolder: FileFolder.BuiltLogicFunction,
     });
@@ -65,7 +65,7 @@ describe('validateResourcePath', () => {
   });
 
   it('should fail on missing extension (filename integrity check)', () => {
-    const result = validateResourcePath({
+    const result = validateFilePath({
       resourcePath: 'Makefile',
       fileFolder: FileFolder.BuiltLogicFunction,
     });
@@ -78,7 +78,7 @@ describe('validateResourcePath', () => {
   });
 
   it('should fail on wrong extension (resource extension check)', () => {
-    const result = validateResourcePath({
+    const result = validateFilePath({
       resourcePath: 'handler.js',
       fileFolder: FileFolder.BuiltLogicFunction,
     });
@@ -91,7 +91,7 @@ describe('validateResourcePath', () => {
   });
 
   it('should short-circuit on the first failure', () => {
-    const result = validateResourcePath({
+    const result = validateFilePath({
       resourcePath: '',
       fileFolder: FileFolder.BuiltLogicFunction,
     });

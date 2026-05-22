@@ -5,7 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -50,7 +50,7 @@ export class FlatLogicFunctionValidatorService {
     }
 
     if (isDefined(flatEntityUpdate.builtHandlerPath)) {
-      const builtPathResult = validateResourcePath({
+      const builtPathResult = validateFilePath({
         resourcePath: flatEntityUpdate.builtHandlerPath,
         fileFolder: FileFolder.BuiltLogicFunction,
       });
@@ -65,7 +65,7 @@ export class FlatLogicFunctionValidatorService {
     }
 
     if (isDefined(flatEntityUpdate.sourceHandlerPath)) {
-      const sourcePathResult = validateResourcePath({
+      const sourcePathResult = validateFilePath({
         resourcePath: flatEntityUpdate.sourceHandlerPath,
         fileFolder: FileFolder.Source,
       });
@@ -146,7 +146,7 @@ export class FlatLogicFunctionValidatorService {
     }
 
     if (isDefined(flatLogicFunctionToValidate.builtHandlerPath)) {
-      const builtPathResult = validateResourcePath({
+      const builtPathResult = validateFilePath({
         resourcePath: flatLogicFunctionToValidate.builtHandlerPath,
         fileFolder: FileFolder.BuiltLogicFunction,
       });
@@ -161,7 +161,7 @@ export class FlatLogicFunctionValidatorService {
     }
 
     if (isDefined(flatLogicFunctionToValidate.sourceHandlerPath)) {
-      const sourcePathResult = validateResourcePath({
+      const sourcePathResult = validateFilePath({
         resourcePath: flatLogicFunctionToValidate.sourceHandlerPath,
         fileFolder: FileFolder.Source,
       });

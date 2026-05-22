@@ -438,6 +438,14 @@ describe('FileStorageService', () => {
             context: { folderPath: '' },
           },
           {
+            title: 'folder path with special characters (spaces)',
+            context: { folderPath: 'my folder/data' },
+          },
+          {
+            title: 'folder path with shell metacharacters',
+            context: { folderPath: 'folder;rm -rf/' },
+          },
+          {
             title: 'file path with .mjs extension',
             context: { folderPath: 'src/logic-functions/handler.mjs' },
           },
