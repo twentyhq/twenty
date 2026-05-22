@@ -123,9 +123,8 @@ export class OrchestratorState {
   private eventIdCounter = 0;
   onChange?: () => void;
 
-  constructor(options: { appPath: string; frontendUrl?: string }) {
+  constructor(options: { appPath: string }) {
     this.appPath = options.appPath;
-    this.frontendUrl = options.frontendUrl;
 
     this.previousObjectsFieldsFingerprint = null;
 

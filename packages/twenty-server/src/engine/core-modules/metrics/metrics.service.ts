@@ -114,7 +114,7 @@ export class MetricsService {
     return gauge;
   }
 
-  async incrementCounter({
+  async incrementCounterForEvent({
     key,
     eventId,
     attributes,
@@ -144,7 +144,7 @@ export class MetricsService {
     }
   }
 
-  async batchIncrementCounter({
+  async incrementCounterForEvents({
     key,
     eventIds,
     attributes,
@@ -162,6 +162,32 @@ export class MetricsService {
     if (shouldStoreInCache) {
       await this.metricsCacheService.updateCounter(key, eventIds);
     }
+  }
+
+  incrementCounterBy({
+    key,
+    amount,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    amount: number;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createCounter(key).add(amount, attributes);
+  }
+
+  recordHistogram({
+    key,
+    value,
+    unit,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    value: number;
+    unit?: string;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createHistogram(key, { unit }).record(value, attributes);
   }
 
   async groupMetrics(
