@@ -1,5 +1,9 @@
 import { type QueryRunner } from 'typeorm';
 
+import {
+  WorkspaceSchemaManagerException,
+  WorkspaceSchemaManagerExceptionCode,
+} from 'src/engine/twenty-orm/workspace-schema-manager/exceptions/workspace-schema-manager.exception';
 import { type WorkspaceSchemaIndexDefinition } from 'src/engine/twenty-orm/workspace-schema-manager/types/workspace-schema-index-definition.type';
 import { escapeIdentifier } from 'src/engine/workspace-manager/workspace-migration/utils/remove-sql-injection.util';
 import { validateAndReturnIndexWhereClause } from 'src/engine/workspace-manager/workspace-migration/utils/validate-index-where-clause.util';
@@ -29,8 +33,9 @@ export class WorkspaceSchemaIndexManagerService {
   }): Promise<void> {
     if (concurrently) {
       if (queryRunner.isTransactionActive) {
-        throw new Error(
+        throw new WorkspaceSchemaManagerException(
           'CREATE INDEX CONCURRENTLY cannot run inside a transaction block. Pass a QueryRunner with no active transaction.',
+          WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_CREATION_IN_TRANSACTION,
         );
       }
 

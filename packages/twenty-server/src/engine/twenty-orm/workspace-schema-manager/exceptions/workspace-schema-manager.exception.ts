@@ -9,6 +9,8 @@ import {
 
 export const WorkspaceSchemaManagerExceptionCode = appendCommonExceptionCode({
   ENUM_OPERATION_FAILED: 'ENUM_OPERATION_FAILED',
+  CONCURRENT_INDEX_CREATION_IN_TRANSACTION:
+    'CONCURRENT_INDEX_CREATION_IN_TRANSACTION',
 } as const);
 
 const getWorkspaceSchemaManagerExceptionUserFriendlyMessage = (
@@ -16,6 +18,7 @@ const getWorkspaceSchemaManagerExceptionUserFriendlyMessage = (
 ) => {
   switch (code) {
     case WorkspaceSchemaManagerExceptionCode.ENUM_OPERATION_FAILED:
+    case WorkspaceSchemaManagerExceptionCode.CONCURRENT_INDEX_CREATION_IN_TRANSACTION:
     case WorkspaceSchemaManagerExceptionCode.INTERNAL_SERVER_ERROR:
       return STANDARD_ERROR_MESSAGE;
     default:
