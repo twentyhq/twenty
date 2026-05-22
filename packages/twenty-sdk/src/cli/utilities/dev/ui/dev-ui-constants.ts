@@ -7,6 +7,7 @@ import {
   type OrchestratorStateEntityInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { SyncableEntity } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 export type DevUiStatus =
   | 'idle'
@@ -159,7 +160,7 @@ export const groupEntitiesByType = (
 export const getApplicationUrl = (state: OrchestratorState): string | null => {
   const applicationId = state.steps.resolveApplication.output.applicationId;
 
-  if (!state.frontendUrl || !applicationId) {
+  if (!isDefined(state.frontendUrl) || !isDefined(applicationId)) {
     return null;
   }
 
