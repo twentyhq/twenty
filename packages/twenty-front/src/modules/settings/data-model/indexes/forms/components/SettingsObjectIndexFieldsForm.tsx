@@ -1,10 +1,9 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { Select } from '@/ui/input/components/Select';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Controller, useFormContext } from 'react-hook-form';
-import { IconTrash } from 'twenty-ui/display';
+import { IconTrash, useIcons } from 'twenty-ui/display';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndex';
@@ -13,18 +12,16 @@ type SettingsObjectIndexFieldsFormProps = {
   indexableFields: FieldMetadataItem[];
 };
 
-// Mirrors SettingsDatabaseEventsForm dimensions so the rows visually match the
-// webhook trigger form.
-const FIELD_DROPDOWN_WIDTH = 240;
-const FIELD_MOBILE_WIDTH = 180;
-
-const StyledFieldRow = styled.div<{ isMobile: boolean }>`
+const StyledFieldRow = styled.div`
   align-items: center;
-  display: grid;
+  display: flex;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: ${({ isMobile }) =>
-    isMobile ? `${FIELD_MOBILE_WIDTH}px auto` : `${FIELD_DROPDOWN_WIDTH}px auto`};
   margin-bottom: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledSelectWrapper = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 const StyledPlaceholder = styled.div`
@@ -36,7 +33,7 @@ export const SettingsObjectIndexFieldsForm = ({
   indexableFields,
 }: SettingsObjectIndexFieldsFormProps) => {
   const { t } = useLingui();
-  const isMobile = useIsMobile();
+  const { getIcon } = useIcons();
   const { control } = useFormContext<SettingsObjectNewIndexFormValues>();
 
   const emptyFieldOption: SelectOption<string> = {
@@ -82,7 +79,8 @@ export const SettingsObjectIndexFieldsForm = ({
                   (field) =>
                     field.id === fieldId || !value.includes(field.id),
                 )
-                .map((field) => ({
+                .map<SelectOption<string>>((field) => ({
+                  Icon: getIcon(field.icon),
                   label: field.label,
                   value: field.id,
                 }));
@@ -90,21 +88,20 @@ export const SettingsObjectIndexFieldsForm = ({
               const isEmptyRow = fieldId === null;
 
               return (
-                <StyledFieldRow
-                  key={`${rowIndex}-${fieldId ?? 'empty'}`}
-                  isMobile={isMobile}
-                >
-                  <Select
-                    dropdownId={`settings-object-new-index-field-${rowIndex}`}
-                    value={fieldId ?? ''}
-                    options={availableOptions}
-                    emptyOption={emptyFieldOption}
-                    onChange={(newValue) =>
-                      handleSelect(rowIndex, newValue)
-                    }
-                    fullWidth
-                    withSearchInput
-                  />
+                <StyledFieldRow key={`${rowIndex}-${fieldId ?? 'empty'}`}>
+                  <StyledSelectWrapper>
+                    <Select
+                      dropdownId={`settings-object-new-index-field-${rowIndex}`}
+                      value={fieldId ?? ''}
+                      options={availableOptions}
+                      emptyOption={emptyFieldOption}
+                      onChange={(newValue) =>
+                        handleSelect(rowIndex, newValue)
+                      }
+                      fullWidth
+                      withSearchInput
+                    />
+                  </StyledSelectWrapper>
                   {isEmptyRow ? (
                     <StyledPlaceholder />
                   ) : (
