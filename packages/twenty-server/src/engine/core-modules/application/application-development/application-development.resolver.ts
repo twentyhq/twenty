@@ -20,7 +20,7 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
-import { validateApplicationFileExtensionOrThrow } from 'src/engine/core-modules/application/application-development/utils/validate-application-file-extension-or-throw.util';
+import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -220,7 +220,17 @@ export class ApplicationDevelopmentResolver {
       );
     }
 
-    validateApplicationFileExtensionOrThrow({ fileFolder, filePath });
+    const pathValidationResult = validateResourcePath({
+      resourcePath: filePath,
+      fileFolder,
+    });
+
+    if (!pathValidationResult.isValid) {
+      throw new ApplicationException(
+        pathValidationResult.error,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
 
     const application = await this.applicationService.findByUniversalIdentifier(
       {

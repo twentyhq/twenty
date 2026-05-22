@@ -5,9 +5,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
-import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/has-allowed-extension.util';
-import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
+import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -51,58 +49,34 @@ export class FlatLogicFunctionValidatorService {
       return validationResult;
     }
 
-    if (
-      isDefined(flatEntityUpdate.builtHandlerPath) &&
-      !isSafeRelativePath(flatEntityUpdate.builtHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Built handler path contains unsafe characters`,
+    if (isDefined(flatEntityUpdate.builtHandlerPath)) {
+      const builtPathResult = validateResourcePath({
+        resourcePath: flatEntityUpdate.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: t`Built handler path is invalid: ${builtPathResult.error}`,
+          userFriendlyMessage: msg`Built handler path is invalid`,
+        });
+      }
     }
 
-    if (
-      isDefined(flatEntityUpdate.builtHandlerPath) &&
-      !hasAllowedExtension({
-        filePath: flatEntityUpdate.builtHandlerPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
-            FileFolder.BuiltLogicFunction
-          ],
-      })
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path must have a .mjs extension`,
-        userFriendlyMessage: msg`Built handler path must have a .mjs extension`,
+    if (isDefined(flatEntityUpdate.sourceHandlerPath)) {
+      const sourcePathResult = validateResourcePath({
+        resourcePath: flatEntityUpdate.sourceHandlerPath,
+        fileFolder: FileFolder.Source,
       });
-    }
 
-    if (
-      isDefined(flatEntityUpdate.sourceHandlerPath) &&
-      !isSafeRelativePath(flatEntityUpdate.sourceHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Source handler path contains unsafe characters`,
-      });
-    }
-
-    if (
-      isDefined(flatEntityUpdate.sourceHandlerPath) &&
-      !hasAllowedExtension({
-        filePath: flatEntityUpdate.sourceHandlerPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      })
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path must have a .ts or .tsx extension`,
-        userFriendlyMessage: msg`Source handler path must have a .ts or .tsx extension`,
-      });
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: t`Source handler path is invalid: ${sourcePathResult.error}`,
+          userFriendlyMessage: msg`Source handler path is invalid`,
+        });
+      }
     }
 
     return validationResult;
@@ -171,58 +145,34 @@ export class FlatLogicFunctionValidatorService {
       });
     }
 
-    if (
-      isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
-      !isSafeRelativePath(flatLogicFunctionToValidate.builtHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Built handler path contains unsafe characters`,
+    if (isDefined(flatLogicFunctionToValidate.builtHandlerPath)) {
+      const builtPathResult = validateResourcePath({
+        resourcePath: flatLogicFunctionToValidate.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: t`Built handler path is invalid: ${builtPathResult.error}`,
+          userFriendlyMessage: msg`Built handler path is invalid`,
+        });
+      }
     }
 
-    if (
-      isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
-      !hasAllowedExtension({
-        filePath: flatLogicFunctionToValidate.builtHandlerPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
-            FileFolder.BuiltLogicFunction
-          ],
-      })
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path must have a .mjs extension`,
-        userFriendlyMessage: msg`Built handler path must have a .mjs extension`,
+    if (isDefined(flatLogicFunctionToValidate.sourceHandlerPath)) {
+      const sourcePathResult = validateResourcePath({
+        resourcePath: flatLogicFunctionToValidate.sourceHandlerPath,
+        fileFolder: FileFolder.Source,
       });
-    }
 
-    if (
-      isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
-      !isSafeRelativePath(flatLogicFunctionToValidate.sourceHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Source handler path contains unsafe characters`,
-      });
-    }
-
-    if (
-      isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
-      !hasAllowedExtension({
-        filePath: flatLogicFunctionToValidate.sourceHandlerPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      })
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path must have a .ts or .tsx extension`,
-        userFriendlyMessage: msg`Source handler path must have a .ts or .tsx extension`,
-      });
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: t`Source handler path is invalid: ${sourcePathResult.error}`,
+          userFriendlyMessage: msg`Source handler path is invalid`,
+        });
+      }
     }
 
     return validationResult;

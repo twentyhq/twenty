@@ -1,9 +1,8 @@
 import { FileFolder } from 'twenty-shared/types';
 
-import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { validateResourceExtensionOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension-or-throw.util';
+import { validateResourceExtension } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension.util';
 
-describe('validateResourceExtensionOrThrow', () => {
+describe('validateResourceExtension', () => {
   it.each([
     {
       title: 'BuiltLogicFunction with .mjs',
@@ -46,11 +45,11 @@ describe('validateResourceExtensionOrThrow', () => {
       fileFolder: FileFolder.PublicAsset,
     },
   ])(
-    'should accept valid extension for $title',
+    'should return isValid: true for $title',
     ({ resourcePath, fileFolder }) => {
-      expect(() =>
-        validateResourceExtensionOrThrow({ resourcePath, fileFolder }),
-      ).not.toThrow();
+      expect(
+        validateResourceExtension({ resourcePath, fileFolder }),
+      ).toEqual({ isValid: true });
     },
   );
 
@@ -86,15 +85,15 @@ describe('validateResourceExtensionOrThrow', () => {
       fileFolder: FileFolder.Dependencies,
     },
   ])(
-    'should reject invalid extension for $title',
+    'should return isValid: false for $title',
     ({ resourcePath, fileFolder }) => {
-      expect(() =>
-        validateResourceExtensionOrThrow({ resourcePath, fileFolder }),
-      ).toThrow(
-        expect.objectContaining({
-          code: FileStorageExceptionCode.INVALID_EXTENSION,
-        }),
-      );
+      const result = validateResourceExtension({ resourcePath, fileFolder });
+
+      expect(result.isValid).toBe(false);
+
+      if (!result.isValid) {
+        expect(result.error).toContain('Invalid file extension');
+      }
     },
   );
 
@@ -110,11 +109,11 @@ describe('validateResourceExtensionOrThrow', () => {
       fileFolder: FileFolder.FilesField,
     },
   ])(
-    'should not throw for unconfigured file folder $title',
+    'should return isValid: true for unconfigured file folder $title',
     ({ resourcePath, fileFolder }) => {
-      expect(() =>
-        validateResourceExtensionOrThrow({ resourcePath, fileFolder }),
-      ).not.toThrow();
+      expect(
+        validateResourceExtension({ resourcePath, fileFolder }),
+      ).toEqual({ isValid: true });
     },
   );
 });

@@ -9,8 +9,11 @@ import { Like, Repository, type QueryRunner } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { validateResourceExtensionOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-extension-or-throw.util';
-import { validateResourcePathOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-resource-path-or-throw.util';
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
@@ -38,8 +41,17 @@ export class FileStorageService {
     fileFolder,
     resourcePath,
   }: ResourceIdentifier): string {
-    validateResourcePathOrThrow({ resourcePath });
-    validateResourceExtensionOrThrow({ resourcePath, fileFolder });
+    const validationResult = validateResourcePath({
+      resourcePath,
+      fileFolder,
+    });
+
+    if (!validationResult.isValid) {
+      throw new FileStorageException(
+        validationResult.error,
+        FileStorageExceptionCode.ACCESS_DENIED,
+      );
+    }
 
     const onStoragePath = join(
       workspaceId,

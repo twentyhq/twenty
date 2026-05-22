@@ -6,9 +6,7 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER } from 'src/engine/core-modules/file-storage/constants/allowed-extensions-by-application-file-folder.constant';
-import { hasAllowedExtension } from 'src/engine/core-modules/file-storage/utils/has-allowed-extension.util';
-import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
+import { validateResourcePath } from 'src/engine/core-modules/file-storage/utils/validate-resource-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FrontComponentExceptionCode } from 'src/engine/metadata-modules/front-component/front-component.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -40,58 +38,34 @@ export class FlatFrontComponentValidatorService {
       });
     }
 
-    if (
-      isDefined(flatFrontComponent.builtComponentPath) &&
-      !isSafeRelativePath(flatFrontComponent.builtComponentPath)
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Built component path contains unsafe characters`,
-        userFriendlyMessage: msg`Built component path contains unsafe characters`,
+    if (isDefined(flatFrontComponent.builtComponentPath)) {
+      const builtPathResult = validateResourcePath({
+        resourcePath: flatFrontComponent.builtComponentPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: t`Built component path is invalid: ${builtPathResult.error}`,
+          userFriendlyMessage: msg`Built component path is invalid`,
+        });
+      }
     }
 
-    if (
-      isDefined(flatFrontComponent.builtComponentPath) &&
-      !hasAllowedExtension({
-        filePath: flatFrontComponent.builtComponentPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
-            FileFolder.BuiltFrontComponent
-          ],
-      })
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Built component path must have a .mjs extension`,
-        userFriendlyMessage: msg`Built component path must have a .mjs extension`,
+    if (isDefined(flatFrontComponent.sourceComponentPath)) {
+      const sourcePathResult = validateResourcePath({
+        resourcePath: flatFrontComponent.sourceComponentPath,
+        fileFolder: FileFolder.Source,
       });
-    }
 
-    if (
-      isDefined(flatFrontComponent.sourceComponentPath) &&
-      !isSafeRelativePath(flatFrontComponent.sourceComponentPath)
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Source component path contains unsafe characters`,
-        userFriendlyMessage: msg`Source component path contains unsafe characters`,
-      });
-    }
-
-    if (
-      isDefined(flatFrontComponent.sourceComponentPath) &&
-      !hasAllowedExtension({
-        filePath: flatFrontComponent.sourceComponentPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      })
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Source component path must have a .ts or .tsx extension`,
-        userFriendlyMessage: msg`Source component path must have a .ts or .tsx extension`,
-      });
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: t`Source component path is invalid: ${sourcePathResult.error}`,
+          userFriendlyMessage: msg`Source component path is invalid`,
+        });
+      }
     }
 
     return validationResult;
@@ -164,58 +138,34 @@ export class FlatFrontComponentValidatorService {
       return validationResult;
     }
 
-    if (
-      isDefined(flatEntityUpdate.builtComponentPath) &&
-      !isSafeRelativePath(flatEntityUpdate.builtComponentPath)
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Built component path contains unsafe characters`,
-        userFriendlyMessage: msg`Built component path contains unsafe characters`,
+    if (isDefined(flatEntityUpdate.builtComponentPath)) {
+      const builtPathResult = validateResourcePath({
+        resourcePath: flatEntityUpdate.builtComponentPath,
+        fileFolder: FileFolder.BuiltFrontComponent,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: t`Built component path is invalid: ${builtPathResult.error}`,
+          userFriendlyMessage: msg`Built component path is invalid`,
+        });
+      }
     }
 
-    if (
-      isDefined(flatEntityUpdate.builtComponentPath) &&
-      !hasAllowedExtension({
-        filePath: flatEntityUpdate.builtComponentPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[
-            FileFolder.BuiltFrontComponent
-          ],
-      })
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Built component path must have a .mjs extension`,
-        userFriendlyMessage: msg`Built component path must have a .mjs extension`,
+    if (isDefined(flatEntityUpdate.sourceComponentPath)) {
+      const sourcePathResult = validateResourcePath({
+        resourcePath: flatEntityUpdate.sourceComponentPath,
+        fileFolder: FileFolder.Source,
       });
-    }
 
-    if (
-      isDefined(flatEntityUpdate.sourceComponentPath) &&
-      !isSafeRelativePath(flatEntityUpdate.sourceComponentPath)
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Source component path contains unsafe characters`,
-        userFriendlyMessage: msg`Source component path contains unsafe characters`,
-      });
-    }
-
-    if (
-      isDefined(flatEntityUpdate.sourceComponentPath) &&
-      !hasAllowedExtension({
-        filePath: flatEntityUpdate.sourceComponentPath,
-        allowedExtensions:
-          ALLOWED_EXTENSIONS_BY_APPLICATION_FILE_FOLDER[FileFolder.Source],
-      })
-    ) {
-      validationResult.errors.push({
-        code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
-        message: t`Source component path must have a .ts or .tsx extension`,
-        userFriendlyMessage: msg`Source component path must have a .ts or .tsx extension`,
-      });
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: FrontComponentExceptionCode.INVALID_FRONT_COMPONENT_INPUT,
+          message: t`Source component path is invalid: ${sourcePathResult.error}`,
+          userFriendlyMessage: msg`Source component path is invalid`,
+        });
+      }
     }
 
     return validationResult;
