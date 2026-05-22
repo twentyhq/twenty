@@ -11,8 +11,6 @@ import {
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
-import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
-import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
@@ -25,7 +23,6 @@ export class ConnectedAccountMetadataService {
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
-    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     private readonly appOAuthRevokeService: AppOAuthRevokeService,
   ) {}
 
@@ -151,41 +148,22 @@ export class ConnectedAccountMetadataService {
       where: { id, workspaceId },
     });
 
-    const authContext = buildSystemAuthContext(workspaceId);
-
     const [messageChannels, calendarChannels] = await Promise.all([
-      this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.messageChannelRepository.find({
-            where: { connectedAccountId: id, workspaceId },
-          }),
-        authContext,
-      ),
-      this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () =>
-          this.calendarChannelRepository.find({
-            where: { connectedAccountId: id, workspaceId },
-          }),
-        authContext,
-      ),
+      this.messageChannelRepository.find({
+        where: { connectedAccountId: id, workspaceId },
+      }),
+      this.calendarChannelRepository.find({
+        where: { connectedAccountId: id, workspaceId },
+      }),
     ]);
 
     this.logger.log(
       `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannels.length} message channel(s) and ${calendarChannels.length} calendar channel(s)`,
     );
 
-    // Best-effort revocation against the provider's revokeEndpoint (no-op
-    // for non-app providers and for app providers without a revokeEndpoint
-    // declared). We don't want a slow or failing provider to block the
-    // local disconnect, so any error is swallowed inside the service.
     await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
 
-    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      await this.repository.delete({
-        id,
-        workspaceId,
-      });
-    }, authContext);
+    await this.repository.delete({ id, workspaceId });
 
     return connectedAccount;
   }
