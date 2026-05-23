@@ -121,6 +121,8 @@ export const EXPECTED_MANIFEST: Manifest = {
     },
   ],
 
+  indexes: [],
+
   fields: [
     // Reverse relation fields for rootNote (5 fields)
     {
