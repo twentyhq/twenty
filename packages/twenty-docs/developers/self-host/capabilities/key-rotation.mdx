@@ -17,9 +17,9 @@ Each key carries a `publicKey` (kept indefinitely so it can verify previously is
 ### Rotate the current key
 
 - **Manual** — **Settings → Admin Panel → Signing keys → Revoke** on the current row. Revoking wipes its encrypted private material and demotes it; the next sign call automatically mints a fresh ES256 keypair as the new current. Tokens signed under any other (non-revoked) `kid` keep verifying until they expire.
-- **Enterprise (automatic)** — a daily cron (`'15 3 * * *'` UTC) issues a new current key once the existing one has been current for `SIGNING_KEY_ROTATION_DAYS` (default `90`). The previous key is *not* revoked, so tokens signed under it keep verifying. Set `IS_SIGNING_KEY_AUTO_ROTATION_ENABLED=true` (default `false`) so `yarn command:prod cron:register:all` includes it, then register all crons once with that command. Running `yarn command:prod cron:rotate-signing-keys` directly always registers it regardless of the flag.
+- **Enterprise (automatic)** — a daily cron (`'15 3 * * *'` UTC) issues a new current key once the existing one has been current for `SIGNING_KEY_ROTATION_DAYS`. Setting this variable both opts in to the rotation and configures the threshold; when it is unset, `yarn command:prod cron:register:all` skips the rotation cron and any direct `yarn command:prod cron:rotate-signing-keys` invocation is a no-op. The previous key is *not* revoked, so tokens signed under it keep verifying.
 
-  <Note>The Enterprise cron, `IS_SIGNING_KEY_AUTO_ROTATION_ENABLED` and `SIGNING_KEY_ROTATION_DAYS` ship in v2.6+.</Note>
+  <Note>The Enterprise cron and `SIGNING_KEY_ROTATION_DAYS` ship in v2.6+.</Note>
 
 ### Revoke a key (leak / emergency only)
 

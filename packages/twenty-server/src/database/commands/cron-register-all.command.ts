@@ -1,6 +1,7 @@
 import { Logger } from '@nestjs/common';
 
 import { Command, CommandRunner } from 'nest-commander';
+import { isDefined } from 'twenty-shared/utils';
 
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
 import { StaleRegistrationCleanupCronCommand } from 'src/engine/core-modules/application/application-oauth/stale-registration-cleanup/commands/stale-registration-cleanup.cron.command';
@@ -71,8 +72,8 @@ export class CronRegisterAllCommand extends CommandRunner {
   async run(): Promise<void> {
     this.logger.log('Registering all background sync cron jobs...');
 
-    const isSigningKeyAutoRotationEnabled = this.twentyConfigService.get(
-      'IS_SIGNING_KEY_AUTO_ROTATION_ENABLED',
+    const isSigningKeyAutoRotationEnabled = isDefined(
+      this.twentyConfigService.get('SIGNING_KEY_ROTATION_DAYS'),
     );
 
     const allCommands = [
