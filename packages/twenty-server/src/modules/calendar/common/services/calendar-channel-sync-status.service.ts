@@ -239,7 +239,7 @@ export class CalendarChannelSyncStatusService {
       workspaceId,
     );
 
-    await this.metricsService.batchIncrementCounter({
+    await this.metricsService.incrementCounterForEvents({
       key: MetricsKeys.CalendarEventSyncJobActive,
       eventIds: calendarChannelIds,
     });
@@ -275,7 +275,7 @@ export class CalendarChannelSyncStatusService {
       { lite: true },
     );
 
-    await this.metricsService.batchIncrementCounter({
+    await this.metricsService.incrementCounterForEvents({
       key: MetricsKeys.CalendarEventSyncJobFailedUnknown,
       eventIds: calendarChannelIds,
     });
@@ -333,7 +333,7 @@ export class CalendarChannelSyncStatusService {
       { lite: true },
     );
 
-    await this.metricsService.batchIncrementCounter({
+    await this.metricsService.incrementCounterForEvents({
       key: MetricsKeys.CalendarEventSyncJobFailedInsufficientPermissions,
       eventIds: calendarChannelIds,
     });

@@ -86,7 +86,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
   };
 
   const mockMetricsService = {
-    incrementCounter: jest.fn(),
+    incrementCounterForEvent: jest.fn(),
   };
 
   const mockMessageQueueService = {
