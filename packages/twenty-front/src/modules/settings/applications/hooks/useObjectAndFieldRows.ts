@@ -28,7 +28,14 @@ export const useObjectAndFieldRows = ({
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
-  const installedApplications = currentWorkspace?.installedApplications;
+  const installedApplications = currentWorkspace?.installedApplications?.map(
+    (app) => ({
+      id: app.id,
+      name: app.name,
+      universalIdentifier: app.universalIdentifier,
+      logo: app.logo?.url ?? null,
+    }),
+  );
 
   return useMemo(() => {
     if (isDefined(installedApplication)) {
