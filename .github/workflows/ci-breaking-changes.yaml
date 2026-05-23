@@ -144,6 +144,9 @@ jobs:
 
           npx nx run twenty-server:database:init:prod
 
+      - name: Flush cache before seeding current branch
+        run: npx nx command-no-deps twenty-server -- cache:flush
+
       - name: Seed current branch database with test data
         run: |
           npx nx command-no-deps twenty-server -- workspace:seed:dev
@@ -160,7 +163,7 @@ jobs:
       - name: Wait for current branch server to be ready
         run: |
           echo "Waiting for current branch server to start..."
-          timeout=300
+          timeout=60
           interval=5
           elapsed=0
 
@@ -185,9 +188,10 @@ jobs:
           done
 
           if [ $elapsed -ge $timeout ]; then
-            echo "::warning::Timed out waiting for current branch server to serve a valid schema. Validation will skip the API diff."
+            echo "❌ Timed out waiting for current branch server to serve a valid schema."
             echo "Current server log:"
             cat /tmp/current-server.log || echo "No current server log found"
+            exit 1
           fi
 
       - name: Download GraphQL and REST responses from current branch
@@ -311,6 +315,9 @@ jobs:
 
           npx nx run twenty-server:database:init:prod
 
+      - name: Flush cache before seeding main branch
+        run: npx nx command-no-deps twenty-server -- cache:flush
+
       - name: Seed main branch database with test data
         run: |
           npx nx command-no-deps twenty-server -- workspace:seed:dev
@@ -352,9 +359,10 @@ jobs:
           done
 
           if [ $elapsed -ge $timeout ]; then
-            echo "::warning::Timed out waiting for main branch server to serve a valid schema. Validation will skip the API diff."
+            echo "❌ Timed out waiting for main branch server to serve a valid schema."
             echo "Main server log:"
             cat /tmp/main-server.log || echo "No main server log found"
+            exit 1
           fi
 
       - name: Download GraphQL and REST responses from main branch
@@ -450,6 +458,7 @@ jobs:
           echo "Using OpenAPITools/openapi-diff via Docker"
 
       - name: Generate GraphQL Schema Diff Reports
+        id: graphql-diff
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
@@ -463,6 +472,7 @@ jobs:
             echo "✅ No changes in GraphQL schema"
           else
             echo "⚠️ Changes detected in GraphQL schema, generating report..."
+            echo "core_breaking=true" >> $GITHUB_OUTPUT
             echo "# GraphQL Schema Changes" > graphql-schema-diff.md
             echo "" >> graphql-schema-diff.md
             graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >> graphql-schema-diff.md 2>&1 || {
@@ -480,6 +490,7 @@ jobs:
             echo "✅ No changes in GraphQL metadata schema"
           else
             echo "⚠️ Changes detected in GraphQL metadata schema, generating report..."
+            echo "metadata_breaking=true" >> $GITHUB_OUTPUT
             echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
             echo "" >> graphql-metadata-diff.md
             graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >> graphql-metadata-diff.md 2>&1 || {
@@ -496,6 +507,7 @@ jobs:
           ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
 
       - name: Check REST API Breaking Changes
+        id: rest-diff
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
@@ -518,6 +530,7 @@ jobs:
 
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST API"
+              echo "breaking=true" >> $GITHUB_OUTPUT
 
               # Generate breaking changes report
               echo "# REST API Breaking Changes" > rest-api-diff.md
@@ -565,6 +578,7 @@ jobs:
           fi
 
       - name: Check REST Metadata API Breaking Changes
+        id: rest-metadata-diff
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== CHECKING REST METADATA API FOR BREAKING CHANGES ==="
@@ -587,6 +601,7 @@ jobs:
 
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST Metadata API"
+              echo "breaking=true" >> $GITHUB_OUTPUT
 
               # Generate breaking changes report (only for breaking changes)
               echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
@@ -632,6 +647,79 @@ jobs:
             echo "::warning::REST Metadata API analysis tool error - continuing workflow"
           fi
 
+      - name: Fail on breaking changes
+        if: steps.validate-schemas.outputs.valid == 'true'
+        run: |
+          breaking=false
+
+          if [ "${{ steps.graphql-diff.outputs.core_breaking }}" = "true" ]; then
+            echo "❌ GraphQL core schema has breaking changes"
+            breaking=true
+            if [ -f graphql-schema-diff.md ]; then
+              echo ""
+              cat graphql-schema-diff.md
+              echo ""
+            fi
+          fi
+
+          if [ "${{ steps.graphql-diff.outputs.metadata_breaking }}" = "true" ]; then
+            echo "❌ GraphQL metadata schema has breaking changes"
+            breaking=true
+            if [ -f graphql-metadata-diff.md ]; then
+              echo ""
+              cat graphql-metadata-diff.md
+              echo ""
+            fi
+          fi
+
+          if [ "${{ steps.rest-diff.outputs.breaking }}" = "true" ]; then
+            echo "❌ REST core API has breaking changes"
+            breaking=true
+            if [ -f rest-api-diff.json ]; then
+              echo ""
+              jq -r '
+                (if (.missingEndpoints | length) > 0 then
+                  "  Removed endpoints:\n" +
+                  (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end),
+                (if (.changedOperations | length) > 0 then
+                  "  Changed operations:\n" +
+                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end)
+              ' rest-api-diff.json | sed '/^$/d'
+              echo ""
+            fi
+          fi
+
+          if [ "${{ steps.rest-metadata-diff.outputs.breaking }}" = "true" ]; then
+            echo "❌ REST metadata API has breaking changes"
+            breaking=true
+            if [ -f rest-metadata-api-diff.json ]; then
+              echo ""
+              jq -r '
+                (if (.missingEndpoints | length) > 0 then
+                  "  Removed endpoints:\n" +
+                  (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end),
+                (if (.changedOperations | length) > 0 then
+                  "  Changed operations:\n" +
+                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end)
+              ' rest-metadata-api-diff.json | sed '/^$/d'
+              echo ""
+            fi
+          fi
+
+          if [ "$breaking" = "true" ]; then
+            echo ""
+            echo "This PR introduces breaking changes to the public API."
+            echo "If intentional, deprecate the old endpoint and introduce a new one."
+            echo "See the breaking changes report artifact and PR comment for details."
+            exit 1
+          fi
+
+          echo "✅ No breaking API changes detected"
+
       - name: Upload breaking changes report
         if: always()
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
@@ -652,5 +740,3 @@ jobs:
           if [ -f /tmp/main-server.pid ]; then
             kill $(cat /tmp/main-server.pid) || true
           fi
-
-
