@@ -14,8 +14,11 @@
 /.npmrc                @Weiko @charlesBochet @prastoin
 **/package.json        @Weiko @charlesBochet @prastoin
 **/yarn.lock           @Weiko @charlesBochet @prastoin
-**/pnpm-lock.yaml      @Weiko @charlesBochet @prastoin
-**/package-lock.json   @Weiko @charlesBochet @prastoin
+
+# ============================================================
+# twenty-apps: exempt from strict ownership (last match wins)
+# ============================================================
+/packages/twenty-apps/
 
 # ============================================================
 # Build & tooling configs (can execute arbitrary code)
