@@ -4,3 +4,8 @@
 /.github/actions/      @Weiko @charlesBochet @prastoin
 /.github/dependabot.yml @Weiko @charlesBochet @prastoin
 /.yarnrc.yml           @Weiko @charlesBochet @prastoin
+
+**/package.json        @Weiko @charlesBochet @prastoin
+**/yarn.lock           @Weiko @charlesBochet @prastoin
+**/pnpm-lock.yaml      @Weiko @charlesBochet @prastoin
+**/package-lock.json   @Weiko @charlesBochet @prastoin
