@@ -1,17 +1,16 @@
 'use client';
 
-import { type ReactNode, useEffect, useId, useRef, useState } from 'react';
+import { type ReactNode, useEffect, useRef, useState } from 'react';
 
 import { Container, LinkButton } from '@/design-system/components';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
-import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import NextImage from 'next/image';
 
 import { useProductHeroMenuSync } from './product-hero-menu-sync';
+import { ProductBackgroundHalftone } from './ProductBackgroundHalftone';
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
@@ -28,60 +27,37 @@ export type HeroScrollProps = {
 
 const NAV_HEIGHT = 64;
 
-const LIGHT_BG = '#ffffff';
-const DARK_BG = '#141414';
-
-function lerpColor(
-  from: [number, number, number],
-  to: [number, number, number],
-  t: number,
-): string {
-  const r = Math.round(from[0] + (to[0] - from[0]) * t);
-  const g = Math.round(from[1] + (to[1] - from[1]) * t);
-  const b = Math.round(from[2] + (to[2] - from[2]) * t);
-
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-const LIGHT_BG_RGB: [number, number, number] = [255, 255, 255];
-const DARK_BG_RGB: [number, number, number] = [20, 20, 20];
-const LIGHT_TEXT_RGB: [number, number, number] = [28, 28, 28];
-const DARK_TEXT_RGB: [number, number, number] = [255, 255, 255];
-
 const ScrollTrack = styled.section`
+  height: 200vh;
   position: relative;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    height: 200vh;
-  }
 `;
 
 const StickyFrame = styled.div`
+  height: calc(100vh - ${NAV_HEIGHT}px);
+  height: calc(100dvh - ${NAV_HEIGHT}px);
+  overflow: hidden;
+  position: sticky;
+  top: ${NAV_HEIGHT}px;
+  width: 100%;
+
+  /* Add subtle background transition for when the dark layer isn't fully opaque */
+  background-color: #ffffff;
+`;
+
+const FullLayer = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  inset: 0;
   justify-content: flex-start;
-  overflow: hidden;
   padding-bottom: ${theme.spacing(6)};
   padding-top: ${theme.spacing(7.5)};
-  width: 100%;
-
-  &[data-phase='0'] {
-    background-color: ${LIGHT_BG};
-  }
-
-  &[data-phase='1'] {
-    background-color: ${DARK_BG};
-  }
+  position: absolute;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    height: calc(100vh - ${NAV_HEIGHT}px);
     padding-bottom: 0;
     padding-top: ${theme.spacing(12)};
-    position: sticky;
-    top: ${NAV_HEIGHT}px;
-    transition: none;
   }
 `;
 
@@ -94,10 +70,6 @@ const PatternOverlay = styled.div`
   transform: translateX(-50%);
   width: 100%;
   z-index: 0;
-`;
-
-const patternImageClassName = css`
-  object-fit: cover;
 `;
 
 const StyledContainer = styled(Container)`
@@ -127,6 +99,15 @@ const HeadingSlot = styled.div`
 
   @media (min-width: ${theme.breakpoints.md}px) {
     max-width: 672px;
+  }
+`;
+
+const ContentLayer = styled.div`
+  inset: 0;
+  position: absolute;
+
+  &[data-active='true'] {
+    position: relative;
   }
 `;
 
@@ -161,11 +142,13 @@ const CtaLayer = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: ${theme.spacing(3)};
+  inset: 0;
   justify-content: center;
-`;
+  position: absolute;
 
-const TabsLayer = styled.div`
-  width: 100%;
+  &[data-active='true'] {
+    position: relative;
+  }
 `;
 
 const VisualWrapper = styled.div`
@@ -186,51 +169,39 @@ export function HeroVisualScroll({
   visual,
 }: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
-  const { morphProgress, navProgress, phase } = useHeroScrollProgress(trackRef);
+  const { morphProgress, navProgress } = useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
   const [activeTab, setActiveTab] = useState(0);
-  const idPrefix = useId();
 
   useEffect(() => {
     menuSync?.setMorphProgress(navProgress);
   }, [menuSync, navProgress]);
 
-  const activeScene = phase === 0 ? 0 : activeTab + 1;
-
-  const backgroundColor = lerpColor(LIGHT_BG_RGB, DARK_BG_RGB, morphProgress);
-  const headingColor = lerpColor(LIGHT_TEXT_RGB, DARK_TEXT_RGB, morphProgress);
-  const bodyColor = `rgba(${Math.round(28 + (255 - 28) * morphProgress)}, ${Math.round(28 + (255 - 28) * morphProgress)}, ${Math.round(28 + (255 - 28) * morphProgress)}, ${0.6 + 0.1 * morphProgress})`;
-  const patternOpacity = morphProgress * 0.4;
-
   return (
     <ScrollTrack ref={trackRef}>
-      <StickyFrame
-        data-phase={phase}
-        style={{ backgroundColor }}
-      >
-        <PatternOverlay style={{ opacity: patternOpacity }}>
-          <NextImage
-            alt=""
-            className={patternImageClassName}
-            fill
-            sizes="100vw"
-            src="/images/product/tabs/background.webp"
-          />
-        </PatternOverlay>
-        <StyledContainer>
-          <HeadingGroup>
-            <HeadingSlot style={{ color: headingColor }}>
-              {phase === 0 ? introHeading : aiHeading}
-            </HeadingSlot>
+      <StickyFrame>
+        {/* BASE LAYER: INTRO */}
+        <FullLayer
+          style={{ backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
+        >
+          <StyledContainer>
+            <HeadingGroup>
+              <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
+                <ContentLayer data-active={true}>{introHeading}</ContentLayer>
+                <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                  {aiHeading}
+                </ContentLayer>
+              </HeadingSlot>
+              <BodyText style={{ color: theme.colors.primary.text[60] }}>
+                <ContentLayer data-active={true}>{introBody}</ContentLayer>
+                <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                  {aiBody}
+                </ContentLayer>
+              </BodyText>
+            </HeadingGroup>
 
-            <BodyText style={{ color: bodyColor }}>
-              {phase === 0 ? introBody : aiBody}
-            </BodyText>
-          </HeadingGroup>
-
-          <ActionSlot>
-            {phase === 0 ? (
-              <CtaLayer style={{ position: 'relative' }}>
+            <ActionSlot>
+              <CtaLayer data-active={true}>
                 <LinkButton
                   color="secondary"
                   href={ctaHref}
@@ -238,22 +209,81 @@ export function HeroVisualScroll({
                   variant="contained"
                 />
               </CtaLayer>
-            ) : (
-              <TabsLayer>
+              <CtaLayer
+                data-active={false}
+                style={{ opacity: 0, pointerEvents: 'none' }}
+              >
                 <TabButtons
                   activeIndex={activeTab}
-                  idPrefix={idPrefix}
+                  idPrefix="product-hero-intro"
                   onSelect={setActiveTab}
                   tabs={tabs}
                 />
-              </TabsLayer>
-            )}
-          </ActionSlot>
-        </StyledContainer>
+              </CtaLayer>
+            </ActionSlot>
+          </StyledContainer>
 
-        <VisualWrapper>
-          <ProductVisual activeScene={activeScene} visual={visual} />
-        </VisualWrapper>
+          <VisualWrapper>
+            <ProductVisual activeScene={0} visual={visual} />
+          </VisualWrapper>
+        </FullLayer>
+
+        {/* TOP LAYER: AI (Wipes up from bottom) */}
+        <FullLayer
+          style={{
+            backgroundColor: '#141414',
+            clipPath: `inset(${100 - morphProgress * 100}% 0 0 0)`,
+            pointerEvents: morphProgress > 0.5 ? 'auto' : 'none',
+            // Prevent text from rendering sub-pixel anti-aliasing differently than the base layer
+            transform: 'translateZ(0)',
+          }}
+        >
+          <PatternOverlay style={{ opacity: 1.0 }}>
+            <ProductBackgroundHalftone />
+          </PatternOverlay>
+          <StyledContainer>
+            <HeadingGroup>
+              <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
+                <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                  {introHeading}
+                </ContentLayer>
+                <ContentLayer data-active={true}>{aiHeading}</ContentLayer>
+              </HeadingSlot>
+              <BodyText style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                <ContentLayer data-active={false} style={{ opacity: 0 }}>
+                  {introBody}
+                </ContentLayer>
+                <ContentLayer data-active={true}>{aiBody}</ContentLayer>
+              </BodyText>
+            </HeadingGroup>
+
+            <ActionSlot>
+              <CtaLayer
+                data-active={false}
+                style={{ opacity: 0, pointerEvents: 'none' }}
+              >
+                <LinkButton
+                  color="secondary"
+                  href={ctaHref}
+                  label={ctaLabel}
+                  variant="contained"
+                />
+              </CtaLayer>
+              <CtaLayer data-active={true}>
+                <TabButtons
+                  activeIndex={activeTab}
+                  idPrefix="product-hero-ai"
+                  onSelect={setActiveTab}
+                  tabs={tabs}
+                />
+              </CtaLayer>
+            </ActionSlot>
+          </StyledContainer>
+
+          <VisualWrapper>
+            <ProductVisual activeScene={activeTab + 1} visual={visual} />
+          </VisualWrapper>
+        </FullLayer>
       </StickyFrame>
     </ScrollTrack>
   );

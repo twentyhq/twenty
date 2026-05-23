@@ -2,7 +2,6 @@
 
 import { type RefObject, useCallback, useEffect, useState } from 'react';
 
-const MOBILE_BREAKPOINT = 921;
 const NAV_HEIGHT = 64;
 
 // Scroll range over which the morph happens (as fraction of scrollable distance)
@@ -31,7 +30,11 @@ export type HeroScrollState = {
   phase: 0 | 1;
 };
 
-const INITIAL_STATE: HeroScrollState = { morphProgress: 0, navProgress: 0, phase: 0 };
+const INITIAL_STATE: HeroScrollState = {
+  morphProgress: 0,
+  navProgress: 0,
+  phase: 0,
+};
 
 export function useHeroScrollProgress(
   trackRef: RefObject<HTMLDivElement | null>,
@@ -42,10 +45,6 @@ export function useHeroScrollProgress(
     const element = trackRef.current;
 
     if (!element) return;
-    if (window.innerWidth < MOBILE_BREAKPOINT) {
-      setState(INITIAL_STATE);
-      return;
-    }
 
     const rect = element.getBoundingClientRect();
     const scrollableDistance = element.offsetHeight - window.innerHeight;
@@ -56,16 +55,36 @@ export function useHeroScrollProgress(
     const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
     const morphProgress = mapToMorphProgress(progress);
 
+    // Nav transitions to dark when the wipe line reaches the nav
+    let navProgress = 0;
+
+    // The dark layer wipes up from the bottom.
+    // morphProgress = 0 -> wipe line is at the bottom of the screen (100vh)
+    // morphProgress = 1 -> wipe line is at the top of the screen (0vh)
+    // We want the nav to transition when the wipe line crosses NAV_HEIGHT.
+
+    // Calculate where the wipe line is in pixels from the top of the viewport
+    const wipeLineY = window.innerHeight * (1 - morphProgress);
+
+    // Transition the nav color over a larger window so it feels like a smooth
+    // gradient passing under the nav rather than a hard flash.
+    const NAV_TRANSITION_WINDOW = window.innerHeight * 0.4; // 40vh transition
+
+    if (wipeLineY <= NAV_HEIGHT) {
+      navProgress = 1;
+    } else if (wipeLineY <= NAV_HEIGHT + NAV_TRANSITION_WINDOW) {
+      const linear = 1 - (wipeLineY - NAV_HEIGHT) / NAV_TRANSITION_WINDOW;
+      navProgress = smoothstep(linear);
+    }
+
     // Nav fades back to light only once the track's bottom is above the nav
-    let navProgress = morphProgress;
     const trackBottom = rect.bottom;
 
     if (trackBottom < NAV_HEIGHT) {
       navProgress = 0;
     } else if (trackBottom < NAV_HEIGHT + NAV_EXIT_DISTANCE_PX) {
       const exitFade = (trackBottom - NAV_HEIGHT) / NAV_EXIT_DISTANCE_PX;
-
-      navProgress = morphProgress * exitFade;
+      navProgress = navProgress * exitFade;
     }
 
     setState({
