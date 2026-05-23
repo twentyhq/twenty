@@ -1187,6 +1187,15 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Enable the Enterprise JWT signing key auto-rotation cron when registering background jobs via cron:register:all. When false (default), the cron is not registered.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  IS_SIGNING_KEY_AUTO_ROTATION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Number of days after which the Enterprise auto-rotation cron issues a new current JWT signing key. When unset, the cron is a no-op. Previous keys remain in the database to keep verifying tokens they signed; revocation stays a manual admin action.',
     type: ConfigVariableType.NUMBER,
   })

@@ -10,6 +10,7 @@ import { EventLogCleanupCronCommand } from 'src/engine/core-modules/event-logs/c
 import { RotateSigningKeysCronCommand } from 'src/engine/core-modules/jwt/crons/commands/rotate-signing-keys.cron.command';
 import { CronTriggerCronCommand } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/cron/cron-trigger.cron.command';
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CheckCustomDomainValidRecordsCronCommand } from 'src/engine/core-modules/workspace/crons/commands/check-custom-domain-valid-records.cron.command';
 import { TrashCleanupCronCommand } from 'src/engine/trash-cleanup/commands/trash-cleanup.cron.command';
 import { CleanOnboardingWorkspacesCronCommand } from 'src/engine/workspace-manager/workspace-cleaner/commands/clean-onboarding-workspaces.cron.command';
@@ -62,12 +63,17 @@ export class CronRegisterAllCommand extends CommandRunner {
     private readonly marketplaceCatalogSyncCronCommand: MarketplaceCatalogSyncCronCommand,
     private readonly applicationVersionCheckCronCommand: ApplicationVersionCheckCronCommand,
     private readonly staleRegistrationCleanupCronCommand: StaleRegistrationCleanupCronCommand,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super();
   }
 
   async run(): Promise<void> {
     this.logger.log('Registering all background sync cron jobs...');
+
+    const isSigningKeyAutoRotationEnabled = this.twentyConfigService.get(
+      'IS_SIGNING_KEY_AUTO_ROTATION_ENABLED',
+    );
 
     const allCommands = [
       {
@@ -161,6 +167,7 @@ export class CronRegisterAllCommand extends CommandRunner {
       {
         name: 'RotateSigningKeys',
         command: this.rotateSigningKeysCronCommand,
+        isEnabled: isSigningKeyAutoRotationEnabled,
       },
       {
         name: 'StaleRegistrationCleanup',
@@ -172,8 +179,15 @@ export class CronRegisterAllCommand extends CommandRunner {
     let failureCount = 0;
     const failures: string[] = [];
     const successes: string[] = [];
+    const skipped: string[] = [];
 
-    for (const { name, command } of allCommands) {
+    for (const { name, command, isEnabled = true } of allCommands) {
+      if (!isEnabled) {
+        this.logger.log(`Skipping ${name} cron job (disabled by config)`);
+        skipped.push(name);
+        continue;
+      }
+
       try {
         this.logger.log(`Registering ${name} cron job...`);
         await command.run();
@@ -188,7 +202,7 @@ export class CronRegisterAllCommand extends CommandRunner {
     }
 
     this.logger.log(
-      `Cron job registration completed: ${successCount} successful, ${failureCount} failed`,
+      `Cron job registration completed: ${successCount} successful, ${failureCount} failed, ${skipped.length} skipped`,
     );
 
     if (failures.length > 0) {
@@ -197,6 +211,10 @@ export class CronRegisterAllCommand extends CommandRunner {
 
     if (successCount > 0) {
       this.logger.log(`Successful commands: ${successes.join(', ')}`);
+    }
+
+    if (skipped.length > 0) {
+      this.logger.log(`Skipped commands: ${skipped.join(', ')}`);
     }
   }
 }
