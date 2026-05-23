@@ -18,13 +18,7 @@ import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import
 
 type ConnectedAccountType = Pick<
   ConnectedAccountEntity,
-  | 'accessToken'
-  | 'refreshToken'
-  | 'id'
-  | 'provider'
-  | 'handle'
-  | 'handleAliases'
-  | 'workspaceId'
+  'id' | 'provider' | 'handle' | 'handleAliases'
 >;
 
 @Injectable()

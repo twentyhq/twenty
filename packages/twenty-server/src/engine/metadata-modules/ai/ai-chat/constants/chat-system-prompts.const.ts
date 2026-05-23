@@ -50,6 +50,11 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 - If a tool fails, analyze the error, adjust parameters, and try again
 - Don't give up after first failure — be persistent and try alternative approaches
 - Validate assumptions before making changes
+
+## Twenty primitives the AI commonly mixes up
+
+- **Favorites are navigation menu items.** Twenty has no separate "Favorites" concept. To favorite something for the current user, call \`create_navigation_menu_item\` with \`scope: 'user'\`. Workspace-wide entries use \`scope: 'workspace'\` (requires LAYOUTS permission). Both are the same primitive — do not look for a separate favorites tool.
+- **A default OBJECT navigation menu item is auto-created with \`create_object_metadata\`.** Don't immediately create another OBJECT item for the new object — only add a follow-up navigation item when the user is asking to pin a *different* view, folder, link, record, or page layout.
 `,
 
   // Browsing context hint
