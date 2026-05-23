@@ -1,11 +1,13 @@
-import { RelationType } from 'twenty-shared/types';
+import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { computeCompositeColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-column-name.util';
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import {
   FlatEntityMapsException,
   FlatEntityMapsExceptionCode,
 } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
-import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
@@ -17,14 +19,15 @@ export type GenerateFlatIndexArgs = {
   objectFlatFieldMetadatas: UniversalFlatFieldMetadata[];
   flatIndex: Omit<UniversalFlatIndexMetadata, 'name'>;
 };
+
 export const generateFlatIndexMetadataWithNameOrThrow = ({
   flatObjectMetadata,
   objectFlatFieldMetadatas,
   flatIndex,
 }: GenerateFlatIndexArgs): UniversalFlatIndexMetadata => {
-  const orderedFlatFields = flatIndex.universalFlatIndexFieldMetadatas
+  const orderedIndexColumnNames = flatIndex.universalFlatIndexFieldMetadatas
     .sort((a, b) => a.order - b.order)
-    .map((flatIndexField) => {
+    .flatMap((flatIndexField) => {
       const relatedFlatFieldMetadata = objectFlatFieldMetadatas.find(
         (flatFieldMetadata) =>
           flatFieldMetadata.universalIdentifier ===
@@ -38,37 +41,74 @@ export const generateFlatIndexMetadataWithNameOrThrow = ({
         );
       }
 
+      if (isCompositeFieldMetadataType(relatedFlatFieldMetadata.type)) {
+        const compositeType = compositeTypeDefinitions.get(
+          relatedFlatFieldMetadata.type,
+        );
+
+        if (!isDefined(compositeType)) {
+          throw new FlatEntityMapsException(
+            `Composite type definition missing for ${relatedFlatFieldMetadata.type}`,
+            FlatEntityMapsExceptionCode.INTERNAL_SERVER_ERROR,
+          );
+        }
+
+        if (isDefined(flatIndexField.subFieldName)) {
+          const property = compositeType.properties.find(
+            (compositeProperty) =>
+              compositeProperty.name === flatIndexField.subFieldName,
+          );
+
+          if (!isDefined(property)) {
+            throw new FlatEntityMapsException(
+              `Composite sub-field "${flatIndexField.subFieldName}" not found on ${relatedFlatFieldMetadata.name}`,
+              FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+            );
+          }
+
+          return [
+            computeCompositeColumnName(
+              {
+                name: relatedFlatFieldMetadata.name,
+                type: relatedFlatFieldMetadata.type,
+              },
+              property,
+            ),
+          ];
+        }
+
+        // System indexes (no subFieldName) project the composite parent onto
+        // every property flagged isIncludedInUniqueConstraint.
+        return compositeType.properties
+          .filter((property) => property.isIncludedInUniqueConstraint)
+          .map((property) =>
+            computeCompositeColumnName(relatedFlatFieldMetadata.name, property),
+          );
+      }
+
       const isManyToOneRelation =
         isMorphOrRelationUniversalFlatFieldMetadata(relatedFlatFieldMetadata) &&
         relatedFlatFieldMetadata.universalSettings?.relationType ===
           RelationType.MANY_TO_ONE;
 
-      const name = isManyToOneRelation
-        ? computeMorphOrRelationFieldJoinColumnName({
-            name: relatedFlatFieldMetadata.name,
-          })
-        : relatedFlatFieldMetadata.name;
-
-      return {
-        name,
-        isUnique: relatedFlatFieldMetadata.isUnique,
-      };
+      return [
+        isManyToOneRelation
+          ? computeMorphOrRelationFieldJoinColumnName({
+              name: relatedFlatFieldMetadata.name,
+            })
+          : relatedFlatFieldMetadata.name,
+      ];
     });
 
-  const isUnique = orderedFlatFields.some((flatField) => flatField.isUnique);
-  const orderedIndexColumnNames = orderedFlatFields.map(
-    (flatField) => flatField.name,
-  );
   const name = generateDeterministicIndexNameV2({
     flatObjectMetadata,
     orderedIndexColumnNames,
-    isUnique,
+    isUnique: flatIndex.isUnique,
     indexWhereClause: flatIndex.indexWhereClause,
   });
 
   return {
     ...flatIndex,
     name,
-    isUnique,
   };
 };
