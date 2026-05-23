@@ -36,6 +36,7 @@ export type {
   CommandMenuItemManifest,
   FrontComponentManifest,
 } from './frontComponentManifestType';
+export type { IndexFieldManifest, IndexManifest } from './indexManifestType';
 export type {
   LogicFunctionManifest,
   CronTriggerSettings,
