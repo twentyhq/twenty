@@ -46,6 +46,9 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     LogicFunctionResolver,
     WorkspaceFlatLogicFunctionMapCacheService,
   ],
-  exports: [LogicFunctionFromSourceService, LogicFunctionFromSourceHelperService],
+  exports: [
+    LogicFunctionFromSourceService,
+    LogicFunctionFromSourceHelperService,
+  ],
 })
 export class LogicFunctionModule {}

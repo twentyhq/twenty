@@ -189,10 +189,11 @@ export class LogicFunctionExecutorService {
       return callerOverride;
     }
 
-    const isPrebuiltModeEnabled = await this.featureFlagService.isFeatureEnabled(
-      FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-      workspaceId,
-    );
+    const isPrebuiltModeEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
+        workspaceId,
+      );
 
     if (!isPrebuiltModeEnabled) {
       return LogicFunctionExecutionMode.LIVE;

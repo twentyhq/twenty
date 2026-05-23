@@ -1,4 +1,9 @@
-import { Field, HideField, ObjectType, registerEnumType } from '@nestjs/graphql';
+import {
+  Field,
+  HideField,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql';
 
 import {
   Authorize,
