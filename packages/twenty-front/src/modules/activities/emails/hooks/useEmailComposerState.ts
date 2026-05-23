@@ -4,7 +4,10 @@ import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
-import { getEmailBodyWithSignature } from '@/activities/emails/utils/getEmailBodyWithSignature';
+import {
+  getEmailBodyWithSignature,
+  getEmailBodyWithUpdatedSignature,
+} from '@/activities/emails/utils/getEmailBodyWithSignature';
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 
 type UseEmailComposerStateArgs = {
@@ -40,6 +43,11 @@ export const useEmailComposerState = ({
   const [showCcBcc, setShowCcBcc] = useState(false);
   const [files, setFiles] = useState<EmailAttachment[]>([]);
   const [hasEditedBody, setHasEditedBody] = useState(false);
+  const [previousEmailSignature, setPreviousEmailSignature] = useState<
+    string | null | undefined
+  >(
+    undefined,
+  );
 
   const { sendEmail, loading } = useSendEmail();
   const { data: connectedAccountsData } = useQuery<{
@@ -58,13 +66,27 @@ export const useEmailComposerState = ({
   );
 
   useEffect(() => {
-    if (hasEditedBody) {
+    if (previousEmailSignature === emailSignature) {
       return;
     }
 
-    setBody(getEmailBodyWithSignature(emailSignature));
+    const nextBody = hasEditedBody
+      ? getEmailBodyWithUpdatedSignature({
+          body,
+          previousEmailSignature,
+          nextEmailSignature: emailSignature,
+        })
+      : getEmailBodyWithSignature(emailSignature);
+
+    setPreviousEmailSignature(emailSignature);
+
+    if (nextBody === body) {
+      return;
+    }
+
+    setBody(nextBody);
     setBodyFieldKey((previousKey) => previousKey + 1);
-  }, [emailSignature, hasEditedBody]);
+  }, [body, emailSignature, hasEditedBody, previousEmailSignature]);
 
   const recipientCount = useMemo(
     () => countRecipients(to) + countRecipients(cc) + countRecipients(bcc),
