@@ -57,11 +57,12 @@ export const fromCreateCommandMenuItemInputToFlatCommandMenuItemToCreate = ({
     shortLabel: createCommandMenuItemInput.shortLabel ?? null,
     position: createCommandMenuItemInput.position ?? 0,
     isPinned: createCommandMenuItemInput.isPinned ?? false,
-    payload:
-      createCommandMenuItemInput.engineComponentKey ===
-      EngineComponentKey.NAVIGATION
-        ? (createCommandMenuItemInput.payload ?? null)
-        : null,
+    payload: [
+      EngineComponentKey.NAVIGATION,
+      EngineComponentKey.CREATE_NEW_RECORD,
+    ].includes(createCommandMenuItemInput.engineComponentKey)
+      ? (createCommandMenuItemInput.payload ?? null)
+      : null,
     hotKeys: createCommandMenuItemInput.hotKeys ?? null,
     availabilityType:
       createCommandMenuItemInput.availabilityType ??

@@ -13,6 +13,9 @@ type TestContext = {
   input: CreateCommandMenuItemInput;
 };
 
+const CREATE_NEW_RECORD_PAYLOAD_ERROR_MESSAGE =
+  'payload for CREATE_NEW_RECORD must be null or contain';
+
 const failingCommandMenuItemCreationTestCases: EachTestingContext<TestContext>[] =
   [
     {
@@ -138,4 +141,37 @@ describe('CommandMenuItem creation should fail', () => {
       });
     },
   );
+
+  it('should reject CREATE_NEW_RECORD command menu item with a path payload', async () => {
+    const { errors } = await createCommandMenuItem({
+      expectToFail: true,
+      input: {
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+        label: 'Create from path',
+        payload: { path: '/objects/companies' },
+      },
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      CREATE_NEW_RECORD_PAYLOAD_ERROR_MESSAGE,
+    );
+  });
+
+  it('should reject CREATE_NEW_RECORD command menu item with mixed object and path payload', async () => {
+    const { errors } = await createCommandMenuItem({
+      expectToFail: true,
+      input: {
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+        label: 'Create from mixed payload',
+        payload: {
+          objectMetadataItemId: faker.string.uuid(),
+          path: '/objects/companies',
+        },
+      },
+    });
+
+    expect(JSON.stringify(errors)).toContain(
+      CREATE_NEW_RECORD_PAYLOAD_ERROR_MESSAGE,
+    );
+  });
 });

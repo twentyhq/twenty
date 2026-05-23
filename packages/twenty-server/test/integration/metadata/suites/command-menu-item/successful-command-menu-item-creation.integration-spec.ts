@@ -218,6 +218,47 @@ describe('CommandMenuItem creation should succeed', () => {
     });
   });
 
+  it('should create CREATE_NEW_RECORD command menu item without payload', async () => {
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+        label: 'Create current record',
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      label: 'Create current record',
+      payload: null,
+    });
+  });
+
+  it('should create CREATE_NEW_RECORD command menu item with objectMetadataItemId payload', async () => {
+    const { data } = await createCommandMenuItem({
+      expectToFail: false,
+      input: {
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+        label: 'Create Company',
+        payload: { objectMetadataItemId: companyObjectMetadataId },
+      },
+    });
+
+    createdCommandMenuItemId = data?.createCommandMenuItem?.id;
+
+    expect(data.createCommandMenuItem).toMatchObject({
+      id: expect.any(String),
+      engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      label: 'Create Company',
+      payload: {
+        objectMetadataItemId: companyObjectMetadataId,
+      },
+    });
+  });
+
   it('should create command menu item with frontComponentId', async () => {
     const { data: frontComponentData } = await createFrontComponent({
       expectToFail: false,

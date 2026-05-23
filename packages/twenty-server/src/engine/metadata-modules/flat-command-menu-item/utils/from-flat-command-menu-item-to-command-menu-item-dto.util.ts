@@ -22,6 +22,7 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
     flatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
   pageLayoutId: flatCommandMenuItem.pageLayoutId ?? undefined,
   workspaceId: flatCommandMenuItem.workspaceId,
+  universalIdentifier: flatCommandMenuItem.universalIdentifier,
   applicationId: flatCommandMenuItem.applicationId ?? undefined,
   createdAt: new Date(flatCommandMenuItem.createdAt),
   updatedAt: new Date(flatCommandMenuItem.updatedAt),

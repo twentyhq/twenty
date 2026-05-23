@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { act, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { type JsonValue } from 'type-fest';
@@ -26,11 +26,17 @@ type MockButtonProps = {
   onClick: () => void | Promise<void>;
   title: string;
   disabled?: boolean;
+  hotkeys?: string[];
+  Icon?: unknown;
+  isLoading?: boolean;
 };
 
 const mockFormFieldInput = jest.fn();
 const mockButton = jest.fn();
 const mockCreateOneRecord = jest.fn();
+const mockUseCreateOneRecord = jest.fn(() => ({
+  createOneRecord: mockCreateOneRecord,
+}));
 const mockOpenRecordInSidePanel = jest.fn();
 const mockEnqueueErrorSnackBar = jest.fn();
 let mockCreateRecordObjectMetadataItemId = 'ship-object-metadata-id';
@@ -63,9 +69,7 @@ jest.mock('@/object-metadata/hooks/useObjectMetadataItems', () => ({
 }));
 
 jest.mock('@/object-record/hooks/useCreateOneRecord', () => ({
-  useCreateOneRecord: () => ({
-    createOneRecord: mockCreateOneRecord,
-  }),
+  useCreateOneRecord: (args: unknown) => mockUseCreateOneRecord(args),
 }));
 
 jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
@@ -79,7 +83,8 @@ jest.mock('@/object-record/record-field/ui/components/FormFieldInput', () => ({
 jest.mock(
   '@/object-record/record-field/ui/types/guards/isFieldRelation',
   () => ({
-    isFieldRelation: () => false,
+    isFieldRelation: (field: MockFieldDefinition) =>
+      field.metadata.fieldName === 'captain',
   }),
 );
 
@@ -124,6 +129,10 @@ jest.mock('twenty-ui/layout', () => ({
   Section: ({ children }: { children: ReactNode }) => children,
 }));
 
+jest.mock('twenty-ui/utilities', () => ({
+  getOsControlSymbol: () => '⌘',
+}));
+
 const buildTextField = ({
   id,
   name,
@@ -141,6 +150,19 @@ const buildTextField = ({
   isSystem: false,
   isUIReadOnly,
   settings: null,
+});
+
+const buildRelationField = ({ id, name }: { id: string; name: string }) => ({
+  id,
+  name,
+  label: name,
+  type: FieldMetadataType.RELATION,
+  isActive: true,
+  isSystem: false,
+  isUIReadOnly: false,
+  settings: {
+    relationType: 'MANY_TO_ONE',
+  },
 });
 
 const shipObjectMetadataItem = {
@@ -185,6 +207,10 @@ describe('SidePanelCreateRecordPage', () => {
   it('renders creatable fields in index view order and opens the created record after save', async () => {
     renderPage();
 
+    expect(mockUseCreateOneRecord).toHaveBeenCalledWith({
+      objectNameSingular: 'ship',
+    });
+
     const renderedFieldNames = mockFormFieldInput.mock.calls.map(
       ([props]: [MockFormFieldInputProps]) => props.field.metadata.fieldName,
     );
@@ -210,6 +236,15 @@ describe('SidePanelCreateRecordPage', () => {
     ]?.[0] as MockButtonProps | undefined;
 
     expect(latestButtonProps).toBeDefined();
+    expect(latestButtonProps).toEqual(
+      expect.objectContaining({
+        title: 'Create',
+        Icon: expect.any(Function),
+        hotkeys: ['⌘', '⏎'],
+        disabled: false,
+        isLoading: false,
+      }),
+    );
 
     await act(async () => {
       await latestButtonProps?.onClick();
@@ -222,6 +257,87 @@ describe('SidePanelCreateRecordPage', () => {
       recordId: 'created-ship-id',
       objectNameSingular: 'ship',
       resetNavigationStack: true,
+    });
+  });
+
+  it('creates the record with the command enter shortcut', async () => {
+    const { container } = renderPage();
+
+    const fieldPropsByName = new Map(
+      mockFormFieldInput.mock.calls.map(
+        ([props]: [MockFormFieldInputProps]) => [
+          props.field.metadata.fieldName,
+          props,
+        ],
+      ),
+    );
+
+    await act(async () => {
+      fieldPropsByName.get('name')?.onChange('SHIPKEYBOARD');
+    });
+
+    await act(async () => {
+      fireEvent.keyDown(container.firstChild as HTMLElement, {
+        key: 'Enter',
+        metaKey: true,
+      });
+      await Promise.resolve();
+    });
+
+    expect(mockCreateOneRecord).toHaveBeenCalledWith({
+      name: 'SHIPKEYBOARD',
+    });
+  });
+
+  it('uses relation join-column names when creating the record', async () => {
+    mockObjectMetadataItems = [
+      {
+        ...shipObjectMetadataItem,
+        fields: [
+          buildTextField({ id: 'name-field-id', name: 'name' }),
+          buildRelationField({
+            id: 'captain-field-id',
+            name: 'captain',
+          }),
+        ],
+      } as EnrichedObjectMetadataItem,
+    ];
+    mockIndexView = {
+      viewFields: [
+        { fieldMetadataId: 'name-field-id', position: 0 },
+        { fieldMetadataId: 'captain-field-id', position: 1 },
+      ],
+    };
+
+    renderPage();
+
+    const fieldPropsByName = new Map(
+      mockFormFieldInput.mock.calls.map(
+        ([props]: [MockFormFieldInputProps]) => [
+          props.field.metadata.fieldName,
+          props,
+        ],
+      ),
+    );
+
+    await act(async () => {
+      fieldPropsByName.get('name')?.onChange('SHIPRELATION');
+      fieldPropsByName
+        .get('captain')
+        ?.onChange('00000000-0000-0000-0000-000000000001');
+    });
+
+    const latestButtonProps = mockButton.mock.calls[
+      mockButton.mock.calls.length - 1
+    ]?.[0] as MockButtonProps | undefined;
+
+    await act(async () => {
+      await latestButtonProps?.onClick();
+    });
+
+    expect(mockCreateOneRecord).toHaveBeenCalledWith({
+      name: 'SHIPRELATION',
+      captainId: '00000000-0000-0000-0000-000000000001',
     });
   });
 });

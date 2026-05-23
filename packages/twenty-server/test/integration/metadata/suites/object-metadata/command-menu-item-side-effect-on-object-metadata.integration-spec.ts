@@ -4,10 +4,13 @@ import { createOneObjectMetadata } from 'test/integration/metadata/suites/object
 import { deleteOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/delete-one-object-metadata.util';
 import { updateOneObjectMetadata } from 'test/integration/metadata/suites/object-metadata/utils/update-one-object-metadata.util';
 import { isDefined } from 'twenty-shared/utils';
+import { v5 } from 'uuid';
 
 import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item.dto';
 import { type ObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-command-menu-item-payload.type';
+import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
+import { CREATE_RECORD_COMMAND_UUID_NAMESPACE } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-create-record-flat-command-menu-item.util';
 
 const findObjectCommandMenuItemForObject = ({
   commandMenuItems,
@@ -47,9 +50,14 @@ const findCreateRecordCommandMenuItemForObject = (
 
 const COMMAND_MENU_ITEM_GQL_FIELDS = `
   id
+  universalIdentifier
   engineComponentKey
   label
+  shortLabel
   icon
+  isPinned
+  availabilityType
+  conditionalAvailabilityExpression
   payload {
     ... on PathCommandMenuItemPayload {
       path
@@ -102,7 +110,7 @@ describe('Command menu item side effects on object metadata', () => {
     } = await createOneObjectMetadata({
       expectToFail: false,
       input: createObjectInput,
-      gqlFields: 'id',
+      gqlFields: 'id universalIdentifier',
     });
 
     createdObjectMetadataId = createOneObject.id;
@@ -128,18 +136,29 @@ describe('Command menu item side effects on object metadata', () => {
       }),
     );
 
-    expect(
-      findCreateRecordCommandMenuItemForObject(
-        commandMenuItems,
-        createdObjectMetadataId,
-      ),
-    ).toEqual(
+    const createRecordItem = findCreateRecordCommandMenuItemForObject(
+      commandMenuItems,
+      createdObjectMetadataId,
+    );
+
+    expect(createRecordItem).toEqual(
       expect.objectContaining({
+        universalIdentifier: v5(
+          createOneObject.universalIdentifier,
+          CREATE_RECORD_COMMAND_UUID_NAMESPACE,
+        ),
         label: `Create ${createObjectInput.labelSingular}`,
+        shortLabel: `Create ${createObjectInput.labelSingular}`,
         icon: createObjectInput.icon,
+        isPinned: false,
+        availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+        conditionalAvailabilityExpression: `targetObjectWritePermissions.${createObjectInput.nameSingular} and not (pageType == "INDEX_PAGE" and objectMetadataItem.nameSingular == "${createObjectInput.nameSingular}")`,
         engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
       }),
     );
+    expect(createRecordItem?.payload).toEqual({
+      objectMetadataItemId: createdObjectMetadataId,
+    });
   });
 
   it('should delete navigation and create record command menu items when a custom object is deleted', async () => {
