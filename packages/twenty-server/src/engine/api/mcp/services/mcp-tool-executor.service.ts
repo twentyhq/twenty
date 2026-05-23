@@ -3,6 +3,9 @@ import { Injectable } from '@nestjs/common';
 import { type ToolSet } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
 import {
   MCP_PROGRESS_NOTIFICATION_METHOD,
@@ -22,6 +25,8 @@ const unwrapJsonSchema = (schema: unknown) =>
 
 @Injectable()
 export class McpToolExecutorService {
+  constructor(private readonly metricsService: MetricsService) {}
+
   async handleToolCall(
     id: string | number,
     toolSet: ToolSet,
@@ -58,6 +63,11 @@ export class McpToolExecutorService {
         messages: [],
       });
 
+      void this.metricsService.incrementCounterBy({
+        key: MetricsKeys.McpToolExecutionSucceeded,
+        amount: 1,
+      });
+
       return wrapJsonRpcResponse(id, {
         result: {
           content: [{ type: 'text', text: JSON.stringify(result) }],
@@ -65,6 +75,11 @@ export class McpToolExecutorService {
         },
       });
     } catch (executionError) {
+      void this.metricsService.incrementCounterBy({
+        key: MetricsKeys.McpToolExecutionFailed,
+        amount: 1,
+      });
+
       return wrapJsonRpcResponse(id, {
         result: {
           content: [

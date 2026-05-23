@@ -9,7 +9,7 @@ import {
 
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
+import { GoogleOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/google/google-oauth2-client.provider';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GmailGetHistoryService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-history.service';
 import { GmailGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/gmail/services/gmail-get-message-list.service';
@@ -30,25 +30,15 @@ const createMockFolder = (
 
 describe('GmailGetMessageListService', () => {
   let service: GmailGetMessageListService;
-  let oAuth2ClientManagerService: OAuth2ClientManagerService;
+  let googleOAuth2ClientProvider: GoogleOAuth2ClientProvider;
 
   const mockConnectedAccount: Pick<
     ConnectedAccountEntity,
-    | 'provider'
-    | 'accessToken'
-    | 'refreshToken'
-    | 'id'
-    | 'handle'
-    | 'connectionParameters'
-    | 'workspaceId'
+    'provider' | 'id' | 'handle'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.GOOGLE,
-    accessToken: 'access-token',
-    refreshToken: 'refresh-token',
     handle: 'test@gmail.com',
-    connectionParameters: {},
-    workspaceId: 'workspace-id',
   };
 
   beforeEach(async () => {
@@ -56,9 +46,9 @@ describe('GmailGetMessageListService', () => {
       providers: [
         GmailGetMessageListService,
         {
-          provide: OAuth2ClientManagerService,
+          provide: GoogleOAuth2ClientProvider,
           useValue: {
-            getGoogleOAuth2Client: jest.fn(),
+            getClient: jest.fn(),
           },
         },
         {
@@ -80,8 +70,8 @@ describe('GmailGetMessageListService', () => {
     service = module.get<GmailGetMessageListService>(
       GmailGetMessageListService,
     );
-    oAuth2ClientManagerService = module.get<OAuth2ClientManagerService>(
-      OAuth2ClientManagerService,
+    googleOAuth2ClientProvider = module.get<GoogleOAuth2ClientProvider>(
+      GoogleOAuth2ClientProvider,
     );
   });
 
@@ -106,9 +96,7 @@ describe('GmailGetMessageListService', () => {
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
 
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       const result = await service.getMessageLists({
         messageChannel: {
@@ -169,9 +157,7 @@ describe('GmailGetMessageListService', () => {
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
 
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       const result = await service.getMessageLists({
         messageChannel: {
@@ -232,9 +218,7 @@ describe('GmailGetMessageListService', () => {
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
 
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       const result = await service.getMessageLists({
         messageChannel: {
@@ -276,9 +260,7 @@ describe('GmailGetMessageListService', () => {
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
 
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       const result = await service.getMessageLists({
         messageChannel: {
@@ -311,9 +293,7 @@ describe('GmailGetMessageListService', () => {
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
 
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       const result = await service.getMessageLists({
         messageChannel: {
@@ -357,9 +337,7 @@ describe('GmailGetMessageListService', () => {
       };
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       const messageFolders = [
         createMockFolder({
@@ -421,9 +399,7 @@ describe('GmailGetMessageListService', () => {
       };
 
       jest.spyOn(google, 'gmail').mockReturnValue(mockGmailClient as never);
-      (
-        oAuth2ClientManagerService.getGoogleOAuth2Client as jest.Mock
-      ).mockResolvedValue({});
+      (googleOAuth2ClientProvider.getClient as jest.Mock).mockResolvedValue({});
 
       await service.getMessageLists({
         messageChannel: {

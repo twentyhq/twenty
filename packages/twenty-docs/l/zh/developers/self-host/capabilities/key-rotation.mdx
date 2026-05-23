@@ -16,10 +16,9 @@ Twenty 具有两个相互独立的密钥族：
 
 ### 轮换当前密钥
 
-* **手动** — 在当前行上执行 **Settings → Admin Panel → Signing keys → Revoke**。 吊销操作会清除其加密的私有材料并将其降级；下一次签名调用会自动生成一个新的 ES256 密钥对，作为新的当前密钥。 在任何其他（未被吊销的）`kid` 下签名的令牌会一直验证，直到过期。
-* **Enterprise（自动）** — 每日 cron（`'15 3 * * *'` UTC）会在现有密钥已作为当前密钥使用 `SIGNING_KEY_ROTATION_DAYS`（默认 `90`）后签发一个新的当前密钥。 先前的密钥*不会*被吊销，因此在其下签名的令牌仍然可以通过验证。 使用 `yarn command:prod cron:register:all` 注册一次。
+将 `SIGNING_KEY_ROTATION_DAYS` 设为启用该功能：然后每日的 cron 任务会在现有密钥超过该阈值后签发新的当前密钥。 先前的密钥*不会*被吊销，因此在其下签名的令牌仍然可以通过验证。 将变量保持未设置以禁用自动轮换。
 
-  <Note>Enterprise 的 cron 和 `SIGNING_KEY_ROTATION_DAYS` 从 v2.6+ 版本开始提供。</Note>
+<Note>自动轮换在 v2.6+ 中提供。</Note>
 
 ### 吊销密钥（仅限泄露 / 紧急情况）
 
