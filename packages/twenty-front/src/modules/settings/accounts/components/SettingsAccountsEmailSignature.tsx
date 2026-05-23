@@ -12,6 +12,10 @@ import { UPDATE_CONNECTED_ACCOUNT_SIGNATURE } from '@/settings/accounts/graphql/
 import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 import { GET_MY_MESSAGE_CHANNELS } from '@/settings/accounts/graphql/queries/getMyMessageChannels';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import {
+  type UpdateConnectedAccountSignatureMutation,
+  type UpdateConnectedAccountSignatureMutationVariables,
+} from '~/generated-metadata/graphql';
 
 type SettingsAccountsEmailSignatureProps = {
   connectedAccount: {
@@ -42,9 +46,10 @@ export const SettingsAccountsEmailSignature = ({
   );
   const [editorKey, setEditorKey] = useState(0);
 
-  const [updateConnectedAccountSignature, { loading }] = useMutation(
-    UPDATE_CONNECTED_ACCOUNT_SIGNATURE,
-  );
+  const [updateConnectedAccountSignature, { loading }] = useMutation<
+    UpdateConnectedAccountSignatureMutation,
+    UpdateConnectedAccountSignatureMutationVariables
+  >(UPDATE_CONNECTED_ACCOUNT_SIGNATURE);
 
   useEffect(() => {
     setEmailSignature(connectedAccount.emailSignature ?? '');

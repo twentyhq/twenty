@@ -29,6 +29,7 @@ const mockedConnectedAccounts = [
     userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
     connectionProviderId: null,
     name: 'Tim Apple',
+    emailSignature: null,
     visibility: 'SHARE_EVERYTHING',
     lastCredentialsRefreshedAt: null,
     connectionParameters: null,
@@ -152,6 +153,17 @@ const meta: Meta<typeof WorkflowEditActionEmailBase> = {
           return HttpResponse.json({
             data: {
               myCalendarChannels: [],
+            },
+          });
+        }),
+        graphql.query('WorkflowStepConnectedAccountHandle', () => {
+          return HttpResponse.json({
+            data: {
+              workflowStepConnectedAccountHandle: {
+                id: MOCK_CONNECTED_ACCOUNT_ID,
+                handle: 'tim@apple.dev',
+                provider: 'google',
+              },
             },
           });
         }),
