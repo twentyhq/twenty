@@ -30,7 +30,6 @@ export const indexMetadataGraphqlApiExceptionHandler = (error: Error) => {
       case IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD:
       case IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_MORH_RELATION_FIELD_AND_RELATION_FIELD:
         throw new UserInputError(error);
-      case IndexMetadataExceptionCode.UNIQUE_INDEX_NOT_ALLOWED:
       case IndexMetadataExceptionCode.CANNOT_DELETE_SYSTEM_INDEX:
         throw new ForbiddenError(error);
       case IndexMetadataExceptionCode.CUSTOM_INDEX_LIMIT_REACHED:

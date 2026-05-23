@@ -14,13 +14,15 @@ import { Button, SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/constants/MaxCustomIndexesPerObject';
+import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
-import { getCompositeSubFieldLabel } from '@/settings/data-model/indexes/utils/getCompositeSubFieldLabel';
-import { type FieldMetadataType } from '~/generated-metadata/graphql';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -58,41 +60,40 @@ export const SettingsObjectIndexesSection = ({
     useState<SettingsObjectIndexesTableItem | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const tableItems = useMemo<SettingsObjectIndexesTableItem[]>(
-    () =>
-      objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
-        id: indexMetadataItem.id,
-        name: indexMetadataItem.name,
-        isUnique: indexMetadataItem.isUnique,
-        isCustom: indexMetadataItem.isCustom ?? false,
-        indexType: indexMetadataItem.indexType,
-        indexWhereClause: indexMetadataItem.indexWhereClause,
-        indexFields:
-          indexMetadataItem.indexFieldMetadatas
-            ?.map((indexField) => {
-              const fieldMetadataItem = objectMetadataItem.fields.find(
-                (field) => field.id === indexField.fieldMetadataId,
-              );
+  const tableItems = useMemo<SettingsObjectIndexesTableItem[]>(() => {
+    const fieldsById = new Map(
+      objectMetadataItem.fields.map((field) => [field.id, field]),
+    );
 
-              if (!isDefined(fieldMetadataItem)) return undefined;
+    return objectMetadataItem.indexMetadatas.map((indexMetadataItem) => ({
+      id: indexMetadataItem.id,
+      name: indexMetadataItem.name,
+      isUnique: indexMetadataItem.isUnique,
+      isCustom: indexMetadataItem.isCustom ?? false,
+      indexType: indexMetadataItem.indexType,
+      indexWhereClause: indexMetadataItem.indexWhereClause,
+      indexFields:
+        indexMetadataItem.indexFieldMetadatas
+          ?.map((indexField) => {
+            const fieldMetadataItem = fieldsById.get(
+              indexField.fieldMetadataId,
+            );
 
-              if (
-                isDefined(indexField.subFieldName) &&
-                indexField.subFieldName !== ''
-              ) {
-                return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
-                  fieldMetadataItem.type as FieldMetadataType,
-                  indexField.subFieldName,
-                )}`;
-              }
+            if (!isDefined(fieldMetadataItem)) return undefined;
 
-              return fieldMetadataItem.label;
-            })
-            .filter((label): label is string => Boolean(label))
-            .join(', ') ?? '',
-      })),
-    [objectMetadataItem],
-  );
+            if (isNonEmptyString(indexField.subFieldName)) {
+              return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
+                fieldMetadataItem.type as CompositeFieldType,
+                indexField.subFieldName as CompositeFieldSubFieldName,
+              )}`;
+            }
+
+            return fieldMetadataItem.label;
+          })
+          .filter((label): label is string => Boolean(label))
+          .join(', ') ?? '',
+    }));
+  }, [objectMetadataItem.indexMetadatas, objectMetadataItem.fields]);
 
   const filteredItems = useMemo(() => {
     const searchNormalized = normalizeSearchText(searchTerm);

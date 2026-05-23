@@ -69,7 +69,6 @@ export const computeFlatIndexFieldColumnNames = ({
           );
         }
 
-        // Custom indexes target a specific sub-column via subFieldName.
         if (isDefined(subFieldName)) {
           const property = compositeType.properties.find(
             (compositeProperty) => compositeProperty.name === subFieldName,
@@ -90,8 +89,8 @@ export const computeFlatIndexFieldColumnNames = ({
           ];
         }
 
-        // System indexes (no subFieldName) fall back to the
-        // isIncludedInUniqueConstraint projection — preserves prior behavior.
+        // System indexes (no subFieldName) project the composite parent onto
+        // every property flagged isIncludedInUniqueConstraint.
         const uniqueCompositeProperties = compositeType.properties.filter(
           (property) => property.isIncludedInUniqueConstraint,
         );

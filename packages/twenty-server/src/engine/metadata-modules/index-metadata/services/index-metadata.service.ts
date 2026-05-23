@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -11,7 +12,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadat
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'src/engine/metadata-modules/index-metadata/constants/max-custom-indexes-per-object.constant';
+import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { type CreateIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/create-index.input';
 import {
   IndexMetadataException,
@@ -36,19 +37,6 @@ export class IndexMetadataService {
     createIndexInput: CreateIndexInput;
     workspaceId: string;
   }): Promise<FlatIndexMetadata> {
-    // Reject unique up front. The CreateIndexInput type does not expose
-    // isUnique, but a future contributor could add it — keep this guard so the
-    // intent is explicit and unit-testable.
-    if ((createIndexInput as { isUnique?: boolean }).isUnique === true) {
-      throw new IndexMetadataException(
-        'Unique indexes cannot be created here — use field creation instead',
-        IndexMetadataExceptionCode.UNIQUE_INDEX_NOT_ALLOWED,
-        {
-          userFriendlyMessage: msg`Unique indexes are created automatically when you mark a field as unique.`,
-        },
-      );
-    }
-
     const { fields: fieldInputs } = createIndexInput;
 
     if (fieldInputs.length === 0) {
@@ -132,8 +120,7 @@ export class IndexMetadataService {
       const isComposite = isCompositeFieldMetadataType(flatField.type);
 
       if (isComposite) {
-        // Composite parent — sub-field is required and must exist.
-        if (!isDefined(input.subFieldName) || input.subFieldName === '') {
+        if (!isNonEmptyString(input.subFieldName)) {
           throw new IndexMetadataException(
             `Composite field ${flatField.name} requires a sub-field selection`,
             IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
@@ -157,7 +144,7 @@ export class IndexMetadataService {
             },
           );
         }
-      } else if (isDefined(input.subFieldName) && input.subFieldName !== '') {
+      } else if (isNonEmptyString(input.subFieldName)) {
         // Scalar / relation parent — sub-field doesn't apply.
         throw new IndexMetadataException(
           `Field ${flatField.name} is not composite — subFieldName must not be set`,

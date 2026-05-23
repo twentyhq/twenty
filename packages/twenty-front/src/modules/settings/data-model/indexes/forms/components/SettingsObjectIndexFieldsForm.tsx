@@ -57,8 +57,8 @@ export const SettingsObjectIndexFieldsForm = ({
       name="fields"
       control={control}
       render={({ field: { value, onChange } }) => {
-        // Render one row per picked column plus one trailing empty row that
-        // acts as the implicit "add another" affordance (webhook-form pattern).
+        // One row per picked column plus a trailing empty row as the
+        // implicit "add another" affordance.
         const rows: (
           | SettingsObjectNewIndexFormValues['fields'][number]
           | null

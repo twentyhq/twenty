@@ -21,10 +21,8 @@ export class CreateIndexFieldInput {
   @Field(() => UUIDScalarType)
   fieldMetadataId!: string;
 
-  // For composite-typed parent fields (Address, Currency, ...), the user
-  // picks a specific sub-property name (e.g. 'addressCity', 'amountMicros').
-  // Required for composite parents, must be null/absent for scalar/relation
-  // parents — validated server-side.
+  // Composite sub-property name (e.g. 'addressCity'). Required for composite
+  // parents, must be absent for scalar/relation parents.
   @IsOptional()
   @IsString()
   @Field({ nullable: true })
@@ -37,8 +35,7 @@ export class CreateIndexInput {
   @Field(() => UUIDScalarType)
   objectMetadataId!: string;
 
-  // Ordered list of fields that make up the index. Order matters for
-  // composite indexes — Postgres uses the leading column first.
+  // Order matters: Postgres uses the leading column first.
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMinSize(1)
@@ -51,12 +48,8 @@ export class CreateIndexInput {
   @Field(() => IndexType, { defaultValue: IndexType.BTREE })
   indexType!: IndexType;
 
-  // Partial-index WHERE clause is intentionally NOT exposed on this input.
-  // The server-side validateAndReturnIndexWhereClause util only allows a
-  // hardcoded allowlist (currently just `"deletedAt" IS NULL`), so a
-  // free-text WHERE field on the user-facing API would mislead callers.
-  // System indexes that legitimately use WHERE clauses go through other
-  // code paths that bypass this DTO.
+  // indexWhereClause is not exposed: the validator only allows a hardcoded
+  // allowlist, so a free-text field on the user-facing API would mislead.
 }
 
 @InputType()

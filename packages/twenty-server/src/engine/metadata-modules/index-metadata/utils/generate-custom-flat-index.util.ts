@@ -13,12 +13,9 @@ import { type GenerateFlatIndexArgs } from 'src/engine/metadata-modules/index-me
 import { generateDeterministicIndexNameV2 } from 'src/engine/metadata-modules/index-metadata/utils/generate-deterministic-index-name-v2';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 
-// Custom indexes created through the settings UI are never unique — uniqueness
-// is owned by the field-creation flow. Forces isUnique=false (including in the
-// deterministic name hash) so the caller's choice of fields can't accidentally
-// upgrade the index to UNIQUE. Composite parents must arrive with a non-null
-// subFieldName on their universalFlatIndexFieldMetadatas entry — the service
-// validates that earlier.
+// User-created indexes are never unique — uniqueness is owned by the
+// field-creation flow. isUnique is forced to false here and in the
+// deterministic name hash.
 export const generateCustomFlatIndexMetadata = ({
   flatObjectMetadata,
   objectFlatFieldMetadatas,

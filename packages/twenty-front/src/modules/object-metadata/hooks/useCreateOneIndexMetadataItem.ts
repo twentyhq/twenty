@@ -46,10 +46,8 @@ export const useCreateOneIndexMetadataItem = () => {
         const { __typename, indexFieldMetadataList, ...indexData } =
           createdIndex;
 
-        // Mirror the indexFieldMetadataList → indexFieldMetadatas renaming done
-        // by mapPaginatedObjectMetadataItemsToObjectMetadataItems so the cached
-        // item shape matches what consumers expect (and the row renders its
-        // fields immediately, no refetch needed).
+        // Apollo returns `indexFieldMetadataList`; the cache shape uses
+        // `indexFieldMetadatas` (see mapPaginatedObjectMetadataItemsToObjectMetadataItems).
         addToDraft({
           key: 'indexMetadataItems',
           items: [

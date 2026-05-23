@@ -2,9 +2,12 @@ import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataIte
 import { type IconComponent } from 'twenty-ui/display';
 import { type SelectOption } from 'twenty-ui/input';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
-import { getCompositeSubFieldLabel } from '@/settings/data-model/indexes/utils/getCompositeSubFieldLabel';
+import { getCompositeSubFieldLabel } from '@/object-record/object-filter-dropdown/utils/getCompositeSubFieldLabel';
+import { type CompositeFieldSubFieldName } from '@/settings/data-model/types/CompositeFieldSubFieldName';
+import { type CompositeFieldType } from '@/settings/data-model/types/CompositeFieldType';
 
 // The Select component takes string values. We encode (fieldMetadataId,
 // subFieldName) as `${id}` for scalar fields and `${id}::${subFieldName}` for
@@ -16,7 +19,7 @@ export const encodeIndexableOptionValue = (
   fieldMetadataId: string,
   subFieldName: string | null,
 ): string =>
-  isDefined(subFieldName) && subFieldName !== ''
+  isNonEmptyString(subFieldName)
     ? `${fieldMetadataId}${INDEXABLE_OPTION_SEPARATOR}${subFieldName}`
     : fieldMetadataId;
 
@@ -29,8 +32,7 @@ export const decodeIndexableOptionValue = (
 
   return {
     fieldMetadataId,
-    subFieldName:
-      isDefined(subFieldName) && subFieldName !== '' ? subFieldName : null,
+    subFieldName: isNonEmptyString(subFieldName) ? subFieldName : null,
   };
 };
 
@@ -56,7 +58,7 @@ export const buildIndexableSelectOptions = ({
       // specific column.
       return compositeType.properties.map<SelectOption<string>>((property) => ({
         Icon: getIcon(field.icon),
-        label: `${field.label} > ${getCompositeSubFieldLabel(field.type as FieldMetadataType, property.name)}`,
+        label: `${field.label} > ${getCompositeSubFieldLabel(field.type as CompositeFieldType, property.name as CompositeFieldSubFieldName)}`,
         value: encodeIndexableOptionValue(field.id, property.name),
       }));
     }

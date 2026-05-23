@@ -12,7 +12,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
@@ -23,7 +23,7 @@ import { z } from 'zod';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/constants/MaxCustomIndexesPerObject';
+import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 
 const settingsObjectNewIndexFormSchema = z.object({
   fields: z
@@ -81,6 +81,14 @@ export const SettingsObjectNewIndex = () => {
 
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
+  const indexableFields = useMemo(
+    () =>
+      (activeObjectMetadataItem?.fields ?? [])
+        .filter(isFieldIndexable)
+        .sort((a, b) => a.label.localeCompare(b.label)),
+    [activeObjectMetadataItem?.fields],
+  );
+
   if (!isDefined(activeObjectMetadataItem)) return null;
 
   const customIndexCount = activeObjectMetadataItem.indexMetadatas.filter(
@@ -106,10 +114,6 @@ export const SettingsObjectNewIndex = () => {
       navigate(SettingsPath.ObjectDetail, { objectNamePlural });
     }
   };
-
-  const indexableFields = activeObjectMetadataItem.fields
-    .filter(isFieldIndexable)
-    .sort((a, b) => a.label.localeCompare(b.label));
 
   return (
     <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading

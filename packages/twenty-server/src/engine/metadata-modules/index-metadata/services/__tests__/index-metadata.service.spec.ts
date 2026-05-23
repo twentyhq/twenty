@@ -6,7 +6,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-flat-entity-maps.constant';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { getFlatIndexMetadataMock } from 'src/engine/metadata-modules/flat-index-metadata/__mocks__/get-flat-index-metadata.mock';
-import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'src/engine/metadata-modules/index-metadata/constants/max-custom-indexes-per-object.constant';
+import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import {
   IndexMetadataException,
   IndexMetadataExceptionCode,
@@ -179,29 +179,6 @@ describe('IndexMetadataService', () => {
   });
 
   describe('createOne validation', () => {
-    it('rejects isUnique=true', async () => {
-      setupCacheReturn();
-
-      await expect(
-        service.createOne({
-          workspaceId: WORKSPACE_ID,
-          createIndexInput: {
-            objectMetadataId: OBJECT_ID,
-            fields: [{ fieldMetadataId: 'field-1' }],
-            indexType: IndexType.BTREE,
-            // oxlint-disable-next-line @typescript-eslint/no-explicit-any
-            isUnique: true,
-          } as any,
-        }),
-      ).rejects.toMatchObject({
-        code: IndexMetadataExceptionCode.UNIQUE_INDEX_NOT_ALLOWED,
-      });
-
-      expect(
-        migrationService.validateBuildAndRunWorkspaceMigration,
-      ).not.toHaveBeenCalled();
-    });
-
     it('rejects empty fields', async () => {
       setupCacheReturn();
 
