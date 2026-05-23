@@ -44,7 +44,6 @@ export const SettingsAccountsEmailSignature = ({
   const [emailSignature, setEmailSignature] = useState(
     connectedAccount.emailSignature ?? '',
   );
-  const [editorKey, setEditorKey] = useState(0);
 
   const [updateConnectedAccountSignature, { loading }] = useMutation<
     UpdateConnectedAccountSignatureMutation,
@@ -53,7 +52,6 @@ export const SettingsAccountsEmailSignature = ({
 
   useEffect(() => {
     setEmailSignature(connectedAccount.emailSignature ?? '');
-    setEditorKey((previousKey) => previousKey + 1);
   }, [connectedAccount.id, connectedAccount.emailSignature]);
 
   const handleSave = async () => {
@@ -82,7 +80,7 @@ export const SettingsAccountsEmailSignature = ({
     <Card rounded>
       <StyledCardContent>
         <FormAdvancedTextFieldInput
-          key={`${connectedAccount.id}-${editorKey}`}
+          key={connectedAccount.id}
           defaultValue={emailSignature}
           onChange={setEmailSignature}
           placeholder={t`Add your email signature`}

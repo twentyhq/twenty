@@ -17,7 +17,7 @@ describe('getEmailBodyWithSignature', () => {
   it('replaces the previous trailing signature while preserving body content', () => {
     expect(
       getEmailBodyWithUpdatedSignature({
-        body: '<p>Hello</p><p>Jane Doe</p>',
+        body: '<p>Hello</p><p></p><p>Jane Doe</p>',
         previousEmailSignature: '<p>Jane Doe</p>',
         nextEmailSignature: '<p>John Smith</p>',
       }),
@@ -27,7 +27,7 @@ describe('getEmailBodyWithSignature', () => {
   it('removes the previous trailing signature when the next account has no signature', () => {
     expect(
       getEmailBodyWithUpdatedSignature({
-        body: '<p>Hello</p><p>Jane Doe</p>',
+        body: '<p>Hello</p><p></p><p>Jane Doe</p>',
         previousEmailSignature: '<p>Jane Doe</p>',
         nextEmailSignature: null,
       }),

@@ -1,5 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 
+const EMAIL_SIGNATURE_SEPARATOR = '<p></p>';
+
 export const getEmailBodyWithSignature = (
   emailSignature: string | null | undefined,
 ) => {
@@ -7,7 +9,7 @@ export const getEmailBodyWithSignature = (
     return '';
   }
 
-  return `<p></p>${emailSignature}`;
+  return `${EMAIL_SIGNATURE_SEPARATOR}${emailSignature}`;
 };
 
 const getEmailBodyWithoutTrailingSignature = (
@@ -24,7 +26,13 @@ const getEmailBodyWithoutTrailingSignature = (
     return body;
   }
 
-  return trimmedBody.slice(0, -emailSignature.length);
+  const bodyWithoutSignature = trimmedBody.slice(0, -emailSignature.length);
+
+  if (bodyWithoutSignature.endsWith(EMAIL_SIGNATURE_SEPARATOR)) {
+    return bodyWithoutSignature.slice(0, -EMAIL_SIGNATURE_SEPARATOR.length);
+  }
+
+  return bodyWithoutSignature;
 };
 
 export const getEmailBodyWithUpdatedSignature = ({
@@ -52,5 +60,5 @@ export const getEmailBodyWithUpdatedSignature = ({
     return getEmailBodyWithSignature(nextEmailSignature);
   }
 
-  return `${bodyWithoutPreviousSignature}<p></p>${nextEmailSignature}`;
+  return `${bodyWithoutPreviousSignature}${EMAIL_SIGNATURE_SEPARATOR}${nextEmailSignature}`;
 };

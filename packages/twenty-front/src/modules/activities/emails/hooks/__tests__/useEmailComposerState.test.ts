@@ -51,7 +51,7 @@ describe('useEmailComposerState', () => {
     );
 
     act(() => {
-      result.current.setBody('<p>Hello</p><p>Jane Doe</p>');
+      result.current.setBody('<p>Hello</p><p></p><p>Jane Doe</p>');
     });
 
     act(() => {
