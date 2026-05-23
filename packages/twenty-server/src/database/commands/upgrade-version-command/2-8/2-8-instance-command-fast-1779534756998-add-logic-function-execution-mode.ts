@@ -7,10 +7,10 @@ import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interf
 export class AddLogicFunctionExecutionModeFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `CREATE TYPE "core"."logicFunction_executionMode_enum" AS ENUM('LIVE', 'PREBUILT')`,
+      `CREATE TYPE "core"."logicFunction_executionmode_enum" AS ENUM('LIVE', 'PREBUILT')`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."logicFunction" ADD "executionMode" "core"."logicFunction_executionMode_enum" NOT NULL DEFAULT 'LIVE'`,
+      `ALTER TABLE "core"."logicFunction" ADD "executionMode" "core"."logicFunction_executionmode_enum" NOT NULL DEFAULT 'LIVE'`,
     );
   }
 
@@ -19,7 +19,7 @@ export class AddLogicFunctionExecutionModeFastInstanceCommand implements FastIns
       `ALTER TABLE "core"."logicFunction" DROP COLUMN "executionMode"`,
     );
     await queryRunner.query(
-      `DROP TYPE "core"."logicFunction_executionMode_enum"`,
+      `DROP TYPE "core"."logicFunction_executionmode_enum"`,
     );
   }
 }
