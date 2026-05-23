@@ -4834,6 +4834,9 @@ export default {
             "name": [
                 1
             ],
+            "emailSignature": [
+                1
+            ],
             "visibility": [
                 1
             ],
@@ -7775,6 +7778,15 @@ export default {
                     "id": [
                         3,
                         "UUID!"
+                    ]
+                }
+            ],
+            "updateConnectedAccountSignature": [
+                269,
+                {
+                    "input": [
+                        469,
+                        "UpdateConnectedAccountSignatureInput!"
                     ]
                 }
             ],
@@ -11165,6 +11177,17 @@ export default {
             ],
             "universalIdentifier": [
                 3
+            ],
+            "__typename": [
+                1
+            ]
+        },
+        "UpdateConnectedAccountSignatureInput": {
+            "id": [
+                3
+            ],
+            "emailSignature": [
+                1
             ],
             "__typename": [
                 1

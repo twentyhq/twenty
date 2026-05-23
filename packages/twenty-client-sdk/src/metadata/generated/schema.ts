@@ -2123,6 +2123,7 @@ export interface ConnectedAccountPublicDTO {
     connectionProviderId?: Scalars['UUID']
     applicationId?: Scalars['UUID']
     name?: Scalars['String']
+    emailSignature?: Scalars['String']
     visibility: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
@@ -2773,6 +2774,7 @@ export interface Mutation {
     createEmailGroupChannel: CreateEmailGroupChannelOutput
     deleteEmailGroupChannel: MessageChannel
     deleteConnectedAccount: ConnectedAccountPublicDTO
+    updateConnectedAccountSignature: ConnectedAccountPublicDTO
     updateCalendarChannel: CalendarChannel
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
@@ -5124,6 +5126,7 @@ export interface ConnectedAccountPublicDTOGenqlSelection{
     connectionProviderId?: boolean | number
     applicationId?: boolean | number
     name?: boolean | number
+    emailSignature?: boolean | number
     visibility?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
@@ -5826,6 +5829,7 @@ export interface MutationGenqlSelection{
     createEmailGroupChannel?: (CreateEmailGroupChannelOutputGenqlSelection & { __args: {input: CreateEmailGroupChannelInput} })
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
+    updateConnectedAccountSignature?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {input: UpdateConnectedAccountSignatureInput} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
@@ -6211,6 +6215,8 @@ export interface UpdateMessageChannelInput {id: Scalars['UUID'],update: UpdateMe
 export interface UpdateMessageChannelInputUpdates {visibility?: (MessageChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (MessageChannelContactAutoCreationPolicy | null),messageFolderImportPolicy?: (MessageFolderImportPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null),excludeNonProfessionalEmails?: (Scalars['Boolean'] | null),excludeGroupEmails?: (Scalars['Boolean'] | null)}
 
 export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
+
+export interface UpdateConnectedAccountSignatureInput {id: Scalars['UUID'],emailSignature?: (Scalars['String'] | null)}
 
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 

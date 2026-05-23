@@ -1,8 +1,11 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useQuery } from '@apollo/client/react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import { type EmailAttachment } from 'twenty-shared/types';
 
 import { useSendEmail } from '@/activities/emails/hooks/useSendEmail';
+import { getEmailBodyWithSignature } from '@/activities/emails/utils/getEmailBodyWithSignature';
+import { GET_MY_CONNECTED_ACCOUNTS } from '@/settings/accounts/graphql/queries/getMyConnectedAccounts';
 
 type UseEmailComposerStateArgs = {
   connectedAccountId: string;
@@ -33,10 +36,35 @@ export const useEmailComposerState = ({
   const [bcc, setBcc] = useState('');
   const [subject, setSubject] = useState(defaultSubject);
   const [body, setBody] = useState('');
+  const [bodyFieldKey, setBodyFieldKey] = useState(0);
   const [showCcBcc, setShowCcBcc] = useState(false);
   const [files, setFiles] = useState<EmailAttachment[]>([]);
+  const [hasEditedBody, setHasEditedBody] = useState(false);
 
   const { sendEmail, loading } = useSendEmail();
+  const { data: connectedAccountsData } = useQuery<{
+    myConnectedAccounts: {
+      id: string;
+      emailSignature: string | null;
+    }[];
+  }>(GET_MY_CONNECTED_ACCOUNTS);
+
+  const emailSignature = useMemo(
+    () =>
+      connectedAccountsData?.myConnectedAccounts.find(
+        (account) => account.id === connectedAccountId,
+      )?.emailSignature,
+    [connectedAccountsData?.myConnectedAccounts, connectedAccountId],
+  );
+
+  useEffect(() => {
+    if (hasEditedBody) {
+      return;
+    }
+
+    setBody(getEmailBodyWithSignature(emailSignature));
+    setBodyFieldKey((previousKey) => previousKey + 1);
+  }, [emailSignature, hasEditedBody]);
 
   const recipientCount = useMemo(
     () => countRecipients(to) + countRecipients(cc) + countRecipients(bcc),
@@ -88,6 +116,11 @@ export const useEmailComposerState = ({
     exceedsRecipientLimit,
   ]);
 
+  const handleBodyChange = useCallback((value: string) => {
+    setHasEditedBody(true);
+    setBody(value);
+  }, []);
+
   return {
     connectedAccountId,
     setConnectedAccountId,
@@ -100,7 +133,8 @@ export const useEmailComposerState = ({
     subject,
     setSubject,
     body,
-    setBody,
+    setBody: handleBodyChange,
+    bodyFieldKey,
     showCcBcc,
     setShowCcBcc,
     files,

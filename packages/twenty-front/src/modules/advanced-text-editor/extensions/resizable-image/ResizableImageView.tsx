@@ -8,13 +8,25 @@ const IMAGE_MIN_WIDTH = 32;
 const IMAGE_MAX_WIDTH = 600;
 
 const StyledNodeViewWrapperContainer = styled.div<{
-  align?: string;
+  align?: string | null;
 }>`
+  float: ${({ align }) =>
+    align === 'left' || align === 'right' ? align : 'none'};
   height: 100%;
   margin-left: ${({ align }) =>
-    align === 'left' ? '0' : align === 'center' ? 'auto' : 'unset'};
+    align === 'right'
+      ? themeCssVariables.spacing[2]
+      : align === 'center'
+        ? 'auto'
+        : '0'};
   margin-right: ${({ align }) =>
-    align === 'right' ? '0' : align === 'center' ? 'auto' : 'unset'};
+    align === 'left'
+      ? themeCssVariables.spacing[2]
+      : align === 'center'
+        ? 'auto'
+        : '0'};
+  max-width: 100%;
+  width: fit-content;
 `;
 
 const StyledImageWrapper = styled.div<{ width?: number }>`

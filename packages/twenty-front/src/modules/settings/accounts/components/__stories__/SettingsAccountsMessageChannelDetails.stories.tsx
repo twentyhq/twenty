@@ -30,6 +30,11 @@ const meta: Meta<typeof SettingsAccountsMessageChannelDetails> = {
       isSyncEnabled: true,
       visibility: MessageChannelVisibility.SHARE_EVERYTHING,
       messageFolderImportPolicy: MessageFolderImportPolicy.ALL_FOLDERS,
+      connectedAccount: {
+        id: '20202020-ef5a-4822-9e08-ce6e6a4dcb6a',
+        handle: 'jane@example.com',
+        emailSignature: '<p>Jane Doe</p>',
+      },
     },
   },
   argTypes: {

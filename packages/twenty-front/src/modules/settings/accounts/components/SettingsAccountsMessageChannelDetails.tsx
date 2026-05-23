@@ -12,6 +12,7 @@ import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { type MessageChannel } from '@/accounts/types/MessageChannel';
+import { SettingsAccountsEmailSignature } from '@/settings/accounts/components/SettingsAccountsEmailSignature';
 import { SettingsAccountsMessageAutoCreationCard } from '@/settings/accounts/components/SettingsAccountsMessageAutoCreationCard';
 import { SettingsAccountsMessageFolderCard } from '@/settings/accounts/components/SettingsAccountsMessageFolderCard';
 import { SettingsAccountsMessageVisibilityCard } from '@/settings/accounts/components/SettingsAccountsMessageVisibilityCard';
@@ -30,6 +31,7 @@ type SettingsAccountsMessageChannelDetailsProps = {
     | 'isSyncEnabled'
     | 'messageFolderImportPolicy'
     | 'type'
+    | 'connectedAccount'
   >;
 };
 
@@ -96,6 +98,14 @@ export const SettingsAccountsMessageChannelDetails = ({
           <SettingsAccountsMessageFolderCard
             onChange={handleMessageFolderImportPolicyChange}
             value={messageChannel.messageFolderImportPolicy}
+          />
+        </Section>
+      )}
+      {messageChannel.connectedAccount && (
+        <Section>
+          <H2Title title={t`Signature`} />
+          <SettingsAccountsEmailSignature
+            connectedAccount={messageChannel.connectedAccount}
           />
         </Section>
       )}

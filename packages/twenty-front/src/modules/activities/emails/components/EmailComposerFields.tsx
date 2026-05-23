@@ -106,7 +106,8 @@ export const EmailComposerFields = ({
         placeholder={t`Subject`}
       />
       <FormAdvancedTextFieldInput
-        defaultValue=""
+        key={composerState.bodyFieldKey}
+        defaultValue={composerState.body}
         onChange={composerState.setBody}
         placeholder={t`Type something or press "/" to see commands`}
         minHeight={120}

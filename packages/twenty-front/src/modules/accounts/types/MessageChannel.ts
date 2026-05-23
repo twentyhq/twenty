@@ -25,6 +25,7 @@ export type MessageChannel = {
   connectedAccount: {
     id: string;
     handle: string;
+    emailSignature: string | null;
   } | null;
   createdAt: string;
   updatedAt: string;

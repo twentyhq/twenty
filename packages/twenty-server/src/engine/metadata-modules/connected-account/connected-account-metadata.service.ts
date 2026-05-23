@@ -137,6 +137,47 @@ export class ConnectedAccountMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
+  async updateEmailSignature({
+    id,
+    workspaceId,
+    emailSignature,
+  }: {
+    id: string;
+    workspaceId: string;
+    emailSignature?: string | null;
+  }): Promise<ConnectedAccountEntity> {
+    const sanitizedEmailSignature =
+      await this.sanitizeEmailSignature(emailSignature);
+
+    return this.update({
+      id,
+      workspaceId,
+      data: { emailSignature: sanitizedEmailSignature },
+    });
+  }
+
+  private async sanitizeEmailSignature(
+    emailSignature?: string | null,
+  ): Promise<string | null> {
+    if (!emailSignature || emailSignature.trim().length === 0) {
+      return null;
+    }
+
+    const [{ default: createDOMPurify }, { JSDOM }] = await Promise.all([
+      import('dompurify'),
+      import('jsdom'),
+    ]);
+    const window = new JSDOM('').window;
+    const purify = createDOMPurify(window);
+    const sanitizedEmailSignature = purify.sanitize(emailSignature);
+
+    window.close();
+
+    return sanitizedEmailSignature.trim().length > 0
+      ? sanitizedEmailSignature
+      : null;
+  }
+
   async delete({
     id,
     workspaceId,

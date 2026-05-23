@@ -2444,6 +2444,7 @@ type ConnectedAccountPublicDTO {
   connectionProviderId: UUID
   applicationId: UUID
   name: String
+  emailSignature: String
   visibility: String!
   createdAt: DateTime!
   updatedAt: DateTime!
@@ -3240,6 +3241,7 @@ type Mutation {
   createEmailGroupChannel(input: CreateEmailGroupChannelInput!): CreateEmailGroupChannelOutput!
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
+  updateConnectedAccountSignature(input: UpdateConnectedAccountSignatureInput!): ConnectedAccountPublicDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
@@ -4193,6 +4195,11 @@ input UpdateMessageChannelInputUpdates {
 
 input CreateEmailGroupChannelInput {
   handle: String!
+}
+
+input UpdateConnectedAccountSignatureInput {
+  id: UUID!
+  emailSignature: String
 }
 
 input UpdateCalendarChannelInput {

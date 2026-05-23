@@ -11,6 +11,7 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
 import { ConnectedAccountPublicDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account-public.dto';
 import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
+import { UpdateConnectedAccountSignatureInput } from 'src/engine/metadata-modules/connected-account/dtos/update-connected-account-signature.input';
 import { ConnectedAccountGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/connected-account/interceptors/connected-account-graphql-api-exception.interceptor';
 import { buildPublicConnectedAccount } from 'src/engine/metadata-modules/connected-account/utils/build-public-connected-account.util';
 
@@ -35,6 +36,29 @@ export class ConnectedAccountResolver {
       });
 
     return accounts.map((account) => buildPublicConnectedAccount(account));
+  }
+
+  @Mutation(() => ConnectedAccountPublicDTO)
+  @UseGuards(NoPermissionGuard)
+  async updateConnectedAccountSignature(
+    @Args('input') input: UpdateConnectedAccountSignatureInput,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthUserWorkspaceId() userWorkspaceId: string,
+  ): Promise<ConnectedAccountPublicDTO> {
+    await this.connectedAccountMetadataService.verifyOwnership({
+      id: input.id,
+      userWorkspaceId,
+      workspaceId: workspace.id,
+    });
+
+    const updated =
+      await this.connectedAccountMetadataService.updateEmailSignature({
+        id: input.id,
+        workspaceId: workspace.id,
+        emailSignature: input.emailSignature,
+      });
+
+    return buildPublicConnectedAccount(updated);
   }
 
   @Mutation(() => ConnectedAccountPublicDTO)

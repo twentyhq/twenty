@@ -13,6 +13,7 @@ export const GET_MY_CONNECTED_ACCOUNTS = gql`
       userWorkspaceId
       connectionProviderId
       name
+      emailSignature
       visibility
       lastCredentialsRefreshedAt
       connectionParameters {

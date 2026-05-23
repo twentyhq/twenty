@@ -20,6 +20,7 @@ export const GET_MY_MESSAGE_CHANNELS = gql`
       connectedAccount {
         id
         handle
+        emailSignature
       }
       createdAt
       updatedAt

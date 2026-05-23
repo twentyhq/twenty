@@ -86,6 +86,11 @@ export class ConnectedAccountDTO {
   @Field(() => String, { nullable: true })
   name: string | null;
 
+  @IsString()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  emailSignature: string | null;
+
   // 'user' = private to the connecting user.
   // 'workspace' = shared with all members.
   // Named `visibility` to disambiguate from the OAuth `scopes` array.

@@ -105,6 +105,9 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'varchar', nullable: true })
   name: string | null;
 
+  @Column({ type: 'text', nullable: true })
+  emailSignature: string | null;
+
   @Column({ type: 'varchar', nullable: false, default: 'user' })
   visibility: ConnectedAccountVisibility;
 
