@@ -1,9 +1,19 @@
-import { Page } from '@playwright/test';
+import { type Page } from '@playwright/test';
 
-const MAC = process.platform === 'darwin';
+async function isMacBrowser(page: Page) {
+  return page.evaluate(() => {
+    const navigatorWithUserAgentData = navigator as Navigator & {
+      userAgentData?: { platform?: string };
+    };
+    const platform =
+      navigatorWithUserAgentData.userAgentData?.platform ?? navigator.platform;
+
+    return /mac|iphone|ipad|ipod/i.test(platform);
+  });
+}
 
 async function keyDownCtrlOrMeta(page: Page) {
-  if (MAC) {
+  if (await isMacBrowser(page)) {
     await page.keyboard.down('Meta');
   } else {
     await page.keyboard.down('Control');
@@ -11,7 +21,7 @@ async function keyDownCtrlOrMeta(page: Page) {
 }
 
 async function keyUpCtrlOrMeta(page: Page) {
-  if (MAC) {
+  if (await isMacBrowser(page)) {
     await page.keyboard.up('Meta');
   } else {
     await page.keyboard.up('Control');

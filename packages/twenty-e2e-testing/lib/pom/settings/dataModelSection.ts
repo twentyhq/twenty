@@ -1,4 +1,38 @@
-import { Locator, Page } from '@playwright/test';
+import {
+  expect,
+  type Locator,
+  type Page,
+  type Response,
+} from '@playwright/test';
+
+type CreateObjectParams = {
+  singularLabel: string;
+  pluralLabel: string;
+};
+
+type CreateObjectMetadataResponseBody = {
+  data?: {
+    createOneObject?: {
+      namePlural?: string;
+    };
+  };
+  errors?: unknown[];
+};
+
+const isCreateObjectMetadataResponse = (response: Response) => {
+  if (!response.url().endsWith('/metadata')) {
+    return false;
+  }
+
+  try {
+    return (
+      response.request().postDataJSON().operationName ===
+      'CreateOneObjectMetadataItem'
+    );
+  } catch {
+    return false;
+  }
+};
 
 export class DataModelSection {
   private readonly searchObjectInput: Locator;
@@ -185,5 +219,49 @@ export class DataModelSection {
 
   async clickSaveButton() {
     await this.saveButton.click();
+  }
+
+  async createObject({ singularLabel, pluralLabel }: CreateObjectParams) {
+    await Promise.all([
+      this.page.waitForURL(/\/settings\/objects\/new/),
+      this.clickAddObjectButton(),
+    ]);
+
+    await this.typeObjectSingularName(singularLabel);
+    await this.typeObjectPluralName(pluralLabel);
+    await this.objectPluralNameInput.blur();
+
+    await expect(this.saveButton).toBeEnabled();
+
+    const createObjectResponsePromise = this.page.waitForResponse(
+      isCreateObjectMetadataResponse,
+    );
+
+    await this.clickSaveButton();
+
+    const createObjectResponse = await createObjectResponsePromise;
+    const createObjectResponseBody =
+      (await createObjectResponse.json()) as CreateObjectMetadataResponseBody;
+
+    if (!createObjectResponse.ok() || createObjectResponseBody.errors?.length) {
+      throw new Error(
+        `Object creation failed: ${JSON.stringify(createObjectResponseBody)}`,
+      );
+    }
+
+    const createdObjectNamePlural =
+      createObjectResponseBody.data?.createOneObject?.namePlural;
+
+    if (createdObjectNamePlural === undefined) {
+      throw new Error(
+        `Object creation response is missing createOneObject.namePlural: ${JSON.stringify(
+          createObjectResponseBody,
+        )}`,
+      );
+    }
+
+    await this.page.waitForURL(
+      new RegExp(`/settings/objects/${createdObjectNamePlural}(?:[?#]|$)`),
+    );
   }
 }
