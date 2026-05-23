@@ -43,7 +43,7 @@ export const parseAndFormatGmailMessage = (
 
   const participants = [
     ...formatAddressObjectAsParticipants(
-      [{ address: from }],
+      [from],
       MessageParticipantRole.FROM,
     ),
     ...formatAddressObjectAsParticipants(
@@ -72,7 +72,7 @@ export const parseAndFormatGmailMessage = (
     subject: subject || '',
     messageThreadExternalId: threadId,
     receivedAt: new Date(parseInt(internalDate)),
-    direction: computeMessageDirection(from || '', connectedAccount),
+    direction: computeMessageDirection(from.address || '', connectedAccount),
     participants,
     text: sanitizeString(textWithoutReplyQuotations),
     attachments,
