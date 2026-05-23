@@ -39,6 +39,7 @@ export const getBillingExceptionStatusCode = (
     case BillingExceptionCode.BILLING_PRICE_INVALID:
     case BillingExceptionCode.BILLING_SUBSCRIPTION_PHASE_NOT_FOUND:
     case BillingExceptionCode.BILLING_TOO_MUCH_SUBSCRIPTIONS_FOUND:
+    case BillingExceptionCode.BILLING_SUBSCRIPTION_NOT_CANCELED:
       return 500;
     default: {
       return assertUnreachable(exception.code);

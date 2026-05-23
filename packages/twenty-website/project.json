@@ -21,7 +21,7 @@
       "cache": false,
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx next dev"
+        "command": "npx next dev --port 3002"
       }
     },
     "start": {
@@ -30,7 +30,7 @@
       "dependsOn": ["build"],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx next start"
+        "command": "npx next start --port 3002"
       }
     },
     "check-boundaries": {

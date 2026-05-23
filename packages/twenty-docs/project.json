@@ -21,11 +21,17 @@
     },
     "lint": {},
     "fmt": {
+      "executor": "nx:run-commands",
+      "cache": true,
       "options": {
-        "files": "."
+        "cwd": "{projectRoot}",
+        "command": "prettier . --check --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
       },
       "configurations": {
-        "fix": {}
+        "ci": {},
+        "fix": {
+          "command": "prettier . --write --cache --cache-location ../../.cache/prettier/{projectRoot} --cache-strategy metadata"
+        }
       }
     }
   }

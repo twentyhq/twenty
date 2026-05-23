@@ -18,9 +18,7 @@ type SigningKeyRow = {
 };
 
 @RegisteredInstanceCommand('2.5.0', 1798000007000, { type: 'slow' })
-export class EncryptSigningKeyPrivateKeysSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptSigningKeyPrivateKeysSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}

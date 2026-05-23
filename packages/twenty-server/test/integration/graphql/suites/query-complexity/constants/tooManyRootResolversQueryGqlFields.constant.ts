@@ -79,13 +79,6 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
         }
       }
     }
-    calendarChannels {
-      edges {
-        node {
-          id
-        }
-      }
-    }
     calendarChannelEventAssociations {
       edges {
         node {
@@ -94,13 +87,6 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
       }
     }
     messageThreads {
-      edges {
-        node {
-          id
-        }
-      }
-    }
-    messageChannels {
       edges {
         node {
           id
@@ -150,6 +136,27 @@ export const TOO_MANY_ROOT_RESOLVERS_QUERY_GQL_FIELDS = gql`
       }
     }
     dashboards {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    messages {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    messageParticipants {
+      edges {
+        node {
+          id
+        }
+      }
+    }
+    workspaceMembers {
       edges {
         node {
           id

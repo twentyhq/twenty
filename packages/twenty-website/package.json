@@ -3,9 +3,9 @@
   "private": true,
   "scripts": {
     "nx": "NX_DEFAULT_PROJECT=twenty-website node ../../node_modules/nx/bin/nx.js",
-    "dev": "npx next dev",
+    "dev": "npx next dev --port 3002",
     "build": "npx next build",
-    "start": "npx next start",
+    "start": "npx next start --port 3002",
     "convert-images": "node ./scripts/convert-png-to-webp.mjs",
     "preview": "opennextjs-cloudflare build && opennextjs-cloudflare preview",
     "deploy:dev": "opennextjs-cloudflare build && opennextjs-cloudflare deploy --env dev",

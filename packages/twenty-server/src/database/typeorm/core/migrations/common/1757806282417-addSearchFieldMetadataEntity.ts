@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddSearchFieldMetadataEntity1757806282417
-  implements MigrationInterface
-{
+export class AddSearchFieldMetadataEntity1757806282417 implements MigrationInterface {
   name = 'AddSearchFieldMetadataEntity1757806282417';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

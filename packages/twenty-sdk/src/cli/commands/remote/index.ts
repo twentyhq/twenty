@@ -84,9 +84,7 @@ const addAction = async (options: {
   test?: boolean;
 }) => {
   if (options.apiUrl) {
-    console.warn(
-      chalk.yellow('⚠ --api-url is deprecated. Use --url instead.'),
-    );
+    console.warn(chalk.yellow('⚠ --api-url is deprecated. Use --url instead.'));
   }
   const configPath = options.test ? getConfigPath(true) : undefined;
   const configService = new ConfigService(

@@ -96,9 +96,9 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
       .expect(200)
       .expect((response) => {
         expect(response.body.errors).toBeUndefined();
-        expect(response.body.data.updateWorkspace.isPublicInviteLinkEnabled).toBe(
-          true,
-        );
+        expect(
+          response.body.data.updateWorkspace.isPublicInviteLinkEnabled,
+        ).toBe(true);
       });
 
     const uniqueEmail = `profile-onboarding-${randomUUID()}@example.com`;
@@ -189,9 +189,9 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
 
     expect(beforeNameUpdateResponse.status).toBe(200);
     expect(beforeNameUpdateResponse.body.errors).toBeUndefined();
-    expect(beforeNameUpdateResponse.body.data.currentUser.onboardingStatus).toBe(
-      OnboardingStatus.PROFILE_CREATION,
-    );
+    expect(
+      beforeNameUpdateResponse.body.data.currentUser.onboardingStatus,
+    ).toBe(OnboardingStatus.PROFILE_CREATION);
 
     const workspaceMemberQuery = gql`
       query WorkspaceMemberForProfileOnboarding(
@@ -253,7 +253,9 @@ describe('updateWorkspaceMemberSettings and profile onboarding', () => {
 
     expect(updateNameResponse.status).toBe(200);
     expect(updateNameResponse.body.errors).toBeUndefined();
-    expect(updateNameResponse.body.data.updateWorkspaceMemberSettings).toBe(true);
+    expect(updateNameResponse.body.data.updateWorkspaceMemberSettings).toBe(
+      true,
+    );
 
     const afterNameUpdateResponse = await makeMetadataAPIRequest(
       {

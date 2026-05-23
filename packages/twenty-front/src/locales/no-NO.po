@@ -2136,7 +2136,7 @@ msgid "Application details"
 msgstr "Applikasjonsdetaljer"
 
 #. js-lingui-id: lGEBD4
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Application installed successfully."
 msgstr "Applikasjonen ble installert vellykket."
 
@@ -6977,7 +6977,7 @@ msgid "Failed to get response"
 msgstr "Kunne ikke få svar"
 
 #. js-lingui-id: qZwtAi
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr "Kunne ikke installere applikasjonen."
 
@@ -9461,7 +9461,7 @@ msgstr "Loggfør en ny avtale (selskap, beløp, fase, forventet avslutning). Det
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 msgid "Log out"
 msgstr "Logg ut"
 

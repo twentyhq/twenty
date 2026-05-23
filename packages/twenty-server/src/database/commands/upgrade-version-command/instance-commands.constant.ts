@@ -52,6 +52,7 @@ import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/comma
 import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
 import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
+import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1779600000000-finalize-role-permission-flag-cutover';
 import { AllowCreateRecordCommandMenuItemPayloadFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1799000001000-allow-create-record-command-menu-item-payload';
 
 export const INSTANCE_COMMANDS = [
@@ -107,5 +108,6 @@ export const INSTANCE_COMMANDS = [
   DropPostgresCredentialsTableFastInstanceCommand,
   AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddChannelSyncStageIndexesFastInstanceCommand,
+  FinalizeRolePermissionFlagCutoverFastInstanceCommand,
   AllowCreateRecordCommandMenuItemPayloadFastInstanceCommand,
 ];

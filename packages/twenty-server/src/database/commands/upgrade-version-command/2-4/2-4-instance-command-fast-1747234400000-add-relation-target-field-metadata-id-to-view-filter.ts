@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.4.0', 1747234400000)
-export class AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddRelationTargetFieldMetadataIdToViewFilterEarly2_4FastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."viewFilter" ADD COLUMN IF NOT EXISTS "relationTargetFieldMetadataId" uuid`,

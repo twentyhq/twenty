@@ -9,9 +9,7 @@ import { STANDARD_PERMISSION_FLAG_DEFINITIONS } from 'src/engine/metadata-module
 const PERMISSION_FLAG_TYPES = Object.values(PermissionFlagType) as string[];
 
 @RegisteredInstanceCommand('2.6.0', 1778235340023, { type: 'slow' })
-export class BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class BackfillRolePermissionFlagPermissionFlagIdSlowInstanceCommand implements SlowInstanceCommand {
   async runDataMigration(dataSource: DataSource): Promise<void> {
     const unknownFlagRows: { flag: string }[] = await dataSource.query(
       `SELECT DISTINCT "flag" FROM "core"."rolePermissionFlag"

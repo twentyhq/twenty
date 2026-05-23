@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationIdAndUniversalIdentifierToPageLayouts1765200057592
-  implements MigrationInterface
-{
+export class AddApplicationIdAndUniversalIdentifierToPageLayouts1765200057592 implements MigrationInterface {
   name = 'AddApplicationIdAndUniversalIdentifierToPageLayouts1765200057592';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

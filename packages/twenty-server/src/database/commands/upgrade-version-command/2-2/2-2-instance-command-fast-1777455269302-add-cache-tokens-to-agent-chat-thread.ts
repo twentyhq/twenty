@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.2.0', 1777455269302)
-export class AddCacheTokensToAgentChatThreadFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddCacheTokensToAgentChatThreadFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `ALTER TABLE "core"."agentChatThread" ADD "totalCacheReadTokens" bigint NOT NULL DEFAULT 0`,

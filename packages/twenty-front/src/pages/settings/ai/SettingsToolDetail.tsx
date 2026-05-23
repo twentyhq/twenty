@@ -229,6 +229,7 @@ export const SettingsToolDetail = () => {
                 textAreaId="tool-description-textarea"
                 placeholder={t`Write a description`}
                 minRows={3}
+                maxRows={5}
                 value={editedDescription ?? description ?? ''}
                 onChange={handleDescriptionChange}
                 disabled={isReadOnly}

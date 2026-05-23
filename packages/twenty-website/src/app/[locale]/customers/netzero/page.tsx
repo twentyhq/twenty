@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { type CaseStudyData } from '@/lib/customers';
+import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
@@ -8,8 +8,7 @@ import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 
-const PLACEHOLDER_HERO =
-  'https://images.unsplash.com/photo-1744830343976-ce690ba2a67c?w=1600&q=80';
+const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.netzero;
 
 const META_TITLE = msg`A CRM that grows with you | NetZero & Twenty`;
 const META_DESCRIPTION = msg`How NetZero uses Twenty across carbon credits, agricultural products, and franchised industrial systems with a modular CRM and a roadmap toward AI-assisted workflows.`;
@@ -50,7 +49,7 @@ export default async function NetZeroCaseStudyPage({
       authorAvatarSrc: '/images/partner/testimonials/olivier-reinaud.webp',
       authorRole: msg`Co-founder, NetZero`,
       clientIcon: 'netzero',
-      heroImageSrc: PLACEHOLDER_HERO,
+      heroImageSrc: HERO_IMAGE,
       industry: msg`Agribusiness`,
       kpis: [
         { value: msg`3 product lines`, label: msg`On a single CRM` },

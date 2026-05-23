@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddLogoFileIdColumnOnWorkspaceTable1771323022170
-  implements MigrationInterface
-{
+export class AddLogoFileIdColumnOnWorkspaceTable1771323022170 implements MigrationInterface {
   name = 'AddLogoFileIdColumnOnWorkspaceTable1771323022170';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -2136,7 +2136,7 @@ msgid "Application details"
 msgstr "Uygulama detayları"
 
 #. js-lingui-id: lGEBD4
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Application installed successfully."
 msgstr "Uygulama başarıyla yüklendi."
 
@@ -6977,7 +6977,7 @@ msgid "Failed to get response"
 msgstr "Yanıt alınamadı"
 
 #. js-lingui-id: qZwtAi
-#: src/modules/marketplace/hooks/useInstallApp.ts
+#: src/modules/marketplace/hooks/useInstallMarketplaceApp.ts
 msgid "Failed to install the application."
 msgstr "Uygulama yüklenemedi."
 
@@ -9461,7 +9461,7 @@ msgstr "Yeni bir anlaşma kaydedin (şirket, tutar, aşama, beklenen kapanış).
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 msgid "Log out"
 msgstr "Oturumu kapat"
 

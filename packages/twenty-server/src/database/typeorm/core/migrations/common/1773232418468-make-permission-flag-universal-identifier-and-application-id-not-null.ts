@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makePermissionFlagUniversalIdentifierAndApplicationIdNotNullQueries } from 'src/database/typeorm/core/migrations/utils/1773232418467-make-permission-flag-universal-identifier-and-application-id-not-null.util';
 
-export class MakePermissionFlagUniversalIdentifierAndApplicationIdNotNull1773232418468
-  implements MigrationInterface
-{
+export class MakePermissionFlagUniversalIdentifierAndApplicationIdNotNull1773232418468 implements MigrationInterface {
   name =
     'MakePermissionFlagUniversalIdentifierAndApplicationIdNotNull1773232418468';
 
