@@ -1187,7 +1187,7 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Number of days after which the Enterprise auto-rotation cron issues a new current JWT signing key. When unset, cron:register:all skips the rotation cron and any direct invocation is a no-op. Previous keys remain in the database to keep verifying tokens they signed; revocation stays a manual admin action.',
+      'Days the current JWT signing key stays valid before the rotation cron issues a new one. Leave unset to disable auto-rotation.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
