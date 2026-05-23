@@ -5,7 +5,12 @@ export const APPLICATION_REGISTRATION_FRAGMENT = gql`
     id
     universalIdentifier
     name
-    logo
+    logo {
+      fileId
+      label
+      extension
+      url
+    }
     oAuthClientId
     oAuthRedirectUris
     oAuthScopes

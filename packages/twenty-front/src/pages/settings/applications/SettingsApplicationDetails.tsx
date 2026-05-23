@@ -293,7 +293,7 @@ export const SettingsApplicationDetails = () => {
             applicationInfo={{
               id: application.id,
               name: displayName,
-              logo: application.logo,
+              logo: application.logo?.url ?? null,
               universalIdentifier: application.universalIdentifier,
             }}
           />

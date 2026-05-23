@@ -5,6 +5,7 @@ import { GraphQLJSON } from 'graphql-type-json';
 import { type Manifest } from 'twenty-shared/application';
 
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { FileOutputDTO } from 'src/engine/core-modules/file/dtos/file-output.dto';
 
 @ObjectType('MarketplaceAppDetail')
 export class MarketplaceAppDetailDTO {
@@ -37,9 +38,8 @@ export class MarketplaceAppDetailDTO {
   latestAvailableVersion?: string;
 
   @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
-  logo?: string;
+  @Field(() => FileOutputDTO, { nullable: true })
+  logo?: FileOutputDTO | null;
 
   @IsBoolean()
   @Field(() => Boolean)

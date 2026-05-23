@@ -100,7 +100,7 @@ export const SettingsApplicationRegistrationDetails = () => {
           <Avatar
             type="app"
             size="md"
-            avatarUrl={registration.logo ?? undefined}
+            avatarUrl={registration.logo?.url ?? undefined}
             placeholder={registration.name}
             placeholderColorSeed={registration.name}
           />

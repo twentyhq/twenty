@@ -54,7 +54,6 @@ import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
 import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1779600000000-finalize-role-permission-flag-cutover';
 import { AddLogoToApplicationRegistrationFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1779387505162-add-logo-to-application-registration';
-import { BackfillApplicationRegistrationLogoSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-slow-1779387601428-backfill-application-registration-logo';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -111,5 +110,4 @@ export const INSTANCE_COMMANDS = [
   AddChannelSyncStageIndexesFastInstanceCommand,
   FinalizeRolePermissionFlagCutoverFastInstanceCommand,
   AddLogoToApplicationRegistrationFastInstanceCommand,
-  BackfillApplicationRegistrationLogoSlowInstanceCommand,
 ];

@@ -1,13 +1,13 @@
-import { Context, Parent, ResolveField } from '@nestjs/graphql';
+import { Parent, ResolveField } from '@nestjs/graphql';
 
-import { AdminResolver } from 'src/engine/api/graphql/graphql-config/decorators/admin-resolver.decorator';
+import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationLogoService } from 'src/engine/core-modules/application/application-registration/application-registration-logo.service';
-import { type IDataloaders } from 'src/engine/dataloaders/dataloader.interface';
+import { ApplicationRegistrationSummaryDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-summary.dto';
 import { FileOutputDTO } from 'src/engine/core-modules/file/dtos/file-output.dto';
 
-@AdminResolver(() => ApplicationRegistrationEntity)
-export class AdminPanelApplicationRegistrationResolver {
+@MetadataResolver(() => ApplicationRegistrationSummaryDTO)
+export class ApplicationRegistrationSummaryResolver {
   constructor(
     private readonly applicationRegistrationLogoService: ApplicationRegistrationLogoService,
   ) {}
@@ -19,15 +19,5 @@ export class AdminPanelApplicationRegistrationResolver {
     return this.applicationRegistrationLogoService.resolveLogoFile(
       registration,
     );
-  }
-
-  @ResolveField(() => Boolean)
-  async isConfigured(
-    @Parent() registration: ApplicationRegistrationEntity,
-    @Context() context: { loaders: IDataloaders },
-  ): Promise<boolean> {
-    return context.loaders.isConfiguredLoader.load({
-      applicationRegistrationId: registration.id,
-    });
   }
 }

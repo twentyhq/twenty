@@ -134,14 +134,6 @@ export class ApplicationRegistrationEntity {
   @Column({ type: 'jsonb', nullable: true })
   manifest: Manifest | null;
 
-  @Field(() => String, { nullable: true })
-  @Column({ nullable: true, type: 'text' })
-  @WasIntroducedInUpgrade({
-    upgradeCommandName:
-      '2.8.0_AddLogoToApplicationRegistrationFastInstanceCommand_1779387505162',
-  })
-  logo: string | null;
-
   @Column({ nullable: true, type: 'uuid' })
   @WasIntroducedInUpgrade({
     upgradeCommandName:

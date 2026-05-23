@@ -66,7 +66,7 @@ export const useApplicationChipData = ({
     ? new URL(StandardLogo, window.location.href).toString()
     : isCustom
       ? new URL(CustomLogo, window.location.href).toString()
-      : (application.logo ?? undefined);
+      : (application.logo?.url ?? undefined);
 
   return {
     applicationChipData: {

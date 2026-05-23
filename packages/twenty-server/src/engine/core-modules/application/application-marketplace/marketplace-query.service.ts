@@ -13,6 +13,7 @@ import { MarketplaceCatalogSyncCronJob } from 'src/engine/core-modules/applicati
 import { MarketplaceAppDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app.dto';
 import { MarketplaceAppDetailDTO } from 'src/engine/core-modules/application/application-marketplace/dtos/marketplace-app-detail.dto';
 import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
+import { buildFileOutputFromUrl } from 'src/engine/core-modules/file/utils/build-file-output-from-url.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
@@ -101,7 +102,7 @@ export class MarketplaceQueryService {
       category: app?.category ?? '',
       logo:
         resolveApplicationRegistrationLogoUrl({
-          logo: registration.logo,
+          logo: app?.logoUrl ?? null,
           sourceType: registration.sourceType,
           sourcePackage: registration.sourcePackage,
           latestAvailableVersion: registration.latestAvailableVersion,
@@ -122,14 +123,15 @@ export class MarketplaceQueryService {
       sourceType: registration.sourceType,
       sourcePackage: registration.sourcePackage ?? undefined,
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
-      logo:
+      logo: buildFileOutputFromUrl(
         resolveApplicationRegistrationLogoUrl({
-          logo: registration.logo,
+          logo: registration.manifest?.application?.logoUrl ?? null,
           sourceType: registration.sourceType,
           sourcePackage: registration.sourcePackage,
           latestAvailableVersion: registration.latestAvailableVersion,
           cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
-        }) ?? undefined,
+        }),
+      ),
       isListed: registration.isListed,
       isFeatured: registration.isFeatured,
       manifest: registration.manifest ?? undefined,

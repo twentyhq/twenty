@@ -187,7 +187,10 @@ export const SettingsApplicationsDeveloperTab = () => {
                 return (
                   <SettingsApplicationTableRow
                     key={registration.id}
-                    application={registration}
+                    application={{
+                      ...registration,
+                      logo: registration.logo?.url ?? null,
+                    }}
                     sourceType={registration.sourceType}
                     action={
                       <IconChevronRight

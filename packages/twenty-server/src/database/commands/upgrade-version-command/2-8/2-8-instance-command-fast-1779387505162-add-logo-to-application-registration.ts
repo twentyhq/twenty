@@ -9,9 +9,6 @@ export class AddLogoToApplicationRegistrationFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."applicationRegistration" ADD "logo" text',
-    );
-    await queryRunner.query(
       'ALTER TABLE "core"."applicationRegistration" ADD "logoFileId" uuid',
     );
     await queryRunner.query(
@@ -31,9 +28,6 @@ export class AddLogoToApplicationRegistrationFastInstanceCommand
     );
     await queryRunner.query(
       'ALTER TABLE "core"."applicationRegistration" DROP COLUMN "logoFileId"',
-    );
-    await queryRunner.query(
-      'ALTER TABLE "core"."applicationRegistration" DROP COLUMN "logo"',
     );
   }
 }

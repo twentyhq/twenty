@@ -70,7 +70,12 @@ export const USER_QUERY_FRAGMENT = gql`
         id
         name
         universalIdentifier
-        logo
+        logo {
+          fileId
+          label
+          extension
+          url
+        }
       }
       isCustomDomainEnabled
       workspaceUrls {

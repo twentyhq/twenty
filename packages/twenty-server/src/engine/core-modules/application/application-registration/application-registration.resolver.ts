@@ -36,6 +36,7 @@ import { TransferApplicationRegistrationOwnershipInput } from 'src/engine/core-m
 import { UpdateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/update-application-registration.input';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
+import { FileOutputDTO } from 'src/engine/core-modules/file/dtos/file-output.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -332,11 +333,13 @@ export class ApplicationRegistrationResolver {
     });
   }
 
-  @ResolveField(() => String, { nullable: true })
+  @ResolveField(() => FileOutputDTO, { nullable: true })
   async logo(
     @Parent() registration: ApplicationRegistrationEntity,
-  ): Promise<string | null> {
-    return this.applicationRegistrationLogoService.resolveLogoUrl(registration);
+  ): Promise<FileOutputDTO | null> {
+    return this.applicationRegistrationLogoService.resolveLogoFile(
+      registration,
+    );
   }
 
   @ResolveField(() => Boolean)

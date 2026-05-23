@@ -35,9 +35,8 @@ export class ApplicationDTO {
   @Field({ nullable: true })
   description?: string;
 
-  @IsOptional()
-  @IsString()
-  @Field({ nullable: true })
+  // Internal raw value (path or absolute URL); GraphQL exposure as FileOutput
+  // is handled by ApplicationLogoResolver.
   logo?: string;
 
   @IsOptional()

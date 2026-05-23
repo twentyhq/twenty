@@ -218,7 +218,6 @@ export class ApplicationTarballService {
         sourceType: ApplicationRegistrationSourceType.TARBALL,
         tarballFileId: savedFile.id,
         name: manifest.application?.displayName ?? 'Unknown App',
-        logo: manifest.application?.logoUrl ?? null,
         logoFileId,
         manifest,
         latestAvailableVersion: packageJson?.version ?? null,

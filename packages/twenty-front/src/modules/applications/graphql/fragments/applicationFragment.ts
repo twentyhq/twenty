@@ -11,7 +11,12 @@ export const APPLICATION_FRAGMENT = gql`
     id
     name
     description
-    logo
+    logo {
+      fileId
+      label
+      extension
+      url
+    }
     version
     universalIdentifier
     applicationRegistrationId
@@ -19,7 +24,12 @@ export const APPLICATION_FRAGMENT = gql`
       id
       latestAvailableVersion
       sourceType
-      logo
+      logo {
+        fileId
+        label
+        extension
+        url
+      }
     }
     canBeUninstalled
     defaultRoleId

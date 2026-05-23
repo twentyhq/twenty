@@ -17,6 +17,7 @@ import {
   ApplicationRegistrationExceptionCode,
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { resolveApplicationRegistrationLogoUrl } from 'src/engine/core-modules/application/utils/resolve-application-registration-logo-url.util';
+import { buildFileOutputFromUrl } from 'src/engine/core-modules/file/utils/build-file-output-from-url.util';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type ApplicationRegistrationStatsDTO } from 'src/engine/core-modules/application/application-registration/dtos/application-registration-stats.dto';
 import { type CreateApplicationRegistrationInput } from 'src/engine/core-modules/application/application-registration/dtos/create-application-registration.input';
@@ -116,13 +117,15 @@ export class ApplicationRegistrationService {
     return {
       id: registration.id,
       name: registration.name,
-      logo: resolveApplicationRegistrationLogoUrl({
-        logo: registration.logo,
-        sourceType: registration.sourceType,
-        sourcePackage: registration.sourcePackage,
-        latestAvailableVersion: registration.latestAvailableVersion,
-        cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
-      }),
+      logo: buildFileOutputFromUrl(
+        resolveApplicationRegistrationLogoUrl({
+          logo: registration.manifest?.application?.logoUrl ?? null,
+          sourceType: registration.sourceType,
+          sourcePackage: registration.sourcePackage,
+          latestAvailableVersion: registration.latestAvailableVersion,
+          cdnBaseUrl: this.twentyConfigService.get('APP_REGISTRY_CDN_URL'),
+        }),
+      ),
       websiteUrl: registration.manifest?.application?.websiteUrl ?? null,
       oAuthScopes: registration.oAuthScopes,
     };
@@ -231,7 +234,6 @@ export class ApplicationRegistrationService {
     await this.applicationRegistrationRepository.save({
       ...existing,
       name: manifest.application.displayName,
-      logo: manifest.application.logoUrl ?? null,
       manifest,
       ...(sourceType !== undefined && { sourceType }),
     });
@@ -301,7 +303,6 @@ export class ApplicationRegistrationService {
         sourceType: params.sourceType,
         sourcePackage: params.sourcePackage,
         latestAvailableVersion: params.latestAvailableVersion,
-        logo: params.manifest?.application?.logoUrl ?? null,
         manifest: params.manifest,
         isFeatured,
       });
@@ -314,7 +315,6 @@ export class ApplicationRegistrationService {
         latestAvailableVersion: params.latestAvailableVersion,
         isListed: true,
         isFeatured,
-        logo: params.manifest?.application?.logoUrl ?? null,
         manifest: params.manifest,
         oAuthClientId: v4(),
         oAuthRedirectUris: [],

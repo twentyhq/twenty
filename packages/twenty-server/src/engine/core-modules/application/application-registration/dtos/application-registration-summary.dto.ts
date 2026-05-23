@@ -4,6 +4,7 @@ import { IsOptional, IsString } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
+import { FileOutputDTO } from 'src/engine/core-modules/file/dtos/file-output.dto';
 
 @ObjectType('ApplicationRegistrationSummary')
 export class ApplicationRegistrationSummaryDTO {
@@ -18,8 +19,6 @@ export class ApplicationRegistrationSummaryDTO {
   @Field(() => ApplicationRegistrationSourceType)
   sourceType: ApplicationRegistrationSourceType;
 
-  @IsOptional()
-  @IsString()
-  @Field(() => String, { nullable: true })
-  logo?: string | null;
+  @Field(() => FileOutputDTO, { nullable: true })
+  logo?: FileOutputDTO | null;
 }

@@ -20,7 +20,12 @@ const buildHandlers = (
   application: {
     id: string;
     name: string;
-    logo: string | null;
+    logo: {
+      fileId: string | null;
+      label: string | null;
+      extension: string | null;
+      url: string;
+    } | null;
     oAuthScopes: string[];
     websiteUrl: string | null;
   } | null,

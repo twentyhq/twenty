@@ -4,7 +4,12 @@ export const FIND_APPLICATION_REGISTRATION_BY_CLIENT_ID = gql`
   query FindApplicationRegistrationByClientId($clientId: String!) {
     findApplicationRegistrationByClientId(clientId: $clientId) {
       id
-      logo
+      logo {
+        fileId
+        label
+        extension
+        url
+      }
       name
       oAuthScopes
       websiteUrl

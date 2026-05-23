@@ -285,7 +285,7 @@ export const Authorize = () => {
   }
 
   const appName = applicationRegistration.name;
-  const appLogoUrl = applicationRegistration.logo;
+  const appLogoUrl = applicationRegistration.logo?.url ?? null;
   const requestedScopes: string[] = applicationRegistration.oAuthScopes ?? [];
 
   const showLogoImage = isNonEmptyString(appLogoUrl) && !hasLogoError;
