@@ -17,7 +17,11 @@ import {
 } from '@/blocknote-editor/components/CustomSlashMenu';
 import { useMentionMenu } from '@/mention/hooks/useMentionMenu';
 import { IconX } from 'twenty-ui/display';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 interface BlockEditorProps {
   editor: typeof BLOCK_SCHEMA.BlockNoteEditor;
@@ -37,6 +41,10 @@ const StyledEditor = styled.div`
     color: ${themeCssVariables.font.color.primary};
     font-size: 13px;
     min-height: 400px;
+
+    @media (max-width: ${MOBILE_VIEWPORT}px) {
+      min-height: clamp(140px, 45dvh, 400px);
+    }
   }
   & .editor [class^='_inlineContent']:before {
     color: ${themeCssVariables.font.color.tertiary};

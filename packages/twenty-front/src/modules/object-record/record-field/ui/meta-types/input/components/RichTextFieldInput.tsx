@@ -14,7 +14,11 @@ import { Suspense, lazy, useContext, useRef } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { IconLayoutSidebarLeftCollapse } from 'twenty-ui/display';
 import { FloatingIconButton } from 'twenty-ui/input';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  MOBILE_VIEWPORT,
+  ThemeContext,
+  themeCssVariables,
+} from 'twenty-ui/theme-constants';
 
 const ActivityRichTextEditor = lazy(() =>
   import('@/activities/components/ActivityRichTextEditor').then((module) => ({
@@ -35,10 +39,24 @@ const StyledContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   margin: 0 0 0 calc(-1 * ${themeCssVariables.spacing[5]});
+  max-height: calc(100dvh - ${themeCssVariables.spacing[6]});
+  max-width: calc(100vw - ${themeCssVariables.spacing[4]});
+  overflow: auto;
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[2]}
     ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[12]};
   position: relative;
   width: 480px;
+
+  & > *:first-child {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    margin-left: 0;
+    padding-left: ${themeCssVariables.spacing[2]};
+    width: calc(100vw - ${themeCssVariables.spacing[4]});
+  }
 `;
 
 const StyledCollapseButton = styled.div`
@@ -46,6 +64,7 @@ const StyledCollapseButton = styled.div`
   color: ${themeCssVariables.font.color.light};
   cursor: pointer;
   display: flex;
+  flex-shrink: 0;
 `;
 
 const LoadingSkeleton = () => {
