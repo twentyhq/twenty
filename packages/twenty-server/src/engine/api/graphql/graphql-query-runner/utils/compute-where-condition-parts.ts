@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -43,6 +43,11 @@ export const computeWhereConditionParts = ({
     ? `"${key}"`
     : `"${objectNameSingular}"."${key}"`;
 
+  const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
+  const comparisonFieldReference = isDateTimeField
+    ? `date_trunc('milliseconds', ${fieldReference})`
+    : fieldReference;
+
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
     value,
@@ -60,32 +65,32 @@ export const computeWhereConditionParts = ({
       };
     case 'eq':
       return {
-        sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: `${comparisonFieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
       return {
-        sql: `${fieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
+        sql: `${comparisonFieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
       return {
-        sql: `${fieldReference} > :${key}${paramSuffix}`,
+        sql: `${comparisonFieldReference} > :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gte':
       return {
-        sql: `${fieldReference} >= :${key}${paramSuffix}`,
+        sql: `${comparisonFieldReference} >= :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lt':
       return {
-        sql: `${fieldReference} < :${key}${paramSuffix}`,
+        sql: `${comparisonFieldReference} < :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lte':
       return {
-        sql: `${fieldReference} <= :${key}${paramSuffix}`,
+        sql: `${comparisonFieldReference} <= :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'in':
