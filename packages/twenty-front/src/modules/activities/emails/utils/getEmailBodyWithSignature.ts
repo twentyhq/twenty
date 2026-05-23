@@ -5,28 +5,35 @@ const EMAIL_SIGNATURE_SEPARATOR = '<p></p>';
 export const getEmailBodyWithSignature = (
   emailSignature: string | null | undefined,
 ) => {
-  if (!isDefined(emailSignature) || emailSignature.trim().length === 0) {
+  const trimmedEmailSignature = emailSignature?.trim();
+
+  if (!isDefined(trimmedEmailSignature) || trimmedEmailSignature.length === 0) {
     return '';
   }
 
-  return `${EMAIL_SIGNATURE_SEPARATOR}${emailSignature}`;
+  return `${EMAIL_SIGNATURE_SEPARATOR}${trimmedEmailSignature}`;
 };
 
 const getEmailBodyWithoutTrailingSignature = (
   body: string,
   emailSignature: string | null | undefined,
 ) => {
-  if (!isDefined(emailSignature) || emailSignature.trim().length === 0) {
+  const trimmedEmailSignature = emailSignature?.trim();
+
+  if (!isDefined(trimmedEmailSignature) || trimmedEmailSignature.length === 0) {
     return body;
   }
 
   const trimmedBody = body.trimEnd();
 
-  if (!trimmedBody.endsWith(emailSignature)) {
+  if (!trimmedBody.endsWith(trimmedEmailSignature)) {
     return body;
   }
 
-  const bodyWithoutSignature = trimmedBody.slice(0, -emailSignature.length);
+  const bodyWithoutSignature = trimmedBody.slice(
+    0,
+    -trimmedEmailSignature.length,
+  );
 
   if (bodyWithoutSignature.endsWith(EMAIL_SIGNATURE_SEPARATOR)) {
     return bodyWithoutSignature.slice(0, -EMAIL_SIGNATURE_SEPARATOR.length);
@@ -48,17 +55,15 @@ export const getEmailBodyWithUpdatedSignature = ({
     body,
     previousEmailSignature,
   );
+  const nextEmailBodySignature = getEmailBodyWithSignature(nextEmailSignature);
 
-  if (
-    !isDefined(nextEmailSignature) ||
-    nextEmailSignature.trim().length === 0
-  ) {
+  if (nextEmailBodySignature.length === 0) {
     return bodyWithoutPreviousSignature;
   }
 
   if (bodyWithoutPreviousSignature.trim().length === 0) {
-    return getEmailBodyWithSignature(nextEmailSignature);
+    return nextEmailBodySignature;
   }
 
-  return `${bodyWithoutPreviousSignature}${EMAIL_SIGNATURE_SEPARATOR}${nextEmailSignature}`;
+  return `${bodyWithoutPreviousSignature}${nextEmailBodySignature}`;
 };

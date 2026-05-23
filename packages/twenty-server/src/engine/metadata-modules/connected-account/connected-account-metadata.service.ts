@@ -169,13 +169,11 @@ export class ConnectedAccountMetadataService {
     ]);
     const window = new JSDOM('').window;
     const purify = createDOMPurify(window);
-    const sanitizedEmailSignature = purify.sanitize(emailSignature);
+    const sanitizedEmailSignature = purify.sanitize(emailSignature).trim();
 
     window.close();
 
-    return sanitizedEmailSignature.trim().length > 0
-      ? sanitizedEmailSignature
-      : null;
+    return sanitizedEmailSignature.length > 0 ? sanitizedEmailSignature : null;
   }
 
   async delete({

@@ -24,6 +24,16 @@ describe('getEmailBodyWithSignature', () => {
     ).toBe('<p>Hello</p><p></p><p>John Smith</p>');
   });
 
+  it('replaces signatures with trailing whitespace', () => {
+    expect(
+      getEmailBodyWithUpdatedSignature({
+        body: '<p>Hello</p><p></p><p>Jane Doe</p>',
+        previousEmailSignature: '<p>Jane Doe</p>\n',
+        nextEmailSignature: ' <p>John Smith</p> ',
+      }),
+    ).toBe('<p>Hello</p><p></p><p>John Smith</p>');
+  });
+
   it('removes the previous trailing signature when the next account has no signature', () => {
     expect(
       getEmailBodyWithUpdatedSignature({
