@@ -2,9 +2,7 @@ import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useCreateOneIndexMetadataItem } from '@/object-metadata/hooks/useCreateOneIndexMetadataItem';
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import { isCompositeFieldType } from '@/object-record/object-filter-dropdown/utils/isCompositeFieldType';
 import { SEARCH_VECTOR_FIELD_NAME } from '@/object-record/constants/SearchVectorFieldName';
-import { type FieldType } from '@/settings/data-model/types/FieldType';
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsObjectIndexFieldsForm } from '@/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm';
@@ -28,7 +26,14 @@ import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/constants/MaxCustomIndexesPerObject';
 
 const settingsObjectNewIndexFormSchema = z.object({
-  fieldMetadataIds: z.array(z.string().uuid()).min(1),
+  fields: z
+    .array(
+      z.object({
+        fieldMetadataId: z.string().uuid(),
+        subFieldName: z.string().nullable(),
+      }),
+    )
+    .min(1),
   indexType: z.nativeEnum(IndexType),
 });
 
@@ -36,13 +41,12 @@ export type SettingsObjectNewIndexFormValues = z.infer<
   typeof settingsObjectNewIndexFormSchema
 >;
 
-// Composite types (Address, Currency, Links, ...) can't be indexed as a
-// single column — see server-side IndexMetadataService for details.
+// Composites are now indexable via their sub-fields, so they're allowed.
+// Just hide the search vector + system + inactive.
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
   if (field.isSystem === true) return false;
   if (field.isActive !== true) return false;
-  if (isCompositeFieldType(field.type as FieldType)) return false;
   return true;
 };
 
@@ -64,7 +68,7 @@ export const SettingsObjectNewIndex = () => {
     mode: 'onTouched',
     resolver: zodResolver(settingsObjectNewIndexFormSchema),
     defaultValues: {
-      fieldMetadataIds: [],
+      fields: [],
       indexType: IndexType.BTREE,
     },
   });
@@ -90,7 +94,10 @@ export const SettingsObjectNewIndex = () => {
   const handleSave = async (formValues: SettingsObjectNewIndexFormValues) => {
     const result = await createOneIndexMetadataItem({
       objectMetadataId: activeObjectMetadataItem.id,
-      fieldMetadataIds: formValues.fieldMetadataIds,
+      fields: formValues.fields.map((entry) => ({
+        fieldMetadataId: entry.fieldMetadataId,
+        subFieldName: entry.subFieldName,
+      })),
       indexType: formValues.indexType,
     });
 
@@ -151,7 +158,7 @@ export const SettingsObjectNewIndex = () => {
           <Section>
             <H2Title
               title={t`Fields`}
-              description={t`Pick one or more fields. The order you select them in becomes the column order in the index — important for composite queries.`}
+              description={t`Pick one or more fields. The order you select them in becomes the column order in the index — important for composite queries. For composite fields like Address, pick the specific sub-column to index.`}
             />
             <SettingsObjectIndexFieldsForm indexableFields={indexableFields} />
           </Section>

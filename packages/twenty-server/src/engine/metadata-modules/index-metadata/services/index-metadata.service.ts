@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
+import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -48,9 +49,9 @@ export class IndexMetadataService {
       );
     }
 
-    const { fieldMetadataIds } = createIndexInput;
+    const { fields: fieldInputs } = createIndexInput;
 
-    if (fieldMetadataIds.length === 0) {
+    if (fieldInputs.length === 0) {
       throw new IndexMetadataException(
         'At least one field is required to create an index',
         IndexMetadataExceptionCode.INDEX_FIELDS_REQUIRED,
@@ -60,12 +61,19 @@ export class IndexMetadataService {
       );
     }
 
-    if (new Set(fieldMetadataIds).size !== fieldMetadataIds.length) {
+    // Duplicate check considers (fieldMetadataId, subFieldName) pair so the
+    // user CAN pick "Address > City" and "Address > Postcode" in the same
+    // composite index, but not the exact same column twice.
+    const dedupKeys = fieldInputs.map(
+      (input) => `${input.fieldMetadataId}::${input.subFieldName ?? ''}`,
+    );
+
+    if (new Set(dedupKeys).size !== dedupKeys.length) {
       throw new IndexMetadataException(
-        'Duplicate field ids in index field list',
+        'Duplicate field+sub-field in index field list',
         IndexMetadataExceptionCode.DUPLICATE_INDEX_FIELDS,
         {
-          userFriendlyMessage: msg`The same field cannot appear twice in an index.`,
+          userFriendlyMessage: msg`The same column cannot appear twice in an index.`,
         },
       );
     }
@@ -100,10 +108,12 @@ export class IndexMetadataService {
       );
     }
 
-    const objectFlatFieldMetadatas = fieldMetadataIds.map((fieldId) => {
+    // Resolve each input to a flat field + validated subFieldName (or null
+    // for scalar/relation parents).
+    const resolvedInputs = fieldInputs.map((input) => {
       const flatField = findFlatEntityByIdInFlatEntityMaps({
         flatEntityMaps: existingFlatFieldMetadataMaps,
-        flatEntityId: fieldId,
+        flatEntityId: input.fieldMetadataId,
       });
 
       if (
@@ -111,7 +121,7 @@ export class IndexMetadataService {
         flatField.objectMetadataId !== createIndexInput.objectMetadataId
       ) {
         throw new IndexMetadataException(
-          `Field ${fieldId} not found on object ${createIndexInput.objectMetadataId}`,
+          `Field ${input.fieldMetadataId} not found on object ${createIndexInput.objectMetadataId}`,
           IndexMetadataExceptionCode.INDEX_FIELD_NOT_FOUND_ON_OBJECT,
           {
             userFriendlyMessage: msg`One of the selected fields does not belong to this object.`,
@@ -119,29 +129,54 @@ export class IndexMetadataService {
         );
       }
 
-      return flatField;
-    });
+      const isComposite = isCompositeFieldMetadataType(flatField.type);
 
-    // Composite types (Address, Currency, Links, ...) can't be indexed as a
-    // single field. computeFlatIndexFieldColumnNames filters their properties
-    // by isIncludedInUniqueConstraint — which is false for everything in
-    // Address/Currency — and returns []. That leaves the CREATE INDEX SQL
-    // with an empty `()` column list and Postgres errors out with a syntax
-    // error, leaving an orphaned indexMetadata row behind. Reject up front.
-    for (const flatField of objectFlatFieldMetadatas) {
-      if (isCompositeFieldMetadataType(flatField.type)) {
-        const fieldType = flatField.type;
-        const fieldLabel = flatField.label;
+      if (isComposite) {
+        // Composite parent — sub-field is required and must exist.
+        if (!isDefined(input.subFieldName) || input.subFieldName === '') {
+          throw new IndexMetadataException(
+            `Composite field ${flatField.name} requires a sub-field selection`,
+            IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
+            {
+              userFriendlyMessage: msg`Pick a specific sub-field of "${flatField.label}" — composite fields can't be indexed as a whole.`,
+            },
+          );
+        }
 
+        const compositeType = compositeTypeDefinitions.get(flatField.type);
+        const knownProperty = compositeType?.properties.find(
+          (property) => property.name === input.subFieldName,
+        );
+
+        if (!isDefined(knownProperty)) {
+          throw new IndexMetadataException(
+            `Unknown sub-field ${input.subFieldName} on composite field ${flatField.name}`,
+            IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
+            {
+              userFriendlyMessage: msg`"${input.subFieldName}" is not a valid sub-field of "${flatField.label}".`,
+            },
+          );
+        }
+      } else if (isDefined(input.subFieldName) && input.subFieldName !== '') {
+        // Scalar / relation parent — sub-field doesn't apply.
         throw new IndexMetadataException(
-          `Cannot create index for composite field ${flatField.name} of type ${fieldType}`,
+          `Field ${flatField.name} is not composite — subFieldName must not be set`,
           IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
           {
-            userFriendlyMessage: msg`The field "${fieldLabel}" (${fieldType}) is a composite type and can't be indexed directly. Index the underlying sub-fields instead, or pick a scalar field.`,
+            userFriendlyMessage: msg`"${flatField.label}" is not a composite field — remove the sub-field selection.`,
           },
         );
       }
-    }
+
+      return {
+        flatField,
+        subFieldName: isComposite ? (input.subFieldName ?? null) : null,
+      };
+    });
+
+    const objectFlatFieldMetadatas = resolvedInputs.map(
+      ({ flatField }) => flatField,
+    );
 
     const existingCustomIndexCount = Object.values(
       existingFlatIndexMaps.byUniversalIdentifier,
@@ -187,11 +222,12 @@ export class IndexMetadataService {
         universalIdentifier: indexMetadataUniversalIdentifier,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
-        universalFlatIndexFieldMetadatas: objectFlatFieldMetadatas.map(
-          (flatField, order) => ({
+        universalFlatIndexFieldMetadatas: resolvedInputs.map(
+          ({ flatField, subFieldName }, order) => ({
             createdAt,
             updatedAt: createdAt,
             order,
+            subFieldName,
             fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
             indexMetadataUniversalIdentifier,
           }),

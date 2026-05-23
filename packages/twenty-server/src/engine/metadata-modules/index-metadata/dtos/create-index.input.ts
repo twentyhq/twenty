@@ -6,6 +6,8 @@ import {
   ArrayNotEmpty,
   IsArray,
   IsEnum,
+  IsOptional,
+  IsString,
   IsUUID,
   ValidateNested,
 } from 'class-validator';
@@ -14,19 +16,36 @@ import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 
 @InputType()
+export class CreateIndexFieldInput {
+  @IsUUID()
+  @Field(() => UUIDScalarType)
+  fieldMetadataId!: string;
+
+  // For composite-typed parent fields (Address, Currency, ...), the user
+  // picks a specific sub-property name (e.g. 'addressCity', 'amountMicros').
+  // Required for composite parents, must be null/absent for scalar/relation
+  // parents — validated server-side.
+  @IsOptional()
+  @IsString()
+  @Field({ nullable: true })
+  subFieldName?: string;
+}
+
+@InputType()
 export class CreateIndexInput {
   @IsUUID()
   @Field(() => UUIDScalarType)
   objectMetadataId!: string;
 
-  // Ordered list of field metadata ids that make up the index. Order matters
-  // for composite indexes — Postgres uses the leading column first.
+  // Ordered list of fields that make up the index. Order matters for
+  // composite indexes — Postgres uses the leading column first.
   @IsArray()
   @ArrayNotEmpty()
   @ArrayMinSize(1)
-  @IsUUID('all', { each: true })
-  @Field(() => [UUIDScalarType])
-  fieldMetadataIds!: string[];
+  @Type(() => CreateIndexFieldInput)
+  @ValidateNested({ each: true })
+  @Field(() => [CreateIndexFieldInput])
+  fields!: CreateIndexFieldInput[];
 
   @IsEnum(IndexType)
   @Field(() => IndexType, { defaultValue: IndexType.BTREE })

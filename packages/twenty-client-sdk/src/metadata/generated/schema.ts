@@ -386,6 +386,7 @@ export interface IndexField {
     id: Scalars['UUID']
     fieldMetadataId: Scalars['UUID']
     order: Scalars['Float']
+    subFieldName?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'IndexField'
@@ -3259,6 +3260,7 @@ export interface IndexFieldGenqlSelection{
     id?: boolean | number
     fieldMetadataId?: boolean | number
     order?: boolean | number
+    subFieldName?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
@@ -6134,7 +6136,9 @@ export interface CreateOneIndexInput {
 /** The custom index to create */
 index: CreateIndexInput}
 
-export interface CreateIndexInput {objectMetadataId: Scalars['UUID'],fieldMetadataIds: Scalars['UUID'][],indexType: IndexType}
+export interface CreateIndexInput {objectMetadataId: Scalars['UUID'],fields: CreateIndexFieldInput[],indexType: IndexType}
+
+export interface CreateIndexFieldInput {fieldMetadataId: Scalars['UUID'],subFieldName?: (Scalars['String'] | null)}
 
 export interface DeleteOneIndexInput {
 /** The id of the custom index to delete. */

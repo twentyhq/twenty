@@ -523,6 +523,7 @@ type IndexField {
   id: UUID!
   fieldMetadataId: UUID!
   order: Float!
+  subFieldName: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -3934,8 +3935,13 @@ input CreateOneIndexInput {
 
 input CreateIndexInput {
   objectMetadataId: UUID!
-  fieldMetadataIds: [UUID!]!
+  fields: [CreateIndexFieldInput!]!
   indexType: IndexType! = BTREE
+}
+
+input CreateIndexFieldInput {
+  fieldMetadataId: UUID!
+  subFieldName: String
 }
 
 input DeleteOneIndexInput {

@@ -57,6 +57,13 @@ export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEnti
   @Column({ nullable: false })
   order: number;
 
+  // Composite-type fields (Address, Currency, ...) don't map to a single SQL
+  // column. When the user picks "Address > City", we store the parent
+  // fieldMetadataId here AND the composite sub-property name in subFieldName
+  // (e.g. 'addressCity'). For scalar/relation fields this is null.
+  @Column({ type: 'text', nullable: true })
+  subFieldName: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

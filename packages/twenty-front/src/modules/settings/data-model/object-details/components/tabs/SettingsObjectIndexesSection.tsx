@@ -19,6 +19,9 @@ import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/constants/MaxCustomIndexesPerObject';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
+import { getCompositeSubFieldLabel } from '@/settings/data-model/indexes/constants/CompositeSubFieldLabels';
+import { type FieldMetadataType } from '~/generated-metadata/graphql';
+import { isDefined } from 'twenty-shared/utils';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;
@@ -71,7 +74,20 @@ export const SettingsObjectIndexesSection = ({
               const fieldMetadataItem = objectMetadataItem.fields.find(
                 (field) => field.id === indexField.fieldMetadataId,
               );
-              return fieldMetadataItem?.label;
+
+              if (!isDefined(fieldMetadataItem)) return undefined;
+
+              if (
+                isDefined(indexField.subFieldName) &&
+                indexField.subFieldName !== ''
+              ) {
+                return `${fieldMetadataItem.label} > ${getCompositeSubFieldLabel(
+                  fieldMetadataItem.type as FieldMetadataType,
+                  indexField.subFieldName,
+                )}`;
+              }
+
+              return fieldMetadataItem.label;
             })
             .filter((label): label is string => Boolean(label))
             .join(', ') ?? '',

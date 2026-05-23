@@ -1,7 +1,13 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
+import {
+  buildIndexableSelectOptions,
+  decodeIndexableOptionValue,
+  encodeIndexableOptionValue,
+} from '@/settings/data-model/indexes/utils/buildIndexableSelectOptions';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { IconTrash, useIcons } from 'twenty-ui/display';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
@@ -36,6 +42,11 @@ export const SettingsObjectIndexFieldsForm = ({
   const { getIcon } = useIcons();
   const { control } = useFormContext<SettingsObjectNewIndexFormValues>();
 
+  const allOptions = useMemo(
+    () => buildIndexableSelectOptions({ indexableFields, getIcon }),
+    [indexableFields, getIcon],
+  );
+
   const emptyFieldOption: SelectOption<string> = {
     label: t`Select a field`,
     value: '',
@@ -43,23 +54,28 @@ export const SettingsObjectIndexFieldsForm = ({
 
   return (
     <Controller
-      name="fieldMetadataIds"
+      name="fields"
       control={control}
       render={({ field: { value, onChange } }) => {
-        // Render one row per picked field plus one trailing empty row that
-        // acts as the implicit "add another field" affordance (same approach
-        // as the webhook operations form).
-        const rows: (string | null)[] = [...value, null];
+        // Render one row per picked column plus one trailing empty row that
+        // acts as the implicit "add another" affordance (webhook-form pattern).
+        const rows: (SettingsObjectNewIndexFormValues['fields'][number] | null)[] =
+          [...value, null];
 
-        const handleSelect = (rowIndex: number, newFieldId: string) => {
-          if (newFieldId === '') return;
+        const pickedValues = value.map((entry) =>
+          encodeIndexableOptionValue(entry.fieldMetadataId, entry.subFieldName),
+        );
+
+        const handleSelect = (rowIndex: number, newOptionValue: string) => {
+          if (newOptionValue === '') return;
 
           const next = [...value];
+          const decoded = decodeIndexableOptionValue(newOptionValue);
 
           if (rowIndex < value.length) {
-            next[rowIndex] = newFieldId;
+            next[rowIndex] = decoded;
           } else {
-            next.push(newFieldId);
+            next.push(decoded);
           }
 
           onChange(next);
@@ -71,30 +87,35 @@ export const SettingsObjectIndexFieldsForm = ({
 
         return (
           <>
-            {rows.map((fieldId, rowIndex) => {
-              // Exclude fields already used by other rows; keep this row's
-              // own value so the dropdown still reflects the current choice.
-              const availableOptions: SelectOption<string>[] = indexableFields
-                .filter(
-                  (field) => field.id === fieldId || !value.includes(field.id),
-                )
-                .map<SelectOption<string>>((field) => ({
-                  Icon: getIcon(field.icon),
-                  label: field.label,
-                  value: field.id,
-                }));
+            {rows.map((entry, rowIndex) => {
+              const currentValue = entry
+                ? encodeIndexableOptionValue(
+                    entry.fieldMetadataId,
+                    entry.subFieldName,
+                  )
+                : '';
 
-              const isEmptyRow = fieldId === null;
+              // Exclude columns already picked in other rows; keep this row's
+              // own value visible.
+              const availableOptions = allOptions.filter(
+                (option) =>
+                  option.value === currentValue ||
+                  !pickedValues.includes(option.value),
+              );
+
+              const isEmptyRow = entry === null;
 
               return (
-                <StyledFieldRow key={`${rowIndex}-${fieldId ?? 'empty'}`}>
+                <StyledFieldRow key={`${rowIndex}-${currentValue || 'empty'}`}>
                   <StyledSelectWrapper>
                     <Select
                       dropdownId={`settings-object-new-index-field-${rowIndex}`}
-                      value={fieldId ?? ''}
+                      value={currentValue}
                       options={availableOptions}
                       emptyOption={emptyFieldOption}
-                      onChange={(newValue) => handleSelect(rowIndex, newValue)}
+                      onChange={(newValue) =>
+                        handleSelect(rowIndex, newValue)
+                      }
                       fullWidth
                       withSearchInput
                     />

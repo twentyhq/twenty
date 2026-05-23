@@ -187,7 +187,7 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: OBJECT_ID,
-            fieldMetadataIds: ['field-1'],
+            fields: [{ fieldMetadataId: 'field-1' }],
             indexType: IndexType.BTREE,
             // oxlint-disable-next-line @typescript-eslint/no-explicit-any
             isUnique: true,
@@ -202,7 +202,7 @@ describe('IndexMetadataService', () => {
       ).not.toHaveBeenCalled();
     });
 
-    it('rejects empty fieldMetadataIds', async () => {
+    it('rejects empty fields', async () => {
       setupCacheReturn();
 
       await expect(
@@ -210,7 +210,7 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: OBJECT_ID,
-            fieldMetadataIds: [],
+            fields: [],
             indexType: IndexType.BTREE,
           },
         }),
@@ -219,7 +219,7 @@ describe('IndexMetadataService', () => {
       });
     });
 
-    it('rejects duplicate fieldMetadataIds', async () => {
+    it('rejects duplicate (fieldMetadataId + subFieldName) pairs', async () => {
       setupCacheReturn();
 
       await expect(
@@ -227,7 +227,10 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: OBJECT_ID,
-            fieldMetadataIds: ['field-1', 'field-1'],
+            fields: [
+              { fieldMetadataId: 'field-1' },
+              { fieldMetadataId: 'field-1' },
+            ],
             indexType: IndexType.BTREE,
           },
         }),
@@ -244,7 +247,7 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: 'unknown-object',
-            fieldMetadataIds: ['field-1'],
+            fields: [{ fieldMetadataId: 'field-1' }],
             indexType: IndexType.BTREE,
           },
         }),
@@ -253,10 +256,7 @@ describe('IndexMetadataService', () => {
       });
     });
 
-    it('rejects composite-type fields (Currency, Address, …)', async () => {
-      // Composite fields produce 0 columns via computeFlatIndexFieldColumnNames
-      // (none of their properties have isIncludedInUniqueConstraint=true),
-      // which crashes the migration with "syntax error at or near ')'".
+    it('rejects composite-type fields without subFieldName', async () => {
       setupCacheReturn({
         fieldIds: [
           {
@@ -273,7 +273,7 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: OBJECT_ID,
-            fieldMetadataIds: ['field-currency'],
+            fields: [{ fieldMetadataId: 'field-currency' }],
             indexType: IndexType.BTREE,
           },
         }),
@@ -286,6 +286,65 @@ describe('IndexMetadataService', () => {
       ).not.toHaveBeenCalled();
     });
 
+    it('rejects composite-type fields with an unknown subFieldName', async () => {
+      setupCacheReturn({
+        fieldIds: [
+          {
+            id: 'field-currency',
+            universalIdentifier: 'field-currency-universal',
+            name: 'annualRecurringRevenue',
+            type: FieldMetadataType.CURRENCY,
+          },
+        ],
+      });
+
+      await expect(
+        service.createOne({
+          workspaceId: WORKSPACE_ID,
+          createIndexInput: {
+            objectMetadataId: OBJECT_ID,
+            fields: [
+              {
+                fieldMetadataId: 'field-currency',
+                subFieldName: 'notARealProp',
+              },
+            ],
+            indexType: IndexType.BTREE,
+          },
+        }),
+      ).rejects.toMatchObject({
+        code: IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
+      });
+    });
+
+    it('rejects subFieldName on a scalar field', async () => {
+      setupCacheReturn({
+        fieldIds: [
+          {
+            id: 'field-text',
+            universalIdentifier: 'field-text-universal',
+            name: 'someText',
+            type: FieldMetadataType.TEXT,
+          },
+        ],
+      });
+
+      await expect(
+        service.createOne({
+          workspaceId: WORKSPACE_ID,
+          createIndexInput: {
+            objectMetadataId: OBJECT_ID,
+            fields: [
+              { fieldMetadataId: 'field-text', subFieldName: 'whatever' },
+            ],
+            indexType: IndexType.BTREE,
+          },
+        }),
+      ).rejects.toMatchObject({
+        code: IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_COMPOSITE_FIELD,
+      });
+    });
+
     it('rejects when a field does not belong to the object', async () => {
       setupCacheReturn();
 
@@ -294,7 +353,7 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: OBJECT_ID,
-            fieldMetadataIds: ['unknown-field'],
+            fields: [{ fieldMetadataId: 'unknown-field' }],
             indexType: IndexType.BTREE,
           },
         }),
@@ -320,7 +379,7 @@ describe('IndexMetadataService', () => {
           workspaceId: WORKSPACE_ID,
           createIndexInput: {
             objectMetadataId: OBJECT_ID,
-            fieldMetadataIds: ['field-1'],
+            fields: [{ fieldMetadataId: 'field-1' }],
             indexType: IndexType.BTREE,
           },
         }),
