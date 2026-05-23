@@ -38,7 +38,28 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
   const orderByKeys = Object.keys(orderBy ?? {});
 
   orderByKeys?.forEach((key) => {
-    orderByValues[key] = objectRecord[key];
+    const orderByEntry = orderBy?.[key];
+    const recordValue = objectRecord[key];
+
+    // For nested entries
+    if (
+      typeof orderByEntry === 'object' &&
+      orderByEntry !== null &&
+      typeof recordValue === 'object' &&
+      recordValue !== null
+    ) {
+      const projectedValue: Record<string, unknown> = {};
+
+      for (const subKey of Object.keys(orderByEntry)) {
+        projectedValue[subKey] = recordValue[subKey];
+      }
+
+      orderByValues[key] = projectedValue;
+
+      return;
+    }
+
+    orderByValues[key] = recordValue;
   });
 
   const cursorData: CursorData = {
