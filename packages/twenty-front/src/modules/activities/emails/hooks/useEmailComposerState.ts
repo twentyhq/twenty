@@ -45,9 +45,7 @@ export const useEmailComposerState = ({
   const [hasEditedBody, setHasEditedBody] = useState(false);
   const [previousEmailSignature, setPreviousEmailSignature] = useState<
     string | null | undefined
-  >(
-    undefined,
-  );
+  >(undefined);
 
   const { sendEmail, loading } = useSendEmail();
   const { data: connectedAccountsData } = useQuery<{

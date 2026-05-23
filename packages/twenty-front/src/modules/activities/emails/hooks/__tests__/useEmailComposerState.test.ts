@@ -59,9 +59,7 @@ describe('useEmailComposerState', () => {
     });
 
     await waitFor(() =>
-      expect(result.current.body).toBe(
-        '<p>Hello</p><p></p><p>John Smith</p>',
-      ),
+      expect(result.current.body).toBe('<p>Hello</p><p></p><p>John Smith</p>'),
     );
   });
 });
