@@ -34,7 +34,7 @@ type MockButtonProps = {
 const mockFormFieldInput = jest.fn();
 const mockButton = jest.fn();
 const mockCreateOneRecord = jest.fn();
-const mockUseCreateOneRecord = jest.fn(() => ({
+const mockUseCreateOneRecord = jest.fn((_args: unknown) => ({
   createOneRecord: mockCreateOneRecord,
 }));
 const mockOpenRecordInSidePanel = jest.fn();
