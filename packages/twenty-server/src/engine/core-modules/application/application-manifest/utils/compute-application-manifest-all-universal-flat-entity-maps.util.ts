@@ -34,6 +34,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
 export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
@@ -137,23 +138,30 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
     }
   }
 
-  const indexCountByObjectUniversalIdentifier = (manifest.indexes ?? []).reduce<
-    Record<string, number>
-  >((acc, indexManifest) => {
-    acc[indexManifest.objectUniversalIdentifier] =
-      (acc[indexManifest.objectUniversalIdentifier] ?? 0) + 1;
+  const indexCountByObjectUniversalIdentifier = new Map<string, number>();
+  const fieldsByObjectUniversalIdentifier = new Map<
+    string,
+    UniversalFlatFieldMetadata[]
+  >();
 
-    return acc;
-  }, {});
-
-  for (const [objectUniversalIdentifier, count] of Object.entries(
-    indexCountByObjectUniversalIdentifier,
+  for (const flatField of Object.values(
+    allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
   )) {
-    if (count > MAX_CUSTOM_INDEXES_PER_OBJECT) {
-      throw new Error(
-        `Application declares ${count} indexes on object ${objectUniversalIdentifier}; the per-object cap is ${MAX_CUSTOM_INDEXES_PER_OBJECT}`,
+    if (!isDefined(flatField)) continue;
+
+    const bucket =
+      fieldsByObjectUniversalIdentifier.get(
+        flatField.objectMetadataUniversalIdentifier,
+      ) ?? [];
+
+    if (bucket.length === 0) {
+      fieldsByObjectUniversalIdentifier.set(
+        flatField.objectMetadataUniversalIdentifier,
+        bucket,
       );
     }
+
+    bucket.push(flatField);
   }
 
   for (const indexManifest of manifest.indexes ?? []) {
@@ -168,21 +176,30 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
       );
     }
 
-    const objectFlatFieldMetadatas = Object.values(
-      allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (flatField) =>
-          flatField.objectMetadataUniversalIdentifier ===
-          flatObjectMetadata.universalIdentifier,
+    const nextCount =
+      (indexCountByObjectUniversalIdentifier.get(
+        indexManifest.objectUniversalIdentifier,
+      ) ?? 0) + 1;
+
+    if (nextCount > MAX_CUSTOM_INDEXES_PER_OBJECT) {
+      throw new Error(
+        `Application declares more than ${MAX_CUSTOM_INDEXES_PER_OBJECT} indexes on object ${indexManifest.objectUniversalIdentifier}`,
       );
+    }
+
+    indexCountByObjectUniversalIdentifier.set(
+      indexManifest.objectUniversalIdentifier,
+      nextCount,
+    );
 
     addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
       universalFlatEntity: fromIndexManifestToUniversalFlatIndex({
         indexManifest,
         flatObjectMetadata,
-        objectFlatFieldMetadatas,
+        objectFlatFieldMetadatas:
+          fieldsByObjectUniversalIdentifier.get(
+            flatObjectMetadata.universalIdentifier,
+          ) ?? [],
         applicationUniversalIdentifier,
         now,
       }),

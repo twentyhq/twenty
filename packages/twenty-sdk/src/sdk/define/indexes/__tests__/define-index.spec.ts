@@ -48,6 +48,25 @@ describe('defineIndex', () => {
     expect(result.errors).toContain('Index must have at least one field');
   });
 
+  it('rejects duplicate (fieldUniversalIdentifier, subFieldName) pairs', () => {
+    const result = defineIndex({
+      ...baseValidConfig,
+      fields: [
+        {
+          universalIdentifier: '4f1b9f9f-1111-1111-1111-111111111111',
+          fieldUniversalIdentifier: '4f1b9f9f-eeee-ffff-0000-111111111111',
+        },
+        {
+          universalIdentifier: '4f1b9f9f-1111-1111-1111-222222222222',
+          fieldUniversalIdentifier: '4f1b9f9f-eeee-ffff-0000-111111111111',
+        },
+      ],
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Index lists the same column twice');
+  });
+
   it('reports a missing fieldUniversalIdentifier on an entry', () => {
     const result = defineIndex({
       ...baseValidConfig,

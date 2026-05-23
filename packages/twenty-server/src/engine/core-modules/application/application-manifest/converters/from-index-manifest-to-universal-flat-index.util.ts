@@ -1,3 +1,4 @@
+import { isNonEmptyString } from '@sniptt/guards';
 import { type IndexManifest } from 'twenty-shared/application';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -29,8 +30,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
   }
 
   const dedupKeys = indexManifest.fields.map(
-    (entry) =>
-      `${entry.fieldUniversalIdentifier}::${entry.subFieldName ?? ''}`,
+    (entry) => `${entry.fieldUniversalIdentifier}::${entry.subFieldName ?? ''}`,
   );
 
   if (new Set(dedupKeys).size !== dedupKeys.length) {
@@ -55,7 +55,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
       const isComposite = isCompositeFieldMetadataType(flatField.type);
 
       if (isComposite) {
-        if (!isDefined(entry.subFieldName) || entry.subFieldName === '') {
+        if (!isNonEmptyString(entry.subFieldName)) {
           throw new Error(
             `Composite field "${flatField.name}" requires a subFieldName in index "${indexManifest.universalIdentifier}"`,
           );
@@ -73,7 +73,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
             `Sub-field "${entry.subFieldName}" not found on composite field "${flatField.name}" in index "${indexManifest.universalIdentifier}"`,
           );
         }
-      } else if (isDefined(entry.subFieldName) && entry.subFieldName !== '') {
+      } else if (isNonEmptyString(entry.subFieldName)) {
         throw new Error(
           `Field "${flatField.name}" is not composite — subFieldName must be omitted in index "${indexManifest.universalIdentifier}"`,
         );
