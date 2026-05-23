@@ -67,16 +67,11 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       flatEntities: [logicFunction],
     });
 
-    // App-install path: an application manifest can declare a logic function
-    // that arrives PREBUILT with the built bundle already uploaded to object
-    // storage. Install it on the driver here, mirroring the update handler.
     if (
       logicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
       logicFunction.isBuildUpToDate &&
       isDefined(logicFunction.checksum)
     ) {
-      // Feature-flag gate: when off the executor forces LIVE regardless of
-      // column value, so we skip the AWS install round-trip entirely.
       const isPrebuiltModeEnabled =
         await this.featureFlagService.isFeatureEnabled(
           FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,

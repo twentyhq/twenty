@@ -101,9 +101,6 @@ export class LogicFunctionExecutorService {
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
-    // Caller-provided override. Takes precedence over the feature flag and the
-    // entity column — used by test execution paths to keep iteration paths on
-    // LIVE while the rest of the system runs PREBUILT.
     executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
     await this.throttleExecution(workspaceId);
@@ -172,10 +169,6 @@ export class LogicFunctionExecutorService {
     return resultLogicFunction;
   }
 
-  // Effective mode = caller override (test paths) > feature-flag fallback
-  // (whole rollout gated to LIVE) > entity column. PREBUILT-mode functions
-  // automatically degrade to LIVE when the flag is off, which is the safe
-  // rollback behavior we want on day one.
   private async resolveEffectiveExecutionMode({
     workspaceId,
     flatLogicFunction,

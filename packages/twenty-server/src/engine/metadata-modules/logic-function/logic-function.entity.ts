@@ -68,7 +68,12 @@ export class LogicFunctionEntity
   @Column({ nullable: false, type: 'boolean', default: true })
   isBuildUpToDate: boolean;
 
-  @Column({ nullable: false, default: LogicFunctionExecutionMode.LIVE })
+  @Column({
+    type: 'enum',
+    enum: LogicFunctionExecutionMode,
+    default: LogicFunctionExecutionMode.LIVE,
+    nullable: false,
+  })
   executionMode: LogicFunctionExecutionMode;
 
   @Column({ nullable: true, type: 'jsonb' })

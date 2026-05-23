@@ -136,9 +136,6 @@ export class WorkflowTriggerWorkspaceService {
           steps: workflowVersion.steps ?? [],
         });
 
-        // Flip CODE-step logic functions to PREBUILT now that we have a
-        // fresh build. The migration action handler installs the bundle
-        // on the driver as part of the same apply.
         await this.codeStepBuildService.switchCodeStepLogicFunctionsToPrebuilt({
           workspaceId,
           steps: workflowVersion.steps ?? [],

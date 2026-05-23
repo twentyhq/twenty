@@ -116,13 +116,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     });
   }
 
-  // Installs the prebuilt bundle on the driver (e.g. UpdateFunctionCode +
-  // bundle-checksum tag for Lambda) when either:
-  //   - executionMode just flipped LIVE -> PREBUILT with a fresh build, or
-  //   - checksum changed while executionMode was already PREBUILT.
-  //
-  // Refuses to run when isBuildUpToDate is false: the validator already
-  // rejects that combination, this is the runtime backstop.
   private async installPrebuiltBundleIfNeeded({
     existingLogicFunction,
     update,
@@ -149,9 +142,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       return;
     }
 
-    // Feature-flag gate the install side effect. With the flag off the
-    // executor forces LIVE on every invocation regardless of column value,
-    // so installing a bundle would only burn AWS calls during rollout.
     const isPrebuiltModeEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,

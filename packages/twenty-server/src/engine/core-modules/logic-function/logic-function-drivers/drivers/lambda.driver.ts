@@ -94,15 +94,8 @@ const BUILDER_HANDLER_PATH = resolve(
   ),
 );
 
-// Tag stamped onto the Lambda function whenever a prebuilt bundle is
-// installed (UpdateFunctionCode). Acts as the source of truth for what
-// bundle is currently on the Lambda — read on demand instead of being
-// stored in the DB.
 const LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG = 'twenty:bundle-checksum';
 
-// Filename that the unified executor (index.mjs) imports when invoked
-// without `code` in the payload. Must match the path used by the
-// executor: `await import('./prebuilt-logic-function.mjs')`.
 const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
 
 type LambdaDriverExecutorPayload = {
@@ -1203,11 +1196,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       const isPrebuilt =
         effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT;
 
-      // LIVE: read the latest built bundle from object storage and ship it
-      // in the invoke payload (historical behavior, bit-for-bit identical).
-      //
-      // PREBUILT: skip the storage read entirely — the bundle is already
-      // installed on the Lambda as `prebuilt-logic-function.mjs`.
       const compiledCode = isPrebuilt
         ? undefined
         : await this.logicFunctionResourceService.getBuiltCode({
@@ -1314,14 +1302,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  // Reads the prebuilt bundle from object storage, packages a zip with
-  // the unified executor (`index.mjs`) + `prebuilt-logic-function.mjs`,
-  // installs it on the Lambda via UpdateFunctionCode, and stamps the
-  // function with the bundle checksum as a Lambda tag.
-  //
-  // Invoked from the validate-build-and-run migration pipeline, never
-  // at invoke time — execute is strict and fails fast if the installed
-  // tag doesn't match the function's stored checksum.
   async installPrebuiltBundle({
     flatLogicFunction,
     flatApplication,
@@ -1334,8 +1314,6 @@ export class LambdaDriver implements LogicFunctionDriver {
       );
     }
 
-    // Make sure the Lambda exists with the right layers before we replace
-    // its code package; otherwise UpdateFunctionCode targets nothing.
     await this.buildLambdaExecutor({
       flatLogicFunction,
       flatApplication,

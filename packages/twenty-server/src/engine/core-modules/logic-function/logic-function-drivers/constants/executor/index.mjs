@@ -1,21 +1,6 @@
 import { promises as fs } from 'fs';
 import { createHash } from 'crypto';
 
-// Unified executor that handles both execution modes for a logic function:
-//
-// - LIVE  ("hot" iteration): the caller ships the compiled bundle in
-//   `event.code` and we evaluate it dynamically from /tmp. Behavior is
-//   identical to the historical executor: content-hash filename so warm
-//   containers hit Node's ESM module cache and avoid re-parsing.
-//
-// - PREBUILT (production): `event.code` is absent; the compiled bundle
-//   was installed onto the Lambda's deployment package as
-//   `./prebuilt-logic-function.mjs`. We import it directly, which means
-//   every cold start avoids the JSON-payload-shipping cost and warm
-//   invocations hit the regular ESM module cache.
-//
-// Module-scoped state and side-effects in the user bundle are intentionally
-// shared across invocations of the same container, in both modes.
 export const handler = async (event) => {
   const { code, params, env, handlerName } = event;
 
