@@ -7,12 +7,12 @@ export class FileOutputDTO {
   @Field(() => UUIDScalarType, { nullable: true })
   fileId: string | null;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   label: string | null;
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   extension: string | null;
 
-  @Field()
+  @Field(() => String)
   url: string;
 }
