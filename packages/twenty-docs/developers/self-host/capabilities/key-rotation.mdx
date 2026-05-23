@@ -16,10 +16,9 @@ Each key carries a `publicKey` (kept indefinitely so it can verify previously is
 
 ### Rotate the current key
 
-- **Manual** — **Settings → Admin Panel → Signing keys → Revoke** on the current row. Revoking wipes its encrypted private material and demotes it; the next sign call automatically mints a fresh ES256 keypair as the new current. Tokens signed under any other (non-revoked) `kid` keep verifying until they expire.
-- **Automatic** — set `SIGNING_KEY_ROTATION_DAYS` to opt in: a daily cron then issues a new current key once the existing one is older than that threshold. Previous keys are *not* revoked, so tokens signed under them keep verifying. Leave the variable unset to disable auto-rotation.
+Set `SIGNING_KEY_ROTATION_DAYS` to opt in: a daily cron then issues a new current key once the existing one is older than that threshold. Previous keys are *not* revoked, so tokens signed under them keep verifying. Leave the variable unset to disable auto-rotation.
 
-  <Note>Auto-rotation ships in v2.6+.</Note>
+<Note>Auto-rotation ships in v2.6+.</Note>
 
 ### Revoke a key (leak / emergency only)
 
