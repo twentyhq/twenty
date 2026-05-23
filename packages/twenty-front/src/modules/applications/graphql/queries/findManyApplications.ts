@@ -6,7 +6,12 @@ export const FIND_MANY_APPLICATIONS = gql`
       id
       name
       description
-      logo
+      logo {
+        fileId
+        label
+        extension
+        url
+      }
       version
       universalIdentifier
       applicationRegistrationId

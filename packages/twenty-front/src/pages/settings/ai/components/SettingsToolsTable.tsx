@@ -54,7 +54,12 @@ const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
       id
       name
       universalIdentifier
-      logo
+      logo {
+        fileId
+        label
+        extension
+        url
+      }
     }
   }
 `;
@@ -92,7 +97,12 @@ export const SettingsToolsTable = () => {
       id: string;
       name: string;
       universalIdentifier: string;
-      logo?: string | null;
+      logo?: {
+        fileId: string | null;
+        label: string | null;
+        extension: string | null;
+        url: string;
+      } | null;
     }>;
   }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
   const { data: marketplaceAppsData } = useQuery<{
