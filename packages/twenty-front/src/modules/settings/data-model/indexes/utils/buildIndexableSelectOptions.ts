@@ -4,7 +4,7 @@ import { type SelectOption } from 'twenty-ui/input';
 import { compositeTypeDefinitions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
-import { getCompositeSubFieldLabel } from '~/modules/settings/data-model/indexes/constants/CompositeSubFieldLabels';
+import { getCompositeSubFieldLabel } from '@/settings/data-model/indexes/utils/getCompositeSubFieldLabel';
 
 // The Select component takes string values. We encode (fieldMetadataId,
 // subFieldName) as `${id}` for scalar fields and `${id}::${subFieldName}` for

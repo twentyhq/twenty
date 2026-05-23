@@ -14,14 +14,13 @@ import { Button, SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle, UndecoratedLink } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from '~/pages/settings/data-model/constants/MaxCustomIndexesPerObject';
 import { SettingsObjectIndexTable } from '~/pages/settings/data-model/SettingsObjectIndexTable';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
-import { getCompositeSubFieldLabel } from '@/settings/data-model/indexes/constants/CompositeSubFieldLabels';
+import { getCompositeSubFieldLabel } from '@/settings/data-model/indexes/utils/getCompositeSubFieldLabel';
 import { type FieldMetadataType } from '~/generated-metadata/graphql';
-import { isDefined } from 'twenty-shared/utils';
 
 type SettingsObjectIndexesSectionProps = {
   objectMetadataItem: EnrichedObjectMetadataItem;

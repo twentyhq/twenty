@@ -54,9 +54,3 @@ export const COMPOSITE_SUB_FIELD_LABELS: Partial<
     markdown: 'Markdown',
   },
 };
-
-export const getCompositeSubFieldLabel = (
-  parentType: FieldMetadataType,
-  subFieldName: string,
-): string =>
-  COMPOSITE_SUB_FIELD_LABELS[parentType]?.[subFieldName] ?? subFieldName;
