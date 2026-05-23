@@ -23,6 +23,16 @@ export type SerializedEventData = {
   movementY?: number;
   button?: number;
   buttons?: number;
+  pointerId?: number;
+  pointerType?: string;
+  pressure?: number;
+  tangentialPressure?: number;
+  tiltX?: number;
+  tiltY?: number;
+  twist?: number;
+  width?: number;
+  height?: number;
+  isPrimary?: boolean;
   key?: string;
   code?: string;
   repeat?: boolean;
