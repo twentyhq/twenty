@@ -42,10 +42,7 @@ export const parseAndFormatGmailMessage = (
       : [];
 
   const participants = [
-    ...formatAddressObjectAsParticipants(
-      [from],
-      MessageParticipantRole.FROM,
-    ),
+    ...formatAddressObjectAsParticipants([from], MessageParticipantRole.FROM),
     ...formatAddressObjectAsParticipants(
       toParticipants,
       MessageParticipantRole.TO,

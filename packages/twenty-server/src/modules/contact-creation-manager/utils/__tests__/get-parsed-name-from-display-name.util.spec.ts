@@ -18,7 +18,8 @@ describe('getParsedNameFromDisplayName', () => {
         },
       },
       {
-        title: 'should keep all trailing tokens together as a multi-word last name',
+        title:
+          'should keep all trailing tokens together as a multi-word last name',
         context: {
           displayName: 'Mary Jane Watson',
           expected: { firstName: 'Mary', lastName: 'Jane Watson' },
@@ -72,8 +73,7 @@ describe('getParsedNameFromDisplayName', () => {
   describe('email-derived display names', () => {
     const testCases: TestCase[] = [
       {
-        title:
-          'should split a single dotted token like an email local part',
+        title: 'should split a single dotted token like an email local part',
         context: {
           displayName: 'john.doe',
           expected: { firstName: 'john', lastName: 'doe' },
@@ -105,7 +105,8 @@ describe('getParsedNameFromDisplayName', () => {
   describe('mail-server ":GROUP" tag suffix', () => {
     const testCases: TestCase[] = [
       {
-        title: 'should strip the tag from the first name in the comma-inverted form',
+        title:
+          'should strip the tag from the first name in the comma-inverted form',
         context: {
           displayName: 'Smith, Jane:GROUP',
           expected: { firstName: 'Jane', lastName: 'Smith' },

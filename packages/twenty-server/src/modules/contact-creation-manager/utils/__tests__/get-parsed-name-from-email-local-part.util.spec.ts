@@ -26,14 +26,16 @@ describe('getParsedNameFromEmailLocalPart', () => {
       },
     },
     {
-      title: 'should fall back to the whole local part as first name when no dot is present',
+      title:
+        'should fall back to the whole local part as first name when no dot is present',
       context: {
         localPart: 'noname',
         expected: { firstName: 'noname', lastName: '' },
       },
     },
     {
-      title: 'should ignore consecutive dots so they do not produce empty segments',
+      title:
+        'should ignore consecutive dots so they do not produce empty segments',
       context: {
         localPart: 'john..doe',
         expected: { firstName: 'john', lastName: 'doe' },
@@ -52,6 +54,22 @@ describe('getParsedNameFromEmailLocalPart', () => {
       context: {
         localPart: '',
         expected: { firstName: '', lastName: '' },
+      },
+    },
+    {
+      title:
+        'should strip an RFC 5233 plus-address tag so routing metadata does not end up in the name',
+      context: {
+        localPart: 'john.doe+sales',
+        expected: { firstName: 'john', lastName: 'doe' },
+      },
+    },
+    {
+      title:
+        'should strip a plus-address tag even when the local part has no dot',
+      context: {
+        localPart: 'noname+ticket-123',
+        expected: { firstName: 'noname', lastName: '' },
       },
     },
   ];
