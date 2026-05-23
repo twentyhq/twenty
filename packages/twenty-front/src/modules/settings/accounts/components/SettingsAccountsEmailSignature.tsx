@@ -41,9 +41,11 @@ export const SettingsAccountsEmailSignature = ({
 }: SettingsAccountsEmailSignatureProps) => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
-  const [emailSignature, setEmailSignature] = useState(
-    connectedAccount.emailSignature ?? '',
-  );
+  const [signatureFormState, setSignatureFormState] = useState(() => ({
+    connectedAccountId: connectedAccount.id,
+    editorKey: 0,
+    emailSignature: connectedAccount.emailSignature ?? '',
+  }));
 
   const [updateConnectedAccountSignature, { loading }] = useMutation<
     UpdateConnectedAccountSignatureMutation,
@@ -51,7 +53,22 @@ export const SettingsAccountsEmailSignature = ({
   >(UPDATE_CONNECTED_ACCOUNT_SIGNATURE);
 
   useEffect(() => {
-    setEmailSignature(connectedAccount.emailSignature ?? '');
+    const emailSignature = connectedAccount.emailSignature ?? '';
+
+    setSignatureFormState((previousState) => {
+      if (
+        previousState.connectedAccountId === connectedAccount.id &&
+        previousState.emailSignature === emailSignature
+      ) {
+        return previousState;
+      }
+
+      return {
+        connectedAccountId: connectedAccount.id,
+        editorKey: previousState.editorKey + 1,
+        emailSignature,
+      };
+    });
   }, [connectedAccount.id, connectedAccount.emailSignature]);
 
   const handleSave = async () => {
@@ -60,7 +77,9 @@ export const SettingsAccountsEmailSignature = ({
         variables: {
           input: {
             id: connectedAccount.id,
-            emailSignature: emailSignature.trim() ? emailSignature : null,
+            emailSignature: signatureFormState.emailSignature.trim()
+              ? signatureFormState.emailSignature
+              : null,
           },
         },
         refetchQueries: [GET_MY_CONNECTED_ACCOUNTS, GET_MY_MESSAGE_CHANNELS],
@@ -74,15 +93,22 @@ export const SettingsAccountsEmailSignature = ({
     }
   };
 
-  const isDirty = emailSignature !== (connectedAccount.emailSignature ?? '');
+  const isDirty =
+    signatureFormState.emailSignature !==
+    (connectedAccount.emailSignature ?? '');
 
   return (
     <Card rounded>
       <StyledCardContent>
         <FormAdvancedTextFieldInput
-          key={connectedAccount.id}
-          defaultValue={emailSignature}
-          onChange={setEmailSignature}
+          key={signatureFormState.editorKey}
+          defaultValue={signatureFormState.emailSignature}
+          onChange={(emailSignature) => {
+            setSignatureFormState((previousState) => ({
+              ...previousState,
+              emailSignature,
+            }));
+          }}
           placeholder={t`Add your email signature`}
           minHeight={120}
           maxWidth={600}
