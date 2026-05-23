@@ -1,7 +1,10 @@
 import { trimAndRemoveDuplicatedWhitespacesFromObjectStringProperties } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
@@ -43,6 +46,10 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       checksum,
       isBuildUpToDate,
+      // Created-from-source paths (workflow CODE step authoring, app-dev test
+      // creation) start LIVE: the source iteration loop is what users care
+      // about; PREBUILT is opt-in via workflow activation / app install.
+      executionMode: LogicFunctionExecutionMode.LIVE,
       handlerName,
       sourceHandlerPath,
       builtHandlerPath,

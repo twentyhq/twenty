@@ -7,6 +7,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -77,6 +78,29 @@ export class FlatLogicFunctionValidatorService {
           userFriendlyMessage: msg`Source handler path is invalid`,
         });
       }
+    }
+
+    // Refuse to move a function into PREBUILT mode unless a fresh build is
+    // available — otherwise we'd install (or worse, fail to install) a stale
+    // bundle. We check the post-update view so a single update that sets all
+    // three fields (executionMode, checksum, isBuildUpToDate) is accepted.
+    const postUpdateExecutionMode =
+      flatEntityUpdate.executionMode ?? existingFlatLogicFunction.executionMode;
+    const postUpdateChecksum =
+      flatEntityUpdate.checksum ?? existingFlatLogicFunction.checksum;
+    const postUpdateIsBuildUpToDate =
+      flatEntityUpdate.isBuildUpToDate ??
+      existingFlatLogicFunction.isBuildUpToDate;
+
+    if (
+      postUpdateExecutionMode === LogicFunctionExecutionMode.PREBUILT &&
+      (!postUpdateIsBuildUpToDate || !isDefined(postUpdateChecksum))
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Logic function cannot be switched to PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be switched to PREBUILT mode without a fresh build and a checksum`,
+      });
     }
 
     return validationResult;
@@ -173,6 +197,21 @@ export class FlatLogicFunctionValidatorService {
           userFriendlyMessage: msg`Source handler path is invalid`,
         });
       }
+    }
+
+    // App-install can legitimately create a function directly in PREBUILT
+    // mode, but only when a fresh build + checksum are supplied alongside it.
+    if (
+      flatLogicFunctionToValidate.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      (!flatLogicFunctionToValidate.isBuildUpToDate ||
+        !isDefined(flatLogicFunctionToValidate.checksum))
+    ) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Logic function cannot be created in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be created in PREBUILT mode without a fresh build and a checksum`,
+      });
     }
 
     return validationResult;

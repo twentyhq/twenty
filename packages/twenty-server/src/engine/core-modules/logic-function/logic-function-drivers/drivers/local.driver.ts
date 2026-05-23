@@ -9,10 +9,12 @@ import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionDriver,
+  type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
@@ -20,6 +22,12 @@ import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-fu
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -29,6 +37,14 @@ const LAYER_BUILD_LOCK_TTL_MS = 120_000;
 const LAYER_BUILD_LOCK_RETRY_MS = 500;
 const LAYER_BUILD_LOCK_MAX_RETRIES = 240;
 const LAYER_BUILD_READY_SENTINEL = '.twenty-layer-ready';
+
+// Filename used by the unified executor for the prebuilt user bundle.
+// Mirrors the Lambda driver constant for parity across drivers.
+const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
+// Sidecar file co-located with the installed bundle that stores the
+// bundle checksum — the local equivalent of the Lambda `twenty:bundle-checksum`
+// tag.
+const PREBUILT_CHECKSUM_FILE_NAME = 'prebuilt-bundle.checksum';
 
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
@@ -283,6 +299,7 @@ export class LocalDriver implements LogicFunctionDriver {
     payload,
     env,
     timeoutMs = 900_000,
+    effectiveExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.createLayerIfNotExist({
       flatApplication,
@@ -300,13 +317,19 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const inMemoryBuiltHandlerPath =
-        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
-          workspaceId: flatLogicFunction.workspaceId,
-          applicationUniversalIdentifier,
-          builtHandlerPath: flatLogicFunction.builtHandlerPath,
-          inMemoryDestinationPath: sourceTemporaryDir,
-        });
+      const isPrebuilt =
+        effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT;
+
+      // LIVE: fetch the latest bundle from object storage on every invoke.
+      // PREBUILT: use the locally-cached bundle written during install.
+      const inMemoryBuiltHandlerPath = isPrebuilt
+        ? this.getInstalledBundlePath(flatLogicFunction)
+        : await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+            workspaceId: flatLogicFunction.workspaceId,
+            applicationUniversalIdentifier,
+            builtHandlerPath: flatLogicFunction.builtHandlerPath,
+            inMemoryDestinationPath: sourceTemporaryDir,
+          });
 
       await this.assembleNodeModules({
         sourceTemporaryDir,
@@ -560,5 +583,88 @@ export class LocalDriver implements LogicFunctionDriver {
 
       child.on('close', () => clearTimeout(t));
     });
+  }
+
+  private getPrebuiltBundleDir(flatLogicFunction: FlatLogicFunction): string {
+    return join(
+      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
+      'prebuilt',
+      flatLogicFunction.id,
+    );
+  }
+
+  private getInstalledBundlePath(flatLogicFunction: FlatLogicFunction): string {
+    return join(
+      this.getPrebuiltBundleDir(flatLogicFunction),
+      PREBUILT_BUNDLE_FILE_NAME,
+    );
+  }
+
+  private getInstalledChecksumPath(
+    flatLogicFunction: FlatLogicFunction,
+  ): string {
+    return join(
+      this.getPrebuiltBundleDir(flatLogicFunction),
+      PREBUILT_CHECKSUM_FILE_NAME,
+    );
+  }
+
+  // Reads the prebuilt bundle from object storage and caches it on the
+  // local filesystem alongside a sidecar checksum file. The sidecar file
+  // is the local equivalent of the Lambda `twenty:bundle-checksum` tag
+  // and is read by `getInstalledBundleChecksum`.
+  async installPrebuiltBundle({
+    flatLogicFunction,
+    applicationUniversalIdentifier,
+  }: LogicFunctionInstallPrebuiltBundleParams): Promise<void> {
+    if (!isNonEmptyString(flatLogicFunction.checksum)) {
+      throw new LogicFunctionException(
+        `Cannot install prebuilt bundle for function '${flatLogicFunction.id}' without a checksum`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
+    const prebuiltDir = this.getPrebuiltBundleDir(flatLogicFunction);
+
+    await fs.mkdir(prebuiltDir, { recursive: true });
+
+    await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
+      inMemoryDestinationPath: prebuiltDir,
+    });
+
+    const downloadedPath = join(
+      prebuiltDir,
+      flatLogicFunction.builtHandlerPath,
+    );
+    const targetPath = this.getInstalledBundlePath(flatLogicFunction);
+
+    if (downloadedPath !== targetPath) {
+      await fs.mkdir(dirname(targetPath), { recursive: true });
+      await fs.rename(downloadedPath, targetPath);
+    }
+
+    await fs.writeFile(
+      this.getInstalledChecksumPath(flatLogicFunction),
+      flatLogicFunction.checksum,
+      'utf8',
+    );
+  }
+
+  async getInstalledBundleChecksum(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<string | null> {
+    try {
+      const checksum = await fs.readFile(
+        this.getInstalledChecksumPath(flatLogicFunction),
+        'utf8',
+      );
+
+      return checksum.trim() || null;
+    } catch {
+      return null;
+    }
   }
 }

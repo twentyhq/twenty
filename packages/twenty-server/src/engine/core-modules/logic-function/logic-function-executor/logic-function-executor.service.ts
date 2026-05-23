@@ -6,6 +6,7 @@ import {
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
 } from 'twenty-shared/application';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
 import { v4 } from 'uuid';
@@ -26,6 +27,7 @@ import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/uti
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
@@ -37,6 +39,11 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
@@ -76,6 +83,7 @@ export class LogicFunctionExecutorService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly featureFlagService: FeatureFlagService,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
@@ -86,12 +94,17 @@ export class LogicFunctionExecutorService {
     payload,
     userId,
     userWorkspaceId,
+    executionMode,
   }: {
     logicFunctionId: string;
     workspaceId: string;
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
+    // Caller-provided override. Takes precedence over the feature flag and the
+    // entity column — used by test execution paths to keep iteration paths on
+    // LIVE while the rest of the system runs PREBUILT.
+    executionMode?: LogicFunctionExecutionMode;
   }): Promise<LogicFunctionExecuteResult> {
     await this.throttleExecution(workspaceId);
 
@@ -111,6 +124,19 @@ export class LogicFunctionExecutorService {
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
+    const effectiveExecutionMode = await this.resolveEffectiveExecutionMode({
+      workspaceId,
+      flatLogicFunction,
+      callerOverride: executionMode,
+    });
+
+    if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
+      await this.assertPrebuiltBundleInstalled({
+        driver,
+        flatLogicFunction,
+      });
+    }
+
     let resultLogicFunction: LogicFunctionExecuteResult;
 
     try {
@@ -121,13 +147,15 @@ export class LogicFunctionExecutorService {
         payload,
         env: envVariables,
         timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
+        effectiveExecutionMode,
       });
     } catch (error) {
       this.logger.error(
         `Logic function execution failed: ` +
           `functionId=${logicFunctionId}, ` +
           `workspaceId=${workspaceId}, ` +
-          `driver=${driver.constructor.name}: ` +
+          `driver=${driver.constructor.name}, ` +
+          `mode=${effectiveExecutionMode}: ` +
           `${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
@@ -142,6 +170,55 @@ export class LogicFunctionExecutorService {
     });
 
     return resultLogicFunction;
+  }
+
+  // Effective mode = caller override (test paths) > feature-flag fallback
+  // (whole rollout gated to LIVE) > entity column. PREBUILT-mode functions
+  // automatically degrade to LIVE when the flag is off, which is the safe
+  // rollback behavior we want on day one.
+  private async resolveEffectiveExecutionMode({
+    workspaceId,
+    flatLogicFunction,
+    callerOverride,
+  }: {
+    workspaceId: string;
+    flatLogicFunction: FlatLogicFunction;
+    callerOverride?: LogicFunctionExecutionMode;
+  }): Promise<LogicFunctionExecutionMode> {
+    if (isDefined(callerOverride)) {
+      return callerOverride;
+    }
+
+    const isPrebuiltModeEnabled = await this.featureFlagService.isFeatureEnabled(
+      FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
+      workspaceId,
+    );
+
+    if (!isPrebuiltModeEnabled) {
+      return LogicFunctionExecutionMode.LIVE;
+    }
+
+    return flatLogicFunction.executionMode ?? LogicFunctionExecutionMode.LIVE;
+  }
+
+  private async assertPrebuiltBundleInstalled({
+    driver,
+    flatLogicFunction,
+  }: {
+    driver: ReturnType<LogicFunctionDriverFactory['getCurrentDriver']>;
+    flatLogicFunction: FlatLogicFunction;
+  }): Promise<void> {
+    const installedChecksum =
+      await driver.getInstalledBundleChecksum(flatLogicFunction);
+
+    if (installedChecksum !== flatLogicFunction.checksum) {
+      throw new LogicFunctionException(
+        `Prebuilt bundle is not installed for function '${flatLogicFunction.id}' ` +
+          `(installed=${installedChecksum ?? 'none'}, expected=${flatLogicFunction.checksum ?? 'none'}). ` +
+          `Rebuild and try again.`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
   }
 
   async transpile(

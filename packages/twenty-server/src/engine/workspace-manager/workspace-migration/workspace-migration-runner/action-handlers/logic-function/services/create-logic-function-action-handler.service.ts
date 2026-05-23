@@ -1,9 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
+import { FeatureFlagKey } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+
+import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
 import {
   FlatCreateLogicFunctionAction,
@@ -19,6 +26,14 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'create',
   'logicFunction',
 ) {
+  constructor(
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {
+    super();
+  }
+
   override async transpileUniversalActionToFlatAction({
     action,
     flatApplication,
@@ -44,13 +59,61 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatCreateLogicFunctionAction>,
   ): Promise<void> {
-    const { flatAction, queryRunner } = context;
+    const { flatAction, queryRunner, flatApplication } = context;
     const { flatEntity: logicFunction } = flatAction;
 
     await this.insertFlatEntitiesInRepository({
       queryRunner,
       flatEntities: [logicFunction],
     });
+
+    // App-install path: an application manifest can declare a logic function
+    // that arrives PREBUILT with the built bundle already uploaded to object
+    // storage. Install it on the driver here, mirroring the update handler.
+    if (
+      logicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
+      logicFunction.isBuildUpToDate &&
+      isDefined(logicFunction.checksum)
+    ) {
+      // Feature-flag gate: when off the executor forces LIVE regardless of
+      // column value, so we skip the AWS install round-trip entirely.
+      const isPrebuiltModeEnabled =
+        await this.featureFlagService.isFeatureEnabled(
+          FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
+          context.workspaceId,
+        );
+
+      if (!isPrebuiltModeEnabled) {
+        return;
+      }
+
+      const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+      const installStart = Date.now();
+
+      try {
+        await driver.installPrebuiltBundle({
+          flatLogicFunction: logicFunction,
+          flatApplication,
+          applicationUniversalIdentifier: flatApplication.universalIdentifier,
+        });
+
+        this.logger.log(
+          `[lambda-timing] event=install_prebuilt fnId=${logicFunction.id} ` +
+            `reason=app_install install_duration_ms=${Date.now() - installStart}`,
+          CreateLogicFunctionActionHandlerService.name,
+        );
+      } catch (error) {
+        this.logger.error(
+          `Failed to install prebuilt bundle on app-install for function ${logicFunction.id} ` +
+            `after ${Date.now() - installStart}ms: ` +
+            `${error instanceof Error ? error.message : String(error)}`,
+          CreateLogicFunctionActionHandlerService.name,
+          error instanceof Error ? error.stack : undefined,
+        );
+        throw error;
+      }
+    }
   }
 
   async rollbackForMetadata(

@@ -18,6 +18,8 @@ import {
   LogType,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
+  TagResourceCommand,
+  UpdateFunctionCodeCommand,
   UpdateFunctionConfigurationCommand,
   waitUntilFunctionActiveV2,
   waitUntilFunctionUpdatedV2,
@@ -32,6 +34,7 @@ import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -50,7 +53,10 @@ import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logi
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -88,8 +94,19 @@ const BUILDER_HANDLER_PATH = resolve(
   ),
 );
 
+// Tag stamped onto the Lambda function whenever a prebuilt bundle is
+// installed (UpdateFunctionCode). Acts as the source of truth for what
+// bundle is currently on the Lambda — read on demand instead of being
+// stored in the DB.
+const LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG = 'twenty:bundle-checksum';
+
+// Filename that the unified executor (index.mjs) imports when invoked
+// without `code` in the payload. Must match the path used by the
+// executor: `await import('./prebuilt-logic-function.mjs')`.
+const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
+
 type LambdaDriverExecutorPayload = {
-  code: string;
+  code?: string;
   params: object;
   env: Record<string, string>;
   handlerName: string;
@@ -1164,6 +1181,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     payload,
     env,
     timeoutMs = 900_000,
+    effectiveExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     let currentPhase: LambdaExecutionPhase = LambdaExecutionPhase.BUILD;
     let buildExecutorMs = 0;
@@ -1182,22 +1200,30 @@ export class LambdaDriver implements LogicFunctionDriver {
       currentPhase = LambdaExecutionPhase.FETCH_CODE;
       const fetchStart = Date.now();
 
-      const compiledCode = await this.logicFunctionResourceService.getBuiltCode(
-        {
-          workspaceId: flatLogicFunction.workspaceId,
-          applicationUniversalIdentifier,
-          builtHandlerPath: flatLogicFunction.builtHandlerPath,
-        },
-      );
+      const isPrebuilt =
+        effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT;
+
+      // LIVE: read the latest built bundle from object storage and ship it
+      // in the invoke payload (historical behavior, bit-for-bit identical).
+      //
+      // PREBUILT: skip the storage read entirely — the bundle is already
+      // installed on the Lambda as `prebuilt-logic-function.mjs`.
+      const compiledCode = isPrebuilt
+        ? undefined
+        : await this.logicFunctionResourceService.getBuiltCode({
+            workspaceId: flatLogicFunction.workspaceId,
+            applicationUniversalIdentifier,
+            builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          });
       getBuiltCodeMs = Date.now() - fetchStart;
 
       currentPhase = LambdaExecutionPhase.INVOKE;
 
       const executorPayload: LambdaDriverExecutorPayload = {
         params: payload,
-        code: compiledCode,
         env: env ?? {},
         handlerName: flatLogicFunction.handlerName,
+        ...(isDefined(compiledCode) ? { code: compiledCode } : {}),
       };
 
       const payloadString = JSON.stringify(executorPayload);
@@ -1231,7 +1257,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       const duration = Date.now() - fetchStart;
 
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${effectiveExecutionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {
@@ -1286,5 +1312,102 @@ export class LambdaDriver implements LogicFunctionDriver {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
       );
     }
+  }
+
+  // Reads the prebuilt bundle from object storage, packages a zip with
+  // the unified executor (`index.mjs`) + `prebuilt-logic-function.mjs`,
+  // installs it on the Lambda via UpdateFunctionCode, and stamps the
+  // function with the bundle checksum as a Lambda tag.
+  //
+  // Invoked from the validate-build-and-run migration pipeline, never
+  // at invoke time — execute is strict and fails fast if the installed
+  // tag doesn't match the function's stored checksum.
+  async installPrebuiltBundle({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LogicFunctionInstallPrebuiltBundleParams): Promise<void> {
+    if (!isNonEmptyString(flatLogicFunction.checksum)) {
+      throw new LogicFunctionException(
+        `Cannot install prebuilt bundle for function '${flatLogicFunction.id}' without a checksum`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
+    // Make sure the Lambda exists with the right layers before we replace
+    // its code package; otherwise UpdateFunctionCode targets nothing.
+    await this.buildLambdaExecutor({
+      flatLogicFunction,
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+
+    const compiledCode = await this.logicFunctionResourceService.getBuiltCode({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
+    });
+
+    const temporaryDirManager = new TemporaryDirManager();
+    const { sourceTemporaryDir, lambdaZipPath } =
+      await temporaryDirManager.init();
+
+    try {
+      await copyExecutor(sourceTemporaryDir);
+      await fs.writeFile(
+        join(sourceTemporaryDir, PREBUILT_BUNDLE_FILE_NAME),
+        compiledCode,
+        'utf8',
+      );
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+      const lambdaClient = await this.getLambdaClient();
+
+      const updateResult = await lambdaClient.send(
+        new UpdateFunctionCodeCommand({
+          FunctionName: flatLogicFunction.id,
+          ZipFile: await fs.readFile(lambdaZipPath),
+        }),
+      );
+
+      await this.waitFunctionUpdated(flatLogicFunction.id);
+
+      const functionArn = updateResult.FunctionArn;
+
+      if (!isNonEmptyString(functionArn)) {
+        throw new Error(
+          `UpdateFunctionCode did not return a FunctionArn for '${flatLogicFunction.id}'`,
+        );
+      }
+
+      await lambdaClient.send(
+        new TagResourceCommand({
+          Resource: functionArn,
+          Tags: {
+            [LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG]: flatLogicFunction.checksum,
+          },
+        }),
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
+    } finally {
+      await temporaryDirManager.clean();
+    }
+  }
+
+  async getInstalledBundleChecksum(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<string | null> {
+    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+
+    if (!isDefined(lambdaExecutor)) {
+      return null;
+    }
+
+    return lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null;
   }
 }

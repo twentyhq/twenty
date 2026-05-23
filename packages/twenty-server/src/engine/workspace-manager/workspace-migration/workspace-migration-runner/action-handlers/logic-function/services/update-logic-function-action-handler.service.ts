@@ -1,14 +1,22 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
-import { FileFolder } from 'twenty-shared/types';
+import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
+import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
+
+import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionEntity,
+  LogicFunctionExecutionMode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   FlatUpdateLogicFunctionAction,
@@ -24,7 +32,12 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   'update',
   'logicFunction',
 ) {
-  constructor(private readonly fileStorageService: FileStorageService) {
+  constructor(
+    private readonly fileStorageService: FileStorageService,
+    @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
+    private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
+    private readonly featureFlagService: FeatureFlagService,
+  ) {
     super();
   }
 
@@ -64,10 +77,11 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     } = context;
     const { entityId, update } = flatAction;
 
-    const existingLogicFunction = findFlatEntityByIdInFlatEntityMapsOrThrow({
-      flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
-      flatEntityId: entityId,
-    });
+    const existingLogicFunction =
+      findFlatEntityByIdInFlatEntityMapsOrThrow<FlatLogicFunction>({
+        flatEntityMaps: allFlatEntityMaps.flatLogicFunctionMaps,
+        flatEntityId: entityId,
+      });
 
     const applicationUniversalIdentifier = flatApplication.universalIdentifier;
 
@@ -92,6 +106,109 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         fileFolder: FileFolder.BuiltLogicFunction,
         resourcePath: existingLogicFunction.builtHandlerPath,
       });
+    }
+
+    await this.installPrebuiltBundleIfNeeded({
+      existingLogicFunction,
+      update,
+      applicationUniversalIdentifier,
+      context,
+    });
+  }
+
+  // Installs the prebuilt bundle on the driver (e.g. UpdateFunctionCode +
+  // bundle-checksum tag for Lambda) when either:
+  //   - executionMode just flipped LIVE -> PREBUILT with a fresh build, or
+  //   - checksum changed while executionMode was already PREBUILT.
+  //
+  // Refuses to run when isBuildUpToDate is false: the validator already
+  // rejects that combination, this is the runtime backstop.
+  private async installPrebuiltBundleIfNeeded({
+    existingLogicFunction,
+    update,
+    applicationUniversalIdentifier,
+    context,
+  }: {
+    existingLogicFunction: FlatLogicFunction;
+    update: FlatUpdateLogicFunctionAction['update'];
+    applicationUniversalIdentifier: string;
+    context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>;
+  }): Promise<void> {
+    const targetExecutionMode =
+      update.executionMode ?? existingLogicFunction.executionMode;
+
+    if (targetExecutionMode !== LogicFunctionExecutionMode.PREBUILT) {
+      return;
+    }
+
+    const targetChecksum = update.checksum ?? existingLogicFunction.checksum;
+    const targetIsBuildUpToDate =
+      update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate;
+
+    if (!targetIsBuildUpToDate || !isDefined(targetChecksum)) {
+      return;
+    }
+
+    // Feature-flag gate the install side effect. With the flag off the
+    // executor forces LIVE on every invocation regardless of column value,
+    // so installing a bundle would only burn AWS calls during rollout.
+    const isPrebuiltModeEnabled =
+      await this.featureFlagService.isFeatureEnabled(
+        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
+        context.workspaceId,
+      );
+
+    if (!isPrebuiltModeEnabled) {
+      return;
+    }
+
+    const becamePrebuilt =
+      isDefined(update.executionMode) &&
+      update.executionMode === LogicFunctionExecutionMode.PREBUILT &&
+      existingLogicFunction.executionMode !==
+        LogicFunctionExecutionMode.PREBUILT;
+    const checksumChangedWhilePrebuilt =
+      existingLogicFunction.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      isDefined(update.checksum) &&
+      update.checksum !== existingLogicFunction.checksum;
+
+    if (!becamePrebuilt && !checksumChangedWhilePrebuilt) {
+      return;
+    }
+
+    const driver = this.logicFunctionDriverFactory.getCurrentDriver();
+
+    const installStart = Date.now();
+
+    try {
+      await driver.installPrebuiltBundle({
+        flatLogicFunction: {
+          ...existingLogicFunction,
+          ...update,
+          checksum: targetChecksum,
+          executionMode: LogicFunctionExecutionMode.PREBUILT,
+          isBuildUpToDate: true,
+        },
+        flatApplication: context.flatApplication,
+        applicationUniversalIdentifier,
+      });
+
+      this.logger.log(
+        `[lambda-timing] event=install_prebuilt fnId=${existingLogicFunction.id} ` +
+          `reason=${becamePrebuilt ? 'mode_flip' : 'checksum_change'} ` +
+          `install_duration_ms=${Date.now() - installStart}`,
+        UpdateLogicFunctionActionHandlerService.name,
+      );
+    } catch (error) {
+      this.logger.error(
+        `Failed to install prebuilt bundle for function ${existingLogicFunction.id} ` +
+          `after ${Date.now() - installStart}ms: ` +
+          `${error instanceof Error ? error.message : String(error)}`,
+        UpdateLogicFunctionActionHandlerService.name,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw error;
     }
   }
 }

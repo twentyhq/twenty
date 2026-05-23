@@ -4,6 +4,7 @@ import { executeLogicFunction } from 'test/integration/metadata/suites/logic-fun
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 // Default template function code that matches the expected behavior
 const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: string; b: number }): Promise<object> => {
@@ -58,6 +59,11 @@ describe('Logic Function Execution', () => {
     const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
+    // Logic functions created from source iterate in LIVE mode until the
+    // parent workflow is activated (PREBUILT install happens then).
+    expect(createData?.createOneLogicFunction?.executionMode).toBe(
+      LogicFunctionExecutionMode.LIVE,
+    );
     createdFunctionIds.push(functionId);
 
     await updateLogicFunctionSource({

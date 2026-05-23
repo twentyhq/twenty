@@ -2,7 +2,10 @@ import { parse } from 'path';
 
 import { type LogicFunctionManifest } from 'twenty-shared/application';
 
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type UniversalFlatLogicFunction } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-logic-function.type';
 
 export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
@@ -37,6 +40,11 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
+    // App-installed logic functions land directly in PREBUILT mode: the
+    // bundle is delivered as part of the application manifest and the
+    // create-action handler installs it on the driver as part of the same
+    // migration apply.
+    executionMode: LogicFunctionExecutionMode.PREBUILT,
     createdAt: now,
     updatedAt: now,
     deletedAt: null,
