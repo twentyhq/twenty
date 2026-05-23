@@ -1,4 +1,5 @@
 import { PreComputedChipGeneratorsContext } from '@/object-metadata/contexts/PreComputedChipGeneratorsContext';
+import { generateDefaultRecordChipData } from '@/object-metadata/utils/generateDefaultRecordChipData';
 import { type RecordChipData } from '@/object-record/record-field/ui/types/RecordChipData';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { useContext } from 'react';
@@ -23,9 +24,12 @@ export const useRecordChipData = ({
     identifierChipGeneratorPerObject[objectNameSingular];
 
   if (!isDefined(identifierChipGenerator)) {
-    throw new Error(
-      `No identifier chip generator found for object name singular: ${objectNameSingular}`,
-    );
+    return {
+      recordChipData: generateDefaultRecordChipData({
+        objectNameSingular,
+        record,
+      }),
+    };
   }
 
   return {

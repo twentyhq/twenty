@@ -44,19 +44,26 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
+
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
       try {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+          scope.setExtras({
+            mechanism: 'onUnhandle',
+            pathname: window.location.pathname,
+          });
+
+          scope.setTag('pathname', window.location.pathname);
 
           const fingerprint = hasErrorCode(error) ? error.code : error.message;
-          scope.setFingerprint([fingerprint]);
+          scope.setFingerprint([fingerprint, window.location.pathname]);
           error.name = error.message;
           return scope;
         });
