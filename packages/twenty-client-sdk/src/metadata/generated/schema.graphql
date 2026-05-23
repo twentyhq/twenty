@@ -48,9 +48,9 @@ type ApplicationRegistration {
   isListed: Boolean!
   isFeatured: Boolean!
   isPreInstalled: Boolean!
-  logo: String
   createdAt: DateTime!
   updatedAt: DateTime!
+  logo: FileOutput
   isConfigured: Boolean!
 }
 
@@ -283,11 +283,18 @@ type Role {
   rowLevelPermissionPredicateGroups: [RowLevelPermissionPredicateGroup!]
 }
 
+type FileOutput {
+  fileId: UUID
+  label: String
+  extension: String
+  url: String!
+}
+
 type ApplicationRegistrationSummary {
   id: UUID!
   latestAvailableVersion: String
   sourceType: ApplicationRegistrationSourceType!
-  logo: String
+  logo: FileOutput
 }
 
 type ApplicationVariable {
@@ -691,7 +698,6 @@ type Application {
   id: UUID!
   name: String!
   description: String
-  logo: String
   version: String
   universalIdentifier: String!
   packageJsonChecksum: String
@@ -711,6 +717,7 @@ type Application {
   objects: [Object!]!
   applicationVariables: [ApplicationVariable!]!
   applicationRegistration: ApplicationRegistrationSummary
+  logo: FileOutput
 }
 
 type ViewField {
@@ -1971,7 +1978,7 @@ type CreateApplicationRegistration {
 type PublicApplicationRegistration {
   id: UUID!
   name: String!
-  logo: String
+  logo: FileOutput
   websiteUrl: String
   oAuthScopes: [String!]!
 }
@@ -2357,7 +2364,7 @@ type MarketplaceAppDetail {
   sourceType: ApplicationRegistrationSourceType!
   sourcePackage: String
   latestAvailableVersion: String
-  logo: String
+  logo: FileOutput
   isListed: Boolean!
   isFeatured: Boolean!
   manifest: JSON

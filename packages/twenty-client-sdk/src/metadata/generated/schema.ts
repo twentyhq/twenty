@@ -52,9 +52,9 @@ export interface ApplicationRegistration {
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
     isPreInstalled: Scalars['Boolean']
-    logo?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
+    logo?: FileOutput
     isConfigured: Scalars['Boolean']
     __typename: 'ApplicationRegistration'
 }
@@ -232,11 +232,19 @@ export interface Role {
     __typename: 'Role'
 }
 
+export interface FileOutput {
+    fileId?: Scalars['UUID']
+    label?: Scalars['String']
+    extension?: Scalars['String']
+    url: Scalars['String']
+    __typename: 'FileOutput'
+}
+
 export interface ApplicationRegistrationSummary {
     id: Scalars['UUID']
     latestAvailableVersion?: Scalars['String']
     sourceType: ApplicationRegistrationSourceType
-    logo?: Scalars['String']
+    logo?: FileOutput
     __typename: 'ApplicationRegistrationSummary'
 }
 
@@ -456,7 +464,6 @@ export interface Application {
     id: Scalars['UUID']
     name: Scalars['String']
     description?: Scalars['String']
-    logo?: Scalars['String']
     version?: Scalars['String']
     universalIdentifier: Scalars['String']
     packageJsonChecksum?: Scalars['String']
@@ -476,6 +483,7 @@ export interface Application {
     objects: Object[]
     applicationVariables: ApplicationVariable[]
     applicationRegistration?: ApplicationRegistrationSummary
+    logo?: FileOutput
     __typename: 'Application'
 }
 
@@ -1611,7 +1619,7 @@ export interface CreateApplicationRegistration {
 export interface PublicApplicationRegistration {
     id: Scalars['UUID']
     name: Scalars['String']
-    logo?: Scalars['String']
+    logo?: FileOutput
     websiteUrl?: Scalars['String']
     oAuthScopes: Scalars['String'][]
     __typename: 'PublicApplicationRegistration'
@@ -2034,7 +2042,7 @@ export interface MarketplaceAppDetail {
     sourceType: ApplicationRegistrationSourceType
     sourcePackage?: Scalars['String']
     latestAvailableVersion?: Scalars['String']
-    logo?: Scalars['String']
+    logo?: FileOutput
     isListed: Scalars['Boolean']
     isFeatured: Scalars['Boolean']
     manifest?: Scalars['JSON']
@@ -2924,9 +2932,9 @@ export interface ApplicationRegistrationGenqlSelection{
     isListed?: boolean | number
     isFeatured?: boolean | number
     isPreInstalled?: boolean | number
-    logo?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
+    logo?: FileOutputGenqlSelection
     isConfigured?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
@@ -3097,11 +3105,20 @@ export interface RoleGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface FileOutputGenqlSelection{
+    fileId?: boolean | number
+    label?: boolean | number
+    extension?: boolean | number
+    url?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ApplicationRegistrationSummaryGenqlSelection{
     id?: boolean | number
     latestAvailableVersion?: boolean | number
     sourceType?: boolean | number
-    logo?: boolean | number
+    logo?: FileOutputGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -3366,7 +3383,6 @@ export interface ApplicationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
     description?: boolean | number
-    logo?: boolean | number
     version?: boolean | number
     universalIdentifier?: boolean | number
     packageJsonChecksum?: boolean | number
@@ -3386,6 +3402,7 @@ export interface ApplicationGenqlSelection{
     objects?: ObjectGenqlSelection
     applicationVariables?: ApplicationVariableGenqlSelection
     applicationRegistration?: ApplicationRegistrationSummaryGenqlSelection
+    logo?: FileOutputGenqlSelection
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -4556,7 +4573,7 @@ export interface CreateApplicationRegistrationGenqlSelection{
 export interface PublicApplicationRegistrationGenqlSelection{
     id?: boolean | number
     name?: boolean | number
-    logo?: boolean | number
+    logo?: FileOutputGenqlSelection
     websiteUrl?: boolean | number
     oAuthScopes?: boolean | number
     __typename?: boolean | number
@@ -5031,7 +5048,7 @@ export interface MarketplaceAppDetailGenqlSelection{
     sourceType?: boolean | number
     sourcePackage?: boolean | number
     latestAvailableVersion?: boolean | number
-    logo?: boolean | number
+    logo?: FileOutputGenqlSelection
     isListed?: boolean | number
     isFeatured?: boolean | number
     manifest?: boolean | number
@@ -6407,6 +6424,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isRole = (obj?: { __typename?: any } | null): obj is Role => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRole"')
       return Role_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const FileOutput_possibleTypes: string[] = ['FileOutput']
+    export const isFileOutput = (obj?: { __typename?: any } | null): obj is FileOutput => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isFileOutput"')
+      return FileOutput_possibleTypes.includes(obj.__typename)
     }
     
 
