@@ -9,16 +9,41 @@ import { type CommandMenuItemDTO } from 'src/engine/metadata-modules/command-men
 import { type ObjectMetadataCommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/types/object-metadata-command-menu-item-payload.type';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 
+const findObjectCommandMenuItemForObject = ({
+  commandMenuItems,
+  engineComponentKey,
+  objectMetadataId,
+}: {
+  commandMenuItems: CommandMenuItemDTO[];
+  engineComponentKey: EngineComponentKey;
+  objectMetadataId: string;
+}) =>
+  commandMenuItems.find(
+    (item) =>
+      item.engineComponentKey === engineComponentKey &&
+      (item.payload as ObjectMetadataCommandMenuItemPayload | undefined)
+        ?.objectMetadataItemId === objectMetadataId,
+  );
+
 const findNavigationCommandMenuItemForObject = (
   commandMenuItems: CommandMenuItemDTO[],
   objectMetadataId: string,
 ) =>
-  commandMenuItems.find(
-    (item) =>
-      item.engineComponentKey === EngineComponentKey.NAVIGATION &&
-      (item.payload as ObjectMetadataCommandMenuItemPayload | undefined)
-        ?.objectMetadataItemId === objectMetadataId,
-  );
+  findObjectCommandMenuItemForObject({
+    commandMenuItems,
+    engineComponentKey: EngineComponentKey.NAVIGATION,
+    objectMetadataId,
+  });
+
+const findCreateRecordCommandMenuItemForObject = (
+  commandMenuItems: CommandMenuItemDTO[],
+  objectMetadataId: string,
+) =>
+  findObjectCommandMenuItemForObject({
+    commandMenuItems,
+    engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+    objectMetadataId,
+  });
 
 const COMMAND_MENU_ITEM_GQL_FIELDS = `
   id
@@ -35,7 +60,7 @@ const COMMAND_MENU_ITEM_GQL_FIELDS = `
   }
 `;
 
-describe('Command menu item side effect on object metadata', () => {
+describe('Command menu item side effects on object metadata', () => {
   let createdObjectMetadataId: string | undefined = undefined;
 
   const uniqueSuffix = Date.now().toString().slice(-8);
@@ -71,7 +96,7 @@ describe('Command menu item side effect on object metadata', () => {
     createdObjectMetadataId = undefined;
   });
 
-  it('should create a navigation command menu item when a custom object is created', async () => {
+  it('should create navigation and create record command menu items when a custom object is created', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -102,9 +127,22 @@ describe('Command menu item side effect on object metadata', () => {
         engineComponentKey: EngineComponentKey.NAVIGATION,
       }),
     );
+
+    expect(
+      findCreateRecordCommandMenuItemForObject(
+        commandMenuItems,
+        createdObjectMetadataId,
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        label: `Create ${createObjectInput.labelSingular}`,
+        icon: createObjectInput.icon,
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
+      }),
+    );
   });
 
-  it('should delete the navigation command menu item when a custom object is deleted', async () => {
+  it('should delete navigation and create record command menu items when a custom object is deleted', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -126,6 +164,12 @@ describe('Command menu item side effect on object metadata', () => {
 
     expect(
       findNavigationCommandMenuItemForObject(
+        itemsBeforeDelete,
+        deletedObjectId,
+      ),
+    ).toBeDefined();
+    expect(
+      findCreateRecordCommandMenuItemForObject(
         itemsBeforeDelete,
         deletedObjectId,
       ),
@@ -155,14 +199,17 @@ describe('Command menu item side effect on object metadata', () => {
     });
 
     expect(
-      findNavigationCommandMenuItemForObject(
+      findNavigationCommandMenuItemForObject(itemsAfterDelete, deletedObjectId),
+    ).toBeUndefined();
+    expect(
+      findCreateRecordCommandMenuItemForObject(
         itemsAfterDelete,
         deletedObjectId,
       ),
     ).toBeUndefined();
   });
 
-  it('should delete the navigation command menu item when a custom object is disabled', async () => {
+  it('should delete navigation and create record command menu items when a custom object is disabled', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -183,6 +230,12 @@ describe('Command menu item side effect on object metadata', () => {
 
     expect(
       findNavigationCommandMenuItemForObject(
+        itemsBeforeDisable,
+        createdObjectMetadataId,
+      ),
+    ).toBeDefined();
+    expect(
+      findCreateRecordCommandMenuItemForObject(
         itemsBeforeDisable,
         createdObjectMetadataId,
       ),
@@ -210,9 +263,15 @@ describe('Command menu item side effect on object metadata', () => {
         createdObjectMetadataId,
       ),
     ).toBeUndefined();
+    expect(
+      findCreateRecordCommandMenuItemForObject(
+        itemsAfterDisable,
+        createdObjectMetadataId,
+      ),
+    ).toBeUndefined();
   });
 
-  it('should recreate the navigation command menu item when a disabled object is re-enabled', async () => {
+  it('should recreate navigation and create record command menu items when a disabled object is re-enabled', async () => {
     const {
       data: { createOneObject },
     } = await createOneObjectMetadata({
@@ -245,6 +304,12 @@ describe('Command menu item side effect on object metadata', () => {
         createdObjectMetadataId,
       ),
     ).toBeUndefined();
+    expect(
+      findCreateRecordCommandMenuItemForObject(
+        itemsWhileDisabled,
+        createdObjectMetadataId,
+      ),
+    ).toBeUndefined();
 
     await updateOneObjectMetadata({
       expectToFail: false,
@@ -272,6 +337,19 @@ describe('Command menu item side effect on object metadata', () => {
         label: `Go to ${createObjectInput.labelPlural}`,
         icon: createObjectInput.icon,
         engineComponentKey: EngineComponentKey.NAVIGATION,
+      }),
+    );
+
+    expect(
+      findCreateRecordCommandMenuItemForObject(
+        itemsAfterReEnable,
+        createdObjectMetadataId,
+      ),
+    ).toEqual(
+      expect.objectContaining({
+        label: `Create ${createObjectInput.labelSingular}`,
+        icon: createObjectInput.icon,
+        engineComponentKey: EngineComponentKey.CREATE_NEW_RECORD,
       }),
     );
   });

@@ -326,12 +326,13 @@ export class FlatCommandMenuItemValidatorService {
     const hasObjectMetadataItemId =
       'objectMetadataItemId' in payload &&
       isNonEmptyString(payload.objectMetadataItemId);
+    const hasPath = 'path' in payload && isNonEmptyString(payload.path);
 
-    if (!hasObjectMetadataItemId) {
+    if (!hasObjectMetadataItemId || hasPath) {
       validationResult.errors.push({
         code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
-        message: t`payload for CREATE_NEW_RECORD must be null or contain an "objectMetadataItemId" property`,
-        userFriendlyMessage: msg`Payload for create record items must be empty or contain an object metadata item identifier`,
+        message: t`payload for CREATE_NEW_RECORD must be null or contain an "objectMetadataItemId" property without a "path" property`,
+        userFriendlyMessage: msg`Payload for create record items must be empty or contain an object metadata item identifier without a path`,
       });
     }
   }

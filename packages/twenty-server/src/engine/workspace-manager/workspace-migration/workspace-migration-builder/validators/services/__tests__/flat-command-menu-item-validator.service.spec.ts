@@ -91,6 +91,23 @@ describe('FlatCommandMenuItemValidatorService', () => {
     ]);
   });
 
+  it('rejects mixed object metadata and path payload for CREATE_NEW_RECORD', () => {
+    const result = service.validateFlatCommandMenuItemCreation(
+      buildCreationArgs(
+        buildFlatCommandMenuItem({
+          payload: {
+            objectMetadataItemId: 'object-metadata-id',
+            path: '/settings/profile',
+          },
+        }),
+      ),
+    );
+
+    expect(result.errors.map((error) => error.code)).toEqual([
+      CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+    ]);
+  });
+
   it('still requires payload for NAVIGATION', () => {
     const result = service.validateFlatCommandMenuItemCreation(
       buildCreationArgs(
