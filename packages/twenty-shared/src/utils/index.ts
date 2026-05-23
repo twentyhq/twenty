@@ -107,6 +107,7 @@ export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecor
 export type { FieldShared } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
+export { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from './filter/utils/compositeFieldFilterOperandsMap';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';
@@ -115,9 +116,11 @@ export {
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from './filter/utils/fieldRatingConvertors';
+export { FILTER_OPERANDS_MAP } from './filter/utils/filterOperandsMap';
 export { filterSelectOptionsOfFieldMetadataItem } from './filter/utils/filterSelectOptionsOfFieldMetadataItem';
 export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
+export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilterOperandsForFilterableFieldType';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';

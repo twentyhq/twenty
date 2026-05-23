@@ -30,10 +30,9 @@ describe('signUpInWorkspace into a non-active workspace (integration)', () => {
       [WorkspaceActivationStatus.ACTIVE, SEED_APPLE_WORKSPACE_ID],
     );
 
-    await testDataSource.query(
-      'DELETE FROM core."user" WHERE email = $1',
-      [existingUserEmail],
-    );
+    await testDataSource.query('DELETE FROM core."user" WHERE email = $1', [
+      existingUserEmail,
+    ]);
   });
 
   it('rejects an existing user joining a suspended workspace with the workspace-readiness message', async () => {

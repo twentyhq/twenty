@@ -246,6 +246,7 @@ export const SettingsDataModelObjectAboutForm = ({
             textAreaId={descriptionTextAreaId}
             placeholder={t`Write a description`}
             minRows={4}
+            maxRows={5}
             value={value ?? undefined}
             onChange={(nextValue) => onChange(nextValue ?? null)}
             onBlur={() => onNewDirtyField?.()}

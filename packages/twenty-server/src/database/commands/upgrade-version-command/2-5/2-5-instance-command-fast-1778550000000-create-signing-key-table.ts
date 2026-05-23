@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { type FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.5.0', 1778550000000)
-export class CreateSigningKeyTableFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class CreateSigningKeyTableFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       `CREATE TABLE IF NOT EXISTS "core"."signingKey" (

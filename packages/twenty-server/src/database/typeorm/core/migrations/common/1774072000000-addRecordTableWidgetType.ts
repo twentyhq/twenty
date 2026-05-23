@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddRecordTableWidgetType1774072000000
-  implements MigrationInterface
-{
+export class AddRecordTableWidgetType1774072000000 implements MigrationInterface {
   name = 'AddRecordTableWidgetType1774072000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

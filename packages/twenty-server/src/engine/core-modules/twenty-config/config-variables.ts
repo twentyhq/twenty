@@ -1185,9 +1185,9 @@ export class ConfigVariables {
   FALLBACK_ENCRYPTION_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Number of days after which the Enterprise auto-rotation cron issues a new current JWT signing key. When unset, the cron is a no-op. Previous keys remain in the database to keep verifying tokens they signed; revocation stays a manual admin action.',
+      'Days the current JWT signing key stays valid before the rotation cron issues a new one. Leave unset to disable auto-rotation.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()

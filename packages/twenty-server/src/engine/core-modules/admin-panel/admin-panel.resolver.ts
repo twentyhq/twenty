@@ -44,6 +44,8 @@ import { AdminPanelSigningKeyService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel/services/admin-panel-statistics.service';
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
+import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -105,6 +107,7 @@ export class AdminPanelResolver {
     private readonly adminPanelHealthService: AdminPanelHealthService,
     private readonly adminPanelSigningKeyService: AdminPanelSigningKeyService,
     private readonly applicationRegistrationService: ApplicationRegistrationService,
+    private readonly applicationRegistrationVariableService: ApplicationRegistrationVariableService,
     private adminPanelQueueService: AdminPanelQueueService,
     private featureFlagService: FeatureFlagService,
     private readonly twentyConfigService: TwentyConfigService,
@@ -710,6 +713,16 @@ export class AdminPanelResolver {
     @Args('id') id: string,
   ): Promise<ApplicationRegistrationEntity> {
     return this.applicationRegistrationService.findOneByIdGlobal(id);
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Query(() => [ApplicationRegistrationVariableDTO])
+  async findAdminApplicationRegistrationVariables(
+    @Args('applicationRegistrationId') applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
+    return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValuesGlobal(
+      applicationRegistrationId,
+    );
   }
 
   @UseGuards(AdminPanelGuard)

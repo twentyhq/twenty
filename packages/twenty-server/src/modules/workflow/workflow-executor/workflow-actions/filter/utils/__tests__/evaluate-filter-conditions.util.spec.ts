@@ -310,6 +310,171 @@ describe('evaluateFilterConditions', () => {
           'Operand CONTAINS not supported for uuid filter',
         );
       });
+
+      it('should return true for IS_EMPTY when UUID is null/undefined/empty', () => {
+        const cases = [null, undefined, ''];
+
+        for (const leftOperand of cases) {
+          const filter = createFilter(
+            ViewFilterOperand.IS_EMPTY,
+            leftOperand,
+            null,
+            'UUID',
+          );
+
+          expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+        }
+      });
+
+      it('should return false for IS_EMPTY when UUID is a non-empty string', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          uuid1,
+          null,
+          'UUID',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+      });
+
+      it('should return false for IS_NOT_EMPTY when UUID is null/undefined/empty', () => {
+        const cases = [null, undefined, ''];
+
+        for (const leftOperand of cases) {
+          const filter = createFilter(
+            ViewFilterOperand.IS_NOT_EMPTY,
+            leftOperand,
+            null,
+            'UUID',
+          );
+
+          expect(evaluateFilterConditions({ filters: [filter] })).toBe(false);
+        }
+      });
+
+      it('should return true for IS_NOT_EMPTY when UUID is a non-empty string', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          uuid1,
+          null,
+          'UUID',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+    });
+
+    describe('Rating filter operands', () => {
+      it('should compare RATING_n strings by numeric rank for IS', () => {
+        const filterMatch = createFilter(
+          ViewFilterOperand.IS,
+          'RATING_3',
+          '3',
+          'RATING',
+        );
+        const filterNoMatch = createFilter(
+          ViewFilterOperand.IS,
+          'RATING_3',
+          '4',
+          'RATING',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filterMatch] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterNoMatch] })).toBe(
+          false,
+        );
+      });
+
+      it('should compare with GREATER_THAN_OR_EQUAL on rank', () => {
+        const filterGte = createFilter(
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          'RATING_4',
+          '3',
+          'RATING',
+        );
+        const filterLt = createFilter(
+          ViewFilterOperand.GREATER_THAN_OR_EQUAL,
+          'RATING_2',
+          '3',
+          'RATING',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filterGte] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterLt] })).toBe(false);
+      });
+
+      it('should compare with LESS_THAN_OR_EQUAL on rank', () => {
+        const filterLte = createFilter(
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
+          'RATING_2',
+          '3',
+          'RATING',
+        );
+        const filterGt = createFilter(
+          ViewFilterOperand.LESS_THAN_OR_EQUAL,
+          'RATING_4',
+          '3',
+          'RATING',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filterLte] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filterGt] })).toBe(false);
+      });
+
+      it('should handle IS_NOT, IS_EMPTY, IS_NOT_EMPTY', () => {
+        const filterIsNotMatch = createFilter(
+          ViewFilterOperand.IS_NOT,
+          'RATING_3',
+          '4',
+          'RATING',
+        );
+        const filterIsEmpty = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          null,
+          null,
+          'RATING',
+        );
+        const filterIsNotEmpty = createFilter(
+          ViewFilterOperand.IS_NOT_EMPTY,
+          'RATING_3',
+          null,
+          'RATING',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filterIsNotMatch] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [filterIsEmpty] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [filterIsNotEmpty] })).toBe(
+          true,
+        );
+      });
+
+      it('should treat unparseable rating string as empty', () => {
+        const filter = createFilter(
+          ViewFilterOperand.IS_EMPTY,
+          'not-a-rating',
+          null,
+          'RATING',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter] })).toBe(true);
+      });
+
+      it('should throw on unsupported rating operand', () => {
+        const filter = createFilter(
+          ViewFilterOperand.CONTAINS,
+          'RATING_3',
+          '3',
+          'RATING',
+        );
+
+        expect(() => evaluateFilterConditions({ filters: [filter] })).toThrow(
+          'Operand CONTAINS not supported for rating filter',
+        );
+      });
     });
 
     describe('Select filter operands', () => {

@@ -1401,6 +1401,19 @@ export interface WorkspaceUrls {
     __typename: 'WorkspaceUrls'
 }
 
+export interface ApplicationRegistrationVariableDTO {
+    id: Scalars['UUID']
+    key: Scalars['String']
+    value?: Scalars['String']
+    description: Scalars['String']
+    isSecret: Scalars['Boolean']
+    isRequired: Scalars['Boolean']
+    isFilled: Scalars['Boolean']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    __typename: 'ApplicationRegistrationVariableDTO'
+}
+
 export interface BillingTrialPeriod {
     duration: Scalars['Float']
     isCreditCardRequired: Scalars['Boolean']
@@ -1607,19 +1620,6 @@ export interface PublicApplicationRegistration {
 export interface RotateClientSecret {
     clientSecret: Scalars['String']
     __typename: 'RotateClientSecret'
-}
-
-export interface ApplicationRegistrationVariableDTO {
-    id: Scalars['UUID']
-    key: Scalars['String']
-    value?: Scalars['String']
-    description: Scalars['String']
-    isSecret: Scalars['Boolean']
-    isRequired: Scalars['Boolean']
-    isFilled: Scalars['Boolean']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    __typename: 'ApplicationRegistrationVariableDTO'
 }
 
 export interface Relation {
@@ -2160,6 +2160,19 @@ export interface ImapSmtpCaldavConnectionSuccess {
     __typename: 'ImapSmtpCaldavConnectionSuccess'
 }
 
+export interface Webhook {
+    id: Scalars['UUID']
+    targetUrl: Scalars['String']
+    operations: Scalars['String'][]
+    description?: Scalars['String']
+    secret: Scalars['String']
+    applicationId: Scalars['UUID']
+    createdAt: Scalars['DateTime']
+    updatedAt: Scalars['DateTime']
+    deletedAt?: Scalars['DateTime']
+    __typename: 'Webhook'
+}
+
 export interface ToolIndexEntry {
     name: Scalars['String']
     description: Scalars['String']
@@ -2528,19 +2541,6 @@ export interface MinimalMetadata {
     __typename: 'MinimalMetadata'
 }
 
-export interface Webhook {
-    id: Scalars['UUID']
-    targetUrl: Scalars['String']
-    operations: Scalars['String'][]
-    description?: Scalars['String']
-    secret: Scalars['String']
-    applicationId: Scalars['UUID']
-    createdAt: Scalars['DateTime']
-    updatedAt: Scalars['DateTime']
-    deletedAt?: Scalars['DateTime']
-    __typename: 'Webhook'
-}
-
 export interface Query {
     navigationMenuItems: NavigationMenuItem[]
     navigationMenuItem?: NavigationMenuItem
@@ -2591,6 +2591,8 @@ export interface Query {
     getRoles: Role[]
     getToolIndex: ToolIndexEntry[]
     getToolInputSchema?: Scalars['JSON']
+    webhooks: Webhook[]
+    webhook?: Webhook
     field: Field
     fields: FieldConnection
     getViewGroups: ViewGroup[]
@@ -2599,8 +2601,6 @@ export interface Query {
     myMessageChannels: MessageChannel[]
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myCalendarChannels: CalendarChannel[]
-    webhooks: Webhook[]
-    webhook?: Webhook
     minimalMetadata: MinimalMetadata
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
@@ -2755,6 +2755,9 @@ export interface Mutation {
     upsertRowLevelPermissionPredicates: UpsertRowLevelPermissionPredicatesResult
     assignRoleToAgent: Scalars['Boolean']
     removeRoleFromAgent: Scalars['Boolean']
+    createWebhook: Webhook
+    updateWebhook: Webhook
+    deleteWebhook: Webhook
     createOneField: Field
     updateOneField: Field
     deleteOneField: Field
@@ -2771,9 +2774,6 @@ export interface Mutation {
     deleteEmailGroupChannel: MessageChannel
     deleteConnectedAccount: ConnectedAccountPublicDTO
     updateCalendarChannel: CalendarChannel
-    createWebhook: Webhook
-    updateWebhook: Webhook
-    deleteWebhook: Webhook
     createChatThread: AgentChatThread
     sendChatMessage: SendChatMessageResult
     stopAgentChatStream: Scalars['Boolean']
@@ -2827,7 +2827,6 @@ export interface Mutation {
     updateWorkspace: Workspace
     deleteCurrentWorkspace: Workspace
     checkCustomDomainValidRecords?: DomainValidRecords
-    installApplication: Scalars['Boolean']
     runWorkspaceMigration: Scalars['Boolean']
     uninstallApplication: Scalars['Boolean']
     createOIDCIdentityProvider: SetupSso
@@ -2848,7 +2847,9 @@ export interface Mutation {
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
     createOneAppToken: AppToken
-    installMarketplaceApp: Application
+    /** @deprecated Use installApplication instead */
+    installMarketplaceApp: Scalars['Boolean']
+    installApplication: Application
     syncMarketplaceCatalog: Scalars['Boolean']
     createDevelopmentApplication: DevelopmentApplication
     generateApplicationToken: ApplicationTokenPair
@@ -4332,6 +4333,20 @@ export interface WorkspaceUrlsGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface ApplicationRegistrationVariableDTOGenqlSelection{
+    id?: boolean | number
+    key?: boolean | number
+    value?: boolean | number
+    description?: boolean | number
+    isSecret?: boolean | number
+    isRequired?: boolean | number
+    isFilled?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface BillingTrialPeriodGenqlSelection{
     duration?: boolean | number
     isCreditCardRequired?: boolean | number
@@ -4549,20 +4564,6 @@ export interface PublicApplicationRegistrationGenqlSelection{
 
 export interface RotateClientSecretGenqlSelection{
     clientSecret?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
-export interface ApplicationRegistrationVariableDTOGenqlSelection{
-    id?: boolean | number
-    key?: boolean | number
-    value?: boolean | number
-    description?: boolean | number
-    isSecret?: boolean | number
-    isRequired?: boolean | number
-    isFilled?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5165,6 +5166,20 @@ export interface ImapSmtpCaldavConnectionSuccessGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WebhookGenqlSelection{
+    id?: boolean | number
+    targetUrl?: boolean | number
+    operations?: boolean | number
+    description?: boolean | number
+    secret?: boolean | number
+    applicationId?: boolean | number
+    createdAt?: boolean | number
+    updatedAt?: boolean | number
+    deletedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface ToolIndexEntryGenqlSelection{
     name?: boolean | number
     description?: boolean | number
@@ -5540,20 +5555,6 @@ export interface MinimalMetadataGenqlSelection{
     __scalar?: boolean | number
 }
 
-export interface WebhookGenqlSelection{
-    id?: boolean | number
-    targetUrl?: boolean | number
-    operations?: boolean | number
-    description?: boolean | number
-    secret?: boolean | number
-    applicationId?: boolean | number
-    createdAt?: boolean | number
-    updatedAt?: boolean | number
-    deletedAt?: boolean | number
-    __typename?: boolean | number
-    __scalar?: boolean | number
-}
-
 export interface QueryGenqlSelection{
     navigationMenuItems?: NavigationMenuItemGenqlSelection
     navigationMenuItem?: (NavigationMenuItemGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5616,6 +5617,8 @@ export interface QueryGenqlSelection{
     getRoles?: RoleGenqlSelection
     getToolIndex?: ToolIndexEntryGenqlSelection
     getToolInputSchema?: { __args: {toolName: Scalars['String']} }
+    webhooks?: WebhookGenqlSelection
+    webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     field?: (FieldGenqlSelection & { __args: {
     /** The id of the record to find. */
     id: Scalars['UUID']} })
@@ -5630,8 +5633,6 @@ export interface QueryGenqlSelection{
     myMessageChannels?: (MessageChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
-    webhooks?: WebhookGenqlSelection
-    webhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     minimalMetadata?: MinimalMetadataGenqlSelection
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
@@ -5807,6 +5808,9 @@ export interface MutationGenqlSelection{
     upsertRowLevelPermissionPredicates?: (UpsertRowLevelPermissionPredicatesResultGenqlSelection & { __args: {input: UpsertRowLevelPermissionPredicatesInput} })
     assignRoleToAgent?: { __args: {agentId: Scalars['UUID'], roleId: Scalars['UUID']} }
     removeRoleFromAgent?: { __args: {agentId: Scalars['UUID']} }
+    createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
+    updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
+    deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     createOneField?: (FieldGenqlSelection & { __args: {input: CreateOneFieldMetadataInput} })
     updateOneField?: (FieldGenqlSelection & { __args: {input: UpdateOneFieldMetadataInput} })
     deleteOneField?: (FieldGenqlSelection & { __args: {input: DeleteOneFieldInput} })
@@ -5823,9 +5827,6 @@ export interface MutationGenqlSelection{
     deleteEmailGroupChannel?: (MessageChannelGenqlSelection & { __args: {id: Scalars['UUID']} })
     deleteConnectedAccount?: (ConnectedAccountPublicDTOGenqlSelection & { __args: {id: Scalars['UUID']} })
     updateCalendarChannel?: (CalendarChannelGenqlSelection & { __args: {input: UpdateCalendarChannelInput} })
-    createWebhook?: (WebhookGenqlSelection & { __args: {input: CreateWebhookInput} })
-    updateWebhook?: (WebhookGenqlSelection & { __args: {input: UpdateWebhookInput} })
-    deleteWebhook?: (WebhookGenqlSelection & { __args: {id: Scalars['UUID']} })
     createChatThread?: AgentChatThreadGenqlSelection
     sendChatMessage?: (SendChatMessageResultGenqlSelection & { __args: {threadId: Scalars['UUID'], text: Scalars['String'], messageId: Scalars['UUID'], browsingContext?: (Scalars['JSON'] | null), modelId?: (Scalars['String'] | null), fileAttachments?: (FileAttachmentInput[] | null)} })
     stopAgentChatStream?: { __args: {threadId: Scalars['UUID']} }
@@ -5879,7 +5880,6 @@ export interface MutationGenqlSelection{
     updateWorkspace?: (WorkspaceGenqlSelection & { __args: {data: UpdateWorkspaceInput} })
     deleteCurrentWorkspace?: WorkspaceGenqlSelection
     checkCustomDomainValidRecords?: DomainValidRecordsGenqlSelection
-    installApplication?: { __args: {appRegistrationId: Scalars['String'], version?: (Scalars['String'] | null)} }
     runWorkspaceMigration?: { __args: {workspaceMigration: WorkspaceMigrationInput} }
     uninstallApplication?: { __args: {universalIdentifier: Scalars['String']} }
     createOIDCIdentityProvider?: (SetupSsoGenqlSelection & { __args: {input: SetupOIDCSsoInput} })
@@ -5900,7 +5900,9 @@ export interface MutationGenqlSelection{
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     createOneAppToken?: (AppTokenGenqlSelection & { __args: {input: CreateOneAppTokenInput} })
-    installMarketplaceApp?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
+    /** @deprecated Use installApplication instead */
+    installMarketplaceApp?: { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} }
+    installApplication?: (ApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], version?: (Scalars['String'] | null)} })
     syncMarketplaceCatalog?: boolean | number
     createDevelopmentApplication?: (DevelopmentApplicationGenqlSelection & { __args: {universalIdentifier: Scalars['String'], name: Scalars['String']} })
     generateApplicationToken?: (ApplicationTokenPairGenqlSelection & { __args: {applicationId: Scalars['UUID']} })
@@ -6152,6 +6154,16 @@ export interface RowLevelPermissionPredicateInput {id?: (Scalars['UUID'] | null)
 
 export interface RowLevelPermissionPredicateGroupInput {id?: (Scalars['UUID'] | null),objectMetadataId: Scalars['UUID'],parentRowLevelPermissionPredicateGroupId?: (Scalars['UUID'] | null),logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator,positionInRowLevelPermissionPredicateGroup?: (Scalars['Float'] | null)}
 
+export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
+
+export interface UpdateWebhookInput {
+/** The id of the webhook to update */
+id: Scalars['UUID'],
+/** The webhook fields to update */
+update: UpdateWebhookInputUpdates}
+
+export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
+
 export interface CreateOneFieldMetadataInput {
 /** The record to create */
 field: CreateFieldInput}
@@ -6203,16 +6215,6 @@ export interface CreateEmailGroupChannelInput {handle: Scalars['String']}
 export interface UpdateCalendarChannelInput {id: Scalars['UUID'],update: UpdateCalendarChannelInputUpdates}
 
 export interface UpdateCalendarChannelInputUpdates {visibility?: (CalendarChannelVisibility | null),isContactAutoCreationEnabled?: (Scalars['Boolean'] | null),contactAutoCreationPolicy?: (CalendarChannelContactAutoCreationPolicy | null),isSyncEnabled?: (Scalars['Boolean'] | null)}
-
-export interface CreateWebhookInput {id?: (Scalars['UUID'] | null),targetUrl: Scalars['String'],operations: Scalars['String'][],description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
-
-export interface UpdateWebhookInput {
-/** The id of the webhook to update */
-id: Scalars['UUID'],
-/** The webhook fields to update */
-update: UpdateWebhookInputUpdates}
-
-export interface UpdateWebhookInputUpdates {targetUrl?: (Scalars['String'] | null),operations?: (Scalars['String'][] | null),description?: (Scalars['String'] | null),secret?: (Scalars['String'] | null)}
 
 export interface FileAttachmentInput {id: Scalars['UUID'],filename: Scalars['String']}
 
@@ -7183,6 +7185,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const ApplicationRegistrationVariableDTO_possibleTypes: string[] = ['ApplicationRegistrationVariableDTO']
+    export const isApplicationRegistrationVariableDTO = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariableDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariableDTO"')
+      return ApplicationRegistrationVariableDTO_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const BillingTrialPeriod_possibleTypes: string[] = ['BillingTrialPeriod']
     export const isBillingTrialPeriod = (obj?: { __typename?: any } | null): obj is BillingTrialPeriod => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isBillingTrialPeriod"')
@@ -7363,14 +7373,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isRotateClientSecret = (obj?: { __typename?: any } | null): obj is RotateClientSecret => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isRotateClientSecret"')
       return RotateClientSecret_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const ApplicationRegistrationVariableDTO_possibleTypes: string[] = ['ApplicationRegistrationVariableDTO']
-    export const isApplicationRegistrationVariableDTO = (obj?: { __typename?: any } | null): obj is ApplicationRegistrationVariableDTO => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isApplicationRegistrationVariableDTO"')
-      return ApplicationRegistrationVariableDTO_possibleTypes.includes(obj.__typename)
     }
     
 
@@ -7935,6 +7937,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     
 
 
+    const Webhook_possibleTypes: string[] = ['Webhook']
+    export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
+      return Webhook_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
     const ToolIndexEntry_possibleTypes: string[] = ['ToolIndexEntry']
     export const isToolIndexEntry = (obj?: { __typename?: any } | null): obj is ToolIndexEntry => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isToolIndexEntry"')
@@ -8195,14 +8205,6 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isMinimalMetadata = (obj?: { __typename?: any } | null): obj is MinimalMetadata => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isMinimalMetadata"')
       return MinimalMetadata_possibleTypes.includes(obj.__typename)
-    }
-    
-
-
-    const Webhook_possibleTypes: string[] = ['Webhook']
-    export const isWebhook = (obj?: { __typename?: any } | null): obj is Webhook => {
-      if (!obj?.__typename) throw new Error('__typename is missing in "isWebhook"')
-      return Webhook_possibleTypes.includes(obj.__typename)
     }
     
 

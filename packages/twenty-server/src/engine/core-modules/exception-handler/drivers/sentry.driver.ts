@@ -12,9 +12,7 @@ import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/ex
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
 
-export class ExceptionHandlerSentryDriver
-  implements ExceptionHandlerDriverInterface
-{
+export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     exceptions: ReadonlyArray<any>,

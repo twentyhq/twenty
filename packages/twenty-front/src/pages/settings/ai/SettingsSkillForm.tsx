@@ -481,6 +481,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
                   textAreaId="skill-description-textarea"
                   placeholder={t`Write a description`}
                   minRows={3}
+                  maxRows={5}
                   value={formValues.description}
                   onChange={(value) =>
                     handleFieldChange('description', value ?? '')

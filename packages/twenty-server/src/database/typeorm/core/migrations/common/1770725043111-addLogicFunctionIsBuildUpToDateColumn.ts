@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddLogicFunctionIsBuildUpToDateColumn1770725043111
-  implements MigrationInterface
-{
+export class AddLogicFunctionIsBuildUpToDateColumn1770725043111 implements MigrationInterface {
   name = 'AddLogicFunctionIsBuildUpToDateColumn1770725043111';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

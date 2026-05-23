@@ -2130,6 +2130,11 @@ msgstr "Aplicabilitate"
 msgid "Application"
 msgstr "Aplicație"
 
+#. js-lingui-id: N+cUnB
+#: src/modules/front-components/hooks/useFrontComponentExecutionContext.ts
+msgid "Application copied \"{preview}\" to your clipboard"
+msgstr ""
+
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Application details"
@@ -9461,7 +9466,7 @@ msgstr "Înregistrați o tranzacție nouă (companie, sumă, etapă, închidere 
 #. js-lingui-id: FgAxTj
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
-#: src/modules/auth/sign-in-up/components/SignInUpGlobalScopeForm.tsx
+#: src/modules/auth/sign-in-up/components/WorkspaceSelectionFooter.tsx
 msgid "Log out"
 msgstr "Deconectare"
 

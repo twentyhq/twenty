@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class NullableApplicationServerlessFunctionLayer1762333916255
-  implements MigrationInterface
-{
+export class NullableApplicationServerlessFunctionLayer1762333916255 implements MigrationInterface {
   name = 'NullableApplicationServerlessFunctionLayer1762333916255';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

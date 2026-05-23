@@ -27,7 +27,7 @@ export class UpsertViewWidgetViewFilterInput {
 
   @IsOptional()
   @IsEnum(ViewFilterOperand)
-  @Field({ nullable: true, defaultValue: ViewFilterOperand.CONTAINS })
+  @Field({ nullable: true })
   operand?: ViewFilterOperand;
 
   @IsDefined()
