@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
 import { FeatureFlagKey } from 'twenty-shared/types';
@@ -17,6 +17,8 @@ import {
 
 @Injectable()
 export class CodeStepBuildService {
+  private readonly logger = new Logger(CodeStepBuildService.name);
+
   constructor(
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly logicFunctionFromSourceService: LogicFunctionFromSourceService,
@@ -111,6 +113,11 @@ export class CodeStepBuildService {
         : undefined;
 
       if (!isDefined(applicationUniversalIdentifier)) {
+        this.logger.warn(
+          `Skipping build for logic function '${logicFunctionId}' (workspace=${workspaceId}): ` +
+            `applicationId=${flatLogicFunction.applicationId ?? 'null'} did not resolve to an application. ` +
+            `The function will not be rebuilt and may stay out of date.`,
+        );
         continue;
       }
 
@@ -189,6 +196,11 @@ export class CodeStepBuildService {
         : undefined;
 
       if (!isDefined(applicationUniversalIdentifier)) {
+        this.logger.warn(
+          `Skipping PREBUILT switch for logic function '${logicFunctionId}' (workspace=${workspaceId}): ` +
+            `applicationId=${flatLogicFunction.applicationId ?? 'null'} did not resolve to an application. ` +
+            `The function will continue running in LIVE mode.`,
+        );
         continue;
       }
 

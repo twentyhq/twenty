@@ -98,6 +98,15 @@ const LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG = 'twenty:bundle-checksum';
 
 const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
 
+// Serializes `installPrebuiltBundle` against concurrent reads/writes for the
+// same function. Reads (`getInstalledBundleChecksum`) take the same lock with
+// a short, no-op critical section so they wait out any in-progress install
+// instead of observing the transient window between `UpdateFunctionCode` and
+// `TagResource` (when the function exists with the new bundle but stale tag).
+const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
+const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
+const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
+
 type LambdaDriverExecutorPayload = {
   code?: string;
   params: object;
@@ -1302,6 +1311,10 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
+  private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
+    return `lambda-install:${flatLogicFunction.id}`;
+  }
+
   async installPrebuiltBundle({
     flatLogicFunction,
     flatApplication,
@@ -1313,6 +1326,10 @@ export class LambdaDriver implements LogicFunctionDriver {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
       );
     }
+
+    // The async closure passed to `withLock` widens narrowed types from the
+    // outer scope, so capture the narrowed checksum locally.
+    const checksum = flatLogicFunction.checksum;
 
     await this.buildLambdaExecutor({
       flatLogicFunction,
@@ -1326,66 +1343,88 @@ export class LambdaDriver implements LogicFunctionDriver {
       builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
 
-    const temporaryDirManager = new TemporaryDirManager();
-    const { sourceTemporaryDir, lambdaZipPath } =
-      await temporaryDirManager.init();
+    await this.cacheLockService.withLock(
+      async () => {
+        const temporaryDirManager = new TemporaryDirManager();
+        const { sourceTemporaryDir, lambdaZipPath } =
+          await temporaryDirManager.init();
 
-    try {
-      await copyExecutor(sourceTemporaryDir);
-      await fs.writeFile(
-        join(sourceTemporaryDir, PREBUILT_BUNDLE_FILE_NAME),
-        compiledCode,
-        'utf8',
-      );
-      await createZipFile(sourceTemporaryDir, lambdaZipPath);
+        try {
+          await copyExecutor(sourceTemporaryDir);
+          await fs.writeFile(
+            join(sourceTemporaryDir, PREBUILT_BUNDLE_FILE_NAME),
+            compiledCode,
+            'utf8',
+          );
+          await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-      const lambdaClient = await this.getLambdaClient();
+          const lambdaClient = await this.getLambdaClient();
 
-      const updateResult = await lambdaClient.send(
-        new UpdateFunctionCodeCommand({
-          FunctionName: flatLogicFunction.id,
-          ZipFile: await fs.readFile(lambdaZipPath),
-        }),
-      );
+          const updateResult = await lambdaClient.send(
+            new UpdateFunctionCodeCommand({
+              FunctionName: flatLogicFunction.id,
+              ZipFile: await fs.readFile(lambdaZipPath),
+            }),
+          );
 
-      await this.waitFunctionUpdated(flatLogicFunction.id);
+          await this.waitFunctionUpdated(flatLogicFunction.id);
 
-      const functionArn = updateResult.FunctionArn;
+          const functionArn = updateResult.FunctionArn;
 
-      if (!isNonEmptyString(functionArn)) {
-        throw new Error(
-          `UpdateFunctionCode did not return a FunctionArn for '${flatLogicFunction.id}'`,
-        );
-      }
+          if (!isNonEmptyString(functionArn)) {
+            throw new Error(
+              `UpdateFunctionCode did not return a FunctionArn for '${flatLogicFunction.id}'`,
+            );
+          }
 
-      await lambdaClient.send(
-        new TagResourceCommand({
-          Resource: functionArn,
-          Tags: {
-            [LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG]: flatLogicFunction.checksum,
-          },
-        }),
-      );
-    } catch (error) {
-      this.logger.error(
-        `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw error;
-    } finally {
-      await temporaryDirManager.clean();
-    }
+          await lambdaClient.send(
+            new TagResourceCommand({
+              Resource: functionArn,
+              Tags: {
+                [LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG]: checksum,
+              },
+            }),
+          );
+        } catch (error) {
+          this.logger.error(
+            `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+            error instanceof Error ? error.stack : undefined,
+          );
+          throw error;
+        } finally {
+          await temporaryDirManager.clean();
+        }
+      },
+      this.getPrebuiltInstallLockKey(flatLogicFunction),
+      {
+        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
+        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
+        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
+      },
+    );
   }
 
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
-    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+    return this.cacheLockService.withLock(
+      async () => {
+        const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
-    if (!isDefined(lambdaExecutor)) {
-      return null;
-    }
+        if (!isDefined(lambdaExecutor)) {
+          return null;
+        }
 
-    return lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null;
+        return (
+          lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null
+        );
+      },
+      this.getPrebuiltInstallLockKey(flatLogicFunction),
+      {
+        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
+        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
+        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
+      },
+    );
   }
 }

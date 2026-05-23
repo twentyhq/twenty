@@ -41,6 +41,15 @@ const LAYER_BUILD_READY_SENTINEL = '.twenty-layer-ready';
 const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
 const PREBUILT_CHECKSUM_FILE_NAME = 'prebuilt-bundle.checksum';
 
+// Serializes `installPrebuiltBundle` against concurrent reads/writes for the
+// same function. Reads (`getInstalledBundleChecksum`) take the same lock with
+// a short, no-op critical section so they wait out any in-progress install
+// instead of observing the transient window between writing the bundle file
+// and writing the checksum sidecar.
+const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
+const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
+const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
+
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
@@ -315,20 +324,27 @@ export class LocalDriver implements LogicFunctionDriver {
       const isPrebuilt =
         effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT;
 
+      await this.assembleNodeModules({
+        sourceTemporaryDir,
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+
+      // The bundle must live inside `sourceTemporaryDir` so that ESM bare
+      // imports inside the prebuilt code resolve against the `node_modules`
+      // tree assembled above. In PREBUILT mode the persisted bundle lives in
+      // a stable cache dir outside `sourceTemporaryDir`, so we copy it in.
       const inMemoryBuiltHandlerPath = isPrebuilt
-        ? this.getInstalledBundlePath(flatLogicFunction)
+        ? await this.copyPrebuiltBundleIntoExecutionDir({
+            flatLogicFunction,
+            sourceTemporaryDir,
+          })
         : await this.logicFunctionResourceService.copyBuiltCodeInMemory({
             workspaceId: flatLogicFunction.workspaceId,
             applicationUniversalIdentifier,
             builtHandlerPath: flatLogicFunction.builtHandlerPath,
             inMemoryDestinationPath: sourceTemporaryDir,
           });
-
-      await this.assembleNodeModules({
-        sourceTemporaryDir,
-        flatApplication,
-        applicationUniversalIdentifier,
-      });
 
       let logs = '';
 
@@ -593,6 +609,21 @@ export class LocalDriver implements LogicFunctionDriver {
     );
   }
 
+  private async copyPrebuiltBundleIntoExecutionDir({
+    flatLogicFunction,
+    sourceTemporaryDir,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    sourceTemporaryDir: string;
+  }): Promise<string> {
+    const installedBundlePath = this.getInstalledBundlePath(flatLogicFunction);
+    const localBundlePath = join(sourceTemporaryDir, PREBUILT_BUNDLE_FILE_NAME);
+
+    await fs.copyFile(installedBundlePath, localBundlePath);
+
+    return localBundlePath;
+  }
+
   private getInstalledChecksumPath(
     flatLogicFunction: FlatLogicFunction,
   ): string {
@@ -600,6 +631,10 @@ export class LocalDriver implements LogicFunctionDriver {
       this.getPrebuiltBundleDir(flatLogicFunction),
       PREBUILT_CHECKSUM_FILE_NAME,
     );
+  }
+
+  private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
+    return `local-install:${flatLogicFunction.id}`;
   }
 
   async installPrebuiltBundle({
@@ -613,47 +648,71 @@ export class LocalDriver implements LogicFunctionDriver {
       );
     }
 
-    const prebuiltDir = this.getPrebuiltBundleDir(flatLogicFunction);
+    // The async closure passed to `withLock` widens narrowed types from the
+    // outer scope, so capture the narrowed checksum locally.
+    const checksum = flatLogicFunction.checksum;
 
-    await fs.mkdir(prebuiltDir, { recursive: true });
+    await this.cacheLockService.withLock(
+      async () => {
+        const prebuiltDir = this.getPrebuiltBundleDir(flatLogicFunction);
 
-    await this.logicFunctionResourceService.copyBuiltCodeInMemory({
-      workspaceId: flatLogicFunction.workspaceId,
-      applicationUniversalIdentifier,
-      builtHandlerPath: flatLogicFunction.builtHandlerPath,
-      inMemoryDestinationPath: prebuiltDir,
-    });
+        await fs.mkdir(prebuiltDir, { recursive: true });
 
-    const downloadedPath = join(
-      prebuiltDir,
-      flatLogicFunction.builtHandlerPath,
-    );
-    const targetPath = this.getInstalledBundlePath(flatLogicFunction);
+        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          inMemoryDestinationPath: prebuiltDir,
+        });
 
-    if (downloadedPath !== targetPath) {
-      await fs.mkdir(dirname(targetPath), { recursive: true });
-      await fs.rename(downloadedPath, targetPath);
-    }
+        const downloadedPath = join(
+          prebuiltDir,
+          flatLogicFunction.builtHandlerPath,
+        );
+        const targetPath = this.getInstalledBundlePath(flatLogicFunction);
 
-    await fs.writeFile(
-      this.getInstalledChecksumPath(flatLogicFunction),
-      flatLogicFunction.checksum,
-      'utf8',
+        if (downloadedPath !== targetPath) {
+          await fs.mkdir(dirname(targetPath), { recursive: true });
+          await fs.rename(downloadedPath, targetPath);
+        }
+
+        await fs.writeFile(
+          this.getInstalledChecksumPath(flatLogicFunction),
+          checksum,
+          'utf8',
+        );
+      },
+      this.getPrebuiltInstallLockKey(flatLogicFunction),
+      {
+        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
+        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
+        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
+      },
     );
   }
 
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
-    try {
-      const checksum = await fs.readFile(
-        this.getInstalledChecksumPath(flatLogicFunction),
-        'utf8',
-      );
+    return this.cacheLockService.withLock(
+      async () => {
+        try {
+          const checksum = await fs.readFile(
+            this.getInstalledChecksumPath(flatLogicFunction),
+            'utf8',
+          );
 
-      return checksum.trim() || null;
-    } catch {
-      return null;
-    }
+          return checksum.trim() || null;
+        } catch {
+          return null;
+        }
+      },
+      this.getPrebuiltInstallLockKey(flatLogicFunction),
+      {
+        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
+        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
+        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
+      },
+    );
   }
 }

@@ -80,13 +80,21 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
+    // Treat only `undefined` as "field not present in the update" — an
+    // explicit `null` from the caller is a real value (e.g. clearing the
+    // checksum) and must be validated, not silently overridden.
     const postUpdateExecutionMode =
-      flatEntityUpdate.executionMode ?? existingFlatLogicFunction.executionMode;
+      flatEntityUpdate.executionMode !== undefined
+        ? flatEntityUpdate.executionMode
+        : existingFlatLogicFunction.executionMode;
     const postUpdateChecksum =
-      flatEntityUpdate.checksum ?? existingFlatLogicFunction.checksum;
+      flatEntityUpdate.checksum !== undefined
+        ? flatEntityUpdate.checksum
+        : existingFlatLogicFunction.checksum;
     const postUpdateIsBuildUpToDate =
-      flatEntityUpdate.isBuildUpToDate ??
-      existingFlatLogicFunction.isBuildUpToDate;
+      flatEntityUpdate.isBuildUpToDate !== undefined
+        ? flatEntityUpdate.isBuildUpToDate
+        : existingFlatLogicFunction.isBuildUpToDate;
 
     if (
       postUpdateExecutionMode === LogicFunctionExecutionMode.PREBUILT &&
