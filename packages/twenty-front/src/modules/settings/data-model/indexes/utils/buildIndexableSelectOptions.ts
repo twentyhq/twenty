@@ -54,13 +54,11 @@ export const buildIndexableSelectOptions = ({
       // Composite parent — emit one option per sub-property. The parent
       // itself is NOT selectable because the SQL index requires picking a
       // specific column.
-      return compositeType.properties.map<SelectOption<string>>(
-        (property) => ({
-          Icon: getIcon(field.icon),
-          label: `${field.label} > ${getCompositeSubFieldLabel(field.type as FieldMetadataType, property.name)}`,
-          value: encodeIndexableOptionValue(field.id, property.name),
-        }),
-      );
+      return compositeType.properties.map<SelectOption<string>>((property) => ({
+        Icon: getIcon(field.icon),
+        label: `${field.label} > ${getCompositeSubFieldLabel(field.type as FieldMetadataType, property.name)}`,
+        value: encodeIndexableOptionValue(field.id, property.name),
+      }));
     }
 
     return [

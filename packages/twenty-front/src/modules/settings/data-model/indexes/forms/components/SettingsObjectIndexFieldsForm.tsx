@@ -59,8 +59,10 @@ export const SettingsObjectIndexFieldsForm = ({
       render={({ field: { value, onChange } }) => {
         // Render one row per picked column plus one trailing empty row that
         // acts as the implicit "add another" affordance (webhook-form pattern).
-        const rows: (SettingsObjectNewIndexFormValues['fields'][number] | null)[] =
-          [...value, null];
+        const rows: (
+          | SettingsObjectNewIndexFormValues['fields'][number]
+          | null
+        )[] = [...value, null];
 
         const pickedValues = value.map((entry) =>
           encodeIndexableOptionValue(entry.fieldMetadataId, entry.subFieldName),
@@ -113,9 +115,7 @@ export const SettingsObjectIndexFieldsForm = ({
                       value={currentValue}
                       options={availableOptions}
                       emptyOption={emptyFieldOption}
-                      onChange={(newValue) =>
-                        handleSelect(rowIndex, newValue)
-                      }
+                      onChange={(newValue) => handleSelect(rowIndex, newValue)}
                       fullWidth
                       withSearchInput
                     />
