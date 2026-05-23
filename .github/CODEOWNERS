@@ -21,12 +21,9 @@
 /packages/twenty-apps/
 
 # ============================================================
-# Build & tooling configs (can execute arbitrary code)
+# Build & tooling configs
 # ============================================================
 /nx.json               @Weiko @charlesBochet @prastoin
-/tsconfig.base.json    @Weiko @charlesBochet @prastoin
-**/vite.config.*       @Weiko @charlesBochet @prastoin
-**/jest.config.*       @Weiko @charlesBochet @prastoin
 
 # ============================================================
 # Docker (container-level compromise)
