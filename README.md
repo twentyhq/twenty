@@ -4,7 +4,7 @@
   </a>
 </p>
 
-I hate this CRM
+I really hate this CRM
 
 <h2 align="center" >The #1 Open-Source CRM</h2>
 
