@@ -1,11 +1,38 @@
+# ============================================================
+# CI/CD & GitHub infrastructure
+# ============================================================
 /.github/              @Weiko @charlesBochet @prastoin
 /.github/CODEOWNERS    @Weiko @charlesBochet @prastoin
 /.github/workflows/    @Weiko @charlesBochet @prastoin
 /.github/actions/      @Weiko @charlesBochet @prastoin
 /.github/dependabot.yml @Weiko @charlesBochet @prastoin
-/.yarnrc.yml           @Weiko @charlesBochet @prastoin
 
+# ============================================================
+# Package management & dependency lockfiles
+# ============================================================
+/.yarnrc.yml           @Weiko @charlesBochet @prastoin
+/.npmrc                @Weiko @charlesBochet @prastoin
 **/package.json        @Weiko @charlesBochet @prastoin
 **/yarn.lock           @Weiko @charlesBochet @prastoin
 **/pnpm-lock.yaml      @Weiko @charlesBochet @prastoin
 **/package-lock.json   @Weiko @charlesBochet @prastoin
+
+# ============================================================
+# Build & tooling configs (can execute arbitrary code)
+# ============================================================
+/nx.json               @Weiko @charlesBochet @prastoin
+/tsconfig.base.json    @Weiko @charlesBochet @prastoin
+**/vite.config.*       @Weiko @charlesBochet @prastoin
+**/jest.config.*       @Weiko @charlesBochet @prastoin
+
+# ============================================================
+# Docker (container-level compromise)
+# ============================================================
+**/Dockerfile*         @Weiko @charlesBochet @prastoin
+**/docker-compose*.yml @Weiko @charlesBochet @prastoin
+**/docker-compose*.yaml @Weiko @charlesBochet @prastoin
+
+# ============================================================
+# Git hooks (execute on checkout/commit/push)
+# ============================================================
+/.husky/**             @Weiko @charlesBochet @prastoin
