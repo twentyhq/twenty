@@ -424,6 +424,15 @@ describe('FileStorageService', () => {
           expect(mockDriver.delete).not.toHaveBeenCalled();
         },
       );
+
+      it('should call driver.delete with dirname and basename', async () => {
+        await service.deleteFile(validResourceIdentifier);
+
+        expect(mockDriver.delete).toHaveBeenCalledWith({
+          folderPath: 'workspace-123/app-456/built-front-component/src/components',
+          filename: 'my-component.mjs',
+        });
+      });
     });
 
     describe('deleteFolder', () => {
@@ -479,7 +488,7 @@ describe('FileStorageService', () => {
             context: {
               folderPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
               expectedStoragePath:
-                'workspace-123/app-456/built-front-component/8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+                'workspace-123/app-456/built-front-component/8b2df3cc-23ad-4e1b-87fd-f880d4cefd58/',
             },
           },
           {
@@ -487,7 +496,7 @@ describe('FileStorageService', () => {
             context: {
               folderPath: 'v1.0.0',
               expectedStoragePath:
-                'workspace-123/app-456/built-front-component/v1.0.0',
+                'workspace-123/app-456/built-front-component/v1.0.0/',
             },
           },
           {
@@ -495,7 +504,7 @@ describe('FileStorageService', () => {
             context: {
               folderPath: 'my-folder',
               expectedStoragePath:
-                'workspace-123/app-456/built-front-component/my-folder',
+                'workspace-123/app-456/built-front-component/my-folder/',
             },
           },
           {
@@ -503,7 +512,7 @@ describe('FileStorageService', () => {
             context: {
               folderPath: '0000-0999/tmp200/toto',
               expectedStoragePath:
-                'workspace-123/app-456/built-front-component/0000-0999/tmp200/toto',
+                'workspace-123/app-456/built-front-component/0000-0999/tmp200/toto/',
             },
           },
         ];
