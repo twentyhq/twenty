@@ -18,6 +18,7 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
+import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 
 export type ResourceIdentifier = {
   workspaceId: string;
@@ -327,14 +328,12 @@ export class FileStorageService {
       where: { id: file.applicationId, workspaceId: file.workspaceId },
     });
 
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-
-    await driver.delete({
-      folderPath: `${file.workspaceId}/${application.universalIdentifier}`,
-      filename: file.path,
+    await this.deleteFile({
+      workspaceId,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      fileFolder,
+      resourcePath: removeFileFolderFromFileEntityPath(file.path),
     });
-
-    await this.fileRepository.delete(fileId);
   }
 
   async checkIfWorkspaceFolderExists(workspaceId: string): Promise<boolean> {

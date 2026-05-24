@@ -475,6 +475,14 @@ describe('FileStorageService', () => {
             title: 'file path with .json extension',
             context: { folderPath: 'config/settings.json' },
           },
+          {
+            title: 'dotted version string (extname detects .0)',
+            context: { folderPath: 'v1.0.0' },
+          },
+          {
+            title: 'numeric-only extension (.7z)',
+            context: { folderPath: 'archive.7z' },
+          },
         ];
 
       type AcceptedFolderPathContext = {
@@ -490,14 +498,6 @@ describe('FileStorageService', () => {
               folderPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
               expectedStoragePath:
                 'workspace-123/app-456/built-front-component/8b2df3cc-23ad-4e1b-87fd-f880d4cefd58/',
-            },
-          },
-          {
-            title: 'versioned folder path (v1.0.0)',
-            context: {
-              folderPath: 'v1.0.0',
-              expectedStoragePath:
-                'workspace-123/app-456/built-front-component/v1.0.0/',
             },
           },
           {
@@ -547,6 +547,40 @@ describe('FileStorageService', () => {
           });
         },
       );
+    });
+
+    describe('deleteByFileId', () => {
+      it('should delegate to deleteFile with the correct resource path', async () => {
+        mockFileRepository.findOneOrFail.mockResolvedValue({
+          id: 'file-id',
+          path: 'built-front-component/src/components/my-component.mjs',
+          applicationId: 'app-id',
+          workspaceId: 'workspace-123',
+        });
+
+        mockApplicationRepository.findOneOrFail.mockResolvedValue({
+          id: 'app-id',
+          universalIdentifier: 'app-456',
+        });
+
+        await service.deleteByFileId({
+          fileId: 'file-id',
+          workspaceId: 'workspace-123',
+          fileFolder: FileFolder.BuiltFrontComponent,
+        });
+
+        expect(mockDriver.delete).toHaveBeenCalledWith({
+          folderPath:
+            'workspace-123/app-456/built-front-component/src/components',
+          filename: 'my-component.mjs',
+        });
+
+        expect(mockFileRepository.delete).toHaveBeenCalledWith({
+          path: 'built-front-component/src/components/my-component.mjs',
+          applicationId: 'app-id',
+          workspaceId: 'workspace-123',
+        });
+      });
     });
 
     describe('copy', () => {

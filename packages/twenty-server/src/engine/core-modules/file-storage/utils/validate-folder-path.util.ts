@@ -29,7 +29,7 @@ export const validateFolderPath = ({
 
   const extension = extname(folderPath);
 
-  if (extension.length > 0 && /[a-zA-Z]/.test(extension)) {
+  if (extension.length > 0) {
     return {
       isValid: false,
       error: t`Folder path must not contain a file extension — use deleteFile for file paths`,
