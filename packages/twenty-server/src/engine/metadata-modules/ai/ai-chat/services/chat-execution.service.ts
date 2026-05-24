@@ -59,6 +59,7 @@ import {
   getCallLevelCacheProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
+import { AI_SDK_OPENAI } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -257,7 +258,12 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const rawModelMessages = await convertToModelMessages(processedMessages);
+    const messagesForModel =
+      registeredModel.sdkPackage === AI_SDK_OPENAI
+        ? this.removeToolPartsForStatelessOpenAi(processedMessages)
+        : processedMessages;
+
+    const rawModelMessages = await convertToModelMessages(messagesForModel);
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(
@@ -499,6 +505,17 @@ export class ChatExecutionService {
       modelConfig,
       hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private removeToolPartsForStatelessOpenAi(messages: UIMessage[]): UIMessage[] {
+    const messagesWithoutToolParts = messages
+      .map((message) => ({
+        ...message,
+        parts: message.parts.filter((part) => !part.type.startsWith('tool-')),
+      }))
+      .filter((message) => message.parts.length > 0);
+
+    return messagesWithoutToolParts;
   }
 
   private injectBrowsingContextIntoLastUserMessage(

@@ -79,6 +79,12 @@ export class StreamAgentChatJob {
     try {
       await this.executeStream(data, workspace, abortController.signal);
     } catch (error) {
+      if (this.isAbortError(error)) {
+        this.logger.warn(`Stream ${data.streamId} aborted`);
+
+        return;
+      }
+
       this.logger.error(
         `Stream ${data.streamId} failed: ${error instanceof Error ? error.message : String(error)}`,
       );
@@ -125,6 +131,10 @@ export class StreamAgentChatJob {
           });
       }
     }
+  }
+
+  private isAbortError(error: unknown): boolean {
+    return error instanceof Error && error.name === 'AbortError';
   }
 
   private async executeStream(
