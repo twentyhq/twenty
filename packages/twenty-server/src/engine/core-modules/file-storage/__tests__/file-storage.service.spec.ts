@@ -429,7 +429,8 @@ describe('FileStorageService', () => {
         await service.deleteFile(validResourceIdentifier);
 
         expect(mockDriver.delete).toHaveBeenCalledWith({
-          folderPath: 'workspace-123/app-456/built-front-component/src/components',
+          folderPath:
+            'workspace-123/app-456/built-front-component/src/components',
           filename: 'my-component.mjs',
         });
       });
