@@ -251,7 +251,7 @@ export class FileStorageService {
     const { onStorageFilePath, filePath } =
       this.validateAndBuildFileStoragePath(params);
 
-    const deleteResult = driver.delete({
+    await driver.delete({
       folderPath: dirname(onStorageFilePath),
       filename: basename(onStorageFilePath),
     });
@@ -268,8 +268,6 @@ export class FileStorageService {
       applicationId: application.id,
       workspaceId: params.workspaceId,
     });
-
-    return deleteResult;
   }
 
   async deleteFolder(
@@ -292,7 +290,7 @@ export class FileStorageService {
 
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const deleteResult = driver.delete({ folderPath: onStorageFolderPath });
+    await driver.delete({ folderPath: onStorageFolderPath });
 
     const application = await this.applicationRepository.findOneOrFail({
       where: {
@@ -306,8 +304,6 @@ export class FileStorageService {
       applicationId: application.id,
       workspaceId,
     });
-
-    return deleteResult;
   }
 
   async deleteByFileId({
