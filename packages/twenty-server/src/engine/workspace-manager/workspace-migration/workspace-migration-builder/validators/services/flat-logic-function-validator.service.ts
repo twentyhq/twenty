@@ -80,10 +80,6 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    // Refuse to move a function into PREBUILT mode unless a fresh build is
-    // available — otherwise we'd install (or worse, fail to install) a stale
-    // bundle. We check the post-update view so a single update that sets all
-    // three fields (executionMode, checksum, isBuildUpToDate) is accepted.
     const postUpdateExecutionMode =
       flatEntityUpdate.executionMode !== undefined
         ? flatEntityUpdate.executionMode
@@ -204,8 +200,6 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    // App-install can legitimately create a function directly in PREBUILT
-    // mode, but only when a fresh build + checksum are supplied alongside it.
     if (
       flatLogicFunctionToValidate.executionMode ===
         LogicFunctionExecutionMode.PREBUILT &&
