@@ -269,6 +269,14 @@ describe('FileStorageService', () => {
             'workspace-123/app-456/built-front-component/v1.0.0/file.name.mjs',
         },
       },
+      {
+        title: 'path with hidden directory (dot-prefixed segment)',
+        context: {
+          resourcePath: '.hidden/file.name.mjs',
+          expectedStoragePath:
+            'workspace-123/app-456/built-front-component/.hidden/file.name.mjs',
+        },
+      },
     ];
 
     describe('readFile', () => {
