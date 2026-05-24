@@ -28,7 +28,6 @@ export const validatePathSegmentsSafety = ({
   const segments = resourcePath.split('/');
 
   for (const segment of segments) {
-
     if (segment.length > MAX_SEGMENT_LENGTH) {
       return {
         isValid: false,

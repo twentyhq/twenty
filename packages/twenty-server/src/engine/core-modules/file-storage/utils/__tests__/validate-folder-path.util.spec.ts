@@ -73,20 +73,15 @@ describe('validateFolderPath', () => {
   it.each([
     { title: 'trailing slash', folderPath: 'my-folder/' },
     { title: 'double slashes', folderPath: 'my-folder//sub' },
-  ])(
-    'should fail on $title',
-    ({ folderPath }) => {
-      const result = validateFolderPath({ folderPath });
+  ])('should fail on $title', ({ folderPath }) => {
+    const result = validateFolderPath({ folderPath });
 
-      expect(result.isValid).toBe(false);
+    expect(result.isValid).toBe(false);
 
-      if (!result.isValid) {
-        expect(result.error).toContain(
-          'empty segments or trailing slashes',
-        );
-      }
-    },
-  );
+    if (!result.isValid) {
+      expect(result.error).toContain('empty segments or trailing slashes');
+    }
+  });
 
   it.each([
     { title: '.mjs extension', folderPath: 'src/logic-functions/handler.mjs' },
