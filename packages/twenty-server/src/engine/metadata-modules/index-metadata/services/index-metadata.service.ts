@@ -20,6 +20,7 @@ import {
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { generateCustomFlatIndexMetadata } from 'src/engine/metadata-modules/index-metadata/utils/generate-custom-flat-index.util';
+import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -178,6 +179,16 @@ export class IndexMetadataService {
     const objectFlatFieldMetadatas = resolvedInputs.map(
       ({ flatField }) => flatField,
     );
+
+    validateIndexTypeAgainstFieldsOrThrow({
+      indexType: createIndexInput.indexType,
+      fields: resolvedInputs.map(({ flatField, subFieldName }) => ({
+        type: flatField.type,
+        name: flatField.name,
+        label: flatField.label,
+        subFieldName,
+      })),
+    });
 
     const existingCustomIndexCount = Object.values(
       existingFlatIndexMaps.byUniversalIdentifier,

@@ -1,11 +1,15 @@
 import { isNonEmptyString } from '@sniptt/guards';
 import { type IndexManifest } from 'twenty-shared/application';
-import { compositeTypeDefinitions } from 'twenty-shared/types';
+import {
+  compositeTypeDefinitions,
+  type FieldMetadataType,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
 import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
+import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
 import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { type UniversalFlatIndexMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-index-metadata.type';
 import { type UniversalFlatObjectMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-object-metadata.type';
@@ -38,6 +42,14 @@ export const fromIndexManifestToUniversalFlatIndex = ({
       `Index "${indexManifest.universalIdentifier}" lists the same column twice`,
     );
   }
+
+  const resolvedIndexType = (indexManifest.indexType ?? 'BTREE') as IndexType;
+  const resolvedFieldsForValidation: Array<{
+    type: FieldMetadataType;
+    name: string;
+    label: string;
+    subFieldName: string | null;
+  }> = [];
 
   const universalFlatIndexFieldMetadatas = indexManifest.fields.map(
     (entry, order) => {
@@ -79,16 +91,30 @@ export const fromIndexManifestToUniversalFlatIndex = ({
         );
       }
 
+      const subFieldName = isComposite ? (entry.subFieldName ?? null) : null;
+
+      resolvedFieldsForValidation.push({
+        type: flatField.type,
+        name: flatField.name,
+        label: flatField.label,
+        subFieldName,
+      });
+
       return {
         createdAt: now,
         updatedAt: now,
         order,
-        subFieldName: isComposite ? (entry.subFieldName ?? null) : null,
+        subFieldName,
         fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
         indexMetadataUniversalIdentifier: indexManifest.universalIdentifier,
       };
     },
   );
+
+  validateIndexTypeAgainstFieldsOrThrow({
+    indexType: resolvedIndexType,
+    fields: resolvedFieldsForValidation,
+  });
 
   return generateFlatIndexMetadataWithNameOrThrow({
     flatObjectMetadata,
@@ -99,7 +125,7 @@ export const fromIndexManifestToUniversalFlatIndex = ({
       universalIdentifier: indexManifest.universalIdentifier,
       applicationUniversalIdentifier,
       objectMetadataUniversalIdentifier: flatObjectMetadata.universalIdentifier,
-      indexType: (indexManifest.indexType ?? 'BTREE') as IndexType,
+      indexType: resolvedIndexType,
       indexWhereClause: null,
       isCustom: false,
       isUnique: false,

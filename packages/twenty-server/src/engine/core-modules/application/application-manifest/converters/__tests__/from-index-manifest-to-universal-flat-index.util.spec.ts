@@ -197,6 +197,54 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
     ).toThrow(/same column twice/);
   });
 
+  it('throws when GIN is requested on a scalar (non-GIN-compatible) field', () => {
+    expect(() =>
+      fromIndexManifestToUniversalFlatIndex({
+        indexManifest: {
+          ...baseManifest,
+          indexType: 'GIN',
+          fields: [
+            {
+              universalIdentifier: 'field-entry-1',
+              fieldUniversalIdentifier: scalarField.universalIdentifier,
+            },
+          ],
+        },
+        flatObjectMetadata,
+        objectFlatFieldMetadatas: [scalarField],
+        applicationUniversalIdentifier,
+        now,
+      }),
+    ).toThrow(/GIN index does not support/);
+  });
+
+  it('accepts GIN on a TS_VECTOR field', () => {
+    const tsVectorField = {
+      universalIdentifier: 'field-uuid-tsvector',
+      name: 'searchVector',
+      type: FieldMetadataType.TS_VECTOR,
+    } as UniversalFlatFieldMetadata;
+
+    const result = fromIndexManifestToUniversalFlatIndex({
+      indexManifest: {
+        ...baseManifest,
+        indexType: 'GIN',
+        fields: [
+          {
+            universalIdentifier: 'field-entry-1',
+            fieldUniversalIdentifier: tsVectorField.universalIdentifier,
+          },
+        ],
+      },
+      flatObjectMetadata,
+      objectFlatFieldMetadatas: [tsVectorField],
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.indexType).toBe(IndexType.GIN);
+  });
+
   it('throws when fields is empty', () => {
     expect(() =>
       fromIndexManifestToUniversalFlatIndex({

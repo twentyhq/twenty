@@ -3,6 +3,7 @@ import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { CrudOperationType } from 'twenty-shared/types';
+import { v4 as uuidv4 } from 'uuid';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
@@ -46,16 +47,31 @@ export const useCreateOneIndexMetadataItem = () => {
         const { __typename, indexFieldMetadataList, ...indexData } =
           createdIndex;
 
-        // Apollo returns `indexFieldMetadataList`; the cache shape uses
-        // `indexFieldMetadatas` (see mapPaginatedObjectMetadataItemsToObjectMetadataItems).
+        // Hydrate indexFieldMetadatas from the input rather than the
+        // server's @ResolveField on indexFieldMetadataList: the field-
+        // resolver reads from the flat-entity cache which can lag a beat
+        // behind the just-run migration and return an empty list, leaving
+        // the row labelled blank until a full refresh.
+        const hydratedIndexFieldMetadatas: IndexFieldMetadataItem[] =
+          indexFieldMetadataList.length === input.fields.length
+            ? indexFieldMetadataList.map(
+                ({ __typename: _, ...rest }) => rest as IndexFieldMetadataItem,
+              )
+            : input.fields.map((field, order) => ({
+                id: uuidv4(),
+                fieldMetadataId: field.fieldMetadataId,
+                subFieldName: field.subFieldName ?? undefined,
+                order,
+                createdAt: createdIndex.createdAt,
+                updatedAt: createdIndex.updatedAt,
+              }));
+
         addToDraft({
           key: 'indexMetadataItems',
           items: [
             {
               ...indexData,
-              indexFieldMetadatas: indexFieldMetadataList.map(
-                ({ __typename: _, ...rest }) => rest as IndexFieldMetadataItem,
-              ),
+              indexFieldMetadatas: hydratedIndexFieldMetadatas,
               objectMetadataId: input.objectMetadataId,
             } as FlatIndexMetadataItem,
           ],
