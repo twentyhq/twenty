@@ -16,10 +16,9 @@ Her anahtar bir `publicKey` (önceden verilmiş belirteçleri doğrulayabilmesi 
 
 ### Geçerli anahtarı döndür
 
-* **El ile** — geçerli satırda **Settings → Admin Panel → Signing keys → Revoke**. İptal etmek, şifrelenmiş özel materyalini siler ve onu geçerli olmaktan çıkarır; bir sonraki imzalama çağrısı, yeni geçerli olarak otomatik olarak yeni bir ES256 anahtar çifti oluşturur. Herhangi başka bir (iptal edilmemiş) `kid` ile imzalanan belirteçler, süreleri dolana kadar doğrulanmaya devam eder.
-* **Kurumsal (otomatik)** — günlük bir cron (`'15 3 * * *'` UTC), mevcut anahtar `SIGNING_KEY_ROTATION_DAYS` (varsayılan `90`) kadar süredir geçerli olduğunda yeni bir geçerli anahtar verir. Önceki anahtar *iptal edilmez*, bu nedenle onunla imzalanan belirteçler doğrulanmaya devam eder. `yarn command:prod cron:register:all` ile bir kez kaydedin.
+Etkinleştirmek için `SIGNING_KEY_ROTATION_DAYS` değerini ayarlayın: günlük bir cron görevi, mevcut anahtar bu eşikten daha eski olduğunda yeni bir güncel anahtar oluşturur. Önceki anahtarlar *iptal edilmez*, bu nedenle onlarla imzalanmış belirteçler doğrulanmaya devam eder. Otomatik döndürmeyi devre dışı bırakmak için değişkeni ayarlamadan bırakın.
 
-  <Note>Kurumsal cron ve `SIGNING_KEY_ROTATION_DAYS` v2.6+ ile birlikte gelir.</Note>
+<Note>Otomatik döndürme v2.6+ ile birlikte gelir.</Note>
 
 ### Bir anahtarı iptal et (yalnızca sızıntı / acil durum için)
 

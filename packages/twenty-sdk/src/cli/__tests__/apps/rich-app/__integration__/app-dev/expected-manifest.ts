@@ -1,6 +1,6 @@
 import { FieldType } from '@/sdk/define';
 import type { Manifest } from 'twenty-shared/application';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import {
   FieldMetadataType,
   NavigationMenuItemType,
@@ -1385,7 +1385,7 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'c0c1c2c3-c4c5-4000-8000-000000000001',
       fieldPermissions: [],
       objectPermissions: [],
-      permissionFlags: [],
+      permissionFlagUniversalIdentifiers: [],
     },
     {
       canBeAssignedToAgents: false,
@@ -1417,12 +1417,7 @@ export const EXPECTED_MANIFEST: Manifest = {
           objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
         },
       ],
-      permissionFlags: [
-        {
-          universalIdentifier: '01d7865a-7700-5d49-b2aa-62623c2cbac7',
-          flag: PermissionFlagType.APPLICATIONS,
-        },
-      ],
+      permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
       universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
     },
   ],

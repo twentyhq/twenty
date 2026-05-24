@@ -86,7 +86,7 @@ export type {
 
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
-export { PermissionFlag } from '@/sdk/define/roles/permission-flag-type';
+export { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export { defineSkill } from '@/sdk/define/skills/define-skill';
 

@@ -12,6 +12,8 @@ export {
   featureFlags,
   targetObjectReadPermissions,
   targetObjectWritePermissions,
+  canImpersonate,
+  canAccessFullAdminPanel,
   isDefined,
   isNonEmptyString,
   includes,
@@ -29,6 +31,7 @@ export {
   objectMetadataItem,
 } from './conditional-availability/conditional-availability-variables';
 export { closeSidePanel } from './functions/closeSidePanel';
+export { copyToClipboard } from './functions/copyToClipboard';
 export { getApplicationVariable } from './functions/getApplicationVariable';
 export { enqueueSnackbar } from './functions/enqueueSnackbar';
 export { navigate } from './functions/navigate';
@@ -47,6 +50,7 @@ export type {
   CloseSidePanelFunction,
   CommandConfirmationModalAccent,
   CommandConfirmationModalResult,
+  CopyToClipboardFunction,
   EnqueueSnackbarFunction,
   NavigateFunction,
   OpenCommandConfirmationModalFunction,
