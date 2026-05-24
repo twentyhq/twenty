@@ -3,7 +3,10 @@ import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/v
 describe('validateFolderPath', () => {
   it.each([
     { title: 'simple folder name', folderPath: 'my-folder' },
-    { title: 'UUID folder', folderPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58' },
+    {
+      title: 'UUID folder',
+      folderPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+    },
     { title: 'versioned folder (v1.0.0)', folderPath: 'v1.0.0' },
     { title: 'nested folder path', folderPath: '0000-0999/tmp200/toto' },
     {
@@ -74,18 +77,15 @@ describe('validateFolderPath', () => {
     { title: '.woff2 extension', folderPath: 'fonts/roboto.woff2' },
     { title: '.pdf extension', folderPath: 'docs/report.pdf' },
     { title: '.csv extension', folderPath: 'data/export.csv' },
-  ])(
-    'should fail on path with file extension ($title)',
-    ({ folderPath }) => {
-      const result = validateFolderPath({ folderPath });
+  ])('should fail on path with file extension ($title)', ({ folderPath }) => {
+    const result = validateFolderPath({ folderPath });
 
-      expect(result.isValid).toBe(false);
+    expect(result.isValid).toBe(false);
 
-      if (!result.isValid) {
-        expect(result.error).toContain('file extension');
-      }
-    },
-  );
+    if (!result.isValid) {
+      expect(result.error).toContain('file extension');
+    }
+  });
 
   it('should short-circuit on the first failure', () => {
     const result = validateFolderPath({
