@@ -110,7 +110,10 @@ export class FileStorageService {
         relativePath: params.folderPath,
       });
 
-    return { onStorageFolderPath: onStoragePath, folderPath: resourcePath };
+    return {
+      onStorageFolderPath: `${onStoragePath}/`,
+      folderPath: `${resourcePath}/`,
+    };
   }
 
   async writeFile({
@@ -248,7 +251,10 @@ export class FileStorageService {
     const { onStorageFilePath, filePath } =
       this.validateAndBuildFileStoragePath(params);
 
-    const deleteResult = driver.delete({ folderPath: onStorageFilePath });
+    const deleteResult = driver.delete({
+      folderPath: dirname(onStorageFilePath),
+      filename: basename(onStorageFilePath),
+    });
 
     const application = await this.applicationRepository.findOneOrFail({
       where: {
@@ -296,7 +302,7 @@ export class FileStorageService {
     });
 
     await this.fileRepository.delete({
-      path: Like(`${validatedFolderPath}/%`),
+      path: Like(`${validatedFolderPath}%`),
       applicationId: application.id,
       workspaceId,
     });
