@@ -2125,6 +2125,11 @@ msgstr "Applicability"
 msgid "Application"
 msgstr "Application"
 
+#. js-lingui-id: N+cUnB
+#: src/modules/front-components/hooks/useFrontComponentExecutionContext.ts
+msgid "Application copied \"{preview}\" to your clipboard"
+msgstr "Application copied \"{preview}\" to your clipboard"
+
 #. js-lingui-id: vdieHo
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 msgid "Application details"

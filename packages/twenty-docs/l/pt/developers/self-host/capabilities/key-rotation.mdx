@@ -16,10 +16,9 @@ Cada chave carrega uma `publicKey` (mantida indefinidamente para que possa verif
 
 ### Rotacionar a chave atual
 
-* **Manual** — **Settings → Admin Panel → Signing keys → Revoke** na linha atual. A revogação apaga o material privado criptografado e o rebaixa; a próxima chamada de assinatura gera automaticamente um novo par de chaves ES256 como o novo atual. Tokens assinados sob qualquer outro `kid` (não revogado) continuam sendo verificados até expirarem.
-* **Enterprise (automático)** — um cron diário (`'15 3 * * *'` UTC) emite uma nova chave atual assim que a existente tiver sido atual por `SIGNING_KEY_ROTATION_DAYS` (padrão `90`). A chave anterior *não* é revogada, então tokens assinados sob ela continuam sendo verificados. Registre-o uma vez com `yarn command:prod cron:register:all`.
+Defina `SIGNING_KEY_ROTATION_DAYS` para ativar: um cron diário então gera uma nova chave e a define como atual quando a existente for mais antiga do que esse limite. Chaves anteriores *não* são revogadas, então tokens assinados sob elas continuam sendo verificados. Deixe a variável não definida para desativar a rotação automática.
 
-  <Note>O cron do Enterprise e `SIGNING_KEY_ROTATION_DAYS` são disponibilizados a partir da v2.6+.</Note>
+<Note>A rotação automática está disponível a partir da v2.6+.</Note>
 
 ### Revogar uma chave (apenas vazamento / emergência)
 
