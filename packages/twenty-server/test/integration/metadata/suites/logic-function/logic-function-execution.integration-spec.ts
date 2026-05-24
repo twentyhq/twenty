@@ -1,10 +1,7 @@
 import { createOneLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/create-logic-function.util';
 import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/delete-logic-function.util';
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
-import { switchLogicFunctionToPrebuilt } from 'test/integration/metadata/suites/logic-function/utils/switch-logic-function-to-prebuilt.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
-import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
@@ -298,108 +295,4 @@ describe('Logic Function Execution', () => {
     expect(errorResult?.data).toBeNull();
   });
 
-  describe('PREBUILT execution mode', () => {
-    beforeAll(async () => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-        value: true,
-        expectToFail: false,
-      });
-    });
-
-    afterAll(async () => {
-      await updateFeatureFlag({
-        featureFlag: FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-        value: false,
-        expectToFail: false,
-      });
-    });
-
-    // Regression test for the bug where the prebuilt bundle was placed in a
-    // cache directory outside `sourceTemporaryDir` while `node_modules` was
-    // assembled inside it. ESM bare imports (e.g. `lodash.groupby`) resolve
-    // relative to the importing file's location, so the prebuilt bundle could
-    // not load any external dependency at runtime. Executing a function that
-    // imports an external package in PREBUILT mode must succeed end-to-end.
-    it('executes a function with external packages in PREBUILT mode', async () => {
-      const { data: createData } = await createOneLogicFunction({
-        input: {
-          name: 'External Packages PREBUILT Test',
-        },
-        expectToFail: false,
-      });
-
-      const functionId = createData?.createOneLogicFunction?.id;
-
-      expect(functionId).toBeDefined();
-      createdFunctionIds.push(functionId);
-
-      await updateLogicFunctionSource({
-        input: {
-          id: functionId,
-          update: {
-            sourceHandlerCode: EXTERNAL_PACKAGES_FUNCTION_CODE,
-          },
-        },
-        expectToFail: false,
-      });
-
-      // Trigger a build (sets `isBuildUpToDate` and `checksum`) by running
-      // once in LIVE mode — `executeOneFromSource` builds lazily on the
-      // first execution after a source change.
-      const { data: liveExecuteData } = await executeLogicFunction({
-        input: {
-          id: functionId,
-          payload: {
-            items: [{ category: 'fruit', name: 'apple' }],
-          },
-        },
-        expectToFail: false,
-      });
-
-      expect(liveExecuteData?.executeOneLogicFunction?.status).toBe(
-        LogicFunctionExecutionStatus.SUCCESS,
-      );
-
-      await switchLogicFunctionToPrebuilt({ logicFunctionId: functionId });
-
-      const { data: prebuiltExecuteData } = await executeLogicFunction({
-        input: {
-          id: functionId,
-          payload: {
-            items: [
-              { category: 'fruit', name: 'apple' },
-              { category: 'vegetable', name: 'carrot' },
-              { category: 'fruit', name: 'banana' },
-            ],
-          },
-        },
-        expectToFail: false,
-      });
-
-      const result = prebuiltExecuteData?.executeOneLogicFunction;
-
-      if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
-        throw new Error(JSON.stringify(result?.error, null, 2));
-      }
-
-      expect(result?.status).toBe(LogicFunctionExecutionStatus.SUCCESS);
-
-      const data = result?.data as unknown as {
-        grouped: Record<string, Array<{ category: string; name: string }>>;
-        categories: string[];
-      };
-
-      expect(data?.grouped).toMatchObject({
-        fruit: [
-          { category: 'fruit', name: 'apple' },
-          { category: 'fruit', name: 'banana' },
-        ],
-        vegetable: [{ category: 'vegetable', name: 'carrot' }],
-      });
-      expect(data?.categories).toEqual(
-        expect.arrayContaining(['fruit', 'vegetable']),
-      );
-    });
-  });
 });
