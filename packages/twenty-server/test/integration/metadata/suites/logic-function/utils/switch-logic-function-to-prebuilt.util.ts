@@ -1,7 +1,5 @@
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // Drives the same code path as `code-step-build.service.ts ::
@@ -9,6 +7,13 @@ import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder
 // function, then runs it through the workspace migration with
 // `executionMode = PREBUILT`. The update-action-handler will install the
 // prebuilt bundle synchronously when the prebuilt feature flag is on.
+//
+// The required services live in `LogicFunctionModule` /
+// `WorkspaceManyOrAllFlatEntityMapsCacheModule`. Importing those modules
+// from a Jest test file pulls `graphql-upload`'s `.mjs` files into Jest's
+// CJS transform, which crashes parsing — so we rely on `setup-test.ts`
+// (which runs through `tsx/esm`) to resolve them once and stash them on
+// `globalThis`.
 export const switchLogicFunctionToPrebuilt = async ({
   logicFunctionId,
   workspaceId = SEED_APPLE_WORKSPACE_ID,
@@ -16,10 +21,9 @@ export const switchLogicFunctionToPrebuilt = async ({
   logicFunctionId: string;
   workspaceId?: string;
 }): Promise<void> => {
-  const helperService = global.app.get(LogicFunctionFromSourceHelperService);
-  const flatEntityMapsCacheService = global.app.get(
-    WorkspaceManyOrAllFlatEntityMapsCacheService,
-  );
+  const helperService = global.logicFunctionFromSourceHelperService;
+  const flatEntityMapsCacheService =
+    global.workspaceManyOrAllFlatEntityMapsCacheService;
 
   const { flatLogicFunctionMaps, flatApplicationMaps } =
     await flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
