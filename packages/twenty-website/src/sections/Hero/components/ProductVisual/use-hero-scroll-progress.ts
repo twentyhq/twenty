@@ -8,7 +8,6 @@ const NAV_HEIGHT = 64;
 const MORPH_START = 0.12;
 const MORPH_END = 0.55;
 
-// Distance (px) over which the nav fades back to light after the hero leaves
 const NAV_EXIT_DISTANCE_PX = 120;
 
 function smoothstep(value: number): number {
@@ -55,20 +54,10 @@ export function useHeroScrollProgress(
     const progress = Math.max(0, Math.min(1, scrolled / scrollableDistance));
     const morphProgress = mapToMorphProgress(progress);
 
-    // Nav transitions to dark when the wipe line reaches the nav
     let navProgress = 0;
 
-    // The dark layer wipes up from the bottom.
-    // morphProgress = 0 -> wipe line is at the bottom of the screen (100vh)
-    // morphProgress = 1 -> wipe line is at the top of the screen (0vh)
-    // We want the nav to transition when the wipe line crosses NAV_HEIGHT.
-
-    // Calculate where the wipe line is in pixels from the top of the viewport
     const wipeLineY = window.innerHeight * (1 - morphProgress);
-
-    // Transition the nav color over a larger window so it feels like a smooth
-    // gradient passing under the nav rather than a hard flash.
-    const NAV_TRANSITION_WINDOW = window.innerHeight * 0.4; // 40vh transition
+    const NAV_TRANSITION_WINDOW = window.innerHeight * 0.4;
 
     if (wipeLineY <= NAV_HEIGHT) {
       navProgress = 1;
@@ -77,7 +66,6 @@ export function useHeroScrollProgress(
       navProgress = smoothstep(linear);
     }
 
-    // Nav fades back to light only once the track's bottom is above the nav
     const trackBottom = rect.bottom;
 
     if (trackBottom < NAV_HEIGHT) {

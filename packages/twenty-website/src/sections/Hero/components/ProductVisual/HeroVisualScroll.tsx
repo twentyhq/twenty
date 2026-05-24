@@ -11,6 +11,7 @@ import { styled } from '@linaria/react';
 
 import { useProductHeroMenuSync } from './product-hero-menu-sync';
 import { ProductBackgroundHalftone } from './ProductBackgroundHalftone';
+import { ProductIntroHalftone } from './ProductIntroHalftone';
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
@@ -41,7 +42,6 @@ const StickyFrame = styled.div`
   top: ${NAV_HEIGHT}px;
   width: 100%;
 
-  /* Add subtle background transition for when the dark layer isn't fully opaque */
   background-color: #ffffff;
 `;
 
@@ -51,12 +51,10 @@ const FullLayer = styled.div`
   flex-direction: column;
   inset: 0;
   justify-content: flex-start;
-  padding-bottom: ${theme.spacing(6)};
   padding-top: ${theme.spacing(7.5)};
   position: absolute;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    padding-bottom: 0;
     padding-top: ${theme.spacing(12)};
   }
 `;
@@ -69,6 +67,17 @@ const PatternOverlay = styled.div`
   position: absolute;
   transform: translateX(-50%);
   width: 100%;
+  z-index: 0;
+`;
+
+const IntroBackground = styled.div`
+  bottom: 0;
+  left: -20%;
+  overflow: clip;
+  pointer-events: none;
+  position: absolute;
+  right: -20%;
+  top: 0;
   z-index: 0;
 `;
 
@@ -155,7 +164,9 @@ const VisualWrapper = styled.div`
   flex: 1;
   min-height: 0;
   overflow: hidden;
+  position: relative;
   width: 100%;
+  z-index: 1;
 `;
 
 export function HeroVisualScroll({
@@ -184,6 +195,9 @@ export function HeroVisualScroll({
         <FullLayer
           style={{ backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
         >
+          <IntroBackground>
+            <ProductIntroHalftone />
+          </IntroBackground>
           <StyledContainer>
             <HeadingGroup>
               <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
