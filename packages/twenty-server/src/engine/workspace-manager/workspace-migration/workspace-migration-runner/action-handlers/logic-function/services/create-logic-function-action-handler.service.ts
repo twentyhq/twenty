@@ -1,12 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
@@ -29,7 +27,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
   constructor(
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -72,16 +69,6 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       logicFunction.isBuildUpToDate &&
       isDefined(logicFunction.checksum)
     ) {
-      const isPrebuiltModeEnabled =
-        await this.featureFlagService.isFeatureEnabled(
-          FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-          context.workspaceId,
-        );
-
-      if (!isPrebuiltModeEnabled) {
-        return;
-      }
-
       const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
       const installStart = Date.now();

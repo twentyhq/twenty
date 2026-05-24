@@ -1,11 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { FeatureFlagKey, FileFolder } from 'twenty-shared/types';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
-import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
@@ -36,7 +35,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     private readonly fileStorageService: FileStorageService,
     @Inject(LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN)
     private readonly logicFunctionDriverFactory: LogicFunctionDriverFactory,
-    private readonly featureFlagService: FeatureFlagService,
   ) {
     super();
   }
@@ -139,16 +137,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate;
 
     if (!targetIsBuildUpToDate || !isDefined(targetChecksum)) {
-      return;
-    }
-
-    const isPrebuiltModeEnabled =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,
-        context.workspaceId,
-      );
-
-    if (!isPrebuiltModeEnabled) {
       return;
     }
 
