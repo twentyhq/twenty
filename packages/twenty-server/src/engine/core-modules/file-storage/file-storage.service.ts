@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { basename, dirname, extname, join } from 'path';
+import { basename, dirname, join } from 'path';
 import { type Readable } from 'stream';
 
 import { FileFolder } from 'twenty-shared/types';
@@ -13,9 +13,8 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { validatePathSegmentsSafety } from 'src/engine/core-modules/file-storage/utils/validate-path-segments-safety.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
-import { validateSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/validate-safe-relative-path.util';
+import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
@@ -87,33 +86,13 @@ export class FileStorageService {
   private validateAndBuildFolderStoragePath(
     params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
   ): string {
-    const safePathResult = validateSafeRelativePath({
-      resourcePath: params.folderPath,
+    const validationResult = validateFolderPath({
+      folderPath: params.folderPath,
     });
 
-    if (!safePathResult.isValid) {
+    if (!validationResult.isValid) {
       throw new FileStorageException(
-        safePathResult.error,
-        FileStorageExceptionCode.ACCESS_DENIED,
-      );
-    }
-
-    const segmentsSafetyResult = validatePathSegmentsSafety({
-      resourcePath: params.folderPath,
-    });
-
-    if (!segmentsSafetyResult.isValid) {
-      throw new FileStorageException(
-        segmentsSafetyResult.error,
-        FileStorageExceptionCode.ACCESS_DENIED,
-      );
-    }
-
-    const extension = extname(params.folderPath);
-
-    if (/^\.[a-zA-Z]+$/.test(extension)) {
-      throw new FileStorageException(
-        'Folder path must not contain a file extension — use deleteFile for file paths',
+        validationResult.error,
         FileStorageExceptionCode.ACCESS_DENIED,
       );
     }
