@@ -168,6 +168,7 @@
     "planer": "1.2.0",
     "pluralize": "8.0.0",
     "postal-mime": "^2.6.1",
+    "protobufjs": "^7.5.5",
     "psl": "^1.9.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
