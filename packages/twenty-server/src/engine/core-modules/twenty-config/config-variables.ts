@@ -1370,6 +1370,15 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
+    description:
+      'Enable compatibility mode for OpenAI organizations or projects with Zero Data Retention. Replays prior tool results as text instead of OpenAI item references.',
+    type: ConfigVariableType.BOOLEAN,
+  })
+  @IsOptional()
+  OPENAI_ZERO_DATA_RETENTION_ENABLED = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
     isSensitive: true,
     description: 'API key for Anthropic models (Claude)',
     type: ConfigVariableType.STRING,

@@ -27,6 +27,7 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   createExecuteToolTool,
   createLearnToolsTool,
@@ -59,6 +60,8 @@ import {
   getCallLevelCacheProviderOptions,
   injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
+import { sanitizeOpenAiZdrMessageHistory } from 'src/engine/metadata-modules/ai/ai-chat/utils/sanitize-openai-zdr-message-history.util';
+import { AI_SDK_OPENAI } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
@@ -99,6 +102,7 @@ export class ChatExecutionService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
     private readonly metricsService: MetricsService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   async streamChat({
@@ -257,7 +261,19 @@ export class ChatExecutionService {
       providerOptions: getCacheProviderOptions(registeredModel.sdkPackage),
     };
 
-    const rawModelMessages = await convertToModelMessages(processedMessages);
+    const isOpenAiZeroDataRetentionEnabled = this.twentyConfigService.get(
+      'OPENAI_ZERO_DATA_RETENTION_ENABLED',
+    );
+
+    // OpenAI Zero Data Retention organizations do not persist response items,
+    // so replay tool results as plain text instead of tool-call item IDs.
+    const messagesForModel =
+      registeredModel.sdkPackage === AI_SDK_OPENAI &&
+      isOpenAiZeroDataRetentionEnabled
+        ? sanitizeOpenAiZdrMessageHistory(processedMessages)
+        : processedMessages;
+
+    const rawModelMessages = await convertToModelMessages(messagesForModel);
 
     const pruningResult =
       this.messagePruningService.pruneIfOverContextWindowLimit(
