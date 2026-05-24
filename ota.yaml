@@ -1,0 +1,517 @@
+version: 1
+project:
+  name: twenty
+  description: Twenty monorepo readiness slice covering contributor local setup (frontend, backend, worker), CI-style build/lint/typecheck/test tasks, and Docker Compose self-host startup
+  type: application
+metadata:
+  ota:
+    minimum_version: "1.6.15"
+execution:
+  default_context: host
+  contexts:
+    host:
+      backend: native
+      only_on:
+        - linux
+        - macos
+    docker-host:
+      extends: host
+      requirements:
+        tools:
+          docker: "*"
+toolchains:
+  node:
+    provider: corepack
+    version: "^24.5.0"
+    package_managers:
+      yarn: "4.13.0"
+surfaces:
+  api:
+    kind: http
+    port: 3000
+    path: /healthz
+    readiness:
+      kind: http
+      method: GET
+      path: /healthz
+      success:
+        status:
+          - 200
+      body:
+        contains: '"status":"ok"'
+      interval: 5s
+      timeout: 3s
+      retries: 120
+      start_period: 20s
+  web:
+    kind: http
+    port: 3001
+    path: /
+    readiness:
+      kind: http
+      method: GET
+      path: /
+      headers:
+        Accept: text/html
+      success:
+        status:
+          - 200
+      body:
+        contains: "<!DOCTYPE html>"
+      interval: 5s
+      timeout: 3s
+      retries: 60
+      start_period: 15s
+  postgres:
+    kind: tcp
+    port: 5432
+    readiness:
+      kind: tcp
+      interval: 3s
+      timeout: 2s
+      retries: 20
+      start_period: 5s
+  redis:
+    kind: tcp
+    port: 6379
+    readiness:
+      kind: tcp
+      interval: 3s
+      timeout: 2s
+      retries: 20
+      start_period: 5s
+tasks:
+  prepare:env:front:
+    context: host
+    description: Create frontend env file from template when missing
+    category: setup
+    action:
+      kind: copy_if_missing
+      from: packages/twenty-front/.env.example
+      to: packages/twenty-front/.env
+    effects:
+      writes:
+        - packages/twenty-front/.env
+  prepare:env:server:
+    context: host
+    description: Create server env file from template when missing
+    category: setup
+    action:
+      kind: copy_if_missing
+      from: packages/twenty-server/.env.example
+      to: packages/twenty-server/.env
+    depends_on:
+      - prepare:env:front
+    effects:
+      writes:
+        - packages/twenty-server/.env
+  prepare:env:compose:
+    context: docker-host
+    description: Create Docker Compose env file from template and generate local self-host secrets when missing
+    category: setup
+    run: |
+      sh -c 'cd packages/twenty-docker
+      if [ ! -f .env ]; then
+        umask 077
+        cp .env.example .env
+        {
+          printf "\n"
+          printf "ENCRYPTION_KEY=%s\n" "$(openssl rand -base64 32)"
+          printf "PG_DATABASE_PASSWORD=postgres\n"
+        } >> .env
+      fi'
+    effects:
+      writes:
+        - packages/twenty-docker/.env
+  setup:env:
+    context: host
+    description: Create local frontend and server env files from the repository templates
+    notes: |
+      This follows the contributor local setup guide and the Nx reset targets.
+      It is deterministic, but it writes local `.env` files and is intentionally outside
+      the agent-safe task set.
+    category: setup
+    run: npx nx reset:env twenty-front && npx nx reset:env twenty-server
+    effects:
+      writes:
+        - packages/twenty-front/.env
+        - packages/twenty-server/.env
+  setup:services:
+    context: host
+    description: Start and prepare PostgreSQL and Redis for local development
+    notes: |
+      Uses the repository's canonical setup script, which auto-detects local services
+      versus Docker services and creates `default` and `test` databases.
+    category: setup
+    run: bash packages/twenty-utils/setup-dev-env.sh
+    effects:
+      network: true
+      writes:
+        - packages/twenty-front/.env
+        - packages/twenty-server/.env
+      external_state:
+        - postgres
+        - redis
+        - docker
+  setup:services:docker:
+    context: docker-host
+    description: Start dev infrastructure services through Docker Compose only
+    notes: |
+      Uses the documented dev services compose file (`postgres` + `redis`).
+    category: setup
+    run: docker compose -f packages/twenty-docker/docker-compose.dev.yml up -d
+    effects:
+      network: true
+      external_state:
+        - docker
+  install:
+    context: host
+    description: Install workspace dependencies with the repository lockfile policy
+    notes: |
+      Mirrors the CI install action (`yarn --immutable --check-cache`).
+    category: setup
+    run: yarn --immutable --check-cache
+    requirements:
+      toolchains:
+        - node
+    effects:
+      network: true
+      writes:
+        - node_modules
+        - .yarn/cache
+        - .pnp.cjs
+        - .pnp.loader.mjs
+  db:reset:
+    context: host
+    description: Reset and seed the Twenty server databases
+    category: setup
+    run: npx nx database:reset twenty-server
+    depends_on:
+      - install
+      - setup:services
+    requirements:
+      toolchains:
+        - node
+    effects:
+      external_state:
+        - postgres
+        - redis
+  build:shared:
+    context: host
+    description: Build the shared package required by frontend and server builds
+    category: build
+    run: npx nx build twenty-shared
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+    effects:
+      writes:
+        - packages/twenty-shared/dist
+  build:front:
+    context: host
+    description: Build the frontend package
+    category: build
+    run: npx nx build twenty-front
+    depends_on:
+      - build:shared
+      - setup:env
+    requirements:
+      toolchains:
+        - node
+    effects:
+      writes:
+        - packages/twenty-front/build
+  build:server:
+    context: host
+    description: Build the backend server package
+    category: build
+    run: npx nx build twenty-server
+    depends_on:
+      - build:shared
+      - setup:env
+    requirements:
+      toolchains:
+        - node
+    effects:
+      writes:
+        - packages/twenty-server/dist
+  lint:front:
+    context: host
+    description: Lint the frontend package
+    category: test
+    run: npx nx lint twenty-front
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+  lint:server:
+    context: host
+    description: Lint the backend server package
+    category: test
+    run: npx nx lint twenty-server
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+  lint:
+    context: host
+    description: Run aggregate lint checks for frontend and backend
+    category: test
+    run: sh -c 'npx nx lint twenty-front && npx nx lint twenty-server'
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+  typecheck:front:
+    context: host
+    description: Typecheck the frontend package
+    category: test
+    run: npx nx typecheck twenty-front
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+  typecheck:server:
+    context: host
+    description: Typecheck the backend server package
+    category: test
+    run: npx nx typecheck twenty-server
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+  typecheck:
+    context: host
+    description: Run aggregate typechecks for frontend and backend
+    category: test
+    run: sh -c 'npx nx typecheck twenty-front && npx nx typecheck twenty-server'
+    depends_on:
+      - install
+    requirements:
+      toolchains:
+        - node
+  test:front:
+    context: host
+    description: Run frontend unit tests
+    category: test
+    run: npx nx test twenty-front
+    depends_on:
+      - install
+      - setup:env
+    requirements:
+      toolchains:
+        - node
+  test:server:
+    context: host
+    description: Run backend unit tests
+    category: test
+    run: npx nx test twenty-server
+    depends_on:
+      - build:server
+    requirements:
+      toolchains:
+        - node
+  test:server:integration:
+    context: host
+    description: Run backend integration tests with database reset
+    category: test
+    run: npx nx run twenty-server:test:integration:with-db-reset
+    depends_on:
+      - setup:services
+      - build:server
+    requirements:
+      toolchains:
+        - node
+    effects:
+      external_state:
+        - postgres
+        - redis
+  test:
+    context: host
+    description: Run core frontend and backend unit test surfaces
+    category: test
+    run: sh -c 'npx nx test twenty-front && npx nx test twenty-server'
+    depends_on:
+      - install
+      - setup:env
+    requirements:
+      toolchains:
+        - node
+  dev:
+    context: host
+    description: Start frontend, backend, and worker together in development mode
+    notes: |
+      This maps to the repository's top-level `yarn start` script.
+    category: dev
+    run: yarn start
+    depends_on:
+      - setup:env
+      - setup:services
+      - install
+      - db:reset
+    requirements:
+      toolchains:
+        - node
+    runtime:
+      kind: service
+      surfaces:
+        api: {}
+        web:
+          project:
+            host:
+              primary: true
+  dev:front:
+    context: host
+    description: Start the frontend development server
+    category: dev
+    run: npx nx start twenty-front
+    depends_on:
+      - setup:env
+      - install
+    requirements:
+      toolchains:
+        - node
+    runtime:
+      kind: service
+      surfaces:
+        - web
+  dev:server:
+    context: host
+    description: Start the backend server
+    category: dev
+    run: npx nx start twenty-server
+    depends_on:
+      - setup:env
+      - setup:services
+      - install
+      - db:reset
+    requirements:
+      toolchains:
+        - node
+    runtime:
+      kind: service
+      surfaces:
+        - api
+  dev:worker:
+    context: host
+    description: Start the backend worker process
+    category: dev
+    run: npx nx run twenty-server:worker
+    depends_on:
+      - setup:env
+      - setup:services
+      - install
+      - db:reset
+    requirements:
+      toolchains:
+        - node
+  run:compose:
+    context: docker-host
+    description: Start Twenty self-host stack from the repository Docker Compose file
+    notes: |
+      Starts server, worker, db, and redis from `packages/twenty-docker/docker-compose.yml`.
+      Readiness is anchored to the server health endpoint.
+    category: dev
+    run: docker compose -f packages/twenty-docker/docker-compose.yml up -d
+    depends_on:
+      - prepare:env:compose
+    effects:
+      network: true
+      external_state:
+        - docker
+    runtime:
+      kind: service
+      surfaces:
+        api:
+          project:
+            host:
+              primary: true
+workflows:
+  default: native-dev
+  verify:
+    intent: ci_verification
+    description: Core CI-style verification workflow for frontend and backend packages
+    notes: |
+      Mirrors the repo CI shape for install, lint, typecheck, and unit tests.
+      Integration and e2e slices are exposed as separate workflows.
+    setup:
+      task: install
+    run:
+      task: test
+  native-dev:
+    intent: local_development
+    description: Canonical contributor development workflow with frontend, backend, and worker
+    prepare:
+      task: prepare:env:server
+    setup:
+      task: setup:services
+    run:
+      task: dev
+    readiness:
+      surfaces:
+        - api
+        - web
+  integration:
+    intent: ci_verification
+    description: Backend integration workflow with DB reset and integration tests
+    prepare:
+      task: prepare:env:server
+    setup:
+      task: setup:services
+    run:
+      task: test:server:integration
+  docker-selfhost:
+    intent: packaged_runtime
+    description: Docker Compose self-host startup using the repository's shipped compose file
+    setup:
+      task: prepare:env:compose
+    run:
+      task: run:compose
+    readiness:
+      surfaces:
+        - api
+agent:
+  posture: readiness_strict
+  entrypoint: prepare:env:server
+  default_task: test
+  safe_tasks:
+    - install
+    - lint
+    - lint:front
+    - lint:server
+    - typecheck
+    - typecheck:front
+    - typecheck:server
+  verify_after_changes:
+    - lint
+    - typecheck
+  writable_paths:
+    - node_modules
+    - .yarn/cache
+    - .pnp.cjs
+    - .pnp.loader.mjs
+    - packages/twenty-front
+    - packages/twenty-server
+    - packages/twenty-shared
+    - packages/twenty-ui
+    - packages/twenty-docs
+    - packages/twenty-utils
+  protected_paths:
+    - ota.yaml
+    - yarn.lock
+    - package.json
+    - .github/workflows
+    - packages/twenty-front/.env
+    - packages/twenty-server/.env
+    - packages/twenty-docker/.env
+  notes: |
+    Prefer `lint:diff-with-main` and single-file test runs during iterative edits.
+    Long-running run tasks (`dev`, `dev:front`, `dev:server`, `dev:worker`, `run:compose`)
+    are intentionally not agent-safe.
