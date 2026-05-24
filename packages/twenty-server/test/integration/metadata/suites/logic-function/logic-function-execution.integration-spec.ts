@@ -59,6 +59,8 @@ describe('Logic Function Execution', () => {
     const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
+    // Logic functions created from source iterate in LIVE mode until the
+    // parent workflow is activated (PREBUILT install happens then).
     expect(createData?.createOneLogicFunction?.executionMode).toBe(
       LogicFunctionExecutionMode.LIVE,
     );

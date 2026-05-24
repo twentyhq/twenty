@@ -38,14 +38,14 @@ const LAYER_BUILD_LOCK_RETRY_MS = 500;
 const LAYER_BUILD_LOCK_MAX_RETRIES = 240;
 const LAYER_BUILD_READY_SENTINEL = '.twenty-layer-ready';
 
+// Filename used by the unified executor for the prebuilt user bundle.
+// Mirrors the Lambda driver constant for parity across drivers.
 const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
+// Sidecar file co-located with the installed bundle that stores the
+// bundle checksum — the local equivalent of the Lambda `twenty:bundle-checksum`
+// tag.
 const PREBUILT_CHECKSUM_FILE_NAME = 'prebuilt-bundle.checksum';
 
-// Serializes `installPrebuiltBundle` against concurrent reads/writes for the
-// same function. Reads (`getInstalledBundleChecksum`) take the same lock with
-// a short, no-op critical section so they wait out any in-progress install
-// instead of observing the transient window between writing the bundle file
-// and writing the checksum sidecar.
 const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
 const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
 const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
@@ -330,10 +330,8 @@ export class LocalDriver implements LogicFunctionDriver {
         applicationUniversalIdentifier,
       });
 
-      // The bundle must live inside `sourceTemporaryDir` so that ESM bare
-      // imports inside the prebuilt code resolve against the `node_modules`
-      // tree assembled above. In PREBUILT mode the persisted bundle lives in
-      // a stable cache dir outside `sourceTemporaryDir`, so we copy it in.
+      // LIVE: fetch the latest bundle from object storage on every invoke.
+      // PREBUILT: use the locally-cached bundle written during install.
       const inMemoryBuiltHandlerPath = isPrebuilt
         ? await this.copyPrebuiltBundleIntoExecutionDir({
             flatLogicFunction,
@@ -637,6 +635,10 @@ export class LocalDriver implements LogicFunctionDriver {
     return `local-install:${flatLogicFunction.id}`;
   }
 
+  // Reads the prebuilt bundle from object storage and caches it on the
+  // local filesystem alongside a sidecar checksum file. The sidecar file
+  // is the local equivalent of the Lambda `twenty:bundle-checksum` tag
+  // and is read by `getInstalledBundleChecksum`.
   async installPrebuiltBundle({
     flatLogicFunction,
     applicationUniversalIdentifier,
@@ -648,8 +650,6 @@ export class LocalDriver implements LogicFunctionDriver {
       );
     }
 
-    // The async closure passed to `withLock` widens narrowed types from the
-    // outer scope, so capture the narrowed checksum locally.
     const checksum = flatLogicFunction.checksum;
 
     await this.cacheLockService.withLock(

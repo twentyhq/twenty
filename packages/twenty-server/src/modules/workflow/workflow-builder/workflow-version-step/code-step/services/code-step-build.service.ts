@@ -128,6 +128,15 @@ export class CodeStepBuildService {
     }
   }
 
+  // Switch every CODE-step logic function for the given workflow steps to
+  // PREBUILT mode. Bundle install (UpdateFunctionCode + tag on Lambda, sidecar
+  // file locally) happens inside the migration action handler triggered by
+  // updateOneFromMetadata — we never install at execute time.
+  //
+  // Called from workflow activation (publish), after the bundles have been
+  // freshly built. Functions already PREBUILT or without a checksum are
+  // skipped: PREBUILT-with-stale-build can't be reinstalled until the build
+  // is refreshed.
   async switchCodeStepLogicFunctionsToPrebuilt({
     workspaceId,
     steps,
@@ -135,6 +144,9 @@ export class CodeStepBuildService {
     workspaceId: string;
     steps: WorkflowAction[];
   }): Promise<void> {
+    // Workflow activation is the main entry point that flips logic
+    // functions to PREBUILT. Skip the entire switch when the flag is off so
+    // workspaces without PREBUILT enabled never trigger a Lambda install.
     const isPrebuiltModeEnabled =
       await this.featureFlagService.isFeatureEnabled(
         FeatureFlagKey.IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED,

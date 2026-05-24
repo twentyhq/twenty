@@ -1,3 +1,4 @@
+import gql from 'graphql-tag';
 import request from 'supertest';
 import {
   destroyWorkflowRun,
@@ -5,15 +6,14 @@ import {
   waitForWorkflowCompletion,
 } from 'test/integration/graphql/suites/workflow/utils/workflow-run-test.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
+import { makeMetadataAPIRequest } from 'test/integration/metadata/suites/utils/make-metadata-api-request.util';
 import { updateFeatureFlag } from 'test/integration/metadata/suites/utils/update-feature-flag.util';
 import { FeatureFlagKey } from 'twenty-shared/types';
 
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+
 const client = request(`http://localhost:${APP_PORT}`);
 
-// Function source that imports an external package from the default layer.
-// Exercises the bundle/dependency resolution path that triggered the
-// PREBUILT-mode regression where the prebuilt bundle could not load any bare
-// import because `node_modules` was assembled outside its parent directory.
 const EXTERNAL_PACKAGES_FUNCTION_CODE = `import groupBy from 'lodash.groupby';
 
 export const main = async (params: { items: Array<{ category: string; name: string }> }): Promise<object> => {
@@ -28,6 +28,7 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
   let createdWorkflowId: string | null = null;
   let createdWorkflowVersionId: string | null = null;
   let codeStepId: string | null = null;
+  let codeStepLogicFunctionId: string | null = null;
   let createdWorkflowRunId: string | null = null;
 
   beforeAll(async () => {
@@ -161,9 +162,8 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
     const logicFunctionId = codeStep.settings.input.logicFunctionId;
 
     expect(logicFunctionId).toBeDefined();
+    codeStepLogicFunctionId = logicFunctionId;
 
-    // Wire trigger.items into the code step's logicFunctionInput so the
-    // workflow runner forwards the trigger payload to the function.
     const updateStepResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -206,11 +206,6 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
 
     expect(updateSourceResponse.errors).toBeUndefined();
 
-    // activateWorkflowVersion triggers buildCodeStepsFromSourceForSteps
-    // (compiles the source and produces a checksum) and
-    // switchCodeStepLogicFunctionsToPrebuilt (flips executionMode to
-    // PREBUILT when the feature flag is enabled). After this call, the
-    // underlying logic function is ready to run from its prebuilt bundle.
     const activateResponse = await client
       .post('/graphql')
       .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
@@ -253,6 +248,29 @@ describe('Code step workflow with PREBUILT logic function (e2e)', () => {
       value: false,
       expectToFail: false,
     });
+  });
+
+  it('flips the underlying logic function to PREBUILT on workflow activation', async () => {
+    const findLogicFunctionResponse = await makeMetadataAPIRequest({
+      query: gql`
+        query FindOneLogicFunction($input: LogicFunctionIdInput!) {
+          findOneLogicFunction(input: $input) {
+            id
+            executionMode
+          }
+        }
+      `,
+      variables: { input: { id: codeStepLogicFunctionId } },
+    });
+
+    expect(findLogicFunctionResponse.body.errors).toBeUndefined();
+
+    const logicFunction =
+      findLogicFunctionResponse.body.data.findOneLogicFunction;
+
+    expect(logicFunction.executionMode).toBe(
+      LogicFunctionExecutionMode.PREBUILT,
+    );
   });
 
   it('runs the code step from its prebuilt bundle and resolves bare imports', async () => {

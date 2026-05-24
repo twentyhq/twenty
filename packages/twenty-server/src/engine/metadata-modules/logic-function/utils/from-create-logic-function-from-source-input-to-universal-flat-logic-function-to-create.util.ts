@@ -46,6 +46,9 @@ export const fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionT
       timeoutSeconds: createLogicFunctionFromSourceInput.timeoutSeconds ?? 300,
       checksum,
       isBuildUpToDate,
+      // Created-from-source paths (workflow CODE step authoring, app-dev test
+      // creation) start LIVE: the source iteration loop is what users care
+      // about; PREBUILT is opt-in via workflow activation / app install.
       executionMode: LogicFunctionExecutionMode.LIVE,
       handlerName,
       sourceHandlerPath,
