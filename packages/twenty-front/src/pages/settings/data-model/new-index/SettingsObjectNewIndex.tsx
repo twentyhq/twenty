@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react/macro';
 import { useEffect, useMemo } from 'react';
 import { FormProvider, useForm } from 'react-hook-form';
 import { useParams } from 'react-router-dom';
-import { AppPath, SettingsPath } from 'twenty-shared/types';
+import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, H2Title, IconAlertTriangle } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
@@ -41,12 +41,20 @@ export type SettingsObjectNewIndexFormValues = z.infer<
   typeof settingsObjectNewIndexFormSchema
 >;
 
-// Composites are now indexable via their sub-fields, so they're allowed.
-// Just hide the search vector + system + inactive.
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;
   if (field.isSystem === true) return false;
   if (field.isActive !== true) return false;
+
+  // Only MANY_TO_ONE relations have a join column on this side; ONE_TO_MANY
+  // and MANY_TO_MANY have nothing concrete to index.
+  const relationType =
+    field.relation?.type ?? field.morphRelations?.[0]?.type ?? null;
+
+  if (isDefined(relationType) && relationType !== RelationType.MANY_TO_ONE) {
+    return false;
+  }
+
   return true;
 };
 

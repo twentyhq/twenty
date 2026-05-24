@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg } from '@lingui/core/macro';
-import { compositeTypeDefinitions } from 'twenty-shared/types';
+import { compositeTypeDefinitions, RelationType } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
@@ -113,6 +114,19 @@ export class IndexMetadataService {
           IndexMetadataExceptionCode.INDEX_FIELD_NOT_FOUND_ON_OBJECT,
           {
             userFriendlyMessage: msg`One of the selected fields does not belong to this object.`,
+          },
+        );
+      }
+
+      if (
+        isMorphOrRelationFlatFieldMetadata(flatField) &&
+        flatField.settings?.relationType !== RelationType.MANY_TO_ONE
+      ) {
+        throw new IndexMetadataException(
+          `Field ${flatField.name} is a non-MANY_TO_ONE relation and has no join column to index`,
+          IndexMetadataExceptionCode.INDEX_NOT_SUPPORTED_FOR_MORH_RELATION_FIELD_AND_RELATION_FIELD,
+          {
+            userFriendlyMessage: msg`"${flatField.label}" is a one-to-many relation and can't be indexed directly. Index the foreign-key side instead.`,
           },
         );
       }
