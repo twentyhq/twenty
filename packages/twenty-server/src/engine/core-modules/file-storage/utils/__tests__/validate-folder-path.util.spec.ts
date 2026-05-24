@@ -61,7 +61,7 @@ describe('validateFolderPath', () => {
   });
 
   it('should fail on shell metacharacters', () => {
-    const result = validateFolderPath({ folderPath: 'folder;rm -rf/' });
+    const result = validateFolderPath({ folderPath: 'folder;rm -rf' });
 
     expect(result.isValid).toBe(false);
 
@@ -69,6 +69,24 @@ describe('validateFolderPath', () => {
       expect(result.error).toContain('invalid characters');
     }
   });
+
+  it.each([
+    { title: 'trailing slash', folderPath: 'my-folder/' },
+    { title: 'double slashes', folderPath: 'my-folder//sub' },
+  ])(
+    'should fail on $title',
+    ({ folderPath }) => {
+      const result = validateFolderPath({ folderPath });
+
+      expect(result.isValid).toBe(false);
+
+      if (!result.isValid) {
+        expect(result.error).toContain(
+          'empty segments or trailing slashes',
+        );
+      }
+    },
+  );
 
   it.each([
     { title: '.mjs extension', folderPath: 'src/logic-functions/handler.mjs' },

@@ -18,12 +18,16 @@ export const validatePathSegmentsSafety = ({
     };
   }
 
+  if (resourcePath.includes('//') || resourcePath.endsWith('/')) {
+    return {
+      isValid: false,
+      error: t`Resource path must not contain empty segments or trailing slashes`,
+    };
+  }
+
   const segments = resourcePath.split('/');
 
   for (const segment of segments) {
-    if (segment.length === 0) {
-      continue;
-    }
 
     if (segment.length > MAX_SEGMENT_LENGTH) {
       return {

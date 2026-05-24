@@ -269,7 +269,7 @@ export class FileStorageService {
       folderPath,
     } = params;
 
-    const onStoragePath = this.validateAndBuildFolderStoragePath({
+    const onStorageFolderPath = this.validateAndBuildFolderStoragePath({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder,
@@ -278,7 +278,7 @@ export class FileStorageService {
 
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const deleteResult = driver.delete({ folderPath: onStoragePath });
+    const deleteResult = driver.delete({ folderPath: onStorageFolderPath });
 
     const application = await this.applicationRepository.findOneOrFail({
       where: {
@@ -290,7 +290,7 @@ export class FileStorageService {
     const basePath = `${join(fileFolder, folderPath)}`.replace(/\/+/g, '/');
 
     await this.fileRepository.delete({
-      path: Like(`${basePath}%`),
+      path: Like(`${basePath}/%`),
       applicationId: application.id,
       workspaceId,
     });
