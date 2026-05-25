@@ -98,8 +98,8 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<{ stream: Readable; mimeType: string }> {
-    const file = await this.fileRepository.findOneOrFail({
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    const file = await this.fileRepository.findOne({
       where: {
         id: fileId,
         workspaceId,
@@ -107,32 +107,51 @@ export class FileService {
       },
     });
 
-    const application = await this.applicationRepository.findOneOrFail({
+    if (file === null) {
+      return null;
+    }
+
+    const application = await this.applicationRepository.findOne({
       where: {
         id: file.applicationId,
         workspaceId,
       },
     });
 
-    const stream = await this.fileStorageService.readFile({
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-      fileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-    });
+    if (application === null) {
+      return null;
+    }
 
-    return {
-      stream,
-      mimeType: file.mimeType,
-    };
+    try {
+      const stream = await this.fileStorageService.readFile({
+        resourcePath: removeFileFolderFromFileEntityPath(file.path),
+        fileFolder,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+      });
+
+      return {
+        stream,
+        mimeType: file.mimeType,
+      };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async getFileResponseById(params: {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<FileResponse> {
-    const file = await this.fileRepository.findOneOrFail({
+  }): Promise<FileResponse | null> {
+    const file = await this.fileRepository.findOne({
       where: {
         id: params.fileId,
         workspaceId: params.workspaceId,
@@ -140,12 +159,20 @@ export class FileService {
       },
     });
 
-    const application = await this.applicationRepository.findOneOrFail({
+    if (file === null) {
+      return null;
+    }
+
+    const application = await this.applicationRepository.findOne({
       where: {
         id: file.applicationId,
         workspaceId: params.workspaceId,
       },
     });
+
+    if (application === null) {
+      return null;
+    }
 
     const mimeType = file.mimeType ?? 'application/octet-stream';
     const resourceIdentifier = {
@@ -155,22 +182,33 @@ export class FileService {
       workspaceId: params.workspaceId,
     };
 
-    const presignedUrl = await this.fileStorageService.getPresignedUrl({
-      ...resourceIdentifier,
-      expiresInSeconds: this.twentyConfigService.get(
-        'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
-      ),
-      responseContentType: mimeType,
-      responseContentDisposition: getContentDisposition(mimeType),
-    });
+    try {
+      const presignedUrl = await this.fileStorageService.getPresignedUrl({
+        ...resourceIdentifier,
+        expiresInSeconds: this.twentyConfigService.get(
+          'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
+        ),
+        responseContentType: mimeType,
+        responseContentDisposition: getContentDisposition(mimeType),
+      });
 
-    if (presignedUrl) {
-      return { type: 'redirect', presignedUrl };
+      if (presignedUrl) {
+        return { type: 'redirect', presignedUrl };
+      }
+
+      const stream = await this.fileStorageService.readFile(resourceIdentifier);
+
+      return { type: 'stream', stream, mimeType };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
     }
-
-    const stream = await this.fileStorageService.readFile(resourceIdentifier);
-
-    return { type: 'stream', stream, mimeType };
   }
 
   async getFileContentById({
@@ -181,8 +219,8 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<{ buffer: Buffer; mimeType: string }> {
-    const file = await this.fileRepository.findOneOrFail({
+  }): Promise<{ buffer: Buffer; mimeType: string } | null> {
+    const file = await this.fileRepository.findOne({
       where: {
         id: fileId,
         workspaceId,
@@ -190,26 +228,45 @@ export class FileService {
       },
     });
 
-    const application = await this.applicationRepository.findOneOrFail({
+    if (file === null) {
+      return null;
+    }
+
+    const application = await this.applicationRepository.findOne({
       where: {
         id: file.applicationId,
         workspaceId,
       },
     });
 
-    const stream = await this.fileStorageService.readFile({
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-      fileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-    });
+    if (application === null) {
+      return null;
+    }
 
-    const buffer = await streamToBuffer(stream);
+    try {
+      const stream = await this.fileStorageService.readFile({
+        resourcePath: removeFileFolderFromFileEntityPath(file.path),
+        fileFolder,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+      });
 
-    return {
-      buffer,
-      mimeType: file.mimeType ?? 'application/octet-stream',
-    };
+      const buffer = await streamToBuffer(stream);
+
+      return {
+        buffer,
+        mimeType: file.mimeType ?? 'application/octet-stream',
+      };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async deleteWorkspaceFolder(workspaceId: string) {
