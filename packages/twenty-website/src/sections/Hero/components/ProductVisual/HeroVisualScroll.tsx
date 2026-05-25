@@ -247,9 +247,11 @@ export function HeroVisualScroll({
     StackTargetMetric[]
   >([]);
   const clamp = (value: number) => Math.max(0, Math.min(1, value));
-  const stackAppearProgress = clamp((morphProgress - 0.08) / 0.12);
-  const stackAlignProgress = clamp((morphProgress - 0.58) / 0.16);
-  const stackSpreadProgress = clamp((morphProgress - 0.74) / 0.18);
+  const stackAppearProgress = clamp((morphProgress - 0.14) / 0.12);
+  const stackAlignProgress = clamp((morphProgress - 0.69) / 0.16);
+  const stackSpreadProgress = clamp((morphProgress - 0.83) / 0.18);
+  const stackSpreadEasedProgress =
+    1 - Math.pow(1 - stackSpreadProgress, 2.6);
   const selectorRevealProgress = clamp((morphProgress - 0.94) / 0.06);
   const selectorRevealReady = selectorRevealProgress > 0.96;
   const stackCards = tabs;
@@ -426,7 +428,7 @@ export function HeroVisualScroll({
                         stackWidth != null && targetMetric != null
                           ? stackWidth +
                             (targetMetric.width - stackWidth) *
-                              stackSpreadProgress
+                              stackSpreadEasedProgress
                           : stackWidth ?? targetMetric?.width;
                       const offset = targetMetric?.offset ?? 0;
 
@@ -435,7 +437,7 @@ export function HeroVisualScroll({
                           key={index}
                           style={{
                             transform: `translate3d(calc(-50% + ${
-                              offset * stackSpreadProgress
+                              offset * stackSpreadEasedProgress
                             }px), ${
                               stackBaseOffsets[index] *
                               (1 - stackAlignProgress)
