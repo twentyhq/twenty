@@ -2,7 +2,7 @@ import { type FieldActorValue } from '@/object-record/record-field/ui/types/Fiel
 
 import { t } from '@lingui/core/macro';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
-import { AvatarOrIcon, Chip } from 'twenty-ui/components';
+import { AvatarOrIcon, Chip, ChipVariant } from 'twenty-ui/components';
 import {
   IconApi,
   IconCalendar,
@@ -84,13 +84,12 @@ export const ActorDisplay = ({
 }: ActorDisplayProps) => {
   const LeftIcon = getLeftIcon({ source, context });
 
-  const isIconInverted =
-    source === 'API' || source === 'IMPORT' || source === 'SYSTEM';
-
   return (
     <Chip
       label={name ?? ''}
+      clickable={false}
       emptyLabel={t`Untitled`}
+      variant={ChipVariant.Transparent}
       leftComponent={
         <AvatarOrIcon
           placeholderColorSeed={workspaceMemberId ?? undefined}
@@ -98,7 +97,6 @@ export const ActorDisplay = ({
           placeholder={name}
           Icon={LeftIcon}
           avatarUrl={avatarUrl ?? undefined}
-          isIconInverted={isIconInverted}
         />
       }
     />
