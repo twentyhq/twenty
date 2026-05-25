@@ -11,6 +11,7 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
+import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -30,6 +31,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
+    @InjectRepository(IndexMetadataEntity)
+    private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationEntity)
@@ -53,6 +56,7 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   ): Promise<FlatEntityMaps<FlatFieldMetadata>> {
     const [
       fieldMetadatas,
+      indexMetadatas,
       objectMetadatas,
       applications,
       viewFields,
@@ -62,6 +66,11 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     ] = await Promise.all([
       this.fieldMetadataRepository.find({
         where: { workspaceId },
+        withDeleted: true,
+      }),
+      this.indexMetadataRepository.find({
+        where: { workspaceId, isUnique: true },
+        relations: ['indexFieldMetadatas'],
         withDeleted: true,
       }),
       this.objectMetadataRepository.find({
@@ -145,6 +154,19 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
+    // Single source of truth for field-level uniqueness: a field is unique iff
+    // there exists a UNIQUE IndexMetadata whose single member targets it
+    // directly (no composite sub-field).
+    const uniqueFieldMetadataIds = new Set<string>();
+
+    for (const indexMetadataEntity of indexMetadatas) {
+      const fields = indexMetadataEntity.indexFieldMetadatas ?? [];
+
+      if (fields.length === 1 && fields[0].subFieldName === null) {
+        uniqueFieldMetadataIds.add(fields[0].fieldMetadataId);
+      }
+    }
+
     const flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
     for (const fieldMetadataEntity of fieldMetadatas) {
@@ -169,7 +191,10 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
       });
 
       addFlatEntityToFlatEntityMapsThroughMutationOrThrow({
-        flatEntity: flatFieldMetadata,
+        flatEntity: {
+          ...flatFieldMetadata,
+          isUnique: uniqueFieldMetadataIds.has(fieldMetadataEntity.id),
+        },
         flatEntityMapsToMutate: flatFieldMetadataMaps,
       });
     }
