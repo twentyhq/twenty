@@ -193,7 +193,7 @@ export interface FieldPermission {
 export interface RolePermissionFlag {
     id: Scalars['UUID']
     roleId: Scalars['UUID']
-    flag: PermissionFlagType
+    flag: Scalars['String']
     __typename: 'RolePermissionFlag'
 }
 
