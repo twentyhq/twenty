@@ -2,9 +2,9 @@ import { useLinkedObjectsTitle } from '@/activities/timeline-activities/hooks/us
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
 import { type ActivityTargetableObject } from '@/activities/types/ActivityTargetableEntity';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { useGenerateDepthRecordGqlFieldsFromObject } from '@/object-record/graphql/record-gql-fields/hooks/useGenerateDepthRecordGqlFieldsFromObject';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
 // do we need to test this?
@@ -62,10 +62,14 @@ export const useTimelineActivities = (
 
   useLinkedObjectsTitle(activityIds);
 
-  const loading = loadingTimelineActivities;
+  const firstQueryLoading =
+    loadingTimelineActivities && timelineActivities.length === 0;
+
+  const loading = loadingTimelineActivities && !firstQueryLoading;
 
   return {
     timelineActivities,
+    firstQueryLoading,
     loading,
     fetchMoreRecords,
   };

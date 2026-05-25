@@ -48,12 +48,12 @@ const StyledSidePanelPlaceholderWrapper = styled.div`
 export const TimelineCard = () => {
   const targetRecord = useTargetRecord();
   const { isInSidePanel } = useLayoutRenderingContext();
-  const { timelineActivities, loading, fetchMoreRecords } =
+  const { timelineActivities, firstQueryLoading, loading, fetchMoreRecords } =
     useTimelineActivities(targetRecord);
 
   const isTimelineActivitiesEmpty = timelineActivities.length === 0;
 
-  if (loading === true) {
+  if (firstQueryLoading === true) {
     return <SkeletonLoader withSubSections />;
   }
 
