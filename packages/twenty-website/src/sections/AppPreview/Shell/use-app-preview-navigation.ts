@@ -76,6 +76,31 @@ type AppPreviewNavigationState = {
   workspaceEntries: SidebarEntry[];
 };
 
+function getVisibleSidebarItems(items: SidebarItemDef[]) {
+  return items.filter((item) => !item.hidden);
+}
+
+function getVisibleSidebarEntries(entries: SidebarEntry[]): SidebarEntry[] {
+  return entries.reduce<SidebarEntry[]>((visibleEntries, entry) => {
+    if ('items' in entry) {
+      const visibleItems = entry.items.filter((item) => !item.hidden);
+
+      if (visibleItems.length === 0) {
+        return visibleEntries;
+      }
+
+      visibleEntries.push({ ...entry, items: visibleItems });
+      return visibleEntries;
+    }
+
+    if (!entry.hidden) {
+      visibleEntries.push(entry);
+    }
+
+    return visibleEntries;
+  }, []);
+}
+
 export function useAppPreviewNavigation(
   visual: AppPreviewNavigationConfig,
 ): AppPreviewNavigationState {
@@ -182,11 +207,11 @@ export function useAppPreviewNavigation(
     activeItemLabel: activeItem.label,
     activePage,
     canSelectPageItem,
-    favorites: visual.sidebar.favorites,
+    favorites: getVisibleSidebarItems(visual.sidebar.favorites),
     openFolderIds,
     resetNavigation,
     selectPageItem,
     toggleFolder,
-    workspaceEntries: visual.sidebar.workspace,
+    workspaceEntries: getVisibleSidebarEntries(visual.sidebar.workspace),
   };
 }

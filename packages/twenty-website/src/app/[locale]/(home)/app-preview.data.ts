@@ -1372,6 +1372,7 @@ export const APP_PREVIEW_DATA: { visual: AppPreviewConfig } = {
           },
           {
             id: 'workflow-send-email-sequence',
+            hidden: true,
             label: 'Send email sequence when deal is engaged',
             icon: {
               color: '#451E11',
@@ -1407,7 +1408,7 @@ export const APP_PREVIEW_DATA: { visual: AppPreviewConfig } = {
                 {
                   id: 'iterator',
                   x: 420,
-                  y: 230,
+                  y: 195,
                   width: 190,
                   label: 'Action',
                   title: 'Iterator',
@@ -1415,8 +1416,8 @@ export const APP_PREVIEW_DATA: { visual: AppPreviewConfig } = {
                 },
                 {
                   id: 'send-email',
-                  x: 590,
-                  y: 340,
+                  x: 640,
+                  y: 268,
                   width: 200,
                   label: 'Action',
                   title: 'Send Email',
@@ -1437,10 +1438,10 @@ export const APP_PREVIEW_DATA: { visual: AppPreviewConfig } = {
                 },
               ],
               branchLabels: [
-                { x: 635, y: 248, text: 'loop' },
-                { x: 482, y: 318, text: 'completed' },
+                { x: 656, y: 214, text: 'loop' },
+                { x: 515, y: 276, text: 'completed' },
               ],
-              plusNode: { x: 515, y: 380 },
+              plusNode: { x: 515, y: 308 },
             },
           },
           {

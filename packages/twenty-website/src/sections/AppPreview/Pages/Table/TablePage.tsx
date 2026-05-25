@@ -74,15 +74,17 @@ const DataRow = styled.div<{ $rowIndex: number }>`
   animation: tableRowAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: ${({ $rowIndex }) => `${120 + $rowIndex * 70}ms`};
   display: flex;
+  max-height: 0;
+  overflow: hidden;
 
   @keyframes tableRowAppear {
     from {
       opacity: 0;
-      transform: translateY(6px);
+      max-height: 0;
     }
     to {
       opacity: 1;
-      transform: translateY(0);
+      max-height: 32px;
     }
   }
 `;

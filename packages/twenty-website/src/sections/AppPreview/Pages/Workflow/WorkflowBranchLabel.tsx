@@ -7,7 +7,7 @@ import {
   WORKFLOW_PAGE_FONT,
 } from './workflow-page-theme';
 
-const BranchLabel = styled.div`
+const BranchLabel = styled.div<{ $centered?: boolean }>`
   align-items: center;
   background: ${WORKFLOW_PAGE_COLORS.nodeSurface};
   border: 1px solid ${WORKFLOW_PAGE_COLORS.nodeBorder};
@@ -22,6 +22,8 @@ const BranchLabel = styled.div`
   min-width: 20px;
   padding: 0 4px;
   position: absolute;
+  transform: ${({ $centered }) =>
+    $centered ? 'translate(-50%, -50%)' : 'none'};
   z-index: 2;
 `;
 
@@ -30,5 +32,12 @@ export function WorkflowBranchLabel({
   x,
   y,
 }: WorkflowBranchLabelDefinition) {
-  return <BranchLabel style={{ left: x, top: y }}>{text}</BranchLabel>;
+  return (
+    <BranchLabel
+      $centered={text === 'completed'}
+      style={{ left: x, top: y }}
+    >
+      {text}
+    </BranchLabel>
+  );
 }

@@ -323,6 +323,23 @@ export type ResponseChip = {
   name: string;
 };
 
+export type ProductVisualSceneKind =
+  | 'leadCreation'
+  | 'opportunityReview'
+  | 'taskCreation'
+  | 'recordSummary'
+  | 'workflowCreation';
+
+export type ProductVisualSceneDefinition = {
+  initialPageItemId: string;
+  kind: ProductVisualSceneKind;
+  label: string;
+  responseChips: ResponseChip[];
+  responseText: string;
+  sidebarMode?: 'collapsed' | 'expanded';
+  followUpPageItemId?: string;
+};
+
 export const COMPANIES_PAGE_ITEM_ID = 'companies';
 export const PEOPLE_PAGE_ITEM_ID = 'people';
 export const OPPORTUNITIES_PAGE_ITEM_ID = 'opportunities';
@@ -330,39 +347,42 @@ export const TASKS_PAGE_ITEM_ID = 'tasks';
 export const WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID =
   'workflow-send-email-sequence';
 
-export const PROMPT_OPTIONS = [
+export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
   {
+    initialPageItemId: COMPANIES_PAGE_ITEM_ID,
+    kind: 'leadCreation',
     label: 'Add a new lead',
-    navSteps: [
-      { at: 0.25, targetPageItemId: COMPANIES_PAGE_ITEM_ID },
-      { at: 0.65, targetPageItemId: PEOPLE_PAGE_ITEM_ID },
-    ],
+    followUpPageItemId: PEOPLE_PAGE_ITEM_ID,
     responseText:
-      'OpenAI is now in Companies with openai.com, AI Research, and $2.0M ARR. Sam Altman was added in People as CEO in San Francisco and linked back to OpenAI as the main contact.',
+      '**OpenAI** is now in Companies with openai.com, AI Research, and **$2.0M ARR**. **Sam Altman** was added in People as CEO in San Francisco and linked back to OpenAI as the main contact.',
     responseChips: [
       { name: 'OpenAI', logoUrl: SHARED_COMPANY_LOGO_URLS.openai },
     ],
+    sidebarMode: 'expanded',
   },
   {
-    label: 'Show me all deals closing this month',
-    navSteps: [{ at: 0.3, targetPageItemId: OPPORTUNITIES_PAGE_ITEM_ID }],
+    initialPageItemId: OPPORTUNITIES_PAGE_ITEM_ID,
+    kind: 'opportunityReview',
+    label: 'Set up a view for deals closing this month',
     responseText:
-      'There are 7 opportunities on the board worth $12.9M total. Biggest: Host Ops with Airbnb at $4.2M, then AI Prototyping with Figma at $3.5M. The rest are spread across Stripe, Github, Notion, Anthropic, and Mailchimp.',
+      'Created a view for the **7 deals** closing this month, worth **$12.9M total**. Biggest are Host Ops at **$4.2M** and AI Prototyping at **$3.5M**, with the rest spread across Anthropic, Notion, Github, Stripe, and Mailchimp.',
     responseChips: [
+      { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
+      { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
+      { name: 'Github', logoUrl: SHARED_COMPANY_LOGO_URLS.github },
       { name: 'Airbnb', logoUrl: SHARED_COMPANY_LOGO_URLS.airbnb },
       { name: 'Figma', logoUrl: SHARED_COMPANY_LOGO_URLS.figma },
       { name: 'Stripe', logoUrl: SHARED_COMPANY_LOGO_URLS.stripe },
-      { name: 'Github', logoUrl: SHARED_COMPANY_LOGO_URLS.github },
-      { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
-      { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
       { name: 'Mailchimp', logoUrl: SHARED_COMPANY_LOGO_URLS.mailchimp },
     ],
+    sidebarMode: 'collapsed',
   },
   {
-    label: 'Create follow-up tasks for my top 10 accounts',
-    navSteps: [{ at: 0.3, targetPageItemId: TASKS_PAGE_ITEM_ID }],
+    initialPageItemId: TASKS_PAGE_ITEM_ID,
+    kind: 'taskCreation',
+    label: 'Generate follow-up tasks for my top 10 accounts using notes to gather context',
     responseText:
-      'Created 10 follow-up tasks scheduled from Nov 1 to Nov 8. The first batch covers Anthropic, Slack, Figma, Notion, and Github, with the rest covering Airbnb, Stripe, Sequoia, Accel, and Google.',
+      'Created **10 follow-up tasks** dated **Nov 1 through Nov 8**. The first rows cover Anthropic, Slack, Figma, Notion, and Github, followed by Airbnb, Stripe, Sequoia, Accel, and Google.',
     responseChips: [
       { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
       { name: 'Slack', logoUrl: SHARED_COMPANY_LOGO_URLS.slack },
@@ -375,24 +395,27 @@ export const PROMPT_OPTIONS = [
       { name: 'Accel', logoUrl: SHARED_COMPANY_LOGO_URLS.accel },
       { name: 'Google', logoUrl: SHARED_COMPANY_LOGO_URLS.google },
     ],
+    sidebarMode: 'collapsed',
   },
   {
-    label: "Summarize this customer's history",
-    navSteps: [{ at: 0.3, targetPageItemId: COMPANIES_PAGE_ITEM_ID }],
+    initialPageItemId: COMPANIES_PAGE_ITEM_ID,
+    kind: 'recordSummary',
+    label: 'Summarize Qonto account history',
     responseText:
-      'Qonto has 3 notes, 12 linked people, Q Global Holdings as the parent account, and 1 active opportunity. Recent calls with Phil Schiller and Steve Anavi focused on selling through benefits, and the next follow-up is with Alexandre Prot.',
+      'Qonto has **3 notes** centered on a benefits-led pitch, **Q Global Holdings** as the parent account, and **1 active opportunity**. The latest follow-up is with **Alexandre Prot**, and the history points to customer-service and operations as the main buying angles.',
     responseChips: [
       { name: 'Qonto', logoUrl: SHARED_COMPANY_LOGO_URLS.qonto },
     ],
+    sidebarMode: 'collapsed',
   },
   {
-    label: 'Create a workflow that sends an email sequence',
-    navSteps: [
-      { at: 0.4, targetPageItemId: WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID },
-    ],
+    initialPageItemId: WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID,
+    kind: 'workflowCreation',
+    label: 'Draft a workflow that sends an email sequence',
     responseText:
-      'Created and activated "Send email sequence when deal is engaged" with a Manual trigger, an Iterator, and a Send Email step. It is ready to run as-is, and I can add filters or customize the email copy next.',
+      'Created and activated a sequence with a **Manual trigger**, an **Iterator**, and a **Send Email** step. It is ready to run now, and filters or email copy can be refined next.',
     responseChips: [],
+    sidebarMode: 'collapsed',
   },
 ];
 
@@ -505,4 +528,20 @@ export const QONTO_RECORD_PAGE: RecordPageDefinition = {
       body: 'Apple sells its products by focusing on the benefits users gain from their products, rather than solely highlighting the features. The same approach should be used for selling to Qonto. Understand their pain points and how your product can alleviate those issues. Emphasize how our CRM tool can help streamline their operations, improve customer service, and ultimately, grow their business.',
     },
   ],
+};
+
+export const QONTO_RECORD_PAGE_INITIAL: RecordPageDefinition = {
+  ...QONTO_RECORD_PAGE,
+  record: {
+    ...QONTO_RECORD_PAGE.record,
+    relations: [
+      QONTO_RECORD_PAGE.record.relations[0],
+      QONTO_RECORD_PAGE.record.relations[1],
+      {
+        ...QONTO_RECORD_PAGE.record.relations[2],
+        items: QONTO_RECORD_PAGE.record.relations[2].items.slice(0, 1),
+      },
+    ],
+  },
+  notes: QONTO_RECORD_PAGE.notes.slice(0, 1),
 };

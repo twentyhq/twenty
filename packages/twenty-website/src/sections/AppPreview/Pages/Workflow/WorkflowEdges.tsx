@@ -35,6 +35,50 @@ export function WorkflowEdges({
   const completedSourceNode = completedEdge
     ? getWorkflowNodeById(nodes, completedEdge.from)
     : undefined;
+  const topPortNodeIds = new Set<string>();
+  const bottomPortNodeIds = new Set<string>();
+  const rightPortNodeIds = new Set<string>();
+
+  for (const edge of edges) {
+    if (edge.type === 'loopRight') {
+      rightPortNodeIds.add(edge.from);
+      topPortNodeIds.add(edge.to);
+      continue;
+    }
+
+    bottomPortNodeIds.add(edge.from);
+
+    if (edge.type !== 'loopBack') {
+      topPortNodeIds.add(edge.to);
+    }
+  }
+
+  if (completedSourceNode && plusNode) {
+    bottomPortNodeIds.add(completedSourceNode.id);
+  }
+
+  const completedConnectorPath =
+    plusNode && completedSourceNode
+      ? (() => {
+          const startX =
+            completedSourceNode.x + completedSourceNode.width / 2;
+          const startY = completedSourceNode.y + WORKFLOW_NODE_HEIGHT + 1;
+          const endX = plusNode.x;
+          const endY = plusNode.y;
+          const elbowY = endY - 14;
+
+          if (Math.abs(startX - endX) < 1) {
+            return `M${startX} ${startY} L${endX} ${endY}`;
+          }
+
+          return [
+            `M${startX} ${startY}`,
+            `L${startX} ${elbowY}`,
+            `L${endX} ${elbowY}`,
+            `L${endX} ${endY}`,
+          ].join(' ');
+        })()
+      : undefined;
 
   return (
     <CanvasOverlay
@@ -74,16 +118,17 @@ export function WorkflowEdges({
           strokeWidth="1"
         />
       ))}
-      {plusNode && completedSourceNode && (
+      {completedConnectorPath ? (
         <path
-          d={`M${completedSourceNode.x + completedSourceNode.width / 2} ${completedSourceNode.y + WORKFLOW_NODE_HEIGHT + 1} L${plusNode.x} ${plusNode.y}`}
+          d={completedConnectorPath}
           fill="none"
           stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
           strokeDasharray="4 3"
           strokeLinecap="round"
+          strokeLinejoin="round"
           strokeWidth="1"
         />
-      )}
+      ) : null}
       {nodes.map((node) => {
         const cx = node.x + node.width / 2;
         const bottomY = node.y + WORKFLOW_NODE_HEIGHT + 1;
@@ -92,30 +137,36 @@ export function WorkflowEdges({
 
         return (
           <g key={`ports-${node.id}`}>
-            <circle
-              cx={cx}
-              cy={node.y}
-              fill={WORKFLOW_PAGE_COLORS.nodeSurface}
-              r="4"
-              stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
-              strokeWidth="1"
-            />
-            <circle
-              cx={cx}
-              cy={bottomY}
-              fill={WORKFLOW_PAGE_COLORS.nodeSurface}
-              r="4"
-              stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
-              strokeWidth="1"
-            />
-            <circle
-              cx={rightX}
-              cy={midY}
-              fill={WORKFLOW_PAGE_COLORS.nodeSurface}
-              r="4"
-              stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
-              strokeWidth="1"
-            />
+            {topPortNodeIds.has(node.id) ? (
+              <circle
+                cx={cx}
+                cy={node.y}
+                fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+                r="4"
+                stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+                strokeWidth="1"
+              />
+            ) : null}
+            {bottomPortNodeIds.has(node.id) ? (
+              <circle
+                cx={cx}
+                cy={bottomY}
+                fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+                r="4"
+                stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+                strokeWidth="1"
+              />
+            ) : null}
+            {rightPortNodeIds.has(node.id) ? (
+              <circle
+                cx={rightX}
+                cy={midY}
+                fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+                r="4"
+                stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+                strokeWidth="1"
+              />
+            ) : null}
           </g>
         );
       })}

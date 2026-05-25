@@ -83,7 +83,6 @@ type AppPreviewLayoutProps = {
   onToggleFolder: (folderId: string) => void;
   openFolderIds: string[];
   page: PageDefinition;
-  pageKey?: string;
   revealedObjectIds: string[];
   rightAside?: ReactNode;
   workspaceEntries: SidebarEntry[];
@@ -102,7 +101,6 @@ export function AppPreviewLayout({
   onToggleFolder,
   openFolderIds,
   page,
-  pageKey,
   revealedObjectIds,
   rightAside,
   workspaceEntries,
@@ -149,11 +147,7 @@ export function AppPreviewLayout({
               />
             ) : null}
 
-            {renderPageDefinition(
-              page,
-              onSelectPageItem,
-              pageKey ?? activeItemId,
-            )}
+            {renderPageDefinition(page, onSelectPageItem)}
           </IndexSurface>
 
           {rightAside}

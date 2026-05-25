@@ -4,19 +4,19 @@ import type { TabType } from '@/sections/Tabs';
 
 export const AI_HERO_TABS: TabType[] = [
   {
-    body: msg`Show me all deals closing this month`,
+    body: msg`Set up a view for deals closing this month`,
     icon: 'search',
   },
   {
-    body: msg`Create follow-up tasks for my top 10 accounts`,
+    body: msg`Generate follow-up tasks for my top 10 accounts`,
     icon: 'check',
   },
   {
-    body: msg`Summarize this customer's history`,
+    body: msg`Summarize Qonto account history`,
     icon: 'edit',
   },
   {
-    body: msg`Create a workflow that sends an email sequence`,
+    body: msg`Draft a workflow that sends an email sequence`,
     icon: 'code',
   },
 ];

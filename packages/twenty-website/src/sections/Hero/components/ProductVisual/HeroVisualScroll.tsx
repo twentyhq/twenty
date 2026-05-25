@@ -264,6 +264,7 @@ export function HeroVisualScroll({
   const stackSpreadMetrics =
     stackTargetMetrics.length === tabs.length ? stackTargetMetrics : null;
   const stackWidth = stackSpreadMetrics?.[0]?.width ?? null;
+  const aiPlaybackEnabled = morphProgress >= 0.58;
 
   useEffect(() => {
     menuSync?.setMorphProgress(navProgress);
@@ -466,7 +467,11 @@ export function HeroVisualScroll({
           </StyledContainer>
 
           <VisualWrapper>
-            <ProductVisual activeScene={activeTab + 1} visual={visual} />
+            <ProductVisual
+              activeScene={activeTab + 1}
+              playbackEnabled={aiPlaybackEnabled}
+              visual={visual}
+            />
           </VisualWrapper>
         </FullLayer>
       </StickyFrame>

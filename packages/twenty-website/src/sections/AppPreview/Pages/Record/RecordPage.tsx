@@ -242,11 +242,23 @@ const RelationTitleCount = styled.span`
   margin-left: 4px;
 `;
 
-const RelationItem = styled.div`
+const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
   align-items: center;
+  background: ${({ $highlighted }) =>
+    $highlighted ? COLORS.backgroundSecondary : 'transparent'};
+  border: 1px solid
+    ${({ $highlighted }) =>
+      $highlighted ? COLORS.border : 'transparent'};
+  border-radius: 6px;
   display: flex;
   gap: 6px;
+  opacity: ${({ $muted }) => ($muted ? 0.55 : 1)};
   padding: 2px 0;
+  padding-inline: ${({ $highlighted }) => ($highlighted ? '6px' : '0')};
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    opacity 180ms ease;
 `;
 
 const RelationName = styled.span`
@@ -374,16 +386,34 @@ const NotesGrid = styled.div`
   }
 `;
 
-const NoteCard = styled.div<{ $index: number }>`
+const NoteCard = styled.div<{
+  $highlighted?: boolean;
+  $index: number;
+  $muted?: boolean;
+}>`
   animation: noteCardAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
   animation-delay: ${({ $index }) => `${400 + $index * 100}ms`};
-  background: ${COLORS.backgroundSecondary};
-  border: 1px solid ${COLORS.borderLight};
+  background: ${({ $highlighted }) =>
+    $highlighted ? COLORS.background : COLORS.backgroundSecondary};
+  border: 1px solid
+    ${({ $highlighted }) =>
+      $highlighted ? COLORS.border : COLORS.borderLight};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
   height: 280px;
   justify-content: space-between;
+  opacity: ${({ $muted }) => ($muted ? 0.56 : 1)};
+  transform: ${({ $highlighted }) =>
+    $highlighted ? 'translateY(-2px)' : 'none'};
+  transition:
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    opacity 180ms ease,
+    transform 180ms ease;
+  box-shadow: ${({ $highlighted }) =>
+    $highlighted ? '0 4px 14px rgba(0, 0, 0, 0.06)' : 'none'};
 
   @keyframes noteCardAppear {
     from {
@@ -518,6 +548,10 @@ function FieldValueRenderer({ field }: { field: RecordField }) {
 
 export function RecordPage({ page }: { page: RecordPageDefinition }) {
   const { record, notes } = page;
+  const hasHighlightedNotes = notes.some((note) => note.highlighted);
+  const hasHighlightedRelations = record.relations.some((section) =>
+    section.items.some((item) => item.highlighted),
+  );
 
   return (
     <Shell>
@@ -564,7 +598,11 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
               ) : null}
             </RelationTitle>
             {section.items.map((item) => (
-              <RelationItem key={item.name}>
+              <RelationItem
+                $highlighted={item.highlighted}
+                $muted={hasHighlightedRelations && !item.highlighted}
+                key={item.name}
+              >
                 {item.avatarUrl ? (
                   <RelationAvatarImage alt={item.name} src={item.avatarUrl} />
                 ) : item.domain ? (
@@ -602,7 +640,12 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
 
         <NotesGrid>
           {notes.map((note, index) => (
-            <NoteCard $index={index} key={note.id}>
+            <NoteCard
+              $highlighted={note.highlighted}
+              $index={index}
+              $muted={hasHighlightedNotes && !note.highlighted}
+              key={note.id}
+            >
               <NoteContent>
                 <NoteTitle>{note.title}</NoteTitle>
                 <NoteBody>{note.body}</NoteBody>

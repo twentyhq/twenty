@@ -207,6 +207,7 @@ export type RecordField = {
 export type RecordRelation = {
   avatarUrl?: string;
   domain?: string;
+  highlighted?: boolean;
   icon?: SidebarIcon;
   name: string;
 };
@@ -215,6 +216,7 @@ export type RecordNote = {
   id: string;
   title: string;
   body: string;
+  highlighted?: boolean;
   relation?: { avatarUrl?: string; name: string };
 };
 
@@ -263,6 +265,7 @@ export type SidebarIcon =
     };
 
 type SidebarBaseItemDef = {
+  hidden?: boolean;
   id: string;
   label: string;
   icon: SidebarIcon;
