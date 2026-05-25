@@ -48,8 +48,6 @@ export class FileController {
   ) {
     const filepath = join(...req.params.path);
 
-    // Reject path traversal and other unsafe inputs with the same response as a
-    // missing file, so traversal probes are indistinguishable from regular misses.
     if (!isSafeRelativePath(filepath)) {
       throw new FileException(
         'File not found',
