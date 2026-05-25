@@ -1,9 +1,16 @@
 'use client';
 
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import {
+  type CSSProperties,
+  type ReactNode,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { Container, LinkButton } from '@/design-system/components';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
+import { TabButton } from '@/sections/Tabs/components/TabButton';
 import { TabButtons } from '@/sections/Tabs/components/TabButtons';
 import type { TabType } from '@/sections/Tabs/types';
 import { theme } from '@/theme';
@@ -22,8 +29,14 @@ export type HeroScrollProps = {
   ctaLabel: string;
   introBody: string;
   introHeading: ReactNode;
+  introSecondaryCta?: ReactNode;
   tabs: TabType[];
   visual: AppPreviewConfig;
+};
+
+type StackTargetMetric = {
+  offset: number;
+  width: number;
 };
 
 const NAV_HEIGHT = 64;
@@ -142,7 +155,7 @@ const HeadingGroup = styled.div`
 `;
 
 const ActionSlot = styled.div`
-  min-height: 48px;
+  min-height: 64px;
   position: relative;
   width: 100%;
 `;
@@ -157,6 +170,51 @@ const CtaLayer = styled.div`
 
   &[data-active='true'] {
     position: relative;
+  }
+`;
+
+const MeasureTabButtons = styled(TabButtons)`
+  width: 100%;
+
+  @media (min-width: ${theme.breakpoints.lg}px) {
+    opacity: 0;
+    pointer-events: none;
+    visibility: hidden;
+  }
+`;
+
+const StackedTabDeck = styled.div`
+  display: none;
+  inset: 0;
+  position: absolute;
+
+  @media (min-width: ${theme.breakpoints.lg}px) {
+    display: block;
+  }
+`;
+
+const StackedTabCard = styled.div`
+  left: 50%;
+  max-width: min(500px, calc(100vw - 160px));
+  opacity: var(--hero-stack-opacity, 0);
+  position: absolute;
+  top: 0;
+  transform-origin: center top;
+  transition: none;
+  width: var(--hero-stack-width, auto);
+  will-change: opacity, transform;
+
+  & > button {
+    background-color: ${theme.colors.secondary.background[100]};
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.1) 0%,
+      rgba(255, 255, 255, 0.1) 100%
+    );
+    border: 1px solid ${theme.colors.secondary.border[10]};
+    box-sizing: border-box;
+    max-width: none;
+    width: 100%;
   }
 `;
 
@@ -176,17 +234,78 @@ export function HeroVisualScroll({
   ctaLabel,
   introBody,
   introHeading,
+  introSecondaryCta,
   tabs,
   visual,
 }: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const rowButtonsRef = useRef<HTMLDivElement>(null);
   const { morphProgress, navProgress } = useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
   const [activeTab, setActiveTab] = useState(0);
+  const [stackTargetMetrics, setStackTargetMetrics] = useState<
+    StackTargetMetric[]
+  >([]);
+  const clamp = (value: number) => Math.max(0, Math.min(1, value));
+  const stackAppearProgress = clamp((morphProgress - 0.08) / 0.12);
+  const stackAlignProgress = clamp((morphProgress - 0.58) / 0.16);
+  const stackSpreadProgress = clamp((morphProgress - 0.74) / 0.18);
+  const selectorRevealProgress = clamp((morphProgress - 0.94) / 0.06);
+  const selectorRevealReady = selectorRevealProgress > 0.96;
+  const stackCards = tabs;
+
+  const stackStyle = {
+    '--hero-stack-opacity': String(stackAppearProgress),
+    '--hero-stack-shift-y': `${(1 - stackAppearProgress) * 24}px`,
+  } as CSSProperties;
+
+  const stackBaseOffsets = [0, 8, 16, 24];
+  const stackBaseScales = [1, 0.985, 0.97, 0.955];
+  const stackSpreadMetrics =
+    stackTargetMetrics.length === tabs.length ? stackTargetMetrics : null;
+  const stackWidth = stackSpreadMetrics?.[0]?.width ?? null;
 
   useEffect(() => {
     menuSync?.setMorphProgress(navProgress);
   }, [menuSync, navProgress]);
+
+  useEffect(() => {
+    const updateStackTargets = () => {
+      const rowContainer = rowButtonsRef.current;
+
+      if (!(rowContainer instanceof HTMLElement)) {
+        return;
+      }
+
+      const buttons = Array.from(rowContainer.querySelectorAll('button'));
+
+      if (buttons.length !== tabs.length) {
+        return;
+      }
+
+      const containerRect = rowContainer.getBoundingClientRect();
+      const containerCenter = containerRect.left + containerRect.width / 2;
+
+      setStackTargetMetrics(
+        buttons.map((button) => {
+          const rect = button.getBoundingClientRect();
+
+          return {
+            offset: rect.left + rect.width / 2 - containerCenter,
+            width: rect.width,
+          };
+        }),
+      );
+    };
+
+    updateStackTargets();
+
+    window.addEventListener('resize', updateStackTargets);
+
+    return () => {
+      window.removeEventListener('resize', updateStackTargets);
+    };
+  }, [tabs]);
 
   return (
     <ScrollTrack ref={trackRef}>
@@ -222,12 +341,13 @@ export function HeroVisualScroll({
                   label={ctaLabel}
                   variant="contained"
                 />
+                {introSecondaryCta}
               </CtaLayer>
               <CtaLayer
                 data-active={false}
                 style={{ opacity: 0, pointerEvents: 'none' }}
               >
-                <TabButtons
+                <MeasureTabButtons
                   activeIndex={activeTab}
                   idPrefix="product-hero-intro"
                   onSelect={setActiveTab}
@@ -284,12 +404,63 @@ export function HeroVisualScroll({
                 />
               </CtaLayer>
               <CtaLayer data-active={true}>
-                <TabButtons
+                <MeasureTabButtons
                   activeIndex={activeTab}
-                  idPrefix="product-hero-ai"
+                  containerRef={rowButtonsRef}
+                  idPrefix="product-hero-ai-measure"
                   onSelect={setActiveTab}
                   tabs={tabs}
                 />
+                <StackedTabDeck
+                  aria-hidden={selectorRevealReady ? undefined : 'true'}
+                  style={{
+                    ...stackStyle,
+                    pointerEvents: selectorRevealReady ? 'auto' : 'none',
+                  }}
+                >
+                  {stackCards.map((tab, index) => (
+                    (() => {
+                      const targetMetric = stackSpreadMetrics?.[index];
+                      const width =
+                        stackWidth != null && targetMetric != null
+                          ? stackWidth +
+                            (targetMetric.width - stackWidth) *
+                              stackSpreadProgress
+                          : stackWidth ?? targetMetric?.width;
+                      const offset = targetMetric?.offset ?? 0;
+
+                      return (
+                        <StackedTabCard
+                          key={index}
+                          style={{
+                            transform: `translate3d(calc(-50% + ${
+                              offset * stackSpreadProgress
+                            }px), ${
+                              stackBaseOffsets[index] *
+                              (1 - stackAlignProgress)
+                            }px, 0) scale(${
+                              stackBaseScales[index] +
+                              (1 - stackBaseScales[index]) *
+                                stackAlignProgress
+                            })`,
+                            width: width ? `${width}px` : undefined,
+                            zIndex: 4 - index,
+                          }}
+                        >
+                          <TabButton
+                            controls={`product-hero-ai-stack-panel-${index}`}
+                            id={`product-hero-ai-stack-tab-${index}`}
+                            isActive={
+                              selectorRevealReady && index === activeTab
+                            }
+                            onSelect={() => setActiveTab(index)}
+                            tab={tab}
+                          />
+                        </StackedTabCard>
+                      );
+                    })()
+                  ))}
+                </StackedTabDeck>
               </CtaLayer>
             </ActionSlot>
           </StyledContainer>

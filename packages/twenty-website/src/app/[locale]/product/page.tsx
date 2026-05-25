@@ -96,12 +96,12 @@ export default async function ProductPage({ params }: ProductPageProps) {
       >
         <Hero.HeroVisualScroll
           aiBody={i18n._(
-            msg`Ask questions, automate tasks, and get insights. All powered by AI that understands your data.`,
+            msg`Ask questions, automate tasks, and get insights with AI that understands your data and helps you move faster every day, end to end across teams.`,
           )}
           aiHeading={
             <Heading size="lg" weight="light">
               <HeadingPart fontFamily="serif">
-                {i18n._(msg`AI that actually`)}
+                {i18n._(msg`...with AI that actually`)}
               </HeadingPart>
               <br />
               <HeadingPart fontFamily="serif">
@@ -115,7 +115,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
           ctaHref="https://app.twenty.com/welcome"
           ctaLabel={i18n._(msg`Get started`)}
           introBody={i18n._(
-            msg`Track relationships, manage pipelines, and take action quickly with a CRM that feels intuitive from day one.`,
+            msg`Track relationships, manage pipelines, and take action quickly with an intuitive CRM that helps your team move faster from day one with confidence.`,
           )}
           introHeading={
             <Heading size="lg" weight="light">
@@ -130,6 +130,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
                 {i18n._(msg`move fast`)}
               </HeadingPart>
             </Heading>
+          }
+          introSecondaryCta={
+            <TalkToUsButton
+              color="secondary"
+              label={msg`Talk to us`}
+              variant="outlined"
+            />
           }
           tabs={AI_HERO_TABS}
           visual={APP_PREVIEW_DATA.visual}
