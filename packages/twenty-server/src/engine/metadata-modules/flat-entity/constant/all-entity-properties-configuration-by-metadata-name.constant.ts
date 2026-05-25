@@ -62,12 +62,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: undefined,
     },
     // isUnique is derived from IndexMetadata at cache build time and is
-    // not a column on the fieldMetadata table. The unique-index toggle
-    // flows through handleIndexChangesDuringFieldUpdate, which creates
-    // or deletes the underlying IndexMetadata directly — the field
-    // metadata row itself has nothing to persist for this property.
+    // not a column on the fieldMetadata table. It stays in
+    // propertiesToCompare so per-type validators see the proposed
+    // change (e.g. rejecting unique on FILES), but the field-metadata
+    // runner drops it before issuing the SQL UPDATE — the actual state
+    // change rides on the side-effect index create/delete.
     isUnique: {
-      toCompare: false,
+      toCompare: true,
       toStringify: false,
       universalProperty: undefined,
     },
