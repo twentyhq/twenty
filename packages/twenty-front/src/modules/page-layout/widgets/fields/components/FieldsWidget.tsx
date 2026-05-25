@@ -1,5 +1,6 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { RecordFieldsScopeContextProvider } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
+import { RecordDetailDuplicatesSection } from '@/object-record/record-field-list/record-detail-section/duplicate/components/RecordDetailDuplicatesSection';
 import { RecordFieldListComponentInstanceContext } from '@/object-record/record-field-list/states/contexts/RecordFieldListComponentInstanceContext';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { FieldsWidgetCellEditModePortal } from '@/page-layout/widgets/fields/components/FieldsWidgetCellEditModePortal';
@@ -169,6 +170,13 @@ export const FieldsWidget = ({ widget }: FieldsWidgetProps) => {
                 />
               </StyledPropertyBox>
             </FieldsWidgetGroupContainer>
+          )}
+
+          {!isInSidePanel && (
+            <RecordDetailDuplicatesSection
+              objectRecordId={targetRecord.id}
+              objectNameSingular={targetRecord.targetObjectNameSingular}
+            />
           )}
 
           <FieldsWidgetCellHoveredPortal
