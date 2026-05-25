@@ -19,8 +19,9 @@ import {
   IndexMetadataException,
   IndexMetadataExceptionCode,
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
-import { generateCustomFlatIndexMetadata } from 'src/engine/metadata-modules/index-metadata/utils/generate-custom-flat-index.util';
+import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
+import { validateNoDuplicateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -190,6 +191,18 @@ export class IndexMetadataService {
       })),
     });
 
+    validateNoDuplicateUniqueIndexOrThrow({
+      proposed: {
+        isUnique: false,
+        fields: resolvedInputs.map(({ flatField, subFieldName }) => ({
+          fieldMetadataId: flatField.id,
+          subFieldName,
+        })),
+      },
+      existingFlatIndexMaps,
+      objectMetadataId: createIndexInput.objectMetadataId,
+    });
+
     const existingCustomIndexCount = Object.values(
       existingFlatIndexMaps.byUniversalIdentifier,
     )
@@ -218,34 +231,36 @@ export class IndexMetadataService {
     const indexMetadataUniversalIdentifier = v4();
     const createdAt = new Date().toISOString();
 
-    const universalFlatIndexMetadata = generateCustomFlatIndexMetadata({
-      flatObjectMetadata,
-      objectFlatFieldMetadatas,
-      flatIndex: {
-        createdAt,
-        updatedAt: createdAt,
-        indexType: createIndexInput.indexType,
-        // WHERE clause is system-only — see CreateIndexInput for rationale.
-        indexWhereClause: null,
-        isCustom: true,
-        isUnique: false,
-        objectMetadataUniversalIdentifier:
-          flatObjectMetadata.universalIdentifier,
-        universalIdentifier: indexMetadataUniversalIdentifier,
-        applicationUniversalIdentifier:
-          workspaceCustomFlatApplication.universalIdentifier,
-        universalFlatIndexFieldMetadatas: resolvedInputs.map(
-          ({ flatField, subFieldName }, order) => ({
-            createdAt,
-            updatedAt: createdAt,
-            order,
-            subFieldName,
-            fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
-            indexMetadataUniversalIdentifier,
-          }),
-        ),
+    const universalFlatIndexMetadata = generateFlatIndexMetadataWithNameOrThrow(
+      {
+        flatObjectMetadata,
+        objectFlatFieldMetadatas,
+        flatIndex: {
+          createdAt,
+          updatedAt: createdAt,
+          indexType: createIndexInput.indexType,
+          // WHERE clause is system-only — see CreateIndexInput for rationale.
+          indexWhereClause: null,
+          isCustom: true,
+          isUnique: false,
+          objectMetadataUniversalIdentifier:
+            flatObjectMetadata.universalIdentifier,
+          universalIdentifier: indexMetadataUniversalIdentifier,
+          applicationUniversalIdentifier:
+            workspaceCustomFlatApplication.universalIdentifier,
+          universalFlatIndexFieldMetadatas: resolvedInputs.map(
+            ({ flatField, subFieldName }, order) => ({
+              createdAt,
+              updatedAt: createdAt,
+              order,
+              subFieldName,
+              fieldMetadataUniversalIdentifier: flatField.universalIdentifier,
+              indexMetadataUniversalIdentifier,
+            }),
+          ),
+        },
       },
-    });
+    );
 
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
