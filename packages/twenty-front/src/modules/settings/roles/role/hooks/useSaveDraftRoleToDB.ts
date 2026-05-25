@@ -12,7 +12,6 @@ import { getOperationName } from '~/utils/getOperationName';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useMutation } from '@apollo/client/react';
 import {
-  type PermissionFlagType,
   type RowLevelPermissionPredicateGroupLogicalOperator,
   type RowLevelPermissionPredicateOperand,
   type Role,
@@ -170,9 +169,10 @@ export const useSaveDraftRoleToDB = ({
         variables: {
           upsertPermissionFlagsInput: {
             roleId: roleId,
-            permissionFlagKeys: (settingsDraftRole.permissionFlags?.map(
-              (permissionFlag) => permissionFlag.flag,
-            ) ?? []) as PermissionFlagType[],
+            permissionFlagKeys:
+              settingsDraftRole.permissionFlags?.map(
+                (permissionFlag) => permissionFlag.flag,
+              ) ?? [],
           },
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],
@@ -366,9 +366,10 @@ export const useSaveDraftRoleToDB = ({
         variables: {
           upsertPermissionFlagsInput: {
             roleId: targetRoleId,
-            permissionFlagKeys: (settingsDraftRole.permissionFlags?.map(
-              (permissionFlag) => permissionFlag.flag,
-            ) ?? []) as PermissionFlagType[],
+            permissionFlagKeys:
+              settingsDraftRole.permissionFlags?.map(
+                (permissionFlag) => permissionFlag.flag,
+              ) ?? [],
           },
         },
         refetchQueries: [getOperationName(GET_ROLES) ?? ''],

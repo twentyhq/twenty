@@ -14,11 +14,7 @@ import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  type Agent,
-  type PermissionFlagType,
-  GetRolesDocument,
-} from '~/generated-metadata/graphql';
+import { type Agent, GetRolesDocument } from '~/generated-metadata/graphql';
 import { SidePanelSkeletonLoader } from '~/loading/components/SidePanelSkeletonLoader';
 import { filterBySearchQuery } from '~/utils/filterBySearchQuery';
 
@@ -102,9 +98,8 @@ export const WorkflowAiAgentPermissionsTab = ({
     (item) => item.id === workflowAiAgentActionAgent?.roleId,
   );
   const objectPermissions = role?.objectPermissions || [];
-  const permissionFlagKeys = (role?.permissionFlags?.map(
-    (permissionFlag) => permissionFlag.flag,
-  ) ?? []) as PermissionFlagType[];
+  const permissionFlagKeys =
+    role?.permissionFlags?.map((permissionFlag) => permissionFlag.flag) ?? [];
   const hasRoleWithPermissions =
     isDefined(workflowAiAgentActionAgent?.roleId) &&
     (objectPermissions.length > 0 || permissionFlagKeys.length > 0);

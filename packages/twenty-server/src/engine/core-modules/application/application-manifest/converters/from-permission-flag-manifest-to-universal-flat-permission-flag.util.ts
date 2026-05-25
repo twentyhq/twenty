@@ -18,7 +18,7 @@ export const fromPermissionFlagManifestToUniversalFlatPermissionFlag = ({
     label: permissionFlagManifest.label,
     description: permissionFlagManifest.description ?? null,
     icon: permissionFlagManifest.icon ?? null,
-    permissionType: permissionFlagManifest.permissionType,
+    permissionType: 'tool',
     rolePermissionFlagUniversalIdentifiers: [],
     createdAt: now,
     updatedAt: now,
