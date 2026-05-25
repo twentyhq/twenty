@@ -13,6 +13,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { assertSourceMatchesPath } from 'src/engine/core-modules/file-storage/utils/assert-source-matches-path.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
@@ -157,6 +158,11 @@ export class FileStorageService {
         fileFolder,
         resourcePath,
       });
+
+    await assertSourceMatchesPath({
+      sourceFile,
+      resourcePath,
+    });
 
     await driver.writeFile({
       filePath: onStorageFilePath,

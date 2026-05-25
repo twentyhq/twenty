@@ -20,7 +20,10 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
+import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -192,7 +195,7 @@ export class ApplicationDevelopmentResolver {
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, mimetype }: FileUpload,
+    { createReadStream }: FileUpload,
     @Args()
     {
       applicationUniversalIdentifier,
@@ -248,9 +251,31 @@ export class ApplicationDevelopmentResolver {
 
     const buffer = await streamToBuffer(createReadStream());
 
+    // Derive mime/ext from the bytes — never trust the multipart Content-Type
+    // header. The catch turns magic-byte mismatches into a user-visible 4xx.
+    let derived: { mimeType: string; ext: string };
+
+    try {
+      derived = await extractFileInfo({ file: buffer, filename: filePath });
+    } catch (error) {
+      if (error instanceof FileStorageException) {
+        throw new ApplicationException(
+          error.message,
+          ApplicationExceptionCode.INVALID_INPUT,
+        );
+      }
+      throw error;
+    }
+
+    const sanitizedFile = sanitizeFile({
+      file: buffer,
+      ext: derived.ext,
+      mimeType: derived.mimeType,
+    });
+
     return await this.fileStorageService.writeFile({
-      sourceFile: buffer,
-      mimeType: mimetype,
+      sourceFile: sanitizedFile,
+      mimeType: derived.mimeType,
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,

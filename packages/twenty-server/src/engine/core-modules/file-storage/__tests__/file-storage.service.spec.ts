@@ -406,6 +406,60 @@ describe('FileStorageService', () => {
           }),
         );
       });
+
+      describe('magic-byte backstop', () => {
+        const pngBuffer = Buffer.from([
+          0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00,
+          0x0d, 0x49, 0x48, 0x44, 0x52,
+        ]);
+        const textBuffer = Buffer.from('Hello, world!', 'utf-8');
+
+        it('should reject buffer whose magic bytes do not match the path extension', async () => {
+          await expect(
+            service.writeFile({
+              workspaceId: 'workspace-123',
+              applicationUniversalIdentifier: 'app-456',
+              fileFolder: FileFolder.PublicAsset,
+              resourcePath: 'assets/fake-image.png',
+              sourceFile: textBuffer,
+              mimeType: 'image/png',
+              settings: { isTemporaryFile: false, toDelete: false },
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.INVALID_EXTENSION,
+          });
+
+          expect(mockDriver.writeFile).not.toHaveBeenCalled();
+        });
+
+        it('should accept buffer whose magic bytes match the path extension', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: 'assets/photo.png',
+            sourceFile: pngBuffer,
+            mimeType: 'image/png',
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          expect(mockDriver.writeFile).toHaveBeenCalled();
+        });
+
+        it('should skip magic-byte check for string sources (trusted internal callers)', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.Source,
+            resourcePath: 'src/index.tsx',
+            sourceFile: 'export const App = () => null;',
+            mimeType: 'application/typescript',
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          expect(mockDriver.writeFile).toHaveBeenCalled();
+        });
+      });
     });
 
     describe('deleteFile', () => {

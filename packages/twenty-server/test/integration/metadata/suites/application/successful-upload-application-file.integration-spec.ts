@@ -10,80 +10,116 @@ import { v4 as uuidv4 } from 'uuid';
 
 const TEST_APP_ID = uuidv4();
 
-type TestContext = {
+type UploadInput = {
   fileFolder: string;
-  fileFolderValue: FileFolder;
   filePath: string;
   filename: string;
   contentType: string;
   fileContent: string;
 };
 
+type UploadExpected = {
+  fileFolderValue: FileFolder;
+  persistedMimeType?: string;
+};
+
+type TestContext = {
+  input: UploadInput;
+  expected: UploadExpected;
+};
+
 const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
   {
     title: 'when uploading a built front component',
     context: {
-      fileFolder: 'BuiltFrontComponent',
-      fileFolderValue: FileFolder.BuiltFrontComponent,
-      filePath: 'src/components/my-component.mjs',
-      filename: 'my-component.mjs',
-      contentType: 'application/javascript',
-      fileContent: 'export default function MyComponent() {}',
+      input: {
+        fileFolder: 'BuiltFrontComponent',
+        filePath: 'src/components/my-component.mjs',
+        filename: 'my-component.mjs',
+        contentType: 'application/javascript',
+        fileContent: 'export default function MyComponent() {}',
+      },
+      expected: {
+        fileFolderValue: FileFolder.BuiltFrontComponent,
+        persistedMimeType: 'text/javascript',
+      },
     },
   },
   {
     title: 'when uploading a built logic function',
     context: {
-      fileFolder: 'BuiltLogicFunction',
-      fileFolderValue: FileFolder.BuiltLogicFunction,
-      filePath: 'src/handlers/my-handler.mjs',
-      filename: 'my-handler.mjs',
-      contentType: 'application/javascript',
-      fileContent: 'export default async function handler() {}',
+      input: {
+        fileFolder: 'BuiltLogicFunction',
+        filePath: 'src/handlers/my-handler.mjs',
+        filename: 'my-handler.mjs',
+        contentType: 'application/javascript',
+        fileContent: 'export default async function handler() {}',
+      },
+      expected: {
+        fileFolderValue: FileFolder.BuiltLogicFunction,
+        persistedMimeType: 'text/javascript',
+      },
     },
   },
   {
     title: 'when uploading a source file',
     context: {
-      fileFolder: 'Source',
-      fileFolderValue: FileFolder.Source,
-      filePath: 'src/index.tsx',
-      filename: 'index.tsx',
-      contentType: 'text/plain',
-      fileContent: 'export const App = () => <div>Hello</div>;',
+      input: {
+        fileFolder: 'Source',
+        filePath: 'src/index.tsx',
+        filename: 'index.tsx',
+        contentType: 'text/plain',
+        fileContent: 'export const App = () => <div>Hello</div>;',
+      },
+      expected: {
+        fileFolderValue: FileFolder.Source,
+      },
     },
   },
   {
     title: 'when uploading a public asset',
     context: {
-      fileFolder: 'PublicAsset',
-      fileFolderValue: FileFolder.PublicAsset,
-      filePath: 'assets/logo.svg',
-      filename: 'logo.svg',
-      contentType: 'image/svg+xml',
-      fileContent: '<svg></svg>',
+      input: {
+        fileFolder: 'PublicAsset',
+        filePath: 'assets/logo.svg',
+        filename: 'logo.svg',
+        contentType: 'image/svg+xml',
+        fileContent: '<svg></svg>',
+      },
+      expected: {
+        fileFolderValue: FileFolder.PublicAsset,
+        persistedMimeType: 'image/svg+xml',
+      },
     },
   },
   {
     title: 'when uploading a dependencies file',
     context: {
-      fileFolder: 'Dependencies',
-      fileFolderValue: FileFolder.Dependencies,
-      filePath: 'yarn.lock',
-      filename: 'yarn.lock',
-      contentType: 'text/plain',
-      fileContent: '# yarn lockfile v1',
+      input: {
+        fileFolder: 'Dependencies',
+        filePath: 'yarn.lock',
+        filename: 'yarn.lock',
+        contentType: 'text/plain',
+        fileContent: '# yarn lockfile v1',
+      },
+      expected: {
+        fileFolderValue: FileFolder.Dependencies,
+      },
     },
   },
   {
     title: 'when uploading a file in a nested directory path',
     context: {
-      fileFolder: 'Source',
-      fileFolderValue: FileFolder.Source,
-      filePath: 'src/modules/auth/login/login.component.tsx',
-      filename: 'login.component.tsx',
-      contentType: 'text/plain',
-      fileContent: 'export const Login = () => null;',
+      input: {
+        fileFolder: 'Source',
+        filePath: 'src/modules/auth/login/login.component.tsx',
+        filename: 'login.component.tsx',
+        contentType: 'text/plain',
+        fileContent: 'export const Login = () => null;',
+      },
+      expected: {
+        fileFolderValue: FileFolder.Source,
+      },
     },
   },
 ];
@@ -106,16 +142,16 @@ describe('Upload application file should succeed', () => {
 
   it.each(eachTestingContextFilter(SUCCESSFUL_TEST_CASES))(
     '$title',
-    async ({ context }) => {
+    async ({ context: { input, expected } }) => {
       jest.useRealTimers();
 
       const { data, errors } = await uploadApplicationFile({
         applicationUniversalIdentifier: TEST_APP_ID,
-        fileFolder: context.fileFolder,
-        filePath: context.filePath,
-        fileBuffer: Buffer.from(context.fileContent),
-        filename: context.filename,
-        contentType: context.contentType,
+        fileFolder: input.fileFolder,
+        filePath: input.filePath,
+        fileBuffer: Buffer.from(input.fileContent),
+        filename: input.filename,
+        contentType: input.contentType,
         expectToFail: false,
       });
 
@@ -124,8 +160,20 @@ describe('Upload application file should succeed', () => {
       expect(errors).toBeUndefined();
       expect(data.uploadApplicationFile).toEqual({
         id: expect.any(String),
-        path: `${context.fileFolderValue}/${context.filePath}`,
+        path: `${expected.fileFolderValue}/${input.filePath}`,
       });
+
+      const [row] = await globalThis.testDataSource.query(
+        `SELECT "mimeType" FROM core."file" WHERE id = $1`,
+        [data.uploadApplicationFile.id],
+      );
+
+      if (expected.persistedMimeType !== undefined) {
+        expect(row.mimeType).toBe(expected.persistedMimeType);
+      } else {
+        expect(typeof row.mimeType).toBe('string');
+        expect(row.mimeType.length).toBeGreaterThan(0);
+      }
     },
     60000,
   );
