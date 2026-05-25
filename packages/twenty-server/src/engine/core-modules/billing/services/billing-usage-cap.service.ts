@@ -112,10 +112,6 @@ export class BillingUsageCapService {
 
     const [billingSubscriptionItem] = billingSubscriptionItems;
 
-    if (billingSubscriptionItem.hasReachedCurrentPeriodCap === hasReachedCap) {
-      return;
-    }
-
     await this.billingSubscriptionItemRepository.update(
       { id: billingSubscriptionItem.id },
       { hasReachedCurrentPeriodCap: hasReachedCap },
