@@ -317,9 +317,8 @@ export class BillingUsageService {
         -usedCredits,
       );
 
-    const previousAvailableCredits = decrementedAvailableCredits + usedCredits;
     const hasJustReachedCap =
-      previousAvailableCredits > 0 && decrementedAvailableCredits <= 0;
+      availableCredits > 0 && decrementedAvailableCredits <= 0;
 
     if (hasJustReachedCap) {
       await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
