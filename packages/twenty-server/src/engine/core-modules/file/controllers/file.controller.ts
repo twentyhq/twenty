@@ -88,6 +88,10 @@ export class FileController {
 
       stream.pipe(res);
     } catch (error) {
+      if (error instanceof FileException) {
+        throw error;
+      }
+
       if (
         error instanceof FileStorageException &&
         error.code === FileStorageExceptionCode.FILE_NOT_FOUND

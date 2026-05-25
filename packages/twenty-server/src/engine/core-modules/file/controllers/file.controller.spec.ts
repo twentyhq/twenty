@@ -17,8 +17,8 @@ import {
 import { FileApiExceptionFilter } from 'src/engine/core-modules/file/filters/file-api-exception.filter';
 import { FileByIdGuard } from 'src/engine/core-modules/file/guards/file-by-id.guard';
 import { FileService } from 'src/engine/core-modules/file/services/file.service';
-import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
+import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
 import { FileController } from './file.controller';
 
@@ -293,9 +293,7 @@ describe('FileController', () => {
     });
 
     it('should throw FileException with FILE_NOT_FOUND when asset is not found', async () => {
-      jest
-        .spyOn(fileService, 'getFileStreamByPath')
-        .mockResolvedValue(null);
+      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue(null);
 
       const mockRequest = {
         params: { path: ['missing-asset.png'] },
