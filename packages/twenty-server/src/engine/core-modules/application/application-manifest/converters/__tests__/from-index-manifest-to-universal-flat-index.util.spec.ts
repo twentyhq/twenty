@@ -91,6 +91,27 @@ describe('fromIndexManifestToUniversalFlatIndex', () => {
     );
   });
 
+  it('forwards isUnique from the manifest', () => {
+    const result = fromIndexManifestToUniversalFlatIndex({
+      indexManifest: {
+        ...baseManifest,
+        isUnique: true,
+        fields: [
+          {
+            universalIdentifier: 'field-entry-1',
+            fieldUniversalIdentifier: scalarField.universalIdentifier,
+          },
+        ],
+      },
+      flatObjectMetadata,
+      objectFlatFieldMetadatas: [scalarField],
+      applicationUniversalIdentifier,
+      now,
+    });
+
+    expect(result.isUnique).toBe(true);
+  });
+
   it('throws when a composite field is referenced without a subFieldName', () => {
     expect(() =>
       fromIndexManifestToUniversalFlatIndex({

@@ -72,9 +72,22 @@ export default defineIndex({
 });
 ```
 
-A few constraints to keep in mind:
+### Unique indexes
 
-- `defineIndex` doesn't accept `isUnique` or a partial `WHERE` clause — single-field uniqueness goes on the field with `defineField({ isUnique: true })`; richer constraints stay under admin control.
+`defineIndex` accepts `isUnique: true` for both single- and multi-column uniqueness. This is the recommended primitive — `defineField({ isUnique: true })` is deprecated and will be removed in a future release.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [{ universalIdentifier: '…', fieldUniversalIdentifier: EMAIL_FIELD_UNIVERSAL_IDENTIFIER }],
+});
+```
+
+### Other constraints
+
+- Partial `WHERE` clauses stay under admin control — apps can't declare them.
 - Each object is capped at 10 custom indexes (the framework's own indexes don't count).
 
 Order the `fields` array the way Postgres should use it — leftmost column first, like a phone book. Indexes are not free: every write to the table updates them. Add one only when you have a query that needs it.
