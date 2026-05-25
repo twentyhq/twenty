@@ -11,7 +11,7 @@ import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-
 import { isMorphOrRelationFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
+import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { type CreateIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/create-index.input';
@@ -293,10 +293,19 @@ export class IndexMetadataService {
         },
       );
 
-    return findFlatEntityByUniversalIdentifierOrThrow({
+    const createdFlatIndexMetadata = findFlatEntityByUniversalIdentifier({
       universalIdentifier: indexMetadataUniversalIdentifier,
       flatEntityMaps: recomputedFlatIndexMaps,
     });
+
+    if (!isDefined(createdFlatIndexMetadata)) {
+      throw new IndexMetadataException(
+        `Index ${indexMetadataUniversalIdentifier} was created but is missing from the recomputed cache`,
+        IndexMetadataExceptionCode.INDEX_CREATION_FAILED,
+      );
+    }
+
+    return createdFlatIndexMetadata;
   }
 
   async deleteOne({
