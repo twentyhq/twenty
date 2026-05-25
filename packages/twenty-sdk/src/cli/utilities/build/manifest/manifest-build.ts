@@ -18,6 +18,7 @@ import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
@@ -38,6 +39,7 @@ import {
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
@@ -82,6 +84,7 @@ export const buildManifest = async (
   let applicationConfig: ApplicationConfig | undefined;
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
+  const permissionFlags: PermissionFlagManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
@@ -102,6 +105,7 @@ export const buildManifest = async (
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
+  const permissionFlagsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
@@ -187,6 +191,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         fieldsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.PermissionFlags: {
+        const extract = await extractManifestFromFile<PermissionFlagConfig>({
+          appPath,
+          filePath,
+        });
+        permissionFlags.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        permissionFlagsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Roles: {
@@ -526,6 +541,7 @@ export const buildManifest = async (
         application,
         objects: objects.sort(byId),
         fields: fields.sort(byId),
+        permissionFlags: permissionFlags.sort(byId),
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
@@ -544,6 +560,7 @@ export const buildManifest = async (
     application: applicationFilePaths,
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
+    permissionFlags: permissionFlagsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,

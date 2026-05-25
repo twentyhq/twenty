@@ -84,6 +84,13 @@ export type {
   PageLayoutWidgetManifest,
 } from 'twenty-shared/application';
 
+export { definePermissionFlag } from '@/sdk/define/permission-flags/define-permission-flag';
+export type { PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
+export type {
+  PermissionFlagManifest,
+  PermissionFlagPermissionType,
+} from 'twenty-shared/application';
+
 export { defineApplicationRole } from '@/sdk/define/roles/define-application-role';
 export { defineRole } from '@/sdk/define/roles/define-role';
 export { SystemPermissionFlag } from 'twenty-shared/constants';

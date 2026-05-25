@@ -17,6 +17,7 @@ import { fromObjectPermissionManifestToUniversalFlatObjectPermission } from 'src
 import { fromPageLayoutManifestToUniversalFlatPageLayout } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-manifest-to-universal-flat-page-layout.util';
 import { fromPageLayoutTabManifestToUniversalFlatPageLayoutTab } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-tab-manifest-to-universal-flat-page-layout-tab.util';
 import { fromPageLayoutWidgetManifestToUniversalFlatPageLayoutWidget } from 'src/engine/core-modules/application/application-manifest/converters/from-page-layout-widget-manifest-to-universal-flat-page-layout-widget.util';
+import { fromPermissionFlagManifestToUniversalFlatPermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-manifest-to-universal-flat-permission-flag.util';
 import { fromPermissionFlagToUniversalFlatRolePermissionFlag } from 'src/engine/core-modules/application/application-manifest/converters/from-permission-flag-to-universal-flat-role-permission-flag.util';
 import { fromRoleManifestToUniversalFlatRole } from 'src/engine/core-modules/application/application-manifest/converters/from-role-manifest-to-universal-flat-role.util';
 import { fromSkillManifestToUniversalFlatSkill } from 'src/engine/core-modules/application/application-manifest/converters/from-skill-manifest-to-universal-flat-skill.util';
@@ -171,6 +172,19 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         }),
       universalFlatEntityMapsToMutate:
         allUniversalFlatEntityMaps.flatConnectionProviderMaps,
+    });
+  }
+
+  for (const permissionFlagManifest of manifest.permissionFlags ?? []) {
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity:
+        fromPermissionFlagManifestToUniversalFlatPermissionFlag({
+          permissionFlagManifest,
+          applicationUniversalIdentifier,
+          now,
+        }),
+      universalFlatEntityMapsToMutate:
+        allUniversalFlatEntityMaps.flatPermissionFlagMaps,
     });
   }
 

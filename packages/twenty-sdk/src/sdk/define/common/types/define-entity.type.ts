@@ -5,6 +5,7 @@ import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-fun
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
@@ -40,6 +41,7 @@ export type DefinableEntity =
   | NavigationMenuItemManifest
   | PageLayoutConfig
   | PageLayoutTabConfig
+  | PermissionFlagConfig
   | CommandMenuItemConfig;
 
 export type DefineEntity<T extends DefinableEntity = DefinableEntity> = (

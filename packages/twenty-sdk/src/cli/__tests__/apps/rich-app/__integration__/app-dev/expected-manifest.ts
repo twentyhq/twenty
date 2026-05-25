@@ -13,6 +13,7 @@ import {
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
+  permissionFlags: [],
   pageLayouts: [],
   pageLayoutTabs: [
     {
