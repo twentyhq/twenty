@@ -278,7 +278,6 @@ export class ApplicationDevelopmentResolver {
 
     return await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
-      mimeType: derived.mimeType,
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,

@@ -501,7 +501,6 @@ export class ApplicationInstallService {
 
       await this.fileStorageService.writeFile({
         sourceFile: sanitizedContent,
-        mimeType,
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,

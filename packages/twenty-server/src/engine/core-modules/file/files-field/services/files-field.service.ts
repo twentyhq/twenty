@@ -84,7 +84,6 @@ export class FilesFieldService {
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
-      mimeType,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,

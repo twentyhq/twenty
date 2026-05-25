@@ -381,7 +381,6 @@ describe('FileStorageService', () => {
               ...validResourceIdentifier,
               resourcePath: context.resourcePath,
               sourceFile: Buffer.from('malicious'),
-              mimeType: 'application/javascript',
               settings: { isTemporaryFile: false, toDelete: false },
             }),
           ).rejects.toMatchObject({
@@ -396,7 +395,6 @@ describe('FileStorageService', () => {
         await service.writeFile({
           ...validResourceIdentifier,
           sourceFile: Buffer.from('valid content'),
-          mimeType: 'application/javascript',
           settings: { isTemporaryFile: false, toDelete: false },
         });
 
@@ -422,7 +420,6 @@ describe('FileStorageService', () => {
               fileFolder: FileFolder.PublicAsset,
               resourcePath: 'assets/fake-image.png',
               sourceFile: textBuffer,
-              mimeType: 'image/png',
               settings: { isTemporaryFile: false, toDelete: false },
             }),
           ).rejects.toMatchObject({
@@ -432,32 +429,56 @@ describe('FileStorageService', () => {
           expect(mockDriver.writeFile).not.toHaveBeenCalled();
         });
 
-        it('should accept buffer whose magic bytes match the path extension', async () => {
+        it('should accept buffer whose magic bytes match the path extension and persist the bytes-derived mime', async () => {
           await service.writeFile({
             workspaceId: 'workspace-123',
             applicationUniversalIdentifier: 'app-456',
             fileFolder: FileFolder.PublicAsset,
             resourcePath: 'assets/photo.png',
             sourceFile: pngBuffer,
-            mimeType: 'image/png',
             settings: { isTemporaryFile: false, toDelete: false },
           });
 
-          expect(mockDriver.writeFile).toHaveBeenCalled();
+          expect(mockDriver.writeFile).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'image/png' }),
+          );
+          expect(mockFileRepository.upsert).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'image/png' }),
+            expect.anything(),
+          );
         });
 
-        it('should skip magic-byte check for string sources (trusted internal callers)', async () => {
+        it('should persist application/typescript for a TypeScript source string (TWENTY_MIME_POLICY)', async () => {
           await service.writeFile({
             workspaceId: 'workspace-123',
             applicationUniversalIdentifier: 'app-456',
             fileFolder: FileFolder.Source,
             resourcePath: 'src/index.tsx',
             sourceFile: 'export const App = () => null;',
-            mimeType: 'application/typescript',
             settings: { isTemporaryFile: false, toDelete: false },
           });
 
-          expect(mockDriver.writeFile).toHaveBeenCalled();
+          expect(mockDriver.writeFile).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'application/typescript' }),
+          );
+        });
+
+        it('should persist application/typescript for a TypeScript source buffer (policy beats mrmime collision)', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.Source,
+            resourcePath: 'src/handler.ts',
+            sourceFile: Buffer.from(
+              'export const handler = () => null;',
+              'utf-8',
+            ),
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          expect(mockDriver.writeFile).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'application/typescript' }),
+          );
         });
       });
     });

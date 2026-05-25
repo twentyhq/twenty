@@ -50,7 +50,6 @@ export class FileEmailAttachmentService {
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: name,
-      mimeType,
       fileFolder: FileFolder.EmailAttachment,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,

@@ -47,7 +47,6 @@ export class FileAiChatService {
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: name,
-      mimeType,
       fileFolder: FileFolder.AgentChat,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,

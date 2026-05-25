@@ -20,7 +20,7 @@ type UploadInput = {
 
 type UploadExpected = {
   fileFolderValue: FileFolder;
-  persistedMimeType?: string;
+  persistedMimeType: string;
 };
 
 type TestContext = {
@@ -73,6 +73,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
       expected: {
         fileFolderValue: FileFolder.Source,
+        persistedMimeType: 'application/typescript',
       },
     },
   },
@@ -104,6 +105,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
       expected: {
         fileFolderValue: FileFolder.Dependencies,
+        persistedMimeType: 'application/octet-stream',
       },
     },
   },
@@ -119,6 +121,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<TestContext>[] = [
       },
       expected: {
         fileFolderValue: FileFolder.Source,
+        persistedMimeType: 'application/typescript',
       },
     },
   },
@@ -168,12 +171,7 @@ describe('Upload application file should succeed', () => {
         [data.uploadApplicationFile.id],
       );
 
-      if (expected.persistedMimeType !== undefined) {
-        expect(row.mimeType).toBe(expected.persistedMimeType);
-      } else {
-        expect(typeof row.mimeType).toBe('string');
-        expect(row.mimeType.length).toBeGreaterThan(0);
-      }
+      expect(row.mimeType).toBe(expected.persistedMimeType);
     },
     60000,
   );

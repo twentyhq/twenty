@@ -78,7 +78,10 @@ describe('extractFileInfoOrThrow', () => {
   ])(
     'should fall back to extension for $name files',
     async ({ filename, ext, mime }) => {
-      const result = await extractFileInfoOrThrow({ file: textBuffer, filename });
+      const result = await extractFileInfoOrThrow({
+        file: textBuffer,
+        filename,
+      });
 
       expect(result).toEqual({ mimeType: mime, ext });
     },
@@ -101,4 +104,22 @@ describe('extractFileInfoOrThrow', () => {
       );
     },
   );
+
+  describe('TWENTY_MIME_POLICY (Twenty deviates from IANA)', () => {
+    it.each([
+      { filename: 'src/index.ts', expectedMime: 'application/typescript' },
+      { filename: 'src/index.tsx', expectedMime: 'application/typescript' },
+      { filename: 'src/handler.cjs', expectedMime: 'text/javascript' },
+    ])(
+      'should return $expectedMime for $filename without throwing on IANA collision',
+      async ({ filename, expectedMime }) => {
+        const result = await extractFileInfoOrThrow({
+          file: textBuffer,
+          filename,
+        });
+
+        expect(result.mimeType).toBe(expectedMime);
+      },
+    );
+  });
 });

@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { detectPdf } from '@file-type/pdf';
+import { TWENTY_MIME_POLICY } from 'src/engine/core-modules/file/constants/twenty-mime-policy.constant';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 
 export const extractFileInfoOrThrow = async ({
@@ -40,6 +41,15 @@ export const extractFileInfoOrThrow = async ({
   let mimeType: string = 'application/octet-stream';
 
   if (isNonEmptyString(ext)) {
+    // Twenty policy wins over IANA/mrmime for the (small) set of extensions
+    // where the IANA mapping collides with a developer-tooling convention
+    // (e.g. .ts → video/mp2t is correct per IANA but means TypeScript here).
+    const policyMime = TWENTY_MIME_POLICY[ext];
+
+    if (isDefined(policyMime)) {
+      return { mimeType: policyMime, ext };
+    }
+
     const mimeTypeFromExtension = lookup(ext);
 
     if (

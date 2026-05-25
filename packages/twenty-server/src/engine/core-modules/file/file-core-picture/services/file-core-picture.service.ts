@@ -85,7 +85,6 @@ export class FileCorePictureService {
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: finalName,
-      mimeType,
       fileFolder: FileFolder.CorePicture,
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,

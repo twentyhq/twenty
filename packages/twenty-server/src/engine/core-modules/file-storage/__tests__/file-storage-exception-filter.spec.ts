@@ -25,12 +25,12 @@ describe('FileStorageExceptionFilter', () => {
       code: FileStorageExceptionCode.FILE_NOT_FOUND,
       expectedError: NotFoundError,
     },
-  ])('should map $code to the expected GraphQL error', ({
-    code,
-    expectedError,
-  }) => {
-    const exception = new FileStorageException('test message', code);
+  ])(
+    'should map $code to the expected GraphQL error',
+    ({ code, expectedError }) => {
+      const exception = new FileStorageException('test message', code);
 
-    expect(() => filter.catch(exception)).toThrow(expectedError);
-  });
+      expect(() => filter.catch(exception)).toThrow(expectedError);
+    },
+  );
 });

@@ -13,7 +13,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { assertSourceMatchesPath } from 'src/engine/core-modules/file-storage/utils/assert-source-matches-path.util';
+import { resolveMimeTypeOrThrow } from 'src/engine/core-modules/file-storage/utils/resolve-mime-type-or-throw.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
@@ -120,7 +120,6 @@ export class FileStorageService {
 
   async writeFile({
     sourceFile,
-    mimeType,
     fileFolder,
     applicationUniversalIdentifier,
     workspaceId,
@@ -130,7 +129,6 @@ export class FileStorageService {
     queryRunner,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
-    mimeType: string | undefined;
     fileId?: string;
     settings: FileSettings;
     queryRunner?: QueryRunner;
@@ -159,7 +157,7 @@ export class FileStorageService {
         resourcePath,
       });
 
-    await assertSourceMatchesPath({
+    const mimeType = await resolveMimeTypeOrThrow({
       sourceFile,
       resourcePath,
     });

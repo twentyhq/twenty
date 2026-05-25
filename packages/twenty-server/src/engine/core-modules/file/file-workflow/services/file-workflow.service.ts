@@ -48,7 +48,6 @@ export class FileWorkflowService {
     const savedFile = await this.fileStorageService.writeFile({
       sourceFile: sanitizedFile,
       resourcePath: name,
-      mimeType,
       fileFolder: FileFolder.Workflow,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
