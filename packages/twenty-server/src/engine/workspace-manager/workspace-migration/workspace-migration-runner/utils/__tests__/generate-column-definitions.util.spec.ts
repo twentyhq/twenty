@@ -348,7 +348,7 @@ describe('Generate Column Definitions', () => {
           type: 'text',
           isNullable: true,
           isPrimary: false,
-            default: 'NULL',
+          default: 'NULL',
           isArray: false,
         },
       ]);
@@ -375,7 +375,7 @@ describe('Generate Column Definitions', () => {
           type: 'boolean',
           isNullable: true,
           isPrimary: false,
-            default: "'true'::boolean",
+          default: "'true'::boolean",
           isArray: false,
         },
       ]);
@@ -403,7 +403,7 @@ describe('Generate Column Definitions', () => {
           type: 'text',
           isNullable: true,
           isPrimary: false,
-            default: 'NULL',
+          default: 'NULL',
           isArray: false,
         },
       ]);
@@ -429,7 +429,7 @@ describe('Generate Column Definitions', () => {
           type: 'uuid',
           isNullable: true,
           isPrimary: false,
-            default: 'NULL',
+          default: 'NULL',
           isArray: false,
         },
       ]);
