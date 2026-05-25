@@ -295,12 +295,7 @@ describe('FileController', () => {
     it('should throw FileException with FILE_NOT_FOUND when asset is not found', async () => {
       jest
         .spyOn(fileService, 'getFileStreamByPath')
-        .mockRejectedValue(
-          new FileStorageException(
-            'File not found',
-            FileStorageExceptionCode.FILE_NOT_FOUND,
-          ),
-        );
+        .mockResolvedValue(null);
 
       const mockRequest = {
         params: { path: ['missing-asset.png'] },

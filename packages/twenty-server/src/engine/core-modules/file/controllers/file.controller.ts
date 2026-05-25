@@ -18,7 +18,6 @@ import {
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
-
 import {
   FileException,
   FileExceptionCode,
@@ -59,12 +58,21 @@ export class FileController {
     }
 
     try {
-      const { stream, mimeType } = await this.fileService.getFileStreamByPath({
+      const fileStream = await this.fileService.getFileStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
       });
+
+      if (fileStream === null) {
+        throw new FileException(
+          'File not found',
+          FileExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      const { stream, mimeType } = fileStream;
 
       setFileResponseHeaders(res, mimeType);
 

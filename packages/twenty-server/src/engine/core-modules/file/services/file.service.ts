@@ -8,6 +8,10 @@ import { Like, Repository } from 'typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { type FileResponse } from 'src/engine/core-modules/file/types/file-response.type';
 import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-content-disposition.utils';
@@ -38,15 +42,19 @@ export class FileService {
     applicationId: string;
     filepath: string;
     fileFolder: FileFolder;
-  }): Promise<{ stream: Readable; mimeType: string }> {
-    const application = await this.applicationRepository.findOneOrFail({
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    const application = await this.applicationRepository.findOne({
       where: {
         id: applicationId,
         workspaceId,
       },
     });
 
-    const file = await this.fileRepository.findOneOrFail({
+    if (application === null) {
+      return null;
+    }
+
+    const file = await this.fileRepository.findOne({
       where: {
         path: `${fileFolder}/${filepath}`,
         workspaceId,
@@ -54,17 +62,32 @@ export class FileService {
       },
     });
 
-    const stream = await this.fileStorageService.readFile({
-      resourcePath: filepath,
-      fileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-    });
+    if (file === null) {
+      return null;
+    }
 
-    return {
-      stream,
-      mimeType: file.mimeType,
-    };
+    try {
+      const stream = await this.fileStorageService.readFile({
+        resourcePath: filepath,
+        fileFolder,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+      });
+
+      return {
+        stream,
+        mimeType: file.mimeType,
+      };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async getFileStreamById({
