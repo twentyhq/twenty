@@ -2,6 +2,10 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
 import { FileFolder } from 'twenty-shared/types';
+import {
+  type EachTestingContext,
+  eachTestingContextFilter,
+} from 'twenty-shared/testing';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
@@ -190,141 +194,203 @@ describe('FileStorageService', () => {
       resourcePath: 'src/components/my-component.mjs',
     };
 
+    const validFolderIdentifier = {
+      workspaceId: 'workspace-123',
+      applicationUniversalIdentifier: 'app-456',
+      fileFolder: FileFolder.BuiltFrontComponent,
+    };
+
     const expectedValidPath =
       'workspace-123/app-456/built-front-component/src/components/my-component.mjs';
 
+    type RejectedFilePathContext = {
+      resourcePath: string;
+    };
+
+    const REJECTED_FILE_PATHS: EachTestingContext<RejectedFilePathContext>[] = [
+      {
+        title: 'path traversal with ../',
+        context: {
+          resourcePath:
+            '../../../victim-ws/victim-app/built-front-component/secret.mjs',
+        },
+      },
+      {
+        title: 'absolute path',
+        context: { resourcePath: '/etc/passwd' },
+      },
+      {
+        title: 'single-level traversal escaping fileFolder',
+        context: { resourcePath: '../source/handler.ts' },
+      },
+      {
+        title: 'excess .. segments',
+        context: { resourcePath: 'foo/../../../../../../etc/passwd' },
+      },
+      {
+        title: 'exact 3-level traversal to another tenant',
+        context: {
+          resourcePath:
+            '../../../target-ws/target-app/built-front-component/file.js',
+        },
+      },
+      {
+        title: 'empty resource path',
+        context: { resourcePath: '' },
+      },
+    ];
+
+    type AcceptedFilePathContext = {
+      resourcePath: string;
+      expectedStoragePath: string;
+    };
+
+    const ACCEPTED_FILE_PATHS: EachTestingContext<AcceptedFilePathContext>[] = [
+      {
+        title: 'valid relative path',
+        context: {
+          resourcePath: 'src/components/my-component.mjs',
+          expectedStoragePath: expectedValidPath,
+        },
+      },
+      {
+        title: 'deeply nested valid path',
+        context: {
+          resourcePath: 'a/b/c/d/e/f/deep-file.mjs',
+          expectedStoragePath:
+            'workspace-123/app-456/built-front-component/a/b/c/d/e/f/deep-file.mjs',
+        },
+      },
+      {
+        title: 'path with dots that are not traversal',
+        context: {
+          resourcePath: 'v1.0.0/file.name.mjs',
+          expectedStoragePath:
+            'workspace-123/app-456/built-front-component/v1.0.0/file.name.mjs',
+        },
+      },
+      {
+        title: 'path with hidden directory (dot-prefixed segment)',
+        context: {
+          resourcePath: '.hidden/file.name.mjs',
+          expectedStoragePath:
+            'workspace-123/app-456/built-front-component/.hidden/file.name.mjs',
+        },
+      },
+    ];
+
     describe('readFile', () => {
-      it('should allow valid relative paths', async () => {
-        await service.readFile(validResourceIdentifier);
+      it.each(eachTestingContextFilter(REJECTED_FILE_PATHS))(
+        'should reject $title',
+        ({ context }) => {
+          expect(() =>
+            service.readFile({
+              ...validResourceIdentifier,
+              resourcePath: context.resourcePath,
+            }),
+          ).toThrow(
+            expect.objectContaining({
+              code: FileStorageExceptionCode.ACCESS_DENIED,
+            }),
+          );
 
-        expect(mockDriver.readFile).toHaveBeenCalledWith({
-          filePath: expectedValidPath,
-        });
-      });
+          expect(mockDriver.readFile).not.toHaveBeenCalled();
+        },
+      );
 
-      it('should reject path traversal with ../', () => {
-        expect(() =>
-          service.readFile({
+      it.each(eachTestingContextFilter(ACCEPTED_FILE_PATHS))(
+        'should accept $title',
+        async ({ context }) => {
+          await service.readFile({
             ...validResourceIdentifier,
-            resourcePath:
-              '../../../victim-ws/victim-app/built-front-component/secret.mjs',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
+            resourcePath: context.resourcePath,
+          });
 
-        expect(mockDriver.readFile).not.toHaveBeenCalled();
-      });
-
-      it('should reject absolute paths', () => {
-        expect(() =>
-          service.readFile({
-            ...validResourceIdentifier,
-            resourcePath: '/etc/passwd',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
-
-        expect(mockDriver.readFile).not.toHaveBeenCalled();
-      });
-
-      it('should reject single-level traversal escaping fileFolder', () => {
-        expect(() =>
-          service.readFile({
-            ...validResourceIdentifier,
-            resourcePath: '../source/handler.ts',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
-
-        expect(mockDriver.readFile).not.toHaveBeenCalled();
-      });
+          expect(mockDriver.readFile).toHaveBeenCalledWith({
+            filePath: context.expectedStoragePath,
+          });
+        },
+      );
     });
 
     describe('checkFileExists', () => {
-      it('should allow valid relative paths', async () => {
-        await service.checkFileExists(validResourceIdentifier);
+      it.each(eachTestingContextFilter(REJECTED_FILE_PATHS))(
+        'should reject $title',
+        ({ context }) => {
+          expect(() =>
+            service.checkFileExists({
+              ...validResourceIdentifier,
+              resourcePath: context.resourcePath,
+            }),
+          ).toThrow(
+            expect.objectContaining({
+              code: FileStorageExceptionCode.ACCESS_DENIED,
+            }),
+          );
 
-        expect(mockDriver.checkFileExists).toHaveBeenCalledWith({
-          filePath: expectedValidPath,
-        });
-      });
-
-      it('should reject path traversal with ../', () => {
-        expect(() =>
-          service.checkFileExists({
-            ...validResourceIdentifier,
-            resourcePath:
-              '../../../other-ws/other-app/built-front-component/file.js',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
-
-        expect(mockDriver.checkFileExists).not.toHaveBeenCalled();
-      });
+          expect(mockDriver.checkFileExists).not.toHaveBeenCalled();
+        },
+      );
     });
 
     describe('getPresignedUrl', () => {
-      it('should reject path traversal', async () => {
-        await expect(
-          service.getPresignedUrl({
-            ...validResourceIdentifier,
-            resourcePath: '../../../other-ws/file.js',
-          }),
-        ).rejects.toMatchObject({
-          code: FileStorageExceptionCode.ACCESS_DENIED,
-        });
+      it.each(eachTestingContextFilter(REJECTED_FILE_PATHS))(
+        'should reject $title',
+        async ({ context }) => {
+          await expect(
+            service.getPresignedUrl({
+              ...validResourceIdentifier,
+              resourcePath: context.resourcePath,
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          });
 
-        expect(mockDriver.getPresignedUrl).not.toHaveBeenCalled();
-      });
+          expect(mockDriver.getPresignedUrl).not.toHaveBeenCalled();
+        },
+      );
     });
 
     describe('downloadFile', () => {
-      it('should reject path traversal', () => {
-        expect(() =>
-          service.downloadFile({
-            ...validResourceIdentifier,
-            resourcePath: '../../../other-ws/file.js',
-            localPath: '/tmp/download.js',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
+      it.each(eachTestingContextFilter(REJECTED_FILE_PATHS))(
+        'should reject $title',
+        ({ context }) => {
+          expect(() =>
+            service.downloadFile({
+              ...validResourceIdentifier,
+              resourcePath: context.resourcePath,
+              localPath: '/tmp/download.js',
+            }),
+          ).toThrow(
+            expect.objectContaining({
+              code: FileStorageExceptionCode.ACCESS_DENIED,
+            }),
+          );
 
-        expect(mockDriver.downloadFile).not.toHaveBeenCalled();
-      });
+          expect(mockDriver.downloadFile).not.toHaveBeenCalled();
+        },
+      );
     });
 
     describe('writeFile', () => {
-      it('should reject path traversal on write', async () => {
-        await expect(
-          service.writeFile({
-            ...validResourceIdentifier,
-            resourcePath:
-              '../../../victim-ws/victim-app/built-front-component/overwrite.mjs',
-            sourceFile: Buffer.from('malicious'),
-            mimeType: 'application/javascript',
-            settings: { isTemporaryFile: false, toDelete: false },
-          }),
-        ).rejects.toMatchObject({
-          code: FileStorageExceptionCode.ACCESS_DENIED,
-        });
+      it.each(eachTestingContextFilter(REJECTED_FILE_PATHS))(
+        'should reject $title',
+        async ({ context }) => {
+          await expect(
+            service.writeFile({
+              ...validResourceIdentifier,
+              resourcePath: context.resourcePath,
+              sourceFile: Buffer.from('malicious'),
+              mimeType: 'application/javascript',
+              settings: { isTemporaryFile: false, toDelete: false },
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          });
 
-        expect(mockDriver.writeFile).not.toHaveBeenCalled();
-      });
+          expect(mockDriver.writeFile).not.toHaveBeenCalled();
+        },
+      );
 
       it('should allow valid writes', async () => {
         await service.writeFile({
@@ -342,18 +408,178 @@ describe('FileStorageService', () => {
       });
     });
 
-    describe('delete', () => {
-      it('should reject path traversal on delete', async () => {
-        await expect(
-          service.delete({
-            ...validResourceIdentifier,
-            resourcePath: '../../../other-ws/other-app/folder',
-          }),
-        ).rejects.toMatchObject({
-          code: FileStorageExceptionCode.ACCESS_DENIED,
+    describe('deleteFile', () => {
+      it.each(eachTestingContextFilter(REJECTED_FILE_PATHS))(
+        'should reject $title',
+        async ({ context }) => {
+          await expect(
+            service.deleteFile({
+              ...validResourceIdentifier,
+              resourcePath: context.resourcePath,
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          });
+
+          expect(mockDriver.delete).not.toHaveBeenCalled();
+        },
+      );
+
+      it('should call driver.delete with dirname and basename', async () => {
+        await service.deleteFile(validResourceIdentifier);
+
+        expect(mockDriver.delete).toHaveBeenCalledWith({
+          folderPath:
+            'workspace-123/app-456/built-front-component/src/components',
+          filename: 'my-component.mjs',
+        });
+      });
+    });
+
+    describe('deleteFolder', () => {
+      type RejectedFolderPathContext = {
+        folderPath: string;
+      };
+
+      const REJECTED_FOLDER_PATHS: EachTestingContext<RejectedFolderPathContext>[] =
+        [
+          {
+            title: 'path traversal with ../',
+            context: { folderPath: '../../../other-ws/other-app/folder' },
+          },
+          {
+            title: 'absolute path',
+            context: { folderPath: '/etc/secret-folder' },
+          },
+          {
+            title: 'empty folder path',
+            context: { folderPath: '' },
+          },
+          {
+            title: 'folder path with special characters (spaces)',
+            context: { folderPath: 'my folder/data' },
+          },
+          {
+            title: 'folder path with shell metacharacters',
+            context: { folderPath: 'folder;rm -rf/' },
+          },
+          {
+            title: 'file path with .mjs extension',
+            context: { folderPath: 'src/logic-functions/handler.mjs' },
+          },
+          {
+            title: 'file path with .ts extension',
+            context: { folderPath: 'src/components/index.ts' },
+          },
+          {
+            title: 'file path with .json extension',
+            context: { folderPath: 'config/settings.json' },
+          },
+          {
+            title: 'dotted version string (extname detects .0)',
+            context: { folderPath: 'v1.0.0' },
+          },
+          {
+            title: 'numeric-only extension (.7z)',
+            context: { folderPath: 'archive.7z' },
+          },
+        ];
+
+      type AcceptedFolderPathContext = {
+        folderPath: string;
+        expectedStoragePath: string;
+      };
+
+      const ACCEPTED_FOLDER_PATHS: EachTestingContext<AcceptedFolderPathContext>[] =
+        [
+          {
+            title: 'UUID folder path',
+            context: {
+              folderPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+              expectedStoragePath:
+                'workspace-123/app-456/built-front-component/8b2df3cc-23ad-4e1b-87fd-f880d4cefd58/',
+            },
+          },
+          {
+            title: 'simple folder name',
+            context: {
+              folderPath: 'my-folder',
+              expectedStoragePath:
+                'workspace-123/app-456/built-front-component/my-folder/',
+            },
+          },
+          {
+            title: 'nested folder path with numeric ranges',
+            context: {
+              folderPath: '0000-0999/tmp200/toto',
+              expectedStoragePath:
+                'workspace-123/app-456/built-front-component/0000-0999/tmp200/toto/',
+            },
+          },
+        ];
+
+      it.each(eachTestingContextFilter(REJECTED_FOLDER_PATHS))(
+        'should reject $title',
+        async ({ context }) => {
+          await expect(
+            service.deleteFolder({
+              ...validFolderIdentifier,
+              folderPath: context.folderPath,
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.ACCESS_DENIED,
+          });
+
+          expect(mockDriver.delete).not.toHaveBeenCalled();
+        },
+      );
+
+      it.each(eachTestingContextFilter(ACCEPTED_FOLDER_PATHS))(
+        'should accept $title',
+        async ({ context }) => {
+          await service.deleteFolder({
+            ...validFolderIdentifier,
+            folderPath: context.folderPath,
+          });
+
+          expect(mockDriver.delete).toHaveBeenCalledWith({
+            folderPath: context.expectedStoragePath,
+          });
+        },
+      );
+    });
+
+    describe('deleteByFileId', () => {
+      it('should delegate to deleteFile with the correct resource path', async () => {
+        mockFileRepository.findOneOrFail.mockResolvedValue({
+          id: 'file-id',
+          path: 'built-front-component/src/components/my-component.mjs',
+          applicationId: 'app-id',
+          workspaceId: 'workspace-123',
         });
 
-        expect(mockDriver.delete).not.toHaveBeenCalled();
+        mockApplicationRepository.findOneOrFail.mockResolvedValue({
+          id: 'app-id',
+          universalIdentifier: 'app-456',
+        });
+
+        await service.deleteByFileId({
+          fileId: 'file-id',
+          workspaceId: 'workspace-123',
+          fileFolder: FileFolder.BuiltFrontComponent,
+        });
+
+        expect(mockDriver.delete).toHaveBeenCalledWith({
+          folderPath:
+            'workspace-123/app-456/built-front-component/src/components',
+          filename: 'my-component.mjs',
+        });
+
+        expect(mockFileRepository.delete).toHaveBeenCalledWith({
+          path: 'built-front-component/src/components/my-component.mjs',
+          applicationId: 'app-id',
+          workspaceId: 'workspace-123',
+        });
       });
     });
 
@@ -388,71 +614,6 @@ describe('FileStorageService', () => {
         ).rejects.toMatchObject({
           code: FileStorageExceptionCode.ACCESS_DENIED,
         });
-      });
-    });
-
-    describe('edge cases', () => {
-      it('should reject traversal with excess .. segments', () => {
-        expect(() =>
-          service.readFile({
-            ...validResourceIdentifier,
-            resourcePath: 'foo/../../../../../../etc/passwd',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
-      });
-
-      it('should accept deeply nested valid paths', async () => {
-        await service.readFile({
-          ...validResourceIdentifier,
-          resourcePath: 'a/b/c/d/e/f/deep-file.mjs',
-        });
-
-        expect(mockDriver.readFile).toHaveBeenCalledWith({
-          filePath:
-            'workspace-123/app-456/built-front-component/a/b/c/d/e/f/deep-file.mjs',
-        });
-      });
-
-      it('should reject exact 3-level traversal to another tenant', () => {
-        expect(() =>
-          service.readFile({
-            ...validResourceIdentifier,
-            resourcePath:
-              '../../../target-ws/target-app/built-front-component/file.js',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
-      });
-
-      it('should accept paths with dots that are not traversal', async () => {
-        await service.readFile({
-          ...validResourceIdentifier,
-          resourcePath: '.hidden/file.name.ext',
-        });
-
-        expect(mockDriver.readFile).toHaveBeenCalled();
-      });
-
-      it('should reject empty resource path', () => {
-        expect(() =>
-          service.readFile({
-            ...validResourceIdentifier,
-            resourcePath: '',
-          }),
-        ).toThrow(
-          expect.objectContaining({
-            code: FileStorageExceptionCode.ACCESS_DENIED,
-          }),
-        );
-
-        expect(mockDriver.readFile).not.toHaveBeenCalled();
       });
     });
   });

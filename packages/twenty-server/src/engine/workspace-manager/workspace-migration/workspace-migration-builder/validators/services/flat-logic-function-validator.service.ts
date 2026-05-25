@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
+import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
@@ -48,26 +49,34 @@ export class FlatLogicFunctionValidatorService {
       return validationResult;
     }
 
-    if (
-      isDefined(flatEntityUpdate.builtHandlerPath) &&
-      !isSafeRelativePath(flatEntityUpdate.builtHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Built handler path contains unsafe characters`,
+    if (isDefined(flatEntityUpdate.builtHandlerPath)) {
+      const builtPathResult = validateFilePath({
+        resourcePath: flatEntityUpdate.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: builtPathResult.error,
+          userFriendlyMessage: msg`Built handler path is invalid`,
+        });
+      }
     }
 
-    if (
-      isDefined(flatEntityUpdate.sourceHandlerPath) &&
-      !isSafeRelativePath(flatEntityUpdate.sourceHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Source handler path contains unsafe characters`,
+    if (isDefined(flatEntityUpdate.sourceHandlerPath)) {
+      const sourcePathResult = validateFilePath({
+        resourcePath: flatEntityUpdate.sourceHandlerPath,
+        fileFolder: FileFolder.Source,
       });
+
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: sourcePathResult.error,
+          userFriendlyMessage: msg`Source handler path is invalid`,
+        });
+      }
     }
 
     return validationResult;
@@ -136,26 +145,34 @@ export class FlatLogicFunctionValidatorService {
       });
     }
 
-    if (
-      isDefined(flatLogicFunctionToValidate.builtHandlerPath) &&
-      !isSafeRelativePath(flatLogicFunctionToValidate.builtHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Built handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Built handler path contains unsafe characters`,
+    if (isDefined(flatLogicFunctionToValidate.builtHandlerPath)) {
+      const builtPathResult = validateFilePath({
+        resourcePath: flatLogicFunctionToValidate.builtHandlerPath,
+        fileFolder: FileFolder.BuiltLogicFunction,
       });
+
+      if (!builtPathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: builtPathResult.error,
+          userFriendlyMessage: msg`Built handler path is invalid`,
+        });
+      }
     }
 
-    if (
-      isDefined(flatLogicFunctionToValidate.sourceHandlerPath) &&
-      !isSafeRelativePath(flatLogicFunctionToValidate.sourceHandlerPath)
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Source handler path contains unsafe characters`,
-        userFriendlyMessage: msg`Source handler path contains unsafe characters`,
+    if (isDefined(flatLogicFunctionToValidate.sourceHandlerPath)) {
+      const sourcePathResult = validateFilePath({
+        resourcePath: flatLogicFunctionToValidate.sourceHandlerPath,
+        fileFolder: FileFolder.Source,
       });
+
+      if (!sourcePathResult.isValid) {
+        validationResult.errors.push({
+          code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+          message: sourcePathResult.error,
+          userFriendlyMessage: msg`Source handler path is invalid`,
+        });
+      }
     }
 
     return validationResult;
