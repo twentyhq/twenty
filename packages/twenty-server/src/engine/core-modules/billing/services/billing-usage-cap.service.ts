@@ -110,8 +110,14 @@ export class BillingUsageCapService {
       );
     }
 
+    const [billingSubscriptionItem] = billingSubscriptionItems;
+
+    if (billingSubscriptionItem.hasReachedCurrentPeriodCap === hasReachedCap) {
+      return;
+    }
+
     await this.billingSubscriptionItemRepository.update(
-      { id: billingSubscriptionItems[0].id },
+      { id: billingSubscriptionItem.id },
       { hasReachedCurrentPeriodCap: hasReachedCap },
     );
   }
