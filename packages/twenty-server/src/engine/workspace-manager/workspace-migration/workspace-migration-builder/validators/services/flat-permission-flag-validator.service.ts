@@ -68,7 +68,7 @@ export class FlatPermissionFlagValidatorService {
     if (isDefined(collidingPermissionFlag)) {
       validationResult.errors.push({
         code: PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
-        message: t`Permission flag definition with key "${flatPermissionFlagToValidate.key}" is already registered in this workspace by application ${collidingPermissionFlag.applicationUniversalIdentifier}`,
+        message: t`Permission flag definition with key "${flatPermissionFlagToValidate.key}" is already registered in this workspace.`,
         userFriendlyMessage: msg`Another application in this workspace has already registered a permission flag with this key.`,
       });
     }
