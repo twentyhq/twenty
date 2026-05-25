@@ -22,7 +22,7 @@ import { UploadApplicationFileInput } from 'src/engine/core-modules/application/
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
 import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
@@ -256,7 +256,10 @@ export class ApplicationDevelopmentResolver {
     let derived: { mimeType: string; ext: string };
 
     try {
-      derived = await extractFileInfo({ file: buffer, filename: filePath });
+      derived = await extractFileInfoOrThrow({
+        file: buffer,
+        filename: filePath,
+      });
     } catch (error) {
       if (error instanceof FileStorageException) {
         throw new ApplicationException(

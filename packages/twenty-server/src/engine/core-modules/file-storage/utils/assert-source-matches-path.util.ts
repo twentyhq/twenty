@@ -1,4 +1,4 @@
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 
 // Last-resort magic-byte assertion for FileStorageService.writeFile. String
 // sources are skipped because they only come from trusted internal code that
@@ -18,7 +18,7 @@ export const assertSourceMatchesPath = async ({
     ? sourceFile
     : Buffer.from(sourceFile);
 
-  await extractFileInfo({
+  await extractFileInfoOrThrow({
     file: buffer,
     filename: resourcePath,
   });

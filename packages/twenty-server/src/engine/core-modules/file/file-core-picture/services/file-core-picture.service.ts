@@ -19,7 +19,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
@@ -72,7 +72,7 @@ export class FileCorePictureService {
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
-    const { mimeType, ext } = await extractFileInfo({ file, filename });
+    const { mimeType, ext } = await extractFileInfoOrThrow({ file, filename });
     const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();

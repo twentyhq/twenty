@@ -15,7 +15,7 @@ import {
   FilesFieldException,
   FilesFieldExceptionCode,
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
@@ -53,7 +53,7 @@ export class FilesFieldService {
       );
     }
 
-    const { mimeType, ext } = await extractFileInfo({
+    const { mimeType, ext } = await extractFileInfoOrThrow({
       file,
       filename,
     });

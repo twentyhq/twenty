@@ -5,7 +5,7 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 
 import semver from 'semver';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
@@ -493,7 +493,7 @@ export class ApplicationInstallService {
         );
       }
 
-      const { mimeType, ext } = await extractFileInfo({
+      const { mimeType, ext } = await extractFileInfoOrThrow({
         file: content,
         filename: relativePath,
       });

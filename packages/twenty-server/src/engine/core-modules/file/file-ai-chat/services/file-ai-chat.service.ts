@@ -8,7 +8,7 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 @Injectable()
 export class FileAiChatService {
@@ -27,7 +27,7 @@ export class FileAiChatService {
     filename: string;
     workspaceId: string;
   }): Promise<FileWithSignedUrlDTO> {
-    const { mimeType, ext } = await extractFileInfo({
+    const { mimeType, ext } = await extractFileInfoOrThrow({
       file,
       filename,
     });

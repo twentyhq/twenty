@@ -12,7 +12,7 @@ import {
 import { detectPdf } from '@file-type/pdf';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 
-export const extractFileInfo = async ({
+export const extractFileInfoOrThrow = async ({
   file,
   filename,
 }: {
