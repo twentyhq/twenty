@@ -89,7 +89,6 @@ export const generateCompositeColumnDefinition = ({
         : columnType,
     isNullable:
       parentFlatFieldMetadata.isNullable || !compositeProperty.isRequired,
-    isUnique: parentFlatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isArray: isArrayFlag,
     isPrimary: false,
@@ -108,7 +107,6 @@ const generateTsVectorColumnDefinition = (
     type: fieldMetadataTypeToColumnType(flatFieldMetadata.type),
     isNullable: true,
     isArray: false,
-    isUnique: false,
     default: null,
     asExpression: flatFieldMetadata.settings?.asExpression ?? undefined,
     generatedType: flatFieldMetadata.settings?.generatedType ?? undefined,
@@ -134,7 +132,6 @@ const generateRelationColumnDefinition = (
     type: fieldMetadataTypeToColumnType(FieldMetadataType.UUID),
     isNullable: true,
     isArray: false,
-    isUnique: false,
     default: null,
     isPrimary: false,
   };
@@ -171,7 +168,6 @@ const generateColumnDefinition = ({
     isArray:
       flatFieldMetadata.type === FieldMetadataType.ARRAY ||
       flatFieldMetadata.type === FieldMetadataType.MULTI_SELECT,
-    isUnique: flatFieldMetadata.isUnique ?? false,
     default: serializedDefaultValue,
     isPrimary: flatFieldMetadata.name === 'id',
   };
