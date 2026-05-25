@@ -247,7 +247,7 @@ type FieldPermission {
 type RolePermissionFlag {
   id: UUID!
   roleId: UUID!
-  flag: PermissionFlagType!
+  flag: String!
 }
 
 type ApiKeyForRole {
@@ -4029,7 +4029,7 @@ input ObjectPermissionInput {
 
 input UpsertPermissionFlagsInput {
   roleId: UUID!
-  permissionFlagKeys: [PermissionFlagType!]!
+  permissionFlagKeys: [String!]!
 }
 
 input UpsertFieldPermissionsInput {

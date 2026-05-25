@@ -40,6 +40,7 @@ import {
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
@@ -85,6 +86,7 @@ export const buildManifest = async (
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
   const indexes: IndexManifest[] = [];
+  const permissionFlags: PermissionFlagManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
@@ -106,6 +108,7 @@ export const buildManifest = async (
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
   const indexesFilePaths: string[] = [];
+  const permissionFlagsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
@@ -191,6 +194,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         fieldsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.PermissionFlags: {
+        const extract = await extractManifestFromFile<PermissionFlagManifest>({
+          appPath,
+          filePath,
+        });
+        permissionFlags.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        permissionFlagsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Roles: {
@@ -547,6 +561,7 @@ export const buildManifest = async (
         objects: objects.sort(byId),
         fields: fields.sort(byId),
         indexes: indexes.sort(byId),
+        permissionFlags: permissionFlags.sort(byId),
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
@@ -566,6 +581,7 @@ export const buildManifest = async (
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
     indexes: indexesFilePaths,
+    permissionFlags: permissionFlagsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,

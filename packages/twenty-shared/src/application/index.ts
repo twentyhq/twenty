@@ -55,6 +55,10 @@ export type {
   PageLayoutTabManifest,
   PageLayoutManifest,
 } from './pageLayoutManifestType';
+export type {
+  PermissionFlagPermissionType,
+  PermissionFlagManifest,
+} from './permissionFlagManifestType';
 export type { PostInstallLogicFunctionApplicationManifest } from './postInstallLogicFunctionApplicationType';
 export type { PreInstallLogicFunctionApplicationManifest } from './preInstallLogicFunctionApplicationType';
 export type {

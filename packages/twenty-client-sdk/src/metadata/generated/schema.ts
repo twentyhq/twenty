@@ -193,7 +193,7 @@ export interface FieldPermission {
 export interface RolePermissionFlag {
     id: Scalars['UUID']
     roleId: Scalars['UUID']
-    flag: PermissionFlagType
+    flag: Scalars['String']
     __typename: 'RolePermissionFlag'
 }
 
@@ -6160,7 +6160,7 @@ export interface UpsertObjectPermissionsInput {roleId: Scalars['UUID'],objectPer
 
 export interface ObjectPermissionInput {objectMetadataId: Scalars['UUID'],canReadObjectRecords?: (Scalars['Boolean'] | null),canUpdateObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteObjectRecords?: (Scalars['Boolean'] | null),canDestroyObjectRecords?: (Scalars['Boolean'] | null)}
 
-export interface UpsertPermissionFlagsInput {roleId: Scalars['UUID'],permissionFlagKeys: PermissionFlagType[]}
+export interface UpsertPermissionFlagsInput {roleId: Scalars['UUID'],permissionFlagKeys: Scalars['String'][]}
 
 export interface UpsertFieldPermissionsInput {roleId: Scalars['UUID'],fieldPermissions: FieldPermissionInput[]}
 

@@ -15,6 +15,7 @@ import {
   type PageLayoutManifest,
   type PageLayoutTabManifest,
 } from './pageLayoutManifestType';
+import { type PermissionFlagManifest } from './permissionFlagManifestType';
 import { type RoleManifest } from './roleManifestType';
 import { type SkillManifest } from './skillManifestType';
 import { type ViewManifest } from './viewManifestType';
@@ -26,6 +27,7 @@ export type Manifest = {
   indexes?: IndexManifest[];
   logicFunctions: LogicFunctionManifest[];
   frontComponents: FrontComponentManifest[];
+  permissionFlags: PermissionFlagManifest[];
   roles: RoleManifest[];
   skills: SkillManifest[];
   agents: AgentManifest[];
