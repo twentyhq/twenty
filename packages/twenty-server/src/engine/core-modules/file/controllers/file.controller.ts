@@ -92,16 +92,6 @@ export class FileController {
         throw error;
       }
 
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        throw new FileException(
-          'File not found',
-          FileExceptionCode.FILE_NOT_FOUND,
-        );
-      }
-
       throw new FileException(
         'Error retrieving file',
         FileExceptionCode.INTERNAL_SERVER_ERROR,
