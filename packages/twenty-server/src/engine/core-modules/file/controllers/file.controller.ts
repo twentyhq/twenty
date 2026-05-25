@@ -9,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { pipeline } from 'node:stream/promises';
 import { join } from 'path';
 
 import { Request, Response } from 'express';
@@ -92,14 +93,20 @@ export class FileController {
 
     setFileResponseHeaders(res, mimeType);
 
-    stream.on('error', () => {
-      throw new FileException(
-        'Error streaming file from storage',
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
-      );
-    });
+    try {
+      await pipeline(stream, res);
+    } catch (error) {
+      this.logger.error('Public asset stream failed mid-transfer', { error });
 
-    stream.pipe(res);
+      if (!res.headersSent) {
+        throw new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      }
+
+      res.destroy();
+    }
   }
 
   @Get('file/:fileFolder/:id')

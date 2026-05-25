@@ -2,8 +2,13 @@ import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { Readable } from 'stream';
+import { pipeline } from 'node:stream/promises';
 
 import { FileFolder } from 'twenty-shared/types';
+
+jest.mock('node:stream/promises', () => ({
+  pipeline: jest.fn(),
+}));
 
 import {
   FileStorageException,
@@ -32,10 +37,16 @@ const createMockStream = (): Readable => {
   return stream;
 };
 
-const createMockResponse = () => ({
+const createMockResponse = ({
+  headersSent = false,
+}: { headersSent?: boolean } = {}) => ({
   setHeader: jest.fn(),
   redirect: jest.fn(),
+  headersSent,
+  destroy: jest.fn(),
 });
+
+const mockPipeline = jest.mocked(pipeline);
 
 describe('FileController', () => {
   let controller: FileController;
@@ -74,6 +85,9 @@ describe('FileController', () => {
 
     controller = module.get<FileController>(FileController);
     fileService = module.get<FileService>(FileService);
+
+    // Default to a resolved pipeline so happy-path tests don't have to wire it up.
+    mockPipeline.mockResolvedValue(undefined);
   });
 
   it('should be defined', () => {
@@ -260,7 +274,7 @@ describe('FileController', () => {
         'Content-Disposition',
         'inline',
       );
-      expect(mockStream.pipe).toHaveBeenCalledWith(mockResponse);
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
 
     it('should handle single-segment path', async () => {
@@ -350,6 +364,67 @@ describe('FileController', () => {
         'getFileStreamByPath failed unexpectedly',
         { error: underlyingError },
       );
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockRequest = {
+        params: { path: ['mid-stream-error.png'] },
+      } as any;
+
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
+
+      await expect(
+        controller.getPublicAssets(
+          mockResponse,
+          mockRequest,
+          'workspace-id',
+          'app-id',
+        ),
+      ).rejects.toThrow(
+        new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+    });
+
+    it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue({
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
+
+      const mockRequest = {
+        params: { path: ['mid-stream-after-headers.png'] },
+      } as any;
+
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
+
+      // No throw expected — once headers are out, the controller cannot honestly
+      // switch to a 500 response, so it tears the socket down instead.
+      await controller.getPublicAssets(
+        mockResponse,
+        mockRequest,
+        'workspace-id',
+        'app-id',
+      );
+
+      expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
     });
   });
 });
