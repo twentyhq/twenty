@@ -23,11 +23,6 @@ describe('resolveMimeTypeOrThrow', () => {
         expectedMime: 'application/typescript',
       },
       {
-        name: '.cjs (policy override of mrmime application/node)',
-        resourcePath: 'src/handler.cjs',
-        expectedMime: 'text/javascript',
-      },
-      {
         name: '.mjs (mrmime — already RFC 9239 text/javascript)',
         resourcePath: 'src/handler.mjs',
         expectedMime: 'text/javascript',
@@ -114,15 +109,6 @@ describe('resolveMimeTypeOrThrow', () => {
       });
 
       expect(result).toBe('application/typescript');
-    });
-
-    it('should return text/javascript for a text buffer with a .cjs path (policy beats mrmime application/node)', async () => {
-      const result = await resolveMimeTypeOrThrow({
-        sourceFile: textBuffer,
-        resourcePath: 'src/handler.cjs',
-      });
-
-      expect(result).toBe('text/javascript');
     });
 
     it('should return text/markdown for a text buffer with a .md path (mrmime fallback)', async () => {

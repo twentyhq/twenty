@@ -6,17 +6,14 @@
 //   - ts/tsx:    IANA registers `.ts` as `video/mp2t` (MPEG-2 Transport Stream),
 //                which predates TypeScript. `.tsx` is unregistered. Twenty uses
 //                the developer-tooling convention `application/typescript`.
-//   - cjs:       mrmime returns `application/node`, which is the Node.js
-//                runtime mime; we want browsers and clients to treat CommonJS
-//                files as plain JavaScript per RFC 9239.
 //
 // Only add an entry when (1) mrmime returns the wrong mime (collision) or no
-// mime AND (2) there is a clear developer-tooling convention for the right
-// mime. For media, archives, documents, and anything else with a real IANA
-// registration (including `.js` and `.mjs`, which mrmime already maps to
-// `text/javascript`), trust mrmime.
+// mime AND (2) Twenty actually writes that extension via FileStorageService AND
+// (3) there is a clear developer-tooling convention for the right mime. For
+// everything else — media, archives, documents, `.js`, `.mjs`, `.cjs`, etc. —
+// trust mrmime. This policy is reactive: extend it the day we observe a real
+// wrong-mime persisted by an exercised code path, not in anticipation.
 export const TWENTY_MIME_POLICY: Record<string, string> = {
   ts: 'application/typescript',
   tsx: 'application/typescript',
-  cjs: 'text/javascript',
 };

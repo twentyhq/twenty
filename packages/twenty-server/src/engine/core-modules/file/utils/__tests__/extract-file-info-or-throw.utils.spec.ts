@@ -109,7 +109,6 @@ describe('extractFileInfoOrThrow', () => {
     it.each([
       { filename: 'src/index.ts', expectedMime: 'application/typescript' },
       { filename: 'src/index.tsx', expectedMime: 'application/typescript' },
-      { filename: 'src/handler.cjs', expectedMime: 'text/javascript' },
     ])(
       'should return $expectedMime for $filename without throwing on IANA collision',
       async ({ filename, expectedMime }) => {
