@@ -424,6 +424,7 @@ function evaluateDefaultFilter(filter: ResolvedFilter): boolean {
       return leftValue != rightValue;
     case ViewFilterOperand.IS_EMPTY:
       return !isNotEmptyTextOrArray(leftValue);
+    case ViewFilterOperand.IS_NOT_NULL:
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isNotEmptyTextOrArray(leftValue);
     case ViewFilterOperand.CONTAINS:

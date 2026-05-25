@@ -47,10 +47,21 @@ export class FilterWorkflowAction implements WorkflowAction {
       leftOperand: resolveInput(filter.stepOutputKey, context),
     }));
 
-    const matchesFilter = evaluateFilterConditions({
-      filterGroups: stepFilterGroups,
-      filters: resolvedFilters,
-    });
+    let matchesFilter: boolean;
+
+    try {
+      matchesFilter = evaluateFilterConditions({
+        filterGroups: stepFilterGroups,
+        filters: resolvedFilters,
+      });
+    } catch (error) {
+      throw new WorkflowStepExecutorException(
+        error instanceof Error
+          ? error.message
+          : 'Filter action contains invalid filter configuration',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+    }
 
     return {
       result: {

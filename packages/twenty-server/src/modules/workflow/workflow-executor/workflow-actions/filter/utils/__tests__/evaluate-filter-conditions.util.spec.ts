@@ -1392,6 +1392,24 @@ describe('evaluateFilterConditions', () => {
         expect(evaluateFilterConditions({ filters: [filter5] })).toBe(false);
       });
 
+      it('should handle IsNotNull operand with unknown type', () => {
+        const filter1 = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          'not empty',
+          '',
+          'unknown',
+        );
+        const filter2 = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          null,
+          '',
+          'unknown',
+        );
+
+        expect(evaluateFilterConditions({ filters: [filter1] })).toBe(true);
+        expect(evaluateFilterConditions({ filters: [filter2] })).toBe(false);
+      });
+
       it('should handle GreaterThanOrEqual operand with unknown type', () => {
         const filter1 = createFilter(
           ViewFilterOperand.GREATER_THAN_OR_EQUAL,
