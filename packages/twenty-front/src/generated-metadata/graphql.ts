@@ -5390,7 +5390,7 @@ export type UpsertObjectPermissionsInput = {
 };
 
 export type UpsertPermissionFlagsInput = {
-  permissionFlagKeys: Array<PermissionFlagType>;
+  permissionFlagKeys: Array<Scalars['String']>;
   roleId: Scalars['UUID'];
 };
 
