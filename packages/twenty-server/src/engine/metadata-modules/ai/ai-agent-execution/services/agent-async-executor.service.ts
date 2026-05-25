@@ -36,6 +36,7 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
+import { withOpenAIStoreDisabledProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/openai-provider-options.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -169,7 +170,9 @@ export class AgentAsyncExecutorService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
-      let providerOptions = {};
+      let providerOptions = withOpenAIStoreDisabledProviderOptions(
+        registeredModel.sdkPackage,
+      );
 
       if (agent) {
         const effectiveRoleConfig = await this.getEffectiveRolePermissionConfig(
@@ -216,11 +219,14 @@ export class AgentAsyncExecutorService {
           ...nativeTools,
         };
 
-        providerOptions = this.aiModelConfigService.getProviderOptions(
-          registeredModel,
-          agent as unknown as Parameters<
-            typeof this.aiModelConfigService.getProviderOptions
-          >[1],
+        providerOptions = withOpenAIStoreDisabledProviderOptions(
+          registeredModel.sdkPackage,
+          this.aiModelConfigService.getProviderOptions(
+            registeredModel,
+            agent as unknown as Parameters<
+              typeof this.aiModelConfigService.getProviderOptions
+            >[1],
+          ),
         );
       }
 
@@ -303,6 +309,9 @@ export class AgentAsyncExecutorService {
 
                  Please generate the structured output based on the execution results and context above.`,
         output: Output.object({ schema: jsonSchema(agentSchema) }),
+        providerOptions: withOpenAIStoreDisabledProviderOptions(
+          registeredModel.sdkPackage,
+        ),
         experimental_telemetry: AI_TELEMETRY_CONFIG,
         onStepFinish: async (step) => {
           const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
