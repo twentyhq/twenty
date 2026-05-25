@@ -88,7 +88,7 @@ export class FileController {
       }
 
       throw new FileException(
-        `Error retrieving file: ${error.message}`,
+        'Error retrieving file',
         FileExceptionCode.INTERNAL_SERVER_ERROR,
       );
     }

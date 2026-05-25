@@ -320,7 +320,7 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors', async () => {
+    it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors without leaking the underlying message', async () => {
       jest
         .spyOn(fileService, 'getFileStreamByPath')
         .mockRejectedValue(new Error('Connection refused'));
@@ -340,7 +340,7 @@ describe('FileController', () => {
         ),
       ).rejects.toThrow(
         new FileException(
-          'Error retrieving file: Connection refused',
+          'Error retrieving file',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         ),
       );
