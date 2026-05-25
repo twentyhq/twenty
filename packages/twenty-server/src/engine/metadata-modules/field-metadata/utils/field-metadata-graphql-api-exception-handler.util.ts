@@ -16,7 +16,7 @@ import { workspaceMigrationBuilderGraphqlApiExceptionHandler } from 'src/engine/
 
 export const fieldMetadataGraphqlApiExceptionHandler = (error: Error) => {
   if (error instanceof WorkspaceMigrationBuilderException) {
-    workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
+    return workspaceMigrationBuilderGraphqlApiExceptionHandler(error);
   }
 
   if (error instanceof InvalidMetadataException) {
