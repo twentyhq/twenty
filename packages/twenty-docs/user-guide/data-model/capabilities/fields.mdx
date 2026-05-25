@@ -113,7 +113,7 @@ If you have Advanced mode enabled, each object exposes an **Indexes** section in
 - Add a multi-column index on the fields you query most
 - Remove an index you added (system indexes can't be removed)
 
-Indexes are not free: every write has to update them, and each one uses disk space. There's a soft cap of 10 custom indexes per object. Add an index only when you've identified a slow query that would benefit from it.
+Indexes are not free: every write has to update them, and each one uses disk space. Each object is capped at 10 custom indexes — you'll need to remove one before adding the eleventh. Add an index only when you've identified a slow query that would benefit from it.
 
 ## Field Configuration Best Practices
 
