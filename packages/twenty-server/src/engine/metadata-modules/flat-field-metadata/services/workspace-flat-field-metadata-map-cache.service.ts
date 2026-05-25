@@ -12,6 +12,7 @@ import { FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/fl
 import { FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { fromFieldMetadataEntityToFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/from-field-metadata-entity-to-flat-field-metadata.util';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import { computeUniqueFieldMetadataIdsFromIndexEntities } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-indexes.util';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities/view-field.entity';
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
@@ -154,18 +155,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
     const applicationIdToUniversalIdentifierMap =
       createIdToUniversalIdentifierMap(applications);
 
-    // Single source of truth for field-level uniqueness: a field is unique iff
-    // there exists a UNIQUE IndexMetadata whose single member targets it
-    // directly (no composite sub-field).
-    const uniqueFieldMetadataIds = new Set<string>();
-
-    for (const indexMetadataEntity of indexMetadatas) {
-      const fields = indexMetadataEntity.indexFieldMetadatas ?? [];
-
-      if (fields.length === 1 && fields[0].subFieldName === null) {
-        uniqueFieldMetadataIds.add(fields[0].fieldMetadataId);
-      }
-    }
+    const uniqueFieldMetadataIds =
+      computeUniqueFieldMetadataIdsFromIndexEntities(indexMetadatas);
 
     const flatFieldMetadataMaps = createEmptyFlatEntityMaps();
 
