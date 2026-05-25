@@ -1,4 +1,4 @@
-import { type CanActivate } from '@nestjs/common';
+import { type CanActivate, Logger } from '@nestjs/common';
 import { Test, type TestingModule } from '@nestjs/testing';
 
 import { Readable } from 'stream';
@@ -292,7 +292,7 @@ describe('FileController', () => {
       });
     });
 
-    it('should throw FileException with FILE_NOT_FOUND when asset is not found', async () => {
+    it('should throw FILE_NOT_FOUND when the service yields null', async () => {
       jest.spyOn(fileService, 'getFileStreamByPath').mockResolvedValue(null);
 
       const mockRequest = {
@@ -313,10 +313,17 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors without leaking the underlying message', async () => {
+    it('should throw INTERNAL_SERVER_ERROR without leaking the underlying message, and log the original error', async () => {
+      const loggerSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation(() => undefined);
+      const underlyingError = new Error(
+        'Connection refused: postgres://secret-host:5432',
+      );
+
       jest
         .spyOn(fileService, 'getFileStreamByPath')
-        .mockRejectedValue(new Error('Connection refused'));
+        .mockRejectedValue(underlyingError);
 
       const mockRequest = {
         params: { path: ['broken-asset.png'] },
@@ -324,18 +331,24 @@ describe('FileController', () => {
 
       const mockResponse = createMockResponse() as any;
 
-      await expect(
-        controller.getPublicAssets(
-          mockResponse,
-          mockRequest,
-          'workspace-id',
-          'app-id',
-        ),
-      ).rejects.toThrow(
+      const promise = controller.getPublicAssets(
+        mockResponse,
+        mockRequest,
+        'workspace-id',
+        'app-id',
+      );
+
+      await expect(promise).rejects.toThrow(
         new FileException(
           'Error retrieving file',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         ),
+      );
+      await expect(promise).rejects.not.toThrow(/secret-host/);
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'getFileStreamByPath failed unexpectedly',
+        { error: underlyingError },
       );
     });
   });

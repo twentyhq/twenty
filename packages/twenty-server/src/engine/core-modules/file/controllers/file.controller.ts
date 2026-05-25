@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Param,
   Req,
   Res,
@@ -35,6 +36,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 @Controller()
 @UseFilters(FileApiExceptionFilter)
 export class FileController {
+  private readonly logger = new Logger(FileController.name);
+
   constructor(private readonly fileService: FileService) {}
 
   @Get('public-assets/:workspaceId/:applicationId/*path')
@@ -60,43 +63,43 @@ export class FileController {
       );
     }
 
-    try {
-      const fileStream = await this.fileService.getFileStreamByPath({
+    const fileStream = await this.fileService
+      .getFileStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
-      });
+      })
+      .catch((error) => {
+        this.logger.error('getFileStreamByPath failed unexpectedly', {
+          error,
+        });
 
-      if (fileStream === null) {
         throw new FileException(
-          'File not found',
-          FileExceptionCode.FILE_NOT_FOUND,
-        );
-      }
-
-      const { stream, mimeType } = fileStream;
-
-      setFileResponseHeaders(res, mimeType);
-
-      stream.on('error', () => {
-        throw new FileException(
-          'Error streaming file from storage',
+          'Error retrieving file',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       });
 
-      stream.pipe(res);
-    } catch (error) {
-      if (error instanceof FileException) {
-        throw error;
-      }
-
+    if (fileStream === null) {
       throw new FileException(
-        'Error retrieving file',
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
       );
     }
+
+    const { stream, mimeType } = fileStream;
+
+    setFileResponseHeaders(res, mimeType);
+
+    stream.on('error', () => {
+      throw new FileException(
+        'Error streaming file from storage',
+        FileExceptionCode.INTERNAL_SERVER_ERROR,
+      );
+    });
+
+    stream.pipe(res);
   }
 
   @Get('file/:fileFolder/:id')
