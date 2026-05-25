@@ -159,11 +159,6 @@ msgstr "A path segment exceeds the maximum length of 255 characters"
 msgid "A payment processing error occurred."
 msgstr "A payment processing error occurred."
 
-#. js-lingui-id: CazRIU
-#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-msgid "A permission flag with this key already exists"
-msgstr "A permission flag with this key already exists"
-
 #. js-lingui-id: Io42ej
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
 msgid "A person"
@@ -537,6 +532,11 @@ msgstr "An unknown calendar error occurred."
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-company-standard-flat-field-metadata.util.ts
 msgid "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
 msgstr "Annual Recurring Revenue: The actual or estimated annual revenue of the company"
+
+#. js-lingui-id: 4XvK/4
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
+msgid "Another application in this workspace has already registered a permission flag with this key."
+msgstr "Another application in this workspace has already registered a permission flag with this key."
 
 #. js-lingui-id: fRWsMD
 #: src/engine/metadata-modules/ai/ai.exception.ts
@@ -5377,11 +5377,11 @@ msgstr "Permission flag definition to delete not found"
 msgid "Permission flag definition to update not found"
 msgstr "Permission flag definition to update not found"
 
-#. js-lingui-id: O/v4Uv
+#. js-lingui-id: KNBagU
 #. placeholder {0}: flatPermissionFlagToValidate.key
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-permission-flag-validator.service.ts
-msgid "Permission flag definition with key {0} already exists in this workspace"
-msgstr "Permission flag definition with key {0} already exists in this workspace"
+msgid "Permission flag definition with key \"{0}\" is already registered in this workspace."
+msgstr "Permission flag definition with key \"{0}\" is already registered in this workspace."
 
 #. js-lingui-id: FxbCOo
 #. placeholder {0}: existing.key
