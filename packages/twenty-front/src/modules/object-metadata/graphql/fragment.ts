@@ -37,6 +37,7 @@ export const OBJECT_METADATA_FRAGMENT = gql`
       indexFieldMetadataList {
         id
         fieldMetadataId
+        subFieldName
         createdAt
         updatedAt
         order

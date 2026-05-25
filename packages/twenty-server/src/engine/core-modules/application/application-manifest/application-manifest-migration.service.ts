@@ -71,6 +71,7 @@ export class ApplicationManifestMigrationService {
       fields: [],
       logicFunctions: [preInstallLogicFunctionManifest],
       frontComponents: [],
+      permissionFlags: [],
       roles: [],
       skills: [],
       agents: [],
