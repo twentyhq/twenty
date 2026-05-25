@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Logger,
   Param,
   Req,
   Res,
@@ -8,6 +9,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
+import { pipeline } from 'node:stream/promises';
 import { join } from 'path';
 
 import { Request, Response } from 'express';
@@ -17,7 +19,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import {
   FileException,
   FileExceptionCode,
@@ -35,6 +37,8 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 @Controller()
 @UseFilters(FileApiExceptionFilter)
 export class FileController {
+  private readonly logger = new Logger(FileController.name);
+
   constructor(private readonly fileService: FileService) {}
 
   @Get('public-assets/:workspaceId/:applicationId/*path')
@@ -48,39 +52,60 @@ export class FileController {
   ) {
     const filepath = join(...req.params.path);
 
-    try {
-      const { stream, mimeType } = await this.fileService.getFileStreamByPath({
+    const filePathValidationResult = validateFilePath({
+      resourcePath: filepath,
+      fileFolder: FileFolder.PublicAsset,
+    });
+
+    if (!filePathValidationResult.isValid) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    const fileStream = await this.fileService
+      .getFileStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
-      });
+      })
+      .catch((error) => {
+        this.logger.error('getFileStreamByPath failed unexpectedly', {
+          error,
+        });
 
-      setFileResponseHeaders(res, mimeType);
-
-      stream.on('error', () => {
         throw new FileException(
-          'Error streaming file from storage',
+          'Error retrieving file',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       });
 
-      stream.pipe(res);
+    if (fileStream === null) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    const { stream, mimeType } = fileStream;
+
+    setFileResponseHeaders(res, mimeType);
+
+    try {
+      await pipeline(stream, res);
     } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
+      this.logger.error('Public asset stream failed mid-transfer', { error });
+
+      if (!res.headersSent) {
         throw new FileException(
-          'File not found',
-          FileExceptionCode.FILE_NOT_FOUND,
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       }
 
-      throw new FileException(
-        `Error retrieving file: ${error.message}`,
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
-      );
+      res.destroy();
     }
   }
 
