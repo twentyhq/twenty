@@ -137,15 +137,6 @@ const FAILING_TEST_CASES: EachTestingContext<TestContext>[] = [
       filePath: 'install.sh',
     },
   },
-  {
-    title:
-      'when filePath has an invalid extension for PublicAsset (.js is not allowed)',
-    context: {
-      applicationUniversalIdentifier: TEST_APP_ID,
-      fileFolder: 'PublicAsset',
-      filePath: 'assets/script.js',
-    },
-  },
 ];
 
 describe('Upload application file should fail', () => {

@@ -34,16 +34,6 @@ describe('validateFileExtension', () => {
       resourcePath: 'yarn.lock',
       fileFolder: FileFolder.Dependencies,
     },
-    {
-      title: 'PublicAsset with .svg',
-      resourcePath: 'assets/logo.svg',
-      fileFolder: FileFolder.PublicAsset,
-    },
-    {
-      title: 'PublicAsset with .woff2',
-      resourcePath: 'fonts/roboto.woff2',
-      fileFolder: FileFolder.PublicAsset,
-    },
   ])(
     'should return isValid: true for $title',
     ({ resourcePath, fileFolder }) => {
@@ -68,11 +58,6 @@ describe('validateFileExtension', () => {
       title: 'BuiltLogicFunction with .pdf',
       resourcePath: 'handler.pdf',
       fileFolder: FileFolder.BuiltLogicFunction,
-    },
-    {
-      title: 'PublicAsset with .js',
-      resourcePath: 'assets/script.js',
-      fileFolder: FileFolder.PublicAsset,
     },
     {
       title: 'Source with .mjs',
@@ -107,6 +92,21 @@ describe('validateFileExtension', () => {
       title: 'FilesField',
       resourcePath: 'document.pdf',
       fileFolder: FileFolder.FilesField,
+    },
+    {
+      title: 'PublicAsset with .svg',
+      resourcePath: 'assets/logo.svg',
+      fileFolder: FileFolder.PublicAsset,
+    },
+    {
+      title: 'PublicAsset with .js',
+      resourcePath: 'assets/script.js',
+      fileFolder: FileFolder.PublicAsset,
+    },
+    {
+      title: 'PublicAsset with .exe',
+      resourcePath: 'downloads/installer.exe',
+      fileFolder: FileFolder.PublicAsset,
     },
   ])(
     'should return isValid: true for unconfigured file folder $title',
