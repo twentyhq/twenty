@@ -61,8 +61,13 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    // isUnique is derived from IndexMetadata at cache build time and is
+    // not a column on the fieldMetadata table. The unique-index toggle
+    // flows through handleIndexChangesDuringFieldUpdate, which creates
+    // or deletes the underlying IndexMetadata directly — the field
+    // metadata row itself has nothing to persist for this property.
     isUnique: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },

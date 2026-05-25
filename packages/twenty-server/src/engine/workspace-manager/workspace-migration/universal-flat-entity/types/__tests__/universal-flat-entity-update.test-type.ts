@@ -15,7 +15,6 @@ type Assertions = [
       | 'defaultValue'
       | 'standardOverrides'
       | 'options'
-      | 'isUnique'
       | 'isLabelSyncedWithName'
       | 'universalSettings'
     >
