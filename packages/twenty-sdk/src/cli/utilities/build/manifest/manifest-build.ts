@@ -18,7 +18,6 @@ import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
-import { type PermissionFlagConfig } from '@/sdk/define/permission-flags/permission-flag-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
 import { type ViewConfig } from '@/sdk/define/views/view-config';
 import { readFile } from 'node:fs/promises';
@@ -194,7 +193,7 @@ export const buildManifest = async (
         break;
       }
       case ManifestEntityKey.PermissionFlags: {
-        const extract = await extractManifestFromFile<PermissionFlagConfig>({
+        const extract = await extractManifestFromFile<PermissionFlagManifest>({
           appPath,
           filePath,
         });
