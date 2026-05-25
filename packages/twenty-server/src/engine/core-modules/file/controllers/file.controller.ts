@@ -17,7 +17,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import {
   FileException,
   FileExceptionCode,
@@ -48,7 +48,12 @@ export class FileController {
   ) {
     const filepath = join(...req.params.path);
 
-    if (!isSafeRelativePath(filepath)) {
+    const filePathValidationResult = validateFilePath({
+      resourcePath: filepath,
+      fileFolder: FileFolder.PublicAsset,
+    });
+
+    if (!filePathValidationResult.isValid) {
       throw new FileException(
         'File not found',
         FileExceptionCode.FILE_NOT_FOUND,
