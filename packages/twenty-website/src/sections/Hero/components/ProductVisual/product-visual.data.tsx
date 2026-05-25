@@ -1,4 +1,7 @@
-import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
+import {
+  SHARED_COMPANY_LOGO_URLS,
+  SHARED_PEOPLE_AVATAR_URLS,
+} from '@/content/site/asset-paths';
 import type {
   RecordPageDefinition,
   RowDef,
@@ -27,7 +30,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Anthropic',
         domain: 'anthropic.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -52,7 +55,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Slack',
         domain: 'slack.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -77,7 +80,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Figma',
         domain: 'figma.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -102,7 +105,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Notion',
         domain: 'notion.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -127,7 +130,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Github',
         domain: 'github.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -152,7 +155,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Airbnb',
         domain: 'airbnb.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -177,7 +180,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Stripe',
         domain: 'stripe.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -202,7 +205,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Sequoia',
         domain: 'sequoia.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -227,7 +230,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Accel',
         domain: 'accel.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
   {
@@ -252,7 +255,7 @@ export const NEW_TASK_ROWS: RowDef[] = [
         name: 'Google',
         domain: 'google.com',
       },
-      status: { type: 'tag', value: 'To Do' },
+      status: { type: 'select', value: 'To Do' },
     },
   },
 ];
@@ -261,7 +264,7 @@ export const NEW_COMPANY_ROW: RowDef = {
   id: 'openai',
   cells: {
     company: { type: 'entity', name: 'OpenAI', domain: 'openai.com' },
-    url: { type: 'link', value: 'openai.com' },
+    url: { type: 'link', kind: 'url', value: 'openai.com' },
     createdBy: {
       type: 'person',
       name: 'AI Agent',
@@ -278,9 +281,9 @@ export const NEW_COMPANY_ROW: RowDef = {
       avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
     },
     icp: { type: 'boolean', value: true },
-    arr: { type: 'number', value: '$2,000,000' },
-    linkedin: { type: 'link', value: 'openai' },
-    industry: { type: 'tag', value: 'AI Research' },
+    arr: { type: 'currency', value: '$2,000,000' },
+    linkedin: { type: 'link', kind: 'social', value: 'openai' },
+    industry: { type: 'select', value: 'AI Research' },
     mainContact: {
       type: 'person',
       name: 'Sam Altman',
@@ -306,115 +309,90 @@ export const NEW_PERSON_ROW: RowDef = {
       avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
     },
     company: { type: 'entity', name: 'OpenAI', domain: 'openai.com' },
-    email: { type: 'link', value: 'sam@openai.com' },
-    phone: { type: 'text', value: '+1 415 555 0199' },
+    email: { type: 'link', kind: 'email', value: 'sam@openai.com' },
+    phone: { type: 'link', kind: 'phone', value: '+1 415 555 0199' },
     jobTitle: { type: 'text', value: 'CEO' },
     city: { type: 'text', value: 'San Francisco' },
-    linkedin: { type: 'link', value: 'sama' },
+    linkedin: { type: 'link', kind: 'social', value: 'sama' },
     added: { type: 'text', value: 'Just now' },
   },
 };
 
+export type ResponseChip = {
+  logoUrl: string;
+  name: string;
+};
+
+export const COMPANIES_PAGE_ITEM_ID = 'companies';
+export const PEOPLE_PAGE_ITEM_ID = 'people';
+export const OPPORTUNITIES_PAGE_ITEM_ID = 'opportunities';
+export const TASKS_PAGE_ITEM_ID = 'tasks';
+export const WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID =
+  'workflow-send-email-sequence';
+
 export const PROMPT_OPTIONS = [
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <line x1="12" y1="5" x2="12" y2="19" />
-        <line x1="5" y1="12" x2="19" y2="12" />
-      </svg>
-    ),
     label: 'Add a new lead',
     navSteps: [
-      { at: 0.25, target: 'Companies' },
-      { at: 0.65, target: 'People' },
+      { at: 0.25, targetPageItemId: COMPANIES_PAGE_ITEM_ID },
+      { at: 0.65, targetPageItemId: PEOPLE_PAGE_ITEM_ID },
     ],
-    response:
-      'Adding OpenAI as a new company. Setting domain to openai.com, industry to AI Research, and ARR to $2,000,000. Account owner assigned to Sam Altman. Company record is live in your CRM.\n\nNow creating the contact — adding Sam Altman as CEO at OpenAI, based in San Francisco. Person record linked to the company.',
+    responseText:
+      'OpenAI is now in Companies with openai.com, AI Research, and $2.0M ARR. Sam Altman was added in People as CEO in San Francisco and linked back to OpenAI as the main contact.',
+    responseChips: [
+      { name: 'OpenAI', logoUrl: SHARED_COMPANY_LOGO_URLS.openai },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="11" cy="11" r="8" />
-        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-      </svg>
-    ),
     label: 'Show me all deals closing this month',
-    navSteps: [{ at: 0.3, target: 'Opportunities' }],
-    response:
-      'Filtering your pipeline to deals closing this month. Found 7 opportunities worth $12.9M total across Identified, Qualified, and Engaged stages. The biggest: Host Ops with Airbnb at $4,200,000, followed by AI Prototyping with Figma at $3,500,000.',
+    navSteps: [{ at: 0.3, targetPageItemId: OPPORTUNITIES_PAGE_ITEM_ID }],
+    responseText:
+      'There are 7 opportunities on the board worth $12.9M total. Biggest: Host Ops with Airbnb at $4.2M, then AI Prototyping with Figma at $3.5M. The rest are spread across Stripe, Github, Notion, Anthropic, and Mailchimp.',
+    responseChips: [
+      { name: 'Airbnb', logoUrl: SHARED_COMPANY_LOGO_URLS.airbnb },
+      { name: 'Figma', logoUrl: SHARED_COMPANY_LOGO_URLS.figma },
+      { name: 'Stripe', logoUrl: SHARED_COMPANY_LOGO_URLS.stripe },
+      { name: 'Github', logoUrl: SHARED_COMPANY_LOGO_URLS.github },
+      { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
+      { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
+      { name: 'Mailchimp', logoUrl: SHARED_COMPANY_LOGO_URLS.mailchimp },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <polyline points="9 11 12 14 22 4" />
-        <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-      </svg>
-    ),
     label: 'Create follow-up tasks for my top 10 accounts',
-    navSteps: [{ at: 0.3, target: 'Tasks' }],
-    response:
-      'Creating follow-up tasks for your top 10 accounts by ARR. Done — added 10 tasks:\n\n• "Follow up on Enterprise Expansion" → Anthropic (Nov 1)\n• "Schedule renewal call" → Slack (Nov 2)\n• "Send proposal to Dylan" → Figma (Nov 3)\n• "Review consolidation timeline" → Notion (Nov 4)\n• "Check in on Copilot Rollout" → Github (Nov 5)\n• "Review Host Ops proposal" → Airbnb (Nov 6)\n• "Send billing expansion contract" → Stripe (Nov 6)\n• "Schedule quarterly review" → Sequoia (Nov 7)\n• "Follow up on Portfolio Sync" → Accel (Nov 7)\n• "Prep AI Solutions deck" → Google (Nov 8)\n\nAll assigned to account owners with 7-day deadlines.',
+    navSteps: [{ at: 0.3, targetPageItemId: TASKS_PAGE_ITEM_ID }],
+    responseText:
+      'Created 10 follow-up tasks scheduled from Nov 1 to Nov 8. The first batch covers Anthropic, Slack, Figma, Notion, and Github, with the rest covering Airbnb, Stripe, Sequoia, Accel, and Google.',
+    responseChips: [
+      { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
+      { name: 'Slack', logoUrl: SHARED_COMPANY_LOGO_URLS.slack },
+      { name: 'Figma', logoUrl: SHARED_COMPANY_LOGO_URLS.figma },
+      { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
+      { name: 'Github', logoUrl: SHARED_COMPANY_LOGO_URLS.github },
+      { name: 'Airbnb', logoUrl: SHARED_COMPANY_LOGO_URLS.airbnb },
+      { name: 'Stripe', logoUrl: SHARED_COMPANY_LOGO_URLS.stripe },
+      { name: 'Sequoia', logoUrl: SHARED_COMPANY_LOGO_URLS.sequoia },
+      { name: 'Accel', logoUrl: SHARED_COMPANY_LOGO_URLS.accel },
+      { name: 'Google', logoUrl: SHARED_COMPANY_LOGO_URLS.google },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" />
-        <polyline points="14 2 14 8 20 8" />
-        <line x1="16" y1="13" x2="8" y2="13" />
-        <line x1="16" y1="17" x2="8" y2="17" />
-      </svg>
-    ),
     label: "Summarize this customer's history",
-    navSteps: [{ at: 0.3, target: 'Companies' }],
-    response:
-      "Here's the history for Qonto:\n\nLogged a call between Phil Schiller and Steve Anavi — focused on selling through benefits rather than features. Strategy: emphasize how our CRM streamlines operations and improves customer service.\n\nFollow-up with Alexandre Prot to understand their pain points and position our tool as the solution.\n\n3 notes total, 12 people associated, with Q Global Holdings as parent company. Active opportunity in pipeline.",
+    navSteps: [{ at: 0.3, targetPageItemId: COMPANIES_PAGE_ITEM_ID }],
+    responseText:
+      'Qonto has 3 notes, 12 linked people, Q Global Holdings as the parent account, and 1 active opportunity. Recent calls with Phil Schiller and Steve Anavi focused on selling through benefits, and the next follow-up is with Alexandre Prot.',
+    responseChips: [
+      { name: 'Qonto', logoUrl: SHARED_COMPANY_LOGO_URLS.qonto },
+    ],
   },
   {
-    icon: (
-      <svg
-        width="14"
-        height="14"
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-      >
-        <circle cx="12" cy="12" r="3" />
-        <path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15 1.65 1.65 0 003 14.08V14a2 2 0 014 0v.09" />
-      </svg>
-    ),
     label: 'Create a workflow that sends an email sequence',
-    navSteps: [{ at: 0.4, target: 'Send email sequence when deal is engaged' }],
-    response:
-      "I built and activated a workflow that sends an email sequence to each one of the selected People.\n\nThis will only send if the Person has emails.primaryEmail filled in. If some People don't have an email, I'll add a filter step to skip sending when the email is empty (to avoid failures).\n\nIf you want to customize the email subject/body (branding, links, etc.), paste your desired text and I'll update the workflow.",
+    navSteps: [
+      { at: 0.4, targetPageItemId: WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID },
+    ],
+    responseText:
+      'Created and activated "Send email sequence when deal is engaged" with a Manual trigger, an Iterator, and a Send Email step. It is ready to run as-is, and I can add filters or customize the email copy next.',
+    responseChips: [],
   },
 ];
 
@@ -429,26 +407,56 @@ export const QONTO_RECORD_PAGE: RecordPageDefinition = {
     name: 'Qonto',
     createdAt: 'Created 4 hours ago',
     fields: [
-      { icon: 'link', label: 'URL', value: 'qonto.com' },
+      {
+        icon: 'link',
+        label: 'URL',
+        value: { type: 'link', kind: 'url', value: 'qonto.com' },
+      },
       {
         icon: 'user',
-        label: 'Account O...',
-        value: 'Phil Schiller',
-        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.philSchiller,
+        label: 'Account Owner',
+        value: {
+          type: 'person',
+          name: 'Phil Schiller',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.philSchiller,
+          kind: 'person',
+          tone: 'gray',
+        },
       },
       {
         icon: 'mapPin',
         label: 'Address',
-        value: '18 Rue De Navarin, 75009 Paris',
+        value: { type: 'text', value: '18 Rue De Navarin, 75009 Paris' },
       },
-      { icon: 'check', label: 'ICP', value: '✓ True' },
-      { icon: 'currency', label: 'Revenue', value: '$500,000' },
+      {
+        icon: 'check',
+        label: 'ICP',
+        value: { type: 'boolean', value: true },
+      },
+      {
+        icon: 'currency',
+        label: 'Revenue',
+        value: { type: 'currency', value: '$500,000' },
+      },
       {
         icon: 'linkedin',
-        label: 'Linkedin',
-        value: 'linkedin.com/company/q...',
+        label: 'LinkedIn',
+        value: {
+          type: 'link',
+          kind: 'social',
+          label: 'linkedin.com/company/q...',
+          value: 'qonto',
+        },
       },
-      { icon: 'twitter', label: 'Twitter', value: '@qonto' },
+      {
+        icon: 'twitter',
+        label: 'Twitter',
+        value: {
+          type: 'link',
+          kind: 'social',
+          value: '@qonto',
+        },
+      },
     ],
     moreCount: 12,
     relations: [

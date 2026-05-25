@@ -22,7 +22,7 @@ type PreviewProps = {
 export function Preview({ visual }: PreviewProps) {
   return (
     <PreviewRoot>
-      <AppPreview showTerminal={false} visual={visual} />
+      <AppPreview frameMode="static" showTerminal={false} visual={visual} />
     </PreviewRoot>
   );
 }

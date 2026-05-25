@@ -1,19 +1,103 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
-import { useAppPreviewState } from '@/sections/AppPreview/Shell/use-app-preview-state';
+import { useAppPreviewExperience } from '@/sections/AppPreview/Shell/use-app-preview-experience';
+import type { PageDefinition } from '@/sections/AppPreview/types/app-preview-data';
 
 import {
+  COMPANIES_PAGE_ITEM_ID,
   NEW_COMPANY_ROW,
   NEW_PERSON_ROW,
   NEW_TASK_ROWS,
+  PEOPLE_PAGE_ITEM_ID,
   PROMPT_OPTIONS,
   QONTO_RECORD_PAGE,
+  TASKS_PAGE_ITEM_ID,
 } from './product-visual.data';
 
 type AutoplayOptions = {
   externalScene?: number;
 };
+
+type ProductVisualSceneFlags = {
+  companyAdded: boolean;
+  personAdded: boolean;
+  recordReady: boolean;
+  tasksAdded: boolean;
+};
+
+function getStreamProgress(streamedLength: number, fullTextLength: number) {
+  if (fullTextLength === 0) {
+    return 1;
+  }
+
+  return Math.min(streamedLength / fullTextLength, 1);
+}
+
+function getSceneFlags(
+  selectedOption: number,
+  isScrollDriven: boolean,
+  streamProgress: number,
+): ProductVisualSceneFlags {
+  return {
+    companyAdded:
+      selectedOption === 0 && (isScrollDriven || streamProgress >= 0.2),
+    personAdded: selectedOption === 0 && streamProgress >= 0.6,
+    recordReady:
+      selectedOption === 3 && (isScrollDriven || streamProgress >= 0.5),
+    tasksAdded:
+      selectedOption === 2 && (isScrollDriven || streamProgress >= 0.3),
+  };
+}
+
+function resolveDisplayPage(
+  activePage: PageDefinition,
+  activeItemId: string,
+  sceneFlags: ProductVisualSceneFlags,
+): PageDefinition {
+  if (sceneFlags.recordReady) {
+    return QONTO_RECORD_PAGE;
+  }
+
+  if (activePage.type !== 'table') {
+    return activePage;
+  }
+
+  if (sceneFlags.companyAdded && activeItemId === COMPANIES_PAGE_ITEM_ID) {
+    return {
+      ...activePage,
+      header: {
+        ...activePage.header,
+        count: (activePage.header.count ?? 0) + 1,
+      },
+      rows: [NEW_COMPANY_ROW, ...activePage.rows],
+    };
+  }
+
+  if (sceneFlags.personAdded && activeItemId === PEOPLE_PAGE_ITEM_ID) {
+    return {
+      ...activePage,
+      header: {
+        ...activePage.header,
+        count: (activePage.header.count ?? 0) + 1,
+      },
+      rows: [NEW_PERSON_ROW, ...activePage.rows],
+    };
+  }
+
+  if (sceneFlags.tasksAdded && activeItemId === TASKS_PAGE_ITEM_ID) {
+    return {
+      ...activePage,
+      header: {
+        ...activePage.header,
+        count: (activePage.header.count ?? 0) + NEW_TASK_ROWS.length,
+      },
+      rows: [...NEW_TASK_ROWS, ...activePage.rows],
+    };
+  }
+
+  return activePage;
+}
 
 export function useProductVisualAutoplay(
   visual: AppPreviewConfig,
@@ -21,12 +105,7 @@ export function useProductVisualAutoplay(
 ) {
   const { externalScene } = options;
   const [selectedOption, setSelectedOption] = useState<number>(0);
-  const [streamedText, setStreamedText] = useState('');
-  const [streamComplete, setStreamComplete] = useState(false);
-  const [companyAdded, setCompanyAdded] = useState(false);
-  const [personAdded, setPersonAdded] = useState(false);
-  const [tasksAdded, setTasksAdded] = useState(false);
-  const [recordReady, setRecordReady] = useState(false);
+  const [streamedLength, setStreamedLength] = useState(0);
 
   useEffect(() => {
     if (externalScene !== undefined) {
@@ -40,138 +119,90 @@ export function useProductVisualAutoplay(
 
   const {
     activeItem,
-    activeLabel,
+    activeItemId,
+    activeItemLabel,
     activePage,
-    handleSelectLabel,
-    handleToggleFolder,
+    favorites,
     highlightedItemId,
     openFolderIds,
     revealedObjectIds,
-    workspaceNav,
-  } = useAppPreviewState(visual);
-
-  let displayPage = activePage;
-  if (selectedOption === 3 && recordReady) {
-    displayPage = QONTO_RECORD_PAGE;
-  } else if (activePage != null && activePage.type === 'table') {
-    const title = activePage.header?.title;
-    if (companyAdded && title === 'All Companies') {
-      displayPage = {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + 1,
-        },
-        rows: [NEW_COMPANY_ROW, ...activePage.rows],
-      };
-    } else if (personAdded && title === 'All People') {
-      displayPage = {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + 1,
-        },
-        rows: [NEW_PERSON_ROW, ...activePage.rows],
-      };
-    } else if (tasksAdded && title === 'All Tasks') {
-      displayPage = {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + NEW_TASK_ROWS.length,
-        },
-        rows: [...NEW_TASK_ROWS, ...activePage.rows],
-      };
-    }
-  }
-
+    selectPageItem,
+    toggleFolder,
+    workspaceEntries,
+  } = useAppPreviewExperience(visual);
   const isScrollDriven = externalScene !== undefined;
+  const selectedOptionData = PROMPT_OPTIONS[selectedOption];
+  const fullText = selectedOptionData.responseText;
+  const streamProgress = getStreamProgress(streamedLength, fullText.length);
+  const streamedText = fullText.slice(0, streamedLength);
+  const streamComplete = streamedLength >= fullText.length;
+  const sceneFlags = useMemo(
+    () => getSceneFlags(selectedOption, isScrollDriven, streamProgress),
+    [isScrollDriven, selectedOption, streamProgress],
+  );
+  const displayPage = resolveDisplayPage(
+    activePage,
+    activeItemId,
+    sceneFlags,
+  );
 
   useEffect(() => {
-    const option = PROMPT_OPTIONS[selectedOption];
-    const fullText = option.response;
+    setStreamedLength(0);
 
     if (isScrollDriven) {
-      if (selectedOption === 3) {
-        setRecordReady(true);
-      } else {
-        const firstStep = option.navSteps[0];
+      if (selectedOption !== 3) {
+        const firstStep = selectedOptionData.navSteps[0];
         if (firstStep) {
-          handleSelectLabel(firstStep.target);
+          selectPageItem(firstStep.targetPageItemId);
         }
       }
-      if (selectedOption === 0) {
-        setCompanyAdded(true);
-      }
-      if (selectedOption === 2) {
-        setTasksAdded(true);
-      }
+    }
+
+    if (fullText.length === 0) {
+      return undefined;
     }
 
     let index = 0;
     const completedSteps = new Set<number>();
-    let companyInjected = false;
-    let personInjected = false;
-    let tasksInjected = false;
-    let recordShown = false;
-    setStreamedText('');
-    setStreamComplete(false);
-    if (!isScrollDriven) {
-      setCompanyAdded(false);
-      setPersonAdded(false);
-      setTasksAdded(false);
-      setRecordReady(false);
+
+    if (isScrollDriven && selectedOption !== 3 && selectedOptionData.navSteps[0]) {
+      completedSteps.add(0);
     }
+
     const interval = setInterval(() => {
-      index += 1;
-      setStreamedText(fullText.slice(0, index));
-      const progress = index / fullText.length;
-      option.navSteps.forEach((step, stepIndex) => {
+      index = Math.min(index + 1, fullText.length);
+      setStreamedLength(index);
+      const progress = getStreamProgress(index, fullText.length);
+
+      selectedOptionData.navSteps.forEach((step, stepIndex) => {
         if (!completedSteps.has(stepIndex) && progress >= step.at) {
           completedSteps.add(stepIndex);
-          handleSelectLabel(step.target);
+          selectPageItem(step.targetPageItemId);
         }
       });
-      if (selectedOption === 0) {
-        if (!companyInjected && progress >= 0.2) {
-          companyInjected = true;
-          setCompanyAdded(true);
-        }
-        if (!personInjected && progress >= 0.6) {
-          personInjected = true;
-          setPersonAdded(true);
-        }
-      }
-      if (selectedOption === 2 && !tasksInjected && progress >= 0.3) {
-        tasksInjected = true;
-        setTasksAdded(true);
-      }
-      if (selectedOption === 3 && !recordShown && progress >= 0.5) {
-        recordShown = true;
-        setRecordReady(true);
-      }
+
       if (index >= fullText.length) {
         clearInterval(interval);
-        setStreamComplete(true);
       }
     }, 20);
+
     return () => clearInterval(interval);
-  }, [selectedOption, handleSelectLabel, isScrollDriven]);
+  }, [fullText, isScrollDriven, selectPageItem, selectedOption, selectedOptionData]);
 
   return {
     activeItem,
-    activeLabel,
+    activeItemId,
+    activeItemLabel,
     displayPage,
-    handleOptionSelect: setSelectedOption,
-    handleSelectLabel,
-    handleToggleFolder,
+    favorites,
     highlightedItemId,
-    isScrollDriven,
     openFolderIds,
     revealedObjectIds,
+    selectPageItem,
     selectedOption,
     streamComplete,
     streamedText,
-    workspaceNav,
+    toggleFolder,
+    workspaceEntries,
   };
 }

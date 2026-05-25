@@ -1,7 +1,8 @@
 'use client';
 
+import { useLatestRef } from '@/lib/react';
 import { styled } from '@linaria/react';
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { ASSISTANT_RESPONSE_STREAMING_STAGES } from '../utils/assistant-response-streaming-stages';
 import { buildAssistantResponseSegments } from './AssistantResponseSegments';
@@ -48,16 +49,29 @@ export const AssistantResponse = ({
   onObjectCreated,
   onChatFinished,
 }: AssistantResponseProps) => {
+  const onObjectCreatedRef = useLatestRef(onObjectCreated);
   const { createStageCompletionHandler, hasReachedStage, stage } =
     useAssistantResponseStage({
       instantComplete,
       onChatFinished,
     });
-  const objectCreationHandler = instantComplete ? undefined : onObjectCreated;
+  const objectCreationHandler = useCallback(
+    (id: string) => {
+      if (instantComplete) {
+        return;
+      }
+
+      onObjectCreatedRef.current?.(id);
+    },
+    [instantComplete, onObjectCreatedRef],
+  );
 
   const segmentsByStage = useMemo(
-    () => buildAssistantResponseSegments(objectCreationHandler),
-    [objectCreationHandler],
+    () =>
+      buildAssistantResponseSegments(
+        instantComplete ? undefined : objectCreationHandler,
+      ),
+    [instantComplete, objectCreationHandler],
   );
 
   return (

@@ -16,6 +16,7 @@ import type { CellEntity, CellPerson, KanbanCard } from '../../types';
 import { FaviconLogo } from '../../Shared/components/FaviconLogo';
 import { PersonAvatar } from '../../Shared/components/PersonAvatar';
 import { Chip } from '../../Shared/components/Chip';
+import { ChipVariant } from '../../Shared/utils/chip-variant';
 import {
   KANBAN_PAGE_COLORS,
   KANBAN_PAGE_FONT,
@@ -145,6 +146,7 @@ function EntityChip({ entity }: { entity: CellEntity }) {
       label={entity.name}
       leftComponent={<FaviconLogo domain={entity.domain} label={entity.name} />}
       maxWidth={152}
+      variant={ChipVariant.Highlighted}
     />
   );
 }
@@ -156,6 +158,7 @@ function PersonChip({ person }: { person: CellPerson }) {
       label={person.name}
       leftComponent={<PersonAvatar person={person} />}
       maxWidth={152}
+      variant={ChipVariant.Highlighted}
     />
   );
 }

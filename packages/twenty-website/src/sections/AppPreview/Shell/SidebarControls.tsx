@@ -3,152 +3,118 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import {
-  IconHome2,
-  IconMessageCircle,
+  IconHome,
+  IconMessageCircle2,
   IconMessageCirclePlus,
 } from '@tabler/icons-react';
 
-import {
-  APP_FONT,
-  COLORS,
-  TABLER_STROKE,
-} from '../Shared/utils/app-preview-theme';
+import { APP_FONT } from '../Shared/utils/app-preview-theme';
 
-const SidebarControlsRoot = styled.div`
-  align-items: center;
-  display: grid;
-  gap: 8px;
-  grid-auto-flow: column;
-  grid-template-columns: auto;
+const Root = styled.div<{ $desktopExpanded: boolean }>`
+  display: flex;
   justify-content: center;
-  min-width: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    display: flex;
-    gap: 12px;
-    grid-auto-flow: row;
-    justify-content: space-between;
+    align-items: center;
+    justify-content: ${({ $desktopExpanded }) =>
+      $desktopExpanded ? 'space-between' : 'center'};
   }
 `;
 
-const SegmentedRail = styled.div`
-  background: #fcfcfccc;
-  border: 1px solid ${COLORS.border};
-  border-radius: 40px;
+const SegmentedRail = styled.div<{ $desktopExpanded: boolean }>`
   display: none;
-  gap: 2px;
-  grid-auto-flow: column;
-  padding: 3px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    display: grid;
+    display: ${({ $desktopExpanded }) => ($desktopExpanded ? 'flex' : 'none')};
+    align-items: center;
+    background-color: #fcfcfccc;
+    border: 1px solid #ebebeb;
+    border-radius: 999px;
+    column-gap: 2px;
+    height: 26px;
+    padding-bottom: 3px;
+    padding-left: 3px;
+    padding-right: 3px;
+    padding-top: 3px;
   }
 `;
 
 const Segment = styled.div<{ $selected?: boolean }>`
   align-items: center;
   background: ${({ $selected }) => ($selected ? '#0000000a' : 'transparent')};
-  border-radius: 16px;
+  border-radius: 999px;
   display: flex;
-  height: 22px;
+  height: 20px;
   justify-content: center;
-  width: 22px;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    padding: 0 8px;
-    width: 32px;
-  }
+  width: 32px;
 `;
 
-const NewChat = styled.div`
+const NewChat = styled.div<{ $desktopExpanded: boolean }>`
   align-items: center;
-  background: ${COLORS.backgroundSecondary};
-  border: 1px solid ${COLORS.border};
-  border-radius: 40px;
-  color: ${COLORS.textSecondary};
+  background-color: #fcfcfc;
+  border: 1px solid #ebebeb;
+  border-radius: 999px;
+  color: #666666;
   display: flex;
-  gap: 4px;
-  height: 28px;
+  height: 32px;
   justify-content: center;
-  min-width: 0;
-  padding: 3px;
-  width: 28px;
+  width: 32px;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    width: 103px;
+    column-gap: ${({ $desktopExpanded }) => ($desktopExpanded ? '4px' : '0')};
+    height: ${({ $desktopExpanded }) => ($desktopExpanded ? '26px' : '32px')};
+    padding-bottom: ${({ $desktopExpanded }) =>
+      $desktopExpanded ? '3px' : '0'};
+    padding-left: ${({ $desktopExpanded }) => ($desktopExpanded ? '3px' : '0')};
+    padding-right: ${({ $desktopExpanded }) =>
+      $desktopExpanded ? '3px' : '0'};
+    padding-top: ${({ $desktopExpanded }) => ($desktopExpanded ? '3px' : '0')};
+    width: ${({ $desktopExpanded }) => ($desktopExpanded ? '103px' : '32px')};
   }
 `;
 
-const NewChatLabel = styled.span`
+const NewChatLabel = styled.span<{ $desktopExpanded: boolean }>`
   display: none;
-  font-family: ${APP_FONT};
-  font-size: 13px;
-  font-weight: ${theme.font.weight.medium};
-  line-height: 1.4;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    display: block;
+    display: ${({ $desktopExpanded }) => ($desktopExpanded ? 'block' : 'none')};
+    font-family: ${APP_FONT};
+    font-size: 13px;
+    font-weight: ${theme.font.weight.medium};
+    line-height: 1.4;
   }
 `;
 
-type MiniIconProps = {
-  color?: string;
-  size?: number;
+type SidebarControlsProps = {
+  desktopExpanded: boolean;
 };
 
-function HomeMini({ color = COLORS.textSecondary, size = 16 }: MiniIconProps) {
+export function SidebarControls({ desktopExpanded }: SidebarControlsProps) {
   return (
-    <IconHome2 aria-hidden color={color} size={size} stroke={TABLER_STROKE} />
-  );
-}
-
-function CommentMini({
-  color = COLORS.textTertiary,
-  size = 16,
-}: MiniIconProps) {
-  return (
-    <IconMessageCircle
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
-  );
-}
-
-function MessageCirclePlusMini({
-  color = COLORS.textSecondary,
-  size = 16,
-}: MiniIconProps) {
-  return (
-    <IconMessageCirclePlus
-      aria-hidden
-      color={color}
-      size={size}
-      stroke={TABLER_STROKE}
-    />
-  );
-}
-
-export function SidebarControls() {
-  return (
-    <SidebarControlsRoot>
-      <SegmentedRail aria-hidden="true">
+    <Root $desktopExpanded={desktopExpanded}>
+      <SegmentedRail $desktopExpanded={desktopExpanded} aria-hidden="true">
         <Segment $selected>
-          <HomeMini />
+          <IconHome aria-hidden color="#333333" size={16} strokeWidth={2} />
         </Segment>
         <Segment>
-          <CommentMini />
+          <IconMessageCircle2
+            aria-hidden
+            color="#999999"
+            size={16}
+            strokeWidth={2}
+          />
         </Segment>
       </SegmentedRail>
-      <NewChat aria-hidden="true">
-        <MessageCirclePlusMini />
-        <NewChatLabel>New chat</NewChatLabel>
+
+      <NewChat $desktopExpanded={desktopExpanded} aria-hidden="true">
+        <IconMessageCirclePlus
+          aria-hidden
+          color="#666666"
+          size={16}
+          strokeWidth={2}
+        />
+        <NewChatLabel $desktopExpanded={desktopExpanded}>New chat</NewChatLabel>
       </NewChat>
-    </SidebarControlsRoot>
+    </Root>
   );
 }

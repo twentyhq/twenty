@@ -1,14 +1,35 @@
 export type CellText = {
   type: 'text';
-  targetLabel?: string;
+  targetPageItemId?: string;
   value: string;
   shortLabel?: string;
   tone?: string;
 };
 export type CellNumber = { type: 'number'; value: string };
-export type CellLink = { type: 'link'; value: string };
+export type CellCurrency = { type: 'currency'; value: string };
+
+export type CellLink = {
+  type: 'link';
+  kind?: 'email' | 'phone' | 'social' | 'url';
+  label?: string;
+  value: string;
+};
 export type CellBoolean = { type: 'boolean'; value: boolean };
-export type CellTag = { type: 'tag'; value: string };
+
+export type CellSelect = {
+  type: 'select';
+  color?:
+    | 'amber'
+    | 'blue'
+    | 'gray'
+    | 'green'
+    | 'orange'
+    | 'pink'
+    | 'purple'
+    | 'red'
+    | 'teal';
+  value: string;
+};
 
 export type CellPerson = {
   type: 'person';
@@ -33,9 +54,10 @@ export type CellRelation = {
 export type CellValue =
   | CellText
   | CellNumber
+  | CellCurrency
   | CellLink
   | CellBoolean
-  | CellTag
+  | CellSelect
   | CellPerson
   | CellEntity
   | CellRelation;
@@ -168,11 +190,18 @@ export type KanbanPageDefinition = {
   type: 'kanban';
 };
 
+export type RecordFieldValue =
+  | CellBoolean
+  | CellCurrency
+  | CellLink
+  | CellPerson
+  | CellSelect
+  | CellText;
+
 export type RecordField = {
-  avatarUrl?: string;
   icon?: string;
   label: string;
-  value: string;
+  value: RecordFieldValue;
 };
 
 export type RecordRelation = {
@@ -233,34 +262,42 @@ export type SidebarIcon =
       shape?: 'circle' | 'square';
     };
 
-export type SidebarItemDef = {
+type SidebarBaseItemDef = {
   id: string;
   label: string;
-  href?: string;
   icon: SidebarIcon;
-  page?: PageDefinition;
   meta?: string;
-  active?: boolean;
-  showChevron?: boolean;
-  children?: SidebarItemDef[];
 };
+
+export type SidebarPageItemDef = SidebarBaseItemDef & {
+  page: PageDefinition;
+  href?: never;
+};
+
+export type SidebarLinkItemDef = SidebarBaseItemDef & {
+  href: string;
+  page?: never;
+};
+
+export type SidebarItemDef = SidebarLinkItemDef | SidebarPageItemDef;
 
 export type SidebarFolderDef = {
   id: string;
   label: string;
   icon: SidebarIcon;
-  defaultOpen?: boolean;
-  showChevron?: boolean;
-  children?: SidebarItemDef[];
-  items: SidebarItemDef[];
+  items: SidebarPageItemDef[];
 };
 
 export type SidebarEntry = SidebarItemDef | SidebarFolderDef;
 
+export type AppPreviewSidebarConfig = {
+  favorites: SidebarItemDef[];
+  initialActiveItemId: string;
+  initialOpenFolderIds: string[];
+  workspace: SidebarEntry[];
+};
+
 export type AppPreviewConfig = {
-  workspace: { icon: string; name: string };
-  favoritesNav?: SidebarItemDef[];
-  workspaceNav: SidebarEntry[];
-  tableWidth?: number;
-  actions?: string[];
+  defaultViewbarActions: string[];
+  sidebar: AppPreviewSidebarConfig;
 };

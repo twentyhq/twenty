@@ -29,19 +29,6 @@ const TableShell = styled.div`
   width: 100%;
 `;
 
-const GripRail = styled.div`
-  background: ${COLORS.background};
-  display: grid;
-  flex: 0 0 12px;
-  grid-auto-rows: 32px;
-  width: 12px;
-`;
-
-const GripCell = styled.div`
-  background: ${COLORS.background};
-  border-bottom: 1px solid ${COLORS.borderLight};
-`;
-
 const TableViewport = styled.div<{ $dragging: boolean }>`
   cursor: ${({ $dragging }) => ($dragging ? 'grabbing' : 'grab')};
   flex: 1 1 auto;
@@ -129,7 +116,11 @@ const TableCell = styled.div<{
     $align === 'right' ? 'flex-end' : 'flex-start'};
   left: ${({ $sticky }) => ($sticky ? '0' : 'auto')};
   min-width: ${({ $width }) => `${$width}px`};
-  padding: 0 ${TABLE_CELL_HORIZONTAL_PADDING}px;
+  padding-bottom: 0;
+  padding-right: ${TABLE_CELL_HORIZONTAL_PADDING}px;
+  padding-top: 0;
+  padding-left: ${({ $sticky }) =>
+    $sticky ? `${TABLE_CELL_HORIZONTAL_PADDING - 1}px` : `${TABLE_CELL_HORIZONTAL_PADDING}px`};
   position: ${({ $sticky }) => ($sticky ? 'sticky' : 'relative')};
   z-index: ${({ $header, $sticky }) => {
     if ($sticky && $header) {
@@ -212,10 +203,10 @@ const HeaderFillContent = styled.div`
 
 export function TablePage({
   page,
-  onNavigateToLabel,
+  onNavigateToPageItemId,
 }: {
   page: TablePageDefinition;
-  onNavigateToLabel?: (label: string) => void;
+  onNavigateToPageItemId?: (itemId: string) => void;
 }) {
   const {
     dragging,
@@ -237,14 +228,6 @@ export function TablePage({
 
   return (
     <TableShell>
-      <GripRail aria-hidden="true">
-        <GripCell />
-        {page.rows.map((row) => (
-          <GripCell key={`grip-${row.id}`} />
-        ))}
-        <GripCell />
-      </GripRail>
-
       <TableViewport
         ref={viewportRef}
         $dragging={dragging}
@@ -332,7 +315,7 @@ export function TablePage({
                             columnId: column.id,
                             hovered,
                             isFirstColumn: !!column.isFirstColumn,
-                            onNavigateToLabel,
+                            onNavigateToPageItemId,
                           })
                         : null}
                     </TableCell>

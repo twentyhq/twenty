@@ -6,8 +6,6 @@ import type {
 } from './workflow-page-data';
 import { getWorkflowEdgePath } from './workflow-page-geometry';
 import {
-  WORKFLOW_CANVAS_HEIGHT,
-  WORKFLOW_CANVAS_WIDTH,
   WORKFLOW_NODE_HEIGHT,
   WORKFLOW_PAGE_COLORS,
 } from './workflow-page-theme';
@@ -21,10 +19,14 @@ const CanvasOverlay = styled.svg`
 `;
 
 export function WorkflowEdges({
+  canvasHeight,
+  canvasWidth,
   edges,
   nodes,
   plusNode,
 }: {
+  canvasHeight: number;
+  canvasWidth: number;
   edges: ReadonlyArray<WorkflowEdgeDefinition>;
   nodes: ReadonlyArray<WorkflowNodeDefinition>;
   plusNode?: { x: number; y: number };
@@ -37,7 +39,7 @@ export function WorkflowEdges({
   return (
     <CanvasOverlay
       aria-hidden
-      viewBox={`0 0 ${WORKFLOW_CANVAS_WIDTH} ${WORKFLOW_CANVAS_HEIGHT}`}
+      viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
     >
       <defs>
         <marker

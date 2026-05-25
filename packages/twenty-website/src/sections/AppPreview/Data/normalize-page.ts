@@ -1,7 +1,7 @@
 import type {
   KanbanPageDefinition,
   PageDefinition,
-  SidebarItemDef,
+  SidebarPageItemDef,
   TablePageDefinition,
   WorkflowPageDefinition,
 } from '../types';
@@ -80,12 +80,8 @@ function normalizeWorkflowPage(
 }
 
 export function normalizePage(
-  item: SidebarItemDef,
+  item: SidebarPageItemDef,
   defaults: PageDefaults,
-): PageDefinition | null {
-  if (!item.page) {
-    return null;
-  }
-
+): PageDefinition {
   return normalizeExplicitPage(item.page, defaults);
 }

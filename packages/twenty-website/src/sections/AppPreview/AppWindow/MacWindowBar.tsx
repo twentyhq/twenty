@@ -5,9 +5,10 @@ import type { PointerEvent as ReactPointerEvent } from 'react';
 import { TerminalTrafficLights } from '../Terminal/TerminalTrafficLights/TerminalTrafficLights';
 
 type MacWindowBarProps = {
+  interactive?: boolean;
+  isDragging?: boolean;
+  onDragStart?: (event: ReactPointerEvent<HTMLDivElement>) => void;
   title?: string;
-  onDragStart: (event: ReactPointerEvent<HTMLDivElement>) => void;
-  isDragging: boolean;
 };
 
 const BAR_BACKGROUND = '#F7F7F7';
@@ -17,12 +18,18 @@ const BAR_VERTICAL_PADDING = 8;
 const BAR_HORIZONTAL_PADDING = 12;
 const TRAFFIC_LIGHT_WIDTH = 52;
 
-const BarRoot = styled.div<{ $isDragging: boolean }>`
+const BarRoot = styled.div<{ $interactive: boolean; $isDragging: boolean }>`
   align-items: center;
   background: ${BAR_BACKGROUND};
   border-bottom: 1px solid ${BAR_BORDER};
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
-  cursor: ${({ $isDragging }) => ($isDragging ? 'grabbing' : 'grab')};
+  cursor: ${({ $interactive, $isDragging }) => {
+    if (!$interactive) {
+      return 'default';
+    }
+
+    return $isDragging ? 'grabbing' : 'grab';
+  }};
   display: grid;
   flex-shrink: 0;
   grid-template-columns: auto 1fr auto;
@@ -47,12 +54,17 @@ const RightSpacer = styled.div`
 `;
 
 export const MacWindowBar = ({
-  title = 'Twenty',
+  interactive = true,
+  isDragging = false,
   onDragStart,
-  isDragging,
+  title = 'Twenty',
 }: MacWindowBarProps) => {
   return (
-    <BarRoot $isDragging={isDragging} onPointerDown={onDragStart}>
+    <BarRoot
+      $interactive={interactive}
+      $isDragging={isDragging}
+      onPointerDown={interactive ? onDragStart : undefined}
+    >
       <TerminalTrafficLights horizontalInset={0} />
       <Title>{title}</Title>
       <RightSpacer aria-hidden />

@@ -62,7 +62,7 @@ const NodeContent = styled.div`
 `;
 
 const NodeLabel = styled.div`
-  color: ${WORKFLOW_PAGE_COLORS.textTertiary};
+  color: ${WORKFLOW_PAGE_COLORS.textLight};
   font-family: ${WORKFLOW_PAGE_FONT};
   font-size: 11px;
   font-weight: 600;

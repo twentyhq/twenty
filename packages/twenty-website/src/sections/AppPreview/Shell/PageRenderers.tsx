@@ -66,7 +66,7 @@ const PAGE_RENDERERS = {
 
 export function renderPageDefinition(
   page: PageDefinition,
-  onNavigateToLabel?: (label: string) => void,
+  onNavigateToPageItemId?: (itemId: string) => void,
   pageKey?: string,
 ) {
   switch (page.type) {
@@ -75,7 +75,7 @@ export function renderPageDefinition(
         <TablePage
           key={pageKey}
           page={page}
-          onNavigateToLabel={onNavigateToLabel}
+          onNavigateToPageItemId={onNavigateToPageItemId}
         />
       );
     case 'kanban':
