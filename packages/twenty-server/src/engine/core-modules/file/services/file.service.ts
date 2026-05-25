@@ -39,18 +39,18 @@ export class FileService {
     filepath: string;
     fileFolder: FileFolder;
   }): Promise<{ stream: Readable; mimeType: string }> {
+    const application = await this.applicationRepository.findOneOrFail({
+      where: {
+        id: applicationId,
+        workspaceId,
+      },
+    });
+
     const file = await this.fileRepository.findOneOrFail({
       where: {
         path: `${fileFolder}/${filepath}`,
         workspaceId,
         applicationId,
-      },
-    });
-
-    const application = await this.applicationRepository.findOneOrFail({
-      where: {
-        id: applicationId,
-        workspaceId,
       },
     });
 

@@ -17,6 +17,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { isSafeRelativePath } from 'src/engine/core-modules/file-storage/utils/is-safe-relative-path.util';
 
 import {
   FileException,
@@ -47,6 +48,15 @@ export class FileController {
     applicationId: string,
   ) {
     const filepath = join(...req.params.path);
+
+    // Reject path traversal and other unsafe inputs with the same response as a
+    // missing file, so traversal probes are indistinguishable from regular misses.
+    if (!isSafeRelativePath(filepath)) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
 
     try {
       const { stream, mimeType } = await this.fileService.getFileStreamByPath({
