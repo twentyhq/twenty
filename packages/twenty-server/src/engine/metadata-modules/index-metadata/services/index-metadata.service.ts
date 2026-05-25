@@ -21,6 +21,7 @@ import {
 } from 'src/engine/metadata-modules/index-metadata/index-field-metadata.exception';
 import { generateFlatIndexMetadataWithNameOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/generate-flat-index.util';
 import { validateIndexTypeAgainstFieldsOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util';
+import { validateNoDuplicateUniqueIndexOrThrow } from 'src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -188,6 +189,18 @@ export class IndexMetadataService {
         label: flatField.label,
         subFieldName,
       })),
+    });
+
+    validateNoDuplicateUniqueIndexOrThrow({
+      proposed: {
+        isUnique: false,
+        fields: resolvedInputs.map(({ flatField, subFieldName }) => ({
+          fieldMetadataId: flatField.id,
+          subFieldName,
+        })),
+      },
+      existingFlatIndexMaps,
+      objectMetadataId: createIndexInput.objectMetadataId,
     });
 
     const existingCustomIndexCount = Object.values(
