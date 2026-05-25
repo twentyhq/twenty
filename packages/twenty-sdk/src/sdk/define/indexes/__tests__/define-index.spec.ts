@@ -29,6 +29,16 @@ describe('defineIndex', () => {
     expect(result.errors).toContain('Index must have a universalIdentifier');
   });
 
+  it('rejects a whitespace-only universalIdentifier', () => {
+    const result = defineIndex({
+      ...baseValidConfig,
+      universalIdentifier: '   ',
+    });
+
+    expect(result.success).toBe(false);
+    expect(result.errors).toContain('Index must have a universalIdentifier');
+  });
+
   it('reports a missing objectUniversalIdentifier', () => {
     const result = defineIndex({
       ...baseValidConfig,
