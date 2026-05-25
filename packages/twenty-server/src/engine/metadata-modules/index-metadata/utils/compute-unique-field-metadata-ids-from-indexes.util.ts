@@ -1,9 +1,3 @@
-import { isDefined } from 'twenty-shared/utils';
-
-import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
-import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { type IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
-
 type IndexLike = {
   isUnique: boolean;
   flatIndexFieldMetadatas?: Array<{
@@ -37,14 +31,3 @@ export const computeUniqueFieldMetadataIdsFromIndexes = (
 
   return set;
 };
-
-export const computeUniqueFieldMetadataIdsFromFlatIndexMaps = (
-  flatIndexMaps: FlatEntityMaps<FlatIndexMetadata>,
-): Set<string> =>
-  computeUniqueFieldMetadataIdsFromIndexes(
-    Object.values(flatIndexMaps.byUniversalIdentifier).filter(isDefined),
-  );
-
-export const computeUniqueFieldMetadataIdsFromIndexEntities = (
-  indexEntities: ReadonlyArray<IndexMetadataEntity>,
-): Set<string> => computeUniqueFieldMetadataIdsFromIndexes(indexEntities);

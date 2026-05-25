@@ -19,27 +19,14 @@ import { AppPath, RelationType, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Callout, H2Title, IconAlertTriangle } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { z } from 'zod';
 import { IndexType } from '~/generated-metadata/graphql';
 import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
-
-const settingsObjectNewIndexFormSchema = z.object({
-  fields: z
-    .array(
-      z.object({
-        fieldMetadataId: z.string().uuid(),
-        subFieldName: z.string().nullable(),
-      }),
-    )
-    .min(1),
-  indexType: z.nativeEnum(IndexType),
-});
-
-export type SettingsObjectNewIndexFormValues = z.infer<
-  typeof settingsObjectNewIndexFormSchema
->;
+import {
+  settingsObjectNewIndexFormSchema,
+  type SettingsObjectNewIndexFormValues,
+} from '~/pages/settings/data-model/new-index/SettingsObjectNewIndexFormValues';
 
 const isFieldIndexable = (field: FieldMetadataItem): boolean => {
   if (field.name === SEARCH_VECTOR_FIELD_NAME) return false;

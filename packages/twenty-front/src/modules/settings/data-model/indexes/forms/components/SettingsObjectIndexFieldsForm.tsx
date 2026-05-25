@@ -1,9 +1,7 @@
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
-import {
-  buildIndexableSelectOptions,
-  decodeIndexableOptionValue,
-  encodeIndexableOptionValue,
-} from '@/settings/data-model/indexes/utils/buildIndexableSelectOptions';
+import { buildIndexableSelectOptions } from '@/settings/data-model/indexes/utils/buildIndexableSelectOptions';
+import { decodeIndexableOptionValue } from '@/settings/data-model/indexes/utils/decodeIndexableOptionValue';
+import { encodeIndexableOptionValue } from '@/settings/data-model/indexes/utils/encodeIndexableOptionValue';
 import { Select } from '@/ui/input/components/Select';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
@@ -12,7 +10,7 @@ import { Controller, useFormContext } from 'react-hook-form';
 import { IconTrash, useIcons } from 'twenty-ui/display';
 import { IconButton, type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndex';
+import { type SettingsObjectNewIndexFormValues } from '~/pages/settings/data-model/new-index/SettingsObjectNewIndexFormValues';
 
 type SettingsObjectIndexFieldsFormProps = {
   indexableFields: FieldMetadataItem[];
@@ -57,8 +55,6 @@ export const SettingsObjectIndexFieldsForm = ({
       name="fields"
       control={control}
       render={({ field: { value, onChange } }) => {
-        // One row per picked column plus a trailing empty row as the
-        // implicit "add another" affordance.
         const rows: (
           | SettingsObjectNewIndexFormValues['fields'][number]
           | null
@@ -97,8 +93,6 @@ export const SettingsObjectIndexFieldsForm = ({
                   )
                 : '';
 
-              // Exclude columns already picked in other rows; keep this row's
-              // own value visible.
               const availableOptions = allOptions.filter(
                 (option) =>
                   option.value === currentValue ||

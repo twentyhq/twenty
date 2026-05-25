@@ -12,7 +12,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatIndexMetadataToIndexMetadataDto } from 'src/engine/metadata-modules/flat-index-metadata/utils/from-flat-index-metadata-to-index-metadata-dto.util';
-import { CreateOneIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/create-index.input';
+import { CreateOneIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/create-one-index.input';
 import { DeleteOneIndexInput } from 'src/engine/metadata-modules/index-metadata/dtos/delete-index.input';
 import { IndexFieldMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-field-metadata.dto';
 import { IndexMetadataDTO } from 'src/engine/metadata-modules/index-metadata/dtos/index-metadata.dto';

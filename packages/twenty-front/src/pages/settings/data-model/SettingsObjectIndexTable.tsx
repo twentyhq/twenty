@@ -14,8 +14,6 @@ import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type SettingsObjectIndexesTableItem } from '~/pages/settings/data-model/types/SettingsObjectIndexesTableItem';
 
-// Last column is the row-action slot (delete). Only populated for custom rows,
-// but reserved on every row so the grid stays aligned.
 const OBJECT_INDEX_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 70px 80px 32px';
 
 const StyledTableContainer = styled.div`
