@@ -1,6 +1,7 @@
 import { type ApplicationConfig } from '@/sdk/define/application/application-config';
 import { type CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 import { type FrontComponentConfig } from '@/sdk/define/front-component/front-component-config';
+import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type LogicFunctionConfig } from '@/sdk/define/logic-functions/logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
@@ -30,6 +31,7 @@ export type DefinableEntity =
   | ObjectConfig
   | FieldManifest
   | FrontComponentConfig
+  | IndexConfig
   | LogicFunctionConfig
   | PostInstallLogicFunctionConfig
   | PreInstallLogicFunctionConfig

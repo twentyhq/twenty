@@ -20,6 +20,7 @@ export const EXPECTED_MANIFEST: Manifest = {
   skills: [],
   agents: [],
   publicAssets: [],
+  indexes: [],
   fields: [
     {
       name: 'targetMyNote',

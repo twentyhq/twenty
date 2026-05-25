@@ -1,4 +1,5 @@
 import { type Manifest } from 'twenty-shared/application';
+import { MAX_CUSTOM_INDEXES_PER_OBJECT } from 'twenty-shared/constants';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +11,7 @@ import { fromConnectionProviderManifestToUniversalFlatConnectionProvider } from 
 import { fromFieldManifestToUniversalFlatFieldMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-field-manifest-to-universal-flat-field-metadata.util';
 import { fromFieldPermissionManifestToUniversalFlatFieldPermission } from 'src/engine/core-modules/application/application-manifest/converters/from-field-permission-manifest-to-universal-flat-field-permission.util';
 import { fromFrontComponentManifestToUniversalFlatFrontComponent } from 'src/engine/core-modules/application/application-manifest/converters/from-front-component-manifest-to-universal-flat-front-component.util';
+import { fromIndexManifestToUniversalFlatIndex } from 'src/engine/core-modules/application/application-manifest/converters/from-index-manifest-to-universal-flat-index.util';
 import { fromLogicFunctionManifestToUniversalFlatLogicFunction } from 'src/engine/core-modules/application/application-manifest/converters/from-logic-function-manifest-to-universal-flat-logic-function.util';
 import { fromNavigationMenuItemManifestToUniversalFlatNavigationMenuItem } from 'src/engine/core-modules/application/application-manifest/converters/from-navigation-menu-item-manifest-to-universal-flat-navigation-menu-item.util';
 import { fromObjectManifestToUniversalFlatObjectMetadata } from 'src/engine/core-modules/application/application-manifest/converters/from-object-manifest-to-universal-flat-object-metadata.util';
@@ -33,6 +35,7 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import { fromAgentManifestToUniversalFlatAgent } from 'src/engine/core-modules/application/utils/from-agent-manifest-to-universal-flat-agent.util';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { type AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
+import { type UniversalFlatFieldMetadata } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-field-metadata.type';
 import { addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/add-universal-flat-entity-to-universal-flat-entity-maps-through-mutation-or-throw.util';
 
 export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
@@ -134,6 +137,75 @@ export const computeApplicationManifestAllUniversalFlatEntityMaps = ({
         });
       }
     }
+  }
+
+  const indexCountByObjectUniversalIdentifier = new Map<string, number>();
+  const fieldsByObjectUniversalIdentifier = new Map<
+    string,
+    UniversalFlatFieldMetadata[]
+  >();
+
+  for (const flatField of Object.values(
+    allUniversalFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
+  )) {
+    if (!isDefined(flatField)) continue;
+
+    const bucket =
+      fieldsByObjectUniversalIdentifier.get(
+        flatField.objectMetadataUniversalIdentifier,
+      ) ?? [];
+
+    if (bucket.length === 0) {
+      fieldsByObjectUniversalIdentifier.set(
+        flatField.objectMetadataUniversalIdentifier,
+        bucket,
+      );
+    }
+
+    bucket.push(flatField);
+  }
+
+  for (const indexManifest of manifest.indexes ?? []) {
+    const flatObjectMetadata =
+      allUniversalFlatEntityMaps.flatObjectMetadataMaps.byUniversalIdentifier[
+        indexManifest.objectUniversalIdentifier
+      ];
+
+    if (!isDefined(flatObjectMetadata)) {
+      throw new Error(
+        `Index "${indexManifest.universalIdentifier}" references unknown object ${indexManifest.objectUniversalIdentifier}`,
+      );
+    }
+
+    const nextCount =
+      (indexCountByObjectUniversalIdentifier.get(
+        indexManifest.objectUniversalIdentifier,
+      ) ?? 0) + 1;
+
+    if (nextCount > MAX_CUSTOM_INDEXES_PER_OBJECT) {
+      throw new Error(
+        `Application declares more than ${MAX_CUSTOM_INDEXES_PER_OBJECT} indexes on object ${indexManifest.objectUniversalIdentifier}`,
+      );
+    }
+
+    indexCountByObjectUniversalIdentifier.set(
+      indexManifest.objectUniversalIdentifier,
+      nextCount,
+    );
+
+    addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
+      universalFlatEntity: fromIndexManifestToUniversalFlatIndex({
+        indexManifest,
+        flatObjectMetadata,
+        objectFlatFieldMetadatas:
+          fieldsByObjectUniversalIdentifier.get(
+            flatObjectMetadata.universalIdentifier,
+          ) ?? [],
+        applicationUniversalIdentifier,
+        now,
+      }),
+      universalFlatEntityMapsToMutate: allUniversalFlatEntityMaps.flatIndexMaps,
+    });
   }
 
   for (const logicFunctionManifest of manifest.logicFunctions) {

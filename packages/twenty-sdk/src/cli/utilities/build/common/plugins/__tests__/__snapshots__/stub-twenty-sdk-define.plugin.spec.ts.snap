@@ -37,6 +37,7 @@ exports[`stub-twenty-sdk-define plugin > matches the recorded export partition 1
     "defineConnectionProvider",
     "defineField",
     "defineFrontComponent",
+    "defineIndex",
     "defineLogicFunction",
     "defineNavigationMenuItem",
     "defineObject",
