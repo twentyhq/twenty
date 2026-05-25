@@ -9,11 +9,8 @@ import { addMilliseconds } from 'date-fns';
 import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
-import {
-  AppPath,
-  ConnectedAccountProvider,
-  FeatureFlagKey,
-} from 'twenty-shared/types';
+import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -436,7 +433,7 @@ export class AuthService {
       userId: _impersonatorUserId,
     });
 
-    analytics.insertWorkspaceEvent('Monitoring', {
+    await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -462,7 +459,7 @@ export class AuthService {
       true,
     );
 
-    analytics.insertWorkspaceEvent('Monitoring', {
+    await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -524,6 +521,19 @@ export class AuthService {
     if (!authorizeAppInput.redirectUrl) {
       throw new AuthException(
         `redirectUrl not provided for '${clientId}'`,
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
+    // OAuth 2.1 / MCP auth spec: PKCE is mandatory for public clients
+    // (clients registered with token_endpoint_auth_method=none, i.e. no
+    // client secret hash). Confidential clients are authenticated at the
+    // token endpoint instead.
+    const isPublicClient = !applicationRegistration.oAuthClientSecretHash;
+
+    if (isPublicClient && !codeChallenge) {
+      throw new AuthException(
+        `code_challenge is required for public clients (PKCE S256, per OAuth 2.1)`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
@@ -752,10 +762,12 @@ export class AuthService {
     loginToken,
     workspace,
     billingCheckoutSessionState,
+    returnToPath,
   }: {
     loginToken: string;
     workspace: WorkspaceDomainConfig;
     billingCheckoutSessionState?: string;
+    returnToPath?: string;
   }) {
     const url = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
@@ -763,6 +775,9 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
+        ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
+          ? { returnToPath }
+          : {}),
       },
     });
 
@@ -935,6 +950,7 @@ export class AuthService {
       billingCheckoutSessionState,
       action,
       locale,
+      returnToPath,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
     authProvider: AuthProviderEnum.Google | AuthProviderEnum.Microsoft,
   ): Promise<string> {
@@ -986,6 +1002,9 @@ export class AuthService {
               targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
             }),
           }),
+          ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
+            ? { returnToPath }
+            : {}),
         },
       });
 
@@ -1057,6 +1076,7 @@ export class AuthService {
         loginToken: loginToken.token,
         workspace,
         billingCheckoutSessionState,
+        returnToPath,
       });
     } catch (error) {
       return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
@@ -1081,19 +1101,6 @@ export class AuthService {
     oidcTokenClaims?: Record<string, unknown>;
     connectedAccountProvider?: ConnectedAccountProvider;
   }): Promise<void> {
-    const isConnectedAccountMigrated =
-      await this.featureFlagService.isFeatureEnabled(
-        FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED,
-        input.workspaceId,
-      );
-
-    // const willBeEnabledByDefault = DEFAULT_FEATURE_FLAGS.includes(FeatureFlagKey.IS_CONNECTED_ACCOUNT_MIGRATED);
-    const willBeEnabledByDefault = false;
-
-    if (!isConnectedAccountMigrated && !willBeEnabledByDefault) {
-      return;
-    }
-
     const provider =
       input.connectedAccountProvider ??
       this.mapAuthProviderToConnectedAccountProvider(input.authProvider);
@@ -1143,6 +1150,9 @@ export class AuthService {
       case ConnectedAccountProvider.SAML:
         return [];
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        return [];
+      case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.APP:
         return [];
       default:
         throw new Error(

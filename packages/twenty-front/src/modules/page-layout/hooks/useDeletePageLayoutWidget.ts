@@ -44,8 +44,9 @@ export const useDeletePageLayoutWidget = (pageLayoutIdFromProps?: string) => {
       const allTabLayouts = store.get(pageLayoutCurrentLayoutsState);
 
       const tabWithWidget = pageLayoutDraft.tabs.find((tab) =>
-        tab.widgets.some((w) => w.id === widgetId),
+        tab.widgets.some((widget) => widget.id === widgetId),
       );
+
       const tabId = tabWithWidget?.id;
 
       if (isDefined(tabId)) {

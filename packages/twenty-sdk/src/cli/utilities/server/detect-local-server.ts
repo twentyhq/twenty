@@ -1,4 +1,4 @@
-const LOCAL_PORTS = [2020, 3000];
+const LOCAL_PORTS = [2020];
 
 export const checkServerHealth = async (port: number): Promise<boolean> => {
   const controller = new AbortController();
@@ -19,8 +19,12 @@ export const checkServerHealth = async (port: number): Promise<boolean> => {
   }
 };
 
-export const detectLocalServer = async (): Promise<string | null> => {
-  for (const port of LOCAL_PORTS) {
+export const detectLocalServer = async (
+  preferredPort?: number,
+): Promise<string | null> => {
+  const ports = preferredPort ? [preferredPort] : LOCAL_PORTS;
+
+  for (const port of ports) {
     if (await checkServerHealth(port)) {
       return `http://localhost:${port}`;
     }

@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RefactorAgentChatEntities1764100000000
-  implements MigrationInterface
-{
+export class RefactorAgentChatEntities1764100000000 implements MigrationInterface {
   name = 'RefactorAgentChatEntities1764100000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

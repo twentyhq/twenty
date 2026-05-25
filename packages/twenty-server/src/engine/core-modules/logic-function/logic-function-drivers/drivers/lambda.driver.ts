@@ -1,12 +1,14 @@
 import { createHash } from 'crypto';
 import * as fs from 'fs/promises';
-import { resolve, join } from 'path';
+import { join, resolve } from 'path';
 
 import {
   CreateFunctionCommand,
   type CreateFunctionCommandInput,
   DeleteFunctionCommand,
+  DeleteLayerVersionCommand,
   GetFunctionCommand,
+  GetFunctionCommandOutput,
   InvokeCommand,
   type InvokeCommandInput,
   Lambda,
@@ -16,30 +18,38 @@ import {
   LogType,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
+  UpdateFunctionConfigurationCommand,
   waitUntilFunctionActiveV2,
+  waitUntilFunctionUpdatedV2,
 } from '@aws-sdk/client-lambda';
 import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { AssumeRoleCommand, STSClient } from '@aws-sdk/client-sts';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
+  type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
-  type LogicFunctionDriver,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
+import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
+import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
+import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -47,8 +57,6 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -57,7 +65,8 @@ const YARN_INSTALL_LAMBDA_MEMORY_MB = 1024;
 const COMMON_LAYER_NAME_PREFIX = 'twenty-common-layer';
 const BUILDER_LAMBDA_TIMEOUT_SECONDS = 60;
 const BUILDER_LAMBDA_MEMORY_MB = 512;
-
+const EXECUTOR_LAMBDA_MEMORY_MB = 512;
+const LAMBDA_EPHEMERAL_STORAGE_MB = 4096;
 const YARN_INSTALL_HANDLER_PATH = resolve(
   __dirname,
   join(
@@ -105,6 +114,8 @@ export type BuilderLambdaResult = {
 
 export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
+  sdkClientArchiveService: SdkClientArchiveService;
+  cacheLockService: CacheLockService;
   region: string;
   lambdaRole: string;
   subhostingRole?: string;
@@ -113,41 +124,35 @@ export interface LambdaDriverOptions extends LambdaClientConfig {
 }
 
 export class LambdaDriver implements LogicFunctionDriver {
+  private readonly logger = new Logger(LambdaDriver.name);
   private lambdaClient: Lambda | undefined;
+  private assumeRoleCredentials:
+    | { accessKeyId: string; secretAccessKey: string; sessionToken: string }
+    | undefined;
   private credentialsExpiry: Date | null = null;
   private readonly options: LambdaDriverOptions;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
+  private readonly sdkClientArchiveService: SdkClientArchiveService;
+  private readonly cacheLockService: CacheLockService;
 
   constructor(options: LambdaDriverOptions) {
     this.options = options;
     this.lambdaClient = undefined;
     this.logicFunctionResourceService = options.logicFunctionResourceService;
+    this.sdkClientArchiveService = options.sdkClientArchiveService;
+    this.cacheLockService = options.cacheLockService;
   }
 
-  private async getLambdaClient() {
-    if (
-      !isDefined(this.lambdaClient) ||
-      (isDefined(this.options.subhostingRole) &&
-        isDefined(this.credentialsExpiry) &&
+  private areAssumeRoleCredentialsExpired(): boolean {
+    return (
+      !isDefined(this.assumeRoleCredentials) ||
+      (isDefined(this.credentialsExpiry) &&
         new Date() >= this.credentialsExpiry)
-    ) {
-      this.lambdaClient = new Lambda({
-        ...this.options,
-        ...(isDefined(this.options.subhostingRole) && {
-          credentials: await this.getAssumeRoleCredentials(),
-        }),
-      });
-    }
-
-    return this.lambdaClient;
+    );
   }
 
-  private async getAssumeRoleCredentials() {
+  private async refreshAssumeRoleCredentials() {
     const stsClient = new STSClient({ region: this.options.region });
-
-    this.credentialsExpiry = new Date(
-      Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
-    );
 
     const assumeRoleCommand = new AssumeRoleCommand({
       RoleArn: this.options.subhostingRole,
@@ -166,11 +171,42 @@ export class LambdaDriver implements LogicFunctionDriver {
       throw new Error('Failed to assume role');
     }
 
-    return {
+    this.assumeRoleCredentials = {
       accessKeyId: Credentials.AccessKeyId,
       secretAccessKey: Credentials.SecretAccessKey,
       sessionToken: Credentials.SessionToken,
     };
+
+    this.credentialsExpiry = new Date(
+      Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
+    );
+
+    this.lambdaClient = undefined;
+  }
+
+  private async getAssumeRoleCredentials() {
+    if (this.areAssumeRoleCredentialsExpired()) {
+      await this.refreshAssumeRoleCredentials();
+    }
+
+    return this.assumeRoleCredentials!;
+  }
+
+  private async getLambdaClient() {
+    if (
+      !isDefined(this.lambdaClient) ||
+      (isDefined(this.options.subhostingRole) &&
+        this.areAssumeRoleCredentialsExpired())
+    ) {
+      this.lambdaClient = new Lambda({
+        ...this.options,
+        ...(isDefined(this.options.subhostingRole) && {
+          credentials: await this.getAssumeRoleCredentials(),
+        }),
+      });
+    }
+
+    return this.lambdaClient;
   }
 
   private async generatePresignedUploadUrl(
@@ -203,8 +239,30 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  private getLayerName(flatApplication: FlatApplication) {
-    return flatApplication.yarnLockChecksum ?? 'default';
+  private async waitFunctionUpdated(
+    functionName: string,
+    maxWaitTime: number = UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
+  ) {
+    await waitUntilFunctionUpdatedV2(
+      { client: await this.getLambdaClient(), maxWaitTime },
+      { FunctionName: functionName },
+    );
+  }
+
+  private getDepsLayerName(flatApplication: FlatApplication): string {
+    const checksum = flatApplication.yarnLockChecksum ?? 'default';
+
+    return `deps-${checksum}`;
+  }
+
+  private getSdkLayerName({
+    workspaceId,
+    applicationUniversalIdentifier,
+  }: {
+    workspaceId: string;
+    applicationUniversalIdentifier: string;
+  }): string {
+    return `sdk-${workspaceId}-${applicationUniversalIdentifier}`;
   }
 
   private yarnInstallFunctionName: string | undefined;
@@ -353,6 +411,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: YARN_INSTALL_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       await lambdaClient.send(new CreateFunctionCommand(params));
@@ -442,6 +501,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         Runtime: LogicFunctionRuntime.NODE22,
         Timeout: BUILDER_LAMBDA_TIMEOUT_SECONDS,
         MemorySize: BUILDER_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
       };
 
       await lambdaClient.send(new CreateFunctionCommand(params));
@@ -486,6 +546,19 @@ export class LambdaDriver implements LogicFunctionDriver {
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
+      const userCompilationErrorRegex = /^Build failed with \d+ error/;
+
+      const isUserCompilationError =
+        isNonEmptyString(parsedResult?.errorMessage) &&
+        userCompilationErrorRegex.test(parsedResult.errorMessage);
+
+      if (isUserCompilationError) {
+        throw new LogicFunctionException(
+          `Function code compilation failed: ${parsedResult.errorMessage}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_COMPILATION_FAILED,
+        );
+      }
+
       throw new LogicFunctionException(
         `Builder Lambda failed: ${JSON.stringify(parsedResult)}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_CREATE_FAILED,
@@ -516,6 +589,33 @@ export class LambdaDriver implements LogicFunctionDriver {
     ).send(new ListLayerVersionsCommand(listLayerParams));
 
     return listLayerResult.LayerVersions?.[0]?.LayerVersionArn;
+  }
+
+  private async publishLayer({
+    layerName,
+    zipBuffer,
+  }: {
+    layerName: string;
+    zipBuffer: Buffer;
+  }): Promise<string> {
+    const result = await (
+      await this.getLambdaClient()
+    ).send(
+      new PublishLayerVersionCommand({
+        LayerName: layerName,
+        Content: { ZipFile: zipBuffer },
+        CompatibleRuntimes: [
+          LogicFunctionRuntime.NODE18,
+          LogicFunctionRuntime.NODE22,
+        ],
+      }),
+    );
+
+    if (!isDefined(result.LayerVersionArn)) {
+      throw new Error('New layer version ARN is undefined');
+    }
+
+    return result.LayerVersionArn;
   }
 
   private async getDependencyContents(
@@ -550,7 +650,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<void> {
-    const layerName = this.getLayerName(flatApplication);
+    const layerName = this.getDepsLayerName(flatApplication);
 
     const existingArn = await this.getExistingLayerArn(layerName);
 
@@ -605,7 +705,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }): Promise<string> {
-    const layerName = this.getLayerName(flatApplication);
+    const layerName = this.getDepsLayerName(flatApplication);
 
     const existingArn = await this.getExistingLayerArn(layerName);
 
@@ -627,6 +727,90 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
 
     return newArn;
+  }
+
+  private async ensureSdkLayer({
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<string> {
+    const layerName = this.getSdkLayerName({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    if (!flatApplication.isSdkLayerStale) {
+      const existingArn = await this.getExistingLayerArn(layerName);
+
+      if (isDefined(existingArn)) {
+        return existingArn;
+      }
+    }
+
+    await this.deleteAllLayerVersions({
+      lambdaClient: await this.getLambdaClient(),
+      layerName,
+    });
+
+    const sdkArchiveBuffer =
+      await this.sdkClientArchiveService.downloadArchiveBuffer({
+        workspaceId: flatApplication.workspaceId,
+        applicationId: flatApplication.id,
+        applicationUniversalIdentifier,
+      });
+
+    const zipBuffer = await this.reprefixZipEntries({
+      sourceBuffer: sdkArchiveBuffer,
+      prefix: 'nodejs/node_modules/twenty-client-sdk',
+    });
+
+    const arn = await this.publishLayer({ layerName, zipBuffer });
+
+    await this.sdkClientArchiveService.markSdkLayerFresh({
+      applicationId: flatApplication.id,
+      workspaceId: flatApplication.workspaceId,
+    });
+
+    return arn;
+  }
+
+  // Re-wraps zip entries under a new prefix path without extracting to disk.
+  private async reprefixZipEntries({
+    sourceBuffer,
+    prefix,
+  }: {
+    sourceBuffer: Buffer;
+    prefix: string;
+  }): Promise<Buffer> {
+    const { default: unzipper } = await import('unzipper');
+    const archiver = (await import('archiver')).default;
+
+    const directory = await unzipper.Open.buffer(sourceBuffer);
+    const archive = archiver('zip', { zlib: { level: 9 } });
+
+    const chunks: Buffer[] = [];
+
+    archive.on('data', (chunk: Buffer) => chunks.push(chunk));
+
+    for (const entry of directory.files) {
+      if (entry.type === 'Directory') {
+        continue;
+      }
+
+      archive.append(entry.stream(), {
+        name: `${prefix}/${entry.path}`,
+      });
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      archive.on('end', resolve);
+      archive.on('error', reject);
+      void archive.finalize();
+    });
+
+    return Buffer.concat(chunks);
   }
 
   private async getLambdaExecutor(flatLogicFunction: FlatLogicFunction) {
@@ -655,36 +839,91 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  private async isAlreadyBuilt(
-    flatLogicFunction: FlatLogicFunction,
-    flatApplication: FlatApplication,
-  ) {
-    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+  private async deleteAllLayerVersions({
+    lambdaClient,
+    layerName,
+  }: {
+    lambdaClient: Lambda;
+    layerName: string;
+  }): Promise<void> {
+    let marker: string | undefined;
 
-    if (!isDefined(lambdaExecutor)) {
-      return false;
-    }
+    do {
+      const listResult = await lambdaClient.send(
+        new ListLayerVersionsCommand({
+          LayerName: layerName,
+          MaxItems: 50,
+          Marker: marker,
+        }),
+      );
 
-    const layers = lambdaExecutor.Configuration?.Layers;
+      const versions = listResult.LayerVersions ?? [];
 
-    if (!isDefined(layers) || layers.length !== 1) {
-      await this.delete(flatLogicFunction);
+      await Promise.all(
+        versions.map((version) =>
+          lambdaClient.send(
+            new DeleteLayerVersionCommand({
+              LayerName: layerName,
+              VersionNumber: version.Version,
+            }),
+          ),
+        ),
+      );
 
-      return false;
-    }
-
-    const layerName = this.getLayerName(flatApplication);
-
-    if (layers[0].Arn?.includes(layerName)) {
-      return true;
-    }
-
-    await this.delete(flatLogicFunction);
-
-    return false;
+      marker = listResult.NextMarker;
+    } while (isDefined(marker));
   }
 
-  private async build({
+  private hasExpectedLayers({
+    lambdaExecutor,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    lambdaExecutor: GetFunctionCommandOutput;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): boolean {
+    const layers = lambdaExecutor.Configuration?.Layers;
+
+    if (!isDefined(layers) || layers.length !== 2) {
+      return false;
+    }
+
+    const depsLayerName = this.getDepsLayerName(flatApplication);
+    const sdkLayerName = this.getSdkLayerName({
+      workspaceId: flatApplication.workspaceId,
+      applicationUniversalIdentifier,
+    });
+
+    return (
+      layers.some((layer) => layer.Arn?.includes(depsLayerName)) &&
+      layers.some((layer) => layer.Arn?.includes(sdkLayerName))
+    );
+  }
+
+  private async updateLambdaExecutorConfiguration({
+    flatLogicFunction,
+    depsLayerArn,
+    sdkLayerArn,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    depsLayerArn: string;
+    sdkLayerArn: string;
+  }) {
+    const lambdaClient = await this.getLambdaClient();
+
+    await lambdaClient.send(
+      new UpdateFunctionConfigurationCommand({
+        FunctionName: flatLogicFunction.id,
+        Layers: [depsLayerArn, sdkLayerArn],
+        Runtime: flatLogicFunction.runtime,
+        Timeout: 900,
+        MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
+      }),
+    );
+  }
+
+  private async buildLambdaExecutor({
     flatLogicFunction,
     flatApplication,
     applicationUniversalIdentifier,
@@ -693,56 +932,221 @@ export class LambdaDriver implements LogicFunctionDriver {
     flatApplication: FlatApplication;
     applicationUniversalIdentifier: string;
   }) {
-    if (await this.isAlreadyBuilt(flatLogicFunction, flatApplication)) {
+    const buildArgs = {
+      flatLogicFunction,
+      flatApplication,
+      applicationUniversalIdentifier,
+    };
+
+    const { canSkip } = await this.checkLambdaExecutorBuildStatus(buildArgs);
+
+    if (canSkip) {
       return;
     }
 
-    const layerArn = await this.getLayerArn({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
+    const buildLockTtlMs = 120_000;
+    const buildLockRetryMs = 500;
+    const buildLockMaxRetries = 240;
 
+    await this.cacheLockService.withLock(
+      async () => {
+        // Need to check again inside the lock in case lock was not acquired immediately.
+        const { canSkip, lambdaExecutor } =
+          await this.checkLambdaExecutorBuildStatus(buildArgs);
+
+        if (canSkip) {
+          return;
+        }
+
+        await this.ensureLambdaExecutor({ ...buildArgs, lambdaExecutor });
+      },
+      `lambda-build:${flatLogicFunction.id}`,
+      {
+        ttl: buildLockTtlMs,
+        ms: buildLockRetryMs,
+        maxRetries: buildLockMaxRetries,
+      },
+    );
+  }
+
+  private async checkLambdaExecutorBuildStatus({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<{
+    canSkip: boolean;
+    lambdaExecutor: GetFunctionCommandOutput | undefined;
+  }> {
+    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+
+    const canSkip =
+      isDefined(lambdaExecutor) &&
+      !flatApplication.isSdkLayerStale &&
+      this.hasExpectedLayers({
+        lambdaExecutor,
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+
+    return { canSkip, lambdaExecutor };
+  }
+
+  private async ensureLambdaExecutor({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+    lambdaExecutor,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+    lambdaExecutor: GetFunctionCommandOutput | undefined;
+  }) {
+    let depsLayerArn: string;
+
+    try {
+      depsLayerArn = await this.getLayerArn({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new LogicFunctionException(
+        `Failed to get dependency layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
+
+    let sdkLayerArn: string;
+
+    try {
+      sdkLayerArn = await this.ensureSdkLayer({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new LogicFunctionException(
+        `Failed to get SDK layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
+
+    if (!isDefined(lambdaExecutor)) {
+      await this.createLambdaExecutor({
+        flatLogicFunction,
+        depsLayerArn,
+        sdkLayerArn,
+      });
+      await this.waitFunctionActive(flatLogicFunction.id);
+
+      return;
+    }
+
+    await this.updateLambdaExecutorConfiguration({
+      flatLogicFunction,
+      depsLayerArn,
+      sdkLayerArn,
+    });
+    await this.waitFunctionUpdated(flatLogicFunction.id);
+  }
+
+  private async createLambdaExecutor({
+    flatLogicFunction,
+    depsLayerArn,
+    sdkLayerArn,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    depsLayerArn: string;
+    sdkLayerArn: string;
+  }) {
     const temporaryDirManager = new TemporaryDirManager();
 
     const { sourceTemporaryDir, lambdaZipPath } =
       await temporaryDirManager.init();
 
-    await copyExecutor(sourceTemporaryDir);
+    try {
+      await copyExecutor(sourceTemporaryDir);
 
-    await createZipFile(sourceTemporaryDir, lambdaZipPath);
+      await createZipFile(sourceTemporaryDir, lambdaZipPath);
 
-    const params: CreateFunctionCommandInput = {
-      Code: {
-        ZipFile: await fs.readFile(lambdaZipPath),
-      },
-      FunctionName: flatLogicFunction.id,
-      Layers: [layerArn],
-      Handler: 'index.handler',
-      Role: this.options.lambdaRole,
-      Runtime: flatLogicFunction.runtime,
-      Timeout: 900, // timeout is handled by the logic function service
-    };
+      // SDK layer listed last so it overwrites the stub twenty-client-sdk
+      // from the deps layer (later layers take precedence in /opt merge).
+      const params: CreateFunctionCommandInput = {
+        Code: {
+          ZipFile: await fs.readFile(lambdaZipPath),
+        },
+        FunctionName: flatLogicFunction.id,
+        Layers: [depsLayerArn, sdkLayerArn],
+        Handler: 'index.handler',
+        Role: this.options.lambdaRole,
+        Runtime: flatLogicFunction.runtime,
+        Timeout: 900,
+        MemorySize: EXECUTOR_LAMBDA_MEMORY_MB,
+        EphemeralStorage: { Size: LAMBDA_EPHEMERAL_STORAGE_MB },
+      };
 
-    const command = new CreateFunctionCommand(params);
+      const lambdaClient = await this.getLambdaClient();
 
-    await (await this.getLambdaClient()).send(command);
-
-    await temporaryDirManager.clean();
+      await lambdaClient.send(new CreateFunctionCommand(params));
+    } finally {
+      await temporaryDirManager.clean();
+    }
   }
 
-  private extractLogs(logString: string): string {
-    const formattedLogString = Buffer.from(logString, 'base64')
-      .toString('utf8')
-      .split('\t')
-      .join(' ');
+  private parseLambdaLogResult(logResult: string | undefined): {
+    logs: string;
+    initDurationMs: string | null;
+    billedDurationMs: string | null;
+    reportDurationMs: string | null;
+    coldStart: boolean;
+  } {
+    if (!logResult) {
+      return {
+        logs: '',
+        initDurationMs: null,
+        billedDurationMs: null,
+        reportDurationMs: null,
+        coldStart: false,
+      };
+    }
 
-    return formattedLogString
+    const decoded = Buffer.from(logResult, 'base64').toString('utf8');
+
+    const initDurationMs =
+      decoded.match(/Init Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    const billedDurationMs =
+      decoded.match(/Billed Duration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+    const reportDurationMs =
+      decoded.match(/\bDuration:\s*([\d.]+)\s*ms/i)?.[1] ?? null;
+
+    const logs = decoded
+      .split('\t')
+      .join(' ')
       .replace(/^(START|END|REPORT).*\n?/gm, '')
       .replace(
         /^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) [a-f0-9-]+ INFO /gm,
         '$1 INFO ',
       )
       .trim();
+
+    return {
+      logs,
+      initDurationMs,
+      billedDurationMs,
+      reportDurationMs,
+      coldStart: initDurationMs !== null,
+    };
   }
 
   async execute({
@@ -753,13 +1157,14 @@ export class LambdaDriver implements LogicFunctionDriver {
     env,
     timeoutMs = 900_000,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    await this.build({
+    const buildStart = Date.now();
+
+    await this.buildLambdaExecutor({
       flatLogicFunction,
       flatApplication,
       applicationUniversalIdentifier,
     });
-
-    await this.waitFunctionActive(flatLogicFunction.id);
+    const buildExecutorMs = Date.now() - buildStart;
 
     const startTime = Date.now();
 
@@ -768,6 +1173,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
       builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
+    const getBuiltCodeMs = Date.now() - startTime;
 
     const executorPayload: LambdaDriverExecutorPayload = {
       params: payload,
@@ -776,9 +1182,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       handlerName: flatLogicFunction.handlerName,
     };
 
+    const payloadString = JSON.stringify(executorPayload);
     const params: InvokeCommandInput = {
       FunctionName: flatLogicFunction.id,
-      Payload: JSON.stringify(executorPayload),
+      Payload: payloadString,
       LogType: LogType.Tail,
     };
 
@@ -787,18 +1194,30 @@ export class LambdaDriver implements LogicFunctionDriver {
     try {
       const lambdaClient = await this.getLambdaClient();
 
+      const invokeStart = Date.now();
       const result = await callWithTimeout({
         callback: () => lambdaClient.send(command),
         timeoutMs,
       });
+      const invokeSendMs = Date.now() - invokeStart;
 
       const parsedResult = result.Payload
         ? JSON.parse(result.Payload.transformToString())
         : {};
 
-      const logs = result.LogResult ? this.extractLogs(result.LogResult) : '';
+      const {
+        logs,
+        initDurationMs,
+        billedDurationMs,
+        reportDurationMs,
+        coldStart,
+      } = this.parseLambdaLogResult(result.LogResult);
 
       const duration = Date.now() - startTime;
+
+      this.logger.log(
+        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+      );
 
       if (result.FunctionError) {
         return {
@@ -817,13 +1236,26 @@ export class LambdaDriver implements LogicFunctionDriver {
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
+      this.logger.error(
+        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+
       if (error instanceof ResourceNotFoundException) {
         throw new LogicFunctionException(
           `Function '${flatLogicFunction.id}' does not exist`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
         );
       }
-      throw error;
+
+      if (error instanceof LogicFunctionException) {
+        throw error;
+      }
+
+      throw new LogicFunctionException(
+        `Lambda invocation failed for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
+      );
     }
   }
 }

@@ -1,5 +1,6 @@
 ---
-title: 1-Tıklama ile Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
@@ -50,7 +51,7 @@ Manuel kurulum için bu adımları uygulayın.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Gizli Jetonlar Oluşturun**
+2. **Bir Şifreleme Anahtarı Oluşturun**
 
    Benzersiz bir rastgele karakter dizisi oluşturmak için aşağıdaki komutu çalıştırın:
 
@@ -58,15 +59,17 @@ Manuel kurulum için bu adımları uygulayın.
    openssl rand -base64 32
    ```
 
-   **Önemli:** Bu değeri gizli tutun / paylaşmayın.
+   **Önemli:** Bu değeri gizli tutun / paylaşmayın. `ENCRYPTION_KEY` kaybedilirse, veritabanında depolanan her gizli veriye (OAuth belirteçleri, uygulama değişkenleri, TOTP gizli anahtarları vb.) erişim de kaybedilir.
 
 3. **`.env` Güncelleyin**
 
    .env dosyanızdaki yer tutucu değeri oluşturulan jetonla değiştirin:
 
    ```ini
-   APP_SECRET=birinci_rastgele_dize
+   ENCRYPTION_KEY=random_string
    ```
+
+   Kesinti olmadan anahtarı döndürmeye ilişkin talimatlar için [Anahtar döndürme kılavuzuna](/l/tr/developers/self-host/capabilities/key-rotation) bakın.
 
 4. **Postgres Şifresini Ayarlayın**
 

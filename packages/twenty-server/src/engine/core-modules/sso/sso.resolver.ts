@@ -35,7 +35,7 @@ import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-module
 @UsePipes(ResolverValidationPipe)
 @UseGuards(SettingsPermissionGuard(PermissionFlagType.SECURITY))
 export class SSOResolver {
-  constructor(private readonly sSOService: SSOService) {}
+  constructor(private readonly ssoService: SSOService) {}
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
   @Mutation(() => SetupSsoDTO)
@@ -43,7 +43,7 @@ export class SSOResolver {
     @Args('input') setupSsoInput: SetupOIDCSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<SetupSsoDTO | SSOException> {
-    return this.sSOService.createOIDCIdentityProvider(
+    return this.ssoService.createOIDCIdentityProvider(
       setupSsoInput,
       workspaceId,
     );
@@ -54,7 +54,7 @@ export class SSOResolver {
   async getSSOIdentityProviders(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.sSOService.getSSOIdentityProviders(workspaceId);
+    return this.ssoService.getSSOIdentityProviders(workspaceId);
   }
 
   @UseGuards(WorkspaceAuthGuard, EnterpriseFeaturesEnabledGuard)
@@ -63,7 +63,7 @@ export class SSOResolver {
     @Args('input') setupSsoInput: SetupSAMLSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<SetupSsoDTO | SSOException> {
-    return this.sSOService.createSAMLIdentityProvider(
+    return this.ssoService.createSAMLIdentityProvider(
       setupSsoInput,
       workspaceId,
     );
@@ -75,7 +75,7 @@ export class SSOResolver {
     @Args('input') { identityProviderId }: DeleteSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.sSOService.deleteSSOIdentityProvider(
+    return this.ssoService.deleteSSOIdentityProvider(
       identityProviderId,
       workspaceId,
     );
@@ -87,6 +87,6 @@ export class SSOResolver {
     @Args('input') input: EditSsoInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ) {
-    return this.sSOService.editSSOIdentityProvider(input, workspaceId);
+    return this.ssoService.editSSOIdentityProvider(input, workspaceId);
   }
 }

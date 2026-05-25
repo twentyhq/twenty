@@ -51,7 +51,7 @@ export class SSOAuthController {
     private readonly guardRedirectService: GuardRedirectService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly userService: UserService,
-    private readonly sSOService: SSOService,
+    private readonly ssoService: SSOService,
     @InjectRepository(WorkspaceSSOIdentityProviderEntity)
     private readonly workspaceSSOIdentityProviderRepository: Repository<WorkspaceSSOIdentityProviderEntity>,
   ) {}
@@ -66,11 +66,11 @@ export class SSOAuthController {
   async generateMetadata(@Req() req: any): Promise<string | void> {
     return generateServiceProviderMetadata({
       wantAssertionsSigned: true,
-      issuer: this.sSOService.buildIssuerURL({
+      issuer: this.ssoService.buildIssuerURL({
         id: req.params.identityProviderId,
         type: IdentityProviderType.SAML,
       }),
-      callbackUrl: this.sSOService.buildCallbackUrl({
+      callbackUrl: this.ssoService.buildCallbackUrl({
         id: req.params.identityProviderId,
         type: IdentityProviderType.SAML,
       }),

@@ -1,1 +1,1 @@
-export type ResolverSchemaScope = 'core' | 'metadata';
+export type ResolverSchemaScope = 'core' | 'metadata' | 'admin';

@@ -9,10 +9,12 @@ import {
   ApiKeyException,
   ApiKeyExceptionCode,
 } from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -78,6 +80,43 @@ export class ApiKeyRoleService {
     }
 
     return roleId;
+  }
+
+  async getRoleDtoByApiKeyId({
+    apiKeyId,
+    workspaceId,
+  }: {
+    apiKeyId: string;
+    workspaceId: string;
+  }): Promise<RoleDTO> {
+    const { apiKeyRoleMap, flatRoleMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'apiKeyRoleMap',
+        'flatRoleMaps',
+      ]);
+
+    const roleId = apiKeyRoleMap[apiKeyId];
+
+    if (!isDefined(roleId)) {
+      throw new ApiKeyException(
+        `API key ${apiKeyId} has no role assigned`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(flatRole)) {
+      throw new ApiKeyException(
+        `Role ${roleId} not found for API key ${apiKeyId}`,
+        ApiKeyExceptionCode.API_KEY_NO_ROLE_ASSIGNED,
+      );
+    }
+
+    return fromFlatRoleToRoleDto(flatRole);
   }
 
   private async validateAssignRoleInput({

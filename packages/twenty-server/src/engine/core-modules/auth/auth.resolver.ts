@@ -122,7 +122,7 @@ export class AuthResolver {
     private workspaceDomainsService: WorkspaceDomainsService,
     private userWorkspaceService: UserWorkspaceService,
     private emailVerificationTokenService: EmailVerificationTokenService,
-    private sSOService: SSOService,
+    private ssoService: SSOService,
     private readonly auditService: AuditService,
     private readonly permissionsService: PermissionsService,
   ) {}
@@ -142,7 +142,7 @@ export class AuthResolver {
   async getAuthorizationUrlForSSO(
     @Args('input') params: GetAuthorizationUrlForSSOInput,
   ) {
-    return await this.sSOService.getAuthorizationUrlForSSO(
+    return await this.ssoService.getAuthorizationUrlForSSO(
       params.identityProviderId,
       omit(params, ['identityProviderId']),
     );
@@ -512,8 +512,10 @@ export class AuthResolver {
     @AuthUser() currentUser: AuthContextUser,
     @AuthProvider() authProvider: AuthProviderEnum,
   ): Promise<SignUpDTO> {
+    const fullUser = await this.userService.findUserByIdOrThrow(currentUser.id);
+
     const { user, workspace } = await this.signInUpService.signUpOnNewWorkspace(
-      { type: 'existingUser', existingUser: currentUser },
+      { type: 'existingUser', existingUser: fullUser },
     );
 
     const loginToken = await this.loginTokenService.generateLoginToken(
@@ -709,7 +711,7 @@ export class AuthResolver {
       userId: impersonatorUserWorkspace.user.id,
     });
 
-    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: `${isServerLevelImpersonation ? 'server' : 'workspace'}.impersonation.token_exchange_attempt`,
       message: `Impersonation token exchange attempt for ${targetUserEmail} by ${impersonatorUserWorkspace.user.id}`,
     });
@@ -720,7 +722,7 @@ export class AuthResolver {
 
     if (isServerLevelImpersonation) {
       if (!hasServerLevelImpersonatePermission) {
-        auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+        await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
           eventName: 'server.impersonation.token_exchange_failed',
           message: `Server level impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
         });
@@ -731,7 +733,7 @@ export class AuthResolver {
         );
       }
 
-      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: `server.impersonation.token_exchange_success`,
         message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
@@ -753,7 +755,7 @@ export class AuthResolver {
       });
 
     if (!hasWorkspaceLevelImpersonatePermission) {
-      auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+      await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
         eventName: 'workspace.impersonation.token_exchange_failed',
         message: `Impersonation not allowed for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
       });
@@ -763,7 +765,7 @@ export class AuthResolver {
       );
     }
 
-    auditService.insertWorkspaceEvent(MONITORING_EVENT, {
+    await auditService.insertWorkspaceEvent(MONITORING_EVENT, {
       eventName: 'workspace.impersonation.token_exchange_success',
       message: `Impersonation token exchanged for ${targetUserEmail} by userId ${impersonatorUserWorkspace.user.id}`,
     });

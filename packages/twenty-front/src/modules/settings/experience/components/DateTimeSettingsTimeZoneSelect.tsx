@@ -3,7 +3,6 @@ import { findAvailableTimeZoneOption } from '@/localization/utils/findAvailableT
 import { AVAILABLE_TIMEZONE_OPTIONS } from '@/settings/experience/constants/AvailableTimezoneOptions';
 import { Select } from '@/ui/input/components/Select';
 import { t } from '@lingui/core/macro';
-import { isDefined } from 'twenty-shared/utils';
 import { type SelectOption } from 'twenty-ui/input';
 
 type DateTimeSettingsTimeZoneSelectProps = {
@@ -23,18 +22,15 @@ export const DateTimeSettingsTimeZoneSelect = ({
     <Select
       dropdownId="datetime-settings-time-zone"
       label={t`Time zone`}
-      dropdownWidthAuto
+      dropdownWidth={480}
       fullWidth
       value={value}
-      options={[
-        {
-          label: isDefined(systemTimeZoneOption)
-            ? t`System settings`.concat(` - ${systemTimeZoneOption.label}`)
-            : t`System settings`,
-          value: 'system',
-        },
-        ...(AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]),
-      ]}
+      pinnedOption={{
+        label: t`System settings`,
+        value: 'system',
+        contextualText: systemTimeZoneOption?.label,
+      }}
+      options={AVAILABLE_TIMEZONE_OPTIONS as SelectOption<string>[]}
       onChange={onChange}
       withSearchInput
     />

@@ -12,44 +12,66 @@
  */
 
 export const DOCUMENTATION_PATHS = {
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_BEST_PRACTICES_SERVER:
-    '/developers/contribute/capabilities/backend-development/best-practices-server',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_CUSTOM_OBJECTS:
-    '/developers/contribute/capabilities/backend-development/custom-objects',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_FEATURE_FLAGS:
-    '/developers/contribute/capabilities/backend-development/feature-flags',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_FOLDER_ARCHITECTURE_SERVER:
-    '/developers/contribute/capabilities/backend-development/folder-architecture-server',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_QUEUE:
-    '/developers/contribute/capabilities/backend-development/queue',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_SERVER_COMMANDS:
-    '/developers/contribute/capabilities/backend-development/server-commands',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BACKEND_DEVELOPMENT_ZAPIER:
-    '/developers/contribute/capabilities/backend-development/zapier',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_BUG_AND_REQUESTS:
-    '/developers/contribute/capabilities/bug-and-requests',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_BEST_PRACTICES_FRONT:
-    '/developers/contribute/capabilities/frontend-development/best-practices-front',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_FOLDER_ARCHITECTURE_FRONT:
-    '/developers/contribute/capabilities/frontend-development/folder-architecture-front',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_FRONTEND_COMMANDS:
-    '/developers/contribute/capabilities/frontend-development/frontend-commands',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_HOTKEYS:
-    '/developers/contribute/capabilities/frontend-development/hotkeys',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_STORYBOOK:
-    '/developers/contribute/capabilities/frontend-development/storybook',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_STYLE_GUIDE:
-    '/developers/contribute/capabilities/frontend-development/style-guide',
-  DEVELOPERS_CONTRIBUTE_CAPABILITIES_FRONTEND_DEVELOPMENT_WORK_WITH_FIGMA:
-    '/developers/contribute/capabilities/frontend-development/work-with-figma',
   DEVELOPERS_CONTRIBUTE_CAPABILITIES_LOCAL_SETUP:
     '/developers/contribute/capabilities/local-setup',
-  DEVELOPERS_CONTRIBUTE_CONTRIBUTE: '/developers/contribute/contribute',
+  DEVELOPERS_CONTRIBUTE_COMMANDS: '/developers/contribute/commands',
+  DEVELOPERS_CONTRIBUTE_STYLE_GUIDE: '/developers/contribute/style-guide',
   DEVELOPERS_EXTEND_API: '/developers/extend/api',
-  DEVELOPERS_EXTEND_APPS_BUILDING: '/developers/extend/apps/building',
-  DEVELOPERS_EXTEND_APPS_GETTING_STARTED:
-    '/developers/extend/apps/getting-started',
-  DEVELOPERS_EXTEND_APPS_PUBLISHING: '/developers/extend/apps/publishing',
+  DEVELOPERS_EXTEND_APPS_CONFIG_APPLICATION:
+    '/developers/extend/apps/config/application',
+  DEVELOPERS_EXTEND_APPS_CONFIG_INSTALL_HOOKS:
+    '/developers/extend/apps/config/install-hooks',
+  DEVELOPERS_EXTEND_APPS_CONFIG_OVERVIEW:
+    '/developers/extend/apps/config/overview',
+  DEVELOPERS_EXTEND_APPS_CONFIG_PUBLIC_ASSETS:
+    '/developers/extend/apps/config/public-assets',
+  DEVELOPERS_EXTEND_APPS_CONFIG_ROLES: '/developers/extend/apps/config/roles',
+  DEVELOPERS_EXTEND_APPS_DATA_EXTENDING_OBJECTS:
+    '/developers/extend/apps/data/extending-objects',
+  DEVELOPERS_EXTEND_APPS_DATA_OBJECTS: '/developers/extend/apps/data/objects',
+  DEVELOPERS_EXTEND_APPS_DATA_OVERVIEW: '/developers/extend/apps/data/overview',
+  DEVELOPERS_EXTEND_APPS_DATA_RELATIONS:
+    '/developers/extend/apps/data/relations',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
+    '/developers/extend/apps/getting-started/concepts',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:
+    '/developers/extend/apps/getting-started/local-server',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_PROJECT_STRUCTURE:
+    '/developers/extend/apps/getting-started/project-structure',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_QUICK_START:
+    '/developers/extend/apps/getting-started/quick-start',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_SCAFFOLDING:
+    '/developers/extend/apps/getting-started/scaffolding',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_TROUBLESHOOTING:
+    '/developers/extend/apps/getting-started/troubleshooting',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_COMMAND_MENU_ITEMS:
+    '/developers/extend/apps/layout/command-menu-items',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_FRONT_COMPONENTS:
+    '/developers/extend/apps/layout/front-components',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_NAVIGATION_MENU_ITEMS:
+    '/developers/extend/apps/layout/navigation-menu-items',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_OVERVIEW:
+    '/developers/extend/apps/layout/overview',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_PAGE_LAYOUTS:
+    '/developers/extend/apps/layout/page-layouts',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_VIEWS: '/developers/extend/apps/layout/views',
+  DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
+    '/developers/extend/apps/logic/connections',
+  DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
+    '/developers/extend/apps/logic/logic-functions',
+  DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
+    '/developers/extend/apps/logic/overview',
+  DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
+    '/developers/extend/apps/logic/skills-and-agents',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
+    '/developers/extend/apps/operations/cli',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
+    '/developers/extend/apps/operations/overview',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
+    '/developers/extend/apps/operations/publishing',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
+    '/developers/extend/apps/operations/testing',
+  DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',
   DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',
   DEVELOPERS_SELF_HOST_CAPABILITIES_CLOUD_PROVIDERS:
@@ -62,31 +84,22 @@ export const DOCUMENTATION_PATHS = {
     '/developers/self-host/capabilities/troubleshooting',
   DEVELOPERS_SELF_HOST_CAPABILITIES_UPGRADE_GUIDE:
     '/developers/self-host/capabilities/upgrade-guide',
-  DEVELOPERS_SELF_HOST_SELF_HOST: '/developers/self-host/self-host',
-  TWENTY_UI_DISPLAY_APP_TOOLTIP: '/twenty-ui/display/app-tooltip',
-  TWENTY_UI_DISPLAY_CHECKMARK: '/twenty-ui/display/checkmark',
-  TWENTY_UI_DISPLAY_CHIP: '/twenty-ui/display/chip',
-  TWENTY_UI_DISPLAY_ICONS: '/twenty-ui/display/icons',
-  TWENTY_UI_DISPLAY_SOON_PILL: '/twenty-ui/display/soon-pill',
-  TWENTY_UI_DISPLAY_TAG: '/twenty-ui/display/tag',
-  TWENTY_UI_INPUT_BLOCK_EDITOR: '/twenty-ui/input/block-editor',
-  TWENTY_UI_INPUT_BUTTONS: '/twenty-ui/input/buttons',
-  TWENTY_UI_INPUT_CHECKBOX: '/twenty-ui/input/checkbox',
-  TWENTY_UI_INPUT_COLOR_SCHEME: '/twenty-ui/input/color-scheme',
-  TWENTY_UI_INPUT_ICON_PICKER: '/twenty-ui/input/icon-picker',
-  TWENTY_UI_INPUT_IMAGE_INPUT: '/twenty-ui/input/image-input',
-  TWENTY_UI_INPUT_RADIO: '/twenty-ui/input/radio',
-  TWENTY_UI_INPUT_SELECT: '/twenty-ui/input/select',
-  TWENTY_UI_INPUT_TEXT: '/twenty-ui/input/text',
-  TWENTY_UI_INPUT_TOGGLE: '/twenty-ui/input/toggle',
-  TWENTY_UI_INTRODUCTION: '/twenty-ui/introduction',
-  TWENTY_UI_NAVIGATION: '/twenty-ui/navigation',
-  TWENTY_UI_NAVIGATION_BREADCRUMB: '/twenty-ui/navigation/breadcrumb',
-  TWENTY_UI_NAVIGATION_LINKS: '/twenty-ui/navigation/links',
-  TWENTY_UI_NAVIGATION_MENU_ITEM: '/twenty-ui/navigation/menu-item',
-  TWENTY_UI_NAVIGATION_NAVIGATION_BAR: '/twenty-ui/navigation/navigation-bar',
-  TWENTY_UI_NAVIGATION_STEP_BAR: '/twenty-ui/navigation/step-bar',
-  TWENTY_UI_PROGRESS_BAR: '/twenty-ui/progress-bar',
+  GETTING_STARTED_CORE_CONCEPTS_AI: '/getting-started/core-concepts/ai',
+  GETTING_STARTED_CORE_CONCEPTS_APPS: '/getting-started/core-concepts/apps',
+  GETTING_STARTED_CORE_CONCEPTS_CALENDAR_AND_EMAIL:
+    '/getting-started/core-concepts/calendar-and-email',
+  GETTING_STARTED_CORE_CONCEPTS_DASHBOARDS:
+    '/getting-started/core-concepts/dashboards',
+  GETTING_STARTED_CORE_CONCEPTS_DATA_MODEL:
+    '/getting-started/core-concepts/data-model',
+  GETTING_STARTED_CORE_CONCEPTS_GLOSSARY:
+    '/getting-started/core-concepts/glossary',
+  GETTING_STARTED_CORE_CONCEPTS_LAYOUT: '/getting-started/core-concepts/layout',
+  GETTING_STARTED_CORE_CONCEPTS_WORKFLOWS:
+    '/getting-started/core-concepts/workflows',
+  GETTING_STARTED_INTRODUCTION: '/getting-started/introduction',
+  GETTING_STARTED_KEY_FEATURES: '/getting-started/key-features',
+  GETTING_STARTED_QUICKSTART: '/getting-started/quickstart',
   USER_GUIDE_AI_CAPABILITIES_AI_AGENTS: '/user-guide/ai/capabilities/ai-agents',
   USER_GUIDE_AI_CAPABILITIES_AI_CHATBOT:
     '/user-guide/ai/capabilities/ai-chatbot',
@@ -94,10 +107,10 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/ai/capabilities/permissions-access-control',
   USER_GUIDE_AI_HOW_TOS_AI_FAQ: '/user-guide/ai/how-tos/ai-faq',
   USER_GUIDE_AI_OVERVIEW: '/user-guide/ai/overview',
+  USER_GUIDE_BILLING_CAPABILITIES_CREDITS:
+    '/user-guide/billing/capabilities/credits',
   USER_GUIDE_BILLING_CAPABILITIES_PRICING_PLANS:
     '/user-guide/billing/capabilities/pricing-plans',
-  USER_GUIDE_BILLING_CAPABILITIES_WORKFLOW_CREDITS:
-    '/user-guide/billing/capabilities/workflow-credits',
   USER_GUIDE_BILLING_HOW_TOS_BILLING_FAQ:
     '/user-guide/billing/how-tos/billing-faq',
   USER_GUIDE_BILLING_OVERVIEW: '/user-guide/billing/overview',
@@ -179,19 +192,12 @@ export const DOCUMENTATION_PATHS = {
   USER_GUIDE_DATA_MODEL_HOW_TOS_DATA_MODEL_FAQ:
     '/user-guide/data-model/how-tos/data-model-faq',
   USER_GUIDE_DATA_MODEL_OVERVIEW: '/user-guide/data-model/overview',
-  USER_GUIDE_GETTING_STARTED_CAPABILITIES_GLOSSARY:
-    '/user-guide/getting-started/capabilities/glossary',
-  USER_GUIDE_GETTING_STARTED_CAPABILITIES_IMPLEMENTATION_SERVICES:
-    '/user-guide/getting-started/capabilities/implementation-services',
-  USER_GUIDE_GETTING_STARTED_CAPABILITIES_WHAT_IS_TWENTY:
-    '/user-guide/getting-started/capabilities/what-is-twenty',
-  USER_GUIDE_GETTING_STARTED_HOW_TOS_CONFIGURE_YOUR_WORKSPACE:
-    '/user-guide/getting-started/how-tos/configure-your-workspace',
-  USER_GUIDE_GETTING_STARTED_HOW_TOS_CREATE_WORKSPACE:
-    '/user-guide/getting-started/how-tos/create-workspace',
-  USER_GUIDE_GETTING_STARTED_HOW_TOS_NAVIGATE_AROUND_TWENTY:
-    '/user-guide/getting-started/how-tos/navigate-around-twenty',
   USER_GUIDE_INTRODUCTION: '/user-guide/introduction',
+  USER_GUIDE_LAYOUT_CAPABILITIES_NAVIGATION:
+    '/user-guide/layout/capabilities/navigation',
+  USER_GUIDE_LAYOUT_CAPABILITIES_RECORD_PAGES:
+    '/user-guide/layout/capabilities/record-pages',
+  USER_GUIDE_LAYOUT_OVERVIEW: '/user-guide/layout/overview',
   USER_GUIDE_PERMISSIONS_ACCESS_CAPABILITIES_PERMISSIONS:
     '/user-guide/permissions-access/capabilities/permissions',
   USER_GUIDE_PERMISSIONS_ACCESS_CAPABILITIES_SSO_CONFIGURATION:
@@ -241,7 +247,6 @@ export const DOCUMENTATION_PATHS = {
     '/user-guide/views-pipelines/how-tos/show-expected-amount-in-pipeline',
   USER_GUIDE_VIEWS_PIPELINES_HOW_TOS_TRACK_TIME_IN_STAGE:
     '/user-guide/views-pipelines/how-tos/track-time-in-stage',
-  USER_GUIDE_VIEWS_PIPELINES_OVERVIEW: '/user-guide/views-pipelines/overview',
   USER_GUIDE_WORKFLOWS_CAPABILITIES_SEND_EMAILS_FROM_WORKFLOWS:
     '/user-guide/workflows/capabilities/send-emails-from-workflows',
   USER_GUIDE_WORKFLOWS_CAPABILITIES_USE_BRANCHES_IN_WORKFLOWS:

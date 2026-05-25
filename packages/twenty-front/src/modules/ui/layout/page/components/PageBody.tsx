@@ -2,7 +2,7 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 
 import { PagePanel } from './PagePanel';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type PageBodyProps = {
   children: ReactNode;
@@ -21,6 +21,10 @@ const StyledMainContainer = styled.div`
   padding-left: 0;
   padding-right: ${themeCssVariables.spacing[3]};
   width: 100%;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    padding-left: ${themeCssVariables.spacing[3]};
+  }
 `;
 
 type LeftContainerProps = {

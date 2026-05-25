@@ -8,7 +8,8 @@ import {
 const activateWorkflowVersionSchema = z.object({
   workflowVersionId: z
     .string()
-    .describe('The ID of the workflow version to activate'),
+    .uuid()
+    .describe('The UUID of the workflow version to activate'),
 });
 
 type ActivateWorkflowVersionInput = z.infer<

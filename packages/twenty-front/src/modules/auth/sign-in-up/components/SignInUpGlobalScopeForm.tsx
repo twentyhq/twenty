@@ -6,7 +6,7 @@ import { Trans, useLingui } from '@lingui/react/macro';
 import { FormProvider } from 'react-hook-form';
 import { ClickToActionLink, UndecoratedLink } from 'twenty-ui/navigation';
 
-import { useAuth } from '@/auth/hooks/useAuth';
+import { StyledOnboardingContentContainer } from '@/auth/components/StyledOnboardingContentContainer';
 import { SignInUpWithCredentials } from '@/auth/sign-in-up/components/internal/SignInUpWithCredentials';
 import { SignInUpWithGoogle } from '@/auth/sign-in-up/components/internal/SignInUpWithGoogle';
 import { SignInUpWithMicrosoft } from '@/auth/sign-in-up/components/internal/SignInUpWithMicrosoft';
@@ -19,10 +19,10 @@ import {
 } from '@/auth/states/signInUpStepState';
 import { getAvailableWorkspacePathAndSearchParams } from '@/auth/utils/availableWorkspacesUtils';
 import { authProvidersState } from '@/client-config/states/authProvidersState';
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { DEFAULT_WORKSPACE_LOGO } from '@/ui/navigation/navigation-drawer/constants/DefaultWorkspaceLogo';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isNonEmptyString } from '@sniptt/guards';
-import { motion } from 'framer-motion';
 import { useContext } from 'react';
 import {
   Avatar,
@@ -34,20 +34,12 @@ import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type AvailableWorkspace } from '~/generated-metadata/graphql';
 import { getWorkspaceUrl } from '~/utils/getWorkspaceUrl';
 
-const StyledContentContainer = styled(motion.div)`
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[4]};
-  min-width: 200px;
-`;
-
 const StyledWorkspaceContainer = styled.div`
   background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-direction: column;
-  margin-bottom: ${themeCssVariables.spacing[8]};
-  margin-top: ${themeCssVariables.spacing[4]};
   overflow: hidden;
   width: 100%;
 
@@ -122,11 +114,6 @@ const StyledChevronIcon = styled.div`
   display: flex;
 `;
 
-const StyledActionLinkContainer = styled.div`
-  display: flex;
-  justify-content: center;
-`;
-
 const StyledForgotPasswordLinkContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -136,9 +123,9 @@ const StyledForgotPasswordLinkContainer = styled.div`
 export const SignInUpGlobalScopeForm = () => {
   const { theme } = useContext(ThemeContext);
   const authProviders = useAtomStateValue(authProvidersState);
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
   const signInUpStep = useAtomStateValue(signInUpStepState);
   const { buildWorkspaceUrl } = useBuildWorkspaceUrl();
-  const { signOut } = useAuth();
 
   const { createWorkspace } = useSignUpInNewWorkspace();
   const availableWorkspaces = useAtomStateValue(availableWorkspacesState);
@@ -167,7 +154,7 @@ export const SignInUpGlobalScopeForm = () => {
   return (
     <>
       {signInUpStep === SignInUpStep.WorkspaceSelection && (
-        <>
+        <StyledOnboardingContentContainer>
           <StyledWorkspaceContainer>
             {[
               ...availableWorkspaces.availableWorkspacesForSignIn,
@@ -206,29 +193,26 @@ export const SignInUpGlobalScopeForm = () => {
                 </StyledWorkspaceItem>
               </UndecoratedLink>
             ))}
-            <StyledWorkspaceItem onClick={() => createWorkspace()}>
-              <StyledWorkspaceContent>
-                <StyledWorkspaceLogo>
-                  <IconPlus size={theme.icon.size.lg} />
-                </StyledWorkspaceLogo>
-                <StyledWorkspaceTextContainer>
-                  <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
-                </StyledWorkspaceTextContainer>
-                <StyledChevronIcon>
-                  <IconChevronRight size={theme.icon.size.md} />
-                </StyledChevronIcon>
-              </StyledWorkspaceContent>
-            </StyledWorkspaceItem>
+            {!isDDLLocked && (
+              <StyledWorkspaceItem onClick={() => createWorkspace()}>
+                <StyledWorkspaceContent>
+                  <StyledWorkspaceLogo>
+                    <IconPlus size={theme.icon.size.lg} />
+                  </StyledWorkspaceLogo>
+                  <StyledWorkspaceTextContainer>
+                    <StyledWorkspaceName>{t`Create a workspace`}</StyledWorkspaceName>
+                  </StyledWorkspaceTextContainer>
+                  <StyledChevronIcon>
+                    <IconChevronRight size={theme.icon.size.md} />
+                  </StyledChevronIcon>
+                </StyledWorkspaceContent>
+              </StyledWorkspaceItem>
+            )}
           </StyledWorkspaceContainer>
-          <StyledActionLinkContainer>
-            <ClickToActionLink onClick={signOut}>
-              <Trans>Log out</Trans>
-            </ClickToActionLink>
-          </StyledActionLinkContainer>
-        </>
+        </StyledOnboardingContentContainer>
       )}
       {signInUpStep !== SignInUpStep.WorkspaceSelection && (
-        <StyledContentContainer>
+        <StyledOnboardingContentContainer>
           {authProviders.google && (
             <SignInUpWithGoogle
               action="list-available-workspaces"
@@ -257,7 +241,7 @@ export const SignInUpGlobalScopeForm = () => {
               </ClickToActionLink>
             </StyledForgotPasswordLinkContainer>
           )}
-        </StyledContentContainer>
+        </StyledOnboardingContentContainer>
       )}
     </>
   );

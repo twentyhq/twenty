@@ -1,7 +1,9 @@
 import { renderHook } from '@testing-library/react';
 
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { useColumnDefinitionsFromObjectMetadata } from '@/object-metadata/hooks/useColumnDefinitionsFromObjectMetadata';
@@ -27,6 +29,7 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       workspaceCustomApplication: {
         id: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
       },
+      installedApplications: [],
       id: '1',
       featureFlags: [],
       allowImpersonation: false,
@@ -68,10 +71,11 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
       isTwoFactorAuthenticationEnforced: false,
       trashRetentionDays: 14,
       eventLogRetentionDays: 365 * 3,
-      fastModel: DEFAULT_FAST_MODEL,
-      smartModel: DEFAULT_SMART_MODEL,
+      fastModel: AUTO_SELECT_FAST_MODEL_ID,
+      smartModel: AUTO_SELECT_SMART_MODEL_ID,
       enabledAiModelIds: [],
       useRecommendedModels: true,
+      isInternalMessagesImportEnabled: false,
     });
 
     const companyObjectMetadata = getTestEnrichedObjectMetadataItemsMock().find(
@@ -90,6 +94,6 @@ describe('useColumnDefinitionsFromObjectMetadata', () => {
 
     const { columnDefinitions } = result.current;
 
-    expect(columnDefinitions.length).toBe(25);
+    expect(columnDefinitions.length).toBe(24);
   });
 });

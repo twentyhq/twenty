@@ -3,7 +3,33 @@ import { Field, ObjectType } from '@nestjs/graphql';
 import { ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ImapSmtpCaldavConnectionParametersDTO } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.dto';
+
+@ObjectType('ImapSmtpCaldavPublicConnectionParams')
+class PublicConnectionParamsDTO {
+  @Field(() => String)
+  host: string;
+
+  @Field(() => Number)
+  port: number;
+
+  @Field(() => String, { nullable: true })
+  username?: string;
+
+  @Field(() => Boolean, { nullable: true })
+  secure?: boolean;
+}
+
+@ObjectType('ImapSmtpCaldavPublicConnectionParameters')
+class ImapSmtpCaldavPublicConnectionParametersDTO {
+  @Field(() => PublicConnectionParamsDTO, { nullable: true })
+  IMAP?: PublicConnectionParamsDTO;
+
+  @Field(() => PublicConnectionParamsDTO, { nullable: true })
+  SMTP?: PublicConnectionParamsDTO;
+
+  @Field(() => PublicConnectionParamsDTO, { nullable: true })
+  CALDAV?: PublicConnectionParamsDTO;
+}
 
 @ObjectType('ConnectedImapSmtpCaldavAccount')
 export class ConnectedImapSmtpCaldavAccountDTO {
@@ -17,8 +43,8 @@ export class ConnectedImapSmtpCaldavAccountDTO {
   provider: ConnectedAccountProvider;
 
   @Field(() => UUIDScalarType)
-  accountOwnerId: string;
+  userWorkspaceId: string;
 
-  @Field(() => ImapSmtpCaldavConnectionParametersDTO, { nullable: true })
-  connectionParameters: ImapSmtpCaldavConnectionParametersDTO | null;
+  @Field(() => ImapSmtpCaldavPublicConnectionParametersDTO, { nullable: true })
+  connectionParameters: ImapSmtpCaldavPublicConnectionParametersDTO | null;
 }

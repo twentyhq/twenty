@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddWorkspaceIdToApplicationRegistration1772267875869
-  implements MigrationInterface
-{
+export class AddWorkspaceIdToApplicationRegistration1772267875869 implements MigrationInterface {
   name = 'AddWorkspaceIdToApplicationRegistration1772267875869';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

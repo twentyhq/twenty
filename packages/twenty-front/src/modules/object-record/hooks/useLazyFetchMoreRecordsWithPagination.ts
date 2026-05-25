@@ -27,8 +27,12 @@ import {
 import { DEFAULT_SEARCH_REQUEST_LIMIT } from '@/object-record/constants/DefaultSearchRequestLimit';
 import { cursorFamilyState } from '@/object-record/states/cursorFamilyState';
 import { hasNextPageFamilyState } from '@/object-record/states/hasNextPageFamilyState';
-import { capitalize, isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import {
+  getConnectionTypename,
+  isDefined,
+  isNonEmptyArray,
+} from 'twenty-shared/utils';
 
 export type UseFindManyRecordsParams<T> = ObjectMetadataItemIdentifier &
   RecordGqlOperationVariables & {
@@ -143,9 +147,9 @@ export const useLazyFetchMoreRecordsWithPagination = <
 
               return Object.assign({}, prev, {
                 [objectMetadataItem.namePlural]: {
-                  __typename: `${capitalize(
+                  __typename: getConnectionTypename(
                     objectMetadataItem.nameSingular,
-                  )}Connection`,
+                  ),
                   edges: newEdges,
                   pageInfo:
                     fetchMoreResult?.[objectMetadataItem.namePlural].pageInfo,

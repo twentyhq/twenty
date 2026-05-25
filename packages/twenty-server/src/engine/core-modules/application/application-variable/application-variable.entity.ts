@@ -2,30 +2,31 @@ import { ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
-  ManyToOne,
   PrimaryGeneratedColumn,
-  Unique,
   UpdateDateColumn,
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
+import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({
   name: 'applicationVariable',
   schema: 'core',
 })
 @ObjectType('ApplicationVariable')
-@Unique('IDX_APPLICATION_VARIABLE_KEY_APPLICATION_ID_UNIQUE', [
-  'key',
-  'applicationId',
-])
-export class ApplicationVariableEntity {
+// Constrains `value` for secret rows to the versioned envelope, while
+// leaving plaintext non-secret values untouched. The keyId portion is
+// not constrained so future ENCRYPTION_KEY rotations do not need a DDL
+// migration.
+@Check(
+  'CHK_applicationVariable_value_encrypted',
+  `"isSecret" = false OR "value" = '' OR "value" LIKE 'enc:v2:%'`,
+)
+export class ApplicationVariableEntity extends SyncableEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
   id: string;
@@ -41,20 +42,6 @@ export class ApplicationVariableEntity {
 
   @Column({ nullable: false, type: 'boolean', default: false })
   isSecret: boolean;
-
-  @Column({ nullable: true, type: 'uuid' })
-  applicationId?: string;
-
-  @ManyToOne(
-    () => ApplicationEntity,
-    (application) => application.applicationVariables,
-    {
-      onDelete: 'CASCADE',
-      nullable: true,
-    },
-  )
-  @JoinColumn({ name: 'applicationId' })
-  application: EntityRelation<ApplicationEntity> | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

@@ -1,8 +1,4 @@
-export type RecordReference = {
-  objectNameSingular: string;
-  recordId: string;
-  displayName: string;
-};
+import { type RecordReference } from 'src/engine/core-modules/tool/types/record-reference.type';
 
 export type ToolOutput<T = object> = {
   success: boolean;
@@ -12,6 +8,5 @@ export type ToolOutput<T = object> = {
   status?: number;
   statusText?: string;
   headers?: Record<string, string>;
-  // Record references for linking to created/found records
   recordReferences?: RecordReference[];
 };

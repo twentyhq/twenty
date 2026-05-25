@@ -3,8 +3,9 @@ import { type ReactNode, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { isDefined } from 'twenty-shared/utils';
+import { LinkifiedText } from '@ui/display/components/LinkifiedText';
 import { themeCssVariables } from '@ui/theme-constants';
+import { isDefined } from 'twenty-shared/utils';
 import { AppTooltip, TooltipDelay } from './AppTooltip';
 
 const spacing4 = themeCssVariables.spacing[4];
@@ -32,6 +33,7 @@ const StyledOverflowingMultilineText = styled.div<{
   display: -webkit-box;
   -webkit-box-orient: vertical;
   white-space: pre-wrap;
+  overflow-wrap: break-word;
 `;
 
 const StyledOverflowingText = styled.div<{
@@ -64,6 +66,7 @@ type OverflowingTextWithTooltipProps = {
   isTooltipMultiline?: boolean;
   displayedMaxRows?: number;
   tooltipDelay?: TooltipDelay;
+  alwaysShowTooltip?: boolean;
 } & (
   | {
       text: string | null | undefined;
@@ -82,6 +85,7 @@ export const OverflowingTextWithTooltip = ({
   displayedMaxRows,
   tooltipContent,
   tooltipDelay = TooltipDelay.mediumDelay,
+  alwaysShowTooltip = false,
 }: OverflowingTextWithTooltipProps) => {
   const textElementId = `title-id-${+new Date()}`;
 
@@ -129,7 +133,7 @@ export const OverflowingTextWithTooltip = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {text}
+          {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
         </StyledOverflowingMultilineText>
       ) : (
         <StyledOverflowingText
@@ -141,12 +145,12 @@ export const OverflowingTextWithTooltip = ({
           onMouseEnter={handleMouseEnter}
           onMouseLeave={handleMouseLeave}
         >
-          {text}
+          {isNonEmptyString(text) ? <LinkifiedText text={text} /> : text}
         </StyledOverflowingText>
       )}
 
       {shouldRenderTooltip &&
-        isTitleOverflowing &&
+        (isTitleOverflowing || alwaysShowTooltip) &&
         isDefined(tooltipText) &&
         createPortal(
           <div onClick={handleTooltipClick}>

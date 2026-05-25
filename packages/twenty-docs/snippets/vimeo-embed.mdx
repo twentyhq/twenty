@@ -1,5 +1,5 @@
 export const VimeoEmbed = ({ videoId, title = 'Video' }) => (
-  <div style={{padding:'69.01% 0 0 0', position:'relative', margin: '32px 0px'}}>
+  <div style={{padding:'69.01% 0 0 0', position:'relative', margin: '32px 0px', borderRadius: '16px', overflow:'hidden', border:'2px solid black'}}>
     <iframe
       src={`https://player.vimeo.com/video/${videoId}?autoplay=1&loop=1&autopause=0&background=1&app_id=58479`}
       frameBorder="0"
@@ -10,8 +10,7 @@ export const VimeoEmbed = ({ videoId, title = 'Video' }) => (
         left:0,
         width:'100%',
         height:'100%',
-        borderRadius: '16px',
-        border:'2px solid black'
+        transform:'scale(1.1)',
       }}
       title={title}
     />

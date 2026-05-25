@@ -54,7 +54,13 @@ export const fileFolderConfigs: Record<FileFolder, FileFolderConfig> = {
   [FileFolder.Workflow]: {
     ignoreExpirationToken: false,
   },
+  [FileFolder.EmailAttachment]: {
+    ignoreExpirationToken: false,
+  },
   [FileFolder.AppTarball]: {
+    ignoreExpirationToken: false,
+  },
+  [FileFolder.GeneratedSdkClient]: {
     ignoreExpirationToken: false,
   },
 };

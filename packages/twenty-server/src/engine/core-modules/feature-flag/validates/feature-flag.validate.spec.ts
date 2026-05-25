@@ -8,7 +8,7 @@ describe('featureFlagValidator', () => {
     it('should not throw error if featureFlagKey is valid', () => {
       expect(() =>
         featureFlagValidator.assertIsFeatureFlagKey(
-          'IS_AI_ENABLED',
+          'IS_JUNCTION_RELATIONS_ENABLED',
           new UnknownException('Error', 'Error', {
             userFriendlyMessage: msg`Error`,
           }),

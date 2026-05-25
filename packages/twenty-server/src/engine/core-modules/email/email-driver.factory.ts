@@ -7,12 +7,16 @@ import { SmtpDriver } from 'src/engine/core-modules/email/drivers/smtp.driver';
 import { EmailDriver } from 'src/engine/core-modules/email/enums/email-driver.enum';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 @Injectable()
 export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> {
-  constructor(twentyConfigService: TwentyConfigService) {
-    super(twentyConfigService);
+  constructor(
+    twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
+  ) {
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
@@ -23,7 +27,7 @@ export class EmailDriverFactory extends DriverFactoryBase<EmailDriverInterface> 
     }
 
     if (driver === EmailDriver.SMTP) {
-      const emailConfigHash = this.getConfigGroupHash(
+      const emailConfigHash = this.configGroupHashService.computeHash(
         ConfigVariablesGroup.EMAIL_SETTINGS,
       );
 

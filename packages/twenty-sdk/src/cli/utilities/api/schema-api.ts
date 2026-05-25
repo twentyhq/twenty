@@ -6,20 +6,20 @@ export class SchemaApi {
   constructor(private readonly client: AxiosInstance) {}
 
   async getSchema(options?: {
-    authToken?: string;
+    appAccessToken?: string;
   }): Promise<ApiResponse<string>> {
     return this.introspectEndpoint('/graphql', options);
   }
 
   async getMetadataSchema(options?: {
-    authToken?: string;
+    appAccessToken?: string;
   }): Promise<ApiResponse<string>> {
     return this.introspectEndpoint('/metadata', options);
   }
 
   private async introspectEndpoint(
     endpoint: string,
-    options?: { authToken?: string },
+    options?: { appAccessToken?: string },
   ): Promise<ApiResponse<string>> {
     try {
       const introspectionQuery = getIntrospectionQuery();
@@ -29,8 +29,8 @@ export class SchemaApi {
         Accept: '*/*',
       };
 
-      if (options?.authToken) {
-        headers.Authorization = `Bearer ${options.authToken}`;
+      if (options?.appAccessToken) {
+        headers.Authorization = `Bearer ${options.appAccessToken}`;
       }
 
       const response = await this.client.post(

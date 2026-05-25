@@ -91,15 +91,20 @@ export type ViewConfiguration = {
   configurationType: 'VIEW';
 };
 
+export type RecordTableConfiguration = {
+  configurationType: 'RECORD_TABLE';
+  viewId?: string;
+};
+
 export type FieldConfiguration = {
   configurationType: 'FIELD';
   fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'FIELD' | 'VIEW';
+  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW';
 };
 
 export type FieldsConfiguration = {
   configurationType: 'FIELDS';
-  viewId?: string | null;
+  viewId?: SerializedRelation | null;
   newFieldDefaultVisibility?: boolean | null;
   shouldAllowUserToSeeHiddenFields?: boolean;
 };
@@ -146,6 +151,10 @@ export type EmailsConfiguration = {
   configurationType: 'EMAILS';
 };
 
+export type EmailThreadConfiguration = {
+  configurationType: 'EMAIL_THREAD';
+};
+
 export type CalendarConfiguration = {
   configurationType: 'CALENDAR';
 };
@@ -169,6 +178,7 @@ export type PageLayoutWidgetConfiguration =
   | BarChartConfiguration
   | LineChartConfiguration
   | ViewConfiguration
+  | RecordTableConfiguration
   | FieldConfiguration
   | FieldsConfiguration
   | FieldRichTextConfiguration
@@ -183,4 +193,5 @@ export type PageLayoutWidgetConfiguration =
   | CalendarConfiguration
   | WorkflowConfiguration
   | WorkflowVersionConfiguration
-  | WorkflowRunConfiguration;
+  | WorkflowRunConfiguration
+  | EmailThreadConfiguration;

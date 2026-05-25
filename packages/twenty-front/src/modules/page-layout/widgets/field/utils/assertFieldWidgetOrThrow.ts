@@ -1,7 +1,7 @@
 import { type FieldConfiguration } from '@/page-layout/types/FieldConfiguration';
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
-import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow } from 'twenty-shared/utils';
+import { WidgetConfigurationType } from '~/generated-metadata/graphql';
 
 type AssertFieldWidgetOrThrow = (
   widget: PageLayoutWidget,
@@ -18,8 +18,7 @@ export const assertFieldWidgetOrThrow: AssertFieldWidgetOrThrow = (
   );
 
   if (
-    !isNonEmptyString(widget.configuration.__typename) ||
-    widget.configuration.__typename !== 'FieldConfiguration'
+    widget.configuration.configurationType !== WidgetConfigurationType.FIELD
   ) {
     throw new Error(
       `Expected FieldConfiguration but got ${widget.configuration.__typename}`,

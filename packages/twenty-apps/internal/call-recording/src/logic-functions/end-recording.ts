@@ -7,7 +7,7 @@ import {
   type Participant,
 } from 'src/utils/match-participants';
 import { summarizeTranscript } from 'src/utils/summarize-transcript';
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 import { CoreApiClient, MetadataApiClient } from 'twenty-sdk/clients';
 import { z } from 'zod';
 

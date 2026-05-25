@@ -276,6 +276,19 @@ export type FieldRelationValue<
   T extends FieldRelationToOneValue | FieldRelationFromManyValue,
 > = T;
 
+export type FieldMorphRelationManyToOneValue = {
+  objectNameSingular: string;
+  objectNamePlural: string;
+  value?: ObjectRecord;
+  foreignKeyFieldValue: string;
+} | null;
+
+export type FieldMorphRelationOneToManyValue = {
+  objectNameSingular: string;
+  objectNamePlural: string;
+  value: ObjectRecord[];
+}[];
+
 export type Json = ZodHelperLiteral | { [key: string]: Json } | Json[];
 export type FieldJsonValue = Record<string, Json> | Json[] | null;
 
@@ -335,4 +348,5 @@ export type FieldFilesValue = {
   extension?: string;
   url?: string;
   fileCategory?: FileCategory;
+  isDeleted?: boolean;
 };

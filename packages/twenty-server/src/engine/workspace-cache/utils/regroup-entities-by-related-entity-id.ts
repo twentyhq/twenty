@@ -17,7 +17,7 @@ export const regroupEntitiesByRelatedEntityId = <T extends AllMetadataName>({
   entities,
   foreignKey,
 }: RegroupEntitiesByRelatedEntityIdArgs<T>) => {
-  const entitiesByRelatedEntityId = new Map<string, RegroupedEntity[]>();
+  const entitiesByRelatedEntityId = new Map<string, MetadataEntity<T>[]>();
 
   for (const entity of entities) {
     const currentRelatedEntityId = entity[
@@ -32,10 +32,7 @@ export const regroupEntitiesByRelatedEntityId = <T extends AllMetadataName>({
       entitiesByRelatedEntityId.set(currentRelatedEntityId, []);
     }
 
-    entitiesByRelatedEntityId.get(currentRelatedEntityId)!.push({
-      id: entity.id,
-      universalIdentifier: entity.universalIdentifier,
-    });
+    entitiesByRelatedEntityId.get(currentRelatedEntityId)!.push(entity);
   }
 
   return entitiesByRelatedEntityId;

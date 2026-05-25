@@ -1,6 +1,7 @@
 import { type PropsWithChildren, useContext, useEffect, useState } from 'react';
 
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { contextStoreFilterGroupsComponentState } from '@/context-store/states/contextStoreFilterGroupsComponentState';
@@ -12,6 +13,7 @@ import {
   type ContextStoreTargetedRecordsRule,
   contextStoreTargetedRecordsRuleComponentState,
 } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
+import { type ContextStorePageType } from 'twenty-shared/types';
 import { type ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
 import { type RecordFilterGroup } from '@/object-record/record-filter-group/types/RecordFilterGroup';
@@ -26,6 +28,7 @@ export type JestContextStoreSetterMocks = {
   contextStoreCurrentObjectMetadataNameSingular?: string;
   contextStoreCurrentViewId?: string;
   contextStoreCurrentViewType?: ContextStoreViewType;
+  contextStoreCurrentPageType?: ContextStorePageType;
 };
 
 type JestContextStoreSetterProps =
@@ -41,6 +44,7 @@ export const JestContextStoreSetter = ({
   contextStoreFilters = [],
   contextStoreFilterGroups = [],
   contextStoreCurrentViewType,
+  contextStoreCurrentPageType,
   children,
 }: JestContextStoreSetterProps) => {
   const contextStoreInstanceContext = useContext(
@@ -84,6 +88,11 @@ export const JestContextStoreSetter = ({
     instanceId,
   );
 
+  const setContextStoreCurrentPageType = useSetAtomComponentState(
+    contextStoreCurrentPageTypeComponentState,
+    instanceId,
+  );
+
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular: contextStoreCurrentObjectMetadataNameSingular,
   });
@@ -99,6 +108,7 @@ export const JestContextStoreSetter = ({
     setContextStoreFilters(contextStoreFilters);
     setContextStoreFilterGroups(contextStoreFilterGroups);
     setContextStoreCurrentViewType(contextStoreCurrentViewType ?? null);
+    setContextStoreCurrentPageType(contextStoreCurrentPageType ?? null);
     setIsLoaded(true);
   }, [
     setContextStoreTargetedRecordsRule,
@@ -114,6 +124,8 @@ export const JestContextStoreSetter = ({
     contextStoreCurrentViewId,
     setContextStoreCurrentViewType,
     contextStoreCurrentViewType,
+    setContextStoreCurrentPageType,
+    contextStoreCurrentPageType,
     setContextStoreFilterGroups,
     contextStoreFilterGroups,
   ]);

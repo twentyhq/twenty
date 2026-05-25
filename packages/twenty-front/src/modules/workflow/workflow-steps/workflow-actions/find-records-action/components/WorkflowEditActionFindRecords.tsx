@@ -1,16 +1,17 @@
 import { styled } from '@linaria/react';
-import { msg } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react/macro';
 import { isNumber } from '@sniptt/guards';
 import { useEffect, useState } from 'react';
 import { QUERY_MAX_RECORDS } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { HorizontalSeparator, useIcons } from 'twenty-ui/display';
+import { HorizontalSeparator } from 'twenty-ui/display';
 import { type JsonValue } from 'type-fest';
 import { useDebouncedCallback } from 'use-debounce';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
+import { useObjectMetadataSelectHelpers } from '@/object-metadata/hooks/useObjectMetadataSelectHelpers';
 import { useObjectPermissions } from '@/object-record/hooks/useObjectPermissions';
 import { turnSortsIntoOrderBy } from '@/object-record/object-sort-dropdown/utils/turnSortsIntoOrderBy';
 import { FormNumberFieldInput } from '@/object-record/record-field/ui/form-types/components/FormNumberFieldInput';
@@ -82,6 +83,8 @@ export const WorkflowEditActionFindRecords = ({
   actionOptions,
 }: WorkflowEditActionFindRecordsProps) => {
   const { t } = useLingui();
+  const { getSelectIconPropsFromObjectMetadataItem } =
+    useObjectMetadataSelectHelpers();
   const maxRecordsFormatted = QUERY_MAX_RECORDS.toLocaleString();
 
   const dropdownId = 'workflow-edit-action-record-find-records-object-name';
@@ -108,13 +111,11 @@ export const WorkflowEditActionFindRecords = ({
   const selectedObjectMetadataItem = objectMetadataItems.find(
     (item) => item.nameSingular === formData.objectNameSingular,
   );
-  const { getIcon } = useIcons();
-
   const selectedOption = selectedObjectMetadataItem
     ? {
-        Icon: getIcon(selectedObjectMetadataItem?.icon),
-        label: selectedObjectMetadataItem?.labelPlural,
-        value: selectedObjectMetadataItem?.nameSingular,
+        label: selectedObjectMetadataItem.labelPlural,
+        value: selectedObjectMetadataItem.nameSingular,
+        ...getSelectIconPropsFromObjectMetadataItem(selectedObjectMetadataItem),
       }
     : { label: i18n._(defaultSelectedOptionMessage), value: '' };
 

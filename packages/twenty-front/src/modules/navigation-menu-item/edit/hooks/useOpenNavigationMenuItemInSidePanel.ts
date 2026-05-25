@@ -1,4 +1,5 @@
-import { selectedNavigationMenuItemInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemInEditModeState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { SidePanelPages } from 'twenty-shared/types';
@@ -7,8 +8,11 @@ import type { IconComponent } from 'twenty-ui/display';
 
 export const useOpenNavigationMenuItemInSidePanel = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
-  const setSelectedNavigationMenuItemInEditMode = useSetAtomState(
-    selectedNavigationMenuItemInEditModeState,
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
   );
 
   const openNavigationMenuItemInSidePanel = ({
@@ -23,8 +27,9 @@ export const useOpenNavigationMenuItemInSidePanel = () => {
     focusTitleInput?: boolean;
   }) => {
     if (isDefined(itemId)) {
-      setSelectedNavigationMenuItemInEditMode(itemId);
+      setSelectedNavigationMenuItemIdInEditMode(itemId);
     }
+    setPendingInsertionNavigationMenuItem(null);
     navigateSidePanel({
       page: SidePanelPages.NavigationMenuItemEdit,
       pageTitle,

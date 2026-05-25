@@ -11,7 +11,7 @@ import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.s
 import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
 import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 @Injectable()
-export class FileAIChatService {
+export class FileAiChatService {
   constructor(
     private readonly fileStorageService: FileStorageService,
     private readonly applicationService: ApplicationService,
@@ -61,7 +61,7 @@ export class FileAIChatService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      url: await this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.AgentChat,

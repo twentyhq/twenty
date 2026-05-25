@@ -1,5 +1,5 @@
 import { addDays } from 'date-fns';
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons/SaveAndCancelButtons';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -10,6 +10,7 @@ import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyToken
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
 import { Key } from 'ts-key-enum';
@@ -17,10 +18,10 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useMutation, useQuery } from '@apollo/client/react';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
+  GetApiKeysDocument,
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -58,7 +59,10 @@ export const SettingsDevelopersApiKeysNew = () => {
     }
   }, [rolesData]);
 
-  const [createApiKey] = useMutation(CreateApiKeyDocument);
+  const [createApiKey] = useMutation(CreateApiKeyDocument, {
+    refetchQueries: [GetApiKeysDocument],
+    awaitRefetchQueries: true,
+  });
 
   const jotaiStore = useStore();
 
@@ -70,6 +74,8 @@ export const SettingsDevelopersApiKeysNew = () => {
   );
 
   const handleSave = async () => {
+    if (!formValues.name) return;
+
     const expiresAt = addDays(
       new Date(),
       formValues.expirationDate ?? 30,
@@ -84,7 +90,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     const { data: newApiKeyData } = await createApiKey({
       variables: {
         input: {
-          name: formValues.name,
+          name: formValues.name.trim(),
           expiresAt,
           roleId: roleIdToUse,
         },
@@ -115,7 +121,7 @@ export const SettingsDevelopersApiKeysNew = () => {
     }
   };
 
-  const canSave = !!formValues.name && !!formValues.roleId && createApiKey;
+  const canSave = !!formValues.name && !!formValues.roleId;
 
   if (rolesLoading) {
     return <SettingsSkeletonLoader />;
@@ -137,7 +143,7 @@ export const SettingsDevelopersApiKeysNew = () => {
       ]}
       actionButton={
         <SaveAndCancelButtons
-          isSaveDisabled={!isDefined(canSave)}
+          isSaveDisabled={!canSave}
           onCancel={() => {
             navigateSettings(SettingsPath.ApiWebhooks);
           }}

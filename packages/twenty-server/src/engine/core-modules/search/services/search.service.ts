@@ -1,19 +1,27 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import chunk from 'lodash.chunk';
-import { FieldMetadataType, ObjectRecord } from 'twenty-shared/types';
+import { OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS } from 'twenty-shared/constants';
+import {
+  FieldMetadataType,
+  FileFolder,
+  ObjectRecord,
+} from 'twenty-shared/types';
 import { getLogoUrlFromDomainName, isDefined } from 'twenty-shared/utils';
 import { Brackets, type ObjectLiteral } from 'typeorm';
 
 import { type ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import {
   decodeCursor,
   encodeCursorData,
 } from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { isQueryCanceledError } from 'src/engine/api/graphql/workspace-query-runner/utils/is-query-canceled-error.util';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
+import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { STANDARD_OBJECTS_BY_PRIORITY_RANK } from 'src/engine/core-modules/search/constants/standard-objects-by-priority-rank';
 import { type ObjectRecordFilterInput } from 'src/engine/core-modules/search/dtos/object-record-filter-input';
 import { type SearchArgs } from 'src/engine/core-modules/search/dtos/search-args';
@@ -35,7 +43,8 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 import { SEARCH_VECTOR_FIELD } from 'src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type WorkspaceRepository } from 'src/engine/twenty-orm/repository/workspace.repository';
-import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { getWorkspaceContext } from 'src/engine/twenty-orm/storage/orm-workspace-context.storage';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 
 type LastRanks = { tsRankCD: number; tsRank: number };
 
@@ -48,9 +57,11 @@ const OBJECT_METADATA_ITEMS_CHUNK_SIZE = 5;
 
 @Injectable()
 export class SearchService {
+  private readonly logger = new Logger(SearchService.name);
+
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
-    private readonly fileService: FileService,
+    private readonly fileUrlService: FileUrlService,
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
@@ -64,12 +75,10 @@ export class SearchService {
     filter,
     after,
     workspaceId,
-    rolePermissionConfig,
   }: {
     flatObjectMetadatas: FlatObjectMetadata[];
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
     workspaceId: string;
-    rolePermissionConfig?: RolePermissionConfig;
   } & SearchArgs) {
     const filteredObjectMetadataItems = this.filterObjectMetadataItems({
       flatObjectMetadatas,
@@ -90,6 +99,14 @@ export class SearchService {
         objectMetadataItemChunk.map(async (flatObjectMetadata) => {
           return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
             async () => {
+              const context = getWorkspaceContext();
+              const rolePermissionConfig =
+                resolveRolePermissionConfig({
+                  authContext: context.authContext,
+                  userWorkspaceRoleMap: context.userWorkspaceRoleMap,
+                  apiKeyRoleMap: context.apiKeyRoleMap,
+                }) ?? undefined;
+
               const repository =
                 await this.globalWorkspaceOrmManager.getRepository<ObjectRecord>(
                   workspaceId,
@@ -131,19 +148,35 @@ export class SearchService {
     includedObjectNameSingulars: string[];
     excludedObjectNameSingulars: string[];
   }) {
+    const hasExplicitInclusion = includedObjectNameSingulars.length > 0;
+
     return flatObjectMetadatas.filter(
       ({ nameSingular, isSearchable, isActive }) => {
-        if (!isSearchable) {
-          return false;
-        }
         if (!isActive) {
           return false;
         }
-        if (excludedObjectNameSingulars.includes(nameSingular)) {
+
+        if (hasExplicitInclusion) {
+          if (
+            OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS.includes(
+              nameSingular as (typeof OBJECTS_WITH_CHANNEL_VISIBILITY_CONSTRAINTS)[number],
+            )
+          ) {
+            return false;
+          }
+
+          return (
+            includedObjectNameSingulars.includes(nameSingular) &&
+            !excludedObjectNameSingulars.includes(nameSingular)
+          );
+        }
+
+        if (!isSearchable) {
           return false;
         }
-        if (includedObjectNameSingulars.length > 0) {
-          return includedObjectNameSingulars.includes(nameSingular);
+
+        if (excludedObjectNameSingulars.includes(nameSingular)) {
+          return false;
         }
 
         return true;
@@ -326,64 +359,107 @@ export class SearchService {
     limit: number;
     filter: ObjectRecordFilterInput;
   }) {
-    const queryBuilder = entityManager.createQueryBuilder();
-
-    const { flatObjectMetadataMaps } = entityManager.internalContext;
-
-    const queryParser = new GraphqlQueryParser(
-      flatObjectMetadata,
-      flatObjectMetadataMaps,
-      flatFieldMetadataMaps,
+    const timeoutMs = this.twentyConfigService.get(
+      'SEARCH_ILIKE_FALLBACK_TIMEOUT_MS',
     );
 
-    queryParser.applyFilterToBuilder(
-      queryBuilder,
-      flatObjectMetadata.nameSingular,
-      filter,
-    );
+    // Must not run inside a caller transaction: SET LOCAL is transaction-scoped
+    // and would leak into the outer transaction.
+    try {
+      return await entityManager.manager.transaction(
+        async (transactionManager) => {
+          const { queryRunner } = transactionManager;
 
-    queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+          if (!isDefined(queryRunner)) {
+            throw new Error(
+              'Expected queryRunner to be defined within transaction',
+            );
+          }
 
-    const imageIdentifierField = this.getImageIdentifierColumn(
-      flatObjectMetadata,
-      flatFieldMetadataMaps,
-    );
+          await queryRunner.query(
+            `SELECT set_config('statement_timeout', $1, true)`,
+            [String(timeoutMs)],
+          );
 
-    const fieldsToSelect = [
-      'id',
-      ...this.getLabelIdentifierColumns(
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-      ),
-      ...(imageIdentifierField ? [imageIdentifierField] : []),
-    ].map((field) => `"${field}"`);
+          const queryBuilder = entityManager.createQueryBuilder(
+            undefined,
+            queryRunner,
+          );
 
-    queryBuilder.select(fieldsToSelect);
+          const { flatObjectMetadataMaps } = entityManager.internalContext;
 
-    const searchWords = searchInput
-      .trim()
-      .split(/\s+/)
-      .filter(isNonEmptyString);
+          const queryParser = new GraphqlQueryParser(
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+          );
 
-    searchWords.forEach((word, index) => {
-      const paramName = `ilikeFallback${index}`;
+          queryParser.applyFilterToBuilder(
+            queryBuilder,
+            flatObjectMetadata.nameSingular,
+            filter,
+          );
 
-      queryBuilder.andWhere(
-        `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
-        { [paramName]: `%${escapeForIlike(word)}%` },
+          queryParser.applyDeletedAtToBuilder(queryBuilder, filter);
+
+          const imageIdentifierField = this.getImageIdentifierColumn(
+            flatObjectMetadata,
+            flatFieldMetadataMaps,
+          );
+
+          const fieldsToSelect = [
+            'id',
+            ...this.getLabelIdentifierColumns(
+              flatObjectMetadata,
+              flatFieldMetadataMaps,
+            ),
+            ...(imageIdentifierField ? [imageIdentifierField] : []),
+          ].map((field) => `"${field}"`);
+
+          queryBuilder.select(fieldsToSelect);
+
+          const searchWords = searchInput
+            .trim()
+            .split(/\s+/)
+            .filter(isNonEmptyString);
+
+          searchWords.forEach((word, index) => {
+            const paramName = `ilikeFallback${index}`;
+
+            queryBuilder.andWhere(
+              `public.unaccent_immutable("${SEARCH_VECTOR_FIELD.name}"::text) ILIKE public.unaccent_immutable(:${paramName})`,
+              { [paramName]: `%${escapeForIlike(word)}%` },
+            );
+          });
+
+          const rawResults = await queryBuilder
+            .orderBy('"id"', 'ASC')
+            .take(limit)
+            .getRawMany();
+
+          return rawResults.map((record) => ({
+            ...record,
+            tsRankCD: 0,
+            tsRank: 0,
+          }));
+        },
       );
-    });
+    } catch (error) {
+      if (isQueryCanceledError(error)) {
+        this.logger.warn(
+          `Search ILIKE fallback exceeded ${timeoutMs}ms timeout`,
+          {
+            workspaceId: entityManager.internalContext.workspaceId,
+            objectNameSingular: flatObjectMetadata.nameSingular,
+            searchInputLength: searchInput.length,
+          },
+        );
 
-    const rawResults = await queryBuilder
-      .orderBy('"id"', 'ASC')
-      .take(limit)
-      .getRawMany();
+        return [];
+      }
 
-    return rawResults.map((record) => ({
-      ...record,
-      tsRankCD: 0,
-      tsRank: 0,
-    }));
+      throw error;
+    }
   }
 
   computeCursorWhereCondition({
@@ -488,6 +564,15 @@ export class SearchService {
       return 'domainNamePrimaryLinkUrl';
     }
 
+    //TODO: Temporary solution before imageIdentifier refactor
+    if (flatObjectMetadata.nameSingular === 'person') {
+      return 'avatarFile';
+    }
+
+    if (flatObjectMetadata.nameSingular === 'workspaceMember') {
+      return 'avatarUrl';
+    }
+
     if (!flatObjectMetadata.imageIdentifierFieldMetadataId) {
       return null;
     }
@@ -504,19 +589,24 @@ export class SearchService {
     return imageIdentifierField.name;
   }
 
-  private getImageUrlWithToken(avatarUrl: string, workspaceId: string): string {
-    return this.fileService.signFileUrl({
-      url: avatarUrl,
+  private async getImageUrlWithToken(
+    avatarFileId: string,
+    fileFolder: FileFolder,
+    workspaceId: string,
+  ): Promise<string> {
+    return this.fileUrlService.signFileByIdUrl({
+      fileId: avatarFileId,
       workspaceId,
+      fileFolder,
     });
   }
 
-  getImageIdentifierValue(
+  async getImageIdentifierValue(
     record: ObjectRecord,
     flatObjectMetadata: FlatObjectMetadata,
     flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
     workspaceId: string,
-  ): string {
+  ): Promise<string> {
     const imageIdentifierField = this.getImageIdentifierColumn(
       flatObjectMetadata,
       flatFieldMetadataMaps,
@@ -529,9 +619,41 @@ export class SearchService {
       return getLogoUrlFromDomainName(record.domainNamePrimaryLinkUrl) || '';
     }
 
+    //TODO: Temporary solution before imageIdentifier refactor
+    if (flatObjectMetadata.nameSingular === 'person') {
+      const avatarFileId = (record.avatarFile as FileOutput[])?.[0]?.fileId;
+      if (!isDefined(avatarFileId)) {
+        return '';
+      }
+      return this.getImageUrlWithToken(
+        avatarFileId,
+        FileFolder.FilesField,
+        workspaceId,
+      );
+    }
+
+    if (flatObjectMetadata.nameSingular === 'workspaceMember') {
+      const avatarFileId = extractFileIdFromUrl(
+        record.avatarUrl,
+        FileFolder.CorePicture,
+      );
+      if (!isDefined(avatarFileId)) {
+        return '';
+      }
+      return this.getImageUrlWithToken(
+        avatarFileId,
+        FileFolder.CorePicture,
+        workspaceId,
+      );
+    }
+
     return imageIdentifierField &&
       isNonEmptyString(record[imageIdentifierField])
-      ? this.getImageUrlWithToken(record[imageIdentifierField], workspaceId)
+      ? this.getImageUrlWithToken(
+          record[imageIdentifierField],
+          FileFolder.FilesField,
+          workspaceId,
+        )
       : '';
   }
 
@@ -572,7 +694,7 @@ export class SearchService {
     return recordEdges;
   }
 
-  computeSearchObjectResults({
+  async computeSearchObjectResults({
     recordsWithObjectMetadataItems,
     flatFieldMetadataMaps,
     workspaceId,
@@ -584,10 +706,10 @@ export class SearchService {
     workspaceId: string;
     limit: number;
     after?: string;
-  }): SearchResultConnectionDTO {
-    const searchRecords = recordsWithObjectMetadataItems.flatMap(
+  }): Promise<SearchResultConnectionDTO> {
+    const recordPromises = recordsWithObjectMetadataItems.flatMap(
       ({ objectMetadataItem, records }) => {
-        return records.map((record) => {
+        return records.map(async (record) => {
           return {
             recordId: record.id,
             objectNameSingular: objectMetadataItem.nameSingular,
@@ -599,7 +721,7 @@ export class SearchService {
               objectMetadataItem,
               flatFieldMetadataMaps,
             ),
-            imageUrl: this.getImageIdentifierValue(
+            imageUrl: await this.getImageIdentifierValue(
               record,
               objectMetadataItem,
               flatFieldMetadataMaps,
@@ -611,6 +733,7 @@ export class SearchService {
         });
       },
     );
+    const searchRecords = await Promise.all(recordPromises);
 
     const sortedRecords = this.sortSearchObjectResults(searchRecords).slice(
       0,

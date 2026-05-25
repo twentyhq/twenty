@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeViewUniversalIdentifierAndApplicationIdNotNullableQueries } from 'src/database/typeorm/core/migrations/utils/1768213174271-makeViewUniversalIdentifierAndApplicationIdNotNullable.util';
 
-export class MakeViewUniversalIdentifierAndApplicationIdNotNullable1768213174271
-  implements MigrationInterface
-{
+export class MakeViewUniversalIdentifierAndApplicationIdNotNullable1768213174271 implements MigrationInterface {
   name = 'MakeViewUniversalIdentifierAndApplicationIdNotNullable1768213174271';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

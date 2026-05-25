@@ -1,5 +1,4 @@
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
-import { useRecordFieldsScopeContextOrThrow } from '@/object-record/record-field-list/contexts/RecordFieldsScopeContext';
 import { RecordDetailMorphRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailMorphRelationSectionDropdown';
 import { RecordDetailRelationSectionDropdown } from '@/object-record/record-field-list/record-detail-section/relation/components/RecordDetailRelationSectionDropdown';
 import {
@@ -17,15 +16,11 @@ import {
   type FieldRelationMetadata,
 } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { isFieldMorphRelation } from '@/object-record/record-field/ui/types/guards/isFieldMorphRelation';
-import { getRecordFieldCardRelationPickerDropdownId } from '@/object-record/record-show/utils/getRecordFieldCardRelationPickerDropdownId';
-import { isDropdownOpenComponentState } from '@/ui/layout/dropdown/states/isDropdownOpenComponentState';
-import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { CustomError } from 'twenty-shared/utils';
-import { IconPencil } from 'twenty-ui/display';
+import { IconPencil, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { RelationType } from '~/generated-metadata/graphql';
 
 type FieldWidgetRelationEditActionProps = {
   fieldDefinition:
@@ -34,30 +29,15 @@ type FieldWidgetRelationEditActionProps = {
   recordId: string;
 };
 
-const StyledEditButtonWrapper = styled.div<{
-  isDropdownOpen: boolean;
-  isMobile: boolean;
-}>`
-  opacity: ${({ isDropdownOpen, isMobile }) =>
-    isDropdownOpen ? '1' : isMobile ? '1' : '0'};
-  pointer-events: ${({ isDropdownOpen }) => (isDropdownOpen ? 'auto' : 'none')};
-  transition: ${({ isDropdownOpen }) =>
-    isDropdownOpen
-      ? 'none'
-      : `opacity ${themeCssVariables.animation.duration.instant}s ease`};
-
-  .widget:hover & {
-    opacity: 1;
-    pointer-events: auto;
-  }
+const StyledEditButtonWrapper = styled.div`
+  opacity: 1;
+  pointer-events: auto;
 `;
 
 export const FieldWidgetRelationEditAction = ({
   fieldDefinition,
   recordId,
 }: FieldWidgetRelationEditActionProps) => {
-  const { scopeInstanceId } = useRecordFieldsScopeContextOrThrow();
-
   const { objectMetadataItems } = useObjectMetadataItems();
   const objectMetadataItem = objectMetadataItems.find(
     (item) =>
@@ -92,26 +72,14 @@ export const FieldWidgetRelationEditAction = ({
 
   const isMorphRelation = isFieldMorphRelation(fieldDefinition);
 
-  const relationSelectionDropdownId =
-    getRecordFieldCardRelationPickerDropdownId({
-      fieldDefinition,
-      recordId,
-      instanceId: scopeInstanceId,
-    });
-
-  const isDropdownOpen = useAtomComponentStateValue(
-    isDropdownOpenComponentState,
-    relationSelectionDropdownId,
-  );
-
-  const isMobile = useIsMobile();
+  const triggerIcon =
+    fieldDefinition.metadata.relationType === RelationType.MANY_TO_ONE
+      ? IconPencil
+      : IconPlus;
 
   const dropdownTriggerClickableComponent = (
-    <StyledEditButtonWrapper
-      isDropdownOpen={isDropdownOpen}
-      isMobile={isMobile}
-    >
-      <LightIconButton Icon={IconPencil} accent="secondary" />
+    <StyledEditButtonWrapper>
+      <LightIconButton Icon={triggerIcon} accent="secondary" />
     </StyledEditButtonWrapper>
   );
 

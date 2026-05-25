@@ -1,7 +1,7 @@
 import { type ObjectRecord, RelationType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { selectPriorityFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/select-priority-field-value.util';
+import { defaultMergeFieldValue } from 'src/engine/api/graphql/graphql-query-runner/utils/default-merge-field-value.util';
 
 export const mergeRelationFieldValuesForDryRunRecord = (
   recordsWithValues: { value: unknown; recordId: string }[],
@@ -12,7 +12,7 @@ export const mergeRelationFieldValuesForDryRunRecord = (
     return mergeOneToManyRelationArrays(recordsWithValues);
   }
 
-  return selectPriorityFieldValue(
+  return defaultMergeFieldValue(
     recordsWithValues as { value: ObjectRecord | null; recordId: string }[],
     priorityRecordId,
   );

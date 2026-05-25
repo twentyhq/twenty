@@ -14,6 +14,7 @@ import {
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
 @Injectable()
 export class ApplicationRegistrationVariableService {
@@ -25,19 +26,37 @@ export class ApplicationRegistrationVariableService {
     private readonly encryptionService: SecretEncryptionService,
   ) {}
 
-  async findVariables(
+  async findVariablesWithObfuscatedValues(
     applicationRegistrationId: string,
     workspaceId: string,
-  ): Promise<ApplicationRegistrationVariableEntity[]> {
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
     await this.assertRegistrationOwnedByWorkspace(
       applicationRegistrationId,
       workspaceId,
     );
 
-    return this.variableRepository.find({
+    return this.findVariablesWithObfuscatedValuesGlobal(
+      applicationRegistrationId,
+    );
+  }
+
+  async findVariablesWithObfuscatedValuesGlobal(
+    applicationRegistrationId: string,
+  ): Promise<ApplicationRegistrationVariableDTO[]> {
+    const variables = await this.variableRepository.find({
       where: { applicationRegistrationId },
       order: { key: 'ASC' },
     });
+
+    return variables.map((variable) => ({
+      ...variable,
+      isFilled: variable.isFilled,
+      value: variable.isFilled
+        ? variable.isSecret
+          ? '•••••••••••••'
+          : this.encryptionService.decryptVersioned(variable.encryptedValue)
+        : null,
+    }));
   }
 
   async createVariable(
@@ -49,7 +68,7 @@ export class ApplicationRegistrationVariableService {
       workspaceId,
     );
 
-    const encryptedValue = this.encryptionService.encrypt(input.value);
+    const encryptedValue = this.encryptionService.encryptVersioned(input.value);
 
     const variable = this.variableRepository.create({
       applicationRegistrationId: input.applicationRegistrationId,
@@ -87,7 +106,13 @@ export class ApplicationRegistrationVariableService {
     const updateData: Record<string, unknown> = {};
 
     if (isDefined(update.value)) {
-      updateData.encryptedValue = this.encryptionService.encrypt(update.value);
+      updateData.encryptedValue = this.encryptionService.encryptVersioned(
+        update.value,
+      );
+    }
+
+    if (isDefined(update.resetValue) && update.resetValue) {
+      updateData.encryptedValue = '';
     }
 
     if (isDefined(update.description)) {
@@ -169,6 +194,46 @@ export class ApplicationRegistrationVariableService {
     } else {
       await this.variableRepository.delete({ applicationRegistrationId });
     }
+  }
+
+  async isConfiguredBatch(
+    applicationRegistrationIds: string[],
+  ): Promise<Map<string, boolean>> {
+    const variables = await this.variableRepository.find({
+      where: { applicationRegistrationId: In(applicationRegistrationIds) },
+    });
+
+    const variablesByRegistrationId = new Map<
+      string,
+      ApplicationRegistrationVariableEntity[]
+    >();
+
+    for (const variable of variables) {
+      const existing =
+        variablesByRegistrationId.get(variable.applicationRegistrationId) ?? [];
+
+      existing.push(variable);
+      variablesByRegistrationId.set(
+        variable.applicationRegistrationId,
+        existing,
+      );
+    }
+
+    const result = new Map<string, boolean>();
+
+    for (const id of applicationRegistrationIds) {
+      const registrationVariables = variablesByRegistrationId.get(id) ?? [];
+      const requiredVariables = registrationVariables.filter(
+        (v) => v.isRequired,
+      );
+
+      result.set(
+        id,
+        requiredVariables.every((v) => v.isFilled),
+      );
+    }
+
+    return result;
   }
 
   private async assertRegistrationOwnedByWorkspace(

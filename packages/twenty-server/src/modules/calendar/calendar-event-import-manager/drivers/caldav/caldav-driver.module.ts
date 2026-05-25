@@ -1,13 +1,33 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
-import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav.provider';
+import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
+import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
+import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
+import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
 import { CalDavGetEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-get-events.service';
 
 @Module({
-  imports: [SecureHttpClientModule, TwentyConfigModule],
-  providers: [CalDavClientProvider, CalDavGetEventsService],
-  exports: [CalDavGetEventsService],
+  imports: [
+    SecureHttpClientModule,
+    TwentyConfigModule,
+    ConnectedAccountTokenEncryptionModule,
+    TypeOrmModule.forFeature([ConnectedAccountEntity]),
+  ],
+  providers: [
+    CalDavClientProvider,
+    CalDavClientService,
+    CalDavFetchEventsService,
+    CalDavGetEventsService,
+  ],
+  exports: [
+    CalDavClientProvider,
+    CalDavClientService,
+    CalDavFetchEventsService,
+    CalDavGetEventsService,
+  ],
 })
 export class CalDavDriverModule {}

@@ -188,4 +188,51 @@ describe('SecretEncryptionService', () => {
       expect(result).toBe(mask);
     });
   });
+
+  describe('decryptAndMaskVersioned', () => {
+    const mask = '********';
+
+    it('round-trips a v2 envelope and applies the mask', () => {
+      const secret = 'sk-abcdefghij1234567890';
+      const encrypted = service.encryptVersioned(secret);
+
+      const result = service.decryptAndMaskVersioned({
+        value: encrypted,
+        mask,
+      });
+
+      // 23 chars, floor(23/10) = 2, min(5, 2) = 2 → first 2 chars + mask
+      expect(result).toBe(`sk${mask}`);
+    });
+
+    it('decrypts a workspace-scoped v2 envelope when given the matching workspaceId', () => {
+      const workspaceId = '11111111-1111-1111-1111-111111111111';
+      const secret = 'sk-workspace-bound-secret';
+      const encrypted = service.encryptVersioned(secret, { workspaceId });
+
+      const result = service.decryptAndMaskVersioned({
+        value: encrypted,
+        mask,
+        workspaceId,
+      });
+
+      // 25 chars, floor(25/10) = 2, min(5, 2) = 2 → first 2 chars + mask
+      expect(result).toBe(`sk${mask}`);
+    });
+
+    it('returns null/undefined values as-is', () => {
+      expect(
+        service.decryptAndMaskVersioned({
+          value: null as unknown as string,
+          mask,
+        }),
+      ).toBeNull();
+      expect(
+        service.decryptAndMaskVersioned({
+          value: undefined as unknown as string,
+          mask,
+        }),
+      ).toBeUndefined();
+    });
+  });
 });

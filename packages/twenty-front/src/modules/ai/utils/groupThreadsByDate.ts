@@ -1,29 +1,83 @@
+import { t } from '@lingui/core/macro';
+import { differenceInCalendarDays } from 'date-fns';
+
 import { type AgentChatThread } from '~/generated-metadata/graphql';
 
-import { type DateGroupKey } from '@/ai/utils/dateGroupKey';
+export type AgentChatThreadDateGroup = {
+  id: string;
+  title: string;
+  threads: AgentChatThread[];
+};
+
+const getLocalDayDifference = (date: Date, today: Date) =>
+  differenceInCalendarDays(today, date);
+
+const getMonthGroupId = (date: Date) =>
+  `month:${date.getFullYear()}-${date.getMonth() + 1}`;
+
+const formatMonthGroupTitle = (date: Date) =>
+  new Intl.DateTimeFormat(undefined, {
+    month: 'long',
+    year: 'numeric',
+  }).format(date);
+
+const getThreadDateGroup = (
+  threadActivityAt: Date,
+  today: Date,
+): Omit<AgentChatThreadDateGroup, 'threads'> => {
+  const localDayDifference = getLocalDayDifference(threadActivityAt, today);
+
+  if (localDayDifference === 0) {
+    return {
+      id: 'today',
+      title: t`Today`,
+    };
+  }
+
+  if (localDayDifference === 1) {
+    return {
+      id: 'yesterday',
+      title: t`Yesterday`,
+    };
+  }
+
+  if (localDayDifference >= 2 && localDayDifference <= 7) {
+    return {
+      id: 'previous-7-days',
+      title: t`Previous 7 days`,
+    };
+  }
+
+  return {
+    id: getMonthGroupId(threadActivityAt),
+    title: formatMonthGroupTitle(threadActivityAt),
+  };
+};
 
 export const groupThreadsByDate = (
   threads: AgentChatThread[],
-): Record<DateGroupKey, AgentChatThread[]> => {
-  const today = new Date();
-  const yesterday = new Date(today);
-  yesterday.setDate(yesterday.getDate() - 1);
+  today = new Date(),
+): AgentChatThreadDateGroup[] => {
+  const groupedThreadsByDate = new Map<string, AgentChatThreadDateGroup>();
 
-  return threads.reduce<Record<DateGroupKey, AgentChatThread[]>>(
-    (acc, thread) => {
-      const threadDate = new Date(thread.updatedAt);
-      const threadDateString = threadDate.toDateString();
+  for (const thread of threads) {
+    const threadDateGroup = getThreadDateGroup(
+      new Date(thread.lastMessageAt ?? thread.updatedAt),
+      today,
+    );
+    const existingThreadDateGroup = groupedThreadsByDate.get(
+      threadDateGroup.id,
+    );
 
-      if (threadDateString === today.toDateString()) {
-        acc.today.push(thread);
-      } else if (threadDateString === yesterday.toDateString()) {
-        acc.yesterday.push(thread);
-      } else {
-        acc.older.push(thread);
-      }
+    if (existingThreadDateGroup !== undefined) {
+      existingThreadDateGroup.threads.push(thread);
+    } else {
+      groupedThreadsByDate.set(threadDateGroup.id, {
+        ...threadDateGroup,
+        threads: [thread],
+      });
+    }
+  }
 
-      return acc;
-    },
-    { today: [], yesterday: [], older: [] },
-  );
+  return [...groupedThreadsByDate.values()];
 };

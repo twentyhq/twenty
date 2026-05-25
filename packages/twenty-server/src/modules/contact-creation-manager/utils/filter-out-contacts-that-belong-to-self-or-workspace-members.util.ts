@@ -1,6 +1,6 @@
 import { isDefined } from 'twenty-shared/utils';
 
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { type Contact } from 'src/modules/contact-creation-manager/types/contact.type';
 import { getDomainNameFromHandle } from 'src/modules/contact-creation-manager/utils/get-domain-name-from-handle.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
@@ -8,8 +8,9 @@ import { isWorkDomain } from 'src/utils/is-work-email';
 
 export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   contacts: Contact[],
-  connectedAccount: ConnectedAccountWorkspaceEntity,
+  connectedAccount: ConnectedAccountEntity,
   workspaceMembers: WorkspaceMemberWorkspaceEntity[],
+  isInternalMessagesImportEnabled: boolean = false,
 ): Contact[] {
   if (!isDefined(connectedAccount.handle)) {
     throw new Error('Connected account handle is missing');
@@ -20,7 +21,7 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
 
   const allHandles = [
     connectedAccount.handle.toLowerCase(),
-    ...(connectedAccount.handleAliases?.split(',') || []).map((handle) =>
+    ...(connectedAccount.handleAliases || []).map((handle) =>
       handle.toLowerCase(),
     ),
   ];
@@ -41,7 +42,8 @@ export function filterOutContactsThatBelongToSelfOrWorkspaceMembers(
   return contacts.filter(
     (contact) =>
       (isDifferentDomain(contact, selfDomainName) ||
-        !isWorkDomain(selfDomainName)) &&
+        !isWorkDomain(selfDomainName) ||
+        isInternalMessagesImportEnabled) &&
       // @ts-expect-error legacy noImplicitAny
       !workspaceMembersMap[contact.handle.toLowerCase()] &&
       !allHandles.includes(contact.handle.toLowerCase()),

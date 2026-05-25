@@ -1,0 +1,56 @@
+---
+title: Prezentare generală
+description: Integrează-ți aplicația în interfața Twenty — intrări în bara laterală, vizualizări salvate, file în pagina de detalii a înregistrărilor și componente React izolate.
+icon: table-columns
+---
+
+**Stratul de layout** al unei aplicații Twenty reprezintă tot ceea ce vede utilizatorul: unde apare aplicația în bara laterală, ce vizualizări de listă oferă, cum sunt aranjate paginile de detalii ale înregistrărilor și ce componente React personalizate sunt afișate în interiorul acelor pagini.
+
+```text
+   Sidebar               Record list            Record detail page
+   ───────               ───────────            ──────────────────
+   [📋 My View]    ────▶ ┌──────────┐          ┌─────────────────────┐
+   [📋 Drafts ]          │ Companies│          │ Tabs: [Overview ]   │
+   [📋 Inbox  ]          │ ──────── │          │       [Notes    ]   │
+        ▲                │  Apple   │          │       [Hello    ]◀──── definePageLayoutTab
+        │                │  Acme    │          │                     │   adds a tab...
+        └ defineNavi-    │  …       │          │  ┌────────────────┐ │
+          gationMenu-    └────▲─────┘          │  │                │ │
+          Item points         │                │  │   React UI     │◀── …with a
+          to a defineView     │                │  │  (sandboxed in │ │   defineFrontComponent
+                              └ defineView     │  │   a Worker)    │ │   widget inside
+                                picks columns  │  └────────────────┘ │
+                                and filters    └─────────────────────┘
+```
+
+## În această secțiune
+
+<CardGroup cols={2}>
+  <Card title="Vizualizări" icon="list" href="/l/ro/developers/extend/apps/layout/views">
+    `defineView` — configurații salvate pentru liste: coloane vizibile, filtre, grupuri.
+  </Card>
+  <Card title="Elemente de meniu de navigare" icon="bars" href="/l/ro/developers/extend/apps/layout/navigation-menu-items">
+    `defineNavigationMenuItem` — intrări în bara laterală care trimit către vizualizări sau URL-uri externe.
+  </Card>
+  <Card title="Layouturi de pagină" icon="table-columns" href="/l/ro/developers/extend/apps/layout/page-layouts">
+    `definePageLayout` și `definePageLayoutTab` — file și widgeturi pe pagina de detalii a unei înregistrări.
+  </Card>
+  <Card title="Componente front-end" icon="window-maximize" href="/l/ro/developers/extend/apps/layout/front-components">
+    `defineFrontComponent` — componente React izolate care rulează în interiorul Twenty.
+  </Card>
+  <Card title="Elemente din meniul de comenzi" icon="terminal" href="/l/ro/developers/extend/apps/layout/command-menu-items">
+    `defineCommandMenuItem` — înregistrează componente front-end ca intrări Cmd+K și acțiuni rapide.
+  </Card>
+</CardGroup>
+
+## Unde este afișată aplicația
+
+| Suprafață                                          | Ce controlează                                                                                          | Entitate                                  |
+| -------------------------------------------------- | ------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+| **Bară laterală**                                  | O intrare personalizată care face legătura către o vizualizare salvată sau un URL extern                | `defineNavigationMenuItem`                |
+| **Listă de înregistrări**                          | O configurație salvată pentru un obiect — coloane vizibile, ordine, filtre, grupuri                     | `defineView`                              |
+| **Pagină de detalii a unei înregistrări**          | Filele și widgeturile de pe o pagină de înregistrare (ale propriului tău obiect sau ale unuia standard) | `definePageLayout`, `definePageLayoutTab` |
+| **În interiorul oricăreia dintre cele de mai sus** | Un widget React personalizat — butoane, formulare, dashboarduri, integrări                              | `defineFrontComponent`                    |
+| **Meniul de comenzi (Cmd+K)**                      | O acțiune rapidă fixată sau o comandă ascunsă                                                           | `defineCommandMenuItem`                   |
+
+Componentele front rulează în interiorul unui Web Worker izolat folosind Remote DOM — acestea sunt redate *nativ* în pagină (nu într-un iframe), dar nu pot accesa direct pagina gazdă sau DOM-ul. Comunicarea cu Twenty se face printr-un API al gazdei bazat pe transmiterea de mesaje.

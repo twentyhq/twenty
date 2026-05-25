@@ -26,7 +26,7 @@ describe('isStripeValidProductMetadata', () => {
     const metadata: Stripe.Metadata = {
       planKey: BillingPlanKey.ENTERPRISE,
       priceUsageBased: BillingUsageType.METERED,
-      productKey: BillingProductKey.WORKFLOW_NODE_EXECUTION,
+      productKey: BillingProductKey.RESOURCE_CREDIT,
       randomKey: 'randomValue',
     };
 

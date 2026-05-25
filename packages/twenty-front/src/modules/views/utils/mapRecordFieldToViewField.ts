@@ -6,10 +6,10 @@ export const mapRecordFieldToViewField = (recordField: RecordField) => {
     id: recordField.id,
     fieldMetadataId: recordField.fieldMetadataItemId,
     isVisible: recordField.isVisible,
+    isActive: true,
     position: recordField.position,
     size: recordField.size,
     aggregateOperation: recordField.aggregateOperation,
-    isOverridden: false,
   };
 
   return viewField;

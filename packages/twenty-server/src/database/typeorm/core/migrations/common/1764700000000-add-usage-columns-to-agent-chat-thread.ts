@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddUsageColumnsToAgentChatThread1764700000000
-  implements MigrationInterface
-{
+export class AddUsageColumnsToAgentChatThread1764700000000 implements MigrationInterface {
   name = 'AddUsageColumnsToAgentChatThread1764700000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -36,6 +36,7 @@ const StyledHeader = styled.div`
 `;
 
 const StyledMenuItemList = styled.div`
+  background-color: ${themeCssVariables.background.secondary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
   margin-top: ${themeCssVariables.spacing[2]};

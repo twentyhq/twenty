@@ -134,7 +134,7 @@ export class CleanerWorkspaceService {
       throw new Error('Workspace member email is missing');
     }
 
-    this.emailService.send({
+    await this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
@@ -177,18 +177,18 @@ export class CleanerWorkspaceService {
 
     if (!dryRun) {
       for (const workspaceMember of workspaceMembers) {
+        await this.sendWarningEmail(
+          workspaceMember,
+          workspace.displayName,
+          daysSinceInactive,
+        );
+
         await this.userVarsService.set({
           userId: workspaceMember.userId,
           workspaceId: workspace.id,
           key: USER_WORKSPACE_DELETION_WARNING_SENT_KEY,
           value: true,
         });
-
-        await this.sendWarningEmail(
-          workspaceMember,
-          workspace.displayName,
-          daysSinceInactive,
-        );
       }
     }
   }
@@ -212,7 +212,7 @@ export class CleanerWorkspaceService {
       throw new Error('Workspace member email is missing');
     }
 
-    this.emailService.send({
+    await this.emailService.send({
       to: workspaceMember.userEmail,
       from: `${this.twentyConfigService.get(
         'EMAIL_FROM_NAME',
@@ -291,27 +291,49 @@ export class CleanerWorkspaceService {
     });
 
     if (workspaces.length !== 0) {
-      if (!dryRun) {
-        for (const workspace of workspaces) {
-          const userWorkspaces = await this.userWorkspaceRepository.find({
-            where: {
-              workspaceId: workspace.id,
-            },
-            withDeleted: true,
-          });
+      for (const workspace of workspaces) {
+        if (!isDefined(workspace.deletedAt)) {
+          this.logger.log(
+            `${dryRun ? 'DRY RUN - ' : ''}Soft deleting onboarding workspace ${workspace.id}`,
+          );
 
-          for (const userWorkspace of userWorkspaces) {
-            await this.workspaceService.handleRemoveWorkspaceMember(
-              workspace.id,
-              userWorkspace.userId,
-            );
+          if (!dryRun) {
+            const userWorkspaces = await this.userWorkspaceRepository.find({
+              where: {
+                workspaceId: workspace.id,
+              },
+              withDeleted: true,
+            });
+
+            for (const userWorkspace of userWorkspaces) {
+              await this.workspaceService.handleRemoveWorkspaceMember(
+                workspace.id,
+                userWorkspace.userId,
+              );
+            }
+
+            if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
+              await this.billingSubscriptionService.cancelSubscription(
+                workspace.id,
+              );
+            }
+
+            await this.workspaceService.deleteWorkspace(workspace.id, true);
           }
+        } else {
           if (this.twentyConfigService.get('IS_BILLING_ENABLED')) {
-            await this.billingSubscriptionService.deleteSubscriptions(
+            await this.billingSubscriptionService.assertSubscriptionCanceledOrNone(
               workspace.id,
             );
           }
-          await this.workspaceRepository.delete(workspace.id);
+
+          this.logger.log(
+            `${dryRun ? 'DRY RUN - ' : ''}Hard deleting onboarding workspace ${workspace.id}`,
+          );
+
+          if (!dryRun) {
+            await this.workspaceService.deleteWorkspace(workspace.id);
+          }
         }
       }
 
@@ -356,7 +378,7 @@ export class CleanerWorkspaceService {
     }
 
     await this.workspaceService.deleteWorkspace(workspace.id);
-    this.metricsService.incrementCounter({
+    void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.CronJobDeletedWorkspace,
       shouldStoreInCache: false,
     });

@@ -1,19 +1,19 @@
-import { isDefined } from 'twenty-shared/utils';
-import { type ReactNode, useContext } from 'react';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { type ReactNode, useContext } from 'react';
 
+import { ObjectMetadataIcon } from '@/object-metadata/components/ObjectMetadataIcon';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
 import { SettingsItemTypeTag } from '@/settings/components/SettingsItemTypeTag';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import {
   SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
   StyledActionTableCell,
   StyledNameTableCell,
+  StyledStickyFirstCell,
 } from '@/settings/data-model/object-details/components/SettingsObjectItemTableRowStyledComponents';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
-import { useIcons } from 'twenty-ui/display';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 export type SettingsObjectMetadataItemTableRowProps = {
@@ -58,11 +58,8 @@ export const SettingsObjectMetadataItemTableRow = ({
   link,
   totalObjectCount,
 }: SettingsObjectMetadataItemTableRowProps) => {
-  const { theme } = useContext(ThemeContext);
   const { t } = useLingui();
-
-  const { getIcon } = useIcons();
-  const Icon = getIcon(objectMetadataItem.icon);
+  const { theme } = useContext(ThemeContext);
 
   return (
     <TableRow
@@ -70,25 +67,23 @@ export const SettingsObjectMetadataItemTableRow = ({
       key={objectMetadataItem.namePlural}
       to={link}
     >
-      <StyledNameTableCell>
-        {isDefined(Icon) && (
-          <Icon
-            style={{
-              minWidth: theme.icon.size.md,
-            }}
+      <StyledStickyFirstCell>
+        <StyledNameTableCell>
+          <ObjectMetadataIcon
+            objectMetadataItem={objectMetadataItem}
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
           />
-        )}
-        <StyledNameContainer>
-          <StyledNameLabel title={objectMetadataItem.labelPlural}>
-            {objectMetadataItem.labelPlural}
-          </StyledNameLabel>
-          {!objectMetadataItem.isActive && (
-            <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
-          )}
-        </StyledNameContainer>
-      </StyledNameTableCell>
+          <StyledNameContainer>
+            <StyledNameLabel title={objectMetadataItem.labelPlural}>
+              {objectMetadataItem.labelPlural}
+            </StyledNameLabel>
+            {!objectMetadataItem.isActive && (
+              <StyledInactiveLabel>{t`Deactivated`}</StyledInactiveLabel>
+            )}
+          </StyledNameContainer>
+        </StyledNameTableCell>
+      </StyledStickyFirstCell>
       <TableCell>
         <SettingsItemTypeTag item={objectMetadataItem} />
       </TableCell>

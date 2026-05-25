@@ -1,23 +1,23 @@
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
 import { type ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context-user.type';
-import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
+import { type FlatAuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
+import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
 export { AUTH_CONTEXT_USER_SELECT_FIELDS } from 'src/engine/core-modules/auth/constants/auth-context-user-select-fields.constants';
-export { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context-user.type';
+export { type FlatAuthContextUser as AuthContextUser } from 'src/engine/core-modules/auth/types/flat-auth-context-user.type';
 
 export type RawAuthContext = {
-  user?: AuthContextUser | null | undefined;
-  apiKey?: ApiKeyEntity | null | undefined;
+  user?: FlatAuthContextUser | null | undefined;
+  apiKey?: FlatApiKey | null | undefined;
   workspaceMemberId?: string;
   workspaceMember?: WorkspaceMemberWorkspaceEntity;
-  workspace?: WorkspaceEntity;
+  workspace?: FlatWorkspace;
   application?: ApplicationEntity | null | undefined;
   userWorkspaceId?: string;
-  userWorkspace?: UserWorkspaceEntity;
+  userWorkspace?: FlatUserWorkspace;
   authProvider?: AuthProviderEnum;
   impersonationContext?: {
     impersonatorUserWorkspaceId?: string;
@@ -43,11 +43,12 @@ export enum JwtTokenTypeEnum {
   LOGIN = 'LOGIN',
   FILE = 'FILE',
   API_KEY = 'API_KEY',
-  POSTGRES_PROXY = 'POSTGRES_PROXY',
   REMOTE_SERVER = 'REMOTE_SERVER',
   KEY_ENCRYPTION_KEY = 'KEY_ENCRYPTION_KEY',
   APPLICATION_ACCESS = 'APPLICATION_ACCESS',
   APPLICATION_REFRESH = 'APPLICATION_REFRESH',
+  APP_OAUTH_STATE = 'APP_OAUTH_STATE',
+  APPROVED_ACCESS_DOMAIN = 'APPROVED_ACCESS_DOMAIN',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -137,8 +138,28 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   impersonatedUserWorkspaceId?: string;
 };
 
-export type PostgresProxyTokenJwtPayload = CommonPropertiesJwtPayload & {
-  type: JwtTokenTypeEnum.POSTGRES_PROXY;
+export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APP_OAUTH_STATE;
+  workspaceId: string;
+  connectionProviderId: string;
+  userId: string;
+  userWorkspaceId: string;
+  // 'user' = the resulting credential is private to userWorkspaceId.
+  // 'workspace' = visible to anyone in the workspace.
+  // Named `visibility` to disambiguate from OAuth `scopes` on the row.
+  visibility: 'user' | 'workspace';
+  // If set, the callback updates this existing connectedAccount row instead
+  // of creating a new one (used by the UI's "Reconnect" action).
+  reconnectingConnectedAccountId: string | null;
+  redirectLocation: string | null;
+  codeVerifier: string | null;
+};
+
+export type ApprovedAccessDomainJwtPayload = CommonPropertiesJwtPayload & {
+  type: JwtTokenTypeEnum.APPROVED_ACCESS_DOMAIN;
+  workspaceId: string;
+  approvedAccessDomainId: string;
+  domain: string;
 };
 
 export type JwtPayload =
@@ -152,4 +173,5 @@ export type JwtPayload =
   | RefreshTokenJwtPayload
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
-  | PostgresProxyTokenJwtPayload;
+  | AppOAuthStateJwtPayload
+  | ApprovedAccessDomainJwtPayload;

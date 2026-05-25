@@ -1,11 +1,20 @@
-import { type FlatApplicationVariable } from 'src/engine/core-modules/application/application-variable/types/flat-application-variable.type';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 
 describe('buildEnvVar', () => {
+  const workspaceA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
+  const workspaceB = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
+
   const mockSecretEncryptionService = {
-    encrypt: jest.fn((value: string) => `encrypted_${value}`),
-    decrypt: jest.fn((value: string) => value.replace('encrypted_', '')),
+    encryptVersioned: jest.fn(
+      (value: string, opts?: { workspaceId?: string }) =>
+        `enc:v2:deadbeef:${value}|${opts?.workspaceId ?? 'instance'}`,
+    ),
+    decryptVersioned: jest.fn(
+      (value: string, _opts?: { workspaceId?: string }) =>
+        value.replace(/^enc:v2:[0-9a-f]+:/, '').replace(/\|.*$/, ''),
+    ),
   } as unknown as SecretEncryptionService;
 
   beforeEach(() => {
@@ -18,7 +27,7 @@ describe('buildEnvVar', () => {
     expect(result).toEqual({});
   });
 
-  it('should handle mixed secret and non-secret variables', () => {
+  it('should decrypt secret variables with the row workspaceId bound to HKDF', () => {
     const flatVariables: FlatApplicationVariable[] = [
       {
         id: '1',
@@ -27,16 +36,22 @@ describe('buildEnvVar', () => {
         description: 'Public URL',
         isSecret: false,
         applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
       {
         id: '2',
         key: 'API_SECRET',
-        value: 'encrypted_secret-123',
+        value: `enc:v2:deadbeef:secret-123|${workspaceA}`,
         description: 'API secret',
         isSecret: true,
         applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -47,6 +62,9 @@ describe('buildEnvVar', () => {
         description: 'Debug flag',
         isSecret: false,
         applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -59,9 +77,54 @@ describe('buildEnvVar', () => {
       API_SECRET: 'secret-123',
       DEBUG: 'true',
     });
-    expect(mockSecretEncryptionService.decrypt).toHaveBeenCalledTimes(1);
-    expect(mockSecretEncryptionService.decrypt).toHaveBeenCalledWith(
-      'encrypted_secret-123',
+    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledTimes(
+      1,
+    );
+    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      `enc:v2:deadbeef:secret-123|${workspaceA}`,
+      { workspaceId: workspaceA },
+    );
+  });
+
+  it('routes each secret variable to its own workspace HKDF context', () => {
+    const flatVariables: FlatApplicationVariable[] = [
+      {
+        id: '1',
+        key: 'A_SECRET',
+        value: `enc:v2:deadbeef:value-a|${workspaceA}`,
+        description: '',
+        isSecret: true,
+        applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+      {
+        id: '2',
+        key: 'B_SECRET',
+        value: `enc:v2:deadbeef:value-b|${workspaceB}`,
+        description: '',
+        isSecret: true,
+        applicationId: 'app-1',
+        workspaceId: workspaceB,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
+        createdAt: '2024-01-01T00:00:00.000Z',
+        updatedAt: '2024-01-01T00:00:00.000Z',
+      },
+    ];
+
+    buildEnvVar(flatVariables, mockSecretEncryptionService);
+
+    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      `enc:v2:deadbeef:value-a|${workspaceA}`,
+      { workspaceId: workspaceA },
+    );
+    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
+      `enc:v2:deadbeef:value-b|${workspaceB}`,
+      { workspaceId: workspaceB },
     );
   });
 
@@ -74,6 +137,9 @@ describe('buildEnvVar', () => {
         description: '',
         isSecret: false,
         applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -84,6 +150,9 @@ describe('buildEnvVar', () => {
         description: '',
         isSecret: false,
         applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },
@@ -106,6 +175,9 @@ describe('buildEnvVar', () => {
         description: '',
         isSecret: false,
         applicationId: 'app-1',
+        workspaceId: workspaceA,
+        universalIdentifier: '00000000-0000-0000-0000-000000000000',
+        applicationUniversalIdentifier: '00000000-0000-0000-0000-000000000000',
         createdAt: '2024-01-01T00:00:00.000Z',
         updatedAt: '2024-01-01T00:00:00.000Z',
       },

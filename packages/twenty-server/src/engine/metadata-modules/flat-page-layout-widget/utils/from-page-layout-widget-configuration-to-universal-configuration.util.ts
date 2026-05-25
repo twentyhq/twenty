@@ -295,6 +295,32 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
       return {
         ...rest,
         newFieldDefaultVisibility,
+        viewUniversalIdentifier,
+      };
+    }
+
+    case WidgetConfigurationType.RECORD_TABLE: {
+      const { viewId, ...rest } = configuration;
+
+      let viewUniversalIdentifier: string | undefined = undefined;
+
+      if (isDefined(viewId)) {
+        viewUniversalIdentifier =
+          viewUniversalIdentifierById[viewId] ?? undefined;
+
+        if (
+          !isDefined(viewUniversalIdentifier) &&
+          shouldThrowOnMissingIdentifier
+        ) {
+          throw new FlatEntityMapsException(
+            `View universal identifier not found for id: ${viewId}`,
+            FlatEntityMapsExceptionCode.RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+          );
+        }
+      }
+
+      return {
+        ...rest,
         viewId: viewUniversalIdentifier,
       };
     }
@@ -352,6 +378,7 @@ export const fromPageLayoutWidgetConfigurationToUniversalConfiguration = ({
     case WidgetConfigurationType.WORKFLOW_RUN:
     case WidgetConfigurationType.IFRAME:
     case WidgetConfigurationType.STANDALONE_RICH_TEXT:
+    case WidgetConfigurationType.EMAIL_THREAD:
       return configuration;
   }
 };

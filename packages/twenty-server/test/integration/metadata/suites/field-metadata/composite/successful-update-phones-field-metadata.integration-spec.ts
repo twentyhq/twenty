@@ -52,12 +52,7 @@ const SUCCESSFUL_TEST_CASES: EachTestingContext<{
     title: 'phones field default value with empty values',
     context: {
       input: {
-        defaultValue: {
-          primaryPhoneNumber: "''",
-          primaryPhoneCountryCode: "''",
-          primaryPhoneCallingCode: "''",
-          additionalPhones: null,
-        },
+        defaultValue: null,
       },
     },
   },

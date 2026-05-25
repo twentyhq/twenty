@@ -8,6 +8,7 @@ export const mapDBMessagesToUIMessages = (
   return dbMessages.map((dbMessage) => ({
     id: dbMessage.id,
     role: dbMessage.role as ExtendedUIMessage['role'],
+    status: dbMessage.status as 'queued' | 'sent',
     parts: dbMessage.parts.map(mapDBPartToUIMessagePart),
     metadata: {
       createdAt: dbMessage.createdAt,

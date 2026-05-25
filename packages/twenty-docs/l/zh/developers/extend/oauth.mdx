@@ -1,0 +1,189 @@
+---
+title: OAuth
+icon: 键
+description: 采用 PKCE 的授权码流程和用于服务器到服务器访问的客户端凭证。
+---
+
+Twenty 对面向用户的应用采用授权码 + PKCE 实现 OAuth 2.0，对服务器到服务器访问采用客户端凭证。 客户端通过 [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591) 动态注册——无需在仪表板中手动设置。
+
+## 何时使用 OAuth
+
+| 场景                  | 认证方式                                                        |
+| ------------------- | ----------------------------------------------------------- |
+| 内部脚本、自动化            | [API 密钥](/l/zh/developers/extend/api#authentication)             |
+| 代表用户执行操作的外部应用       | **OAuth — 授权码**                                             |
+| 服务器到服务器，无用户上下文      | **OAuth — 客户端凭证**                                           |
+| 带有 UI 扩展的 Twenty 应用 | [应用](/l/zh/developers/extend/apps/getting-started) (OAuth 将自动处理) |
+
+## 注册客户端
+
+根据 [RFC 7591](https://datatracker.ietf.org/doc/html/rfc7591)，Twenty 支持**动态客户端注册**。 无需手动设置——以编程方式注册：
+
+```bash
+POST /oauth/register
+Content-Type: application/json
+
+{
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"],
+  "grant_types": ["authorization_code"],
+  "token_endpoint_auth_method": "client_secret_post"
+}
+```
+
+**响应:**
+
+```json
+{
+  "client_id": "abc123",
+  "client_secret": "secret456",
+  "client_name": "My Integration",
+  "redirect_uris": ["https://myapp.com/callback"]
+}
+```
+
+<Warning>
+安全存储 `client_secret`——之后无法再检索。
+</Warning>
+
+## 范围
+
+| 范围     | 访问                             |
+| ------ | ------------------------------ |
+| `api`  | 对 Core 和 Metadata API 的完全读/写访问 |
+| `个人资料` | 读取已认证用户的个人资料信息                 |
+
+以空格分隔的字符串请求范围：`scope=api profile`
+
+## 授权码流程
+
+当你的应用代表某个 Twenty 用户执行操作时，请使用此流程。
+
+### 1. 重定向用户以进行授权
+
+```
+GET /oauth/authorize?
+  client_id=YOUR_CLIENT_ID&
+  response_type=code&
+  redirect_uri=https://myapp.com/callback&
+  scope=api&
+  state=random_state_value&
+  code_challenge=CHALLENGE&
+  code_challenge_method=S256
+```
+
+| 参数                      | 必填 | 描述                                    |
+| ----------------------- | -- | ------------------------------------- |
+| `client_id`             | 是  | 你已注册的客户端 ID                           |
+| `response_type`         | 是  | 必须为 `code`                            |
+| `redirect_uri`          | 是  | 必须与已注册的重定向 URI 匹配                     |
+| `scope`                 | 否  | 以空格分隔的范围（默认为 `api`）                   |
+| `状态`                    | 推荐 | 用于防止 CSRF 攻击的随机字符串                    |
+| `code_challenge`        | 推荐 | PKCE 质询（验证器的 SHA-256 哈希，base64url 编码） |
+| `code_challenge_method` | 推荐 | 使用 PKCE 时必须为 `S256`                   |
+
+用户将看到授权同意界面，并同意或拒绝访问。
+
+### 2. 处理回调
+
+授权后，Twenty 会重定向回你的 `redirect_uri`：
+
+```
+https://myapp.com/callback?code=AUTH_CODE&state=random_state_value
+```
+
+验证 `state` 与你发送的值一致。
+
+### 3. 将授权码交换为令牌
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=authorization_code&
+code=AUTH_CODE&
+redirect_uri=https://myapp.com/callback&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+code_verifier=YOUR_PKCE_VERIFIER
+```
+
+**响应:**
+
+```json
+{
+  "access_token": "eyJhbG...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "refresh_token": "dGhpcyBpcyBh..."
+}
+```
+
+### 4. 使用访问令牌
+
+```bash
+GET /rest/companies
+Authorization: Bearer ACCESS_TOKEN
+```
+
+### 5. 过期时刷新
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=refresh_token&
+refresh_token=YOUR_REFRESH_TOKEN&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET
+```
+
+## 客户端凭证流程
+
+适用于无用户交互的服务器到服务器集成：
+
+```bash
+POST /oauth/token
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&
+client_id=YOUR_CLIENT_ID&
+client_secret=YOUR_CLIENT_SECRET&
+scope=api
+```
+
+返回的令牌具有工作区级访问权限，不绑定到任何特定用户。
+
+## 服务器发现
+
+Twenty 在标准发现端点发布其 OAuth 配置：
+
+```
+GET /.well-known/oauth-authorization-server
+```
+
+这将返回所有端点、支持的授权类型、范围和功能——有助于构建通用的 OAuth 客户端。
+
+## API 端点概览
+
+| 端点                                        | 目的       |
+| ----------------------------------------- | -------- |
+| `/.well-known/oauth-authorization-server` | 服务器元数据发现 |
+| `/oauth/register`                         | 动态客户端注册  |
+| `/oauth/authorize`                        | 用户授权     |
+| `/oauth/token`                            | 令牌交换与刷新  |
+
+| 环境      | 基础 URL                   |
+| ------- | ------------------------ |
+| **云端**  | `https://api.twenty.com` |
+| **自托管** | `https://{your-domain}`  |
+
+## OAuth 与 API 密钥对比
+
+|             | API 密钥     | OAuth       |
+| ----------- | ---------- | ----------- |
+| **设置**      | 在设置中生成     | 注册客户端并实现流程  |
+| **用户上下文**   | 无（工作区级）    | 特定用户的权限     |
+| **最适合**     | 脚本、内部工具    | 外部应用、多用户集成  |
+| **令牌轮换**    | 手动         | 通过刷新令牌自动完成  |
+| **范围限定的访问** | 完整的 API 访问 | 通过范围实现细粒度控制 |

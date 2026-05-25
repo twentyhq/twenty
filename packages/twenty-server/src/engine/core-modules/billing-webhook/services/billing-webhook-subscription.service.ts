@@ -23,8 +23,7 @@ import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/e
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { SubscriptionStatus } from 'src/engine/core-modules/billing/enums/billing-subscription-status.enum';
 import { BillingWebhookEvent } from 'src/engine/core-modules/billing/enums/billing-webhook-events.enum';
-import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { StripeCustomerService } from 'src/engine/core-modules/billing/stripe/services/stripe-customer.service';
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -32,6 +31,7 @@ import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queu
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { WorkspaceService } from 'src/engine/core-modules/workspace/services/workspace.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   CleanWorkspaceDeletionWarningUserVarsJob,
   type CleanWorkspaceDeletionWarningUserVarsJobData,
@@ -55,10 +55,10 @@ export class BillingWebhookSubscriptionService {
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
-    private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly workspaceService: WorkspaceService,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
-    private readonly stripeBillingAlertService: StripeBillingAlertService,
+    private readonly billingUsageService: BillingUsageService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
   ) {}
 
   async processStripeEvent(
@@ -137,16 +137,19 @@ export class BillingWebhookSubscriptionService {
     await this.updateBillingSubscriptionItems(
       updatedBillingSubscription.id,
       event,
+      workspaceId,
     );
+
+    await this.billingUsageService.flushAvailableCreditsFromCache(workspace.id);
+    await this.workspaceCacheService.invalidateAndRecompute(workspace.id, [
+      'billingSubscription',
+    ]);
 
     const shouldSuspend = this.shouldSuspendWorkspace(data);
 
     if (shouldSuspend) {
       if (workspace.activationStatus === WorkspaceActivationStatus.ACTIVE) {
-        await this.workspaceRepository.update(workspaceId, {
-          activationStatus: WorkspaceActivationStatus.SUSPENDED,
-          suspendedAt: new Date(),
-        });
+        await this.workspaceService.suspendWorkspace(workspaceId);
       } else if (
         workspace.activationStatus ===
         WorkspaceActivationStatus.PENDING_CREATION
@@ -171,21 +174,6 @@ export class BillingWebhookSubscriptionService {
       String(data.object.customer),
       workspaceId,
     );
-
-    if (event.type === BillingWebhookEvent.CUSTOMER_SUBSCRIPTION_CREATED) {
-      await this.billingSubscriptionService.setBillingThresholdsAndTrialPeriodWorkflowCredits(
-        updatedBillingSubscription.id,
-      );
-      const gte =
-        this.billingSubscriptionService.getTrialPeriodFreeWorkflowCredits(
-          updatedBillingSubscription,
-        );
-
-      await this.stripeBillingAlertService.createUsageThresholdAlertForCustomerMeter(
-        updatedBillingSubscription.stripeCustomerId,
-        gte,
-      );
-    }
 
     return {
       stripeSubscriptionId: data.object.id,
@@ -224,6 +212,7 @@ export class BillingWebhookSubscriptionService {
       | Stripe.CustomerSubscriptionUpdatedEvent
       | Stripe.CustomerSubscriptionCreatedEvent
       | Stripe.CustomerSubscriptionDeletedEvent,
+    workspaceId: string,
   ) {
     const deletedSubscriptionItemIds =
       getDeletedStripeSubscriptionItemIdsFromStripeSubscriptionEvent(event);
@@ -239,6 +228,7 @@ export class BillingWebhookSubscriptionService {
       transformStripeSubscriptionEventToDatabaseSubscriptionItem(
         subscriptionId,
         event.data,
+        workspaceId,
       ),
       {
         conflictPaths: ['stripeSubscriptionItemId'],

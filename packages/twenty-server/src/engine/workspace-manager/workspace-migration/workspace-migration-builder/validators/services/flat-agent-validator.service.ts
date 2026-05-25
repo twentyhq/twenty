@@ -4,7 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { AgentExceptionCode } from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+import { AiExceptionCode } from 'src/engine/metadata-modules/ai/ai.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type UniversalFlatAgent } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-agent.type';
 import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
@@ -89,7 +89,7 @@ export class FlatAgentValidatorService {
 
     if (!isDefined(existingAgent)) {
       validationResult.errors.push({
-        code: AgentExceptionCode.AGENT_NOT_FOUND,
+        code: AiExceptionCode.AGENT_NOT_FOUND,
         message: t`Agent not found`,
         userFriendlyMessage: msg`Agent not found`,
       });
@@ -106,7 +106,7 @@ export class FlatAgentValidatorService {
       })
     ) {
       validationResult.errors.push({
-        code: AgentExceptionCode.AGENT_IS_STANDARD,
+        code: AiExceptionCode.AGENT_IS_STANDARD,
         message: t`Cannot delete standard agent`,
         userFriendlyMessage: msg`Cannot delete standard agent`,
       });
@@ -140,7 +140,7 @@ export class FlatAgentValidatorService {
 
     if (!isDefined(fromFlatAgent)) {
       validationResult.errors.push({
-        code: AgentExceptionCode.AGENT_NOT_FOUND,
+        code: AiExceptionCode.AGENT_NOT_FOUND,
         message: t`Agent not found`,
         userFriendlyMessage: msg`Agent not found`,
       });
@@ -157,7 +157,7 @@ export class FlatAgentValidatorService {
       })
     ) {
       validationResult.errors.push({
-        code: AgentExceptionCode.AGENT_IS_STANDARD,
+        code: AiExceptionCode.AGENT_IS_STANDARD,
         message: t`Cannot update standard agent`,
         userFriendlyMessage: msg`Cannot update standard agent`,
       });

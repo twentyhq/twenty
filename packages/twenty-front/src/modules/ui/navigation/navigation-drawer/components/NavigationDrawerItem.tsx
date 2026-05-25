@@ -1,5 +1,4 @@
-import { NavigationMenuItemStyleIcon } from '@/navigation-menu-item/display/components/NavigationMenuItemStyleIcon';
-import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { NAVIGATION_DRAWER_COLLAPSED_WIDTH } from '@/ui/layout/resizable-panel/constants/NavigationDrawerCollapsedWidth';
 import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
 import { NavigationDrawerItemBreadcrumb } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemBreadcrumb';
@@ -21,9 +20,11 @@ import {
   Label,
   OverflowingTextWithTooltip,
   type TablerIconsProps,
+  TintedIconTile,
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
+import { MenuItemIconBoxContainer } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -92,14 +93,14 @@ const StyledItem = styled.button<StyledItemProps>`
   border-radius: ${themeCssVariables.border.radius.sm};
   box-sizing: border-box;
   color: ${({ active, isSoon, variant }) => {
+    if (variant === 'tertiary') {
+      return themeCssVariables.font.color.tertiary;
+    }
     if (active === true) {
       return themeCssVariables.font.color.primary;
     }
     if (isSoon) {
       return themeCssVariables.font.color.light;
-    }
-    if (variant === 'tertiary') {
-      return themeCssVariables.font.color.tertiary;
     }
     return themeCssVariables.font.color.secondary;
   }};
@@ -111,6 +112,7 @@ const StyledItem = styled.button<StyledItemProps>`
   height: ${themeCssVariables.spacing[7]};
   margin-top: ${({ indentationLevel }) =>
     indentationLevel === 2 ? '2px' : '0'};
+  min-width: 0;
   padding-bottom: ${themeCssVariables.spacing[1]};
   padding-left: ${themeCssVariables.spacing[1]};
   padding-right: ${({ hasRightOptions }) =>
@@ -128,7 +130,10 @@ const StyledItem = styled.button<StyledItemProps>`
 
   &:hover {
     background: ${themeCssVariables.background.transparent.light};
-    color: ${themeCssVariables.font.color.primary};
+    color: ${({ variant }) =>
+      variant === 'tertiary'
+        ? themeCssVariables.font.color.tertiary
+        : themeCssVariables.font.color.primary};
   }
 
   &:hover .keyboard-shortcuts {
@@ -136,7 +141,7 @@ const StyledItem = styled.button<StyledItemProps>`
   }
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    font-size: ${themeCssVariables.font.size.lg};
+    height: ${themeCssVariables.spacing[8]};
   }
 `;
 
@@ -157,7 +162,7 @@ const StyledLabelParent = styled.div`
 `;
 
 const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.medium};
+  font-weight: ${themeCssVariables.font.weight.regular};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
@@ -189,27 +194,13 @@ const StyledSpacer = styled.span`
   flex-grow: 1;
 `;
 
-const StyledIcon = styled.div<{
-  $backgroundColor?: string;
-  $borderColor?: string;
-}>`
+const StyledIcon = styled.div`
   align-items: center;
-  background-color: ${({ $backgroundColor }) =>
-    $backgroundColor || 'transparent'};
-  border: ${({ $backgroundColor, $borderColor }) =>
-    $backgroundColor && $borderColor ? `1px solid ${$borderColor}` : 'none'};
-  border-radius: ${({ $backgroundColor }) => ($backgroundColor ? '4px' : '0')};
-  box-sizing: ${({ $backgroundColor }) =>
-    $backgroundColor ? 'border-box' : 'content-box'};
   display: flex;
   flex-grow: 0;
   flex-shrink: 0;
-  height: ${({ $backgroundColor }) =>
-    $backgroundColor ? themeCssVariables.spacing[4] : 'auto'};
   justify-content: center;
   margin-right: ${themeCssVariables.spacing[2]};
-  width: ${({ $backgroundColor }) =>
-    $backgroundColor ? themeCssVariables.spacing[4] : 'auto'};
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -269,7 +260,7 @@ export const NavigationDrawerItem = ({
 }: NavigationDrawerItemProps) => {
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
-  const isSettingsPage = useIsSettingsPage();
+  const isExpanded = useNavigationDrawerExpanded();
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
 
@@ -332,7 +323,7 @@ export const NavigationDrawerItem = ({
         isSoon={isSoon}
         variant={variant}
         indentationLevel={indentationLevel}
-        isNavigationDrawerExpanded={isNavigationDrawerExpanded}
+        isNavigationDrawerExpanded={isExpanded}
         isDragging={isDragging}
         hasRightOptions={isDefined(rightOptions)}
         isSelectedInEditMode={isSelectedInEditMode}
@@ -354,24 +345,24 @@ export const NavigationDrawerItem = ({
           {Icon &&
             (isNonEmptyString(iconColor) ? (
               <StyledIcon>
-                <NavigationMenuItemStyleIcon Icon={Icon} color={iconColor} />
+                <TintedIconTile Icon={Icon} color={iconColor} />
               </StyledIcon>
             ) : (
               <StyledIcon>
-                <Icon
-                  style={{
-                    minWidth: theme.icon.size.md,
-                  }}
-                  size={theme.icon.size.md}
-                  stroke={theme.icon.stroke.md}
-                  color={
-                    showBreadcrumb &&
-                    !isSettingsPage &&
-                    !isNavigationDrawerExpanded
-                      ? theme.font.color.light
-                      : 'currentColor'
-                  }
-                />
+                <MenuItemIconBoxContainer>
+                  <Icon
+                    style={{
+                      minWidth: theme.icon.size.md,
+                    }}
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.md}
+                    color={
+                      showBreadcrumb && !isExpanded
+                        ? theme.font.color.light
+                        : 'currentColor'
+                    }
+                  />
+                </MenuItemIconBoxContainer>
               </StyledIcon>
             ))}
 
@@ -444,7 +435,7 @@ export const NavigationDrawerItem = ({
         </StyledItemElementsContainer>
       </StyledItem>
 
-      {!isNavigationDrawerExpanded && !isMobile && (
+      {!isExpanded && !isMobile && (
         <AppTooltip
           anchorSelect={`#${navigationItemId}`}
           content={label}

@@ -1,0 +1,566 @@
+---
+title: 逻辑函数
+description: 定义具有 HTTP、cron 和数据库事件触发器的服务端 TypeScript 函数。
+icon: bolt
+---
+
+逻辑函数是在 Twenty 平台上运行的服务端 TypeScript 函数。 它们可以由 HTTP 请求、cron 调度或数据库事件触发——也可以作为工具暴露给 AI 代理。
+
+<AccordionGroup>
+<Accordion title="defineLogicFunction" description="定义逻辑函数及其触发器">
+
+每个函数文件都使用 `defineLogicFunction()` 导出包含处理程序和可选触发器的配置。
+
+```ts src/logic-functions/createPostCard.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
+import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+
+const handler = async (params: RoutePayload) => {
+  const client = new CoreApiClient();
+  const name = 'name' in params.queryStringParameters
+    ? params.queryStringParameters.name ?? process.env.DEFAULT_RECIPIENT_NAME ?? 'Hello world'
+    : 'Hello world';
+
+  const result = await client.mutation({
+    createPostCard: {
+      __args: { data: { name } },
+      id: true,
+      name: true,
+    },
+  });
+  return result;
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'create-new-post-card',
+  timeoutSeconds: 2,
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/post-card/create',
+    httpMethod: 'GET',
+    isAuthRequired: true,
+  },
+  /*databaseEventTriggerSettings: {
+    eventName: 'people.created',
+  },*/
+  /*cronTriggerSettings: {
+    pattern: '0 0 1 1 *',
+  },*/
+});
+```
+
+可用的触发器类型：
+* **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
+> 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
+* **cron**：使用 CRON 表达式按计划运行你的函数。
+* **databaseEvent**：在工作空间对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
+> 例如 `person.updated`、`*.created`、`company.*`
+
+<Note>
+你也可以使用 CLI 手动执行函数：
+
+```bash filename="Terminal"
+yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+```
+
+```bash filename="Terminal"
+yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+```
+
+你可以通过以下方式查看日志：
+
+```bash filename="Terminal"
+yarn twenty logs
+```
+</Note>
+
+#### 路由触发器负载
+
+当路由触发器调用你的逻辑函数时，它会接收一个遵循
+[AWS HTTP API v2 格式](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)的 `RoutePayload` 对象。
+从 `twenty-sdk` 导入 `RoutePayload` 类型：
+
+```ts
+import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+
+const handler = async (event: RoutePayload) => {
+  const { headers, queryStringParameters, pathParameters, body } = event;
+  const { method, path } = event.requestContext.http;
+
+  return { message: 'Success' };
+};
+```
+
+`RoutePayload` 类型具有以下结构：
+
+  | 属性                           | 类型                                                      | 描述                                                                                                                    | 示例                                                                         |
+  | ---------------------------- | ------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+  | `headers`                    | `Record\<string, string \| undefined>` | HTTP 请求头（仅限 `forwardedRequestHeaders` 中列出的那些）                                                                         | 见下文                                                                        |
+  | `queryStringParameters`      | `Record\<string, string \| undefined>` | 查询字符串参数（多个值以逗号连接）                                                                                                     | `/users?ids=1&ids=2&ids=3&name=Alice` -> `{ ids: '1,2,3', name: 'Alice' }` |
+  | `pathParameters`             | `Record\<string, string \| undefined>` | 从路由模式中提取的路径参数                                                                                                         | `/users/:id`，`/users/123` -> `{ id: '123' }`                               |
+  | `body`                       | `object \| null`                                        | 已解析的请求体（JSON）                                                                                                         | `{ id: 1 }` -> `{ id: 1 }`                                                 |
+  | `rawBody`                    | `string \| undefined`                                   | 在 JSON 解析之前的原始 UTF-8 请求体。 用于验证 HMAC 风格的 Webhook 签名（例如 GitHub 的 `X-Hub-Signature-256`、Stripe）。 当运行时未保留它时为 `undefined`。 |                                                                            |
+  | `isBase64Encoded`            | `boolean`                                               | 请求体是否为 base64 编码                                                                                                      |                                                                            |
+  | `requestContext.http.method` | `string`                                                | HTTP 方法（GET、POST、PUT、PATCH、DELETE）                                                                                    |                                                                            |
+  | `requestContext.http.path`   | `string`                                                | 原始请求路径                                                                                                                |                                                                            |
+
+
+#### forwardedRequestHeaders
+
+出于安全原因，默认**不会**将传入请求的 HTTP 请求头传递给你的逻辑函数。
+如需访问特定请求头，请在 `forwardedRequestHeaders` 数组中显式列出：
+
+```ts
+export default defineLogicFunction({
+  universalIdentifier: 'e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf',
+  name: 'webhook-handler',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/webhook',
+    httpMethod: 'POST',
+    isAuthRequired: false,
+    forwardedRequestHeaders: ['x-webhook-signature', 'content-type'],
+  },
+});
+```
+
+在你的处理程序中，可以这样访问被转发的请求头：
+
+```ts
+const handler = async (event: RoutePayload) => {
+  const signature = event.headers['x-webhook-signature'];
+  const contentType = event.headers['content-type'];
+
+  // Validate webhook signature...
+  return { received: true };
+};
+```
+
+<Note>
+请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
+</Note>
+
+#### 将函数公开为 AI 工具或工作流操作
+
+逻辑函数可以在两个入口对外公开，每个入口都有各自的触发器：
+
+* **`toolTriggerSettings`** — 使该函数可被 Twenty 的 AI 功能（chat、MCP、function calling）发现。 使用标准 JSON Schema，LLM 能够原生理解的格式。
+* **`workflowActionTriggerSettings`** — 使该函数在可视化工作流构建器中显示为一个步骤。 使用 Twenty 丰富的 `InputSchema`，以便构建器可以呈现合适的字段编辑器、变量选择器和标签。
+
+函数可以选择加入其中一个、另一个，或两者都加入。 它们与 `cronTriggerSettings`、`databaseEventTriggerSettings` 和 `httpRouteTriggerSettings` 并列 — 相同的模式、相同的结构。
+
+```ts src/logic-functions/enrich-company.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const handler = async (params: { companyName: string; domain?: string }) => {
+  const client = new CoreApiClient();
+
+  const result = await client.mutation({
+    createTask: {
+      __args: {
+        data: {
+          title: `Enrich data for ${params.companyName}`,
+          body: `Domain: ${params.domain ?? 'unknown'}`,
+        },
+      },
+      id: true,
+    },
+  });
+
+  return { taskId: result.createTask.id };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  name: 'enrich-company',
+  description: 'Enrich a company record with external data',
+  timeoutSeconds: 10,
+  handler,
+  toolTriggerSettings: {},
+});
+```
+
+关键点：
+
+* 函数可以混用这些入口 — 同时声明 `toolTriggerSettings` 和 `workflowActionTriggerSettings`，即可在 chat 和工作流构建器中同时公开它。
+* `toolTriggerSettings.inputSchema` 和 `workflowActionTriggerSettings.inputSchema` 均为可选。 如果省略，清单构建器会根据处理器源代码进行推断（AI 工具使用 JSON Schema，工作流操作使用 Twenty 的 `InputSchema`）。 当你需要更丰富的类型时，可显式提供一个 — 例如，在工作流构建器中使用对 `FieldMetadataType` 友好的字段（如 `CURRENCY` 或 `RELATION`），或提供 AI 代理可读取的 `description` 字段：
+
+```ts
+export default defineLogicFunction({
+  ...,
+  toolTriggerSettings: {
+    inputSchema: {
+      type: 'object',
+      properties: {
+        companyName: {
+          type: 'string',
+          description: 'The name of the company to enrich',
+        },
+        domain: {
+          type: 'string',
+          description: 'The company website domain (optional)',
+        },
+      },
+      required: ['companyName'],
+    },
+  },
+});
+```
+
+<Note>
+**写一个好的 `description`。** AI 智能体会依赖该函数的 `description` 字段来决定何时使用该工具。 明确说明该工具的作用以及应在何时调用。
+</Note>
+
+</Accordion>
+<Accordion title="definePostInstallLogicFunction" description="定义一个安装后逻辑函数（每个应用一个）">
+
+安装后函数是在你的应用安装到工作区后自动运行的逻辑函数。 服务器会在应用的元数据已同步并已生成 SDK 客户端**之后**执行它，因此工作区已完全可用，且新架构已就绪。 常见用例包括预置默认数据、创建初始记录、配置工作区设置，或在第三方服务上预配资源。
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Post install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Runs after installation to set up the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  shouldRunSynchronously: false,
+  handler,
+});
+```
+
+你也可以随时使用 CLI 手动执行安装后函数：
+
+```bash filename="Terminal"
+yarn twenty exec --postInstall
+```
+
+关键点：
+* 安装后函数使用 `definePostInstallLogicFunction()` — 这是一个省略触发器设置（`cronTriggerSettings`、`databaseEventTriggerSettings`、`httpRouteTriggerSettings`、`toolTriggerSettings`、`workflowActionTriggerSettings`）的专用变体。
+* 处理程序会接收一个 `InstallPayload`，其为 `{ previousVersion?: string; newVersion: string }` —— `newVersion` 是正在安装的版本，而 `previousVersion` 是先前已安装的版本（在全新安装时为 `undefined`）。 使用这些值来区分全新安装与升级，并运行特定版本的迁移逻辑。
+* **钩子何时运行**：默认情况下，仅在全新安装时运行。 如果还希望在应用从旧版本升级时运行，请传入 `shouldRunOnVersionUpgrade: true`。 若省略，该标志默认为 `false`，升级将跳过该钩子。
+* **执行模型 — 默认异步，可选择同步**：`shouldRunSynchronously` 标志控制安装后*如何*执行。
+  * `shouldRunSynchronously: false` *(默认)* — 该钩子会**加入消息队列**，设置 `retryLimit: 3`，并在工作线程中异步运行。 作业一入列，安装响应即返回，因此缓慢或失败的处理程序不会阻塞调用方。 工作线程最多会重试三次。 **将其用于长时间运行的作业**——预填充大型数据集、调用缓慢的第三方 API、预配外部资源，以及任何可能超出合理 HTTP 响应窗口的任务。
+  * `shouldRunSynchronously: true` — 该钩子会在安装流程中**内联执行**（与安装前使用相同的执行器）。 安装请求将阻塞直至处理程序完成；若抛出异常，安装调用方将收到 `POST_INSTALL_ERROR`。 不进行自动重试。 **用于需要在响应前完成的快速工作**——例如向用户返回验证错误，或进行安装调用返回后客户端将立即依赖的快速设置。 请注意，运行安装后时，元数据迁移已应用完成，因此同步模式下的失败**不会**回滚架构更改——它只会暴露错误。
+* 确保你的处理程序是幂等的。 在异步模式下，队列最多可重试三次；在任一模式下，当 `shouldRunOnVersionUpgrade: true` 时，该钩子在升级时可能再次运行。
+* 在处理程序内可使用环境变量 `APPLICATION_ID`、`APP_ACCESS_TOKEN` 和 `API_URL`（与其他逻辑函数相同），因此你可以使用作用域限定到你应用的应用访问令牌调用 Twenty API。
+* 每个应用仅允许一个安装后函数。 如果检测到多个，清单构建将报错。
+* 构建期间，函数的 `universalIdentifier`、`shouldRunOnVersionUpgrade` 和 `shouldRunSynchronously` 会自动附加到应用清单的 `postInstallLogicFunction` 字段下——你无需在 `defineApplication()` 中引用它们。
+* 默认超时时间设置为 300 秒（5 分钟），以便支持更长的设置任务，如数据填充。
+* **开发模式下不执行**：当应用在本地注册（通过 `yarn twenty dev`）时，服务器会完全跳过安装流程，并通过 CLI 监视器直接同步文件——因此无论 `shouldRunSynchronously` 如何，安装后在开发模式下都不会运行。 使用 `yarn twenty exec --postInstall` 在运行中的工作区上手动触发它。
+
+</Accordion>
+<Accordion title="definePreInstallLogicFunction" description="定义一个安装前逻辑函数（每个应用一个）">
+
+安装前函数是在安装期间自动运行的逻辑函数，**在应用工作区元数据迁移之前**。 它与安装后共享相同的负载结构（`InstallPayload`），但在安装流程中位置更早，因此可以准备即将到来的迁移所依赖的状态——典型用例如备份数据、验证与新架构的兼容性，或归档即将被重构或删除的记录。
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+
+const handler = async (payload: InstallPayload): Promise<void> => {
+  console.log('Pre install logic function executed successfully!', payload.previousVersion);
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Runs before installation to prepare the application.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+你也可以随时使用 CLI 手动执行安装前函数：
+
+```bash filename="Terminal"
+yarn twenty exec --preInstall
+```
+
+关键点：
+* 安装前函数使用 `definePreInstallLogicFunction()`——与安装后相同的专用配置，只是附加到不同的生命周期阶段。
+* 安装前和安装后处理程序接收相同的 `InstallPayload` 类型：`{ previousVersion?: string; newVersion: string }`。 导入一次，可在两个钩子中复用。
+* **钩子何时运行**：位于工作区元数据迁移（`synchronizeFromManifest`）之前。 在执行之前，服务器会运行一次纯增量的“精简同步”，将**新**版本的安装前函数注册到工作区元数据中——不会触及其他任何内容——然后再执行它。 由于此次同步仅为增量操作，当你的处理程序运行时，上一版本的对象、字段和数据仍完好无损：你可以安全地读取并备份迁移前的状态。
+* **执行模型**：安装前以**同步**方式执行，并且**会阻塞安装**。 如果处理程序抛出异常，安装会在任何架构更改应用之前被中止——工作区将保持在上一版本且处于一致状态。 这是有意为之：安装前是你拒绝高风险升级的最后机会。
+* 与安装后相同，每个应用仅允许一个安装前函数。 在构建期间，它会自动附加到应用清单的 `preInstallLogicFunction` 下。
+* **开发模式下不执行**：与安装后相同——对于本地注册的应用将完全跳过安装流程，因此在 `yarn twenty dev` 下不会运行安装前。 使用 `yarn twenty exec --preInstall` 手动触发它。
+
+</Accordion>
+<Accordion title="安装前 vs 安装后：何时使用哪一个" description="选择合适的安装钩子">
+
+两个钩子都属于同一安装流程，并接收相同的 `InstallPayload`。 区别在于它们相对于工作区元数据迁移**何时**运行，这会影响它们可以安全访问的数据范围。
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ install flow                                                │
+│                                                             │
+│   upload package → [pre-install] → metadata migration →     │
+│   generate SDK → [post-install]                             │
+│                                                             │
+│                  old schema visible    new schema visible   │
+└─────────────────────────────────────────────────────────────┘
+```
+
+安装前始终为**同步**（会阻塞安装并可中止它）。 安装后**默认异步**——在工作线程中入列并自动重试——但可通过 `shouldRunSynchronously: true` 选择同步执行。 关于各模式的使用场景，请参见上方的 `definePostInstallLogicFunction` 折叠面板。
+
+**对于需要新架构已存在的任何事项，请使用 `post-install`。** 这是最常见的情况：
+
+* 针对新添加的对象和字段预填充默认数据（创建初始记录、默认视图、演示内容）。
+* 在应用已有凭据的前提下，向第三方服务注册 Webhook。
+* 调用你自己的 API 完成依赖已同步元数据的设置。
+* 用于在每次升级时对状态进行对账的幂等“确保其存在”逻辑——结合 `shouldRunOnVersionUpgrade: true` 使用。
+
+示例——在安装后预填充一个默认的 `PostCard` 记录：
+
+```ts src/logic-functions/post-install.ts
+import { definePostInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion }: InstallPayload): Promise<void> => {
+  if (previousVersion) return; // fresh installs only
+
+  const client = createClient();
+  await client.postCard.create({
+    data: { title: 'Welcome to Postcard', content: 'Your first card!' },
+  });
+};
+
+export default definePostInstallLogicFunction({
+  universalIdentifier: 'f7a2b9c1-3d4e-5678-abcd-ef9876543210',
+  name: 'post-install',
+  description: 'Seeds a welcome post card after install.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: false,
+  handler,
+});
+```
+
+**当迁移可能破坏或损坏现有数据时，请使用 `pre-install`。** 由于安装前在*先前*架构上运行，且其失败会回滚升级，因此凡是有风险的操作都应放在这里：
+
+* **备份即将被删除或重构的数据**——例如，你在 v2 中移除某个字段，需要在迁移运行前将其值复制到另一个字段或导出到存储中。
+* **归档会被新约束判为无效的记录**——例如某个字段将变为 `NOT NULL`，你需要先删除或修正具有空值的行。
+* **验证兼容性；若当前数据无法干净迁移则拒绝升级**——从处理程序中抛出异常，安装将中止且不会应用任何更改。 这比在迁移中途才发现不兼容要更安全。
+* **在会导致关联丢失的架构更改之前**对数据进行重命名或重新设置键。
+
+示例——在破坏性迁移之前归档记录：
+
+```ts src/logic-functions/pre-install.ts
+import { definePreInstallLogicFunction, type InstallPayload } from 'twenty-sdk/define';
+import { createClient } from './generated/client';
+
+const handler = async ({ previousVersion, newVersion }: InstallPayload): Promise<void> => {
+  // Only the 1.x → 2.x upgrade drops the legacy `notes` field.
+  if (!previousVersion?.startsWith('1.') || !newVersion.startsWith('2.')) {
+    return;
+  }
+
+  const client = createClient();
+  const legacyRecords = await client.postCard.findMany({
+    where: { notes: { isNotNull: true } },
+  });
+
+  if (legacyRecords.length === 0) return;
+
+  // Copy legacy `notes` into the new `description` field before the migration
+  // drops the `notes` column. If this fails, the upgrade is aborted and the
+  // workspace stays on v1 with all data intact.
+  await Promise.all(
+    legacyRecords.map((record) =>
+      client.postCard.update({
+        where: { id: record.id },
+        data: { description: record.notes },
+      }),
+    ),
+  );
+};
+
+export default definePreInstallLogicFunction({
+  universalIdentifier: 'a1b2c3d4-5678-90ab-cdef-1234567890ab',
+  name: 'pre-install',
+  description: 'Backs up legacy notes into description before the v2 migration.',
+  timeoutSeconds: 300,
+  shouldRunOnVersionUpgrade: true,
+  handler,
+});
+```
+
+**经验法则：**
+
+| 你想要...                  | 使用                                                            |
+| ----------------------- | ------------------------------------------------------------- |
+| 预填充默认数据、配置工作区、注册外部资源    | `post-install`                                                |
+| 运行不应阻塞安装响应的长时间预填充或第三方调用 | `post-install` (默认 — `shouldRunSynchronously: false`，由工作线程重试) |
+| 运行安装调用返回后调用方将立即依赖的快速设置  | `post-install`，配合 `shouldRunSynchronously: true`              |
+| 读取或备份即将被迁移丢失的数据         | `pre-install`                                                 |
+| 拒绝会损坏现有数据的升级            | `pre-install`（从处理程序中抛出异常）                                     |
+| 在每次升级时执行对账              | `post-install` 配合 `shouldRunOnVersionUpgrade: true`           |
+| 仅在首次安装时执行一次性设置          | `post-install` 配合 `shouldRunOnVersionUpgrade: false`（默认）      |
+
+<Note>
+如有不确定，默认选择**安装后（post-install）**。 仅当迁移本身具有破坏性，且你需要在其丢失之前拦截先前状态时，才使用安装前。
+</Note>
+
+</Accordion>
+</AccordionGroup>
+
+## 类型化 API 客户端（`twenty-client-sdk`）
+
+`twenty-client-sdk` 包提供了两个类型化的 GraphQL 客户端，供你的逻辑函数和前端组件与 Twenty API 交互。
+
+| 客户端                 | 导入                           | 端点                       | 是否生成？     |
+| ------------------- | ---------------------------- | ------------------------ | --------- |
+| `CoreApiClient`     | `twenty-client-sdk/core`     | `/graphql`——工作区数据（记录、对象） | 是，在开发/构建时 |
+| `MetadataApiClient` | `twenty-client-sdk/metadata` | `/metadata`——工作区配置、文件上传  | 否，已预构建提供  |
+
+<AccordionGroup>
+<Accordion title="CoreApiClient" description="查询和变更工作区数据（记录、对象）">
+
+`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty build` 时**根据你的工作区架构生成**，因此完全类型化以匹配你的对象和字段。
+
+```ts
+import { CoreApiClient } from 'twenty-client-sdk/core';
+
+const client = new CoreApiClient();
+
+// Query records
+const { companies } = await client.query({
+  companies: {
+    edges: {
+      node: {
+        id: true,
+        name: true,
+        domainName: {
+          primaryLinkLabel: true,
+          primaryLinkUrl: true,
+        },
+      },
+    },
+  },
+});
+
+// Create a record
+const { createCompany } = await client.mutation({
+  createCompany: {
+    __args: {
+      data: {
+        name: 'Acme Corp',
+      },
+    },
+    id: true,
+    name: true,
+  },
+});
+```
+
+该客户端使用选择集语法：传入 `true` 以包含某字段，使用 `__args` 传递参数，并通过嵌套对象表示关系。 你将基于工作区架构获得完整的自动补全和类型检查。
+
+<Note>
+**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
+</Note>
+
+#### 使用 CoreSchema 进行类型标注
+
+`CoreSchema` 提供与工作区对象相匹配的 TypeScript 类型，可用于为组件状态或函数参数进行类型标注：
+
+```ts
+import { CoreApiClient, CoreSchema } from 'twenty-client-sdk/core';
+import { useState } from 'react';
+
+const [company, setCompany] = useState<
+  Pick<CoreSchema.Company, 'id' | 'name'> | undefined
+>(undefined);
+
+const client = new CoreApiClient();
+const result = await client.query({
+  company: {
+    __args: { filter: { position: { eq: 1 } } },
+    id: true,
+    name: true,
+  },
+});
+setCompany(result.company);
+```
+
+</Accordion>
+<Accordion title="MetadataApiClient" description="工作区配置、应用和文件上传">
+
+`MetadataApiClient` 随 SDK 一并提供，已预构建（无需生成）。 它会查询 `/metadata` 端点以获取工作区配置、应用和文件上传。
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+
+const metadataClient = new MetadataApiClient();
+
+// List first 10 objects in the workspace
+const { objects } = await metadataClient.query({
+  objects: {
+    edges: {
+      node: {
+        id: true,
+        nameSingular: true,
+        namePlural: true,
+        labelSingular: true,
+        isCustom: true,
+      },
+    },
+    __args: {
+      filter: {},
+      paging: { first: 10 },
+    },
+  },
+});
+```
+
+#### 上传文件
+
+`MetadataApiClient` 包含一个 `uploadFile` 方法，用于将文件附加到文件类型字段：
+
+```ts
+import { MetadataApiClient } from 'twenty-client-sdk/metadata';
+import * as fs from 'fs';
+
+const metadataClient = new MetadataApiClient();
+
+const fileBuffer = fs.readFileSync('./invoice.pdf');
+
+const uploadedFile = await metadataClient.uploadFile(
+  fileBuffer,                                         // file contents as a Buffer
+  'invoice.pdf',                                      // filename
+  'application/pdf',                                  // MIME type
+  '58a0a314-d7ea-4865-9850-7fb84e72f30b',            // field universalIdentifier
+);
+
+console.log(uploadedFile);
+// { id: '...', path: '...', size: 12345, createdAt: '...', url: 'https://...' }
+```
+
+| 参数                                 | 类型       | 描述                                           |
+| ---------------------------------- | -------- | -------------------------------------------- |
+| `fileBuffer`                       | `Buffer` | 原始文件内容                                       |
+| `filename`                         | `string` | 文件名称（用于存储和显示）                                |
+| `contentType`                      | `string` | MIME 类型（如果省略，默认为 `application/octet-stream`） |
+| `fieldMetadataUniversalIdentifier` | `string` | 你的对象上文件类型字段的 `universalIdentifier`           |
+
+关键点：
+* 使用字段的 `universalIdentifier`（而不是其工作区特定的 ID），因此你的上传代码可在安装了你的应用的任何工作区中运行。
+* 返回的 `url` 是一个签名 URL，你可以用它来访问已上传的文件。
+
+</Accordion>
+</AccordionGroup>
+
+<Note>
+  当你的代码在 Twenty 上运行（逻辑函数或前端组件）时，平台会以环境变量的形式注入凭据：
+
+  * `TWENTY_API_URL`——Twenty API 的基础 URL
+  * `TWENTY_APP_ACCESS_TOKEN`——作用域限定为你的应用默认函数角色的短期密钥
+
+  你无需将这些值传递给客户端——它们会自动从 `process.env` 读取。 API 密钥的权限由你的 `application-config.ts` 中 `defaultRoleUniversalIdentifier` 引用的角色决定。
+</Note>

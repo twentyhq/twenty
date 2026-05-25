@@ -1,0 +1,489 @@
+---
+title: Componentes de front-end
+description: Crie componentes React que renderizam dentro da UI do Twenty com isolamento em sandbox.
+icon: window-maximize
+---
+
+Componentes de front-end são componentes React que renderizam diretamente dentro da UI do Twenty. Eles são executados em um Web Worker isolado usando Remote DOM — seu código é sandboxed, mas renderiza nativamente na página, não em um iframe.
+
+## Onde os componentes de front-end podem ser usados
+
+Os componentes de front-end podem ser renderizados em dois locais dentro do Twenty:
+
+* **Painel lateral** — Componentes de front-end não headless abrem no painel lateral direito. Este é o comportamento padrão quando um componente de front-end é acionado pelo menu de comandos.
+* **Widgets (painéis e páginas de registro)** — Componentes de front-end podem ser incorporados como widgets nos layouts de página. Ao configurar um painel ou o layout de uma página de registro, os usuários podem adicionar um widget de componente de front-end.
+
+## Exemplo básico
+
+A maneira mais rápida de ver um componente de front-end em ação é registrá-lo como um **item do menu de comando**. Use `defineCommandMenuItem` em um arquivo separado para fazer o componente aparecer como um botão de ação rápida no canto superior direito da página:
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+Após sincronizar com `yarn twenty dev` (ou executando uma única vez o `yarn twenty dev --once`), a ação rápida aparece no canto superior direito da página:
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="Botão de ação rápida no canto superior direito" />
+</div>
+
+Clique nele para renderizar o componente inline.
+
+## Campos de configuração
+
+| Campo                 | Obrigatório | Descrição                                                                    |
+| --------------------- | ----------- | ---------------------------------------------------------------------------- |
+| `universalIdentifier` | Sim         | ID único e estável para este componente                                      |
+| `component`           | Sim         | Uma função de componente React                                               |
+| `name`                | Não         | Nome de Exibição                                                             |
+| `description`         | Não         | Descrição do que o componente faz                                            |
+| `isHeadless`          | Não         | Defina como `true` se o componente não tiver interface visível (veja abaixo) |
+
+## Colocando um componente de front-end em uma página
+
+Além de comandos, você pode incorporar um componente de front-end diretamente em uma página de registro adicionando-o como um widget em um **layout de página**. Veja a seção [definePageLayout](/l/pt/developers/extend/apps/skills-and-agents#definepagelayout) para obter detalhes.
+
+## Headless vs não headless
+
+Os componentes de front-end têm dois modos de renderização controlados pela opção `isHeadless`:
+
+**Não headless (padrão)** — O componente renderiza uma interface visível. Quando acionado pelo menu de comandos, ele é aberto no painel lateral. Este é o comportamento padrão quando `isHeadless` é `false` ou omitido.
+
+**Headless (`isHeadless: true`)** — O componente é montado de forma invisível em segundo plano. Ele não abre o painel lateral. Componentes headless são projetados para ações que executam lógica e, em seguida, se desmontam — por exemplo, executar uma tarefa assíncrona, navegar para uma página ou exibir um modal de confirmação. Eles se combinam naturalmente com os componentes Command do SDK descritos abaixo.
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+Como o componente retorna `null`, o Twenty ignora renderizar um contêiner para ele — nenhum espaço vazio aparece no layout. O componente ainda tem acesso a todos os hooks e à API de comunicação do host.
+
+## Componentes Command do SDK
+
+O pacote `twenty-sdk` fornece quatro componentes auxiliares Command projetados para componentes de front-end headless. Cada componente executa uma ação ao montar, trata erros exibindo uma notificação de snackbar e desmonta automaticamente o componente de front-end ao concluir.
+
+Importe-os de `twenty-sdk/command`:
+
+* **`Command`** — Executa um callback assíncrono via a prop `execute`.
+* **`CommandLink`** — Navega para um caminho do app. Props: `to`, `params`, `queryParams`, `options`.
+* **`CommandModal`** — Abre um modal de confirmação. Se o usuário confirmar, executa o callback `execute`. Props: `title`, `subtitle`, `execute`, `confirmButtonText`, `confirmButtonAccent`.
+* **`CommandOpenSidePanelPage`** — Abre uma página específica do painel lateral. Props: `page`, `pageTitle`, `pageIcon`.
+
+Aqui está um exemplo completo de um componente de front-end headless usando `Command` para executar uma ação a partir do menu de comandos:
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+E um exemplo usando `CommandModal` para solicitar confirmação antes de executar:
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## Acessando o contexto de execução
+
+Dentro do seu componente, use hooks do SDK para acessar o usuário atual, o registro e a instância do componente:
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+Hooks disponíveis:
+
+| Hook                                          | Retorna            | Descrição                                                                           |
+| --------------------------------------------- | ------------------ | ----------------------------------------------------------------------------------- |
+| `useUserId()`                                 | `string` ou `null` | O ID do usuário atual                                                               |
+| `useSelectedRecordIds()`                      | `string[]`         | Todos os IDs dos registros selecionados (array vazio se nenhum estiver selecionado) |
+| `useRecordId()`                               | `string` ou `null` | **Obsoleto.** Use `useSelectedRecordIds()` em vez disso                             |
+| `useFrontComponentId()`                       | `string`           | O ID desta instância do componente                                                  |
+| `useFrontComponentExecutionContext(selector)` | varia              | Acesse o contexto de execução completo com uma função seletora                      |
+
+## API de comunicação do host
+
+Componentes de front-end podem acionar navegação, modais e notificações usando funções de `twenty-sdk`:
+
+| Função                                          | Descrição                             |
+| ----------------------------------------------- | ------------------------------------- |
+| `navigate(to, params?, queryParams?, options?)` | Navegar para uma página no app        |
+| `openSidePanelPage(params)`                     | Abrir um painel lateral               |
+| `closeSidePanel()`                              | Fechar o painel lateral               |
+| `openCommandConfirmationModal(params)`          | Mostrar um diálogo de confirmação     |
+| `enqueueSnackbar(params)`                       | Mostrar uma notificação do tipo toast |
+| `unmountFrontComponent()`                       | Desmontar o componente                |
+| `updateProgress(progress)`                      | Atualizar um indicador de progresso   |
+
+Aqui está um exemplo que usa a API do host para exibir um snackbar e fechar o painel lateral após a conclusão de uma ação:
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### Trabalhando com vários registros
+
+Use `useSelectedRecordIds()` para lidar com vários registros selecionados. Isso é útil para operações em lote:
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## defineCommandMenuItem
+
+Use `defineCommandMenuItem` para registrar um componente de front-end no menu de comando (Cmd+K). Se `isPinned` for `true`, ele também aparece como um botão de ação rápida no canto superior direito da página.
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+| Campo                                   | Obrigatório | Descrição                                                                                                                                                                                            |
+| --------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | Sim         | ID exclusivo e estável para o comando                                                                                                                                                                |
+| `label`                                 | Sim         | Rótulo completo exibido no menu de comandos (Cmd+K)                                                                                                                                                  |
+| `frontComponentUniversalIdentifier`     | Sim         | O `universalIdentifier` do componente de front-end que este comando abre                                                                                                                             |
+| `shortLabel`                            | Não         | Rótulo mais curto exibido no botão fixado de ação rápida                                                                                                                                             |
+| `icon`                                  | Não         | Nome do ícone exibido ao lado do rótulo (por exemplo, `'IconBolt'`, `'IconSend'`)                                                                                                                    |
+| `isPinned`                              | Não         | Quando `true`, mostra o comando como um botão de ação rápida no canto superior direito da página                                                                                                     |
+| `availabilityType`                      | Não         | Controla onde o comando aparece: `'GLOBAL'` (sempre disponível), `'RECORD_SELECTION'` (apenas quando registros estão selecionados) ou `'FALLBACK'` (exibido quando nenhum outro comando corresponde) |
+| `availabilityObjectUniversalIdentifier` | Não         | Restringe o comando a páginas de um tipo específico de objeto (por exemplo, somente em registros de Company)                                                                                         |
+| `conditionalAvailabilityExpression`     | Não         | Uma expressão booleana para controlar dinamicamente se o comando é visível (veja abaixo)                                                                                                             |
+
+## Expressões de disponibilidade condicional
+
+O campo `conditionalAvailabilityExpression` permite controlar quando um comando é visível com base no contexto da página atual. Importe variáveis tipadas e operadores de `twenty-sdk` para construir expressões:
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+**Variáveis de contexto** — representam o estado atual da página:
+
+| Variável                       | Tipo      | Descrição                                                                   |
+| ------------------------------ | --------- | --------------------------------------------------------------------------- |
+| `pageType`                     | `string`  | Tipo de página atual (por exemplo, `'RecordIndexPage'`, `'RecordShowPage'`) |
+| `isInSidePanel`                | `boolean` | Se o componente é renderizado em um painel lateral                          |
+| `numberOfSelectedRecords`      | `number`  | Número de registros atualmente selecionados                                 |
+| `isSelectAll`                  | `boolean` | Se "selecionar tudo" está ativo                                             |
+| `selectedRecords`              | `array`   | Os objetos de registro selecionados                                         |
+| `favoriteRecordIds`            | `array`   | IDs dos registros marcados como favoritos                                   |
+| `objectPermissions`            | `object`  | Permissões para o tipo de objeto atual                                      |
+| `targetObjectReadPermissions`  | `object`  | Permissões de leitura para o objeto alvo                                    |
+| `targetObjectWritePermissions` | `object`  | Permissões de escrita para o objeto alvo                                    |
+| `featureFlags`                 | `object`  | Flags de recurso ativas                                                     |
+| `objectMetadataItem`           | `object`  | Metadados do tipo de objeto atual                                           |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | Se a visualização atual tem um filtro de soft-delete                        |
+
+**Operadores** — combine variáveis em expressões booleanas:
+
+| Operador                            | Descrição                                                              |
+| ----------------------------------- | ---------------------------------------------------------------------- |
+| `isDefined(value)`                  | `true` se o valor não for null/undefined                               |
+| `isNonEmptyString(value)`           | `true` se o valor for uma string não vazia                             |
+| `includes(array, value)`            | `true` se o array contiver o valor                                     |
+| `includesEvery(array, prop, value)` | `true` se a propriedade de cada item incluir o valor                   |
+| `every(array, prop)`                | `true` se a propriedade for truthy em cada item                        |
+| `everyDefined(array, prop)`         | `true` se a propriedade estiver definida em cada item                  |
+| `everyEquals(array, prop, value)`   | `true` se a propriedade for igual ao valor em cada item                |
+| `some(array, prop)`                 | `true` se a propriedade for truthy em pelo menos um item               |
+| `someDefined(array, prop)`          | `true` se a propriedade estiver definida em pelo menos um item         |
+| `someEquals(array, prop, value)`    | `true` se a propriedade for igual ao valor em pelo menos um item       |
+| `someNonEmptyString(array, prop)`   | `true` se a propriedade for uma string não vazia em pelo menos um item |
+| `none(array, prop)`                 | `true` se a propriedade for falsy em cada item                         |
+| `noneDefined(array, prop)`          | `true` se a propriedade for undefined em cada item                     |
+| `noneEquals(array, prop, value)`    | `true` se a propriedade não for igual ao valor em nenhum item          |
+
+## Recursos públicos
+
+Componentes de front-end podem acessar arquivos do diretório `public/` do app usando `getPublicAssetUrl`:
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+Veja a [seção de recursos públicos](/l/pt/developers/extend/apps/cli-and-testing#public-assets-public-folder) para obter detalhes.
+
+## Estilização
+
+Componentes de front-end suportam várias abordagens de estilização. Você pode usar:
+
+* **Estilos inline** — `style={{ color: 'red' }}`
+* **Componentes de UI do Twenty** — importe de `twenty-sdk/ui` (Button, Tag, Status, Chip, Avatar e mais)
+* **Emotion** — CSS-in-JS com `@emotion/react`
+* **Styled-components** — padrões `styled.div`
+* **Tailwind CSS** — classes utilitárias
+* **Qualquer biblioteca CSS-in-JS** compatível com React
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

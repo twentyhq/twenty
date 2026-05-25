@@ -42,12 +42,14 @@ export enum PermissionsExceptionCode {
   UPSERT_FIELD_PERMISSION_FAILED = 'UPSERT_FIELD_PERMISSION_FAILED',
   PERMISSION_NOT_FOUND = 'PERMISSION_NOT_FOUND',
   OBJECT_PERMISSION_NOT_FOUND = 'OBJECT_PERMISSION_NOT_FOUND',
+  FIELD_PERMISSION_NOT_FOUND = 'FIELD_PERMISSION_NOT_FOUND',
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'EMPTY_FIELD_PERMISSION_NOT_ALLOWED',
   JOIN_COLUMN_NAME_REQUIRED = 'JOIN_COLUMN_NAME_REQUIRED',
   COMPOSITE_TYPE_NOT_FOUND = 'COMPOSITE_TYPE_NOT_FOUND',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'ROLE_CANNOT_BE_ASSIGNED_TO_USERS',
   APPLICATION_ROLE_NOT_FOUND = 'APPLICATION_ROLE_NOT_FOUND',
+  ROLE_BELONGS_TO_ANOTHER_APPLICATION = 'ROLE_BELONGS_TO_ANOTHER_APPLICATION',
 }
 
 const getPermissionsExceptionUserFriendlyMessage = (
@@ -128,6 +130,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`Permission not found.`;
     case PermissionsExceptionCode.OBJECT_PERMISSION_NOT_FOUND:
       return msg`Object permission not found.`;
+    case PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND:
+      return msg`Field permission not found.`;
     case PermissionsExceptionCode.EMPTY_FIELD_PERMISSION_NOT_ALLOWED:
       return msg`Empty field permissions are not allowed.`;
     case PermissionsExceptionCode.JOIN_COLUMN_NAME_REQUIRED:
@@ -140,6 +144,8 @@ const getPermissionsExceptionUserFriendlyMessage = (
       return msg`This role cannot be assigned to users.`;
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
       return msg`No role assigned to the application.`;
+    case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
+      return msg`Cannot target a role owned by another application.`;
     default:
       assertUnreachable(code);
   }
@@ -184,6 +190,7 @@ export enum PermissionsExceptionMessage {
   FIELD_RESTRICTION_ONLY_ALLOWED_ON_READABLE_OBJECT = 'Field restriction only makes sense on readable object',
   FIELD_RESTRICTION_ON_UPDATE_ONLY_ALLOWED_ON_UPDATABLE_OBJECT = 'Field restriction on update only makes sense on updatable object',
   OBJECT_PERMISSION_NOT_FOUND = 'Object permission not found',
+  FIELD_PERMISSION_NOT_FOUND = 'Field permission not found',
   EMPTY_FIELD_PERMISSION_NOT_ALLOWED = 'Empty field permission not allowed',
   ROLE_MUST_HAVE_AT_LEAST_ONE_TARGET = 'Role must be assignable to at least one target type',
   ROLE_CANNOT_BE_ASSIGNED_TO_USERS = 'Role cannot be assigned to users',

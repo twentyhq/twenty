@@ -7,6 +7,7 @@ import {
   type RecordFilterValueDependencies,
   type RecordGqlOperationFilter,
 } from 'twenty-shared/types';
+import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import {
   computeRecordGqlOperationFilter,
   turnAnyFieldFilterIntoRecordGqlFilter,
@@ -17,6 +18,7 @@ type ComputeContextStoreFiltersProps = {
   contextStoreFilters: RecordFilter[];
   contextStoreFilterGroups: RecordFilterGroup[];
   objectMetadataItem: EnrichedObjectMetadataItem;
+  fieldMetadataItems: FieldMetadataItem[];
   filterValueDependencies: RecordFilterValueDependencies;
   contextStoreAnyFieldFilterValue: string;
 };
@@ -26,6 +28,7 @@ export const computeContextStoreFilters = ({
   contextStoreFilters,
   contextStoreFilterGroups,
   objectMetadataItem,
+  fieldMetadataItems,
   filterValueDependencies,
   contextStoreAnyFieldFilterValue,
 }: ComputeContextStoreFiltersProps) => {
@@ -42,7 +45,7 @@ export const computeContextStoreFilters = ({
       recordGqlFilterForAnyFieldFilter,
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        fields: objectMetadataItem?.fields ?? [],
+        fieldMetadataItems,
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),
@@ -58,18 +61,20 @@ export const computeContextStoreFilters = ({
     ]);
   }
   if (contextStoreTargetedRecordsRule.mode === 'selection') {
+    if (contextStoreTargetedRecordsRule.selectedRecordIds.length === 0) {
+      return { id: { in: [] } };
+    }
+
     queryFilter = makeAndFilterVariables([
       recordGqlFilterForAnyFieldFilter,
-      contextStoreTargetedRecordsRule.selectedRecordIds.length > 0
-        ? {
-            id: {
-              in: contextStoreTargetedRecordsRule.selectedRecordIds,
-            },
-          }
-        : undefined,
+      {
+        id: {
+          in: contextStoreTargetedRecordsRule.selectedRecordIds,
+        },
+      },
       computeRecordGqlOperationFilter({
         filterValueDependencies,
-        fields: objectMetadataItem?.fields ?? [],
+        fieldMetadataItems,
         recordFilters: contextStoreFilters,
         recordFilterGroups: contextStoreFilterGroups,
       }),

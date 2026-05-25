@@ -1,5 +1,6 @@
 ---
-title: В один клик с Docker Compose
+title: Docker Compose
+icon: docker
 ---
 
 <Warning>
@@ -50,7 +51,7 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    curl -o .env https://raw.githubusercontent.com/twentyhq/twenty/refs/heads/main/packages/twenty-docker/.env.example
    ```
 
-2. **Создайте секретные токены**
+2. **Сгенерируйте ключ шифрования**
 
    Выполните следующую команду для генерации уникальной случайной строки:
 
@@ -58,15 +59,17 @@ VERSION=vx.y.z BRANCH=branch-name bash <(curl -sL https://raw.githubusercontent.
    openssl rand -base64 32
    ```
 
-   **Внимание:** держите это значение в секрете / не делитесь им.
+   **Внимание:** держите это значение в секрете / не делитесь им. Потеря `ENCRYPTION_KEY` означает потерю доступа ко всем секретам, хранящимся в базе данных (OAuth-токены, переменные приложения, TOTP-секреты и т. д.).
 
 3. **Обновите файл `.env`**
 
    Замените значение плейсхолдера в вашем файле .env на сгенерированный токен:
 
    ```ini
-   APP_SECRET=first_random_string
+   ENCRYPTION_KEY=random_string
    ```
+
+   См. [руководство по ротации ключей](/l/ru/developers/self-host/capabilities/key-rotation) для получения инструкций по их ротации без простоя.
 
 4. **Установите пароль для Postgres**
 

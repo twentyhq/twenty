@@ -6,6 +6,8 @@ import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { CommandMenuItemExceptionCode } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.exception';
+import { type CommandMenuItemPayload } from 'src/engine/metadata-modules/command-menu-item/dtos/command-menu-item-payload.union';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -35,29 +37,22 @@ export class FlatCommandMenuItemValidatorService {
       });
     }
 
-    const hasWorkflowVersionId = isDefined(
-      flatCommandMenuItem.workflowVersionId,
-    );
-    const hasFrontComponentUniversalIdentifier = isDefined(
-      flatCommandMenuItem.frontComponentUniversalIdentifier,
-    );
-    const hasEngineComponentKey = isDefined(
-      flatCommandMenuItem.engineComponentKey,
-    );
-
-    const sourceCount = [
-      hasWorkflowVersionId,
-      hasFrontComponentUniversalIdentifier,
-      hasEngineComponentKey,
-    ].filter(Boolean).length;
-
-    if (sourceCount !== 1) {
+    if (!isDefined(flatCommandMenuItem.engineComponentKey)) {
       validationResult.errors.push({
-        code: CommandMenuItemExceptionCode.WORKFLOW_OR_FRONT_COMPONENT_REQUIRED,
-        message: t`Exactly one of workflowVersionId, frontComponentUniversalIdentifier or engineComponentKey is required`,
-        userFriendlyMessage: msg`Exactly one of workflow version, front component or engine component key is required`,
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`engineComponentKey is required`,
+        userFriendlyMessage: msg`Engine component key is required`,
       });
     }
+
+    this.validateEngineComponentKeyCoherence({
+      engineComponentKey: flatCommandMenuItem.engineComponentKey,
+      workflowVersionId: flatCommandMenuItem.workflowVersionId,
+      frontComponentUniversalIdentifier:
+        flatCommandMenuItem.frontComponentUniversalIdentifier,
+      payload: flatCommandMenuItem.payload,
+      validationResult,
+    });
 
     return validationResult;
   }
@@ -136,6 +131,160 @@ export class FlatCommandMenuItemValidatorService {
       });
     }
 
+    const engineComponentKey =
+      flatEntityUpdate.engineComponentKey ??
+      fromFlatCommandMenuItem.engineComponentKey;
+
+    const payload =
+      flatEntityUpdate.payload !== undefined
+        ? flatEntityUpdate.payload
+        : fromFlatCommandMenuItem.payload;
+
+    this.validateEngineComponentKeyCoherence({
+      engineComponentKey,
+      workflowVersionId: fromFlatCommandMenuItem.workflowVersionId,
+      frontComponentUniversalIdentifier:
+        fromFlatCommandMenuItem.frontComponentUniversalIdentifier,
+      payload,
+      validationResult,
+    });
+
     return validationResult;
+  }
+
+  private validateEngineComponentKeyCoherence({
+    engineComponentKey,
+    workflowVersionId,
+    frontComponentUniversalIdentifier,
+    payload,
+    validationResult,
+  }: {
+    engineComponentKey: EngineComponentKey | null;
+    workflowVersionId: string | null;
+    frontComponentUniversalIdentifier: string | null;
+    payload: CommandMenuItemPayload | null;
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }): void {
+    if (!isDefined(engineComponentKey)) {
+      return;
+    }
+
+    switch (engineComponentKey) {
+      case EngineComponentKey.TRIGGER_WORKFLOW_VERSION: {
+        if (!isNonEmptyString(workflowVersionId)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`workflowVersionId is required when engineComponentKey is TRIGGER_WORKFLOW_VERSION`,
+            userFriendlyMessage: msg`Workflow version is required for workflow trigger items`,
+          });
+        }
+
+        if (isNonEmptyString(frontComponentUniversalIdentifier)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`frontComponentId must not be set when engineComponentKey is TRIGGER_WORKFLOW_VERSION`,
+            userFriendlyMessage: msg`Front component must not be set for workflow trigger items`,
+          });
+        }
+
+        break;
+      }
+      case EngineComponentKey.FRONT_COMPONENT_RENDERER: {
+        if (!isNonEmptyString(frontComponentUniversalIdentifier)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`frontComponentId is required when engineComponentKey is FRONT_COMPONENT_RENDERER`,
+            userFriendlyMessage: msg`Front component is required for front component renderer items`,
+          });
+        }
+
+        if (isNonEmptyString(workflowVersionId)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`workflowVersionId must not be set when engineComponentKey is FRONT_COMPONENT_RENDERER`,
+            userFriendlyMessage: msg`Workflow version must not be set for front component renderer items`,
+          });
+        }
+
+        break;
+      }
+      case EngineComponentKey.NAVIGATION: {
+        this.validateNavigationPayload({ payload, validationResult });
+
+        if (isNonEmptyString(workflowVersionId)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`workflowVersionId must not be set for engine component key ${engineComponentKey}`,
+            userFriendlyMessage: msg`Workflow version must not be set for this item type`,
+          });
+        }
+
+        if (isNonEmptyString(frontComponentUniversalIdentifier)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`frontComponentId must not be set for engine component key ${engineComponentKey}`,
+            userFriendlyMessage: msg`Front component must not be set for this item type`,
+          });
+        }
+
+        break;
+      }
+      default: {
+        if (isNonEmptyString(workflowVersionId)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`workflowVersionId must not be set for engine component key ${engineComponentKey}`,
+            userFriendlyMessage: msg`Workflow version must not be set for this item type`,
+          });
+        }
+
+        if (isNonEmptyString(frontComponentUniversalIdentifier)) {
+          validationResult.errors.push({
+            code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+            message: t`frontComponentId must not be set for engine component key ${engineComponentKey}`,
+            userFriendlyMessage: msg`Front component must not be set for this item type`,
+          });
+        }
+
+        break;
+      }
+    }
+  }
+
+  private validateNavigationPayload({
+    payload,
+    validationResult,
+  }: {
+    payload: CommandMenuItemPayload | null;
+    validationResult: FailedFlatEntityValidation<
+      'commandMenuItem',
+      'create' | 'update'
+    >;
+  }): void {
+    if (!isDefined(payload)) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`payload is required when engineComponentKey is NAVIGATION`,
+        userFriendlyMessage: msg`Payload is required for navigation items`,
+      });
+
+      return;
+    }
+
+    const hasPath = 'path' in payload && isNonEmptyString(payload.path);
+    const hasObjectMetadataItemId =
+      'objectMetadataItemId' in payload &&
+      isNonEmptyString(payload.objectMetadataItemId);
+
+    if (!hasPath && !hasObjectMetadataItemId) {
+      validationResult.errors.push({
+        code: CommandMenuItemExceptionCode.INVALID_COMMAND_MENU_ITEM_INPUT,
+        message: t`payload must contain either a "path" or "objectMetadataItemId" property`,
+        userFriendlyMessage: msg`Payload must contain either a path or an object metadata item identifier`,
+      });
+    }
   }
 }

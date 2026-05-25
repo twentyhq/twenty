@@ -1,0 +1,489 @@
+---
+title: 前端组件
+description: 构建可在 Twenty 的 UI 中渲染并具备沙盒隔离的 React 组件。
+icon: window-maximize
+---
+
+前端组件是直接在 Twenty 的 UI 内渲染的 React 组件。 它们在使用 Remote DOM 的**隔离 Web Worker**中运行——你的代码在沙盒中执行，但会原生渲染到页面中，而非在 iframe 里。
+
+## 前端组件可用位置
+
+在 Twenty 中，前端组件可在两个位置进行渲染：
+
+* **侧边栏** — 非无头的前端组件会在右侧侧边栏中打开。 当前端组件从命令菜单触发时，这是默认行为。
+* **小部件（仪表盘和记录页面）** — 前端组件可以作为小部件嵌入页面布局中。 在配置仪表盘或记录页面布局时，用户可以添加前端组件小部件。
+
+## 基础示例
+
+最快查看前端组件实际运行效果的方法，是将其注册为一个**命令菜单项**。 在单独的文件中使用 `defineCommandMenuItem`，使该组件显示为页面右上角的快速操作按钮：
+
+```tsx src/front-components/hello-world.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+
+const HelloWorld = () => {
+  return (
+    <div style={{ padding: '20px', fontFamily: 'sans-serif' }}>
+      <h1>Hello from my app!</h1>
+      <p>This component renders inside Twenty.</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+  name: 'hello-world',
+  description: 'A simple front component',
+  component: HelloWorld,
+});
+```
+
+```ts src/command-menu-items/hello-world.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'd4e5f6a7-b8c9-0123-defa-456789012345',
+  shortLabel: 'Hello',
+  label: 'Hello World',
+  icon: 'IconBolt',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+使用 `yarn twenty dev` 同步后（或单次运行 `yarn twenty dev --once`），快速操作会出现在页面右上角：
+
+<div style={{textAlign: 'center'}}>
+  <img src="/images/docs/developers/extends/apps/quick-action.png" alt="右上角的快速操作按钮" />
+</div>
+
+点击它以内联方式渲染该组件。
+
+## 配置字段
+
+| 字段                    | 必填 | 描述                           |
+| --------------------- | -- | ---------------------------- |
+| `universalIdentifier` | 是  | 该组件的稳定唯一 ID                  |
+| `component`           | 是  | 一个 React 组件函数                |
+| `name`                | 否  | 显示名称                         |
+| `description`         | 否  | 组件的功能描述                      |
+| `isHeadless`          | 否  | 如果组件没有可见的 UI，则设为 `true`（见下文） |
+
+## 在页面上放置前端组件
+
+除了命令之外，您还可以在**页面布局**中将其添加为小部件，从而将前端组件直接嵌入记录页面。 详情请参见[definePageLayout](/l/zh/developers/extend/apps/skills-and-agents#definepagelayout)部分。
+
+## 无头与非无头
+
+前端组件有两种由 `isHeadless` 选项控制的渲染模式：
+
+**非无头（默认）** — 该组件会渲染可见的 UI。 从命令菜单触发时，它会在侧边栏中打开。 当 `isHeadless` 为 `false` 或被省略时，这是默认行为。
+
+**无头 (`isHeadless: true`)** — 该组件会在后台以不可见的方式挂载。 它不会打开侧边栏。 无头组件旨在用于执行逻辑后自行卸载的操作——例如运行异步任务、导航到某个页面或显示确认模态框。 它们与下文介绍的 SDK Command 组件天然契合。
+
+```tsx src/front-components/sync-tracker.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId, enqueueSnackbar } from 'twenty-sdk/front-component';
+import { useEffect } from 'react';
+
+const SyncTracker = () => {
+  const recordId = useRecordId();
+
+  useEffect(() => {
+    enqueueSnackbar({ message: `Tracking record ${recordId}`, variant: 'info' });
+  }, [recordId]);
+
+  return null;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-tracker',
+  description: 'Tracks record views silently',
+  isHeadless: true,
+  component: SyncTracker,
+});
+```
+
+由于该组件返回 `null`，Twenty 会跳过为其渲染容器——布局中不会出现空白区域。 该组件仍可访问所有 hooks 和宿主通信 API。
+
+## SDK Command 组件
+
+`twenty-sdk` 包提供了四个为无头前端组件设计的 Command 辅助组件。 每个组件都会在挂载时执行一个操作，通过显示 snackbar 通知来处理错误，并在完成后自动卸载该前端组件。
+
+从 `twenty-sdk/command` 导入它们：
+
+* **`Command`** — 通过 `execute` 属性运行异步回调。
+* **`CommandLink`** — 导航到某个应用路径。 属性：`to`、`params`、`queryParams`、`options`。
+* **`CommandModal`** — 打开一个确认模态框。 如果用户确认，则执行 `execute` 回调。 属性：`title`、`subtitle`、`execute`、`confirmButtonText`、`confirmButtonAccent`。
+* **`CommandOpenSidePanelPage`** — 打开特定的侧边栏页面。 属性：`page`、`pageTitle`、`pageIcon`。
+
+下面是一个完整示例：无头前端组件使用 `Command` 从命令菜单运行一个操作：
+
+```tsx src/front-components/run-action.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const RunAction = () => {
+  const execute = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      createTask: {
+        __args: { data: { title: 'Created by my app' } },
+        id: true,
+      },
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+  name: 'run-action',
+  description: 'Creates a task from the command menu',
+  component: RunAction,
+  isHeadless: true,
+});
+```
+
+```ts src/command-menu-items/run-action.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'f6a7b8c9-d0e1-2345-fabc-456789012345',
+  label: 'Run my action',
+  icon: 'IconPlayerPlay',
+  frontComponentUniversalIdentifier: 'e5f6a7b8-c9d0-1234-efab-345678901234',
+});
+```
+
+另一个示例：使用 `CommandModal` 在执行前请求确认：
+
+```tsx src/front-components/delete-draft.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { CommandModal } from 'twenty-sdk/command';
+
+const DeleteDraft = () => {
+  const execute = async () => {
+    // perform the deletion
+  };
+
+  return (
+    <CommandModal
+      title="Delete draft?"
+      subtitle="This action cannot be undone."
+      execute={execute}
+      confirmButtonText="Delete"
+      confirmButtonAccent="danger"
+    />
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'a7b8c9d0-e1f2-3456-abcd-567890123456',
+  name: 'delete-draft',
+  description: 'Deletes a draft with confirmation',
+  component: DeleteDraft,
+  isHeadless: true,
+});
+```
+
+## 访问运行时上下文
+
+在组件内部，使用 SDK 的 hooks 获取当前用户、记录和组件实例：
+
+```tsx src/front-components/record-info.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import {
+  useUserId,
+  useRecordId,
+  useFrontComponentId,
+} from 'twenty-sdk/front-component';
+
+const RecordInfo = () => {
+  const userId = useUserId();
+  const recordId = useRecordId();
+  const componentId = useFrontComponentId();
+
+  return (
+    <div>
+      <p>User: {userId}</p>
+      <p>Record: {recordId ?? 'No record context'}</p>
+      <p>Component: {componentId}</p>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'b2c3d4e5-f6a7-8901-bcde-f23456789012',
+  name: 'record-info',
+  component: RecordInfo,
+});
+```
+
+可用的 hooks：
+
+| 钩子                                            | 返回值               | 描述                                    |
+| --------------------------------------------- | ----------------- | ------------------------------------- |
+| `useUserId()`                                 | `string` 或 `null` | 当前用户的 ID                              |
+| `useSelectedRecordIds()`                      | `字符串[]`           | 所有已选择的记录 ID（如果未选择，则为空数组）              |
+| `useRecordId()`                               | `string` 或 `null` | **已弃用。** 请改用 `useSelectedRecordIds()` |
+| `useFrontComponentId()`                       | `string`          | 此组件实例的 ID                             |
+| `useFrontComponentExecutionContext(selector)` | 因情况而异             | 使用选择器函数访问完整的执行上下文                     |
+
+## 宿主通信 API
+
+前端组件可以使用来自 `twenty-sdk` 的函数触发导航、模态框和通知：
+
+| 函数                                              | 描述            |
+| ----------------------------------------------- | ------------- |
+| `navigate(to, params?, queryParams?, options?)` | 在应用中导航到某个页面   |
+| `openSidePanelPage(params)`                     | 打开侧边栏         |
+| `closeSidePanel()`                              | 关闭侧边栏         |
+| `openCommandConfirmationModal(params)`          | 显示确认对话框       |
+| `enqueueSnackbar(params)`                       | 显示一条 Toast 通知 |
+| `unmountFrontComponent()`                       | 卸载该组件         |
+| `updateProgress(progress)`                      | 更新进度指示器       |
+
+下面是一个示例，使用宿主 API 在操作完成后显示一条 snackbar 并关闭侧边栏：
+
+```tsx src/front-components/archive-record.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useRecordId } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const ArchiveRecord = () => {
+  const recordId = useRecordId();
+
+  const handleArchive = async () => {
+    const client = new CoreApiClient();
+
+    await client.mutation({
+      updateTask: {
+        __args: { id: recordId, data: { status: 'ARCHIVED' } },
+        id: true,
+      },
+    });
+
+    await enqueueSnackbar({
+      message: 'Record archived',
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Archive this record?</p>
+      <button onClick={handleArchive}>Archive</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'c9d0e1f2-a3b4-5678-cdef-789012345678',
+  name: 'archive-record',
+  description: 'Archives the current record',
+  component: ArchiveRecord,
+});
+```
+
+### 处理多个记录
+
+使用 `useSelectedRecordIds()` 来处理多个已选记录。 这对于批量操作很有用：
+
+```tsx src/front-components/bulk-export.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
+import { CoreApiClient } from 'twenty-sdk/clients';
+
+const BulkExport = () => {
+  const selectedRecordIds = useSelectedRecordIds();
+
+  const handleExport = async () => {
+    const client = new CoreApiClient();
+
+    for (const recordId of selectedRecordIds) {
+      await client.mutation({
+        updateTask: {
+          __args: { id: recordId, data: { exported: true } },
+          id: true,
+        },
+      });
+    }
+
+    await enqueueSnackbar({
+      message: `Exported ${selectedRecordIds.length} records`,
+      variant: 'success',
+    });
+
+    await closeSidePanel();
+  };
+
+  return (
+    <div style={{ padding: '20px' }}>
+      <p>Export {selectedRecordIds.length} selected record(s)?</p>
+      <button onClick={handleExport}>Export</button>
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678901',
+  name: 'bulk-export',
+  description: 'Export selected records',
+  component: BulkExport,
+  command: {
+    universalIdentifier: 'd0e1f2a3-b4c5-6789-defa-012345678902',
+    label: 'Bulk Export',
+    availabilityType: 'RECORD_SELECTION',
+    conditionalAvailabilityExpression: numberOfSelectedRecords > 0,
+  },
+});
+```
+
+## defineCommandMenuItem
+
+使用 `defineCommandMenuItem` 在命令菜单（Cmd+K）中注册一个前端组件。 如果 `isPinned` 为 `true`，它还会显示为页面右上角的快速操作按钮。
+
+```ts src/command-menu-items/open-dashboard.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+
+export default defineCommandMenuItem({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  label: 'Open Dashboard',
+  shortLabel: 'Dashboard',
+  icon: 'IconLayoutDashboard',
+  isPinned: true,
+  availabilityType: 'GLOBAL',
+  frontComponentUniversalIdentifier: '74c526eb-cb68-4cf7-b05c-0dd8c288d948',
+});
+```
+
+| 字段                                      | 必填 | 描述                                                                               |
+| --------------------------------------- | -- | -------------------------------------------------------------------------------- |
+| `universalIdentifier`                   | 是  | 该命令的稳定唯一 ID                                                                      |
+| `label`                                 | 是  | 在命令菜单（Cmd+K）中显示的完整标签                                                             |
+| `frontComponentUniversalIdentifier`     | 是  | 此命令打开的前端组件的 `universalIdentifier`                                                |
+| `shortLabel`                            | 否  | 固定的快速操作按钮上显示的较短标签                                                                |
+| `icon`                                  | 否  | 显示在标签旁边的图标名称（例如 `'IconBolt'`、`'IconSend'`）                                       |
+| `isPinned`                              | 否  | 为 `true` 时，会将该命令显示为页面右上角的快速操作按钮                                                  |
+| `availabilityType`                      | 否  | 控制命令出现的位置：'GLOBAL'（始终可用）、'RECORD_SELECTION'（仅在选择了记录时），或 'FALLBACK'（当没有其他命令匹配时显示） |
+| `availabilityObjectUniversalIdentifier` | 否  | 将该命令限制在特定对象类型的页面上（例如仅在 Company 记录上）                                              |
+| `conditionalAvailabilityExpression`     | 否  | 用于动态控制命令是否可见的布尔表达式（见下文）                                                          |
+
+## 条件可用性表达式
+
+通过 `conditionalAvailabilityExpression` 字段，您可以基于当前页面上下文控制命令何时可见。 从 `twenty-sdk` 导入带类型的变量和运算符来构建表达式：
+
+```ts src/command-menu-items/bulk-update.command-menu-item.ts
+import { defineCommandMenuItem } from 'twenty-sdk/define';
+import {
+  objectPermissions,
+  everyEquals,
+} from 'twenty-sdk/front-component';
+
+export default defineCommandMenuItem({
+  universalIdentifier: '...',
+  label: 'Bulk Update',
+  availabilityType: 'RECORD_SELECTION',
+  frontComponentUniversalIdentifier: '...',
+  conditionalAvailabilityExpression: everyEquals(
+    objectPermissions,
+    'canUpdateObjectRecords',
+    true,
+  ),
+});
+```
+
+**上下文变量** — 表示页面的当前状态：
+
+| 变量                             | 类型        | 描述                                            |
+| ------------------------------ | --------- | --------------------------------------------- |
+| `pageType`                     | `string`  | 当前页面类型（例如 'RecordIndexPage'、'RecordShowPage'） |
+| `isInSidePanel`                | `boolean` | 组件是否在侧边栏中渲染                                   |
+| `numberOfSelectedRecords`      | `number`  | 当前选中的记录数量                                     |
+| `isSelectAll`                  | `boolean` | “全选”是否已激活                                     |
+| `selectedRecords`              | `array`   | 已选记录对象                                        |
+| `favoriteRecordIds`            | `array`   | 已收藏记录的 ID                                     |
+| `objectPermissions`            | `object`  | 当前对象类型的权限                                     |
+| `targetObjectReadPermissions`  | `object`  | 目标对象的读取权限                                     |
+| `targetObjectWritePermissions` | `object`  | 目标对象的写入权限                                     |
+| `featureFlags`                 | `object`  | 当前启用的功能标志                                     |
+| `objectMetadataItem`           | `object`  | 当前对象类型的元数据                                    |
+| `hasAnySoftDeleteFilterOnView` | `boolean` | 当前视图是否包含软删除筛选器                                |
+
+**运算符** — 将变量组合为布尔表达式：
+
+| 运算符                                 | 描述                               |
+| ----------------------------------- | -------------------------------- |
+| `isDefined(value)`                  | 当该值不是 null/undefined 时为 `true`   |
+| `isNonEmptyString(value)`           | 当该值为非空字符串时为 `true`               |
+| `includes(array, value)`            | 当数组包含该值时为 `true`                 |
+| `includesEvery(array, prop, value)` | 当每个条目的属性都包含该值时为 `true`           |
+| `every(array, prop)`                | 当该属性在每个条目上都为 truthy 时为 `true`    |
+| `everyDefined(array, prop)`         | 当该属性在每个条目上都已定义时为 `true`          |
+| `everyEquals(array, prop, value)`   | 当该属性在每个条目上都等于该值时为 `true`         |
+| `some(array, prop)`                 | 当至少一个条目上的该属性为 truthy 时为 `true`   |
+| `someDefined(array, prop)`          | 当至少一个条目上的该属性已定义时为 `true`         |
+| `someEquals(array, prop, value)`    | 当至少一个条目上的该属性等于该值时为 `true`        |
+| `someNonEmptyString(array, prop)`   | 当至少一个条目上的该属性为非空字符串时为 `true`      |
+| `none(array, prop)`                 | 当该属性在每个条目上都为 falsy 时为 `true`     |
+| `noneDefined(array, prop)`          | 当该属性在每个条目上都为 undefined 时为 `true` |
+| `noneEquals(array, prop, value)`    | 当该属性在任意条目上都不等于该值时为 `true`        |
+
+## 公共资源
+
+前端组件可以使用 `getPublicAssetUrl` 访问应用的 `public/` 目录中的文件：
+
+```tsx
+import { defineFrontComponent, getPublicAssetUrl } from 'twenty-sdk/define';
+
+const Logo = () => <img src={getPublicAssetUrl('logo.png')} alt="Logo" />;
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'logo',
+  component: Logo,
+});
+```
+
+详情请参见[公共资源部分](/l/zh/developers/extend/apps/cli-and-testing#public-assets-public-folder)。
+
+## 样式
+
+前端组件支持多种样式方案。 您可以使用：
+
+* **内联样式** — `style={{ color: 'red' }}`
+* **Twenty UI 组件** — 从 `twenty-sdk/ui` 导入（Button、Tag、Status、Chip、Avatar 等）
+* **Emotion** — 使用 `@emotion/react` 的 CSS-in-JS
+* **Styled-components** — `styled.div` 模式
+* **Tailwind CSS** — 工具类
+* **任何 CSS-in-JS 库**（与 React 兼容）
+
+```tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Button, Tag, Status } from 'twenty-sdk/ui';
+
+const StyledWidget = () => {
+  return (
+    <div style={{ padding: '16px', display: 'flex', gap: '8px' }}>
+      <Button title="Click me" onClick={() => alert('Clicked!')} />
+      <Tag text="Active" color="green" />
+      <Status color="green" text="Online" />
+    </div>
+  );
+};
+
+export default defineFrontComponent({
+  universalIdentifier: 'e5f6a7b8-c9d0-1234-efab-567890123456',
+  name: 'styled-widget',
+  component: StyledWidget,
+});
+```

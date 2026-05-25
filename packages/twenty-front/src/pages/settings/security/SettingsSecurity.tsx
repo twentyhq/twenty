@@ -8,6 +8,7 @@ import { authProvidersState } from '@/client-config/states/authProvidersState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
 import { Separator } from '@/settings/components/Separator';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { SettingsOptionCardContentCounter } from '@/settings/components/SettingsOptions/SettingsOptionCardContentCounter';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -19,12 +20,14 @@ import { SettingsSecurityAuthBypassOptionsList } from '@/settings/security/compo
 import { SettingsSecurityAuthProvidersOptionsList } from '@/settings/security/components/SettingsSecurityAuthProvidersOptionsList';
 import { SettingsSecurityEditableProfileFields } from '@/settings/security/components/SettingsSecurityEditableProfileFields';
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
+import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
+import { useMutation } from '@apollo/client/react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
@@ -33,12 +36,12 @@ import {
   IconClockHour8,
   IconHistory,
   IconLock,
+  IconMail,
   IconTrash,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { useMutation } from '@apollo/client/react';
 import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
 
 const StyledContainer = styled.div`
@@ -128,6 +131,33 @@ export const SettingsSecurity = () => {
     });
 
     saveTrashRetention(value);
+  };
+
+  const handleSyncInternalEmailsChange = (value: boolean) => {
+    if (!currentWorkspace) {
+      return;
+    }
+
+    if (value === currentWorkspace.isInternalMessagesImportEnabled) {
+      return;
+    }
+
+    setCurrentWorkspace({
+      ...currentWorkspace,
+      isInternalMessagesImportEnabled: value,
+    });
+
+    updateWorkspace({
+      variables: {
+        input: {
+          isInternalMessagesImportEnabled: value,
+        },
+      },
+    }).catch((err) => {
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(err) ? err : undefined,
+      });
+    });
   };
 
   const handleEventLogRetentionDaysChange = (value: number) => {
@@ -250,49 +280,55 @@ export const SettingsSecurity = () => {
                 />
               }
             />
-            <Card rounded>
-              <SettingsOptionCardContentButton
-                Icon={IconHistory}
-                title={t`Workspace Events`}
-                description={
-                  !isClickHouseConfigured
-                    ? t`ClickHouse is required for audit logs. Contact your administrator.`
-                    : !hasEnterpriseAccess
-                      ? t`Upgrade to Enterprise to access audit logs`
+            {hasEnterpriseAccess ? (
+              <Card rounded>
+                <SettingsOptionCardContentButton
+                  Icon={IconHistory}
+                  title={t`Workspace Events`}
+                  description={
+                    !isClickHouseConfigured
+                      ? t`ClickHouse is required for audit logs. Contact your administrator.`
                       : t`View and filter events, page views, object changes`
-                }
-                Button={
-                  <StyledLinkContainer>
-                    <Link
-                      to={getSettingsPath(SettingsPath.EventLogs)}
-                      data-disabled={!isEventLogsEnabled}
-                    >
-                      <Button
-                        title={t`View Logs`}
-                        variant="secondary"
-                        size="small"
-                        disabled={!isEventLogsEnabled}
-                      />
-                    </Link>
-                  </StyledLinkContainer>
-                }
+                  }
+                  Button={
+                    <StyledLinkContainer>
+                      <Link
+                        to={getSettingsPath(SettingsPath.EventLogs)}
+                        data-disabled={!isEventLogsEnabled}
+                      >
+                        <Button
+                          title={t`View Logs`}
+                          variant="secondary"
+                          size="small"
+                          disabled={!isEventLogsEnabled}
+                        />
+                      </Link>
+                    </StyledLinkContainer>
+                  }
+                />
+                {isEventLogsEnabled && (
+                  <>
+                    <Separator />
+                    <SettingsOptionCardContentCounter
+                      Icon={IconClockHour8}
+                      title={t`Log retention`}
+                      description={t`Number of days to retain audit logs (30-1095 days)`}
+                      value={currentWorkspace?.eventLogRetentionDays ?? 90}
+                      onChange={handleEventLogRetentionDaysChange}
+                      minValue={30}
+                      maxValue={1095}
+                      showButtons={false}
+                    />
+                  </>
+                )}
+              </Card>
+            ) : (
+              <SettingsEnterpriseFeatureGateCard
+                title={t`Enterprise feature`}
+                description={t`Upgrade to Enterprise to access audit logs.`}
+                buttonTitle={t`Activate`}
               />
-              {isEventLogsEnabled && (
-                <>
-                  <Separator />
-                  <SettingsOptionCardContentCounter
-                    Icon={IconClockHour8}
-                    title={t`Log retention`}
-                    description={t`Number of days to retain audit logs (30-1095 days)`}
-                    value={currentWorkspace?.eventLogRetentionDays ?? 90}
-                    onChange={handleEventLogRetentionDaysChange}
-                    minValue={30}
-                    maxValue={1095}
-                    showButtons={false}
-                  />
-                </>
-              )}
-            </Card>
+            )}
           </Section>
           <Section>
             <H2Title
@@ -308,6 +344,17 @@ export const SettingsSecurity = () => {
                 onChange={handleTrashRetentionDaysChange}
                 minValue={0}
                 showButtons={false}
+              />
+              <Separator />
+              <SettingsOptionCardContentToggle
+                Icon={IconMail}
+                title={t`Sync Internal Emails`}
+                description={t`Include emails where all participants share the same domain.`}
+                checked={
+                  currentWorkspace?.isInternalMessagesImportEnabled ?? false
+                }
+                onChange={handleSyncInternalEmailsChange}
+                advancedMode
               />
             </Card>
           </Section>

@@ -4,9 +4,11 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { useIncrementalUpdateManyRecords } from '@/object-record/hooks/useIncrementalUpdateManyRecords';
 import { useFilterValueDependencies } from '@/object-record/record-filter/hooks/useFilterValueDependencies';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type UseUpdateMultipleRecordsActionsProps = {
   objectNameSingular: string;
@@ -43,11 +45,16 @@ export const useUpdateMultipleRecordsActions = ({
 
   const { filterValueDependencies } = useFilterValueDependencies();
 
+  const flattenedFieldMetadataItems = useAtomStateValue(
+    flattenedFieldMetadataItemsSelector,
+  );
+
   const graphqlFilter = computeContextStoreFilters({
     contextStoreTargetedRecordsRule,
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });
@@ -62,13 +69,8 @@ export const useUpdateMultipleRecordsActions = ({
     filter: graphqlFilter,
   });
 
-  const updateRecords = async (fieldsToUpdate: Record<string, any>) => {
-    const count = await incrementalUpdateManyRecords(fieldsToUpdate);
-    return count;
-  };
-
   return {
-    updateRecords,
+    updateRecords: incrementalUpdateManyRecords,
     isUpdating,
     progress,
     cancel,

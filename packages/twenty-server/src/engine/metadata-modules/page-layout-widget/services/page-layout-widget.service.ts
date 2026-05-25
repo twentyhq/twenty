@@ -18,8 +18,8 @@ import {
 import { CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { UpdatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/update-page-layout-widget.input';
 import { type PageLayoutWidgetDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/page-layout-widget.dto';
+import { resolveOverridableEntityProperty } from 'src/engine/metadata-modules/utils/resolve-overridable-entity-property.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import {
   PageLayoutWidgetException,
   PageLayoutWidgetExceptionCode,
@@ -28,8 +28,7 @@ import {
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { type AllPageLayoutWidgetConfiguration } from 'src/engine/metadata-modules/page-layout-widget/types/all-page-layout-widget-configuration.type';
 import { fromFlatPageLayoutWidgetToPageLayoutWidgetDto } from 'src/engine/metadata-modules/page-layout-widget/utils/from-flat-page-layout-widget-to-page-layout-widget-dto.util';
-import { isChartFieldsForValidation } from 'src/engine/metadata-modules/page-layout-widget/utils/is-chart-fields-for-validation.util';
-import { validateChartConfigurationFieldReferences } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
+import { validateChartConfigurationFieldReferencesOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-chart-configuration-field-references.util';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 import { DashboardSyncService } from 'src/modules/dashboard-sync/services/dashboard-sync.service';
@@ -122,25 +121,17 @@ export class PageLayoutWidgetService {
     }
   }
 
-  private async validateChartFieldReferencesIfApplicable({
+  private async validateChartFieldReferences({
     configuration,
     objectMetadataId,
-    widgetType,
+    widgetTitle,
     workspaceId,
   }: {
     configuration: AllPageLayoutWidgetConfiguration;
     objectMetadataId?: string | null;
-    widgetType?: WidgetType | null;
+    widgetTitle?: string | null;
     workspaceId: string;
   }): Promise<void> {
-    const needsChartValidation =
-      isChartFieldsForValidation(configuration) ||
-      widgetType === WidgetType.GRAPH;
-
-    if (!needsChartValidation) {
-      return;
-    }
-
     const { flatFieldMetadataMaps, flatObjectMetadataMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
@@ -149,20 +140,13 @@ export class PageLayoutWidgetService {
         },
       );
 
-    try {
-      validateChartConfigurationFieldReferences({
-        configuration,
-        objectMetadataId,
-        widgetType,
-        flatFieldMetadataMaps,
-        flatObjectMetadataMaps,
-      });
-    } catch (error) {
-      throw new PageLayoutWidgetException(
-        error instanceof Error ? error.message : String(error),
-        PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      );
-    }
+    validateChartConfigurationFieldReferencesOrThrow({
+      widgetConfiguration: configuration,
+      widgetObjectMetadataId: objectMetadataId,
+      widgetTitle,
+      flatFieldMetadataMaps,
+      flatObjectMetadataMaps,
+    });
   }
 
   async findByPageLayoutTabId({
@@ -179,8 +163,8 @@ export class PageLayoutWidgetService {
       .filter(isDefined)
       .filter(
         (widget) =>
-          widget.pageLayoutTabId === pageLayoutTabId &&
-          !isDefined(widget.deletedAt),
+          resolveOverridableEntityProperty(widget, 'pageLayoutTabId') ===
+            pageLayoutTabId && !isDefined(widget.deletedAt),
       )
       .sort(
         (widgetA, widgetB) =>
@@ -275,10 +259,10 @@ export class PageLayoutWidgetService {
       });
 
     if (isDefined(createInput.configuration)) {
-      await this.validateChartFieldReferencesIfApplicable({
+      await this.validateChartFieldReferences({
         configuration: createInput.configuration,
         objectMetadataId: createInput.objectMetadataId ?? null,
-        widgetType: createInput.type,
+        widgetTitle: createInput.title,
         workspaceId,
       });
     }
@@ -334,6 +318,7 @@ export class PageLayoutWidgetService {
         flatFrontComponentMaps: existingFlatFrontComponentMaps,
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
+        flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
       },
       { workspaceCustomFlatApplication },
     ] = await Promise.all([
@@ -346,6 +331,7 @@ export class PageLayoutWidgetService {
             'flatFrontComponentMaps',
             'flatViewFieldGroupMaps',
             'flatViewMaps',
+            'flatPageLayoutTabMaps',
           ],
         },
       ),
@@ -385,6 +371,7 @@ export class PageLayoutWidgetService {
         flatFrontComponentMaps: existingFlatFrontComponentMaps,
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
+        flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:
@@ -405,14 +392,14 @@ export class PageLayoutWidgetService {
       const effectiveObjectMetadataId = isObjectMetadataIdBeingUpdated
         ? processedUpdateData.objectMetadataId
         : existingWidget.objectMetadataId;
-      const effectiveWidgetType =
-        processedUpdateData.type ?? existingWidget.type;
+      const effectiveWidgetTitle =
+        processedUpdateData.title ?? existingWidget.title;
 
       if (isDefined(effectiveConfiguration)) {
-        await this.validateChartFieldReferencesIfApplicable({
+        await this.validateChartFieldReferences({
           configuration: effectiveConfiguration,
           objectMetadataId: effectiveObjectMetadataId,
-          widgetType: effectiveWidgetType,
+          widgetTitle: effectiveWidgetTitle,
           workspaceId,
         });
       }

@@ -1,25 +1,30 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
+import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import {
   ConnectedAccountException,
   ConnectedAccountExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/connected-account.exception';
-import { ConnectedAccountDTO } from 'src/engine/metadata-modules/connected-account/dtos/connected-account.dto';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 @Injectable()
 export class ConnectedAccountMetadataService {
+  private readonly logger = new Logger(ConnectedAccountMetadataService.name);
+
   constructor(
     @InjectRepository(ConnectedAccountEntity)
     private readonly repository: Repository<ConnectedAccountEntity>,
+    @InjectRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    private readonly appOAuthRevokeService: AppOAuthRevokeService,
   ) {}
-
-  async findAll(workspaceId: string): Promise<ConnectedAccountDTO[]> {
-    return this.repository.find({ where: { workspaceId } });
-  }
 
   async findByUserWorkspaceId({
     userWorkspaceId,
@@ -27,7 +32,7 @@ export class ConnectedAccountMetadataService {
   }: {
     userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO[]> {
+  }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
       where: { userWorkspaceId, workspaceId },
     });
@@ -39,19 +44,21 @@ export class ConnectedAccountMetadataService {
   }: {
     id: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO | null> {
+  }): Promise<ConnectedAccountEntity | null> {
     return this.repository.findOne({ where: { id, workspaceId } });
   }
 
-  async findByIds({
-    ids,
+  async findByIdAndUserWorkspaceId({
+    id,
+    userWorkspaceId,
     workspaceId,
   }: {
-    ids: string[];
+    id: string;
+    userWorkspaceId: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO[]> {
-    return this.repository.find({
-      where: { id: In(ids), workspaceId },
+  }): Promise<ConnectedAccountEntity | null> {
+    return this.repository.findOne({
+      where: { id, userWorkspaceId, workspaceId },
     });
   }
 
@@ -107,7 +114,7 @@ export class ConnectedAccountMetadataService {
       provider: string;
       userWorkspaceId: string;
     },
-  ): Promise<ConnectedAccountDTO> {
+  ): Promise<ConnectedAccountEntity> {
     const entity = this.repository.create(data);
 
     return this.repository.save(entity);
@@ -121,7 +128,7 @@ export class ConnectedAccountMetadataService {
     id: string;
     workspaceId: string;
     data: Partial<ConnectedAccountEntity>;
-  }): Promise<ConnectedAccountDTO> {
+  }): Promise<ConnectedAccountEntity> {
     await this.repository.update(
       { id, workspaceId },
       data as Record<string, unknown>,
@@ -136,10 +143,25 @@ export class ConnectedAccountMetadataService {
   }: {
     id: string;
     workspaceId: string;
-  }): Promise<ConnectedAccountDTO> {
+  }): Promise<ConnectedAccountEntity> {
     const connectedAccount = await this.repository.findOneOrFail({
       where: { id, workspaceId },
     });
+
+    const [messageChannelCount, calendarChannelCount] = await Promise.all([
+      this.messageChannelRepository.count({
+        where: { connectedAccountId: id, workspaceId },
+      }),
+      this.calendarChannelRepository.count({
+        where: { connectedAccountId: id, workspaceId },
+      }),
+    ]);
+
+    this.logger.log(
+      `WorkspaceId: ${workspaceId} Deleting connected account ${id} with ${messageChannelCount} message channel(s) and ${calendarChannelCount} calendar channel(s)`,
+    );
+
+    await this.appOAuthRevokeService.revokeIfApp(connectedAccount);
 
     await this.repository.delete({ id, workspaceId });
 

@@ -4,13 +4,18 @@ import { type ToolSet, zodSchema } from 'ai';
 import { isDefined } from 'twenty-shared/utils';
 
 import { JSON_RPC_ERROR_CODE } from 'src/engine/api/mcp/constants/json-rpc-error-code.const';
+import { MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-closed-world-read-only-tool-annotations.const';
+import { MCP_EXCLUDED_TOOL_NAMES } from 'src/engine/api/mcp/constants/mcp-excluded-tool-names.const';
+import { MCP_EXECUTE_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-execute-tool-annotations.const';
+import { MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS } from 'src/engine/api/mcp/constants/mcp-open-world-read-only-tool-annotations.const';
 import { MCP_PROTOCOL_VERSION } from 'src/engine/api/mcp/constants/mcp-protocol-version.const';
 import { MCP_SERVER_INFO } from 'src/engine/api/mcp/constants/mcp-server-info.const';
 import { MCP_SERVER_INSTRUCTIONS } from 'src/engine/api/mcp/constants/mcp-server-instructions.const';
 import { type JsonRpc } from 'src/engine/api/mcp/dtos/json-rpc';
 import { McpToolExecutorService } from 'src/engine/api/mcp/services/mcp-tool-executor.service';
+import { type McpToolAnnotations } from 'src/engine/api/mcp/types/mcp-tool-annotations.type';
 import { wrapJsonRpcResponse } from 'src/engine/api/mcp/utils/wrap-jsonrpc-response.util';
-import { type ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { buildApiKeyAuthContext } from 'src/engine/core-modules/auth/utils/build-api-key-auth-context.util';
@@ -36,11 +41,36 @@ import {
   LOAD_SKILL_TOOL_NAME,
   loadSkillInputSchema,
 } from 'src/engine/core-modules/tool-provider/tools/load-skill.tool';
-import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 
-const MCP_EXCLUDED_TOOLS = new Set(['code_interpreter', 'http_request']);
+type McpAnnotatedTool = ToolSet[string] & {
+  annotations: McpToolAnnotations;
+};
+
+const MCP_PRELOADED_TOOL_ANNOTATIONS: Record<string, McpToolAnnotations> = {
+  search_help_center: MCP_OPEN_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+};
+
+const annotatePreloadedMcpTools = (toolSet: ToolSet): ToolSet =>
+  Object.fromEntries(
+    Object.entries(toolSet).map(([name, toolDefinition]) => {
+      const annotations = MCP_PRELOADED_TOOL_ANNOTATIONS[name];
+
+      if (!isDefined(annotations)) {
+        throw new Error(`Missing MCP annotations for preloaded tool "${name}"`);
+      }
+
+      return [
+        name,
+        {
+          ...toolDefinition,
+          annotations,
+        } as McpAnnotatedTool,
+      ];
+    }),
+  );
 
 @Injectable()
 export class McpProtocolService {
@@ -70,7 +100,7 @@ export class McpProtocolService {
   async getRoleId(
     workspaceId: string,
     userWorkspaceId?: string,
-    apiKey?: ApiKeyEntity,
+    apiKey?: FlatApiKey,
   ) {
     if (isDefined(apiKey)) {
       return this.apiKeyRoleService.getRoleIdForApiKeyId(
@@ -99,7 +129,7 @@ export class McpProtocolService {
   }
 
   private async buildMcpToolSet(
-    workspace: WorkspaceEntity,
+    workspace: FlatWorkspace,
     roleId: string,
     options?: {
       authContext?: WorkspaceAuthContext;
@@ -118,41 +148,51 @@ export class McpProtocolService {
     const preloadedTools = await this.toolRegistry.getToolsByName(
       COMMON_PRELOAD_TOOLS,
       toolContext,
+      { includeLoadingMessage: false },
     );
 
     return {
-      ...preloadedTools,
+      ...annotatePreloadedMcpTools(preloadedTools),
       [GET_TOOL_CATALOG_TOOL_NAME]: {
         ...createGetToolCatalogTool(this.toolRegistry, workspace.id, roleId, {
           userId: options?.userId,
           userWorkspaceId: options?.userWorkspaceId,
-          excludeTools: MCP_EXCLUDED_TOOLS,
+          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
         }),
         inputSchema: zodSchema(getToolCatalogInputSchema),
-      },
+        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
       [LEARN_TOOLS_TOOL_NAME]: {
         ...createLearnToolsTool(
           this.toolRegistry,
           toolContext,
-          MCP_EXCLUDED_TOOLS,
+          MCP_EXCLUDED_TOOL_NAMES,
         ),
         inputSchema: zodSchema(learnToolsInputSchema),
-      },
+        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
       [EXECUTE_TOOL_TOOL_NAME]: {
-        ...createExecuteToolTool(
-          this.toolRegistry,
-          toolContext,
-          preloadedTools,
-          MCP_EXCLUDED_TOOLS,
-        ),
+        ...createExecuteToolTool(this.toolRegistry, toolContext, {
+          excludeTools: MCP_EXCLUDED_TOOL_NAMES,
+        }),
         inputSchema: executeToolInputSchema,
-      },
+        annotations: MCP_EXECUTE_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
       [LOAD_SKILL_TOOL_NAME]: {
-        ...createLoadSkillTool((names) =>
-          this.skillService.findFlatSkillsByNames(names, workspace.id),
+        ...createLoadSkillTool(
+          (names) =>
+            this.skillService.findFlatSkillsByNames(names, workspace.id),
+          async () => {
+            const allSkills = await this.skillService.findAllFlatSkills(
+              workspace.id,
+            );
+
+            return allSkills.map((skill) => skill.name);
+          },
         ),
         inputSchema: zodSchema(loadSkillInputSchema),
-      },
+        annotations: MCP_CLOSED_WORLD_READ_ONLY_TOOL_ANNOTATIONS,
+      } as McpAnnotatedTool,
     };
   }
 
@@ -165,11 +205,12 @@ export class McpProtocolService {
       userWorkspaceId,
       apiKey,
     }: {
-      workspace: WorkspaceEntity;
+      workspace: FlatWorkspace;
       userId?: string;
       userWorkspaceId?: string;
-      apiKey: ApiKeyEntity | undefined;
+      apiKey: FlatApiKey | undefined;
     },
+    sseWriter?: (data: Record<string, unknown>) => void,
   ): Promise<Record<string, unknown> | null> {
     try {
       // JSON-RPC notifications have no id and expect no response
@@ -236,6 +277,7 @@ export class McpProtocolService {
           id,
           toolSet,
           params,
+          sseWriter,
         );
       }
 

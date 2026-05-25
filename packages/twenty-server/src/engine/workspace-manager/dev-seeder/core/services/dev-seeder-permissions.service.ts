@@ -10,6 +10,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { FieldPermissionService } from 'src/engine/metadata-modules/object-permission/field-permission/field-permission.service';
 import { ObjectPermissionService } from 'src/engine/metadata-modules/object-permission/object-permission.service';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
+import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
@@ -146,6 +147,27 @@ export class DevSeederPermissionsService {
       roleId: adminRole.id,
     });
 
+    const memberRole = await this.initMinimalPermissionsAndActivateWorkspace({
+      workspaceId,
+      workspaceCustomFlatApplication,
+    });
+
+    if (memberUserWorkspaceIds.length > 0) {
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId,
+        userWorkspaceIds: memberUserWorkspaceIds,
+        roleId: memberRole.id,
+      });
+    }
+  }
+
+  public async initMinimalPermissionsAndActivateWorkspace({
+    workspaceId,
+    workspaceCustomFlatApplication,
+  }: {
+    workspaceId: string;
+    workspaceCustomFlatApplication: FlatApplication;
+  }): Promise<RoleDTO> {
     const memberRole = await this.roleService.createMemberRole({
       workspaceId,
       ownerFlatApplication: workspaceCustomFlatApplication,
@@ -158,13 +180,7 @@ export class DevSeederPermissionsService {
         activationStatus: WorkspaceActivationStatus.ACTIVE,
       });
 
-    if (memberUserWorkspaceIds.length > 0) {
-      await this.userRoleService.assignRoleToManyUserWorkspace({
-        workspaceId,
-        userWorkspaceIds: memberUserWorkspaceIds,
-        roleId: memberRole.id,
-      });
-    }
+    return memberRole;
   }
 
   private async createLimitedRoleForSeedWorkspace({

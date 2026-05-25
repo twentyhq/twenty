@@ -11,6 +11,8 @@ export type UniversalFlatIndexFieldMetadata = Omit<
   | 'fieldMetadataId'
   | 'fieldMetadata'
   | 'id'
+  | 'workspaceId'
+  | 'workspace'
   | keyof CastRecordTypeOrmDatePropertiesToString<IndexFieldMetadataEntity>
 > & {
   indexMetadataUniversalIdentifier: string;

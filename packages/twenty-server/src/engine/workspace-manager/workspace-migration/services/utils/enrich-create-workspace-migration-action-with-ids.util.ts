@@ -167,9 +167,13 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       case 'navigationMenuItem':
       case 'frontComponent':
       case 'viewSort':
+      case 'rolePermissionFlag':
       case 'permissionFlag':
       case 'objectPermission':
-      case 'webhook': {
+      case 'fieldPermission':
+      case 'webhook':
+      case 'applicationVariable':
+      case 'connectionProvider': {
         if (!isDefined(idByUniversalIdentifier)) {
           return action;
         }

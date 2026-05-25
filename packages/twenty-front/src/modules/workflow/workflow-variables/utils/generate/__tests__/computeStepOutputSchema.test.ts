@@ -61,6 +61,15 @@ describe('computeStepOutputSchema', () => {
 
       expect(result).toBeUndefined();
     });
+
+    it('should return undefined for LOGIC_FUNCTION step type', () => {
+      const result = computeStepOutputSchema({
+        step: { type: 'LOGIC_FUNCTION', settings: {} } as any,
+        objectMetadataItems: [],
+      });
+
+      expect(result).toBeUndefined();
+    });
   });
 
   describe('DATABASE_EVENT trigger', () => {
@@ -409,20 +418,13 @@ describe('computeStepOutputSchema', () => {
   });
 
   describe('AI_AGENT step', () => {
-    it('should return response schema', () => {
+    it('should return undefined for AI_AGENT step type', () => {
       const result = computeStepOutputSchema({
         step: { type: 'AI_AGENT', settings: {} } as any,
         objectMetadataItems: [],
       });
 
-      expect(result).toEqual({
-        response: {
-          isLeaf: true,
-          type: FieldMetadataType.TEXT,
-          label: 'Response',
-          value: null,
-        },
-      });
+      expect(result).toBeUndefined();
     });
   });
 
@@ -461,8 +463,8 @@ describe('shouldComputeOutputSchemaOnFrontend', () => {
     expect(shouldComputeOutputSchemaOnFrontend('HTTP_REQUEST')).toBe(false);
   });
 
-  it('should return true for AI_AGENT', () => {
-    expect(shouldComputeOutputSchemaOnFrontend('AI_AGENT')).toBe(true);
+  it('should return false for AI_AGENT', () => {
+    expect(shouldComputeOutputSchemaOnFrontend('AI_AGENT')).toBe(false);
   });
 
   it('should return false for WEBHOOK', () => {
@@ -471,6 +473,10 @@ describe('shouldComputeOutputSchemaOnFrontend', () => {
 
   it('should return false for ITERATOR', () => {
     expect(shouldComputeOutputSchemaOnFrontend('ITERATOR')).toBe(false);
+  });
+
+  it('should return false for LOGIC_FUNCTION', () => {
+    expect(shouldComputeOutputSchemaOnFrontend('LOGIC_FUNCTION')).toBe(false);
   });
 
   it('should return true for DATABASE_EVENT', () => {

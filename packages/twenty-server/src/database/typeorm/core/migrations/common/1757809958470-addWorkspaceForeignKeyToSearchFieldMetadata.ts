@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddWorkspaceForeignKeyToSearchFieldMetadata1757809958470
-  implements MigrationInterface
-{
+export class AddWorkspaceForeignKeyToSearchFieldMetadata1757809958470 implements MigrationInterface {
   name = 'AddWorkspaceForeignKeyToSearchFieldMetadata1757809958470';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

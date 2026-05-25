@@ -1,13 +1,15 @@
+import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { SidePanelGroup } from '@/side-panel/components/SidePanelGroup';
 import { t } from '@lingui/core/macro';
 import { WorkflowAiAgentPermissionsObjectRow } from './WorkflowAiAgentPermissionsObjectRow';
-import { StyledLabel, StyledList } from './WorkflowAiAgentPermissionsStyles';
 
 type WorkflowAiAgentPermissionsObjectsListProps = {
-  objects: Array<{
-    id: string;
-    icon?: string | null;
-    labelPlural: string;
-  }>;
+  objects: Array<
+    Pick<
+      EnrichedObjectMetadataItem,
+      'id' | 'icon' | 'labelPlural' | 'nameSingular' | 'color' | 'isSystem'
+    >
+  >;
   onObjectClick: (objectId: string) => void;
   readonly: boolean;
 };
@@ -18,18 +20,15 @@ export const WorkflowAiAgentPermissionsObjectsList = ({
   readonly,
 }: WorkflowAiAgentPermissionsObjectsListProps) => {
   return (
-    <div>
-      <StyledLabel>{t`Objects`}</StyledLabel>
-      <StyledList>
-        {objects.map((objectMetadata) => (
-          <WorkflowAiAgentPermissionsObjectRow
-            key={objectMetadata.id}
-            objectMetadata={objectMetadata}
-            onClick={() => onObjectClick(objectMetadata.id)}
-            readonly={readonly}
-          />
-        ))}
-      </StyledList>
-    </div>
+    <SidePanelGroup heading={t`Objects`}>
+      {objects.map((objectMetadata) => (
+        <WorkflowAiAgentPermissionsObjectRow
+          key={objectMetadata.id}
+          objectMetadata={objectMetadata}
+          onClick={() => onObjectClick(objectMetadata.id)}
+          readonly={readonly}
+        />
+      ))}
+    </SidePanelGroup>
   );
 };

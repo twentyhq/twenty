@@ -1,6 +1,11 @@
 import crypto from 'crypto';
+import { promises as fs } from 'fs';
+import { tmpdir } from 'os';
+import { join } from 'path';
 
 import request from 'supertest';
+import * as tar from 'tar';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { type DataSource } from 'typeorm';
 
 const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
@@ -13,16 +18,18 @@ const MARKETPLACE_QUERY = `
       description
       author
       sourcePackage
-      icon
-      version
       category
+      logo
+      isFeatured
     }
   }
 `;
 
 const INSTALL_MUTATION = `
-  mutation InstallMarketplaceApp($universalIdentifier: String!) {
-    installMarketplaceApp(universalIdentifier: $universalIdentifier)
+  mutation InstallApplication($universalIdentifier: String!) {
+    installApplication(universalIdentifier: $universalIdentifier) {
+      id
+    }
   }
 `;
 
@@ -58,7 +65,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
     name: string;
     sourcePackage: string;
     latestAvailableVersion?: string;
-    marketplaceDisplayData?: Record<string, unknown>;
+    manifest?: Record<string, unknown>;
   }): Promise<string> => {
     const id = crypto.randomUUID();
     const oAuthClientId = crypto.randomUUID();
@@ -68,7 +75,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         (id, "universalIdentifier", name, "oAuthClientId",
          "oAuthRedirectUris", "oAuthScopes", "workspaceId",
          "sourceType", "sourcePackage", "latestAvailableVersion",
-         "marketplaceDisplayData", "isListed")
+         "manifest", "isListed")
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)`,
       [
         id,
@@ -81,9 +88,7 @@ describe('Marketplace Catalog Sync (integration)', () => {
         'npm',
         params.sourcePackage,
         params.latestAvailableVersion ?? '1.0.0',
-        params.marketplaceDisplayData
-          ? JSON.stringify(params.marketplaceDisplayData)
-          : null,
+        params.manifest ? JSON.stringify(params.manifest) : null,
         true,
       ],
     );
@@ -134,10 +139,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
         universalIdentifier: curatedUid,
         name: 'Data Enrichment',
         sourcePackage: '@twentyhq/app-data-enrichment',
-        marketplaceDisplayData: {
-          icon: 'IconSparkles',
-          version: '1.0.0',
-          category: 'Data',
+        manifest: {
+          application: {
+            category: 'Data',
+          },
         },
       });
     });
@@ -175,11 +180,10 @@ describe('Marketplace Catalog Sync (integration)', () => {
       expect(curatedApp).toBeDefined();
       expect(curatedApp.name).toBe('Data Enrichment');
       expect(curatedApp.category).toBe('Data');
-      expect(curatedApp.icon).toBe('IconSparkles');
     });
   });
 
-  describe('installMarketplaceApp', () => {
+  describe('installApplication', () => {
     it('should fail if registration does not exist', async () => {
       const res = await gqlRequest(INSTALL_MUTATION, {
         universalIdentifier: crypto.randomUUID(),
@@ -190,5 +194,106 @@ describe('Marketplace Catalog Sync (integration)', () => {
         'No application registration found',
       );
     });
+
+    it('should install a tarball app and return the application id', async () => {
+      const universalIdentifier = crypto.randomUUID();
+      const roleId = crypto.randomUUID();
+
+      const manifest = JSON.stringify({
+        application: {
+          universalIdentifier,
+          displayName: 'Install Test App',
+          description: 'App for testing installApplication',
+          icon: 'IconTestPipe',
+          defaultRoleUniversalIdentifier: roleId,
+          applicationVariables: {},
+          packageJsonChecksum: null,
+          yarnLockChecksum: null,
+        },
+        roles: [
+          {
+            universalIdentifier: roleId,
+            label: 'Default Role',
+            description: 'Default role',
+          },
+        ],
+        skills: [],
+        agents: [],
+        objects: [],
+        fields: [],
+        logicFunctions: [],
+        frontComponents: [],
+        publicAssets: [],
+        views: [],
+        navigationMenuItems: [],
+        pageLayouts: [],
+        pageLayoutTabs: [],
+        commandMenuItems: [],
+      });
+
+      const packageJson = JSON.stringify({
+        name: 'test-install-app',
+        version: '1.0.0',
+      });
+
+      const tempId = crypto.randomUUID();
+      const sourceDir = join(tmpdir(), `test-tarball-src-${tempId}`);
+      const tarballPath = join(tmpdir(), `test-tarball-${tempId}.tar.gz`);
+
+      await fs.mkdir(sourceDir, { recursive: true });
+      await fs.writeFile(join(sourceDir, 'manifest.json'), manifest);
+      await fs.writeFile(join(sourceDir, 'package.json'), packageJson);
+
+      await tar.create(
+        { file: tarballPath, gzip: true, cwd: sourceDir },
+        ['manifest.json', 'package.json'],
+      );
+
+      const tarballBuffer = await fs.readFile(tarballPath);
+
+      await fs.rm(sourceDir, { recursive: true, force: true });
+      await fs.rm(tarballPath, { force: true });
+
+      const UPLOAD_MUTATION = `
+        mutation UploadAppTarball($file: Upload!, $universalIdentifier: String) {
+          uploadAppTarball(file: $file, universalIdentifier: $universalIdentifier) {
+            id
+            universalIdentifier
+            name
+          }
+        }
+      `;
+
+      const uploadRes = await request(baseUrl)
+        .post('/metadata')
+        .set('Authorization', `Bearer ${APPLE_JANE_ADMIN_ACCESS_TOKEN}`)
+        .field(
+          'operations',
+          JSON.stringify({
+            query: UPLOAD_MUTATION,
+            variables: { file: null, universalIdentifier },
+          }),
+        )
+        .field('map', JSON.stringify({ '0': ['variables.file'] }))
+        .attach('0', tarballBuffer, 'app.tar.gz')
+        .expect(200);
+
+      expect(uploadRes.body.errors).toBeUndefined();
+      expect(uploadRes.body.data.uploadAppTarball.id).toBeDefined();
+
+      try {
+        const installRes = await gqlRequest(INSTALL_MUTATION, {
+          universalIdentifier,
+        }).expect(200);
+
+        expect(installRes.body.errors).toBeUndefined();
+        expect(installRes.body.data.installApplication).toBeDefined();
+        expect(installRes.body.data.installApplication.id).toBeDefined();
+      } finally {
+        await cleanupApplicationAndAppRegistration({
+          applicationUniversalIdentifier: universalIdentifier,
+        });
+      }
+    }, 120000);
   });
 });

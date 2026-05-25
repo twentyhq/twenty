@@ -14,8 +14,8 @@ import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/Workflo
 import { WorkflowEditActionFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormFieldSettings';
 import { type WorkflowFormActionField } from '@/workflow/workflow-steps/workflow-actions/form-action/types/WorkflowFormActionField';
 import { getDefaultFormFieldSettings } from '@/workflow/workflow-steps/workflow-actions/form-action/utils/getDefaultFormFieldSettings';
-import { styled } from '@linaria/react';
 import { type OnDragEndResponder } from '@hello-pangea/dnd';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useEffect, useState } from 'react';
@@ -30,9 +30,9 @@ import {
   IconTrash,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import { v4 } from 'uuid';
-import { themeCssVariables, ThemeContext } from 'twenty-ui/theme-constants';
 
 export type WorkflowEditActionFormBuilderProps = {
   triggerType: WorkflowTriggerType | undefined;
@@ -98,9 +98,10 @@ const StyledFieldContainer = styled.div<{
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
   display: flex;
   font-family: inherit;
+  height: 100%;
   padding-left: ${themeCssVariables.spacing[2]};
-  padding-right: ${themeCssVariables.spacing[2]};
 
+  padding-right: ${themeCssVariables.spacing[2]};
   width: 100%;
 
   &:hover,
@@ -330,7 +331,9 @@ export const WorkflowEditActionFormBuilder = ({
                                           .placeholder}
                                   </FormFieldPlaceholder>
                                 </StyledPlaceholderContainer>
-                                {field.type === 'RECORD' && (
+                                {(field.type === 'RECORD' ||
+                                  field.type === 'SELECT' ||
+                                  field.type === 'MULTI_SELECT') && (
                                   <IconChevronDown
                                     size={theme.icon.size.md}
                                     color={

@@ -5,11 +5,9 @@ export type AgentChatMessageUIToolCallPart = {
   toolCallId: string;
   state: string;
   output: {
-    toolName: string;
-    result: {
-      message: string;
-      result: NavigateAppToolOutput;
-      success: boolean;
-    };
+    success: boolean;
+    message: string;
+    error?: string;
+    result?: NavigateAppToolOutput;
   };
 };

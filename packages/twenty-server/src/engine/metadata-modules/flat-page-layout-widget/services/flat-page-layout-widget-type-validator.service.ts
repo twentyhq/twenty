@@ -89,6 +89,12 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       WORKFLOW_RUN: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.WORKFLOW_RUN,
       ),
+      RECORD_TABLE: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.RECORD_TABLE,
+      ),
+      EMAIL_THREAD: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.EMAIL_THREAD,
+      ),
     };
 
   private readonly PAGE_LAYOUT_WIDGET_TYPE_VALIDATOR_FOR_UPDATE_HASHMAP: FlatPageLayoutWidgetTypeValidatorForUpdate =
@@ -136,6 +142,12 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ),
       WORKFLOW_RUN: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.WORKFLOW_RUN,
+      ),
+      RECORD_TABLE: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.RECORD_TABLE,
+      ),
+      EMAIL_THREAD: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.EMAIL_THREAD,
       ),
     };
 

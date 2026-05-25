@@ -3,9 +3,10 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type QueryRunner } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import { LoggerService } from 'src/engine/core-modules/logger/logger.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { AllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/all-flat-entity-maps.type';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -35,6 +36,7 @@ export class WorkspaceMigrationRunnerService {
     private readonly workspaceCacheStorageService: WorkspaceCacheStorageService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly logger: LoggerService,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
   private getLegacyCacheInvalidationPromises({
@@ -85,9 +87,15 @@ export class WorkspaceMigrationRunnerService {
       flatMapsKeysSet.has('flatRoleMaps') ||
       flatMapsKeysSet.has('flatRoleTargetMaps');
 
+    const shouldInvalidateRolesPermissionsCache =
+      flatMapsKeysSet.has('flatObjectPermissionMaps') ||
+      flatMapsKeysSet.has('flatFieldPermissionMaps') ||
+      flatMapsKeysSet.has('flatRolePermissionFlagMaps');
+
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
-      shouldInvalidateRoleMapCache
+      shouldInvalidateRoleMapCache ||
+      shouldInvalidateRolesPermissionsCache
     ) {
       asyncOperations.push(
         this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
@@ -98,6 +106,14 @@ export class WorkspaceMigrationRunnerService {
           'ORMEntityMetadatas',
           'flatRoleTargetByAgentIdMaps',
           'graphQLResolverNameMap',
+        ]),
+      );
+    }
+
+    if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
+      asyncOperations.push(
+        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'applicationVariableMaps',
         ]),
       );
     }
@@ -154,21 +170,26 @@ export class WorkspaceMigrationRunnerService {
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
-    queryRunner: externalQueryRunner,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
-    queryRunner?: QueryRunner;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
+    hasSchemaMetadataChanged: boolean;
   }> => {
+    if (this.twentyConfigService.get('WORKSPACE_SCHEMA_DDL_LOCKED')) {
+      throw new WorkspaceMigrationRunnerException({
+        message:
+          'Workspace schema DDL changes are locked. This is typically set during hot upgrades.',
+        code: WorkspaceMigrationRunnerExceptionCode.DDL_LOCKED,
+      });
+    }
+
     this.logger.time('Runner', 'Total execution');
     this.logger.time('Runner', 'Initial cache retrieval');
 
-    const queryRunner =
-      externalQueryRunner ?? this.coreDataSource.createQueryRunner();
-    const isTransactionAlreadyActive = queryRunner.isTransactionActive;
+    const queryRunner = this.coreDataSource.createQueryRunner();
 
     const actionMetadataNames = [
       ...new Set(actions.flatMap((action) => action.metadataName)),
@@ -219,14 +240,12 @@ export class WorkspaceMigrationRunnerService {
 
     this.logger.time('Runner', 'Transaction execution');
 
-    if (!isTransactionAlreadyActive) {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-    }
+    await queryRunner.connect();
+    await queryRunner.startTransaction();
+
+    const allMetadataEvents: MetadataEvent[] = [];
 
     try {
-      const allMetadataEvents: MetadataEvent[] = [];
-
       for (const action of actions) {
         const { partialOptimisticCache, metadataEvents } =
           await this.workspaceMigrationRunnerActionHandlerRegistry.executeActionHandler(
@@ -250,29 +269,16 @@ export class WorkspaceMigrationRunnerService {
         allMetadataEvents.push(...metadataEvents);
       }
 
-      if (!isTransactionAlreadyActive) {
-        await queryRunner.commitTransaction();
-      }
+      await queryRunner.commitTransaction();
 
       this.logger.timeEnd('Runner', 'Transaction execution');
-
-      await this.invalidateCache({
-        allFlatEntityMapsKeys,
-        workspaceId,
-      });
-
-      this.logger.timeEnd('Runner', 'Total execution');
-
-      return { allFlatEntityMaps, metadataEvents: allMetadataEvents };
     } catch (error) {
-      if (!isTransactionAlreadyActive && queryRunner.isTransactionActive) {
-        await queryRunner.rollbackTransaction().catch((rollbackError) =>
-          // oxlint-disable-next-line no-console
-          console.trace(
-            `Failed to rollback transaction: ${rollbackError.message}`,
-          ),
-        );
-      }
+      await queryRunner.rollbackTransaction().catch((rollbackError) =>
+        // oxlint-disable-next-line no-console
+        console.trace(
+          `Failed to rollback transaction: ${rollbackError.message}`,
+        ),
+      );
 
       const invertedActions = [...actions].reverse();
 
@@ -290,6 +296,18 @@ export class WorkspaceMigrationRunnerService {
         );
       }
 
+      try {
+        await this.invalidateCache({
+          allFlatEntityMapsKeys,
+          workspaceId,
+        });
+      } catch (cacheError) {
+        this.logger.error(
+          `Cache invalidation failed after rollback: ${cacheError}`,
+          'Runner',
+        );
+      }
+
       if (error instanceof WorkspaceMigrationRunnerException) {
         throw error;
       }
@@ -299,9 +317,31 @@ export class WorkspaceMigrationRunnerService {
         code: WorkspaceMigrationRunnerExceptionCode.INTERNAL_SERVER_ERROR,
       });
     } finally {
-      if (!isTransactionAlreadyActive) {
-        await queryRunner.release();
-      }
+      await queryRunner.release();
     }
+
+    try {
+      await this.invalidateCache({
+        allFlatEntityMapsKeys,
+        workspaceId,
+      });
+    } catch (cacheError) {
+      this.logger.error(
+        `Cache invalidation failed after committed transaction: ${cacheError}`,
+        'Runner',
+      );
+    }
+
+    const hasSchemaMetadataChanged =
+      allFlatEntityMapsKeys.includes('flatObjectMetadataMaps') ||
+      allFlatEntityMapsKeys.includes('flatFieldMetadataMaps');
+
+    this.logger.timeEnd('Runner', 'Total execution');
+
+    return {
+      allFlatEntityMaps,
+      metadataEvents: allMetadataEvents,
+      hasSchemaMetadataChanged,
+    };
   };
 }

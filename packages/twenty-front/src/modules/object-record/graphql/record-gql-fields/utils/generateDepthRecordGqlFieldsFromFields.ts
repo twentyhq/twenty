@@ -6,13 +6,15 @@ import {
 } from 'twenty-shared/types';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
-import { getImageIdentifierFieldMetadataItem } from '@/object-metadata/utils/getImageIdentifierFieldMetadataItem';
-import { getLabelIdentifierFieldMetadataItem } from '@/object-metadata/utils/getLabelIdentifierFieldMetadataItem';
 import { type RecordGqlFields } from '@/object-record/graphql/record-gql-fields/types/RecordGqlFields';
+import { buildIdentifierGqlFields } from '@/object-record/graphql/record-gql-fields/utils/buildIdentifierGqlFields';
 import { generateActivityTargetGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateActivityTargetGqlFields';
 import { generateJunctionRelationGqlFields } from '@/object-record/graphql/record-gql-fields/utils/generateJunctionRelationGqlFields';
 import { isJunctionRelationField } from '@/object-record/record-field/ui/utils/junction/isJunctionRelationField';
-import { computeMorphRelationFieldName, isDefined } from 'twenty-shared/utils';
+import {
+  computeMorphRelationGqlFieldName,
+  isDefined,
+} from 'twenty-shared/utils';
 
 export type GenerateDepthRecordGqlFieldsFromFields = {
   objectMetadataItems: Pick<
@@ -96,21 +98,9 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           }
         }
 
-        const labelIdentifierFieldMetadataItem =
-          getLabelIdentifierFieldMetadataItem(targetObjectMetadataItem);
-
-        const imageIdentifierFieldMetadataItem =
-          getImageIdentifierFieldMetadataItem(targetObjectMetadataItem);
-
-        const relationIdentifierSubGqlFields = {
-          id: true,
-          ...(isDefined(labelIdentifierFieldMetadataItem)
-            ? { [labelIdentifierFieldMetadataItem.name]: true }
-            : {}),
-          ...(isDefined(imageIdentifierFieldMetadataItem)
-            ? { [imageIdentifierFieldMetadataItem.name]: true }
-            : {}),
-        };
+        const relationIdentifierSubGqlFields = buildIdentifierGqlFields(
+          targetObjectMetadataItem,
+        );
 
         const manyToOneGqlFields = {
           [`${fieldMetadata.name}Id`]: true,
@@ -138,17 +128,33 @@ export const generateDepthRecordGqlFieldsFromFields = ({
         }
 
         const morphGqlFields = fieldMetadata.morphRelations.map(
-          (morphRelation) => ({
-            gqlField: computeMorphRelationFieldName({
-              fieldName: fieldMetadata.name,
-              relationType: morphRelation.type,
-              targetObjectMetadataNameSingular:
-                morphRelation.targetObjectMetadata.nameSingular,
-              targetObjectMetadataNamePlural:
-                morphRelation.targetObjectMetadata.namePlural,
-            }),
-            fieldMetadata,
-          }),
+          (morphRelation) => {
+            const morphTargetObjectMetadataItem = objectMetadataItems.find(
+              (objectMetadataItem) =>
+                objectMetadataItem.id === morphRelation.targetObjectMetadata.id,
+            );
+
+            if (!morphTargetObjectMetadataItem) {
+              throw new Error(
+                `Target object metadata item not found for ${fieldMetadata.name} (morph target ${morphRelation.targetObjectMetadata.nameSingular})`,
+              );
+            }
+
+            return {
+              gqlField: computeMorphRelationGqlFieldName({
+                fieldName: fieldMetadata.name,
+                relationType: morphRelation.type,
+                targetObjectMetadataNameSingular:
+                  morphRelation.targetObjectMetadata.nameSingular,
+                targetObjectMetadataNamePlural:
+                  morphRelation.targetObjectMetadata.namePlural,
+              }),
+              fieldMetadata,
+              relationIdentifierSubGqlFields: buildIdentifierGqlFields(
+                morphTargetObjectMetadataItem,
+              ),
+            };
+          },
         );
 
         return {
@@ -156,8 +162,14 @@ export const generateDepthRecordGqlFieldsFromFields = ({
           ...morphGqlFields.reduce(
             (morphGqlFields, morphGqlField) => ({
               ...morphGqlFields,
-              ...(depth === 1
-                ? { [`${morphGqlField.gqlField}`]: { id: true, name: true } }
+              ...(depth === 1 && shouldOnlyLoadRelationIdentifiers
+                ? {
+                    [`${morphGqlField.gqlField}`]:
+                      morphGqlField.relationIdentifierSubGqlFields,
+                  }
+                : {}),
+              ...(depth === 1 && !shouldOnlyLoadRelationIdentifiers
+                ? { [`${morphGqlField.gqlField}`]: true }
                 : {}),
               ...(relationType === RelationType.MANY_TO_ONE
                 ? { [`${morphGqlField.gqlField}Id`]: true }

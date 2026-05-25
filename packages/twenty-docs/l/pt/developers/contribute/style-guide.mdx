@@ -1,0 +1,176 @@
+---
+title: Guia de Estilo
+icon: pincel
+description: Convenções de código e práticas recomendadas para contribuir para o Twenty.
+---
+
+## React
+
+### Apenas componentes funcionais
+
+Use sempre componentes funcionais TSX com exportações nomeadas.
+
+```tsx
+// ❌ Bad
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+export default MyComponent;
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Propriedades
+
+Crie um tipo chamado `{ComponentName}Props`. Use desestruturação. Não use `React.FC`.
+
+```tsx
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+### Sem spread de props de uma única variável
+
+```tsx
+// ❌ Bad
+const MyComponent = (props: MyComponentProps) => <Other {...props} />;
+
+// ✅ Good
+const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, prop2 }} />;
+```
+
+## Gerenciamento de Estado
+
+### Átomos do Jotai para estado global
+
+```tsx
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
+  key: 'myAtomState',
+  defaultValue: 'default value',
+});
+```
+
+* Prefira átomos em vez de prop drilling
+* Não use `useRef` para estado — use `useState` ou átomos
+* Use famílias de átomos e seletores para listas
+
+### Evite re-renderizações desnecessárias
+
+* Extraia `useEffect` e busca de dados em componentes sidecar irmãos
+* Prefira manipuladores de eventos (`handleClick`, `handleChange`) em vez de `useEffect`
+* Não use `React.memo()` — corrija a causa raiz em vez disso
+* Limite o uso de `useCallback` / `useMemo`
+
+```tsx
+// ❌ Bad — useEffect in the same component causes re-renders
+export const Page = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <div>{data}</div>;
+};
+
+// ✅ Good — extract into sibling
+export const PageData = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <></>;
+};
+export const Page = () => {
+  const [data] = useAtomState(dataState);
+  return <div>{data}</div>;
+};
+```
+
+## TypeScript
+
+* **`type` em vez de `interface`** — mais flexível, mais fácil de compor
+* **Literais de string em vez de enums** — exceto para enums do codegen do GraphQL e APIs internas da biblioteca
+* **Sem `any`** — TypeScript estrito aplicado
+* **Sem imports de tipos** — use imports normais (aplicado pelo Oxlint `typescript/consistent-type-imports`)
+* **Use [Zod](https://github.com/colinhacks/zod)** para validação em tempo de execução de objetos não tipados
+
+## JavaScript
+
+```tsx
+// Use nullish-coalescing (??) instead of ||
+const value = process.env.MY_VALUE ?? 'default';
+
+// Use optional chaining
+onClick?.();
+```
+
+## Nomenclatura
+
+* **Variáveis**: camelCase, descritivas (`email` não `value`, `fieldMetadata` não `fm`)
+* **Constantes**: SCREAMING_SNAKE_CASE
+* **Tipos/Classes**: PascalCase
+* **Arquivos/diretórios**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **Manipuladores de eventos**: `handleClick` (não `onClick` para a função manipuladora)
+* **Props do componente**: prefixe com o nome do componente (`ButtonProps`)
+* **Componentes estilizados**: prefixe com `Styled` (`StyledTitle`)
+
+## Estilização
+
+Use componentes estilizados do [Linaria](https://github.com/callstack/linaria). Use valores do tema — evite `px`, `rem` ou cores hardcoded.
+
+```tsx
+// ❌ Bad
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  margin-left: 4px;
+`;
+
+// ✅ Good
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+```
+
+## Importações
+
+Use aliases em vez de caminhos relativos:
+
+```tsx
+// ❌ Bad
+import { Foo } from '../../../../../testing/decorators/Foo';
+
+// ✅ Good
+import { Foo } from '~/testing/decorators/Foo';
+import { Bar } from '@/modules/bar/components/Bar';
+```
+
+## Estrutura de pastas
+
+```
+front
+└── modules/         # Feature modules
+│   └── module1/
+│       ├── components/
+│       ├── constants/
+│       ├── contexts/
+│       ├── graphql/  (fragments, queries, mutations)
+│       ├── hooks/
+│       ├── states/   (atoms, selectors)
+│       ├── types/
+│       └── utils/
+└── pages/           # Route-level components
+└── ui/              # Reusable UI components (display, input, feedback, ...)
+```
+
+* Módulos podem importar de outros módulos, mas `ui/` deve permanecer sem dependências
+* Use subpastas `internal/` para código privado do módulo
+* Componentes com menos de 300 linhas, serviços com menos de 500 linhas

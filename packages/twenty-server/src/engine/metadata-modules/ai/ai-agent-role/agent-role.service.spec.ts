@@ -4,9 +4,9 @@ import { getRepositoryToken } from '@nestjs/typeorm';
 import { type Repository } from 'typeorm';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-target/types/flat-role-target.type';
@@ -226,7 +226,7 @@ describe('AiAgentRoleService', () => {
       expect(roleTargetService.create).not.toHaveBeenCalled();
     });
 
-    it('should throw AgentException when agent does not exist', async () => {
+    it('should throw AiException when agent does not exist', async () => {
       // Arrange
       const nonExistentAgentId = 'non-existent-agent-id';
 
@@ -239,7 +239,7 @@ describe('AiAgentRoleService', () => {
           agentId: nonExistentAgentId,
           roleId: testRole.id,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.assignRoleToAgent({
@@ -248,12 +248,12 @@ describe('AiAgentRoleService', () => {
           roleId: testRole.id,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_NOT_FOUND,
+        code: AiExceptionCode.AGENT_NOT_FOUND,
         message: `Agent with id ${nonExistentAgentId} not found in workspace`,
       });
     });
 
-    it('should throw AgentException when role does not exist', async () => {
+    it('should throw AiException when role does not exist', async () => {
       // Arrange
       const nonExistentRoleId = 'non-existent-role-id';
 
@@ -267,7 +267,7 @@ describe('AiAgentRoleService', () => {
           agentId: testAgent.id,
           roleId: nonExistentRoleId,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.assignRoleToAgent({
@@ -276,12 +276,12 @@ describe('AiAgentRoleService', () => {
           roleId: nonExistentRoleId,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.ROLE_NOT_FOUND,
+        code: AiExceptionCode.ROLE_NOT_FOUND,
         message: `Role with id ${nonExistentRoleId} not found in workspace`,
       });
     });
 
-    it('should throw AgentException when agent belongs to different workspace', async () => {
+    it('should throw AiException when agent belongs to different workspace', async () => {
       // Arrange
       const differentWorkspaceId = 'different-workspace-id';
 
@@ -294,7 +294,7 @@ describe('AiAgentRoleService', () => {
           agentId: testAgent.id,
           roleId: testRole.id,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.assignRoleToAgent({
@@ -303,7 +303,7 @@ describe('AiAgentRoleService', () => {
           roleId: testRole.id,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.AGENT_NOT_FOUND,
+        code: AiExceptionCode.AGENT_NOT_FOUND,
         message: `Agent with id ${testAgent.id} not found in workspace`,
       });
     });
@@ -355,7 +355,7 @@ describe('AiAgentRoleService', () => {
           workspaceId: testWorkspaceId,
           agentId: testAgent.id,
         }),
-      ).rejects.toThrow(AgentException);
+      ).rejects.toThrow(AiException);
 
       await expect(
         service.removeRoleFromAgent({
@@ -363,7 +363,7 @@ describe('AiAgentRoleService', () => {
           agentId: testAgent.id,
         }),
       ).rejects.toMatchObject({
-        code: AgentExceptionCode.ROLE_NOT_FOUND,
+        code: AiExceptionCode.ROLE_NOT_FOUND,
         message: `Role target not found for agent ${testAgent.id}`,
       });
     });

@@ -8,7 +8,8 @@ import {
 const deactivateWorkflowVersionSchema = z.object({
   workflowVersionId: z
     .string()
-    .describe('The ID of the workflow version to deactivate'),
+    .uuid()
+    .describe('The UUID of the workflow version to deactivate'),
 });
 
 type DeactivateWorkflowVersionInput = z.infer<

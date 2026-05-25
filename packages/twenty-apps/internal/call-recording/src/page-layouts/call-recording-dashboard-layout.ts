@@ -5,7 +5,7 @@ import {
   CREATED_AT_FIELD_UNIVERSAL_IDENTIFIER,
   NAME_FIELD_UNIVERSAL_IDENTIFIER,
 } from 'src/objects/call-recording';
-import { AggregateOperations, definePageLayout, ObjectRecordGroupByDateGranularity, PageLayoutTabLayoutMode } from 'twenty-sdk';
+import { AggregateOperations, definePageLayout, ObjectRecordGroupByDateGranularity, PageLayoutTabLayoutMode } from 'twenty-sdk/define';
 
 export const CALL_RECORDING_DASHBOARD_LAYOUT_UNIVERSAL_IDENTIFIER =
   '17ff2924-00c9-4105-ac4e-64c28cba781f';

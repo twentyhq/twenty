@@ -28,7 +28,7 @@ export const InformationBannerDeletedRecord = ({
     <StyledInformationBannerDeletedRecord>
       <InformationBanner
         componentInstanceId="information-banner-deleted-record"
-        variant="danger"
+        color="danger"
         message={t`This record has been deleted`}
         buttonTitle={t`Restore`}
         buttonIcon={IconRefresh}

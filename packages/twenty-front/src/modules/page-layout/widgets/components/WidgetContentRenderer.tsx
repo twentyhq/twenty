@@ -1,5 +1,6 @@
 import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { CalendarWidget } from '@/page-layout/widgets/calendar/components/CalendarWidget';
+import { EmailThreadWidget } from '@/page-layout/widgets/email-thread/components/EmailThreadWidget';
 import { EmailWidget } from '@/page-layout/widgets/emails/components/EmailWidget';
 import { FieldRichTextWidgetRenderer } from '@/page-layout/widgets/field-rich-text/components/FieldRichTextWidgetRenderer';
 import { FieldWidget } from '@/page-layout/widgets/field/components/FieldWidget';
@@ -14,6 +15,7 @@ import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
 import { TimelineWidget } from '@/page-layout/widgets/timeline/components/TimelineWidget';
 import { WorkflowRunWidget } from '@/page-layout/widgets/workflow/components/WorkflowRunWidget';
 import { WorkflowVersionWidget } from '@/page-layout/widgets/workflow/components/WorkflowVersionWidget';
+import { RecordTableWidgetRenderer } from '@/page-layout/widgets/record-table/components/RecordTableWidgetRenderer';
 import { WorkflowWidget } from '@/page-layout/widgets/workflow/components/WorkflowWidget';
 import { WidgetType } from '~/generated-metadata/graphql';
 
@@ -72,6 +74,12 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.FRONT_COMPONENT:
       return <FrontComponentWidgetRenderer widget={widget} />;
+
+    case WidgetType.RECORD_TABLE:
+      return <RecordTableWidgetRenderer widget={widget} />;
+
+    case WidgetType.EMAIL_THREAD:
+      return <EmailThreadWidget widget={widget} />;
 
     default:
       return null;

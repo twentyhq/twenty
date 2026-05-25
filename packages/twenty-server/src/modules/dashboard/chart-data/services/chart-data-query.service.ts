@@ -93,7 +93,6 @@ export class ChartDataQueryService {
   }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
-      flatObjectMetadata,
       flatFieldMetadataMaps,
       userTimezone,
     });
@@ -236,7 +235,7 @@ export class ChartDataQueryService {
       groupByDimensionValues: true,
     };
 
-    const results = await this.commonGroupByQueryRunnerService.execute(
+    const { results } = await this.commonGroupByQueryRunnerService.execute(
       {
         filter: gqlOperationFilter,
         orderBy: orderBy.length > 0 ? orderBy : undefined,

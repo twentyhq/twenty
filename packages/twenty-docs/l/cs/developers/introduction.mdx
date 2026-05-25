@@ -1,33 +1,28 @@
 ---
-title: Začínáme
-description: Vítejte v dokumentaci pro vývojáře Twenty, která je vaším zdrojem informací pro rozšiřování, vlastní hostování a přispívání do Twenty.
+title: Vývojáři
+description: Vytvářejte aplikace, používejte API, hostujte sami nebo přispívejte do kódu.
 ---
 
 import { CardTitle } from "/snippets/card-title.mdx"
 
-<CardGroup cols={2}>
-  <Card href="/l/cs/developers/api" icon="code">
+<CardGroup cols={3}>
+  <Card href="/l/cs/developers/extend/apps/getting-started" img="/images/user-guide/halftone/dev-apps.png">
+    <CardTitle>Aplikace</CardTitle>
+    Rozšiřte Twenty pomocí vlastních objektů, serverové logiky, UI komponent a AI agentů — to vše jako balíčky TypeScriptu.
+  </Card>
+
+  <Card href="/l/cs/developers/extend/api" img="/images/user-guide/halftone/dev-api.png">
     <CardTitle>API</CardTitle>
-    Dotazujte a upravujte data CRM pomocí REST nebo GraphQL.
+    Rozhraní API REST a GraphQL, webhooky a OAuth.
   </Card>
 
-  <Card href="/l/cs/developers/webhooks" icon="bell">
-    <CardTitle>Webhooks</CardTitle>
-    Přijímejte oznámení v reálném čase při výskytu událostí.
-  </Card>
-
-  <Card href="/l/cs/developers/apps/apps" icon="puzzle-piece">
-    <CardTitle>Apps</CardTitle>
-    Vytvářejte vlastní aplikace rozšiřující možnosti Twenty.
-  </Card>
-
-  <Card href="/l/cs/developers/self-host/self-host" icon="desktop">
+  <Card href="/l/cs/developers/self-host/capabilities/docker-compose" img="/images/user-guide/halftone/dev-self-host.png">
     <CardTitle>Hostujte sami</CardTitle>
-    Nasaďte a spravujte Twenty na vlastní infrastruktuře.
+    Provozujte Twenty na vlastní infrastruktuře.
   </Card>
 
-  <Card href="/l/cs/developers/contribute/contribute" icon="github">
+  <Card href="/l/cs/developers/contribute/capabilities/local-setup" img="/images/user-guide/halftone/dev-contribute.png">
     <CardTitle>Přispějte</CardTitle>
-    Připojte se k naší open-source komunitě a přispívejte do Twenty.
+    Nastavte si monorepo lokálně a odesílejte PR.
   </Card>
 </CardGroup>

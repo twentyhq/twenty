@@ -1,6 +1,6 @@
 {
   "name": "self-hosting",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -11,13 +11,22 @@
   "scripts": {
     "twenty": "twenty",
     "lint": "oxlint -c .oxlintrc.json .",
-    "lint:fix": "oxlint --fix -c .oxlintrc.json ."
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "twenty-client-sdk": "1.22.0-canary.6",
+    "twenty-sdk": "1.22.0-canary.6"
   },
   "devDependencies": {
     "@types/node": "^24.7.2",
+    "@types/react": "^19.0.0",
     "oxlint": "^0.16.0",
-    "twenty-sdk": "0.6.2"
-  },
-  "$schema": "https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-cli/src/constants/schemas/appManifest.schema.json",
-  "universalIdentifier": "a7070f46-3158-4b40-828f-8e6b1febc233"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.2.1",
+    "vitest": "^3.1.1"
+  }
 }

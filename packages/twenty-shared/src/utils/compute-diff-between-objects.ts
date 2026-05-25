@@ -1,11 +1,12 @@
 import { isDefined } from '@/utils/validation';
-import deepEqual from 'deep-equal';
+
+import { fastDeepEqual } from './json/fast-deep-equal';
 
 type Diff<T extends { id: string }> = {
   toCreate: T[];
   toUpdate: T[];
   toRestoreAndUpdate: T[];
-  idsToDelete: string[];
+  idsToRemove: string[];
 };
 
 const extractProperties = <T extends { id: string }>(
@@ -27,15 +28,17 @@ type ComputeDiffBetweenObjectsParams<
   existingObjects: T[];
   receivedObjects: K[];
   propertiesToCompare: (keyof K & keyof T)[];
+  isEntityIncluded: (entity: NoInfer<T>) => boolean;
 };
 
 export const computeDiffBetweenObjects = <
-  T extends { id: string; deletedAt: string | null },
+  T extends { id: string },
   K extends { id: string },
 >({
   existingObjects,
   receivedObjects,
   propertiesToCompare,
+  isEntityIncluded,
 }: ComputeDiffBetweenObjectsParams<T, K>): Diff<K> => {
   const toCreate: K[] = [];
   const toUpdate: K[] = [];
@@ -52,7 +55,7 @@ export const computeDiffBetweenObjects = <
     const existingEntity = existingEntitiesMap.get(receivedObject.id);
 
     if (isDefined(existingEntity)) {
-      if (isDefined(existingEntity.deletedAt)) {
+      if (!isEntityIncluded(existingEntity)) {
         toRestoreAndUpdate.push(receivedObject);
       } else {
         const comparableExistingEntity = extractProperties(
@@ -65,7 +68,9 @@ export const computeDiffBetweenObjects = <
           propertiesToCompare,
         );
 
-        if (!deepEqual(comparableExistingEntity, comparableReceivedEntity)) {
+        if (
+          !fastDeepEqual(comparableExistingEntity, comparableReceivedEntity)
+        ) {
           toUpdate.push(receivedObject);
         }
       }
@@ -74,8 +79,8 @@ export const computeDiffBetweenObjects = <
     }
   }
 
-  const idsToDelete = existingObjects
-    .filter((existingEntity) => !isDefined(existingEntity.deletedAt))
+  const idsToRemove = existingObjects
+    .filter((existingEntity) => isEntityIncluded(existingEntity))
     .filter((existingEntity) => !receivedEntitiesMap.has(existingEntity.id))
     .map((entity) => entity.id);
 
@@ -83,6 +88,6 @@ export const computeDiffBetweenObjects = <
     toCreate,
     toUpdate,
     toRestoreAndUpdate,
-    idsToDelete,
+    idsToRemove,
   };
 };

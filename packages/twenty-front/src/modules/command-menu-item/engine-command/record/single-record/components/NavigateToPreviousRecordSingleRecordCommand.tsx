@@ -1,11 +1,11 @@
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
-import { useMountedEngineCommandContext } from '@/command-menu-item/engine-command/hooks/useMountedEngineCommandContext';
+import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
 import { useRecordShowPagePagination } from '@/object-record/record-show/hooks/useRecordShowPagePagination';
 import { isDefined } from 'twenty-shared/utils';
 
 export const NavigateToPreviousRecordSingleRecordCommand = () => {
   const { objectMetadataItem, selectedRecords } =
-    useMountedEngineCommandContext();
+    useHeadlessCommandContextApi();
 
   const recordId = selectedRecords[0]?.id;
 
@@ -15,12 +15,13 @@ export const NavigateToPreviousRecordSingleRecordCommand = () => {
     );
   }
 
-  const { navigateToPreviousRecord } = useRecordShowPagePagination(
-    objectMetadataItem.nameSingular,
-    recordId,
-  );
+  const { navigateToPreviousRecord, isLoadingPagination } =
+    useRecordShowPagePagination(objectMetadataItem.nameSingular, recordId);
 
   return (
-    <HeadlessEngineCommandWrapperEffect execute={navigateToPreviousRecord} />
+    <HeadlessEngineCommandWrapperEffect
+      execute={navigateToPreviousRecord}
+      ready={!isLoadingPagination}
+    />
   );
 };

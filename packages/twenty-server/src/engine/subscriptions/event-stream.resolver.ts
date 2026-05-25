@@ -64,16 +64,31 @@ export class EventStreamResolver {
   ) {
     const eventStreamChannelId = eventStreamIdToChannelId(eventStreamId);
 
-    const streamData = await this.eventStreamService.getStreamData(
+    const existingStreamData = await this.eventStreamService.getStreamData(
       workspace.id,
       eventStreamChannelId,
     );
 
-    if (isDefined(streamData)) {
-      throw new EventStreamException(
-        'Event stream already exists',
-        EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,
-      );
+    if (isDefined(existingStreamData)) {
+      const isAuthorized = await this.eventStreamService.isAuthorized({
+        streamData: existingStreamData,
+        authContext: {
+          userWorkspaceId,
+          apiKeyId: apiKey?.id,
+        },
+      });
+
+      if (!isAuthorized) {
+        throw new EventStreamException(
+          'Event stream already exists',
+          EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS,
+        );
+      }
+
+      await this.eventStreamService.destroyEventStream({
+        workspaceId: workspace.id,
+        eventStreamChannelId,
+      });
     }
 
     await this.eventStreamService.createEventStream({
@@ -136,11 +151,9 @@ export class EventStreamResolver {
     );
 
     if (!isDefined(streamData)) {
-      throw new EventStreamException(
-        'Event stream does not exist',
-        EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST,
-      );
+      return false;
     }
+
     const isAuthorized = await this.eventStreamService.isAuthorized({
       streamData,
       authContext: {
@@ -155,6 +168,7 @@ export class EventStreamResolver {
         EventStreamExceptionCode.NOT_AUTHORIZED,
       );
     }
+
     await this.eventStreamService.addQuery({
       workspaceId: workspace.id,
       eventStreamChannelId,
@@ -182,10 +196,7 @@ export class EventStreamResolver {
     );
 
     if (!isDefined(streamData)) {
-      throw new EventStreamException(
-        'Event stream does not exist',
-        EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST,
-      );
+      return false;
     }
 
     const isAuthorized = await this.eventStreamService.isAuthorized({

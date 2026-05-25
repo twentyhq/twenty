@@ -23,6 +23,7 @@ const mockPageLayout: PageLayout = {
   name: 'Test Layout',
   type: PageLayoutType.DASHBOARD,
   objectMetadataId: null,
+  universalIdentifier: '20202020-0000-0000-0000-000000000001',
   tabs: [],
   createdAt: '2024-01-01T00:00:00.000Z',
   updatedAt: '2024-01-01T00:00:00.000Z',

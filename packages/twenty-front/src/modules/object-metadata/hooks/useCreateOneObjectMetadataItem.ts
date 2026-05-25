@@ -2,17 +2,19 @@ import { useApolloClient, useMutation } from '@apollo/client/react';
 import {
   type CreateObjectInput,
   CreateOneObjectMetadataItemDocument,
+  FindManyCommandMenuItemsDocument,
   FindManyNavigationMenuItemsDocument,
   FindManyViewsDocument,
 } from '~/generated-metadata/graphql';
 
 import { useMetadataErrorHandler } from '@/metadata-error-handler/hooks/useMetadataErrorHandler';
-import { useMetadataStore } from '@/metadata-store/hooks/useMetadataStore';
+import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatFieldMetadataItem } from '@/metadata-store/types/FlatFieldMetadataItem';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
 import { splitViewWithRelated } from '@/metadata-store/utils/splitViewWithRelated';
 import { type MetadataRequestResult } from '@/object-metadata/types/MetadataRequestResult.type';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useLoadCurrentUser } from '@/users/hooks/useLoadCurrentUser';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { t } from '@lingui/core/macro';
 import { CrudOperationType } from 'twenty-shared/types';
@@ -26,7 +28,9 @@ export const useCreateOneObjectMetadataItem = () => {
   const client = useApolloClient();
   const { handleMetadataError } = useMetadataErrorHandler();
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { addToDraft, replaceDraft, applyChanges } = useMetadataStore();
+  const { addToDraft, replaceDraft, applyChanges } =
+    useUpdateMetadataStoreDraft();
+  const { loadCurrentUser } = useLoadCurrentUser();
 
   const createOneObjectMetadataItem = async (
     input: CreateObjectInput,
@@ -69,17 +73,22 @@ export const useCreateOneObjectMetadataItem = () => {
 
         applyChanges();
 
-        const [viewsResult, navItemsResult] = await Promise.all([
-          client.query({
-            query: FindManyViewsDocument,
-            variables: { objectMetadataId: createdObject.id },
-            fetchPolicy: 'network-only',
-          }),
-          client.query({
-            query: FindManyNavigationMenuItemsDocument,
-            fetchPolicy: 'network-only',
-          }),
-        ]);
+        const [viewsResult, navItemsResult, commandMenuItemsResult] =
+          await Promise.all([
+            client.query({
+              query: FindManyViewsDocument,
+              variables: { objectMetadataId: createdObject.id },
+              fetchPolicy: 'network-only',
+            }),
+            client.query({
+              query: FindManyNavigationMenuItemsDocument,
+              fetchPolicy: 'network-only',
+            }),
+            client.query({
+              query: FindManyCommandMenuItemsDocument,
+              fetchPolicy: 'network-only',
+            }),
+          ]);
 
         const fetchedViews = viewsResult.data?.getViews ?? [];
 
@@ -106,7 +115,14 @@ export const useCreateOneObjectMetadataItem = () => {
           navItemsResult.data?.navigationMenuItems ?? [],
         );
 
+        replaceDraft(
+          'commandMenuItems',
+          commandMenuItemsResult.data?.commandMenuItems ?? [],
+        );
+
         applyChanges();
+
+        await loadCurrentUser();
       }
 
       return {

@@ -55,7 +55,7 @@ exports[`CommandMenuItem update should fail when updating with empty label 1`] =
       "commandMenuItem": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Label is required",
   },
   "message": "Multiple validation errors occurred while updating command menu item",
   "name": "GraphQLError",
@@ -87,6 +87,41 @@ exports[`CommandMenuItem update should fail when updating with missing id 1`] = 
     "userFriendlyMessage": "An error occurred.",
   },
   "message": "Field "id" of required type "UUID!" was not provided.",
+  "name": "GraphQLError",
+}
+`;
+
+exports[`CommandMenuItem update should fail when changing engineComponentKey to a standard key on an item with workflowVersionId 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "commandMenuItem": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_COMMAND_MENU_ITEM_INPUT",
+              "message": "workflowVersionId must not be set for engine component key GO_TO_PEOPLE",
+              "userFriendlyMessage": "Workflow version must not be set for this item type",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "commandMenuItem",
+          "status": "fail",
+          "type": "update",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 commandMenuItem",
+    "summary": {
+      "commandMenuItem": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "Workflow version must not be set for this item type",
+  },
+  "message": "Multiple validation errors occurred while updating command menu item",
   "name": "GraphQLError",
 }
 `;

@@ -76,3 +76,15 @@ export class PublicWorkspaceDataDTO {
   @Field(() => WorkspaceUrlsDTO)
   workspaceUrls: WorkspaceUrlsDTO;
 }
+
+@ObjectType('PublicWorkspaceDataSummary')
+export class PublicWorkspaceDataSummaryDTO {
+  @Field(() => UUIDScalarType)
+  id: string;
+
+  @Field(() => String, { nullable: true })
+  logo: WorkspaceEntity['logo'];
+
+  @Field(() => String, { nullable: true })
+  displayName: WorkspaceEntity['displayName'];
+}

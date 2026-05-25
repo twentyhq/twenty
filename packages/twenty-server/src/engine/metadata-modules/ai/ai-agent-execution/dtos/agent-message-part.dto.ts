@@ -40,6 +40,9 @@ export class AgentMessagePartDTO {
   @Field(() => String, { nullable: true })
   state: string | null;
 
+  @Field(() => Boolean, { nullable: true })
+  providerExecuted: boolean | null;
+
   @Field(() => String, { nullable: true })
   errorMessage: string | null;
 

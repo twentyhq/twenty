@@ -61,9 +61,6 @@ export class CreateObjectInput {
   color?: string;
 
   @HideField()
-  dataSourceId: string;
-
-  @HideField()
   applicationId?: string;
 
   @HideField()

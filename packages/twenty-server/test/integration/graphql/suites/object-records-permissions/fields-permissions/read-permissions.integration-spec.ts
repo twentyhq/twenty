@@ -82,7 +82,14 @@ const COMPANY_GQL_FIELDS_WITH_PEOPLE_CITY_AGGREGATE = `
       }
 `;
 
+const expectNoGraphQLErrors = (response: any) => {
+  expect(response.body.errors).toBeUndefined();
+  expect(response.body.data).toBeDefined();
+};
+
 const expectPermissionDeniedError = (response: any) => {
+  expect(response.body.errors).toBeDefined();
+  expect(response.body.errors.length).toBeGreaterThan(0);
   expect(response.body.errors[0].message).toBe(
     PermissionsExceptionMessage.PERMISSION_DENIED,
   );
@@ -110,7 +117,7 @@ describe('Field permissions restrictions', () => {
         {
           objectMetadataId: companyObjectId,
           fieldMetadataId: restrictedCompanyFieldId,
-          canReadFieldValue: false,
+          canUpdateFieldValue: false,
         },
       ],
     });
@@ -127,7 +134,7 @@ describe('Field permissions restrictions', () => {
         {
           objectMetadataId: personObjectId,
           fieldMetadataId: restrictedPersonFieldId,
-          canReadFieldValue: false,
+          canUpdateFieldValue: false,
         },
       ],
     });
@@ -272,7 +279,7 @@ describe('Field permissions restrictions', () => {
     }
   });
 
-  describe('should throw an error if requesting a restricted field', () => {
+  describe('should allow restricted fields to be read', () => {
     beforeEach(async () => {
       await restrictAccessToCompanyEmployee(
         customRoleId,
@@ -290,7 +297,10 @@ describe('Field permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectPermissionDeniedError(response);
+      expectNoGraphQLErrors(response);
+      expect(
+        response.body.data.companies.edges[0].node.employees,
+      ).toBeDefined();
     });
 
     it('2. findOne', async () => {
@@ -302,7 +312,8 @@ describe('Field permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectPermissionDeniedError(response);
+      expectNoGraphQLErrors(response);
+      expect(response.body.data.company.employees).toBeDefined();
     });
 
     it('3. updateMany', async () => {
@@ -310,6 +321,8 @@ describe('Field permissions restrictions', () => {
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
         gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
+        filter: { id: { eq: companyId } },
+        data: { name: 'TestUpdate' },
       });
 
       const response =
@@ -323,6 +336,7 @@ describe('Field permissions restrictions', () => {
         objectMetadataSingularName: 'company',
         gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
         recordId: companyId,
+        data: { name: 'TestUpdate' },
       });
 
       const response =
@@ -366,6 +380,7 @@ describe('Field permissions restrictions', () => {
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
         gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
+        filter: { id: { eq: companyId } },
       });
 
       const response =
@@ -388,7 +403,7 @@ describe('Field permissions restrictions', () => {
     });
   });
 
-  it('2. should throw an error if requesting a restricted field of a related object', async () => {
+  it('2. should allow a restricted field of a related object to be read', async () => {
     await restrictAccessToPersonCity(
       customRoleId,
       personObjectId,
@@ -402,7 +417,10 @@ describe('Field permissions restrictions', () => {
     const response =
       await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-    expectPermissionDeniedError(response);
+    expectNoGraphQLErrors(response);
+    expect(
+      response.body.data.companies.edges[0].node.people.edges[0].node.city,
+    ).toBeDefined();
   });
 
   it('3. should succeed if restricted fields exist but are not requested', async () => {
@@ -432,7 +450,7 @@ describe('Field permissions restrictions', () => {
   });
 
   describe('Aggregate operations', () => {
-    it('1. should throw an error if requesting a restricted field through aggregates', async () => {
+    it('1. should allow aggregate over a restricted field', async () => {
       await restrictAccessToCompanyEmployee(
         customRoleId,
         companyObjectId,
@@ -452,10 +470,11 @@ describe('Field permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectPermissionDeniedError(response);
+      expectNoGraphQLErrors(response);
+      expect(response.body.data.companies.countEmptyEmployees).toBeDefined();
     });
 
-    it('2. should throw an error if requesting a restricted field on related object through aggregates', async () => {
+    it('2. should allow aggregate over a restricted field on a related object', async () => {
       await restrictAccessToPersonCity(
         customRoleId,
         personObjectId,
@@ -471,7 +490,10 @@ describe('Field permissions restrictions', () => {
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectPermissionDeniedError(response);
+      expectNoGraphQLErrors(response);
+      expect(
+        response.body.data.companies.edges[0].node.people.percentageEmptyCity,
+      ).toBeDefined();
     });
   });
 });

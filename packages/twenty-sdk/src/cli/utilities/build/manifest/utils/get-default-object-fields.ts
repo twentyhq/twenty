@@ -1,11 +1,13 @@
-import type { ObjectConfig } from '@/sdk/objects/object-config';
+import type { ObjectConfig } from '@/sdk/define/objects/object-config';
 import { FieldMetadataType } from 'twenty-shared/types';
-import { generateDefaultFieldUniversalIdentifier } from '@/cli/utilities/build/manifest/utils/generate-default-field-universal-identifier';
+import { generateDefaultFieldUniversalIdentifier } from '@/sdk/define/objects/generate-default-field-universal-identifier';
 import { type ObjectFieldManifest } from 'twenty-shared/application';
 
 export const getDefaultObjectFields = (
   objectConfig: ObjectConfig,
 ): ObjectFieldManifest[] => {
+  const objectUniversalIdentifier = objectConfig.universalIdentifier;
+
   const idField: ObjectFieldManifest = {
     name: 'id',
     label: 'Id',
@@ -15,7 +17,7 @@ export const getDefaultObjectFields = (
     defaultValue: 'uuid',
     type: FieldMetadataType.UUID as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'id',
     }),
   };
@@ -29,7 +31,7 @@ export const getDefaultObjectFields = (
     defaultValue: null,
     type: FieldMetadataType.TEXT as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'name',
     }),
   };
@@ -43,7 +45,7 @@ export const getDefaultObjectFields = (
     defaultValue: 'now',
     type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'createdAt',
     }),
   };
@@ -57,7 +59,7 @@ export const getDefaultObjectFields = (
     defaultValue: 'now',
     type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'updatedAt',
     }),
   };
@@ -71,7 +73,7 @@ export const getDefaultObjectFields = (
     defaultValue: null,
     type: FieldMetadataType.DATE_TIME as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'deletedAt',
     }),
   };
@@ -85,7 +87,7 @@ export const getDefaultObjectFields = (
     defaultValue: { name: "''", source: "'MANUAL'" },
     type: FieldMetadataType.ACTOR as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'createdBy',
     }),
   };
@@ -99,7 +101,7 @@ export const getDefaultObjectFields = (
     defaultValue: { name: "''", source: "'MANUAL'" },
     type: FieldMetadataType.ACTOR as const,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'updatedBy',
     }),
   };
@@ -113,7 +115,7 @@ export const getDefaultObjectFields = (
     defaultValue: 0,
     type: FieldMetadataType.POSITION,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'position',
     }),
   };
@@ -127,7 +129,7 @@ export const getDefaultObjectFields = (
     defaultValue: null,
     type: FieldMetadataType.TS_VECTOR,
     universalIdentifier: generateDefaultFieldUniversalIdentifier({
-      objectConfig,
+      objectUniversalIdentifier,
       fieldName: 'searchVector',
     }),
   };

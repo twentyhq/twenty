@@ -10,13 +10,14 @@
   "packageManager": "yarn@4.9.2",
   "scripts": {
     "dev": "twenty dev",
-    "exec": "twenty exec",
-    "uninstall": "twenty uninstall",
+    "exec": "twenty dev:fn-exec",
+    "uninstall": "twenty app:uninstall",
     "lint": "oxlint -c .oxlintrc.json .",
     "lint:fix": "oxlint --fix -c .oxlintrc.json ."
   },
   "dependencies": {
-    "twenty-sdk": "latest"
+    "twenty-sdk": "latest",
+    "twenty-client-sdk": "latest"
   },
   "devDependencies": {
     "typescript": "^5.9.3",

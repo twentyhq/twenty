@@ -2,6 +2,7 @@ import { NavigationMenuItemType } from 'twenty-shared/types';
 import { NavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolder';
 import { NavigationMenuItemLinkDisplay } from '@/navigation-menu-item/display/link/components/NavigationMenuItemLinkDisplay';
 import { NavigationMenuItemObjectDisplay } from '@/navigation-menu-item/display/object/components/NavigationMenuItemObjectDisplay';
+import { NavigationMenuItemPageLayoutDisplay } from '@/navigation-menu-item/display/page-layout/components/NavigationMenuItemPageLayoutDisplay';
 import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-item/display/sections/types/NavigationMenuItemSectionContentProps';
 
 type NavigationMenuItemDisplayProps = NavigationMenuItemSectionContentProps;
@@ -14,10 +15,10 @@ export const NavigationMenuItemDisplay = ({
   folderChildrenById,
   folderCount,
   rightOptions,
-  selectedNavigationMenuItemId,
   onNavigationMenuItemClick,
   onActiveObjectMetadataItemClick,
   readOnly,
+  orphanIndex,
 }: NavigationMenuItemDisplayProps) => {
   switch (item.type) {
     case NavigationMenuItemType.FOLDER:
@@ -29,9 +30,9 @@ export const NavigationMenuItemDisplay = ({
           isDragging={isDragging}
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
-          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           readOnly={readOnly}
+          orphanIndex={orphanIndex}
         />
       );
     case NavigationMenuItemType.LINK:
@@ -44,7 +45,21 @@ export const NavigationMenuItemDisplay = ({
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
           rightOptions={rightOptions}
-          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
+          onNavigationMenuItemClick={onNavigationMenuItemClick}
+          onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
+          readOnly={readOnly}
+        />
+      );
+    case NavigationMenuItemType.PAGE_LAYOUT:
+      return (
+        <NavigationMenuItemPageLayoutDisplay
+          item={item}
+          isEditInPlace={isEditInPlace}
+          editModeProps={editModeProps}
+          isDragging={isDragging}
+          folderChildrenById={folderChildrenById}
+          folderCount={folderCount}
+          rightOptions={rightOptions}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
           readOnly={readOnly}
@@ -60,7 +75,6 @@ export const NavigationMenuItemDisplay = ({
           folderChildrenById={folderChildrenById}
           folderCount={folderCount}
           rightOptions={rightOptions}
-          selectedNavigationMenuItemId={selectedNavigationMenuItemId}
           onNavigationMenuItemClick={onNavigationMenuItemClick}
           onActiveObjectMetadataItemClick={onActiveObjectMetadataItemClick}
           readOnly={readOnly}

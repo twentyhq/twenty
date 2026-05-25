@@ -139,8 +139,10 @@ export class FileApi {
   }): Promise<ApiResponse<boolean>> {
     try {
       const mutation = `
-        mutation InstallMarketplaceApp($universalIdentifier: String!) {
-          installMarketplaceApp(universalIdentifier: $universalIdentifier)
+        mutation InstallApplication($universalIdentifier: String!) {
+          installApplication(universalIdentifier: $universalIdentifier) {
+            id
+          }
         }
       `;
 
@@ -161,14 +163,13 @@ export class FileApi {
       if (response.data.errors) {
         return {
           success: false,
-          error:
-            response.data.errors[0]?.message || 'Failed to install application',
+          error: response.data.errors[0] || 'Failed to install application',
         };
       }
 
       return {
         success: true,
-        data: response.data.data.installMarketplaceApp,
+        data: response.data.data.installApplication,
       };
     } catch (error) {
       if (axios.isAxiosError(error) && error.response) {

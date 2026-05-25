@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddDependencyChecksumsToLogicFunctionLayer1770038963629
-  implements MigrationInterface
-{
+export class AddDependencyChecksumsToLogicFunctionLayer1770038963629 implements MigrationInterface {
   name = 'AddDependencyChecksumsToLogicFunctionLayer1770038963629';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

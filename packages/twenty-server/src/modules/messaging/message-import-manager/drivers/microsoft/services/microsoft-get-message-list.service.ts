@@ -8,10 +8,10 @@ import {
 import { isNonEmptyString } from '@sniptt/guards';
 import pLimit from 'p-limit';
 
-import { OAuth2ClientManagerService } from 'src/modules/connected-account/oauth2-client-manager/services/oauth2-client-manager.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
-import { type MessageFolderWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-folder.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
+import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
+import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {
@@ -29,7 +29,7 @@ const FOLDER_PROCESSING_CONCURRENCY = 4;
 export class MicrosoftGetMessageListService {
   private readonly logger = new Logger(MicrosoftGetMessageListService.name);
   constructor(
-    private readonly oAuth2ClientManagerService: OAuth2ClientManagerService,
+    private readonly microsoftOAuth2ClientProvider: MicrosoftOAuth2ClientProvider,
     private readonly microsoftMessageListFetchErrorHandler: MicrosoftMessageListFetchErrorHandler,
   ) {}
 
@@ -71,22 +71,18 @@ export class MicrosoftGetMessageListService {
   }
 
   public async getMessageList(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'accessToken' | 'id'
-    >,
+    connectedAccount: Pick<ConnectedAccountEntity, 'provider' | 'id'>,
     messageFolder: Pick<
-      MessageFolderWorkspaceEntity,
+      MessageFolderEntity,
       'name' | 'syncCursor' | 'externalId'
     >,
   ): Promise<GetOneMessageListResponse> {
     const messageExternalIds: string[] = [];
     const messageExternalIdsToDelete: string[] = [];
 
-    const microsoftClient =
-      await this.oAuth2ClientManagerService.getMicrosoftOAuth2Client(
-        connectedAccount,
-      );
+    const microsoftClient = await this.microsoftOAuth2ClientProvider.getClient(
+      connectedAccount.id,
+    );
 
     const folderId = messageFolder.externalId || messageFolder.name;
     const apiUrl = isNonEmptyString(messageFolder.syncCursor)

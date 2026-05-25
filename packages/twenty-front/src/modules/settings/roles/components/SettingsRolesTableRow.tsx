@@ -83,6 +83,7 @@ export const SettingsRolesTableRow = ({ role }: SettingsRolesTableRowProps) => {
       <TableRow
         key={role.id}
         gridAutoColumns="332px 3fr 2fr 1fr"
+        mobileGridAutoColumns="5fr 1fr 1fr 35px"
         to={getSettingsPath(SettingsPath.RoleDetail, { roleId: role.id })}
       >
         <TableCell>

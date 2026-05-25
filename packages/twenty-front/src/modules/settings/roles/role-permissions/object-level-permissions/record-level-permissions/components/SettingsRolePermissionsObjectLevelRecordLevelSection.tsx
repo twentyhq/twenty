@@ -14,6 +14,7 @@ import { SettingsPath } from 'twenty-shared/types';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { OrganizationAdornment } from '~/pages/settings/enterprise/components/OrganizationAdornment';
 
 const StyledContent = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
@@ -22,18 +23,6 @@ const StyledContent = styled.div`
 const StyledCardContainer = styled.div`
   margin-top: ${themeCssVariables.spacing[4]};
   overflow: hidden;
-`;
-
-const StyledPillContainer = styled.span`
-  align-items: center;
-  background: ${themeCssVariables.background.secondary};
-  border: 1px solid ${themeCssVariables.border.color.light};
-  border-radius: 40px;
-  color: ${themeCssVariables.font.color.tertiary};
-  display: inline-flex;
-  font-weight: ${themeCssVariables.font.weight.medium};
-  gap: ${themeCssVariables.spacing[1]};
-  padding: ${themeCssVariables.spacing[1]} ${themeCssVariables.spacing[2]};
 `;
 
 type SettingsRolePermissionsObjectLevelRecordLevelSectionProps = {
@@ -57,12 +46,7 @@ export const SettingsRolePermissionsObjectLevelRecordLevelSection = ({
         <H2Title
           title={t`Record-level`}
           description={t`Ability to filter the records a user can interact with`}
-          adornment={
-            <StyledPillContainer>
-              <IconLock size={12} />
-              {t`Organization`}
-            </StyledPillContainer>
-          }
+          adornment={<OrganizationAdornment />}
         />
         <StyledCardContainer>
           <Card rounded>

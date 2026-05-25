@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { CommonArgsProcessors } from 'src/engine/api/common/common-args-processors/common-args-processors';
+import { GroupByArgProcessorService } from 'src/engine/api/common/common-args-processors/group-by-arg-processor/group-by-arg-processor.service';
 import { ProcessNestedRelationsV2Helper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations-v2.helper';
 import { ProcessNestedRelationsHelper } from 'src/engine/api/common/common-nested-relations-processor/process-nested-relations.helper';
 import { CommonQueryRunners } from 'src/engine/api/common/common-query-runners/common-query-runners';
@@ -53,6 +54,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     CommonResultGettersService,
     GroupByWithRecordsService,
   ],
-  exports: [...CommonQueryRunners],
+  exports: [...CommonQueryRunners, GroupByArgProcessorService],
 })
 export class CoreCommonApiModule {}

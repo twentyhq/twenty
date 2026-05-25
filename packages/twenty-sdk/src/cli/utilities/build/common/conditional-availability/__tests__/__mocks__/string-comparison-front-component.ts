@@ -1,20 +1,11 @@
-import {
-  defineFrontComponent,
-  everyEquals,
-  pageType,
-  selectedRecords,
-} from '@/sdk';
+import { defineCommandMenuItem } from '@/sdk/define';
+import { everyEquals, pageType, selectedRecords } from '@/sdk/front-component';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'string-comparison',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'string-comparison-cmd',
-    label: 'String Comparison',
-    conditionalAvailabilityExpression:
-      pageType === 'RECORD_PAGE' &&
-      everyEquals(selectedRecords, 'company.name', 'apple'),
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'string-comparison-cmd',
+  label: 'String Comparison',
+  frontComponentUniversalIdentifier: 'string-comparison',
+  conditionalAvailabilityExpression:
+    pageType === 'RECORD_PAGE' &&
+    everyEquals(selectedRecords, 'company.name', 'apple'),
 });

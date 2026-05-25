@@ -14,11 +14,9 @@ export const buildBaseManifest = ({
     defaultRoleUniversalIdentifier: roleId,
     displayName: 'Test Application',
     description: 'Test application',
-    icon: 'IconTestPipe',
     applicationVariables: {},
     packageJsonChecksum: null,
     yarnLockChecksum: null,
-    apiClientChecksum: null,
   },
   roles: [
     {
@@ -27,6 +25,7 @@ export const buildBaseManifest = ({
       description: 'A test role',
     },
   ],
+  permissionFlags: [],
   skills: [],
   agents: [],
   objects: [],
@@ -37,5 +36,7 @@ export const buildBaseManifest = ({
   views: [],
   navigationMenuItems: [],
   pageLayouts: [],
+  pageLayoutTabs: [],
+  commandMenuItems: [],
   ...overrides,
 });

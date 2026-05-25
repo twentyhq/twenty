@@ -3,6 +3,6 @@ export const SETTINGS_OBJECT_DETAIL_TABS = {
   TABS_IDS: {
     FIELDS: 'fields',
     SETTINGS: 'settings',
-    INDEXES: 'indexes',
+    LAYOUT: 'layout',
   },
 } as const;

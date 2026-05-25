@@ -1,5 +1,6 @@
 ---
 title: Einrichtung
+icon: Zahnrad
 ---
 
 # Konfigurationsverwaltung
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # Standard
 
 <Warning>
 Jede Variable ist mit Beschreibungen in Ihrem Admin-Panel dokumentiert unter **Einstellungen → Admin-Panel → Konfigurationsvariablen**.
-Einige Infrastruktureinstellungen wie Datenbankverbindungen (`PG_DATABASE_URL`), Server-URLs (`SERVER_URL`) und Anwendungsgeheimnisse (`APP_SECRET`) können nur über die `.env`-Datei konfiguriert werden.
+Einige Infrastruktureinstellungen wie Datenbankverbindungen (`PG_DATABASE_URL`), Server-URLs (`SERVER_URL`) und Secrets (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) können nur über die `.env`-Datei konfiguriert werden.
 
 [Vollständige technische Referenz →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Verschlüsselungsschlüssel
+
+Twenty verwendet zwei ausschließlich über Umgebungsvariablen konfigurierbare Verschlüsselungsschlüssel:
+
+| Variable                  | Zweck                                                                                                                                                                                                               | Erforderlich                                                                                                         |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Primärer Schlüssel, der für die Verschlüsselung von Secrets im Ruhezustand verwendet wird (OAuth-Tokens, Anwendungsvariablen, private Schlüssel von Signierschlüsseln, TOTP-Secrets, sensible Konfigurationswerte). | Ja, für neue Installationen (Legacy-Installationen können stattdessen auf `APP_SECRET` zurückgreifen – siehe unten). |
+| `FALLBACK_ENCRYPTION_KEY` | Nur zur Verifizierung verwendeter Schlüssel. Während einer Rotation auf den *vorherigen* `ENCRYPTION_KEY` gesetzt, damit vorhandene Zeilen weiterhin entschlüsselt werden können.                                   | Nur während der Rotation                                                                                             |
+
+Aus Gründen der Abwärtskompatibilität greift Twenty, falls `ENCRYPTION_KEY` nicht gesetzt ist, für die Verschlüsselung im Ruhezustand auf `APP_SECRET` zurück – entsprechend dem Legacy-Verhalten älterer Deployments. Neue Installationen sollten immer einen eigenen `ENCRYPTION_KEY` setzen.
+
+Werte mit `openssl rand -base64 32` generieren und sie an einem sicheren Ort aufbewahren (einen Secrets-Manager, eine versiegelte Konfiguration usw.). Der Verlust des `ENCRYPTION_KEY` bedeutet den Verlust des Zugriffs auf jedes in der Datenbank gespeicherte Secret.
+
+Um `ENCRYPTION_KEY` ohne Downtime zu rotieren, siehe die [Anleitung zur Schlüsselrotation](/l/de/developers/self-host/capabilities/key-rotation).
 
 ## 2. Nur-Umgebungs-Konfiguration
 
@@ -296,6 +312,16 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
 **Nur-Umgebungsmodus:** Wenn Sie `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false` setzen, fügen Sie diese Variablen stattdessen Ihrer `.env`-Datei hinzu.
 </Warning>
+
+## S3-Speicher
+
+<Warning>
+Standardmäßig speichert Twenty hochgeladene Dateien auf dem lokalen Dateisystem. Für Produktionsbereitstellungen verwenden Sie S3 oder einen S3-kompatiblen Dienst (MinIO, DigitalOcean Spaces usw.). um sicherzustellen, dass Dateien Container-Neustarts überdauern und über mehrere Serverinstanzen skaliert werden können.
+</Warning>
+
+Setzen Sie `STORAGE_TYPE=S_3` und konfigurieren Sie die Variablen `STORAGE_S3_*` über das Admin-Panel oder `.env`. Siehe die [Referenz zu config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) für die vollständige Liste der S3-Variablen.
+
+Wenn Sie S3 mit CORS-abhängigen Funktionen verwenden (z. B. Dateidownloads im Browser), stellen Sie sicher, dass Ihr Bucket in seiner CORS-Konfiguration die Origin Ihres Twenty-Frontends zulässt.
 
 ## Logikfunktionen & Code-Interpreter
 

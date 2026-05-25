@@ -1,0 +1,51 @@
+---
+title: Genel Bakış
+description: Uygulamanın kendisini yapılandırın — kimliğini, varsayılan izinlerini ve kurulum sırasında nelerin çalıştığını.
+icon: screwdriver-wrench
+---
+
+Bir Twenty uygulamasının **config katmanı**, uygulamayı *platforma tanımlar* — kimliğini, sahip olduğu izinleri ve kurulum veya yükseltme sırasında çalışan kodu açıklar. Bu deklarasyonlar yeni veri biçimleri veya çalışma zamanı davranışı eklemez; Twenty’ye *uygulamanın kim olduğunu* ve *nasıl kurulacağını* söyler.
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ Application — identity, default role, variables,       │
+│               marketplace metadata                     │
+│                                                        │
+│   ┌──────────────────────────────────────────────────┐ │
+│   │ Role — what the app's logic functions can read   │ │
+│   │ and write (referenced by Application)            │ │
+│   └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+                          │
+                          ▼  (at install / upgrade time)
+       ┌──────────────────────────────────┐
+       │ Pre-install hook                 │  before metadata migration
+       └──────────────────────────────────┘
+       ┌──────────────────────────────────┐
+       │ Post-install hook                │  after metadata migration
+       └──────────────────────────────────┘
+```
+
+## Bu bölümde
+
+<CardGroup cols={2}>
+  <Card title="Uygulama Yapılandırması" icon="rocket" href="/l/tr/developers/extend/apps/config/application">
+    `defineApplication` — kimlik, varsayılan rol, değişkenler, marketplace metaverisi.
+  </Card>
+  <Card title="Roller ve İzinler" icon="shield-halved" href="/l/tr/developers/extend/apps/config/roles">
+    `defineRole` — uygulamanızın mantık fonksiyonlarının neleri okuyup yazabildiğini tanımlayın.
+  </Card>
+  <Card title="Kurulum Kancaları" icon="anahtar" href="/l/tr/developers/extend/apps/config/install-hooks">
+    `definePreInstallLogicFunction` ve `definePostInstallLogicFunction` — verileri yedekleyin, varsayılanları tohumlayın, yükseltmeleri doğrulayın.
+  </Card>
+</CardGroup>
+
+## Parçaların birbiriyle ilişkisi
+
+* **Application** giriş noktasıdır. Her uygulamada tam olarak bir `defineApplication()` çağrısı vardır ve bu çağrı varsayılan olarak bir **Rol**e işaret eder.
+* **Rol**, uygulamanın mantık fonksiyonlarının ve ön bileşenlerinin neleri okuyup yazabildiğini kontrol eder. En az ayrıcalık ilkesini izleyin: kodunuzun gerçekten ihtiyaç duyduğu izinleri verin.
+* **Install Hooks**, kurulum veya yükseltme sırasında çalışır — ön kurulum, metadata migrasyonundan önce (böylece riskli bir yükseltmeyi reddedebilir), son kurulum migrasyondan sonra (böylece yeni şemaya karşı varsayılan verileri tohumlayabilir).
+
+<Note>
+Kurulum kancaları, [mantık fonksiyonu](/l/tr/developers/extend/apps/logic/logic-functions) çalışma zamanını paylaşır — aynı handler imzası, aynı ortam değişkenleri, aynı türlendirilmiş API istemcisi — ancak kendi define fonksiyonlarıyla deklare edilir ve normal tetikleyici modelinin (HTTP, cron, veritabanı olayları) dışında yaşarlar.
+</Note>

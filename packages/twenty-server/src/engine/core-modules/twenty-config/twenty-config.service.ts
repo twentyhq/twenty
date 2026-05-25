@@ -121,7 +121,7 @@ export class TwentyConfigService {
       let value = this.get(typedKey) ?? '';
       const source = this.determineConfigSource(typedKey, value, envMetadata);
 
-      value = this.maskSensitiveValue(typedKey, value);
+      value = this.maskSensitiveValue(typedKey, value, envMetadata);
 
       result[key] = {
         value,
@@ -147,7 +147,7 @@ export class TwentyConfigService {
     let value = this.get(key) ?? '';
     const source = this.determineConfigSource(key, value, metadata);
 
-    value = this.maskSensitiveValue(key, value);
+    value = this.maskSensitiveValue(key, value, metadata);
 
     return {
       value,
@@ -248,26 +248,47 @@ export class TwentyConfigService {
     key: T,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     value: any,
+    metadata: ConfigVariablesMetadataOptions,
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   ): any {
-    if (!isString(value) || !(key in CONFIG_VARIABLES_MASKING_CONFIG)) {
-      return value;
+    if (key in CONFIG_VARIABLES_MASKING_CONFIG) {
+      if (!isString(value)) {
+        return value;
+      }
+
+      const varMaskingConfig =
+        CONFIG_VARIABLES_MASKING_CONFIG[
+          key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
+        ];
+      const options =
+        varMaskingConfig.strategy ===
+        ConfigVariablesMaskingStrategies.LAST_N_CHARS
+          ? { chars: varMaskingConfig.chars }
+          : undefined;
+
+      return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
+        ...options,
+        variableName: key as string,
+      });
     }
 
-    const varMaskingConfig =
-      CONFIG_VARIABLES_MASKING_CONFIG[
-        key as keyof typeof CONFIG_VARIABLES_MASKING_CONFIG
-      ];
-    const options =
-      varMaskingConfig.strategy ===
-      ConfigVariablesMaskingStrategies.LAST_N_CHARS
-        ? { chars: varMaskingConfig.chars }
-        : undefined;
+    if (metadata?.isSensitive) {
+      if (!value && value !== false && value !== 0) {
+        return value;
+      }
 
-    return configVariableMaskSensitiveData(value, varMaskingConfig.strategy, {
-      ...options,
-      variableName: key as string,
-    });
+      if (isString(value)) {
+        return configVariableMaskSensitiveData(
+          value,
+          ConfigVariablesMaskingStrategies.LAST_N_CHARS,
+          { chars: 4, variableName: key as string },
+        );
+      }
+
+      return '********';
+    }
+
+    return value;
   }
 
   validateConfigVariableExists(key: string): boolean {

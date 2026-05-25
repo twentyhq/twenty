@@ -5,7 +5,7 @@ import {
   mockFlatFieldMetadataMaps,
   mockFlatObjectMetadatas,
 } from 'src/engine/core-modules/__mocks__/mockFlatObjectMetadatas';
-import { FileService } from 'src/engine/core-modules/file/services/file.service';
+import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { SearchService } from 'src/engine/core-modules/search/services/search.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -18,8 +18,14 @@ describe('SearchService', () => {
       providers: [
         SearchService,
         { provide: GlobalWorkspaceOrmManager, useValue: {} },
-        { provide: FileService, useValue: {} },
-        { provide: TwentyConfigService, useValue: { get: () => false } },
+        { provide: FileUrlService, useValue: {} },
+        {
+          provide: TwentyConfigService,
+          useValue: {
+            get: (key: string) =>
+              key === 'SEARCH_ILIKE_FALLBACK_TIMEOUT_MS' ? 500 : false,
+          },
+        },
       ],
     }).compile();
 
@@ -65,6 +71,24 @@ describe('SearchService', () => {
 
       expect(objectMetadataItems).toEqual([mockFlatObjectMetadatas[1]]);
     });
+    it('should allow non-searchable objects when explicitly included', () => {
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        flatObjectMetadatas: mockFlatObjectMetadatas,
+        includedObjectNameSingulars: ['non-searchable-object'],
+        excludedObjectNameSingulars: [],
+      });
+
+      expect(objectMetadataItems).toEqual([mockFlatObjectMetadatas[3]]);
+    });
+    it('should block objects with channel visibility constraints even when explicitly included', () => {
+      const objectMetadataItems = service.filterObjectMetadataItems({
+        flatObjectMetadatas: mockFlatObjectMetadatas,
+        includedObjectNameSingulars: ['message'],
+        excludedObjectNameSingulars: [],
+      });
+
+      expect(objectMetadataItems).toEqual([]);
+    });
   });
 
   describe('getLabelIdentifierColumns', () => {
@@ -87,13 +111,13 @@ describe('SearchService', () => {
   });
 
   describe('getImageIdentifierColumn', () => {
-    it('should return null if the object metadata item does not have an image identifier', () => {
+    it('should return `avatarFile` if the object metadata item is a person', () => {
       const imageIdentifierColumn = service.getImageIdentifierColumn(
         mockFlatObjectMetadatas[0],
         mockFlatFieldMetadataMaps,
       );
 
-      expect(imageIdentifierColumn).toBeNull();
+      expect(imageIdentifierColumn).toEqual('avatarFile');
     });
     it('should return `domainNamePrimaryLinkUrl` column for a company object metadata item', () => {
       const imageIdentifierColumn = service.getImageIdentifierColumn(

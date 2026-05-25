@@ -30,7 +30,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
     flatApplication,
     workspaceId,
   }: WorkspaceMigrationActionRunnerArgs<UniversalCreateNavigationMenuItemAction>): Promise<FlatCreateNavigationMenuItemAction> {
-    const { targetObjectMetadataId, folderId, viewId } =
+    const { targetObjectMetadataId, folderId, viewId, pageLayoutId } =
       resolveUniversalRelationIdentifiersToIds({
         flatEntityMaps: allFlatEntityMaps,
         metadataName: action.metadataName,
@@ -49,6 +49,7 @@ export class CreateNavigationMenuItemActionHandlerService extends WorkspaceMigra
         targetObjectMetadataId,
         folderId,
         viewId,
+        pageLayoutId,
         applicationId: flatApplication.id,
         id: action.id ?? v4(),
         workspaceId,

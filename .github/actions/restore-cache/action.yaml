@@ -25,7 +25,7 @@ runs:
       run: |
         echo "CACHE_PRIMARY_KEY_PREFIX=v4-${CACHE_KEY}-${REF_NAME}" >> "${GITHUB_OUTPUT}"
     - name: Restore cache
-      uses: actions/cache/restore@v4
+      uses: actions/cache/restore@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0 (restore)
       id: restore-cache
       with:
         key: ${{ steps.cache-primary-key-builder.outputs.CACHE_PRIMARY_KEY_PREFIX }}-${{ github.sha }}

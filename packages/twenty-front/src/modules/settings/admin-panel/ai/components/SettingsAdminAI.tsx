@@ -1,49 +1,113 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath } from 'twenty-shared/utils';
 import { Tag } from 'twenty-ui/components';
 import { H2Title, IconBolt, IconLock, IconRobot } from 'twenty-ui/display';
 import { Card, Section } from 'twenty-ui/layout';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { billingState } from '@/client-config/states/billingState';
 import { useClientConfig } from '@/client-config/hooks/useClientConfig';
-import { SettingsAdminAiModelsTable } from '@/settings/admin-panel/ai/components/SettingsAdminAiModelsTable';
+import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
 import { SettingsAdminAiProviderListCard } from '@/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard';
 import { AI_PROVIDER_SOURCE } from '@/settings/admin-panel/ai/constants/AiProviderSource';
 import { SET_ADMIN_AI_MODEL_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelRecommended';
+import { SET_ADMIN_AI_MODELS_RECOMMENDED } from '@/settings/admin-panel/ai/graphql/mutations/setAdminAiModelsRecommended';
 import { SET_ADMIN_DEFAULT_AI_MODEL } from '@/settings/admin-panel/ai/graphql/mutations/setAdminDefaultAiModel';
 import { GET_ADMIN_AI_MODELS } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiModels';
+import { GET_ADMIN_AI_USAGE_BY_WORKSPACE } from '@/settings/admin-panel/ai/graphql/queries/getAdminAiUsageByWorkspace';
 import { GET_AI_PROVIDERS } from '@/settings/admin-panel/ai/graphql/queries/getAiProviders';
 import { type GetAiProvidersResult } from '@/settings/admin-panel/ai/types/GetAiProvidersResult';
-import { getModelIcon } from '@/settings/admin-panel/ai/utils/getModelIcon';
 import { parseProviderItems } from '@/settings/admin-panel/ai/utils/parseProviderItems';
-import { SettingsAdminTabSkeletonLoader } from '@/settings/admin-panel/components/SettingsAdminTabSkeletonLoader';
+import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
+import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
+import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
+import { getPeriodDates } from '@/settings/usage/utils/getPeriodDates';
+import { getPeriodOptions } from '@/settings/usage/utils/getPeriodOptions';
+import { type PeriodPreset } from '@/settings/usage/utils/periodPreset';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Select } from '@/ui/input/components/Select';
+import { Table } from '@/ui/layout/table/components/Table';
+import { TableCell } from '@/ui/layout/table/components/TableCell';
+import { TableHeader } from '@/ui/layout/table/components/TableHeader';
+import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import {
   AiModelRole,
   type AdminAiModelConfig,
-} from '~/generated-metadata/graphql';
+} from '~/generated-admin/graphql';
+
+const USAGE_TABLE_GRID_TEMPLATE_COLUMNS = '1fr 120px';
+
+type UsageBreakdownItem = {
+  key: string;
+  label?: string | null;
+  creditsUsed: number;
+};
 
 export const SettingsAdminAI = () => {
+  const apolloAdminClient = useApolloAdminClient();
   const { enqueueErrorSnackBar } = useSnackBar();
   const { refetch: refetchClientConfig } = useClientConfig();
+  const { formatUsageValue } = useUsageValueFormatter();
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const billing = useAtomStateValue(billingState);
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const hasEnterpriseAccess =
+    isBillingEnabled ||
+    currentWorkspace?.hasValidEnterpriseValidityToken === true;
+  const [usagePeriod, setUsagePeriod] = useState<PeriodPreset>('30d');
+  const periodOptions = getPeriodOptions();
+  const usageDates = getPeriodDates(usagePeriod);
 
-  const { data, loading: isLoadingModels } = useQuery<{
+  const {
+    data,
+    loading: isLoadingModels,
+    refetch: refetchModels,
+  } = useQuery<{
     getAdminAiModels: {
       defaultSmartModelId?: string | null;
       defaultFastModelId?: string | null;
       models: AdminAiModelConfig[];
     };
-  }>(GET_ADMIN_AI_MODELS);
+  }>(GET_ADMIN_AI_MODELS, { client: apolloAdminClient });
 
-  const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED);
-  const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL);
+  const [setModelRecommended] = useMutation(SET_ADMIN_AI_MODEL_RECOMMENDED, {
+    client: apolloAdminClient,
+  });
+  const [setModelsRecommended] = useMutation(SET_ADMIN_AI_MODELS_RECOMMENDED, {
+    client: apolloAdminClient,
+  });
+  const [setDefaultModel] = useMutation(SET_ADMIN_DEFAULT_AI_MODEL, {
+    client: apolloAdminClient,
+  });
 
   const { data: providersData, loading: isLoadingProviders } =
-    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS);
+    useQuery<GetAiProvidersResult>(GET_AI_PROVIDERS, {
+      client: apolloAdminClient,
+    });
+
+  const { data: usageData, previousData: previousUsageData } = useQuery<{
+    getAdminAiUsageByWorkspace: UsageBreakdownItem[];
+  }>(GET_ADMIN_AI_USAGE_BY_WORKSPACE, {
+    client: apolloAdminClient,
+    variables: {
+      periodStart: usageDates.periodStart,
+      periodEnd: usageDates.periodEnd,
+    },
+    skip: !hasEnterpriseAccess,
+  });
+
+  const effectiveUsageData = usageData ?? previousUsageData;
+  const usageByWorkspace = effectiveUsageData?.getAdminAiUsageByWorkspace ?? [];
 
   const models = data?.getAdminAiModels?.models ?? [];
 
@@ -65,7 +129,7 @@ export const SettingsAdminAI = () => {
   );
 
   if (isLoadingProviders || isLoadingModels) {
-    return <SettingsAdminTabSkeletonLoader />;
+    return <SettingsSectionSkeletonLoader />;
   }
 
   const handleRecommendedToggle = async (
@@ -200,14 +264,108 @@ export const SettingsAdminAI = () => {
             description={t`Select which models appear as recommended in the workspace model picker`}
           />
 
-          <SettingsAdminAiModelsTable
+          <SettingsAiModelsTable
             models={enabledModels}
+            isChecked={(model) => model.isRecommended === true}
             onToggle={handleRecommendedToggle}
-            checkedField="isRecommended"
+            onToggleAll={async (shouldCheckAll) => {
+              const modelIds = enabledModels
+                .filter(
+                  (model) => (model.isRecommended === true) !== shouldCheckAll,
+                )
+                .map((model) => model.modelId);
+
+              if (modelIds.length === 0) return;
+
+              try {
+                await setModelsRecommended({
+                  variables: {
+                    modelIds,
+                    recommended: shouldCheckAll,
+                  },
+                });
+              } catch {
+                enqueueErrorSnackBar({
+                  message: t`Failed to update model recommendations`,
+                });
+              } finally {
+                await refetchModels();
+                await refetchClientConfig();
+              }
+            }}
             anchorPrefix="recommended-model-row"
           />
         </Section>
       )}
+
+      <Section>
+        <H2Title
+          title={t`AI Usage by Workspace`}
+          description={t`AI consumption across all workspaces.`}
+          adornment={
+            hasEnterpriseAccess ? (
+              <Select
+                dropdownId="admin-ai-usage-period"
+                value={usagePeriod}
+                options={periodOptions}
+                onChange={setUsagePeriod}
+                needIconCheck
+                selectSizeVariant="small"
+              />
+            ) : (
+              <Tag
+                text={t`Enterprise`}
+                color="transparent"
+                Icon={IconLock}
+                variant="border"
+              />
+            )
+          }
+        />
+        {hasEnterpriseAccess ? (
+          usageByWorkspace.length > 0 ? (
+            <Table>
+              <TableRow gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}>
+                <TableHeader>{t`Workspace`}</TableHeader>
+                <TableHeader align="right">{t`Usage`}</TableHeader>
+              </TableRow>
+              {usageByWorkspace.map((item) => (
+                <TableRow
+                  key={item.key}
+                  gridTemplateColumns={USAGE_TABLE_GRID_TEMPLATE_COLUMNS}
+                  to={getSettingsPath(SettingsPath.AdminPanelWorkspaceDetail, {
+                    workspaceId: item.key,
+                  })}
+                >
+                  <TableCell color={themeCssVariables.font.color.primary}>
+                    {item.label ?? item.key}
+                  </TableCell>
+                  <TableCell align="right">
+                    {formatUsageValue(item.creditsUsed)}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </Table>
+          ) : (
+            <Card rounded>
+              <TableRow gridTemplateColumns="1fr">
+                <TableCell
+                  color={themeCssVariables.font.color.tertiary}
+                  align="center"
+                >
+                  {t`No AI usage data recorded yet.`}
+                </TableCell>
+              </TableRow>
+            </Card>
+          )
+        ) : (
+          <SettingsEnterpriseFeatureGateCard
+            title={t`Enterprise feature`}
+            description={t`AI usage analytics across workspaces is available with an Enterprise key.`}
+            buttonTitle={t`Activate`}
+          />
+        )}
+      </Section>
     </>
   );
 };

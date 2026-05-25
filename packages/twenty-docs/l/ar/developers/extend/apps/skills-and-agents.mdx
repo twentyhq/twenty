@@ -1,0 +1,69 @@
+---
+title: المهارات والوكلاء
+description: عرّف مهارات ووكلاء الذكاء الاصطناعي لتطبيقك.
+icon: robot
+---
+
+<Warning>
+  المهارات والوكلاء حاليًا في مرحلة الألفا. الميزة تعمل لكنها لا تزال قيد التطور.
+</Warning>
+
+يمكن للتطبيقات تعريف قدرات ذكاء اصطناعي تعمل داخل مساحة العمل — تعليمات مهارات قابلة لإعادة الاستخدام ووكلاء بموجهات نظام مخصّصة.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="عرّف مهارات وكلاء الذكاء الاصطناعي">
+
+تُحدِّد المهارات تعليمات وإمكانات قابلة لإعادة الاستخدام يمكن لوكلاء الذكاء الاصطناعي استخدامها داخل مساحة العمل لديك. استخدم `defineSkill()` لتعريف مهارات مع تحقّق مدمج:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+النقاط الرئيسية:
+* `name` هي سلسلة معرّف فريدة للمهارة (يُنصَح باستخدام kebab-case).
+* `label` هو اسم العرض المقروء للبشر الظاهر في واجهة المستخدم.
+* `content` يحتوي على تعليمات المهارة — وهو النص الذي يستخدمه وكيل الذكاء الاصطناعي.
+* `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
+* `description` (اختياري) يوفّر سياقًا إضافيًا حول غرض المهارة.
+
+</Accordion>
+<Accordion title="defineAgent" description="عرِّف وكلاء الذكاء الاصطناعي باستخدام موجهات مخصّصة">
+
+الوكلاء هم مساعدون ذكاء اصطناعي يعيشون داخل مساحة العمل لديك. استخدم `defineAgent()` لإنشاء وكلاء بموجه نظام مخصّص:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+النقاط الرئيسية:
+* `name` هي سلسلة معرّف فريدة للوكيل (يُنصح باستخدام kebab-case).
+* `label` هو اسم العرض الظاهر في واجهة المستخدم.
+* `prompt` هو موجه النظام الذي يحدّد سلوك الوكيل.
+* `description` (اختياري) يوفّر سياقًا حول ما يفعله الوكيل.
+* `icon` (اختياري) يحدّد الأيقونة المعروضة في واجهة المستخدم.
+* `modelId` (اختياري) يتجاوز نموذج الذكاء الاصطناعي الافتراضي الذي يستخدمه الوكيل.
+
+</Accordion>
+</AccordionGroup>

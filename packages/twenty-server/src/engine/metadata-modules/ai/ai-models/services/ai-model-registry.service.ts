@@ -3,32 +3,38 @@ import { Injectable, Logger } from '@nestjs/common';
 import { type LanguageModel } from 'ai';
 import { type AiSdkPackage } from 'twenty-shared/ai';
 
+import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
 
 import {
-  AgentException,
-  AgentExceptionCode,
-} from 'src/engine/metadata-modules/ai/ai-agent/agent.exception';
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { AiModelPreferencesService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-preferences.service';
 import { ProviderConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/provider-config.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { type AIModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
 import { type AiProviderConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-config.type';
 import { type AiProviderModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-provider-model-config.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
 import { DEFAULT_CONTEXT_WINDOW_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-context-window-tokens.const';
-import { DEFAULT_FAST_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-fast-model.const';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
+import { isAutoSelectModelId } from 'twenty-shared/utils';
+
 import { DEFAULT_MAX_OUTPUT_TOKENS } from 'src/engine/metadata-modules/ai/ai-models/types/default-max-output-tokens.const';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
 import { buildCompositeModelId } from 'src/engine/metadata-modules/ai/ai-models/utils/composite-model-id.util';
 import { inferModelFamily } from 'src/engine/metadata-modules/ai/ai-models/utils/infer-model-family.util';
-import { isDefaultModelSentinel } from 'src/engine/metadata-modules/ai/ai-models/utils/is-default-model-sentinel.util';
+import { isProviderConfigured } from 'src/engine/metadata-modules/ai/ai-models/utils/is-provider-configured.util';
 import {
   isModelAllowedByWorkspace,
   type WorkspaceModelAvailabilitySettings,
 } from 'src/engine/metadata-modules/ai/ai-models/utils/is-model-allowed.util';
 
-export interface RegisteredAIModel {
+export interface RegisteredAiModel {
   modelId: string;
   sdkPackage: AiSdkPackage;
   model: LanguageModel;
@@ -40,19 +46,35 @@ export interface RegisteredAIModel {
 @Injectable()
 export class AiModelRegistryService {
   private readonly logger = new Logger(AiModelRegistryService.name);
-  private modelRegistry: Map<string, RegisteredAIModel> = new Map();
-  private modelConfigCache: Map<string, AIModelConfig> = new Map();
+  private modelRegistry: Map<string, RegisteredAiModel> = new Map();
+  private modelConfigCache: Map<string, AiModelConfig> = new Map();
   private providerModelDefCache: Map<
     string,
     { providerName: string; modelDef: AiProviderModelConfig }
   > = new Map();
+  private currentConfigHash: string | null = null;
 
   constructor(
     private readonly providerConfigService: ProviderConfigService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
     private readonly preferencesService: AiModelPreferencesService,
-  ) {
+    private readonly configGroupHashService: ConfigGroupHashService,
+  ) {}
+
+  // The registry is rebuilt lazily whenever the LLM-group config hash changes,
+  // so any mutation to an LLM-tagged config variable is picked up automatically
+  // on the next read — no explicit refresh from callers needed.
+  private ensureFresh(): void {
+    const configHash = this.configGroupHashService.computeHash(
+      ConfigVariablesGroup.LLM,
+    );
+
+    if (configHash === this.currentConfigHash) {
+      return;
+    }
+
     this.buildModelRegistry();
+    this.currentConfigHash = configHash;
   }
 
   private buildModelRegistry(): void {
@@ -81,9 +103,7 @@ export class AiModelRegistryService {
         continue;
       }
 
-      const isConfigured = !!(config.apiKey || config.accessKeyId);
-
-      const sdkInstance = isConfigured
+      const sdkInstance = isProviderConfigured(config)
         ? this.sdkProviderFactory.createProvider(providerKey, config)
         : undefined;
 
@@ -92,7 +112,7 @@ export class AiModelRegistryService {
 
         this.modelConfigCache.set(
           compositeId,
-          this.toAIModelConfig(compositeId, config, modelDef),
+          this.toAiModelConfig(compositeId, config, modelDef),
         );
 
         this.providerModelDefCache.set(compositeId, {
@@ -114,11 +134,11 @@ export class AiModelRegistryService {
     }
   }
 
-  private toAIModelConfig(
+  private toAiModelConfig(
     compositeId: string,
     providerConfig: AiProviderConfig,
     modelDef: AiProviderModelConfig,
-  ): AIModelConfig {
+  ): AiModelConfig {
     return {
       modelId: compositeId,
       label: modelDef.label,
@@ -143,15 +163,21 @@ export class AiModelRegistryService {
     };
   }
 
-  getModel(modelId: string): RegisteredAIModel | undefined {
+  getModel(modelId: string): RegisteredAiModel | undefined {
+    this.ensureFresh();
+
     return this.modelRegistry.get(modelId);
   }
 
-  getAvailableModels(): RegisteredAIModel[] {
+  getAvailableModels(): RegisteredAiModel[] {
+    this.ensureFresh();
+
     return Array.from(this.modelRegistry.values());
   }
 
-  getModelConfig(modelId: string): AIModelConfig | undefined {
+  getModelConfig(modelId: string): AiModelConfig | undefined {
+    this.ensureFresh();
+
     return this.modelConfigCache.get(modelId);
   }
 
@@ -161,7 +187,7 @@ export class AiModelRegistryService {
 
   private getFirstAvailableModelFromList(
     modelIds: string[],
-  ): RegisteredAIModel | undefined {
+  ): RegisteredAiModel | undefined {
     for (const modelId of modelIds) {
       const model = this.getModel(modelId);
 
@@ -173,15 +199,15 @@ export class AiModelRegistryService {
     return undefined;
   }
 
-  getDefaultSpeedModel(): RegisteredAIModel {
+  getDefaultSpeedModel(): RegisteredAiModel {
     return this.getDefaultModelForRole(AiModelRole.FAST);
   }
 
-  getDefaultPerformanceModel(): RegisteredAIModel {
+  getDefaultPerformanceModel(): RegisteredAiModel {
     return this.getDefaultModelForRole(AiModelRole.SMART);
   }
 
-  private getDefaultModelForRole(role: AiModelRole): RegisteredAIModel {
+  private getDefaultModelForRole(role: AiModelRole): RegisteredAiModel {
     const prefs = this.preferencesService.getPreferences();
     const preferenceKey =
       role === AiModelRole.FAST ? 'defaultFastModels' : 'defaultSmartModels';
@@ -193,19 +219,21 @@ export class AiModelRegistryService {
     }
 
     if (!model) {
-      throw new AgentException(
+      throw new AiException(
         'No AI models are available. Configure at least one AI provider.',
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 
     return model;
   }
 
-  getEffectiveModelConfig(modelId: string): AIModelConfig {
-    if (isDefaultModelSentinel(modelId)) {
+  getEffectiveModelConfig(modelId: string): AiModelConfig {
+    this.ensureFresh();
+
+    if (isAutoSelectModelId(modelId)) {
       const defaultModel =
-        modelId === DEFAULT_FAST_MODEL
+        modelId === AUTO_SELECT_FAST_MODEL_ID
           ? this.getDefaultSpeedModel()
           : this.getDefaultPerformanceModel();
 
@@ -227,15 +255,15 @@ export class AiModelRegistryService {
       return this.createDefaultConfigForCustomModel(registeredModel);
     }
 
-    throw new AgentException(
+    throw new AiException(
       `Model with ID ${modelId} not found`,
-      AgentExceptionCode.AGENT_EXECUTION_FAILED,
+      AiExceptionCode.AGENT_EXECUTION_FAILED,
     );
   }
 
   private createDefaultConfigForCustomModel(
-    registeredModel: RegisteredAIModel,
-  ): AIModelConfig {
+    registeredModel: RegisteredAiModel,
+  ): AiModelConfig {
     return {
       modelId: registeredModel.modelId,
       label: registeredModel.modelId,
@@ -253,7 +281,7 @@ export class AiModelRegistryService {
   }
 
   isModelAdminAllowed(modelId: string): boolean {
-    if (isDefaultModelSentinel(modelId)) {
+    if (isAutoSelectModelId(modelId)) {
       return true;
     }
 
@@ -268,9 +296,9 @@ export class AiModelRegistryService {
     workspace: WorkspaceModelAvailabilitySettings,
   ): void {
     if (!this.isModelAdminAllowed(modelId)) {
-      throw new AgentException(
+      throw new AiException(
         'The selected model has been disabled by the administrator.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
 
@@ -281,27 +309,28 @@ export class AiModelRegistryService {
         this.getRecommendedModelIds(),
       )
     ) {
-      throw new AgentException(
+      throw new AiException(
         'The selected model is not available in this workspace.',
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }
 
-  getAdminFilteredModels(): RegisteredAIModel[] {
+  getAdminFilteredModels(): RegisteredAiModel[] {
     return this.getAvailableModels().filter((model) =>
       this.isModelAdminAllowed(model.modelId),
     );
   }
 
   getAllModelsWithStatus(): Array<{
-    modelConfig: AIModelConfig;
+    modelConfig: AiModelConfig;
     isAvailable: boolean;
     isAdminEnabled: boolean;
     isRecommended: boolean;
     providerName?: string;
     name?: string;
   }> {
+    this.ensureFresh();
     const recommended = this.getRecommendedModelIds();
 
     return Array.from(this.modelConfigCache.values()).map((modelConfig) => {
@@ -332,16 +361,34 @@ export class AiModelRegistryService {
     await this.preferencesService.setModelRecommended(modelId, recommended);
   }
 
+  async setModelsAdminEnabled(
+    modelIds: string[],
+    enabled: boolean,
+  ): Promise<void> {
+    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    await this.preferencesService.setModelsAdminEnabled(modelIds, enabled);
+  }
+
+  async setModelsRecommended(
+    modelIds: string[],
+    recommended: boolean,
+  ): Promise<void> {
+    modelIds.forEach((id) => this.validateModelInRegistry(id));
+    await this.preferencesService.setModelsRecommended(modelIds, recommended);
+  }
+
   async setDefaultModel(role: AiModelRole, modelId: string): Promise<void> {
     this.validateModelInRegistry(modelId);
     await this.preferencesService.setDefaultModel(role, modelId);
   }
 
   private validateModelInRegistry(modelId: string): void {
+    this.ensureFresh();
+
     if (!this.providerModelDefCache.has(modelId)) {
-      throw new AgentException(
+      throw new AiException(
         `Cannot update model "${modelId}": not found in registry`,
-        AgentExceptionCode.AGENT_EXECUTION_FAILED,
+        AiExceptionCode.AGENT_EXECUTION_FAILED,
       );
     }
   }
@@ -354,21 +401,17 @@ export class AiModelRegistryService {
     return this.providerConfigService.getCatalogProviderNames();
   }
 
-  refreshRegistry(): void {
-    this.buildModelRegistry();
-  }
-
-  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAIModel {
+  resolveModelForAgent(agent: { modelId: string } | null): RegisteredAiModel {
     const aiModel = this.getEffectiveModelConfig(
-      agent?.modelId ?? DEFAULT_SMART_MODEL,
+      agent?.modelId ?? AUTO_SELECT_SMART_MODEL_ID,
     );
 
     const registeredModel = this.getModel(aiModel.modelId);
 
     if (!registeredModel) {
-      throw new AgentException(
+      throw new AiException(
         `Model ${aiModel.modelId} not found in registry. Check that the corresponding AI provider is configured.`,
-        AgentExceptionCode.API_KEY_NOT_CONFIGURED,
+        AiExceptionCode.API_KEY_NOT_CONFIGURED,
       );
     }
 

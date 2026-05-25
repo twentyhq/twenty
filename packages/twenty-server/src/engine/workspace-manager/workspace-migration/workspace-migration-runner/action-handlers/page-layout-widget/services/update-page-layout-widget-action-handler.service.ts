@@ -10,6 +10,7 @@ import {
   UniversalUpdatePageLayoutWidgetAction,
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout-widget/types/workspace-migration-page-layout-widget-action.type';
 import { fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-configuration-to-flat-page-layout-widget-configuration.util';
+import { fromUniversalOverridesToPageLayoutWidgetOverrides } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/page-layout-widget/services/utils/from-universal-overrides-to-page-layout-widget-overrides.util';
 import {
   WorkspaceMigrationActionRunnerArgs,
   WorkspaceMigrationActionRunnerContext,
@@ -34,14 +35,17 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
       universalIdentifier: action.universalIdentifier,
     });
 
-    const { universalConfiguration, ...updateWithResolvedForeignKeys } =
-      resolveUniversalUpdateRelationIdentifiersToIds({
-        metadataName: 'pageLayoutWidget',
-        universalUpdate: action.update,
-        allFlatEntityMaps,
-      });
+    const {
+      universalConfiguration,
+      universalOverrides,
+      ...updateWithResolvedForeignKeys
+    } = resolveUniversalUpdateRelationIdentifiersToIds({
+      metadataName: 'pageLayoutWidget',
+      universalUpdate: action.update,
+      allFlatEntityMaps,
+    });
 
-    const update =
+    const updateWithConfiguration =
       universalConfiguration === undefined
         ? updateWithResolvedForeignKeys
         : {
@@ -57,6 +61,19 @@ export class UpdatePageLayoutWidgetActionHandlerService extends WorkspaceMigrati
                   allFlatEntityMaps.flatViewFieldGroupMaps,
               }),
           };
+
+    const update =
+      universalOverrides === undefined
+        ? updateWithConfiguration
+        : universalOverrides === null
+          ? { ...updateWithConfiguration, overrides: null }
+          : {
+              ...updateWithConfiguration,
+              overrides: fromUniversalOverridesToPageLayoutWidgetOverrides({
+                universalOverrides,
+                flatPageLayoutTabMaps: allFlatEntityMaps.flatPageLayoutTabMaps,
+              }),
+            };
 
     return {
       type: 'update',

@@ -1,5 +1,6 @@
 ---
 title: Configuração
+icon: engrenagem
 ---
 
 # Gestão de Configuração
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # default
 
 <Warning>
 Cada variável é documentada com descrições no seu painel de administração em **Configurações → Painel de Administração → Variáveis de Configuração**.
-Algumas configurações de infraestrutura como conexões de banco de dados (`PG_DATABASE_URL`), URLs de servidor (`SERVER_URL`) e segredos do app (`APP_SECRET`) só podem ser configuradas via arquivo `.env`.
+Algumas configurações de infraestrutura como conexões de banco de dados (`PG_DATABASE_URL`), URLs de servidor (`SERVER_URL`) e segredos (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) só podem ser configuradas via arquivo `.env`.
 
 [Referência técnica completa →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Chaves de criptografia
+
+A Twenty usa duas chaves de criptografia definidas apenas por variáveis de ambiente:
+
+| Variável                  | Finalidade                                                                                                                                                                           | Obrigatório                                                                                                  |
+| ------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ |
+| `ENCRYPTION_KEY`          | Chave primária usada para criptografar segredos em repouso (tokens OAuth, variáveis do aplicativo, chaves privadas de assinatura, segredos TOTP, valores de configuração sensíveis). | Sim para novas instalações (instalações legadas podem, em vez disso, depender de `APP_SECRET` — veja abaixo) |
+| `FALLBACK_ENCRYPTION_KEY` | Chave somente para verificação. Definida durante uma rotação para a *chave `ENCRYPTION_KEY` anterior* para que as linhas existentes permaneçam descriptografáveis.                   | Apenas durante a rotação                                                                                     |
+
+Para compatibilidade retroativa, se `ENCRYPTION_KEY` não estiver definida, Twenty recorre a `APP_SECRET` para criptografia em repouso — correspondendo ao comportamento legado de implantações mais antigas. Novas instalações devem sempre definir uma `ENCRYPTION_KEY` dedicada.
+
+Gere valores com `openssl rand -base64 32` e armazene-os em um local seguro (um gerenciador de segredos, configuração selada, etc.). Perder a `ENCRYPTION_KEY` significa perder o acesso a todos os segredos armazenados no banco de dados.
+
+Para rotacionar a `ENCRYPTION_KEY` sem tempo de inatividade, consulte o [guia de rotação de chaves](/l/pt/developers/self-host/capabilities/key-rotation).
 
 ## 2. Configuração Somente por Ambiente
 
@@ -296,6 +312,16 @@ yarn command:prod cron:workflow:automated-cron-trigger
 <Warning>
 **Modo somente ambiente:** Se você definir `IS_CONFIG_VARIABLES_IN_DB_ENABLED=false`, adicione estas variáveis ao seu arquivo `.env`.
 </Warning>
+
+## Armazenamento S3
+
+<Warning>
+Por padrão, o Twenty armazena os arquivos enviados no sistema de arquivos local. Para implantações em produção, use o S3 ou um serviço compatível com S3 (MinIO, DigitalOcean Spaces, etc.) para garantir que os arquivos persistam entre reinicializações do contêiner e possam escalar em várias instâncias de servidor.
+</Warning>
+
+Defina `STORAGE_TYPE=S_3` e configure as variáveis `STORAGE_S3_*` pelo painel de administração ou `.env`. Veja a [referência de config-variables.ts](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts) para a lista completa de variáveis do S3.
+
+Ao usar o S3 com recursos dependentes de CORS (por exemplo, downloads de arquivos no navegador), verifique se o seu bucket permite a origem do seu frontend do Twenty na sua configuração de CORS.
 
 ## Funções lógicas e interpretador de código
 

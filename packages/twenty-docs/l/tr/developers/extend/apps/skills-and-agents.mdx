@@ -1,0 +1,69 @@
+---
+title: Beceriler ve Ajanlar
+description: Uygulamanız için yapay zekâ yetenekleri ve ajanları tanımlayın.
+icon: robot
+---
+
+<Warning>
+  Beceriler ve ajanlar şu anda alfa aşamasında. Özellik işlevsel ancak hâlâ gelişmekte.
+</Warning>
+
+Uygulamalar, çalışma alanı içinde yer alan yapay zekâ yeteneklerini — yeniden kullanılabilir yetenek yönergeleri ve özel sistem istemlerine sahip ajanları — tanımlayabilir.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Yapay zekâ ajanı yeteneklerini tanımlayın">
+
+Yetenekler, yapay zekâ ajanlarının çalışma alanınızda kullanabileceği yeniden kullanılabilir yönergeleri ve kabiliyetleri tanımlar. Yerleşik doğrulamayla yetenekleri tanımlamak için `defineSkill()` kullanın:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Önemli noktalar:
+* `name`, yetenek için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen, insan tarafından okunabilir addır.
+* `content`, yetenek yönergelerini içerir — bu, yapay zekâ ajanının kullandığı metindir.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `description` (isteğe bağlı), yeteneğin amacı hakkında ek bağlam sağlar.
+
+</Accordion>
+<Accordion title="defineAgent" description="Özel istemlerle yapay zekâ ajanları tanımlayın">
+
+Ajanlar, çalışma alanınız içinde bulunan yapay zekâ asistanlarıdır. Özel bir sistem istemiyle ajanlar oluşturmak için `defineAgent()` kullanın:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Önemli noktalar:
+* `name`, ajan için benzersiz bir tanımlayıcı dizedir (kebab-case önerilir).
+* `label`, UI'de gösterilen görünen addır.
+* `prompt`, ajanın davranışını tanımlayan sistem istemidir.
+* `description` (isteğe bağlı), ajanın ne yaptığı hakkında bağlam sağlar.
+* `icon` (isteğe bağlı), UI'de gösterilen simgeyi ayarlar.
+* `modelId` (isteğe bağlı), ajanın kullandığı varsayılan yapay zekâ modelini geçersiz kılar.
+
+</Accordion>
+</AccordionGroup>

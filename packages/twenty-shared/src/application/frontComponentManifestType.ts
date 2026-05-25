@@ -5,16 +5,15 @@ export type CommandMenuItemManifest = SyncableEntityOptions & {
   shortLabel?: string;
   icon?: string;
   isPinned?: boolean;
-  availabilityType?: 'GLOBAL' | 'RECORD_SELECTION' | 'FALLBACK';
+  availabilityType?:
+    | 'GLOBAL'
+    | 'GLOBAL_OBJECT_CONTEXT'
+    | 'RECORD_SELECTION'
+    | 'FALLBACK';
   availabilityObjectUniversalIdentifier?: string;
   frontComponentUniversalIdentifier: string;
   conditionalAvailabilityExpression?: string;
 };
-
-export type FrontComponentCommandManifest = Omit<
-  CommandMenuItemManifest,
-  'frontComponentUniversalIdentifier'
->;
 
 export type FrontComponentManifest = {
   universalIdentifier: string;
@@ -25,5 +24,5 @@ export type FrontComponentManifest = {
   builtComponentChecksum: string;
   componentName: string;
   isHeadless?: boolean;
-  command?: FrontComponentCommandManifest;
+  usesSdkClient?: boolean;
 };

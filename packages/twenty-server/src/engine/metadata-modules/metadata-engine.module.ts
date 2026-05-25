@@ -8,7 +8,6 @@ import { AiGenerateTextModule } from 'src/engine/metadata-modules/ai/ai-generate
 import { CalendarChannelMetadataModule } from 'src/engine/metadata-modules/calendar-channel/calendar-channel-metadata.module';
 import { ConnectedAccountMetadataModule } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.module';
 import { CommandMenuItemModule } from 'src/engine/metadata-modules/command-menu-item/command-menu-item.module';
-import { DataSourceModule } from 'src/engine/metadata-modules/data-source/data-source.module';
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { FlatEntityMapsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/flat-entity/filters/flat-entity-maps-graphql-api-exception.filter';
 import { FrontComponentModule } from 'src/engine/metadata-modules/front-component/front-component.module';
@@ -18,6 +17,7 @@ import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/messag
 import { MessageFolderMetadataModule } from 'src/engine/metadata-modules/message-folder/message-folder-metadata.module';
 import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { PermissionFlagModule } from 'src/engine/metadata-modules/permission-flag/permission-flag.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { MinimalMetadataModule } from 'src/engine/metadata-modules/minimal-metadata/minimal-metadata.module';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
@@ -30,7 +30,6 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
 
 @Module({
   imports: [
-    DataSourceModule,
     FieldMetadataModule,
     FrontComponentModule,
     ObjectMetadataModule,
@@ -49,6 +48,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     WorkspaceMetadataVersionModule,
     RoleModule,
     PermissionsModule,
+    PermissionFlagModule,
     RouteTriggerModule,
     WebhookModule,
     ConnectedAccountMetadataModule,
@@ -63,7 +63,6 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     },
   ],
   exports: [
-    DataSourceModule,
     FieldMetadataModule,
     FrontComponentModule,
     ObjectMetadataModule,
@@ -78,6 +77,7 @@ import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/work
     ViewModule,
     RoleModule,
     PermissionsModule,
+    PermissionFlagModule,
     WebhookModule,
     ConnectedAccountMetadataModule,
     MessageChannelMetadataModule,

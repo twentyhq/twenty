@@ -6,10 +6,8 @@ import { useDebouncedCallback } from 'use-debounce';
 import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceMemberState } from '@/auth/states/currentWorkspaceMemberState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
-import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
 import { useCanEditProfileField } from '@/settings/profile/hooks/useCanEditProfileField';
+import { useUpdateWorkspaceMemberSettings } from '@/settings/profile/hooks/useUpdateWorkspaceMemberSettings';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { logError } from '~/utils/logError';
@@ -29,9 +27,7 @@ type NameFieldsProps = {
 export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
   const { t } = useLingui();
   const currentUser = useAtomStateValue(currentUserState);
-  const [currentWorkspaceMember, setCurrentWorkspaceMember] = useAtomState(
-    currentWorkspaceMemberState,
-  );
+  const currentWorkspaceMember = useAtomStateValue(currentWorkspaceMemberState);
   const { canEdit: canEditFirstName } = useCanEditProfileField('firstName');
   const { canEdit: canEditLastName } = useCanEditProfileField('lastName');
 
@@ -42,7 +38,7 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
     currentWorkspaceMember?.name?.lastName ?? '',
   );
 
-  const { updateOneRecord } = useUpdateOneRecord();
+  const { updateWorkspaceMemberSettings } = useUpdateWorkspaceMemberSettings();
 
   // TODO: Enhance this with react-web-hook-form (https://www.react-hook-form.com)
   const debouncedUpdate = useDebouncedCallback(async () => {
@@ -52,22 +48,13 @@ export const NameFields = ({ autoSave = true }: NameFieldsProps) => {
       }
 
       if (autoSave) {
-        await updateOneRecord({
-          objectNameSingular: CoreObjectNameSingular.WorkspaceMember,
-          idToUpdate: currentWorkspaceMember?.id,
-          updateOneRecordInput: {
+        await updateWorkspaceMemberSettings({
+          workspaceMemberId: currentWorkspaceMember.id,
+          update: {
             name: {
               firstName: firstName,
               lastName: lastName,
             },
-          },
-        });
-
-        setCurrentWorkspaceMember({
-          ...currentWorkspaceMember,
-          name: {
-            firstName,
-            lastName,
           },
         });
       }

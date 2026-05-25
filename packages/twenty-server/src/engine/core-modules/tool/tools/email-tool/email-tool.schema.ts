@@ -24,7 +24,7 @@ export const EmailToolInputZodSchema = z.object({
     'Recipients object with to, cc, and bcc fields (comma-separated)',
   ),
   subject: z.string().describe('The email subject line'),
-  body: z.string().describe('The email body content (HTML or plain text)'),
+  body: z.string().describe('The email body content in HTML format'),
   connectedAccountId: z
     .string()
     .refine((val) => isValidUuid(val))

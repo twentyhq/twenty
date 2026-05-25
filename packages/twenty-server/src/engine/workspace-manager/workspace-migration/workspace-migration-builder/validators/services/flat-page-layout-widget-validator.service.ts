@@ -3,7 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
-  FeatureFlagKey,
   PageLayoutTabLayoutMode,
   PageLayoutWidgetPosition,
   type GridPosition,
@@ -13,8 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
-import { GraphType } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-type.enum';
-import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
@@ -44,9 +41,6 @@ export class FlatPageLayoutWidgetValidatorService {
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'update'>> {
-    const isDashboardV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
-
     const existingFlatPageLayoutWidget = findFlatEntityByUniversalIdentifier({
       universalIdentifier,
       flatEntityMaps:
@@ -103,15 +97,6 @@ export class FlatPageLayoutWidgetValidatorService {
     });
 
     validationResult.errors.push(...positionErrors);
-
-    const featureFlagErrors = this.validateFeatureFlags({
-      type: updatedFlatPageLayoutWidget.type,
-      configuration: updatedFlatPageLayoutWidget.universalConfiguration,
-      widgetTitle: updatedFlatPageLayoutWidget.title,
-      isDashboardV2Enabled,
-    });
-
-    validationResult.errors.push(...featureFlagErrors);
 
     const typeSpecificityErrors =
       this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForUpdate(
@@ -176,9 +161,6 @@ export class FlatPageLayoutWidgetValidatorService {
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.pageLayoutWidget
   >): Promise<FailedFlatEntityValidation<'pageLayoutWidget', 'create'>> {
-    const isDashboardV2Enabled =
-      featureFlagsMap[FeatureFlagKey.IS_DASHBOARD_V2_ENABLED] ?? false;
-
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatPageLayoutWidgetToValidate.universalIdentifier,
@@ -236,15 +218,6 @@ export class FlatPageLayoutWidgetValidatorService {
 
     validationResult.errors.push(...positionErrors);
 
-    const featureFlagErrors = this.validateFeatureFlags({
-      type: flatPageLayoutWidgetToValidate.type,
-      configuration: flatPageLayoutWidgetToValidate.universalConfiguration,
-      widgetTitle: flatPageLayoutWidgetToValidate.title,
-      isDashboardV2Enabled,
-    });
-
-    validationResult.errors.push(...featureFlagErrors);
-
     const typeSpecificityErrors =
       this.flatPageLayoutWidgetTypeValidatorService.validateFlatPageLayoutWidgetTypeSpecificitiesForCreation(
         {
@@ -280,47 +253,6 @@ export class FlatPageLayoutWidgetValidatorService {
     }
 
     return validateWidgetGridPosition(gridPosition, widgetTitle);
-  }
-
-  private validateFeatureFlags({
-    type,
-    configuration,
-    widgetTitle,
-    isDashboardV2Enabled,
-  }: {
-    type: WidgetType | undefined;
-    configuration: { configurationType?: unknown } | null | undefined;
-    widgetTitle: string;
-    isDashboardV2Enabled: boolean;
-  }): FlatEntityValidationError[] {
-    if (!isDefined(type) || !isDefined(configuration)) {
-      return [];
-    }
-
-    if (type !== WidgetType.GRAPH) {
-      return [];
-    }
-
-    const graphConfiguration = configuration as {
-      configurationType?: GraphType;
-    };
-
-    if (
-      graphConfiguration.configurationType === GraphType.GAUGE_CHART &&
-      !isDashboardV2Enabled
-    ) {
-      const chartType = graphConfiguration.configurationType;
-
-      return [
-        {
-          code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-          message: t`Invalid configuration for widget "${widgetTitle}": Chart type ${chartType} requires IS_DASHBOARD_V2_ENABLED feature flag`,
-          userFriendlyMessage: msg`This chart type requires the Dashboard V2 feature to be enabled`,
-        },
-      ];
-    }
-
-    return [];
   }
 
   private validatePosition({

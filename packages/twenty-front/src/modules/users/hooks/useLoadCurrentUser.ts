@@ -56,7 +56,7 @@ export const useLoadCurrentUser = () => {
 
     const user = currentUserResult.data?.currentUser;
 
-    if (!user) {
+    if (!isDefined(user)) {
       throw new Error('No current user result');
     }
 

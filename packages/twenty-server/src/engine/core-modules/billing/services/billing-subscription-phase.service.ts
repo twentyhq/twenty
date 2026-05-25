@@ -16,6 +16,7 @@ import { type BillingSubscriptionSchedulePhaseDTO } from 'src/engine/core-module
 import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingPlanService } from 'src/engine/core-modules/billing/services/billing-plan.service';
 import { BillingPriceService } from 'src/engine/core-modules/billing/services/billing-price.service';
+import { SubscriptionStripePrices } from 'src/engine/core-modules/billing/services/billing-subscription-update.service';
 import { normalizePriceRef } from 'src/engine/core-modules/billing/utils/normalize-price-ref.utils';
 
 @Injectable()
@@ -82,31 +83,26 @@ export class BillingSubscriptionPhaseService {
     } as Stripe.SubscriptionScheduleUpdateParams.Phase;
   }
 
-  async buildPhaseUpdateParams({
-    licensedStripePriceId,
-    seats,
-    meteredStripePriceId,
+  buildPhaseUpdateParams({
+    toUpdatePrices,
     startDate,
     endDate,
   }: {
-    licensedStripePriceId: string;
-    seats: number;
-    meteredStripePriceId: string;
+    toUpdatePrices: SubscriptionStripePrices;
     startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
     endDate: number | undefined;
-  }): Promise<Stripe.SubscriptionScheduleUpdateParams.Phase> {
+  }): Stripe.SubscriptionScheduleUpdateParams.Phase {
     return {
       start_date: startDate,
       ...(endDate ? { end_date: endDate } : {}),
       proration_behavior: 'none',
       items: [
-        { price: licensedStripePriceId, quantity: seats },
-        { price: meteredStripePriceId },
+        {
+          price: toUpdatePrices.licensedPriceId,
+          quantity: toUpdatePrices.seats,
+        },
+        { price: toUpdatePrices.resourceCreditPriceId, quantity: 1 },
       ],
-      billing_thresholds:
-        await this.billingPriceService.getBillingThresholdsByMeterPriceId(
-          meteredStripePriceId,
-        ),
     };
   }
 
@@ -124,16 +120,6 @@ export class BillingSubscriptionPhaseService {
     };
   }
 
-  getMeteredPriceIdFromPhaseUpdateParams(
-    phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
-  ): string {
-    const meteredItem = findOrThrow(phase.items!, (i) => i.quantity == null);
-
-    assertIsDefinedOrThrow(meteredItem.price);
-
-    return meteredItem.price;
-  }
-
   async isSamePhaseSignature(
     a: Stripe.SubscriptionScheduleUpdateParams.Phase,
     b: Stripe.SubscriptionScheduleUpdateParams.Phase,
@@ -143,20 +129,89 @@ export class BillingSubscriptionPhaseService {
         this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(a);
       const phaseBLicensedPriceIdAndQuantity =
         this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(b);
-      const phaseAMeteredPriceId =
-        this.getMeteredPriceIdFromPhaseUpdateParams(a);
-      const phaseBMeteredPriceId =
-        this.getMeteredPriceIdFromPhaseUpdateParams(b);
+      const phaseAResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(a);
+      const phaseBResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(b);
 
       return (
         phaseALicensedPriceIdAndQuantity.price ===
           phaseBLicensedPriceIdAndQuantity.price &&
         phaseALicensedPriceIdAndQuantity.quantity ===
           phaseBLicensedPriceIdAndQuantity.quantity &&
-        phaseAMeteredPriceId === phaseBMeteredPriceId
+        phaseAResourceCreditPriceId === phaseBResourceCreditPriceId
       );
     } catch {
       return false;
     }
+  }
+  async buildResourceCreditPhaseUpdateParams({
+    basePlanStripePriceId,
+    seats,
+    resourceCreditStripePriceId,
+    startDate,
+    endDate,
+  }: {
+    basePlanStripePriceId: string;
+    seats: number;
+    resourceCreditStripePriceId: string;
+    startDate: Stripe.SubscriptionScheduleUpdateParams.Phase['start_date'];
+    endDate: number | undefined;
+  }): Promise<Stripe.SubscriptionScheduleUpdateParams.Phase> {
+    return {
+      start_date: startDate,
+      ...(endDate ? { end_date: endDate } : {}),
+      proration_behavior: 'none',
+      items: [
+        { price: basePlanStripePriceId, quantity: seats },
+        { price: resourceCreditStripePriceId, quantity: 1 },
+      ],
+    };
+  }
+
+  // Billing V2: compares resource credit Stripe price id between phases
+  async isSameResourceCreditPhaseSignature(
+    a: Stripe.SubscriptionScheduleUpdateParams.Phase,
+    b: Stripe.SubscriptionScheduleUpdateParams.Phase,
+  ): Promise<boolean> {
+    try {
+      const phaseALicensedPriceIdAndQuantity =
+        this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(a);
+      const phaseBLicensedPriceIdAndQuantity =
+        this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(b);
+      const phaseAResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(a);
+      const phaseBResourceCreditPriceId =
+        this.getResourceCreditPriceIdFromPhaseUpdateParams(b);
+
+      return (
+        phaseALicensedPriceIdAndQuantity.price ===
+          phaseBLicensedPriceIdAndQuantity.price &&
+        phaseALicensedPriceIdAndQuantity.quantity ===
+          phaseBLicensedPriceIdAndQuantity.quantity &&
+        phaseAResourceCreditPriceId === phaseBResourceCreditPriceId
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  getResourceCreditPriceIdFromPhaseUpdateParams(
+    phase: Stripe.SubscriptionScheduleUpdateParams.Phase,
+  ): string {
+    const items = phase.items ?? [];
+    const licensedPriceIdAndQuantity =
+      this.getLicensedPriceIdAndQuantityFromPhaseUpdateParams(phase);
+
+    const resourceCreditItem = items.find(
+      (item) =>
+        item.price !== licensedPriceIdAndQuantity.price && item.quantity === 1,
+    );
+
+    if (!resourceCreditItem?.price) {
+      throw new Error('Resource credit item not found in V2 phase params');
+    }
+
+    return resourceCreditItem.price;
   }
 }

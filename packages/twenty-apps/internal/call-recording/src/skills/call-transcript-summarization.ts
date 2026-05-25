@@ -1,4 +1,4 @@
-import { defineSkill } from 'twenty-sdk';
+import { defineSkill } from 'twenty-sdk/define';
 
 export const CALL_TRANSCRIPT_SUMMARIZATION_SKILL_UNIVERSAL_IDENTIFIER =
   '11fb51a7-4d5a-4168-91d7-9fbe5eb7d609';

@@ -61,6 +61,14 @@ export const createStandardObjectFlatMetadata = <
       labelIdentifierFieldMetadataName
     ].universalIdentifier;
 
+  const imageIdentifierFieldMetadataUniversalIdentifier =
+    imageIdentifierFieldMetadataName
+      ? // @ts-expect-error ignore
+        STANDARD_OBJECTS[nameSingular as keyof typeof STANDARD_OBJECTS].fields[
+          imageIdentifierFieldMetadataName
+        ].universalIdentifier
+      : null;
+
   return {
     universalIdentifier,
     applicationId: twentyStandardApplicationId,
@@ -96,6 +104,7 @@ export const createStandardObjectFlatMetadata = <
     fieldIds: [],
     indexMetadataIds: [],
     objectPermissionIds: [],
+    fieldPermissionIds: [],
     viewIds: [],
     createdAt: now,
     updatedAt: now,
@@ -103,9 +112,10 @@ export const createStandardObjectFlatMetadata = <
     applicationUniversalIdentifier: twentyStandardApplicationId,
     fieldUniversalIdentifiers: [],
     objectPermissionUniversalIdentifiers: [],
+    fieldPermissionUniversalIdentifiers: [],
     viewUniversalIdentifiers: [],
     indexMetadataUniversalIdentifiers: [],
     labelIdentifierFieldMetadataUniversalIdentifier,
-    imageIdentifierFieldMetadataUniversalIdentifier: null,
+    imageIdentifierFieldMetadataUniversalIdentifier,
   };
 };

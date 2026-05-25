@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddCalendarFieldMetadataIdToViewTable1757864696439
-  implements MigrationInterface
-{
+export class AddCalendarFieldMetadataIdToViewTable1757864696439 implements MigrationInterface {
   name = 'AddCalendarFieldMetadataIdToViewTable1757864696439';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

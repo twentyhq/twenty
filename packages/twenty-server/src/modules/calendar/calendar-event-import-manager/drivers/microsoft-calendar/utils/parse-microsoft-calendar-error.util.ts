@@ -4,6 +4,7 @@ import {
   CalendarEventImportDriverException,
   CalendarEventImportDriverExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/drivers/exceptions/calendar-event-import-driver.exception';
+import { isDefined } from 'twenty-shared/utils';
 
 export const parseMicrosoftCalendarError = (
   error: GraphError,
@@ -12,6 +13,13 @@ export const parseMicrosoftCalendarError = (
 
   switch (statusCode) {
     case 400:
+      if (!isDefined(message)) {
+        return new CalendarEventImportDriverException(
+          'Microsoft Graph API returned 400 with empty error body',
+          CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
+        );
+      }
+
       return new CalendarEventImportDriverException(
         message,
         CalendarEventImportDriverExceptionCode.UNKNOWN,
@@ -19,8 +27,9 @@ export const parseMicrosoftCalendarError = (
 
     case 404:
       if (
-        message ==
-        'The mailbox is either inactive, soft-deleted, or is hosted on-premise.'
+        message?.includes(
+          'The mailbox is either inactive, soft-deleted, or is hosted on-premise.',
+        )
       ) {
         return new CalendarEventImportDriverException(
           message,
@@ -40,6 +49,11 @@ export const parseMicrosoftCalendarError = (
       );
 
     case 429:
+    case 500:
+    case 502:
+    case 503:
+    case 504:
+    case 509:
       return new CalendarEventImportDriverException(
         message,
         CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR,
@@ -56,12 +70,6 @@ export const parseMicrosoftCalendarError = (
         message,
         CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS,
       );
-    case 500:
-      return new CalendarEventImportDriverException(
-        message,
-        CalendarEventImportDriverExceptionCode.UNKNOWN,
-      );
-
     default:
       return new CalendarEventImportDriverException(
         message,

@@ -80,7 +80,41 @@ export class MetricsService {
     return gauge;
   }
 
-  async incrementCounter({
+  createInfoGauge({
+    metricName,
+    options,
+    attributesCallback,
+  }: {
+    metricName: string;
+    options: MetricOptions;
+    attributesCallback: () => Attributes | Promise<Attributes>;
+  }): ObservableGauge {
+    const normalizedName = metricName.endsWith('_info')
+      ? metricName
+      : `${metricName}_info`;
+
+    const gauge = this.getMeter().createObservableGauge(
+      normalizedName,
+      options,
+    );
+
+    gauge.addCallback(async (observableResult) => {
+      try {
+        const attributes = await attributesCallback();
+
+        observableResult.observe(1, attributes);
+      } catch (error) {
+        this.logger.error(
+          `Failed to collect info gauge ${normalizedName}`,
+          error,
+        );
+      }
+    });
+
+    return gauge;
+  }
+
+  async incrementCounterForEvent({
     key,
     eventId,
     attributes,
@@ -98,7 +132,11 @@ export class MetricsService {
     counter.add(1, attributes);
 
     if (shouldStoreInCache && eventId) {
-      this.metricsCacheService.updateCounter(key, [eventId]);
+      try {
+        await this.metricsCacheService.updateCounter(key, [eventId]);
+      } catch (error) {
+        this.logger.error(`Failed to update metrics cache for ${key}`, error);
+      }
     }
 
     if (isDefined(debugLog)) {
@@ -106,7 +144,7 @@ export class MetricsService {
     }
   }
 
-  async batchIncrementCounter({
+  async incrementCounterForEvents({
     key,
     eventIds,
     attributes,
@@ -122,8 +160,34 @@ export class MetricsService {
     counter.add(eventIds.length, attributes);
 
     if (shouldStoreInCache) {
-      this.metricsCacheService.updateCounter(key, eventIds);
+      await this.metricsCacheService.updateCounter(key, eventIds);
     }
+  }
+
+  incrementCounterBy({
+    key,
+    amount,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    amount: number;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createCounter(key).add(amount, attributes);
+  }
+
+  recordHistogram({
+    key,
+    value,
+    unit,
+    attributes,
+  }: {
+    key: MetricsKeys;
+    value: number;
+    unit?: string;
+    attributes?: Attributes;
+  }): void {
+    this.getMeter().createHistogram(key, { unit }).record(value, attributes);
   }
 
   async groupMetrics(

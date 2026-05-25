@@ -12,13 +12,20 @@ import {
 
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
-@Entity('indexFieldMetadata')
-export class IndexFieldMetadataEntity
-  implements Required<IndexFieldMetadataEntity>
-{
+@Entity({ name: 'indexFieldMetadata', schema: 'core' })
+export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  @Index()
+  workspaceId: string;
+
+  @ManyToOne('WorkspaceEntity', { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity>;
 
   @Column({ nullable: false })
   indexMetadataId: string;
@@ -49,6 +56,12 @@ export class IndexFieldMetadataEntity
 
   @Column({ nullable: false })
   order: number;
+
+  // Null for scalar/relation fields. Set to the composite sub-property name
+  // (e.g. 'addressCity') when the index targets a single column of a
+  // composite-type parent.
+  @Column({ type: 'text', nullable: true })
+  subFieldName: string | null;
 
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;

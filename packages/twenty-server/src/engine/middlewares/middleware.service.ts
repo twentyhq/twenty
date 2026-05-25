@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type Request, type Response } from 'express';
 import { type APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,7 +12,6 @@ import { getAuthExceptionRestStatus } from 'src/engine/core-modules/auth/utils/g
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { ErrorCode } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { DataSourceService } from 'src/engine/metadata-modules/data-source/data-source.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { INTERNAL_SERVER_ERROR } from 'src/engine/middlewares/constants/default-error-message.constant';
 import { bindDataToRequestObject } from 'src/engine/utils/bind-data-to-request-object.util';
@@ -28,7 +28,6 @@ export class MiddlewareService {
     private readonly accessTokenService: AccessTokenService,
     private readonly workspaceStorageCacheService: WorkspaceCacheStorageService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
-    private readonly dataSourceService: DataSourceService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly jwtWrapperService: JwtWrapperService,
   ) {}
@@ -106,13 +105,11 @@ export class MiddlewareService {
         )
       : undefined;
 
-    const dataSourcesMetadata = data.workspace
-      ? await this.dataSourceService.getDataSourcesMetadataFromWorkspaceId(
-          data.workspace.id,
-        )
-      : undefined;
+    if (!data.workspace) {
+      throw new Error('No data sources found');
+    }
 
-    if (!dataSourcesMetadata || dataSourcesMetadata.length === 0) {
+    if (!isNonEmptyString(data.workspace.databaseSchema)) {
       throw new Error('No data sources found');
     }
 

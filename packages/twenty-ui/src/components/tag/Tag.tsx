@@ -7,7 +7,7 @@ import { type ThemeColor } from '@ui/theme';
 import { ThemeContext, themeCssVariables } from '@ui/theme-constants';
 import { useContext } from 'react';
 
-const StyledTag = styled.h3<{
+const StyledTag = styled.span<{
   color: TagColor;
   weight: TagWeight;
   variant: TagVariant;

@@ -1,6 +1,7 @@
 import { type CommandMenuItemManifest } from 'twenty-shared/application';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
+import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import { type UniversalFlatCommandMenuItem } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-command-menu-item.type';
 
 const AVAILABILITY_TYPE_MAP: Record<
@@ -8,6 +9,7 @@ const AVAILABILITY_TYPE_MAP: Record<
   CommandMenuItemAvailabilityType
 > = {
   GLOBAL: CommandMenuItemAvailabilityType.GLOBAL,
+  GLOBAL_OBJECT_CONTEXT: CommandMenuItemAvailabilityType.GLOBAL_OBJECT_CONTEXT,
   RECORD_SELECTION: CommandMenuItemAvailabilityType.RECORD_SELECTION,
   FALLBACK: CommandMenuItemAvailabilityType.FALLBACK,
 };
@@ -38,9 +40,11 @@ export const fromCommandMenuItemManifestToUniversalFlatCommandMenuItem = ({
       commandMenuItemManifest.frontComponentUniversalIdentifier,
     availabilityObjectMetadataUniversalIdentifier:
       commandMenuItemManifest.availabilityObjectUniversalIdentifier ?? null,
-    engineComponentKey: null,
+    engineComponentKey: EngineComponentKey.FRONT_COMPONENT_RENDERER,
+    payload: null,
     hotKeys: null,
     workflowVersionId: null,
+    pageLayoutUniversalIdentifier: null,
     createdAt: now,
     updatedAt: now,
   };

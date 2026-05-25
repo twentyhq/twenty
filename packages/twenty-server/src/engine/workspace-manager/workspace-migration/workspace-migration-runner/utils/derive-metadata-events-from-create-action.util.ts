@@ -69,6 +69,9 @@ const deriveAllMetadataEventsFromCreateAction = (
 
       return [objectEvent, ...fieldEvents];
     }
+    case 'applicationVariable': {
+      return [];
+    }
     case 'view':
     case 'viewField':
     case 'viewGroup':
@@ -89,10 +92,13 @@ const deriveAllMetadataEventsFromCreateAction = (
     case 'commandMenuItem':
     case 'frontComponent':
     case 'navigationMenuItem':
+    case 'rolePermissionFlag':
     case 'permissionFlag':
     case 'objectPermission':
+    case 'fieldPermission':
     case 'viewSort':
-    case 'webhook': {
+    case 'webhook':
+    case 'connectionProvider': {
       return [
         {
           type: 'created',

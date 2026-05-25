@@ -1,0 +1,69 @@
+---
+title: 技能与智能体
+description: 为你的应用定义 AI 技能和智能体。
+icon: robot
+---
+
+<Warning>
+  技能和智能体目前处于 Alpha 阶段。 该功能可用，但仍在演进中。
+</Warning>
+
+应用可以定义存在于工作区内的 AI 能力——可复用的技能指令以及具有自定义系统提示词的智能体。
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="定义 AI 智能体技能">
+
+技能定义了可复用的指令和能力，AI 智能体可在你的工作区中使用。 使用 `defineSkill()` 定义带内置校验的技能：
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+关键点：
+* `name` 是该技能的唯一标识字符串（推荐使用 kebab-case）。
+* `label` 是在 UI 中显示的人类可读名称。
+* `content` 包含技能指令——这是 AI 智能体使用的文本。
+* `icon`（可选）设置在 UI 中显示的图标。
+* `description`（可选）提供有关技能用途的更多上下文。
+
+</Accordion>
+<Accordion title="defineAgent" description="使用自定义提示词定义 AI 智能体">
+
+智能体是在你的工作区内驻留的 AI 助手。 使用 `defineAgent()` 来创建带有自定义系统提示词的智能体：
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+关键点：
+* `name` 是该智能体的唯一标识字符串（推荐使用 kebab-case）。
+* `label` 是在 UI 中显示的名称。
+* `prompt` 是定义智能体行为的系统提示词。
+* `description`（可选）提供有关智能体功能的上下文。
+* `icon`（可选）设置在 UI 中显示的图标。
+* `modelId`（可选）会覆盖该智能体使用的默认 AI 模型。
+
+</Accordion>
+</AccordionGroup>

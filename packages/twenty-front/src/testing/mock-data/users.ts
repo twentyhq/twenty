@@ -1,5 +1,7 @@
-import { DEFAULT_FAST_MODEL } from '@/ai/constants/DefaultFastModel';
-import { DEFAULT_SMART_MODEL } from '@/ai/constants/DefaultSmartModel';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 import { type CurrentUserWorkspace } from '@/auth/states/currentUserWorkspaceState';
 import { CUSTOM_WORKSPACE_APPLICATION_MOCK } from '@/object-metadata/hooks/__tests__/constants/CustomWorkspaceApplicationMock.test.constant';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
@@ -47,7 +49,7 @@ export const workspaceLogoUrl =
 
 // Extract Pro monthly base product from mockBillingPlans to use in workspace billing mocks
 const PRO_PLAN = mockBillingPlans.listPlans.find((p) => p.planKey === 'PRO')!;
-const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.licensedProducts?.[0]!;
+const PRO_BASE_LICENSED_PRODUCT = PRO_PLAN?.baseProducts?.[0]!;
 const PRO_BASE_MONTHLY_PRICE = PRO_BASE_LICENSED_PRODUCT?.prices?.find(
   (pr) => pr.recurringInterval === 'Month',
 )!;
@@ -59,6 +61,7 @@ const PRO_METERED_MONTHLY_PRICE = PRO_METERED_PRODUCT?.prices?.find(
 export const mockCurrentWorkspace = {
   workspaceCustomApplication: CUSTOM_WORKSPACE_APPLICATION_MOCK,
   workspaceCustomApplicationId: CUSTOM_WORKSPACE_APPLICATION_MOCK.id,
+  installedApplications: [CUSTOM_WORKSPACE_APPLICATION_MOCK],
   subdomain: 'acme.twenty.com',
   id: '7dfbc3f7-6e5e-4128-957e-8d86808cdf6w',
   displayName: 'Twenty',
@@ -86,11 +89,12 @@ export const mockCurrentWorkspace = {
   updatedAt: '2023-04-26T10:23:42.33625+00:00',
   metadataVersion: 1,
   trashRetentionDays: 14,
-  fastModel: DEFAULT_FAST_MODEL,
-  smartModel: DEFAULT_SMART_MODEL,
+  fastModel: AUTO_SELECT_FAST_MODEL_ID,
+  smartModel: AUTO_SELECT_SMART_MODEL_ID,
   routerModel: 'auto',
   enabledAiModelIds: [],
   useRecommendedModels: true,
+  isInternalMessagesImportEnabled: false,
   currentBillingSubscription: {
     __typename: 'BillingSubscription',
     id: '7efbc3f7-6e5e-4128-957e-8d86808cdf6a',
@@ -156,8 +160,7 @@ export const mockCurrentWorkspace = {
     },
   ],
   workspaceMembersCount: 1,
-  databaseSchema: '',
-  databaseUrl: '',
+  databaseSchema: null,
   isTwoFactorAuthenticationEnforced: false,
   eventLogRetentionDays: 90,
   __typename: 'Workspace',

@@ -55,7 +55,8 @@ If feature descriptions are not provided or need enhancement, research the codeb
 - Services: Look for `*.service.ts` files
 
 **For Database/ORM Changes:**
-- Migrations: `packages/twenty-server/src/database/typeorm/`
+- Instance commands (fast/slow): `packages/twenty-server/src/database/commands/upgrade-version-command/`
+- Legacy TypeORM migrations: `packages/twenty-server/src/database/typeorm/`
 - Entities: `packages/twenty-server/src/entities/`
 
 ### Research Commands
@@ -124,15 +125,16 @@ mkdir -p packages/twenty-website/public/images/releases/{MINOR_VERSION}
 
 **Destination:** `packages/twenty-website/public/images/releases/{MINOR_VERSION}/`
 
-**Naming Convention:** `{VERSION}-descriptive-name.png`
+**Naming Convention:** `{VERSION}-descriptive-name.webp`
 
 Examples:
-- `1.9.0-feature-name.png`
-- `1.9.0-another-feature.png`
+- `1.9.0-feature-name.webp`
+- `1.9.0-another-feature.webp`
 
 ```bash
-# Move and rename files
+# Move and rename source files, then convert to webp if needed
 cp ~/Downloads/🆕/source-file.png packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-name.png
+cd packages/twenty-website && node scripts/convert-png-to-webp.mjs
 ```
 
 ### 4. Research Features (if needed)
@@ -157,19 +159,19 @@ Date: {YYYY-MM-DD}
 
 Short description explaining what the feature does and why it's useful. Keep it user-focused and concise (1-2 sentences).
 
-![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-1.png)
+![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-1.webp)
 
 # Feature 2 Name
 
 Another short description of the second feature.
 
-![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-2.png)
+![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-2.webp)
 
 # Feature 3 Name
 
 Description of the third feature.
 
-![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-3.png)
+![](/images/releases/{MINOR_VERSION}/{VERSION}-feature-3.webp)
 ```
 
 **Style Guidelines:**
@@ -220,8 +222,8 @@ I've created the changelog for version {VERSION}. Here's the content for your re
 [Show full MDX content]
 
 Images moved to:
-- packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-1.png
-- packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-2.png
+- packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-1.webp
+- packages/twenty-website/public/images/releases/{MINOR_VERSION}/{VERSION}-feature-2.webp
 
 Please review the content. Once you approve, I'll commit the changes and create the pull request.
 ```
@@ -287,12 +289,12 @@ Or visit: `https://github.com/twentyhq/twenty/pull/new/{VERSION}`
 - **Location**: `packages/twenty-website/public/images/releases/`
 
 ### Image Files
-- **Format**: `{VERSION}-descriptive-name.png`
+- **Format**: `{VERSION}-descriptive-name.webp`
 - **Convention**: Kebab-case descriptive names
 - **Examples**: 
-  - `1.8.0-workflow-iterator.png`
-  - `1.8.0-bulk-select.png`
-  - `1.9.0-new-feature.png`
+  - `1.8.0-workflow-iterator.webp`
+  - `1.8.0-bulk-select.webp`
+  - `1.9.0-new-feature.webp`
 
 ## Quick Reference Template
 

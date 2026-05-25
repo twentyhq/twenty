@@ -6,10 +6,9 @@ import { type Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { DEFAULT_SMART_MODEL } from 'src/engine/metadata-modules/ai/ai-models/types/default-smart-model.const';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -25,7 +24,6 @@ import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.gu
 export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly aiAgentExecutionService: AgentAsyncExecutorService,
-    private readonly aiBillingService: AiBillingService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
     @InjectRepository(AgentEntity)
     private readonly agentRepository: Repository<AgentEntity>,
@@ -50,7 +48,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     }
 
     const { agentId, prompt } = step.settings.input;
-    const workspaceId = context.workspaceId as string;
+    const workspaceId = runInfo.workspaceId;
 
     let agent: AgentEntity | null = null;
 
@@ -78,7 +76,7 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         ? executionContext.authContext.userWorkspaceId
         : null;
 
-    const { result, usage, cacheCreationTokens } =
+    const { result, hasNoMoreAvailableCredits } =
       await this.aiAgentExecutionService.executeAgent({
         agent,
         userPrompt: resolveInput(prompt, context) as string,
@@ -87,15 +85,16 @@ export class AiAgentWorkflowAction implements WorkflowAction {
           : undefined,
         rolePermissionConfig: executionContext.rolePermissionConfig,
         authContext: executionContext.authContext,
+        workspaceId,
+        userWorkspaceId,
+        operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       });
 
-    await this.aiBillingService.calculateAndBillUsage(
-      agent?.modelId ?? DEFAULT_SMART_MODEL,
-      { usage, cacheCreationTokens },
-      workspaceId,
-      agent?.id || null,
-      userWorkspaceId,
-    );
+    if (hasNoMoreAvailableCredits) {
+      return {
+        error: 'AI agent stopped: no more available credits.',
+      };
+    }
 
     return {
       result,

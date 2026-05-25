@@ -48,6 +48,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.ROLE_NOT_FOUND:
     case PermissionsExceptionCode.OBJECT_METADATA_NOT_FOUND:
     case PermissionsExceptionCode.FIELD_METADATA_NOT_FOUND:
+    case PermissionsExceptionCode.FIELD_PERMISSION_NOT_FOUND:
     case PermissionsExceptionCode.PERMISSION_NOT_FOUND:
       throw new NotFoundError(error);
     case PermissionsExceptionCode.UPSERT_FIELD_PERMISSION_FAILED:
@@ -70,6 +71,7 @@ export const permissionGraphqlApiExceptionHandler = (
     case PermissionsExceptionCode.COMPOSITE_TYPE_NOT_FOUND:
     case PermissionsExceptionCode.USER_WORKSPACE_NOT_FOUND:
     case PermissionsExceptionCode.APPLICATION_ROLE_NOT_FOUND:
+    case PermissionsExceptionCode.ROLE_BELONGS_TO_ANOTHER_APPLICATION:
       throw error;
     default: {
       return assertUnreachable(error.code);

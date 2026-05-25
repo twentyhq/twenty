@@ -127,16 +127,6 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     tabListInstanceId,
   });
 
-  const handleLayoutChangeWithoutPendingPlaceholder = (
-    currentLayout: Layout[],
-    allLayouts: Layouts,
-  ) => {
-    handleLayoutChange(
-      currentLayout,
-      filterPendingPlaceholderFromLayouts(allLayouts),
-    );
-  };
-
   const gridContainerRef = useRef<HTMLDivElement>(null);
 
   const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
@@ -160,6 +150,16 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
     !isDefined(activeTabWidgets) || activeTabWidgets.length === 0;
 
   const hasPendingPlaceholder = isDefined(pageLayoutDraggedArea);
+
+  const handleLayoutChangeWithoutPendingPlaceholder = (
+    currentLayout: Layout[],
+    allLayouts: Layouts,
+  ) => {
+    handleLayoutChange(
+      currentLayout,
+      filterPendingPlaceholderFromLayouts(allLayouts),
+    );
+  };
 
   const baseLayouts = isLayoutEmpty
     ? EMPTY_LAYOUT
@@ -205,13 +205,15 @@ export const PageLayoutGridLayout = ({ tabId }: PageLayoutGridLayoutProps) => {
         maxCols={12}
         containerPadding={[0, 0]}
         margin={[PAGE_LAYOUT_GRID_MARGIN, PAGE_LAYOUT_GRID_MARGIN]}
-        isDraggable={isPageLayoutInEditMode}
-        isResizable={isPageLayoutInEditMode}
+        isDraggable={isPageLayoutInEditMode && !isLayoutEmpty}
+        isResizable={isPageLayoutInEditMode && !isLayoutEmpty}
         draggableHandle=".drag-handle"
         compactType="vertical"
         preventCollision={false}
         resizeHandle={
-          isPageLayoutInEditMode ? <PageLayoutGridResizeHandle /> : undefined
+          isPageLayoutInEditMode && !isLayoutEmpty ? (
+            <PageLayoutGridResizeHandle />
+          ) : undefined
         }
         resizeHandles={['n', 's', 'e', 'w', 'ne', 'nw', 'se', 'sw']}
         onDragStart={(_layout, _oldItem, newItem) => {

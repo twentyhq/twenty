@@ -1,4 +1,4 @@
-import { defineObject, FieldType } from 'twenty-sdk';
+import { defineObject, FieldType } from 'twenty-sdk/define';
 
 export const CALL_RECORDING_OBJECT_UNIVERSAL_IDENTIFIER =
   'af251b70-85c6-49bd-bf4a-2631f34c8f1a';

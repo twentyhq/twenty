@@ -22,6 +22,7 @@ type CategorizeRelationFieldsArgs = {
 type CategorizedRelationFields = {
   activityTargetFields: FieldMetadataItem[];
   inlineRelationFields: FieldMetadataItem[];
+  junctionRelationFields: FieldMetadataItem[];
   boxedRelationFields: FieldMetadataItem[];
 };
 
@@ -70,6 +71,7 @@ export const categorizeRelationFields = ({
 }: CategorizeRelationFieldsArgs): CategorizedRelationFields => {
   const activityTargetFields: FieldMetadataItem[] = [];
   const inlineRelationFields: FieldMetadataItem[] = [];
+  const junctionRelationFields: FieldMetadataItem[] = [];
   const boxedRelationFields: FieldMetadataItem[] = [];
 
   for (const field of relationFields) {
@@ -82,6 +84,7 @@ export const categorizeRelationFields = ({
     // Junction relations (when feature enabled) are rendered inline with other fields
     if (isJunctionRelationsEnabled && isJunctionRelationField(field)) {
       inlineRelationFields.push(field);
+      junctionRelationFields.push(field);
       continue;
     }
 
@@ -94,6 +97,7 @@ export const categorizeRelationFields = ({
   return {
     activityTargetFields,
     inlineRelationFields,
+    junctionRelationFields,
     boxedRelationFields,
   };
 };

@@ -52,38 +52,45 @@ First, create the intermediate object that will hold the connections.
 1. Go to **Settings → Data Model**
 2. Click **+ New object**
 3. Name it descriptively (e.g., "Project Assignment", "Team Member", "Product Order")
-4. Click **Save**
+4. Toggle "Skip creating a Name field" on
+
+<img src="/images/user-guide/fields/new-pivot-object.png" alt="New pivot object" />
+
+5. Click **Save**
 
 <Tip>
 **Naming convention**: Use a name that describes the relationship, like "Project Assignment" or "Team Membership". This makes the data model easier to understand.
 </Tip>
 
-## Step 2: Create Relations from the Junction Object
+## Step 2: Create Relations Between Objects and the Junction
 
-Add relation fields from the junction object to both objects you want to connect.
+Add relation fields from each of your two objects to the junction object.
 
-### First Relation (Junction → Object A)
+### First Relation (Object A → Junction)
 
-1. Select your junction object in **Settings → Data Model**
-2. Click **+ Add Field**
-3. Choose **Relation** as the field type
-4. Select the first object (e.g., "People")
-5. Set the relation type to **Many-to-One** (many assignments can link to one person)
-6. Name the fields:
-   - Field on junction: e.g., "Person"
-   - Field on People: e.g., "Project Assignments"
-7. Click **Save**
-
-### Second Relation (Junction → Object B)
-
-1. Still on the junction object, click **+ Add Field**
-2. Choose **Relation** as the field type
-3. Select the second object (e.g., "Projects")
-4. Set the relation type to **Many-to-One**
+1. Select your first object in **Settings → Data Model**
+2. Click **+ Add Relation**
+3. Select the junction object (e.g., "Project Assignments")
+4. Set the relation type to **One-To-Many** (one person can link to many assignments)
 5. Name the fields:
+    - Field on People: e.g., "Project Assignments"
+    - Field on junction: e.g., "Person"
+6. Click **Save**
+
+### Second Relation (Object B → Junction)
+
+1. Select your second object in **Settings → Data Model**
+2. Click **+ Add Relation**
+3. Select the junction object (e.g., "Project Assignments")
+4. Set the relation type to **One-To-Many** (one project can link to many assignments)
+5. Enable **"This is a relation to a Junction Object"**
+
+<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
+
+6. Name the fields:
    - Field on junction: e.g., "Project"
    - Field on Projects: e.g., "Team Members"
-6. Click **Save**
+7. Click **Save**
 
 ## Step 3: Configure the Junction Relation Display
 
@@ -96,18 +103,6 @@ Now configure the source objects to display linked records directly, skipping th
 5. Enable **"This is a relation to a Junction Object"**
 6. Select the **Target relation** (e.g., "Project" — the field on the junction that points to the other side)
 7. Click **Save**
-
-
-{/* TODO: Add image
-<img src="/images/user-guide/fields/junction-relation-toggle.png" style={{width:'100%'}}/>
-*/}
-
-Repeat for the other object:
-1. Select "Projects" in Data Model
-2. Edit the "Team Members" relation field
-3. Enable the junction toggle
-4. Select "Person" as the target relation
-5. Save
 
 ## Result
 
@@ -127,15 +122,15 @@ Here's a complete walkthrough:
 - Description: "Links people to projects they work on"
 
 ### Add Relations
-1. **Project Assignment → People**
-   - Type: Many-to-One
-   - Field on Assignment: "Person"
+1. **People → Project Assignment**
+   - Type: One-to-Many
    - Field on People: "Project Assignments"
+   - Field on Assignment: "Person"
 
-2. **Project Assignment → Projects**
-   - Type: Many-to-One
-   - Field on Assignment: "Project"
+2. **Projects → Project Assignment**
+   - Type: One-to-Many
    - Field on Projects: "Team Members"
+   - Field on Assignment: "Project"
 
 ### Configure Junction Display
 1. On **People** object:

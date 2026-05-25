@@ -13,4 +13,8 @@ export type InputJsonSchema = {
   properties?: Record<string, InputJsonSchema>;
   required?: string[];
   additionalProperties?: boolean | InputJsonSchema;
+  minimum?: number;
+  maximum?: number;
+  multiline?: boolean;
+  label?: string;
 };
