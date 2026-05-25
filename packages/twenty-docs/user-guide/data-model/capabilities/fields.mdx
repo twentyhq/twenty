@@ -101,19 +101,9 @@ Make a field unique to ensure distinct records cannot have the same value. For e
 
 If you get an error when setting uniqueness, check for duplicate values in your data (including deleted records).
 
-Under the hood, toggling Unique creates a unique database index on the field. You don't need to manage that index yourself — it is created and removed automatically when you flip the toggle.
-
 ## Indexes (Advanced)
 
-An index speeds up queries that filter or sort by a field. Twenty manages the indexes used by its own features automatically — most workspaces never need to touch this section.
-
-If you have Advanced mode enabled, each object exposes an **Indexes** section in `Settings → Data Model → <object>`. You can:
-
-- See every index on the object (system and custom)
-- Add a multi-column index on the fields you query most
-- Remove an index you added (system indexes can't be removed)
-
-Indexes are not free: every write has to update them, and each one uses disk space. Each object is capped at 10 custom indexes — you'll need to remove one before adding the eleventh. Add an index only when you've identified a slow query that would benefit from it.
+Database indexes are managed automatically — adding your own is rarely necessary and easy to get wrong. With Advanced mode on, each object has an **Indexes** section under `Settings → Data Model → <object>` for the cases where you know you need one.
 
 ## Field Configuration Best Practices
 

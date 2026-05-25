@@ -72,14 +72,12 @@ export default defineIndex({
 });
 ```
 
-App-declared indexes are intentionally limited:
+A few constraints to keep in mind:
 
-- **No unique indexes** — those belong to the data model and stay under admin control.
-- **No partial `WHERE` clauses** — keep them simple and predictable.
-- **Capped at 10 indexes per object** — same cap as user-created indexes; the framework's own indexes don't count against it.
-- **Removed on uninstall** — indexes go away with the app, just like its objects.
+- `defineIndex` doesn't accept `isUnique` or a partial `WHERE` clause — single-field uniqueness goes on the field with `defineField({ isUnique: true })`; richer constraints stay under admin control.
+- Each object is capped at 10 custom indexes (the framework's own indexes don't count).
 
-Order the `fields` array the way Postgres should — leftmost column first, like a phone book. Indexes are not free: every write to the table updates them. Add one only when you have a query that needs it.
+Order the `fields` array the way Postgres should use it — leftmost column first, like a phone book. Indexes are not free: every write to the table updates them. Add one only when you have a query that needs it.
 
 <Note>
 Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/developers/extend/apps/logic/connections).
