@@ -18,6 +18,25 @@ msgstr ""
 "X-Crowdin-File: /packages/twenty-server/src/engine/core-modules/i18n/locales/en.po\n"
 "X-Crowdin-File-ID: 31\n"
 
+#. js-lingui-id: ZM94I5
+#. placeholder {0}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "\"{0}\" is a one-to-many relation and can't be indexed directly. Index the foreign-key side instead."
+msgstr ""
+
+#. js-lingui-id: bxSgKk
+#. placeholder {0}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "\"{0}\" is not a composite field — remove the sub-field selection."
+msgstr ""
+
+#. js-lingui-id: 6RLdgl
+#. placeholder {0}: input.subFieldName
+#. placeholder {1}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
+msgstr ""
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -1591,6 +1610,11 @@ msgstr "Не вдалося знайти метадані поля, пов'яз�
 msgid "Could not find index related object metadata"
 msgstr "Не вдалося знайти метадані об'єкта, пов'язаного з індексом"
 
+#. js-lingui-id: P23sJE
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "Could not find the object for this index."
+msgstr ""
+
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Could not found updated field metadata"
@@ -2813,6 +2837,18 @@ msgstr "Функцію не знайдено."
 #. js-lingui-id: Weq9zb
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"
+msgstr ""
+
+#. js-lingui-id: V8DWC+
+#. placeholder {0}: field.label
+#: src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util.ts
+msgid "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" doesn't qualify."
+msgstr ""
+
+#. js-lingui-id: xaBJxq
+#. placeholder {0}: field.label
+#: src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util.ts
+msgid "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" sub-properties don't qualify."
 msgstr ""
 
 #. js-lingui-id: cvJ2e6
@@ -4940,6 +4976,11 @@ msgstr "Жовтень"
 msgid "On delete action is only supported for many to one relations"
 msgstr "Дія \"On delete\" підтримується лише для зв'язків багато-до-одного"
 
+#. js-lingui-id: DWJeR1
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "One of the selected fields does not belong to this object."
+msgstr ""
+
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
@@ -5420,6 +5461,17 @@ msgstr ""
 #. js-lingui-id: m2ivgq
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Phones"
+msgstr ""
+
+#. js-lingui-id: RrxR7k
+#. placeholder {0}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
+msgstr ""
+
+#. js-lingui-id: TtfDdb
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "Pick at least one field for the index."
 msgstr ""
 
 #. js-lingui-id: f0YMH6
@@ -6346,6 +6398,11 @@ msgstr "Системні поля не можуть бути видалені"
 msgid "System fields cannot be updated"
 msgstr "Системні поля не можуть бути оновлені"
 
+#. js-lingui-id: aK2k19
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "System indexes are required for Twenty to work and cannot be deleted."
+msgstr ""
+
 #. js-lingui-id: /ojawH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -6764,6 +6821,11 @@ msgstr "Шукану роль не знайдено. Вона могла бут�
 msgid "The role you are trying to modify could not be found."
 msgstr "Роль, яку ви намагаєтеся змінити, не знайдено."
 
+#. js-lingui-id: eaW27s
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "The same column cannot appear twice in an index."
+msgstr ""
+
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
@@ -6884,6 +6946,11 @@ msgstr "Цьому ключу API не призначено ролі."
 msgid "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
 msgstr ""
 
+#. js-lingui-id: 99gsJ/
+#: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
+msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
+msgstr ""
+
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
@@ -6938,6 +7005,11 @@ msgstr "Ця назва поля недоступна."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This field permission is already set for the role"
+msgstr ""
+
+#. js-lingui-id: 7f5dRA
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "This index does not exist or has already been deleted."
 msgstr ""
 
 #. js-lingui-id: 6Z/zIt
@@ -8403,6 +8475,11 @@ msgstr "Так"
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
 msgstr "Ви не маєте права виконувати цю дію."
+
+#. js-lingui-id: TRUO3G
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "You can have at most {MAX_CUSTOM_INDEXES_PER_OBJECT} custom indexes per object. Delete one before creating a new one."
+msgstr ""
 
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts

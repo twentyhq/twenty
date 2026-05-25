@@ -13,6 +13,25 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. js-lingui-id: ZM94I5
+#. placeholder {0}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "\"{0}\" is a one-to-many relation and can't be indexed directly. Index the foreign-key side instead."
+msgstr "\"{0}\" is a one-to-many relation and can't be indexed directly. Index the foreign-key side instead."
+
+#. js-lingui-id: bxSgKk
+#. placeholder {0}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "\"{0}\" is not a composite field — remove the sub-field selection."
+msgstr "\"{0}\" is not a composite field — remove the sub-field selection."
+
+#. js-lingui-id: 6RLdgl
+#. placeholder {0}: input.subFieldName
+#. placeholder {1}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "\"{0}\" is not a valid sub-field of \"{1}\"."
+msgstr "\"{0}\" is not a valid sub-field of \"{1}\"."
+
 #. js-lingui-id: SsRDX3
 #: src/engine/core-modules/user/utils/assert-workspace-member-update-non-custom-fields.util.ts
 msgid "\"{payloadKey}\" is not a valid workspace member field."
@@ -1586,6 +1605,11 @@ msgstr "Could not find index field related field metadata"
 msgid "Could not find index related object metadata"
 msgstr "Could not find index related object metadata"
 
+#. js-lingui-id: P23sJE
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "Could not find the object for this index."
+msgstr "Could not find the object for this index."
+
 #. js-lingui-id: KwGZ0m
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-or-relation-flat-field-metadata.util.ts
 msgid "Could not found updated field metadata"
@@ -2809,6 +2833,18 @@ msgstr "Function not found."
 #: src/engine/metadata-modules/view-field-group/constants/standard-view-field-group-names.ts
 msgid "General"
 msgstr "General"
+
+#. js-lingui-id: V8DWC+
+#. placeholder {0}: field.label
+#: src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util.ts
+msgid "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" doesn't qualify."
+msgstr "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" doesn't qualify."
+
+#. js-lingui-id: xaBJxq
+#. placeholder {0}: field.label
+#: src/engine/metadata-modules/index-metadata/utils/validate-index-type-against-fields.util.ts
+msgid "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" sub-properties don't qualify."
+msgstr "GIN indexes work on multi-select, array, JSON, and search-vector columns. \"{0}\" sub-properties don't qualify."
 
 #. js-lingui-id: cvJ2e6
 #: src/engine/core-modules/auth/auth.exception.ts
@@ -4935,6 +4971,11 @@ msgstr "October"
 msgid "On delete action is only supported for many to one relations"
 msgstr "On delete action is only supported for many to one relations"
 
+#. js-lingui-id: DWJeR1
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "One of the selected fields does not belong to this object."
+msgstr "One of the selected fields does not belong to this object."
+
 #. js-lingui-id: JZB2eY
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
 msgid "One or more records were not found."
@@ -5416,6 +5457,17 @@ msgstr "Person record Position"
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
 msgid "Phones"
 msgstr "Phones"
+
+#. js-lingui-id: RrxR7k
+#. placeholder {0}: flatField.label
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
+msgstr "Pick a specific sub-field of \"{0}\" — composite fields can't be indexed as a whole."
+
+#. js-lingui-id: TtfDdb
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "Pick at least one field for the index."
+msgstr "Pick at least one field for the index."
 
 #. js-lingui-id: f0YMH6
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
@@ -6341,6 +6393,11 @@ msgstr "System fields cannot be deleted"
 msgid "System fields cannot be updated"
 msgstr "System fields cannot be updated"
 
+#. js-lingui-id: aK2k19
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "System indexes are required for Twenty to work and cannot be deleted."
+msgstr "System indexes are required for Twenty to work and cannot be deleted."
+
 #. js-lingui-id: /ojawH
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-object-metadata-validator.service.ts
@@ -6759,6 +6816,11 @@ msgstr "The role you are looking for could not be found. It may have been delete
 msgid "The role you are trying to modify could not be found."
 msgstr "The role you are trying to modify could not be found."
 
+#. js-lingui-id: eaW27s
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "The same column cannot appear twice in an index."
+msgstr "The same column cannot appear twice in an index."
+
 #. js-lingui-id: vD3FVp
 #: src/engine/core-modules/imap-smtp-caldav-connection/services/imap-smtp-caldav-connection-validator.service.ts
 msgid "The server address you entered is not allowed. Please use a public server address."
@@ -6879,6 +6941,11 @@ msgstr "This API key has no role assigned."
 msgid "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
 msgstr "This app requires a newer version of the Twenty server. Please upgrade your server or use a compatible app version."
 
+#. js-lingui-id: 99gsJ/
+#: src/engine/metadata-modules/index-metadata/utils/validate-no-duplicate-unique-index.util.ts
+msgid "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
+msgstr "This column is already marked as unique. Toggle the field's \"Unique\" off first if you want to manage the constraint here."
+
 #. js-lingui-id: ADtO2E
 #: src/engine/twenty-orm/exceptions/twenty-orm.exception.ts
 msgid "This connection is not allowed."
@@ -6934,6 +7001,11 @@ msgstr "This field name is not available."
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-field-permission-validator.service.ts
 msgid "This field permission is already set for the role"
 msgstr "This field permission is already set for the role"
+
+#. js-lingui-id: 7f5dRA
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "This index does not exist or has already been deleted."
+msgstr "This index does not exist or has already been deleted."
 
 #. js-lingui-id: 6Z/zIt
 #: src/engine/metadata-modules/permissions/permissions.exception.ts
@@ -8398,6 +8470,11 @@ msgstr "Yes"
 #: src/engine/subscriptions/event-stream.exception.ts
 msgid "You are not authorized to perform this action."
 msgstr "You are not authorized to perform this action."
+
+#. js-lingui-id: TRUO3G
+#: src/engine/metadata-modules/index-metadata/services/index-metadata.service.ts
+msgid "You can have at most {MAX_CUSTOM_INDEXES_PER_OBJECT} custom indexes per object. Delete one before creating a new one."
+msgstr "You can have at most {MAX_CUSTOM_INDEXES_PER_OBJECT} custom indexes per object. Delete one before creating a new one."
 
 #. js-lingui-id: 84/Dko
 #: src/engine/api/common/common-query-runners/common-merge-many-query-runner.service.ts
