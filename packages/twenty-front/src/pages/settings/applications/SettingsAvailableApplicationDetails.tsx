@@ -10,6 +10,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useParams } from 'react-router-dom';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { type Manifest } from 'twenty-shared/application';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -43,6 +44,7 @@ export const SettingsAvailableApplicationDetails = () => {
     availableApplicationId: string;
   }>();
 
+  const navigateSettings = useNavigateSettings();
   const { install, isInstalling } = useInstallMarketplaceApp();
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
@@ -98,9 +100,17 @@ export const SettingsAvailableApplicationDetails = () => {
 
   const handleInstall = async () => {
     if (isDefined(detail)) {
-      await install({
+      const data = await install({
         universalIdentifier: detail.universalIdentifier,
       });
+
+      const applicationId = data?.installApplication?.id;
+
+      if (isDefined(applicationId)) {
+        navigateSettings(SettingsPath.ApplicationDetail, {
+          applicationId,
+        });
+      }
     }
   };
 

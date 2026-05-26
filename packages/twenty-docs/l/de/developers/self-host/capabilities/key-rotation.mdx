@@ -16,10 +16,9 @@ Jeder Schlüssel enthält einen `publicKey` (unbefristet aufbewahrt, damit er zu
 
 ### Aktuellen Schlüssel rotieren
 
-* **Manuell** — **Settings → Admin Panel → Signing keys → Revoke** in der aktuellen Zeile. Das Widerrufen löscht das verschlüsselte private Material und stuft es herab; der nächste Signieraufruf erstellt automatisch ein neues ES256-Schlüsselpaar als neuen aktuellen Schlüssel. Tokens, die unter einem anderen (nicht widerrufenen) `kid` signiert wurden, werden weiterhin verifiziert, bis sie ablaufen.
-* **Enterprise (automatisch)** — ein täglicher Cron-Job (`'15 3 * * *'` UTC) erstellt einen neuen aktuellen Schlüssel, sobald der vorhandene Schlüssel seit `SIGNING_KEY_ROTATION_DAYS` (Standard `90`) aktuell ist. Der vorherige Schlüssel wird *nicht* widerrufen, daher werden Tokens, die darunter signiert wurden, weiterhin verifiziert. Registriere ihn einmalig mit `yarn command:prod cron:register:all`.
+Setzen Sie `SIGNING_KEY_ROTATION_DAYS`, um die Funktion zu aktivieren: Ein täglicher Cronjob erstellt dann einen neuen aktuellen Schlüssel, sobald der bestehende Schlüssel älter als dieser Schwellenwert ist. Frühere Schlüssel werden *nicht* widerrufen, daher werden Tokens, die darunter signiert wurden, weiterhin verifiziert. Lassen Sie die Variable ungesetzt, um die automatische Rotation zu deaktivieren.
 
-  <Note>Der Enterprise-Cron-Job und `SIGNING_KEY_ROTATION_DAYS` sind ab v2.6+ enthalten.</Note>
+<Note>Die automatische Rotation ist ab Version v2.6 verfügbar.</Note>
 
 ### Einen Schlüssel widerrufen (nur bei Leak / Notfall)
 

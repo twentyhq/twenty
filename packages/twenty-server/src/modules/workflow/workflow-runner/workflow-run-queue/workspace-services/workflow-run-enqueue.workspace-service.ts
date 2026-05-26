@@ -154,7 +154,7 @@ export class WorkflowRunEnqueueWorkspaceService {
       );
     } catch (error) {
       try {
-        await this.metricsService.incrementCounter({
+        await this.metricsService.incrementCounterForEvent({
           key: MetricsKeys.WorkflowRunFailedToEnqueue,
           eventId: workspaceId,
         });

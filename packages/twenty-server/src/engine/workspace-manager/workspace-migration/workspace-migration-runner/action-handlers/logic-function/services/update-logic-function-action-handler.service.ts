@@ -86,7 +86,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     );
 
     if (builtPathChanged) {
-      await this.fileStorageService.delete({
+      await this.fileStorageService.deleteFile({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder: FileFolder.BuiltLogicFunction,

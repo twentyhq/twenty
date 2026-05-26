@@ -195,6 +195,19 @@ export enum ApplicationRegistrationSourceType {
   TARBALL = 'TARBALL'
 }
 
+export type ApplicationRegistrationVariableDto = {
+  __typename?: 'ApplicationRegistrationVariableDTO';
+  createdAt: Scalars['DateTime'];
+  description: Scalars['String'];
+  id: Scalars['UUID'];
+  isFilled: Scalars['Boolean'];
+  isRequired: Scalars['Boolean'];
+  isSecret: Scalars['Boolean'];
+  key: Scalars['String'];
+  updatedAt: Scalars['DateTime'];
+  value?: Maybe<Scalars['String']>;
+};
+
 export enum ConfigSource {
   DATABASE = 'DATABASE',
   DEFAULT = 'DEFAULT',
@@ -494,6 +507,7 @@ export type Query = {
   __typename?: 'Query';
   adminPanelRecentUsers: Array<AdminPanelRecentUser>;
   adminPanelTopWorkspaces: Array<AdminPanelTopWorkspace>;
+  findAdminApplicationRegistrationVariables: Array<ApplicationRegistrationVariableDto>;
   findAllApplicationRegistrations: Array<ApplicationRegistration>;
   findOneAdminApplicationRegistration: ApplicationRegistration;
   getAdminAiModels: AdminAiModels;
@@ -527,6 +541,11 @@ export type QueryAdminPanelRecentUsersArgs = {
 
 export type QueryAdminPanelTopWorkspacesArgs = {
   searchTerm?: InputMaybe<Scalars['String']>;
+};
+
+
+export type QueryFindAdminApplicationRegistrationVariablesArgs = {
+  applicationRegistrationId: Scalars['String'];
 };
 
 
@@ -903,6 +922,13 @@ export type GetModelsDevSuggestionsQueryVariables = Exact<{
 
 export type GetModelsDevSuggestionsQuery = { __typename?: 'Query', getModelsDevSuggestions: Array<{ __typename?: 'ModelsDevModelSuggestion', modelId: string, name: string, inputCostPerMillionTokens: number, outputCostPerMillionTokens: number, cachedInputCostPerMillionTokens?: number | null, cacheCreationCostPerMillionTokens?: number | null, contextWindowTokens: number, maxOutputTokens: number, modalities: Array<string>, supportsReasoning: boolean }> };
 
+export type FindAdminApplicationRegistrationVariablesQueryVariables = Exact<{
+  applicationRegistrationId: Scalars['String'];
+}>;
+
+
+export type FindAdminApplicationRegistrationVariablesQuery = { __typename?: 'Query', findAdminApplicationRegistrationVariables: Array<{ __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, value?: string | null, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string }> };
+
 export type FindAllApplicationRegistrationsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
@@ -1127,6 +1153,7 @@ export const GetAdminAiUsageByWorkspaceDocument = {"kind":"Document","definition
 export const GetAiProvidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetAiProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getAiProviders"}}]}}]} as unknown as DocumentNode<GetAiProvidersQuery, GetAiProvidersQueryVariables>;
 export const GetModelsDevProvidersDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModelsDevProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getModelsDevProviders"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"modelCount"}},{"kind":"Field","name":{"kind":"Name","value":"npm"}}]}}]}}]} as unknown as DocumentNode<GetModelsDevProvidersQuery, GetModelsDevProvidersQueryVariables>;
 export const GetModelsDevSuggestionsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"GetModelsDevSuggestions"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"providerType"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"getModelsDevSuggestions"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"providerType"},"value":{"kind":"Variable","name":{"kind":"Name","value":"providerType"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"modelId"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"inputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"outputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"cachedInputCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"cacheCreationCostPerMillionTokens"}},{"kind":"Field","name":{"kind":"Name","value":"contextWindowTokens"}},{"kind":"Field","name":{"kind":"Name","value":"maxOutputTokens"}},{"kind":"Field","name":{"kind":"Name","value":"modalities"}},{"kind":"Field","name":{"kind":"Name","value":"supportsReasoning"}}]}}]}}]} as unknown as DocumentNode<GetModelsDevSuggestionsQuery, GetModelsDevSuggestionsQueryVariables>;
+export const FindAdminApplicationRegistrationVariablesDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindAdminApplicationRegistrationVariables"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findAdminApplicationRegistrationVariables"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"applicationRegistrationId"},"value":{"kind":"Variable","name":{"kind":"Name","value":"applicationRegistrationId"}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"key"}},{"kind":"Field","name":{"kind":"Name","value":"value"}},{"kind":"Field","name":{"kind":"Name","value":"description"}},{"kind":"Field","name":{"kind":"Name","value":"isSecret"}},{"kind":"Field","name":{"kind":"Name","value":"isRequired"}},{"kind":"Field","name":{"kind":"Name","value":"isFilled"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]}}]} as unknown as DocumentNode<FindAdminApplicationRegistrationVariablesQuery, FindAdminApplicationRegistrationVariablesQueryVariables>;
 export const FindAllApplicationRegistrationsDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"query","name":{"kind":"Name","value":"FindAllApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"findAllApplicationRegistrations"},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"FragmentSpread","name":{"kind":"Name","value":"ApplicationRegistrationFragment"}}]}}]}},{"kind":"FragmentDefinition","name":{"kind":"Name","value":"ApplicationRegistrationFragment"},"typeCondition":{"kind":"NamedType","name":{"kind":"Name","value":"ApplicationRegistration"}},"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"id"}},{"kind":"Field","name":{"kind":"Name","value":"universalIdentifier"}},{"kind":"Field","name":{"kind":"Name","value":"name"}},{"kind":"Field","name":{"kind":"Name","value":"logoUrl"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthClientId"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthRedirectUris"}},{"kind":"Field","name":{"kind":"Name","value":"oAuthScopes"}},{"kind":"Field","name":{"kind":"Name","value":"sourceType"}},{"kind":"Field","name":{"kind":"Name","value":"sourcePackage"}},{"kind":"Field","name":{"kind":"Name","value":"latestAvailableVersion"}},{"kind":"Field","name":{"kind":"Name","value":"isListed"}},{"kind":"Field","name":{"kind":"Name","value":"isFeatured"}},{"kind":"Field","name":{"kind":"Name","value":"isPreInstalled"}},{"kind":"Field","name":{"kind":"Name","value":"isConfigured"}},{"kind":"Field","name":{"kind":"Name","value":"ownerWorkspaceId"}},{"kind":"Field","name":{"kind":"Name","value":"createdAt"}},{"kind":"Field","name":{"kind":"Name","value":"updatedAt"}}]}}]} as unknown as DocumentNode<FindAllApplicationRegistrationsQuery, FindAllApplicationRegistrationsQueryVariables>;
 export const CreateDatabaseConfigVariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"CreateDatabaseConfigVariable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}},{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"value"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"JSON"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"createDatabaseConfigVariable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}},{"kind":"Argument","name":{"kind":"Name","value":"value"},"value":{"kind":"Variable","name":{"kind":"Name","value":"value"}}}]}]}}]} as unknown as DocumentNode<CreateDatabaseConfigVariableMutation, CreateDatabaseConfigVariableMutationVariables>;
 export const DeleteDatabaseConfigVariableDocument = {"kind":"Document","definitions":[{"kind":"OperationDefinition","operation":"mutation","name":{"kind":"Name","value":"DeleteDatabaseConfigVariable"},"variableDefinitions":[{"kind":"VariableDefinition","variable":{"kind":"Variable","name":{"kind":"Name","value":"key"}},"type":{"kind":"NonNullType","type":{"kind":"NamedType","name":{"kind":"Name","value":"String"}}}}],"selectionSet":{"kind":"SelectionSet","selections":[{"kind":"Field","name":{"kind":"Name","value":"deleteDatabaseConfigVariable"},"arguments":[{"kind":"Argument","name":{"kind":"Name","value":"key"},"value":{"kind":"Variable","name":{"kind":"Name","value":"key"}}}]}]}}]} as unknown as DocumentNode<DeleteDatabaseConfigVariableMutation, DeleteDatabaseConfigVariableMutationVariables>;

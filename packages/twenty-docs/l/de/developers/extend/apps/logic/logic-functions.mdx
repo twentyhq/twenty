@@ -61,17 +61,17 @@ Verfügbare Trigger-Typen:
 Sie können eine Funktion auch manuell über die CLI ausführen:
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 Sie können Protokolle mit folgendem Befehl ansehen:
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
@@ -340,7 +340,7 @@ Das Paket `twenty-client-sdk` stellt zwei typisierte GraphQL-Clients bereit, um 
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Arbeitsbereichsdaten (Datensätze, Objekte) abfragen und ändern">
 
-Der `CoreApiClient` ist der Haupt-Client zum Abfragen und Ändern von Arbeitsbereichsdaten. Er wird während `yarn twenty dev` oder `yarn twenty build` **aus Ihrem Arbeitsbereichsschema generiert** und ist daher vollständig typisiert, passend zu Ihren Objekten und Feldern.
+Der `CoreApiClient` ist der Haupt-Client zum Abfragen und Ändern von Arbeitsbereichsdaten. Er wird während `yarn twenty dev` oder `yarn twenty dev:build` **aus Ihrem Arbeitsbereichsschema generiert** und ist daher vollständig typisiert, passend zu Ihren Objekten und Feldern.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -380,7 +380,7 @@ const { createCompany } = await client.mutation({
 Der Client verwendet eine Selection-Set-Syntax: Übergeben Sie `true`, um ein Feld einzuschließen, verwenden Sie `__args` für Argumente, und verschachteln Sie Objekte für Relationen. Sie erhalten vollständige Autovervollständigung und Typprüfung basierend auf Ihrem Arbeitsbereichsschema.
 
 <Note>
-**Der CoreApiClient wird zur Entwicklungs-/Build-Zeit generiert.** Wenn Sie ihn verwenden, ohne zuvor `yarn twenty dev` oder `yarn twenty build` ausgeführt zu haben, wird ein Fehler ausgelöst. Die Generierung erfolgt automatisch — die CLI inspiziert das GraphQL-Schema Ihres Arbeitsbereichs und erzeugt mit `@genql/cli` einen typisierten Client.
+**Der CoreApiClient wird zur Entwicklungs-/Build-Zeit generiert.** Wenn Sie ihn verwenden, ohne zuvor `yarn twenty dev` oder `yarn twenty dev:build` ausgeführt zu haben, wird ein Fehler ausgelöst. Die Generierung erfolgt automatisch — die CLI inspiziert das GraphQL-Schema Ihres Arbeitsbereichs und erzeugt mit `@genql/cli` einen typisierten Client.
 </Note>
 
 #### Verwendung von CoreSchema für Typannotationen

@@ -20,11 +20,12 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
+import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationTokenPairDTO } from 'src/engine/core-modules/application/application-oauth/dtos/application-token-pair.dto';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
-import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { ApplicationRegistrationSourceType } from 'src/engine/core-modules/application/application-registration/enums/application-registration-source-type.enum';
 import {
@@ -37,14 +38,14 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
+import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
-import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -216,6 +217,32 @@ export class ApplicationDevelopmentResolver {
       throw new ApplicationException(
         `Invalid fileFolder for application file upload. Allowed values: ${allowedApplicationFileFolders.join(', ')}`,
         ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const pathValidationResult = validateFilePath({
+      resourcePath: filePath,
+      fileFolder,
+    });
+
+    if (!pathValidationResult.isValid) {
+      throw new ApplicationException(
+        pathValidationResult.error,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const application = await this.applicationService.findByUniversalIdentifier(
+      {
+        universalIdentifier: applicationUniversalIdentifier,
+        workspaceId,
+      },
+    );
+
+    if (!isDefined(application)) {
+      throw new ApplicationException(
+        'Application not found in workspace.',
+        ApplicationExceptionCode.APPLICATION_NOT_FOUND,
       );
     }
 

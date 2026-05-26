@@ -29,9 +29,7 @@ import { RatioAggregateConfigDTO } from 'src/engine/metadata-modules/page-layout
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 
 @ObjectType('AggregateChartConfiguration')
-export class AggregateChartConfigurationDTO
-  implements AggregateChartConfiguration
-{
+export class AggregateChartConfigurationDTO implements AggregateChartConfiguration {
   @Field(() => WidgetConfigurationType)
   @IsIn([WidgetConfigurationType.AGGREGATE_CHART])
   @IsNotEmpty()

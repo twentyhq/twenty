@@ -249,10 +249,10 @@ export class SignInUpService {
 
     if (!userWorkspaceExists) {
       throw new AuthException(
-        'User is not part of the workspace',
+        'Workspace is not ready to welcome new members',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
         {
-          userFriendlyMessage: msg`User is not part of the workspace`,
+          userFriendlyMessage: msg`Workspace is not ready to welcome new members`,
         },
       );
     }
@@ -384,7 +384,7 @@ export class SignInUpService {
       undefined,
     );
 
-    void this.metricsService.incrementCounter({
+    void this.metricsService.incrementCounterForEvent({
       key: MetricsKeys.SignUpSuccess,
       shouldStoreInCache: false,
     });

@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFileEntityUniqueConstraint1770032815802
-  implements MigrationInterface
-{
+export class AddFileEntityUniqueConstraint1770032815802 implements MigrationInterface {
   name = 'AddFileEntityUniqueConstraint1770032815802';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

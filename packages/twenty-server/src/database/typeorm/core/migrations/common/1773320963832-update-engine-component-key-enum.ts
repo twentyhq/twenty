@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class UpdateEngineComponentKeyEnum1773320963832
-  implements MigrationInterface
-{
+export class UpdateEngineComponentKeyEnum1773320963832 implements MigrationInterface {
   name = 'UpdateEngineComponentKeyEnum1773320963832';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

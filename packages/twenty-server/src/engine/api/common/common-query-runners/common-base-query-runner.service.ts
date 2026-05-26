@@ -385,7 +385,7 @@ export abstract class CommonBaseQueryRunnerService<
         longConfig.timeWindow,
       );
     } catch (error) {
-      await this.metricsService.incrementCounter({
+      await this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.CommonApiQueryRateLimited,
         shouldStoreInCache: false,
       });

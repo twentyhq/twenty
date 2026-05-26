@@ -61,17 +61,17 @@ Tipuri de declanșatoare disponibile:
 Puteți, de asemenea, să executați manual o funcție folosind CLI:
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 Puteți urmări jurnalele cu:
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
@@ -341,7 +341,7 @@ Pachetul `twenty-client-sdk` oferă doi clienți GraphQL tipați pentru a intera
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Interogați și modificați datele spațiului de lucru (înregistrări, obiecte)">
 
-`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este generat din schema spațiului de lucru în timpul `yarn twenty dev` sau `yarn twenty build`, astfel încât este complet tipizat pentru a corespunde obiectelor și câmpurilor dvs.
+`CoreApiClient` este clientul principal pentru interogarea și modificarea datelor din spațiul de lucru. Este **generat din schema spațiului de lucru** în timpul `yarn twenty dev` sau `yarn twenty dev:build`, astfel încât este complet tipizat pentru a corespunde obiectelor și câmpurilor dvs.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -381,7 +381,7 @@ const { createCompany } = await client.mutation({
 Clientul folosește o sintaxă de tip selection-set: transmiteți `true` pentru a include un câmp, folosiți `__args` pentru argumente și imbricați obiecte pentru relații. Obțineți autocompletare și verificare completă a tipurilor, pe baza schemei spațiului dvs. de lucru.
 
 <Note>
-**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
+**CoreApiClient este generat în timpul dev/build.** Dacă îl utilizați fără a rula mai întâi `yarn twenty dev` sau `yarn twenty dev:build`, va arunca o eroare. Generarea are loc automat — CLI inspectează schema GraphQL a spațiului dvs. de lucru și generează un client tipizat folosind `@genql/cli`.
 </Note>
 
 #### Folosirea CoreSchema pentru adnotări de tip

@@ -54,6 +54,9 @@ import { EncryptConnectionParametersSlowInstanceCommand } from 'src/database/com
 import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
 import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
+import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1779600000000-finalize-role-permission-flag-cutover';
+import { AddSubFieldNameToIndexFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798200000000-add-sub-field-name-to-index-field-metadata';
+import { DropFieldMetadataIsUniqueColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798300000000-drop-field-metadata-is-unique-column';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -110,4 +113,7 @@ export const INSTANCE_COMMANDS = [
   AddSubFieldNameToViewSortFastInstanceCommand,
   DropPostgresCredentialsTableFastInstanceCommand,
   AddChannelSyncStageIndexesFastInstanceCommand,
+  FinalizeRolePermissionFlagCutoverFastInstanceCommand,
+  AddSubFieldNameToIndexFieldMetadataFastInstanceCommand,
+  DropFieldMetadataIsUniqueColumnFastInstanceCommand,
 ];
