@@ -10,7 +10,7 @@ on:
       ota_ref:
         description: Ota branch, tag, or commit to build for this matrix run
         required: false
-        default: 922056507ebcc19963edba58ee24b0246ecfdf25
+        default: bobai/gap3-smoke-verdict-contract
   pull_request:
     paths:
       - 'ota.yaml'
@@ -29,8 +29,6 @@ permissions:
 
 env:
   OTA_NO_UPDATE_CHECK: '1'
-  OTA_SOURCE_REPOSITORY: ota-run/ota
-  OTA_SOURCE_REF: 922056507ebcc19963edba58ee24b0246ecfdf25
 
 jobs:
   native:
@@ -78,10 +76,10 @@ jobs:
           yarn --version
 
       - name: Install ota from source
-        uses: ota-run/ota/.github/actions/install-ota-from-source@922056507ebcc19963edba58ee24b0246ecfdf25
+        uses: ota-run/ota/.github/actions/install-ota-from-source@v1.6.16
         with:
-          repository: ${{ github.event.inputs.ota_repository || env.OTA_SOURCE_REPOSITORY }}
-          ref: ${{ github.event.inputs.ota_ref || env.OTA_SOURCE_REF }}
+          repository: ${{ github.event.inputs.ota_repository || 'ota-run/ota' }}
+          ref: ${{ github.event.inputs.ota_ref || 'bobai/gap3-smoke-verdict-contract' }}
 
       - name: Assert ota minimum version from contract
         shell: bash
