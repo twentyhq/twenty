@@ -120,6 +120,22 @@ const normDomain = (d?: string | null): string | undefined =>
     ? d.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '') || undefined
     : undefined;
 
+// Distinct non-empty values across rows, for the preflight report. Flattens array
+// fields (e.g. partnerScope, typeCustom) and stringifies, so scalar and
+// multi-select fields share one path. Derived from the already-fetched source
+// rows — no per-loop bookkeeping needed.
+const distinct = <TRow>(rows: TRow[], pick: (row: TRow) => unknown): string[] =>
+  [
+    ...new Set(
+      rows.flatMap((row) => {
+        const value = pick(row);
+        return Array.isArray(value) ? value : value != null ? [value] : [];
+      }),
+    ),
+  ]
+    .map(String)
+    .sort();
+
 async function main() {
   console.log(`[import] mode: ${APPLY ? 'APPLY (writing to local)' : 'DRY-RUN (no writes)'}`);
   const local = new CoreApiClient({
@@ -131,24 +147,6 @@ async function main() {
   let writes = 0;
   const pace = async () => {
     if (APPLY && writes++ > 0) await new Promise((r) => setTimeout(r, 750));
-  };
-
-  // Distinct TFT values seen, for the preflight coverage report.
-  const seen: Record<string, Set<string>> = {
-    partnerStage: new Set(),
-    partnerTier: new Set(),
-    partnerScope: new Set(),
-    typeOfTeam: new Set(),
-    partnerTimezone: new Set(),
-    oppStage: new Set(),
-    hostingType: new Set(),
-    subscriptionType: new Set(),
-    subscriptionFrequency: new Set(),
-    quoteStatus: new Set(),
-    typeCustom: new Set(),
-  };
-  const note = (bucket: string, value?: string | null) => {
-    if (value) seen[bucket].add(value);
   };
 
   // ---------------------------------------------------------------------
@@ -324,6 +322,29 @@ async function main() {
   const budgetCurrency = (amount: any) =>
     amount?.amountMicros != null ? { amountMicros: amount.amountMicros, currencyCode: amount.currencyCode ?? 'USD' } : undefined;
 
+  // Generic create/update dispatch shared by partners, opportunities and content.
+  // Owns pacing + APPLY-gating + the create-vs-update branch, so each loop below
+  // only builds its `data`. genql keys a mutation by the object name, so the
+  // create<Object>/update<Object> names are derived from one argument. Companies
+  // keep their own upsert (above) because of the domain-collision fallback.
+  // Returns the row id: the real id on APPLY, a synthetic dry id otherwise so the
+  // relation mapping in dry-run still resolves to a stable placeholder.
+  const upsert = async (
+    object: 'Partner' | 'Opportunity' | 'PartnerContent',
+    existingId: string | undefined,
+    data: Record<string, unknown>,
+    dryKey: string,
+  ): Promise<string> => {
+    if (!APPLY) return existingId ?? `dry:${object}:${dryKey}`;
+    await pace();
+    if (existingId) {
+      await local.mutation({ [`update${object}`]: { __args: { id: existingId, data }, id: true } } as any);
+      return existingId;
+    }
+    const created: any = await local.mutation({ [`create${object}`]: { __args: { data }, id: true } } as any);
+    return created[`create${object}`].id;
+  };
+
   // -- Partners (upsert by slug) --
   console.log(`[import] upserting ${tftPeople.length} partners...`);
   const localPartnerIdByTftPersonId = new Map<string, string>();
@@ -331,12 +352,6 @@ async function main() {
   let partnersUpdated = 0;
   let partnersDone = 0;
   for (const p of tftPeople) {
-    note('partnerStage', p.partnerStage);
-    note('partnerTier', p.partnerTier);
-    (Array.isArray(p.partnerScope) ? p.partnerScope : []).forEach((s: string) => note('partnerScope', s));
-    note('typeOfTeam', p.partnerTypeOfTeam);
-    note('partnerTimezone', p.partnerTimezone);
-
     const slug = personSlug(p);
     const companyId = await upsertCompany(p.company?.name, p.company?.domainName?.primaryLinkUrl);
     // Timezone band -> geographic region(s). Unmapped/OTHER -> no region.
@@ -364,25 +379,15 @@ async function main() {
       ...(companyId && APPLY ? { companyId } : {}),
     };
 
-    let partnerId = partnerIdBySlug.get(slug);
-    if (partnerId) {
-      if (APPLY) {
-        await pace();
-        await local.mutation({ updatePartner: { __args: { id: partnerId, data }, id: true } } as any);
-      }
+    const existingId = partnerIdBySlug.get(slug);
+    const partnerId = await upsert('Partner', existingId, data, slug);
+    if (existingId) {
       partnersUpdated++;
     } else {
-      if (APPLY) {
-        await pace();
-        const created: any = await local.mutation({ createPartner: { __args: { data }, id: true } } as any);
-        partnerId = created.createPartner.id;
-      } else {
-        partnerId = `dry:partner:${slug}`;
-      }
-      partnerIdBySlug.set(slug, partnerId as string);
+      partnerIdBySlug.set(slug, partnerId);
       partnersCreated++;
     }
-    localPartnerIdByTftPersonId.set(p.id, partnerId as string);
+    localPartnerIdByTftPersonId.set(p.id, partnerId);
     partnersDone++;
     if (partnersDone % 10 === 0 || partnersDone === tftPeople.length)
       console.log(`[import] partners ${partnersDone}/${tftPeople.length} (created=${partnersCreated} updated=${partnersUpdated})`);
@@ -397,11 +402,6 @@ async function main() {
   let oppsDone = 0;
   for (const o of tftOpps) {
     if (!o.name) continue;
-    note('oppStage', o.stage);
-    note('hostingType', o.hostingType);
-    note('subscriptionType', o.subscriptionType);
-    note('subscriptionFrequency', o.subscriptionFrequence);
-
     const companyId = await upsertCompany(o.company?.name, o.company?.domainName?.primaryLinkUrl);
     const partnerId = o.partner?.id ? localPartnerIdByTftPersonId.get(o.partner.id) : undefined;
     if (partnerId) oppsPartnerLinked++;
@@ -423,19 +423,9 @@ async function main() {
     };
 
     const existingId = oppIdByTftId.get(o.id);
-    if (existingId) {
-      if (APPLY) {
-        await pace();
-        await local.mutation({ updateOpportunity: { __args: { id: existingId, data }, id: true } } as any);
-      }
-      oppsUpdated++;
-    } else {
-      if (APPLY) {
-        await pace();
-        await local.mutation({ createOpportunity: { __args: { data }, id: true } } as any);
-      }
-      oppsCreated++;
-    }
+    await upsert('Opportunity', existingId, data, o.id);
+    if (existingId) oppsUpdated++;
+    else oppsCreated++;
     oppsDone++;
     if (oppsDone % 20 === 0 || oppsDone === tftOpps.length)
       console.log(`[import] opportunities ${oppsDone}/${tftOpps.length} (created=${oppsCreated} updated=${oppsUpdated})`);
@@ -446,9 +436,7 @@ async function main() {
   console.log(`[import] upserting ${contentRecords.length} content records...`);
   let contentCreated = 0;
   let contentUpdated = 0;
-  contentRecords.forEach((c: any) => (Array.isArray(c.typeCustom) ? c.typeCustom : []).forEach((t: string) => note('typeCustom', t)));
   for (const c of contentRecords) {
-    note('quoteStatus', c.status);
     const name = c.name || 'Partner content';
     const partnerId = c.partnerPerson?.id ? localPartnerIdByTftPersonId.get(c.partnerPerson.id) : undefined;
     const customerCompanyId = await upsertCompany(c.customerCompany?.name, c.customerCompany?.domainName?.primaryLinkUrl);
@@ -462,27 +450,17 @@ async function main() {
       ...(customerCompanyId && APPLY ? { customerCompanyId } : {}),
     };
     const existingId = contentIdByName.get(name);
-    if (existingId) {
-      if (APPLY) {
-        await pace();
-        await local.mutation({ updatePartnerContent: { __args: { id: existingId, data }, id: true } } as any);
-      }
-      contentUpdated++;
-    } else {
-      if (APPLY) {
-        await pace();
-        await local.mutation({ createPartnerContent: { __args: { data }, id: true } } as any);
-      }
-      contentCreated++;
-    }
+    await upsert('PartnerContent', existingId, data, name);
+    if (existingId) contentUpdated++;
+    else contentCreated++;
   }
   console.log(`[import] partner content created=${contentCreated} updated=${contentUpdated}`);
 
   // ---------------------------------------------------------------------
-  // 4. Preflight: distinct TFT values vs local option coverage.
+  // 4. Preflight: distinct TFT values vs local option coverage. Derived
+  //    directly from the fetched source rows (no per-loop bookkeeping).
   // ---------------------------------------------------------------------
-  const report = (label: string, bucket: string, optionKey?: string) => {
-    const values = [...seen[bucket]].sort();
+  const report = (label: string, values: string[], optionKey?: string) => {
     const allowed = optionKey ? LOCAL_OPTIONS[optionKey] : undefined;
     const uncovered = allowed ? values.filter((v) => !allowed.has(v)) : [];
     console.log(
@@ -490,21 +468,24 @@ async function main() {
         (uncovered.length ? `  ⚠️ NOT IN LOCAL OPTIONS: ${uncovered.join(', ')}` : ''),
     );
   };
+  const partnerStages = distinct(tftPeople, (p: any) => p.partnerStage);
+  const oppStages = distinct(tftOpps, (o: any) => o.stage);
+  const timezones = distinct(tftPeople, (p: any) => p.partnerTimezone);
   console.log('--- preflight: distinct TFT values seen ---');
-  report('partnerStage (-> validationStage map)', 'partnerStage');
-  report('partnerTier', 'partnerTier', 'partnerTier');
-  report('partnerScope', 'partnerScope', 'partnerScope');
-  report('typeOfTeam', 'typeOfTeam', 'typeOfTeam');
-  report('partnerTimezone (-> region map)', 'partnerTimezone');
-  report('opp stage (-> matchStatus map)', 'oppStage');
-  report('hostingType', 'hostingType', 'hostingType');
-  report('subscriptionType', 'subscriptionType', 'subscriptionType');
-  report('subscriptionFrequency', 'subscriptionFrequency', 'subscriptionFrequency');
-  report('quote status', 'quoteStatus', 'quoteStatus');
-  report('customerContent typeCustom', 'typeCustom');
-  const unmappedStages = [...seen.partnerStage].filter((s) => !(s in PARTNER_STAGE_TO_VALIDATION));
-  const unmappedOpps = [...seen.oppStage].filter((s) => !(s in STAGE_TO_MATCH_STATUS));
-  const unmappedTz = [...seen.partnerTimezone].filter((t) => !(t in TIMEZONE_TO_REGION));
+  report('partnerStage (-> validationStage map)', partnerStages);
+  report('partnerTier', distinct(tftPeople, (p: any) => p.partnerTier), 'partnerTier');
+  report('partnerScope', distinct(tftPeople, (p: any) => p.partnerScope), 'partnerScope');
+  report('typeOfTeam', distinct(tftPeople, (p: any) => p.partnerTypeOfTeam), 'typeOfTeam');
+  report('partnerTimezone (-> region map)', timezones);
+  report('opp stage (-> matchStatus map)', oppStages);
+  report('hostingType', distinct(tftOpps, (o: any) => o.hostingType), 'hostingType');
+  report('subscriptionType', distinct(tftOpps, (o: any) => o.subscriptionType), 'subscriptionType');
+  report('subscriptionFrequency', distinct(tftOpps, (o: any) => o.subscriptionFrequence), 'subscriptionFrequency');
+  report('quote status', distinct(contentRecords, (c: any) => c.status), 'quoteStatus');
+  report('customerContent typeCustom', distinct(contentRecords, (c: any) => c.typeCustom));
+  const unmappedStages = partnerStages.filter((s) => !(s in PARTNER_STAGE_TO_VALIDATION));
+  const unmappedOpps = oppStages.filter((s) => !(s in STAGE_TO_MATCH_STATUS));
+  const unmappedTz = timezones.filter((t) => !(t in TIMEZONE_TO_REGION));
   if (unmappedStages.length) console.log(`[preflight] ⚠️ partnerStage not mapped: ${unmappedStages.join(', ')}`);
   if (unmappedOpps.length) console.log(`[preflight] ⚠️ opp stage not mapped: ${unmappedOpps.join(', ')}`);
   if (unmappedTz.length) console.log(`[preflight] ⚠️ partnerTimezone not mapped: ${unmappedTz.join(', ')}`);
