@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "El camp pels permisos del qual estàs intentant establir no s'ha pogut trobar. Pot haver estat eliminat."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "L'extensió del fitxer no coincideix amb el contingut del fitxer. Comproveu que el fitxer no estigui malmès i que tingui l'extensió correcta."
 

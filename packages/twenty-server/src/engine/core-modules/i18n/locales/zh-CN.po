@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "您尝试设置权限的字段未找到。它可能已被删除。"
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "文件扩展名与文件内容不匹配。请检查您的文件未损坏且具有正确的扩展名。"
 

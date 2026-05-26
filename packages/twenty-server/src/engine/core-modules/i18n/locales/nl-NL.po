@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "Het veld waarvoor u rechten probeert in te stellen kon niet worden gevonden. Het is mogelijk verwijderd."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "De bestandsextensie komt niet overeen met de inhoud van het bestand. Controleer of je bestand niet beschadigd is en de juiste extensie heeft."
 

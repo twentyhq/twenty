@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "לא ניתן למצוא את השדה שאתה מנסה להגדיר הרשאות עבורו. ייתכן שהוא נמחק."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "סיומת הקובץ אינה תואמת את תוכן הקובץ. יש לבדוק שהקובץ אינו פגום ושיש לו את הסיומת הנכונה."
 

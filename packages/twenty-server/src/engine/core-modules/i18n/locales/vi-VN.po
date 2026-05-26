@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "Không thể tìm thấy trường bạn đang cố gắng thiết lập quyền hạn. Nó có thể đã bị xóa."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "Phần mở rộng tệp không khớp với nội dung tệp. Vui lòng kiểm tra để đảm bảo tệp của bạn không bị hỏng và có phần mở rộng chính xác."
 
