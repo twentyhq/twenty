@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Readable } from 'stream';
@@ -22,6 +22,8 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class FileService {
+  private readonly logger = new Logger(FileService.name);
+
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
@@ -119,6 +121,10 @@ export class FileService {
     });
 
     if (application === null) {
+      this.logger.warn(
+        `File ${file.id} references missing application ${file.applicationId} in workspace ${workspaceId}`,
+      );
+
       return null;
     }
 
@@ -171,6 +177,10 @@ export class FileService {
     });
 
     if (application === null) {
+      this.logger.warn(
+        `File ${file.id} references missing application ${file.applicationId} in workspace ${params.workspaceId}`,
+      );
+
       return null;
     }
 
@@ -182,20 +192,20 @@ export class FileService {
       workspaceId: params.workspaceId,
     };
 
+    const presignedUrl = await this.fileStorageService.getPresignedUrl({
+      ...resourceIdentifier,
+      expiresInSeconds: this.twentyConfigService.get(
+        'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
+      ),
+      responseContentType: mimeType,
+      responseContentDisposition: getContentDisposition(mimeType),
+    });
+
+    if (presignedUrl) {
+      return { type: 'redirect', presignedUrl };
+    }
+
     try {
-      const presignedUrl = await this.fileStorageService.getPresignedUrl({
-        ...resourceIdentifier,
-        expiresInSeconds: this.twentyConfigService.get(
-          'STORAGE_S3_PRESIGNED_URL_EXPIRES_IN',
-        ),
-        responseContentType: mimeType,
-        responseContentDisposition: getContentDisposition(mimeType),
-      });
-
-      if (presignedUrl) {
-        return { type: 'redirect', presignedUrl };
-      }
-
       const stream = await this.fileStorageService.readFile(resourceIdentifier);
 
       return { type: 'stream', stream, mimeType };
@@ -240,6 +250,10 @@ export class FileService {
     });
 
     if (application === null) {
+      this.logger.warn(
+        `File ${file.id} references missing application ${file.applicationId} in workspace ${workspaceId}`,
+      );
+
       return null;
     }
 

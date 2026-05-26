@@ -27,7 +27,6 @@ const createMockStream = (): Readable => {
 
   stream.push('file content');
   stream.push(null);
-  stream.pipe = jest.fn();
 
   return stream;
 };
