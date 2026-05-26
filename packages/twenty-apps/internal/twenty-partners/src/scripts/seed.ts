@@ -11,7 +11,7 @@
 //   tsx src/scripts/seed.ts
 
 import { config } from 'dotenv';
-config({ path: '.env.local' });
+config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -89,13 +89,13 @@ const OPPORTUNITIES: Opp[] = [
   { name: 'Sunrise — vendor onboarding', companyName: 'Sunrise Logistics', matchStatus: 'LOST', numberOfSeats: 10, hostingType: 'CLOUD', subscriptionType: 'PRO', subscriptionFrequency: 'MONTHLY' },
 ];
 
-type Quote = { name: string; status: string; partnerSlug: string; oppName: string };
+type Quote = { name: string; status: string; partnerSlug: string; contentType: string[] };
 const QUOTES: Quote[] = [
-  { name: 'Sunrise APAC fleet — Nine Dots quote', status: 'WIP', partnerSlug: 'nine-dots-ventures', oppName: 'Sunrise — APAC fleet CRM' },
-  { name: 'Helix clinical — NetZero quote', status: 'INTERVIEW_SCHEDULED', partnerSlug: 'netzero-systems', oppName: 'Helix Bio — clinical trials CRM' },
-  { name: 'Acme rollout — Elevate quote', status: 'UNDER_CUSTOMER_PARTNER_REVIEW', partnerSlug: 'elevate-consulting', oppName: 'Acme RE — CRM rollout' },
-  { name: 'Sunrise LATAM — Nine Dots quote', status: 'APPROVED', partnerSlug: 'nine-dots-ventures', oppName: 'Sunrise — LATAM expansion' },
-  { name: 'Helix self-host — Meridian quote', status: 'REJECTED', partnerSlug: 'meridian-craft', oppName: 'Helix Bio — self-host evaluation' },
+  { name: 'Sunrise APAC fleet — Nine Dots quote', status: 'WIP', partnerSlug: 'nine-dots-ventures', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Helix clinical — NetZero quote', status: 'INTERVIEW_SCHEDULED', partnerSlug: 'netzero-systems', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Acme rollout — Elevate quote', status: 'UNDER_CUSTOMER_PARTNER_REVIEW', partnerSlug: 'elevate-consulting', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Sunrise LATAM — Nine Dots quote', status: 'APPROVED', partnerSlug: 'nine-dots-ventures', contentType: ['PARTNER_QUOTE'] },
+  { name: 'Helix self-host — Meridian quote', status: 'REJECTED', partnerSlug: 'meridian-craft', contentType: ['CASE_STUDY'] },
 ];
 
 const nodes = (r: any, key: string): any[] => (r?.[key]?.edges ?? []).map((e: any) => e.node);
@@ -177,12 +177,12 @@ async function main() {
   // -- Partner quotes (upsert by name) --
   let quoteCount = 0;
   for (const q of QUOTES) {
-    const data = { name: q.name, status: q.status, partnerId: partnerIdBySlug.get(q.partnerSlug), opportunityId: oppIdByName.get(q.oppName) };
-    const existing = nodes(await client.query({ partnerQuotes: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerQuotes');
+    const data = { name: q.name, status: q.status, contentType: q.contentType, partnerId: partnerIdBySlug.get(q.partnerSlug) };
+    const existing = nodes(await client.query({ partnerContents: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerContents');
     if (existing[0]?.id) {
-      await client.mutation({ updatePartnerQuote: { __args: { id: existing[0].id, data }, id: true } } as any);
+      await client.mutation({ updatePartnerContent: { __args: { id: existing[0].id, data }, id: true } } as any);
     } else {
-      await client.mutation({ createPartnerQuote: { __args: { data }, id: true } } as any);
+      await client.mutation({ createPartnerContent: { __args: { data }, id: true } } as any);
     }
     quoteCount++;
   }

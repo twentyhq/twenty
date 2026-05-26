@@ -10,9 +10,14 @@ import {
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 
 import { detectPdf } from '@file-type/pdf';
+import { TWENTY_MIME_POLICY } from 'src/engine/core-modules/file/constants/twenty-mime-policy.constant';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 
-export const extractFileInfo = async ({
+const fileTypeParser = new FileTypeParser({
+  customDetectors: [detectPdf],
+});
+
+export const extractFileInfoOrThrow = async ({
   file,
   filename,
 }: {
@@ -21,12 +26,8 @@ export const extractFileInfo = async ({
 }) => {
   const { ext: declaredExt } = buildFileInfo(filename);
 
-  const fileParser = new FileTypeParser({
-    customDetectors: [detectPdf],
-  });
-
   const { ext: detectedExt, mime: detectedMime } =
-    (await fileParser.fromBuffer(file)) ?? {};
+    (await fileTypeParser.fromBuffer(file)) ?? {};
 
   if (isDefined(detectedExt) && isDefined(detectedMime)) {
     return {
@@ -40,6 +41,22 @@ export const extractFileInfo = async ({
   let mimeType: string = 'application/octet-stream';
 
   if (isNonEmptyString(ext)) {
+    // Twenty policy wins over the ext-based fallback for the (small) set of
+    // extensions where mrmime's IANA mapping collides with a developer-tooling
+    // convention. This branch is only reached when file-type's magic-byte
+    // sniff returned nothing — when the bytes actually match (e.g. a real
+    // MPEG-TS video at foo.ts), we already returned above.
+    //
+    // For .ts/.tsx the policy is also load-bearing for correctness: without
+    // it, lookup('ts') → 'video/mp2t' is in file-type's supportedMimeTypes,
+    // so the check below would throw INVALID_EXTENSION on every TypeScript
+    // source upload.
+    const policyMime = TWENTY_MIME_POLICY[ext];
+
+    if (isDefined(policyMime)) {
+      return { mimeType: policyMime, ext };
+    }
+
     const mimeTypeFromExtension = lookup(ext);
 
     if (
