@@ -102,7 +102,7 @@ const StyledContainer = styled(Container)`
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   position: relative;
-  row-gap: ${theme.spacing(6)};
+  row-gap: ${theme.spacing(8)};
   text-align: center;
   width: 100%;
   z-index: 1;
