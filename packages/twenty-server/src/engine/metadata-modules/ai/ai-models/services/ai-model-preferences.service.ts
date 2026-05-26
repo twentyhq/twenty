@@ -17,7 +17,9 @@ export class AiModelPreferencesService {
       recommendedModels: this.twentyConfigService.get(
         'AI_MODELS_DEFAULT_RECOMMENDED',
       ),
-      disabledModels: this.twentyConfigService.get('AI_MODELS_DEFAULT_DISABLED'),
+      disabledModels: this.twentyConfigService.get(
+        'AI_MODELS_DEFAULT_DISABLED',
+      ),
     };
   }
 
