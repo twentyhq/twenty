@@ -3,8 +3,8 @@ import { QueryRunner } from 'typeorm';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
-@RegisteredInstanceCommand('2.7.0', 1778862608620)
-export class AddEmailingDomainTenantStatusFastInstanceCommand
+@RegisteredInstanceCommand('2.8.0', 1798400000000)
+export class EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand
   implements FastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
@@ -14,9 +14,21 @@ export class AddEmailingDomainTenantStatusFastInstanceCommand
     await queryRunner.query(
       'ALTER TABLE "core"."emailingDomain" ADD "tenantStatus" "core"."emailingDomain_tenantstatus_enum" NOT NULL DEFAULT \'ACTIVE\'',
     );
+    await queryRunner.query(
+      'ALTER TABLE "core"."emailingDomain" DROP CONSTRAINT "IDX_EMAILING_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."emailingDomain" ADD CONSTRAINT "IDX_EMAILING_DOMAIN_DOMAIN_UNIQUE" UNIQUE ("domain")',
+    );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    await queryRunner.query(
+      'ALTER TABLE "core"."emailingDomain" DROP CONSTRAINT "IDX_EMAILING_DOMAIN_DOMAIN_UNIQUE"',
+    );
+    await queryRunner.query(
+      'ALTER TABLE "core"."emailingDomain" ADD CONSTRAINT "IDX_EMAILING_DOMAIN_DOMAIN_WORKSPACE_ID_UNIQUE" UNIQUE ("domain", "workspaceId")',
+    );
     await queryRunner.query(
       'ALTER TABLE "core"."emailingDomain" DROP COLUMN "tenantStatus"',
     );

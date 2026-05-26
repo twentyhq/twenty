@@ -1,5 +1,8 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
+import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
+
 const SNS_SUBSCRIBE_URL_PATTERN =
   /^https:\/\/sns\.[a-z0-9-]+\.amazonaws\.com\//;
 
@@ -9,25 +12,26 @@ export class SnsSubscriptionConfirmerService {
 
   async confirm(subscribeUrl: string | undefined): Promise<void> {
     if (!subscribeUrl) {
-      return;
+      throw new MessagingWebhookException(
+        'Missing SubscribeURL on SNS subscription confirmation',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
+      );
     }
 
     if (!SNS_SUBSCRIBE_URL_PATTERN.test(subscribeUrl)) {
-      this.logger.error(
+      throw new MessagingWebhookException(
         `Refusing to fetch non-AWS SubscribeURL: ${subscribeUrl}`,
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_SUBSCRIBE_URL,
       );
-
-      return;
     }
 
     const response = await fetch(subscribeUrl);
 
     if (!response.ok) {
-      this.logger.error(
+      throw new MessagingWebhookException(
         `Failed to confirm SNS subscription via ${subscribeUrl}: ${response.status}`,
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_SUBSCRIPTION_CONFIRMATION_FAILED,
       );
-
-      return;
     }
 
     this.logger.log(`Confirmed SNS subscription via ${subscribeUrl}`);

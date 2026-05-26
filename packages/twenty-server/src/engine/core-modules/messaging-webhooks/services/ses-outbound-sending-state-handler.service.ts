@@ -4,7 +4,7 @@ import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-dom
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { type SesEventBridgeNotification } from 'src/engine/core-modules/messaging-webhooks/types/ses-event-bridge-notification.type';
 import { parseWorkspaceIdFromAwsSesResourceArn } from 'src/engine/core-modules/messaging-webhooks/utils/parse-workspace-id-from-aws-ses-resource-arn.util';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 @Injectable()
 export class SesOutboundSendingStateHandlerService {
@@ -41,7 +41,7 @@ export class SesOutboundSendingStateHandlerService {
   private resolveWorkspaceIdFromResources(
     resources: string[] | undefined,
   ): string | null {
-    if (!isDefined(resources) || resources.length === 0) {
+    if (!isNonEmptyArray(resources)) {
       return null;
     }
 

@@ -1,8 +1,10 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import type SnsPayloadValidator from 'sns-payload-validator';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 
+import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
+import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
 import { SesOutboundSendingStateHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-sending-state-handler.service';
 import { SnsSignatureVerifierService } from 'src/engine/core-modules/messaging-webhooks/services/sns-signature-verifier.service';
 import { SnsSubscriptionConfirmerService } from 'src/engine/core-modules/messaging-webhooks/services/sns-subscription-confirmer.service';
@@ -22,7 +24,10 @@ export class SesOutboundWebhookRouterService {
     const payload = parseJson<SnsPayload>(rawBody.toString('utf8'));
 
     if (!isDefined(payload)) {
-      throw new BadRequestException('Invalid SNS payload');
+      throw new MessagingWebhookException(
+        'Invalid SNS payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
+      );
     }
 
     await this.snsSignatureVerifierService.assertAllowedAndSigned(payload);
@@ -43,7 +48,10 @@ export class SesOutboundWebhookRouterService {
     const event = parseJson<SesEventBridgeNotification>(payload.Message);
 
     if (!isDefined(event)) {
-      return;
+      throw new MessagingWebhookException(
+        'Invalid SNS notification message',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_PAYLOAD,
+      );
     }
 
     await this.sesOutboundSendingStateHandlerService.handle(event);

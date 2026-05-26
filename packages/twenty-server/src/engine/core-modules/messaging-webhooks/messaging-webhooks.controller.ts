@@ -1,15 +1,18 @@
 import {
-  BadRequestException,
   Controller,
   HttpCode,
   Post,
   type RawBodyRequest,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { type Request } from 'express';
 
+import { MessagingWebhookApiExceptionFilter } from 'src/engine/core-modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
+import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
+import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
 import { SesInboundWebhookRouterService } from 'src/engine/core-modules/messaging-webhooks/services/ses-inbound-webhook-router.service';
 import { SesOutboundWebhookRouterService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-webhook-router.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
@@ -17,6 +20,7 @@ import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 import { isDefined } from 'twenty-shared/utils';
 
 @Controller()
+@UseFilters(MessagingWebhookApiExceptionFilter)
 export class MessagingWebhooksController {
   constructor(
     private readonly sesInboundWebhookRouterService: SesInboundWebhookRouterService,
@@ -30,7 +34,10 @@ export class MessagingWebhooksController {
     @Req() request: RawBodyRequest<Request>,
   ): Promise<void> {
     if (!isDefined(request.rawBody)) {
-      throw new BadRequestException('Missing SNS payload');
+      throw new MessagingWebhookException(
+        'Missing SNS payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
+      );
     }
 
     await this.sesInboundWebhookRouterService.route(request.rawBody);
@@ -43,7 +50,10 @@ export class MessagingWebhooksController {
     @Req() request: RawBodyRequest<Request>,
   ): Promise<void> {
     if (!isDefined(request.rawBody)) {
-      throw new BadRequestException('Missing SNS payload');
+      throw new MessagingWebhookException(
+        'Missing SNS payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
+      );
     }
 
     await this.sesOutboundWebhookRouterService.route(request.rawBody);

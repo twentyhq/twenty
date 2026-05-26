@@ -5,6 +5,8 @@ import {
   CreateEmailIdentityCommand,
   CreateTenantCommand,
   CreateTenantResourceAssociationCommand,
+  DeleteConfigurationSetCommand,
+  DeleteContactListCommand,
   DeleteEmailIdentityCommand,
   DeleteTenantResourceAssociationCommand,
   GetEmailIdentityCommand,
@@ -135,7 +137,12 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {
     const sesClient = this.awsSesClientProvider.getSESClient();
     const tenantName = this.buildTenantName(input.workspaceId);
+    const configurationSetName = this.buildConfigurationSetName(
+      input.workspaceId,
+    );
+    const contactListName = this.buildContactListName(input.workspaceId);
     const identityArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:identity/${input.domain}`;
+    const configurationSetArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:configuration-set/${configurationSetName}`;
 
     await sesClient
       .send(
@@ -144,6 +151,33 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
           ResourceArn: identityArn,
         }),
       )
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) throw error;
+      });
+
+    await sesClient
+      .send(
+        new DeleteTenantResourceAssociationCommand({
+          TenantName: tenantName,
+          ResourceArn: configurationSetArn,
+        }),
+      )
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) throw error;
+      });
+
+    await sesClient
+      .send(
+        new DeleteConfigurationSetCommand({
+          ConfigurationSetName: configurationSetName,
+        }),
+      )
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) throw error;
+      });
+
+    await sesClient
+      .send(new DeleteContactListCommand({ ContactListName: contactListName }))
       .catch((error) => {
         if (!(error instanceof NotFoundException)) throw error;
       });
