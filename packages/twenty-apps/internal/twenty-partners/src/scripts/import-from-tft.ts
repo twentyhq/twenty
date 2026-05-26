@@ -236,12 +236,23 @@ async function main() {
   // enforces uniqueness on domain, so dedup must be domain-aware: the same company
   // can arrive under different names (e.g. "Acme" vs "acme.com") across TFT people,
   // opps and content, and creating a second one collides on the domain constraint.
-  const existingCompanies = edges(
-    await local.query({
-      companies: { __args: { filter: {}, first: 500 }, edges: { node: { id: true, name: true, domainName: { primaryLinkUrl: true } } } },
-    } as any),
-    'companies',
-  );
+  // Page through ALL companies (not just the first 500): these dedupe maps must
+  // be complete, or upsertCompany would create domain-colliding duplicates for
+  // companies that live beyond the first page in a larger workspace.
+  const existingCompanies: any[] = [];
+  let companiesCursor: string | undefined;
+  for (;;) {
+    const page: any = await local.query({
+      companies: {
+        __args: { filter: {}, first: 200, ...(companiesCursor ? { after: companiesCursor } : {}) },
+        edges: { node: { id: true, name: true, domainName: { primaryLinkUrl: true } } },
+        pageInfo: { hasNextPage: true, endCursor: true },
+      },
+    } as any);
+    existingCompanies.push(...edges(page, 'companies'));
+    if (!page?.companies?.pageInfo?.hasNextPage) break;
+    companiesCursor = page.companies.pageInfo.endCursor;
+  }
   const companyIdByName = new Map<string, string>(existingCompanies.map((n: any) => [n.name, n.id]));
   const companyIdByDomain = new Map<string, string>();
   for (const c of existingCompanies) {
@@ -261,7 +272,11 @@ async function main() {
       : [],
   );
 
-  const contentNames = uniq(contentRecords.map((c: any) => c.name || 'Partner content'));
+  // Unnamed content upserts by name, so a constant fallback would make every
+  // unnamed record collide on one key (collapsing them on re-run). Key the
+  // fallback on the TFT id so each unnamed record stays distinct.
+  const contentName = (c: any): string => c.name || `Partner content ${c.id}`;
+  const contentNames = uniq(contentRecords.map(contentName));
   const contentIdByName = new Map<string, string>(
     contentNames.length
       ? edges(
@@ -299,18 +314,24 @@ async function main() {
         } as any);
         id = created.createCompany.id;
       } catch (err) {
-        // Fallback: domain collided with a company beyond the 500 we indexed.
-        // Find it by domain and reuse instead of failing the whole import.
+        // Fallback: createCompany failed, almost certainly because the domain
+        // already exists (Twenty enforces a unique domain) on a company we
+        // didn't index. Re-find it and reuse instead of failing the import.
+        // `ilike` is a substring match — and the stored value carries an
+        // https:// prefix so we can't `eq` the normalized form — so it can
+        // return the wrong company ("acme.com" also matches "notacme.com" or
+        // "acme.com.br"). Confirm an exact normalized-domain match before reuse.
         if (!nd) throw err;
         await pace();
-        const found = edges(
+        const candidates = edges(
           await local.query({
-            companies: { __args: { filter: { domainName: { primaryLinkUrl: { ilike: `%${nd}%` } } }, first: 1 }, edges: { node: { id: true } } },
+            companies: { __args: { filter: { domainName: { primaryLinkUrl: { ilike: `%${nd}%` } } }, first: 20 }, edges: { node: { id: true, domainName: { primaryLinkUrl: true } } } },
           } as any),
           'companies',
         );
-        if (!found[0]?.id) throw err;
-        id = found[0].id;
+        const match = candidates.find((c: any) => normDomain(c.domainName?.primaryLinkUrl) === nd);
+        if (!match?.id) throw err;
+        id = match.id;
         console.log(`[import] company "${name}" reused existing by domain ${nd}`);
       }
     }
@@ -437,7 +458,7 @@ async function main() {
   let contentCreated = 0;
   let contentUpdated = 0;
   for (const c of contentRecords) {
-    const name = c.name || 'Partner content';
+    const name = contentName(c);
     const partnerId = c.partnerPerson?.id ? localPartnerIdByTftPersonId.get(c.partnerPerson.id) : undefined;
     const customerCompanyId = await upsertCompany(c.customerCompany?.name, c.customerCompany?.domainName?.primaryLinkUrl);
     const data: Record<string, unknown> = {
