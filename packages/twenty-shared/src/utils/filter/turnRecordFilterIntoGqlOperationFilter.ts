@@ -584,22 +584,17 @@ const buildDirectFieldGqlOperationFilter = ({
         })
         .parse(recordFilter.value);
 
-      const recordIdsWithCurrentWorkspaceMember =
-        isCurrentWorkspaceMemberSelected
-          ? [
-              ...selectedRecordIds,
-              filterValueDependencies?.currentWorkspaceMemberId,
-            ]
-          : selectedRecordIds;
+      const recordIds = [
+        ...selectedRecordIds,
+        ...(isCurrentWorkspaceMemberSelected
+          ? [filterValueDependencies?.currentWorkspaceMemberId]
+          : []),
+        ...(isCurrentRecordSelected
+          ? [filterValueDependencies?.currentRecordId]
+          : []),
+      ].filter(isDefined);
 
-      const recordIds = isCurrentRecordSelected
-        ? [
-            ...recordIdsWithCurrentWorkspaceMember,
-            filterValueDependencies?.currentRecordId,
-          ]
-        : recordIdsWithCurrentWorkspaceMember;
-
-      if (!isDefined(recordIds) || recordIds.length === 0) return;
+      if (recordIds.length === 0) return;
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
