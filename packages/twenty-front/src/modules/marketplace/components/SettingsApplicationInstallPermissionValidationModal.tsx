@@ -34,23 +34,10 @@ const StyledFullscreenContainer = styled.div`
   width: 100%;
 `;
 
-const StyledBackLink = styled.button`
-  align-items: center;
-  background: none;
-  border: none;
-  color: ${themeCssVariables.font.color.secondary};
-  cursor: pointer;
-  display: flex;
-  font-size: ${themeCssVariables.font.size.md};
-  gap: ${themeCssVariables.spacing[1]};
+const StyledLightButton = styled(LightButton)`
   left: ${themeCssVariables.spacing[4]};
-  padding: ${themeCssVariables.spacing[2]};
   position: absolute;
   top: ${themeCssVariables.spacing[4]};
-
-  &:hover {
-    color: ${themeCssVariables.font.color.primary};
-  }
 `;
 
 const StyledContent = styled.div`
@@ -73,9 +60,9 @@ const StyledTitle = styled.div`
 `;
 
 const StyledPermissionsCard = styled.div`
+  background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
-  background: ${themeCssVariables.background.primary};
   margin-bottom: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[4]};
 `;
@@ -138,13 +125,11 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
       overlay="transparent"
     >
       <StyledFullscreenContainer>
-        <StyledBackLink onClick={handleClose}>
-          <LightButton
-            Icon={IconChevronLeft}
-            title={t`Back to settings`}
-            onClick={handleClose}
-          />
-        </StyledBackLink>
+        <StyledLightButton
+          Icon={IconChevronLeft}
+          title={t`Back to settings`}
+          onClick={handleClose}
+        />
 
         <StyledContent>
           <StyledAppConnectionHeaderContainer>
