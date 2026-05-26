@@ -14,14 +14,13 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
+import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
+import { getMetadataRelatedMetadataNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-related-metadata-names.util';
+import { getMetadataSerializedRelationNames } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-serialized-relation-names.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import {
-  WORKSPACE_CACHE_KEYS_V2,
-  type WorkspaceCacheKeyName,
-} from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 // 2-8 dropped calendarChannel/messageChannel/messageFolder standard objects, which
@@ -221,14 +220,23 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveO
 
     await this.fieldMetadataRepository.insert(fieldMetadataRowsWithApplication);
 
-    // The flat-maps / ORM entity metadata cache is not version-stamped, so bumping
-    // the metadata version alone leaves running workers serving stale entity metadata
-    // (missing the restored fields). Flush the whole workspace cache so they recompute
-    // from the updated metadata, then bump the version.
-    await this.workspaceCacheService.flush(
-      workspaceId,
-      Object.keys(WORKSPACE_CACHE_KEYS_V2) as WorkspaceCacheKeyName[],
-    );
+    // Derive the affected cache keys from the fieldMetadata metadata name using
+    // the same utility set the migration runner uses, so the flush scope stays
+    // in sync with the canonical dependency graph automatically.
+    const fieldMetadataRelatedNames = [
+      'fieldMetadata',
+      ...getMetadataRelatedMetadataNames('fieldMetadata'),
+      ...getMetadataSerializedRelationNames('fieldMetadata'),
+    ] as const;
+    const cacheKeysToFlush = [
+      ...new Set(fieldMetadataRelatedNames.map(getMetadataFlatEntityMapsKey)),
+    ];
+
+    await this.workspaceCacheService.flush(workspaceId, [
+      ...cacheKeysToFlush,
+      'ORMEntityMetadatas',
+      'graphQLResolverNameMap',
+    ]);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
