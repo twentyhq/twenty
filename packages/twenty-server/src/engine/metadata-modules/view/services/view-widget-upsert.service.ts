@@ -750,7 +750,9 @@ export class ViewWidgetUpsertService {
             inputFilter.positionInViewFilterGroup ||
           existingFilter.subFieldName !== inputFilter.subFieldName ||
           existingFilter.relationTargetFieldMetadataId !==
-            (inputFilter.relationTargetFieldMetadataId ?? null);
+            (inputFilter.relationTargetFieldMetadataId ??
+              existingFilter.relationTargetFieldMetadataId ??
+              null);
 
         if (hasChanged) {
           const {
@@ -763,7 +765,8 @@ export class ViewWidgetUpsertService {
               fieldMetadataId: inputFilter.fieldMetadataId,
               viewFilterGroupId: inputFilter.viewFilterGroupId,
               relationTargetFieldMetadataId:
-                inputFilter.relationTargetFieldMetadataId,
+                inputFilter.relationTargetFieldMetadataId ??
+                existingFilter.relationTargetFieldMetadataId,
             },
             flatEntityMaps: {
               flatFieldMetadataMaps,
@@ -786,7 +789,9 @@ export class ViewWidgetUpsertService {
             subFieldName:
               inputFilter.subFieldName ?? existingFilter.subFieldName,
             relationTargetFieldMetadataId:
-              inputFilter.relationTargetFieldMetadataId ?? null,
+              inputFilter.relationTargetFieldMetadataId ??
+              existingFilter.relationTargetFieldMetadataId ??
+              null,
             relationTargetFieldMetadataUniversalIdentifier,
             updatedAt: now,
           });
