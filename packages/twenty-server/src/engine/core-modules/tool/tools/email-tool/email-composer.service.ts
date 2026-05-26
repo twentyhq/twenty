@@ -29,7 +29,6 @@ import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspac
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
@@ -46,7 +45,6 @@ export class EmailComposerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
@@ -221,13 +219,20 @@ export class EmailComposerService {
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id);
 
-      const { stream } = await this.fileService.getFileStreamById({
+      const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
         fileFolder,
       });
 
-      const buffer = await streamToBuffer(stream);
+      if (fileStream === null) {
+        throw new EmailToolException(
+          `Files not found: ${fileMetadata.name} (${fileMetadata.id})`,
+          EmailToolExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      const buffer = await streamToBuffer(fileStream.stream);
 
       attachments.push({
         filename: fileMetadata.name,
@@ -300,27 +305,6 @@ export class EmailComposerService {
       },
       authContext,
     );
-  }
-
-  private async refreshConnectedAccountTokens(
-    connectedAccount: ConnectedAccountEntity,
-    workspaceId: string,
-    messageChannelId: string,
-  ): Promise<ConnectedAccountEntity> {
-    const { accessToken, refreshToken } =
-      await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-        {
-          connectedAccount,
-          workspaceId,
-          messageChannelId,
-        },
-      );
-
-    return {
-      ...connectedAccount,
-      accessToken,
-      refreshToken,
-    };
   }
 
   async composeEmail(
@@ -401,14 +385,6 @@ export class EmailComposerService {
       );
     }
 
-    const connectedAccountWithFreshTokens = isDefined(messageChannel)
-      ? await this.refreshConnectedAccountTokens(
-          connectedAccount,
-          workspaceId,
-          messageChannel.id,
-        )
-      : connectedAccount;
-
     const attachments = await this.getAttachments(
       files || [],
       workspaceId,
@@ -441,7 +417,7 @@ export class EmailComposerService {
         plainTextBody,
         sanitizedHtmlBody,
         attachments,
-        connectedAccount: connectedAccountWithFreshTokens,
+        connectedAccount,
         messageChannelId: messageChannel?.id,
         shouldPersistMessage: isDefined(messageChannel),
         inReplyTo,

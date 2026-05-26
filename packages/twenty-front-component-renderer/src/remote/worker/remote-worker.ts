@@ -163,6 +163,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.enqueueSnackbar;
     frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
     frontComponentHostCommunicationApi.updateProgress = hostApi.updateProgress;
+    frontComponentHostCommunicationApi.copyToClipboard =
+      hostApi.copyToClipboard;
   };
 
 const onConfirmationModalResult: WorkerExports['onConfirmationModalResult'] =

@@ -274,16 +274,23 @@ export class CodeInterpreterTool implements Tool {
           continue;
         }
 
-        const { buffer, mimeType } = await this.fileService.getFileContentById({
+        const fileContent = await this.fileService.getFileContentById({
           fileId: file.fileId,
           workspaceId,
           fileFolder: FileFolder.AgentChat,
         });
 
+        if (fileContent === null) {
+          this.logger.warn(
+            `File ${file.filename} no longer available (id=${file.fileId})`,
+          );
+          continue;
+        }
+
         inputFiles.push({
           filename: file.filename,
-          content: buffer,
-          mimeType,
+          content: fileContent.buffer,
+          mimeType: fileContent.mimeType,
         });
       } catch (error) {
         this.logger.warn(`Failed to resolve file ${file.filename}`, error);

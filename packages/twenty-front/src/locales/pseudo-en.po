@@ -231,6 +231,11 @@ msgstr ""
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr ""
 
+#. js-lingui-id: u1mVnV
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "{appDisplayName} would like to:"
+msgstr ""
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -1077,6 +1082,12 @@ msgstr ""
 msgid "Add In-Reply-To"
 msgstr ""
 
+#. js-lingui-id: iT7UeX
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
+msgid "Add Index"
+msgstr ""
+
 #. js-lingui-id: 7XzAKI
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
 msgid "Add inputs to your form"
@@ -1378,11 +1389,6 @@ msgstr ""
 #. js-lingui-id: cBdysG
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Advanced Encryption"
-msgstr ""
-
-#. js-lingui-id: +uqBul
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
-msgid "Advanced feature to improve the performance of queries and to enforce unicity constraints."
 msgstr ""
 
 #. js-lingui-id: tMFFwF
@@ -1905,8 +1911,10 @@ msgstr ""
 #: src/modules/object-metadata/hooks/useUpdateOneObjectMetadataItem.ts
 #: src/modules/object-metadata/hooks/useUpdateOneFieldMetadataItem.ts
 #: src/modules/object-metadata/hooks/useDeleteOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useDeleteOneIndexMetadataItem.ts
 #: src/modules/object-metadata/hooks/useDeleteOneFieldMetadataItem.ts
 #: src/modules/object-metadata/hooks/useCreateOneObjectMetadataItem.ts
+#: src/modules/object-metadata/hooks/useCreateOneIndexMetadataItem.ts
 #: src/modules/object-metadata/hooks/useCreateOneFieldMetadataItem.ts
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
 #: src/modules/logic-functions/hooks/usePersistLogicFunction.ts
@@ -2123,6 +2131,11 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/utils/getActionHeaderTypeOrThrow.ts
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 msgid "Application"
+msgstr ""
+
+#. js-lingui-id: N+cUnB
+#: src/modules/front-components/hooks/useFrontComponentExecutionContext.ts
+msgid "Application copied \"{preview}\" to your clipboard"
 msgstr ""
 
 #. js-lingui-id: vdieHo
@@ -2541,7 +2554,7 @@ msgid "Authorization failed. Please try again."
 msgstr ""
 
 #. js-lingui-id: yIVrHZ
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 msgid "Authorize"
 msgstr ""
 
@@ -2556,7 +2569,7 @@ msgid "Authorized URL copied to clipboard"
 msgstr ""
 
 #. js-lingui-id: 8RmQki
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 msgid "Authorizing..."
 msgstr ""
 
@@ -2638,6 +2651,11 @@ msgstr ""
 #. js-lingui-id: Dht9W3
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
+msgstr ""
+
+#. js-lingui-id: 9aZHfH
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "Back to settings"
 msgstr ""
 
 #. js-lingui-id: GtJbUa
@@ -2810,6 +2828,11 @@ msgstr ""
 #. js-lingui-id: JLxwQS
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
+msgstr ""
+
+#. js-lingui-id: GsXRxc
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
+msgid "BTREE (default, good for sorting and equality)"
 msgstr ""
 
 #. js-lingui-id: vwZV+4
@@ -2995,7 +3018,6 @@ msgstr ""
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
-#: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -3007,6 +3029,7 @@ msgstr ""
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr ""
@@ -5088,6 +5111,7 @@ msgstr ""
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobRowDropdownMenu.tsx
@@ -5228,6 +5252,11 @@ msgstr ""
 #. js-lingui-id: DgHnjS
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "Delete this agent"
+msgstr ""
+
+#. js-lingui-id: +RYIn9
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
+msgid "Delete this index?"
 msgstr ""
 
 #. js-lingui-id: T6S2Ns
@@ -5699,6 +5728,11 @@ msgstr ""
 #. js-lingui-id: GhTFTJ
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputSchemaBuilder.tsx
 msgid "e.g., summary, status, count"
+msgstr ""
+
+#. js-lingui-id: npNQJR
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+msgid "Each index speeds up reads on the fields it covers, but slows down every insert and update, and uses disk space. Only add an index when you know which queries it serves."
 msgstr ""
 
 #. js-lingui-id: 79hamt
@@ -7250,6 +7284,7 @@ msgstr ""
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
@@ -7716,6 +7751,16 @@ msgstr ""
 msgid "Get your subscription"
 msgstr ""
 
+#. js-lingui-id: XXtAx5
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
+msgid "GIN (full-text search and JSONB)"
+msgstr ""
+
+#. js-lingui-id: lwDz5R
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Global search"
+msgstr ""
+
 #. js-lingui-id: sr0UJD
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "Go Back"
@@ -7987,6 +8032,11 @@ msgstr ""
 msgid "Hide label"
 msgstr ""
 
+#. js-lingui-id: y9sG4l
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
+msgid "Hide system indexes"
+msgstr ""
+
 #. js-lingui-id: i0qMbr
 #: src/modules/navigation/components/MainNavigationDrawerTabsRow.tsx
 msgid "Home"
@@ -8178,11 +8228,6 @@ msgstr ""
 msgid "if"
 msgstr ""
 
-#. js-lingui-id: K6ChR5
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-msgid "If disabled, use advanced search filters to find these records"
-msgstr ""
-
 #. js-lingui-id: bTDz/2
 #: src/modules/settings/admin-panel/health-status/maintenance-mode/components/SettingsAdminMaintenanceMode.tsx
 msgid "If there's no link, no button will appear."
@@ -8358,11 +8403,6 @@ msgstr ""
 msgid "Include emails where all participants share the same domain."
 msgstr ""
 
-#. js-lingui-id: Wyip/m
-#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
-msgid "Include in default search"
-msgstr ""
-
 #. js-lingui-id: mtGDyy
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Incomplete"
@@ -8378,9 +8418,18 @@ msgstr ""
 msgid "Index"
 msgstr ""
 
+#. js-lingui-id: O+81DP
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+msgid "Index created"
+msgstr ""
+
+#. js-lingui-id: R6uY2r
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
+msgid "Index deleted"
+msgstr ""
+
 #. js-lingui-id: pZ/USH
-#: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
-#: src/modules/settings/data-model/object-details/components/tabs/ObjectIndexes.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 msgid "Indexes"
 msgstr ""
 
@@ -8458,6 +8507,11 @@ msgstr ""
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
+msgstr ""
+
+#. js-lingui-id: XOHdRf
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "Install {appDisplayName} on your workspace"
 msgstr ""
 
 #. js-lingui-id: 4ZM8/a
@@ -10321,6 +10375,12 @@ msgstr ""
 msgid "New Group"
 msgstr ""
 
+#. js-lingui-id: //H2Cs
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+msgid "New Index"
+msgstr ""
+
 #. js-lingui-id: o8MyXb
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 msgid "New key"
@@ -10748,6 +10808,11 @@ msgstr ""
 #. js-lingui-id: 1jgsYC
 #: src/modules/settings/accounts/components/message-folders/SettingsMessageFoldersEmptyStateCard.tsx
 msgid "No folders found for this account"
+msgstr ""
+
+#. js-lingui-id: 9kCSLK
+#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+msgid "No indexes match your filters."
 msgstr ""
 
 #. js-lingui-id: gIrKyO
@@ -11307,6 +11372,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -11546,6 +11612,7 @@ msgid "Optional secret used to compute the HMAC signature for webhook payloads"
 msgstr ""
 
 #. js-lingui-id: 0zpgxV
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/modules/ui/layout/dropdown/components/OptionsDropdownMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectForm.tsx
@@ -11957,6 +12024,16 @@ msgstr ""
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 msgid "Pick an object"
+msgstr ""
+
+#. js-lingui-id: JHXjkT
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+msgid "Pick one or more fields. The order you select them in becomes the column order in the index — important for composite queries. For composite fields like Address, pick the specific sub-column to index."
+msgstr ""
+
+#. js-lingui-id: X1kz7Q
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+msgid "Pick the index type. BTREE covers most queries; GIN is for full-text and JSONB."
 msgstr ""
 
 #. js-lingui-id: N0+GsR
@@ -12410,6 +12487,11 @@ msgstr ""
 msgid "quarters"
 msgstr ""
 
+#. js-lingui-id: Z9go8W
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
+msgid "Queries that relied on it will fall back to a sequential scan. You can recreate it later."
+msgstr ""
+
 #. js-lingui-id: /IUt/5
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminWorkerHealthStatus.tsx
 msgid "Queue information is not available because the worker is down"
@@ -12794,6 +12876,11 @@ msgstr ""
 #. js-lingui-id: 2HpFUd
 #: src/modules/object-record/record-table/empty-state/components/RecordTableEmptyStateSoftDelete.tsx
 msgid "Remove Deleted filter"
+msgstr ""
+
+#. js-lingui-id: /hrkZs
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
+msgid "Remove field"
 msgstr ""
 
 #. js-lingui-id: 9VZ6f0
@@ -13467,7 +13554,7 @@ msgid "Search an assigned {roleTargetDisplayName}..."
 msgstr ""
 
 #. js-lingui-id: k7kp5/
-#: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Search an index..."
 msgstr ""
 
@@ -13765,6 +13852,11 @@ msgstr ""
 #. js-lingui-id: OMoA3j
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "Select a date"
+msgstr ""
+
+#. js-lingui-id: 1YV5aa
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm.tsx
+msgid "Select a field"
 msgstr ""
 
 #. js-lingui-id: bP/w4M
@@ -14222,6 +14314,11 @@ msgstr ""
 msgid "Show only rows with errors"
 msgstr ""
 
+#. js-lingui-id: 3UVA3z
+#: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectSearchSection.tsx
+msgid "Show this object's records in the command menu (⌘K)."
+msgstr ""
+
 #. js-lingui-id: TJ4tz9
 #: src/modules/side-panel/pages/page-layout/constants/settings/ChartConfigurationSettingLabels.ts
 msgid "Show value in center"
@@ -14517,6 +14614,11 @@ msgstr ""
 #. js-lingui-id: 65A04M
 #: src/pages/settings/profile/appearance/components/LocalePicker.tsx
 msgid "Spanish"
+msgstr ""
+
+#. js-lingui-id: pyfee5
+#: src/modules/settings/data-model/object-details/components/tabs/ObjectSettings.tsx
+msgid "Speed up reads on the fields you filter or sort by most. Each index also slows down writes and uses disk space, so add them with intent."
 msgstr ""
 
 #. js-lingui-id: gsifzp
@@ -16005,6 +16107,7 @@ msgstr ""
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/components/WorkflowOutputFieldTypeSelector.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOIdentitiesProvidersForm.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
+#: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 msgid "Type"
 msgstr ""
@@ -16573,6 +16676,11 @@ msgstr ""
 #: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkills.tsx
 msgid "Use filter to see existing tools or create your own"
+msgstr ""
+
+#. js-lingui-id: 1Y7Unr
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
+msgid "Use indexes sparingly"
 msgstr ""
 
 #. js-lingui-id: oTTQsc
@@ -17299,6 +17407,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/SettingsNewObject.tsx
+#: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx

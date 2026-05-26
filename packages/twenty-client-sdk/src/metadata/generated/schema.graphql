@@ -247,7 +247,7 @@ type FieldPermission {
 type RolePermissionFlag {
   id: UUID!
   roleId: UUID!
-  flag: PermissionFlagType!
+  flag: String!
 }
 
 type ApiKeyForRole {
@@ -523,6 +523,7 @@ type IndexField {
   id: UUID!
   fieldMetadataId: UUID!
   order: Float!
+  subFieldName: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -2476,6 +2477,18 @@ type ImapSmtpCaldavConnectionSuccess {
   connectedAccountId: String!
 }
 
+type Webhook {
+  id: UUID!
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String!
+  applicationId: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  deletedAt: DateTime
+}
+
 type ToolIndexEntry {
   name: String!
   description: String!
@@ -2902,18 +2915,6 @@ type MinimalMetadata {
   collectionHashes: [CollectionHash!]!
 }
 
-type Webhook {
-  id: UUID!
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String!
-  applicationId: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  deletedAt: DateTime
-}
-
 type Query {
   navigationMenuItems: [NavigationMenuItem!]!
   navigationMenuItem(id: UUID!): NavigationMenuItem
@@ -2982,6 +2983,8 @@ type Query {
   getRoles: [Role!]!
   getToolIndex: [ToolIndexEntry!]!
   getToolInputSchema(toolName: String!): JSON
+  webhooks: [Webhook!]!
+  webhook(id: UUID!): Webhook
   field(
     """The id of the record to find."""
     id: UUID!
@@ -2999,8 +3002,6 @@ type Query {
   myMessageChannels(connectedAccountId: UUID): [MessageChannel!]!
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
-  webhooks: [Webhook!]!
-  webhook(id: UUID!): Webhook
   minimalMetadata: MinimalMetadata!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
@@ -3209,6 +3210,8 @@ type Mutation {
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
+  createOneIndex(input: CreateOneIndexInput!): Index!
+  deleteOneIndex(input: DeleteOneIndexInput!): Index!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3222,6 +3225,9 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
+  createWebhook(input: CreateWebhookInput!): Webhook!
+  updateWebhook(input: UpdateWebhookInput!): Webhook!
+  deleteWebhook(id: UUID!): Webhook!
   createOneField(input: CreateOneFieldMetadataInput!): Field!
   updateOneField(input: UpdateOneFieldMetadataInput!): Field!
   deleteOneField(input: DeleteOneFieldInput!): Field!
@@ -3238,9 +3244,6 @@ type Mutation {
   deleteEmailGroupChannel(id: UUID!): MessageChannel!
   deleteConnectedAccount(id: UUID!): ConnectedAccountPublicDTO!
   updateCalendarChannel(input: UpdateCalendarChannelInput!): CalendarChannel!
-  createWebhook(input: CreateWebhookInput!): Webhook!
-  updateWebhook(input: UpdateWebhookInput!): Webhook!
-  deleteWebhook(id: UUID!): Webhook!
   createChatThread: AgentChatThread!
   sendChatMessage(threadId: UUID!, text: String!, messageId: UUID!, browsingContext: JSON, modelId: String, fileAttachments: [FileAttachmentInput!]): SendChatMessageResult!
   stopAgentChatStream(threadId: UUID!): Boolean!
@@ -3925,6 +3928,27 @@ input UpdateObjectPayload {
   isSearchable: Boolean
 }
 
+input CreateOneIndexInput {
+  """The custom index to create"""
+  index: CreateIndexInput!
+}
+
+input CreateIndexInput {
+  objectMetadataId: UUID!
+  fields: [CreateIndexFieldInput!]!
+  indexType: IndexType! = BTREE
+}
+
+input CreateIndexFieldInput {
+  fieldMetadataId: UUID!
+  subFieldName: String
+}
+
+input DeleteOneIndexInput {
+  """The id of the custom index to delete."""
+  id: UUID!
+}
+
 input CreateAgentInput {
   name: String
   label: String!
@@ -4005,7 +4029,7 @@ input ObjectPermissionInput {
 
 input UpsertPermissionFlagsInput {
   roleId: UUID!
-  permissionFlagKeys: [PermissionFlagType!]!
+  permissionFlagKeys: [String!]!
 }
 
 input UpsertFieldPermissionsInput {
@@ -4045,6 +4069,29 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input CreateWebhookInput {
+  id: UUID
+  targetUrl: String!
+  operations: [String!]!
+  description: String
+  secret: String
+}
+
+input UpdateWebhookInput {
+  """The id of the webhook to update"""
+  id: UUID!
+
+  """The webhook fields to update"""
+  update: UpdateWebhookInputUpdates!
+}
+
+input UpdateWebhookInputUpdates {
+  targetUrl: String
+  operations: [String!]
+  description: String
+  secret: String
 }
 
 input CreateOneFieldMetadataInput {
@@ -4182,29 +4229,6 @@ input UpdateCalendarChannelInputUpdates {
   isContactAutoCreationEnabled: Boolean
   contactAutoCreationPolicy: CalendarChannelContactAutoCreationPolicy
   isSyncEnabled: Boolean
-}
-
-input CreateWebhookInput {
-  id: UUID
-  targetUrl: String!
-  operations: [String!]!
-  description: String
-  secret: String
-}
-
-input UpdateWebhookInput {
-  """The id of the webhook to update"""
-  id: UUID!
-
-  """The webhook fields to update"""
-  update: UpdateWebhookInputUpdates!
-}
-
-input UpdateWebhookInputUpdates {
-  targetUrl: String
-  operations: [String!]
-  description: String
-  secret: String
 }
 
 input FileAttachmentInput {

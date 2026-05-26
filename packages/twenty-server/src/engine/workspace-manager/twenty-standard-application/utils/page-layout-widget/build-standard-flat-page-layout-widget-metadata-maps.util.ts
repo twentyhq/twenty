@@ -66,17 +66,14 @@ const RECORD_PAGE_FIELDS_VIEW_NAME_BY_OBJECT: Partial<
   Record<AllStandardObjectName, string>
 > = {
   blocklist: 'blocklistRecordPageFields',
-  calendarChannel: 'calendarChannelRecordPageFields',
   calendarChannelEventAssociation:
     'calendarChannelEventAssociationRecordPageFields',
   calendarEventParticipant: 'calendarEventParticipantRecordPageFields',
   company: 'companyRecordPageFields',
-  messageChannel: 'messageChannelRecordPageFields',
   messageChannelMessageAssociation:
     'messageChannelMessageAssociationRecordPageFields',
   messageChannelMessageAssociationMessageFolder:
     'messageChannelMessageAssociationMessageFolderRecordPageFields',
-  messageFolder: 'messageFolderRecordPageFields',
   messageParticipant: 'messageParticipantRecordPageFields',
   note: 'noteRecordPageFields',
   opportunity: 'opportunityRecordPageFields',

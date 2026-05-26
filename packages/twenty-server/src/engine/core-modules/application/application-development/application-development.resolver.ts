@@ -20,6 +20,7 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -215,6 +216,18 @@ export class ApplicationDevelopmentResolver {
     if (!allowedApplicationFileFolders.includes(fileFolder)) {
       throw new ApplicationException(
         `Invalid fileFolder for application file upload. Allowed values: ${allowedApplicationFileFolders.join(', ')}`,
+        ApplicationExceptionCode.INVALID_INPUT,
+      );
+    }
+
+    const pathValidationResult = validateFilePath({
+      resourcePath: filePath,
+      fileFolder,
+    });
+
+    if (!pathValidationResult.isValid) {
+      throw new ApplicationException(
+        pathValidationResult.error,
         ApplicationExceptionCode.INVALID_INPUT,
       );
     }
