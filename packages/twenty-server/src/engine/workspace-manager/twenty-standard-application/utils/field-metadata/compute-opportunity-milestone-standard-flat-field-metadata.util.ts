@@ -493,6 +493,28 @@ export const buildOpportunityMilestoneStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  taskTargets: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'taskTargets',
+      label: i18nLabel(msg`Tasks`),
+      description: i18nLabel(msg`Tasks linked to this milestone.`),
+      icon: 'IconCheckbox',
+      isNullable: true,
+      targetObjectName: 'taskTarget',
+      targetFieldName: 'targetOpportunityMilestone',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   dependsOnEdges: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,

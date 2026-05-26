@@ -9,6 +9,7 @@ import { FileWidget } from '@/page-layout/widgets/files/components/FileWidget';
 import { FrontComponentWidgetRenderer } from '@/page-layout/widgets/front-component/components/FrontComponentWidgetRenderer';
 import { GraphWidgetRenderer } from '@/page-layout/widgets/graph/components/GraphWidgetRenderer';
 import { IframeWidget } from '@/page-layout/widgets/iframe/components/IframeWidget';
+import { MilestonesWidget } from '@/page-layout/widgets/milestones/components/MilestonesWidget';
 import { NoteWidget } from '@/page-layout/widgets/notes/components/NoteWidget';
 import { StandaloneRichTextWidgetRenderer } from '@/page-layout/widgets/standalone-rich-text/components/StandaloneRichTextWidgetRenderer';
 import { TaskWidget } from '@/page-layout/widgets/tasks/components/TaskWidget';
@@ -44,6 +45,9 @@ export const WidgetContentRenderer = ({
 
     case WidgetType.TASKS:
       return <TaskWidget widget={widget} />;
+
+    case WidgetType.MILESTONES:
+      return <MilestonesWidget widget={widget} />;
 
     case WidgetType.NOTES:
       return <NoteWidget widget={widget} />;

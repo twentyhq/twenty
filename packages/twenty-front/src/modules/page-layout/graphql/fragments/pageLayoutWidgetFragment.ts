@@ -187,6 +187,9 @@ export const PAGE_LAYOUT_WIDGET_FRAGMENT = gql`
       ... on TasksConfiguration {
         configurationType
       }
+      ... on MilestonesConfiguration {
+        configurationType
+      }
       ... on TimelineConfiguration {
         configurationType
       }

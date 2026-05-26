@@ -10,6 +10,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type AttachmentWorkspaceEntity } from 'src/modules/attachment/standard-objects/attachment.workspace-entity';
 import { type OpportunityMilestoneDependencyWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity-milestone-dependency.workspace-entity';
 import { type OpportunityWorkspaceEntity } from 'src/modules/opportunity/standard-objects/opportunity.workspace-entity';
+import { type TaskTargetWorkspaceEntity } from 'src/modules/task/standard-objects/task-target.workspace-entity';
 import { type TimelineActivityWorkspaceEntity } from 'src/modules/timeline/standard-objects/timeline-activity.workspace-entity';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
@@ -40,6 +41,7 @@ export class OpportunityMilestoneWorkspaceEntity extends BaseWorkspaceEntity {
   assigneeId: string | null;
   attachments: EntityRelation<AttachmentWorkspaceEntity[]>;
   timelineActivities: EntityRelation<TimelineActivityWorkspaceEntity[]>;
+  taskTargets: EntityRelation<TaskTargetWorkspaceEntity[]>;
   // Edges where this milestone is the *dependent* (i.e. its predecessors).
   dependsOnEdges: EntityRelation<OpportunityMilestoneDependencyWorkspaceEntity[]>;
   // Edges where this milestone is the *required* one (i.e. milestones that wait on it).

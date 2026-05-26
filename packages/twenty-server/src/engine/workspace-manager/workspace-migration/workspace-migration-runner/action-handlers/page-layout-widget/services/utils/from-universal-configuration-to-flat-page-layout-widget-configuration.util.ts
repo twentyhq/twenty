@@ -348,6 +348,7 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     case WidgetConfigurationType.VIEW:
     case WidgetConfigurationType.TIMELINE:
     case WidgetConfigurationType.TASKS:
+    case WidgetConfigurationType.MILESTONES:
     case WidgetConfigurationType.NOTES:
     case WidgetConfigurationType.FILES:
     case WidgetConfigurationType.EMAILS:

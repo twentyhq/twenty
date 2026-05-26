@@ -65,6 +65,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       TASKS: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.TASKS,
       ),
+      MILESTONES: validateSimpleRecordPageWidgetForCreation(
+        WidgetConfigurationType.MILESTONES,
+      ),
       NOTES: validateSimpleRecordPageWidgetForCreation(
         WidgetConfigurationType.NOTES,
       ),
@@ -118,6 +121,9 @@ export class FlatPageLayoutWidgetTypeValidatorService {
       ),
       TASKS: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.TASKS,
+      ),
+      MILESTONES: validateSimpleRecordPageWidgetForUpdate(
+        WidgetConfigurationType.MILESTONES,
       ),
       NOTES: validateSimpleRecordPageWidgetForUpdate(
         WidgetConfigurationType.NOTES,

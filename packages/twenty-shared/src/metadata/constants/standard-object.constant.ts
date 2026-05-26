@@ -2135,6 +2135,9 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: '20202020-7f16-4f16-8a16-1aa0b1ca7a16',
       },
+      taskTargets: {
+        universalIdentifier: '20202020-7f1a-4f1a-8a1a-1aa0b1ca7a1a',
+      },
       dependsOnEdges: {
         universalIdentifier: '20202020-7f18-4f18-8a18-1aa0b1ca7a18',
       },
@@ -2687,6 +2690,9 @@ export const STANDARD_OBJECTS = {
       targetOpportunity: {
         universalIdentifier: '20202020-6cb2-4c01-a9a5-aca3dbc11d41',
       },
+      targetOpportunityMilestone: {
+        universalIdentifier: '20202020-7b71-4b71-8b71-7b71b1ca7b71',
+      },
       createdBy: {
         universalIdentifier: '65fe2a53-45e4-4225-9711-b827f55e51cc',
       },
@@ -2715,6 +2721,9 @@ export const STANDARD_OBJECTS = {
       },
       opportunityIdIndex: {
         universalIdentifier: '6942e0ba-90f6-4c33-bf40-7f00b1ec35ab',
+      },
+      opportunityMilestoneIdIndex: {
+        universalIdentifier: '20202020-7b72-4b72-8b72-7b72b1ca7b72',
       },
     },
     views: {

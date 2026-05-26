@@ -139,6 +139,10 @@ export type TasksConfiguration = {
   configurationType: 'TASKS';
 };
 
+export type MilestonesConfiguration = {
+  configurationType: 'MILESTONES';
+};
+
 export type NotesConfiguration = {
   configurationType: 'NOTES';
 };
@@ -187,6 +191,7 @@ export type PageLayoutWidgetConfiguration =
   | FrontComponentConfiguration
   | TimelineConfiguration
   | TasksConfiguration
+  | MilestonesConfiguration
   | NotesConfiguration
   | FilesConfiguration
   | EmailsConfiguration

@@ -187,6 +187,7 @@ export type {
   FrontComponentConfiguration,
   TimelineConfiguration,
   TasksConfiguration,
+  MilestonesConfiguration,
   NotesConfiguration,
   FilesConfiguration,
   EmailsConfiguration,
