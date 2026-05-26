@@ -265,7 +265,7 @@ export const Authorize = () => {
             <StyledErrorText>{authorizeError}</StyledErrorText>
           )}
           <AuthorizeActionButtons
-            cancelTo={AppPath.Index}
+            onCancel={() => navigate(AppPath.Index)}
             onAuthorize={handleAuthorize}
             isLoading={isAuthorizing}
           />
