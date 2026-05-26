@@ -16,6 +16,7 @@ import { destroyOnePageLayoutTab } from 'test/integration/metadata/suites/page-l
 import { createOnePageLayoutWidget } from 'test/integration/metadata/suites/page-layout-widget/utils/create-one-page-layout-widget.util';
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
+import { PageLayoutTabLayoutMode } from 'twenty-shared/types';
 
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -249,6 +250,56 @@ describe('Page layout widget creation should fail', () => {
           type: WidgetType.GRAPH,
           configuration:
             INVALID_HORIZONTAL_BAR_CHART_CONFIG_MISSING_GROUP_BY as unknown as CreatePageLayoutWidgetInput['configuration'],
+          gridPosition: DEFAULT_GRID_POSITION,
+        },
+      });
+
+      expectOneNotInternalServerErrorSnapshot({ errors });
+    });
+  });
+
+  describe('CANVAS tab widget cap', () => {
+    let canvasTabId: string;
+
+    beforeAll(async () => {
+      const { data } = await createOnePageLayoutTab({
+        expectToFail: false,
+        input: {
+          title: 'CANVAS Tab For Cap Test',
+          pageLayoutId: testPageLayoutId,
+          layoutMode: PageLayoutTabLayoutMode.CANVAS,
+        },
+      });
+
+      canvasTabId = data.createPageLayoutTab.id;
+
+      await createOnePageLayoutWidget({
+        expectToFail: false,
+        input: {
+          title: 'First widget on CANVAS tab',
+          pageLayoutTabId: canvasTabId,
+          type: WidgetType.IFRAME,
+          configuration: TEST_IFRAME_CONFIG,
+          gridPosition: DEFAULT_GRID_POSITION,
+        },
+      });
+    });
+
+    afterAll(async () => {
+      await destroyOnePageLayoutTab({
+        expectToFail: false,
+        input: { id: canvasTabId },
+      });
+    });
+
+    it('rejects a second widget on a CANVAS tab', async () => {
+      const { errors } = await createOnePageLayoutWidget({
+        expectToFail: true,
+        input: {
+          title: 'Second widget should be rejected',
+          pageLayoutTabId: canvasTabId,
+          type: WidgetType.IFRAME,
+          configuration: TEST_IFRAME_CONFIG,
           gridPosition: DEFAULT_GRID_POSITION,
         },
       });

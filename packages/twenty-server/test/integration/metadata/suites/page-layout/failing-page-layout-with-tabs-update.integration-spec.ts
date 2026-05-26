@@ -11,7 +11,11 @@ import {
 import { createOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/create-one-page-layout.util';
 import { destroyOnePageLayout } from 'test/integration/metadata/suites/page-layout/utils/destroy-one-page-layout.util';
 import { updateOnePageLayoutWithTabsAndWidgets } from 'test/integration/metadata/suites/page-layout/utils/update-one-page-layout-with-tabs-and-widgets.util';
-import { AggregateOperations, FieldMetadataType } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  FieldMetadataType,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 
@@ -56,6 +60,174 @@ describe('Page layout with tabs update should fail', () => {
     });
 
     expectOneNotInternalServerErrorSnapshot({ errors });
+  });
+
+  it('when moving a widget into an occupied CANVAS tab', async () => {
+    const { data: layoutData } = await createOnePageLayout({
+      expectToFail: false,
+      input: {
+        name: 'Move Into Occupied Canvas Layout',
+        type: PageLayoutType.RECORD_PAGE,
+      },
+    });
+
+    const testPageLayoutId = layoutData.createPageLayout.id;
+    const sourceTabId = v4();
+    const canvasTabId = v4();
+    const widgetToMoveId = v4();
+    const canvasWidgetId = v4();
+
+    try {
+      await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: false,
+        input: {
+          id: testPageLayoutId,
+          name: 'Move Into Occupied Canvas Layout',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: null,
+          tabs: [
+            {
+              id: sourceTabId,
+              title: 'Source Tab',
+              position: 0,
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              widgets: [
+                {
+                  id: widgetToMoveId,
+                  pageLayoutTabId: sourceTabId,
+                  title: 'Widget To Move',
+                  type: WidgetType.IFRAME,
+                  objectMetadataId: null,
+                  gridPosition: {
+                    row: 0,
+                    column: 0,
+                    rowSpan: 1,
+                    columnSpan: 1,
+                  },
+                  position: {
+                    layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                    index: 0,
+                  },
+                  configuration: {
+                    configurationType: WidgetConfigurationType.IFRAME,
+                    url: 'https://example.com/source',
+                  },
+                },
+              ],
+            },
+            {
+              id: canvasTabId,
+              title: 'Canvas Tab',
+              position: 1,
+              layoutMode: PageLayoutTabLayoutMode.CANVAS,
+              widgets: [
+                {
+                  id: canvasWidgetId,
+                  pageLayoutTabId: canvasTabId,
+                  title: 'Canvas Widget',
+                  type: WidgetType.IFRAME,
+                  objectMetadataId: null,
+                  gridPosition: {
+                    row: 0,
+                    column: 0,
+                    rowSpan: 1,
+                    columnSpan: 1,
+                  },
+                  position: {
+                    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+                  },
+                  configuration: {
+                    configurationType: WidgetConfigurationType.IFRAME,
+                    url: 'https://example.com/canvas',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      const { errors } = await updateOnePageLayoutWithTabsAndWidgets({
+        expectToFail: true,
+        input: {
+          id: testPageLayoutId,
+          name: 'Move Into Occupied Canvas Layout',
+          type: PageLayoutType.RECORD_PAGE,
+          objectMetadataId: null,
+          tabs: [
+            {
+              id: sourceTabId,
+              title: 'Source Tab',
+              position: 0,
+              layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+              widgets: [],
+            },
+            {
+              id: canvasTabId,
+              title: 'Canvas Tab',
+              position: 1,
+              layoutMode: PageLayoutTabLayoutMode.CANVAS,
+              widgets: [
+                {
+                  id: canvasWidgetId,
+                  pageLayoutTabId: canvasTabId,
+                  title: 'Canvas Widget',
+                  type: WidgetType.IFRAME,
+                  objectMetadataId: null,
+                  gridPosition: {
+                    row: 0,
+                    column: 0,
+                    rowSpan: 1,
+                    columnSpan: 1,
+                  },
+                  position: {
+                    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+                  },
+                  configuration: {
+                    configurationType: WidgetConfigurationType.IFRAME,
+                    url: 'https://example.com/canvas',
+                  },
+                },
+                {
+                  id: widgetToMoveId,
+                  pageLayoutTabId: canvasTabId,
+                  title: 'Widget To Move',
+                  type: WidgetType.IFRAME,
+                  objectMetadataId: null,
+                  gridPosition: {
+                    row: 0,
+                    column: 0,
+                    rowSpan: 1,
+                    columnSpan: 1,
+                  },
+                  position: {
+                    layoutMode: PageLayoutTabLayoutMode.CANVAS,
+                  },
+                  configuration: {
+                    configurationType: WidgetConfigurationType.IFRAME,
+                    url: 'https://example.com/source',
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      });
+
+      expect(errors).toBeDefined();
+      expect(errors).toHaveLength(1);
+      const [firstError] = errors ?? [];
+
+      expect(firstError?.extensions.code).toBe('BAD_USER_INPUT');
+      expect(firstError?.message).toContain(
+        'A CANVAS layout tab can only contain one widget',
+      );
+    } finally {
+      await destroyOnePageLayout({
+        expectToFail: false,
+        input: { id: testPageLayoutId },
+      });
+    }
   });
 
   describe('chart filter validation failures', () => {

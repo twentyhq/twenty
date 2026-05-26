@@ -13,10 +13,12 @@ import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules
 import { FlatPageLayoutWidgetTypeValidatorService } from 'src/engine/metadata-modules/flat-page-layout-widget/services/flat-page-layout-widget-type-validator.service';
 import { PageLayoutTabExceptionCode } from 'src/engine/metadata-modules/page-layout-tab/exceptions/page-layout-tab.exception';
 import { PageLayoutWidgetExceptionCode } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { validatePageLayoutWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-grid-position.util';
 import { validatePageLayoutWidgetVerticalListPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-page-layout-widget-vertical-list-position.util';
 import { validateWidgetGridPosition } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-grid-position.util';
 import { type UniversalFlatPageLayoutTab } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-tab.type';
+import { type UniversalFlatPageLayoutWidget } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-page-layout-widget.type';
 import {
   FailedFlatEntityValidation,
   FlatEntityValidationError,
@@ -82,6 +84,23 @@ export class FlatPageLayoutWidgetValidatorService {
       flatEntityMaps:
         optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
     });
+
+    const effectivePageLayoutTab = findFlatEntityByUniversalIdentifier({
+      universalIdentifier: this.getEffectivePageLayoutTabUniversalIdentifier(
+        updatedFlatPageLayoutWidget,
+      ),
+      flatEntityMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutTabMaps,
+    });
+
+    const canvasTabErrors = this.validateCanvasTabWidgetCap({
+      pageLayoutTab: effectivePageLayoutTab,
+      flatPageLayoutWidgetMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+      excludeWidgetUniversalIdentifier: universalIdentifier,
+    });
+
+    validationResult.errors.push(...canvasTabErrors);
 
     const gridPositionErrors = this.validateGridPosition({
       gridPosition: updatedFlatPageLayoutWidget.gridPosition,
@@ -203,6 +222,16 @@ export class FlatPageLayoutWidgetValidatorService {
       });
     }
 
+    const canvasTabErrors = this.validateCanvasTabWidgetCap({
+      pageLayoutTab: referencedPageLayoutTab,
+      flatPageLayoutWidgetMaps:
+        optimisticFlatEntityMapsAndRelatedFlatEntityMaps.flatPageLayoutWidgetMaps,
+      excludeWidgetUniversalIdentifier:
+        flatPageLayoutWidgetToValidate.universalIdentifier,
+    });
+
+    validationResult.errors.push(...canvasTabErrors);
+
     const gridPositionErrors = this.validateGridPosition({
       gridPosition: flatPageLayoutWidgetToValidate.gridPosition,
       widgetTitle: flatPageLayoutWidgetToValidate.title,
@@ -233,6 +262,58 @@ export class FlatPageLayoutWidgetValidatorService {
     validationResult.errors.push(...typeSpecificityErrors);
 
     return validationResult;
+  }
+
+  private validateCanvasTabWidgetCap({
+    pageLayoutTab,
+    flatPageLayoutWidgetMaps,
+    excludeWidgetUniversalIdentifier,
+  }: {
+    pageLayoutTab: UniversalFlatPageLayoutTab | undefined;
+    flatPageLayoutWidgetMaps: MetadataUniversalFlatEntityMaps<'pageLayoutWidget'>;
+    excludeWidgetUniversalIdentifier?: string;
+  }): FlatEntityValidationError[] {
+    if (
+      !isDefined(pageLayoutTab) ||
+      pageLayoutTab.layoutMode !== PageLayoutTabLayoutMode.CANVAS
+    ) {
+      return [];
+    }
+
+    const existingWidgetsOnTab = Object.values(
+      flatPageLayoutWidgetMaps.byUniversalIdentifier,
+    ).filter(
+      (widget) =>
+        isDefined(widget) &&
+        !isDefined(widget.deletedAt) &&
+        this.getEffectivePageLayoutTabUniversalIdentifier(widget) ===
+          pageLayoutTab.universalIdentifier &&
+        widget.universalIdentifier !== excludeWidgetUniversalIdentifier,
+    );
+
+    if (existingWidgetsOnTab.length === 0) {
+      return [];
+    }
+
+    return [
+      {
+        code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
+        message: t`A CANVAS layout tab can only contain one widget`,
+        userFriendlyMessage: msg`A CANVAS layout tab can only contain one widget`,
+      },
+    ];
+  }
+
+  private getEffectivePageLayoutTabUniversalIdentifier(
+    widget: Pick<
+      UniversalFlatPageLayoutWidget,
+      'pageLayoutTabUniversalIdentifier' | 'universalOverrides'
+    >,
+  ): string {
+    return (
+      widget.universalOverrides?.pageLayoutTabUniversalIdentifier ??
+      widget.pageLayoutTabUniversalIdentifier
+    );
   }
 
   private validateGridPosition({

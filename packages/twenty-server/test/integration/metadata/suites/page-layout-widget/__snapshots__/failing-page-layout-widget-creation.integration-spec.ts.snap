@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Page layout widget creation should fail AGGREGATE_CHART widget configuration validation failures when AGGREGATE_CHART configuration has invalid UUID 1`] = `
 {
@@ -41,6 +41,42 @@ exports[`Page layout widget creation should fail BAR_CHART widget configuration 
   },
   "message": "primaryAxisGroupByFieldMetadataId: primaryAxisGroupByFieldMetadataId should not be empty, primaryAxisGroupByFieldMetadataId must be a UUID; layout: layout should not be empty, layout must be one of the following values: VERTICAL, HORIZONTAL",
   "name": "UserInputError",
+}
+`;
+
+exports[`Page layout widget creation should fail CANVAS tab widget cap rejects a second widget on a CANVAS tab 1`] = `
+{
+  "extensions": {
+    "code": "METADATA_VALIDATION_FAILED",
+    "errors": {
+      "pageLayoutWidget": [
+        {
+          "errors": [
+            {
+              "code": "INVALID_PAGE_LAYOUT_WIDGET_DATA",
+              "message": "A CANVAS layout tab can only contain one widget",
+              "userFriendlyMessage": "A CANVAS layout tab can only contain one widget",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "pageLayoutTabUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "pageLayoutWidget",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
+    },
+    "message": "Validation failed for 1 pageLayoutWidget",
+    "summary": {
+      "pageLayoutWidget": 1,
+      "totalErrors": 1,
+    },
+    "userFriendlyMessage": "A CANVAS layout tab can only contain one widget",
+  },
+  "message": "Multiple validation errors occurred while creating page layout widget",
+  "name": "GraphQLError",
 }
 `;
 
