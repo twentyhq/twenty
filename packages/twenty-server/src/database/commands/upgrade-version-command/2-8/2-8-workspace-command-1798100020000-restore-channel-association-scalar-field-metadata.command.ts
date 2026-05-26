@@ -18,6 +18,10 @@ import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-m
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 import { WorkspaceMetadataVersionService } from 'src/engine/metadata-modules/workspace-metadata-version/services/workspace-metadata-version.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import {
+  WORKSPACE_CACHE_KEYS_V2,
+  type WorkspaceCacheKeyName,
+} from 'src/engine/workspace-cache/types/workspace-cache-key.type';
 import { getWorkspaceSchemaContextForMigration } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/get-workspace-schema-context-for-migration.util';
 
 // 2-8 dropped calendarChannel/messageChannel/messageFolder standard objects, which
@@ -217,6 +221,15 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveO
 
     await this.fieldMetadataRepository.insert(fieldMetadataRowsWithApplication);
 
+    // The flat-maps / ORM entity metadata cache is not version-stamped, so bumping
+    // the metadata version alone leaves running workers serving stale entity metadata
+    // (missing the restored fields). Flush the whole workspace cache so they recompute
+    // from the updated metadata, then bump the version.
+    await this.workspaceCacheService.flush(
+      workspaceId,
+      Object.keys(WORKSPACE_CACHE_KEYS_V2) as WorkspaceCacheKeyName[],
+    );
+
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,
     );
@@ -244,16 +257,26 @@ export class RestoreChannelAssociationScalarFieldMetadataCommand extends ActiveO
       ...new Set(tableColumnPairs.map(({ columnName }) => columnName)),
     ];
 
-    const rows: { table_name: string; column_name: string }[] =
-      await dataSource.query(
-        `SELECT table_name, column_name
-         FROM information_schema.columns
-         WHERE table_schema = $1
-         AND table_name = ANY($2)
-         AND column_name = ANY($3)`,
-        [schemaName, tableNames, columnNames],
-      );
+    // The workspace data source blocks raw query(); use a query runner like sibling
+    // upgrade commands do for direct schema access.
+    const queryRunner = dataSource.createQueryRunner();
 
-    return new Set(rows.map((row) => `${row.table_name}.${row.column_name}`));
+    try {
+      await queryRunner.connect();
+
+      const rows: { table_name: string; column_name: string }[] =
+        await queryRunner.query(
+          `SELECT table_name, column_name
+           FROM information_schema.columns
+           WHERE table_schema = $1
+           AND table_name = ANY($2)
+           AND column_name = ANY($3)`,
+          [schemaName, tableNames, columnNames],
+        );
+
+      return new Set(rows.map((row) => `${row.table_name}.${row.column_name}`));
+    } finally {
+      await queryRunner.release();
+    }
   }
 }
