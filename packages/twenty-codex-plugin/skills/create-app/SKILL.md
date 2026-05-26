@@ -17,7 +17,16 @@ cd <app-name>
 yarn twenty dev
 ```
 
-The scaffolder creates the project, installs dependencies, initializes Git, starts a local Twenty server through Docker, authenticates with the development API key, runs an initial one-shot sync, and opens the generated app page when possible.
+The scaffolder creates the project, enables corepack, installs dependencies, initializes Git, starts a local Twenty server through Docker, authenticates with the development API key, runs an initial one-shot sync, and opens the generated app page when possible.
+
+After the scaffolder completes successfully, start dev mode as a daemon/background process for the new app:
+
+```bash
+cd <app-name>
+yarn twenty dev
+```
+
+Keep the dev process running in the background so local file changes continue to build and sync. Do not block the final response on the foreground watch process once it has started successfully.
 
 If the user provides a package name, display name, or description, pass them through:
 
@@ -27,45 +36,13 @@ npx create-twenty-app@latest <app-directory> --name "<package-name>" --display-n
 
 Supported create-time options are `--name`, `--display-name`, `--description`, `--url`, and `--authentication-method`.
 
-# Create an App Against an Existing Server
-
-Use this only when the user explicitly wants to connect the new app to an existing Twenty Cloud, self-hosted, or remote development server.
-
-First, ask the user for:
-
-- The app name.
-- The Twenty server or workspace URL.
-
-Remove any trailing `/` from the server URL, then run:
-
-```bash
-npx create-twenty-app@latest <app-name> --url <server-url>
-cd <app-name>
-yarn twenty dev
-```
-
-For remote URLs, the scaffolder uses OAuth authentication by default. Do not use `--api-url`; it is deprecated. Do not pass `--authentication-method apiKey` for remote servers because create-time API key authentication is only supported for the local Docker instance.
+The default local Twenty URL is `http://localhost:2020/`
 
 # Docker Troubleshooting
 
 Use this when the default local flow fails because Docker is missing or not running.
 
-If scaffolding fails before project creation, check the runtime first: `create-twenty-app@2.7.0` declares Node.js `^24.5.0` and Yarn `^4.0.2`. Use `corepack enable` when Yarn is missing.
-
-If Docker is missing, share this download link: `https://www.docker.com/products/docker-desktop/`. Ask the user to install Docker Desktop, open it, and ensure it is running before retrying the scaffold command.
-
-If Docker is installed but not running, the app may already have been created without server authentication or sync. Ask the user to open Docker Desktop, then resume from the generated app directory:
-
-```bash
-cd <app-name>
-yarn twenty docker:start
-yarn twenty remote:add --local
-yarn twenty dev --once
-yarn twenty dev
-```
-
-The default local Twenty URL is `http://localhost:2020/`.
-
+If Docker is missing, share this download link: `https://www.docker.com/products/docker-desktop/`. Ask the user to install Docker Desktop.
 
 # Next Steps
 
