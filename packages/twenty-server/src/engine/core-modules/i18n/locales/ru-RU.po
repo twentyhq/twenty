@@ -694,10 +694,10 @@ msgstr "Исполнитель"
 msgid "Associated User Id"
 msgstr "Идентификатор связанного пользователя"
 
-#. js-lingui-id: K9efby
+#. js-lingui-id: IlaQdj
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "At least one relation is require"
-msgstr "Требуется как минимум одна связь"
+msgid "At least one relation is required"
+msgstr ""
 
 #. js-lingui-id: UY1vmE
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
