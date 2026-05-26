@@ -4,8 +4,9 @@ import { makeMetadataAPIRequestWithFileUpload } from 'test/integration/metadata/
 import { SEED_APPLE_WORKSPACE_ID } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 
 // 67-byte 1x1 transparent PNG. Big enough for `file-type` to detect a valid
-// image header, small enough to keep the upload negligible.
-const ONE_BY_ONE_TRANSPARENT_PNG = Buffer.from(
+// image header, small enough to keep the upload negligible. Exported so the
+// success spec can assert round-trip byte-equality against the served body.
+export const ONE_BY_ONE_TRANSPARENT_PNG = Buffer.from(
   '89504E470D0A1A0A0000000D49484452000000010000000108060000001F15C4890000000D4944415478DA63000100000005000100200CB81000000000049454E44AE426082',
   'hex',
 );

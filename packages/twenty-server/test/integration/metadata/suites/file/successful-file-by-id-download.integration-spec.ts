@@ -1,6 +1,9 @@
 import request from 'supertest';
 import { extractPathAndQueryFromUrl } from 'test/integration/metadata/suites/file/utils/file-by-id-url-helpers.util';
-import { seedWorkspaceLogo } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
+import {
+  ONE_BY_ONE_TRANSPARENT_PNG,
+  seedWorkspaceLogo,
+} from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 
 describe('File-by-id controller download should succeed', () => {
   let signedUrl: string;
@@ -43,10 +46,6 @@ describe('File-by-id controller download should succeed', () => {
 
     const body = response.body as Buffer;
 
-    expect(body.length).toBeGreaterThan(8);
-    expect(body[0]).toBe(0x89);
-    expect(body[1]).toBe(0x50);
-    expect(body[2]).toBe(0x4e);
-    expect(body[3]).toBe(0x47);
+    expect(body.equals(ONE_BY_ONE_TRANSPARENT_PNG)).toBe(true);
   }, 30000);
 });
