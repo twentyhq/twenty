@@ -411,7 +411,6 @@ export class ApplicationService {
 
     const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.packageJsonContent,
-      mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
@@ -422,7 +421,6 @@ export class ApplicationService {
 
     const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.yarnLockContent,
-      mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
