@@ -232,6 +232,20 @@ jobs:
           }
           JS
 
+      - name: Dry-run verify workflow (container mode)
+        if: ${{ matrix.docker_ready }}
+        shell: bash
+        run: |
+          ota up --workflow verify --container --dry-run --json . > ota-up-verify-container.json
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-verify-container.json', 'utf8'));
+          if (!report.dry_run || report.status === 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          JS
+
       - name: Dry-run native-dev workflow
         if: ${{ !matrix.unsupported_host }}
         shell: bash
@@ -309,6 +323,7 @@ jobs:
             ota-execution-topology.json
             ota-doctor-native-dev.json
             ota-up-verify.json
+            ota-up-verify-container.json
             ota-up-native-dev.json
             ota-up-integration.json
             ota-up-docker-selfhost.json

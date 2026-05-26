@@ -14,6 +14,20 @@ execution:
       only_on:
         - linux
         - macos
+    app:
+      backend: container
+      lifecycle: ephemeral
+      container:
+        image: node:24-bookworm
+        engines:
+          - docker
+          - podman
+      attachments:
+        isolated_paths:
+          - node_modules
+          - .yarn
+          - .pnp.cjs
+          - .pnp.loader.mjs
     docker-host:
       extends: host
       requirements:
@@ -537,6 +551,7 @@ agent:
     templates only when missing.
     Use `ota up --workflow native-dev --native .` for the canonical local dev loop.
     Use `ota up --workflow verify --native .` for CI-style lint/typecheck/test validation.
+    Use `ota up --workflow verify --container .` for the containerized CI-style verify path.
     Use `ota up --workflow integration --native .` for backend integration coverage.
     Use `ota up --workflow docker-selfhost --native .` for the repository self-host compose path.
     No tasks are agent-safe by default in this slice.
