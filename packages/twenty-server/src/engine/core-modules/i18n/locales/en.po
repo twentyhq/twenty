@@ -689,10 +689,10 @@ msgstr "Assignee"
 msgid "Associated User Id"
 msgstr "Associated User Id"
 
-#. js-lingui-id: K9efby
+#. js-lingui-id: IlaQdj
 #: src/engine/metadata-modules/flat-field-metadata/validators/utils/validate-morph-relation-creation-payload.util.ts
-msgid "At least one relation is require"
-msgstr "At least one relation is require"
+msgid "At least one relation is required"
+msgstr "At least one relation is required"
 
 #. js-lingui-id: UY1vmE
 #: src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
