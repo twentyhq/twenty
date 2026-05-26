@@ -126,14 +126,15 @@ function inferPreviewImage(content) {
 function readReleaseNotes() {
   const fileNames = fs
     .readdirSync(releasesDirectory)
-    .filter((fileName) => fileName.endsWith('.md') || fileName.endsWith('.mdx'));
+    .filter(
+      (fileName) => fileName.endsWith('.md') || fileName.endsWith('.mdx'),
+    );
 
   const notes = fileNames.map((fileName) => {
     const fullPath = path.join(releasesDirectory, fileName);
     const raw = fs.readFileSync(fullPath, 'utf8');
     const { data, content } = matter(raw);
-    const release =
-      typeof data.release === 'string' ? data.release.trim() : '';
+    const release = typeof data.release === 'string' ? data.release.trim() : '';
     const date = normalizeFrontmatterDate(data.Date ?? data.date);
     const title =
       typeof data.title === 'string' && data.title.trim()
@@ -160,7 +161,11 @@ function readReleaseNotes() {
       );
     }
 
-    const imagePath = path.join(projectRoot, 'public', previewImage.replace(/^\//, ''));
+    const imagePath = path.join(
+      projectRoot,
+      'public',
+      previewImage.replace(/^\//, ''),
+    );
 
     if (!fs.existsSync(imagePath)) {
       throw new Error(
@@ -178,7 +183,9 @@ function readReleaseNotes() {
     };
   });
 
-  notes.sort((left, right) => compareSemanticVersions(right.release, left.release));
+  notes.sort((left, right) =>
+    compareSemanticVersions(right.release, left.release),
+  );
 
   return notes;
 }
