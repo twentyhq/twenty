@@ -180,17 +180,24 @@ async function main() {
     }`),
     'opportunities',
   );
-  console.log('[import] fetching TFT partner quotes...');
+  console.log('[import] fetching TFT partner content...');
   const tftContent = edges(
     await tftQuery(`query {
       customerContents(first: 500) {
-        edges { node { id name status approvalDate typeCustom partnerPerson { id } } }
+        edges { node {
+          id name status approvalDate typeCustom
+          interview { primaryLinkUrl }
+          partnerPerson { id }
+          customerCompany { id name domainName { primaryLinkUrl } }
+          customerPerson { id }
+        } }
       }
     }`),
     'customerContents',
   );
-  const quotes = tftContent.filter((c: any) => Array.isArray(c.typeCustom) && c.typeCustom.includes('PARTNER_QUOTE'));
-  console.log(`[import] TFT: ${tftPeople.length} partner-people, ${tftOpps.length} opportunities, ${quotes.length} partner quotes`);
+  // All marketing content is imported now (quotes, case studies, logos), not just partner quotes.
+  const contentRecords = tftContent;
+  console.log(`[import] TFT: ${tftPeople.length} partner-people, ${tftOpps.length} opportunities, ${contentRecords.length} content records`);
 
   const personSlug = (p: any): string =>
     slugify([p.name?.firstName, p.name?.lastName].filter(Boolean).join(' ').trim() || 'Unknown partner') || p.id;
@@ -235,14 +242,14 @@ async function main() {
       : [],
   );
 
-  const quoteNames = uniq(quotes.map((q: any) => q.name || 'Partner quote'));
-  const quoteIdByName = new Map<string, string>(
-    quoteNames.length
+  const contentNames = uniq(contentRecords.map((c: any) => c.name || 'Partner content'));
+  const contentIdByName = new Map<string, string>(
+    contentNames.length
       ? edges(
           await local.query({
-            partnerQuotes: { __args: { filter: { name: { in: quoteNames } }, first: 500 }, edges: { node: { id: true, name: true } } },
+            partnerContents: { __args: { filter: { name: { in: contentNames } }, first: 500 }, edges: { node: { id: true, name: true } } },
           } as any),
-          'partnerQuotes',
+          'partnerContents',
         ).map((n: any) => [n.name, n.id])
       : [],
   );
@@ -390,37 +397,41 @@ async function main() {
   }
   console.log(`[import] opportunities done: created=${oppsCreated} updated=${oppsUpdated} (partner-linked=${oppsPartnerLinked})`);
 
-  // -- Partner quotes (upsert by name) --
-  console.log(`[import] upserting ${quotes.length} partner quotes...`);
-  let quotesCreated = 0;
-  let quotesUpdated = 0;
-  tftContent.forEach((c: any) => (Array.isArray(c.typeCustom) ? c.typeCustom : []).forEach((t: string) => note('typeCustom', t)));
-  for (const q of quotes) {
-    note('quoteStatus', q.status);
-    const name = q.name || 'Partner quote';
-    const partnerId = q.partnerPerson?.id ? localPartnerIdByTftPersonId.get(q.partnerPerson.id) : undefined;
+  // -- Partner content (upsert by name) --
+  console.log(`[import] upserting ${contentRecords.length} content records...`);
+  let contentCreated = 0;
+  let contentUpdated = 0;
+  contentRecords.forEach((c: any) => (Array.isArray(c.typeCustom) ? c.typeCustom : []).forEach((t: string) => note('typeCustom', t)));
+  for (const c of contentRecords) {
+    note('quoteStatus', c.status);
+    const name = c.name || 'Partner content';
+    const partnerId = c.partnerPerson?.id ? localPartnerIdByTftPersonId.get(c.partnerPerson.id) : undefined;
+    const customerCompanyId = await upsertCompany(c.customerCompany?.name, c.customerCompany?.domainName?.primaryLinkUrl);
     const data: Record<string, unknown> = {
       name,
-      ...(q.status ? { status: q.status } : {}),
-      ...(q.approvalDate ? { approvalDate: q.approvalDate } : {}),
+      ...(Array.isArray(c.typeCustom) && c.typeCustom.length ? { contentType: c.typeCustom } : {}),
+      ...(c.status ? { status: c.status } : {}),
+      ...(c.approvalDate ? { approvalDate: c.approvalDate } : {}),
+      ...(c.interview?.primaryLinkUrl ? { interview: { primaryLinkUrl: c.interview.primaryLinkUrl } } : {}),
       ...(partnerId && APPLY ? { partnerId } : {}),
+      ...(customerCompanyId && APPLY ? { customerCompanyId } : {}),
     };
-    const existingId = quoteIdByName.get(name);
+    const existingId = contentIdByName.get(name);
     if (existingId) {
       if (APPLY) {
         await pace();
-        await local.mutation({ updatePartnerQuote: { __args: { id: existingId, data }, id: true } } as any);
+        await local.mutation({ updatePartnerContent: { __args: { id: existingId, data }, id: true } } as any);
       }
-      quotesUpdated++;
+      contentUpdated++;
     } else {
       if (APPLY) {
         await pace();
-        await local.mutation({ createPartnerQuote: { __args: { data }, id: true } } as any);
+        await local.mutation({ createPartnerContent: { __args: { data }, id: true } } as any);
       }
-      quotesCreated++;
+      contentCreated++;
     }
   }
-  console.log(`[import] partner quotes created=${quotesCreated} updated=${quotesUpdated}`);
+  console.log(`[import] partner content created=${contentCreated} updated=${contentUpdated}`);
 
   // ---------------------------------------------------------------------
   // 4. Preflight: distinct TFT values vs local option coverage.
