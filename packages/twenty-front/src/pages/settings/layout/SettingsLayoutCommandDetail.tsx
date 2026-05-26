@@ -1,5 +1,6 @@
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
+import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
@@ -8,6 +9,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -36,11 +38,15 @@ export const SettingsLayoutCommandDetail = () => {
   const commandMenuItems = useAtomStateValue(commandMenuItemsSelector);
   const frontComponents = useAtomStateValue(frontComponentsSelector);
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const commandMenuItemsStoreStatus = useAtomFamilySelectorValue(
+    metadataStoreStatusFamilySelector,
+    'commandMenuItems',
+  );
 
   const commandMenuItem = commandMenuItems.find(
     (item) => item.id === commandMenuItemId,
   );
-  const isLoading = commandMenuItems.length === 0;
+  const isLoading = commandMenuItemsStoreStatus === 'empty';
 
   const frontComponent = isDefined(commandMenuItem?.frontComponentId)
     ? frontComponents.find((fc) => fc.id === commandMenuItem.frontComponentId)

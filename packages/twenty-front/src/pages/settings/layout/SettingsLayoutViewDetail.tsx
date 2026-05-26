@@ -1,3 +1,4 @@
+import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -7,6 +8,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -40,9 +42,13 @@ export const SettingsLayoutViewDetail = () => {
   const flattenedFieldMetadataItems = useAtomStateValue(
     flattenedFieldMetadataItemsSelector,
   );
+  const viewsStoreStatus = useAtomFamilySelectorValue(
+    metadataStoreStatusFamilySelector,
+    'views',
+  );
 
   const view = views.find((v) => v.id === viewId);
-  const isLoading = views.length === 0;
+  const isLoading = viewsStoreStatus === 'empty';
 
   const objectLabel = isDefined(view)
     ? objectMetadataItems.find((o) => o.id === view.objectMetadataId)

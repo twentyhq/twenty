@@ -37,8 +37,9 @@ export const SettingsLayout = () => {
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
 
   const startCustomizing = () => {
-    enterLayoutCustomizationMode();
-    navigate('/');
+    if (enterLayoutCustomizationMode()) {
+      navigate('/');
+    }
   };
 
   return (

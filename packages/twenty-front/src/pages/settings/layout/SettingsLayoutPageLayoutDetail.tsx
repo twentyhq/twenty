@@ -1,3 +1,4 @@
+import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { pageLayoutsWithRelationsSelector } from '@/page-layout/states/pageLayoutsWithRelationsSelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
@@ -8,6 +9,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { type ReactNode } from 'react';
@@ -29,11 +31,15 @@ export const SettingsLayoutPageLayoutDetail = () => {
     pageLayoutsWithRelationsSelector,
   );
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+  const pageLayoutsStoreStatus = useAtomFamilySelectorValue(
+    metadataStoreStatusFamilySelector,
+    'pageLayouts',
+  );
 
   const pageLayout = pageLayoutsWithRelations.find(
     (p) => p.id === pageLayoutId,
   );
-  const isLoading = pageLayoutsWithRelations.length === 0;
+  const isLoading = pageLayoutsStoreStatus === 'empty';
 
   const resolveObjectLabel = (id: string | null | undefined) =>
     isDefined(id)

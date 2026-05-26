@@ -1,3 +1,4 @@
+import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { pageLayoutsWithRelationsSelector } from '@/page-layout/states/pageLayoutsWithRelationsSelector';
@@ -8,6 +9,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -32,9 +34,13 @@ export const SettingsLayoutSidebarItemDetail = () => {
   const pageLayoutsWithRelations = useAtomStateValue(
     pageLayoutsWithRelationsSelector,
   );
+  const navigationMenuItemsStoreStatus = useAtomFamilySelectorValue(
+    metadataStoreStatusFamilySelector,
+    'navigationMenuItems',
+  );
 
   const sidebarItem = navigationMenuItems.find((i) => i.id === sidebarItemId);
-  const isLoading = navigationMenuItems.length === 0;
+  const isLoading = navigationMenuItemsStoreStatus === 'empty';
 
   const resolveTarget = (): string | undefined => {
     if (!isDefined(sidebarItem)) return undefined;

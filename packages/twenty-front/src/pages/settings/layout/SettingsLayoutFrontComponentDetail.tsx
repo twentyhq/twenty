@@ -1,4 +1,5 @@
 import { frontComponentsSelector } from '@/front-components/states/frontComponentsSelector';
+import { metadataStoreStatusFamilySelector } from '@/metadata-store/states/metadataStoreStatusFamilySelector';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -6,6 +7,7 @@ import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
+import { useAtomFamilySelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilySelectorValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -82,11 +84,15 @@ export const SettingsLayoutFrontComponentDetail = () => {
   const { frontComponentId = '' } = useParams<{ frontComponentId: string }>();
 
   const frontComponents = useAtomStateValue(frontComponentsSelector);
+  const frontComponentsStoreStatus = useAtomFamilySelectorValue(
+    metadataStoreStatusFamilySelector,
+    'frontComponents',
+  );
 
   const frontComponent = frontComponents.find(
     (fc) => fc.id === frontComponentId,
   );
-  const isLoading = frontComponents.length === 0;
+  const isLoading = frontComponentsStoreStatus === 'empty';
 
   const detailRows: { key: string; label: string; value: ReactNode }[] =
     isDefined(frontComponent)
