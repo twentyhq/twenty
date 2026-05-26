@@ -5,6 +5,22 @@
   "projectType": "application",
   "tags": ["scope:website"],
   "targets": {
+    "generate-release-manifest": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/content/releases/**/*",
+        "{projectRoot}/public/images/releases/**/*",
+        "{projectRoot}/scripts/generate-release-notes-manifest.mjs"
+      ],
+      "outputs": [
+        "{projectRoot}/src/lib/releases/generated-release-notes.ts"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "node scripts/generate-release-notes-manifest.mjs"
+      }
+    },
     "build": {
       "executor": "nx:run-commands",
       "cache": true,
@@ -14,11 +30,12 @@
         "cwd": "{projectRoot}",
         "command": "npx next build"
       },
-      "dependsOn": ["^build"]
+      "dependsOn": ["generate-release-manifest", "^build"]
     },
     "dev": {
       "executor": "nx:run-commands",
       "cache": false,
+      "dependsOn": ["generate-release-manifest"],
       "options": {
         "cwd": "{projectRoot}",
         "command": "npx next dev --port 3002"
@@ -86,7 +103,9 @@
         "check-lottie-frames"
       ]
     },
-    "typecheck": {},
+    "typecheck": {
+      "dependsOn": ["generate-release-manifest"]
+    },
     "test": {},
     "fmt": {
       "options": {
