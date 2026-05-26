@@ -16,6 +16,8 @@ export type EmailingDomainVerificationResult = {
 };
 
 export interface EmailingDomainDriverInterface {
+  provisionWorkspace(workspaceId: string): Promise<void>;
+  deprovisionWorkspace(workspaceId: string): Promise<void>;
   verifyDomain(
     input: EmailingDomainResourceInput,
   ): Promise<EmailingDomainVerificationResult>;

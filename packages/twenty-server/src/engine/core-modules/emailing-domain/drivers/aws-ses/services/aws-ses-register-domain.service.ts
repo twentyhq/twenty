@@ -17,8 +17,7 @@ import { AWS_SES_MAIL_FROM_SUBDOMAIN } from 'src/engine/core-modules/emailing-do
 import { AWS_SES_MARKETING_TOPIC_NAME } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/constants/aws-ses-marketing-topic-name.constant';
 import { AwsSesClientProvider } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/providers/aws-ses-client.provider';
 
-type RegisterDomainInput = {
-  domain: string;
+type ProvisionWorkspaceInput = {
   tenantName: string;
   configurationSetName: string;
   contactListName: string;
@@ -30,59 +29,21 @@ export class AwsSesRegisterDomainService {
 
   constructor(private readonly awsSesClientProvider: AwsSesClientProvider) {}
 
-  async registerDomain(
-    input: RegisterDomainInput,
+  async provisionWorkspaceResources(
+    input: ProvisionWorkspaceInput,
     config: AwsSesDriverConfig,
   ): Promise<void> {
     const sesClient = this.awsSesClientProvider.getSESClient();
 
-    const isWorkspaceAlreadyRegistered = await this.isWorkspaceRegistered(
+    const isAlreadyProvisioned = await this.isWorkspaceProvisioned(
       sesClient,
       input.configurationSetName,
     );
 
-    if (!isWorkspaceAlreadyRegistered) {
-      await this.registerWorkspaceResources(sesClient, input, config);
+    if (isAlreadyProvisioned) {
+      return;
     }
 
-    await sesClient.send(
-      new PutEmailIdentityMailFromAttributesCommand({
-        EmailIdentity: input.domain,
-        MailFromDomain: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${input.domain}`,
-        BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
-      }),
-    );
-
-    this.logger.log(
-      `Registered domain ${input.domain} on tenant ${input.tenantName}`,
-    );
-  }
-
-  private async isWorkspaceRegistered(
-    sesClient: SESv2Client,
-    configurationSetName: string,
-  ): Promise<boolean> {
-    try {
-      await sesClient.send(
-        new GetConfigurationSetCommand({
-          ConfigurationSetName: configurationSetName,
-        }),
-      );
-
-      return true;
-    } catch (error) {
-      if (error instanceof NotFoundException) {
-        return false;
-      }
-      throw error;
-    }
-  }
-
-  private async registerWorkspaceResources(
-    sesClient: SESv2Client,
-    input: RegisterDomainInput,
-    config: AwsSesDriverConfig,
-  ): Promise<void> {
     const eventBusArn = `arn:aws:events:${config.region}:${config.accountId}:event-bus/${AWS_SES_EVENT_BUS_NAME}`;
     const configurationSetArn = `arn:aws:ses:${config.region}:${config.accountId}:configuration-set/${input.configurationSetName}`;
 
@@ -137,5 +98,43 @@ export class AwsSesRegisterDomainService {
         ResourceArn: configurationSetArn,
       }),
     );
+
+    this.logger.log(
+      `Provisioned workspace resources for tenant ${input.tenantName}`,
+    );
+  }
+
+  async registerDomain(domain: string): Promise<void> {
+    const sesClient = this.awsSesClientProvider.getSESClient();
+
+    await sesClient.send(
+      new PutEmailIdentityMailFromAttributesCommand({
+        EmailIdentity: domain,
+        MailFromDomain: `${AWS_SES_MAIL_FROM_SUBDOMAIN}.${domain}`,
+        BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
+      }),
+    );
+
+    this.logger.log(`Registered MAIL FROM for domain ${domain}`);
+  }
+
+  private async isWorkspaceProvisioned(
+    sesClient: SESv2Client,
+    configurationSetName: string,
+  ): Promise<boolean> {
+    try {
+      await sesClient.send(
+        new GetConfigurationSetCommand({
+          ConfigurationSetName: configurationSetName,
+        }),
+      );
+
+      return true;
+    } catch (error) {
+      if (error instanceof NotFoundException) {
+        return false;
+      }
+      throw error;
+    }
   }
 }

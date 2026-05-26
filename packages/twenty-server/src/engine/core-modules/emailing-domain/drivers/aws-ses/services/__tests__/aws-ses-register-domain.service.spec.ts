@@ -20,8 +20,7 @@ describe('AwsSesRegisterDomainService', () => {
     accountId: '123456789012',
   };
 
-  const input = {
-    domain: 'mail.example.com',
+  const provisionInput = {
     tenantName: 'twenty-workspace-ws1',
     configurationSetName: 'twenty-workspace-ws1',
     contactListName: 'twenty-workspace-ws1',
@@ -43,90 +42,91 @@ describe('AwsSesRegisterDomainService', () => {
     return { service, send };
   };
 
-  it('issues every workspace + domain setup command when the configuration set does not yet exist', async () => {
-    const { service, send } = setUp();
+  describe('provisionWorkspaceResources', () => {
+    it('creates every workspace-scoped resource when the configuration set does not yet exist', async () => {
+      const { service, send } = setUp();
 
-    send.mockImplementation(async (command) => {
-      if (command instanceof GetConfigurationSetCommand) {
-        throw buildNotFound();
-      }
+      send.mockImplementation(async (command) => {
+        if (command instanceof GetConfigurationSetCommand) {
+          throw buildNotFound();
+        }
 
-      return {};
+        return {};
+      });
+
+      await service.provisionWorkspaceResources(provisionInput, config);
+
+      const commandTypes = send.mock.calls.map(
+        ([command]) => command.constructor.name,
+      );
+
+      expect(commandTypes).toEqual([
+        GetConfigurationSetCommand.name,
+        CreateConfigurationSetCommand.name,
+        CreateConfigurationSetEventDestinationCommand.name,
+        CreateContactListCommand.name,
+        CreateTenantResourceAssociationCommand.name,
+      ]);
     });
 
-    await service.registerDomain(input, config);
+    it('issues no creates when the configuration set already exists', async () => {
+      const { service, send } = setUp();
 
-    const commandTypes = send.mock.calls.map(
-      ([command]) => command.constructor.name,
-    );
+      send.mockResolvedValue({});
 
-    expect(commandTypes).toEqual([
-      GetConfigurationSetCommand.name,
-      CreateConfigurationSetCommand.name,
-      CreateConfigurationSetEventDestinationCommand.name,
-      CreateContactListCommand.name,
-      CreateTenantResourceAssociationCommand.name,
-      PutEmailIdentityMailFromAttributesCommand.name,
-    ]);
-  });
+      await service.provisionWorkspaceResources(provisionInput, config);
 
-  // The configuration set, event destination, contact list, and tenant
-  // association are all workspace-scoped, so a second domain on the same
-  // workspace must not re-issue their creates. Only the per-domain MAIL FROM
-  // configuration runs every time.
-  it('skips the workspace-scoped creates when the configuration set already exists', async () => {
-    const { service, send } = setUp();
+      const commandTypes = send.mock.calls.map(
+        ([command]) => command.constructor.name,
+      );
 
-    send.mockResolvedValue({});
+      expect(commandTypes).toEqual([GetConfigurationSetCommand.name]);
+    });
 
-    await service.registerDomain(input, config);
+    it('propagates non-NotFound AWS errors raised by the existence probe', async () => {
+      const { service, send } = setUp();
+      const fatalError = new Error('Boom');
 
-    const commandTypes = send.mock.calls.map(
-      ([command]) => command.constructor.name,
-    );
+      send.mockImplementation(async (command) => {
+        if (command instanceof GetConfigurationSetCommand) {
+          throw fatalError;
+        }
 
-    expect(commandTypes).toEqual([
-      GetConfigurationSetCommand.name,
-      PutEmailIdentityMailFromAttributesCommand.name,
-    ]);
-  });
+        return {};
+      });
 
-  it('configures custom MAIL FROM using the bounce subdomain', async () => {
-    const { service, send } = setUp();
-
-    send.mockResolvedValue({});
-
-    await service.registerDomain(input, config);
-
-    const mailFromCall = send.mock.calls.find(
-      ([command]) =>
-        command instanceof PutEmailIdentityMailFromAttributesCommand,
-    );
-
-    expect(mailFromCall?.[0].input).toMatchObject({
-      EmailIdentity: 'mail.example.com',
-      MailFromDomain: 'bounce.mail.example.com',
-      BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
+      await expect(
+        service.provisionWorkspaceResources(provisionInput, config),
+      ).rejects.toBe(fatalError);
     });
   });
 
-  // A non-NotFound failure on the existence probe is a real error (e.g. IAM,
-  // throttling) and must surface to the caller rather than being silently
-  // treated as "not registered".
-  it('propagates non-NotFound AWS errors raised by the existence probe', async () => {
-    const { service, send } = setUp();
-    const fatalError = new Error('Boom');
+  describe('registerDomain', () => {
+    it('configures custom MAIL FROM using the bounce subdomain', async () => {
+      const { service, send } = setUp();
 
-    send.mockImplementation(async (command) => {
-      if (command instanceof GetConfigurationSetCommand) {
-        throw fatalError;
-      }
+      send.mockResolvedValue({});
 
-      return {};
+      await service.registerDomain('mail.example.com');
+
+      const commandTypes = send.mock.calls.map(
+        ([command]) => command.constructor.name,
+      );
+
+      expect(commandTypes).toEqual([
+        PutEmailIdentityMailFromAttributesCommand.name,
+      ]);
+
+      const mailFromCall = send.mock.calls.find(
+        ([command]) =>
+          command instanceof PutEmailIdentityMailFromAttributesCommand,
+      );
+
+      expect(mailFromCall?.[0].input).toMatchObject({
+        EmailIdentity: 'mail.example.com',
+        MailFromDomain: 'bounce.mail.example.com',
+        BehaviorOnMxFailure: 'USE_DEFAULT_VALUE',
+      });
     });
-
-    await expect(service.registerDomain(input, config)).rejects.toBe(
-      fatalError,
-    );
   });
 });

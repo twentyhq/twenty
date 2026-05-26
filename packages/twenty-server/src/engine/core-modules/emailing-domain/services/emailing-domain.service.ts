@@ -49,6 +49,8 @@ export class EmailingDomainService {
     const emailingDomainDriver =
       this.emailingDomainDriverFactory.getCurrentDriver();
 
+    await emailingDomainDriver.provisionWorkspace(workspace.id);
+
     const verificationResult = await emailingDomainDriver.verifyDomain({
       domain,
       workspaceId: workspace.id,
@@ -96,6 +98,7 @@ export class EmailingDomainService {
       await this.deleteRemoteEmailingDomain(emailingDomain);
     }
 
+    await this.deprovisionRemoteWorkspace(workspaceId);
     await this.emailingDomainRepository.delete({ workspaceId });
   }
 
@@ -213,6 +216,18 @@ export class EmailingDomainService {
     } catch (error) {
       this.logger.warn(
         `Remote cleanup for emailing domain ${emailingDomain.domain} (workspace ${emailingDomain.workspaceId}) failed: ${error}`,
+      );
+    }
+  }
+
+  private async deprovisionRemoteWorkspace(workspaceId: string): Promise<void> {
+    try {
+      await this.emailingDomainDriverFactory
+        .getCurrentDriver()
+        .deprovisionWorkspace(workspaceId);
+    } catch (error) {
+      this.logger.warn(
+        `Remote deprovision for emailing domain workspace ${workspaceId} failed: ${error}`,
       );
     }
   }

@@ -8,6 +8,7 @@ import {
   DeleteConfigurationSetCommand,
   DeleteContactListCommand,
   DeleteEmailIdentityCommand,
+  DeleteTenantCommand,
   DeleteTenantResourceAssociationCommand,
   GetEmailIdentityCommand,
   NotFoundException,
@@ -51,8 +52,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       this.logger.log(`Starting domain verification for: ${input.domain}`);
 
       const tenantName = this.buildTenantName(input.workspaceId);
-
-      await this.ensureTenantExists(tenantName);
 
       const { isVerified, verificationRecords } =
         await this.createOrUpdateEmailIdentity(input.domain, tenantName);
@@ -112,16 +111,23 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     }
   }
 
-  async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
-    await this.awsSesRegisterDomainService.registerDomain(
+  async provisionWorkspace(workspaceId: string): Promise<void> {
+    const tenantName = this.buildTenantName(workspaceId);
+
+    await this.ensureTenantExists(tenantName);
+
+    await this.awsSesRegisterDomainService.provisionWorkspaceResources(
       {
-        domain: input.domain,
-        tenantName: this.buildTenantName(input.workspaceId),
-        configurationSetName: this.buildConfigurationSetName(input.workspaceId),
-        contactListName: this.buildContactListName(input.workspaceId),
+        tenantName,
+        configurationSetName: this.buildConfigurationSetName(workspaceId),
+        contactListName: this.buildContactListName(workspaceId),
       },
       this.config,
     );
+  }
+
+  async registerDomain(input: EmailingDomainResourceInput): Promise<void> {
+    await this.awsSesRegisterDomainService.registerDomain(input.domain);
   }
 
   async sendEmail(
@@ -137,12 +143,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
   async cleanupDomain(input: EmailingDomainResourceInput): Promise<void> {
     const sesClient = this.awsSesClientProvider.getSESClient();
     const tenantName = this.buildTenantName(input.workspaceId);
-    const configurationSetName = this.buildConfigurationSetName(
-      input.workspaceId,
-    );
-    const contactListName = this.buildContactListName(input.workspaceId);
     const identityArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:identity/${input.domain}`;
-    const configurationSetArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:configuration-set/${configurationSetName}`;
 
     await sesClient
       .send(
@@ -154,6 +155,20 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       .catch((error) => {
         if (!(error instanceof NotFoundException)) throw error;
       });
+
+    await sesClient
+      .send(new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }))
+      .catch((error) => {
+        if (!(error instanceof NotFoundException)) throw error;
+      });
+  }
+
+  async deprovisionWorkspace(workspaceId: string): Promise<void> {
+    const sesClient = this.awsSesClientProvider.getSESClient();
+    const tenantName = this.buildTenantName(workspaceId);
+    const configurationSetName = this.buildConfigurationSetName(workspaceId);
+    const contactListName = this.buildContactListName(workspaceId);
+    const configurationSetArn = `arn:aws:ses:${this.config.region}:${this.config.accountId}:configuration-set/${configurationSetName}`;
 
     await sesClient
       .send(
@@ -183,7 +198,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
       });
 
     await sesClient
-      .send(new DeleteEmailIdentityCommand({ EmailIdentity: input.domain }))
+      .send(new DeleteTenantCommand({ TenantName: tenantName }))
       .catch((error) => {
         if (!(error instanceof NotFoundException)) throw error;
       });
