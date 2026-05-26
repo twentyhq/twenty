@@ -16,9 +16,7 @@ import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/
 import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/index-metadata.entity';
 
 @Entity({ name: 'indexFieldMetadata', schema: 'core' })
-export class IndexFieldMetadataEntity
-  implements Required<IndexFieldMetadataEntity>
-{
+export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEntity> {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
