@@ -23,7 +23,7 @@
 //   tsx src/scripts/import-from-tft.ts
 
 import { config } from 'dotenv';
-config({ path: '.env.local' });
+config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
@@ -76,6 +76,17 @@ const PARTNER_STAGE_TO_VALIDATION: Record<string, string> = {
   REJECTED: 'REJECTED',
 };
 
+// TFT person.partnerTimezone -> our Partner.region (MULTI_SELECT). TFT's value is a
+// coarse timezone band, not a geography, so each maps to every region it plausibly
+// covers. OTHER carries no signal -> no region. Region stays empty if unmapped.
+const TIMEZONE_TO_REGION: Record<string, string[]> = {
+  AMERICAS: ['US', 'LATAM'],
+  EMEA: ['EUROPE', 'MENA', 'AFRICA'],
+  WEST_ASIA: ['MENA', 'APAC'],
+  EAST_ASIA_OCEANIA: ['APAC'],
+  OTHER: [],
+};
+
 // Local SELECT option sets, for preflight coverage checks (a TFT value not in
 // these would fail a real write). Keep in sync with src/objects + src/fields.
 const LOCAL_OPTIONS: Record<string, Set<string>> = {
@@ -120,6 +131,7 @@ async function main() {
     partnerTier: new Set(),
     partnerScope: new Set(),
     typeOfTeam: new Set(),
+    partnerTimezone: new Set(),
     oppStage: new Set(),
     hostingType: new Set(),
     subscriptionType: new Set(),
@@ -134,6 +146,7 @@ async function main() {
   // ---------------------------------------------------------------------
   // 1. Read all three TFT datasets (raw fetch; not rate-limited by local).
   // ---------------------------------------------------------------------
+  console.log('[import] fetching TFT people...');
   const tftPeople = edges(
     await tftQuery(`query {
       people(first: 500, filter: { partnerStage: { in: ["APPLICATION","POTENTIAL_PARTNER","PARTNER","FORMER_PARTNER","REJECTED"] } }) {
@@ -143,7 +156,7 @@ async function main() {
           emails { primaryEmail }
           city jobTitle
           linkedinLink { primaryLinkUrl }
-          partnerStage partnerTier partnerScope partnerTypeOfTeam partnerIsAvailable partnerSkills
+          partnerStage partnerTier partnerScope partnerTypeOfTeam partnerTimezone partnerIsAvailable partnerSkills
           partnerBudgetMinimum { amountMicros currencyCode }
           partnerBudgetAverage { amountMicros currencyCode }
           company { id name domainName { primaryLinkUrl } }
@@ -152,6 +165,7 @@ async function main() {
     }`),
     'people',
   );
+  console.log('[import] fetching TFT opportunities...');
   const tftOpps = edges(
     await tftQuery(`query {
       opportunities(first: 500) {
@@ -166,6 +180,7 @@ async function main() {
     }`),
     'opportunities',
   );
+  console.log('[import] fetching TFT partner quotes...');
   const tftContent = edges(
     await tftQuery(`query {
       customerContents(first: 500) {
@@ -183,6 +198,7 @@ async function main() {
   // ---------------------------------------------------------------------
   // 2. Batched existence lookups against local (one `in` query per object).
   // ---------------------------------------------------------------------
+  console.log('[import] checking existing records in target workspace...');
   const partnerSlugs = uniq(tftPeople.map(personSlug));
   const partnerIdBySlug = new Map<string, string>(
     partnerSlugs.length
@@ -257,24 +273,36 @@ async function main() {
     amount?.amountMicros != null ? { amountMicros: amount.amountMicros, currencyCode: amount.currencyCode ?? 'USD' } : undefined;
 
   // -- Partners (upsert by slug) --
+  console.log(`[import] upserting ${tftPeople.length} partners...`);
   const localPartnerIdByTftPersonId = new Map<string, string>();
   let partnersCreated = 0;
   let partnersUpdated = 0;
+  let partnersDone = 0;
   for (const p of tftPeople) {
     note('partnerStage', p.partnerStage);
     note('partnerTier', p.partnerTier);
     (Array.isArray(p.partnerScope) ? p.partnerScope : []).forEach((s: string) => note('partnerScope', s));
     note('typeOfTeam', p.partnerTypeOfTeam);
+    note('partnerTimezone', p.partnerTimezone);
 
     const slug = personSlug(p);
     const companyId = await upsertCompany(p.company?.name, p.company?.domainName?.primaryLinkUrl);
+    // Timezone band -> geographic region(s). Unmapped/OTHER -> no region.
+    const region = TIMEZONE_TO_REGION[p.partnerTimezone] ?? [];
+    // A partner scoped for hosting is, by definition, a self-host expert.
+    const scope = Array.isArray(p.partnerScope) ? p.partnerScope : [];
+    const deploymentExpertise = scope.includes('HOSTING_ENVIRONMENT') ? ['SELF_HOST'] : [];
     const data: Record<string, unknown> = {
       name: [p.name?.firstName, p.name?.lastName].filter(Boolean).join(' ').trim() || 'Unknown partner',
       slug,
       validationStage: PARTNER_STAGE_TO_VALIDATION[p.partnerStage] ?? 'APPLICATION',
       availability: p.partnerIsAvailable ? 'AVAILABLE' : 'UNAVAILABLE',
+      // TFT has no language data; default everyone to English.
+      languagesSpoken: ['ENGLISH'],
       ...(p.partnerTier ? { partnerTier: p.partnerTier } : {}),
-      ...(Array.isArray(p.partnerScope) && p.partnerScope.length ? { partnerScope: p.partnerScope } : {}),
+      ...(scope.length ? { partnerScope: scope } : {}),
+      ...(region.length ? { region } : {}),
+      ...(deploymentExpertise.length ? { deploymentExpertise } : {}),
       ...(p.partnerTypeOfTeam ? { typeOfTeam: p.partnerTypeOfTeam } : {}),
       ...(Array.isArray(p.partnerSkills) && p.partnerSkills.length ? { skills: p.partnerSkills } : {}),
       ...(p.city ? { city: p.city } : {}),
@@ -303,13 +331,18 @@ async function main() {
       partnersCreated++;
     }
     localPartnerIdByTftPersonId.set(p.id, partnerId as string);
+    partnersDone++;
+    if (partnersDone % 10 === 0 || partnersDone === tftPeople.length)
+      console.log(`[import] partners ${partnersDone}/${tftPeople.length} (created=${partnersCreated} updated=${partnersUpdated})`);
   }
-  console.log(`[import] partners created=${partnersCreated} updated=${partnersUpdated}`);
+  console.log(`[import] partners done: created=${partnersCreated} updated=${partnersUpdated}`);
 
   // -- Opportunities (upsert by tftOpportunityId) --
+  console.log(`[import] upserting ${tftOpps.length} opportunities...`);
   let oppsCreated = 0;
   let oppsUpdated = 0;
   let oppsPartnerLinked = 0;
+  let oppsDone = 0;
   for (const o of tftOpps) {
     if (!o.name) continue;
     note('oppStage', o.stage);
@@ -351,10 +384,14 @@ async function main() {
       }
       oppsCreated++;
     }
+    oppsDone++;
+    if (oppsDone % 20 === 0 || oppsDone === tftOpps.length)
+      console.log(`[import] opportunities ${oppsDone}/${tftOpps.length} (created=${oppsCreated} updated=${oppsUpdated})`);
   }
-  console.log(`[import] opportunities created=${oppsCreated} updated=${oppsUpdated} (partner-linked=${oppsPartnerLinked})`);
+  console.log(`[import] opportunities done: created=${oppsCreated} updated=${oppsUpdated} (partner-linked=${oppsPartnerLinked})`);
 
   // -- Partner quotes (upsert by name) --
+  console.log(`[import] upserting ${quotes.length} partner quotes...`);
   let quotesCreated = 0;
   let quotesUpdated = 0;
   tftContent.forEach((c: any) => (Array.isArray(c.typeCustom) ? c.typeCustom : []).forEach((t: string) => note('typeCustom', t)));
@@ -402,6 +439,7 @@ async function main() {
   report('partnerTier', 'partnerTier', 'partnerTier');
   report('partnerScope', 'partnerScope', 'partnerScope');
   report('typeOfTeam', 'typeOfTeam', 'typeOfTeam');
+  report('partnerTimezone (-> region map)', 'partnerTimezone');
   report('opp stage (-> matchStatus map)', 'oppStage');
   report('hostingType', 'hostingType', 'hostingType');
   report('subscriptionType', 'subscriptionType', 'subscriptionType');
@@ -410,8 +448,10 @@ async function main() {
   report('customerContent typeCustom', 'typeCustom');
   const unmappedStages = [...seen.partnerStage].filter((s) => !(s in PARTNER_STAGE_TO_VALIDATION));
   const unmappedOpps = [...seen.oppStage].filter((s) => !(s in STAGE_TO_MATCH_STATUS));
+  const unmappedTz = [...seen.partnerTimezone].filter((t) => !(t in TIMEZONE_TO_REGION));
   if (unmappedStages.length) console.log(`[preflight] ⚠️ partnerStage not mapped: ${unmappedStages.join(', ')}`);
   if (unmappedOpps.length) console.log(`[preflight] ⚠️ opp stage not mapped: ${unmappedOpps.join(', ')}`);
+  if (unmappedTz.length) console.log(`[preflight] ⚠️ partnerTimezone not mapped: ${unmappedTz.join(', ')}`);
 }
 
 main().catch((err) => {
