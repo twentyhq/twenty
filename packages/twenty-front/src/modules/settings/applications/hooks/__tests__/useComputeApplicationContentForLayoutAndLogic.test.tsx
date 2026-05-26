@@ -56,31 +56,6 @@ describe('useComputeApplicationContentForLayoutAndLogic', () => {
       expect(row.secondary).toContain('2 tabs');
       expect(row.link).toBeUndefined();
     });
-
-    it('exposes a link to the layout detail page when an installed app is provided', () => {
-      const manifestContent = {
-        ...baseManifest,
-        objects: [],
-        pageLayouts: [
-          {
-            universalIdentifier: 'pl-1',
-            name: 'Layout',
-            tabs: [],
-          },
-        ],
-      } as unknown as Manifest;
-
-      const { result } = renderHook(
-        () =>
-          useComputeApplicationContentForLayoutAndLogic({
-            installedApplication: { id: APP_ID, agents: [] },
-            manifestContent,
-          }),
-        { wrapper },
-      );
-
-      expect(result.current.pageLayoutRows[0].link).toBeDefined();
-    });
   });
 
   describe('viewRows', () => {

@@ -118,10 +118,12 @@ export const SettingsApplicationDetailContentTab = ({
         key: fc.id,
         name: fc.name,
         secondary: fc.description ?? undefined,
-        link: getSettingsPath(SettingsPath.ApplicationFrontComponentDetail, {
-          applicationId,
-          frontComponentId: fc.id,
-        }),
+        link: getSettingsPath(
+          SettingsPath.LayoutManageItemFrontComponentDetail,
+          {
+            frontComponentId: fc.id,
+          },
+        ),
       }))
     : (manifestContent?.frontComponents ?? []).map((fc) => ({
         key: fc.universalIdentifier,
@@ -136,8 +138,7 @@ export const SettingsApplicationDetailContentTab = ({
         key: item.id,
         name: item.label,
         secondary: item.shortLabel ?? undefined,
-        link: getSettingsPath(SettingsPath.ApplicationCommandMenuItemDetail, {
-          applicationId,
+        link: getSettingsPath(SettingsPath.LayoutManageItemCommandDetail, {
           commandMenuItemId: item.id,
         }),
       }))

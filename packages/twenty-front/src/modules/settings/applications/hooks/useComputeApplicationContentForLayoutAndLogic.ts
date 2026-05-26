@@ -18,8 +18,6 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
 }) => {
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
-  const installedAppId = installedApplication?.id;
-
   // Workspace metadata covers standard + installed-app objects; the manifest
   // fallback only matters when previewing an uninstalled marketplace app.
   const resolveLabel = (uid: string | undefined | null) => {
@@ -48,12 +46,6 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
       key: layout.universalIdentifier,
       name: layout.name,
       secondary: parts.length > 0 ? parts.join(' · ') : undefined,
-      link: isDefined(installedAppId)
-        ? getSettingsPath(SettingsPath.ApplicationPageLayoutDetail, {
-            applicationId: installedAppId,
-            pageLayoutUniversalIdentifier: layout.universalIdentifier,
-          })
-        : undefined,
     };
   });
 
@@ -69,12 +61,6 @@ export const useComputeApplicationContentForLayoutAndLogic = ({
         secondary: isDefined(objectLabel)
           ? t`${formattedType} of ${objectLabel}`
           : formattedType,
-        link: isDefined(installedAppId)
-          ? getSettingsPath(SettingsPath.ApplicationViewDetail, {
-              applicationId: installedAppId,
-              viewUniversalIdentifier: view.universalIdentifier,
-            })
-          : undefined,
       };
     },
   );

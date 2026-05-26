@@ -198,18 +198,26 @@ const SettingsApplicationConnectionDetail = lazy(() =>
   ),
 );
 
-const SettingsApplicationFrontComponentDetail = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationFrontComponentDetail').then(
+const SettingsLayoutCommandDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutCommandDetail').then(
     (module) => ({
-      default: module.SettingsApplicationFrontComponentDetail,
+      default: module.SettingsLayoutCommandDetail,
     }),
   ),
 );
 
-const SettingsApplicationCommandMenuItemDetail = lazy(() =>
-  import('~/pages/settings/applications/SettingsApplicationCommandMenuItemDetail').then(
+const SettingsLayoutSidebarItemDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutSidebarItemDetail').then(
     (module) => ({
-      default: module.SettingsApplicationCommandMenuItemDetail,
+      default: module.SettingsLayoutSidebarItemDetail,
+    }),
+  ),
+);
+
+const SettingsLayoutFrontComponentDetail = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutFrontComponentDetail').then(
+    (module) => ({
+      default: module.SettingsLayoutFrontComponentDetail,
     }),
   ),
 );
@@ -348,6 +356,20 @@ const SettingsObjects = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjects').then((module) => ({
     default: module.SettingsObjects,
   })),
+);
+
+const SettingsLayout = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayout').then((module) => ({
+    default: module.SettingsLayout,
+  })),
+);
+
+const SettingsLayoutManageItems = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayoutManageItems').then(
+    (module) => ({
+      default: module.SettingsLayoutManageItems,
+    }),
+  ),
 );
 
 const SettingsDevelopersWebhookNew = lazy(() =>
@@ -636,6 +658,31 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.Layout} element={<SettingsLayout />} />
+        <Route
+          path={SettingsPath.LayoutManageItems}
+          element={<SettingsLayoutManageItems />}
+        />
+        <Route
+          path={SettingsPath.LayoutManageItemCommandDetail}
+          element={<SettingsLayoutCommandDetail />}
+        />
+        <Route
+          path={SettingsPath.LayoutManageItemSidebarItemDetail}
+          element={<SettingsLayoutSidebarItemDetail />}
+        />
+        <Route
+          path={SettingsPath.LayoutManageItemFrontComponentDetail}
+          element={<SettingsLayoutFrontComponentDetail />}
+        />
+        <Route
+          path={SettingsPath.LayoutManageItemViewDetail}
+          element={<SettingsLayoutViewDetail />}
+        />
+        <Route
+          path={SettingsPath.LayoutManageItemPageLayoutDetail}
+          element={<SettingsLayoutPageLayoutDetail />}
+        />
         <Route
           path={SettingsPath.NewEmailGroupChannel}
           element={<SettingsNewEmailGroupChannel />}
@@ -852,22 +899,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ApplicationLogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
-        />
-        <Route
-          path={SettingsPath.ApplicationFrontComponentDetail}
-          element={<SettingsApplicationFrontComponentDetail />}
-        />
-        <Route
-          path={SettingsPath.ApplicationCommandMenuItemDetail}
-          element={<SettingsApplicationCommandMenuItemDetail />}
-        />
-        <Route
-          path={SettingsPath.ApplicationViewDetail}
-          element={<SettingsLayoutViewDetail />}
-        />
-        <Route
-          path={SettingsPath.ApplicationPageLayoutDetail}
-          element={<SettingsLayoutPageLayoutDetail />}
         />
         <Route
           path={SettingsPath.ApplicationRegistrationConfigVariableDetails}

@@ -26,6 +26,7 @@ import {
   IconHelpCircle,
   IconHierarchy2,
   IconKey,
+  IconLayout,
   IconMail,
   IconMessage,
   IconPlug,
@@ -127,6 +128,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
+          label: t`Layout`,
+          path: SettingsPath.Layout,
+          Icon: IconLayout,
+          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+        },
+        {
           label: t`Members`,
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
@@ -157,14 +164,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Applications,
           Icon: IconPlug,
           isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
-          modifier: 'new',
         },
         {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
-          modifier: 'new',
         },
         {
           label: t`Security`,
