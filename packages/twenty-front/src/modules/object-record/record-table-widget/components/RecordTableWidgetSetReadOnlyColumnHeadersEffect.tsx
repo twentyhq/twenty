@@ -8,10 +8,10 @@ import { useEffect } from 'react';
 
 export const RecordTableWidgetSetReadOnlyColumnHeadersEffect = ({
   recordTableId,
-  areCellsEditable = false,
+  isReadOnly = true,
 }: {
   recordTableId: string;
-  areCellsEditable?: boolean;
+  isReadOnly?: boolean;
 }) => {
   const store = useStore();
 
@@ -48,9 +48,9 @@ export const RecordTableWidgetSetReadOnlyColumnHeadersEffect = ({
       isRecordTableCellsNonEditableComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      !areCellsEditable,
+      isReadOnly,
     );
-  }, [store, recordTableId, areCellsEditable]);
+  }, [store, recordTableId, isReadOnly]);
 
   return null;
 };
