@@ -8,7 +8,10 @@ import {
   type EachTestingContext,
   eachTestingContextFilter,
 } from 'twenty-shared/testing';
-import { AggregateOperations } from 'twenty-shared/types';
+import {
+  AggregateOperations,
+  PageLayoutTabLayoutMode,
+} from 'twenty-shared/types';
 import { v4 } from 'uuid';
 
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -229,4 +232,110 @@ describe('Page layout with tabs update should succeed', () => {
       );
     },
   );
+
+  it('should move a widget to another tab when saving layout tabs and widgets', async () => {
+    const widgetId = v4();
+
+    await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      input: {
+        id: testPageLayoutId,
+        name: 'Layout Before Widget Move',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: testTabId1,
+            title: 'Source Tab',
+            position: 0,
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            widgets: [
+              {
+                id: widgetId,
+                pageLayoutTabId: testTabId1,
+                title: 'Iframe Widget',
+                type: WidgetType.IFRAME,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  index: 0,
+                },
+                configuration: MOCK_IFRAME_CONFIGURATION,
+              },
+            ],
+          },
+          {
+            id: testTabId2,
+            title: 'Destination Tab',
+            position: 1,
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            widgets: [],
+          },
+        ],
+      },
+    });
+
+    const { data } = await updateOnePageLayoutWithTabsAndWidgets({
+      expectToFail: false,
+      input: {
+        id: testPageLayoutId,
+        name: 'Layout After Widget Move',
+        type: PageLayoutType.RECORD_PAGE,
+        objectMetadataId: null,
+        tabs: [
+          {
+            id: testTabId1,
+            title: 'Source Tab',
+            position: 0,
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            widgets: [],
+          },
+          {
+            id: testTabId2,
+            title: 'Destination Tab',
+            position: 1,
+            layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+            widgets: [
+              {
+                id: widgetId,
+                pageLayoutTabId: testTabId2,
+                title: 'Iframe Widget',
+                type: WidgetType.IFRAME,
+                objectMetadataId: null,
+                gridPosition: {
+                  row: 0,
+                  column: 0,
+                  rowSpan: 1,
+                  columnSpan: 1,
+                },
+                position: {
+                  layoutMode: PageLayoutTabLayoutMode.VERTICAL_LIST,
+                  index: 0,
+                },
+                configuration: MOCK_IFRAME_CONFIGURATION,
+              },
+            ],
+          },
+        ],
+      },
+    });
+
+    const updatedTabs = data.updatePageLayoutWithTabsAndWidgets.tabs ?? [];
+    const sourceTab = updatedTabs.find((tab) => tab.id === testTabId1);
+    const destinationTab = updatedTabs.find((tab) => tab.id === testTabId2);
+
+    expect(sourceTab?.widgets).toHaveLength(0);
+    expect(destinationTab?.widgets).toHaveLength(1);
+    expect(destinationTab?.widgets?.[0]).toMatchObject({
+      id: widgetId,
+      pageLayoutTabId: testTabId2,
+      title: 'Iframe Widget',
+    });
+  });
 });
