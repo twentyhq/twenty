@@ -13,6 +13,7 @@ import {
 
 export const EXPECTED_MANIFEST: Manifest = {
   commandMenuItems: [],
+  permissionFlags: [],
   pageLayouts: [],
   pageLayoutTabs: [
     {
@@ -118,6 +119,19 @@ export const EXPECTED_MANIFEST: Manifest = {
       universalIdentifier: 'f1234567-abcd-4000-8000-000000000001',
       isHeadless: false,
       usesSdkClient: false,
+    },
+  ],
+
+  indexes: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+      objectUniversalIdentifier: '54b589ca-eeed-4950-a176-358418b85c05',
+      fields: [
+        {
+          universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+          fieldUniversalIdentifier: '87b675b8-dd8c-4448-b4ca-20e5a2234a1e',
+        },
+      ],
     },
   ],
 

@@ -4,13 +4,11 @@ exports[`Permission flag upsert should fail when permissionFlagKeys contains inv
 {
   "extensions": {
     "code": "BAD_USER_INPUT",
-    "http": {
-      "status": 400,
-    },
-    "userFriendlyMessage": "An error occurred.",
+    "subCode": "INVALID_SETTING_PERMISSIONS",
+    "userFriendlyMessage": "Some of the permissions you selected are not valid. Please try again with valid permission settings.",
   },
-  "message": "Value "INVALID_FLAG" does not exist in "PermissionFlagType" enum.",
-  "name": "GraphQLError",
+  "message": "Invalid permission setting (unknown value): INVALID_FLAG",
+  "name": "UserInputError",
 }
 `;
 

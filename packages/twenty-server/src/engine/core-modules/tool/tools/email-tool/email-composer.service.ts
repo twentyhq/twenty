@@ -219,13 +219,20 @@ export class EmailComposerService {
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id);
 
-      const { stream } = await this.fileService.getFileStreamById({
+      const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
         fileFolder,
       });
 
-      const buffer = await streamToBuffer(stream);
+      if (fileStream === null) {
+        throw new EmailToolException(
+          `Files not found: ${fileMetadata.name} (${fileMetadata.id})`,
+          EmailToolExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      const buffer = await streamToBuffer(fileStream.stream);
 
       attachments.push({
         filename: fileMetadata.name,
