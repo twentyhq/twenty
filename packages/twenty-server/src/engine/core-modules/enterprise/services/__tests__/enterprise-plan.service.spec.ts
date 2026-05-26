@@ -286,8 +286,6 @@ describe('EnterprisePlanService', () => {
     });
   });
 
-
-
   describe('isValid', () => {
     it('should return true when validity token is valid', async () => {
       await setupValidState();
