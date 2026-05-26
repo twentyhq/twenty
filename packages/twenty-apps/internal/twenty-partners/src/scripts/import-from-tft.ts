@@ -112,6 +112,14 @@ const edges = (result: any, key: string): any[] =>
 const uniq = (values: (string | undefined | null)[]): string[] =>
   [...new Set(values.filter((v): v is string => !!v))];
 
+// Normalize a domain for dedup. Twenty's company domain is a unique key but is
+// stored with an https:// prefix, while TFT values vary, so compare on a canonical
+// form (no protocol, no www, no trailing slash, lowercased).
+const normDomain = (d?: string | null): string | undefined =>
+  d
+    ? d.trim().toLowerCase().replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/+$/, '') || undefined
+    : undefined;
+
 async function main() {
   console.log(`[import] mode: ${APPLY ? 'APPLY (writing to local)' : 'DRY-RUN (no writes)'}`);
   const local = new CoreApiClient({
@@ -226,17 +234,22 @@ async function main() {
       : [],
   );
 
-  const companyNames = uniq([...tftPeople.map((p: any) => p.company?.name), ...tftOpps.map((o: any) => o.company?.name)]);
-  const companyIdByName = new Map<string, string>(
-    companyNames.length
-      ? edges(
-          await local.query({
-            companies: { __args: { filter: { name: { in: companyNames } }, first: 500 }, edges: { node: { id: true, name: true } } },
-          } as any),
-          'companies',
-        ).map((n: any) => [n.name, n.id])
-      : [],
+  // Fetch existing companies and index by BOTH name and normalized domain. Twenty
+  // enforces uniqueness on domain, so dedup must be domain-aware: the same company
+  // can arrive under different names (e.g. "Acme" vs "acme.com") across TFT people,
+  // opps and content, and creating a second one collides on the domain constraint.
+  const existingCompanies = edges(
+    await local.query({
+      companies: { __args: { filter: {}, first: 500 }, edges: { node: { id: true, name: true, domainName: { primaryLinkUrl: true } } } },
+    } as any),
+    'companies',
   );
+  const companyIdByName = new Map<string, string>(existingCompanies.map((n: any) => [n.name, n.id]));
+  const companyIdByDomain = new Map<string, string>();
+  for (const c of existingCompanies) {
+    const nd = normDomain(c.domainName?.primaryLinkUrl);
+    if (nd && !companyIdByDomain.has(nd)) companyIdByDomain.set(nd, c.id);
+  }
 
   const oppTftIds = uniq(tftOpps.filter((o: any) => o.name).map((o: any) => o.id));
   const oppIdByTftId = new Map<string, string>(
@@ -269,18 +282,42 @@ async function main() {
   const upsertCompany = async (name?: string, domain?: string): Promise<string | undefined> => {
     if (!name) return undefined;
     if (companyIdByName.has(name)) return companyIdByName.get(name);
+    const nd = normDomain(domain);
+    // Same company under a different name but same domain — reuse it.
+    if (nd && companyIdByDomain.has(nd)) {
+      const existingId = companyIdByDomain.get(nd) as string;
+      companyIdByName.set(name, existingId);
+      return existingId;
+    }
     let id = `dry:company:${name}`;
     if (APPLY) {
       await pace();
-      const created: any = await local.mutation({
-        createCompany: {
-          __args: { data: { name, ...(domain ? { domainName: { primaryLinkUrl: domain } } : {}) } },
-          id: true,
-        },
-      } as any);
-      id = created.createCompany.id;
+      try {
+        const created: any = await local.mutation({
+          createCompany: {
+            __args: { data: { name, ...(domain ? { domainName: { primaryLinkUrl: domain } } : {}) } },
+            id: true,
+          },
+        } as any);
+        id = created.createCompany.id;
+      } catch (err) {
+        // Fallback: domain collided with a company beyond the 500 we indexed.
+        // Find it by domain and reuse instead of failing the whole import.
+        if (!nd) throw err;
+        await pace();
+        const found = edges(
+          await local.query({
+            companies: { __args: { filter: { domainName: { primaryLinkUrl: { ilike: `%${nd}%` } } }, first: 1 }, edges: { node: { id: true } } },
+          } as any),
+          'companies',
+        );
+        if (!found[0]?.id) throw err;
+        id = found[0].id;
+        console.log(`[import] company "${name}" reused existing by domain ${nd}`);
+      }
     }
     companyIdByName.set(name, id);
+    if (nd) companyIdByDomain.set(nd, id);
     return id;
   };
 
