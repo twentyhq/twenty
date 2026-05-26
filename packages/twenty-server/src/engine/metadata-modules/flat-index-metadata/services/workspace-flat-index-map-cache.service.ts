@@ -52,6 +52,7 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
               indexMetadataId: true,
               fieldMetadataId: true,
               order: true,
+              subFieldName: true,
               createdAt: true,
               updatedAt: true,
             },
