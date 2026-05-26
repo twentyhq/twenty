@@ -202,7 +202,8 @@ export class FileStorageService {
     },
   ): Promise<string | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePathOrThrow(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.getPresignedUrl({
       filePath: onStorageFilePath,
@@ -215,7 +216,8 @@ export class FileStorageService {
   readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePathOrThrow(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.readFile({ filePath: onStorageFilePath });
   }
@@ -224,7 +226,8 @@ export class FileStorageService {
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePathOrThrow(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.downloadFile({
       onStoragePath: onStorageFilePath,
@@ -399,7 +402,8 @@ export class FileStorageService {
 
   checkFileExists(params: ResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePathOrThrow(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.checkFileExists({ filePath: onStorageFilePath });
   }
