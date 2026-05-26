@@ -41,9 +41,16 @@ export const extractFileInfoOrThrow = async ({
   let mimeType: string = 'application/octet-stream';
 
   if (isNonEmptyString(ext)) {
-    // Twenty policy wins over IANA/mrmime for the (small) set of extensions
-    // where the IANA mapping collides with a developer-tooling convention
-    // (e.g. .ts → video/mp2t is correct per IANA but means TypeScript here).
+    // Twenty policy wins over the ext-based fallback for the (small) set of
+    // extensions where mrmime's IANA mapping collides with a developer-tooling
+    // convention. This branch is only reached when file-type's magic-byte
+    // sniff returned nothing — when the bytes actually match (e.g. a real
+    // MPEG-TS video at foo.ts), we already returned above.
+    //
+    // For .ts/.tsx the policy is also load-bearing for correctness: without
+    // it, lookup('ts') → 'video/mp2t' is in file-type's supportedMimeTypes,
+    // so the check below would throw INVALID_EXTENSION on every TypeScript
+    // source upload.
     const policyMime = TWENTY_MIME_POLICY[ext];
 
     if (isDefined(policyMime)) {
