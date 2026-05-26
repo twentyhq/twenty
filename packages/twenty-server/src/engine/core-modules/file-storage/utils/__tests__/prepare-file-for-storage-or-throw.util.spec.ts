@@ -9,7 +9,8 @@ const pdfBuffer = Buffer.from('%PDF-1.4\n', 'utf-8');
 const zipBuffer = Buffer.from([0x50, 0x4b, 0x03, 0x04]);
 const textBuffer = Buffer.from('Hello, world!', 'utf-8');
 
-const benignSvg = '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10" /></svg>';
+const benignSvg =
+  '<svg xmlns="http://www.w3.org/2000/svg"><circle r="10" /></svg>';
 const maliciousSvg = `<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(2)</script><circle r="10" /></svg>`;
 
 describe('prepareFileForStorageOrThrow', () => {
