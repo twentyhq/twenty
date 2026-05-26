@@ -8,19 +8,17 @@ import { useLingui } from '@lingui/react/macro';
 import { Tag } from 'twenty-ui/components';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Avatar, IconInfoCircle, IconKey, IconSettings, IconWorld, } from 'twenty-ui/display';
 import {
-  SettingsApplicationRegistrationConfigTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
-import {
-  SettingsApplicationRegistrationOAuthTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
-import {
-  SettingsApplicationRegistrationDistributionTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
-import {
-  SettingsApplicationRegistrationGeneralTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+  Avatar,
+  IconInfoCircle,
+  IconKey,
+  IconSettings,
+  IconWorld,
+} from 'twenty-ui/display';
+import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
+import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
+import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
+import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { styled } from '@linaria/react';

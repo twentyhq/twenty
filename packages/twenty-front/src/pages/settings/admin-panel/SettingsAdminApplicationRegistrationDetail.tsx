@@ -6,23 +6,19 @@ import { SettingsPath } from 'twenty-shared/types';
 import { useLingui } from '@lingui/react/macro';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
-import {
-  APPLICATION_REGISTRATION_ADMIN_PATH
-} from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
+import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { Avatar, IconInfoCircle, IconKey, IconSettings, IconWorld, } from 'twenty-ui/display';
 import {
-  SettingsApplicationRegistrationConfigTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
-import {
-  SettingsApplicationRegistrationOAuthTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
-import {
-  SettingsApplicationRegistrationDistributionTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
-import {
-  SettingsApplicationRegistrationGeneralTab
-} from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
+  Avatar,
+  IconInfoCircle,
+  IconKey,
+  IconSettings,
+  IconWorld,
+} from 'twenty-ui/display';
+import { SettingsApplicationRegistrationConfigTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationConfigTab';
+import { SettingsApplicationRegistrationOAuthTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationOAuthTab';
+import { SettingsApplicationRegistrationDistributionTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab';
+import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/applications/tabs/SettingsApplicationRegistrationGeneralTab';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
