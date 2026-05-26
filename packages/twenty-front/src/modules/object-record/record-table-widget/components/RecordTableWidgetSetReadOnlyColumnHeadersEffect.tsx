@@ -3,15 +3,18 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
+import { isRecordTableEmptyStateHiddenComponentState } from '@/object-record/record-table/states/isRecordTableEmptyStateHiddenComponentState';
 import { useStore } from 'jotai';
 import { useEffect } from 'react';
 
 export const RecordTableWidgetSetReadOnlyColumnHeadersEffect = ({
   recordTableId,
   isReadOnly = true,
+  isEmptyStateHidden = false,
 }: {
   recordTableId: string;
   isReadOnly?: boolean;
+  isEmptyStateHidden?: boolean;
 }) => {
   const store = useStore();
 
@@ -50,7 +53,14 @@ export const RecordTableWidgetSetReadOnlyColumnHeadersEffect = ({
       }),
       isReadOnly,
     );
-  }, [store, recordTableId, isReadOnly]);
+
+    store.set(
+      isRecordTableEmptyStateHiddenComponentState.atomFamily({
+        instanceId: recordTableId,
+      }),
+      isEmptyStateHidden,
+    );
+  }, [store, recordTableId, isReadOnly, isEmptyStateHidden]);
 
   return null;
 };

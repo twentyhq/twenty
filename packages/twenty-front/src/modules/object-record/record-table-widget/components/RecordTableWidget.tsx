@@ -14,10 +14,12 @@ const StyledTableContainer = styled.div`
 
 type RecordTableWidgetProps = {
   isReadOnly?: boolean;
+  isEmptyStateHidden?: boolean;
 };
 
 export const RecordTableWidget = ({
   isReadOnly = true,
+  isEmptyStateHidden = false,
 }: RecordTableWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
@@ -27,6 +29,7 @@ export const RecordTableWidget = ({
       <RecordTableWidgetSetReadOnlyColumnHeadersEffect
         recordTableId={recordIndexId}
         isReadOnly={isReadOnly}
+        isEmptyStateHidden={isEmptyStateHidden}
       />
       <RecordIndexTableContainerEffect />
       <StyledTableContainer>

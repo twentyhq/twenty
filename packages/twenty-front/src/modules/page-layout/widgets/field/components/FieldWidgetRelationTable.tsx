@@ -56,6 +56,7 @@ export const FieldWidgetRelationTable = ({
           viewId={viewId}
           widgetId={widget.id}
           isReadOnly={isPageLayoutInEditMode}
+          isEmptyStateHidden
         />
       </StyledContainer>
     </RecordFilterValueDependenciesContext.Provider>
