@@ -178,11 +178,11 @@ async function main() {
   let quoteCount = 0;
   for (const q of QUOTES) {
     const data = { name: q.name, status: q.status, partnerId: partnerIdBySlug.get(q.partnerSlug), opportunityId: oppIdByName.get(q.oppName) };
-    const existing = nodes(await client.query({ partnerQuotes: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerQuotes');
+    const existing = nodes(await client.query({ partnerContents: { __args: { filter: { name: { eq: q.name } }, first: 1 }, edges: { node: { id: true } } } } as any), 'partnerContents');
     if (existing[0]?.id) {
-      await client.mutation({ updatePartnerQuote: { __args: { id: existing[0].id, data }, id: true } } as any);
+      await client.mutation({ updatePartnerContent: { __args: { id: existing[0].id, data }, id: true } } as any);
     } else {
-      await client.mutation({ createPartnerQuote: { __args: { data }, id: true } } as any);
+      await client.mutation({ createPartnerContent: { __args: { data }, id: true } } as any);
     }
     quoteCount++;
   }

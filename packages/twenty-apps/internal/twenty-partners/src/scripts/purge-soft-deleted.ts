@@ -22,9 +22,9 @@ const requireEnv = (name: string): string => {
   return value;
 };
 
-// Objects the import writes to. partners + partnerQuotes are app custom objects;
+// Objects the import writes to. partners + partnerContents are app custom objects;
 // companies + opportunities are standard but populated by the import.
-const OBJECTS = ['companies', 'partners', 'opportunities', 'partnerQuotes'] as const;
+const OBJECTS = ['companies', 'partners', 'opportunities', 'partnerContents'] as const;
 
 const gql = async (url: string, key: string, query: string): Promise<any> => {
   const response = await fetch(`${url.replace(/\/$/, '')}/graphql`, {
