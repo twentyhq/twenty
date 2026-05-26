@@ -306,6 +306,7 @@ export class ApplicationDevelopmentResolver {
     await this.applicationRegistrationService.updateFromManifest(
       applicationRegistrationId,
       manifestWithResolvedUrls,
+      ApplicationRegistrationSourceType.LOCAL,
     );
 
     if (manifest.application.serverVariables) {
