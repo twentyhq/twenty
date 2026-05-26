@@ -5,11 +5,19 @@ import { msg } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
+import {
+  ApiKeyException,
+  ApiKeyExceptionCode,
+} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
+import {
+  AiException,
+  AiExceptionCode,
+} from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
@@ -411,10 +419,6 @@ export class RoleService {
     });
   }
 
-  // Rebinds role_targets (users, API keys, agents) to the workspace default
-  // role before deletion. Without this, FK ON DELETE CASCADE drops the
-  // role_target rows and orphans the API keys / agents (no role → 500s at
-  // request time).
   // TODO: Move to migration side effect / To address for rollback of role deletion
   private async rebindTargetsOfRoleToDeleteToDefaultRole({
     roleId,
@@ -453,12 +457,18 @@ export class RoleService {
           workspaceId,
         });
       } catch (error) {
-        throw this.toRoleDeleteRebindException({
-          error,
-          roleLabel,
-          targetKind: 'apiKey',
-          targetCount: apiKeysToRebind.length,
-        });
+        if (
+          error instanceof ApiKeyException &&
+          error.code === ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
+        ) {
+          throw this.toRoleDeleteRebindException({
+            error,
+            roleLabel,
+            targetKind: 'apiKey',
+            targetCount: apiKeysToRebind.length,
+          });
+        }
+        throw error;
       }
     }
 
@@ -476,19 +486,22 @@ export class RoleService {
           workspaceId,
         });
       } catch (error) {
-        throw this.toRoleDeleteRebindException({
-          error,
-          roleLabel,
-          targetKind: 'agent',
-          targetCount: agentsToRebind.length,
-        });
+        if (
+          error instanceof AiException &&
+          error.code === AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS
+        ) {
+          throw this.toRoleDeleteRebindException({
+            error,
+            roleLabel,
+            targetKind: 'agent',
+            targetCount: agentsToRebind.length,
+          });
+        }
+        throw error;
       }
     }
   }
 
-  // Wraps inner assignRoleTo* failures (typically: default role lacks
-  // canBeAssignedToApiKeys / canBeAssignedToAgents) so the user sees a
-  // role-deletion-context message instead of a raw assignment error.
   private toRoleDeleteRebindException({
     error,
     roleLabel,
