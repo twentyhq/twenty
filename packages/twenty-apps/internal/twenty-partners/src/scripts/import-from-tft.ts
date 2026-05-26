@@ -200,9 +200,12 @@ async function main() {
     }`),
     'customerContents',
   );
-  // All marketing content is imported now (quotes, case studies, logos), not just partner quotes.
-  const contentRecords = tftContent;
-  console.log(`[import] TFT: ${tftPeople.length} partner-people, ${tftOpps.length} opportunities, ${contentRecords.length} content records`);
+  // Import all content TYPES (quotes, case studies, logos) but only records that
+  // involve a partner. Customer-only content (no partnerPerson) is noise for the
+  // partners app; a partner-linked case study/quote should show on the partner.
+  const contentRecords = tftContent.filter((c: any) => c.partnerPerson?.id);
+  console.log(`[import] TFT: ${tftPeople.length} partner-people, ${tftOpps.length} opportunities, ${tftContent.length} content records`);
+  console.log(`[import] partner content: ${contentRecords.length} partner-linked of ${tftContent.length} total (skipping ${tftContent.length - contentRecords.length} customer-only)`);
 
   const personSlug = (p: any): string =>
     slugify([p.name?.firstName, p.name?.lastName].filter(Boolean).join(' ').trim() || 'Unknown partner') || p.id;
