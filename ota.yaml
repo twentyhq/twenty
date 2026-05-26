@@ -525,9 +525,18 @@ agent:
     - packages/twenty-server/.env
     - packages/twenty-server/.env.test
     - packages/twenty-docker/.env
+  bootstrap:
+    ota:
+      note: Install ota when missing so contributors and agents can run the readiness workflows declared in this contract.
+      sh: curl -fsSL https://dist.ota.run/install.sh | OTA_VERSION=v1.6.15 sh
+      powershell: $env:OTA_VERSION='v1.6.15'; irm https://dist.ota.run/install.ps1 | iex
   notes: |
-    No tasks are agent-safe by default in this contract because all verification paths
-    depend on install/setup surfaces with environment mutation and/or network access.
-    Prefer `lint:diff-with-main` and single-file test runs during iterative edits.
-    Long-running run tasks (`dev`, `dev:front`, `dev:server`, `dev:worker`, `run:compose`)
-    are intentionally not agent-safe.
+    Use `ota tasks --use .` to list runnable tasks and review the agent-safe surface before execution.
+    Use `ota run prepare:env:server .` for native/integration workflows and
+    `ota run prepare:env:compose .` for Docker Compose workflows so env files are created from
+    templates only when missing.
+    Use `ota up --workflow native-dev --native .` for the canonical local dev loop.
+    Use `ota up --workflow verify --native .` for CI-style lint/typecheck/test validation.
+    Use `ota up --workflow integration --native .` for backend integration coverage.
+    Use `ota up --workflow docker-selfhost --native .` for the repository self-host compose path.
+    No tasks are agent-safe by default in this slice.
