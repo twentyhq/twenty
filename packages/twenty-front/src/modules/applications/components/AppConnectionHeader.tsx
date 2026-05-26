@@ -5,8 +5,6 @@ import { Avatar, IconRefresh } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppConnectionHeaderProps = {
-  workspaceLogoUrl?: string | null;
-  workspaceName?: string;
   appLogoUrl?: string | null;
   appName: string;
 };
@@ -54,29 +52,17 @@ const StyledLinkIconContainer = styled.div`
 `;
 
 export const AppConnectionHeader = ({
-  workspaceLogoUrl,
-  workspaceName,
   appLogoUrl,
   appName,
 }: AppConnectionHeaderProps) => {
   const [hasAppLogoError, setHasAppLogoError] = useState(false);
 
-  const showWorkspaceLogo = isNonEmptyString(workspaceLogoUrl);
   const showAppLogoImage = isNonEmptyString(appLogoUrl) && !hasAppLogoError;
 
   return (
     <StyledContainer>
       <StyledAppLogoTile>
-        {showWorkspaceLogo ? (
-          <StyledAppLogo src={workspaceLogoUrl} alt="" />
-        ) : (
-          <Avatar
-            size="xl"
-            placeholder={workspaceName ?? ''}
-            placeholderColorSeed={workspaceName ?? ''}
-            type="squared"
-          />
-        )}
+        <StyledAppLogo src={'/images/integrations/twenty-logo.svg'} alt="" />
       </StyledAppLogoTile>
       <StyledLinkIconContainer aria-hidden>
         <IconRefresh size={14} />

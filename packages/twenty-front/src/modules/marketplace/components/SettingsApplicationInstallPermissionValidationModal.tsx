@@ -149,8 +149,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
         <StyledContent>
           <StyledAppConnectionHeaderContainer>
             <AppConnectionHeader
-              workspaceLogoUrl={currentWorkspace?.logo ?? undefined}
-              workspaceName={currentWorkspace?.displayName ?? ''}
               appLogoUrl={appLogoUrl}
               appName={appDisplayName}
             />

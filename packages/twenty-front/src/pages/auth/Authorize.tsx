@@ -7,14 +7,14 @@ import { AppConnectionHeader } from '@/applications/components/AppConnectionHead
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
 import { useRedirect } from '@/domain-manager/hooks/useRedirect';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useQuery, useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { isDefined } from 'twenty-shared/utils';
 import {
   H1Title,
   H1TitleFontColor,
+  type IconComponent,
   IconDatabase,
   IconUserCircle,
-  type IconComponent,
 } from 'twenty-ui/display';
 import { ModalContent } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
@@ -230,11 +230,7 @@ export const Authorize = () => {
     <ModalContent isVerticallyCentered isHorizontallyCentered>
       <StyledCardWrapper>
         <StyledHeader>
-          <AppConnectionHeader
-            workspaceLogoUrl="/images/integrations/twenty-logo.svg"
-            appLogoUrl={appLogoUrl}
-            appName={appName}
-          />
+          <AppConnectionHeader appLogoUrl={appLogoUrl} appName={appName} />
         </StyledHeader>
         <ModalContent contentPadding={10}>
           <StyledOAuthTitle
