@@ -11,7 +11,7 @@
 //   tsx src/scripts/seed.ts
 
 import { config } from 'dotenv';
-config({ path: '.env.local' });
+config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
