@@ -136,7 +136,7 @@ export class BullMQDriver
     );
 
     this.workerMap[queueName].on('completed', (job) => {
-      void this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobCompleted,
         attributes: { queue: queueName, job_name: job?.name ?? '' },
         shouldStoreInCache: false,
@@ -148,7 +148,7 @@ export class BullMQDriver
         return;
       }
 
-      void this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobFailed,
         attributes: {
           queue: queueName,

@@ -57,6 +57,12 @@ export class IndexFieldMetadataEntity implements Required<IndexFieldMetadataEnti
   @Column({ nullable: false })
   order: number;
 
+  // Null for scalar/relation fields. Set to the composite sub-property name
+  // (e.g. 'addressCity') when the index targets a single column of a
+  // composite-type parent.
+  @Column({ type: 'text', nullable: true })
+  subFieldName: string | null;
+
   @CreateDateColumn({ type: 'timestamptz' })
   createdAt: Date;
 

@@ -61,6 +61,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    // isUnique is derived from IndexMetadata at cache build time and is
+    // not a column on the fieldMetadata table. It stays in
+    // propertiesToCompare so per-type validators see the proposed
+    // change (e.g. rejecting unique on FILES), but the field-metadata
+    // runner drops it before issuing the SQL UPDATE — the actual state
+    // change rides on the side-effect index create/delete.
     isUnique: {
       toCompare: true,
       toStringify: false,
@@ -1198,7 +1204,7 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'roleUniversalIdentifier',
     },
     flag: {
-      toCompare: true,
+      toCompare: false,
       toStringify: false,
       universalProperty: undefined,
     },

@@ -4,6 +4,7 @@ import { msg, t } from '@lingui/core/macro';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import {
   FieldMetadataType,
+  RelationType,
   compositeTypeDefinitions,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -11,6 +12,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { FlatEntityMapsExceptionCode } from 'src/engine/metadata-modules/flat-entity/exceptions/flat-entity-maps.exception';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { isCompositeUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-composite-flat-field-metadata.util';
+import { isMorphOrRelationUniversalFlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/is-morph-or-relation-flat-field-metadata.util';
 import { IndexExceptionCode } from 'src/engine/metadata-modules/flat-index-metadata/exceptions/index-exception-code';
 import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
@@ -184,11 +186,18 @@ export class FlatIndexValidatorService {
                   (property) => property.isIncludedInUniqueConstraint,
                 );
 
+              // MORPH_RELATION resolves to multiple join columns and can't
+              // satisfy a single-column UNIQUE constraint. RELATION is only
+              // accepted as MANY_TO_ONE: that side owns a single join column
+              // (UUID) which Postgres can uniquely index.
+              const isUnindexableRelation =
+                isMorphOrRelationUniversalFlatFieldMetadata(relatedFlatField) &&
+                (relatedFlatField.type === FieldMetadataType.MORPH_RELATION ||
+                  relatedFlatField.universalSettings?.relationType !==
+                    RelationType.MANY_TO_ONE);
+
               if (
-                [
-                  FieldMetadataType.MORPH_RELATION,
-                  FieldMetadataType.RELATION,
-                ].includes(relatedFlatField.type) ||
+                isUnindexableRelation ||
                 isCompositeFieldWithNonIncludedUniqueConstraint
               ) {
                 const fieldType = relatedFlatField.type;

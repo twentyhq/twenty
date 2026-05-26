@@ -29,6 +29,7 @@ export { interpolateCommandMenuItemTemplate } from './command-menu-items/interpo
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { isDateWithoutTime } from './date/isDateWithoutTime';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';
 export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';

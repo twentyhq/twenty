@@ -29,6 +29,7 @@ const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicatio
     enqueueSnackbar: noopAsync,
     closeSidePanel: noopAsync,
     updateProgress: noopAsync,
+    copyToClipboard: noopAsync,
   };
 
 type FrontComponentWorkerEffectProps = {

@@ -381,6 +381,14 @@ const SettingsObjectNewFieldConfigure = lazy(() =>
     }),
   ),
 );
+
+const SettingsObjectNewIndex = lazy(() =>
+  import('~/pages/settings/data-model/new-index/SettingsObjectNewIndex').then(
+    (module) => ({
+      default: module.SettingsObjectNewIndex,
+    }),
+  ),
+);
 const SettingsObjectFieldEdit = lazy(() =>
   import('~/pages/settings/data-model/SettingsObjectFieldEdit').then(
     (module) => ({
@@ -741,6 +749,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectNewFieldConfigure}
           element={<SettingsObjectNewFieldConfigure />}
+        />
+        <Route
+          path={SettingsPath.ObjectNewIndex}
+          element={<SettingsObjectNewIndex />}
         />
         <Route
           path={SettingsPath.ObjectFieldEdit}

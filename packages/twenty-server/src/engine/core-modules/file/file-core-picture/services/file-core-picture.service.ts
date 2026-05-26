@@ -189,7 +189,7 @@ export class FileCorePictureService {
     const customApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(workspaceId);
 
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier: customApplicationUniversalIdentifier,
       fileFolder: FileFolder.CorePicture,

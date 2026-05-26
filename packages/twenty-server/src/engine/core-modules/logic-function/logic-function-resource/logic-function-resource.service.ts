@@ -149,7 +149,7 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
   }: GetSourceCodeParams): Promise<void> {
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,

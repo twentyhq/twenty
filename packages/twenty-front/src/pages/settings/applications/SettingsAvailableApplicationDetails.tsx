@@ -1,5 +1,6 @@
 import { CurrentApplicationContext } from '@/applications/contexts/CurrentApplicationContext';
-import { useInstallMarketplaceApp } from '@/marketplace/hooks/useInstallMarketplaceApp';
+import { SettingsApplicationInstallPermissionValidationModal } from '@/marketplace/components/SettingsApplicationInstallPermissionValidationModal';
+import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/hooks/useInstallMarketplaceAppWithPermissionValidation';
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -45,7 +46,8 @@ export const SettingsAvailableApplicationDetails = () => {
   }>();
 
   const navigateSettings = useNavigateSettings();
-  const { install, isInstalling } = useInstallMarketplaceApp();
+  const { requestInstall, install, isInstalling, modalInstanceId } =
+    useInstallMarketplaceAppWithPermissionValidation();
   const { upgrade, isUpgrading } = useUpgradeApplication();
 
   const canInstallMarketplaceApps = useHasPermissionFlag(
@@ -231,7 +233,7 @@ export const SettingsAvailableApplicationDetails = () => {
             }}
             isInstalled={isAlreadyInstalled}
             canInstallMarketplaceApps={canInstallMarketplaceApps}
-            onInstall={handleInstall}
+            onInstall={requestInstall}
             isInstalling={isInstalling}
             hasUpdate={hasUpdate}
             onUpgrade={handleUpgrade}
@@ -302,6 +304,14 @@ export const SettingsAvailableApplicationDetails = () => {
           {renderActiveTabContent()}
         </SettingsPageContainer>
       </SubMenuTopBarContainer>
+      <SettingsApplicationInstallPermissionValidationModal
+        modalInstanceId={modalInstanceId}
+        appDisplayName={displayName}
+        appLogoUrl={app?.logoUrl}
+        defaultRole={defaultRole}
+        onAuthorize={handleInstall}
+        isInstalling={isInstalling}
+      />
     </CurrentApplicationContext.Provider>
   );
 };
