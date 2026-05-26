@@ -166,7 +166,7 @@ async function main() {
     'people',
   );
   console.log('[import] fetching TFT opportunities...');
-  const tftOpps = edges(
+  const tftOppsAll = edges(
     await tftQuery(`query {
       opportunities(first: 500) {
         edges { node {
@@ -180,6 +180,11 @@ async function main() {
     }`),
     'opportunities',
   );
+  // Only import opportunities linked to a partner. The rest is TFT's general sales
+  // pipeline (mostly LOST/IDENTIFIED) — noise for a partners app. Every partner
+  // stage (INTRODUCED/WORKING) only ever appears on partner-linked opps anyway.
+  const tftOpps = tftOppsAll.filter((o: any) => o.partner?.id);
+  console.log(`[import] opportunities: ${tftOpps.length} partner-linked of ${tftOppsAll.length} total (skipping ${tftOppsAll.length - tftOpps.length} unlinked)`);
   console.log('[import] fetching TFT partner content...');
   const tftContent = edges(
     await tftQuery(`query {
