@@ -69,10 +69,11 @@ export default defineObject({
     {
       universalIdentifier: 'f303369e-288c-4a48-9920-c1de0ad9a159',
       type: FieldType.FILES,
-      name: 'attachments',
-      label: 'Attachments',
+      name: 'documents',
+      label: 'Documents',
       icon: 'IconPaperclip',
       isNullable: true,
+      universalSettings: { maxNumberOfValues: 10 },
     },
   ],
 });
