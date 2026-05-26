@@ -1,29 +1,24 @@
 import request from 'supertest';
 import { extractPathAndQueryFromUrl } from 'test/integration/metadata/suites/file/utils/file-by-id-url-helpers.util';
-import {
-  cleanupTestWorkspaceLogo,
-  uploadTestWorkspaceLogo,
-} from 'test/integration/metadata/suites/file/utils/workspace-logo-test-fixture.util';
+import { seedWorkspaceLogo } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 
 describe('File-by-id controller download should succeed', () => {
-  let fileId: string;
   let signedUrl: string;
-  let workspaceId: string;
+  let cleanup: () => Promise<void>;
 
   beforeAll(async () => {
     jest.useRealTimers();
 
-    const uploaded = await uploadTestWorkspaceLogo();
+    const seeded = await seedWorkspaceLogo();
 
-    fileId = uploaded.fileId;
-    signedUrl = uploaded.signedUrl;
-    workspaceId = uploaded.workspaceId;
+    signedUrl = seeded.signedUrl;
+    cleanup = seeded.cleanup;
 
     jest.useFakeTimers();
   }, 60000);
 
   afterAll(async () => {
-    await cleanupTestWorkspaceLogo({ fileId, workspaceId });
+    await cleanup();
   });
 
   it('should stream the workspace logo with correct headers and a non-empty image body', async () => {

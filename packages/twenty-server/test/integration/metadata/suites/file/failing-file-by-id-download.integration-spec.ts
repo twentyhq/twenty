@@ -3,33 +3,30 @@ import {
   extractPathAndQueryFromUrl,
   swapFileIdInUrl,
 } from 'test/integration/metadata/suites/file/utils/file-by-id-url-helpers.util';
-import {
-  cleanupTestWorkspaceLogo,
-  uploadTestWorkspaceLogo,
-} from 'test/integration/metadata/suites/file/utils/workspace-logo-test-fixture.util';
+import { seedWorkspaceLogo } from 'test/integration/metadata/suites/file/utils/seed-workspace-logo.util';
 import { expectOneNotInternalServerErrorHttpResponseSnapshot } from 'test/integration/utils/expect-one-not-internal-server-error-http-response-snapshot.util';
 import { FileFolder } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 describe('File-by-id controller download should fail', () => {
   let fileId: string;
-  let workspaceId: string;
   let validUrlPath: string;
+  let cleanup: () => Promise<void>;
 
   beforeAll(async () => {
     jest.useRealTimers();
 
-    const uploaded = await uploadTestWorkspaceLogo();
+    const seeded = await seedWorkspaceLogo();
 
-    fileId = uploaded.fileId;
-    workspaceId = uploaded.workspaceId;
-    validUrlPath = extractPathAndQueryFromUrl(uploaded.signedUrl);
+    fileId = seeded.fileId;
+    validUrlPath = extractPathAndQueryFromUrl(seeded.signedUrl);
+    cleanup = seeded.cleanup;
 
     jest.useFakeTimers();
   }, 60000);
 
   afterAll(async () => {
-    await cleanupTestWorkspaceLogo({ fileId, workspaceId });
+    await cleanup();
   });
 
   it('should respond 403 when the request has no token query parameter', async () => {
