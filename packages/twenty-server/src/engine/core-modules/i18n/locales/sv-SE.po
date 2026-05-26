@@ -6765,7 +6765,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "Fältet du försöker ställa in behörigheter för kunde inte hittas. Det kan ha blivit raderat."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "Filändelsen stämmer inte överens med filens innehåll. Kontrollera att filen inte är skadad och att den har rätt filändelse."
 

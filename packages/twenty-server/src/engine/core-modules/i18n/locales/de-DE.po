@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "Das Feld, für das Sie Berechtigungen setzen möchten, konnte nicht gefunden werden. Möglicherweise wurde es gelöscht."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "Die Dateierweiterung stimmt nicht mit dem Dateiinhalt überein. Bitte prüfen Sie, ob Ihre Datei nicht beschädigt ist und die korrekte Dateierweiterung hat."
 

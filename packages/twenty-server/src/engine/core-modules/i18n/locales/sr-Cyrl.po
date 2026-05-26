@@ -6759,7 +6759,7 @@ msgid "The field you are trying to set permissions for could not be found. It ma
 msgstr "Поље за које покушавате да подесите дозволе није пронађено. Могуће је да је избрисано."
 
 #. js-lingui-id: bAGU1r
-#: src/engine/core-modules/file/utils/extract-file-info.utils.ts
+#: src/engine/core-modules/file/utils/extract-file-info-or-throw.utils.ts
 msgid "The file extension doesn't match the file content. Please check that your file is not corrupted and has the correct extension."
 msgstr "Екстензија датотеке се не поклапа са садржајем датотеке. Проверите да ли ваша датотека није оштећена и да ли има исправну екстензију."
 
