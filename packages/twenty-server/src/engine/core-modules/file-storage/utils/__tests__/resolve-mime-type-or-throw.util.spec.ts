@@ -66,6 +66,26 @@ describe('resolveMimeTypeOrThrow', () => {
 
       expect(result).toBe('application/octet-stream');
     });
+
+    it('should return application/octet-stream for dot-files (extname considers no extension)', async () => {
+      const result = await resolveMimeTypeOrThrow({
+        sourceFile: 'content',
+        resourcePath: '.gitignore',
+      });
+
+      expect(result).toBe('application/octet-stream');
+    });
+
+    it('should throw when a string is paired with a binary extension whose bytes do not match', async () => {
+      await expect(
+        resolveMimeTypeOrThrow({
+          sourceFile: 'this is not a png',
+          resourcePath: 'fake-image.png',
+        }),
+      ).rejects.toMatchObject({
+        code: FileStorageExceptionCode.INVALID_EXTENSION,
+      });
+    });
   });
 
   describe('buffer sources with matching magic bytes', () => {
