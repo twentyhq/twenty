@@ -6,7 +6,7 @@ import { useNavigationDrawerTooltip } from '@/ui/navigation/navigation-drawer/ho
 import { type NavigationDrawerSubItemState } from '@/ui/navigation/navigation-drawer/types/NavigationDrawerSubItemState';
 import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -261,8 +261,9 @@ export const NavigationDrawerItem = ({
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isExpanded = useNavigationDrawerExpanded();
-  const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
-    useAtomState(isNavigationDrawerExpandedState);
+  const setIsNavigationDrawerExpanded = useSetAtomState(
+    isNavigationDrawerExpandedState,
+  );
 
   const { navigationItemId } = useNavigationDrawerTooltip(label, to);
 

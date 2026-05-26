@@ -211,11 +211,15 @@ export class ApplicationRegistrationService {
     return this.findOneById(id, ownerWorkspaceId);
   }
 
-  async updateFromManifest(
-    applicationRegistrationId: string,
-    manifest: Manifest,
-    sourceType?: ApplicationRegistrationSourceType,
-  ): Promise<void> {
+  async updateFromManifest({
+    applicationRegistrationId,
+    manifest,
+    sourceType,
+  }: {
+    applicationRegistrationId: string;
+    manifest: Manifest;
+    sourceType?: ApplicationRegistrationSourceType;
+  }): Promise<void> {
     const existing = await this.applicationRegistrationRepository.findOneOrFail(
       { where: { id: applicationRegistrationId } },
     );
