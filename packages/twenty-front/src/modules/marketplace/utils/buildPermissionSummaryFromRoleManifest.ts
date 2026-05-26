@@ -12,6 +12,7 @@ import {
   IconTool,
   IconUsers,
 } from 'twenty-ui/display';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 export type PermissionSummaryItem = {
   Icon: IconComponent;
@@ -63,9 +64,9 @@ export const buildPermissionSummaryFromRoleManifest = (
     });
   }
 
-  const hasDataModelFlag = (defaultRole.permissionFlags ?? []).some(
-    (flag) => flag.flag === 'DATA_MODEL',
-  );
+  const hasDataModelFlag = (
+    defaultRole.permissionFlagUniversalIdentifiers ?? []
+  ).some((flag) => flag === SystemPermissionFlag.DATA_MODEL);
 
   if (hasDataModelFlag) {
     items.push({
@@ -88,26 +89,35 @@ export const buildPermissionSummaryFromRoleManifest = (
     });
   }
 
-  const otherFlags = (defaultRole.permissionFlags ?? []).filter(
-    (flag) => flag.flag !== 'DATA_MODEL',
-  );
+  const otherFlags = (
+    defaultRole.permissionFlagUniversalIdentifiers ?? []
+  ).filter((flag) => flag !== SystemPermissionFlag.DATA_MODEL);
 
   const flagLabels: Record<string, { label: string; Icon: IconComponent }> = {
-    WORKFLOWS: { label: 'Manage workflows', Icon: IconSettingsAutomation },
-    SECURITY: { label: 'Manage security settings', Icon: IconKey },
-    WORKSPACE_MEMBERS: {
+    [SystemPermissionFlag.WORKFLOWS]: {
+      label: 'Manage workflows',
+      Icon: IconSettingsAutomation,
+    },
+    [SystemPermissionFlag.SECURITY]: {
+      label: 'Manage security settings',
+      Icon: IconKey,
+    },
+    [SystemPermissionFlag.WORKSPACE_MEMBERS]: {
       label: 'Manage workspace members',
       Icon: IconUsers,
     },
-    BILLING: { label: 'Manage billing', Icon: IconCurrencyDollar },
-    API_KEYS_AND_WEBHOOKS: {
+    [SystemPermissionFlag.BILLING]: {
+      label: 'Manage billing',
+      Icon: IconCurrencyDollar,
+    },
+    [SystemPermissionFlag.API_KEYS_AND_WEBHOOKS]: {
       label: 'Manage API keys and webhooks',
       Icon: IconCode,
     },
   };
 
   for (const flag of otherFlags) {
-    const config = flagLabels[flag.flag];
+    const config = flagLabels[flag];
 
     if (isDefined(config)) {
       items.push(config);

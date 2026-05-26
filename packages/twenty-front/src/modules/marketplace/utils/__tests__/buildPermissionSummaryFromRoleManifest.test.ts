@@ -1,4 +1,5 @@
 import { type RoleManifest } from 'twenty-shared/application';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 
 import { buildPermissionSummaryFromRoleManifest } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 
@@ -160,9 +161,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
     it('should add DATA_MODEL flag as "Read and write data model configuration"', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          { universalIdentifier: 'flag-1', flag: 'DATA_MODEL' as any },
-        ],
+        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.DATA_MODEL],
       };
 
       const result = buildPermissionSummaryFromRoleManifest(role);
@@ -174,9 +173,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
     it('should add WORKFLOWS flag', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          { universalIdentifier: 'flag-1', flag: 'WORKFLOWS' as any },
-        ],
+        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKFLOWS],
       };
 
       const result = buildPermissionSummaryFromRoleManifest(role);
@@ -188,9 +185,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
     it('should add SECURITY flag', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          { universalIdentifier: 'flag-1', flag: 'SECURITY' as any },
-        ],
+        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.SECURITY],
       };
 
       const result = buildPermissionSummaryFromRoleManifest(role);
@@ -202,11 +197,8 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
     it('should add WORKSPACE_MEMBERS flag', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          {
-            universalIdentifier: 'flag-1',
-            flag: 'WORKSPACE_MEMBERS' as any,
-          },
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag.WORKSPACE_MEMBERS,
         ],
       };
 
@@ -219,9 +211,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
     it('should add BILLING flag', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          { universalIdentifier: 'flag-1', flag: 'BILLING' as any },
-        ],
+        permissionFlagUniversalIdentifiers: [SystemPermissionFlag.BILLING],
       };
 
       const result = buildPermissionSummaryFromRoleManifest(role);
@@ -230,14 +220,11 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
       expect(result[0].label).toBe('Manage billing');
     });
 
-    it('should add API_KEYS_AND_WEBHOOKS flag with tool icon', () => {
+    it('should add API_KEYS_AND_WEBHOOKS flag', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          {
-            universalIdentifier: 'flag-1',
-            flag: 'API_KEYS_AND_WEBHOOKS' as any,
-          },
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag.API_KEYS_AND_WEBHOOKS,
         ],
       };
 
@@ -250,11 +237,8 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
     it('should ignore unknown permission flags', () => {
       const role: RoleManifest = {
         ...baseRole,
-        permissionFlags: [
-          {
-            universalIdentifier: 'flag-1',
-            flag: 'UNKNOWN_FLAG' as any,
-          },
+        permissionFlagUniversalIdentifiers: [
+          'unknown-flag-00000000-0000-0000-0000-000000000000',
         ],
       };
 
@@ -298,9 +282,9 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
         canUpdateAllObjectRecords: true,
         canUpdateAllSettings: true,
         canAccessAllTools: true,
-        permissionFlags: [
-          { universalIdentifier: 'flag-1', flag: 'DATA_MODEL' as any },
-          { universalIdentifier: 'flag-2', flag: 'WORKFLOWS' as any },
+        permissionFlagUniversalIdentifiers: [
+          SystemPermissionFlag.DATA_MODEL,
+          SystemPermissionFlag.WORKFLOWS,
         ],
       };
 
@@ -325,7 +309,7 @@ describe('buildPermissionSummaryFromRoleManifest', () => {
         canUpdateAllSettings: false,
         canAccessAllTools: false,
         objectPermissions: [],
-        permissionFlags: [],
+        permissionFlagUniversalIdentifiers: [],
       };
 
       const result = buildPermissionSummaryFromRoleManifest(role);
