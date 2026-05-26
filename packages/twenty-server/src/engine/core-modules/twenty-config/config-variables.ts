@@ -1120,6 +1120,27 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'Bearer token that allows the Open Network enrichment pipeline to sync contacts into this server',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+    isSensitive: true,
+  })
+  @IsOptional()
+  OPEN_NETWORK_API_TOKEN?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
+      'Optional workspace id used when Open Network syncs contacts into a specific workspace',
+    type: ConfigVariableType.STRING,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  OPEN_NETWORK_WORKSPACE_ID?: string;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
       'headers are honored — required for request.protocol to return ' +
       '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +
