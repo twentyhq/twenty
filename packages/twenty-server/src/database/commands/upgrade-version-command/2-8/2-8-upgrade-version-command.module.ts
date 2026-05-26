@@ -4,9 +4,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { DropChannelStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-workspace-command-1798000050000-drop-channel-standard-objects.command';
 import { BackfillRelationJoinColumnIndexesCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-workspace-command-1798100000000-backfill-relation-join-column-indexes.command';
-import { MigrateAiModelPreferencesCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-workspace-command-1799000000000-migrate-ai-model-preferences.command';
-import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
-import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { GateDefaultCommandMenuItemsByPermissionFlagCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-workspace-command-1798100010000-gate-default-command-menu-items-by-permission-flag.command';
 import { RestoreChannelAssociationScalarFieldMetadataCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-workspace-command-1798100020000-restore-channel-association-scalar-field-metadata.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -18,7 +15,6 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([KeyValuePairEntity]),
     ApplicationModule,
     TypeOrmModule.forFeature([FieldMetadataEntity]),
     WorkspaceCacheModule,
@@ -29,9 +25,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     BackfillRelationJoinColumnIndexesCommand,
-    MigrateAiModelPreferencesCommand,
     DropChannelStandardObjectsCommand,
-    BackfillRelationJoinColumnIndexesCommand,
     GateDefaultCommandMenuItemsByPermissionFlagCommand,
     RestoreChannelAssociationScalarFieldMetadataCommand,
   ],

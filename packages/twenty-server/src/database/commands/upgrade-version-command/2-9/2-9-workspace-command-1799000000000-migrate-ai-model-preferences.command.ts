@@ -28,9 +28,9 @@ const PREFERENCE_KEY_MAP = {
   AI_MODELS_DEFAULT_DISABLED: 'disabledModels',
 } as const;
 
-@RegisteredWorkspaceCommand('2.8.0', 1799000000000)
+@RegisteredWorkspaceCommand('2.9.0', 1799000000000)
 @Command({
-  name: 'upgrade:2-8:migrate-ai-model-preferences',
+  name: 'upgrade:2-9:migrate-ai-model-preferences',
   description:
     'Migrate AI_MODEL_PREFERENCES config var to the four individual AI_MODELS_DEFAULT_* vars, per workspace',
 })
