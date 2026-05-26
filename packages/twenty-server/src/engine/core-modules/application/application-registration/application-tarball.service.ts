@@ -271,33 +271,33 @@ export class ApplicationTarballService {
       return null;
     }
 
-    let content: Buffer;
-
     try {
-      content = await fs.readFile(absolutePath);
+      const content = await fs.readFile(absolutePath);
+
+      const { mimeType, ext } = await extractFileInfo({
+        file: content,
+        filename: params.logoPath,
+      });
+      const sanitizedContent = sanitizeFile({ file: content, ext, mimeType });
+
+      const savedLogoFile = await this.fileStorageService.writeFile({
+        sourceFile: sanitizedContent,
+        mimeType,
+        fileFolder: FileFolder.AppTarball,
+        applicationUniversalIdentifier: params.applicationUniversalIdentifier,
+        workspaceId: params.workspaceId,
+        resourcePath: `${params.registrationId}/logo${ext}`,
+        fileId: params.existingLogoFileId ?? v4(),
+        settings: { isTemporaryFile: false, toDelete: false },
+      });
+
+      return savedLogoFile.id;
     } catch {
-      this.logger.warn(`Logo file not found in tarball: ${params.logoPath}`);
+      this.logger.warn(
+        `Failed to process logo from tarball: ${params.logoPath}`,
+      );
 
       return null;
     }
-
-    const { mimeType, ext } = await extractFileInfo({
-      file: content,
-      filename: params.logoPath,
-    });
-    const sanitizedContent = sanitizeFile({ file: content, ext, mimeType });
-
-    const savedLogoFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedContent,
-      mimeType,
-      fileFolder: FileFolder.AppTarball,
-      applicationUniversalIdentifier: params.applicationUniversalIdentifier,
-      workspaceId: params.workspaceId,
-      resourcePath: `${params.registrationId}/logo${ext}`,
-      fileId: params.existingLogoFileId ?? v4(),
-      settings: { isTemporaryFile: false, toDelete: false },
-    });
-
-    return savedLogoFile.id;
   }
 }

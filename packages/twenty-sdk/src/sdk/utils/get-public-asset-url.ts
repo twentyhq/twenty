@@ -34,10 +34,13 @@ export const getPublicAssetUrl = (path: string): string => {
     ? withoutLeadingSlash
     : `public/${withoutLeadingSlash}`;
 
-  const encodedPath = withPublicPrefix
-    .split('/')
-    .map(encodeURIComponent)
-    .join('/');
+  const isAbsolute =
+    withPublicPrefix.startsWith('http://') ||
+    withPublicPrefix.startsWith('https://');
+
+  const encodedPath = isAbsolute
+    ? withPublicPrefix
+    : withPublicPrefix.split('/').map(encodeURIComponent).join('/');
 
   const url = buildPublicAssetUrl({
     path: encodedPath,

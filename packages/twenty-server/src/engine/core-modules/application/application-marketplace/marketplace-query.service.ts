@@ -101,7 +101,10 @@ export class MarketplaceQueryService {
       category: app?.category ?? '',
       logo:
         resolveApplicationRegistrationLogoUrl({
-          logo: registration.logo,
+          logo:
+            registration.logo ??
+            registration.manifest?.application?.logoUrl ??
+            null,
           sourceType: registration.sourceType,
           sourcePackage: registration.sourcePackage,
           latestAvailableVersion: registration.latestAvailableVersion,
@@ -124,7 +127,10 @@ export class MarketplaceQueryService {
       latestAvailableVersion: registration.latestAvailableVersion ?? undefined,
       logo:
         resolveApplicationRegistrationLogoUrl({
-          logo: registration.logo,
+          logo:
+            registration.logo ??
+            registration.manifest?.application?.logoUrl ??
+            null,
           sourceType: registration.sourceType,
           sourcePackage: registration.sourcePackage,
           latestAvailableVersion: registration.latestAvailableVersion,
