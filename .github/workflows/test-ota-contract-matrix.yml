@@ -29,6 +29,8 @@ permissions:
 
 env:
   OTA_NO_UPDATE_CHECK: '1'
+  OTA_SOURCE_REPOSITORY: ota-run/ota
+  OTA_SOURCE_REF: 922056507ebcc19963edba58ee24b0246ecfdf25
 
 jobs:
   native:
@@ -78,8 +80,42 @@ jobs:
       - name: Install ota from source
         uses: ota-run/ota/.github/actions/install-ota-from-source@922056507ebcc19963edba58ee24b0246ecfdf25
         with:
-          repository: ${{ github.event.inputs.ota_repository || 'ota-run/ota' }}
-          ref: ${{ github.event.inputs.ota_ref || '922056507ebcc19963edba58ee24b0246ecfdf25' }}
+          repository: ${{ github.event.inputs.ota_repository || env.OTA_SOURCE_REPOSITORY }}
+          ref: ${{ github.event.inputs.ota_ref || env.OTA_SOURCE_REF }}
+
+      - name: Assert ota minimum version from contract
+        shell: bash
+        run: |
+          ota --version | tee ota-version.txt
+          required="$(awk -F'"' '/minimum_version:/{print $2; exit}' ota.yaml)"
+          if [ -z "$required" ]; then
+            echo "missing metadata.ota.minimum_version in ota.yaml"
+            exit 1
+          fi
+          node - "$required" "$(cat ota-version.txt)" <<'JS'
+          const required = process.argv[2];
+          const versionLine = process.argv[3];
+          const match = versionLine.match(/v(\d+\.\d+\.\d+)/);
+          if (!match) {
+            console.error(`unable to parse ota version from: ${versionLine}`);
+            process.exit(1);
+          }
+          const current = match[1];
+          const toParts = (v) => v.split('.').map((x) => Number.parseInt(x, 10));
+          const compare = (a, b) => {
+            const ap = toParts(a);
+            const bp = toParts(b);
+            for (let i = 0; i < 3; i += 1) {
+              const diff = (ap[i] || 0) - (bp[i] || 0);
+              if (diff !== 0) return diff;
+            }
+            return 0;
+          };
+          if (compare(current, required) < 0) {
+            console.error(`installed ota ${current} does not satisfy minimum_version ${required}`);
+            process.exit(1);
+          }
+          JS
 
       - name: Validate contract
         shell: bash
@@ -87,21 +123,13 @@ jobs:
           ota validate --json . > ota-validate.json
           ota validate .
 
-      - name: List verify workflow tasks
+      - name: Export workflow task matrices (JSON)
         shell: bash
-        run: ota tasks --workflow verify .
-
-      - name: List native-dev workflow tasks
-        shell: bash
-        run: ota tasks --workflow native-dev .
-
-      - name: List integration workflow tasks
-        shell: bash
-        run: ota tasks --workflow integration .
-
-      - name: List docker-selfhost workflow tasks
-        shell: bash
-        run: ota tasks --workflow docker-selfhost .
+        run: |
+          ota tasks --workflow verify --json . > ota-tasks-verify.json
+          ota tasks --workflow native-dev --json . > ota-tasks-native-dev.json
+          ota tasks --workflow integration --json . > ota-tasks-integration.json
+          ota tasks --workflow docker-selfhost --json . > ota-tasks-docker-selfhost.json
 
       - name: Export execution topology
         shell: bash
@@ -145,50 +173,108 @@ jobs:
         shell: bash
         run: |
           set +e
-          ota up --workflow native-dev --native --dry-run . > ota-up-native-dev.txt 2>&1
+          ota up --workflow native-dev --native --dry-run --json . > ota-up-native-dev.json
           status=$?
           set -e
-          cat ota-up-native-dev.txt
           if [ "$status" -eq 0 ]; then
             echo "expected ota up --dry-run to fail on unsupported native Windows host"
             exit 1
           fi
-          grep -F "Unsupported host platform for context" ota-up-native-dev.txt
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-native-dev.json', 'utf8'));
+          const blockers = report.blockers || [];
+          if (report.status !== 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          if (!blockers.some((blocker) => (blocker.summary || '').startsWith('Unsupported host platform for context:'))) {
+            console.error(JSON.stringify(blockers, null, 2));
+            process.exit(1);
+          }
+          JS
 
       - name: Dry-run docker-selfhost workflow reports unsupported host
         if: ${{ matrix.unsupported_host }}
         shell: bash
         run: |
           set +e
-          ota up --workflow docker-selfhost --native --dry-run . > ota-up-docker-selfhost.txt 2>&1
+          ota up --workflow docker-selfhost --native --dry-run --json . > ota-up-docker-selfhost.json
           status=$?
           set -e
-          cat ota-up-docker-selfhost.txt
           if [ "$status" -eq 0 ]; then
             echo "expected ota up --dry-run to fail on unsupported native Windows host"
             exit 1
           fi
-          grep -F "Unsupported host platform for context" ota-up-docker-selfhost.txt
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-docker-selfhost.json', 'utf8'));
+          const blockers = report.blockers || [];
+          if (report.status !== 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          if (!blockers.some((blocker) => (blocker.summary || '').startsWith('Unsupported host platform for context:'))) {
+            console.error(JSON.stringify(blockers, null, 2));
+            process.exit(1);
+          }
+          JS
 
       - name: Dry-run verify workflow
         if: ${{ !matrix.unsupported_host }}
         shell: bash
-        run: ota up --workflow verify --native --dry-run .
+        run: |
+          ota up --workflow verify --native --dry-run --json . > ota-up-verify.json
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-verify.json', 'utf8'));
+          if (!report.dry_run || report.status === 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          JS
 
       - name: Dry-run native-dev workflow
         if: ${{ !matrix.unsupported_host }}
         shell: bash
-        run: ota up --workflow native-dev --native --dry-run .
+        run: |
+          ota up --workflow native-dev --native --dry-run --json . > ota-up-native-dev.json
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-native-dev.json', 'utf8'));
+          if (!report.dry_run || report.status === 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          JS
 
       - name: Dry-run integration workflow
         if: ${{ !matrix.unsupported_host }}
         shell: bash
-        run: ota up --workflow integration --native --dry-run .
+        run: |
+          ota up --workflow integration --native --dry-run --json . > ota-up-integration.json
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-integration.json', 'utf8'));
+          if (!report.dry_run || report.status === 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          JS
 
       - name: Dry-run docker-selfhost workflow
         if: ${{ matrix.docker_ready }}
         shell: bash
-        run: ota up --workflow docker-selfhost --native --dry-run .
+        run: |
+          ota up --workflow docker-selfhost --native --dry-run --json . > ota-up-docker-selfhost.json
+          node - <<'JS'
+          const fs = require('fs');
+          const report = JSON.parse(fs.readFileSync('ota-up-docker-selfhost.json', 'utf8'));
+          if (!report.dry_run || report.status === 'BLOCKED') {
+            console.error(JSON.stringify(report, null, 2));
+            process.exit(1);
+          }
+          JS
 
       - name: Proof docker-selfhost workflow
         if: ${{ matrix.full_proof }}
@@ -200,23 +286,33 @@ jobs:
           ota proof runtime --workflow docker-selfhost --json . > ota-proof-docker-selfhost.json
           status=$?
           cat ota-proof-docker-selfhost.json
-          if [ "$status" -eq 0 ]; then
-            docker compose -f packages/twenty-docker/docker-compose.yml down -v || true
-            ota clean . || true
-          fi
           exit "$status"
 
-      - name: Upload failure artifacts
-        if: ${{ failure() }}
+      - name: Cleanup proof runtime state
+        if: ${{ always() && matrix.full_proof }}
+        shell: bash
+        run: |
+          docker compose -f packages/twenty-docker/docker-compose.yml down -v || true
+          ota clean . || true
+
+      - name: Upload matrix artifacts
+        if: ${{ always() }}
         uses: actions/upload-artifact@v4
         with:
           name: ota-contract-matrix-${{ matrix.name }}
           include-hidden-files: true
           path: |
+            ota-version.txt
             ota-validate.json
+            ota-tasks-verify.json
+            ota-tasks-native-dev.json
+            ota-tasks-integration.json
+            ota-tasks-docker-selfhost.json
             ota-execution-topology.json
             ota-doctor-native-dev.json
-            ota-up-native-dev.txt
-            ota-up-docker-selfhost.txt
+            ota-up-verify.json
+            ota-up-native-dev.json
+            ota-up-integration.json
+            ota-up-docker-selfhost.json
             ota-proof-docker-selfhost.json
             .ota/proof/docker-selfhost/

@@ -125,11 +125,11 @@ tasks:
         - packages/twenty-docker/.env
   setup:env:
     context: host
-    description: Create local frontend and server env files from the repository templates
+    description: Reset local frontend and server env files from the repository templates
     notes: |
       This follows the contributor local setup guide and the Nx reset targets.
-      It is deterministic, but it writes local `.env` files and is intentionally outside
-      the agent-safe task set.
+      `npx nx reset:env` overwrites existing `.env` files from `.env.example`,
+      so this task intentionally mutates local environment configuration.
     category: setup
     run: npx nx reset:env twenty-front && npx nx reset:env twenty-server
     effects:
@@ -193,6 +193,8 @@ tasks:
       toolchains:
         - node
     effects:
+      writes:
+        - packages/twenty-server/dist
       external_state:
         - postgres
         - redis
@@ -330,9 +332,25 @@ tasks:
       toolchains:
         - node
     effects:
+      writes:
+        - packages/twenty-server/reset-logs.log
       external_state:
         - postgres
         - redis
+  verify:
+    context: host
+    description: Run the CI verification chain (lint, typecheck, and unit tests)
+    notes: |
+      Mirrors the repo's CI task surface for frontend and backend package validation.
+    category: test
+    run: sh -c 'echo "verify checks passed"'
+    depends_on:
+      - lint
+      - typecheck
+      - test
+    requirements:
+      toolchains:
+        - node
   test:
     context: host
     description: Run core frontend and backend unit test surfaces
@@ -444,7 +462,7 @@ workflows:
     setup:
       task: install
     run:
-      task: test
+      task: verify
   native-dev:
     intent: local_development
     description: Canonical contributor development workflow with frontend, backend, and worker
@@ -482,16 +500,9 @@ agent:
   entrypoint: prepare:env:server
   default_task: test
   safe_tasks:
-    - install
-    - lint
-    - lint:front
-    - lint:server
-    - typecheck
-    - typecheck:front
-    - typecheck:server
+    []
   verify_after_changes:
-    - lint
-    - typecheck
+    []
   writable_paths:
     - node_modules
     - .yarn/cache
@@ -505,13 +516,18 @@ agent:
     - packages/twenty-utils
   protected_paths:
     - ota.yaml
+    - OTA_MATRIX.md
     - yarn.lock
     - package.json
+    - .nvmrc
     - .github/workflows
     - packages/twenty-front/.env
     - packages/twenty-server/.env
+    - packages/twenty-server/.env.test
     - packages/twenty-docker/.env
   notes: |
+    No tasks are agent-safe by default in this contract because all verification paths
+    depend on install/setup surfaces with environment mutation and/or network access.
     Prefer `lint:diff-with-main` and single-file test runs during iterative edits.
     Long-running run tasks (`dev`, `dev:front`, `dev:server`, `dev:worker`, `run:compose`)
     are intentionally not agent-safe.
