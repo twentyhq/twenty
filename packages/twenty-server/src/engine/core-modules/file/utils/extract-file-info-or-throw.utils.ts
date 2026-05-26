@@ -13,6 +13,10 @@ import { detectPdf } from '@file-type/pdf';
 import { TWENTY_MIME_POLICY } from 'src/engine/core-modules/file/constants/twenty-mime-policy.constant';
 import { buildFileInfo } from 'src/engine/core-modules/file/utils/build-file-info.utils';
 
+const fileTypeParser = new FileTypeParser({
+  customDetectors: [detectPdf],
+});
+
 export const extractFileInfoOrThrow = async ({
   file,
   filename,
@@ -22,12 +26,8 @@ export const extractFileInfoOrThrow = async ({
 }) => {
   const { ext: declaredExt } = buildFileInfo(filename);
 
-  const fileParser = new FileTypeParser({
-    customDetectors: [detectPdf],
-  });
-
   const { ext: detectedExt, mime: detectedMime } =
-    (await fileParser.fromBuffer(file)) ?? {};
+    (await fileTypeParser.fromBuffer(file)) ?? {};
 
   if (isDefined(detectedExt) && isDefined(detectedMime)) {
     return {
