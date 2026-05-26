@@ -35,6 +35,10 @@ const StyledAuthorizeButton = styled(MainButton)`
   box-shadow: none;
 `;
 
+const StyledCancelButton = styled(MainButton)`
+  box-shadow: none;
+`;
+
 export const AuthorizeActionButtons = ({
   onAuthorize,
   onCancel,
@@ -48,7 +52,7 @@ export const AuthorizeActionButtons = ({
       {isDefined(cancelTo) ? (
         <StyledCancelLinkContainer>
           <UndecoratedLink to={cancelTo} fullWidth>
-            <MainButton
+            <StyledCancelButton
               title={t`Cancel`}
               variant="secondary"
               fullWidth
@@ -57,7 +61,7 @@ export const AuthorizeActionButtons = ({
           </UndecoratedLink>
         </StyledCancelLinkContainer>
       ) : (
-        <MainButton
+        <StyledCancelButton
           title={t`Cancel`}
           variant="secondary"
           onClick={onCancel}

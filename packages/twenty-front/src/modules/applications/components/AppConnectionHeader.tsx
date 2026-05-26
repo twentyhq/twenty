@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { Avatar, IconRefresh } from 'twenty-ui/display';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 type AppConnectionHeaderProps = {
   appLogoUrl?: string | null;
@@ -55,6 +55,8 @@ export const AppConnectionHeader = ({
   appLogoUrl,
   appName,
 }: AppConnectionHeaderProps) => {
+  const { theme } = useContext(ThemeContext);
+
   const [hasAppLogoError, setHasAppLogoError] = useState(false);
 
   const showAppLogoImage = isNonEmptyString(appLogoUrl) && !hasAppLogoError;
@@ -65,7 +67,7 @@ export const AppConnectionHeader = ({
         <StyledAppLogo src={'/images/integrations/twenty-logo.svg'} alt="" />
       </StyledAppLogoTile>
       <StyledLinkIconContainer aria-hidden>
-        <IconRefresh size={14} />
+        <IconRefresh size={theme.icon.size.md} stroke={theme.icon.stroke.lg} />
       </StyledLinkIconContainer>
       <StyledAppLogoTile>
         {showAppLogoImage ? (

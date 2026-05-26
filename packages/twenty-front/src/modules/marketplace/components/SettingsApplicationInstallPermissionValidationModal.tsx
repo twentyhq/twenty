@@ -1,12 +1,10 @@
 import { AppConnectionHeader } from '@/applications/components/AppConnectionHeader';
 import { AuthorizeActionButtons } from '@/applications/components/AuthorizeActionButtons';
-import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import {
   buildPermissionSummaryFromRoleManifest,
   type PermissionSummaryItem,
 } from '@/marketplace/utils/buildPermissionSummaryFromRoleManifest';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useMemo } from 'react';
@@ -27,6 +25,7 @@ type SettingsApplicationInstallPermissionValidationModalProps = {
 
 const StyledFullscreenContainer = styled.div`
   align-items: center;
+  background: ${themeCssVariables.background.secondary};
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -66,6 +65,7 @@ const StyledAppConnectionHeaderContainer = styled.div`
 `;
 
 const StyledTitle = styled.div`
+  color: ${themeCssVariables.font.color.primary};
   font-size: ${themeCssVariables.font.size.lg};
   font-weight: ${themeCssVariables.font.weight.semiBold};
   margin-bottom: ${themeCssVariables.spacing[6]};
@@ -75,6 +75,7 @@ const StyledTitle = styled.div`
 const StyledPermissionsCard = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.md};
+  background: ${themeCssVariables.background.primary};
   margin-bottom: ${themeCssVariables.spacing[6]};
   padding: ${themeCssVariables.spacing[4]};
 `;
@@ -109,7 +110,6 @@ export const SettingsApplicationInstallPermissionValidationModal = ({
   isInstalling,
 }: SettingsApplicationInstallPermissionValidationModalProps) => {
   const { closeModal } = useModal();
-  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
   const permissionItems: PermissionSummaryItem[] = useMemo(() => {
     if (!defaultRole) {
