@@ -34,7 +34,6 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
-import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -249,24 +248,14 @@ export class ApplicationDevelopmentResolver {
 
     const buffer = await streamToBuffer(createReadStream());
 
-    try {
-      return await this.fileStorageService.writeFile({
-        sourceFile: buffer,
-        fileFolder,
-        applicationUniversalIdentifier,
-        workspaceId,
-        resourcePath: filePath,
-        settings: { isTemporaryFile: false, toDelete: false },
-      });
-    } catch (error) {
-      if (error instanceof FileStorageException) {
-        throw new ApplicationException(
-          error.message,
-          ApplicationExceptionCode.INVALID_INPUT,
-        );
-      }
-      throw error;
-    }
+    return await this.fileStorageService.writeFile({
+      sourceFile: buffer,
+      fileFolder,
+      applicationUniversalIdentifier,
+      workspaceId,
+      resourcePath: filePath,
+      settings: { isTemporaryFile: false, toDelete: false },
+    });
   }
 
   private async throttlePerApplication(

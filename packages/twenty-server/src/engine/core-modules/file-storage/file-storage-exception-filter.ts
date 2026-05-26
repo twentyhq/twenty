@@ -12,10 +12,6 @@ import {
   UserInputError,
 } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 
-// Last-resort GraphQL translation so an unhandled FileStorageException from
-// the storage layer does not regress to a 500. Resolvers should still
-// pre-validate and translate to their own domain exception for the most
-// relevant error code.
 @Catch(FileStorageException)
 export class FileStorageExceptionFilter implements ExceptionFilter {
   catch(exception: FileStorageException) {
