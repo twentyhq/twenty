@@ -253,9 +253,7 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
         existingIdentity.DkimAttributes?.Tokens || [],
       );
 
-      if (!isVerified) {
-        await this.associateResourceWithTenant(domain, tenantName);
-      }
+      await this.associateResourceWithTenant(domain, tenantName);
 
       return { isVerified, verificationRecords };
     } catch (error) {
