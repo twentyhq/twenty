@@ -1,4 +1,3 @@
-import { useIsPageLayoutInEditMode } from '@/page-layout/hooks/useIsPageLayoutInEditMode';
 import { isRecordTableCheckboxColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableCheckboxColumnHiddenComponentState';
 import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { isRecordTableCellsNonEditableComponentState } from '@/object-record/record-table/states/isRecordTableCellsNonEditableComponentState';
@@ -9,11 +8,12 @@ import { useEffect } from 'react';
 
 export const RecordTableWidgetSetReadOnlyColumnHeadersEffect = ({
   recordTableId,
+  areCellsEditable = false,
 }: {
   recordTableId: string;
+  areCellsEditable?: boolean;
 }) => {
   const store = useStore();
-  const isPageLayoutInEditMode = useIsPageLayoutInEditMode();
 
   useEffect(() => {
     store.set(
@@ -41,16 +41,16 @@ export const RecordTableWidgetSetReadOnlyColumnHeadersEffect = ({
       isRecordTableColumnResizableComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      isPageLayoutInEditMode,
+      true,
     );
 
     store.set(
       isRecordTableCellsNonEditableComponentState.atomFamily({
         instanceId: recordTableId,
       }),
-      true,
+      !areCellsEditable,
     );
-  }, [store, recordTableId, isPageLayoutInEditMode]);
+  }, [store, recordTableId, areCellsEditable]);
 
   return null;
 };

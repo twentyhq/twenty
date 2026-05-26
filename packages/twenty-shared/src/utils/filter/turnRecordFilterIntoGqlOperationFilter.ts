@@ -570,22 +570,34 @@ const buildDirectFieldGqlOperationFilter = ({
           );
       }
     case 'RELATION': {
-      const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-        jsonRelationFilterValueSchema
-          .catch({
-            isCurrentWorkspaceMemberSelected: false,
-            selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
-              recordFilter.value,
-            ),
-          })
-          .parse(recordFilter.value);
+      const {
+        isCurrentWorkspaceMemberSelected,
+        isCurrentRecordSelected,
+        selectedRecordIds,
+      } = jsonRelationFilterValueSchema
+        .catch({
+          isCurrentWorkspaceMemberSelected: false,
+          isCurrentRecordSelected: false,
+          selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+            recordFilter.value,
+          ),
+        })
+        .parse(recordFilter.value);
 
-      const recordIds = isCurrentWorkspaceMemberSelected
+      const recordIdsWithCurrentWorkspaceMember =
+        isCurrentWorkspaceMemberSelected
+          ? [
+              ...selectedRecordIds,
+              filterValueDependencies?.currentWorkspaceMemberId,
+            ]
+          : selectedRecordIds;
+
+      const recordIds = isCurrentRecordSelected
         ? [
-            ...selectedRecordIds,
-            filterValueDependencies?.currentWorkspaceMemberId,
+            ...recordIdsWithCurrentWorkspaceMember,
+            filterValueDependencies?.currentRecordId,
           ]
-        : selectedRecordIds;
+        : recordIdsWithCurrentWorkspaceMember;
 
       if (!isDefined(recordIds) || recordIds.length === 0) return;
 

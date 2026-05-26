@@ -7,12 +7,14 @@ type RecordTableWidgetRendererContentProps = {
   objectMetadataId: string;
   viewId: string;
   widgetId: string;
+  areCellsEditable?: boolean;
 };
 
 export const RecordTableWidgetRendererContent = ({
   objectMetadataId,
   viewId,
   widgetId,
+  areCellsEditable = false,
 }: RecordTableWidgetRendererContentProps) => {
   const { objectMetadataItem } = useObjectMetadataItemById({
     objectId: objectMetadataId,
@@ -29,7 +31,7 @@ export const RecordTableWidgetRendererContent = ({
         viewId={viewId}
         widgetId={widgetId}
       >
-        <RecordTableWidget />
+        <RecordTableWidget areCellsEditable={areCellsEditable} />
       </RecordTableWidgetProvider>
     </>
   );

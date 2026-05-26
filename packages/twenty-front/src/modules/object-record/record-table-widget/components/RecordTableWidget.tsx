@@ -8,10 +8,17 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 const StyledTableContainer = styled.div`
   border: 1px solid ${themeCssVariables.border.color.light};
   border-radius: ${themeCssVariables.border.radius.sm};
+  min-height: 0;
   overflow: hidden;
 `;
 
-export const RecordTableWidget = () => {
+type RecordTableWidgetProps = {
+  areCellsEditable?: boolean;
+};
+
+export const RecordTableWidget = ({
+  areCellsEditable = false,
+}: RecordTableWidgetProps) => {
   const { objectNameSingular, recordIndexId, viewBarInstanceId } =
     useRecordIndexContextOrThrow();
 
@@ -19,6 +26,7 @@ export const RecordTableWidget = () => {
     <>
       <RecordTableWidgetSetReadOnlyColumnHeadersEffect
         recordTableId={recordIndexId}
+        areCellsEditable={areCellsEditable}
       />
       <RecordIndexTableContainerEffect />
       <StyledTableContainer>

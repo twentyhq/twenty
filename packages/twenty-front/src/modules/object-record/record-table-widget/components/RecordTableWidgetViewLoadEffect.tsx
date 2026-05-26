@@ -75,7 +75,9 @@ export const RecordTableWidgetViewLoadEffect = ({
       return;
     }
 
-    loadRecordIndexStates(currentView, objectMetadataItem);
+    loadRecordIndexStates(currentView, objectMetadataItem, {
+      skipGlobalIndexStates: true,
+    });
 
     setLastLoadedRecordTableWidgetViewId({
       viewId,

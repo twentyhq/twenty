@@ -66,15 +66,17 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
       return;
     }
 
+    // Wait for the atomic batch from loadRecordIndexStates to populate
+    // visibleRecordFields before triggering any fetch. This guard must apply
+    // to every branch: when the current view is a draft (e.g. an unsaved
+    // record-table widget view), it is not in the persisted views store, so
+    // currentView is undefined and the view-change branch below never runs.
+    if (isEmpty(visibleRecordFields)) {
+      return;
+    }
+
     (async () => {
       if ((currentView?.id ?? null) !== lastContextStoreVirtualizedViewId) {
-        // Wait for the atomic batch from loadRecordIndexStates to populate
-        // visibleRecordFields before triggering a fetch. On the next render
-        // after the batch, fields will be populated and we'll proceed.
-        if (isEmpty(visibleRecordFields)) {
-          return;
-        }
-
         setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
         setLastRecordTableQueryIdentifier(queryIdentifier);
         setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);

@@ -20,6 +20,7 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
@@ -121,20 +122,35 @@ export class ViewWidgetUpsertService {
       flatEntityMaps: flatPageLayoutWidgetMaps,
     });
 
-    if (
-      !isDefined(widget) ||
-      !isFlatPageLayoutWidgetConfigurationOfType(
-        widget,
-        WidgetConfigurationType.RECORD_TABLE,
-      )
-    ) {
+    if (!isDefined(widget)) {
       throw new ViewException(
         t`Record table widget not found`,
         ViewExceptionCode.VIEW_WIDGET_NOT_FOUND,
       );
     }
 
-    const viewId = widget.configuration.viewId;
+    const isRecordTableWidget = isFlatPageLayoutWidgetConfigurationOfType(
+      widget,
+      WidgetConfigurationType.RECORD_TABLE,
+    );
+
+    const isFieldTableWidget =
+      isFlatPageLayoutWidgetConfigurationOfType(
+        widget,
+        WidgetConfigurationType.FIELD,
+      ) && widget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE;
+
+    if (!isRecordTableWidget && !isFieldTableWidget) {
+      throw new ViewException(
+        t`Record table widget not found`,
+        ViewExceptionCode.VIEW_WIDGET_NOT_FOUND,
+      );
+    }
+
+    const viewId =
+      'viewId' in widget.configuration
+        ? widget.configuration.viewId
+        : undefined;
 
     if (!isDefined(viewId)) {
       throw new ViewException(
