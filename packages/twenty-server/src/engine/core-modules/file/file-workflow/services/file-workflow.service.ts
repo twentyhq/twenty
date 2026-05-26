@@ -9,7 +9,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 
 @Injectable()
 export class FileWorkflowService {
@@ -28,12 +27,10 @@ export class FileWorkflowService {
     filename: string;
     workspaceId: string;
   }): Promise<FileWithSignedUrlDTO> {
-    const { mimeType, ext } = await extractFileInfoOrThrow({
+    const { ext } = await extractFileInfoOrThrow({
       file,
       filename,
     });
-
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -46,7 +43,7 @@ export class FileWorkflowService {
       );
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: file,
       resourcePath: name,
       fileFolder: FileFolder.Workflow,
       applicationUniversalIdentifier:

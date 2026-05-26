@@ -20,10 +20,6 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
-import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
-import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -38,6 +34,8 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { FileStorageException } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
@@ -251,14 +249,14 @@ export class ApplicationDevelopmentResolver {
 
     const buffer = await streamToBuffer(createReadStream());
 
-    // Derive mime/ext from the bytes — never trust the multipart Content-Type
-    // header. The catch turns magic-byte mismatches into a user-visible 4xx.
-    let derived: { mimeType: string; ext: string };
-
     try {
-      derived = await extractFileInfoOrThrow({
-        file: buffer,
-        filename: filePath,
+      return await this.fileStorageService.writeFile({
+        sourceFile: buffer,
+        fileFolder,
+        applicationUniversalIdentifier,
+        workspaceId,
+        resourcePath: filePath,
+        settings: { isTemporaryFile: false, toDelete: false },
       });
     } catch (error) {
       if (error instanceof FileStorageException) {
@@ -269,21 +267,6 @@ export class ApplicationDevelopmentResolver {
       }
       throw error;
     }
-
-    const sanitizedFile = sanitizeFile({
-      file: buffer,
-      ext: derived.ext,
-      mimeType: derived.mimeType,
-    });
-
-    return await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
-      fileFolder,
-      applicationUniversalIdentifier,
-      workspaceId,
-      resourcePath: filePath,
-      settings: { isTemporaryFile: false, toDelete: false },
-    });
   }
 
   private async throttlePerApplication(

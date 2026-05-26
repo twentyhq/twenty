@@ -16,7 +16,6 @@ import {
   FilesFieldExceptionCode,
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
 import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Injectable()
@@ -53,12 +52,10 @@ export class FilesFieldService {
       );
     }
 
-    const { mimeType, ext } = await extractFileInfoOrThrow({
+    const { ext } = await extractFileInfoOrThrow({
       file,
       filename,
     });
-
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -82,7 +79,7 @@ export class FilesFieldService {
     });
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: file,
       resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,

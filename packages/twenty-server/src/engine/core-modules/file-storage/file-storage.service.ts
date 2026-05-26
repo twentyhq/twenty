@@ -13,7 +13,7 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-import { resolveMimeTypeOrThrow } from 'src/engine/core-modules/file-storage/utils/resolve-mime-type-or-throw.util';
+import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
@@ -157,15 +157,16 @@ export class FileStorageService {
         resourcePath,
       });
 
-    const mimeType = await resolveMimeTypeOrThrow({
-      sourceFile,
-      resourcePath,
-    });
+    const { sourceFile: persistedSourceFile, mimeType } =
+      await prepareFileForStorageOrThrow({
+        sourceFile,
+        resourcePath,
+      });
 
     await driver.writeFile({
       filePath: onStorageFilePath,
       mimeType,
-      sourceFile,
+      sourceFile: persistedSourceFile,
     });
 
     await fileRepository.upsert(
@@ -176,9 +177,9 @@ export class FileStorageService {
         id: fileId,
         mimeType,
         size:
-          typeof sourceFile === 'string'
-            ? Buffer.byteLength(sourceFile)
-            : sourceFile.length,
+          typeof persistedSourceFile === 'string'
+            ? Buffer.byteLength(persistedSourceFile)
+            : persistedSourceFile.length,
         settings,
       },
       ['path', 'workspaceId', 'applicationId'],

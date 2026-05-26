@@ -481,6 +481,64 @@ describe('FileStorageService', () => {
           );
         });
       });
+
+      describe('SVG sanitization (centralized invariant)', () => {
+        const maliciousSvg =
+          '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(2)</script><circle r="10" /></svg>';
+
+        it('should strip scripts and event handlers from an SVG string upload', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: 'assets/icon.svg',
+            sourceFile: maliciousSvg,
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          const driverCall = mockDriver.writeFile.mock.calls[0][0];
+
+          expect(driverCall.mimeType).toBe('image/svg+xml');
+          expect(typeof driverCall.sourceFile).toBe('string');
+          expect(driverCall.sourceFile).not.toContain('<script>');
+          expect(driverCall.sourceFile).not.toContain('onload');
+          expect(driverCall.sourceFile).toContain('<circle');
+        });
+
+        it('should strip scripts and event handlers from an SVG buffer upload', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: 'assets/icon.svg',
+            sourceFile: Buffer.from(maliciousSvg, 'utf-8'),
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          const driverCall = mockDriver.writeFile.mock.calls[0][0];
+
+          expect(driverCall.mimeType).toBe('image/svg+xml');
+          expect(driverCall.sourceFile).not.toContain('<script>');
+          expect(driverCall.sourceFile).not.toContain('onload');
+        });
+
+        it('should leave non-SVG content untouched (sanitize is no-op)', async () => {
+          const original = '{"foo": "bar"}';
+
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.Source,
+            resourcePath: 'package.json',
+            sourceFile: original,
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          const driverCall = mockDriver.writeFile.mock.calls[0][0];
+
+          expect(driverCall.sourceFile).toBe(original);
+        });
+      });
     });
 
     describe('deleteFile', () => {
