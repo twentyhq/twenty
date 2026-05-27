@@ -25,8 +25,8 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
     private readonly rolePermissionFlagRepository: Repository<RolePermissionFlagEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     @InjectWorkspaceScopedRepository(PermissionFlagEntity)
     private readonly permissionFlagRepository: WorkspaceScopedRepository<PermissionFlagEntity>,
   ) {
@@ -47,8 +47,7 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
-        this.roleRepository.find({
-          where: { workspaceId },
+        this.roleRepository.find(workspaceId, {
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
