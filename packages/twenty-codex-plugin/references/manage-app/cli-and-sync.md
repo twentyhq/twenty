@@ -2,6 +2,8 @@
 
 Use this reference for Twenty app CLI command behavior, remotes, authentication, sync, validation commands, build, deploy, logs, function execution, and CI/CD troubleshooting.
 
+All `yarn twenty *` commands in this reference must run outside the sandbox. The Codex sandbox has incompatible Node and Yarn versions and no internet access. See `../operations/command-execution.md` for execution context rules.
+
 Use `../develop-app/app-structure.md` only for app file layout and post-entity-edit validation checklists.
 
 ## App Checks
