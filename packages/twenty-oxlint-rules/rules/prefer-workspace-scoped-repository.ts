@@ -35,9 +35,6 @@ const BLACKLIST = new Set<string>([
   'BillingCustomerEntity',
   'BillingSubscriptionEntity',
   'BillingEntitlementEntity',
-  // Listed but not yet migrated — existing call sites are temporarily
-  // suppressed with eslint-disable + TODO(workspace-scoped) markers.
-  'UserWorkspaceEntity',
 ]);
 
 // Intentionally NOT on the blacklist:
@@ -45,6 +42,12 @@ const BLACKLIST = new Set<string>([
 //   tokens are minted before the user picks a workspace), so the
 //   wrapper's "workspaceId required" contract doesn't fit. Cross-tenant
 //   lookups by token jti are also normal here.
+// - UserWorkspaceEntity: a many-to-many pivot between users and
+//   workspaces. Many natural lookups are by `userId` across all
+//   workspaces (sign-in, account switcher, impersonation discovery),
+//   so a generic workspaceId-required facade doesn't fit. The right
+//   long-term home for this is a typed UserWorkspaceService with
+//   explicit method names per access pattern; not in scope here.
 
 const isInjectRepositoryDecoratorForBlacklistedEntity = (
   decorator: any,

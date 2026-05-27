@@ -13,8 +13,6 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 @CoreEntityCache('userWorkspaceEntity')
 export class UserWorkspaceEntityCacheProviderService extends CoreEntityCacheProvider<FlatUserWorkspace> {
   constructor(
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {

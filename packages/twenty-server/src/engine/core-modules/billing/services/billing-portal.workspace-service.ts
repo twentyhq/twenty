@@ -51,8 +51,6 @@ export class BillingPortalWorkspaceService {
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     @InjectWorkspaceScopedRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}

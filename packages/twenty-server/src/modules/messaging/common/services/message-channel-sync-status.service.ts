@@ -36,8 +36,6 @@ export class MessageChannelSyncStatusService {
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly accountsToReconnectService: AccountsToReconnectService,

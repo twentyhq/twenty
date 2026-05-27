@@ -37,8 +37,6 @@ export class ConnectionProviderOAuthController {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}

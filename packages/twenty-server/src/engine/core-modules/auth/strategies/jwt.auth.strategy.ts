@@ -38,8 +38,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
     private readonly jwtWrapperService: JwtWrapperService,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly permissionsService: PermissionsService,
