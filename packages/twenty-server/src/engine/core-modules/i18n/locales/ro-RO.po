@@ -6999,6 +6999,11 @@ msgstr "Acest domeniu este deja luat."
 msgid "This email is already in use."
 msgstr "Acest e-mail este deja utilizat."
 
+#. js-lingui-id: mjE4RD
+#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
+msgid "This evaluation target could not be found."
+msgstr ""
+
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
