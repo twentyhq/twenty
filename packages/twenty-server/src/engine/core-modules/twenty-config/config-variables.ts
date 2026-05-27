@@ -42,9 +42,13 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { DEFAULT_MODEL_PREFERENCES } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
+import {
+  DEFAULT_DISABLED_MODELS,
+  DEFAULT_FAST_MODELS,
+  DEFAULT_RECOMMENDED_MODELS,
+  DEFAULT_SMART_MODELS,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -1435,20 +1439,38 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'AI model admin preferences: disabled models, recommended models, and default fast/smart model lists. Managed via admin panel or env.',
-    type: ConfigVariableType.JSON,
+      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES: AiModelPreferences = DEFAULT_MODEL_PREFERENCES;
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Storage path for AI model preferences fallback (e.g. config/ai-model-preferences.json). Loaded at startup and used only when no value is set via AI_MODEL_PREFERENCES env var or the database.',
-    type: ConfigVariableType.STRING,
+      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES_STORAGE_PATH?: string;
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of model IDs disabled by default. Disabled models cannot be used by any workspace. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
