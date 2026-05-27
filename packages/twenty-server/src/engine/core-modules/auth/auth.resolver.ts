@@ -103,8 +103,12 @@ import { AuthService } from './services/auth.service';
 )
 export class AuthResolver {
   constructor(
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,

@@ -19,6 +19,8 @@ export class ResourceCreditService {
   protected readonly logger = new Logger(ResourceCreditService.name);
 
   constructor(
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
   ) {}

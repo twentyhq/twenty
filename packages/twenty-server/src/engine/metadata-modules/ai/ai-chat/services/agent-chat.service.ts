@@ -65,6 +65,8 @@ export class AgentChatService {
     private readonly messageRepository: WorkspaceScopedRepository<AgentMessageEntity>,
     @InjectWorkspaceScopedRepository(AgentMessagePartEntity)
     private readonly messagePartRepository: WorkspaceScopedRepository<AgentMessagePartEntity>,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,

@@ -44,8 +44,12 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
     private readonly billingPlanService: BillingPlanService,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly stripeCustomerService: StripeCustomerService,
@@ -53,6 +57,8 @@ export class BillingSubscriptionService {
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
     private readonly stripeSubscriptionScheduleService: StripeSubscriptionScheduleService,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingSubscriptionEntity>,
     private readonly enterprisePlanService: EnterprisePlanService,

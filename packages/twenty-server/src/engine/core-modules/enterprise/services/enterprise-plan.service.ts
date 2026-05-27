@@ -36,6 +36,8 @@ export class EnterprisePlanService implements OnModuleInit {
 
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
   ) {}

@@ -24,6 +24,8 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
 
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     protected readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,

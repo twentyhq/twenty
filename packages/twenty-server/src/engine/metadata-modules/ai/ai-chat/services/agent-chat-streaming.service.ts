@@ -55,6 +55,8 @@ export class AgentChatStreamingService {
   constructor(
     @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
     private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)

@@ -32,6 +32,8 @@ export type ResourceIdentifier = {
 export class FileStorageService {
   constructor(
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     @InjectRepository(ApplicationEntity)

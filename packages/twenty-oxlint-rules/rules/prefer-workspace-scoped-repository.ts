@@ -2,11 +2,22 @@ import { defineRule } from '@oxlint/plugins';
 
 export const RULE_NAME = 'prefer-workspace-scoped-repository';
 
-// Entities that must be accessed through WorkspaceScopedRepository
-// (i.e. @InjectWorkspaceScopedRepository) rather than the raw TypeORM
-// repository. Each entry below is a core- or metadata-schema entity that
-// carries a workspaceId column. Add new entities here as they are
-// migrated to the wrapper.
+// Entities that MUST be accessed through WorkspaceScopedRepository
+// (@InjectWorkspaceScopedRepository) — using the raw TypeORM repository
+// (@InjectRepository) on any of these is a lint error.
+//
+// Each entry is a core- or metadata-schema entity carrying a
+// workspaceId column. The list expresses intent: every such entity
+// belongs here. Entities still in active migration keep their
+// existing raw call sites suppressed with `// eslint-disable-next-line
+// twenty/prefer-workspace-scoped-repository` plus a
+// `TODO(workspace-scoped)` note, so the blacklist captures the
+// eventual goal rather than just what's already been refactored.
+//
+// Note on naming: "blacklist" here means "entities forbidden from raw
+// @InjectRepository". It is *not* a list of entities the rule opts
+// into checking — the rule's enforcement scope is the entire codebase,
+// and this set is what triggers the error.
 const BLACKLIST = new Set<string>([
   'AgentTurnEntity',
   'AgentMessageEntity',
@@ -20,6 +31,14 @@ const BLACKLIST = new Set<string>([
   'ApprovedAccessDomainEntity',
   'EmailingDomainEntity',
   'PublicDomainEntity',
+  // Listed but not yet migrated — existing call sites are temporarily
+  // suppressed with eslint-disable + TODO(workspace-scoped) markers.
+  'UserWorkspaceEntity',
+  'AppTokenEntity',
+  'FileEntity',
+  'BillingCustomerEntity',
+  'BillingSubscriptionEntity',
+  'BillingEntitlementEntity',
 ]);
 
 const isInjectRepositoryDecoratorForBlacklistedEntity = (

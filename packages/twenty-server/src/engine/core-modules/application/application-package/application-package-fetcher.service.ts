@@ -49,6 +49,8 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
     private readonly secureHttpClientService: SecureHttpClientService,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     @InjectRepository(ApplicationEntity)

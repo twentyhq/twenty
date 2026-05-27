@@ -53,6 +53,8 @@ export class MigrateMessagingInfrastructureToMetadataCommand extends ActiveOrSus
     private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
     @InjectRepository(MessageFolderEntity)
     private readonly messageFolderRepository: Repository<MessageFolderEntity>,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
     private readonly featureFlagService: FeatureFlagService,

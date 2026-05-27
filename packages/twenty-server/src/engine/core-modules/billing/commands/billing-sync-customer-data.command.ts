@@ -20,6 +20,8 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspaceCo
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
+    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     protected readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
   ) {
