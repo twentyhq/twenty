@@ -5,6 +5,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
+import { coercePlaintextFromOAuthProviderResponse } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-oauth-provider-response.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -176,8 +177,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountEntity;
 
       const newPlaintextTokens = {
-        accessToken: mockNewAccessTokenPlaintext,
-        refreshToken: mockRefreshTokenPlaintext,
+        accessToken: coercePlaintextFromOAuthProviderResponse(
+          mockNewAccessTokenPlaintext,
+        ),
+        refreshToken: coercePlaintextFromOAuthProviderResponse(
+          mockRefreshTokenPlaintext,
+        ),
       };
 
       jest
@@ -219,8 +224,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountEntity;
 
       const newPlaintextTokens = {
-        accessToken: mockNewAccessTokenPlaintext,
-        refreshToken: mockRefreshTokenPlaintext,
+        accessToken: coercePlaintextFromOAuthProviderResponse(
+          mockNewAccessTokenPlaintext,
+        ),
+        refreshToken: coercePlaintextFromOAuthProviderResponse(
+          mockRefreshTokenPlaintext,
+        ),
       };
 
       jest
@@ -262,8 +271,12 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountEntity;
 
       const newPlaintextTokens = {
-        accessToken: mockNewAccessTokenPlaintext,
-        refreshToken: mockRefreshTokenPlaintext,
+        accessToken: coercePlaintextFromOAuthProviderResponse(
+          mockNewAccessTokenPlaintext,
+        ),
+        refreshToken: coercePlaintextFromOAuthProviderResponse(
+          mockRefreshTokenPlaintext,
+        ),
       };
 
       jest

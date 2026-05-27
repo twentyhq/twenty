@@ -15,6 +15,7 @@ import {
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -133,7 +134,7 @@ export class ColumnRotationSiteHandler<
 
     try {
       const plaintext = this.secretEncryptionService.decryptVersioned(
-        currentValue,
+        assertEncryptedStringOrThrow(currentValue),
         cryptoOptions,
       );
       const reEncrypted = this.secretEncryptionService.encryptVersioned(

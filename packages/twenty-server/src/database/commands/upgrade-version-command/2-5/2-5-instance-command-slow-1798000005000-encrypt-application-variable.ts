@@ -3,6 +3,7 @@ import { Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -76,8 +77,13 @@ export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstan
 
         if (looksLikeLegacyCtrCiphertext(row.value)) {
           try {
+            // Legacy CTR ciphertext lacks the `enc:` envelope prefix that
+            // `assertEncryptedStringOrThrow` requires; the upstream
+            // `looksLikeLegacyCtrCiphertext` guard already validates the
+            // shape, so the brand cast here is a documented one-off bypass
+            // for migration-only legacy data.
             plaintext = this.secretEncryptionService.decryptVersioned(
-              row.value,
+              row.value as EncryptedString,
               { workspaceId: row.workspaceId },
             );
           } catch (error) {

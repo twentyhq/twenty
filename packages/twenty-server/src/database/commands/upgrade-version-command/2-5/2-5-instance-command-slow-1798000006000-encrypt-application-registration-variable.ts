@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -49,8 +50,11 @@ export class EncryptApplicationRegistrationVariableSlowInstanceCommand implement
       }
 
       for (const row of rows) {
+        // SQL `NOT LIKE 'enc:v2:%'` filter above means only legacy CTR
+        // ciphertext (no `enc:` prefix) reaches this branch; the brand cast
+        // is a documented one-off bypass for migration-only legacy data.
         const plaintext = this.secretEncryptionService.decryptVersioned(
-          row.encryptedValue,
+          row.encryptedValue as EncryptedString,
         );
 
         if (!isDefined(plaintext)) {

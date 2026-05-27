@@ -6,6 +6,10 @@ import {
   type ConnectionParameters,
   type ImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
+import { coercePlaintextFromUserInput } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-user-input.util';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
@@ -28,9 +32,9 @@ export class ConnectedAccountTokenEncryptionService {
     plaintext,
     workspaceId,
   }: {
-    plaintext: string;
+    plaintext: PlaintextString;
     workspaceId: string;
-  }): string {
+  }): EncryptedString {
     if (this.looksLikeCiphertext(plaintext)) {
       throw new SecretEncryptionException(
         'ConnectedAccountTokenEncryptionService.encrypt received an already-encrypted envelope. This indicates a double-encryption bug — the caller is encrypting ciphertext.',
@@ -47,9 +51,9 @@ export class ConnectedAccountTokenEncryptionService {
     plaintext,
     workspaceId,
   }: {
-    plaintext: string | null;
+    plaintext: PlaintextString | null;
     workspaceId: string;
-  }): string | null {
+  }): EncryptedString | null {
     if (!isDefined(plaintext)) {
       return null;
     }
@@ -61,16 +65,9 @@ export class ConnectedAccountTokenEncryptionService {
     ciphertext,
     workspaceId,
   }: {
-    ciphertext: string;
+    ciphertext: EncryptedString;
     workspaceId: string;
-  }): string {
-    if (!ciphertext.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX)) {
-      throw new SecretEncryptionException(
-        'Received a plaintext value where ciphertext was expected. The encryption backfill migration may not have run.',
-        SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
-      );
-    }
-
+  }): PlaintextString {
     return this.secretEncryptionService.decryptVersioned(ciphertext, {
       workspaceId,
     });
@@ -80,9 +77,9 @@ export class ConnectedAccountTokenEncryptionService {
     ciphertext,
     workspaceId,
   }: {
-    ciphertext: string | null;
+    ciphertext: EncryptedString | null;
     workspaceId: string;
-  }): string | null {
+  }): PlaintextString | null {
     if (!isDefined(ciphertext)) {
       return null;
     }
@@ -95,12 +92,12 @@ export class ConnectedAccountTokenEncryptionService {
     refreshToken,
     workspaceId,
   }: {
-    accessToken: string;
-    refreshToken: string | null;
+    accessToken: PlaintextString;
+    refreshToken: PlaintextString | null;
     workspaceId: string;
   }): {
-    encryptedAccessToken: string;
-    encryptedRefreshToken: string | null;
+    encryptedAccessToken: EncryptedString;
+    encryptedRefreshToken: EncryptedString | null;
   } {
     return {
       encryptedAccessToken: this.encrypt({
@@ -122,10 +119,10 @@ export class ConnectedAccountTokenEncryptionService {
     connectionParameters,
     workspaceId,
   }: {
-    connectionParameters: ImapSmtpCaldavParams;
+    connectionParameters: ImapSmtpCaldavParams<PlaintextString>;
     workspaceId: string;
-  }): ImapSmtpCaldavParams {
-    const result: ImapSmtpCaldavParams = {};
+  }): ImapSmtpCaldavParams<EncryptedString> {
+    const result: ImapSmtpCaldavParams<EncryptedString> = {};
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
@@ -147,10 +144,10 @@ export class ConnectedAccountTokenEncryptionService {
     connectionParameters,
     workspaceId,
   }: {
-    connectionParameters: ImapSmtpCaldavParams;
+    connectionParameters: ImapSmtpCaldavParams<EncryptedString>;
     workspaceId: string;
-  }): ImapSmtpCaldavParams {
-    const result: ImapSmtpCaldavParams = {};
+  }): ImapSmtpCaldavParams<PlaintextString> {
+    const result: ImapSmtpCaldavParams<PlaintextString> = {};
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
@@ -172,26 +169,34 @@ export class ConnectedAccountTokenEncryptionService {
     protocolParams,
     workspaceId,
   }: {
-    protocolParams: ConnectionParameters;
+    protocolParams: ConnectionParameters<EncryptedString>;
     workspaceId: string;
-  }): ConnectionParameters {
+  }): ConnectionParameters<PlaintextString> {
     const isEncrypted = protocolParams.password.startsWith(
       SECRET_ENCRYPTION_ENVELOPE_PREFIX,
     );
 
-    // TODO: Remove after 2-5 slow instance command has been run everywhere
+    // TODO: Remove after 2-5 slow instance command has been run everywhere.
+    // During the rollout window protocolParams.password may be a legacy
+    // unencrypted plaintext value living in the same column. We trust the
+    // entity-level brand at the type layer (column is EncryptedString) but
+    // still re-validate at runtime to handle the un-backfilled tail; the
+    // assert above splits the two.
     if (!isEncrypted) {
       this.logger.warn(
         'Protocol password is not encrypted. Expected during the rollout window until the slow instance command finishes backfilling.',
       );
 
-      return protocolParams;
+      return {
+        ...protocolParams,
+        password: coercePlaintextFromUserInput(protocolParams.password),
+      };
     }
 
     return {
       ...protocolParams,
       password: this.decrypt({
-        ciphertext: protocolParams.password,
+        ciphertext: assertEncryptedStringOrThrow(protocolParams.password),
         workspaceId,
       }),
     };

@@ -16,6 +16,7 @@ import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -123,7 +124,9 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     }
 
     try {
-      const plaintext = this.secretEncryptionService.decryptVersioned(rawValue);
+      const plaintext = this.secretEncryptionService.decryptVersioned(
+        assertEncryptedStringOrThrow(rawValue),
+      );
       const reEncrypted =
         this.secretEncryptionService.encryptVersioned(plaintext);
 

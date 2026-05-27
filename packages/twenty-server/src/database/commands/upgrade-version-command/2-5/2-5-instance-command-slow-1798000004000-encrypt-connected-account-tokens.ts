@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { coercePlaintextFromUserInput } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-user-input.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
@@ -59,7 +60,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowIns
         if (isPlaintext(row.accessToken)) {
           params.push(
             this.connectedAccountTokenEncryptionService.encrypt({
-              plaintext: row.accessToken,
+              plaintext: coercePlaintextFromUserInput(row.accessToken),
               workspaceId: row.workspaceId,
             }),
           );
@@ -69,7 +70,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowIns
         if (isPlaintext(row.refreshToken)) {
           params.push(
             this.connectedAccountTokenEncryptionService.encrypt({
-              plaintext: row.refreshToken,
+              plaintext: coercePlaintextFromUserInput(row.refreshToken),
               workspaceId: row.workspaceId,
             }),
           );

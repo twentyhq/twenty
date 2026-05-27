@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
+import { coercePlaintextFromOAuthProviderResponse } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-oauth-provider-response.util';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -34,10 +35,13 @@ export class UpdateConnectedAccountOnReconnectService {
       scopes,
     } = input;
 
+    // Boundary: tokens entering here were just re-issued by the external
+    // OAuth provider on reconnect, so we brand them as plaintext before
+    // handing them to the encryption service.
     const { encryptedAccessToken, encryptedRefreshToken } =
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
-        accessToken,
-        refreshToken,
+        accessToken: coercePlaintextFromOAuthProviderResponse(accessToken),
+        refreshToken: coercePlaintextFromOAuthProviderResponse(refreshToken),
         workspaceId,
       });
 

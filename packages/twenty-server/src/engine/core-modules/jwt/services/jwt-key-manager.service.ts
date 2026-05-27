@@ -13,6 +13,7 @@ import {
   JwtKeyManagerException,
   JwtKeyManagerExceptionCode,
 } from 'src/engine/core-modules/jwt/jwt-key-manager.exception';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export type CurrentSigningKey = {
@@ -189,7 +190,9 @@ export class JwtKeyManagerService {
       );
     }
 
-    return this.secretEncryptionService.decryptVersioned(encryptedPrivateKey);
+    return this.secretEncryptionService.decryptVersioned(
+      assertEncryptedStringOrThrow(encryptedPrivateKey),
+    );
   }
 
   private async generateAndPersistCurrent(): Promise<CurrentSigningKey> {

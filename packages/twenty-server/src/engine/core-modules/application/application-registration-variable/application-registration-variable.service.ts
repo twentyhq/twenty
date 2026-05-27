@@ -13,6 +13,7 @@ import {
 } from 'src/engine/core-modules/application/application-registration/application-registration.exception';
 import { type CreateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/create-application-registration-variable.input';
 import { type UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 
@@ -54,7 +55,9 @@ export class ApplicationRegistrationVariableService {
       value: variable.isFilled
         ? variable.isSecret
           ? '•••••••••••••'
-          : this.encryptionService.decryptVersioned(variable.encryptedValue)
+          : this.encryptionService.decryptVersioned(
+              assertEncryptedStringOrThrow(variable.encryptedValue),
+            )
         : null,
     }));
   }

@@ -1,5 +1,6 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 import { SecretEncryptionService } from './secret-encryption.service';
@@ -223,13 +224,13 @@ describe('SecretEncryptionService', () => {
     it('returns null/undefined values as-is', () => {
       expect(
         service.decryptAndMaskVersioned({
-          value: null as unknown as string,
+          value: null as unknown as EncryptedString,
           mask,
         }),
       ).toBeNull();
       expect(
         service.decryptAndMaskVersioned({
-          value: undefined as unknown as string,
+          value: undefined as unknown as EncryptedString,
           mask,
         }),
       ).toBeUndefined();

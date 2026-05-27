@@ -10,6 +10,7 @@ import { ConnectionProviderException } from 'src/engine/core-modules/application
 import { assertOAuthProvider } from 'src/engine/core-modules/application/connection-provider/utils/assert-oauth-provider.util';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 @Injectable()
@@ -53,7 +54,9 @@ export class ConnectionProviderService {
       variables.map((v) => [
         v.key,
         v.encryptedValue
-          ? this.secretEncryptionService.decryptVersioned(v.encryptedValue)
+          ? this.secretEncryptionService.decryptVersioned(
+              assertEncryptedStringOrThrow(v.encryptedValue),
+            )
           : '',
       ]),
     );

@@ -6,6 +6,7 @@ import { DataSource } from 'typeorm';
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -100,7 +101,11 @@ describe('2-5 slow instance command 1798000008000 - EncryptSensitiveConfigStorag
     const value = await readValue(id);
 
     expect(value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)).toBe(true);
-    expect(secretEncryptionService.decryptVersioned(value)).toBe(plaintext);
+    expect(
+      secretEncryptionService.decryptVersioned(
+        assertEncryptedStringOrThrow(value),
+      ),
+    ).toBe(plaintext);
   });
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {

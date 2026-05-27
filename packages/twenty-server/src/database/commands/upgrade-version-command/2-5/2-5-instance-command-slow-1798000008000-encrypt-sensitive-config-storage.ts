@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -58,8 +59,14 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
           continue;
         }
 
-        const plaintext =
-          this.secretEncryptionService.decryptVersioned(rawValue);
+        // Legacy CTR ciphertext lacks the `enc:` envelope prefix that
+        // `assertEncryptedStringOrThrow` requires; the upstream
+        // `startsWith(V2_PREFIX)` filter ensures only legacy CTR values
+        // reach this branch, so the brand cast is a documented one-off
+        // bypass for migration-only legacy data.
+        const plaintext = this.secretEncryptionService.decryptVersioned(
+          rawValue as EncryptedString,
+        );
 
         if (!isDefined(plaintext)) {
           continue;

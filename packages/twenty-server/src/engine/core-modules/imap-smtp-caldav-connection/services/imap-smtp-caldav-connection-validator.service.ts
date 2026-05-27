@@ -8,6 +8,8 @@ import { ConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-cal
 import { connectionParametersUpdateSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters-update.schema';
 import { connectionParametersSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema';
 import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { coercePlaintextFromUserInput } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-user-input.util';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 @Injectable()
@@ -21,8 +23,11 @@ export class ImapSmtpCaldavValidatorService {
     existingProtocolParams,
   }: {
     params: ConnectionParametersInput;
-    existingProtocolParams: ConnectionParameters | null;
-  }): Promise<ConnectionParameters> {
+    // The caller decrypts the at-rest params before calling us so we work
+    // exclusively with plaintext passwords (either a new one supplied by
+    // the user or the previously decrypted existing one).
+    existingProtocolParams: ConnectionParameters<PlaintextString> | null;
+  }): Promise<ConnectionParameters<PlaintextString>> {
     if (!params) {
       throw new UserInputError('Protocol connection parameters are required', {
         userFriendlyMessage: msg`Please provide connection details to configure your email account.`,
@@ -61,8 +66,12 @@ export class ImapSmtpCaldavValidatorService {
       );
     }
 
-    const password =
-      validated.password ?? existingProtocolParams?.password ?? null;
+    // `validated.password` originates from the GraphQL input (fresh user
+    // input); `existingProtocolParams?.password` is a previously-decrypted
+    // plaintext from the caller. Either way the final value is plaintext.
+    const password = isNonEmptyString(validated.password)
+      ? coercePlaintextFromUserInput(validated.password)
+      : (existingProtocolParams?.password ?? null);
 
     if (!isNonEmptyString(password)) {
       throw new UserInputError(
