@@ -122,9 +122,10 @@ export class RowLevelPermissionPredicateGroupService {
   }
 
   public async deleteAllRowLevelPermissionPredicateGroups(workspaceId: string) {
-    await this.rowLevelPermissionPredicateGroupRepository.delete({
+    await this.rowLevelPermissionPredicateGroupRepository.delete(
       workspaceId,
-    });
+      {},
+    );
 
     await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
       'rolesPermissions',
