@@ -5716,6 +5716,7 @@ msgstr "Record table widget has no associated view"
 
 #. js-lingui-id: KnnILY
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "Record table widget not found"
 msgstr "Record table widget not found"
 

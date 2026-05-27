@@ -533,6 +533,11 @@ msgstr "{totalFieldsCount} visible fields"
 msgid "{visibleFieldsCount} shown"
 msgstr "{visibleFieldsCount} shown"
 
+#. js-lingui-id: WjjsAL
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+msgid "{visibleFieldsCount} visible fields"
+msgstr "{visibleFieldsCount} visible fields"
+
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
 msgid "{workflowRunIteratorSubStepIterationsCount, plural, one {# item} other {# items}}"
@@ -7309,7 +7314,9 @@ msgstr "fields"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -15176,6 +15183,8 @@ msgstr "Tab Settings"
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
