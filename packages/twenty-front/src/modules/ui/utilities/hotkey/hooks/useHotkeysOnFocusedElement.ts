@@ -48,6 +48,15 @@ export const useHotkeysOnFocusedElement = ({
   return useHotkeys(
     keys,
     (keyboardEvent, hotkeysEvent) => {
+      // Ignore key events fired while an IME composition is in progress.
+      // For CJK input (Japanese, Chinese, Korean), pressing Enter to confirm a
+      // conversion emits a keydown with isComposing=true (keyCode 229). Without
+      // this guard that Enter would trigger submit/escape/tab hotkeys and the
+      // form gets submitted before the user finishes typing.
+      if (keyboardEvent.isComposing || keyboardEvent.keyCode === 229) {
+        return;
+      }
+
       callScopedHotkeyCallback({
         keyboardEvent,
         hotkeysEvent,
