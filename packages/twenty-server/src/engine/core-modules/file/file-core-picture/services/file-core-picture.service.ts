@@ -19,9 +19,8 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { getImageBufferFromUrl } from 'src/utils/image';
@@ -72,8 +71,7 @@ export class FileCorePictureService {
     applicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileEntity> {
-    const { mimeType, ext } = await extractFileInfo({ file, filename });
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
+    const { ext } = await extractFileInfoOrThrow({ file, filename });
 
     const fileId = v4();
     const finalName = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -83,9 +81,8 @@ export class FileCorePictureService {
       (await this.findCustomApplicationUniversalIdentifier(workspaceId));
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: file,
       resourcePath: finalName,
-      mimeType,
       fileFolder: FileFolder.CorePicture,
       applicationUniversalIdentifier: universalIdentifier,
       workspaceId,
@@ -189,7 +186,7 @@ export class FileCorePictureService {
     const customApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(workspaceId);
 
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier: customApplicationUniversalIdentifier,
       fileFolder: FileFolder.CorePicture,

@@ -1,0 +1,214 @@
+import fs from 'fs';
+import path from 'path';
+
+import matter from 'gray-matter';
+
+const projectRoot = path.resolve(import.meta.dirname, '..');
+const releasesDirectory = path.join(projectRoot, 'src', 'content', 'releases');
+const outputPath = path.join(
+  projectRoot,
+  'src',
+  'lib',
+  'releases',
+  'generated-release-notes.ts',
+);
+
+const headingRegex = /^\s*#\s+(.+?)\s*$/m;
+const imageRegex = /!\[[^\]]*\]\(([^)]+)\)/;
+
+function normalizeFrontmatterDate(dateValue) {
+  if (typeof dateValue === 'string') {
+    return dateValue;
+  }
+
+  if (dateValue instanceof Date && !Number.isNaN(dateValue.getTime())) {
+    return dateValue.toISOString().slice(0, 10);
+  }
+
+  return '';
+}
+
+function compareSemanticVersions(a, b) {
+  return compareParsed(parseSemver(a), parseSemver(b));
+}
+
+function parseSemver(version) {
+  const trimmed = version.trim().replace(/^v/i, '');
+  const withoutBuild = trimmed.split('+', 1)[0] ?? '';
+  const dashIndex = withoutBuild.indexOf('-');
+  const coreString =
+    dashIndex === -1 ? withoutBuild : withoutBuild.slice(0, dashIndex);
+  const preString = dashIndex === -1 ? null : withoutBuild.slice(dashIndex + 1);
+  const core = coreString.split('.').map((part) => {
+    const parsed = Number.parseInt(part, 10);
+    return Number.isFinite(parsed) ? parsed : 0;
+  });
+
+  return {
+    core,
+    pre: preString === null || preString === '' ? null : preString.split('.'),
+  };
+}
+
+function compareParsed(a, b) {
+  const length = Math.max(a.core.length, b.core.length);
+
+  for (let index = 0; index < length; index += 1) {
+    const left = a.core[index] ?? 0;
+    const right = b.core[index] ?? 0;
+
+    if (left !== right) {
+      return left < right ? -1 : 1;
+    }
+  }
+
+  if (a.pre === null && b.pre === null) {
+    return 0;
+  }
+
+  if (a.pre === null) {
+    return 1;
+  }
+
+  if (b.pre === null) {
+    return -1;
+  }
+
+  const prereleaseLength = Math.min(a.pre.length, b.pre.length);
+
+  for (let index = 0; index < prereleaseLength; index += 1) {
+    const left = a.pre[index] ?? '';
+    const right = b.pre[index] ?? '';
+    const leftIsNumeric = /^\d+$/.test(left);
+    const rightIsNumeric = /^\d+$/.test(right);
+
+    if (leftIsNumeric && rightIsNumeric) {
+      const leftNumber = Number.parseInt(left, 10);
+      const rightNumber = Number.parseInt(right, 10);
+
+      if (leftNumber !== rightNumber) {
+        return leftNumber < rightNumber ? -1 : 1;
+      }
+
+      continue;
+    }
+
+    if (leftIsNumeric) {
+      return -1;
+    }
+
+    if (rightIsNumeric) {
+      return 1;
+    }
+
+    if (left !== right) {
+      return left < right ? -1 : 1;
+    }
+  }
+
+  if (a.pre.length === b.pre.length) {
+    return 0;
+  }
+
+  return a.pre.length < b.pre.length ? -1 : 1;
+}
+
+function inferTitle(content) {
+  const match = content.match(headingRegex);
+  return match?.[1]?.trim() ?? '';
+}
+
+function inferPreviewImage(content) {
+  const match = content.match(imageRegex);
+  return match?.[1]?.trim() ?? '';
+}
+
+function readReleaseNotes() {
+  const fileNames = fs
+    .readdirSync(releasesDirectory)
+    .filter(
+      (fileName) => fileName.endsWith('.md') || fileName.endsWith('.mdx'),
+    );
+
+  const notes = fileNames.map((fileName) => {
+    const fullPath = path.join(releasesDirectory, fileName);
+    const raw = fs.readFileSync(fullPath, 'utf8');
+    const { data, content } = matter(raw);
+    const release = typeof data.release === 'string' ? data.release.trim() : '';
+    const date = normalizeFrontmatterDate(data.Date ?? data.date);
+    const title =
+      typeof data.title === 'string' && data.title.trim()
+        ? data.title.trim()
+        : inferTitle(content);
+    const previewImage =
+      typeof data.previewImage === 'string' && data.previewImage.trim()
+        ? data.previewImage.trim()
+        : inferPreviewImage(content);
+
+    if (!release) {
+      throw new Error(`Missing "release" frontmatter in ${fileName}`);
+    }
+
+    if (!title) {
+      throw new Error(
+        `Missing release title in ${fileName}. Add "title" frontmatter or a top-level markdown heading.`,
+      );
+    }
+
+    if (!previewImage) {
+      throw new Error(
+        `Missing preview image in ${fileName}. Add "previewImage" frontmatter or a markdown image.`,
+      );
+    }
+
+    const imagePath = path.join(
+      projectRoot,
+      'public',
+      previewImage.replace(/^\//, ''),
+    );
+
+    if (!fs.existsSync(imagePath)) {
+      throw new Error(
+        `Preview image "${previewImage}" referenced by ${fileName} was not found in public/.`,
+      );
+    }
+
+    return {
+      slug: fileName.replace(/\.mdx?$/i, ''),
+      date,
+      release,
+      title,
+      previewImage,
+      content,
+    };
+  });
+
+  notes.sort((left, right) =>
+    compareSemanticVersions(right.release, left.release),
+  );
+
+  return notes;
+}
+
+function buildFileContent(notes) {
+  const serializedNotes = JSON.stringify(notes, null, 2);
+
+  return `/* eslint-disable */
+// This file is auto-generated by scripts/generate-release-notes-manifest.mjs.
+// Do not edit it manually.
+
+import type { LocalReleaseNote } from './types';
+
+export const GENERATED_RELEASE_NOTES: LocalReleaseNote[] = ${serializedNotes} as LocalReleaseNote[];
+`;
+}
+
+function main() {
+  const notes = readReleaseNotes();
+  fs.writeFileSync(outputPath, buildFileContent(notes));
+  process.stdout.write(
+    `Generated release manifest with ${notes.length} entries at ${path.relative(projectRoot, outputPath)}\n`,
+  );
+}
+
+main();

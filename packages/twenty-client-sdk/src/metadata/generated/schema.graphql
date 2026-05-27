@@ -247,7 +247,7 @@ type FieldPermission {
 type RolePermissionFlag {
   id: UUID!
   roleId: UUID!
-  flag: PermissionFlagType!
+  flag: String!
 }
 
 type ApiKeyForRole {
@@ -523,6 +523,7 @@ type IndexField {
   id: UUID!
   fieldMetadataId: UUID!
   order: Float!
+  subFieldName: String
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -1314,6 +1315,7 @@ type FieldConfiguration {
   configurationType: WidgetConfigurationType!
   fieldMetadataId: String!
   fieldDisplayMode: FieldDisplayMode!
+  viewId: String
 }
 
 """Display mode for field configuration widgets"""
@@ -1322,6 +1324,7 @@ enum FieldDisplayMode {
   EDITOR
   FIELD
   VIEW
+  TABLE
 }
 
 type FieldRichTextConfiguration {
@@ -3209,6 +3212,8 @@ type Mutation {
   createOneObject(input: CreateOneObjectInput!): Object!
   deleteOneObject(input: DeleteOneObjectInput!): Object!
   updateOneObject(input: UpdateOneObjectInput!): Object!
+  createOneIndex(input: CreateOneIndexInput!): Index!
+  deleteOneIndex(input: DeleteOneIndexInput!): Index!
   createOneAgent(input: CreateAgentInput!): Agent!
   updateOneAgent(input: UpdateAgentInput!): Agent!
   deleteOneAgent(input: AgentIdInput!): Agent!
@@ -3925,6 +3930,27 @@ input UpdateObjectPayload {
   isSearchable: Boolean
 }
 
+input CreateOneIndexInput {
+  """The custom index to create"""
+  index: CreateIndexInput!
+}
+
+input CreateIndexInput {
+  objectMetadataId: UUID!
+  fields: [CreateIndexFieldInput!]!
+  indexType: IndexType! = BTREE
+}
+
+input CreateIndexFieldInput {
+  fieldMetadataId: UUID!
+  subFieldName: String
+}
+
+input DeleteOneIndexInput {
+  """The id of the custom index to delete."""
+  id: UUID!
+}
+
 input CreateAgentInput {
   name: String
   label: String!
@@ -4005,7 +4031,7 @@ input ObjectPermissionInput {
 
 input UpsertPermissionFlagsInput {
   roleId: UUID!
-  permissionFlagKeys: [PermissionFlagType!]!
+  permissionFlagKeys: [String!]!
 }
 
 input UpsertFieldPermissionsInput {

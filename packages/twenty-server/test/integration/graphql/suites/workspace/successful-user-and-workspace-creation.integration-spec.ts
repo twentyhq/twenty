@@ -131,7 +131,7 @@ describe('Successful user and workspace creation', () => {
     );
   });
 
-  it('should delete workspace and related metadata entities when last user is deleted', async () => {
+  it('should suspend and soft-delete workspace when last user is deleted', async () => {
     const uniqueEmail = `test-delete-${randomUUID()}@example.com`;
 
     const { data } = await signUp({
@@ -253,16 +253,11 @@ describe('Successful user and workspace creation', () => {
       [workspaceId],
     );
 
-    expect(workspaceAfterDeletion).toHaveLength(0);
-
-    for (const table of tablesToVerify) {
-      const result = await testDataSource.query(
-        `SELECT COUNT(*) as count FROM core."${table}" WHERE "workspaceId" = $1`,
-        [workspaceId],
-      );
-      const count = parseInt(result[0].count);
-
-      expect({ count, table }).toEqual({ count: 0, table });
-    }
+    expect(workspaceAfterDeletion).toHaveLength(1);
+    expect(workspaceAfterDeletion[0].activationStatus).toBe(
+      WorkspaceActivationStatus.SUSPENDED,
+    );
+    expect(workspaceAfterDeletion[0].suspendedAt).not.toBeNull();
+    expect(workspaceAfterDeletion[0].deletedAt).not.toBeNull();
   });
 });

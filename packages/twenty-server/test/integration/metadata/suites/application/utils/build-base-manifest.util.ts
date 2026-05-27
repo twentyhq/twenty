@@ -25,6 +25,7 @@ export const buildBaseManifest = ({
       description: 'A test role',
     },
   ],
+  permissionFlags: [],
   skills: [],
   agents: [],
   objects: [],

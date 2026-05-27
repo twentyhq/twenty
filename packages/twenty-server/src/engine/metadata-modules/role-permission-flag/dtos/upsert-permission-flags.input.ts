@@ -1,7 +1,6 @@
 import { Field, InputType } from '@nestjs/graphql';
 
-import { IsArray, IsEnum, IsNotEmpty, IsUUID } from 'class-validator';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { IsArray, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
 
@@ -13,7 +12,7 @@ export class UpsertPermissionFlagsInput {
   roleId: string;
 
   @IsArray()
-  @IsEnum(PermissionFlagType, { each: true })
-  @Field(() => [PermissionFlagType])
-  permissionFlagKeys: PermissionFlagType[];
+  @IsString({ each: true })
+  @Field(() => [String])
+  permissionFlagKeys: string[];
 }

@@ -193,7 +193,7 @@ export interface FieldPermission {
 export interface RolePermissionFlag {
     id: Scalars['UUID']
     roleId: Scalars['UUID']
-    flag: PermissionFlagType
+    flag: Scalars['String']
     __typename: 'RolePermissionFlag'
 }
 
@@ -386,6 +386,7 @@ export interface IndexField {
     id: Scalars['UUID']
     fieldMetadataId: Scalars['UUID']
     order: Scalars['Float']
+    subFieldName?: Scalars['String']
     createdAt: Scalars['DateTime']
     updatedAt: Scalars['DateTime']
     __typename: 'IndexField'
@@ -965,12 +966,13 @@ export interface FieldConfiguration {
     configurationType: WidgetConfigurationType
     fieldMetadataId: Scalars['String']
     fieldDisplayMode: FieldDisplayMode
+    viewId?: Scalars['String']
     __typename: 'FieldConfiguration'
 }
 
 
 /** Display mode for field configuration widgets */
-export type FieldDisplayMode = 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW'
+export type FieldDisplayMode = 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW' | 'TABLE'
 
 export interface FieldRichTextConfiguration {
     configurationType: WidgetConfigurationType
@@ -2742,6 +2744,8 @@ export interface Mutation {
     createOneObject: Object
     deleteOneObject: Object
     updateOneObject: Object
+    createOneIndex: Index
+    deleteOneIndex: Index
     createOneAgent: Agent
     updateOneAgent: Agent
     deleteOneAgent: Agent
@@ -3257,6 +3261,7 @@ export interface IndexFieldGenqlSelection{
     id?: boolean | number
     fieldMetadataId?: boolean | number
     order?: boolean | number
+    subFieldName?: boolean | number
     createdAt?: boolean | number
     updatedAt?: boolean | number
     __typename?: boolean | number
@@ -3883,6 +3888,7 @@ export interface FieldConfigurationGenqlSelection{
     configurationType?: boolean | number
     fieldMetadataId?: boolean | number
     fieldDisplayMode?: boolean | number
+    viewId?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5795,6 +5801,8 @@ export interface MutationGenqlSelection{
     createOneObject?: (ObjectGenqlSelection & { __args: {input: CreateOneObjectInput} })
     deleteOneObject?: (ObjectGenqlSelection & { __args: {input: DeleteOneObjectInput} })
     updateOneObject?: (ObjectGenqlSelection & { __args: {input: UpdateOneObjectInput} })
+    createOneIndex?: (IndexGenqlSelection & { __args: {input: CreateOneIndexInput} })
+    deleteOneIndex?: (IndexGenqlSelection & { __args: {input: DeleteOneIndexInput} })
     createOneAgent?: (AgentGenqlSelection & { __args: {input: CreateAgentInput} })
     updateOneAgent?: (AgentGenqlSelection & { __args: {input: UpdateAgentInput} })
     deleteOneAgent?: (AgentGenqlSelection & { __args: {input: AgentIdInput} })
@@ -6126,6 +6134,18 @@ id: Scalars['UUID']}
 
 export interface UpdateObjectPayload {labelSingular?: (Scalars['String'] | null),labelPlural?: (Scalars['String'] | null),nameSingular?: (Scalars['String'] | null),namePlural?: (Scalars['String'] | null),description?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),shortcut?: (Scalars['String'] | null),color?: (Scalars['String'] | null),isActive?: (Scalars['Boolean'] | null),labelIdentifierFieldMetadataId?: (Scalars['UUID'] | null),imageIdentifierFieldMetadataId?: (Scalars['UUID'] | null),isLabelSyncedWithName?: (Scalars['Boolean'] | null),isSearchable?: (Scalars['Boolean'] | null)}
 
+export interface CreateOneIndexInput {
+/** The custom index to create */
+index: CreateIndexInput}
+
+export interface CreateIndexInput {objectMetadataId: Scalars['UUID'],fields: CreateIndexFieldInput[],indexType: IndexType}
+
+export interface CreateIndexFieldInput {fieldMetadataId: Scalars['UUID'],subFieldName?: (Scalars['String'] | null)}
+
+export interface DeleteOneIndexInput {
+/** The id of the custom index to delete. */
+id: Scalars['UUID']}
+
 export interface CreateAgentInput {name?: (Scalars['String'] | null),label: Scalars['String'],icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt: Scalars['String'],modelId: Scalars['String'],roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
 
 export interface UpdateAgentInput {id: Scalars['UUID'],name?: (Scalars['String'] | null),label?: (Scalars['String'] | null),icon?: (Scalars['String'] | null),description?: (Scalars['String'] | null),prompt?: (Scalars['String'] | null),modelId?: (Scalars['String'] | null),roleId?: (Scalars['UUID'] | null),responseFormat?: (Scalars['JSON'] | null),modelConfiguration?: (Scalars['JSON'] | null),evaluationInputs?: (Scalars['String'][] | null)}
@@ -6142,7 +6162,7 @@ export interface UpsertObjectPermissionsInput {roleId: Scalars['UUID'],objectPer
 
 export interface ObjectPermissionInput {objectMetadataId: Scalars['UUID'],canReadObjectRecords?: (Scalars['Boolean'] | null),canUpdateObjectRecords?: (Scalars['Boolean'] | null),canSoftDeleteObjectRecords?: (Scalars['Boolean'] | null),canDestroyObjectRecords?: (Scalars['Boolean'] | null)}
 
-export interface UpsertPermissionFlagsInput {roleId: Scalars['UUID'],permissionFlagKeys: PermissionFlagType[]}
+export interface UpsertPermissionFlagsInput {roleId: Scalars['UUID'],permissionFlagKeys: Scalars['String'][]}
 
 export interface UpsertFieldPermissionsInput {roleId: Scalars['UUID'],fieldPermissions: FieldPermissionInput[]}
 
@@ -8609,7 +8629,8 @@ export const enumFieldDisplayMode = {
    CARD: 'CARD' as const,
    EDITOR: 'EDITOR' as const,
    FIELD: 'FIELD' as const,
-   VIEW: 'VIEW' as const
+   VIEW: 'VIEW' as const,
+   TABLE: 'TABLE' as const
 }
 
 export const enumPageLayoutType = {

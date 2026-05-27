@@ -16,9 +16,11 @@ export const EXPECTED_MANIFEST: Manifest = {
     packageJsonChecksum: '[checksum]',
     yarnLockChecksum: '[checksum]',
   },
+  permissionFlags: [],
   skills: [],
   agents: [],
   publicAssets: [],
+  indexes: [],
   fields: [
     {
       name: 'targetMyNote',

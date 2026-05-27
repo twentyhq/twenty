@@ -46,16 +46,6 @@ export class WorkspaceFlatIndexMapCacheService extends WorkspaceCacheProvider<
           },
           withDeleted: true,
           relationLoadStrategy: 'join',
-          select: {
-            indexFieldMetadatas: {
-              id: true,
-              indexMetadataId: true,
-              fieldMetadataId: true,
-              order: true,
-              createdAt: true,
-              updatedAt: true,
-            },
-          },
           relations: ['indexFieldMetadatas'],
         }),
         this.applicationRepository.find({
