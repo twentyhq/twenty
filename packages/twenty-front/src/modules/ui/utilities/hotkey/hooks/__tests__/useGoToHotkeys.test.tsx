@@ -39,4 +39,66 @@ describe('useGoToHotkeys', () => {
 
     expect(result.current.pathname).toBe('/three');
   });
+
+  it('should not navigate when keys are pressed while an input is focused', () => {
+    const input = document.createElement('input');
+    document.body.appendChild(input);
+    input.focus();
+
+    const { result } = renderHook(() => {
+      useGoToHotkeys({ key: 'a', location: '/three' });
+
+      const location = useLocation();
+
+      return {
+        pathname: location.pathname,
+      };
+    }, renderHookConfig);
+
+    expect(result.current.pathname).toBe('/two');
+
+    act(() => {
+      fireEvent.keyDown(input, { key: 'g', code: 'KeyG' });
+    });
+
+    act(() => {
+      fireEvent.keyDown(input, { key: 'a', code: 'KeyA' });
+    });
+
+    // Navigation should NOT have happened because focus was inside an input
+    expect(result.current.pathname).toBe('/two');
+
+    document.body.removeChild(input);
+  });
+
+  it('should not navigate when keys are pressed while a textarea is focused', () => {
+    const textarea = document.createElement('textarea');
+    document.body.appendChild(textarea);
+    textarea.focus();
+
+    const { result } = renderHook(() => {
+      useGoToHotkeys({ key: 'n', location: '/notes' });
+
+      const location = useLocation();
+
+      return {
+        pathname: location.pathname,
+      };
+    }, renderHookConfig);
+
+    expect(result.current.pathname).toBe('/two');
+
+    act(() => {
+      fireEvent.keyDown(textarea, { key: 'g', code: 'KeyG' });
+    });
+
+    act(() => {
+      fireEvent.keyDown(textarea, { key: 'n', code: 'KeyN' });
+    });
+
+    // Navigation should NOT have happened because focus was inside a textarea
+    expect(result.current.pathname).toBe('/two');
+
+    document.body.removeChild(textarea);
+  });
 });
