@@ -25,6 +25,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
   findOne(workspaceId: string, options: FindOneOptions<T>): Promise<T | null> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.findOne({
       ...options,
       where: this.mergeWorkspaceIdIntoWhere(workspaceId, options.where),
@@ -32,6 +34,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   }
 
   findOneOrFail(workspaceId: string, options: FindOneOptions<T>): Promise<T> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.findOneOrFail({
       ...options,
       where: this.mergeWorkspaceIdIntoWhere(workspaceId, options.where),
@@ -39,6 +43,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   }
 
   find(workspaceId: string, options?: FindManyOptions<T>): Promise<T[]> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.find({
       ...options,
       where: this.mergeWorkspaceIdIntoWhere(workspaceId, options?.where),
@@ -46,6 +52,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   }
 
   count(workspaceId: string, options?: FindManyOptions<T>): Promise<number> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.count({
       ...options,
       where: this.mergeWorkspaceIdIntoWhere(workspaceId, options?.where),
@@ -57,6 +65,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     criteria: FindOptionsWhere<T>,
     partialEntity: QueryDeepPartialEntity<T>,
   ): Promise<UpdateResult> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.update(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
       partialEntity,
@@ -67,6 +77,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
   ): Promise<DeleteResult> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.delete(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
     );
@@ -76,6 +88,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
   ): Promise<UpdateResult> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.softDelete(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
     );
@@ -85,6 +99,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     workspaceId: string,
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
   ): Promise<InsertResult> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.insert(
       this.stampWorkspaceIdOnEntities(workspaceId, entity),
     );
@@ -95,6 +111,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
     conflictPathsOrOptions: string[] | UpsertOptions<T>,
   ): Promise<InsertResult> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.upsert(
       this.stampWorkspaceIdOnEntities(workspaceId, entity),
       conflictPathsOrOptions,
@@ -106,6 +124,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     entity: E,
     options?: SaveOptions,
   ): Promise<E & T> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.save({ ...entity, workspaceId } as E, options);
   }
 
@@ -114,6 +134,8 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     entities: E[],
     options?: SaveOptions,
   ): Promise<(E & T)[]> {
+    this.assertWorkspaceId(workspaceId);
+
     return this.repository.save(
       entities.map((entity) => ({ ...entity, workspaceId }) as E),
       options,
@@ -135,6 +157,23 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return new WorkspaceScopedRepository<T>(
       manager.getRepository(this.repository.target),
     );
+  }
+
+  // Guard against a missing workspaceId at the wrapper boundary.
+  // TypeORM drops `undefined` values from the WHERE/criteria
+  // serializer, so `findOne(undefined, { where: { id } })` would emit
+  // `WHERE id = ...` with no workspace filter — a cross-workspace data
+  // leak. Throwing here forces a defined value at the call site.
+  private assertWorkspaceId(workspaceId: string): void {
+    if (
+      workspaceId === undefined ||
+      workspaceId === null ||
+      workspaceId === ''
+    ) {
+      throw new Error(
+        'WorkspaceScopedRepository: workspaceId must be a non-empty string.',
+      );
+    }
   }
 
   // workspaceId is prepended to the merged object so it appears first

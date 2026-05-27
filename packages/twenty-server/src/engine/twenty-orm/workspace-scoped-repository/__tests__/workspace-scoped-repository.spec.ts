@@ -35,6 +35,36 @@ describe('WorkspaceScopedRepository', () => {
     scoped = new WorkspaceScopedRepository(repository);
   });
 
+  describe('workspaceId guard', () => {
+    // TypeORM drops `undefined` values from WHERE/criteria, so a
+    // missing workspaceId would otherwise produce an unscoped query.
+    // Each public method must trip before reaching the repository.
+    it.each([
+      ['findOne', () => scoped.findOne(undefined as never, { where: {} })],
+      [
+        'findOneOrFail',
+        () => scoped.findOneOrFail(undefined as never, { where: {} }),
+      ],
+      ['find', () => scoped.find(undefined as never)],
+      ['count', () => scoped.count(undefined as never)],
+      ['update', () => scoped.update(undefined as never, {}, {})],
+      ['delete', () => scoped.delete(undefined as never, {})],
+      ['softDelete', () => scoped.softDelete(undefined as never, {})],
+      ['insert', () => scoped.insert(undefined as never, {})],
+      ['upsert', () => scoped.upsert(undefined as never, {}, ['id'])],
+      ['save', () => scoped.save(undefined as never, {})],
+      ['saveMany', () => scoped.saveMany(undefined as never, [{}])],
+    ])('%s throws when workspaceId is undefined', (_name, call) => {
+      expect(call).toThrow(/workspaceId must be a non-empty string/);
+    });
+
+    it.each([null, ''])('throws when workspaceId is %p', (badWorkspaceId) => {
+      expect(() =>
+        scoped.findOne(badWorkspaceId as never, { where: {} }),
+      ).toThrow(/workspaceId must be a non-empty string/);
+    });
+  });
+
   describe('findOne', () => {
     it('merges workspaceId into a plain where clause', async () => {
       await scoped.findOne(WORKSPACE_ID, { where: { id: 'a' } });

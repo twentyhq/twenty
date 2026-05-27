@@ -2,20 +2,15 @@ import { defineRule } from '@oxlint/plugins';
 
 export const RULE_NAME = 'prefer-workspace-scoped-repository';
 
-// Entities allowed to be injected via raw @InjectRepository. Everything
-// else matching @InjectRepository(*Entity) is required to go through
-// @InjectWorkspaceScopedRepository so workspaceId is enforced on every
-// read/write. New entities default to enforcement: add to this set only
-// when raw access is genuinely the right shape (no workspaceId column,
-// pivot/global table, or workspaceId-discovered-from-the-row patterns).
-const EXCLUSIONS = new Set<string>([
-  // Workspace itself / pivot / nullable workspaceId by design
+// Entities that legitimately do not fit the workspace-scoped wrapper:
+// the workspace itself, pivots, nullable-workspaceId rows, and global
+// tables with no workspaceId column.
+const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'WorkspaceEntity',
   'UserWorkspaceEntity',
   'AppTokenEntity',
   'ApplicationRegistrationEntity',
 
-  // Global tables with no workspaceId column
   'ApplicationVariableEntity',
   'BillingMeterEntity',
   'BillingPriceEntity',
@@ -30,10 +25,14 @@ const EXCLUSIONS = new Set<string>([
   'SigningKeyEntity',
   'UserEntity',
   'WorkspaceSSOIdentityProviderEntity',
+]);
 
-  // Workspace-scoped entities currently outside the wrapper. Removing an
-  // entry forces every raw @InjectRepository site for it to migrate to
-  // the wrapper or carry an explicit eslint-disable.
+// Workspace-scoped entities still injected raw at one or more call
+// sites. Routed here to keep the rule enforceable without forcing a
+// repo-wide migration in a single change. Removing an entry forces
+// every raw @InjectRepository site for it to switch to the wrapper or
+// carry an explicit eslint-disable.
+const WORKSPACE_SCOPED_EXEMPTIONS = new Set<string>([
   'ApplicationEntity',
   'ApplicationRegistrationVariableEntity',
   'CalendarChannelEntity',
@@ -65,6 +64,15 @@ const EXCLUSIONS = new Set<string>([
   'ViewGroupEntity',
   'ViewSortEntity',
   'WebhookEntity',
+]);
+
+// Entities allowed to be injected via raw @InjectRepository. Every
+// other @InjectRepository(*Entity) site must go through
+// @InjectWorkspaceScopedRepository so workspaceId is enforced on every
+// read/write. New entities default to enforcement.
+const EXCLUSIONS = new Set<string>([
+  ...STRUCTURAL_EXEMPTIONS,
+  ...WORKSPACE_SCOPED_EXEMPTIONS,
 ]);
 
 const matchInjectRepositoryEntity = (decorator: any): string | null => {
