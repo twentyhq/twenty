@@ -83,5 +83,28 @@ ruleTester.run(RULE_NAME, rule, {
         },
       ],
     },
+    {
+      // Plain (non-parameter-property) constructor parameter with an
+      // explicit assignment in the body. Must still be caught — the
+      // rule should not depend on the TSParameterProperty shorthand.
+      code: `
+        class AgentChatService {
+          private readonly threadRepository: Repository<AgentChatThreadEntity>;
+          constructor(
+            @InjectRepository(AgentChatThreadEntity)
+            threadRepository: Repository<AgentChatThreadEntity>,
+          ) {
+            this.threadRepository = threadRepository;
+          }
+        }
+      `,
+      filename: 'agent-chat.service.ts',
+      errors: [
+        {
+          messageId: 'preferWorkspaceScopedRepository',
+          data: { entityName: 'AgentChatThreadEntity' },
+        },
+      ],
+    },
   ],
 });

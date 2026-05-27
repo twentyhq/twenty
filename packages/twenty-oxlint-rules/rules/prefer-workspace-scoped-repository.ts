@@ -116,10 +116,10 @@ export const rule = defineRule({
         }
 
         for (const param of node.value.params ?? []) {
-          if (param.type !== 'TSParameterProperty') {
-            continue;
-          }
-
+          // Parameter decorators live on `.decorators` for both
+          // TSParameterProperty (e.g. `private readonly foo`) and plain
+          // parameters (e.g. `foo: Foo`). Checking both covers shorthand
+          // and explicit-assignment constructor forms.
           for (const decorator of param.decorators ?? []) {
             const entityName = matchInjectRepositoryEntity(decorator);
 

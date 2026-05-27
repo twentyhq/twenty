@@ -137,6 +137,13 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
+  // workspaceId goes first in the merged object so it appears first in
+  // the generated SQL WHERE clause. Postgres' planner picks the most
+  // selective index regardless of clause order, but leading with
+  // workspaceId matches how the composite indexes are declared on these
+  // tables and makes the security intent obvious in query logs. We
+  // strip any caller-supplied workspaceId first so the scoped value
+  // always wins.
   private mergeWorkspaceIdIntoWhere(
     workspaceId: string,
     where: FindOneOptions<T>['where'] | undefined,
@@ -146,19 +153,30 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     }
 
     if (Array.isArray(where)) {
-      return where.map(
-        (clause) => ({ ...clause, workspaceId }) as FindOptionsWhere<T>,
+      return where.map((clause) =>
+        this.prependWorkspaceId(workspaceId, clause),
       );
     }
 
-    return { ...where, workspaceId } as FindOptionsWhere<T>;
+    return this.prependWorkspaceId(workspaceId, where as FindOptionsWhere<T>);
   }
 
   private mergeWorkspaceIdIntoCriteria(
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
   ): FindOptionsWhere<T> {
-    return { ...criteria, workspaceId } as FindOptionsWhere<T>;
+    return this.prependWorkspaceId(workspaceId, criteria);
+  }
+
+  private prependWorkspaceId(
+    workspaceId: string,
+    clause: FindOptionsWhere<T>,
+  ): FindOptionsWhere<T> {
+    const { workspaceId: _ignored, ...rest } = clause as FindOptionsWhere<T> & {
+      workspaceId?: unknown;
+    };
+
+    return { workspaceId, ...rest } as FindOptionsWhere<T>;
   }
 
   private stampWorkspaceIdOnEntities(

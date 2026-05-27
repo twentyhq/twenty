@@ -67,6 +67,19 @@ describe('WorkspaceScopedRepository', () => {
       });
     });
 
+    it('places workspaceId first in the merged WHERE clause', async () => {
+      await scoped.findOne(WORKSPACE_ID, {
+        where: { id: 'a', status: 'queued' },
+      });
+
+      const callArg = repository.findOne.mock.calls[0][0];
+      const whereKeys = Object.keys(
+        (callArg as { where: Record<string, unknown> }).where,
+      );
+
+      expect(whereKeys[0]).toBe('workspaceId');
+    });
+
     it('preserves relations and other options', async () => {
       await scoped.findOne(WORKSPACE_ID, {
         where: { id: 'a' },
