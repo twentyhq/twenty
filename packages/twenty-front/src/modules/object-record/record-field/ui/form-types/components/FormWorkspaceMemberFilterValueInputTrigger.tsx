@@ -45,6 +45,7 @@ export const FormWorkspaceMemberFilterValueInputTrigger = ({
       <VariableChipStandalone
         rawVariableName={defaultValue ?? ''}
         onRemove={readonly ? undefined : onUnlinkVariable}
+        isFullRecord
       />
     );
   }
