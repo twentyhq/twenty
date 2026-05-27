@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { type Readable } from 'stream';
@@ -22,6 +22,8 @@ import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
 export class FileService {
+  private readonly logger = new Logger(FileService.name);
+
   constructor(
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
@@ -98,8 +100,8 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<{ stream: Readable; mimeType: string }> {
-    const file = await this.fileRepository.findOneOrFail({
+  }): Promise<{ stream: Readable; mimeType: string } | null> {
+    const file = await this.fileRepository.findOne({
       where: {
         id: fileId,
         workspaceId,
@@ -107,32 +109,55 @@ export class FileService {
       },
     });
 
-    const application = await this.applicationRepository.findOneOrFail({
+    if (file === null) {
+      return null;
+    }
+
+    const application = await this.applicationRepository.findOne({
       where: {
         id: file.applicationId,
         workspaceId,
       },
     });
 
-    const stream = await this.fileStorageService.readFile({
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-      fileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-    });
+    if (application === null) {
+      this.logger.warn(
+        `File ${file.id} references missing application ${file.applicationId} in workspace ${workspaceId}`,
+      );
 
-    return {
-      stream,
-      mimeType: file.mimeType,
-    };
+      return null;
+    }
+
+    try {
+      const stream = await this.fileStorageService.readFile({
+        resourcePath: removeFileFolderFromFileEntityPath(file.path),
+        fileFolder,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+      });
+
+      return {
+        stream,
+        mimeType: file.mimeType,
+      };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async getFileResponseById(params: {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<FileResponse> {
-    const file = await this.fileRepository.findOneOrFail({
+  }): Promise<FileResponse | null> {
+    const file = await this.fileRepository.findOne({
       where: {
         id: params.fileId,
         workspaceId: params.workspaceId,
@@ -140,12 +165,24 @@ export class FileService {
       },
     });
 
-    const application = await this.applicationRepository.findOneOrFail({
+    if (file === null) {
+      return null;
+    }
+
+    const application = await this.applicationRepository.findOne({
       where: {
         id: file.applicationId,
         workspaceId: params.workspaceId,
       },
     });
+
+    if (application === null) {
+      this.logger.warn(
+        `File ${file.id} references missing application ${file.applicationId} in workspace ${params.workspaceId}`,
+      );
+
+      return null;
+    }
 
     const mimeType = file.mimeType ?? 'application/octet-stream';
     const resourceIdentifier = {
@@ -168,9 +205,20 @@ export class FileService {
       return { type: 'redirect', presignedUrl };
     }
 
-    const stream = await this.fileStorageService.readFile(resourceIdentifier);
+    try {
+      const stream = await this.fileStorageService.readFile(resourceIdentifier);
 
-    return { type: 'stream', stream, mimeType };
+      return { type: 'stream', stream, mimeType };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async getFileContentById({
@@ -181,8 +229,8 @@ export class FileService {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
-  }): Promise<{ buffer: Buffer; mimeType: string }> {
-    const file = await this.fileRepository.findOneOrFail({
+  }): Promise<{ buffer: Buffer; mimeType: string } | null> {
+    const file = await this.fileRepository.findOne({
       where: {
         id: fileId,
         workspaceId,
@@ -190,26 +238,49 @@ export class FileService {
       },
     });
 
-    const application = await this.applicationRepository.findOneOrFail({
+    if (file === null) {
+      return null;
+    }
+
+    const application = await this.applicationRepository.findOne({
       where: {
         id: file.applicationId,
         workspaceId,
       },
     });
 
-    const stream = await this.fileStorageService.readFile({
-      resourcePath: removeFileFolderFromFileEntityPath(file.path),
-      fileFolder,
-      applicationUniversalIdentifier: application.universalIdentifier,
-      workspaceId,
-    });
+    if (application === null) {
+      this.logger.warn(
+        `File ${file.id} references missing application ${file.applicationId} in workspace ${workspaceId}`,
+      );
 
-    const buffer = await streamToBuffer(stream);
+      return null;
+    }
 
-    return {
-      buffer,
-      mimeType: file.mimeType ?? 'application/octet-stream',
-    };
+    try {
+      const stream = await this.fileStorageService.readFile({
+        resourcePath: removeFileFolderFromFileEntityPath(file.path),
+        fileFolder,
+        applicationUniversalIdentifier: application.universalIdentifier,
+        workspaceId,
+      });
+
+      const buffer = await streamToBuffer(stream);
+
+      return {
+        buffer,
+        mimeType: file.mimeType ?? 'application/octet-stream',
+      };
+    } catch (error) {
+      if (
+        error instanceof FileStorageException &&
+        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+      ) {
+        return null;
+      }
+
+      throw error;
+    }
   }
 
   async deleteWorkspaceFolder(workspaceId: string) {

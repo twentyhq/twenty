@@ -1,15 +1,15 @@
 import { FieldType, defineObject } from 'twenty-sdk/define';
 
-import { PARTNER_QUOTE_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
+import { PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER } from 'src/constants/universal-identifiers';
 
 export default defineObject({
-  universalIdentifier: PARTNER_QUOTE_OBJECT_UNIVERSAL_IDENTIFIER,
-  nameSingular: 'partnerQuote',
-  namePlural: 'partnerQuotes',
-  labelSingular: 'Partner Quote',
-  labelPlural: 'Partner Quotes',
-  description: 'A quote a partner submitted for a customer deal',
-  icon: 'IconFileDollar',
+  universalIdentifier: PARTNER_CONTENT_OBJECT_UNIVERSAL_IDENTIFIER,
+  nameSingular: 'partnerContent',
+  namePlural: 'partnerContents',
+  labelSingular: 'Partner Content',
+  labelPlural: 'Partner Content',
+  description: 'Marketing content involving a partner: quotes, case studies, logos',
+  icon: 'IconQuote',
   isSearchable: true,
   labelIdentifierFieldMetadataUniversalIdentifier: '9e688624-83d2-4715-8b18-80492a6de2b6',
   fields: [
@@ -20,6 +20,20 @@ export default defineObject({
       label: 'Name',
       icon: 'IconTag',
       defaultValue: "''",
+    },
+    {
+      universalIdentifier: '1d926e6e-6ac1-4d60-ab3d-a73114005692',
+      type: FieldType.MULTI_SELECT,
+      name: 'contentType',
+      label: 'Content Type',
+      icon: 'IconCategory',
+      isNullable: true,
+      options: [
+        { id: '07f85e5b-0d70-416b-9884-256e469ed532', value: 'CUSTOMER_QUOTE', label: 'Customer quote', position: 0, color: 'blue' },
+        { id: '108b2358-d04d-4fdc-83df-a5978d39f66f', value: 'CASE_STUDY', label: 'Case study', position: 1, color: 'green' },
+        { id: 'eb45f371-f93c-4c45-9c8a-f29e1a58b7e4', value: 'PARTNER_QUOTE', label: 'Partner quote', position: 2, color: 'orange' },
+        { id: '3356c8a0-41cd-47c3-a293-5862138abc1a', value: 'LOGO', label: 'Logo', position: 3, color: 'purple' },
+      ],
     },
     {
       universalIdentifier: 'a0fe09c4-c1f4-4b96-93c6-d7ec38f1166a',
@@ -45,21 +59,21 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: '2cbe67e3-24ec-421b-bab5-50f3306c2391',
-      type: FieldType.CURRENCY,
-      name: 'amount',
-      label: 'Amount',
-      icon: 'IconCoin',
+      universalIdentifier: 'da7e9094-e2c3-47d3-924f-a1d4d3c717ed',
+      type: FieldType.LINKS,
+      name: 'interview',
+      label: 'Interview',
+      icon: 'IconMicrophone',
       isNullable: true,
     },
     {
       universalIdentifier: 'f303369e-288c-4a48-9920-c1de0ad9a159',
       type: FieldType.FILES,
-      name: 'quoteFile',
-      label: 'Quote File',
+      name: 'documents',
+      label: 'Documents',
       icon: 'IconPaperclip',
       isNullable: true,
-      universalSettings: { maxNumberOfValues: 1 },
+      universalSettings: { maxNumberOfValues: 10 },
     },
   ],
 });

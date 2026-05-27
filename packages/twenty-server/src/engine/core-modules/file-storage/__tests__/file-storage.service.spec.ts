@@ -381,7 +381,6 @@ describe('FileStorageService', () => {
               ...validResourceIdentifier,
               resourcePath: context.resourcePath,
               sourceFile: Buffer.from('malicious'),
-              mimeType: 'application/javascript',
               settings: { isTemporaryFile: false, toDelete: false },
             }),
           ).rejects.toMatchObject({
@@ -396,7 +395,6 @@ describe('FileStorageService', () => {
         await service.writeFile({
           ...validResourceIdentifier,
           sourceFile: Buffer.from('valid content'),
-          mimeType: 'application/javascript',
           settings: { isTemporaryFile: false, toDelete: false },
         });
 
@@ -405,6 +403,141 @@ describe('FileStorageService', () => {
             filePath: expectedValidPath,
           }),
         );
+      });
+
+      describe('magic-byte backstop', () => {
+        const pngBuffer = Buffer.from([
+          0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 0x00, 0x00, 0x00,
+          0x0d, 0x49, 0x48, 0x44, 0x52,
+        ]);
+        const textBuffer = Buffer.from('Hello, world!', 'utf-8');
+
+        it('should reject buffer whose magic bytes do not match the path extension', async () => {
+          await expect(
+            service.writeFile({
+              workspaceId: 'workspace-123',
+              applicationUniversalIdentifier: 'app-456',
+              fileFolder: FileFolder.PublicAsset,
+              resourcePath: 'assets/fake-image.png',
+              sourceFile: textBuffer,
+              settings: { isTemporaryFile: false, toDelete: false },
+            }),
+          ).rejects.toMatchObject({
+            code: FileStorageExceptionCode.INVALID_EXTENSION,
+          });
+
+          expect(mockDriver.writeFile).not.toHaveBeenCalled();
+        });
+
+        it('should accept buffer whose magic bytes match the path extension and persist the bytes-derived mime', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: 'assets/photo.png',
+            sourceFile: pngBuffer,
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          expect(mockDriver.writeFile).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'image/png' }),
+          );
+          expect(mockFileRepository.upsert).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'image/png' }),
+            expect.anything(),
+          );
+        });
+
+        it('should persist application/typescript for a TypeScript source string (TWENTY_MIME_POLICY)', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.Source,
+            resourcePath: 'src/index.tsx',
+            sourceFile: 'export const App = () => null;',
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          expect(mockDriver.writeFile).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'application/typescript' }),
+          );
+        });
+
+        it('should persist application/typescript for a TypeScript source buffer (policy beats mrmime collision)', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.Source,
+            resourcePath: 'src/handler.ts',
+            sourceFile: Buffer.from(
+              'export const handler = () => null;',
+              'utf-8',
+            ),
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          expect(mockDriver.writeFile).toHaveBeenCalledWith(
+            expect.objectContaining({ mimeType: 'application/typescript' }),
+          );
+        });
+      });
+
+      describe('SVG sanitization (centralized invariant)', () => {
+        const maliciousSvg =
+          '<svg xmlns="http://www.w3.org/2000/svg" onload="alert(1)"><script>alert(2)</script><circle r="10" /></svg>';
+
+        it('should strip scripts and event handlers from an SVG string upload', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: 'assets/icon.svg',
+            sourceFile: maliciousSvg,
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          const driverCall = mockDriver.writeFile.mock.calls[0][0];
+
+          expect(driverCall.mimeType).toBe('image/svg+xml');
+          expect(typeof driverCall.sourceFile).toBe('string');
+          expect(driverCall.sourceFile).not.toContain('<script>');
+          expect(driverCall.sourceFile).not.toContain('onload');
+          expect(driverCall.sourceFile).toContain('<circle');
+        });
+
+        it('should strip scripts and event handlers from an SVG buffer upload', async () => {
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.PublicAsset,
+            resourcePath: 'assets/icon.svg',
+            sourceFile: Buffer.from(maliciousSvg, 'utf-8'),
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          const driverCall = mockDriver.writeFile.mock.calls[0][0];
+
+          expect(driverCall.mimeType).toBe('image/svg+xml');
+          expect(driverCall.sourceFile).not.toContain('<script>');
+          expect(driverCall.sourceFile).not.toContain('onload');
+        });
+
+        it('should leave non-SVG content untouched (sanitize is no-op)', async () => {
+          const original = '{"foo": "bar"}';
+
+          await service.writeFile({
+            workspaceId: 'workspace-123',
+            applicationUniversalIdentifier: 'app-456',
+            fileFolder: FileFolder.Source,
+            resourcePath: 'package.json',
+            sourceFile: original,
+            settings: { isTemporaryFile: false, toDelete: false },
+          });
+
+          const driverCall = mockDriver.writeFile.mock.calls[0][0];
+
+          expect(driverCall.sourceFile).toBe(original);
+        });
       });
     });
 

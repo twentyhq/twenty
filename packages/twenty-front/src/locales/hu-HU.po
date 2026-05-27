@@ -236,6 +236,11 @@ msgstr "{agentLabel} ügynök szerepköre"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} a(z) {fieldLabel} alapján"
 
+#. js-lingui-id: u1mVnV
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "{appDisplayName} would like to:"
+msgstr ""
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -2554,7 +2559,7 @@ msgid "Authorization failed. Please try again."
 msgstr "Az engedélyezés sikertelen. Kérjük, próbálja meg újra."
 
 #. js-lingui-id: yIVrHZ
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 msgid "Authorize"
 msgstr "Engedélyezés"
 
@@ -2569,7 +2574,7 @@ msgid "Authorized URL copied to clipboard"
 msgstr "Engedélyezett URL vágólapra másolva"
 
 #. js-lingui-id: 8RmQki
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 msgid "Authorizing..."
 msgstr "Engedélyezés..."
 
@@ -2652,6 +2657,11 @@ msgstr "Vissza ide: {linkText}"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Vissza a tartalomhoz"
+
+#. js-lingui-id: 9aZHfH
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "Back to settings"
+msgstr ""
 
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -3013,7 +3023,6 @@ msgstr "Nem tud beolvasni? Másolja a"
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
-#: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -3025,6 +3034,7 @@ msgstr "Nem tud beolvasni? Másolja a"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr "Mégse"
@@ -8503,6 +8513,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
 msgstr "Telepítés"
+
+#. js-lingui-id: XOHdRf
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "Install {appDisplayName} on your workspace"
+msgstr ""
 
 #. js-lingui-id: 4ZM8/a
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -16089,6 +16104,7 @@ msgstr "Kétfaktoros hitelesítési beállítás sikeresen befejezve!"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts

@@ -236,6 +236,11 @@ msgstr "Ruolo dell'agente {agentLabel}"
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} di {fieldLabel}"
 
+#. js-lingui-id: u1mVnV
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "{appDisplayName} would like to:"
+msgstr ""
+
 #. js-lingui-id: ZZZxmp
 #: src/pages/auth/Authorize.tsx
 msgid "{appName} would like to:"
@@ -2554,7 +2559,7 @@ msgid "Authorization failed. Please try again."
 msgstr "Autorizzazione non riuscita. Per favore riprova."
 
 #. js-lingui-id: yIVrHZ
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 msgid "Authorize"
 msgstr "Autorizza"
 
@@ -2569,7 +2574,7 @@ msgid "Authorized URL copied to clipboard"
 msgstr "URL autorizzato copiato negli appunti"
 
 #. js-lingui-id: 8RmQki
-#: src/pages/auth/Authorize.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 msgid "Authorizing..."
 msgstr "Autorizzazione in corso..."
 
@@ -2652,6 +2657,11 @@ msgstr "Torna a {linkText}"
 #: src/pages/not-found/NotFound.tsx
 msgid "Back to content"
 msgstr "Torna al contenuto"
+
+#. js-lingui-id: 9aZHfH
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "Back to settings"
+msgstr ""
 
 #. js-lingui-id: GtJbUa
 #: src/modules/error-handler/components/AppRootErrorFallback.tsx
@@ -3013,7 +3023,6 @@ msgstr "Non puoi scansionare? Copia il"
 #. js-lingui-id: dEgA5A
 #: src/pages/settings/applications/components/SettingsApplicationConnectScopePickerModal.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDangerZone.tsx
-#: src/pages/auth/Authorize.tsx
 #: src/modules/ui/layout/modal/components/ConfirmationModal.tsx
 #: src/modules/ui/feedback/snack-bar-manager/components/SnackBar.tsx
 #: src/modules/spreadsheet-import/steps/components/ImportDataStep.tsx
@@ -3025,6 +3034,7 @@ msgstr "Non puoi scansionare? Copia il"
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/settings/components/SaveAndCancelButtons/CancelButton.tsx
 #: src/modules/object-record/record-update-multiple/components/UpdateMultipleRecordsFooter.tsx
+#: src/modules/applications/components/AuthorizeActionButtons.tsx
 #: src/modules/activities/emails/components/EmailComposer.tsx
 msgid "Cancel"
 msgstr "Annulla"
@@ -8503,6 +8513,11 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
 msgstr "Installa"
+
+#. js-lingui-id: XOHdRf
+#: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
+msgid "Install {appDisplayName} on your workspace"
+msgstr ""
 
 #. js-lingui-id: 4ZM8/a
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
@@ -16091,6 +16106,7 @@ msgstr "Configurazione dell'autenticazione a due fattori completata con successo
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts

@@ -16,6 +16,7 @@ const UNKNOWN_APPLICATION_ID = uuidv4();
 
 const PUBLIC_ASSET_PATH = 'assets/logo.svg';
 const PUBLIC_ASSET_CONTENT = '<svg><circle r="10" /></svg>';
+const PERSISTED_PUBLIC_ASSET_CONTENT = '<svg><circle r="10"></circle></svg>';
 const PUBLIC_ASSET_CONTENT_TYPE = 'image/svg+xml';
 
 type FailingCase = {
@@ -81,8 +82,7 @@ describe('Public assets controller download should fail', () => {
     await setupApplicationForSync({
       applicationUniversalIdentifier: TEST_APP_UID,
       name: 'Test Public Assets Download Failure App',
-      description:
-        'App for testing failing public-assets controller downloads',
+      description: 'App for testing failing public-assets controller downloads',
       sourcePath: 'test-public-assets-download-failure',
     });
 
@@ -93,9 +93,6 @@ describe('Public assets controller download should fail', () => {
 
     applicationId = id;
 
-    // A real public asset must exist so the "no content leak" guard below is
-    // meaningful — without it, `not.toContain(PUBLIC_ASSET_CONTENT)` would
-    // pass trivially regardless of the controller's behavior.
     jest.useRealTimers();
 
     await uploadApplicationFile({
@@ -129,7 +126,7 @@ describe('Public assets controller download should fail', () => {
       jest.useFakeTimers();
 
       // The legitimate asset content must never leak through a failure path.
-      expect(response.text).not.toContain(PUBLIC_ASSET_CONTENT);
+      expect(response.text).not.toContain(PERSISTED_PUBLIC_ASSET_CONTENT);
 
       expectOneNotInternalServerErrorHttpResponseSnapshot({
         status: response.status,
