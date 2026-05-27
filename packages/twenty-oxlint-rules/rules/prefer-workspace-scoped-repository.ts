@@ -14,6 +14,12 @@ const BLACKLIST = new Set<string>([
   'AgentChatThreadEntity',
   'AgentTurnEvaluationEntity',
   'AgentEntity',
+  'TwoFactorAuthenticationMethodEntity',
+  'ApiKeyEntity',
+  'FeatureFlagEntity',
+  'ApprovedAccessDomainEntity',
+  'EmailingDomainEntity',
+  'PublicDomainEntity',
 ]);
 
 const isInjectRepositoryDecoratorForBlacklistedEntity = (

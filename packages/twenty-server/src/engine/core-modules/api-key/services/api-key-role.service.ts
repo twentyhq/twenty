@@ -16,6 +16,10 @@ import { type RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { fromFlatRoleToRoleDto } from 'src/engine/metadata-modules/role/utils/fromFlatRoleToRoleDto.util';
 import { fromRoleEntityToRoleDto } from 'src/engine/metadata-modules/role/utils/fromRoleEntityToRoleDto.util';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 @Injectable()
@@ -26,8 +30,8 @@ export class ApiKeyRoleService {
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
 
-    @InjectRepository(ApiKeyEntity)
-    private readonly apiKeyRepository: Repository<ApiKeyEntity>,
+    @InjectWorkspaceScopedRepository(ApiKeyEntity)
+    private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly roleTargetService: RoleTargetService,
   ) {}
@@ -128,8 +132,8 @@ export class ApiKeyRoleService {
     workspaceId: string;
     roleId: string;
   }) {
-    const apiKey = await this.apiKeyRepository.findOne({
-      where: { id: apiKeyId, workspaceId },
+    const apiKey = await this.apiKeyRepository.findOne(workspaceId, {
+      where: { id: apiKeyId },
     });
 
     if (!apiKey) {
@@ -223,12 +227,8 @@ export class ApiKeyRoleService {
       return [];
     }
 
-    const apiKeys = await this.apiKeyRepository.find({
-      where: {
-        id: In(apiKeyIds),
-        workspaceId,
-        revokedAt: IsNull(),
-      },
+    const apiKeys = await this.apiKeyRepository.find(workspaceId, {
+      where: { id: In(apiKeyIds), revokedAt: IsNull() },
     });
 
     return apiKeys;

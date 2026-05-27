@@ -100,6 +100,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     ConnectedAccountHealth,
     AppHealthIndicator,
     provideWorkspaceScopedRepository(AgentMessageEntity),
+    provideWorkspaceScopedRepository(FeatureFlagEntity),
   ],
   exports: [
     AdminPanelUserLookupService,

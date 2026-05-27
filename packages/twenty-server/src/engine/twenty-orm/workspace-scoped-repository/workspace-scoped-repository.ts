@@ -16,6 +16,7 @@ import {
   type UpdateResult,
 } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 // Entities accessed through this wrapper must declare a workspaceId column.
 // The constraint is enforced both at compile time (the generic bound below)
@@ -93,6 +94,17 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   ): Promise<InsertResult> {
     return this.repository.insert(
       this.stampWorkspaceIdOnEntities(workspaceId, entity),
+    );
+  }
+
+  upsert(
+    workspaceId: string,
+    entity: QueryDeepPartialEntity<T> | QueryDeepPartialEntity<T>[],
+    conflictPathsOrOptions: string[] | UpsertOptions<T>,
+  ): Promise<InsertResult> {
+    return this.repository.upsert(
+      this.stampWorkspaceIdOnEntities(workspaceId, entity),
+      conflictPathsOrOptions,
     );
   }
 

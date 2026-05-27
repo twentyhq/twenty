@@ -1,9 +1,12 @@
 import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation } from '@nestjs/graphql';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import {
@@ -43,8 +46,8 @@ export class TwoFactorAuthenticationResolver {
     private readonly loginTokenService: LoginTokenService,
     private readonly userService: UserService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
-    @InjectRepository(TwoFactorAuthenticationMethodEntity)
-    private readonly twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
+    @InjectWorkspaceScopedRepository(TwoFactorAuthenticationMethodEntity)
+    private readonly twoFactorAuthenticationMethodRepository: WorkspaceScopedRepository<TwoFactorAuthenticationMethodEntity>,
   ) {}
 
   @Mutation(() => InitiateTwoFactorAuthenticationProvisioningDTO)
@@ -132,7 +135,7 @@ export class TwoFactorAuthenticationResolver {
     @AuthUser() user: AuthContextUser,
   ): Promise<DeleteTwoFactorAuthenticationMethodDTO> {
     const twoFactorMethod =
-      await this.twoFactorAuthenticationMethodRepository.findOne({
+      await this.twoFactorAuthenticationMethodRepository.findOne(workspace.id, {
         where: {
           id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
         },
@@ -146,19 +149,16 @@ export class TwoFactorAuthenticationResolver {
       );
     }
 
-    if (
-      twoFactorMethod.userWorkspace.userId !== user.id ||
-      twoFactorMethod.userWorkspace.workspaceId !== workspace.id
-    ) {
+    if (twoFactorMethod.userWorkspace.userId !== user.id) {
       throw new AuthException(
         'You can only delete your own two-factor authentication methods',
         AuthExceptionCode.FORBIDDEN_EXCEPTION,
       );
     }
 
-    await this.twoFactorAuthenticationMethodRepository.delete(
-      deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
-    );
+    await this.twoFactorAuthenticationMethodRepository.delete(workspace.id, {
+      id: deleteTwoFactorAuthenticationMethodInput.twoFactorAuthenticationMethodId,
+    });
 
     return { success: true };
   }

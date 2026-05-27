@@ -22,6 +22,7 @@ const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
     delete: jest.fn(),
     softDelete: jest.fn(),
     insert: jest.fn(),
+    upsert: jest.fn(),
     save: jest.fn(),
     createQueryBuilder: jest.fn(),
   }) as unknown as jest.Mocked<Repository<FakeEntity>>;
@@ -177,6 +178,36 @@ describe('WorkspaceScopedRepository', () => {
         id: 'a',
         workspaceId: WORKSPACE_ID,
       });
+    });
+  });
+
+  describe('upsert', () => {
+    it('stamps workspaceId on a single entity and forwards conflict opts', async () => {
+      await scoped.upsert(WORKSPACE_ID, { id: 'a', status: 'queued' }, ['id']);
+
+      expect(repository.upsert).toHaveBeenCalledWith(
+        { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+        ['id'],
+      );
+    });
+
+    it('stamps workspaceId on each entity in an array', async () => {
+      await scoped.upsert(
+        WORKSPACE_ID,
+        [
+          { id: 'a', status: 'queued' },
+          { id: 'b', status: 'sent' },
+        ],
+        { conflictPaths: ['id'] },
+      );
+
+      expect(repository.upsert).toHaveBeenCalledWith(
+        [
+          { id: 'a', status: 'queued', workspaceId: WORKSPACE_ID },
+          { id: 'b', status: 'sent', workspaceId: WORKSPACE_ID },
+        ],
+        { conflictPaths: ['id'] },
+      );
     });
   });
 
