@@ -1,5 +1,3 @@
-import axios from 'axios';
-
 export async function fetchLatestGithubReleaseTag(): Promise<string | null> {
   try {
     const headers: Record<string, string> = {
@@ -11,12 +9,15 @@ export async function fetchLatestGithubReleaseTag(): Promise<string | null> {
       headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
     }
 
-    const response = await axios.get(
+    const response = await fetch(
       'https://api.github.com/repos/twentyhq/twenty/releases/latest',
       { headers },
     );
 
-    return response.data.tag_name;
+    if (!response.ok) return null;
+
+    const data = (await response.json()) as { tag_name?: string };
+    return data.tag_name ?? null;
   } catch {
     return null;
   }
