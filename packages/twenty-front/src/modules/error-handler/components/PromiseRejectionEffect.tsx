@@ -1,5 +1,6 @@
 import { useCallback, useEffect } from 'react';
 
+import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import {
   CombinedGraphQLErrors,
@@ -44,10 +45,18 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
+      const isViteStaleChunkLazyLoadingError =
+        error instanceof Error &&
+        checkIfItsAViteStaleChunkLazyLoadingError(error);
+
+      if (!isAbortError && !isViteStaleChunkLazyLoadingError) {
         enqueueErrorSnackBar(
           error instanceof Error ? { message: error.message } : {},
         );
+      }
+
+      if (isAbortError || isViteStaleChunkLazyLoadingError) {
+        return;
       }
 
       try {

@@ -1,5 +1,6 @@
 import { AppErrorBoundaryEffect } from '@/error-handler/components/internal/AppErrorBoundaryEffect';
 import { checkIfItsAViteStaleChunkLazyLoadingError } from '@/error-handler/utils/checkIfItsAViteStaleChunkLazyLoadingError';
+import { getViteStaleChunkRecoveryState } from '@/error-handler/utils/getViteStaleChunkRecoveryState';
 import { type ErrorInfo, type ReactNode } from 'react';
 import { ErrorBoundary, type FallbackProps } from 'react-error-boundary';
 import { type CustomError, isDefined } from 'twenty-shared/utils';
@@ -16,12 +17,53 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
+const getCurrentNavigationType = () => {
+  const [navigationEntry] = performance.getEntriesByType(
+    'navigation',
+  ) as PerformanceNavigationTiming[];
+
+  return navigationEntry?.type;
+};
+
 export const AppErrorBoundary = ({
   children,
   FallbackComponent,
   resetOnLocationChange = true,
 }: AppErrorBoundaryProps) => {
   const handleError = async (error: Error | CustomError, info: ErrorInfo) => {
+    const isViteStaleChunkLazyLoadingError =
+      checkIfItsAViteStaleChunkLazyLoadingError(error);
+
+    if (isViteStaleChunkLazyLoadingError) {
+      const { shouldReload, retryCount } = getViteStaleChunkRecoveryState(
+        getCurrentNavigationType(),
+      );
+
+      try {
+        const { captureMessage, withScope } = await import('@sentry/react');
+
+        withScope((scope) => {
+          scope.setLevel(shouldReload ? 'warning' : 'error');
+          scope.setTag('error.category', 'stale-chunk');
+          scope.setTag('error.type', 'vite-dynamic-import');
+          scope.setExtra('staleChunkRecoveryAttemptCount', retryCount);
+          scope.setExtra('staleChunkRecoveryShouldReload', shouldReload);
+          scope.setExtra('info', info);
+
+          captureMessage(error.message);
+        });
+      } catch (sentryError) {
+        // oxlint-disable-next-line no-console
+        console.error('Failed to capture exception with Sentry:', sentryError);
+      }
+
+      if (shouldReload) {
+        window.location.reload();
+      }
+
+      return;
+    }
+
     try {
       const { captureException } = await import('@sentry/react');
       captureException(error, (scope) => {
@@ -35,13 +77,6 @@ export const AppErrorBoundary = ({
     } catch (sentryError) {
       // oxlint-disable-next-line no-console
       console.error('Failed to capture exception with Sentry:', sentryError);
-    }
-
-    const isViteStaleChunkLazyLoadingError =
-      checkIfItsAViteStaleChunkLazyLoadingError(error);
-
-    if (isViteStaleChunkLazyLoadingError) {
-      window.location.reload();
     }
   };
 
