@@ -97,8 +97,6 @@ export class AuthService {
     private readonly userRepository: Repository<UserEntity>,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly emailService: EmailService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly i18nService: I18nService,

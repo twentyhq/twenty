@@ -31,15 +31,20 @@ const BLACKLIST = new Set<string>([
   'ApprovedAccessDomainEntity',
   'EmailingDomainEntity',
   'PublicDomainEntity',
-  // Listed but not yet migrated — existing call sites are temporarily
-  // suppressed with eslint-disable + TODO(workspace-scoped) markers.
-  'UserWorkspaceEntity',
-  'AppTokenEntity',
   'FileEntity',
   'BillingCustomerEntity',
   'BillingSubscriptionEntity',
   'BillingEntitlementEntity',
+  // Listed but not yet migrated — existing call sites are temporarily
+  // suppressed with eslint-disable + TODO(workspace-scoped) markers.
+  'UserWorkspaceEntity',
 ]);
+
+// Intentionally NOT on the blacklist:
+// - AppTokenEntity: workspaceId is nullable by design (password-reset
+//   tokens are minted before the user picks a workspace), so the
+//   wrapper's "workspaceId required" contract doesn't fit. Cross-tenant
+//   lookups by token jti are also normal here.
 
 const isInjectRepositoryDecoratorForBlacklistedEntity = (
   decorator: any,

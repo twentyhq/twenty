@@ -19,8 +19,6 @@ import { AuthProviderEnum } from 'src/engine/core-modules/workspace/types/worksp
 @Injectable()
 export class RenewTokenService {
   constructor(
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AppTokenEntity)
     private readonly appTokenRepository: Repository<AppTokenEntity>,
     private readonly accessTokenService: AccessTokenService,
