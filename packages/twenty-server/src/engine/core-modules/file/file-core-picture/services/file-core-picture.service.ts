@@ -23,10 +23,8 @@ import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extra
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import {
-  InjectWorkspaceScopedRepository,
-  WorkspaceScopedRepository,
-} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { getImageBufferFromUrl } from 'src/utils/image';
 
 @Injectable()

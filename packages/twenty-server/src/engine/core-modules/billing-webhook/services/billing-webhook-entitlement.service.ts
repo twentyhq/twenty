@@ -16,17 +16,12 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
-import {
-  InjectWorkspaceScopedRepository,
-  WorkspaceScopedRepository,
-} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class BillingWebhookEntitlementService {
   constructor(
-    // Stripe-initiated webhook: the workspace is discovered from the
-    // BillingCustomer row via stripeCustomerId. No workspaceId is
-    // available at lookup time, so the scoped facade doesn't fit.
+    // Stripe webhook: workspace discovered from BillingCustomer by stripeCustomerId.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,

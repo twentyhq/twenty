@@ -8,11 +8,8 @@ import { MessageQueueService } from 'src/engine/core-modules/message-queue/servi
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { AgentChatService } from 'src/engine/metadata-modules/ai/ai-chat/services/agent-chat.service';
-import {
-  InjectWorkspaceScopedRepository,
-  WorkspaceScopedRepository,
-} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { EvaluateAgentTurnJob } from './evaluate-agent-turn.job';
 
 export type RunEvaluationInputJobData = {

@@ -9,11 +9,8 @@ import { type BillingEntitlementKey } from 'src/engine/core-modules/billing/enum
 import { BillingProductService } from 'src/engine/core-modules/billing/services/billing-product.service';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import {
-  InjectWorkspaceScopedRepository,
-  WorkspaceScopedRepository,
-} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class BillingService {
   protected readonly logger = new Logger(BillingService.name);

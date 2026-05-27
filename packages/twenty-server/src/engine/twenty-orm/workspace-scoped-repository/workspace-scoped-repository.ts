@@ -1,15 +1,11 @@
-import { Inject, type Provider } from '@nestjs/common';
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { type EntityClassOrSchema } from '@nestjs/typeorm/dist/interfaces/entity-class-or-schema.type';
 import {
   type DeepPartial,
   type DeleteResult,
+  type EntityManager,
   type FindManyOptions,
   type FindOneOptions,
   type FindOptionsWhere,
   type InsertResult,
-  type ObjectLiteral,
   type Repository,
   type SaveOptions,
   type SelectQueryBuilder,
@@ -18,16 +14,13 @@ import {
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
-// Entities accessed through this wrapper must declare a workspaceId column.
-// The constraint is enforced both at compile time (the generic bound below)
-// and at runtime (every read/write merges workspaceId into the criteria).
-export type WorkspaceScopedEntity = ObjectLiteral & { workspaceId: string };
+import { type WorkspaceScopedEntity } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-entity.type';
 
-// Wraps a TypeORM Repository so that every operation is scoped to a
-// caller-supplied workspaceId. Built to make cross-workspace IDOR bugs
-// impossible-by-default for `core` and `metadata` schema entities that
-// carry a workspaceId column. Workspace-data schema entities should keep
-// using WorkspaceRepository / twentyORMManager.
+// Wraps a TypeORM Repository so every operation is scoped to a
+// caller-supplied workspaceId. Makes cross-workspace IDOR bugs
+// impossible-by-default for core- and metadata-schema entities that
+// carry a workspaceId column. Workspace-data schema entities continue
+// to use WorkspaceRepository / twentyORMManager.
 export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
@@ -128,11 +121,20 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   }
 
   // Escape hatch for cases that genuinely need a SelectQueryBuilder
-  // (joins, aggregates, complex predicates). Caller MUST add the workspaceId
-  // predicate themselves — this method does not enforce it. Prefer the
-  // typed methods above when possible.
+  // (joins, aggregates, complex predicates). Caller MUST add the
+  // workspaceId predicate themselves — this method does not enforce it.
+  // Prefer the typed methods above when possible.
   createQueryBuilder(alias?: string): SelectQueryBuilder<T> {
     return this.repository.createQueryBuilder(alias);
+  }
+
+  // Returns a new wrapper bound to the given EntityManager. Use inside
+  // a QueryRunner transaction so reads/writes participate in the
+  // transaction while still being workspace-scoped.
+  withManager(manager: EntityManager): WorkspaceScopedRepository<T> {
+    return new WorkspaceScopedRepository<T>(
+      manager.getRepository(this.repository.target),
+    );
   }
 
   private mergeWorkspaceIdIntoWhere(
@@ -172,35 +174,3 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return { ...entity, workspaceId } as QueryDeepPartialEntity<T>;
   }
 }
-
-const tokenFor = (entity: EntityClassOrSchema): string =>
-  `WorkspaceScopedRepository<${getEntityName(entity)}>`;
-
-const getEntityName = (entity: EntityClassOrSchema): string => {
-  if (typeof entity === 'function') {
-    return entity.name;
-  }
-
-  return entity.options?.name ?? entity.constructor.name;
-};
-
-// Use inside Nest module `providers:` arrays. Wires up a
-// WorkspaceScopedRepository<T> for the given entity by reading the
-// raw TypeORM repository provided by TypeOrmModule.forFeature([entity]).
-export const provideWorkspaceScopedRepository = (
-  entity: EntityClassOrSchema,
-): Provider => ({
-  provide: tokenFor(entity),
-  useFactory: <T extends WorkspaceScopedEntity>(repository: Repository<T>) =>
-    new WorkspaceScopedRepository<T>(repository),
-  inject: [getRepositoryToken(entity)],
-});
-
-// Parameter decorator for constructor injection.
-export const InjectWorkspaceScopedRepository = (
-  entity: EntityClassOrSchema,
-): ParameterDecorator => Inject(tokenFor(entity));
-
-// Exposed for tests that need to provide a mock against the same token
-// the application code resolves to.
-export const getWorkspaceScopedRepositoryToken = tokenFor;

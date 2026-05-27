@@ -9,23 +9,15 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
-import {
-  InjectWorkspaceScopedRepository,
-  WorkspaceScopedRepository,
-} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AdminPanelChatService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    // Admin support flow: the only reads here are for an authenticated
-    // admin inspecting workspaces that have opted into impersonation via
-    // workspace.allowImpersonation, enforced by
-    // assertWorkspaceAllowsImpersonation below. The threadId-by-id lookup
-    // in getChatThreadMessages cannot be workspace-scoped because the
-    // admin doesn't know which workspace the thread belongs to until
-    // after the lookup. Subsequent reads are scoped to thread.workspaceId.
+    // Thread lookup is by id alone; the admin does not know the workspaceId
+    // upfront. assertWorkspaceAllowsImpersonation gates every other read.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AgentChatThreadEntity)
     private readonly agentChatThreadRepository: Repository<AgentChatThreadEntity>,

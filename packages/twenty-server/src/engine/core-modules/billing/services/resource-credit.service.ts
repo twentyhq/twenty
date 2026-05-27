@@ -1,14 +1,13 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
 
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 export type ResourceCreditPricingInfo = {
   tierCap: number;
   unitPriceCents: number;
@@ -19,12 +18,8 @@ export class ResourceCreditService {
   protected readonly logger = new Logger(ResourceCreditService.name);
 
   constructor(
-    // Lookup is by subscription id only; the caller flow doesn't carry
-    // a workspaceId at this layer. Migrating would require threading
-    // workspaceId through getResourceCreditRolloverParameters callers.
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingSubscriptionEntity)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
   ) {}
 
   extractResourceCreditPricingInfo(
@@ -61,18 +56,24 @@ export class ResourceCreditService {
     };
   }
 
-  async getResourceCreditRolloverParameters(subscriptionId: string): Promise<{
+  async getResourceCreditRolloverParameters(
+    workspaceId: string,
+    subscriptionId: string,
+  ): Promise<{
     tierQuantity: number;
     unitPriceCents: number;
   } | null> {
-    const subscription = await this.billingSubscriptionRepository.findOne({
-      where: { id: subscriptionId },
-      relations: [
-        'billingSubscriptionItems',
-        'billingSubscriptionItems.billingProduct',
-        'billingSubscriptionItems.billingProduct.billingPrices',
-      ],
-    });
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: { id: subscriptionId },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
 
     if (!isDefined(subscription)) {
       return null;

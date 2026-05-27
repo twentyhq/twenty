@@ -12,7 +12,7 @@ import { type BillingProductService } from 'src/engine/core-modules/billing/serv
 import { type BillingSubscriptionPhaseService } from 'src/engine/core-modules/billing/services/billing-subscription-phase.service';
 import { type StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { type BillingMeterPrice } from 'src/engine/core-modules/billing/types/billing-meter-price.type';
-
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { buildSubscription } from './build-subscription.util';
 
 export const repoMock = <T extends ObjectLiteral>() =>
@@ -81,7 +81,7 @@ export const buildDefaultMeteredTiers = (
 
 export const arrangeBillingSubscriptionRepositoryFindOneOrFail = (
   billingSubscriptionRepository: jest.Mocked<
-    Repository<BillingSubscriptionEntity>
+    WorkspaceScopedRepository<BillingSubscriptionEntity>
   >,
   params: {
     planKey?: BillingPlanKey;

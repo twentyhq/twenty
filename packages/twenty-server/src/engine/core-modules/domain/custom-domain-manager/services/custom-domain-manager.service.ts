@@ -24,9 +24,7 @@ export class CustomDomainManagerService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    // Intentionally cross-workspace: enforces global uniqueness of the
-    // requested custom domain against every workspace's public-domain
-    // registrations.
+    // Enforces global uniqueness of a custom domain across all workspaces.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(PublicDomainEntity)
     private readonly publicDomainRepository: Repository<PublicDomainEntity>,

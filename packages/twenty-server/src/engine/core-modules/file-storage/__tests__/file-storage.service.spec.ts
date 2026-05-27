@@ -12,8 +12,7 @@ import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/f
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
-import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 describe('FileStorageService', () => {
   let service: FileStorageService;
   let fileStorageDriverFactory: FileStorageDriverFactory;

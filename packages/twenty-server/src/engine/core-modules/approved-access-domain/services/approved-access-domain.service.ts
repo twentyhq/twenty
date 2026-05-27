@@ -9,10 +9,8 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
-import {
-  InjectWorkspaceScopedRepository,
-  WorkspaceScopedRepository,
-} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
@@ -42,9 +40,7 @@ export class ApprovedAccessDomainService {
   constructor(
     @InjectWorkspaceScopedRepository(ApprovedAccessDomainEntity)
     private readonly approvedAccessDomainRepository: WorkspaceScopedRepository<ApprovedAccessDomainEntity>,
-    // Two lookups intentionally cross workspaces (token-validated post-lookup,
-    // and SSO discovery by domain). They use this raw repository; all other
-    // access goes through the scoped wrapper above.
+    // Cross-workspace lookups for token validation and SSO discovery.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApprovedAccessDomainEntity)
     private readonly approvedAccessDomainRepositoryUnscoped: Repository<ApprovedAccessDomainEntity>,
@@ -208,8 +204,6 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    // Cross-workspace lookup by id is gated by the signed validation token:
-    // the JWT payload's workspaceId and domain must match the loaded row.
     const approvedAccessDomain =
       await this.approvedAccessDomainRepositoryUnscoped.findOneBy({
         id: approvedAccessDomainId,
@@ -309,10 +303,6 @@ export class ApprovedAccessDomainService {
   async findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
     domain: string,
   ) {
-    // Cross-workspace SSO discovery: given a user's email domain at sign-in
-    // time, find all workspaces with a validated approved access domain
-    // matching that domain. The caller has no workspaceId yet — this is
-    // how the workspace is discovered.
     return this.approvedAccessDomainRepositoryUnscoped.find({
       relations: [
         'workspace',

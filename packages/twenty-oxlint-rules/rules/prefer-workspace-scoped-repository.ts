@@ -2,56 +2,71 @@ import { defineRule } from '@oxlint/plugins';
 
 export const RULE_NAME = 'prefer-workspace-scoped-repository';
 
-// Entities that MUST be accessed through WorkspaceScopedRepository
-// (@InjectWorkspaceScopedRepository) — using the raw TypeORM repository
-// (@InjectRepository) on any of these is a lint error.
-//
-// Each entry is a core- or metadata-schema entity carrying a
-// workspaceId column. The list expresses intent: every such entity
-// belongs here. Entities still in active migration keep their
-// existing raw call sites suppressed with `// eslint-disable-next-line
-// twenty/prefer-workspace-scoped-repository` plus a
-// `TODO(workspace-scoped)` note, so the blacklist captures the
-// eventual goal rather than just what's already been refactored.
-//
-// Note on naming: "blacklist" here means "entities forbidden from raw
-// @InjectRepository". It is *not* a list of entities the rule opts
-// into checking — the rule's enforcement scope is the entire codebase,
-// and this set is what triggers the error.
-const BLACKLIST = new Set<string>([
-  'AgentTurnEntity',
-  'AgentMessageEntity',
-  'AgentMessagePartEntity',
-  'AgentChatThreadEntity',
-  'AgentTurnEvaluationEntity',
-  'AgentEntity',
-  'TwoFactorAuthenticationMethodEntity',
-  'ApiKeyEntity',
-  'FeatureFlagEntity',
-  'ApprovedAccessDomainEntity',
-  'EmailingDomainEntity',
-  'PublicDomainEntity',
-  'FileEntity',
-  'BillingCustomerEntity',
-  'BillingSubscriptionEntity',
-  'BillingEntitlementEntity',
+// Entities allowed to be injected via raw @InjectRepository. Everything
+// else matching @InjectRepository(*Entity) is required to go through
+// @InjectWorkspaceScopedRepository so workspaceId is enforced on every
+// read/write. New entities default to enforcement: add to this set only
+// when raw access is genuinely the right shape (no workspaceId column,
+// pivot/global table, or workspaceId-discovered-from-the-row patterns).
+const EXCLUSIONS = new Set<string>([
+  // Workspace itself / pivot / nullable workspaceId by design
+  'WorkspaceEntity',
+  'UserWorkspaceEntity',
+  'AppTokenEntity',
+  'ApplicationRegistrationEntity',
+
+  // Global tables with no workspaceId column
+  'ApplicationVariableEntity',
+  'BillingMeterEntity',
+  'BillingPriceEntity',
+  'BillingProductEntity',
+  'BillingSubscriptionItemEntity',
+  'ConnectedAccountEntity',
+  'ConnectionProviderEntity',
+  'FrontComponentEntity',
+  'LogicFunctionEntity',
+  'MessageFolderEntity',
+  'RolePermissionFlagEntity',
+  'SigningKeyEntity',
+  'UserEntity',
+  'WorkspaceSSOIdentityProviderEntity',
+
+  // Workspace-scoped entities not yet routed through the wrapper.
+  // Drop entries from this list as they are migrated.
+  'ApplicationEntity',
+  'ApplicationRegistrationVariableEntity',
+  'CalendarChannelEntity',
+  'CommandMenuItemEntity',
+  'DataSourceEntity',
+  'FieldMetadataEntity',
+  'FieldPermissionEntity',
+  'IndexMetadataEntity',
+  'KeyValuePairEntity',
+  'MessageChannelEntity',
+  'NavigationMenuItemEntity',
+  'ObjectMetadataEntity',
+  'ObjectPermissionEntity',
+  'PageLayoutEntity',
+  'PageLayoutTabEntity',
+  'PageLayoutWidgetEntity',
+  'PermissionFlagEntity',
+  'RoleEntity',
+  'RoleTargetEntity',
+  'RowLevelPermissionPredicateEntity',
+  'RowLevelPermissionPredicateGroupEntity',
+  'SkillEntity',
+  'UpgradeMigrationEntity',
+  'ViewEntity',
+  'ViewFieldEntity',
+  'ViewFieldGroupEntity',
+  'ViewFilterEntity',
+  'ViewFilterGroupEntity',
+  'ViewGroupEntity',
+  'ViewSortEntity',
+  'WebhookEntity',
 ]);
 
-// Intentionally NOT on the blacklist:
-// - AppTokenEntity: workspaceId is nullable by design (password-reset
-//   tokens are minted before the user picks a workspace), so the
-//   wrapper's "workspaceId required" contract doesn't fit. Cross-tenant
-//   lookups by token jti are also normal here.
-// - UserWorkspaceEntity: a many-to-many pivot between users and
-//   workspaces. Many natural lookups are by `userId` across all
-//   workspaces (sign-in, account switcher, impersonation discovery),
-//   so a generic workspaceId-required facade doesn't fit. The right
-//   long-term home for this is a typed UserWorkspaceService with
-//   explicit method names per access pattern; not in scope here.
-
-const isInjectRepositoryDecoratorForBlacklistedEntity = (
-  decorator: any,
-): { entityName: string } | null => {
+const matchInjectRepositoryEntity = (decorator: any): string | null => {
   if (decorator.expression?.type !== 'CallExpression') {
     return null;
   }
@@ -68,11 +83,15 @@ const isInjectRepositoryDecoratorForBlacklistedEntity = (
     return null;
   }
 
-  if (!BLACKLIST.has(arg.name)) {
+  if (!arg.name.endsWith('Entity')) {
     return null;
   }
 
-  return { entityName: arg.name };
+  if (EXCLUSIONS.has(arg.name)) {
+    return null;
+  }
+
+  return arg.name;
 };
 
 export const rule = defineRule({
@@ -80,12 +99,12 @@ export const rule = defineRule({
     type: 'problem',
     docs: {
       description:
-        'Disallow raw @InjectRepository for entities that must go through WorkspaceScopedRepository. Workspace-scoped core-schema entities must be injected via @InjectWorkspaceScopedRepository so workspaceId is enforced on every read/write.',
+        'Disallow raw @InjectRepository for workspace-scoped entities. Entities carrying a workspaceId must be injected via @InjectWorkspaceScopedRepository so the workspaceId guard is enforced on every read/write. Entities that do not fit the wrapper are listed in the EXCLUSIONS set in this rule.',
     },
     schema: [],
     messages: {
       preferWorkspaceScopedRepository:
-        "{{entityName}} must be injected via @InjectWorkspaceScopedRepository({{entityName}}) returning WorkspaceScopedRepository<{{entityName}}>. Raw @InjectRepository bypasses the workspaceId guard that prevents cross-workspace data access.",
+        "{{entityName}} must be injected via @InjectWorkspaceScopedRepository({{entityName}}) returning WorkspaceScopedRepository<{{entityName}}>. Raw @InjectRepository bypasses the workspaceId guard that prevents cross-workspace data access. If {{entityName}} genuinely does not fit (no workspaceId column, cross-tenant lookup, etc.), either add it to the EXCLUSIONS set in this rule or suppress with `// eslint-disable-next-line twenty/prefer-workspace-scoped-repository` and a short reason.",
     },
   },
   create: (context) => {
@@ -101,15 +120,13 @@ export const rule = defineRule({
           }
 
           for (const decorator of param.decorators ?? []) {
-            const match = isInjectRepositoryDecoratorForBlacklistedEntity(
-              decorator,
-            );
+            const entityName = matchInjectRepositoryEntity(decorator);
 
-            if (match !== null) {
+            if (entityName !== null) {
               context.report({
                 node: decorator,
                 messageId: 'preferWorkspaceScopedRepository',
-                data: { entityName: match.entityName },
+                data: { entityName },
               });
             }
           }
