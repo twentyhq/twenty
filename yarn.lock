@@ -28661,17 +28661,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "axios@npm:1.14.0"
-  dependencies:
-    follow-redirects: "npm:^1.15.11"
-    form-data: "npm:^4.0.5"
-    proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/2541f4aa215a7d1842429dad006fc682d82bc0e74bd14500823f7d8cce3bbae0e0a8c328c8538946718f366ab8ce5a4c12e9ad40e5a0f3482ff8bff0cd115d45
-  languageName: node
-  linkType: hard
-
 "axios@npm:^1.9.0":
   version: 1.13.6
   resolution: "axios@npm:1.13.6"
@@ -49878,13 +49867,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "proxy-from-env@npm:2.1.0"
-  checksum: 10c0/ed01729fd4d094eab619cd7e17ce3698b3413b31eb102c4904f9875e677cd207392795d5b4adee9cec359dfd31c44d5ad7595a3a3ad51c40250e141512281c58
-  languageName: node
-  linkType: hard
-
 "proxy-memoize@npm:3.0.1":
   version: 3.0.1
   resolution: "proxy-memoize@npm:3.0.1"
@@ -57101,7 +57083,6 @@ __metadata:
     "@types/react-dom": "npm:^19"
     "@types/three": "npm:^0.183.1"
     "@wyw-in-js/babel-preset": "npm:^0.8.1"
-    axios: "npm:^1.14.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     framer-motion: "npm:^11.18.0"
     gray-matter: "npm:^4.0.3"

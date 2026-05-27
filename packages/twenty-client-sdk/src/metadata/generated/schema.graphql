@@ -1315,6 +1315,7 @@ type FieldConfiguration {
   configurationType: WidgetConfigurationType!
   fieldMetadataId: String!
   fieldDisplayMode: FieldDisplayMode!
+  viewId: String
 }
 
 """Display mode for field configuration widgets"""
@@ -1323,6 +1324,7 @@ enum FieldDisplayMode {
   EDITOR
   FIELD
   VIEW
+  TABLE
 }
 
 type FieldRichTextConfiguration {

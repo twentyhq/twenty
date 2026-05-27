@@ -16,10 +16,12 @@ export const buildRecordInputFromFilter = ({
   currentRecordFilters,
   objectMetadataItem,
   currentWorkspaceMember,
+  currentRecordId,
 }: {
   currentRecordFilters: RecordFilter[];
   objectMetadataItem: EnrichedObjectMetadataItem;
   currentWorkspaceMember?: CurrentWorkspaceMember;
+  currentRecordId?: string;
 }): Partial<ObjectRecord> => {
   const recordInput: Partial<ObjectRecord> = {};
 
@@ -38,6 +40,7 @@ export const buildRecordInputFromFilter = ({
         options: fieldMetadataItem.options ?? undefined,
         relationType: fieldMetadataItem.relation?.type,
         currentWorkspaceMember: currentWorkspaceMember ?? undefined,
+        currentRecordId,
         label: filter.label,
       });
 
