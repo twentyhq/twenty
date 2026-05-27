@@ -24,8 +24,8 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     WorkspaceSchemaManagerModule,
   ],
   providers: [
-    BackfillRelationJoinColumnIndexesCommand,
     DropChannelStandardObjectsCommand,
+    BackfillRelationJoinColumnIndexesCommand,
     GateDefaultCommandMenuItemsByPermissionFlagCommand,
     RestoreChannelAssociationScalarFieldMetadataCommand,
   ],
