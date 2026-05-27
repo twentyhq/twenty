@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
+
+import { EntityMetadataNotFoundError } from 'typeorm/error/EntityMetadataNotFoundError';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
@@ -11,6 +13,10 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
 @Injectable()
 @WorkspaceCache('flatWorkspaceMemberMaps', { localDataOnly: true })
 export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheProvider<FlatWorkspaceMemberMaps> {
+  private readonly logger = new Logger(
+    WorkspaceFlatWorkspaceMemberMapCacheService.name,
+  );
+
   constructor(
     protected readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {
@@ -18,35 +24,51 @@ export class WorkspaceFlatWorkspaceMemberMapCacheService extends WorkspaceCacheP
   }
 
   async computeForCache(workspaceId: string): Promise<FlatWorkspaceMemberMaps> {
-    const flatWorkspaceMemberMaps =
-      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
-        async () => {
-          const workspaceMemberRepository =
-            await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
-              workspaceId,
-              'workspaceMember',
-              { shouldBypassPermissionChecks: true },
-            );
+    try {
+      const flatWorkspaceMemberMaps =
+        await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+          async () => {
+            const workspaceMemberRepository =
+              await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
+                workspaceId,
+                'workspaceMember',
+                { shouldBypassPermissionChecks: true },
+              );
 
-          const flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps = {
-            byId: {},
-            idByUserId: {},
-          };
-          const workspaceMembers = await workspaceMemberRepository.find({
-            withDeleted: true,
-          });
+            const flatWorkspaceMemberMaps: FlatWorkspaceMemberMaps = {
+              byId: {},
+              idByUserId: {},
+            };
+            const workspaceMembers = await workspaceMemberRepository.find({
+              withDeleted: true,
+            });
 
-          for (const workspaceMember of workspaceMembers) {
-            flatWorkspaceMemberMaps.byId[workspaceMember.id] = workspaceMember;
-            flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] =
-              workspaceMember.id;
-          }
+            for (const workspaceMember of workspaceMembers) {
+              flatWorkspaceMemberMaps.byId[workspaceMember.id] =
+                workspaceMember;
+              flatWorkspaceMemberMaps.idByUserId[workspaceMember.userId] =
+                workspaceMember.id;
+            }
 
-          return flatWorkspaceMemberMaps;
-        },
-        buildSystemAuthContext(workspaceId),
-      );
+            return flatWorkspaceMemberMaps;
+          },
+          buildSystemAuthContext(workspaceId),
+        );
 
-    return flatWorkspaceMemberMaps;
+      return flatWorkspaceMemberMaps;
+    } catch (error) {
+      if (error instanceof EntityMetadataNotFoundError) {
+        this.logger.warn(
+          `Skipping workspace member cache recompute because metadata is missing for workspace ${workspaceId}`,
+        );
+
+        return {
+          byId: {},
+          idByUserId: {},
+        };
+      }
+
+      throw error;
+    }
   }
 }

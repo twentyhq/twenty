@@ -325,11 +325,23 @@ export class WorkspaceCacheService implements OnModuleInit {
     }
 
     const computePromises = cacheKeyNames.map(async (keyName) => {
-      const provider = this.getProviderOrThrow(keyName);
-      const data = await provider.computeForCache(workspaceId);
-      const hash = crypto.randomUUID();
+      try {
+        const provider = this.getProviderOrThrow(keyName);
+        const data = await provider.computeForCache(workspaceId);
+        const hash = crypto.randomUUID();
 
-      return { keyName, data, hash };
+        return { keyName, data, hash };
+      } catch (error) {
+        const errorMessage =
+          error instanceof Error ? error.message : 'Unknown error';
+
+        this.logger.error(
+          `Failed to recompute workspace cache key ${keyName} for workspace ${workspaceId}: ${errorMessage}`,
+          error instanceof Error ? error.stack : undefined,
+        );
+
+        throw error;
+      }
     });
 
     const computed = await Promise.all(computePromises);
