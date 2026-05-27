@@ -39,14 +39,14 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
       }
     } catch {
       enqueueErrorSnackBar({
-        message: t`Failed to create email group channel. Email group may not be configured on this server.`,
+        message: t`Failed to create email handle. Email handles may not be configured on this server.`,
       });
     }
   }, [createEmailGroupChannel, handle, navigate, enqueueErrorSnackBar, t]);
 
   return (
     <SubMenuTopBarContainer
-      title={t`New Email Group`}
+      title={t`New Email Handle`}
       links={[
         {
           children: t`Workspace`,
@@ -56,7 +56,7 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
           children: t`General`,
           href: getSettingsPath(SettingsPath.Workspace),
         },
-        { children: t`New Email Group` },
+        { children: t`New Email Handle` },
       ]}
       actionButton={
         <SaveAndCancelButtons
@@ -72,10 +72,10 @@ export const SettingsAccountsNewEmailGroupChannel = () => {
         <Section>
           <H2Title
             title={t`Email Address`}
-            description={t`Enter the email address you want to forward emails from (e.g. support@mycompany.com).`}
+            description={t`The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains.`}
           />
           <SettingsTextInput
-            instanceId="email-group-handle"
+            instanceId="email-group-source"
             label={t`Source Email Address`}
             placeholder="support@mycompany.com"
             value={handle}
