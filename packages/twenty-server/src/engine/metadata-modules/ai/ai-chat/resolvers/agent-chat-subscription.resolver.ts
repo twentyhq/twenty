@@ -1,10 +1,8 @@
 import { UseGuards, UseInterceptors } from '@nestjs/common';
 import { Args, Subscription } from '@nestjs/graphql';
 
-import { InjectRepository } from '@nestjs/typeorm';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
@@ -22,6 +20,10 @@ import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai
 import { AgentChatEventDTO } from 'src/engine/metadata-modules/ai/ai-chat/dtos/agent-chat-event.dto';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @MetadataResolver()
 @UseGuards(WorkspaceAuthGuard, UserAuthGuard)
@@ -29,8 +31,8 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 export class AgentChatSubscriptionResolver {
   constructor(
     private readonly subscriptionService: SubscriptionService,
-    @InjectRepository(AgentChatThreadEntity)
-    private readonly threadRepository: Repository<AgentChatThreadEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
+    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
   ) {}
 
   @Subscription(() => AgentChatEventDTO, {
@@ -47,7 +49,7 @@ export class AgentChatSubscriptionResolver {
     @AuthWorkspace() workspace: WorkspaceEntity,
     @AuthUserWorkspaceId() userWorkspaceId: string,
   ) {
-    const thread = await this.threadRepository.findOne({
+    const thread = await this.threadRepository.findOne(workspace.id, {
       where: { id: threadId, userWorkspaceId },
       select: ['id'],
     });

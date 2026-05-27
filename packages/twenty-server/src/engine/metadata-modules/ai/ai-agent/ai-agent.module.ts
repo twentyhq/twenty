@@ -13,6 +13,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationGraphqlApiExceptionInterceptor } from 'src/engine/workspace-manager/workspace-migration/interceptors/workspace-migration-graphql-api-exception.interceptor';
@@ -44,6 +45,7 @@ import { AgentEntity } from './entities/agent.entity';
     AgentService,
     WorkspaceMigrationGraphqlApiExceptionInterceptor,
     AiGraphqlApiExceptionInterceptor,
+    provideWorkspaceScopedRepository(AgentEntity),
   ],
   exports: [AgentService, TypeOrmModule.forFeature([AgentEntity])],
 })

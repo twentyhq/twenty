@@ -1,14 +1,16 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { resolveInput } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   WorkflowStepExecutorException,
   WorkflowStepExecutorExceptionCode,
@@ -25,8 +27,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
   constructor(
     private readonly aiAgentExecutionService: AgentAsyncExecutorService,
     private readonly workflowExecutionContextService: WorkflowExecutionContextService,
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
   ) {}
 
   async execute({
@@ -53,11 +55,8 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     let agent: AgentEntity | null = null;
 
     if (agentId) {
-      agent = await this.agentRepository.findOne({
-        where: {
-          id: agentId,
-          workspaceId,
-        },
+      agent = await this.agentRepository.findOne(workspaceId, {
+        where: { id: agentId },
       });
     }
 
