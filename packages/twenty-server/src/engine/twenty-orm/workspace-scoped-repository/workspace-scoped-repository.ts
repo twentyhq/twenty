@@ -16,11 +16,8 @@ import { type UpsertOptions } from 'typeorm/repository/UpsertOptions';
 
 import { type WorkspaceScopedEntity } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-entity.type';
 
-// Wraps a TypeORM Repository so every operation is scoped to a
-// caller-supplied workspaceId. Makes cross-workspace IDOR bugs
-// impossible-by-default for core- and metadata-schema entities that
-// carry a workspaceId column. Workspace-data schema entities continue
-// to use WorkspaceRepository / twentyORMManager.
+// Wraps a TypeORM Repository to scope every operation by workspaceId.
+// For workspace-data entities, use WorkspaceRepository instead.
 export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
   constructor(private readonly repository: Repository<T>) {}
 
@@ -142,28 +139,20 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // Escape hatch for cases that genuinely need a SelectQueryBuilder
-  // (joins, aggregates, complex predicates). Caller MUST add the
-  // workspaceId predicate themselves — this method does not enforce it.
-  // Prefer the typed methods above when possible.
+  // Escape hatch. Caller MUST add the workspaceId predicate themselves.
   createQueryBuilder(alias?: string): SelectQueryBuilder<T> {
     return this.repository.createQueryBuilder(alias);
   }
 
-  // Returns a new wrapper bound to the given EntityManager. Use inside
-  // a QueryRunner transaction so reads/writes participate in the
-  // transaction while still being workspace-scoped.
+  // Returns a wrapper bound to the given EntityManager (transactions).
   withManager(manager: EntityManager): WorkspaceScopedRepository<T> {
     return new WorkspaceScopedRepository<T>(
       manager.getRepository(this.repository.target),
     );
   }
 
-  // Guard against a missing workspaceId at the wrapper boundary.
-  // TypeORM drops `undefined` values from the WHERE/criteria
-  // serializer, so `findOne(undefined, { where: { id } })` would emit
-  // `WHERE id = ...` with no workspace filter — a cross-workspace data
-  // leak. Throwing here forces a defined value at the call site.
+  // TypeORM drops `undefined` values from WHERE, which would emit an
+  // unscoped query. Reject falsy workspaceId at the boundary.
   private assertWorkspaceId(workspaceId: string): void {
     if (
       workspaceId === undefined ||
@@ -176,13 +165,6 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     }
   }
 
-  // workspaceId is prepended to the merged object so it appears first
-  // in the generated SQL WHERE clause. Postgres' planner picks the most
-  // selective index regardless of clause order, but leading with
-  // workspaceId matches how the composite indexes are declared on these
-  // tables and makes the security intent obvious in query logs. If a
-  // caller includes workspaceId in their WHERE we throw (rather than
-  // silently override) so cross-scope mistakes fail loudly.
   private mergeWorkspaceIdIntoWhere(
     workspaceId: string,
     where: FindOneOptions<T>['where'] | undefined,

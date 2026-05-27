@@ -7,9 +7,8 @@ import { type Repository } from 'typeorm';
 import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { type WorkspaceScopedEntity } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-entity.type';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
-// Use inside Nest module `providers:` arrays. Wires up a
-// WorkspaceScopedRepository<T> for the given entity by reading the raw
-// TypeORM repository provided by TypeOrmModule.forFeature([entity]).
+
+// Requires TypeOrmModule.forFeature([entity]) in the same module.
 export const provideWorkspaceScopedRepository = (
   entity: EntityClassOrSchema,
 ): Provider => ({
