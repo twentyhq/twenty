@@ -1,6 +1,16 @@
-import { type FrontComponentManifest } from 'twenty-shared/application';
+import {
+  type FrontComponentCommandManifest,
+  type FrontComponentManifest,
+} from 'twenty-shared/application';
 
 export type FrontComponentType = React.ComponentType<any>;
+
+export type FrontComponentCommandConfig = Omit<
+  FrontComponentCommandManifest,
+  'conditionalAvailabilityExpression'
+> & {
+  conditionalAvailabilityExpression?: boolean | string;
+};
 
 export type FrontComponentConfig = Omit<
   FrontComponentManifest,
@@ -11,4 +21,5 @@ export type FrontComponentConfig = Omit<
   | 'usesSdkClient'
 > & {
   component: FrontComponentType;
+  command?: FrontComponentCommandConfig;
 };

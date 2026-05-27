@@ -51,7 +51,7 @@ import {
   getInputSchemaFromSourceCode,
   jsonSchemaToInputSchema,
 } from 'twenty-shared/logic-function';
-import { assertUnreachable } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 const loadSources = async (appPath: string): Promise<string[]> => {
   return await glob(['**/*.ts', '**/*.tsx'], {
@@ -358,7 +358,7 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
 
-        const { component, ...rest } = extract.config;
+        const { component, command, ...rest } = extract.config;
 
         const relativeFilePath = relative(appPath, filePath);
 
@@ -373,6 +373,14 @@ export const buildManifest = async (
 
         frontComponents.push(config);
         frontComponentsFilePaths.push(relativePath);
+
+        if (isDefined(command)) {
+          commandMenuItems.push({
+            ...command,
+            frontComponentUniversalIdentifier: config.universalIdentifier,
+          } as unknown as CommandMenuItemManifest);
+          commandMenuItemsFilePaths.push(relativePath);
+        }
 
         break;
       }
