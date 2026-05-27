@@ -24,7 +24,6 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
-import { MenuItemIconBoxContainer } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -162,7 +161,7 @@ const StyledLabelParent = styled.div`
 `;
 
 const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.regular};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
@@ -350,20 +349,18 @@ export const NavigationDrawerItem = ({
               </StyledIcon>
             ) : (
               <StyledIcon>
-                <MenuItemIconBoxContainer>
-                  <Icon
-                    style={{
-                      minWidth: theme.icon.size.md,
-                    }}
-                    size={theme.icon.size.md}
-                    stroke={theme.icon.stroke.md}
-                    color={
-                      showBreadcrumb && !isExpanded
-                        ? theme.font.color.light
-                        : 'currentColor'
-                    }
-                  />
-                </MenuItemIconBoxContainer>
+                <Icon
+                  style={{
+                    minWidth: theme.icon.size.md,
+                  }}
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.md}
+                  color={
+                    showBreadcrumb && !isExpanded
+                      ? theme.font.color.light
+                      : 'currentColor'
+                  }
+                />
               </StyledIcon>
             ))}
 
