@@ -29,6 +29,10 @@ import { type BillingPortalCheckoutSessionParameters } from 'src/engine/core-mod
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class BillingPortalWorkspaceService {
@@ -42,10 +46,8 @@ export class BillingPortalWorkspaceService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(UserWorkspaceEntity)
@@ -162,10 +164,13 @@ export class BillingPortalWorkspaceService {
       workspaceId: workspace.id,
     });
 
-    const customer = await this.billingCustomerRepository.findOne({
-      where: { workspaceId: workspace.id },
-      relations: ['billingSubscriptions'],
-    });
+    const customer = await this.billingCustomerRepository.findOne(
+      workspace.id,
+      {
+        where: {},
+        relations: ['billingSubscriptions'],
+      },
+    );
 
     const stripeSubscriptionLineItems = this.getStripeSubscriptionLineItems({
       quantity,

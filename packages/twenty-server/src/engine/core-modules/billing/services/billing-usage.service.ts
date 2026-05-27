@@ -27,6 +27,10 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type UsageSumRow = {
@@ -37,10 +41,8 @@ type UsageSumRow = {
 export class BillingUsageService {
   protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
@@ -127,9 +129,10 @@ export class BillingUsageService {
         ? item.freeTrialQuantity
         : item.creditAmount;
 
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: { workspaceId },
-    });
+    const billingCustomer = await this.billingCustomerRepository.findOne(
+      workspaceId,
+      { where: {} },
+    );
     const rolloverCredits = billingCustomer?.creditBalanceMicro ?? 0;
 
     return {
@@ -222,9 +225,9 @@ export class BillingUsageService {
     const resourceUsageCap = this.getResourceUsageCap(subscription);
 
     const { creditBalanceMicro: creditBalance } =
-      await this.billingCustomerRepository.findOneOrFail({
+      await this.billingCustomerRepository.findOneOrFail(workspaceId, {
         select: { creditBalanceMicro: true },
-        where: { workspaceId },
+        where: {},
       });
 
     const usage = await this.getCurrentPeriodCreditsUsed(

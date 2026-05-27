@@ -64,6 +64,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingWebhookSubscriptionScheduleService,
     BillingWebhookEntitlementService,
     provideWorkspaceScopedRepository(BillingEntitlementEntity),
+    provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
 })
 export class BillingWebhookModule {}

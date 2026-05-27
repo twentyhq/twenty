@@ -1,16 +1,17 @@
 /* @license Enterprise */
 
-import { InjectRepository } from '@nestjs/typeorm';
-
 import chalk from 'chalk';
 import { Command } from 'nest-commander';
-import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Command({
   name: 'billing:sync-customer-data',
@@ -20,10 +21,8 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspaceCo
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly stripeSubscriptionService: StripeSubscriptionService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingCustomerEntity)
-    protected readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    protected readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {
     super(workspaceIteratorService);
   }
@@ -32,11 +31,10 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspaceCo
     workspaceId,
     options,
   }: RunOnWorkspaceArgs): Promise<void> {
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: {
-        workspaceId,
-      },
-    });
+    const billingCustomer = await this.billingCustomerRepository.findOne(
+      workspaceId,
+      { where: {} },
+    );
 
     if (!options.dryRun && !billingCustomer) {
       const stripeCustomerId =
@@ -46,13 +44,9 @@ export class BillingSyncCustomerDataCommand extends ActiveOrSuspendedWorkspaceCo
 
       if (typeof stripeCustomerId === 'string') {
         await this.billingCustomerRepository.upsert(
-          {
-            stripeCustomerId,
-            workspaceId,
-          },
-          {
-            conflictPaths: ['workspaceId'],
-          },
+          workspaceId,
+          { stripeCustomerId },
+          { conflictPaths: ['workspaceId'] },
         );
       }
     }

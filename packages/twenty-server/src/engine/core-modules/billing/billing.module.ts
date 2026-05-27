@@ -94,6 +94,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     BillingGaugeService,
     WorkspaceBillingSubscriptionCacheService,
     provideWorkspaceScopedRepository(BillingEntitlementEntity),
+    provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
   exports: [
     BillingSubscriptionService,

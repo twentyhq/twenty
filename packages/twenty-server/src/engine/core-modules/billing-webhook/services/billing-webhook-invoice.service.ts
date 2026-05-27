@@ -33,7 +33,9 @@ export class BillingWebhookInvoiceService {
   constructor(
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Stripe-initiated webhook: the workspace context is discovered
+    // from the BillingCustomer row via stripeCustomerId. No workspaceId
+    // is available at lookup time, so the scoped facade doesn't fit.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,

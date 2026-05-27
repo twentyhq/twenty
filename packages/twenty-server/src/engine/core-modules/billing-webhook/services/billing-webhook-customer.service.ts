@@ -1,9 +1,6 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import type Stripe from 'stripe';
 
@@ -12,15 +9,17 @@ import {
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class BillingWebhookCustomerService {
   protected readonly logger = new Logger(BillingWebhookCustomerService.name);
   constructor(
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
   async processStripeEvent(data: Stripe.CustomerCreatedEvent.Data) {
@@ -36,10 +35,8 @@ export class BillingWebhookCustomerService {
     }
 
     await this.billingCustomerRepository.upsert(
-      {
-        stripeCustomerId,
-        workspaceId,
-      },
+      workspaceId,
+      { stripeCustomerId },
       {
         conflictPaths: ['workspaceId'],
         skipUpdateIfNoValuesChanged: true,

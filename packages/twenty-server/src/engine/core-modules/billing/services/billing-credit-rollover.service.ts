@@ -1,21 +1,20 @@
 /* @license Enterprise */
 
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/billing-customer.entity';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class BillingCreditRolloverService {
   constructor(
     private readonly billingUsageService: BillingUsageService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
   ) {}
 
   async processRolloverOnPeriodTransition({
@@ -39,6 +38,7 @@ export class BillingCreditRolloverService {
     const rolloverAmount = Math.min(unusedCredits, tierQuantity);
 
     await this.billingCustomerRepository.update(
+      workspaceId,
       { stripeCustomerId },
       { creditBalanceMicro: rolloverAmount },
     );
