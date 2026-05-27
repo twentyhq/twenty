@@ -22,6 +22,10 @@ import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custo
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import {
+  EmailingDomainWorkspaceCleanupJob,
+  type EmailingDomainWorkspaceCleanupJobData,
+} from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { FileCorePictureService } from 'src/engine/core-modules/file/file-core-picture/services/file-core-picture.service';
 import {
   FileWorkspaceFolderDeletionJob,
@@ -505,6 +509,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     await this.messageQueueService.add<FileWorkspaceFolderDeletionJobData>(
       FileWorkspaceFolderDeletionJob.name,
+      { workspaceId: id },
+    );
+
+    await this.messageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
+      EmailingDomainWorkspaceCleanupJob.name,
       { workspaceId: id },
     );
 
