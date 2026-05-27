@@ -393,7 +393,6 @@ If this renders but the full page does not, the issue is inside the full compone
 Use local dev sync while iterating and one-shot sync for bounded verification. Use `../manage-app/cli-and-sync.md` for exact command behavior, remote setup, verbose troubleshooting, deploys, and logs.
 
 ```bash
-yarn twenty dev
 yarn twenty dev --once
 ```
 

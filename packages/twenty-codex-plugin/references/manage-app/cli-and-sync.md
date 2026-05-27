@@ -58,19 +58,15 @@ When the user says "prod", "production", or "workspace de prod", identify the ta
 
 ## Development Sync
 
-Use watch mode for interactive development:
-
-```bash
-yarn twenty dev
-```
-
-Use one-shot mode for agents, scripts, CI, and quick verification:
+Always use one-shot sync to synchronize app changes with the active remote:
 
 ```bash
 yarn twenty dev --once
 ```
 
-Both modes require an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
+Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty dev --once` each time changes need to be synced.
+
+One-shot sync requires an authenticated remote. If authentication fails, re-add or switch the remote before retrying.
 
 Use verbose one-shot sync for bounded troubleshooting:
 

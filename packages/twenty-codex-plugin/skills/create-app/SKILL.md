@@ -14,19 +14,19 @@ The directory name must contain only lowercase letters, numbers, and hyphens. Tr
 ```bash
 npx create-twenty-app@latest <app-name>
 cd <app-name>
-yarn twenty dev
+yarn twenty dev --once
 ```
 
 The scaffolder creates the project, enables corepack, installs dependencies, initializes Git, starts a local Twenty server through Docker, authenticates with the development API key, runs an initial one-shot sync, and opens the generated app page when possible.
 
-After the scaffolder completes successfully, start dev mode as a daemon/background process for the new app:
+After the scaffolder completes successfully, run a one-shot sync to confirm the app is deployed:
 
 ```bash
 cd <app-name>
-yarn twenty dev
+yarn twenty dev --once
 ```
 
-Keep the dev process running in the background so local file changes continue to build and sync. Do not block the final response on the foreground watch process once it has started successfully.
+Always use `--once` to synchronize the app. Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty dev --once` each time you need to sync changes to the active remote.
 
 If the user provides a package name, display name, or description, pass them through:
 
