@@ -6999,6 +6999,11 @@ msgstr "이 도메인은 이미 사용 중입니다."
 msgid "This email is already in use."
 msgstr "이 이메일은 이미 사용 중입니다."
 
+#. js-lingui-id: mjE4RD
+#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
+msgid "This evaluation target could not be found."
+msgstr ""
+
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
 msgid "This feature is not enabled."
