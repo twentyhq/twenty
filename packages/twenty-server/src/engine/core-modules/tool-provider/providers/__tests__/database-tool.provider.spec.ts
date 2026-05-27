@@ -39,9 +39,8 @@ describe('DatabaseToolProvider', () => {
       createEmptyFlatEntityMaps() as FlatEntityMaps<FlatObjectMetadata>;
 
     for (const object of objects) {
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        object.universalIdentifier
-      ] = object;
+      flatObjectMetadataMaps.byUniversalIdentifier[object.universalIdentifier] =
+        object;
       flatObjectMetadataMaps.universalIdentifierById[object.id] =
         object.universalIdentifier;
     }
