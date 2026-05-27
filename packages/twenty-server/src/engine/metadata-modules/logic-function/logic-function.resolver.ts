@@ -171,7 +171,8 @@ export class LogicFunctionResolver {
   async executeOneLogicFunction(
     @Args('input') { id, payload }: ExecuteOneLogicFunctionInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
-    @AuthUserWorkspaceId() userWorkspaceId: string,
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
   ): Promise<LogicFunctionExecutionResultDTO> {
     try {
       return await this.logicFunctionFromSourceService.executeOneFromSource({

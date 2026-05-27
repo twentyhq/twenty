@@ -5,7 +5,7 @@ import {
   ObjectPermissionLevel,
 } from 'twenty-shared/application';
 
-const EMPTY_PERMISSION_CONTEXT: LogicFunctionPermissionContext = {
+const createEmptyPermissionContext = (): LogicFunctionPermissionContext => ({
   canReadAllObjectRecords: false,
   canUpdateAllObjectRecords: false,
   canSoftDeleteAllObjectRecords: false,
@@ -14,7 +14,7 @@ const EMPTY_PERMISSION_CONTEXT: LogicFunctionPermissionContext = {
   canAccessAllTools: false,
   permissionFlags: {},
   objectsPermissions: {},
-};
+});
 
 export type PermissionContext = LogicFunctionPermissionContext & {
   hasObjectPermission: (
@@ -33,13 +33,13 @@ const parsePermissionContext = (): LogicFunctionPermissionContext => {
   const raw = process.env[DEFAULT_PERMISSION_CONTEXT_NAME];
 
   if (!raw) {
-    return EMPTY_PERMISSION_CONTEXT;
+    return createEmptyPermissionContext();
   }
 
   try {
     return JSON.parse(raw) as LogicFunctionPermissionContext;
   } catch {
-    return EMPTY_PERMISSION_CONTEXT;
+    return createEmptyPermissionContext();
   }
 };
 
