@@ -11,6 +11,8 @@ import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/w
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-source.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @RegisteredWorkspaceCommand('1.21.0', 1775500003000)
 @Command({
@@ -22,8 +24,8 @@ export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorks
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(DataSourceEntity)
-    private readonly dataSourceRepository: Repository<DataSourceEntity>,
+    @InjectWorkspaceScopedRepository(DataSourceEntity)
+    private readonly dataSourceRepository: WorkspaceScopedRepository<DataSourceEntity>,
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
   ) {
     super(workspaceIteratorService);
@@ -54,8 +56,7 @@ export class BackfillDatasourceToWorkspaceCommand extends ActiveOrSuspendedWorks
       return;
     }
 
-    const dataSource = await this.dataSourceRepository.findOne({
-      where: { workspaceId },
+    const dataSource = await this.dataSourceRepository.findOne(workspaceId, {
       order: { createdAt: 'DESC' },
     });
 

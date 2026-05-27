@@ -26,6 +26,7 @@ import { DataSourceEntity } from 'src/engine/metadata-modules/data-source/data-s
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
@@ -64,6 +65,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MigrateMessagingInfrastructureToMetadataCommand,
     FixMessageThreadViewAndLabelIdentifierCommand,
     UpdateSearchCommandMenuItemLabelsCommand,
+    provideWorkspaceScopedRepository(DataSourceEntity),
   ],
 })
 export class V1_21_UpgradeVersionCommandModule {}
