@@ -14,6 +14,36 @@ export interface CursorData {
   [key: string]: any;
 }
 
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
+const getOrderByKeyPaths = (order: ObjectRecordOrderBy | undefined) => {
+  return (
+    order?.flatMap((orderBy) =>
+      Object.entries(orderBy).flatMap(([key, value]) => {
+        if (isObject(value)) {
+          return Object.keys(value).map((subKey) => `${key}.${subKey}`);
+        }
+
+        return [key];
+      }),
+    ) ?? []
+  );
+};
+
+const getByPath = <T extends ObjectRecord = ObjectRecord>(
+  objectRecord: T,
+  path: string,
+) => {
+  return path.split('.').reduce<unknown>((value, key) => {
+    if (!isObject(value)) {
+      return undefined;
+    }
+
+    return value[key];
+  }, objectRecord);
+};
+
 export const decodeCursor = <T = CursorData>(cursor: string): T => {
   try {
     return JSON.parse(Buffer.from(cursor, 'base64').toString());
@@ -33,12 +63,8 @@ export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
-  const orderBy = order?.reduce((acc, orderBy) => ({ ...acc, ...orderBy }), {});
-
-  const orderByKeys = Object.keys(orderBy ?? {});
-
-  orderByKeys?.forEach((key) => {
-    orderByValues[key] = objectRecord[key];
+  getOrderByKeyPaths(order).forEach((keyPath) => {
+    orderByValues[keyPath] = getByPath(objectRecord, keyPath);
   });
 
   const cursorData: CursorData = {
