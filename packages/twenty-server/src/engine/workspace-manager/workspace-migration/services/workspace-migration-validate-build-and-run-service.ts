@@ -30,6 +30,7 @@ import {
   enrichCreateWorkspaceMigrationActionsWithIds,
   IdByUniversalIdentifierByMetadataName,
 } from 'src/engine/workspace-manager/workspace-migration/services/utils/enrich-create-workspace-migration-action-with-ids.util';
+import { buildFailedWorkspaceMigrationResultFromFlatEntityMapsException } from 'src/engine/workspace-manager/workspace-migration/services/utils/build-failed-workspace-migration-result-from-flat-entity-maps-exception.util';
 import { WorkspaceMigrationBuildOrchestratorService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-build-orchestrator.service';
 import { WorkspaceMigrationBuilderAdditionalCacheDataMaps } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-builder-additional-cache-data-maps.type';
 import {
@@ -371,7 +372,28 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       await this.workspaceMigrationBuildOrchestratorService
         .buildWorkspaceMigration(buildArgs)
         .catch((error) => {
+          if (
+            error instanceof FlatEntityMapsException &&
+            [
+              FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
+              FlatEntityMapsExceptionCode
+                .RELATION_UNIVERSAL_IDENTIFIER_NOT_FOUND,
+            ].includes(error.code)
+          ) {
+            this.logger.warn(
+              `Workspace migration build failed due to unresolved metadata reference on ${args.workspaceId}: ${error.message}`,
+            );
+
+            return buildFailedWorkspaceMigrationResultFromFlatEntityMapsException(
+              {
+                error,
+                fromToAllFlatEntityMaps: buildArgs.fromToAllFlatEntityMaps,
+              },
+            );
+          }
+
           this.logger.error(error);
+
           throw new WorkspaceMigrationV2Exception(
             error.message,
             WorkspaceMigrationV2ExceptionCode.BUILDER_INTERNAL_SERVER_ERROR,
