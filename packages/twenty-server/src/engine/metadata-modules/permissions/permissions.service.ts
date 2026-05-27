@@ -2,11 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { type LogicFunctionPermissionContext } from 'twenty-shared/application';
 import {
   PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
-import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -100,34 +100,40 @@ export class PermissionsService {
     };
   }
 
-  public async getRolePermissionContext({
+  public async buildLogicFunctionPermissionContext({
     roleId,
     workspaceId,
   }: {
-    roleId: string;
+    roleId?: string;
     workspaceId: string;
-  }): Promise<{
-    capabilities: {
-      canReadAllObjectRecords: boolean;
-      canUpdateAllObjectRecords: boolean;
-      canSoftDeleteAllObjectRecords: boolean;
-      canDestroyAllObjectRecords: boolean;
-      canUpdateAllSettings: boolean;
-      canAccessAllTools: boolean;
-    };
-    permissionFlags: Record<string, boolean>;
-    objectsPermissions: ObjectsPermissions;
-  }> {
+  }): Promise<LogicFunctionPermissionContext> {
+    if (!isDefined(roleId)) {
+      return {
+        canReadAllObjectRecords: false,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        permissionFlags: {},
+        objectsPermissions: {},
+      };
+    }
+
     const {
       rolesPermissions,
       flatRoleMaps,
       flatRolePermissionFlagMaps,
       flatPermissionFlagMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
     } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
       'rolesPermissions',
       'flatRoleMaps',
       'flatRolePermissionFlagMaps',
       'flatPermissionFlagMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
     ]);
 
     const flatRole = findFlatEntityByIdInFlatEntityMaps({
@@ -173,17 +179,56 @@ export class PermissionsService {
         grantedPermissionFlagIds.has(flatPermissionFlag.id);
     }
 
+    const objectsPermissions: LogicFunctionPermissionContext['objectsPermissions'] =
+      {};
+
+    for (const [objectMetadataId, objectPermissions] of Object.entries(
+      rolesPermissions[roleId] ?? {},
+    )) {
+      const objectUniversalIdentifier =
+        flatObjectMetadataMaps.universalIdentifierById[objectMetadataId];
+
+      if (!isDefined(objectUniversalIdentifier)) {
+        continue;
+      }
+
+      const restrictedFields: LogicFunctionPermissionContext['objectsPermissions'][string]['restrictedFields'] =
+        {};
+
+      for (const [fieldMetadataId, fieldPermissions] of Object.entries(
+        objectPermissions.restrictedFields,
+      )) {
+        const fieldUniversalIdentifier =
+          flatFieldMetadataMaps.universalIdentifierById[fieldMetadataId];
+
+        if (!isDefined(fieldUniversalIdentifier)) {
+          continue;
+        }
+
+        restrictedFields[fieldUniversalIdentifier] = {
+          canRead: fieldPermissions.canRead,
+          canUpdate: fieldPermissions.canUpdate,
+        };
+      }
+
+      objectsPermissions[objectUniversalIdentifier] = {
+        canRead: objectPermissions.canReadObjectRecords,
+        canUpdate: objectPermissions.canUpdateObjectRecords,
+        canSoftDelete: objectPermissions.canSoftDeleteObjectRecords,
+        canDestroy: objectPermissions.canDestroyObjectRecords,
+        restrictedFields,
+      };
+    }
+
     return {
-      capabilities: {
-        canReadAllObjectRecords: flatRole.canReadAllObjectRecords,
-        canUpdateAllObjectRecords: flatRole.canUpdateAllObjectRecords,
-        canSoftDeleteAllObjectRecords: flatRole.canSoftDeleteAllObjectRecords,
-        canDestroyAllObjectRecords: flatRole.canDestroyAllObjectRecords,
-        canUpdateAllSettings: flatRole.canUpdateAllSettings,
-        canAccessAllTools: flatRole.canAccessAllTools,
-      },
+      canReadAllObjectRecords: flatRole.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: flatRole.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords: flatRole.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: flatRole.canDestroyAllObjectRecords,
+      canUpdateAllSettings: flatRole.canUpdateAllSettings,
+      canAccessAllTools: flatRole.canAccessAllTools,
       permissionFlags,
-      objectsPermissions: rolesPermissions[roleId] ?? {},
+      objectsPermissions,
     };
   }
 

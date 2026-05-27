@@ -6,7 +6,6 @@ import {
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
   DEFAULT_PERMISSION_CONTEXT_NAME,
-  type LogicFunctionPermissionContext,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
@@ -266,10 +265,11 @@ export class LogicFunctionExecutorService {
       this.secretEncryptionService,
     );
 
-    const permissionContext = await this.buildPermissionContext({
-      workspaceId,
-      roleId,
-    });
+    const permissionContext =
+      await this.permissionsService.buildLogicFunctionPermissionContext({
+        workspaceId,
+        roleId,
+      });
 
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
@@ -281,86 +281,6 @@ export class LogicFunctionExecutorService {
       // values let a specific tenant customize a server default.
       ...serverVariables,
       ...workspaceVariables,
-    };
-  }
-
-  private async buildPermissionContext({
-    workspaceId,
-    roleId,
-  }: {
-    workspaceId: string;
-    roleId?: string;
-  }): Promise<LogicFunctionPermissionContext> {
-    if (!isDefined(roleId)) {
-      return {
-        canReadAllObjectRecords: false,
-        canUpdateAllObjectRecords: false,
-        canSoftDeleteAllObjectRecords: false,
-        canDestroyAllObjectRecords: false,
-        canUpdateAllSettings: false,
-        canAccessAllTools: false,
-        permissionFlags: {},
-        objectsPermissions: {},
-      };
-    }
-
-    const { capabilities, permissionFlags, objectsPermissions } =
-      await this.permissionsService.getRolePermissionContext({
-        roleId,
-        workspaceId,
-      });
-
-    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'flatObjectMetadataMaps',
-        'flatFieldMetadataMaps',
-      ]);
-
-    const objectsPermissionsByUniversalIdentifier: LogicFunctionPermissionContext['objectsPermissions'] =
-      {};
-
-    for (const [objectMetadataId, objectPermissions] of Object.entries(
-      objectsPermissions,
-    )) {
-      const objectUniversalIdentifier =
-        flatObjectMetadataMaps.universalIdentifierById[objectMetadataId];
-
-      if (!isDefined(objectUniversalIdentifier)) {
-        continue;
-      }
-
-      const restrictedFields: LogicFunctionPermissionContext['objectsPermissions'][string]['restrictedFields'] =
-        {};
-
-      for (const [fieldMetadataId, fieldPermissions] of Object.entries(
-        objectPermissions.restrictedFields,
-      )) {
-        const fieldUniversalIdentifier =
-          flatFieldMetadataMaps.universalIdentifierById[fieldMetadataId];
-
-        if (!isDefined(fieldUniversalIdentifier)) {
-          continue;
-        }
-
-        restrictedFields[fieldUniversalIdentifier] = {
-          canRead: fieldPermissions.canRead,
-          canUpdate: fieldPermissions.canUpdate,
-        };
-      }
-
-      objectsPermissionsByUniversalIdentifier[objectUniversalIdentifier] = {
-        canRead: objectPermissions.canReadObjectRecords,
-        canUpdate: objectPermissions.canUpdateObjectRecords,
-        canSoftDelete: objectPermissions.canSoftDeleteObjectRecords,
-        canDestroy: objectPermissions.canDestroyObjectRecords,
-        restrictedFields,
-      };
-    }
-
-    return {
-      ...capabilities,
-      permissionFlags,
-      objectsPermissions: objectsPermissionsByUniversalIdentifier,
     };
   }
 
