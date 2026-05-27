@@ -9,6 +9,7 @@ import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { buildWorkspaceAuthContext } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import {
   RouteTriggerException,
@@ -25,6 +26,8 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { getRoleIdFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-id-from-role-permission-config.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CustomException } from 'src/utils/custom-exception';
 
@@ -48,32 +51,25 @@ export class RouteTriggerService {
     authContext: AuthContext;
     workspaceId: string;
   }): Promise<string | undefined> {
-    if (isDefined(authContext.apiKey)) {
-      const { apiKeyRoleMap } = await this.workspaceCacheService.getOrRecompute(
-        workspaceId,
-        ['apiKeyRoleMap'],
-      );
+    const workspaceAuthContext = buildWorkspaceAuthContext(authContext);
 
-      return apiKeyRoleMap[authContext.apiKey.id];
+    if (!isDefined(workspaceAuthContext)) {
+      return undefined;
     }
 
-    if (
-      isDefined(authContext.application) &&
-      isDefined(authContext.application.defaultRoleId)
-    ) {
-      return authContext.application.defaultRoleId;
-    }
+    const { userWorkspaceRoleMap, apiKeyRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'apiKeyRoleMap',
+      ]);
 
-    if (isDefined(authContext.userWorkspaceId)) {
-      const { userWorkspaceRoleMap } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'userWorkspaceRoleMap',
-        ]);
+    const rolePermissionConfig = resolveRolePermissionConfig({
+      authContext: workspaceAuthContext,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    });
 
-      return userWorkspaceRoleMap[authContext.userWorkspaceId];
-    }
-
-    return undefined;
+    return getRoleIdFromRolePermissionConfig(rolePermissionConfig);
   }
 
   private async getLogicFunctionWithPathParamsOrFail({
