@@ -6,6 +6,7 @@ import {
   PermissionFlagType,
   SystemPermissionFlag,
 } from 'twenty-shared/constants';
+import { type ObjectsPermissions } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
@@ -95,6 +96,71 @@ export class PermissionsService {
     return {
       permissionFlags,
       objectsPermissions,
+    };
+  }
+
+  public async getRolePermissionContext({
+    roleId,
+    workspaceId,
+  }: {
+    roleId: string;
+    workspaceId: string;
+  }): Promise<{
+    capabilities: {
+      canReadAllObjectRecords: boolean;
+      canUpdateAllObjectRecords: boolean;
+      canSoftDeleteAllObjectRecords: boolean;
+      canDestroyAllObjectRecords: boolean;
+      canUpdateAllSettings: boolean;
+      canAccessAllTools: boolean;
+    };
+    permissionFlags: Record<string, boolean>;
+    objectsPermissions: ObjectsPermissions;
+  }> {
+    const role = await this.roleRepository.findOne({
+      where: { id: roleId, workspaceId },
+      relations: ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
+    });
+
+    if (!isDefined(role)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    const permissionFlags: Record<string, boolean> = {};
+
+    for (const feature of Object.values(PermissionFlagType)) {
+      const hasBasePermission = this.isToolPermission(feature)
+        ? role.canAccessAllTools
+        : role.canUpdateAllSettings;
+
+      permissionFlags[SystemPermissionFlag[feature]] =
+        hasBasePermission || this.roleHasPermissionFlag(role, feature);
+    }
+
+    for (const rolePermissionFlag of role.rolePermissionFlags ?? []) {
+      permissionFlags[rolePermissionFlag.permissionFlag.universalIdentifier] =
+        true;
+    }
+
+    const { rolesPermissions } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'rolesPermissions',
+      ]);
+
+    return {
+      capabilities: {
+        canReadAllObjectRecords: role.canReadAllObjectRecords,
+        canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
+        canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
+        canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
+        canUpdateAllSettings: role.canUpdateAllSettings,
+        canAccessAllTools: role.canAccessAllTools,
+      },
+      permissionFlags,
+      objectsPermissions: rolesPermissions[roleId] ?? {},
     };
   }
 

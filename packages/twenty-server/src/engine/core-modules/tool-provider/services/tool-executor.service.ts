@@ -240,6 +240,11 @@ export class ToolExecutorService {
       logicFunctionId: ref.logicFunctionId,
       workspaceId: context.workspaceId,
       payload: args,
+      roleId: context.roleId,
+      ...(isDefined(context.userId) ? { userId: context.userId } : {}),
+      ...(isDefined(context.userWorkspaceId)
+        ? { userWorkspaceId: context.userWorkspaceId }
+        : {}),
     });
 
     if (result.error) {

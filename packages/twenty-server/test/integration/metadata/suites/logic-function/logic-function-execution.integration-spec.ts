@@ -3,7 +3,16 @@ import { deleteLogicFunction } from 'test/integration/metadata/suites/logic-func
 import { executeLogicFunction } from 'test/integration/metadata/suites/logic-function/utils/execute-logic-function.util';
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 
+import { SystemPermissionFlag } from 'twenty-shared/constants';
+
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+
+// Function returning the permission context injected via TWENTY_PERMISSION_CONTEXT
+const PERMISSION_CONTEXT_FUNCTION_CODE = `export const main = async (): Promise<object> => {
+  const raw = process.env.TWENTY_PERMISSION_CONTEXT;
+
+  return { permissionContext: raw ? JSON.parse(raw) : null };
+};`;
 
 // Default template function code that matches the expected behavior
 const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: string; b: number }): Promise<object> => {
@@ -289,5 +298,65 @@ describe('Logic Function Execution', () => {
       errorMessage: expect.stringContaining('Intentional test error'),
     });
     expect(errorResult?.data).toBeNull();
+  });
+
+  it('should inject the caller permission context as an env variable', async () => {
+    const { data: createData } = await createOneLogicFunction({
+      input: {
+        name: 'Permission Context Test',
+      },
+      expectToFail: false,
+    });
+
+    const functionId = createData?.createOneLogicFunction?.id;
+
+    expect(functionId).toBeDefined();
+    createdFunctionIds.push(functionId);
+
+    await updateLogicFunctionSource({
+      input: {
+        id: functionId,
+        update: {
+          sourceHandlerCode: PERMISSION_CONTEXT_FUNCTION_CODE,
+        },
+      },
+      expectToFail: false,
+    });
+
+    const { data: executeData } = await executeLogicFunction({
+      input: {
+        id: functionId,
+        payload: {},
+      },
+      expectToFail: false,
+    });
+
+    const result = executeData?.executeOneLogicFunction;
+
+    if (result?.status !== LogicFunctionExecutionStatus.SUCCESS) {
+      throw new Error(JSON.stringify(result?.error, null, 2));
+    }
+
+    const { permissionContext } = result?.data as unknown as {
+      permissionContext: {
+        canReadAllObjectRecords: boolean;
+        canUpdateAllObjectRecords: boolean;
+        canUpdateAllSettings: boolean;
+        canAccessAllTools: boolean;
+        permissionFlags: Record<string, boolean>;
+        objectsPermissions: Record<string, unknown>;
+      } | null;
+    };
+
+    expect(permissionContext).not.toBeNull();
+    expect(typeof permissionContext?.canReadAllObjectRecords).toBe('boolean');
+    expect(typeof permissionContext?.objectsPermissions).toBe('object');
+
+    // executeOneLogicFunction is guarded by the WORKFLOWS permission flag, so
+    // the resolved caller role is guaranteed to carry it — keyed by its
+    // universalIdentifier.
+    expect(
+      permissionContext?.permissionFlags[SystemPermissionFlag.WORKFLOWS],
+    ).toBe(true);
   });
 });
