@@ -1,4 +1,4 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 
 import { objectRecordChangedValues } from 'src/engine/core-modules/event-emitter/utils/object-record-changed-values';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -149,6 +149,101 @@ describe('objectRecordChangedValues', () => {
     );
 
     expect(result).toEqual(expectedChanges);
+  });
+
+  it('includes changes to RELATION fields', () => {
+    const relationFieldId = 'company-field-id';
+    const relationUniversalId = 'company-universal-id';
+
+    const objectMetadataWithRelation: FlatObjectMetadata = {
+      ...mockObjectMetadata,
+      fieldIds: [relationFieldId],
+    };
+
+    const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          [relationUniversalId]: {
+            id: relationFieldId,
+            name: 'company',
+            type: FieldMetadataType.RELATION,
+            settings: { relationType: RelationType.MANY_TO_ONE },
+            universalIdentifier: relationUniversalId,
+          } as FlatFieldMetadata,
+        },
+        universalIdentifierById: {
+          [relationFieldId]: relationUniversalId,
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+    const oldRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516m',
+      company: { id: 'company-1' },
+    };
+    const newRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516m',
+      company: { id: 'company-2' },
+    };
+
+    const result = objectRecordChangedValues(
+      oldRecord,
+      newRecord,
+      objectMetadataWithRelation,
+      flatFieldMetadataMapsWithRelation,
+    );
+
+    expect(result).toEqual({
+      company: { before: { id: 'company-1' }, after: { id: 'company-2' } },
+    });
+  });
+
+  it('normalizes MANY_TO_ONE join column changes to relation field names', () => {
+    const relationFieldId = 'company-field-id';
+    const relationUniversalId = 'company-universal-id';
+
+    const objectMetadataWithRelation: FlatObjectMetadata = {
+      ...mockObjectMetadata,
+      fieldIds: [relationFieldId],
+    };
+
+    const flatFieldMetadataMapsWithRelation: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          [relationUniversalId]: {
+            id: relationFieldId,
+            name: 'company',
+            type: FieldMetadataType.RELATION,
+            settings: { relationType: RelationType.MANY_TO_ONE },
+            universalIdentifier: relationUniversalId,
+          } as FlatFieldMetadata,
+        },
+        universalIdentifierById: {
+          [relationFieldId]: relationUniversalId,
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+    const oldRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516m',
+      companyId: 'company-1',
+    };
+    const newRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516m',
+      companyId: 'company-2',
+    };
+
+    const result = objectRecordChangedValues(
+      oldRecord,
+      newRecord,
+      objectMetadataWithRelation,
+      flatFieldMetadataMapsWithRelation,
+    );
+
+    expect(result).toEqual({
+      company: { before: 'company-1', after: 'company-2' },
+    });
+    expect(result).not.toHaveProperty('companyId');
   });
 
   it('ignores changes to POSITION fields', () => {

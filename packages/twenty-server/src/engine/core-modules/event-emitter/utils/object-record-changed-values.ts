@@ -13,20 +13,19 @@ export const objectRecordChangedValues = (
   objectMetadataItem: FlatObjectMetadata,
   flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>,
 ) => {
-  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
-    flatFieldMetadataMaps,
-    objectMetadataItem,
-  );
+  const { fieldIdByName, fieldIdByJoinColumnName } =
+    buildFieldMapsFromFlatObjectMetadata(flatFieldMetadataMaps, objectMetadataItem);
 
   return Object.keys(newRecord).reduce(
     (acc, key) => {
-      const fieldId = fieldIdByName[key];
+      const fieldId = fieldIdByName[key] ?? fieldIdByJoinColumnName[key];
       const field = fieldId
         ? findFlatEntityByIdInFlatEntityMaps({
             flatEntityId: fieldId,
             flatEntityMaps: flatFieldMetadataMaps,
           })
         : undefined;
+      const diffKey = field?.name ?? key;
 
       const oldRecordValue = oldRecord[key];
       const newRecordValue = newRecord[key];
@@ -34,7 +33,6 @@ export const objectRecordChangedValues = (
       if (
         key === 'updatedAt' ||
         key === 'searchVector' ||
-        field?.type === FieldMetadataType.RELATION ||
         field?.type === FieldMetadataType.POSITION
       ) {
         return acc;
@@ -44,7 +42,7 @@ export const objectRecordChangedValues = (
         return acc;
       }
 
-      acc[key] = { before: oldRecordValue, after: newRecordValue };
+      acc[diffKey] = { before: oldRecordValue, after: newRecordValue };
 
       return acc;
     },
