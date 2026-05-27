@@ -38,6 +38,50 @@ describe('parseInitialBlocknote', () => {
     expect(parseInitialBlocknote('{"key": "value"}')).toBeUndefined();
   });
 
+  it('should filter invalid blocks from the parsed content', () => {
+    const input = JSON.stringify([
+      { type: 'paragraph', content: 'valid block' },
+      null,
+      { content: 'missing type' },
+    ]);
+
+    expect(parseInitialBlocknote(input)).toEqual([
+      { type: 'paragraph', content: 'valid block' },
+    ]);
+  });
+
+  it('should return undefined when all parsed blocks are invalid', () => {
+    const input = JSON.stringify([null, { content: 'missing type' }]);
+
+    expect(parseInitialBlocknote(input)).toBeUndefined();
+  });
+
+  it('should sanitize invalid nested children', () => {
+    const input = JSON.stringify([
+      {
+        type: 'paragraph',
+        content: 'parent',
+        children: [
+          { type: 'paragraph', content: 'valid child' },
+          { content: 'invalid child' },
+        ],
+      },
+    ]);
+
+    expect(parseInitialBlocknote(input)).toEqual([
+      {
+        type: 'paragraph',
+        content: 'parent',
+        children: [
+          {
+            type: 'paragraph',
+            content: 'valid child',
+          },
+        ],
+      },
+    ]);
+  });
+
   it('should use custom log context when parsing fails', () => {
     const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
     parseInitialBlocknote('invalid', 'Custom context');
