@@ -20,6 +20,10 @@ import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-mod
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 export type ResourceIdentifier = {
   workspaceId: string;
@@ -32,10 +36,8 @@ export type ResourceIdentifier = {
 export class FileStorageService {
   constructor(
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
@@ -140,8 +142,14 @@ export class FileStorageService {
     const applicationRepository = queryRunner
       ? queryRunner.manager.getRepository(ApplicationEntity)
       : this.applicationRepository;
+    // When called within a transaction we need the QueryRunner-bound
+    // FileEntity repository instead of the injected one; wrap it with
+    // the same workspace-scoped facade so the call sites below stay
+    // identical.
     const fileRepository = queryRunner
-      ? queryRunner.manager.getRepository(FileEntity)
+      ? new WorkspaceScopedRepository<FileEntity>(
+          queryRunner.manager.getRepository(FileEntity),
+        )
       : this.fileRepository;
 
     const application = await applicationRepository.findOneOrFail({
@@ -172,9 +180,9 @@ export class FileStorageService {
     });
 
     await fileRepository.upsert(
+      workspaceId,
       {
         path: filePath,
-        workspaceId,
         applicationId: application.id,
         id: fileId,
         mimeType,
@@ -187,11 +195,10 @@ export class FileStorageService {
       ['path', 'workspaceId', 'applicationId'],
     );
 
-    return await fileRepository.findOneOrFail({
+    return fileRepository.findOneOrFail(workspaceId, {
       where: {
         path: filePath,
         applicationId: application.id,
-        workspaceId,
       },
     });
   }
@@ -257,9 +264,8 @@ export class FileStorageService {
       folderPath: `${workspaceId}/${applicationUniversalIdentifier}/`,
     });
 
-    await this.fileRepository.delete({
+    await this.fileRepository.delete(workspaceId, {
       applicationId: application.id,
-      workspaceId,
     });
   }
 
@@ -280,10 +286,9 @@ export class FileStorageService {
       },
     });
 
-    await this.fileRepository.delete({
+    await this.fileRepository.delete(params.workspaceId, {
       path: filePath,
       applicationId: application.id,
-      workspaceId: params.workspaceId,
     });
   }
 
@@ -316,10 +321,9 @@ export class FileStorageService {
       },
     });
 
-    await this.fileRepository.delete({
+    await this.fileRepository.delete(workspaceId, {
       path: Like(`${validatedFolderPath}%`),
       applicationId: application.id,
-      workspaceId,
     });
   }
 
@@ -332,10 +336,9 @@ export class FileStorageService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<void> {
-    const file = await this.fileRepository.findOneOrFail({
+    const file = await this.fileRepository.findOneOrFail(workspaceId, {
       where: {
         id: fileId,
-        workspaceId,
         path: Like(`${fileFolder}/%`),
       },
     });

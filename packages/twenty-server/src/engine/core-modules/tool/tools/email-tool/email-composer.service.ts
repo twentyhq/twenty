@@ -27,6 +27,10 @@ import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/to
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
@@ -45,10 +49,8 @@ export class EmailComposerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileService: FileService,
   ) {}
 
@@ -193,8 +195,8 @@ export class EmailComposerService {
 
     const fileIds = files.map((file) => file.id);
 
-    const fileEntities = await this.fileRepository.find({
-      where: { id: In(fileIds), workspaceId },
+    const fileEntities = await this.fileRepository.find(workspaceId, {
+      where: { id: In(fileIds) },
     });
 
     const fileEntityMap = new Map(

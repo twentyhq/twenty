@@ -1,8 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { ExtendedUIMessage } from 'twenty-shared/ai';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 import type { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
 import type { UIDataTypes, UIMessagePart, UITools } from 'ai';
@@ -65,10 +64,8 @@ export class AgentChatService {
     private readonly messageRepository: WorkspaceScopedRepository<AgentMessageEntity>,
     @InjectWorkspaceScopedRepository(AgentMessagePartEntity)
     private readonly messagePartRepository: WorkspaceScopedRepository<AgentMessagePartEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly titleGenerationService: AgentTitleGenerationService,
     private readonly workspaceEventBroadcaster: WorkspaceEventBroadcaster,
   ) {}
@@ -313,10 +310,9 @@ export class AgentChatService {
 
     const validFiles =
       fileAttachments && fileAttachments.length > 0
-        ? await this.fileRepository.find({
+        ? await this.fileRepository.find(workspaceId, {
             where: {
               id: In(fileAttachments.map((attachment) => attachment.id)),
-              workspaceId,
             },
             select: ['id'],
           })

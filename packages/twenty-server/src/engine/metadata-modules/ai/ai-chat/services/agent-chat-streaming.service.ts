@@ -1,5 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { generateId } from 'ai';
 import {
@@ -8,7 +7,7 @@ import {
   isExtendedFileUIPart,
 } from 'twenty-shared/ai';
 import { FileFolder } from 'twenty-shared/types';
-import { In, Like, type Repository } from 'typeorm';
+import { In, Like } from 'typeorm';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -55,10 +54,8 @@ export class AgentChatStreamingService {
   constructor(
     @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
     private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectMessageQueue(MessageQueue.aiStreamQueue)
     private readonly messageQueueService: MessageQueueService,
     private readonly agentChatService: AgentChatService,
@@ -314,10 +311,9 @@ export class AgentChatStreamingService {
 
     const fileIds = fileAttachments.map((attachment) => attachment.id);
 
-    const validFiles = await this.fileRepository.find({
+    const validFiles = await this.fileRepository.find(workspaceId, {
       where: {
         id: In(fileIds),
-        workspaceId,
         path: Like(`${FileFolder.AgentChat}/%`),
       },
     });

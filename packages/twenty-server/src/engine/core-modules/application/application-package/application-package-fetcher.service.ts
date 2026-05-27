@@ -49,7 +49,10 @@ export class ApplicationPackageFetcherService implements OnModuleInit {
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileStorageService: FileStorageService,
     private readonly secureHttpClientService: SecureHttpClientService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // The tarball file is fetched here by an id that comes from the
+    // ApplicationRegistrationEntity. Registrations on the catalog have a
+    // null ownerWorkspaceId, so the workspace-scoped facade doesn't fit;
+    // raw access kept on purpose.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
