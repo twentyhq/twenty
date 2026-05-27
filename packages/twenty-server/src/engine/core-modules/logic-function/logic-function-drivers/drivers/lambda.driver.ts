@@ -41,7 +41,6 @@ import { ASSET_PATH } from 'src/constants/assets-path';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { COMMON_LAYER_DEPENDENCIES_DIRNAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/common-layer-dependencies-dirname';
-import { callWithTimeout } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/call-with-timeout';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
@@ -429,17 +428,18 @@ export class LambdaDriver implements LogicFunctionDriver {
 
     const yarnInstallFunctionName = await this.getYarnInstallFunctionName();
 
-    const result = await callWithTimeout({
-      callback: () =>
-        lambdaClient.send(
-          new InvokeCommand({
-            FunctionName: yarnInstallFunctionName,
-            Payload: JSON.stringify(payload),
-            LogType: LogType.Tail,
-          }),
+    const result = await lambdaClient.send(
+      new InvokeCommand({
+        FunctionName: yarnInstallFunctionName,
+        Payload: JSON.stringify(payload),
+        LogType: LogType.Tail,
+      }),
+      {
+        abortSignal: AbortSignal.timeout(
+          YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
         ),
-      timeoutMs: YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS * 1000,
-    });
+      },
+    );
 
     if (result.FunctionError) {
       const parsedResult = result.Payload
@@ -529,17 +529,16 @@ export class LambdaDriver implements LogicFunctionDriver {
       builtFileName,
     };
 
-    const result = await callWithTimeout({
-      callback: () =>
-        lambdaClient.send(
-          new InvokeCommand({
-            FunctionName: builderFunctionName,
-            Payload: JSON.stringify(payload),
-            LogType: LogType.Tail,
-          }),
-        ),
-      timeoutMs: BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000,
-    });
+    const result = await lambdaClient.send(
+      new InvokeCommand({
+        FunctionName: builderFunctionName,
+        Payload: JSON.stringify(payload),
+        LogType: LogType.Tail,
+      }),
+      {
+        abortSignal: AbortSignal.timeout(BUILDER_LAMBDA_TIMEOUT_SECONDS * 1000),
+      },
+    );
 
     if (result.FunctionError) {
       const parsedResult = result.Payload
@@ -1195,9 +1194,8 @@ export class LambdaDriver implements LogicFunctionDriver {
       const lambdaClient = await this.getLambdaClient();
 
       const invokeStart = Date.now();
-      const result = await callWithTimeout({
-        callback: () => lambdaClient.send(command),
-        timeoutMs,
+      const result = await lambdaClient.send(command, {
+        abortSignal: AbortSignal.timeout(timeoutMs),
       });
       const invokeSendMs = Date.now() - invokeStart;
 
@@ -1245,6 +1243,13 @@ export class LambdaDriver implements LogicFunctionDriver {
         throw new LogicFunctionException(
           `Function '${flatLogicFunction.id}' does not exist`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_NOT_FOUND,
+        );
+      }
+
+      if (error instanceof Error && error.name === 'TimeoutError') {
+        throw new LogicFunctionException(
+          `Lambda invocation timed out for function '${flatLogicFunction.id}': ${error.message}`,
+          LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT,
         );
       }
 
