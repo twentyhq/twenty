@@ -48,10 +48,8 @@ export class BillingUsageService {
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
     @InjectCacheStorage(CacheStorageNamespace.EngineBillingUsage)
     private readonly billingUsageCacheStorage: CacheStorageService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingSubscriptionEntity)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly billingUsageCapService: BillingUsageCapService,
@@ -206,14 +204,17 @@ export class BillingUsageService {
     workspaceId: string;
     currentPeriodStart: Date | string;
   }): Promise<number> {
-    const subscription = await this.billingSubscriptionRepository.findOne({
-      where: { workspaceId, currentPeriodStart: new Date(currentPeriodStart) },
-      relations: [
-        'billingSubscriptionItems',
-        'billingSubscriptionItems.billingProduct',
-        'billingSubscriptionItems.billingProduct.billingPrices',
-      ],
-    });
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: { currentPeriodStart: new Date(currentPeriodStart) },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
 
     if (!isDefined(subscription)) {
       throw new BillingException(

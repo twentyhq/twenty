@@ -57,7 +57,9 @@ export class BillingSubscriptionUpdateService {
     private readonly billingPriceRepository: Repository<BillingPriceEntity>,
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Lookup is by subscription id only; threading workspaceId through
+    // updateSubscription is a larger refactor since callers come from
+    // multiple service layers.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,

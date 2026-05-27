@@ -22,7 +22,8 @@ export class BillingGaugeService implements OnModuleInit {
     private readonly twentyConfigService: TwentyConfigService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Observability gauges that count subscriptions across every
+    // workspace; cross-tenant by design.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,

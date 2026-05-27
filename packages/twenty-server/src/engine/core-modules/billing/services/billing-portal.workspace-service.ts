@@ -42,7 +42,10 @@ export class BillingPortalWorkspaceService {
     private readonly stripeBillingPortalService: StripeBillingPortalService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
     private readonly billingSubscriptionService: BillingSubscriptionService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Only used in computeBillingPortalSessionURLOrThrow which already
+    // scopes by workspace.id and a status filter — could be migrated
+    // independently when that method is split out. Keeping raw here to
+    // limit blast radius of this commit.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,

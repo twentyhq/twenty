@@ -50,7 +50,11 @@ export class BillingSubscriptionService {
     private readonly billingPlanService: BillingPlanService,
     @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
     private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Mixed use: some calls scope by workspaceId, but
+    // getCurrentBillingSubscription accepts either workspaceId or
+    // stripeCustomerId in its criteria, and the conflict-upsert keys
+    // on stripeSubscriptionId. Keeping raw to avoid splitting the
+    // public surface in this PR; future cleanup could dual-inject.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,

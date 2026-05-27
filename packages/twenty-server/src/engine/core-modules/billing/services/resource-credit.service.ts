@@ -19,7 +19,9 @@ export class ResourceCreditService {
   protected readonly logger = new Logger(ResourceCreditService.name);
 
   constructor(
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Lookup is by subscription id only; the caller flow doesn't carry
+    // a workspaceId at this layer. Migrating would require threading
+    // workspaceId through getResourceCreditRolloverParameters callers.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,

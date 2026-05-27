@@ -51,7 +51,10 @@ export class BillingWebhookSubscriptionService {
     private readonly stripeCustomerService: StripeCustomerService,
     @InjectMessageQueue(MessageQueue.workspaceQueue)
     private readonly messageQueueService: MessageQueueService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
+    // Stripe-initiated subscription upserts conflict-resolve on
+    // stripeSubscriptionId across the whole subscriptions table; the
+    // workspace-scoped facade doesn't fit. The matching post-upsert
+    // find still includes workspaceId in its WHERE.
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
     private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
