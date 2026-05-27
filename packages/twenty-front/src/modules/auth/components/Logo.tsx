@@ -57,12 +57,15 @@ export const Logo = ({
   onClick,
 }: LogoProps) => {
   const { redirectToDefaultDomain } = useRedirectToDefaultDomain();
-  const defaultPrimaryLogoUrl = `${window.location.origin}/images/icons/android/android-launchericon-192-192.png`;
 
-  const primaryLogoUrl = getImageAbsoluteURI({
-    imageUrl: primaryLogo ?? defaultPrimaryLogoUrl,
-    baseUrl: REACT_APP_SERVER_BASE_URL,
-  });
+  const hasPrimaryLogo = isDefined(primaryLogo);
+
+  const primaryLogoUrl = hasPrimaryLogo
+    ? getImageAbsoluteURI({
+        imageUrl: primaryLogo,
+        baseUrl: REACT_APP_SERVER_BASE_URL,
+      })
+    : null;
 
   const secondaryLogoUrl = isNonEmptyString(secondaryLogo)
     ? getImageAbsoluteURI({
@@ -71,22 +74,24 @@ export const Logo = ({
       })
     : null;
 
-  const isUsingDefaultLogo = !isDefined(primaryLogo);
+  // When no workspace logo is set, render nothing — never fall back to the
+  // Twenty default icon so every client deployment is fully white-labeled.
+  if (!hasPrimaryLogo && !isDefined(secondaryLogoUrl) && !isDefined(placeholder)) {
+    return null;
+  }
 
   return (
     <StyledContainer onClick={() => onClick?.()}>
-      {isUsingDefaultLogo ? (
+      {hasPrimaryLogo && isDefined(primaryLogoUrl) ? (
+        <StyledPrimaryLogo
+          style={{ backgroundImage: `url(${primaryLogoUrl})` }}
+        />
+      ) : (
+        // No logo uploaded yet — link back to default domain so admins can
+        // still navigate, but show nothing instead of the Twenty icon.
         <UndecoratedLink
           to={AppPath.SignInUp}
           onClick={redirectToDefaultDomain}
-        >
-          <StyledPrimaryLogo
-            style={{ backgroundImage: `url(${primaryLogoUrl})` }}
-          />
-        </UndecoratedLink>
-      ) : (
-        <StyledPrimaryLogo
-          style={{ backgroundImage: `url(${primaryLogoUrl})` }}
         />
       )}
       {isDefined(secondaryLogoUrl) ? (

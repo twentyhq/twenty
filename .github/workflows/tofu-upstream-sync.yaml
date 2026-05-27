@@ -1,0 +1,71 @@
+name: TOFU sync upstream Twenty
+
+permissions:
+  contents: read
+
+on:
+  schedule:
+    # Monday 14:00 UTC — opens a PR for human review (never auto-merges)
+    - cron: '0 14 * * 1'
+  workflow_dispatch:
+
+jobs:
+  open-sync-pr:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - name: Checkout fork main
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+        with:
+          fetch-depth: 0
+
+      - name: Fetch upstream Twenty
+        run: |
+          git remote add upstream https://github.com/twentyhq/twenty.git \
+            2>/dev/null || git remote set-url upstream https://github.com/twentyhq/twenty.git
+          git fetch upstream main
+
+      - name: Create sync branch and merge upstream
+        id: merge
+        run: |
+          SYNC_BRANCH="upstream/sync-$(date -u +%Y-%m-%d)"
+          echo "branch=${SYNC_BRANCH}" >> "$GITHUB_OUTPUT"
+          git checkout -B "$SYNC_BRANCH"
+          if git merge upstream/main -m "chore: sync upstream Twenty ($(date -u +%Y-%m-%d))"; then
+            echo "status=clean" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=conflicts" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Push sync branch
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SYNC_BRANCH: ${{ steps.merge.outputs.branch }}
+        run: |
+          git push -u origin "$SYNC_BRANCH" --force
+
+      - name: Open pull request
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SYNC_BRANCH: ${{ steps.merge.outputs.branch }}
+          MERGE_STATUS: ${{ steps.merge.outputs.status }}
+        run: |
+          BODY="Automated weekly upstream sync from twentyhq/twenty main.
+
+          Before merging, walk the Active Core Patches table in tofu/FORK-MANAGEMENT.md and re-apply white-label changes if any patched files conflict.
+
+          Merge status: ${MERGE_STATUS}"
+
+          EXISTING="$(gh pr list --head "$SYNC_BRANCH" --json number -q '.[0].number' || true)"
+          if [ -n "$EXISTING" ]; then
+            echo "PR already exists: #${EXISTING}"
+            exit 0
+          fi
+
+          gh pr create \
+            --base main \
+            --head "$SYNC_BRANCH" \
+            --title "chore: sync upstream Twenty ($(date -u +%Y-%m-%d))" \
+            --body "$BODY"
