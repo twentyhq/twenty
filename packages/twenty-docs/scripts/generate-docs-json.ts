@@ -2,8 +2,8 @@ import fs from 'fs';
 import path from 'path';
 
 import {
-    DEFAULT_LANGUAGE,
-    SUPPORTED_LANGUAGES,
+  DEFAULT_LANGUAGE,
+  SUPPORTED_LANGUAGES,
 } from '../navigation/supported-languages';
 
 type BasePage = string | BaseGroup;
@@ -71,15 +71,11 @@ const baseStructure: BaseStructure = JSON.parse(
 
 const docsConfig = JSON.parse(fs.readFileSync(docsPath, 'utf8'));
 
-const collectTranslations = (
-  file: TranslationFile | null,
-): TranslationMaps => {
+const collectTranslations = (file: TranslationFile | null): TranslationMaps => {
   const tabLabels = new Map<string, string>();
   const groupLabels = new Map<string, string>();
 
-  const collectGroups = (
-    groups?: Record<string, TranslationGroupEntry>,
-  ) => {
+  const collectGroups = (groups?: Record<string, TranslationGroupEntry>) => {
     if (!groups) {
       return;
     }
@@ -99,17 +95,15 @@ const collectTranslations = (
 };
 
 const loadTranslationFile = (language: string): TranslationFile | null => {
-  const translationPath = path.join(
-    localesRoot,
-    language,
-    'navigation.json',
-  );
+  const translationPath = path.join(localesRoot, language, 'navigation.json');
 
   if (!fs.existsSync(translationPath)) {
     return null;
   }
 
-  return JSON.parse(fs.readFileSync(translationPath, 'utf8')) as TranslationFile;
+  return JSON.parse(
+    fs.readFileSync(translationPath, 'utf8'),
+  ) as TranslationFile;
 };
 
 const buildLanguageEntry = (language: string): GeneratedLanguage => {
@@ -142,8 +136,15 @@ const buildGroup = (
   ),
 });
 
-const formatPageSlug = (slug: string, language: string): string =>
-  language === DEFAULT_LANGUAGE ? slug : `l/${language}/${slug}`;
+const formatPageSlug = (slug: string, language: string): string => {
+  if (language === DEFAULT_LANGUAGE) {
+    return slug;
+  }
+
+  const localizedPagePath = path.join(localesRoot, language, `${slug}.mdx`);
+
+  return fs.existsSync(localizedPagePath) ? `l/${language}/${slug}` : slug;
+};
 
 const hasLocaleContent = (language: string): boolean => {
   if (language === DEFAULT_LANGUAGE) {
@@ -154,9 +155,8 @@ const hasLocaleContent = (language: string): boolean => {
   return fs.existsSync(localeDir);
 };
 
-const languages = SUPPORTED_LANGUAGES.filter(hasLocaleContent).map(
-  buildLanguageEntry,
-);
+const languages =
+  SUPPORTED_LANGUAGES.filter(hasLocaleContent).map(buildLanguageEntry);
 
 if (!docsConfig.navigation) {
   docsConfig.navigation = {};
@@ -165,4 +165,3 @@ if (!docsConfig.navigation) {
 docsConfig.navigation.languages = languages;
 
 fs.writeFileSync(docsPath, `${JSON.stringify(docsConfig, null, 2)}\n`);
-

@@ -8,6 +8,7 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 
 const BEHIND_IDS_KEY = 'upgrade-status:behind-workspace-ids';
 const FAILED_IDS_KEY = 'upgrade-status:failed-workspace-ids';
+const UP_TO_DATE_COUNT_KEY = 'upgrade-status:up-to-date-workspace-count';
 const COMPUTED_AT_KEY = 'upgrade-status:computed-at';
 
 const CACHE_TTL_MS = 60 * 60 * 1000;
@@ -32,13 +33,21 @@ export class UpgradeStatusCacheService {
     return this.cacheStorage.setMembers(FAILED_IDS_KEY);
   }
 
+  async getUpToDateWorkspaceCount(): Promise<number> {
+    const raw = await this.cacheStorage.get<number>(UP_TO_DATE_COUNT_KEY);
+
+    return isDefined(raw) ? raw : 0;
+  }
+
   async write({
     behindWorkspaceIds,
     failedWorkspaceIds,
+    upToDateWorkspaceCount,
     computedAt,
   }: {
     behindWorkspaceIds: string[];
     failedWorkspaceIds: string[];
+    upToDateWorkspaceCount: number;
     computedAt: Date;
   }): Promise<void> {
     await Promise.all([
@@ -58,6 +67,11 @@ export class UpgradeStatusCacheService {
         CACHE_TTL_MS,
       ),
       this.cacheStorage.set(
+        UP_TO_DATE_COUNT_KEY,
+        upToDateWorkspaceCount,
+        CACHE_TTL_MS,
+      ),
+      this.cacheStorage.set(
         COMPUTED_AT_KEY,
         computedAt.toISOString(),
         CACHE_TTL_MS,
@@ -69,6 +83,7 @@ export class UpgradeStatusCacheService {
     await Promise.all([
       this.cacheStorage.del(BEHIND_IDS_KEY),
       this.cacheStorage.del(FAILED_IDS_KEY),
+      this.cacheStorage.del(UP_TO_DATE_COUNT_KEY),
       this.cacheStorage.del(COMPUTED_AT_KEY),
     ]);
   }

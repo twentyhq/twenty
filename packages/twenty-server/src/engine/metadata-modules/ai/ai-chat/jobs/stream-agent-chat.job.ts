@@ -193,6 +193,7 @@ export class StreamAgentChatJob {
       let lastStepConversationSize = 0;
       let totalCacheCreationTokens = 0;
       let streamError: unknown;
+      let checkHasNoMoreAvailableCredits: () => boolean = () => false;
 
       // onFinish fires before the uiStream is fully drained. We use this
       // promise to coordinate: the IIFE waits for DB persist to complete
@@ -224,7 +225,7 @@ export class StreamAgentChatJob {
             });
           };
 
-          const { stream, modelConfig } =
+          const { stream, modelConfig, hasNoMoreAvailableCredits } =
             await this.chatExecutionService.streamChat({
               workspace,
               userWorkspaceId: data.userWorkspaceId,
@@ -236,6 +237,8 @@ export class StreamAgentChatJob {
               abortSignal,
               conversationSizeTokens: data.conversationSizeTokens,
             });
+
+          checkHasNoMoreAvailableCredits = hasNoMoreAvailableCredits;
 
           const titleWritePromise = titlePromise.then((generatedTitle) => {
             if (generatedTitle) {
@@ -278,6 +281,7 @@ export class StreamAgentChatJob {
                     responseMessage,
                     threadId: data.threadId,
                     workspaceId: data.workspaceId,
+                    userWorkspaceId: data.userWorkspaceId,
                     streamUsage,
                     lastStepConversationSize,
                     totalCacheCreationTokens,
@@ -298,7 +302,7 @@ export class StreamAgentChatJob {
 
       // Publish all chunks first, then signal completion. This guarantees
       // message-persisted arrives after every stream-chunk on the client.
-      (async () => {
+      void (async () => {
         try {
           for await (const chunk of uiStream) {
             await this.eventPublisherService.publish({
@@ -315,6 +319,13 @@ export class StreamAgentChatJob {
 
           if (streamError) {
             reject(streamError);
+          } else if (checkHasNoMoreAvailableCredits()) {
+            await this.eventPublisherService.publish({
+              threadId: data.threadId,
+              workspaceId: data.workspaceId,
+              event: { type: 'credits-exhausted' },
+            });
+            resolve();
           } else {
             await this.eventPublisherService.publish({
               threadId: data.threadId,
@@ -424,6 +435,7 @@ export class StreamAgentChatJob {
     responseMessage,
     threadId,
     workspaceId,
+    userWorkspaceId,
     streamUsage,
     lastStepConversationSize,
     totalCacheCreationTokens,
@@ -433,6 +445,7 @@ export class StreamAgentChatJob {
     responseMessage: Omit<ExtendedUIMessage, 'id'>;
     threadId: string;
     workspaceId: string;
+    userWorkspaceId: string;
     streamUsage: {
       inputTokens: number;
       outputTokens: number;
@@ -481,6 +494,11 @@ export class StreamAgentChatJob {
         `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
       contextWindowTokens: modelConfig.contextWindowTokens,
       conversationSize: lastStepConversationSize,
+    });
+
+    await this.agentChatService.notifyThreadUsageUpdated({
+      threadId,
+      userWorkspaceId,
     });
   }
 }

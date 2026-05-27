@@ -66,7 +66,7 @@ jobs:
 
     steps:
       - name: Checkout current branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           fetch-depth: 10
 
@@ -144,6 +144,9 @@ jobs:
 
           npx nx run twenty-server:database:init:prod
 
+      - name: Flush cache before seeding current branch
+        run: npx nx command-no-deps twenty-server -- cache:flush
+
       - name: Seed current branch database with test data
         run: |
           npx nx command-no-deps twenty-server -- workspace:seed:dev
@@ -160,13 +163,21 @@ jobs:
       - name: Wait for current branch server to be ready
         run: |
           echo "Waiting for current branch server to start..."
-          timeout=300
+          timeout=60
           interval=5
           elapsed=0
 
+          ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
+
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            GRAPHQL_RESPONSE=$(curl -s -X POST "http://localhost:${{ env.CURRENT_SERVER_PORT }}/graphql" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null || echo '{}')
+
+            if echo "$GRAPHQL_RESPONSE" | jq -e '.data.__schema' > /dev/null 2>&1 && \
+               curl -fsS "http://localhost:${{ env.CURRENT_SERVER_PORT }}/rest/open-api/core" \
+                 -H "Authorization: Bearer ${ADMIN_TOKEN}" > /dev/null 2>&1; then
               echo "Current branch server is ready!"
               break
             fi
@@ -177,7 +188,7 @@ jobs:
           done
 
           if [ $elapsed -ge $timeout ]; then
-            echo "Timeout waiting for current branch server to start"
+            echo "❌ Timed out waiting for current branch server to serve a valid schema."
             echo "Current server log:"
             cat /tmp/current-server.log || echo "No current server log found"
             exit 1
@@ -304,6 +315,9 @@ jobs:
 
           npx nx run twenty-server:database:init:prod
 
+      - name: Flush cache before seeding main branch
+        run: npx nx command-no-deps twenty-server -- cache:flush
+
       - name: Seed main branch database with test data
         run: |
           npx nx command-no-deps twenty-server -- workspace:seed:dev
@@ -324,9 +338,17 @@ jobs:
           interval=5
           elapsed=0
 
+          ADMIN_TOKEN=$(jq -r '.APPLE_JANE_ADMIN_ACCESS_TOKEN' packages/twenty-server/test/integration/constants/test-tokens.json)
+
           while [ $elapsed -lt $timeout ]; do
-            if curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" > /dev/null 2>&1 && \
-               curl -s "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" > /dev/null 2>&1; then
+            GRAPHQL_RESPONSE=$(curl -s -X POST "http://localhost:${{ env.MAIN_SERVER_PORT }}/graphql" \
+              -H "Content-Type: application/json" \
+              -H "Authorization: Bearer ${ADMIN_TOKEN}" \
+              -d '{"query":"{ __schema { queryType { name } } }"}' 2>/dev/null || echo '{}')
+
+            if echo "$GRAPHQL_RESPONSE" | jq -e '.data.__schema' > /dev/null 2>&1 && \
+               curl -fsS "http://localhost:${{ env.MAIN_SERVER_PORT }}/rest/open-api/core" \
+                 -H "Authorization: Bearer ${ADMIN_TOKEN}" > /dev/null 2>&1; then
               echo "Main branch server is ready!"
               break
             fi
@@ -337,7 +359,7 @@ jobs:
           done
 
           if [ $elapsed -ge $timeout ]; then
-            echo "Timeout waiting for main branch server to start"
+            echo "❌ Timed out waiting for main branch server to serve a valid schema."
             echo "Main server log:"
             cat /tmp/main-server.log || echo "No main server log found"
             exit 1
@@ -407,11 +429,23 @@ jobs:
           valid=true
 
           for file in main-schema-introspection.json current-schema-introspection.json \
-                      main-metadata-schema-introspection.json current-metadata-schema-introspection.json \
-                      main-rest-api.json current-rest-api.json \
+                      main-metadata-schema-introspection.json current-metadata-schema-introspection.json; do
+            if [ ! -f "$file" ]; then
+              echo "::warning::Missing GraphQL schema file: $file"
+              valid=false
+            elif ! jq -e '.data.__schema' "$file" >/dev/null 2>&1; then
+              echo "::warning::File $file is not a valid GraphQL introspection result. First 200 bytes: $(head -c 200 "$file")"
+              valid=false
+            fi
+          done
+
+          for file in main-rest-api.json current-rest-api.json \
                       main-rest-metadata-api.json current-rest-metadata-api.json; do
-            if [ ! -f "$file" ] || ! jq empty "$file" 2>/dev/null; then
-              echo "::warning::Invalid or missing schema file: $file"
+            if [ ! -f "$file" ]; then
+              echo "::warning::Missing OpenAPI spec file: $file"
+              valid=false
+            elif ! jq -e '.openapi // .swagger' "$file" >/dev/null 2>&1; then
+              echo "::warning::File $file is not a valid OpenAPI spec. First 200 bytes: $(head -c 200 "$file")"
               valid=false
             fi
           done
@@ -424,6 +458,7 @@ jobs:
           echo "Using OpenAPITools/openapi-diff via Docker"
 
       - name: Generate GraphQL Schema Diff Reports
+        id: graphql-diff
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== INSTALLING GRAPHQL INSPECTOR CLI ==="
@@ -437,6 +472,7 @@ jobs:
             echo "✅ No changes in GraphQL schema"
           else
             echo "⚠️ Changes detected in GraphQL schema, generating report..."
+            echo "core_breaking=true" >> $GITHUB_OUTPUT
             echo "# GraphQL Schema Changes" > graphql-schema-diff.md
             echo "" >> graphql-schema-diff.md
             graphql-inspector diff main-schema-introspection.json current-schema-introspection.json >> graphql-schema-diff.md 2>&1 || {
@@ -454,6 +490,7 @@ jobs:
             echo "✅ No changes in GraphQL metadata schema"
           else
             echo "⚠️ Changes detected in GraphQL metadata schema, generating report..."
+            echo "metadata_breaking=true" >> $GITHUB_OUTPUT
             echo "# GraphQL Metadata Schema Changes" > graphql-metadata-diff.md
             echo "" >> graphql-metadata-diff.md
             graphql-inspector diff main-metadata-schema-introspection.json current-metadata-schema-introspection.json >> graphql-metadata-diff.md 2>&1 || {
@@ -470,6 +507,7 @@ jobs:
           ls -la *-diff.md 2>/dev/null || echo "No diff files generated (no changes detected)"
 
       - name: Check REST API Breaking Changes
+        id: rest-diff
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== CHECKING REST API FOR BREAKING CHANGES ==="
@@ -492,6 +530,7 @@ jobs:
 
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST API"
+              echo "breaking=true" >> $GITHUB_OUTPUT
 
               # Generate breaking changes report
               echo "# REST API Breaking Changes" > rest-api-diff.md
@@ -539,6 +578,7 @@ jobs:
           fi
 
       - name: Check REST Metadata API Breaking Changes
+        id: rest-metadata-diff
         if: steps.validate-schemas.outputs.valid == 'true'
         run: |
           echo "=== CHECKING REST METADATA API FOR BREAKING CHANGES ==="
@@ -561,6 +601,7 @@ jobs:
 
             if [ "$incompatible" = "true" ]; then
               echo "❌ Breaking changes detected in REST Metadata API"
+              echo "breaking=true" >> $GITHUB_OUTPUT
 
               # Generate breaking changes report (only for breaking changes)
               echo "# REST Metadata API Breaking Changes" > rest-metadata-api-diff.md
@@ -606,9 +647,82 @@ jobs:
             echo "::warning::REST Metadata API analysis tool error - continuing workflow"
           fi
 
+      - name: Fail on breaking changes
+        if: steps.validate-schemas.outputs.valid == 'true'
+        run: |
+          breaking=false
+
+          if [ "${{ steps.graphql-diff.outputs.core_breaking }}" = "true" ]; then
+            echo "❌ GraphQL core schema has breaking changes"
+            breaking=true
+            if [ -f graphql-schema-diff.md ]; then
+              echo ""
+              cat graphql-schema-diff.md
+              echo ""
+            fi
+          fi
+
+          if [ "${{ steps.graphql-diff.outputs.metadata_breaking }}" = "true" ]; then
+            echo "❌ GraphQL metadata schema has breaking changes"
+            breaking=true
+            if [ -f graphql-metadata-diff.md ]; then
+              echo ""
+              cat graphql-metadata-diff.md
+              echo ""
+            fi
+          fi
+
+          if [ "${{ steps.rest-diff.outputs.breaking }}" = "true" ]; then
+            echo "❌ REST core API has breaking changes"
+            breaking=true
+            if [ -f rest-api-diff.json ]; then
+              echo ""
+              jq -r '
+                (if (.missingEndpoints | length) > 0 then
+                  "  Removed endpoints:\n" +
+                  (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end),
+                (if (.changedOperations | length) > 0 then
+                  "  Changed operations:\n" +
+                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end)
+              ' rest-api-diff.json | sed '/^$/d'
+              echo ""
+            fi
+          fi
+
+          if [ "${{ steps.rest-metadata-diff.outputs.breaking }}" = "true" ]; then
+            echo "❌ REST metadata API has breaking changes"
+            breaking=true
+            if [ -f rest-metadata-api-diff.json ]; then
+              echo ""
+              jq -r '
+                (if (.missingEndpoints | length) > 0 then
+                  "  Removed endpoints:\n" +
+                  (.missingEndpoints | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end),
+                (if (.changedOperations | length) > 0 then
+                  "  Changed operations:\n" +
+                  (.changedOperations | map("    - " + (.method // "?") + " " + (.pathUrl // "?")) | join("\n"))
+                else "" end)
+              ' rest-metadata-api-diff.json | sed '/^$/d'
+              echo ""
+            fi
+          fi
+
+          if [ "$breaking" = "true" ]; then
+            echo ""
+            echo "This PR introduces breaking changes to the public API."
+            echo "If intentional, deprecate the old endpoint and introduce a new one."
+            echo "See the breaking changes report artifact and PR comment for details."
+            exit 1
+          fi
+
+          echo "✅ No breaking API changes detected"
+
       - name: Upload breaking changes report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
         with:
           name: breaking-changes-report
           path: |
@@ -626,5 +740,3 @@ jobs:
           if [ -f /tmp/main-server.pid ]; then
             kill $(cat /tmp/main-server.pid) || true
           fi
-
-

@@ -1,4 +1,5 @@
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -25,6 +26,22 @@ export type ConnectedAccountVisibility = 'user' | 'workspace';
 @Entity({ name: 'connectedAccount', schema: 'core' })
 @Index('IDX_CONNECTED_ACCOUNT_CONNECTION_PROVIDER_ID', ['connectionProviderId'])
 @Index('IDX_CONNECTED_ACCOUNT_APPLICATION_ID', ['applicationId'])
+@Check(
+  'CHK_connectedAccount_accessToken_encrypted',
+  `"accessToken" IS NULL OR "accessToken" LIKE 'enc:v2:%'`,
+)
+@Check(
+  'CHK_connectedAccount_refreshToken_encrypted',
+  `"refreshToken" IS NULL OR "refreshToken" LIKE 'enc:v2:%'`,
+)
+@Check(
+  'CHK_connectedAccount_connectionParameters_encrypted',
+  `"connectionParameters" IS NULL OR (` +
+    `(("connectionParameters"->'IMAP'->>'password') IS NULL OR ("connectionParameters"->'IMAP'->>'password') LIKE 'enc:v2:%') ` +
+    `AND (("connectionParameters"->'SMTP'->>'password') IS NULL OR ("connectionParameters"->'SMTP'->>'password') LIKE 'enc:v2:%') ` +
+    `AND (("connectionParameters"->'CALDAV'->>'password') IS NULL OR ("connectionParameters"->'CALDAV'->>'password') LIKE 'enc:v2:%')` +
+    `)`,
+)
 export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

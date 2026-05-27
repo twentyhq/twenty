@@ -23,7 +23,8 @@ export const MinimalMetadataGater = ({ children }: React.PropsWithChildren) => {
     isMatchingLocation(location, AppPath.ResetPassword) ||
     isMatchingLocation(location, AppPath.CreateWorkspace) ||
     isMatchingLocation(location, AppPath.PlanRequired) ||
-    isMatchingLocation(location, AppPath.PlanRequiredSuccess);
+    isMatchingLocation(location, AppPath.PlanRequiredSuccess) ||
+    isMatchingLocation(location, AppPath.Authorize);
 
   const shouldShowLoader = !isMinimalMetadataReady && !isOnExcludedPath;
 

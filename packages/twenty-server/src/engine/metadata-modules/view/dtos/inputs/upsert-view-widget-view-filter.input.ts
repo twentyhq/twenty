@@ -27,7 +27,7 @@ export class UpsertViewWidgetViewFilterInput {
 
   @IsOptional()
   @IsEnum(ViewFilterOperand)
-  @Field({ nullable: true, defaultValue: ViewFilterOperand.CONTAINS })
+  @Field({ nullable: true })
   operand?: ViewFilterOperand;
 
   @IsDefined()
@@ -48,4 +48,9 @@ export class UpsertViewWidgetViewFilterInput {
   @IsString()
   @Field({ nullable: true })
   subFieldName?: string;
+
+  @IsOptional()
+  @IsUUID()
+  @Field(() => UUIDScalarType, { nullable: true })
+  relationTargetFieldMetadataId?: string;
 }

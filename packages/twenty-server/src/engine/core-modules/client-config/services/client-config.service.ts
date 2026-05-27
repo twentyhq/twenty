@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import { StorageDriverType } from 'src/engine/core-modules/file-storage/interfaces/file-storage.interface';
 import { NodeEnvironment } from 'src/engine/core-modules/twenty-config/interfaces/node-environment.interface';
 import { SupportDriver } from 'src/engine/core-modules/twenty-config/interfaces/support.interface';
 
@@ -228,6 +229,10 @@ export class ClientConfigService {
       isImapSmtpCaldavEnabled: this.twentyConfigService.get(
         'IS_IMAP_SMTP_CALDAV_ENABLED',
       ),
+      isEmailGroupEnabled:
+        this.twentyConfigService.get('STORAGE_TYPE') ===
+          StorageDriverType.S_3 &&
+        isNonEmptyString(this.twentyConfigService.get('INBOUND_EMAIL_DOMAIN')),
       allowRequestsToTwentyIcons: this.twentyConfigService.get(
         'ALLOW_REQUESTS_TO_TWENTY_ICONS',
       ),

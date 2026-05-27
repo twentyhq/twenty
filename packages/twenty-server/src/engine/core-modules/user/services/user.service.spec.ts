@@ -55,7 +55,10 @@ describe('UserService', () => {
         },
         {
           provide: WorkspaceService,
-          useValue: { deleteWorkspace: jest.fn() },
+          useValue: {
+            deleteWorkspace: jest.fn(),
+            suspendWorkspace: jest.fn(),
+          },
         },
         {
           provide: WorkspaceDomainsService,
@@ -386,7 +389,8 @@ describe('UserService', () => {
 
       const res = await service.deleteUser('u2');
 
-      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2');
+      expect(workspaceService.suspendWorkspace).toHaveBeenCalledWith('w2');
+      expect(workspaceService.deleteWorkspace).toHaveBeenCalledWith('w2', true);
       expect(res).toMatchObject({ id: 'u2' });
     });
 

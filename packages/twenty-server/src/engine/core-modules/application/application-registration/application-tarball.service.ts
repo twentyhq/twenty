@@ -29,8 +29,6 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import type { ApplicationManifest } from 'twenty-shared/application';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 
-export const MAX_TARBALL_UPLOAD_SIZE_BYTES = 50 * 1024 * 1024;
-
 @Injectable()
 export class ApplicationTarballService {
   private readonly logger = new Logger(ApplicationTarballService.name);
@@ -96,7 +94,7 @@ export class ApplicationTarballService {
       const requiredServerVersion = packageJson?.engines?.twenty;
 
       const versionValidation =
-        this.applicationVersionValidationService.validateServerCompatibility(
+        await this.applicationVersionValidationService.validateServerCompatibility(
           requiredServerVersion,
         );
 
@@ -192,7 +190,6 @@ export class ApplicationTarballService {
       const savedFile = await this.fileStorageService.writeFile({
         sourceFile: params.tarballBuffer,
         resourcePath: `${appRegistration.id}/app.tar.gz`,
-        mimeType: 'application/gzip',
         fileFolder: FileFolder.AppTarball,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,

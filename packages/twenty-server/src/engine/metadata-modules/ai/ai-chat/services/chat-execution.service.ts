@@ -15,6 +15,9 @@ import {
 import { AppPath } from 'twenty-shared/types';
 import { getAppPath, isDefined } from 'twenty-shared/utils';
 
+import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
+import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 
 import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-provider/interfaces/code-execution-stream-emitter.type';
@@ -38,8 +41,12 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { type BrowsingContextType } from 'src/engine/metadata-modules/ai/ai-agent/types/browsingContext.type';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
-import { extractCacheCreationTokensFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
+import {
+  extractCacheCreationTokens,
+  extractCacheCreationTokensFromSteps,
+} from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { AI_CHAT_TOOL_NAMES_TO_PRELOAD } from 'src/engine/metadata-modules/ai/ai-chat/constants/ai-chat-tool-names-to-preload.const';
 import { MessagePruningService } from 'src/engine/metadata-modules/ai/ai-chat/services/message-pruning.service';
 import { SystemPromptBuilderService } from 'src/engine/metadata-modules/ai/ai-chat/services/system-prompt-builder.service';
@@ -48,9 +55,9 @@ import {
   type ExtractedFile,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/extract-code-interpreter-files.util';
 import {
-  injectCacheBreakpoint,
   getCacheProviderOptions,
   getCallLevelCacheProviderOptions,
+  injectCacheBreakpoint,
 } from 'src/engine/metadata-modules/ai/ai-chat/utils/inject-cache-breakpoint.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
@@ -72,6 +79,7 @@ export type ChatExecutionOptions = {
 export type ChatExecutionResult = {
   stream: ReturnType<typeof streamText>;
   modelConfig: AiModelConfig;
+  hasNoMoreAvailableCredits: () => boolean;
 };
 
 @Injectable()
@@ -90,6 +98,7 @@ export class ChatExecutionService {
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly messagePruningService: MessagePruningService,
+    private readonly metricsService: MetricsService,
   ) {}
 
   async streamChat({
@@ -117,10 +126,6 @@ export class ChatExecutionService {
       userWorkspaceId,
       onCodeExecutionUpdate,
     };
-
-    const contextString = browsingContext
-      ? this.buildContextFromBrowsingContext(workspace, browsingContext)
-      : undefined;
 
     const toolCatalog = await this.toolRegistry.buildToolIndex(
       workspace.id,
@@ -222,11 +227,22 @@ export class ChatExecutionService {
       }
     }
 
+    if (isDefined(browsingContext)) {
+      const contextString = this.buildContextFromBrowsingContext(
+        workspace,
+        browsingContext,
+      );
+
+      processedMessages = this.injectBrowsingContextIntoLastUserMessage(
+        processedMessages,
+        contextString,
+      );
+    }
+
     const systemPrompt = this.systemPromptBuilder.buildFullPrompt(
       toolCatalog,
       skillCatalog,
       preloadedToolNames,
-      contextString,
       storedFiles,
       workspace.aiAdditionalInstructions ?? undefined,
       userContext,
@@ -263,7 +279,12 @@ export class ChatExecutionService {
 
     const modelMessages = pruningResult.messages;
 
-    const billUsageFromSteps = async (steps: StepResult<ToolSet>[]) => {
+    let hasNoMoreAvailableCredits = false;
+    const streamStartedAt = performance.now();
+    let stepStartedAt = streamStartedAt;
+    let ttftRecorded = false;
+
+    const emitTurnUsageEvent = async (steps: StepResult<ToolSet>[]) => {
       const usage = steps.reduce<LanguageModelUsage>(
         (acc, step) => ({
           inputTokens: (acc.inputTokens ?? 0) + (step.usage.inputTokens ?? 0),
@@ -304,11 +325,24 @@ export class ChatExecutionService {
       );
 
       const cacheCreationTokens = extractCacheCreationTokensFromSteps(steps);
+      const totalTokens =
+        (usage.inputTokens ?? 0) +
+        (usage.outputTokens ?? 0) +
+        cacheCreationTokens;
 
-      await this.aiBillingService.calculateAndBillUsage(
+      const costInDollars = this.aiBillingService.calculateCost(
         registeredModel.modelId,
         { usage, cacheCreationTokens },
+      );
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(costInDollars),
+      );
+
+      await this.aiBillingService.emitAiTokenUsageEvent(
         workspace.id,
+        creditsUsedMicro,
+        totalTokens,
+        registeredModel.modelId,
         UsageOperationType.AI_CHAT_TOKEN,
         null,
         userWorkspaceId,
@@ -316,11 +350,40 @@ export class ChatExecutionService {
 
       // billNativeWebSearchUsage short-circuits when count <= 0, so calling
       // unconditionally is safe regardless of whether native search fired.
-      this.aiBillingService.billNativeWebSearchUsage(
+      void this.aiBillingService.billNativeWebSearchUsage(
         countNativeWebSearchCallsFromSteps(steps),
         workspace.id,
         userWorkspaceId,
       );
+
+      const modelAttr = { model: registeredModel.modelId };
+
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatInputTokens,
+        amount: usage.inputTokens ?? 0,
+        attributes: modelAttr,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatOutputTokens,
+        amount: usage.outputTokens ?? 0,
+        attributes: modelAttr,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatCacheReadTokens,
+        amount: usage.inputTokenDetails?.cacheReadTokens ?? 0,
+        attributes: modelAttr,
+      });
+      this.metricsService.incrementCounterBy({
+        key: MetricsKeys.AiChatCacheWriteTokens,
+        amount: cacheCreationTokens,
+        attributes: modelAttr,
+      });
+      this.metricsService.recordHistogram({
+        key: MetricsKeys.AiChatTurnLatencyMs,
+        value: performance.now() - streamStartedAt,
+        unit: 'ms',
+        attributes: modelAttr,
+      });
     };
 
     const stream = streamText({
@@ -328,16 +391,75 @@ export class ChatExecutionService {
       messages: [systemMessage, ...modelMessages],
       tools: activeTools,
       abortSignal,
-      stopWhen: stepCountIs(AGENT_CONFIG.MAX_STEPS),
+      stopWhen: (step) =>
+        stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
       providerOptions: getCallLevelCacheProviderOptions(
         registeredModel.sdkPackage,
       ),
-      prepareStep: ({ messages }) => ({
-        messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
-      }),
+      prepareStep: ({ messages }) => {
+        stepStartedAt = performance.now();
+
+        return {
+          messages: injectCacheBreakpoint(messages, registeredModel.sdkPackage),
+        };
+      },
+      onChunk: ({ chunk }) => {
+        if (
+          !ttftRecorded &&
+          (chunk.type === 'text-delta' || chunk.type === 'tool-call')
+        ) {
+          ttftRecorded = true;
+          this.metricsService.recordHistogram({
+            key: MetricsKeys.AiChatTtftMs,
+            value: performance.now() - streamStartedAt,
+            unit: 'ms',
+            attributes: { model: registeredModel.modelId },
+          });
+        }
+      },
+      onStepFinish: async (step) => {
+        this.metricsService.recordHistogram({
+          key: MetricsKeys.AiChatStepLatencyMs,
+          value: performance.now() - stepStartedAt,
+          unit: 'ms',
+          attributes: { model: registeredModel.modelId },
+        });
+
+        const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+          await this.aiBillingService.decrementAndCheckAvailableCredits(
+            registeredModel.modelId,
+            {
+              usage: step.usage,
+              cacheCreationTokens: extractCacheCreationTokens(
+                step.providerMetadata,
+              ),
+            },
+            workspace.id,
+          );
+
+        if (stepHasNoMoreAvailableCredits) {
+          hasNoMoreAvailableCredits = true;
+        }
+
+        for (const toolResult of step.toolResults) {
+          const output = toolResult.output as ToolOutput | undefined;
+
+          if (!isDefined(output?.success)) {
+            continue;
+          }
+
+          void this.metricsService.incrementCounterForEvent({
+            key: output.success
+              ? MetricsKeys.AiChatToolExecutionSucceeded
+              : MetricsKeys.AiChatToolExecutionFailed,
+            attributes: { model: registeredModel.modelId },
+            shouldStoreInCache: false,
+          });
+        }
+      },
       onAbort: async ({ steps }) => {
-        await billUsageFromSteps(steps);
+        await emitTurnUsageEvent(steps);
       },
       experimental_repairToolCall: async ({
         toolCall,
@@ -364,7 +486,7 @@ export class ChatExecutionService {
 
     Promise.all([stream.usage, stream.steps])
       .then(async ([, steps]) => {
-        await billUsageFromSteps(steps);
+        await emitTurnUsageEvent(steps);
       })
       .catch((error) => {
         if (error?.name === 'AbortError') {
@@ -376,7 +498,36 @@ export class ChatExecutionService {
     return {
       stream,
       modelConfig,
+      hasNoMoreAvailableCredits: () => hasNoMoreAvailableCredits,
     };
+  }
+
+  private injectBrowsingContextIntoLastUserMessage(
+    messages: UIMessage[],
+    contextString: string,
+  ): UIMessage[] {
+    const lastUserIndex = messages
+      .map((message) => message.role)
+      .lastIndexOf('user');
+
+    if (lastUserIndex === -1) {
+      return messages;
+    }
+
+    const lastUserMessage = messages[lastUserIndex];
+    const browsingContextPart = {
+      type: 'text' as const,
+      text: `<browsing_context note="Only use this if the user explicitly asks about the current page, record, or view. Do not call any tools based on this context.">\n${contextString}\n</browsing_context>`,
+    };
+
+    return [
+      ...messages.slice(0, lastUserIndex),
+      {
+        ...lastUserMessage,
+        parts: [...lastUserMessage.parts, browsingContextPart],
+      },
+      ...messages.slice(lastUserIndex + 1),
+    ];
   }
 
   private buildContextFromBrowsingContext(

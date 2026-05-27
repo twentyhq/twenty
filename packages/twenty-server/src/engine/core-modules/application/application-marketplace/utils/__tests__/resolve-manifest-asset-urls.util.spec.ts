@@ -18,6 +18,7 @@ const buildMinimalManifest = (
   fields: [],
   logicFunctions: [],
   frontComponents: [],
+  permissionFlags: [],
   roles: [],
   skills: [],
   agents: [],

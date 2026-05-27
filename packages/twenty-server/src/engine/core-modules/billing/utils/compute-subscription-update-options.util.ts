@@ -17,16 +17,15 @@ export const computeSubscriptionUpdateOptions = (
   switch (subscriptionUpdate.type) {
     case SubscriptionUpdateType.PLAN:
       return {
-        proration: 'create_prorations',
+        proration: 'always_invoice',
         metadata: {
           plan: subscriptionUpdate.newPlan,
         },
       };
-    case SubscriptionUpdateType.METERED_PRICE:
+    case SubscriptionUpdateType.RESOURCE_CREDIT_PRICE:
       return {
-        proration: 'create_prorations',
+        proration: 'none',
       };
-
     case SubscriptionUpdateType.INTERVAL:
       return {
         proration: 'create_prorations',

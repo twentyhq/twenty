@@ -79,6 +79,35 @@ export class UpgradeGaugeService implements OnModuleInit {
       },
       cacheValue: true,
     });
+
+    this.metricsService.createObservableGauge({
+      metricName: 'twenty_upgrade_workspaces_up_to_date_total',
+      options: {
+        description: 'Number of workspaces up-to-date on upgrade commands',
+      },
+      callback: async () => {
+        const upgradeStatus = await this.getCachedUpgradeStatus();
+
+        return upgradeStatus?.upToDateWorkspaceCount ?? 0;
+      },
+      cacheValue: true,
+    });
+
+    this.metricsService.createInfoGauge({
+      metricName: 'twenty_upgrade_instance',
+      options: {
+        description:
+          'Inferred instance version (semver-ish, derived from the last applied upgrade migration), carried as the `version` attribute',
+      },
+      attributesCallback: async () => {
+        const upgradeStatus = await this.getCachedUpgradeStatus();
+
+        return {
+          version:
+            upgradeStatus?.instanceUpgradeStatus.inferredVersion ?? 'unknown',
+        };
+      },
+    });
   }
 
   private async getCachedUpgradeStatus(): Promise<InstanceAndAllWorkspacesUpgradeStatus | null> {

@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import { Raw, Repository } from 'typeorm';
 
-import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
+import { differenceInDays } from 'date-fns';
 import {
   BillingException,
   BillingExceptionCode,
 } from 'src/engine/core-modules/billing/billing.exception';
+import { BillingPriceEntity } from 'src/engine/core-modules/billing/entities/billing-price.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
+import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingProductKey } from 'src/engine/core-modules/billing/enums/billing-product-key.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { billingValidator } from 'src/engine/core-modules/billing/billing.validate';
+import { isDefined } from 'twenty-shared/utils';
 
 @Injectable()
 export class BillingSubscriptionItemService {
@@ -21,41 +23,55 @@ export class BillingSubscriptionItemService {
     private readonly twentyConfigService: TwentyConfigService,
   ) {}
 
-  async getMeteredSubscriptionItemDetails(subscriptionId: string) {
-    const meteredSubscriptionItems =
-      await this.billingSubscriptionItemRepository.find({
-        where: {
-          billingSubscriptionId: subscriptionId,
+  async getResourceCreditSubscriptionItemDetails(
+    subscription: BillingSubscriptionEntity,
+  ): Promise<{
+    stripeSubscriptionItemId: string;
+    productKey: BillingProductKey;
+    creditAmount: number;
+    freeTrialQuantity: number;
+    unitPriceCents: number;
+  } | null> {
+    const item = await this.billingSubscriptionItemRepository.findOne({
+      where: {
+        billingSubscriptionId: subscription.id,
+        billingProduct: {
+          metadata: Raw((alias) => `${alias} @> :metadata::jsonb`, {
+            metadata: JSON.stringify({
+              productKey: BillingProductKey.RESOURCE_CREDIT,
+            }),
+          }),
         },
-        relations: ['billingProduct', 'billingProduct.billingPrices'],
-      });
-
-    return meteredSubscriptionItems.reduce(
-      (acc, item) => {
-        const price = this.findMatchingPrice(item);
-
-        if (!price.stripeMeterId) {
-          return acc;
-        }
-
-        return acc.concat({
-          stripeSubscriptionItemId: item.stripeSubscriptionItemId,
-          productKey: item.billingProduct.metadata.productKey,
-          stripeMeterId: price.stripeMeterId,
-          tierQuantity: this.getTierQuantity(price),
-          freeTrialQuantity: this.getFreeTrialQuantity(item),
-          unitPriceCents: this.getUnitPrice(price),
-        });
       },
-      [] as Array<{
-        stripeSubscriptionItemId: string;
-        productKey: BillingProductKey;
-        stripeMeterId: string;
-        tierQuantity: number;
-        freeTrialQuantity: number;
-        unitPriceCents: number;
-      }>,
+      relations: ['billingProduct', 'billingProduct.billingPrices'],
+    });
+
+    if (!item) {
+      return null;
+    }
+
+    const price = this.findMatchingPrice(item);
+
+    const trialDuration =
+      isDefined(subscription.trialEnd) && isDefined(subscription.trialStart)
+        ? differenceInDays(subscription.trialEnd, subscription.trialStart)
+        : 0;
+
+    const trialWithCreditCardDuration = this.twentyConfigService.get(
+      'BILLING_FREE_TRIAL_WITH_CREDIT_CARD_DURATION_IN_DAYS',
     );
+
+    return {
+      stripeSubscriptionItemId: item.stripeSubscriptionItemId,
+      productKey: BillingProductKey.RESOURCE_CREDIT,
+      creditAmount: Number(price.metadata?.credit_amount ?? 0),
+      freeTrialQuantity: this.twentyConfigService.get(
+        trialDuration === trialWithCreditCardDuration
+          ? 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITH_CREDIT_CARD'
+          : 'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
+      ),
+      unitPriceCents: price.unitAmount ?? 0,
+    };
   }
 
   private findMatchingPrice(
@@ -73,28 +89,5 @@ export class BillingSubscriptionItemService {
     }
 
     return matchingPrice;
-  }
-
-  private getTierQuantity(price: BillingPriceEntity): number {
-    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
-
-    return price.tiers[0].up_to;
-  }
-
-  private getFreeTrialQuantity(item: BillingSubscriptionItemEntity): number {
-    switch (item.billingProduct.metadata.productKey) {
-      case BillingProductKey.WORKFLOW_NODE_EXECUTION:
-        return this.twentyConfigService.get(
-          'BILLING_FREE_WORKFLOW_CREDITS_FOR_TRIAL_PERIOD_WITHOUT_CREDIT_CARD',
-        );
-      default:
-        return 0;
-    }
-  }
-
-  private getUnitPrice(price: BillingPriceEntity): number {
-    billingValidator.assertIsMeteredTiersSchemaOrThrow(price.tiers);
-
-    return Number(price.tiers[1].unit_amount_decimal);
   }
 }

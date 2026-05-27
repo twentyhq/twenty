@@ -1,0 +1,72 @@
+---
+title: Yerel Sunucu
+description: Yerel Twenty Docker sunucusunu yönetin — başlatın, durdurun, yükseltin, paralel test örneği çalıştırın ve manuel SDK kurulumu yapın.
+icon: server
+---
+
+## Yerel sunucuyu yönetme
+
+Yerel Twenty konteynerini kontrol etmek için `yarn twenty docker:*` kullanın:
+
+| Komut                                  | Ne yapar                                                  |
+| -------------------------------------- | --------------------------------------------------------- |
+| `yarn twenty docker:start`             | Sunucuyu başlatır (gerekirse imajı çeker)                 |
+| `yarn twenty docker:start --port 3030` | Özel bir portta başlatır                                  |
+| `yarn twenty docker:stop`              | Sunucuyu durdurur (verileri korur)                        |
+| `yarn twenty docker:status`            | URL'yi, sürümü ve oturum açma kimlik bilgilerini gösterir |
+| `yarn twenty docker:logs`              | Sunucu günlüklerini akış olarak gösterir                  |
+| `yarn twenty docker:reset`             | Verileri siler ve sıfırdan başlatır                       |
+| `yarn twenty docker:upgrade`           | En güncel `twenty-app-dev` imajını çeker                  |
+| `yarn twenty docker:upgrade 2.2.0`     | Belirli bir sürüme yükseltir                              |
+
+Veriler, yeniden başlatmalar arasında iki Docker biriminde kalıcıdır (PostgreSQL için `twenty-app-dev-data`, dosyalar için `twenty-app-dev-storage`). Her şeyi silmek için `reset` kullanın.
+
+## Sunucu imajını yükseltme
+
+`yarn twenty docker:upgrade`, en güncel imajı çeker, özetleri karşılaştırır ve yalnızca gerçekten bir şey değiştiyse konteyneri yeniden oluşturur. Birimler korunur — yalnızca konteyner değiştirilir. Yeni bir imaj çekildiyse ve konteyner çalışıyorsa, yükseltme otomatik olarak yeni bir konteyner başlatır; sağlıklı hale gelmesini beklemek için ardından `yarn twenty docker:start` çalıştırın.
+
+```bash filename="Terminal"
+yarn twenty docker:upgrade            # Latest
+yarn twenty docker:upgrade 2.2.0      # Specific version
+```
+
+Çalışan sürümü `yarn twenty docker:status` ile doğrulayabilirsiniz (konteynere gömülü `APP_VERSION` değerini gösterir).
+
+## Paralel bir test örneği çalıştırma
+
+Ana geliştirme verilerinize dokunmadan entegrasyon testlerini veya denemeleri yürütmek için, herhangi bir `docker:*` komutuna `--test` parametresini vererek ikinci, tamamen yalıtılmış bir örneği yönetebilirsiniz:
+
+| Komut                               | Ne yapar                                                      |
+| ----------------------------------- | ------------------------------------------------------------- |
+| `yarn twenty docker:start --test`   | Test örneğini başlatır (varsayılan bağlantı noktası 2021'dir) |
+| `yarn twenty docker:stop --test`    | Durdurur                                                      |
+| `yarn twenty docker:status --test`  | Durumunu gösterir                                             |
+| `yarn twenty docker:logs --test`    | Günlüklerini akış olarak gösterir                             |
+| `yarn twenty docker:reset --test`   | Verilerini siler                                              |
+| `yarn twenty docker:upgrade --test` | İmajını yükseltir                                             |
+
+Test örneği, kendine ait bir Docker konteynerinde (`twenty-app-dev-test`), ayrılmış birimlerle (`twenty-app-dev-test-data`, `twenty-app-dev-test-storage`) ve yapılandırmayla çalışır; böylece ana örneğinizle çakışma olmadan paralel olarak çalışabilir. Varsayılan 2021'i geçersiz kılmak için `--test` ile `--port`'u birlikte kullanın.
+
+## Manuel kurulum (iskelet oluşturucu olmadan)
+
+SDK'yı mevcut bir projeye ekliyorsanız iskelet oluşturma adımını atlayın:
+
+```bash filename="Terminal"
+yarn add twenty-sdk twenty-client-sdk
+```
+
+`package.json` dosyasına betiği ekleyin:
+
+```json filename="package.json"
+{
+  "scripts": {
+    "twenty": "twenty"
+  }
+}
+```
+
+Artık `yarn twenty dev`, `yarn twenty docker:start` ve diğerlerini çalıştırabilirsiniz.
+
+<Note>
+`twenty-sdk`'yi global olarak kurmayın — her uygulama kendi sürümünü kullansın diye proje bazında sabitleyin.
+</Note>

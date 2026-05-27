@@ -24,6 +24,7 @@ import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-mod
   exports: [
     DefaultAiCatalogService,
     AiModelRegistryService,
+    AiModelPreferencesService,
     AiModelConfigService,
     SdkProviderFactoryService,
     ModelsDevCatalogService,

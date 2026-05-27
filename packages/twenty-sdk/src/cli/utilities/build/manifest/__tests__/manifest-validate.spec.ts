@@ -31,6 +31,7 @@ const validManifest: Manifest = {
   frontComponents: [],
   fields: [],
   logicFunctions: [],
+  permissionFlags: [],
   roles: [],
   skills: [],
   agents: [],

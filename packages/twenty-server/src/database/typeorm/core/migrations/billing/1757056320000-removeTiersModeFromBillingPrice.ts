@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveTiersModeFromBillingPrice1757056320000
-  implements MigrationInterface
-{
+export class RemoveTiersModeFromBillingPrice1757056320000 implements MigrationInterface {
   name = 'RemoveTiersModeFromBillingPrice1757056320000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

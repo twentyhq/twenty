@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class FixDataSourceAndWorkspaceMigrationWorkspaceIdType1767200000000
-  implements MigrationInterface
-{
+export class FixDataSourceAndWorkspaceMigrationWorkspaceIdType1767200000000 implements MigrationInterface {
   name = 'FixDataSourceAndWorkspaceMigrationWorkspaceIdType1767200000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -3,9 +3,11 @@ title: Setări domeniu
 description: Configurați domeniul spațiului de lucru, domeniile de acces aprobate și domeniile publice.
 ---
 
-Configurați setările de domeniu în **Setări → Domenii**.
+Setările de domeniu se află în trei locuri, în funcție de ceea ce configurați.
 
 ## Domeniu Spațiu de lucru
+
+Configurați în **Setări → General → Domeniu al spațiului de lucru**.
 
 Editați numele subdomeniului sau setați un domeniu personalizat pentru spațiul de lucru.
 
@@ -18,6 +20,8 @@ Editați numele subdomeniului sau setați un domeniu personalizat pentru spațiu
 Pentru domeniile personalizate, va trebui să configurați setările DNS la furnizorul de domeniu.
 
 ## Domenii Aprobate
+
+Configurați în **Setări → Membri → Invită**.
 
 Oricine are o adresă de email pe aceste domenii se poate înscrie automat în acest spațiu de lucru.
 
@@ -35,13 +39,16 @@ Acest lucru este util pentru a permite întregii echipe să se înregistreze sin
 
 ## Domenii Publice
 
-Provisionați un mediu de găzduire complet și sigur pe aceste domenii.
+Configurați în **Setări → Aplicații → Dezvoltator**.
+
+Provisionați un mediu de găzduire complet și sigur pe aceste domenii. Un domeniu public poate fi asociat cu o anumită aplicație — când este asociat, numai funcțiile de logică rutată HTTP ale acelei aplicații sunt accesibile pe domeniu. Lăsați asocierea goală pentru a expune toate rutele HTTP ale spațiului de lucru.
 
 ### Adaugă Domeniu Public
 
 1. Faceți clic pe **Adăugați domeniu public**
 2. Introduceți domeniul pe care doriți să îl utilizați
-3. Configurați setările DNS conform instrucțiunilor
-4. Verificați domeniul
+3. Opțional, asociați-l unei aplicații
+4. Configurați setările DNS conform instrucțiunilor
+5. Verificați domeniul
 
 Certificatele SSL sunt furnizate automat pentru domeniile publice.

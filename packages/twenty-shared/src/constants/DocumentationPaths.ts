@@ -17,20 +17,60 @@ export const DOCUMENTATION_PATHS = {
   DEVELOPERS_CONTRIBUTE_COMMANDS: '/developers/contribute/commands',
   DEVELOPERS_CONTRIBUTE_STYLE_GUIDE: '/developers/contribute/style-guide',
   DEVELOPERS_EXTEND_API: '/developers/extend/api',
-  DEVELOPERS_EXTEND_APPS_BUILDING: '/developers/extend/apps/building',
-  DEVELOPERS_EXTEND_APPS_CLI_AND_TESTING:
-    '/developers/extend/apps/cli-and-testing',
-  DEVELOPERS_EXTEND_APPS_DATA_MODEL: '/developers/extend/apps/data-model',
-  DEVELOPERS_EXTEND_APPS_FRONT_COMPONENTS:
-    '/developers/extend/apps/front-components',
-  DEVELOPERS_EXTEND_APPS_GETTING_STARTED:
-    '/developers/extend/apps/getting-started',
-  DEVELOPERS_EXTEND_APPS_LAYOUT: '/developers/extend/apps/layout',
-  DEVELOPERS_EXTEND_APPS_LOGIC_FUNCTIONS:
-    '/developers/extend/apps/logic-functions',
-  DEVELOPERS_EXTEND_APPS_PUBLISHING: '/developers/extend/apps/publishing',
-  DEVELOPERS_EXTEND_APPS_SKILLS_AND_AGENTS:
-    '/developers/extend/apps/skills-and-agents',
+  DEVELOPERS_EXTEND_APPS_CONFIG_APPLICATION:
+    '/developers/extend/apps/config/application',
+  DEVELOPERS_EXTEND_APPS_CONFIG_INSTALL_HOOKS:
+    '/developers/extend/apps/config/install-hooks',
+  DEVELOPERS_EXTEND_APPS_CONFIG_OVERVIEW:
+    '/developers/extend/apps/config/overview',
+  DEVELOPERS_EXTEND_APPS_CONFIG_PUBLIC_ASSETS:
+    '/developers/extend/apps/config/public-assets',
+  DEVELOPERS_EXTEND_APPS_CONFIG_ROLES: '/developers/extend/apps/config/roles',
+  DEVELOPERS_EXTEND_APPS_DATA_EXTENDING_OBJECTS:
+    '/developers/extend/apps/data/extending-objects',
+  DEVELOPERS_EXTEND_APPS_DATA_OBJECTS: '/developers/extend/apps/data/objects',
+  DEVELOPERS_EXTEND_APPS_DATA_OVERVIEW: '/developers/extend/apps/data/overview',
+  DEVELOPERS_EXTEND_APPS_DATA_RELATIONS:
+    '/developers/extend/apps/data/relations',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_CONCEPTS:
+    '/developers/extend/apps/getting-started/concepts',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_LOCAL_SERVER:
+    '/developers/extend/apps/getting-started/local-server',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_PROJECT_STRUCTURE:
+    '/developers/extend/apps/getting-started/project-structure',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_QUICK_START:
+    '/developers/extend/apps/getting-started/quick-start',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_SCAFFOLDING:
+    '/developers/extend/apps/getting-started/scaffolding',
+  DEVELOPERS_EXTEND_APPS_GETTING_STARTED_TROUBLESHOOTING:
+    '/developers/extend/apps/getting-started/troubleshooting',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_COMMAND_MENU_ITEMS:
+    '/developers/extend/apps/layout/command-menu-items',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_FRONT_COMPONENTS:
+    '/developers/extend/apps/layout/front-components',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_NAVIGATION_MENU_ITEMS:
+    '/developers/extend/apps/layout/navigation-menu-items',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_OVERVIEW:
+    '/developers/extend/apps/layout/overview',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_PAGE_LAYOUTS:
+    '/developers/extend/apps/layout/page-layouts',
+  DEVELOPERS_EXTEND_APPS_LAYOUT_VIEWS: '/developers/extend/apps/layout/views',
+  DEVELOPERS_EXTEND_APPS_LOGIC_CONNECTIONS:
+    '/developers/extend/apps/logic/connections',
+  DEVELOPERS_EXTEND_APPS_LOGIC_LOGIC_FUNCTIONS:
+    '/developers/extend/apps/logic/logic-functions',
+  DEVELOPERS_EXTEND_APPS_LOGIC_OVERVIEW:
+    '/developers/extend/apps/logic/overview',
+  DEVELOPERS_EXTEND_APPS_LOGIC_SKILLS_AND_AGENTS:
+    '/developers/extend/apps/logic/skills-and-agents',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_CLI:
+    '/developers/extend/apps/operations/cli',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_OVERVIEW:
+    '/developers/extend/apps/operations/overview',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_PUBLISHING:
+    '/developers/extend/apps/operations/publishing',
+  DEVELOPERS_EXTEND_APPS_OPERATIONS_TESTING:
+    '/developers/extend/apps/operations/testing',
   DEVELOPERS_EXTEND_OAUTH: '/developers/extend/oauth',
   DEVELOPERS_EXTEND_WEBHOOKS: '/developers/extend/webhooks',
   DEVELOPERS_INTRODUCTION: '/developers/introduction',

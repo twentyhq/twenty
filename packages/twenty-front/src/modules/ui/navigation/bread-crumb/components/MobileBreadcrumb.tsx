@@ -1,5 +1,5 @@
 import { t } from '@lingui/core/macro';
-import { useOpenSettingsMenu } from '@/navigation/hooks/useOpenSettings';
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
 import { styled } from '@linaria/react';
 import { isNonEmptyString } from '@sniptt/guards';
 import { type ReactNode, useContext } from 'react';
@@ -47,14 +47,13 @@ export const MobileBreadcrumb = ({
   links,
 }: MobileBreadcrumbProps) => {
   const { theme } = useContext(ThemeContext);
-  const { openSettingsMenu } = useOpenSettingsMenu();
+  const isSettingsPage = useIsSettingsPage();
 
-  const handleBackToSettingsClick = () => {
-    openSettingsMenu();
-  };
+  if (isSettingsPage && links.length <= 2) {
+    return null;
+  }
 
   const previousLink = links[links.length - 2];
-  const shouldRedirectToSettings = links.length === 2;
 
   const text = isNonEmptyString(previousLink.children)
     ? previousLink.children
@@ -64,14 +63,7 @@ export const MobileBreadcrumb = ({
 
   return (
     <StyledWrapper className={className}>
-      {shouldRedirectToSettings ? (
-        <>
-          <IconChevronLeft size={theme.icon.size.md} />
-          <StyledText onClick={handleBackToSettingsClick}>
-            {t`Back to Settings`}
-          </StyledText>
-        </>
-      ) : previousLink?.href ? (
+      {previousLink?.href ? (
         <>
           <IconChevronLeft size={theme.icon.size.md} />
           <StyledLinkContainer>

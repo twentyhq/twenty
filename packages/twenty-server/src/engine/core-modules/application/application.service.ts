@@ -82,6 +82,7 @@ export class ApplicationService {
     const workspace = isDefined(workspaceInput)
       ? workspaceInput
       : await this.workspaceRepository.findOne({
+          select: ['id', 'workspaceCustomApplicationId'],
           where: {
             id: workspaceId,
           },
@@ -410,7 +411,6 @@ export class ApplicationService {
 
     const packageJsonFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.packageJsonContent,
-      mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,
@@ -421,7 +421,6 @@ export class ApplicationService {
 
     const yarnLockFile = await this.fileStorageService.writeFile({
       sourceFile: defaultPackageFields.yarnLockContent,
-      mimeType: undefined,
       fileFolder: FileFolder.Dependencies,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: application.workspaceId,

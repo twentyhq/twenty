@@ -13,12 +13,13 @@ import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/i
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { isCloudflareIntegrationEnabledState } from '@/client-config/states/isCloudflareIntegrationEnabledState';
 import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
-import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
+import { isEmailGroupEnabledState } from '@/client-config/states/isEmailGroupEnabledState';
 import { isEmailingDomainsEnabledState } from '@/client-config/states/isEmailingDomainsEnabledState';
 import { isEmailVerificationRequiredState } from '@/client-config/states/isEmailVerificationRequiredState';
 import { isGoogleCalendarEnabledState } from '@/client-config/states/isGoogleCalendarEnabledState';
 import { isGoogleMessagingEnabledState } from '@/client-config/states/isGoogleMessagingEnabledState';
 import { isImapSmtpCaldavEnabledState } from '@/client-config/states/isImapSmtpCaldavEnabledState';
+import { maintenanceModeState } from '@/client-config/states/maintenanceModeState';
 import { isMicrosoftCalendarEnabledState } from '@/client-config/states/isMicrosoftCalendarEnabledState';
 import { isMicrosoftMessagingEnabledState } from '@/client-config/states/isMicrosoftMessagingEnabledState';
 import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWorkspaceEnabledState';
@@ -100,11 +101,14 @@ export const useClientConfig = (): UseClientConfigResult => {
 
   const setCalendarBookingPageId = useSetAtomState(calendarBookingPageIdState);
 
-  const setIsImapSmtpCaldavEnabled = useSetAtomState(
-    isImapSmtpCaldavEnabledState,
-  );
+  const setIsEmailGroupEnabled = useSetAtomState(isEmailGroupEnabledState);
+
   const setIsEmailingDomainsEnabled = useSetAtomState(
     isEmailingDomainsEnabledState,
+  );
+
+  const setIsImapSmtpCaldavEnabled = useSetAtomState(
+    isImapSmtpCaldavEnabledState,
   );
 
   const setAllowRequestsToTwentyIcons = useSetAtomState(
@@ -195,6 +199,7 @@ export const useClientConfig = (): UseClientConfigResult => {
 
       setCalendarBookingPageId(clientConfig?.calendarBookingPageId ?? null);
       setIsImapSmtpCaldavEnabled(clientConfig?.isImapSmtpCaldavEnabled);
+      setIsEmailGroupEnabled(clientConfig?.isEmailGroupEnabled ?? false);
       setIsEmailingDomainsEnabled(clientConfig?.isEmailingDomainsEnabled);
       setAllowRequestsToTwentyIcons(clientConfig?.allowRequestsToTwentyIcons);
       setIsCloudflareIntegrationEnabled(
@@ -233,6 +238,7 @@ export const useClientConfig = (): UseClientConfigResult => {
     setIsDeveloperDefaultSignInPrefilled,
     setIsEmailVerificationRequired,
     setIsImapSmtpCaldavEnabled,
+    setIsEmailGroupEnabled,
     setIsMultiWorkspaceEnabled,
     setIsEmailingDomainsEnabled,
     setIsClickHouseConfigured,

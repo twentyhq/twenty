@@ -8,8 +8,9 @@ import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/pro
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
-import { ViewFieldToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-field-tool.provider';
+import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
+import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
 import { WorkflowToolProvider } from 'src/engine/core-modules/tool-provider/providers/workflow-tool.provider';
 import { ToolExecutorService } from 'src/engine/core-modules/tool-provider/services/tool-executor.service';
 import { ToolModule } from 'src/engine/core-modules/tool/tool.module';
@@ -19,6 +20,7 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { FieldMetadataModule } from 'src/engine/metadata-modules/field-metadata/field-metadata.module';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { LogicFunctionModule } from 'src/engine/metadata-modules/logic-function/logic-function.module';
+import { NavigationMenuItemModule } from 'src/engine/metadata-modules/navigation-menu-item/navigation-menu-item.module';
 import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -26,15 +28,21 @@ import { ViewFieldModule } from 'src/engine/metadata-modules/view-field/view-fie
 import { ViewFilterModule } from 'src/engine/metadata-modules/view-filter/view-filter.module';
 import { ViewSortModule } from 'src/engine/metadata-modules/view-sort/view-sort.module';
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
+import { WebhookModule } from 'src/engine/metadata-modules/webhook/webhook.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { ToolIndexResolver } from './resolvers/tool-index.resolver';
 import { ToolRegistryService } from './services/tool-registry.service';
 
-// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule to avoid
-// circular dependencies. Instead, they are @Global() modules that provide their tokens.
-// When imported anywhere in the app (e.g., AiChatModule), the tokens become available
-// globally to their respective providers via @Optional() injection.
+// NOTE: This module does NOT import WorkflowToolsModule or DashboardToolsModule
+// directly: their service graphs transitively reach AiAgentExecutionModule which
+// forwardRef's back into ToolProviderModule. Those two @Global() modules provide
+// a service token that their respective providers consume via @Optional()
+// @Inject, breaking the cycle.
+//
+// Webhook and NavigationMenuItem do NOT have that cycle, so we import their
+// entity modules directly and the providers inject the services the normal way
+// (same pattern as views/objects/metadata).
 
 @Module({
   imports: [
@@ -52,6 +60,8 @@ import { ToolRegistryService } from './services/tool-registry.service';
     WorkspaceCacheModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     LogicFunctionModule,
+    NavigationMenuItemModule,
+    WebhookModule,
     UserRoleModule,
     TypeOrmModule.forFeature([UserEntity]),
   ],
@@ -62,9 +72,10 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
+    NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,
-    ViewFieldToolProvider,
     ViewToolProvider,
+    WebhookToolProvider,
     WorkflowToolProvider,
     {
       // TOOL_PROVIDERS contains only providers implementing ToolProvider
@@ -78,8 +89,9 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider: DatabaseToolProvider,
         metadataProvider: MetadataToolProvider,
         logicFunctionProvider: LogicFunctionToolProvider,
-        viewFieldProvider: ViewFieldToolProvider,
+        navigationMenuItemProvider: NavigationMenuItemToolProvider,
         viewProvider: ViewToolProvider,
+        webhookProvider: WebhookToolProvider,
         workflowProvider: WorkflowToolProvider,
       ) => [
         actionProvider,
@@ -87,8 +99,9 @@ import { ToolRegistryService } from './services/tool-registry.service';
         databaseProvider,
         metadataProvider,
         logicFunctionProvider,
-        viewFieldProvider,
+        navigationMenuItemProvider,
         viewProvider,
+        webhookProvider,
         workflowProvider,
       ],
       inject: [
@@ -97,8 +110,9 @@ import { ToolRegistryService } from './services/tool-registry.service';
         DatabaseToolProvider,
         MetadataToolProvider,
         LogicFunctionToolProvider,
-        ViewFieldToolProvider,
+        NavigationMenuItemToolProvider,
         ViewToolProvider,
+        WebhookToolProvider,
         WorkflowToolProvider,
       ],
     },

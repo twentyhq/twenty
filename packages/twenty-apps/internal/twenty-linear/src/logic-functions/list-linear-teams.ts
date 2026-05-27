@@ -16,4 +16,33 @@ export default defineLogicFunction({
       properties: {},
     },
   },
+  workflowActionTriggerSettings: {
+    label: 'List Linear Teams',
+    inputSchema: [
+      {
+        type: 'object',
+        properties: {},
+      },
+    ],
+    outputSchema: [
+      {
+        type: 'object',
+        properties: {
+          success: { type: 'boolean' },
+          teams: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                id: { type: 'string' },
+                name: { type: 'string' },
+                key: { type: 'string' },
+              },
+            },
+          },
+          error: { type: 'string' },
+        },
+      },
+    ],
+  },
 });

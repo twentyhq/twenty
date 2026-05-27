@@ -3,11 +3,11 @@ import { type ReactNode, useContext } from 'react';
 
 import { NavigationDrawerCollapseButton } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerCollapseButton';
 
+import { useIsSettingsPage } from '@/navigation/hooks/useIsSettingsPage';
+import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
 import { PAGE_ACTION_CONTAINER_CLICK_OUTSIDE_ID } from '@/ui/layout/page/constants/PageActionContainerClickOutsideId';
 import { PAGE_BAR_MIN_HEIGHT } from '@/ui/layout/page/constants/PageBarMinHeight';
-import { isNavigationDrawerExpandedState } from '@/ui/navigation/states/isNavigationDrawerExpanded';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AnimatePresence } from 'framer-motion';
 import { isDefined } from 'twenty-shared/utils';
 import {
@@ -105,16 +105,15 @@ export const PageHeader = ({
   className,
 }: PageHeaderProps) => {
   const isMobile = useIsMobile();
+  const isSettingsPage = useIsSettingsPage();
   const { theme } = useContext(ThemeContext);
-  const isNavigationDrawerExpanded = useAtomStateValue(
-    isNavigationDrawerExpandedState,
-  );
+  const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
 
   return (
     <AnimatePresence initial={false}>
       <StyledTopBarContainer className={className} isMobile={isMobile}>
         <StyledLeftContainer>
-          {!isMobile && !isNavigationDrawerExpanded && (
+          {!isNavigationDrawerExpanded && (!isMobile || isSettingsPage) && (
             <NavigationDrawerCollapseButton direction="right" />
           )}
           {hasClosePageButton && (

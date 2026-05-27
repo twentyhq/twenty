@@ -13,6 +13,7 @@
     "concurrently": "^8.2.2",
     "http-server": "^14.1.1",
     "nx": "22.5.4",
+    "oxfmt": "0.50.0",
     "tsx": "^4.17.0",
     "verdaccio": "^6.3.1"
   },
@@ -53,18 +54,18 @@
       "packages/twenty-ui",
       "packages/twenty-utils",
       "packages/twenty-zapier",
-      "packages/twenty-website-new",
+      "packages/twenty-website",
       "packages/twenty-docs",
       "packages/twenty-e2e-testing",
       "packages/twenty-shared",
       "packages/twenty-sdk",
       "packages/twenty-front-component-renderer",
       "packages/twenty-client-sdk",
-      "packages/twenty-apps",
       "packages/twenty-cli",
       "packages/create-twenty-app",
       "packages/twenty-oxlint-rules",
-      "packages/twenty-companion"
+      "packages/twenty-companion",
+      "packages/twenty-claude-skills"
     ]
   },
   "prettier": {

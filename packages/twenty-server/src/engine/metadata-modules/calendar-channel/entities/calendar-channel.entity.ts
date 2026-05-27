@@ -4,6 +4,7 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  Index,
   JoinColumn,
   ManyToOne,
   PrimaryGeneratedColumn,
@@ -35,6 +36,11 @@ registerEnumType(CalendarChannelContactAutoCreationPolicy, {
 });
 
 @Entity({ name: 'calendarChannel', schema: 'core' })
+@Index('IDX_CALENDAR_CHANNEL_WORKSPACE_ID_SYNC_ENABLED_SYNC_STAGE', [
+  'workspaceId',
+  'isSyncEnabled',
+  'syncStage',
+])
 export class CalendarChannelEntity extends WorkspaceRelatedEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

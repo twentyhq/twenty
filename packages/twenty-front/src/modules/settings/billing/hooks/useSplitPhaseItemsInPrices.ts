@@ -1,6 +1,6 @@
 import { useNextBillingPhase } from '@/settings/billing/hooks/useNextBillingPhase';
 import { usePriceAndBillingUsageByPriceId } from '@/settings/billing/hooks/usePriceAndBillingUsageByPriceId';
-import { type MeteredBillingPrice } from '@/settings/billing/types/billing-price-tiers.type';
+import { isDefined } from 'twenty-shared/utils';
 import {
   BillingUsageType,
   type BillingPriceLicensed,
@@ -16,17 +16,20 @@ export const useSplitPhaseItemsInPrices = () => {
       const { price, billingUsage } = getPriceAndBillingUsageByPriceId(
         item.price,
       );
+
       if (billingUsage === BillingUsageType.LICENSED) {
-        acc.nextLicensedPrice = price;
-      }
-      if (billingUsage === BillingUsageType.METERED) {
-        acc.nextMereredPrice = price as MeteredBillingPrice;
+        const licensedPrice = price as BillingPriceLicensed;
+        if (isDefined(licensedPrice.creditAmount)) {
+          acc.nextResourceCreditPrice = licensedPrice;
+        } else {
+          acc.nextBasePrice = licensedPrice;
+        }
       }
       return acc;
     },
     {} as {
-      nextMereredPrice: MeteredBillingPrice | undefined;
-      nextLicensedPrice: BillingPriceLicensed | undefined;
+      nextBasePrice: BillingPriceLicensed | undefined;
+      nextResourceCreditPrice: BillingPriceLicensed | undefined;
     },
   );
 

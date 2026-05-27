@@ -90,7 +90,7 @@ export class WorkspaceMigrationRunnerService {
     const shouldInvalidateRolesPermissionsCache =
       flatMapsKeysSet.has('flatObjectPermissionMaps') ||
       flatMapsKeysSet.has('flatFieldPermissionMaps') ||
-      flatMapsKeysSet.has('flatPermissionFlagMaps');
+      flatMapsKeysSet.has('flatRolePermissionFlagMaps');
 
     if (
       shouldIncrementMetadataGraphqlSchemaVersion ||
@@ -106,6 +106,14 @@ export class WorkspaceMigrationRunnerService {
           'ORMEntityMetadatas',
           'flatRoleTargetByAgentIdMaps',
           'graphQLResolverNameMap',
+        ]),
+      );
+    }
+
+    if (flatMapsKeysSet.has('flatApplicationVariableMaps')) {
+      asyncOperations.push(
+        this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+          'applicationVariableMaps',
         ]),
       );
     }

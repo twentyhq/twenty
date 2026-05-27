@@ -14,9 +14,9 @@ import type { NavigationMenuItemSectionContentProps } from '@/navigation-menu-it
 import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 
 const LazyNavigationMenuItemFolderDnd = lazy(() =>
-  import(
-    '@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd'
-  ).then((module) => ({ default: module.NavigationMenuItemFolderDnd })),
+  import('@/navigation-menu-item/display/folder/components/NavigationMenuItemFolderDnd').then(
+    (module) => ({ default: module.NavigationMenuItemFolderDnd }),
+  ),
 );
 
 type NavigationMenuItemFolderProps = Pick<

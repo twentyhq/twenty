@@ -21,6 +21,7 @@ import { FileModule } from 'src/engine/core-modules/file/file.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { OnboardingModule } from 'src/engine/core-modules/onboarding/onboarding.module';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
+import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -89,6 +90,7 @@ import { StandardObjectsPrefillModule } from 'src/engine/workspace-manager/stand
         WorkspaceMigrationModule,
         CoreEntityCacheModule,
         UpgradeModule,
+        SdkClientModule,
       ],
       services: [WorkspaceService],
       resolvers: workspaceAutoResolverOpts,

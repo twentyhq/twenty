@@ -1,5 +1,6 @@
 import { TwoFactorAuthenticationStrategy } from 'twenty-shared/types';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -17,6 +18,10 @@ import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspac
 
 @Index(['userWorkspaceId', 'strategy'], { unique: true })
 @Entity({ name: 'twoFactorAuthenticationMethod', schema: 'core' })
+@Check(
+  'CHK_twoFactorAuthenticationMethod_secret_encrypted',
+  `"secret" LIKE 'enc:v2:%'`,
+)
 export class TwoFactorAuthenticationMethodEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;

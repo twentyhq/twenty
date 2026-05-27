@@ -35,7 +35,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
           ref: ${{ github.head_ref || github.ref_name }}
@@ -54,7 +54,7 @@ jobs:
       # Strict mode fails if there are missing website translations.
       - name: Compile website translations
         id: compile_translations_strict
-        run: npx nx run twenty-website-new:lingui:compile --strict
+        run: npx nx run twenty-website:lingui:compile --strict
         continue-on-error: true
 
       - name: Stash any changes before pulling translations
@@ -66,13 +66,13 @@ jobs:
 
       - name: Pull website translations from Crowdin
         if: inputs.force_pull || steps.compile_translations_strict.outcome == 'failure'
-        uses: crowdin/github-action@v2
+        uses: crowdin/github-action@8868a33591d21088edfc398968173a3b98d51706 # v2
         with:
           upload_sources: false
           upload_translations: false
           download_translations: true
-          source: 'packages/twenty-website-new/src/locales/en.po'
-          translation: 'packages/twenty-website-new/src/locales/%locale%.po'
+          source: 'packages/twenty-website/src/locales/en.po'
+          translation: 'packages/twenty-website/src/locales/%locale%.po'
           export_only_approved: false
           localization_branch_name: i18n-website
           base_url: 'https://twenty.api.crowdin.com'
@@ -101,9 +101,9 @@ jobs:
       - name: Compile website translations
         id: compile_translations
         run: |
-          npx nx run twenty-website-new:lingui:compile
+          npx nx run twenty-website:lingui:compile
           git status
-          git add packages/twenty-website-new/src/locales
+          git add packages/twenty-website/src/locales
           if ! git diff --staged --quiet --exit-code; then
             git commit -m "chore: compile website translations"
             echo "changes_detected=true" >> $GITHUB_OUTPUT
@@ -128,8 +128,7 @@ jobs:
 
       - name: Trigger i18n automerge
         if: steps.compile_translations.outputs.changes_detected == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          repository: twentyhq/twenty-infra
-          event-type: i18n-pr-ready
+        env:
+          GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+        run: |
+          gh api repos/twentyhq/twenty-infra/dispatches -f event_type=i18n-pr-ready

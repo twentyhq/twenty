@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddRouterModelToWorkspace1760985484643
-  implements MigrationInterface
-{
+export class AddRouterModelToWorkspace1760985484643 implements MigrationInterface {
   name = 'AddRouterModelToWorkspace1760985484643';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -2,9 +2,12 @@ import { Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 
-import { MessageChannelSyncStage } from 'twenty-shared/types';
+import {
+  MessageChannelSyncStage,
+  MessageChannelType,
+} from 'twenty-shared/types';
 import { SentryCronMonitor } from 'src/engine/core-modules/cron/sentry-cron-monitor.decorator';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
@@ -57,6 +60,7 @@ export class MessagingMessageListFetchCronJob {
               workspaceId: activeWorkspace.id,
               isSyncEnabled: true,
               syncStage: MessageChannelSyncStage.MESSAGE_LIST_FETCH_PENDING,
+              type: Not(MessageChannelType.EMAIL_GROUP),
             },
           },
         );
