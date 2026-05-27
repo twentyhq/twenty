@@ -101,7 +101,7 @@ describe('Page layout widget override behavior', () => {
     expect(data.updatePageLayoutWidget.title).toBe(overriddenTitle);
   });
 
-  it('should write a tab move as an override on a seeded widget without mutating the base pageLayoutTabId', async () => {
+  it('should move a seeded widget to another tab through an override', async () => {
     let destinationTabId: string | undefined;
 
     try {
@@ -126,8 +126,30 @@ describe('Page layout widget override behavior', () => {
       });
 
       expect(data.updatePageLayoutWidget.pageLayoutTabId).toBe(
-        seededWidgetOriginalPageLayoutTabId,
+        destinationTabId,
       );
+
+      const { data: originalTabWidgetsData } = await findPageLayoutWidgets({
+        expectToFail: false,
+        input: { pageLayoutTabId: seededWidgetOriginalPageLayoutTabId },
+        gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+      });
+
+      expect(
+        originalTabWidgetsData.getPageLayoutWidgets.map((widget) => widget.id),
+      ).not.toContain(seededWidgetId);
+
+      const { data: destinationTabWidgetsData } = await findPageLayoutWidgets({
+        expectToFail: false,
+        input: { pageLayoutTabId: destinationTabId },
+        gqlFields: WIDGET_OVERRIDE_GQL_FIELDS,
+      });
+
+      expect(
+        destinationTabWidgetsData.getPageLayoutWidgets.map(
+          (widget) => widget.id,
+        ),
+      ).toContain(seededWidgetId);
     } finally {
       await updateOnePageLayoutWidget({
         expectToFail: false,
