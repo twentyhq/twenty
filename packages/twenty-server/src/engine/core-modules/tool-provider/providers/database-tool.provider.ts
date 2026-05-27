@@ -5,6 +5,7 @@ import {
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -116,6 +117,9 @@ export class DatabaseToolProvider implements ToolProvider {
       const restrictedFields = permission.restrictedFields;
       const snakePlural = camelToSnakeCase(objectMetadata.namePlural);
       const snakeSingular = camelToSnakeCase(objectMetadata.nameSingular);
+      const canBeManagedByAutomation = canObjectBeManagedByAutomation({
+        nameSingular: objectMetadata.nameSingular,
+      });
 
       if (permission.canReadObjectRecords) {
         descriptors.push({
@@ -182,7 +186,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords) {
+      if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
@@ -266,7 +270,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (permission.canSoftDeleteObjectRecords) {
+      if (permission.canSoftDeleteObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `delete_${snakeSingular}`,
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
