@@ -45,7 +45,7 @@ export const parseGmailMessage = (message: gmail_v1.Schema$Message) => {
     historyId,
     internalDate,
     subject,
-    from: rawFrom ? safeParseEmailAddressAddress(rawFrom) : undefined,
+    from: rawFrom ? safeParseEmailAddresses(rawFrom)[0] : undefined,
     deliveredTo: rawDeliveredTo
       ? safeParseEmailAddressAddress(rawDeliveredTo)
       : undefined,

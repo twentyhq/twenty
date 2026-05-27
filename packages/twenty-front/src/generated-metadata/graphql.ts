@@ -1635,7 +1635,6 @@ export type FeatureFlag = {
 };
 
 export enum FeatureFlagKey {
-  IS_EMAILING_DOMAIN_ENABLED = 'IS_EMAILING_DOMAIN_ENABLED',
   IS_EMAIL_GROUP_ENABLED = 'IS_EMAIL_GROUP_ENABLED',
   IS_JSON_FILTER_ENABLED = 'IS_JSON_FILTER_ENABLED',
   IS_JUNCTION_RELATIONS_ENABLED = 'IS_JUNCTION_RELATIONS_ENABLED',
@@ -2504,6 +2503,7 @@ export type Mutation = {
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
   sendChatMessage: SendChatMessageResult;
   sendEmail: SendEmailOutput;
+  sendEmailViaEmailingDomain: SendEmailViaDomainOutput;
   sendInvitations: SendInvitations;
   setEnterpriseKey: EnterpriseLicenseInfoDto;
   setResourceCreditSubscriptionPrice: BillingUpdate;
@@ -3227,6 +3227,11 @@ export type MutationSendChatMessageArgs = {
 
 export type MutationSendEmailArgs = {
   input: SendEmailInput;
+};
+
+
+export type MutationSendEmailViaEmailingDomainArgs = {
+  input: SendEmailViaDomainInput;
 };
 
 
@@ -4783,6 +4788,23 @@ export type SendEmailOutput = {
   __typename?: 'SendEmailOutput';
   error?: Maybe<Scalars['String']>;
   success: Scalars['Boolean'];
+};
+
+export type SendEmailViaDomainInput = {
+  bcc?: InputMaybe<Array<Scalars['String']>>;
+  cc?: InputMaybe<Array<Scalars['String']>>;
+  emailingDomainId: Scalars['String'];
+  from: Scalars['String'];
+  html?: InputMaybe<Scalars['String']>;
+  replyTo?: InputMaybe<Array<Scalars['String']>>;
+  subject: Scalars['String'];
+  text: Scalars['String'];
+  to: Array<Scalars['String']>;
+};
+
+export type SendEmailViaDomainOutput = {
+  __typename?: 'SendEmailViaDomainOutput';
+  messageId: Scalars['String'];
 };
 
 export type SendInvitations = {

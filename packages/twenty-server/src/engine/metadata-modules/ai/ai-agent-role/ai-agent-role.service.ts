@@ -12,12 +12,13 @@ import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/ag
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AiAgentRoleService {
   constructor(
-    @InjectRepository(AgentEntity)
-    private readonly agentRepository: Repository<AgentEntity>,
+    @InjectWorkspaceScopedRepository(AgentEntity)
+    private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
     @InjectRepository(RoleTargetEntity)
@@ -101,11 +102,8 @@ export class AiAgentRoleService {
       return [];
     }
 
-    const agents = await this.agentRepository.find({
-      where: {
-        id: In(agentIds),
-        workspaceId,
-      },
+    const agents = await this.agentRepository.find(workspaceId, {
+      where: { id: In(agentIds) },
     });
 
     return agents;
@@ -120,8 +118,8 @@ export class AiAgentRoleService {
     workspaceId: string;
     roleId: string;
   }) {
-    const agent = await this.agentRepository.findOne({
-      where: { id: agentId, workspaceId },
+    const agent = await this.agentRepository.findOne(workspaceId, {
+      where: { id: agentId },
     });
 
     if (!agent) {
