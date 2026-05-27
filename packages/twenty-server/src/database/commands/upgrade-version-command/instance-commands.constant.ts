@@ -43,7 +43,7 @@ import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/datab
 import { CreateSigningKeyTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778550000000-create-signing-key-table';
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
 import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
-import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798400000000-emailing-domain-tenant-status-and-global-uniqueness';
+import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000020000-emailing-domain-tenant-status-and-global-uniqueness';
 import { EncryptApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000005000-encrypt-application-variable';
 import { EncryptApplicationRegistrationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000006000-encrypt-application-registration-variable';
 import { EncryptSigningKeyPrivateKeysSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000007000-encrypt-signing-key-private-keys';
