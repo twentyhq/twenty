@@ -30,6 +30,7 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
 const WORKSPACE_SCOPED_EXEMPTIONS = new Set<string>([
   'ApplicationEntity',
   'CalendarChannelEntity',
+  'DataSourceEntity',
   'FieldMetadataEntity',
   'KeyValuePairEntity',
   'MessageChannelEntity',
