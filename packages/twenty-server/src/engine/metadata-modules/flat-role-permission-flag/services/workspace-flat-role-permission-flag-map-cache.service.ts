@@ -10,6 +10,8 @@ import { fromRolePermissionFlagEntityToFlatRolePermissionFlag } from 'src/engine
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
@@ -25,8 +27,8 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(RoleEntity)
     private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(PermissionFlagEntity)
-    private readonly permissionFlagRepository: Repository<PermissionFlagEntity>,
+    @InjectWorkspaceScopedRepository(PermissionFlagEntity)
+    private readonly permissionFlagRepository: WorkspaceScopedRepository<PermissionFlagEntity>,
   ) {
     super();
   }
@@ -50,8 +52,7 @@ export class WorkspaceFlatRolePermissionFlagMapCacheService extends WorkspaceCac
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
-        this.permissionFlagRepository.find({
-          where: { workspaceId },
+        this.permissionFlagRepository.find(workspaceId, {
           select: ['id', 'universalIdentifier'],
           withDeleted: true,
         }),
