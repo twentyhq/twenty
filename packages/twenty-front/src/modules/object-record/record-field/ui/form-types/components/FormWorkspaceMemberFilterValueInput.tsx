@@ -9,33 +9,28 @@ import {
   useState,
 } from 'react';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
-import {
-  arrayOfUuidOrVariableSchema,
-  isDefined,
-  jsonRelationFilterValueSchema,
-} from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronDown, IconUserCircle } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
 import { MAX_WORKSPACE_MEMBERS_TO_DISPLAY } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownActorSelect';
-import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputContainer';
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
-import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
-import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
+import { FormWorkspaceMemberFilterValueInputDropdownContent } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputDropdownContent';
+import { FormWorkspaceMemberFilterValueInputTrigger } from '@/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputTrigger';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
-import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
+import {
+  buildWorkspaceMemberFilterJsonValue,
+  type ParsedWorkspaceMemberFilterValue,
+  parseWorkspaceMemberFilterValue,
+} from '@/object-record/record-field/ui/form-types/utils/parseWorkspaceMemberFilterValue';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
 import { type SelectableItem } from '@/object-record/select/types/SelectableItem';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
-import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
-import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
-import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
@@ -49,73 +44,6 @@ const StyledIconButton = styled.div`
   display: flex;
   padding-right: ${themeCssVariables.spacing[2]};
 `;
-
-const StyledTriggerLabel = styled.div`
-  align-items: center;
-  color: ${themeCssVariables.font.color.primary};
-  display: flex;
-  flex: 1;
-  gap: ${themeCssVariables.spacing[1]};
-  margin: ${themeCssVariables.spacing[2]};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-`;
-
-const StyledPlaceholderContainer = styled.div`
-  margin: ${themeCssVariables.spacing[2]};
-`;
-
-type ParsedWorkspaceMemberFilterValue = {
-  isCurrentWorkspaceMemberSelected: boolean;
-  selectedRecordIds: string[];
-};
-
-const parseWorkspaceMemberFilterValue = (
-  rawValue: string | null | undefined,
-): ParsedWorkspaceMemberFilterValue => {
-  if (!isDefined(rawValue) || rawValue === '') {
-    return {
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: [],
-    };
-  }
-
-  const fallbackRecordIds = (() => {
-    try {
-      return arrayOfUuidOrVariableSchema.parse(rawValue);
-    } catch {
-      return [] as string[];
-    }
-  })();
-
-  const parsed = jsonRelationFilterValueSchema
-    .catch({
-      isCurrentWorkspaceMemberSelected: false,
-      selectedRecordIds: fallbackRecordIds,
-    })
-    .parse(rawValue);
-
-  return {
-    isCurrentWorkspaceMemberSelected:
-      parsed.isCurrentWorkspaceMemberSelected ?? false,
-    selectedRecordIds: parsed.selectedRecordIds,
-  };
-};
-
-const buildJsonValue = ({
-  isCurrentWorkspaceMemberSelected,
-  selectedRecordIds,
-}: ParsedWorkspaceMemberFilterValue): string => {
-  if (!isCurrentWorkspaceMemberSelected && selectedRecordIds.length === 0) {
-    return '';
-  }
-
-  return JSON.stringify({
-    isCurrentWorkspaceMemberSelected,
-    selectedRecordIds,
-  });
-};
 
 export type FormWorkspaceMemberFilterValueInputProps = {
   label?: string;
@@ -169,7 +97,7 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   const emitChange = useCallback(
     (next: ParsedWorkspaceMemberFilterValue) => {
-      const jsonValue = buildJsonValue(next);
+      const jsonValue = buildWorkspaceMemberFilterJsonValue(next);
 
       if (jsonValue === '' && onClear) {
         onClear();
@@ -292,20 +220,15 @@ export const FormWorkspaceMemberFilterValueInput = ({
     selectedRecords,
   ]);
 
-  const triggerContent = isVariableValue ? (
-    <VariableChipStandalone
-      rawVariableName={defaultValue ?? ''}
-      onRemove={readonly ? undefined : handleUnlinkVariable}
+  const triggerContent = (
+    <FormWorkspaceMemberFilterValueInputTrigger
+      isVariableValue={isVariableValue}
+      defaultValue={defaultValue}
+      isCurrentWorkspaceMemberSelected={isCurrentWorkspaceMemberSelected}
+      triggerDisplayText={triggerDisplayText}
+      readonly={readonly}
+      onUnlinkVariable={handleUnlinkVariable}
     />
-  ) : isDefined(triggerDisplayText) ? (
-    <StyledTriggerLabel>
-      {isCurrentWorkspaceMemberSelected && <IconUserCircle size={12} />}
-      {triggerDisplayText}
-    </StyledTriggerLabel>
-  ) : (
-    <StyledPlaceholderContainer>
-      <FormFieldPlaceholder>{t`Select`}</FormFieldPlaceholder>
-    </StyledPlaceholderContainer>
   );
 
   return (
@@ -349,36 +272,18 @@ export const FormWorkspaceMemberFilterValueInput = ({
               </StyledFormSelectContainerWrapper>
             }
             dropdownComponents={
-              <DropdownContent
-                widthInPixels={GenericDropdownContentWidth.ExtraLarge}
-              >
-                <DropdownMenuSearchInput
-                  autoFocus
-                  type="text"
-                  value={searchFilter}
-                  onChange={handleSearchChange}
-                />
-                <DropdownMenuSeparator />
-                {filteredPinnedSelectableItems.length > 0 && (
-                  <>
-                    <ObjectFilterDropdownRecordPinnedItems
-                      selectableItems={filteredPinnedSelectableItems}
-                      onChange={handleSelectChange}
-                    />
-                    <DropdownMenuSeparator />
-                  </>
-                )}
-                <MultipleSelectDropdown
-                  selectableListId={selectableListId}
-                  focusId={dropdownId}
-                  itemsToSelect={recordsToSelect}
-                  filteredSelectedItems={filteredSelectedRecords}
-                  selectedItems={selectedRecords}
-                  onChange={handleSelectChange}
-                  searchFilter={searchFilter}
-                  loadingItems={loading}
-                />
-              </DropdownContent>
+              <FormWorkspaceMemberFilterValueInputDropdownContent
+                dropdownId={dropdownId}
+                selectableListId={selectableListId}
+                searchFilter={searchFilter}
+                onSearchChange={handleSearchChange}
+                pinnedSelectableItems={filteredPinnedSelectableItems}
+                recordsToSelect={recordsToSelect}
+                filteredSelectedRecords={filteredSelectedRecords}
+                selectedRecords={selectedRecords}
+                loading={loading}
+                onSelectChange={handleSelectChange}
+              />
             }
           />
         )}
