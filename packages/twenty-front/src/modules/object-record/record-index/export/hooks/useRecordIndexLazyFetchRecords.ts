@@ -107,7 +107,7 @@ export const useRecordIndexLazyFetchRecords = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    flattenedFieldMetadataItems,
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });

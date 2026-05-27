@@ -80,7 +80,7 @@ export default defineObject({
 * Каждому полю требуются `name`, `type`, `label` и собственный стабильный `universalIdentifier`.
 * Массив `fields` необязателен — вы можете определять объекты без пользовательских полей.
 * Встроенным полям, определённым здесь, **не** нужен `objectUniversalIdentifier` — он наследуется от родительского объекта. Используйте [`defineField()`](/l/ru/developers/extend/apps/data/extending-objects), чтобы добавить поля к объектам, которые вам не принадлежат.
-* Вы можете сгенерировать новые объекты с помощью `yarn twenty add object`, который проведёт вас через выбор именования, полей и связей. См. [Architecture → Scaffolding entities](/l/ru/developers/extend/apps/getting-started/scaffolding).
+* Вы можете сгенерировать заготовки новых объектов с помощью `yarn twenty dev:add object`, который проведёт вас через настройку названий, полей и связей. См. [Architecture → Scaffolding entities](/l/ru/developers/extend/apps/getting-started/scaffolding).
 
 <Note>
 **Базовые поля добавляются автоматически.** Когда вы определяете пользовательский объект, Twenty создаёт для вас стандартные поля, такие как `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` и `deletedAt`. Вам не нужно объявлять их в массиве `fields` — только ваши пользовательские поля. Вы можете переопределить базовое поле, объявив поле с тем же именем, но это редко бывает хорошей идеей.

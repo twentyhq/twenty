@@ -29,12 +29,14 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   public async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'id' | 'provider' | 'connectionParameters' | 'handle'
+      'id' | 'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
     try {
-      const client = await this.imapClientProvider.getClient(connectedAccount);
+      const client = await this.imapClientProvider.getClient(
+        connectedAccount.id,
+      );
 
       const mailboxList = await client.list();
 

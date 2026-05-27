@@ -151,8 +151,8 @@ const innerServerStart = async (
 
   if (!checkDockerRunning()) {
     const retryCommand = isTest
-      ? 'yarn twenty server start --test'
-      : 'yarn twenty server start';
+      ? 'yarn twenty docker:start --test'
+      : 'yarn twenty docker:start';
 
     return {
       success: false,
@@ -177,7 +177,7 @@ const innerServerStart = async (
           code: SERVER_ERROR_CODES.HEALTH_TIMEOUT,
           message:
             'Twenty server did not become healthy in time.\n' +
-            "Check: 'yarn twenty server logs'",
+            "Check: 'yarn twenty docker:logs'",
         },
       };
     }
@@ -202,7 +202,7 @@ const innerServerStart = async (
 
     if (existingPort !== port) {
       onProgress?.(
-        `Existing container uses port ${existingPort}. Run 'yarn twenty server reset${isTest ? ' --test' : ''}' first to change ports.`,
+        `Existing container uses port ${existingPort}. Run 'yarn twenty docker:reset${isTest ? ' --test' : ''}' first to change ports.`,
       );
     }
 
@@ -257,7 +257,7 @@ const innerServerStart = async (
         code: SERVER_ERROR_CODES.HEALTH_TIMEOUT,
         message:
           'Twenty server did not become healthy in time.\n' +
-          "Check: 'yarn twenty server logs'",
+          "Check: 'yarn twenty docker:logs'",
       },
     };
   }

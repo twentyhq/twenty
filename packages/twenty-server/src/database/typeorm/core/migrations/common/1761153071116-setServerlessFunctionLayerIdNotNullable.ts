@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class SetServerlessFunctionLayerIdNotNullable1761153071116
-  implements MigrationInterface
-{
+export class SetServerlessFunctionLayerIdNotNullable1761153071116 implements MigrationInterface {
   name = 'SetServerlessFunctionLayerIdNotNullable1761153071116';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

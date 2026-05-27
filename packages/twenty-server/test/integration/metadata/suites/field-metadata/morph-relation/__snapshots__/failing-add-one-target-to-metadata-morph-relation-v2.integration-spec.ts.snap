@@ -72,7 +72,7 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,
@@ -145,7 +145,7 @@ exports[`updateOne FieldMetadataService morph relation fields v2 - Add one targe
         },
       ],
     },
-    "message": "Validation failed for 2 fieldMetadatas, 1 index",
+    "message": "Validation failed for 2 fieldMetadata, 1 index",
     "summary": {
       "fieldMetadata": 2,
       "index": 1,

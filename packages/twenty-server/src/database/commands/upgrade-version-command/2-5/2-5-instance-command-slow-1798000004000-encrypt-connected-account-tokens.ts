@@ -26,9 +26,7 @@ const isPlaintext = (value: string | null): value is string =>
   isDefined(value) && !value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX);
 
 @RegisteredInstanceCommand('2.5.0', 1798000004000, { type: 'slow' })
-export class EncryptConnectedAccountTokensSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}

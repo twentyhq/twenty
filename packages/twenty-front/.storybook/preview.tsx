@@ -5,11 +5,17 @@ import { initialize, mswLoader } from 'msw-storybook-addon';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 // oxlint-disable-next-line no-restricted-imports
+import { DateFormat } from '../src/modules/localization/constants/DateFormat';
+// oxlint-disable-next-line no-restricted-imports
+import { TimeFormat } from '../src/modules/localization/constants/TimeFormat';
+// oxlint-disable-next-line no-restricted-imports
 import { FileUploadProvider } from '../src/modules/file-upload/components/FileUploadProvider';
 // oxlint-disable-next-line no-restricted-imports
 import { RootDecorator } from '../src/testing/decorators/RootDecorator';
 // oxlint-disable-next-line no-restricted-imports
 import { resetJotaiStore } from '../src/modules/ui/utilities/state/jotai/jotaiStore';
+// oxlint-disable-next-line no-restricted-imports
+import { UserContext } from '../src/modules/users/contexts/UserContext';
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import 'twenty-ui/style.css';
@@ -59,6 +65,16 @@ initialize({
   quiet: true,
 });
 
+// Mirrors production's MinimalMetadataGater so any story rendering a
+// date-aware component (DateTimeDisplay, etc.) sees a real IANA timeZone
+// instead of UserContext's default `{}`. Stories needing a specific timezone
+// can still override by nesting their own UserContext.Provider.
+const STORYBOOK_DEFAULT_USER_CONTEXT = {
+  dateFormat: DateFormat.DAY_FIRST,
+  timeFormat: TimeFormat.HOUR_24,
+  timeZone: 'UTC',
+};
+
 const preview: Preview = {
   decorators: [
     (Story) => {
@@ -69,7 +85,9 @@ const preview: Preview = {
               <ClickOutsideListenerContext.Provider
                 value={{ excludedClickOutsideId: undefined }}
               >
-                <Story />
+                <UserContext.Provider value={STORYBOOK_DEFAULT_USER_CONTEXT}>
+                  <Story />
+                </UserContext.Provider>
               </ClickOutsideListenerContext.Provider>
             </FileUploadProvider>
           </ThemeProvider>

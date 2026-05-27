@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddSystemRoleToAgentMessage1764210000000
-  implements MigrationInterface
-{
+export class AddSystemRoleToAgentMessage1764210000000 implements MigrationInterface {
   name = 'AddSystemRoleToAgentMessage1764210000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

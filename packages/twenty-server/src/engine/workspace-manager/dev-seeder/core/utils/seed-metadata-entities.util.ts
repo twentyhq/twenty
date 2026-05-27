@@ -13,10 +13,10 @@ import {
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
 import { USER_WORKSPACE_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/utils/seed-user-workspaces.util';
-import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/calendar-channel-data-seeds.constant';
+import { CALENDAR_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/calendar-channel-seed-ids.constant';
+import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-channel-seed-ids.constant';
+import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/core/constants/message-folder-seed-ids.constant';
 import { CONNECTED_ACCOUNT_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/connected-account-data-seeds.constant';
-import { MESSAGE_CHANNEL_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-channel-data-seeds.constant';
-import { MESSAGE_FOLDER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev-seeder/data/constants/message-folder-data-seeds.constant';
 
 type SeedMetadataEntitiesArgs = {
   queryRunner: QueryRunner;
@@ -40,7 +40,7 @@ const YC_MESSAGE_CHANNEL_IDS = {
   JANE: '30303030-8c4d-4e71-a672-2e6a8c9f1b3d',
   SUPPORT: '30303030-e2f1-49b5-85d2-5d3a3386990d',
   SALES: '30303030-e2f1-49b5-85d2-5d3a3386990e',
-};
+} as const;
 
 const YC_CALENDAR_CHANNEL_IDS = {
   TIM: '30303030-a40f-4faf-bb9f-c6f9945b8203',
@@ -49,7 +49,7 @@ const YC_CALENDAR_CHANNEL_IDS = {
   JANE: '30303030-a40f-4faf-bb9f-c6f9945b8208',
   COMPANY_MAIN: '30303030-a40f-4faf-bb9f-c6f9945b8206',
   TEAM_CALENDAR: '30303030-a40f-4faf-bb9f-c6f9945b8207',
-};
+} as const;
 
 const YC_MESSAGE_FOLDER_IDS = {
   TIM_INBOX: '30303030-1234-4567-8901-abcdef012345',
@@ -57,22 +57,9 @@ const YC_MESSAGE_FOLDER_IDS = {
   JONY_INBOX: '30303030-1234-4567-8901-abcdef012346',
   JANE_INBOX: '30303030-1234-4567-8901-abcdef012347',
   JANE_SENT: '30303030-1234-4567-8901-abcdef012348',
-};
+} as const;
 
-type WorkspaceSeedIds = {
-  userWorkspaceIds: {
-    TIM: string;
-    JONY: string;
-    PHIL: string;
-    JANE: string;
-  };
-  connectedAccountIds: typeof CONNECTED_ACCOUNT_DATA_SEED_IDS;
-  messageChannelIds: typeof MESSAGE_CHANNEL_DATA_SEED_IDS;
-  calendarChannelIds: typeof CALENDAR_CHANNEL_DATA_SEED_IDS;
-  messageFolderIds: typeof MESSAGE_FOLDER_DATA_SEED_IDS;
-};
-
-const getSeedIds = (workspaceId: string): WorkspaceSeedIds => {
+const getSeedIds = (workspaceId: string) => {
   if (workspaceId === SEED_YCOMBINATOR_WORKSPACE_ID) {
     return {
       userWorkspaceIds: {

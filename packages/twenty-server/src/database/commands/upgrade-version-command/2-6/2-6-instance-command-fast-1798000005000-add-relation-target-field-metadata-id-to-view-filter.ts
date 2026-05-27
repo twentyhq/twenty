@@ -4,12 +4,10 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.6.0', 1798000005000)
-export class AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" ADD "relationTargetFieldMetadataId" uuid`,
+      `ALTER TABLE "core"."viewFilter" ADD COLUMN IF NOT EXISTS "relationTargetFieldMetadataId" uuid`,
     );
     await queryRunner.query(
       `CREATE INDEX "IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID" ON "core"."viewFilter" ("relationTargetFieldMetadataId") WHERE "relationTargetFieldMetadataId" IS NOT NULL`,
@@ -27,7 +25,7 @@ export class AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand
       `DROP INDEX "core"."IDX_VIEW_FILTER_RELATION_TARGET_FIELD_METADATA_ID"`,
     );
     await queryRunner.query(
-      `ALTER TABLE "core"."viewFilter" DROP COLUMN "relationTargetFieldMetadataId"`,
+      `ALTER TABLE "core"."viewFilter" DROP COLUMN IF EXISTS "relationTargetFieldMetadataId"`,
     );
   }
 }

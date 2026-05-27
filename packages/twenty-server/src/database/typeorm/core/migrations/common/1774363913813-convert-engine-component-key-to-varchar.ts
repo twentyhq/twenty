@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class ConvertEngineComponentKeyToVarchar1774363913813
-  implements MigrationInterface
-{
+export class ConvertEngineComponentKeyToVarchar1774363913813 implements MigrationInterface {
   name = 'ConvertEngineComponentKeyToVarchar1774363913813';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

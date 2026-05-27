@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddSuspendedAtColumnOnWorkspaceTable1770198374736
-  implements MigrationInterface
-{
+export class AddSuspendedAtColumnOnWorkspaceTable1770198374736 implements MigrationInterface {
   name = 'AddSuspendedAtColumnOnWorkspaceTable1770198374736';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

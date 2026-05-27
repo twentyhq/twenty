@@ -13,8 +13,8 @@ icon: bolt
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
-import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -61,17 +61,17 @@ export default defineLogicFunction({
 你也可以使用 CLI 手动执行函数：
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 你可以通过以下方式查看日志：
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
@@ -79,10 +79,10 @@ yarn twenty logs
 
 当路由触发器调用你的逻辑函数时，它会接收一个遵循
 [AWS HTTP API v2 格式](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html)的 `RoutePayload` 对象。
-从 `twenty-sdk` 导入 `RoutePayload` 类型：
+从 `twenty-sdk/logic-function` 导入 `RoutePayload` 类型：
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -140,6 +140,115 @@ const handler = async (event: RoutePayload) => {
 <Note>
 请求头名称会被规范化为小写。 请使用小写键访问它们（例如，`event.headers['content-type']`）。
 </Note>
+
+#### 数据库事件触发器有效负载
+
+当数据库事件触发器调用你的逻辑函数时，每条被更改的记录都会对应一个 `DatabaseEventPayload`。 该负载将关于源工作区和对象的元数据与记录级事件组合在一起。
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+有效负载包括：
+
+| 属性                                               | 描述                                                           |
+| ------------------------------------------------ | ------------------------------------------------------------ |
+| `name`                                           | 事件名称，例如 `person.updated`。                                    |
+| `workspaceId`                                    | 事件发生的工作区。                                                    |
+| `objectMetadata`                                 | 已更改对象的元数据。                                                   |
+| `recordId`                                       | 已更改记录的 ID。                                                   |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | 当事件由工作区用户触发时的操作者字段。                                          |
+| `properties`                                     | 事件的记录数据，根据操作不同，包含 `before`、`after`、`diff` 和 `updatedFields`。 |
+
+| 事件                 | 记录数据                                                                                                           |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+对于软删除，`.deleted` 遵循更新样式的结构，因为记录的 `deletedAt` 字段发生了变化。
+对于永久删除，请使用 `.destroyed`。
+
+<Note>
+`databaseEventTriggerSettings.updatedFields` 会筛选出哪些更新事件会触发该函数。
+`event.properties.updatedFields` 告诉你在当前事件中哪些字段实际发生了变化。
+</Note>
+
+创建事件示例：
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+更新事件示例：
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+仅在 email 更新时触发：
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+销毁事件示例：
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
 
 #### 将函数公开为 AI 工具或工作流操作
 
@@ -232,7 +341,7 @@ export default defineLogicFunction({
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="查询和变更工作区数据（记录、对象）">
 
-`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty build` 时**根据你的工作区架构生成**，因此完全类型化以匹配你的对象和字段。
+`CoreApiClient` 是用于查询和变更工作区数据的主要客户端。 它会在执行 `yarn twenty dev` 或 `yarn twenty dev:build` 时**根据你的工作区架构生成**，因此具有完整的类型定义以匹配你的对象和字段。
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -272,7 +381,7 @@ const { createCompany } = await client.mutation({
 该客户端使用选择集语法：传入 `true` 以包含某字段，使用 `__args` 传递参数，并通过嵌套对象表示关系。 你将基于工作区架构获得完整的自动补全和类型检查。
 
 <Note>
-**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
+**CoreApiClient 在开发/构建时生成。** 如果在未先运行 `yarn twenty dev` 或 `yarn twenty dev:build` 的情况下尝试使用它，将会抛出错误。 该生成过程是自动完成的——CLI 会自省你的工作区 GraphQL 架构，并使用 `@genql/cli` 生成类型化客户端。
 </Note>
 
 #### 使用 CoreSchema 进行类型标注

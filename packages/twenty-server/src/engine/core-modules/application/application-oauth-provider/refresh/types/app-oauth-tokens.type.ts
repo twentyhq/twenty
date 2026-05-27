@@ -4,5 +4,5 @@
 
 export type AppOAuthTokens = {
   accessToken: string;
-  refreshToken: string;
+  refreshToken: string | null;
 };

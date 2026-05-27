@@ -1,7 +1,9 @@
 import { type DynamicModule, Global } from '@nestjs/common';
+import { APP_FILTER } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
+import { FileStorageExceptionFilter } from 'src/engine/core-modules/file-storage/file-storage-exception-filter';
 import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -16,7 +18,14 @@ export class FileStorageModule {
         TwentyConfigModule,
         TypeOrmModule.forFeature([FileEntity, ApplicationEntity]),
       ],
-      providers: [FileStorageDriverFactory, FileStorageService],
+      providers: [
+        FileStorageDriverFactory,
+        FileStorageService,
+        {
+          provide: APP_FILTER,
+          useClass: FileStorageExceptionFilter,
+        },
+      ],
       exports: [FileStorageDriverFactory, FileStorageService],
     };
   }

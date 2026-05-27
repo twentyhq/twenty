@@ -4,7 +4,7 @@ description: Yaygın ilk çalıştırma sorunları — Docker, Node sürümü, Y
 icon: anahtar
 ---
 
-* **Docker hataları** — `yarn twenty server start` öncesinde Docker Desktop'ın (veya daemon'ın) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
+* **Docker hataları** — `yarn twenty docker:start` öncesinde Docker Desktop'ın (veya daemon'un) çalıştığından emin olun. Hata iletisi, işletim sisteminiz için doğru başlatma komutunu gösterecektir.
 * **Yanlış Node sürümü** — 24+ gerekir. `node -v` ile kontrol edin.
 * **Yarn 4 eksik** — `corepack enable` çalıştırın.
 * **Bağımlılıklar bozuk** — `rm -rf node_modules && yarn install`.

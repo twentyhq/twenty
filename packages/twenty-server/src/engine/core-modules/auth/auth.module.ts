@@ -69,6 +69,7 @@ import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadat
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
@@ -127,6 +128,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     EnterpriseModule,
     FileModule,
     ConnectedAccountTokenEncryptionModule,
+    EmailAliasManagerModule,
   ],
   controllers: [
     GoogleAuthController,

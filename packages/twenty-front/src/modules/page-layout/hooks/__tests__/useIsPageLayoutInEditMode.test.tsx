@@ -75,6 +75,7 @@ describe('useIsPageLayoutInEditMode', () => {
         name: 'Record Page',
         type: PageLayoutType.RECORD_PAGE,
         objectMetadataId: 'company-id',
+        universalIdentifier: '20202020-0000-0000-0000-000000000001',
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         deletedAt: null,

@@ -25,6 +25,6 @@ export const checkServerVersionCompatibility = async (
       `⚠ Local Twenty server is v${info.localServerVersion} (${info.daysBehind} days behind v${info.latestServerVersion}).`,
     ),
   );
-  console.warn(chalk.dim('  Update with: yarn twenty server upgrade'));
+  console.warn(chalk.dim('  Update with: yarn twenty docker:upgrade'));
   console.warn('');
 };

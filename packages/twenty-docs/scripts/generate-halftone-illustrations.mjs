@@ -53,75 +53,81 @@ async function main() {
     const base64 = imageBytes.toString('base64');
     const mime = sourcePath.endsWith('.png') ? 'image/png' : 'image/jpeg';
 
-    const resultBase64 = await page.evaluate(async ({ b64, m }) => {
-      const LINE_SPACING = 8;
-      const MIN_LINE_WIDTH = 0.5;
-      const MAX_LINE_WIDTH = 6;
-      const COLOR = { r: 74, g: 56, b: 245 }; // #4A38F5
-      const TRANSPARENT_BG = true;
+    const resultBase64 = await page.evaluate(
+      async ({ b64, m }) => {
+        const LINE_SPACING = 8;
+        const MIN_LINE_WIDTH = 0.5;
+        const MAX_LINE_WIDTH = 6;
+        const COLOR = { r: 74, g: 56, b: 245 }; // #4A38F5
+        const TRANSPARENT_BG = true;
 
-      const img = new Image();
-      await new Promise((res, rej) => {
-        img.onload = res;
-        img.onerror = rej;
-        img.src = `data:${m};base64,${b64}`;
-      });
+        const img = new Image();
+        await new Promise((res, rej) => {
+          img.onload = res;
+          img.onerror = rej;
+          img.src = `data:${m};base64,${b64}`;
+        });
 
-      const { width, height } = img;
-      const scale = 2;
-      const outW = width * scale;
-      const outH = height * scale;
+        const { width, height } = img;
+        const scale = 2;
+        const outW = width * scale;
+        const outH = height * scale;
 
-      // Read source pixels
-      const tmp = document.createElement('canvas');
-      tmp.width = width;
-      tmp.height = height;
-      const tmpCtx = tmp.getContext('2d');
-      tmpCtx.drawImage(img, 0, 0);
-      const px = tmpCtx.getImageData(0, 0, width, height).data;
+        // Read source pixels
+        const tmp = document.createElement('canvas');
+        tmp.width = width;
+        tmp.height = height;
+        const tmpCtx = tmp.getContext('2d');
+        tmpCtx.drawImage(img, 0, 0);
+        const px = tmpCtx.getImageData(0, 0, width, height).data;
 
-      // Output canvas
-      const out = document.createElement('canvas');
-      out.width = outW;
-      out.height = outH;
-      const ctx = out.getContext('2d');
-      // Transparent background — adapts to both light and dark mode
+        // Output canvas
+        const out = document.createElement('canvas');
+        out.width = outW;
+        out.height = outH;
+        const ctx = out.getContext('2d');
+        // Transparent background — adapts to both light and dark mode
 
-      const sp = LINE_SPACING * scale;
+        const sp = LINE_SPACING * scale;
 
-      for (let y = sp / 2; y < outH; y += sp) {
-        const srcY = Math.min(Math.floor(y / scale), height - 1);
-        let x = 0;
+        for (let y = sp / 2; y < outH; y += sp) {
+          const srcY = Math.min(Math.floor(y / scale), height - 1);
+          let x = 0;
 
-        while (x < outW) {
-          const srcX = Math.min(Math.floor(x / scale), width - 1);
-          const i = (srcY * width + srcX) * 4;
-          const lum = (0.299 * px[i] + 0.587 * px[i+1] + 0.114 * px[i+2]) / 255;
-          const a = px[i+3] / 255;
-          const dark = (1 - lum) * a;
+          while (x < outW) {
+            const srcX = Math.min(Math.floor(x / scale), width - 1);
+            const i = (srcY * width + srcX) * 4;
+            const lum =
+              (0.299 * px[i] + 0.587 * px[i + 1] + 0.114 * px[i + 2]) / 255;
+            const a = px[i + 3] / 255;
+            const dark = (1 - lum) * a;
 
-          if (dark > 0.2) {
-            const w = (MIN_LINE_WIDTH + (MAX_LINE_WIDTH - MIN_LINE_WIDTH) * dark) * scale;
-            const dashLen = sp * (0.3 + 0.7 * dark);
-            const gap = sp * (0.1 + 0.4 * (1 - dark));
-            const alpha = 0.3 + 0.7 * dark;
+            if (dark > 0.2) {
+              const w =
+                (MIN_LINE_WIDTH + (MAX_LINE_WIDTH - MIN_LINE_WIDTH) * dark) *
+                scale;
+              const dashLen = sp * (0.3 + 0.7 * dark);
+              const gap = sp * (0.1 + 0.4 * (1 - dark));
+              const alpha = 0.3 + 0.7 * dark;
 
-            ctx.strokeStyle = `rgba(${COLOR.r},${COLOR.g},${COLOR.b},${alpha})`;
-            ctx.lineWidth = w;
-            ctx.lineCap = 'round';
-            ctx.beginPath();
-            ctx.moveTo(x, y);
-            ctx.lineTo(Math.min(x + dashLen, outW), y);
-            ctx.stroke();
-            x += dashLen + gap;
-          } else {
-            x += sp * 0.5;
+              ctx.strokeStyle = `rgba(${COLOR.r},${COLOR.g},${COLOR.b},${alpha})`;
+              ctx.lineWidth = w;
+              ctx.lineCap = 'round';
+              ctx.beginPath();
+              ctx.moveTo(x, y);
+              ctx.lineTo(Math.min(x + dashLen, outW), y);
+              ctx.stroke();
+              x += dashLen + gap;
+            } else {
+              x += sp * 0.5;
+            }
           }
         }
-      }
 
-      return out.toDataURL('image/png').split(',')[1];
-    }, { b64: base64, m: mime });
+        return out.toDataURL('image/png').split(',')[1];
+      },
+      { b64: base64, m: mime },
+    );
 
     const outputPath = join(OUTPUT_DIR, `${illust.name}.png`);
     writeFileSync(outputPath, Buffer.from(resultBase64, 'base64'));

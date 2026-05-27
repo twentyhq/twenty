@@ -259,7 +259,18 @@ describe('computeSchemaComponents', () => {
         "properties": {
           "additionalPhones": {
             "items": {
-              "type": "string",
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
             },
             "type": "array",
           },
@@ -491,7 +502,18 @@ describe('computeSchemaComponents', () => {
         "properties": {
           "additionalPhones": {
             "items": {
-              "type": "string",
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
             },
             "type": "array",
           },
@@ -752,7 +774,18 @@ describe('computeSchemaComponents', () => {
         "properties": {
           "additionalPhones": {
             "items": {
-              "type": "string",
+              "properties": {
+                "callingCode": {
+                  "type": "string",
+                },
+                "countryCode": {
+                  "type": "string",
+                },
+                "number": {
+                  "type": "string",
+                },
+              },
+              "type": "object",
             },
             "type": "array",
           },

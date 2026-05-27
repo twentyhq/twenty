@@ -56,12 +56,15 @@ export class BillingUsageService {
       return true;
     }
 
-    const billingSubscription =
-      await this.billingSubscriptionService.getCurrentBillingSubscription({
-        workspaceId,
-      });
+    const { billingSubscription } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'billingSubscription',
+      ]);
 
-    return !!billingSubscription;
+    return (
+      isDefined(billingSubscription) &&
+      billingSubscription.status !== SubscriptionStatus.Canceled
+    );
   }
 
   async getResourceCreditProductUsage(
@@ -314,7 +317,10 @@ export class BillingUsageService {
         -usedCredits,
       );
 
-    if (decrementedAvailableCredits <= 0) {
+    const hasJustReachedCap =
+      availableCredits > 0 && decrementedAvailableCredits <= 0;
+
+    if (hasJustReachedCap) {
       await this.billingUsageCapService.setSubscriptionItemHasReachedCap(
         workspaceId,
         true,

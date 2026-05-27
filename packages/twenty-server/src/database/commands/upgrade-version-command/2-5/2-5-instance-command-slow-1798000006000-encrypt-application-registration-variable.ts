@@ -19,9 +19,7 @@ type ApplicationRegistrationVariableRow = {
 };
 
 @RegisteredInstanceCommand('2.5.0', 1798000006000, { type: 'slow' })
-export class EncryptApplicationRegistrationVariableSlowInstanceCommand
-  implements SlowInstanceCommand
-{
+export class EncryptApplicationRegistrationVariableSlowInstanceCommand implements SlowInstanceCommand {
   constructor(
     private readonly secretEncryptionService: SecretEncryptionService,
   ) {}

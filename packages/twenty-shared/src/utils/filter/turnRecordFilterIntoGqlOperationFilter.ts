@@ -55,7 +55,7 @@ import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation
 import { arrayOfUuidOrVariableSchema } from '@/utils/filter/utils/validation-schemas/arrayOfUuidsOrVariablesSchema';
 import { jsonRelationFilterValueSchema } from '@/utils/filter/utils/validation-schemas/jsonRelationFilterValueSchema';
 
-type FieldShared = {
+export type FieldShared = {
   id: string;
   name: string;
   type: FieldMetadataType;
@@ -65,18 +65,18 @@ type FieldShared = {
 type TurnRecordFilterIntoRecordGqlOperationFilterParams = {
   filterValueDependencies: RecordFilterValueDependencies;
   recordFilter: Omit<RecordFilter, 'id'>;
-  fieldMetadataItems: FieldShared[];
+  fieldMetadataItemById: Map<string, FieldShared>;
 };
 
 export const turnRecordFilterIntoRecordGqlOperationFilter = ({
   recordFilter,
-  fieldMetadataItems,
+  fieldMetadataItemById,
   filterValueDependencies,
 }: TurnRecordFilterIntoRecordGqlOperationFilterParams):
   | RecordGqlOperationFilter
   | undefined => {
-  const sourceFieldMetadataItem = fieldMetadataItems.find(
-    (field) => field.id === recordFilter.fieldMetadataId,
+  const sourceFieldMetadataItem = fieldMetadataItemById.get(
+    recordFilter.fieldMetadataId,
   );
 
   if (!isDefined(sourceFieldMetadataItem)) {
@@ -91,8 +91,8 @@ export const turnRecordFilterIntoRecordGqlOperationFilter = ({
     sourceFieldMetadataItem.type === FieldMetadataType.RELATION &&
     isDefined(recordFilter.relationTargetFieldMetadataId)
   ) {
-    const targetFieldMetadataItem = fieldMetadataItems.find(
-      (field) => field.id === recordFilter.relationTargetFieldMetadataId,
+    const targetFieldMetadataItem = fieldMetadataItemById.get(
+      recordFilter.relationTargetFieldMetadataId,
     );
 
     if (!isDefined(targetFieldMetadataItem)) {
@@ -507,6 +507,14 @@ const buildDirectFieldGqlOperationFilter = ({
               eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
             } as RatingFilter,
           };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                eq: convertRatingToRatingValue(parseFloat(recordFilter.value)),
+              } as RatingFilter,
+            },
+          };
         case RecordFilterOperand.GREATER_THAN_OR_EQUAL:
           return {
             [fieldMetadataItem.name]: {
@@ -562,24 +570,31 @@ const buildDirectFieldGqlOperationFilter = ({
           );
       }
     case 'RELATION': {
-      const { isCurrentWorkspaceMemberSelected, selectedRecordIds } =
-        jsonRelationFilterValueSchema
-          .catch({
-            isCurrentWorkspaceMemberSelected: false,
-            selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
-              recordFilter.value,
-            ),
-          })
-          .parse(recordFilter.value);
+      const {
+        isCurrentWorkspaceMemberSelected,
+        isCurrentRecordSelected,
+        selectedRecordIds,
+      } = jsonRelationFilterValueSchema
+        .catch({
+          isCurrentWorkspaceMemberSelected: false,
+          isCurrentRecordSelected: false,
+          selectedRecordIds: arrayOfUuidOrVariableSchema.parse(
+            recordFilter.value,
+          ),
+        })
+        .parse(recordFilter.value);
 
-      const recordIds = isCurrentWorkspaceMemberSelected
-        ? [
-            ...selectedRecordIds,
-            filterValueDependencies?.currentWorkspaceMemberId,
-          ]
-        : selectedRecordIds;
+      const recordIds = [
+        ...selectedRecordIds,
+        ...(isCurrentWorkspaceMemberSelected
+          ? [filterValueDependencies?.currentWorkspaceMemberId]
+          : []),
+        ...(isCurrentRecordSelected
+          ? [filterValueDependencies?.currentRecordId]
+          : []),
+      ].filter(isDefined);
 
-      if (!isDefined(recordIds) || recordIds.length === 0) return;
+      if (recordIds.length === 0) return;
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
@@ -1525,9 +1540,16 @@ const buildDirectFieldGqlOperationFilter = ({
       };
     }
     case 'UUID': {
-      const recordIds = arrayOfUuidOrVariableSchema.parse(recordFilter.value);
+      const parsedRecordIds = arrayOfUuidOrVariableSchema.parse(
+        recordFilter.value,
+      );
 
-      if (!isDefined(recordIds) || recordIds.length === 0) return;
+      // Fall back to a sentinel v4 UUID when the input isn't a valid UUID so the
+      // filter compiles to a guaranteed no-match instead of being silently dropped.
+      const recordIds =
+        isDefined(parsedRecordIds) && parsedRecordIds.length > 0
+          ? parsedRecordIds
+          : ['00000000-0000-4000-8000-000000000000'];
 
       switch (recordFilter.operand) {
         case RecordFilterOperand.IS:
@@ -1535,6 +1557,14 @@ const buildDirectFieldGqlOperationFilter = ({
             [fieldMetadataItem.name]: {
               in: recordIds,
             } as UUIDFilter,
+          };
+        case RecordFilterOperand.IS_NOT:
+          return {
+            not: {
+              [fieldMetadataItem.name]: {
+                in: recordIds,
+              } as UUIDFilter,
+            },
           };
         default:
           throw new Error(

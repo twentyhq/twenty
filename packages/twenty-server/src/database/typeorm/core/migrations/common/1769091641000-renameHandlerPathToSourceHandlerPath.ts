@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RenameHandlerPathToSourceHandlerPath1769091641000
-  implements MigrationInterface
-{
+export class RenameHandlerPathToSourceHandlerPath1769091641000 implements MigrationInterface {
   name = 'RenameHandlerPathToSourceHandlerPath1769091641000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

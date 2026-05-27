@@ -95,7 +95,8 @@ export type RecordTableConfiguration = {
 export type FieldConfiguration = {
   configurationType: 'FIELD';
   fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW';
+  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW' | 'TABLE';
+  viewId?: string;
 };
 
 export type FieldsConfiguration = {

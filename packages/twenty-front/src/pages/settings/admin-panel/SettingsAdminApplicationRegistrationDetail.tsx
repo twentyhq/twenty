@@ -9,6 +9,7 @@ import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApo
 import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import {
+  Avatar,
   IconInfoCircle,
   IconKey,
   IconSettings,
@@ -21,9 +22,17 @@ import { SettingsApplicationRegistrationGeneralTab } from '~/pages/settings/appl
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { styled } from '@linaria/react';
 
 const REGISTRATION_DETAIL_TAB_LIST_ID =
   'admin-application-registration-detail-tab-list';
+
+const StyledTitleContainer = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
 
 export const SettingsAdminApplicationRegistrationDetail = () => {
   const { t } = useLingui();
@@ -66,6 +75,7 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
         return (
           <SettingsApplicationRegistrationConfigTab
             registration={registration}
+            fromAdmin
           />
         );
       case 'oauth':
@@ -93,7 +103,18 @@ export const SettingsAdminApplicationRegistrationDetail = () => {
 
   return (
     <SubMenuTopBarContainer
-      title={registration.name}
+      title={
+        <StyledTitleContainer>
+          <Avatar
+            type="app"
+            size="md"
+            avatarUrl={registration.logoUrl ?? undefined}
+            placeholder={registration.name}
+            placeholderColorSeed={registration.name}
+          />
+          {registration.name}
+        </StyledTitleContainer>
+      }
       links={[
         {
           children: t`Other`,

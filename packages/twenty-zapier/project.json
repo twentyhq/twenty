@@ -16,7 +16,12 @@
       "executor": "nx:run-commands",
       "options": {
         "cwd": "{projectRoot}",
-        "commands": ["prettier . --write \"!build\""]
+        "commands": ["npx oxfmt ."]
+      },
+      "configurations": {
+        "check": {
+          "commands": ["npx oxfmt --check ."]
+        }
       }
     },
     "test": {
