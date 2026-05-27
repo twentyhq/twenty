@@ -51,7 +51,7 @@ The development loop is:
 create → develop → sync → validate → repeat
 ```
 
-1. **Create**: `npx create-twenty-app@latest <app-name>` generates the project, installs dependencies, starts a local Twenty server, and runs an initial sync.
+1. **Create**: `npx create-twenty-app@latest <app-name>` generates the project, installs dependencies, starts a local Twenty server, and runs an initial sync. The scaffolder handles everything in one command — do not run `yarn twenty dev --once` after scaffolding because the sync already happened.
 
 2. **Develop**: Add or modify entities in `src/`. Objects go in `src/objects/`, front components in `src/front-components/`, logic functions in `src/logic-functions/`, page layouts in `src/page-layouts/`, and so on. Each entity file exports a `define*` call.
 

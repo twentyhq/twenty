@@ -32,30 +32,21 @@ For a local Docker instance (default):
 
 ```bash
 npx create-twenty-app@latest <app-name>
-cd <app-name>
-yarn twenty dev --once
 ```
 
 For an existing Twenty instance:
 
 ```bash
 npx create-twenty-app@latest <app-name> --url <twenty-instance-url>
-cd <app-name>
-yarn twenty dev --once
 ```
 
 The `--url` flag skips Docker setup and authenticates via OAuth on the provided instance. The scaffolder opens a browser for the OAuth flow, then stores the credentials as a remote in `~/.twenty/config.json`.
 
-The scaffolder creates the project, enables corepack, installs dependencies, initializes Git, authenticates with the target instance, runs an initial sync, and opens the generated app page when possible.
+The scaffolder handles everything: it creates the project, enables corepack, installs dependencies, initializes Git, authenticates with the target instance, runs an initial sync, and opens the generated app page when possible.
 
-After the scaffolder completes successfully, run a one-shot sync to confirm the app is deployed:
+Do not run `yarn twenty dev --once` after scaffolding. The scaffolder already performs the initial sync. Running it again is redundant and will fail if the Codex environment has a different Node or Yarn version than the project expects.
 
-```bash
-cd <app-name>
-yarn twenty dev --once
-```
-
-Always use `--once` to synchronize the app. Do not use bare `yarn twenty dev` (watch mode). Run `yarn twenty dev --once` each time you need to sync changes to the active remote.
+After the scaffolder completes, `cd` into the project directory and confirm the files are in place. The app is already synced and installed on the target instance.
 
 If the user provides a package name, display name, or description, pass them through:
 
@@ -64,6 +55,8 @@ npx create-twenty-app@latest <app-directory> --name "<package-name>" --display-n
 ```
 
 Supported create-time options are `--name`, `--display-name`, `--description`, `--url`, and `--authentication-method`.
+
+When the user later makes changes to the app entities, use `yarn twenty dev --once` to sync those changes. See the `manage-app` skill for sync workflow.
 
 ## Docker Troubleshooting
 
