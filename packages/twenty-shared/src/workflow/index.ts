@@ -81,7 +81,10 @@ export type {
   WorkflowRunStepInfos,
 } from './types/WorkflowRunStateStepInfos';
 export { StepStatus } from './types/WorkflowRunStateStepInfos';
-export { canObjectBeManagedByWorkflow } from './utils/canObjectBeManagedByWorkflow';
+export {
+  OBJECTS_BLOCKED_FROM_AUTOMATION,
+  canObjectBeManagedByAutomation,
+} from './utils/canObjectBeManagedByAutomation';
 export { extractRawVariableNamePart } from './utils/extractRawVariableNameParts';
 export { getFunctionInputFromInputSchema } from './utils/getFunctionInputFromInputSchema';
 export { getWorkflowRunContext } from './utils/getWorkflowRunContext';
