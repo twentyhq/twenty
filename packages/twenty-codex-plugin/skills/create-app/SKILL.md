@@ -9,9 +9,26 @@ For background on how Twenty apps work — the SDK packages, remotes, sync lifec
 
 Use this as the default way to start an app unless the user gives different instructions.
 
+## Why A Twenty Instance Is Needed
+
+Before scaffolding, explain to the user that a Twenty app is not a standalone application — it is a package that extends a running Twenty instance. During development, the app's entities (objects, views, front components, logic functions) are synced to a Twenty instance where they are registered, rendered, and executed. Without a connected instance, there is nothing to sync to, no workspace to test in, and no way to verify the app works.
+
+## Choose A Twenty Instance
+
+Ask the user how they want to connect to a Twenty instance:
+
+1. **Local instance with Docker** — the scaffolder starts a disposable local Twenty server on `http://localhost:2020` through Docker. Best for starting fresh without affecting a shared workspace. Requires Docker Desktop to be installed and running.
+2. **Existing Twenty instance** — the user provides the URL of a running Twenty server (self-hosted or cloud, e.g. `https://app.twenty.com`). The scaffolder authenticates via OAuth on that instance. Best when the user already has a workspace with data they want to develop against.
+
+If the user does not specify, ask which option they prefer before proceeding.
+
+## Scaffolding
+
 First, ask the user for the app name if they did not provide one.
 
 The directory name must contain only lowercase letters, numbers, and hyphens. Transform the entered name to lowercase and replace spaces with hyphens when needed.
+
+For a local Docker instance (default):
 
 ```bash
 npx create-twenty-app@latest <app-name>
@@ -19,7 +36,17 @@ cd <app-name>
 yarn twenty dev --once
 ```
 
-The scaffolder creates the project, enables corepack, installs dependencies, initializes Git, starts a local Twenty server through Docker, authenticates with the development API key, runs an initial one-shot sync, and opens the generated app page when possible.
+For an existing Twenty instance:
+
+```bash
+npx create-twenty-app@latest <app-name> --url <twenty-instance-url>
+cd <app-name>
+yarn twenty dev --once
+```
+
+The `--url` flag skips Docker setup and authenticates via OAuth on the provided instance. The scaffolder opens a browser for the OAuth flow, then stores the credentials as a remote in `~/.twenty/config.json`.
+
+The scaffolder creates the project, enables corepack, installs dependencies, initializes Git, authenticates with the target instance, runs an initial sync, and opens the generated app page when possible.
 
 After the scaffolder completes successfully, run a one-shot sync to confirm the app is deployed:
 
@@ -38,13 +65,13 @@ npx create-twenty-app@latest <app-directory> --name "<package-name>" --display-n
 
 Supported create-time options are `--name`, `--display-name`, `--description`, `--url`, and `--authentication-method`.
 
-The default local Twenty URL is `http://localhost:2020/`
+## Docker Troubleshooting
 
-# Docker Troubleshooting
-
-Use this when the default local flow fails because Docker is missing or not running.
+Use this when the local Docker flow fails because Docker is missing or not running.
 
 If Docker is missing, share this download link: `https://www.docker.com/products/docker-desktop/`. Ask the user to install Docker Desktop.
+
+If Docker is not an option, suggest connecting to an existing Twenty instance instead using the `--url` flag.
 
 # Next Steps
 
