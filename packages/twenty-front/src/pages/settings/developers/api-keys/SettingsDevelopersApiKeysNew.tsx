@@ -159,6 +159,9 @@ export const SettingsDevelopersApiKeysNew = () => {
             placeholder={t`E.g. backoffice integration`}
             value={formValues.name}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing || e.keyCode === 229) {
+                return;
+              }
               if (e.key === Key.Enter) {
                 handleSave();
               }
