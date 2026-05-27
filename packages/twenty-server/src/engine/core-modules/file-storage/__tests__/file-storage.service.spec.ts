@@ -12,6 +12,7 @@ import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/f
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileStorageExceptionCode } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('FileStorageService', () => {
   let service: FileStorageService;
@@ -41,7 +42,7 @@ describe('FileStorageService', () => {
           useValue: mockFileStorageDriverFactory,
         },
         {
-          provide: getRepositoryToken(FileEntity),
+          provide: getWorkspaceScopedRepositoryToken(FileEntity),
           useValue: mockFileRepository,
         },
         {
@@ -443,6 +444,7 @@ describe('FileStorageService', () => {
             expect.objectContaining({ mimeType: 'image/png' }),
           );
           expect(mockFileRepository.upsert).toHaveBeenCalledWith(
+            'workspace-123',
             expect.objectContaining({ mimeType: 'image/png' }),
             expect.anything(),
           );
@@ -708,10 +710,9 @@ describe('FileStorageService', () => {
           filename: 'my-component.mjs',
         });
 
-        expect(mockFileRepository.delete).toHaveBeenCalledWith({
+        expect(mockFileRepository.delete).toHaveBeenCalledWith('workspace-123', {
           path: 'built-front-component/src/components/my-component.mjs',
           applicationId: 'app-id',
-          workspaceId: 'workspace-123',
         });
       });
     });

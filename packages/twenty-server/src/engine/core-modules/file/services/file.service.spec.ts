@@ -6,6 +6,7 @@ import { FileStorageService } from 'src/engine/core-modules/file-storage/file-st
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 import { FileService } from './file.service';
 
@@ -33,7 +34,7 @@ describe('FileService', () => {
           useValue: {},
         },
         {
-          provide: getRepositoryToken(FileEntity),
+          provide: getWorkspaceScopedRepositoryToken(FileEntity),
           useValue: {},
         },
         {
