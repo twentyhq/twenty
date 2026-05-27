@@ -462,10 +462,8 @@ export class RoleService {
           error.code === ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
         ) {
           throw this.toRoleDeleteRebindException({
-            error,
             roleLabel,
             targetKind: 'apiKey',
-            targetCount: apiKeysToRebind.length,
           });
         }
         throw error;
@@ -491,10 +489,8 @@ export class RoleService {
           error.code === AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS
         ) {
           throw this.toRoleDeleteRebindException({
-            error,
             roleLabel,
             targetKind: 'agent',
-            targetCount: agentsToRebind.length,
           });
         }
         throw error;
@@ -503,21 +499,16 @@ export class RoleService {
   }
 
   private toRoleDeleteRebindException({
-    error,
     roleLabel,
     targetKind,
-    targetCount,
   }: {
-    error: unknown;
     roleLabel: string;
     targetKind: 'apiKey' | 'agent';
-    targetCount: number;
   }): Error {
     const targetLabel = targetKind === 'apiKey' ? 'API key' : 'agent';
-    const innerMessage = error instanceof Error ? error.message : String(error);
 
     return new PermissionsException(
-      `Cannot delete role "${roleLabel}": ${targetCount} ${targetLabel}(s) depend on it and the workspace default role cannot take them over (${innerMessage}). Reassign these ${targetLabel}(s) to another role first.`,
+      `Cannot delete role "${roleLabel}": the workspace default role cannot be assigned to ${targetLabel}s.`,
       targetKind === 'apiKey'
         ? PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
         : PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
