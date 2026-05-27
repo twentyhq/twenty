@@ -65,12 +65,12 @@ export const useTimelineActivities = (
   const firstQueryLoading =
     loadingTimelineActivities && timelineActivities.length === 0;
 
-  const loading = loadingTimelineActivities && !firstQueryLoading;
+  const loadingMore = loadingTimelineActivities && !firstQueryLoading;
 
   return {
     timelineActivities,
     firstQueryLoading,
-    loading,
+    loadingMore,
     fetchMoreRecords,
   };
 };
