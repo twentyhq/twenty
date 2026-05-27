@@ -1,4 +1,4 @@
-import { ExecutionContext, Injectable } from '@nestjs/common';
+import { ExecutionContext, Injectable, Logger } from '@nestjs/common';
 
 import { type Request } from 'express';
 import { AppPath } from 'twenty-shared/types';
@@ -15,6 +15,8 @@ import { type CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
 export class GuardRedirectService {
+  private readonly logger = new Logger(GuardRedirectService.name);
+
   constructor(
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
@@ -67,16 +69,36 @@ export class GuardRedirectService {
         };
   }
 
-  private captureException(err: Error | CustomException, workspaceId?: string) {
+  private captureException({
+    error,
+    workspaceId,
+    pathname,
+  }: {
+    error: Error | CustomException;
+    workspaceId?: string;
+    pathname: string;
+  }) {
     if (
-      err instanceof AuthException &&
-      err.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
-    )
-      return;
+      error instanceof AuthException &&
+      error.code !== AuthExceptionCode.INTERNAL_SERVER_ERROR
+    ) {
+      const logMessage = `Auth exception redirected from guard: code=${error.code}, pathname=${pathname}, workspaceId=${workspaceId ?? 'unknown'}`;
 
-    this.exceptionHandlerService.captureExceptions([err], {
+      if (error.code === AuthExceptionCode.OAUTH_ACCESS_DENIED) {
+        this.logger.log(logMessage);
+      } else {
+        this.logger.warn(logMessage);
+      }
+
+      return;
+    }
+
+    this.exceptionHandlerService.captureExceptions([error], {
       workspace: {
         id: workspaceId,
+      },
+      additionalData: {
+        pathname,
       },
     });
   }
@@ -95,7 +117,11 @@ export class GuardRedirectService {
     };
     pathname: string;
   }) {
-    this.captureException(error, workspace.id);
+    this.captureException({
+      error,
+      workspaceId: workspace.id,
+      pathname,
+    });
 
     const errorMessage =
       error instanceof AuthException
