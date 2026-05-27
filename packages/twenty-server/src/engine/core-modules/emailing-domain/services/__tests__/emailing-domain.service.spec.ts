@@ -1,11 +1,10 @@
-import { type Repository } from 'typeorm';
-
 import { EmailingDomainDriverExceptionCode } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { type EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('EmailingDomainService.sendEmail', () => {
   const buildEmailingDomain = (
@@ -30,8 +29,8 @@ describe('EmailingDomainService.sendEmail', () => {
   const setUp = (emailingDomain: EmailingDomainEntity) => {
     const sendEmail = jest.fn().mockResolvedValue({ messageId: 'msg-1' });
     const repository = {
-      findOneBy: jest.fn().mockResolvedValue(emailingDomain),
-    } as unknown as Repository<EmailingDomainEntity>;
+      findOne: jest.fn().mockResolvedValue(emailingDomain),
+    } as unknown as WorkspaceScopedRepository<EmailingDomainEntity>;
     const factory = {
       getCurrentDriver: () => ({ sendEmail }),
     } as unknown as EmailingDomainDriverFactory;

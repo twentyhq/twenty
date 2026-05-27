@@ -1,7 +1,4 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import {
   EmailingDomainDriverException,
@@ -17,14 +14,15 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class EmailingDomainService {
   private readonly logger = new Logger(EmailingDomainService.name);
 
   constructor(
-    @InjectRepository(EmailingDomainEntity)
-    private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
+    @InjectWorkspaceScopedRepository(EmailingDomainEntity)
+    private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
   ) {}
 
@@ -33,11 +31,12 @@ export class EmailingDomainService {
     driverType: EmailingDomainDriver,
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity> {
-    const existingEmailingDomain =
-      await this.emailingDomainRepository.findOneBy({
-        domain,
-        workspaceId: workspace.id,
-      });
+    const existingEmailingDomain = await this.emailingDomainRepository.findOne(
+      workspace.id,
+      {
+        where: { domain },
+      },
+    );
 
     if (existingEmailingDomain) {
       throw new EmailingDomainDriverException(
@@ -64,10 +63,9 @@ export class EmailingDomainService {
     const isVerifiedOnCreation =
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
-    return this.emailingDomainRepository.save({
+    return this.emailingDomainRepository.save(workspace.id, {
       domain,
       driver: driverType,
-      workspaceId: workspace.id,
       status: verificationResult.status,
       verificationRecords: verificationResult.verificationRecords,
       verifiedAt: isVerifiedOnCreation ? new Date() : null,
@@ -84,29 +82,30 @@ export class EmailingDomainService {
     );
 
     await this.deleteRemoteEmailingDomain(emailingDomain);
-    await this.emailingDomainRepository.delete({ id: emailingDomain.id });
+    await this.emailingDomainRepository.delete(workspace.id, {
+      id: emailingDomain.id,
+    });
   }
 
   async cleanupAllEmailingDomainsForWorkspace(
     workspaceId: string,
   ): Promise<void> {
-    const emailingDomains = await this.emailingDomainRepository.find({
-      where: { workspaceId },
-    });
+    const emailingDomains = await this.emailingDomainRepository.find(
+      workspaceId,
+    );
 
     for (const emailingDomain of emailingDomains) {
       await this.deleteRemoteEmailingDomain(emailingDomain);
     }
 
     await this.deprovisionRemoteWorkspace(workspaceId);
-    await this.emailingDomainRepository.delete({ workspaceId });
+    await this.emailingDomainRepository.delete(workspaceId, {});
   }
 
   async getEmailingDomains(
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity[]> {
-    return this.emailingDomainRepository.find({
-      where: { workspaceId: workspace.id },
+    return this.emailingDomainRepository.find(workspace.id, {
       order: { createdAt: 'DESC' },
     });
   }
@@ -133,6 +132,7 @@ export class EmailingDomainService {
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
     await this.emailingDomainRepository.update(
+      workspace.id,
       { id: emailingDomain.id },
       {
         status: verificationResult.status,
@@ -141,8 +141,8 @@ export class EmailingDomainService {
       },
     );
 
-    return this.emailingDomainRepository.findOneByOrFail({
-      id: emailingDomain.id,
+    return this.emailingDomainRepository.findOneOrFail(workspace.id, {
+      where: { id: emailingDomain.id },
     });
   }
 
@@ -190,10 +190,12 @@ export class EmailingDomainService {
     workspaceId: string,
     emailingDomainId: string,
   ): Promise<EmailingDomainEntity> {
-    const emailingDomain = await this.emailingDomainRepository.findOneBy({
-      id: emailingDomainId,
+    const emailingDomain = await this.emailingDomainRepository.findOne(
       workspaceId,
-    });
+      {
+        where: { id: emailingDomainId },
+      },
+    );
 
     if (!emailingDomain) {
       throw new EmailingDomainDriverException(

@@ -20,7 +20,8 @@ import { StripeInvoiceService } from 'src/engine/core-modules/billing/stripe/ser
 import { StripeSubscriptionScheduleService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-schedule.service';
 import { StripeSubscriptionService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription.service';
 import { SubscriptionUpdateType } from 'src/engine/core-modules/billing/types/billing-subscription-update.type';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   arrangeBillingPriceRepositoryFindOneOrFail,
   arrangeBillingProductServiceGetProductPrices,
@@ -48,7 +49,7 @@ describe('BillingSubscriptionUpdateService', () => {
   let module: TestingModule;
   let service: BillingSubscriptionUpdateService;
   let billingSubscriptionRepository: jest.Mocked<
-    Repository<BillingSubscriptionEntity>
+    WorkspaceScopedRepository<BillingSubscriptionEntity>
   >;
   let billingPriceRepository: jest.Mocked<Repository<BillingPriceEntity>>;
   let billingProductService: jest.Mocked<BillingProductService>;
@@ -136,7 +137,7 @@ describe('BillingSubscriptionUpdateService', () => {
           },
         },
         {
-          provide: getRepositoryToken(BillingSubscriptionEntity),
+          provide: getWorkspaceScopedRepositoryToken(BillingSubscriptionEntity),
           useValue: repoMock<BillingSubscriptionEntity>(),
         },
         {
@@ -161,7 +162,7 @@ describe('BillingSubscriptionUpdateService', () => {
 
     service = module.get(BillingSubscriptionUpdateService);
     billingSubscriptionRepository = module.get(
-      getRepositoryToken(BillingSubscriptionEntity),
+      getWorkspaceScopedRepositoryToken(BillingSubscriptionEntity),
     );
     billingPriceRepository = module.get(getRepositoryToken(BillingPriceEntity));
     billingProductService = module.get(BillingProductService);
@@ -229,7 +230,7 @@ describe('BillingSubscriptionUpdateService', () => {
         }) as BillingPriceEntity,
       ]);
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.PLAN,
         newPlan: BillingPlanKey.ENTERPRISE,
       });
@@ -355,7 +356,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.PLAN,
         newPlan: BillingPlanKey.ENTERPRISE,
       });
@@ -464,7 +465,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.PLAN,
         newPlan: BillingPlanKey.PRO,
       });
@@ -577,7 +578,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.PLAN,
         newPlan: BillingPlanKey.PRO,
       });
@@ -654,7 +655,7 @@ describe('BillingSubscriptionUpdateService', () => {
         }) as BillingPriceEntity,
       ]);
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.INTERVAL,
         newInterval: SubscriptionInterval.Year,
       });
@@ -775,7 +776,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.INTERVAL,
         newInterval: SubscriptionInterval.Year,
       });
@@ -884,7 +885,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.INTERVAL,
         newInterval: SubscriptionInterval.Month,
       });
@@ -997,7 +998,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.INTERVAL,
         newInterval: SubscriptionInterval.Month,
       });
@@ -1058,7 +1059,7 @@ describe('BillingSubscriptionUpdateService', () => {
         {},
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.SEATS,
         newSeats: 2,
       });
@@ -1162,7 +1163,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.SEATS,
         newSeats: 2,
       });
@@ -1236,7 +1237,7 @@ describe('BillingSubscriptionUpdateService', () => {
         {},
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.SEATS,
         newSeats: 1,
       });
@@ -1340,7 +1341,7 @@ describe('BillingSubscriptionUpdateService', () => {
         } as Stripe.SubscriptionScheduleUpdateParams.Phase,
       );
 
-      await service.updateSubscription('sub_db_1', {
+      await service.updateSubscription('ws_1', 'sub_db_1', {
         type: SubscriptionUpdateType.SEATS,
         newSeats: 1,
       });
