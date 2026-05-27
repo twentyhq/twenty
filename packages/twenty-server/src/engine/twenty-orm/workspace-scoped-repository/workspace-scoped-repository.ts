@@ -137,13 +137,13 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  // workspaceId goes first in the merged object so it appears first in
-  // the generated SQL WHERE clause. Postgres' planner picks the most
+  // workspaceId is prepended to the merged object so it appears first
+  // in the generated SQL WHERE clause. Postgres' planner picks the most
   // selective index regardless of clause order, but leading with
   // workspaceId matches how the composite indexes are declared on these
-  // tables and makes the security intent obvious in query logs. We
-  // strip any caller-supplied workspaceId first so the scoped value
-  // always wins.
+  // tables and makes the security intent obvious in query logs. If a
+  // caller includes workspaceId in their WHERE we throw (rather than
+  // silently override) so cross-scope mistakes fail loudly.
   private mergeWorkspaceIdIntoWhere(
     workspaceId: string,
     where: FindOneOptions<T>['where'] | undefined,
@@ -172,11 +172,13 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     workspaceId: string,
     clause: FindOptionsWhere<T>,
   ): FindOptionsWhere<T> {
-    const { workspaceId: _ignored, ...rest } = clause as FindOptionsWhere<T> & {
-      workspaceId?: unknown;
-    };
+    if ('workspaceId' in clause) {
+      throw new Error(
+        'WorkspaceScopedRepository: do not include `workspaceId` in the WHERE clause — it is provided as the first argument and merged automatically.',
+      );
+    }
 
-    return { workspaceId, ...rest } as FindOptionsWhere<T>;
+    return { workspaceId, ...clause } as FindOptionsWhere<T>;
   }
 
   private stampWorkspaceIdOnEntities(

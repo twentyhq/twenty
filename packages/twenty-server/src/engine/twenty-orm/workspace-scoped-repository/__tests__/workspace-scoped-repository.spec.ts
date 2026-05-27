@@ -57,14 +57,25 @@ describe('WorkspaceScopedRepository', () => {
       });
     });
 
-    it('overrides any caller-supplied workspaceId with the scoped one', async () => {
-      await scoped.findOne(WORKSPACE_ID, {
-        where: { id: 'a', workspaceId: OTHER_WORKSPACE_ID } as never,
-      });
+    it('throws if the caller includes workspaceId in the WHERE clause', () => {
+      expect(() =>
+        scoped.findOne(WORKSPACE_ID, {
+          where: { id: 'a', workspaceId: OTHER_WORKSPACE_ID } as never,
+        }),
+      ).toThrow(/do not include `workspaceId`/);
 
-      expect(repository.findOne).toHaveBeenCalledWith({
-        where: { id: 'a', workspaceId: WORKSPACE_ID },
-      });
+      expect(repository.findOne).not.toHaveBeenCalled();
+    });
+
+    it('throws if any clause of an array WHERE includes workspaceId', () => {
+      expect(() =>
+        scoped.findOne(WORKSPACE_ID, {
+          where: [
+            { id: 'a' },
+            { id: 'b', workspaceId: OTHER_WORKSPACE_ID } as never,
+          ],
+        }),
+      ).toThrow(/do not include `workspaceId`/);
     });
 
     it('places workspaceId first in the merged WHERE clause', async () => {
@@ -123,17 +134,16 @@ describe('WorkspaceScopedRepository', () => {
       );
     });
 
-    it('overrides caller-supplied workspaceId in the criteria', async () => {
-      await scoped.update(
-        WORKSPACE_ID,
-        { id: 'a', workspaceId: OTHER_WORKSPACE_ID } as never,
-        { status: 'completed' },
-      );
+    it('throws if the caller includes workspaceId in the criteria', () => {
+      expect(() =>
+        scoped.update(
+          WORKSPACE_ID,
+          { id: 'a', workspaceId: OTHER_WORKSPACE_ID } as never,
+          { status: 'completed' },
+        ),
+      ).toThrow(/do not include `workspaceId`/);
 
-      expect(repository.update).toHaveBeenCalledWith(
-        { id: 'a', workspaceId: WORKSPACE_ID },
-        { status: 'completed' },
-      );
+      expect(repository.update).not.toHaveBeenCalled();
     });
   });
 
