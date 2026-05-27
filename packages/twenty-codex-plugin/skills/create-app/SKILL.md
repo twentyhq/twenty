@@ -44,10 +44,6 @@ The `--url` flag skips Docker setup and authenticates via OAuth on the provided 
 
 The scaffolder handles everything: it creates the project, enables corepack, installs dependencies, initializes Git, authenticates with the target instance, runs an initial sync, and opens the generated app page when possible.
 
-Do not run `yarn twenty dev --once` after scaffolding. The scaffolder already performs the initial sync. Running it again is redundant and will fail if the Codex environment has a different Node or Yarn version than the project expects.
-
-After the scaffolder completes, `cd` into the project directory and confirm the files are in place. The app is already synced and installed on the target instance.
-
 If the user provides a package name, display name, or description, pass them through:
 
 ```bash
@@ -56,7 +52,15 @@ npx create-twenty-app@latest <app-directory> --name "<package-name>" --display-n
 
 Supported create-time options are `--name`, `--display-name`, `--description`, `--url`, and `--authentication-method`.
 
-When the user later makes changes to the app entities, use `yarn twenty dev --once` to sync those changes. See the `manage-app` skill for sync workflow.
+## After Scaffolding
+
+When the scaffolder completes, the app is fully created, synced, and installed. The job is done.
+
+Do not run any `yarn`, `npm`, `node`, or `corepack` commands after scaffolding. Do not run `yarn twenty dev --once`, `yarn test`, `yarn lint`, or any other validation. The scaffolder already performed the initial sync. These commands will fail in the Codex environment because it has different Node and Yarn versions than the project requires, which leads to misleading errors and wasted debugging.
+
+Do not check Node versions, search for version managers, inspect the toolchain, or attempt to fix runtime mismatches. These are not problems — the scaffolder used its own correct toolchain.
+
+Report to the user that the app was created successfully and is ready for development. Then stop. Wait for the user to ask for the next action.
 
 ## Docker Troubleshooting
 
@@ -68,6 +72,8 @@ If Docker is not an option, suggest connecting to an existing Twenty instance in
 
 # Next Steps
 
-Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
+Only proceed to these when the user explicitly asks:
 
-Use `references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.
+- Use `develop-app` when the user wants to add objects, fields, logic functions, roles, views, navigation, page layouts, skills, agents, or front component registrations.
+- Use `references/design/front-component-ui.md` when the user wants to design or improve the UI of a Twenty front component.
+- When the user later makes changes to app entities, use `yarn twenty dev --once` to sync those changes. See the `manage-app` skill for sync workflow.
