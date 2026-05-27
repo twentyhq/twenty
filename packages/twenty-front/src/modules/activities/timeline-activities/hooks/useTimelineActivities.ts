@@ -65,7 +65,8 @@ export const useTimelineActivities = (
   const firstQueryLoading =
     loadingTimelineActivities && timelineActivities.length === 0;
 
-  const loadingMore = loadingTimelineActivities && !firstQueryLoading;
+  const loadingMore =
+    loadingTimelineActivities && timelineActivities.length > 0;
 
   return {
     timelineActivities,
