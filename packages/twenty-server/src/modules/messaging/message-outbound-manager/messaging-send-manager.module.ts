@@ -5,6 +5,7 @@ import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/em
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { OAuth2ClientManagerModule } from 'src/modules/connected-account/oauth2-client-manager/oauth2-client-manager.module';
 import { MessagingIMAPDriverModule } from 'src/modules/messaging/message-import-manager/drivers/imap/messaging-imap-driver.module';
 import { MessagingSmtpDriverModule } from 'src/modules/messaging/message-import-manager/drivers/smtp/messaging-smtp-driver.module';
@@ -38,6 +39,7 @@ import { SentMessagePersistenceService } from 'src/modules/messaging/message-out
     MessagingMessageOutboundService,
     SendEmailService,
     SentMessagePersistenceService,
+    provideWorkspaceScopedRepository(EmailingDomainEntity),
   ],
   exports: [
     MessagingMessageOutboundService,

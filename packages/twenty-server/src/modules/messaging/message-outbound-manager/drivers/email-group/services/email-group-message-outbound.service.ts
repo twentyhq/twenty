@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
@@ -13,6 +11,8 @@ import {
   MessageChannelException,
   MessageChannelExceptionCode,
 } from 'src/engine/metadata-modules/message-channel/message-channel.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { type MessageOutboundDriver } from 'src/modules/messaging/message-outbound-manager/interfaces/message-outbound-driver.interface';
 import { type SendMessageInput } from 'src/modules/messaging/message-outbound-manager/types/send-message-input.type';
 import { type SendMessageResult } from 'src/modules/messaging/message-outbound-manager/types/send-message-result.type';
@@ -20,8 +20,8 @@ import { type SendMessageResult } from 'src/modules/messaging/message-outbound-m
 @Injectable()
 export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
   constructor(
-    @InjectRepository(EmailingDomainEntity)
-    private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
+    @InjectWorkspaceScopedRepository(EmailingDomainEntity)
+    private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainService: EmailingDomainService,
   ) {}
 
@@ -81,10 +81,12 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    const emailingDomain = await this.emailingDomainRepository.findOneBy({
-      domain: handleDomain,
-      workspaceId: connectedAccount.workspaceId,
-    });
+    const emailingDomain = await this.emailingDomainRepository.findOne(
+      connectedAccount.workspaceId,
+      {
+        where: { domain: handleDomain },
+      },
+    );
 
     if (!isDefined(emailingDomain)) {
       throw new MessageChannelException(

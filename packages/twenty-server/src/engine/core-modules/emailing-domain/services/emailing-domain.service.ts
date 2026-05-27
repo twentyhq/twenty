@@ -90,9 +90,8 @@ export class EmailingDomainService {
   async cleanupAllEmailingDomainsForWorkspace(
     workspaceId: string,
   ): Promise<void> {
-    const emailingDomains = await this.emailingDomainRepository.find(
-      workspaceId,
-    );
+    const emailingDomains =
+      await this.emailingDomainRepository.find(workspaceId);
 
     for (const emailingDomain of emailingDomains) {
       await this.deleteRemoteEmailingDomain(emailingDomain);
