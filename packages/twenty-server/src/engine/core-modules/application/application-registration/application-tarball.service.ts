@@ -190,7 +190,6 @@ export class ApplicationTarballService {
       const savedFile = await this.fileStorageService.writeFile({
         sourceFile: params.tarballBuffer,
         resourcePath: `${appRegistration.id}/app.tar.gz`,
-        mimeType: 'application/gzip',
         fileFolder: FileFolder.AppTarball,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,

@@ -5,8 +5,6 @@ import { promises as fs } from 'fs';
 import { resolve } from 'path';
 
 import semver from 'semver';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
 import { Manifest } from 'twenty-shared/application';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
@@ -493,15 +491,8 @@ export class ApplicationInstallService {
         );
       }
 
-      const { mimeType, ext } = await extractFileInfo({
-        file: content,
-        filename: relativePath,
-      });
-      const sanitizedContent = sanitizeFile({ file: content, ext, mimeType });
-
       await this.fileStorageService.writeFile({
-        sourceFile: sanitizedContent,
-        mimeType,
+        sourceFile: content,
         fileFolder,
         applicationUniversalIdentifier,
         workspaceId,

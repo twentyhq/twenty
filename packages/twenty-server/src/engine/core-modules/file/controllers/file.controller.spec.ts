@@ -11,11 +11,6 @@ jest.mock('node:stream/promises', () => ({
 }));
 
 import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
-
-import {
   FileException,
   FileExceptionCode,
 } from 'src/engine/core-modules/file/file.exception';
@@ -32,7 +27,6 @@ const createMockStream = (): Readable => {
 
   stream.push('file content');
   stream.push(null);
-  stream.pipe = jest.fn();
 
   return stream;
 };
@@ -153,7 +147,7 @@ describe('FileController', () => {
         'Content-Disposition',
         'inline',
       );
-      expect(mockStream.pipe).toHaveBeenCalledWith(mockResponse);
+      expect(mockPipeline).toHaveBeenCalledWith(mockStream, mockResponse);
     });
 
     it('should force attachment disposition for non-safe MIME types', async () => {
@@ -185,15 +179,8 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with FILE_NOT_FOUND when file is not found', async () => {
-      jest
-        .spyOn(fileService, 'getFileResponseById')
-        .mockRejectedValue(
-          new FileStorageException(
-            'File not found',
-            FileStorageExceptionCode.FILE_NOT_FOUND,
-          ),
-        );
+    it('should throw FILE_NOT_FOUND when the service yields null', async () => {
+      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue(null);
 
       const mockRequest = { workspaceId: 'workspace-id' } as any;
       const mockResponse = createMockResponse() as any;
@@ -210,27 +197,97 @@ describe('FileController', () => {
       );
     });
 
-    it('should throw FileException with INTERNAL_SERVER_ERROR for unexpected errors', async () => {
+    it('should throw INTERNAL_SERVER_ERROR without leaking the underlying message, and log the original error', async () => {
+      const loggerSpy = jest
+        .spyOn(Logger.prototype, 'error')
+        .mockImplementation(() => undefined);
+      const underlyingError = new Error(
+        'Storage unavailable: postgres://secret-host:5432',
+      );
+
       jest
         .spyOn(fileService, 'getFileResponseById')
-        .mockRejectedValue(new Error('Storage unavailable'));
+        .mockRejectedValue(underlyingError);
 
       const mockRequest = { workspaceId: 'workspace-id' } as any;
       const mockResponse = createMockResponse() as any;
+
+      const promise = controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.Workflow,
+        'file-456',
+      );
+
+      await expect(promise).rejects.toThrow(
+        new FileException(
+          'Error retrieving file',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        ),
+      );
+      await expect(promise).rejects.not.toThrow(/secret-host/);
+
+      expect(loggerSpy).toHaveBeenCalledWith(
+        'getFileResponseById failed unexpectedly',
+        { error: underlyingError },
+      );
+    });
+
+    it('should throw INTERNAL_SERVER_ERROR when the stream errors before headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
+        type: 'stream',
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('source backend exploded'));
+
+      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockResponse = createMockResponse({ headersSent: false }) as any;
 
       await expect(
         controller.getFileById(
           mockResponse,
           mockRequest,
-          FileFolder.Workflow,
-          'file-456',
+          FileFolder.CorePicture,
+          'file-123',
         ),
       ).rejects.toThrow(
         new FileException(
-          'Error retrieving file: Storage unavailable',
+          'Error streaming file from storage',
           FileExceptionCode.INTERNAL_SERVER_ERROR,
         ),
       );
+
+      expect(mockResponse.destroy).not.toHaveBeenCalled();
+    });
+
+    it('should destroy the response without throwing when the stream errors after headers are sent', async () => {
+      const mockStream = createMockStream();
+
+      jest.spyOn(fileService, 'getFileResponseById').mockResolvedValue({
+        type: 'stream',
+        stream: mockStream,
+        mimeType: 'image/png',
+      });
+
+      mockPipeline.mockRejectedValue(new Error('socket reset mid-flight'));
+
+      const mockRequest = { workspaceId: 'workspace-id' } as any;
+      const mockResponse = createMockResponse({ headersSent: true }) as any;
+
+      // No throw expected — once headers are out, the controller cannot honestly
+      // switch to a 500 response, so it tears the socket down instead.
+      await controller.getFileById(
+        mockResponse,
+        mockRequest,
+        FileFolder.CorePicture,
+        'file-123',
+      );
+
+      expect(mockResponse.destroy).toHaveBeenCalledTimes(1);
     });
   });
 

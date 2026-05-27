@@ -53,6 +53,9 @@ import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/co
 import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
 import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1779600000000-finalize-role-permission-flag-cutover';
+import { AddSubFieldNameToIndexFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798200000000-add-sub-field-name-to-index-field-metadata';
+import { DropFieldMetadataIsUniqueColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798300000000-drop-field-metadata-is-unique-column';
+import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -108,4 +111,7 @@ export const INSTANCE_COMMANDS = [
   AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddChannelSyncStageIndexesFastInstanceCommand,
   FinalizeRolePermissionFlagCutoverFastInstanceCommand,
+  AddSubFieldNameToIndexFieldMetadataFastInstanceCommand,
+  DropFieldMetadataIsUniqueColumnFastInstanceCommand,
+  MigrateAiModelPreferencesSlowInstanceCommand,
 ];

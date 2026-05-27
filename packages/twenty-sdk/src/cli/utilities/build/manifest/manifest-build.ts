@@ -16,6 +16,7 @@ import { type FrontComponentConfig } from '@/sdk/define/front-component/front-co
 import { type PostInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/post-install-logic-function-config';
 import { type PreInstallLogicFunctionConfig } from '@/sdk/define/logic-functions/pre-install-logic-function-config';
 import { type ObjectConfig } from '@/sdk/define/objects/object-config';
+import { type IndexConfig } from '@/sdk/define/indexes/index-config';
 import { type PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 import { type PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
 import { type RoleConfig } from '@/sdk/define/roles/role-config';
@@ -32,12 +33,14 @@ import {
   type ConnectionProviderManifest,
   type FieldManifest,
   type FrontComponentManifest,
+  type IndexManifest,
   type LogicFunctionManifest,
   type Manifest,
   type NavigationMenuItemManifest,
   type ObjectManifest,
   type PageLayoutManifest,
   type PageLayoutTabManifest,
+  type PermissionFlagManifest,
   type PostInstallLogicFunctionApplicationManifest,
   type PreInstallLogicFunctionApplicationManifest,
   type RoleManifest,
@@ -82,6 +85,8 @@ export const buildManifest = async (
   let applicationConfig: ApplicationConfig | undefined;
   const objects: ObjectManifest[] = [];
   const fields: FieldManifest[] = [];
+  const indexes: IndexManifest[] = [];
+  const permissionFlags: PermissionFlagManifest[] = [];
   const roles: RoleManifest[] = [];
   const skills: SkillManifest[] = [];
   const agents: AgentManifest[] = [];
@@ -102,6 +107,8 @@ export const buildManifest = async (
   const applicationFilePaths: string[] = [];
   const objectsFilePaths: string[] = [];
   const fieldsFilePaths: string[] = [];
+  const indexesFilePaths: string[] = [];
+  const permissionFlagsFilePaths: string[] = [];
   const rolesFilePaths: string[] = [];
   const skillsFilePaths: string[] = [];
   const agentsFilePaths: string[] = [];
@@ -187,6 +194,17 @@ export const buildManifest = async (
         errors.push(...extract.errors);
         warnings.push(...(extract.warnings ?? []));
         fieldsFilePaths.push(relativePath);
+        break;
+      }
+      case ManifestEntityKey.PermissionFlags: {
+        const extract = await extractManifestFromFile<PermissionFlagManifest>({
+          appPath,
+          filePath,
+        });
+        permissionFlags.push(extract.config);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        permissionFlagsFilePaths.push(relativePath);
         break;
       }
       case ManifestEntityKey.Roles: {
@@ -402,6 +420,22 @@ export const buildManifest = async (
         pageLayoutsFilePaths.push(relativePath);
         break;
       }
+      case ManifestEntityKey.Indexes: {
+        const extract = await extractManifestFromFile<IndexConfig>({
+          appPath,
+          filePath,
+        });
+
+        const indexManifest: IndexManifest = {
+          ...extract.config,
+        };
+
+        indexes.push(indexManifest);
+        errors.push(...extract.errors);
+        warnings.push(...(extract.warnings ?? []));
+        indexesFilePaths.push(relativePath);
+        break;
+      }
       case ManifestEntityKey.PageLayoutTabs: {
         const extract = await extractManifestFromFile<PageLayoutTabConfig>({
           appPath,
@@ -526,6 +560,8 @@ export const buildManifest = async (
         application,
         objects: objects.sort(byId),
         fields: fields.sort(byId),
+        indexes: indexes.sort(byId),
+        permissionFlags: permissionFlags.sort(byId),
         roles: roles.sort(byId),
         skills: skills.sort(byId),
         agents: agents.sort(byId),
@@ -544,6 +580,8 @@ export const buildManifest = async (
     application: applicationFilePaths,
     objects: objectsFilePaths,
     fields: fieldsFilePaths,
+    indexes: indexesFilePaths,
+    permissionFlags: permissionFlagsFilePaths,
     roles: rolesFilePaths,
     skills: skillsFilePaths,
     agents: agentsFilePaths,

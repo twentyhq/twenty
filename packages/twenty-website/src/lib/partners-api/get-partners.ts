@@ -1,3 +1,5 @@
+import { unstable_cache } from 'next/cache';
+
 import { partnersApiFetch } from './client';
 import type { MarketplacePartner } from './partner-types';
 
@@ -20,7 +22,9 @@ type ApiResponse = { ok: boolean; count: number; partners: ApiPartner[] };
 const normalizeUrl = (raw: string): string =>
   raw && !raw.includes('://') ? `https://${raw}` : raw;
 
-export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
+const fetchPartnersUncached = async (): Promise<
+  readonly MarketplacePartner[]
+> => {
   try {
     const data = (await partnersApiFetch('/s/partners')) as ApiResponse;
     if (!Array.isArray(data.partners)) {
@@ -42,3 +46,9 @@ export const getPartners = async (): Promise<readonly MarketplacePartner[]> => {
     return [];
   }
 };
+
+export const getPartners = unstable_cache(
+  fetchPartnersUncached,
+  ['partners-api:list'],
+  { revalidate: 300, tags: ['partners-api'] },
+);

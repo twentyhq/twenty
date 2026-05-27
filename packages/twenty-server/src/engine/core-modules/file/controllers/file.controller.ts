@@ -15,10 +15,6 @@ import { join } from 'path';
 import { Request, Response } from 'express';
 import { FileFolder } from 'twenty-shared/types';
 
-import {
-  FileStorageException,
-  FileStorageExceptionCode,
-} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import {
   FileException,
@@ -120,45 +116,49 @@ export class FileController {
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
     const workspaceId = (req as any)?.workspaceId;
 
-    try {
-      const fileResponse = await this.fileService.getFileResponseById({
+    const fileResponse = await this.fileService
+      .getFileResponseById({
         fileId,
         workspaceId,
         fileFolder,
-      });
+      })
+      .catch((error) => {
+        this.logger.error('getFileResponseById failed unexpectedly', {
+          error,
+        });
 
-      if (fileResponse.type === 'redirect') {
-        return res.redirect(fileResponse.presignedUrl);
-      }
-
-      setFileResponseHeaders(res, fileResponse.mimeType);
-
-      fileResponse.stream.on('error', () => {
-        if (!res.headersSent) {
-          res.status(500).send('Error streaming file from storage');
-
-          return;
-        }
-
-        res.destroy();
-      });
-
-      fileResponse.stream.pipe(res);
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
         throw new FileException(
-          'File not found',
-          FileExceptionCode.FILE_NOT_FOUND,
+          'Error retrieving file',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
+        );
+      });
+
+    if (fileResponse === null) {
+      throw new FileException(
+        'File not found',
+        FileExceptionCode.FILE_NOT_FOUND,
+      );
+    }
+
+    if (fileResponse.type === 'redirect') {
+      return res.redirect(fileResponse.presignedUrl);
+    }
+
+    setFileResponseHeaders(res, fileResponse.mimeType);
+
+    try {
+      await pipeline(fileResponse.stream, res);
+    } catch (error) {
+      this.logger.error('File-by-id stream failed mid-transfer', { error });
+
+      if (!res.headersSent) {
+        throw new FileException(
+          'Error streaming file from storage',
+          FileExceptionCode.INTERNAL_SERVER_ERROR,
         );
       }
 
-      throw new FileException(
-        `Error retrieving file: ${error.message}`,
-        FileExceptionCode.INTERNAL_SERVER_ERROR,
-      );
+      res.destroy();
     }
   }
 }
