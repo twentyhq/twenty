@@ -177,8 +177,8 @@ export const SettingsApplicationsDeveloperTab = () => {
             <TableRow
               gridTemplateColumns={APPLICATION_TABLE_ROW_GRID_TEMPLATE_COLUMNS}
             >
-              <TableHeader> {t`Name`}</TableHeader>
-              <TableHeader>{''}</TableHeader>
+              <TableHeader>{t`Name`}</TableHeader>
+              <TableHeader>{t`Type`}</TableHeader>
               <TableHeader>{''}</TableHeader>
               <TableHeader />
             </TableRow>
@@ -188,6 +188,7 @@ export const SettingsApplicationsDeveloperTab = () => {
                   <SettingsApplicationTableRow
                     key={registration.id}
                     application={registration}
+                    sourceType={registration.sourceType}
                     action={
                       <IconChevronRight
                         size={theme.icon.size.md}
