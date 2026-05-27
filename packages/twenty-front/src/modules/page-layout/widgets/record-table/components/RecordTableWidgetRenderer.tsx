@@ -29,6 +29,7 @@ export const RecordTableWidgetRenderer = ({
       objectMetadataId={widget.objectMetadataId}
       viewId={viewId}
       widgetId={widget.id}
+      isEmptyStateHidden
     />
   );
 };

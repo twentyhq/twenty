@@ -286,31 +286,6 @@ describe('EnterprisePlanService', () => {
     });
   });
 
-  // hasValidEnterpriseKey now means "has any ENTERPRISE_KEY configured"
-  describe('hasValidEnterpriseKey', () => {
-    it('should return true when signed enterprise key is valid', async () => {
-      await setupValidState();
-
-      expect(service.hasValidEnterpriseKey()).toBe(true);
-    });
-
-    it('should return true with unsigned legacy key', async () => {
-      setupEnterpriseKey('some-legacy-key');
-      mockCryptoVerify.mockReturnValue(false);
-      appTokenFindOneMock.mockResolvedValue(null);
-      await service.onModuleInit();
-
-      expect(service.hasValidEnterpriseKey()).toBe(true);
-    });
-
-    it('should return false when no key is configured', async () => {
-      setupEnterpriseKey(undefined);
-      await service.onModuleInit();
-
-      expect(service.hasValidEnterpriseKey()).toBe(false);
-    });
-  });
-
   describe('isValid', () => {
     it('should return true when validity token is valid', async () => {
       await setupValidState();
