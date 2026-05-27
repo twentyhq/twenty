@@ -113,7 +113,7 @@
       ]
     },
     "typecheck": {
-      "dependsOn": ["generate-release-manifest"]
+      "dependsOn": ["generate-release-manifest", "^build"]
     },
     "test": {},
     "fmt": {
