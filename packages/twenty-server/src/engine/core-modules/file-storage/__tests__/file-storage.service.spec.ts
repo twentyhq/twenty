@@ -710,10 +710,13 @@ describe('FileStorageService', () => {
           filename: 'my-component.mjs',
         });
 
-        expect(mockFileRepository.delete).toHaveBeenCalledWith('workspace-123', {
-          path: 'built-front-component/src/components/my-component.mjs',
-          applicationId: 'app-id',
-        });
+        expect(mockFileRepository.delete).toHaveBeenCalledWith(
+          'workspace-123',
+          {
+            path: 'built-front-component/src/components/my-component.mjs',
+            applicationId: 'app-id',
+          },
+        );
       });
     });
 

@@ -50,7 +50,9 @@ describe('ApprovedAccessDomainService', () => {
       providers: [
         ApprovedAccessDomainService,
         {
-          provide: getWorkspaceScopedRepositoryToken(ApprovedAccessDomainEntity),
+          provide: getWorkspaceScopedRepositoryToken(
+            ApprovedAccessDomainEntity,
+          ),
           useValue: {
             delete: jest.fn(),
             findOne: jest.fn(),
