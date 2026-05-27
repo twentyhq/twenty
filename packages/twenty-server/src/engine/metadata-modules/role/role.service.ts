@@ -461,11 +461,10 @@ export class RoleService {
           error instanceof ApiKeyException &&
           error.code === ApiKeyExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
         ) {
-          throw this.toRoleDeleteRebindException({
+          throw this.toApiKeyRebindException({
             error,
             roleLabel,
-            targetKind: 'apiKey',
-            targetCount: apiKeysToRebind.length,
+            apiKeyCount: apiKeysToRebind.length,
           });
         }
         throw error;
@@ -486,46 +485,39 @@ export class RoleService {
           workspaceId,
         });
       } catch (error) {
+        // If the default role doesn't accept agents, fall through to the
+        // FK CASCADE: it drops the role_target and agent execution handles
+        // a missing role gracefully (roleId defaults to ''). Unlike API
+        // keys, an orphan agent doesn't crash request-time permission
+        // lookups, so blocking the deletion would surprise existing
+        // workflows that relied on the cascade.
         if (
           error instanceof AiException &&
           error.code === AiExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS
         ) {
-          throw this.toRoleDeleteRebindException({
-            error,
-            roleLabel,
-            targetKind: 'agent',
-            targetCount: agentsToRebind.length,
-          });
+          continue;
         }
         throw error;
       }
     }
   }
 
-  private toRoleDeleteRebindException({
+  private toApiKeyRebindException({
     error,
     roleLabel,
-    targetKind,
-    targetCount,
+    apiKeyCount,
   }: {
     error: unknown;
     roleLabel: string;
-    targetKind: 'apiKey' | 'agent';
-    targetCount: number;
+    apiKeyCount: number;
   }): Error {
-    const targetLabel = targetKind === 'apiKey' ? 'API key' : 'agent';
     const innerMessage = error instanceof Error ? error.message : String(error);
 
     return new PermissionsException(
-      `Cannot delete role "${roleLabel}": ${targetCount} ${targetLabel}(s) depend on it and the workspace default role cannot take them over (${innerMessage}). Reassign these ${targetLabel}(s) to another role first.`,
-      targetKind === 'apiKey'
-        ? PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS
-        : PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_AGENTS,
+      `Cannot delete role "${roleLabel}": ${apiKeyCount} API key(s) depend on it and the workspace default role cannot take them over (${innerMessage}). Reassign these API key(s) to another role first.`,
+      PermissionsExceptionCode.ROLE_CANNOT_BE_ASSIGNED_TO_API_KEYS,
       {
-        userFriendlyMessage:
-          targetKind === 'apiKey'
-            ? msg`Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first.`
-            : msg`Cannot delete this role: it is still assigned to one or more agents, and the workspace default role cannot be assigned to agents. Please reassign these agents to another role first.`,
+        userFriendlyMessage: msg`Cannot delete this role: it is still assigned to one or more API keys, and the workspace default role cannot be assigned to API keys. Please reassign these API keys to another role first.`,
       },
     );
   }
