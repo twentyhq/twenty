@@ -585,7 +585,8 @@ const assertCliGuidanceSplit = () => {
 
   const requiredDevelopFragments = [
     'references/develop-app/app-structure.md',
-    'After entity changes, run the validation checklist in `app-structure.md`',
+    'yarn twenty dev:add',
+    'yarn twenty dev --once',
     'switch to `manage-app`',
   ];
 

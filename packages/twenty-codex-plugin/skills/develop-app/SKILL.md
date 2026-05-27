@@ -24,15 +24,29 @@ If setup, dependencies, remotes, authentication, sync, build, deploy, logs, or C
 
 For app shape and entity file structure, read `../../references/develop-app/app-structure.md`.
 
-Prefer the app CLI for new entities when an interactive prompt is acceptable:
+## Adding New Entities
+
+Use the app CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate automatically:
 
 ```bash
 yarn twenty dev:add
 ```
 
-For agent/non-interactive work, it is usually faster to create the files directly using the SDK patterns in `twenty-sdk/define`. Use the generated CLI templates or local SDK typings as reference instead of getting stuck in prompts.
+This is the default and preferred way to create objects, fields, views, logic functions, front components, and other entities. Do not manually create entity files, explore SDK typings in `node_modules`, or generate UUIDs by hand when the CLI can do it.
 
-After entity changes, run the validation checklist in `app-structure.md` when practical. If validation fails because of setup, remotes, authentication, sync, build, logs, or CI/CD, switch to `manage-app`.
+Only create entity files manually when modifying existing entities or when the CLI does not support the specific entity type.
+
+## After Entity Changes
+
+After adding or modifying entities, sync the app to the active remote:
+
+```bash
+yarn twenty dev --once
+```
+
+Do not run `yarn twenty dev:typecheck`, `yarn lint`, or other validation commands. These are redundant when the CLI generated the files, and they cause environment issues in the Codex sandbox. The sync command itself will report errors if the entity definitions are invalid.
+
+Do not attempt to fix Node or Yarn version mismatches, search for version managers, or debug the toolchain. If a command fails due to environment issues, report the error to the user and stop.
 
 Use the official Twenty docs or local SDK source when exact entity fields, imports, or configuration shapes matter.
 
