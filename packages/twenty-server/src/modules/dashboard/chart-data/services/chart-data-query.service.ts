@@ -91,10 +91,14 @@ export class ChartDataQueryService {
     secondaryAxisOrderBy,
     splitMultiValueFields,
   }: ExecuteGroupByQueryParams): Promise<GroupByRawResult[]> {
+    const currentWorkspaceMemberId =
+      authContext.type === 'user' ? authContext.workspaceMemberId : undefined;
+
     const gqlOperationFilter = convertChartFilterToGqlOperationFilter({
       filter,
       flatFieldMetadataMaps,
       userTimezone,
+      currentWorkspaceMemberId,
     });
 
     const primaryGroupByField = getFieldMetadata(
