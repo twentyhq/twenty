@@ -43,6 +43,7 @@ import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -92,6 +93,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ResourceCreditService,
     BillingGaugeService,
     WorkspaceBillingSubscriptionCacheService,
+    provideWorkspaceScopedRepository(BillingEntitlementEntity),
   ],
   exports: [
     BillingSubscriptionService,

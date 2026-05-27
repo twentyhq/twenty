@@ -35,6 +35,10 @@ import { getPlanKeyFromSubscription } from 'src/engine/core-modules/billing/util
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class BillingSubscriptionService {
@@ -44,10 +48,8 @@ export class BillingSubscriptionService {
     private readonly stripeSubscriptionService: StripeSubscriptionService,
     private readonly billingPriceService: BillingPriceService,
     private readonly billingPlanService: BillingPlanService,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingEntitlementEntity)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
+    @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingSubscriptionEntity)
@@ -196,9 +198,7 @@ export class BillingSubscriptionService {
     const hasValidEnterprisePlan = this.enterprisePlanService.isValid();
 
     const entitlements = isBillingEnabled
-      ? await this.billingEntitlementRepository.find({
-          where: { workspaceId },
-        })
+      ? await this.billingEntitlementRepository.find(workspaceId)
       : [];
 
     const entitlementsByKey = entitlements.reduce(
@@ -222,11 +222,10 @@ export class BillingSubscriptionService {
     workspaceId: string,
     key: BillingEntitlementKey,
   ): Promise<boolean> {
-    const entitlement = await this.billingEntitlementRepository.findOneBy({
+    const entitlement = await this.billingEntitlementRepository.findOne(
       workspaceId,
-      key,
-      value: true,
-    });
+      { where: { key, value: true } },
+    );
 
     return entitlement?.value ?? false;
   }

@@ -16,6 +16,10 @@ import { BillingCustomerEntity } from 'src/engine/core-modules/billing/entities/
 import { BillingEntitlementEntity } from 'src/engine/core-modules/billing/entities/billing-entitlement.entity';
 import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { RowLevelPermissionPredicateGroupService } from 'src/engine/metadata-modules/row-level-permission-predicate/services/row-level-permission-predicate-group.service';
+import {
+  InjectWorkspaceScopedRepository,
+  WorkspaceScopedRepository,
+} from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 @Injectable()
 export class BillingWebhookEntitlementService {
@@ -24,10 +28,8 @@ export class BillingWebhookEntitlementService {
     // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
-    // TODO(workspace-scoped): migrate to @InjectWorkspaceScopedRepository
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(BillingEntitlementEntity)
-    private readonly billingEntitlementRepository: Repository<BillingEntitlementEntity>,
+    @InjectWorkspaceScopedRepository(BillingEntitlementEntity)
+    private readonly billingEntitlementRepository: WorkspaceScopedRepository<BillingEntitlementEntity>,
     private readonly rowLevelPermissionPredicateGroupService: RowLevelPermissionPredicateGroupService,
   ) {}
 
@@ -53,10 +55,14 @@ export class BillingWebhookEntitlementService {
         data,
       );
 
-    await this.billingEntitlementRepository.upsert(billingEntitlements, {
-      conflictPaths: ['workspaceId', 'key'],
-      skipUpdateIfNoValuesChanged: true,
-    });
+    await this.billingEntitlementRepository.upsert(
+      workspaceId,
+      billingEntitlements,
+      {
+        conflictPaths: ['workspaceId', 'key'],
+        skipUpdateIfNoValuesChanged: true,
+      },
+    );
 
     const isRowLevelPermissionDisabled = billingEntitlements.some(
       (entitlement) =>
