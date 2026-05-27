@@ -1,10 +1,8 @@
 /* @license Enterprise */
 
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { type Repository } from 'typeorm';
 
 import { differenceInDays } from 'date-fns';
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
@@ -27,6 +25,8 @@ import { CacheStorageService } from 'src/engine/core-modules/cache-storage/servi
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 type UsageSumRow = {
@@ -37,15 +37,15 @@ type UsageSumRow = {
 export class BillingUsageService {
   protected readonly logger = new Logger(BillingUsageService.name);
   constructor(
-    @InjectRepository(BillingCustomerEntity)
-    private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
+    @InjectWorkspaceScopedRepository(BillingCustomerEntity)
+    private readonly billingCustomerRepository: WorkspaceScopedRepository<BillingCustomerEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly billingSubscriptionItemService: BillingSubscriptionItemService,
     @InjectCacheStorage(CacheStorageNamespace.EngineBillingUsage)
     private readonly billingUsageCacheStorage: CacheStorageService,
-    @InjectRepository(BillingSubscriptionEntity)
-    private readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
+    @InjectWorkspaceScopedRepository(BillingSubscriptionEntity)
+    private readonly billingSubscriptionRepository: WorkspaceScopedRepository<BillingSubscriptionEntity>,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly clickHouseService: ClickHouseService,
     private readonly billingUsageCapService: BillingUsageCapService,
@@ -123,9 +123,10 @@ export class BillingUsageService {
         ? item.freeTrialQuantity
         : item.creditAmount;
 
-    const billingCustomer = await this.billingCustomerRepository.findOne({
-      where: { workspaceId },
-    });
+    const billingCustomer = await this.billingCustomerRepository.findOne(
+      workspaceId,
+      { where: {} },
+    );
     const rolloverCredits = billingCustomer?.creditBalanceMicro ?? 0;
 
     return {
@@ -199,14 +200,17 @@ export class BillingUsageService {
     workspaceId: string;
     currentPeriodStart: Date | string;
   }): Promise<number> {
-    const subscription = await this.billingSubscriptionRepository.findOne({
-      where: { workspaceId, currentPeriodStart: new Date(currentPeriodStart) },
-      relations: [
-        'billingSubscriptionItems',
-        'billingSubscriptionItems.billingProduct',
-        'billingSubscriptionItems.billingProduct.billingPrices',
-      ],
-    });
+    const subscription = await this.billingSubscriptionRepository.findOne(
+      workspaceId,
+      {
+        where: { currentPeriodStart: new Date(currentPeriodStart) },
+        relations: [
+          'billingSubscriptionItems',
+          'billingSubscriptionItems.billingProduct',
+          'billingSubscriptionItems.billingProduct.billingPrices',
+        ],
+      },
+    );
 
     if (!isDefined(subscription)) {
       throw new BillingException(
@@ -218,9 +222,9 @@ export class BillingUsageService {
     const resourceUsageCap = this.getResourceUsageCap(subscription);
 
     const { creditBalanceMicro: creditBalance } =
-      await this.billingCustomerRepository.findOneOrFail({
+      await this.billingCustomerRepository.findOneOrFail(workspaceId, {
         select: { creditBalanceMicro: true },
-        where: { workspaceId },
+        where: {},
       });
 
     const usage = await this.getCurrentPeriodCreditsUsed(

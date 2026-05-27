@@ -1,15 +1,11 @@
 /* @license Enterprise */
 
-import { InjectRepository } from '@nestjs/typeorm';
-
 import { Command, Option } from 'nest-commander';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
 import { BillingSubscriptionService } from 'src/engine/core-modules/billing/services/billing-subscription.service';
 import { StripeSubscriptionItemService } from 'src/engine/core-modules/billing/stripe/services/stripe-subscription-item.service';
 
@@ -24,8 +20,6 @@ export class BillingUpdateSubscriptionPriceCommand extends ActiveOrSuspendedWork
 
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    @InjectRepository(BillingSubscriptionEntity)
-    protected readonly billingSubscriptionRepository: Repository<BillingSubscriptionEntity>,
     private readonly billingSubscriptionService: BillingSubscriptionService,
     private readonly stripeSubscriptionItemService: StripeSubscriptionItemService,
   ) {

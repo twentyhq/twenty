@@ -1,7 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import {
@@ -10,12 +7,13 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class EmailingDomainService {
   constructor(
-    @InjectRepository(EmailingDomainEntity)
-    private readonly emailingDomainRepository: Repository<EmailingDomainEntity>,
+    @InjectWorkspaceScopedRepository(EmailingDomainEntity)
+    private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
   ) {}
 
@@ -24,10 +22,12 @@ export class EmailingDomainService {
     driver: EmailingDomainDriver,
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity> {
-    const existingDomain = await this.emailingDomainRepository.findOneBy({
-      domain,
-      workspaceId: workspace.id,
-    });
+    const existingDomain = await this.emailingDomainRepository.findOne(
+      workspace.id,
+      {
+        where: { domain },
+      },
+    );
 
     if (existingDomain) {
       throw new Error('Emailing domain already exists for this workspace');
@@ -39,33 +39,29 @@ export class EmailingDomainService {
       workspaceId: workspace.id,
     });
 
-    const domainToCreate = {
+    return this.emailingDomainRepository.save(workspace.id, {
       domain,
       driver,
-      workspaceId: workspace.id,
       ...verificationResult,
-    };
-
-    const savedDomain =
-      await this.emailingDomainRepository.save(domainToCreate);
-
-    return savedDomain;
+    });
   }
 
   async deleteEmailingDomain(
     workspace: WorkspaceEntity,
     emailingDomainId: string,
   ): Promise<void> {
-    const emailingDomain = await this.emailingDomainRepository.findOneBy({
-      id: emailingDomainId,
-      workspaceId: workspace.id,
-    });
+    const emailingDomain = await this.emailingDomainRepository.findOne(
+      workspace.id,
+      {
+        where: { id: emailingDomainId },
+      },
+    );
 
     if (!emailingDomain) {
       throw new Error('Emailing domain not found');
     }
 
-    await this.emailingDomainRepository.delete({
+    await this.emailingDomainRepository.delete(workspace.id, {
       id: emailingDomain.id,
     });
   }
@@ -73,13 +69,8 @@ export class EmailingDomainService {
   async getEmailingDomains(
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity[]> {
-    return await this.emailingDomainRepository.find({
-      where: {
-        workspaceId: workspace.id,
-      },
-      order: {
-        createdAt: 'DESC',
-      },
+    return this.emailingDomainRepository.find(workspace.id, {
+      order: { createdAt: 'DESC' },
     });
   }
 
@@ -87,9 +78,8 @@ export class EmailingDomainService {
     workspace: WorkspaceEntity,
     emailingDomainId: string,
   ): Promise<EmailingDomainEntity | null> {
-    return await this.emailingDomainRepository.findOneBy({
-      id: emailingDomainId,
-      workspaceId: workspace.id,
+    return this.emailingDomainRepository.findOne(workspace.id, {
+      where: { id: emailingDomainId },
     });
   }
 
@@ -116,12 +106,10 @@ export class EmailingDomainService {
       workspaceId: emailingDomain.workspaceId,
     });
 
-    const updatedDomain = await this.emailingDomainRepository.save({
+    return this.emailingDomainRepository.save(workspace.id, {
       ...emailingDomain,
       ...verificationResult,
     });
-
-    return updatedDomain;
   }
 
   async syncEmailingDomain(
@@ -138,9 +126,8 @@ export class EmailingDomainService {
     }
 
     await this.emailingDomainRepository.update(
-      {
-        id: emailingDomainId,
-      },
+      workspace.id,
+      { id: emailingDomainId },
       {
         verificationRecords: emailingDomain.verificationRecords,
         status: EmailingDomainStatus.PENDING,
@@ -154,14 +141,13 @@ export class EmailingDomainService {
         workspaceId: emailingDomain.workspaceId,
       });
 
-      const updatedDomain = await this.emailingDomainRepository.save({
+      return this.emailingDomainRepository.save(workspace.id, {
         ...emailingDomain,
         ...statusResult,
       });
-
-      return updatedDomain;
     } catch (error) {
       await this.emailingDomainRepository.update(
+        workspace.id,
         { id: emailingDomainId },
         {
           verificationRecords: emailingDomain.verificationRecords,
