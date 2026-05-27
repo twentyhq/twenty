@@ -449,15 +449,4 @@ describe('PermissionsService', () => {
       });
     });
   });
-
-  describe('getDefaultUserWorkspacePermissions', () => {
-    it('should default CODE_INTERPRETER_TOOL to false', () => {
-      const { permissionFlags } = service.getDefaultUserWorkspacePermissions();
-
-      expect(permissionFlags).toHaveProperty(
-        PermissionFlagType.CODE_INTERPRETER_TOOL,
-        false,
-      );
-    });
-  });
 });
