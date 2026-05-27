@@ -273,4 +273,26 @@ describe('WorkspaceScopedRepository', () => {
       expect(repository.createQueryBuilder).toHaveBeenCalledWith('t');
     });
   });
+
+  describe('withManager', () => {
+    it('returns a new wrapper bound to the manager-provided repository', async () => {
+      const txRepository = createMockRepository();
+      const manager = {
+        getRepository: jest.fn().mockReturnValue(txRepository),
+      } as unknown as import('typeorm').EntityManager;
+      (repository as unknown as { target: unknown }).target = 'FakeEntity';
+
+      const tx = scoped.withManager(manager);
+
+      expect(tx).not.toBe(scoped);
+      expect(manager.getRepository).toHaveBeenCalledWith('FakeEntity');
+
+      await tx.findOne(WORKSPACE_ID, { where: { id: 'a' } });
+
+      expect(txRepository.findOne).toHaveBeenCalledWith({
+        where: { id: 'a', workspaceId: WORKSPACE_ID },
+      });
+      expect(repository.findOne).not.toHaveBeenCalled();
+    });
+  });
 });

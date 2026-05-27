@@ -31,8 +31,9 @@ const EXCLUSIONS = new Set<string>([
   'UserEntity',
   'WorkspaceSSOIdentityProviderEntity',
 
-  // Workspace-scoped entities not yet routed through the wrapper.
-  // Drop entries from this list as they are migrated.
+  // Workspace-scoped entities currently outside the wrapper. Removing an
+  // entry forces every raw @InjectRepository site for it to migrate to
+  // the wrapper or carry an explicit eslint-disable.
   'ApplicationEntity',
   'ApplicationRegistrationVariableEntity',
   'CalendarChannelEntity',

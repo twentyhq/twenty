@@ -339,11 +339,6 @@ describe('TwoFactorAuthenticationResolver', () => {
         ),
       );
     });
-
-    // Cross-workspace lookup is now blocked at the repository layer by
-    // WorkspaceScopedRepository — the findOne call merges workspaceId
-    // into WHERE and would simply return null for a method belonging to
-    // another workspace, surfacing as INVALID_INPUT (covered above).
   });
 
   describe('verifyTwoFactorAuthenticationMethodForAuthenticatedUser', () => {
