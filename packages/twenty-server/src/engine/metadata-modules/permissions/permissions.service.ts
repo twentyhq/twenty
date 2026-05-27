@@ -11,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -117,47 +118,69 @@ export class PermissionsService {
     permissionFlags: Record<string, boolean>;
     objectsPermissions: ObjectsPermissions;
   }> {
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
-      relations: ['rolePermissionFlags', 'rolePermissionFlags.permissionFlag'],
+    const {
+      rolesPermissions,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+      flatPermissionFlagMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatRoleMaps',
+      'flatRolePermissionFlagMaps',
+      'flatPermissionFlagMaps',
+    ]);
+
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
     });
 
-    if (!isDefined(role)) {
+    if (!isDefined(flatRole)) {
       throw new PermissionsException(
         PermissionsExceptionMessage.ROLE_NOT_FOUND,
         PermissionsExceptionCode.ROLE_NOT_FOUND,
       );
     }
 
+    const grantedPermissionFlagIds = new Set(
+      flatRole.rolePermissionFlagIds
+        .map(
+          (rolePermissionFlagId) =>
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: rolePermissionFlagId,
+              flatEntityMaps: flatRolePermissionFlagMaps,
+            })?.permissionFlagId,
+        )
+        .filter(isDefined),
+    );
+
     const permissionFlags: Record<string, boolean> = {};
 
-    for (const feature of Object.values(PermissionFlagType)) {
-      const hasBasePermission = this.isToolPermission(feature)
-        ? role.canAccessAllTools
-        : role.canUpdateAllSettings;
+    for (const flatPermissionFlag of Object.values(
+      flatPermissionFlagMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(flatPermissionFlag)) {
+        continue;
+      }
 
-      permissionFlags[SystemPermissionFlag[feature]] =
-        hasBasePermission || this.roleHasPermissionFlag(role, feature);
+      const hasBasePermission =
+        flatPermissionFlag.permissionType === 'tool'
+          ? flatRole.canAccessAllTools
+          : flatRole.canUpdateAllSettings;
+
+      permissionFlags[flatPermissionFlag.universalIdentifier] =
+        hasBasePermission ||
+        grantedPermissionFlagIds.has(flatPermissionFlag.id);
     }
-
-    for (const rolePermissionFlag of role.rolePermissionFlags ?? []) {
-      permissionFlags[rolePermissionFlag.permissionFlag.universalIdentifier] =
-        true;
-    }
-
-    const { rolesPermissions } =
-      await this.workspaceCacheService.getOrRecompute(workspaceId, [
-        'rolesPermissions',
-      ]);
 
     return {
       capabilities: {
-        canReadAllObjectRecords: role.canReadAllObjectRecords,
-        canUpdateAllObjectRecords: role.canUpdateAllObjectRecords,
-        canSoftDeleteAllObjectRecords: role.canSoftDeleteAllObjectRecords,
-        canDestroyAllObjectRecords: role.canDestroyAllObjectRecords,
-        canUpdateAllSettings: role.canUpdateAllSettings,
-        canAccessAllTools: role.canAccessAllTools,
+        canReadAllObjectRecords: flatRole.canReadAllObjectRecords,
+        canUpdateAllObjectRecords: flatRole.canUpdateAllObjectRecords,
+        canSoftDeleteAllObjectRecords: flatRole.canSoftDeleteAllObjectRecords,
+        canDestroyAllObjectRecords: flatRole.canDestroyAllObjectRecords,
+        canUpdateAllSettings: flatRole.canUpdateAllSettings,
+        canAccessAllTools: flatRole.canAccessAllTools,
       },
       permissionFlags,
       objectsPermissions: rolesPermissions[roleId] ?? {},
