@@ -25,6 +25,7 @@ import { FormFieldInputContainer } from '@/object-record/record-field/ui/form-ty
 import { FormFieldInputInnerContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputInnerContainer';
 import { FormFieldInputRowContainer } from '@/object-record/record-field/ui/form-types/components/FormFieldInputRowContainer';
 import { FormFieldPlaceholder } from '@/object-record/record-field/ui/form-types/components/FormFieldPlaceholder';
+import { VariableChipStandalone } from '@/object-record/record-field/ui/form-types/components/VariableChipStandalone';
 import { type VariablePickerComponent } from '@/object-record/record-field/ui/form-types/types/VariablePickerComponent';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
 import { useRecordsForSelect } from '@/object-record/select/hooks/useRecordsForSelect';
@@ -35,6 +36,7 @@ import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent
 import { DropdownMenuSearchInput } from '@/ui/layout/dropdown/components/DropdownMenuSearchInput';
 import { DropdownMenuSeparator } from '@/ui/layout/dropdown/components/DropdownMenuSeparator';
 import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
+import { isStandaloneVariableString } from '@/workflow/utils/isStandaloneVariableString';
 
 const StyledFormSelectContainerWrapper = styled.div<{ readonly?: boolean }>`
   cursor: ${({ readonly }) => (readonly ? 'default' : 'pointer')};
@@ -141,9 +143,17 @@ export const FormWorkspaceMemberFilterValueInput = ({
 
   const [searchFilter, setSearchFilter] = useState('');
 
+  const isVariableValue = isStandaloneVariableString(defaultValue);
+
   const parsedValue = useMemo(
-    () => parseWorkspaceMemberFilterValue(defaultValue),
-    [defaultValue],
+    () =>
+      isVariableValue
+        ? {
+            isCurrentWorkspaceMemberSelected: false,
+            selectedRecordIds: [] as string[],
+          }
+        : parseWorkspaceMemberFilterValue(defaultValue),
+    [defaultValue, isVariableValue],
   );
 
   const { isCurrentWorkspaceMemberSelected, selectedRecordIds } = parsedValue;
@@ -223,6 +233,15 @@ export const FormWorkspaceMemberFilterValueInput = ({
     [onChange],
   );
 
+  const handleUnlinkVariable = useCallback(() => {
+    if (isDefined(onClear)) {
+      onClear();
+      return;
+    }
+
+    onChange('');
+  }, [onChange, onClear]);
+
   const handleSearchChange = useCallback(
     (event: ChangeEvent<HTMLInputElement>) => {
       setSearchFilter(event.target.value);
@@ -273,7 +292,12 @@ export const FormWorkspaceMemberFilterValueInput = ({
     selectedRecords,
   ]);
 
-  const triggerContent = isDefined(triggerDisplayText) ? (
+  const triggerContent = isVariableValue ? (
+    <VariableChipStandalone
+      rawVariableName={defaultValue ?? ''}
+      onRemove={readonly ? undefined : handleUnlinkVariable}
+    />
+  ) : isDefined(triggerDisplayText) ? (
     <StyledTriggerLabel>
       {isCurrentWorkspaceMemberSelected && <IconUserCircle size={12} />}
       {triggerDisplayText}
