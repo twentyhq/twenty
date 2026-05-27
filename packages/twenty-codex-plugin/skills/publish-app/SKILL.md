@@ -5,6 +5,8 @@ description: Use when the user wants to prepare or verify a Twenty app for npm o
 
 # Publishing Checklist
 
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.
+
 Use `../../references/publish-app/prepare-for-app-store.md` for detailed README, marketplace copy, logo, screenshot, and public asset guidance.
 
 Keep the skill workflow concise:

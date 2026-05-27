@@ -5,6 +5,8 @@ description: Use when the user wants to create or scaffold a new Twenty app
 
 # Quickstart an App
 
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.
+
 Use this as the default way to start an app unless the user gives different instructions.
 
 First, ask the user for the app name if they did not provide one.

@@ -5,6 +5,8 @@ description: Use when the user wants to add or modify Twenty app entities, inclu
 
 # Boundaries
 
+For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.
+
 Do not scaffold a new app here. Use `create-app` first when the app does not exist.
 
 # Workflow

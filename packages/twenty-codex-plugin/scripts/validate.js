@@ -358,6 +358,7 @@ const assertReferences = () => {
     'references/develop-app/standalone-pages.md',
     'references/manage-app/cli-and-sync.md',
     'references/publish-app/prepare-for-app-store.md',
+    'references/concepts/how-apps-work.md',
     'references/use-twenty-mcp/setup.md',
     'references/use-twenty-mcp/result-formatting.md',
   ];
@@ -658,6 +659,55 @@ const assertCliGuidanceSplit = () => {
   }
 };
 
+const assertHowAppsWork = () => {
+  const howAppsWorkPath = path.join(
+    pluginRoot,
+    'references/concepts/how-apps-work.md',
+  );
+  const howAppsWork = readText(howAppsWorkPath);
+
+  const requiredFragments = [
+    '# How Twenty Apps Work',
+    '## What Is A Twenty App',
+    'standalone npm package',
+    '## SDK Packages',
+    'twenty-sdk',
+    'twenty-client-sdk',
+    '## Twenty Instances And Remotes',
+    '## Local Development Environment',
+    '## App Lifecycle',
+    'create-twenty-app',
+    '## Front Component Rendering',
+    'Remote DOM',
+    '## App File Structure',
+    'application-config.ts',
+    '## Sharing An App',
+    '## Key Concepts',
+    'Universal identifiers',
+  ];
+
+  for (const fragment of requiredFragments) {
+    if (!howAppsWork.includes(fragment)) {
+      fail(`how-apps-work.md is missing foundational guidance: ${fragment}`);
+    }
+  }
+
+  const skillsToCheck = [
+    'skills/create-app/SKILL.md',
+    'skills/develop-app/SKILL.md',
+    'skills/manage-app/SKILL.md',
+    'skills/publish-app/SKILL.md',
+  ];
+
+  for (const skillRelPath of skillsToCheck) {
+    const skill = readText(path.join(pluginRoot, skillRelPath));
+
+    if (!skill.includes('references/concepts/how-apps-work.md')) {
+      fail(`${skillRelPath} must reference how-apps-work.md`);
+    }
+  }
+};
+
 const assertSetupHelper = () => {
   const setupScript = path.join(pluginRoot, 'scripts', 'setup-mcp.sh');
   const syntaxCheck = spawnSync('bash', ['-n', setupScript], { encoding: 'utf8' });
@@ -692,6 +742,7 @@ assertReferences();
 assertTwentyMcpFormattingContract();
 assertFrontComponentGuidance();
 assertCliGuidanceSplit();
+assertHowAppsWork();
 assertSetupHelper();
 
 if (failures.length > 0) {
