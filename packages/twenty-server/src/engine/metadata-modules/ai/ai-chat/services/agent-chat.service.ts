@@ -23,7 +23,10 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 
+import { toDisplayCredits } from 'src/engine/core-modules/usage/utils/to-display-credits.util';
+import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/types/ai-chat-file-attachment.type';
 import { AgentTitleGenerationService } from './agent-title-generation.service';
+import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
 const serializeThreadForBroadcast = (
   thread: AgentChatThreadEntity,
@@ -37,8 +40,8 @@ const serializeThreadForBroadcast = (
   totalCacheCreationTokens: thread.totalCacheCreationTokens,
   contextWindowTokens: thread.contextWindowTokens,
   conversationSize: thread.conversationSize,
-  totalInputCredits: thread.totalInputCredits,
-  totalOutputCredits: thread.totalOutputCredits,
+  totalInputCredits: toDisplayCredits(thread.totalInputCredits),
+  totalOutputCredits: toDisplayCredits(thread.totalOutputCredits),
   deletedAt: thread.deletedAt,
   lastMessageAt,
   createdAt: thread.createdAt,
@@ -252,14 +255,14 @@ export class AgentChatService {
     threadId,
     text,
     id,
-    fileIds,
+    fileAttachments,
     workspaceId,
     userWorkspaceId,
   }: {
     threadId: string;
     text: string;
     id?: string;
-    fileIds?: string[];
+    fileAttachments?: AiChatFileAttachment[];
     workspaceId: string;
     userWorkspaceId: string;
   }): Promise<AgentMessageEntity> {
@@ -277,12 +280,18 @@ export class AgentChatService {
 
     const savedMessageId = (id ?? insertResult.identifiers[0].id) as string;
 
-    const files =
-      fileIds && fileIds.length > 0
+    const validFiles =
+      fileAttachments && fileAttachments.length > 0
         ? await this.fileRepository.find({
-            where: { id: In(fileIds), workspaceId },
+            where: {
+              id: In(fileAttachments.map((attachment) => attachment.id)),
+              workspaceId,
+            },
+            select: ['id'],
           })
         : [];
+
+    const validFileIds = new Set(validFiles.map((file) => file.id));
 
     const parts = [
       {
@@ -292,14 +301,16 @@ export class AgentChatService {
         textContent: text,
         workspaceId,
       },
-      ...files.map((file, index) => ({
-        messageId: savedMessageId,
-        orderIndex: index + 1,
-        type: 'file',
-        fileId: file.id,
-        fileFilename: file.path.split('/').pop() ?? null,
-        workspaceId,
-      })),
+      ...(fileAttachments ?? [])
+        .filter((attachment) => validFileIds.has(attachment.id))
+        .map((attachment, index) => ({
+          messageId: savedMessageId,
+          orderIndex: index + 1,
+          type: 'file',
+          fileId: attachment.id,
+          fileFilename: attachment.filename,
+          workspaceId,
+        })),
     ];
 
     await this.messagePartRepository.insert(parts);
@@ -529,9 +540,32 @@ export class AgentChatService {
     );
   }
 
+  async notifyThreadUsageUpdated({
+    threadId,
+    userWorkspaceId,
+  }: {
+    threadId: string;
+    userWorkspaceId: string;
+  }): Promise<void> {
+    const thread = await this.getThreadById(threadId, userWorkspaceId);
+
+    await this.broadcastThreadUpdated(
+      thread,
+      [
+        'totalInputTokens',
+        'totalOutputTokens',
+        'totalInputCredits',
+        'totalOutputCredits',
+        'conversationSize',
+        'contextWindowTokens',
+      ],
+      userWorkspaceId,
+    );
+  }
+
   private async broadcastThreadUpdated(
     thread: AgentChatThreadEntity,
-    updatedFields: string[],
+    updatedFields: (keyof AgentChatThreadDTO)[],
     userWorkspaceId: string,
   ): Promise<void> {
     const lastMessageAt = await this.getLastMessageAtForThread(thread.id);

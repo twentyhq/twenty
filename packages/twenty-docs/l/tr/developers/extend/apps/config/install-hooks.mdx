@@ -45,7 +45,7 @@ export default definePostInstallLogicFunction({
 Ayrıca kurulum sonrası işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty exec --postInstall
+yarn twenty dev:function:exec --postInstall
 ```
 
 Önemli noktalar:
@@ -60,7 +60,7 @@ yarn twenty exec --postInstall
 * Uygulama başına yalnızca bir kurulum sonrası işlevine izin verilir. Birden fazla tespit edilirse manifest oluşturma hataya düşer.
 * İşlevin `universalIdentifier`, `shouldRunOnVersionUpgrade` ve `shouldRunSynchronously` değerleri, derleme sırasında uygulama manifestine `postInstallLogicFunction` alanı altında otomatik olarak eklenir — bunlara [`defineApplication()`](/l/tr/developers/extend/apps/config/application) içinde atıfta bulunmanıza gerek yoktur.
 * Varsayılan zaman aşımı, veri tohumlama gibi daha uzun kurulum görevlerine izin vermek için 300 saniye (5 dakika) olarak ayarlanmıştır.
-* **Geliştirme modunda çalıştırılmaz**: bir uygulama yerel olarak kaydedildiğinde (`yarn twenty dev` aracılığıyla), sunucu kurulum akışını tamamen atlar ve dosyaları doğrudan CLI watcher üzerinden eşitler — bu nedenle, `shouldRunSynchronously` ne olursa olsun, kurulum sonrası geliştirme modunda hiç çalışmaz. Çalışan bir çalışma alanında bunu elle tetiklemek için `yarn twenty exec --postInstall` kullanın.
+* **Geliştirme modunda çalıştırılmaz**: bir uygulama yerel olarak kaydedildiğinde (`yarn twenty dev` aracılığıyla), sunucu kurulum akışını tamamen atlar ve dosyaları doğrudan CLI watcher üzerinden eşitler — bu nedenle, `shouldRunSynchronously` ne olursa olsun, kurulum sonrası geliştirme modunda hiç çalışmaz. Çalışan bir çalışma alanında bunu elle tetiklemek için `yarn twenty dev:function:exec --postInstall` kullanın.
 
 </Accordion>
 <Accordion title="definePreInstallLogicFunction" description="Çalışma alanı üstveri (metadata) geçişi uygulanmadan önce çalışır">
@@ -87,7 +87,7 @@ export default definePreInstallLogicFunction({
 Ayrıca kurulum öncesi işlevi istediğiniz zaman CLI kullanarak manuel olarak çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty exec --preInstall
+yarn twenty dev:function:exec --preInstall
 ```
 
 Önemli noktalar:
@@ -96,7 +96,7 @@ yarn twenty exec --preInstall
 * **Kanca ne zaman çalışır**: çalışma alanı üstveri (metadata) geçişinden hemen önce konumlandırılır (`synchronizeFromManifest`). Çalıştırmadan önce, sunucu yalnızca ekleyici bir "indirgenmiş eşitleme" yürütür; bu, çalışma alanı üstverisinde **yeni** sürümün kurulum öncesi işlevini kaydeder — başka hiçbir şeye dokunulmaz — ve ardından bunu yürütür. Bu eşitleme yalnızca ekleyici olduğundan, işleyiciniz çalıştığında önceki sürümün nesneleri, alanları ve verileri hâlâ sağlamdır: geçiş öncesi durumu güvenle okuyabilir ve yedekleyebilirsiniz.
 * **Yürütme modeli**: kurulum öncesi **senkron** olarak yürütülür ve **kurulumu bloklar**. İşleyici bir hata fırlatırsa, herhangi bir şema değişikliği uygulanmadan önce kurulum iptal edilir — çalışma alanı, tutarlı bir durumda önceki sürümde kalır. Bu kasıtlıdır: kurulum öncesi, riskli bir yükseltmeyi reddetmek için son şansınızdır.
 * Kurulum sonrası ile aynı şekilde, uygulama başına yalnızca bir kurulum öncesi işlevine izin verilir. Derleme sırasında uygulama manifestine `preInstallLogicFunction` altında otomatik olarak eklenir.
-* **Geliştirme modunda çalıştırılmaz**: kurulum sonrasında olduğu gibi — yerel olarak kaydedilen uygulamalarda kurulum akışı tamamen atlanır, bu nedenle `yarn twenty dev` altında kurulum öncesi hiç çalışmaz. Bunu elle tetiklemek için `yarn twenty exec --preInstall` kullanın.
+* **Geliştirme modunda çalıştırılmaz**: kurulum sonrasında olduğu gibi — yerel olarak kaydedilen uygulamalarda kurulum akışı tamamen atlanır, bu nedenle `yarn twenty dev` altında kurulum öncesi hiç çalışmaz. Bunu elle tetiklemek için `yarn twenty dev:function:exec --preInstall` kullanın.
 
 </Accordion>
 <Accordion title="Kurulum öncesi vs kurulum sonrası: hangisini ne zaman kullanmalı" description="Doğru kurulum kancasını seçme">

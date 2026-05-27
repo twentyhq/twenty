@@ -1,7 +1,7 @@
 ---
 title: Roles & Permissions
 description: Declare what objects and fields your app's logic functions and front components can read and write.
-icon: "shield-halved"
+icon: 'shield-halved'
 ---
 
 A **role** is a permission set: which objects an app can read or write, which fields it can see, and which platform-level capabilities it can use. Every app's logic functions and front components inherit the permissions of the role marked with `defineApplicationRole()` (see [The default function role](#the-default-function-role) below).
@@ -40,7 +40,8 @@ export default defineRole({
       objectUniversalIdentifier:
         STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
       fieldUniversalIdentifier:
-        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name.universalIdentifier,
+        STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.fields.name
+          .universalIdentifier,
       canReadFieldValue: false,
       canUpdateFieldValue: false,
     },
@@ -80,6 +81,7 @@ export default defineApplicationRole({
 `defineApplicationRole()` is a thin wrapper around `defineRole()` that flags **the** role used as your application's default at install time. Validation is identical to `defineRole`, but the build pipeline auto-wires its `universalIdentifier` into the application manifest's `defaultRoleUniversalIdentifier` — so you do not need to reference it from [`defineApplication`](/developers/extend/apps/config/application) yourself.
 
 Notes:
+
 - Exactly **one** `defineApplicationRole(...)` is allowed per app — the manifest build will fail if it finds more than one.
 - Use `defineRole()` (not `defineApplicationRole()`) for any **additional** roles your app ships.
 - Setting `defaultRoleUniversalIdentifier` explicitly on `defineApplication()` is still supported for backward compatibility, but is deprecated in favor of `defineApplicationRole()`.

@@ -36,6 +36,8 @@ import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.g
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 import { fromFieldMetadataEntityToFieldMetadataDto } from 'src/engine/metadata-modules/field-metadata/utils/from-field-metadata-entity-to-field-metadata-dto.util';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
+import { computeUniqueFieldMetadataIdsFromFlatIndexMaps } from 'src/engine/metadata-modules/index-metadata/utils/compute-unique-field-metadata-ids-from-flat-index-maps.util';
 import { fromFlatObjectMetadataToObjectMetadataDto } from 'src/engine/metadata-modules/flat-object-metadata/utils/from-flat-object-metadata-to-object-metadata-dto.util';
 import { CreateObjectInput } from 'src/engine/metadata-modules/object-metadata/dtos/create-object.input';
 import { type ObjectMetadataWithFieldsDTO } from 'src/engine/metadata-modules/object-metadata/dtos/object-metadata-with-fields.dto';
@@ -55,6 +57,7 @@ import {
   toLegacyObjectMetadataListResponse,
   toLegacyObjectMetadataUpdateResponse,
 } from 'src/engine/metadata-modules/object-metadata/utils/to-legacy-object-metadata-response.util';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller('rest/metadata/objects')
 @UseGuards(
@@ -62,7 +65,10 @@ import {
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.DATA_MODEL),
 )
-@UseFilters(ObjectMetadataRestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  ObjectMetadataRestApiExceptionFilter,
+)
 @UsePipes(new ValidationPipe())
 export class ObjectMetadataController {
   constructor(
@@ -72,7 +78,19 @@ export class ObjectMetadataController {
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
   ) {}
+
+  private async loadUniqueFieldMetadataIds(
+    workspaceId: string,
+  ): Promise<ReadonlySet<string>> {
+    const { flatIndexMaps } =
+      await this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
+        { workspaceId, flatMapsKeys: ['flatIndexMaps'] },
+      );
+
+    return computeUniqueFieldMetadataIdsFromFlatIndexMaps(flatIndexMaps);
+  }
 
   @Get()
   async findMany(
@@ -87,13 +105,20 @@ export class ObjectMetadataController {
       endingBefore: parseEndingBeforeRestRequest(request),
     });
 
-    const fields = await this.findFieldsForObjectIds(
-      workspaceId,
-      items.map((object) => object.id),
-    );
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.findFieldsForObjectIds(
+        workspaceId,
+        items.map((object) => object.id),
+      ),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const data = items.map((object) =>
-      this.toObjectWithFieldsDto(object, fields.get(object.id) ?? []),
+      this.toObjectWithFieldsDto(
+        object,
+        fields.get(object.id) ?? [],
+        uniqueFieldMetadataIds,
+      ),
     );
 
     const result: {
@@ -123,11 +148,18 @@ export class ObjectMetadataController {
       );
     }
 
-    const fields = await this.fieldMetadataRepository.find({
-      where: { objectMetadataId: object.id, workspaceId },
-    });
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { objectMetadataId: object.id, workspaceId },
+      }),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
-    const result = this.toObjectWithFieldsDto(object, fields);
+    const result = this.toObjectWithFieldsDto(
+      object,
+      fields,
+      uniqueFieldMetadataIds,
+    );
 
     return (await this.isNewMetadataFormat(workspaceId))
       ? result
@@ -144,13 +176,21 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const fields = await this.fieldMetadataRepository.find({
-      where: { objectMetadataId: flatObject.id, workspaceId },
-    });
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { objectMetadataId: flatObject.id, workspaceId },
+      }),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
-      fields: fields.map(fromFieldMetadataEntityToFieldMetadataDto),
+      fields: fields.map((field) =>
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
+      ),
     };
 
     return (await this.isNewMetadataFormat(workspaceId))
@@ -207,13 +247,21 @@ export class ObjectMetadataController {
       workspaceId,
     });
 
-    const fields = await this.fieldMetadataRepository.find({
-      where: { objectMetadataId: flatObject.id, workspaceId },
-    });
+    const [fields, uniqueFieldMetadataIds] = await Promise.all([
+      this.fieldMetadataRepository.find({
+        where: { objectMetadataId: flatObject.id, workspaceId },
+      }),
+      this.loadUniqueFieldMetadataIds(workspaceId),
+    ]);
 
     const result: ObjectMetadataWithFieldsDTO = {
       ...fromFlatObjectMetadataToObjectMetadataDto(flatObject),
-      fields: fields.map(fromFieldMetadataEntityToFieldMetadataDto),
+      fields: fields.map((field) =>
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
+      ),
     };
 
     return (await this.isNewMetadataFormat(workspaceId))
@@ -258,10 +306,16 @@ export class ObjectMetadataController {
   private toObjectWithFieldsDto(
     object: ObjectMetadataEntity,
     fields: FieldMetadataEntity[],
+    uniqueFieldMetadataIds: ReadonlySet<string>,
   ): ObjectMetadataWithFieldsDTO {
     return {
       ...fromObjectMetadataEntityToObjectMetadataDto(object),
-      fields: fields.map(fromFieldMetadataEntityToFieldMetadataDto),
+      fields: fields.map((field) =>
+        fromFieldMetadataEntityToFieldMetadataDto(
+          field,
+          uniqueFieldMetadataIds,
+        ),
+      ),
     };
   }
 }

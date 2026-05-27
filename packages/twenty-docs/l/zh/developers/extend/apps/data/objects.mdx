@@ -80,7 +80,7 @@ export default defineObject({
 * 每个字段都需要 `name`、`type`、`label` 以及其自身稳定的 `universalIdentifier`。
 * `fields` 数组是可选的——你可以定义没有自定义字段的对象。
 * 此处定义的内联字段**不**需要 `objectUniversalIdentifier`——它会从父对象继承。 使用[`defineField()`](/l/zh/developers/extend/apps/data/extending-objects)为你不拥有的对象添加字段。
-* 你可以使用 `yarn twenty add object` 脚手架创建新对象，它会引导你完成命名、字段和关系。 参见 [Architecture → Scaffolding entities](/l/zh/developers/extend/apps/getting-started/scaffolding)。
+* 你可以使用 `yarn twenty dev:add object` 脚手架创建新对象，它会引导你完成命名、字段和关系。 参见 [Architecture → Scaffolding entities](/l/zh/developers/extend/apps/getting-started/scaffolding)。
 
 <Note>
 **基础字段会自动添加。** 当你定义自定义对象时，Twenty 会为你创建标准字段，例如 `id`、`name`、`createdAt`、`updatedAt`、`createdBy`、`updatedBy` 和 `deletedAt`。 你无需在 `fields` 数组中声明这些字段——只需声明你的自定义字段。 你可以通过声明一个同名字段来覆盖默认字段，但这么做通常并不是一个好主意。

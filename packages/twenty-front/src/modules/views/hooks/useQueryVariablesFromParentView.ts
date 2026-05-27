@@ -33,7 +33,7 @@ export const useQueryVariablesFromParentView = ({
     recordSorts: contextStoreRecordShowParentView?.parentViewSorts ?? [],
     objectMetadataItem,
     objectMetadataItems,
-    flattenedFieldMetadataItems,
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
   });
 

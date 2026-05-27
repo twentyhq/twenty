@@ -14,7 +14,7 @@ function validateEnv(): { apiUrl: string; apiKey: string } {
   if (!apiUrl || !apiKey) {
     throw new Error(
       'TWENTY_API_URL and TWENTY_API_KEY must be set.\n' +
-        'Start a local server: yarn twenty server start\n' +
+        'Start a local server: yarn twenty docker:start\n' +
         'Or set them in vitest env config.',
     );
   }
@@ -80,8 +80,8 @@ export async function teardown() {
   const uninstallResult = await appUninstall({ appPath: APP_PATH });
 
   if (!uninstallResult.success) {
-    console.warn(
-      `App uninstall failed: ${uninstallResult.error?.message ?? 'Unknown error'}`,
+    throw new Error(
+      `App uninstall failed during teardown: ${JSON.stringify(uninstallResult.error, null, 2)}`,
     );
   }
 }

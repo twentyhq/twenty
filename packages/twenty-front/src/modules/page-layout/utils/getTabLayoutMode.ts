@@ -14,7 +14,10 @@ export const getTabLayoutMode = ({
   tab,
   pageLayoutType,
 }: GetTabLayoutModeParams): PageLayoutTabLayoutMode => {
-  if (pageLayoutType === PageLayoutType.RECORD_PAGE) {
+  if (
+    pageLayoutType === PageLayoutType.RECORD_PAGE ||
+    pageLayoutType === PageLayoutType.STANDALONE_PAGE
+  ) {
     assertPageLayoutTabHasDefinedLayoutModeOrThrow(tab);
 
     return tab.layoutMode;

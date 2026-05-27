@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFrontComponentIdToCommandMenuItem1769654418252
-  implements MigrationInterface
-{
+export class AddFrontComponentIdToCommandMenuItem1769654418252 implements MigrationInterface {
   name = 'AddFrontComponentIdToCommandMenuItem1769654418252';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

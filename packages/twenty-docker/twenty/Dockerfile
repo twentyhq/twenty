@@ -86,7 +86,11 @@ RUN if [ -d /app/packages/twenty-front/build ]; then \
 
 FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-server
 
-RUN apk add --no-cache curl jq postgresql-client
+RUN apk add --no-cache \
+    'curl>=8.19.0-r0' \
+    'nghttp2-libs>=1.69.0-r0' \
+    'postgresql18-client>=18.4-r0' \
+    jq
 
 COPY ./packages/twenty-docker/twenty/entrypoint.sh /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh

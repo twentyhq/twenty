@@ -19,7 +19,7 @@ jobs:
       files: |
         package.json
         yarn.lock
-        packages/twenty-website-new/**
+        packages/twenty-website/**
         packages/twenty-shared/**
   website-task:
     needs: changed-files-check

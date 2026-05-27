@@ -1,4 +1,4 @@
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { SystemPermissionFlag } from 'twenty-shared/constants';
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { expectOneNotInternalServerErrorSnapshot } from 'test/integration/graphql/utils/expect-one-not-internal-server-error-snapshot.util';
@@ -11,7 +11,6 @@ import { STANDARD_ROLE } from 'src/engine/workspace-manager/twenty-standard-appl
 
 const TEST_APP_ID = 'a1b2c3d4-0020-4000-a000-000000000010';
 const TEST_ROLE_ID = 'a1b2c3d4-0020-4000-a000-000000000011';
-const TEST_PERMISSION_FLAG_ID = 'a1b2c3d4-0020-4000-a000-000000000012';
 const TEST_OBJECT_PERMISSION_ID = 'a1b2c3d4-0020-4000-a000-000000000013';
 const TEST_FIELD_PERMISSION_ID = 'a1b2c3d4-0020-4000-a000-000000000014';
 
@@ -45,12 +44,7 @@ describe('Sync application should fail when retargeting existing permissions to 
             universalIdentifier: TEST_ROLE_ID,
             label: 'App Default Role',
             description: 'Default role for the test app',
-            permissionFlags: [
-              {
-                universalIdentifier: TEST_PERMISSION_FLAG_ID,
-                flag: PermissionFlagType.WORKSPACE,
-              },
-            ],
+            permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE],
           },
         ],
       },
@@ -75,12 +69,7 @@ describe('Sync application should fail when retargeting existing permissions to 
             universalIdentifier: STANDARD_ROLE.admin.universalIdentifier,
             label: 'Admin',
             description: 'Attempts to retarget permission flag to admin role',
-            permissionFlags: [
-              {
-                universalIdentifier: TEST_PERMISSION_FLAG_ID,
-                flag: PermissionFlagType.WORKSPACE,
-              },
-            ],
+            permissionFlagUniversalIdentifiers: [SystemPermissionFlag.WORKSPACE],
           },
         ],
       },

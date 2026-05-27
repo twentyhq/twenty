@@ -157,6 +157,7 @@ export class ApplyMessagesVisibilityRestrictionsService {
         return messages;
       },
       authContext,
+      { lite: true },
     );
   }
 }

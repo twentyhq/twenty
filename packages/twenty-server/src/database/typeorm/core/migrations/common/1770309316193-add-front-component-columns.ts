@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddFrontComponentColumns1770309316193
-  implements MigrationInterface
-{
+export class AddFrontComponentColumns1770309316193 implements MigrationInterface {
   name = 'AddFrontComponentColumns1770309316193';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

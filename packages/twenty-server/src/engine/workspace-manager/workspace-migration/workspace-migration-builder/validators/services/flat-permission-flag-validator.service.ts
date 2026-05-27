@@ -1,17 +1,19 @@
 import { Injectable } from '@nestjs/common';
 
 import { msg, t } from '@lingui/core/macro';
-import { PermissionFlagType } from 'twenty-shared/constants';
+import { isNonEmptyString } from '@sniptt/guards';
 import { ALL_METADATA_NAME } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
-import { PermissionsExceptionCode } from 'src/engine/metadata-modules/permissions/permissions.exception';
-import { FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import { PERMISSION_FLAG_PERMISSION_TYPES } from 'src/engine/metadata-modules/permission-flag/constants/permission-flag-permission-type.constant';
+import { PermissionFlagExceptionCode } from 'src/engine/metadata-modules/permission-flag/permission-flag.exception';
+import { belongsToTwentyStandardApp } from 'src/engine/metadata-modules/utils/belongs-to-twenty-standard-app.util';
+import { isCallerTwentyStandardApp } from 'src/engine/metadata-modules/utils/is-caller-twenty-standard-app.util';
+import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
-import { FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
-import { UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
-import { validateRoleBelongsToCallerApplication } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/utils/validate-role-belongs-to-caller-application.util';
+import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
+import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
 
 @Injectable()
 export class FlatPermissionFlagValidatorService {
@@ -19,17 +21,14 @@ export class FlatPermissionFlagValidatorService {
     flatEntityToValidate: flatPermissionFlagToValidate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
-      flatRoleMaps,
     },
-    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.permissionFlag
   >): FailedFlatEntityValidation<'permissionFlag', 'create'> {
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier: flatPermissionFlagToValidate.universalIdentifier,
-        roleUniversalIdentifier:
-          flatPermissionFlagToValidate.roleUniversalIdentifier,
+        key: flatPermissionFlagToValidate.key,
       },
       metadataName: 'permissionFlag',
       type: 'create',
@@ -42,71 +41,47 @@ export class FlatPermissionFlagValidatorService {
 
     if (isDefined(existingByUniversalId)) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Permission flag with universal identifier ${flatPermissionFlagToValidate.universalIdentifier} already exists`,
-        userFriendlyMessage: msg`Permission flag already exists`,
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
+        message: t`Permission flag definition with universal identifier ${flatPermissionFlagToValidate.universalIdentifier} already exists`,
+        userFriendlyMessage: msg`Permission flag definition already exists`,
       });
     }
 
-    const referencedRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: flatPermissionFlagToValidate.roleUniversalIdentifier,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    if (!isDefined(referencedRole)) {
+    if (!isNonEmptyString(flatPermissionFlagToValidate.key)) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
-      });
-    } else {
-      validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole,
-          buildOptions,
-        }),
-      );
-
-      if (!referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
-      }
-    }
-
-    const isValidFlag =
-      isDefined(flatPermissionFlagToValidate.flag) &&
-      Object.values(PermissionFlagType).includes(
-        flatPermissionFlagToValidate.flag,
-      );
-
-    if (!isValidFlag) {
-      validationResult.errors.push({
-        code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Invalid permission flag value`,
-        userFriendlyMessage: msg`Invalid permission setting`,
+        code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_KEY,
+        message: t`Permission flag definition key is required`,
+        userFriendlyMessage: msg`Key is required`,
       });
     }
 
-    const duplicateForSameRole = Object.values(
+    const collidingPermissionFlag = Object.values(
       optimisticFlatPermissionFlagMaps.byUniversalIdentifier,
-    ).filter(
-      (pf) =>
-        isDefined(pf) &&
-        pf.roleUniversalIdentifier ===
-          flatPermissionFlagToValidate.roleUniversalIdentifier &&
-        pf.flag === flatPermissionFlagToValidate.flag &&
-        pf.universalIdentifier !==
+    ).find(
+      (definition) =>
+        isDefined(definition) &&
+        definition.key === flatPermissionFlagToValidate.key &&
+        definition.universalIdentifier !==
           flatPermissionFlagToValidate.universalIdentifier,
     );
 
-    if (duplicateForSameRole.length > 0) {
+    if (isDefined(collidingPermissionFlag)) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Permission flag for this role and setting already exists`,
-        userFriendlyMessage: msg`This permission is already set for the role`,
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_ALREADY_EXISTS,
+        message: t`Permission flag definition with key "${flatPermissionFlagToValidate.key}" is already registered in this workspace.`,
+        userFriendlyMessage: msg`Another application in this workspace has already registered a permission flag with this key.`,
+      });
+    }
+
+    if (
+      !PERMISSION_FLAG_PERMISSION_TYPES.includes(
+        flatPermissionFlagToValidate.permissionType,
+      )
+    ) {
+      validationResult.errors.push({
+        code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
+        message: t`Permission flag definition permission type must be 'settings' or 'tool'`,
+        userFriendlyMessage: msg`Invalid permission type`,
       });
     }
 
@@ -118,17 +93,11 @@ export class FlatPermissionFlagValidatorService {
     flatEntityUpdate,
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
-      flatRoleMaps,
     },
     buildOptions,
   }: FlatEntityUpdateValidationArgs<
     typeof ALL_METADATA_NAME.permissionFlag
   >): FailedFlatEntityValidation<'permissionFlag', 'update'> {
-    const existingFlatPermissionFlag = findFlatEntityByUniversalIdentifier({
-      universalIdentifier,
-      flatEntityMaps: optimisticFlatPermissionFlagMaps,
-    });
-
     const validationResult = getEmptyFlatEntityValidationError({
       flatEntityMinimalInformation: {
         universalIdentifier,
@@ -137,79 +106,56 @@ export class FlatPermissionFlagValidatorService {
       type: 'update',
     });
 
-    if (!isDefined(existingFlatPermissionFlag)) {
+    const existing = findFlatEntityByUniversalIdentifier({
+      universalIdentifier,
+      flatEntityMaps: optimisticFlatPermissionFlagMaps,
+    });
+
+    if (!isDefined(existing)) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.PERMISSION_NOT_FOUND,
-        message: t`Permission flag to update not found`,
-        userFriendlyMessage: msg`Permission flag not found`,
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND,
+        message: t`Permission flag definition to update not found`,
+        userFriendlyMessage: msg`Permission flag definition not found`,
       });
 
       return validationResult;
     }
 
-    const updatedFlatPermissionFlag = {
-      ...existingFlatPermissionFlag,
-      ...flatEntityUpdate,
-    };
-
-    const referencedRole = findFlatEntityByUniversalIdentifier({
-      universalIdentifier: updatedFlatPermissionFlag.roleUniversalIdentifier,
-      flatEntityMaps: flatRoleMaps,
-    });
-
-    if (!isDefined(referencedRole)) {
+    if (
+      !isCallerTwentyStandardApp(buildOptions) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: existing.universalIdentifier,
+        applicationUniversalIdentifier: existing.applicationUniversalIdentifier,
+      })
+    ) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.ROLE_NOT_FOUND,
-        message: t`Role not found`,
-        userFriendlyMessage: msg`Role not found`,
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD,
+        message: t`Cannot update standard permission flag definition`,
+        userFriendlyMessage: msg`Cannot update standard permission flag definition`,
       });
-    } else {
-      validationResult.errors.push(
-        ...validateRoleBelongsToCallerApplication({
-          referencedRole,
-          buildOptions,
-        }),
-      );
-
-      if (!referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
-      }
     }
 
-    if (isDefined(flatEntityUpdate.flag)) {
-      const isValidFlag = Object.values(PermissionFlagType).includes(
-        flatEntityUpdate.flag as PermissionFlagType,
-      );
-
-      if (!isValidFlag) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.INVALID_SETTING,
-          message: t`Invalid permission flag value`,
-          userFriendlyMessage: msg`Invalid permission setting`,
-        });
-      }
-    }
-
-    const duplicateForSameRole = Object.values(
-      optimisticFlatPermissionFlagMaps.byUniversalIdentifier,
-    ).filter(
-      (pf) =>
-        isDefined(pf) &&
-        pf.roleUniversalIdentifier ===
-          updatedFlatPermissionFlag.roleUniversalIdentifier &&
-        pf.flag === updatedFlatPermissionFlag.flag &&
-        pf.universalIdentifier !== universalIdentifier,
-    );
-
-    if (duplicateForSameRole.length > 0) {
+    if (
+      isDefined(flatEntityUpdate.key) &&
+      flatEntityUpdate.key !== existing.key
+    ) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.INVALID_SETTING,
-        message: t`Permission flag for this role and setting already exists`,
-        userFriendlyMessage: msg`This permission is already set for the role`,
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_KEY_IMMUTABLE,
+        message: t`Permission flag definition key cannot be changed after creation`,
+        userFriendlyMessage: msg`Key cannot be changed`,
+      });
+    }
+
+    if (
+      isDefined(flatEntityUpdate.permissionType) &&
+      !PERMISSION_FLAG_PERMISSION_TYPES.includes(
+        flatEntityUpdate.permissionType,
+      )
+    ) {
+      validationResult.errors.push({
+        code: PermissionFlagExceptionCode.INVALID_PERMISSION_FLAG_PERMISSION_TYPE,
+        message: t`Permission flag definition permission type must be 'settings' or 'tool'`,
+        userFriendlyMessage: msg`Invalid permission type`,
       });
     }
 
@@ -220,8 +166,9 @@ export class FlatPermissionFlagValidatorService {
     flatEntityToValidate: { universalIdentifier },
     optimisticFlatEntityMapsAndRelatedFlatEntityMaps: {
       flatPermissionFlagMaps: optimisticFlatPermissionFlagMaps,
-      flatRoleMaps,
+      flatRolePermissionFlagMaps: optimisticFlatRolePermissionFlagMaps,
     },
+    buildOptions,
   }: UniversalFlatEntityValidationArgs<
     typeof ALL_METADATA_NAME.permissionFlag
   >): FailedFlatEntityValidation<'permissionFlag', 'delete'> {
@@ -233,30 +180,50 @@ export class FlatPermissionFlagValidatorService {
       type: 'delete',
     });
 
-    const existingFlatPermissionFlag = findFlatEntityByUniversalIdentifier({
+    const existing = findFlatEntityByUniversalIdentifier({
       universalIdentifier,
       flatEntityMaps: optimisticFlatPermissionFlagMaps,
     });
 
-    if (!isDefined(existingFlatPermissionFlag)) {
+    if (!isDefined(existing)) {
       validationResult.errors.push({
-        code: PermissionsExceptionCode.PERMISSION_NOT_FOUND,
-        message: t`Permission flag to delete not found`,
-        userFriendlyMessage: msg`Permission flag not found`,
-      });
-    } else {
-      const referencedRole = findFlatEntityByUniversalIdentifier({
-        universalIdentifier: existingFlatPermissionFlag.roleUniversalIdentifier,
-        flatEntityMaps: flatRoleMaps,
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_NOT_FOUND,
+        message: t`Permission flag definition to delete not found`,
+        userFriendlyMessage: msg`Permission flag definition not found`,
       });
 
-      if (isDefined(referencedRole) && !referencedRole.isEditable) {
-        validationResult.errors.push({
-          code: PermissionsExceptionCode.ROLE_NOT_EDITABLE,
-          message: t`Role is not editable`,
-          userFriendlyMessage: msg`This role cannot be modified because it is a system role. Only custom roles can be edited.`,
-        });
-      }
+      return validationResult;
+    }
+
+    if (
+      !isCallerTwentyStandardApp(buildOptions) &&
+      belongsToTwentyStandardApp({
+        universalIdentifier: existing.universalIdentifier,
+        applicationUniversalIdentifier: existing.applicationUniversalIdentifier,
+      })
+    ) {
+      validationResult.errors.push({
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_IS_STANDARD,
+        message: t`Cannot delete standard permission flag definition`,
+        userFriendlyMessage: msg`Cannot delete standard permission flag definition`,
+      });
+    }
+
+    const isPermissionFlagInUse = Object.values(
+      optimisticFlatRolePermissionFlagMaps.byUniversalIdentifier,
+    ).some(
+      (rolePermissionFlag) =>
+        isDefined(rolePermissionFlag) &&
+        rolePermissionFlag.permissionFlagUniversalIdentifier ===
+          existing.universalIdentifier,
+    );
+
+    if (isPermissionFlagInUse) {
+      validationResult.errors.push({
+        code: PermissionFlagExceptionCode.PERMISSION_FLAG_IN_USE,
+        message: t`Permission flag definition with key ${existing.key} is still assigned to a role`,
+        userFriendlyMessage: msg`Remove this permission from all roles before deleting it`,
+      });
     }
 
     return validationResult;

@@ -9,9 +9,7 @@ import {
 import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow-version.workspace-entity';
 
 @WorkspaceQueryHook(`workflowVersion.deleteMany`)
-export class WorkflowVersionDeleteManyPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowVersionDeleteManyPreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(): Promise<
     DeleteManyResolverArgs<WorkflowVersionWorkspaceEntity>
   > {

@@ -54,7 +54,7 @@ export const useUpdateMultipleRecordsActions = ({
     contextStoreFilters,
     contextStoreFilterGroups,
     objectMetadataItem,
-    flattenedFieldMetadataItems,
+    fieldMetadataItems: flattenedFieldMetadataItems,
     filterValueDependencies,
     contextStoreAnyFieldFilterValue,
   });

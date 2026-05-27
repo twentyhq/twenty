@@ -61,6 +61,12 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       toStringify: false,
       universalProperty: undefined,
     },
+    // isUnique is derived from IndexMetadata at cache build time and is
+    // not a column on the fieldMetadata table. It stays in
+    // propertiesToCompare so per-type validators see the proposed
+    // change (e.g. rejecting unique on FILES), but the field-metadata
+    // runner drops it before issuing the SQL UPDATE — the actual state
+    // change rides on the side-effect index create/delete.
     isUnique: {
       toCompare: true,
       toStringify: false,
@@ -1186,16 +1192,58 @@ export const ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME = {
       universalProperty: 'pageLayoutUniversalIdentifier',
     },
   },
-  permissionFlag: {
-    flag: {
+  rolePermissionFlag: {
+    permissionFlagId: {
       toCompare: true,
       toStringify: false,
-      universalProperty: undefined,
+      universalProperty: 'permissionFlagUniversalIdentifier',
     },
     roleId: {
       toCompare: true,
       toStringify: false,
       universalProperty: 'roleUniversalIdentifier',
+    },
+    flag: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    createdAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    updatedAt: {
+      toCompare: false,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+  },
+  permissionFlag: {
+    key: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    label: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    description: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    icon: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
+    },
+    permissionType: {
+      toCompare: true,
+      toStringify: false,
+      universalProperty: undefined,
     },
     createdAt: {
       toCompare: false,

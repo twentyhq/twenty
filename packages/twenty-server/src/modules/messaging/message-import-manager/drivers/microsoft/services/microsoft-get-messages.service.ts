@@ -11,20 +11,14 @@ import { MicrosoftImportDriverException } from 'src/modules/messaging/message-im
 import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.interface';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
-import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse.util';
+import { safeParseEmailAddress } from 'src/modules/messaging/message-import-manager/utils/safe-parse-email-address.util';
 
 import { MicrosoftFetchByBatchService } from './microsoft-fetch-by-batch.service';
 import { MicrosoftMessagesImportErrorHandler } from './microsoft-messages-import-error-handler.service';
 
 type ConnectedAccountType = Pick<
   ConnectedAccountEntity,
-  | 'accessToken'
-  | 'refreshToken'
-  | 'id'
-  | 'provider'
-  | 'handle'
-  | 'handleAliases'
-  | 'workspaceId'
+  'id' | 'provider' | 'handle' | 'handleAliases'
 >;
 
 @Injectable()

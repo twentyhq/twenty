@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { makeViewGroupUniversalIdentifierAndApplicationIdNotNullableQueries } from 'src/database/typeorm/core/migrations/utils/1768213174274-makeViewGroupUniversalIdentifierAndApplicationIdNotNullable.util';
 
-export class MakeViewGroupUniversalIdentifierAndApplicationIdNotNullable1768213174274
-  implements MigrationInterface
-{
+export class MakeViewGroupUniversalIdentifierAndApplicationIdNotNullable1768213174274 implements MigrationInterface {
   name =
     'MakeViewGroupUniversalIdentifierAndApplicationIdNotNullable1768213174274';
 

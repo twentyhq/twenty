@@ -2,6 +2,7 @@ import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { toPlainText } from '@react-email/render';
+import { isNonEmptyString } from '@sniptt/guards';
 import DOMPurify from 'dompurify';
 import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
 import {
@@ -10,7 +11,7 @@ import {
   FileFolder,
 } from 'twenty-shared/types';
 import { isDefined, isValidUuid } from 'twenty-shared/utils';
-import { In, type Repository } from 'typeorm';
+import { In, LessThanOrEqual, type Repository } from 'typeorm';
 import { z } from 'zod';
 
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
@@ -19,18 +20,23 @@ import {
   EmailToolException,
   EmailToolExceptionCode,
 } from 'src/engine/core-modules/tool/tools/email-tool/exceptions/email-tool.exception';
-import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
 import { type ComposeEmailParams } from 'src/engine/core-modules/tool/tools/email-tool/types/compose-email-params.type';
+import { EmailComposerResult } from 'src/engine/core-modules/tool/tools/email-tool/types/email-composer-result.type';
 import { parseCommaSeparatedEmails } from 'src/engine/core-modules/tool/tools/email-tool/utils/parse-comma-separated-emails.util';
 import { type ToolExecutionContext } from 'src/engine/core-modules/tool/types/tool-execution-context.type';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { type MessageChannelMessageAssociationWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-channel-message-association.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
 import { type MessageAttachment } from 'src/modules/messaging/message-import-manager/types/message';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
+
+type ParentThreadContext = {
+  threadExternalId?: string;
+  references?: string[];
+};
+
 @Injectable()
 export class EmailComposerService {
   private readonly logger = new Logger(EmailComposerService.name);
@@ -39,7 +45,6 @@ export class EmailComposerService {
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    private readonly messagingAccountAuthenticationService: MessagingAccountAuthenticationService,
     @InjectRepository(FileEntity)
     private readonly fileRepository: Repository<FileEntity>,
     private readonly fileService: FileService,
@@ -214,13 +219,20 @@ export class EmailComposerService {
     for (const fileMetadata of files) {
       const fileEntity = fileEntityMap.get(fileMetadata.id);
 
-      const { stream } = await this.fileService.getFileStreamById({
+      const fileStream = await this.fileService.getFileStreamById({
         fileId: fileMetadata.id,
         workspaceId,
         fileFolder,
       });
 
-      const buffer = await streamToBuffer(stream);
+      if (fileStream === null) {
+        throw new EmailToolException(
+          `Files not found: ${fileMetadata.name} (${fileMetadata.id})`,
+          EmailToolExceptionCode.FILE_NOT_FOUND,
+        );
+      }
+
+      const buffer = await streamToBuffer(fileStream.stream);
 
       attachments.push({
         filename: fileMetadata.name,
@@ -232,13 +244,13 @@ export class EmailComposerService {
     return attachments;
   }
 
-  // Look up the provider-specific thread ID (e.g. Gmail threadId) from the
-  // parent message so replies can be explicitly threaded in the provider API.
-  private async getThreadExternalId(
+  // Resolve parent's root thread id (Gmail/MS native or stored) + RFC 5322 §3.6.4
+  // References chain so replies thread on both Twenty and recipient mail clients.
+  private async getParentThreadContext(
     workspaceId: string,
     inReplyTo: string,
     messageChannelId: string,
-  ): Promise<string | undefined> {
+  ): Promise<ParentThreadContext> {
     const authContext = buildSystemAuthContext(workspaceId);
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
@@ -253,8 +265,12 @@ export class EmailComposerService {
           where: { headerMessageId: inReplyTo },
         });
 
-        if (!parentMessage) {
-          return undefined;
+        if (
+          !isDefined(parentMessage) ||
+          !isDefined(parentMessage.messageThreadId) ||
+          !isDefined(parentMessage.receivedAt)
+        ) {
+          return {};
         }
 
         const associationRepository =
@@ -263,38 +279,32 @@ export class EmailComposerService {
             'messageChannelMessageAssociation',
           );
 
-        const association = await associationRepository.findOne({
-          where: {
-            messageId: parentMessage.id,
-            messageChannelId,
-          },
-        });
+        const [association, ancestorMessages] = await Promise.all([
+          associationRepository.findOne({
+            where: { messageId: parentMessage.id, messageChannelId },
+            select: { messageThreadExternalId: true },
+          }),
+          messageRepository.find({
+            where: {
+              messageThreadId: parentMessage.messageThreadId,
+              receivedAt: LessThanOrEqual(parentMessage.receivedAt),
+            },
+            select: { headerMessageId: true },
+            order: { receivedAt: 'ASC' },
+          }),
+        ]);
 
-        return association?.messageThreadExternalId ?? undefined;
+        const references = ancestorMessages
+          .map((message) => message.headerMessageId)
+          .filter(isNonEmptyString);
+
+        return {
+          threadExternalId: association?.messageThreadExternalId ?? undefined,
+          references: references.length > 0 ? references : undefined,
+        };
       },
       authContext,
     );
-  }
-
-  private async refreshConnectedAccountTokens(
-    connectedAccount: ConnectedAccountEntity,
-    workspaceId: string,
-    messageChannelId: string,
-  ): Promise<ConnectedAccountEntity> {
-    const { accessToken, refreshToken } =
-      await this.messagingAccountAuthenticationService.validateAndRefreshConnectedAccountAuthentication(
-        {
-          connectedAccount,
-          workspaceId,
-          messageChannelId,
-        },
-      );
-
-    return {
-      ...connectedAccount,
-      accessToken,
-      refreshToken,
-    };
   }
 
   async composeEmail(
@@ -375,14 +385,6 @@ export class EmailComposerService {
       );
     }
 
-    const connectedAccountWithFreshTokens = isDefined(messageChannel)
-      ? await this.refreshConnectedAccountTokens(
-          connectedAccount,
-          workspaceId,
-          messageChannel.id,
-        )
-      : connectedAccount;
-
     const attachments = await this.getAttachments(
       files || [],
       workspaceId,
@@ -397,15 +399,14 @@ export class EmailComposerService {
     const plainTextBody = toPlainText(sanitizedHtmlBody);
     const sanitizedSubject = purify.sanitize(subject || '');
 
-    let threadExternalId: string | undefined;
-
-    if (inReplyTo && isDefined(messageChannel)) {
-      threadExternalId = await this.getThreadExternalId(
-        workspaceId,
-        inReplyTo,
-        messageChannel.id,
-      );
-    }
+    const { threadExternalId, references } =
+      isDefined(inReplyTo) && isDefined(messageChannel)
+        ? await this.getParentThreadContext(
+            workspaceId,
+            inReplyTo,
+            messageChannel.id,
+          )
+        : {};
 
     return {
       success: true,
@@ -416,11 +417,12 @@ export class EmailComposerService {
         plainTextBody,
         sanitizedHtmlBody,
         attachments,
-        connectedAccount: connectedAccountWithFreshTokens,
+        connectedAccount,
         messageChannelId: messageChannel?.id,
         shouldPersistMessage: isDefined(messageChannel),
         inReplyTo,
         threadExternalId,
+        references,
       },
     };
   }

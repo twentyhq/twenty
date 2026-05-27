@@ -136,7 +136,6 @@ export class SystemPromptBuilderService {
     toolCatalog: ToolIndexEntry[],
     skillCatalog: FlatSkill[],
     preloadedTools: string[],
-    contextString?: string,
     storedFiles?: Array<{
       filename: string;
       fileId: string;
@@ -146,6 +145,7 @@ export class SystemPromptBuilderService {
   ): string {
     const parts: string[] = [
       CHAT_SYSTEM_PROMPTS.BASE,
+      CHAT_SYSTEM_PROMPTS.BROWSING_CONTEXT_INSTRUCTION,
       CHAT_SYSTEM_PROMPTS.RESPONSE_FORMAT,
     ];
 
@@ -162,12 +162,6 @@ export class SystemPromptBuilderService {
 
     if (storedFiles && storedFiles.length > 0) {
       parts.push(this.buildUploadedFilesSection(storedFiles));
-    }
-
-    if (contextString) {
-      parts.push(
-        `\nCONTEXT (what the user is currently viewing):\n${contextString}`,
-      );
     }
 
     return parts.join('\n');
@@ -317,13 +311,15 @@ ${tools
       case ToolCategory.METADATA:
         return 'Metadata Tools (schema management)';
       case ToolCategory.VIEW:
-        return 'View Tools (manage views, filters, and sorts)';
+        return 'View Tools (manage views, fields, filters, and sorts)';
       case ToolCategory.DASHBOARD:
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
-      case ToolCategory.VIEW_FIELD:
-        return 'View Field Tools (manage view columns)';
+      case ToolCategory.NAVIGATION_MENU_ITEM:
+        return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
+      case ToolCategory.WEBHOOK:
+        return 'Webhook Tools (outgoing webhooks)';
       default:
         return assertUnreachable(category);
     }

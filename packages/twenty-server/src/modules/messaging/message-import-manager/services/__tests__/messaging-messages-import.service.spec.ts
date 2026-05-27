@@ -12,11 +12,9 @@ import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/typ
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { BlocklistRepository } from 'src/modules/blocklist/repositories/blocklist.repository';
 import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
-import { ConnectedAccountRefreshTokensService } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { MessagingAccountAuthenticationService } from 'src/modules/messaging/message-import-manager/services/messaging-account-authentication.service';
 import { MessagingGetMessagesService } from 'src/modules/messaging/message-import-manager/services/messaging-get-messages.service';
 import { MessageImportExceptionHandlerService } from 'src/modules/messaging/message-import-manager/services/messaging-import-exception-handler.service';
 import { MessagingMessagesImportService } from 'src/modules/messaging/message-import-manager/services/messaging-messages-import.service';
@@ -31,7 +29,6 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 describe('MessagingMessagesImportService', () => {
   let service: MessagingMessagesImportService;
   let messageChannelSyncStatusService: MessageChannelSyncStatusService;
-  let connectedAccountRefreshTokensService: ConnectedAccountRefreshTokensService;
   let emailAliasManagerService: EmailAliasManagerService;
   let messagingGetMessagesService: MessagingGetMessagesService;
   let saveMessagesService: MessagingSaveMessagesAndEnqueueContactCreationService;
@@ -85,15 +82,6 @@ describe('MessagingMessagesImportService', () => {
             .fn()
             .mockResolvedValue(undefined),
           markAsMessagesImportPending: jest.fn().mockResolvedValue(undefined),
-        },
-      },
-      {
-        provide: ConnectedAccountRefreshTokensService,
-        useValue: {
-          refreshAndSaveTokens: jest.fn().mockResolvedValue({
-            accessToken: 'new-access-token',
-            refreshToken: 'new-refresh-token',
-          }),
         },
       },
       {
@@ -175,10 +163,6 @@ describe('MessagingMessagesImportService', () => {
         },
       },
       {
-        provide: MessagingAccountAuthenticationService,
-        useClass: MessagingAccountAuthenticationService,
-      },
-      {
         provide: getRepositoryToken(UserWorkspaceEntity),
         useValue: {
           findOne: jest.fn().mockResolvedValue({ userId: 'user-id' }),
@@ -225,10 +209,6 @@ describe('MessagingMessagesImportService', () => {
       module.get<MessageChannelSyncStatusService>(
         MessageChannelSyncStatusService,
       );
-    connectedAccountRefreshTokensService =
-      module.get<ConnectedAccountRefreshTokensService>(
-        ConnectedAccountRefreshTokensService,
-      );
     emailAliasManagerService = module.get<EmailAliasManagerService>(
       EmailAliasManagerService,
     );
@@ -266,24 +246,11 @@ describe('MessagingMessagesImportService', () => {
     ).toHaveBeenCalledWith([mockMessageChannel.id], workspaceId);
 
     expect(
-      connectedAccountRefreshTokensService.refreshAndSaveTokens,
-    ).toHaveBeenCalledWith(mockConnectedAccount, workspaceId);
-
-    expect(emailAliasManagerService.refreshHandleAliases).toHaveBeenCalledWith(
-      {
-        ...mockConnectedAccount,
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-      },
-      workspaceId,
-    );
+      emailAliasManagerService.refreshHandleAliases,
+    ).not.toHaveBeenCalled();
     expect(messagingGetMessagesService.getMessages).toHaveBeenCalledWith(
       ['message-id-1', 'message-id-2'],
-      {
-        ...mockConnectedAccount,
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-      },
+      mockConnectedAccount,
       mockMessageChannel,
     );
     expect(
@@ -323,10 +290,6 @@ describe('MessagingMessagesImportService', () => {
     messageChannelSyncStatusService =
       module.get<MessageChannelSyncStatusService>(
         MessageChannelSyncStatusService,
-      );
-    connectedAccountRefreshTokensService =
-      module.get<ConnectedAccountRefreshTokensService>(
-        ConnectedAccountRefreshTokensService,
       );
     emailAliasManagerService = module.get<EmailAliasManagerService>(
       EmailAliasManagerService,

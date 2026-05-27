@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UpdateRoleTargetsUniqueConstraint1764329720503
-  implements MigrationInterface
-{
+export class UpdateRoleTargetsUniqueConstraint1764329720503 implements MigrationInterface {
   name = 'UpdateRoleTargetsUniqueConstraint1764329720503';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

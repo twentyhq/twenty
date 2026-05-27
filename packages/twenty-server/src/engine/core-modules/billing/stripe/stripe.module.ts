@@ -3,7 +3,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
-import { StripeBillingAlertService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-alert.service';
 import { StripeBillingMeterEventService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter-event.service';
 import { StripeBillingMeterService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-meter.service';
 import { StripeBillingPortalService } from 'src/engine/core-modules/billing/stripe/services/stripe-billing-portal.service';
@@ -39,7 +38,6 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     StripePriceService,
     StripeProductService,
     StripeBillingMeterEventService,
-    StripeBillingAlertService,
     StripeCreditGrantService,
     StripeInvoiceService,
   ],
@@ -55,7 +53,6 @@ import { DomainServerConfigModule } from 'src/engine/core-modules/domain/domain-
     StripeProductService,
     StripeBillingMeterEventService,
     StripeSubscriptionScheduleService,
-    StripeBillingAlertService,
     StripeCreditGrantService,
     StripeInvoiceService,
   ],
