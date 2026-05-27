@@ -2615,6 +2615,9 @@ export default {
             "fieldDisplayMode": [
                 110
             ],
+            "viewId": [
+                1
+            ],
             "__typename": [
                 1
             ]

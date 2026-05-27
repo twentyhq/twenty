@@ -4,6 +4,7 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { recordTableWidgetViewPersistedComponentState } from '@/page-layout/states/recordTableWidgetViewPersistedComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
 import { useMutation } from '@apollo/client/react';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
@@ -11,7 +12,6 @@ import { isDefined } from 'twenty-shared/utils';
 import {
   type UpsertViewWidgetInput,
   type ViewFragmentFragment,
-  WidgetType,
 } from '~/generated-metadata/graphql';
 
 export const useSaveRecordTableWidgetViews = () => {
@@ -45,7 +45,7 @@ export const useSaveRecordTableWidgetViews = () => {
 
       const draftRecordTableWidgets = draft.tabs
         .flatMap((tab) => tab.widgets)
-        .filter((widget) => widget.type === WidgetType.RECORD_TABLE);
+        .filter(widgetUsesRecordTableView);
 
       for (const widget of draftRecordTableWidgets) {
         const viewId = getWidgetConfigurationViewId(widget.configuration);
