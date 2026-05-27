@@ -451,15 +451,6 @@ describe('PermissionsService', () => {
   });
 
   describe('getDefaultUserWorkspacePermissions', () => {
-    it('should default WEB_SEARCH_TOOL to false', () => {
-      const { permissionFlags } = service.getDefaultUserWorkspacePermissions();
-
-      expect(permissionFlags).toHaveProperty(
-        PermissionFlagType.WEB_SEARCH_TOOL,
-        false,
-      );
-    });
-
     it('should default CODE_INTERPRETER_TOOL to false', () => {
       const { permissionFlags } = service.getDefaultUserWorkspacePermissions();
 

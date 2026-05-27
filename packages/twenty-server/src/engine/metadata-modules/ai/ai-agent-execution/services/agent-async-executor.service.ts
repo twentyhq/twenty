@@ -17,7 +17,6 @@ import { type Repository } from 'typeorm';
 import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-auth-context.guard';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { EXA_WEB_SEARCH_TOOL_NAME } from 'src/engine/core-modules/tool-provider/constants/exa-web-search-tool-name.const';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
@@ -154,7 +153,6 @@ export class AgentAsyncExecutorService {
         };
 
         let registryTools: ToolSet = {};
-        let actionWebSearchTools: ToolSet = {};
 
         // Workflow agent registry tools are scoped exclusively by the agent
         // permission-tab role. No role means no registry tools.
@@ -186,11 +184,6 @@ export class AgentAsyncExecutorService {
               wrapWithErrorContext: false,
             },
           );
-
-          actionWebSearchTools = await this.toolRegistry.getToolsByName(
-            [EXA_WEB_SEARCH_TOOL_NAME],
-            toolProviderContext,
-          );
         }
 
         const nativeTools = this.nativeToolBinder.bind(
@@ -200,7 +193,6 @@ export class AgentAsyncExecutorService {
 
         tools = {
           ...registryTools,
-          ...actionWebSearchTools,
           ...nativeTools,
         };
 

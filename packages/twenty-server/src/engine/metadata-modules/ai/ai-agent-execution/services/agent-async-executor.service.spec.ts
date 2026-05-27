@@ -52,11 +52,14 @@ describe('AgentAsyncExecutorService', () => {
     Pick<AiModelConfigService, 'getProviderOptions'>
   >;
   let toolRegistry: jest.Mocked<
-    Pick<ToolRegistryService, 'getToolsByCategories' | 'getToolsByName'>
+    Pick<ToolRegistryService, 'getToolsByCategories'>
   >;
   let nativeToolBinder: jest.Mocked<Pick<NativeToolBinderService, 'bind'>>;
   let aiBillingService: jest.Mocked<
-    Pick<AiBillingService, 'calculateAndBillUsage' | 'billNativeWebSearchUsage'>
+    Pick<
+      AiBillingService,
+      'calculateCost' | 'emitAiTokenUsageEvent' | 'billNativeWebSearchUsage'
+    >
   >;
   let billingUsageService: jest.Mocked<
     Pick<BillingUsageService, 'hasAvailableCreditsOrThrow'>
@@ -93,9 +96,6 @@ describe('AgentAsyncExecutorService', () => {
       getToolsByCategories: jest.fn().mockResolvedValue({
         registry_tool: {},
       }),
-      getToolsByName: jest.fn().mockResolvedValue({
-        action_web_search_tool: {},
-      }),
     };
 
     nativeToolBinder = {
@@ -105,7 +105,8 @@ describe('AgentAsyncExecutorService', () => {
     };
 
     aiBillingService = {
-      calculateAndBillUsage: jest.fn(),
+      calculateCost: jest.fn().mockReturnValue(0),
+      emitAiTokenUsageEvent: jest.fn(),
       billNativeWebSearchUsage: jest.fn(),
     };
 
@@ -148,7 +149,6 @@ describe('AgentAsyncExecutorService', () => {
     });
 
     expect(toolRegistry.getToolsByCategories).not.toHaveBeenCalled();
-    expect(toolRegistry.getToolsByName).not.toHaveBeenCalled();
     expect(nativeToolBinder.bind).toHaveBeenCalledWith(registeredModel, {
       webSearch: true,
       twitterSearch: true,
@@ -181,18 +181,10 @@ describe('AgentAsyncExecutorService', () => {
       }),
       expect.any(Object),
     );
-    expect(toolRegistry.getToolsByName).toHaveBeenCalledWith(
-      expect.any(Array),
-      expect.objectContaining({
-        roleId: agentRoleId,
-        rolePermissionConfig: { unionOf: [agentRoleId] },
-      }),
-    );
     expect(mockedGenerateText).toHaveBeenCalledWith(
       expect.objectContaining({
         tools: {
           registry_tool: {},
-          action_web_search_tool: {},
           native_web_search_tool: {},
         },
       }),
