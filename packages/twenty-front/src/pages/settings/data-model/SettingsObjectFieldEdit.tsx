@@ -48,11 +48,17 @@ import { useNavigateApp } from '~/hooks/useNavigateApp';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/utils/getFieldMetadataItemInitialValues';
 
-//TODO: fix this type
-export type SettingsDataModelFieldEditFormValues = z.infer<
-  ReturnType<typeof settingsFieldFormSchema>
-> &
-  any;
+export type SettingsDataModelFieldEditFormValues = {
+  icon: string;
+  type: SettingsFieldType;
+  label: string;
+  description?: string | null;
+  isLabelSyncedWithName: boolean;
+  name?: string;
+  settings?: any;
+  defaultValue?: any;
+  relation?: any;
+} & Record<string, any>;
 
 const DELETE_FIELD_MODAL_ID = 'delete-field-confirmation-modal';
 const StyledDangerButtons = styled.div`
@@ -172,7 +178,7 @@ export const SettingsObjectFieldEdit = () => {
     }
 
     const { dirtyFields } = formConfig.formState;
-    setNewNameDuringSave(formValues.name);
+    setNewNameDuringSave(formValues.name ?? null);
 
     if (
       formValues.type === FieldMetadataType.RELATION &&
