@@ -57,11 +57,6 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
           continue;
         }
 
-        // The `isEncryptedString` gate above guarantees this value lacks
-        // the `enc:` envelope prefix, i.e. it is legacy AES-CTR ciphertext.
-        // The brand cast is a deliberate type-level bypass for
-        // migration-only legacy data — `decryptVersioned` routes internally
-        // to the legacy AES-CTR path when no envelope is present.
         const plaintext = this.secretEncryptionService.decryptVersioned(
           rawValue as EncryptedString,
         );

@@ -50,13 +50,6 @@ export class EncryptSigningKeyPrivateKeysSlowInstanceCommand implements SlowInst
       }
 
       for (const row of rows) {
-        // Defense in depth: the SQL `NOT LIKE 'enc:v2:%'` filter already
-        // excludes v2-enveloped rows, but a runtime `isEncryptedString`
-        // gate guards against any future filter regression. Inside this
-        // branch the value is guaranteed legacy CTR ciphertext (no envelope
-        // prefix), so the brand cast is a deliberate type-level bypass for
-        // migration-only legacy data — `decryptVersioned` routes internally
-        // to the legacy AES-CTR path when no envelope is present.
         if (isEncryptedString(row.privateKey)) {
           continue;
         }

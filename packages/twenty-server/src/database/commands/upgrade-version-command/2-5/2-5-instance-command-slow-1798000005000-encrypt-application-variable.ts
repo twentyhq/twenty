@@ -77,10 +77,6 @@ export class EncryptApplicationVariableSlowInstanceCommand
           continue;
         }
 
-        // Defensive: the SQL `NOT LIKE 'enc:v2:%'` filter already excludes
-        // v2-enveloped rows. The runtime `isEncryptedString` gate hardens
-        // against any future filter regression so we never accidentally
-        // re-encrypt an already-v2 row.
         if (isEncryptedString(row.value)) {
           continue;
         }
@@ -89,12 +85,6 @@ export class EncryptApplicationVariableSlowInstanceCommand
 
         if (looksLikeLegacyCtrCiphertext(row.value)) {
           try {
-            // `isEncryptedString` returned false above and the base64+length
-            // heuristic matches, so this value is legacy AES-CTR ciphertext.
-            // The brand cast is a deliberate type-level bypass for
-            // migration-only legacy data — `decryptVersioned` routes
-            // internally to the legacy AES-CTR path when no envelope is
-            // present.
             plaintext = this.secretEncryptionService.decryptVersioned(
               row.value as EncryptedString,
               { workspaceId: row.workspaceId },

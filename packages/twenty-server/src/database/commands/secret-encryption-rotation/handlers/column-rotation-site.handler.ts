@@ -117,6 +117,10 @@ export class ColumnRotationSiteHandler<
     const currentValue = row[encryptedColumn] as string | null | undefined;
 
     if (!isDefined(currentValue) || !isEncryptedString(currentValue)) {
+      this.logger.error(
+        `[${this.siteName}] row ${rowId}: column '${encryptedColumn}' is not a versioned envelope, refusing to rotate.`,
+      );
+
       return { rotated: 0, skipped: 0, errors: 1 };
     }
 
