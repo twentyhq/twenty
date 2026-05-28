@@ -14,7 +14,7 @@ import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/
 
 @InputType()
 export class UpdateApplicationRegistrationVariablePayload {
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   @IsString()
   @MaxLength(10000)
   @IsOptional()

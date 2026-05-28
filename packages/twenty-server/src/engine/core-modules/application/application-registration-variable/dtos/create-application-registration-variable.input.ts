@@ -21,7 +21,7 @@ export class CreateApplicationRegistrationVariableInput {
   @MaxLength(256)
   key: string;
 
-  @Field()
+  @Field(() => String)
   @IsString()
   @MaxLength(10000)
   value: PlaintextString;
