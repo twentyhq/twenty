@@ -3,7 +3,7 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { type FeatureFlagKey } from '~/generated-admin/graphql';
 
-export const useFeatureFlagState = () => {
+export const useAdminUpdateFeatureFlag = () => {
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
