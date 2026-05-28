@@ -3,6 +3,21 @@ name: develop-app
 description: Use when the user wants to add or modify Twenty app entities, including objects, layouts, logic functions, and front components inside an existing Twenty app.
 ---
 
+# When To Use
+
+Pick this skill when the user wants to change what an existing Twenty app *does* — its data model, UI, logic, or workflows. Representative triggers:
+
+- "add a new object to my Twenty app"
+- "create a logic function that runs on record create"
+- "add a custom field to the company object"
+- "build a front component for the deal page"
+- "modify an existing entity / object / field"
+- "add a workflow with a manual trigger"
+- "add roles and permissions to my app"
+- "create a standalone page in my app"
+
+Do not use this skill to scaffold a brand-new app (use `create-app`), to sync/deploy/troubleshoot (use `manage-app`), to prepare marketplace assets (use `publish-app`), or to query workspace records (use `use-twenty-mcp`).
+
 # Boundaries
 
 For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.

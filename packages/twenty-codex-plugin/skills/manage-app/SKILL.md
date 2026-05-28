@@ -3,6 +3,22 @@ name: manage-app
 description: Use when the user wants to manage or troubleshoot tooling, remotes, sync, build, deploy, logs, CI/CD, or operational workflows for an existing Twenty app.
 ---
 
+# When To Use
+
+Pick this skill when the user wants to operate, troubleshoot, or ship an existing Twenty app — anything between "I have an app" and "it runs in production". Representative triggers:
+
+- "sync my app changes to the server"
+- "deploy my Twenty app to production"
+- "check the logs for my logic function"
+- "switch to a different Twenty remote / instance"
+- "add a new remote for staging"
+- "set up CI/CD for my Twenty app"
+- "troubleshoot a failed deploy / sync / build"
+- "uninstall my app from production"
+- "run my logic function manually for testing"
+
+Do not use this skill to scaffold (use `create-app`), to change app entities or code (use `develop-app`), to prepare marketplace assets (use `publish-app`), or to query workspace records (use `use-twenty-mcp`).
+
 # Boundaries
 
 For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.

@@ -3,6 +3,19 @@ name: create-app
 description: Use when the user wants to create or scaffold a new Twenty app
 ---
 
+# When To Use
+
+Pick this skill when the user wants to start a brand-new Twenty app from scratch. Representative triggers:
+
+- "I want to build a Twenty app"
+- "scaffold a new Twenty app"
+- "start a new Twenty plugin / extension / integration"
+- "create a CRM extension for Twenty"
+- "set up a Twenty app project"
+- "bootstrap a Twenty app called X"
+
+Do not use this skill when the app already exists — use `develop-app` to add features, `manage-app` for sync/deploy/troubleshooting, `publish-app` for marketplace prep, or `use-twenty-mcp` to query workspace data.
+
 # Quickstart an App
 
 For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.

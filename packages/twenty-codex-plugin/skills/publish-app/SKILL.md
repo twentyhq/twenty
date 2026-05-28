@@ -3,6 +3,20 @@ name: publish-app
 description: Use when the user wants to prepare or verify a Twenty app for npm or marketplace publication, including README/About copy, package metadata, defineApplication marketplace metadata, logos, screenshots, and public assets.
 ---
 
+# When To Use
+
+Pick this skill when the user wants to make an existing Twenty app *presentable* — listing copy, branding, public assets, and publication. Representative triggers:
+
+- "prepare my Twenty app for the marketplace"
+- "write the README for my Twenty app"
+- "publish my app to npm"
+- "add a logo / screenshots / marketplace metadata"
+- "set up `defineApplication` marketplace fields"
+- "review my app listing before going live"
+- "ship a new version of my published app"
+
+Do not use this skill to scaffold (use `create-app`), to change app entities (use `develop-app`), to deploy a private build to a specific Twenty server (use `manage-app`), or to query workspace records (use `use-twenty-mcp`).
+
 # Publishing Checklist
 
 For background on how Twenty apps work — the SDK packages, remotes, sync lifecycle, and rendering model — read `../../references/concepts/how-apps-work.md`.

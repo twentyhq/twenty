@@ -3,6 +3,21 @@ name: use-twenty-mcp
 description: Use when the user wants Codex to connect to an existing Twenty workspace through MCP, retrieve or inspect workspace records and metadata, or present Twenty CRM data as readable Markdown with formatted dates, values, record links, and compact tables instead of raw API output.
 ---
 
+# When To Use
+
+Pick this skill when the user wants to read from or inspect a running Twenty workspace — not change app code. Representative triggers:
+
+- "list all my companies / people / opportunities in Twenty"
+- "show me the records I created this week"
+- "what's in my Twenty workspace"
+- "connect Codex to my Twenty workspace"
+- "set up Twenty MCP for `myworkspace.twenty.com`"
+- "query the CRM for X"
+- "summarize my pipeline from Twenty"
+- "show me the fields on the company object"
+
+Do not use this skill to scaffold an app (use `create-app`), to add or modify app entities (use `develop-app`), to operate an app (use `manage-app`), or to prepare marketplace assets (use `publish-app`).
+
 # What It Is
 
 Twenty MCP connects Codex to an existing Twenty workspace so the agent can inspect workspace data and metadata: records, objects, fields, schema, configuration, and related CRM context.
