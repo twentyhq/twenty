@@ -42,7 +42,7 @@ export class AwsSesRegisterDomainService {
           ConfigurationSetName: input.configurationSetName,
           ReputationOptions: { ReputationMetricsEnabled: true },
           SendingOptions: { SendingEnabled: true },
-          SuppressionOptions: { SuppressedReasons: ['BOUNCE', 'COMPLAINT'] },
+          SuppressionOptions: { SuppressedReasons: [] },
           Tags: [{ Key: 'managed-by', Value: 'twenty' }],
         }),
       )

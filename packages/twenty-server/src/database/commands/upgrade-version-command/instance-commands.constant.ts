@@ -58,6 +58,7 @@ import { DropFieldMetadataIsUniqueColumnFastInstanceCommand } from 'src/database
 import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000020000-emailing-domain-tenant-status-and-global-uniqueness';
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
+import { AddEmailGroupSuppressedRecipientFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1780000902115-addEmailGroupSuppressedRecipient';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -118,4 +119,5 @@ export const INSTANCE_COMMANDS = [
   DropFieldMetadataIsUniqueColumnFastInstanceCommand,
   MigrateAiModelPreferencesSlowInstanceCommand,
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
+  AddEmailGroupSuppressedRecipientFastInstanceCommand,
 ];

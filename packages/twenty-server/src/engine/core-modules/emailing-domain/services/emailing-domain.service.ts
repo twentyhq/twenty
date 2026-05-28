@@ -13,6 +13,7 @@ import {
   type EmailingDomainSendEmailResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -24,6 +25,7 @@ export class EmailingDomainService {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
+    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
   ) {}
 
   async createEmailingDomain(
@@ -178,8 +180,33 @@ export class EmailingDomainService {
       );
     }
 
+    const suppressedAddresses =
+      await this.emailGroupSuppressionService.getSuppressedAddresses(
+        workspaceId,
+        [
+          ...emailContent.to,
+          ...(emailContent.cc ?? []),
+          ...(emailContent.bcc ?? []),
+        ],
+      );
+
+    const isNotSuppressed = (address: string): boolean =>
+      !suppressedAddresses.has(address.trim().toLowerCase());
+
+    const deliverableTo = emailContent.to.filter(isNotSuppressed);
+
+    if (deliverableTo.length === 0) {
+      throw new EmailingDomainDriverException(
+        `All primary recipients are suppressed for emailing domain ${emailingDomain.domain}`,
+        EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED,
+      );
+    }
+
     return this.emailingDomainDriverFactory.getCurrentDriver().sendEmail({
       ...emailContent,
+      to: deliverableTo,
+      cc: emailContent.cc?.filter(isNotSuppressed),
+      bcc: emailContent.bcc?.filter(isNotSuppressed),
       workspaceId,
       domain: emailingDomain.domain,
     });
