@@ -6,8 +6,6 @@ const VALID_PAYLOAD = {
   name: 'Ada Lovelace',
   company: 'Analytical Engines',
   website: 'https://analytical.example/',
-  message: 'We would like to integrate Twenty with our analytical engine.',
-  programId: 'technology' as const,
 };
 
 const VALID_BODY = JSON.stringify(VALID_PAYLOAD);
@@ -154,11 +152,11 @@ describe('POST /api/partner-application', () => {
     expect(response.status).toBe(400);
   });
 
-  it('returns 400 when programId is unknown', async () => {
+  it('returns 400 when country enum is unknown', async () => {
     const { POST } = await loadRoute();
     const response = await POST(
       buildRequest({
-        body: JSON.stringify({ ...VALID_PAYLOAD, programId: 'wat' }),
+        body: JSON.stringify({ ...VALID_PAYLOAD, country: 'ATLANTIS' }),
         ip: '203.0.113.18',
       }),
     );
@@ -187,13 +185,12 @@ describe('POST /api/partner-application', () => {
       LastName: 'Lovelace',
       Company: 'Analytical Engines',
       Website: 'https://analytical.example/',
-      Message: 'We would like to integrate Twenty with our analytical engine.',
-      ProgramId: 'technology',
+      CurrencyCode: 'USD',
     });
     expect(init.signal).toBeInstanceOf(AbortSignal);
   });
 
-  it('forwards optional Opportunities when provided', async () => {
+  it('forwards rich optional wizard fields when provided', async () => {
     const fetchSpy = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
@@ -204,7 +201,12 @@ describe('POST /api/partner-application', () => {
       buildRequest({
         body: JSON.stringify({
           ...VALID_PAYLOAD,
-          opportunities: '50/month',
+          country: 'FRANCE',
+          languages: ['ENGLISH', 'FRENCH'],
+          typeOfTeam: 'SOLO',
+          partnerScope: ['APPS'],
+          deploymentExpertise: ['CLOUD'],
+          hourlyRate: 150,
         }),
         ip: '203.0.113.24',
       }),
@@ -213,11 +215,17 @@ describe('POST /api/partner-application', () => {
     expect(response.status).toBe(200);
     const [, init] = fetchSpy.mock.calls[0];
     expect(JSON.parse(init.body as string)).toMatchObject({
-      Opportunities: '50/month',
+      Country: 'FRANCE',
+      LanguagesSpoken: ['ENGLISH', 'FRENCH'],
+      TypeOfTeam: 'SOLO',
+      PartnerScope: ['APPS'],
+      DeploymentExpertise: ['CLOUD'],
+      HourlyRate: 150,
+      CurrencyCode: 'USD',
     });
   });
 
-  it('omits optional Opportunities when not provided', async () => {
+  it('omits optional rich fields when not provided', async () => {
     const fetchSpy = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
@@ -228,7 +236,10 @@ describe('POST /api/partner-application', () => {
 
     expect(response.status).toBe(200);
     const [, init] = fetchSpy.mock.calls[0];
-    expect(JSON.parse(init.body as string)).not.toHaveProperty('Opportunities');
+    const body = JSON.parse(init.body as string);
+    expect(body).not.toHaveProperty('Country');
+    expect(body).not.toHaveProperty('LanguagesSpoken');
+    expect(body).not.toHaveProperty('PartnerScope');
   });
 
   it('returns 502 when the webhook responds with a non-2xx status', async () => {

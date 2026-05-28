@@ -3,18 +3,12 @@ import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
 import { PARTNER_TESTIMONIALS } from '@/app/[locale]/partners/testimonials.data';
 import {
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/[locale]/partners/components/PartnerApplication';
-import {
-  Eyebrow,
-  Heading,
-  HeadingPart,
-  LinkButton,
-} from '@/design-system/components';
+import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import {
   getRouteI18n,
@@ -27,22 +21,9 @@ import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Signoff } from '@/sections/Signoff';
 import { Testimonials } from '@/sections/Testimonials';
-import {
-  ThreeCards,
-  type ThreeCardsScrollLayoutOptions,
-} from '@/sections/ThreeCards';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 import { styled } from '@linaria/react';
-
-const PARTNER_ILLUSTRATION_CARDS_SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOptions =
-  {
-    endEdgeRatio: 0.28,
-    initialScale: 0.935,
-    initialTranslateY: 132,
-    opacityRamp: 0.28,
-    stagger: 0.16,
-  };
 
 const PromoSpacing = styled.div`
   margin-bottom: ${theme.spacing(8)};
@@ -112,29 +93,6 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
           entries={CASE_STUDY_CATALOG_ENTRIES}
         />
       </PromoSpacing>
-
-      <ThreeCards.Root scheme="muted">
-        <ThreeCards.Intro page={Pages.Partners} align="left">
-          <Eyebrow>
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Which partner program is right for you?`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Find the program that fits your business`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`and unlock new opportunities with Twenty`)}
-            </HeadingPart>
-          </Heading>
-        </ThreeCards.Intro>
-        <ThreeCards.IllustrationCards
-          illustrationCards={PARTNER_ILLUSTRATION_CARDS}
-          layoutOptions={PARTNER_ILLUSTRATION_CARDS_SCROLL_LAYOUT_OPTIONS}
-          variant="simple"
-        />
-      </ThreeCards.Root>
 
       <Testimonials.Root
         scheme="muted"

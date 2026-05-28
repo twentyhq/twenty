@@ -4,29 +4,12 @@ import {
   getClientIpKey,
   readJsonBody,
 } from '@/lib/api';
-import { splitFullName } from '@/sections/PartnerApplication';
+import {
+  buildWebhookPayload,
+  partnerApplicationRequestSchema,
+} from '@/app/api/partner-application/partner-application-schema';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
-
-const PARTNER_PROGRAM_IDS = ['technology', 'content', 'solutions'] as const;
-
-const partnerApplicationRequestSchema = z.strictObject({
-  email: z
-    .string()
-    .trim()
-    .min(1, { error: 'Email is required.' })
-    .pipe(z.email({ error: 'Invalid email address.' })),
-  name: z.string().trim().min(1, { error: 'Name is required.' }),
-  company: z.string().trim().min(1, { error: 'Company is required.' }),
-  website: z
-    .string()
-    .trim()
-    .min(1, { error: 'Website is required.' })
-    .pipe(z.httpUrl({ error: 'Invalid website URL.' })),
-  message: z.string().trim().min(1, { error: 'Message is required.' }),
-  programId: z.enum(PARTNER_PROGRAM_IDS).optional(),
-  opportunities: z.string().trim().optional(),
-});
 
 const webhookUrlSchema = z
   .string()
@@ -34,7 +17,6 @@ const webhookUrlSchema = z
   .pipe(z.httpUrl({ error: 'Invalid webhook URL.' }));
 
 const MAX_BODY_BYTES = 16 * 1024;
-
 const WEBHOOK_TIMEOUT_MS = 8_000;
 
 const checkRateLimit = createRateLimiter({
@@ -102,24 +84,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const { name, email, company, website, message, programId, opportunities } =
-    parsed.data;
-  const { firstName, lastName } = splitFullName(name);
+  const payload = buildWebhookPayload(parsed.data);
 
   const upstream = await fetchWithTimeout(
     webhookUrl,
     {
-      body: JSON.stringify({
-        Email: email,
-        FirstName: firstName,
-        LastName: lastName,
-        Company: company,
-        Website: website,
-        Message: message,
-        ...(programId !== undefined && { ProgramId: programId }),
-        ...(opportunities !== undefined &&
-          opportunities !== '' && { Opportunities: opportunities }),
-      }),
+      body: JSON.stringify(payload),
       headers: { 'Content-Type': 'application/json' },
       method: 'POST',
     },
