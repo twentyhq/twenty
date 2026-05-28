@@ -24,11 +24,8 @@ export const getParsedNameFromDisplayName = (
     lastName: stripTrailingGroupTag(parsed.lastName),
   });
 
-  // Comma-inverted forms: "Last, First", "Last, First Middle", and
-  // multi-comma shapes like "Last, First, Jr." or "Last, First, MD" that some
-  // address books and ATSes emit. We split on the first comma and treat the
-  // remainder as the first name, collapsing any further commas to spaces so
-  // the stored firstName never contains a stray comma.
+  // Comma-inverted forms "Last, First[, Suffix]". Splits on the first comma;
+  // any further commas collapse to spaces so firstName is comma-free.
   const commaMatch = cleaned.match(/^([^,]+),\s*(.+)$/);
 
   if (isDefined(commaMatch)) {

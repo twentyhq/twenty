@@ -339,10 +339,10 @@ export class CreateCompanyAndPersonService {
     };
   }
 
-  // Only enrich names on contacts that the auto-creation pipeline itself
-  // created (CALENDAR or EMAIL). Manually created, imported, API-created and
-  // other curated sources stay untouched. We only fill in fields that are
-  // currently empty — never overwrite existing data.
+  // Stages per-personId name enrichments for existing People auto-created via
+  // CALENDAR or EMAIL. Empty fields are filled from new sources (first
+  // non-empty value wins across multiple contacts mapping to the same Person);
+  // populated fields are never overwritten.
   private computePeopleToEnrichNames(
     uniqueContacts: Contact[],
     shouldCreateOrRestorePeopleByHandleMap: Map<
@@ -350,11 +350,6 @@ export class CreateCompanyAndPersonService {
       { existingPerson: PersonWorkspaceEntity }
     >,
   ): { personId: string; name: FullNameMetadata }[] {
-    // Stage enrichments by personId. A single Person can match more than one
-    // contact in the same batch when its primaryEmail and additionalEmails
-    // both appear in the import — we merge field-by-field so a partial first
-    // match (e.g. only a firstName) doesn't lock out a later contact from
-    // filling the still-empty lastName.
     const enrichmentByPersonId = new Map<
       string,
       { firstName: string; lastName: string }
@@ -369,11 +364,8 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      // Soft-deleted matches are about to be restored in this same batch (see
-      // contactsThatNeedPersonRestore above), so enrich them too — restore
-      // runs before enrich in createCompaniesAndPeople, which means the row
-      // is no longer soft-deleted by the time the enrichment UPDATE fires.
-
+      // Soft-deleted matches are restored earlier in the same job, so the
+      // enrichment UPDATE runs against an un-deleted row.
       const existingSource = existingPerson.createdBy?.source;
 
       if (
@@ -383,8 +375,6 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      // Take staged values if we've already touched this Person in this batch,
-      // otherwise start from what the DB already has.
       const staged = enrichmentByPersonId.get(existingPerson.id);
       const currentFirstName =
         staged?.firstName ?? existingPerson.name?.firstName ?? '';
@@ -393,8 +383,6 @@ export class CreateCompanyAndPersonService {
       const firstNameIsEmpty = !isNonEmptyString(currentFirstName);
       const lastNameIsEmpty = !isNonEmptyString(currentLastName);
 
-      // Skip the parser when both fields are already filled — dominant
-      // steady-state case for the cron after the initial enrichment pass.
       if (!firstNameIsEmpty && !lastNameIsEmpty) {
         continue;
       }
@@ -414,7 +402,6 @@ export class CreateCompanyAndPersonService {
           ? parsedLastName
           : currentLastName;
 
-      // This contact didn't add anything new for this Person.
       if (
         enrichedFirstName === currentFirstName &&
         enrichedLastName === currentLastName
