@@ -9,10 +9,12 @@ import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domai
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailGroupSuppressedRecipientEntity } from 'src/engine/core-modules/emailing-domain/email-group-suppressed-recipient.entity';
+import { EmailingDomainUnsubscribeController } from 'src/engine/core-modules/emailing-domain/emailing-domain-unsubscribe.controller';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain.resolver';
 import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { EmailGroupUnsubscribeService } from 'src/engine/core-modules/emailing-domain/services/email-group-unsubscribe.service';
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -28,6 +30,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     FeatureFlagModule,
     PermissionsModule,
   ],
+  controllers: [EmailingDomainUnsubscribeController],
   exports: [
     EmailingDomainService,
     EmailingDomainTenantStatusService,
@@ -37,6 +40,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     EmailingDomainService,
     EmailingDomainTenantStatusService,
     EmailGroupSuppressionService,
+    EmailGroupUnsubscribeService,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,

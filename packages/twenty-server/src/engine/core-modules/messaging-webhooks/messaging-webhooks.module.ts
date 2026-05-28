@@ -6,6 +6,7 @@ import { SesInboundMailHandlerService } from 'src/engine/core-modules/messaging-
 import { SesInboundWebhookRouterService } from 'src/engine/core-modules/messaging-webhooks/services/ses-inbound-webhook-router.service';
 import { SesOutboundSendingStateHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-sending-state-handler.service';
 import { SesOutboundWebhookRouterService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-webhook-router.service';
+import { SesSuppressionEventHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-suppression-event-handler.service';
 import { SnsSignatureVerifierService } from 'src/engine/core-modules/messaging-webhooks/services/sns-signature-verifier.service';
 import { SnsSubscriptionConfirmerService } from 'src/engine/core-modules/messaging-webhooks/services/sns-subscription-confirmer.service';
 import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty-config.module';
@@ -18,6 +19,7 @@ import { TwentyConfigModule } from 'src/engine/core-modules/twenty-config/twenty
     SnsSubscriptionConfirmerService,
     SesInboundMailHandlerService,
     SesOutboundSendingStateHandlerService,
+    SesSuppressionEventHandlerService,
     SesInboundWebhookRouterService,
     SesOutboundWebhookRouterService,
   ],

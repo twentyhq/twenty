@@ -6,6 +6,7 @@ import { isDefined, parseJson } from 'twenty-shared/utils';
 import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
 import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
 import { SesOutboundSendingStateHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-sending-state-handler.service';
+import { SesSuppressionEventHandlerService } from 'src/engine/core-modules/messaging-webhooks/services/ses-suppression-event-handler.service';
 import { SnsSignatureVerifierService } from 'src/engine/core-modules/messaging-webhooks/services/sns-signature-verifier.service';
 import { SnsSubscriptionConfirmerService } from 'src/engine/core-modules/messaging-webhooks/services/sns-subscription-confirmer.service';
 import { type SesEventBridgeNotification } from 'src/engine/core-modules/messaging-webhooks/types/ses-event-bridge-notification.type';
@@ -18,6 +19,7 @@ export class SesOutboundWebhookRouterService {
     private readonly snsSignatureVerifierService: SnsSignatureVerifierService,
     private readonly snsSubscriptionConfirmerService: SnsSubscriptionConfirmerService,
     private readonly sesOutboundSendingStateHandlerService: SesOutboundSendingStateHandlerService,
+    private readonly sesSuppressionEventHandlerService: SesSuppressionEventHandlerService,
   ) {}
 
   async route(rawBody: Buffer): Promise<void> {
@@ -54,6 +56,20 @@ export class SesOutboundWebhookRouterService {
       );
     }
 
-    await this.sesOutboundSendingStateHandlerService.handle(event);
+    if (
+      event['detail-type'] === 'Sending Status Enabled' ||
+      event['detail-type'] === 'Sending Status Disabled'
+    ) {
+      await this.sesOutboundSendingStateHandlerService.handle(event);
+
+      return;
+    }
+
+    if (
+      event['detail-type'] === 'Email Bounced' ||
+      event['detail-type'] === 'Email Complaint Received'
+    ) {
+      await this.sesSuppressionEventHandlerService.handle(event);
+    }
   }
 }

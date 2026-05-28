@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyArray } from '@sniptt/guards';
+
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -14,6 +16,7 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { EmailGroupUnsubscribeService } from 'src/engine/core-modules/emailing-domain/services/email-group-unsubscribe.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -26,6 +29,7 @@ export class EmailingDomainService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
+    private readonly emailGroupUnsubscribeService: EmailGroupUnsubscribeService,
   ) {}
 
   async createEmailingDomain(
@@ -202,14 +206,51 @@ export class EmailingDomainService {
       );
     }
 
+    const deliverableCc = emailContent.cc?.filter(isNotSuppressed);
+    const deliverableBcc = emailContent.bcc?.filter(isNotSuppressed);
+
+    const headers = this.buildSingleRecipientUnsubscribeHeaders(
+      workspaceId,
+      emailContent,
+      deliverableTo,
+      deliverableCc,
+      deliverableBcc,
+    );
+
     return this.emailingDomainDriverFactory.getCurrentDriver().sendEmail({
       ...emailContent,
       to: deliverableTo,
-      cc: emailContent.cc?.filter(isNotSuppressed),
-      bcc: emailContent.bcc?.filter(isNotSuppressed),
+      cc: deliverableCc,
+      bcc: deliverableBcc,
+      headers,
       workspaceId,
       domain: emailingDomain.domain,
     });
+  }
+
+  private buildSingleRecipientUnsubscribeHeaders(
+    workspaceId: string,
+    emailContent: EmailingDomainEmailContent,
+    deliverableTo: string[],
+    deliverableCc: string[] | undefined,
+    deliverableBcc: string[] | undefined,
+  ): EmailingDomainEmailContent['headers'] {
+    const isSingleRecipient =
+      deliverableTo.length === 1 &&
+      !isNonEmptyArray(deliverableCc) &&
+      !isNonEmptyArray(deliverableBcc);
+
+    if (emailContent.includeUnsubscribe !== true || !isSingleRecipient) {
+      return emailContent.headers;
+    }
+
+    return [
+      ...(emailContent.headers ?? []),
+      ...this.emailGroupUnsubscribeService.buildUnsubscribeHeaders(
+        workspaceId,
+        deliverableTo[0],
+      ),
+    ];
   }
 
   private async findEmailingDomainByIdOrThrow(

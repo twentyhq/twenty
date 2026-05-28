@@ -104,16 +104,19 @@ EventBridge → SNS → `POST /webhooks/messaging/ses/outbound` → `SesOutbound
 exists and consumes `SesEventBridgeNotification`, switching on `detail-type`. Today it handles only
 `'Sending Status Enabled' | 'Sending Status Disabled'` → tenant pause.
 
-Extend:
-1. Widen the `SesEventBridgeNotification['detail-type']` union to include the SES event detail-types
-   (`'Bounce' | 'Complaint' | 'Subscription'`) and add the matching `detail.bounce` / `detail.complaint`
-   / `detail.subscription` payload fields.
-2. Convert the router's ternary into a switch dispatching to a new
-   `SesSuppressionEventHandlerService` for the three actionable types.
-3. Handler upserts suppression rows: `INSERT ... ON CONFLICT (workspaceId, emailAddress) DO NOTHING`
-   (idempotent vs SNS at-least-once replay). Suppress **only** `Bounce` with `bounceType === 'Permanent'`
-   and all `Complaint`. `Subscription` → `UNSUBSCRIBE` row.
-4. Workspace ID parsed from the resource ARN (same parse the sending-state handler already uses).
+As built:
+1. Widened `SesEventBridgeNotification['detail-type']` to include `'Email Bounced'` and
+   `'Email Complaint Received'` (the actual EventBridge envelope strings — verified against AWS docs;
+   the SNS-style `detail.eventType` is `'Bounce'`/`'Complaint'`) plus the `detail.mail` / `detail.bounce`
+   / `detail.complaint` payload fields.
+2. Router dispatches by `detail-type`: sending-status → `SesOutboundSendingStateHandlerService`;
+   `'Email Bounced'`/`'Email Complaint Received'` → new `SesSuppressionEventHandlerService`.
+3. Handler suppresses via the Item-1 reactivating upsert. Suppress **only** `bounce.bounceType ===
+   'Permanent'` (HARD_BOUNCE) and all complaints (COMPLAINT). `feedbackId` stored in `providerEventId`.
+4. Workspace ID resolved from the `workspace` EmailTag (`detail.mail.tags.workspace[0]`, the exact id we
+   set at send time), falling back to parsing the resource ARN.
+5. `Subscription` events are moot once SES list management is removed (we no longer own an SES list);
+   unsubscribe is handled entirely by the app endpoint below.
 
 ### twenty-infra reconciliation
 
@@ -123,14 +126,22 @@ events ride the existing outbound topic/route, **delete** them rather than wire 
 existing outbound topic does not also carry Bounce/Complaint (verify the EventBridge rule → SNS topic
 fan-out in twenty-infra before deleting).
 
-### Unsubscribe (app-owned)
+### Unsubscribe (app-owned) — as built
 
 SES list management is unusable (fact: one list/account). Own it:
-- Add a `List-Unsubscribe` (and `List-Unsubscribe-Post: List-Unsubscribe=One-Click`, RFC 8058) header
-  via `SendEmailCommand` → `Content.Simple.Headers` (`MessageHeader[]` — confirmed supported in
-  `@aws-sdk/client-sesv2@3.1001.0`; **no Raw MIME needed**).
-- Header points at a new app endpoint that writes a `reason='UNSUBSCRIBE'` suppression row. Endpoint
-  takes a signed token encoding `workspaceId` + `emailAddress` (do not trust raw query params).
+- `EmailGroupUnsubscribeService` builds `List-Unsubscribe` + `List-Unsubscribe-Post:
+  List-Unsubscribe=One-Click` (RFC 8058) headers, attached via `Content.Simple.Headers`
+  (`MessageHeader[]` — supported in `@aws-sdk/client-sesv2@3.1001.0`; **no Raw MIME**).
+- Token is a self-contained HMAC-SHA256 over `APP_SECRET` of `{workspaceId, emailAddress}`
+  (base64url payload + signature, constant-time compare). No JWT key/token-type coupling, stateless
+  verify. Never trusts raw query params.
+- `EmailingDomainUnsubscribeController` exposes public `POST /emailing/unsubscribe` (one-click) and
+  `GET /emailing/unsubscribe` (browser fallback); a valid token writes a `MARKETING`/`UNSUBSCRIBE`
+  suppression row (`FieldActorSource.API`). Always returns 200 (no recipient-existence leak).
+- Headers are attached **only** when the caller sets `includeUnsubscribe: true` **and** the message
+  resolves to exactly one deliverable recipient (one-click targets a single address). v1 read path is
+  channel-agnostic, so an unsubscribe blocks all sends for that address until the transactional channel
+  type lands — transactional callers must leave `includeUnsubscribe` unset.
 
 ---
 

@@ -5,6 +5,7 @@ import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-dom
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { type EmailGroupUnsubscribeService } from 'src/engine/core-modules/emailing-domain/services/email-group-unsubscribe.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -49,13 +50,21 @@ describe('EmailingDomainService.sendEmail', () => {
           new Set(suppressedAddresses.map((address) => address.toLowerCase())),
         ),
     } as unknown as EmailGroupSuppressionService;
+    const unsubscribeService = {
+      buildUnsubscribeHeaders: jest
+        .fn()
+        .mockReturnValue([
+          { name: 'List-Unsubscribe', value: '<https://app/unsubscribe>' },
+        ]),
+    } as unknown as EmailGroupUnsubscribeService;
     const service = new EmailingDomainService(
       repository,
       factory,
       suppressionService,
+      unsubscribeService,
     );
 
-    return { service, sendEmail };
+    return { service, sendEmail, unsubscribeService };
   };
 
   it('delegates to the driver when the domain is verified and the tenant is active', async () => {
@@ -131,6 +140,44 @@ describe('EmailingDomainService.sendEmail', () => {
       code: EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED,
     });
     expect(sendEmail).not.toHaveBeenCalled();
+  });
+
+  it('attaches one-click unsubscribe headers for a single-recipient marketing send', async () => {
+    const { service, sendEmail } = setUp(buildEmailingDomain());
+
+    await service.sendEmail(
+      'ws1',
+      'domain-1',
+      buildEmailContent({ includeUnsubscribe: true }),
+    );
+
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        headers: [
+          { name: 'List-Unsubscribe', value: '<https://app/unsubscribe>' },
+        ],
+      }),
+    );
+  });
+
+  it('omits unsubscribe headers when the message has multiple recipients', async () => {
+    const { service, sendEmail, unsubscribeService } = setUp(
+      buildEmailingDomain(),
+    );
+
+    await service.sendEmail(
+      'ws1',
+      'domain-1',
+      buildEmailContent({
+        includeUnsubscribe: true,
+        cc: ['second@example.com'],
+      }),
+    );
+
+    expect(unsubscribeService.buildUnsubscribeHeaders).not.toHaveBeenCalled();
+    expect(sendEmail).toHaveBeenCalledWith(
+      expect.objectContaining({ headers: undefined }),
+    );
   });
 
   // Verification is a precondition for the tenant-status check: a domain that
