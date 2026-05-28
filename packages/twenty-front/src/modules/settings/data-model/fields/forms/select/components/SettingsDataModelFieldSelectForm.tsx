@@ -141,6 +141,17 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
+const StyledBulkEditButtonContainer = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+  width: 100%;
+
+  > button {
+    justify-content: center;
+    flex: 1;
+  }
+`;
+
 const StyledOptionsHeaderContainer = styled.div`
   align-items: center;
   display: flex;
@@ -190,6 +201,9 @@ export const SettingsDataModelFieldSelectForm = ({
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
   const [isBulkInputMode, setIsBulkInputMode] = useState(false);
   const [bulkInputText, setBulkInputText] = useState('');
+  const [originalOptions, setOriginalOptions] = useState<
+    FieldMetadataItemOption[]
+  >([]);
 
   const OPTIONS_DROPDOWN_ID =
     'settings-data-model-field-select-options-dropdown';
@@ -378,10 +392,16 @@ export const SettingsDataModelFieldSelectForm = ({
                                   setBulkInputText(
                                     convertOptionsToBulkText(options),
                                   );
+                                  setOriginalOptions(options);
+                                  setIsBulkInputMode(true);
+                                } else {
+                                  const nextOptions = convertBulkTextToOptions(
+                                    bulkInputText,
+                                    originalOptions,
+                                  );
+                                  onChange(nextOptions);
+                                  setIsBulkInputMode(false);
                                 }
-                                setIsBulkInputMode(
-                                  (currentInputMode) => !currentInputMode,
-                                );
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
                             />
@@ -412,12 +432,6 @@ export const SettingsDataModelFieldSelectForm = ({
                           return;
                         }
 
-                        const nextOptions = convertBulkTextToOptions(
-                          nextOptionAsText,
-                          options,
-                        );
-
-                        onChange(nextOptions);
                         setBulkInputText(nextOptionAsText);
                       }}
                       minRows={5}
@@ -528,6 +542,32 @@ export const SettingsDataModelFieldSelectForm = ({
                       onClick={handleAddOption}
                     />
                   </StyledButtonContainer>
+                </CardFooter>
+              </StyledFooterContainer>
+            )}
+            {!disabled && isBulkInputMode && (
+              <StyledFooterContainer>
+                <CardFooter>
+                  <StyledBulkEditButtonContainer>
+                    <LightButton
+                      title={t`Cancel`}
+                      accent="tertiary"
+                      onClick={() => {
+                        setIsBulkInputMode(false);
+                      }}
+                    />
+                    <LightButton
+                      title={t`Done`}
+                      onClick={() => {
+                        const nextOptions = convertBulkTextToOptions(
+                          bulkInputText,
+                          originalOptions,
+                        );
+                        onChange(nextOptions);
+                        setIsBulkInputMode(false);
+                      }}
+                    />
+                  </StyledBulkEditButtonContainer>
                 </CardFooter>
               </StyledFooterContainer>
             )}
