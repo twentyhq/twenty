@@ -1,10 +1,144 @@
-{
-  "install": "yarn install",
-  "start": "(sudo service docker start || service docker start || true) && bash packages/twenty-utils/setup-dev-env.sh && npx nx database:reset twenty-server",
-  "terminals": [
-    {
-      "name": "Development Server",
-      "command": "yarn start"
+The core problem you're encountering stems from a fundamental timing issue in the upgrade process: **workspace cache recomputation is happening before all necessary database schema migrations have been applied.** This leads to two distinct failures, both manifesting as the application code expecting a schema or data structure that doesn't yet exist in the underlying database.
+
+### Root Cause Analysis
+
+1.  **Failure #1 (v2.4.0 → v2.6.2: `column relationTargetFieldMetadataId does not exist`)**: The `WorkspaceFlatViewFilterMapCacheService.computeForCache` service, which runs during workspace processing, issues a SQL `SELECT` query that includes `relationTargetFieldMetadataId`. This column is part of the target v2.6 schema but is only added by step 76 (`2.6.0_AddRelationTargetFieldMetadataIdToViewFilter`). Your upgrade aborts at step 72 because the database, still at a pre-v2.6 schema, does not have this column. This is a classic "read-before-write" problem during schema migration.
+
+2.  **Failure #2 (v2.4.0 → v2.7.3: `universalIdentifier` undefined in `WorkspaceRolesPermissionsCacheService`)**: This occurs in `WorkspaceRolesPermissionsCacheService.hasSettingsGatedObjectPermissions` during cache recomputation. The code attempts to read `.universalIdentifier` from an `undefined` object. The preceding log line `[upgrade-proxy] strip relation RolePermissionFlagEntity.permissionFlag -> PermissionFlagEntity` is a strong indicator. It suggests that the `UpgradeAwareRepositoryProxy` is trying to normalize the `RolePermissionFlagEntity` relation for cross-version compatibility. However, if the `PermissionFlag` entity it's looking for (or the relation itself) hasn't been properly migrated or adjusted in the database (due to pending v2.6 migrations like `RenamePermissionFlagToRolePermissionFlag`), the lookup for the related `permissionFlag` object might return `undefined`, leading to the `TypeError`. Again, this happens before the relevant migrations (steps 73-75) have completed.
+
+Both failures highlight that the services responsible for recomputing the workspace cache are using the *target version's* entity definitions to query a database that's still reflecting the *source version's* schema. While `UpgradeAwareRepositoryProxy` tries to bridge this, it's not robust enough to handle non-existent columns in `SELECT` statements or certain relation resolution issues when the underlying schema is significantly different.
+
+### Proposed Fix: Reorder Upgrade Sequence
+
+The most robust solution is to restructure the upgrade sequence to ensure all database schema migrations (instance and workspace) are completed *before* any workspace-level cache recomputations are triggered.
+
+**High-Level Change:**
+
+1.  **Phase 1: Apply all instance-level migrations.**
+2.  **Phase 2: Apply all workspace-level migrations for *all* workspaces.** This phase should *only* focus on schema and data migrations, not cache recomputation.
+3.  **Phase 3: After *all* migrations are successfully applied across the entire instance and all workspaces, then iterate through all workspaces to recompute their caches.**
+
+This ensures that when the cache services execute, the database schema (and its data structure) fully aligns with the entity definitions of the target application version.
+
+---
+
+### Detailed Code Fix (Conceptual, targeting `UpgradeSequenceRunnerService` or similar orchestration logic)
+
+The changes would primarily be within the service responsible for running the overall upgrade sequence (e.g., `packages/twenty-server/src/engine/upgrade/services/upgrade-sequence-runner.service.ts` or its callers).
+
+
+// packages/twenty-server/src/engine/upgrade/services/upgrade-sequence-runner.service.ts
+// (Or equivalent file orchestrating the upgrade process)
+
+import { Injectable, Logger } from '@nestjs/common';
+// ... other imports for services (InstanceCommandRunnerService, WorkspaceCommandRunnerService, WorkspaceIteratorService, WorkspaceCacheService)
+
+@Injectable()
+export class UpgradeSequenceRunnerService {
+  private readonly logger = new Logger(UpgradeSequenceRunnerService.name);
+
+  constructor(
+    private readonly instanceCommandRunnerService: InstanceCommandRunnerService,
+    private readonly workspaceCommandRunnerService: WorkspaceCommandRunnerService,
+    private readonly workspaceIteratorService: WorkspaceIteratorService,
+    private readonly workspaceCacheService: WorkspaceCacheService, // <-- Key service for recomputation
+    // ... other services
+  ) {}
+
+  async runSequence(options: UpgradeSequenceRunnerServiceOptions): Promise<void> {
+    const { dryRun, workspaceIds } = options;
+    const sequence = await this.buildUpgradeSequence(options);
+    const workspaces = await this.workspaceIteratorService.getWorkspacesForUpgrade(workspaceIds);
+
+    this.logger.log(`Initialized upgrade sequence: ${sequence.totalSteps} step(s)`);
+    // Event logging omitted for brevity
+
+    try {
+      // --- PHASE 1: Apply all Instance-level commands (schema & data migrations) ---
+      this.logger.log('Starting instance-level migrations...');
+      for (const step of sequence.instanceSteps) {
+        this.logger.debug(`Running instance step: ${step.command.name} (${step.command.version})`);
+        await this.instanceCommandRunnerService.run(step, dryRun);
+      }
+      this.logger.log('Instance-level migrations completed.');
+
+      // --- PHASE 2: Apply all Workspace-level commands (schema & data migrations) ---
+      this.logger.log('Starting workspace-level migrations...');
+      let failures = 0;
+      for (const [index, workspace] of workspaces.entries()) {
+        this.logger.log(`Upgrading workspace ${workspace.id} ${index + 1}/${workspaces.length}`);
+        
+        // Mark workspace as starting upgrade
+        await this.workspaceIteratorService.startWorkspaceUpgrade(workspace.id);
+
+        try {
+          for (const step of sequence.workspaceSteps) {
+            this.logger.debug(`Running workspace step for ${workspace.id}: ${step.command.name} (${step.command.version})`);
+            await this.workspaceCommandRunnerService.run(workspace.id, step, dryRun);
+            // IMPORTANT: Ensure no implicit cache recomputation happens here or within individual workspace commands.
+            // If any workspace migration command is currently triggering `workspaceCacheService.recomputeDataFromProvider`,
+            // that call must be removed or conditionalized to only run *after* all migrations.
+          }
+          await this.workspaceIteratorService.finishWorkspaceUpgrade(workspace.id);
+        } catch (error) {
+          this.logger.error(`Error in workspace ${workspace.id}:`, error);
+          await this.workspaceIteratorService.failWorkspaceUpgrade(workspace.id, error);
+          failures++;
+        }
+      }
+
+      if (failures > 0) {
+        this.logger.error(`Workspace steps ended with ${failures} failure(s). Aborting — cannot proceed to next steps.`);
+        // Emit abort event or throw
+        throw new Error(`Upgrade completed with ${failures} workspace failure(s) during migration phase.`);
+      }
+      this.logger.log('Workspace-level migrations completed for all workspaces.');
+
+
+      // --- PHASE 3: Recompute ALL workspace caches, AFTER all migrations are applied ---
+      if (!dryRun) { // Cache recomputation should not happen during a dry run
+        this.logger.log('Recomputing workspace caches for all workspaces...');
+        for (const [index, workspace] of workspaces.entries()) {
+          this.logger.log(`Recomputing cache for workspace ${workspace.id} ${index + 1}/${workspaces.length}`);
+          try {
+            await this.workspaceCacheService.recomputeDataFromProvider(workspace.id);
+          } catch (error) {
+            this.logger.error(`Error recomputing cache for workspace ${workspace.id}:`, error);
+            // Decide how to handle cache recomputation failures: abort or log and continue?
+            // For critical services, it might be better to abort or mark as failed.
+            // For now, logging error.
+          }
+        }
+        this.logger.log('All workspace caches recomputed.');
+      } else {
+        this.logger.log('Skipping workspace cache recomputation in dry run mode.');
+      }
+
+      this.logger.log('Upgrade completed successfully.');
+      // Emit summary event
+    } catch (error) {
+      this.logger.error(`Upgrade failed: ${error.message}`, error.stack);
+      // Emit abort event
+      throw error; // Re-throw to indicate overall failure
     }
-  ]
+  }
+
+  // ... (buildUpgradeSequence and other helper methods) ...
 }
+
+
+**Key Considerations for Implementation:**
+
+1.  **Locate `recomputeDataFromProvider` Calls:** The most crucial part is to identify exactly where `this.workspaceCacheService.recomputeDataFromProvider()` (or methods like `computeForCache` that lead to it) is currently being called. Based on the logs, it seems to happen *during* the `workspaceCommandRunnerService.run` or as a direct step in the per-workspace processing. These existing calls must be removed or conditionalized to *not* run until the dedicated Phase 3.
+2.  **`UpgradeAwareRepositoryProxy`:** After this change, the proxy will still be important for data migrations within phases 1 and 2, but it should no longer be critical for bridging schema gaps during cache recomputation.
+3.  **Error Handling:** Ensure robust error handling for each phase, especially if a failure in Phase 2 (migrations) should prevent Phase 3 (cache recomputation).
+
+### Answers to Your Questions:
+
+1.  **Failure #1 (v2.6 ordering bug):** This is indeed an ordering bug. The fix is definitely to defer workspace cache recomputation. Extending `UpgradeAwareRepositoryProxy` for unknown columns is a much more complex and fragile solution than simply ensuring the schema is ready when cache services run.
+2.  **Failure #2 (v2.7 `universalIdentifier` null):** The issue with `defineRole` SDK roles and `RenamePermissionFlagToRolePermissionFlag` is likely a symptom of the same premature cache recomputation. Deferring the cache will allow the relevant migrations to correctly update the `PermissionFlag` and `RolePermissionFlag` tables, which should then provide valid data for the cache service. Deleting/recreating roles is a workaround and not a proper fix. A backfill migration might still be necessary if the v2.4.0 data itself has inconsistencies that the v2.6/v2.7 migrations don't automatically fix, but that's a secondary concern to the timing.
+3.  **CLI helper to dump/inspect state:** This is a good feature request. Currently, you'd need to use direct SQL queries as suggested in the thought process (`SELECT * FROM core.role WHERE workspaceId = 'your_workspace_id';` etc.).
+4.  **CLI helper to reset failed upgrade state:** Another excellent feature request. For now, your method of snapshot restore is the most reliable. A CLI command that updates `commandExecution` table entries to clear `failedAt` for a specific workspace would be very useful.
+5.  **Sanitized DB dump:** Yes, a sanitized `pg_dump` of your v2.4.0 state would be highly valuable for the maintainers to reproduce and test the fix accurately.
+
+This proposed fix directly addresses the root cause of both failures by ensuring the database schema is fully prepared before any services attempt to query and cache its data according to the new application version.
