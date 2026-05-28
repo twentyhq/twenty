@@ -1,5 +1,6 @@
-import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 
 describe('buildEnvVar', () => {
@@ -32,7 +33,7 @@ describe('buildEnvVar', () => {
       {
         id: '1',
         key: 'PUBLIC_URL',
-        value: 'https://example.com',
+        value: 'https://example.com' as EncryptedString,
         description: 'Public URL',
         isSecret: false,
         applicationId: 'app-1',
@@ -45,7 +46,7 @@ describe('buildEnvVar', () => {
       {
         id: '2',
         key: 'API_SECRET',
-        value: `enc:v2:deadbeef:secret-123|${workspaceA}`,
+        value: `enc:v2:deadbeef:secret-123|${workspaceA}` as EncryptedString,
         description: 'API secret',
         isSecret: true,
         applicationId: 'app-1',
@@ -58,7 +59,7 @@ describe('buildEnvVar', () => {
       {
         id: '3',
         key: 'DEBUG',
-        value: 'true',
+        value: 'true' as EncryptedString,
         description: 'Debug flag',
         isSecret: false,
         applicationId: 'app-1',
@@ -91,7 +92,7 @@ describe('buildEnvVar', () => {
       {
         id: '1',
         key: 'A_SECRET',
-        value: `enc:v2:deadbeef:value-a|${workspaceA}`,
+        value: `enc:v2:deadbeef:value-a|${workspaceA}` as EncryptedString,
         description: '',
         isSecret: true,
         applicationId: 'app-1',
@@ -104,7 +105,7 @@ describe('buildEnvVar', () => {
       {
         id: '2',
         key: 'B_SECRET',
-        value: `enc:v2:deadbeef:value-b|${workspaceB}`,
+        value: `enc:v2:deadbeef:value-b|${workspaceB}` as EncryptedString,
         description: '',
         isSecret: true,
         applicationId: 'app-1',
@@ -133,7 +134,7 @@ describe('buildEnvVar', () => {
       {
         id: '1',
         key: 'NULL_VALUE',
-        value: null as unknown as string,
+        value: null as unknown as EncryptedString | '',
         description: '',
         isSecret: false,
         applicationId: 'app-1',
@@ -146,7 +147,7 @@ describe('buildEnvVar', () => {
       {
         id: '2',
         key: 'UNDEFINED_VALUE',
-        value: undefined as unknown as string,
+        value: undefined as unknown as EncryptedString | '',
         description: '',
         isSecret: false,
         applicationId: 'app-1',
@@ -171,7 +172,7 @@ describe('buildEnvVar', () => {
       {
         id: '1',
         key: 'NUMBER_VALUE',
-        value: 123 as unknown as string,
+        value: 123 as unknown as EncryptedString | '',
         description: '',
         isSecret: false,
         applicationId: 'app-1',

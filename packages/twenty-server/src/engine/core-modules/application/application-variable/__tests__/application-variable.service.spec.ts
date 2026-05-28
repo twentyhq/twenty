@@ -10,6 +10,7 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
@@ -96,7 +97,7 @@ describe('ApplicationVariableEntityService', () => {
 
       await service.update({
         key: 'API_KEY',
-        plainTextValue: 'new-secret-value',
+        plainTextValue: 'new-secret-value' as PlaintextString,
         applicationId: mockApplicationId,
         workspaceId: mockWorkspaceId,
       });
@@ -129,7 +130,7 @@ describe('ApplicationVariableEntityService', () => {
 
       await service.update({
         key: 'PUBLIC_URL',
-        plainTextValue: 'https://new-url.com',
+        plainTextValue: 'https://new-url.com' as PlaintextString,
         applicationId: mockApplicationId,
         workspaceId: mockWorkspaceId,
       });
@@ -147,7 +148,7 @@ describe('ApplicationVariableEntityService', () => {
       await expect(
         service.update({
           key: 'NON_EXISTENT',
-          plainTextValue: 'some-value',
+          plainTextValue: 'some-value' as PlaintextString,
           applicationId: mockApplicationId,
           workspaceId: mockWorkspaceId,
         }),
@@ -156,7 +157,7 @@ describe('ApplicationVariableEntityService', () => {
       await expect(
         service.update({
           key: 'NON_EXISTENT',
-          plainTextValue: 'some-value',
+          plainTextValue: 'some-value' as PlaintextString,
           applicationId: mockApplicationId,
           workspaceId: mockWorkspaceId,
         }),

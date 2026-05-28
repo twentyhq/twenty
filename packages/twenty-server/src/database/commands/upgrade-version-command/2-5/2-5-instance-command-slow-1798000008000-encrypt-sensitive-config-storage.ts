@@ -4,6 +4,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { type ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -70,7 +71,9 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
         }
 
         const encrypted =
-          this.secretEncryptionService.encryptVersioned(plaintext);
+          this.secretEncryptionService.encryptVersioned(
+            plaintext as PlaintextString,
+          );
 
         await dataSource.query(
           `UPDATE "core"."keyValuePair"
