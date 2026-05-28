@@ -6,7 +6,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     key,
     universalIdentifier,
     description,
-    value,
+    encryptedValue,
     isSecret,
     applicationUniversalIdentifier,
     now,
@@ -14,7 +14,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     key: string;
     universalIdentifier: string;
     description?: string;
-    value?: string;
+    encryptedValue: EncryptedString | '';
     isSecret?: boolean;
     applicationUniversalIdentifier: string;
     now: string;
@@ -23,8 +23,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       universalIdentifier,
       applicationUniversalIdentifier,
       key,
-      // Manifest values are not compared (toCompare: false) — cast is safe
-      value: (isSecret ? '' : (value ?? '')) as EncryptedString | '',
+      value: encryptedValue,
       description: description ?? '',
       isSecret: isSecret ?? false,
       createdAt: now,
