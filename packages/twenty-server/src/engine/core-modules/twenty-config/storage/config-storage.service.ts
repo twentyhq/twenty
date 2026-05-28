@@ -56,6 +56,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
     const metadata = this.getConfigMetadata(key);
 
     return (
+      typeof value === 'string' &&
       metadata?.isSensitive === true &&
       metadata.type === ConfigVariableType.STRING
     );
