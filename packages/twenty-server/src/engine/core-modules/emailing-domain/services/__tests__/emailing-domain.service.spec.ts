@@ -7,6 +7,10 @@ import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-doma
 import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { type EmailGroupUnsubscribeService } from 'src/engine/core-modules/emailing-domain/services/email-group-unsubscribe.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { type BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { type ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { type WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('EmailingDomainService.sendEmail', () => {
@@ -57,14 +61,33 @@ describe('EmailingDomainService.sendEmail', () => {
           { name: 'List-Unsubscribe', value: '<https://app/unsubscribe>' },
         ]),
     } as unknown as EmailGroupUnsubscribeService;
+    const throttlerService = {
+      tokenBucketThrottleOrThrow: jest.fn().mockResolvedValue(1),
+    } as unknown as ThrottlerService;
+    const billingUsageService = {
+      canFeatureBeUsed: jest.fn().mockResolvedValue(true),
+    } as unknown as BillingUsageService;
+    const workspaceEventEmitter = {
+      emitCustomBatchEvent: jest.fn(),
+    } as unknown as WorkspaceEventEmitter;
     const service = new EmailingDomainService(
       repository,
       factory,
       suppressionService,
       unsubscribeService,
+      throttlerService,
+      billingUsageService,
+      workspaceEventEmitter,
     );
 
-    return { service, sendEmail, unsubscribeService };
+    return {
+      service,
+      sendEmail,
+      unsubscribeService,
+      throttlerService,
+      billingUsageService,
+      workspaceEventEmitter,
+    };
   };
 
   it('delegates to the driver when the domain is verified and the tenant is active', async () => {
@@ -177,6 +200,62 @@ describe('EmailingDomainService.sendEmail', () => {
     expect(unsubscribeService.buildUnsubscribeHeaders).not.toHaveBeenCalled();
     expect(sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({ headers: undefined }),
+    );
+  });
+
+  it('meters one usage event per accepted recipient at the marked-up per-recipient cost', async () => {
+    const { service, workspaceEventEmitter } = setUp(buildEmailingDomain());
+
+    await service.sendEmail(
+      'ws1',
+      'domain-1',
+      buildEmailContent({ to: ['a@example.com', 'b@example.com'] }),
+    );
+
+    expect(workspaceEventEmitter.emitCustomBatchEvent).toHaveBeenCalledWith(
+      'USAGE_RECORDED',
+      [
+        expect.objectContaining({
+          operationType: UsageOperationType.EMAIL_SEND,
+          quantity: 2,
+          creditsUsedMicro: 600,
+        }),
+      ],
+      'ws1',
+    );
+  });
+
+  it('rejects sending when the billing plan disallows it, without calling the driver or metering', async () => {
+    const { service, sendEmail, billingUsageService, workspaceEventEmitter } =
+      setUp(buildEmailingDomain());
+
+    (billingUsageService.canFeatureBeUsed as jest.Mock).mockResolvedValue(
+      false,
+    );
+
+    await expect(
+      service.sendEmail('ws1', 'domain-1', buildEmailContent()),
+    ).rejects.toMatchObject({
+      code: EmailingDomainDriverExceptionCode.SENDING_SUSPENDED,
+    });
+    expect(sendEmail).not.toHaveBeenCalled();
+    expect(workspaceEventEmitter.emitCustomBatchEvent).not.toHaveBeenCalled();
+  });
+
+  it('consumes one rate-limit token per deliverable recipient before sending', async () => {
+    const { service, throttlerService } = setUp(buildEmailingDomain());
+
+    await service.sendEmail(
+      'ws1',
+      'domain-1',
+      buildEmailContent({ to: ['a@example.com'], cc: ['c@example.com'] }),
+    );
+
+    expect(throttlerService.tokenBucketThrottleOrThrow).toHaveBeenCalledWith(
+      'emailing-domain-send:ws1',
+      2,
+      expect.any(Number),
+      expect.any(Number),
     );
   });
 

@@ -1,0 +1,5 @@
+export const EMAIL_SUBJECT_MAX_LENGTH = 998;
+export const EMAIL_BODY_MAX_LENGTH = 1_000_000;
+export const EMAIL_MAX_RECIPIENTS_PER_FIELD = 50;
+export const EMAIL_MAX_REPLY_TO = 10;
+export const EMAIL_MAX_TOTAL_RECIPIENTS = 50;

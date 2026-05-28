@@ -2,6 +2,14 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyArray } from '@sniptt/guards';
 
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import {
+  EMAIL_SEND_AWS_COST_PER_RECIPIENT_USD,
+  EMAIL_SEND_CREDIT_MARKUP,
+  EMAIL_SEND_THROTTLE_MAX_RECIPIENTS,
+  EMAIL_SEND_THROTTLE_WINDOW_MS,
+} from 'src/engine/core-modules/emailing-domain/constants/email-send-billing.constant';
+import { EMAIL_MAX_TOTAL_RECIPIENTS } from 'src/engine/core-modules/emailing-domain/constants/email-limits.constant';
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -17,9 +25,17 @@ import {
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { EmailGroupUnsubscribeService } from 'src/engine/core-modules/emailing-domain/services/email-group-unsubscribe.service';
+import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
+import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-recorded.constant';
+import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
+import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
+import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { DOLLAR_TO_CREDIT_MULTIPLIER } from 'src/engine/metadata-modules/ai/ai-billing/constants/dollar-to-credit-multiplier';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 @Injectable()
 export class EmailingDomainService {
   private readonly logger = new Logger(EmailingDomainService.name);
@@ -30,6 +46,9 @@ export class EmailingDomainService {
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
     private readonly emailGroupUnsubscribeService: EmailGroupUnsubscribeService,
+    private readonly throttlerService: ThrottlerService,
+    private readonly billingUsageService: BillingUsageService,
+    private readonly workspaceEventEmitter: WorkspaceEventEmitter,
   ) {}
 
   async createEmailingDomain(
@@ -209,6 +228,21 @@ export class EmailingDomainService {
     const deliverableCc = emailContent.cc?.filter(isNotSuppressed);
     const deliverableBcc = emailContent.bcc?.filter(isNotSuppressed);
 
+    const recipientCount =
+      deliverableTo.length +
+      (deliverableCc?.length ?? 0) +
+      (deliverableBcc?.length ?? 0);
+
+    if (recipientCount > EMAIL_MAX_TOTAL_RECIPIENTS) {
+      throw new EmailingDomainDriverException(
+        `A single email cannot exceed ${EMAIL_MAX_TOTAL_RECIPIENTS} recipients`,
+        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
+      );
+    }
+
+    await this.assertBillingAllowsSending(workspaceId);
+    await this.assertWithinSendRate(workspaceId, recipientCount);
+
     const headers = this.buildSingleRecipientUnsubscribeHeaders(
       workspaceId,
       emailContent,
@@ -217,15 +251,68 @@ export class EmailingDomainService {
       deliverableBcc,
     );
 
-    return this.emailingDomainDriverFactory.getCurrentDriver().sendEmail({
-      ...emailContent,
-      to: deliverableTo,
-      cc: deliverableCc,
-      bcc: deliverableBcc,
-      headers,
+    const result = await this.emailingDomainDriverFactory
+      .getCurrentDriver()
+      .sendEmail({
+        ...emailContent,
+        to: deliverableTo,
+        cc: deliverableCc,
+        bcc: deliverableBcc,
+        headers,
+        workspaceId,
+        domain: emailingDomain.domain,
+      });
+
+    this.meterEmailSend(workspaceId, recipientCount);
+
+    return result;
+  }
+
+  private async assertBillingAllowsSending(workspaceId: string): Promise<void> {
+    const canSend =
+      await this.billingUsageService.canFeatureBeUsed(workspaceId);
+
+    if (!canSend) {
+      throw new EmailingDomainDriverException(
+        'Email sending is not available for this workspace billing plan',
+        EmailingDomainDriverExceptionCode.SENDING_SUSPENDED,
+      );
+    }
+  }
+
+  private async assertWithinSendRate(
+    workspaceId: string,
+    recipientCount: number,
+  ): Promise<void> {
+    await this.throttlerService.tokenBucketThrottleOrThrow(
+      `emailing-domain-send:${workspaceId}`,
+      recipientCount,
+      EMAIL_SEND_THROTTLE_MAX_RECIPIENTS,
+      EMAIL_SEND_THROTTLE_WINDOW_MS,
+    );
+  }
+
+  private meterEmailSend(workspaceId: string, recipientCount: number): void {
+    const creditsUsedMicro = Math.round(
+      EMAIL_SEND_AWS_COST_PER_RECIPIENT_USD *
+        EMAIL_SEND_CREDIT_MARKUP *
+        DOLLAR_TO_CREDIT_MULTIPLIER *
+        recipientCount,
+    );
+
+    this.workspaceEventEmitter.emitCustomBatchEvent<UsageEvent>(
+      USAGE_RECORDED,
+      [
+        {
+          resourceType: UsageResourceType.API,
+          operationType: UsageOperationType.EMAIL_SEND,
+          creditsUsedMicro,
+          quantity: recipientCount,
+          unit: UsageUnit.INVOCATION,
+        },
+      ],
       workspaceId,
-      domain: emailingDomain.domain,
-    });
+    );
   }
 
   private buildSingleRecipientUnsubscribeHeaders(

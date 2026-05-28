@@ -153,9 +153,15 @@ Add `class-validator` decorators:
 - `@MaxLength` on `subject`, `text`, `html`.
 - `@ArrayMaxSize` on `to`, `cc`, `bcc`, `replyTo` (existing: only `@ArrayMinSize(1)` on `to`).
 
-### Throttle
+### Throttle — as built
 
-- Per-workspace send throttle (Redis token bucket keyed by `workspaceId`).
+- Reuses the existing `ThrottlerService.tokenBucketThrottleOrThrow`, keyed
+  `emailing-domain-send:<workspaceId>`, consuming one token per deliverable recipient
+  (`EMAIL_SEND_THROTTLE_MAX_RECIPIENTS` per `EMAIL_SEND_THROTTLE_WINDOW_MS`). Checked after the
+  suppression filter, before the driver send.
+- Hard per-message recipient cap (`EMAIL_MAX_TOTAL_RECIPIENTS`, SES's 50-recipient limit) on the
+  deliverable total; DTO also caps each field (`@ArrayMaxSize`) and body/subject lengths
+  (`@MaxLength`).
 
 ### Credit metering (Felix)
 
@@ -194,11 +200,22 @@ Integration (existing path):
      periodStart: subscriptionPeriodStart,
    }], workspaceId)
    ```
-4. Pre-send credit-balance check: reject the send if the workspace lacks credits for the recipient count
-   (reuse `BillingUsageService` balance/decrement). Order in `sendEmail`: tenant-status → suppression
-   filter → credit check on survivors → send → meter.
+4. Pre-send gate: `BillingUsageService.canFeatureBeUsed(workspaceId)` (rejects when the workspace has
+   no active subscription); when billing is disabled it returns true so dev/self-host still sends.
+   Order in `sendEmail`: verified → tenant-status → from-domain → suppression filter → recipient cap →
+   billing gate → throttle → send → meter.
 
-Attachment data ($0.12/GB on SES) not metered in v1 — note as follow-up.
+As built: metering emits via the **global `WorkspaceEventEmitter`** only (no `BillingModule` coupling
+for the meter itself); the existing `USAGE_RECORDED` → ClickHouse → cap pipeline performs credit
+**enforcement** asynchronously (pausing the workspace at the cap), matching how
+`WORKFLOW_EXECUTION` is metered. A hard pre-send balance reject (vs the coarse subscription gate) can
+layer on later via `BillingUsageService` if product wants it. Adding `EMAIL_SEND` to
+`UsageOperationType` also required an entry in the exhaustive
+`USAGE_UNIT_BY_OPERATION_TYPE` map (`app-billing.service.ts`).
+
+Attachment data ($0.12/GB on SES) not metered in v1 — note as follow-up. A Stripe meter with
+eventName `EMAIL_SEND` must be provisioned for revenue to land (no reverse op-type→meter mapping
+exists in code yet).
 
 ---
 
