@@ -271,9 +271,18 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   return serialized;
 };
 
+const getSerializedEventInput = (event: unknown): unknown => {
+  if (!isObject(event)) {
+    return event;
+  }
+
+  const eventRecord = event as Record<string, unknown>;
+  return isObject(eventRecord.detail) ? eventRecord.detail : event;
+};
+
 const wrapEventHandler = (handler: (detail: SerializedEventData) => void) => {
   return (event: unknown) => {
-    handler(serializeEvent(event));
+    handler(serializeEvent(getSerializedEventInput(event)));
   };
 };
 
