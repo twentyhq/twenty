@@ -1,3 +1,6 @@
+import { AppChip } from '@/applications/components/AppChip';
+import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
+import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
 import { interpolateCommandMenuItemFields } from '@/command-menu-item/display/utils/interpolateCommandMenuItemFields';
@@ -101,6 +104,12 @@ const CommandMenuItemSelectableRenderer = ({
     selectableListInstanceId,
   );
 
+  const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
+
+  const { applicationChipData } = useApplicationChipData({
+    applicationId: item.applicationId,
+  });
+
   const onItemClick = () => {
     if (disabled) {
       return;
@@ -118,12 +127,19 @@ const CommandMenuItemSelectableRenderer = ({
         )
       ) : undefined;
 
+    const AppChipIcon = () => (
+      <AppChip applicationId={item.applicationId} size={'md'} chipOnly />
+    );
+
     return (
       <SelectableListItem itemId={item.id} onEnter={onItemClick}>
         <CommandMenuItem
           id={item.id}
-          Icon={Icon}
+          Icon={isThirdPartyApp ? AppChipIcon : Icon}
           label={getCommandMenuItemLabel(label)}
+          description={
+            isThirdPartyApp ? applicationChipData.name : undefined
+          }
           onClick={disabled ? undefined : handleClick}
           hotKeys={item.hotKeys}
           disabled={disabled}
@@ -137,9 +153,17 @@ const CommandMenuItemSelectableRenderer = ({
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
       <MenuItem
         focused={isSelectedItemId}
-        LeftIcon={Icon}
+        LeftIcon={isThirdPartyApp ? undefined : Icon}
+        LeftComponent={
+          isThirdPartyApp ? (
+            <AppChip applicationId={item.applicationId} size={'md'} chipOnly />
+          ) : undefined
+        }
         onClick={onItemClick}
         text={getCommandMenuItemLabel(label)}
+        contextualText={
+          isThirdPartyApp ? applicationChipData.name : undefined
+        }
         disabled={disabled}
       />
     </SelectableListItem>
