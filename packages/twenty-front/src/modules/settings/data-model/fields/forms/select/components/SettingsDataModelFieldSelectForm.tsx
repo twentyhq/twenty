@@ -147,8 +147,8 @@ const StyledBulkEditButtonContainer = styled.div`
   width: 100%;
 
   > button {
-    justify-content: center;
     flex: 1;
+    justify-content: center;
   }
 `;
 
