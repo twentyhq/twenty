@@ -91,10 +91,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     });
   }
 
-  existsBy(
-    workspaceId: string,
-    where: FindOptionsWhere<T>,
-  ): Promise<boolean> {
+  existsBy(workspaceId: string, where: FindOptionsWhere<T>): Promise<boolean> {
     this.assertWorkspaceId(workspaceId);
 
     return this.repository.existsBy(
