@@ -43,6 +43,8 @@ export default defineField({
 
 * Расположение файла зависит от вас. Принятое соглашение — `src/fields/\<name>.field.ts`, но SDK обнаруживает поля в любом месте внутри `src/`.
 
+* Чтобы добавить вкладку в стандартную компоновку страницы (например, на страницу сведений о задаче или компании), используйте [`definePageLayoutTab`](/l/ru/developers/extend/apps/layout/page-layouts#definepagelayouttab) с `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` из `twenty-sdk/define`.
+
 ## Добавление связи к существующему объекту
 
 Чтобы добавить поле связи (например, связать ваш пользовательский объект со стандартным `Person`), используйте `defineField()` с `FieldType.RELATION`. Шаблон тот же, что и для встроенных связей, но с явным указанием `objectUniversalIdentifier`. Смотрите раздел [Relations](/l/ru/developers/extend/apps/data/relations) для двунаправленного шаблона.
