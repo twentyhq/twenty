@@ -1,5 +1,4 @@
-import { AppChip } from '@/applications/components/AppChip';
-import { useApplicationChipData } from '@/applications/hooks/useApplicationChipData';
+import { AppMenuItem } from '@/applications/components/AppMenuItem';
 import { useIsThirdPartyApplication } from '@/applications/hooks/useIsThirdPartyApplication';
 import { CommandMenuContext } from '@/command-menu-item/contexts/CommandMenuContext';
 import { CommandListItemLoader } from '@/command-menu-item/display/components/CommandListItemLoader';
@@ -106,16 +105,26 @@ const CommandMenuItemSelectableRenderer = ({
 
   const isThirdPartyApp = useIsThirdPartyApplication(item.applicationId);
 
-  const { applicationChipData } = useApplicationChipData({
-    applicationId: item.applicationId,
-  });
-
   const onItemClick = () => {
     if (disabled) {
       return;
     }
     handleClick();
   };
+
+  if (isThirdPartyApp) {
+    return (
+      <SelectableListItem itemId={item.id} onEnter={onItemClick}>
+        <AppMenuItem
+          applicationId={item.applicationId}
+          text={getCommandMenuItemLabel(label)}
+          onClick={disabled ? undefined : handleClick}
+          focused={!disabled && isSelectedItemId}
+          disabled={disabled}
+        />
+      </SelectableListItem>
+    );
+  }
 
   if (displayType === 'listItem') {
     const loaderComponent =
@@ -127,19 +136,12 @@ const CommandMenuItemSelectableRenderer = ({
         )
       ) : undefined;
 
-    const AppChipIcon = () => (
-      <AppChip applicationId={item.applicationId} size={'md'} chipOnly />
-    );
-
     return (
       <SelectableListItem itemId={item.id} onEnter={onItemClick}>
         <CommandMenuItem
           id={item.id}
-          Icon={isThirdPartyApp ? AppChipIcon : Icon}
+          Icon={Icon}
           label={getCommandMenuItemLabel(label)}
-          description={
-            isThirdPartyApp ? applicationChipData.name : undefined
-          }
           onClick={disabled ? undefined : handleClick}
           hotKeys={item.hotKeys}
           disabled={disabled}
@@ -153,17 +155,9 @@ const CommandMenuItemSelectableRenderer = ({
     <SelectableListItem itemId={item.id} onEnter={onItemClick}>
       <MenuItem
         focused={isSelectedItemId}
-        LeftIcon={isThirdPartyApp ? undefined : Icon}
-        LeftComponent={
-          isThirdPartyApp ? (
-            <AppChip applicationId={item.applicationId} size={'md'} chipOnly />
-          ) : undefined
-        }
+        LeftIcon={Icon}
         onClick={onItemClick}
         text={getCommandMenuItemLabel(label)}
-        contextualText={
-          isThirdPartyApp ? applicationChipData.name : undefined
-        }
         disabled={disabled}
       />
     </SelectableListItem>

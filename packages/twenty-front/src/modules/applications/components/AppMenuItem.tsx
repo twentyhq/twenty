@@ -5,13 +5,17 @@ import { MenuItem } from 'twenty-ui/navigation';
 type AppMenuItemProps = {
   applicationId?: string | null;
   text: string;
-  onClick: () => void;
+  onClick?: () => void;
+  focused?: boolean;
+  disabled?: boolean;
 };
 
 export const AppMenuItem = ({
   applicationId,
   text,
   onClick,
+  focused,
+  disabled,
 }: AppMenuItemProps) => {
   const { applicationChipData } = useApplicationChipData({
     applicationId,
@@ -26,6 +30,8 @@ export const AppMenuItem = ({
       text={text}
       contextualText={applicationChipData.name}
       onClick={onClick}
+      focused={focused}
+      disabled={disabled}
     />
   );
 };
