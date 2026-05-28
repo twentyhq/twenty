@@ -104,7 +104,7 @@ export class SecretEncryptionService {
   }
 
   public encryptVersioned(
-    value: string,
+    value: PlaintextString,
     opts: VersionedOptions = {},
   ): EncryptedString {
     if (!isDefined(value)) {

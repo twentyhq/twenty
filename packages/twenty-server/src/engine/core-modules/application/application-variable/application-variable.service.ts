@@ -11,6 +11,7 @@ import {
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -48,7 +49,7 @@ export class ApplicationVariableEntityService {
   }: Pick<ApplicationVariableEntity, 'key'> & {
     applicationId: string;
     workspaceId: string;
-    plainTextValue: string;
+    plainTextValue: PlaintextString;
   }) {
     const existingVariable = await this.applicationVariableRepository.findOne({
       where: { key, applicationId },

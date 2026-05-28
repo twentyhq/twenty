@@ -4,6 +4,7 @@ import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-mana
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
@@ -71,10 +72,12 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
       existing &&
       !existing.isSecret
     ) {
+      // existing.value is plaintext here because !existing.isSecret
       (update as Record<string, unknown>).value =
-        this.secretEncryptionService.encryptVersioned(existing.value, {
-          workspaceId,
-        });
+        this.secretEncryptionService.encryptVersioned(
+          existing.value as PlaintextString,
+          { workspaceId },
+        );
     }
 
     if (
