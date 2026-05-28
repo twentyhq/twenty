@@ -116,7 +116,7 @@ describe('ApplicationVariableEntityService', () => {
       );
     });
 
-    it('should not encrypt value when variable is not secret', async () => {
+    it('should encrypt value even when variable is not secret', async () => {
       const existingVariable = {
         id: '1',
         key: 'PUBLIC_URL',
@@ -135,10 +135,13 @@ describe('ApplicationVariableEntityService', () => {
         workspaceId: mockWorkspaceId,
       });
 
-      expect(secretEncryptionService.encryptVersioned).not.toHaveBeenCalled();
+      expect(secretEncryptionService.encryptVersioned).toHaveBeenCalledWith(
+        'https://new-url.com',
+        { workspaceId: mockWorkspaceId },
+      );
       expect(repository.update).toHaveBeenCalledWith(
         { key: 'PUBLIC_URL', applicationId: mockApplicationId },
-        { value: 'https://new-url.com' },
+        { value: `enc:v2:deadbeef:https://new-url.com|${mockWorkspaceId}` },
       );
     });
 
