@@ -27,9 +27,6 @@ const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
     decrement: jest.fn(),
     delete: jest.fn(),
     softDelete: jest.fn(),
-    softRemove: jest.fn(),
-    recover: jest.fn(),
-    remove: jest.fn(),
     insert: jest.fn(),
     upsert: jest.fn(),
     save: jest.fn(),
@@ -66,9 +63,6 @@ describe('WorkspaceScopedRepository', () => {
       ['decrement', () => scoped.decrement(undefined as never, {}, 'count', 1)],
       ['delete', () => scoped.delete(undefined as never, {})],
       ['softDelete', () => scoped.softDelete(undefined as never, {})],
-      ['softRemove', () => scoped.softRemove(undefined as never, {})],
-      ['recover', () => scoped.recover(undefined as never, {})],
-      ['remove', () => scoped.remove(undefined as never, {})],
       ['insert', () => scoped.insert(undefined as never, {})],
       ['upsert', () => scoped.upsert(undefined as never, {}, ['id'])],
       ['save', () => scoped.save(undefined as never, {})],
@@ -318,35 +312,6 @@ describe('WorkspaceScopedRepository', () => {
         id: 'a',
         workspaceId: WORKSPACE_ID,
       });
-    });
-  });
-
-  describe('softRemove, recover, remove', () => {
-    it('softRemove stamps workspaceId on the entity', async () => {
-      await scoped.softRemove(WORKSPACE_ID, { id: 'a' });
-
-      expect(repository.softRemove).toHaveBeenCalledWith(
-        { id: 'a', workspaceId: WORKSPACE_ID },
-        undefined,
-      );
-    });
-
-    it('recover stamps workspaceId on the entity', async () => {
-      await scoped.recover(WORKSPACE_ID, { id: 'a' });
-
-      expect(repository.recover).toHaveBeenCalledWith(
-        { id: 'a', workspaceId: WORKSPACE_ID },
-        undefined,
-      );
-    });
-
-    it('remove stamps workspaceId on the entity', async () => {
-      await scoped.remove(WORKSPACE_ID, { id: 'a' });
-
-      expect(repository.remove).toHaveBeenCalledWith(
-        { id: 'a', workspaceId: WORKSPACE_ID },
-        undefined,
-      );
     });
   });
 

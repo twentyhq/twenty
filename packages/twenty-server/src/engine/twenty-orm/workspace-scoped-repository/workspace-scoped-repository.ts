@@ -6,7 +6,6 @@ import {
   type FindOneOptions,
   type FindOptionsWhere,
   type InsertResult,
-  type RemoveOptions,
   type Repository,
   type SaveOptions,
   type SelectQueryBuilder,
@@ -179,35 +178,13 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     );
   }
 
-  softRemove<E extends DeepPartial<T>>(
-    workspaceId: string,
-    entity: E,
-    options?: SaveOptions,
-  ): Promise<E & T> {
-    this.assertWorkspaceId(workspaceId);
-
-    return this.repository.softRemove({ ...entity, workspaceId } as E, options);
-  }
-
-  recover<E extends DeepPartial<T>>(
-    workspaceId: string,
-    entity: E,
-    options?: SaveOptions,
-  ): Promise<E & T> {
-    this.assertWorkspaceId(workspaceId);
-
-    return this.repository.recover({ ...entity, workspaceId } as E, options);
-  }
-
-  remove<E extends DeepPartial<T>>(
-    workspaceId: string,
-    entity: E,
-    options?: RemoveOptions,
-  ): Promise<T> {
-    this.assertWorkspaceId(workspaceId);
-
-    return this.repository.remove({ ...entity, workspaceId } as E & T, options);
-  }
+  // softRemove / recover / remove are intentionally absent.
+  // TypeORM's entity-based methods use only the primary key in the WHERE
+  // clause — stamping workspaceId on the entity object does not add an
+  // AND workspace_id = ? guard to the SQL. A leaked entity id could
+  // therefore act on a row from a different workspace.
+  // Use softDelete / delete (criteria-based) instead — they always include
+  // workspaceId in the WHERE clause.
 
   insert(
     workspaceId: string,
