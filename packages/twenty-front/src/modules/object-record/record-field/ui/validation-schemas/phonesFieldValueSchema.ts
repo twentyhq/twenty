@@ -5,7 +5,7 @@ import { type FieldPhonesValue } from '@/object-record/record-field/ui/types/Fie
 export const phonesFieldValueSchema = z.object({
   primaryPhoneNumber: z.string(),
   primaryPhoneCountryCode: z.string(),
-  primaryPhoneCallingCode: z.string(),
+  primaryPhoneCallingCode: z.string().optional(),
   additionalPhones: z
     .array(
       z.object({
