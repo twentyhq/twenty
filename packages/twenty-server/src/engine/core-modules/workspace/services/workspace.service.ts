@@ -22,6 +22,7 @@ import { CustomDomainManagerService } from 'src/engine/core-modules/domain/custo
 import { SubdomainManagerService } from 'src/engine/core-modules/domain/subdomain-manager/services/subdomain-manager.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import {
   EmailingDomainWorkspaceCleanupJob,
   type EmailingDomainWorkspaceCleanupJobData,
@@ -512,9 +513,18 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       { workspaceId: id },
     );
 
+    const emailingDomains = await this.coreDataSource
+      .getRepository(EmailingDomainEntity)
+      .find({ where: { workspaceId: id } });
+
     await this.messageQueueService.add<EmailingDomainWorkspaceCleanupJobData>(
       EmailingDomainWorkspaceCleanupJob.name,
-      { workspaceId: id },
+      {
+        workspaceId: id,
+        domains: emailingDomains.map(
+          (emailingDomain) => emailingDomain.domain,
+        ),
+      },
     );
 
     if (workspace.customDomain) {
