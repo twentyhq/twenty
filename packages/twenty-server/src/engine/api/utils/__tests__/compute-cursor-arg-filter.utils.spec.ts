@@ -261,10 +261,6 @@ describe('computeCursorArgFilter', () => {
         {
           fullName: {
             firstName: OrderByDirection.AscNullsLast,
-          },
-        },
-        {
-          fullName: {
             lastName: OrderByDirection.AscNullsLast,
           },
         },
