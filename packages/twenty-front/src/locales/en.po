@@ -3532,6 +3532,11 @@ msgstr "Code Editor"
 msgid "Code Execution"
 msgstr "Code Execution"
 
+#. js-lingui-id: T9qjpu
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+msgid "Code Interpreter"
+msgstr "Code Interpreter"
+
 #. js-lingui-id: bKJYIa
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionCodeEditorTab.tsx
 msgid "Code your function"
@@ -13410,6 +13415,11 @@ msgstr "Run"
 #: src/modules/object-record/record-table/empty-state/utils/getEmptyStateSubTitle.ts
 msgid "Run a workflow and return here to view its executions"
 msgstr "Run a workflow and return here to view its executions"
+
+#. js-lingui-id: rRyKdg
+#: src/modules/settings/roles/role-permissions/permission-flags/hooks/useActionRolePermissionFlagConfig.ts
+msgid "Run code to analyze files and data"
+msgstr "Run code to analyze files and data"
 
 #. js-lingui-id: UPaWvi
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTestTab.tsx
