@@ -5,8 +5,10 @@ import {
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { type RegisteredAiModel } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import {
+  AiModelRegistryService,
+  type RegisteredAiModel,
+} from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 
 describe('AiModelConfigService.getProviderOptions — xAI search parameters', () => {
