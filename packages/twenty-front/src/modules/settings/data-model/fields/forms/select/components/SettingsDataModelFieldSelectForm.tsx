@@ -395,11 +395,6 @@ export const SettingsDataModelFieldSelectForm = ({
                                   setOriginalOptions(options);
                                   setIsBulkInputMode(true);
                                 } else {
-                                  const nextOptions = convertBulkTextToOptions(
-                                    bulkInputText,
-                                    originalOptions,
-                                  );
-                                  onChange(nextOptions);
                                   setIsBulkInputMode(false);
                                 }
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
