@@ -62,12 +62,9 @@ export class TwoFactorAuthenticationService {
     workspaceId: string;
   }): Promise<PlaintextString> {
     if (storedSecret.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)) {
-      return this.secretEncryptionService.decryptVersioned(
-        storedSecret,
-        {
-          workspaceId,
-        },
-      );
+      return this.secretEncryptionService.decryptVersioned(storedSecret, {
+        workspaceId,
+      });
     }
 
     return this.simpleSecretEncryptionUtil.decryptSecret(

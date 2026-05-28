@@ -473,9 +473,9 @@ describe('ImapSmtpCalDavAPIService', () => {
             host: 'imap.example.com',
             port: 993,
             secure: true,
-          password: 'password' as PlaintextString,
-        },
-      } as PlaintextImapSmtpCaldavParams,
+            password: 'password' as PlaintextString,
+          },
+        } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -509,9 +509,9 @@ describe('ImapSmtpCalDavAPIService', () => {
             port: 443,
             secure: true,
             username: 'test@example.com',
-          password: 'password' as PlaintextString,
-        },
-      } as PlaintextImapSmtpCaldavParams,
+            password: 'password' as PlaintextString,
+          },
+        } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -682,9 +682,9 @@ describe('ImapSmtpCalDavAPIService', () => {
             port: 587,
             secure: true,
             username: 'test@example.com',
-          password: 'password' as PlaintextString,
-        },
-      } as PlaintextImapSmtpCaldavParams,
+            password: 'password' as PlaintextString,
+          },
+        } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);

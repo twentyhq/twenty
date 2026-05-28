@@ -30,8 +30,12 @@ export type ImapSmtpCaldavParams<Pwd extends string = string> = {
   CALDAV?: ConnectionParameters<Pwd>;
 };
 
-export type EncryptedConnectionParameters = ConnectionParameters<EncryptedString>;
-export type PlaintextConnectionParameters = ConnectionParameters<PlaintextString>;
+export type EncryptedConnectionParameters =
+  ConnectionParameters<EncryptedString>;
+export type PlaintextConnectionParameters =
+  ConnectionParameters<PlaintextString>;
 
-export type EncryptedImapSmtpCaldavParams = ImapSmtpCaldavParams<EncryptedString>;
-export type PlaintextImapSmtpCaldavParams = ImapSmtpCaldavParams<PlaintextString>;
+export type EncryptedImapSmtpCaldavParams =
+  ImapSmtpCaldavParams<EncryptedString>;
+export type PlaintextImapSmtpCaldavParams =
+  ImapSmtpCaldavParams<PlaintextString>;

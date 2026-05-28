@@ -117,9 +117,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
     }
 
     try {
-      const plaintext = this.secretEncryptionService.decryptVersioned(
-        rawValue,
-      );
+      const plaintext = this.secretEncryptionService.decryptVersioned(rawValue);
       const reEncrypted =
         this.secretEncryptionService.encryptVersioned(plaintext);
 
