@@ -85,97 +85,26 @@ export class ApplicationRegistrationVariableService {
     input: UpdateApplicationRegistrationVariableInput,
     workspaceId: string,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    const { id, update } = input;
-
-    const variable = await this.variableRepository.findOne({
-      where: { id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
+    const variable = await this.findVariableOrThrow(input.id);
 
     await this.assertRegistrationOwnedByWorkspace(
       variable.applicationRegistrationId,
       workspaceId,
     );
 
-    const updateData: Record<string, unknown> = {};
-
-    if (isDefined(update.value)) {
-      updateData.encryptedValue = this.encryptionService.encryptVersioned(
-        update.value,
-      );
-    }
-
-    if (isDefined(update.resetValue) && update.resetValue) {
-      updateData.encryptedValue = '';
-    }
-
-    if (isDefined(update.description)) {
-      updateData.description = update.description;
-    }
-
-    if (Object.keys(updateData).length > 0) {
-      await this.variableRepository.update(id, updateData);
-    }
-
-    return this.variableRepository.findOneOrFail({ where: { id } });
+    return this.applyVariableUpdate(input);
   }
 
   async updateVariableGlobal(
     input: UpdateApplicationRegistrationVariableInput,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    const { id, update } = input;
+    await this.findVariableOrThrow(input.id);
 
-    const variable = await this.variableRepository.findOne({
-      where: { id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
-
-    const updateData: Record<string, unknown> = {};
-
-    if (isDefined(update.value)) {
-      updateData.encryptedValue = this.encryptionService.encryptVersioned(
-        update.value,
-      );
-    }
-
-    if (isDefined(update.resetValue) && update.resetValue) {
-      updateData.encryptedValue = '';
-    }
-
-    if (isDefined(update.description)) {
-      updateData.description = update.description;
-    }
-
-    if (Object.keys(updateData).length > 0) {
-      await this.variableRepository.update(id, updateData);
-    }
-
-    return this.variableRepository.findOneOrFail({ where: { id } });
+    return this.applyVariableUpdate(input);
   }
 
   async deleteVariable(id: string, workspaceId: string): Promise<boolean> {
-    const variable = await this.variableRepository.findOne({
-      where: { id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
+    const variable = await this.findVariableOrThrow(id);
 
     await this.assertRegistrationOwnedByWorkspace(
       variable.applicationRegistrationId,
@@ -273,6 +202,51 @@ export class ApplicationRegistrationVariableService {
     }
 
     return result;
+  }
+
+  private async findVariableOrThrow(
+    id: string,
+  ): Promise<ApplicationRegistrationVariableEntity> {
+    const variable = await this.variableRepository.findOne({
+      where: { id },
+    });
+
+    if (!variable) {
+      throw new ApplicationRegistrationException(
+        `Variable with id ${id} not found`,
+        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
+      );
+    }
+
+    return variable;
+  }
+
+  private async applyVariableUpdate(
+    input: UpdateApplicationRegistrationVariableInput,
+  ): Promise<ApplicationRegistrationVariableEntity> {
+    const { id, update } = input;
+
+    const updateData: Record<string, unknown> = {};
+
+    if (isDefined(update.value)) {
+      updateData.encryptedValue = this.encryptionService.encryptVersioned(
+        update.value,
+      );
+    }
+
+    if (isDefined(update.resetValue) && update.resetValue) {
+      updateData.encryptedValue = '';
+    }
+
+    if (isDefined(update.description)) {
+      updateData.description = update.description;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await this.variableRepository.update(id, updateData);
+    }
+
+    return this.variableRepository.findOneOrFail({ where: { id } });
   }
 
   private async assertRegistrationOwnedByWorkspace(
