@@ -92,6 +92,24 @@ export const useApolloFactory = (options: Partial<Options> = {}) => {
             dedupeKey: 'app-version-mismatch',
           },
         });
+
+        // A stale tab can't recover on its own: its bundle is built against an
+        // older schema, so every request keeps failing. Reload once to fetch
+        // the current index.html and its hashed assets. Guard with a short time
+        // window so that if the reload comes back still stale (e.g. an
+        // intermediate cache serving an old index.html) we don't trap the user
+        // in a refresh loop — we leave the snackbar up for a manual refresh. A
+        // genuinely newer deploy minutes later still reloads.
+        const RELOAD_GUARD_KEY = 'app-version-mismatch-reloaded-at';
+        const RELOAD_GUARD_WINDOW_MS = 10_000;
+        const lastReloadAt = Number(
+          window.sessionStorage.getItem(RELOAD_GUARD_KEY) ?? 0,
+        );
+
+        if (Date.now() - lastReloadAt > RELOAD_GUARD_WINDOW_MS) {
+          window.sessionStorage.setItem(RELOAD_GUARD_KEY, String(Date.now()));
+          window.location.reload();
+        }
       },
       onPayloadTooLarge: (message) => {
         enqueueErrorSnackBar({
