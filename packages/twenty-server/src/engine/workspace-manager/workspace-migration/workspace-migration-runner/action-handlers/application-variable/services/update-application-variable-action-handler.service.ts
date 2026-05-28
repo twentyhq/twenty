@@ -3,9 +3,6 @@ import { Injectable } from '@nestjs/common';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
-import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { findFlatEntityByUniversalIdentifierOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier-or-throw.util';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
@@ -22,9 +19,7 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
   'update',
   'applicationVariable',
 ) {
-  constructor(
-    private readonly secretEncryptionService: SecretEncryptionService,
-  ) {
+  constructor() {
     super();
   }
 
@@ -52,6 +47,8 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
     };
   }
 
+  // Value is always encrypted regardless of isSecret, so toggling
+  // isSecret does not require re-encrypting or decrypting the stored value.
   async executeForMetadata(
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateApplicationVariableAction>,
   ): Promise<void> {
@@ -61,39 +58,6 @@ export class UpdateApplicationVariableActionHandlerService extends WorkspaceMigr
       queryRunner.manager.getRepository<ApplicationVariableEntity>(
         ApplicationVariableEntity,
       );
-
-    const existing = await applicationVariableRepository.findOne({
-      where: { id: entityId, workspaceId },
-    });
-
-    if (
-      update.isSecret !== undefined &&
-      update.isSecret &&
-      existing &&
-      !existing.isSecret
-    ) {
-      // existing.value is plaintext here because !existing.isSecret
-      (update as Record<string, unknown>).value =
-        this.secretEncryptionService.encryptVersioned(
-          existing.value as PlaintextString,
-          { workspaceId },
-        );
-    }
-
-    if (
-      update.isSecret !== undefined &&
-      !update.isSecret &&
-      existing &&
-      existing.isSecret
-    ) {
-      (update as Record<string, unknown>).value =
-        this.secretEncryptionService.decryptVersioned(
-          existing.value as EncryptedString,
-          {
-            workspaceId,
-          },
-        );
-    }
 
     await applicationVariableRepository.update(
       { id: entityId, workspaceId },
