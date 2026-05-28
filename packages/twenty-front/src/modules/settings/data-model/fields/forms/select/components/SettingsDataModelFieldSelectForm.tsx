@@ -141,6 +141,22 @@ const StyledButtonContainer = styled.div`
   }
 `;
 
+const StyledBulkEditButtonContainer = styled.div`
+  display: flex;
+  width: 100%;
+
+  > button {
+    flex: 1;
+    justify-content: center;
+  }
+`;
+
+const StyledBulkEditButtonSeparator = styled.div`
+  align-self: stretch;
+  background: ${themeCssVariables.border.color.medium};
+  width: 1px;
+`;
+
 const StyledOptionsHeaderContainer = styled.div`
   align-items: center;
   display: flex;
@@ -190,6 +206,9 @@ export const SettingsDataModelFieldSelectForm = ({
   const [hasAppliedNewOption, setHasAppliedNewOption] = useState(false);
   const [isBulkInputMode, setIsBulkInputMode] = useState(false);
   const [bulkInputText, setBulkInputText] = useState('');
+  const [optionsBeforeBulkEdit, setOptionsBeforeBulkEdit] = useState<
+    FieldMetadataItemOption[] | null
+  >(null);
 
   const OPTIONS_DROPDOWN_ID =
     'settings-data-model-field-select-options-dropdown';
@@ -310,6 +329,18 @@ export const SettingsDataModelFieldSelectForm = ({
     setFormValue('options', newOptions, { shouldDirty: true });
   };
 
+  const handleEnterBulkInputMode = (options: FieldMetadataItemOption[]) => {
+    setOptionsBeforeBulkEdit(options);
+    setBulkInputText(convertOptionsToBulkText(options));
+    setIsBulkInputMode(true);
+  };
+
+  const handleExitBulkInputMode = () => {
+    setIsBulkInputMode(false);
+    setOptionsBeforeBulkEdit(null);
+    setBulkInputText('');
+  };
+
   return (
     <>
       <Controller
@@ -322,9 +353,25 @@ export const SettingsDataModelFieldSelectForm = ({
         name="options"
         control={control}
         defaultValue={initialOptions}
-        render={({ field: { onChange, value: options } }) => (
-          <>
-            <StyledContainerWrapper>
+        render={({ field: { onChange, value: options } }) => {
+          const handleBulkEditCancel = () => {
+            if (isDefined(optionsBeforeBulkEdit)) {
+              onChange(optionsBeforeBulkEdit);
+            }
+
+            handleExitBulkInputMode();
+          };
+
+          const handleBulkEditDone = () => {
+            const nextOptions = convertBulkTextToOptions(bulkInputText, options);
+
+            onChange(nextOptions);
+            handleExitBulkInputMode();
+          };
+
+          return (
+            <>
+              <StyledContainerWrapper>
               <CardContent>
                 <StyledOptionsHeaderContainer>
                   <StyledLabelContainer>
@@ -374,14 +421,12 @@ export const SettingsDataModelFieldSelectForm = ({
                               }
                               LeftIcon={IconPencil}
                               onClick={() => {
-                                if (!isBulkInputMode) {
-                                  setBulkInputText(
-                                    convertOptionsToBulkText(options),
-                                  );
+                                if (isBulkInputMode) {
+                                  handleBulkEditDone();
+                                } else {
+                                  handleEnterBulkInputMode(options);
                                 }
-                                setIsBulkInputMode(
-                                  (currentInputMode) => !currentInputMode,
-                                );
+
                                 closeOptionsDropdown(OPTIONS_DROPDOWN_ID);
                               }}
                             />
@@ -412,12 +457,6 @@ export const SettingsDataModelFieldSelectForm = ({
                           return;
                         }
 
-                        const nextOptions = convertBulkTextToOptions(
-                          nextOptionAsText,
-                          options,
-                        );
-
-                        onChange(nextOptions);
                         setBulkInputText(nextOptionAsText);
                       }}
                       minRows={5}
@@ -518,6 +557,25 @@ export const SettingsDataModelFieldSelectForm = ({
                 )}
               </CardContent>
             </StyledContainerWrapper>
+            {!disabled && isBulkInputMode && (
+              <StyledFooterContainer>
+                <CardFooter>
+                  <StyledBulkEditButtonContainer>
+                    <LightButton
+                      title={t`Cancel`}
+                      accent="tertiary"
+                      onClick={handleBulkEditCancel}
+                    />
+                    <StyledBulkEditButtonSeparator />
+                    <LightButton
+                      title={t`Done`}
+                      accent="secondary"
+                      onClick={handleBulkEditDone}
+                    />
+                  </StyledBulkEditButtonContainer>
+                </CardFooter>
+              </StyledFooterContainer>
+            )}
             {!disabled && !isBulkInputMode && (
               <StyledFooterContainer>
                 <CardFooter>
@@ -531,8 +589,9 @@ export const SettingsDataModelFieldSelectForm = ({
                 </CardFooter>
               </StyledFooterContainer>
             )}
-          </>
-        )}
+            </>
+          );
+        }}
       />
     </>
   );
