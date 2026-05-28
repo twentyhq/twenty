@@ -16,6 +16,7 @@ import {
   AiModelRegistryService,
   RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type NativeModelBinding } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-binding.type';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 
@@ -28,13 +29,18 @@ export class AiModelConfigService {
     private readonly sdkProviderFactory: SdkProviderFactoryService,
   ) {}
 
-  getProviderOptions(
+  getNativeModelBinding(
     model: RegisteredAiModel,
     options: NativeModelToolOptions = {},
-  ): ProviderOptions {
+  ): NativeModelBinding {
+    return {
+      tools: this.getNativeModelTools(model, options),
+      providerOptions: this.getNativeSearchProviderOptions(model, options),
+    };
+  }
+
+  getReasoningProviderOptions(model: RegisteredAiModel): ProviderOptions {
     switch (model.sdkPackage) {
-      case AI_SDK_XAI:
-        return this.getXaiProviderOptions(options);
       case AI_SDK_ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
       case AI_SDK_BEDROCK:
@@ -44,7 +50,7 @@ export class AiModelConfigService {
     }
   }
 
-  getNativeModelTools(
+  private getNativeModelTools(
     model: RegisteredAiModel,
     options: NativeModelToolOptions,
   ): ToolSet {
@@ -66,7 +72,7 @@ export class AiModelConfigService {
       return tools as ToolSet;
     }
 
-    // provider-option bindings (e.g. xAI) are handled in getProviderOptions
+    // provider-option bindings (e.g. xAI) are handled in getNativeSearchProviderOptions
     if (webSearchTool.kind !== 'sdk-tool') {
       return tools as ToolSet;
     }
@@ -101,7 +107,19 @@ export class AiModelConfigService {
     return tools as ToolSet;
   }
 
-  private getXaiProviderOptions(
+  private getNativeSearchProviderOptions(
+    model: RegisteredAiModel,
+    options: NativeModelToolOptions,
+  ): ProviderOptions {
+    switch (model.sdkPackage) {
+      case AI_SDK_XAI:
+        return this.getXaiSearchProviderOptions(options);
+      default:
+        return {};
+    }
+  }
+
+  private getXaiSearchProviderOptions(
     options: NativeModelToolOptions,
   ): ProviderOptions {
     const webSearchEnabled = options.webSearch === true;

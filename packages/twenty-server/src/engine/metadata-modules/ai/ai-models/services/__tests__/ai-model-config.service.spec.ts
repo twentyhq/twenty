@@ -11,7 +11,7 @@ import {
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
 
-describe('AiModelConfigService.getProviderOptions — xAI search parameters', () => {
+describe('AiModelConfigService.getNativeModelBinding — xAI search parameters', () => {
   let service: AiModelConfigService;
 
   const xaiModel: RegisteredAiModel = {
@@ -40,25 +40,25 @@ describe('AiModelConfigService.getProviderOptions — xAI search parameters', ()
 
   it('returns empty options when neither webSearch nor twitterSearch is enabled', () => {
     expect(
-      service.getProviderOptions(xaiModel, {
+      service.getNativeModelBinding(xaiModel, {
         webSearch: false,
         twitterSearch: false,
-      }),
+      }).providerOptions,
     ).toEqual({});
   });
 
   it('omits sources entirely when neither flag is enabled (no implicit "auto" search)', () => {
-    const result = service.getProviderOptions(xaiModel, {});
+    const result = service.getNativeModelBinding(xaiModel, {}).providerOptions;
 
     expect(result).toEqual({});
   });
 
   it('emits only the web source when only webSearch is enabled', () => {
     expect(
-      service.getProviderOptions(xaiModel, {
+      service.getNativeModelBinding(xaiModel, {
         webSearch: true,
         twitterSearch: false,
-      }),
+      }).providerOptions,
     ).toEqual({
       xai: {
         searchParameters: {
@@ -71,10 +71,10 @@ describe('AiModelConfigService.getProviderOptions — xAI search parameters', ()
 
   it('emits only the x source when only twitterSearch is enabled', () => {
     expect(
-      service.getProviderOptions(xaiModel, {
+      service.getNativeModelBinding(xaiModel, {
         webSearch: false,
         twitterSearch: true,
-      }),
+      }).providerOptions,
     ).toEqual({
       xai: {
         searchParameters: {
@@ -87,10 +87,10 @@ describe('AiModelConfigService.getProviderOptions — xAI search parameters', ()
 
   it('emits both sources when webSearch and twitterSearch are enabled', () => {
     expect(
-      service.getProviderOptions(xaiModel, {
+      service.getNativeModelBinding(xaiModel, {
         webSearch: true,
         twitterSearch: true,
-      }),
+      }).providerOptions,
     ).toEqual({
       xai: {
         searchParameters: {
@@ -102,10 +102,10 @@ describe('AiModelConfigService.getProviderOptions — xAI search parameters', ()
   });
 
   it('preserves source order — web before x — for deterministic provider payloads', () => {
-    const result = service.getProviderOptions(xaiModel, {
+    const result = service.getNativeModelBinding(xaiModel, {
       webSearch: true,
       twitterSearch: true,
-    });
+    }).providerOptions;
 
     expect(result).toMatchObject({
       xai: {
@@ -125,10 +125,10 @@ describe('AiModelConfigService.getProviderOptions — xAI search parameters', ()
     };
 
     expect(
-      service.getProviderOptions(anthropicModel, {
+      service.getNativeModelBinding(anthropicModel, {
         webSearch: true,
         twitterSearch: true,
-      }),
+      }).providerOptions,
     ).toEqual({});
   });
 });

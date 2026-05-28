@@ -70,12 +70,16 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
         },
         {
           provide: AiModelConfigService,
-          useValue: { getProviderOptions: jest.fn().mockReturnValue({}) },
+          useValue: {
+            getReasoningProviderOptions: jest.fn().mockReturnValue({}),
+          },
         },
         { provide: ToolRegistryService, useValue: toolRegistry },
         {
           provide: NativeToolBinderService,
-          useValue: { bind: jest.fn().mockReturnValue({}) },
+          useValue: {
+            bind: jest.fn().mockReturnValue({ tools: {}, providerOptions: {} }),
+          },
         },
         {
           provide: AiBillingService,

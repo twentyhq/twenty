@@ -168,8 +168,9 @@ export class ChatExecutionService {
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );
-    const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
+    const nativeBinding = this.nativeToolBinder.bind(registeredModel, {
       webSearch: nativeCapabilities?.webSearch === true,
+      twitterSearch: nativeCapabilities?.twitterSearch === true,
     });
 
     // Tools the model can call directly: preloaded registry tools (already
@@ -177,12 +178,12 @@ export class ChatExecutionService {
     // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
       ...preloadedTools,
-      ...nativeModelTools,
+      ...nativeBinding.tools,
     };
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
-      ...Object.keys(nativeModelTools),
+      ...Object.keys(nativeBinding.tools),
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
@@ -398,9 +399,10 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelCacheProviderOptions(
-        registeredModel.sdkPackage,
-      ),
+      providerOptions: {
+        ...nativeBinding.providerOptions,
+        ...getCallLevelCacheProviderOptions(registeredModel.sdkPackage),
+      },
       prepareStep: ({ messages }) => {
         stepStartedAt = performance.now();
 

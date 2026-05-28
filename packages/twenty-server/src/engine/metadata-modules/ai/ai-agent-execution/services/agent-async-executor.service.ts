@@ -186,20 +186,22 @@ export class AgentAsyncExecutorService {
           );
         }
 
-        const nativeTools = this.nativeToolBinder.bind(
+        const nativeBinding = this.nativeToolBinder.bind(
           registeredModel,
           nativeModelToolOptions,
         );
 
         tools = {
           ...registryTools,
-          ...nativeTools,
+          ...nativeBinding.tools,
         };
 
-        providerOptions = this.aiModelConfigService.getProviderOptions(
-          registeredModel,
-          nativeModelToolOptions,
-        );
+        providerOptions = {
+          ...nativeBinding.providerOptions,
+          ...this.aiModelConfigService.getReasoningProviderOptions(
+            registeredModel,
+          ),
+        };
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
