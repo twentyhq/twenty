@@ -2,12 +2,18 @@ import { defineRule } from '@oxlint/plugins';
 
 export const RULE_NAME = 'prefer-workspace-scoped-repository';
 
-// Entities that legitimately do not carry a workspaceId column.
+// Entities that do not fit the scoped wrapper: workspace itself, pivots,
+// nullable-workspaceId rows (instance-level config / migrations / tokens),
+// and global tables with no workspaceId column at all.
 const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'WorkspaceEntity',
   'UserWorkspaceEntity',
   'AppTokenEntity',
   'ApplicationRegistrationEntity',
+  'ApplicationRegistrationVariableEntity',
+  // nullable workspaceId — both rows support instance-level and per-workspace use
+  'KeyValuePairEntity',
+  'UpgradeMigrationEntity',
 
   'ApplicationVariableEntity',
   'BillingMeterEntity',
@@ -25,39 +31,25 @@ const STRUCTURAL_EXEMPTIONS = new Set<string>([
   'WorkspaceSSOIdentityProviderEntity',
 ]);
 
-// Workspace-scoped entities exempted from the wrapper at the call site.
+// Workspace-scoped entities the wrapper could technically wrap, but where
+// the dominant access patterns are cross-workspace (request routing, auth,
+// metadata sync, file storage, transaction-bound channel updates) and the
+// payoff doesn't justify dual-injecting every call site or growing the
+// wrapper API. Treat as a "deliberately not migrated" list, not a backlog.
 const WORKSPACE_SCOPED_EXEMPTIONS = new Set<string>([
+  // Resolved by id alone at auth/request-routing time and inside file-storage
+  // transactions; very few of the ~50 call sites carry a workspaceId.
   'ApplicationEntity',
-  'ApplicationRegistrationVariableEntity',
+  // 20+ call sites across calendar/messaging modules; staged for a dedicated PR.
   'CalendarChannelEntity',
-  'CommandMenuItemEntity',
-  'DataSourceEntity',
-  'FieldMetadataEntity',
-  'FieldPermissionEntity',
-  'IndexMetadataEntity',
-  'KeyValuePairEntity',
   'MessageChannelEntity',
-  'NavigationMenuItemEntity',
+  // The owning services `extends TypeOrmQueryService<E>` and pass the raw
+  // repo to `super(...)`; the superclass type doesn't accept the wrapper.
+  'FieldMetadataEntity',
   'ObjectMetadataEntity',
-  'ObjectPermissionEntity',
-  'PageLayoutEntity',
-  'PageLayoutTabEntity',
-  'PageLayoutWidgetEntity',
-  'PermissionFlagEntity',
-  'RoleEntity',
-  'RoleTargetEntity',
-  'RowLevelPermissionPredicateEntity',
-  'RowLevelPermissionPredicateGroupEntity',
-  'SkillEntity',
-  'UpgradeMigrationEntity',
-  'ViewEntity',
-  'ViewFieldEntity',
-  'ViewFieldGroupEntity',
-  'ViewFilterEntity',
-  'ViewFilterGroupEntity',
-  'ViewGroupEntity',
-  'ViewSortEntity',
-  'WebhookEntity',
+  // Only injection lives in a frozen historical upgrade-version-command
+  // directory that CI's mutation-guard refuses to let us edit.
+  'DataSourceEntity',
 ]);
 
 // Everything else must use @InjectWorkspaceScopedRepository.

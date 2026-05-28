@@ -46,6 +46,8 @@ import {
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -76,8 +78,8 @@ export class AgentAsyncExecutorService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
@@ -85,11 +87,11 @@ export class AgentAsyncExecutorService {
   private async getAgentRoleId(
     agentId: string,
     workspaceId: string,
+    rolePermissionConfig?: RolePermissionConfig,
   ): Promise<string | undefined> {
-    const roleTarget = await this.roleTargetRepository.findOne({
+    const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
       where: {
         agentId,
-        workspaceId,
       },
       select: ['roleId'],
     });

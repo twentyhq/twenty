@@ -1,6 +1,7 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
+import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
@@ -26,7 +27,9 @@ const isPlaintext = (value: string | null): value is string =>
   isDefined(value) && !value.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX);
 
 @RegisteredInstanceCommand('2.5.0', 1798000004000, { type: 'slow' })
-export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowInstanceCommand {
+export class EncryptConnectedAccountTokensSlowInstanceCommand
+  implements SlowInstanceCommand
+{
   constructor(
     private readonly connectedAccountTokenEncryptionService: ConnectedAccountTokenEncryptionService,
   ) {}
@@ -59,7 +62,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowIns
         if (isPlaintext(row.accessToken)) {
           params.push(
             this.connectedAccountTokenEncryptionService.encrypt({
-              plaintext: row.accessToken,
+              plaintext: row.accessToken as PlaintextString,
               workspaceId: row.workspaceId,
             }),
           );
@@ -69,7 +72,7 @@ export class EncryptConnectedAccountTokensSlowInstanceCommand implements SlowIns
         if (isPlaintext(row.refreshToken)) {
           params.push(
             this.connectedAccountTokenEncryptionService.encrypt({
-              plaintext: row.refreshToken,
+              plaintext: row.refreshToken as PlaintextString,
               workspaceId: row.workspaceId,
             }),
           );
