@@ -14,91 +14,90 @@ import { SettingsPath } from 'twenty-shared/types';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { ApplicationRegistrationConfigVariableEditForm } from '@/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm';
 
-export const SettingsAdminApplicationRegistrationConfigVariableDetail =
-  () => {
-    const { t } = useLingui();
-    const apolloAdminClient = useApolloAdminClient();
+export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
+  const { t } = useLingui();
+  const apolloAdminClient = useApolloAdminClient();
 
-    const { variableKey, applicationRegistrationId = '' } = useParams<{
-      applicationRegistrationId: string;
-      variableKey: string;
-    }>();
+  const { variableKey, applicationRegistrationId = '' } = useParams<{
+    applicationRegistrationId: string;
+    variableKey: string;
+  }>();
 
-    const { data: applicationRegistrationData } = useQuery(
-      FindOneAdminApplicationRegistrationDocument,
-      {
-        client: apolloAdminClient,
-        variables: { id: applicationRegistrationId },
-        skip: !applicationRegistrationId,
-      },
-    );
+  const { data: applicationRegistrationData } = useQuery(
+    FindOneAdminApplicationRegistrationDocument,
+    {
+      client: apolloAdminClient,
+      variables: { id: applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
 
-    const registration =
-      applicationRegistrationData?.findOneAdminApplicationRegistration;
+  const registration =
+    applicationRegistrationData?.findOneAdminApplicationRegistration;
 
-    const { data: variablesData } = useQuery(
-      FindAdminApplicationRegistrationVariablesDocument,
-      {
-        client: apolloAdminClient,
-        variables: { applicationRegistrationId },
-        skip: !applicationRegistrationId,
-      },
-    );
+  const { data: variablesData } = useQuery(
+    FindAdminApplicationRegistrationVariablesDocument,
+    {
+      client: apolloAdminClient,
+      variables: { applicationRegistrationId },
+      skip: !applicationRegistrationId,
+    },
+  );
 
-    const variable = (
-      variablesData?.findAdminApplicationRegistrationVariables ?? []
-    ).find((variable) => variable.key === variableKey);
+  const variable = (
+    variablesData?.findAdminApplicationRegistrationVariables ?? []
+  ).find((variable) => variable.key === variableKey);
 
-    const [updateVariable] = useMutation(
-      UpdateAdminApplicationRegistrationVariableDocument,
-      {
-        client: apolloAdminClient,
-        refetchQueries: [FindAdminApplicationRegistrationVariablesDocument],
-      },
-    );
+  const [updateVariable] = useMutation(
+    UpdateAdminApplicationRegistrationVariableDocument,
+    {
+      client: apolloAdminClient,
+      refetchQueries: [FindAdminApplicationRegistrationVariablesDocument],
+    },
+  );
 
-    if (!variable || !registration) {
-      return <SettingsSkeletonLoader />;
-    }
+  if (!variable || !registration) {
+    return <SettingsSkeletonLoader />;
+  }
 
-    const onUpdateVariable = async (
-      id: string,
-      update: { value: string; resetValue?: boolean },
-    ) => {
-      await updateVariable({
-        variables: { input: { id, update } },
-      });
-    };
-
-    return (
-      <SubMenuTopBarContainer
-        links={[
-          {
-            children: t`Other`,
-            href: getSettingsPath(SettingsPath.AdminPanel),
-          },
-          {
-            children: t`Admin Panel - Apps`,
-            href: APPLICATION_REGISTRATION_ADMIN_PATH,
-          },
-          {
-            children: t`${registration.name} - Config`,
-            href: getSettingsPath(
-              SettingsPath.AdminPanelApplicationRegistrationDetail,
-              { applicationRegistrationId },
-              undefined,
-              'config',
-            ),
-          },
-          {
-            children: variableKey,
-          },
-        ]}
-      >
-        <ApplicationRegistrationConfigVariableEditForm
-          variable={variable}
-          onUpdateVariable={onUpdateVariable}
-        />
-      </SubMenuTopBarContainer>
-    );
+  const onUpdateVariable = async (
+    id: string,
+    update: { value: string; resetValue?: boolean },
+  ) => {
+    await updateVariable({
+      variables: { input: { id, update } },
+    });
   };
+
+  return (
+    <SubMenuTopBarContainer
+      links={[
+        {
+          children: t`Other`,
+          href: getSettingsPath(SettingsPath.AdminPanel),
+        },
+        {
+          children: t`Admin Panel - Apps`,
+          href: APPLICATION_REGISTRATION_ADMIN_PATH,
+        },
+        {
+          children: t`${registration.name} - Config`,
+          href: getSettingsPath(
+            SettingsPath.AdminPanelApplicationRegistrationDetail,
+            { applicationRegistrationId },
+            undefined,
+            'config',
+          ),
+        },
+        {
+          children: variableKey,
+        },
+      ]}
+    >
+      <ApplicationRegistrationConfigVariableEditForm
+        variable={variable}
+        onUpdateVariable={onUpdateVariable}
+      />
+    </SubMenuTopBarContainer>
+  );
+};
