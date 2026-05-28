@@ -1,4 +1,4 @@
-import { MAX_EMAIL_RECIPIENTS } from 'twenty-shared/constants';
+import { MAX_CAMPAIGN_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,13 +17,16 @@ export const SendCampaignCommand = () => {
   const objectNameSingular = objectMetadataItem?.nameSingular ?? null;
   const isPerson = objectNameSingular === CoreObjectNameSingular.Person;
 
-  // Campaign is bulk-only in v1 — selecting a single Person should still work,
-  // but in practice it's a tool for selections.
+  // Campaign is bulk-only in v1. We hard-cap recipient resolution at
+  // MAX_CAMPAIGN_RECIPIENTS to match the server-side validation in the
+  // SendMessageCampaign DTO. If the user selected more than that, only the
+  // first MAX_CAMPAIGN_RECIPIENTS will be fetched — the drawer surfaces the
+  // truncation via the selectedCount vs queuedCount delta.
   const { records: personRecords, loading } = useFindManyRecords({
     objectNameSingular: CoreObjectNameSingular.Person,
     filter: graphqlFilter ?? undefined,
     recordGqlFields: { id: true },
-    limit: MAX_EMAIL_RECIPIENTS,
+    limit: MAX_CAMPAIGN_RECIPIENTS,
     skip: !isPerson,
   });
 

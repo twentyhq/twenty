@@ -10,8 +10,7 @@ import {
   IsUUID,
   Length,
 } from 'class-validator';
-
-export const MAX_CAMPAIGN_RECIPIENTS = 1000;
+import { MAX_CAMPAIGN_RECIPIENTS } from 'twenty-shared/constants';
 
 @InputType()
 export class SendMessageCampaignInput {

@@ -6,6 +6,7 @@ import { useCreateBlockNote } from '@blocknote/react';
 import '@blocknote/react/style.css';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { MAX_CAMPAIGN_RECIPIENTS } from 'twenty-shared/constants';
 import { IconSend } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -79,6 +80,11 @@ const StyledSelect = styled.select`
 
 const StyledRecipientCount = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
+  font-size: ${themeCssVariables.font.size.sm};
+`;
+
+const StyledTruncationWarning = styled.div`
+  color: ${themeCssVariables.font.color.danger};
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
@@ -174,6 +180,12 @@ export const SidePanelComposeCampaignPage = () => {
         <StyledRecipientCount>
           {t`Sending to ${recipientPersonIds.length} recipient(s)`}
         </StyledRecipientCount>
+
+        {recipientPersonIds.length >= MAX_CAMPAIGN_RECIPIENTS && (
+          <StyledTruncationWarning>
+            {t`Recipient cap of ${MAX_CAMPAIGN_RECIPIENTS} reached — any additional people selected will not receive this campaign.`}
+          </StyledTruncationWarning>
+        )}
 
         {!domainsLoading && verifiedDomains.length === 0 && (
           <StyledEmptyDomainsMessage>
