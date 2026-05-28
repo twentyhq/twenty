@@ -1,5 +1,5 @@
 import { styled } from '@linaria/react';
-import { useCallback, useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { AppPath } from 'twenty-shared/types';
 
@@ -175,20 +175,17 @@ export const Authorize = () => {
     }
   }, [shouldRedirectToNotFound, navigate]);
 
-  const appendThemeToUrl = useCallback(
-    (urlString: string) => {
-      try {
-        const url = new URL(urlString);
+  const appendThemeToUrl = (urlString: string) => {
+    try {
+      const url = new URL(urlString);
 
-        url.searchParams.set('theme', colorScheme);
+      url.searchParams.set('theme', colorScheme);
 
-        return url.toString();
-      } catch {
-        return urlString;
-      }
-    },
-    [colorScheme],
-  );
+      return url.toString();
+    } catch {
+      return urlString;
+    }
+  };
 
   const handleAuthorize = async () => {
     if (isDefined(clientId) && isDefined(redirectUrl)) {
