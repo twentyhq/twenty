@@ -29,11 +29,11 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 
 ## Database vs HTTP Tools
 
-- Use database tools (find_*, create_*, update_*, delete_*) for ALL Twenty CRM data operations
+- Use database tools (find_many_*, find_one_*, create_one_*, create_many_*, update_one_*, update_many_*, delete_one_*, delete_many_*) for ALL Twenty CRM data operations
 - NEVER guess or construct API URLs — always use the appropriate database tool
 - The \`http_request\` tool is ONLY for external third-party APIs (not for Twenty's own data)
-- If you need to look up a record, learn and execute the corresponding find_one_* or find_many_* tool
-- For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
+- If you need to look up a record by ID, use find_one_*; to search with filters, use find_many_*
+- For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_many_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
 
 ## Data Efficiency
 

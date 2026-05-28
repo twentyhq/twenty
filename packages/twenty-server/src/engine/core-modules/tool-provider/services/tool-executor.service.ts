@@ -20,6 +20,7 @@ import { buildUserAuthContext } from 'src/engine/core-modules/auth/utils/build-u
 import { LogicFunctionExecutorService } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/services/delete-many-records.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
@@ -49,6 +50,7 @@ export class ToolExecutorService {
     private readonly updateRecordService: UpdateRecordService,
     private readonly updateManyRecordsService: UpdateManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
+    private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(UserEntity)
@@ -89,7 +91,7 @@ export class ToolExecutorService {
       context.authContext ?? (await this.buildAuthContext(context));
 
     switch (ref.operation) {
-      case 'find': {
+      case 'find_many': {
         const { limit, offset, orderBy, ...filter } = args;
 
         return this.findRecordsService.execute({
@@ -112,7 +114,7 @@ export class ToolExecutorService {
           rolePermissionConfig: context.rolePermissionConfig,
         });
 
-      case 'create':
+      case 'create_one':
         return this.createRecordService.execute({
           objectName: ref.objectNameSingular,
           objectRecord: args,
@@ -132,7 +134,7 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-      case 'update': {
+      case 'update_one': {
         const { id, ...fields } = args;
         const objectRecord = Object.fromEntries(
           Object.entries(fields).filter(([, value]) => value !== undefined),
@@ -158,13 +160,21 @@ export class ToolExecutorService {
           slimResponse: true,
         });
 
-      case 'delete':
+      case 'delete_one':
         return this.deleteRecordService.execute({
           objectName: ref.objectNameSingular,
           objectRecordId: args.id as string,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
           soft: true,
+        });
+
+      case 'delete_many':
+        return this.deleteManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          filter: args.filter as Record<string, unknown>,
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
         });
 
       case 'group_by': {

@@ -5,6 +5,7 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { CreateManyRecordsService } from 'src/engine/core-modules/record-crud/services/create-many-records.service';
 import { CreateRecordService } from 'src/engine/core-modules/record-crud/services/create-record.service';
+import { DeleteManyRecordsService } from 'src/engine/core-modules/record-crud/services/delete-many-records.service';
 import { DeleteRecordService } from 'src/engine/core-modules/record-crud/services/delete-record.service';
 import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
@@ -30,6 +31,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UpdateRecordService,
     UpdateManyRecordsService,
     DeleteRecordService,
+    DeleteManyRecordsService,
     FindRecordsService,
     GroupByRecordsService,
     UpsertRecordService,
@@ -40,6 +42,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     UpdateRecordService,
     UpdateManyRecordsService,
     DeleteRecordService,
+    DeleteManyRecordsService,
     FindRecordsService,
     GroupByRecordsService,
     UpsertRecordService,

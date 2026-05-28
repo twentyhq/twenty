@@ -1,9 +1,10 @@
 export type DatabaseCrudOperation =
-  | 'find'
+  | 'find_many'
   | 'find_one'
-  | 'create'
+  | 'create_one'
   | 'create_many'
-  | 'update'
+  | 'update_one'
   | 'update_many'
-  | 'delete'
+  | 'delete_one'
+  | 'delete_many'
   | 'group_by';

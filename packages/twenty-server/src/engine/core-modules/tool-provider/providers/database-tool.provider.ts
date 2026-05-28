@@ -16,6 +16,7 @@ import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/rec
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
@@ -119,7 +120,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
       if (permission.canReadObjectRecords) {
         descriptors.push({
-          name: `find_${snakePlural}`,
+          name: `find_many_${snakePlural}`,
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
@@ -130,11 +131,11 @@ export class DatabaseToolProvider implements ToolProvider {
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'find',
+            operation: 'find_many',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'find',
+          operation: 'find_many',
         });
 
         descriptors.push({
@@ -184,7 +185,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
       if (permission.canUpdateObjectRecords) {
         descriptors.push({
-          name: `create_${snakeSingular}`,
+          name: `create_one_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
@@ -195,11 +196,11 @@ export class DatabaseToolProvider implements ToolProvider {
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'create',
+            operation: 'create_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'create',
+          operation: 'create_one',
         });
 
         descriptors.push({
@@ -225,7 +226,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
 
         descriptors.push({
-          name: `update_${snakeSingular}`,
+          name: `update_one_${snakeSingular}`,
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
@@ -236,11 +237,11 @@ export class DatabaseToolProvider implements ToolProvider {
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'update',
+            operation: 'update_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'update',
+          operation: 'update_one',
         });
 
         descriptors.push({
@@ -268,7 +269,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
       if (permission.canSoftDeleteObjectRecords) {
         descriptors.push({
-          name: `delete_${snakeSingular}`,
+          name: `delete_one_${snakeSingular}`,
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
@@ -277,11 +278,28 @@ export class DatabaseToolProvider implements ToolProvider {
           executionRef: {
             kind: 'database_crud',
             objectNameSingular: objectMetadata.nameSingular,
-            operation: 'delete',
+            operation: 'delete_one',
           },
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
-          operation: 'delete',
+          operation: 'delete_one',
+        });
+
+        descriptors.push({
+          name: `delete_many_${snakePlural}`,
+          description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(includeSchemas && {
+            inputSchema: z.toJSONSchema(BulkDeleteToolInputSchema),
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'delete_many',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'delete_many',
         });
       }
     }

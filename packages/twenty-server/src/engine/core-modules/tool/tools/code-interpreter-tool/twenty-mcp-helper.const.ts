@@ -18,7 +18,7 @@ class TwentyMCP:
        search_help_center. These are the 5 surfaces exposed directly.
 
      - Workspace catalog: 250+ CRUD / view / workflow / dashboard tools
-       like find_companies, create_person, update_opportunity. These are
+       like find_many_companies, create_one_person, update_one_opportunity. These are
        reached through execute_tool as a dispatcher.
 
     call_tool(name, args) accepts both — catalog tools are routed via
@@ -48,7 +48,7 @@ class TwentyMCP:
         """
         Call any Twenty tool by name.
 
-        Catalog tools (find_companies, create_person, …) are routed
+        Catalog tools (find_many_companies, create_one_person, …) are routed
         through execute_tool. MCP-native tools are called directly.
         The execute_tool envelope { success, message, result } is
         unwrapped so you always get the inner tool's result back.
@@ -61,7 +61,7 @@ class TwentyMCP:
             Tool result as parsed JSON
 
         Example:
-            companies = twenty.call_tool('find_companies', {'limit': 5})
+            companies = twenty.call_tool('find_many_companies', {'limit': 5})
             # companies == {'records': [...], 'count': '5'}
         """
         if not self._available:
@@ -143,7 +143,7 @@ class TwentyMCP:
 # \`twenty\` is a pre-built instance of the TwentyMCP class above. It is
 # already bound in this module scope — DO NOT \`import twenty\`. There is
 # no Python package by that name. Just use it directly, e.g.:
-#     companies = twenty.call_tool('find_companies', {'limit': 10})
+#     companies = twenty.call_tool('find_many_companies', {'limit': 10})
 # --------------------------------------------------------------------------
 twenty = TwentyMCP()
 `;
