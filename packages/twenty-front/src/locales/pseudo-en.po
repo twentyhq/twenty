@@ -5927,9 +5927,14 @@ msgid "else if"
 msgstr ""
 
 #. js-lingui-id: O3oNi5
+#: src/pages/settings/SettingsWorkspaceEmail.tsx
+#: src/pages/settings/SettingsWorkspaceEmail.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -5938,7 +5943,9 @@ msgstr ""
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 msgid "Email"
@@ -6044,8 +6051,6 @@ msgid "Emailing domain deleted successfully"
 msgstr ""
 
 #. js-lingui-id: axQccV
-#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 msgid "Emailing Domains"
 msgstr ""
@@ -7712,7 +7717,6 @@ msgstr ""
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -7720,7 +7724,6 @@ msgstr ""
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
@@ -17422,6 +17425,7 @@ msgid "Workflows"
 msgstr ""
 
 #. js-lingui-id: pmUArF
+#: src/pages/settings/SettingsWorkspaceEmail.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 #: src/pages/settings/SettingsUsage.tsx
