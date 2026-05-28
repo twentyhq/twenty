@@ -304,14 +304,12 @@ export const useGraphQLErrorHandlerHook = <
           return;
         }
 
-        const frontEndMajor = semver.parse(frontEndAppVersion)?.major;
-        const backendMajor = semver.parse(backendAppVersion)?.major;
-
-        if (
-          isDefined(frontEndMajor) &&
-          isDefined(backendMajor) &&
-          frontEndMajor < backendMajor
-        ) {
+        // Fire on any strictly-older client version, not just a major bump.
+        // A stale SPA tab kept open across a minor/patch deploy still sends
+        // GraphQL documents built against the old schema (e.g. selecting fields
+        // the server has since dropped). The old major-only gate let those slip
+        // through and surface as cryptic field errors instead of a refresh prompt.
+        if (semver.lt(frontEndAppVersion, backendAppVersion)) {
           void options.metricsService.incrementCounterForEvent({
             key: MetricsKeys.AppVersionMismatch,
           });
