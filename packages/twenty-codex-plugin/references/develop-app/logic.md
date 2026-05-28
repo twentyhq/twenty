@@ -4,14 +4,23 @@ Use this reference for Twenty app logic functions, skills, agents, and connectio
 
 ## Logic Functions
 
-Logic functions should be narrow, observable, and explicit about side effects.
+A logic function file should contain trigger registration, input validation, the call out to the work, and the writes back — nothing else. Everything else lives next to it (see `app-structure.md`):
 
-When adding logic:
+- External API calls → `src/<service>-client/<name>.ts`.
+- Response parsing and mapping → `src/utils/<name>.util.ts`.
+- Response and DTO types → `src/types/<name>.ts`.
+- Shared structure across object types → one mapper factory parameterized by object kind, not parallel functions.
 
-- Keep the trigger, inputs, writes, and external calls easy to identify.
-- Validate required fields before making writes or remote calls.
-- Avoid hiding customer-impacting side effects behind UI-only actions.
-- Prefer idempotent behavior for jobs or repeated invocations.
+Kebab-case filenames, one export per file. See `app-structure.md`.
+
+Other rules:
+
+- Validate required fields before writes or remote calls.
+- Prefer idempotent behavior for jobs and repeated invocations.
+- Read secrets through the application-config helper, not raw `process.env`.
+- Do not hide customer-impacting side effects behind UI-only actions.
+
+Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
 
 ## Skills And Agents
 
@@ -31,3 +40,21 @@ For third-party connections:
 - Keep secrets out of source and public assets.
 - Document required OAuth or API setup in the app README or listing.
 - Verify failure states for expired or missing credentials.
+
+## Post-Install Hooks
+
+Use `definePostInstallLogicFunction` for records that must exist on install — default workflows, views, roles, or seeded reference data. Do not implement this as runtime first-run code.
+
+Post-install hook files live alongside other logic functions (typically `src/logic-functions/<name>.post-install.ts`). Kebab-case filename, one export per file.
+
+Hooks must be idempotent: find by stable identifier before creating, update if it exists, never duplicate. Treat a not-found from a single-record query as "needs create."
+
+Do not write fields Twenty computes elsewhere (workflow `statuses` is computed from version status — see `workflows.md`).
+
+Dev sync skips install hooks. Invoke locally:
+
+```bash
+yarn twenty dev:function:exec
+```
+
+Run again after rebuilding to verify idempotency.

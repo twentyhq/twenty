@@ -28,6 +28,16 @@ Use these surfaces for different jobs:
 | Dashboard | Metric and report composition from built-in widgets | `DASHBOARD` page layout |
 | Command or side panel | Short actions, focused forms, one selected record, or background commands | `defineFrontComponent` plus command menu item |
 
+## Removing The Scaffolded Placeholder
+
+Every freshly scaffolded app contains three placeholder files that wire a "Welcome" sidebar item to a generic landing page:
+
+- `src/front-components/main-page.tsx`
+- `src/page-layouts/main-page.page-layout.ts`
+- `src/navigation-menu-items/main-page.navigation-menu-item.ts`
+
+If the app has no user-facing page — for example, it only extends standard objects, declares logic functions, or seeds workflows — delete all three files before the first deploy. Leaving them in ships a dead sidebar item.
+
 ## Quickstart
 
 Use this minimal file set:

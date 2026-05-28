@@ -22,6 +22,8 @@ Ask the user how they want to connect to a Twenty instance:
 
 If the user does not specify, ask which option they prefer before proceeding.
 
+Before scaffolding, repeat back the app's purpose in one sentence and its expected shape: standard objects extended, any custom objects, whether it needs UI, whether it needs workflows or post-install seeding. Scaffolding is one-way — confirming here avoids re-scaffolds later.
+
 ## Scaffolding
 
 First, ask the user for the app name if they did not provide one.
@@ -61,6 +63,8 @@ Do not run any `yarn`, `npm`, `node`, or `corepack` commands after scaffolding. 
 Do not check Node versions, search for version managers, inspect the toolchain, or attempt to fix runtime mismatches. These are not problems — the scaffolder used its own correct toolchain.
 
 Report to the user that the app was created successfully and is ready for development. Then stop. Wait for the user to ask for the next action.
+
+The scaffolder generates a placeholder page at `src/front-components/main-page.tsx` plus its page layout and navigation menu item. In `develop-app`, delete all three before the first deploy unless the app actually needs UI. Do not stack additional pages on top of the placeholder.
 
 ## Docker Troubleshooting
 

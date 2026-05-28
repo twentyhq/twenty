@@ -356,6 +356,8 @@ const assertReferences = () => {
     'references/develop-app/logic.md',
     'references/develop-app/layout.md',
     'references/develop-app/standalone-pages.md',
+    'references/develop-app/tests.md',
+    'references/develop-app/workflows.md',
     'references/manage-app/cli-and-sync.md',
     'references/publish-app/prepare-for-app-store.md',
     'references/concepts/how-apps-work.md',

@@ -43,6 +43,23 @@ For non-interactive agent work, direct file creation is often better. Use genera
 
 Use official Twenty docs or local SDK source when exact imports, entity fields, or configuration shapes matter.
 
+## Source Layout
+
+Add these alongside the scaffolded `src/{fields,objects,logic-functions,front-components,page-layouts,navigation-menu-items,constants}/` as needed:
+
+- `src/utils/` — pure helpers as `<name>.util.ts`, kept flat.
+- `src/types/` — one PascalCase type per file.
+- `src/<service>-client/` — wrappers around external SDKs or HTTP clients. One folder per service, matching Twenty's `*-client` convention (`redis-client/`, `sdk-client/`, ...).
+- Tests as `*.spec.ts` in sibling `__tests__/` folders next to the code they cover.
+
+Filenames are kebab-case; conventional suffixes are `.util.ts`, `.dto.ts`, `.service.ts`, `.spec.ts` — matching the Twenty backend. One export per file across `utils/`, `types/`, and each `<service>-client/`.
+
+Files inside `src/types/` use plain `<name>.ts` (one PascalCase type per file) — no `.type.ts` suffix. Files inside `src/<service>-client/` also use plain `<name>.ts`; the folder name carries the suffix, so do not repeat it on the file.
+
+When field definitions differ only by `objectUniversalIdentifier` and label, replace them with a factory in `src/fields/field-factories.ts`.
+
+Read secrets through the application-config helper, not raw `process.env`.
+
 ## Boundaries
 
 - Do not scaffold a new app from this workflow. Use `create-app` first when the app does not exist.
@@ -62,3 +79,5 @@ The sync command builds the app and pushes entity definitions to the active remo
 Do not run `yarn twenty dev:typecheck`, `yarn lint`, or `yarn test` as part of routine entity validation. These commands are useful for CI/CD pipelines but cause environment issues when run from the Codex sandbox due to Node and Yarn version mismatches. If any command fails because of setup, dependencies, remotes, authentication, or toolchain issues, report the error to the user and stop — do not attempt to fix the environment.
 
 Switch to `manage-app` and use `../manage-app/cli-and-sync.md` for sync or remote troubleshooting.
+
+Tests are not part of sync validation but should cover `src/utils/` helpers and post-install hook idempotency. See `tests.md`.

@@ -24,6 +24,30 @@ If setup, dependencies, remotes, authentication, sync, build, deploy, logs, or C
 
 For app shape and entity file structure, read `../../references/develop-app/app-structure.md`.
 
+## Plan Before Editing
+
+For any change involving more than one entity, state the plan back in 3–6 lines before editing: objects extended, fields added, logic functions and post-install hooks declared, whether the app needs UI. Confirm with the user when there is a real choice.
+
+Skip for single-entity edits, renames, and copy fixes.
+
+## Code Organization
+
+Keep logic functions and post-install hooks narrow. Extract everything that is not the trigger, inputs, writes, and external call:
+
+- `src/utils/<name>.util.ts` — pure helpers (parsers, mappers, formatters).
+- `src/types/<name>.ts` — external API and internal DTO types (one PascalCase type per file).
+- `src/<service>-client/<name>.ts` — wrappers around external SDKs or shared HTTP clients. One folder per service, matching Twenty's `*-client` convention.
+
+Kebab-case filenames; one export per file across all three. See `app-structure.md` for the full suffix convention.
+
+Refactor when:
+
+- A `*.logic-function.ts` or `*.post-install.ts` file exceeds the soft cap (see `../../references/develop-app/logic.md`).
+- The same parsing or mapping logic appears across object types.
+- Multiple field files differ only by name and identifier — use a factory under `src/fields/`.
+
+Tests as `*.spec.ts` in sibling `__tests__/` folders next to the code they cover. See `../../references/develop-app/tests.md`.
+
 ## Adding New Entities
 
 Use the app CLI to add new entities. It generates the correct file structure, UUIDs, SDK imports, and boilerplate automatically:
@@ -58,7 +82,9 @@ Read the smallest reference that matches the requested entity work:
 - Views, navigation, page layouts, page layout tabs, and front component registration: `../../references/develop-app/layout.md`
 - Full-page custom UI and standalone page patterns: `../../references/develop-app/standalone-pages.md`
 - Front component source, Twenty UI imports, data hooks, runtime imports, and browser verification: `../../references/develop-app/front-components.md`
-- Logic functions, skills, agents, and connection providers: `../../references/develop-app/logic.md`
+- Logic functions, skills, agents, post-install hooks, and connection providers: `../../references/develop-app/logic.md`
+- Workflows, manual triggers, draft/activate lifecycle, and seeder pitfalls: `../../references/develop-app/workflows.md`
+- Tests — what to cover and where to put the files: `../../references/develop-app/tests.md`
 - App file structure and entity validation checklist: `../../references/develop-app/app-structure.md`
 - Detailed front component UI design: `../../references/design/front-component-ui.md`
 
