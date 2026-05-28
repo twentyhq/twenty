@@ -6,11 +6,4 @@ import { type NativeModelTools } from 'src/engine/metadata-modules/ai/ai-models/
 export const getNativeModelToolsForSdkPackage = (
   sdkPackage?: AiSdkPackage | null,
 ): NativeModelTools | undefined =>
-  sdkPackage
-    ? (
-        NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE as Record<
-          AiSdkPackage,
-          NativeModelTools
-        >
-      )[sdkPackage]
-    : undefined;
+  sdkPackage ? NATIVE_MODEL_TOOLS_BY_SDK_PACKAGE[sdkPackage] : undefined;

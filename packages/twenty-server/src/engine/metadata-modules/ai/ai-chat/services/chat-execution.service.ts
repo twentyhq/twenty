@@ -62,6 +62,7 @@ import {
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -164,8 +165,11 @@ export class ChatExecutionService {
     );
 
     // Native and action search may both be bound here; the model picks at runtime.
+    const nativeCapabilities = getNativeModelCapabilities(
+      registeredModel.sdkPackage,
+    );
     const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
-      webSearch: true,
+      webSearch: nativeCapabilities?.webSearch === true,
     });
 
     // Tools the model can call directly: preloaded registry tools (already
