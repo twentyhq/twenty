@@ -7,6 +7,7 @@ import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/s
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-campaign.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
+import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 
 export type MessagingCampaignSendRecipientJobData = {
   workspaceId: string;
@@ -17,6 +18,10 @@ export type MessagingCampaignSendRecipientJobData = {
   personId: string;
   toAddress: string;
 };
+
+// Reuse the existing inbound-converter — handles <script>/<style>/comments
+// correctly (the naive regex strip we used to have did not).
+const htmlToText = createHtmlToTextConverter();
 
 @Processor({
   queueName: MessageQueue.emailQueue,
@@ -32,6 +37,29 @@ export class MessagingCampaignSendRecipientJob {
 
   @Process(MessagingCampaignSendRecipientJob.name)
   async handle(data: MessagingCampaignSendRecipientJobData): Promise<void> {
+    const { workspaceId, campaignId } = data;
+
+    // Wrap the entire handler so even error/early-return paths still try to
+    // finalize the campaign — otherwise a deleted message or campaign could
+    // leave the campaign stuck in SENDING.
+    try {
+      await this.processOneRecipient(data);
+    } finally {
+      try {
+        await this.maybeFinalizeCampaign({ workspaceId, campaignId });
+      } catch (error) {
+        this.logger.error(
+          `Failed to finalize campaign ${campaignId} after job: ${
+            error instanceof Error ? error.message : String(error)
+          }`,
+        );
+      }
+    }
+  }
+
+  private async processOneRecipient(
+    data: MessagingCampaignSendRecipientJobData,
+  ): Promise<void> {
     const {
       workspaceId,
       campaignId,
@@ -62,6 +90,19 @@ export class MessagingCampaignSendRecipientJob {
       this.logger.warn(
         `Campaign message ${messageId} not found in workspace ${workspaceId}; skipping send`,
       );
+
+      return;
+    }
+
+    // Duplicate-send guard. BullMQ may re-run a job if the worker dies between
+    // the SES call and the DB write — without this check the recipient would
+    // get the email twice. Once a message is in any non-QUEUED state we leave
+    // it alone.
+    if (message.deliveryStatus !== 'QUEUED') {
+      this.logger.warn(
+        `Campaign message ${messageId} already in ${message.deliveryStatus}; skipping resend`,
+      );
+
       return;
     }
 
@@ -73,23 +114,40 @@ export class MessagingCampaignSendRecipientJob {
       this.logger.warn(
         `Campaign ${campaignId} not found in workspace ${workspaceId}; skipping send`,
       );
+
+      return;
+    }
+
+    if (!campaign.fromAddress || !campaign.subject) {
+      this.logger.error(
+        `Campaign ${campaignId} missing fromAddress or subject; marking message FAILED`,
+      );
+
+      await messageRepository.update(
+        { id: messageId },
+        { deliveryStatus: 'FAILED' },
+      );
+
+      await campaignRepository.increment(
+        { id: campaignId },
+        'failedCount',
+        1,
+      );
+
       return;
     }
 
     const html = campaign.bodyTemplate ?? '';
-    // SES requires a plain-text body alongside the HTML. The frontend's
-    // BlockNote editor produces HTML; we strip tags for the text fallback.
-    // Good enough for v1; a proper html-to-text pass can come later.
-    const text = stripHtmlTags(html);
+    const text = htmlToText(html);
 
     try {
       const result = await this.emailingDomainService.sendEmail(
         workspaceId,
         emailingDomainId,
         {
-          from: campaign.fromAddress ?? '',
+          from: campaign.fromAddress,
           to: [toAddress],
-          subject: campaign.subject ?? '',
+          subject: campaign.subject,
           text,
           html,
           replyTo: campaign.replyTo ? [campaign.replyTo] : undefined,
@@ -129,16 +187,12 @@ export class MessagingCampaignSendRecipientJob {
         1,
       );
     }
-
-    await this.maybeFinalizeCampaign({
-      workspaceId,
-      campaignId,
-    });
   }
 
-  // Mark the campaign as SENT (or FAILED if 100% bounce/fail) once every
-  // recipient message has reached a terminal status. Cheap to call on every
-  // send; the query is indexed on sourceCampaignId.
+  // Finalize the campaign when every recipient message has reached a terminal
+  // status. Guarded by `status = 'SENDING'` so concurrent finalizers can't
+  // overwrite each other (TypeORM's update accepts a where-criteria as the
+  // first arg, which translates to a compare-and-swap).
   private async maybeFinalizeCampaign({
     workspaceId,
     campaignId,
@@ -165,6 +219,12 @@ export class MessagingCampaignSendRecipientJob {
       select: ['id', 'deliveryStatus'],
     });
 
+    // Guard against vacuous truth: every() returns true on an empty array,
+    // which would otherwise mark a zero-recipient campaign FAILED.
+    if (messages.length === 0) {
+      return;
+    }
+
     const stillInFlight = messages.some(
       (message) =>
         message.deliveryStatus === 'QUEUED' ||
@@ -181,8 +241,10 @@ export class MessagingCampaignSendRecipientJob {
         message.deliveryStatus === 'BOUNCED',
     );
 
+    // status='SENDING' guard ensures at most one finalizer wins — subsequent
+    // writers' updates match zero rows.
     await campaignRepository.update(
-      { id: campaignId },
+      { id: campaignId, status: 'SENDING' },
       {
         status: allFailed ? 'FAILED' : 'SENT',
         sentAt: new Date(),
@@ -190,20 +252,3 @@ export class MessagingCampaignSendRecipientJob {
     );
   }
 }
-
-// Minimal HTML → text fallback for SES's required text body. Replaces block
-// tags with newlines, strips remaining tags, decodes common entities,
-// collapses whitespace. Not a full html-to-text — good enough for v1.
-const stripHtmlTags = (html: string): string => {
-  return html
-    .replace(/<(p|div|br|li|h[1-6])[^>]*>/gi, '\n')
-    .replace(/<\/(p|div|li|h[1-6])>/gi, '\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim();
-};
