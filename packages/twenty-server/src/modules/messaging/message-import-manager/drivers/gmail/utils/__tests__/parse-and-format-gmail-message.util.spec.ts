@@ -67,6 +67,25 @@ describe('parseAndFormatGmailMessage', () => {
     ]);
   });
 
+  it('should preserve the display name on the FROM participant', () => {
+    const result = parseAndFormatGmailMessage(
+      buildMessage([
+        { name: 'From', value: '"Doe, John" <john.doe@example.com>' },
+        { name: 'To', value: 'me@example.com' },
+        { name: 'Message-ID', value: '<abc@example.com>' },
+      ]),
+      connectedAccount,
+    );
+
+    const fromParticipant = result?.participants.find((p) => p.role === 'FROM');
+
+    expect(fromParticipant).toEqual({
+      role: 'FROM',
+      handle: 'john.doe@example.com',
+      displayName: 'Doe, John',
+    });
+  });
+
   it('should mark messages from the connected account as OUTGOING', () => {
     const result = parseAndFormatGmailMessage(
       buildMessage([

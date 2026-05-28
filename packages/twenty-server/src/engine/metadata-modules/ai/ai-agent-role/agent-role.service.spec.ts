@@ -13,12 +13,13 @@ import { type FlatRoleTarget } from 'src/engine/metadata-modules/flat-role-targe
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { RoleTargetService } from 'src/engine/metadata-modules/role-target/services/role-target.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
-
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
+import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { AiAgentRoleService } from './ai-agent-role.service';
 
 describe('AiAgentRoleService', () => {
   let service: AiAgentRoleService;
-  let agentRepository: Repository<AgentEntity>;
+  let agentRepository: WorkspaceScopedRepository<AgentEntity>;
   let roleRepository: Repository<RoleEntity>;
   let roleTargetRepository: Repository<RoleTargetEntity>;
   let roleTargetService: RoleTargetService;
@@ -33,9 +34,10 @@ describe('AiAgentRoleService', () => {
       providers: [
         AiAgentRoleService,
         {
-          provide: getRepositoryToken(AgentEntity),
+          provide: getWorkspaceScopedRepositoryToken(AgentEntity),
           useValue: {
             findOne: jest.fn(),
+            find: jest.fn(),
             save: jest.fn(),
           },
         },
@@ -66,8 +68,8 @@ describe('AiAgentRoleService', () => {
     }).compile();
 
     service = module.get<AiAgentRoleService>(AiAgentRoleService);
-    agentRepository = module.get<Repository<AgentEntity>>(
-      getRepositoryToken(AgentEntity),
+    agentRepository = module.get<WorkspaceScopedRepository<AgentEntity>>(
+      getWorkspaceScopedRepositoryToken(AgentEntity),
     );
     roleRepository = module.get<Repository<RoleEntity>>(
       getRepositoryToken(RoleEntity),
@@ -148,8 +150,8 @@ describe('AiAgentRoleService', () => {
       });
 
       // Assert
-      expect(agentRepository.findOne).toHaveBeenCalledWith({
-        where: { id: testAgent.id, workspaceId: testWorkspaceId },
+      expect(agentRepository.findOne).toHaveBeenCalledWith(testWorkspaceId, {
+        where: { id: testAgent.id },
       });
       expect(roleRepository.findOne).toHaveBeenCalledWith({
         where: { id: testRole.id, workspaceId: testWorkspaceId },

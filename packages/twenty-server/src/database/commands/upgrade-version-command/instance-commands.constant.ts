@@ -42,6 +42,8 @@ import { AddApplicationIdToPublicDomainFastInstanceCommand } from 'src/database/
 import { AddIsInternalMessagesImportEnabledFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778525104406-add-is-internal-messages-import-enabled';
 import { CreateSigningKeyTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778550000000-create-signing-key-table';
 import { EncryptConnectedAccountTokensSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000004000-encrypt-connected-account-tokens';
+import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
+import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799000020000-emailing-domain-tenant-status-and-global-uniqueness';
 import { EncryptApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000005000-encrypt-application-variable';
 import { EncryptApplicationRegistrationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000006000-encrypt-application-registration-variable';
 import { EncryptSigningKeyPrivateKeysSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-slow-1798000007000-encrypt-signing-key-private-keys';
@@ -50,11 +52,11 @@ import { EncryptTotpSecretsSlowInstanceCommand } from 'src/database/commands/upg
 import { EncryptConnectionParametersSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-slow-1798000010000-encrypt-connection-parameters';
 import { AddSubFieldNameToViewSortFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1778502963794-add-sub-field-name-to-view-sort';
 import { DropPostgresCredentialsTableFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-5/2-5-instance-command-fast-1798500000000-drop-postgres-credentials-table';
-import { AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000005000-add-relation-target-field-metadata-id-to-view-filter';
 import { AddChannelSyncStageIndexesFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-6/2-6-instance-command-fast-1798000010000-add-channel-sync-stage-indexes';
 import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-7/2-7-instance-command-fast-1779600000000-finalize-role-permission-flag-cutover';
 import { AddSubFieldNameToIndexFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798200000000-add-sub-field-name-to-index-field-metadata';
 import { DropFieldMetadataIsUniqueColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798300000000-drop-field-metadata-is-unique-column';
+import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -99,6 +101,8 @@ export const INSTANCE_COMMANDS = [
   AddIsInternalMessagesImportEnabledFastInstanceCommand,
   CreateSigningKeyTableFastInstanceCommand,
   EncryptConnectedAccountTokensSlowInstanceCommand,
+  AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
+  EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand,
   EncryptApplicationVariableSlowInstanceCommand,
   EncryptApplicationRegistrationVariableSlowInstanceCommand,
   EncryptSigningKeyPrivateKeysSlowInstanceCommand,
@@ -107,9 +111,9 @@ export const INSTANCE_COMMANDS = [
   EncryptConnectionParametersSlowInstanceCommand,
   AddSubFieldNameToViewSortFastInstanceCommand,
   DropPostgresCredentialsTableFastInstanceCommand,
-  AddRelationTargetFieldMetadataIdToViewFilterFastInstanceCommand,
   AddChannelSyncStageIndexesFastInstanceCommand,
   FinalizeRolePermissionFlagCutoverFastInstanceCommand,
   AddSubFieldNameToIndexFieldMetadataFastInstanceCommand,
   DropFieldMetadataIsUniqueColumnFastInstanceCommand,
+  MigrateAiModelPreferencesSlowInstanceCommand,
 ];

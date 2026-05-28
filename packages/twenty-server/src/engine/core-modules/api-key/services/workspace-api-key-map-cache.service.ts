@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { WorkspaceCacheProvider } from 'src/engine/workspace-cache/interfaces/workspace-cache-provider.service';
 
 import { type FlatApiKey } from 'src/engine/core-modules/api-key/types/flat-api-key.type';
 import { fromApiKeyEntityToFlat } from 'src/engine/core-modules/api-key/utils/from-api-key-entity-to-flat.util';
 import { ApiKeyEntity } from 'src/engine/core-modules/api-key/api-key.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 
 @Injectable()
@@ -16,8 +15,8 @@ export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   Record<string, FlatApiKey>
 > {
   constructor(
-    @InjectRepository(ApiKeyEntity)
-    private readonly apiKeyRepository: Repository<ApiKeyEntity>,
+    @InjectWorkspaceScopedRepository(ApiKeyEntity)
+    private readonly apiKeyRepository: WorkspaceScopedRepository<ApiKeyEntity>,
   ) {
     super();
   }
@@ -25,9 +24,7 @@ export class WorkspaceApiKeyMapCacheService extends WorkspaceCacheProvider<
   async computeForCache(
     workspaceId: string,
   ): Promise<Record<string, FlatApiKey>> {
-    const apiKeys = await this.apiKeyRepository.find({
-      where: { workspaceId },
-    });
+    const apiKeys = await this.apiKeyRepository.find(workspaceId);
 
     return apiKeys.reduce(
       (map, apiKey) => {

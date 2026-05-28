@@ -1,5 +1,5 @@
 import { type FieldMetadataType } from 'twenty-shared/types';
-import { FieldDisplayMode } from '~/generated-metadata/graphql';
+import { FieldDisplayMode, RelationType } from '~/generated-metadata/graphql';
 
 import { FIELD_WIDGET_CONFIG } from '@/page-layout/widgets/field/constants/fieldWidgetConfig';
 
@@ -13,12 +13,25 @@ export const getFieldWidgetDefaultDisplayMode = (
 
 export const getFieldWidgetAvailableDisplayModes = (
   fieldType: FieldMetadataType,
-) =>
-  getFieldWidgetConfig(fieldType)?.availableDisplayModes ?? [
-    FieldDisplayMode.FIELD,
-  ];
+  relationType?: RelationType | null,
+) => {
+  const availableDisplayModes = getFieldWidgetConfig(fieldType)
+    ?.availableDisplayModes ?? [FieldDisplayMode.FIELD];
+
+  if (relationType !== RelationType.ONE_TO_MANY) {
+    return availableDisplayModes.filter(
+      (displayMode) => displayMode !== FieldDisplayMode.TABLE,
+    );
+  }
+
+  return availableDisplayModes;
+};
 
 export const isDisplayModeValidForFieldType = (
   fieldType: FieldMetadataType,
   displayMode: FieldDisplayMode,
-) => getFieldWidgetAvailableDisplayModes(fieldType).includes(displayMode);
+  relationType?: RelationType | null,
+) =>
+  getFieldWidgetAvailableDisplayModes(fieldType, relationType).includes(
+    displayMode,
+  );

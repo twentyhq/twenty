@@ -216,6 +216,11 @@ msgstr "{1} OAuth is not yet set up by your server administrator. They need to f
 msgid "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 msgstr "{advancedFilterCount, plural, one {{advancedFilterCount} advanced rule} other {{advancedFilterCount} advanced rules}}"
 
+#. js-lingui-id: XWd9bY
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
+msgid "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
+msgstr "{agentCount, plural, one {{agentCount} agent} other {{agentCount} agents}}"
+
 #. js-lingui-id: WGnqk6
 #: src/modules/workflow/workflow-steps/workflow-actions/ai-agent-action/hooks/useWorkflowAiAgentPermissionActions.ts
 msgid "{agentDisplayName} role ({agentIdPrefix})"
@@ -230,6 +235,11 @@ msgstr "{agentLabel} Agent Role"
 #: src/modules/object-record/record-aggregate/utils/getAggregateLabelWithFieldName.ts
 msgid "{aggregateLabel} of {fieldLabel}"
 msgstr "{aggregateLabel} of {fieldLabel}"
+
+#. js-lingui-id: WhHyQh
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
+msgid "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
+msgstr "{apiKeyCount, plural, one {{apiKeyCount} API key} other {{apiKeyCount} API keys}}"
 
 #. js-lingui-id: u1mVnV
 #: src/modules/marketplace/components/SettingsApplicationInstallPermissionValidationModal.tsx
@@ -390,6 +400,11 @@ msgstr "{jobCount, plural, one {This will retry the selected job. It will be re-
 msgid "{label} list"
 msgstr "{label} list"
 
+#. js-lingui-id: 1DrH/j
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
+msgid "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
+msgstr "{memberCount, plural, one {{memberCount} member} other {{memberCount} members}}"
+
 #. js-lingui-id: Y32cMj
 #: src/modules/page-layout/widgets/email-thread/components/EmailThreadIntermediaryMessages.tsx
 msgid "{messagesLength} emails"
@@ -517,6 +532,11 @@ msgstr "{totalFieldsCount} visible fields"
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "{visibleFieldsCount} shown"
 msgstr "{visibleFieldsCount} shown"
+
+#. js-lingui-id: WjjsAL
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+msgid "{visibleFieldsCount} visible fields"
+msgstr "{visibleFieldsCount} visible fields"
 
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -896,7 +916,6 @@ msgstr "Actions users can perform on this object"
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "Activate"
 
@@ -1031,16 +1050,15 @@ msgstr "Add custom instructions specific to your workspace (appended to system p
 msgid "Add Custom Provider"
 msgstr "Add Custom Provider"
 
-#. js-lingui-id: 33pO0a
+#. js-lingui-id: +Gf1IN
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
-msgid "Add email group"
-msgstr "Add email group"
+msgid "Add email handle"
+msgstr "Add email handle"
 
-#. js-lingui-id: 3O3+7h
-#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
-#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
-msgid "Add Emailing Domain"
-msgstr "Add Emailing Domain"
+#. js-lingui-id: HMM0Sc
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
+msgid "Add emailing domain"
+msgstr "Add emailing domain"
 
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1307,7 +1325,6 @@ msgid "Added {beautifiedCreatedAt}"
 msgstr "Added {beautifiedCreatedAt}"
 
 #. js-lingui-id: jEHeq+
-#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
 msgstr "Added {beautifyPastDateRelative}"
@@ -1949,6 +1966,7 @@ msgstr "An unexpected error occurred. Please try again."
 
 #. js-lingui-id: HZFm5R
 #: src/utils/date-utils.ts
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
 #: src/modules/auth/sign-in-up/components/FooterNote.tsx
 msgid "and"
 msgstr "and"
@@ -2183,7 +2201,6 @@ msgstr "application variable"
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
-#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Applications"
 msgstr "Applications"
@@ -2215,7 +2232,6 @@ msgid "Approved Domains"
 msgstr "Approved Domains"
 
 #. js-lingui-id: VDvaN2
-#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
@@ -2252,10 +2268,16 @@ msgstr "Archive files cannot be previewed. Please download the file to access it
 msgid "Archived"
 msgstr "Archived"
 
-#. js-lingui-id: mk25CW
+#. js-lingui-id: Yzbh3i
+#. placeholder {0}: emailingDomain.domain
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+msgid "Are you sure you want to delete {0}? Outbound mail through this domain will stop working."
+msgstr "Are you sure you want to delete {0}? Outbound mail through this domain will stop working."
+
+#. js-lingui-id: Faev6R
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "Are you sure you want to delete {sourceHandle}? Forwarded emails will no longer arrive in this workspace."
-msgstr "Are you sure you want to delete {sourceHandle}? Forwarded emails will no longer arrive in this workspace."
+msgid "Are you sure you want to delete {sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working."
+msgstr "Are you sure you want to delete {sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working."
 
 #. js-lingui-id: 4CHeVx
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -3718,11 +3740,6 @@ msgstr "Configure an SSO connection"
 msgid "Configure and customize your calendar preferences."
 msgstr "Configure and customize your calendar preferences."
 
-#. js-lingui-id: 5i71HM
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Configure and verify domains for emailing from this workspace."
-msgstr "Configure and verify domains for emailing from this workspace."
-
 #. js-lingui-id: 6MDr1S
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure CalDAV settings to sync your calendar events."
@@ -3811,10 +3828,15 @@ msgstr "Confirm"
 msgid "Confirm changing your current resource credit allocation."
 msgstr "Confirm changing your current resource credit allocation."
 
-#. js-lingui-id: FbJ7Si
+#. js-lingui-id: SU6Tym
 #: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
-msgid "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
-msgstr "Confirm deletion of {roleName} role? This cannot be undone. All members will be reassigned to the default role."
+msgid "Confirm deletion of {roleName} role? This cannot be undone."
+msgstr "Confirm deletion of {roleName} role? This cannot be undone."
+
+#. js-lingui-id: W7S+Tm
+#: src/modules/settings/roles/role-settings/components/SettingsRoleSettingsDeleteRoleConfirmationModalSubtitle.tsx
+msgid "Confirm deletion of {roleName} role? This cannot be undone. {reassignSubject} will be reassigned to the default role."
+msgstr "Confirm deletion of {roleName} role? This cannot be undone. {reassignSubject} will be reassigned to the default role."
 
 #. js-lingui-id: kZkFSm
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -5084,6 +5106,8 @@ msgstr "delete"
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5105,7 +5129,6 @@ msgstr "delete"
 #: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
-#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5189,10 +5212,15 @@ msgstr "Delete app"
 msgid "Delete chat"
 msgstr "Delete chat"
 
-#. js-lingui-id: /BTna7
+#. js-lingui-id: cC09EO
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "Delete email group"
-msgstr "Delete email group"
+msgid "Delete email handle"
+msgstr "Delete email handle"
+
+#. js-lingui-id: yZyuut
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+msgid "Delete emailing domain"
+msgstr "Delete emailing domain"
 
 #. js-lingui-id: gf2eXy
 #: src/pages/settings/ai/components/SettingsAgentEvalsTab.tsx
@@ -5532,6 +5560,7 @@ msgstr "Doesn't contain"
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 msgid "Domain"
 msgstr "Domain"
 
@@ -5938,10 +5967,10 @@ msgstr "Email copied to clipboard"
 msgid "Email Editor"
 msgstr "Email Editor"
 
-#. js-lingui-id: KQM9eG
+#. js-lingui-id: nsVRM/
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
-msgid "Email Groups"
-msgstr "Email Groups"
+msgid "Email Handles"
+msgstr "Email Handles"
 
 #. js-lingui-id: lfQsvW
 #: src/pages/onboarding/internal/ChooseYourPlanContent.tsx
@@ -6010,14 +6039,14 @@ msgid "Emailing domain created successfully. Please verify the domain to start u
 msgstr "Emailing domain created successfully. Please verify the domain to start using it."
 
 #. js-lingui-id: XDpopO
-#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 msgid "Emailing domain deleted successfully"
 msgstr "Emailing domain deleted successfully"
 
 #. js-lingui-id: axQccV
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 msgid "Emailing Domains"
 msgstr "Emailing Domains"
 
@@ -6338,11 +6367,6 @@ msgstr "Enter text or Type '/' for commands"
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
 msgstr "Enter the credentials to set the connection"
-
-#. js-lingui-id: PTGfBH
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Enter the email address you want to forward emails from (e.g. support@mycompany.com)."
-msgstr "Enter the email address you want to forward emails from (e.g. support@mycompany.com)."
 
 #. js-lingui-id: rGWgcm
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -6950,20 +6974,20 @@ msgstr "Failed to add model"
 msgid "Failed to add provider"
 msgstr "Failed to add provider"
 
-#. js-lingui-id: d+6i8z
+#. js-lingui-id: L9UnOU
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email group channel. Email group may not be configured on this server."
-msgstr "Failed to create email group channel. Email group may not be configured on this server."
+msgid "Failed to create email handle. Email handles may not be configured on this server."
+msgstr "Failed to create email handle. Email handles may not be configured on this server."
 
 #. js-lingui-id: WM7GKt
 #: src/pages/settings/ai/SettingsAI.tsx
 msgid "Failed to create tool"
 msgstr "Failed to create tool"
 
-#. js-lingui-id: W4hzLB
+#. js-lingui-id: lWoewm
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "Failed to delete email group channel."
-msgstr "Failed to delete email group channel."
+msgid "Failed to delete email handle."
+msgstr "Failed to delete email handle."
 
 #. js-lingui-id: pUligB
 #: src/modules/settings/admin-panel/health-status/hooks/useDeleteJobs.ts
@@ -7288,7 +7312,9 @@ msgstr "fields"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -10367,11 +10393,11 @@ msgstr "New conversation"
 msgid "New Email"
 msgstr "New Email"
 
-#. js-lingui-id: TmlJkc
+#. js-lingui-id: VJZNJt
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "New Email Group"
-msgstr "New Email Group"
+msgid "New Email Handle"
+msgstr "New Email Handle"
 
 #. js-lingui-id: wqoYqp
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -11708,6 +11734,7 @@ msgstr "Organize"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
@@ -14282,6 +14309,11 @@ msgstr "Share with workspace"
 msgid "Share your app to other workspaces without pushing it on the marketplace"
 msgstr "Share your app to other workspaces without pushing it on the marketplace"
 
+#. js-lingui-id: 9ZxCpH
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+msgid "Shared addresses your workspace uses to send and receive email."
+msgstr "Shared addresses your workspace uses to send and receive email."
+
 #. js-lingui-id: NyIsOu
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Sharing link copied to clipboard"
@@ -14753,6 +14785,7 @@ msgstr "State"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -15155,6 +15188,8 @@ msgstr "Tab Settings"
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
@@ -15245,6 +15280,16 @@ msgstr "Text copied to clipboard"
 #: src/modules/object-record/record-field/ui/form-types/components/FormAdvancedTextFieldInput.tsx
 msgid "Text Editor"
 msgstr "Text Editor"
+
+#. js-lingui-id: KJjmr/
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "The address your workspace sends and receives email from."
+msgstr "The address your workspace sends and receives email from."
+
+#. js-lingui-id: Z4WP0F
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
+msgstr "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
 
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
@@ -15350,11 +15395,6 @@ msgstr "The email associated to this account"
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "The email associated to your account"
-
-#. js-lingui-id: TQGLgF
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "The external address whose mail is forwarded into the workspace."
-msgstr "The external address whose mail is forwarded into the workspace."
 
 #. js-lingui-id: diO3fm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -16154,6 +16194,7 @@ msgstr "Two-factor authentication setup completed successfully!"
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
+#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationsTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
@@ -16920,6 +16961,11 @@ msgstr "Verify"
 msgid "Verify code from the app"
 msgstr "Verify code from the app"
 
+#. js-lingui-id: hdyekU
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
+msgid "Verify domains so the workspace can send outbound email through them."
+msgstr "Verify domains so the workspace can send outbound email through them."
+
 #. js-lingui-id: zS/rMV
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Verify the code from the app"
@@ -17586,11 +17632,6 @@ msgstr "Workspace upgrade health"
 msgid "Workspace views require manage views permission"
 msgstr "Workspace views require manage views permission"
 
-#. js-lingui-id: 9Bn3vI
-#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
-msgid "Workspace-level shared addresses that receive forwarded mail."
-msgstr "Workspace-level shared addresses that receive forwarded mail."
-
 #. js-lingui-id: pmt7u4
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 msgid "Workspaces"
@@ -17855,11 +17896,6 @@ msgstr "Your enterprise features will be disabled"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "Your enterprise features will remain active until {cancelAtDate}."
-
-#. js-lingui-id: 5TsUUL
-#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
-msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
-msgstr "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

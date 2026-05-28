@@ -10,7 +10,12 @@ export const getStripeClient = (): Stripe => {
       throw new Error('STRIPE_SECRET_KEY is not configured');
     }
 
-    stripeInstance = new Stripe(secretKey, {});
+    // On Cloudflare Workers the Stripe SDK's default Node http transport hangs
+    // on outbound TLS — even with nodejs_compat — and aborts at the SDK's own
+    // 80s timeout. Forcing the fetch-based client uses workerd's native fetch.
+    stripeInstance = new Stripe(secretKey, {
+      httpClient: Stripe.createFetchHttpClient(),
+    });
   }
 
   return stripeInstance;
