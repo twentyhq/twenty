@@ -40,6 +40,7 @@ export default defineField({
 - When defining fields **inline inside `defineObject()`**, you do **not** need `objectUniversalIdentifier` — it's inherited from the parent object.
 - `defineField()` is the only way to add fields to objects you didn't create with `defineObject()`.
 - File location is up to you. The convention is `src/fields/<name>.field.ts`, but the SDK detects fields anywhere in `src/`.
+- To add a tab to a standard page layout (e.g. the Task or Company detail page), use [`definePageLayoutTab`](/developers/extend/apps/layout/page-layouts#definepagelayouttab) with `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` from `twenty-sdk/define`.
 
 ## Adding a relation to an existing object
 

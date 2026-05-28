@@ -9,6 +9,8 @@ import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 
 import { ApprovedAccessDomainEntity } from 'src/engine/core-modules/approved-access-domain/approved-access-domain.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import {
   ApprovedAccessDomainException,
   ApprovedAccessDomainExceptionCode,
@@ -36,8 +38,12 @@ export class ApprovedAccessDomainService {
   private readonly logger = new Logger(ApprovedAccessDomainService.name);
 
   constructor(
+    @InjectWorkspaceScopedRepository(ApprovedAccessDomainEntity)
+    private readonly approvedAccessDomainRepository: WorkspaceScopedRepository<ApprovedAccessDomainEntity>,
+    // Cross-workspace lookups for token validation and SSO discovery.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(ApprovedAccessDomainEntity)
-    private readonly approvedAccessDomainRepository: Repository<ApprovedAccessDomainEntity>,
+    private readonly approvedAccessDomainRepositoryUnscoped: Repository<ApprovedAccessDomainEntity>,
     private readonly emailService: EmailService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly fileUrlService: FileUrlService,
@@ -199,7 +205,7 @@ export class ApprovedAccessDomainService {
     }
 
     const approvedAccessDomain =
-      await this.approvedAccessDomainRepository.findOneBy({
+      await this.approvedAccessDomainRepositoryUnscoped.findOneBy({
         id: approvedAccessDomainId,
       });
 
@@ -225,10 +231,10 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    return await this.approvedAccessDomainRepository.save({
-      ...approvedAccessDomain,
-      isValidated: true,
-    });
+    return this.approvedAccessDomainRepository.save(
+      approvedAccessDomain.workspaceId,
+      { ...approvedAccessDomain, isValidated: true },
+    );
   }
 
   async createApprovedAccessDomain(
@@ -244,12 +250,12 @@ export class ApprovedAccessDomainService {
       );
     }
 
-    if (
-      await this.approvedAccessDomainRepository.findOneBy({
-        domain,
-        workspaceId: inWorkspace.id,
-      })
-    ) {
+    const existing = await this.approvedAccessDomainRepository.findOne(
+      inWorkspace.id,
+      { where: { domain } },
+    );
+
+    if (existing) {
       throw new ApprovedAccessDomainException(
         'Approved access domain already registered.',
         ApprovedAccessDomainExceptionCode.APPROVED_ACCESS_DOMAIN_ALREADY_REGISTERED,
@@ -260,10 +266,8 @@ export class ApprovedAccessDomainService {
     }
 
     const approvedAccessDomain = await this.approvedAccessDomainRepository.save(
-      {
-        workspaceId: inWorkspace.id,
-        domain,
-      },
+      inWorkspace.id,
+      { domain },
     );
 
     await this.sendApprovedAccessDomainValidationEmail(
@@ -281,30 +285,25 @@ export class ApprovedAccessDomainService {
     approvedAccessDomainId: string,
   ) {
     const approvedAccessDomain =
-      await this.approvedAccessDomainRepository.findOneBy({
-        id: approvedAccessDomainId,
-        workspaceId: workspace.id,
+      await this.approvedAccessDomainRepository.findOne(workspace.id, {
+        where: { id: approvedAccessDomainId },
       });
 
     approvedAccessDomainValidator.assertIsDefinedOrThrow(approvedAccessDomain);
 
-    await this.approvedAccessDomainRepository.delete({
+    await this.approvedAccessDomainRepository.delete(workspace.id, {
       id: approvedAccessDomain.id,
     });
   }
 
   async getApprovedAccessDomains(workspace: WorkspaceEntity) {
-    return await this.approvedAccessDomainRepository.find({
-      where: {
-        workspaceId: workspace.id,
-      },
-    });
+    return this.approvedAccessDomainRepository.find(workspace.id);
   }
 
   async findValidatedApprovedAccessDomainWithWorkspacesAndSSOIdentityProvidersDomain(
     domain: string,
   ) {
-    return await this.approvedAccessDomainRepository.find({
+    return this.approvedAccessDomainRepositoryUnscoped.find({
       relations: [
         'workspace',
         'workspace.workspaceSSOIdentityProviders',

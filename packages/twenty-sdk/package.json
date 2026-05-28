@@ -119,6 +119,9 @@
   },
   "typesVersions": {
     "*": {
+      "billing": [
+        "dist/billing/index.d.ts"
+      ],
       "define": [
         "dist/define/index.d.ts"
       ],
