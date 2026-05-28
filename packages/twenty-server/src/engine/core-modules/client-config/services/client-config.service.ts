@@ -117,6 +117,9 @@ export class ClientConfigService {
             defaultPerformanceModel?.providerName,
           ),
           sdkPackage: defaultPerformanceModel?.sdkPackage ?? null,
+          nativeCapabilities: getNativeModelCapabilities(
+            defaultPerformanceModel?.sdkPackage,
+          ),
           inputCostPerMillionTokens:
             defaultPerformanceModelConfig?.inputCostPerMillionTokens,
           outputCostPerMillionTokens:
@@ -135,6 +138,9 @@ export class ClientConfigService {
           providerName: defaultSpeedModel?.providerName,
           providerLabel: getProviderLabel(defaultSpeedModel?.providerName),
           sdkPackage: defaultSpeedModel?.sdkPackage ?? null,
+          nativeCapabilities: getNativeModelCapabilities(
+            defaultSpeedModel?.sdkPackage,
+          ),
           inputCostPerMillionTokens:
             defaultSpeedModelConfig?.inputCostPerMillionTokens,
           outputCostPerMillionTokens:
