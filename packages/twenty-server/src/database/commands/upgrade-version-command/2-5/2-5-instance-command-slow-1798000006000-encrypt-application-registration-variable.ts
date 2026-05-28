@@ -2,6 +2,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -50,9 +51,17 @@ export class EncryptApplicationRegistrationVariableSlowInstanceCommand implement
       }
 
       for (const row of rows) {
-        // SQL `NOT LIKE 'enc:v2:%'` filter above means only legacy CTR
-        // ciphertext (no `enc:` prefix) reaches this branch; the brand cast
-        // is a documented one-off bypass for migration-only legacy data.
+        // Defense in depth: the SQL `NOT LIKE 'enc:v2:%'` filter already
+        // excludes v2-enveloped rows, but a runtime `isEncryptedString`
+        // gate guards against any future filter regression. Inside this
+        // branch the value is guaranteed legacy CTR ciphertext (no envelope
+        // prefix), so the brand cast is a deliberate type-level bypass for
+        // migration-only legacy data — `decryptVersioned` routes internally
+        // to the legacy AES-CTR path when no envelope is present.
+        if (isEncryptedString(row.encryptedValue)) {
+          continue;
+        }
+
         const plaintext = this.secretEncryptionService.decryptVersioned(
           row.encryptedValue as EncryptedString,
         );

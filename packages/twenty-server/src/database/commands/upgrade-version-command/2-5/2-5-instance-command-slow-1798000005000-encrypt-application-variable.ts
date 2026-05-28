@@ -4,6 +4,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -73,15 +74,24 @@ export class EncryptApplicationVariableSlowInstanceCommand implements SlowInstan
           continue;
         }
 
+        // Defensive: the SQL `NOT LIKE 'enc:v2:%'` filter already excludes
+        // v2-enveloped rows. The runtime `isEncryptedString` gate hardens
+        // against any future filter regression so we never accidentally
+        // re-encrypt an already-v2 row.
+        if (isEncryptedString(row.value)) {
+          continue;
+        }
+
         let plaintext: string;
 
         if (looksLikeLegacyCtrCiphertext(row.value)) {
           try {
-            // Legacy CTR ciphertext lacks the `enc:` envelope prefix that
-            // `assertEncryptedStringOrThrow` requires; the upstream
-            // `looksLikeLegacyCtrCiphertext` guard already validates the
-            // shape, so the brand cast here is a documented one-off bypass
-            // for migration-only legacy data.
+            // `isEncryptedString` returned false above and the base64+length
+            // heuristic matches, so this value is legacy AES-CTR ciphertext.
+            // The brand cast is a deliberate type-level bypass for
+            // migration-only legacy data — `decryptVersioned` routes
+            // internally to the legacy AES-CTR path when no envelope is
+            // present.
             plaintext = this.secretEncryptionService.decryptVersioned(
               row.value as EncryptedString,
               { workspaceId: row.workspaceId },

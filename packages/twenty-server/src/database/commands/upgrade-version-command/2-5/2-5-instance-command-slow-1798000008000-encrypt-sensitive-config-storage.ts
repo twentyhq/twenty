@@ -3,7 +3,7 @@ import { DataSource, QueryRunner } from 'typeorm';
 
 import { KeyValuePairType } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
-import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
+import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { type ConfigVariablesMetadataMap } from 'src/engine/core-modules/twenty-config/decorators/config-variables-metadata.decorator';
@@ -52,18 +52,15 @@ export class EncryptSensitiveConfigStorageSlowInstanceCommand implements SlowIns
           continue;
         }
 
-        if (
-          rawValue === '' ||
-          rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
-        ) {
+        if (rawValue === '' || isEncryptedString(rawValue)) {
           continue;
         }
 
-        // Legacy CTR ciphertext lacks the `enc:` envelope prefix that
-        // `assertEncryptedStringOrThrow` requires; the upstream
-        // `startsWith(V2_PREFIX)` filter ensures only legacy CTR values
-        // reach this branch, so the brand cast is a documented one-off
-        // bypass for migration-only legacy data.
+        // The `isEncryptedString` gate above guarantees this value lacks
+        // the `enc:` envelope prefix, i.e. it is legacy AES-CTR ciphertext.
+        // The brand cast is a deliberate type-level bypass for
+        // migration-only legacy data — `decryptVersioned` routes internally
+        // to the legacy AES-CTR path when no envelope is present.
         const plaintext = this.secretEncryptionService.decryptVersioned(
           rawValue as EncryptedString,
         );
