@@ -350,8 +350,10 @@ export class CreateCompanyAndPersonService {
       { existingPerson: PersonWorkspaceEntity }
     >,
   ): { personId: string; name: FullNameMetadata }[] {
-    const peopleToEnrichNames: { personId: string; name: FullNameMetadata }[] =
-      [];
+    const peopleToEnrichNamesByPersonId = new Map<
+      string,
+      { personId: string; name: FullNameMetadata }
+    >();
 
     for (const contact of uniqueContacts) {
       const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
@@ -359,6 +361,14 @@ export class CreateCompanyAndPersonService {
       )?.existingPerson;
 
       if (!isDefined(existingPerson) || !isNull(existingPerson.deletedAt)) {
+        continue;
+      }
+
+      // A single Person can match multiple contacts in the same batch when
+      // its primaryEmail and additionalEmails both appear in the import.
+      // Keep the first enrichment we compute so updateMany doesn't issue
+      // two UPDATEs against the same row with order-dependent winners.
+      if (peopleToEnrichNamesByPersonId.has(existingPerson.id)) {
         continue;
       }
 
@@ -398,7 +408,7 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      peopleToEnrichNames.push({
+      peopleToEnrichNamesByPersonId.set(existingPerson.id, {
         personId: existingPerson.id,
         name: {
           firstName: shouldEnrichFirstName
@@ -409,7 +419,7 @@ export class CreateCompanyAndPersonService {
       });
     }
 
-    return peopleToEnrichNames;
+    return Array.from(peopleToEnrichNamesByPersonId.values());
   }
 
   formatPeopleToCreateFromContacts({

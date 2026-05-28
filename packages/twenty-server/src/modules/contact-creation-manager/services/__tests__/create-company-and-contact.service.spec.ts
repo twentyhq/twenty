@@ -328,6 +328,37 @@ describe('CreateCompanyAndPersonService', () => {
           },
         ]);
       });
+
+      it('should not emit two enrichments when one Person matches both primary and additional emails in the batch', () => {
+        const existingPersonWithMultipleEmails = buildExistingPerson({
+          emails: {
+            primaryEmail: 'felix@twenty.com',
+            additionalEmails: ['felix.personal@example.com'],
+          },
+        });
+
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [
+              { handle: 'felix@twenty.com', displayName: 'Félix Malfait' },
+              {
+                handle: 'felix.personal@example.com',
+                displayName: 'Félix Other',
+              },
+            ],
+            [existingPersonWithMultipleEmails],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
     });
   });
 });
