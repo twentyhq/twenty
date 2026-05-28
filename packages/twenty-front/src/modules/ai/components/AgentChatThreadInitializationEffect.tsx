@@ -73,13 +73,7 @@ export const AgentChatThreadInitializationEffect = () => {
         replaceDraft('agentChatThreads', result.data.chatThreads);
         applyChanges();
       });
-  }, [
-    storeEntry.status,
-    hasAiPermission,
-    client,
-    replaceDraft,
-    applyChanges,
-  ]);
+  }, [storeEntry.status, hasAiPermission, client, replaceDraft, applyChanges]);
 
   useEffect(() => {
     setAgentChatThreadsLoading(
