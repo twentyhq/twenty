@@ -76,7 +76,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   const handleDelete = async () => {
     try {
       await deleteEmailGroupChannel(channel.id);
-      navigateSettings(SettingsPath.Workspace);
+      navigateSettings(SettingsPath.WorkspaceEmail);
     } catch {
       enqueueErrorSnackBar({
         message: t`Failed to delete email handle.`,
@@ -93,8 +93,8 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: t`General`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: t`Email`,
+          href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
         { children: sourceHandle },
       ]}
