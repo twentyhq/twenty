@@ -126,6 +126,45 @@ export class ApplicationRegistrationVariableService {
     return this.variableRepository.findOneOrFail({ where: { id } });
   }
 
+  async updateVariableGlobal(
+    input: UpdateApplicationRegistrationVariableInput,
+  ): Promise<ApplicationRegistrationVariableEntity> {
+    const { id, update } = input;
+
+    const variable = await this.variableRepository.findOne({
+      where: { id },
+    });
+
+    if (!variable) {
+      throw new ApplicationRegistrationException(
+        `Variable with id ${id} not found`,
+        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
+      );
+    }
+
+    const updateData: Record<string, unknown> = {};
+
+    if (isDefined(update.value)) {
+      updateData.encryptedValue = this.encryptionService.encryptVersioned(
+        update.value,
+      );
+    }
+
+    if (isDefined(update.resetValue) && update.resetValue) {
+      updateData.encryptedValue = '';
+    }
+
+    if (isDefined(update.description)) {
+      updateData.description = update.description;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await this.variableRepository.update(id, updateData);
+    }
+
+    return this.variableRepository.findOneOrFail({ where: { id } });
+  }
+
   async deleteVariable(id: string, workspaceId: string): Promise<boolean> {
     const variable = await this.variableRepository.findOne({
       where: { id },
