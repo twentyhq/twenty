@@ -12,6 +12,7 @@ import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/s
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 
 jest.mock('ai', () => ({
   ...jest.requireActual('ai'),
@@ -99,7 +100,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           useValue: roleTargetRepository,
         },
         {
