@@ -1137,6 +1137,105 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  messageCampaign: {
+    universalIdentifier: '2ea0a595-f426-4672-8495-ade5cde19e38',
+    fields: {
+      id: { universalIdentifier: '86410c97-8f91-43cb-a96e-aa709d97efe4' },
+      createdAt: {
+        universalIdentifier: '51bac4fb-7d1b-4b78-9058-d1dfbc40ef3f',
+      },
+      updatedAt: {
+        universalIdentifier: 'b7aad27b-8281-4bc4-83fe-6513964ced43',
+      },
+      deletedAt: {
+        universalIdentifier: '87fa63e1-6d2c-453f-a896-f0403f49bd9c',
+      },
+      name: {
+        universalIdentifier: 'cf6eb1bf-b40d-4bca-82bd-6587b9c64040',
+      },
+      subject: {
+        universalIdentifier: 'a7ade487-de58-4d28-864e-1e5d547d07a6',
+      },
+      bodyTemplate: {
+        universalIdentifier: '09713db2-3233-4902-b553-475a1700e5c1',
+      },
+      fromAddress: {
+        universalIdentifier: '5485a0dd-f666-4bea-8c03-356b2a3a1b47',
+      },
+      replyTo: {
+        universalIdentifier: '0d514e60-1ec9-47c6-83b6-a974874baa10',
+      },
+      status: {
+        universalIdentifier: 'fa72a8b4-d204-4634-a0b0-dffa10d0b2ff',
+      },
+      scheduledAt: {
+        universalIdentifier: '984acbd1-21fc-4387-aebc-8d480724a9bd',
+      },
+      sentAt: {
+        universalIdentifier: '4a1ba5e3-d2c7-4750-b0fe-94e8d9f368ff',
+      },
+      sentCount: {
+        universalIdentifier: 'f44a575f-a4f2-4149-8b96-a474c6c6a3ae',
+      },
+      bouncedCount: {
+        universalIdentifier: '9c04f54d-82e0-42b3-8ecb-ae6752f00b3e',
+      },
+      failedCount: {
+        universalIdentifier: '0ff620aa-702b-4dfd-80c1-f33672dd68b7',
+      },
+      recipientSource: {
+        universalIdentifier: '39f19f8e-d35a-40fb-9004-15076eb4999d',
+      },
+      createdBy: {
+        universalIdentifier: 'ca40d8bf-39cd-48ad-8cd6-0451893aa6d1',
+      },
+      updatedBy: {
+        universalIdentifier: 'd6eb8c1b-4628-4bc5-bfb6-b09a8c5fcb42',
+      },
+      position: {
+        universalIdentifier: 'b0f2088a-8df0-46f7-9f6e-340002c37e3d',
+      },
+      searchVector: {
+        universalIdentifier: 'c255199d-4ac6-40c1-bf85-d7f385befed4',
+      },
+      messages: {
+        universalIdentifier: 'c1ebad47-224b-4f34-b710-7ee78d191780',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: 'a3f37119-6790-4720-a062-3467543a3e37',
+      },
+    },
+    views: {
+      allCampaigns: {
+        universalIdentifier: '2a2a63fc-dccb-4cef-b80d-530a715c0b24',
+        viewFields: {
+          name: {
+            universalIdentifier: '069cb01f-d937-45c0-aaf9-1653918df54e',
+          },
+          status: {
+            universalIdentifier: '9742578f-38a0-4129-a769-3fba98a90a29',
+          },
+          subject: {
+            universalIdentifier: 'cef060d7-bfd2-4bf7-9e42-cbe021375ace',
+          },
+          sentCount: {
+            universalIdentifier: 'a68d4285-7271-4bb2-a76d-ed4b85d3d52b',
+          },
+          bouncedCount: {
+            universalIdentifier: 'e9197ee8-a3b5-4222-a27e-4481c68f3a5f',
+          },
+          sentAt: {
+            universalIdentifier: '080f3510-9e0d-40d6-97c0-17cfbee0c70b',
+          },
+          createdBy: {
+            universalIdentifier: 'f836b7db-3848-44ae-ae77-b7738bcdde31',
+          },
+        },
+      },
+    },
+  },
   message: {
     universalIdentifier: '20202020-3f6b-4425-80ab-e468899ab4b2',
     fields: {
@@ -1178,6 +1277,18 @@ export const STANDARD_OBJECTS = {
       },
       searchVector: {
         universalIdentifier: '529b6008-4a12-4d48-bbc3-26a3f199bafd',
+      },
+      deliveryStatus: {
+        universalIdentifier: 'b626a3f0-fd37-4e2e-b720-cd889fb82c88',
+      },
+      providerMessageId: {
+        universalIdentifier: '15d2c367-6200-4143-996f-4877efe77a6a',
+      },
+      sourceType: {
+        universalIdentifier: 'befa3d30-e27b-4771-9ca0-0bce163a891c',
+      },
+      sourceCampaign: {
+        universalIdentifier: '8bafc415-ae6d-4b91-abde-1b29ee3261df',
       },
     },
     indexes: {

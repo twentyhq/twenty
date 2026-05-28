@@ -57,6 +57,8 @@ import { FinalizeRolePermissionFlagCutoverFastInstanceCommand } from 'src/databa
 import { AddSubFieldNameToIndexFieldMetadataFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798200000000-add-sub-field-name-to-index-field-metadata';
 import { DropFieldMetadataIsUniqueColumnFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-8/2-8-instance-command-fast-1798300000000-drop-field-metadata-is-unique-column';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
+import { AddWorkspaceTransactionalChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799100000000-add-workspace-transactional-channel-type';
+import { AddNotApplicableMessageChannelSyncStageFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799100010000-add-not-applicable-message-channel-sync-stage';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -116,4 +118,6 @@ export const INSTANCE_COMMANDS = [
   AddSubFieldNameToIndexFieldMetadataFastInstanceCommand,
   DropFieldMetadataIsUniqueColumnFastInstanceCommand,
   MigrateAiModelPreferencesSlowInstanceCommand,
+  AddWorkspaceTransactionalChannelTypeFastInstanceCommand,
+  AddNotApplicableMessageChannelSyncStageFastInstanceCommand,
 ];

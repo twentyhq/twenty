@@ -44,6 +44,7 @@ export class EmailAliasManagerService {
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:
       case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.WORKSPACE_TRANSACTIONAL:
       case ConnectedAccountProvider.APP:
         handleAliases = [];
         break;

@@ -31,6 +31,7 @@ const PROVIDERS_ICON_MAPPING = {
     [ConnectedAccountProvider.OIDC]: IconMail,
     [ConnectedAccountProvider.SAML]: IconMail,
     [ConnectedAccountProvider.EMAIL_GROUP]: IconMail,
+    [ConnectedAccountProvider.WORKSPACE_TRANSACTIONAL]: IconMail,
     // App-managed connections aren't email accounts; this case is unreachable
     // for the EMAIL source but the lookup type still requires every provider.
     [ConnectedAccountProvider.APP]: IconMail,

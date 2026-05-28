@@ -5,5 +5,6 @@ export enum ConnectedAccountProvider {
   OIDC = 'oidc',
   SAML = 'saml',
   EMAIL_GROUP = 'email_group',
+  WORKSPACE_TRANSACTIONAL = 'workspace_transactional',
   APP = 'app',
 }

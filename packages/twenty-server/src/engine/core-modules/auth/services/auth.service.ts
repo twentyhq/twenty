@@ -1152,6 +1152,7 @@ export class AuthService {
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
         return [];
       case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.WORKSPACE_TRANSACTIONAL:
       case ConnectedAccountProvider.APP:
         return [];
       default:

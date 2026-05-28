@@ -366,6 +366,36 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  messageCampaign: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'messageCampaign'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'messageCampaign',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.messageCampaign.universalIdentifier,
+        nameSingular: 'messageCampaign',
+        namePlural: 'messageCampaigns',
+        labelSingular: i18nLabel(msg`Campaign`),
+        labelPlural: i18nLabel(msg`Campaigns`),
+        description: i18nLabel(msg`A bulk email campaign sent to many people`),
+        icon: 'IconSend',
+        isSearchable: true,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   note: ({
     now,
     workspaceId,

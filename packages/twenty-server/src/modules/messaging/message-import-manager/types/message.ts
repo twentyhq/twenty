@@ -13,6 +13,12 @@ export type Message = Omit<
   | 'messageThreadId'
   | 'messageFolders'
   | 'id'
+  // Outbound delivery fields aren't meaningful for synced inbound messages
+  | 'deliveryStatus'
+  | 'providerMessageId'
+  | 'sourceType'
+  | 'sourceCampaign'
+  | 'sourceCampaignId'
 > & {
   attachments: {
     filename: string;

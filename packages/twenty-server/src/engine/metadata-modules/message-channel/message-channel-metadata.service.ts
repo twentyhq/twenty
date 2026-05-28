@@ -202,6 +202,59 @@ export class MessageChannelMetadataService {
     return this.repository.findOneOrFail({ where: { id, workspaceId } });
   }
 
+  async findOrCreateWorkspaceTransactionalChannel({
+    workspaceId,
+    userWorkspaceId,
+    handle,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string;
+    handle?: string;
+  }): Promise<MessageChannelDTO> {
+    const existing = await this.repository.findOne({
+      where: {
+        workspaceId,
+        type: MessageChannelType.WORKSPACE_TRANSACTIONAL,
+      },
+    });
+
+    if (existing) {
+      return existing;
+    }
+
+    // Synthetic, workspace-scoped sender channel — the actual from-address is
+    // set per message via EmailingDomainService.sendEmail. We use a stable
+    // placeholder handle so the row is identifiable without claiming a real
+    // mailbox.
+    const effectiveHandle = handle ?? `transactional@${workspaceId}.local`;
+
+    const connectedAccount = await this.connectedAccountMetadataService.create({
+      workspaceId,
+      handle: effectiveHandle,
+      provider: ConnectedAccountProvider.WORKSPACE_TRANSACTIONAL,
+      userWorkspaceId,
+      accessToken: null,
+      refreshToken: null,
+      visibility: 'workspace',
+    });
+
+    return this.create({
+      workspaceId,
+      handle: effectiveHandle,
+      connectedAccountId: connectedAccount.id,
+      type: MessageChannelType.WORKSPACE_TRANSACTIONAL,
+      visibility: MessageChannelVisibility.SHARE_EVERYTHING,
+      syncStage: MessageChannelSyncStage.NOT_APPLICABLE,
+      syncStatus: MessageChannelSyncStatus.NOT_SYNCED,
+      isSyncEnabled: false,
+      isContactAutoCreationEnabled: false,
+      contactAutoCreationPolicy: MessageChannelContactAutoCreationPolicy.NONE,
+      excludeGroupEmails: false,
+      excludeNonProfessionalEmails: false,
+      pendingGroupEmailsAction: MessageChannelPendingGroupEmailsAction.NONE,
+    });
+  }
+
   async createEmailGroupChannel({
     handle,
     userWorkspaceId,

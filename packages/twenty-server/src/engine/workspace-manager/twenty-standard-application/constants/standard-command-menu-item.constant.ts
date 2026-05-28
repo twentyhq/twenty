@@ -965,6 +965,24 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     engineComponentKey: EngineComponentKey.COMPOSE_EMAIL,
     hotKeys: null,
   },
+  sendCampaignToPerson: {
+    universalIdentifier: '9bb9ffc4-d85b-42a1-845f-09978df195a8',
+    label: 'Send Campaign',
+    icon: 'IconSend',
+    isPinned: false,
+    // After composeEmailToPerson so it sits below the per-person Send Email
+    // action in the menu.
+    position: 63.5,
+    shortLabel: 'Send Campaign',
+    availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+    conditionalAvailabilityExpression:
+      'numberOfSelectedRecords >= 1 and permissionFlags.SEND_EMAIL_TOOL',
+    availabilityObjectMetadataUniversalIdentifier:
+      STANDARD_OBJECTS.person.universalIdentifier,
+    frontComponentUniversalIdentifier: null,
+    engineComponentKey: EngineComponentKey.SEND_CAMPAIGN,
+    hotKeys: null,
+  },
   composeEmailToCompany: {
     universalIdentifier: 'a76d3ab8-4c3a-4e5d-8a4a-1f5d6e7f8a90',
     label: 'Send Email',

@@ -29,6 +29,11 @@ const createMockMessage = (
   deletedAt: null,
   createdAt: '2024-03-20T09:00:00Z',
   updatedAt: '2024-03-20T09:00:00Z',
+  deliveryStatus: null,
+  providerMessageId: null,
+  sourceType: null,
+  sourceCampaign: null,
+  sourceCampaignId: null,
 });
 
 describe('ApplyMessagesVisibilityRestrictionsService', () => {
