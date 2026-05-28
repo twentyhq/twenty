@@ -23,6 +23,8 @@ import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extra
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { getImageBufferFromUrl } from 'src/utils/image';
 
 @Injectable()
@@ -33,8 +35,8 @@ export class FileCorePictureService {
     private readonly fileStorageService: FileStorageService,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     private readonly fileUrlService: FileUrlService,
     private readonly secureHttpClientService: SecureHttpClientService,
   ) {}
@@ -175,11 +177,10 @@ export class FileCorePictureService {
     fileId: string;
     workspaceId: string;
   }): Promise<void> {
-    const file = await this.fileRepository.findOneOrFail({
+    const file = await this.fileRepository.findOneOrFail(workspaceId, {
       where: {
         id: fileId,
         path: Like(`${FileFolder.CorePicture}/%`),
-        workspaceId,
       },
     });
 
@@ -287,13 +288,15 @@ export class FileCorePictureService {
     targetApplicationUniversalIdentifier?: string;
     queryRunner?: QueryRunner;
   }): Promise<FileWithSignedUrlDTO> {
-    const sourceFile = await this.fileRepository.findOneOrFail({
-      where: {
-        id: sourceFileId,
-        workspaceId: sourceWorkspaceId,
-        path: Like(`${FileFolder.CorePicture}/%`),
+    const sourceFile = await this.fileRepository.findOneOrFail(
+      sourceWorkspaceId,
+      {
+        where: {
+          id: sourceFileId,
+          path: Like(`${FileFolder.CorePicture}/%`),
+        },
       },
-    });
+    );
 
     const sourceApplicationUniversalIdentifier =
       await this.findCustomApplicationUniversalIdentifier(sourceWorkspaceId);

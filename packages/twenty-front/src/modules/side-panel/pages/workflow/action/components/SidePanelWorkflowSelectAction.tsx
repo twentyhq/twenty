@@ -9,11 +9,9 @@ import { CORE_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constan
 import { FLOW_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/FlowActions';
 import { HUMAN_INPUT_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/HumanInputActions';
 import { RECORD_ACTIONS } from '@/workflow/workflow-steps/workflow-actions/constants/RecordActions';
-import { getActionIconColorOrThrow } from '@/workflow/workflow-steps/workflow-actions/utils/getActionIconColorOrThrow';
+import { ToolMenuItem } from '@/side-panel/pages/workflow/action/components/ToolMenuItem';
 import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconFunction } from 'twenty-ui/display';
-import { MenuItem } from 'twenty-ui/navigation';
 
 export type WorkflowActionSelection = {
   type: WorkflowActionType;
@@ -91,19 +89,12 @@ export const SidePanelWorkflowSelectAction = ({
       {toolFunctions.length > 0 && (
         <>
           <SidePanelWorkflowSelectStepTitle>
-            {t`Applications`}
+            {t`Other`}
           </SidePanelWorkflowSelectStepTitle>
           {toolFunctions.map((fn) => (
-            <MenuItem
+            <ToolMenuItem
               key={fn.id}
-              withIconContainer={true}
-              LeftIcon={() => (
-                <IconFunction
-                  color={getActionIconColorOrThrow('LOGIC_FUNCTION')}
-                  size={16}
-                />
-              )}
-              text={fn.workflowActionTriggerSettings?.label ?? fn.name}
+              logicFunction={fn}
               onClick={() => handleFunctionClick(fn.id)}
             />
           ))}

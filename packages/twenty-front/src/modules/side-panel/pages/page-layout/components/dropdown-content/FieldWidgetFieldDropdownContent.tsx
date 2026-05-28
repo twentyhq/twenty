@@ -80,7 +80,11 @@ export const FieldWidgetFieldDropdownContent = () => {
     const needsDisplayModeSwitch =
       isDefined(selectedField) &&
       isDefined(currentDisplayMode) &&
-      !isDisplayModeValidForFieldType(selectedField.type, currentDisplayMode);
+      !isDisplayModeValidForFieldType(
+        selectedField.type,
+        currentDisplayMode,
+        selectedField.relation?.type,
+      );
 
     updateCurrentWidgetConfig({
       configToUpdate: {

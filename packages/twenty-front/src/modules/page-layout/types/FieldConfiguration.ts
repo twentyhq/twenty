@@ -8,4 +8,5 @@ export type FieldConfiguration = {
   configurationType: WidgetConfigurationType.FIELD;
   fieldMetadataId: string;
   fieldDisplayMode: FieldDisplayMode;
+  viewId?: string;
 };

@@ -1,67 +1,61 @@
 import {
-  BadRequestException,
   Controller,
   HttpCode,
   Post,
   type RawBodyRequest,
   Req,
+  UseFilters,
   UseGuards,
 } from '@nestjs/common';
 
 import { type Request } from 'express';
-import type SnsPayloadValidator from 'sns-payload-validator';
 
-import { MessagingWebhookDispatcherService } from 'src/engine/core-modules/messaging-webhooks/services/messaging-webhook-dispatcher.service';
-import { SnsSignatureVerifierService } from 'src/engine/core-modules/messaging-webhooks/services/sns-signature-verifier.service';
+import { MessagingWebhookApiExceptionFilter } from 'src/engine/core-modules/messaging-webhooks/filters/messaging-webhook-api-exception.filter';
+import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
+import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
+import { SesInboundWebhookRouterService } from 'src/engine/core-modules/messaging-webhooks/services/ses-inbound-webhook-router.service';
+import { SesOutboundWebhookRouterService } from 'src/engine/core-modules/messaging-webhooks/services/ses-outbound-webhook-router.service';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
-
-type SnsPayload = SnsPayloadValidator.SnsPayload;
+import { isDefined } from 'twenty-shared/utils';
 
 @Controller()
+@UseFilters(MessagingWebhookApiExceptionFilter)
 export class MessagingWebhooksController {
   constructor(
-    private readonly snsSignatureVerifierService: SnsSignatureVerifierService,
-    private readonly messagingWebhookDispatcherService: MessagingWebhookDispatcherService,
+    private readonly sesInboundWebhookRouterService: SesInboundWebhookRouterService,
+    private readonly sesOutboundWebhookRouterService: SesOutboundWebhookRouterService,
   ) {}
 
-  @Post(['webhooks/messaging/ses'])
+  @Post(['webhooks/messaging/ses/inbound'])
   @UseGuards(PublicEndpointGuard, NoPermissionGuard)
   @HttpCode(200)
-  async handleSesWebhook(
+  async handleSesInboundWebhook(
     @Req() request: RawBodyRequest<Request>,
   ): Promise<void> {
-    if (!request.rawBody) {
-      throw new BadRequestException('Missing SNS payload');
-    }
-
-    const payload = this.parseSnsPayload(request.rawBody);
-
-    await this.snsSignatureVerifierService.assertAllowedAndSigned(payload);
-
-    if (
-      payload.Type === 'SubscriptionConfirmation' ||
-      payload.Type === 'UnsubscribeConfirmation'
-    ) {
-      await this.messagingWebhookDispatcherService.confirmSnsSubscription(
-        payload.SubscribeURL,
-      );
-
-      return;
-    }
-
-    if (payload.Type === 'Notification') {
-      await this.messagingWebhookDispatcherService.dispatchSnsNotification(
-        payload,
+    if (!isDefined(request.rawBody)) {
+      throw new MessagingWebhookException(
+        'Missing SNS payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
       );
     }
+
+    await this.sesInboundWebhookRouterService.route(request.rawBody);
   }
 
-  private parseSnsPayload(rawBody: Buffer): SnsPayload {
-    try {
-      return JSON.parse(rawBody.toString('utf8')) as SnsPayload;
-    } catch {
-      throw new BadRequestException('Invalid SNS payload');
+  @Post(['webhooks/messaging/ses/outbound'])
+  @UseGuards(PublicEndpointGuard, NoPermissionGuard)
+  @HttpCode(200)
+  async handleSesOutboundWebhook(
+    @Req() request: RawBodyRequest<Request>,
+  ): Promise<void> {
+    if (!isDefined(request.rawBody)) {
+      throw new MessagingWebhookException(
+        'Missing SNS payload',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_MISSING_REQUEST_BODY,
+      );
     }
+
+    await this.sesOutboundWebhookRouterService.route(request.rawBody);
   }
 }

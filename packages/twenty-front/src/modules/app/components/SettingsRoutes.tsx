@@ -128,6 +128,12 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsWorkspaceEmail = lazy(() =>
+  import('~/pages/settings/SettingsWorkspaceEmail').then((module) => ({
+    default: module.SettingsWorkspaceEmail,
+  })),
+);
+
 const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
   import('~/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail').then(
     (module) => ({
@@ -636,6 +642,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route
+          path={SettingsPath.WorkspaceEmail}
+          element={<SettingsWorkspaceEmail />}
+        />
         <Route
           path={SettingsPath.NewEmailGroupChannel}
           element={<SettingsNewEmailGroupChannel />}

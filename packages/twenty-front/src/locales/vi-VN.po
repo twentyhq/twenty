@@ -210,6 +210,12 @@ msgstr ""
 msgid "{0} widgets"
 msgstr ""
 
+#. js-lingui-id: 2UKfhY
+#. placeholder {0}: selectedItemNames.length
+#: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
+msgid "{0} workspace members"
+msgstr ""
+
 #. js-lingui-id: xTgz1F
 #. placeholder {1}: provider.displayName
 #: src/pages/settings/applications/tabs/SettingsApplicationConnectionsSection.tsx
@@ -537,6 +543,11 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "{visibleFieldsCount} shown"
 msgstr "{visibleFieldsCount} được hiển thị"
+
+#. js-lingui-id: WjjsAL
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+msgid "{visibleFieldsCount} visible fields"
+msgstr ""
 
 #. js-lingui-id: riMLMq
 #: src/modules/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher.tsx
@@ -916,7 +927,6 @@ msgstr "Các hành động người dùng có thể thực hiện trên đối t
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
-#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
 msgid "Activate"
 msgstr "Kích hoạt"
 
@@ -1051,16 +1061,15 @@ msgstr "Thêm hướng dẫn tùy chỉnh dành riêng cho không gian làm vi�
 msgid "Add Custom Provider"
 msgstr "Thêm nhà cung cấp tùy chỉnh"
 
-#. js-lingui-id: 33pO0a
+#. js-lingui-id: +Gf1IN
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
-msgid "Add email group"
+msgid "Add email handle"
 msgstr ""
 
-#. js-lingui-id: 3O3+7h
-#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
-#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
-msgid "Add Emailing Domain"
-msgstr "Thêm tên miền gửi Email"
+#. js-lingui-id: HMM0Sc
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
+msgid "Add emailing domain"
+msgstr ""
 
 #. js-lingui-id: DpV70M
 #: src/modules/workflow/workflow-steps/workflow-actions/form-action/components/WorkflowEditActionFormBuilder.tsx
@@ -1327,7 +1336,6 @@ msgid "Added {beautifiedCreatedAt}"
 msgstr "Đã thêm vào {beautifiedCreatedAt}"
 
 #. js-lingui-id: jEHeq+
-#: src/pages/settings/emailing-domains/SettingsEmailingDomains.tsx
 #: src/modules/settings/security/components/approvedAccessDomains/SettingsApprovedAccessDomainsListCard.tsx
 msgid "Added {beautifyPastDateRelative}"
 msgstr "Đã thêm vào {beautifyPastDateRelative}"
@@ -2204,7 +2212,6 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
-#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Applications"
 msgstr "Ứng dụng"
@@ -2236,7 +2243,6 @@ msgid "Approved Domains"
 msgstr "Miền Đã Được Phê Duyệt"
 
 #. js-lingui-id: VDvaN2
-#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/domains/components/SettingPublicDomain.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
@@ -2273,9 +2279,15 @@ msgstr "Tệp lưu trữ không thể xem trước. Vui lòng tải tệp xuốn
 msgid "Archived"
 msgstr ""
 
-#. js-lingui-id: mk25CW
+#. js-lingui-id: Yzbh3i
+#. placeholder {0}: emailingDomain.domain
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+msgid "Are you sure you want to delete {0}? Outbound mail through this domain will stop working."
+msgstr ""
+
+#. js-lingui-id: Faev6R
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "Are you sure you want to delete {sourceHandle}? Forwarded emails will no longer arrive in this workspace."
+msgid "Are you sure you want to delete {sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working."
 msgstr ""
 
 #. js-lingui-id: 4CHeVx
@@ -3739,11 +3751,6 @@ msgstr "Cấu hình kết nối SSO"
 msgid "Configure and customize your calendar preferences."
 msgstr "Cấu hình và tùy chỉnh các tùy chọn lịch của bạn."
 
-#. js-lingui-id: 5i71HM
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
-msgid "Configure and verify domains for emailing from this workspace."
-msgstr "Cấu hình và xác minh tên miền để gửi email từ không gian làm việc này."
-
 #. js-lingui-id: 6MDr1S
 #: src/modules/settings/accounts/components/SettingsAccountsConnectionForm.tsx
 msgid "Configure CalDAV settings to sync your calendar events."
@@ -5110,6 +5117,8 @@ msgstr "xóa"
 #. js-lingui-id: cnGeoo
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5131,7 +5140,6 @@ msgstr "xóa"
 #: src/modules/side-panel/pages/page-layout/components/CanvasTabSettingsContent.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/logic-functions/components/tabs/SettingsLogicFunctionTabEnvironmentVariableTableRow.tsx
-#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
 #: src/modules/settings/domains/components/SettingPublicDomainRowDropdownMenu.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
@@ -5215,9 +5223,14 @@ msgstr "Xóa ứng dụng"
 msgid "Delete chat"
 msgstr ""
 
-#. js-lingui-id: /BTna7
+#. js-lingui-id: cC09EO
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "Delete email group"
+msgid "Delete email handle"
+msgstr ""
+
+#. js-lingui-id: yZyuut
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+msgid "Delete emailing domain"
 msgstr ""
 
 #. js-lingui-id: gf2eXy
@@ -5558,6 +5571,7 @@ msgstr "Không chứa"
 #. js-lingui-id: EoKe5U
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 msgid "Domain"
 msgstr "Tên miền"
 
@@ -5924,9 +5938,14 @@ msgid "else if"
 msgstr "nếu không thì nếu"
 
 #. js-lingui-id: O3oNi5
+#: src/pages/settings/SettingsWorkspaceEmail.tsx
+#: src/pages/settings/SettingsWorkspaceEmail.tsx
 #: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
+#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -5935,7 +5954,9 @@ msgstr "nếu không thì nếu"
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTableHeader.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminGeneral.tsx
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/object-record/record-field/ui/meta-types/input/components/EmailsFieldInput.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpEmailField.tsx
 msgid "Email"
@@ -5964,9 +5985,9 @@ msgstr "Đã sao chép email vào bảng tạm"
 msgid "Email Editor"
 msgstr "Trình chỉnh sửa Email"
 
-#. js-lingui-id: KQM9eG
+#. js-lingui-id: nsVRM/
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
-msgid "Email Groups"
+msgid "Email Handles"
 msgstr ""
 
 #. js-lingui-id: lfQsvW
@@ -6036,14 +6057,12 @@ msgid "Emailing domain created successfully. Please verify the domain to start u
 msgstr "Tên miền email được tạo thành công. Vui lòng xác minh tên miền để bắt đầu sử dụng."
 
 #. js-lingui-id: XDpopO
-#: src/modules/settings/emailing-domains/components/SettingsEmailingDomainRowDropdownMenu.tsx
+#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 msgid "Emailing domain deleted successfully"
 msgstr "Tên miền email đã được xóa thành công"
 
 #. js-lingui-id: axQccV
-#: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
-#: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
-#: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 msgid "Emailing Domains"
 msgstr "Tên miền Email"
 
@@ -6364,11 +6383,6 @@ msgstr ""
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
 msgid "Enter the credentials to set the connection"
 msgstr "Nhập thông tin xác thực để thiết lập kết nối"
-
-#. js-lingui-id: PTGfBH
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Enter the email address you want to forward emails from (e.g. support@mycompany.com)."
-msgstr ""
 
 #. js-lingui-id: rGWgcm
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
@@ -6976,9 +6990,9 @@ msgstr "Thêm mô hình thất bại"
 msgid "Failed to add provider"
 msgstr "Thêm nhà cung cấp thất bại"
 
-#. js-lingui-id: d+6i8z
+#. js-lingui-id: L9UnOU
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "Failed to create email group channel. Email group may not be configured on this server."
+msgid "Failed to create email handle. Email handles may not be configured on this server."
 msgstr ""
 
 #. js-lingui-id: WM7GKt
@@ -6986,9 +7000,9 @@ msgstr ""
 msgid "Failed to create tool"
 msgstr "Tạo công cụ thất bại"
 
-#. js-lingui-id: W4hzLB
+#. js-lingui-id: lWoewm
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "Failed to delete email group channel."
+msgid "Failed to delete email handle."
 msgstr ""
 
 #. js-lingui-id: pUligB
@@ -7314,7 +7328,9 @@ msgstr "trường"
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
+#: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/SidePanelPageLayoutRecordPageWidgetTypeSelect.tsx
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionFieldSelectFieldMenu.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
@@ -7712,7 +7728,6 @@ msgstr "Biểu đồ đo lường"
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -7720,7 +7735,6 @@ msgstr "Biểu đồ đo lường"
 #: src/modules/settings/domains/components/SettingsSubdomain.tsx
 #: src/modules/settings/domains/components/SettingsCustomDomain.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/page-layout/widgets/fields/hooks/useFieldsWidgetGroupsForDisplay.ts
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
 msgid "General"
@@ -9799,6 +9813,8 @@ msgstr "Máy chủ MCP"
 #. js-lingui-id: upbzgm
 #: src/modules/views/hooks/useComputeRecordRelationFilterLabelValue.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelPermissionValueInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInput.tsx
 msgid "Me"
 msgstr "Tôi"
 
@@ -10370,10 +10386,10 @@ msgstr "Cuộc trò chuyện mới"
 msgid "New Email"
 msgstr ""
 
-#. js-lingui-id: TmlJkc
+#. js-lingui-id: VJZNJt
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
 #: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
-msgid "New Email Group"
+msgid "New Email Handle"
 msgstr ""
 
 #. js-lingui-id: wqoYqp
@@ -11711,6 +11727,7 @@ msgstr "Sắp xếp"
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
+#: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
@@ -13861,6 +13878,7 @@ msgstr ""
 #. js-lingui-id: rG3WVm
 #: src/modules/spreadsheet-import/steps/components/ValidationStep/components/columns.tsx
 #: src/modules/spreadsheet-import/steps/components/SelectHeaderStep/components/SelectColumn.tsx
+#: src/modules/object-record/record-field/ui/form-types/components/FormWorkspaceMemberFilterValueInputTrigger.tsx
 #: src/modules/object-record/record-field/ui/form-types/components/FormSingleRecordFieldChip.tsx
 msgid "Select"
 msgstr "Chọn"
@@ -14283,6 +14301,11 @@ msgstr ""
 #. js-lingui-id: gaJRur
 #: src/pages/settings/applications/tabs/SettingsApplicationRegistrationDistributionTab.tsx
 msgid "Share your app to other workspaces without pushing it on the marketplace"
+msgstr ""
+
+#. js-lingui-id: 9ZxCpH
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
+msgid "Shared addresses your workspace uses to send and receive email."
 msgstr ""
 
 #. js-lingui-id: NyIsOu
@@ -14756,6 +14779,7 @@ msgstr "Trạng thái"
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminInstanceStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/signing-keys/components/SettingsAdminSigningKeysTable.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminWorkspaceContent.tsx
@@ -15158,6 +15182,8 @@ msgstr "Cài đặt Tab"
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/modules/views/view-picker/constants/ViewPickerTypeSelectOptions.ts
+#: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
+#: src/modules/side-panel/pages/page-layout/components/dropdown-content/FieldWidgetLayoutDropdownContent.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/keyboard-shortcut-menu/components/KeyboardShortcutMenuOpenContent.tsx
@@ -15249,6 +15275,16 @@ msgstr "Đã sao chép văn bản vào bảng tạm"
 msgid "Text Editor"
 msgstr "Trình chỉnh sửa văn bản"
 
+#. js-lingui-id: KJjmr/
+#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+msgid "The address your workspace sends and receives email from."
+msgstr ""
+
+#. js-lingui-id: Z4WP0F
+#: src/modules/settings/accounts/components/SettingsAccountsNewEmailGroupChannel.tsx
+msgid "The address your workspace will send and receive email from (e.g. support@mycompany.com). Outbound sending requires the domain to be verified in Outbound Domains."
+msgstr ""
+
 #. js-lingui-id: oVH0Mt
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 msgid "The API endpoint for your OpenAI-compatible provider"
@@ -15323,11 +15359,6 @@ msgstr ""
 #: src/pages/settings/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr "Email liên kết với tài khoản của bạn"
-
-#. js-lingui-id: TQGLgF
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-msgid "The external address whose mail is forwarded into the workspace."
-msgstr ""
 
 #. js-lingui-id: diO3fm
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerManual.tsx
@@ -16892,6 +16923,11 @@ msgstr "Xác minh"
 msgid "Verify code from the app"
 msgstr "Xác minh mã từ ứng dụng"
 
+#. js-lingui-id: hdyekU
+#: src/modules/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection.tsx
+msgid "Verify domains so the workspace can send outbound email through them."
+msgstr ""
+
 #. js-lingui-id: zS/rMV
 #: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Verify the code from the app"
@@ -17405,6 +17441,7 @@ msgid "Workflows"
 msgstr "Quy Trình Làm Việc"
 
 #. js-lingui-id: pmUArF
+#: src/pages/settings/SettingsWorkspaceEmail.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsUsageUserDetail.tsx
 #: src/pages/settings/SettingsUsage.tsx
@@ -17557,11 +17594,6 @@ msgstr ""
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownVisibilityContent.tsx
 msgid "Workspace views require manage views permission"
 msgstr "Chế độ xem không gian làm việc yêu cầu quyền quản lý chế độ xem"
-
-#. js-lingui-id: 9Bn3vI
-#: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
-msgid "Workspace-level shared addresses that receive forwarded mail."
-msgstr ""
 
 #. js-lingui-id: pmt7u4
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
@@ -17823,11 +17855,6 @@ msgstr "Các tính năng Enterprise của bạn sẽ bị vô hiệu hóa"
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 msgid "Your enterprise features will remain active until {cancelAtDate}."
 msgstr "Các tính năng Enterprise của bạn sẽ vẫn hoạt động đến {cancelAtDate}."
-
-#. js-lingui-id: 5TsUUL
-#: src/modules/information-banner/components/enterprise/InformationBannerInvalidEnterpriseKey.tsx
-msgid "Your enterprise key is no longer valid. Activate a new key to continue using enterprise features."
-msgstr ""
 
 #. js-lingui-id: NTpA4U
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx

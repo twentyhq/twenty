@@ -85,6 +85,10 @@ export { definePageLayout } from '@/sdk/define/page-layouts/define-page-layout';
 export { definePageLayoutTab } from '@/sdk/define/page-layouts/define-page-layout-tab';
 export type { PageLayoutConfig } from '@/sdk/define/page-layouts/page-layout-config';
 export type { PageLayoutTabConfig } from '@/sdk/define/page-layouts/page-layout-tab-config';
+export {
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS as STANDARD_PAGE_LAYOUT,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
+} from '@/sdk/define/page-layouts/standard-page-layout-ids';
 export type {
   PageLayoutManifest,
   PageLayoutTabManifest,
