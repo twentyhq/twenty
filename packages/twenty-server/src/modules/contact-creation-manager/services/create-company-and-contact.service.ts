@@ -373,6 +373,15 @@ export class CreateCompanyAndPersonService {
 
       const existingFirstName = existingPerson.name?.firstName ?? '';
       const existingLastName = existingPerson.name?.lastName ?? '';
+      const existingFirstNameIsEmpty = !isNonEmptyString(existingFirstName);
+      const existingLastNameIsEmpty = !isNonEmptyString(existingLastName);
+
+      // Skip the parser when the existing record is already fully populated.
+      // This is the dominant steady-state case for the auto-creation cron — the
+      // first pass enriches missing fields, subsequent passes have nothing to do.
+      if (!existingFirstNameIsEmpty && !existingLastNameIsEmpty) {
+        continue;
+      }
 
       const { firstName: parsedFirstName, lastName: parsedLastName } =
         getFirstNameAndLastNameFromHandleAndDisplayName(
@@ -381,10 +390,9 @@ export class CreateCompanyAndPersonService {
         );
 
       const shouldEnrichFirstName =
-        !isNonEmptyString(existingFirstName) &&
-        isNonEmptyString(parsedFirstName);
+        existingFirstNameIsEmpty && isNonEmptyString(parsedFirstName);
       const shouldEnrichLastName =
-        !isNonEmptyString(existingLastName) && isNonEmptyString(parsedLastName);
+        existingLastNameIsEmpty && isNonEmptyString(parsedLastName);
 
       if (!shouldEnrichFirstName && !shouldEnrichLastName) {
         continue;
