@@ -6,7 +6,8 @@ import chunk from 'lodash.chunk';
 import compact from 'lodash.compact';
 import {
   ConnectedAccountProvider,
-  type FieldActorSource,
+  FieldActorSource,
+  type FullNameMetadata,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type DeepPartial, type Repository } from 'typeorm';
@@ -112,6 +113,7 @@ export class CreateCompanyAndPersonService {
         const {
           contactsThatNeedPersonCreate,
           contactsThatNeedPersonRestore,
+          peopleToEnrichNames,
           workDomainNamesToCreate,
           shouldCreateOrRestorePeopleByHandleMap,
         } =
@@ -154,6 +156,11 @@ export class CreateCompanyAndPersonService {
 
         const restoredPeople = await this.createPersonService.restorePeople(
           peopleToRestore,
+          workspaceId,
+        );
+
+        await this.createPersonService.enrichPeopleNames(
+          peopleToEnrichNames,
           workspaceId,
         );
 
@@ -296,6 +303,11 @@ export class CreateCompanyAndPersonService {
       return !isNull(existingPerson.deletedAt);
     });
 
+    const peopleToEnrichNames = this.computePeopleToEnrichNames(
+      uniqueContacts,
+      shouldCreateOrRestorePeopleByHandleMap,
+    );
+
     const workDomainNamesToCreate = compact(
       [...contactsThatNeedPersonCreate, ...contactsThatNeedPersonRestore]
         .map((contact) => {
@@ -321,9 +333,75 @@ export class CreateCompanyAndPersonService {
     return {
       contactsThatNeedPersonCreate,
       contactsThatNeedPersonRestore,
+      peopleToEnrichNames,
       workDomainNamesToCreate,
       shouldCreateOrRestorePeopleByHandleMap,
     };
+  }
+
+  // Only enrich names on contacts that the auto-creation pipeline itself
+  // created (CALENDAR or EMAIL). Manually created, imported, API-created and
+  // other curated sources stay untouched. We only fill in fields that are
+  // currently empty — never overwrite existing data.
+  private computePeopleToEnrichNames(
+    uniqueContacts: Contact[],
+    shouldCreateOrRestorePeopleByHandleMap: Map<
+      string,
+      { existingPerson: PersonWorkspaceEntity }
+    >,
+  ): { personId: string; name: FullNameMetadata }[] {
+    const peopleToEnrichNames: { personId: string; name: FullNameMetadata }[] =
+      [];
+
+    for (const contact of uniqueContacts) {
+      const existingPerson = shouldCreateOrRestorePeopleByHandleMap.get(
+        contact.handle.toLowerCase(),
+      )?.existingPerson;
+
+      if (!isDefined(existingPerson) || !isNull(existingPerson.deletedAt)) {
+        continue;
+      }
+
+      const existingSource = existingPerson.createdBy?.source;
+
+      if (
+        existingSource !== FieldActorSource.CALENDAR &&
+        existingSource !== FieldActorSource.EMAIL
+      ) {
+        continue;
+      }
+
+      const existingFirstName = existingPerson.name?.firstName ?? '';
+      const existingLastName = existingPerson.name?.lastName ?? '';
+
+      const { firstName: parsedFirstName, lastName: parsedLastName } =
+        getFirstNameAndLastNameFromHandleAndDisplayName(
+          contact.handle,
+          contact.displayName,
+        );
+
+      const shouldEnrichFirstName =
+        !isNonEmptyString(existingFirstName) &&
+        isNonEmptyString(parsedFirstName);
+      const shouldEnrichLastName =
+        !isNonEmptyString(existingLastName) && isNonEmptyString(parsedLastName);
+
+      if (!shouldEnrichFirstName && !shouldEnrichLastName) {
+        continue;
+      }
+
+      peopleToEnrichNames.push({
+        personId: existingPerson.id,
+        name: {
+          firstName: shouldEnrichFirstName
+            ? parsedFirstName
+            : existingFirstName,
+          lastName: shouldEnrichLastName ? parsedLastName : existingLastName,
+        },
+      });
+    }
+
+    return peopleToEnrichNames;
   }
 
   formatPeopleToCreateFromContacts({
