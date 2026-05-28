@@ -21,14 +21,14 @@ Turn a qualified lead's materials into a **design doc**: a translation of the cu
 1. **Gather** — read all source materials in full. Coverage is the point.
 2. **Extract needs, grounded** — facts vs inferences (`(inf.)`); never invent. Per the doctrine.
 3. **Draft** the doc in the doctrine's 12-section structure, applying every rule in the doctrine.
-4. **Verify load-bearing claims live** — use **WebFetch** against the Twenty doc map in the doctrine's Verification section before asserting any capability. Build the §12 appendix as you go.
+4. **Verify load-bearing claims live** — use **WebFetch** against the Twenty doc map in the doctrine's Verification section before asserting any capability. Build the §11 appendix as you go.
 5. **Reconcile discrepancies** — sources that disagree (call vs braindump; a name differing across/within sources) get flagged both ways, never silently resolved.
-6. **Resolve ❓ with the operator** — after a full v1 draft, use **AskUserQuestion** to ask the Twenty team member the unknowns a Twenty insider can answer; leave customer-facing unknowns as ❓. **If running autonomously** (no operator — a subagent/batch run), skip the questions and leave every unknown as ❓ in the body and §12.
-7. **Self-check, then save** — scan for a bare `~`, first-person voice outside customer quotes, local file paths, and any capability claim stated as fact without a §12 source. Fix, then save to the lead folder as `YYYY-MM-DD-<lead>-design-doc.md`.
+6. **Resolve ❓ with the operator** — after a full v1 draft, use **AskUserQuestion** to ask the Twenty team member the unknowns a Twenty insider can answer; leave customer-facing unknowns as ❓. **If running autonomously** (no operator — a subagent/batch run), skip the questions and leave every unknown as ❓ in the body and §11.
+7. **Self-check, then save** — scan the output for: an em dash, a bare `~`, first-person voice outside customer quotes, local file paths, a header that isn't the four-field table, a point repeated across sections instead of a §N cross-reference, a leftover glossary / domain-language section, runtime/env-var mechanics that belong in the technical phase, and any capability claim stated as fact without a §11 source. Fix, then save to the lead folder as `YYYY-MM-DD-<lead>-design-doc.md`.
 
 ## Worked example
 
-Gold standard: `partners-experience/TSF/2026-05-26-tsf-design-doc.md`. Match its depth, flag discipline, and §12 verification appendix.
+Reference: `partners-experience/TSF/2026-05-26-tsf-design-doc.md` shows the target **coverage, flag discipline, and §11 verification appendix**. It predates the current concision / table-header / no-glossary / no-em-dash rules, so where its formatting differs, **follow this doctrine over the example.**
 
 ## Notes
 
