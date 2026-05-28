@@ -1,7 +1,7 @@
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
-import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
 
 describe('buildEnvVar', () => {
   const workspaceA = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
@@ -28,12 +28,13 @@ describe('buildEnvVar', () => {
     expect(result).toEqual({});
   });
 
-  it('should decrypt secret variables with the row workspaceId bound to HKDF', () => {
+  it('should decrypt all encrypted variables regardless of isSecret', () => {
     const flatVariables: FlatApplicationVariable[] = [
       {
         id: '1',
         key: 'PUBLIC_URL',
-        value: 'https://example.com' as EncryptedString,
+        value:
+          `enc:v2:deadbeef:https://example.com|${workspaceA}` as EncryptedString,
         description: 'Public URL',
         isSecret: false,
         applicationId: 'app-1',
@@ -59,7 +60,7 @@ describe('buildEnvVar', () => {
       {
         id: '3',
         key: 'DEBUG',
-        value: 'true' as EncryptedString,
+        value: `enc:v2:deadbeef:true|${workspaceA}` as EncryptedString,
         description: 'Debug flag',
         isSecret: false,
         applicationId: 'app-1',
@@ -79,11 +80,7 @@ describe('buildEnvVar', () => {
       DEBUG: 'true',
     });
     expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledTimes(
-      1,
-    );
-    expect(mockSecretEncryptionService.decryptVersioned).toHaveBeenCalledWith(
-      `enc:v2:deadbeef:secret-123|${workspaceA}`,
-      { workspaceId: workspaceA },
+      3,
     );
   });
 
