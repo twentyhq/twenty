@@ -5,7 +5,6 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { AppOAuthRefreshAccessTokenService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-refresh-tokens.service';
-import { coercePlaintextFromOAuthProviderResponse } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-oauth-provider-response.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -16,6 +15,7 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
+import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
 
 const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
@@ -33,9 +33,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
   const mockWorkspaceId = 'workspace-123';
   const mockConnectedAccountId = 'account-456';
 
-  const mockAccessTokenPlaintext = 'valid-access-token';
-  const mockRefreshTokenPlaintext = 'valid-refresh-token';
-  const mockNewAccessTokenPlaintext = 'new-access-token';
+  const mockAccessTokenPlaintext = 'valid-access-token' as PlaintextString;
+  const mockRefreshTokenPlaintext = 'valid-refresh-token' as PlaintextString;
+  const mockNewAccessTokenPlaintext = 'new-access-token' as PlaintextString;
 
   const mockEncryptedAccessToken = `${FAKE_CIPHER_PREFIX}CIPHER(${mockAccessTokenPlaintext})`;
   const mockEncryptedRefreshToken = `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`;
@@ -177,12 +177,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountEntity;
 
       const newPlaintextTokens = {
-        accessToken: coercePlaintextFromOAuthProviderResponse(
-          mockNewAccessTokenPlaintext,
-        ),
-        refreshToken: coercePlaintextFromOAuthProviderResponse(
-          mockRefreshTokenPlaintext,
-        ),
+        accessToken: mockNewAccessTokenPlaintext,
+        refreshToken: mockRefreshTokenPlaintext,
       };
 
       jest
@@ -224,12 +220,8 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountEntity;
 
       const newPlaintextTokens = {
-        accessToken: coercePlaintextFromOAuthProviderResponse(
-          mockNewAccessTokenPlaintext,
-        ),
-        refreshToken: coercePlaintextFromOAuthProviderResponse(
-          mockRefreshTokenPlaintext,
-        ),
+        accessToken: mockNewAccessTokenPlaintext,
+        refreshToken: mockRefreshTokenPlaintext,
       };
 
       jest
@@ -271,12 +263,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
       } as ConnectedAccountEntity;
 
       const newPlaintextTokens = {
-        accessToken: coercePlaintextFromOAuthProviderResponse(
-          mockNewAccessTokenPlaintext,
-        ),
-        refreshToken: coercePlaintextFromOAuthProviderResponse(
-          mockRefreshTokenPlaintext,
-        ),
+        accessToken: mockNewAccessTokenPlaintext,
+
+        refreshToken: mockRefreshTokenPlaintext,
       };
 
       jest

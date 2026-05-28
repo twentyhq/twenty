@@ -3,15 +3,14 @@ import { Injectable } from '@nestjs/common';
 import { google } from 'googleapis';
 import { isDefined } from 'twenty-shared/utils';
 
-import { coercePlaintextFromOAuthProviderResponse } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-oauth-provider-response.util';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
-import { type ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 import { parseGoogleOAuthError } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/utils/parse-google-oauth-error.util';
+import { type ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 @Injectable()
 export class GoogleAPIRefreshAccessTokenService {
@@ -39,7 +38,7 @@ export class GoogleAPIRefreshAccessTokenService {
       }
 
       return {
-        accessToken: coercePlaintextFromOAuthProviderResponse(token),
+        accessToken: token as PlaintextString,
         refreshToken,
       };
     } catch (error) {

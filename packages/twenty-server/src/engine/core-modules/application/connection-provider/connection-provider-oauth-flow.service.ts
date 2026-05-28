@@ -24,7 +24,6 @@ import {
   JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
-import { coercePlaintextFromOAuthProviderResponse } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-oauth-provider-response.util';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
@@ -247,11 +246,9 @@ export class ConnectionProviderOAuthFlowService {
   }): Promise<ConnectedAccountEntity> {
     const { encryptedAccessToken, encryptedRefreshToken } =
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
-        accessToken: coercePlaintextFromOAuthProviderResponse(
-          tokenResponse.accessToken,
-        ),
+        accessToken: tokenResponse.accessToken,
         refreshToken: isDefined(tokenResponse.refreshToken)
-          ? coercePlaintextFromOAuthProviderResponse(tokenResponse.refreshToken)
+          ? tokenResponse.refreshToken
           : null,
         workspaceId,
       });
