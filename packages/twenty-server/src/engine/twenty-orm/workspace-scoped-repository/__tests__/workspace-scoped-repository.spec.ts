@@ -15,11 +15,21 @@ const createMockRepository = (): jest.Mocked<Repository<FakeEntity>> =>
   ({
     findOne: jest.fn().mockResolvedValue(null),
     findOneOrFail: jest.fn(),
+    findOneBy: jest.fn().mockResolvedValue(null),
     find: jest.fn().mockResolvedValue([]),
     count: jest.fn().mockResolvedValue(0),
+    findAndCount: jest.fn().mockResolvedValue([[], 0]),
+    exists: jest.fn().mockResolvedValue(false),
+    existsBy: jest.fn().mockResolvedValue(false),
+    maximum: jest.fn().mockResolvedValue(null),
     update: jest.fn(),
+    increment: jest.fn(),
+    decrement: jest.fn(),
     delete: jest.fn(),
     softDelete: jest.fn(),
+    softRemove: jest.fn(),
+    recover: jest.fn(),
+    remove: jest.fn(),
     insert: jest.fn(),
     upsert: jest.fn(),
     save: jest.fn(),
@@ -45,15 +55,25 @@ describe('WorkspaceScopedRepository', () => {
         'findOneOrFail',
         () => scoped.findOneOrFail(undefined as never, { where: {} }),
       ],
+      ['findOneBy', () => scoped.findOneBy(undefined as never, {})],
       ['find', () => scoped.find(undefined as never)],
       ['count', () => scoped.count(undefined as never)],
+      ['findAndCount', () => scoped.findAndCount(undefined as never)],
+      ['exists', () => scoped.exists(undefined as never)],
+      ['existsBy', () => scoped.existsBy(undefined as never, {})],
       ['update', () => scoped.update(undefined as never, {}, {})],
+      ['increment', () => scoped.increment(undefined as never, {}, 'count', 1)],
+      ['decrement', () => scoped.decrement(undefined as never, {}, 'count', 1)],
       ['delete', () => scoped.delete(undefined as never, {})],
       ['softDelete', () => scoped.softDelete(undefined as never, {})],
+      ['softRemove', () => scoped.softRemove(undefined as never, {})],
+      ['recover', () => scoped.recover(undefined as never, {})],
+      ['remove', () => scoped.remove(undefined as never, {})],
       ['insert', () => scoped.insert(undefined as never, {})],
       ['upsert', () => scoped.upsert(undefined as never, {}, ['id'])],
       ['save', () => scoped.save(undefined as never, {})],
       ['saveMany', () => scoped.saveMany(undefined as never, [{}])],
+      ['maximum', () => scoped.maximum(undefined as never, 'id' as never)],
     ])('%s throws when workspaceId is undefined', (_name, call) => {
       expect(call).toThrow(/workspaceId must be a non-empty string/);
     });
@@ -136,6 +156,28 @@ describe('WorkspaceScopedRepository', () => {
     });
   });
 
+  describe('findOneBy', () => {
+    it('merges workspaceId into where', async () => {
+      await scoped.findOneBy(WORKSPACE_ID, { id: 'a' });
+
+      expect(repository.findOneBy).toHaveBeenCalledWith({
+        id: 'a',
+        workspaceId: WORKSPACE_ID,
+      });
+    });
+
+    it('throws if the caller includes workspaceId in where', () => {
+      expect(() =>
+        scoped.findOneBy(WORKSPACE_ID, {
+          id: 'a',
+          workspaceId: OTHER_WORKSPACE_ID,
+        } as never),
+      ).toThrow(/do not include `workspaceId`/);
+
+      expect(repository.findOneBy).not.toHaveBeenCalled();
+    });
+  });
+
   describe('find', () => {
     it('adds workspaceId when no where is provided', async () => {
       await scoped.find(WORKSPACE_ID);
@@ -150,6 +192,53 @@ describe('WorkspaceScopedRepository', () => {
 
       expect(repository.find).toHaveBeenCalledWith({
         where: { status: 'queued', workspaceId: WORKSPACE_ID },
+      });
+    });
+  });
+
+  describe('findAndCount', () => {
+    it('merges workspaceId into where', async () => {
+      await scoped.findAndCount(WORKSPACE_ID, { where: { status: 'queued' } });
+
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { status: 'queued', workspaceId: WORKSPACE_ID },
+      });
+    });
+
+    it('works without options', async () => {
+      await scoped.findAndCount(WORKSPACE_ID);
+
+      expect(repository.findAndCount).toHaveBeenCalledWith({
+        where: { workspaceId: WORKSPACE_ID },
+      });
+    });
+  });
+
+  describe('exists', () => {
+    it('merges workspaceId into where', async () => {
+      await scoped.exists(WORKSPACE_ID, { where: { status: 'queued' } });
+
+      expect(repository.exists).toHaveBeenCalledWith({
+        where: { status: 'queued', workspaceId: WORKSPACE_ID },
+      });
+    });
+
+    it('works without options', async () => {
+      await scoped.exists(WORKSPACE_ID);
+
+      expect(repository.exists).toHaveBeenCalledWith({
+        where: { workspaceId: WORKSPACE_ID },
+      });
+    });
+  });
+
+  describe('existsBy', () => {
+    it('merges workspaceId into where', async () => {
+      await scoped.existsBy(WORKSPACE_ID, { id: 'a' });
+
+      expect(repository.existsBy).toHaveBeenCalledWith({
+        id: 'a',
+        workspaceId: WORKSPACE_ID,
       });
     });
   });
@@ -177,6 +266,41 @@ describe('WorkspaceScopedRepository', () => {
     });
   });
 
+  describe('increment and decrement', () => {
+    it('increment merges workspaceId into criteria', async () => {
+      await scoped.increment(WORKSPACE_ID, { id: 'a' }, 'count', 1);
+
+      expect(repository.increment).toHaveBeenCalledWith(
+        { id: 'a', workspaceId: WORKSPACE_ID },
+        'count',
+        1,
+      );
+    });
+
+    it('increment throws if the caller includes workspaceId in the criteria', () => {
+      expect(() =>
+        scoped.increment(
+          WORKSPACE_ID,
+          { id: 'a', workspaceId: OTHER_WORKSPACE_ID } as never,
+          'count',
+          1,
+        ),
+      ).toThrow(/do not include `workspaceId`/);
+
+      expect(repository.increment).not.toHaveBeenCalled();
+    });
+
+    it('decrement merges workspaceId into criteria', async () => {
+      await scoped.decrement(WORKSPACE_ID, { id: 'a' }, 'count', 1);
+
+      expect(repository.decrement).toHaveBeenCalledWith(
+        { id: 'a', workspaceId: WORKSPACE_ID },
+        'count',
+        1,
+      );
+    });
+  });
+
   describe('delete and softDelete', () => {
     it('delete merges workspaceId into criteria', async () => {
       await scoped.delete(WORKSPACE_ID, { id: 'a' });
@@ -194,6 +318,35 @@ describe('WorkspaceScopedRepository', () => {
         id: 'a',
         workspaceId: WORKSPACE_ID,
       });
+    });
+  });
+
+  describe('softRemove, recover, remove', () => {
+    it('softRemove stamps workspaceId on the entity', async () => {
+      await scoped.softRemove(WORKSPACE_ID, { id: 'a' });
+
+      expect(repository.softRemove).toHaveBeenCalledWith(
+        { id: 'a', workspaceId: WORKSPACE_ID },
+        undefined,
+      );
+    });
+
+    it('recover stamps workspaceId on the entity', async () => {
+      await scoped.recover(WORKSPACE_ID, { id: 'a' });
+
+      expect(repository.recover).toHaveBeenCalledWith(
+        { id: 'a', workspaceId: WORKSPACE_ID },
+        undefined,
+      );
+    });
+
+    it('remove stamps workspaceId on the entity', async () => {
+      await scoped.remove(WORKSPACE_ID, { id: 'a' });
+
+      expect(repository.remove).toHaveBeenCalledWith(
+        { id: 'a', workspaceId: WORKSPACE_ID },
+        undefined,
+      );
     });
   });
 
@@ -315,6 +468,25 @@ describe('WorkspaceScopedRepository', () => {
 
       expect(repository.count).toHaveBeenCalledWith({
         where: { workspaceId: WORKSPACE_ID },
+      });
+    });
+  });
+
+  describe('maximum', () => {
+    it('calls with scoped criteria when where is provided', async () => {
+      await scoped.maximum(WORKSPACE_ID, 'id' as never, { status: 'queued' });
+
+      expect(repository.maximum).toHaveBeenCalledWith('id', {
+        status: 'queued',
+        workspaceId: WORKSPACE_ID,
+      });
+    });
+
+    it('calls with only workspaceId when no where is given', async () => {
+      await scoped.maximum(WORKSPACE_ID, 'id' as never);
+
+      expect(repository.maximum).toHaveBeenCalledWith('id', {
+        workspaceId: WORKSPACE_ID,
       });
     });
   });

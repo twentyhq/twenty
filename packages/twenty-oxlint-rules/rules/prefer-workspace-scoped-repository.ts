@@ -40,11 +40,6 @@ const WORKSPACE_SCOPED_EXEMPTIONS = new Set<string>([
   // Resolved by id alone at auth/request-routing time and inside file-storage
   // transactions; very few of the ~50 call sites carry a workspaceId.
   'ApplicationEntity',
-  // Sync-loop services call `.increment(...)` and bind the repo to a
-  // QueryRunner via `repository.manager.transaction(...)` — neither shape
-  // is on the wrapper today.
-  'CalendarChannelEntity',
-  'MessageChannelEntity',
   // The owning services `extends TypeOrmQueryService<E>` and pass the raw
   // repo to `super(...)`; the superclass type doesn't accept the wrapper.
   'FieldMetadataEntity',

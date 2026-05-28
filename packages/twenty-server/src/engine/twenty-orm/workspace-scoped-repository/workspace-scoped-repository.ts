@@ -6,6 +6,8 @@ import {
   type FindOneOptions,
   type FindOptionsWhere,
   type InsertResult,
+  type PickKeysByType,
+  type RemoveOptions,
   type Repository,
   type SaveOptions,
   type SelectQueryBuilder,
@@ -39,6 +41,17 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     });
   }
 
+  findOneBy(
+    workspaceId: string,
+    where: FindOptionsWhere<T>,
+  ): Promise<T | null> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.findOneBy(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, where),
+    );
+  }
+
   find(workspaceId: string, options?: FindManyOptions<T>): Promise<T[]> {
     this.assertWorkspaceId(workspaceId);
 
@@ -57,6 +70,53 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     });
   }
 
+  findAndCount(
+    workspaceId: string,
+    options?: FindManyOptions<T>,
+  ): Promise<[T[], number]> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.findAndCount({
+      ...options,
+      where: this.mergeWorkspaceIdIntoWhere(workspaceId, options?.where),
+    });
+  }
+
+  exists(workspaceId: string, options?: FindManyOptions<T>): Promise<boolean> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.exists({
+      ...options,
+      where: this.mergeWorkspaceIdIntoWhere(workspaceId, options?.where),
+    });
+  }
+
+  existsBy(
+    workspaceId: string,
+    where: FindOptionsWhere<T>,
+  ): Promise<boolean> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.existsBy(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, where),
+    );
+  }
+
+  maximum(
+    workspaceId: string,
+    columnName: PickKeysByType<T, number>,
+    where?: FindOptionsWhere<T>,
+  ): Promise<number | null> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.maximum(
+      columnName,
+      where
+        ? this.mergeWorkspaceIdIntoCriteria(workspaceId, where)
+        : ({ workspaceId } as FindOptionsWhere<T>),
+    );
+  }
+
   update(
     workspaceId: string,
     criteria: FindOptionsWhere<T>,
@@ -67,6 +127,36 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.update(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
       partialEntity,
+    );
+  }
+
+  increment(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+    propertyPath: string,
+    value: number | string,
+  ): Promise<UpdateResult> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.increment(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
+      propertyPath,
+      value,
+    );
+  }
+
+  decrement(
+    workspaceId: string,
+    criteria: FindOptionsWhere<T>,
+    propertyPath: string,
+    value: number | string,
+  ): Promise<UpdateResult> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.decrement(
+      this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
+      propertyPath,
+      value,
     );
   }
 
@@ -90,6 +180,36 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     return this.repository.softDelete(
       this.mergeWorkspaceIdIntoCriteria(workspaceId, criteria),
     );
+  }
+
+  softRemove<E extends DeepPartial<T>>(
+    workspaceId: string,
+    entity: E,
+    options?: SaveOptions,
+  ): Promise<E & T> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.softRemove({ ...entity, workspaceId } as E, options);
+  }
+
+  recover<E extends DeepPartial<T>>(
+    workspaceId: string,
+    entity: E,
+    options?: SaveOptions,
+  ): Promise<E & T> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.recover({ ...entity, workspaceId } as E, options);
+  }
+
+  remove<E extends DeepPartial<T>>(
+    workspaceId: string,
+    entity: E,
+    options?: RemoveOptions,
+  ): Promise<E> {
+    this.assertWorkspaceId(workspaceId);
+
+    return this.repository.remove({ ...entity, workspaceId } as E & T, options);
   }
 
   insert(

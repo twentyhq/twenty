@@ -313,6 +313,9 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
     return await this.userWorkspaceRepository.count({ where: { userId } });
   }
 
+  // TODO migrate roleTargetRepository to WorkspaceScopedRepository once workspaceId
+  // is threaded through all deleteUserWorkspace callers (user.service.ts does not
+  // currently have it at the call site).
   async deleteUserWorkspace({
     userWorkspaceId,
     softDelete = false,
