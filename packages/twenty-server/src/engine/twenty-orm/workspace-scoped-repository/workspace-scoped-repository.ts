@@ -6,7 +6,6 @@ import {
   type FindOneOptions,
   type FindOptionsWhere,
   type InsertResult,
-  type PickKeysByType,
   type RemoveOptions,
   type Repository,
   type SaveOptions,
@@ -101,13 +100,14 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
 
   maximum(
     workspaceId: string,
-    columnName: PickKeysByType<T, number>,
+    columnName: string,
     where?: FindOptionsWhere<T>,
   ): Promise<number | null> {
     this.assertWorkspaceId(workspaceId);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return this.repository.maximum(
-      columnName,
+      columnName as any,
       where
         ? this.mergeWorkspaceIdIntoCriteria(workspaceId, where)
         : ({ workspaceId } as FindOptionsWhere<T>),
@@ -203,7 +203,7 @@ export class WorkspaceScopedRepository<T extends WorkspaceScopedEntity> {
     workspaceId: string,
     entity: E,
     options?: RemoveOptions,
-  ): Promise<E> {
+  ): Promise<T> {
     this.assertWorkspaceId(workspaceId);
 
     return this.repository.remove({ ...entity, workspaceId } as E & T, options);

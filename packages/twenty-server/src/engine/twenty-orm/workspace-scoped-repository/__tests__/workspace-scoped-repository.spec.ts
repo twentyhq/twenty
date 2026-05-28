@@ -73,7 +73,7 @@ describe('WorkspaceScopedRepository', () => {
       ['upsert', () => scoped.upsert(undefined as never, {}, ['id'])],
       ['save', () => scoped.save(undefined as never, {})],
       ['saveMany', () => scoped.saveMany(undefined as never, [{}])],
-      ['maximum', () => scoped.maximum(undefined as never, 'id' as never)],
+      ['maximum', () => scoped.maximum(undefined as never, 'id')],
     ])('%s throws when workspaceId is undefined', (_name, call) => {
       expect(call).toThrow(/workspaceId must be a non-empty string/);
     });
@@ -474,7 +474,7 @@ describe('WorkspaceScopedRepository', () => {
 
   describe('maximum', () => {
     it('calls with scoped criteria when where is provided', async () => {
-      await scoped.maximum(WORKSPACE_ID, 'id' as never, { status: 'queued' });
+      await scoped.maximum(WORKSPACE_ID, 'id', { status: 'queued' });
 
       expect(repository.maximum).toHaveBeenCalledWith('id', {
         status: 'queued',
@@ -483,7 +483,7 @@ describe('WorkspaceScopedRepository', () => {
     });
 
     it('calls with only workspaceId when no where is given', async () => {
-      await scoped.maximum(WORKSPACE_ID, 'id' as never);
+      await scoped.maximum(WORKSPACE_ID, 'id');
 
       expect(repository.maximum).toHaveBeenCalledWith('id', {
         workspaceId: WORKSPACE_ID,
