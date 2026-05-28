@@ -350,9 +350,14 @@ export class CreateCompanyAndPersonService {
       { existingPerson: PersonWorkspaceEntity }
     >,
   ): { personId: string; name: FullNameMetadata }[] {
-    const peopleToEnrichNamesByPersonId = new Map<
+    // Stage enrichments by personId. A single Person can match more than one
+    // contact in the same batch when its primaryEmail and additionalEmails
+    // both appear in the import — we merge field-by-field so a partial first
+    // match (e.g. only a firstName) doesn't lock out a later contact from
+    // filling the still-empty lastName.
+    const enrichmentByPersonId = new Map<
       string,
-      { personId: string; name: FullNameMetadata }
+      { firstName: string; lastName: string }
     >();
 
     for (const contact of uniqueContacts) {
@@ -361,14 +366,6 @@ export class CreateCompanyAndPersonService {
       )?.existingPerson;
 
       if (!isDefined(existingPerson) || !isNull(existingPerson.deletedAt)) {
-        continue;
-      }
-
-      // A single Person can match multiple contacts in the same batch when
-      // its primaryEmail and additionalEmails both appear in the import.
-      // Keep the first enrichment we compute so updateMany doesn't issue
-      // two UPDATEs against the same row with order-dependent winners.
-      if (peopleToEnrichNamesByPersonId.has(existingPerson.id)) {
         continue;
       }
 
@@ -381,15 +378,19 @@ export class CreateCompanyAndPersonService {
         continue;
       }
 
-      const existingFirstName = existingPerson.name?.firstName ?? '';
-      const existingLastName = existingPerson.name?.lastName ?? '';
-      const existingFirstNameIsEmpty = !isNonEmptyString(existingFirstName);
-      const existingLastNameIsEmpty = !isNonEmptyString(existingLastName);
+      // Take staged values if we've already touched this Person in this batch,
+      // otherwise start from what the DB already has.
+      const staged = enrichmentByPersonId.get(existingPerson.id);
+      const currentFirstName =
+        staged?.firstName ?? existingPerson.name?.firstName ?? '';
+      const currentLastName =
+        staged?.lastName ?? existingPerson.name?.lastName ?? '';
+      const firstNameIsEmpty = !isNonEmptyString(currentFirstName);
+      const lastNameIsEmpty = !isNonEmptyString(currentLastName);
 
-      // Skip the parser when the existing record is already fully populated.
-      // This is the dominant steady-state case for the auto-creation cron — the
-      // first pass enriches missing fields, subsequent passes have nothing to do.
-      if (!existingFirstNameIsEmpty && !existingLastNameIsEmpty) {
+      // Skip the parser when both fields are already filled — dominant
+      // steady-state case for the cron after the initial enrichment pass.
+      if (!firstNameIsEmpty && !lastNameIsEmpty) {
         continue;
       }
 
@@ -399,27 +400,32 @@ export class CreateCompanyAndPersonService {
           contact.displayName,
         );
 
-      const shouldEnrichFirstName =
-        existingFirstNameIsEmpty && isNonEmptyString(parsedFirstName);
-      const shouldEnrichLastName =
-        existingLastNameIsEmpty && isNonEmptyString(parsedLastName);
+      const enrichedFirstName =
+        firstNameIsEmpty && isNonEmptyString(parsedFirstName)
+          ? parsedFirstName
+          : currentFirstName;
+      const enrichedLastName =
+        lastNameIsEmpty && isNonEmptyString(parsedLastName)
+          ? parsedLastName
+          : currentLastName;
 
-      if (!shouldEnrichFirstName && !shouldEnrichLastName) {
+      // This contact didn't add anything new for this Person.
+      if (
+        enrichedFirstName === currentFirstName &&
+        enrichedLastName === currentLastName
+      ) {
         continue;
       }
 
-      peopleToEnrichNamesByPersonId.set(existingPerson.id, {
-        personId: existingPerson.id,
-        name: {
-          firstName: shouldEnrichFirstName
-            ? parsedFirstName
-            : existingFirstName,
-          lastName: shouldEnrichLastName ? parsedLastName : existingLastName,
-        },
+      enrichmentByPersonId.set(existingPerson.id, {
+        firstName: enrichedFirstName,
+        lastName: enrichedLastName,
       });
     }
 
-    return Array.from(peopleToEnrichNamesByPersonId.values());
+    return Array.from(enrichmentByPersonId.entries()).map(
+      ([personId, name]) => ({ personId, name }),
+    );
   }
 
   formatPeopleToCreateFromContacts({

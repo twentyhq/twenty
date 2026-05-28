@@ -359,6 +359,41 @@ describe('CreateCompanyAndPersonService', () => {
           },
         ]);
       });
+
+      it('should merge partial enrichments across contacts mapping to the same Person', () => {
+        const existingPersonWithMultipleEmails = buildExistingPerson({
+          name: { firstName: '', lastName: '' },
+          emails: {
+            primaryEmail: 'felix@twenty.com',
+            additionalEmails: ['felix.personal@example.com'],
+          },
+        });
+
+        const result =
+          service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
+            [
+              // First contact only carries a first name.
+              { handle: 'felix@twenty.com', displayName: 'Félix' },
+              // Second contact (additional email) carries both — the lastName
+              // should fill in even though the firstName slot is already taken.
+              {
+                handle: 'felix.personal@example.com',
+                displayName: 'Félix Malfait',
+              },
+            ],
+            [existingPersonWithMultipleEmails],
+            FieldActorSource.EMAIL,
+            mockConnectedAccount,
+            null,
+          );
+
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
+      });
     });
   });
 });
