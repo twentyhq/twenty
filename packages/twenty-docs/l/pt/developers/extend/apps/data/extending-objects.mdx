@@ -43,6 +43,8 @@ export default defineField({
 
 * A localização do arquivo fica a seu critério. A convenção é `src/fields/\<name>.field.ts`, mas o SDK detecta campos em qualquer lugar dentro de `src/`.
 
+* Para adicionar uma aba a um layout de página padrão (por exemplo, a página de detalhes de Task ou Company), use [`definePageLayoutTab`](/l/pt/developers/extend/apps/layout/page-layouts#definepagelayouttab) com `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` de `twenty-sdk/define`.
+
 ## Adicionando uma relação a um objeto existente
 
 Para adicionar um campo de relação (por exemplo, vinculando seu objeto personalizado a um `Person` padrão), use `defineField()` com `FieldType.RELATION`. O padrão é o mesmo que para relações inline, mas com `objectUniversalIdentifier` definido explicitamente. Veja [Relações](/l/pt/developers/extend/apps/data/relations) para o padrão bidirecional.
