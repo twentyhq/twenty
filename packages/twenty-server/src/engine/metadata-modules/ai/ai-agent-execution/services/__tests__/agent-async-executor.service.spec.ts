@@ -1,4 +1,18 @@
-jest.mock('@file-type/pdf', () => ({ detectPdf: jest.fn() }));
+import { Test, type TestingModule } from '@nestjs/testing';
+
+import { getRepositoryToken } from '@nestjs/typeorm';
+
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
+import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
+import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
+import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
+import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
+import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
+import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
+import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
+import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
+
 jest.mock('ai', () => ({
   ...jest.requireActual('ai'),
   generateText: jest.fn().mockResolvedValue({
@@ -17,21 +31,6 @@ jest.mock('ai', () => ({
     },
   }),
 }));
-
-import { Test, type TestingModule } from '@nestjs/testing';
-
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
-import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
-import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
-import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
-import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
-import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
-import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 
 describe('AgentAsyncExecutorService — workflow agent role-scoped tool resolution', () => {
   let service: AgentAsyncExecutorService;
