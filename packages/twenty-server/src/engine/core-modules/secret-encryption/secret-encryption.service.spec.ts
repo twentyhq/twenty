@@ -210,7 +210,9 @@ describe('SecretEncryptionService', () => {
     it('decrypts a workspace-scoped v2 envelope when given the matching workspaceId', () => {
       const workspaceId = '11111111-1111-1111-1111-111111111111';
       const secret = 'sk-workspace-bound-secret';
-      const encrypted = service.encryptVersioned(secret as PlaintextString, { workspaceId });
+      const encrypted = service.encryptVersioned(secret as PlaintextString, {
+        workspaceId,
+      });
 
       const result = service.decryptAndMaskVersioned({
         value: encrypted,

@@ -26,8 +26,15 @@ describe('stripSecretFromApplicationVariables', () => {
 
   it('should include non-secret variables', () => {
     const variables = [
-      makeFlatVariable({ key: 'PUBLIC_URL', value: 'https://example.com' as EncryptedString }),
-      makeFlatVariable({ id: '2', key: 'DEBUG', value: 'true' as EncryptedString }),
+      makeFlatVariable({
+        key: 'PUBLIC_URL',
+        value: 'https://example.com' as EncryptedString,
+      }),
+      makeFlatVariable({
+        id: '2',
+        key: 'DEBUG',
+        value: 'true' as EncryptedString,
+      }),
     ];
 
     expect(stripSecretFromApplicationVariables(variables)).toEqual({
@@ -38,14 +45,21 @@ describe('stripSecretFromApplicationVariables', () => {
 
   it('should exclude secret variables', () => {
     const variables = [
-      makeFlatVariable({ key: 'PUBLIC_URL', value: 'https://example.com' as EncryptedString }),
+      makeFlatVariable({
+        key: 'PUBLIC_URL',
+        value: 'https://example.com' as EncryptedString,
+      }),
       makeFlatVariable({
         id: '2',
         key: 'API_SECRET',
         value: 'encrypted_secret' as EncryptedString,
         isSecret: true,
       }),
-      makeFlatVariable({ id: '3', key: 'DEBUG', value: 'true' as EncryptedString }),
+      makeFlatVariable({
+        id: '3',
+        key: 'DEBUG',
+        value: 'true' as EncryptedString,
+      }),
     ];
 
     const result = stripSecretFromApplicationVariables(variables);
@@ -91,7 +105,11 @@ describe('stripSecretFromApplicationVariables', () => {
 
   it('should return empty object when all variables are secret', () => {
     const variables = [
-      makeFlatVariable({ key: 'SECRET_1', value: 'val1' as EncryptedString, isSecret: true }),
+      makeFlatVariable({
+        key: 'SECRET_1',
+        value: 'val1' as EncryptedString,
+        isSecret: true,
+      }),
       makeFlatVariable({
         id: '2',
         key: 'SECRET_2',
