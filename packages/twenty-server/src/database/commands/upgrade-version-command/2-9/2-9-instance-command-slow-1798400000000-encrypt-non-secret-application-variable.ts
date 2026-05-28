@@ -38,6 +38,7 @@ export class EncryptNonSecretApplicationVariableSlowInstanceCommand
 
   async runDataMigration(dataSource: DataSource): Promise<void> {
     let cursor = '00000000-0000-0000-0000-000000000000';
+    let totalEncrypted = 0;
 
     while (true) {
       const rows: ApplicationVariableRow[] = await dataSource.query(
@@ -56,6 +57,8 @@ export class EncryptNonSecretApplicationVariableSlowInstanceCommand
         break;
       }
 
+      let batchEncrypted = 0;
+
       for (const row of rows) {
         if (isEncryptedString(row.value)) {
           continue;
@@ -72,10 +75,21 @@ export class EncryptNonSecretApplicationVariableSlowInstanceCommand
             WHERE id = $1`,
           [row.id, encryptedValue],
         );
+
+        batchEncrypted++;
       }
 
+      totalEncrypted += batchEncrypted;
       cursor = rows[rows.length - 1].id;
+
+      this.logger.log(
+        `Encrypted ${batchEncrypted} non-secret application variables in this batch (${totalEncrypted} total so far)`,
+      );
     }
+
+    this.logger.log(
+      `Finished encrypting non-secret application variables: ${totalEncrypted} rows encrypted`,
+    );
   }
 
   // Tightens the CHECK constraint: all values must now be either empty

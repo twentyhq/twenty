@@ -68,6 +68,13 @@ export class ConnectedAccountTokenEncryptionService {
     ciphertext: EncryptedString;
     workspaceId: string;
   }): PlaintextString {
+    if (!ciphertext.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX)) {
+      throw new SecretEncryptionException(
+        'Received a plaintext value where ciphertext was expected. The encryption backfill migration may not have run.',
+        SecretEncryptionExceptionCode.MALFORMED_ENVELOPE,
+      );
+    }
+
     return this.secretEncryptionService.decryptVersioned(ciphertext, {
       workspaceId,
     });
@@ -176,6 +183,7 @@ export class ConnectedAccountTokenEncryptionService {
       SECRET_ENCRYPTION_ENVELOPE_PREFIX,
     );
 
+    // TODO: Remove in follow-up PR once all legacy encryption fallbacks are dropped.
     // TODO: Remove after 2-5 slow instance command has been run everywhere.
     // During the rollout window protocolParams.password may be a legacy
     // unencrypted plaintext value living in the same column. We trust the
@@ -187,11 +195,11 @@ export class ConnectedAccountTokenEncryptionService {
         'Protocol password is not encrypted. Expected during the rollout window until the slow instance command finishes backfilling.',
       );
 
+      const rawPassword: string = protocolParams.password;
+
       return {
         ...protocolParams,
-        // TODO prastoin This legacy is required for dependent instance commands making encryption
-        // We might create dedicated legacy service method TODO afterwards
-        password: protocolParams.password as unknown as PlaintextString,
+        password: rawPassword as PlaintextString,
       };
     }
 
