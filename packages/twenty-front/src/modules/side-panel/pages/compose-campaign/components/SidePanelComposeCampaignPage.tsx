@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import '@blocknote/core/fonts/inter.css';
 import '@blocknote/mantine/style.css';
@@ -128,9 +128,7 @@ export const SidePanelComposeCampaignPage = () => {
   const [bodyHtml, setBodyHtml] = useState('');
   const [fromAddress, setFromAddress] = useState('');
   const [replyTo, setReplyTo] = useState('');
-  const [emailingDomainId, setEmailingDomainId] = useState(
-    verifiedDomains[0]?.id ?? '',
-  );
+  const [emailingDomainId, setEmailingDomainId] = useState('');
 
   const editor = useCreateBlockNote({
     schema: BLOCK_SCHEMA,
@@ -142,10 +140,21 @@ export const SidePanelComposeCampaignPage = () => {
     setBodyHtml(editor.blocksToFullHTML(editor.document));
   };
 
-  // Auto-pick the first verified domain when it loads.
-  if (!emailingDomainId && verifiedDomains.length > 0) {
-    setEmailingDomainId(verifiedDomains[0].id);
-  }
+  // Sync the auto-pick with the verifiedDomains query. Runs whenever the
+  // domain list changes, so if the currently-selected id disappears from the
+  // list (e.g. unverified in another tab), we fall back to the first available
+  // verified one rather than holding a stale id and failing on send.
+  useEffect(() => {
+    if (verifiedDomains.length === 0) {
+      return;
+    }
+    const stillValid = verifiedDomains.some(
+      (domain) => domain.id === emailingDomainId,
+    );
+    if (!stillValid) {
+      setEmailingDomainId(verifiedDomains[0].id);
+    }
+  }, [verifiedDomains, emailingDomainId]);
 
   // The BlockNote editor always has at least one empty paragraph block, so an
   // untouched editor produces non-empty HTML. Check the document's text

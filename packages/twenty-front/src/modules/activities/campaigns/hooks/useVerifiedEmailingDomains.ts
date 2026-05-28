@@ -9,7 +9,7 @@ type EmailingDomain = {
 };
 
 type FindVerifiedEmailingDomainsResult = {
-  getEmailingDomains: EmailingDomain[];
+  getCampaignEmailingDomains: EmailingDomain[];
 };
 
 export const useVerifiedEmailingDomains = () => {
@@ -17,7 +17,7 @@ export const useVerifiedEmailingDomains = () => {
     FIND_VERIFIED_EMAILING_DOMAINS,
   );
 
-  const verifiedDomains = (data?.getEmailingDomains ?? []).filter(
+  const verifiedDomains = (data?.getCampaignEmailingDomains ?? []).filter(
     (domain) => domain.status === 'VERIFIED',
   );
 
