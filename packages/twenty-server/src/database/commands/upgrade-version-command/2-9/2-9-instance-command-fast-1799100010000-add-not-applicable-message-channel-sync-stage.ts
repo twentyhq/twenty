@@ -23,6 +23,11 @@ export class AddNotApplicableMessageChannelSyncStageFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // Remap rows whose syncStage won't exist after we narrow the type back
+    // down — otherwise the USING cast below fails on 'NOT_APPLICABLE'.
+    await queryRunner.query(
+      `UPDATE "core"."messageChannel" SET "syncStage" = 'FAILED' WHERE "syncStage" = 'NOT_APPLICABLE'`,
+    );
     await queryRunner.query(
       "CREATE TYPE \"core\".\"messageChannel_syncstage_enum_old\" AS ENUM('PENDING_CONFIGURATION', 'MESSAGE_LIST_FETCH_PENDING', 'MESSAGE_LIST_FETCH_SCHEDULED', 'MESSAGE_LIST_FETCH_ONGOING', 'MESSAGES_IMPORT_PENDING', 'MESSAGES_IMPORT_SCHEDULED', 'MESSAGES_IMPORT_ONGOING', 'FAILED')",
     );

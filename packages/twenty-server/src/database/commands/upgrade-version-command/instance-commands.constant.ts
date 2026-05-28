@@ -59,6 +59,7 @@ import { DropFieldMetadataIsUniqueColumnFastInstanceCommand } from 'src/database
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddWorkspaceTransactionalChannelTypeFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799100000000-add-workspace-transactional-channel-type';
 import { AddNotApplicableMessageChannelSyncStageFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799100010000-add-not-applicable-message-channel-sync-stage';
+import { AddWorkspaceTransactionalChannelUniqueIndexFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1799100020000-add-workspace-transactional-channel-unique-index';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -120,4 +121,5 @@ export const INSTANCE_COMMANDS = [
   MigrateAiModelPreferencesSlowInstanceCommand,
   AddWorkspaceTransactionalChannelTypeFastInstanceCommand,
   AddNotApplicableMessageChannelSyncStageFastInstanceCommand,
+  AddWorkspaceTransactionalChannelUniqueIndexFastInstanceCommand,
 ];

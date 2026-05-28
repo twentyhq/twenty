@@ -6,6 +6,7 @@ import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/em
 import { MessageChannelMetadataModule } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { MessagingCampaignSendRecipientJob } from 'src/modules/messaging/message-outbound-manager/jobs/messaging-campaign-send-recipient.job';
+import { CampaignEmailingDomainResolver } from 'src/modules/messaging/message-outbound-manager/resolvers/campaign-emailing-domain.resolver';
 import { MessageCampaignResolver } from 'src/modules/messaging/message-outbound-manager/resolvers/message-campaign.resolver';
 import { MessagingCampaignService } from 'src/modules/messaging/message-outbound-manager/services/messaging-campaign.service';
 
@@ -20,6 +21,7 @@ import { MessagingCampaignService } from 'src/modules/messaging/message-outbound
   ],
   providers: [
     MessageCampaignResolver,
+    CampaignEmailingDomainResolver,
     MessagingCampaignService,
     MessagingCampaignSendRecipientJob,
   ],

@@ -21,6 +21,14 @@ export class AddWorkspaceTransactionalChannelTypeFastInstanceCommand
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
+    // Delete rows whose enum value won't exist after we narrow the type back
+    // down — otherwise the USING cast below fails on 'WORKSPACE_TRANSACTIONAL'.
+    await queryRunner.query(
+      `DELETE FROM "core"."messageChannel" WHERE "type" = 'WORKSPACE_TRANSACTIONAL'`,
+    );
+    await queryRunner.query(
+      `DELETE FROM "core"."connectedAccount" WHERE "provider" = 'workspace_transactional'`,
+    );
     await queryRunner.query(
       "CREATE TYPE \"core\".\"messageChannel_type_enum_old\" AS ENUM('EMAIL', 'SMS', 'EMAIL_GROUP')",
     );
