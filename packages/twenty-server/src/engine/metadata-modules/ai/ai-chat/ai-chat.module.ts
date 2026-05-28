@@ -12,12 +12,16 @@ import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AiAgentExecutionModule } from 'src/engine/metadata-modules/ai/ai-agent-execution/ai-agent-execution.module';
+import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
+import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
+import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { AiBillingModule } from 'src/engine/metadata-modules/ai/ai-billing/ai-billing.module';
 import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { SkillModule } from 'src/engine/metadata-modules/skill/skill.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { DashboardToolsModule } from 'src/modules/dashboard/tools/dashboard-tools.module';
@@ -75,6 +79,11 @@ import { SystemPromptBuilderService } from './services/system-prompt-builder.ser
     StreamAgentChatJob,
     SystemPromptBuilderService,
     AiGraphqlApiExceptionInterceptor,
+    provideWorkspaceScopedRepository(AgentChatThreadEntity),
+    provideWorkspaceScopedRepository(AgentTurnEntity),
+    provideWorkspaceScopedRepository(AgentMessageEntity),
+    provideWorkspaceScopedRepository(AgentMessagePartEntity),
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     AgentChatService,

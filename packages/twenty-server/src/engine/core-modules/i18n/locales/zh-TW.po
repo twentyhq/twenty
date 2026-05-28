@@ -459,6 +459,11 @@ msgstr "匯入訊息時發生錯誤"
 msgid "An error occurred during workspace migration."
 msgstr "工作區遷移期間發生錯誤。"
 
+#. js-lingui-id: X3mSup
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "An error occurred while processing the webhook."
+msgstr ""
+
 #. js-lingui-id: S7yZl9
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "An error occurred with two-factor authentication data."
@@ -5208,6 +5213,8 @@ msgstr "找不到頁面版面配置."
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
@@ -6156,6 +6163,11 @@ msgstr "找不到 SDK 用戶端封存檔。可能尚未為此應用程式產生 
 msgid "Search vector"
 msgstr "搜索向量"
 
+#. js-lingui-id: CTcVpP
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Sending is currently suspended for this email domain."
+msgstr ""
+
 #. js-lingui-id: hgvbYY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
 msgid "September"
@@ -6853,6 +6865,16 @@ msgstr ""
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "物件的單數名稱與複數名稱不能相同"
 
+#. js-lingui-id: 9bYo5E
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be authenticated."
+msgstr ""
+
+#. js-lingui-id: 3nHyuH
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be processed."
+msgstr ""
+
 #. js-lingui-id: 5N6QtE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgid "The workflow automated trigger settings"
@@ -6996,6 +7018,11 @@ msgstr "此網域已被使用。"
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
 msgstr "此電子郵件已被使用。"
+
+#. js-lingui-id: mjE4RD
+#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
+msgid "This evaluation target could not be found."
+msgstr ""
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts

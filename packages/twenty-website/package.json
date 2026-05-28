@@ -24,7 +24,6 @@
     "@lottiefiles/dotlottie-react": "^0.18.10",
     "@tabler/icons-react": "^3.41.1",
     "@wyw-in-js/babel-preset": "^0.8.1",
-    "axios": "^1.14.0",
     "framer-motion": "^11.18.0",
     "gray-matter": "^4.0.3",
     "next": "16.1.7",

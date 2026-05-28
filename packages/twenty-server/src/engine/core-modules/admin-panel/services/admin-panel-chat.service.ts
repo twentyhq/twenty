@@ -7,18 +7,22 @@ import { type AdminChatMessageDTO } from 'src/engine/core-modules/admin-panel/dt
 import { type AdminWorkspaceChatThreadDTO } from 'src/engine/core-modules/admin-panel/dtos/admin-workspace-chat-thread.dto';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
-import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AgentMessageEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message.entity';
-
+import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class AdminPanelChatService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    // Thread lookup is by id alone; the admin does not know the workspaceId
+    // upfront. assertWorkspaceAllowsImpersonation gates every other read.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(AgentChatThreadEntity)
     private readonly agentChatThreadRepository: Repository<AgentChatThreadEntity>,
-    @InjectRepository(AgentMessageEntity)
-    private readonly agentMessageRepository: Repository<AgentMessageEntity>,
+    @InjectWorkspaceScopedRepository(AgentMessageEntity)
+    private readonly agentMessageRepository: WorkspaceScopedRepository<AgentMessageEntity>,
   ) {}
 
   private async assertWorkspaceAllowsImpersonation(
@@ -74,11 +78,14 @@ export class AdminPanelChatService {
 
     await this.assertWorkspaceAllowsImpersonation(thread.workspaceId);
 
-    const messages = await this.agentMessageRepository.find({
-      where: { threadId },
-      relations: { parts: true },
-      order: { createdAt: 'ASC' },
-    });
+    const messages = await this.agentMessageRepository.find(
+      thread.workspaceId,
+      {
+        where: { threadId },
+        relations: { parts: true },
+        order: { createdAt: 'ASC' },
+      },
+    );
 
     return {
       thread: {

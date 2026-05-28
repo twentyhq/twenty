@@ -91,13 +91,19 @@ export class DevModeOrchestrator {
     await ensureDir(outputDir);
     await emptyDir(outputDir);
 
+    this.state.addEvent({
+      message: `Using remote "${ConfigService.getActiveRemote()}"`,
+      status: 'info',
+    });
+
     if (!this.verbose) {
       this.state.addEvent({
         message: 'Add --verbose to see fully detailed logs',
         status: 'info',
       });
-      this.state.notify();
     }
+
+    this.state.notify();
 
     await this.startWatchersStep.start();
 

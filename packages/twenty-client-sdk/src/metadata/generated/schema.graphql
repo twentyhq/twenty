@@ -1433,6 +1433,39 @@ type Analytics {
   success: Boolean!
 }
 
+type VerificationRecord {
+  type: String!
+  key: String!
+  value: String!
+  priority: Float
+}
+
+type EmailingDomain {
+  id: UUID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  domain: String!
+  driver: EmailingDomainDriver!
+  status: EmailingDomainStatus!
+  verificationRecords: [VerificationRecord!]
+  verifiedAt: DateTime
+}
+
+enum EmailingDomainDriver {
+  AWS_SES
+}
+
+enum EmailingDomainStatus {
+  PENDING
+  VERIFIED
+  FAILED
+  TEMPORARY_FAILURE
+}
+
+type SendEmailViaDomainOutput {
+  messageId: String!
+}
+
 type ApprovedAccessDomain {
   id: UUID!
   domain: String!
@@ -2360,35 +2393,6 @@ type PublicDomain {
   createdAt: DateTime!
 }
 
-type VerificationRecord {
-  type: String!
-  key: String!
-  value: String!
-  priority: Float
-}
-
-type EmailingDomain {
-  id: UUID!
-  createdAt: DateTime!
-  updatedAt: DateTime!
-  domain: String!
-  driver: EmailingDomainDriver!
-  status: EmailingDomainStatus!
-  verificationRecords: [VerificationRecord!]
-  verifiedAt: DateTime
-}
-
-enum EmailingDomainDriver {
-  AWS_SES
-}
-
-enum EmailingDomainStatus {
-  PENDING
-  VERIFIED
-  FAILED
-  TEMPORARY_FAILURE
-}
-
 type AutocompleteResult {
   text: String!
   placeId: String!
@@ -2933,6 +2937,7 @@ type Query {
   getPageLayoutTab(id: String!): PageLayoutTab!
   getPageLayouts(objectMetadataId: String, pageLayoutType: PageLayoutType): [PageLayout!]!
   getPageLayout(id: String!): PageLayout
+  getEmailingDomains: [EmailingDomain!]!
   applicationConnectionProviders(applicationId: UUID!): [ApplicationConnectionProvider!]!
   getPageLayoutWidgets(pageLayoutTabId: String!): [PageLayoutWidget!]!
   getPageLayoutWidget(id: String!): PageLayoutWidget!
@@ -3027,7 +3032,6 @@ type Query {
   getAddressDetails(placeId: String!, token: String!): PlaceDetailsResult!
   getUsageAnalytics(input: UsageAnalyticsInput): UsageAnalytics!
   findManyPublicDomains: [PublicDomain!]!
-  getEmailingDomains: [EmailingDomain!]!
   findManyMarketplaceApps: [MarketplaceApp!]!
   findMarketplaceAppDetail(universalIdentifier: String!): MarketplaceAppDetail!
 }
@@ -3182,6 +3186,10 @@ type Mutation {
   resetPageLayoutToDefault(id: String!): PageLayout!
   resetPageLayoutWidgetToDefault(id: String!): PageLayoutWidget!
   resetPageLayoutTabToDefault(id: String!): PageLayoutTab!
+  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
+  deleteEmailingDomain(id: String!): Boolean!
+  verifyEmailingDomain(id: String!): EmailingDomain!
+  sendEmailViaEmailingDomain(input: SendEmailViaDomainInput!): SendEmailViaDomainOutput!
   updateOneApplicationVariable(key: String!, value: String!, applicationId: UUID!): Boolean!
   createPageLayoutWidget(input: CreatePageLayoutWidgetInput!): PageLayoutWidget!
   updatePageLayoutWidget(id: String!, input: UpdatePageLayoutWidgetInput!): PageLayoutWidget!
@@ -3302,9 +3310,6 @@ type Mutation {
   updatePublicDomain(domain: String!, applicationId: String): PublicDomain!
   deletePublicDomain(domain: String!): Boolean!
   checkPublicDomainValidRecords(domain: String!): DomainValidRecords
-  createEmailingDomain(domain: String!, driver: EmailingDomainDriver!): EmailingDomain!
-  deleteEmailingDomain(id: String!): Boolean!
-  verifyEmailingDomain(id: String!): EmailingDomain!
   createOneAppToken(input: CreateOneAppTokenInput!): AppToken!
   installMarketplaceApp(universalIdentifier: String!, version: String): Boolean! @deprecated(reason: "Use installApplication instead")
   installApplication(universalIdentifier: String!, version: String): Application!
@@ -3746,6 +3751,18 @@ input GridPositionInput {
   column: Float!
   rowSpan: Float!
   columnSpan: Float!
+}
+
+input SendEmailViaDomainInput {
+  emailingDomainId: String!
+  to: [String!]!
+  cc: [String!]
+  bcc: [String!]
+  subject: String!
+  text: String!
+  html: String
+  from: String!
+  replyTo: [String!]
 }
 
 input CreatePageLayoutWidgetInput {
