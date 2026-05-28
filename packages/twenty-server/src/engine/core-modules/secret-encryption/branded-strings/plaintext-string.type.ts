@@ -1,5 +1,4 @@
-declare const PLAINTEXT_STRING_BRAND: unique symbol;
-
+import { z } from 'zod';
 // Hard nominal brand for plaintext secrets (decrypted tokens, user-provided
 // passwords, OAuth provider responses) that should never be confused with
 // ciphertext or be implicitly persisted unencrypted.
@@ -11,6 +10,7 @@ declare const PLAINTEXT_STRING_BRAND: unique symbol;
 // - SecretEncryptionService.decryptVersioned (transformation)
 // - Named coercePlaintextFromX helpers, which act as audit-trail entry points
 //   for plaintext entering the system (user input, OAuth provider responses).
-export type PlaintextString = string & {
-  readonly [PLAINTEXT_STRING_BRAND]: true;
-};
+
+export const plaintextStringSchema = z.string().brand('PLAINTEXT_STRING_BRAND');
+
+export type PlaintextString = z.infer<typeof plaintextStringSchema>;

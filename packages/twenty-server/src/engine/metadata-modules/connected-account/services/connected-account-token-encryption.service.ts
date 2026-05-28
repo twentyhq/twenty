@@ -9,7 +9,6 @@ import {
   type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
-import { coercePlaintextFromUserInput } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-user-input.util';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
@@ -191,7 +190,9 @@ export class ConnectedAccountTokenEncryptionService {
 
       return {
         ...protocolParams,
-        password: coercePlaintextFromUserInput(protocolParams.password),
+        // TODO prastoin This legacy is required for dependent instance commands making encryption
+        // We might create dedicated legacy service method TODO afterwards
+        password: protocolParams.password as unknown as PlaintextString,
       };
     }
 

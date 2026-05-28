@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { EntityManager } from 'typeorm';
 
-import { coercePlaintextFromOAuthProviderResponse } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-oauth-provider-response.util';
+import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -11,8 +11,8 @@ import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system
 export type UpdateConnectedAccountOnReconnectInput = {
   workspaceId: string;
   connectedAccountId: string;
-  accessToken: string;
-  refreshToken: string;
+  accessToken: PlaintextString;
+  refreshToken: PlaintextString;
   scopes: string[];
   transactionManager: EntityManager;
 };
@@ -40,8 +40,8 @@ export class UpdateConnectedAccountOnReconnectService {
     // handing them to the encryption service.
     const { encryptedAccessToken, encryptedRefreshToken } =
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
-        accessToken: coercePlaintextFromOAuthProviderResponse(accessToken),
-        refreshToken: coercePlaintextFromOAuthProviderResponse(refreshToken),
+        accessToken,
+        refreshToken,
         workspaceId,
       });
 
