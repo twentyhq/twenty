@@ -7,7 +7,7 @@ import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { ConfigValueConverterService } from 'src/engine/core-modules/twenty-config/conversion/config-value-converter.service';
@@ -72,7 +72,7 @@ export class ConfigStorageService implements ConfigStorageInterface {
 
       return isDecrypt
         ? this.secretEncryptionService.decryptVersioned(
-            assertEncryptedStringOrThrow(convertedValue),
+            convertedValue as EncryptedString,
           )
         : this.secretEncryptionService.encryptVersioned(convertedValue);
     } catch (error) {

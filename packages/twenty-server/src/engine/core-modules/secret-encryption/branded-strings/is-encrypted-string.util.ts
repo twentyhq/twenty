@@ -7,8 +7,6 @@ import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/
 // neither can be distinguished from arbitrary input by shape alone.
 //
 // Use this when a caller needs to branch on "is this in the versioned
-// envelope?" without throwing. For DB columns contractually guaranteed
-// to hold envelope-wrapped ciphertext, prefer `assertEncryptedStringOrThrow`
-// (which additionally validates envelope structure).
+// envelope?" without throwing.
 export const isEncryptedString = (value: string): value is EncryptedString =>
   value.startsWith(SECRET_ENCRYPTION_ENVELOPE_PREFIX);

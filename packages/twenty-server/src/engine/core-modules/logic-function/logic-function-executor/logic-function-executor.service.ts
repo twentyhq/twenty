@@ -28,7 +28,6 @@ import { BillingUsageService } from 'src/engine/core-modules/billing/services/bi
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
-import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -307,9 +306,11 @@ export class LogicFunctionExecutorService {
     // use the instance-scoped versioned envelope (no workspaceId in the HKDF
     // info).
     for (const variable of serverVariables) {
-      envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
-        assertEncryptedStringOrThrow(variable.encryptedValue),
-      );
+      if (variable.encryptedValue !== '') {
+        envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
+          variable.encryptedValue,
+        );
+      }
     }
 
     return envMap;

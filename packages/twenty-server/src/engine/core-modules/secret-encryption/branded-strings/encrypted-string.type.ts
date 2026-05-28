@@ -6,10 +6,9 @@ declare const ENCRYPTED_STRING_BRAND: unique symbol;
 // so logging, DB writes, GraphQL responses and other read-only consumers
 // continue to work without ceremony.
 //
-// The only sanctioned mints are inside the secret-encryption module:
-// - SecretEncryptionService.encryptVersioned (transformation)
-// - assertEncryptedStringOrThrow (runtime envelope validation)
-// Any other `as EncryptedString` is a code-review-level concern.
+// The canonical mint is SecretEncryptionService.encryptVersioned.
+// Call sites reading encrypted columns from the DB may use
+// `as EncryptedString` to satisfy the branded parameter.
 export type EncryptedString = string & {
   readonly [ENCRYPTED_STRING_BRAND]: true;
 };

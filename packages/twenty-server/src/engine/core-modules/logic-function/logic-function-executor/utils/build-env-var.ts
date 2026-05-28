@@ -1,7 +1,7 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
-import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export const buildEnvVar = (
@@ -15,7 +15,7 @@ export const buildEnvVar = (
       acc[flatApplicationVariable.key] =
         flatApplicationVariable.isSecret && isNonEmptyString(value)
           ? secretEncryptionService.decryptVersioned(
-              assertEncryptedStringOrThrow(value),
+              value as EncryptedString,
               {
                 workspaceId: flatApplicationVariable.workspaceId,
               },

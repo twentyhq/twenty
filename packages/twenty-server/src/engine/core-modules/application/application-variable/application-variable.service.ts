@@ -10,7 +10,7 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
-import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -34,7 +34,7 @@ export class ApplicationVariableEntityService {
     }
 
     return this.secretEncryptionService.decryptAndMaskVersioned({
-      value: assertEncryptedStringOrThrow(applicationVariable.value),
+      value: applicationVariable.value as EncryptedString,
       mask: SECRET_APPLICATION_VARIABLE_MASK,
       workspaceId: applicationVariable.workspaceId,
     });

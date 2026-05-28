@@ -13,7 +13,7 @@ import {
   JwtKeyManagerException,
   JwtKeyManagerExceptionCode,
 } from 'src/engine/core-modules/jwt/jwt-key-manager.exception';
-import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export type CurrentSigningKey = {
@@ -180,7 +180,7 @@ export class JwtKeyManagerService {
   }
 
   private decryptPrivateKey(
-    encryptedPrivateKey: string | null,
+    encryptedPrivateKey: EncryptedString | null,
     id: string,
   ): string {
     if (!isDefined(encryptedPrivateKey)) {
@@ -191,7 +191,7 @@ export class JwtKeyManagerService {
     }
 
     return this.secretEncryptionService.decryptVersioned(
-      assertEncryptedStringOrThrow(encryptedPrivateKey),
+      encryptedPrivateKey,
     );
   }
 
