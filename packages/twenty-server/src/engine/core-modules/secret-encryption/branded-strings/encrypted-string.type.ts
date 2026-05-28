@@ -1,4 +1,4 @@
-declare const ENCRYPTED_STRING_BRAND: unique symbol;
+import { z } from 'zod';
 
 // Hard nominal brand for ciphertext produced by SecretEncryptionService.
 // A raw `string` is not assignable to `EncryptedString` (the brand key is
@@ -9,6 +9,6 @@ declare const ENCRYPTED_STRING_BRAND: unique symbol;
 // The canonical mint is SecretEncryptionService.encryptVersioned.
 // Call sites reading encrypted columns from the DB may use
 // `as EncryptedString` to satisfy the branded parameter.
-export type EncryptedString = string & {
-  readonly [ENCRYPTED_STRING_BRAND]: true;
-};
+const encryptedStringSchema = z.string().brand('ENCRYPTED_STRING_BRAND');
+
+export type EncryptedString = z.infer<typeof encryptedStringSchema>;
