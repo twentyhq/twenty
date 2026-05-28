@@ -1,8 +1,11 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import {
+  type EncryptedImapSmtpCaldavParams,
+  type ImapSmtpCaldavParams,
+  type PlaintextImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
@@ -72,7 +75,7 @@ export class EncryptConnectionParametersSlowInstanceCommand implements SlowInsta
           continue;
         }
 
-        const plaintextOnly: ImapSmtpCaldavParams<PlaintextString> = {};
+        const plaintextOnly: PlaintextImapSmtpCaldavParams = {};
 
         for (const protocol of ACCOUNT_TYPES) {
           const protocolParams = row.connectionParameters[protocol];
@@ -105,8 +108,8 @@ export class EncryptConnectionParametersSlowInstanceCommand implements SlowInsta
         // already-encrypted protocols; we trust the entity-level brand on
         // the post-merge result since each protocol is either freshly
         // encrypted above or was already an `enc:v2:` envelope.
-        const merged: ImapSmtpCaldavParams<EncryptedString> = {
-          ...(row.connectionParameters as ImapSmtpCaldavParams<EncryptedString>),
+        const merged: EncryptedImapSmtpCaldavParams = {
+          ...(row.connectionParameters as EncryptedImapSmtpCaldavParams),
           ...encrypted,
         };
 

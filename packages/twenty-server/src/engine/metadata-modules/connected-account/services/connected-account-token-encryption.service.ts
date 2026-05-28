@@ -3,8 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isDefined } from 'twenty-shared/utils';
 
 import {
-  type ConnectionParameters,
-  type ImapSmtpCaldavParams,
+  type EncryptedConnectionParameters,
+  type EncryptedImapSmtpCaldavParams,
+  type PlaintextConnectionParameters,
+  type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { assertEncryptedStringOrThrow } from 'src/engine/core-modules/secret-encryption/branded-strings/assert-encrypted-string-or-throw.util';
 import { coercePlaintextFromUserInput } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-user-input.util';
@@ -119,10 +121,10 @@ export class ConnectedAccountTokenEncryptionService {
     connectionParameters,
     workspaceId,
   }: {
-    connectionParameters: ImapSmtpCaldavParams<PlaintextString>;
+    connectionParameters: PlaintextImapSmtpCaldavParams;
     workspaceId: string;
-  }): ImapSmtpCaldavParams<EncryptedString> {
-    const result: ImapSmtpCaldavParams<EncryptedString> = {};
+  }): EncryptedImapSmtpCaldavParams {
+    const result: EncryptedImapSmtpCaldavParams = {};
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
@@ -144,10 +146,10 @@ export class ConnectedAccountTokenEncryptionService {
     connectionParameters,
     workspaceId,
   }: {
-    connectionParameters: ImapSmtpCaldavParams<EncryptedString>;
+    connectionParameters: EncryptedImapSmtpCaldavParams;
     workspaceId: string;
-  }): ImapSmtpCaldavParams<PlaintextString> {
-    const result: ImapSmtpCaldavParams<PlaintextString> = {};
+  }): PlaintextImapSmtpCaldavParams {
+    const result: PlaintextImapSmtpCaldavParams = {};
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];
@@ -169,9 +171,9 @@ export class ConnectedAccountTokenEncryptionService {
     protocolParams,
     workspaceId,
   }: {
-    protocolParams: ConnectionParameters<EncryptedString>;
+    protocolParams: EncryptedConnectionParameters;
     workspaceId: string;
-  }): ConnectionParameters<PlaintextString> {
+  }): PlaintextConnectionParameters {
     const isEncrypted = protocolParams.password.startsWith(
       SECRET_ENCRYPTION_ENVELOPE_PREFIX,
     );

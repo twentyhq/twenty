@@ -13,8 +13,10 @@ import {
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { buildCurrentEncryptionKeyIdEnvelopeLikePattern } from 'src/database/commands/secret-encryption-rotation/utils/build-current-encryption-key-id-envelope-like-pattern.util';
 import { buildRotationErrorMessage } from 'src/database/commands/secret-encryption-rotation/utils/build-rotation-error-message.util';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import {
+  type EncryptedImapSmtpCaldavParams,
+  type ImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import {
   SecretEncryptionException,
@@ -134,10 +136,10 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
     connectionParameters,
     workspaceId,
   }: {
-    connectionParameters: ImapSmtpCaldavParams<EncryptedString>;
+    connectionParameters: EncryptedImapSmtpCaldavParams;
     workspaceId: string;
-  }): ImapSmtpCaldavParams<EncryptedString> {
-    const result: ImapSmtpCaldavParams<EncryptedString> = {
+  }): EncryptedImapSmtpCaldavParams {
+    const result: EncryptedImapSmtpCaldavParams = {
       ...connectionParameters,
     };
 

@@ -12,9 +12,8 @@ import { ImapSmtpCaldavValidatorService } from 'src/engine/core-modules/imap-smt
 import {
   type AccountType,
   type ConnectionParameters,
-  type ImapSmtpCaldavParams,
+  type PlaintextImapSmtpCaldavParams,
 } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { CalDavClientService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-client.service';
@@ -218,9 +217,9 @@ export class ImapSmtpCaldavService {
   }: {
     connectionParameters: EmailAccountConnectionParametersInput;
     handle: string;
-    existingConnectionParameters: ImapSmtpCaldavParams<PlaintextString> | null;
-  }): Promise<ImapSmtpCaldavParams<PlaintextString>> {
-    const validatedParams: ImapSmtpCaldavParams<PlaintextString> = {};
+    existingConnectionParameters: PlaintextImapSmtpCaldavParams | null;
+  }): Promise<PlaintextImapSmtpCaldavParams> {
+    const validatedParams: PlaintextImapSmtpCaldavParams = {};
 
     for (const protocol of ACCOUNT_TYPES) {
       const params = connectionParameters[protocol];

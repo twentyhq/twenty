@@ -7,9 +7,8 @@ import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-er
 import { ConnectionParametersInput } from 'src/engine/core-modules/imap-smtp-caldav-connection/dtos/imap-smtp-caldav-connection.input';
 import { connectionParametersUpdateSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters-update.schema';
 import { connectionParametersSchema } from 'src/engine/core-modules/imap-smtp-caldav-connection/schemas/connection-parameters.schema';
-import { type ConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { type PlaintextConnectionParameters } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { coercePlaintextFromUserInput } from 'src/engine/core-modules/secret-encryption/branded-strings/coerce-plaintext-from-user-input.util';
-import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecureHttpClientService } from 'src/engine/core-modules/secure-http-client/secure-http-client.service';
 
 @Injectable()
@@ -26,8 +25,8 @@ export class ImapSmtpCaldavValidatorService {
     // The caller decrypts the at-rest params before calling us so we work
     // exclusively with plaintext passwords (either a new one supplied by
     // the user or the previously decrypted existing one).
-    existingProtocolParams: ConnectionParameters<PlaintextString> | null;
-  }): Promise<ConnectionParameters<PlaintextString>> {
+    existingProtocolParams: PlaintextConnectionParameters | null;
+  }): Promise<PlaintextConnectionParameters> {
     if (!params) {
       throw new UserInputError('Protocol connection parameters are required', {
         userFriendlyMessage: msg`Please provide connection details to configure your email account.`,

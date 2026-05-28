@@ -16,7 +16,7 @@ import { type ConnectedAccountProvider } from 'twenty-shared/types';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ConnectionProviderEntity } from 'src/engine/core-modules/application/connection-provider/connection-provider.entity';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { type EncryptedImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
@@ -72,7 +72,7 @@ export class ConnectedAccountEntity extends WorkspaceRelatedEntity {
   scopes: string[] | null;
 
   @Column({ type: 'jsonb', nullable: true })
-  connectionParameters: ImapSmtpCaldavParams<EncryptedString> | null;
+  connectionParameters: EncryptedImapSmtpCaldavParams | null;
 
   @Column({ type: 'timestamptz', nullable: true })
   lastSignedInAt: Date | null;

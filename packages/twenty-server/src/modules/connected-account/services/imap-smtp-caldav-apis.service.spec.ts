@@ -9,7 +9,10 @@ import {
 
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import {
+  type EncryptedImapSmtpCaldavParams,
+  type PlaintextImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -123,9 +126,9 @@ describe('ImapSmtpCalDavAPIService', () => {
     `enc:v2:${password}` as EncryptedString;
 
   const withEncryptedPasswords = (
-    params: ImapSmtpCaldavParams<PlaintextString>,
-  ): ImapSmtpCaldavParams<EncryptedString> => {
-    const result: ImapSmtpCaldavParams<EncryptedString> = {};
+    params: PlaintextImapSmtpCaldavParams,
+  ): EncryptedImapSmtpCaldavParams => {
+    const result: EncryptedImapSmtpCaldavParams = {};
 
     for (const protocol of ['IMAP', 'SMTP', 'CALDAV'] as const) {
       if (params[protocol]) {
@@ -144,7 +147,7 @@ describe('ImapSmtpCalDavAPIService', () => {
       ({
         connectionParameters,
       }: {
-        connectionParameters: ImapSmtpCaldavParams<PlaintextString>;
+        connectionParameters: PlaintextImapSmtpCaldavParams;
         workspaceId: string;
       }) => withEncryptedPasswords(connectionParameters),
     ),
@@ -252,7 +255,7 @@ describe('ImapSmtpCalDavAPIService', () => {
           username: 'test@example.com',
           password: 'password' as PlaintextString,
         },
-      } as ImapSmtpCaldavParams<PlaintextString>,
+      } as PlaintextImapSmtpCaldavParams,
     };
 
     it('should create new account with message channel when account does not exist and IMAP is configured', async () => {
@@ -343,7 +346,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
-        } as ImapSmtpCaldavParams<PlaintextString>,
+        } as PlaintextImapSmtpCaldavParams,
         connectedAccountId: 'existing-account-id',
       };
 
@@ -472,7 +475,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             secure: true,
           password: 'password' as PlaintextString,
         },
-      } as ImapSmtpCaldavParams<PlaintextString>,
+      } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -508,7 +511,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
           password: 'password' as PlaintextString,
         },
-      } as ImapSmtpCaldavParams<PlaintextString>,
+      } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -550,7 +553,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
-        } as ImapSmtpCaldavParams<PlaintextString>,
+        } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -599,7 +602,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
             password: 'password' as PlaintextString,
           },
-        } as ImapSmtpCaldavParams<PlaintextString>,
+        } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
@@ -681,7 +684,7 @@ describe('ImapSmtpCalDavAPIService', () => {
             username: 'test@example.com',
           password: 'password' as PlaintextString,
         },
-      } as ImapSmtpCaldavParams<PlaintextString>,
+      } as PlaintextImapSmtpCaldavParams,
       };
 
       mockConnectedAccountRepository.findOne.mockResolvedValue(null);
