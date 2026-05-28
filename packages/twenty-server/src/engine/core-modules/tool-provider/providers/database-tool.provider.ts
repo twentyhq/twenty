@@ -5,7 +5,6 @@ import {
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
-import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -14,6 +13,7 @@ import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
 import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
@@ -121,10 +121,10 @@ export class DatabaseToolProvider implements ToolProvider {
       if (permission.canReadObjectRecords) {
         descriptors.push({
           name: `find_many_${snakePlural}`,
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
+          description: `Search ${objectMetadata.labelPlural} records. Filter by any field, sort (orderBy), paginate (limit/offset). Find by ID: filter.id.eq = "record-id".`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateFindToolInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -140,10 +140,10 @@ export class DatabaseToolProvider implements ToolProvider {
 
         descriptors.push({
           name: `find_one_${snakeSingular}`,
-          description: `Retrieve a single ${objectMetadata.labelSingular} record by its unique ID. Use this when you know the exact record ID and need the complete record data. Returns the full record or an error if not found.`,
+          description: `Retrieve a single ${objectMetadata.labelSingular} by ID.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(FindOneToolInputSchema),
+            inputSchema: toToolJsonSchema(FindOneToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -169,7 +169,7 @@ export class DatabaseToolProvider implements ToolProvider {
             category: ToolCategory.DATABASE_CRUD,
             ...(includeSchemas &&
               groupBySchema && {
-                inputSchema: z.toJSONSchema(groupBySchema),
+                inputSchema: toToolJsonSchema(groupBySchema),
               }),
             executionRef: {
               kind: 'database_crud',
@@ -189,7 +189,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateCreateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -208,7 +208,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -230,7 +230,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -249,7 +249,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(
+            inputSchema: toToolJsonSchema(
               generateUpdateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -273,7 +273,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(DeleteToolInputSchema),
+            inputSchema: toToolJsonSchema(DeleteToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -290,7 +290,7 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: z.toJSONSchema(BulkDeleteToolInputSchema),
+            inputSchema: toToolJsonSchema(BulkDeleteToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
