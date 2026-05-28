@@ -365,9 +365,14 @@ export class CreateCompanyAndPersonService {
         contact.handle.toLowerCase(),
       )?.existingPerson;
 
-      if (!isDefined(existingPerson) || !isNull(existingPerson.deletedAt)) {
+      if (!isDefined(existingPerson)) {
         continue;
       }
+
+      // Soft-deleted matches are about to be restored in this same batch (see
+      // contactsThatNeedPersonRestore above), so enrich them too — restore
+      // runs before enrich in createCompaniesAndPeople, which means the row
+      // is no longer soft-deleted by the time the enrichment UPDATE fires.
 
       const existingSource = existingPerson.createdBy?.source;
 

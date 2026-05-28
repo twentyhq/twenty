@@ -276,7 +276,9 @@ describe('CreateCompanyAndPersonService', () => {
         expect(result.peopleToEnrichNames).toEqual([]);
       });
 
-      it('should skip enrichment for soft-deleted contacts (restore path owns them)', () => {
+      it('should enrich a soft-deleted contact that will be restored in this same batch', () => {
+        // Restore runs before enrich in createCompaniesAndPeople — by the time
+        // the enrichment UPDATE fires, the row is no longer soft-deleted.
         const result =
           service.computeContactsThatNeedPersonCreateAndRestoreAndWorkDomainNamesToCreate(
             [contact],
@@ -286,7 +288,12 @@ describe('CreateCompanyAndPersonService', () => {
             null,
           );
 
-        expect(result.peopleToEnrichNames).toEqual([]);
+        expect(result.peopleToEnrichNames).toEqual([
+          {
+            personId: 'existing-person-1',
+            name: { firstName: 'Félix', lastName: 'Malfait' },
+          },
+        ]);
       });
 
       it('should fill firstName when missing and preserve existing lastName', () => {
