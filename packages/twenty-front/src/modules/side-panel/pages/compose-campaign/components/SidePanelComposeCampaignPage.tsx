@@ -15,11 +15,13 @@ import { useSendMessageCampaign } from '@/activities/campaigns/hooks/useSendMess
 import { useVerifiedEmailingDomains } from '@/activities/campaigns/hooks/useVerifiedEmailingDomains';
 import { BLOCK_SCHEMA } from '@/blocknote-editor/blocks/Schema';
 import { BlockEditor } from '@/blocknote-editor/components/BlockEditor';
+import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { composeCampaignDefaultSubjectComponentState } from '@/side-panel/pages/compose-campaign/states/composeCampaignDefaultSubjectComponentState';
-import { composeCampaignRecipientPersonIdsComponentState } from '@/side-panel/pages/compose-campaign/states/composeCampaignRecipientPersonIdsComponentState';
+import { composeCampaignRecipientFilterComponentState } from '@/side-panel/pages/compose-campaign/states/composeCampaignRecipientFilterComponentState';
 import { useSidePanelHistory } from '@/side-panel/hooks/useSidePanelHistory';
 import { SidePanelFooter } from '@/ui/layout/side-panel/components/SidePanelFooter';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
 
 const StyledContainer = styled.div`
   display: flex;
@@ -94,9 +96,9 @@ const StyledEmptyDomainsMessage = styled.div`
 `;
 
 export const SidePanelComposeCampaignPage = () => {
-  const recipientPersonIds =
-    useAtomComponentStateValue(composeCampaignRecipientPersonIdsComponentState) ??
-    [];
+  const recipientFilter = useAtomComponentStateValue(
+    composeCampaignRecipientFilterComponentState,
+  );
   const defaultSubject =
     useAtomComponentStateValue(composeCampaignDefaultSubjectComponentState) ??
     '';
@@ -105,6 +107,18 @@ export const SidePanelComposeCampaignPage = () => {
   const { sendCampaign, loading: sending } = useSendMessageCampaign();
   const { verifiedDomains, loading: domainsLoading } =
     useVerifiedEmailingDomains();
+
+  // Cheap pre-flight count of how many Person rows the filter resolves to.
+  // Limit:1 is enough because we only need totalCount from the response; the
+  // backend resolves the real recipient list when the mutation fires.
+  const { totalCount: matchedRecipientCount, loading: countLoading } =
+    useFindManyRecords({
+      objectNameSingular: CoreObjectNameSingular.Person,
+      filter: recipientFilter ?? undefined,
+      recordGqlFields: { id: true },
+      limit: 1,
+      skip: recipientFilter === null,
+    });
 
   const [name, setName] = useState('');
   const [subject, setSubject] = useState(defaultSubject);
@@ -146,6 +160,8 @@ export const SidePanelComposeCampaignPage = () => {
     );
   });
 
+  const recipientCount = matchedRecipientCount ?? 0;
+
   const canSend =
     !sending &&
     name.trim().length > 0 &&
@@ -153,9 +169,14 @@ export const SidePanelComposeCampaignPage = () => {
     hasBodyContent &&
     fromAddress.trim().length > 0 &&
     emailingDomainId.length > 0 &&
-    recipientPersonIds.length > 0;
+    recipientFilter !== null &&
+    recipientCount > 0;
 
   const handleSend = async () => {
+    if (recipientFilter === null) {
+      return;
+    }
+
     // Recompute HTML at send time in case onChange was missed during fast typing.
     const finalHtml = editor.blocksToFullHTML(editor.document);
 
@@ -166,7 +187,7 @@ export const SidePanelComposeCampaignPage = () => {
       fromAddress: fromAddress.trim(),
       replyTo: replyTo.trim() ? replyTo.trim() : undefined,
       emailingDomainId,
-      recipientPersonIds,
+      recipientFilter,
     });
 
     if (success) {
@@ -178,12 +199,14 @@ export const SidePanelComposeCampaignPage = () => {
     <StyledContainer>
       <StyledContent>
         <StyledRecipientCount>
-          {t`Sending to ${recipientPersonIds.length} recipient(s)`}
+          {countLoading
+            ? t`Resolving recipients…`
+            : t`Sending to ${recipientCount} recipient(s)`}
         </StyledRecipientCount>
 
-        {recipientPersonIds.length >= MAX_CAMPAIGN_RECIPIENTS && (
+        {recipientCount > MAX_CAMPAIGN_RECIPIENTS && (
           <StyledTruncationWarning>
-            {t`Recipient cap of ${MAX_CAMPAIGN_RECIPIENTS} reached — any additional people selected will not receive this campaign.`}
+            {t`Selection matches ${recipientCount} people but the campaign cap is ${MAX_CAMPAIGN_RECIPIENTS}. Only the first ${MAX_CAMPAIGN_RECIPIENTS} will receive this campaign.`}
           </StyledTruncationWarning>
         )}
 

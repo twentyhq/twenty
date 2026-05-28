@@ -2,16 +2,19 @@ import { useCallback } from 'react';
 
 import { useStore } from 'jotai';
 import { t } from '@lingui/core/macro';
-import { SidePanelPages } from 'twenty-shared/types';
+import {
+  type RecordGqlOperationFilter,
+  SidePanelPages,
+} from 'twenty-shared/types';
 import { IconSend } from 'twenty-ui/display';
 import { v4 } from 'uuid';
 
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
 import { composeCampaignDefaultSubjectComponentState } from '@/side-panel/pages/compose-campaign/states/composeCampaignDefaultSubjectComponentState';
-import { composeCampaignRecipientPersonIdsComponentState } from '@/side-panel/pages/compose-campaign/states/composeCampaignRecipientPersonIdsComponentState';
+import { composeCampaignRecipientFilterComponentState } from '@/side-panel/pages/compose-campaign/states/composeCampaignRecipientFilterComponentState';
 
 type OpenComposeCampaignParams = {
-  recipientPersonIds: string[];
+  recipientFilter: RecordGqlOperationFilter;
   defaultSubject?: string;
 };
 
@@ -24,10 +27,10 @@ export const useOpenComposeCampaignInSidePanel = () => {
       const pageId = v4();
 
       store.set(
-        composeCampaignRecipientPersonIdsComponentState.atomFamily({
+        composeCampaignRecipientFilterComponentState.atomFamily({
           instanceId: pageId,
         }),
-        params.recipientPersonIds,
+        params.recipientFilter,
       );
 
       store.set(

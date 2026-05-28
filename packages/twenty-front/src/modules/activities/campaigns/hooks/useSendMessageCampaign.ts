@@ -1,6 +1,7 @@
 import { useMutation } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
 import { useCallback } from 'react';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 import { SEND_MESSAGE_CAMPAIGN } from '@/activities/campaigns/graphql/mutations/sendMessageCampaign';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -12,7 +13,7 @@ type SendMessageCampaignInput = {
   fromAddress: string;
   replyTo?: string;
   emailingDomainId: string;
-  recipientPersonIds: string[];
+  recipientFilter: RecordGqlOperationFilter;
 };
 
 type SendMessageCampaignResult = {
@@ -43,7 +44,7 @@ export const useSendMessageCampaign = () => {
           enqueueSuccessSnackBar({
             message:
               skippedRecipientCount > 0
-                ? t`Campaign queued for ${queuedRecipientCount} recipients (${skippedRecipientCount} skipped — no email).`
+                ? t`Campaign queued for ${queuedRecipientCount} recipients (${skippedRecipientCount} skipped — no email or cap reached).`
                 : t`Campaign queued for ${queuedRecipientCount} recipients.`,
           });
           return true;

@@ -1,53 +1,32 @@
-import { MAX_CAMPAIGN_RECIPIENTS } from 'twenty-shared/constants';
 import { CoreObjectNameSingular } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { HeadlessEngineCommandWrapperEffect } from '@/command-menu-item/engine-command/components/HeadlessEngineCommandWrapperEffect';
 import { useHeadlessCommandContextApi } from '@/command-menu-item/engine-command/hooks/useHeadlessCommandContextApi';
-import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { useOpenComposeCampaignInSidePanel } from '@/side-panel/hooks/useOpenComposeCampaignInSidePanel';
 
 export const SendCampaignCommand = () => {
   const { openComposeCampaignInSidePanel } =
     useOpenComposeCampaignInSidePanel();
 
-  const { objectMetadataItem, selectedRecords, graphqlFilter } =
-    useHeadlessCommandContextApi();
+  const { objectMetadataItem, graphqlFilter } = useHeadlessCommandContextApi();
 
   const objectNameSingular = objectMetadataItem?.nameSingular ?? null;
   const isPerson = objectNameSingular === CoreObjectNameSingular.Person;
 
-  // Campaign is bulk-only in v1. We hard-cap recipient resolution at
-  // MAX_CAMPAIGN_RECIPIENTS to match the server-side validation in the
-  // SendMessageCampaign DTO. If the user selected more than that, only the
-  // first MAX_CAMPAIGN_RECIPIENTS will be fetched — the drawer surfaces the
-  // truncation via the selectedCount vs queuedCount delta.
-  const { records: personRecords, loading } = useFindManyRecords({
-    objectNameSingular: CoreObjectNameSingular.Person,
-    filter: graphqlFilter ?? undefined,
-    recordGqlFields: { id: true },
-    limit: MAX_CAMPAIGN_RECIPIENTS,
-    skip: !isPerson,
-  });
-
-  const recipientPersonIds = isPerson
-    ? personRecords.map((record) => record.id).filter(isDefined)
-    : selectedRecords.map((record) => record.id).filter(isDefined);
-
   const handleExecute = () => {
-    if (recipientPersonIds.length === 0) {
+    if (!isPerson || !isDefined(graphqlFilter)) {
       return;
     }
 
+    // Forward the table's filter representation as-is. The backend uses the
+    // same GraphqlQueryParser machinery the read API does to resolve it into
+    // Person rows, so we never have to materialize the full ID list on the
+    // client.
     openComposeCampaignInSidePanel({
-      recipientPersonIds,
+      recipientFilter: graphqlFilter,
     });
   };
 
-  return (
-    <HeadlessEngineCommandWrapperEffect
-      execute={handleExecute}
-      ready={!loading}
-    />
-  );
+  return <HeadlessEngineCommandWrapperEffect execute={handleExecute} ready />;
 };

@@ -1,15 +1,19 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
+import { MAX_CAMPAIGN_RECIPIENTS } from 'twenty-shared/constants';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
+import { GraphqlQueryParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query.parser';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { MessageChannelMetadataService } from 'src/engine/metadata-modules/message-channel/message-channel-metadata.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getObjectMetadataFromEntityTarget } from 'src/engine/twenty-orm/utils/get-object-metadata-from-entity-target.util';
 import { type MessageCampaignWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-campaign.workspace-entity';
 import { type MessageThreadWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message-thread.workspace-entity';
 import { type MessageWorkspaceEntity } from 'src/modules/messaging/common/standard-objects/message.workspace-entity';
@@ -28,6 +32,11 @@ type StartCampaignResult = {
   campaignId: string;
   queuedRecipientCount: number;
   skippedRecipientCount: number;
+};
+
+type ResolvedRecipient = {
+  personId: string;
+  email: string;
 };
 
 @Injectable()
@@ -70,37 +79,28 @@ export class MessagingCampaignService {
         },
       );
 
-    const personRepository =
-      await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
+    const { recipients, totalMatchedCount } =
+      await this.resolveRecipientsFromFilter({
         workspaceId,
-        'person',
-        { shouldBypassPermissionChecks: true },
-      );
+        recipientFilter: input.recipientFilter,
+      });
 
-    const people = await personRepository.find({
-      where: { id: In(input.recipientPersonIds) },
-      select: ['id', 'emails'],
-    });
-
-    const recipientsWithEmail = people
-      .map((person) => ({
-        personId: person.id,
-        email: person.emails?.primaryEmail ?? null,
-      }))
-      .filter(
-        (recipient): recipient is { personId: string; email: string } =>
-          recipient.email !== null && recipient.email.length > 0,
-      );
-
-    if (recipientsWithEmail.length === 0) {
+    if (recipients.length === 0) {
       throw new MessagingCampaignException(
-        'None of the selected recipients have a primary email address',
+        'None of the matching recipients have a primary email address',
         MessagingCampaignExceptionCode.NO_RECIPIENTS_WITH_EMAIL,
       );
     }
 
+    // Truncation due to the recipient cap counts as "skipped" alongside
+    // recipients without an email.
+    const truncatedCount = Math.max(
+      0,
+      totalMatchedCount - MAX_CAMPAIGN_RECIPIENTS,
+    );
     const skippedRecipientCount =
-      input.recipientPersonIds.length - recipientsWithEmail.length;
+      truncatedCount + (Math.min(totalMatchedCount, MAX_CAMPAIGN_RECIPIENTS) -
+        recipients.length);
 
     const campaignRepository =
       await this.globalWorkspaceOrmManager.getRepository<MessageCampaignWorkspaceEntity>(
@@ -136,10 +136,10 @@ export class MessagingCampaignService {
     });
 
     // One thread + one message per recipient. Lets replies (if reply-to is a
-    // synced mailbox) thread naturally, and avoids cross-recipient leakage.
+    // synced mailbox) thread naturally and avoids cross-recipient leakage.
     const messageIds: string[] = [];
 
-    for (const recipient of recipientsWithEmail) {
+    for (const recipient of recipients) {
       const thread = await messageThreadRepository.save({});
       const message = await messageRepository.save({
         subject: input.subject,
@@ -174,6 +174,76 @@ export class MessagingCampaignService {
       campaignId: campaign.id,
       queuedRecipientCount: messageIds.length,
       skippedRecipientCount,
+    };
+  }
+
+  // Resolves the GraphQL filter to (personId, email) tuples using the same
+  // filter machinery the GraphQL query API uses. Caps at
+  // MAX_CAMPAIGN_RECIPIENTS server-side regardless of how many rows match.
+  private async resolveRecipientsFromFilter({
+    workspaceId,
+    recipientFilter,
+  }: {
+    workspaceId: string;
+    recipientFilter: RecordGqlOperationFilter;
+  }): Promise<{
+    recipients: ResolvedRecipient[];
+    totalMatchedCount: number;
+  }> {
+    const personRepository =
+      await this.globalWorkspaceOrmManager.getRepository<PersonWorkspaceEntity>(
+        workspaceId,
+        'person',
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const { flatObjectMetadataMaps, flatFieldMetadataMaps } =
+      personRepository.internalContext;
+
+    const personFlatObjectMetadata = getObjectMetadataFromEntityTarget(
+      'person',
+      personRepository.internalContext,
+    );
+
+    const parser = new GraphqlQueryParser(
+      personFlatObjectMetadata,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    );
+
+    // We build two queries: one for the count (so we can report
+    // truncation accurately) and one for the actual fetch capped at
+    // MAX_CAMPAIGN_RECIPIENTS. Both share the same filter.
+    const buildBaseQuery = () => {
+      const qb = personRepository.createQueryBuilder('person');
+      parser.applyFilterToBuilder(qb, 'person', recipientFilter);
+      parser.applyDeletedAtToBuilder(qb, recipientFilter);
+
+      // Skip rows without a usable primary email — we'd have to discard
+      // them anyway after fetching.
+      qb.andWhere('"person"."emailsPrimaryEmail" IS NOT NULL').andWhere(
+        '"person"."emailsPrimaryEmail" <> \'\'',
+      );
+
+      return qb;
+    };
+
+    const countQb = buildBaseQuery();
+    const totalMatchedCount = await countQb.getCount();
+
+    const fetchQb = buildBaseQuery()
+      .select([
+        '"person"."id" AS "personId"',
+        '"person"."emailsPrimaryEmail" AS "email"',
+      ])
+      .orderBy('"person"."id"', 'ASC')
+      .take(MAX_CAMPAIGN_RECIPIENTS);
+
+    const rows = await fetchQb.getRawMany<ResolvedRecipient>();
+
+    return {
+      recipients: rows,
+      totalMatchedCount,
     };
   }
 

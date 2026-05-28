@@ -1,16 +1,16 @@
 import { Field, InputType } from '@nestjs/graphql';
 
 import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
   IsEmail,
+  IsNotEmptyObject,
+  IsObject,
   IsOptional,
   IsString,
   IsUUID,
   Length,
 } from 'class-validator';
-import { MAX_CAMPAIGN_RECIPIENTS } from 'twenty-shared/constants';
+import { GraphQLJSON } from 'graphql-type-json';
+import { type RecordGqlOperationFilter } from 'twenty-shared/types';
 
 @InputType()
 export class SendMessageCampaignInput {
@@ -25,7 +25,7 @@ export class SendMessageCampaignInput {
   subject: string;
 
   @Field({
-    description: 'Rich-text body template (BlockNote JSON or HTML string).',
+    description: 'Rich-text body — HTML rendered from the BlockNote editor.',
   })
   @IsString()
   bodyTemplate: string;
@@ -45,10 +45,13 @@ export class SendMessageCampaignInput {
   @IsUUID('4')
   emailingDomainId: string;
 
-  @Field(() => [String], { description: 'Person IDs to send to.' })
-  @IsArray()
-  @ArrayMinSize(1)
-  @ArrayMaxSize(MAX_CAMPAIGN_RECIPIENTS)
-  @IsUUID('4', { each: true })
-  recipientPersonIds: string[];
+  // The same RecordGqlOperationFilter the record table uses for selection.
+  // Server resolves it to Person rows (capped at MAX_CAMPAIGN_RECIPIENTS) so
+  // the client never has to materialize thousands of IDs.
+  @Field(() => GraphQLJSON, {
+    description: 'Record filter resolving to the recipient Person rows.',
+  })
+  @IsObject()
+  @IsNotEmptyObject()
+  recipientFilter: RecordGqlOperationFilter;
 }
