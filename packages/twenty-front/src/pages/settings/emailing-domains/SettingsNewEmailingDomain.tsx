@@ -114,7 +114,7 @@ export const SettingsNewEmailingDomain = () => {
       title={t`New Emailing Domain`}
       actionButton={
         <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.WorkspaceEmail)}
+          onCancel={() => navigate(SettingsPath.Workspace)}
           onSave={handleSave}
           isSaveDisabled={!canSave}
         />
@@ -125,8 +125,8 @@ export const SettingsNewEmailingDomain = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: <Trans>Email</Trans>,
-          href: getSettingsPath(SettingsPath.WorkspaceEmail),
+          children: <Trans>Emailing Domains</Trans>,
+          href: getSettingsPath(SettingsPath.Workspace),
         },
         { children: <Trans>New Emailing Domain</Trans> },
       ]}
