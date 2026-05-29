@@ -17,7 +17,27 @@ export class WorkspaceBrandingMiddleware implements NestMiddleware {
   ) {}
 
   async use(request: Request, response: Response, next: NextFunction) {
-    if (request.method !== 'GET' || !this.shouldServeBrandedIndexHtml(request)) {
+    if (request.method !== 'GET') {
+      return next();
+    }
+
+    if (request.path === '/favicon.ico') {
+      const branding =
+        await this.workspaceBrandingService.getBrandingFromRequest(request);
+
+      if (!isDefined(branding)) {
+        response.status(404).send();
+
+        return;
+      }
+
+      response.setHeader('Cache-Control', 'public, max-age=300');
+      response.redirect(302, branding.logoUrl);
+
+      return;
+    }
+
+    if (!this.shouldServeBrandedIndexHtml(request)) {
       return next();
     }
 
@@ -46,10 +66,6 @@ export class WorkspaceBrandingMiddleware implements NestMiddleware {
 
   private shouldServeBrandedIndexHtml(request: Request): boolean {
     const path = request.path;
-
-    if (path === '/favicon.ico') {
-      return false;
-    }
 
     if (isStaticAssetPath(path) || isApiPath(path)) {
       return false;

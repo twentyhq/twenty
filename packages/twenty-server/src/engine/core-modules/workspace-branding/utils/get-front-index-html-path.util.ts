@@ -1,17 +1,13 @@
-import { existsSync } from 'fs';
 import { join } from 'path';
 
-export const getFrontIndexHtmlPath = (): string | null => {
-  const candidatePaths = [
-    join(__dirname, '..', '..', '..', 'front', 'index.html'),
-    join(__dirname, '..', '..', '..', '..', 'front', 'index.html'),
-  ];
+import { getFrontDistPath } from './get-front-dist-path.util';
 
-  for (const candidatePath of candidatePaths) {
-    if (existsSync(candidatePath)) {
-      return candidatePath;
-    }
+export const getFrontIndexHtmlPath = (): string | null => {
+  const frontDistPath = getFrontDistPath();
+
+  if (frontDistPath === null) {
+    return null;
   }
 
-  return null;
+  return join(frontDistPath, 'index.html');
 };

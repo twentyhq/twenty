@@ -7,11 +7,9 @@ import {
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
 
-import { existsSync } from 'fs';
-import { join } from 'path';
-
 import { YogaDriver, type YogaDriverConfig } from '@graphql-yoga/nestjs';
 import { SentryModule } from '@sentry/nestjs/setup';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AdminPanelGraphQLApiModule } from 'src/engine/api/graphql/admin-panel-graphql-api.module';
 import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.module';
@@ -25,6 +23,7 @@ import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/mid
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { WorkspaceBrandingMiddleware } from 'src/engine/core-modules/workspace-branding/workspace-branding.middleware';
 import { WorkspaceBrandingModule } from 'src/engine/core-modules/workspace-branding/workspace-branding.module';
+import { getFrontDistPath } from 'src/engine/core-modules/workspace-branding/utils/get-front-dist-path.util';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
@@ -83,7 +82,7 @@ const MIGRATED_REST_METHODS = [
 export class AppModule {
   private static getConditionalModules(): DynamicModule[] {
     const modules: DynamicModule[] = [];
-    const frontPath = join(__dirname, 'front');
+    const frontPath = getFrontDistPath();
 
     // NestJS DevTools - can be useful for debugging and profiling
     /* if (process.env.NODE_ENV === NodeEnvironment.DEVELOPMENT) {
@@ -94,7 +93,7 @@ export class AppModule {
       );
     } */
 
-    if (existsSync(frontPath)) {
+    if (isDefined(frontPath)) {
       modules.push(
         ServeStaticModule.forRoot({
           rootPath: frontPath,

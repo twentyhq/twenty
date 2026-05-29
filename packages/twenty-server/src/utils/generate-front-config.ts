@@ -2,6 +2,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 import { config } from 'dotenv';
+import { isDefined } from 'twenty-shared/utils';
+
+import { getFrontDistPath } from 'src/engine/core-modules/workspace-branding/utils/get-front-dist-path.util';
+
 config({
   path: process.env.NODE_ENV === 'test' ? '.env.test' : '.env',
   override: true,
@@ -22,7 +26,17 @@ export function generateFrontConfig(): void {
     </script>
     <!-- END: Twenty Config -->`;
 
-  const distPath = path.join(__dirname, '..', 'front');
+  const distPath = getFrontDistPath();
+
+  if (!isDefined(distPath)) {
+    // oxlint-disable-next-line no-console
+    console.log(
+      'Frontend build not found or not writable, assuming it is served independently',
+    );
+
+    return;
+  }
+
   const indexPath = path.join(distPath, 'index.html');
 
   try {

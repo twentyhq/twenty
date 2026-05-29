@@ -13,5 +13,7 @@ export const getRequestOrigin = (request: Request): string => {
       ? forwardedHost.split(',')[0]?.trim()
       : request.headers.host;
 
-  return `${protocol}://${hostHeader}`;
+  const hostname = hostHeader ?? request.hostname;
+
+  return `${protocol}://${hostname}`;
 };

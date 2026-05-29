@@ -10,7 +10,7 @@ import { REACT_APP_SERVER_BASE_URL } from '~/config';
 const DEFAULT_PWA_NAME = 'CRM';
 const STATIC_MANIFEST_PATH = '/manifest.json';
 
-const getWorkspaceFaviconUrl = (): string => {
+const getServerFaviconUrl = (): string => {
   const serverBaseUrl = REACT_APP_SERVER_BASE_URL.replace(/\/$/, '');
 
   return `${serverBaseUrl}/favicon.ico`;
@@ -57,8 +57,10 @@ export const PageFavicon = () => {
     currentWorkspace?.displayName ??
     DEFAULT_PWA_NAME;
 
-  const hasWorkspaceLogo = isDefined(workspaceLogo);
-  const faviconUrl = getWorkspaceFaviconUrl();
+  const hasWorkspaceLogo = isNonEmptyString(workspaceLogo);
+  const faviconUrl = hasWorkspaceLogo
+    ? workspaceLogo
+    : getServerFaviconUrl();
 
   const pwaDisplayName = isNonEmptyString(workspaceDisplayName)
     ? workspaceDisplayName
