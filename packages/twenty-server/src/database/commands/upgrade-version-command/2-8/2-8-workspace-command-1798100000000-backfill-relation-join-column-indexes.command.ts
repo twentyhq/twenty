@@ -80,7 +80,9 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
 
     const indexedFieldIds = new Set<string>();
 
-    for (const flatIndex of Object.values(flatIndexMaps.byUniversalIdentifier)) {
+    for (const flatIndex of Object.values(
+      flatIndexMaps.byUniversalIdentifier,
+    )) {
       if (!isDefined(flatIndex)) {
         continue;
       }
@@ -155,10 +157,12 @@ export class BackfillRelationJoinColumnIndexesCommand extends ActiveOrSuspendedW
         universalFlatIndexMetadata,
         joinColumnName,
       } of flatIndexBuildPlans) {
-        const { schemaName, tableName } = getWorkspaceSchemaContextForMigration({
-          workspaceId,
-          objectMetadata: flatObjectMetadata,
-        });
+        const { schemaName, tableName } = getWorkspaceSchemaContextForMigration(
+          {
+            workspaceId,
+            objectMetadata: flatObjectMetadata,
+          },
+        );
 
         await this.workspaceSchemaManagerService.indexManager.createIndex({
           queryRunner,

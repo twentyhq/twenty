@@ -6,6 +6,7 @@ import { DataSource } from 'typeorm';
 
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
@@ -186,7 +187,7 @@ describe('2-5 slow instance command 1798000005000 - EncryptApplicationVariableSl
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'already-v2-secret';
-    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext, {
+    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext as PlaintextString, {
       workspaceId,
     });
     const id = await seedRow({ isSecret: true, value: preexistingV2 });

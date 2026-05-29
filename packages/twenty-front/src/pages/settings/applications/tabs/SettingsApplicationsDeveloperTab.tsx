@@ -42,7 +42,6 @@ import {
 import { getApplicationDescriptionSummary } from '~/pages/settings/applications/utils/getApplicationDescriptionSummary';
 import { ApplicationDisplay } from '@/applications/components/ApplicationDisplay';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
-import { SettingsEmailingDomains } from '~/pages/settings/emailing-domains/SettingsEmailingDomains';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -78,9 +77,6 @@ export const SettingsApplicationsDeveloperTab = () => {
 
   const isPublicDomainEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_PUBLIC_DOMAIN_ENABLED,
-  );
-  const isEmailingDomainEnabled = useIsFeatureEnabled(
-    FeatureFlagKey.IS_EMAILING_DOMAIN_ENABLED,
   );
 
   const [marketplaceAppSearchTerm, setMarketplaceAppSearchTerm] = useState('');
@@ -202,16 +198,6 @@ export const SettingsApplicationsDeveloperTab = () => {
               })}
             </StyledTableRowsContainer>
           </Table>
-        </Section>
-      )}
-
-      {isEmailingDomainEnabled && (
-        <Section>
-          <H2Title
-            title={t`Emailing Domains`}
-            description={t`Configure and verify domains for emailing from this workspace.`}
-          />
-          <SettingsEmailingDomains />
         </Section>
       )}
 

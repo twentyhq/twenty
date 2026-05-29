@@ -1,7 +1,9 @@
-import { ForbiddenException, Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import SnsPayloadValidator from 'sns-payload-validator';
 
+import { MessagingWebhookExceptionCode } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook-exception-code.enum';
+import { MessagingWebhookException } from 'src/engine/core-modules/messaging-webhooks/messaging-webhook.exception';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
 type SnsPayload = SnsPayloadValidator.SnsPayload;
@@ -17,7 +19,10 @@ export class SnsSignatureVerifierService {
     if (!this.isTopicAllowlisted(payload.TopicArn)) {
       this.logger.warn(`SNS topic ${payload.TopicArn} is not in allowlist`);
 
-      throw new ForbiddenException('SNS topic not allowed');
+      throw new MessagingWebhookException(
+        'SNS topic not allowed',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_FORBIDDEN_TOPIC,
+      );
     }
 
     try {
@@ -28,7 +33,10 @@ export class SnsSignatureVerifierService {
 
       this.logger.warn(`SNS signature verification failed: ${errorMessage}`);
 
-      throw new ForbiddenException('SNS signature invalid');
+      throw new MessagingWebhookException(
+        'SNS signature invalid',
+        MessagingWebhookExceptionCode.MESSAGING_WEBHOOK_INVALID_SIGNATURE,
+      );
     }
   }
 
