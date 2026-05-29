@@ -37,9 +37,9 @@ The API key authenticates the developer against the target workspace. It determi
 
 An app needs a running Twenty instance to develop against. There are two ways to connect:
 
-1. **Local instance with Docker** (default): `create-twenty-app` starts a disposable local Twenty server on `http://localhost:2020` through Docker. The scaffolder authenticates with the local server's development API key and creates a `local` remote automatically. This is best for starting fresh without affecting a shared workspace.
+1. **Existing instance via OAuth** (default): `create-twenty-app --url <twenty-instance-url>` authenticates via OAuth on the provided Twenty server. The scaffolder opens a browser for the OAuth flow, then stores the credentials as a remote in `~/.twenty/config.json`. This is best when the developer already has a workspace with data to develop against.
 
-2. **Existing instance via OAuth**: `create-twenty-app --url <twenty-instance-url>` skips Docker and authenticates via OAuth on the provided Twenty server. The scaffolder opens a browser for the OAuth flow, then stores the credentials as a remote. This is best when the developer already has a workspace with data to develop against.
+2. **Local instance with Docker** (fallback): `create-twenty-app` (no `--url`) starts a disposable local Twenty server on `http://localhost:2020` through Docker. The scaffolder authenticates with the local server's development API key and creates a `local` remote automatically. Use this when the developer has no Twenty instance available and wants to start fresh without affecting a shared workspace.
 
 In both cases, the result is a remote stored in `~/.twenty/config.json` that the CLI uses for all subsequent sync, deploy, and data access commands.
 

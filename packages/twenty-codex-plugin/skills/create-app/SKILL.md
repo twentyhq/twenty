@@ -28,12 +28,14 @@ Before scaffolding, explain to the user that a Twenty app is not a standalone ap
 
 ## Choose A Twenty Instance
 
-Ask the user how they want to connect to a Twenty instance:
+By default, ask the user for the URL of their existing Twenty instance (e.g. `https://app.twenty.com` or a self-hosted URL). Mention that if they don't have one yet, you can spin up a local instance with Docker instead.
 
-1. **Local instance with Docker** — the scaffolder starts a disposable local Twenty server on `http://localhost:2020` through Docker. Best for starting fresh without affecting a shared workspace. Requires Docker Desktop to be installed and running.
-2. **Existing Twenty instance** — the user provides the URL of a running Twenty server (self-hosted or cloud, e.g. `https://app.twenty.com`). The scaffolder authenticates via OAuth on that instance. Best when the user already has a workspace with data they want to develop against.
+The two options are:
 
-If the user does not specify, ask which option they prefer before proceeding.
+1. **Existing Twenty instance (default)** — the user provides the URL of a running Twenty server (self-hosted or cloud, e.g. `https://app.twenty.com`). The scaffolder authenticates via OAuth on that instance. Best when the user already has a workspace with data they want to develop against.
+2. **Local instance with Docker (fallback)** — only when the user has no Twenty instance available. The scaffolder starts a disposable local Twenty server on `http://localhost:2020` through Docker. Requires Docker Desktop to be installed and running.
+
+If the user does not provide a URL, ask first whether they have a Twenty instance URL to use; only fall back to Docker if they explicitly say they don't have one.
 
 Before scaffolding, repeat back the app's purpose in one sentence and its expected shape: standard objects extended, any custom objects, whether it needs UI, whether it needs workflows or post-install seeding. Scaffolding is one-way — confirming here avoids re-scaffolds later.
 
@@ -43,19 +45,21 @@ First, ask the user for the app name if they did not provide one.
 
 The directory name must contain only lowercase letters, numbers, and hyphens. Transform the entered name to lowercase and replace spaces with hyphens when needed.
 
-For a local Docker instance (default):
-
-```bash
-npx create-twenty-app@latest <app-name>
-```
-
-For an existing Twenty instance:
+For an existing Twenty instance (default):
 
 ```bash
 npx create-twenty-app@latest <app-name> --url <twenty-instance-url>
 ```
 
-The `--url` flag skips Docker setup and authenticates via OAuth on the provided instance. The scaffolder opens a browser for the OAuth flow, then stores the credentials as a remote in `~/.twenty/config.json`.
+The `--url` flag authenticates via OAuth on the provided instance. The scaffolder opens a browser for the OAuth flow, then stores the credentials as a remote in `~/.twenty/config.json`.
+
+Only if the user has no Twenty instance and wants to try locally with Docker:
+
+```bash
+npx create-twenty-app@latest <app-name>
+```
+
+This omits `--url` and starts a disposable local Twenty server through Docker.
 
 The scaffolder handles everything: it creates the project, enables corepack, installs dependencies, initializes Git, authenticates with the target instance, runs an initial sync, and opens the generated app page when possible.
 
@@ -79,13 +83,13 @@ Report to the user that the app was created successfully and is ready for develo
 
 The scaffolder generates a placeholder page at `src/front-components/main-page.tsx` plus its page layout and navigation menu item. In `develop-app`, delete all three before the first deploy unless the app actually needs UI. Do not stack additional pages on top of the placeholder.
 
-## Docker Troubleshooting
+## Docker Fallback Troubleshooting
 
-Use this when the local Docker flow fails because Docker is missing or not running.
+Use this only when the user opted into the Docker fallback and it fails because Docker is missing or not running.
 
-If Docker is missing, share this download link: `https://www.docker.com/products/docker-desktop/`. Ask the user to install Docker Desktop.
+The preferred recovery is to ask the user for an existing Twenty instance URL and rerun the scaffolder with `--url <twenty-instance-url>` — this skips Docker entirely.
 
-If Docker is not an option, suggest connecting to an existing Twenty instance instead using the `--url` flag.
+If the user still wants the local Docker path and Docker is missing, share this download link: `https://www.docker.com/products/docker-desktop/` and ask them to install Docker Desktop.
 
 # Next Steps
 
