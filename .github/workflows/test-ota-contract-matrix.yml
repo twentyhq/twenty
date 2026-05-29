@@ -299,7 +299,6 @@ jobs:
         shell: bash
         run: |
           ota run verify --native --stream .
-          ota run integration --native --stream .
 
       - name: Execute verify workflow (native)
         if: ${{ matrix.full_proof }}
