@@ -16,7 +16,6 @@ import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
-import { ApplicationEntityCacheProviderService } from 'src/engine/core-modules/application/application-entity-cache-provider.service';
 
 @Module({
   imports: [
@@ -39,7 +38,6 @@ import { ApplicationEntityCacheProviderService } from 'src/engine/core-modules/a
   providers: [
     ApplicationService,
     WorkspaceFlatApplicationMapCacheService,
-    ApplicationEntityCacheProviderService,
     provideWorkspaceScopedRepository(AgentEntity),
     provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],

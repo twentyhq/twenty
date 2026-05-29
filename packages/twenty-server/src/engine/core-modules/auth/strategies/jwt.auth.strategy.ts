@@ -371,10 +371,12 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
 
     const applicationId = payload.sub ?? payload.applicationId;
 
-    const application = await this.coreEntityCacheService.get(
-      'applicationEntity',
-      applicationId,
-    );
+    const { flatApplicationMaps } =
+      await this.workspaceCacheService.getOrRecompute(workspace.id, [
+        'flatApplicationMaps',
+      ]);
+
+    const application = flatApplicationMaps.byId[applicationId];
 
     if (!isDefined(application)) {
       throw new AuthException(

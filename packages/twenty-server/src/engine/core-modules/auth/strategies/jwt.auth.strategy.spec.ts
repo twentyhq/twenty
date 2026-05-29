@@ -2,8 +2,14 @@ import { randomUUID } from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 
-import { AuthException, AuthExceptionCode, } from 'src/engine/core-modules/auth/auth.exception';
-import { type JwtPayload, JwtTokenTypeEnum, } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  AuthException,
+  AuthExceptionCode,
+} from 'src/engine/core-modules/auth/auth.exception';
+import {
+  type JwtPayload,
+  JwtTokenTypeEnum,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -23,7 +29,7 @@ describe('JwtAuthStrategy', () => {
 
   let workspaceStore: Record<string, any>;
   let userStore: Record<string, any>;
-  let applicationStore: Record<string, any>;
+  let applicationStore: Record<string, Record<string, any>>;
   let apiKeyStore: Record<string, Record<string, any>>;
 
   beforeEach(() => {
@@ -71,6 +77,12 @@ describe('JwtAuthStrategy', () => {
             };
           }
 
+          if (cacheKeys.includes('flatApplicationMaps')) {
+            result.flatApplicationMaps = {
+              byId: applicationStore[workspaceId] ?? {},
+            };
+          }
+
           if (cacheKeys.includes('apiKeyMap')) {
             result.apiKeyMap = apiKeyStore[workspaceId] ?? {};
           }
@@ -92,10 +104,6 @@ describe('JwtAuthStrategy', () => {
 
         if (keyName === 'userWorkspaceEntity') {
           return userWorkspaceRepository.findOne({ where: { id: entityId } });
-        }
-
-        if (keyName === 'applicationEntity') {
-          return applicationStore[entityId] ?? null;
         }
 
         return null;
@@ -340,7 +348,10 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
+      const mockWorkspace = new WorkspaceEntity();
+
+      mockWorkspace.id = validWorkspaceId;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
 
       strategy = createStrategy();
 
