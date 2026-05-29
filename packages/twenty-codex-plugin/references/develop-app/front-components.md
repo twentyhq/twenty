@@ -72,6 +72,8 @@ Do not duplicate this orchestration across sibling front components. When two co
 - Front-component runtime helpers go in `src/front-components/utils/<name>.util.ts`.
 - Payload builders, result parsers, selected-record validators, and summary formatters should be small testable functions with sibling specs.
 
+Each extracted helper and type lives in its own file: one export per file. A local, non-exported type may stay with the util, but an exported type moves to its own file. See `app-structure.md`.
+
 Prefer configuration-driven helpers when creating parallel actions for people, companies, tasks, or other objects. Each front component should provide only object-specific configuration, such as the front component universal identifier, logic function universal identifier, record query, payload builder, labels, and snackbar copy.
 
 ## Bulk Logic Function Calls

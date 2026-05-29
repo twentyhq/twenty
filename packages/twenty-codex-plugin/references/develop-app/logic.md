@@ -11,7 +11,7 @@ A logic function file should contain trigger registration, input validation, the
 - Response and DTO types → `src/types/<name>.ts`.
 - Shared structure across object types → one mapper factory parameterized by object kind, not parallel functions.
 
-Kebab-case filenames, one export per file. See `app-structure.md`.
+Kebab-case filenames, one export per file. Response/DTO types go in `src/types/<name>.ts` and parsing/mapping helpers in `src/utils/<name>.util.ts` — never export both a type and a util from the same file (a local, non-exported type may stay with the util), and never put multiple function exports in one file. See `app-structure.md`.
 
 Other rules:
 

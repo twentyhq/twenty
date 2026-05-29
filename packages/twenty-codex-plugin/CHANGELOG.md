@@ -32,6 +32,7 @@ The first version of the Twenty Codex plugin.
 - `references/develop-app/tests.md` and `references/manage-app/cli-and-sync.md`: documented that integration tests must run against the isolated test instance (`yarn twenty docker:start --test`, port `2021`) instead of the dev instance, since the test harness installs and uninstalls the app on its target server.
 - `skills/manage-app/SKILL.md`: added direct test-run routing so "run tests" requests load the tests reference and run full suites with `TWENTY_API_URL=http://localhost:2021`.
 - `scripts/validators/cross-doc-contracts.js`: added a testing-guidance contract so validation fails if the port-2021 integration-test rule drifts out of the manage skill or references.
+- `references/develop-app/app-structure.md`, `skills/develop-app/SKILL.md`, `references/develop-app/logic.md`, `references/develop-app/front-components.md`: made the one-export-per-file rule explicit — every helper, type, and client file exports exactly one thing, and multiple function exports in a single file are forbidden. The rule counts exports, not declarations: a local, non-exported type may live alongside the util, but an exported or reused type splits into `src/types/<name>.ts` separate from `src/utils/<name>.util.ts`.
 
 ### Plugin Structure
 - `.codex-plugin/plugin.json` manifest with `interface` metadata (display name, descriptions, category, capabilities, branding, default prompts).

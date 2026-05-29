@@ -52,7 +52,36 @@ Add these alongside the scaffolded `src/{fields,objects,logic-functions,front-co
 - `src/<service>-client/` — wrappers around external SDKs or HTTP clients. One folder per service, matching Twenty's `*-client` convention (`redis-client/`, `sdk-client/`, ...).
 - Tests as `*.spec.ts` in sibling `__tests__/` folders next to the code they cover.
 
-Filenames are kebab-case; conventional suffixes are `.util.ts`, `.dto.ts`, `.service.ts`, `.spec.ts` — matching the Twenty backend. One export per file across `utils/`, `types/`, and each `<service>-client/`.
+Filenames are kebab-case; conventional suffixes are `.util.ts`, `.dto.ts`, `.service.ts`, `.spec.ts` — matching the Twenty backend.
+
+### One Export Per File
+
+Every helper, type, and client file exports exactly one thing. The rule counts exports, not declarations — there are no exceptions for `utils/`, `types/`, or `<service>-client/`.
+
+- Never put multiple function exports in the same file. One function per file, each with its own sibling spec.
+- A file must never export more than one thing. A local (non-exported) type used only by the util may live in the same file, but the moment a type is exported or reused elsewhere it moves to `src/types/<name>.ts` while the util stays in `src/utils/<name>.util.ts`.
+
+```ts
+// ❌ Bad — src/utils/parse-company.util.ts exports a type and a util
+export type ParsedCompany = { id: string; name: string };
+export const parseCompany = (raw: RawCompany): ParsedCompany => { /* ... */ };
+
+// ✅ Good — src/utils/parse-company.util.ts (one export; the type is local)
+type ParsedCompany = { id: string; name: string };
+
+export const parseCompany = (raw: RawCompany): ParsedCompany => { /* ... */ };
+
+// ✅ Good — when the type is shared, split it
+// src/types/parsed-company.ts (one PascalCase type)
+export type ParsedCompany = { id: string; name: string };
+
+// src/utils/parse-company.util.ts (one util)
+import { type ParsedCompany } from 'src/types/parsed-company';
+
+export const parseCompany = (raw: RawCompany): ParsedCompany => { /* ... */ };
+```
+
+Entity files are consistent with this rule: front components, logic functions, and post-install hooks use a single `export default define...()`, which is one export.
 
 Files inside `src/types/` use plain `<name>.ts` (one PascalCase type per file) — no `.type.ts` suffix. Files inside `src/<service>-client/` also use plain `<name>.ts`; the folder name carries the suffix, so do not repeat it on the file.
 

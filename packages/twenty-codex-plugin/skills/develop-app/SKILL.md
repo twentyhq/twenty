@@ -54,7 +54,7 @@ Keep logic functions, post-install hooks, and front components narrow. Extract e
 - `src/types/<name>.ts` — external API and internal DTO types (one PascalCase type per file).
 - `src/<service>-client/<name>.ts` — wrappers around external SDKs or shared HTTP clients. One folder per service, matching Twenty's `*-client` convention.
 
-Kebab-case filenames; one export per file across all three. See `app-structure.md` for the full suffix convention.
+Kebab-case filenames. One export per file is mandatory for every helper, type, and client file in `src/` — never multiple function exports in one file. The rule counts exports: a local (non-exported) type may stay alongside the util, but once a type is exported or reused it splits into a `src/types/<name>.ts` file separate from the `src/utils/<name>.util.ts` file. See `app-structure.md` for the canonical rule and the full suffix convention.
 
 Refactor when:
 
