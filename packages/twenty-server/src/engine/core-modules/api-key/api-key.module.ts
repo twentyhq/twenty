@@ -44,6 +44,8 @@ import { ApiKeyController } from './controllers/api-key.controller';
     WorkspaceApiKeyMapCacheService,
     GenerateApiKeyCommand,
     provideWorkspaceScopedRepository(ApiKeyEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   controllers: [ApiKeyController],
   exports: [

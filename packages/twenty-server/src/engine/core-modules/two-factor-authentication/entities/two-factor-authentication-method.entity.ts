@@ -12,6 +12,8 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+
 import { OTPStatus } from 'src/engine/core-modules/two-factor-authentication/strategies/otp/otp.constants';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -48,7 +50,7 @@ export class TwoFactorAuthenticationMethodEntity {
   userWorkspace: Relation<UserWorkspaceEntity>;
 
   @Column({ nullable: false, type: 'text' })
-  secret: string;
+  secret: EncryptedString;
 
   @Column({
     type: 'enum',

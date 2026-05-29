@@ -92,6 +92,7 @@
       "dependsOn": ["^build"],
       "inputs": ["{projectRoot}/src/sdk/**/*"],
       "outputs": [
+        "{projectRoot}/dist/billing",
         "{projectRoot}/dist/define",
         "{projectRoot}/dist/front-component",
         "{projectRoot}/dist/logic-function",
@@ -99,7 +100,7 @@
       ],
       "options": {
         "cwd": "{projectRoot}",
-        "command": "npx vite build -c vite.config.define.ts && npx vite build -c vite.config.front-component.ts && npx vite build -c vite.config.logic-function.ts && npx vite build -c vite.config.utils.ts && npx rollup -c rollup.config.sdk-dts.mjs"
+        "command": "npx vite build -c vite.config.define.ts && npx vite build -c vite.config.billing.ts && npx vite build -c vite.config.front-component.ts && npx vite build -c vite.config.logic-function.ts && npx vite build -c vite.config.utils.ts && npx rollup -c rollup.config.sdk-dts.mjs"
       }
     }
   }

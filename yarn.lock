@@ -304,8 +304,8 @@ __metadata:
   linkType: hard
 
 "@apollo/client@npm:^4.0.0":
-  version: 4.1.6
-  resolution: "@apollo/client@npm:4.1.6"
+  version: 4.2.0
+  resolution: "@apollo/client@npm:4.2.0"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -330,7 +330,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/ff152317932cb0ba46423161d388d1a2bc0bbc6c8ec6e2e85e915bb2ec22f461effa6fd2bbc8b754babd75ac8b52843f1e3ddf8e501cbe1d9b857e4df2f2f2df
+  checksum: 10c0/80c59430efb1bd979206aae1dcc59addd002c774dd004f1901e3266531170c66904916aa31056f216e07d8c279f27605526fe3a819ffaba304151d5d860f5943
   languageName: node
   linkType: hard
 
@@ -41962,9 +41962,9 @@ __metadata:
   linkType: hard
 
 "js-cookie@npm:^3.0.5":
-  version: 3.0.5
-  resolution: "js-cookie@npm:3.0.5"
-  checksum: 10c0/04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
+  version: 3.0.7
+  resolution: "js-cookie@npm:3.0.7"
+  checksum: 10c0/c921c43014e98bb94a1765663a1a10d693048d61444e374c1ecf459eba92320381f9c406e724df9aa44e819c4b606e6a7240f2abe2d5c54ad1e73a3002b191c2
   languageName: node
   linkType: hard
 
