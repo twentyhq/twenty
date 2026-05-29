@@ -1,10 +1,9 @@
 import {
+  AlreadyExistsException,
   CreateConfigurationSetCommand,
   CreateConfigurationSetEventDestinationCommand,
   CreateContactListCommand,
   CreateTenantResourceAssociationCommand,
-  GetConfigurationSetCommand,
-  NotFoundException,
   PutEmailIdentityMailFromAttributesCommand,
 } from '@aws-sdk/client-sesv2';
 
@@ -26,10 +25,10 @@ describe('AwsSesRegisterDomainService', () => {
     contactListName: 'twenty-workspace-ws1',
   };
 
-  const buildNotFound = () =>
-    new NotFoundException({
-      $metadata: { httpStatusCode: 404 },
-      message: 'Configuration set not found.',
+  const buildAlreadyExists = () =>
+    new AlreadyExistsException({
+      $metadata: { httpStatusCode: 409 },
+      message: 'Resource already exists.',
     });
 
   const setUp = () => {
@@ -43,33 +42,7 @@ describe('AwsSesRegisterDomainService', () => {
   };
 
   describe('provisionWorkspaceResources', () => {
-    it('creates every workspace-scoped resource when the configuration set does not yet exist', async () => {
-      const { service, send } = setUp();
-
-      send.mockImplementation(async (command) => {
-        if (command instanceof GetConfigurationSetCommand) {
-          throw buildNotFound();
-        }
-
-        return {};
-      });
-
-      await service.provisionWorkspaceResources(provisionInput, config);
-
-      const commandTypes = send.mock.calls.map(
-        ([command]) => command.constructor.name,
-      );
-
-      expect(commandTypes).toEqual([
-        GetConfigurationSetCommand.name,
-        CreateConfigurationSetCommand.name,
-        CreateConfigurationSetEventDestinationCommand.name,
-        CreateContactListCommand.name,
-        CreateTenantResourceAssociationCommand.name,
-      ]);
-    });
-
-    it('issues no creates when the configuration set already exists', async () => {
+    it('creates every workspace-scoped resource', async () => {
       const { service, send } = setUp();
 
       send.mockResolvedValue({});
@@ -80,20 +53,38 @@ describe('AwsSesRegisterDomainService', () => {
         ([command]) => command.constructor.name,
       );
 
-      expect(commandTypes).toEqual([GetConfigurationSetCommand.name]);
+      expect(commandTypes).toEqual([
+        CreateConfigurationSetCommand.name,
+        CreateConfigurationSetEventDestinationCommand.name,
+        CreateContactListCommand.name,
+        CreateTenantResourceAssociationCommand.name,
+      ]);
     });
 
-    it('propagates non-NotFound AWS errors raised by the existence probe', async () => {
+    it('ignores AlreadyExistsException per resource so a retry re-runs every step', async () => {
+      const { service, send } = setUp();
+
+      send.mockRejectedValue(buildAlreadyExists());
+
+      await service.provisionWorkspaceResources(provisionInput, config);
+
+      const commandTypes = send.mock.calls.map(
+        ([command]) => command.constructor.name,
+      );
+
+      expect(commandTypes).toEqual([
+        CreateConfigurationSetCommand.name,
+        CreateConfigurationSetEventDestinationCommand.name,
+        CreateContactListCommand.name,
+        CreateTenantResourceAssociationCommand.name,
+      ]);
+    });
+
+    it('propagates AWS errors that are not AlreadyExistsException', async () => {
       const { service, send } = setUp();
       const fatalError = new Error('Boom');
 
-      send.mockImplementation(async (command) => {
-        if (command instanceof GetConfigurationSetCommand) {
-          throw fatalError;
-        }
-
-        return {};
-      });
+      send.mockRejectedValue(fatalError);
 
       await expect(
         service.provisionWorkspaceResources(provisionInput, config),
