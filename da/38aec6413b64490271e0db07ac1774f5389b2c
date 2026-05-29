@@ -1,0 +1,26 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/email-group-suppressed-recipient.entity.ts
+  s_4a10800c36ffe6::t_7976b3aabc50c4 17
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1780060974610-add-email-group-suppressed-recipient.ts
+  s_4a10800c36ffe6::t_f44482979cd769 6,12
+packages/twenty-server/src/database/commands/upgrade-version-command/instance-commands.constant.ts
+  s_4a10800c36ffe6::t_f44482979cd769 61
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/email-group-suppression.service.ts
+  s_4a10800c36ffe6::t_20806d0c425b51 3,5
+  s_4a10800c36ffe6::t_9060273724fc5b 71,75-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "da38aec6413b64490271e0db07ac1774f5389b2c",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
