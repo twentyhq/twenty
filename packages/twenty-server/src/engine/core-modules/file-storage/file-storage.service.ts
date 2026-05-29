@@ -13,13 +13,15 @@ import {
   FileStorageException,
   FileStorageExceptionCode,
 } from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
+import { prepareFileForStorageOrThrow } from 'src/engine/core-modules/file-storage/utils/prepare-file-for-storage-or-throw.util';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { validateFolderPath } from 'src/engine/core-modules/file-storage/utils/validate-folder-path.util';
 import { validateStoragePathIsWithinWorkspaceOrThrow } from 'src/engine/core-modules/file-storage/utils/validate-storage-path-is-within-workspace-or-throw.util';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { FileSettings } from 'src/engine/core-modules/file/types/file-settings.types';
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 export type ResourceIdentifier = {
   workspaceId: string;
   applicationUniversalIdentifier: string;
@@ -31,8 +33,8 @@ export type ResourceIdentifier = {
 export class FileStorageService {
   constructor(
     private readonly fileStorageDriverFactory: FileStorageDriverFactory,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
@@ -66,7 +68,7 @@ export class FileStorageService {
     return { onStoragePath, resourcePath };
   }
 
-  private validateAndBuildFileStoragePath(params: ResourceIdentifier): {
+  private validateAndBuildFileStoragePathOrThrow(params: ResourceIdentifier): {
     onStorageFilePath: string;
     filePath: string;
   } {
@@ -91,7 +93,7 @@ export class FileStorageService {
     return { onStorageFilePath: onStoragePath, filePath: resourcePath };
   }
 
-  private validateAndBuildFolderStoragePath(
+  private validateAndBuildFolderStoragePathOrThrow(
     params: Omit<ResourceIdentifier, 'resourcePath'> & { folderPath: string },
   ): { onStorageFolderPath: string; folderPath: string } {
     const validationResult = validateFolderPath({
@@ -119,7 +121,6 @@ export class FileStorageService {
 
   async writeFile({
     sourceFile,
-    mimeType,
     fileFolder,
     applicationUniversalIdentifier,
     workspaceId,
@@ -129,7 +130,6 @@ export class FileStorageService {
     queryRunner,
   }: ResourceIdentifier & {
     sourceFile: string | Buffer | Uint8Array;
-    mimeType: string | undefined;
     fileId?: string;
     settings: FileSettings;
     queryRunner?: QueryRunner;
@@ -140,7 +140,7 @@ export class FileStorageService {
       ? queryRunner.manager.getRepository(ApplicationEntity)
       : this.applicationRepository;
     const fileRepository = queryRunner
-      ? queryRunner.manager.getRepository(FileEntity)
+      ? this.fileRepository.withManager(queryRunner.manager)
       : this.fileRepository;
 
     const application = await applicationRepository.findOneOrFail({
@@ -151,40 +151,45 @@ export class FileStorageService {
     });
 
     const { onStorageFilePath, filePath } =
-      this.validateAndBuildFileStoragePath({
+      this.validateAndBuildFileStoragePathOrThrow({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder,
         resourcePath,
       });
 
+    const { sourceFile: persistedSourceFile, mimeType } =
+      await prepareFileForStorageOrThrow({
+        sourceFile,
+        resourcePath,
+      });
+
     await driver.writeFile({
       filePath: onStorageFilePath,
       mimeType,
-      sourceFile,
+      sourceFile: persistedSourceFile,
     });
 
     await fileRepository.upsert(
+      workspaceId,
       {
         path: filePath,
-        workspaceId,
         applicationId: application.id,
         id: fileId,
         mimeType,
         size:
-          typeof sourceFile === 'string'
-            ? Buffer.byteLength(sourceFile)
-            : sourceFile.length,
+          typeof persistedSourceFile === 'string'
+            ? Buffer.byteLength(persistedSourceFile)
+            : persistedSourceFile.length,
         settings,
       },
       ['path', 'workspaceId', 'applicationId'],
     );
 
-    return await fileRepository.findOneOrFail({
+    return fileRepository.findOneOrFail(workspaceId, {
       where: {
         path: filePath,
         applicationId: application.id,
-        workspaceId,
       },
     });
   }
@@ -197,7 +202,8 @@ export class FileStorageService {
     },
   ): Promise<string | null> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePath(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.getPresignedUrl({
       filePath: onStorageFilePath,
@@ -210,7 +216,8 @@ export class FileStorageService {
   readFile(params: ResourceIdentifier): Promise<Readable> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePath(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.readFile({ filePath: onStorageFilePath });
   }
@@ -219,7 +226,8 @@ export class FileStorageService {
     params: ResourceIdentifier & { localPath: string },
   ): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePath(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.downloadFile({
       onStoragePath: onStorageFilePath,
@@ -247,16 +255,15 @@ export class FileStorageService {
       folderPath: `${workspaceId}/${applicationUniversalIdentifier}/`,
     });
 
-    await this.fileRepository.delete({
+    await this.fileRepository.delete(workspaceId, {
       applicationId: application.id,
-      workspaceId,
     });
   }
 
   async deleteFile(params: ResourceIdentifier): Promise<void> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
     const { onStorageFilePath, filePath } =
-      this.validateAndBuildFileStoragePath(params);
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     await driver.delete({
       folderPath: dirname(onStorageFilePath),
@@ -270,10 +277,9 @@ export class FileStorageService {
       },
     });
 
-    await this.fileRepository.delete({
+    await this.fileRepository.delete(params.workspaceId, {
       path: filePath,
       applicationId: application.id,
-      workspaceId: params.workspaceId,
     });
   }
 
@@ -288,7 +294,7 @@ export class FileStorageService {
     } = params;
 
     const { onStorageFolderPath, folderPath: validatedFolderPath } =
-      this.validateAndBuildFolderStoragePath({
+      this.validateAndBuildFolderStoragePathOrThrow({
         workspaceId,
         applicationUniversalIdentifier,
         fileFolder,
@@ -306,10 +312,9 @@ export class FileStorageService {
       },
     });
 
-    await this.fileRepository.delete({
+    await this.fileRepository.delete(workspaceId, {
       path: Like(`${validatedFolderPath}%`),
       applicationId: application.id,
-      workspaceId,
     });
   }
 
@@ -322,10 +327,9 @@ export class FileStorageService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<void> {
-    const file = await this.fileRepository.findOneOrFail({
+    const file = await this.fileRepository.findOneOrFail(workspaceId, {
       where: {
         id: fileId,
-        workspaceId,
         path: Like(`${fileFolder}/%`),
       },
     });
@@ -373,9 +377,9 @@ export class FileStorageService {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
 
     const { onStorageFilePath: fromPath } =
-      this.validateAndBuildFileStoragePath(from);
+      this.validateAndBuildFileStoragePathOrThrow(from);
     const { onStorageFilePath: toPath } =
-      this.validateAndBuildFileStoragePath(to);
+      this.validateAndBuildFileStoragePathOrThrow(to);
 
     const isFile = await driver.checkFileExists({ filePath: fromPath });
 
@@ -394,7 +398,8 @@ export class FileStorageService {
 
   checkFileExists(params: ResourceIdentifier): Promise<boolean> {
     const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const { onStorageFilePath } = this.validateAndBuildFileStoragePath(params);
+    const { onStorageFilePath } =
+      this.validateAndBuildFileStoragePathOrThrow(params);
 
     return driver.checkFileExists({ filePath: onStorageFilePath });
   }

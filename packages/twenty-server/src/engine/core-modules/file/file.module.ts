@@ -11,7 +11,7 @@ import { JwtModule } from 'src/engine/core-modules/jwt/jwt.module';
 import { SecureHttpClientModule } from 'src/engine/core-modules/secure-http-client/secure-http-client.module';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { FileController } from './controllers/file.controller';
 import { FileEntity } from './entities/file.entity';
 import { FileCorePictureModule } from './file-core-picture/file-core-picture.module';
@@ -42,6 +42,7 @@ import { FileService } from './services/file.service';
     FileByIdGuard,
     FileWorkspaceFolderDeletionJob,
     FileDeletionJob,
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     FileService,

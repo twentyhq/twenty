@@ -15,6 +15,7 @@ import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modu
 import { GoogleAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/google/services/google-api-refresh-tokens.service';
 import { MicrosoftAPIRefreshAccessTokenService } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/services/microsoft-api-refresh-tokens.service';
 
+import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
 import { ConnectedAccountRefreshTokensService } from './connected-account-refresh-tokens.service';
 
 const FAKE_CIPHER_PREFIX = `${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}keyid:`;
@@ -32,9 +33,9 @@ describe('ConnectedAccountRefreshTokensService', () => {
   const mockWorkspaceId = 'workspace-123';
   const mockConnectedAccountId = 'account-456';
 
-  const mockAccessTokenPlaintext = 'valid-access-token';
-  const mockRefreshTokenPlaintext = 'valid-refresh-token';
-  const mockNewAccessTokenPlaintext = 'new-access-token';
+  const mockAccessTokenPlaintext = 'valid-access-token' as PlaintextString;
+  const mockRefreshTokenPlaintext = 'valid-refresh-token' as PlaintextString;
+  const mockNewAccessTokenPlaintext = 'new-access-token' as PlaintextString;
 
   const mockEncryptedAccessToken = `${FAKE_CIPHER_PREFIX}CIPHER(${mockAccessTokenPlaintext})`;
   const mockEncryptedRefreshToken = `${FAKE_CIPHER_PREFIX}CIPHER(${mockRefreshTokenPlaintext})`;
@@ -263,6 +264,7 @@ describe('ConnectedAccountRefreshTokensService', () => {
 
       const newPlaintextTokens = {
         accessToken: mockNewAccessTokenPlaintext,
+
         refreshToken: mockRefreshTokenPlaintext,
       };
 

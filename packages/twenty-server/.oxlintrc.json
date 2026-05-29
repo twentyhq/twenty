@@ -78,6 +78,7 @@
     ],
 
     "twenty/inject-workspace-repository": "warn",
+    "twenty/prefer-workspace-scoped-repository": "error",
     "twenty/rest-api-methods-should-be-guarded": "error",
     "twenty/graphql-resolvers-should-be-guarded": "error",
     "twenty/upgrade-command-filename": "error",

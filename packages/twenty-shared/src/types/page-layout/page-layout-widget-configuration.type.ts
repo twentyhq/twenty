@@ -25,10 +25,6 @@ export type AggregateChartConfiguration = BaseChartConfiguration & {
   ratioAggregateConfig?: RatioAggregateConfig;
 };
 
-export type GaugeChartConfiguration = BaseChartConfiguration & {
-  configurationType: 'GAUGE_CHART';
-};
-
 export type PieChartConfiguration = BaseChartConfiguration & {
   configurationType: 'PIE_CHART';
   groupByFieldMetadataId: SerializedRelation;
@@ -99,7 +95,8 @@ export type RecordTableConfiguration = {
 export type FieldConfiguration = {
   configurationType: 'FIELD';
   fieldMetadataId: string;
-  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW';
+  fieldDisplayMode: 'CARD' | 'EDITOR' | 'FIELD' | 'VIEW' | 'TABLE';
+  viewId?: string;
 };
 
 export type FieldsConfiguration = {
@@ -173,7 +170,6 @@ export type WorkflowRunConfiguration = {
 
 export type PageLayoutWidgetConfiguration =
   | AggregateChartConfiguration
-  | GaugeChartConfiguration
   | PieChartConfiguration
   | BarChartConfiguration
   | LineChartConfiguration

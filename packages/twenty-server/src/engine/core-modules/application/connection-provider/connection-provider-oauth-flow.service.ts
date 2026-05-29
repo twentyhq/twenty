@@ -247,7 +247,9 @@ export class ConnectionProviderOAuthFlowService {
     const { encryptedAccessToken, encryptedRefreshToken } =
       this.connectedAccountTokenEncryptionService.encryptTokenPair({
         accessToken: tokenResponse.accessToken,
-        refreshToken: tokenResponse.refreshToken,
+        refreshToken: isDefined(tokenResponse.refreshToken)
+          ? tokenResponse.refreshToken
+          : null,
         workspaceId,
       });
 

@@ -9,6 +9,8 @@ const TEST_WORKSPACE_ID = '20202020-1c25-4d02-bf25-6aeccf7ea419';
 
 const PUBLIC_ASSET_PATH = 'assets/logo.svg';
 const PUBLIC_ASSET_CONTENT = '<svg><circle r="10" /></svg>';
+const EXPECTED_SANITIZED_PUBLIC_ASSET_CONTENT =
+  '<svg><circle r="10"></circle></svg>';
 const PUBLIC_ASSET_CONTENT_TYPE = 'image/svg+xml';
 
 describe('Public assets controller download should succeed', () => {
@@ -76,7 +78,7 @@ describe('Public assets controller download should succeed', () => {
     );
     expect(response.headers['x-content-type-options']).toBe('nosniff');
     expect((response.body as Buffer).toString('utf-8')).toBe(
-      PUBLIC_ASSET_CONTENT,
+      EXPECTED_SANITIZED_PUBLIC_ASSET_CONTENT,
     );
   }, 30000);
 });

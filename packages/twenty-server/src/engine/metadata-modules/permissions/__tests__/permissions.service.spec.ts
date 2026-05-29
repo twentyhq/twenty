@@ -11,6 +11,7 @@ import { ApplicationEntity } from 'src/engine/core-modules/application/applicati
 import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 
 describe('PermissionsService', () => {
@@ -21,7 +22,7 @@ describe('PermissionsService', () => {
       providers: [
         PermissionsService,
         {
-          provide: getRepositoryToken(RoleEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleEntity),
           useValue: {},
         },
         {

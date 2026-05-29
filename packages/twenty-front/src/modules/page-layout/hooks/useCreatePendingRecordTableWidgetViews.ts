@@ -2,11 +2,12 @@ import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDr
 import { pageLayoutPersistedComponentState } from '@/page-layout/states/pageLayoutPersistedComponentState';
 import { recordTableWidgetViewDraftComponentState } from '@/page-layout/states/recordTableWidgetViewDraftComponentState';
 import { getWidgetConfigurationViewId } from '@/page-layout/utils/getWidgetConfigurationViewId';
+import { widgetUsesRecordTableView } from '@/page-layout/utils/widgetUsesRecordTableView';
 import { usePerformViewAPIPersist } from '@/views/hooks/internal/usePerformViewAPIPersist';
+import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { WidgetType } from '~/generated-metadata/graphql';
 
 export const useCreatePendingRecordTableWidgetViews = () => {
   const { performViewAPICreate, performViewAPIDestroy } =
@@ -35,7 +36,7 @@ export const useCreatePendingRecordTableWidgetViews = () => {
       const persistedRecordTableWidgets = new Map(
         (persisted?.tabs ?? [])
           .flatMap((tab) => tab.widgets)
-          .filter((widget) => widget.type === WidgetType.RECORD_TABLE)
+          .filter(widgetUsesRecordTableView)
           .map((widget) => [
             widget.id,
             getWidgetConfigurationViewId(widget.configuration),
@@ -44,10 +45,14 @@ export const useCreatePendingRecordTableWidgetViews = () => {
 
       const draftRecordTableWidgets = draft.tabs
         .flatMap((tab) => tab.widgets)
-        .filter((widget) => widget.type === WidgetType.RECORD_TABLE);
+        .filter(widgetUsesRecordTableView);
 
       const draftWidgetIds = new Set(
         draftRecordTableWidgets.map((widget) => widget.id),
+      );
+
+      const existingViewIds = new Set(
+        store.get(viewsSelector.atom).map((view) => view.id),
       );
 
       for (const widget of draftRecordTableWidgets) {
@@ -63,7 +68,10 @@ export const useCreatePendingRecordTableWidgetViews = () => {
           continue;
         }
 
-        if (isDefined(persistedViewId)) {
+        if (
+          isDefined(persistedViewId) &&
+          existingViewIds.has(persistedViewId)
+        ) {
           await performViewAPIDestroy({ id: persistedViewId });
         }
 
@@ -101,7 +109,11 @@ export const useCreatePendingRecordTableWidgetViews = () => {
       }
 
       for (const [widgetId, viewId] of persistedRecordTableWidgets) {
-        if (!draftWidgetIds.has(widgetId) && isDefined(viewId)) {
+        if (
+          !draftWidgetIds.has(widgetId) &&
+          isDefined(viewId) &&
+          existingViewIds.has(viewId)
+        ) {
           await performViewAPIDestroy({ id: viewId });
         }
       }
