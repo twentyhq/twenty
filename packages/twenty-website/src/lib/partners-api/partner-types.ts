@@ -12,4 +12,12 @@ export type MarketplacePartner = {
   deploymentExpertise: readonly DeploymentExpertise[];
   region: readonly ServedGeo[];
   languagesSpoken: readonly SpokenLanguage[];
+  hourlyRateUsd: number | null;
+  projectBudgetMinUsd: number | null;
+  projectBudgetTypicalUsd: number | null;
+  linkedinUrl: string;
+  profilePictureUrl: string;
+  city: string;
+  country: string;
+  skills: readonly string[];
 };
