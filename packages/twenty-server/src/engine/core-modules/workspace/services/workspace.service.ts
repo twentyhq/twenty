@@ -521,9 +521,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       EmailingDomainWorkspaceCleanupJob.name,
       {
         workspaceId: id,
-        domains: emailingDomains.map(
-          (emailingDomain) => emailingDomain.domain,
-        ),
+        domains: emailingDomains.map((emailingDomain) => emailingDomain.domain),
       },
     );
 
