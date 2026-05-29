@@ -59,6 +59,7 @@ import { EmailingDomainTenantStatusAndGlobalUniquenessFastInstanceCommand } from
 import { EncryptNonSecretApplicationVariableSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1798400000000-encrypt-non-secret-application-variable';
 import { MigrateAiModelPreferencesSlowInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-slow-1799000010000-migrate-ai-model-preferences';
 import { AddEmailGroupSuppressedRecipientFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1780060974610-add-email-group-suppressed-recipient';
+import { AddEmailingDomainUnsubscribeHostFastInstanceCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-instance-command-fast-1780088214774-add-emailing-domain-unsubscribe-host';
 
 export const INSTANCE_COMMANDS = [
   AddViewFieldGroupIdIndexOnViewFieldFastInstanceCommand,
@@ -120,4 +121,5 @@ export const INSTANCE_COMMANDS = [
   MigrateAiModelPreferencesSlowInstanceCommand,
   EncryptNonSecretApplicationVariableSlowInstanceCommand,
   AddEmailGroupSuppressedRecipientFastInstanceCommand,
+  AddEmailingDomainUnsubscribeHostFastInstanceCommand,
 ];
