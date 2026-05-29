@@ -204,9 +204,7 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
                   href={partner.linkedinUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label={i18n._(
-                    msg`View ${partner.name} on LinkedIn`,
-                  )}
+                  aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
                   onClick={stopPropagation}
                 >
                   <IconBrandLinkedin size={16} aria-hidden="true" />

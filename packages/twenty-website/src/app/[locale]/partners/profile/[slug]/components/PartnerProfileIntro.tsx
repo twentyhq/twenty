@@ -16,7 +16,9 @@ type PartnerProfileIntroProps = {
   introduction: string;
 };
 
-export function PartnerProfileIntro({ introduction }: PartnerProfileIntroProps) {
+export function PartnerProfileIntro({
+  introduction,
+}: PartnerProfileIntroProps) {
   if (!introduction) return null;
   return <Prose>{introduction}</Prose>;
 }
