@@ -9,8 +9,7 @@ export const resolveInboundMailIntent = (
     notification.receipt?.recipients ?? []
   ).some(
     (recipient) =>
-      recipient.split('@')[0]?.toLowerCase() ===
-      UNSUBSCRIBE_MAILBOX_LOCAL_PART,
+      recipient.split('@')[0]?.toLowerCase() === UNSUBSCRIBE_MAILBOX_LOCAL_PART,
   );
 
   return isAddressedToUnsubscribeMailbox ? 'UNSUBSCRIBE' : 'IMPORT';

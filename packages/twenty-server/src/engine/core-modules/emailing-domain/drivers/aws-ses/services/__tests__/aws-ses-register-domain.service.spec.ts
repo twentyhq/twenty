@@ -2,7 +2,6 @@ import {
   AlreadyExistsException,
   CreateConfigurationSetCommand,
   CreateConfigurationSetEventDestinationCommand,
-  CreateContactListCommand,
   CreateTenantResourceAssociationCommand,
   PutEmailIdentityMailFromAttributesCommand,
 } from '@aws-sdk/client-sesv2';
@@ -22,7 +21,6 @@ describe('AwsSesRegisterDomainService', () => {
   const provisionInput = {
     tenantName: 'twenty-workspace-ws1',
     configurationSetName: 'twenty-workspace-ws1',
-    contactListName: 'twenty-workspace-ws1',
   };
 
   const buildAlreadyExists = () =>
@@ -56,7 +54,6 @@ describe('AwsSesRegisterDomainService', () => {
       expect(commandTypes).toEqual([
         CreateConfigurationSetCommand.name,
         CreateConfigurationSetEventDestinationCommand.name,
-        CreateContactListCommand.name,
         CreateTenantResourceAssociationCommand.name,
       ]);
     });
@@ -75,7 +72,6 @@ describe('AwsSesRegisterDomainService', () => {
       expect(commandTypes).toEqual([
         CreateConfigurationSetCommand.name,
         CreateConfigurationSetEventDestinationCommand.name,
-        CreateContactListCommand.name,
         CreateTenantResourceAssociationCommand.name,
       ]);
     });

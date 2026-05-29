@@ -64,10 +64,7 @@ export class UnsubscribeTokenService {
       .digest('base64url');
   }
 
-  private signaturesMatch(
-    candidate: string,
-    expected: string,
-  ): boolean {
+  private signaturesMatch(candidate: string, expected: string): boolean {
     const candidateBuffer = Buffer.from(candidate);
     const expectedBuffer = Buffer.from(expected);
 

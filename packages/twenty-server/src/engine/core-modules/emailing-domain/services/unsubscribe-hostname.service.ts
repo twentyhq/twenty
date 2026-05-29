@@ -1,0 +1,110 @@
+/* @license Enterprise */
+import { Injectable, Logger } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
+
+import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
+import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
+import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
+@Injectable()
+export class UnsubscribeHostnameService {
+  private readonly logger = new Logger(UnsubscribeHostnameService.name);
+
+  constructor(
+    @InjectWorkspaceScopedRepository(EmailingDomainEntity)
+    private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
+    private readonly dnsManagerService: DnsManagerService,
+  ) {}
+
+  async provision(emailingDomain: EmailingDomainEntity): Promise<void> {
+    if (isNonEmptyString(emailingDomain.unsubscribeHostnameId)) {
+      return;
+    }
+
+    const hostname = this.buildHostname(emailingDomain.domain);
+
+    const createdHostname =
+      await this.dnsManagerService.registerHostname(hostname);
+
+    await this.emailingDomainRepository.update(
+      emailingDomain.workspaceId,
+      { id: emailingDomain.id },
+      {
+        unsubscribeHostname: hostname,
+        unsubscribeHostnameId: createdHostname.id,
+        unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
+      },
+    );
+  }
+
+  async refreshStatus(emailingDomain: EmailingDomainEntity): Promise<void> {
+    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
+      return;
+    }
+
+    const isWorking = await this.dnsManagerService.isHostnameWorking(
+      emailingDomain.unsubscribeHostname,
+    );
+
+    await this.emailingDomainRepository.update(
+      emailingDomain.workspaceId,
+      { id: emailingDomain.id },
+      {
+        unsubscribeHostnameStatus: isWorking
+          ? UnsubscribeHostnameStatus.ACTIVE
+          : UnsubscribeHostnameStatus.PENDING,
+      },
+    );
+  }
+
+  async deprovision(emailingDomain: EmailingDomainEntity): Promise<void> {
+    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
+      return;
+    }
+
+    await this.dnsManagerService.deleteHostnameSilently(
+      emailingDomain.unsubscribeHostname,
+    );
+  }
+
+  async getDnsRecords(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<VerificationRecord[]> {
+    if (!isNonEmptyString(emailingDomain.unsubscribeHostname)) {
+      return [];
+    }
+
+    try {
+      const hostnameWithRecords =
+        await this.dnsManagerService.getHostnameWithRecords(
+          emailingDomain.unsubscribeHostname,
+        );
+
+      if (!isDefined(hostnameWithRecords)) {
+        return [];
+      }
+
+      return hostnameWithRecords.records.map((record) => ({
+        type: 'CNAME' as const,
+        key: record.key,
+        value: record.value,
+      }));
+    } catch (error) {
+      this.logger.warn(
+        `Failed to read unsubscribe DNS records for ${emailingDomain.unsubscribeHostname}: ${error}`,
+      );
+
+      return [];
+    }
+  }
+
+  private buildHostname(domain: string): string {
+    return `${UNSUBSCRIBE_HOSTNAME_PREFIX}.${domain}`;
+  }
+}

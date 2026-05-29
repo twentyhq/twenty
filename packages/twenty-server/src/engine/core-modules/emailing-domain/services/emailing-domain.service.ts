@@ -17,6 +17,7 @@ import {
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util';
@@ -33,6 +34,7 @@ export class EmailingDomainService {
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
+    private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
   ) {}
 
   async createEmailingDomain(
@@ -72,13 +74,28 @@ export class EmailingDomainService {
     const isVerifiedOnCreation =
       verificationResult.status === EmailingDomainStatus.VERIFIED;
 
-    return this.emailingDomainRepository.save(workspace.id, {
-      domain,
-      driver: driverType,
-      status: verificationResult.status,
-      verificationRecords: verificationResult.verificationRecords,
-      verifiedAt: isVerifiedOnCreation ? new Date() : null,
-    });
+    const emailingDomain = await this.emailingDomainRepository.save(
+      workspace.id,
+      {
+        domain,
+        driver: driverType,
+        status: verificationResult.status,
+        verificationRecords: verificationResult.verificationRecords,
+        verifiedAt: isVerifiedOnCreation ? new Date() : null,
+      },
+    );
+
+    if (isVerifiedOnCreation) {
+      await this.syncUnsubscribeHostname(workspace.id, emailingDomain.id, {
+        provision: true,
+      });
+    }
+
+    return this.withUnsubscribeRecords(
+      await this.emailingDomainRepository.findOneOrFail(workspace.id, {
+        where: { id: emailingDomain.id },
+      }),
+    );
   }
 
   async deleteEmailingDomain(
@@ -90,6 +107,7 @@ export class EmailingDomainService {
       emailingDomainId,
     );
 
+    await this.unsubscribeHostnameService.deprovision(emailingDomain);
     await this.deleteRemoteEmailingDomain(emailingDomain);
     await this.emailingDomainRepository.delete(workspace.id, {
       id: emailingDomain.id,
@@ -125,9 +143,37 @@ export class EmailingDomainService {
   async getEmailingDomains(
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity[]> {
-    return this.emailingDomainRepository.find(workspace.id, {
-      order: { createdAt: 'DESC' },
-    });
+    const emailingDomains = await this.emailingDomainRepository.find(
+      workspace.id,
+      {
+        order: { createdAt: 'DESC' },
+      },
+    );
+
+    return Promise.all(
+      emailingDomains.map((emailingDomain) =>
+        this.withUnsubscribeRecords(emailingDomain),
+      ),
+    );
+  }
+
+  private async withUnsubscribeRecords(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<EmailingDomainEntity> {
+    const unsubscribeRecords =
+      await this.unsubscribeHostnameService.getDnsRecords(emailingDomain);
+
+    if (unsubscribeRecords.length === 0) {
+      return emailingDomain;
+    }
+
+    return {
+      ...emailingDomain,
+      verificationRecords: [
+        ...(emailingDomain.verificationRecords ?? []),
+        ...unsubscribeRecords,
+      ],
+    };
   }
 
   async verifyEmailingDomain(
@@ -161,9 +207,42 @@ export class EmailingDomainService {
       },
     );
 
-    return this.emailingDomainRepository.findOneOrFail(workspace.id, {
-      where: { id: emailingDomain.id },
+    await this.syncUnsubscribeHostname(workspace.id, emailingDomain.id, {
+      provision: verificationResult.status === EmailingDomainStatus.VERIFIED,
     });
+
+    return this.withUnsubscribeRecords(
+      await this.emailingDomainRepository.findOneOrFail(workspace.id, {
+        where: { id: emailingDomain.id },
+      }),
+    );
+  }
+
+  private async syncUnsubscribeHostname(
+    workspaceId: string,
+    emailingDomainId: string,
+    { provision }: { provision: boolean },
+  ): Promise<void> {
+    try {
+      const emailingDomain = await this.emailingDomainRepository.findOneOrFail(
+        workspaceId,
+        { where: { id: emailingDomainId } },
+      );
+
+      if (provision) {
+        await this.unsubscribeHostnameService.provision(emailingDomain);
+      }
+
+      await this.unsubscribeHostnameService.refreshStatus(
+        await this.emailingDomainRepository.findOneOrFail(workspaceId, {
+          where: { id: emailingDomainId },
+        }),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to sync unsubscribe hostname for emailing domain ${emailingDomainId}: ${error}`,
+      );
+    }
   }
 
   async sendEmail(

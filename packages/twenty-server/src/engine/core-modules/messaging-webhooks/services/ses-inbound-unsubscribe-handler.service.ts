@@ -11,7 +11,9 @@ import { type SesInboundNotification } from 'src/engine/core-modules/messaging-w
 
 @Injectable()
 export class SesInboundUnsubscribeHandlerService {
-  private readonly logger = new Logger(SesInboundUnsubscribeHandlerService.name);
+  private readonly logger = new Logger(
+    SesInboundUnsubscribeHandlerService.name,
+  );
 
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
