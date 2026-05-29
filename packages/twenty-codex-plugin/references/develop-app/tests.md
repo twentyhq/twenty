@@ -41,4 +41,4 @@ TWENTY_API_URL=http://localhost:2021 yarn test
 
 The seeded default `TWENTY_API_KEY` works for both instances, so only the URL needs overriding. This mirrors CI, which spawns the same isolated instance via the `spawn-twenty-app-dev-test` action.
 
-Do not run `yarn test` from the Codex sandbox; it hits the Node/Yarn mismatch. Write the files; the user or CI runs them.
+When the user asks you to run tests, do run them. First start or verify the isolated test instance, then run the test command with `TWENTY_API_URL=http://localhost:2021`. Do not run integration tests against `http://localhost:2020` unless the user explicitly asks to target the dev instance. If only unit tests are requested, use the package's unit-test script and no `TWENTY_API_URL` override is needed.

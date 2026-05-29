@@ -35,7 +35,7 @@ These rules apply in every skill. They exist because they have failed before.
 
 1. **One-shot sync only.** Use `yarn twenty dev --once` to synchronize app changes. Never `yarn twenty dev` (watch mode). Watch mode leaks file handles and produces ambiguous failure output in agent sandboxes.
 
-2. **Do not run toolchain validation in the Codex sandbox.** After scaffolding (`create-twenty-app`) or after the CLI generates entities, do not run `yarn`, `npm install`, `node`, `corepack`, `yarn lint`, `yarn test`, or `yarn twenty dev:typecheck`. The scaffolder and the CLI used the correct toolchain inside the project; the Codex sandbox uses a different Node/Yarn. Running these will fail with misleading version-mismatch errors and waste user time.
+2. **Do not run broad validation unless it is requested.** After scaffolding (`create-twenty-app`) or after the CLI generates entities, prefer the bounded command that matches the task: `yarn twenty dev --once` for app sync, the package's unit-test script for unit tests, and `TWENTY_API_URL=http://localhost:2021 yarn test` for the full integration suite. Integration tests must target the isolated test instance on port `2021`, not the dev instance on port `2020`, unless the user explicitly asks otherwise.
 
 3. **Use `yarn twenty dev:add` for new entities.** It generates correct file structure, UUIDs, SDK imports, and boilerplate. Do not hand-craft entity files unless modifying existing ones or the CLI does not support that entity type.
 

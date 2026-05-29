@@ -76,7 +76,7 @@ yarn twenty dev --once
 
 The sync command builds the app and pushes entity definitions to the active remote. If any definition is invalid, the sync reports the error. This is the only validation step needed after entity changes.
 
-Do not run `yarn twenty dev:typecheck`, `yarn lint`, or `yarn test` as part of routine entity validation. These commands are useful for CI/CD pipelines but cause environment issues when run from the Codex sandbox due to Node and Yarn version mismatches. If any command fails because of setup, dependencies, remotes, authentication, or toolchain issues, report the error to the user and stop — do not attempt to fix the environment.
+Do not run `yarn twenty dev:typecheck`, `yarn lint`, or `yarn test` as part of routine entity validation. Use `yarn twenty dev --once` for entity sync validation. When the user explicitly asks to run tests, follow `tests.md`: unit tests may use the package's unit-test script, and the full suite must run with `TWENTY_API_URL=http://localhost:2021` against the isolated test instance.
 
 Switch to `manage-app` and use `../manage-app/cli-and-sync.md` for sync or remote troubleshooting.
 

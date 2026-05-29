@@ -30,6 +30,8 @@ The first version of the Twenty Codex plugin.
 - `README.md`: restructured into What/Installation/Skills/MCP/Development sections; added skills-overview table; linked `CONTRIBUTING.md`, `CHECKLIST.md`, `CHANGELOG.md`.
 - `scripts/validators/lib.js` `isAllowedDocumentationHost`: added `developers.openai.com`, `keepachangelog.com`, `semver.org` to the placeholder host allowlist so external documentation references in `CHECKLIST.md`, `CONTRIBUTING.md`, and `CHANGELOG.md` pass validation.
 - `references/develop-app/tests.md` and `references/manage-app/cli-and-sync.md`: documented that integration tests must run against the isolated test instance (`yarn twenty docker:start --test`, port `2021`) instead of the dev instance, since the test harness installs and uninstalls the app on its target server.
+- `skills/manage-app/SKILL.md`: added direct test-run routing so "run tests" requests load the tests reference and run full suites with `TWENTY_API_URL=http://localhost:2021`.
+- `scripts/validators/cross-doc-contracts.js`: added a testing-guidance contract so validation fails if the port-2021 integration-test rule drifts out of the manage skill or references.
 
 ### Plugin Structure
 - `.codex-plugin/plugin.json` manifest with `interface` metadata (display name, descriptions, category, capabilities, branding, default prompts).

@@ -83,9 +83,9 @@ After adding or modifying entities, sync the app to the active remote:
 yarn twenty dev --once
 ```
 
-Do not run `yarn twenty dev:typecheck`, `yarn lint`, or other validation commands. These are redundant when the CLI generated the files, and they cause environment issues in the Codex sandbox. The sync command itself will report errors if the entity definitions are invalid.
+Do not run `yarn twenty dev:typecheck`, `yarn lint`, or other validation commands as part of routine entity validation. Use `yarn twenty dev --once` for entity sync validation. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
 
-Do not attempt to fix Node or Yarn version mismatches, search for version managers, or debug the toolchain. If a command fails due to environment issues, report the error to the user and stop.
+Do not search for version managers or debug the toolchain after a successful sync unless a command actually fails and the failure points there.
 
 Use the official Twenty docs or local SDK source when exact entity fields, imports, or configuration shapes matter.
 

@@ -23,6 +23,7 @@ references.assertHowAppsWork(fail);
 crossDocContracts.assertTwentyMcpFormattingContract(fail);
 crossDocContracts.assertFrontComponentGuidance(fail);
 crossDocContracts.assertCliGuidanceSplit(fail);
+crossDocContracts.assertTestingGuidance(fail);
 setupHelper.assertSetupHelper(fail);
 
 if (failures.length > 0) {

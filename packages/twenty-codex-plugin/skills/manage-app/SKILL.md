@@ -15,6 +15,7 @@ Pick this skill when the user wants to operate, troubleshoot, or ship an existin
 - "set up CI/CD for my Twenty app"
 - "troubleshoot a failed deploy / sync / build"
 - "uninstall my app from production"
+- "run tests for my Twenty app"
 - "run my logic function manually for testing"
 
 Do not use this skill to scaffold (use `create-app`), to change app entities or code (use `develop-app`), to prepare marketplace assets (use `publish-app`), or to query workspace records (use `use-twenty-mcp`).
@@ -50,6 +51,15 @@ yarn twenty remote:list
 Treat deploys, uninstalls, production remote changes, and production syncs as externally visible actions. Ask for explicit confirmation before running them when the target is production or user data could be affected.
 
 For command details, remotes, validation command semantics, sync modes, troubleshooting, build, deploy, logs, exec, and CI/CD, read `../../references/manage-app/cli-and-sync.md`.
+
+If the user asks to run tests, also read `../../references/develop-app/tests.md` before running any test command. Full test suites include integration tests that install and uninstall the app on their target server, so start or verify the isolated test instance and run:
+
+```bash
+yarn twenty docker:start --test
+TWENTY_API_URL=http://localhost:2021 yarn test
+```
+
+Do not run integration tests against the dev instance on `http://localhost:2020` unless the user explicitly asks for that target. If the user asks for unit tests only, use the package's unit-test script and no `TWENTY_API_URL` override is needed.
 
 # Remotes
 

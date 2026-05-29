@@ -111,6 +111,10 @@ test('assertCliGuidanceSplit passes on current state', () => {
   assert.deepStrictEqual(collectFailures(crossDocContracts.assertCliGuidanceSplit), []);
 });
 
+test('assertTestingGuidance passes on current state', () => {
+  assert.deepStrictEqual(collectFailures(crossDocContracts.assertTestingGuidance), []);
+});
+
 test('assertSetupHelper passes on current state', () => {
   assert.deepStrictEqual(collectFailures(setupHelper.assertSetupHelper), []);
 });
@@ -236,5 +240,16 @@ test('assertSkillTriggerPhrases catches a SKILL.md missing the When To Use secti
   withFileMutation(skillPath, (original) => original.replace(/^#+\s+When To Use[\s\S]*?(?=\n#\s)/m, ''), () => {
     const failures = collectFailures(skills.assertSkillTriggerPhrases);
     assert.ok(failures.some((f) => f.includes('create-app') && f.includes('When To Use')));
+  });
+});
+
+test('assertTestingGuidance catches missing manage-app test target instructions', () => {
+  const skillPath = path.join(PLUGIN_ROOT, 'skills', 'manage-app', 'SKILL.md');
+  withFileMutation(skillPath, (original) => original.replace('TWENTY_API_URL=http://localhost:2021 yarn test', 'yarn test'), () => {
+    const failures = collectFailures(crossDocContracts.assertTestingGuidance);
+    assert.ok(
+      failures.some((f) => f.includes('manage-app/SKILL.md') && f.includes('TWENTY_API_URL')),
+      `expected manage-app test target failure, got: ${failures.join('; ')}`,
+    );
   });
 });

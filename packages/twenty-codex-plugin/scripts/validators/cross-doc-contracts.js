@@ -250,8 +250,71 @@ const assertCliGuidanceSplit = (fail) => {
   }
 };
 
+const assertTestingGuidance = (fail) => {
+  const manageSkillPath = path.join(PLUGIN_ROOT, 'skills/manage-app/SKILL.md');
+  const testsPath = path.join(PLUGIN_ROOT, 'references/develop-app/tests.md');
+  const cliAndSyncPath = path.join(PLUGIN_ROOT, 'references/manage-app/cli-and-sync.md');
+  const agentsPath = path.join(PLUGIN_ROOT, 'AGENTS.md');
+  const manageSkill = readText(manageSkillPath);
+  const tests = readText(testsPath);
+  const cliAndSync = readText(cliAndSyncPath);
+  const agents = readText(agentsPath);
+
+  const requiredManageFragments = [
+    'run tests for my Twenty app',
+    'references/develop-app/tests.md',
+    'yarn twenty docker:start --test',
+    'TWENTY_API_URL=http://localhost:2021 yarn test',
+    'Do not run integration tests against the dev instance on `http://localhost:2020`',
+  ];
+
+  for (const fragment of requiredManageFragments) {
+    if (!manageSkill.includes(fragment)) {
+      fail(`manage-app/SKILL.md is missing test execution guidance: ${fragment}`);
+    }
+  }
+
+  const requiredSharedFragments = [
+    'isolated test instance',
+    'port (`2021`)',
+    'TWENTY_API_URL=http://localhost:2021 yarn test',
+    'Do not run integration tests against `http://localhost:2020`',
+  ];
+
+  for (const fragment of requiredSharedFragments) {
+    if (!tests.includes(fragment)) {
+      fail(`tests.md is missing isolated integration-test guidance: ${fragment}`);
+    }
+  }
+
+  const requiredCliFragments = [
+    'Integration tests install and uninstall the app on their target server',
+    'yarn twenty docker:start --test',
+    'port `2021`',
+    '../develop-app/tests.md',
+  ];
+
+  for (const fragment of requiredCliFragments) {
+    if (!cliAndSync.includes(fragment)) {
+      fail(`cli-and-sync.md is missing integration-test target guidance: ${fragment}`);
+    }
+  }
+
+  const requiredAgentsFragments = [
+    'TWENTY_API_URL=http://localhost:2021 yarn test',
+    'Integration tests must target the isolated test instance on port `2021`',
+  ];
+
+  for (const fragment of requiredAgentsFragments) {
+    if (!agents.includes(fragment)) {
+      fail(`AGENTS.md is missing durable test target guidance: ${fragment}`);
+    }
+  }
+};
+
 module.exports = {
   assertTwentyMcpFormattingContract,
   assertFrontComponentGuidance,
   assertCliGuidanceSplit,
+  assertTestingGuidance,
 };
