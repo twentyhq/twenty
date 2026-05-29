@@ -57,8 +57,6 @@ export const SettingsAccountsBlocklistSection = () => {
         };
       }),
     });
-      }),
-    });
   };
 
   return (
