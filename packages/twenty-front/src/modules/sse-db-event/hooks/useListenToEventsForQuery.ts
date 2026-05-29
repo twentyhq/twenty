@@ -9,11 +9,13 @@ import { useStore } from 'jotai';
 export const useListenToEventsForQuery = ({
   queryId,
   operationSignature,
+  skip = false,
 }: {
   queryId: string;
   operationSignature:
     | RecordGqlOperationSignature
     | MetadataGqlOperationSignature;
+  skip?: boolean;
 }) => {
   const store = useStore();
   const changeQueryIdListenState = useCallback(
@@ -57,10 +59,10 @@ export const useListenToEventsForQuery = ({
   );
 
   useEffect(() => {
-    changeQueryIdListenState(true, queryId, operationSignature);
+    changeQueryIdListenState(!skip, queryId, operationSignature);
 
     return () => {
       changeQueryIdListenState(false, queryId, operationSignature);
     };
-  }, [changeQueryIdListenState, queryId, operationSignature]);
+  }, [changeQueryIdListenState, queryId, operationSignature, skip]);
 };

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { QUERY_MAX_RECORDS_FROM_RELATION } from 'twenty-shared/constants';
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
@@ -50,6 +50,8 @@ import { parseEventNameOrThrow } from 'src/engine/workspace-event-emitter/utils/
 
 @Injectable()
 export class ObjectRecordEventPublisher {
+  private readonly logger = new Logger(ObjectRecordEventPublisher.name);
+
   constructor(
     private readonly subscriptionService: SubscriptionService,
     private readonly eventStreamService: EventStreamService,
@@ -219,16 +221,24 @@ export class ObjectRecordEventPublisher {
     }
 
     if (matchedEvents.length > 0) {
-      await this.enrichEventBatchWithNestedRelations({
-        objectMetadata: workspaceEventBatch.objectMetadata,
-        events: matchedEvents.map(
-          (matchedEvent) => matchedEvent.objectRecordEvent,
-        ),
-        streamData,
-        permissionsContext,
-        workspaceId: workspaceEventBatch.workspaceId,
-        roleId,
-      });
+      try {
+        await this.enrichEventBatchWithNestedRelations({
+          objectMetadata: workspaceEventBatch.objectMetadata,
+          events: matchedEvents.map(
+            (matchedEvent) => matchedEvent.objectRecordEvent,
+          ),
+          streamData,
+          permissionsContext,
+          workspaceId: workspaceEventBatch.workspaceId,
+          roleId,
+        });
+      } catch (error) {
+        this.logger.warn(
+          `Failed to enrich nested relations for ${workspaceEventBatch.name} subscription event, broadcasting without them: ${
+            (error as Error)?.message
+          }`,
+        );
+      }
 
       const payload: EventStreamPayload = {
         objectRecordEventsWithQueryIds: matchedEvents,
