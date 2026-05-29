@@ -4,6 +4,7 @@ import { act, renderHook, waitFor } from '@testing-library/react';
 import { type ReactNode } from 'react';
 
 import {
+  type Application,
   FindOneApplicationDocument,
   UpdateOneApplicationVariableDocument,
 } from '~/generated-metadata/graphql';
@@ -25,7 +26,7 @@ const KEY = 'API_KEY';
 const OLD_VALUE = 'old';
 const NEW_VALUE = 'new';
 
-const buildApplication = (variableValue: string) => ({
+const buildApplication = (variableValue: string): Application => ({
   __typename: 'Application',
   id: APP_ID,
   name: 'Test App',
