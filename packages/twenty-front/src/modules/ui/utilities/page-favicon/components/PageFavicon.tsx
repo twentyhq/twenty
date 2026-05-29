@@ -3,11 +3,8 @@ import { workspacePublicDataState } from '@/auth/states/workspacePublicDataState
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useEffect, useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-import {
-  getImageAbsoluteURI,
-  isDefined,
-  isNonEmptyString,
-} from 'twenty-shared/utils';
+import { isNonEmptyString } from '@sniptt/guards';
+import { getImageAbsoluteURI, isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
 const DEFAULT_PWA_NAME = 'CRM';
