@@ -61,7 +61,7 @@ Refactor when:
 - The same parsing or mapping logic appears across object types.
 - Multiple field files differ only by name and identifier — use a factory under `src/fields/`.
 
-Tests as `*.spec.ts` in sibling `__tests__/` folders next to the code they cover. See `../../references/develop-app/tests.md`.
+Always create a `*.spec.ts` test file in a sibling `__tests__/` folder for every util/function you add or change, one spec file per source file. See `../../references/develop-app/tests.md`.
 
 ## Adding New Entities
 
