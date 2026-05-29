@@ -152,6 +152,8 @@ export const Authorize = () => {
     searchParam.get('redirect_uri') ?? searchParam.get('redirectUrl');
   const state = searchParam.get('state');
 
+  const isMissingRedirectUrl = !isDefined(redirectUrl);
+
   const {
     data,
     loading,
@@ -176,28 +178,34 @@ export const Authorize = () => {
   }, [shouldRedirectToNotFound, navigate]);
 
   const handleAuthorize = async () => {
-    if (isDefined(clientId) && isDefined(redirectUrl)) {
-      setIsAuthorizing(true);
-      setAuthorizeError(null);
+    if (!isDefined(clientId) || isMissingRedirectUrl) {
+      setAuthorizeError(
+        t`Invalid authorization link: missing redirect URI. Please contact the app developer.`,
+      );
 
-      await authorizeApp({
-        variables: {
-          clientId,
-          codeChallenge: codeChallenge ?? undefined,
-          redirectUrl,
-          state: state ?? undefined,
-        },
-        onCompleted: (responseData) => {
-          redirect(responseData.authorizeApp.redirectUrl);
-        },
-        onError: (error) => {
-          setIsAuthorizing(false);
-          setAuthorizeError(
-            error.message || t`Authorization failed. Please try again.`,
-          );
-        },
-      });
+      return;
     }
+
+    setIsAuthorizing(true);
+    setAuthorizeError(null);
+
+    await authorizeApp({
+      variables: {
+        clientId,
+        codeChallenge: codeChallenge ?? undefined,
+        redirectUrl,
+        state: state ?? undefined,
+      },
+      onCompleted: (responseData) => {
+        redirect(responseData.authorizeApp.redirectUrl);
+      },
+      onError: (error) => {
+        setIsAuthorizing(false);
+        setAuthorizeError(
+          error.message || t`Authorization failed. Please try again.`,
+        );
+      },
+    });
   };
 
   if (isDefined(queryError)) {
@@ -261,13 +269,17 @@ export const Authorize = () => {
               </StyledScopeList>
             </StyledPermissionSection>
           )}
-          {authorizeError && (
-            <StyledErrorText>{authorizeError}</StyledErrorText>
+          {(authorizeError || isMissingRedirectUrl) && (
+            <StyledErrorText>
+              {authorizeError ??
+                t`Invalid authorization link: missing redirect URI. Please contact the app developer.`}
+            </StyledErrorText>
           )}
           <AuthorizeActionButtons
             onCancel={() => navigate(AppPath.Index)}
             onAuthorize={handleAuthorize}
             isLoading={isAuthorizing}
+            isAuthorizeDisabled={isMissingRedirectUrl}
           />
         </ModalContent>
       </StyledCardWrapper>

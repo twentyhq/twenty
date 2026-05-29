@@ -519,6 +519,16 @@ export class AuthService {
     }
 
     if (!authorizeAppInput.redirectUrl) {
+      const analytics = this.auditService.createContext({
+        workspaceId: workspace.id,
+        userId: user.id,
+      });
+
+      await analytics.insertWorkspaceEvent('Monitoring', {
+        eventName: 'oauth.authorize.invalid-request.missing-redirect-uri',
+        message: `clientId=${clientId}; workspaceId=${workspace.id}; userId=${user.id}`,
+      });
+
       throw new AuthException(
         `redirectUrl not provided for '${clientId}'`,
         AuthExceptionCode.FORBIDDEN_EXCEPTION,

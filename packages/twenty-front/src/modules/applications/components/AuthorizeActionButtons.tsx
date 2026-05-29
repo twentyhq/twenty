@@ -7,6 +7,7 @@ type AuthorizeActionButtonsProps = {
   onAuthorize: () => void;
   onCancel: () => void;
   isLoading?: boolean;
+  isAuthorizeDisabled?: boolean;
 };
 
 const StyledButtonContainer = styled.div`
@@ -32,6 +33,7 @@ export const AuthorizeActionButtons = ({
   onAuthorize,
   onCancel,
   isLoading,
+  isAuthorizeDisabled,
 }: AuthorizeActionButtonsProps) => {
   const { t } = useLingui();
 
@@ -47,7 +49,7 @@ export const AuthorizeActionButtons = ({
       <StyledAuthorizeButton
         title={isLoading ? t`Authorizing...` : t`Authorize`}
         onClick={onAuthorize}
-        disabled={isLoading}
+        disabled={isLoading || isAuthorizeDisabled}
         fullWidth
       />
     </StyledButtonContainer>
