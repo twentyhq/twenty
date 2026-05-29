@@ -45,14 +45,15 @@ describe('partnerApplicationReducer', () => {
   });
 
   it('GO_NEXT on Identity step with missing required fields fills fieldErrors and stays put', () => {
-    const next = partnerApplicationReducer(
-      INITIAL_PARTNER_APPLICATION_STATE,
-      { type: 'GO_NEXT' },
-    );
+    const next = partnerApplicationReducer(INITIAL_PARTNER_APPLICATION_STATE, {
+      type: 'GO_NEXT',
+    });
     expect(next.stepIndex).toBe(0);
-    expect(Object.keys(next.fieldErrors).sort()).toEqual(
-      ['company', 'email', 'name'],
-    );
+    expect(Object.keys(next.fieldErrors).sort()).toEqual([
+      'company',
+      'email',
+      'name',
+    ]);
   });
 
   it('GO_NEXT on Identity step with required fields valid advances to Profile', () => {
@@ -76,17 +77,6 @@ describe('partnerApplicationReducer', () => {
     expect(next.fieldErrors.email).toBe('invalid_email');
   });
 
-  it('GO_NEXT on Profile requires country and reveals countryOther when OTHER', () => {
-    const onProfile: PartnerApplicationState = {
-      ...INITIAL_PARTNER_APPLICATION_STATE,
-      stepIndex: 1,
-      country: 'OTHER',
-    };
-    const next = partnerApplicationReducer(onProfile, { type: 'GO_NEXT' });
-    expect(next.stepIndex).toBe(1);
-    expect(next.fieldErrors.countryOther).toBe('required');
-  });
-
   it('GO_BACK clamps at 0 and clears errors', () => {
     const onProfileWithErrors: PartnerApplicationState = {
       ...INITIAL_PARTNER_APPLICATION_STATE,
@@ -102,21 +92,6 @@ describe('partnerApplicationReducer', () => {
     expect(clamped.stepIndex).toBe(0);
   });
 
-  it('TOGGLE_LANGUAGES_OTHER off clears any stale languagesOther error', () => {
-    const seeded: PartnerApplicationState = {
-      ...INITIAL_PARTNER_APPLICATION_STATE,
-      languagesOtherSelected: true,
-      languagesOther: 'Klingon',
-      fieldErrors: { languagesOther: 'required' },
-    };
-    const off = partnerApplicationReducer(seeded, {
-      type: 'TOGGLE_LANGUAGES_OTHER',
-    });
-    expect(off.languagesOtherSelected).toBe(false);
-    expect(off.languagesOther).toBe('');
-    expect(off.fieldErrors.languagesOther).toBeUndefined();
-  });
-
   it('RESET returns to initial state from any state', () => {
     const dirty: PartnerApplicationState = {
       ...INITIAL_PARTNER_APPLICATION_STATE,
@@ -124,8 +99,8 @@ describe('partnerApplicationReducer', () => {
       stepIndex: 3,
       isSubmitting: true,
     };
-    expect(
-      partnerApplicationReducer(dirty, { type: 'RESET' }),
-    ).toEqual(INITIAL_PARTNER_APPLICATION_STATE);
+    expect(partnerApplicationReducer(dirty, { type: 'RESET' })).toEqual(
+      INITIAL_PARTNER_APPLICATION_STATE,
+    );
   });
 });

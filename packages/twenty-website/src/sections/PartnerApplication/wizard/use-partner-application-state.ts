@@ -11,7 +11,7 @@ import {
   type PartnerTypeOfTeam,
 } from './partner-fields.data';
 
-export type CountryFieldValue = PartnerCountryValue | 'OTHER' | '';
+export type CountryFieldValue = PartnerCountryValue | '';
 
 export type PartnerApplicationState = {
   stepIndex: number;
@@ -26,10 +26,7 @@ export type PartnerApplicationState = {
   linkedin: string;
   city: string;
   country: CountryFieldValue;
-  countryOther: string;
   languages: PartnerLanguageValue[];
-  languagesOtherSelected: boolean;
-  languagesOther: string;
 
   // Expertise & experience
   typeOfTeam: PartnerTypeOfTeam | '';
@@ -59,10 +56,7 @@ export const INITIAL_PARTNER_APPLICATION_STATE: PartnerApplicationState = {
   linkedin: '',
   city: '',
   country: '',
-  countryOther: '',
   languages: [],
-  languagesOtherSelected: false,
-  languagesOther: '',
   typeOfTeam: '',
   partnerScope: [],
   skills: [],
@@ -85,8 +79,6 @@ export type ScalarFieldName =
   | 'linkedin'
   | 'city'
   | 'country'
-  | 'countryOther'
-  | 'languagesOther'
   | 'typeOfTeam'
   | 'workspaceUrl'
   | 'customerReferences'
@@ -99,7 +91,6 @@ export type PartnerApplicationAction =
   | { type: 'TOGGLE_SCOPE'; value: PartnerScopeValue }
   | { type: 'TOGGLE_DEPLOYMENT'; value: PartnerDeploymentValue }
   | { type: 'TOGGLE_LANGUAGE'; value: PartnerLanguageValue }
-  | { type: 'TOGGLE_LANGUAGES_OTHER' }
   | { type: 'SET_SKILLS'; value: string[] }
   | { type: 'GO_NEXT' }
   | { type: 'GO_BACK' }
@@ -138,15 +129,6 @@ function validateStep(
     }
   }
   if (stepId === 'profile') {
-    if (state.country === 'OTHER' && !state.countryOther.trim()) {
-      errors.countryOther = 'required';
-    }
-    if (
-      state.languagesOtherSelected &&
-      !state.languagesOther.trim()
-    ) {
-      errors.languagesOther = 'required';
-    }
     if (state.linkedin && !URL_PATTERN.test(state.linkedin)) {
       errors.linkedin = 'invalid_url';
     }
@@ -211,17 +193,6 @@ export function partnerApplicationReducer(
         : [...state.languages, action.value];
       return { ...state, languages: next };
     }
-    case 'TOGGLE_LANGUAGES_OTHER': {
-      const nextSelected = !state.languagesOtherSelected;
-      return {
-        ...state,
-        languagesOtherSelected: nextSelected,
-        languagesOther: nextSelected ? state.languagesOther : '',
-        fieldErrors: nextSelected
-          ? state.fieldErrors
-          : dropError(state.fieldErrors, 'languagesOther'),
-      };
-    }
     case 'SET_SKILLS':
       return { ...state, skills: action.value };
     case 'GO_NEXT': {
@@ -265,8 +236,7 @@ export function usePartnerApplicationState() {
     [],
   );
   const toggleScope = useCallback(
-    (value: PartnerScopeValue) =>
-      dispatch({ type: 'TOGGLE_SCOPE', value }),
+    (value: PartnerScopeValue) => dispatch({ type: 'TOGGLE_SCOPE', value }),
     [],
   );
   const toggleDeployment = useCallback(
@@ -277,10 +247,6 @@ export function usePartnerApplicationState() {
   const toggleLanguage = useCallback(
     (value: PartnerLanguageValue) =>
       dispatch({ type: 'TOGGLE_LANGUAGE', value }),
-    [],
-  );
-  const toggleLanguagesOther = useCallback(
-    () => dispatch({ type: 'TOGGLE_LANGUAGES_OTHER' }),
     [],
   );
   const setSkills = useCallback(
@@ -294,8 +260,7 @@ export function usePartnerApplicationState() {
     [],
   );
   const setSubmitError = useCallback(
-    (value: string | null) =>
-      dispatch({ type: 'SET_SUBMIT_ERROR', value }),
+    (value: string | null) => dispatch({ type: 'SET_SUBMIT_ERROR', value }),
     [],
   );
   const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
@@ -306,7 +271,6 @@ export function usePartnerApplicationState() {
     toggleScope,
     toggleDeployment,
     toggleLanguage,
-    toggleLanguagesOther,
     setSkills,
     goNext,
     goBack,

@@ -22,13 +22,8 @@ type ExpertiseStepProps = {
 
 export function ExpertiseStep({ controller }: ExpertiseStepProps) {
   const { i18n } = useLingui();
-  const {
-    state,
-    setField,
-    toggleScope,
-    toggleDeployment,
-    setSkills,
-  } = controller;
+  const { state, setField, toggleScope, toggleDeployment, setSkills } =
+    controller;
 
   const teamOptions = PARTNER_TYPE_OF_TEAM_OPTIONS.map((option) => ({
     value: option.value,
@@ -68,10 +63,7 @@ export function ExpertiseStep({ controller }: ExpertiseStepProps) {
           ariaLabel={i18n._(COPY.partnerScope)}
         />
       </Form.Field>
-      <Form.Field
-        label={i18n._(COPY.skills)}
-        hint={i18n._(COPY.skillsHint)}
-      >
+      <Form.Field label={i18n._(COPY.skills)} hint={i18n._(COPY.skillsHint)}>
         <Form.TagInput
           values={state.skills}
           onValuesChange={setSkills}

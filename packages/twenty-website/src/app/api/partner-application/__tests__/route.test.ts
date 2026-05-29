@@ -1,5 +1,6 @@
 const ORIGINAL_FETCH = global.fetch;
 const ORIGINAL_WEBHOOK_URL = process.env.PARTNER_APPLICATION_WEBHOOK_URL;
+const ORIGINAL_API_KEY = process.env.PARTNER_APPLICATION_SECRET;
 
 const VALID_PAYLOAD = {
   email: 'a@b.co',
@@ -25,7 +26,6 @@ function buildRequest({
   if (contentType !== null) headers.set('content-type', contentType);
   headers.set('x-forwarded-for', ip);
   if (contentLength !== undefined) headers.set('content-length', contentLength);
-
   return new Request('https://example.com/api/partner-application', {
     method: 'POST',
     headers,
@@ -42,26 +42,26 @@ async function loadRoute() {
 describe('POST /api/partner-application', () => {
   beforeEach(() => {
     process.env.PARTNER_APPLICATION_WEBHOOK_URL = 'https://hooks.example/test';
+    process.env.PARTNER_APPLICATION_SECRET = 'test-key-abc123';
   });
 
   afterEach(() => {
     global.fetch = ORIGINAL_FETCH;
     process.env.PARTNER_APPLICATION_WEBHOOK_URL = ORIGINAL_WEBHOOK_URL;
+    process.env.PARTNER_APPLICATION_SECRET = ORIGINAL_API_KEY;
   });
 
   it('returns 503 when the webhook URL is not configured', async () => {
     delete process.env.PARTNER_APPLICATION_WEBHOOK_URL;
     const { POST } = await loadRoute();
-
     const response = await POST(buildRequest());
     expect(response.status).toBe(503);
   });
 
-  it('returns 503 when the webhook URL is not a valid URL', async () => {
-    process.env.PARTNER_APPLICATION_WEBHOOK_URL = 'not-a-url';
+  it('returns 503 when the application secret is not configured', async () => {
+    delete process.env.PARTNER_APPLICATION_SECRET;
     const { POST } = await loadRoute();
-
-    const response = await POST(buildRequest());
+    const response = await POST(buildRequest({ ip: '203.0.113.2' }));
     expect(response.status).toBe(503);
   });
 
@@ -79,10 +79,7 @@ describe('POST /api/partner-application', () => {
   it('returns 413 when content-length declares a too-large body', async () => {
     const { POST } = await loadRoute();
     const response = await POST(
-      buildRequest({
-        contentLength: '99999999',
-        ip: '203.0.113.11',
-      }),
+      buildRequest({ contentLength: '99999999', ip: '203.0.113.11' }),
     );
     expect(response.status).toBe(413);
   });
@@ -117,36 +114,15 @@ describe('POST /api/partner-application', () => {
     expect(response.status).toBe(400);
   });
 
-  it('returns 400 when extra fields are present (strict schema)', async () => {
+  it('returns 400 when an extra (legacy) field is present (strictObject)', async () => {
     const { POST } = await loadRoute();
     const response = await POST(
       buildRequest({
-        body: JSON.stringify({ ...VALID_PAYLOAD, extra: 'nope' }),
+        body: JSON.stringify({
+          ...VALID_PAYLOAD,
+          countryOther: 'Republic of Examples',
+        }),
         ip: '203.0.113.15',
-      }),
-    );
-    expect(response.status).toBe(400);
-  });
-
-  it('returns 400 when company is missing', async () => {
-    const { POST } = await loadRoute();
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { company: _omitted, ...withoutCompany } = VALID_PAYLOAD;
-    const response = await POST(
-      buildRequest({
-        body: JSON.stringify(withoutCompany),
-        ip: '203.0.113.16',
-      }),
-    );
-    expect(response.status).toBe(400);
-  });
-
-  it('returns 400 when website is not a URL', async () => {
-    const { POST } = await loadRoute();
-    const response = await POST(
-      buildRequest({
-        body: JSON.stringify({ ...VALID_PAYLOAD, website: 'not-a-url' }),
-        ip: '203.0.113.17',
       }),
     );
     expect(response.status).toBe(400);
@@ -157,13 +133,13 @@ describe('POST /api/partner-application', () => {
     const response = await POST(
       buildRequest({
         body: JSON.stringify({ ...VALID_PAYLOAD, country: 'ATLANTIS' }),
-        ip: '203.0.113.18',
+        ip: '203.0.113.16',
       }),
     );
     expect(response.status).toBe(400);
   });
 
-  it('forwards a valid submission to the webhook with all fields and returns 200', async () => {
+  it('forwards a valid submission to the webhook with camelCase payload + header auth and returns 200', async () => {
     const fetchSpy = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
@@ -174,23 +150,24 @@ describe('POST /api/partner-application', () => {
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ success: true });
-
     expect(fetchSpy).toHaveBeenCalledTimes(1);
+
     const [url, init] = fetchSpy.mock.calls[0];
     expect(url).toBe('https://hooks.example/test');
     expect(init.method).toBe('POST');
+    expect(init.headers['X-Application-Secret']).toBe('test-key-abc123');
+    expect(init.headers['Content-Type']).toBe('application/json');
     expect(JSON.parse(init.body as string)).toEqual({
-      Email: 'a@b.co',
-      FirstName: 'Ada',
-      LastName: 'Lovelace',
-      Company: 'Analytical Engines',
-      Website: 'https://analytical.example/',
-      CurrencyCode: 'USD',
+      email: 'a@b.co',
+      firstName: 'Ada',
+      lastName: 'Lovelace',
+      companyName: 'Analytical Engines',
+      domainName: 'https://analytical.example/',
     });
     expect(init.signal).toBeInstanceOf(AbortSignal);
   });
 
-  it('forwards rich optional wizard fields when provided', async () => {
+  it('forwards rich optional wizard fields with camelCase keys', async () => {
     const fetchSpy = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
@@ -215,13 +192,12 @@ describe('POST /api/partner-application', () => {
     expect(response.status).toBe(200);
     const [, init] = fetchSpy.mock.calls[0];
     expect(JSON.parse(init.body as string)).toMatchObject({
-      Country: 'FRANCE',
-      LanguagesSpoken: ['ENGLISH', 'FRENCH'],
-      TypeOfTeam: 'SOLO',
-      PartnerScope: ['APPS'],
-      DeploymentExpertise: ['CLOUD'],
-      HourlyRate: 150,
-      CurrencyCode: 'USD',
+      country: 'FRANCE',
+      languages: ['ENGLISH', 'FRENCH'],
+      typeOfTeam: 'SOLO',
+      partnerScope: ['APPS'],
+      deploymentExpertise: ['CLOUD'],
+      hourlyRate: 150,
     });
   });
 
@@ -237,16 +213,15 @@ describe('POST /api/partner-application', () => {
     expect(response.status).toBe(200);
     const [, init] = fetchSpy.mock.calls[0];
     const body = JSON.parse(init.body as string);
-    expect(body).not.toHaveProperty('Country');
-    expect(body).not.toHaveProperty('LanguagesSpoken');
-    expect(body).not.toHaveProperty('PartnerScope');
+    expect(body).not.toHaveProperty('country');
+    expect(body).not.toHaveProperty('languages');
+    expect(body).not.toHaveProperty('partnerScope');
   });
 
   it('returns 502 when the webhook responds with a non-2xx status', async () => {
     global.fetch = jest
       .fn()
       .mockResolvedValue(new Response('boom', { status: 500 }));
-
     const { POST } = await loadRoute();
     const response = await POST(buildRequest({ ip: '203.0.113.21' }));
     expect(response.status).toBe(502);
@@ -254,7 +229,6 @@ describe('POST /api/partner-application', () => {
 
   it('returns 502 when the webhook fetch throws (network error)', async () => {
     global.fetch = jest.fn().mockRejectedValue(new Error('connection refused'));
-
     const { POST } = await loadRoute();
     const response = await POST(buildRequest({ ip: '203.0.113.22' }));
     expect(response.status).toBe(502);
@@ -266,7 +240,6 @@ describe('POST /api/partner-application', () => {
       .mockRejectedValue(
         Object.assign(new Error('aborted'), { name: 'AbortError' }),
       );
-
     const { POST } = await loadRoute();
     const response = await POST(buildRequest({ ip: '203.0.113.23' }));
     expect(response.status).toBe(504);
@@ -276,16 +249,13 @@ describe('POST /api/partner-application', () => {
     global.fetch = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
-
     const { POST } = await loadRoute();
     const ip = '203.0.113.99';
     const statuses: number[] = [];
-
     for (let i = 0; i < 6; i++) {
       const r = await POST(buildRequest({ ip }));
       statuses.push(r.status);
     }
-
     expect(statuses.slice(0, 5).every((s) => s === 200)).toBe(true);
     expect(statuses[5]).toBe(429);
   });
@@ -294,13 +264,9 @@ describe('POST /api/partner-application', () => {
     global.fetch = jest
       .fn()
       .mockResolvedValue(new Response(null, { status: 200 }));
-
     const { POST } = await loadRoute();
     const ip = '203.0.113.100';
-    for (let i = 0; i < 5; i++) {
-      await POST(buildRequest({ ip }));
-    }
-
+    for (let i = 0; i < 5; i++) await POST(buildRequest({ ip }));
     const denied = await POST(buildRequest({ ip }));
     expect(denied.status).toBe(429);
     const retryAfter = denied.headers.get('Retry-After');

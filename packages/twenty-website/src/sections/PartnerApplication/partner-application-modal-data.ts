@@ -33,11 +33,7 @@ export const PARTNER_APPLICATION_FIELD_COPY = {
   countryPlaceholder: msg`Select your country`,
   countrySearchPlaceholder: msg`Search a country…`,
   countrySearchEmpty: msg`No matching country.`,
-  countryOther: msg`Please specify your country`,
   languages: msg`Languages spoken`,
-  languagesOtherToggle: msg`Add another language`,
-  languagesOther: msg`Other languages (comma-separated)`,
-  optionOther: msg`Other`,
   // Expertise
   typeOfTeam: msg`Type of team *`,
   typeOfTeamPlaceholder: msg`Solo or agency?`,

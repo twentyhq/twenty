@@ -1,7 +1,6 @@
 import {
-  buildWebhookPayload,
+  buildLogicFunctionPayload,
   partnerApplicationRequestSchema,
-  type PartnerApplicationRequest,
 } from '@/app/api/partner-application/partner-application-schema';
 
 const minimalValid = {
@@ -58,7 +57,7 @@ describe('partnerApplicationRequestSchema', () => {
   it('rejects unknown top-level keys (strictObject)', () => {
     const parsed = partnerApplicationRequestSchema.safeParse({
       ...minimalValid,
-      programId: 'technology',
+      countryOther: 'Republic of Examples',
     });
     expect(parsed.success).toBe(false);
   });
@@ -72,45 +71,28 @@ describe('partnerApplicationRequestSchema', () => {
   });
 });
 
-describe('buildWebhookPayload', () => {
-  it('splits FirstName/LastName from name and sets USD currency', () => {
-    const payload = buildWebhookPayload({
-      ...fullValid,
-    } as PartnerApplicationRequest);
-    expect(payload.FirstName).toBe('Ada');
-    expect(payload.LastName).toBe('Lovelace');
-    expect(payload.Email).toBe('ada@example.com');
-    expect(payload.Company).toBe('Analytical Engines Ltd');
-    expect(payload.HourlyRate).toBe(150);
-    expect(payload.CurrencyCode).toBe('USD');
+describe('buildLogicFunctionPayload', () => {
+  it('splits firstName/lastName from name and uses camelCase keys', () => {
+    const payload = buildLogicFunctionPayload(fullValid as never);
+    expect(payload.firstName).toBe('Ada');
+    expect(payload.lastName).toBe('Lovelace');
+    expect(payload.email).toBe('ada@example.com');
+    expect(payload.companyName).toBe('Analytical Engines Ltd');
+    expect(payload.hourlyRate).toBe(150);
+    expect((payload as Record<string, unknown>).CurrencyCode).toBeUndefined();
   });
 
   it('omits keys for undefined optional fields', () => {
-    const payload = buildWebhookPayload(minimalValid as PartnerApplicationRequest);
-    expect('Linkedin' in payload).toBe(false);
-    expect('Country' in payload).toBe(false);
-    expect('CountryOther' in payload).toBe(false);
-    expect('Languages' in payload).toBe(false);
-    expect('PartnerScope' in payload).toBe(false);
-    expect(payload.CurrencyCode).toBe('USD');
+    const payload = buildLogicFunctionPayload(minimalValid as never);
+    expect('linkedin' in payload).toBe(false);
+    expect('country' in payload).toBe(false);
+    expect('languages' in payload).toBe(false);
+    expect('partnerScope' in payload).toBe(false);
+    expect('domainName' in payload).toBe(false);
   });
 
-  it('forwards CountryOther free text when provided', () => {
-    const payload = buildWebhookPayload({
-      ...minimalValid,
-      countryOther: 'Republic of Examples',
-    } as PartnerApplicationRequest);
-    expect(payload.CountryOther).toBe('Republic of Examples');
-    expect('Country' in payload).toBe(false);
-  });
-
-  it('forwards LanguagesOther free text when provided', () => {
-    const payload = buildWebhookPayload({
-      ...minimalValid,
-      languages: ['ENGLISH'],
-      languagesOther: 'Klingon, Esperanto',
-    } as PartnerApplicationRequest);
-    expect(payload.LanguagesSpoken).toEqual(['ENGLISH']);
-    expect(payload.LanguagesOther).toBe('Klingon, Esperanto');
+  it('forwards website as domainName when provided', () => {
+    const payload = buildLogicFunctionPayload(fullValid as never);
+    expect(payload.domainName).toBe('https://analyticalengines.example');
   });
 });

@@ -211,7 +211,9 @@ export function FormSelect<TValue extends string>({
         data-invalid={invalid ? 'true' : undefined}
         onClick={() => setOpen((v) => !v)}
       >
-        <Value data-empty={value === '' || !selectedOption ? 'true' : undefined}>
+        <Value
+          data-empty={value === '' || !selectedOption ? 'true' : undefined}
+        >
           {value === '' || !selectedOption ? placeholder : selectedOption.label}
         </Value>
         <IconChevronDown size={20} stroke={1.5} aria-hidden />

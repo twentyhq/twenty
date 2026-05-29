@@ -64,10 +64,15 @@ export function StepIndicator({
               : 'upcoming';
         const isLast = index === stepCount - 1;
         return (
-          <span key={index} style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+          <span
+            key={index}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}
+          >
             <Dot data-state={state} />
             {isLast ? null : (
-              <Connector data-completed={index < activeStepIndex ? 'true' : undefined} />
+              <Connector
+                data-completed={index < activeStepIndex ? 'true' : undefined}
+              />
             )}
           </span>
         );

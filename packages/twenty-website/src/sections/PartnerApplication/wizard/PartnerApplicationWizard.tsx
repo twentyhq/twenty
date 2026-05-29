@@ -10,9 +10,7 @@ import {
   PARTNER_APPLICATION_MODAL_COPY,
   PARTNER_APPLICATION_STEP_HEADER_LABELS,
 } from '@/sections/PartnerApplication/partner-application-modal-data';
-import {
-  PARTNER_APPLICATION_STEP_IDS,
-} from '@/sections/PartnerApplication/wizard/partner-fields.data';
+import { PARTNER_APPLICATION_STEP_IDS } from '@/sections/PartnerApplication/wizard/partner-fields.data';
 import { StepIndicator } from '@/sections/PartnerApplication/wizard/StepIndicator';
 import { IdentityStep } from '@/sections/PartnerApplication/wizard/steps/IdentityStep';
 import { ProfileStep } from '@/sections/PartnerApplication/wizard/steps/ProfileStep';
@@ -154,14 +152,8 @@ export function PartnerApplicationWizard({
 }: WizardProps) {
   const { i18n } = useLingui();
   const controller = usePartnerApplicationState();
-  const {
-    state,
-    goNext,
-    goBack,
-    setSubmitting,
-    setSubmitError,
-    reset,
-  } = controller;
+  const { state, goNext, goBack, setSubmitting, setSubmitError, reset } =
+    controller;
 
   useEffect(() => {
     reset();
@@ -195,13 +187,8 @@ export function PartnerApplicationWizard({
       if (state.website.trim()) payload.website = state.website.trim();
       if (state.linkedin.trim()) payload.linkedin = state.linkedin.trim();
       if (state.city.trim()) payload.city = state.city.trim();
-      if (state.country !== '' && state.country !== 'OTHER')
-        payload.country = state.country;
-      if (state.country === 'OTHER' && state.countryOther.trim())
-        payload.countryOther = state.countryOther.trim();
+      if (state.country !== '') payload.country = state.country;
       if (state.languages.length > 0) payload.languages = state.languages;
-      if (state.languagesOtherSelected && state.languagesOther.trim())
-        payload.languagesOther = state.languagesOther.trim();
       if (state.typeOfTeam !== '') payload.typeOfTeam = state.typeOfTeam;
       if (state.partnerScope.length > 0)
         payload.partnerScope = state.partnerScope;
@@ -287,10 +274,7 @@ export function PartnerApplicationWizard({
             )}{' '}
             · {i18n._(PARTNER_APPLICATION_STEP_HEADER_LABELS[stepId])}
           </HeaderLabel>
-          <StepIndicator
-            stepCount={STEPS.length}
-            activeStepIndex={stepIndex}
-          />
+          <StepIndicator stepCount={STEPS.length} activeStepIndex={stepIndex} />
         </HeaderStrip>
       </TitleBlock>
 
