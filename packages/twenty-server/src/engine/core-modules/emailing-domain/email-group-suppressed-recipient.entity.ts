@@ -14,7 +14,7 @@ import { EmailGroupSuppressionScope } from 'src/engine/core-modules/emailing-dom
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 @Entity({ name: 'emailGroupSuppressedRecipient', schema: 'core' })
-@Unique('IDX_EMAIL_GROUP_SUPPRESSED_RECIPIENT_WORKSPACE_EMAIL_SCOPE_UNIQUE', [
+@Unique('IDX_EMAIL_GROUP_SUPPRESSED_RECIPIENT_WS_EMAIL_SCOPE_UNIQUE', [
   'workspaceId',
   'emailAddress',
   'scope',

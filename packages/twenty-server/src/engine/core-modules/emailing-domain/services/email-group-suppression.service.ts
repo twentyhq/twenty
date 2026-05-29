@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FieldActorSource } from 'twenty-shared/types';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
 import { BLOCKED_SCOPES_BY_SEND_TYPE } from 'src/engine/core-modules/emailing-domain/constants/blocked-scopes-by-send-type.constant';
@@ -66,32 +67,22 @@ export class EmailGroupSuppressionService {
     providerEventId = null,
   }: SuppressRecipientArgs): Promise<void> {
     const normalizedEmailAddress = emailAddress.trim().toLowerCase();
-    const scope = SUPPRESSION_SCOPE_BY_REASON[reason];
 
-    const existingSuppression =
-      await this.suppressedRecipientRepository.findOne(workspaceId, {
-        where: { emailAddress: normalizedEmailAddress, scope },
-      });
-
-    if (isDefined(existingSuppression)) {
-      if (!existingSuppression.isSuppressed) {
-        await this.suppressedRecipientRepository.update(
-          workspaceId,
-          { id: existingSuppression.id },
-          { isSuppressed: true },
-        );
-      }
-
+    if (!isNonEmptyString(normalizedEmailAddress)) {
       return;
     }
 
-    await this.suppressedRecipientRepository.save(workspaceId, {
-      emailAddress: normalizedEmailAddress,
-      scope,
-      reason,
-      isSuppressed: true,
-      createdBySource,
-      providerEventId,
-    });
+    await this.suppressedRecipientRepository.upsert(
+      workspaceId,
+      {
+        emailAddress: normalizedEmailAddress,
+        scope: SUPPRESSION_SCOPE_BY_REASON[reason],
+        reason,
+        isSuppressed: true,
+        createdBySource,
+        providerEventId,
+      },
+      ['workspaceId', 'emailAddress', 'scope'],
+    );
   }
 }
