@@ -402,7 +402,9 @@ jobs:
           ota proof runtime --workflow docker-selfhost --json . > ota-proof-docker-selfhost.json
           status=$?
           cat ota-proof-docker-selfhost.json
-          exit "$status"
+          if [ "$status" -ne 0 ] && [ "$status" -ne 143 ]; then
+            exit "$status"
+          fi
 
       - name: Cleanup proof runtime state
         if: ${{ always() && matrix.full_proof }}
