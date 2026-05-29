@@ -123,6 +123,14 @@ const FieldErrorBanner = styled.p`
   margin: 0;
 `;
 
+const SuccessView = styled.div`
+  align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(16px, 4vh, 32px);
+  margin-top: clamp(16px, 4vh, 32px);
+`;
+
 function StepRenderer({
   controller,
 }: {
@@ -152,8 +160,15 @@ export function PartnerApplicationWizard({
 }: WizardProps) {
   const { i18n } = useLingui();
   const controller = usePartnerApplicationState();
-  const { state, goNext, goBack, setSubmitting, setSubmitError, reset } =
-    controller;
+  const {
+    state,
+    goNext,
+    goBack,
+    setSubmitting,
+    setSubmitError,
+    setSubmitted,
+    reset,
+  } = controller;
 
   useEffect(() => {
     reset();
@@ -222,7 +237,7 @@ export function PartnerApplicationWizard({
           );
           return;
         }
-        onSuccess();
+        setSubmitted();
       } catch {
         setSubmitError(
           i18n._(PARTNER_APPLICATION_MODAL_COPY.validation.submitFailed),
@@ -231,8 +246,54 @@ export function PartnerApplicationWizard({
         setSubmitting(false);
       }
     },
-    [isLastStep, goNext, state, setSubmitError, setSubmitting, i18n, onSuccess],
+    [
+      isLastStep,
+      goNext,
+      state,
+      setSubmitError,
+      setSubmitting,
+      setSubmitted,
+      i18n,
+    ],
   );
+
+  if (state.isSubmitted) {
+    return (
+      <>
+        <TitleBlock>
+          <Modal.Title
+            render={
+              <TitleHeadingWrapper>
+                <Heading as="h2" size="lg" weight="light">
+                  <HeadingPart fontFamily="serif" fontWeight="light">
+                    {i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSerif)}
+                  </HeadingPart>
+                  <br />
+                  <HeadingPart fontFamily="sans" fontWeight="light">
+                    {i18n._(PARTNER_APPLICATION_MODAL_COPY.successTitleSans)}
+                  </HeadingPart>
+                </Heading>
+              </TitleHeadingWrapper>
+            }
+          />
+        </TitleBlock>
+        <SuccessView>
+          <Modal.Footer>
+            <PrimaryButton type="button" onClick={onSuccess}>
+              <ButtonShape
+                fillColor={theme.colors.primary.background[100]}
+                height={BUTTON_HEIGHTS_PX.regular}
+                strokeColor="none"
+              />
+              <PrimaryLabel>
+                {i18n._(PARTNER_APPLICATION_MODAL_COPY.successClose)}
+              </PrimaryLabel>
+            </PrimaryButton>
+          </Modal.Footer>
+        </SuccessView>
+      </>
+    );
+  }
 
   return (
     <>

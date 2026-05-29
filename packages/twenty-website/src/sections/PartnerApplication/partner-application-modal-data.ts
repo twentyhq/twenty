@@ -12,6 +12,9 @@ export const PARTNER_APPLICATION_MODAL_COPY = {
   next: msg`Next →`,
   submit: msg`Submit application`,
   submitInFlight: msg`Submitting…`,
+  successTitleSerif: msg`Thanks,`,
+  successTitleSans: msg`we'll be in touch!`,
+  successClose: msg`Close`,
   validation: {
     incompleteForm: msg`Please complete all required fields before continuing.`,
     invalidEmail: msg`Enter a valid email address.`,

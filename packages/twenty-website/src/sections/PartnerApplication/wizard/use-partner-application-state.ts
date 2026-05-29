@@ -45,6 +45,7 @@ export type PartnerApplicationState = {
   fieldErrors: Partial<Record<string, string>>;
   submitError: string | null;
   isSubmitting: boolean;
+  isSubmitted: boolean;
 };
 
 export const INITIAL_PARTNER_APPLICATION_STATE: PartnerApplicationState = {
@@ -69,6 +70,7 @@ export const INITIAL_PARTNER_APPLICATION_STATE: PartnerApplicationState = {
   fieldErrors: {},
   submitError: null,
   isSubmitting: false,
+  isSubmitted: false,
 };
 
 export type ScalarFieldName =
@@ -96,6 +98,7 @@ export type PartnerApplicationAction =
   | { type: 'GO_BACK' }
   | { type: 'SET_SUBMITTING'; value: boolean }
   | { type: 'SET_SUBMIT_ERROR'; value: string | null }
+  | { type: 'SET_SUBMITTED' }
   | { type: 'RESET' };
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -217,6 +220,13 @@ export function partnerApplicationReducer(
       return { ...state, isSubmitting: action.value };
     case 'SET_SUBMIT_ERROR':
       return { ...state, submitError: action.value };
+    case 'SET_SUBMITTED':
+      return {
+        ...state,
+        isSubmitted: true,
+        isSubmitting: false,
+        submitError: null,
+      };
     case 'RESET':
       return INITIAL_PARTNER_APPLICATION_STATE;
     default:
@@ -263,6 +273,10 @@ export function usePartnerApplicationState() {
     (value: string | null) => dispatch({ type: 'SET_SUBMIT_ERROR', value }),
     [],
   );
+  const setSubmitted = useCallback(
+    () => dispatch({ type: 'SET_SUBMITTED' }),
+    [],
+  );
   const reset = useCallback(() => dispatch({ type: 'RESET' }), []);
 
   return {
@@ -276,6 +290,7 @@ export function usePartnerApplicationState() {
     goBack,
     setSubmitting,
     setSubmitError,
+    setSubmitted,
     reset,
   };
 }

@@ -1046,6 +1046,11 @@ msgstr "Le classique ne meurt jamais. Il est simplement étendu une fois de plus
 msgid "Clear filters"
 msgstr ""
 
+#. js-lingui-id: yz7wBu
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Close"
+msgstr ""
+
 #. js-lingui-id: XLMJ7O
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -4068,6 +4073,11 @@ msgstr "Conditions d’utilisation de Twenty.com PBC, y compris l’utilisation 
 msgid "Thailand 🇹🇭"
 msgstr ""
 
+#. js-lingui-id: pYwj0k
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "Thanks,"
+msgstr ""
+
 #. js-lingui-id: dn9a7V
 #: src/app/[locale]/product/page.tsx
 msgid "that"
@@ -4677,6 +4687,11 @@ msgstr "Nous n'avons pas pu soumettre votre candidature. Veuillez réessayer dan
 #: src/app/[locale]/(home)/testimonials.data.ts
 msgid "We didn't want to patch over the problem. We wanted to build something institutions could rely on at scale, and that meant starting from a foundation solid enough to support the full complexity of what we had in mind."
 msgstr "Nous ne voulions pas simplement masquer le problème. Nous voulions construire quelque chose sur lequel les établissements pourraient s'appuyer à grande échelle, ce qui signifiait partir d'une base suffisamment solide pour supporter toute la complexité de ce que nous avions en tête."
+
+#. js-lingui-id: u7hKUm
+#: src/sections/PartnerApplication/partner-application-modal-data.ts
+msgid "we'll be in touch!"
+msgstr ""
 
 #. js-lingui-id: d5CWI6
 #: src/app/[locale]/partners/page.tsx

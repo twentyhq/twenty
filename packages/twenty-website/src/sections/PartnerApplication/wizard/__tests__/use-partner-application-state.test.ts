@@ -92,6 +92,28 @@ describe('partnerApplicationReducer', () => {
     expect(clamped.stepIndex).toBe(0);
   });
 
+  it('SET_SUBMITTED flips isSubmitted to true and clears submitError + isSubmitting', () => {
+    const seeded: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      isSubmitting: true,
+      submitError: 'transient network error',
+    };
+    const next = partnerApplicationReducer(seeded, { type: 'SET_SUBMITTED' });
+    expect(next.isSubmitted).toBe(true);
+    expect(next.isSubmitting).toBe(false);
+    expect(next.submitError).toBeNull();
+  });
+
+  it('RESET clears isSubmitted back to false', () => {
+    const seeded: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      isSubmitted: true,
+    };
+    expect(partnerApplicationReducer(seeded, { type: 'RESET' })).toEqual(
+      INITIAL_PARTNER_APPLICATION_STATE,
+    );
+  });
+
   it('RESET returns to initial state from any state', () => {
     const dirty: PartnerApplicationState = {
       ...INITIAL_PARTNER_APPLICATION_STATE,
