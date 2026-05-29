@@ -15,6 +15,14 @@ const make = (overrides: Partial<MarketplacePartner>): MarketplacePartner => ({
   region: [],
   languagesSpoken: [],
   deploymentExpertise: [],
+  hourlyRateUsd: null,
+  projectBudgetMinUsd: null,
+  projectBudgetTypicalUsd: null,
+  linkedinUrl: '',
+  profilePictureUrl: '',
+  city: '',
+  country: '',
+  skills: [],
   ...overrides,
 });
 
