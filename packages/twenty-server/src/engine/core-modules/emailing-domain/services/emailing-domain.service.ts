@@ -56,6 +56,8 @@ export class EmailingDomainService {
     driverType: EmailingDomainDriver,
     workspace: WorkspaceEntity,
   ): Promise<EmailingDomainEntity> {
+    await this.assertBillingAllowsEmailGroup(workspace.id);
+
     const existingEmailingDomain = await this.emailingDomainRepository.findOne(
       workspace.id,
       {
@@ -240,7 +242,7 @@ export class EmailingDomainService {
       );
     }
 
-    await this.assertBillingAllowsSending(workspaceId);
+    await this.assertBillingAllowsEmailGroup(workspaceId);
     await this.assertWithinSendRate(workspaceId, recipientCount);
 
     const headers = this.buildSingleRecipientUnsubscribeHeaders(
@@ -268,13 +270,15 @@ export class EmailingDomainService {
     return result;
   }
 
-  private async assertBillingAllowsSending(workspaceId: string): Promise<void> {
-    const canSend =
+  private async assertBillingAllowsEmailGroup(
+    workspaceId: string,
+  ): Promise<void> {
+    const isEntitled =
       await this.billingUsageService.canFeatureBeUsed(workspaceId);
 
-    if (!canSend) {
+    if (!isEntitled) {
       throw new EmailingDomainDriverException(
-        'Email sending is not available for this workspace billing plan',
+        'The email domain feature requires an active billing plan',
         EmailingDomainDriverExceptionCode.SENDING_SUSPENDED,
       );
     }

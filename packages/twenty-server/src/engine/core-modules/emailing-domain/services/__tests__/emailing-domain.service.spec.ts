@@ -1,5 +1,7 @@
 import { EmailingDomainDriverExceptionCode } from 'src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception';
 import { type EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
+import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
+import { type WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
@@ -201,6 +203,26 @@ describe('EmailingDomainService.sendEmail', () => {
     expect(sendEmail).toHaveBeenCalledWith(
       expect.objectContaining({ headers: undefined }),
     );
+  });
+
+  it('blocks provisioning a new emailing domain when the billing plan disallows the feature', async () => {
+    const { service, billingUsageService } = setUp(buildEmailingDomain());
+
+    (billingUsageService.canFeatureBeUsed as jest.Mock).mockResolvedValue(
+      false,
+    );
+
+    await expect(
+      service.createEmailingDomain(
+        'mail.example.com',
+        EmailingDomainDriver.AWS_SES,
+        {
+          id: 'ws1',
+        } as WorkspaceEntity,
+      ),
+    ).rejects.toMatchObject({
+      code: EmailingDomainDriverExceptionCode.SENDING_SUSPENDED,
+    });
   });
 
   it('meters one usage event per accepted recipient at the marked-up per-recipient cost', async () => {

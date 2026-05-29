@@ -219,11 +219,26 @@ exists in code yet).
 
 ---
 
-## 4. Enterprise gate
+## 4. Enterprise gate / paywall — as built
 
-Put the whole feature (provisioning, send, webhook suppression, unsubscribe endpoint) behind the
-enterprise flag. Gate at the resolver/service entry points; verified config sets for non-enterprise
-workspaces should not provision.
+Intent: the whole feature is paywalled, especially emailing-domain provisioning.
+
+Twenty has **no `entitlement` primitive**; billed features (workflows, AI) are paywalled with
+`BillingUsageService.canFeatureBeUsed` (active, non-canceled subscription) plus the resource-credit
+cap. This feature follows that same pattern:
+
+- **Visibility / admin gate:** every GraphQL operation already carries
+  `@RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)` + `FeatureFlagGuard`.
+- **Paywall gate:** `assertBillingAllowsEmailGroup` (`canFeatureBeUsed`) now guards **both**
+  `createEmailingDomain` (provisioning — the costly AWS step) **and** `sendEmail`. A workspace cannot
+  provision a domain or send without an active plan, even if an admin flips the feature flag.
+  `canFeatureBeUsed` returns true when billing is disabled, so dev/self-host is unaffected.
+- The public SES webhook + unsubscribe endpoints are intentionally not flag-gated: they are
+  event/token-driven and only become reachable after a (now paywalled) provisioning.
+
+Follow-ups for a true per-plan paywall (billing config, not code): provision a billing product/price
+for the email feature and scope `IS_EMAIL_GROUP_ENABLED` to paid plans; a frontend upsell for the
+blocked state.
 
 ---
 
