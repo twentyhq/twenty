@@ -18,7 +18,6 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -39,6 +38,7 @@ import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billi
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import {
   AiException,
@@ -87,7 +87,6 @@ export class AgentAsyncExecutorService {
   private async getAgentRoleId(
     agentId: string,
     workspaceId: string,
-    rolePermissionConfig?: RolePermissionConfig,
   ): Promise<string | undefined> {
     const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
       where: {
@@ -198,12 +197,10 @@ export class AgentAsyncExecutorService {
           ...nativeBinding.tools,
         };
 
-        providerOptions = {
-          ...nativeBinding.providerOptions,
-          ...this.aiModelConfigService.getReasoningProviderOptions(
+        providerOptions =
+          this.aiModelConfigService.getReasoningProviderOptions(
             registeredModel,
-          ),
-        };
+          );
       }
 
       this.logger.log(`Generated ${Object.keys(tools).length} tools for agent`);
