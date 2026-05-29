@@ -38,9 +38,12 @@ const renderCard = () =>
   );
 
 describe('PartnerCard', () => {
-  it('renders the partner name as the article heading', () => {
+  it('renders the partner name inside the detail-page link in the heading', () => {
     const html = renderCard();
-    expect(html).toMatch(new RegExp(`<h3[^>]*>${FIXTURE.name}</h3>`, 'i'));
+    expect(html).toMatch(
+      new RegExp(`<h3[^>]*>\\s*<a[^>]*>${FIXTURE.name}</a>\\s*</h3>`, 'i'),
+    );
+    expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
   });
 
   it('renders the geo eyebrow with the first served region', () => {

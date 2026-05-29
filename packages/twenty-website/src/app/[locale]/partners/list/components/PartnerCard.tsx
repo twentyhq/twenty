@@ -7,7 +7,7 @@ import { LinkButton } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextLink from 'next/link';
-import type { CSSProperties, MouseEvent } from 'react';
+import type { CSSProperties } from 'react';
 
 import type { MarketplacePartner } from '@/lib/partners-api';
 import { PartnerAvatar } from './PartnerAvatar';
@@ -22,18 +22,6 @@ import {
 type PartnerCardStyle = CSSProperties & {
   '--partner-card-index': number;
 };
-
-const CardLink = styled(NextLink)`
-  color: inherit;
-  display: block;
-  text-decoration: none;
-
-  &:focus-visible {
-    outline: 2px solid ${theme.colors.primary.text[100]};
-    outline-offset: 4px;
-    border-radius: ${theme.radius(2)};
-  }
-`;
 
 const CardArticle = styled.article`
   @keyframes partnerCardEnter {
@@ -55,7 +43,9 @@ const CardArticle = styled.article`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(5)};
+  isolation: isolate;
   padding: ${theme.spacing(6)};
+  position: relative;
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -107,11 +97,36 @@ const PartnerName = styled.h3`
   margin: 0;
 `;
 
+// The card's whole-surface link uses the "stretched link" pattern: an inline
+// <a> on the name with an absolutely-positioned ::after that covers the
+// entire <article>. Other anchors inside the card (LinkedIn icon, Book-a-call)
+// sit above this overlay via z-index, so each remains an independent click
+// target without illegal nested <a> elements.
+const NameLink = styled(NextLink)`
+  color: inherit;
+  text-decoration: none;
+
+  &::after {
+    border-radius: ${theme.radius(2)};
+    content: '';
+    inset: 0;
+    position: absolute;
+    z-index: 0;
+  }
+
+  &:focus-visible::after {
+    outline: 2px solid ${theme.colors.primary.text[100]};
+    outline-offset: 4px;
+  }
+`;
+
 const LinkedinIconLink = styled.a`
   align-items: center;
   color: ${theme.colors.primary.text[60]};
   display: inline-flex;
+  position: relative;
   transition: color 0.2s ease;
+  z-index: 1;
 
   &:hover {
     color: ${theme.colors.primary.text[100]};
@@ -157,6 +172,8 @@ const ChipRows = styled.div`
 const CtaWrapper = styled.div`
   display: flex;
   margin-top: auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const isSafeHttpUrl = (raw: string) => {
@@ -166,8 +183,6 @@ const isSafeHttpUrl = (raw: string) => {
     return false;
   }
 };
-
-const stopPropagation = (event: MouseEvent) => event.stopPropagation();
 
 type PartnerCardProps = {
   partner: MarketplacePartner;
@@ -189,70 +204,68 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
   const calendarSafe = isSafeHttpUrl(partner.calendarLink);
 
   return (
-    <CardLink
-      href={`/${locale}/partners/profile/${partner.slug}`}
-      aria-labelledby={headingId}
-    >
-      <CardArticle style={style}>
-        <CardHeader>
-          <PartnerAvatar name={partner.name} slug={partner.slug} />
-          <HeaderText>
-            <NameRow>
-              <PartnerName id={headingId}>{partner.name}</PartnerName>
-              {linkedinSafe && (
-                <LinkedinIconLink
-                  href={partner.linkedinUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
-                  onClick={stopPropagation}
-                >
-                  <IconBrandLinkedin size={16} aria-hidden="true" />
-                </LinkedinIconLink>
-              )}
-            </NameRow>
-            <CountryEyebrow>{countryLine}</CountryEyebrow>
-          </HeaderText>
-        </CardHeader>
+    <CardArticle aria-labelledby={headingId} style={style}>
+      <CardHeader>
+        <PartnerAvatar name={partner.name} slug={partner.slug} />
+        <HeaderText>
+          <NameRow>
+            <PartnerName id={headingId}>
+              <NameLink href={`/${locale}/partners/profile/${partner.slug}`}>
+                {partner.name}
+              </NameLink>
+            </PartnerName>
+            {linkedinSafe && (
+              <LinkedinIconLink
+                href={partner.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
+              >
+                <IconBrandLinkedin size={16} aria-hidden="true" />
+              </LinkedinIconLink>
+            )}
+          </NameRow>
+          <CountryEyebrow>{countryLine}</CountryEyebrow>
+        </HeaderText>
+      </CardHeader>
 
-        <Introduction>{partner.introduction}</Introduction>
+      <Introduction>{partner.introduction}</Introduction>
 
-        <PartnerMoneyRow
-          hourlyRateUsd={partner.hourlyRateUsd}
-          projectBudgetMinUsd={partner.projectBudgetMinUsd}
+      <PartnerMoneyRow
+        hourlyRateUsd={partner.hourlyRateUsd}
+        projectBudgetMinUsd={partner.projectBudgetMinUsd}
+      />
+
+      <Divider aria-hidden="true" />
+
+      <ChipRows>
+        <PartnerChipRow
+          label={msg`Regions`}
+          values={partner.region}
+          valueLabels={SERVED_GEO_LABELS}
         />
+        <PartnerChipRow
+          label={msg`Languages`}
+          values={partner.languagesSpoken}
+          valueLabels={SPOKEN_LANGUAGE_LABELS}
+        />
+        <PartnerChipRow
+          label={msg`Deploys`}
+          values={partner.deploymentExpertise}
+          valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
+        />
+      </ChipRows>
 
-        <Divider aria-hidden="true" />
-
-        <ChipRows>
-          <PartnerChipRow
-            label={msg`Regions`}
-            values={partner.region}
-            valueLabels={SERVED_GEO_LABELS}
+      {calendarSafe && (
+        <CtaWrapper>
+          <LinkButton
+            color="secondary"
+            href={partner.calendarLink}
+            label={i18n._(msg`Book a call`)}
+            variant="contained"
           />
-          <PartnerChipRow
-            label={msg`Languages`}
-            values={partner.languagesSpoken}
-            valueLabels={SPOKEN_LANGUAGE_LABELS}
-          />
-          <PartnerChipRow
-            label={msg`Deploys`}
-            values={partner.deploymentExpertise}
-            valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
-          />
-        </ChipRows>
-
-        {calendarSafe && (
-          <CtaWrapper onClick={stopPropagation}>
-            <LinkButton
-              color="secondary"
-              href={partner.calendarLink}
-              label={i18n._(msg`Book a call`)}
-              variant="contained"
-            />
-          </CtaWrapper>
-        )}
-      </CardArticle>
-    </CardLink>
+        </CtaWrapper>
+      )}
+    </CardArticle>
   );
 }
