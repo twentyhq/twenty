@@ -1,5 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -12,9 +14,12 @@ import {
   type EmailingDomainEmailContent,
   type EmailingDomainSendEmailResult,
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
+import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
+import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -27,6 +32,7 @@ export class EmailingDomainService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
     private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
+    private readonly unsubscribeTokenService: UnsubscribeTokenService,
   ) {}
 
   async createEmailingDomain(
@@ -193,6 +199,9 @@ export class EmailingDomainService {
       );
     }
 
+    const messageCategory =
+      emailContent.messageCategory ?? EmailGroupMessageCategory.TRANSACTIONAL;
+
     const suppressedAddresses =
       await this.emailGroupSuppressionService.getSuppressedAddresses(
         workspaceId,
@@ -201,7 +210,7 @@ export class EmailingDomainService {
           ...(emailContent.cc ?? []),
           ...(emailContent.bcc ?? []),
         ],
-        emailContent.messageCategory ?? EmailGroupMessageCategory.TRANSACTIONAL,
+        messageCategory,
       );
 
     const isNotSuppressed = (address: string): boolean =>
@@ -216,13 +225,51 @@ export class EmailingDomainService {
       );
     }
 
+    const unsubscribeHeaders =
+      messageCategory === EmailGroupMessageCategory.CAMPAIGN
+        ? this.buildCampaignUnsubscribeHeaders(
+            workspaceId,
+            emailingDomain,
+            deliverableTo[0],
+          )
+        : [];
+
     return this.emailingDomainDriverFactory.getCurrentDriver().sendEmail({
       ...emailContent,
       to: deliverableTo,
       cc: emailContent.cc?.filter(isNotSuppressed),
       bcc: emailContent.bcc?.filter(isNotSuppressed),
+      headers: [...(emailContent.headers ?? []), ...unsubscribeHeaders],
       workspaceId,
       domain: emailingDomain.domain,
+    });
+  }
+
+  private buildCampaignUnsubscribeHeaders(
+    workspaceId: string,
+    emailingDomain: EmailingDomainEntity,
+    primaryRecipient: string,
+  ) {
+    if (
+      emailingDomain.unsubscribeHostnameStatus !==
+        UnsubscribeHostnameStatus.ACTIVE ||
+      !isNonEmptyString(emailingDomain.unsubscribeHostname)
+    ) {
+      throw new EmailingDomainDriverException(
+        `Cannot send marketing email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
+        EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY,
+      );
+    }
+
+    const token = this.unsubscribeTokenService.sign({
+      workspaceId,
+      emailAddress: primaryRecipient,
+    });
+
+    return buildUnsubscribeHeaders({
+      unsubscribeHostname: emailingDomain.unsubscribeHostname,
+      domain: emailingDomain.domain,
+      token,
     });
   }
 

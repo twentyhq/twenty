@@ -6,6 +6,7 @@ import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailin
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('EmailingDomainService.sendEmail', () => {
@@ -49,10 +50,14 @@ describe('EmailingDomainService.sendEmail', () => {
           new Set(suppressedAddresses.map((address) => address.toLowerCase())),
         ),
     } as unknown as EmailGroupSuppressionService;
+    const unsubscribeTokenService = {
+      sign: jest.fn().mockReturnValue('signed-token'),
+    } as unknown as UnsubscribeTokenService;
     const service = new EmailingDomainService(
       repository,
       factory,
       suppressionService,
+      unsubscribeTokenService,
     );
 
     return { service, sendEmail };

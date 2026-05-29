@@ -1,0 +1,45 @@
+import { Injectable, Logger } from '@nestjs/common';
+
+import { isNonEmptyString } from '@sniptt/guards';
+import { FieldActorSource } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
+
+import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
+import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
+import { type SesInboundNotification } from 'src/engine/core-modules/messaging-webhooks/types/sns-message.type';
+
+@Injectable()
+export class SesInboundUnsubscribeHandlerService {
+  private readonly logger = new Logger(SesInboundUnsubscribeHandlerService.name);
+
+  constructor(
+    private readonly unsubscribeTokenService: UnsubscribeTokenService,
+    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
+  ) {}
+
+  async handle(notification: SesInboundNotification): Promise<void> {
+    const subject = notification.mail?.commonHeaders?.subject;
+
+    if (!isNonEmptyString(subject)) {
+      this.logger.warn('Unsubscribe email received without a token subject');
+
+      return;
+    }
+
+    const payload = this.unsubscribeTokenService.verify(subject.trim());
+
+    if (!isDefined(payload)) {
+      this.logger.warn('Unsubscribe email received with an invalid token');
+
+      return;
+    }
+
+    await this.emailGroupSuppressionService.suppress({
+      workspaceId: payload.workspaceId,
+      emailAddress: payload.emailAddress,
+      reason: EmailGroupSuppressionReason.UNSUBSCRIBE,
+      createdBySource: FieldActorSource.SYSTEM,
+    });
+  }
+}

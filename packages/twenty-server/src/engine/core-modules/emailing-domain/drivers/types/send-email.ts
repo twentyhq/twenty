@@ -6,6 +6,11 @@ export type EmailingDomainAttachment = {
   contentType: string;
 };
 
+export type EmailingDomainHeader = {
+  name: string;
+  value: string;
+};
+
 export type EmailingDomainEmailContent = {
   from: string;
   to: string[];
@@ -16,6 +21,7 @@ export type EmailingDomainEmailContent = {
   html?: string;
   replyTo?: string[];
   attachments?: EmailingDomainAttachment[];
+  headers?: EmailingDomainHeader[];
   messageCategory?: EmailGroupMessageCategory;
 };
 

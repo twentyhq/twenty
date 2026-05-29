@@ -54,6 +54,12 @@ export class AwsSesSendEmailService {
           ReplyToAddresses: input.replyTo,
           Content: {
             Simple: {
+              Headers: isNonEmptyArray(input.headers)
+                ? input.headers.map((header) => ({
+                    Name: header.name,
+                    Value: header.value,
+                  }))
+                : undefined,
               Subject: { Data: input.subject, Charset: 'UTF-8' },
               Body: {
                 Text: { Data: input.text, Charset: 'UTF-8' },
