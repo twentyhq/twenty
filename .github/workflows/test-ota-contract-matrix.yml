@@ -293,6 +293,14 @@ jobs:
           }
           JS
 
+      - name: Execute native smoke tasks (cross-OS non-Ubuntu)
+        if: ${{ !matrix.full_proof && !matrix.unsupported_host }}
+        timeout-minutes: 45
+        shell: bash
+        run: |
+          ota run verify --native --stream .
+          ota run integration --native --stream .
+
       - name: Execute verify workflow (native)
         if: ${{ matrix.full_proof }}
         timeout-minutes: 45
