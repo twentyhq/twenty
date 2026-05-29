@@ -1,6 +1,8 @@
 import { type TimelineActivity } from '@/activities/timeline-activities/types/TimelineActivity';
-import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { findFieldMetadataItemByDiffKey } from '@/activities/timeline-activities/utils/findFieldMetadataItemByDiffKey';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
+import { CoreObjectNameSingular } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export const filterOutInvalidTimelineActivities = (
   timelineActivities: TimelineActivity[],
@@ -21,14 +23,6 @@ export const filterOutInvalidTimelineActivities = (
     throw new Error('Object metadata items not found');
   }
 
-  const fieldMetadataItemMap = new Map(
-    mainObjectMetadataItem.readableFields.map((field) => [field.name, field]),
-  );
-
-  const noteFieldMetadataItemMap = new Map(
-    noteObjectMetadataItem.readableFields.map((field) => [field.name, field]),
-  );
-
   return timelineActivities.filter((timelineActivity) => {
     const diff = timelineActivity.properties?.diff;
     const canSkipValidation = !diff;
@@ -41,11 +35,14 @@ export const filterOutInvalidTimelineActivities = (
       timelineActivity.name.startsWith('linked-note') ||
       timelineActivity.name.startsWith('linked-task');
 
+    const fieldsToValidateAgainst = isNoteOrTask
+      ? noteObjectMetadataItem.readableFields
+      : mainObjectMetadataItem.readableFields;
+
     const validDiffEntries = Object.entries(diff).filter(([diffKey]) =>
-      isNoteOrTask
-        ? // Note and Task objects have the same field metadata
-          noteFieldMetadataItemMap.has(diffKey)
-        : fieldMetadataItemMap.has(diffKey),
+      isDefined(
+        findFieldMetadataItemByDiffKey(fieldsToValidateAgainst, diffKey),
+      ),
     );
 
     if (validDiffEntries.length === 0) {
