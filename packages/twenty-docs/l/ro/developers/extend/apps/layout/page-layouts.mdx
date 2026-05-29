@@ -65,16 +65,15 @@ Folosește aceasta atunci când vrei doar să **adaugi** o filă la un layout ex
 import {
   definePageLayoutTab,
   PageLayoutTabLayoutMode,
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
 } from 'twenty-sdk/define';
 import { HELLO_WORLD_FRONT_COMPONENT_UNIVERSAL_IDENTIFIER } from '../front-components/hello-world';
-
-const COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER =
-  '20202020-ab01-4001-8001-c0aba11c0100';
 
 export default definePageLayoutTab({
   universalIdentifier: 'b1b2b3b4-b5b6-4000-8000-000000000001',
   pageLayoutUniversalIdentifier:
-    COMPANY_RECORD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER,
+    STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage
+      .universalIdentifier,
   title: 'Hello World',
   position: 1000,
   icon: 'IconWorld',
@@ -97,6 +96,37 @@ export default definePageLayoutTab({
 ### Puncte cheie
 
 * `pageLayoutUniversalIdentifier` este **obligatoriu** și trebuie să indice către un layout de pagină care există deja la momentul instalării — fie un layout standard Twenty, fie unul definit de propria ta aplicație. Referințele cross-app către layouturi deținute de o altă aplicație instalată nu sunt acceptate în prezent. Când lipsește layoutul părinte, instalarea eșuează cu o eroare clară de validare.
+
+* Pentru layout-urile standard Twenty, importați identificatorii din `twenty-sdk/define`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS } from 'twenty-sdk/define';
+
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.companyRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.personRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.opportunityRecordPage.universalIdentifier
+  // STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.noteRecordPage.universalIdentifier
+  // …
+  ```
+
+  Fiecare intrare de layout își expune, de asemenea, `tabs` și `widgets`, astfel încât puteți face referire la orice nivel:
+
+  ```ts
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.universalIdentifier
+  STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.taskRecordPage.tabs.home.widgets.fields.universalIdentifier
+  ```
+
+  Este disponibil și un alias scurt `STANDARD_PAGE_LAYOUT`:
+
+  ```ts
+  import { STANDARD_PAGE_LAYOUT } from 'twenty-sdk/define';
+
+  STANDARD_PAGE_LAYOUT.companyRecordPage.universalIdentifier;
+  ```
+
 * `widgets` sunt limitate doar la această filă — fac referire la [front components](/l/ro/developers/extend/apps/layout/front-components), vizualizări etc., exact ca widgeturile definite inline în `definePageLayout`.
+
 * `position` controlează ordonarea în raport cu filele existente din layoutul țintă. Alege o valoare care să plaseze fila ta acolo unde dorești, relativ la filele predefinite.
+
 * Folosește aceasta în loc de `definePageLayout` atunci când vrei doar să adaugi la un layout existent. Folosește `definePageLayout` atunci când deții întregul layout.

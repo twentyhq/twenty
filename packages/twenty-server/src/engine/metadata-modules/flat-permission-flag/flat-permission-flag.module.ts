@@ -6,6 +6,7 @@ import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata
 import { WorkspaceFlatPermissionFlagMapCacheService } from 'src/engine/metadata-modules/flat-permission-flag/services/workspace-flat-permission-flag-map-cache.service';
 import { PermissionFlagEntity } from 'src/engine/metadata-modules/permission-flag/permission-flag.entity';
 import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permission-flag/role-permission-flag.entity';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 
 @Module({
   imports: [
@@ -16,7 +17,10 @@ import { RolePermissionFlagEntity } from 'src/engine/metadata-modules/role-permi
     ]),
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
   ],
-  providers: [WorkspaceFlatPermissionFlagMapCacheService],
+  providers: [
+    WorkspaceFlatPermissionFlagMapCacheService,
+    provideWorkspaceScopedRepository(PermissionFlagEntity),
+  ],
   exports: [WorkspaceFlatPermissionFlagMapCacheService],
 })
 export class FlatPermissionFlagModule {}

@@ -17,12 +17,14 @@ const pageHtml = ({
   title,
   message,
   isSuccess,
+  isDarkMode,
 }: {
   title: string;
   message: string;
   isSuccess: boolean;
+  isDarkMode: boolean;
 }) => `<!DOCTYPE html>
-<html lang="en">
+<html lang="en"${isDarkMode ? ' class="dark"' : ''}>
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -31,20 +33,40 @@ const pageHtml = ({
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
+    :root {
+      --bg-body: #fafafa;
+      --bg-card: #fff;
+      --bg-logo-tile: #fff;
+      --text-primary: #333;
+      --text-secondary: #666;
+      --shadow: 2px 4px 16px 0 rgba(0,0,0,0.16), 0 2px 4px 0 rgba(0,0,0,0.08);
+      --success-bg: #f0faf0;
+      --error-bg: #fef0f0;
+    }
+    html.dark {
+      --bg-body: #171717;
+      --bg-card: #1b1b1b;
+      --bg-logo-tile: #2b2b2b;
+      --text-primary: #e6e6e6;
+      --text-secondary: #999;
+      --shadow: 2px 4px 16px 0 rgba(0,0,0,0.5), 0 2px 4px 0 rgba(0,0,0,0.3);
+      --success-bg: #0a2e0a;
+      --error-bg: #2e0a0a;
+    }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-      background: #fafafa;
+      background: var(--bg-body);
       display: flex;
       align-items: center;
       justify-content: center;
       min-height: 100dvh;
-      color: #333;
+      color: var(--text-primary);
     }
     .card {
-      background: #fff;
+      background: var(--bg-card);
       border-radius: 8px;
-      box-shadow: 2px 4px 16px 0 rgba(0,0,0,0.16), 0 2px 4px 0 rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
       max-width: min(100%, 360px);
       width: fit-content;
       display: flex;
@@ -66,9 +88,9 @@ const pageHtml = ({
       width: 36px;
       height: 36px;
       padding: 4px;
-      background: #fff;
+      background: var(--bg-logo-tile);
       border-radius: 100%;
-      box-shadow: 2px 4px 16px 0 rgba(0,0,0,0.16), 0 2px 4px 0 rgba(0,0,0,0.08);
+      box-shadow: var(--shadow);
       display: flex;
       align-items: center;
       justify-content: center;
@@ -86,8 +108,8 @@ const pageHtml = ({
       width: 20px;
       height: 20px;
     }
-    .status-icon-success { background: #f0faf0; }
-    .status-icon-error { background: #fef0f0; }
+    .status-icon-success { background: var(--success-bg); }
+    .status-icon-error { background: var(--error-bg); }
     .content {
       display: flex;
       flex-direction: column;
@@ -98,14 +120,14 @@ const pageHtml = ({
       font-size: 1rem;
       font-weight: 500;
       line-height: 1.1;
-      color: #333;
+      color: var(--text-primary);
       text-align: center;
       text-wrap: balance;
       margin-bottom: 16px;
     }
     p {
       font-size: 0.82rem;
-      color: #666;
+      color: var(--text-secondary);
       text-align: center;
       line-height: 1.5;
     }
@@ -132,11 +154,12 @@ const pageHtml = ({
 </body>
 </html>`;
 
-const successHtml = () =>
+const successHtml = (isDarkMode: boolean) =>
   pageHtml({
     title: 'Authentication successful',
     message: 'You can close this window and return to the terminal.',
     isSuccess: true,
+    isDarkMode,
   });
 
 const escapeHtml = (text: string): string =>
@@ -147,11 +170,12 @@ const escapeHtml = (text: string): string =>
     .replace(/"/g, '&quot;')
     .replace(/'/g, '&#039;');
 
-const errorHtml = (error: string) =>
+const errorHtml = (error: string, isDarkMode: boolean) =>
   pageHtml({
     title: 'Authentication failed',
     message: `${escapeHtml(error)}<br>Please return to the terminal and try again.`,
     isSuccess: false,
+    isDarkMode,
   });
 
 export const startCallbackServer = (options?: {
@@ -179,6 +203,7 @@ export const startCallbackServer = (options?: {
 
       const code = url.searchParams.get('code');
       const error = url.searchParams.get('error');
+      const isDarkMode = url.searchParams.get('theme') === 'dark';
 
       const headers = {
         'Content-Type': 'text/html',
@@ -187,14 +212,14 @@ export const startCallbackServer = (options?: {
 
       if (code) {
         res.writeHead(200, headers);
-        res.end(successHtml());
+        res.end(successHtml(isDarkMode));
         callbackResolve({ success: true, code });
       } else {
         const errorMessage =
           error ?? url.searchParams.get('error_description') ?? 'Unknown error';
 
         res.writeHead(200, headers);
-        res.end(errorHtml(errorMessage));
+        res.end(errorHtml(errorMessage, isDarkMode));
         callbackResolve({ success: false, error: errorMessage });
       }
     });
