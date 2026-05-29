@@ -3,6 +3,7 @@ import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsT
 export type CommandMenuItemManifest = SyncableEntityOptions & {
   label: string;
   shortLabel?: string;
+  /** @deprecated icon will be ignored */
   icon?: string;
   isPinned?: boolean;
   availabilityType?:
