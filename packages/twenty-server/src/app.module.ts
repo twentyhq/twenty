@@ -98,6 +98,11 @@ export class AppModule {
       modules.push(
         ServeStaticModule.forRoot({
           rootPath: frontPath,
+          // SPA index is served by WorkspaceBrandingMiddleware so favicon,
+          // apple-touch-icon, and og:image use the workspace logo on first load.
+          serveStaticOptions: {
+            index: false,
+          },
         }),
       );
     }

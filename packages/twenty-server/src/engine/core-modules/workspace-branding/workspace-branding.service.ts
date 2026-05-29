@@ -1,7 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { existsSync, readFileSync } from 'fs';
-import { join } from 'path';
+import { readFileSync } from 'fs';
 
 import { type Request } from 'express';
 import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
@@ -9,6 +8,7 @@ import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
 
+import { getFrontIndexHtmlPath } from './utils/get-front-index-html-path.util';
 import { getRequestOrigin } from './utils/get-request-origin.util';
 
 const DEFAULT_DISPLAY_NAME = 'CRM';
@@ -28,9 +28,9 @@ export class WorkspaceBrandingService {
   ) {}
 
   getIndexHtmlTemplate(): string | null {
-    const indexPath = join(__dirname, '..', '..', '..', 'front', 'index.html');
+    const indexPath = getFrontIndexHtmlPath();
 
-    if (!existsSync(indexPath)) {
+    if (!isDefined(indexPath)) {
       return null;
     }
 

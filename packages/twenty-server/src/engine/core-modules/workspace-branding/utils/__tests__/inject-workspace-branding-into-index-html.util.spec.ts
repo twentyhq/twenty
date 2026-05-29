@@ -18,12 +18,12 @@ describe('injectWorkspaceBrandingIntoIndexHtml', () => {
       logoUrl: 'https://crm.example.com/files/workspace-logo.png',
     });
 
+    expect(result).toContain('href="/favicon.ico"');
     expect(result).toContain(
-      'href="https://crm.example.com/files/workspace-logo.png"',
+      'content="https://crm.example.com/files/workspace-logo.png"',
     );
     expect(result).toContain('content="Top of Funnel"');
     expect(result).toContain('<title>Top of Funnel</title>');
-    expect(result).not.toContain('href="/favicon.ico"');
   });
 
   it('should escape HTML in display name and logo URL', () => {

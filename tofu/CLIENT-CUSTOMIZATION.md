@@ -48,12 +48,19 @@ Set this to the client's company name (e.g., "Acme Corp CRM"). This appears in:
 - Email subjects ("You've been invited to join **Acme Corp CRM**")
 - The top of the nav drawer
 
-### 1.3 Favicon
+### 1.3 Favicon & PWA ("Open in app" icon)
 
-The favicon is currently the Twenty icon served from the app bundle. To change it per-client:
-- **Fork-level change required** — replace `packages/twenty-front/public/images/icons/` assets
-- This is a future improvement; for now the Twenty icon remains in the browser tab
-- **Priority: Low** for initial client deployments
+Handled by fork + workspace logo upload — **no per-client image build required.**
+
+| What | How |
+|---|---|
+| Browser tab icon | `/favicon.ico` on server → redirects to workspace logo |
+| Install / Open in app | Dynamic manifest from `PageFavicon.tsx` + server-injected HTML on first load |
+| Slack / link previews | Server injects `og:image` + workspace title in HTML |
+
+**Steps:** Upload logo in Settings → General (Section 1.1). After deploy or logo change, remove and re-install the PWA on mobile.
+
+**Verify:** See [WHITE-LABEL.md](./WHITE-LABEL.md#verify-white-label-run-after-every-image-rollout).
 
 ### 1.4 Email Sender Name
 
@@ -358,7 +365,7 @@ These cannot be done through the UI and require changes to this repo:
 | Item | File(s) | Status | Priority |
 |---|---|---|---|
 | **White-label sign-in logo** — removed Twenty "20" fallback; sign-in page shows workspace logo (uploaded in Settings) or nothing | `Logo.tsx`, `SignInUp.tsx` | ✅ Done | Critical |
-| Default favicon | `packages/twenty-front/public/images/icons/` | ⬜ TODO | Low |
+| **Favicon / PWA / link previews** — workspace logo via `/favicon.ico`, server HTML inject, dynamic manifest | `PageFavicon.tsx`, `workspace-branding/*`, `app.module.ts`, `manifest.json` | ✅ Done | Critical |
 | Default seed data at workspace creation | `packages/twenty-server/src/engine/workspace-manager/standard-objects/` | ⬜ TODO | Medium |
 | Remove Twenty branding from email templates | `packages/twenty-emails/src/` | ⬜ TODO | Medium |
 | "Privacy Policy" / "Terms of Service" links on sign-in page | `packages/twenty-front/src/pages/auth/SignInUp.tsx` | ⬜ TODO | Medium |

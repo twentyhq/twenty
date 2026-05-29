@@ -44,11 +44,17 @@ Twenty is **dual-licensed**:
 
 See the following docs in order of importance:
 
-- **[DEPLOYMENT-DIGITALOCEAN.md](./DEPLOYMENT-DIGITALOCEAN.md)** — **canonical production deploy path**: DO App Platform + Supabase + Upstash (use this for all clients)
-- **[PRICING.md](./PRICING.md)** — our infra cost per client + proposed client pricing tiers for SOWs
+- **[DEPLOYMENT-DIGITALOCEAN.md](./DEPLOYMENT-DIGITALOCEAN.md)** — App Platform + Supabase path (alternative to droplet fleet)
+- **[PRICING.md](./PRICING.md)** — CRM-only infra + pricing (App Platform model)
 - **[DATABASE.md](./DATABASE.md)** — Postgres/Redis architecture, Supabase integration deep-dive
-- **[SETUP.md](./SETUP.md)** — local dev environment (for hacking on core) + Docker Compose alternatives
-- **[FORK-MANAGEMENT.md](./FORK-MANAGEMENT.md)** — keeping this fork in sync with upstream Twenty
+- **[SETUP.md](./SETUP.md)** — local dev environment + Docker Compose
+- **[FORK-MANAGEMENT.md](./FORK-MANAGEMENT.md)** — upstream sync
+- **[WHITE-LABEL.md](./WHITE-LABEL.md)** — branding patches, verify checklist, upstream merge notes
+- **[UPSTREAM-SYNC.md](./UPSTREAM-SYNC.md)** — automated weekly sync PR workflow
+
+**Full GTM Flywheel (product suite + rate card):** `~/Developer/tofu-brain/private/strategy/product/README.md`
+**Droplet fleet ops:** `~/Developer/twenty-crm-launch`
+**Business hub (iCloud):** `Top of Funnel/GTM-FLYWHEEL.md`
 
 ## Tech Stack (for reference)
 

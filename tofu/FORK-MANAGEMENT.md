@@ -101,7 +101,7 @@ These are intentional changes to Twenty core files. Check each during every upst
 | Patch | Files changed | Why | Added |
 |---|---|---|---|
 | **White-label sign-in logo** | `Logo.tsx`, `SignInUp.tsx` | No Twenty "20" icon on auth; workspace logo only | Apr 25 2026 |
-| **White-label defaults** | `DefaultWorkspaceLogo.ts`, `DefaultWorkspaceName.ts`, `PageFavicon.tsx`, `title-utils.ts`, `index.html`, `workspace-branding/*` | Remove Twenty CDN logo fallback, generic tab/meta titles, favicon/PWA manifest/apple-touch-icon from workspace logo; server injects crawler-visible branding for link previews | May 26 2026 |
+| **White-label defaults** | `DefaultWorkspaceLogo.ts`, `DefaultWorkspaceName.ts`, `PageFavicon.tsx`, `title-utils.ts`, `index.html`, `public/manifest.json`, `workspace-branding/*`, `app.module.ts` | Remove Twenty CDN logo fallback, generic tab/meta titles; server injects first-paint branding; `/favicon.ico` + PWA manifest use workspace logo (see [WHITE-LABEL.md](./WHITE-LABEL.md)) | May 26 2026 |
 | **White-label auth copy** | `SignInUp.tsx`, `FooterNote.tsx` | Generic welcome text; hide Twenty ToS/Privacy links on sign-in | May 26 2026 |
 | **White-label timeline** | `getTimelineActivityAuthorFullName.ts` | System events show "System" not "Twenty" | May 26 2026 |
 
@@ -114,6 +114,18 @@ If `Logo.tsx` or `SignInUp.tsx` conflict on merge:
    - `SignInUp.tsx`: ensure `<Logo>` receives `primaryLogo={workspacePublicData?.logo}` (not `secondaryLogo`)
    - `Logo.tsx`: ensure `defaultPrimaryLogoUrl` fallback is removed; when `primaryLogo` is null/undefined render nothing instead of the Twenty icon
 3. See `tofu/CLIENT-CUSTOMIZATION.md` Section 9 for the full description of the intent
+
+**PWA / favicon patch (May 26 2026):** If `app.module.ts`, `PageFavicon.tsx`, or `workspace-branding/*` conflict:
+
+1. Accept upstream, then restore:
+   - `ServeStaticModule.forRoot({ ..., serveStaticOptions: { index: false } })`
+   - `WorkspaceBrandingMiddleware` registered for `GET *` before static wins SPA routes
+   - `inject-workspace-branding-into-index-html.util.ts` uses `/favicon.ico` for icon links (not signed URL)
+   - `PageFavicon.tsx` manifest + helmet use `${SERVER_URL}/favicon.ico`
+   - `public/manifest.json` fallback icons → `/favicon.ico` only (no android-launcher paths)
+2. Run verify commands in [WHITE-LABEL.md](./WHITE-LABEL.md#verify-white-label-run-after-every-image-rollout)
+
+See also: [WHITE-LABEL.md](./WHITE-LABEL.md) · [UPSTREAM-SYNC.md](./UPSTREAM-SYNC.md)
 
 ## How Deployments, Docker, and Logos Fit Together
 
@@ -131,11 +143,11 @@ The official image is built from upstream Twenty. It still shows Twenty branding
 Build path (from repo root):
 
 ```bash
-docker build -f packages/twenty-docker/twenty/Dockerfile -t ghcr.io/bcharleson/tofu-twenty:v2.8.3 .
-docker push ghcr.io/bcharleson/tofu-twenty:v2.8.3
+docker build -f packages/twenty-docker/twenty/Dockerfile -t ghcr.io/bcharleson/tofu-twenty:v2.8.6-tofu .
+docker push ghcr.io/bcharleson/tofu-twenty:v2.8.6-tofu
 ```
 
-The launch repo's compose file sets `image: ghcr.io/bcharleson/tofu-twenty:v2.8.3` (pinned tag, not `latest`).
+The launch repo's compose file sets `image: ghcr.io/bcharleson/tofu-twenty:v2.8.6-tofu` (pinned tag, not `latest`).
 
 ### Logo / branding: two layers
 

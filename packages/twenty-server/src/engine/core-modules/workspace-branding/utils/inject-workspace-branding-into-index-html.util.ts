@@ -20,8 +20,10 @@ export const injectWorkspaceBrandingIntoIndexHtml = ({
   const escapedDisplayName = escapeHtmlAttribute(displayName);
   const escapedLogoUrl = escapeHtmlAttribute(logoUrl);
 
-  const brandingHead = `<link rel="icon" href="${escapedLogoUrl}" />
-    <link rel="apple-touch-icon" href="${escapedLogoUrl}" />
+  // Use /favicon.ico for tab and PWA icons — stable URL that redirects to the
+  // workspace logo. og:image keeps the direct URL for link previews.
+  const brandingHead = `<link rel="icon" href="/favicon.ico" />
+    <link rel="apple-touch-icon" href="/favicon.ico" />
     <meta property="og:image" content="${escapedLogoUrl}" />
     <meta property="og:title" content="${escapedDisplayName}" />
     <meta property="og:description" content="${escapedDisplayName}" />
