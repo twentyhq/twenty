@@ -333,6 +333,63 @@ describe('transformEventBatchToEventPayloads', () => {
     });
   });
 
+  describe('position-only updates', () => {
+    it('should include position-only events when the trigger has no updatedFields filter', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.updated',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['position'] },
+          }),
+          createMockEvent({
+            recordId: 'record-2',
+            properties: { after: {}, updatedFields: ['name'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.updated' },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(2);
+      expect(
+        result.map((r) => (r.payload as ObjectRecordEvent).recordId),
+      ).toEqual(['record-1', 'record-2']);
+    });
+
+    it('should include events that change other fields alongside position', () => {
+      const workspaceEventBatch = createMockWorkspaceEventBatch({
+        name: 'company.updated',
+        events: [
+          createMockEvent({
+            recordId: 'record-1',
+            properties: { after: {}, updatedFields: ['position', 'name'] },
+          }),
+        ],
+      });
+      const logicFunctions = [
+        createMockLogicFunction({
+          databaseEventTriggerSettings: { eventName: 'company.updated' },
+        }),
+      ];
+
+      const result = transformEventBatchToEventPayloads({
+        workspaceEventBatch,
+        logicFunctions,
+      });
+
+      expect(result).toHaveLength(1);
+    });
+  });
+
   describe('edge cases', () => {
     it('should return empty array when no logic functions provided', () => {
       const workspaceEventBatch = createMockWorkspaceEventBatch();

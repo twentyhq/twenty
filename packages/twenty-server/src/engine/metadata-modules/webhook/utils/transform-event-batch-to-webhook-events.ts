@@ -27,18 +27,6 @@ export const transformEventBatchToWebhookEvents = ({
     const secret = webhook.secret;
 
     for (const eventData of workspaceEventBatch.events) {
-      const eventUpdatedFields =
-        'updatedFields' in eventData.properties
-          ? eventData.properties.updatedFields
-          : undefined;
-
-      if (
-        eventUpdatedFields?.length === 1 &&
-        eventUpdatedFields[0] === 'position'
-      ) {
-        continue;
-      }
-
       const { record, updatedFields } = transformEventToWebhookEvent({
         eventName: workspaceEventBatch.name,
         event: eventData,

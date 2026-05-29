@@ -8,7 +8,7 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, mapById } from 'twenty-shared/utils';
 
-export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
+export const useGetRecordBoardEffectsForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
   const { activeFieldMetadataItems } = useActiveFieldMetadataItems({
@@ -27,7 +27,7 @@ export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
     recordIndexGroupFieldMetadataItemComponentState,
   );
 
-  const getShouldInitializeRecordBoardForUpdateInputs = (
+  const getRecordBoardEffectsForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
   ) => {
     const updatedFieldNames = new Set<string>();
@@ -44,11 +44,17 @@ export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
         updatedFieldNames.add(fieldName);
       }
 
+      const fieldNamesForFilterAndSortChecks = fieldNamesForUpdateInput.filter(
+        (fieldName) => fieldName !== 'position',
+      );
+
       const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
         (fieldMetadataItemToFilter) =>
-          fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
+          fieldNamesForFilterAndSortChecks.includes(
+            fieldMetadataItemToFilter.name,
+          ) ||
           (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
-            fieldNamesForUpdateInput.includes(
+            fieldNamesForFilterAndSortChecks.includes(
               `${fieldMetadataItemToFilter.name}Id`,
             )),
       );
@@ -83,18 +89,20 @@ export const useGetShouldInitializeRecordBoardForUpdateInputs = () => {
       }
     }
 
-    if (updatedFieldNames.has('position')) {
-      return true;
-    }
+    const shouldTriggerInitialQuery =
+      thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField;
 
-    return (
-      thereIsAnUpdateOnAFilteredField ||
-      thereIsAnUpdateOnASortedField ||
-      thereIsAnUpdateOnAGroupField
-    );
+    const shouldRepositionRecords =
+      !shouldTriggerInitialQuery &&
+      (updatedFieldNames.has('position') || thereIsAnUpdateOnAGroupField);
+
+    return {
+      shouldTriggerInitialQuery,
+      shouldRepositionRecords,
+    };
   };
 
   return {
-    getShouldInitializeRecordBoardForUpdateInputs,
+    getRecordBoardEffectsForUpdateInputs,
   };
 };

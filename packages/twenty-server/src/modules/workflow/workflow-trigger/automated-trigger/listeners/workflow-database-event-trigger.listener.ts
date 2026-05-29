@@ -396,10 +396,6 @@ export class WorkflowDatabaseEventTriggerListener {
       const updateEventPayload = eventPayload as ObjectRecordUpdateEvent;
       const updatedFields = updateEventPayload?.properties?.updatedFields ?? [];
 
-      if (updatedFields.length === 1 && updatedFields[0] === 'position') {
-        return false;
-      }
-
       return (
         !settings.fields ||
         settings.fields.length === 0 ||
@@ -411,10 +407,6 @@ export class WorkflowDatabaseEventTriggerListener {
       const settings = eventListener.settings as UpsertEventTriggerSettings;
       const upsertEventPayload = eventPayload as ObjectRecordUpsertEvent;
       const updatedFields = upsertEventPayload?.properties?.updatedFields ?? [];
-
-      if (updatedFields.length === 1 && updatedFields[0] === 'position') {
-        return false;
-      }
 
       return (
         !settings.fields ||
