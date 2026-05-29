@@ -4,11 +4,11 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 
 import { WorkspaceQueryRunnerModule } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-runner.module';
 import { ActorModule } from 'src/engine/core-modules/actor/actor.module';
-import { ApplicationLogsModule } from 'src/engine/core-modules/application-logs/application-logs.module';
-import { applicationLogsModuleFactory } from 'src/engine/core-modules/application-logs/application-logs.module-factory';
 import { AdminPanelModule } from 'src/engine/core-modules/admin-panel/admin-panel.module';
 import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { AppTokenModule } from 'src/engine/core-modules/app-token/app-token.module';
+import { ApplicationLogsModule } from 'src/engine/core-modules/application-logs/application-logs.module';
+import { applicationLogsModuleFactory } from 'src/engine/core-modules/application-logs/application-logs.module-factory';
 import { ApplicationDevelopmentModule } from 'src/engine/core-modules/application/application-development/application-development.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceModule } from 'src/engine/core-modules/application/application-marketplace/marketplace.module';
@@ -46,8 +46,8 @@ import { loggerModuleFactory } from 'src/engine/core-modules/logger/logger.modul
 import { LogicFunctionModule } from 'src/engine/core-modules/logic-function/logic-function.module';
 import { MessageQueueModule } from 'src/engine/core-modules/message-queue/message-queue.module';
 import { messageQueueModuleFactory } from 'src/engine/core-modules/message-queue/message-queue.module-factory';
-import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
 import { MessagingWebhooksModule } from 'src/engine/core-modules/messaging-webhooks/messaging-webhooks.module';
+import { TimelineMessagingModule } from 'src/engine/core-modules/messaging/timeline-messaging.module';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
 import { MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { OpenApiModule } from 'src/engine/core-modules/open-api/open-api.module';
@@ -79,6 +79,7 @@ import { AuditModule } from './audit/audit.module';
 import { ClientConfigModule } from './client-config/client-config.module';
 import { EventLogsModule } from './event-logs/event-logs.module';
 import { FileModule } from './file/file.module';
+import { WorkspaceBrandingModule } from './workspace-branding/workspace-branding.module';
 
 @Module({
   imports: [
@@ -166,6 +167,7 @@ import { FileModule } from './file/file.module';
     EventLogsModule,
     PreInstalledAppsModule,
     AppBillingModule,
+    WorkspaceBrandingModule,
   ],
   providers: [
     {

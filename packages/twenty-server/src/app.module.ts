@@ -1,8 +1,8 @@
 import {
-  type DynamicModule,
-  type MiddlewareConsumer,
-  Module,
-  RequestMethod,
+    type DynamicModule,
+    type MiddlewareConsumer,
+    Module,
+    RequestMethod,
 } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ServeStaticModule } from '@nestjs/serve-static';
@@ -18,11 +18,13 @@ import { CoreGraphQLApiModule } from 'src/engine/api/graphql/core-graphql-api.mo
 import { GraphQLConfigModule } from 'src/engine/api/graphql/graphql-config/graphql-config.module';
 import { GraphQLConfigService } from 'src/engine/api/graphql/graphql-config/graphql-config.service';
 import { MetadataGraphQLApiModule } from 'src/engine/api/graphql/metadata-graphql-api.module';
-import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-method-guard.middleware';
 import { McpModule } from 'src/engine/api/mcp/mcp.module';
+import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-method-guard.middleware';
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { WorkspaceBrandingMiddleware } from 'src/engine/core-modules/workspace-branding/workspace-branding.middleware';
+import { WorkspaceBrandingModule } from 'src/engine/core-modules/workspace-branding/workspace-branding.module';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';
@@ -30,7 +32,6 @@ import { MiddlewareModule } from 'src/engine/middlewares/middleware.module';
 import { RestCoreMiddleware } from 'src/engine/middlewares/rest-core.middleware';
 import { GlobalWorkspaceDataSourceModule } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-datasource.module';
 import { TwentyORMModule } from 'src/engine/twenty-orm/twenty-orm.module';
-import { WorkspaceCacheStorageModule } from 'src/engine/workspace-cache-storage/workspace-cache-storage.module';
 import { ModulesModule } from 'src/modules/modules.module';
 
 import { ClickHouseModule } from './database/clickHouse/clickHouse.module';
@@ -70,6 +71,7 @@ const MIGRATED_REST_METHODS = [
     RestApiModule,
     McpModule,
     MiddlewareModule,
+    WorkspaceBrandingModule,
     WorkspaceMetadataVersionModule,
     // I18n module for translations
     I18nModule,
@@ -112,6 +114,10 @@ export class AppModule {
   }
 
   configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(WorkspaceBrandingMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.GET });
+
     consumer
       .apply(
         GraphQLHydrateRequestFromTokenMiddleware,

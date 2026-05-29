@@ -101,7 +101,7 @@ These are intentional changes to Twenty core files. Check each during every upst
 | Patch | Files changed | Why | Added |
 |---|---|---|---|
 | **White-label sign-in logo** | `Logo.tsx`, `SignInUp.tsx` | No Twenty "20" icon on auth; workspace logo only | Apr 25 2026 |
-| **White-label defaults** | `DefaultWorkspaceLogo.ts`, `DefaultWorkspaceName.ts`, `PageFavicon.tsx`, `title-utils.ts`, `index.html` | Remove Twenty CDN logo fallback, generic tab/meta titles, favicon from workspace logo only | May 26 2026 |
+| **White-label defaults** | `DefaultWorkspaceLogo.ts`, `DefaultWorkspaceName.ts`, `PageFavicon.tsx`, `title-utils.ts`, `index.html`, `workspace-branding/*` | Remove Twenty CDN logo fallback, generic tab/meta titles, favicon/PWA manifest/apple-touch-icon from workspace logo; server injects crawler-visible branding for link previews | May 26 2026 |
 | **White-label auth copy** | `SignInUp.tsx`, `FooterNote.tsx` | Generic welcome text; hide Twenty ToS/Privacy links on sign-in | May 26 2026 |
 | **White-label timeline** | `getTimelineActivityAuthorFullName.ts` | System events show "System" not "Twenty" | May 26 2026 |
 
@@ -147,7 +147,7 @@ Removes Twenty fallbacks so the app never shows the "20" icon, Twenty CDN logo, 
 
 After provisioning, on each instance:
 
-1. **Settings → General → Logo** — upload client PNG/SVG (192×192 min). This drives sign-in page, nav drawer, and browser favicon (via `PageFavicon`).
+1. **Settings → General → Logo** — upload client PNG/SVG (192×192 min). This drives sign-in page, nav drawer, browser favicon, installed PWA icon (`PageFavicon`), and **Slack/link preview thumbnails** (server injects `og:image` + `/favicon.ico` redirect from this logo). After a logo change, remove and re-install the PWA so Chrome picks up the new manifest. Slack may cache old previews for a while.
 2. **Settings → General → Workspace name** — e.g. "Acme Corp CRM" (tab titles, invites).
 3. **Instance `.env`** (launch repo `instances/<slug>/.env`):
    ```env
