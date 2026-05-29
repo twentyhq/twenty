@@ -29,9 +29,10 @@ async function main() {
   });
   console.log(`[migrate-scope] target: ${url} — ${apply ? 'APPLY' : 'dry-run'}`);
 
+  // Pass 1: page through ALL partners read-only and collect those that need remapping.
+  type Pending = { id: string; current: string[]; next: string[] };
+  const pending: Pending[] = [];
   let after: string | null = null;
-  let changed = 0;
-  // Page through all partners.
   // eslint-disable-next-line no-constant-condition
   while (true) {
     const data: any = await client.query({
@@ -49,19 +50,23 @@ async function main() {
       const isChanged =
         next.length !== current.length || next.some((v, i) => v !== current[i]);
       if (!isChanged) continue;
-      changed += 1;
+      pending.push({ id, current, next });
       console.log(`[migrate-scope] ${id}: ${JSON.stringify(current)} -> ${JSON.stringify(next)}`);
-      if (apply) {
-        await client.mutation({
-          updatePartner: { __args: { id, data: { partnerScope: next } }, id: true },
-        } as any);
-      }
     }
     if (!data.partners?.pageInfo?.hasNextPage) break;
     after = data.partners.pageInfo.endCursor;
   }
 
-  console.log(`[migrate-scope] ${apply ? 'updated' : 'would update'} ${changed} partner(s)`);
+  // Pass 2: apply the remapping mutations (only when MIGRATE_APPLY=1).
+  if (apply) {
+    for (const { id, next } of pending) {
+      await client.mutation({
+        updatePartner: { __args: { id, data: { partnerScope: next } }, id: true },
+      } as any);
+    }
+  }
+
+  console.log(`[migrate-scope] ${apply ? 'updated' : 'would update'} ${pending.length} partner(s)`);
   if (!apply) console.log('[migrate-scope] re-run with MIGRATE_APPLY=1 to apply');
 }
 

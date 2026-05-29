@@ -483,7 +483,6 @@ export default defineObject({
       label: 'Application Notes',
       icon: 'IconClipboardText',
       isNullable: true,
-      defaultValue: "'null'",
     },
     {
       universalIdentifier: 'a0000010-0000-4000-8000-000000000010',

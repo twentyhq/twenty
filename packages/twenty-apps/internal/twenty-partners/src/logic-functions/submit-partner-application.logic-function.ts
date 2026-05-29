@@ -1,6 +1,8 @@
 import { CoreApiClient } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
+import { slugify } from '../scripts/slugify';
+
 export const SUBMIT_PARTNER_APPLICATION_LOGIC_FUNCTION_ID =
   '7b1e2c5f-3a14-4f7d-8e91-0b5e2a3c4d76';
 
@@ -65,15 +67,6 @@ function validate(input: SubmitPartnerApplicationInput): string | null {
 function toMicros(usd: number | undefined): { amountMicros: number; currencyCode: 'USD' } | undefined {
   if (typeof usd !== 'number' || !Number.isFinite(usd) || usd < 0) return undefined;
   return { amountMicros: Math.round(usd * 1_000_000), currencyCode: 'USD' };
-}
-
-function slugify(name: string): string {
-  return name
-    .toLowerCase()
-    .normalize('NFKD')
-    .replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 }
 
 function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | null {

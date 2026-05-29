@@ -28,6 +28,7 @@ config({ path: process.env.ENV_FILE ?? '.env.local' });
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
 import { mapLegacyScope } from './partner-scope-map';
+import { slugify } from './slugify';
 
 const requireEnv = (name: string): string => {
   const value = process.env[name];
@@ -100,13 +101,6 @@ const LOCAL_OPTIONS: Record<string, Set<string>> = {
   subscriptionFrequency: new Set(['MONTHLY', 'ANNUAL']),
   quoteStatus: new Set(['WIP', 'INTERVIEW_SCHEDULED', 'UNDER_CUSTOMER_PARTNER_REVIEW', 'APPROVED', 'REJECTED']),
 };
-
-const slugify = (s: string): string =>
-  s
-    .toLowerCase()
-    .trim()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
 
 const edges = (result: any, key: string): any[] =>
   (result?.[key]?.edges ?? []).map((e: any) => e.node);
