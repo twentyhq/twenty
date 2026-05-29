@@ -129,11 +129,15 @@ const generateCommonEventsType = (
               });
               writer.writeLine(');');
               writer.blankLine();
-              writer.writeLine('return new CustomEvent(eventType, {');
+              writer.writeLine('const event = new CustomEvent(eventType, {');
               writer.indent(() => {
                 writer.writeLine('detail: eventData,');
               });
               writer.writeLine('}) as RemoteEvent<SerializedEventData>;');
+              writer.blankLine();
+              writer.writeLine('Object.assign(event, eventData);');
+              writer.blankLine();
+              writer.writeLine('return event;');
             });
             writer.writeLine('},');
           });

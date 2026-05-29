@@ -144,6 +144,12 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   if (isNumber(domEvent.clientY)) {
     serialized.clientY = domEvent.clientY;
   }
+  if (isNumber(domEvent.x)) {
+    serialized.x = domEvent.x;
+  }
+  if (isNumber(domEvent.y)) {
+    serialized.y = domEvent.y;
+  }
   if (isNumber(domEvent.pageX)) {
     serialized.pageX = domEvent.pageX;
   }

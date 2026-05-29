@@ -94,9 +94,13 @@ const createSerializedEventConfig = (
       eventData,
     );
 
-    return new CustomEvent(eventType, {
+    const event = new CustomEvent(eventType, {
       detail: eventData,
     }) as RemoteEvent<SerializedEventData>;
+
+    Object.assign(event, eventData);
+
+    return event;
   },
 });
 const HTML_COMMON_EVENTS_CONFIG = Object.fromEntries(

@@ -13,6 +13,8 @@ export type SerializedEventData = {
   shiftKey?: boolean;
   clientX?: number;
   clientY?: number;
+  x?: number;
+  y?: number;
   pageX?: number;
   pageY?: number;
   screenX?: number;
