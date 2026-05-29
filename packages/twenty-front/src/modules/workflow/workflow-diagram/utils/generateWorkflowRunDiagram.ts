@@ -31,9 +31,6 @@ const shouldOpenStep = ({
     return false;
   }
 
-  // RUNNING is included because form steps transition RUNNING→PENDING
-  // almost instantly, and SSE events can deliver stale data that causes
-  // the PENDING status to be missed entirely.
   return (
     stepInfo.status === StepStatus.PENDING ||
     stepInfo.status === StepStatus.RUNNING

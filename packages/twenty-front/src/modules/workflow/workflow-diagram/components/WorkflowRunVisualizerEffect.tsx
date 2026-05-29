@@ -20,7 +20,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { StepStatus } from 'twenty-shared/workflow';
+
 import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowRunVisualizerEffect = ({
@@ -190,12 +190,7 @@ export const WorkflowRunVisualizerEffect = ({
         title: stepToOpenByDefault.data.name,
         icon: getIcon(getWorkflowNodeIconKey(stepToOpenByDefault.data)),
         workflowSelectedNode: stepToOpenByDefault.id,
-        // RUNNING is treated as PENDING for form steps because SSE events
-        // can deliver stale data where PENDING was already overwritten.
-        stepExecutionStatus:
-          stepToOpenByDefault.data.runStatus === StepStatus.RUNNING
-            ? StepStatus.PENDING
-            : stepToOpenByDefault.data.runStatus,
+        stepExecutionStatus: stepToOpenByDefault.data.runStatus,
       });
     },
     [
