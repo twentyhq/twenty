@@ -13,10 +13,8 @@ const PARTNER_LANGUAGE_VALUES = new Set([
 ] as const);
 
 const PARTNER_SCOPE_VALUES = new Set([
-  'APPS','DATA_MODEL','DATA_MIGRATION','HOSTING_ENVIRONMENT','WORKFLOWS',
+  'ADVISORY','SOLUTIONING','DEVELOPMENT','HOSTING','SUPPORT',
 ] as const);
-
-const PARTNER_DEPLOYMENT_VALUES = new Set(['CLOUD','SELF_HOST'] as const);
 const PARTNER_TYPE_OF_TEAM_VALUES = new Set(['SOLO','AGENCY'] as const);
 
 export type SubmitPartnerApplicationInput = {
@@ -32,12 +30,10 @@ export type SubmitPartnerApplicationInput = {
   typeOfTeam?: string;
   partnerScope?: string[];
   skills?: string[];
-  deploymentExpertise?: string[];
+  applicationNotes?: string;
   hourlyRate?: number;
   projectBudgetMin?: number;
   calendarLink?: string;
-  workspaceUrl?: string;
-  customerReferences?: string;
 };
 
 export type SubmitPartnerApplicationResult =
@@ -62,10 +58,6 @@ function validate(input: SubmitPartnerApplicationInput): string | null {
     if (!Array.isArray(input.partnerScope)) return 'invalid_input';
     if (!input.partnerScope.every((s) => PARTNER_SCOPE_VALUES.has(s as never))) return 'invalid_input';
   }
-  if (input.deploymentExpertise !== undefined) {
-    if (!Array.isArray(input.deploymentExpertise)) return 'invalid_input';
-    if (!input.deploymentExpertise.every((d) => PARTNER_DEPLOYMENT_VALUES.has(d as never))) return 'invalid_input';
-  }
   if (input.typeOfTeam !== undefined && !PARTNER_TYPE_OF_TEAM_VALUES.has(input.typeOfTeam as never)) return 'invalid_input';
   return null;
 }
@@ -85,13 +77,7 @@ function slugify(name: string): string {
 }
 
 function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | null {
-  const lines: string[] = [];
-  if (isNonEmptyString(input.workspaceUrl)) lines.push(`Workspace URL: ${input.workspaceUrl.trim()}`);
-  if (isNonEmptyString(input.customerReferences)) {
-    lines.push('Customer references:');
-    lines.push(input.customerReferences.trim());
-  }
-  return lines.length > 0 ? lines.join('\n') : null;
+  return isNonEmptyString(input.applicationNotes) ? input.applicationNotes.trim() : null;
 }
 
 type PartnerFieldsForUpsert = {
@@ -103,7 +89,6 @@ type PartnerFieldsForUpsert = {
   typeOfTeam?: string;
   partnerScope?: string[];
   skills?: string[];
-  deploymentExpertise?: string[];
   hourlyRate?: { amountMicros: number; currencyCode: 'USD' };
   projectBudgetMin?: { amountMicros: number; currencyCode: 'USD' };
   calendarLink?: { primaryLinkUrl: string };
@@ -121,7 +106,6 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
   if (input.typeOfTeam !== undefined) fields.typeOfTeam = input.typeOfTeam;
   if (input.partnerScope !== undefined && input.partnerScope.length > 0) fields.partnerScope = input.partnerScope;
   if (input.skills !== undefined && input.skills.length > 0) fields.skills = input.skills.filter(isNonEmptyString);
-  if (input.deploymentExpertise !== undefined && input.deploymentExpertise.length > 0) fields.deploymentExpertise = input.deploymentExpertise;
   const hourly = toMicros(input.hourlyRate);
   if (hourly) fields.hourlyRate = hourly;
   const min = toMicros(input.projectBudgetMin);

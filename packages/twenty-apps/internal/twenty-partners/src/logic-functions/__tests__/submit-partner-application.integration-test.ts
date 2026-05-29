@@ -134,8 +134,7 @@ describe('submit-partner-application handler — upsert', () => {
         baseInput({
           email: 'update.case@example.com',
           city: 'Paris',
-          partnerScope: ['APPS', 'DATA_MODEL'],
-          deploymentExpertise: ['CLOUD'],
+          partnerScope: ['ADVISORY', 'SOLUTIONING'],
           typeOfTeam: 'SOLO',
           hourlyRate: 175,
         }),
@@ -152,15 +151,13 @@ describe('submit-partner-application handler — upsert', () => {
         id: true,
         city: true,
         partnerScope: true,
-        deploymentExpertise: true,
         typeOfTeam: true,
         hourlyRate: { amountMicros: true, currencyCode: true },
       },
     } as any);
     const node = (partner as any).partner;
     expect(node.city).toBe('Paris');
-    expect(node.partnerScope).toEqual(['APPS', 'DATA_MODEL']);
-    expect(node.deploymentExpertise).toEqual(['CLOUD']);
+    expect(node.partnerScope).toEqual(['ADVISORY', 'SOLUTIONING']);
     expect(node.typeOfTeam).toBe('SOLO');
     expect(node.hourlyRate).toEqual({ amountMicros: 175_000_000, currencyCode: 'USD' });
   });
@@ -201,27 +198,41 @@ describe('submit-partner-application handler — upsert', () => {
     expect(node.city).toBe('Berlin');
   });
 
-  it('writes applicationNotes from workspaceUrl + customerReferences', async () => {
+  it('accepts new category values and stores applicationNotes', async () => {
     const result = await handler(
       authedEvent(
         baseInput({
-          email: 'notes.case@example.com',
-          workspaceUrl: 'https://app.twenty.com/workspaces/ada',
-          customerReferences: 'Acme Corp, Globex',
+          email: 'cat.test@example.com',
+          partnerScope: ['ADVISORY', 'SOLUTIONING'],
+          applicationNotes: 'Workspace https://app.twenty.com/ws · refs: Acme',
         }),
       ),
     );
-    await trackCreated(result);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
+    await trackCreated(result);
 
-    const partner = await client.query({
-      partner: { __args: { filter: { id: { eq: result.partnerId } } }, applicationNotes: true },
+    const fetched = await client.query({
+      partner: {
+        __args: { filter: { id: { eq: result.partnerId } } },
+        partnerScope: true,
+        applicationNotes: true,
+      },
     } as any);
-    const notes = (partner as any).partner.applicationNotes as string;
-    expect(notes).toContain('Workspace URL: https://app.twenty.com/workspaces/ada');
-    expect(notes).toContain('Customer references:');
-    expect(notes).toContain('Acme Corp, Globex');
+    const node = (fetched as any).partner;
+    expect(node.partnerScope).toEqual(
+      expect.arrayContaining(['ADVISORY', 'SOLUTIONING']),
+    );
+    expect(node.applicationNotes).toContain('Acme');
+  });
+
+  it('rejects a legacy scope value as invalid_input', async () => {
+    const result = await handler(
+      authedEvent(baseInput({ email: 'legacy@example.com', partnerScope: ['APPS'] })),
+    );
+    expect(result.ok).toBe(false);
+    if (result.ok) return;
+    expect(result.reason).toBe('invalid_input');
   });
 
   it('returns ok: false on malformed input (empty email)', async () => {
