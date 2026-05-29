@@ -55,7 +55,8 @@ services:
       test: curl --fail http://localhost:3000/healthz
       interval: 5s
       timeout: 5s
-      retries: 20
+      start_period: 90s
+      retries: 24
     restart: always
 
   worker:

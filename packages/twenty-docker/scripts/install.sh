@@ -127,15 +127,41 @@ if [ "$answer" = "n" ]; then
 else
   echo "🐳 Starting Docker containers..."
   docker compose up -d
-  # Check if port is listening
   echo "Waiting for server to be healthy, it might take a few minutes while we initialize the database..."
-  # Tail logs of the server until it's ready
   docker compose logs -f server &
   pid=$!
-  while [ ! $(docker inspect --format='{{.State.Health.Status}}' twenty-server-1) = "healthy" ]; do
+
+  server_container_id=$(docker compose ps -q server)
+
+  if [ -z "$server_container_id" ]; then
+    kill "$pid" 2>/dev/null || true
+    echo "❌ Unable to resolve server container id. Run 'docker compose ps' and 'docker compose logs server' for diagnostics."
+    exit 1
+  fi
+
+  while true; do
+    health_status=$(docker inspect --format='{{if .State.Health}}{{.State.Health.Status}}{{else}}starting{{end}}' "$server_container_id" 2>/dev/null)
+
+    if [ "$health_status" = "healthy" ]; then
+      break
+    fi
+
+    if [ "$health_status" = "unhealthy" ]; then
+      kill "$pid" 2>/dev/null || true
+      echo ""
+      echo "❌ Server container became unhealthy before startup completed."
+      echo "Latest healthcheck probe output:"
+      docker inspect --format='{{range .State.Health.Log}}{{println .End "(exit=" .ExitCode "):" .Output}}{{end}}' "$server_container_id" | tail -n 5
+      echo ""
+      echo "Recent server logs:"
+      docker compose logs --tail 50 server
+      exit 1
+    fi
+
     sleep 1
   done
-  kill $pid
+
+  kill "$pid" 2>/dev/null || true
   echo ""
   echo "✅ Server is up and running"
 fi
