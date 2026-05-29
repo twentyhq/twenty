@@ -1,0 +1,35 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/email-group-suppression.service.ts
+  4a10800c36ffe602 4-95
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-outbound-suppression-handler.service.ts
+  4a10800c36ffe602 39-48
+  s_4a10800c36ffe6::t_e20f13cf1c6dcb 38,49-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "b5f865f0b35bd9ed4f5ae120d167d923a77e2bfb",
+  "prompts": {
+    "4a10800c36ffe602": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773",
+      "total_additions": 42,
+      "total_deletions": 39,
+      "accepted_lines": 102,
+      "overriden_lines": 0
+    }
+  },
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": null
+    }
+  }
+}
