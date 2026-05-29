@@ -25,7 +25,7 @@ execution:
       attachments:
         isolated_paths:
           - node_modules
-          - .yarn
+          - .yarn/cache
           - .pnp.cjs
           - .pnp.loader.mjs
     docker-host:
