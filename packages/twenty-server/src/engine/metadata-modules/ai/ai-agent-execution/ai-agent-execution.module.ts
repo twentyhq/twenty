@@ -14,6 +14,7 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
@@ -49,6 +50,7 @@ import { AgentAsyncExecutorService } from './services/agent-async-executor.servi
     AgentAsyncExecutorService,
     AgentActorContextService,
     AgentMessagePartResolver,
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
     AgentAsyncExecutorService,

@@ -12,6 +12,7 @@ import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logi
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
@@ -143,7 +144,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: agentService,
         },
         {
-          provide: getRepositoryToken(RoleTargetEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           useValue: roleTargetRepository,
         },
         {

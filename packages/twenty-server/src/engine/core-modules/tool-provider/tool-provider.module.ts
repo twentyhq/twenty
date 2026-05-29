@@ -8,7 +8,6 @@ import { DashboardToolProvider } from 'src/engine/core-modules/tool-provider/pro
 import { DatabaseToolProvider } from 'src/engine/core-modules/tool-provider/providers/database-tool.provider';
 import { LogicFunctionToolProvider } from 'src/engine/core-modules/tool-provider/providers/logic-function-tool.provider';
 import { MetadataToolProvider } from 'src/engine/core-modules/tool-provider/providers/metadata-tool.provider';
-import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
 import { NavigationMenuItemToolProvider } from 'src/engine/core-modules/tool-provider/providers/navigation-menu-item-tool.provider';
 import { ViewToolProvider } from 'src/engine/core-modules/tool-provider/providers/view-tool.provider';
 import { WebhookToolProvider } from 'src/engine/core-modules/tool-provider/providers/webhook-tool.provider';
@@ -73,7 +72,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     DashboardToolProvider,
     DatabaseToolProvider,
     MetadataToolProvider,
-    NativeToolBinderService,
     NavigationMenuItemToolProvider,
     LogicFunctionToolProvider,
     ViewToolProvider,
@@ -120,6 +118,6 @@ import { ToolRegistryService } from './services/tool-registry.service';
     },
     ToolRegistryService,
   ],
-  exports: [NativeToolBinderService, ToolRegistryService],
+  exports: [ToolRegistryService],
 })
 export class ToolProviderModule {}

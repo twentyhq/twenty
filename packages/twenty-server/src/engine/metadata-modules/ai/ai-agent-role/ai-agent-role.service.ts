@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { In, IsNull, Not, Repository } from 'typeorm';
+import { In, IsNull, Not } from 'typeorm';
 
 import {
   AiException,
@@ -19,10 +18,10 @@ export class AiAgentRoleService {
   constructor(
     @InjectWorkspaceScopedRepository(AgentEntity)
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
-    @InjectRepository(RoleEntity)
-    private readonly roleRepository: Repository<RoleEntity>,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleEntity)
+    private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     private readonly roleTargetService: RoleTargetService,
   ) {}
 
@@ -62,12 +61,14 @@ export class AiAgentRoleService {
     workspaceId: string;
     agentId: string;
   }): Promise<void> {
-    const existingRoleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        agentId,
-        workspaceId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          agentId,
+        },
       },
-    });
+    );
 
     if (!isDefined(existingRoleTarget)) {
       throw new AiException(
@@ -86,10 +87,9 @@ export class AiAgentRoleService {
     roleId: string,
     workspaceId: string,
   ): Promise<AgentEntity[]> {
-    const roleTargets = await this.roleTargetRepository.find({
+    const roleTargets = await this.roleTargetRepository.find(workspaceId, {
       where: {
         roleId,
-        workspaceId,
         agentId: Not(IsNull()),
       },
     });
@@ -129,8 +129,8 @@ export class AiAgentRoleService {
       );
     }
 
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
     });
 
     if (!role) {
@@ -147,13 +147,15 @@ export class AiAgentRoleService {
       );
     }
 
-    const existingRoleTarget = await this.roleTargetRepository.findOne({
-      where: {
-        agentId,
-        roleId,
-        workspaceId,
+    const existingRoleTarget = await this.roleTargetRepository.findOne(
+      workspaceId,
+      {
+        where: {
+          agentId,
+          roleId,
+        },
       },
-    });
+    );
 
     return {
       roleToAssignIsSameAsCurrentRole: Boolean(existingRoleTarget),
@@ -169,8 +171,8 @@ export class AiAgentRoleService {
     roleTargetId: string;
     workspaceId: string;
   }): Promise<void> {
-    const role = await this.roleRepository.findOne({
-      where: { id: roleId, workspaceId },
+    const role = await this.roleRepository.findOne(workspaceId, {
+      where: { id: roleId },
     });
 
     if (
@@ -182,16 +184,18 @@ export class AiAgentRoleService {
       return;
     }
 
-    const remainingAssignments = await this.roleTargetRepository.count({
-      where: {
-        roleId,
-        workspaceId,
-        id: Not(roleTargetId),
+    const remainingAssignments = await this.roleTargetRepository.count(
+      workspaceId,
+      {
+        where: {
+          roleId,
+          id: Not(roleTargetId),
+        },
       },
-    });
+    );
 
     if (remainingAssignments === 0) {
-      await this.roleRepository.delete({ id: roleId, workspaceId });
+      await this.roleRepository.delete(workspaceId, { id: roleId });
     }
   }
 }

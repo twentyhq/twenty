@@ -1,19 +1,20 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { MessageChannelSyncStatus } from 'twenty-shared/types';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import {
-  type TwentyORMException,
-  TwentyORMExceptionCode,
-} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
 } from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
+import {
+  type TwentyORMException,
+  TwentyORMExceptionCode,
+} from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
 import { MESSAGING_THROTTLE_MAX_ATTEMPTS } from 'src/modules/messaging/message-import-manager/constants/messaging-throttle-max-attempts';
 import {
@@ -22,7 +23,6 @@ import {
 } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { MessageNetworkExceptionCode } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-network.exception';
 import { MessagingMonitoringService } from 'src/modules/messaging/monitoring/services/messaging-monitoring.service';
-import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 
 export enum MessageImportSyncStep {
   MESSAGE_LIST_FETCH = 'MESSAGE_LIST_FETCH',
@@ -33,8 +33,8 @@ export enum MessageImportSyncStep {
 @Injectable()
 export class MessageImportExceptionHandlerService {
   constructor(
-    @InjectRepository(MessageChannelEntity)
-    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
+    @InjectWorkspaceScopedRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: WorkspaceScopedRepository<MessageChannelEntity>,
     private readonly messageChannelSyncStatusService: MessageChannelSyncStatusService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
     private readonly messagingMonitoringService: MessagingMonitoringService,
@@ -183,7 +183,8 @@ export class MessageImportExceptionHandlerService {
     }
 
     await this.messageChannelRepository.increment(
-      { id: messageChannel.id, workspaceId },
+      workspaceId,
+      { id: messageChannel.id },
       'throttleFailureCount',
       1,
     );
@@ -194,7 +195,8 @@ export class MessageImportExceptionHandlerService {
         : undefined;
 
     await this.messageChannelRepository.update(
-      { id: messageChannel.id, workspaceId },
+      workspaceId,
+      { id: messageChannel.id },
       {
         throttleRetryAfter: isDefined(throttleRetryAfter)
           ? throttleRetryAfter.toISOString()

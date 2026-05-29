@@ -23,6 +23,8 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     WorkspaceFlatAgentMapCacheService,
     WorkspaceFlatRoleTargetByAgentIdService,
     provideWorkspaceScopedRepository(AgentEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
     WorkspaceFlatAgentMapCacheService,

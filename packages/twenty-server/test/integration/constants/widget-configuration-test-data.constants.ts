@@ -2,7 +2,6 @@ import { AggregateOperations } from 'twenty-shared/types';
 
 import { type AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
 import { type BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
-import { type GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { type IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { type LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { type PieChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/pie-chart-configuration.dto';
@@ -218,20 +217,5 @@ export const TEST_PIE_CHART_CONFIG_MINIMAL: PieChartConfigurationDTO = {
   aggregateFieldMetadataId: UNIT_TEST_FIELD_METADATA_ID_2,
   aggregateOperation: AggregateOperations.COUNT,
   orderBy: GraphOrderBy.FIELD_ASC,
-  displayDataLabel: false,
-};
-
-export const TEST_GAUGE_CHART_CONFIG: GaugeChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.GAUGE_CHART,
-  aggregateFieldMetadataId: UNIT_TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.SUM,
-  description: 'Completion percentage',
-  displayDataLabel: true,
-};
-
-export const TEST_GAUGE_CHART_CONFIG_MINIMAL: GaugeChartConfigurationDTO = {
-  configurationType: WidgetConfigurationType.GAUGE_CHART,
-  aggregateFieldMetadataId: UNIT_TEST_FIELD_METADATA_ID_1,
-  aggregateOperation: AggregateOperations.COUNT_TRUE,
   displayDataLabel: false,
 };

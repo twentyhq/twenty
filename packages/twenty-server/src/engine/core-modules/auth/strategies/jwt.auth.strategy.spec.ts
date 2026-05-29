@@ -17,7 +17,6 @@ import { JwtAuthStrategy } from './jwt.auth.strategy';
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let userWorkspaceRepository: any;
-  let applicationRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
   let workspaceCacheService: any;
@@ -30,18 +29,16 @@ describe('JwtAuthStrategy', () => {
 
   let workspaceStore: Record<string, any>;
   let userStore: Record<string, any>;
+  let applicationStore: Record<string, Record<string, any>>;
   let apiKeyStore: Record<string, Record<string, any>>;
 
   beforeEach(() => {
     workspaceStore = {};
     userStore = {};
+    applicationStore = {};
     apiKeyStore = {};
 
     userWorkspaceRepository = {
-      findOne: jest.fn(),
-    };
-
-    applicationRepository = {
       findOne: jest.fn(),
     };
 
@@ -77,6 +74,12 @@ describe('JwtAuthStrategy', () => {
               idByUserId: {
                 'valid-user-id': 'workspace-member-id',
               },
+            };
+          }
+
+          if (cacheKeys.includes('flatApplicationMaps')) {
+            result.flatApplicationMaps = {
+              byId: applicationStore[workspaceId] ?? {},
             };
           }
 
@@ -116,7 +119,6 @@ describe('JwtAuthStrategy', () => {
   const createStrategy = () =>
     new JwtAuthStrategy(
       jwtWrapperService,
-      applicationRepository,
       userWorkspaceRepository,
       permissionsService,
       workspaceCacheService,
@@ -346,9 +348,10 @@ describe('JwtAuthStrategy', () => {
         workspaceId: validWorkspaceId,
       };
 
-      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
+      const mockWorkspace = new WorkspaceEntity();
 
-      applicationRepository.findOne.mockResolvedValue(null);
+      mockWorkspace.id = validWorkspaceId;
+      workspaceStore[validWorkspaceId] = mockWorkspace;
 
       strategy = createStrategy();
 
