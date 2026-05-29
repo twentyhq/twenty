@@ -24,13 +24,23 @@ export const getParsedNameFromDisplayName = (
     lastName: stripTrailingGroupTag(parsed.lastName),
   });
 
-  const commaMatch = cleaned.match(/^([^,]+),\s*([^,]+)$/);
+  // Comma-inverted forms "Last, First[, Suffix]". Splits on the first comma;
+  // any further commas collapse to spaces so firstName is comma-free.
+  const commaMatch = cleaned.match(/^([^,]+),\s*(.+)$/);
 
   if (isDefined(commaMatch)) {
-    return withGroupTagsStripped({
-      firstName: commaMatch[2].trim(),
-      lastName: commaMatch[1].trim(),
-    });
+    const lastName = commaMatch[1].trim();
+    const firstName = commaMatch[2]
+      .trim()
+      .replace(/\s*,\s*/g, ' ')
+      .replace(/\s+/g, ' ');
+
+    if (isNonEmptyString(firstName) && isNonEmptyString(lastName)) {
+      return withGroupTagsStripped({
+        firstName,
+        lastName,
+      });
+    }
   }
 
   const [firstToken, ...rest] = cleaned.split(/\s+/);

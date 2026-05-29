@@ -48,15 +48,20 @@ export class ApplicationRegistrationVariableService {
       order: { key: 'ASC' },
     });
 
-    return variables.map((variable) => ({
-      ...variable,
-      isFilled: variable.isFilled,
-      value: variable.isFilled
-        ? variable.isSecret
-          ? '•••••••••••••'
-          : this.encryptionService.decryptVersioned(variable.encryptedValue)
-        : null,
-    }));
+    return variables.map((variable) => {
+      const { encryptedValue } = variable;
+
+      return {
+        ...variable,
+        isFilled: variable.isFilled,
+        value:
+          encryptedValue !== ''
+            ? variable.isSecret
+              ? '•••••••••••••'
+              : this.encryptionService.decryptVersioned(encryptedValue)
+            : null,
+      };
+    });
   }
 
   async createVariable(

@@ -39,6 +39,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     ApplicationService,
     WorkspaceFlatApplicationMapCacheService,
     provideWorkspaceScopedRepository(AgentEntity),
+    provideWorkspaceScopedRepository(CommandMenuItemEntity),
   ],
 })
 export class ApplicationModule {}

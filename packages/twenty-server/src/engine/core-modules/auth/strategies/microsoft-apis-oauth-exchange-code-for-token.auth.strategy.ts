@@ -5,6 +5,7 @@ import { parseJson } from 'twenty-shared/utils';
 
 import { MicrosoftAPIsOauthCommonStrategy } from 'src/engine/core-modules/auth/strategies/microsoft-apis-oauth-common.auth.strategy';
 import { type APIsOAuthRequest } from 'src/engine/core-modules/auth/types/apis-oauth-request.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { type APIsOAuthState } from 'src/engine/core-modules/auth/types/apis-oauth-state.type';
 import { type MicrosoftPassportProfile } from 'src/engine/core-modules/auth/types/microsoft-passport-profile.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -17,8 +18,8 @@ export class MicrosoftAPIsOauthExchangeCodeForTokenStrategy extends MicrosoftAPI
 
   async validate(
     request: APIsOAuthRequest,
-    accessToken: string,
-    refreshToken: string,
+    accessToken: PlaintextString,
+    refreshToken: PlaintextString,
     profile: MicrosoftPassportProfile,
     done: VerifyCallback,
   ): Promise<void> {
