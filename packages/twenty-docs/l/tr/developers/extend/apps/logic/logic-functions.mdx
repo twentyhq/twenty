@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Kullanılabilir tetikleyici türleri:
 * **httpRoute**: İşlevinizi bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
 > örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
+
+<Note>
+Arayüzsüz bir ön uç bileşeninden rota tarafından tetiklenen mantık fonksiyonunu çağırmak için bkz. [Mantık fonksiyonu çağırma](/l/tr/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 * **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
 * **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
 > örn. `person.updated`, `*.created`, `company.*`

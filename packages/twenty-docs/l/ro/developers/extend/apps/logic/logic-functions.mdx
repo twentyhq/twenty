@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Tipuri de declanșatoare disponibile:
 * **httpRoute**: Expune funcția pe o cale și metodă HTTP **sub endpoint-ul `/s/`**:
 > de ex. `path: '/post-card/create'` este apelabil la `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+Pentru a apela o funcție logică declanșată de o rută dintr-o componentă front-end (headless), consultă [Apelarea unei funcții logice](/l/ro/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 * **cron**: Rulează funcția pe un program folosind o expresie CRON.
 * **databaseEvent**: Rulează la evenimentele ciclului de viață ale obiectelor din spațiul de lucru. Când operațiunea evenimentului este `updated`, câmpurile specifice de urmărit pot fi specificate în array-ul `updatedFields`. Dacă este lăsat nedefinit sau gol, orice actualizare va declanșa funcția.
 > de ex. `person.updated`, `*.created`, `company.*`
