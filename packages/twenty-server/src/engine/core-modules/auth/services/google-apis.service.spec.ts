@@ -8,6 +8,7 @@ import {
   MessageChannelVisibility,
 } from 'twenty-shared/types';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
@@ -278,8 +279,8 @@ describe('GoogleAPIsService', () => {
         userId: 'user-id',
         workspaceMemberId: 'workspace-member-id',
         workspaceId: 'workspace-id',
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
+        accessToken: 'new-access-token' as PlaintextString,
+        refreshToken: 'new-refresh-token' as PlaintextString,
         calendarVisibility: CalendarChannelVisibility.SHARE_EVERYTHING,
         messageVisibility: MessageChannelVisibility.SHARE_EVERYTHING,
       });

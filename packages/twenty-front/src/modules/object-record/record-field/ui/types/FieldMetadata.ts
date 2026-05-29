@@ -256,7 +256,7 @@ export type FormFieldCurrencyValue = {
 };
 export type FieldFullNameValue = { firstName: string; lastName: string };
 export type FieldAddressValue = {
-  addressStreet1: string;
+  addressStreet1: string | null;
   addressStreet2: string | null;
   addressCity: string | null;
   addressState: string | null;

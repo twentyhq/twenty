@@ -82,7 +82,10 @@ export class ConnectedAccountMetadataService {
       );
     }
 
-    if (connectedAccount.userWorkspaceId !== userWorkspaceId) {
+    if (
+      connectedAccount.visibility !== 'workspace' &&
+      connectedAccount.userWorkspaceId !== userWorkspaceId
+    ) {
       throw new ConnectedAccountException(
         `Connected account ${id} does not belong to user workspace ${userWorkspaceId}`,
         ConnectedAccountExceptionCode.CONNECTED_ACCOUNT_OWNERSHIP_VIOLATION,
@@ -101,6 +104,19 @@ export class ConnectedAccountMetadataService {
   }): Promise<string[]> {
     const accounts = await this.repository.find({
       where: { userWorkspaceId, workspaceId },
+      select: ['id'],
+    });
+
+    return accounts.map((account) => account.id);
+  }
+
+  async getWorkspaceSharedConnectedAccountIds({
+    workspaceId,
+  }: {
+    workspaceId: string;
+  }): Promise<string[]> {
+    const accounts = await this.repository.find({
+      where: { workspaceId, visibility: 'workspace' },
       select: ['id'],
     });
 

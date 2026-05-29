@@ -41,9 +41,7 @@ export const MobileNavigationBar = () => {
   const { switchToNewChat } = useSwitchToNewAiChat();
   const { alphaSortedActiveNonSystemObjectMetadataItems } =
     useFilteredObjectMetadataItems();
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const setContextStoreCurrentObjectMetadataItemId = useSetAtomComponentState(
     contextStoreCurrentObjectMetadataItemIdComponentState,
@@ -100,7 +98,7 @@ export const MobileNavigationBar = () => {
         openRecordsSearchPage();
       },
     },
-    ...(hasAiSettingsPermission
+    ...(hasAiPermission
       ? [
           {
             name: 'newAiChat' as const,

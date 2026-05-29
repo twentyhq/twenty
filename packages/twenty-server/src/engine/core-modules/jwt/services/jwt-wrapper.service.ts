@@ -137,7 +137,10 @@ export class JwtWrapperService {
     const payload = this.decode<JwtPayload>(token, { json: true });
 
     if (!isDefined(payload)) {
-      throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+      throw new AuthException(
+        'Token invalid.',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
     }
 
     const { key, algorithm } = await this.resolveVerificationKey(token);

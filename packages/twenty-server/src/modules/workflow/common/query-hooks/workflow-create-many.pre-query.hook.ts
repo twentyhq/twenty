@@ -4,7 +4,6 @@ import { type CreateManyResolverArgs } from 'src/engine/api/graphql/workspace-re
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
-import { assertWorkflowStatusesNotSetOrEmpty } from 'src/modules/workflow/common/utils/assert-workflow-statuses-not-set-or-empty';
 
 @WorkspaceQueryHook(`workflow.createMany`)
 export class WorkflowCreateManyPreQueryHook implements WorkspacePreQueryHookInstance {
@@ -13,10 +12,15 @@ export class WorkflowCreateManyPreQueryHook implements WorkspacePreQueryHookInst
     _objectName: string,
     payload: CreateManyResolverArgs<WorkflowWorkspaceEntity>,
   ): Promise<CreateManyResolverArgs<WorkflowWorkspaceEntity>> {
-    payload.data.forEach((workflow) => {
-      assertWorkflowStatusesNotSetOrEmpty(workflow.statuses);
+    const sanitizedData = payload.data.map((workflow) => {
+      const { statuses: _statuses, ...workflowWithoutStatuses } = workflow; // silent not to break creation from view with filter
+
+      return workflowWithoutStatuses as WorkflowWorkspaceEntity;
     });
 
-    return payload;
+    return {
+      ...payload,
+      data: sanitizedData,
+    };
   }
 }

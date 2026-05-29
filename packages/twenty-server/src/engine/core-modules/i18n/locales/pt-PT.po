@@ -459,6 +459,11 @@ msgstr "Ocorreu um erro durante a importação das mensagens"
 msgid "An error occurred during workspace migration."
 msgstr "Ocorreu um erro durante a migração do espaço de trabalho."
 
+#. js-lingui-id: X3mSup
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "An error occurred while processing the webhook."
+msgstr ""
+
 #. js-lingui-id: S7yZl9
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "An error occurred with two-factor authentication data."
@@ -5208,6 +5213,8 @@ msgstr "Layout de página não encontrado."
 #. js-lingui-id: qJ9V6q
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-widget-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
 #: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-page-layout-tab-validator.service.ts
@@ -5721,6 +5728,7 @@ msgstr ""
 
 #. js-lingui-id: KnnILY
 #: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
+#: src/engine/metadata-modules/view/services/view-widget-upsert.service.ts
 msgid "Record table widget not found"
 msgstr ""
 
@@ -6154,6 +6162,11 @@ msgstr "Arquivo compactado do cliente do SDK não encontrado. O cliente do SDK p
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Vetor de pesquisa"
+
+#. js-lingui-id: CTcVpP
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Sending is currently suspended for this email domain."
+msgstr ""
 
 #. js-lingui-id: hgvbYY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6852,6 +6865,16 @@ msgstr ""
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Os nomes singular e plural não podem ser iguais para um objeto"
 
+#. js-lingui-id: 9bYo5E
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be authenticated."
+msgstr ""
+
+#. js-lingui-id: 3nHyuH
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be processed."
+msgstr ""
+
 #. js-lingui-id: 5N6QtE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts
 msgid "The workflow automated trigger settings"
@@ -6995,6 +7018,11 @@ msgstr "Este domínio já está em uso."
 #: src/engine/core-modules/user/user.exception.ts
 msgid "This email is already in use."
 msgstr "Este e-mail já está em uso."
+
+#. js-lingui-id: mjE4RD
+#: src/engine/metadata-modules/ai/ai-agent-monitor/services/agent-turn-grader.service.ts
+msgid "This evaluation target could not be found."
+msgstr ""
 
 #. js-lingui-id: hsi+jf
 #: src/engine/core-modules/workspace/workspace.exception.ts
