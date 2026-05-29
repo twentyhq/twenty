@@ -25,7 +25,7 @@ type BackToMarketplaceLinkProps = {
 export function BackToMarketplaceLink({ locale }: BackToMarketplaceLinkProps) {
   const { i18n } = useLingui();
   return (
-    <BackLink href={`/${locale}/partners`}>
+    <BackLink href={`/${locale}/partners/list`}>
       {i18n._(msg`← Twenty partners`)}
     </BackLink>
   );
