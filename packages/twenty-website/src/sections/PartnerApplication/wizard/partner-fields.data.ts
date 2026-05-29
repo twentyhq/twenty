@@ -1,6 +1,8 @@
 import type { MessageDescriptor } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 
+import type { PartnerApplicationState } from './use-partner-application-state';
+
 export const PARTNER_APPLICATION_STEP_IDS = [
   'identity',
   'profile',
@@ -10,16 +12,6 @@ export const PARTNER_APPLICATION_STEP_IDS = [
 
 export type PartnerApplicationStepId =
   (typeof PARTNER_APPLICATION_STEP_IDS)[number];
-
-export const PARTNER_APPLICATION_STEP_TITLES: Record<
-  PartnerApplicationStepId,
-  MessageDescriptor
-> = {
-  identity: msg`Identity`,
-  profile: msg`Profile`,
-  expertise: msg`Expertise & experience`,
-  commercials: msg`Commercials`,
-};
 
 export const PARTNER_TYPE_OF_TEAM_VALUES = ['SOLO', 'AGENCY'] as const;
 export type PartnerTypeOfTeam = (typeof PARTNER_TYPE_OF_TEAM_VALUES)[number];
@@ -544,7 +536,7 @@ export const PARTNER_LANGUAGE_OPTIONS: ReadonlyArray<{
 // Per-step required field names. The wizard reducer reads this to gate `goNext`.
 export const PARTNER_APPLICATION_STEP_REQUIRED_FIELDS: Record<
   PartnerApplicationStepId,
-  ReadonlyArray<string>
+  ReadonlyArray<keyof PartnerApplicationState>
 > = {
   identity: ['name', 'email', 'company'],
   profile: ['country', 'typeOfTeam'],

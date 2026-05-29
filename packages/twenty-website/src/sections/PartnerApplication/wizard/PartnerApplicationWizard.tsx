@@ -17,6 +17,7 @@ import { ProfileStep } from '@/sections/PartnerApplication/wizard/steps/ProfileS
 import { ExpertiseStep } from '@/sections/PartnerApplication/wizard/steps/ExpertiseStep';
 import { CommercialsStep } from '@/sections/PartnerApplication/wizard/steps/CommercialsStep';
 import {
+  buildPartnerApplicationRequestBody,
   getCurrentStepId,
   usePartnerApplicationState,
   type PartnerApplicationController,
@@ -206,30 +207,7 @@ export function PartnerApplicationWizard({
       }
       if (state.isSubmitting) return;
 
-      const payload: Record<string, unknown> = {
-        name: state.name.trim(),
-        email: state.email.trim(),
-        company: state.company.trim(),
-      };
-      if (state.website.trim()) payload.website = state.website.trim();
-      if (state.linkedin.trim()) payload.linkedin = state.linkedin.trim();
-      if (state.city.trim()) payload.city = state.city.trim();
-      if (state.country !== '') payload.country = state.country;
-      if (state.languages.length > 0) payload.languages = state.languages;
-      if (state.typeOfTeam !== '') payload.typeOfTeam = state.typeOfTeam;
-      if (state.partnerScope.length > 0)
-        payload.partnerScope = state.partnerScope;
-      if (state.skills.length > 0) payload.skills = state.skills;
-      if (state.applicationNotes.trim())
-        payload.applicationNotes = state.applicationNotes.trim();
-      const hourlyRate = parseFloat(state.hourlyRate);
-      if (Number.isFinite(hourlyRate) && hourlyRate >= 0)
-        payload.hourlyRate = hourlyRate;
-      const minBudget = parseFloat(state.projectBudgetMin);
-      if (Number.isFinite(minBudget) && minBudget >= 0)
-        payload.projectBudgetMin = minBudget;
-      if (state.calendarLink.trim())
-        payload.calendarLink = state.calendarLink.trim();
+      const payload = buildPartnerApplicationRequestBody(state);
 
       setSubmitError(null);
       setSubmitting(true);

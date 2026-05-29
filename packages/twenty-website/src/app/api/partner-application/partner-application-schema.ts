@@ -1,55 +1,19 @@
 import {
-  PARTNER_COUNTRY_VALUES,
-  PARTNER_LANGUAGE_VALUES,
-  PARTNER_SCOPE_VALUES,
-  PARTNER_TYPE_OF_TEAM_VALUES,
+  type PARTNER_COUNTRY_VALUES,
+  type PARTNER_LANGUAGE_VALUES,
+  type PARTNER_SCOPE_VALUES,
+  type PARTNER_TYPE_OF_TEAM_VALUES,
 } from '@/sections/PartnerApplication/wizard/partner-fields.data';
+import { type PartnerApplicationRequest } from '@/sections/PartnerApplication/partner-application-field-schemas';
 import { splitFullName } from '@/sections/PartnerApplication';
-import { z } from 'zod';
 
-const optionalNonEmptyString = z.string().trim().min(1).optional();
-
-const optionalUrl = z
-  .string()
-  .trim()
-  .min(1)
-  .pipe(z.httpUrl({ error: 'Invalid URL.' }))
-  .optional();
-
-const optionalNonNegativeNumber = z.number().nonnegative().optional();
-
-export const partnerApplicationRequestSchema = z.strictObject({
-  // Identity
-  name: z.string().trim().min(1, { error: 'Name is required.' }),
-  email: z
-    .string()
-    .trim()
-    .min(1, { error: 'Email is required.' })
-    .pipe(z.email({ error: 'Invalid email address.' })),
-  company: z.string().trim().min(1, { error: 'Company is required.' }),
-  website: optionalUrl,
-
-  // Profile
-  linkedin: optionalUrl,
-  city: optionalNonEmptyString,
-  country: z.enum(PARTNER_COUNTRY_VALUES).optional(),
-  languages: z.array(z.enum(PARTNER_LANGUAGE_VALUES)).optional(),
-
-  // Expertise & experience
-  typeOfTeam: z.enum(PARTNER_TYPE_OF_TEAM_VALUES).optional(),
-  partnerScope: z.array(z.enum(PARTNER_SCOPE_VALUES)).optional(),
-  skills: z.array(z.string().trim().min(1)).optional(),
-  applicationNotes: optionalNonEmptyString,
-
-  // Commercials
-  hourlyRate: optionalNonNegativeNumber,
-  projectBudgetMin: optionalNonNegativeNumber,
-  calendarLink: optionalUrl,
-});
-
-export type PartnerApplicationRequest = z.infer<
-  typeof partnerApplicationRequestSchema
->;
+// The request schema and type live in the section layer so the client wizard
+// can share them without `sections/**` importing from `@/app/**`. Re-export so
+// existing route-side import paths keep working.
+export {
+  partnerApplicationRequestSchema,
+  type PartnerApplicationRequest,
+} from '@/sections/PartnerApplication/partner-application-field-schemas';
 
 export type PartnerApplicationLogicFunctionPayload = {
   firstName: string;

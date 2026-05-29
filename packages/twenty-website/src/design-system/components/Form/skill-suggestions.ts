@@ -10,7 +10,6 @@ export function filterSkillSuggestions(
   const taken = new Set(selected.map((value) => value.toLowerCase()));
   return pool.filter(
     (value) =>
-      !taken.has(value.toLowerCase()) &&
-      value.toLowerCase().includes(trimmed),
+      !taken.has(value.toLowerCase()) && value.toLowerCase().includes(trimmed),
   );
 }

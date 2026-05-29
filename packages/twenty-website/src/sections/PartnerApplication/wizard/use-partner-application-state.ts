@@ -1,6 +1,11 @@
 import { useReducer, useCallback } from 'react';
 
 import {
+  emailFieldSchema,
+  httpUrlFieldSchema,
+  type PartnerApplicationRequest,
+} from '@/sections/PartnerApplication/partner-application-field-schemas';
+import {
   PARTNER_APPLICATION_STEP_IDS,
   PARTNER_APPLICATION_STEP_REQUIRED_FIELDS,
   type PartnerApplicationStepId,
@@ -94,14 +99,39 @@ export type PartnerApplicationAction =
   | { type: 'SET_SUBMITTED' }
   | { type: 'RESET' };
 
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const URL_PATTERN = /^https?:\/\/[^\s]+$/i;
-
 function isEmpty(value: unknown): boolean {
   if (value === '' || value === null || value === undefined) return true;
   if (Array.isArray(value)) return value.length === 0;
   return false;
 }
+
+// Per-step format checks reuse the shared field schemas so the client rejects
+// exactly what the server route schema rejects. The empty/required gate above
+// owns "is it filled in"; these only run on non-empty values.
+type FieldFormatCheck = {
+  field: 'email' | 'website' | 'linkedin' | 'calendarLink';
+  schema: typeof emailFieldSchema | typeof httpUrlFieldSchema;
+  errorCode: 'invalid_email' | 'invalid_url';
+};
+
+const STEP_FORMAT_CHECKS: Partial<
+  Record<PartnerApplicationStepId, ReadonlyArray<FieldFormatCheck>>
+> = {
+  identity: [
+    { field: 'email', schema: emailFieldSchema, errorCode: 'invalid_email' },
+    { field: 'website', schema: httpUrlFieldSchema, errorCode: 'invalid_url' },
+  ],
+  profile: [
+    { field: 'linkedin', schema: httpUrlFieldSchema, errorCode: 'invalid_url' },
+  ],
+  commercials: [
+    {
+      field: 'calendarLink',
+      schema: httpUrlFieldSchema,
+      errorCode: 'invalid_url',
+    },
+  ],
+};
 
 function validateStep(
   state: PartnerApplicationState,
@@ -111,27 +141,15 @@ function validateStep(
   const errors: Partial<Record<string, string>> = {};
 
   for (const field of required) {
-    if (isEmpty(state[field as keyof PartnerApplicationState])) {
+    if (isEmpty(state[field])) {
       errors[field] = 'required';
     }
   }
 
-  if (stepId === 'identity') {
-    if (state.email && !EMAIL_PATTERN.test(state.email)) {
-      errors.email = 'invalid_email';
-    }
-    if (state.website && !URL_PATTERN.test(state.website)) {
-      errors.website = 'invalid_url';
-    }
-  }
-  if (stepId === 'profile') {
-    if (state.linkedin && !URL_PATTERN.test(state.linkedin)) {
-      errors.linkedin = 'invalid_url';
-    }
-  }
-  if (stepId === 'commercials') {
-    if (state.calendarLink && !URL_PATTERN.test(state.calendarLink)) {
-      errors.calendarLink = 'invalid_url';
+  for (const check of STEP_FORMAT_CHECKS[stepId] ?? []) {
+    const value = state[check.field];
+    if (value && !check.schema.safeParse(value).success) {
+      errors[check.field] = check.errorCode;
     }
   }
 
@@ -275,4 +293,40 @@ export function getCurrentStepId(
   state: PartnerApplicationState,
 ): PartnerApplicationStepId {
   return PARTNER_APPLICATION_STEP_IDS[state.stepIndex];
+}
+
+// Maps the form state to the POST body. Trims strings, omits empty optional
+// fields, and parses the numeric commercials. Shape must match what the route
+// schema (`partnerApplicationRequestSchema`) accepts.
+export function buildPartnerApplicationRequestBody(
+  state: PartnerApplicationState,
+): PartnerApplicationRequest {
+  const body: PartnerApplicationRequest = {
+    name: state.name.trim(),
+    email: state.email.trim(),
+    company: state.company.trim(),
+  };
+
+  if (state.website.trim()) body.website = state.website.trim();
+  if (state.linkedin.trim()) body.linkedin = state.linkedin.trim();
+  if (state.city.trim()) body.city = state.city.trim();
+  if (state.country !== '') body.country = state.country;
+  if (state.languages.length > 0) body.languages = state.languages;
+  if (state.typeOfTeam !== '') body.typeOfTeam = state.typeOfTeam;
+  if (state.partnerScope.length > 0) body.partnerScope = state.partnerScope;
+  if (state.skills.length > 0) body.skills = state.skills;
+  if (state.applicationNotes.trim())
+    body.applicationNotes = state.applicationNotes.trim();
+
+  const hourlyRate = parseFloat(state.hourlyRate);
+  if (Number.isFinite(hourlyRate) && hourlyRate >= 0)
+    body.hourlyRate = hourlyRate;
+
+  const projectBudgetMin = parseFloat(state.projectBudgetMin);
+  if (Number.isFinite(projectBudgetMin) && projectBudgetMin >= 0)
+    body.projectBudgetMin = projectBudgetMin;
+
+  if (state.calendarLink.trim()) body.calendarLink = state.calendarLink.trim();
+
+  return body;
 }
