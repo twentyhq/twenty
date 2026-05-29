@@ -23,7 +23,9 @@ export const defineCommandMenuItem: DefineEntity<CommandMenuItemConfig> = (
   }
 
   if (config.icon) {
-    warnings.push('CommandMenuItem icon will be ignored, you should remove it');
+    warnings.push(
+      'CommandMenuItem icon will be ignored in favor of application icon, you should remove it',
+    );
   }
 
   return createValidationResult({ config, errors, warnings });
