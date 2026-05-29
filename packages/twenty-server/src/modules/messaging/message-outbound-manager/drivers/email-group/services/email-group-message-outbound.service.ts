@@ -6,7 +6,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
-import { EmailGroupSendType } from 'src/engine/core-modules/emailing-domain/types/email-group-send-type.type';
+import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
   MessageChannelException,
@@ -54,7 +54,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
         from: connectedAccount.handle,
         replyTo: [connectedAccount.handle],
         attachments: sendMessageInput.attachments,
-        sendType: EmailGroupSendType.CAMPAIGN,
+        messageCategory: EmailGroupMessageCategory.CAMPAIGN,
       },
     );
 
