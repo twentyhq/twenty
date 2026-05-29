@@ -8697,10 +8697,11 @@ msgstr "Correu electrònic o domini no vàlids"
 msgid "Invalid email verification link."
 msgstr "Enllaç de verificació del correu electrònic invàlid."
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
-msgstr "Fitxer invàlid"
+msgid "Invalid file: {0}"
+msgstr ""
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
