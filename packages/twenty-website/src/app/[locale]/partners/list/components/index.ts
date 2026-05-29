@@ -4,3 +4,4 @@ export { PartnerCard } from './PartnerCard';
 export { EmptyState } from './EmptyState';
 export { FilterBar } from './FilterBar';
 export { FilterChipRow } from './FilterChipRow';
+export { PartnerMoneyRow } from './PartnerMoneyRow';
