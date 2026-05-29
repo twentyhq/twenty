@@ -31,7 +31,9 @@ const TriggerButton = styled.button`
   gap: ${theme.spacing(1.5)};
   line-height: ${theme.lineHeight(4)};
   padding: ${theme.spacing(1.5)} ${theme.spacing(3)};
-  transition: background 120ms ease, border-color 120ms ease;
+  transition:
+    background 120ms ease,
+    border-color 120ms ease;
   white-space: nowrap;
 
   &[data-active='true'] {
@@ -138,11 +140,7 @@ export function FilterDropdown<T extends string>({
         </TriggerButton>
       </Popover.Trigger>
       <Popover.Portal>
-        <Popover.Content
-          align="start"
-          className={contentStyles}
-          sideOffset={6}
-        >
+        <Popover.Content align="start" className={contentStyles} sideOffset={6}>
           <OptionList role="group" aria-label={labelText}>
             {options.map((option) => (
               <OptionRow key={option}>
