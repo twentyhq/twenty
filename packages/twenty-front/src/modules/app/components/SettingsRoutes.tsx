@@ -220,6 +220,12 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   ),
 );
 
+const SettingsLayout = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayout').then((module) => ({
+    default: module.SettingsLayout,
+  })),
+);
+
 const SettingsLayoutViewDetail = lazy(() =>
   import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
     default: module.SettingsLayoutViewDetail,
@@ -650,6 +656,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.Layout} element={<SettingsLayout />} />
         <Route
           path={SettingsPath.WorkspaceEmail}
           element={<SettingsWorkspaceEmail />}

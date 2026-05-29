@@ -1,11 +1,12 @@
 import { styled } from '@linaria/react';
 import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
-import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
+import customizeIllustrationDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
+import customizeIllustrationLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
 
 const StyledContainer = styled.div`
   background: ${themeCssVariables.background.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   height: 192px;
   overflow: hidden;
@@ -17,7 +18,7 @@ const StyledImage = styled.img`
   height: 100%;
   inset: 0;
   object-fit: cover;
-  object-position: center;
+  object-position: center top;
   position: absolute;
   width: 100%;
 `;
@@ -30,18 +31,18 @@ const StyledOverlay = styled.div`
   position: absolute;
 `;
 
-type SettingsObjectCoverImageProps = {
+type SettingsLayoutCoverImageProps = {
   overlay?: React.ReactNode;
 };
 
-export const SettingsObjectCoverImage = ({
+export const SettingsLayoutCoverImage = ({
   overlay,
-}: SettingsObjectCoverImageProps) => {
-  const { colorScheme } = useContext(ThemeContext);
+}: SettingsLayoutCoverImageProps) => {
+  const { theme } = useContext(ThemeContext);
   const src =
-    colorScheme === 'light'
-      ? LightCoverImage.toString()
-      : DarkCoverImage.toString();
+    theme.name === 'light'
+      ? customizeIllustrationLight
+      : customizeIllustrationDark;
 
   return (
     <StyledContainer>
