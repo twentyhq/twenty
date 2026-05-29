@@ -1,4 +1,4 @@
-import { EmailGroupSendType } from 'src/engine/core-modules/emailing-domain/types/email-group-send-type.type';
+import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 
 export type EmailingDomainAttachment = {
   filename: string;
@@ -16,7 +16,7 @@ export type EmailingDomainEmailContent = {
   html?: string;
   replyTo?: string[];
   attachments?: EmailingDomainAttachment[];
-  sendType?: EmailGroupSendType;
+  messageCategory?: EmailGroupMessageCategory;
 };
 
 export type EmailingDomainSendEmailInput = EmailingDomainEmailContent & {

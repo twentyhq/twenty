@@ -14,7 +14,7 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
-import { EmailGroupSendType } from 'src/engine/core-modules/emailing-domain/types/email-group-send-type.type';
+import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -201,7 +201,7 @@ export class EmailingDomainService {
           ...(emailContent.cc ?? []),
           ...(emailContent.bcc ?? []),
         ],
-        emailContent.sendType ?? EmailGroupSendType.TRANSACTIONAL,
+        emailContent.messageCategory ?? EmailGroupMessageCategory.TRANSACTIONAL,
       );
 
     const isNotSuppressed = (address: string): boolean =>

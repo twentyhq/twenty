@@ -1,4 +1,4 @@
-export enum EmailGroupSendType {
+export enum EmailGroupMessageCategory {
   TRANSACTIONAL = 'TRANSACTIONAL',
   CAMPAIGN = 'CAMPAIGN',
 }
