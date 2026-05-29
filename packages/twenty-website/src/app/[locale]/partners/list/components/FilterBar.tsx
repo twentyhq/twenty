@@ -22,7 +22,8 @@ import {
   SPOKEN_LANGUAGE_LABELS,
 } from './chip-labels';
 import { ClearFiltersButton } from './ClearFiltersButton';
-import { FilterChipRow } from './FilterChipRow';
+import { ActiveFilterPills, type ActivePill } from './ActiveFilterPills';
+import { FilterDropdown } from './FilterDropdown';
 
 type FilterBarProps = {
   criteria: FilterCriteria;
@@ -39,6 +40,12 @@ const BarSection = styled.section`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(4)};
+`;
+
+const DropdownRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${theme.spacing(2)};
 `;
 
 const Footer = styled.div`
@@ -70,29 +77,50 @@ export function FilterBar({
 }: FilterBarProps) {
   const { i18n } = useLingui();
 
+  const pills: ActivePill[] = [
+    ...[...criteria.regions].map((geo) => ({
+      key: `region:${geo}`,
+      text: i18n._(SERVED_GEO_LABELS[geo]),
+      onRemove: () => onToggleRegion(geo),
+    })),
+    ...[...criteria.languages].map((lang) => ({
+      key: `language:${lang}`,
+      text: i18n._(SPOKEN_LANGUAGE_LABELS[lang]),
+      onRemove: () => onToggleLanguage(lang),
+    })),
+    ...[...criteria.deployments].map((dep) => ({
+      key: `deployment:${dep}`,
+      text: i18n._(DEPLOYMENT_EXPERTISE_LABELS[dep]),
+      onRemove: () => onToggleDeployment(dep),
+    })),
+  ];
+
   return (
     <BarSection aria-label={i18n._(msg`Filter partners`)}>
-      <FilterChipRow
-        label={msg`Regions`}
-        values={SERVED_GEOS}
-        valueLabels={SERVED_GEO_LABELS}
-        selected={criteria.regions}
-        onToggle={onToggleRegion}
-      />
-      <FilterChipRow
-        label={msg`Languages`}
-        values={SPOKEN_LANGUAGES}
-        valueLabels={SPOKEN_LANGUAGE_LABELS}
-        selected={criteria.languages}
-        onToggle={onToggleLanguage}
-      />
-      <FilterChipRow
-        label={msg`Deploys`}
-        values={DEPLOYMENT_EXPERTISES}
-        valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
-        selected={criteria.deployments}
-        onToggle={onToggleDeployment}
-      />
+      <DropdownRow>
+        <FilterDropdown
+          label={msg`Regions`}
+          options={SERVED_GEOS}
+          optionLabels={SERVED_GEO_LABELS}
+          selected={criteria.regions}
+          onToggle={onToggleRegion}
+        />
+        <FilterDropdown
+          label={msg`Languages`}
+          options={SPOKEN_LANGUAGES}
+          optionLabels={SPOKEN_LANGUAGE_LABELS}
+          selected={criteria.languages}
+          onToggle={onToggleLanguage}
+        />
+        <FilterDropdown
+          label={msg`Deploys`}
+          options={DEPLOYMENT_EXPERTISES}
+          optionLabels={DEPLOYMENT_EXPERTISE_LABELS}
+          selected={criteria.deployments}
+          onToggle={onToggleDeployment}
+        />
+      </DropdownRow>
+      {hasAnyFilter && <ActiveFilterPills pills={pills} />}
       <Footer>
         <ResultCount aria-live="polite">
           {hasAnyFilter ? (
