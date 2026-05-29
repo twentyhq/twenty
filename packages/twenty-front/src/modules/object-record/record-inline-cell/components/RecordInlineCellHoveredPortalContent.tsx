@@ -11,7 +11,7 @@ const StyledRecordTableCellHoveredPortalContent = styled.div<{
   gap: ${themeCssVariables.spacing[1]};
   justify-content: ${({ isCentered }) =>
     isCentered === true ? 'center' : 'normal'};
-
+  user-select: text;
   width: 100%;
 `;
 
