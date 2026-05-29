@@ -6,9 +6,7 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 import { type WorkflowWorkspaceEntity } from 'src/modules/workflow/common/standard-objects/workflow.workspace-entity';
 
 @WorkspaceQueryHook(`workflow.createOne`)
-export class WorkflowCreateOnePreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+export class WorkflowCreateOnePreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
     _authContext: WorkspaceAuthContext,
     _objectName: string,
