@@ -20,7 +20,7 @@ src/utils/__tests__/map-bar.util.spec.ts
 - Parsers in `src/utils/` — every branch of foreign API shape handling, including missing fields and empty responses.
 - Mappers in `src/utils/` — foreign-to-Twenty mapping, including the "no match" case.
 - Front-component helpers in `src/front-components/utils/` — selected-record validation, payload builders, logic-function result parsing, summary aggregation, and snackbar message formatting.
-- Bulk logic-function normalization — both the canonical `records: Array<{ id: string; ...fields }>` shape and any backward-compatible flat `{ recordId, ...fields }` shape.
+- Bulk logic-function normalization — the canonical `records: Array<{ id: string; ...fields }>` shape, including empty arrays and records missing `id`.
 - Post-install hooks — at minimum, idempotency: run twice, assert state is identical.
 - Side effects (billing, external state) — assert they fire only on the conditions the code claims.
 

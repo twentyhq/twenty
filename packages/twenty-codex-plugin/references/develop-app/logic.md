@@ -17,7 +17,7 @@ Other rules:
 
 - Validate required fields before writes or remote calls.
 - Prefer bulk inputs for record actions. If a logic function can be triggered from selected records, the canonical input should be `records: Array<{ id: string; ...fields }>` unless the user explicitly says the function is only for one record.
-- Use `id` inside a `records` array for the Twenty record ID. Use `recordId` only in flat single-record payloads or for backward-compatible compatibility paths.
+- Use `id` inside a `records` array for the Twenty record ID. Do not add `recordId`, object-specific IDs such as `companyId`, or flat single-record payloads unless the user explicitly requests a single-record contract.
 - Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
@@ -54,11 +54,11 @@ type BulkResult = {
 };
 ```
 
-For existing single-record functions, keep the old `{ recordId, ...fields }` shape only as a compatibility path. Normalize both shapes at the top of the handler into `records: Array<{ id: string; ...fields }>` and test that normalization.
+For existing single-record functions that are being upgraded to selected-record actions, replace the old flat input with `records: Array<{ id: string; ...fields }>` unless the user explicitly asks for backward compatibility.
 
 Extract and test:
 
-- input normalization from single-record and bulk shapes;
+- input normalization for the canonical bulk shape;
 - per-record validation;
 - external API payload mapping;
 - per-record result mapping;

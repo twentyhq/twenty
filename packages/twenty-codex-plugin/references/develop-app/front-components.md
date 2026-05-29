@@ -89,7 +89,7 @@ Default payload shape:
 }
 ```
 
-Inside `records`, prefer `id` for the Twenty record ID because the array name already establishes record context. Use `recordId` only for flat single-record payloads or when preserving compatibility with an existing logic function.
+Inside `records`, prefer `id` for the Twenty record ID because the array name already establishes record context. Do not add flat `recordId` payloads unless the user explicitly asks for a single-record action.
 
 Logic functions that return per-record outcomes should mirror the same naming:
 
@@ -107,7 +107,7 @@ Logic functions that return per-record outcomes should mirror the same naming:
 }
 ```
 
-If an existing logic function accepts only `recordId`, prefer upgrading it to accept `records` while preserving the old flat input as a compatibility path.
+If an existing logic function accepts only a flat record ID, prefer upgrading it to accept `records` and remove the old flat input unless the user explicitly asks to preserve it.
 
 ## Runtime Verification
 

@@ -65,7 +65,7 @@ Refactor when:
 
 Always create a `*.spec.ts` test file in a sibling `__tests__/` folder for every util/function you add or change, one spec file per source file. See `../../references/develop-app/tests.md`.
 
-When a front component triggers a logic function for selected records, always prefer a bulk-capable logic function unless the user explicitly states that the function is only for one record. The default payload shape is `records: Array<{ id: string; ...fields }>`: inside `records`, use `id` for the Twenty record ID because the array name already establishes the record context. Use `recordId` only for flat single-record compatibility payloads.
+When a front component triggers a logic function for selected records, always prefer a bulk-capable logic function unless the user explicitly states that the function is only for one record. The default payload shape is `records: Array<{ id: string; ...fields }>`: inside `records`, use `id` for the Twenty record ID because the array name already establishes the record context. Do not add flat single-record compatibility payloads unless the user explicitly asks to preserve an existing single-record API.
 
 ## Adding New Entities
 
