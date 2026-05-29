@@ -120,7 +120,6 @@ describe('JwtAuthStrategy', () => {
       userWorkspaceRepository,
       permissionsService,
       workspaceCacheService,
-      coreEntityCacheService,
     );
 
   describe('API_KEY validation', () => {

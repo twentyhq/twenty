@@ -1,3 +1,4 @@
+import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { type FlatUser } from 'src/engine/core-modules/user/types/flat-user.type';
 import { type FlatWorkspace } from 'src/engine/core-modules/workspace/types/flat-workspace.type';
@@ -7,6 +8,7 @@ export type CoreEntityCacheDataMap = {
   user: FlatUser;
   userWorkspaceEntity: FlatUserWorkspace;
   signingKeyPublicKey: string;
+  applicationEntity: FlatApplication;
 };
 
 export type CoreEntityCacheKeyName = keyof CoreEntityCacheDataMap;
@@ -16,4 +18,5 @@ export const CORE_ENTITY_CACHE_KEYS: Record<CoreEntityCacheKeyName, string> = {
   user: 'user',
   userWorkspaceEntity: 'user-workspace',
   signingKeyPublicKey: 'signing-key-public-key',
+  applicationEntity: 'applicationEntity',
 };
