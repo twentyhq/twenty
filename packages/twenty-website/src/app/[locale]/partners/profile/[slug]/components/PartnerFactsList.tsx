@@ -7,13 +7,11 @@ import { styled } from '@linaria/react';
 import type { MessageDescriptor } from '@lingui/core';
 import {
   DEPLOYMENT_EXPERTISE_LABELS,
-  SERVED_GEO_LABELS,
   SPOKEN_LANGUAGE_LABELS,
 } from '@/app/[locale]/partners/list/components/chip-labels';
 import type {
   DeploymentExpertise,
   MarketplacePartner,
-  ServedGeo,
   SpokenLanguage,
 } from '@/lib/partners-api';
 import { theme } from '@/theme';
@@ -72,24 +70,25 @@ function resolveLabels<TValue extends string>(
 }
 
 type PartnerFactsListProps = {
-  region: MarketplacePartner['region'];
+  city: MarketplacePartner['city'];
+  country: MarketplacePartner['country'];
   languagesSpoken: MarketplacePartner['languagesSpoken'];
   deploymentExpertise: MarketplacePartner['deploymentExpertise'];
 };
 
 export function PartnerFactsList({
-  region,
+  city,
+  country,
   languagesSpoken,
   deploymentExpertise,
 }: PartnerFactsListProps) {
   const { i18n } = useLingui();
   const translate = (d: MessageDescriptor) => i18n._(d);
 
-  const regionText = resolveLabels(
-    region as readonly ServedGeo[],
-    SERVED_GEO_LABELS,
-    translate,
-  );
+  // Country is a CRM SELECT enum (e.g. "UNITED_STATES"); title-case it.
+  const locationText = [city, country ? titleCaseFallback(country) : '']
+    .filter(Boolean)
+    .join(', ');
   const languageText = resolveLabels(
     languagesSpoken as readonly SpokenLanguage[],
     SPOKEN_LANGUAGE_LABELS,
@@ -103,10 +102,10 @@ export function PartnerFactsList({
 
   return (
     <FactsDl>
-      {regionText && (
+      {locationText && (
         <FactRow>
-          <FactLabel>{i18n._(msg`Regions`)}</FactLabel>
-          <FactValue>{regionText}</FactValue>
+          <FactLabel>{i18n._(msg`Based in`)}</FactLabel>
+          <FactValue>{locationText}</FactValue>
         </FactRow>
       )}
       {languageText && (

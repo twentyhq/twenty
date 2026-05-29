@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { styled } from '@linaria/react';
 
 import { getPartnerBySlug } from '@/lib/partners-api';
+import { GuideCrosshair } from '@/design-system/components';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
@@ -20,9 +21,29 @@ import {
 
 // ─── Styled layout ────────────────────────────────────────────────────────────
 
+// Soft ambient wash built from Twenty's brand accents (blue / pink / green) at
+// low alpha over white. Lifts the page off flat white without touching text
+// contrast. Pure decoration, fixed behind the content.
 const PageRoot = styled.div`
   background-color: ${theme.colors.primary.background[100]};
-  min-height: 100vh;
+  background-image:
+    radial-gradient(
+      62% 48% at 88% -4%,
+      rgba(74, 56, 245, 0.09),
+      transparent 70%
+    ),
+    radial-gradient(
+      48% 38% at 6% 12%,
+      rgba(237, 135, 252, 0.07),
+      transparent 72%
+    ),
+    radial-gradient(
+      60% 50% at 50% 108%,
+      rgba(137, 252, 154, 0.08),
+      transparent 70%
+    );
+  background-repeat: no-repeat;
+  min-height: 100dvh;
 `;
 
 const PageInner = styled.div`
@@ -70,12 +91,18 @@ const GutterColumn = styled.div`
   }
 `;
 
-// Right rail column
+// Right rail column. A soft neutral panel groups photo + CTAs + rates into one
+// "decision rail" that lifts gently off the color wash without a hard card.
 const RailColumn = styled.aside`
+  align-self: flex-start;
   animation: nameEnter 700ms cubic-bezier(0.22, 1, 0.36, 1) 100ms both;
+  background-color: ${theme.colors.primary.text[5]};
+  border-radius: ${theme.radius(2)};
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(6)};
+  padding: ${theme.spacing(6)};
+  position: relative;
 
   @keyframes nameEnter {
     from {
@@ -123,13 +150,13 @@ const SkillsRow = styled.ul`
 `;
 
 const SkillChip = styled.li`
-  border: 1px solid ${theme.colors.primary.border[10]};
+  background-color: rgba(74, 56, 245, 0.07);
   border-radius: ${theme.radius(2)};
-  color: ${theme.colors.primary.text[80]};
+  color: ${theme.colors.primary.text[100]};
   font-family: ${theme.font.family.sans};
-  font-size: ${theme.font.size(3)};
+  font-size: ${theme.font.size(4)};
   font-weight: ${theme.font.weight.medium};
-  padding: ${theme.spacing(1.5)} ${theme.spacing(3)};
+  padding: ${theme.spacing(2)} ${theme.spacing(4)};
 `;
 
 const Divider = styled.hr`
@@ -228,7 +255,8 @@ export default async function PartnerProfilePage({
               <WhereSection>
                 <SectionEyebrow>Where &amp; how</SectionEyebrow>
                 <PartnerFactsList
-                  region={partner.region}
+                  city={partner.city}
+                  country={partner.country}
                   languagesSpoken={partner.languagesSpoken}
                   deploymentExpertise={partner.deploymentExpertise}
                 />
@@ -240,19 +268,23 @@ export default async function PartnerProfilePage({
 
             {/* ── Right rail ── */}
             <RailColumn aria-label="Partner facts and contact">
+              <GuideCrosshair
+                crossX={`calc(100% - ${theme.spacing(6)})`}
+                crossY={theme.spacing(6)}
+              />
               <PartnerProfilePhoto
                 name={partner.name}
                 slug={partner.slug}
                 profilePictureUrl={partner.profilePictureUrl}
               />
+              <PartnerProfileCtas
+                calendarLink={partner.calendarLink}
+                linkedinUrl={partner.linkedinUrl}
+              />
               <PartnerRatesPanel
                 hourlyRateUsd={partner.hourlyRateUsd}
                 projectBudgetMinUsd={partner.projectBudgetMinUsd}
                 projectBudgetTypicalUsd={partner.projectBudgetTypicalUsd}
-              />
-              <PartnerProfileCtas
-                calendarLink={partner.calendarLink}
-                linkedinUrl={partner.linkedinUrl}
               />
             </RailColumn>
           </ContentGrid>

@@ -9,18 +9,8 @@ const Prose = styled.p`
   line-height: ${theme.lineHeight(7)};
   margin: 0;
   max-width: 62ch;
+  text-wrap: pretty;
   white-space: pre-wrap;
-`;
-
-const DropCap = styled.span`
-  color: ${theme.colors.primary.text[100]};
-  float: left;
-  font-family: ${theme.font.family.serif};
-  font-size: ${theme.font.size(14)};
-  font-weight: ${theme.font.weight.light};
-  line-height: 1;
-  margin-bottom: ${theme.spacing(1)};
-  margin-right: ${theme.spacing(2)};
 `;
 
 type PartnerProfileIntroProps = {
@@ -32,13 +22,5 @@ export function PartnerProfileIntro({
 }: PartnerProfileIntroProps) {
   if (!introduction) return null;
 
-  const firstChar = introduction.charAt(0);
-  const rest = introduction.slice(1);
-
-  return (
-    <Prose>
-      <DropCap aria-hidden="true">{firstChar}</DropCap>
-      {rest}
-    </Prose>
-  );
+  return <Prose>{introduction}</Prose>;
 }

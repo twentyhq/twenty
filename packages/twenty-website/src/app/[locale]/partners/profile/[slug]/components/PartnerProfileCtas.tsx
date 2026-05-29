@@ -59,7 +59,7 @@ export function PartnerProfileCtas({
       <ButtonRow>
         {showCalendar && (
           <LinkButton
-            color="primary"
+            color="secondary"
             href={calendarLink}
             label={i18n._(msg`Book a call`)}
             variant="contained"
@@ -70,7 +70,7 @@ export function PartnerProfileCtas({
             color="secondary"
             href={linkedinUrl}
             label={i18n._(msg`View on LinkedIn`)}
-            variant="contained"
+            variant="outlined"
           />
         )}
       </ButtonRow>

@@ -55,11 +55,12 @@ type PartnerProfileHeaderProps = {
 
 export function PartnerProfileHeader({ partner }: PartnerProfileHeaderProps) {
   const { i18n } = useLingui();
-  const firstGeo = partner.region[0];
-  const region = firstGeo ? i18n._(SERVED_GEO_LABELS[firstGeo]) : '';
 
-  const locationParts = [partner.city, partner.country].filter(Boolean);
-  const eyebrow = [region, ...locationParts].filter(Boolean).join(' · ');
+  // Served regions are the partner's market coverage, not their address.
+  const eyebrow = partner.region
+    .map((geo) => i18n._(SERVED_GEO_LABELS[geo]))
+    .filter(Boolean)
+    .join(' · ');
 
   return (
     <Wrapper>

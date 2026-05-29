@@ -7,14 +7,14 @@ import { styled } from '@linaria/react';
 import { formatUsdRate } from '@/lib/format/format-usd';
 import { theme } from '@/theme';
 
+// Quiet fact list, not a card. A single hairline separates it from the CTAs
+// above; values are modest sans so rates read as a footnote, not the headline.
 const Panel = styled.section`
-  background-color: ${theme.colors.primary.text[5]};
-  border: 1px solid ${theme.colors.primary.border[10]};
-  border-radius: ${theme.radius(2)};
+  border-top: 1px solid ${theme.colors.primary.border[10]};
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing(3)};
-  padding: ${theme.spacing(5)};
+  gap: ${theme.spacing(2)};
+  padding-top: ${theme.spacing(5)};
 `;
 
 const PanelEyebrow = styled.p`
@@ -29,22 +29,21 @@ const PanelEyebrow = styled.p`
 const Row = styled.div`
   align-items: baseline;
   display: flex;
+  gap: ${theme.spacing(3)};
   justify-content: space-between;
 `;
 
 const Label = styled.span`
   color: ${theme.colors.primary.text[60]};
-  font-family: ${theme.font.family.mono};
+  font-family: ${theme.font.family.sans};
   font-size: ${theme.font.size(3)};
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
 `;
 
 const Value = styled.span`
   color: ${theme.colors.primary.text[100]};
-  font-family: ${theme.font.family.serif};
-  font-size: ${theme.font.size(6)};
-  font-weight: ${theme.font.weight.light};
+  font-family: ${theme.font.family.sans};
+  font-size: ${theme.font.size(4)};
+  font-weight: ${theme.font.weight.medium};
 `;
 
 type PartnerRatesPanelProps = {

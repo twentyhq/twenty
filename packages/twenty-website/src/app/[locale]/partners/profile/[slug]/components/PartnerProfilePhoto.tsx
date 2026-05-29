@@ -3,12 +3,13 @@ import { styled } from '@linaria/react';
 import { PartnerAvatar } from '@/app/[locale]/partners/list/components/PartnerAvatar';
 import { theme } from '@/theme';
 
+// Squared tile, not a circle: it reads as a studio/brand image and matches the
+// rectangular panel + crosshair geometry instead of fighting it.
 const PhotoWrapper = styled.div`
-  border-radius: 50%;
-  flex-shrink: 0;
-  height: 200px;
+  aspect-ratio: 1 / 1;
+  border-radius: ${theme.radius(2)};
   overflow: hidden;
-  width: 200px;
+  width: 100%;
 `;
 
 const RealPhoto = styled.img`
@@ -20,13 +21,13 @@ const RealPhoto = styled.img`
 
 const AvatarSizer = styled.div`
   align-items: center;
-  background-color: ${theme.colors.primary.text[5]};
-  border-radius: 50%;
+  aspect-ratio: 1 / 1;
+  background-color: rgba(74, 56, 245, 0.06);
+  border-radius: ${theme.radius(2)};
   display: flex;
-  height: 200px;
   justify-content: center;
   overflow: hidden;
-  width: 200px;
+  width: 100%;
 `;
 
 const isSafeHttpUrl = (raw: string) => {
