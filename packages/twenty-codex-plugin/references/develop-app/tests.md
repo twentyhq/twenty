@@ -29,4 +29,16 @@ src/utils/__tests__/map-bar.util.spec.ts
 
 ## Running Tests
 
+Integration tests build, deploy, install, and uninstall the app on whatever server `TWENTY_API_URL` points to. The scaffold defaults to the dev instance (`http://localhost:2020`), so running them there adds and then removes the app from the workspace you sync to with `yarn twenty dev --once`. Always run them against the isolated test instance instead — a separate container, database, and port (`2021`) that does not affect your running dev instance:
+
+```bash
+# Start the isolated test instance (once).
+yarn twenty docker:start --test
+
+# Run integration tests against it.
+TWENTY_API_URL=http://localhost:2021 yarn test
+```
+
+The seeded default `TWENTY_API_KEY` works for both instances, so only the URL needs overriding. This mirrors CI, which spawns the same isolated instance via the `spawn-twenty-app-dev-test` action.
+
 Do not run `yarn test` from the Codex sandbox; it hits the Node/Yarn mismatch. Write the files; the user or CI runs them.

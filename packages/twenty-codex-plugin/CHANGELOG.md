@@ -6,7 +6,9 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app`, `publish-app`, `use-twenty-mcp`) and the validation script (`scripts/validate.js`).
 
-## [Unreleased]
+## [0.1.0]
+
+The first version of the Twenty Codex plugin.
 
 ### Added
 - `AGENTS.md` at the plugin root: durable cross-skill operating rules, skill routing table, and reference-doc map.
@@ -27,10 +29,7 @@ Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app
 - `.codex-plugin/plugin.json`: rewrote `interface.longDescription` into 3 scannable sentences (was a single ~400-char sentence).
 - `README.md`: restructured into What/Installation/Skills/MCP/Development sections; added skills-overview table; linked `CONTRIBUTING.md`, `CHECKLIST.md`, `CHANGELOG.md`.
 - `scripts/validators/lib.js` `isAllowedDocumentationHost`: added `developers.openai.com`, `keepachangelog.com`, `semver.org` to the placeholder host allowlist so external documentation references in `CHECKLIST.md`, `CONTRIBUTING.md`, and `CHANGELOG.md` pass validation.
-
-## [0.1.0] - initial state
-
-The first version of the Twenty Codex plugin, covering everything in the package prior to the unreleased compliance pass above.
+- `references/develop-app/tests.md` and `references/manage-app/cli-and-sync.md`: documented that integration tests must run against the isolated test instance (`yarn twenty docker:start --test`, port `2021`) instead of the dev instance, since the test harness installs and uninstalls the app on its target server.
 
 ### Plugin Structure
 - `.codex-plugin/plugin.json` manifest with `interface` metadata (display name, descriptions, category, capabilities, branding, default prompts).

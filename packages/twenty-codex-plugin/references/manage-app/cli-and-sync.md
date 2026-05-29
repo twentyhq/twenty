@@ -148,6 +148,8 @@ yarn twenty app:uninstall
 yarn twenty app:uninstall --yes
 ```
 
+Integration tests install and uninstall the app on their target server, so run them against the isolated test instance (`yarn twenty docker:start --test`, port `2021`) rather than the dev instance — see `../develop-app/tests.md`.
+
 ## CI/CD
 
 Apps generated with `create-twenty-app` can use GitHub Actions for CI and CD. For deployment automation, check the app's `.github/workflows/` files and configure:
