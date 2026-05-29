@@ -53,6 +53,30 @@ describe('parseSAMLMetadataFromXMLFile', () => {
       },
     });
   });
+  it('should parse SAML metadata from XML file with non standard prefixes and non URL entityID', () => {
+    const xmlString = `<?xml version="1.0" encoding="UTF-8"?><foo:EntityDescriptor xmlns:foo="urn:oasis:names:tc:SAML:2.0:metadata" entityID="urn:tenant:test" validUntil="2026-02-04T17:46:23.000Z">
+    <foo:IDPSSODescriptor WantAuthnRequestsSigned="false" protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol">
+        <foo:KeyDescriptor use="signing">
+            <bar:KeyInfo xmlns:bar="http://www.w3.org/2000/09/xmldsig#">
+                <bar:X509Data>
+                    <bar:X509Certificate>test</bar:X509Certificate>
+                </bar:X509Data>
+            </bar:KeyInfo>
+        </foo:KeyDescriptor>
+        <foo:SingleSignOnService Binding="urn:oasis:names:tc:SAML:2.0:bindings:HTTP-POST" Location="https://idp.test.com/sso"/>
+    </foo:IDPSSODescriptor>
+</foo:EntityDescriptor>`;
+    const result = parseSAMLMetadataFromXMLFile(xmlString);
+    expect(result).toEqual({
+      success: true,
+      data: {
+        entityID: 'urn:tenant:test',
+        ssoUrl: 'https://idp.test.com/sso',
+        certificate: 'test',
+      },
+    });
+  });
+
   it('should return error if XML is invalid', () => {
     const xmlString = 'invalid xml';
     const result = parseSAMLMetadataFromXMLFile(xmlString);

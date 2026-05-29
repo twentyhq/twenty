@@ -3,42 +3,29 @@
 import { z } from 'zod';
 
 const validator = z.object({
-  entityID: z.url(),
+  entityID: z.string().min(1),
   ssoUrl: z.url(),
   certificate: z.string().min(1),
 });
 
-const allPrefix = ['md', 'ns0', 'ns2', 'dsig', 'ds'];
+const urlSchema = z.url();
 
-const getByPrefixAndKey = (
-  xmlDoc: Document | Element,
-  key: string,
-  prefixList = [...allPrefix],
-): Element | undefined => {
-  if (prefixList.length === 0) return undefined;
-  return (
-    xmlDoc.getElementsByTagName(`${prefixList[0]}:${key}`)?.[0] ??
-    getByPrefixAndKey(xmlDoc, key, prefixList.slice(1)) ??
-    xmlDoc.getElementsByTagName(key)?.[0]
+const getByKey = (xmlDoc: Document | Element, key: string): Element | undefined => {
+  const prefixedElement = Array.from(xmlDoc.getElementsByTagName('*')).find(
+    (element) => element.localName === key,
   );
+
+  return prefixedElement ?? xmlDoc.getElementsByTagName(key)?.[0];
 };
 
-const getAllByPrefixAndKey = (
-  xmlDoc: Document | Element,
-  key: string,
-  prefixList = [...allPrefix],
-): Array<Element> => {
-  const withPrefix = xmlDoc.getElementsByTagName(`${prefixList[0]}:${key}`);
+const getAllByKey = (xmlDoc: Document | Element, key: string): Array<Element> => {
+  const prefixedElements = Array.from(xmlDoc.getElementsByTagName('*')).filter(
+    (element) => element.localName === key,
+  );
 
-  if (withPrefix.length !== 0) {
-    return Array.from(withPrefix);
-  }
-
-  if (prefixList.length > 0) {
-    return getAllByPrefixAndKey(xmlDoc, key, prefixList.slice(1));
-  }
-
-  return Array.from(xmlDoc.getElementsByTagName(`${key}`));
+  return prefixedElements.length > 0
+    ? prefixedElements
+    : Array.from(xmlDoc.getElementsByTagName(key));
 };
 
 export const parseSAMLMetadataFromXMLFile = (
@@ -53,43 +40,32 @@ export const parseSAMLMetadataFromXMLFile = (
       throw new Error('Error parsing XML');
     }
 
-    const entityDescriptor = getByPrefixAndKey(xmlDoc, 'EntityDescriptor');
+    const entityDescriptor = getByKey(xmlDoc, 'EntityDescriptor');
     if (!entityDescriptor) throw new Error('No EntityDescriptor found');
 
-    const IDPSSODescriptor = getByPrefixAndKey(xmlDoc, 'IDPSSODescriptor');
-    if (!IDPSSODescriptor) throw new Error('No IDPSSODescriptor found');
+    const idpSSODescriptor = getByKey(xmlDoc, 'IDPSSODescriptor');
+    if (!idpSSODescriptor) throw new Error('No IDPSSODescriptor found');
 
-    const keyDescriptors = getByPrefixAndKey(IDPSSODescriptor, 'KeyDescriptor');
+    const keyDescriptors = getByKey(idpSSODescriptor, 'KeyDescriptor');
     if (!keyDescriptors) throw new Error('No KeyDescriptor found');
 
-    const keyInfo = getByPrefixAndKey(keyDescriptors, 'KeyInfo');
+    const keyInfo = getByKey(keyDescriptors, 'KeyInfo');
     if (!keyInfo) throw new Error('No KeyInfo found');
 
-    const x509Data = getByPrefixAndKey(keyInfo, 'X509Data');
+    const x509Data = getByKey(keyInfo, 'X509Data');
     if (!x509Data) throw new Error('No X509Data found');
 
-    const x509Certificate = getByPrefixAndKey(
-      x509Data,
-      'X509Certificate',
-    )?.textContent?.trim();
+    const x509Certificate = getByKey(x509Data, 'X509Certificate')?.textContent?.trim();
     if (!x509Certificate) throw new Error('No X509Certificate found');
 
-    const singleSignOnServices = getAllByPrefixAndKey(
-      IDPSSODescriptor,
-      'SingleSignOnService',
-    );
+    const singleSignOnServices = getAllByKey(idpSSODescriptor, 'SingleSignOnService');
+
+    const ssoUrl = singleSignOnServices
+      .map((service) => service.getAttribute('Location'))
+      .find((location) => urlSchema.safeParse(location).success);
 
     const result = {
-      ssoUrl: singleSignOnServices
-        .map((service) => ({
-          Binding: service.getAttribute('Binding'),
-          Location: service.getAttribute('Location'),
-        }))
-        .find(
-          (singleSignOnService) =>
-            singleSignOnService.Binding ===
-            'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect',
-        )?.Location,
+      ssoUrl,
       certificate: x509Certificate,
       entityID: entityDescriptor?.getAttribute('entityID'),
     };
