@@ -448,10 +448,10 @@ msgstr ""
 msgid "Agency"
 msgstr ""
 
-#. js-lingui-id: /C6Pwb
+#. js-lingui-id: vZKKhf
 #: src/app/[locale]/product/feature.data.ts
-msgid "Aggregate, bar, line, pie, and gauge widgets"
-msgstr "Widgets agrégat, barres, lignes, secteurs et jauges"
+msgid "Aggregate, bar, line, and pie widgets"
+msgstr ""
 
 #. js-lingui-id: rp2omj
 #: src/lib/customers/case-study-catalog.ts
@@ -1120,7 +1120,6 @@ msgstr "Licence commerciale (aucune obligation AGPL)"
 
 #. js-lingui-id: OnPROL
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Commercials"
 msgstr ""
 
@@ -1793,7 +1792,6 @@ msgstr "Découvrez une granularité de niveau entreprise, en commençant par un 
 
 #. js-lingui-id: uZRQi+
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Expertise & experience"
 msgstr ""
 
@@ -2271,7 +2269,6 @@ msgstr "Idées de l’équipe qui développe Twenty sur le CRM open source, les 
 
 #. js-lingui-id: ePYQjq
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Identity"
 msgstr ""
 
@@ -3332,7 +3329,6 @@ msgstr "Qualité niveau production"
 
 #. js-lingui-id: vERlcd
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Profile"
 msgstr ""
 

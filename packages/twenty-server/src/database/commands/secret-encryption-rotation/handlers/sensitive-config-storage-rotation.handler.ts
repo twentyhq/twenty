@@ -16,6 +16,7 @@ import {
   KeyValuePairEntity,
   KeyValuePairType,
 } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { isEncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/is-encrypted-string.util';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
@@ -111,14 +112,7 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
   }): Promise<SecretEncryptionRotationOutcome> {
     const rawValue = row.value as unknown;
 
-    if (
-      !isNonEmptyString(rawValue) ||
-      !rawValue.startsWith(SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX)
-    ) {
-      this.logger.error(
-        `[${this.siteName}] row ${row.id} (config key '${row.key}'): value is not a versioned envelope (expected '${SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX}…'), refusing to rotate.`,
-      );
-
+    if (!isNonEmptyString(rawValue) || !isEncryptedString(rawValue)) {
       return { rotated: 0, skipped: 0, errors: 1 };
     }
 

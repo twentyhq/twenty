@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Available trigger types:
 - **httpRoute**: Exposes your function on an HTTP path and method **under the `/s/` endpoint**:
 > e.g. `path: '/post-card/create'` is callable at `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+To invoke a route-triggered logic function from a (headless) front component, see [Calling a logic function](/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 - **cron**: Runs your function on a schedule using a CRON expression.
 - **databaseEvent**: Runs on workspace object lifecycle events. When the event operation is `updated`, specific fields to listen to can be specified in the `updatedFields` array. If left undefined or empty, any update will trigger the function.
 > e.g. `person.updated`, `*.created`, `company.*`

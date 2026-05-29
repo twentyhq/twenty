@@ -304,8 +304,8 @@ __metadata:
   linkType: hard
 
 "@apollo/client@npm:^4.0.0":
-  version: 4.1.6
-  resolution: "@apollo/client@npm:4.1.6"
+  version: 4.2.0
+  resolution: "@apollo/client@npm:4.2.0"
   dependencies:
     "@graphql-typed-document-node/core": "npm:^3.1.1"
     "@wry/caches": "npm:^1.0.0"
@@ -330,7 +330,7 @@ __metadata:
       optional: true
     subscriptions-transport-ws:
       optional: true
-  checksum: 10c0/ff152317932cb0ba46423161d388d1a2bc0bbc6c8ec6e2e85e915bb2ec22f461effa6fd2bbc8b754babd75ac8b52843f1e3ddf8e501cbe1d9b857e4df2f2f2df
+  checksum: 10c0/80c59430efb1bd979206aae1dcc59addd002c774dd004f1901e3266531170c66904916aa31056f216e07d8c279f27605526fe3a819ffaba304151d5d860f5943
   languageName: node
   linkType: hard
 
@@ -28661,17 +28661,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"axios@npm:^1.14.0":
-  version: 1.14.0
-  resolution: "axios@npm:1.14.0"
-  dependencies:
-    follow-redirects: "npm:^1.15.11"
-    form-data: "npm:^4.0.5"
-    proxy-from-env: "npm:^2.1.0"
-  checksum: 10c0/2541f4aa215a7d1842429dad006fc682d82bc0e74bd14500823f7d8cce3bbae0e0a8c328c8538946718f366ab8ce5a4c12e9ad40e5a0f3482ff8bff0cd115d45
-  languageName: node
-  linkType: hard
-
 "axios@npm:^1.9.0":
   version: 1.13.6
   resolution: "axios@npm:1.13.6"
@@ -32105,7 +32094,7 @@ __metadata:
     lodash.startcase: "npm:^4.4.0"
     twenty-sdk: "workspace:*"
     twenty-shared: "workspace:*"
-    typescript: "npm:^5.9.2"
+    typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:^4.5.4"
@@ -41973,9 +41962,9 @@ __metadata:
   linkType: hard
 
 "js-cookie@npm:^3.0.5":
-  version: 3.0.5
-  resolution: "js-cookie@npm:3.0.5"
-  checksum: 10c0/04a0e560407b4489daac3a63e231d35f4e86f78bff9d792011391b49c59f721b513411cd75714c418049c8dc9750b20fcddad1ca5a2ca616c3aca4874cce5b3a
+  version: 3.0.7
+  resolution: "js-cookie@npm:3.0.7"
+  checksum: 10c0/c921c43014e98bb94a1765663a1a10d693048d61444e374c1ecf459eba92320381f9c406e724df9aa44e819c4b606e6a7240f2abe2d5c54ad1e73a3002b191c2
   languageName: node
   linkType: hard
 
@@ -49878,13 +49867,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"proxy-from-env@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "proxy-from-env@npm:2.1.0"
-  checksum: 10c0/ed01729fd4d094eab619cd7e17ce3698b3413b31eb102c4904f9875e677cd207392795d5b4adee9cec359dfd31c44d5ad7595a3a3ad51c40250e141512281c58
-  languageName: node
-  linkType: hard
-
 "proxy-memoize@npm:3.0.1":
   version: 3.0.1
   resolution: "proxy-memoize@npm:3.0.1"
@@ -56352,7 +56334,7 @@ __metadata:
     graphql: "npm:^16.8.1"
     tsc-alias: "npm:^1.8.16"
     twenty-shared: "workspace:*"
-    typescript: "npm:^5.9.2"
+    typescript: "npm:^5.9.3"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:^4.5.4"
     vite-tsconfig-paths: "npm:^4.2.1"
@@ -56459,8 +56441,8 @@ __metadata:
     "@storybook/addon-vitest": "npm:^10.2.13"
     "@storybook/react-vite": "npm:^10.2.13"
     "@types/node": "npm:^24.0.0"
-    "@types/react": "npm:^19.0.0"
-    "@types/react-dom": "npm:^19.0.0"
+    "@types/react": "npm:^18.2.39"
+    "@types/react-dom": "npm:^18.2.15"
     "@typescript/native-preview": "npm:^7.0.0-dev.20260116.1"
     "@vitest/browser-playwright": "npm:^4.0.18"
     playwright: "npm:^1.56.1"
@@ -56703,7 +56685,7 @@ __metadata:
     twenty-client-sdk: "workspace:*"
     twenty-shared: "workspace:*"
     twenty-ui: "workspace:*"
-    typescript: "npm:^5.9.2"
+    typescript: "npm:^5.9.3"
     uuid: "npm:^13.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:^4.5.4"
@@ -56997,7 +56979,7 @@ __metadata:
     transliteration: "npm:^2.3.5"
     tsc-alias: "npm:^1.8.16"
     tsx: "npm:^4.19.3"
-    typescript: "npm:^5.9.2"
+    typescript: "npm:^5.9.3"
     uuid: "npm:^9.0.0"
     vite: "npm:^7.0.0"
     vite-plugin-dts: "npm:3.8.1"
@@ -57101,7 +57083,6 @@ __metadata:
     "@types/react-dom": "npm:^19"
     "@types/three": "npm:^0.183.1"
     "@wyw-in-js/babel-preset": "npm:^0.8.1"
-    axios: "npm:^1.14.0"
     babel-plugin-react-compiler: "npm:1.0.0"
     framer-motion: "npm:^11.18.0"
     gray-matter: "npm:^4.0.3"
@@ -57466,23 +57447,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:5.9.2":
-  version: 5.9.2
-  resolution: "typescript@npm:5.9.2"
+"typescript@npm:5.9.3":
+  version: 5.9.3
+  resolution: "typescript@npm:5.9.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/cd635d50f02d6cf98ed42de2f76289701c1ec587a363369255f01ed15aaf22be0813226bff3c53e99d971f9b540e0b3cc7583dbe05faded49b1b0bed2f638a18
+  checksum: 10c0/6bd7552ce39f97e711db5aa048f6f9995b53f1c52f7d8667c1abdc1700c68a76a308f579cd309ce6b53646deb4e9a1be7c813a93baaf0a28ccd536a30270e1c5
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>":
-  version: 5.9.2
-  resolution: "typescript@patch:typescript@npm%3A5.9.2#optional!builtin<compat/typescript>::version=5.9.2&hash=5786d5"
+"typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>":
+  version: 5.9.3
+  resolution: "typescript@patch:typescript@npm%3A5.9.3#optional!builtin<compat/typescript>::version=5.9.3&hash=5786d5"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 10c0/34d2a8e23eb8e0d1875072064d5e1d9c102e0bdce56a10a25c0b917b8aa9001a9cf5c225df12497e99da107dc379360bc138163c66b55b95f5b105b50578067e
+  checksum: 10c0/ad09fdf7a756814dce65bc60c1657b40d44451346858eea230e10f2e95a289d9183b6e32e5c11e95acc0ccc214b4f36289dcad4bf1886b0adb84d711d336a430
   languageName: node
   linkType: hard
 

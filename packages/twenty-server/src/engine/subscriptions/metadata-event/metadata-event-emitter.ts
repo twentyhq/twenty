@@ -98,9 +98,9 @@ export class MetadataEventEmitter {
         metadataName,
         type,
       });
-      const occurence = grouped.get(eventName);
+      const occurrence = grouped.get(eventName);
 
-      if (!isDefined(occurence)) {
+      if (!isDefined(occurrence)) {
         grouped.set(eventName, {
           eventName,
           metadataName,
@@ -111,8 +111,8 @@ export class MetadataEventEmitter {
       }
 
       grouped.set(eventName, {
-        ...occurence,
-        events: [...occurence.events, metadataEvent],
+        ...occurrence,
+        events: [...occurrence.events, metadataEvent],
       });
     }
 

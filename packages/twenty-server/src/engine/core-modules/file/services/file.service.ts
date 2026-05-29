@@ -18,6 +18,8 @@ import { getContentDisposition } from 'src/engine/core-modules/file/utils/get-co
 import { removeFileFolderFromFileEntityPath } from 'src/engine/core-modules/file/utils/remove-file-folder-from-file-entity-path.utils';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
@@ -28,8 +30,8 @@ export class FileService {
     private readonly jwtWrapperService: JwtWrapperService,
     private readonly fileStorageService: FileStorageService,
     private readonly twentyConfigService: TwentyConfigService,
-    @InjectRepository(FileEntity)
-    private readonly fileRepository: Repository<FileEntity>,
+    @InjectWorkspaceScopedRepository(FileEntity)
+    private readonly fileRepository: WorkspaceScopedRepository<FileEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
@@ -56,10 +58,9 @@ export class FileService {
       return null;
     }
 
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         path: `${fileFolder}/${filepath}`,
-        workspaceId,
         applicationId,
       },
     });
@@ -101,10 +102,9 @@ export class FileService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<{ stream: Readable; mimeType: string } | null> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
-        workspaceId,
         path: Like(`${fileFolder}/%`),
       },
     });
@@ -157,10 +157,9 @@ export class FileService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<FileResponse | null> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOne(params.workspaceId, {
       where: {
         id: params.fileId,
-        workspaceId: params.workspaceId,
         path: Like(`${params.fileFolder}/%`),
       },
     });
@@ -230,10 +229,9 @@ export class FileService {
     workspaceId: string;
     fileFolder: FileFolder;
   }): Promise<{ buffer: Buffer; mimeType: string } | null> {
-    const file = await this.fileRepository.findOne({
+    const file = await this.fileRepository.findOne(workspaceId, {
       where: {
         id: fileId,
-        workspaceId,
         path: Like(`${fileFolder}/%`),
       },
     });

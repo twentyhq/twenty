@@ -17,6 +17,7 @@ import { FieldWidgetMorphRelationCard } from '@/page-layout/widgets/field/compon
 import { FieldWidgetMorphRelationField } from '@/page-layout/widgets/field/components/FieldWidgetMorphRelationField';
 import { FieldWidgetRelationCard } from '@/page-layout/widgets/field/components/FieldWidgetRelationCard';
 import { FieldWidgetRelationField } from '@/page-layout/widgets/field/components/FieldWidgetRelationField';
+import { FieldWidgetRelationTable } from '@/page-layout/widgets/field/components/FieldWidgetRelationTable';
 import { assertFieldWidgetOrThrow } from '@/page-layout/widgets/field/utils/assertFieldWidgetOrThrow';
 import { FieldWidgetTextEditor } from '@/page-layout/widgets/field/components/FieldWidgetTextEditor';
 import { useLayoutRenderingContext } from '@/ui/layout/contexts/LayoutRenderingContext';
@@ -155,6 +156,15 @@ export const FieldWidget = ({ widget }: FieldWidgetProps) => {
           fieldDefinition={fieldDefinition}
           relationValue={record}
           isInSidePanel={isInSidePanel}
+        />
+      );
+    }
+
+    if (fieldDisplayMode === FieldDisplayMode.TABLE) {
+      return (
+        <FieldWidgetRelationTable
+          fieldDefinition={fieldDefinition}
+          recordId={targetRecord.id}
         />
       );
     }

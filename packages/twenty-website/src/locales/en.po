@@ -443,10 +443,10 @@ msgstr "Africa"
 msgid "Agency"
 msgstr "Agency"
 
-#. js-lingui-id: /C6Pwb
+#. js-lingui-id: vZKKhf
 #: src/app/[locale]/product/feature.data.ts
-msgid "Aggregate, bar, line, pie, and gauge widgets"
-msgstr "Aggregate, bar, line, pie, and gauge widgets"
+msgid "Aggregate, bar, line, and pie widgets"
+msgstr "Aggregate, bar, line, and pie widgets"
 
 #. js-lingui-id: rp2omj
 #: src/lib/customers/case-study-catalog.ts
@@ -1115,7 +1115,6 @@ msgstr "Commercial license (no AGPL obligations)"
 
 #. js-lingui-id: OnPROL
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Commercials"
 msgstr "Commercials"
 
@@ -1788,7 +1787,6 @@ msgstr "Experience enterprise-grade granularity, starting with an 11th permissio
 
 #. js-lingui-id: uZRQi+
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Expertise & experience"
 msgstr "Expertise & experience"
 
@@ -2266,7 +2264,6 @@ msgstr "Ideas from the team building Twenty on open source CRM, customer data, G
 
 #. js-lingui-id: ePYQjq
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Identity"
 msgstr "Identity"
 
@@ -3327,7 +3324,6 @@ msgstr "Production grade quality"
 
 #. js-lingui-id: vERlcd
 #: src/sections/PartnerApplication/partner-application-modal-data.ts
-#: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 msgid "Profile"
 msgstr "Profile"
 

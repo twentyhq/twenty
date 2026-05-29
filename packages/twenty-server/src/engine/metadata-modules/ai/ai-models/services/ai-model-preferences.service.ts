@@ -1,59 +1,26 @@
-import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { FileStorageDriverFactory } from 'src/engine/core-modules/file-storage/file-storage-driver.factory';
-import { ConfigSource } from 'src/engine/core-modules/twenty-config/enums/config-source.enum';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
-import { aiModelPreferencesSchema } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.schema';
 import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 import { AiModelRole } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-role.enum';
-import { streamToBuffer } from 'src/utils/stream-to-buffer';
 
 @Injectable()
-export class AiModelPreferencesService implements OnModuleInit {
-  private readonly logger = new Logger(AiModelPreferencesService.name);
-  private filePreferences: AiModelPreferences | null = null;
-
-  constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly fileStorageDriverFactory: FileStorageDriverFactory,
-  ) {}
-
-  async onModuleInit(): Promise<void> {
-    const storagePath = this.twentyConfigService.get(
-      'AI_MODEL_PREFERENCES_STORAGE_PATH',
-    );
-
-    if (!storagePath) {
-      return;
-    }
-
-    try {
-      this.filePreferences = await this.fetchPreferences(storagePath);
-      this.logger.log(
-        `AI_MODEL_PREF - Loaded AI model preferences from storage: ${storagePath}`,
-      );
-    } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(
-        `AI_MODEL_PREF - Failed to load AI model preferences from storage: ${message}`,
-      );
-    }
-  }
+export class AiModelPreferencesService {
+  constructor(private readonly twentyConfigService: TwentyConfigService) {}
 
   getPreferences(): AiModelPreferences {
-    const { source } =
-      this.twentyConfigService.getVariableWithMetadata(
-        'AI_MODEL_PREFERENCES',
-      ) ?? {};
-
-    if (source !== ConfigSource.DEFAULT) {
-      return this.twentyConfigService.get('AI_MODEL_PREFERENCES');
-    }
-
-    return (
-      this.filePreferences ??
-      this.twentyConfigService.get('AI_MODEL_PREFERENCES')
-    );
+    return {
+      defaultFastModels: this.twentyConfigService.get('AI_MODELS_DEFAULT_FAST'),
+      defaultSmartModels: this.twentyConfigService.get(
+        'AI_MODELS_DEFAULT_SMART',
+      ),
+      recommendedModels: this.twentyConfigService.get(
+        'AI_MODELS_DEFAULT_RECOMMENDED',
+      ),
+      disabledModels: this.twentyConfigService.get(
+        'AI_MODELS_DEFAULT_DISABLED',
+      ),
+    };
   }
 
   getRecommendedModelIds(): Set<string> {
@@ -130,16 +97,23 @@ export class AiModelPreferencesService implements OnModuleInit {
   }
 
   private async persistPreferences(prefs: AiModelPreferences): Promise<void> {
-    await this.twentyConfigService.set('AI_MODEL_PREFERENCES', prefs);
-  }
-
-  private async fetchPreferences(
-    filePath: string,
-  ): Promise<AiModelPreferences> {
-    const driver = this.fileStorageDriverFactory.getCurrentDriver();
-    const stream = await driver.readFile({ filePath });
-    const body = (await streamToBuffer(stream)).toString('utf-8');
-
-    return aiModelPreferencesSchema.parse(JSON.parse(body));
+    await Promise.all([
+      this.twentyConfigService.set(
+        'AI_MODELS_DEFAULT_FAST',
+        prefs.defaultFastModels ?? [],
+      ),
+      this.twentyConfigService.set(
+        'AI_MODELS_DEFAULT_SMART',
+        prefs.defaultSmartModels ?? [],
+      ),
+      this.twentyConfigService.set(
+        'AI_MODELS_DEFAULT_RECOMMENDED',
+        prefs.recommendedModels ?? [],
+      ),
+      this.twentyConfigService.set(
+        'AI_MODELS_DEFAULT_DISABLED',
+        prefs.disabledModels ?? [],
+      ),
+    ]);
   }
 }
