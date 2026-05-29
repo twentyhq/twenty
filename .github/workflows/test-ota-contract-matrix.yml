@@ -293,6 +293,18 @@ jobs:
           }
           JS
 
+      - name: Execute verify workflow (native)
+        if: ${{ matrix.full_proof }}
+        timeout-minutes: 45
+        shell: bash
+        run: ota up --workflow verify --native --stream .
+
+      - name: Execute verify workflow (container)
+        if: ${{ matrix.full_proof }}
+        timeout-minutes: 45
+        shell: bash
+        run: ota up --workflow verify --container --stream .
+
       - name: Proof docker-selfhost workflow
         if: ${{ matrix.full_proof }}
         timeout-minutes: 90
