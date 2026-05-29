@@ -8,9 +8,11 @@ import { AwsSesRegisterDomainService } from 'src/engine/core-modules/emailing-do
 import { AwsSesHandleErrorService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-handle-error.service';
 import { AwsSesSendEmailService } from 'src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service';
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
+import { EmailGroupSuppressedRecipientEntity } from 'src/engine/core-modules/emailing-domain/email-group-suppressed-recipient.entity';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain.resolver';
 import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
+import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
@@ -19,14 +21,22 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
 @Module({
   imports: [
     TypeORMModule,
-    NestjsQueryTypeOrmModule.forFeature([EmailingDomainEntity]),
+    NestjsQueryTypeOrmModule.forFeature([
+      EmailingDomainEntity,
+      EmailGroupSuppressedRecipientEntity,
+    ]),
     FeatureFlagModule,
     PermissionsModule,
   ],
-  exports: [EmailingDomainService, EmailingDomainTenantStatusService],
+  exports: [
+    EmailingDomainService,
+    EmailingDomainTenantStatusService,
+    EmailGroupSuppressionService,
+  ],
   providers: [
     EmailingDomainService,
     EmailingDomainTenantStatusService,
+    EmailGroupSuppressionService,
     EmailingDomainResolver,
     EmailingDomainDriverFactory,
     EmailingDomainWorkspaceCleanupJob,
@@ -35,6 +45,7 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
     AwsSesRegisterDomainService,
     AwsSesSendEmailService,
     provideWorkspaceScopedRepository(EmailingDomainEntity),
+    provideWorkspaceScopedRepository(EmailGroupSuppressedRecipientEntity),
   ],
 })
 export class EmailingDomainModule {}

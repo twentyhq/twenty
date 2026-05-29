@@ -362,9 +362,12 @@ export class EmailComposerService {
       workspaceId,
     );
 
-    const messageChannel = connectedAccount.messageChannels.find(
-      (channel) => channel.handle === connectedAccount.handle,
-    );
+    const messageChannel =
+      connectedAccount.provider === ConnectedAccountProvider.EMAIL_GROUP
+        ? connectedAccount.messageChannels[0]
+        : connectedAccount.messageChannels.find(
+            (channel) => channel.handle === connectedAccount.handle,
+          );
 
     const isSmtpOnlyAccount =
       connectedAccount.provider === ConnectedAccountProvider.IMAP_SMTP_CALDAV &&

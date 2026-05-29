@@ -136,7 +136,6 @@ export class AwsSesDriver implements EmailingDomainDriverInterface {
     return this.awsSesSendEmailService.sendEmail(input, {
       tenantName: this.buildTenantName(input.workspaceId),
       configurationSetName: this.buildConfigurationSetName(input.workspaceId),
-      contactListName: this.buildContactListName(input.workspaceId),
     });
   }
 
