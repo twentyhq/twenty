@@ -6,8 +6,10 @@ import { PARTNER_APPLICATION_FIELD_COPY } from '@/sections/PartnerApplication/pa
 import {
   PARTNER_COUNTRY_OPTIONS,
   PARTNER_LANGUAGE_OPTIONS,
+  PARTNER_TYPE_OF_TEAM_OPTIONS,
   type PartnerCountryValue,
   type PartnerLanguageValue,
+  type PartnerTypeOfTeam,
 } from '@/sections/PartnerApplication/wizard/partner-fields.data';
 import type { PartnerApplicationController } from '@/sections/PartnerApplication/wizard/use-partner-application-state';
 import type { MessageDescriptor } from '@lingui/core';
@@ -35,8 +37,24 @@ export function ProfileStep({ controller }: ProfileStepProps) {
     label: i18n._(option.label as MessageDescriptor),
   }));
 
+  const teamOptions = PARTNER_TYPE_OF_TEAM_OPTIONS.map((option) => ({
+    value: option.value,
+    label: i18n._(option.label as MessageDescriptor),
+  }));
+
   return (
     <>
+      <Form.Field label={i18n._(COPY.typeOfTeam)}>
+        <Form.Select<PartnerTypeOfTeam>
+          value={state.typeOfTeam}
+          onValueChange={(value) => setField('typeOfTeam', value)}
+          placeholder={i18n._(COPY.typeOfTeamPlaceholder)}
+          options={teamOptions}
+          invalid={state.fieldErrors.typeOfTeam !== undefined}
+          name="typeOfTeam"
+          ariaLabel={i18n._(COPY.typeOfTeam)}
+        />
+      </Form.Field>
       <Form.Field>
         <Form.Input
           autoComplete="off"
@@ -57,7 +75,7 @@ export function ProfileStep({ controller }: ProfileStepProps) {
           onChange={(event) => setField('city', event.target.value)}
         />
       </Form.Field>
-      <Form.Field label={i18n._(COPY.country)}>
+      <Form.Field>
         <Form.Select<PartnerCountryValue>
           value={state.country}
           onValueChange={(value) => setField('country', value)}

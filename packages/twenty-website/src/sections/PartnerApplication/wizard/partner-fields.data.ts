@@ -33,34 +33,71 @@ export const PARTNER_TYPE_OF_TEAM_OPTIONS: ReadonlyArray<{
 ];
 
 export const PARTNER_SCOPE_VALUES = [
-  'APPS',
-  'DATA_MODEL',
-  'DATA_MIGRATION',
-  'HOSTING_ENVIRONMENT',
-  'WORKFLOWS',
+  'ADVISORY',
+  'SOLUTIONING',
+  'DEVELOPMENT',
+  'HOSTING',
+  'SUPPORT',
 ] as const;
 export type PartnerScopeValue = (typeof PARTNER_SCOPE_VALUES)[number];
 
 export const PARTNER_SCOPE_OPTIONS: ReadonlyArray<{
   value: PartnerScopeValue;
   label: MessageDescriptor;
+  description: MessageDescriptor;
+  examples: MessageDescriptor;
 }> = [
-  { value: 'APPS', label: msg`Apps` },
-  { value: 'DATA_MODEL', label: msg`Data model` },
-  { value: 'DATA_MIGRATION', label: msg`Data migration` },
-  { value: 'HOSTING_ENVIRONMENT', label: msg`Hosting environment` },
-  { value: 'WORKFLOWS', label: msg`Workflows` },
+  {
+    value: 'ADVISORY',
+    label: msg`Advisory & Discovery`,
+    description: msg`Upfront consulting, scoping, strategy.`,
+    examples: msg`CRM audit · Requirements · Process mapping · ROI · RevOps · Vendor selection`,
+  },
+  {
+    value: 'SOLUTIONING',
+    label: msg`Solutioning`,
+    description: msg`What an admin can do without writing code.`,
+    examples: msg`Data modeling · Migrations · No-code workflows · Dashboards · SSO/SCIM · Integrations`,
+  },
+  {
+    value: 'DEVELOPMENT',
+    label: msg`Custom Development`,
+    description: msg`Anything that needs a developer.`,
+    examples: msg`Custom Apps · Scripts · AI/agent integrations`,
+  },
+  {
+    value: 'HOSTING',
+    label: msg`Hosting & Infrastructure`,
+    description: msg`Anything that needs devops skills.`,
+    examples: msg`Self-hosted (Docker/K8s) · Cloud architecture · Scaling · Security · Monitoring`,
+  },
+  {
+    value: 'SUPPORT',
+    label: msg`Training, Adoption & Support`,
+    description: msg`User-side rollout & ongoing support.`,
+    examples: msg`Onboarding · Documentation · Change management · L1/L2 support · Managed services`,
+  },
 ];
 
-export const PARTNER_DEPLOYMENT_VALUES = ['CLOUD', 'SELF_HOST'] as const;
-export type PartnerDeploymentValue = (typeof PARTNER_DEPLOYMENT_VALUES)[number];
-
-export const PARTNER_DEPLOYMENT_OPTIONS: ReadonlyArray<{
-  value: PartnerDeploymentValue;
-  label: MessageDescriptor;
-}> = [
-  { value: 'CLOUD', label: msg`Cloud` },
-  { value: 'SELF_HOST', label: msg`Self-host` },
+export const PARTNER_SKILL_SUGGESTIONS: ReadonlyArray<string> = [
+  'React',
+  'TypeScript',
+  'Node.js',
+  'Python',
+  'PostgreSQL',
+  'GraphQL',
+  'n8n',
+  'Zapier',
+  'Make',
+  'Salesforce',
+  'HubSpot',
+  'SAP',
+  'Shopify',
+  'Stripe',
+  'Docker',
+  'Kubernetes',
+  'AWS',
+  'GCP',
 ];
 
 export const PARTNER_COUNTRY_VALUES = [
@@ -510,7 +547,7 @@ export const PARTNER_APPLICATION_STEP_REQUIRED_FIELDS: Record<
   ReadonlyArray<string>
 > = {
   identity: ['name', 'email', 'company'],
-  profile: ['country'],
-  expertise: ['typeOfTeam', 'partnerScope', 'deploymentExpertise'],
+  profile: ['country', 'typeOfTeam'],
+  expertise: ['partnerScope'],
   commercials: [],
 };

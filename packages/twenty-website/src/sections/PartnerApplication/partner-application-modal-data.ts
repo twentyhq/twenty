@@ -40,14 +40,13 @@ export const PARTNER_APPLICATION_FIELD_COPY = {
   // Expertise
   typeOfTeam: msg`Type of team *`,
   typeOfTeamPlaceholder: msg`Solo or agency?`,
-  partnerScope: msg`What do you cover *`,
-  partnerScopeHint: msg`Pick everything that applies.`,
+  partnerScope: msg`What you cover *`,
+  partnerScopeHint: msg`Pick every category that applies.`,
   skills: msg`Technical skills`,
   skillsHint: msg`Press Enter or comma to add a skill.`,
   skillsPlaceholder: msg`e.g. React, Postgres, n8n…`,
-  deployment: msg`Deployment expertise *`,
-  workspaceUrl: msg`Your Twenty workspace URL`,
-  customerReferences: msg`Customer references`,
+  applicationNotes: msg`Anything else we should know?`,
+  applicationNotesPlaceholder: msg`Workspace URL, customer references, relevant links…`,
   // Commercials
   hourlyRate: msg`Hourly rate`,
   hourlyRatePlaceholder: msg`150`,

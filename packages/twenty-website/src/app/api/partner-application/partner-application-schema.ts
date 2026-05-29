@@ -1,6 +1,5 @@
 import {
   PARTNER_COUNTRY_VALUES,
-  PARTNER_DEPLOYMENT_VALUES,
   PARTNER_LANGUAGE_VALUES,
   PARTNER_SCOPE_VALUES,
   PARTNER_TYPE_OF_TEAM_VALUES,
@@ -40,9 +39,7 @@ export const partnerApplicationRequestSchema = z.strictObject({
   typeOfTeam: z.enum(PARTNER_TYPE_OF_TEAM_VALUES).optional(),
   partnerScope: z.array(z.enum(PARTNER_SCOPE_VALUES)).optional(),
   skills: z.array(z.string().trim().min(1)).optional(),
-  deploymentExpertise: z.array(z.enum(PARTNER_DEPLOYMENT_VALUES)).optional(),
-  workspaceUrl: optionalUrl,
-  customerReferences: optionalNonEmptyString,
+  applicationNotes: optionalNonEmptyString,
 
   // Commercials
   hourlyRate: optionalNonNegativeNumber,
@@ -67,11 +64,7 @@ export type PartnerApplicationLogicFunctionPayload = {
   typeOfTeam?: (typeof PARTNER_TYPE_OF_TEAM_VALUES)[number];
   partnerScope?: ReadonlyArray<(typeof PARTNER_SCOPE_VALUES)[number]>;
   skills?: ReadonlyArray<string>;
-  deploymentExpertise?: ReadonlyArray<
-    (typeof PARTNER_DEPLOYMENT_VALUES)[number]
-  >;
-  workspaceUrl?: string;
-  customerReferences?: string;
+  applicationNotes?: string;
   hourlyRate?: number;
   projectBudgetMin?: number;
   calendarLink?: string;
@@ -100,15 +93,8 @@ export function buildLogicFunctionPayload(
     payload.partnerScope = request.partnerScope;
   if (request.skills !== undefined && request.skills.length > 0)
     payload.skills = request.skills;
-  if (
-    request.deploymentExpertise !== undefined &&
-    request.deploymentExpertise.length > 0
-  )
-    payload.deploymentExpertise = request.deploymentExpertise;
-  if (request.workspaceUrl !== undefined)
-    payload.workspaceUrl = request.workspaceUrl;
-  if (request.customerReferences !== undefined)
-    payload.customerReferences = request.customerReferences;
+  if (request.applicationNotes !== undefined)
+    payload.applicationNotes = request.applicationNotes;
   if (request.hourlyRate !== undefined) payload.hourlyRate = request.hourlyRate;
   if (request.projectBudgetMin !== undefined)
     payload.projectBudgetMin = request.projectBudgetMin;

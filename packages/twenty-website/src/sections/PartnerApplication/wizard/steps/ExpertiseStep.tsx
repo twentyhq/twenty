@@ -4,13 +4,11 @@ import { Form } from '@/design-system/components';
 import { useLingui } from '@lingui/react';
 import { PARTNER_APPLICATION_FIELD_COPY } from '@/sections/PartnerApplication/partner-application-modal-data';
 import {
-  PARTNER_DEPLOYMENT_OPTIONS,
   PARTNER_SCOPE_OPTIONS,
-  PARTNER_TYPE_OF_TEAM_OPTIONS,
-  type PartnerDeploymentValue,
+  PARTNER_SKILL_SUGGESTIONS,
   type PartnerScopeValue,
-  type PartnerTypeOfTeam,
 } from '@/sections/PartnerApplication/wizard/partner-fields.data';
+import { CategoryCardSelect } from '@/sections/PartnerApplication/wizard/steps/CategoryCardSelect';
 import type { PartnerApplicationController } from '@/sections/PartnerApplication/wizard/use-partner-application-state';
 import type { MessageDescriptor } from '@lingui/core';
 
@@ -22,43 +20,25 @@ type ExpertiseStepProps = {
 
 export function ExpertiseStep({ controller }: ExpertiseStepProps) {
   const { i18n } = useLingui();
-  const { state, setField, toggleScope, toggleDeployment, setSkills } =
-    controller;
+  const { state, setField, toggleScope, setSkills } = controller;
 
-  const teamOptions = PARTNER_TYPE_OF_TEAM_OPTIONS.map((option) => ({
+  const categoryOptions = PARTNER_SCOPE_OPTIONS.map((option) => ({
     value: option.value,
     label: i18n._(option.label as MessageDescriptor),
-  }));
-  const scopeOptions = PARTNER_SCOPE_OPTIONS.map((option) => ({
-    value: option.value,
-    label: i18n._(option.label as MessageDescriptor),
-  }));
-  const deploymentOptions = PARTNER_DEPLOYMENT_OPTIONS.map((option) => ({
-    value: option.value,
-    label: i18n._(option.label as MessageDescriptor),
+    description: i18n._(option.description as MessageDescriptor),
+    examples: i18n._(option.examples as MessageDescriptor),
   }));
 
   return (
     <>
-      <Form.Field label={i18n._(COPY.typeOfTeam)}>
-        <Form.Select<PartnerTypeOfTeam>
-          value={state.typeOfTeam}
-          onValueChange={(value) => setField('typeOfTeam', value)}
-          placeholder={i18n._(COPY.typeOfTeamPlaceholder)}
-          options={teamOptions}
-          invalid={state.fieldErrors.typeOfTeam !== undefined}
-          name="typeOfTeam"
-          ariaLabel={i18n._(COPY.typeOfTeam)}
-        />
-      </Form.Field>
       <Form.Field
         label={i18n._(COPY.partnerScope)}
         hint={i18n._(COPY.partnerScopeHint)}
       >
-        <Form.MultiSelect<PartnerScopeValue>
+        <CategoryCardSelect<PartnerScopeValue>
+          options={categoryOptions}
           values={state.partnerScope}
           onToggle={toggleScope}
-          options={scopeOptions}
           invalid={state.fieldErrors.partnerScope !== undefined}
           ariaLabel={i18n._(COPY.partnerScope)}
         />
@@ -69,37 +49,16 @@ export function ExpertiseStep({ controller }: ExpertiseStepProps) {
           onValuesChange={setSkills}
           placeholder={i18n._(COPY.skillsPlaceholder)}
           ariaLabel={i18n._(COPY.skills)}
+          suggestions={PARTNER_SKILL_SUGGESTIONS}
         />
       </Form.Field>
-      <Form.Field label={i18n._(COPY.deployment)}>
-        <Form.MultiSelect<PartnerDeploymentValue>
-          values={state.deploymentExpertise}
-          onToggle={toggleDeployment}
-          options={deploymentOptions}
-          invalid={state.fieldErrors.deploymentExpertise !== undefined}
-          ariaLabel={i18n._(COPY.deployment)}
-        />
-      </Form.Field>
-      <Form.Field>
-        <Form.Input
-          autoComplete="off"
-          name="workspaceUrl"
-          placeholder={i18n._(COPY.workspaceUrl)}
-          type="text"
-          value={state.workspaceUrl}
-          onChange={(event) => setField('workspaceUrl', event.target.value)}
-          aria-invalid={state.fieldErrors.workspaceUrl ? true : undefined}
-        />
-      </Form.Field>
-      <Form.Field>
+      <Form.Field label={i18n._(COPY.applicationNotes)}>
         <Form.Textarea
           autoComplete="off"
-          name="customerReferences"
-          placeholder={i18n._(COPY.customerReferences)}
-          value={state.customerReferences}
-          onChange={(event) =>
-            setField('customerReferences', event.target.value)
-          }
+          name="applicationNotes"
+          placeholder={i18n._(COPY.applicationNotesPlaceholder)}
+          value={state.applicationNotes}
+          onChange={(event) => setField('applicationNotes', event.target.value)}
         />
       </Form.Field>
     </>

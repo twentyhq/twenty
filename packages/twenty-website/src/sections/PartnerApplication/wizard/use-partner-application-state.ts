@@ -5,7 +5,6 @@ import {
   PARTNER_APPLICATION_STEP_REQUIRED_FIELDS,
   type PartnerApplicationStepId,
   type PartnerCountryValue,
-  type PartnerDeploymentValue,
   type PartnerLanguageValue,
   type PartnerScopeValue,
   type PartnerTypeOfTeam,
@@ -32,9 +31,7 @@ export type PartnerApplicationState = {
   typeOfTeam: PartnerTypeOfTeam | '';
   partnerScope: PartnerScopeValue[];
   skills: string[];
-  deploymentExpertise: PartnerDeploymentValue[];
-  workspaceUrl: string;
-  customerReferences: string;
+  applicationNotes: string;
 
   // Commercials
   hourlyRate: string;
@@ -61,9 +58,7 @@ export const INITIAL_PARTNER_APPLICATION_STATE: PartnerApplicationState = {
   typeOfTeam: '',
   partnerScope: [],
   skills: [],
-  deploymentExpertise: [],
-  workspaceUrl: '',
-  customerReferences: '',
+  applicationNotes: '',
   hourlyRate: '',
   projectBudgetMin: '',
   calendarLink: '',
@@ -82,8 +77,7 @@ export type ScalarFieldName =
   | 'city'
   | 'country'
   | 'typeOfTeam'
-  | 'workspaceUrl'
-  | 'customerReferences'
+  | 'applicationNotes'
   | 'hourlyRate'
   | 'projectBudgetMin'
   | 'calendarLink';
@@ -91,7 +85,6 @@ export type ScalarFieldName =
 export type PartnerApplicationAction =
   | { type: 'SET_FIELD'; field: ScalarFieldName; value: string }
   | { type: 'TOGGLE_SCOPE'; value: PartnerScopeValue }
-  | { type: 'TOGGLE_DEPLOYMENT'; value: PartnerDeploymentValue }
   | { type: 'TOGGLE_LANGUAGE'; value: PartnerLanguageValue }
   | { type: 'SET_SKILLS'; value: string[] }
   | { type: 'GO_NEXT' }
@@ -136,11 +129,6 @@ function validateStep(
       errors.linkedin = 'invalid_url';
     }
   }
-  if (stepId === 'expertise') {
-    if (state.workspaceUrl && !URL_PATTERN.test(state.workspaceUrl)) {
-      errors.workspaceUrl = 'invalid_url';
-    }
-  }
   if (stepId === 'commercials') {
     if (state.calendarLink && !URL_PATTERN.test(state.calendarLink)) {
       errors.calendarLink = 'invalid_url';
@@ -178,16 +166,6 @@ export function partnerApplicationReducer(
         ...state,
         partnerScope: next,
         fieldErrors: dropError(state.fieldErrors, 'partnerScope'),
-      };
-    }
-    case 'TOGGLE_DEPLOYMENT': {
-      const next = state.deploymentExpertise.includes(action.value)
-        ? state.deploymentExpertise.filter((v) => v !== action.value)
-        : [...state.deploymentExpertise, action.value];
-      return {
-        ...state,
-        deploymentExpertise: next,
-        fieldErrors: dropError(state.fieldErrors, 'deploymentExpertise'),
       };
     }
     case 'TOGGLE_LANGUAGE': {
@@ -249,11 +227,6 @@ export function usePartnerApplicationState() {
     (value: PartnerScopeValue) => dispatch({ type: 'TOGGLE_SCOPE', value }),
     [],
   );
-  const toggleDeployment = useCallback(
-    (value: PartnerDeploymentValue) =>
-      dispatch({ type: 'TOGGLE_DEPLOYMENT', value }),
-    [],
-  );
   const toggleLanguage = useCallback(
     (value: PartnerLanguageValue) =>
       dispatch({ type: 'TOGGLE_LANGUAGE', value }),
@@ -283,7 +256,6 @@ export function usePartnerApplicationState() {
     state,
     setField,
     toggleScope,
-    toggleDeployment,
     toggleLanguage,
     setSkills,
     goNext,

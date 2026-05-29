@@ -181,8 +181,7 @@ describe('POST /api/partner-application', () => {
           country: 'FRANCE',
           languages: ['ENGLISH', 'FRENCH'],
           typeOfTeam: 'SOLO',
-          partnerScope: ['APPS'],
-          deploymentExpertise: ['CLOUD'],
+          partnerScope: ['ADVISORY'],
           hourlyRate: 150,
         }),
         ip: '203.0.113.24',
@@ -195,8 +194,7 @@ describe('POST /api/partner-application', () => {
       country: 'FRANCE',
       languages: ['ENGLISH', 'FRENCH'],
       typeOfTeam: 'SOLO',
-      partnerScope: ['APPS'],
-      deploymentExpertise: ['CLOUD'],
+      partnerScope: ['ADVISORY'],
       hourlyRate: 150,
     });
   });

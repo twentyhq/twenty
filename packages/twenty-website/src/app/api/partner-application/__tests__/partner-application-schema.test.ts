@@ -17,11 +17,10 @@ const fullValid = {
   country: 'UNITED_KINGDOM',
   languages: ['ENGLISH', 'FRENCH'],
   typeOfTeam: 'SOLO',
-  partnerScope: ['APPS', 'DATA_MODEL'],
+  partnerScope: ['ADVISORY', 'SOLUTIONING'],
   skills: ['React', 'TypeScript'],
-  deploymentExpertise: ['CLOUD'],
-  workspaceUrl: 'https://app.twenty.com/workspace/ada',
-  customerReferences: 'Acme Corp, Globex',
+  applicationNotes:
+    'Workspace https://app.twenty.com/ws/ada · refs: Acme, Globex',
   hourlyRate: 150,
   projectBudgetMin: 5000,
   calendarLink: 'https://cal.com/ada',
@@ -50,6 +49,27 @@ describe('partnerApplicationRequestSchema', () => {
     const parsed = partnerApplicationRequestSchema.safeParse({
       ...minimalValid,
       partnerScope: ['NOPE'],
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('rejects a legacy scope enum value', () => {
+    const parsed = partnerApplicationRequestSchema.safeParse({
+      ...minimalValid,
+      partnerScope: ['APPS'],
+    });
+    expect(parsed.success).toBe(false);
+  });
+
+  it('forwards applicationNotes through to the payload', () => {
+    const payload = buildLogicFunctionPayload(fullValid as never);
+    expect(payload.applicationNotes).toContain('Acme');
+  });
+
+  it('rejects the removed deploymentExpertise key (strictObject)', () => {
+    const parsed = partnerApplicationRequestSchema.safeParse({
+      ...minimalValid,
+      deploymentExpertise: ['CLOUD'],
     });
     expect(parsed.success).toBe(false);
   });

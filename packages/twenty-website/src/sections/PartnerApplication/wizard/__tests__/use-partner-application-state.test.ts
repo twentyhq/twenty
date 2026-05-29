@@ -34,12 +34,12 @@ describe('partnerApplicationReducer', () => {
   it('TOGGLE_SCOPE adds and then removes a scope value', () => {
     const added = partnerApplicationReducer(INITIAL_PARTNER_APPLICATION_STATE, {
       type: 'TOGGLE_SCOPE',
-      value: 'APPS',
+      value: 'ADVISORY',
     });
-    expect(added.partnerScope).toEqual(['APPS']);
+    expect(added.partnerScope).toEqual(['ADVISORY']);
     const removed = partnerApplicationReducer(added, {
       type: 'TOGGLE_SCOPE',
-      value: 'APPS',
+      value: 'ADVISORY',
     });
     expect(removed.partnerScope).toEqual([]);
   });
@@ -124,5 +124,32 @@ describe('partnerApplicationReducer', () => {
     expect(partnerApplicationReducer(dirty, { type: 'RESET' })).toEqual(
       INITIAL_PARTNER_APPLICATION_STATE,
     );
+  });
+
+  it('GO_NEXT on Profile requires country and typeOfTeam', () => {
+    const onProfile: PartnerApplicationState = {
+      ...INITIAL_PARTNER_APPLICATION_STATE,
+      stepIndex: 1,
+      country: 'FRANCE',
+    };
+    const blocked = partnerApplicationReducer(onProfile, { type: 'GO_NEXT' });
+    expect(blocked.stepIndex).toBe(1);
+    expect(blocked.fieldErrors.typeOfTeam).toBe('required');
+
+    const ok = partnerApplicationReducer(
+      { ...onProfile, typeOfTeam: 'SOLO' },
+      { type: 'GO_NEXT' },
+    );
+    expect(ok.stepIndex).toBe(2);
+    expect(ok.fieldErrors).toEqual({});
+  });
+
+  it('SET_FIELD sets applicationNotes', () => {
+    const next = partnerApplicationReducer(INITIAL_PARTNER_APPLICATION_STATE, {
+      type: 'SET_FIELD',
+      field: 'applicationNotes',
+      value: 'Workspace: https://x · refs: Acme',
+    });
+    expect(next.applicationNotes).toBe('Workspace: https://x · refs: Acme');
   });
 });

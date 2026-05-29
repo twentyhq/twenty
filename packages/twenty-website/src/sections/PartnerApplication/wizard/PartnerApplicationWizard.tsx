@@ -185,6 +185,18 @@ export function PartnerApplicationWizard({
       ? PARTNER_APPLICATION_MODAL_COPY.validation.invalidUrl
       : PARTNER_APPLICATION_MODAL_COPY.validation.incompleteForm;
 
+  const stepLabelNode = (
+    <>
+      {i18n._(
+        PARTNER_APPLICATION_MODAL_COPY.stepProgressLabel(
+          stepIndex + 1,
+          STEPS.length,
+        ),
+      )}{' '}
+      · {i18n._(PARTNER_APPLICATION_STEP_HEADER_LABELS[stepId])}
+    </>
+  );
+
   const handleSubmit = useCallback(
     async (event: React.FormEvent<HTMLFormElement>) => {
       event.preventDefault();
@@ -208,12 +220,8 @@ export function PartnerApplicationWizard({
       if (state.partnerScope.length > 0)
         payload.partnerScope = state.partnerScope;
       if (state.skills.length > 0) payload.skills = state.skills;
-      if (state.deploymentExpertise.length > 0)
-        payload.deploymentExpertise = state.deploymentExpertise;
-      if (state.workspaceUrl.trim())
-        payload.workspaceUrl = state.workspaceUrl.trim();
-      if (state.customerReferences.trim())
-        payload.customerReferences = state.customerReferences.trim();
+      if (state.applicationNotes.trim())
+        payload.applicationNotes = state.applicationNotes.trim();
       const hourlyRate = parseFloat(state.hourlyRate);
       if (Number.isFinite(hourlyRate) && hourlyRate >= 0)
         payload.hourlyRate = hourlyRate;
@@ -298,43 +306,43 @@ export function PartnerApplicationWizard({
   return (
     <>
       <TitleBlock>
-        <Modal.Title
-          render={
-            <TitleHeadingWrapper>
-              <Heading as="h2" size="lg" weight="light">
-                <HeadingPart fontFamily="serif" fontWeight="light">
-                  {i18n._(PARTNER_APPLICATION_MODAL_COPY.titleSerif)}
-                </HeadingPart>
-                <br />
-                <HeadingPart fontFamily="sans" fontWeight="light">
-                  {i18n._(PARTNER_APPLICATION_MODAL_COPY.titleSans)}
-                </HeadingPart>
-              </Heading>
-            </TitleHeadingWrapper>
-          }
-        />
-        <Modal.Description
-          render={
-            <SubtitleStack>
-              <Body size="md">
-                {i18n._(PARTNER_APPLICATION_MODAL_COPY.subtitleLine1)}
-              </Body>
-              <Body size="md">
-                {i18n._(PARTNER_APPLICATION_MODAL_COPY.subtitleLine2)}
-              </Body>
-            </SubtitleStack>
-          }
-        />
+        {stepIndex === 0 ? (
+          <>
+            <Modal.Title
+              render={
+                <TitleHeadingWrapper>
+                  <Heading as="h2" size="lg" weight="light">
+                    <HeadingPart fontFamily="serif" fontWeight="light">
+                      {i18n._(PARTNER_APPLICATION_MODAL_COPY.titleSerif)}
+                    </HeadingPart>
+                    <br />
+                    <HeadingPart fontFamily="sans" fontWeight="light">
+                      {i18n._(PARTNER_APPLICATION_MODAL_COPY.titleSans)}
+                    </HeadingPart>
+                  </Heading>
+                </TitleHeadingWrapper>
+              }
+            />
+            <Modal.Description
+              render={
+                <SubtitleStack>
+                  <Body size="md">
+                    {i18n._(PARTNER_APPLICATION_MODAL_COPY.subtitleLine1)}
+                  </Body>
+                  <Body size="md">
+                    {i18n._(PARTNER_APPLICATION_MODAL_COPY.subtitleLine2)}
+                  </Body>
+                </SubtitleStack>
+              }
+            />
+          </>
+        ) : null}
         <HeaderStrip>
-          <HeaderLabel>
-            {i18n._(
-              PARTNER_APPLICATION_MODAL_COPY.stepProgressLabel(
-                stepIndex + 1,
-                STEPS.length,
-              ),
-            )}{' '}
-            · {i18n._(PARTNER_APPLICATION_STEP_HEADER_LABELS[stepId])}
-          </HeaderLabel>
+          {stepIndex === 0 ? (
+            <HeaderLabel>{stepLabelNode}</HeaderLabel>
+          ) : (
+            <Modal.Title render={<HeaderLabel>{stepLabelNode}</HeaderLabel>} />
+          )}
           <StepIndicator stepCount={STEPS.length} activeStepIndex={stepIndex} />
         </HeaderStrip>
       </TitleBlock>
