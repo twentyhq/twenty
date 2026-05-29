@@ -472,6 +472,15 @@ export default defineObject({
       isNullable: true,
     },
     {
+      universalIdentifier: 'a0000011-0000-4000-8000-000000000011',
+      type: FieldType.TEXT,
+      name: 'applicationNotes',
+      label: 'Application Notes',
+      icon: 'IconClipboardText',
+      isNullable: true,
+      defaultValue: "'null'",
+    },
+    {
       universalIdentifier: 'a0000010-0000-4000-8000-000000000010',
       type: FieldType.DATE_TIME,
       name: 'lastMatchAt',
