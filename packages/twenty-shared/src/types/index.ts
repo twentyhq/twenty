@@ -173,7 +173,6 @@ export type {
 export type { GridPosition } from './page-layout/grid-position.type';
 export type {
   AggregateChartConfiguration,
-  GaugeChartConfiguration,
   PieChartConfiguration,
   BarChartConfiguration,
   LineChartConfiguration,
