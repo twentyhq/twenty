@@ -1,3 +1,5 @@
+'use client';
+
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
