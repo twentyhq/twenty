@@ -7719,12 +7719,6 @@ msgstr "Function name"
 msgid "Functions - Settings"
 msgstr "Functions - Settings"
 
-#. js-lingui-id: vYj1cC
-#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
-#: src/modules/page-layout/utils/getWidgetTitle.ts
-msgid "Gauge Chart"
-msgstr "Gauge Chart"
-
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -16932,8 +16926,6 @@ msgstr "Validity token refreshed successfully"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Value"
 

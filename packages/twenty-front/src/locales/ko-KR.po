@@ -7724,12 +7724,6 @@ msgstr "함수 이름"
 msgid "Functions - Settings"
 msgstr "기능 - 설정"
 
-#. js-lingui-id: vYj1cC
-#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
-#: src/modules/page-layout/utils/getWidgetTitle.ts
-msgid "Gauge Chart"
-msgstr "게이지 차트"
-
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -16882,8 +16876,6 @@ msgstr "유효성 토큰이 성공적으로 새로 고침되었습니다"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "값"
 
