@@ -224,6 +224,23 @@ export const PageChangeEffect = () => {
       }
       case isMatchingLocation(location, AppPath.RecordShowPage): {
         const isNewRecord = location.state?.isNewRecord === true;
+        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
+
+        if (!isSidePanelOpen) {
+          resetFocusStackToFocusItem({
+            focusStackItem: {
+              focusId: PageFocusId.RecordShowPage,
+              componentInstance: {
+                componentType: FocusComponentType.PAGE,
+                componentInstanceId: PageFocusId.RecordShowPage,
+              },
+              globalHotkeysConfig: {
+                enableGlobalHotkeysWithModifiers: true,
+                enableGlobalHotkeysConflictingWithKeyboard: true,
+              },
+            },
+          });
+        }
 
         if (
           isNewRecord &&
@@ -234,26 +251,6 @@ export const PageChangeEffect = () => {
             fieldName: location.state.labelIdentifierFieldName,
           });
         }
-
-        const isSidePanelOpen = store.get(isSidePanelOpenedState.atom);
-
-        if (isSidePanelOpen) {
-          return;
-        }
-
-        resetFocusStackToFocusItem({
-          focusStackItem: {
-            focusId: PageFocusId.RecordShowPage,
-            componentInstance: {
-              componentType: FocusComponentType.PAGE,
-              componentInstanceId: PageFocusId.RecordShowPage,
-            },
-            globalHotkeysConfig: {
-              enableGlobalHotkeysWithModifiers: true,
-              enableGlobalHotkeysConflictingWithKeyboard: true,
-            },
-          },
-        });
         break;
       }
       case isMatchingLocation(location, AppPath.SignInUp): {

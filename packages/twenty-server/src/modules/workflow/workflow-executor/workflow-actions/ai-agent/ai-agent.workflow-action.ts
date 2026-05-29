@@ -80,7 +80,6 @@ export class AiAgentWorkflowAction implements WorkflowAction {
         actorContext: executionContext.isActingOnBehalfOfUser
           ? executionContext.initiator
           : undefined,
-        rolePermissionConfig: executionContext.rolePermissionConfig,
         authContext: executionContext.authContext,
         workspaceId,
         userWorkspaceId,

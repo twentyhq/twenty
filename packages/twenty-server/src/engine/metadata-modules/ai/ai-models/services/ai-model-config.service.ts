@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
-import { ProviderOptions } from '@ai-sdk/provider-utils';
-import { ToolSet } from 'ai';
+import { type ProviderOptions } from '@ai-sdk/provider-utils';
+import { type ToolSet } from 'ai';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-config.const';
 import {
@@ -10,28 +11,36 @@ import {
   AI_SDK_OPENAI,
   AI_SDK_XAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
+import { getNativeModelToolsForSdkPackage } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-tools-for-sdk-package.util';
 import {
   AiModelRegistryService,
   RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type NativeModelBinding } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-binding.type';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { FlatAgentWithRoleId } from 'src/engine/metadata-modules/flat-agent/types/flat-agent.type';
 
 @Injectable()
 export class AiModelConfigService {
+  private readonly logger = new Logger(AiModelConfigService.name);
+
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
   ) {}
 
-  getProviderOptions(
+  getNativeModelBinding(
     model: RegisteredAiModel,
-    agent: FlatAgentWithRoleId,
-  ): ProviderOptions {
+    options: NativeModelToolOptions = {},
+  ): NativeModelBinding {
+    return {
+      tools: this.getNativeModelTools(model, options),
+      providerOptions: this.getNativeSearchProviderOptions(model, options),
+    };
+  }
+
+  getReasoningProviderOptions(model: RegisteredAiModel): ProviderOptions {
     switch (model.sdkPackage) {
-      case AI_SDK_XAI:
-        return this.getXaiProviderOptions(agent);
       case AI_SDK_ANTHROPIC:
         return this.getAnthropicProviderOptions(model);
       case AI_SDK_BEDROCK:
@@ -41,13 +50,30 @@ export class AiModelConfigService {
     }
   }
 
-  getNativeModelTools(
+  private getNativeModelTools(
     model: RegisteredAiModel,
     options: NativeModelToolOptions,
   ): ToolSet {
     const tools: Record<string, unknown> = {};
 
-    if (!options.webSearchEnabled) {
+    if (options.webSearch !== true) {
+      return tools as ToolSet;
+    }
+
+    const webSearchTool = getNativeModelToolsForSdkPackage(
+      model.sdkPackage,
+    )?.webSearch;
+
+    if (!isDefined(webSearchTool)) {
+      this.logger.warn(
+        `webSearch requested for sdkPackage="${model.sdkPackage}" but no native binding is registered. Skipping.`,
+      );
+
+      return tools as ToolSet;
+    }
+
+    // provider-option bindings (e.g. xAI) are handled in getNativeSearchProviderOptions
+    if (webSearchTool.kind !== 'sdk-tool') {
       return tools as ToolSet;
     }
 
@@ -58,7 +84,8 @@ export class AiModelConfigService {
           : undefined;
 
         if (anthropicProvider) {
-          tools.web_search = anthropicProvider.tools.webSearch_20250305();
+          tools[webSearchTool.directToolName] =
+            anthropicProvider.tools.webSearch_20250305();
         }
 
         break;
@@ -69,7 +96,8 @@ export class AiModelConfigService {
           : undefined;
 
         if (openaiProvider) {
-          tools.web_search = openaiProvider.tools.webSearch();
+          tools[webSearchTool.directToolName] =
+            openaiProvider.tools.webSearch();
         }
 
         break;
@@ -79,23 +107,51 @@ export class AiModelConfigService {
     return tools as ToolSet;
   }
 
-  private getXaiProviderOptions(agent: FlatAgentWithRoleId): ProviderOptions {
-    if (
-      !agent.modelConfiguration ||
-      (!agent.modelConfiguration.webSearch?.enabled &&
-        !agent.modelConfiguration.twitterSearch?.enabled)
-    ) {
+  private getNativeSearchProviderOptions(
+    model: RegisteredAiModel,
+    options: NativeModelToolOptions,
+  ): ProviderOptions {
+    switch (model.sdkPackage) {
+      case AI_SDK_XAI:
+        return this.getXaiSearchProviderOptions(options);
+      default:
+        return {};
+    }
+  }
+
+  private getXaiSearchProviderOptions(
+    options: NativeModelToolOptions,
+  ): ProviderOptions {
+    const webSearchEnabled = options.webSearch === true;
+    const twitterSearchEnabled = options.twitterSearch === true;
+
+    if (!webSearchEnabled && !twitterSearchEnabled) {
       return {};
     }
 
     const sources: Array<{ type: string }> = [];
+    const xaiTools = getNativeModelToolsForSdkPackage(AI_SDK_XAI);
+    const webSearchTool = xaiTools?.webSearch;
+    const twitterSearchTool = xaiTools?.twitterSearch;
 
-    if (agent.modelConfiguration.webSearch?.enabled) {
-      sources.push({ type: 'web' });
+    if (webSearchEnabled) {
+      if (webSearchTool?.kind === 'provider-option') {
+        sources.push({ type: webSearchTool.providerOptionKey });
+      } else {
+        this.logger.warn(
+          `webSearch requested for xAI but no provider-option binding is registered. Skipping.`,
+        );
+      }
     }
 
-    if (agent.modelConfiguration.twitterSearch?.enabled) {
-      sources.push({ type: 'x' });
+    if (twitterSearchEnabled) {
+      if (twitterSearchTool?.kind === 'provider-option') {
+        sources.push({ type: twitterSearchTool.providerOptionKey });
+      } else {
+        this.logger.warn(
+          `twitterSearch requested for xAI but no provider-option binding is registered. Skipping.`,
+        );
+      }
     }
 
     return {
