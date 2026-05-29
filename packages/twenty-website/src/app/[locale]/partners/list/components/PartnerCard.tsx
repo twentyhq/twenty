@@ -231,11 +231,6 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
 
       <Introduction>{partner.introduction}</Introduction>
 
-      <PartnerMoneyRow
-        hourlyRateUsd={partner.hourlyRateUsd}
-        projectBudgetMinUsd={partner.projectBudgetMinUsd}
-      />
-
       <Divider aria-hidden="true" />
 
       <ChipRows>
@@ -255,6 +250,11 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
           valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
         />
       </ChipRows>
+
+      <PartnerMoneyRow
+        hourlyRateUsd={partner.hourlyRateUsd}
+        projectBudgetMinUsd={partner.projectBudgetMinUsd}
+      />
 
       {calendarSafe && (
         <CtaWrapper>

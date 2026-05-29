@@ -98,7 +98,7 @@ describe('toggleInSet', () => {
 describe('enum constants are non-empty', () => {
   it('covers all known regions, languages, deployments', () => {
     expect(SERVED_GEOS.length).toBe(6);
-    expect(SPOKEN_LANGUAGES.length).toBe(5);
+    expect(SPOKEN_LANGUAGES.length).toBe(35);
     expect(DEPLOYMENT_EXPERTISES.length).toBe(2);
   });
 });
