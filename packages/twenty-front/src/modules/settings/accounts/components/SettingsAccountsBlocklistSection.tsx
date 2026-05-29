@@ -50,11 +50,13 @@ export const SettingsAccountsBlocklistSection = () => {
   const updateBlockedEmailList = (handles: string[]) => {
     if (!isDefined(currentWorkspaceMember)) return;
     createBlocklistItems({
-      recordsToCreate: handles.map((handle) => {
+      recordsToCreate: [...new Set(handles)].map((handle) => {
         return {
           handle,
-          workspaceMemberId: currentWorkspaceMember?.id,
+          workspaceMemberId: currentWorkspaceMember.id,
         };
+      }),
+    });
       }),
     });
   };
