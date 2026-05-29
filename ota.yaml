@@ -26,8 +26,6 @@ execution:
         isolated_paths:
           - node_modules
           - .yarn/cache
-          - .pnp.cjs
-          - .pnp.loader.mjs
     docker-host:
       extends: host
       requirements:
