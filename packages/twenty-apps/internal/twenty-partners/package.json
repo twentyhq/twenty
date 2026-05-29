@@ -22,7 +22,9 @@
     "import:dryrun": "tsx src/scripts/import-from-tft.ts",
     "import:dryrun:prod": "ENV_FILE=.env.prod tsx src/scripts/import-from-tft.ts",
     "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
-    "import:apply:prod": "ENV_FILE=.env.prod IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts"
+    "import:apply:prod": "ENV_FILE=.env.prod IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
+    "migrate:partner-scope": "tsx src/scripts/migrate-partner-scope.ts",
+    "migrate:partner-scope:prod": "ENV_FILE=.env.prod tsx src/scripts/migrate-partner-scope.ts"
   },
   "dependencies": {
     "twenty-client-sdk": "2.4.0",

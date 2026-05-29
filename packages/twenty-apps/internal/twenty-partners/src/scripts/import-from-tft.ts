@@ -27,6 +27,8 @@ config({ path: process.env.ENV_FILE ?? '.env.local' });
 
 import { CoreApiClient } from 'twenty-client-sdk/core';
 
+import { mapLegacyScope } from './partner-scope-map';
+
 const requireEnv = (name: string): string => {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name} env var`);
@@ -378,8 +380,11 @@ async function main() {
     // Timezone band -> geographic region(s). Unmapped/OTHER -> no region.
     const region = TIMEZONE_TO_REGION[p.partnerTimezone] ?? [];
     // A partner scoped for hosting is, by definition, a self-host expert.
-    const scope = Array.isArray(p.partnerScope) ? p.partnerScope : [];
-    const deploymentExpertise = scope.includes('HOSTING_ENVIRONMENT') ? ['SELF_HOST'] : [];
+    const rawScope = Array.isArray(p.partnerScope) ? p.partnerScope : [];
+    // Map legacy TFT categories to the validated set so the import never
+    // re-introduces retired values.
+    const scope = mapLegacyScope(rawScope);
+    const deploymentExpertise = rawScope.includes('HOSTING_ENVIRONMENT') ? ['SELF_HOST'] : [];
     const data: Record<string, unknown> = {
       name: [p.name?.firstName, p.name?.lastName].filter(Boolean).join(' ').trim() || 'Unknown partner',
       slug,

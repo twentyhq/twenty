@@ -30,7 +30,7 @@ export default defineConfig({
     testTimeout: 120_000,
     hookTimeout: 120_000,
     fileParallelism: false,
-    include: ['src/**/*.integration-test.ts'],
+    include: ['src/**/*.integration-test.ts', 'src/**/*.test.ts'],
     globalSetup: ['src/__tests__/global-setup.ts'],
     env: {
       TWENTY_API_URL,
