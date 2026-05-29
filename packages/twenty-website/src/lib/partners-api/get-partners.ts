@@ -3,6 +3,9 @@ import { unstable_cache } from 'next/cache';
 import { partnersApiFetch } from './client';
 import type { MarketplacePartner } from './partner-types';
 
+type CurrencyValue = { amountMicros: number; currencyCode: string } | null;
+type LinkValue = { primaryLinkUrl: string | null } | null;
+
 type ApiPartner = {
   id: string;
   name: string;
@@ -11,16 +14,31 @@ type ApiPartner = {
   languagesSpoken: MarketplacePartner['languagesSpoken'][number][];
   deploymentExpertise: MarketplacePartner['deploymentExpertise'][number][];
   region: MarketplacePartner['region'][number][];
-  calendarLink: { primaryLinkUrl: string | null } | null;
+  calendarLink: LinkValue;
+  hourlyRate: CurrencyValue;
+  projectBudgetMin: CurrencyValue;
+  projectBudgetTypical: CurrencyValue;
+  linkedin: LinkValue;
+  profilePicture: LinkValue;
+  skills: string[] | null;
+  city: string | null;
+  country: string | null;
 };
 
 type ApiResponse = { ok: boolean; count: number; partners: ApiPartner[] };
 
-// Bare domains stored in the CRM (e.g. "calendly.com/x") lack a scheme.
-// Prepend https:// so the URL is absolute; isSafeHttpUrl in PartnerCard will
-// still reject anything that doesn't parse as a valid http(s) URL.
-const normalizeUrl = (raw: string): string =>
-  raw && !raw.includes('://') ? `https://${raw}` : raw;
+const normalizeUrl = (raw: string | null | undefined): string => {
+  if (!raw) return '';
+  return raw.includes('://') ? raw : `https://${raw}`;
+};
+
+const linkUrl = (link: LinkValue): string =>
+  normalizeUrl(link?.primaryLinkUrl ?? '');
+
+const microsToUsd = (currency: CurrencyValue): number | null => {
+  if (!currency || typeof currency.amountMicros !== 'number') return null;
+  return Math.round(currency.amountMicros / 1_000_000);
+};
 
 const fetchPartnersUncached = async (): Promise<
   readonly MarketplacePartner[]
@@ -39,7 +57,15 @@ const fetchPartnersUncached = async (): Promise<
       languagesSpoken: p.languagesSpoken,
       deploymentExpertise: p.deploymentExpertise,
       region: p.region,
-      calendarLink: normalizeUrl(p.calendarLink?.primaryLinkUrl ?? ''),
+      calendarLink: linkUrl(p.calendarLink),
+      hourlyRateUsd: microsToUsd(p.hourlyRate),
+      projectBudgetMinUsd: microsToUsd(p.projectBudgetMin),
+      projectBudgetTypicalUsd: microsToUsd(p.projectBudgetTypical),
+      linkedinUrl: linkUrl(p.linkedin),
+      profilePictureUrl: linkUrl(p.profilePicture),
+      skills: p.skills ?? [],
+      city: p.city ?? '',
+      country: p.country ?? '',
     }));
   } catch (error) {
     console.error('[partners-api] getPartners failed:', error);
