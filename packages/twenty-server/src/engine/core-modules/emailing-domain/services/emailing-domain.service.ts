@@ -94,11 +94,23 @@ export class EmailingDomainService {
     const emailingDomainDriver =
       this.emailingDomainDriverFactory.getCurrentDriver();
 
-    for (const domain of domains) {
-      await emailingDomainDriver.cleanupDomain({ domain, workspaceId });
+    if (domains.length === 0) {
+      return;
     }
 
+    const results = await Promise.allSettled(
+      domains.map((domain) =>
+        emailingDomainDriver.cleanupDomain({ domain, workspaceId }),
+      ),
+    );
+
     await emailingDomainDriver.deprovisionWorkspace(workspaceId);
+
+    if (results.some((result) => result.status === 'rejected')) {
+      throw new Error(
+        `Failed to clean up one or more emailing domains for workspace ${workspaceId}`,
+      );
+    }
   }
 
   async getEmailingDomains(
