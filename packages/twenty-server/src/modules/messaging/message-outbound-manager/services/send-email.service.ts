@@ -42,7 +42,7 @@ export class SendEmailService {
         sendResult,
         subject: data.sanitizedSubject,
         body: data.plainTextBody,
-        recipients: data.recipients,
+        recipients: sendResult.deliveredRecipients ?? data.recipients,
         connectedAccount: data.connectedAccount,
         messageChannelId: data.messageChannelId!,
         inReplyTo: data.inReplyTo,

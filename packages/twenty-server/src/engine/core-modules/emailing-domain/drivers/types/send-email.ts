@@ -1,3 +1,5 @@
+import { EmailGroupSendType } from 'src/engine/core-modules/emailing-domain/types/email-group-send-type.type';
+
 export type EmailingDomainAttachment = {
   filename: string;
   content: Buffer;
@@ -14,6 +16,7 @@ export type EmailingDomainEmailContent = {
   html?: string;
   replyTo?: string[];
   attachments?: EmailingDomainAttachment[];
+  sendType?: EmailGroupSendType;
 };
 
 export type EmailingDomainSendEmailInput = EmailingDomainEmailContent & {
@@ -23,4 +26,5 @@ export type EmailingDomainSendEmailInput = EmailingDomainEmailContent & {
 
 export type EmailingDomainSendEmailResult = {
   messageId: string;
+  deliveredRecipients: { to: string[]; cc: string[]; bcc: string[] };
 };
