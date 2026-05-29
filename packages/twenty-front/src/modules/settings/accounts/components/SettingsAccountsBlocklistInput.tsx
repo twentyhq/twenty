@@ -51,18 +51,21 @@ export const SettingsAccountsBlocklistInput = ({
           (value) => {
             const handles = parseHandles(value);
 
-            return handles.every((handle) => {
-              const isEmail = z.email().safeParse(handle).success;
+            return (
+              isNonEmptyArray(handles) &&
+              handles.every((handle) => {
+                const isEmail = z.email().safeParse(handle).success;
 
-              const isDomain =
-                handle.startsWith('@') &&
-                isValidHostname(handle.slice(1), {
-                  allowIp: false,
-                  allowLocalhost: false,
-                });
+                const isDomain =
+                  handle.startsWith('@') &&
+                  isValidHostname(handle.slice(1), {
+                    allowIp: false,
+                    allowLocalhost: false,
+                  });
 
-              return isEmail || isDomain;
-            });
+                return isEmail || isDomain;
+              })
+            );
           },
           t`Invalid email or domain`,
         )
@@ -70,8 +73,11 @@ export const SettingsAccountsBlocklistInput = ({
           (value) => {
             const handles = parseHandles(value);
 
-            return handles.every(
-              (handle) => !blockedEmailOrDomainList.includes(handle),
+            return (
+              isNonEmptyArray(handles) &&
+              handles.every(
+                (handle) => !blockedEmailOrDomainList.includes(handle),
+              )
             );
           },
           t`Email or domain is already in blocklist`,
