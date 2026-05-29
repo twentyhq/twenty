@@ -2,8 +2,10 @@ import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
 
 import { readFileSync } from 'fs';
 
+import { isNonEmptyString } from '@sniptt/guards';
+
 import { type Request } from 'express';
-import { isDefined, isNonEmptyString } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
