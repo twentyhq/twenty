@@ -1109,6 +1109,23 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'When enabled, the served frontend resolves the API base URL from ' +
+      "the browser's current origin (window.location) instead of the " +
+      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
+      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
+      'DNS), where pinning a single SERVER_URL would break every other ' +
+      'host with CORS or unreachable-host errors. Read at startup by ' +
+      'generate-front-config; SERVER_URL is still used for all server-side ' +
+      'URL generation.',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  FRONT_AUTO_BASE_URL = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
       'headers are honored — required for request.protocol to return ' +
       '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +
