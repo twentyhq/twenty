@@ -1,11 +1,13 @@
 import { useLingui } from '@lingui/react/macro';
 import { useParams } from 'react-router-dom';
-import {
-  FindApplicationRegistrationVariablesDocument,
-  FindOneApplicationRegistrationDocument,
-  UpdateApplicationRegistrationVariableDocument,
-} from '~/generated-metadata/graphql';
 import { useMutation, useQuery } from '@apollo/client/react';
+import {
+  FindAdminApplicationRegistrationVariablesDocument,
+  FindOneAdminApplicationRegistrationDocument,
+  UpdateAdminApplicationRegistrationVariableDocument,
+} from '~/generated-admin/graphql';
+import { useApolloAdminClient } from '@/settings/admin-panel/apollo/hooks/useApolloAdminClient';
+import { APPLICATION_REGISTRATION_ADMIN_PATH } from '@/settings/admin-panel/apps/constants/ApplicationRegistrationAdminPath';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
@@ -13,8 +15,9 @@ import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLo
 import { NotFound } from '~/pages/not-found/NotFound';
 import { ApplicationRegistrationConfigVariableEditForm } from '@/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm';
 
-export const SettingsApplicationRegistrationConfigVariableDetail = () => {
+export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
   const { t } = useLingui();
+  const apolloAdminClient = useApolloAdminClient();
 
   const { variableKey, applicationRegistrationId = '' } = useParams<{
     applicationRegistrationId: string;
@@ -22,30 +25,33 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
   }>();
 
   const { data: applicationRegistrationData, loading: registrationLoading } =
-    useQuery(FindOneApplicationRegistrationDocument, {
+    useQuery(FindOneAdminApplicationRegistrationDocument, {
+      client: apolloAdminClient,
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
     });
 
   const registration =
-    applicationRegistrationData?.findOneApplicationRegistration;
+    applicationRegistrationData?.findOneAdminApplicationRegistration;
 
   const { data: variablesData, loading: variablesLoading } = useQuery(
-    FindApplicationRegistrationVariablesDocument,
+    FindAdminApplicationRegistrationVariablesDocument,
     {
+      client: apolloAdminClient,
       variables: { applicationRegistrationId },
       skip: !applicationRegistrationId,
     },
   );
 
   const variable = (
-    variablesData?.findApplicationRegistrationVariables ?? []
+    variablesData?.findAdminApplicationRegistrationVariables ?? []
   ).find((variable) => variable.key === variableKey);
 
   const [updateVariable] = useMutation(
-    UpdateApplicationRegistrationVariableDocument,
+    UpdateAdminApplicationRegistrationVariableDocument,
     {
-      refetchQueries: [FindApplicationRegistrationVariablesDocument],
+      client: apolloAdminClient,
+      refetchQueries: [FindAdminApplicationRegistrationVariablesDocument],
     },
   );
 
@@ -70,22 +76,17 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
     <SubMenuTopBarContainer
       links={[
         {
-          children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: t`Other`,
+          href: getSettingsPath(SettingsPath.AdminPanel),
         },
         {
-          children: t`Applications - Developer`,
-          href: getSettingsPath(
-            SettingsPath.Applications,
-            undefined,
-            undefined,
-            'developer',
-          ),
+          children: t`Admin Panel - Apps`,
+          href: APPLICATION_REGISTRATION_ADMIN_PATH,
         },
         {
           children: t`${registration.name} - Config`,
           href: getSettingsPath(
-            SettingsPath.ApplicationRegistrationDetail,
+            SettingsPath.AdminPanelApplicationRegistrationDetail,
             { applicationRegistrationId },
             undefined,
             'config',

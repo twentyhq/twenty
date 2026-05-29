@@ -242,6 +242,14 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   ),
 );
 
+const SettingsAdminApplicationRegistrationConfigVariableDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail').then(
+    (module) => ({
+      default: module.SettingsAdminApplicationRegistrationConfigVariableDetail,
+    }),
+  ),
+);
+
 const SettingsAvailableApplicationDetails = lazy(() =>
   import('~/pages/settings/applications/SettingsAvailableApplicationDetails').then(
     (module) => ({
@@ -964,6 +972,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelApplicationRegistrationDetail}
             element={<SettingsAdminApplicationRegistrationDetail />}
+          />
+          <Route
+            path={
+              SettingsPath.AdminPanelApplicationRegistrationConfigVariableDetails
+            }
+            element={
+              <SettingsAdminApplicationRegistrationConfigVariableDetail />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}
