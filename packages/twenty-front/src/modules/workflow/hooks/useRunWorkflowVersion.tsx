@@ -15,6 +15,7 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -136,6 +137,28 @@ export const useRunWorkflowVersion = () => {
     });
 
     setRecordInStore(recordCreatedInCache);
+
+    // Register the SSE query listener eagerly so the subscription is active
+    // before the backend starts processing and emitting events.
+    // WorkflowRunSSESubscribeEffect will later "adopt" this listener (same
+    // queryId) and handle cleanup on unmount.
+    const sseQueryId = `workflow-run-${workflowRunId}`;
+    const currentListeners = store.get(requiredQueryListenersState.atom);
+
+    if (!currentListeners.some((l) => l.queryId === sseQueryId)) {
+      store.set(requiredQueryListenersState.atom, [
+        ...currentListeners,
+        {
+          queryId: sseQueryId,
+          operationSignature: {
+            objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+            variables: {
+              filter: { id: { eq: workflowRunId } },
+            },
+          },
+        },
+      ]);
+    }
 
     await mutate({
       variables: { input: { workflowVersionId, workflowRunId, payload } },
