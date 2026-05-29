@@ -1,21 +1,11 @@
-import { type ComponentType, type ReactNode, useCallback } from 'react';
-import {
-  FrontComponentInputFocusContext,
-  type SetEditableFocused,
-} from 'twenty-front-component-renderer';
+import { useCallback } from 'react';
+import { FrontComponentInputFocusContext } from 'twenty-front-component-renderer';
 
 import { FrontComponentInputFocusCleanupEffect } from '@/front-components/components/FrontComponentInputFocusCleanupEffect';
 import { FrontComponentInstanceContext } from '@/front-components/states/contexts/FrontComponentInstanceContext';
 import { usePushFocusItemToFocusStack } from '@/ui/utilities/focus/hooks/usePushFocusItemToFocusStack';
 import { useRemoveFocusItemFromFocusStackById } from '@/ui/utilities/focus/hooks/useRemoveFocusItemFromFocusStackById';
 import { FocusComponentType } from '@/ui/utilities/focus/types/FocusComponentType';
-
-// Bridge React 18/19 type mismatch between twenty-front and twenty-front-component-renderer
-const FocusContextProvider =
-  FrontComponentInputFocusContext.Provider as unknown as ComponentType<{
-    value: SetEditableFocused | null;
-    children: ReactNode;
-  }>;
 
 type FrontComponentRendererProviderProps = {
   frontComponentId: string;
@@ -56,10 +46,10 @@ export const FrontComponentRendererProvider = ({
     <FrontComponentInstanceContext.Provider
       value={{ instanceId: frontComponentId }}
     >
-      <FocusContextProvider value={setEditableFocused}>
+      <FrontComponentInputFocusContext.Provider value={setEditableFocused}>
         <FrontComponentInputFocusCleanupEffect focusId={focusId} />
         {children}
-      </FocusContextProvider>
+      </FrontComponentInputFocusContext.Provider>
     </FrontComponentInstanceContext.Provider>
   );
 };
