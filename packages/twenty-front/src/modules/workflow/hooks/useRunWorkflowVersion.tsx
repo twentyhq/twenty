@@ -15,8 +15,9 @@ import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useU
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
 import { computeOptimisticCreateRecordBaseRecordInput } from '@/object-record/utils/computeOptimisticCreateRecordBaseRecordInput';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
-import { requiredQueryListenersState } from '@/sse-db-event/states/requiredQueryListenersState';
+import { useChangeQueryListenState } from '@/sse-db-event/hooks/useChangeQueryListenState';
 import { RUN_WORKFLOW_VERSION } from '@/workflow/graphql/mutations/runWorkflowVersion';
+import { getWorkflowRunSseQueryId } from '@/workflow/utils/getWorkflowRunSseQueryId';
 import { type WorkflowRun } from '@/workflow/types/Workflow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useCallback } from 'react';
@@ -64,6 +65,7 @@ export const useRunWorkflowVersion = () => {
     });
 
   const { openRecordInSidePanel } = useOpenRecordInSidePanel();
+  const { changeQueryIdListenState } = useChangeQueryListenState();
 
   const setRecordInStore = useCallback(
     (workflowRun: WorkflowRun) => {
@@ -138,31 +140,24 @@ export const useRunWorkflowVersion = () => {
 
     setRecordInStore(recordCreatedInCache);
 
-    // Register the SSE query listener eagerly so the subscription is active
-    // before the backend starts processing and emitting events.
-    // WorkflowRunSSESubscribeEffect will later "adopt" this listener (same
-    // queryId) and handle cleanup on unmount.
-    const sseQueryId = `workflow-run-${workflowRunId}`;
-    const currentListeners = store.get(requiredQueryListenersState.atom);
+    const sseQueryId = getWorkflowRunSseQueryId(workflowRunId);
+    const sseOperationSignature = {
+      objectNameSingular: CoreObjectNameSingular.WorkflowRun,
+      variables: {
+        filter: { id: { eq: workflowRunId } },
+      },
+    };
 
-    if (!currentListeners.some((l) => l.queryId === sseQueryId)) {
-      store.set(requiredQueryListenersState.atom, [
-        ...currentListeners,
-        {
-          queryId: sseQueryId,
-          operationSignature: {
-            objectNameSingular: CoreObjectNameSingular.WorkflowRun,
-            variables: {
-              filter: { id: { eq: workflowRunId } },
-            },
-          },
-        },
-      ]);
+    changeQueryIdListenState(true, sseQueryId, sseOperationSignature);
+
+    try {
+      await mutate({
+        variables: { input: { workflowVersionId, workflowRunId, payload } },
+      });
+    } catch (error) {
+      changeQueryIdListenState(false, sseQueryId, sseOperationSignature);
+      throw error;
     }
-
-    await mutate({
-      variables: { input: { workflowVersionId, workflowRunId, payload } },
-    });
 
     openRecordInSidePanel({
       objectNameSingular: CoreObjectNameSingular.WorkflowRun,
