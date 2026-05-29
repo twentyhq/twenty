@@ -1,0 +1,72 @@
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/messaging-webhooks.module.ts
+  s_4a10800c36ffe6::t_d21afe20c726ed 6
+  s_4a10800c36ffe6::t_770fd32644f09a 22
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/utils/resolve-inbound-mail-intent.util.ts
+  s_4a10800c36ffe6::t_7136c76eb8224b 1-17
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+  s_4a10800c36ffe6::t_72598ddc22408e 15
+  s_4a10800c36ffe6::t_6944307cff6c46 33-34
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-token.service.ts
+  s_4a10800c36ffe6::t_a1ff456543b6fa 1-80
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/send-email.ts
+  s_4a10800c36ffe6::t_1d8363fe603108 9-13
+  s_4a10800c36ffe6::t_916b3c3e40a2b7 24
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/aws-ses/services/aws-ses-send-email.service.ts
+  s_4a10800c36ffe6::t_5320d9788c3113 57-62
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
+  s_4a10800c36ffe6::t_f01e8e75143591 19
+  s_4a10800c36ffe6::t_a216cf15f73940 38,44
+  s_4a10800c36ffe6::t_16ea7a7da517d3 6
+  s_4a10800c36ffe6::t_4407e12f194500 33
+packages/twenty-server/src/engine/core-modules/emailing-domain/controllers/unsubscribe.controller.ts
+  s_4a10800c36ffe6::t_051430b6313f78 47-48
+  s_4a10800c36ffe6::t_b3eb3f21dd28d2 1-20,23-41,44-46,49-64
+  s_4a10800c36ffe6::t_c7e93d55c1f513 21-22
+packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type.ts
+  s_4a10800c36ffe6::t_415ac39b97a373 1-5
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain.service.ts
+  s_4a10800c36ffe6::t_d92ba01646b2b7 35
+  s_4a10800c36ffe6::t_981bcf2ad03365 3-4
+  s_4a10800c36ffe6::t_1b4ca872594c83 17,20,22
+  s_4a10800c36ffe6::t_a046066d8f07e8 202-204,213,228-236,242-264,266-270,272
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.entity.ts
+  s_4a10800c36ffe6::t_5118f81c6a59c5 63-75
+  s_4a10800c36ffe6::t_672ae1d52d9259 15
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util.ts
+  s_4a10800c36ffe6::t_eaae74c00cb436 16
+  s_4a10800c36ffe6::t_29ac3325eae210 1
+  s_4a10800c36ffe6::t_b85fae04d9d0a1 15
+  s_4a10800c36ffe6::t_d707c211dfaa20 2-14,17-28
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-inbound-mail-handler.service.ts
+  s_4a10800c36ffe6::t_6487f15439c17f 6
+  s_4a10800c36ffe6::t_45de6a177ed34b 8
+  s_4a10800c36ffe6::t_c11e647f12e0cf 28-36,38,40-42
+  s_4a10800c36ffe6::t_56210711fc9660 21,37,39
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/types/ses-inbound-mail-intent.type.ts
+  s_4a10800c36ffe6::t_866a7e63805dcb 1
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/__tests__/emailing-domain.service.spec.ts
+  s_4a10800c36ffe6::t_0b749bd07c9066 53-55,60
+  s_4a10800c36ffe6::t_2c76cfaa83942f 9
+packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-inbound-unsubscribe-handler.service.ts
+  s_4a10800c36ffe6::t_c24cf2e78cf91f 1-2,4,6-20,22-26,28-34,36-45
+  s_4a10800c36ffe6::t_1f7a237e92f66d 21,27,35
+  s_4a10800c36ffe6::t_811fd3040a774f 3,5
+packages/twenty-server/src/engine/core-modules/emailing-domain/constants/unsubscribe-mailbox.constant.ts
+  s_4a10800c36ffe6::t_8eeeb76f8835b9 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "301696e084e815d381c8f6129b930748ba5f2498",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
