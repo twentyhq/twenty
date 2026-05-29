@@ -60,7 +60,6 @@ When a skill points at a reference, read only what the task needs:
 - `develop-app/tests.md` — test organization (`*.spec.ts` in `__tests__/`).
 - `design/front-component-ui.md` — Twenty UI defaults and visual design rules.
 - `manage-app/cli-and-sync.md` — CLI command semantics, sync modes, build, deploy, logs, CI/CD.
-- `operations/command-execution.md` — external command execution patterns.
 - `publish-app/prepare-for-app-store.md` — README, marketplace metadata, logos, screenshots.
 - `use-twenty-mcp/setup.md` — workspace MCP URL normalization and OAuth setup.
 - `use-twenty-mcp/result-formatting.md` — record link building, date formatting, readable Markdown.

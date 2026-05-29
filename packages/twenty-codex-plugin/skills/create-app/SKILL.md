@@ -77,8 +77,6 @@ When the scaffolder completes, the app is fully created, synced, and installed. 
 
 Do not run any follow-up validation commands after scaffolding unless the user asks for them. Do not run `yarn twenty dev --once`, `yarn test`, `yarn lint`, or other validation just to prove the scaffold worked; the scaffolder already performed the initial sync. If the user asks to run tests later, switch to `develop-app` or `manage-app` guidance and run the full suite against the isolated test instance with `TWENTY_API_URL=http://localhost:2021`.
 
-Do not check Node versions, search for version managers, or inspect the toolchain after a successful scaffold unless a command actually fails and the failure points there.
-
 Report to the user that the app was created successfully and is ready for development. Then stop. Wait for the user to ask for the next action.
 
 The scaffolder generates a placeholder page at `src/front-components/main-page.tsx` plus its page layout and navigation menu item. In `develop-app`, delete all three before the first deploy unless the app actually needs UI. Do not stack additional pages on top of the placeholder.

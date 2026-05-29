@@ -81,15 +81,15 @@ Only create entity files manually when modifying existing entities or when the C
 
 ## After Entity Changes
 
-After adding or modifying entities, sync the app to the active remote:
+Once all edits for the change are complete, run lint and typecheck once at the end (not after each individual edit), then sync the app to the active remote:
 
 ```bash
+yarn twenty dev:typecheck
+yarn lint
 yarn twenty dev --once
 ```
 
-Do not run `yarn twenty dev:typecheck`, `yarn lint`, or other validation commands as part of routine entity validation. Use `yarn twenty dev --once` for entity sync validation. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
-
-Do not search for version managers or debug the toolchain after a successful sync unless a command actually fails and the failure points there.
+`yarn twenty dev:typecheck` checks generated app types, `yarn lint` checks local lint rules, and `yarn twenty dev --once` syncs entity definitions to the active remote. Run all three a single time once every edit is done, not repeatedly after each step. When the user explicitly asks to run tests, follow `../../references/develop-app/tests.md`.
 
 Use the official Twenty docs or local SDK source when exact entity fields, imports, or configuration shapes matter.
 

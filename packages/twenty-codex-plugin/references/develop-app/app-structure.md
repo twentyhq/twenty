@@ -68,15 +68,17 @@ Read secrets through the application-config helper, not raw `process.env`.
 
 ## Validation Checklist
 
-After entity changes, sync the app to verify the definitions are valid:
+Once all edits for the change are complete, run lint and typecheck once at the end (not after each individual edit), then sync the app to verify the definitions are valid:
 
 ```bash
+yarn twenty dev:typecheck
+yarn lint
 yarn twenty dev --once
 ```
 
-The sync command builds the app and pushes entity definitions to the active remote. If any definition is invalid, the sync reports the error. This is the only validation step needed after entity changes.
+`yarn twenty dev:typecheck` checks generated app types and `yarn lint` checks local lint rules. `yarn twenty dev --once` then builds the app and pushes entity definitions to the active remote; if any definition is invalid, the sync reports the error. Run all three a single time once every edit is done, not repeatedly after each step.
 
-Do not run `yarn twenty dev:typecheck`, `yarn lint`, or `yarn test` as part of routine entity validation. Use `yarn twenty dev --once` for entity sync validation. When the user explicitly asks to run tests, follow `tests.md`: unit tests may use the package's unit-test script, and the full suite must run with `TWENTY_API_URL=http://localhost:2021` against the isolated test instance.
+When the user explicitly asks to run tests, follow `tests.md`: unit tests may use the package's unit-test script, and the full suite must run with `TWENTY_API_URL=http://localhost:2021` against the isolated test instance.
 
 Switch to `manage-app` and use `../manage-app/cli-and-sync.md` for sync or remote troubleshooting.
 

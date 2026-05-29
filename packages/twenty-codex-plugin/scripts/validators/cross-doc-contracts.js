@@ -203,6 +203,7 @@ const assertCliGuidanceSplit = (fail) => {
     '../manage-app/cli-and-sync.md',
     '## Entity Creation',
     '## Validation Checklist',
+    'run lint and typecheck once at the end (not after each individual edit)',
     'yarn twenty dev:typecheck',
     'yarn lint',
     'yarn twenty dev --once',
@@ -221,11 +222,38 @@ const assertCliGuidanceSplit = (fail) => {
     'Use one-shot mode for agents',
     'yarn twenty dev --once --verbose',
     'yarn twenty remote:list',
+    'Do not run `yarn twenty dev:typecheck`',
+    'run outside the sandbox',
+    'incompatible Node and Yarn',
   ];
 
   for (const fragment of forbiddenAppStructureFragments) {
     if (appStructure.includes(fragment)) {
-      fail(`app-structure.md should not own CLI semantics: ${fragment}`);
+      fail(`app-structure.md should not own CLI semantics or forbid post-edit validation: ${fragment}`);
+    }
+  }
+
+  const requiredDevelopValidationFragments = [
+    'run lint and typecheck once at the end (not after each individual edit)',
+    'yarn twenty dev:typecheck',
+    'yarn lint',
+  ];
+
+  for (const fragment of requiredDevelopValidationFragments) {
+    if (!developSkill.includes(fragment)) {
+      fail(`develop-app/SKILL.md is missing post-edit validation guidance: ${fragment}`);
+    }
+  }
+
+  const forbiddenDevelopFragments = [
+    'Do not run `yarn twenty dev:typecheck`',
+    'debug the toolchain',
+    'run outside the sandbox',
+  ];
+
+  for (const fragment of forbiddenDevelopFragments) {
+    if (developSkill.includes(fragment)) {
+      fail(`develop-app/SKILL.md should not forbid post-edit validation or warn about the sandbox: ${fragment}`);
     }
   }
 
@@ -246,6 +274,18 @@ const assertCliGuidanceSplit = (fail) => {
   for (const fragment of requiredCliFragments) {
     if (!cliAndSync.includes(fragment)) {
       fail(`cli-and-sync.md is missing command guidance: ${fragment}`);
+    }
+  }
+
+  const forbiddenCliFragments = [
+    'run outside the sandbox',
+    'incompatible Node and Yarn',
+    'operations/command-execution.md',
+  ];
+
+  for (const fragment of forbiddenCliFragments) {
+    if (cliAndSync.includes(fragment)) {
+      fail(`cli-and-sync.md should not warn about the sandbox or reference the removed command-execution.md: ${fragment}`);
     }
   }
 };
