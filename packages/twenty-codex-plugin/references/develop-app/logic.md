@@ -16,11 +16,54 @@ Kebab-case filenames, one export per file. See `app-structure.md`.
 Other rules:
 
 - Validate required fields before writes or remote calls.
+- Prefer bulk inputs for record actions. If a logic function can be triggered from selected records, the canonical input should be `records: Array<{ id: string; ...fields }>` unless the user explicitly says the function is only for one record.
+- Use `id` inside a `records` array for the Twenty record ID. Use `recordId` only in flat single-record payloads or for backward-compatible compatibility paths.
+- Return a bulk summary with per-record results for multi-record actions, including counts for success, no match, and failed records.
 - Prefer idempotent behavior for jobs and repeated invocations.
 - Read secrets through the application-config helper, not raw `process.env`.
 - Do not hide customer-impacting side effects behind UI-only actions.
 
 Soft cap: a `*.logic-function.ts` or `*.post-install.ts` file over 200 lines is a refactor signal.
+
+## Bulk Record Actions
+
+Bulk is the default logic-function contract for actions that may run from front component selection. The front component should gather selected records and invoke the function once. Do not make the front component loop over selected records and execute the same logic function repeatedly unless there is an explicit single-record requirement.
+
+Preferred input:
+
+```ts
+type BulkInput<TRecord extends { id: string }> = {
+  records: TRecord[];
+};
+```
+
+Preferred output:
+
+```ts
+type BulkResult = {
+  ok: boolean;
+  enrichedCount: number;
+  noMatchCount: number;
+  failedCount: number;
+  results: Array<{
+    id: string;
+    status: 'ENRICHED' | 'NO_MATCH' | 'FAILED';
+    pdlId?: string;
+    error?: string;
+  }>;
+};
+```
+
+For existing single-record functions, keep the old `{ recordId, ...fields }` shape only as a compatibility path. Normalize both shapes at the top of the handler into `records: Array<{ id: string; ...fields }>` and test that normalization.
+
+Extract and test:
+
+- input normalization from single-record and bulk shapes;
+- per-record validation;
+- external API payload mapping;
+- per-record result mapping;
+- summary count aggregation;
+- error message normalization.
 
 ## Skills And Agents
 

@@ -47,9 +47,10 @@ Skip for single-entity edits, renames, and copy fixes.
 
 ## Code Organization
 
-Keep logic functions and post-install hooks narrow. Extract everything that is not the trigger, inputs, writes, and external call:
+Keep logic functions, post-install hooks, and front components narrow. Extract everything that is not the trigger, inputs, writes, rendering shell, or external call:
 
 - `src/utils/<name>.util.ts` — pure helpers (parsers, mappers, formatters).
+- `src/front-components/utils/<name>.util.ts` — front-component runtime helpers that are reusable and testable.
 - `src/types/<name>.ts` — external API and internal DTO types (one PascalCase type per file).
 - `src/<service>-client/<name>.ts` — wrappers around external SDKs or shared HTTP clients. One folder per service, matching Twenty's `*-client` convention.
 
@@ -58,10 +59,13 @@ Kebab-case filenames; one export per file across all three. See `app-structure.m
 Refactor when:
 
 - A `*.logic-function.ts` or `*.post-install.ts` file exceeds the soft cap (see `../../references/develop-app/logic.md`).
+- A front component contains duplicated command execution, record loading, logic-function lookup, payload building, result parsing, or snackbar formatting.
 - The same parsing or mapping logic appears across object types.
 - Multiple field files differ only by name and identifier — use a factory under `src/fields/`.
 
 Always create a `*.spec.ts` test file in a sibling `__tests__/` folder for every util/function you add or change, one spec file per source file. See `../../references/develop-app/tests.md`.
+
+When a front component triggers a logic function for selected records, always prefer a bulk-capable logic function unless the user explicitly states that the function is only for one record. The default payload shape is `records: Array<{ id: string; ...fields }>`: inside `records`, use `id` for the Twenty record ID because the array name already establishes the record context. Use `recordId` only for flat single-record compatibility payloads.
 
 ## Adding New Entities
 

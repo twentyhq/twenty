@@ -52,6 +52,63 @@ For record-page components, read selection from front component context:
 
 Use the generated or core Twenty client for reads and writes. Keep loading, empty, error, disabled, and saving states explicit so runtime failures are visible and recoverable.
 
+## Headless Actions And DRY Helpers
+
+Headless front components should be thin action shells. The component file should mostly read SDK hooks, return the `Command` helper, and delegate reusable behavior to helpers.
+
+Common headless action flow:
+
+1. Read selected record IDs.
+2. Load the selected records.
+3. Build a payload for one logic-function call.
+4. Execute the logic function.
+5. Parse the result summary.
+6. Show a snackbar.
+7. Let `Command` unmount the component.
+
+Do not duplicate this orchestration across sibling front components. When two components share command execution flow, extract it before copying:
+
+- Pure helpers go in `src/utils/<name>.util.ts`.
+- Front-component runtime helpers go in `src/front-components/utils/<name>.util.ts`.
+- Payload builders, result parsers, selected-record validators, and summary formatters should be small testable functions with sibling specs.
+
+Prefer configuration-driven helpers when creating parallel actions for people, companies, tasks, or other objects. Each front component should provide only object-specific configuration, such as the front component universal identifier, logic function universal identifier, record query, payload builder, labels, and snackbar copy.
+
+## Bulk Logic Function Calls
+
+When a front component triggers a logic function for selected records, always prefer a bulk payload shape unless the user explicitly says the logic function is only for one record. The front component should call the logic function once with all selected records, not loop and execute the same logic function once per record.
+
+Default payload shape:
+
+```ts
+{
+  records: Array<{
+    id: string;
+    // object-specific fields used by the logic function
+  }>;
+}
+```
+
+Inside `records`, prefer `id` for the Twenty record ID because the array name already establishes record context. Use `recordId` only for flat single-record payloads or when preserving compatibility with an existing logic function.
+
+Logic functions that return per-record outcomes should mirror the same naming:
+
+```ts
+{
+  ok: boolean;
+  enrichedCount: number;
+  noMatchCount: number;
+  failedCount: number;
+  results: Array<{
+    id: string;
+    status: 'ENRICHED' | 'NO_MATCH' | 'FAILED';
+    error?: string;
+  }>;
+}
+```
+
+If an existing logic function accepts only `recordId`, prefer upgrading it to accept `records` while preserving the old flat input as a compatibility path.
+
 ## Runtime Verification
 
 A clean typecheck and sync is not runtime verification. After the standard validation in `app-structure.md`, open the relevant Twenty surface and confirm:
