@@ -3,7 +3,15 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import { IconChevronDown, IconSearch } from '@tabler/icons-react';
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type CSSProperties,
+  type ReactNode,
+} from 'react';
+import { createPortal } from 'react-dom';
 
 export type FormSelectOption<TValue extends string> = {
   value: TValue;
@@ -57,6 +65,8 @@ const Value = styled.span`
   }
 `;
 
+// Positioned via inline style (fixed, anchored to the trigger) and portaled to
+// <body> so the modal's overflow/transform can't clip it.
 const Popup = styled.div`
   background: ${theme.colors.secondary.background[100]};
   border: 1px solid ${theme.colors.highlight[100]};
@@ -65,14 +75,9 @@ const Popup = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
-  left: 0;
-  margin-top: ${theme.spacing(1)};
-  max-height: 320px;
   overflow: hidden;
-  position: absolute;
-  right: 0;
-  top: 100%;
-  z-index: 10;
+  position: fixed;
+  z-index: ${theme.zIndex.portalTop};
 `;
 
 const SearchRow = styled.div`
@@ -155,6 +160,21 @@ type FormSelectProps<TValue extends string> = {
   searchEmptyLabel?: string;
 };
 
+// Inline position for the portaled popup: pinned to the trigger, flipped up
+// when there is more room above, height capped so it always fits the viewport.
+type PopupPosition = {
+  left: number;
+  width: number;
+  maxHeight: number;
+  top?: number;
+  bottom?: number;
+};
+
+const POPUP_GAP_PX = 4;
+const VIEWPORT_MARGIN_PX = 8;
+const POPUP_MAX_HEIGHT_PX = 320;
+const POPUP_MIN_HEIGHT_PX = 160;
+
 function labelMatches(label: ReactNode, query: string): boolean {
   if (query === '') return true;
   if (typeof label !== 'string') return true;
@@ -175,15 +195,50 @@ export function FormSelect<TValue extends string>({
 }: FormSelectProps<TValue>) {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [position, setPosition] = useState<PopupPosition | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  const updatePosition = useCallback(() => {
+    const anchor = rootRef.current;
+    if (!anchor) return;
+    const rect = anchor.getBoundingClientRect();
+    const spaceBelow = window.innerHeight - rect.bottom - VIEWPORT_MARGIN_PX;
+    const spaceAbove = rect.top - VIEWPORT_MARGIN_PX;
+    const openUp =
+      spaceBelow < Math.min(POPUP_MAX_HEIGHT_PX, 220) &&
+      spaceAbove > spaceBelow;
+    const available = openUp ? spaceAbove : spaceBelow;
+    const maxHeight = Math.max(
+      POPUP_MIN_HEIGHT_PX,
+      Math.min(POPUP_MAX_HEIGHT_PX, available),
+    );
+    setPosition({
+      left: rect.left,
+      width: rect.width,
+      maxHeight,
+      ...(openUp
+        ? { bottom: window.innerHeight - rect.top + POPUP_GAP_PX }
+        : { top: rect.bottom + POPUP_GAP_PX }),
+    });
+  }, []);
 
   useEffect(() => {
     if (!open) {
       setQuery('');
+      setPosition(null);
       return;
     }
+    updatePosition();
+    const reposition = () => updatePosition();
+    // capture=true so the modal's own scroll container also triggers reposition.
+    window.addEventListener('scroll', reposition, true);
+    window.addEventListener('resize', reposition);
     const handleClick = (event: MouseEvent) => {
-      if (!rootRef.current?.contains(event.target as Node)) setOpen(false);
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (popupRef.current?.contains(target)) return;
+      setOpen(false);
     };
     const handleKey = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
@@ -191,15 +246,28 @@ export function FormSelect<TValue extends string>({
     document.addEventListener('mousedown', handleClick);
     document.addEventListener('keydown', handleKey);
     return () => {
+      window.removeEventListener('scroll', reposition, true);
+      window.removeEventListener('resize', reposition);
       document.removeEventListener('mousedown', handleClick);
       document.removeEventListener('keydown', handleKey);
     };
-  }, [open]);
+  }, [open, updatePosition]);
 
   const selectedOption = options.find((o) => o.value === value);
   const visibleOptions = searchable
     ? options.filter((o) => labelMatches(o.label, query))
     : options;
+
+  const popupStyle: CSSProperties | undefined = position
+    ? {
+        left: position.left,
+        width: position.width,
+        maxHeight: position.maxHeight,
+        ...(position.top !== undefined
+          ? { top: position.top }
+          : { bottom: position.bottom }),
+      }
+    : undefined;
 
   return (
     <Root ref={rootRef}>
@@ -219,46 +287,58 @@ export function FormSelect<TValue extends string>({
         <IconChevronDown size={20} stroke={1.5} aria-hidden />
       </Trigger>
       {name ? <input type="hidden" name={name} value={value} /> : null}
-      {open && (
-        <Popup role="listbox" aria-label={ariaLabel}>
-          {searchable && (
-            <SearchRow>
-              <IconSearch size={16} stroke={1.5} aria-hidden />
-              <SearchInput
-                autoFocus
-                type="text"
-                placeholder={searchPlaceholder}
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-              />
-            </SearchRow>
-          )}
-          <OptionList>
-            {visibleOptions.length === 0 ? (
-              <EmptyState>{searchEmptyLabel ?? '—'}</EmptyState>
-            ) : (
-              visibleOptions.map((option) => {
-                const selected = value === option.value;
-                return (
-                  <Option
-                    key={option.value}
-                    type="button"
-                    role="option"
-                    aria-selected={selected}
-                    data-selected={selected ? 'true' : undefined}
-                    onClick={() => {
-                      onValueChange(option.value);
-                      setOpen(false);
-                    }}
-                  >
-                    {option.label}
-                  </Option>
-                );
-              })
-            )}
-          </OptionList>
-        </Popup>
-      )}
+      {open && popupStyle && typeof document !== 'undefined'
+        ? createPortal(
+            <Popup
+              ref={popupRef}
+              role="listbox"
+              aria-label={ariaLabel}
+              style={popupStyle}
+              // Keep clicks inside the popup from reaching the modal's
+              // outside-press handler (which would close the dialog).
+              onMouseDown={(event) => event.stopPropagation()}
+              onPointerDown={(event) => event.stopPropagation()}
+            >
+              {searchable && (
+                <SearchRow>
+                  <IconSearch size={16} stroke={1.5} aria-hidden />
+                  <SearchInput
+                    autoFocus
+                    type="text"
+                    placeholder={searchPlaceholder}
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                  />
+                </SearchRow>
+              )}
+              <OptionList>
+                {visibleOptions.length === 0 ? (
+                  <EmptyState>{searchEmptyLabel ?? '—'}</EmptyState>
+                ) : (
+                  visibleOptions.map((option) => {
+                    const selected = value === option.value;
+                    return (
+                      <Option
+                        key={option.value}
+                        type="button"
+                        role="option"
+                        aria-selected={selected}
+                        data-selected={selected ? 'true' : undefined}
+                        onClick={() => {
+                          onValueChange(option.value);
+                          setOpen(false);
+                        }}
+                      >
+                        {option.label}
+                      </Option>
+                    );
+                  })
+                )}
+              </OptionList>
+            </Popup>,
+            document.body,
+          )
+        : null}
     </Root>
   );
 }
