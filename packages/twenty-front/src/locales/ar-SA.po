@@ -8697,10 +8697,11 @@ msgstr "بريد إلكتروني أو نطاق غير صالح"
 msgid "Invalid email verification link."
 msgstr "رابط التحقق من البريد الإلكتروني غير صالح."
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
-msgstr "ملف غير صالح"
+msgid "Invalid file: {0}"
+msgstr ""
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx

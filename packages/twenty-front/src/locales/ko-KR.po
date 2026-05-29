@@ -8697,10 +8697,11 @@ msgstr "잘못된 이메일 또는 도메인"
 msgid "Invalid email verification link."
 msgstr "잘못된 이메일 인증 링크입니다."
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
-msgstr "잘못된 파일"
+msgid "Invalid file: {0}"
+msgstr ""
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx

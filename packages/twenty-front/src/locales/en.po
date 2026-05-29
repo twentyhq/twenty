@@ -8715,10 +8715,11 @@ msgstr "Invalid email or domain"
 msgid "Invalid email verification link."
 msgstr "Invalid email verification link."
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
-msgstr "Invalid File"
+msgid "Invalid file: {0}"
+msgstr "Invalid file: {0}"
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx

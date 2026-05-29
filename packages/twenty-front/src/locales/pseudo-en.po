@@ -8692,9 +8692,10 @@ msgstr ""
 msgid "Invalid email verification link."
 msgstr ""
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
+msgid "Invalid file: {0}"
 msgstr ""
 
 #. js-lingui-id: 04zLGG
