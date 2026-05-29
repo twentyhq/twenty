@@ -31,9 +31,9 @@ type GetPartnerBySlugResult =
   | { ok: false; reason: 'NOT_FOUND' | string };
 
 const handler = async (input: {
-  slug?: string;
+  queryStringParameters?: { slug?: string };
 }): Promise<GetPartnerBySlugResult> => {
-  const slug = input?.slug;
+  const slug = input?.queryStringParameters?.slug;
   if (typeof slug !== 'string' || slug.length === 0) {
     return { ok: false, reason: 'Missing slug query parameter' };
   }
