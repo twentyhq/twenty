@@ -18,7 +18,7 @@ const XAI_X_TOOL = { __tool: 'xai-x-search' };
 const ANTHROPIC_WEB_TOOL = { __tool: 'anthropic-web-search' };
 const OPENAI_WEB_TOOL = { __tool: 'openai-web-search' };
 
-describe('AiModelConfigService.getNativeModelBinding — tool-based native search', () => {
+describe('AiModelConfigService.getNativeModelTools — tool-based native search', () => {
   let service: AiModelConfigService;
   let sdkProviderFactory: {
     getRawXaiProvider: jest.Mock;
@@ -66,19 +66,19 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
 
   it('binds no tools when neither webSearch nor twitterSearch is enabled', () => {
     expect(
-      service.getNativeModelBinding(xaiModel, {
+      service.getNativeModelTools(xaiModel, {
         webSearch: false,
         twitterSearch: false,
-      }).tools,
+      }),
     ).toEqual({});
   });
 
   it('binds no tools when no options are passed (no implicit "auto" search)', () => {
-    expect(service.getNativeModelBinding(xaiModel, {}).tools).toEqual({});
+    expect(service.getNativeModelTools(xaiModel, {})).toEqual({});
   });
 
   it('binds only the xAI web_search tool when only webSearch is enabled', () => {
-    const { tools } = service.getNativeModelBinding(xaiModel, {
+    const tools = service.getNativeModelTools(xaiModel, {
       webSearch: true,
       twitterSearch: false,
     });
@@ -87,7 +87,7 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
   });
 
   it('binds only the xAI x_search tool when only twitterSearch is enabled', () => {
-    const { tools } = service.getNativeModelBinding(xaiModel, {
+    const tools = service.getNativeModelTools(xaiModel, {
       webSearch: false,
       twitterSearch: true,
     });
@@ -96,7 +96,7 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
   });
 
   it('binds both xAI tools when webSearch and twitterSearch are enabled', () => {
-    const { tools } = service.getNativeModelBinding(xaiModel, {
+    const tools = service.getNativeModelTools(xaiModel, {
       webSearch: true,
       twitterSearch: true,
     });
@@ -107,27 +107,14 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
     });
   });
 
-  // Regression guard: xAI's deprecated Live Search `searchParameters` provider
-  // option now returns 410. The binding must carry tools only — never
-  // provider options — so the dead payload can never be reintroduced.
-  it('never exposes a providerOptions field on the binding', () => {
-    const binding = service.getNativeModelBinding(xaiModel, {
-      webSearch: true,
-      twitterSearch: true,
-    });
-
-    expect(Object.keys(binding)).toEqual(['tools']);
-    expect(binding).not.toHaveProperty('providerOptions');
-  });
-
   it('binds no tools when the xAI provider cannot be resolved', () => {
     sdkProviderFactory.getRawXaiProvider.mockReturnValueOnce(undefined);
 
     expect(
-      service.getNativeModelBinding(xaiModel, {
+      service.getNativeModelTools(xaiModel, {
         webSearch: true,
         twitterSearch: true,
-      }).tools,
+      }),
     ).toEqual({});
   });
 
@@ -139,10 +126,10 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
     };
 
     expect(
-      service.getNativeModelBinding(modelWithoutProvider, {
+      service.getNativeModelTools(modelWithoutProvider, {
         webSearch: true,
         twitterSearch: true,
-      }).tools,
+      }),
     ).toEqual({});
     expect(sdkProviderFactory.getRawXaiProvider).not.toHaveBeenCalled();
   });
@@ -156,7 +143,7 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
     };
 
     expect(
-      service.getNativeModelBinding(anthropicModel, { webSearch: true }).tools,
+      service.getNativeModelTools(anthropicModel, { webSearch: true }),
     ).toEqual({ web_search: ANTHROPIC_WEB_TOOL });
   });
 
@@ -169,7 +156,7 @@ describe('AiModelConfigService.getNativeModelBinding — tool-based native searc
     };
 
     expect(
-      service.getNativeModelBinding(openaiModel, { webSearch: true }).tools,
+      service.getNativeModelTools(openaiModel, { webSearch: true }),
     ).toEqual({ web_search: OPENAI_WEB_TOOL });
   });
 });

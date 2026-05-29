@@ -16,7 +16,6 @@ import {
   RegisteredAiModel,
 } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { SdkProviderFactoryService } from 'src/engine/metadata-modules/ai/ai-models/services/sdk-provider-factory.service';
-import { type NativeModelBinding } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-binding.type';
 import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import { getNativeModelToolsForSdkPackage } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-tools-for-sdk-package.util';
 
@@ -26,15 +25,6 @@ export class AiModelConfigService {
     private readonly aiModelRegistryService: AiModelRegistryService,
     private readonly sdkProviderFactory: SdkProviderFactoryService,
   ) {}
-
-  getNativeModelBinding(
-    model: RegisteredAiModel,
-    options: NativeModelToolOptions = {},
-  ): NativeModelBinding {
-    return {
-      tools: this.getNativeModelTools(model, options),
-    };
-  }
 
   getReasoningProviderOptions(model: RegisteredAiModel): ProviderOptions {
     switch (model.sdkPackage) {
@@ -47,9 +37,9 @@ export class AiModelConfigService {
     }
   }
 
-  private getNativeModelTools(
+  getNativeModelTools(
     model: RegisteredAiModel,
-    options: NativeModelToolOptions,
+    options: NativeModelToolOptions = {},
   ): ToolSet {
     const tools: Record<string, unknown> = {};
 

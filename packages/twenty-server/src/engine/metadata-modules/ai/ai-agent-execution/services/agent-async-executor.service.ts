@@ -187,14 +187,14 @@ export class AgentAsyncExecutorService {
           );
         }
 
-        const nativeBinding = this.nativeToolBinder.bind(
+        const nativeTools = this.nativeToolBinder.bind(
           registeredModel,
           nativeModelToolOptions,
         );
 
         tools = {
           ...registryTools,
-          ...nativeBinding.tools,
+          ...nativeTools,
         };
 
         providerOptions =

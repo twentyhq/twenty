@@ -168,7 +168,7 @@ export class ChatExecutionService {
     const nativeCapabilities = getNativeModelCapabilities(
       registeredModel.sdkPackage,
     );
-    const nativeBinding = this.nativeToolBinder.bind(registeredModel, {
+    const nativeTools = this.nativeToolBinder.bind(registeredModel, {
       webSearch: nativeCapabilities?.webSearch === true,
       twitterSearch: nativeCapabilities?.twitterSearch === true,
     });
@@ -178,12 +178,12 @@ export class ChatExecutionService {
     // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
       ...preloadedTools,
-      ...nativeBinding.tools,
+      ...nativeTools,
     };
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
-      ...Object.keys(nativeBinding.tools),
+      ...Object.keys(nativeTools),
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.

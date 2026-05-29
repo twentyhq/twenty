@@ -79,7 +79,7 @@ describe('AgentAsyncExecutorService — workflow agent role-scoped tool resoluti
         {
           provide: NativeToolBinderService,
           useValue: {
-            bind: jest.fn().mockReturnValue({ tools: {} }),
+            bind: jest.fn().mockReturnValue({}),
           },
         },
         {
