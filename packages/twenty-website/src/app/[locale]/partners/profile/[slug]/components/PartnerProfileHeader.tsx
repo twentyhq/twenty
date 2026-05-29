@@ -1,43 +1,16 @@
 'use client';
 
-import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
-import { PartnerAvatar } from '@/app/[locale]/partners/list/components/PartnerAvatar';
 import type { MarketplacePartner } from '@/lib/partners-api';
 import { SERVED_GEO_LABELS } from '@/app/[locale]/partners/list/components/chip-labels';
 import { theme } from '@/theme';
 
-const Wrapper = styled.header`
-  align-items: center;
+const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing(4)};
-  text-align: center;
-`;
-
-const Avatar = styled.div`
-  border-radius: 50%;
-  height: 120px;
-  overflow: hidden;
-  width: 120px;
-`;
-
-const RealPhoto = styled.img`
-  display: block;
-  height: 100%;
-  object-fit: cover;
-  width: 100%;
-`;
-
-const Name = styled.h1`
-  color: ${theme.colors.primary.text[100]};
-  font-family: ${theme.font.family.serif};
-  font-size: ${theme.font.size(9)};
-  font-weight: ${theme.font.weight.light};
-  letter-spacing: -0.02em;
-  margin: 0;
+  gap: ${theme.spacing(2)};
 `;
 
 const Eyebrow = styled.p`
@@ -50,13 +23,31 @@ const Eyebrow = styled.p`
   text-transform: uppercase;
 `;
 
-const isSafeHttpUrl = (raw: string) => {
-  try {
-    return ['https:', 'http:'].includes(new URL(raw).protocol);
-  } catch {
-    return false;
+const Name = styled.h1`
+  animation: nameEnter 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  color: ${theme.colors.primary.text[100]};
+  font-family: ${theme.font.family.serif};
+  font-size: ${theme.font.size(12)};
+  font-weight: ${theme.font.weight.light};
+  letter-spacing: -0.02em;
+  line-height: ${theme.lineHeight(11)};
+  margin: 0;
+
+  @keyframes nameEnter {
+    from {
+      opacity: 0;
+      transform: translate3d(0, 12px, 0);
+    }
+    to {
+      opacity: 1;
+      transform: translate3d(0, 0, 0);
+    }
   }
-};
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
 
 type PartnerProfileHeaderProps = {
   partner: MarketplacePartner;
@@ -70,22 +61,10 @@ export function PartnerProfileHeader({ partner }: PartnerProfileHeaderProps) {
   const locationParts = [partner.city, partner.country].filter(Boolean);
   const eyebrow = [region, ...locationParts].filter(Boolean).join(' · ');
 
-  const showRealPhoto = isSafeHttpUrl(partner.profilePictureUrl);
-
   return (
     <Wrapper>
-      <Avatar>
-        {showRealPhoto ? (
-          <RealPhoto
-            src={partner.profilePictureUrl}
-            alt={i18n._(msg`${partner.name} profile picture`)}
-          />
-        ) : (
-          <PartnerAvatar name={partner.name} slug={partner.slug} />
-        )}
-      </Avatar>
-      <Name>{partner.name}</Name>
       {eyebrow && <Eyebrow>{eyebrow}</Eyebrow>}
+      <Name id="partner-name">{partner.name}</Name>
     </Wrapper>
   );
 }

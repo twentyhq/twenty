@@ -13,8 +13,17 @@ const Panel = styled.section`
   border-radius: ${theme.radius(2)};
   display: flex;
   flex-direction: column;
-  gap: ${theme.spacing(4)};
-  padding: ${theme.spacing(6)};
+  gap: ${theme.spacing(3)};
+  padding: ${theme.spacing(5)};
+`;
+
+const PanelEyebrow = styled.p`
+  color: ${theme.colors.primary.text[60]};
+  font-family: ${theme.font.family.mono};
+  font-size: ${theme.font.size(3)};
+  letter-spacing: 0.08em;
+  margin: 0;
+  text-transform: uppercase;
 `;
 
 const Row = styled.div`
@@ -69,6 +78,7 @@ export function PartnerRatesPanel({
 
   return (
     <Panel aria-label={i18n._(msg`Rates`)}>
+      <PanelEyebrow>{i18n._(msg`Rates`)}</PanelEyebrow>
       {rows.map((row) => (
         <Row key={row.label}>
           <Label>{row.label}</Label>
