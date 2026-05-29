@@ -9,3 +9,5 @@ export type {
   SpokenLanguage,
 } from '@/lib/partners-api/partner-facets';
 export type { MarketplacePartner } from '@/lib/partners-api/partner-types';
+export { getPartners } from '@/lib/partners-api/get-partners';
+export { getPartnerBySlug } from '@/lib/partners-api/get-partner-by-slug';
