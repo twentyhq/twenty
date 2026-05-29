@@ -20,12 +20,20 @@ const FIXTURE: MarketplacePartner = {
   deploymentExpertise: ['CLOUD', 'SELF_HOST'],
   region: ['EUROPE', 'US'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
+  hourlyRateUsd: null,
+  projectBudgetMinUsd: null,
+  projectBudgetTypicalUsd: null,
+  linkedinUrl: '',
+  profilePictureUrl: '',
+  city: '',
+  country: '',
+  skills: [],
 };
 
 const renderCard = () =>
   renderToStaticMarkup(
     <I18nProvider i18n={i18n}>
-      <PartnerCard partner={FIXTURE} index={0} />
+      <PartnerCard partner={FIXTURE} index={0} locale="en" />
     </I18nProvider>,
   );
 
@@ -74,9 +82,10 @@ describe('PartnerCard', () => {
         <PartnerCard
           partner={{ ...FIXTURE, calendarLink: unsafeLink }}
           index={0}
+          locale="en"
         />
       </I18nProvider>,
     );
-    expect(html).not.toContain('href=');
+    expect(html).not.toContain(`href="${unsafeLink}"`);
   });
 });
