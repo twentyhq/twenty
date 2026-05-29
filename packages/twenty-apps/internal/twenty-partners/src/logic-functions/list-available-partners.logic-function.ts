@@ -4,6 +4,9 @@ import { defineLogicFunction } from 'twenty-sdk/define';
 export const LIST_AVAILABLE_PARTNERS_LOGIC_FUNCTION_ID =
   '0f91164f-f492-41e8-9bb0-481be5a3d5b9';
 
+type CurrencyValue = { amountMicros: number; currencyCode: string } | null;
+type LinkValue = { primaryLinkUrl: string | null } | null;
+
 type Partner = {
   id: string;
   name: string | null;
@@ -12,7 +15,15 @@ type Partner = {
   languagesSpoken: string[] | null;
   deploymentExpertise: string[] | null;
   region: string[] | null;
-  calendarLink: { primaryLinkUrl: string | null } | null;
+  calendarLink: LinkValue;
+  hourlyRate: CurrencyValue;
+  projectBudgetMin: CurrencyValue;
+  projectBudgetTypical: CurrencyValue;
+  linkedin: LinkValue;
+  profilePicture: LinkValue;
+  skills: string[] | null;
+  city: string | null;
+  country: string | null;
 };
 
 type ListAvailablePartnersResult =
@@ -43,6 +54,14 @@ const handler = async (): Promise<ListAvailablePartnersResult> => {
             deploymentExpertise: true,
             region: true,
             calendarLink: { primaryLinkUrl: true },
+            hourlyRate: { amountMicros: true, currencyCode: true },
+            projectBudgetMin: { amountMicros: true, currencyCode: true },
+            projectBudgetTypical: { amountMicros: true, currencyCode: true },
+            linkedin: { primaryLinkUrl: true },
+            profilePicture: { primaryLinkUrl: true },
+            skills: true,
+            city: true,
+            country: true,
           },
         },
       },
