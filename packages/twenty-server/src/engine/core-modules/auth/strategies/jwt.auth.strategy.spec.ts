@@ -2,14 +2,8 @@ import { randomUUID } from 'crypto';
 
 import { msg } from '@lingui/core/macro';
 
-import {
-  AuthException,
-  AuthExceptionCode,
-} from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthException, AuthExceptionCode, } from 'src/engine/core-modules/auth/auth.exception';
+import { type JwtPayload, JwtTokenTypeEnum, } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';
@@ -17,7 +11,6 @@ import { JwtAuthStrategy } from './jwt.auth.strategy';
 describe('JwtAuthStrategy', () => {
   let strategy: JwtAuthStrategy;
   let userWorkspaceRepository: any;
-  let applicationRepository: any;
   let jwtWrapperService: any;
   let permissionsService: any;
   let workspaceCacheService: any;
@@ -30,18 +23,16 @@ describe('JwtAuthStrategy', () => {
 
   let workspaceStore: Record<string, any>;
   let userStore: Record<string, any>;
+  let applicationStore: Record<string, any>;
   let apiKeyStore: Record<string, Record<string, any>>;
 
   beforeEach(() => {
     workspaceStore = {};
     userStore = {};
+    applicationStore = {};
     apiKeyStore = {};
 
     userWorkspaceRepository = {
-      findOne: jest.fn(),
-    };
-
-    applicationRepository = {
       findOne: jest.fn(),
     };
 
@@ -103,6 +94,10 @@ describe('JwtAuthStrategy', () => {
           return userWorkspaceRepository.findOne({ where: { id: entityId } });
         }
 
+        if (keyName === 'applicationEntity') {
+          return applicationStore[entityId] ?? null;
+        }
+
         return null;
       }),
       invalidate: jest.fn(),
@@ -116,10 +111,10 @@ describe('JwtAuthStrategy', () => {
   const createStrategy = () =>
     new JwtAuthStrategy(
       jwtWrapperService,
-      applicationRepository,
       userWorkspaceRepository,
       permissionsService,
       workspaceCacheService,
+      coreEntityCacheService,
     );
 
   describe('API_KEY validation', () => {
@@ -346,8 +341,6 @@ describe('JwtAuthStrategy', () => {
       };
 
       workspaceStore[validWorkspaceId] = new WorkspaceEntity();
-
-      applicationRepository.findOne.mockResolvedValue(null);
 
       strategy = createStrategy();
 
