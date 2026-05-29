@@ -71,3 +71,4 @@ describe('getPartnerBySlug', () => {
     expect(partner).toBeNull();
   });
 });
+export {};

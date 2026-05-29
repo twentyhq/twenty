@@ -89,3 +89,4 @@ describe('getPartners boundary normalization', () => {
     expect(partners[0].country).toBe('');
   });
 });
+export {};
