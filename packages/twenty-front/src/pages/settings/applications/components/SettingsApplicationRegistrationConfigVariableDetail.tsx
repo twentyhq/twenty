@@ -10,6 +10,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { NotFound } from '~/pages/not-found/NotFound';
 import { ApplicationRegistrationConfigVariableEditForm } from '@/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm';
 
 export const SettingsApplicationRegistrationConfigVariableDetail = () => {
@@ -20,18 +21,16 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
     variableKey: string;
   }>();
 
-  const { data: applicationRegistrationData } = useQuery(
-    FindOneApplicationRegistrationDocument,
-    {
+  const { data: applicationRegistrationData, loading: registrationLoading } =
+    useQuery(FindOneApplicationRegistrationDocument, {
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
-    },
-  );
+    });
 
   const registration =
     applicationRegistrationData?.findOneApplicationRegistration;
 
-  const { data: variablesData } = useQuery(
+  const { data: variablesData, loading: variablesLoading } = useQuery(
     FindApplicationRegistrationVariablesDocument,
     {
       variables: { applicationRegistrationId },
@@ -50,8 +49,12 @@ export const SettingsApplicationRegistrationConfigVariableDetail = () => {
     },
   );
 
-  if (!variable || !registration) {
+  if (registrationLoading || variablesLoading) {
     return <SettingsSkeletonLoader />;
+  }
+
+  if (!variable || !registration) {
+    return <NotFound />;
   }
 
   const onUpdateVariable = async (

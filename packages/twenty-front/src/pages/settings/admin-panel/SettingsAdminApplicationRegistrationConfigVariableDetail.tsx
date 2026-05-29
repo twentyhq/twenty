@@ -12,6 +12,7 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { getSettingsPath } from 'twenty-shared/utils';
 import { SettingsPath } from 'twenty-shared/types';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { NotFound } from '~/pages/not-found/NotFound';
 import { ApplicationRegistrationConfigVariableEditForm } from '@/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm';
 
 export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
@@ -23,19 +24,17 @@ export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
     variableKey: string;
   }>();
 
-  const { data: applicationRegistrationData } = useQuery(
-    FindOneAdminApplicationRegistrationDocument,
-    {
+  const { data: applicationRegistrationData, loading: registrationLoading } =
+    useQuery(FindOneAdminApplicationRegistrationDocument, {
       client: apolloAdminClient,
       variables: { id: applicationRegistrationId },
       skip: !applicationRegistrationId,
-    },
-  );
+    });
 
   const registration =
     applicationRegistrationData?.findOneAdminApplicationRegistration;
 
-  const { data: variablesData } = useQuery(
+  const { data: variablesData, loading: variablesLoading } = useQuery(
     FindAdminApplicationRegistrationVariablesDocument,
     {
       client: apolloAdminClient,
@@ -56,8 +55,12 @@ export const SettingsAdminApplicationRegistrationConfigVariableDetail = () => {
     },
   );
 
-  if (!variable || !registration) {
+  if (registrationLoading || variablesLoading) {
     return <SettingsSkeletonLoader />;
+  }
+
+  if (!variable || !registration) {
+    return <NotFound />;
   }
 
   const onUpdateVariable = async (

@@ -60,9 +60,7 @@ export const ApplicationRegistrationConfigVariableEditForm = ({
       input={
         <TextInput
           value={value}
-          placeholder={
-            !isEditing ? (variable.value ?? t`set-config-value`) : ''
-          }
+          placeholder={!isEditing ? (variable.value ?? t`Enter a value`) : ''}
           onChange={setValue}
           disabled={!isEditing}
           fullWidth

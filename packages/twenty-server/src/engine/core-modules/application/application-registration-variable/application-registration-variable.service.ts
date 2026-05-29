@@ -48,20 +48,7 @@ export class ApplicationRegistrationVariableService {
       order: { key: 'ASC' },
     });
 
-    return variables.map((variable) => {
-      const { encryptedValue } = variable;
-
-      return {
-        ...variable,
-        isFilled: variable.isFilled,
-        value:
-          encryptedValue !== ''
-            ? variable.isSecret
-              ? '•••••••••••••'
-              : this.encryptionService.decryptVersioned(encryptedValue)
-            : null,
-      };
-    });
+    return variables.map((variable) => this.toObfuscatedDTO(variable));
   }
 
   async createVariable(
@@ -102,10 +89,12 @@ export class ApplicationRegistrationVariableService {
 
   async updateVariableGlobal(
     input: UpdateApplicationRegistrationVariableInput,
-  ): Promise<ApplicationRegistrationVariableEntity> {
+  ): Promise<ApplicationRegistrationVariableDTO> {
     await this.findVariableOrThrow(input.id);
 
-    return this.applyVariableUpdate(input);
+    const entity = await this.applyVariableUpdate(input);
+
+    return this.toObfuscatedDTO(entity);
   }
 
   async deleteVariable(id: string, workspaceId: string): Promise<boolean> {
@@ -252,6 +241,23 @@ export class ApplicationRegistrationVariableService {
     }
 
     return this.variableRepository.findOneOrFail({ where: { id } });
+  }
+
+  private toObfuscatedDTO(
+    variable: ApplicationRegistrationVariableEntity,
+  ): ApplicationRegistrationVariableDTO {
+    const { encryptedValue } = variable;
+
+    return {
+      ...variable,
+      isFilled: variable.isFilled,
+      value:
+        encryptedValue !== ''
+          ? variable.isSecret
+            ? '•••••••••••••'
+            : this.encryptionService.decryptVersioned(encryptedValue)
+          : null,
+    };
   }
 
   private async assertRegistrationOwnedByWorkspace(

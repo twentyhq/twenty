@@ -45,7 +45,6 @@ import { AdminPanelStatisticsService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel/services/admin-panel-user-lookup.service';
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
 import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
@@ -728,10 +727,10 @@ export class AdminPanelResolver {
   }
 
   @UseGuards(AdminPanelGuard)
-  @Mutation(() => ApplicationRegistrationVariableEntity)
+  @Mutation(() => ApplicationRegistrationVariableDTO)
   async updateAdminApplicationRegistrationVariable(
     @Args('input') input: UpdateApplicationRegistrationVariableInput,
-  ): Promise<ApplicationRegistrationVariableEntity> {
+  ): Promise<ApplicationRegistrationVariableDTO> {
     return this.applicationRegistrationVariableService.updateVariableGlobal(
       input,
     );

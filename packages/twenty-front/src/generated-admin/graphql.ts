@@ -195,18 +195,6 @@ export enum ApplicationRegistrationSourceType {
   TARBALL = 'TARBALL'
 }
 
-export type ApplicationRegistrationVariable = {
-  __typename?: 'ApplicationRegistrationVariable';
-  createdAt: Scalars['DateTime'];
-  description: Scalars['String'];
-  id: Scalars['UUID'];
-  isFilled: Scalars['Boolean'];
-  isRequired: Scalars['Boolean'];
-  isSecret: Scalars['Boolean'];
-  key: Scalars['String'];
-  updatedAt: Scalars['DateTime'];
-};
-
 export type ApplicationRegistrationVariableDto = {
   __typename?: 'ApplicationRegistrationVariableDTO';
   createdAt: Scalars['DateTime'];
@@ -410,7 +398,7 @@ export type Mutation = {
   setAdminAiModelsRecommended: Scalars['Boolean'];
   setAdminDefaultAiModel: Scalars['Boolean'];
   setMaintenanceMode: Scalars['Boolean'];
-  updateAdminApplicationRegistrationVariable: ApplicationRegistrationVariable;
+  updateAdminApplicationRegistrationVariable: ApplicationRegistrationVariableDto;
   updateDatabaseConfigVariable: Scalars['Boolean'];
   updateWorkspaceFeatureFlag: Scalars['Boolean'];
 };
@@ -956,7 +944,7 @@ export type UpdateAdminApplicationRegistrationVariableMutationVariables = Exact<
 }>;
 
 
-export type UpdateAdminApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateAdminApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariable', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
+export type UpdateAdminApplicationRegistrationVariableMutation = { __typename?: 'Mutation', updateAdminApplicationRegistrationVariable: { __typename?: 'ApplicationRegistrationVariableDTO', id: string, key: string, description: string, isSecret: boolean, isRequired: boolean, isFilled: boolean, createdAt: string, updatedAt: string } };
 
 export type FindAdminApplicationRegistrationVariablesQueryVariables = Exact<{
   applicationRegistrationId: Scalars['String'];
