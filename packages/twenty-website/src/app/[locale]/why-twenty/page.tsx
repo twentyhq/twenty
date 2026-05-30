@@ -51,17 +51,11 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
         href="/illustrations/why-twenty/hero/hero.glb"
         rel="preload"
       />
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="secondary" />
-        <Menu.Nav scheme="secondary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="secondary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="secondary" />
-      </Menu.Root>
+      />
 
       <Hero.Root scheme="dark">
         <Hero.Heading page={Pages.WhyTwenty} size="xl">

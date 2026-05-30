@@ -46,17 +46,7 @@ export default async function PricingPage({ params }: PricingPageProps) {
   return (
     <>
       <JsonLd data={buildFaqPageJsonLd(FAQ_QUESTIONS, (d) => i18n._(d))} />
-      <Menu.Root
-        backgroundColor="#F3F3F3"
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
-        socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      <Menu backgroundColor="#F3F3F3" socialLinks={menuSocialLinks} />
 
       <Hero.Root scheme="muted">
         <Hero.Heading page={Pages.Pricing}>

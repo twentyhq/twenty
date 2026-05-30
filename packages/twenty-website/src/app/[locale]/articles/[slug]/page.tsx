@@ -67,17 +67,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <JsonLd data={buildArticleJsonLd(post)} />
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.primary.background[100]}
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      />
       <Articles.Article post={post} />
     </>
   );

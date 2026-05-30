@@ -45,17 +45,11 @@ export async function CaseStudyPageLayout({
 
   return (
     <>
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.secondary.background[100]}
         scheme="secondary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="secondary" />
-        <Menu.Nav scheme="secondary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="secondary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="secondary" />
-      </Menu.Root>
+      />
 
       <CaseStudy.Hero
         dashColor={palette.dashColor}

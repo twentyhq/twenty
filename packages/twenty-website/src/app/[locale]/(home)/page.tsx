@@ -189,17 +189,10 @@ export default async function HomePage({ params }: HomePageProps) {
         href="/illustrations/home/helped/money.glb"
         as="fetch"
       />
-      <Menu.Root
+      <Menu
         backgroundColor={HOME_TOP_BACKGROUND_COLOR}
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      />
 
       <Hero.Root scheme="muted" showHomeBackground>
         <HeroIntroGroup data-halftone-exclude>

@@ -86,17 +86,10 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
       {posts.length > 0 ? (
         <JsonLd data={buildArticleListJsonLd(posts)} />
       ) : null}
-      <Menu.Root
+      <Menu
         backgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      />
 
       <div className={pageRevealClassName}>
         <Hero.Root scheme="muted">

@@ -50,17 +50,10 @@ export default async function ReleasesPage({ params }: ReleasesPageProps) {
         href="/illustrations/generated/milestone.jpg"
         rel="preload"
       />
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.primary.background[100]}
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      />
 
       <Hero.Root scheme="light">
         <Hero.Heading page={Pages.ReleaseNotes} size="lg" weight="light">
