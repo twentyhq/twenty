@@ -4,9 +4,11 @@ import { styled } from '@linaria/react';
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
+import { WebGlMount } from '@/lib/visual-runtime';
 import { AppPreview } from '@/sections/AppPreview';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { HeroBody, HeroCta, HeroHeading, HeroSection } from '@/sections/Hero';
+import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/components/HomeBackgroundHalftone';
 import { theme } from '@/theme';
 
 const HeroHeadingGroup = styled.div`
@@ -33,7 +35,14 @@ export function HomeHero() {
   const i18n = getServerI18n();
 
   return (
-    <HeroSection scheme="muted" showHomeBackground>
+    <HeroSection
+      scheme="muted"
+      background={
+        <WebGlMount priority>
+          <HomeBackgroundHalftone />
+        </WebGlMount>
+      }
+    >
       <HeroIntroGroup data-halftone-exclude>
         <HeroHeadingGroup>
           <HeroHeading>

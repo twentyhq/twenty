@@ -1,6 +1,4 @@
 import { Container } from '@/design-system/components';
-import { WebGlMount } from '@/lib/visual-runtime';
-import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/components/HomeBackgroundHalftone';
 import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
@@ -65,28 +63,24 @@ const StyledContainer = styled(Container)`
 `;
 
 type HeroSectionProps = {
+  // Optional decorative background rendered behind the hero content (e.g. the
+  // home page's halftone). Injected by the page-local hero so the shell stays
+  // free of WebGL/section dependencies.
+  background?: ReactNode;
   children: ReactNode;
   scheme: Scheme;
-  // Renders the home page's halftone background behind the hero content.
-  showHomeBackground?: boolean;
 };
 
 // Shared hero shell: the scheme-aware section background and the centered
 // content container. Heroes compose their own heading/body/cta/visual inside.
 export function HeroSection({
+  background,
   children,
   scheme,
-  showHomeBackground = false,
 }: HeroSectionProps) {
   return (
     <StyledSection data-scheme={scheme}>
-      {showHomeBackground ? (
-        <StyledBackground>
-          <WebGlMount priority>
-            <HomeBackgroundHalftone />
-          </WebGlMount>
-        </StyledBackground>
-      ) : null}
+      {background ? <StyledBackground>{background}</StyledBackground> : null}
       <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );
