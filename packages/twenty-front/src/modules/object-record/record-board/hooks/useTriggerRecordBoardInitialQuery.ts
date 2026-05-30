@@ -88,8 +88,21 @@ export const useTriggerRecordBoardInitialQuery = () => {
       scrollWrapperHTMLElement?.scrollTo({ top: 0, left: 0 });
     };
 
-    const recordIndexGroupsRecordsGroupByLazyQueryResult =
-      await executeRecordIndexGroupsRecordsLazyGroupBy();
+    let recordIndexGroupsRecordsGroupByLazyQueryResult;
+
+    try {
+      recordIndexGroupsRecordsGroupByLazyQueryResult =
+        await executeRecordIndexGroupsRecordsLazyGroupBy();
+    } catch {
+      // The in-flight groupBy can be aborted (e.g. StrictMode double-mount in dev,
+      // or any unmount/remount race). Reset the loading flag WITHOUT saving the
+      // query identifier, so the effect re-triggers and retries. Without this,
+      // the rejection skips cleanStateBeforeExit, the app-level loading flag stays
+      // stuck true across the remount, and the board hangs on skeletons forever.
+      store.set(recordIndexRecordGroupsAreInInitialLoading, false);
+
+      return;
+    }
 
     if (!isDefined(recordIndexGroupsRecordsGroupByLazyQueryResult)) {
       cleanStateBeforeExit();
