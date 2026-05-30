@@ -103,20 +103,23 @@ export const SettingsObjects = () => {
         <Section>
           <H2Title
             title={t`Existing objects`}
-            adornment={
-              <UndecoratedLink
-                to={getSettingsPath(SettingsPath.ObjectOverview)}
-              >
-                <Button
-                  title={t`Visualize`}
-                  variant="secondary"
-                  size="small"
-                  Icon={IconEye}
-                />
-              </UndecoratedLink>
-            }
+            description={t`Manage objects, fields and relationships`}
           />
           <SettingsObjectTable objectMetadataItems={objectMetadataItems} />
+        </Section>
+        <Section>
+          <H2Title
+            title={t`Visualize data model`}
+            description={t`See your data structure as an interactive diagram`}
+          />
+          <UndecoratedLink to={getSettingsPath(SettingsPath.ObjectOverview)}>
+            <Button
+              title={t`Visualize`}
+              variant="secondary"
+              size="small"
+              Icon={IconEye}
+            />
+          </UndecoratedLink>
         </Section>
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
