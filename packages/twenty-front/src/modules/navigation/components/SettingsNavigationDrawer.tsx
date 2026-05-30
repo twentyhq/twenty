@@ -1,12 +1,23 @@
+import { NavigationDrawerAiChatContent } from '@/ai/components/NavigationDrawerAiChatContent';
+import { MainNavigationDrawerTabsRow } from '@/navigation/components/MainNavigationDrawerTabsRow';
+import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsNavigationDrawerItems } from '@/settings/components/SettingsNavigationDrawerItems';
 import { NavigationDrawer } from '@/ui/navigation/navigation-drawer/components/NavigationDrawer';
 import { NavigationDrawerFixedContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerFixedContent';
 import { NavigationDrawerScrollableContent } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerScrollableContent';
 import { isAdvancedModeEnabledState } from '@/ui/navigation/navigation-drawer/states/isAdvancedModeEnabledState';
+import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigationDrawerActiveTabState';
+import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useLingui } from '@lingui/react/macro';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
+import { PermissionFlagType } from '~/generated-metadata/graphql';
 
+// Same shape as MainNavigationDrawer: a Home/Chat tab toggle pinned to the
+// top, then either the settings nav (Home) or the AI chat thread list
+// (Chat). The AdvancedSettingsToggle stays pinned to the bottom and only
+// makes sense on the Home tab.
 export const SettingsNavigationDrawer = ({
   className,
 }: {
@@ -16,20 +27,38 @@ export const SettingsNavigationDrawer = ({
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
+  const navigationDrawerActiveTab = useAtomStateValue(
+    navigationDrawerActiveTabState,
+  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
+
+  const showAiChatContent =
+    hasAiPermission &&
+    navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
+      <NavigationDrawerFixedContent>
+        <MainNavigationDrawerTabsRow />
+      </NavigationDrawerFixedContent>
+
       <NavigationDrawerScrollableContent>
-        <SettingsNavigationDrawerItems />
+        {showAiChatContent ? (
+          <NavigationDrawerAiChatContent />
+        ) : (
+          <SettingsNavigationDrawerItems />
+        )}
       </NavigationDrawerScrollableContent>
 
-      <NavigationDrawerFixedContent>
-        <AdvancedSettingsToggle
-          isAdvancedModeEnabled={isAdvancedModeEnabled}
-          setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-          label={t`Advanced:`}
-        />
-      </NavigationDrawerFixedContent>
+      {!showAiChatContent && (
+        <NavigationDrawerFixedContent>
+          <AdvancedSettingsToggle
+            isAdvancedModeEnabled={isAdvancedModeEnabled}
+            setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+            label={t`Advanced:`}
+          />
+        </NavigationDrawerFixedContent>
+      )}
     </NavigationDrawer>
   );
 };

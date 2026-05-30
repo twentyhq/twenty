@@ -1,4 +1,5 @@
 import { InformationBannerWrapper } from '@/information-banner/components/InformationBannerWrapper';
+import { MainContainerLayoutWithSidePanel } from '@/object-record/components/MainContainerLayoutWithSidePanel';
 import {
   Breadcrumb,
   type BreadcrumbProps,
@@ -6,7 +7,6 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 import { styled } from '@linaria/react';
 import { type JSX, type ReactNode } from 'react';
-import { PageBody } from './PageBody';
 import { PageHeader } from './PageHeader';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -72,7 +72,13 @@ export const SubMenuTopBarContainer = ({
       <PageHeader title={<Breadcrumb links={links} />}>
         {actionButton}
       </PageHeader>
-      <PageBody>
+      {/*
+        MainContainerLayoutWithSidePanel is the same wrapper the App's record
+        pages use: it renders the page body on the left and SidePanelForDesktop
+        on the right. Hosting it here lets the AI chat side panel (and any
+        other side-panel page) open in settings exactly as it does in the App.
+      */}
+      <MainContainerLayoutWithSidePanel>
         <StyledBodyContentWrapper>
           <InformationBannerWrapper />
           {(isDefined(title) || reserveTitleSpace === true) && (
@@ -83,7 +89,7 @@ export const SubMenuTopBarContainer = ({
           )}
           {children}
         </StyledBodyContentWrapper>
-      </PageBody>
+      </MainContainerLayoutWithSidePanel>
     </StyledContainer>
   );
 };
