@@ -1,5 +1,6 @@
 import { type ProviderOptions } from '@ai-sdk/provider-utils';
 import { type ModelMessage } from 'ai';
+import { type AiSdkPackage } from 'twenty-shared/ai';
 
 import {
   AI_SDK_ANTHROPIC,
@@ -41,7 +42,7 @@ export const mergeProviderOptions = (
 };
 
 export const getCallLevelCacheProviderOptions = (
-  sdkPackage: string,
+  sdkPackage: AiSdkPackage,
 ): ProviderOptions | undefined => {
   if (sdkPackage === AI_SDK_ANTHROPIC) {
     return { anthropic: { cacheControl: { type: 'ephemeral' } } };
@@ -51,7 +52,7 @@ export const getCallLevelCacheProviderOptions = (
 };
 
 export const getCacheProviderOptions = (
-  sdkPackage: string,
+  sdkPackage: AiSdkPackage,
 ): ProviderOptions | undefined => {
   if (sdkPackage === AI_SDK_BEDROCK) {
     return { bedrock: { cachePoint: { type: 'default' } } };
@@ -61,7 +62,7 @@ export const getCacheProviderOptions = (
 };
 
 export const withOpenAIStoreDisabledProviderOptions = (
-  sdkPackage: string,
+  sdkPackage: AiSdkPackage,
   providerOptions?: ProviderOptions,
 ): ProviderOptions | undefined => {
   if (sdkPackage !== AI_SDK_OPENAI) {
@@ -76,7 +77,7 @@ export const withOpenAIStoreDisabledProviderOptions = (
 };
 
 export const getCallLevelProviderOptions = (
-  sdkPackage: string,
+  sdkPackage: AiSdkPackage,
 ): ProviderOptions | undefined =>
   withOpenAIStoreDisabledProviderOptions(
     sdkPackage,
@@ -85,7 +86,7 @@ export const getCallLevelProviderOptions = (
 
 export const injectCacheBreakpoint = (
   messages: ModelMessage[],
-  sdkPackage: string,
+  sdkPackage: AiSdkPackage,
 ): ModelMessage[] => {
   if (messages.length === 0) return messages;
 
