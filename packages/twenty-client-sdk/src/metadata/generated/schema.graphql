@@ -3269,6 +3269,7 @@ type Mutation {
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
+  generatePlaygroundToken: AuthToken!
   emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!

@@ -2803,6 +2803,7 @@ export interface Mutation {
     authorizeApp: AuthorizeApp
     renewToken: AuthTokens
     generateApiKeyToken: ApiKeyToken
+    generatePlaygroundToken: AuthToken
     emailPasswordResetLink: EmailPasswordResetLink
     updatePasswordViaResetToken: InvalidatePassword
     createApplicationRegistration: CreateApplicationRegistration
@@ -5852,6 +5853,7 @@ export interface MutationGenqlSelection{
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
     renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })
+    generatePlaygroundToken?: AuthTokenGenqlSelection
     emailPasswordResetLink?: (EmailPasswordResetLinkGenqlSelection & { __args: {email: Scalars['String'], workspaceId?: (Scalars['UUID'] | null)} })
     updatePasswordViaResetToken?: (InvalidatePasswordGenqlSelection & { __args: {passwordResetToken: Scalars['String'], newPassword: Scalars['String']} })
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })

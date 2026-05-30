@@ -8208,6 +8208,9 @@ export default {
                     ]
                 }
             ],
+            "generatePlaygroundToken": [
+                32
+            ],
             "emailPasswordResetLink": [
                 241,
                 {
