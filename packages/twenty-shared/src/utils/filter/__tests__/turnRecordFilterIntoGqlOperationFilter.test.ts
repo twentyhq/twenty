@@ -375,6 +375,20 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       expect(result).toHaveProperty('updatedAt.lt');
     });
 
+    it('should handle IS_AFTER operand with UTC offset datetime', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: makeFilter(
+          'f-datetime',
+          RecordFilterOperand.IS_AFTER,
+          '2026-05-01T00:00:00+00:00',
+        ),
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({ updatedAt: { gte: '2026-05-01T00:00:00Z' } });
+    });
+
     it('should handle IS operand', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,

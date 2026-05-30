@@ -27,6 +27,8 @@ const hasErrorCode = (
   return 'code' in error && isDefined(error.code);
 };
 
+const nonCriticalErrorCodes = new Set(['INVALID_DATE_TIME_FILTER_VALUE']);
+
 export const PromiseRejectionEffect = () => {
   const { enqueueErrorSnackBar } = useSnackBar();
 
@@ -44,19 +46,27 @@ export const PromiseRejectionEffect = () => {
         error?.networkError?.name === 'AbortError' ||
         error?.name === 'AbortError';
 
-      if (!isAbortError) {
-        enqueueErrorSnackBar(
-          error instanceof Error ? { message: error.message } : {},
-        );
+      if (isAbortError) {
+        return;
       }
+
+      enqueueErrorSnackBar(
+        error instanceof Error ? { message: error.message } : {},
+      );
 
       try {
         const { captureException } = await import('@sentry/react');
         captureException(error, (scope) => {
-          scope.setExtras({ mechanism: 'onUnhandle' });
+          scope.setExtras({ mechanism: 'onUnhandledRejection' });
 
           const fingerprint = hasErrorCode(error) ? error.code : error.message;
           scope.setFingerprint([fingerprint]);
+
+          if (hasErrorCode(error) && nonCriticalErrorCodes.has(error.code)) {
+            scope.setLevel('warning');
+            scope.setTag('error-expectedness', 'expected-invalid-filter-value');
+          }
+
           error.name = error.message;
           return scope;
         });

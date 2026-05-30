@@ -131,6 +131,27 @@ type BuildDirectFieldGqlOperationFilterParams = {
   fieldMetadataItem: FieldShared;
 };
 
+const normalizeDateTimeFilterValue = (dateTimeValue: string) => {
+  return dateTimeValue.replace(/\+00:00$/, 'Z');
+};
+
+const parseDateTimeFilterInstantOrThrow = ({
+  dateTimeValue,
+  filterType,
+}: {
+  dateTimeValue: string;
+  filterType: string;
+}) => {
+  try {
+    return Temporal.Instant.from(normalizeDateTimeFilterValue(dateTimeValue));
+  } catch {
+    throw new CustomError(
+      `Cannot parse "${dateTimeValue}" for ${filterType} filter`,
+      'INVALID_DATE_TIME_FILTER_VALUE',
+    );
+  }
+};
+
 const buildDirectFieldGqlOperationFilter = ({
   recordFilter,
   fieldMetadataItem,
@@ -445,13 +466,17 @@ const buildDirectFieldGqlOperationFilter = ({
 
           try {
             parsedPlainDate = recordFilter.value.includes('T')
-              ? Temporal.Instant.from(recordFilter.value)
+              ? parseDateTimeFilterInstantOrThrow({
+                  dateTimeValue: recordFilter.value,
+                  filterType,
+                })
                   .toZonedDateTimeISO(timeZone)
                   .toPlainDate()
               : Temporal.PlainDate.from(recordFilter.value);
           } catch {
-            throw new Error(
+            throw new CustomError(
               `Cannot parse "${recordFilter.value}" for ${filterType} filter`,
+              'INVALID_DATE_TIME_FILTER_VALUE',
             );
           }
 
@@ -475,7 +500,10 @@ const buildDirectFieldGqlOperationFilter = ({
           };
         }
 
-        const resolvedDateTime = Temporal.Instant.from(recordFilter.value);
+        const resolvedDateTime = parseDateTimeFilterInstantOrThrow({
+          dateTimeValue: recordFilter.value,
+          filterType,
+        });
 
         switch (recordFilter.operand) {
           case RecordFilterOperand.IS_AFTER: {
