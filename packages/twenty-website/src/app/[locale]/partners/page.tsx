@@ -5,7 +5,7 @@ import { PartnerHero } from '@/app/[locale]/partners/components/PartnerHero';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
+import { CaseStudyCatalogPromo } from '@/sections/CaseStudyCatalog';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { PartnerSignoff } from '@/app/[locale]/partners/components/PartnerSignoff';
 import { PartnerTestimonials } from '@/app/[locale]/partners/components/PartnerTestimonials';
@@ -52,7 +52,7 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
       />
 
       <PromoSpacing>
-        <CaseStudyCatalog.Promo
+        <CaseStudyCatalogPromo
           compactTop
           entries={CASE_STUDY_CATALOG_ENTRIES}
         />

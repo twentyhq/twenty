@@ -4,7 +4,7 @@ import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
+import { CaseStudyCatalogGrid } from '@/sections/CaseStudyCatalog';
 import { CustomersCatalogHero } from '@/app/[locale]/customers/_components/CustomersCatalogHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { CustomersCatalogSignoff } from '@/app/[locale]/customers/_components/CustomersCatalogSignoff';
@@ -71,7 +71,7 @@ export default async function CaseStudiesCatalogPage({
         />
       </div>
 
-      <CaseStudyCatalog.Grid compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
+      <CaseStudyCatalogGrid compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
 
       <CustomersCatalogSignoff />
 

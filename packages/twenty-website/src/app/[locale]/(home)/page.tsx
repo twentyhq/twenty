@@ -76,9 +76,7 @@ export default async function HomePage({ params }: HomePageProps) {
 
       <HomeFeatureThreeCards />
 
-      <Helped.Root scheme="muted">
-        <Helped.Scene cards={HELPED_CARDS} />
-      </Helped.Root>
+      <Helped scheme="muted" cards={HELPED_CARDS} />
 
       <HomeTestimonials />
 
