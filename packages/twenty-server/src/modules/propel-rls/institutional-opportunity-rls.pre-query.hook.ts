@@ -8,11 +8,9 @@ import {
   composeFilter,
 } from 'src/modules/propel-rls/build-tier-filter.util';
 
-// Propel clean-room RLS — secondaryOpportunity (lane ①). Tier logic in build-tier-filter.util.ts.
-@WorkspaceQueryHook(`secondaryOpportunity.findMany`)
-export class SecondaryOpportunityRlsPreQueryHook
-  implements WorkspacePreQueryHookInstance
-{
+// Propel clean-room RLS — institutionalOpportunity (lane ③). Tier logic in build-tier-filter.util.ts.
+@WorkspaceQueryHook(`institutionalOpportunity.findMany`)
+export class InstitutionalOpportunityRlsPreQueryHook implements WorkspacePreQueryHookInstance {
   async execute(
     authContext: WorkspaceAuthContext,
     _objectName: string,
