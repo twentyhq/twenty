@@ -31,8 +31,7 @@ import {
   IconSparkles,
   IconTool,
 } from 'twenty-ui/display';
-import { Card } from 'twenty-ui/layout';
-import { Section } from 'twenty-ui/layout';
+import { Card, Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -277,11 +276,7 @@ export const SettingsAiOverviewTab = () => {
           description={t`What's installed and being used in your workspace`}
         />
         <StyledStatsGrid>
-          <StatTile
-            Icon={IconMessage}
-            label={t`Conversations`}
-            value={'—'}
-          />
+          <StatTile Icon={IconMessage} label={t`Conversations`} value={'—'} />
           <StatTile
             Icon={IconSparkles}
             label={t`Skills`}
@@ -292,11 +287,7 @@ export const SettingsAiOverviewTab = () => {
             label={t`Tools`}
             value={toolsCount.toString()}
           />
-          <StatTile
-            Icon={IconHierarchy2}
-            label={t`AI workflows`}
-            value={'—'}
-          />
+          <StatTile Icon={IconHierarchy2} label={t`AI workflows`} value={'—'} />
         </StyledStatsGrid>
       </Section>
 

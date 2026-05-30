@@ -43,7 +43,7 @@ const isCachedTokenUsable = (token: string | null): boolean => {
 export const useOpenPlayground = () => {
   const navigateSettings = useNavigateSettings();
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
-  const cachedToken = useAtomStateValue(playgroundApiKeyState);
+  const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const { enqueueErrorSnackBar } = useSnackBar();
   const [generatePlaygroundToken] = useMutation(
     GeneratePlaygroundTokenDocument,
@@ -58,7 +58,7 @@ export const useOpenPlayground = () => {
 
   return useCallback(
     async (type: 'rest' | 'graphql', schema: PlaygroundSchemas) => {
-      if (!isCachedTokenUsable(cachedToken)) {
+      if (!isCachedTokenUsable(playgroundApiKey)) {
         const { data } = await generatePlaygroundToken();
         const token = data?.generatePlaygroundToken.token;
         if (!isDefined(token)) {
@@ -78,7 +78,7 @@ export const useOpenPlayground = () => {
       navigateSettings(path, { schema });
     },
     [
-      cachedToken,
+      playgroundApiKey,
       enqueueErrorSnackBar,
       generatePlaygroundToken,
       navigateSettings,

@@ -78,12 +78,12 @@ export const SettingsApiWebhooks = () => {
   // TabList writes to activeTabIdComponentState (keyed by componentInstanceId)
   // on click, and its internal TabListFromUrlOptionalEffect syncs URL hash →
   // atom so deep links land on the right tab. We only read here.
-  const activeTabIdFromState = useAtomComponentStateValue(
+  const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
     SETTINGS_API_WEBHOOKS_TABS_INSTANCE_ID,
   );
-  const activeTab: TabKey = isTabKey(activeTabIdFromState ?? '')
-    ? (activeTabIdFromState as TabKey)
+  const activeTab: TabKey = isTabKey(activeTabId ?? '')
+    ? (activeTabId as TabKey)
     : 'playground';
 
   const tabs = [
@@ -162,9 +162,7 @@ export const SettingsApiWebhooks = () => {
                 <SettingsCard
                   title={t`REST playground`}
                   Icon={<IconCode size={16} />}
-                  onClick={() =>
-                    openPlayground('rest', PlaygroundSchemas.CORE)
-                  }
+                  onClick={() => openPlayground('rest', PlaygroundSchemas.CORE)}
                 />
                 <SettingsCard
                   title={t`GraphQL playground`}

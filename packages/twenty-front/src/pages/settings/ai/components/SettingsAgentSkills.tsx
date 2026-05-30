@@ -87,39 +87,37 @@ export const SettingsAgentSkills = () => {
 
   return (
     <Section>
-        <H2Title
-          title={t`Skills`}
-          description={t`Use filter to see existing tools or create your own`}
-        />
+      <H2Title
+        title={t`Skills`}
+        description={t`Use filter to see existing tools or create your own`}
+      />
 
-        <StyledSearchInput
-          placeholder={t`Search a skill...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
-            <Dropdown
-              dropdownId="settings-skills-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconArchive}
-                      onToggleChange={() =>
-                        setShowDeactivated(!showDeactivated)
-                      }
-                      toggled={showDeactivated}
-                      text={t`Deactivated`}
-                      toggleSize="small"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          )}
-        />
+      <StyledSearchInput
+        placeholder={t`Search a skill...`}
+        value={searchTerm}
+        onChange={setSearchTerm}
+        filterDropdown={(filterButton) => (
+          <Dropdown
+            dropdownId="settings-skills-filter-dropdown"
+            dropdownPlacement="bottom-end"
+            dropdownOffset={{ x: 0, y: 8 }}
+            clickableComponent={filterButton}
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItemToggle
+                    LeftIcon={IconArchive}
+                    onToggleChange={() => setShowDeactivated(!showDeactivated)}
+                    toggled={showDeactivated}
+                    text={t`Deactivated`}
+                    toggleSize="small"
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
+        )}
+      />
       <SettingsAgentSkillsTable
         skills={filteredSkills}
         loading={loading}

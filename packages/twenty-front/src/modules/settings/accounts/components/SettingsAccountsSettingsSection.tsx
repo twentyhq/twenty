@@ -19,7 +19,15 @@ const StyledCardsContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
   margin-top: ${themeCssVariables.spacing[6]};
 
-  @media (max-width: ${MOBILE_VIEWPORT}pxF) {
+  // The links rendered by UndecoratedLink default to inline-block — without
+  // flex:1 each card only takes its content width and the row leaves slack
+  // on the right. min-width:0 lets long descriptions wrap inside the card.
+  > * {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
     flex-direction: column;
   }
 `;

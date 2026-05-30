@@ -9,12 +9,7 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import {
-  IconApps,
-  IconCode,
-  IconDownload,
-  IconPlug,
-} from 'twenty-ui/display';
+import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 // TODO: replace with apps-specific illustrations + recordings when designed.
 // Reusing the layout customize illustration + sidebar walkthrough as

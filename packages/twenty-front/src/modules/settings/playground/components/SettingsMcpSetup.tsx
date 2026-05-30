@@ -219,7 +219,9 @@ export const SettingsMcpSetup = () => {
         <div>
           <StyledSubLabel>{t`Inject your schema`}</StyledSubLabel>
           <Button
-            title={schemaCopy.copied ? t`Copied` : t`Copy data model as Markdown`}
+            title={
+              schemaCopy.copied ? t`Copied` : t`Copy data model as Markdown`
+            }
             Icon={schemaCopy.copied ? IconCheck : IconDownload}
             size="small"
             variant="secondary"
