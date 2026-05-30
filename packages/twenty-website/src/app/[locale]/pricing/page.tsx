@@ -6,10 +6,9 @@ import { SALESFORCE_DATA } from '@/app/[locale]/pricing/salesforce.data';
 import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { EngagementBand } from '@/sections/EngagementBand';
-import { Hero } from '@/sections/Hero';
+import { PricingHero } from '@/app/[locale]/pricing/_components/PricingHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Plans, PricingStateProvider } from '@/sections/Plans';
 import { PlanTable } from '@/sections/PlanTable';
@@ -48,16 +47,7 @@ export default async function PricingPage({ params }: PricingPageProps) {
       <JsonLd data={buildFaqPageJsonLd(FAQ_QUESTIONS, (d) => i18n._(d))} />
       <Menu backgroundColor="#F3F3F3" socialLinks={menuSocialLinks} />
 
-      <Hero.Root scheme="muted">
-        <Hero.Heading page={Pages.Pricing}>
-          <HeadingPart fontFamily="serif">{i18n._(msg`Simple`)}</HeadingPart>
-          <br />
-          <HeadingPart fontFamily="sans">{i18n._(msg`Pricing`)}</HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.Pricing} preserveLineBreaks>
-          {i18n._(msg`Start your free trial today\nwithout credit card.`)}
-        </Hero.Body>
-      </Hero.Root>
+      <PricingHero />
 
       <PricingStateProvider>
         <Plans.Root scheme="muted">

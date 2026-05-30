@@ -2,11 +2,10 @@ import { msg } from '@lingui/core/macro';
 import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Editorial } from '@/app/[locale]/why-twenty/_components/Editorial';
 import { Marquee } from '@/app/[locale]/why-twenty/_components/Marquee';
-import { Hero } from '@/sections/Hero';
+import { WhyTwentyHero } from '@/app/[locale]/why-twenty/_components/WhyTwentyHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { WhyTwentySignoff } from '@/app/[locale]/why-twenty/_components/WhyTwentySignoff';
 import { theme } from '@/theme';
@@ -57,22 +56,7 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
         socialLinks={menuSocialLinks}
       />
 
-      <Hero.Root scheme="dark">
-        <Hero.Heading page={Pages.WhyTwenty} size="xl">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`The future of CRM is built,`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`not bought.`)}
-          </HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.WhyTwenty}>
-          {i18n._(
-            msg`CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy.`,
-          )}
-        </Hero.Body>
-        <Hero.WhyTwentyVisual />
-      </Hero.Root>
+      <WhyTwentyHero />
 
       <Editorial
         scheme="dark"

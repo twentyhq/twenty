@@ -1,11 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { HELPED_CARDS } from '@/app/[locale]/(home)/helped.data';
-import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { Problem, type ProblemPointType } from '@/sections/Problem';
 import { HOME_TESTIMONIALS } from '@/app/[locale]/(home)/testimonials.data';
 import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/(home)/three-cards-illustration.data';
-import { TalkToUsButton } from '@/sections/ContactCal';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
 import {
@@ -13,14 +11,13 @@ import {
   Eyebrow,
   Heading,
   HeadingPart,
-  LinkButton,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Helped } from '@/sections/Helped';
-import { Hero } from '@/sections/Hero';
+import { HomeHero } from '@/app/[locale]/(home)/_components/HomeHero';
 import { HomeStepper, type HomeStepperStepType } from '@/sections/HomeStepper';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Testimonials } from '@/sections/Testimonials';
@@ -33,26 +30,6 @@ import { styled } from '@linaria/react';
 export const generateMetadata = buildRouteMetadata('home');
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
-
-const HeroHeadingGroup = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.spacing(3)};
-  width: 100%;
-
-  > *:last-child {
-    margin-top: 0;
-  }
-`;
-
-const HeroIntroGroup = styled.div`
-  align-items: center;
-  display: flex;
-  flex-direction: column;
-  gap: ${theme.spacing(8)};
-  width: 100%;
-`;
 
 const ThreeCardsIllustrationIntroContent = styled.div`
   display: grid;
@@ -194,39 +171,7 @@ export default async function HomePage({ params }: HomePageProps) {
         socialLinks={menuSocialLinks}
       />
 
-      <Hero.Root scheme="muted" showHomeBackground>
-        <HeroIntroGroup data-halftone-exclude>
-          <HeroHeadingGroup>
-            <Hero.Heading page={Pages.Home}>
-              <HeadingPart fontFamily="serif">
-                {i18n._(msg`Build your Enterprise CRM`)}
-              </HeadingPart>{' '}
-              <HeadingPart fontFamily="sans">
-                {i18n._(msg`at\u00A0AI\u00A0Speed`)}
-              </HeadingPart>
-            </Hero.Heading>
-            <Hero.Body page={Pages.Home} size="sm">
-              {i18n._(
-                msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
-              )}
-            </Hero.Body>
-          </HeroHeadingGroup>
-          <Hero.Cta>
-            <LinkButton
-              color="secondary"
-              href="https://app.twenty.com/welcome"
-              label={i18n._(msg`Get started`)}
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="secondary"
-              label={msg`Talk to us`}
-              variant="outlined"
-            />
-          </Hero.Cta>
-        </HeroIntroGroup>
-        <Hero.AppPreview visual={APP_PREVIEW_DATA.visual} />
-      </Hero.Root>
+      <HomeHero />
 
       <TrustedBy />
 

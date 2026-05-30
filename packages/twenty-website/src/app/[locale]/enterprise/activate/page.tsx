@@ -1,16 +1,10 @@
 import { msg } from '@lingui/core/macro';
 import { EnterpriseActivateClient } from '@/app/[locale]/enterprise/activate/EnterpriseActivateClient';
-import {
-  Body,
-  Container,
-  Eyebrow,
-  HeadingPart,
-} from '@/design-system/components';
+import { Body, Container } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Hero } from '@/sections/Hero';
+import { EnterpriseActivateHero } from '@/app/[locale]/enterprise/activate/_components/EnterpriseActivateHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
@@ -65,24 +59,7 @@ export default async function EnterpriseActivatePage({
     <>
       <Menu backgroundColor="#F3F3F3" socialLinks={menuSocialLinks} />
 
-      <Hero.Root scheme="muted">
-        <Eyebrow>
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`Self-hosting`)}
-          </HeadingPart>
-        </Eyebrow>
-        <Hero.Heading page={Pages.Pricing}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Enterprise`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`activation`)}</HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.Pricing}>
-          {i18n._(
-            msg`Your checkout is complete. Follow the steps below to copy your license key into your Twenty instance.`,
-          )}
-        </Hero.Body>
-      </Hero.Root>
+      <EnterpriseActivateHero />
 
       <ActivatePageContent>
         <Container>

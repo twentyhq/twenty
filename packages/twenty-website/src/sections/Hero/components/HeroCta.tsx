@@ -9,8 +9,7 @@ const CTAsContainer = styled.div`
   justify-content: center;
 `;
 
-type HeroCtaProps = { children: ReactNode };
-
-export function Cta({ children }: HeroCtaProps) {
+// Shared hero call-to-action row.
+export function HeroCta({ children }: { children: ReactNode }) {
   return <CTAsContainer>{children}</CTAsContainer>;
 }

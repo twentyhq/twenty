@@ -57,9 +57,14 @@ async function findBarrel(sectionDir) {
 async function findRoot(sectionDir) {
   const sectionName = path.basename(sectionDir);
   const candidates = [
+    // Legacy compound sections own the <section> in components/Root.tsx.
     path.join(sectionDir, 'components', 'Root.tsx'),
+    // Single-file sections own it in <Section>.tsx (e.g. TrustedBy/TrustedBy.tsx).
     path.join(sectionDir, `${sectionName}.tsx`),
     path.join(sectionDir, `${sectionName}.ts`),
+    // Flat-primitive sections own it in a <Section>Section shell
+    // (e.g. Hero/components/HeroSection.tsx) consumed by page-local blocks.
+    path.join(sectionDir, 'components', `${sectionName}Section.tsx`),
   ];
   for (const candidate of candidates) {
     if (await fileExists(candidate)) return candidate;

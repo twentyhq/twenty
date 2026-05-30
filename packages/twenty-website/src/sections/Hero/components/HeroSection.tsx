@@ -6,16 +6,6 @@ import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
-  &[data-color-scheme='primary'] {
-    --hero-body-color: ${theme.colors.primary.text[60]};
-    color: ${theme.colors.primary.text[100]};
-  }
-
-  &[data-color-scheme='secondary'] {
-    --hero-body-color: ${theme.colors.secondary.text[80]};
-    color: ${theme.colors.secondary.text[100]};
-  }
-
   &[data-scheme='light'] {
     background-color: var(--color-white);
     color: var(--color-text);
@@ -74,27 +64,22 @@ const StyledContainer = styled(Container)`
   }
 `;
 
-type RootProps = {
-  backgroundColor?: string;
+type HeroSectionProps = {
   children: ReactNode;
-  colorScheme?: 'primary' | 'secondary';
-  scheme?: Scheme;
+  scheme: Scheme;
+  // Renders the home page's halftone background behind the hero content.
   showHomeBackground?: boolean;
 };
 
-export function Root({
-  backgroundColor,
+// Shared hero shell: the scheme-aware section background and the centered
+// content container. Heroes compose their own heading/body/cta/visual inside.
+export function HeroSection({
   children,
-  colorScheme = 'primary',
   scheme,
   showHomeBackground = false,
-}: RootProps) {
+}: HeroSectionProps) {
   return (
-    <StyledSection
-      data-color-scheme={scheme ? undefined : colorScheme}
-      data-scheme={scheme}
-      style={scheme ? undefined : { backgroundColor }}
-    >
+    <StyledSection data-scheme={scheme}>
       {showHomeBackground ? (
         <StyledBackground>
           <WebGlMount priority>

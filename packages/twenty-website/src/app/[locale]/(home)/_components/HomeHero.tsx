@@ -1,0 +1,70 @@
+import { msg } from '@lingui/core/macro';
+import { styled } from '@linaria/react';
+
+import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
+import { HeadingPart, LinkButton } from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/server';
+import { AppPreview } from '@/sections/AppPreview';
+import { TalkToUsButton } from '@/sections/ContactCal';
+import { HeroBody, HeroCta, HeroHeading, HeroSection } from '@/sections/Hero';
+import { theme } from '@/theme';
+
+const HeroHeadingGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(3)};
+  width: 100%;
+
+  > *:last-child {
+    margin-top: 0;
+  }
+`;
+
+const HeroIntroGroup = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: ${theme.spacing(8)};
+  width: 100%;
+`;
+
+export function HomeHero() {
+  const i18n = getServerI18n();
+
+  return (
+    <HeroSection scheme="muted" showHomeBackground>
+      <HeroIntroGroup data-halftone-exclude>
+        <HeroHeadingGroup>
+          <HeroHeading>
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`Build your Enterprise CRM`)}
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`at AI Speed`)}
+            </HeadingPart>
+          </HeroHeading>
+          <HeroBody maxWidthMd={591} size="sm">
+            {i18n._(
+              msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
+            )}
+          </HeroBody>
+        </HeroHeadingGroup>
+        <HeroCta>
+          <LinkButton
+            color="secondary"
+            href="https://app.twenty.com/welcome"
+            label={i18n._(msg`Get started`)}
+            variant="contained"
+          />
+          <TalkToUsButton
+            color="secondary"
+            label={msg`Talk to us`}
+            variant="outlined"
+          />
+        </HeroCta>
+      </HeroIntroGroup>
+      <AppPreview visual={APP_PREVIEW_DATA.visual} />
+    </HeroSection>
+  );
+}

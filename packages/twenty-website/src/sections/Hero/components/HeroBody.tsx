@@ -6,12 +6,11 @@ import {
   type BodyVariant,
   type BodyWeight,
 } from '@/design-system/components/Body';
-import type { Page } from '@/lib/pages';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-const StyledBody = styled.div`
+const StyledBody = styled.div<{ $maxWidthMd: number }>`
   color: var(--color-text-muted, ${theme.colors.primary.text[60]});
 
   &[data-preserve-line-breaks='true'] {
@@ -23,69 +22,41 @@ const StyledBody = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='home'] {
-      max-width: 591px;
-    }
-
-    &[data-page='partners'] {
-      max-width: 500px;
-    }
-
-    &[data-page='pricing'] {
-      max-width: 500px;
-    }
-
-    &[data-page='product'] {
-      max-width: 591px;
-    }
-
-    &[data-page='whyTwenty'] {
-      max-width: 443px;
-    }
-
-    &[data-page='releaseNotes'] {
-      max-width: 591px;
-      white-space: pre-line;
-    }
-
-    &[data-page='articles'] {
-      max-width: 550px;
-    }
-
-    &[data-page='caseStudies'] {
-      max-width: 550px;
-    }
+    max-width: ${({ $maxWidthMd }) => `${$maxWidthMd}px`};
   }
 `;
 
 type HeroBodyProps = {
   as?: BodyAs;
   children: ReactNode;
-  className?: string;
   family?: BodyFamily;
-  page: Page;
+  // The body column width at md and up (mobile is always 360px). Each hero
+  // owns its own measure rather than the section switching on a page id.
+  maxWidthMd: number;
   preserveLineBreaks?: boolean;
   size?: BodySize;
   variant?: BodyVariant;
   weight?: BodyWeight;
 };
 
-export function Body({
+// Shared hero sub-heading copy block.
+export function HeroBody({
   as,
   children,
-  className,
   family,
-  page,
+  maxWidthMd,
   preserveLineBreaks = false,
   size,
   variant,
   weight,
 }: HeroBodyProps) {
   return (
-    <StyledBody data-page={page} data-preserve-line-breaks={preserveLineBreaks}>
+    <StyledBody
+      $maxWidthMd={maxWidthMd}
+      data-preserve-line-breaks={preserveLineBreaks}
+    >
       <BaseBody
         as={as}
-        className={className}
         family={family}
         size={size}
         variant={variant}

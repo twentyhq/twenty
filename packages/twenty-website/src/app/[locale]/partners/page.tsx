@@ -4,14 +4,13 @@ import { TrustedBy } from '@/sections/TrustedBy';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
 import { PARTNER_TESTIMONIALS } from '@/app/[locale]/partners/testimonials.data';
-import { PartnerHeroCtas } from '@/app/[locale]/partners/components/PartnerApplication';
+import { PartnerHero } from '@/app/[locale]/partners/components/PartnerHero';
 import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
-import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { PartnerSignoff } from '@/app/[locale]/partners/components/PartnerSignoff';
 import { Testimonials } from '@/sections/Testimonials';
@@ -60,24 +59,7 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
         socialLinks={menuSocialLinks}
       />
 
-      <Hero.Root scheme="light">
-        <Hero.Heading page={Pages.Partners}>
-          <HeadingPart fontFamily="serif">{i18n._(msg`Become`)}</HeadingPart>
-          <br />
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`our partner`)}
-          </HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.Partners}>
-          {i18n._(
-            msg`We're building the #1 Open Source CRM, but we can't do it alone. Join our partner ecosystem and grow with us.`,
-          )}
-        </Hero.Body>
-        <Hero.Cta>
-          <PartnerHeroCtas />
-        </Hero.Cta>
-        <Hero.PartnerVisual />
-      </Hero.Root>
+      <PartnerHero />
 
       <TrustedBy
         backgroundColor={theme.colors.primary.background[100]}

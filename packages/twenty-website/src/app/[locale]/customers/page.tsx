@@ -1,14 +1,11 @@
-import { msg } from '@lingui/core/macro';
 import { Faq } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
-import { Hero } from '@/sections/Hero';
+import { CustomersCatalogHero } from '@/app/[locale]/customers/_components/CustomersCatalogHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { CustomersCatalogSignoff } from '@/app/[locale]/customers/_components/CustomersCatalogSignoff';
 import { buildRouteMetadata } from '@/lib/seo';
@@ -51,7 +48,9 @@ type CaseStudiesCatalogPageProps = {
 export default async function CaseStudiesCatalogPage({
   params,
 }: CaseStudiesCatalogPageProps) {
-  const [i18n, stats] = await Promise.all([
+  // getRouteI18n sets the request-scoped i18n context the page's components
+  // read; the page renders no copy of its own, so the instance is unused here.
+  const [, stats] = await Promise.all([
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
@@ -65,25 +64,7 @@ export default async function CaseStudiesCatalogPage({
       />
 
       <div className={pageRevealClassName}>
-        <Hero.Root scheme="muted">
-          <Hero.Heading page={Pages.CaseStudies}>
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`See how teams`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`build`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`on Twenty`)}
-            </HeadingPart>
-          </Hero.Heading>
-          <Hero.Body page={Pages.CaseStudies}>
-            {i18n._(
-              msg`Real stories from real teams about how they shaped Twenty to fit their workflow and accelerated their growth.`,
-            )}
-          </Hero.Body>
-        </Hero.Root>
+        <CustomersCatalogHero />
         <TrustedBy
           cardBackgroundColor={CUSTOMERS_TOP_BACKGROUND_COLOR}
           compactBottom

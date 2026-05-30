@@ -1,13 +1,11 @@
 import { notFound } from 'next/navigation';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
-import { HeadingPart } from '@/design-system/components';
 import { getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { resolveLocaleParam } from '@/lib/i18n';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import {
   buildArticleListJsonLd,
   buildBreadcrumbListJsonLd,
@@ -15,7 +13,7 @@ import {
   JsonLd,
 } from '@/lib/seo';
 import { Articles } from '@/sections/Articles';
-import { Hero } from '@/sections/Hero';
+import { ArticlesHero } from '@/app/[locale]/articles/_components/ArticlesHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { TrustedBy } from '@/sections/TrustedBy';
 import { css } from '@linaria/core';
@@ -92,18 +90,7 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
       />
 
       <div className={pageRevealClassName}>
-        <Hero.Root scheme="muted">
-          <Hero.Heading page={Pages.Articles}>
-            <HeadingPart fontFamily="serif">Ideas on</HeadingPart>
-            <br />
-            <HeadingPart fontFamily="serif">open-source</HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">CRM</HeadingPart>
-          </Hero.Heading>
-          <Hero.Body page={Pages.Articles}>
-            Ideas from the team building Twenty on open source CRM, GTM systems,
-            and building software that lasts.
-          </Hero.Body>
-        </Hero.Root>
+        <ArticlesHero />
         <TrustedBy
           cardBackgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
           compactBottom

@@ -1,14 +1,10 @@
-import { msg } from '@lingui/core/macro';
-import { HeadingPart, LinkButton } from '@/design-system/components';
-import { GitHubIcon } from '@/icons';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { fetchLatestGithubReleaseTag } from '@/lib/releases/fetch-latest-release-tag';
 import { getVisibleReleaseNotes } from '@/lib/releases/get-visible-releases';
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
-import { Hero } from '@/sections/Hero';
+import { ReleasesHero } from '@/app/[locale]/releases/_components/ReleasesHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { ReleaseNotes } from '@/sections/ReleaseNotes';
 import { theme } from '@/theme';
@@ -25,7 +21,7 @@ type ReleasesPageProps = {
 
 export default async function ReleasesPage({ params }: ReleasesPageProps) {
   const allNotes = loadLocalReleaseNotes();
-  const [i18n, latestTag, stats] = await Promise.all([
+  const [, latestTag, stats] = await Promise.all([
     getRouteI18n(params),
     fetchLatestGithubReleaseTag(),
     fetchCommunityStats(),
@@ -55,28 +51,7 @@ export default async function ReleasesPage({ params }: ReleasesPageProps) {
         socialLinks={menuSocialLinks}
       />
 
-      <Hero.Root scheme="light">
-        <Hero.Heading page={Pages.ReleaseNotes} size="lg" weight="light">
-          <HeadingPart fontFamily="serif">{i18n._(msg`Latest`)}</HeadingPart>
-          <br />
-          <HeadingPart fontFamily="sans">{i18n._(msg`Releases`)}</HeadingPart>
-        </Hero.Heading>
-        <Hero.Body page={Pages.ReleaseNotes} size="sm">
-          {i18n._(
-            msg`Discover the newest features and improvements in Twenty,\nthe #1 Open Source CRM.`,
-          )}
-        </Hero.Body>
-        <Hero.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://github.com/twentyhq/twenty/releases"
-            label={i18n._(msg`Technical notes`)}
-            leadingIcon={<GitHubIcon fillColor="currentColor" size={14} />}
-            variant="outlined"
-          />
-        </Hero.Cta>
-        <Hero.ReleaseNotesVisual />
-      </Hero.Root>
+      <ReleasesHero />
 
       <ReleaseNotes.Root>
         {allNotes.length === 0 ? (
