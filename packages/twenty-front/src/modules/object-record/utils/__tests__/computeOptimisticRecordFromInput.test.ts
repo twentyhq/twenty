@@ -5,6 +5,7 @@ import { updateRecordFromCache } from '@/object-record/cache/utils/updateRecordF
 import { generateDepthRecordGqlFieldsFromRecord } from '@/object-record/graphql/record-gql-fields/utils/generateDepthRecordGqlFieldsFromRecord';
 import { type FieldActorForInputValue } from '@/object-record/record-field/ui/types/FieldMetadata';
 import { computeOptimisticRecordFromInput } from '@/object-record/utils/computeOptimisticRecordFromInput';
+import { sanitizeRecordInput } from '@/object-record/utils/sanitizeRecordInput';
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { InMemoryCache } from '@apollo/client';
 import { mockedWorkspaceMemberRecords } from '~/testing/mock-data/generated/data/workspaceMembers/mock-workspaceMembers-data';
@@ -273,5 +274,35 @@ describe('computeOptimisticRecordFromInput', () => {
     ).toThrowErrorMatchingInlineSnapshot(
       `"Should never occur, encountered unknown fields unknwon, foo, bar in objectMetadataItem person"`,
     );
+  });
+
+  // #15800: creating a record from a relation cell (e.g. Tasks/Notes) can carry
+  // a field that doesn't belong to the target object. The raw input trips the
+  // invariant above, but feeding the sanitized input (as the create hooks do)
+  // must not.
+  it('should not throw when the input has been sanitized first', () => {
+    const cache = new InMemoryCache();
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+    const sanitizedInput = sanitizeRecordInput({
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: {
+        city: 'Paris',
+        nonExistentField: 'should be stripped',
+      },
+    });
+
+    const result = computeOptimisticRecordFromInput({
+      currentWorkspaceMember,
+      objectMetadataItems: getTestEnrichedObjectMetadataItemsMock(),
+      objectMetadataItem: personObjectMetadataItem,
+      recordInput: sanitizedInput,
+      cache,
+      objectPermissionsByObjectMetadataId: {},
+    });
+
+    expect(result).toEqual({
+      city: 'Paris',
+    });
   });
 });
