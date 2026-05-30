@@ -826,7 +826,12 @@ export class AuthResolver {
   // is access-shaped (carries userId + workspaceMemberId) so the playground
   // page runs against the caller's actual permissions — no shared "Playground"
   // API key to manage or revoke. TTL is set by PLAYGROUND_TOKEN_EXPIRES_IN.
-  @UseGuards(WorkspaceAuthGuard)
+  // Guarded by API_KEYS_AND_WEBHOOKS to match the UI gate on the playground
+  // page and stay consistent with generateApiKeyToken above.
+  @UseGuards(
+    WorkspaceAuthGuard,
+    SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
+  )
   @Mutation(() => AuthToken)
   async generatePlaygroundToken(
     @AuthUser() user: UserEntity,

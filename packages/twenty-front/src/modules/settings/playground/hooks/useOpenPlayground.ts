@@ -61,13 +61,10 @@ export const useOpenPlayground = () => {
       if (!isCachedTokenUsable(playgroundApiKey)) {
         const { data } = await generatePlaygroundToken();
         const token = data?.generatePlaygroundToken.token;
-        if (!isDefined(token)) {
-          // onError fires for thrown errors; this handles a malformed success.
-          enqueueErrorSnackBar({
-            message: t`Could not open the API playground`,
-          });
-          return;
-        }
+        // Apollo resolves the mutation promise with data: undefined when the
+        // server errors, AND fires onError above — which already shows the
+        // snackbar. Just bail out here without raising a second one.
+        if (!isDefined(token)) return;
         setPlaygroundApiKey(token);
       }
 
