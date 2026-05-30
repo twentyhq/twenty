@@ -6,7 +6,7 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 

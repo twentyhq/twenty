@@ -10,7 +10,7 @@ import { resolveLocaleParam } from '@/lib/i18n';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+} from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import {
   buildArticleListJsonLd,

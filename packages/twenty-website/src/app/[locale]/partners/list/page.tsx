@@ -4,7 +4,7 @@ import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+} from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';

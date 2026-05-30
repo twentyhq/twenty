@@ -8,8 +8,8 @@ import {
   HeadingPart,
 } from '@/design-system/components';
 import { PlusIcon, UsersIcon } from '@/icons';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
-import { LocalizedLinkButton } from '@/lib/i18n/components/LocalizedLinkButton';
+import { getServerI18n } from '@/lib/i18n/server';
+import { LocalizedLinkButton } from '@/lib/i18n';
 import { PromoMic } from '@/sections/CaseStudyCatalog/visuals/PromoMic';
 import { theme } from '@/theme';
 import type { MessageDescriptor } from '@lingui/core';

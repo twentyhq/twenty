@@ -3,7 +3,7 @@ import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import {
   getRouteI18n,
   type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+} from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';

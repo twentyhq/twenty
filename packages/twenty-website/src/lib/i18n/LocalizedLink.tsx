@@ -7,8 +7,23 @@ import {
 } from '@/design-system/components/Button/BaseButton';
 import type { LinkButtonType } from '@/design-system/components/Button/types/link-button-type';
 import { styled } from '@linaria/react';
+import Link from 'next/link';
+import { type ComponentProps } from 'react';
 
-import { LocalizedLink } from './LocalizedLink';
+import { useLocale } from './client';
+import { localizeHref } from './locales';
+
+// Next.js <Link> that automatically prefixes the current locale's URL segment.
+
+type LocalizedLinkProps = Omit<ComponentProps<typeof Link>, 'href'> & {
+  href: string;
+};
+
+export const LocalizedLink = ({ href, ...rest }: LocalizedLinkProps) => {
+  const locale = useLocale();
+  // oxlint-disable-next-line eslint-plugin-react(jsx-props-no-spreading)
+  return <Link href={localizeHref(locale, href)} {...rest} />;
+};
 
 const StyledButtonLink = styled(LocalizedLink)`
   ${buttonBaseStyles}

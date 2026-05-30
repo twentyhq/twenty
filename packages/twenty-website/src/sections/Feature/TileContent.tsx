@@ -3,7 +3,7 @@ import { styled } from '@linaria/react';
 
 import { Body, Heading, HeadingPart } from '@/design-system/components';
 import { INFORMATIVE_ICONS } from '@/icons';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import { theme } from '@/theme';
 
 import type { FeatureTileType } from './Feature';

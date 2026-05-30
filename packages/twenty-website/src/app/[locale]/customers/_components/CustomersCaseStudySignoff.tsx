@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { HeadingPart, LinkButton } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import { Signoff } from '@/sections/Signoff';
 
