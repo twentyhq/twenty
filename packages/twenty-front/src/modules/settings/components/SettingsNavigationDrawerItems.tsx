@@ -8,8 +8,21 @@ import {
 import { CollapsibleNavigationDrawerSection } from '@/ui/navigation/navigation-drawer/components/CollapsibleNavigationDrawerSection';
 import { NavigationDrawerItemGroup } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItemGroup';
 import { getNavigationSubItemLeftAdornment } from '@/ui/navigation/navigation-drawer/utils/getNavigationSubItemLeftAdornment';
+import { styled } from '@linaria/react';
 import { matchPath, resolvePath, useLocation } from 'react-router-dom';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getSettingsPath } from 'twenty-shared/utils';
+
+// Spacing between settings sections (User / Workspace / Other). Lives here
+// instead of on NavigationDrawerSection so it only applies between section
+// siblings — it doesn't leak into other places NavigationDrawerSection is
+// reused (e.g. the chat tabs row, which would otherwise push the first
+// section header further down than it does in the App).
+const StyledSectionsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[3]};
+`;
 
 const renderSectionItem = (
   item: SettingsNavigationItem,
@@ -94,7 +107,7 @@ export const SettingsNavigationDrawerItems = () => {
   };
 
   return (
-    <>
+    <StyledSectionsContainer>
       {settingsNavigationItems.map((section) => {
         const allItemsHidden = section.items.every((item) => item.isHidden);
         if (allItemsHidden) {
@@ -130,6 +143,6 @@ export const SettingsNavigationDrawerItems = () => {
           </CollapsibleNavigationDrawerSection>
         );
       })}
-    </>
+    </StyledSectionsContainer>
   );
 };

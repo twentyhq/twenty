@@ -5,9 +5,7 @@ import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 
-const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`
-  margin-bottom: ${({ isSettingsDrawer }) =>
-    isSettingsDrawer ? themeCssVariables.spacing[3] : '0'};
+const StyledSection = styled.div`
   width: 100%;
 `;
 
@@ -44,7 +42,7 @@ export const NavigationDrawerSection = ({
     !isSettingsDrawer && !isMobile && !isNavigationDrawerExpanded;
 
   return (
-    <StyledSection isSettingsDrawer={isSettingsDrawer} className={className}>
+    <StyledSection className={className}>
       <StyledSectionInnerContainerMinusScrollPadding
         isMobile={isMobile}
         isMainNavCollapsed={isMainNavCollapsed}
