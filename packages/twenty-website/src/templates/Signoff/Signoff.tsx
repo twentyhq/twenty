@@ -82,12 +82,6 @@ const HeadingWrap = styled.div`
   max-width: ${theme.layout.editorial};
   min-width: 0;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-preline='true'] {
-      white-space: pre-line;
-    }
-  }
 `;
 
 const Subline = styled.div`
@@ -99,12 +93,6 @@ const Subline = styled.div`
   max-width: 452px;
   min-width: 0;
   width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-preline='true'] {
-      white-space: pre-line;
-    }
-  }
 `;
 
 const Actions = styled.div`
@@ -124,8 +112,6 @@ type SignoffProps = {
   // The tall, vertically-centered sign-off layout (with guide crosshair),
   // as opposed to the compact default.
   centered?: boolean;
-  // Honor `\n` line breaks in the heading/body copy (md and up).
-  preLine?: boolean;
 };
 
 export function Signoff({
@@ -134,7 +120,6 @@ export function Signoff({
   body,
   scheme,
   centered = false,
-  preLine = false,
 }: SignoffProps) {
   return (
     <StyledSection
@@ -148,12 +133,12 @@ export function Signoff({
         />
       ) : null}
       <StyledContainer>
-        <HeadingWrap data-preline={preLine ? 'true' : undefined}>
+        <HeadingWrap>
           <BaseHeading as="h2" size="xl" weight="light">
             {heading}
           </BaseHeading>
         </HeadingWrap>
-        <Subline data-preline={preLine ? 'true' : undefined}>
+        <Subline>
           <BaseBody as="p" size="sm" weight="regular">
             {body}
           </BaseBody>

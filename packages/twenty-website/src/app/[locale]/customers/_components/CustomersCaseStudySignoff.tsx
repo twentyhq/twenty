@@ -1,24 +1,38 @@
 import { msg } from '@lingui/core/macro';
-import { TalkToUsButton } from '@/sections/ContactCal';
-import { HeadingPart, LinkButton } from '@/design-system/components';
+import { Trans } from '@lingui/react/macro';
+
+import {
+  HeadingPart,
+  LinkButton,
+  ResponsiveLineBreak,
+} from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { Signoff } from '@/templates/Signoff';
 
 export function CustomersCaseStudySignoff() {
   const i18n = getServerI18n();
+
   return (
     <Signoff
       scheme="muted"
       centered
-      preLine
       heading={
         <HeadingPart fontFamily="serif">
-          {i18n._(msg`Ready to grow\nwith Twenty?`)}
+          <Trans>
+            Ready to grow
+            <ResponsiveLineBreak />
+            with Twenty?
+          </Trans>
         </HeadingPart>
       }
-      body={i18n._(
-        msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
-      )}
+      body={
+        <Trans>
+          Join the teams that chose to own their CRM.
+          <ResponsiveLineBreak />
+          Start building with Twenty today.
+        </Trans>
+      }
     >
       <LinkButton
         color="secondary"

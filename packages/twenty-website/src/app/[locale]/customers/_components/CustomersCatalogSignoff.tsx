@@ -1,6 +1,11 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
-import { HeadingPart, LinkButton } from '@/design-system/components';
+import {
+  HeadingPart,
+  LinkButton,
+  ResponsiveLineBreak,
+} from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { Signoff } from '@/templates/Signoff';
@@ -13,21 +18,20 @@ export function CustomersCatalogSignoff() {
     <Signoff
       scheme="light"
       centered
-      preLine
       heading={
-        <>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Ready to build`)}
-          </HeadingPart>
+        <Trans>
+          <HeadingPart fontFamily="serif">Ready to build</HeadingPart>
           <br />
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`your own story?`)}
-          </HeadingPart>
-        </>
+          <HeadingPart fontFamily="sans">your own story?</HeadingPart>
+        </Trans>
       }
-      body={i18n._(
-        msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
-      )}
+      body={
+        <Trans>
+          Join the teams that chose to own their CRM.
+          <ResponsiveLineBreak />
+          Start building with Twenty today.
+        </Trans>
+      }
     >
       <LinkButton
         color="secondary"

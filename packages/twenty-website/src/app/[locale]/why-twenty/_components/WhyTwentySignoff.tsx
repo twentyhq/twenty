@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
@@ -12,14 +13,14 @@ export function WhyTwentySignoff() {
     <Signoff
       scheme="dark"
       heading={
-        <>
+        <Trans>
           <HeadingPart fontFamily="serif">
-            {i18n._(msg`Build a CRM your competitors`)}
+            Build a CRM your competitors
           </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`can't buy.`)}</HeadingPart>
-        </>
+          <HeadingPart fontFamily="sans">can't buy.</HeadingPart>
+        </Trans>
       }
-      body={i18n._(msg`Open-source, AI-ready, and yours to shape.`)}
+      body={<Trans>Open-source, AI-ready, and yours to shape.</Trans>}
     >
       <LinkButton
         color="primary"
