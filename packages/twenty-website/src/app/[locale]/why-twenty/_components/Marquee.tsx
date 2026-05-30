@@ -7,6 +7,8 @@ export type MarqueeSegment = {
   text: ReactNode;
 };
 
+type MarqueeScheme = 'light' | 'muted' | 'dark';
+
 const MARQUEE_REPEAT = 6;
 
 const StyledSection = styled.section`
@@ -111,8 +113,6 @@ const Segment = styled.span`
   }
 `;
 
-type Scheme = 'light' | 'muted' | 'dark';
-
 function Phrase({ segments }: { segments: MarqueeSegment[] }) {
   return (
     <PhraseGroup>
@@ -144,19 +144,14 @@ function Track({
   );
 }
 
-type RootProps = {
-  backgroundColor?: string;
-  color?: string;
+type MarqueeProps = {
   segments: MarqueeSegment[];
-  scheme?: Scheme;
+  scheme: MarqueeScheme;
 };
 
-function Root({ backgroundColor, color, segments, scheme }: RootProps) {
+export function Marquee({ segments, scheme }: MarqueeProps) {
   return (
-    <StyledSection
-      data-scheme={scheme}
-      style={scheme ? undefined : { backgroundColor, color }}
-    >
+    <StyledSection data-scheme={scheme}>
       <Viewport>
         <Row>
           <Track segments={segments} reversed={false} />
@@ -168,5 +163,3 @@ function Root({ backgroundColor, color, segments, scheme }: RootProps) {
     </StyledSection>
   );
 }
-
-export const Marquee = { Root };

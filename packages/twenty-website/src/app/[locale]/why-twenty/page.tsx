@@ -7,39 +7,13 @@ import {
 } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Editorial } from '@/sections/Editorial';
+import { Editorial } from '@/app/[locale]/why-twenty/_components/Editorial';
+import { Marquee } from '@/app/[locale]/why-twenty/_components/Marquee';
 import { Hero } from '@/sections/Hero';
-import { Marquee } from '@/sections/Marquee';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Signoff } from '@/sections/Signoff';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
-import { css } from '@linaria/core';
-
-const editorialOneIntroClass = css`
-  margin-bottom: ${theme.spacing(4)};
-  --editorial-heading-max-width: 760px;
-  --editorial-intro-max-width: 760px;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    margin-bottom: ${theme.spacing(8)};
-  }
-`;
-
-const editorialRightIntroClass = css`
-  margin-bottom: ${theme.spacing(4)};
-  --editorial-heading-max-width: 760px;
-  --editorial-intro-max-width: 760px;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    align-items: flex-end;
-    margin-bottom: ${theme.spacing(8)};
-    margin-left: auto;
-    margin-right: 0;
-    text-align: right;
-    width: auto;
-  }
-`;
 
 const crosshairLineColor = theme.colors.secondary.border[10];
 
@@ -109,79 +83,86 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
         <Hero.WhyTwentyVisual />
       </Hero.Root>
 
-      <Editorial.Root scheme="dark" crosshair={sectionCrosshairRight}>
-        <Editorial.Intro className={editorialOneIntroClass}>
-          <Editorial.Eyebrow colorScheme="secondary">
-            {i18n._(msg`The shift`)}
-          </Editorial.Eyebrow>
-          <Editorial.Heading>
+      <Editorial
+        scheme="dark"
+        crosshair={sectionCrosshairRight}
+        eyebrowColorScheme="secondary"
+        eyebrow={i18n._(msg`The shift`)}
+        heading={
+          <>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`CRM was a ledger.`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
               {i18n._(msg`AI turned it into an operating system.`)}
             </HeadingPart>
-          </Editorial.Heading>
-        </Editorial.Intro>
-        <Editorial.Body layout="two-column-left">
-          {i18n._(
+          </>
+        }
+        bodyLayout="two-column-left"
+        bodyParagraphs={[
+          i18n._(
             msg`For twenty years, CRM meant the same thing: a place to log calls, track deals, and pull reports on Friday. The real work happened in people's heads, in Slack threads, in hallway conversations. The CRM kept score. Nobody expected more from it.`,
-          )}
-          {i18n._(
+          ),
+          i18n._(
             msg`AI agents are starting to draft outreach, score leads, research accounts, write follow-ups, update deal stages. Every one of these actions reads from and writes to the CRM. The scoreboard became the playbook. The database became the brain.`,
-          )}
-        </Editorial.Body>
-      </Editorial.Root>
+          ),
+        ]}
+      />
 
-      <Editorial.Root scheme="dark" crosshair={sectionCrosshairLeft}>
-        <Editorial.Intro className={editorialRightIntroClass}>
-          <Editorial.Eyebrow colorScheme="secondary">
-            {i18n._(msg`What this means`)}
-          </Editorial.Eyebrow>
-          <Editorial.Heading>
+      <Editorial
+        scheme="dark"
+        crosshair={sectionCrosshairLeft}
+        introAlign="right"
+        eyebrowColorScheme="secondary"
+        eyebrow={i18n._(msg`What this means`)}
+        heading={
+          <>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Differentiation now`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
               {i18n._(msg`lives in the code you own.`)}
             </HeadingPart>
-          </Editorial.Heading>
-        </Editorial.Intro>
-        <Editorial.Body layout="two-column-right">
-          {i18n._(
+          </>
+        }
+        bodyLayout="two-column-right"
+        bodyParagraphs={[
+          i18n._(
             msg`You don't buy your deployment pipeline off the shelf. You don't rent your data warehouse from a vendor who decides the schema. You build it, you own it, you iterate on it every week. CRM is going the same way. The teams that treat it as infrastructure they own will compound an advantage every quarter.`,
-          )}
-          {i18n._(
+          ),
+          i18n._(
             msg`Tuesday your team learns that deals with a technical champion close 3x faster. Wednesday you add the field, wire up the scoring, adjust the workflow. By Thursday your agents are acting on it. That feedback loop is the edge. And it only works if the CRM is yours.`,
-          )}
-        </Editorial.Body>
-      </Editorial.Root>
+          ),
+        ]}
+      />
 
-      <Editorial.Root scheme="dark" crosshair={sectionCrosshairRight}>
-        <Editorial.Intro className={editorialOneIntroClass}>
-          <Editorial.Eyebrow colorScheme="secondary">
-            {i18n._(msg`The opportunity`)}
-          </Editorial.Eyebrow>
-          <Editorial.Heading>
+      <Editorial
+        scheme="dark"
+        crosshair={sectionCrosshairRight}
+        eyebrowColorScheme="secondary"
+        eyebrow={i18n._(msg`The opportunity`)}
+        heading={
+          <>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Build it in an afternoon.`)}
             </HeadingPart>{' '}
             <HeadingPart fontFamily="sans">
               {i18n._(msg`AI made the gap that small.`)}
             </HeadingPart>
-          </Editorial.Heading>
-        </Editorial.Intro>
-        <Editorial.Body layout="two-column-left">
-          {i18n._(
+          </>
+        }
+        bodyLayout="two-column-left"
+        bodyParagraphs={[
+          i18n._(
             msg`A year ago, customizing your CRM meant hiring a Salesforce consultant, learning Apex, waiting months. The gap between "I want this" and "it's live" was measured in quarters and invoices. So people settled. They bent their process to fit the tool and called it adoption.`,
-          )}
-          {i18n._(
+          ),
+          i18n._(
             msg`Now a developer can describe what they want to Claude Code and have a working app in an afternoon. A custom object, a scoring workflow, a new view, an integration. The bottleneck isn't building anymore. It's whether your platform lets you.`,
-          )}
-        </Editorial.Body>
-      </Editorial.Root>
+          ),
+        ]}
+      />
 
-      <Marquee.Root
+      <Marquee
         scheme="dark"
         segments={[
           { fontFamily: 'serif', text: i18n._(msg`Same CRM`) },
