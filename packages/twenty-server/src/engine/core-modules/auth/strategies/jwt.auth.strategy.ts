@@ -430,6 +430,17 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   async validate(payload: JwtPayload): Promise<AuthContext> {
+    const context = await this.dispatch(payload);
+
+    return {
+      ...context,
+      tokenType: this.isLegacyApiKeyPayload(payload)
+        ? JwtTokenTypeEnum.API_KEY
+        : payload.type,
+    };
+  }
+
+  private async dispatch(payload: JwtPayload): Promise<AuthContext> {
     // Support legacy api keys
     if (
       payload.type === JwtTokenTypeEnum.API_KEY ||

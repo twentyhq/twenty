@@ -20,6 +20,7 @@ export const bindDataToRequestObject = (
   request.userWorkspaceId = data.userWorkspaceId;
   request.authProvider = data.authProvider;
   request.impersonationContext = data.impersonationContext;
+  request.tokenType = data.tokenType;
 
   request.locale =
     data.userWorkspace?.locale ??

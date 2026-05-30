@@ -1,9 +1,8 @@
-import { styled } from '@linaria/react';
 import { gql } from '@apollo/client';
 import { useQuery } from '@apollo/client/react';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type ReactNode, useContext, useMemo, useState } from 'react';
-import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
+import { type ReactNode, useMemo, useState } from 'react';
 
 import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
@@ -11,42 +10,19 @@ import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsS
 import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
-import { Table } from '@/ui/layout/table/components/Table';
-import { TableHeader } from '@/ui/layout/table/components/TableHeader';
-import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconChevronRight,
-  IconLock,
-  IconPuzzle,
-  IconTool,
-} from 'twenty-ui/display';
+import { ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconLock, IconPuzzle, IconTool } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { ToolCategory } from 'twenty-shared/ai';
-import { normalizeSearchText } from '~/utils/normalizeSearchText';
-import { SettingsToolIcon } from './SettingsToolIcon';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
-  SettingsToolTableRow,
-  TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
-} from './SettingsToolTableRow';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-
-type ToolItem = {
-  identifier: string;
-  name: string;
-  description?: string | null;
-  category?: string;
-  objectName?: string | null;
-  icon?: string | null;
-  applicationId?: string | null;
-};
+  type SettingsAgentToolItem,
+  SettingsAgentToolsTable,
+} from '~/pages/settings/ai/components/SettingsAgentToolsTable';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
 
 const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
   query FindManyApplicationsForToolTable {
@@ -74,12 +50,7 @@ const StyledSearchContainer = styled.div`
   padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-const StyledTableHeaderRowContainer = styled.div`
-  margin-bottom: ${themeCssVariables.spacing[2]};
-`;
-
 export const SettingsAgentToolsTab = () => {
-  const { theme } = useContext(ThemeContext);
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const {
@@ -115,28 +86,10 @@ export const SettingsAgentToolsTab = () => {
   const isManaged = (applicationId?: string | null) =>
     isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
 
-  const isCustom = (item: ToolItem) => isDefined(item.applicationId);
+  const isCustom = (tool: SettingsAgentToolItem) =>
+    isDefined(tool.applicationId);
 
-  const getToolLink = (item: ToolItem) =>
-    getSettingsPath(SettingsPath.AiToolDetail, {
-      toolIdentifier: item.identifier,
-    });
-
-  const getToolApplicationId = (item: ToolItem) => {
-    if (isDefined(item.applicationId)) {
-      return item.applicationId;
-    }
-
-    return (
-      currentWorkspace?.installedApplications?.find(
-        (app) =>
-          app.universalIdentifier ===
-          TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-      )?.id ?? ''
-    );
-  };
-
-  const allTools: ToolItem[] = useMemo(
+  const allTools: SettingsAgentToolItem[] = useMemo(
     () => [
       ...logicFunctions
         .filter((fn) => isDefined(fn.toolTriggerSettings))
@@ -173,22 +126,22 @@ export const SettingsAgentToolsTab = () => {
   );
 
   const filteredTools = allTools
-    .filter((item) => {
+    .filter((tool) => {
       const searchNormalized = normalizeSearchText(searchTerm);
 
       const matchesSearch =
-        normalizeSearchText(item.name).includes(searchNormalized) ||
-        normalizeSearchText(item.description ?? '').includes(searchNormalized);
+        normalizeSearchText(tool.name).includes(searchNormalized) ||
+        normalizeSearchText(tool.description ?? '').includes(searchNormalized);
 
       if (!matchesSearch) {
         return false;
       }
 
-      if (!isCustom(item)) {
+      if (!isCustom(tool)) {
         return showStandardTools;
       }
 
-      if (isManaged(item.applicationId)) {
+      if (isManaged(tool.applicationId)) {
         return showManagedTools;
       }
 
@@ -196,7 +149,7 @@ export const SettingsAgentToolsTab = () => {
     })
     .sort((a, b) => a.name.localeCompare(b.name));
 
-  const showSkeleton = toolIndexLoading && !toolIndexError;
+  const isLoading = toolIndexLoading && !toolIndexError;
 
   return (
     <Section>
@@ -252,60 +205,15 @@ export const SettingsAgentToolsTab = () => {
           )}
         />
       </StyledSearchContainer>
-      <Table>
-        <StyledTableHeaderRowContainer>
-          <TableRow gridTemplateColumns={TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS}>
-            <TableHeader>{t`Name`}</TableHeader>
-            <TableHeader>{t`App`}</TableHeader>
-            <TableHeader />
-          </TableRow>
-        </StyledTableHeaderRowContainer>
-        {showSkeleton
-          ? Array.from({ length: 3 }).map((_, index) => (
-              <SkeletonTheme
-                key={index}
-                baseColor={theme.background.tertiary}
-                highlightColor={theme.background.transparent.lighter}
-                borderRadius={4}
-              >
-                <Skeleton height={32} borderRadius={4} />
-              </SkeletonTheme>
-            ))
-          : filteredTools.map((item) => {
-              const application = isDefined(item.applicationId)
-                ? applicationById.get(item.applicationId)
-                : undefined;
-              const marketplaceApp = isDefined(application)
-                ? marketplaceAppByUniversalIdentifier.get(
-                    application.universalIdentifier,
-                  )
-                : undefined;
-
-              return (
-                <SettingsToolTableRow
-                  key={item.identifier}
-                  leftIcon={
-                    <SettingsToolIcon
-                      icon={item.icon}
-                      toolName={item.name}
-                      objectName={item.objectName ?? undefined}
-                      application={application}
-                      marketplaceApp={marketplaceApp}
-                    />
-                  }
-                  name={item.name}
-                  applicationId={getToolApplicationId(item)}
-                  action={
-                    <IconChevronRight
-                      size={theme.icon.size.md}
-                      stroke={theme.icon.stroke.sm}
-                    />
-                  }
-                  link={getToolLink(item)}
-                />
-              );
-            })}
-      </Table>
+      <SettingsAgentToolsTable
+        tools={filteredTools}
+        isLoading={isLoading}
+        applicationById={applicationById}
+        marketplaceAppByUniversalIdentifier={
+          marketplaceAppByUniversalIdentifier
+        }
+        currentWorkspace={currentWorkspace}
+      />
     </Section>
   );
 };

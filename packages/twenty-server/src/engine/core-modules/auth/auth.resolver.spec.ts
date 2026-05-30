@@ -14,7 +14,6 @@ import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspac
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { SSOService } from 'src/engine/core-modules/sso/services/sso.service';
-import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { TwoFactorAuthenticationService } from 'src/engine/core-modules/two-factor-authentication/two-factor-authentication.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -142,13 +141,6 @@ describe('AuthResolver', () => {
             createContext: jest.fn().mockReturnValue({
               insertWorkspaceEvent: jest.fn(),
             }),
-          },
-        },
-        {
-          provide: JwtWrapperService,
-          useValue: {
-            extractJwtFromRequest: jest.fn().mockReturnValue(() => null),
-            decode: jest.fn(),
           },
         },
       ],
