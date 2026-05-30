@@ -1,13 +1,17 @@
 import {
+  getCallLevelProviderOptions,
+  getCacheProviderOptions,
+  injectCacheBreakpoint,
   mergeProviderOptions,
   withOpenAIStoreDisabledProviderOptions,
-} from 'src/engine/metadata-modules/ai/ai-chat/utils/openai-provider-options.util';
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import {
   AI_SDK_ANTHROPIC,
+  AI_SDK_BEDROCK,
   AI_SDK_OPENAI,
 } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-sdk-package.const';
 
-describe('openai-provider-options.util', () => {
+describe('provider-options.util', () => {
   describe('mergeProviderOptions', () => {
     it('merges provider options without overwriting unrelated providers', () => {
       expect(
@@ -33,6 +37,34 @@ describe('openai-provider-options.util', () => {
         openai: {
           reasoningEffort: 'medium',
           store: false,
+        },
+      });
+    });
+  });
+
+  describe('getCallLevelProviderOptions', () => {
+    it('returns cache provider options for Anthropic models', () => {
+      expect(getCallLevelProviderOptions(AI_SDK_ANTHROPIC)).toEqual({
+        anthropic: {
+          cacheControl: { type: 'ephemeral' },
+        },
+      });
+    });
+
+    it('returns store false for OpenAI models', () => {
+      expect(getCallLevelProviderOptions(AI_SDK_OPENAI)).toEqual({
+        openai: {
+          store: false,
+        },
+      });
+    });
+  });
+
+  describe('getCacheProviderOptions', () => {
+    it('returns cache point provider options for Bedrock models', () => {
+      expect(getCacheProviderOptions(AI_SDK_BEDROCK)).toEqual({
+        bedrock: {
+          cachePoint: { type: 'default' },
         },
       });
     });
@@ -81,6 +113,42 @@ describe('openai-provider-options.util', () => {
           providerOptions,
         ),
       ).toBe(providerOptions);
+    });
+  });
+
+  describe('injectCacheBreakpoint', () => {
+    it('injects cache provider options on the last message only', () => {
+      expect(
+        injectCacheBreakpoint(
+          [
+            { role: 'user', content: 'first' },
+            {
+              role: 'user',
+              content: 'last',
+              providerOptions: {
+                openai: {
+                  store: false,
+                },
+              },
+            },
+          ],
+          AI_SDK_BEDROCK,
+        ),
+      ).toEqual([
+        { role: 'user', content: 'first' },
+        {
+          role: 'user',
+          content: 'last',
+          providerOptions: {
+            openai: {
+              store: false,
+            },
+            bedrock: {
+              cachePoint: { type: 'default' },
+            },
+          },
+        },
+      ]);
     });
   });
 });
