@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
@@ -46,17 +47,19 @@ export function HomeHero() {
       <HeroIntroGroup data-halftone-exclude>
         <HeroHeadingGroup>
           <HeroHeading>
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Build your Enterprise CRM`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`at AI Speed`)}
-            </HeadingPart>
+            <Trans>
+              <HeadingPart fontFamily="serif">
+                Build your Enterprise CRM
+              </HeadingPart>{' '}
+              <HeadingPart fontFamily="sans">at AI Speed</HeadingPart>
+            </Trans>
           </HeroHeading>
           <HeroBody maxWidthMd={591} size="sm">
-            {i18n._(
-              msg`Twenty gives technical teams the building blocks for a custom CRM that meets complex business needs and quickly adapts as the business evolves.`,
-            )}
+            <Trans>
+              Twenty gives technical teams the building blocks for a custom CRM
+              that meets complex business needs and quickly adapts as the
+              business evolves.
+            </Trans>
           </HeroBody>
         </HeroHeadingGroup>
         <HeroCta>
