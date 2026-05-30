@@ -1,21 +1,24 @@
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { HeadingPart } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import { HeroBody, HeroHeading, HeroSection } from '@/templates/Hero';
 
 export function PricingHero() {
-  const i18n = getServerI18n();
-
   return (
     <HeroSection scheme="muted">
       <HeroHeading>
-        <HeadingPart fontFamily="serif">{i18n._(msg`Simple`)}</HeadingPart>
-        <br />
-        <HeadingPart fontFamily="sans">{i18n._(msg`Pricing`)}</HeadingPart>
+        <Trans>
+          <HeadingPart fontFamily="serif">Simple</HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">Pricing</HeadingPart>
+        </Trans>
       </HeroHeading>
-      <HeroBody maxWidthMd={500} preserveLineBreaks>
-        {i18n._(msg`Start your free trial today\nwithout credit card.`)}
+      <HeroBody maxWidthMd={500}>
+        <Trans>
+          Start your free trial today
+          <br />
+          without credit card.
+        </Trans>
       </HeroBody>
     </HeroSection>
   );

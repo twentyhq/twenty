@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { GitHubIcon } from '@/icons';
@@ -12,14 +13,18 @@ export function ReleasesHero() {
   return (
     <HeroSection scheme="light">
       <HeroHeading size="lg" weight="light">
-        <HeadingPart fontFamily="serif">{i18n._(msg`Latest`)}</HeadingPart>
-        <br />
-        <HeadingPart fontFamily="sans">{i18n._(msg`Releases`)}</HeadingPart>
+        <Trans>
+          <HeadingPart fontFamily="serif">Latest</HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">Releases</HeadingPart>
+        </Trans>
       </HeroHeading>
-      <HeroBody maxWidthMd={591} preserveLineBreaks size="sm">
-        {i18n._(
-          msg`Discover the newest features and improvements in Twenty,\nthe #1 Open Source CRM.`,
-        )}
+      <HeroBody maxWidthMd={591} size="sm">
+        <Trans>
+          Discover the newest features and improvements in Twenty,
+          <br />
+          the #1 Open Source CRM.
+        </Trans>
       </HeroBody>
       <HeroCta>
         <LinkButton

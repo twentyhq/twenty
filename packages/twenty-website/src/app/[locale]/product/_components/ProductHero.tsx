@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { AI_HERO_TABS } from '@/app/[locale]/product/ai-hero-tabs.data';
@@ -16,16 +17,12 @@ export function ProductHero() {
       )}
       aiHeading={
         <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`AI that actually`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`helps you`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`work faster`)}
-          </HeadingPart>
+          <Trans>
+            <HeadingPart fontFamily="serif">AI that actually</HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">helps you</HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">work faster</HeadingPart>
+          </Trans>
         </Heading>
       }
       ctaHref="https://app.twenty.com/welcome"
@@ -35,12 +32,12 @@ export function ProductHero() {
       )}
       introHeading={
         <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`A CRM for teams`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="serif">{i18n._(msg`that`)}</HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`move fast`)}</HeadingPart>
+          <Trans>
+            <HeadingPart fontFamily="serif">A CRM for teams</HeadingPart>
+            <br />
+            <HeadingPart fontFamily="serif">that</HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">move fast</HeadingPart>
+          </Trans>
         </Heading>
       }
       tabs={AI_HERO_TABS}

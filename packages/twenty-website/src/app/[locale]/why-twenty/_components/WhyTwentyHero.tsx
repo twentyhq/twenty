@@ -1,8 +1,7 @@
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { css } from '@linaria/core';
 
 import { HeadingPart } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import { HeroBody, HeroHeading, HeroSection } from '@/templates/Hero';
 import { WhyTwentyVisual } from '@/sections/Hero';
 import { theme } from '@/theme';
@@ -12,20 +11,22 @@ const headingClassName = css`
 `;
 
 export function WhyTwentyHero() {
-  const i18n = getServerI18n();
-
   return (
     <HeroSection scheme="dark">
       <HeroHeading className={headingClassName} size="xl">
-        <HeadingPart fontFamily="serif">
-          {i18n._(msg`The future of CRM is built,`)}
-        </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">{i18n._(msg`not bought.`)}</HeadingPart>
+        <Trans>
+          <HeadingPart fontFamily="serif">
+            The future of CRM is built,
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">not bought.</HeadingPart>
+        </Trans>
       </HeroHeading>
       <HeroBody maxWidthMd={443}>
-        {i18n._(
-          msg`CRM was a database you filled on Fridays. AI turned it into the system that runs your go-to-market. To differentiate, you have to build what your competitors can't buy.`,
-        )}
+        <Trans>
+          CRM was a database you filled on Fridays. AI turned it into the system
+          that runs your go-to-market. To differentiate, you have to build what
+          your competitors can't buy.
+        </Trans>
       </HeroBody>
       <WhyTwentyVisual />
     </HeroSection>
