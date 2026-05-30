@@ -12,11 +12,6 @@ type SettingsNavigationDrawerItemProps = {
   hasActiveSubItem?: boolean;
 };
 
-// All settings nav items render their icon inside a uniform grey tile via
-// TintedIconTile. Per-section colored tiles (Profile=blue, Accounts=orange,
-// etc.) are deliberately out of scope here and live on a separate branch.
-const SETTINGS_NAV_ICON_TILE_COLOR = 'gray';
-
 export const SettingsNavigationDrawerItem = ({
   item,
   subItemState,
@@ -44,7 +39,7 @@ export const SettingsNavigationDrawerItem = ({
           label={item.label}
           to={href}
           Icon={item.Icon}
-          iconColor={SETTINGS_NAV_ICON_TILE_COLOR}
+          withIconBackground
           active={isActive}
           modifier={item.modifier}
           onClick={item.onClick}
@@ -60,7 +55,7 @@ export const SettingsNavigationDrawerItem = ({
       label={item.label}
       to={href || undefined}
       Icon={item.Icon}
-      iconColor={SETTINGS_NAV_ICON_TILE_COLOR}
+      withIconBackground
       active={isActive}
       modifier={item.modifier}
       onClick={item.onClick}
