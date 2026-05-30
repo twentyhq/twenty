@@ -1,13 +1,9 @@
-import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-export type MarqueeSegment = {
-  fontFamily: string;
-  text: ReactNode;
-};
-
-type MarqueeScheme = 'light' | 'muted' | 'dark';
+import { getServerI18n } from '@/lib/i18n/server';
+import { theme } from '@/theme';
 
 const MARQUEE_REPEAT = 6;
 
@@ -17,16 +13,6 @@ const StyledSection = styled.section`
   padding-bottom: ${theme.spacing(20)};
   padding-top: ${theme.spacing(20)};
   width: 100%;
-
-  &[data-scheme='light'] {
-    background-color: var(--color-white);
-    color: var(--color-text);
-  }
-
-  &[data-scheme='muted'] {
-    background-color: var(--color-neutral);
-    color: var(--color-text);
-  }
 
   &[data-scheme='dark'] {
     background-color: var(--color-black);
@@ -113,12 +99,12 @@ const Segment = styled.span`
   }
 `;
 
-function Phrase({ segments }: { segments: MarqueeSegment[] }) {
+function Phrase({ segments }: { segments: ReactNode[] }) {
   return (
     <PhraseGroup>
       {segments.map((segment, segmentIndex) => (
         <Segment key={segmentIndex} data-segment-index={segmentIndex}>
-          {segment.text}
+          {segment}
         </Segment>
       ))}
     </PhraseGroup>
@@ -129,7 +115,7 @@ function Track({
   segments,
   reversed,
 }: {
-  segments: MarqueeSegment[];
+  segments: ReactNode[];
   reversed: boolean;
 }) {
   const phrases = Array.from({ length: MARQUEE_REPEAT }, (_, index) => (
@@ -144,14 +130,19 @@ function Track({
   );
 }
 
-type MarqueeProps = {
-  segments: MarqueeSegment[];
-  scheme: MarqueeScheme;
-};
+// Self-contained: the why-twenty marquee owns its copy (and its always-dark
+// scheme). Segment styling is positional via data-segment-index.
+export function Marquee() {
+  const i18n = getServerI18n();
 
-export function Marquee({ segments, scheme }: MarqueeProps) {
+  const segments: ReactNode[] = [
+    i18n._(msg`Same CRM`),
+    i18n._(msg`Same output`),
+    i18n._(msg`Same results`),
+  ];
+
   return (
-    <StyledSection data-scheme={scheme}>
+    <StyledSection data-scheme="dark">
       <Viewport>
         <Row>
           <Track segments={segments} reversed={false} />

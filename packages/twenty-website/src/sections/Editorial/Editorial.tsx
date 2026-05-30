@@ -10,10 +10,9 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-// Page-local editorial block for /why-twenty: an eyebrow + heading intro
-// followed by a one/two-column body. A plain props-driven component (no
-// compound Root/slot ceremony) — the same structure is reused several times on
-// the page by passing different content.
+// Shared editorial layout shell: an eyebrow + heading intro followed by a
+// one/two-column body. Props-driven (no compound ceremony); page-local blocks
+// pass the copy and per-instance layout (crosshair, alignment, body layout).
 
 export type EditorialCrosshair = {
   crossX: string;
