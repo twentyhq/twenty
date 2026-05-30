@@ -1,8 +1,6 @@
-import { msg } from '@lingui/core/macro';
 import { Faq } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { PARTNER_TESTIMONIALS } from '@/app/[locale]/partners/testimonials.data';
 import { PartnerHero } from '@/app/[locale]/partners/components/PartnerHero';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
@@ -10,7 +8,7 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { PartnerSignoff } from '@/app/[locale]/partners/components/PartnerSignoff';
-import { Testimonials } from '@/sections/Testimonials';
+import { PartnerTestimonials } from '@/app/[locale]/partners/components/PartnerTestimonials';
 import { PartnerThreeCards } from '@/app/[locale]/partners/components/PartnerThreeCards';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
@@ -31,7 +29,9 @@ type PartnerPageProps = {
 };
 
 export default async function PartnerPage({ params }: PartnerPageProps) {
-  const [i18n, stats] = await Promise.all([
+  // getRouteI18n sets the request-scoped i18n context the page's components
+  // read; the page renders no copy of its own, so the instance is unused here.
+  const [, stats] = await Promise.all([
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
@@ -60,17 +60,7 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
 
       <PartnerThreeCards />
 
-      <Testimonials.Root
-        scheme="muted"
-        shapeFillColor={theme.colors.secondary.background[100]}
-      >
-        <Testimonials.PartnerCarousel
-          eyebrow={i18n._(msg`Join our growing partner ecosystem`)}
-          testimonials={PARTNER_TESTIMONIALS}
-        >
-          <Testimonials.PartnerVisual />
-        </Testimonials.PartnerCarousel>
-      </Testimonials.Root>
+      <PartnerTestimonials />
 
       <PartnerSignoff />
 

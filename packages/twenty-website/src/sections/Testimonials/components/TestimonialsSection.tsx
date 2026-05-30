@@ -1,11 +1,7 @@
 import { Container } from '@/design-system/components';
-import { theme } from '@/theme';
+import { theme, type Scheme } from '@/theme';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
-import { Carousel } from './components/TestimonialsCarousel';
-import { PartnerCarousel } from './components/TestimonialsPartnerCarousel';
-import { MountedTestimonialsVisual } from './components/MountedTestimonialsVisual';
-import { MountedTestimonialsPartnerVisual } from './components/MountedTestimonialsPartnerVisual';
 
 const TESTIMONIALS_SHAPE_PATH =
   'M0 4a4 4 0 0 1 4-4h344.32c4.197 0 8.369.66 12.361 1.958l49.5 16.084A40 40 0 0 0 422.542 20h517.7c4.293 0 8.559-.691 12.633-2.047l47.785-15.906A40 40 0 0 1 1013.29 0H1356a4 4 0 0 1 4 4v16H0z';
@@ -81,9 +77,8 @@ const BackgroundShape = styled.div`
   z-index: 0;
 `;
 
-const StyledContainer = styled(Container)<{ $compactBottom: boolean }>`
-  padding-bottom: ${({ $compactBottom }) =>
-    $compactBottom ? theme.spacing(6) : theme.spacing(22)};
+const StyledContainer = styled(Container)`
+  padding-bottom: ${theme.spacing(22)};
   padding-left: ${theme.spacing(4)};
   padding-right: ${theme.spacing(4)};
   padding-top: ${theme.spacing(22)};
@@ -94,47 +89,30 @@ const StyledContainer = styled(Container)<{ $compactBottom: boolean }>`
     padding-left: ${theme.spacing(10)};
     padding-right: ${theme.spacing(10)};
     padding-top: ${theme.spacing(25)};
-    padding-bottom: ${({ $compactBottom }) =>
-      $compactBottom ? theme.spacing(8) : theme.spacing(25)};
+    padding-bottom: ${theme.spacing(25)};
   }
 `;
 
-type RootProps = {
-  backgroundColor?: string;
+type TestimonialsSectionProps = {
   children: ReactNode;
-  color?: string;
-  compactBottom?: boolean;
-  scheme?: 'light' | 'muted' | 'dark';
+  scheme: Scheme;
   shapeFillColor?: string;
 };
 
-function Root({
-  backgroundColor,
+// Shared shell for the testimonials sections: scheme-aware background, the
+// decorative bottom shape, and the content container. Page-local blocks own
+// the eyebrow copy, testimonial data, and which carousel/visual to render.
+export function TestimonialsSection({
   children,
-  color,
-  compactBottom = false,
   scheme,
   shapeFillColor = theme.colors.primary.background[100],
-}: RootProps) {
+}: TestimonialsSectionProps) {
   return (
-    <StyledSection
-      data-scheme={scheme}
-      style={scheme ? undefined : { backgroundColor, color }}
-    >
+    <StyledSection data-scheme={scheme}>
       <BackgroundShape>
         <TestimonialsShape fillColor={shapeFillColor} />
       </BackgroundShape>
-      <StyledContainer $compactBottom={compactBottom}>
-        {children}
-      </StyledContainer>
+      <StyledContainer>{children}</StyledContainer>
     </StyledSection>
   );
 }
-
-export const Testimonials = {
-  Carousel,
-  HourglassVisual: MountedTestimonialsVisual,
-  PartnerCarousel,
-  PartnerVisual: MountedTestimonialsPartnerVisual,
-  Root,
-};

@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { HELPED_CARDS } from '@/app/[locale]/(home)/helped.data';
 import { Problem, type ProblemPointType } from '@/sections/Problem';
-import { HOME_TESTIMONIALS } from '@/app/[locale]/(home)/testimonials.data';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
 import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
@@ -12,7 +11,7 @@ import { Helped } from '@/sections/Helped';
 import { HomeHero } from '@/app/[locale]/(home)/_components/HomeHero';
 import { HomeStepper, type HomeStepperStepType } from '@/sections/HomeStepper';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Testimonials } from '@/sections/Testimonials';
+import { HomeTestimonials } from '@/app/[locale]/(home)/_components/HomeTestimonials';
 import { HomeFeatureThreeCards } from '@/app/[locale]/(home)/_components/HomeFeatureThreeCards';
 import { HomeIllustrationThreeCards } from '@/app/[locale]/(home)/_components/HomeIllustrationThreeCards';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
@@ -167,14 +166,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <Helped.Scene cards={HELPED_CARDS} />
       </Helped.Root>
 
-      <Testimonials.Root scheme="muted">
-        <Testimonials.Carousel
-          eyebrow={i18n._(msg`They are the real sales`)}
-          testimonials={HOME_TESTIMONIALS}
-        >
-          <Testimonials.HourglassVisual />
-        </Testimonials.Carousel>
-      </Testimonials.Root>
+      <HomeTestimonials />
 
       <Faq />
     </>
