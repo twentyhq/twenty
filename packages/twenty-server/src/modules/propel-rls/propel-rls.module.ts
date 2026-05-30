@@ -39,12 +39,21 @@ import { PortalSyncGroupByRlsPreQueryHook } from 'src/modules/propel-rls/portal-
 import { TrakheesiPermitRlsPreQueryHook } from 'src/modules/propel-rls/trakheesi-permit-rls.pre-query.hook';
 import { TrakheesiPermitFindOneRlsPreQueryHook } from 'src/modules/propel-rls/trakheesi-permit-find-one-rls.pre-query.hook';
 import { TrakheesiPermitGroupByRlsPreQueryHook } from 'src/modules/propel-rls/trakheesi-permit-group-by-rls.pre-query.hook';
+import { StageGateService } from 'src/modules/propel-rls/stage-gate.service';
+import { SecondaryOpportunityStageGatePreQueryHook } from 'src/modules/propel-rls/secondary-opportunity-stage-gate.pre-query.hook';
+import { SellOpportunityStageGatePreQueryHook } from 'src/modules/propel-rls/sell-opportunity-stage-gate.pre-query.hook';
+import { OffPlanOpportunityStageGatePreQueryHook } from 'src/modules/propel-rls/offplan-opportunity-stage-gate.pre-query.hook';
+import { InstitutionalOpportunityStageGatePreQueryHook } from 'src/modules/propel-rls/institutional-opportunity-stage-gate.pre-query.hook';
+import { RcbiOpportunityStageGatePreQueryHook } from 'src/modules/propel-rls/rcbi-opportunity-stage-gate.pre-query.hook';
+import { ListingStageGatePreQueryHook } from 'src/modules/propel-rls/listing-stage-gate.pre-query.hook';
+import { DealStageGatePreQueryHook } from 'src/modules/propel-rls/deal-stage-gate.pre-query.hook';
 
-// Propel clean-room RLS hooks. AGPL @WorkspaceQueryHook services that inject
-// per-tier row filters on the auto-generated READ paths (findMany, findOne,
-// groupBy), keyed off the workspaceMember `propelTier` field. NOT derived from the
-// @license Enterprise RLS. attributionRollup is intentionally excluded (brokerage-
-// wide metric). findDuplicates is not hooked (no filter arg — narrow surface).
+// Propel clean-room module:
+//  - RLS read-path hooks (findMany/findOne/groupBy) inject per-tier row filters.
+//  - §8.3 stage-gate hooks (updateOne) block forward stage moves until the current
+//    stage's task is DONE. StageGateService does the lookup (GlobalWorkspaceOrmManager
+//    is @Global-exported, so no module import needed).
+// None derived from @license Enterprise code.
 @Module({
   providers: [
     SecondaryOpportunityRlsPreQueryHook,
@@ -86,6 +95,14 @@ import { TrakheesiPermitGroupByRlsPreQueryHook } from 'src/modules/propel-rls/tr
     TrakheesiPermitRlsPreQueryHook,
     TrakheesiPermitFindOneRlsPreQueryHook,
     TrakheesiPermitGroupByRlsPreQueryHook,
+    SecondaryOpportunityStageGatePreQueryHook,
+    SellOpportunityStageGatePreQueryHook,
+    OffPlanOpportunityStageGatePreQueryHook,
+    InstitutionalOpportunityStageGatePreQueryHook,
+    RcbiOpportunityStageGatePreQueryHook,
+    ListingStageGatePreQueryHook,
+    DealStageGatePreQueryHook,
+    StageGateService,
   ],
 })
 export class PropelRlsModule {}
