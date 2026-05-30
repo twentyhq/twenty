@@ -74,7 +74,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     <StyledContainer>
       <RestPlaygroundSchemaFetchEffect
         schema={schema}
-        apiKey={playgroundApiKey}
+        apiKey={playgroundApiKey.token}
         onSchemaLoaded={setSpecContent}
         onError={onError}
       />
@@ -89,7 +89,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               },
               authentication: {
                 http: {
-                  bearer: { token: playgroundApiKey },
+                  bearer: { token: playgroundApiKey.token },
                 },
               },
               baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,

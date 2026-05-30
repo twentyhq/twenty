@@ -3,23 +3,21 @@ import { type ReactNode, useContext } from 'react';
 
 import DarkCoverImage from '@/settings/playground/assets/cover-dark.png';
 import LightCoverImage from '@/settings/playground/assets/cover-light.png';
+import { Card } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-// 1 px medium border matches the visual frame the Card wrapper provides on
-// the Layout and Data model heroes — this cover is rendered standalone (no
-// Card), so the border keeps it consistent with those other hero treatments.
 const StyledCoverContainer = styled.div`
   align-items: center;
   background-size: cover;
-  border: 1px solid ${themeCssVariables.border.color.medium};
-  border-radius: ${themeCssVariables.border.radius.md};
-  box-sizing: border-box;
   display: flex;
   height: 153px;
   justify-content: center;
+  position: relative;
+`;
+
+const StyledCardWrapper = styled.div`
   margin-bottom: ${themeCssVariables.spacing[4]};
   margin-top: ${themeCssVariables.spacing[4]};
-  position: relative;
 `;
 
 type StyledSettingsApiPlaygroundCoverImageProps = {
@@ -33,16 +31,17 @@ export const StyledSettingsApiPlaygroundCoverImage = ({
 }: StyledSettingsApiPlaygroundCoverImageProps) => {
   const { colorScheme } = useContext(ThemeContext);
 
-  const coverImage =
-    colorScheme === 'light'
-      ? LightCoverImage.toString()
-      : DarkCoverImage.toString();
+  const coverImage = colorScheme === 'light' ? LightCoverImage : DarkCoverImage;
+
   return (
-    <StyledCoverContainer
-      className={className}
-      style={{ backgroundImage: `url('${coverImage}')` }}
-    >
-      {children}
-    </StyledCoverContainer>
+    <StyledCardWrapper className={className}>
+      <Card rounded>
+        <StyledCoverContainer
+          style={{ backgroundImage: `url('${coverImage}')` }}
+        >
+          {children}
+        </StyledCoverContainer>
+      </Card>
+    </StyledCardWrapper>
   );
 };

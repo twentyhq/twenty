@@ -24,18 +24,17 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
+import { SettingsAgentSkillsTab } from '~/pages/settings/ai/components/SettingsAgentSkillsTab';
+import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAiModelsTab } from '~/pages/settings/ai/components/SettingsAiModelsTab';
+import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
+import { SettingsAiUsageTab } from '~/pages/settings/ai/components/SettingsAiUsageTab';
+import { SETTINGS_AI_TABS } from '~/pages/settings/ai/constants/SettingsAiTabs';
 
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
 const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
 
-const SETTINGS_AI_HERO_MODAL_ID = 'settings-ai-hero-modal';
-const SETTINGS_AI_HERO_TABS_ID = 'settings-ai-hero-tabs';
-import { SettingsAgentTools } from '~/pages/settings/ai/components/SettingsAgentTools';
-import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
-import { SettingsAiModelsTab } from './components/SettingsAiModelsTab';
-import { SettingsAiUsageTab } from './components/SettingsAiUsageTab';
-import { SettingsAgentSkills } from './components/SettingsAgentSkills';
-import { SETTINGS_AI_TABS } from './constants/SettingsAiTabs';
+const SETTINGS_AI_HERO_INSTANCE_ID_PREFIX = 'settings-ai-hero';
 
 export const SettingsAI = () => {
   const navigate = useNavigate();
@@ -160,8 +159,7 @@ export const SettingsAI = () => {
           <SettingsDiscoveryHeroCard
             lightSrc={AI_HERO_LIGHT}
             darkSrc={AI_HERO_DARK}
-            modalInstanceId={SETTINGS_AI_HERO_MODAL_ID}
-            tabsInstanceId={SETTINGS_AI_HERO_TABS_ID}
+            instanceIdPrefix={SETTINGS_AI_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
                 id: 'skills',
@@ -191,8 +189,8 @@ export const SettingsAI = () => {
         />
         {isOverviewTab && <SettingsAiOverviewTab />}
         {isModelsTab && <SettingsAiModelsTab />}
-        {isSkillsTab && <SettingsAgentSkills />}
-        {isToolsTab && <SettingsAgentTools />}
+        {isSkillsTab && <SettingsAgentSkillsTab />}
+        {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

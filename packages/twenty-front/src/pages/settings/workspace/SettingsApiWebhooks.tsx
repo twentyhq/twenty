@@ -31,8 +31,7 @@ import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/workspace/constants
 type TabKey =
   (typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS)[keyof typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS];
 
-const SETTINGS_API_HERO_MODAL_ID = 'settings-api-hero-modal';
-const SETTINGS_API_HERO_TABS_ID = 'settings-api-hero-tabs';
+const SETTINGS_API_HERO_INSTANCE_ID_PREFIX = 'settings-api-hero';
 
 const StyledButtonContainer = styled.div`
   display: flex;
@@ -57,11 +56,6 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
   overflow: ${({ isMobile }) => (isMobile ? 'hidden' : 'visible')};
 `;
 
-const TAB_KEYS = Object.values(SETTINGS_API_WEBHOOKS_TABS.TABS_IDS);
-
-const isTabKey = (value: string): value is TabKey =>
-  (TAB_KEYS as readonly string[]).includes(value);
-
 export const SettingsApiWebhooks = () => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
@@ -70,9 +64,8 @@ export const SettingsApiWebhooks = () => {
     activeTabIdComponentState,
     SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID,
   );
-  const activeTab: TabKey = isTabKey(activeTabId ?? '')
-    ? (activeTabId as TabKey)
-    : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API;
+  const activeTab: TabKey =
+    (activeTabId as TabKey) ?? SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API;
 
   const tabs = [
     {
@@ -106,10 +99,9 @@ export const SettingsApiWebhooks = () => {
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={PlaygroundCoverLight.toString()}
-            darkSrc={PlaygroundCoverDark.toString()}
-            modalInstanceId={SETTINGS_API_HERO_MODAL_ID}
-            tabsInstanceId={SETTINGS_API_HERO_TABS_ID}
+            lightSrc={PlaygroundCoverLight}
+            darkSrc={PlaygroundCoverDark}
+            instanceIdPrefix={SETTINGS_API_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
                 id: 'rest',

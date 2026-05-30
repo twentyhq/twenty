@@ -14,7 +14,10 @@ const meta: Meta<typeof SettingsRestPlayground> = {
   component: SettingsRestPlayground,
   decorators: [
     (Story) => {
-      jotaiStore.set(playgroundApiKeyState.atom, 'test-api-key');
+      jotaiStore.set(playgroundApiKeyState.atom, {
+        token: 'test-api-key',
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      });
       return <Story />;
     },
     ComponentDecorator,

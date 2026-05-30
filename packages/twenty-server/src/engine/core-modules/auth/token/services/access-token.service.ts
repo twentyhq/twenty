@@ -153,7 +153,7 @@ export class AccessTokenService {
     workspaceId,
     authProvider,
   }: Pick<
-    AccessTokenJwtPayload,
+    PlaygroundTokenJwtPayload,
     'userId' | 'workspaceId' | 'authProvider'
   >): Promise<AuthToken> {
     const expiresIn = this.twentyConfigService.get(

@@ -41,8 +41,7 @@ const StyledOverlay = styled.div`
 type SettingsDiscoveryHeroCardProps = {
   lightSrc: string;
   darkSrc: string;
-  modalInstanceId: string;
-  tabsInstanceId: string;
+  instanceIdPrefix: string;
   tabs: SettingsCustomizeVideoModalTab[];
   playButtonAriaLabel?: string;
 };
@@ -50,14 +49,16 @@ type SettingsDiscoveryHeroCardProps = {
 export const SettingsDiscoveryHeroCard = ({
   lightSrc,
   darkSrc,
-  modalInstanceId,
-  tabsInstanceId,
+  instanceIdPrefix,
   tabs,
   playButtonAriaLabel,
 }: SettingsDiscoveryHeroCardProps) => {
   const { t } = useLingui();
   const { colorScheme } = useContext(ThemeContext);
   const { openModal } = useModal();
+
+  const modalInstanceId = `${instanceIdPrefix}-modal`;
+  const tabsInstanceId = `${instanceIdPrefix}-tabs`;
 
   const src = colorScheme === 'light' ? lightSrc : darkSrc;
 

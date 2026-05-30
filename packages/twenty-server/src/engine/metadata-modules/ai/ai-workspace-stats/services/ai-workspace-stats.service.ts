@@ -1,12 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
-import { IsNull, Not, Repository } from 'typeorm';
+import { isDefined } from 'twenty-shared/utils';
 
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { WorkspaceAiStatsDTO } from 'src/engine/metadata-modules/ai/ai-workspace-stats/dtos/workspace-ai-stats.dto';
-import { LogicFunctionEntity } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { SkillEntity } from 'src/engine/metadata-modules/skill/entities/skill.entity';
+import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
@@ -20,23 +18,32 @@ export class AiWorkspaceStatsService {
   constructor(
     @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
     private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
-    @InjectWorkspaceScopedRepository(SkillEntity)
-    private readonly skillRepository: WorkspaceScopedRepository<SkillEntity>,
-    @InjectRepository(LogicFunctionEntity)
-    private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
+    private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async computeStats(workspaceId: string): Promise<WorkspaceAiStatsDTO> {
-    const [conversationsCount, skillsCount, toolsCount, aiWorkflowsCount] =
-      await Promise.all([
-        this.threadRepository.count(workspaceId),
-        this.skillRepository.count(workspaceId),
-        this.logicFunctionRepository.count({
-          where: { workspaceId, toolTriggerSettings: Not(IsNull()) },
-        }),
-        this.countWorkflowsLinkedToAgent(workspaceId),
-      ]);
+    const [conversationsCount, flatMaps, aiWorkflowsCount] = await Promise.all([
+      this.threadRepository.count(workspaceId),
+      this.flatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps({
+        workspaceId,
+        flatMapsKeys: ['flatSkillMaps', 'flatLogicFunctionMaps'],
+      }),
+      this.countWorkflowsLinkedToAgent(workspaceId),
+    ]);
+
+    const skillsCount = Object.values(
+      flatMaps.flatSkillMaps.byUniversalIdentifier,
+    ).filter(isDefined).length;
+
+    const toolsCount = Object.values(
+      flatMaps.flatLogicFunctionMaps.byUniversalIdentifier,
+    ).filter(
+      (logicFunction) =>
+        isDefined(logicFunction) &&
+        isDefined(logicFunction.toolTriggerSettings) &&
+        !isDefined(logicFunction.deletedAt),
+    ).length;
 
     return {
       conversationsCount,

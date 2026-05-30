@@ -3,9 +3,7 @@ import { styled } from '@linaria/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import React from 'react';
 
-// Kept for back-compat with the SETTINGS_OBJECT_TABLE_COLUMN_WIDTH export —
-// the grid below no longer references it so the table can stretch across the
-// full available content column instead of summing to ~527 px on every page.
+// Column width used by the Applications data tables (Instances column).
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';
 
 // Relative grid: Name takes all remaining space (with a floor); App / Fields /

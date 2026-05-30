@@ -36,10 +36,6 @@ const StyledIconAndButtonContainer = styled.button`
   }
 `;
 
-// No left padding — the drawer's outer StyledContainer already adds the
-// spacing that aligns nav items 8 px from the drawer edge. The previous
-// padding-left: spacing[5] stacked on top of that and pushed the Exit
-// Settings button noticeably right of the items below it.
 const StyledContainer = styled.div`
   align-items: center;
   display: flex;

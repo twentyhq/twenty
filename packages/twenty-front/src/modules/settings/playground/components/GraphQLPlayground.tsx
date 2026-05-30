@@ -60,7 +60,7 @@ export const GraphQLPlayground = ({
         plugins={[explorer]}
         fetcher={fetcher}
         defaultHeaders={JSON.stringify({
-          Authorization: `Bearer ${playgroundApiKey}`,
+          Authorization: `Bearer ${playgroundApiKey.token}`,
         })}
       />
     </StyledGraphiQLContainer>

@@ -1,5 +1,4 @@
 import { useMutation } from '@apollo/client/react';
-import { jwtDecode } from 'jwt-decode';
 import { useCallback } from 'react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -7,33 +6,29 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
+import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
-import { GeneratePlaygroundTokenDocument } from '~/generated-metadata/graphql';
+import {
+  type AuthToken,
+  GeneratePlaygroundTokenDocument,
+} from '~/generated-metadata/graphql';
 
-const TOKEN_FRESHNESS_BUFFER_SECONDS = 5 * 60;
+const TOKEN_FRESHNESS_BUFFER_MS = 5 * 60 * 1000;
 
-// A cached token is reusable only when it is a PLAYGROUND-type JWT and has
-// more than the freshness buffer of runway left.
-const isCachedTokenUsable = (token: string | null): boolean => {
+const isCachedTokenFresh = (token: AuthToken | null): boolean => {
   if (token === null) return false;
-  try {
-    const decoded = jwtDecode<{ exp?: number; type?: string }>(token);
-    if (decoded.type !== 'PLAYGROUND') return false;
-    if (decoded.exp === undefined) return false;
-    const nowSeconds = Math.floor(Date.now() / 1000);
-    return decoded.exp - nowSeconds > TOKEN_FRESHNESS_BUFFER_SECONDS;
-  } catch {
-    return false;
-  }
+  return (
+    new Date(token.expiresAt).getTime() - Date.now() > TOKEN_FRESHNESS_BUFFER_MS
+  );
 };
 
 export const useOpenPlayground = () => {
   const navigateSettings = useNavigateSettings();
-  const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
-  const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
+  const [playgroundApiKey, setPlaygroundApiKey] = useAtomState(
+    playgroundApiKeyState,
+  );
   const { enqueueErrorSnackBar } = useSnackBar();
   const [generatePlaygroundToken] = useMutation(
     GeneratePlaygroundTokenDocument,
@@ -47,16 +42,16 @@ export const useOpenPlayground = () => {
   );
 
   return useCallback(
-    async (type: 'rest' | 'graphql', schema: PlaygroundSchemas) => {
-      if (!isCachedTokenUsable(playgroundApiKey)) {
+    async (type: PlaygroundTypes, schema: PlaygroundSchemas) => {
+      if (!isCachedTokenFresh(playgroundApiKey)) {
         const { data } = await generatePlaygroundToken();
-        const token = data?.generatePlaygroundToken.token;
-        if (!isDefined(token)) return;
-        setPlaygroundApiKey(token);
+        const mintedToken = data?.generatePlaygroundToken;
+        if (!isDefined(mintedToken)) return;
+        setPlaygroundApiKey(mintedToken);
       }
 
       const path =
-        type === 'graphql'
+        type === PlaygroundTypes.GRAPHQL
           ? SettingsPath.GraphQLPlayground
           : SettingsPath.RestPlayground;
       navigateSettings(path, { schema });

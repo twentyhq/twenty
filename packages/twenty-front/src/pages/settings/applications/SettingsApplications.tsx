@@ -12,8 +12,6 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 // TODO: replace with apps-specific illustrations + recordings when designed.
-// Reusing the layout customize illustration + sidebar walkthrough as
-// placeholders so the hero pattern is wired everywhere consistently.
 import placeholderHeroDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
 import placeholderHeroLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
 import {
@@ -25,8 +23,7 @@ import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
 
 const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
-const APPLICATIONS_HERO_MODAL_ID = 'settings-applications-hero-modal';
-const APPLICATIONS_HERO_TABS_ID = 'settings-applications-hero-tabs';
+const APPLICATIONS_HERO_INSTANCE_ID_PREFIX = 'settings-applications-hero';
 
 export const SettingsApplications = () => {
   const { t } = useLingui();
@@ -87,8 +84,7 @@ export const SettingsApplications = () => {
           <SettingsDiscoveryHeroCard
             lightSrc={placeholderHeroLight}
             darkSrc={placeholderHeroDark}
-            modalInstanceId={APPLICATIONS_HERO_MODAL_ID}
-            tabsInstanceId={APPLICATIONS_HERO_TABS_ID}
+            instanceIdPrefix={APPLICATIONS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
                 id: 'browse',

@@ -23,8 +23,7 @@ import DarkCoverImage from '@/settings/data-model/assets/cover-dark.png';
 import LightCoverImage from '@/settings/data-model/assets/cover-light.png';
 import { SettingsObjectTable } from '~/pages/settings/data-model/SettingsObjectTable';
 
-const SETTINGS_DATA_MODEL_HERO_MODAL_ID = 'settings-data-model-hero-modal';
-const SETTINGS_DATA_MODEL_HERO_TABS_ID = 'settings-data-model-hero-tabs';
+const SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX = 'settings-data-model-hero';
 
 export const SettingsObjects = () => {
   const { t } = useLingui();
@@ -90,10 +89,9 @@ export const SettingsObjects = () => {
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={LightCoverImage.toString()}
-            darkSrc={DarkCoverImage.toString()}
-            modalInstanceId={SETTINGS_DATA_MODEL_HERO_MODAL_ID}
-            tabsInstanceId={SETTINGS_DATA_MODEL_HERO_TABS_ID}
+            lightSrc={LightCoverImage}
+            darkSrc={DarkCoverImage}
+            instanceIdPrefix={SETTINGS_DATA_MODEL_HERO_INSTANCE_ID_PREFIX}
             tabs={heroTabs}
             playButtonAriaLabel={t`Watch data model demo`}
           />

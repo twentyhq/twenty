@@ -25,8 +25,7 @@ const MEMBERS_TAB_TEAM_ID = 'team';
 const MEMBERS_TAB_INVITE_ID = 'invite';
 const MEMBERS_TAB_ROLES_ID = 'roles';
 
-const SETTINGS_MEMBERS_HERO_MODAL_ID = 'settings-members-hero-modal';
-const SETTINGS_MEMBERS_HERO_TABS_ID = 'settings-members-hero-tabs';
+const SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX = 'settings-members-hero';
 
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
@@ -77,8 +76,7 @@ export const SettingsWorkspaceMembers = () => {
           <SettingsDiscoveryHeroCard
             lightSrc={placeholderHeroLight}
             darkSrc={placeholderHeroDark}
-            modalInstanceId={SETTINGS_MEMBERS_HERO_MODAL_ID}
-            tabsInstanceId={SETTINGS_MEMBERS_HERO_TABS_ID}
+            instanceIdPrefix={SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {
                 id: 'team',

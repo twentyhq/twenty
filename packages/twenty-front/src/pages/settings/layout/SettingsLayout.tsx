@@ -21,8 +21,7 @@ import { UndecoratedLink } from 'twenty-ui/navigation';
 import customizeIllustrationDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
 import customizeIllustrationLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
 
-const SETTINGS_LAYOUT_HERO_MODAL_ID = 'settings-layout-hero-modal';
-const SETTINGS_LAYOUT_HERO_TABS_ID = 'settings-layout-hero-tabs';
+const SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX = 'settings-layout-hero';
 
 export const SettingsLayout = () => {
   const { t } = useLingui();
@@ -93,8 +92,7 @@ export const SettingsLayout = () => {
           <SettingsDiscoveryHeroCard
             lightSrc={customizeIllustrationLight}
             darkSrc={customizeIllustrationDark}
-            modalInstanceId={SETTINGS_LAYOUT_HERO_MODAL_ID}
-            tabsInstanceId={SETTINGS_LAYOUT_HERO_TABS_ID}
+            instanceIdPrefix={SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX}
             tabs={heroTabs}
             playButtonAriaLabel={t`Watch customization demo`}
           />

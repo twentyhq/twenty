@@ -26,7 +26,7 @@ const StyledSearchInput = styled(SearchInput)`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
-export const SettingsAgentSkills = () => {
+export const SettingsAgentSkillsTab = () => {
   const { t } = useLingui();
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 

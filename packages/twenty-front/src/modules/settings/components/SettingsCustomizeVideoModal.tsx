@@ -3,7 +3,6 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { styled } from '@linaria/react';
 import { useState } from 'react';
-import { createPortal } from 'react-dom';
 import { type IconComponent, IconX } from 'twenty-ui/display';
 import { IconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -72,38 +71,33 @@ export const SettingsCustomizeVideoModal = ({
   };
 
   return (
-    <>
-      {createPortal(
-        <ModalStatefulWrapper
-          modalInstanceId={modalInstanceId}
-          size="large"
-          padding="none"
-          isClosable
-          onClose={handleClose}
-          renderInDocumentBody
-        >
-          <StyledHeader>
-            <StyledTabsContainer>
-              <TabList
-                tabs={tabs}
-                behaveAsLinks={false}
-                componentInstanceId={tabsInstanceId}
-                onChangeTab={(tabId) => setActiveTabId(tabId)}
-              />
-            </StyledTabsContainer>
-            <IconButton Icon={IconX} onClick={handleClose} size="small" />
-          </StyledHeader>
-          <StyledVideoContainer>
-            <StyledVideoIframe
-              key={activeTab.id}
-              src={`https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1`}
-              allow="autoplay; fullscreen; picture-in-picture"
-              title={activeTab.title}
-            />
-          </StyledVideoContainer>
-        </ModalStatefulWrapper>,
-        document.body,
-      )}
-    </>
+    <ModalStatefulWrapper
+      modalInstanceId={modalInstanceId}
+      size="large"
+      padding="none"
+      isClosable
+      onClose={handleClose}
+      renderInDocumentBody
+    >
+      <StyledHeader>
+        <StyledTabsContainer>
+          <TabList
+            tabs={tabs}
+            behaveAsLinks={false}
+            componentInstanceId={tabsInstanceId}
+            onChangeTab={(tabId) => setActiveTabId(tabId)}
+          />
+        </StyledTabsContainer>
+        <IconButton Icon={IconX} onClick={handleClose} size="small" />
+      </StyledHeader>
+      <StyledVideoContainer>
+        <StyledVideoIframe
+          key={activeTab.id}
+          src={`https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1`}
+          allow="autoplay; fullscreen; picture-in-picture"
+          title={activeTab.title}
+        />
+      </StyledVideoContainer>
+    </ModalStatefulWrapper>
   );
 };

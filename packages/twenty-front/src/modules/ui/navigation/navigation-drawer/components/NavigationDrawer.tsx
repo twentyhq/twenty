@@ -51,11 +51,6 @@ const StyledAnimatedContainer = styled.div<{
   }
 `;
 
-// Both the settings drawer and the main app drawer share this padding —
-// previously the settings drawer had 0 left padding while the main app drawer
-// had spacing[2] left padding, which made the items in the two drawers
-// misalign by 8 px. Using the same padding for both unifies the layout
-// without an isSettings branch.
 const StyledContainer = styled.div<{
   isExpanded?: boolean;
 }>`
@@ -85,8 +80,6 @@ export const NavigationDrawer = ({
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isExpanded = useNavigationDrawerExpanded();
-  // isSettingsDrawer is still used below for the back button + skipping the
-  // resize handle on settings; the outer StyledContainer no longer needs it.
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
