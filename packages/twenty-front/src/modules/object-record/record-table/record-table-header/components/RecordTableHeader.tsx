@@ -5,6 +5,7 @@ import { RecordTableHeaderAddColumnButton } from '@/object-record/record-table/r
 import { RecordTableHeaderCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCell';
 import { RecordTableHeaderCheckboxColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCheckboxColumn';
 import { RecordTableHeaderDragDropColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropColumn';
+import { RecordTableHeaderDragDropContext } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderDragDropContext';
 import { RecordTableHeaderEmptyLastColumn } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderEmptyLastColumn';
 import { RecordTableHeaderFirstCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstCell';
 import { RecordTableHeaderFirstScrollableCell } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderFirstScrollableCell';
@@ -16,6 +17,7 @@ import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/rec
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { filterOutByProperty } from 'twenty-shared/utils';
+import { Droppable } from '@hello-pangea/dnd';
 
 const StyledHeaderContainer = styled.div`
   display: flex;
@@ -53,28 +55,39 @@ export const RecordTableHeader = () => {
   useResizeTableHeader();
 
   return (
-    <StyledHeaderContainer>
-      {!isRecordTableDragColumnHidden && <RecordTableHeaderDragDropColumn />}
-      {!isRecordTableCheckboxColumnHidden && (
-        <RecordTableHeaderCheckboxColumn />
-      )}
-      <RecordTableHeaderFirstCell />
-      <RecordTableHeaderFirstScrollableCell />
-      {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
-        (recordField, index) => (
-          <RecordTableHeaderCell
-            key={recordField.fieldMetadataItemId}
-            recordField={recordField}
-            recordFieldIndex={index + 2}
-          />
-        ),
-      )}
-      {isRecordTableColumnHeadersReadOnly ? (
-        <RecordTableHeaderEmptyLastColumn />
-      ) : (
-        <RecordTableHeaderAddColumnButton />
-      )}
-      <RecordTableHeaderLastEmptyColumn />
-    </StyledHeaderContainer>
+    <RecordTableHeaderDragDropContext>
+      <Droppable droppableId="droppable-header" direction='horizontal' ignoreContainerClipping>
+        {(droppableProvied) => (
+          <StyledHeaderContainer 
+          ref={droppableProvied.innerRef} 
+          {...droppableProvied.droppableProps}
+          >
+            {!isRecordTableDragColumnHidden && (
+              <RecordTableHeaderDragDropColumn />
+            )}
+            {!isRecordTableCheckboxColumnHidden && (
+              <RecordTableHeaderCheckboxColumn />
+            )}
+            <RecordTableHeaderFirstCell />
+            <RecordTableHeaderFirstScrollableCell />
+            {recordFieldsWithoutLabelIdentifierAndFirstOne.map(
+              (recordField, index) => (
+                <RecordTableHeaderCell
+                  key={recordField.fieldMetadataItemId}
+                  recordField={recordField}
+                  recordFieldIndex={index + 2}
+                />
+              ),
+            )}
+            {isRecordTableColumnHeadersReadOnly ? (
+              <RecordTableHeaderEmptyLastColumn />
+            ) : (
+              <RecordTableHeaderAddColumnButton />
+            )}
+            <RecordTableHeaderLastEmptyColumn />
+          </StyledHeaderContainer>
+        )}
+      </Droppable>
+    </RecordTableHeaderDragDropContext>
   );
 };

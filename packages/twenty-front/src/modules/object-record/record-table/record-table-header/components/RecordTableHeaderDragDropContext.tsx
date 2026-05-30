@@ -1,4 +1,3 @@
-import { RecordBoardContext } from '@/object-record/record-board/contexts/RecordBoardContext';
 import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
 import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
 import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
@@ -8,6 +7,8 @@ import { originalDragSelectionComponentState } from '@/object-record/record-drag
 
 import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
 import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
+import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
+import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
@@ -17,59 +18,51 @@ import {
   type OnDragEndResponder,
 } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
-import { useCallback, useContext } from 'react';
+import { useCallback } from 'react';
 
-export const RecordBoardDragDropContext = ({
+export const RecordTableHeaderDragDropContext = ({
   children,
 }: React.PropsWithChildren) => {
-  const { recordBoardId } = useContext(RecordBoardContext);
+  const { recordTableId } = useRecordTableContextOrThrow();
 
-  const currentRecordSorts = useAtomComponentStateCallbackState(
-    currentRecordSortsComponentState,
-    recordBoardId,
-  );
-  console.log(currentRecordSorts);
-
-  const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
-    recordBoardSelectedRecordIdsComponentSelector,
-    recordBoardId,
-  );
-  console.log(recordBoardSelectedRecordIds);
+  // const currentRecordSorts = useAtomComponentStateCallbackState(
+  //   currentRecordSortsComponentState,
+  //   recordTableId,
+  // );
 
   const store = useStore();
 
   const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
     originalDragSelectionComponentState,
-    recordBoardId,
+    recordTableId,
   );
 
-  const { startRecordDrag } = useStartRecordDrag(recordBoardId);
-  const { endRecordDrag } = useEndRecordDrag(recordBoardId);
+  const { startRecordDrag } = useStartRecordDrag(recordTableId);
+  const { endRecordDrag } = useEndRecordDrag(recordTableId);
 
-  const { processBoardCardDrop } = useProcessBoardCardDrop();
+  // const { processBoardCardDrop } = useProcessBoardCardDrop();
 
-  const isRecordBoardDropProcessingCallbackState =
-    useAtomComponentStateCallbackState(
-      isRecordBoardDropProcessingComponentState,
-    );
+  // const isRecordBoardDropProcessingCallbackState =
+  //   useAtomComponentStateCallbackState(
+  //     isRecordBoardDropProcessingComponentState,
+  //   );
 
   const { openModal } = useModal();
 
-  const handleDragStart = useCallback(
-    (start: DragStart) => {
-      const currentSelectedRecordIds = store.get(recordBoardSelectedRecordIds);
-
-      store.set(isRecordBoardDropProcessingCallbackState, true);
-
-      startRecordDrag(start, currentSelectedRecordIds);
-    },
-    [
-      recordBoardSelectedRecordIds,
-      startRecordDrag,
-      store,
-      isRecordBoardDropProcessingCallbackState,
-    ],
-  );
+  // const handleDragStart = useCallback(
+  //   (start: DragStart) => {
+  //
+  //     // store.set(isRecordBoardDropProcessingCallbackState, true);
+  //
+  //     // startRecordDrag(start, currentSelectedRecordIds);
+  //   },
+  //   [
+  //     // recordBoardSelectedRecordIds,
+  //     startRecordDrag,
+  //     store,
+  //     // isRecordBoardDropProcessingCallbackState,
+  //   ],
+  // );
 
   const handleDragEnd: OnDragEndResponder = useCallback(
     (result) => {
@@ -78,45 +71,45 @@ export const RecordBoardDragDropContext = ({
       );
 
       if (!result.destination) {
-        store.set(isRecordBoardDropProcessingCallbackState, false);
+        // store.set(isRecordBoardDropProcessingCallbackState, false);
         endRecordDrag();
         return;
       }
 
-      const existingRecordSorts = store.get(currentRecordSorts);
+      // const existingRecordSorts = store.get(currentRecordSorts);
 
-      if (existingRecordSorts.length > 0) {
-        store.set(isRecordBoardDropProcessingCallbackState, false);
-        endRecordDrag();
-        openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-        return;
-      }
+      // if (existingRecordSorts.length > 0) {
+      //   // store.set(isRecordBoardDropProcessingCallbackState, false);
+      //   endRecordDrag();
+      //   openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
+      //   return;
+      // }
 
       try {
-        processBoardCardDrop(result, originalDragSelection);
+        // processBoardCardDrop(result, originalDragSelection);
       } catch (error) {
-        store.set(isRecordBoardDropProcessingCallbackState, false);
+        // store.set(isRecordBoardDropProcessingCallbackState, false);
         endRecordDrag();
 
         throw error;
       }
 
-      store.set(isRecordBoardDropProcessingCallbackState, false);
+      // store.set(isRecordBoardDropProcessingCallbackState, false);
       endRecordDrag();
     },
     [
-      processBoardCardDrop,
+      // processBoardCardDrop,
       endRecordDrag,
-      currentRecordSorts,
+      // currentRecordSorts,
       openModal,
       store,
       originalDragSelectionCallbackState,
-      isRecordBoardDropProcessingCallbackState,
+      // isRecordBoardDropProcessingCallbackState,
     ],
   );
 
   return (
-    <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+    <DragDropContext onDragEnd={handleDragEnd}>
       {children}
     </DragDropContext>
   );
