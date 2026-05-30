@@ -25,7 +25,7 @@ import { type CodeExecutionStreamEmitter } from 'src/engine/core-modules/tool-pr
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
-import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import {
   createExecuteToolTool,
@@ -62,6 +62,7 @@ import {
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
 import { type AiModelConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-config.type';
+import { getNativeModelCapabilities } from 'src/engine/metadata-modules/ai/ai-models/utils/get-native-model-capabilities.util';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
 export type ChatExecutionOptions = {
@@ -163,8 +164,13 @@ export class ChatExecutionService {
       registeredModel.modelId,
     );
 
-    const nativeModelTools = this.nativeToolBinder.bind(registeredModel, {
-      webSearchEnabled: true,
+    // Native and action search may both be bound here; the model picks at runtime.
+    const nativeCapabilities = getNativeModelCapabilities(
+      registeredModel.sdkPackage,
+    );
+    const nativeBinding = this.nativeToolBinder.bind(registeredModel, {
+      webSearch: nativeCapabilities?.webSearch === true,
+      twitterSearch: nativeCapabilities?.twitterSearch === true,
     });
 
     // Tools the model can call directly: preloaded registry tools (already
@@ -172,12 +178,12 @@ export class ChatExecutionService {
     // serialized). execute_tool routes discovered tools through the registry.
     const directTools: ToolSet = {
       ...preloadedTools,
-      ...nativeModelTools,
+      ...nativeBinding.tools,
     };
 
     const preloadedToolNames = [
       ...Object.keys(preloadedTools),
-      ...Object.keys(nativeModelTools),
+      ...Object.keys(nativeBinding.tools),
     ];
 
     // ToolSet is constant for the entire conversation — no mutation.
@@ -393,7 +399,10 @@ export class ChatExecutionService {
       stopWhen: (step) =>
         stepCountIs(AGENT_CONFIG.MAX_STEPS)(step) || hasNoMoreAvailableCredits,
       experimental_telemetry: AI_TELEMETRY_CONFIG,
-      providerOptions: getCallLevelProviderOptions(registeredModel.sdkPackage),
+      providerOptions: getCallLevelProviderOptions(
+        registeredModel.sdkPackage,
+        nativeBinding.providerOptions,
+      ),
       prepareStep: ({ messages }) => {
         stepStartedAt = performance.now();
 

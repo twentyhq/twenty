@@ -18,7 +18,7 @@ import { isUserAuthContext } from 'src/engine/core-modules/auth/guards/is-user-a
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
-import { NativeToolBinderService } from 'src/engine/core-modules/tool-provider/native/native-tool-binder.service';
+import { NativeToolBinderService } from 'src/engine/metadata-modules/ai/ai-models/services/native-tool-binder.service';
 import { ToolRegistryService } from 'src/engine/core-modules/tool-provider/services/tool-registry.service';
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -36,16 +36,22 @@ import {
   extractCacheCreationTokensFromSteps,
 } from 'src/engine/metadata-modules/ai/ai-billing/utils/extract-cache-creation-tokens.util';
 import { mergeLanguageModelUsage } from 'src/engine/metadata-modules/ai/ai-billing/utils/merge-language-model-usage.util';
-import { withOpenAIStoreDisabledProviderOptions } from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
+import {
+  getCallLevelProviderOptions,
+  mergeProviderOptions,
+} from 'src/engine/metadata-modules/ai/ai-chat/utils/provider-options.util';
 import { AI_TELEMETRY_CONFIG } from 'src/engine/metadata-modules/ai/ai-models/constants/ai-telemetry.const';
 import { AiModelConfigService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-config.service';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { type NativeModelToolOptions } from 'src/engine/metadata-modules/ai/ai-models/types/native-model-tool-options.type';
 import {
   AiException,
   AiExceptionCode,
 } from 'src/engine/metadata-modules/ai/ai.exception';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { type RolePermissionConfig } from 'src/engine/twenty-orm/types/role-permission-config';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 const EMPTY_USAGE: LanguageModelUsage = {
   inputTokens: 0,
@@ -76,62 +82,31 @@ export class AgentAsyncExecutorService {
     private readonly nativeToolBinder: NativeToolBinderService,
     private readonly aiBillingService: AiBillingService,
     private readonly billingUsageService: BillingUsageService,
-    @InjectRepository(RoleTargetEntity)
-    private readonly roleTargetRepository: Repository<RoleTargetEntity>,
+    @InjectWorkspaceScopedRepository(RoleTargetEntity)
+    private readonly roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
   ) {}
 
-  private extractRoleIds(
-    rolePermissionConfig?: RolePermissionConfig,
-  ): string[] {
-    if (!rolePermissionConfig) {
-      return [];
-    }
-
-    if ('intersectionOf' in rolePermissionConfig) {
-      return rolePermissionConfig.intersectionOf;
-    }
-
-    if ('unionOf' in rolePermissionConfig) {
-      return rolePermissionConfig.unionOf;
-    }
-
-    return [];
-  }
-
-  private async getEffectiveRolePermissionConfig(
+  private async getAgentRoleId(
     agentId: string,
     workspaceId: string,
     rolePermissionConfig?: RolePermissionConfig,
-  ): Promise<RolePermissionConfig | undefined> {
-    const roleTarget = await this.roleTargetRepository.findOne({
+  ): Promise<string | undefined> {
+    const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
       where: {
         agentId,
-        workspaceId,
       },
       select: ['roleId'],
     });
 
-    const agentRoleId = roleTarget?.roleId;
-    const configRoleIds = this.extractRoleIds(rolePermissionConfig);
-
-    const allRoleIds = agentRoleId
-      ? [...new Set([...configRoleIds, agentRoleId])]
-      : configRoleIds;
-
-    if (allRoleIds.length === 0) {
-      return undefined;
-    }
-
-    return { intersectionOf: allRoleIds };
+    return roleTarget?.roleId;
   }
 
   async executeAgent({
     agent,
     userPrompt,
     actorContext,
-    rolePermissionConfig,
     authContext,
     workspaceId,
     userWorkspaceId,
@@ -140,7 +115,6 @@ export class AgentAsyncExecutorService {
     agent: AgentEntity | null;
     userPrompt: string;
     actorContext?: ActorMetadata;
-    rolePermissionConfig?: RolePermissionConfig;
     authContext?: WorkspaceAuthContext;
     workspaceId: string;
     userWorkspaceId?: string | null;
@@ -170,62 +144,73 @@ export class AgentAsyncExecutorService {
         await this.aiModelRegistryService.resolveModelForAgent(agent);
 
       let tools: ToolSet = {};
-      let providerOptions = withOpenAIStoreDisabledProviderOptions(
+      let providerOptions = getCallLevelProviderOptions(
         registeredModel.sdkPackage,
       );
 
       if (agent) {
-        const effectiveRoleConfig = await this.getEffectiveRolePermissionConfig(
+        const agentRoleId = await this.getAgentRoleId(
           agent.id,
           agent.workspaceId,
-          rolePermissionConfig,
         );
 
-        // Workflow context: registry tools come from DATABASE_CRUD and ACTION.
-        // Native model tools are bound separately below.
-        const roleId = this.extractRoleIds(effectiveRoleConfig)[0] ?? '';
-
-        const toolProviderContext: ToolProviderContext = {
-          workspaceId: agent.workspaceId,
-          roleId,
-          rolePermissionConfig: effectiveRoleConfig ?? { unionOf: [] },
-          authContext,
-          actorContext,
-          userId:
-            isDefined(authContext) && isUserAuthContext(authContext)
-              ? authContext.user.id
-              : undefined,
-          userWorkspaceId:
-            isDefined(authContext) && isUserAuthContext(authContext)
-              ? authContext.userWorkspaceId
-              : undefined,
+        const nativeModelToolOptions: NativeModelToolOptions = {
+          webSearch: agent.modelConfiguration?.webSearch?.enabled === true,
+          twitterSearch:
+            agent.modelConfiguration?.twitterSearch?.enabled === true,
         };
 
-        const registryTools = await this.toolRegistry.getToolsByCategories(
-          toolProviderContext,
-          {
-            categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
-            wrapWithErrorContext: false,
-          },
-        );
+        let registryTools: ToolSet = {};
 
-        const nativeTools = this.nativeToolBinder.bind(registeredModel, {
-          webSearchEnabled:
-            agent.modelConfiguration?.webSearch?.enabled === true,
-        });
+        // Workflow agent registry tools are scoped exclusively by the agent
+        // permission-tab role. No role means no registry tools.
+        if (isDefined(agentRoleId)) {
+          const agentRolePermissionConfig: RolePermissionConfig = {
+            unionOf: [agentRoleId],
+          };
+
+          const toolProviderContext: ToolProviderContext = {
+            workspaceId: agent.workspaceId,
+            roleId: agentRoleId,
+            rolePermissionConfig: agentRolePermissionConfig,
+            authContext,
+            actorContext,
+            userId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.user.id
+                : undefined,
+            userWorkspaceId:
+              isDefined(authContext) && isUserAuthContext(authContext)
+                ? authContext.userWorkspaceId
+                : undefined,
+          };
+
+          registryTools = await this.toolRegistry.getToolsByCategories(
+            toolProviderContext,
+            {
+              categories: WORKFLOW_AGENT_REGISTRY_TOOL_CATEGORIES,
+              wrapWithErrorContext: false,
+            },
+          );
+        }
+
+        const nativeBinding = this.nativeToolBinder.bind(
+          registeredModel,
+          nativeModelToolOptions,
+        );
 
         tools = {
           ...registryTools,
-          ...nativeTools,
+          ...nativeBinding.tools,
         };
 
-        providerOptions = withOpenAIStoreDisabledProviderOptions(
+        providerOptions = getCallLevelProviderOptions(
           registeredModel.sdkPackage,
-          this.aiModelConfigService.getProviderOptions(
-            registeredModel,
-            agent as unknown as Parameters<
-              typeof this.aiModelConfigService.getProviderOptions
-            >[1],
+          mergeProviderOptions(
+            nativeBinding.providerOptions,
+            this.aiModelConfigService.getReasoningProviderOptions(
+              registeredModel,
+            ),
           ),
         );
       }
@@ -309,7 +294,7 @@ export class AgentAsyncExecutorService {
 
                  Please generate the structured output based on the execution results and context above.`,
         output: Output.object({ schema: jsonSchema(agentSchema) }),
-        providerOptions: withOpenAIStoreDisabledProviderOptions(
+        providerOptions: getCallLevelProviderOptions(
           registeredModel.sdkPackage,
         ),
         experimental_telemetry: AI_TELEMETRY_CONFIG,

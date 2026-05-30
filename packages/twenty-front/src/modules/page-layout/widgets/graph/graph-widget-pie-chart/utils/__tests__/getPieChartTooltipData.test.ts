@@ -47,10 +47,12 @@ describe('getPieChartTooltipData', () => {
 
   const createMockDatum = (
     id: string,
+    options?: { computedId?: string },
   ): ComputedDatum<PieChartDataItemWithColor> =>
     ({
-      id,
+      id: options?.computedId ?? id,
       value: 0,
+      data: { id, value: 0 },
     }) as unknown as ComputedDatum<PieChartDataItemWithColor>;
 
   const defaultFormatOptions = {
@@ -146,6 +148,21 @@ describe('getPieChartTooltipData', () => {
       });
 
       expect(result).toBeNull();
+    });
+
+    it('should match by datum.data.id when computed id is namespaced per widget', () => {
+      const datum = createMockDatum('Product A', {
+        computedId: 'widget-xyz:Product A',
+      });
+
+      const result = getPieChartTooltipData({
+        datum,
+        enrichedData: mockEnrichedData,
+        formatOptions: defaultFormatOptions,
+      });
+
+      expect(result?.tooltipItem.key).toBe('Product A');
+      expect(result?.tooltipItem.value).toBe(500);
     });
 
     it('should return null when enrichedData is empty', () => {

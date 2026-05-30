@@ -51,6 +51,23 @@ describe('provider-options.util', () => {
       });
     });
 
+    it('merges existing provider options with call-level options', () => {
+      expect(
+        getCallLevelProviderOptions(AI_SDK_OPENAI, {
+          xai: {
+            searchParameters: { mode: 'auto' },
+          },
+        }),
+      ).toEqual({
+        xai: {
+          searchParameters: { mode: 'auto' },
+        },
+        openai: {
+          store: false,
+        },
+      });
+    });
+
     it('returns store false for OpenAI models', () => {
       expect(getCallLevelProviderOptions(AI_SDK_OPENAI)).toEqual({
         openai: {

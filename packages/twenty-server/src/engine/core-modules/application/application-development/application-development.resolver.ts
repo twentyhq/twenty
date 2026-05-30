@@ -20,7 +20,6 @@ import { DevelopmentApplicationDTO } from 'src/engine/core-modules/application/a
 import { GenerateApplicationTokenInput } from 'src/engine/core-modules/application/application-development/dtos/generate-application-token.input';
 import { UploadApplicationFileInput } from 'src/engine/core-modules/application/application-development/dtos/upload-application-file.input';
 import { WorkspaceMigrationDTO } from 'src/engine/core-modules/application/application-development/dtos/workspace-migration.dto';
-import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { ApplicationExceptionFilter } from 'src/engine/core-modules/application/application-exception-filter';
 import { ApplicationSyncService } from 'src/engine/core-modules/application/application-manifest/application-sync.service';
 import { resolveManifestAssetUrls } from 'src/engine/core-modules/application/application-marketplace/utils/resolve-manifest-asset-urls.util';
@@ -35,6 +34,7 @@ import {
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
+import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { FileDTO } from 'src/engine/core-modules/file/dtos/file.dto';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
@@ -192,7 +192,7 @@ export class ApplicationDevelopmentResolver {
   async uploadApplicationFile(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
     @Args({ name: 'file', type: () => GraphQLUpload })
-    { createReadStream, mimetype }: FileUpload,
+    { createReadStream }: FileUpload,
     @Args()
     {
       applicationUniversalIdentifier,
@@ -250,7 +250,6 @@ export class ApplicationDevelopmentResolver {
 
     return await this.fileStorageService.writeFile({
       sourceFile: buffer,
-      mimeType: mimetype,
       fileFolder,
       applicationUniversalIdentifier,
       workspaceId,
@@ -303,10 +302,11 @@ export class ApplicationDevelopmentResolver {
         `${serverUrl}/public-assets/${workspaceId}/${applicationId}/${filePath}`,
     );
 
-    await this.applicationRegistrationService.updateFromManifest(
+    await this.applicationRegistrationService.updateFromManifest({
       applicationRegistrationId,
-      manifestWithResolvedUrls,
-    );
+      manifest: manifestWithResolvedUrls,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+    });
 
     if (manifest.application.serverVariables) {
       await this.applicationRegistrationVariableService.syncVariableSchemas(

@@ -78,10 +78,14 @@ export const withOpenAIStoreDisabledProviderOptions = (
 
 export const getCallLevelProviderOptions = (
   sdkPackage: AiSdkPackage,
+  providerOptions?: ProviderOptions,
 ): ProviderOptions | undefined =>
   withOpenAIStoreDisabledProviderOptions(
     sdkPackage,
-    getCallLevelCacheProviderOptions(sdkPackage),
+    mergeProviderOptions(
+      providerOptions,
+      getCallLevelCacheProviderOptions(sdkPackage),
+    ),
   );
 
 export const injectCacheBreakpoint = (

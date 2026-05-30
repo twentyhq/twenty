@@ -4,6 +4,7 @@ import { ConnectedAccountProvider } from 'twenty-shared/types';
 import { assertUnreachable } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { EmailGroupMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/email-group/services/email-group-message-outbound.service';
 import { GmailMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/gmail/services/gmail-message-outbound.service';
 import { ImapSmtpMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/imap/services/imap-smtp-message-outbound.service';
 import { MicrosoftMessageOutboundService } from 'src/modules/messaging/message-outbound-manager/drivers/microsoft/services/microsoft-message-outbound.service';
@@ -16,6 +17,7 @@ export class MessagingMessageOutboundService {
     private readonly gmailMessageOutboundService: GmailMessageOutboundService,
     private readonly microsoftMessageOutboundService: MicrosoftMessageOutboundService,
     private readonly imapSmtpMessageOutboundService: ImapSmtpMessageOutboundService,
+    private readonly emailGroupMessageOutboundService: EmailGroupMessageOutboundService,
   ) {}
 
   public async sendMessage(
@@ -39,11 +41,9 @@ export class MessagingMessageOutboundService {
           connectedAccount,
         );
       case ConnectedAccountProvider.EMAIL_GROUP:
-        // Email group channels are inbound-only: replies should go through
-        // the user's own Gmail/Outlook/IMAP account to avoid masking the
-        // sender.
-        throw new Error(
-          'Email group channels are inbound-only; reply using your personal account.',
+        return this.emailGroupMessageOutboundService.sendMessage(
+          sendMessageInput,
+          connectedAccount,
         );
       case ConnectedAccountProvider.OIDC:
       case ConnectedAccountProvider.SAML:

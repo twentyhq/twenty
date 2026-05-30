@@ -1,4 +1,5 @@
 import { appDevOnce } from '@/cli/operations/dev-once';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import { checkSdkVersionCompatibility } from '@/cli/utilities/version/check-sdk-version-compatibility';
 import chalk from 'chalk';
@@ -14,7 +15,9 @@ export class AppDevOnceCommand {
 
     await checkSdkVersionCompatibility(appPath);
 
-    console.log(chalk.blue('Syncing application...'));
+    const remoteName = ConfigService.getActiveRemote();
+
+    console.log(chalk.blue(`Syncing application on ${remoteName}...`));
     console.log(chalk.gray(`App path: ${appPath}\n`));
 
     const result = await appDevOnce({
