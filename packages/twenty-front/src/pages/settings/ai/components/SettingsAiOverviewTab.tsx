@@ -24,10 +24,9 @@ import { getSettingsPath } from 'twenty-shared/utils';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { useDebouncedCallback } from 'use-debounce';
 import {
-  FindManyAgentsDocument,
+  FindWorkspaceAiStatsDocument,
   UpdateWorkspaceDocument,
 } from '~/generated-metadata/graphql';
-import { FIND_MANY_LOGIC_FUNCTIONS } from '@/logic-functions/graphql/queries/findManyLogicFunctions';
 
 const StyledInstructionsContainer = styled.div`
   display: flex;
@@ -45,12 +44,8 @@ export const SettingsAiOverviewTab = () => {
   );
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  const agentsResult = useQuery(FindManyAgentsDocument);
-  const logicFunctionsResult = useQuery(FIND_MANY_LOGIC_FUNCTIONS);
-  const skillsCount = agentsResult.data?.findManyAgents?.length ?? 0;
-  const toolsCount =
-    (logicFunctionsResult.data as { findManyLogicFunctions?: unknown[] })
-      ?.findManyLogicFunctions?.length ?? 0;
+  const { data: aiStatsData } = useQuery(FindWorkspaceAiStatsDocument);
+  const stats = aiStatsData?.findWorkspaceAiStats;
 
   const initialInstructions = currentWorkspace?.aiAdditionalInstructions ?? '';
   const [workspaceInstructions, setWorkspaceInstructions] =
@@ -99,24 +94,24 @@ export const SettingsAiOverviewTab = () => {
               {
                 Icon: IconMessage,
                 label: t`Conversations`,
-                value: '—',
+                value: stats ? stats.conversationsCount.toString() : '—',
               },
               {
                 Icon: IconTool,
                 label: t`Tools`,
-                value: toolsCount.toString(),
+                value: stats ? stats.toolsCount.toString() : '—',
               },
             ],
             [
               {
                 Icon: IconSparkles,
                 label: t`Skills`,
-                value: skillsCount.toString(),
+                value: stats ? stats.skillsCount.toString() : '—',
               },
               {
                 Icon: IconHierarchy2,
                 label: t`AI workflows`,
-                value: '—',
+                value: stats ? stats.aiWorkflowsCount.toString() : '—',
               },
             ],
           ]}
