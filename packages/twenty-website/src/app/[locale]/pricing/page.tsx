@@ -6,8 +6,12 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { PricingEngagementBand } from '@/app/[locale]/pricing/_components/PricingEngagementBand';
 import { PricingHero } from '@/app/[locale]/pricing/_components/PricingHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Plans, PricingStateProvider } from '@/sections/Plans';
-import { PlanTable } from '@/sections/PlanTable';
+import {
+  PlansContent,
+  PlansSection,
+  PricingStateProvider,
+} from '@/sections/Plans';
+import { PlanTableContent, PlanTableSection } from '@/sections/PlanTable';
 import { PricingSalesforce } from '@/app/[locale]/pricing/_components/PricingSalesforce';
 import { theme } from '@/theme';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
@@ -41,17 +45,17 @@ export default async function PricingPage({ params }: PricingPageProps) {
       <PricingHero />
 
       <PricingStateProvider>
-        <Plans.Root scheme="muted">
+        <PlansSection scheme="muted">
           <PricingPlansContainer>
-            <Plans.Content />
+            <PlansContent />
           </PricingPlansContainer>
-        </Plans.Root>
+        </PlansSection>
 
         <PricingEngagementBand />
 
-        <PlanTable.Root scheme="dark">
-          <PlanTable.Content data={PLAN_TABLE_DATA} />
-        </PlanTable.Root>
+        <PlanTableSection scheme="dark">
+          <PlanTableContent data={PLAN_TABLE_DATA} />
+        </PlanTableSection>
       </PricingStateProvider>
 
       <PricingSalesforce />

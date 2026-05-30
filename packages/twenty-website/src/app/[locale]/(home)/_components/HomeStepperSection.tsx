@@ -2,7 +2,10 @@ import { msg } from '@lingui/core/macro';
 
 import { Heading, HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { HomeStepper, type HomeStepperStepType } from '@/sections/HomeStepper';
+import {
+  HomeStepperScrollSection,
+  type HomeStepperStepType,
+} from '@/sections/HomeStepper';
 
 export function HomeStepperSection() {
   const i18n = getServerI18n();
@@ -49,5 +52,5 @@ export function HomeStepperSection() {
     },
   ];
 
-  return <HomeStepper.ScrollSection steps={steps} />;
+  return <HomeStepperScrollSection steps={steps} />;
 }

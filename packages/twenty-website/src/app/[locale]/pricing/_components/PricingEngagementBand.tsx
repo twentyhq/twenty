@@ -4,7 +4,14 @@ import { styled } from '@linaria/react';
 import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { EngagementBand } from '@/sections/EngagementBand';
+import {
+  EngagementBandActions,
+  EngagementBandBody,
+  EngagementBandCopy,
+  EngagementBandHeading,
+  EngagementBandSection,
+  EngagementBandStrip,
+} from '@/sections/EngagementBand';
 import { theme } from '@/theme';
 
 const PricingBannerContainer = styled.div`
@@ -16,34 +23,34 @@ export function PricingEngagementBand() {
   const i18n = getServerI18n();
 
   return (
-    <EngagementBand.Root scheme="muted">
+    <EngagementBandSection scheme="muted">
       <PricingBannerContainer>
-        <EngagementBand.Strip
+        <EngagementBandStrip
           desktopCopyMaxWidth="60%"
           fillColor={theme.colors.primary.background[100]}
           variant="primary"
         >
-          <EngagementBand.Copy>
-            <EngagementBand.Heading>
+          <EngagementBandCopy>
+            <EngagementBandHeading>
               <HeadingPart fontFamily="serif">
                 {i18n._(msg`Need help with customization?`)}
               </HeadingPart>
-            </EngagementBand.Heading>
-            <EngagementBand.Body>
+            </EngagementBandHeading>
+            <EngagementBandBody>
               {i18n._(
                 msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
               )}
-            </EngagementBand.Body>
-          </EngagementBand.Copy>
-          <EngagementBand.Actions>
+            </EngagementBandBody>
+          </EngagementBandCopy>
+          <EngagementBandActions>
             <BecomePartnerButton
               color="secondary"
               label={msg`Find a partner`}
               variant="outlined"
             />
-          </EngagementBand.Actions>
-        </EngagementBand.Strip>
+          </EngagementBandActions>
+        </EngagementBandStrip>
       </PricingBannerContainer>
-    </EngagementBand.Root>
+    </EngagementBandSection>
   );
 }

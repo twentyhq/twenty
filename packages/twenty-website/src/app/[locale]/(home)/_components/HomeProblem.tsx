@@ -2,7 +2,14 @@ import { msg } from '@lingui/core/macro';
 
 import { Eyebrow, HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { Problem, type ProblemPointType } from '@/sections/Problem';
+import {
+  ProblemContent,
+  ProblemHeading,
+  ProblemPoints,
+  ProblemSection,
+  ProblemVisual,
+  type ProblemPointType,
+} from '@/sections/Problem';
 
 export function HomeProblem() {
   const i18n = getServerI18n();
@@ -27,15 +34,15 @@ export function HomeProblem() {
   ];
 
   return (
-    <Problem.Root>
-      <Problem.Visual />
-      <Problem.Content>
+    <ProblemSection>
+      <ProblemVisual />
+      <ProblemContent>
         <Eyebrow>
           <HeadingPart fontFamily="sans">
             {i18n._(msg`The Problem.`)}
           </HeadingPart>
         </Eyebrow>
-        <Problem.Heading>
+        <ProblemHeading>
           <HeadingPart fontFamily="serif">
             {i18n._(msg`A custom CRM gives your org an edge,`)}
           </HeadingPart>{' '}
@@ -46,9 +53,9 @@ export function HomeProblem() {
             {i18n._(msg`comes with`)}
           </HeadingPart>{' '}
           <HeadingPart fontFamily="sans">{i18n._(msg`tradeoffs`)}</HeadingPart>
-        </Problem.Heading>
-        <Problem.Points points={points} />
-      </Problem.Content>
-    </Problem.Root>
+        </ProblemHeading>
+        <ProblemPoints points={points} />
+      </ProblemContent>
+    </ProblemSection>
   );
 }
