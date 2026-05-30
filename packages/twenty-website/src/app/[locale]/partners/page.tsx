@@ -4,10 +4,7 @@ import { TrustedBy } from '@/sections/TrustedBy';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
 import { PARTNER_TESTIMONIALS } from '@/app/[locale]/partners/testimonials.data';
-import {
-  PartnerHeroCtas,
-  PartnerSignoffCtas,
-} from '@/app/[locale]/partners/components/PartnerApplication';
+import { PartnerHeroCtas } from '@/app/[locale]/partners/components/PartnerApplication';
 import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
@@ -16,7 +13,7 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Signoff } from '@/sections/Signoff';
+import { PartnerSignoff } from '@/app/[locale]/partners/components/PartnerSignoff';
 import { Testimonials } from '@/sections/Testimonials';
 import {
   ThreeCards,
@@ -136,25 +133,7 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
         </Testimonials.PartnerCarousel>
       </Testimonials.Root>
 
-      <Signoff.Root scheme="light" page={Pages.Partners}>
-        <Signoff.Heading page={Pages.Partners}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Ready to grow`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`with Twenty?`)}
-          </HeadingPart>
-        </Signoff.Heading>
-        <Signoff.Body page={Pages.Partners}>
-          {i18n._(
-            msg`Join our partner ecosystem and help businesses\ntake control of their CRM.`,
-          )}
-        </Signoff.Body>
-        <Signoff.Cta>
-          <PartnerSignoffCtas />
-        </Signoff.Cta>
-      </Signoff.Root>
+      <PartnerSignoff />
 
       <Faq />
     </>

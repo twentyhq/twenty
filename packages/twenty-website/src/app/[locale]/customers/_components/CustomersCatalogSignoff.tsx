@@ -1,20 +1,29 @@
 import { msg } from '@lingui/core/macro';
-import { TalkToUsButton } from '@/sections/ContactCal';
+
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
+import { TalkToUsButton } from '@/sections/ContactCal';
 import { Signoff } from '@/sections/Signoff';
 
-export function CustomersCaseStudySignoff() {
+// Closing sign-off for the customers catalog page.
+export function CustomersCatalogSignoff() {
   const i18n = getServerI18n();
+
   return (
     <Signoff
-      scheme="muted"
+      scheme="light"
       centered
       preLine
       heading={
-        <HeadingPart fontFamily="serif">
-          {i18n._(msg`Ready to grow\nwith Twenty?`)}
-        </HeadingPart>
+        <>
+          <HeadingPart fontFamily="serif">
+            {i18n._(msg`Ready to build`)}
+          </HeadingPart>
+          <br />
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`your own story?`)}
+          </HeadingPart>
+        </>
       }
       body={i18n._(
         msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,

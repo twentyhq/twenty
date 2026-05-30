@@ -7,16 +7,14 @@ import {
   GuideCrosshair,
   Heading as BaseHeading,
 } from '@/design-system/components';
-import { type Page, Pages } from '@/lib/pages';
 import { theme, type Scheme } from '@/theme';
 
-const SIGNOFF_SHAPE_PATH =
-  'M0 4a4 4 0 0 1 4-4h344.32c4.197 0 8.369.66 12.361 1.958l49.5 16.084A40 40 0 0 0 422.542 20h517.7c4.293 0 8.559-.691 12.633-2.047l47.785-15.906A40 40 0 0 1 1013.29 0H1356a4 4 0 0 1 4 4v16H0z';
-
-const GUIDE_CROSSHAIR_BY_PAGE: Partial<
-  Record<Page, { crossX: string; crossY: string; lineColor?: string }>
-> = {
-  [Pages.Partners]: { crossX: 'calc(50% + 334px)', crossY: '198px' },
+// The tall, centered sign-off has only ever anchored its decorative guide
+// crosshair at this one position, so it stays an internal constant rather
+// than a per-call-site prop.
+const CENTERED_GUIDE_CROSSHAIR = {
+  crossX: 'calc(50% + 334px)',
+  crossY: '198px',
 };
 
 const StyledSection = styled.section`
@@ -38,24 +36,17 @@ const StyledSection = styled.section`
     color: var(--color-text);
   }
 
-  &[data-page='partners'] {
-    position: relative;
-  }
-
-  &[data-shaped] {
-    isolation: isolate;
-    overflow: hidden;
+  &[data-center='true'] {
     position: relative;
   }
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='partners'][data-center='true'] {
+    &[data-center='true'] {
       min-height: 759px;
       overflow: hidden;
-      position: relative;
     }
 
-    &[data-page='partners'][data-center='true'] > div {
+    &[data-center='true'] > div {
       justify-content: center;
       min-height: 759px;
       padding-bottom: 0;
@@ -93,7 +84,7 @@ const HeadingWrap = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='partners'] {
+    &[data-preline='true'] {
       white-space: pre-line;
     }
   }
@@ -110,7 +101,7 @@ const Subline = styled.div`
   width: 100%;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    &[data-page='partners'] {
+    &[data-preline='true'] {
       white-space: pre-line;
     }
   }
@@ -124,121 +115,51 @@ const Actions = styled.div`
   row-gap: ${theme.spacing(1)};
 `;
 
-function SignoffShape({ fillColor }: { fillColor: string }) {
-  return (
-    <div
-      aria-hidden
-      style={{
-        width: '100%',
-        height: '100%',
-        position: 'absolute',
-        inset: 0,
-        pointerEvents: 'none',
-        zIndex: -1,
-      }}
-    >
-      <svg
-        width="100%"
-        height="20"
-        viewBox="0 0 1360 20"
-        fill="none"
-        xmlns="http://www.w3.org/2000/svg"
-        preserveAspectRatio="none"
-        style={{ display: 'block' }}
-      >
-        <path d={SIGNOFF_SHAPE_PATH} fill={fillColor} />
-      </svg>
-      <div
-        style={{
-          position: 'absolute',
-          top: 19,
-          bottom: 0,
-          left: 0,
-          right: 0,
-          backgroundColor: fillColor,
-          borderBottomLeftRadius: 4,
-          borderBottomRightRadius: 4,
-        }}
-      />
-    </div>
-  );
-}
-
-type RootPropsSimple = {
-  backgroundColor?: string;
-  centerContent?: boolean;
+type SignoffProps = {
+  // CTA actions (buttons) for the sign-off.
   children: ReactNode;
-  color?: string;
-  page?: Page;
-  scheme?: Scheme;
-  variant?: 'simple';
+  heading: ReactNode;
+  body: ReactNode;
+  scheme: Scheme;
+  // The tall, vertically-centered sign-off layout (with guide crosshair),
+  // as opposed to the compact default.
+  centered?: boolean;
+  // Honor `\n` line breaks in the heading/body copy (md and up).
+  preLine?: boolean;
 };
 
-type RootPropsShaped = {
-  backgroundColor?: string;
-  centerContent?: boolean;
-  children: ReactNode;
-  color?: string;
-  page?: Page;
-  scheme?: Scheme;
-  shapeFillColor: string;
-  variant: 'shaped';
-};
-
-type RootProps = RootPropsSimple | RootPropsShaped;
-
-function Root(props: RootProps) {
-  const { backgroundColor, centerContent, children, color, page, scheme } =
-    props;
-  const isShaped = props.variant === 'shaped';
-  const shapeFillColor = isShaped ? props.shapeFillColor : undefined;
-  const shouldCenterContent = centerContent ?? page === Pages.Partners;
-
+export function Signoff({
+  children,
+  heading,
+  body,
+  scheme,
+  centered = false,
+  preLine = false,
+}: SignoffProps) {
   return (
     <StyledSection
-      data-center={shouldCenterContent ? 'true' : undefined}
-      data-page={page}
+      data-center={centered ? 'true' : undefined}
       data-scheme={scheme}
-      data-shaped={isShaped ? '' : undefined}
-      style={scheme ? undefined : { backgroundColor, color }}
     >
-      {isShaped && shapeFillColor ? (
-        <SignoffShape fillColor={shapeFillColor} />
-      ) : null}
-      {page && GUIDE_CROSSHAIR_BY_PAGE[page] ? (
+      {centered ? (
         <GuideCrosshair
-          crossX={GUIDE_CROSSHAIR_BY_PAGE[page]!.crossX}
-          crossY={GUIDE_CROSSHAIR_BY_PAGE[page]!.crossY}
-          lineColor={GUIDE_CROSSHAIR_BY_PAGE[page]!.lineColor}
+          crossX={CENTERED_GUIDE_CROSSHAIR.crossX}
+          crossY={CENTERED_GUIDE_CROSSHAIR.crossY}
         />
       ) : null}
-      <StyledContainer>{children}</StyledContainer>
+      <StyledContainer>
+        <HeadingWrap data-preline={preLine ? 'true' : undefined}>
+          <BaseHeading as="h2" size="xl" weight="light">
+            {heading}
+          </BaseHeading>
+        </HeadingWrap>
+        <Subline data-preline={preLine ? 'true' : undefined}>
+          <BaseBody as="p" size="sm" weight="regular">
+            {body}
+          </BaseBody>
+        </Subline>
+        <Actions>{children}</Actions>
+      </StyledContainer>
     </StyledSection>
   );
 }
-
-function Heading({ children, page }: { children: ReactNode; page?: Page }) {
-  return (
-    <HeadingWrap data-page={page}>
-      <BaseHeading as="h2" size="xl" weight="light">
-        {children}
-      </BaseHeading>
-    </HeadingWrap>
-  );
-}
-
-function Body({ children, page }: { children: ReactNode; page?: Page }) {
-  return (
-    <Subline data-page={page}>
-      <BaseBody as="p" size="sm" weight="regular">
-        {children}
-      </BaseBody>
-    </Subline>
-  );
-}
-
-function Cta({ children }: { children: ReactNode }) {
-  return <Actions>{children}</Actions>;
-}
-
-export const Signoff = { Body, Cta, Heading, Root };

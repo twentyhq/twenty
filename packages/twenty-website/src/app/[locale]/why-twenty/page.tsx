@@ -1,5 +1,5 @@
 import { msg } from '@lingui/core/macro';
-import { HeadingPart, LinkButton } from '@/design-system/components';
+import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
@@ -8,7 +8,7 @@ import { Editorial } from '@/app/[locale]/why-twenty/_components/Editorial';
 import { Marquee } from '@/app/[locale]/why-twenty/_components/Marquee';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Signoff } from '@/sections/Signoff';
+import { WhyTwentySignoff } from '@/app/[locale]/why-twenty/_components/WhyTwentySignoff';
 import { theme } from '@/theme';
 import { buildRouteMetadata } from '@/lib/seo';
 
@@ -168,25 +168,7 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
         ]}
       />
 
-      <Signoff.Root scheme="dark" page={Pages.WhyTwenty}>
-        <Signoff.Heading page={Pages.WhyTwenty}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Build a CRM your competitors`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">{i18n._(msg`can't buy.`)}</HeadingPart>
-        </Signoff.Heading>
-        <Signoff.Body page={Pages.WhyTwenty}>
-          {i18n._(msg`Open-source, AI-ready, and yours to shape.`)}
-        </Signoff.Body>
-        <Signoff.Cta>
-          <LinkButton
-            color="primary"
-            href="https://app.twenty.com/welcome"
-            label={i18n._(msg`Get started`)}
-            variant="contained"
-          />
-        </Signoff.Cta>
-      </Signoff.Root>
+      <WhyTwentySignoff />
     </>
   );
 }

@@ -1,9 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { Faq } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
-import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
-import { HeadingPart, LinkButton } from '@/design-system/components';
+import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
@@ -11,7 +10,7 @@ import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels'
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { Signoff } from '@/sections/Signoff';
+import { CustomersCatalogSignoff } from '@/app/[locale]/customers/_components/CustomersCatalogSignoff';
 import { buildRouteMetadata } from '@/lib/seo';
 import { css } from '@linaria/core';
 
@@ -100,35 +99,7 @@ export default async function CaseStudiesCatalogPage({
 
       <CaseStudyCatalog.Grid compactTop entries={CASE_STUDY_CATALOG_ENTRIES} />
 
-      <Signoff.Root scheme="light" page={Pages.Partners}>
-        <Signoff.Heading page={Pages.Partners}>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Ready to build`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`your own story?`)}
-          </HeadingPart>
-        </Signoff.Heading>
-        <Signoff.Body page={Pages.Partners}>
-          {i18n._(
-            msg`Join the teams that chose to own their CRM.\nStart building with Twenty today.`,
-          )}
-        </Signoff.Body>
-        <Signoff.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label={i18n._(msg`Get started`)}
-            variant="contained"
-          />
-          <TalkToUsButton
-            color="secondary"
-            label={msg`Talk to us`}
-            variant="outlined"
-          />
-        </Signoff.Cta>
-      </Signoff.Root>
+      <CustomersCatalogSignoff />
 
       <Faq />
     </>
