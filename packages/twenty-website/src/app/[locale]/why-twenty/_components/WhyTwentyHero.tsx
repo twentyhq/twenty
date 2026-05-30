@@ -3,7 +3,12 @@ import { css } from '@linaria/core';
 
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { HeroBody, HeroHeading, HeroSection, WhyTwentyVisual } from '@/sections/Hero';
+import {
+  HeroBody,
+  HeroHeading,
+  HeroSection,
+  WhyTwentyVisual,
+} from '@/sections/Hero';
 import { theme } from '@/theme';
 
 const headingClassName = css`

@@ -10,9 +10,7 @@ export function EnterpriseActivateHero() {
   return (
     <HeroSection scheme="muted">
       <Eyebrow>
-        <HeadingPart fontFamily="sans">
-          {i18n._(msg`Self-hosting`)}
-        </HeadingPart>
+        <HeadingPart fontFamily="sans">{i18n._(msg`Self-hosting`)}</HeadingPart>
       </Eyebrow>
       <HeroHeading>
         <HeadingPart fontFamily="serif">{i18n._(msg`Enterprise`)}</HeadingPart>{' '}
