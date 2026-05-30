@@ -1,9 +1,6 @@
-import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
-import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import {
   buildBreadcrumbListJsonLd,
   buildRouteMetadata,
@@ -15,10 +12,9 @@ import { Faq } from '@/sections/Faq';
 import { ProductHero } from '@/app/[locale]/product/_components/ProductHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { ProductStepperSection } from '@/app/[locale]/product/_components/product-stepper';
-import { ThreeCards } from '@/sections/ThreeCards';
+import { ProductThreeCards } from '@/app/[locale]/product/_components/ProductThreeCards';
 import { TrustedBy } from '@/sections/TrustedBy';
 import { theme } from '@/theme';
-import { msg } from '@lingui/core/macro';
 import type { AppLocale } from 'twenty-shared/translations';
 
 export const generateMetadata = buildRouteMetadata('product');
@@ -56,24 +52,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <ProductFeature />
 
-      <ThreeCards.Root scheme="light">
-        <ThreeCards.Intro page={Pages.Product} align="left">
-          <Eyebrow>
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Stop settling for trade-offs.`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`A modern CRM with`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`an intuitive interface`)}
-            </HeadingPart>
-          </Heading>
-        </ThreeCards.Intro>
-        <ThreeCards.IllustrationCards illustrationCards={ILLUSTRATION_CARDS} />
-      </ThreeCards.Root>
+      <ProductThreeCards />
 
       <ProductStepperSection />
 

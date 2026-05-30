@@ -2,68 +2,24 @@ import { msg } from '@lingui/core/macro';
 import { HELPED_CARDS } from '@/app/[locale]/(home)/helped.data';
 import { Problem, type ProblemPointType } from '@/sections/Problem';
 import { HOME_TESTIMONIALS } from '@/app/[locale]/(home)/testimonials.data';
-import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
-import { ILLUSTRATION_CARDS } from '@/app/[locale]/(home)/three-cards-illustration.data';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
-import {
-  Body,
-  Eyebrow,
-  Heading,
-  HeadingPart,
-} from '@/design-system/components';
+import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
-import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Helped } from '@/sections/Helped';
 import { HomeHero } from '@/app/[locale]/(home)/_components/HomeHero';
 import { HomeStepper, type HomeStepperStepType } from '@/sections/HomeStepper';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Testimonials } from '@/sections/Testimonials';
-import { ThreeCards } from '@/sections/ThreeCards';
+import { HomeFeatureThreeCards } from '@/app/[locale]/(home)/_components/HomeFeatureThreeCards';
+import { HomeIllustrationThreeCards } from '@/app/[locale]/(home)/_components/HomeIllustrationThreeCards';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
-import { theme } from '@/theme';
-import { css } from '@linaria/core';
-import { styled } from '@linaria/react';
 
 export const generateMetadata = buildRouteMetadata('home');
 
 const HOME_TOP_BACKGROUND_COLOR = '#F4F4F4';
-
-const ThreeCardsIllustrationIntroContent = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(2)};
-  width: 100%;
-`;
-
-const ThreeCardsIllustrationIntroHeader = styled.div`
-  display: grid;
-  grid-template-columns: 1fr;
-  row-gap: ${theme.spacing(6)};
-  width: 100%;
-`;
-
-const threeCardsIllustrationHeadingClassName = css`
-  width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: ${theme.layout.editorial};
-  }
-
-  [data-family='sans'] {
-    letter-spacing: -0.02em;
-  }
-`;
-
-const threeCardsIllustrationBodyClassName = css`
-  width: 100%;
-
-  @media (min-width: ${theme.breakpoints.md}px) {
-    max-width: 571px;
-  }
-`;
 
 type HomePageProps = {
   params: Promise<LocaleRouteParams>;
@@ -201,62 +157,11 @@ export default async function HomePage({ params }: HomePageProps) {
         </Problem.Content>
       </Problem.Root>
 
-      <ThreeCards.Root scheme="light">
-        <ThreeCards.Intro page={Pages.Home} align="left">
-          <ThreeCardsIllustrationIntroContent>
-            <ThreeCardsIllustrationIntroHeader>
-              <Eyebrow>
-                <HeadingPart fontFamily="sans">
-                  {i18n._(msg`Stop settling for trade-offs.`)}
-                </HeadingPart>
-              </Eyebrow>
-              <Heading
-                className={threeCardsIllustrationHeadingClassName}
-                size="lg"
-                weight="light"
-              >
-                <HeadingPart fontFamily="serif">
-                  {i18n._(msg`Assemble, iterate and adapt a robust CRM,`)}
-                </HeadingPart>{' '}
-                <HeadingPart fontFamily="sans">
-                  {i18n._(msg`that's quick to flex`)}
-                </HeadingPart>
-              </Heading>
-            </ThreeCardsIllustrationIntroHeader>
-            <Body className={threeCardsIllustrationBodyClassName} size="sm">
-              {i18n._(
-                msg`Compose your CRM and internal apps with a single extensibility toolkit.`,
-              )}
-            </Body>
-          </ThreeCardsIllustrationIntroContent>
-        </ThreeCards.Intro>
-        <ThreeCards.IllustrationCards illustrationCards={ILLUSTRATION_CARDS} />
-      </ThreeCards.Root>
+      <HomeIllustrationThreeCards />
 
       <HomeStepper.ScrollSection steps={HOME_STEPPER_STEPS} />
 
-      <ThreeCards.Root scheme="light">
-        <ThreeCards.Intro page={Pages.Home} align="center">
-          <Eyebrow>
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Skip the clunky UX that always comes with custom.`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Make your GTM team happy`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`with`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`a CRM they'll love`)}
-            </HeadingPart>
-          </Heading>
-        </ThreeCards.Intro>
-        <ThreeCards.FeatureCards featureCards={FEATURE_CARDS} />
-      </ThreeCards.Root>
+      <HomeFeatureThreeCards />
 
       <Helped.Root scheme="muted">
         <Helped.Scene cards={HELPED_CARDS} />
