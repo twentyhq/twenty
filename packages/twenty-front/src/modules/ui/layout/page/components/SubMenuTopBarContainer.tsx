@@ -23,7 +23,7 @@ type SubMenuTopBarContainerProps = {
 // Cards, forms, and tables inside the white panel are centered in a fixed
 // max-width column so they don't sprawl on large displays. The white panel
 // itself spans edge-to-edge; only the content is constrained.
-const SETTINGS_CONTENT_MAX_WIDTH = 880;
+const SETTINGS_CONTENT_MAX_WIDTH = 760;
 
 const StyledContainer = styled.div`
   display: flex;
