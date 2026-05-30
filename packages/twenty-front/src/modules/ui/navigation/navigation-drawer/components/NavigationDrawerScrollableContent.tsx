@@ -11,11 +11,14 @@ const StyledItemsContainer = styled.div`
   height: 100%;
 `;
 
-const StyledScrollableInnerContainer = styled.div<{ isMobile?: boolean }>`
+// Mobile keeps the touch padding it had. The settings desktop drawer no
+// longer gets this wrapper — its outer StyledContainer in NavigationDrawer
+// already provides the same padding as the main app drawer, so adding extra
+// padding here would misalign settings items from main-app items.
+const StyledScrollableMobileInnerContainer = styled.div`
   height: 100%;
   padding-left: ${themeCssVariables.spacing[5]};
-  padding-right: ${({ isMobile }) =>
-    isMobile ? themeCssVariables.spacing[5] : themeCssVariables.spacing[8]};
+  padding-right: ${themeCssVariables.spacing[5]};
 `;
 
 export const NavigationDrawerScrollableContent = ({
@@ -34,10 +37,10 @@ export const NavigationDrawerScrollableContent = ({
       defaultEnableXScroll={false}
     >
       <StyledItemsContainer>
-        {isSettingsDrawer || isMobile ? (
-          <StyledScrollableInnerContainer isMobile={isMobile}>
+        {isMobile ? (
+          <StyledScrollableMobileInnerContainer>
             {children}
-          </StyledScrollableInnerContainer>
+          </StyledScrollableMobileInnerContainer>
         ) : (
           <>{children}</>
         )}

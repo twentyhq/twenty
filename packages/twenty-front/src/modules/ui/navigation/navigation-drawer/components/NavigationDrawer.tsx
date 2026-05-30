@@ -51,8 +51,12 @@ const StyledAnimatedContainer = styled.div<{
   }
 `;
 
+// Both the settings drawer and the main app drawer share this padding —
+// previously the settings drawer had 0 left padding while the main app drawer
+// had spacing[2] left padding, which made the items in the two drawers
+// misalign by 8 px. Using the same padding for both unifies the layout
+// without an isSettings branch.
 const StyledContainer = styled.div<{
-  isSettings?: boolean;
   isExpanded?: boolean;
 }>`
   box-sizing: border-box;
@@ -60,10 +64,8 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${({ isSettings }) =>
-    isSettings
-      ? `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} 0`
-      : `${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]} ${themeCssVariables.spacing[2]}`};
+  padding: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]}
+    ${themeCssVariables.spacing[2]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
@@ -83,6 +85,8 @@ export const NavigationDrawer = ({
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isExpanded = useNavigationDrawerExpanded();
+  // isSettingsDrawer is still used below for the back button + skipping the
+  // resize handle on settings; the outer StyledContainer no longer needs it.
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
@@ -123,7 +127,7 @@ export const NavigationDrawer = ({
         isExpanded={isExpanded}
         isResizing={isResizing}
       >
-        <StyledContainer isSettings={isSettingsDrawer} isExpanded={isExpanded}>
+        <StyledContainer isExpanded={isExpanded}>
           {!isMobile && isSettingsDrawer && title ? (
             <NavigationDrawerBackButton title={title} />
           ) : (

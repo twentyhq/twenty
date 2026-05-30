@@ -38,6 +38,7 @@ import { VerifyEmailAndGetLoginTokenDTO } from 'src/engine/core-modules/auth/dto
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { ResetPasswordService } from 'src/engine/core-modules/auth/services/reset-password.service';
 import { SignInUpService } from 'src/engine/core-modules/auth/services/sign-in-up.service';
+import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
 import { EmailVerificationTokenService } from 'src/engine/core-modules/auth/token/services/email-verification-token.service';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
@@ -80,6 +81,7 @@ import { PermissionsService } from 'src/engine/metadata-modules/permissions/perm
 import { PermissionsGraphqlApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-graphql-api-exception.filter';
 
 import { ApiKeyToken } from './dto/api-key-token.dto';
+import { AuthToken } from './dto/auth-token.dto';
 import { AuthTokens } from './dto/auth-tokens.dto';
 import { GetAuthTokensFromLoginTokenInput } from './dto/get-auth-tokens-from-login-token.input';
 import { LoginTokenDTO } from './dto/login-token.dto';
@@ -112,6 +114,7 @@ export class AuthResolver {
     private renewTokenService: RenewTokenService,
     private userService: UserService,
     private apiKeyService: ApiKeyService,
+    private accessTokenService: AccessTokenService,
     private resetPasswordService: ResetPasswordService,
     private loginTokenService: LoginTokenService,
     private workspaceAgnosticTokenService: WorkspaceAgnosticTokenService,
@@ -817,6 +820,24 @@ export class AuthResolver {
       args.apiKeyId,
       args.expiresAt,
     );
+  }
+
+  // Mints a short-lived JWT for the in-app REST/GraphQL playground. The token
+  // is access-shaped (carries userId + workspaceMemberId) so the playground
+  // page runs against the caller's actual permissions — no shared "Playground"
+  // API key to manage or revoke. TTL is set by PLAYGROUND_TOKEN_EXPIRES_IN.
+  @UseGuards(WorkspaceAuthGuard)
+  @Mutation(() => AuthToken)
+  async generatePlaygroundToken(
+    @AuthUser() user: UserEntity,
+    @AuthWorkspace() workspace: WorkspaceEntity,
+    @AuthProvider() authProvider: AuthProviderEnum,
+  ): Promise<AuthToken> {
+    return await this.accessTokenService.generatePlaygroundToken({
+      userId: user.id,
+      workspaceId: workspace.id,
+      authProvider,
+    });
   }
 
   @Mutation(() => EmailPasswordResetLinkDTO)

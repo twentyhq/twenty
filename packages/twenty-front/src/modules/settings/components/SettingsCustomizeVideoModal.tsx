@@ -12,7 +12,10 @@ export type SettingsCustomizeVideoModalTab = {
   id: string;
   title: string;
   Icon: IconComponent;
-  videoSrc: string;
+  // Numeric Vimeo video ID. Embedded via player.vimeo.com with background=1
+  // so the player autoplays muted, loops, and hides Vimeo chrome — same
+  // pattern twenty-docs uses for its in-page demo videos.
+  vimeoId: string;
 };
 
 type SettingsCustomizeVideoModalProps = {
@@ -21,9 +24,11 @@ type SettingsCustomizeVideoModalProps = {
   tabs: SettingsCustomizeVideoModalTab[];
 };
 
+// No border-bottom here — the TabList renders its own baseline at the
+// bottom of the row. Adding a separate header border put a second 1px line
+// 1–2px off from the tab underline, producing a visible jog at the join.
 const StyledHeader = styled.div`
   align-items: center;
-  border-bottom: 1px solid ${themeCssVariables.border.color.light};
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   height: 48px;
@@ -38,19 +43,18 @@ const StyledTabsContainer = styled.div`
 `;
 
 const StyledVideoContainer = styled.div`
-  background: ${themeCssVariables.background.tertiary};
   display: flex;
   justify-content: center;
   padding: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledVideo = styled.video`
-  // Pin the aspect ratio to the recordings' native dimensions (1440 × 900).
-  // Without this, the <video> element falls back to the HTML spec's 150px
-  // default intrinsic height between mount and the loadedmetadata event —
-  // which collapses the container and triggers Framer Motion's layout
-  // animation on the modal, reading as "modal slides up then back down".
+// Vimeo's "background" embed defaults to 16:9; we mirror the same width +
+// aspect ratio the <video> placeholder used (960px @ 1440/900) so the modal
+// doesn't reflow when we eventually swap to native recordings, and so the
+// iframe has an intrinsic size on mount (no Framer-Motion layout flicker).
+const StyledVideoIframe = styled.iframe`
   aspect-ratio: 1440 / 900;
+  border: 0;
   border-radius: ${themeCssVariables.border.radius.md};
   box-shadow: ${themeCssVariables.boxShadow.strong};
   display: block;
@@ -96,16 +100,13 @@ export const SettingsCustomizeVideoModal = ({
             <IconButton Icon={IconX} onClick={handleClose} size="small" />
           </StyledHeader>
           <StyledVideoContainer>
-            <StyledVideo
-              // key={activeTab.id} forces a remount when the active tab changes so the new
-              // video plays from frame 0 instead of resuming where the previous one paused.
+            <StyledVideoIframe
+              // key={activeTab.id} forces a remount when the active tab changes so the
+              // new video starts from frame 0 instead of resuming the previous one.
               key={activeTab.id}
-              src={activeTab.videoSrc}
-              autoPlay
-              loop
-              muted
-              playsInline
-              aria-hidden
+              src={`https://player.vimeo.com/video/${activeTab.vimeoId}?autoplay=1&loop=1&autopause=0&background=1&muted=1`}
+              allow="autoplay; fullscreen; picture-in-picture"
+              title={activeTab.title}
             />
           </StyledVideoContainer>
         </ModalStatefulWrapper>,

@@ -11,16 +11,19 @@ const StyledSection = styled.div<{ isSettingsDrawer?: boolean }>`
   width: 100%;
 `;
 
+// Width subtracts spacing[2] on desktop expanded drawers — both main app and
+// settings — so the active item's highlight leaves a small gap before the
+// drawer's right edge. Previously the settings drawer was special-cased to
+// 100% width, which let the active highlight run flush against the edge.
 const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
   isMobile: boolean;
-  isSettingsDrawer: boolean;
   isMainNavCollapsed: boolean;
 }>`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.betweenSiblingsGap};
-  width: ${({ isMobile, isSettingsDrawer, isMainNavCollapsed }) =>
-    isMobile || isSettingsDrawer || isMainNavCollapsed
+  width: ${({ isMobile, isMainNavCollapsed }) =>
+    isMobile || isMainNavCollapsed
       ? '100%'
       : `calc(100% - ${themeCssVariables.spacing[2]})`};
 `;
@@ -44,7 +47,6 @@ export const NavigationDrawerSection = ({
     <StyledSection isSettingsDrawer={isSettingsDrawer} className={className}>
       <StyledSectionInnerContainerMinusScrollPadding
         isMobile={isMobile}
-        isSettingsDrawer={isSettingsDrawer}
         isMainNavCollapsed={isMainNavCollapsed}
       >
         {children}

@@ -1,4 +1,3 @@
-import { OBJECT_SETTINGS_WIDTH } from '@/settings/data-model/constants/ObjectSettings';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { ScrollWrapper } from '@/ui/utilities/scroll/components/ScrollWrapper';
 import { useScrollRestoration } from '@/ui/utilities/scroll/hooks/useScrollRestoration';
@@ -9,10 +8,17 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+// The container fills its parent on desktop. The actual content cap is set
+// upstream by SubMenuTopBarContainer's max-width wrapper (1024 px today), so
+// cards, tables, and forms stretch the full width of the centered column
+// rather than living in the old 512 px column tied to the previous centered
+// settings layout. Pages can still pass an explicit `width` for a narrower
+// form-style layout.
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
   isMobile?: boolean;
 }>`
+  box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[8]};
@@ -27,7 +33,7 @@ const StyledSettingsPageContainer = styled.div<{
     if (isMobile) {
       return 'unset';
     }
-    return OBJECT_SETTINGS_WIDTH + 'px';
+    return '100%';
   }};
 `;
 

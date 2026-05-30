@@ -1,31 +1,27 @@
 import { styled } from '@linaria/react';
-import { useState } from 'react';
-
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
+import { useContext, useState } from 'react';
 
 import { useWorkspaceAiModelAvailability } from '@/ai/hooks/useWorkspaceAiModelAvailability';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
-import { aiModelsState } from '@/client-config/states/aiModelsState';
 import { SettingsAiModelsTable } from '@/settings/ai/components/SettingsAiModelsTable';
-import { getDataResidencyDisplay } from '@/settings/ai/utils/getDataResidencyDisplay';
-import { getModelIcon } from '@/settings/ai/utils/getModelIcon';
-import { SettingsOptionCardContentSelect } from '@/settings/components/SettingsOptions/SettingsOptionCardContentSelect';
+import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsOptionCardContentToggle } from '@/settings/components/SettingsOptions/SettingsOptionCardContentToggle';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { Select } from '@/ui/input/components/Select';
-import { GenericDropdownContentWidth } from '@/ui/layout/dropdown/constants/GenericDropdownContentWidth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { useMutation } from '@apollo/client/react';
+import { useMutation, useQuery } from '@apollo/client/react';
 import { t } from '@lingui/core/macro';
-import { H2Title, IconBolt, IconBrain, IconStar } from 'twenty-ui/display';
+import { H2Title, IconPrompt, IconStar } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { Card, Section } from 'twenty-ui/layout';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { UpdateWorkspaceDocument } from '~/generated-metadata/graphql';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { SettingsPath } from 'twenty-shared/types';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import {
+  GetAiSystemPromptPreviewDocument,
+  UpdateWorkspaceDocument,
+} from '~/generated-metadata/graphql';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledCustomModelsContainer = styled.div`
   display: flex;
@@ -34,96 +30,32 @@ const StyledCustomModelsContainer = styled.div`
   padding-top: ${themeCssVariables.spacing[4]};
 `;
 
+// Default model pickers (Smart / Fast) moved to SettingsAiOverviewTab —
+// this tab is the catalog (Use-best-models toggle + searchable list of
+// available models) plus the read-only System Prompt link card.
 export const SettingsAiModelsTab = () => {
+  const { theme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
   const [currentWorkspace, setCurrentWorkspace] = useAtomState(
     currentWorkspaceState,
   );
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
   const [searchQuery, setSearchQuery] = useState('');
-  const aiModels = useAtomStateValue(aiModelsState);
+  const { data: previewData } = useQuery(GetAiSystemPromptPreviewDocument);
 
-  const { enabledModels, useRecommendedModels, realModels } =
+  const systemPromptTokenCount =
+    previewData?.getAiSystemPromptPreview.estimatedTokenCount;
+  const systemPromptDescription = isDefined(systemPromptTokenCount)
+    ? t`Read the system prompts to understand how the AI works (~${formatNumber(
+        systemPromptTokenCount,
+        { abbreviate: true, decimals: 1 },
+      )} tokens)`
+    : t`Read the system prompts to understand how the AI works`;
+
+  const { useRecommendedModels, realModels } =
     useWorkspaceAiModelAvailability();
 
   const enabledModelIdSet = new Set(currentWorkspace?.enabledAiModelIds ?? []);
-
-  const currentSmartModel = currentWorkspace?.smartModel;
-  const currentFastModel = currentWorkspace?.fastModel;
-
-  const buildPinnedOption = (autoSelectModelId: string) => {
-    const autoSelectEntry = aiModels.find(
-      (model) => model.modelId === autoSelectModelId,
-    );
-
-    if (!autoSelectEntry) {
-      return undefined;
-    }
-
-    return {
-      value: autoSelectModelId,
-      label: autoSelectEntry.label,
-      Icon: getModelIcon(
-        autoSelectEntry.modelFamily,
-        autoSelectEntry.providerName,
-      ),
-      contextualText: t`Best`,
-    };
-  };
-
-  const smartPinnedOption = buildPinnedOption(AUTO_SELECT_SMART_MODEL_ID);
-  const fastPinnedOption = buildPinnedOption(AUTO_SELECT_FAST_MODEL_ID);
-
-  const buildModelOptions = () =>
-    enabledModels.map((model) => {
-      const residencyFlag = model.dataResidency
-        ? ` ${getDataResidencyDisplay(model.dataResidency)}`
-        : '';
-
-      return {
-        value: model.modelId,
-        label: `${model.label}${residencyFlag}`,
-        Icon: getModelIcon(model.modelFamily, model.providerName),
-      };
-    });
-
-  const smartModelOptions = buildModelOptions();
-  const fastModelOptions = buildModelOptions();
-
-  const handleModelFieldChange = async (
-    field: 'smartModel' | 'fastModel',
-    value: string,
-  ) => {
-    if (!currentWorkspace?.id) {
-      return;
-    }
-
-    const previousValue = currentWorkspace[field];
-
-    try {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        [field]: value,
-      });
-
-      await updateWorkspace({
-        variables: {
-          input: {
-            [field]: value,
-          },
-        },
-      });
-    } catch {
-      setCurrentWorkspace({
-        ...currentWorkspace,
-        [field]: previousValue,
-      });
-
-      enqueueErrorSnackBar({
-        message: t`Failed to update model`,
-      });
-    }
-  };
 
   const handleUseRecommendedToggle = async (checked: boolean) => {
     if (!currentWorkspace?.id) {
@@ -224,47 +156,7 @@ export const SettingsAiModelsTab = () => {
     <>
       <Section>
         <H2Title
-          title={t`Default`}
-          description={t`Configure your default AI model`}
-        />
-
-        <Card rounded>
-          <SettingsOptionCardContentSelect
-            Icon={IconBrain}
-            title={t`Smart Model`}
-            description={t`Used for chats, agents, and complex reasoning`}
-          >
-            <Select
-              dropdownId="smart-model-select"
-              value={currentSmartModel}
-              onChange={(value) => handleModelFieldChange('smartModel', value)}
-              options={smartModelOptions}
-              pinnedOption={smartPinnedOption}
-              selectSizeVariant="small"
-              dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            />
-          </SettingsOptionCardContentSelect>
-          <SettingsOptionCardContentSelect
-            Icon={IconBolt}
-            title={t`Fast Model`}
-            description={t`Used for lightweight tasks like title generation`}
-          >
-            <Select
-              dropdownId="fast-model-select"
-              value={currentFastModel}
-              onChange={(value) => handleModelFieldChange('fastModel', value)}
-              options={fastModelOptions}
-              pinnedOption={fastPinnedOption}
-              selectSizeVariant="small"
-              dropdownWidth={GenericDropdownContentWidth.ExtraLarge}
-            />
-          </SettingsOptionCardContentSelect>
-        </Card>
-      </Section>
-
-      <Section>
-        <H2Title
-          title={t`Available`}
+          title={t`Available models`}
           description={t`Models available in the chat model picker`}
         />
         <Card rounded>
@@ -322,6 +214,19 @@ export const SettingsAiModelsTab = () => {
             />
           </StyledCustomModelsContainer>
         )}
+      </Section>
+
+      <Section>
+        <H2Title
+          title={t`System Prompt`}
+          description={systemPromptDescription}
+        />
+        <UndecoratedLink to={getSettingsPath(SettingsPath.AiPrompts)}>
+          <SettingsCard
+            Icon={<IconPrompt size={theme.icon.size.md} />}
+            title={t`Read system prompts`}
+          />
+        </UndecoratedLink>
       </Section>
     </>
   );

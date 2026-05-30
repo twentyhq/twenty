@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { usePersistLogicFunction } from '@/logic-functions/hooks/usePersistLogicFunction';
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -15,15 +16,23 @@ import { t } from '@lingui/core/macro';
 import {
   IconChartBar,
   IconCpu,
+  IconLayoutDashboard,
   IconPlus,
-  IconSettingsBolt,
   IconSparkles,
   IconTool,
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-import { SettingsAiMoreTab } from '~/pages/settings/ai/components/SettingsAiMoreTab';
+// Hero illustration: reuse the existing AI Tools cover for the page hero
+// instead of a layout placeholder. Lives in /public so referenced as a path.
+const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
+const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
+
+const SETTINGS_AI_HERO_MODAL_ID = 'settings-ai-hero-modal';
+const SETTINGS_AI_HERO_TABS_ID = 'settings-ai-hero-tabs';
 import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiModelsTab } from './components/SettingsAiModelsTab';
 import { SettingsAiUsageTab } from './components/SettingsAiUsageTab';
 import { SettingsAgentSkills } from './components/SettingsAgentSkills';
@@ -82,6 +91,11 @@ export const SettingsAI = () => {
 
   const tabs = [
     {
+      id: SETTINGS_AI_TABS.TABS_IDS.OVERVIEW,
+      title: t`Overview`,
+      Icon: IconLayoutDashboard,
+    },
+    {
       id: SETTINGS_AI_TABS.TABS_IDS.MODELS,
       title: t`Models`,
       Icon: IconCpu,
@@ -101,18 +115,17 @@ export const SettingsAI = () => {
       title: t`Usage`,
       Icon: IconChartBar,
     },
-    {
-      id: SETTINGS_AI_TABS.TABS_IDS.MORE,
-      title: t`More`,
-      Icon: IconSettingsBolt,
-    },
   ];
 
-  const isModelsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
-  const isSkillsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
-  const isToolsTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
-  const isUsageTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
-  const isMoreTab = activeTabId === SETTINGS_AI_TABS.TABS_IDS.MORE;
+  // The TabList initializes its active tab from the first tabs[] entry on
+  // mount when state is undefined — Overview now leads, so first paint
+  // shows Overview without a flash of "no tab selected".
+  const resolvedTabId = activeTabId ?? SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
+  const isOverviewTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
+  const isModelsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
+  const isSkillsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.SKILLS;
+  const isToolsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.TOOLS;
+  const isUsageTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
 
   return (
     <SubMenuTopBarContainer
@@ -147,15 +160,44 @@ export const SettingsAI = () => {
       ]}
     >
       <SettingsPageContainer>
+        <Section>
+          <SettingsDiscoveryHeroCard
+            lightSrc={AI_HERO_LIGHT}
+            darkSrc={AI_HERO_DARK}
+            modalInstanceId={SETTINGS_AI_HERO_MODAL_ID}
+            tabsInstanceId={SETTINGS_AI_HERO_TABS_ID}
+            tabs={[
+              {
+                id: 'skills',
+                title: t`Skills`,
+                Icon: IconSparkles,
+                vimeoId: '1185511734',
+              },
+              {
+                id: 'tools',
+                title: t`Tools`,
+                Icon: IconTool,
+                vimeoId: '1185511734',
+              },
+              {
+                id: 'models',
+                title: t`Models`,
+                Icon: IconCpu,
+                vimeoId: '1185511734',
+              },
+            ]}
+            playButtonAriaLabel={t`Watch AI demo`}
+          />
+        </Section>
         <TabList
           tabs={tabs}
           componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
         />
+        {isOverviewTab && <SettingsAiOverviewTab />}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkills />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
-        {isMoreTab && <SettingsAiMoreTab />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>
   );

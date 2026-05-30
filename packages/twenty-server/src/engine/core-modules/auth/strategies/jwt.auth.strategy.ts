@@ -20,6 +20,7 @@ import {
   type AuthContextUser,
   type JwtPayload,
   JwtTokenTypeEnum,
+  type PlaygroundTokenJwtPayload,
   type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
@@ -100,7 +101,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
   }
 
   private async validateAccessToken(
-    payload: AccessTokenJwtPayload,
+    payload: AccessTokenJwtPayload | PlaygroundTokenJwtPayload,
   ): Promise<AuthContext> {
     let user: AuthContextUser | null = null;
     let context: AuthContext = {};
@@ -117,7 +118,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    if (payload.isImpersonating === true) {
+    // Only ACCESS tokens can carry impersonation; PLAYGROUND is always
+    // first-person. The type discriminator narrows payload to the ACCESS
+    // variant inside this branch.
+    if (
+      payload.type === JwtTokenTypeEnum.ACCESS &&
+      payload.isImpersonating === true
+    ) {
       context.impersonationContext = await this.validateImpersonation(payload);
     }
 
@@ -437,7 +444,13 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       return await this.validateWorkspaceAgnosticToken(payload);
     }
 
-    if (payload.type === JwtTokenTypeEnum.ACCESS) {
+    // PLAYGROUND tokens walk the same validation as ACCESS so resolvers see
+    // a full user context. They differ only in the type marker (used for
+    // audit/telemetry) and the absence of impersonation claims.
+    if (
+      payload.type === JwtTokenTypeEnum.ACCESS ||
+      payload.type === JwtTokenTypeEnum.PLAYGROUND
+    ) {
       return await this.validateAccessToken(payload);
     }
 

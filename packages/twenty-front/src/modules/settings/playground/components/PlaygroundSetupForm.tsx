@@ -30,7 +30,10 @@ const StyledForm = styled.form`
   align-items: end;
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: 1.5fr 1fr 1fr 0.5fr;
+  // Last column shrinks to the Launch button's content width so its right
+  // edge sits at the form's right edge — and therefore at the cover image's
+  // right edge above. The other three columns share the remaining space.
+  grid-template-columns: 1.5fr 1fr 1fr auto;
   margin-bottom: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;

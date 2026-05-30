@@ -3,12 +3,15 @@ import { styled } from '@linaria/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import React from 'react';
 
+// Kept for back-compat with the SETTINGS_OBJECT_TABLE_COLUMN_WIDTH export —
+// the grid below no longer references it so the table can stretch across the
+// full available content column instead of summing to ~527 px on every page.
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';
 
-const SETTINGS_OBJECT_TABLE_APP_COLUMN_WIDTH = '140px';
-const SETTINGS_OBJECT_TABLE_FIELDS_COLUMN_WIDTH = '72px';
-
-export const SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `180px ${SETTINGS_OBJECT_TABLE_APP_COLUMN_WIDTH} ${SETTINGS_OBJECT_TABLE_FIELDS_COLUMN_WIDTH} ${SETTINGS_OBJECT_TABLE_COLUMN_WIDTH} 36px`;
+// Relative grid: Name takes all remaining space (with a floor); App / Fields /
+// Instances get fixed minimums so short text columns don't collapse; trailing
+// 36 px holds the chevron / action cell.
+export const SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `minmax(180px, 1fr) 140px 80px 100px 36px`;
 
 export const SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH = '520px';
 

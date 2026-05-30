@@ -366,6 +366,16 @@ export class ConfigVariables {
   APPLICATION_REFRESH_TOKEN_EXPIRES_IN = '60d';
 
   @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.TOKENS_DURATION,
+    description:
+      'Duration for which a playground token (in-app REST/GraphQL playground bearer) is valid',
+    type: ConfigVariableType.STRING,
+  })
+  @IsDuration()
+  @IsOptional()
+  PLAYGROUND_TOKEN_EXPIRES_IN = '2h';
+
+  @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.EMAIL_SETTINGS,
     description: 'Email address used as the sender for outgoing emails',
     type: ConfigVariableType.STRING,

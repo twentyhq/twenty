@@ -1,38 +1,85 @@
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
-import { SettingsLayoutCoverImage } from '@/settings/layout/components/SettingsLayoutCoverImage';
-import {
-  SETTINGS_LAYOUT_CUSTOMIZE_VIDEO_MODAL_ID,
-  SettingsLayoutCustomizeVideoModal,
-} from '@/settings/layout/components/SettingsLayoutCustomizeVideoModal';
 import { SettingsLayoutItemsStats } from '@/settings/layout/components/SettingsLayoutItemsStats';
-import { HeroPlayButton } from '@/ui/layout/hero/components/HeroPlayButton';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconLayout, IconPencil } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconAppWindow,
+  IconCommand,
+  IconLayoutDashboard,
+  IconLayoutSidebarLeftExpand,
+  IconPencil,
+  IconTable,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
-import { Card, Section } from 'twenty-ui/layout';
+import { Section } from 'twenty-ui/layout';
+import { UndecoratedLink } from 'twenty-ui/navigation';
+import customizeIllustrationDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
+import customizeIllustrationLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
+
+const SETTINGS_LAYOUT_HERO_MODAL_ID = 'settings-layout-hero-modal';
+const SETTINGS_LAYOUT_HERO_TABS_ID = 'settings-layout-hero-tabs';
 
 export const SettingsLayout = () => {
   const { t } = useLingui();
-  const navigate = useNavigate();
-  const { openModal } = useModal();
 
-  const handleWatchVideo = () => {
-    openModal(SETTINGS_LAYOUT_CUSTOMIZE_VIDEO_MODAL_ID);
-  };
-
-  const handleStartCustomizing = () => {
-    navigate(AppPath.Index);
-  };
+  // Vimeo IDs are reused from twenty-docs' in-page demos. No video exists
+  // yet for several of these tabs, so the closest topical match is used as
+  // a placeholder — Sidebar/Record page share the Layout core-concepts demo.
+  const heroTabs = useMemo(
+    () => [
+      {
+        id: 'sidebar',
+        title: t`Sidebar`,
+        Icon: IconLayoutSidebarLeftExpand,
+        vimeoId: '1185511790',
+      },
+      {
+        id: 'record-page',
+        title: t`Record page`,
+        Icon: IconAppWindow,
+        vimeoId: '1185511790',
+      },
+      {
+        id: 'command-menu',
+        title: t`Command menu`,
+        Icon: IconCommand,
+        vimeoId: '1185416775',
+      },
+      {
+        id: 'views',
+        title: t`Views`,
+        Icon: IconTable,
+        vimeoId: '1145648745',
+      },
+      {
+        id: 'dashboards',
+        title: t`Dashboards`,
+        Icon: IconLayoutDashboard,
+        vimeoId: '1185511768',
+      },
+    ],
+    [t],
+  );
 
   return (
     <SubMenuTopBarContainer
       title={t`Layout`}
+      actionButton={
+        <UndecoratedLink to={AppPath.Index}>
+          <Button
+            title={t`Customize`}
+            variant="primary"
+            accent="blue"
+            size="small"
+            Icon={IconPencil}
+          />
+        </UndecoratedLink>
+      }
       links={[
         {
           children: t`Workspace`,
@@ -43,45 +90,23 @@ export const SettingsLayout = () => {
     >
       <SettingsPageContainer>
         <Section>
-          <H2Title
-            title={t`Customize`}
-            description={t`Customize your sidebar, commands and record pages`}
+          <SettingsDiscoveryHeroCard
+            lightSrc={customizeIllustrationLight}
+            darkSrc={customizeIllustrationDark}
+            modalInstanceId={SETTINGS_LAYOUT_HERO_MODAL_ID}
+            tabsInstanceId={SETTINGS_LAYOUT_HERO_TABS_ID}
+            tabs={heroTabs}
+            playButtonAriaLabel={t`Watch customization demo`}
           />
-          <Card rounded>
-            <SettingsLayoutCoverImage
-              overlay={
-                <HeroPlayButton
-                  onClick={handleWatchVideo}
-                  ariaLabel={t`Watch customization demo`}
-                />
-              }
-            />
-            <SettingsOptionCardContentButton
-              Icon={IconLayout}
-              title={t`Customize layout`}
-              description={t`Customize how your workspace look.`}
-              Button={
-                <Button
-                  title={t`Customize`}
-                  variant="primary"
-                  accent="blue"
-                  size="small"
-                  Icon={IconPencil}
-                  onClick={handleStartCustomizing}
-                />
-              }
-            />
-          </Card>
         </Section>
         <Section>
           <H2Title
-            title={t`Manage`}
+            title={t`Overview`}
             description={t`All the layout items declared on your workspace`}
           />
           <SettingsLayoutItemsStats />
         </Section>
       </SettingsPageContainer>
-      <SettingsLayoutCustomizeVideoModal />
     </SubMenuTopBarContainer>
   );
 };

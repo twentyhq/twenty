@@ -20,9 +20,28 @@ type SubMenuTopBarContainerProps = {
   tag?: JSX.Element;
 };
 
+// Cards, forms, and tables inside the white panel are centered in a fixed
+// max-width column so they don't sprawl on large displays. The white panel
+// itself spans edge-to-edge; only the content is constrained.
+const SETTINGS_CONTENT_MAX_WIDTH = 880;
+
 const StyledContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+`;
+
+// flex: 1 + min-height: 0 keep the vertical-scroll chain intact: PagePanel's
+// own overflow handling sits one level up and depends on its children
+// participating in the flex height calculation rather than collapsing to
+// content height.
+const StyledBodyContentWrapper = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: 0 auto;
+  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
+  min-height: 0;
   width: 100%;
 `;
 
@@ -54,14 +73,16 @@ export const SubMenuTopBarContainer = ({
         {actionButton}
       </PageHeader>
       <PageBody>
-        <InformationBannerWrapper />
-        {(isDefined(title) || reserveTitleSpace === true) && (
-          <StyledTitle reserveTitleSpace={reserveTitleSpace}>
-            {title}
-            {tag}
-          </StyledTitle>
-        )}
-        {children}
+        <StyledBodyContentWrapper>
+          <InformationBannerWrapper />
+          {(isDefined(title) || reserveTitleSpace === true) && (
+            <StyledTitle reserveTitleSpace={reserveTitleSpace}>
+              {title}
+              {tag}
+            </StyledTitle>
+          )}
+          {children}
+        </StyledBodyContentWrapper>
       </PageBody>
     </StyledContainer>
   );

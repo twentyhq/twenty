@@ -49,6 +49,12 @@ export enum JwtTokenTypeEnum {
   APPLICATION_REFRESH = 'APPLICATION_REFRESH',
   APP_OAUTH_STATE = 'APP_OAUTH_STATE',
   APPROVED_ACCESS_DOMAIN = 'APPROVED_ACCESS_DOMAIN',
+  // Short-lived (~2h) user-attributed token minted on-demand for the in-app
+  // REST/GraphQL playground. Payload mirrors ACCESS so the existing
+  // access-token verification path can decode it; the separate type marker
+  // exists so audit/telemetry can distinguish playground traffic from
+  // session traffic, and so we can reject it from sensitive endpoints later.
+  PLAYGROUND = 'PLAYGROUND',
 }
 
 type CommonPropertiesJwtPayload = {
@@ -138,6 +144,20 @@ export type AccessTokenJwtPayload = CommonPropertiesJwtPayload & {
   impersonatedUserWorkspaceId?: string;
 };
 
+// Playground tokens walk the same verification path as ACCESS tokens; only the
+// type marker (used for audit/telemetry) and the absence of impersonation
+// claims distinguish them. Defined via Omit so any new claim added to
+// AccessTokenJwtPayload flows through automatically.
+export type PlaygroundTokenJwtPayload = Omit<
+  AccessTokenJwtPayload,
+  | 'type'
+  | 'isImpersonating'
+  | 'impersonatorUserWorkspaceId'
+  | 'impersonatedUserWorkspaceId'
+> & {
+  type: JwtTokenTypeEnum.PLAYGROUND;
+};
+
 export type AppOAuthStateJwtPayload = CommonPropertiesJwtPayload & {
   type: JwtTokenTypeEnum.APP_OAUTH_STATE;
   workspaceId: string;
@@ -174,4 +194,5 @@ export type JwtPayload =
   | FileTokenJwtPayload
   | FileTokenJwtPayloadLegacy
   | AppOAuthStateJwtPayload
-  | ApprovedAccessDomainJwtPayload;
+  | ApprovedAccessDomainJwtPayload
+  | PlaygroundTokenJwtPayload;

@@ -5,11 +5,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { H2Title, IconArchive } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Section } from 'twenty-ui/layout';
@@ -22,12 +22,8 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
-const StyledCoverImage = styled.div`
-  background-position: center;
-  background-size: cover;
-  height: 160px;
-  overflow: hidden;
-`;
+// Cover illustration removed — the page-level hero card above the tab list
+// already serves that role, so the in-tab repeat was visual noise.
 
 const StyledSearchInput = styled(SearchInput)`
   margin-bottom: ${themeCssVariables.spacing[4]};
@@ -35,7 +31,6 @@ const StyledSearchInput = styled(SearchInput)`
 
 export const SettingsAgentSkills = () => {
   const { t } = useLingui();
-  const { colorScheme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const { data, loading, refetch } = useQuery(FindManySkillsDocument);
@@ -90,15 +85,8 @@ export const SettingsAgentSkills = () => {
     }
   };
 
-  const coverImage =
-    colorScheme === 'light'
-      ? '/images/ai/ai-skills-cover-light.png'
-      : '/images/ai/ai-skills-cover-dark.png';
-
   return (
-    <>
-      <StyledCoverImage style={{ backgroundImage: `url('${coverImage}')` }} />
-      <Section>
+    <Section>
         <H2Title
           title={t`Skills`}
           description={t`Use filter to see existing tools or create your own`}
@@ -132,13 +120,12 @@ export const SettingsAgentSkills = () => {
             />
           )}
         />
-        <SettingsAgentSkillsTable
-          skills={filteredSkills}
-          loading={loading}
-          onActivate={handleActivate}
-          onDelete={handleDelete}
-        />
-      </Section>
-    </>
+      <SettingsAgentSkillsTable
+        skills={filteredSkills}
+        loading={loading}
+        onActivate={handleActivate}
+        onDelete={handleDelete}
+      />
+    </Section>
   );
 };
