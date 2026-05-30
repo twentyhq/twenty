@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { Signoff } from '@/sections/Signoff';
+import { Signoff } from '@/templates/Signoff';
 
 export function CustomersCaseStudySignoff() {
   const i18n = getServerI18n();

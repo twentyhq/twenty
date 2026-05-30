@@ -5,10 +5,9 @@ import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
 import {
   IllustrationCards,
-  ThreeCardsIntro,
-  ThreeCardsSection,
   type ThreeCardsScrollLayoutOptions,
 } from '@/sections/ThreeCards';
+import { ThreeCardsIntro, ThreeCardsSection } from '@/templates/ThreeCards';
 
 const SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOptions = {
   endEdgeRatio: 0.28,

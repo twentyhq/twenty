@@ -5,8 +5,8 @@ import { getServerI18n } from '@/lib/i18n/server';
 import {
   TestimonialsCarousel,
   TestimonialsHourglassVisual,
-  TestimonialsSection,
 } from '@/sections/Testimonials';
+import { TestimonialsSection } from '@/templates/Testimonials';
 
 export function HomeTestimonials() {
   const i18n = getServerI18n();

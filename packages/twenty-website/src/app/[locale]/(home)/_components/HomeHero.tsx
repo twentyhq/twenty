@@ -7,7 +7,7 @@ import { getServerI18n } from '@/lib/i18n/server';
 import { WebGlMount } from '@/lib/visual-runtime';
 import { AppPreview } from '@/sections/AppPreview';
 import { TalkToUsButton } from '@/sections/ContactCal';
-import { HeroBody, HeroCta, HeroHeading, HeroSection } from '@/sections/Hero';
+import { HeroBody, HeroCta, HeroHeading, HeroSection } from '@/templates/Hero';
 import { HomeBackgroundHalftone } from '@/sections/Hero/visuals/components/HomeBackgroundHalftone';
 import { theme } from '@/theme';
 

@@ -14,6 +14,11 @@ const LEAF_SECTIONS = new Set([
   'LegalDocument',
   'PartnerApplication',
   'Stepper',
+  // Visual-only modules: their layout shells moved to src/templates/, so they
+  // no longer own a section <Root> — they just expose visual components.
+  'Hero',
+  'ThreeCards',
+  'Testimonials',
 ]);
 
 async function listSections() {

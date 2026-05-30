@@ -1,6 +1,6 @@
 import { renderToStaticMarkup } from 'react-dom/server';
 
-import { HeroHeading } from '@/sections/Hero/components/HeroHeading';
+import { HeroHeading } from '@/templates/Hero/HeroHeading';
 
 describe('HeroHeading defaults', () => {
   it('renders <h1> by default', () => {

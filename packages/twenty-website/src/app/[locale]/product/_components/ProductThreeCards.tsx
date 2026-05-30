@@ -3,11 +3,8 @@ import { msg } from '@lingui/core/macro';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import {
-  IllustrationCards,
-  ThreeCardsIntro,
-  ThreeCardsSection,
-} from '@/sections/ThreeCards';
+import { IllustrationCards } from '@/sections/ThreeCards';
+import { ThreeCardsIntro, ThreeCardsSection } from '@/templates/ThreeCards';
 
 export function ProductThreeCards() {
   const i18n = getServerI18n();

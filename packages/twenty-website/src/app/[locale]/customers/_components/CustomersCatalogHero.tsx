@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { HeroBody, HeroHeading, HeroSection } from '@/sections/Hero';
+import { HeroBody, HeroHeading, HeroSection } from '@/templates/Hero';
 
 export function CustomersCatalogHero() {
   const i18n = getServerI18n();

@@ -3,11 +3,8 @@ import { msg } from '@lingui/core/macro';
 import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
 import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import {
-  FeatureCards,
-  ThreeCardsIntro,
-  ThreeCardsSection,
-} from '@/sections/ThreeCards';
+import { FeatureCards } from '@/sections/ThreeCards';
+import { ThreeCardsIntro, ThreeCardsSection } from '@/templates/ThreeCards';
 
 export function HomeFeatureThreeCards() {
   const i18n = getServerI18n();

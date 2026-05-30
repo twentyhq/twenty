@@ -3,13 +3,8 @@ import { msg } from '@lingui/core/macro';
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { GitHubIcon } from '@/icons';
 import { getServerI18n } from '@/lib/i18n/server';
-import {
-  HeroBody,
-  HeroCta,
-  HeroHeading,
-  HeroSection,
-  ReleaseNotesVisual,
-} from '@/sections/Hero';
+import { HeroBody, HeroCta, HeroHeading, HeroSection } from '@/templates/Hero';
+import { ReleaseNotesVisual } from '@/sections/Hero';
 
 export function ReleasesHero() {
   const i18n = getServerI18n();

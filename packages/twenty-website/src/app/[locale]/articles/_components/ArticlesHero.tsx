@@ -1,5 +1,5 @@
 import { HeadingPart } from '@/design-system/components';
-import { HeroBody, HeroHeading, HeroSection } from '@/sections/Hero';
+import { HeroBody, HeroHeading, HeroSection } from '@/templates/Hero';
 
 // Articles is English-only (SOURCE_LOCALE-gated), so the copy is literal.
 export function ArticlesHero() {

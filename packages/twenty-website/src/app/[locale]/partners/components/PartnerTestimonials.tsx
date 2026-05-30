@@ -5,8 +5,8 @@ import { getServerI18n } from '@/lib/i18n/server';
 import {
   TestimonialsPartnerCarousel,
   TestimonialsPartnerVisual,
-  TestimonialsSection,
 } from '@/sections/Testimonials';
+import { TestimonialsSection } from '@/templates/Testimonials';
 import { theme } from '@/theme';
 
 export function PartnerTestimonials() {

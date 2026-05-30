@@ -3,7 +3,7 @@ import { msg } from '@lingui/core/macro';
 import { PartnerSignoffCtas } from '@/app/[locale]/partners/components/PartnerApplication';
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { Signoff } from '@/sections/Signoff';
+import { Signoff } from '@/templates/Signoff';
 
 // Closing sign-off for the partners page.
 export function PartnerSignoff() {

@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 
 import { HeadingPart, LinkButton } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { Signoff } from '@/sections/Signoff';
+import { Signoff } from '@/templates/Signoff';
 
 // Closing sign-off for the why-twenty page (dark, compact layout).
 export function WhyTwentySignoff() {

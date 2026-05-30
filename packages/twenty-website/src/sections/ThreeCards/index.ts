@@ -1,5 +1,3 @@
-export { ThreeCardsSection } from './components/ThreeCardsSection';
-export { ThreeCardsIntro } from './components/ThreeCardsIntro';
 export { IllustrationCards } from './components/IllustrationCards';
 export { FeatureCards } from './components/FeatureCards';
 export type {

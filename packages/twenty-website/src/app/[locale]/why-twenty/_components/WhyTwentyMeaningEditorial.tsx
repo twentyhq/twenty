@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { Editorial } from '@/sections/Editorial';
+import { Editorial } from '@/templates/Editorial';
 import { theme } from '@/theme';
 
 export function WhyTwentyMeaningEditorial() {

@@ -10,11 +10,8 @@ import {
   HeadingPart,
 } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import {
-  IllustrationCards,
-  ThreeCardsIntro,
-  ThreeCardsSection,
-} from '@/sections/ThreeCards';
+import { IllustrationCards } from '@/sections/ThreeCards';
+import { ThreeCardsIntro, ThreeCardsSection } from '@/templates/ThreeCards';
 import { theme } from '@/theme';
 
 const IntroContent = styled.div`
