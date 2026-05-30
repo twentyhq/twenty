@@ -4,13 +4,12 @@ import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/dr
 import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
+import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
-import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
-import { type UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
-describe('EmailingDomainService.sendEmail', () => {
+describe('EmailingDomainSenderService.sendEmail', () => {
   const buildEmailingDomain = (
     overrides: Partial<EmailingDomainEntity> = {},
   ): EmailingDomainEntity =>
@@ -54,17 +53,11 @@ describe('EmailingDomainService.sendEmail', () => {
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;
-    const unsubscribeHostnameService = {
-      provision: jest.fn(),
-      refreshStatus: jest.fn(),
-      deprovision: jest.fn(),
-    } as unknown as UnsubscribeHostnameService;
-    const service = new EmailingDomainService(
+    const service = new EmailingDomainSenderService(
       repository,
       factory,
       suppressionService,
       unsubscribeTokenService,
-      unsubscribeHostnameService,
     );
 
     return { service, sendEmail };

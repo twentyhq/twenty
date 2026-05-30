@@ -9,6 +9,7 @@ import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/dr
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
+import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -28,7 +29,10 @@ import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 @UsePipes(ResolverValidationPipe)
 @MetadataResolver(() => EmailingDomainDTO)
 export class EmailingDomainResolver {
-  constructor(private readonly emailingDomainService: EmailingDomainService) {}
+  constructor(
+    private readonly emailingDomainService: EmailingDomainService,
+    private readonly emailingDomainSenderService: EmailingDomainSenderService,
+  ) {}
 
   @Mutation(() => EmailingDomainDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
@@ -80,7 +84,7 @@ export class EmailingDomainResolver {
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendEmailViaDomainOutputDTO> {
     const { emailingDomainId, ...content } = input;
-    const result = await this.emailingDomainService.sendEmail(
+    const result = await this.emailingDomainSenderService.sendEmail(
       currentWorkspace.id,
       emailingDomainId,
       content,

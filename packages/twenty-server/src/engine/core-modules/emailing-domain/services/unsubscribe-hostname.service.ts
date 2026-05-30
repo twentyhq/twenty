@@ -73,6 +73,51 @@ export class UnsubscribeHostnameService {
     );
   }
 
+  async sync(
+    workspaceId: string,
+    emailingDomainId: string,
+    { provision }: { provision: boolean },
+  ): Promise<void> {
+    try {
+      const emailingDomain = await this.emailingDomainRepository.findOneOrFail(
+        workspaceId,
+        { where: { id: emailingDomainId } },
+      );
+
+      if (provision) {
+        await this.provision(emailingDomain);
+      }
+
+      await this.refreshStatus(
+        await this.emailingDomainRepository.findOneOrFail(workspaceId, {
+          where: { id: emailingDomainId },
+        }),
+      );
+    } catch (error) {
+      this.logger.warn(
+        `Failed to sync unsubscribe hostname for emailing domain ${emailingDomainId}: ${error}`,
+      );
+    }
+  }
+
+  async withDnsRecords(
+    emailingDomain: EmailingDomainEntity,
+  ): Promise<EmailingDomainEntity> {
+    const unsubscribeRecords = await this.getDnsRecords(emailingDomain);
+
+    if (unsubscribeRecords.length === 0) {
+      return emailingDomain;
+    }
+
+    return {
+      ...emailingDomain,
+      verificationRecords: [
+        ...(emailingDomain.verificationRecords ?? []),
+        ...unsubscribeRecords,
+      ],
+    };
+  }
+
   async getDnsRecords(
     emailingDomain: EmailingDomainEntity,
   ): Promise<VerificationRecord[]> {

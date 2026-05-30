@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
-
 import {
   EmailingDomainDriverException,
   EmailingDomainDriverExceptionCode,
@@ -9,21 +7,12 @@ import {
 import { EmailingDomainDriverFactory } from 'src/engine/core-modules/emailing-domain/drivers/emailing-domain-driver.factory';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
-import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-tenant-status.type';
-import {
-  type EmailingDomainEmailContent,
-  type EmailingDomainSendEmailResult,
-} from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
-import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { UnsubscribeHostnameService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-hostname.service';
-import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
-import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
-import { buildUnsubscribeHeaders } from 'src/engine/core-modules/emailing-domain/utils/build-unsubscribe-headers.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+
 @Injectable()
 export class EmailingDomainService {
   private readonly logger = new Logger(EmailingDomainService.name);
@@ -32,8 +21,6 @@ export class EmailingDomainService {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
-    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
-    private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly unsubscribeHostnameService: UnsubscribeHostnameService,
   ) {}
 
@@ -86,12 +73,16 @@ export class EmailingDomainService {
     );
 
     if (isVerifiedOnCreation) {
-      await this.syncUnsubscribeHostname(workspace.id, emailingDomain.id, {
-        provision: true,
-      });
+      await this.unsubscribeHostnameService.sync(
+        workspace.id,
+        emailingDomain.id,
+        {
+          provision: true,
+        },
+      );
     }
 
-    return this.withUnsubscribeRecords(
+    return this.unsubscribeHostnameService.withDnsRecords(
       await this.emailingDomainRepository.findOneOrFail(workspace.id, {
         where: { id: emailingDomain.id },
       }),
@@ -152,28 +143,9 @@ export class EmailingDomainService {
 
     return Promise.all(
       emailingDomains.map((emailingDomain) =>
-        this.withUnsubscribeRecords(emailingDomain),
+        this.unsubscribeHostnameService.withDnsRecords(emailingDomain),
       ),
     );
-  }
-
-  private async withUnsubscribeRecords(
-    emailingDomain: EmailingDomainEntity,
-  ): Promise<EmailingDomainEntity> {
-    const unsubscribeRecords =
-      await this.unsubscribeHostnameService.getDnsRecords(emailingDomain);
-
-    if (unsubscribeRecords.length === 0) {
-      return emailingDomain;
-    }
-
-    return {
-      ...emailingDomain,
-      verificationRecords: [
-        ...(emailingDomain.verificationRecords ?? []),
-        ...unsubscribeRecords,
-      ],
-    };
   }
 
   async verifyEmailingDomain(
@@ -207,149 +179,19 @@ export class EmailingDomainService {
       },
     );
 
-    await this.syncUnsubscribeHostname(workspace.id, emailingDomain.id, {
-      provision: verificationResult.status === EmailingDomainStatus.VERIFIED,
-    });
+    await this.unsubscribeHostnameService.sync(
+      workspace.id,
+      emailingDomain.id,
+      {
+        provision: verificationResult.status === EmailingDomainStatus.VERIFIED,
+      },
+    );
 
-    return this.withUnsubscribeRecords(
+    return this.unsubscribeHostnameService.withDnsRecords(
       await this.emailingDomainRepository.findOneOrFail(workspace.id, {
         where: { id: emailingDomain.id },
       }),
     );
-  }
-
-  private async syncUnsubscribeHostname(
-    workspaceId: string,
-    emailingDomainId: string,
-    { provision }: { provision: boolean },
-  ): Promise<void> {
-    try {
-      const emailingDomain = await this.emailingDomainRepository.findOneOrFail(
-        workspaceId,
-        { where: { id: emailingDomainId } },
-      );
-
-      if (provision) {
-        await this.unsubscribeHostnameService.provision(emailingDomain);
-      }
-
-      await this.unsubscribeHostnameService.refreshStatus(
-        await this.emailingDomainRepository.findOneOrFail(workspaceId, {
-          where: { id: emailingDomainId },
-        }),
-      );
-    } catch (error) {
-      this.logger.warn(
-        `Failed to sync unsubscribe hostname for emailing domain ${emailingDomainId}: ${error}`,
-      );
-    }
-  }
-
-  async sendEmail(
-    workspaceId: string,
-    emailingDomainId: string,
-    emailContent: EmailingDomainEmailContent,
-  ): Promise<EmailingDomainSendEmailResult> {
-    const emailingDomain = await this.findEmailingDomainByIdOrThrow(
-      workspaceId,
-      emailingDomainId,
-    );
-
-    if (emailingDomain.status !== EmailingDomainStatus.VERIFIED) {
-      throw new EmailingDomainDriverException(
-        `Emailing domain is not verified (status: ${emailingDomain.status})`,
-        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
-      );
-    }
-
-    if (emailingDomain.tenantStatus !== EmailingDomainTenantStatus.ACTIVE) {
-      throw new EmailingDomainDriverException(
-        `Sending is suspended for emailing domain ${emailingDomain.domain} (tenantStatus: ${emailingDomain.tenantStatus})`,
-        EmailingDomainDriverExceptionCode.SENDING_SUSPENDED,
-      );
-    }
-
-    const fromAddressDomain = emailContent.from.split('@')[1]?.toLowerCase();
-
-    if (fromAddressDomain !== emailingDomain.domain.toLowerCase()) {
-      throw new EmailingDomainDriverException(
-        `From address ${emailContent.from} does not match verified domain ${emailingDomain.domain}`,
-        EmailingDomainDriverExceptionCode.CONFIGURATION_ERROR,
-      );
-    }
-
-    const messageCategory =
-      emailContent.messageCategory ?? EmailGroupMessageCategory.TRANSACTIONAL;
-
-    const suppressedAddresses =
-      await this.emailGroupSuppressionService.getSuppressedAddresses(
-        workspaceId,
-        [
-          ...emailContent.to,
-          ...(emailContent.cc ?? []),
-          ...(emailContent.bcc ?? []),
-        ],
-        messageCategory,
-      );
-
-    const isNotSuppressed = (address: string): boolean =>
-      !suppressedAddresses.has(address.trim().toLowerCase());
-
-    const deliverableTo = emailContent.to.filter(isNotSuppressed);
-
-    if (deliverableTo.length === 0) {
-      throw new EmailingDomainDriverException(
-        `All primary recipients are suppressed for emailing domain ${emailingDomain.domain}`,
-        EmailingDomainDriverExceptionCode.ALL_RECIPIENTS_SUPPRESSED,
-      );
-    }
-
-    const unsubscribeHeaders =
-      messageCategory === EmailGroupMessageCategory.CAMPAIGN
-        ? this.buildCampaignUnsubscribeHeaders(
-            workspaceId,
-            emailingDomain,
-            deliverableTo[0],
-          )
-        : [];
-
-    return this.emailingDomainDriverFactory.getCurrentDriver().sendEmail({
-      ...emailContent,
-      to: deliverableTo,
-      cc: emailContent.cc?.filter(isNotSuppressed),
-      bcc: emailContent.bcc?.filter(isNotSuppressed),
-      headers: [...(emailContent.headers ?? []), ...unsubscribeHeaders],
-      workspaceId,
-      domain: emailingDomain.domain,
-    });
-  }
-
-  private buildCampaignUnsubscribeHeaders(
-    workspaceId: string,
-    emailingDomain: EmailingDomainEntity,
-    primaryRecipient: string,
-  ) {
-    if (
-      emailingDomain.unsubscribeHostnameStatus !==
-        UnsubscribeHostnameStatus.ACTIVE ||
-      !isNonEmptyString(emailingDomain.unsubscribeHostname)
-    ) {
-      throw new EmailingDomainDriverException(
-        `Cannot send marketing email for ${emailingDomain.domain}: unsubscribe domain is not active (status: ${emailingDomain.unsubscribeHostnameStatus})`,
-        EmailingDomainDriverExceptionCode.UNSUBSCRIBE_NOT_READY,
-      );
-    }
-
-    const token = this.unsubscribeTokenService.sign({
-      workspaceId,
-      emailAddress: primaryRecipient,
-    });
-
-    return buildUnsubscribeHeaders({
-      unsubscribeHostname: emailingDomain.unsubscribeHostname,
-      domain: emailingDomain.domain,
-      token,
-    });
   }
 
   private async findEmailingDomainByIdOrThrow(

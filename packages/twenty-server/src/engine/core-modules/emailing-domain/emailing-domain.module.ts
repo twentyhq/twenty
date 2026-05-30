@@ -14,6 +14,7 @@ import { EmailGroupSuppressedRecipientEntity } from 'src/engine/core-modules/ema
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainResolver } from 'src/engine/core-modules/emailing-domain/emailing-domain.resolver';
 import { EmailingDomainWorkspaceCleanupJob } from 'src/engine/core-modules/emailing-domain/jobs/emailing-domain-workspace-cleanup.job';
+import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { EmailingDomainTenantStatusService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-tenant-status.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
@@ -36,12 +37,14 @@ import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspac
   controllers: [UnsubscribeController],
   exports: [
     EmailingDomainService,
+    EmailingDomainSenderService,
     EmailingDomainTenantStatusService,
     EmailGroupSuppressionService,
     UnsubscribeTokenService,
   ],
   providers: [
     EmailingDomainService,
+    EmailingDomainSenderService,
     EmailingDomainTenantStatusService,
     EmailGroupSuppressionService,
     UnsubscribeTokenService,

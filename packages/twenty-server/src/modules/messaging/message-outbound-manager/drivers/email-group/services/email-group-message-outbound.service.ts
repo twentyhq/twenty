@@ -5,7 +5,7 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
+import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import {
@@ -23,7 +23,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
   constructor(
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
-    private readonly emailingDomainService: EmailingDomainService,
+    private readonly emailingDomainSenderService: EmailingDomainSenderService,
   ) {}
 
   async sendMessage(
@@ -39,7 +39,7 @@ export class EmailGroupMessageOutboundService implements MessageOutboundDriver {
       );
     }
 
-    const result = await this.emailingDomainService.sendEmail(
+    const result = await this.emailingDomainSenderService.sendEmail(
       connectedAccount.workspaceId,
       emailingDomain.id,
       {
