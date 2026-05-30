@@ -48,9 +48,11 @@ export const SettingsNavigationDrawer = ({
 
   return (
     <NavigationDrawer className={className} title={t`Exit Settings`}>
-      <NavigationDrawerFixedContent>
-        <MainNavigationDrawerTabsRow />
-      </NavigationDrawerFixedContent>
+      {hasAiPermission && (
+        <NavigationDrawerFixedContent>
+          <MainNavigationDrawerTabsRow />
+        </NavigationDrawerFixedContent>
+      )}
 
       <NavigationDrawerScrollableContent>
         {showAiChatContent ? (

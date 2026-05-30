@@ -69,7 +69,13 @@ export const SettingsCustomizeVideoModal = ({
   tabs,
 }: SettingsCustomizeVideoModalProps) => {
   const { closeModal } = useModal();
-  const [activeTabId, setActiveTabId] = useState<string>(tabs[0].id);
+  const [activeTabId, setActiveTabId] = useState<string>(tabs[0]?.id ?? '');
+
+  // Callers always pass at least one tab in practice, but guard so a future
+  // empty array doesn't crash at tabs[0].id and tabs.find().
+  if (tabs.length === 0) {
+    return null;
+  }
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
 
