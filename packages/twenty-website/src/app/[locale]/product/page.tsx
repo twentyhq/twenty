@@ -20,8 +20,8 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/lib/seo';
+import { ProductDemo } from '@/app/[locale]/product/_components/ProductDemo';
 import { TalkToUsButton } from '@/sections/ContactCal';
-import { Demo } from '@/sections/Demo';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { Feature } from '@/sections/Feature';
 import { Hero } from '@/sections/Hero';
@@ -200,31 +200,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <HeadingPart fontFamily="sans">{i18n._(msg`with no-code`)}</HeadingPart>
       </ProductStepper.Flow>
 
-      <Demo.Root>
-        <Eyebrow>
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`Try it live`)}
-          </HeadingPart>
-        </Eyebrow>
-        <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`A demo worth a`)}
-          </HeadingPart>
-          <br />
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`thousand words`)}
-          </HeadingPart>
-        </Heading>
-        <Demo.Cta>
-          <LinkButton
-            color="secondary"
-            href="https://app.twenty.com/welcome"
-            label={i18n._(msg`Try Twenty Cloud`)}
-            variant="contained"
-          />
-        </Demo.Cta>
-        <Demo.Preview visual={APP_PREVIEW_DATA.visual} />
-      </Demo.Root>
+      <ProductDemo />
 
       <Faq.Root>
         <Faq.Intro>
