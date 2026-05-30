@@ -1,18 +1,14 @@
-import { msg } from '@lingui/core/macro';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
 import { PLAN_TABLE_DATA } from '@/app/[locale]/pricing/plan-table.data';
-import { SALESFORCE_DATA } from '@/app/[locale]/pricing/salesforce.data';
-import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { EngagementBand } from '@/sections/EngagementBand';
+import { PricingEngagementBand } from '@/app/[locale]/pricing/_components/PricingEngagementBand';
 import { PricingHero } from '@/app/[locale]/pricing/_components/PricingHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { Plans, PricingStateProvider } from '@/sections/Plans';
 import { PlanTable } from '@/sections/PlanTable';
-import { Salesforce } from '@/sections/Salesforce';
+import { PricingSalesforce } from '@/app/[locale]/pricing/_components/PricingSalesforce';
 import { theme } from '@/theme';
 import { buildFaqPageJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { styled } from '@linaria/react';
@@ -21,11 +17,6 @@ const PricingPlansContainer = styled.div`
   display: grid;
   margin: 0 auto;
   row-gap: ${theme.spacing(8)};
-  width: 100%;
-`;
-
-const PricingBannerContainer = styled.div`
-  margin: 0 auto;
   width: 100%;
 `;
 
@@ -56,51 +47,14 @@ export default async function PricingPage({ params }: PricingPageProps) {
           </PricingPlansContainer>
         </Plans.Root>
 
-        <EngagementBand.Root scheme="muted">
-          <PricingBannerContainer>
-            <EngagementBand.Strip
-              desktopCopyMaxWidth="60%"
-              fillColor={theme.colors.primary.background[100]}
-              variant="primary"
-            >
-              <EngagementBand.Copy>
-                <EngagementBand.Heading>
-                  <HeadingPart fontFamily="serif">
-                    {i18n._(msg`Need help with customization?`)}
-                  </HeadingPart>
-                </EngagementBand.Heading>
-                <EngagementBand.Body>
-                  {i18n._(
-                    msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
-                  )}
-                </EngagementBand.Body>
-              </EngagementBand.Copy>
-              <EngagementBand.Actions>
-                <BecomePartnerButton
-                  color="secondary"
-                  label={msg`Find a partner`}
-                  variant="outlined"
-                />
-              </EngagementBand.Actions>
-            </EngagementBand.Strip>
-          </PricingBannerContainer>
-        </EngagementBand.Root>
+        <PricingEngagementBand />
 
         <PlanTable.Root scheme="dark">
           <PlanTable.Content data={PLAN_TABLE_DATA} />
         </PlanTable.Root>
       </PricingStateProvider>
 
-      <Salesforce.Flow
-        scheme="muted"
-        body={SALESFORCE_DATA.body}
-        pricing={SALESFORCE_DATA.pricing}
-      >
-        <HeadingPart fontFamily="serif">
-          {i18n._(msg`Trust the n°1 CRM,`)}
-        </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">{i18n._(msg`or not !`)}</HeadingPart>
-      </Salesforce.Flow>
+      <PricingSalesforce />
 
       <Faq />
     </>
