@@ -12,6 +12,7 @@ import { MessagingQueryHookModule } from 'src/modules/messaging/common/query-hoo
 import { NoteQueryHookModule } from 'src/modules/note/query-hooks/note-query-hook.module';
 import { TaskQueryHookModule } from 'src/modules/task/query-hooks/task-query-hook.module';
 import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/query-hooks/workspace-member-query-hook.module';
+import { PropelRlsModule } from 'src/modules/propel-rls/propel-rls.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { WorkspaceMemberQueryHookModule } from 'src/modules/workspace-member/que
     WorkspaceMemberQueryHookModule,
     NoteQueryHookModule,
     TaskQueryHookModule,
+    PropelRlsModule,
     DiscoveryModule,
   ],
   providers: [
