@@ -23,9 +23,13 @@ export const TintedIconTile = ({
   const style = getIconTileColorShades(color);
   const iconSize = sizeFromProps ?? theme.icon.size.md;
   const iconStroke = strokeFromProps ?? theme.icon.stroke.md;
+  // When the caller doesn't specify a tile size, give the tile 4px of
+  // breathing room around the icon on each side instead of letting the
+  // icon fill the tile edge-to-edge. Callers that pass `size` still get a
+  // tile sized exactly to that value (back-compat with explicit sizing).
   const tileDimension = isDefined(sizeFromProps)
     ? `${sizeFromProps}px`
-    : undefined;
+    : `${iconSize + 8}px`;
 
   return (
     <StyledTintedIconTileContainer
