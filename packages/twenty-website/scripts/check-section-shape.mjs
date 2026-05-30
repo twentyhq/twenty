@@ -92,7 +92,7 @@ async function checkSection(name) {
   const barrel = await findBarrel(sectionDir);
   if (barrel === null) {
     violations.push(
-      `${name}: missing components/index.{ts,tsx} barrel — every section must expose a single compound export.`,
+      `${name}: missing a barrel (index.{ts,tsx}) — every section must expose its public API through one barrel (flat named exports; no compound objects).`,
     );
     return violations;
   }
