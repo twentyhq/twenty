@@ -10,9 +10,19 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+
+// AdvancedSettingsToggle sits in NavigationDrawerFixedContent and the
+// container itself is edge-to-edge by default, so the toggle gets its
+// indent here. Asymmetric L vs R matches the original settings layout.
+const StyledAdvancedToggleWrapper = styled.div`
+  padding-left: ${themeCssVariables.spacing[5]};
+  padding-right: ${themeCssVariables.spacing[8]};
+`;
 
 // Same shape as MainNavigationDrawer: a Home/Chat tab toggle pinned to the
 // top, then either the settings nav (Home) or the AI chat thread list
@@ -52,11 +62,13 @@ export const SettingsNavigationDrawer = ({
 
       {!showAiChatContent && (
         <NavigationDrawerFixedContent>
-          <AdvancedSettingsToggle
-            isAdvancedModeEnabled={isAdvancedModeEnabled}
-            setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
-            label={t`Advanced:`}
-          />
+          <StyledAdvancedToggleWrapper>
+            <AdvancedSettingsToggle
+              isAdvancedModeEnabled={isAdvancedModeEnabled}
+              setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}
+              label={t`Advanced:`}
+            />
+          </StyledAdvancedToggleWrapper>
         </NavigationDrawerFixedContent>
       )}
     </NavigationDrawer>
