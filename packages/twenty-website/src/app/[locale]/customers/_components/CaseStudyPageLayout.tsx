@@ -1,7 +1,14 @@
 import { getCaseStudyPalette, type CaseStudyData } from '@/lib/customers';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { CaseStudy } from '@/sections/CaseStudy';
+import {
+  CaseStudyBody,
+  CaseStudyHero,
+  CaseStudyHighlights,
+  CaseStudySectionNav,
+  CaseStudyTextBlock,
+  CaseStudyVisualBlock,
+} from '@/sections/CaseStudy';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 
@@ -26,7 +33,7 @@ export async function CaseStudyPageLayout({
       const sectionId = `case-study-section-${storySectionIndex}`;
       storySectionIndex += 1;
       return (
-        <CaseStudy.TextBlock
+        <CaseStudyTextBlock
           key={index}
           block={block}
           isLast={index === caseStudy.sections.length - 1}
@@ -35,7 +42,7 @@ export async function CaseStudyPageLayout({
       );
     }
     return (
-      <CaseStudy.VisualBlock
+      <CaseStudyVisualBlock
         key={index}
         block={block}
         isLast={index === caseStudy.sections.length - 1}
@@ -51,20 +58,20 @@ export async function CaseStudyPageLayout({
         socialLinks={menuSocialLinks}
       />
 
-      <CaseStudy.Hero
+      <CaseStudyHero
         dashColor={palette.dashColor}
         hero={caseStudy.hero}
         hoverDashColor={palette.hoverDashColor}
       />
 
-      <CaseStudy.Highlights
+      <CaseStudyHighlights
         industry={caseStudy.hero.industry}
         kpis={caseStudy.hero.kpis}
       />
 
-      <CaseStudy.Body>{sectionBlocks}</CaseStudy.Body>
+      <CaseStudyBody>{sectionBlocks}</CaseStudyBody>
 
-      <CaseStudy.SectionNav items={caseStudy.tableOfContents} />
+      <CaseStudySectionNav items={caseStudy.tableOfContents} />
       <CustomersCaseStudySignoff />
     </>
   );

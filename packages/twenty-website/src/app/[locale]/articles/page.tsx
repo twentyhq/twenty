@@ -12,7 +12,7 @@ import {
   buildRouteMetadata,
   JsonLd,
 } from '@/lib/seo';
-import { Articles } from '@/sections/Articles';
+import { ArticlesIndex } from '@/sections/Articles';
 import { ArticlesHero } from '@/app/[locale]/articles/_components/ArticlesHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { TrustedBy } from '@/sections/TrustedBy';
@@ -97,7 +97,7 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
         />
       </div>
 
-      <Articles.Index posts={posts} />
+      <ArticlesIndex posts={posts} />
     </>
   );
 }

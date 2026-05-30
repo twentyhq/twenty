@@ -6,7 +6,12 @@ import { getVisibleReleaseNotes } from '@/lib/releases/get-visible-releases';
 import { loadLocalReleaseNotes } from '@/lib/releases/load-local-release-notes';
 import { ReleasesHero } from '@/app/[locale]/releases/_components/ReleasesHero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { ReleaseNotes } from '@/sections/ReleaseNotes';
+import {
+  ReleaseNotesDivider,
+  ReleaseNotesEmptyMessage,
+  ReleaseNotesReleaseEntry,
+  ReleaseNotesSection,
+} from '@/sections/ReleaseNotes';
 import { theme } from '@/theme';
 import { buildReleaseListJsonLd, buildRouteMetadata, JsonLd } from '@/lib/seo';
 import { Fragment } from 'react';
@@ -53,33 +58,31 @@ export default async function ReleasesPage({ params }: ReleasesPageProps) {
 
       <ReleasesHero />
 
-      <ReleaseNotes.Root>
+      <ReleaseNotesSection>
         {allNotes.length === 0 ? (
-          <ReleaseNotes.EmptyMessage>
+          <ReleaseNotesEmptyMessage>
             Releases were not found. Add MDX under{' '}
             <strong>packages/twenty-website/src/content/releases</strong> and
             images under{' '}
             <strong>packages/twenty-website/public/images/releases</strong>.
-          </ReleaseNotes.EmptyMessage>
+          </ReleaseNotesEmptyMessage>
         ) : visibleNotes.length === 0 ? (
-          <ReleaseNotes.EmptyMessage>
+          <ReleaseNotesEmptyMessage>
             No releases are visible yet for the current published version.
-          </ReleaseNotes.EmptyMessage>
+          </ReleaseNotesEmptyMessage>
         ) : (
           visibleNotes.map((note, index) => (
             <Fragment key={note.slug}>
-              <ReleaseNotes.ReleaseEntry
+              <ReleaseNotesReleaseEntry
                 content={note.content}
                 date={note.date}
                 release={note.release}
               />
-              {index < visibleNotes.length - 1 ? (
-                <ReleaseNotes.Divider />
-              ) : null}
+              {index < visibleNotes.length - 1 ? <ReleaseNotesDivider /> : null}
             </Fragment>
           ))
         )}
-      </ReleaseNotes.Root>
+      </ReleaseNotesSection>
     </>
   );
 }

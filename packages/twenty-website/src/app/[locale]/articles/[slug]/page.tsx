@@ -8,7 +8,7 @@ import { type LocaleRouteParams } from '@/lib/i18n/server';
 import { localeToUrlSegment, resolveLocaleParam } from '@/lib/i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { buildArticleJsonLd, buildPageMetadata, JsonLd } from '@/lib/seo';
-import { Articles } from '@/sections/Articles';
+import { ArticlesArticle } from '@/sections/Articles';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 
@@ -71,7 +71,7 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         backgroundColor={theme.colors.primary.background[100]}
         socialLinks={menuSocialLinks}
       />
-      <Articles.Article post={post} />
+      <ArticlesArticle post={post} />
     </>
   );
 }
