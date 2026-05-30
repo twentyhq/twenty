@@ -25,13 +25,7 @@ import { TalkToUsButton } from '@/sections/ContactCal';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import {
-  ProductStepper,
-  type ProductStepperStepType,
-} from '@/sections/ProductStepper';
-import { DataModelVisual } from '@/sections/ProductStepper/visuals/DataModelVisual';
-import { LayoutVisual } from '@/sections/ProductStepper/visuals/LayoutVisual';
-import { WorkflowVisual } from '@/sections/ProductStepper/visuals/WorkflowVisual';
+import { ProductStepperSection } from '@/app/[locale]/product/_components/product-stepper';
 import { ThreeCards } from '@/sections/ThreeCards';
 import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
 import { theme } from '@/theme';
@@ -50,33 +44,6 @@ export default async function ProductPage({ params }: ProductPageProps) {
     fetchCommunityStats(),
   ]);
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
-
-  const PRODUCT_STEPS: ProductStepperStepType[] = [
-    {
-      icon: 'users',
-      heading: (
-        <HeadingPart fontFamily="sans">{i18n._(msg`Data model`)}</HeadingPart>
-      ),
-      body: msg`Add objects and fields`,
-      visual: DataModelVisual,
-    },
-    {
-      icon: 'check',
-      heading: (
-        <HeadingPart fontFamily="sans">{i18n._(msg`Automation`)}</HeadingPart>
-      ),
-      body: msg`Create a workflow`,
-      visual: WorkflowVisual,
-    },
-    {
-      icon: 'eye',
-      heading: (
-        <HeadingPart fontFamily="sans">{i18n._(msg`Layout`)}</HeadingPart>
-      ),
-      body: msg`Tailor record pages, menus, and views`,
-      visual: LayoutVisual,
-    },
-  ];
 
   return (
     <>
@@ -169,18 +136,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <ThreeCards.IllustrationCards illustrationCards={ILLUSTRATION_CARDS} />
       </ThreeCards.Root>
 
-      <ProductStepper.Flow
-        body={i18n._(
-          msg`Need a quick change? Skip the engineering ticket. Customize your workspace in minutes.`,
-        )}
-        eyebrow={i18n._(msg`Customization`)}
-        steps={PRODUCT_STEPS}
-      >
-        <HeadingPart fontFamily="serif">
-          {i18n._(msg`Go the extra mile`)}
-        </HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">{i18n._(msg`with no-code`)}</HeadingPart>
-      </ProductStepper.Flow>
+      <ProductStepperSection />
 
       <ProductDemo />
 
