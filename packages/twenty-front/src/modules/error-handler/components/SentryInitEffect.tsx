@@ -8,6 +8,15 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+const isSafariBrowser = () => {
+  const userAgent = window.navigator.userAgent;
+
+  return (
+    /Safari/i.test(userAgent) &&
+    !/(Chrome|Chromium|Android|CriOS)/i.test(userAgent)
+  );
+};
+
 export const SentryInitEffect = () => {
   const sentryConfig = useAtomStateValue(sentryConfigState);
 
@@ -36,13 +45,15 @@ export const SentryInitEffect = () => {
             globalHandlersIntegration,
           } = await import('@sentry/react');
 
+          const shouldEnableReplay = !isSafariBrowser();
+
           init({
             environment: sentryConfig?.environment ?? undefined,
             release: sentryConfig?.release ?? undefined,
             dsn: sentryConfig?.dsn,
             integrations: [
               browserTracingIntegration({}),
-              replayIntegration(),
+              ...(shouldEnableReplay ? [replayIntegration()] : []),
               globalHandlersIntegration({
                 onunhandledrejection: false, // handled in PromiseRejectionEffect
               }),
@@ -52,8 +63,8 @@ export const SentryInitEffect = () => {
               REACT_APP_SERVER_BASE_URL,
             ],
             tracesSampleRate: 1.0,
-            replaysSessionSampleRate: 0.1,
-            replaysOnErrorSampleRate: 1.0,
+            replaysSessionSampleRate: shouldEnableReplay ? 0.1 : 0,
+            replaysOnErrorSampleRate: shouldEnableReplay ? 1.0 : 0,
           });
 
           setIsSentryInitialized(true);
