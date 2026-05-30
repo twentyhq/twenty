@@ -78,7 +78,7 @@ const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
 
-export const SettingsToolsTable = () => {
+export const SettingsAgentTools = () => {
   const { theme } = useContext(ThemeContext);
   const logicFunctions = useAtomStateValue(logicFunctionsSelector);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);

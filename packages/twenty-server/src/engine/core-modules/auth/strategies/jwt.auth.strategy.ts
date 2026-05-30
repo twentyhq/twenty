@@ -13,16 +13,16 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import {
-  type AccessTokenJwtPayload,
-  type ApiKeyTokenJwtPayload,
-  ApplicationAccessTokenJwtPayload,
   type AuthContext,
   type AuthContextUser,
-  type JwtPayload,
-  JwtTokenTypeEnum,
-  type PlaygroundTokenJwtPayload,
-  type WorkspaceAgnosticTokenJwtPayload,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
+import { type ApiKeyTokenJwtPayload } from 'src/engine/core-modules/auth/types/api-key-token-jwt-payload.type';
+import { ApplicationAccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/application-access-token-jwt-payload.type';
+import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
+import { type WorkspaceAgnosticTokenJwtPayload } from 'src/engine/core-modules/auth/types/workspace-agnostic-token-jwt-payload.type';
 import { type FlatUserWorkspace } from 'src/engine/core-modules/user-workspace/types/flat-user-workspace.type';
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { JWT_SUPPORTED_VERIFY_ALGORITHMS } from 'src/engine/core-modules/jwt/constants/jwt-algorithm.constant';
@@ -118,9 +118,7 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       );
     }
 
-    // Only ACCESS tokens can carry impersonation; PLAYGROUND is always
-    // first-person. The type discriminator narrows payload to the ACCESS
-    // variant inside this branch.
+    // Only ACCESS tokens can carry impersonation; PLAYGROUND is always first-person.
     if (
       payload.type === JwtTokenTypeEnum.ACCESS &&
       payload.isImpersonating === true
@@ -444,9 +442,6 @@ export class JwtAuthStrategy extends PassportStrategy(Strategy, 'jwt') {
       return await this.validateWorkspaceAgnosticToken(payload);
     }
 
-    // PLAYGROUND tokens walk the same validation as ACCESS so resolvers see
-    // a full user context. They differ only in the type marker (used for
-    // audit/telemetry) and the absence of impersonation claims.
     if (
       payload.type === JwtTokenTypeEnum.ACCESS ||
       payload.type === JwtTokenTypeEnum.PLAYGROUND

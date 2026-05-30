@@ -8,12 +8,6 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// The container fills its parent on desktop. The actual content cap is set
-// upstream by SubMenuTopBarContainer's max-width wrapper (1024 px today), so
-// cards, tables, and forms stretch the full width of the centered column
-// rather than living in the old 512 px column tied to the previous centered
-// settings layout. Pages can still pass an explicit `width` for a narrower
-// form-style layout.
 const StyledSettingsPageContainer = styled.div<{
   width?: number;
   isMobile?: boolean;

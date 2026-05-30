@@ -26,10 +26,11 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/workspace/constants/SettingsApiWebhooksTabs';
 
-type TabKey = 'api' | 'mcp' | 'webhooks';
+type TabKey =
+  (typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS)[keyof typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS];
 
-const SETTINGS_API_WEBHOOKS_TABS_INSTANCE_ID = 'settings-api-webhooks-tabs';
 const SETTINGS_API_HERO_MODAL_ID = 'settings-api-hero-modal';
 const SETTINGS_API_HERO_TABS_ID = 'settings-api-hero-tabs';
 
@@ -56,7 +57,7 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
   overflow: ${({ isMobile }) => (isMobile ? 'hidden' : 'visible')};
 `;
 
-const TAB_KEYS = ['api', 'mcp', 'webhooks'] as const;
+const TAB_KEYS = Object.values(SETTINGS_API_WEBHOOKS_TABS.TABS_IDS);
 
 const isTabKey = (value: string): value is TabKey =>
   (TAB_KEYS as readonly string[]).includes(value);
@@ -65,30 +66,27 @@ export const SettingsApiWebhooks = () => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
 
-  // TabList writes to activeTabIdComponentState (keyed by componentInstanceId)
-  // on click, and its internal TabListFromUrlOptionalEffect syncs URL hash →
-  // atom so deep links land on the right tab. We only read here.
   const activeTabId = useAtomComponentStateValue(
     activeTabIdComponentState,
-    SETTINGS_API_WEBHOOKS_TABS_INSTANCE_ID,
+    SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID,
   );
   const activeTab: TabKey = isTabKey(activeTabId ?? '')
     ? (activeTabId as TabKey)
-    : 'api';
+    : SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API;
 
   const tabs = [
     {
-      id: 'api' satisfies TabKey,
+      id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
       title: t`API`,
       Icon: IconCode,
     },
     {
-      id: 'mcp' satisfies TabKey,
+      id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP,
       title: t`MCP`,
       Icon: IconRobot,
     },
     {
-      id: 'webhooks' satisfies TabKey,
+      id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS,
       title: t`Webhooks`,
       Icon: IconWebhook,
     },
@@ -133,10 +131,10 @@ export const SettingsApiWebhooks = () => {
         <TabList
           tabs={tabs}
           behaveAsLinks={false}
-          componentInstanceId={SETTINGS_API_WEBHOOKS_TABS_INSTANCE_ID}
+          componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
         />
 
-        {activeTab === 'api' && (
+        {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API && (
           <StyledTabContent>
             <Section>
               <H2Title
@@ -167,13 +165,13 @@ export const SettingsApiWebhooks = () => {
           </StyledTabContent>
         )}
 
-        {activeTab === 'mcp' && (
+        {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.MCP && (
           <StyledTabContent>
             <SettingsMcpSetup />
           </StyledTabContent>
         )}
 
-        {activeTab === 'webhooks' && (
+        {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.WEBHOOKS && (
           <StyledTabContent>
             <Section>
               <H2Title

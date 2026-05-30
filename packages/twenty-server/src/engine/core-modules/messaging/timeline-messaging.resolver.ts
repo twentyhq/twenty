@@ -11,7 +11,9 @@ import { DismissReconnectAccountBannerInput } from 'src/engine/core-modules/mess
 import { TimelineThreadsWithTotalDTO } from 'src/engine/core-modules/messaging/dtos/timeline-threads-with-total.dto';
 import { GetMessagesService } from 'src/engine/core-modules/messaging/services/get-messages.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthUser } from 'src/engine/decorators/auth/auth-user.decorator';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';

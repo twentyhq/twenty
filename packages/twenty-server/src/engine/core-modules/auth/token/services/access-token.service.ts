@@ -15,12 +15,10 @@ import {
 } from 'src/engine/core-modules/auth/auth.exception';
 import { type AuthToken } from 'src/engine/core-modules/auth/dto/auth-token.dto';
 import { JwtAuthStrategy } from 'src/engine/core-modules/auth/strategies/jwt.auth.strategy';
-import {
-  type AccessTokenJwtPayload,
-  type AuthContext,
-  JwtTokenTypeEnum,
-  type PlaygroundTokenJwtPayload,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { type PlaygroundTokenJwtPayload } from 'src/engine/core-modules/auth/types/playground-token-jwt-payload.type';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -48,11 +46,6 @@ export class AccessTokenService {
     private readonly userWorkspaceRepository: Repository<UserWorkspaceEntity>,
   ) {}
 
-  // Shared subject lookup for access-shaped tokens. Runs the three
-  // independent reads (user, workspace, userWorkspace) in parallel, then —
-  // when the workspace is active or suspended — resolves workspaceMember
-  // inside the workspace ORM context so the JWT can carry the claim that
-  // current{User,WorkspaceMember}() resolvers depend on.
   private async resolveTokenSubject(
     userId: string,
     workspaceId: string,

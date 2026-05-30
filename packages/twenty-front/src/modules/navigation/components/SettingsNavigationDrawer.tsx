@@ -16,18 +16,11 @@ import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-// AdvancedSettingsToggle sits in NavigationDrawerFixedContent and the
-// container itself is edge-to-edge by default, so the toggle gets its
-// indent here. Asymmetric L vs R matches the original settings layout.
 const StyledAdvancedToggleWrapper = styled.div`
   padding-left: ${themeCssVariables.spacing[5]};
   padding-right: ${themeCssVariables.spacing[8]};
 `;
 
-// Same shape as MainNavigationDrawer: a Home/Chat tab toggle pinned to the
-// top, then either the settings nav (Home) or the AI chat thread list
-// (Chat). The AdvancedSettingsToggle stays pinned to the bottom and only
-// makes sense on the Home tab.
 export const SettingsNavigationDrawer = ({
   className,
 }: {

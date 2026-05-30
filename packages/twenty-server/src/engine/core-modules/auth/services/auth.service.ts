@@ -47,8 +47,8 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
 import {
   AuthContextUser,
-  JwtTokenTypeEnum,
 } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,

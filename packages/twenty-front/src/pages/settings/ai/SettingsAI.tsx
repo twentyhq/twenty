@@ -24,14 +24,13 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { UndecoratedLink } from 'twenty-ui/navigation';
-// Hero illustration: reuse the existing AI Tools cover for the page hero
-// instead of a layout placeholder. Lives in /public so referenced as a path.
+
 const AI_HERO_LIGHT = '/images/ai/ai-tools-cover-light.png';
 const AI_HERO_DARK = '/images/ai/ai-tools-cover-dark.png';
 
 const SETTINGS_AI_HERO_MODAL_ID = 'settings-ai-hero-modal';
 const SETTINGS_AI_HERO_TABS_ID = 'settings-ai-hero-tabs';
-import { SettingsAgentToolsTab } from '~/pages/settings/ai/components/SettingsAgentToolsTab';
+import { SettingsAgentTools } from '~/pages/settings/ai/components/SettingsAgentTools';
 import { SettingsAiOverviewTab } from '~/pages/settings/ai/components/SettingsAiOverviewTab';
 import { SettingsAiModelsTab } from './components/SettingsAiModelsTab';
 import { SettingsAiUsageTab } from './components/SettingsAiUsageTab';
@@ -117,9 +116,6 @@ export const SettingsAI = () => {
     },
   ];
 
-  // The TabList initializes its active tab from the first tabs[] entry on
-  // mount when state is undefined — Overview now leads, so first paint
-  // shows Overview without a flash of "no tab selected".
   const resolvedTabId = activeTabId ?? SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
   const isOverviewTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.OVERVIEW;
   const isModelsTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.MODELS;
@@ -196,7 +192,7 @@ export const SettingsAI = () => {
         {isOverviewTab && <SettingsAiOverviewTab />}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkills />}
-        {isToolsTab && <SettingsAgentToolsTab />}
+        {isToolsTab && <SettingsAgentTools />}
         {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>
     </SubMenuTopBarContainer>

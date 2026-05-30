@@ -45,11 +45,9 @@ import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services
 import { RenewTokenService } from 'src/engine/core-modules/auth/token/services/renew-token.service';
 import { TransientTokenService } from 'src/engine/core-modules/auth/token/services/transient-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
-import {
-  AuthContextUser,
-  JwtTokenTypeEnum,
-  LoginTokenJwtPayload,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
+import { LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
 import { CaptchaGuard } from 'src/engine/core-modules/captcha/captcha.guard';
 import { CaptchaGraphqlApiExceptionFilter } from 'src/engine/core-modules/captcha/filters/captcha-graphql-api-exception.filter';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
@@ -822,12 +820,6 @@ export class AuthResolver {
     );
   }
 
-  // Mints a short-lived JWT for the in-app REST/GraphQL playground. The token
-  // is access-shaped (carries userId + workspaceMemberId) so the playground
-  // page runs against the caller's actual permissions — no shared "Playground"
-  // API key to manage or revoke. TTL is set by PLAYGROUND_TOKEN_EXPIRES_IN.
-  // Guarded by API_KEYS_AND_WEBHOOKS to match the UI gate on the playground
-  // page and stay consistent with generateApiKeyToken above.
   @UseGuards(
     WorkspaceAuthGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),

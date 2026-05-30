@@ -75,9 +75,6 @@ const StatRow = ({ Icon, label, value }: StatRowProps) => {
   );
 };
 
-// Multi-column stats panel used by settings discovery pages (Layout overview,
-// AI overview, etc.). Each row is a labelled icon + a single value cell;
-// columns separate logical groupings.
 export const SettingsStatsGrid = ({ columns }: SettingsStatsGridProps) => (
   <StyledContainer>
     {columns.map((column, index) => (

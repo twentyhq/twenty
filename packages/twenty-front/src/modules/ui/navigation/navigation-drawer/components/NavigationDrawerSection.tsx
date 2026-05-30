@@ -9,10 +9,6 @@ const StyledSection = styled.div`
   width: 100%;
 `;
 
-// Width subtracts spacing[2] on desktop expanded drawers — both main app and
-// settings — so the active item's highlight leaves a small gap before the
-// drawer's right edge. Previously the settings drawer was special-cased to
-// 100% width, which let the active highlight run flush against the edge.
 const StyledSectionInnerContainerMinusScrollPadding = styled.div<{
   isMobile: boolean;
   isMainNavCollapsed: boolean;

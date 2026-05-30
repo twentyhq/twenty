@@ -8,7 +8,9 @@ import { ApprovedAccessDomainService } from 'src/engine/core-modules/approved-ac
 import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/core-entity-cache.service';
 import { AuthException } from 'src/engine/core-modules/auth/auth.exception';
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';

@@ -13,11 +13,6 @@ import { matchPath, resolvePath, useLocation } from 'react-router-dom';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { getSettingsPath } from 'twenty-shared/utils';
 
-// Spacing between settings sections (User / Workspace / Other). Lives here
-// instead of on NavigationDrawerSection so it only applies between section
-// siblings — it doesn't leak into other places NavigationDrawerSection is
-// reused (e.g. the chat tabs row, which would otherwise push the first
-// section header further down than it does in the App).
 const StyledSectionsContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -117,9 +112,6 @@ export const SettingsNavigationDrawerItems = () => {
         return (
           <CollapsibleNavigationDrawerSection
             key={section.label}
-            // The 'settings/' prefix namespaces the open-state away from the
-            // main app's identically-named sections (Workspace, Other) so
-            // collapsing in one place doesn't collapse in the other.
             sectionId={`settings/${section.label}`}
             label={section.label}
             wrapTitle={

@@ -6,10 +6,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 import { JwtAuthStrategy } from './jwt.auth.strategy';

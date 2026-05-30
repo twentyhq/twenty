@@ -13,16 +13,10 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { GeneratePlaygroundTokenDocument } from '~/generated-metadata/graphql';
 
-// Don't reuse a cached token if it's about to expire — give the user enough
-// runway to make a few requests before they 401.
 const TOKEN_FRESHNESS_BUFFER_SECONDS = 5 * 60;
 
-// We only reuse a cached token if it's BOTH a PLAYGROUND-type JWT AND has
-// enough runway left. Without the type check, an old API_KEY token left in
-// localStorage from a prior version of this flow would pass the exp check
-// (API_KEY JWTs are signed with a 100-year expiry) and silently get sent to
-// the backend, which then rejects it via the API_KEY validation path with
-// "This API Key is revoked".
+// A cached token is reusable only when it is a PLAYGROUND-type JWT and has
+// more than the freshness buffer of runway left.
 const isCachedTokenUsable = (token: string | null): boolean => {
   if (token === null) return false;
   try {
@@ -36,10 +30,6 @@ const isCachedTokenUsable = (token: string | null): boolean => {
   }
 };
 
-// Centralizes the "enter the REST/GraphQL playground" flow: ensure
-// playgroundApiKeyState holds a non-expiring PLAYGROUND JWT, then navigate.
-// Re-minting is skipped when the cached token still has more than the
-// freshness buffer left, so repeat clicks within the TTL are zero-roundtrip.
 export const useOpenPlayground = () => {
   const navigateSettings = useNavigateSettings();
   const setPlaygroundApiKey = useSetAtomState(playgroundApiKeyState);
@@ -61,9 +51,6 @@ export const useOpenPlayground = () => {
       if (!isCachedTokenUsable(playgroundApiKey)) {
         const { data } = await generatePlaygroundToken();
         const token = data?.generatePlaygroundToken.token;
-        // Apollo resolves the mutation promise with data: undefined when the
-        // server errors, AND fires onError above — which already shows the
-        // snackbar. Just bail out here without raising a second one.
         if (!isDefined(token)) return;
         setPlaygroundApiKey(token);
       }
@@ -76,7 +63,6 @@ export const useOpenPlayground = () => {
     },
     [
       playgroundApiKey,
-      enqueueErrorSnackBar,
       generatePlaygroundToken,
       navigateSettings,
       setPlaygroundApiKey,

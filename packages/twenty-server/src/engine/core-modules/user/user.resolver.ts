@@ -20,7 +20,9 @@ import {
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
 import { AvailableWorkspaces } from 'src/engine/core-modules/auth/dto/available-workspaces.dto';
-import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import {
+  type AuthContextUser,
+} from 'src/engine/core-modules/auth/types/auth-context.type';
 import { OnboardingStatus } from 'src/engine/core-modules/onboarding/enums/onboarding-status.enum';
 import {
   OnboardingService,

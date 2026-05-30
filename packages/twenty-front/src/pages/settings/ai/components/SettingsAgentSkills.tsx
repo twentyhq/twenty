@@ -22,9 +22,6 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
-// Cover illustration removed — the page-level hero card above the tab list
-// already serves that role, so the in-tab repeat was visual noise.
-
 const StyledSearchInput = styled(SearchInput)`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;

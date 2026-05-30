@@ -39,21 +39,14 @@ const StyledOverlay = styled.div`
 `;
 
 type SettingsDiscoveryHeroCardProps = {
-  // Theme-aware illustration sources. Both required so the hero adapts.
   lightSrc: string;
   darkSrc: string;
-  // Unique per page so different heroes don't share modal state.
   modalInstanceId: string;
   tabsInstanceId: string;
   tabs: SettingsCustomizeVideoModalTab[];
   playButtonAriaLabel?: string;
 };
 
-// One-stop hero card for settings discovery pages.
-// Card frame + cover illustration + centered play button + tabbed video modal,
-// all wired together. Each page just provides its illustration sources, a
-// unique modal id, and the per-tab video config — no per-page wrapper files,
-// no copy-pasted Card/HeroPlayButton/modal plumbing.
 export const SettingsDiscoveryHeroCard = ({
   lightSrc,
   darkSrc,

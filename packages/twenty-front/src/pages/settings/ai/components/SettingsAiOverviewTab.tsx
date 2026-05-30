@@ -35,7 +35,6 @@ const StyledInstructionsContainer = styled.div`
   gap: ${themeCssVariables.spacing[4]};
 `;
 
-// Deep-link path to the MCP tab on the APIs & Webhooks page.
 const MCP_DEEP_LINK = `${getSettingsPath(SettingsPath.ApiWebhooks)}#mcp`;
 
 export const SettingsAiOverviewTab = () => {
@@ -46,8 +45,6 @@ export const SettingsAiOverviewTab = () => {
   );
   const [updateWorkspace] = useMutation(UpdateWorkspaceDocument);
 
-  // At-a-glance counts. Conversations + AI workflows show "—" until we add a
-  // workspace-wide AiChatThread count endpoint / WorkflowVersion AI filter.
   const agentsResult = useQuery(FindManyAgentsDocument);
   const logicFunctionsResult = useQuery(FIND_MANY_LOGIC_FUNCTIONS);
   const skillsCount = agentsResult.data?.findManyAgents?.length ?? 0;
@@ -55,7 +52,6 @@ export const SettingsAiOverviewTab = () => {
     (logicFunctionsResult.data as { findManyLogicFunctions?: unknown[] })
       ?.findManyLogicFunctions?.length ?? 0;
 
-  // Workspace Instructions — lifted from the deleted SettingsAiMoreTab.
   const initialInstructions = currentWorkspace?.aiAdditionalInstructions ?? '';
   const [workspaceInstructions, setWorkspaceInstructions] =
     useState(initialInstructions);

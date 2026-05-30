@@ -70,8 +70,6 @@ export const SettingsAiModelsTab = () => {
   const { useRecommendedModels, realModels, enabledModels } =
     useWorkspaceAiModelAvailability();
 
-  // Default model pickers (Smart / Fast) — pinned "auto-select" entry is the
-  // "Best" option for each tier, options pull from the workspace-enabled set.
   const currentSmartModel = currentWorkspace?.smartModel;
   const currentFastModel = currentWorkspace?.fastModel;
 

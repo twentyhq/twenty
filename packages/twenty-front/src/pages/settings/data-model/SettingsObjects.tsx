@@ -32,8 +32,6 @@ export const SettingsObjects = () => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
-  // Vimeo IDs re-used from twenty-docs. Relations re-uses the data-model
-  // core-concepts demo since no dedicated relations walkthrough exists yet.
   const heroTabs = useMemo(
     () => [
       {
