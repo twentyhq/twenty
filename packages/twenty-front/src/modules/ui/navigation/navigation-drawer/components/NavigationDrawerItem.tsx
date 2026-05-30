@@ -208,11 +208,12 @@ const StyledIcon = styled.div`
 
 // Soft grey background-only tile (no border) used by the settings drawer.
 // Sized one step larger than the icon so the icon sits with a couple of
-// pixels of breathing room on every side.
+// pixels of breathing room on every side. radius.md matches the rest of
+// the App's small-card / tile language; radius.sm read as sharp squares.
 const StyledIconBackgroundTile = styled.div`
   align-items: center;
   background-color: ${themeCssVariables.background.tertiary};
-  border-radius: ${themeCssVariables.border.radius.sm};
+  border-radius: ${themeCssVariables.border.radius.md};
   display: flex;
   flex-shrink: 0;
   height: ${themeCssVariables.spacing[6]};
