@@ -62,7 +62,9 @@ const StyledValue = styled.div`
   padding: 0 ${themeCssVariables.spacing[1]};
 `;
 
-const StatRow = ({ Icon, label, value }: SettingsStatRow) => {
+type StatRowProps = SettingsStatRow;
+
+const StatRow = ({ Icon, label, value }: StatRowProps) => {
   const { theme } = useContext(ThemeContext);
   return (
     <StyledRow>
