@@ -1,15 +1,10 @@
-import { BillingToggle } from './BillingToggle';
-import { Card } from './Card';
-import { Cards } from './Cards';
 import { PlansContent } from './PlansContent';
 import { Root } from './Root';
-import { SelfHostToggle } from './SelfHostToggle';
 
+// Only Content and Root are part of the section's public compound API. The
+// inner toggles and cards (BillingToggle, SelfHostToggle, Card, Cards) are
+// composed internally by PlansContent and were never consumed via Plans.*.
 export const Plans = {
-  BillingToggle,
-  Card,
-  Cards,
   Content: PlansContent,
   Root,
-  SelfHostToggle,
 };

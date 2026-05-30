@@ -7,8 +7,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.resolve(__dirname, '..');
 const SECTIONS_DIR = path.join(ROOT, 'src', 'sections');
 
-const SECTIONS_USING_NAMED_SLOTS = new Map([]);
-
 const LEAF_SECTIONS = new Set([
   'CaseStudy',
   'CaseStudyCatalog',
@@ -69,22 +67,6 @@ async function findRoot(sectionDir) {
   return null;
 }
 
-function parseSlotIdentifiers(barrelContents) {
-  const exportMatch = barrelContents.match(
-    /export\s+const\s+\w+\s*=\s*\{([^}]+)\}/m,
-  );
-  if (!exportMatch) return null;
-  const body = exportMatch[1];
-  return body
-    .split(',')
-    .map((entry) => entry.trim())
-    .filter((entry) => entry.length > 0)
-    .map((entry) => {
-      const colon = entry.indexOf(':');
-      return colon === -1 ? entry : entry.slice(0, colon).trim();
-    });
-}
-
 const TOARRAY_REGEX = /Children\.toArray\s*\(/;
 
 function stripComments(source) {
@@ -124,55 +106,7 @@ async function checkSection(name) {
     }
   }
 
-  const slotsToCheck = SECTIONS_USING_NAMED_SLOTS.get(name);
-  if (slotsToCheck !== undefined) {
-    const barrelContents = await readFileOrNull(barrel);
-    const exportedSlotNames = barrelContents
-      ? parseSlotIdentifiers(barrelContents)
-      : null;
-    for (const slot of slotsToCheck) {
-      if (exportedSlotNames !== null && !exportedSlotNames.includes(slot)) {
-        violations.push(
-          `${name}: slot "${slot}" is declared in SECTIONS_USING_NAMED_SLOTS but is not exported from ${path.relative(
-            ROOT,
-            barrel,
-          )}. Either export it or remove the entry from check-section-shape.mjs.`,
-        );
-        continue;
-      }
-      const expected = `${name}.${slot}`;
-      const slotFile = await locateSlotFile(sectionDir, slot);
-      if (slotFile === null) {
-        violations.push(
-          `${name}: slot "${slot}" is declared in SECTIONS_USING_NAMED_SLOTS but no source file matches the conventional path (components/${slot}.tsx or components/${slot}/${slot}.tsx).`,
-        );
-        continue;
-      }
-      const contents = await readFileOrNull(slotFile);
-      if (contents === null) continue;
-      if (!contents.includes(`displayName = '${expected}'`)) {
-        violations.push(
-          `${name}: slot "${slot}" source (${path.relative(
-            ROOT,
-            slotFile,
-          )}) does not set ${slot}.displayName = '${expected}'. Root looks slots up by displayName; without it the slot silently fails to render.`,
-        );
-      }
-    }
-  }
-
   return violations;
-}
-
-async function locateSlotFile(sectionDir, slot) {
-  const candidates = [
-    path.join(sectionDir, 'components', `${slot}.tsx`),
-    path.join(sectionDir, 'components', slot, `${slot}.tsx`),
-  ];
-  for (const candidate of candidates) {
-    if (await fileExists(candidate)) return candidate;
-  }
-  return null;
 }
 
 async function main() {
