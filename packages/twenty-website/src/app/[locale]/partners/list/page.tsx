@@ -1,10 +1,7 @@
 import { Suspense } from 'react';
 
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/server';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';

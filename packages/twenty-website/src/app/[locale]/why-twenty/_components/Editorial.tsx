@@ -228,7 +228,9 @@ export function Editorial({
       <StyledContainer>
         <Inner>
           <IntroRoot data-align={introAlign === 'right' ? 'right' : undefined}>
-            <BaseEyebrow colorScheme={eyebrowColorScheme}>{eyebrow}</BaseEyebrow>
+            <BaseEyebrow colorScheme={eyebrowColorScheme}>
+              {eyebrow}
+            </BaseEyebrow>
             <HeadingWrap>
               <BaseHeading as="h2" size="lg" weight="light">
                 {heading}

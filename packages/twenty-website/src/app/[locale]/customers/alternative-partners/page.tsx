@@ -1,10 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/server';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
 
