@@ -15,11 +15,7 @@ export const getNavigationMenuItemComputedLink = (
 ): string => {
   switch (item.type) {
     case NavigationMenuItemType.OBJECT:
-      return getObjectNavigationMenuItemComputedLink(
-        item,
-        objectMetadataItems,
-        views,
-      );
+      return getObjectNavigationMenuItemComputedLink(item, objectMetadataItems);
     case NavigationMenuItemType.VIEW:
       return getViewNavigationMenuItemComputedLink(
         item,
