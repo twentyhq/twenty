@@ -1,11 +1,9 @@
-import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsApiKeysTable';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
+import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsMcpSetup } from '@/settings/playground/components/SettingsMcpSetup';
-import { useOpenPlayground } from '@/settings/playground/hooks/useOpenPlayground';
-import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import PlaygroundCoverDark from '@/settings/playground/assets/cover-dark.png';
 import PlaygroundCoverLight from '@/settings/playground/assets/cover-light.png';
@@ -21,7 +19,6 @@ import {
   H2Title,
   IconBrandGraphql,
   IconCode,
-  IconKey,
   IconPlus,
   IconRobot,
   IconWebhook,
@@ -30,7 +27,7 @@ import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 
-type TabKey = 'playground' | 'mcp' | 'api-keys' | 'webhooks';
+type TabKey = 'api' | 'mcp' | 'webhooks';
 
 const SETTINGS_API_WEBHOOKS_TABS_INSTANCE_ID = 'settings-api-webhooks-tabs';
 const SETTINGS_API_HERO_MODAL_ID = 'settings-api-hero-modal';
@@ -52,12 +49,6 @@ const StyledTabContent = styled.div`
   padding-top: ${themeCssVariables.spacing[6]};
 `;
 
-const StyledPlaygroundCardGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[2]};
-`;
-
 const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
   display: flex;
   flex-direction: column;
@@ -65,7 +56,7 @@ const StyledTableContainer = styled.div<{ isMobile?: boolean }>`
   overflow: ${({ isMobile }) => (isMobile ? 'hidden' : 'visible')};
 `;
 
-const TAB_KEYS = ['playground', 'mcp', 'api-keys', 'webhooks'] as const;
+const TAB_KEYS = ['api', 'mcp', 'webhooks'] as const;
 
 const isTabKey = (value: string): value is TabKey =>
   (TAB_KEYS as readonly string[]).includes(value);
@@ -73,7 +64,6 @@ const isTabKey = (value: string): value is TabKey =>
 export const SettingsApiWebhooks = () => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
-  const openPlayground = useOpenPlayground();
 
   // TabList writes to activeTabIdComponentState (keyed by componentInstanceId)
   // on click, and its internal TabListFromUrlOptionalEffect syncs URL hash →
@@ -84,23 +74,18 @@ export const SettingsApiWebhooks = () => {
   );
   const activeTab: TabKey = isTabKey(activeTabId ?? '')
     ? (activeTabId as TabKey)
-    : 'playground';
+    : 'api';
 
   const tabs = [
     {
-      id: 'playground' satisfies TabKey,
-      title: t`Playground`,
+      id: 'api' satisfies TabKey,
+      title: t`API`,
       Icon: IconCode,
     },
     {
       id: 'mcp' satisfies TabKey,
       title: t`MCP`,
       Icon: IconRobot,
-    },
-    {
-      id: 'api-keys' satisfies TabKey,
-      title: t`API Keys`,
-      Icon: IconKey,
     },
     {
       id: 'webhooks' satisfies TabKey,
@@ -151,62 +136,16 @@ export const SettingsApiWebhooks = () => {
           componentInstanceId={SETTINGS_API_WEBHOOKS_TABS_INSTANCE_ID}
         />
 
-        {activeTab === 'playground' && (
+        {activeTab === 'api' && (
           <StyledTabContent>
             <Section>
               <H2Title
-                title={t`Core API`}
-                description={t`Read, create, and update records in your workspace — companies, people, opportunities, and your custom objects. This is the API you use to build integrations against your data.`}
+                title={t`Documentation`}
+                description={t`Try our REST or GraphQL API playgrounds`}
               />
-              <StyledPlaygroundCardGroup>
-                <SettingsCard
-                  title={t`REST playground`}
-                  Icon={<IconCode size={16} />}
-                  onClick={() => openPlayground('rest', PlaygroundSchemas.CORE)}
-                />
-                <SettingsCard
-                  title={t`GraphQL playground`}
-                  Icon={<IconBrandGraphql size={16} />}
-                  onClick={() =>
-                    openPlayground('graphql', PlaygroundSchemas.CORE)
-                  }
-                />
-              </StyledPlaygroundCardGroup>
+              <PlaygroundSetupForm />
             </Section>
 
-            <Section>
-              <H2Title
-                title={t`Metadata API`}
-                description={t`Read and modify the workspace schema itself — objects, fields, relations, and indexes. Use this to provision custom data models programmatically.`}
-              />
-              <StyledPlaygroundCardGroup>
-                <SettingsCard
-                  title={t`REST playground`}
-                  Icon={<IconCode size={16} />}
-                  onClick={() =>
-                    openPlayground('rest', PlaygroundSchemas.METADATA)
-                  }
-                />
-                <SettingsCard
-                  title={t`GraphQL playground`}
-                  Icon={<IconBrandGraphql size={16} />}
-                  onClick={() =>
-                    openPlayground('graphql', PlaygroundSchemas.METADATA)
-                  }
-                />
-              </StyledPlaygroundCardGroup>
-            </Section>
-          </StyledTabContent>
-        )}
-
-        {activeTab === 'mcp' && (
-          <StyledTabContent>
-            <SettingsMcpSetup />
-          </StyledTabContent>
-        )}
-
-        {activeTab === 'api-keys' && (
-          <StyledTabContent>
             <Section>
               <H2Title
                 title={t`API Keys`}
@@ -225,6 +164,12 @@ export const SettingsApiWebhooks = () => {
                 </StyledButtonContainer>
               </StyledTableContainer>
             </Section>
+          </StyledTabContent>
+        )}
+
+        {activeTab === 'mcp' && (
+          <StyledTabContent>
+            <SettingsMcpSetup />
           </StyledTabContent>
         )}
 
