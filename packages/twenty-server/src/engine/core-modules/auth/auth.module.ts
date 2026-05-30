@@ -72,6 +72,7 @@ import { EmailAliasManagerModule } from 'src/modules/connected-account/email-ali
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 
 import { AuthResolver } from './auth.resolver';
 
@@ -163,6 +164,7 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     UpdateConnectedAccountOnReconnectService,
     TransientTokenService,
     AuthSsoService,
+    RequireAccessTokenGuard,
   ],
   exports: [
     AccessTokenService,

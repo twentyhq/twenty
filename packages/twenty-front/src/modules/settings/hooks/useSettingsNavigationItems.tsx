@@ -135,7 +135,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Layout`,
           path: SettingsPath.Layout,
           Icon: IconLayout,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.LAYOUTS],
         },
         {
           label: t`Members`,

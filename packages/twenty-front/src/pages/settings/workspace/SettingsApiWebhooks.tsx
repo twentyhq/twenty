@@ -130,7 +130,6 @@ export const SettingsApiWebhooks = () => {
 
         <TabList
           tabs={tabs}
-          behaveAsLinks={false}
           componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
         />
 
