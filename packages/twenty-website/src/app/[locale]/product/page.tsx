@@ -9,10 +9,7 @@ import {
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/server';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import {
   buildBreadcrumbListJsonLd,
@@ -27,7 +24,7 @@ import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { ProductStepperSection } from '@/app/[locale]/product/_components/product-stepper';
 import { ThreeCards } from '@/sections/ThreeCards';
-import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TrustedBy } from '@/sections/TrustedBy';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
 import type { AppLocale } from 'twenty-shared/translations';
@@ -109,11 +106,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         visual={APP_PREVIEW_DATA.visual}
       />
 
-      <TrustedBy.Root
-        separator={i18n._(msg`trusted by`)}
-        logos={TRUSTED_BY_LOGOS}
-        clientCount={i18n._(msg`+10k others`)}
-      />
+      <TrustedBy />
 
       <ProductFeature />
 

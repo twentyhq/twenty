@@ -7,7 +7,7 @@ import { FEATURE_CARDS } from '@/app/[locale]/(home)/three-cards-feature.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/(home)/three-cards-illustration.data';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TrustedBy } from '@/sections/TrustedBy';
 import {
   Body,
   Eyebrow,
@@ -16,10 +16,7 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/server';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Helped } from '@/sections/Helped';
@@ -238,11 +235,7 @@ export default async function HomePage({ params }: HomePageProps) {
         <Hero.AppPreview visual={APP_PREVIEW_DATA.visual} />
       </Hero.Root>
 
-      <TrustedBy.Root
-        separator={i18n._(msg`trusted by`)}
-        logos={TRUSTED_BY_LOGOS}
-        clientCount={i18n._(msg`+10k others`)}
-      />
+      <TrustedBy />
 
       <Problem.Root>
         <Problem.Visual />

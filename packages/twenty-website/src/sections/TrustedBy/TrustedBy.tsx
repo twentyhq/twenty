@@ -1,9 +1,12 @@
 import { Container } from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/server';
 import { PlusIcon } from '@/icons';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
-import type { ReactNode } from 'react';
+
+import { TRUSTED_BY_LOGOS } from './trusted-by.data';
 
 export type TrustedByLogosType = {
   fit?: 'contain' | 'cover';
@@ -18,7 +21,6 @@ const DEFAULT_GRAY_BRIGHTNESS = 1;
 const DEFAULT_GRAY_OPACITY = 0.72;
 
 const StyledSection = styled.section<{
-  compactTop: boolean;
   compactBottom: boolean;
   backgroundColor?: string;
 }>`
@@ -26,8 +28,7 @@ const StyledSection = styled.section<{
     backgroundColor ?? 'transparent'};
   padding-bottom: ${({ compactBottom }) =>
     compactBottom ? '0' : theme.spacing(12)};
-  padding-top: ${({ compactTop }) =>
-    compactTop ? theme.spacing(4) : theme.spacing(12)};
+  padding-top: ${theme.spacing(12)};
   position: relative;
   width: 100%;
   z-index: ${({ compactBottom }) => (compactBottom ? 2 : 'auto')};
@@ -35,8 +36,7 @@ const StyledSection = styled.section<{
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-bottom: ${({ compactBottom }) =>
       compactBottom ? '0' : theme.spacing(16)};
-    padding-top: ${({ compactTop }) =>
-      compactTop ? theme.spacing(6) : theme.spacing(16)};
+    padding-top: ${theme.spacing(16)};
   }
 `;
 
@@ -234,30 +234,26 @@ function Logo({
   );
 }
 
-interface RootProps {
-  separator: ReactNode;
-  logos: TrustedByLogosType[];
-  clientCount: ReactNode;
-  compactTop?: boolean;
-  compactBottom?: boolean;
+type TrustedByProps = {
   backgroundColor?: string;
   cardBackgroundColor?: string;
-}
+  compactBottom?: boolean;
+};
 
-function Root({
-  separator,
-  logos,
-  clientCount,
-  compactTop = false,
-  compactBottom = false,
+// Shared "trusted by" chrome: the same logo bar with the same copy on every
+// page, so it owns its separator/count copy and the logo list itself. Pages
+// only vary the surrounding background/spacing.
+export function TrustedBy({
   backgroundColor,
   cardBackgroundColor,
-}: RootProps) {
+  compactBottom = false,
+}: TrustedByProps) {
+  const i18n = getServerI18n();
+
   return (
     <StyledSection
       aria-label="Trusted by leading organizations"
       backgroundColor={backgroundColor}
-      compactTop={compactTop}
       compactBottom={compactBottom}
     >
       <StyledContainer>
@@ -288,12 +284,12 @@ function Root({
           </CornerBottomRight>
           <StyledLabelCell>
             <SeparatorRow>
-              <SeparatorText>{separator}</SeparatorText>
+              <SeparatorText>{i18n._(msg`trusted by`)}</SeparatorText>
             </SeparatorRow>
           </StyledLabelCell>
           <StyledLogosCell>
             <LogoStrip>
-              {logos.map((logo, index) => (
+              {TRUSTED_BY_LOGOS.map((logo, index) => (
                 <Logo
                   fit={logo.fit}
                   grayBrightness={logo.grayBrightness}
@@ -313,7 +309,7 @@ function Root({
                 unoptimized
                 width={14}
               />
-              <StyledCountText>{clientCount}</StyledCountText>
+              <StyledCountText>{i18n._(msg`+10k others`)}</StyledCountText>
             </StyledChip>
           </StyledCountCell>
         </StyledCard>
@@ -321,5 +317,3 @@ function Root({
     </StyledSection>
   );
 }
-
-export const TrustedBy = { Root };

@@ -1,4 +1,3 @@
-import { msg } from '@lingui/core/macro';
 import { notFound } from 'next/navigation';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
@@ -7,10 +6,7 @@ import { getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { resolveLocaleParam } from '@/lib/i18n';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/server';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import {
   buildArticleListJsonLd,
@@ -21,7 +17,7 @@ import {
 import { Articles } from '@/sections/Articles';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
-import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TrustedBy } from '@/sections/TrustedBy';
 import { css } from '@linaria/core';
 
 export const generateMetadata = buildRouteMetadata('articles');
@@ -66,7 +62,10 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
     notFound();
   }
 
-  const [i18n, stats] = await Promise.all([
+  // getRouteI18n sets the request-scoped i18n context that TrustedBy/Menu/
+  // Articles read; this page's own copy is English-only (SOURCE_LOCALE-gated
+  // above), so the returned instance is intentionally unused here.
+  const [, stats] = await Promise.all([
     getRouteI18n(params),
     fetchCommunityStats(),
   ]);
@@ -112,12 +111,9 @@ export default async function ArticlesPage({ params }: ArticlesPageProps) {
             and building software that lasts.
           </Hero.Body>
         </Hero.Root>
-        <TrustedBy.Root
+        <TrustedBy
           cardBackgroundColor={ARTICLES_TOP_BACKGROUND_COLOR}
           compactBottom
-          separator={i18n._(msg`trusted by`)}
-          logos={TRUSTED_BY_LOGOS}
-          clientCount={i18n._(msg`+10k others`)}
         />
       </div>
 

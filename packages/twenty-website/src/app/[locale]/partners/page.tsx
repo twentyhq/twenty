@@ -1,6 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { TRUSTED_BY_LOGOS, TrustedBy } from '@/sections/TrustedBy';
+import { TrustedBy } from '@/sections/TrustedBy';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
@@ -16,10 +16,7 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/server';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { CaseStudyCatalog } from '@/sections/CaseStudyCatalog';
@@ -98,12 +95,9 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
         <Hero.PartnerVisual />
       </Hero.Root>
 
-      <TrustedBy.Root
+      <TrustedBy
         backgroundColor={theme.colors.primary.background[100]}
         compactBottom
-        separator={i18n._(msg`trusted by`)}
-        logos={TRUSTED_BY_LOGOS}
-        clientCount={i18n._(msg`+10k others`)}
       />
 
       <PromoSpacing>
