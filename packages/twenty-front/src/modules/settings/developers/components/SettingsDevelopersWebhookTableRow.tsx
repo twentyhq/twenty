@@ -11,7 +11,10 @@ import { useContext } from 'react';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 import { type Webhook } from '~/generated-metadata/graphql';
 
-const WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 28px';
+// Shared with the table header so the column edges (and the row's bottom
+// border) line up. Header used to use fixed pixel widths and the underline
+// only spanned part of the table.
+export const WEBHOOK_TABLE_ROW_GRID_TEMPLATE_COLUMNS = '1fr 28px';
 
 const StyledIconChevronRightContainer = styled.span`
   align-items: center;
