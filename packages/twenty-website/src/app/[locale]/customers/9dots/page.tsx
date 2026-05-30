@@ -1,4 +1,4 @@
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
@@ -132,5 +132,10 @@ export default async function NineDotsCaseStudyPage({
     },
   };
 
-  return <CaseStudyPageLayout caseStudy={caseStudy} path="/customers/9dots" />;
+  return (
+    <CustomersCaseStudyPageLayout
+      caseStudy={caseStudy}
+      path="/customers/9dots"
+    />
+  );
 }

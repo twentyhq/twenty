@@ -14,15 +14,15 @@ import { theme } from '@/theme';
 
 import { CustomersCaseStudySignoff } from './CustomersCaseStudySignoff';
 
-type CaseStudyPageLayoutProps = {
+type CustomersCaseStudyPageLayoutProps = {
   caseStudy: CaseStudyData;
   path: string;
 };
 
-export async function CaseStudyPageLayout({
+export async function CustomersCaseStudyPageLayout({
   caseStudy,
   path,
-}: CaseStudyPageLayoutProps) {
+}: CustomersCaseStudyPageLayoutProps) {
   const stats = await fetchCommunityStats();
   const menuSocialLinks = mergeSocialLinkLabels(MENU_DATA.socialLinks, stats);
   const palette = getCaseStudyPalette(path);

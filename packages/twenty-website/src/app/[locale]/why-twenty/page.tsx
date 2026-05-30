@@ -1,7 +1,7 @@
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
-import { Marquee } from '@/app/[locale]/why-twenty/_components/Marquee';
+import { WhyTwentyMarquee } from '@/app/[locale]/why-twenty/_components/WhyTwentyMarquee';
 import { WhyTwentyHero } from '@/app/[locale]/why-twenty/_components/WhyTwentyHero';
 import { WhyTwentyMeaningEditorial } from '@/app/[locale]/why-twenty/_components/WhyTwentyMeaningEditorial';
 import { WhyTwentyOpportunityEditorial } from '@/app/[locale]/why-twenty/_components/WhyTwentyOpportunityEditorial';
@@ -52,7 +52,7 @@ export default async function WhyTwentyPage({ params }: WhyTwentyPageProps) {
 
       <WhyTwentyOpportunityEditorial />
 
-      <Marquee />
+      <WhyTwentyMarquee />
 
       <WhyTwentySignoff />
     </>
