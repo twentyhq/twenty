@@ -53,3 +53,14 @@ export const composeFilter = (
   if (!tierFilter) return existing;
   return existing ? { and: [existing, tierFilter] } : tierFilter;
 };
+
+// NOTE on findDuplicates: it is NOT RLS-hooked. It cannot be scoped via a
+// @WorkspaceQueryHook (its args are {ids, data} with no filter, and the post-query
+// hook returns void). A core patch of common-find-duplicates-query-runner.service.ts
+// was explored, but findDuplicates is INERT for our custom objects: it only queries
+// when `flatObjectMetadata.duplicateCriteria` is non-empty, and (a) our objects
+// define none and (b) the app SDK's ObjectManifest has no way to set duplicateCriteria.
+// So there is no reachable leak to scope. If Twenty ever lets the SDK set
+// duplicateCriteria on custom objects, revisit: patch the core runner to fold
+// buildTierFilter(authContext) into duplicateConditions via { and: [...] } for the
+// RLS-scoped objects only.
