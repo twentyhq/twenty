@@ -51,10 +51,6 @@ export type SettingsNavigationItem = {
   path?: SettingsPath;
   onClick?: () => void;
   Icon: IconComponent;
-  // Optional theme color (e.g. 'blue', 'orange') — when set, the icon is
-  // rendered inside a tinted tile via TintedIconTile, matching the look of
-  // object icons in the main app drawer. Without it, the icon is monochrome.
-  iconColor?: string;
   indentationLevel?: NavigationDrawerItemIndentationLevel;
   matchSubPages?: boolean;
   isHidden?: boolean;
@@ -90,26 +86,22 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Profile`,
           path: SettingsPath.ProfilePage,
           Icon: IconUserCircle,
-          iconColor: 'blue',
         },
         {
           label: t`Experience`,
           path: SettingsPath.Experience,
           Icon: IconColorSwatch,
-          iconColor: 'purple',
         },
         {
           label: t`Accounts`,
           path: SettingsPath.Accounts,
           Icon: IconAt,
-          iconColor: 'orange',
           isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
           subItems: [
             {
               label: t`Emails`,
               path: SettingsPath.AccountsEmails,
               Icon: IconMail,
-              iconColor: 'red',
               isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
               indentationLevel: 2,
             },
@@ -117,7 +109,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               label: t`Calendars`,
               path: SettingsPath.AccountsCalendars,
               Icon: IconCalendarEvent,
-              iconColor: 'green',
               isHidden: !permissionMap[PermissionFlagType.CONNECTED_ACCOUNTS],
               indentationLevel: 2,
             },
@@ -132,35 +123,30 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`General`,
           path: SettingsPath.Workspace,
           Icon: IconSettings,
-          iconColor: 'gray',
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
-          iconColor: 'purple',
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
         },
         {
           label: t`Layout`,
           path: SettingsPath.Layout,
           Icon: IconLayout,
-          iconColor: 'blue',
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Members`,
           path: SettingsPath.WorkspaceMembersPage,
           Icon: IconUsers,
-          iconColor: 'pink',
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE_MEMBERS],
         },
         {
           label: t`Billing`,
           path: SettingsPath.Billing,
           Icon: IconCurrencyDollar,
-          iconColor: 'green',
           isHidden:
             !isBillingEnabled || !permissionMap[PermissionFlagType.WORKSPACE],
         },
@@ -168,7 +154,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`APIs & Webhooks`,
           path: SettingsPath.ApiWebhooks,
           Icon: IconApi,
-          iconColor: 'orange',
           isHidden: !permissionMap[PermissionFlagType.API_KEYS_AND_WEBHOOKS],
         },
         // TODO: Re-enable when integrations page is ready
@@ -182,7 +167,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Apps`,
           path: SettingsPath.Applications,
           Icon: IconPlug,
-          iconColor: 'turquoise',
           isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
           modifier: 'new',
         },
@@ -190,7 +174,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          iconColor: 'violet',
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
           modifier: 'new',
         },
@@ -198,7 +181,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Email`,
           path: SettingsPath.WorkspaceEmail,
           Icon: IconMail,
-          iconColor: 'red',
           isHidden:
             !isEmailGroupFeatureEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],
@@ -207,7 +189,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Security`,
           path: SettingsPath.Security,
           Icon: IconKey,
-          iconColor: 'yellow',
           isAdvanced: true,
           isHidden: !permissionMap[PermissionFlagType.SECURITY],
         },
@@ -220,21 +201,18 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`Admin Panel`,
           path: SettingsPath.AdminPanel,
           Icon: IconServer,
-          iconColor: 'bronze',
           isHidden: !isAdminEnabled,
         },
         {
           label: t`Updates`,
           path: SettingsPath.Updates,
           Icon: IconRocket,
-          iconColor: 'orange',
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Support`,
           onClick: () => window.FrontChat?.('show'),
           Icon: IconMessage,
-          iconColor: 'sky',
           isHidden: !isSupportChatConfigured,
         },
         {
@@ -245,13 +223,11 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
               '_blank',
             ),
           Icon: IconHelpCircle,
-          iconColor: 'cyan',
         },
         {
           label: t`Logout`,
           onClick: signOut,
           Icon: IconDoorEnter,
-          iconColor: 'gray',
           matchSubPages: false,
         },
       ],
