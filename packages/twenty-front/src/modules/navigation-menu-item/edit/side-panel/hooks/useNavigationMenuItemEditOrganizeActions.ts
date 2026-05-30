@@ -22,6 +22,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 const computeInsertionPosition = (
   selectedItem: { id: string; folderId?: string | null },
@@ -71,6 +72,9 @@ export const useNavigationMenuItemEditOrganizeActions =
     const { moveUp, moveDown, remove } = useNavigationMenuItemMoveRemove();
     const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
     const views = useAtomStateValue(viewsSelector);
+    const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
+      lastVisitedViewPerObjectMetadataItemState,
+    );
 
     const selectedItem = selectedNavigationMenuItemIdInEditMode
       ? items.find((item) => item.id === selectedNavigationMenuItemIdInEditMode)
@@ -126,6 +130,7 @@ export const useNavigationMenuItemEditOrganizeActions =
           nextItem,
           objectMetadataItems,
           views,
+          lastVisitedViewPerObjectMetadataItem,
         );
         if (isNonEmptyString(link)) {
           navigate(link);

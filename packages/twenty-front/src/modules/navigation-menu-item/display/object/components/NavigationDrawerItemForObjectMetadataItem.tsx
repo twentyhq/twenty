@@ -88,6 +88,7 @@ export const NavigationDrawerItemForObjectMetadataItem = ({
         navigationMenuItem!,
         objectMetadataItems,
         views,
+        lastVisitedViewPerObjectMetadataItem,
       )
     : getAppPath(
         AppPath.RecordIndexPage,

@@ -35,6 +35,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { NavigationMenuItemType, SidePanelPages } from 'twenty-shared/types';
+import { lastVisitedViewPerObjectMetadataItemState } from '@/navigation/states/lastVisitedViewPerObjectMetadataItemState';
 
 const StyledRightIconsContainer = styled.div`
   align-items: center;
@@ -47,6 +48,9 @@ export const WorkspaceSection = () => {
   const { workspaceNavigationMenuItemsSorted } = useSortedNavigationMenuItems();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
   const views = useAtomStateValue(viewsSelector);
+  const lastVisitedViewPerObjectMetadataItem = useAtomStateValue(
+    lastVisitedViewPerObjectMetadataItemState,
+  );
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
@@ -89,6 +93,7 @@ export const WorkspaceSection = () => {
         navItem,
         objectMetadataItems,
         views,
+        lastVisitedViewPerObjectMetadataItem,
       );
       return isNonEmptyString(link);
     });
@@ -97,6 +102,7 @@ export const WorkspaceSection = () => {
         firstChild,
         objectMetadataItems,
         views,
+        lastVisitedViewPerObjectMetadataItem,
       );
       if (isNonEmptyString(link)) {
         navigate(link);
@@ -123,6 +129,7 @@ export const WorkspaceSection = () => {
       item,
       objectMetadataItems,
       views,
+      lastVisitedViewPerObjectMetadataItem,
     );
     if (isNonEmptyString(link)) {
       navigate(link);
