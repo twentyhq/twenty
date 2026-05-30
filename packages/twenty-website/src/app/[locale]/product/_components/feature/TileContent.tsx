@@ -6,7 +6,7 @@ import { INFORMATIVE_ICONS } from '@/icons';
 import { getServerI18n } from '@/lib/i18n/server';
 import { theme } from '@/theme';
 
-import type { FeatureTileType } from './Feature';
+import type { FeatureTileType } from './ProductFeature';
 
 const DIVIDER_COLOR = theme.colors.primary.border[10];
 const ICON_STROKE_WIDTH = 1.5;

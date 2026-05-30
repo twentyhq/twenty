@@ -1,6 +1,5 @@
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { AI_HERO_TABS } from '@/app/[locale]/product/ai-hero-tabs.data';
-import { FEATURE_TILES } from '@/app/[locale]/product/feature.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
 import {
   Eyebrow,
@@ -21,9 +20,9 @@ import {
   JsonLd,
 } from '@/lib/seo';
 import { ProductDemo } from '@/app/[locale]/product/_components/ProductDemo';
+import { ProductFeature } from '@/app/[locale]/product/_components/feature';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { Feature } from '@/sections/Feature';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import {
@@ -149,24 +148,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         clientCount={i18n._(msg`+10k others`)}
       />
 
-      <Feature.Root scheme="light">
-        <Feature.Intro align="center" page={Pages.Product}>
-          <Eyebrow>
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Core Features`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Everything you need,`)}
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`out of the box`)}
-            </HeadingPart>
-          </Heading>
-        </Feature.Intro>
-        <Feature.Tiles tiles={FEATURE_TILES} />
-      </Feature.Root>
+      <ProductFeature />
 
       <ThreeCards.Root scheme="light">
         <ThreeCards.Intro page={Pages.Product} align="left">

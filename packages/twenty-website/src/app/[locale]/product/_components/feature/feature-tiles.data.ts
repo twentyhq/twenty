@@ -1,13 +1,13 @@
 import { msg } from '@lingui/core/macro';
 
-import type { FeatureTileType } from '@/sections/Feature';
-import { ContactsVisual } from '@/sections/Feature/visuals/ContactsVisual';
-import { DashboardVisual } from '@/sections/Feature/visuals/DashboardVisual';
-import { EmailsVisual } from '@/sections/Feature/visuals/EmailsVisual';
-import { FilesVisual } from '@/sections/Feature/visuals/FilesVisual';
-import { ImportVisual } from '@/sections/Feature/visuals/ImportVisual';
-import { PipelineVisual } from '@/sections/Feature/visuals/PipelineVisual';
-import { TasksVisual } from '@/sections/Feature/visuals/TasksVisual';
+import type { FeatureTileType } from './ProductFeature';
+import { ContactsVisual } from './visuals/ContactsVisual';
+import { DashboardVisual } from './visuals/DashboardVisual';
+import { EmailsVisual } from './visuals/EmailsVisual';
+import { FilesVisual } from './visuals/FilesVisual';
+import { ImportVisual } from './visuals/ImportVisual';
+import { PipelineVisual } from './visuals/PipelineVisual';
+import { TasksVisual } from './visuals/TasksVisual';
 
 export const FEATURE_TILES: FeatureTileType[] = [
   {

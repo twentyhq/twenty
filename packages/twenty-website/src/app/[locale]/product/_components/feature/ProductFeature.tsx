@@ -1,10 +1,18 @@
-import { Container } from '@/design-system/components';
-import type { MessageDescriptor } from '@lingui/core';
+import {
+  Container,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+} from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/server';
 import { type Page, Pages } from '@/lib/pages';
 import { theme, type Scheme } from '@/theme';
+import { msg } from '@lingui/core/macro';
+import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import type { ComponentType, ReactNode } from 'react';
 
+import { FEATURE_TILES } from './feature-tiles.data';
 import { FeatureScrollEntrance } from './FeatureScrollEntrance';
 import { TileContent } from './TileContent';
 import { TileVisual } from './TileVisual';
@@ -251,4 +259,27 @@ function Tiles({ tiles }: TilesProps) {
   );
 }
 
-export const Feature = { Intro, Root, Tiles };
+export function ProductFeature() {
+  const i18n = getServerI18n();
+
+  return (
+    <Root scheme="light">
+      <Intro align="center" page={Pages.Product}>
+        <Eyebrow>
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`Core Features`)}
+          </HeadingPart>
+        </Eyebrow>
+        <Heading size="lg" weight="light">
+          <HeadingPart fontFamily="serif">
+            {i18n._(msg`Everything you need,`)}
+          </HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">
+            {i18n._(msg`out of the box`)}
+          </HeadingPart>
+        </Heading>
+      </Intro>
+      <Tiles tiles={FEATURE_TILES} />
+    </Root>
+  );
+}
