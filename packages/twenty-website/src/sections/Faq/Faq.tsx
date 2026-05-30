@@ -1,11 +1,20 @@
-import { Container, Heading as BaseHeading } from '@/design-system/components';
+import {
+  Container,
+  Eyebrow,
+  Heading,
+  HeadingPart,
+  LinkButton,
+} from '@/design-system/components';
+import { getServerI18n } from '@/lib/i18n/server';
 import { WebGlMount } from '@/lib/visual-runtime';
-import { FaqBackground } from '@/sections/Faq/visuals/Background';
+import { TalkToUsButton } from '@/sections/ContactCal';
+import { FAQ_QUESTIONS } from '@/sections/Faq/faq.data';
 import { FaqItems } from '@/sections/Faq/FaqItems';
+import { FaqBackground } from '@/sections/Faq/visuals/Background';
 import { theme } from '@/theme';
+import { msg } from '@lingui/core/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
 
 const StyledSection = styled.section`
   background-color: ${theme.colors.secondary.background[100]};
@@ -62,11 +71,13 @@ const StyledCta = styled.div`
   justify-content: start;
 `;
 
-type ChildrenProps = {
-  children: ReactNode;
-};
+// The shared closing "Any Questions?" FAQ: the same eyebrow, heading, CTA and
+// question list render on every page that uses it, so the section owns its own
+// copy and the FAQ_QUESTIONS list rather than receiving them as props. Pages
+// that also emit FAQ structured data import FAQ_QUESTIONS directly for that.
+export function Faq() {
+  const i18n = getServerI18n();
 
-function Root({ children }: ChildrenProps) {
   return (
     <StyledSection data-scheme="dark">
       <IllustrationLayer aria-hidden>
@@ -74,36 +85,43 @@ function Root({ children }: ChildrenProps) {
           <FaqBackground />
         </WebGlMount>
       </IllustrationLayer>
-      <StyledContainer>{children}</StyledContainer>
+      <StyledContainer>
+        <StyledIntro>
+          <Eyebrow colorScheme="secondary">
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Any Questions?`)}
+            </HeadingPart>
+          </Eyebrow>
+          <Heading
+            as="h2"
+            className={faqHeadingClassName}
+            size="lg"
+            weight="light"
+          >
+            <HeadingPart fontFamily="serif">
+              {i18n._(msg`Stop fighting custom.`)}
+            </HeadingPart>
+            <br />
+            <HeadingPart fontFamily="sans">
+              {i18n._(msg`Start building, with Twenty`)}
+            </HeadingPart>
+          </Heading>
+          <StyledCta>
+            <LinkButton
+              color="primary"
+              href="https://app.twenty.com/welcome"
+              label={i18n._(msg`Get started`)}
+              variant="contained"
+            />
+            <TalkToUsButton
+              color="primary"
+              label={msg`Talk to us`}
+              variant="outlined"
+            />
+          </StyledCta>
+        </StyledIntro>
+        <FaqItems questions={FAQ_QUESTIONS} />
+      </StyledContainer>
     </StyledSection>
   );
 }
-
-function Intro({ children }: ChildrenProps) {
-  return <StyledIntro>{children}</StyledIntro>;
-}
-
-function Heading({ children }: ChildrenProps) {
-  return (
-    <BaseHeading
-      as="h2"
-      className={faqHeadingClassName}
-      size="lg"
-      weight="light"
-    >
-      {children}
-    </BaseHeading>
-  );
-}
-
-function Cta({ children }: ChildrenProps) {
-  return <StyledCta>{children}</StyledCta>;
-}
-
-export const Faq = {
-  Cta,
-  Heading,
-  Intro,
-  Items: FaqItems,
-  Root,
-};

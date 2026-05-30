@@ -1,12 +1,7 @@
 import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { AI_HERO_TABS } from '@/app/[locale]/product/ai-hero-tabs.data';
 import { ILLUSTRATION_CARDS } from '@/app/[locale]/product/three-cards.data';
-import {
-  Eyebrow,
-  Heading,
-  HeadingPart,
-  LinkButton,
-} from '@/design-system/components';
+import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
@@ -18,8 +13,7 @@ import {
 } from '@/lib/seo';
 import { ProductDemo } from '@/app/[locale]/product/_components/ProductDemo';
 import { ProductFeature } from '@/app/[locale]/product/_components/feature';
-import { TalkToUsButton } from '@/sections/ContactCal';
-import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { Faq } from '@/sections/Faq';
 import { Hero } from '@/sections/Hero';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { ProductStepperSection } from '@/app/[locale]/product/_components/product-stepper';
@@ -133,38 +127,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
       <ProductDemo />
 
-      <Faq.Root>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary">
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Any Questions?`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Faq.Heading>
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Stop fighting custom.`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Start building, with Twenty`)}
-            </HeadingPart>
-          </Faq.Heading>
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label={i18n._(msg`Get started`)}
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label={msg`Talk to us`}
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_QUESTIONS} />
-      </Faq.Root>
+      <Faq />
     </>
   );
 }

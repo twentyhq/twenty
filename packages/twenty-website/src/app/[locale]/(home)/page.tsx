@@ -333,38 +333,7 @@ export default async function HomePage({ params }: HomePageProps) {
         </Testimonials.Carousel>
       </Testimonials.Root>
 
-      <Faq.Root>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary">
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Any Questions?`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Faq.Heading>
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Stop fighting custom.`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Start building, with Twenty`)}
-            </HeadingPart>
-          </Faq.Heading>
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label={i18n._(msg`Get started`)}
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label={msg`Talk to us`}
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_QUESTIONS} />
-      </Faq.Root>
+      <Faq />
     </>
   );
 }

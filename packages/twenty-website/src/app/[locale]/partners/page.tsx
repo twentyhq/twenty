@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
-import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
+import { Faq } from '@/sections/Faq';
 import { TrustedBy } from '@/sections/TrustedBy';
-import { TalkToUsButton } from '@/sections/ContactCal';
 import { CASE_STUDY_CATALOG_ENTRIES } from '@/lib/customers';
 import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
 import { PARTNER_TESTIMONIALS } from '@/app/[locale]/partners/testimonials.data';
@@ -9,12 +8,7 @@ import {
   PartnerHeroCtas,
   PartnerSignoffCtas,
 } from '@/app/[locale]/partners/components/PartnerApplication';
-import {
-  Eyebrow,
-  Heading,
-  HeadingPart,
-  LinkButton,
-} from '@/design-system/components';
+import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
@@ -162,38 +156,7 @@ export default async function PartnerPage({ params }: PartnerPageProps) {
         </Signoff.Cta>
       </Signoff.Root>
 
-      <Faq.Root>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary">
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Any Questions?`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Faq.Heading>
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Stop fighting custom.`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Start building, with Twenty`)}
-            </HeadingPart>
-          </Faq.Heading>
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label={i18n._(msg`Get started`)}
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label={msg`Talk to us`}
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_QUESTIONS} />
-      </Faq.Root>
+      <Faq />
     </>
   );
 }

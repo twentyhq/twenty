@@ -1,10 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { Faq, FAQ_QUESTIONS } from '@/sections/Faq';
-import { TalkToUsButton } from '@/sections/ContactCal';
 import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
 import { PLAN_TABLE_DATA } from '@/app/[locale]/pricing/plan-table.data';
 import { SALESFORCE_DATA } from '@/app/[locale]/pricing/salesforce.data';
-import { Eyebrow, HeadingPart, LinkButton } from '@/design-system/components';
+import { HeadingPart } from '@/design-system/components';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
 import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { Pages } from '@/lib/pages';
@@ -123,38 +122,7 @@ export default async function PricingPage({ params }: PricingPageProps) {
         <HeadingPart fontFamily="sans">{i18n._(msg`or not !`)}</HeadingPart>
       </Salesforce.Flow>
 
-      <Faq.Root>
-        <Faq.Intro>
-          <Eyebrow colorScheme="secondary">
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Any Questions?`)}
-            </HeadingPart>
-          </Eyebrow>
-          <Faq.Heading>
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Stop fighting custom.`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Start building, with Twenty`)}
-            </HeadingPart>
-          </Faq.Heading>
-          <Faq.Cta>
-            <LinkButton
-              color="primary"
-              href="https://app.twenty.com/welcome"
-              label={i18n._(msg`Get started`)}
-              variant="contained"
-            />
-            <TalkToUsButton
-              color="primary"
-              label={msg`Talk to us`}
-              variant="outlined"
-            />
-          </Faq.Cta>
-        </Faq.Intro>
-        <Faq.Items questions={FAQ_QUESTIONS} />
-      </Faq.Root>
+      <Faq />
     </>
   );
 }
