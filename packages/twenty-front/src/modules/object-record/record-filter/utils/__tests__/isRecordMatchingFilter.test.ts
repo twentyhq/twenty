@@ -456,6 +456,39 @@ describe('isRecordMatchingFilter', () => {
     });
   });
 
+  describe('Unknown Fields', () => {
+    it('returns false when the filter references a field missing from metadata', () => {
+      const companyMock = {
+        ...companiesMock[0],
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMock,
+          filter: { roleCustom: { eq: 'CEO' } },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
+    it('returns false for implicit and when one field is missing from metadata', () => {
+      const companyMock = {
+        ...companiesMock[0],
+      };
+
+      expect(
+        isRecordMatchingFilter({
+          record: companyMock,
+          filter: {
+            name: { eq: companyMock.name },
+            roleCustom: { eq: 'CEO' },
+          },
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+  });
+
   describe('Implicit And Conditions', () => {
     it('matches record with implicit and of multiple operators within the same field', () => {
       const companyMockInFilter = {

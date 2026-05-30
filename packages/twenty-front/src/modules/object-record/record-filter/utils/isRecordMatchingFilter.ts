@@ -1,3 +1,4 @@
+import { captureException } from '@sentry/react';
 import { isObject } from '@sniptt/guards';
 
 import {
@@ -51,6 +52,8 @@ import {
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { computePossibleMorphGqlFieldForFieldName } from '@/object-record/cache/utils/computePossibleMorphGqlFieldForFieldName';
+
+const ignoredUnknownFilterFieldInMatcherSet = new Set<string>();
 
 const isLeafFilter = (
   filter: RecordGqlOperationFilter,
@@ -217,12 +220,32 @@ export const isRecordMatchingFilter = ({
       );
 
     if (!isDefined(objectMetadataField)) {
-      throw new Error(
-        'Field metadata item "' +
-          filterKey +
-          '" not found for object metadata item ' +
-          objectMetadataItem.nameSingular,
-      );
+      const unknownFilterFieldKey = `${objectMetadataItem.nameSingular}.${filterKey}`;
+
+      if (!ignoredUnknownFilterFieldInMatcherSet.has(unknownFilterFieldKey)) {
+        ignoredUnknownFilterFieldInMatcherSet.add(unknownFilterFieldKey);
+
+        captureException(
+          new Error(
+            `Ignoring stale record filter key "${filterKey}" for object "${objectMetadataItem.nameSingular}" in optimistic matcher`,
+          ),
+          (scope) => {
+            scope.setLevel('warning');
+            scope.setTag('error-handler', 'optimistic-filter-matcher');
+            scope.setTag('objectNameSingular', objectMetadataItem.nameSingular);
+            scope.setTag('filterKey', filterKey);
+            scope.setFingerprint([
+              'optimistic-filter-matcher-unknown-field',
+              objectMetadataItem.nameSingular,
+              filterKey,
+            ]);
+
+            return scope;
+          },
+        );
+      }
+
+      return false;
     }
 
     switch (objectMetadataField.type) {
