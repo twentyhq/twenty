@@ -136,7 +136,9 @@ function buildFocusedOpportunitiesPage(
     0,
   );
   const visibleCardCount =
-    revealProgress <= 0 ? 0 : Math.min(totalCardCount, Math.ceil(revealProgress * totalCardCount));
+    revealProgress <= 0
+      ? 0
+      : Math.min(totalCardCount, Math.ceil(revealProgress * totalCardCount));
   let remainingVisibleCards = visibleCardCount;
 
   const lanes = filteredLanes.map((lane) => {
@@ -428,7 +430,10 @@ export function useProductVisualAutoplay(
     () => getVisibleTextLength(fullText),
     [fullText],
   );
-  const streamProgress = getStreamProgress(streamedLength, fullTextVisibleLength);
+  const streamProgress = getStreamProgress(
+    streamedLength,
+    fullTextVisibleLength,
+  );
   const streamComplete = streamedLength >= fullTextVisibleLength;
   const scenePhase = useMemo(
     () => getScenePhase(selectedScene, streamProgress),

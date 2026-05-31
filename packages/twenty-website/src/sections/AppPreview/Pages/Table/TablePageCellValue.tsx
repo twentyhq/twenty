@@ -159,7 +159,10 @@ function PersonTokenCell({
         <HoverActions $visible={hovered}>
           {withCopyAction ? (
             <MiniAction aria-hidden="true">
-              <MiniIcon icon={IconCopy} color={TABLE_PAGE_COLORS.textSecondary} />
+              <MiniIcon
+                icon={IconCopy}
+                color={TABLE_PAGE_COLORS.textSecondary}
+              />
             </MiniAction>
           ) : null}
         </HoverActions>
@@ -285,7 +288,11 @@ function TextCellComponent({
       variant={ChipVariant.Highlighted}
     />
   ) : (
-    <CellChip clickable={false} label={cell.value} variant={ChipVariant.Highlighted} />
+    <CellChip
+      clickable={false}
+      label={cell.value}
+      variant={ChipVariant.Highlighted}
+    />
   );
 
   return (

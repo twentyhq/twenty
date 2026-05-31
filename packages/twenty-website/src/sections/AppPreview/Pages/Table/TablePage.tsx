@@ -122,7 +122,9 @@ const TableCell = styled.div<{
   padding-right: ${TABLE_CELL_HORIZONTAL_PADDING}px;
   padding-top: 0;
   padding-left: ${({ $sticky }) =>
-    $sticky ? `${TABLE_CELL_HORIZONTAL_PADDING - 1}px` : `${TABLE_CELL_HORIZONTAL_PADDING}px`};
+    $sticky
+      ? `${TABLE_CELL_HORIZONTAL_PADDING - 1}px`
+      : `${TABLE_CELL_HORIZONTAL_PADDING}px`};
   position: ${({ $sticky }) => ($sticky ? 'sticky' : 'relative')};
   z-index: ${({ $header, $sticky }) => {
     if ($sticky && $header) {

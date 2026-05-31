@@ -247,8 +247,7 @@ const RelationItem = styled.div<{ $highlighted?: boolean; $muted?: boolean }>`
   background: ${({ $highlighted }) =>
     $highlighted ? COLORS.backgroundSecondary : 'transparent'};
   border: 1px solid
-    ${({ $highlighted }) =>
-      $highlighted ? COLORS.border : 'transparent'};
+    ${({ $highlighted }) => ($highlighted ? COLORS.border : 'transparent')};
   border-radius: 6px;
   display: flex;
   gap: 6px;
@@ -396,8 +395,7 @@ const NoteCard = styled.div<{
   background: ${({ $highlighted }) =>
     $highlighted ? COLORS.background : COLORS.backgroundSecondary};
   border: 1px solid
-    ${({ $highlighted }) =>
-      $highlighted ? COLORS.border : COLORS.borderLight};
+    ${({ $highlighted }) => ($highlighted ? COLORS.border : COLORS.borderLight)};
   border-radius: 8px;
   display: flex;
   flex-direction: column;
@@ -683,17 +681,11 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
 function FieldIconGlyph({ iconName }: { iconName: string }) {
   switch (iconName) {
     case 'link':
-      return (
-        <IconLink aria-hidden size={16} stroke={TABLER_STROKE} />
-      );
+      return <IconLink aria-hidden size={16} stroke={TABLER_STROKE} />;
     case 'user':
-      return (
-        <IconUser aria-hidden size={16} stroke={TABLER_STROKE} />
-      );
+      return <IconUser aria-hidden size={16} stroke={TABLER_STROKE} />;
     case 'mapPin':
-      return (
-        <IconMapPin aria-hidden size={16} stroke={TABLER_STROKE} />
-      );
+      return <IconMapPin aria-hidden size={16} stroke={TABLER_STROKE} />;
     case 'check':
       return <IconCheck aria-hidden size={16} stroke={TABLER_STROKE} />;
     case 'currency':
@@ -701,9 +693,7 @@ function FieldIconGlyph({ iconName }: { iconName: string }) {
         <IconCurrencyDollar aria-hidden size={16} stroke={TABLER_STROKE} />
       );
     case 'linkedin':
-      return (
-        <IconBrandLinkedin aria-hidden size={16} stroke={TABLER_STROKE} />
-      );
+      return <IconBrandLinkedin aria-hidden size={16} stroke={TABLER_STROKE} />;
     case 'twitter':
       return <IconBrandX aria-hidden size={16} stroke={TABLER_STROKE} />;
     default:

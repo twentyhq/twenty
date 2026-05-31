@@ -380,7 +380,8 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
   {
     initialPageItemId: TASKS_PAGE_ITEM_ID,
     kind: 'taskCreation',
-    label: 'Generate follow-up tasks for my top 10 accounts using notes to gather context',
+    label:
+      'Generate follow-up tasks for my top 10 accounts using notes to gather context',
     responseText:
       'Created **10 follow-up tasks** dated **Nov 1 through Nov 8**. The first rows cover Anthropic, Slack, Figma, Notion, and Github, followed by Airbnb, Stripe, Sequoia, Accel, and Google.',
     responseChips: [
@@ -403,9 +404,7 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     label: 'Summarize Qonto account history',
     responseText:
       'Qonto has **3 notes** centered on a benefits-led pitch, **Q Global Holdings** as the parent account, and **1 active opportunity**. The latest follow-up is with **Alexandre Prot**, and the history points to customer-service and operations as the main buying angles.',
-    responseChips: [
-      { name: 'Qonto', logoUrl: SHARED_COMPANY_LOGO_URLS.qonto },
-    ],
+    responseChips: [{ name: 'Qonto', logoUrl: SHARED_COMPANY_LOGO_URLS.qonto }],
     sidebarMode: 'collapsed',
   },
   {

@@ -70,8 +70,7 @@ export function AppPreview({
     workspaceEntries,
   } = useAppPreviewExperience(visual);
   const resolvedFrameMode = frameMode ?? (showTerminal ? 'windowed' : 'static');
-  const needsWindowOrder =
-    showTerminal || resolvedFrameMode === 'windowed';
+  const needsWindowOrder = showTerminal || resolvedFrameMode === 'windowed';
 
   useEffect(
     () =>

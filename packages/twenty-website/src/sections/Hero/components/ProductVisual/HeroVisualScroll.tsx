@@ -250,8 +250,7 @@ export function HeroVisualScroll({
   const stackAppearProgress = clamp((morphProgress - 0.14) / 0.12);
   const stackAlignProgress = clamp((morphProgress - 0.69) / 0.16);
   const stackSpreadProgress = clamp((morphProgress - 0.83) / 0.18);
-  const stackSpreadEasedProgress =
-    1 - Math.pow(1 - stackSpreadProgress, 2.6);
+  const stackSpreadEasedProgress = 1 - Math.pow(1 - stackSpreadProgress, 2.6);
   const selectorRevealProgress = clamp((morphProgress - 0.94) / 0.06);
   const selectorRevealReady = selectorRevealProgress > 0.96;
   const stackCards = tabs;
@@ -421,7 +420,7 @@ export function HeroVisualScroll({
                     pointerEvents: selectorRevealReady ? 'auto' : 'none',
                   }}
                 >
-                  {stackCards.map((tab, index) => (
+                  {stackCards.map((tab, index) =>
                     (() => {
                       const targetMetric = stackSpreadMetrics?.[index];
                       const width =
@@ -429,7 +428,7 @@ export function HeroVisualScroll({
                           ? stackWidth +
                             (targetMetric.width - stackWidth) *
                               stackSpreadEasedProgress
-                          : stackWidth ?? targetMetric?.width;
+                          : (stackWidth ?? targetMetric?.width);
                       const offset = targetMetric?.offset ?? 0;
 
                       return (
@@ -439,12 +438,10 @@ export function HeroVisualScroll({
                             transform: `translate3d(calc(-50% + ${
                               offset * stackSpreadEasedProgress
                             }px), ${
-                              stackBaseOffsets[index] *
-                              (1 - stackAlignProgress)
+                              stackBaseOffsets[index] * (1 - stackAlignProgress)
                             }px, 0) scale(${
                               stackBaseScales[index] +
-                              (1 - stackBaseScales[index]) *
-                                stackAlignProgress
+                              (1 - stackBaseScales[index]) * stackAlignProgress
                             })`,
                             width: width ? `${width}px` : undefined,
                             zIndex: 4 - index,
@@ -461,8 +458,8 @@ export function HeroVisualScroll({
                           />
                         </StackedTabCard>
                       );
-                    })()
-                  ))}
+                    })(),
+                  )}
                 </StackedTabDeck>
               </CtaLayer>
             </ActionSlot>

@@ -60,8 +60,7 @@ export function WorkflowEdges({
   const completedConnectorPath =
     plusNode && completedSourceNode
       ? (() => {
-          const startX =
-            completedSourceNode.x + completedSourceNode.width / 2;
+          const startX = completedSourceNode.x + completedSourceNode.width / 2;
           const startY = completedSourceNode.y + WORKFLOW_NODE_HEIGHT + 1;
           const endX = plusNode.x;
           const endY = plusNode.y;
@@ -81,10 +80,7 @@ export function WorkflowEdges({
       : undefined;
 
   return (
-    <CanvasOverlay
-      aria-hidden
-      viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
-    >
+    <CanvasOverlay aria-hidden viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}>
       <defs>
         <marker
           id="workflow-arrow"

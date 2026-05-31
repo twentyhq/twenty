@@ -62,7 +62,8 @@ const IndexSurface = styled.div<{ $compactWorkflowPage: boolean }>`
   overflow: hidden;
 
   [aria-label*='workflow'] > div > div {
-    left: ${({ $compactWorkflowPage }) => ($compactWorkflowPage ? '0' : 'auto')};
+    left: ${({ $compactWorkflowPage }) =>
+      $compactWorkflowPage ? '0' : 'auto'};
     transform: ${({ $compactWorkflowPage }) =>
       $compactWorkflowPage ? 'scale(0.78) translateX(-6%)' : 'none'};
     transform-origin: ${({ $compactWorkflowPage }) =>

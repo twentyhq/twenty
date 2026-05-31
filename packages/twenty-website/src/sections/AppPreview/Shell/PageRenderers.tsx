@@ -46,7 +46,10 @@ export function renderPageDefinition(
   switch (page.type) {
     case 'table':
       return (
-        <TablePage page={page} onNavigateToPageItemId={onNavigateToPageItemId} />
+        <TablePage
+          page={page}
+          onNavigateToPageItemId={onNavigateToPageItemId}
+        />
       );
     case 'kanban':
       return <KanbanPage page={page} />;

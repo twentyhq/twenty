@@ -54,10 +54,7 @@ type AppPreviewFrameProps = {
   mode: AppPreviewFrameMode;
 };
 
-export function AppPreviewFrame({
-  children,
-  mode,
-}: AppPreviewFrameProps) {
+export function AppPreviewFrame({ children, mode }: AppPreviewFrameProps) {
   if (mode === 'windowed') {
     return <AppWindow>{children}</AppWindow>;
   }

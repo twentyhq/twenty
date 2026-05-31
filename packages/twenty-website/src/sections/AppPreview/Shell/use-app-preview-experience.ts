@@ -80,11 +80,7 @@ export function useAppPreviewExperience(visual: AppPreviewConfig) {
     setPendingPageItemSelectionId(null);
     handleScenarioReset();
     resetNavigation();
-  }, [
-    handleScenarioReset,
-    resetNavigation,
-    sidebarConfigResetKey,
-  ]);
+  }, [handleScenarioReset, resetNavigation, sidebarConfigResetKey]);
 
   const handleObjectCreated = useCallback(
     (id: string) => {

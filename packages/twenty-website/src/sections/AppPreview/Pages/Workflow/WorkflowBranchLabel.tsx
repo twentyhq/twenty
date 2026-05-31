@@ -32,10 +32,7 @@ export function WorkflowBranchLabel({
   y,
 }: WorkflowBranchLabelDefinition) {
   return (
-    <BranchLabel
-      $centered={text === 'completed'}
-      style={{ left: x, top: y }}
-    >
+    <BranchLabel $centered={text === 'completed'} style={{ left: x, top: y }}>
       {text}
     </BranchLabel>
   );

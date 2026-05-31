@@ -17,10 +17,7 @@ const CheckboxBox = styled.div<{ $checked?: boolean }>`
   background: ${({ $checked }) =>
     $checked ? TABLE_PAGE_COLORS.accentSurfaceSoft : 'transparent'};
   border: 1px solid
-    ${({ $checked }) =>
-      $checked
-        ? TABLE_PAGE_COLORS.accentBorder
-        : '#333333'};
+    ${({ $checked }) => ($checked ? TABLE_PAGE_COLORS.accentBorder : '#333333')};
   border-radius: 3px;
   display: flex;
   flex: 0 0 auto;
