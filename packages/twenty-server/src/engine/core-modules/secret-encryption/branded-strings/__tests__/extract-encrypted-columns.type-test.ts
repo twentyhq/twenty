@@ -3,9 +3,33 @@ import { type Equal, type Expect } from 'twenty-shared/testing';
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type ExtractEncryptedColumns } from 'src/engine/core-modules/secret-encryption/branded-strings/extract-encrypted-columns.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
+import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
 // oxlint-disable-next-line @typescripttypescript/no-empty-object-type
 type EmptyObject = {};
+
+// Mirrors `ImapSmtpCaldavParams<EncryptedString>` shape — JSONB column
+// containing nested EncryptedString fields under protocol keys.
+type EncryptedConnectionParametersLike = {
+  IMAP?: { host: string; password: EncryptedString };
+  SMTP?: { host: string; password: EncryptedString };
+};
+
+type DeeplyNestedThreeLevels = {
+  level1: {
+    level2: {
+      level3: EncryptedString;
+    };
+  };
+};
+
+// Synthetic entity that itself carries an EncryptedString column. Used
+// below to verify that relation properties pointing to such entities
+// are stripped before the contains-recursion runs.
+class FakeRelatedEntity extends WorkspaceRelatedEntity {
+  fakeId: string;
+  encryptedTokenOnRelatedEntity: EncryptedString | null;
+}
 
 type TestedRecord = {
   // Non-EncryptedString fields - must NOT be extracted
@@ -13,6 +37,7 @@ type TestedRecord = {
   plainStringNullable: string | null;
   plainNumber: number;
   plainBoolean: boolean;
+  plainDate: Date;
   plainObject: EmptyObject;
   plainArray: string[];
   plainUnknown: unknown;
@@ -20,8 +45,10 @@ type TestedRecord = {
   plaintextBrandedNullable: PlaintextString | null;
   emptyStringLiteral: '';
   encVersionedLiteral: 'enc:v2:xxx';
+  recordWithoutEncryption: { host: string; port: number };
+  arrayOfPlaintextRecords: Array<{ host: string }>;
 
-  // EncryptedString fields - MUST be extracted
+  // Direct EncryptedString fields - MUST be extracted
   encryptedRequired: EncryptedString;
   encryptedNullable: EncryptedString | null;
   encryptedUndefinable: EncryptedString | undefined;
@@ -29,6 +56,20 @@ type TestedRecord = {
   encryptedOrEmpty: EncryptedString | '';
   encryptedUnionWithPrimitive: EncryptedString | string;
   encryptedUnionWithPlaintext: EncryptedString | PlaintextString;
+
+  // Nested EncryptedString — MUST be extracted (transitive structural)
+  connectionParametersLike: EncryptedConnectionParametersLike;
+  connectionParametersLikeNullable: EncryptedConnectionParametersLike | null;
+  arrayOfRecordsWithEncrypted: Array<{ secret: EncryptedString }>;
+  recordWithEncryptedAtTopLevel: { secret: EncryptedString };
+  deeplyNested: DeeplyNestedThreeLevels;
+
+  // Entity relations — MUST NOT be extracted, even though the related
+  // entity carries an EncryptedString column. Stripped by
+  // `ExtractEntityRelatedEntityProperties` before recursion.
+  relatedEntity: FakeRelatedEntity;
+  relatedEntityNullable: FakeRelatedEntity | null;
+  relatedEntityArray: FakeRelatedEntity[];
 };
 
 type TestResult = ExtractEncryptedColumns<TestedRecord>;
@@ -45,6 +86,11 @@ type Assertions = [
       | 'encryptedOrEmpty'
       | 'encryptedUnionWithPrimitive'
       | 'encryptedUnionWithPlaintext'
+      | 'connectionParametersLike'
+      | 'connectionParametersLikeNullable'
+      | 'arrayOfRecordsWithEncrypted'
+      | 'recordWithEncryptedAtTopLevel'
+      | 'deeplyNested'
     >
   >,
 
