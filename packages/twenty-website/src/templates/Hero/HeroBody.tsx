@@ -30,8 +30,6 @@ type HeroBodyProps = {
   as?: BodyAs;
   children: ReactNode;
   family?: BodyFamily;
-  // The body column width at md and up (mobile is always 360px). Each hero
-  // owns its own measure rather than the section switching on a page id.
   maxWidthMd: number;
   preserveLineBreaks?: boolean;
   size?: BodySize;
@@ -39,7 +37,6 @@ type HeroBodyProps = {
   weight?: BodyWeight;
 };
 
-// Shared hero sub-heading copy block.
 export function HeroBody({
   as,
   children,

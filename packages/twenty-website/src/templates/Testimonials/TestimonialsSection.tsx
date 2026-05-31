@@ -99,9 +99,6 @@ type TestimonialsSectionProps = {
   shapeFillColor?: string;
 };
 
-// Shared shell for the testimonials sections: scheme-aware background, the
-// decorative bottom shape, and the content container. Page-local blocks own
-// the eyebrow copy, testimonial data, and which carousel/visual to render.
 export function TestimonialsSection({
   children,
   scheme,

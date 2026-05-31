@@ -239,9 +239,6 @@ type TrustedByProps = {
   compactBottom?: boolean;
 };
 
-// Shared "trusted by" chrome: the same logo bar with the same copy on every
-// page, so it owns its separator/count copy and the logo list itself. Pages
-// only vary the surrounding background/spacing.
 export function TrustedBy({
   backgroundColor,
   cardBackgroundColor,

@@ -10,7 +10,6 @@ import { getServerI18n } from '@/lib/i18n/server';
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { Signoff } from '@/templates/Signoff';
 
-// Closing sign-off for the customers catalog page.
 export function CustomersCatalogSignoff() {
   const i18n = getServerI18n();
 

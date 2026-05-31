@@ -18,8 +18,6 @@ const HeadingContainer = styled.div`
 
 type HeroHeadingProps = HeadingProps & { children?: ReactNode };
 
-// Shared hero heading: the headline wrapper with its responsive max-width.
-// Defaults to an h1 (heroes are the top of the page).
 export function HeroHeading({
   as = 'h1',
   children,

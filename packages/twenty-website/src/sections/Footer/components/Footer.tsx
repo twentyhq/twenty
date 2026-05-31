@@ -5,8 +5,6 @@ import { Logo } from './Logo';
 import { Nav } from './Nav';
 import { Root } from './Root';
 
-// The footer is the same composition on every page, so it owns its data and
-// child composition; the root layout just renders <Footer />.
 export function Footer() {
   return (
     <Root>

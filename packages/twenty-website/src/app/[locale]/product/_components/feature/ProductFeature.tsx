@@ -29,8 +29,6 @@ export type FeatureTileType = {
   visual: ComponentType<{ active: boolean }>;
 };
 
-// --- Root ---
-
 const StyledSection = styled.section`
   width: 100%;
 
@@ -82,8 +80,6 @@ function Root({ backgroundColor, children, scheme }: RootProps) {
   );
 }
 
-// --- Intro ---
-
 const StyledIntro = styled.div`
   display: grid;
   grid-template-columns: 1fr;
@@ -119,8 +115,6 @@ function Intro({ align, children, page }: IntroProps) {
     </StyledIntro>
   );
 }
-
-// --- Tiles ---
 
 const BORDER = `1px solid ${theme.colors.primary.border[20]}`;
 

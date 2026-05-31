@@ -9,9 +9,6 @@ import { DataModelVisual } from './visuals/DataModelVisual';
 import { LayoutVisual } from './visuals/LayoutVisual';
 import { WorkflowVisual } from './visuals/WorkflowVisual';
 
-// The product page's "no-code customization" stepper. Owns its copy: the step
-// headings render as <Trans> units and the bodies/eyebrow as msg descriptors,
-// so the homogeneous step list is built in-component rather than in a data file.
 export function ProductStepperSection() {
   const i18n = getServerI18n();
 

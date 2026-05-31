@@ -15,10 +15,6 @@ import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import NextImage from 'next/image';
 
-// The product page's live-demo section. Owns its own copy (read from the
-// request-scoped i18n) and composes design-system primitives + the shared
-// AppPreview — no compound slots, no copy in data files.
-
 const RootWrapper = styled.div`
   display: grid;
   grid-template-columns: 1fr;

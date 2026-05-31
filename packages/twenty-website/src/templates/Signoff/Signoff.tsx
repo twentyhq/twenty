@@ -104,13 +104,10 @@ const Actions = styled.div`
 `;
 
 type SignoffProps = {
-  // CTA actions (buttons) for the sign-off.
   children: ReactNode;
   heading: ReactNode;
   body: ReactNode;
   scheme: Scheme;
-  // The tall, vertically-centered sign-off layout (with guide crosshair),
-  // as opposed to the compact default.
   centered?: boolean;
 };
 

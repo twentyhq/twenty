@@ -71,8 +71,6 @@ type HeroSectionProps = {
   scheme: Scheme;
 };
 
-// Shared hero shell: the scheme-aware section background and the centered
-// content container. Heroes compose their own heading/body/cta/visual inside.
 export function HeroSection({
   background,
   children,

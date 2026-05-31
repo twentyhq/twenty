@@ -13,8 +13,6 @@ import { type ComponentProps } from 'react';
 import { useLocale } from './client';
 import { localizeHref } from './locales';
 
-// Next.js <Link> that automatically prefixes the current locale's URL segment.
-
 type LocalizedLinkProps = Omit<ComponentProps<typeof Link>, 'href'> & {
   href: string;
 };

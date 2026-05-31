@@ -28,8 +28,6 @@ type HelpedProps = {
   scheme: Scheme;
 };
 
-// Self-contained home "helped" scene section: owns its layout; the card data
-// is passed in (homogeneous array).
 export function Helped({ cards, scheme }: HelpedProps) {
   return (
     <StyledSection data-scheme={scheme}>

@@ -72,10 +72,6 @@ const StyledCta = styled.div`
   justify-content: start;
 `;
 
-// The shared closing "Any Questions?" FAQ: the same eyebrow, heading, CTA and
-// question list render on every page that uses it, so the section owns its own
-// copy and the FAQ_QUESTIONS list rather than receiving them as props. Pages
-// that also emit FAQ structured data import FAQ_QUESTIONS directly for that.
 export function Faq() {
   const i18n = getServerI18n();
 

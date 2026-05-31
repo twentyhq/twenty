@@ -13,11 +13,6 @@ type MenuProps = {
   socialLinks: MenuSocialLinkType[];
 };
 
-// The site header is the same composition on every page — logo, primary nav,
-// social links and CTA over the shared Root chrome (sticky bar + mobile
-// drawer). Only the surface background and color scheme vary per page, so the
-// section owns the nav-item list and the child composition itself; pages just
-// supply the per-page background, scheme, and stats-labelled social links.
 export function Menu({
   backgroundColor,
   scheme = 'primary',

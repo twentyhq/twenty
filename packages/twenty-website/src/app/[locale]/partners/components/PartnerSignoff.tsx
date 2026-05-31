@@ -4,7 +4,6 @@ import { PartnerSignoffCtas } from '@/app/[locale]/partners/components/PartnerAp
 import { HeadingPart, ResponsiveLineBreak } from '@/design-system/components';
 import { Signoff } from '@/templates/Signoff';
 
-// Closing sign-off for the partners page.
 export function PartnerSignoff() {
   return (
     <Signoff

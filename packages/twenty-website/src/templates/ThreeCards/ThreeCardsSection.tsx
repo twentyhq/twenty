@@ -42,8 +42,6 @@ type ThreeCardsSectionProps = {
   scheme: Scheme;
 };
 
-// Shared shell for the "three cards" sections: scheme-aware background and the
-// content container (intro + card grid). Page-local blocks own the copy.
 export function ThreeCardsSection({
   children,
   scheme,

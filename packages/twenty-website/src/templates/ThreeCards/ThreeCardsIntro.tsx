@@ -24,12 +24,9 @@ const StyledIntro = styled.div<{ $maxWidthMd?: number }>`
 type ThreeCardsIntroProps = {
   align: 'left' | 'center';
   children: ReactNode;
-  // Intro column width at md and up; defaults to the editorial measure. Each
-  // block owns its own measure rather than the section switching on a page id.
   maxWidthMd?: number;
 };
 
-// Shared intro (eyebrow + heading + optional body) for a three-cards section.
 export function ThreeCardsIntro({
   align,
   children,

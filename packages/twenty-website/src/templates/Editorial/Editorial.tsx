@@ -10,10 +10,6 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-// Shared editorial layout shell: an eyebrow + heading intro followed by a
-// one/two-column body. Props-driven (no compound ceremony); page-local blocks
-// pass the copy and per-instance layout (crosshair, alignment, body layout).
-
 export type EditorialCrosshair = {
   crossX: string;
   crossY: string;

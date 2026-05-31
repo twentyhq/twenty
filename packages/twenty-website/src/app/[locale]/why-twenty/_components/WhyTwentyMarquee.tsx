@@ -129,8 +129,7 @@ function Track({
   );
 }
 
-// Self-contained: the why-twenty marquee owns its copy (and its always-dark
-// scheme). Segment styling is positional via data-segment-index.
+// Segment styling is positional via data-segment-index.
 export function WhyTwentyMarquee() {
   const segments: ReactNode[] = [
     <Trans>Same CRM</Trans>,
