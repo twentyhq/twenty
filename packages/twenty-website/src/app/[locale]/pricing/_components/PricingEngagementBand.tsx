@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 
 import { BecomePartnerButton } from '@/app/[locale]/partners/components/PartnerApplication';
 import { HeadingPart } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import {
   EngagementBandActions,
   EngagementBandBody,
@@ -20,8 +20,6 @@ const PricingBannerContainer = styled.div`
 `;
 
 export function PricingEngagementBand() {
-  const i18n = getServerI18n();
-
   return (
     <EngagementBandSection scheme="muted">
       <PricingBannerContainer>
@@ -33,13 +31,14 @@ export function PricingEngagementBand() {
           <EngagementBandCopy>
             <EngagementBandHeading>
               <HeadingPart fontFamily="serif">
-                {i18n._(msg`Need help with customization?`)}
+                <Trans>Need help with customization?</Trans>
               </HeadingPart>
             </EngagementBandHeading>
             <EngagementBandBody>
-              {i18n._(
-                msg`Find the right partner to implement, customize, and tailor Twenty to your team.`,
-              )}
+              <Trans>
+                Find the right partner to implement, customize, and tailor
+                Twenty to your team.
+              </Trans>
             </EngagementBandBody>
           </EngagementBandCopy>
           <EngagementBandActions>
