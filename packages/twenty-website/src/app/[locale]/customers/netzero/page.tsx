@@ -1,12 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
 import { Heading, HeadingPart } from '@/design-system/components';
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 
 const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.netzero;
 
@@ -41,7 +38,7 @@ export default async function NetZeroCaseStudyPage({
             {i18n._(msg`A CRM that`)}
           </HeadingPart>
           <br />
-          <HeadingPart fontFamily="sans">{i18n._(msg`grows`)}</HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">{i18n._(msg`grows`)}</HeadingPart>
           <HeadingPart fontFamily="serif">{i18n._(msg`with you`)}</HeadingPart>
         </Heading>
       ),
@@ -64,7 +61,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`The right`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`foundation`)}
             </HeadingPart>
@@ -83,7 +80,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`A business that does not fit a`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`template`)}</HeadingPart>
           </Heading>
         ),
@@ -101,7 +98,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`From simple to`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`advanced`)}</HeadingPart>
           </Heading>
         ),
@@ -118,7 +115,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`The bet is`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`paying off`)}
             </HeadingPart>
@@ -143,6 +140,9 @@ export default async function NetZeroCaseStudyPage({
   };
 
   return (
-    <CaseStudyPageLayout caseStudy={caseStudy} path="/customers/netzero" />
+    <CustomersCaseStudyPageLayout
+      caseStudy={caseStudy}
+      path="/customers/netzero"
+    />
   );
 }
