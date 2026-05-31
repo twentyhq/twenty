@@ -9,11 +9,6 @@ type HeroPlayButtonProps = {
   className?: string;
 };
 
-// Sits above a hero image and signals "this thing has a video to watch".
-// Uses the workspace surface tokens so the disc adapts to theme: in light
-// mode it reads as a soft white disc with a muted-gray triangle (per the
-// design); in dark mode it reads as a dark disc with a light-gray triangle —
-// still legible on the matching dark illustration.
 const StyledButton = styled.button`
   align-items: center;
   background: ${themeCssVariables.background.primary};
@@ -60,7 +55,6 @@ export const HeroPlayButton = ({
       aria-label={ariaLabel}
       className={className}
     >
-      {/* No fill — the design uses the stroked outline directly from Tabler */}
       <IconPlayerPlay size={theme.icon.size.md} stroke={theme.icon.stroke.md} />
     </StyledButton>
   );

@@ -26,9 +26,7 @@ const SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX = 'settings-layout-hero';
 export const SettingsLayout = () => {
   const { t } = useLingui();
 
-  // Vimeo IDs are reused from twenty-docs' in-page demos. No video exists
-  // yet for several of these tabs, so the closest topical match is used as
-  // a placeholder — Sidebar/Record page share the Layout core-concepts demo.
+  // TODO: replace placeholder demo videos per tab
   const heroTabs = useMemo(
     () => [
       {

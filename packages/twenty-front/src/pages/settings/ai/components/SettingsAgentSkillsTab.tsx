@@ -86,7 +86,7 @@ export const SettingsAgentSkillsTab = () => {
     <Section>
       <H2Title
         title={t`Skills`}
-        description={t`Use filter to see existing tools or create your own`}
+        description={t`Use filter to see existing skills or create your own`}
       />
 
       <StyledSearchInput

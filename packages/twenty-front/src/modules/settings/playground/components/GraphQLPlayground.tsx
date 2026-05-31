@@ -1,5 +1,5 @@
 import {
-  isValidPlaygroundApiKey,
+  isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
 } from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
@@ -43,7 +43,7 @@ export const GraphQLPlayground = ({
 
   const { colorScheme } = useContext(ThemeContext);
 
-  if (!isValidPlaygroundApiKey(playgroundApiKey)) {
+  if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
     onError();
     return null;
   }

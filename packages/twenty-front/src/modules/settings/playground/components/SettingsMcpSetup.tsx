@@ -1,9 +1,16 @@
+import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { H2Title, IconCopy } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Card, CardContent, Section } from 'twenty-ui/layout';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
+
+const StyledPre = styled.pre`
+  font-family: monospace;
+  margin: 0;
+  white-space: pre;
+`;
 
 const buildMcpConfig = (serverUrl: string) =>
   `{
@@ -30,11 +37,7 @@ export const SettingsMcpSetup = () => {
       />
       <Card rounded>
         <CardContent divider>
-          <pre
-            style={{ margin: 0, fontFamily: 'monospace', whiteSpace: 'pre' }}
-          >
-            {mcpConfig}
-          </pre>
+          <StyledPre>{mcpConfig}</StyledPre>
         </CardContent>
         <CardContent>
           <Button

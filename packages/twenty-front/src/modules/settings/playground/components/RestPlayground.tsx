@@ -1,6 +1,6 @@
 import { RestPlaygroundSchemaFetchEffect } from '@/settings/playground/components/RestPlaygroundSchemaFetchEffect';
 import {
-  isValidPlaygroundApiKey,
+  isPlaygroundApiKeyFresh,
   playgroundApiKeyState,
 } from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
@@ -58,7 +58,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
 
-  if (!isValidPlaygroundApiKey(playgroundApiKey)) {
+  if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
     onError();
     return null;
   }

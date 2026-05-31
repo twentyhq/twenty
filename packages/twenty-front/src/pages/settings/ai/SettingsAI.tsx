@@ -63,8 +63,7 @@ export const SettingsAI = () => {
         const newLogicFunction = result.response.data.createOneLogicFunction;
         enqueueSuccessSnackBar({ message: t`Tool created` });
 
-        const applicationId = (newLogicFunction as { applicationId?: string })
-          .applicationId;
+        const applicationId = newLogicFunction.applicationId;
         if (isDefined(applicationId)) {
           navigate(
             getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
