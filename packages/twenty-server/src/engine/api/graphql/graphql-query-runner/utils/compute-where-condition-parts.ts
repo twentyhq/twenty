@@ -44,9 +44,6 @@ export const computeWhereConditionParts = ({
     : `"${objectNameSingular}"."${key}"`;
 
   const isDateTimeField = fieldMetadataType === FieldMetadataType.DATE_TIME;
-  const comparisonFieldReference = isDateTimeField
-    ? `date_trunc('milliseconds', ${fieldReference})`
-    : fieldReference;
 
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
@@ -64,33 +61,61 @@ export const computeWhereConditionParts = ({
         params: {},
       };
     case 'eq':
+      if (isDateTimeField) {
+        return {
+          sql: `(${fieldReference} >= :${key}${paramSuffix} AND ${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond')${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+          params: { [`${key}${paramSuffix}`]: value },
+        };
+      }
+
       return {
-        sql: `${comparisonFieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
+      if (isDateTimeField) {
+        return {
+          sql: `(${fieldReference} < :${key}${paramSuffix} OR ${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond')${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
+          params: { [`${key}${paramSuffix}`]: value },
+        };
+      }
+
       return {
-        sql: `${comparisonFieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
+        sql: `${fieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
+      if (isDateTimeField) {
+        return {
+          sql: `${fieldReference} >= :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
+          params: { [`${key}${paramSuffix}`]: value },
+        };
+      }
+
       return {
-        sql: `${comparisonFieldReference} > :${key}${paramSuffix}`,
+        sql: `${fieldReference} > :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gte':
       return {
-        sql: `${comparisonFieldReference} >= :${key}${paramSuffix}`,
+        sql: `${fieldReference} >= :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lt':
       return {
-        sql: `${comparisonFieldReference} < :${key}${paramSuffix}`,
+        sql: `${fieldReference} < :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lte':
+      if (isDateTimeField) {
+        return {
+          sql: `${fieldReference} < :${key}${paramSuffix}::timestamptz + interval '1 millisecond'`,
+          params: { [`${key}${paramSuffix}`]: value },
+        };
+      }
+
       return {
-        sql: `${comparisonFieldReference} <= :${key}${paramSuffix}`,
+        sql: `${fieldReference} <= :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'in':
