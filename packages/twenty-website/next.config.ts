@@ -11,7 +11,7 @@ import {
 // Locale URL segments that are actually served (others are normalised away),
 // derived from the single WEBSITE_LOCALE_LIST source of truth so adding a
 // locale never requires editing this config. These are exactly the keys of
-// LOCALE_BY_URL_SEGMENT in src/lib/i18n/utils/website-locale-segments.ts.
+// LOCALE_BY_URL_SEGMENT in src/lib/i18n/locales.ts.
 const DEPLOYED_LOCALE_URL_SEGMENTS =
   WEBSITE_LOCALE_LIST.map(localeToUrlSegment);
 

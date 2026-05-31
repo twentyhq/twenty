@@ -13,7 +13,7 @@ export function PricingSalesforce() {
     >
       <Trans>
         <HeadingPart fontFamily="serif">Trust the n°1 CRM,</HeadingPart>{' '}
-        <HeadingPart fontFamily="sans">or not !</HeadingPart>
+        <HeadingPart fontFamily="sans">or not!</HeadingPart>
       </Trans>
     </Salesforce>
   );
