@@ -4,8 +4,7 @@ import { type RefObject, useCallback, useEffect, useState } from 'react';
 
 const NAV_HEIGHT = 64;
 
-// Scroll range over which the morph happens (as fraction of scrollable distance)
-const MORPH_START = 0.12;
+const MORPH_START = 0;
 const MORPH_END = 0.55;
 
 const NAV_EXIT_DISTANCE_PX = 120;
