@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react/macro';
 import { isDefined } from 'twenty-shared/utils';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
@@ -9,6 +10,7 @@ import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/sta
 import { buildCreateNavigationMenuItemInput } from '@/navigation-menu-item/common/utils/buildCreateNavigationMenuItemInput';
 import { useNavigationMenuItemsData } from '@/navigation-menu-item/display/hooks/useNavigationMenuItemsData';
 import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
@@ -16,7 +18,11 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 // add/edit side panel, mirroring useHandleNavigationMenuItemDragAndDrop:
 // the workspace section stages changes in the draft (saved on layout exit),
 // while the favorite section creates/updates/deletes personal items immediately.
+// The immediate path is optimistic (the mutation hooks roll back on failure), so
+// errors are surfaced here and the rejection is swallowed — callers fire-and-forget.
 export const useNavigationMenuItemEditController = () => {
+  const { t } = useLingui();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const navigationMenuItemEditSection = useAtomStateValue(
     navigationMenuItemEditSectionState,
   );
@@ -56,12 +62,16 @@ export const useNavigationMenuItemEditController = () => {
       return;
     }
 
-    await createManyNavigationMenuItems([
-      {
-        ...buildCreateNavigationMenuItemInput(item, (folderId) => folderId),
-        userWorkspaceId: targetUserWorkspaceId,
-      },
-    ]);
+    try {
+      await createManyNavigationMenuItems([
+        {
+          ...buildCreateNavigationMenuItemInput(item, (folderId) => folderId),
+          userWorkspaceId: targetUserWorkspaceId,
+        },
+      ]);
+    } catch {
+      enqueueErrorSnackBar({ message: t`Couldn't add to favorites` });
+    }
   };
 
   const applyUpdate = async (
@@ -79,7 +89,11 @@ export const useNavigationMenuItemEditController = () => {
       return;
     }
 
-    await updateManyNavigationMenuItems([{ id, update }]);
+    try {
+      await updateManyNavigationMenuItems([{ id, update }]);
+    } catch {
+      enqueueErrorSnackBar({ message: t`Couldn't update favorite` });
+    }
   };
 
   const applyDelete = async (ids: string[]): Promise<void> => {
@@ -92,7 +106,11 @@ export const useNavigationMenuItemEditController = () => {
       return;
     }
 
-    await deleteManyNavigationMenuItems(ids);
+    try {
+      await deleteManyNavigationMenuItems(ids);
+    } catch {
+      enqueueErrorSnackBar({ message: t`Couldn't remove favorite` });
+    }
   };
 
   return {
