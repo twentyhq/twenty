@@ -4,7 +4,10 @@ import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import {
+  isValidPlaygroundApiKey,
+  playgroundApiKeyState,
+} from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { PlaygroundTypes } from '@/settings/playground/types/PlaygroundTypes';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
@@ -18,7 +21,7 @@ import {
 const TOKEN_FRESHNESS_BUFFER_MS = 5 * 60 * 1000;
 
 const isCachedTokenFresh = (token: AuthToken | null): boolean => {
-  if (token === null) return false;
+  if (!isValidPlaygroundApiKey(token)) return false;
   return (
     new Date(token.expiresAt).getTime() - Date.now() > TOKEN_FRESHNESS_BUFFER_MS
   );

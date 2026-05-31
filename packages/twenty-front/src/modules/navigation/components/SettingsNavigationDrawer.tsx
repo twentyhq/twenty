@@ -12,13 +12,19 @@ import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
+import { useIsMobile } from 'twenty-ui/utilities';
 import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-const StyledAdvancedToggleWrapper = styled.div`
-  padding-left: ${themeCssVariables.spacing[5]};
-  padding-right: ${themeCssVariables.spacing[8]};
+// On mobile NavigationDrawerFixedContent already adds horizontal padding, so
+// the wrapper is flush. On desktop the FixedContent is edge-to-edge and the
+// wrapper supplies the indent (asymmetric — extra room on the right).
+const StyledAdvancedToggleWrapper = styled.div<{ isMobile: boolean }>`
+  padding-left: ${({ isMobile }) =>
+    isMobile ? '0' : themeCssVariables.spacing[5]};
+  padding-right: ${({ isMobile }) =>
+    isMobile ? '0' : themeCssVariables.spacing[8]};
 `;
 
 export const SettingsNavigationDrawer = ({
@@ -27,6 +33,7 @@ export const SettingsNavigationDrawer = ({
   className?: string;
 }) => {
   const { t } = useLingui();
+  const isMobile = useIsMobile();
   const [isAdvancedModeEnabled, setIsAdvancedModeEnabled] = useAtomState(
     isAdvancedModeEnabledState,
   );
@@ -57,7 +64,7 @@ export const SettingsNavigationDrawer = ({
 
       {!showAiChatContent && (
         <NavigationDrawerFixedContent>
-          <StyledAdvancedToggleWrapper>
+          <StyledAdvancedToggleWrapper isMobile={isMobile}>
             <AdvancedSettingsToggle
               isAdvancedModeEnabled={isAdvancedModeEnabled}
               setIsAdvancedModeEnabled={setIsAdvancedModeEnabled}

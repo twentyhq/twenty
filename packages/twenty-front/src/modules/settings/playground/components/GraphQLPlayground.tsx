@@ -1,4 +1,7 @@
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import {
+  isValidPlaygroundApiKey,
+  playgroundApiKeyState,
+} from '@/settings/playground/states/playgroundApiKeyState';
 import { PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -40,7 +43,7 @@ export const GraphQLPlayground = ({
 
   const { colorScheme } = useContext(ThemeContext);
 
-  if (!playgroundApiKey) {
+  if (!isValidPlaygroundApiKey(playgroundApiKey)) {
     onError();
     return null;
   }
