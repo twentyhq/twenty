@@ -18,7 +18,7 @@ import { sanitizeString } from 'src/modules/messaging/message-import-manager/uti
 
 type ConnectedAccount = Pick<
   ConnectedAccountEntity,
-  'id' | 'provider' | 'handle' | 'handleAliases' | 'connectionParameters'
+  'id' | 'handle' | 'handleAliases'
 >;
 
 @Injectable()
@@ -41,7 +41,7 @@ export class ImapGetMessagesService {
     }
 
     const messagesByFolder = this.groupByFolder(messageExternalIds);
-    const client = await this.imapClientProvider.getClient(connectedAccount);
+    const client = await this.imapClientProvider.getClient(connectedAccount.id);
 
     try {
       return await this.fetchFromAllFolders(

@@ -20,10 +20,15 @@ import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/serv
 import { AiRestApiExceptionFilter } from 'src/engine/metadata-modules/ai/filters/ai-api-exception.filter';
 import { GenerateTextInput } from 'src/engine/metadata-modules/ai/ai-generate-text/dtos/generate-text.input';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
 
 @Controller('rest/ai')
 @UseGuards(JwtAuthGuard, WorkspaceAuthGuard)
-@UseFilters(AiRestApiExceptionFilter, RestApiExceptionFilter)
+@UseFilters(
+  PermissionsRestApiExceptionFilter,
+  AiRestApiExceptionFilter,
+  RestApiExceptionFilter,
+)
 export class AiGenerateTextController {
   constructor(
     private readonly aiModelRegistryService: AiModelRegistryService,
@@ -77,7 +82,7 @@ export class AiGenerateTextController {
       };
     } finally {
       if (result) {
-        this.aiBillingService.calculateAndBillUsage(
+        void this.aiBillingService.calculateAndBillUsage(
           resolvedModelId,
           {
             usage: result.usage,

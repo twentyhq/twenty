@@ -48,6 +48,7 @@ const StyledPageContainerBase = styled.div`
   flex: 1 1 auto;
   flex-direction: row;
   min-height: 0;
+  min-width: 0;
 `;
 const StyledPageContainer = motion.create(StyledPageContainerBase);
 
@@ -58,6 +59,7 @@ const StyledNavigationDrawerWrapper = styled.div`
 const StyledMainContainer = styled.div`
   display: flex;
   flex: 0 1 100%;
+  min-width: 0;
   overflow: hidden;
 `;
 

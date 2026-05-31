@@ -1,96 +1,109 @@
 import { copyBaseApplicationProject } from '@/utils/app-template';
-import { downloadExample } from '@/utils/download-example';
 import { convertToLabel } from '@/utils/convert-to-label';
 import { install } from '@/utils/install';
 import { tryGitInit } from '@/utils/try-git-init';
 import chalk from 'chalk';
 import * as fs from 'fs-extra';
-import inquirer from 'inquirer';
 import kebabCase from 'lodash.kebabcase';
 import * as path from 'path';
 import { basename } from 'path';
+import { spawn } from 'node:child_process';
 import {
+  authLogin,
   authLoginOAuth,
   checkDockerRunning,
   ConfigService,
-  containerExists,
-  detectLocalServer,
+  DEV_API_KEY,
+  DEV_API_URL,
   serverStart,
 } from 'twenty-sdk/cli';
-import { isDefined } from 'twenty-shared/utils';
+import { isDefined, normalizeUrl } from 'twenty-shared/utils';
+import {
+  getDockerInstallInstructions,
+  isDockerInstalled,
+} from '@/utils/docker-install';
 
 const CURRENT_EXECUTION_DIRECTORY = process.env.INIT_CWD || process.cwd();
+const IMAGE = 'twentycrm/twenty-app-dev:latest';
+
+export type AuthenticationMethod = 'oauth' | 'apiKey';
 
 type CreateAppOptions = {
   directory?: string;
-  example?: string;
   name?: string;
   displayName?: string;
   description?: string;
-  skipLocalInstance?: boolean;
-  yes?: boolean;
+  serverUrl?: string;
+  authenticationMethod?: AuthenticationMethod;
 };
 
 export class CreateAppCommand {
-  private static TOTAL_STEPS = 4;
+  private stepCounter = 0;
+  private totalSteps = 0;
 
   async execute(options: CreateAppOptions = {}): Promise<void> {
     const { appName, appDisplayName, appDirectory, appDescription } =
-      await this.getAppInfos(options);
+      this.getAppInfos(options);
+
+    const serverUrl = options.serverUrl ?? DEV_API_URL;
+
+    const skipLocalInstance = serverUrl !== DEV_API_URL;
+
+    if (!skipLocalInstance && !isDockerInstalled()) {
+      console.log(chalk.yellow('\n' + getDockerInstallInstructions() + '\n'));
+      process.exit(1);
+    }
+
+    if (skipLocalInstance && options.authenticationMethod === 'apiKey') {
+      console.log(
+        chalk.yellow(
+          'API key authentication is only supported on a local Docker instance. Ignoring and switching to OAuth authentication.',
+        ),
+      );
+    }
+
+    const authenticationMethod = skipLocalInstance
+      ? 'oauth'
+      : (options.authenticationMethod ?? 'apiKey');
 
     try {
       await this.validateDirectory(appDirectory);
 
-      const confirmed = await this.promptScaffoldConfirmation({
+      this.totalSteps = this.computeTotalSteps({
+        skipLocalInstance,
+      });
+
+      this.stepCounter = 0;
+
+      const dockerPullPromise =
+        !skipLocalInstance && checkDockerRunning()
+          ? this.pullImageInBackground()
+          : Promise.resolve(false);
+
+      this.logPlan({ appName, appDisplayName, appDescription, appDirectory });
+
+      this.logNextStep('Creating project directory');
+
+      await fs.ensureDir(appDirectory);
+
+      this.logDetail(appDirectory);
+
+      this.logNextStep('Scaffolding project files');
+
+      await copyBaseApplicationProject({
         appName,
         appDisplayName,
         appDescription,
         appDirectory,
-        autoConfirm: options.yes,
+        onProgress: (message) => this.logDetail(message),
       });
 
-      if (!confirmed) {
-        console.log(chalk.gray('\nScaffolding cancelled.'));
-        process.exit(0);
-      }
+      this.logNextStep('Installing dependencies');
 
-      console.log('');
-
-      this.logStep(1, 'Creating project directory');
-      await fs.ensureDir(appDirectory);
-      this.logDetail(appDirectory);
-
-      this.logStep(2, 'Scaffolding project files');
-
-      if (options.example) {
-        const exampleSucceeded = await this.tryDownloadExample(
-          options.example,
-          appDirectory,
-        );
-
-        if (!exampleSucceeded) {
-          await copyBaseApplicationProject({
-            appName,
-            appDisplayName,
-            appDescription,
-            appDirectory,
-            onProgress: (message) => this.logDetail(message),
-          });
-        }
-      } else {
-        await copyBaseApplicationProject({
-          appName,
-          appDisplayName,
-          appDescription,
-          appDirectory,
-          onProgress: (message) => this.logDetail(message),
-        });
-      }
-
-      this.logStep(3, 'Installing dependencies');
       await install(appDirectory, (message) => this.logDetail(message));
 
-      this.logStep(4, 'Initializing Git repository');
+      this.logNextStep('Initializing Git repository');
+
       const gitInitialized = await tryGitInit(appDirectory);
 
       if (gitInitialized) {
@@ -104,38 +117,56 @@ export class CreateAppCommand {
 
       console.log('');
 
-      let hasLocalServer = false;
       let authSucceeded = false;
+      let resolvedServerUrl = serverUrl;
+      let serverReady = skipLocalInstance;
 
-      if (!options.skipLocalInstance) {
-        const existingServerUrl = await detectLocalServer();
+      if (!skipLocalInstance) {
+        this.logNextStep('Starting Twenty server');
+        const serverResult = await this.ensureDockerServer(dockerPullPromise);
 
-        if (existingServerUrl) {
-          hasLocalServer = true;
-          authSucceeded = await this.promptConnectToLocal(existingServerUrl);
-        } else {
-          const shouldStart = await this.shouldStartServer(options.yes);
-
-          if (shouldStart) {
-            const startResult = await serverStart({
-              onProgress: (message: string) => console.log(chalk.gray(message)),
-            });
-
-            if (startResult.success) {
-              hasLocalServer = true;
-              authSucceeded = await this.promptConnectToLocal(
-                startResult.data.url,
-              );
-            } else {
-              console.log(chalk.yellow(`\n${startResult.error.message}`));
-            }
-          } else {
-            this.logServerSkipped();
-          }
+        if (isDefined(serverResult.url)) {
+          resolvedServerUrl = serverResult.url;
+          serverReady = true;
         }
       }
 
-      this.logSuccess(appDirectory, hasLocalServer, authSucceeded);
+      if (serverReady) {
+        this.logNextStep('Authenticating');
+
+        authSucceeded = await this.tryExistingAuth(resolvedServerUrl);
+
+        if (authSucceeded) {
+          this.logDetail('Reusing existing credentials');
+        } else if (authenticationMethod === 'oauth') {
+          this.logDetail('Starting OAuth flow');
+          authSucceeded = await this.authenticateWithOAuth(resolvedServerUrl);
+        } else {
+          this.logDetail('Using development API key');
+          authSucceeded = await this.authenticateWithDevKey(resolvedServerUrl);
+        }
+      }
+
+      this.logNextStep('Installing application');
+
+      let syncSucceeded = false;
+
+      if (serverReady && authSucceeded) {
+        syncSucceeded = await this.syncApplication(appDirectory);
+
+        if (!syncSucceeded) {
+          this.logDetail('Sync failed. Run `yarn twenty dev --once` manually.');
+          return;
+        }
+      } else {
+        this.logDetail('Skipped (server or authentication not available)');
+      }
+
+      if (syncSucceeded) {
+        await this.openMainPage(appDirectory, resolvedServerUrl);
+      }
+
+      this.logSuccess(appDirectory, resolvedServerUrl, authSucceeded);
     } catch (error) {
       console.error(
         chalk.red('\nCreate application failed:'),
@@ -145,66 +176,42 @@ export class CreateAppCommand {
     }
   }
 
-  private async getAppInfos(options: CreateAppOptions): Promise<{
+  private computeTotalSteps({
+    skipLocalInstance,
+  }: {
+    skipLocalInstance: boolean;
+  }): number {
+    let steps = 4; // directory, scaffold, install, git
+
+    if (!skipLocalInstance) {
+      steps += 1; // start server
+    }
+
+    steps += 1; // authenticate (oauth or apiKey)
+    steps += 1; // sync application
+
+    return steps;
+  }
+
+  private getAppInfos(options: CreateAppOptions): {
     appName: string;
     appDisplayName: string;
     appDescription: string;
     appDirectory: string;
-  }> {
-    const { directory } = options;
-
-    const hasName = isDefined(options.name) || isDefined(directory);
-    const hasDisplayName = isDefined(options.displayName);
-    const hasDescription = isDefined(options.description);
-    const hasExample = isDefined(options.example);
-
-    const { name, displayName, description } = await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'name',
-        message: 'Application name:',
-        when: () => !hasName && !hasExample,
-        default: 'my-twenty-app',
-        validate: (input) => {
-          if (input.length === 0) return 'Application name is required';
-          return true;
-        },
-      },
-      {
-        type: 'input',
-        name: 'displayName',
-        message: 'Application display name:',
-        when: () => !hasDisplayName && !hasExample,
-        default: (answers: { name?: string }) => {
-          return convertToLabel(
-            answers?.name ?? options.name ?? directory ?? '',
-          );
-        },
-      },
-      {
-        type: 'input',
-        name: 'description',
-        message: 'Application description (optional):',
-        when: () => !hasDescription && !hasExample,
-        default: '',
-      },
-    ]);
-
+  } {
     const appName = (
       options.name ??
-      name ??
-      directory ??
-      options.example ??
+      options.directory ??
       'my-twenty-app'
     ).trim();
 
     const appDisplayName =
-      (options.displayName ?? displayName)?.trim() || convertToLabel(appName);
+      options.displayName?.trim() || convertToLabel(appName);
 
-    const appDescription = (options.description ?? description ?? '').trim();
+    const appDescription = (options.description ?? '').trim();
 
-    const appDirectory = directory
-      ? path.join(CURRENT_EXECUTION_DIRECTORY, directory)
+    const appDirectory = options.directory
+      ? path.join(CURRENT_EXECUTION_DIRECTORY, options.directory)
       : path.join(CURRENT_EXECUTION_DIRECTORY, kebabCase(appName));
 
     return { appName, appDisplayName, appDirectory, appDescription };
@@ -223,54 +230,17 @@ export class CreateAppCommand {
     }
   }
 
-  private async tryDownloadExample(
-    example: string,
-    appDirectory: string,
-  ): Promise<boolean> {
-    try {
-      await downloadExample(example, appDirectory);
-
-      return true;
-    } catch (error) {
-      console.error(
-        chalk.red(
-          `\n${error instanceof Error ? error.message : 'Failed to download example.'}`,
-        ),
-      );
-
-      const { useTemplate } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'useTemplate',
-          message: 'Would you like to create a default template app instead?',
-          default: true,
-        },
-      ]);
-
-      if (!useTemplate) {
-        process.exit(1);
-      }
-
-      // Clean up any partial files from the failed download
-      await fs.emptyDir(appDirectory);
-
-      return false;
-    }
-  }
-
-  private async promptScaffoldConfirmation({
+  private logPlan({
     appName,
     appDisplayName,
     appDescription,
     appDirectory,
-    autoConfirm,
   }: {
     appName: string;
     appDisplayName: string;
     appDescription: string;
     appDirectory: string;
-    autoConfirm?: boolean;
-  }): Promise<boolean> {
+  }): void {
     console.log(chalk.blue('\nCreating Twenty Application\n'));
     console.log(chalk.white(`  Name:           ${appName}`));
     console.log(chalk.white(`  Display name:   ${appDisplayName}`));
@@ -280,43 +250,13 @@ export class CreateAppCommand {
     }
 
     console.log(chalk.white(`  Directory:      ${appDirectory}`));
-
-    console.log(chalk.white('\nThe following steps will be performed:\n'));
-    console.log(chalk.gray('  1. Create project directory'));
-    console.log(
-      chalk.gray(
-        '  2. Scaffold project files from base template\n' +
-          '     - Copy template files\n' +
-          '     - Configure dotfiles (.gitignore, .github)\n' +
-          '     - Generate unique application identifiers\n' +
-          '     - Update package.json with app name and SDK versions',
-      ),
-    );
-    console.log(chalk.gray('  3. Install dependencies (yarn)'));
-    console.log(
-      chalk.gray('  4. Initialize Git repository with initial commit'),
-    );
     console.log('');
-
-    if (autoConfirm) {
-      return true;
-    }
-
-    const { proceed } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'proceed',
-        message: 'Proceed?',
-        default: true,
-      },
-    ]);
-
-    return proceed;
   }
 
-  private logStep(step: number, title: string): void {
+  private logNextStep(title: string): void {
+    this.stepCounter++;
     console.log(
-      chalk.blue(`\n[${step}/${CreateAppCommand.TOTAL_STEPS}]`) +
+      chalk.blue(`\n[${this.stepCounter}/${this.totalSteps}]`) +
         chalk.white(` ${title}...`),
     );
   }
@@ -325,99 +265,298 @@ export class CreateAppCommand {
     console.log(chalk.gray(`      → ${message}`));
   }
 
-  private async shouldStartServer(autoConfirm?: boolean): Promise<boolean> {
-    console.log(
-      chalk.white(
-        '\n  A local Twenty instance is required for app development.\n' +
-          '  It provides the API and schema your application connects to.\n',
-      ),
-    );
+  private pullImageInBackground(): Promise<boolean> {
+    return new Promise((resolve) => {
+      const child = spawn('docker', ['pull', IMAGE], { stdio: 'ignore' });
 
-    if (checkDockerRunning() && containerExists()) {
-      if (autoConfirm) {
-        return true;
-      }
-
-      const { startExisting } = await inquirer.prompt([
-        {
-          type: 'confirm',
-          name: 'startExisting',
-          message:
-            'An existing Twenty server container was found. Would you like to start it?',
-          default: true,
-        },
-      ]);
-
-      return startExisting;
-    }
-
-    if (autoConfirm) {
-      return true;
-    }
-
-    const { startDocker } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'startDocker',
-        message:
-          'No running Twenty instance found. Would you like to start one using Docker?',
-        default: true,
-      },
-    ]);
-
-    return startDocker;
+      child.on('close', (code) => resolve(code === 0));
+      child.on('error', () => resolve(false));
+    });
   }
 
-  private logServerSkipped(): void {
-    console.log(
-      chalk.gray(
-        '\n  To start a Twenty instance later:\n' +
-          '     yarn twenty server start\n\n' +
-          '  To connect to a remote instance instead:\n' +
-          '     yarn twenty remote add\n',
-      ),
-    );
-  }
-
-  private async promptConnectToLocal(serverUrl: string): Promise<boolean> {
-    console.log(
-      chalk.white(
-        '\n  Authentication links your app to a Twenty instance so you can\n' +
-          '  sync custom objects, fields, and roles during development.\n' +
-          '  This will open a browser window to complete the OAuth flow.\n',
-      ),
-    );
-
-    const { shouldAuthenticate } = await inquirer.prompt([
-      {
-        type: 'confirm',
-        name: 'shouldAuthenticate',
-        message: `Authenticate to the local Twenty instance (${serverUrl})?`,
-        default: true,
-      },
-    ]);
-
-    if (!shouldAuthenticate) {
+  private async ensureDockerServer(
+    dockerPullPromise: Promise<boolean>,
+  ): Promise<{ url?: string }> {
+    if (!checkDockerRunning()) {
       console.log(
-        chalk.gray(
-          '\n  Authentication skipped. To authenticate later:\n' +
-            `     yarn twenty remote add --local\n`,
+        chalk.yellow(
+          '\n  Docker is installed but not running.\n' +
+            '  Please start Docker and run this command again.\n',
         ),
       );
 
-      return false;
+      return {};
     }
 
-    await inquirer.prompt([
-      {
-        type: 'input',
-        name: 'confirm',
-        message: 'Press Enter to open the browser for authentication...',
+    this.logDetail('Ensuring latest Twenty server image...');
+
+    const pullSucceeded = await dockerPullPromise;
+
+    if (!pullSucceeded) {
+      this.logDetail(
+        'Image pull failed, continuing with cached image if available...',
+      );
+    }
+
+    const startResult = await serverStart({
+      onProgress: (message: string) => this.logDetail(message),
+    });
+
+    if (startResult.success) {
+      return { url: startResult.data.url };
+    }
+
+    console.log(chalk.yellow(`\n  ${startResult.error.message}`));
+
+    return {};
+  }
+
+  private async openMainPage(
+    appDirectory: string,
+    serverUrl: string,
+  ): Promise<void> {
+    try {
+      const configService = new ConfigService();
+      const config = await configService.getConfig();
+      const token = config.twentyCLIAccessToken ?? config.apiKey;
+
+      if (!token) {
+        return;
+      }
+
+      const [universalIdentifier, frontUrl] = await Promise.all([
+        this.readMainPageLayoutUniversalIdentifier(appDirectory),
+        this.resolveWorkspaceFrontUrl(serverUrl, token),
+      ]);
+
+      if (!universalIdentifier || !frontUrl) {
+        return;
+      }
+
+      const pageLayoutId = await this.resolvePageLayoutId(
+        serverUrl,
+        universalIdentifier,
+        token,
+      );
+
+      if (!pageLayoutId) {
+        return;
+      }
+
+      const url = `${frontUrl}/page/${pageLayoutId}`;
+
+      this.logDetail(`Opening app welcome page: ${url}`);
+      this.openInBrowser(url);
+    } catch {
+      // Best-effort — don't fail the scaffold if browser open fails
+    }
+  }
+
+  private async resolveWorkspaceFrontUrl(
+    serverUrl: string,
+    token: string,
+  ): Promise<string | null> {
+    const query = `{ currentWorkspace { workspaceUrls { subdomainUrl customUrl } } }`;
+
+    const response = await fetch(`${serverUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
       },
-    ]);
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const body = (await response.json()) as {
+      data?: {
+        currentWorkspace?: {
+          workspaceUrls?: { subdomainUrl?: string; customUrl?: string };
+        };
+      };
+    };
+
+    const urls = body.data?.currentWorkspace?.workspaceUrls;
+
+    if (!urls) {
+      return null;
+    }
+
+    const frontUrl = urls.customUrl ?? urls.subdomainUrl;
+
+    return frontUrl ? normalizeUrl(frontUrl) : null;
+  }
+
+  private async readMainPageLayoutUniversalIdentifier(
+    appDirectory: string,
+  ): Promise<string | null> {
+    const filePath = path.join(
+      appDirectory,
+      'src',
+      'constants',
+      'universal-identifiers.ts',
+    );
+    const content = await fs.readFile(filePath, 'utf-8');
+    const match = content.match(
+      /MAIN_PAGE_LAYOUT_UNIVERSAL_IDENTIFIER\s*=\s*'([^']+)'/,
+    );
+
+    return match?.[1] ?? null;
+  }
+
+  private async resolvePageLayoutId(
+    serverUrl: string,
+    universalIdentifier: string,
+    token: string,
+  ): Promise<string | null> {
+    const query = `{ getPageLayouts { id universalIdentifier } }`;
+
+    const response = await fetch(`${serverUrl}/metadata`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ query }),
+    });
+
+    if (!response.ok) {
+      return null;
+    }
+
+    const body = (await response.json()) as {
+      data?: {
+        getPageLayouts?: { id: string; universalIdentifier: string }[];
+      };
+    };
+
+    const matching = body.data?.getPageLayouts?.find(
+      (layout) => layout.universalIdentifier === universalIdentifier,
+    );
+
+    return matching?.id ?? null;
+  }
+
+  private sanitizeBrowserUrl(url: string): string | null {
+    if (/[^\u0020-\u007E]/.test(url)) {
+      return null;
+    }
 
     try {
-      const result = await authLoginOAuth({
+      const parsed = new URL(url);
+
+      if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+        return null;
+      }
+
+      return parsed.toString();
+    } catch {
+      return null;
+    }
+  }
+
+  private openInBrowser(url: string): void {
+    const safeUrl = this.sanitizeBrowserUrl(url);
+
+    if (!safeUrl) {
+      return;
+    }
+
+    const isWindows = process.platform === 'win32';
+    const command = isWindows
+      ? 'rundll32'
+      : process.platform === 'darwin'
+        ? 'open'
+        : 'xdg-open';
+    const args = isWindows
+      ? ['url.dll,FileProtocolHandler', safeUrl]
+      : [safeUrl];
+
+    const child = spawn(command, args, {
+      stdio: 'ignore',
+      detached: !isWindows,
+    });
+    child.on('error', () => undefined);
+    if (!isWindows) {
+      child.unref();
+    }
+  }
+
+  private async syncApplication(appDirectory: string): Promise<boolean> {
+    this.logDetail('Running `yarn twenty dev --once`...');
+    return new Promise((resolve) => {
+      const child = spawn('yarn', ['twenty', 'dev', '--once'], {
+        cwd: appDirectory,
+        stdio: ['inherit', 'pipe', 'pipe'],
+      });
+
+      child.stdout?.resume();
+      child.stderr?.resume();
+
+      child.on('close', (code) => resolve(code === 0));
+      child.on('error', () => resolve(false));
+    });
+  }
+
+  private async tryExistingAuth(serverUrl: string): Promise<boolean> {
+    try {
+      const configService = new ConfigService();
+      const remoteNames = await configService.getRemotes();
+
+      for (const remoteName of remoteNames) {
+        const remoteConfig = await configService.getConfigForRemote(remoteName);
+
+        if (remoteConfig.apiUrl !== serverUrl) {
+          continue;
+        }
+
+        const token = remoteConfig.twentyCLIAccessToken ?? remoteConfig.apiKey;
+
+        if (!token) {
+          continue;
+        }
+
+        const response = await fetch(`${serverUrl}/metadata`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            query: '{ currentWorkspace { id } }',
+          }),
+        });
+
+        if (!response.ok) {
+          continue;
+        }
+
+        const body = (await response.json()) as {
+          data?: { currentWorkspace?: { id: string } };
+          errors?: unknown[];
+        };
+
+        if (isDefined(body.data?.currentWorkspace) && !body.errors) {
+          ConfigService.setActiveRemote(remoteName);
+          await configService.setDefaultRemote(remoteName);
+
+          return true;
+        }
+      }
+
+      return false;
+    } catch {
+      return false;
+    }
+  }
+
+  private async authenticateWithDevKey(serverUrl: string): Promise<boolean> {
+    try {
+      const result = await authLogin({
+        apiKey: DEV_API_KEY,
         apiUrl: serverUrl,
         remote: 'local',
       });
@@ -426,21 +565,68 @@ export class CreateAppCommand {
         const configService = new ConfigService();
 
         await configService.setDefaultRemote('local');
+        this.logDetail('Authenticated as tim@apple.dev (development API key)');
 
         return true;
-      } else {
-        console.log(
-          chalk.yellow(
-            'Authentication failed. Run `yarn twenty remote add --local` manually.',
-          ),
-        );
-
-        return false;
       }
+
+      console.log(
+        chalk.yellow(
+          '  Authentication failed. Run `yarn twenty remote:add --local` manually.',
+        ),
+      );
+
+      return false;
     } catch {
       console.log(
         chalk.yellow(
-          'Authentication failed. Run `yarn twenty remote add` manually.',
+          '  Authentication failed. Run `yarn twenty remote:add --local` manually.',
+        ),
+      );
+
+      return false;
+    }
+  }
+
+  private deriveRemoteName(url: string): string {
+    try {
+      return new URL(url).hostname.replace(/\./g, '-');
+    } catch {
+      return 'remote';
+    }
+  }
+
+  private async authenticateWithOAuth(serverUrl: string): Promise<boolean> {
+    try {
+      const remoteName = this.deriveRemoteName(serverUrl);
+
+      ConfigService.setActiveRemote(remoteName);
+
+      this.logDetail('Opening browser for OAuth...');
+
+      const result = await authLoginOAuth({ apiUrl: serverUrl });
+
+      if (result.success) {
+        const configService = new ConfigService();
+
+        await configService.setDefaultRemote(remoteName);
+        this.logDetail(`Authenticated via OAuth to ${serverUrl}`);
+
+        return true;
+      }
+
+      console.log(
+        chalk.yellow(
+          `  OAuth failed: ${result.error.message}\n` +
+            `  Run \`yarn twenty remote:add --url ${serverUrl}\` manually.`,
+        ),
+      );
+
+      return false;
+    } catch {
+      console.log(
+        chalk.yellow(
+          `  Authentication failed. Run \`yarn twenty remote:add --url ${serverUrl}\` manually.`,
         ),
       );
 
@@ -450,12 +636,13 @@ export class CreateAppCommand {
 
   private logSuccess(
     appDirectory: string,
-    hasLocalServer: boolean,
+    serverUrl: string,
     authSucceeded: boolean,
   ): void {
     const dirName = basename(appDirectory);
 
     console.log(chalk.green('\n✔ Application created successfully!\n'));
+
     console.log(chalk.white('  Next steps:\n'));
 
     let stepNumber = 1;
@@ -465,17 +652,19 @@ export class CreateAppCommand {
     stepNumber++;
 
     if (!authSucceeded) {
-      const remoteCommand = hasLocalServer
-        ? 'yarn twenty remote add --local'
-        : 'yarn twenty remote add';
-
       console.log(chalk.white(`  ${stepNumber}. Connect to a Twenty instance`));
-      console.log(chalk.cyan(`     ${remoteCommand}\n`));
+      console.log(
+        chalk.cyan('     yarn twenty remote:add --url <your-instance-url>\n'),
+      );
       stepNumber++;
     }
 
     console.log(chalk.white(`  ${stepNumber}. Start developing`));
     console.log(chalk.cyan('     yarn twenty dev\n'));
+    stepNumber++;
+
+    console.log(chalk.white(`  ${stepNumber}. Open your twenty instance`));
+    console.log(chalk.cyan(`     ${serverUrl}\n`));
 
     console.log(
       chalk.gray(

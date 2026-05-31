@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class RenameMarketplaceDisplayDataToManifest1774472400000
-  implements MigrationInterface
-{
+export class RenameMarketplaceDisplayDataToManifest1774472400000 implements MigrationInterface {
   name = 'RenameMarketplaceDisplayDataToManifest1774472400000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

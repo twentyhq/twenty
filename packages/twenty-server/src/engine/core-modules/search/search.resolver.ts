@@ -71,7 +71,7 @@ export class SearchResolver {
         workspaceId: workspace.id,
       });
 
-    return this.searchService.computeSearchObjectResults({
+    return await this.searchService.computeSearchObjectResults({
       recordsWithObjectMetadataItems: allRecordsWithObjectMetadataItems,
       flatFieldMetadataMaps,
       workspaceId: workspace.id,

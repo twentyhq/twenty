@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddCanBeUninstalledColumnToApplication1763731277403
-  implements MigrationInterface
-{
+export class AddCanBeUninstalledColumnToApplication1763731277403 implements MigrationInterface {
   name = 'AddCanBeUninstalledColumnToApplication1763731277403';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

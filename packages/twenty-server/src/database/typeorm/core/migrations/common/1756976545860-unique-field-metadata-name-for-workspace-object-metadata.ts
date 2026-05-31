@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UniqueFieldMetadataNameForWorkspaceObjectMetadata1756976545860
-  implements MigrationInterface
-{
+export class UniqueFieldMetadataNameForWorkspaceObjectMetadata1756976545860 implements MigrationInterface {
   name = 'UniqueFieldMetadataNameForWorkspaceObjectMetadata1756976545860';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -3,8 +3,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AuditModule } from 'src/engine/core-modules/audit/audit.module';
 import { BillingWebhookController } from 'src/engine/core-modules/billing-webhook/billing-webhook.controller';
-import { BillingWebhookAlertService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-alert.service';
-import { BillingWebhookCreditGrantService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-credit-grant.service';
 import { BillingWebhookCustomerService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-customer.service';
 import { BillingWebhookEntitlementService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-entitlement.service';
 import { BillingWebhookInvoiceService } from 'src/engine/core-modules/billing-webhook/services/billing-webhook-invoice.service';
@@ -29,6 +27,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { WorkspaceModule } from 'src/engine/core-modules/workspace/workspace.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RowLevelPermissionModule } from 'src/engine/metadata-modules/row-level-permission-predicate/row-level-permission.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 @Module({
@@ -59,13 +58,13 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   providers: [
     BillingWebhookProductService,
     BillingWebhookPriceService,
-    BillingWebhookAlertService,
     BillingWebhookInvoiceService,
     BillingWebhookCustomerService,
     BillingWebhookSubscriptionService,
     BillingWebhookSubscriptionScheduleService,
     BillingWebhookEntitlementService,
-    BillingWebhookCreditGrantService,
+    provideWorkspaceScopedRepository(BillingEntitlementEntity),
+    provideWorkspaceScopedRepository(BillingCustomerEntity),
   ],
 })
 export class BillingWebhookModule {}

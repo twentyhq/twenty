@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class MakeApplicationWorkspaceFkDeferrable1762339932345
-  implements MigrationInterface
-{
+export class MakeApplicationWorkspaceFkDeferrable1762339932345 implements MigrationInterface {
   name = 'MakeApplicationWorkspaceFkDeferrable1762339932345';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

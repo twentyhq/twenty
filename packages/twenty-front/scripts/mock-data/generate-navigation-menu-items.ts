@@ -38,7 +38,9 @@ export const generateNavigationMenuItems = async (token: string) => {
     navigationMenuItems: Record<string, unknown>[];
   };
 
-  console.log(`  Got ${data.navigationMenuItems.length} navigation menu items.`);
+  console.log(
+    `  Got ${data.navigationMenuItems.length} navigation menu items.`,
+  );
 
   writeGeneratedFile(
     'metadata/navigation-menu-items/mock-navigation-menu-items-data.ts',

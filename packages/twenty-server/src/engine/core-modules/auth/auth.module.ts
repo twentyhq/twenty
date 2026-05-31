@@ -6,7 +6,6 @@ import { ApiKeyModule } from 'src/engine/core-modules/api-key/api-key.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { AppTokenEntity } from 'src/engine/core-modules/app-token/app-token.entity';
 import { AppTokenService } from 'src/engine/core-modules/app-token/services/app-token.service';
-import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ConnectionProviderModule } from 'src/engine/core-modules/application/connection-provider/connection-provider.module';
 import { ConnectionProviderOAuthController } from 'src/engine/core-modules/application/connection-provider/connection-provider-oauth.controller';
@@ -63,11 +62,13 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CoreEntityCacheModule } from 'src/engine/core-entity-cache/core-entity-cache.module';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
+import { ConnectedAccountTokenEncryptionModule } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.module';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { EmailAliasManagerModule } from 'src/modules/connected-account/email-alias-manager/email-alias-manager.module';
 import { ConnectedAccountModule } from 'src/modules/connected-account/connected-account.module';
 import { MessagingCommonModule } from 'src/modules/messaging/common/messaging-common.module';
 import { MessagingFolderSyncManagerModule } from 'src/modules/messaging/message-folder-manager/messaging-folder-sync-manager.module';
@@ -88,7 +89,6 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
       UserEntity,
       AppTokenEntity,
       ApiKeyEntity,
-      ApplicationEntity,
       FeatureFlagEntity,
       WorkspaceSSOIdentityProviderEntity,
       KeyValuePairEntity,
@@ -125,6 +125,8 @@ import { JwtAuthStrategy } from './strategies/jwt.auth.strategy';
     SecureHttpClientModule,
     EnterpriseModule,
     FileModule,
+    ConnectedAccountTokenEncryptionModule,
+    EmailAliasManagerModule,
   ],
   controllers: [
     GoogleAuthController,

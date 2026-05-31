@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class MigrateModelIdsToCompositeFormat1773900000000
-  implements MigrationInterface
-{
+export class MigrateModelIdsToCompositeFormat1773900000000 implements MigrationInterface {
   name = 'MigrateModelIdsToCompositeFormat1773900000000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

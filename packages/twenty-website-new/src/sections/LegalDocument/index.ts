@@ -1,1 +1,0 @@
-export { LegalDocument } from './components';

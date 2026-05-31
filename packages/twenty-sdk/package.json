@@ -1,6 +1,6 @@
 {
   "name": "twenty-sdk",
-  "version": "2.3.0",
+  "version": "2.9.0",
   "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
@@ -41,6 +41,11 @@
       "types": "./dist/logic-function/index.d.ts",
       "import": "./dist/logic-function/index.mjs",
       "require": "./dist/logic-function/index.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs"
     },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
@@ -84,7 +89,7 @@
     "react-dom": "^19.0.0",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
     "vite-tsconfig-paths": "^4.2.1",
@@ -114,6 +119,9 @@
   },
   "typesVersions": {
     "*": {
+      "billing": [
+        "dist/billing/index.d.ts"
+      ],
       "define": [
         "dist/define/index.d.ts"
       ],
@@ -122,6 +130,9 @@
       ],
       "logic-function": [
         "dist/logic-function/index.d.ts"
+      ],
+      "utils": [
+        "dist/utils/index.d.ts"
       ],
       "cli": [
         "dist/cli/operations/index.d.ts"

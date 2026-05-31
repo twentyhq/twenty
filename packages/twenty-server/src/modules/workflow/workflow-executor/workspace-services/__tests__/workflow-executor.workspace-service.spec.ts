@@ -78,7 +78,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
 
   const mockBillingUsageService = {
     hasAvailableCredits: jest.fn().mockResolvedValue(true),
-    decrementAvailableCredits: jest.fn().mockResolvedValue(undefined),
+    decrementAvailableCreditsInCache: jest.fn().mockResolvedValue(undefined),
   };
 
   const mockExceptionHandlerService = {
@@ -86,7 +86,7 @@ describe('WorkflowExecutorWorkspaceService', () => {
   };
 
   const mockMetricsService = {
-    incrementCounter: jest.fn(),
+    incrementCounterForEvent: jest.fn(),
   };
 
   const mockMessageQueueService = {

@@ -98,6 +98,22 @@ Clique em **+ Adicionar regra** e selecione um objeto para criar uma exceção.
 | Oportunidades → desativar "Ver registros" | O estagiário não consegue ver o objeto Oportunidades.                     |
 | Pessoas → ativar "Editar registros"       | O estagiário pode editar registros de Pessoas (mas não de outros objetos) |
 
+### Permissões em Nível de Linha
+
+<Note>
+As permissões em nível de linha são um **recurso Premium** disponível no plano **Organization** (Cloud e Self-Hosted).
+</Note>
+
+As permissões em nível de linha permitem restringir quais registros individuais uma função pode ver ou editar, com base em critérios dinâmicos. Diferente das permissões de objeto (que se aplicam a todo um tipo de objeto), as permissões em nível de linha avaliam cada registro de forma independente.
+
+**Casos de uso de exemplo:**
+
+* Representantes de vendas só podem ver suas próprias oportunidades
+* Gerentes podem ver todos os registros em sua região
+* Agentes de suporte só podem visualizar tickets atribuídos a eles
+
+Para configurar permissões em nível de linha, abra uma função, navegue até a guia **Objects** e use a seção **Row-Level** para definir condições de filtro para um objeto específico.
+
 ### Permissões de Campos
 
 Em cada regra em nível de objeto, você pode ir além e configurar **permissões em nível de campo** para controlar o acesso a campos específicos.

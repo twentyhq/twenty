@@ -8,6 +8,7 @@ import {
 
 import { type MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 
+// Synchronous driver for tests and local dev
 export class SyncDriver implements MessageQueueDriver {
   private readonly logger = new Logger(SyncDriver.name);
   private workersMap: {
@@ -50,7 +51,7 @@ export class SyncDriver implements MessageQueueDriver {
   work<T extends MessageQueueJobData>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void> | void,
-  ) {
+  ): void {
     this.logger.log(`Registering handler for queue: ${queueName}`);
     this.workersMap[queueName] = handler;
   }

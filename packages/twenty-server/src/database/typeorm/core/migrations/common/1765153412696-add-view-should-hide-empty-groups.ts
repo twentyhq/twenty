@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddViewShouldHideEmptyGroups1765153412696
-  implements MigrationInterface
-{
+export class AddViewShouldHideEmptyGroups1765153412696 implements MigrationInterface {
   name = 'AddViewShouldHideEmptyGroups1765153412696';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

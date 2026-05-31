@@ -16,13 +16,18 @@ import {
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class PublicDomainService {
   constructor(
     private readonly dnsManagerService: DnsManagerService,
+    @InjectWorkspaceScopedRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
+    // Hostname-to-workspace resolution at request-routing time, before workspace context exists.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(PublicDomainEntity)
-    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
+    private readonly publicDomainRepositoryUnscoped: Repository<PublicDomainEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     @InjectRepository(ApplicationEntity)
@@ -42,9 +47,8 @@ export class PublicDomainService {
       isPublicDomain: true,
     });
 
-    await this.publicDomainRepository.delete({
+    await this.publicDomainRepository.delete(workspace.id, {
       domain: formattedDomain,
-      workspaceId: workspace.id,
     });
   }
 
@@ -62,9 +66,8 @@ export class PublicDomainService {
     const [workspaceWithCustomDomain, existingPublicDomain, application] =
       await Promise.all([
         this.workspaceRepository.findOneBy({ customDomain: formattedDomain }),
-        this.publicDomainRepository.findOneBy({
-          domain: formattedDomain,
-          workspaceId: workspace.id,
+        this.publicDomainRepository.findOne(workspace.id, {
+          where: { domain: formattedDomain },
         }),
         isDefined(applicationId)
           ? this.applicationRepository.findOneBy({
@@ -101,11 +104,11 @@ export class PublicDomainService {
       );
     }
 
-    const publicDomain = this.publicDomainRepository.create({
+    const publicDomain = {
       domain: formattedDomain,
       workspaceId: workspace.id,
       applicationId,
-    });
+    } as PublicDomainEntity;
 
     await this.dnsManagerService.registerHostname(formattedDomain, {
       isPublicDomain: true,
@@ -113,9 +116,8 @@ export class PublicDomainService {
 
     try {
       await this.publicDomainRepository.insert(
-        publicDomain as QueryDeepPartialEntity<
-          Omit<PublicDomainEntity, 'workspace' | 'application'>
-        >,
+        workspace.id,
+        publicDomain as QueryDeepPartialEntity<PublicDomainEntity>,
       );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
@@ -140,9 +142,8 @@ export class PublicDomainService {
     const formattedDomain = domain.trim().toLowerCase();
 
     const [publicDomain, application] = await Promise.all([
-      this.publicDomainRepository.findOneBy({
-        domain: formattedDomain,
-        workspaceId: workspace.id,
+      this.publicDomainRepository.findOne(workspace.id, {
+        where: { domain: formattedDomain },
       }),
       isDefined(applicationId)
         ? this.applicationRepository.findOneBy({
@@ -168,7 +169,7 @@ export class PublicDomainService {
 
     publicDomain.applicationId = applicationId;
 
-    return this.publicDomainRepository.save(publicDomain);
+    return this.publicDomainRepository.save(workspace.id, publicDomain);
   }
 
   async checkPublicDomainValidRecords(
@@ -194,13 +195,16 @@ export class PublicDomainService {
     if (publicDomain.isValidated !== isCustomDomainWorking) {
       publicDomain.isValidated = isCustomDomainWorking;
 
-      await this.publicDomainRepository.save(publicDomain);
+      await this.publicDomainRepository.save(
+        publicDomain.workspaceId,
+        publicDomain,
+      );
     }
 
     return publicDomainWithRecords;
   }
 
   async findByDomain(domain: string) {
-    return this.publicDomainRepository.findOne({ where: { domain } });
+    return this.publicDomainRepositoryUnscoped.findOne({ where: { domain } });
   }
 }

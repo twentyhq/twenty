@@ -13,8 +13,8 @@ Her işlev dosyası, bir işleyici ve isteğe bağlı tetikleyiciler içeren bir
 
 ```ts src/logic-functions/createPostCard.logic-function.ts
 import { defineLogicFunction } from 'twenty-sdk/define';
-import type { DatabaseEventPayload, ObjectRecordCreateEvent, CronPayload, RoutePayload } from 'twenty-sdk/define';
-import { CoreApiClient, type Person } from 'twenty-client-sdk/core';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+import { CoreApiClient } from 'twenty-client-sdk/core';
 
 const handler = async (params: RoutePayload) => {
   const client = new CoreApiClient();
@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Kullanılabilir tetikleyici türleri:
 * **httpRoute**: İşlevinizi bir HTTP yolu ve yöntemiyle **`/s/` uç noktasının altında** kullanıma sunar:
 > örn. `path: '/post-card/create'` `https://your-twenty-server.com/s/post-card/create` adresinden çağrılabilir
+
+<Note>
+Arayüzsüz bir ön uç bileşeninden rota tarafından tetiklenen mantık fonksiyonunu çağırmak için bkz. [Mantık fonksiyonu çağırma](/l/tr/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 * **cron**: Bir CRON ifadesi kullanarak işlevinizi bir zamanlamayla çalıştırır.
 * **databaseEvent**: Çalışma alanı nesnesi yaşam döngüsü olaylarında çalışır. Olay işlemi `updated` olduğunda, dinlenecek belirli alanlar `updatedFields` dizisinde belirtilebilir. Tanımsız veya boş bırakılırsa, herhangi bir güncelleme işlevi tetikler.
 > örn. `person.updated`, `*.created`, `company.*`
@@ -61,17 +65,17 @@ Kullanılabilir tetikleyici türleri:
 Bir işlevi CLI kullanarak manuel olarak da çalıştırabilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty exec -n create-new-post-card -p '{"key": "value"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"key": "value"}'
 ```
 
 ```bash filename="Terminal"
-yarn twenty exec -y e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 Günlükleri şu şekilde izleyebilirsiniz:
 
 ```bash filename="Terminal"
-yarn twenty logs
+yarn twenty dev:function:logs
 ```
 </Note>
 
@@ -79,10 +83,10 @@ yarn twenty logs
 
 Bir rota tetikleyicisi mantık fonksiyonunuzu çağırdığında,
 [AWS HTTP API v2 formatını](https://docs.aws.amazon.com/apigateway/latest/developerguide/http-api-develop-integrations-lambda.html) izleyen bir `RoutePayload` nesnesi alır.
-`RoutePayload` türünü `twenty-sdk` içinden içe aktarın:
+`RoutePayload` türünü `twenty-sdk/logic-function` içinden içe aktarın:
 
 ```ts
-import { defineLogicFunction, type RoutePayload } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
 
 const handler = async (event: RoutePayload) => {
   const { headers, queryStringParameters, pathParameters, body } = event;
@@ -140,6 +144,115 @@ const handler = async (event: RoutePayload) => {
 <Note>
 Başlık adları küçük harfe normalize edilir. Onlara küçük harfli anahtarlarla erişin (örneğin, `event.headers['content-type']`).
 </Note>
+
+#### Veritabanı olay tetikleyicisi yükü
+
+Bir veritabanı olay tetikleyicisi mantık fonksiyonunuzu çağırdığında, değişen her kayıt için bir `DatabaseEventPayload` alır. Yük, kaynak çalışma alanı ve nesne hakkındaki üstveriyi, kayıt düzeyindeki olayla birleştirir.
+
+```ts
+import type {
+  DatabaseEventPayload,
+  ObjectRecordCreateEvent,
+  ObjectRecordDestroyEvent,
+  ObjectRecordUpdateEvent,
+} from 'twenty-sdk/logic-function';
+
+type Person = {
+  id: string;
+  emails?: { primaryEmail?: string };
+};
+```
+
+Yük, şunları içerir:
+
+| Özellik                                          | Açıklama                                                                                          |
+| ------------------------------------------------ | ------------------------------------------------------------------------------------------------- |
+| `name`                                           | `person.updated` gibi bir olay adı.                                                               |
+| `workspaceId`                                    | Olayın gerçekleştiği çalışma alanı.                                                               |
+| `objectMetadata`                                 | Değişen nesne için üstveri.                                                                       |
+| `recordId`                                       | Değişen kaydın kimliği.                                                                           |
+| `userId`, `userWorkspaceId`, `workspaceMemberId` | Olay bir çalışma alanı kullanıcısı tarafından tetiklendiğinde aktör alanları.                     |
+| `properties`                                     | İşleme bağlı olarak `before`, `after`, `diff` ve `updatedFields` içeren olay için kayıt verileri. |
+
+| Etkinlik           | Kayıt verileri                                                                                                 |
+| ------------------ | -------------------------------------------------------------------------------------------------------------- |
+| `person.created`   | `event.properties.after`                                                                                       |
+| `person.updated`   | `event.properties.before`, `event.properties.after`, `event.properties.diff`, `event.properties.updatedFields` |
+| `person.destroyed` | `event.properties.before`                                                                                      |
+
+Yumuşak silmeler için, kayıt `deletedAt` alanı değiştiğinden `.deleted`, güncelleme tarzı yapıyı izler.
+Kalıcı silmeler için `.destroyed` kullanın.
+
+<Note>
+`databaseEventTriggerSettings.updatedFields`, hangi güncelleme olaylarının fonksiyonu tetikleyeceğini filtreler.
+`event.properties.updatedFields`, mevcut olayda hangi alanların gerçekten değiştiğini size bildirir.
+</Note>
+
+Oluşturma olayı örneği:
+
+```ts
+type PersonCreatedEvent = DatabaseEventPayload<
+  ObjectRecordCreateEvent<Person>
+>;
+
+const handler = async (event: PersonCreatedEvent) => {
+  const person = event.properties.after;
+
+  return {
+    personId: event.recordId,
+    email: person.emails?.primaryEmail,
+  };
+};
+```
+
+Güncelleme olayı örneği:
+
+```ts
+type PersonUpdatedEvent = DatabaseEventPayload<
+  ObjectRecordUpdateEvent<Person>
+>;
+
+const handler = async (event: PersonUpdatedEvent) => {
+  const { before, after, diff, updatedFields } = event.properties;
+
+  return {
+    personId: event.recordId,
+    updatedFields,
+    previousEmail: before.emails?.primaryEmail,
+    currentEmail: after.emails?.primaryEmail,
+    emailDiff: diff.emails,
+  };
+};
+```
+
+Yalnızca e-posta güncellemelerinde tetikle:
+
+```ts
+export default defineLogicFunction({
+  ...,
+  databaseEventTriggerSettings: {
+    eventName: 'person.updated',
+    updatedFields: ['emails'],
+  },
+});
+```
+
+Yok etme olayı örneği:
+
+```ts
+type PersonDestroyedEvent = DatabaseEventPayload<
+  ObjectRecordDestroyEvent<Person>
+>;
+
+const handler = async (event: PersonDestroyedEvent) => {
+  const personBeforeDestroy = event.properties.before;
+
+  return {
+    personId: event.recordId,
+    email: personBeforeDestroy.emails?.primaryEmail,
+  };
+};
+```
 
 #### Bir işlevi bir yapay zekâ aracı veya iş akışı eylemi olarak kullanıma sunma
 
@@ -232,7 +345,7 @@ export default defineLogicFunction({
 <AccordionGroup>
 <Accordion title="CoreApiClient" description="Çalışma alanı verilerini sorgulayın ve değiştirin (kayıtlar, nesneler)">
 
-`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. `yarn twenty dev` veya `yarn twenty build` sırasında **çalışma alanı şemanızdan oluşturulur**, bu nedenle nesnelerinize ve alanlarınıza uyacak şekilde tamamen tiplenmiştir.
+`CoreApiClient`, çalışma alanı verilerini sorgulamak ve değiştirmek için ana istemcidir. `yarn twenty dev` veya `yarn twenty dev:build` sırasında **çalışma alanı şemanızdan oluşturulur**, bu nedenle nesnelerinize ve alanlarınıza uyacak şekilde tamamen tiplenmiştir.
 
 ```ts
 import { CoreApiClient } from 'twenty-client-sdk/core';
@@ -272,7 +385,7 @@ const { createCompany } = await client.mutation({
 İstemci bir seçim kümesi sözdizimi kullanır: Bir alanı dahil etmek için `true` geçin, bağımsız değişkenler için `__args` kullanın ve ilişkiler için nesneleri iç içe yerleştirin. Çalışma alanı şemanıza göre tam otomatik tamamlama ve tip denetimi elde edersiniz.
 
 <Note>
-**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty build` çalıştırmadan kullanırsanız, bir hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
+**CoreApiClient geliştirme/derleme zamanında oluşturulur.** Bunu önce `yarn twenty dev` veya `yarn twenty dev:build` çalıştırmadan kullanırsanız, bir hata verir. Oluşturma otomatik olarak gerçekleşir — CLI, çalışma alanınızın GraphQL şemasını inceler ve `@genql/cli` kullanarak tiplenmiş bir istemci üretir.
 </Note>
 
 #### Tür açıklamaları için CoreSchema'yı kullanma

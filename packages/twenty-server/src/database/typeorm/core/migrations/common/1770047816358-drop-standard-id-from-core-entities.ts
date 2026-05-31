@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class DropStandardIdFromCoreEntities1770047816358
-  implements MigrationInterface
-{
+export class DropStandardIdFromCoreEntities1770047816358 implements MigrationInterface {
   name = 'DropStandardIdFromCoreEntities1770047816358';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

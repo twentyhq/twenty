@@ -8,8 +8,8 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileWithSignedUrlDTO } from 'src/engine/core-modules/file/dtos/file-with-sign-url.dto';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
+
 @Injectable()
 export class FileAiChatService {
   constructor(
@@ -27,12 +27,10 @@ export class FileAiChatService {
     filename: string;
     workspaceId: string;
   }): Promise<FileWithSignedUrlDTO> {
-    const { mimeType, ext } = await extractFileInfo({
+    const { ext } = await extractFileInfoOrThrow({
       file,
       filename,
     });
-
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -45,9 +43,8 @@ export class FileAiChatService {
       );
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: file,
       resourcePath: name,
-      mimeType,
       fileFolder: FileFolder.AgentChat,
       applicationUniversalIdentifier:
         workspaceCustomFlatApplication.universalIdentifier,
@@ -61,7 +58,7 @@ export class FileAiChatService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      url: await this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.AgentChat,

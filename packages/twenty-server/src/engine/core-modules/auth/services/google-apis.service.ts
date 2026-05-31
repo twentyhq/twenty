@@ -16,6 +16,7 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { CreateCalendarChannelService } from 'src/engine/core-modules/auth/services/create-calendar-channel.service';
 import { CreateConnectedAccountService } from 'src/engine/core-modules/auth/services/create-connected-account.service';
 import { CreateMessageChannelService } from 'src/engine/core-modules/auth/services/create-message-channel.service';
@@ -38,6 +39,7 @@ import {
   type CalendarEventListFetchJobData,
 } from 'src/modules/calendar/calendar-event-import-manager/jobs/calendar-event-list-fetch.job';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
+import { EmailAliasManagerService } from 'src/modules/connected-account/email-alias-manager/services/email-alias-manager.service';
 import { AccountsToReconnectService } from 'src/modules/connected-account/services/accounts-to-reconnect.service';
 
 import { MessageChannelSyncStatusService } from 'src/modules/messaging/common/services/message-channel-sync-status.service';
@@ -66,6 +68,7 @@ export class GoogleAPIsService {
     private readonly googleAPIScopesService: GoogleAPIScopesService,
     private readonly googleApisServiceAvailabilityService: GoogleApisServiceAvailabilityService,
     private readonly syncMessageFoldersService: SyncMessageFoldersService,
+    private readonly emailAliasManagerService: EmailAliasManagerService,
     @InjectRepository(ConnectedAccountEntity)
     private readonly connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(UserWorkspaceEntity)
@@ -81,8 +84,8 @@ export class GoogleAPIsService {
     userId: string;
     workspaceMemberId: string;
     workspaceId: string;
-    accessToken: string;
-    refreshToken: string;
+    accessToken: PlaintextString;
+    refreshToken: PlaintextString;
     calendarVisibility: CalendarChannelVisibility | undefined;
     messageVisibility: MessageChannelVisibility | undefined;
     skipMessageChannelConfiguration?: boolean;
@@ -237,6 +240,20 @@ export class GoogleAPIsService {
             }
           },
         );
+
+        if (isMessagingEnabled && isMessagingAvailable) {
+          const connectedAccountForAliases =
+            await this.connectedAccountRepository.findOne({
+              where: { id: newOrExistingConnectedAccountId, workspaceId },
+            });
+
+          if (isDefined(connectedAccountForAliases)) {
+            await this.emailAliasManagerService.refreshHandleAliases(
+              connectedAccountForAliases,
+              workspaceId,
+            );
+          }
+        }
 
         if (
           isMessagingEnabled &&

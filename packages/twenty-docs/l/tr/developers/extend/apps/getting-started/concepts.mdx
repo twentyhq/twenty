@@ -65,7 +65,7 @@ your-app/
 │   npx create-twenty-app → yarn twenty dev (live sync)   │
 ├─────────────────────────────────────────────────────────┤
 │ Build & Deploy                                          │
-│   yarn twenty build → yarn twenty deploy                │
+│   yarn twenty dev:build → yarn twenty app:publish        │
 ├─────────────────────────────────────────────────────────┤
 │ Install flow                                            │
 │   upload → [pre-install] → metadata migration →         │
@@ -77,7 +77,7 @@ your-app/
 ```
 
 * **`yarn twenty dev`** — kaynak dosyalarınızı izler ve bağlı bir Twenty sunucusuna değişiklikleri canlı olarak senkronize eder. Şema değiştiğinde tipli API istemcisi otomatik olarak yeniden oluşturulur.
-* **`yarn twenty build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
+* **`yarn twenty dev:build`** — TypeScript'i derler, mantık işlevlerini ve ön uç bileşenlerini esbuild ile paketler ve bir manifest üretir.
 * **Kurulum öncesi/sonrası kancaları** — kurulum sırasında çalışan isteğe bağlı işlevler. Ayrıntılar için [Kurulum Kancaları](/l/tr/developers/extend/apps/config/install-hooks) bölümüne bakın.
 
 ## Sonraki adımlar

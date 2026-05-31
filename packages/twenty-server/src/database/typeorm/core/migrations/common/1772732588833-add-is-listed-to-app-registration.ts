@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddIsListedToAppRegistration1772732588833
-  implements MigrationInterface
-{
+export class AddIsListedToAppRegistration1772732588833 implements MigrationInterface {
   name = 'AddIsListedToAppRegistration1772732588833';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

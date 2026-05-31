@@ -80,7 +80,7 @@ export default defineObject({
 * Her alan bir `name`, `type`, `label` ve kendi kararlı `universalIdentifier` değerini gerektirir.
 * `fields` dizisi isteğe bağlıdır — özel alanlar olmadan da nesneler tanımlayabilirsiniz.
 * Burada tanımlanan satır içi alanların bir `objectUniversalIdentifier`'a **ihtiyacı yoktur** — üst nesneden devralınır. Sahibi olmadığınız nesnelere alan eklemek için [`defineField()`](/l/tr/developers/extend/apps/data/extending-objects) kullanın.
-* `yarn twenty add object` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz. [Mimari → Varlık iskeleti oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding) bölümüne bakın.
+* `yarn twenty dev:add object` kullanarak, adlandırma, alanlar ve ilişkiler konusunda sizi yönlendirerek yeni nesneler oluşturabilirsiniz. [Mimari → Varlık iskeleti oluşturma](/l/tr/developers/extend/apps/getting-started/scaffolding) bölümüne bakın.
 
 <Note>
 **Temel alanlar otomatik olarak eklenir.** Özel bir nesne tanımladığınızda Twenty, sizin için `id`, `name`, `createdAt`, `updatedAt`, `createdBy`, `updatedBy` ve `deletedAt` gibi standart alanlar oluşturur. Bunları `fields` dizinizde bildirmenize gerek yok — yalnızca özel alanlarınızı ekleyin. Aynı ada sahip bir alan bildirerek varsayılan bir alanı geçersiz kılabilirsiniz, ancak bu nadiren iyi bir fikirdir.

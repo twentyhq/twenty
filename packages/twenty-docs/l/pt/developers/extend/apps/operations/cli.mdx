@@ -4,54 +4,54 @@ description: comandos `yarn twenty` para executar funções, transmitir logs, ge
 icon: terminal
 ---
 
-Além de `dev`, `build`, `add` e `typecheck`, a CLI `yarn twenty` fornece comandos para executar funções, visualizar logs e gerenciar instalações de aplicativos.
+Além de `dev`, `dev:build`, `dev:add` e `dev:typecheck`, a CLI `yarn twenty` fornece comandos para executar funções, visualizar logs e gerenciar instalações de aplicativos.
 
-## Executando funções (`yarn twenty exec`)
+## Executando funções (`yarn twenty dev:function:exec`)
 
 Execute manualmente uma função de lógica sem acioná-la via HTTP, cron ou evento de banco de dados:
 
 ```bash filename="Terminal"
 # Execute by function name
-yarn twenty exec -n create-new-post-card
+yarn twenty dev:function:exec -n create-new-post-card
 
 # Execute by universalIdentifier
-yarn twenty exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:exec -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 
 # Pass a JSON payload
-yarn twenty exec -n create-new-post-card -p '{"name": "Hello"}'
+yarn twenty dev:function:exec -n create-new-post-card -p '{"name": "Hello"}'
 
 # Execute the post-install function
-yarn twenty exec --postInstall
+yarn twenty dev:function:exec --postInstall
 ```
 
-## Visualizando logs de funções (`yarn twenty logs`)
+## Visualizando logs de funções (`yarn twenty dev:function:logs`)
 
 Transmita os logs de execução das funções de lógica do seu aplicativo:
 
 ```bash filename="Terminal"
 # Stream all function logs
-yarn twenty logs
+yarn twenty dev:function:logs
 
 # Filter by function name
-yarn twenty logs -n create-new-post-card
+yarn twenty dev:function:logs -n create-new-post-card
 
 # Filter by universalIdentifier
-yarn twenty logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
+yarn twenty dev:function:logs -u e56d363b-0bdc-4d8a-a393-6f0d1c75bdcf
 ```
 
 <Note>
-Isso é diferente de `yarn twenty server logs`, que mostra os logs do contêiner Docker. `yarn twenty logs` mostra os logs de execução de funções do seu aplicativo a partir do servidor Twenty.
+Isso é diferente de `yarn twenty docker:logs`, que mostra os logs do contêiner Docker. `yarn twenty dev:function:logs` mostra os logs de execução de funções do seu aplicativo a partir do servidor Twenty.
 </Note>
 
-## Desinstalando um aplicativo (`yarn twenty uninstall`)
+## Desinstalando um aplicativo (`yarn twenty app:uninstall`)
 
 Remova seu aplicativo do espaço de trabalho ativo:
 
 ```bash filename="Terminal"
-yarn twenty uninstall
+yarn twenty app:uninstall
 
 # Skip the confirmation prompt
-yarn twenty uninstall --yes
+yarn twenty app:uninstall --yes
 ```
 
 ## Gerenciando remotos
@@ -60,19 +60,19 @@ Um **remoto** é um servidor Twenty ao qual seu aplicativo se conecta. Durante a
 
 ```bash filename="Terminal"
 # Add a new remote (opens a browser for OAuth login)
-yarn twenty remote add
+yarn twenty remote:add
 
 # Connect to a local Twenty server (auto-detects port 2020 or 3000)
-yarn twenty remote add --local
+yarn twenty remote:add --local
 
 # Add a remote non-interactively (useful for CI)
-yarn twenty remote add --api-url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
+yarn twenty remote:add --url https://your-twenty-server.com --api-key $TWENTY_API_KEY --as my-remote
 
 # List all configured remotes
-yarn twenty remote list
+yarn twenty remote:list
 
-# Switch the active remote
-yarn twenty remote switch <name>
+# Set the active remote
+yarn twenty remote:use <name>
 ```
 
 Suas credenciais são armazenadas em `~/.twenty/config.json`.

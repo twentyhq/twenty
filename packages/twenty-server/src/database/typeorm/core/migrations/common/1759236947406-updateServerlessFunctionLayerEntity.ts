@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class UpdateServerlessFunctionLayerEntity1759236947406
-  implements MigrationInterface
-{
+export class UpdateServerlessFunctionLayerEntity1759236947406 implements MigrationInterface {
   name = 'UpdateServerlessFunctionLayerEntity1759236947406';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -15,8 +15,7 @@ import {
   FilesFieldException,
   FilesFieldExceptionCode,
 } from 'src/engine/core-modules/file/files-field/files-field.exception';
-import { extractFileInfo } from 'src/engine/core-modules/file/utils/extract-file-info.utils';
-import { sanitizeFile } from 'src/engine/core-modules/file/utils/sanitize-file.utils';
+import { extractFileInfoOrThrow } from 'src/engine/core-modules/file/utils/extract-file-info-or-throw.utils';
 import { FieldMetadataEntity } from 'src/engine/metadata-modules/field-metadata/field-metadata.entity';
 
 @Injectable()
@@ -53,12 +52,10 @@ export class FilesFieldService {
       );
     }
 
-    const { mimeType, ext } = await extractFileInfo({
+    const { ext } = await extractFileInfoOrThrow({
       file,
       filename,
     });
-
-    const sanitizedFile = sanitizeFile({ file, ext, mimeType });
 
     const fileId = v4();
     const name = `${fileId}${isNonEmptyString(ext) ? `.${ext}` : ''}`;
@@ -82,9 +79,8 @@ export class FilesFieldService {
     });
 
     const savedFile = await this.fileStorageService.writeFile({
-      sourceFile: sanitizedFile,
+      sourceFile: file,
       resourcePath: `${fieldMetadata.universalIdentifier}/${name}`,
-      mimeType,
       fileFolder: FileFolder.FilesField,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId,
@@ -97,7 +93,7 @@ export class FilesFieldService {
 
     return {
       ...savedFile,
-      url: this.fileUrlService.signFileByIdUrl({
+      url: await this.fileUrlService.signFileByIdUrl({
         fileId,
         workspaceId,
         fileFolder: FileFolder.FilesField,

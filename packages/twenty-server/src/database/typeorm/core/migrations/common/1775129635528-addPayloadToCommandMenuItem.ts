@@ -2,9 +2,7 @@ import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
 import { addPayloadCheckConstraintToCommandMenuItem } from 'src/database/typeorm/core/migrations/utils/1775129635528-add-payload-to-command-menu-item.util';
 
-export class AddPayloadToCommandMenuItem1775129635528
-  implements MigrationInterface
-{
+export class AddPayloadToCommandMenuItem1775129635528 implements MigrationInterface {
   name = 'AddPayloadToCommandMenuItem1775129635528';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

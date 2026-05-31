@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { t } from '@lingui/core/macro';
 import {
@@ -8,7 +7,7 @@ import {
   ViewSortDirection,
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IsNull, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 import { v4 } from 'uuid';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -20,12 +19,14 @@ import { resolveEntityRelationUniversalIdentifiers } from 'src/engine/metadata-m
 import { splitEntitiesByRemovalStrategy } from 'src/engine/metadata-modules/flat-entity/utils/split-entities-by-removal-strategy.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
+import { FieldDisplayMode } from 'src/engine/metadata-modules/page-layout-widget/enums/field-display-mode.enum';
 import { DEFAULT_VIEW_FIELD_SIZE } from 'src/engine/metadata-modules/flat-view-field/constants/default-view-field-size.constant';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { fromViewFieldOverridesToUniversalOverrides } from 'src/engine/metadata-modules/flat-view-field/utils/from-view-field-overrides-to-universal-overrides.util';
 import { type FlatViewFilterGroupMaps } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group-maps.type';
 import { type FlatViewFilterGroup } from 'src/engine/metadata-modules/flat-view-filter-group/types/flat-view-filter-group.type';
 import { type FlatViewFilter } from 'src/engine/metadata-modules/flat-view-filter/types/flat-view-filter.type';
+import { getDefaultViewFilterOperand } from 'src/engine/metadata-modules/flat-view-filter/utils/get-default-view-filter-operand.util';
 import { type FlatViewSort } from 'src/engine/metadata-modules/flat-view-sort/types/flat-view-sort.type';
 import { type FlatViewMaps } from 'src/engine/metadata-modules/flat-view/types/flat-view-maps.type';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
@@ -41,6 +42,8 @@ import {
   ViewException,
   ViewExceptionCode,
 } from 'src/engine/metadata-modules/view/exceptions/view.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -73,8 +76,8 @@ export class ViewWidgetUpsertService {
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceManyOrAllFlatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
   ) {}
 
   async upsertViewWidget({
@@ -120,20 +123,35 @@ export class ViewWidgetUpsertService {
       flatEntityMaps: flatPageLayoutWidgetMaps,
     });
 
-    if (
-      !isDefined(widget) ||
-      !isFlatPageLayoutWidgetConfigurationOfType(
-        widget,
-        WidgetConfigurationType.RECORD_TABLE,
-      )
-    ) {
+    if (!isDefined(widget)) {
       throw new ViewException(
         t`Record table widget not found`,
         ViewExceptionCode.VIEW_WIDGET_NOT_FOUND,
       );
     }
 
-    const viewId = widget.configuration.viewId;
+    const isRecordTableWidget = isFlatPageLayoutWidgetConfigurationOfType(
+      widget,
+      WidgetConfigurationType.RECORD_TABLE,
+    );
+
+    const isFieldTableWidget =
+      isFlatPageLayoutWidgetConfigurationOfType(
+        widget,
+        WidgetConfigurationType.FIELD,
+      ) && widget.configuration.fieldDisplayMode === FieldDisplayMode.TABLE;
+
+    if (!isRecordTableWidget && !isFieldTableWidget) {
+      throw new ViewException(
+        t`Record table widget not found`,
+        ViewExceptionCode.VIEW_WIDGET_NOT_FOUND,
+      );
+    }
+
+    const viewId =
+      'viewId' in widget.configuration
+        ? widget.configuration.viewId
+        : undefined;
 
     if (!isDefined(viewId)) {
       throw new ViewException(
@@ -169,13 +187,15 @@ export class ViewWidgetUpsertService {
       !isDefined(input.viewFilters) &&
       !isDefined(input.viewSorts)
     ) {
-      const view = await this.viewRepository.findOne({
-        where: {
-          id: upsertContext.viewId,
-          workspaceId: upsertContext.workspaceId,
-          deletedAt: IsNull(),
+      const view = await this.viewRepository.findOne(
+        upsertContext.workspaceId,
+        {
+          where: {
+            id: upsertContext.viewId,
+            deletedAt: IsNull(),
+          },
         },
-      });
+      );
 
       if (!isDefined(view)) {
         throw new ViewException(
@@ -337,10 +357,9 @@ export class ViewWidgetUpsertService {
       );
     }
 
-    const view = await this.viewRepository.findOne({
+    const view = await this.viewRepository.findOne(upsertContext.workspaceId, {
       where: {
         id: upsertContext.viewId,
-        workspaceId: upsertContext.workspaceId,
         deletedAt: IsNull(),
       },
     });
@@ -675,12 +694,15 @@ export class ViewWidgetUpsertService {
           fieldMetadataUniversalIdentifier,
           viewUniversalIdentifier,
           viewFilterGroupUniversalIdentifier,
+          relationTargetFieldMetadataUniversalIdentifier,
         } = resolveEntityRelationUniversalIdentifiers({
           metadataName: 'viewFilter',
           foreignKeyValues: {
             fieldMetadataId: inputFilter.fieldMetadataId,
             viewId,
             viewFilterGroupId: inputFilter.viewFilterGroupId,
+            relationTargetFieldMetadataId:
+              inputFilter.relationTargetFieldMetadataId,
           },
           flatEntityMaps: {
             flatFieldMetadataMaps,
@@ -688,6 +710,28 @@ export class ViewWidgetUpsertService {
             flatViewFilterGroupMaps,
           },
         });
+        const referencedFieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+          flatEntityId: inputFilter.fieldMetadataId,
+          flatEntityMaps: flatFieldMetadataMaps,
+        });
+        const relationTargetFieldMetadata = isDefined(
+          inputFilter.relationTargetFieldMetadataId,
+        )
+          ? findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: inputFilter.relationTargetFieldMetadataId,
+              flatEntityMaps: flatFieldMetadataMaps,
+            })
+          : undefined;
+        const operand =
+          inputFilter.operand ??
+          (isDefined(referencedFieldMetadata)
+            ? getDefaultViewFilterOperand({
+                fieldType: referencedFieldMetadata.type,
+                subFieldName: inputFilter.subFieldName,
+                relationTargetFieldType: relationTargetFieldMetadata?.type,
+              })
+            : undefined) ??
+          ViewFilterOperand.CONTAINS;
 
         filtersToCreate.push({
           id: filterId,
@@ -699,13 +743,16 @@ export class ViewWidgetUpsertService {
           fieldMetadataUniversalIdentifier,
           viewId,
           viewUniversalIdentifier,
-          operand: inputFilter.operand ?? ViewFilterOperand.CONTAINS,
+          operand,
           value: inputFilter.value,
           viewFilterGroupId: inputFilter.viewFilterGroupId ?? null,
           viewFilterGroupUniversalIdentifier,
           positionInViewFilterGroup:
             inputFilter.positionInViewFilterGroup ?? null,
           subFieldName: inputFilter.subFieldName ?? null,
+          relationTargetFieldMetadataId:
+            inputFilter.relationTargetFieldMetadataId ?? null,
+          relationTargetFieldMetadataUniversalIdentifier,
           createdAt: now,
           updatedAt: now,
           deletedAt: null,
@@ -719,17 +766,22 @@ export class ViewWidgetUpsertService {
           existingFilter.viewFilterGroupId !== inputFilter.viewFilterGroupId ||
           existingFilter.positionInViewFilterGroup !==
             inputFilter.positionInViewFilterGroup ||
-          existingFilter.subFieldName !== inputFilter.subFieldName;
+          existingFilter.subFieldName !== inputFilter.subFieldName ||
+          existingFilter.relationTargetFieldMetadataId !==
+            (inputFilter.relationTargetFieldMetadataId ?? null);
 
         if (hasChanged) {
           const {
             fieldMetadataUniversalIdentifier,
             viewFilterGroupUniversalIdentifier,
+            relationTargetFieldMetadataUniversalIdentifier,
           } = resolveEntityRelationUniversalIdentifiers({
             metadataName: 'viewFilter',
             foreignKeyValues: {
               fieldMetadataId: inputFilter.fieldMetadataId,
               viewFilterGroupId: inputFilter.viewFilterGroupId,
+              relationTargetFieldMetadataId:
+                inputFilter.relationTargetFieldMetadataId,
             },
             flatEntityMaps: {
               flatFieldMetadataMaps,
@@ -751,6 +803,9 @@ export class ViewWidgetUpsertService {
               existingFilter.positionInViewFilterGroup,
             subFieldName:
               inputFilter.subFieldName ?? existingFilter.subFieldName,
+            relationTargetFieldMetadataId:
+              inputFilter.relationTargetFieldMetadataId ?? null,
+            relationTargetFieldMetadataUniversalIdentifier,
             updatedAt: now,
           });
         }

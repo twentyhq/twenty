@@ -4,9 +4,7 @@ import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decor
 import { FastInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/fast-instance-command.interface';
 
 @RegisteredInstanceCommand('2.3.0', 1777966965587)
-export class TransformApplicationVariableToSyncableEntityFastInstanceCommand
-  implements FastInstanceCommand
-{
+export class TransformApplicationVariableToSyncableEntityFastInstanceCommand implements FastInstanceCommand {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
       'DROP INDEX "core"."IDX_78ae6cfe5f49a76c4bf842ad58"',

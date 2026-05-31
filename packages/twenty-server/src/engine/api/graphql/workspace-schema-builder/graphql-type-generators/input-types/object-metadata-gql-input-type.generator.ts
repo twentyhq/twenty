@@ -39,6 +39,7 @@ export class ObjectMetadataGqlInputTypeGenerator {
     this.objectMetadataFilterGqlInputTypeGenerator.buildAndStore(
       flatObjectMetadata,
       fields,
+      context,
     );
     this.objectMetadataOrderByGqlInputTypeGenerator.buildAndStore({
       flatObjectMetadata,

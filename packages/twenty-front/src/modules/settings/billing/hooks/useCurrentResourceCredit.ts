@@ -8,8 +8,6 @@ import {
   type SubscriptionInterval,
 } from '~/generated-metadata/graphql';
 
-// V2 hook — reads the RESOURCE_CREDIT subscription item and available pack prices
-// from resourceCreditProducts. Counterpart of useCurrentMetered for V2 workspaces.
 export const useCurrentResourceCredit = () => {
   const { currentPlan } = useCurrentPlan();
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);

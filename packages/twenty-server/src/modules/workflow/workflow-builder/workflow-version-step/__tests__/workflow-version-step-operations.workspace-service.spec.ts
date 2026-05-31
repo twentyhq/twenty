@@ -1,6 +1,8 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
+import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-function';
+
 import { AiAgentRoleService } from 'src/engine/metadata-modules/ai/ai-agent-role/ai-agent-role.service';
 import { AgentService } from 'src/engine/metadata-modules/ai/ai-agent/agent.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
@@ -10,6 +12,7 @@ import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logi
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { getWorkspaceScopedRepositoryToken } from 'src/engine/twenty-orm/workspace-scoped-repository/get-workspace-scoped-repository-token.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
@@ -55,7 +58,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         handlerName: 'main',
         checksum: null,
         toolTriggerSettings: null,
-        workflowActionTriggerSettings: null,
+        workflowActionTriggerSettings: SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS,
         universalIdentifier: 'universal-id',
         applicationId: 'application-id',
         cronTriggerSettings: null,
@@ -141,7 +144,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
           useValue: agentService,
         },
         {
-          provide: getRepositoryToken(RoleTargetEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           useValue: roleTargetRepository,
         },
         {
@@ -284,7 +287,7 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
   });
 
   describe('runStepCreationSideEffectsAndBuildStep', () => {
-    it('should create code step with logic function', async () => {
+    it('should create code step with logic function and seed input fields', async () => {
       const result = await service.runStepCreationSideEffectsAndBuildStep({
         type: WorkflowActionType.CODE,
         workspaceId: mockWorkspaceId,
@@ -296,11 +299,16 @@ describe('WorkflowVersionStepOperationsWorkspaceService', () => {
         settings: {
           input: {
             logicFunctionId: string;
+            logicFunctionInput: Record<string, unknown>;
           };
         };
       };
 
       expect(codeResult.settings.input.logicFunctionId).toBe('new-function-id');
+      expect(codeResult.settings.input.logicFunctionInput).toEqual({
+        a: null,
+        b: null,
+      });
     });
 
     it('should create form step', async () => {

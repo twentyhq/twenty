@@ -2,6 +2,7 @@ import { ObjectType } from '@nestjs/graphql';
 
 import { IDField } from '@ptc-org/nestjs-query-graphql';
 import {
+  Check,
   Column,
   CreateDateColumn,
   Entity,
@@ -10,6 +11,7 @@ import {
 } from 'typeorm';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-entity.interface';
 
 @Entity({
@@ -17,6 +19,12 @@ import { SyncableEntity } from 'src/engine/workspace-manager/types/syncable-enti
   schema: 'core',
 })
 @ObjectType('ApplicationVariable')
+// All values are always encrypted regardless of `isSecret`. The
+// `isSecret` flag only controls display behavior (masked vs plaintext).
+@Check(
+  'CHK_applicationVariable_value_encrypted',
+  `"value" = '' OR "value" LIKE 'enc:v2:%'`,
+)
 export class ApplicationVariableEntity extends SyncableEntity {
   @IDField(() => UUIDScalarType)
   @PrimaryGeneratedColumn('uuid')
@@ -26,7 +34,7 @@ export class ApplicationVariableEntity extends SyncableEntity {
   key: string;
 
   @Column({ nullable: false, type: 'text', default: '' })
-  value: string;
+  value: EncryptedString | '';
 
   @Column({ nullable: false, type: 'text', default: '' })
   description: string;

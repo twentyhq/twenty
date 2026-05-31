@@ -13,8 +13,29 @@ import { WorkflowStepActionDrawerDecorator } from '~/testing/decorators/Workflow
 import { WorkflowStepDecorator } from '~/testing/decorators/WorkflowStepDecorator';
 import { WorkspaceDecorator } from '~/testing/decorators/WorkspaceDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
-import { mockedConnectedAccountRecords } from '~/testing/mock-data/generated/data/connectedAccounts/mock-connectedAccounts-data';
 import { getWorkflowNodeIdMock } from '~/testing/mock-data/workflow';
+
+const MOCK_CONNECTED_ACCOUNT_ID = '20202020-9ac0-4390-9a1a-ab4d2c4e1bb7';
+
+const mockedConnectedAccounts = [
+  {
+    id: MOCK_CONNECTED_ACCOUNT_ID,
+    handle: 'tim@apple.dev',
+    provider: 'google',
+    authFailedAt: null,
+    scopes: ['email', 'calendar'],
+    handleAliases: '',
+    lastSignedInAt: null,
+    userWorkspaceId: '20202020-0687-4c41-b707-ed1bfca972a7',
+    connectionProviderId: null,
+    name: 'Tim Apple',
+    visibility: 'SHARE_EVERYTHING',
+    lastCredentialsRefreshedAt: null,
+    connectionParameters: null,
+    createdAt: '2026-02-27T01:17:25.392Z',
+    updatedAt: '2026-02-27T01:17:25.392Z',
+  },
+];
 
 const DEFAULT_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   id: getWorkflowNodeIdMock(),
@@ -53,7 +74,7 @@ const CONFIGURED_SEND_EMAIL_ACTION: WorkflowSendEmailAction = {
   valid: true,
   settings: {
     input: {
-      connectedAccountId: mockedConnectedAccountRecords[0].id as string,
+      connectedAccountId: MOCK_CONNECTED_ACCOUNT_ID,
       recipients: {
         to: 'test@twenty.com',
         cc: '',
@@ -113,21 +134,24 @@ const meta: Meta<typeof WorkflowEditActionEmailBase> = {
     msw: {
       handlers: [
         ...graphqlMocks.handlers,
-        graphql.query('FindManyConnectedAccounts', () => {
+        graphql.query('MyConnectedAccounts', () => {
           return HttpResponse.json({
             data: {
-              connectedAccounts: {
-                edges: mockedConnectedAccountRecords.map((record) => ({
-                  node: record,
-                  cursor: record.id,
-                })),
-                pageInfo: {
-                  hasNextPage: false,
-                  hasPreviousPage: false,
-                  startCursor: null,
-                  endCursor: null,
-                },
-              },
+              myConnectedAccounts: mockedConnectedAccounts,
+            },
+          });
+        }),
+        graphql.query('MyMessageChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myMessageChannels: [],
+            },
+          });
+        }),
+        graphql.query('MyCalendarChannels', () => {
+          return HttpResponse.json({
+            data: {
+              myCalendarChannels: [],
             },
           });
         }),
