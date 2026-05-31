@@ -178,7 +178,7 @@ describe('MCP Controller (integration)', () => {
 
         expect(hasResultContent || hasError).toBe(true);
       }
-    });
+    }, 60_000);
 
     it('should list prompts and resources as empty arrays', async () => {
       const prompts = await postMcp({

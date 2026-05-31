@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a already existing morph relation with samefield 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 Morph relation collision tests suite it should fail to create a already existing morph relation with same field 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -91,7 +91,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 Morh re
 }
 `;
 
-exports[`failing createOne FieldMetadataService morph relation fields v2 Morh relation collision tests suite it should fail to create a field with name than result in existing morph relation field join column 1`] = `
+exports[`failing createOne FieldMetadataService morph relation fields v2 Morph relation collision tests suite it should fail to create a field with name than result in existing morph relation field join column 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -612,7 +612,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
             {
               "code": "FIELD_METADATA_RELATION_MALFORMED",
               "message": "Morph relation creation payloads are empty",
-              "userFriendlyMessage": "At least one relation is require",
+              "userFriendlyMessage": "At least one relation is required",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -628,7 +628,7 @@ exports[`failing createOne FieldMetadataService morph relation fields v2 it shou
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "At least one relation is require",
+    "userFriendlyMessage": "At least one relation is required",
   },
   "message": "Multiple validation errors occurred while creating field",
   "name": "GraphQLError",

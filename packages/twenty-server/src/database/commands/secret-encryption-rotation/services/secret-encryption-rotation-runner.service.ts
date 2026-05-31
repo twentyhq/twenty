@@ -63,6 +63,8 @@ export class SecretEncryptionRotationRunnerService {
     connectedAccountRepository: Repository<ConnectedAccountEntity>,
     @InjectRepository(SigningKeyEntity)
     signingKeyRepository: Repository<SigningKeyEntity>,
+    // Secret-encryption key rotation sweeps every row across every workspace.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(TwoFactorAuthenticationMethodEntity)
     twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
   ) {

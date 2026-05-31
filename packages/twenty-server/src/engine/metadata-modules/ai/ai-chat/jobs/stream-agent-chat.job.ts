@@ -9,6 +9,8 @@ import type {
 } from 'twenty-shared/ai';
 import { Repository } from 'typeorm';
 
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -37,8 +39,8 @@ export class StreamAgentChatJob {
   private readonly logger = new Logger(StreamAgentChatJob.name);
 
   constructor(
-    @InjectRepository(AgentChatThreadEntity)
-    private readonly threadRepository: Repository<AgentChatThreadEntity>,
+    @InjectWorkspaceScopedRepository(AgentChatThreadEntity)
+    private readonly threadRepository: WorkspaceScopedRepository<AgentChatThreadEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
     private readonly agentChatService: AgentChatService,
@@ -100,14 +102,11 @@ export class StreamAgentChatJob {
     } finally {
       await this.cancelSubscriberService.unsubscribe(cancelChannel);
       await this.threadRepository
-        .createQueryBuilder()
-        .update(AgentChatThreadEntity)
-        .set({ activeStreamId: null })
-        .where('id = :id AND "activeStreamId" = :streamId', {
-          id: data.threadId,
-          streamId: data.streamId,
-        })
-        .execute()
+        .update(
+          data.workspaceId,
+          { id: data.threadId, activeStreamId: data.streamId },
+          { activeStreamId: null },
+        )
         .catch(() => {});
 
       if (!abortController.signal.aborted) {
@@ -462,7 +461,7 @@ export class StreamAgentChatJob {
       return;
     }
 
-    const threadStatus = await this.threadRepository.findOne({
+    const threadStatus = await this.threadRepository.findOne(workspaceId, {
       where: { id: threadId },
       select: ['id', 'deletedAt'],
     });
@@ -480,25 +479,31 @@ export class StreamAgentChatJob {
       workspaceId,
     });
 
-    await this.threadRepository.update(threadId, {
-      totalInputTokens: () => `"totalInputTokens" + ${streamUsage.inputTokens}`,
-      totalOutputTokens: () =>
-        `"totalOutputTokens" + ${streamUsage.outputTokens}`,
-      totalInputCredits: () =>
-        `"totalInputCredits" + ${streamUsage.inputCredits}`,
-      totalOutputCredits: () =>
-        `"totalOutputCredits" + ${streamUsage.outputCredits}`,
-      totalCacheReadTokens: () =>
-        `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
-      totalCacheCreationTokens: () =>
-        `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
-      contextWindowTokens: modelConfig.contextWindowTokens,
-      conversationSize: lastStepConversationSize,
-    });
+    await this.threadRepository.update(
+      workspaceId,
+      { id: threadId },
+      {
+        totalInputTokens: () =>
+          `"totalInputTokens" + ${streamUsage.inputTokens}`,
+        totalOutputTokens: () =>
+          `"totalOutputTokens" + ${streamUsage.outputTokens}`,
+        totalInputCredits: () =>
+          `"totalInputCredits" + ${streamUsage.inputCredits}`,
+        totalOutputCredits: () =>
+          `"totalOutputCredits" + ${streamUsage.outputCredits}`,
+        totalCacheReadTokens: () =>
+          `"totalCacheReadTokens" + ${streamUsage.cacheReadTokens}`,
+        totalCacheCreationTokens: () =>
+          `"totalCacheCreationTokens" + ${totalCacheCreationTokens}`,
+        contextWindowTokens: modelConfig.contextWindowTokens,
+        conversationSize: lastStepConversationSize,
+      },
+    );
 
     await this.agentChatService.notifyThreadUsageUpdated({
       threadId,
       userWorkspaceId,
+      workspaceId,
     });
   }
 }

@@ -70,16 +70,16 @@ filters: [
 | `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
 | `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
 | `BOOLEAN`                                                                                          | `IS`                                                                                                               |
-| `UUID`                                                                                             | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
 | `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
 
 > Feldtypen mit ähnlichen Namen können völlig unterschiedliche Operanden verwenden – `SELECT` und `MULTI_SELECT` sind ein häufiges Beispiel.
 
-### Wertform pro Operand
+### Wertstruktur je Operand
 
-Das Feld `value` ist immer ein JSON-serialisierbarer Wert, aber seine erwartete Form hängt vom Operanden ab:
+Das Feld `value` ist immer ein JSON-serialisierbarer Wert, aber die erwartete Struktur hängt vom Operanden ab:
 
-| Operandfamilie                                           | Wertform                              | Beispiel                 |
+| Operandenfamilie                                         | Wertstruktur                          | Beispiel                 |
 | -------------------------------------------------------- | ------------------------------------- | ------------------------ |
 | `IS`, `IS_NOT` bei `SELECT`                              | Array von Optionsschlüsseln (Strings) | `['ACTIVE', 'PENDING']`  |
 | `CONTAINS`, `DOES_NOT_CONTAIN` bei `MULTI_SELECT`        | Array von Optionsschlüsseln (Strings) | `['TAG_A']`              |
@@ -87,9 +87,9 @@ Das Feld `value` ist immer ein JSON-serialisierbarer Wert, aber seine erwartete 
 | `CONTAINS`, `DOES_NOT_CONTAIN` bei textähnlichen Feldern | Zeichenkette                          | `'acme'`                 |
 | `IS`, `IS_NOT` bei `NUMBER`                              | String (der Wert)                     | `'5'`                    |
 | `IS` bei `RATING` / `UUID`                               | String (der Wert)                     | `'5'`                    |
-| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`            | String (die Schranke)                 | `'10'`                   |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`            | String (der Grenzwert)                | `'10'`                   |
 | `IS`, `IS_BEFORE`, `IS_AFTER` bei `DATE` / `DATE_TIME`   | ISO-8601-String                       | `'2025-01-01T00:00:00Z'` |
-| `IS_EMPTY`, `IS_NOT_EMPTY`                               | Leerer String                         | `''`                     |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                               | leerer String                         | `''`                     |
 | `IS` bei `BOOLEAN`                                       | `'true'` oder `'false'`               | `'true'`                 |
 
 ## Wie Ansichten in der UI angezeigt werden

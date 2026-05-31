@@ -103,6 +103,10 @@ export default defineCommandMenuItem({
 });
 ```
 
+<Note>
+  `RECORD_SELECTION` already implies a non-empty selection — use `numberOfSelectedRecords` only for specific counts (e.g. `>= 2`).
+</Note>
+
 ### Context variables
 
 These represent the current state of the page:

@@ -205,7 +205,9 @@ export const WorkflowRunStepNodeDetail = ({
               key={stepId}
               action={stepDefinition.definition}
               actionOptions={{
-                readonly: stepExecutionStatus !== 'PENDING',
+                readonly:
+                  stepExecutionStatus !== 'PENDING' &&
+                  stepExecutionStatus !== 'RUNNING',
               }}
             />
           );

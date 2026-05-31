@@ -10,11 +10,16 @@ type GenerateDeterministicIndexNameArgs = {
   >;
   isUnique?: boolean;
   orderedIndexColumnNames: string[];
+  // Include the WHERE clause in the hash so a partial index on the same
+  // columns doesn't collide with the non-partial one (Postgres lets them
+  // coexist; the unique-name constraint must not block that).
+  indexWhereClause?: string | null;
 };
 export const generateDeterministicIndexNameV2 = ({
   orderedIndexColumnNames,
   flatObjectMetadata,
   isUnique = false,
+  indexWhereClause,
 }: GenerateDeterministicIndexNameArgs): string => {
   const hash = createHash('sha256');
 
@@ -26,6 +31,10 @@ export const generateDeterministicIndexNameV2 = ({
   [tableName, ...orderedIndexColumnNames].forEach((column) => {
     hash.update(column);
   });
+
+  if (indexWhereClause) {
+    hash.update(indexWhereClause);
+  }
 
   return `IDX_${isUnique ? 'UNIQUE_' : ''}${hash.digest('hex').slice(0, 27)}`;
 };

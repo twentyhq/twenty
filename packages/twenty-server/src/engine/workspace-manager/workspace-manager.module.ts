@@ -15,6 +15,7 @@ import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-t
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceDataSourceModule } from 'src/engine/workspace-datasource/workspace-datasource.module';
 import { DevSeederModule } from 'src/engine/workspace-manager/dev-seeder/dev-seeder.module';
 import { TwentyStandardApplicationModule } from 'src/engine/workspace-manager/twenty-standard-application/twenty-standard-application.module';
@@ -45,6 +46,9 @@ import { WorkspaceManagerService } from './workspace-manager.service';
     ]),
   ],
   exports: [WorkspaceManagerService],
-  providers: [WorkspaceManagerService],
+  providers: [
+    WorkspaceManagerService,
+    provideWorkspaceScopedRepository(RoleEntity),
+  ],
 })
 export class WorkspaceManagerModule {}

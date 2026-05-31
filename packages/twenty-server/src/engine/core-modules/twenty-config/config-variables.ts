@@ -42,9 +42,13 @@ import {
   ConfigVariableException,
   ConfigVariableExceptionCode,
 } from 'src/engine/core-modules/twenty-config/twenty-config.exception';
-import { type AiModelPreferences } from 'src/engine/metadata-modules/ai/ai-models/types/ai-model-preferences.type';
 import { type AiProvidersConfig } from 'src/engine/metadata-modules/ai/ai-models/types/ai-providers-config.type';
-import { DEFAULT_MODEL_PREFERENCES } from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
+import {
+  DEFAULT_DISABLED_MODELS,
+  DEFAULT_FAST_MODELS,
+  DEFAULT_RECOMMENDED_MODELS,
+  DEFAULT_SMART_MODELS,
+} from 'src/engine/metadata-modules/ai/ai-models/utils/load-default-model-preferences.util';
 
 export class ConfigVariables {
   @ConfigVariablesMetadata({
@@ -1120,6 +1124,23 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,
     description:
+      'When enabled, the served frontend resolves the API base URL from ' +
+      "the browser's current origin (window.location) instead of the " +
+      'baked-in SERVER_URL. Useful for self-hosted deployments reachable ' +
+      'from multiple hostnames (Tailscale IP, LAN DNS, SSH tunnel, public ' +
+      'DNS), where pinning a single SERVER_URL would break every other ' +
+      'host with CORS or unreachable-host errors. Read at startup by ' +
+      'generate-front-config; SERVER_URL is still used for all server-side ' +
+      'URL generation.',
+    type: ConfigVariableType.BOOLEAN,
+    isEnvOnly: true,
+  })
+  @IsOptional()
+  FRONT_AUTO_BASE_URL = false;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.SERVER_CONFIG,
+    description:
       'Express "trust proxy" setting. Controls whether X-Forwarded-* ' +
       'headers are honored — required for request.protocol to return ' +
       '"https" when TLS is terminated upstream (reverse proxy, ingress, ' +
@@ -1185,9 +1206,9 @@ export class ConfigVariables {
   FALLBACK_ENCRYPTION_KEY: string;
 
   @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.SERVER_CONFIG,
+    group: ConfigVariablesGroup.ADVANCED_SETTINGS,
     description:
-      'Number of days after which the Enterprise auto-rotation cron issues a new current JWT signing key. When unset, the cron is a no-op. Previous keys remain in the database to keep verifying tokens they signed; revocation stays a manual admin action.',
+      'Days the current JWT signing key stays valid before the rotation cron issues a new one. Leave unset to disable auto-rotation.',
     type: ConfigVariableType.NUMBER,
   })
   @CastToPositiveNumber()
@@ -1435,20 +1456,38 @@ export class ConfigVariables {
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'AI model admin preferences: disabled models, recommended models, and default fast/smart model lists. Managed via admin panel or env.',
-    type: ConfigVariableType.JSON,
+      'Ordered list of fast model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES: AiModelPreferences = DEFAULT_MODEL_PREFERENCES;
+  AI_MODELS_DEFAULT_FAST: string[] = DEFAULT_FAST_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LLM,
     description:
-      'Storage path for AI model preferences fallback (e.g. config/ai-model-preferences.json). Loaded at startup and used only when no value is set via AI_MODEL_PREFERENCES env var or the database.',
-    type: ConfigVariableType.STRING,
+      'Ordered list of smart model IDs to use as defaults. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
   })
   @IsOptional()
-  AI_MODEL_PREFERENCES_STORAGE_PATH?: string;
+  AI_MODELS_DEFAULT_SMART: string[] = DEFAULT_SMART_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of recommended model IDs shown to workspaces using curated model selection. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_RECOMMENDED: string[] = DEFAULT_RECOMMENDED_MODELS;
+
+  @ConfigVariablesMetadata({
+    group: ConfigVariablesGroup.LLM,
+    description:
+      'List of model IDs disabled by default. Disabled models cannot be used by any workspace. Managed via admin panel or env.',
+    type: ConfigVariableType.ARRAY,
+  })
+  @IsOptional()
+  AI_MODELS_DEFAULT_DISABLED: string[] = DEFAULT_DISABLED_MODELS;
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.SERVER_CONFIG,

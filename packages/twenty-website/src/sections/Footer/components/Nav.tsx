@@ -1,7 +1,7 @@
 import { FooterNavCta } from '@/sections/Footer/components/FooterNavCta';
 import { PlusIcon, RectangleFillIcon } from '@/icons';
 import { LocalizedLink } from '@/lib/i18n';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import type { FooterNavGroupType } from '@/sections/Footer/types';
 import { theme } from '@/theme';
 import { NavigationMenu } from '@base-ui/react/navigation-menu';

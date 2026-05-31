@@ -311,13 +311,15 @@ ${tools
       case ToolCategory.METADATA:
         return 'Metadata Tools (schema management)';
       case ToolCategory.VIEW:
-        return 'View Tools (manage views, filters, and sorts)';
+        return 'View Tools (manage views, fields, filters, and sorts)';
       case ToolCategory.DASHBOARD:
         return 'Dashboard Tools (create/manage dashboards)';
       case ToolCategory.LOGIC_FUNCTION:
         return 'Logic Functions (custom tools)';
-      case ToolCategory.VIEW_FIELD:
-        return 'View Field Tools (manage view columns)';
+      case ToolCategory.NAVIGATION_MENU_ITEM:
+        return 'Navigation Menu Item Tools (sidebar entries, folders, and user favorites)';
+      case ToolCategory.WEBHOOK:
+        return 'Webhook Tools (outgoing webhooks)';
       default:
         return assertUnreachable(category);
     }

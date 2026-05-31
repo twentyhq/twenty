@@ -88,6 +88,51 @@ const FAILING_UPDATE_TEST_CASES: EachTestingContext<TestContext>[] = [
       }),
     },
   },
+  {
+    title:
+      'when builtHandlerPath is a folder path without extension (bare UUID)',
+    context: {
+      manifest: buildManifest({
+        builtHandlerPath: '8b2df3cc-23ad-4e1b-87fd-f880d4cefd58',
+      }),
+    },
+  },
+  {
+    title:
+      'when sourceHandlerPath is a folder path without extension',
+    context: {
+      manifest: buildManifest({
+        sourceHandlerPath: 'src/logic-functions/my-handler',
+      }),
+    },
+  },
+  {
+    title:
+      'when builtHandlerPath is updated with invalid extension (.js instead of .mjs)',
+    context: {
+      manifest: buildManifest({
+        builtHandlerPath: 'src/logic-functions/handler.js',
+      }),
+    },
+  },
+  {
+    title:
+      'when sourceHandlerPath is updated with invalid extension (.mjs instead of .ts/.tsx)',
+    context: {
+      manifest: buildManifest({
+        sourceHandlerPath: 'src/logic-functions/handler.mjs',
+      }),
+    },
+  },
+  {
+    title:
+      'when builtHandlerPath is updated with a completely unrelated extension (.pdf)',
+    context: {
+      manifest: buildManifest({
+        builtHandlerPath: 'src/logic-functions/handler.pdf',
+      }),
+    },
+  },
 ];
 
 describe('Logic function update via manifest sync should fail for path traversal', () => {

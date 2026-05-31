@@ -1,6 +1,6 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 
-import bundleSizes from './example-sources-built/bundle-sizes.json';
+import bundleSizes from '@/__stories__/example-sources-built/bundle-sizes.json';
 
 type BundleSizeEntry = {
   name: string;

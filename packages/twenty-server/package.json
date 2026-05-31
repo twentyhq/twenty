@@ -50,7 +50,6 @@
     "@lingui/core": "^5.1.2",
     "@lingui/format-po": "5.1.2",
     "@lingui/react": "5.1.2",
-    "@lingui/vite-plugin": "5.1.2",
     "@microsoft/microsoft-graph-client": "3.0.7",
     "@microsoft/microsoft-graph-types": "^2.40.0",
     "@nestjs/axios": "3.1.2",
@@ -168,6 +167,7 @@
     "planer": "1.2.0",
     "pluralize": "8.0.0",
     "postal-mime": "^2.6.1",
+    "protobufjs": "^7.5.5",
     "psl": "^1.9.0",
     "react": "18.3.1",
     "react-dom": "18.3.1",
@@ -194,6 +194,7 @@
   "devDependencies": {
     "@faker-js/faker": "^9.8.0",
     "@lingui/cli": "^5.1.2",
+    "@lingui/vite-plugin": "5.1.2",
     "@nestjs/cli": "^11.0.16",
     "@nestjs/devtools-integration": "^0.2.1",
     "@nestjs/schematics": "^11.0.9",

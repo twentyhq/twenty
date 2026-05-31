@@ -411,19 +411,20 @@ export class DataloaderService {
             return [];
           }
 
-          return indexMetadataEntity.flatIndexFieldMetadatas.map(
-            (indexFieldMetadata) => {
+          return [...indexMetadataEntity.flatIndexFieldMetadatas]
+            .sort((a, b) => a.order - b.order)
+            .map((indexFieldMetadata) => {
               return {
                 id: indexFieldMetadata.id,
                 fieldMetadataId: indexFieldMetadata.fieldMetadataId,
+                subFieldName: indexFieldMetadata.subFieldName ?? undefined,
                 order: indexFieldMetadata.order,
                 createdAt: new Date(indexFieldMetadata.createdAt),
                 updatedAt: new Date(indexFieldMetadata.updatedAt),
                 indexMetadataId,
                 workspaceId,
               };
-            },
-          );
+            });
         },
       );
     });

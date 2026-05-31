@@ -1,5 +1,6 @@
 import { functionExecute } from '@/cli/operations/execute';
 import { APP_ERROR_CODES, FUNCTION_ERROR_CODES } from '@/cli/types';
+import { ConfigService } from '@/cli/utilities/config/config-service';
 import { CURRENT_EXECUTION_DIRECTORY } from '@/cli/utilities/config/current-execution-directory';
 import chalk from 'chalk';
 import { isDefined } from 'twenty-shared/utils';
@@ -36,7 +37,11 @@ export class LogicFunctionExecuteCommand {
         ? 'pre install'
         : (functionUniversalIdentifier ?? functionName);
 
-    console.log(chalk.blue(`🚀 Executing function "${identifier}"...`));
+    const remoteName = ConfigService.getActiveRemote();
+
+    console.log(
+      chalk.blue(`🚀 Executing function "${identifier}" on ${remoteName}...`),
+    );
     console.log(chalk.gray(`   Payload: ${JSON.stringify(parsedPayload)}\n`));
 
     const executeOptions = postInstall
