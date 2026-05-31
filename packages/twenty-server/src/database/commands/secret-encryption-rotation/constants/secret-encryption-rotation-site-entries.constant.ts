@@ -1,5 +1,8 @@
 import { type Type } from '@nestjs/common';
 
+import { ConnectionParametersRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connection-parameters-rotation.handler';
+import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
+import { type SecretEncryptionRotationHandler } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
@@ -7,11 +10,13 @@ import { type ExtractEncryptedColumns } from 'src/engine/core-modules/secret-enc
 import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
-// `customHandler: true` opts the column out of the runner's auto-wire loop;
-// a dedicated handler class must be registered separately.
+type DedicatedRotationHandlerClass = Type<SecretEncryptionRotationHandler>;
+
+// `customHandler` opts the column out of the runner's auto-wire loop and
+// names the dedicated handler class to dispatch to instead.
 type ColumnRotationSiteMetadata<E extends Type<unknown>> = {
   siteName: string;
-  customHandler?: true;
+  customHandler?: DedicatedRotationHandlerClass;
   isWorkspaceScoped?: boolean;
   extraWhere?: Readonly<Partial<InstanceType<E>>>;
 };
@@ -21,7 +26,9 @@ type SecretEncryptionRotationRegistryShape<R> = {
     ? {
         entity: E;
         columnSiteNames: {
-          [K in ExtractEncryptedColumns<InstanceType<E>>]: ColumnRotationSiteMetadata<E>;
+          [K in ExtractEncryptedColumns<
+            InstanceType<E>
+          >]: ColumnRotationSiteMetadata<E>;
         };
       }
     : never;
@@ -68,7 +75,7 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
       },
       connectionParameters: {
         siteName: 'connected-account-connection-parameters',
-        customHandler: true,
+        customHandler: ConnectionParametersRotationHandler,
       },
     },
   },
@@ -94,9 +101,15 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
 // Sites whose encrypted-ness is per-row conditional and lives outside
 // the type system (currently `KeyValuePairEntity.value` for sensitive
 // CONFIG_VARIABLE rows of type STRING).
-export const SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_NAME = {
-  SENSITIVE_CONFIG_STORAGE: 'sensitive-config-storage',
-} as const;
+export const SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES = {
+  SENSITIVE_CONFIG_STORAGE: {
+    siteName: 'sensitive-config-storage',
+    handler: SensitiveConfigStorageRotationHandler,
+  },
+} as const satisfies Record<
+  string,
+  { siteName: string; handler: DedicatedRotationHandlerClass }
+>;
 
 type RegistryColumnMetadataUnion = {
   [N in keyof typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES]: (typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)[N]['columnSiteNames'][keyof (typeof SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)[N]['columnSiteNames']];
@@ -105,7 +118,7 @@ type RegistryColumnMetadataUnion = {
 type TypedSiteNameUnion = RegistryColumnMetadataUnion['siteName'];
 
 type UntypedSiteNameUnion =
-  (typeof SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_NAME)[keyof typeof SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_NAME];
+  (typeof SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES)[keyof typeof SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES]['siteName'];
 
 export type SecretEncryptionRotationSiteName =
   | TypedSiteNameUnion
@@ -114,5 +127,5 @@ export type SecretEncryptionRotationSiteName =
 // Type-pins each dedicated handler's `siteName` to its registry entry.
 export type SecretEncryptionRotationCustomHandlerSiteName = Extract<
   RegistryColumnMetadataUnion,
-  { customHandler: true }
+  { customHandler: DedicatedRotationHandlerClass }
 >['siteName'];

@@ -1,4 +1,5 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable, Logger, type OnModuleInit } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { performance } from 'perf_hooks';
@@ -7,11 +8,10 @@ import { DataSource, type ObjectLiteral, type Repository } from 'typeorm';
 
 import {
   SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
+  SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES,
   type SecretEncryptionRotationSiteName,
 } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 import { ColumnRotationSiteHandler } from 'src/database/commands/secret-encryption-rotation/handlers/column-rotation-site.handler';
-import { ConnectionParametersRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connection-parameters-rotation.handler';
-import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationSiteResult,
@@ -35,59 +35,60 @@ export type RotationRunSummary = {
 };
 
 @Injectable()
-export class SecretEncryptionRotationRunnerService {
+export class SecretEncryptionRotationRunnerService implements OnModuleInit {
   private readonly logger = new Logger(
     SecretEncryptionRotationRunnerService.name,
   );
 
-  private readonly handlersBySiteName: Map<
+  private readonly handlersBySiteName = new Map<
     SecretEncryptionRotationSiteName,
     SecretEncryptionRotationHandler
-  >;
+  >();
 
   constructor(
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
-    secretEncryptionService: SecretEncryptionService,
-    connectionParametersRotationHandler: ConnectionParametersRotationHandler,
-    sensitiveConfigStorageRotationHandler: SensitiveConfigStorageRotationHandler,
+    private readonly secretEncryptionService: SecretEncryptionService,
     @InjectDataSource()
-    coreDataSource: DataSource,
-  ) {
-    const handlers: SecretEncryptionRotationHandler[] = [];
+    private readonly coreDataSource: DataSource,
+    private readonly moduleRef: ModuleRef,
+  ) {}
 
-    for (const entry of Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)) {
-      const repository = coreDataSource.getRepository(
+  onModuleInit(): void {
+    for (const entry of Object.values(
+      SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
+    )) {
+      const repository = this.coreDataSource.getRepository(
         entry.entity,
       ) as Repository<ObjectLiteral & { id: string }>;
 
       for (const [encryptedColumn, meta] of Object.entries(
         entry.columnSiteNames,
       )) {
-        if (meta.customHandler === true) {
-          continue;
-        }
+        const handler = isDefined(meta.customHandler)
+          ? this.moduleRef.get(meta.customHandler)
+          : new ColumnRotationSiteHandler(
+              {
+                siteName: meta.siteName,
+                repository,
+                encryptedColumn,
+                isWorkspaceScoped: meta.isWorkspaceScoped,
+                extraWhere: meta.extraWhere,
+              },
+              this.secretEncryptionService,
+            );
 
-        handlers.push(
-          new ColumnRotationSiteHandler(
-            {
-              siteName: meta.siteName,
-              repository,
-              encryptedColumn,
-              isWorkspaceScoped: meta.isWorkspaceScoped,
-              extraWhere: meta.extraWhere,
-            },
-            secretEncryptionService,
-          ),
-        );
+        this.handlersBySiteName.set(meta.siteName, handler);
       }
     }
 
-    handlers.push(connectionParametersRotationHandler);
-    handlers.push(sensitiveConfigStorageRotationHandler);
-
-    this.handlersBySiteName = new Map(
-      handlers.map((handler) => [handler.siteName, handler]),
-    );
+    for (const entry of Object.values(
+      SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_ENTRIES,
+    )) {
+      this.handlersBySiteName.set(
+        entry.siteName,
+        this.moduleRef.get(entry.handler),
+      );
+    }
   }
 
   listSiteNames(): SecretEncryptionRotationSiteName[] {
@@ -127,7 +128,7 @@ export class SecretEncryptionRotationRunnerService {
     const startedAt = performance.now();
     const results: SecretEncryptionRotationSiteResult[] = [];
 
-    for (const handler of handlersToRun) {
+    for (const [siteName, handler] of handlersToRun) {
       const siteStartedAt = performance.now();
 
       const remainingBefore = await handler.countRemaining({
@@ -135,7 +136,7 @@ export class SecretEncryptionRotationRunnerService {
       });
 
       this.logger.log(
-        `[${handler.siteName}] start: ${remainingBefore} row(s) need rotation`,
+        `[${siteName}] start: ${remainingBefore} row(s) need rotation`,
       );
 
       const { rotated, skipped, errors } = await handler.rotate({
@@ -146,7 +147,7 @@ export class SecretEncryptionRotationRunnerService {
 
       const durationMs = Math.round(performance.now() - siteStartedAt);
       const result: SecretEncryptionRotationSiteResult = {
-        siteName: handler.siteName,
+        siteName,
         remainingBefore,
         rotated,
         skipped,
@@ -157,7 +158,7 @@ export class SecretEncryptionRotationRunnerService {
       results.push(result);
 
       this.logger.log(
-        `[${handler.siteName}] DONE in ${durationMs}ms — rotated=${rotated} skipped=${skipped} errors=${errors}`,
+        `[${siteName}] DONE in ${durationMs}ms — rotated=${rotated} skipped=${skipped} errors=${errors}`,
       );
     }
 
@@ -180,14 +181,15 @@ export class SecretEncryptionRotationRunnerService {
 
   private resolveHandlersToRun(
     site: string | undefined,
-  ): SecretEncryptionRotationHandler[] {
+  ): Array<
+    [SecretEncryptionRotationSiteName, SecretEncryptionRotationHandler]
+  > {
     if (!isDefined(site)) {
-      return Array.from(this.handlersBySiteName.values());
+      return Array.from(this.handlersBySiteName.entries());
     }
 
-    const handler = this.handlersBySiteName.get(
-      site as SecretEncryptionRotationSiteName,
-    );
+    const siteName = site as SecretEncryptionRotationSiteName;
+    const handler = this.handlersBySiteName.get(siteName);
 
     if (!isDefined(handler)) {
       throw new Error(
@@ -197,7 +199,7 @@ export class SecretEncryptionRotationRunnerService {
       );
     }
 
-    return [handler];
+    return [[siteName, handler]];
   }
 
   private logSummary(summary: RotationRunSummary): void {
