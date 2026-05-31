@@ -1,6 +1,6 @@
 import { randomBytes } from 'crypto';
 
-import { type FieldMetadataType } from 'twenty-shared/types';
+import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { type ObjectLiteral } from 'typeorm';
 
@@ -43,6 +43,18 @@ export const computeWhereConditionParts = ({
     ? `"${key}"`
     : `"${objectNameSingular}"."${key}"`;
 
+  // DATE_TIME values are millisecond-precision in the application layer (a JS
+  // Date cannot hold sub-millisecond digits), but are stored as microsecond
+  // timestamptz in Postgres. Comparing the raw column against a millisecond
+  // value therefore mismatches: e.g. a row stored as ...061789 is never equal
+  // to the cursor value ...061, which breaks cursor pagination over rows
+  // sharing a millisecond (#20520). Compare at millisecond precision so both
+  // sides align. date_trunc floors, matching Date.toISOString().
+  const comparableFieldReference =
+    fieldMetadataType === FieldMetadataType.DATE_TIME
+      ? `date_trunc('milliseconds', ${fieldReference})`
+      : fieldReference;
+
   //TODO : Remove filter null equivalence injection once feature flag removed + null equivalence transformation added in ORM
   const nullEquivalentFieldValue = findPostgresDefaultNullEquivalentValue(
     value,
@@ -60,32 +72,32 @@ export const computeWhereConditionParts = ({
       };
     case 'eq':
       return {
-        sql: `${fieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
+        sql: `${comparableFieldReference} = :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` OR ${fieldReference} IS NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'neq':
       return {
-        sql: `${fieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
+        sql: `${comparableFieldReference} != :${key}${paramSuffix}${hasNullEquivalentFieldValue ? ` AND ${fieldReference} IS NOT NULL` : ''}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gt':
       return {
-        sql: `${fieldReference} > :${key}${paramSuffix}`,
+        sql: `${comparableFieldReference} > :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'gte':
       return {
-        sql: `${fieldReference} >= :${key}${paramSuffix}`,
+        sql: `${comparableFieldReference} >= :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lt':
       return {
-        sql: `${fieldReference} < :${key}${paramSuffix}`,
+        sql: `${comparableFieldReference} < :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'lte':
       return {
-        sql: `${fieldReference} <= :${key}${paramSuffix}`,
+        sql: `${comparableFieldReference} <= :${key}${paramSuffix}`,
         params: { [`${key}${paramSuffix}`]: value },
       };
     case 'in':
