@@ -6,6 +6,7 @@ export {
   NetZeroIcon,
   NineDotsIcon,
   W3villaIcon,
+  type ClientIconKey,
   type ClientIconProps,
 } from './clients';
 export { ArrowLeftIcon } from './functional/ArrowLeft';
@@ -37,5 +38,6 @@ export {
   LinkedInIcon,
   SOCIAL_ICONS,
   XIcon,
+  type SocialIconKey,
   type SocialIconProps,
 } from './social';

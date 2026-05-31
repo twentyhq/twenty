@@ -95,7 +95,6 @@ export function Social({ scheme, socialLinks }: SocialProps) {
         .filter((item) => item.showInDesktop)
         .map((item, index) => {
           const IconComponent = SOCIAL_ICONS[item.icon];
-          if (!IconComponent) return null;
 
           return (
             <SocialLinkItem key={item.href} className={item.className}>

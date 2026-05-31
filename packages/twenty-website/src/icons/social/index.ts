@@ -11,9 +11,11 @@ export { XIcon } from './X';
 
 export type SocialIconProps = { size: number; fillColor: string };
 
-export const SOCIAL_ICONS: Record<string, ComponentType<SocialIconProps>> = {
+export const SOCIAL_ICONS = {
   discord: DiscordIcon,
   github: GitHubIcon,
   linkedin: LinkedInIcon,
   x: XIcon,
-};
+} satisfies Record<string, ComponentType<SocialIconProps>>;
+
+export type SocialIconKey = keyof typeof SOCIAL_ICONS;

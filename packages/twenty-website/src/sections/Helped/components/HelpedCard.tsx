@@ -134,9 +134,7 @@ export function HelpedCard({ card }: CardProps) {
         strokeColor={theme.colors.secondary.border[40]}
       />
       <LogoRow>
-        {IconComponent ? (
-          <IconComponent fillColor={LOGO_FILL} size={logoWidth} />
-        ) : null}
+        <IconComponent fillColor={LOGO_FILL} size={logoWidth} />
       </LogoRow>
       <Rule aria-hidden="true" />
       <VisualShell>

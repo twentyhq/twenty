@@ -1,3 +1,4 @@
+import type { ClientIconKey } from '@/icons';
 import type { MessageDescriptor } from '@lingui/core';
 import type { ReactNode } from 'react';
 
@@ -35,7 +36,7 @@ export type CaseStudyData = {
     title: ReactNode;
     author: string;
     authorAvatarSrc?: string;
-    clientIcon: string;
+    clientIcon: ClientIconKey;
     heroImageSrc: string;
     industry?: MessageDescriptor;
     authorRole?: MessageDescriptor;
@@ -62,7 +63,7 @@ export type CaseStudyCatalogEntry = {
     title: MessageDescriptor;
     author: string;
     authorAvatarSrc?: string;
-    clientIcon: string;
+    clientIcon: ClientIconKey;
     heroImageSrc: string;
   };
   catalogCard: CaseStudyData['catalogCard'];

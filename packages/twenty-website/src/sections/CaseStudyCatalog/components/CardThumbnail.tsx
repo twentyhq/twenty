@@ -86,7 +86,7 @@ export function CardThumbnail({
   variant,
 }: CardThumbnailProps) {
   const ClientIcon = CLIENT_ICONS[clientIcon];
-  const baseLogoWidth = CATALOG_LOGO_WIDTHS[clientIcon] ?? 140;
+  const baseLogoWidth = CATALOG_LOGO_WIDTHS[clientIcon];
   const logoWidth =
     variant === 'large' ? baseLogoWidth * LARGE_LOGO_SCALE : baseLogoWidth;
 
