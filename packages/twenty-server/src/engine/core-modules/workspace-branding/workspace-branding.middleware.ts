@@ -26,14 +26,13 @@ export class WorkspaceBrandingMiddleware implements NestMiddleware {
       const branding =
         await this.workspaceBrandingService.getBrandingFromRequest(request);
 
-      if (!isDefined(branding)) {
-        response.status(404).send();
-
-        return;
-      }
+      const faviconTarget =
+        isDefined(branding) && isNonEmptyString(branding.logoUrl)
+          ? branding.logoUrl
+          : DEFAULT_FAVICON_PATH;
 
       response.setHeader('Cache-Control', 'public, max-age=300');
-      response.redirect(302, branding.logoUrl);
+      response.redirect(302, faviconTarget);
 
       return;
     }

@@ -10,6 +10,8 @@ on:
 
 jobs:
   deploy-main:
+    # Upstream Twenty infra deploy — not used for TOFU fleet (see tofu-docker-publish.yaml).
+    if: github.repository == 'twentyhq/twenty'
     timeout-minutes: 3
     runs-on: ubuntu-latest
     steps:

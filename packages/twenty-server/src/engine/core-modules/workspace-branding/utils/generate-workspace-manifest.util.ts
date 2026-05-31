@@ -1,5 +1,11 @@
 import { isNonEmptyString } from '@sniptt/guards';
 
+import {
+  getIconMimeTypeFromUrl,
+  getManifestIconSizesForMimeType,
+  getManifestLargeIconSizesForMimeType,
+} from './get-icon-mime-type-from-url.util';
+
 export type WorkspaceManifest = {
   name: string;
   short_name: string;
@@ -31,31 +37,31 @@ export const generateWorkspaceManifest = ({
   const icons: WorkspaceManifest['icons'] = [];
 
   if (isNonEmptyString(logoUrl)) {
+    const iconType = getIconMimeTypeFromUrl(logoUrl);
+
     icons.push(
       {
         src: logoUrl,
-        sizes: '192x192',
-        type: 'image/png',
+        sizes: getManifestIconSizesForMimeType(iconType),
+        type: iconType,
         purpose: 'any',
       },
       {
         src: logoUrl,
-        sizes: '512x512',
-        type: 'image/png',
+        sizes: getManifestLargeIconSizesForMimeType(iconType),
+        type: iconType,
         purpose: 'any',
       },
     );
   } else {
     // Generic neutral icon path for fork-level replacement.
     // See tofu/BRANDING.md for how to customize the default PWA icon.
-    icons.push(
-      {
-        src: '/branding/default-app-icon.svg',
-        sizes: 'any',
-        type: 'image/svg+xml',
-        purpose: 'any',
-      },
-    );
+    icons.push({
+      src: '/branding/default-app-icon.svg',
+      sizes: 'any',
+      type: 'image/svg+xml',
+      purpose: 'any',
+    });
   }
 
   return {

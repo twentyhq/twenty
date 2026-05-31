@@ -38,4 +38,31 @@ describe('generateWorkspaceManifest', () => {
 
     expect(result.name).toBe('CRM');
   });
+
+  it('uses svg mime type and sizes when logoUrl is an svg', () => {
+    const result = generateWorkspaceManifest({
+      displayName: 'Acme Corp',
+      logoUrl: 'https://files.example.com/logo.svg',
+    });
+
+    expect(result.icons).toHaveLength(2);
+    expect(result.icons[0]).toEqual({
+      src: 'https://files.example.com/logo.svg',
+      sizes: 'any',
+      type: 'image/svg+xml',
+      purpose: 'any',
+    });
+    expect(result.icons[1].type).toBe('image/svg+xml');
+    expect(result.icons[1].sizes).toBe('any');
+  });
+
+  it('uses ico mime type when logoUrl is an ico', () => {
+    const result = generateWorkspaceManifest({
+      displayName: 'Acme Corp',
+      logoUrl: 'https://files.example.com/logo.ico',
+    });
+
+    expect(result.icons[0].type).toBe('image/x-icon');
+    expect(result.icons[0].sizes).toBe('192x192');
+  });
 });
