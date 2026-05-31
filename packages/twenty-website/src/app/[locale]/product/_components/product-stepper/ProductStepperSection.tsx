@@ -1,6 +1,7 @@
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { Flow } from './Flow';
 import type { ProductStepperStepType } from './types';
@@ -8,9 +9,9 @@ import { DataModelVisual } from './visuals/DataModelVisual';
 import { LayoutVisual } from './visuals/LayoutVisual';
 import { WorkflowVisual } from './visuals/WorkflowVisual';
 
-// The product page's "no-code customization" stepper. Owns its copy (read from
-// request-scoped i18n) and builds its homogeneous step list in-component (the
-// step headings need i18n, so the list can't be a static data array).
+// The product page's "no-code customization" stepper. Owns its copy: the step
+// headings render as <Trans> units and the bodies/eyebrow as msg descriptors,
+// so the homogeneous step list is built in-component rather than in a data file.
 export function ProductStepperSection() {
   const i18n = getServerI18n();
 
@@ -18,7 +19,9 @@ export function ProductStepperSection() {
     {
       icon: 'users',
       heading: (
-        <HeadingPart fontFamily="sans">{i18n._(msg`Data model`)}</HeadingPart>
+        <HeadingPart fontFamily="sans">
+          <Trans>Data model</Trans>
+        </HeadingPart>
       ),
       body: msg`Add objects and fields`,
       visual: DataModelVisual,
@@ -26,7 +29,9 @@ export function ProductStepperSection() {
     {
       icon: 'check',
       heading: (
-        <HeadingPart fontFamily="sans">{i18n._(msg`Automation`)}</HeadingPart>
+        <HeadingPart fontFamily="sans">
+          <Trans>Automation</Trans>
+        </HeadingPart>
       ),
       body: msg`Create a workflow`,
       visual: WorkflowVisual,
@@ -34,7 +39,9 @@ export function ProductStepperSection() {
     {
       icon: 'eye',
       heading: (
-        <HeadingPart fontFamily="sans">{i18n._(msg`Layout`)}</HeadingPart>
+        <HeadingPart fontFamily="sans">
+          <Trans>Layout</Trans>
+        </HeadingPart>
       ),
       body: msg`Tailor record pages, menus, and views`,
       visual: LayoutVisual,
@@ -49,10 +56,10 @@ export function ProductStepperSection() {
       eyebrow={i18n._(msg`Customization`)}
       steps={steps}
     >
-      <HeadingPart fontFamily="serif">
-        {i18n._(msg`Go the extra mile`)}
-      </HeadingPart>{' '}
-      <HeadingPart fontFamily="sans">{i18n._(msg`with no-code`)}</HeadingPart>
+      <Trans>
+        <HeadingPart fontFamily="serif">Go the extra mile</HeadingPart>{' '}
+        <HeadingPart fontFamily="sans">with no-code</HeadingPart>
+      </Trans>
     </Flow>
   );
 }

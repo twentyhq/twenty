@@ -1,8 +1,7 @@
 import { Container } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import { PlusIcon } from '@/icons';
 import { theme } from '@/theme';
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import NextImage from 'next/image';
 
@@ -248,8 +247,6 @@ export function TrustedBy({
   cardBackgroundColor,
   compactBottom = false,
 }: TrustedByProps) {
-  const i18n = getServerI18n();
-
   return (
     <StyledSection
       aria-label="Trusted by leading organizations"
@@ -284,7 +281,9 @@ export function TrustedBy({
           </CornerBottomRight>
           <StyledLabelCell>
             <SeparatorRow>
-              <SeparatorText>{i18n._(msg`trusted by`)}</SeparatorText>
+              <SeparatorText>
+                <Trans>trusted by</Trans>
+              </SeparatorText>
             </SeparatorRow>
           </StyledLabelCell>
           <StyledLogosCell>
@@ -309,7 +308,9 @@ export function TrustedBy({
                 unoptimized
                 width={14}
               />
-              <StyledCountText>{i18n._(msg`+10k others`)}</StyledCountText>
+              <StyledCountText>
+                <Trans>+10k others</Trans>
+              </StyledCountText>
             </StyledChip>
           </StyledCountCell>
         </StyledCard>

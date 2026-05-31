@@ -13,6 +13,7 @@ import { FaqItems } from '@/sections/Faq/FaqItems';
 import { FaqBackground } from '@/sections/Faq/visuals/Background';
 import { theme } from '@/theme';
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
@@ -89,7 +90,7 @@ export function Faq() {
         <StyledIntro>
           <Eyebrow colorScheme="secondary">
             <HeadingPart fontFamily="sans">
-              {i18n._(msg`Any Questions?`)}
+              <Trans>Any Questions?</Trans>
             </HeadingPart>
           </Eyebrow>
           <Heading
@@ -98,13 +99,15 @@ export function Faq() {
             size="lg"
             weight="light"
           >
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`Stop fighting custom.`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`Start building, with Twenty`)}
-            </HeadingPart>
+            <Trans>
+              <HeadingPart fontFamily="serif">
+                Stop fighting custom.
+              </HeadingPart>
+              <br />
+              <HeadingPart fontFamily="sans">
+                Start building, with Twenty
+              </HeadingPart>
+            </Trans>
           </Heading>
           <StyledCta>
             <LinkButton

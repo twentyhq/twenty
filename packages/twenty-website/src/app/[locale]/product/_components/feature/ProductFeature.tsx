@@ -4,10 +4,9 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import { type Page, Pages } from '@/lib/pages';
 import { theme, type Scheme } from '@/theme';
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import type { MessageDescriptor } from '@lingui/core';
 import { styled } from '@linaria/react';
 import type { ComponentType, ReactNode } from 'react';
@@ -260,23 +259,19 @@ function Tiles({ tiles }: TilesProps) {
 }
 
 export function ProductFeature() {
-  const i18n = getServerI18n();
-
   return (
     <Root scheme="light">
       <Intro align="center" page={Pages.Product}>
         <Eyebrow>
           <HeadingPart fontFamily="sans">
-            {i18n._(msg`Core Features`)}
+            <Trans>Core Features</Trans>
           </HeadingPart>
         </Eyebrow>
         <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Everything you need,`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`out of the box`)}
-          </HeadingPart>
+          <Trans>
+            <HeadingPart fontFamily="serif">Everything you need,</HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">out of the box</HeadingPart>
+          </Trans>
         </Heading>
       </Intro>
       <Tiles tiles={FEATURE_TILES} />
