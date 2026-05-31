@@ -1,8 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 
-import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import { AI_HERO_TABS } from '@/app/[locale]/product/ai-hero-tabs.data';
+import { APP_PREVIEW_DATA } from '@/sections/AppPreview';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
 import { TalkToUsButton } from '@/sections/ContactCal';

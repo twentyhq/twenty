@@ -1,4 +1,3 @@
-import { APP_PREVIEW_DATA } from '@/app/[locale]/(home)/app-preview.data';
 import {
   Container,
   Eyebrow,
@@ -7,7 +6,7 @@ import {
   LinkButton,
 } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
-import { AppPreview } from '@/sections/AppPreview';
+import { APP_PREVIEW_DATA, AppPreview } from '@/sections/AppPreview';
 import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';

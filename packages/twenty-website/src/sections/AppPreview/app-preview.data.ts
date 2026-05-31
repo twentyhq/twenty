@@ -4,7 +4,7 @@ import type {
   DashboardPageDefinition,
   KanbanPageDefinition,
   TablePageDefinition,
-} from '@/sections/AppPreview';
+} from './types';
 import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
 
 const PEOPLE_AVATAR_URLS = SHARED_PEOPLE_AVATAR_URLS;
