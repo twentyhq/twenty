@@ -12,8 +12,6 @@ import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-ac
 
 type DedicatedRotationHandlerClass = Type<SecretEncryptionRotationHandler>;
 
-// `customHandler` opts the column out of the runner's auto-wire loop and
-// names the dedicated handler class to dispatch to instead.
 type ColumnRotationSiteMetadata<E extends Type<unknown>> = {
   siteName: string;
   customHandler?: DedicatedRotationHandlerClass;
@@ -34,9 +32,6 @@ type SecretEncryptionRotationRegistryShape<R> = {
     : never;
 };
 
-// Equivalent to `as const satisfies Shape<typeof SELF>` — extracted into a
-// helper because the inline self-referential `satisfies` errors with
-// "implicitly has type 'any'".
 const defineRotationRegistry = <
   const R extends SecretEncryptionRotationRegistryShape<R>,
 >(
@@ -122,9 +117,3 @@ type UntypedSiteNameUnion =
 export type SecretEncryptionRotationSiteName =
   | TypedSiteNameUnion
   | UntypedSiteNameUnion;
-
-// Type-pins each dedicated handler's `siteName` to its registry entry.
-export type SecretEncryptionRotationCustomHandlerSiteName = Extract<
-  RegistryColumnMetadataUnion,
-  { customHandler: DedicatedRotationHandlerClass }
->['siteName'];
