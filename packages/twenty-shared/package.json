@@ -37,7 +37,7 @@
     "slash": "^5.1.0",
     "tsc-alias": "^1.8.16",
     "tsx": "^4.19.3",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "vite": "^7.0.0",
     "vite-plugin-dts": "3.8.1",
     "vite-tsconfig-paths": "^4.2.1"
