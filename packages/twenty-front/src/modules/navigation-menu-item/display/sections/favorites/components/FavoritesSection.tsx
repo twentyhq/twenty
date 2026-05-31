@@ -24,7 +24,6 @@ import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hoo
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
 import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
-import { NavigationDrawerItem } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerItem';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
@@ -65,7 +64,8 @@ export const FavoritesSection = () => {
 
   const { t } = useLingui();
 
-  const { toggleNavigationSection } = useNavigationSection('Favorites');
+  const { toggleNavigationSection, openNavigationSection } =
+    useNavigationSection('Favorites');
   const isNavigationSectionOpen = useAtomFamilyStateValue(
     isNavigationSectionOpenFamilyState,
     'Favorites',
@@ -91,6 +91,9 @@ export const FavoritesSection = () => {
 
   const handleAddFavorite = (event?: React.MouseEvent) => {
     event?.stopPropagation();
+    // Expansion is gated on items existing, so this stays collapsed if the user
+    // cancels and reveals the favorite as soon as it is added.
+    openNavigationSection();
     setNavigationMenuItemEditSection('favorite');
     setPendingInsertionNavigationMenuItem(null);
     setSelectedNavigationMenuItemIdInEditMode(null);
@@ -119,7 +122,7 @@ export const FavoritesSection = () => {
   return (
     <NavigationMenuItemSection
       title={t`Favorites`}
-      isOpen={isNavigationSectionOpen}
+      isOpen={topLevelItems.length > 0 && isNavigationSectionOpen}
       onToggle={toggleNavigationSection}
       rightIcon={
         <LightIconButton
@@ -129,7 +132,7 @@ export const FavoritesSection = () => {
         />
       }
     >
-      {topLevelItems.length > 0 ? (
+      {topLevelItems.length > 0 && (
         <StyledList>
           {topLevelItems.map((item, index) => (
             <StyledListItemRow key={item.id}>
@@ -188,14 +191,6 @@ export const FavoritesSection = () => {
             />
           </NavigationMenuItemDroppableSlot>
         </StyledList>
-      ) : (
-        <NavigationDrawerItem
-          label={t`Add a favorite`}
-          Icon={IconPlus}
-          onClick={handleAddFavorite}
-          triggerEvent="CLICK"
-          variant="tertiary"
-        />
       )}
     </NavigationMenuItemSection>
   );
