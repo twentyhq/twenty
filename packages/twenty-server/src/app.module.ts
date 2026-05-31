@@ -21,9 +21,9 @@ import { McpMethodGuardMiddleware } from 'src/engine/api/mcp/middlewares/mcp-met
 import { RestApiModule } from 'src/engine/api/rest/rest-api.module';
 import { WorkspaceAuthContextMiddleware } from 'src/engine/core-modules/auth/middlewares/workspace-auth-context.middleware';
 import { MetricsModule } from 'src/engine/core-modules/metrics/metrics.module';
+import { getFrontDistPath } from 'src/engine/core-modules/workspace-branding/utils/get-front-dist-path.util';
 import { WorkspaceBrandingMiddleware } from 'src/engine/core-modules/workspace-branding/workspace-branding.middleware';
 import { WorkspaceBrandingModule } from 'src/engine/core-modules/workspace-branding/workspace-branding.module';
-import { getFrontDistPath } from 'src/engine/core-modules/workspace-branding/utils/get-front-dist-path.util';
 import { DataloaderModule } from 'src/engine/dataloaders/dataloader.module';
 import { WorkspaceMetadataVersionModule } from 'src/engine/metadata-modules/workspace-metadata-version/workspace-metadata-version.module';
 import { GraphQLHydrateRequestFromTokenMiddleware } from 'src/engine/middlewares/graphql-hydrate-request-from-token.middleware';

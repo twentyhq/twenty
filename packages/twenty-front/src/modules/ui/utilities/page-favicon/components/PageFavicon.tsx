@@ -7,6 +7,17 @@ import { Helmet } from 'react-helmet-async';
 import { isDefined } from 'twenty-shared/utils';
 import { REACT_APP_SERVER_BASE_URL } from '~/config';
 
+/**
+ * Client-side favicon + PWA manifest handling.
+ *
+ * IMPORTANT (May 2026 white-label changes):
+ * - The server (workspace-branding.middleware) now owns `/manifest.json` and `/favicon.ico`.
+ * - When a workspace logo is set, the server returns a fully branded manifest + 302 favicon redirect.
+ * - This component is mostly a progressive enhancement / safety net for the logged-in app.
+ * - The old client-side Blob manifest swap is only used when a workspace logo exists.
+ * - See tofu/BRANDING.md for the full asset replacement map.
+ */
+
 const DEFAULT_PWA_NAME = 'CRM';
 const STATIC_MANIFEST_PATH = '/manifest.json';
 
@@ -16,36 +27,46 @@ const getServerFaviconUrl = (): string => {
   return `${serverBaseUrl}/favicon.ico`;
 };
 
+const getIconType = (url: string): string => {
+  if (url.toLowerCase().endsWith('.svg')) return 'image/svg+xml';
+  if (url.toLowerCase().endsWith('.ico')) return 'image/x-icon';
+  return 'image/png';
+};
+
 const buildWebAppManifest = ({
   displayName,
   iconUrl,
 }: {
   displayName: string;
   iconUrl: string;
-}) => ({
-  short_name: displayName,
-  name: displayName,
-  start_url: '.',
-  display: 'standalone',
-  // oxlint-disable-next-line twenty/no-hardcoded-colors
-  theme_color: '#000000',
-  // oxlint-disable-next-line twenty/no-hardcoded-colors
-  background_color: '#ffffff',
-  icons: [
-    {
-      src: iconUrl,
-      sizes: '192x192',
-      type: 'image/png',
-      purpose: 'any',
-    },
-    {
-      src: iconUrl,
-      sizes: '512x512',
-      type: 'image/png',
-      purpose: 'any',
-    },
-  ],
-});
+}) => {
+  const iconType = getIconType(iconUrl);
+
+  return {
+    short_name: displayName,
+    name: displayName,
+    start_url: '.',
+    display: 'standalone',
+    // oxlint-disable-next-line twenty/no-hardcoded-colors
+    theme_color: '#000000',
+    // oxlint-disable-next-line twenty/no-hardcoded-colors
+    background_color: '#ffffff',
+    icons: [
+      {
+        src: iconUrl,
+        sizes: iconType === 'image/svg+xml' ? 'any' : '192x192',
+        type: iconType,
+        purpose: 'any',
+      },
+      {
+        src: iconUrl,
+        sizes: iconType === 'image/svg+xml' ? 'any' : '512x512',
+        type: iconType,
+        purpose: 'any',
+      },
+    ],
+  };
+};
 
 export const PageFavicon = () => {
   const workspacePublicData = useAtomStateValue(workspacePublicDataState);

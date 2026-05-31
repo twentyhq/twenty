@@ -23,7 +23,7 @@ For most clients, UI settings are sufficient. Fork-level changes are for things 
 
 **What it affects:** The logo shown on the sign-in/sign-up page ("Welcome to your workspace"), inside the app nav drawer, and in email notifications.
 
-**How it works technically:** `workspace.logo` is stored in the DB as a file reference. When no logo is set, the app falls back to the Twenty default icon (`/images/icons/android/android-launchericon-192-192.png`). Once you upload a logo, it's served from `SERVER_URL/files/...`.
+**How it works technically:** `workspace.logo` is stored in the DB as a file reference. When no logo is set, the app falls back to the neutral fork default (`/branding/default-app-icon.svg`). See `tofu/BRANDING.md` for the complete asset replacement map. Once you upload a logo, it's served from `SERVER_URL/files/...` and the server dynamically injects it into favicons, PWA manifest, and HTML.
 
 **Steps:**
 1. Log in as workspace admin
@@ -55,7 +55,7 @@ Handled by fork + workspace logo upload — **no per-client image build required
 | What | How |
 |---|---|
 | Browser tab icon | `/favicon.ico` on server → redirects to workspace logo |
-| Install / Open in app | Dynamic manifest from `PageFavicon.tsx` + server-injected HTML on first load |
+| Install / Open in app | Server-side `/manifest.json` (workspace-branding.middleware) — works even on fresh loads and for install prompts |
 | Slack / link previews | Server injects `og:image` + workspace title in HTML |
 
 **Steps:** Upload logo in Settings → General (Section 1.1). After deploy or logo change, remove and re-install the PWA on mobile.
@@ -365,7 +365,7 @@ These cannot be done through the UI and require changes to this repo:
 | Item | File(s) | Status | Priority |
 |---|---|---|---|
 | **White-label sign-in logo** — removed Twenty "20" fallback; sign-in page shows workspace logo (uploaded in Settings) or nothing | `Logo.tsx`, `SignInUp.tsx` | ✅ Done | Critical |
-| **Favicon / PWA / link previews** — workspace logo via `/favicon.ico`, server HTML inject, dynamic manifest | `PageFavicon.tsx`, `workspace-branding/*`, `app.module.ts`, `manifest.json` | ✅ Done | Critical |
+| **Favicon / PWA / link previews** — workspace logo via `/favicon.ico`, server HTML inject, dynamic `/manifest.json` | `workspace-branding/*` (middleware + generate-workspace-manifest), `manifest.json`, `public/branding/` | ✅ Done | Critical |
 | Default seed data at workspace creation | `packages/twenty-server/src/engine/workspace-manager/standard-objects/` | ⬜ TODO | Medium |
 | Remove Twenty branding from email templates | `packages/twenty-emails/src/` | ⬜ TODO | Medium |
 | "Privacy Policy" / "Terms of Service" links on sign-in page | `packages/twenty-front/src/pages/auth/SignInUp.tsx` | ⬜ TODO | Medium |
@@ -377,7 +377,7 @@ These cannot be done through the UI and require changes to this repo:
 
 **What changed:**
 - `packages/twenty-front/src/pages/auth/SignInUp.tsx` — passes `workspacePublicData?.logo` as `primaryLogo` instead of `secondaryLogo` so the workspace logo is now the main logo on the sign-in screen
-- `packages/twenty-front/src/modules/auth/components/Logo.tsx` — removed the hardcoded fallback to the Twenty icon (`android-launchericon-192-192.png`); when no logo is uploaded the component renders nothing instead
+- `packages/twenty-front/src/modules/auth/components/Logo.tsx` — removed the hardcoded fallback to the Twenty icon; when no logo is uploaded the component renders nothing instead (see `tofu/BRANDING.md` for current default handling)
 
 **Result:**
 - Workspace with logo uploaded → client's logo shown large, centered, on sign-in page ✅

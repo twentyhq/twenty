@@ -80,9 +80,9 @@ curl -sI "$DOMAIN/favicon.ico" | head -5
 curl -sI "$DOMAIN/" | grep -i cache-control
 curl -s "$DOMAIN/" | grep -E '<title>|apple-touch-icon|og:title'
 
-# 3. Static manifest fallback — no Twenty icon paths
-curl -s "$DOMAIN/manifest.json" | grep -c android-launchericon
-# expect 0
+# 3. Dynamic manifest (server-generated) — should return client name or neutral "CRM"
+curl -s "$DOMAIN/manifest.json" | head -20
+# expect "name": "Your Client Name" (or "CRM" when no logo uploaded)
 
 # 4. In browser: sign-in page, nav drawer, Install app / Open in app icon
 ```
@@ -102,7 +102,7 @@ When merging `upstream/main` or reviewing the weekly sync PR:
 
 1. Walk every file in the Active Core Patches table — conflicts are expected in `Logo.tsx`, `SignInUp.tsx`, `PageFavicon.tsx`, `app.module.ts`, `workspace-branding/*`.
 2. Re-apply **intent**, not blind ours/theirs — upstream may refactor the same area.
-3. Grep for regressions:
+3. Grep for regressions (see also tofu/BRANDING.md for the authoritative asset map):
    ```bash
    rg "android-launchericon|Welcome to Twenty|twenty\.com" packages/twenty-front/src packages/twenty-server/src --glob '!*.spec.*'
    ```
@@ -121,4 +121,4 @@ When merging `upstream/main` or reviewing the weekly sync PR:
 |---|---|---|
 | Email template branding | `packages/twenty-emails/src/` | Medium |
 | Custom ToS/Privacy links per client | Sign-in footer | Medium |
-| Replace bundled icon PNGs in `public/images/icons/` | Fork | Low (bypassed when workspace logo set) |
+| Replace bundled icon PNGs in `public/images/icons/` | Fork | Low (bypassed when workspace logo set). See `tofu/BRANDING.md` for the single place to manage defaults. |

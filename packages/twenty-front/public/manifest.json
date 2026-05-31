@@ -7,15 +7,9 @@
   "background_color": "#ffffff",
   "icons": [
     {
-      "src": "/favicon.ico",
-      "sizes": "192x192",
-      "type": "image/png",
-      "purpose": "any"
-    },
-    {
-      "src": "/favicon.ico",
-      "sizes": "512x512",
-      "type": "image/png",
+      "src": "/branding/default-app-icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
       "purpose": "any"
     }
   ]

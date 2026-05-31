@@ -8,6 +8,7 @@ import {
     isApiPath,
     isStaticAssetPath,
 } from './utils/is-static-asset-path.util';
+import { generateWorkspaceManifest } from './utils/generate-workspace-manifest.util';
 import { WorkspaceBrandingService } from './workspace-branding.service';
 
 @Injectable()
@@ -33,6 +34,22 @@ export class WorkspaceBrandingMiddleware implements NestMiddleware {
 
       response.setHeader('Cache-Control', 'public, max-age=300');
       response.redirect(302, branding.logoUrl);
+
+      return;
+    }
+
+    if (request.path === '/manifest.json') {
+      const branding =
+        await this.workspaceBrandingService.getBrandingFromRequest(request);
+
+      const manifest = generateWorkspaceManifest({
+        displayName: branding?.displayName ?? null,
+        logoUrl: branding?.logoUrl ?? null,
+      });
+
+      response.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+      response.setHeader('Cache-Control', 'public, max-age=300');
+      response.send(JSON.stringify(manifest));
 
       return;
     }
