@@ -942,4 +942,58 @@ describe('JwtAuthStrategy', () => {
       );
     });
   });
+
+  describe('PLAYGROUND token validation', () => {
+    // A PLAYGROUND token is access-shaped but must never impersonate. This is the
+    // same payload that, as an ACCESS token with isImpersonating set but without
+    // impersonation ids, throws 'Invalid or missing user workspace ID in
+    // impersonation token' above; as a PLAYGROUND token it must skip the
+    // impersonation path entirely and resolve to the first-person context.
+    it('ignores isImpersonating and resolves first-person', async () => {
+      const validUserId = 'valid-user-id';
+      const validUserWorkspaceId = randomUUID();
+      const validWorkspaceId = randomUUID();
+
+      const payload = {
+        sub: validUserId,
+        type: JwtTokenTypeEnum.PLAYGROUND,
+        userWorkspaceId: validUserWorkspaceId,
+        workspaceId: validWorkspaceId,
+        isImpersonating: true,
+      };
+
+      workspaceStore[validWorkspaceId] = new WorkspaceEntity();
+      userStore[validUserId] = { id: validUserId, lastName: 'lastNameDefault' };
+
+      coreEntityCacheService.get.mockImplementation(
+        async (keyName: string, entityId: string) => {
+          if (keyName === 'workspaceEntity') {
+            return workspaceStore[entityId] ?? null;
+          }
+
+          if (keyName === 'user') {
+            return userStore[entityId] ?? null;
+          }
+
+          if (keyName === 'userWorkspaceEntity') {
+            return {
+              id: validUserWorkspaceId,
+              user: { id: validUserId, lastName: 'lastNameDefault' },
+              workspace: { id: validWorkspaceId },
+            };
+          }
+
+          return null;
+        },
+      );
+
+      strategy = createStrategy();
+
+      const result = await strategy.validate(payload as JwtPayload);
+
+      expect(result.impersonationContext).toBeUndefined();
+      expect(result.tokenType).toBe(JwtTokenTypeEnum.PLAYGROUND);
+      expect(result.userWorkspaceId).toBe(validUserWorkspaceId);
+    });
+  });
 });
