@@ -295,6 +295,7 @@ export function TablePage({
               <DataRow
                 key={row.id}
                 $rowIndex={rowIndex}
+                data-row-id={row.id}
                 onMouseEnter={() => setHoveredRowId(row.id)}
                 onMouseLeave={() =>
                   setHoveredRowId((current) =>

@@ -360,7 +360,12 @@ export function HeroVisualScroll({
           </StyledContainer>
 
           <VisualWrapper>
-            <ProductVisual activeScene={0} visual={visual} />
+            <ProductVisual
+              activeScene={0}
+              collaborative
+              playbackEnabled={false}
+              visual={visual}
+            />
           </VisualWrapper>
         </FullLayer>
 

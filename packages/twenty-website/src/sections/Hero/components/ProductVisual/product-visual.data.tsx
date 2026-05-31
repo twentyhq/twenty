@@ -544,3 +544,92 @@ export const QONTO_RECORD_PAGE_INITIAL: RecordPageDefinition = {
   },
   notes: QONTO_RECORD_PAGE.notes.slice(0, 1),
 };
+
+export const ANTHROPIC_RECORD_PAGE: RecordPageDefinition = {
+  type: 'record',
+  header: {
+    title: 'Anthropic',
+    count: 12,
+  },
+  record: {
+    logoDomain: 'anthropic.com',
+    name: 'Anthropic',
+    createdAt: 'Created 4 hours ago',
+    fields: [
+      {
+        icon: 'link',
+        label: 'URL',
+        value: { type: 'link', kind: 'url', value: 'anthropic.com' },
+      },
+      {
+        icon: 'user',
+        label: 'Account Owner',
+        value: {
+          type: 'person',
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          kind: 'person',
+          tone: 'gray',
+        },
+      },
+      {
+        icon: 'mapPin',
+        label: 'Address',
+        value: { type: 'text', value: '18 Rue De Navarin' },
+      },
+      {
+        icon: 'check',
+        label: 'ICP',
+        value: { type: 'boolean', value: true },
+      },
+      {
+        icon: 'currency',
+        label: 'ARR',
+        value: { type: 'currency', value: '$500,000' },
+      },
+      {
+        icon: 'linkedin',
+        label: 'LinkedIn',
+        value: {
+          type: 'link',
+          kind: 'social',
+          label: 'linkedin.com/company/a...',
+          value: 'anthropic',
+        },
+      },
+    ],
+    moreCount: 12,
+    relations: [
+      {
+        title: 'Opportunities',
+        items: [{ name: 'Enterprise Expansion', domain: 'anthropic.com' }],
+      },
+      {
+        title: 'People',
+        count: 12,
+        items: [
+          {
+            name: 'Dario Amodei',
+            avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          },
+        ],
+      },
+    ],
+  },
+  notes: [
+    {
+      id: 'kickoff',
+      title: 'Kickoff with Dario',
+      body: 'Walked through the enterprise expansion plan and the security review timeline. Anthropic wants SSO, audit logs, and a dedicated environment before rolling out to the wider research org.',
+      relation: {
+        name: 'Dario Amodei',
+        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+      },
+    },
+    {
+      id: 'pricing-follow-up',
+      title: 'Follow-up on pricing',
+      body: 'Shared updated seat pricing and the annual commitment options. Next step is a procurement intro and a technical deep-dive with their platform team.',
+    },
+  ],
+};
