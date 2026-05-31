@@ -58,7 +58,6 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
       value: {
         siteName: 'application-variable',
         isWorkspaceScoped: true,
-        extraWhere: { isSecret: true },
       },
     },
   },
