@@ -1,8 +1,7 @@
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-import { getServerI18n } from '@/lib/i18n/server';
 import { theme } from '@/theme';
 
 const MARQUEE_REPEAT = 6;
@@ -133,12 +132,10 @@ function Track({
 // Self-contained: the why-twenty marquee owns its copy (and its always-dark
 // scheme). Segment styling is positional via data-segment-index.
 export function WhyTwentyMarquee() {
-  const i18n = getServerI18n();
-
   const segments: ReactNode[] = [
-    i18n._(msg`Same CRM`),
-    i18n._(msg`Same output`),
-    i18n._(msg`Same results`),
+    <Trans>Same CRM</Trans>,
+    <Trans>Same output</Trans>,
+    <Trans>Same results</Trans>,
   ];
 
   return (

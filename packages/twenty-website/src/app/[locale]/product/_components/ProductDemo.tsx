@@ -12,6 +12,7 @@ import { theme } from '@/theme';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import NextImage from 'next/image';
 
 // The product page's live-demo section. Owns its own copy (read from the
@@ -115,17 +116,15 @@ export function ProductDemo() {
         <StyledContainer>
           <Eyebrow>
             <HeadingPart fontFamily="sans">
-              {i18n._(msg`Try it live`)}
+              <Trans>Try it live</Trans>
             </HeadingPart>
           </Eyebrow>
           <Heading size="lg" weight="light">
-            <HeadingPart fontFamily="serif">
-              {i18n._(msg`A demo worth a`)}
-            </HeadingPart>
-            <br />
-            <HeadingPart fontFamily="sans">
-              {i18n._(msg`thousand words`)}
-            </HeadingPart>
+            <Trans>
+              <HeadingPart fontFamily="serif">A demo worth a</HeadingPart>
+              <br />
+              <HeadingPart fontFamily="sans">thousand words</HeadingPart>
+            </Trans>
           </Heading>
           <CtasContainer>
             <LinkButton
