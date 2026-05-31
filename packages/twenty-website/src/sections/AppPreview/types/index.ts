@@ -39,5 +39,6 @@ export type {
   SidebarPageItemDef,
   SidebarItemDef,
   TablePageDefinition,
+  TimelineEvent,
   AppPreviewConfig,
 } from './app-preview-data';

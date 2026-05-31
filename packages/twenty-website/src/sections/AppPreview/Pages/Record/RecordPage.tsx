@@ -7,8 +7,11 @@ import {
   IconCalendarEvent,
   IconCheckbox,
   IconChevronDown,
+  IconChevronUp,
   IconCheck,
+  IconCirclePlus,
   IconCurrencyDollar,
+  IconEditCircle,
   IconLink,
   IconMail,
   IconMapPin,
@@ -18,7 +21,12 @@ import {
   IconUser,
 } from '@tabler/icons-react';
 
-import type { RecordField, RecordPageDefinition } from '../../types';
+import type {
+  RecordField,
+  RecordFieldValue,
+  RecordPageDefinition,
+  TimelineEvent,
+} from '../../types';
 import { FaviconLogo } from '../../Shared/components/FaviconLogo';
 import { PersonAvatar } from '../../Shared/components/PersonAvatar';
 import { PreviewRoundedLink } from '../../Shared/components/PreviewRoundedLink';
@@ -489,10 +497,357 @@ const NoteRelationAvatar = styled.img`
   width: 16px;
 `;
 
+const TimelineFeed = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 16px 24px 24px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const MonthSeparator = styled.div`
+  align-items: center;
+  color: ${COLORS.textLight};
+  display: flex;
+  font-family: ${APP_FONT};
+  font-size: 12px;
+  font-weight: 600;
+  gap: 16px;
+  margin-bottom: 16px;
+`;
+
+const MonthSeparatorLine = styled.div`
+  background: ${COLORS.borderLight};
+  border-radius: 50px;
+  flex: 1;
+  height: 1px;
+`;
+
+const TimelineRow = styled.div<{ $index: number }>`
+  animation: timelineRowAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${400 + $index * 100}ms`};
+  display: flex;
+  gap: 12px;
+
+  @keyframes timelineRowAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const TimelineGutter = styled.div`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+`;
+
+const TimelineIconBox = styled.div`
+  align-items: center;
+  color: ${COLORS.textTertiary};
+  display: flex;
+  flex-shrink: 0;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+`;
+
+const TimelineConnector = styled.div<{ $hidden: boolean }>`
+  background: ${COLORS.borderLight};
+  flex: 1;
+  margin: 4px 0;
+  min-height: 12px;
+  opacity: ${({ $hidden }) => ($hidden ? 0 : 1)};
+  width: 2px;
+`;
+
+const TimelineMain = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+  padding-bottom: 16px;
+`;
+
+const TimelineSummary = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  justify-content: space-between;
+  min-height: 24px;
+`;
+
+const TimelineSummaryLeft = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  min-width: 0;
+  overflow: hidden;
+`;
+
+const TimelineActor = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+`;
+
+const TimelineAction = styled.span`
+  color: ${COLORS.textSecondary};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  white-space: nowrap;
+`;
+
+const TimelineSubject = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+`;
+
+const TimelineDiffLabel = styled.span`
+  color: ${COLORS.textSecondary};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  white-space: nowrap;
+`;
+
+const TimelineArrow = styled.span`
+  color: ${COLORS.textTertiary};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+`;
+
+const TimelineValueText = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  white-space: nowrap;
+`;
+
+const TimelineDiffPerson = styled.span`
+  align-items: center;
+  display: inline-flex;
+  gap: 4px;
+`;
+
+const TimelineLinkedTitle = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  overflow: hidden;
+  text-decoration: underline;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const TimelineTime = styled.span`
+  color: ${COLORS.textTertiary};
+  flex-shrink: 0;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  padding-left: 8px;
+  white-space: nowrap;
+`;
+
+const TimelineToggle = styled.span`
+  align-items: center;
+  border: 1px solid ${COLORS.borderLight};
+  border-radius: 4px;
+  color: ${COLORS.textTertiary};
+  display: inline-flex;
+  flex-shrink: 0;
+  height: 20px;
+  justify-content: center;
+  width: 20px;
+`;
+
+const TimelineCardOuter = styled.div`
+  max-width: 360px;
+  padding-top: 2px;
+  width: 100%;
+`;
+
+const TimelineCardInner = styled.div`
+  background: ${COLORS.backgroundSecondary};
+  border: 1px solid ${COLORS.border};
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 10px;
+`;
+
+const TimelineDiffRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 4px;
+  min-height: 24px;
+`;
+
+const TimelineCardTitle = styled.div`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 500;
+`;
+
+const TimelineCardText = styled.div`
+  color: ${COLORS.textSecondary};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  line-height: 1.4;
+`;
+
+function TimelineEventIcon({ kind }: { kind: TimelineEvent['kind'] }) {
+  switch (kind) {
+    case 'created':
+      return <IconCirclePlus size={16} stroke={TABLER_STROKE} />;
+    case 'updated':
+      return <IconEditCircle size={16} stroke={TABLER_STROKE} />;
+    case 'note':
+      return <IconNotes size={16} stroke={TABLER_STROKE} />;
+    case 'calendar':
+      return <IconCalendarEvent size={16} stroke={TABLER_STROKE} />;
+    default:
+      return null;
+  }
+}
+
+function TimelineDiffValue({ value }: { value: RecordFieldValue }) {
+  switch (value.type) {
+    case 'select':
+      return <PreviewTag color={value.color} label={value.value} />;
+    case 'person':
+      return (
+        <TimelineDiffPerson>
+          <PersonAvatar person={value} size={16} />
+          <TimelineValueText>{value.name}</TimelineValueText>
+        </TimelineDiffPerson>
+      );
+    case 'boolean':
+      return (
+        <TimelineValueText>{value.value ? 'True' : 'False'}</TimelineValueText>
+      );
+    case 'currency':
+    case 'text':
+      return <TimelineValueText>{value.value}</TimelineValueText>;
+    case 'link':
+      return (
+        <TimelineValueText>{value.label ?? value.value}</TimelineValueText>
+      );
+    default:
+      return null;
+  }
+}
+
+function TimelineEventSummary({ event }: { event: TimelineEvent }) {
+  switch (event.kind) {
+    case 'created':
+      return (
+        <>
+          <TimelineSubject>{event.subject}</TimelineSubject>
+          <TimelineAction>was created by</TimelineAction>
+          <TimelineActor>{event.actor}</TimelineActor>
+        </>
+      );
+    case 'note':
+      return (
+        <>
+          <TimelineActor>{event.actor}</TimelineActor>
+          <TimelineAction>created a note</TimelineAction>
+          <TimelineLinkedTitle>{event.title}</TimelineLinkedTitle>
+        </>
+      );
+    case 'calendar':
+      return (
+        <>
+          <TimelineActor>{event.actor}</TimelineActor>
+          <TimelineAction>added a calendar event</TimelineAction>
+          <TimelineSubject>{event.title}</TimelineSubject>
+          <TimelineToggle>
+            <IconChevronUp size={12} stroke={TABLER_STROKE} />
+          </TimelineToggle>
+        </>
+      );
+    case 'updated':
+      if (event.diffs.length === 1) {
+        return (
+          <>
+            <TimelineActor>{event.actor}</TimelineActor>
+            <TimelineAction>updated</TimelineAction>
+            <TimelineDiffLabel>{event.diffs[0].label}</TimelineDiffLabel>
+            <TimelineArrow>→</TimelineArrow>
+            <TimelineDiffValue value={event.diffs[0].value} />
+          </>
+        );
+      }
+
+      return (
+        <>
+          <TimelineActor>{event.actor}</TimelineActor>
+          <TimelineAction>updated</TimelineAction>
+          <TimelineSubject>
+            {event.diffs.length} fields on {event.record}
+          </TimelineSubject>
+          <TimelineToggle>
+            <IconChevronUp size={12} stroke={TABLER_STROKE} />
+          </TimelineToggle>
+        </>
+      );
+    default:
+      return null;
+  }
+}
+
+function TimelineEventCard({ event }: { event: TimelineEvent }) {
+  if (event.kind === 'updated' && event.diffs.length > 1) {
+    return (
+      <TimelineCardOuter>
+        <TimelineCardInner>
+          {event.diffs.map((diff) => (
+            <TimelineDiffRow key={diff.label}>
+              <TimelineDiffLabel>{diff.label}</TimelineDiffLabel>
+              <TimelineArrow>→</TimelineArrow>
+              <TimelineDiffValue value={diff.value} />
+            </TimelineDiffRow>
+          ))}
+        </TimelineCardInner>
+      </TimelineCardOuter>
+    );
+  }
+
+  if (event.kind === 'calendar') {
+    return (
+      <TimelineCardOuter>
+        <TimelineCardInner>
+          <TimelineCardTitle>{event.title}</TimelineCardTitle>
+          <TimelineCardText>{event.detail}</TimelineCardText>
+        </TimelineCardInner>
+      </TimelineCardOuter>
+    );
+  }
+
+  return null;
+}
+
 const RECORD_TABS = [
   { label: 'Timeline', Icon: IconTimelineEvent },
   { label: 'Tasks', Icon: IconCheckbox },
-  { label: 'Notes', Icon: IconNotes, active: true },
+  { label: 'Notes', Icon: IconNotes },
   { label: 'Files', Icon: IconPaperclip },
   { label: 'Emails', Icon: IconMail },
   { label: 'Calendar', Icon: IconCalendarEvent },
@@ -545,7 +900,8 @@ function FieldValueRenderer({ field }: { field: RecordField }) {
 }
 
 export function RecordPage({ page }: { page: RecordPageDefinition }) {
-  const { record, notes } = page;
+  const { record, notes, timeline } = page;
+  const activeTabLabel = timeline ? 'Timeline' : 'Notes';
   const hasHighlightedNotes = notes.some((note) => note.highlighted);
   const hasHighlightedRelations = record.relations.some((section) =>
     section.items.some((item) => item.highlighted),
@@ -621,58 +977,92 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
 
       <CenterPanel>
         <TabBar>
-          {RECORD_TABS.map((tab) => (
-            <Tab key={tab.label} $active={tab.active}>
-              <TabInner $active={tab.active}>
-                <tab.Icon size={16} stroke={TABLER_STROKE} />
-                {tab.label}
-              </TabInner>
-            </Tab>
-          ))}
+          {RECORD_TABS.map((tab) => {
+            const isActive = tab.label === activeTabLabel;
+
+            return (
+              <Tab key={tab.label} $active={isActive}>
+                <TabInner $active={isActive}>
+                  <tab.Icon size={16} stroke={TABLER_STROKE} />
+                  {tab.label}
+                </TabInner>
+              </Tab>
+            );
+          })}
         </TabBar>
 
-        <NotesHeader>
-          <NotesCount>All {notes.length}</NotesCount>
-          <AddNoteButton>+ Add note</AddNoteButton>
-        </NotesHeader>
+        {timeline ? (
+          <TimelineFeed>
+            <MonthSeparator>
+              Today
+              <MonthSeparatorLine />
+            </MonthSeparator>
+            {timeline.map((event, index) => (
+              <TimelineRow $index={index} key={event.id}>
+                <TimelineGutter>
+                  <TimelineIconBox>
+                    <TimelineEventIcon kind={event.kind} />
+                  </TimelineIconBox>
+                  <TimelineConnector $hidden={index === timeline.length - 1} />
+                </TimelineGutter>
+                <TimelineMain>
+                  <TimelineSummary>
+                    <TimelineSummaryLeft>
+                      <TimelineEventSummary event={event} />
+                    </TimelineSummaryLeft>
+                    <TimelineTime>{event.time}</TimelineTime>
+                  </TimelineSummary>
+                  <TimelineEventCard event={event} />
+                </TimelineMain>
+              </TimelineRow>
+            ))}
+          </TimelineFeed>
+        ) : (
+          <>
+            <NotesHeader>
+              <NotesCount>All {notes.length}</NotesCount>
+              <AddNoteButton>+ Add note</AddNoteButton>
+            </NotesHeader>
 
-        <NotesGrid>
-          {notes.map((note, index) => (
-            <NoteCard
-              $highlighted={note.highlighted}
-              $index={index}
-              $muted={hasHighlightedNotes && !note.highlighted}
-              key={note.id}
-            >
-              <NoteContent>
-                <NoteTitle>{note.title}</NoteTitle>
-                <NoteBody>{note.body}</NoteBody>
-              </NoteContent>
-              {note.relation ? (
-                <NoteRelation>
-                  <NoteRelationArrow
-                    fill="none"
-                    stroke={COLORS.textTertiary}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="1"
-                    viewBox="0 0 12 12"
-                  >
-                    <path d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5" />
-                  </NoteRelationArrow>
-                  <NoteRelationLabel>Relations:</NoteRelationLabel>
-                  {note.relation.avatarUrl ? (
-                    <NoteRelationAvatar
-                      alt={note.relation.name}
-                      src={note.relation.avatarUrl}
-                    />
+            <NotesGrid>
+              {notes.map((note, index) => (
+                <NoteCard
+                  $highlighted={note.highlighted}
+                  $index={index}
+                  $muted={hasHighlightedNotes && !note.highlighted}
+                  key={note.id}
+                >
+                  <NoteContent>
+                    <NoteTitle>{note.title}</NoteTitle>
+                    <NoteBody>{note.body}</NoteBody>
+                  </NoteContent>
+                  {note.relation ? (
+                    <NoteRelation>
+                      <NoteRelationArrow
+                        fill="none"
+                        stroke={COLORS.textTertiary}
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="1"
+                        viewBox="0 0 12 12"
+                      >
+                        <path d="M3.5 8.5L8.5 3.5M8.5 3.5H4.5M8.5 3.5V7.5" />
+                      </NoteRelationArrow>
+                      <NoteRelationLabel>Relations:</NoteRelationLabel>
+                      {note.relation.avatarUrl ? (
+                        <NoteRelationAvatar
+                          alt={note.relation.name}
+                          src={note.relation.avatarUrl}
+                        />
+                      ) : null}
+                      <NoteRelationName>{note.relation.name}</NoteRelationName>
+                    </NoteRelation>
                   ) : null}
-                  <NoteRelationName>{note.relation.name}</NoteRelationName>
-                </NoteRelation>
-              ) : null}
-            </NoteCard>
-          ))}
-        </NotesGrid>
+                </NoteCard>
+              ))}
+            </NotesGrid>
+          </>
+        )}
       </CenterPanel>
     </Shell>
   );

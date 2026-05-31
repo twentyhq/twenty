@@ -220,6 +220,37 @@ export type RecordNote = {
   relation?: { avatarUrl?: string; name: string };
 };
 
+export type TimelineFieldDiff = {
+  label: string;
+  value: RecordFieldValue;
+};
+
+export type TimelineEvent =
+  | {
+      kind: 'created';
+      id: string;
+      subject: string;
+      actor: string;
+      time: string;
+    }
+  | {
+      kind: 'updated';
+      id: string;
+      actor: string;
+      record: string;
+      time: string;
+      diffs: TimelineFieldDiff[];
+    }
+  | { kind: 'note'; id: string; actor: string; title: string; time: string }
+  | {
+      kind: 'calendar';
+      id: string;
+      actor: string;
+      title: string;
+      detail: string;
+      time: string;
+    };
+
 export type RecordPageDefinition = {
   type: 'record';
   header: PageHeader;
@@ -236,6 +267,7 @@ export type RecordPageDefinition = {
     }[];
   };
   notes: RecordNote[];
+  timeline?: TimelineEvent[];
 };
 
 export type PageDefinition =

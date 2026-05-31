@@ -632,4 +632,48 @@ export const ANTHROPIC_RECORD_PAGE: RecordPageDefinition = {
       body: 'Shared updated seat pricing and the annual commitment options. Next step is a procurement intro and a technical deep-dive with their platform team.',
     },
   ],
+  timeline: [
+    {
+      kind: 'calendar',
+      id: 'calendar-security-review',
+      actor: 'Alice',
+      title: 'Security review',
+      detail: 'Tomorrow · 10:00 – 10:45 AM · Dario Amodei, Alice',
+      time: '1 hour ago',
+    },
+    {
+      kind: 'note',
+      id: 'note-kickoff',
+      actor: 'Alice',
+      title: 'Kickoff with Dario',
+      time: '2 hours ago',
+    },
+    {
+      kind: 'updated',
+      id: 'update-multi',
+      actor: 'Alice',
+      record: 'Anthropic',
+      time: '3 hours ago',
+      diffs: [
+        { label: 'Industry', value: { type: 'select', value: 'AI Research' } },
+        { label: 'Employees', value: { type: 'text', value: '612' } },
+        { label: 'ICP', value: { type: 'boolean', value: true } },
+      ],
+    },
+    {
+      kind: 'updated',
+      id: 'update-arr',
+      actor: 'Alice',
+      record: 'Anthropic',
+      time: '3 hours ago',
+      diffs: [{ label: 'ARR', value: { type: 'currency', value: '$500,000' } }],
+    },
+    {
+      kind: 'created',
+      id: 'record-created',
+      subject: 'Anthropic',
+      actor: 'Dario Amodei',
+      time: '4 hours ago',
+    },
+  ],
 };
