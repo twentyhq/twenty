@@ -9,11 +9,6 @@ type ExtractEncryptedColumnsFromShape<T> = NonNullable<
   }[keyof T]
 >;
 
-// Strip many-to-one and one-to-many relation properties up front so the
-// structural recursion in `ContainsEncryptedString` cannot cross over
-// into related entities and falsely flag a relation as
-// encryption-bearing. Mirrors the relation-omission strategy used in
-// `UniversalFlatEntityFrom`.
 export type ExtractEncryptedColumns<T> = ExtractEncryptedColumnsFromShape<
   Omit<T, ExtractEntityRelatedEntityProperties<T>>
 >;

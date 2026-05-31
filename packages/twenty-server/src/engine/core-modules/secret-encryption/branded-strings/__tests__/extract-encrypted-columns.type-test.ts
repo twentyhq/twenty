@@ -1,15 +1,11 @@
 import { type Equal, type Expect } from 'twenty-shared/testing';
+import { type EmptyObject } from 'twenty-shared/types';
 
 import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type ExtractEncryptedColumns } from 'src/engine/core-modules/secret-encryption/branded-strings/extract-encrypted-columns.type';
 import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
 
-// oxlint-disable-next-line @typescripttypescript/no-empty-object-type
-type EmptyObject = {};
-
-// Mirrors `ImapSmtpCaldavParams<EncryptedString>` shape — JSONB column
-// containing nested EncryptedString fields under protocol keys.
 type EncryptedConnectionParametersLike = {
   IMAP?: { host: string; password: EncryptedString };
   SMTP?: { host: string; password: EncryptedString };
@@ -23,9 +19,6 @@ type DeeplyNestedThreeLevels = {
   };
 };
 
-// Synthetic entity that itself carries an EncryptedString column. Used
-// below to verify that relation properties pointing to such entities
-// are stripped before the contains-recursion runs.
 class FakeRelatedEntity extends WorkspaceRelatedEntity {
   fakeId: string;
   encryptedTokenOnRelatedEntity: EncryptedString | null;
