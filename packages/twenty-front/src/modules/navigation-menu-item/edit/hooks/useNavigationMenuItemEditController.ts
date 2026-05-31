@@ -17,7 +17,9 @@ import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomStat
 // the workspace section stages changes in the draft (saved on layout exit),
 // while the favorite section creates/updates/deletes personal items immediately.
 export const useNavigationMenuItemEditController = () => {
-  const section = useAtomStateValue(navigationMenuItemEditSectionState);
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
   const { navigationMenuItems, currentWorkspaceMemberId } =
     useNavigationMenuItemsData();
   const { currentDraft } = useDraftNavigationMenuItems();
@@ -28,7 +30,7 @@ export const useNavigationMenuItemEditController = () => {
   const { updateManyNavigationMenuItems } = useUpdateManyNavigationMenuItems();
   const { deleteManyNavigationMenuItems } = useDeleteManyNavigationMenuItems();
 
-  const isDraftMode = section === 'workspace';
+  const isDraftMode = navigationMenuItemEditSection === 'workspace';
   const currentItems = isDraftMode ? currentDraft : navigationMenuItems;
   const targetUserWorkspaceId = isDraftMode
     ? undefined
@@ -41,7 +43,11 @@ export const useNavigationMenuItemEditController = () => {
     if (isDraftMode) {
       setNavigationMenuItemsDraft((draft) => {
         const current = draft ?? [];
-        return [...current.slice(0, flatIndex), item, ...current.slice(flatIndex)];
+        return [
+          ...current.slice(0, flatIndex),
+          item,
+          ...current.slice(flatIndex),
+        ];
       });
       return;
     }
@@ -65,7 +71,9 @@ export const useNavigationMenuItemEditController = () => {
     if (isDraftMode) {
       setNavigationMenuItemsDraft((draft) =>
         isDefined(draft)
-          ? draft.map((item) => (item.id === id ? { ...item, ...update } : item))
+          ? draft.map((item) =>
+              item.id === id ? { ...item, ...update } : item,
+            )
           : draft,
       );
       return;
@@ -77,7 +85,9 @@ export const useNavigationMenuItemEditController = () => {
   const applyDelete = async (ids: string[]): Promise<void> => {
     if (isDraftMode) {
       setNavigationMenuItemsDraft((draft) =>
-        isDefined(draft) ? draft.filter((item) => !ids.includes(item.id)) : draft,
+        isDefined(draft)
+          ? draft.filter((item) => !ids.includes(item.id))
+          : draft,
       );
       return;
     }
@@ -86,7 +96,6 @@ export const useNavigationMenuItemEditController = () => {
   };
 
   return {
-    section,
     isDraftMode,
     currentItems,
     targetUserWorkspaceId,

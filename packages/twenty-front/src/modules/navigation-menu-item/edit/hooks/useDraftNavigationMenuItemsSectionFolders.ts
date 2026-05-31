@@ -3,12 +3,16 @@ import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/f
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 export const useDraftNavigationMenuItemsSectionFolders = () => {
-  const section = useAtomStateValue(navigationMenuItemEditSectionState);
-  const { workspaceNavigationMenuItemsByFolder, userNavigationMenuItemsByFolder } =
-    useNavigationMenuItemsByFolder();
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
+  const {
+    workspaceNavigationMenuItemsByFolder,
+    userNavigationMenuItemsByFolder,
+  } = useNavigationMenuItemsByFolder();
 
   const folders =
-    section === 'workspace'
+    navigationMenuItemEditSection === 'workspace'
       ? workspaceNavigationMenuItemsByFolder
       : userNavigationMenuItemsByFolder;
 

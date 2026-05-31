@@ -14,7 +14,10 @@ export const flattenNavigationMenuItemsWithFolderChildren = (
   foldersWithChildren: FolderWithChildren[],
 ): NavigationMenuItem[] => {
   const childrenByFolderId = new Map(
-    foldersWithChildren.map((folder) => [folder.id, folder.navigationMenuItems]),
+    foldersWithChildren.map((folder) => [
+      folder.id,
+      folder.navigationMenuItems,
+    ]),
   );
 
   return topLevelItems.flatMap((item) =>

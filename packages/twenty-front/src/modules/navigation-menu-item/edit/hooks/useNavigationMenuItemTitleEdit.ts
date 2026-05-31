@@ -20,8 +20,10 @@ export const useNavigationMenuItemTitleEdit = ({
   defaultLabel,
   persistName,
 }: UseNavigationMenuItemTitleEditParams) => {
-  const section = useAtomStateValue(navigationMenuItemEditSectionState);
-  const isDraftMode = section === 'workspace';
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
+  const isDraftMode = navigationMenuItemEditSection === 'workspace';
   const [localNameEdit, setLocalNameEdit] = useState<{
     itemId: string;
     text: string;

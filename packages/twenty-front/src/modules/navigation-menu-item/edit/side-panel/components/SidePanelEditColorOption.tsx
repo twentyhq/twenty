@@ -39,7 +39,9 @@ export const SidePanelEditColorOption = ({
   const { closeDropdown } = useCloseDropdown();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const section = useAtomStateValue(navigationMenuItemEditSectionState);
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
 
   const themeColor = color ?? 'gray';
   const colorLabel = DEFAULT_COLOR_LABELS[themeColor] ?? capitalize(themeColor);
@@ -51,7 +53,10 @@ export const SidePanelEditColorOption = ({
 
     // A personal favorite's color is item-local; only workspace customization
     // recolors the shared object metadata.
-    if (section === 'workspace' && isValidObjectNavigationMenuItem(selectedItem)) {
+    if (
+      navigationMenuItemEditSection === 'workspace' &&
+      isValidObjectNavigationMenuItem(selectedItem)
+    ) {
       updateInDraft('objectMetadataItems', [
         {
           id: selectedItem.targetObjectMetadataId,

@@ -64,12 +64,15 @@ export const SidePanelItemWithAddToNavigationDrag = ({
   const setAddToNavPayloadRegistry = useSetAtomState(
     addToNavPayloadRegistryState,
   );
-  const section = useAtomStateValue(navigationMenuItemEditSectionState);
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
   const [isHovered, setIsHovered] = useState(false);
 
   // Favorites are added by click only; drag-to-add targets the workspace
   // sidebar and runs through layout-customization mode.
-  const effectiveDisableDrag = disableDrag || section === 'favorite';
+  const effectiveDisableDrag =
+    disableDrag || navigationMenuItemEditSection === 'favorite';
   const showDragAffordance = !disabled && !effectiveDisableDrag && isHovered;
   const contextualDescription = showDragAffordance
     ? t`Drag to add to navbar`

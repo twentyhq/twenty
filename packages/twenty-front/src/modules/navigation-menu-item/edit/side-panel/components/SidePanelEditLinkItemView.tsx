@@ -41,8 +41,10 @@ export const SidePanelEditLinkItemView = ({
   showMoveToFolder = false,
 }: SidePanelEditLinkItemViewProps) => {
   const { t } = useLingui();
-  const section = useAtomStateValue(navigationMenuItemEditSectionState);
-  const isDraftMode = section === 'workspace';
+  const navigationMenuItemEditSection = useAtomStateValue(
+    navigationMenuItemEditSectionState,
+  );
+  const isDraftMode = navigationMenuItemEditSection === 'workspace';
   const [urlEditInput, setUrlEditInput] = useState('');
   const [lastAutoSetName, setLastAutoSetName] = useState<string | null>(null);
 

@@ -13,12 +13,15 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 // return personal items in the favorite section and workspace items otherwise.
 export const useNavigationMenuItemEditSectionItems =
   (): NavigationMenuItem[] => {
-    const section = useAtomStateValue(navigationMenuItemEditSectionState);
+    const navigationMenuItemEditSection = useAtomStateValue(
+      navigationMenuItemEditSectionState,
+    );
     const workspaceSectionItems = useNavigationMenuItemSectionItems();
     const { navigationMenuItemsSorted } = useSortedNavigationMenuItems();
-    const { userNavigationMenuItemsByFolder } = useNavigationMenuItemsByFolder();
+    const { userNavigationMenuItemsByFolder } =
+      useNavigationMenuItemsByFolder();
 
-    if (section === 'workspace') {
+    if (navigationMenuItemEditSection === 'workspace') {
       return workspaceSectionItems;
     }
 
