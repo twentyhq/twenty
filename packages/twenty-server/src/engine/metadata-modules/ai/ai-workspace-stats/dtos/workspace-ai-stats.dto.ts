@@ -10,7 +10,4 @@ export class WorkspaceAiStatsDTO {
 
   @Field(() => Int)
   toolsCount: number;
-
-  @Field(() => Int)
-  aiWorkflowsCount: number;
 }

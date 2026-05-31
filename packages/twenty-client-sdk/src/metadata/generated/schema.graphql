@@ -2703,7 +2703,6 @@ type WorkspaceAiStats {
   conversationsCount: Int!
   skillsCount: Int!
   toolsCount: Int!
-  aiWorkflowsCount: Int!
 }
 
 type CalendarChannel {

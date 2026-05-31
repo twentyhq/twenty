@@ -2414,7 +2414,6 @@ export interface WorkspaceAiStats {
     conversationsCount: Scalars['Int']
     skillsCount: Scalars['Int']
     toolsCount: Scalars['Int']
-    aiWorkflowsCount: Scalars['Int']
     __typename: 'WorkspaceAiStats'
 }
 
@@ -5452,7 +5451,6 @@ export interface WorkspaceAiStatsGenqlSelection{
     conversationsCount?: boolean | number
     skillsCount?: boolean | number
     toolsCount?: boolean | number
-    aiWorkflowsCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }

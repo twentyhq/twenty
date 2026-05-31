@@ -6,7 +6,6 @@ export const FIND_WORKSPACE_AI_STATS = gql`
       conversationsCount
       skillsCount
       toolsCount
-      aiWorkflowsCount
     }
   }
 `;

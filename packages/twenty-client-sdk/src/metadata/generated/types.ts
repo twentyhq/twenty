@@ -5488,9 +5488,6 @@ export default {
             "toolsCount": [
                 21
             ],
-            "aiWorkflowsCount": [
-                21
-            ],
             "__typename": [
                 1
             ]

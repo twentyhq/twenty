@@ -11,7 +11,6 @@ import { t } from '@lingui/core/macro';
 import { Fragment, useContext, useState } from 'react';
 import {
   H2Title,
-  IconHierarchy2,
   IconMessage,
   IconRobot,
   IconSparkles,
@@ -97,21 +96,14 @@ export const SettingsAiOverviewTab = () => {
                 value: stats ? stats.conversationsCount.toString() : '—',
               },
               {
-                Icon: IconTool,
-                label: t`Tools`,
-                value: stats ? stats.toolsCount.toString() : '—',
-              },
-            ],
-            [
-              {
                 Icon: IconSparkles,
                 label: t`Skills`,
                 value: stats ? stats.skillsCount.toString() : '—',
               },
               {
-                Icon: IconHierarchy2,
-                label: t`AI workflows`,
-                value: stats ? stats.aiWorkflowsCount.toString() : '—',
+                Icon: IconTool,
+                label: t`Tools`,
+                value: stats ? stats.toolsCount.toString() : '—',
               },
             ],
           ]}
