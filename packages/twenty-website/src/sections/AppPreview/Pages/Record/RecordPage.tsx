@@ -1,9 +1,13 @@
 'use client';
 
+import { useEffect, useState } from 'react';
+
 import { styled } from '@linaria/react';
 import {
+  IconArrowRight,
   IconBrandLinkedin,
   IconBrandX,
+  IconCalendar,
   IconCalendarEvent,
   IconCheckbox,
   IconChevronDown,
@@ -11,20 +15,30 @@ import {
   IconCheck,
   IconCirclePlus,
   IconCurrencyDollar,
+  IconDots,
   IconEditCircle,
+  IconFile,
+  IconFileText,
   IconLink,
   IconMail,
   IconMapPin,
   IconNotes,
   IconPaperclip,
+  IconPlus,
+  IconTable,
   IconTimelineEvent,
   IconUser,
 } from '@tabler/icons-react';
 
 import type {
+  RecordCalendarDay,
+  RecordEmail,
   RecordField,
   RecordFieldValue,
+  RecordFile,
   RecordPageDefinition,
+  RecordParticipant,
+  RecordTask,
   TimelineEvent,
 } from '../../types';
 import { FaviconLogo } from '../../Shared/components/FaviconLogo';
@@ -317,10 +331,11 @@ const TabBar = styled.div`
   }
 `;
 
-const Tab = styled.div<{ $active?: boolean }>`
+const Tab = styled.div<{ $active?: boolean; $clickable?: boolean }>`
   all: unset;
   align-items: center;
   color: ${({ $active }) => ($active ? COLORS.text : COLORS.textSecondary)};
+  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
   display: flex;
   position: relative;
   text-decoration: none;
@@ -379,17 +394,13 @@ const NotesGrid = styled.div`
   display: grid;
   gap: 16px;
   grid-auto-rows: 1fr;
-  grid-template-columns: minmax(0, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   overflow-y: auto;
   padding: 0 24px 24px;
   scrollbar-width: none;
 
   &::-webkit-scrollbar {
     display: none;
-  }
-
-  @media (min-width: 640px) {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 `;
 
@@ -398,8 +409,8 @@ const NoteCard = styled.div<{
   $index: number;
   $muted?: boolean;
 }>`
-  animation: noteCardAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: ${({ $index }) => `${400 + $index * 100}ms`};
+  animation: noteCardAppear 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
   background: ${({ $highlighted }) =>
     $highlighted ? COLORS.background : COLORS.backgroundSecondary};
   border: 1px solid
@@ -407,7 +418,7 @@ const NoteCard = styled.div<{
   border-radius: 8px;
   display: flex;
   flex-direction: column;
-  height: 280px;
+  height: 300px;
   justify-content: space-between;
   opacity: ${({ $muted }) => ($muted ? 0.56 : 1)};
   transform: ${({ $highlighted }) =>
@@ -424,7 +435,7 @@ const NoteCard = styled.div<{
   @keyframes noteCardAppear {
     from {
       opacity: 0;
-      transform: translateY(6px);
+      transform: translateY(-2px);
     }
     to {
       opacity: 1;
@@ -527,11 +538,30 @@ const MonthSeparatorLine = styled.div`
   height: 1px;
 `;
 
+const TimelineGroup = styled.div`
+  position: relative;
+`;
+
+// The 24px rounded rail twenty-front renders behind the event icons.
+const TimelineRail = styled.div`
+  background: ${COLORS.backgroundSecondary};
+  border: 1px solid ${COLORS.borderLight};
+  border-radius: 8px;
+  bottom: 0;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 24px;
+  z-index: 0;
+`;
+
 const TimelineRow = styled.div<{ $index: number }>`
-  animation: timelineRowAppear 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
-  animation-delay: ${({ $index }) => `${400 + $index * 100}ms`};
+  animation: timelineRowAppear 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
   display: flex;
   gap: 12px;
+  position: relative;
+  z-index: 1;
 
   @keyframes timelineRowAppear {
     from {
@@ -549,6 +579,8 @@ const TimelineGutter = styled.div`
   align-items: center;
   display: flex;
   flex-direction: column;
+  flex-shrink: 0;
+  width: 24px;
 `;
 
 const TimelineIconBox = styled.div`
@@ -844,6 +876,583 @@ function TimelineEventCard({ event }: { event: TimelineEvent }) {
   return null;
 }
 
+const TabSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding: 0 24px 24px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const TabHeader = styled.div`
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  margin: 16px 0;
+`;
+
+const TabHeaderLabel = styled.span`
+  align-items: baseline;
+  display: inline-flex;
+`;
+
+const TabHeaderTitle = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 600;
+`;
+
+const TabHeaderCount = styled.span`
+  color: ${COLORS.textLight};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  margin-left: 8px;
+`;
+
+const TabAddButton = styled.span`
+  align-items: center;
+  border: 1px solid ${COLORS.border};
+  border-radius: 4px;
+  color: ${COLORS.textSecondary};
+  display: inline-flex;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px;
+`;
+
+const ListCard = styled.div`
+  background: ${COLORS.backgroundSecondary};
+  border: 1px solid ${COLORS.border};
+  border-radius: 8px;
+  overflow: hidden;
+`;
+
+// Mirrors twenty-front's ActivityRow: 48px tall, 16px horizontal padding, 8px gap,
+// sitting inside a bordered card with 1px dividers between rows.
+const ActivityRowBox = styled.div<{ $index: number }>`
+  align-items: center;
+  animation: activityRowAppear 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
+  box-sizing: border-box;
+  display: flex;
+  gap: 8px;
+  height: 48px;
+  padding: 0 16px;
+
+  & + & {
+    border-top: 1px solid ${COLORS.borderLight};
+  }
+
+  @keyframes activityRowAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const AvatarStack = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+`;
+
+const AvatarWrap = styled.div<{ $index: number }>`
+  margin-left: ${({ $index }) => ($index === 0 ? '0' : '-4px')};
+`;
+
+function AvatarGroup({
+  people,
+  size,
+}: {
+  people: RecordParticipant[];
+  size: number;
+}) {
+  return (
+    <AvatarStack>
+      {people.slice(0, 3).map((person, index) => (
+        <AvatarWrap $index={index} key={`${person.name}-${index}`}>
+          <PersonAvatar person={{ ...person, kind: 'person' }} size={size} />
+        </AvatarWrap>
+      ))}
+    </AvatarStack>
+  );
+}
+
+const TaskLeft = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+`;
+
+const TaskCheckbox = styled.span<{ $done?: boolean }>`
+  align-items: center;
+  background: ${({ $done }) => ($done ? '#3e63dd' : 'transparent')};
+  border: 1px solid ${({ $done }) => ($done ? '#3e63dd' : COLORS.text)};
+  border-radius: 50%;
+  color: #ffffff;
+  display: flex;
+  flex-shrink: 0;
+  height: 16px;
+  justify-content: center;
+  width: 16px;
+`;
+
+const TaskTitle = styled.span<{ $done?: boolean }>`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  padding: 0 8px;
+  text-decoration: ${({ $done }) => ($done ? 'line-through' : 'none')};
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const TaskBody = styled.span`
+  color: ${COLORS.textTertiary};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const TaskRight = styled.div`
+  align-items: center;
+  display: inline-flex;
+  flex-shrink: 0;
+  gap: 8px;
+  margin-left: auto;
+`;
+
+const DueDate = styled.span`
+  align-items: center;
+  color: ${COLORS.textSecondary};
+  display: flex;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  gap: 4px;
+  white-space: nowrap;
+`;
+
+const TargetChip = styled.span`
+  align-items: center;
+  background: ${COLORS.backgroundSecondary};
+  border: 1px solid ${COLORS.borderLight};
+  border-radius: 50px;
+  color: ${COLORS.text};
+  display: inline-flex;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  gap: 4px;
+  max-width: 160px;
+  padding: 1px 8px 1px 2px;
+  white-space: nowrap;
+`;
+
+const TargetChipName = styled.span`
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+function TasksPanel({ tasks }: { tasks: RecordTask[] }) {
+  return (
+    <TabSection>
+      <TabHeader>
+        <TabHeaderLabel>
+          <TabHeaderTitle>To do</TabHeaderTitle>
+          <TabHeaderCount>{tasks.length}</TabHeaderCount>
+        </TabHeaderLabel>
+        <TabAddButton>
+          <IconPlus size={14} stroke={2} />
+          Add task
+        </TabAddButton>
+      </TabHeader>
+      <ListCard>
+        {tasks.map((task, index) => (
+          <ActivityRowBox $index={index} key={task.id}>
+            <TaskLeft>
+              <TaskCheckbox $done={task.done}>
+                {task.done ? <IconCheck size={11} stroke={3} /> : null}
+              </TaskCheckbox>
+              <TaskTitle $done={task.done}>{task.title}</TaskTitle>
+              <TaskBody>{task.body}</TaskBody>
+            </TaskLeft>
+            <TaskRight>
+              <DueDate>
+                <IconCalendar size={16} stroke={TABLER_STROKE} />
+                {task.due}
+              </DueDate>
+              <TargetChip>
+                {task.target.domain ? (
+                  <FaviconLogo
+                    domain={task.target.domain}
+                    label={task.target.name}
+                    size={16}
+                  />
+                ) : (
+                  <PersonAvatar
+                    person={{ ...task.target, kind: 'person' }}
+                    size={16}
+                  />
+                )}
+                <TargetChipName>{task.target.name}</TargetChipName>
+              </TargetChip>
+            </TaskRight>
+          </ActivityRowBox>
+        ))}
+      </ListCard>
+    </TabSection>
+  );
+}
+
+const FILE_ICONS: Record<
+  RecordFile['category'],
+  { Icon: typeof IconFile; color: string }
+> = {
+  pdf: { Icon: IconFileText, color: '#3e63dd' },
+  doc: { Icon: IconFileText, color: '#3e63dd' },
+  sheet: { Icon: IconTable, color: '#12a594' },
+  other: { Icon: IconFile, color: COLORS.textTertiary },
+};
+
+const FileIconChip = styled.span<{ $color: string }>`
+  align-items: center;
+  background: ${({ $color }) => $color};
+  border-radius: 4px;
+  color: #ffffff;
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  padding: 5px;
+`;
+
+const FileName = styled.span`
+  color: ${COLORS.text};
+  flex: 1;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const FileDate = styled.span`
+  align-items: center;
+  color: ${COLORS.textLight};
+  display: flex;
+  flex-shrink: 0;
+  gap: 2px;
+  margin-left: auto;
+`;
+
+const FileDateText = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  white-space: nowrap;
+`;
+
+const FileDots = styled.span`
+  align-items: center;
+  color: ${COLORS.textTertiary};
+  display: flex;
+  flex-shrink: 0;
+`;
+
+function FilesPanel({ files }: { files: RecordFile[] }) {
+  return (
+    <TabSection>
+      <TabHeader>
+        <TabHeaderLabel>
+          <TabHeaderTitle>All</TabHeaderTitle>
+          <TabHeaderCount>{files.length}</TabHeaderCount>
+        </TabHeaderLabel>
+        <TabAddButton>
+          <IconPlus size={14} stroke={2} />
+          Add file
+        </TabAddButton>
+      </TabHeader>
+      <ListCard>
+        {files.map((file, index) => {
+          const { Icon, color } = FILE_ICONS[file.category];
+
+          return (
+            <ActivityRowBox $index={index} key={file.id}>
+              <FileIconChip $color={color}>
+                <Icon size={14} stroke={TABLER_STROKE} />
+              </FileIconChip>
+              <FileName>{file.name}</FileName>
+              <FileDate>
+                <IconCalendar size={16} stroke={TABLER_STROKE} />
+                <FileDateText>{file.date}</FileDateText>
+              </FileDate>
+              <FileDots>
+                <IconDots size={16} stroke={TABLER_STROKE} />
+              </FileDots>
+            </ActivityRowBox>
+          );
+        })}
+      </ListCard>
+    </TabSection>
+  );
+}
+
+const EmailHeading = styled.div`
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  max-width: 34%;
+  overflow: hidden;
+`;
+
+const SenderNames = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  margin: 0 6px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ThreadCount = styled.span`
+  color: ${COLORS.textTertiary};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+`;
+
+const SubjectBody = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  overflow: hidden;
+`;
+
+const EmailSubject = styled.span`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const EmailBody = styled.span`
+  color: ${COLORS.textTertiary};
+  flex: 1;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ReceivedAt = styled.span`
+  color: ${COLORS.textTertiary};
+  flex-shrink: 0;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  padding: 0 4px;
+  white-space: nowrap;
+`;
+
+function EmailsPanel({ emails }: { emails: RecordEmail[] }) {
+  return (
+    <TabSection>
+      <TabHeader>
+        <TabHeaderLabel>
+          <TabHeaderTitle>Inbox</TabHeaderTitle>
+          <TabHeaderCount>{emails.length}</TabHeaderCount>
+        </TabHeaderLabel>
+        <TabAddButton>
+          <IconPlus size={14} stroke={2} />
+          Compose
+        </TabAddButton>
+      </TabHeader>
+      <ListCard>
+        {emails.map((email, index) => (
+          <ActivityRowBox $index={index} key={email.id}>
+            <EmailHeading>
+              <AvatarGroup people={email.participants} size={16} />
+              <SenderNames>
+                {email.participants.map((person) => person.name).join(', ')}
+              </SenderNames>
+              <ThreadCount>{email.count}</ThreadCount>
+            </EmailHeading>
+            <SubjectBody>
+              <EmailSubject>{email.subject}</EmailSubject>
+              <EmailBody>{email.body}</EmailBody>
+            </SubjectBody>
+            <ReceivedAt>{email.date}</ReceivedAt>
+          </ActivityRowBox>
+        ))}
+      </ListCard>
+    </TabSection>
+  );
+}
+
+const CalendarDayRow = styled.div<{ $index: number }>`
+  align-items: flex-start;
+  animation: calendarDayAppear 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: ${({ $index }) => `${120 + $index * 70}ms`};
+  display: flex;
+  gap: 12px;
+  padding: 8px 12px;
+
+  & + & {
+    border-top: 1px solid ${COLORS.borderLight};
+  }
+
+  @keyframes calendarDayAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const DayBadge = styled.div`
+  flex-shrink: 0;
+  text-align: center;
+  width: 28px;
+`;
+
+const WeekDay = styled.div`
+  color: ${COLORS.textTertiary};
+  font-family: ${APP_FONT};
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+`;
+
+const MonthDay = styled.div`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 14px;
+  font-weight: 500;
+`;
+
+const DayEvents = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+`;
+
+const CalEventRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  height: 24px;
+`;
+
+const AttendanceBar = styled.span<{ $active?: boolean }>`
+  background: ${({ $active }) =>
+    $active ? COLORS.accent : COLORS.borderStrong};
+  border-radius: 2px;
+  flex-shrink: 0;
+  height: 24px;
+  width: 4px;
+`;
+
+const CalLabels = styled.div`
+  align-items: center;
+  display: flex;
+  flex: 1;
+  gap: 8px;
+  min-width: 0;
+`;
+
+const CalTime = styled.div`
+  align-items: center;
+  color: ${COLORS.textTertiary};
+  display: flex;
+  flex-shrink: 0;
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  gap: 4px;
+`;
+
+const CalTitle = styled.div`
+  color: ${COLORS.text};
+  font-family: ${APP_FONT};
+  font-size: 13px;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+function CalendarPanel({ calendar }: { calendar: RecordCalendarDay[] }) {
+  return (
+    <TabSection>
+      <TabHeader>
+        <TabHeaderLabel>
+          <TabHeaderTitle>June</TabHeaderTitle>
+          <TabHeaderCount>
+            {calendar.reduce((total, day) => total + day.events.length, 0)}
+          </TabHeaderCount>
+        </TabHeaderLabel>
+        <TabAddButton>
+          <IconPlus size={14} stroke={2} />
+          Add event
+        </TabAddButton>
+      </TabHeader>
+      <ListCard>
+        {calendar.map((day, index) => (
+          <CalendarDayRow $index={index} key={day.id}>
+            <DayBadge>
+              <WeekDay>{day.weekday}</WeekDay>
+              <MonthDay>{day.day}</MonthDay>
+            </DayBadge>
+            <DayEvents>
+              {day.events.map((event) => (
+                <CalEventRow key={event.id}>
+                  <AttendanceBar $active={event.attending} />
+                  <CalLabels>
+                    <CalTime>
+                      {event.start}
+                      <IconArrowRight size={14} stroke={TABLER_STROKE} />
+                      {event.end}
+                    </CalTime>
+                    <CalTitle>{event.title}</CalTitle>
+                  </CalLabels>
+                  <AvatarGroup people={event.participants} size={16} />
+                </CalEventRow>
+              ))}
+            </DayEvents>
+          </CalendarDayRow>
+        ))}
+      </ListCard>
+    </TabSection>
+  );
+}
+
+const TAB_DWELL_MS = 2400;
+
 const RECORD_TABS = [
   { label: 'Timeline', Icon: IconTimelineEvent },
   { label: 'Tasks', Icon: IconCheckbox },
@@ -900,9 +1509,52 @@ function FieldValueRenderer({ field }: { field: RecordField }) {
 }
 
 export function RecordPage({ page }: { page: RecordPageDefinition }) {
-  const { record, notes, timeline } = page;
-  const activeTabLabel = timeline ? 'Timeline' : 'Notes';
+  const { record, notes, timeline, tasks, files, emails, calendar } = page;
   const hasHighlightedNotes = notes.some((note) => note.highlighted);
+  const tabHasContent: Record<string, boolean> = {
+    Timeline: (timeline?.length ?? 0) > 0,
+    Tasks: (tasks?.length ?? 0) > 0,
+    Notes: notes.length > 0,
+    Files: (files?.length ?? 0) > 0,
+    Emails: (emails?.length ?? 0) > 0,
+    Calendar: (calendar?.length ?? 0) > 0,
+  };
+  const availableTabs = RECORD_TABS.filter((tab) => tabHasContent[tab.label]);
+  const [activeTabIndex, setActiveTabIndex] = useState(0);
+  // Once the autoplay tour reaches the last tab, hand control to the user: stop
+  // advancing and let the tab bar be clicked.
+  const [isInteractive, setIsInteractive] = useState(false);
+
+  useEffect(() => {
+    if (isInteractive) {
+      return undefined;
+    }
+
+    if (activeTabIndex >= availableTabs.length - 1) {
+      setIsInteractive(true);
+      return undefined;
+    }
+
+    const timer = setTimeout(() => {
+      setActiveTabIndex((current) => current + 1);
+    }, TAB_DWELL_MS);
+
+    return () => clearTimeout(timer);
+  }, [availableTabs.length, activeTabIndex, isInteractive]);
+
+  const activeTabLabel = availableTabs[activeTabIndex]?.label ?? 'Notes';
+
+  const handleTabClick = (label: string) => {
+    if (!isInteractive) {
+      return;
+    }
+
+    const nextIndex = availableTabs.findIndex((tab) => tab.label === label);
+
+    if (nextIndex >= 0) {
+      setActiveTabIndex(nextIndex);
+    }
+  };
   const hasHighlightedRelations = record.relations.some((section) =>
     section.items.some((item) => item.highlighted),
   );
@@ -981,7 +1633,12 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
             const isActive = tab.label === activeTabLabel;
 
             return (
-              <Tab key={tab.label} $active={isActive}>
+              <Tab
+                key={tab.label}
+                $active={isActive}
+                $clickable={isInteractive}
+                onClick={() => handleTabClick(tab.label)}
+              >
                 <TabInner $active={isActive}>
                   <tab.Icon size={16} stroke={TABLER_STROKE} />
                   {tab.label}
@@ -991,33 +1648,42 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
           })}
         </TabBar>
 
-        {timeline ? (
+        {activeTabLabel === 'Timeline' && timeline ? (
           <TimelineFeed>
             <MonthSeparator>
               Today
               <MonthSeparatorLine />
             </MonthSeparator>
-            {timeline.map((event, index) => (
-              <TimelineRow $index={index} key={event.id}>
-                <TimelineGutter>
-                  <TimelineIconBox>
-                    <TimelineEventIcon kind={event.kind} />
-                  </TimelineIconBox>
-                  <TimelineConnector $hidden={index === timeline.length - 1} />
-                </TimelineGutter>
-                <TimelineMain>
-                  <TimelineSummary>
-                    <TimelineSummaryLeft>
-                      <TimelineEventSummary event={event} />
-                    </TimelineSummaryLeft>
-                    <TimelineTime>{event.time}</TimelineTime>
-                  </TimelineSummary>
-                  <TimelineEventCard event={event} />
-                </TimelineMain>
-              </TimelineRow>
-            ))}
+            <TimelineGroup>
+              <TimelineRail />
+              {timeline.map((event, index) => (
+                <TimelineRow $index={index} key={event.id}>
+                  <TimelineGutter>
+                    <TimelineIconBox>
+                      <TimelineEventIcon kind={event.kind} />
+                    </TimelineIconBox>
+                    <TimelineConnector
+                      $hidden={index === timeline.length - 1}
+                    />
+                  </TimelineGutter>
+                  <TimelineMain>
+                    <TimelineSummary>
+                      <TimelineSummaryLeft>
+                        <TimelineEventSummary event={event} />
+                      </TimelineSummaryLeft>
+                      <TimelineTime>{event.time}</TimelineTime>
+                    </TimelineSummary>
+                    <TimelineEventCard event={event} />
+                  </TimelineMain>
+                </TimelineRow>
+              ))}
+            </TimelineGroup>
           </TimelineFeed>
-        ) : (
+        ) : null}
+        {activeTabLabel === 'Tasks' && tasks ? (
+          <TasksPanel tasks={tasks} />
+        ) : null}
+        {activeTabLabel === 'Notes' ? (
           <>
             <NotesHeader>
               <NotesCount>All {notes.length}</NotesCount>
@@ -1062,7 +1728,16 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
               ))}
             </NotesGrid>
           </>
-        )}
+        ) : null}
+        {activeTabLabel === 'Files' && files ? (
+          <FilesPanel files={files} />
+        ) : null}
+        {activeTabLabel === 'Emails' && emails ? (
+          <EmailsPanel emails={emails} />
+        ) : null}
+        {activeTabLabel === 'Calendar' && calendar ? (
+          <CalendarPanel calendar={calendar} />
+        ) : null}
       </CenterPanel>
     </Shell>
   );

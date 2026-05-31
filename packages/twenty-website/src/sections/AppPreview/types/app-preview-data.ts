@@ -251,6 +251,55 @@ export type TimelineEvent =
       time: string;
     };
 
+export type RecordParticipant = {
+  name: string;
+  avatarUrl?: string;
+  tone?: string;
+};
+
+export type RecordActivityTarget = RecordParticipant & { domain?: string };
+
+export type RecordTask = {
+  id: string;
+  title: string;
+  body: string;
+  due: string;
+  done?: boolean;
+  target: RecordActivityTarget;
+};
+
+export type RecordFile = {
+  id: string;
+  name: string;
+  category: 'pdf' | 'sheet' | 'doc' | 'other';
+  date: string;
+};
+
+export type RecordEmail = {
+  id: string;
+  participants: RecordParticipant[];
+  count: number;
+  subject: string;
+  body: string;
+  date: string;
+};
+
+export type RecordCalendarEvent = {
+  id: string;
+  start: string;
+  end: string;
+  title: string;
+  attending?: boolean;
+  participants: RecordParticipant[];
+};
+
+export type RecordCalendarDay = {
+  id: string;
+  weekday: string;
+  day: string;
+  events: RecordCalendarEvent[];
+};
+
 export type RecordPageDefinition = {
   type: 'record';
   header: PageHeader;
@@ -268,6 +317,10 @@ export type RecordPageDefinition = {
   };
   notes: RecordNote[];
   timeline?: TimelineEvent[];
+  tasks?: RecordTask[];
+  files?: RecordFile[];
+  emails?: RecordEmail[];
+  calendar?: RecordCalendarDay[];
 };
 
 export type PageDefinition =

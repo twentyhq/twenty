@@ -40,5 +40,12 @@ export type {
   SidebarItemDef,
   TablePageDefinition,
   TimelineEvent,
+  RecordParticipant,
+  RecordActivityTarget,
+  RecordTask,
+  RecordFile,
+  RecordEmail,
+  RecordCalendarEvent,
+  RecordCalendarDay,
   AppPreviewConfig,
 } from './app-preview-data';

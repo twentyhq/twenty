@@ -676,4 +676,148 @@ export const ANTHROPIC_RECORD_PAGE: RecordPageDefinition = {
       time: '4 hours ago',
     },
   ],
+  tasks: [
+    {
+      id: 'task-agreement',
+      title: 'Send enterprise agreement',
+      body: 'Final redlines from legal',
+      due: 'Tomorrow',
+      target: {
+        name: 'Dario Amodei',
+        avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+        tone: 'gray',
+      },
+    },
+    {
+      id: 'task-security',
+      title: 'Complete security review',
+      body: 'SOC 2 and DPA sign-off',
+      due: 'Friday',
+      done: true,
+      target: { name: 'Enterprise Expansion', domain: 'anthropic.com' },
+    },
+    {
+      id: 'task-procurement',
+      title: 'Schedule procurement intro',
+      body: 'Loop in their procurement lead',
+      due: 'Next week',
+      target: { name: 'Alice', tone: 'amber' },
+    },
+  ],
+  files: [
+    {
+      id: 'file-agreement',
+      name: 'Enterprise Agreement.pdf',
+      category: 'pdf',
+      date: '2 hours ago',
+    },
+    {
+      id: 'file-security',
+      name: 'Security Review.xlsx',
+      category: 'sheet',
+      date: '1 day ago',
+    },
+    {
+      id: 'file-pricing',
+      name: 'Pricing Proposal.pdf',
+      category: 'pdf',
+      date: '3 days ago',
+    },
+  ],
+  emails: [
+    {
+      id: 'email-expansion',
+      participants: [
+        {
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          tone: 'gray',
+        },
+        { name: 'Alice', tone: 'amber' },
+      ],
+      count: 3,
+      subject: 'Re: Enterprise expansion',
+      body: 'Thanks for the detailed proposal — looping in our platform team.',
+      date: '2 hours ago',
+    },
+    {
+      id: 'email-compliance',
+      participants: [
+        { name: 'Alice', tone: 'amber' },
+        {
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          tone: 'gray',
+        },
+      ],
+      count: 2,
+      subject: 'Security & compliance docs',
+      body: 'Attaching the SOC 2 report and our DPA for review.',
+      date: '1 day ago',
+    },
+    {
+      id: 'email-procurement',
+      participants: [
+        {
+          name: 'Dario Amodei',
+          avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+          tone: 'gray',
+        },
+      ],
+      count: 1,
+      subject: 'Intro to procurement',
+      body: 'Connecting you with our procurement lead to move the contract forward.',
+      date: '2 days ago',
+    },
+  ],
+  calendar: [
+    {
+      id: 'cal-day-wed',
+      weekday: 'Wed',
+      day: '12',
+      events: [
+        {
+          id: 'cal-security',
+          start: '10:00',
+          end: '10:45',
+          title: 'Security review',
+          attending: true,
+          participants: [
+            {
+              name: 'Dario Amodei',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+              tone: 'gray',
+            },
+            { name: 'Alice', tone: 'amber' },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'cal-day-fri',
+      weekday: 'Fri',
+      day: '14',
+      events: [
+        {
+          id: 'cal-qbr',
+          start: '14:00',
+          end: '15:00',
+          title: 'Quarterly business review',
+          participants: [
+            {
+              name: 'Dario Amodei',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.darioAmodei,
+              tone: 'gray',
+            },
+            { name: 'Alice', tone: 'amber' },
+            {
+              name: 'Sam Altman',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
+              tone: 'amber',
+            },
+          ],
+        },
+      ],
+    },
+  ],
 };

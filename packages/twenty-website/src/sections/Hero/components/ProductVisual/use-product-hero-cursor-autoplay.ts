@@ -11,39 +11,34 @@ export type ProductHeroCursorState = {
 
 type CursorPhase = ProductHeroCursorState & { durationMs: number };
 
+// One pass: settle at start, glide to the row, click, open the record — then stop
+// on the terminal phase (no return to the table, no looping).
 const PHASES: CursorPhase[] = [
   {
     position: 'start',
     clicking: false,
-    durationMs: 700,
+    durationMs: 900,
     moveMs: 0,
     showRecord: false,
   },
   {
     position: 'target',
     clicking: false,
-    durationMs: 2000,
-    moveMs: 1700,
+    durationMs: 2200,
+    moveMs: 1800,
     showRecord: false,
   },
   {
     position: 'target',
     clicking: true,
-    durationMs: 420,
+    durationMs: 480,
     moveMs: 0,
     showRecord: false,
   },
   {
     position: 'target',
     clicking: false,
-    durationMs: 3200,
-    moveMs: 0,
-    showRecord: true,
-  },
-  {
-    position: 'start',
-    clicking: false,
-    durationMs: 600,
+    durationMs: 0,
     moveMs: 0,
     showRecord: true,
   },
@@ -55,12 +50,12 @@ export function useProductHeroCursorAutoplay(
   const [phaseIndex, setPhaseIndex] = useState(0);
 
   useEffect(() => {
-    if (!enabled) {
+    if (!enabled || phaseIndex >= PHASES.length - 1) {
       return undefined;
     }
 
     const timer = setTimeout(() => {
-      setPhaseIndex((current) => (current + 1) % PHASES.length);
+      setPhaseIndex((current) => current + 1);
     }, PHASES[phaseIndex].durationMs);
 
     return () => clearTimeout(timer);
