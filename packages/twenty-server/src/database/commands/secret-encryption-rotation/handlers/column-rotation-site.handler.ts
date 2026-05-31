@@ -7,7 +7,7 @@ import {
   type SelectQueryBuilder,
 } from 'typeorm';
 
-import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
+import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,

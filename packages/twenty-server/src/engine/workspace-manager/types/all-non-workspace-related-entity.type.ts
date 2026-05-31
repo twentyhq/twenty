@@ -1,3 +1,4 @@
+import { type ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { type ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import { type ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
 import { type BillingMeterEntity } from 'src/engine/core-modules/billing/entities/billing-meter.entity';
@@ -34,6 +35,7 @@ export type AllNonWorkspaceRelatedEntity =
   | AgentTurnEntity
   | AgentTurnEvaluationEntity
   | IndexFieldMetadataEntity
+  | ApplicationRegistrationEntity
   | ApplicationRegistrationVariableEntity
   | ApplicationVariableEntity
   | BillingMeterEntity

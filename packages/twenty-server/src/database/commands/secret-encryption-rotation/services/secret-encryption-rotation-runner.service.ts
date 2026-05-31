@@ -1,14 +1,14 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
+import { InjectDataSource } from '@nestjs/typeorm';
 
 import { performance } from 'perf_hooks';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
+import { DataSource, type ObjectLiteral, type Repository } from 'typeorm';
 
 import {
-  SECRET_ENCRYPTION_ROTATION_SITE_NAME,
+  SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
   type SecretEncryptionRotationSiteName,
-} from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
+} from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 import { ColumnRotationSiteHandler } from 'src/database/commands/secret-encryption-rotation/handlers/column-rotation-site.handler';
 import { ConnectionParametersRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/connection-parameters-rotation.handler';
 import { SensitiveConfigStorageRotationHandler } from 'src/database/commands/secret-encryption-rotation/handlers/sensitive-config-storage-rotation.handler';
@@ -16,15 +16,10 @@ import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationSiteResult,
 } from 'src/database/commands/secret-encryption-rotation/interfaces/secret-encryption-rotation-handler.interface';
-import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
-import { ApplicationVariableEntity } from 'src/engine/core-modules/application/application-variable/application-variable.entity';
-import { SigningKeyEntity } from 'src/engine/core-modules/jwt/entities/signing-key.entity';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
-import { TwoFactorAuthenticationMethodEntity } from 'src/engine/core-modules/two-factor-authentication/entities/two-factor-authentication-method.entity';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
-import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 
 export type RotationRunOptions = {
   site?: SecretEncryptionRotationSiteName | string;
@@ -55,80 +50,40 @@ export class SecretEncryptionRotationRunnerService {
     secretEncryptionService: SecretEncryptionService,
     connectionParametersRotationHandler: ConnectionParametersRotationHandler,
     sensitiveConfigStorageRotationHandler: SensitiveConfigStorageRotationHandler,
-    @InjectRepository(ApplicationRegistrationVariableEntity)
-    applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
-    @InjectRepository(ApplicationVariableEntity)
-    applicationVariableRepository: Repository<ApplicationVariableEntity>,
-    @InjectRepository(ConnectedAccountEntity)
-    connectedAccountRepository: Repository<ConnectedAccountEntity>,
-    @InjectRepository(SigningKeyEntity)
-    signingKeyRepository: Repository<SigningKeyEntity>,
-    // Secret-encryption key rotation sweeps every row across every workspace.
-    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
-    @InjectRepository(TwoFactorAuthenticationMethodEntity)
-    twoFactorAuthenticationMethodRepository: Repository<TwoFactorAuthenticationMethodEntity>,
+    @InjectDataSource()
+    coreDataSource: DataSource,
   ) {
-    const handlers: SecretEncryptionRotationHandler[] = [
-      new ColumnRotationSiteHandler(
-        {
-          siteName:
-            SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_ACCESS_TOKEN,
-          repository: connectedAccountRepository,
-          encryptedColumn: 'accessToken',
-          isWorkspaceScoped: true,
-        },
-        secretEncryptionService,
-      ),
-      new ColumnRotationSiteHandler(
-        {
-          siteName:
-            SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_REFRESH_TOKEN,
-          repository: connectedAccountRepository,
-          encryptedColumn: 'refreshToken',
-          isWorkspaceScoped: true,
-        },
-        secretEncryptionService,
-      ),
-      connectionParametersRotationHandler,
-      new ColumnRotationSiteHandler(
-        {
-          siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_VARIABLE,
-          repository: applicationVariableRepository,
-          encryptedColumn: 'value',
-          isWorkspaceScoped: true,
-          extraWhere: { isSecret: true },
-        },
-        secretEncryptionService,
-      ),
-      new ColumnRotationSiteHandler(
-        {
-          siteName:
-            SECRET_ENCRYPTION_ROTATION_SITE_NAME.APPLICATION_REGISTRATION_VARIABLE,
-          repository: applicationRegistrationVariableRepository,
-          encryptedColumn: 'encryptedValue',
-        },
-        secretEncryptionService,
-      ),
-      new ColumnRotationSiteHandler(
-        {
-          siteName:
-            SECRET_ENCRYPTION_ROTATION_SITE_NAME.SIGNING_KEY_PRIVATE_KEY,
-          repository: signingKeyRepository,
-          encryptedColumn: 'privateKey',
-        },
-        secretEncryptionService,
-      ),
-      new ColumnRotationSiteHandler(
-        {
-          siteName: SECRET_ENCRYPTION_ROTATION_SITE_NAME.TOTP_SECRET,
-          repository: twoFactorAuthenticationMethodRepository,
-          encryptedColumn: 'secret',
-          isWorkspaceScoped: true,
-        },
-        secretEncryptionService,
-      ),
-      sensitiveConfigStorageRotationHandler,
-    ];
+    const handlers: SecretEncryptionRotationHandler[] = [];
+
+    for (const entry of Object.values(SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES)) {
+      const repository = coreDataSource.getRepository(
+        entry.entity,
+      ) as Repository<ObjectLiteral & { id: string }>;
+
+      for (const [encryptedColumn, meta] of Object.entries(
+        entry.columnSiteNames,
+      )) {
+        if (meta.customHandler === true) {
+          continue;
+        }
+
+        handlers.push(
+          new ColumnRotationSiteHandler(
+            {
+              siteName: meta.siteName,
+              repository,
+              encryptedColumn,
+              isWorkspaceScoped: meta.isWorkspaceScoped,
+              extraWhere: meta.extraWhere,
+            },
+            secretEncryptionService,
+          ),
+        );
+      }
+    }
+
+    handlers.push(connectionParametersRotationHandler);
+    handlers.push(sensitiveConfigStorageRotationHandler);
 
     this.handlersBySiteName = new Map(
       handlers.map((handler) => [handler.siteName, handler]),

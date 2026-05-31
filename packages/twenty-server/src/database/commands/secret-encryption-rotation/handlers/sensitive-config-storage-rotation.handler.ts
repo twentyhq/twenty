@@ -5,7 +5,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
-import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
+import { SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -27,7 +27,7 @@ import { TypedReflect } from 'src/utils/typed-reflect';
 @Injectable()
 export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotationHandler {
   readonly siteName =
-    SECRET_ENCRYPTION_ROTATION_SITE_NAME.SENSITIVE_CONFIG_STORAGE;
+    SECRET_ENCRYPTION_ROTATION_UNTYPED_SITE_NAME.SENSITIVE_CONFIG_STORAGE;
   private readonly logger = new Logger(
     SensitiveConfigStorageRotationHandler.name,
   );

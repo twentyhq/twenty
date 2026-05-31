@@ -1,4 +1,4 @@
-import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
+import { type SecretEncryptionRotationSiteName } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 
 export type SecretEncryptionRotationContext = {
   currentEncryptionKeyId: string;
