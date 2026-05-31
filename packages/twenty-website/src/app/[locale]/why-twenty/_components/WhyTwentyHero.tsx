@@ -17,7 +17,7 @@ export function WhyTwentyHero() {
         <Trans>
           <HeadingPart fontFamily="serif">
             The future of CRM is built,
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="sans">not bought.</HeadingPart>
         </Trans>
       </HeroHeading>

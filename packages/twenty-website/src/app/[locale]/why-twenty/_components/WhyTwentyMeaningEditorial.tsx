@@ -22,7 +22,7 @@ export function WhyTwentyMeaningEditorial() {
       eyebrow={i18n._(msg`What this means`)}
       heading={
         <Trans>
-          <HeadingPart fontFamily="serif">Differentiation now</HeadingPart>{' '}
+          <HeadingPart fontFamily="serif">Differentiation now</HeadingPart>
           <HeadingPart fontFamily="sans">
             lives in the code you own.
           </HeadingPart>

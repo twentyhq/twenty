@@ -15,7 +15,7 @@ export function HomeStepperSection() {
           <Trans>
             <HeadingPart fontFamily="serif">
               Begin with production-grade
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">building blocks</HeadingPart>
           </Trans>
         </Heading>
@@ -26,7 +26,7 @@ export function HomeStepperSection() {
       heading: (
         <Heading size="lg" weight="light">
           <Trans>
-            <HeadingPart fontFamily="serif">Continue iteration</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">Continue iteration</HeadingPart>
             <HeadingPart fontFamily="sans">without friction</HeadingPart>
           </Trans>
         </Heading>
@@ -39,7 +39,7 @@ export function HomeStepperSection() {
           <Trans>
             <HeadingPart fontFamily="serif">
               Stay in control with our
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">open-source software</HeadingPart>
           </Trans>
         </Heading>

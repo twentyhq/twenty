@@ -20,7 +20,7 @@ export function ProductHero() {
           <Trans>
             <HeadingPart fontFamily="serif">AI that actually</HeadingPart>
             <br />
-            <HeadingPart fontFamily="serif">helps you</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">helps you</HeadingPart>
             <HeadingPart fontFamily="sans">work faster</HeadingPart>
           </Trans>
         </Heading>
@@ -35,7 +35,7 @@ export function ProductHero() {
           <Trans>
             <HeadingPart fontFamily="serif">A CRM for teams</HeadingPart>
             <br />
-            <HeadingPart fontFamily="serif">that</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">that</HeadingPart>
             <HeadingPart fontFamily="sans">move fast</HeadingPart>
           </Trans>
         </Heading>

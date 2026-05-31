@@ -15,7 +15,7 @@ export function WhyTwentySignoff() {
         <Trans>
           <HeadingPart fontFamily="serif">
             Build a CRM your competitors
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="sans">can't buy.</HeadingPart>
         </Trans>
       }

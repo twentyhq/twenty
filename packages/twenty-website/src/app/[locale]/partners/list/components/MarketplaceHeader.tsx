@@ -47,7 +47,7 @@ export function MarketplaceHeader() {
         </Eyebrow>
         <Heading size="lg" weight="light">
           <Trans>
-            <HeadingPart fontFamily="serif">Find your</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">Find your</HeadingPart>
             <HeadingPart fontFamily="sans">Twenty partner</HeadingPart>
           </Trans>
         </Heading>

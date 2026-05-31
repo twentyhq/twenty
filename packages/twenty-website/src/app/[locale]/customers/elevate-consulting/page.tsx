@@ -40,7 +40,7 @@ export default async function ElevateConsultingCaseStudyPage({
           <br />
           <HeadingPart fontFamily="sans">
             {i18n._(msg`API backbone`)}
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="serif">
             {i18n._(msg`of a go-to-market stack`)}
           </HeadingPart>
@@ -70,7 +70,7 @@ export default async function ElevateConsultingCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`From documents to`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`open APIs`)}
             </HeadingPart>
@@ -89,8 +89,8 @@ export default async function ElevateConsultingCaseStudyPage({
         eyebrow: msg`Integration`,
         heading: (
           <Heading size="md" weight="light">
-            <HeadingPart fontFamily="serif">{i18n._(msg`One`)}</HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">{i18n._(msg`API`)}</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">{i18n._(msg`One`)}</HeadingPart>
+            <HeadingPart fontFamily="sans">{i18n._(msg`API`)}</HeadingPart>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`to rule them all`)}
             </HeadingPart>
@@ -111,7 +111,7 @@ export default async function ElevateConsultingCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Workflows that`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`actually get used`)}
             </HeadingPart>
@@ -128,7 +128,7 @@ export default async function ElevateConsultingCaseStudyPage({
         eyebrow: msg`What is next`,
         heading: (
           <Heading size="md" weight="light">
-            <HeadingPart fontFamily="serif">{i18n._(msg`Beyond`)}</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">{i18n._(msg`Beyond`)}</HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`internal rollout`)}
             </HeadingPart>

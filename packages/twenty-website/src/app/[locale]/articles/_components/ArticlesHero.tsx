@@ -8,7 +8,7 @@ export function ArticlesHero() {
       <HeroHeading>
         <HeadingPart fontFamily="serif">Ideas on</HeadingPart>
         <br />
-        <HeadingPart fontFamily="serif">open-source</HeadingPart>{' '}
+        <HeadingPart fontFamily="serif">open-source</HeadingPart>
         <HeadingPart fontFamily="sans">CRM</HeadingPart>
       </HeroHeading>
       <HeroBody maxWidthMd={550}>

@@ -62,7 +62,7 @@ export function HomeIllustrationThreeCards() {
               <Trans>
                 <HeadingPart fontFamily="serif">
                   Assemble, iterate and adapt a robust CRM,
-                </HeadingPart>{' '}
+                </HeadingPart>
                 <HeadingPart fontFamily="sans">
                   that's quick to flex
                 </HeadingPart>

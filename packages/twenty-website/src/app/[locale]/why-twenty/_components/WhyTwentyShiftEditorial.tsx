@@ -21,7 +21,7 @@ export function WhyTwentyShiftEditorial() {
       eyebrow={i18n._(msg`The shift`)}
       heading={
         <Trans>
-          <HeadingPart fontFamily="serif">CRM was a ledger.</HeadingPart>{' '}
+          <HeadingPart fontFamily="serif">CRM was a ledger.</HeadingPart>
           <HeadingPart fontFamily="sans">
             AI turned it into an operating system.
           </HeadingPart>

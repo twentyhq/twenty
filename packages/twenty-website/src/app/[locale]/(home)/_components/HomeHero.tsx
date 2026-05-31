@@ -50,7 +50,7 @@ export function HomeHero() {
             <Trans>
               <HeadingPart fontFamily="serif">
                 Build your Enterprise CRM
-              </HeadingPart>{' '}
+              </HeadingPart>
               <HeadingPart fontFamily="sans">at AI Speed</HeadingPart>
             </Trans>
           </HeroHeading>

@@ -263,7 +263,7 @@ export function ProductFeature() {
         </Eyebrow>
         <Heading size="lg" weight="light">
           <Trans>
-            <HeadingPart fontFamily="serif">Everything you need,</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">Everything you need,</HeadingPart>
             <HeadingPart fontFamily="sans">out of the box</HeadingPart>
           </Trans>
         </Heading>

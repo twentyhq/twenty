@@ -16,7 +16,7 @@ export function ProductThreeCards() {
         </Eyebrow>
         <Heading size="lg" weight="light">
           <Trans>
-            <HeadingPart fontFamily="serif">A modern CRM with</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">A modern CRM with</HeadingPart>
             <HeadingPart fontFamily="sans">an intuitive interface</HeadingPart>
           </Trans>
         </Heading>

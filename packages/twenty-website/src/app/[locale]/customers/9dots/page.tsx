@@ -36,10 +36,10 @@ export default async function NineDotsCaseStudyPage({
         <Heading as="h1" size="xl" weight="light">
           <HeadingPart fontFamily="serif">
             {i18n._(msg`A real estate agency on WhatsApp`)}
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="serif">{i18n._(msg`built a`)}</HeadingPart>
           <br />
-          <HeadingPart fontFamily="sans">{i18n._(msg`CRM`)}</HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">{i18n._(msg`CRM`)}</HeadingPart>
           <HeadingPart fontFamily="serif">{i18n._(msg`around it`)}</HeadingPart>
         </Heading>
       ),
@@ -68,7 +68,7 @@ export default async function NineDotsCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`When the channel is`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`the business`)}
             </HeadingPart>
@@ -89,7 +89,7 @@ export default async function NineDotsCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`The CRM as a`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`control hub`)}
             </HeadingPart>
@@ -109,7 +109,7 @@ export default async function NineDotsCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="sans">
               {i18n._(msg`150 hours`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`saved every month`)}
             </HeadingPart>

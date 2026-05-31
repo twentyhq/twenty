@@ -13,7 +13,7 @@ export function EnterpriseActivateHero() {
       </Eyebrow>
       <HeroHeading>
         <Trans>
-          <HeadingPart fontFamily="serif">Enterprise</HeadingPart>{' '}
+          <HeadingPart fontFamily="serif">Enterprise</HeadingPart>
           <HeadingPart fontFamily="sans">activation</HeadingPart>
         </Trans>
       </HeroHeading>

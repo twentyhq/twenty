@@ -20,7 +20,7 @@ export function HomeFeatureThreeCards() {
               Make your GTM team happy
             </HeadingPart>
             <br />
-            <HeadingPart fontFamily="serif">with</HeadingPart>{' '}
+            <HeadingPart fontFamily="serif">with</HeadingPart>
             <HeadingPart fontFamily="sans">a CRM they'll love</HeadingPart>
           </Trans>
         </Heading>

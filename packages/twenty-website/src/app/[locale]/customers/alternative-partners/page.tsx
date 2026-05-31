@@ -62,7 +62,7 @@ export default async function AlternativePartnersCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`AI in the`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`migration workflow`)}
             </HeadingPart>
@@ -81,7 +81,7 @@ export default async function AlternativePartnersCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Self-hosted`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`means control`)}
             </HeadingPart>

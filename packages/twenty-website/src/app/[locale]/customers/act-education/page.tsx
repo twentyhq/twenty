@@ -59,7 +59,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`When the vendor`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`pulled the plug`)}
             </HeadingPart>
@@ -79,7 +79,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`No more renting someone else's`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`structure`)}
             </HeadingPart>
@@ -98,7 +98,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Control without`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`the overhead`)}
             </HeadingPart>
@@ -116,7 +116,7 @@ export default async function ActEducationCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Costs down more than`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`90%`)}</HeadingPart>
           </Heading>
         ),

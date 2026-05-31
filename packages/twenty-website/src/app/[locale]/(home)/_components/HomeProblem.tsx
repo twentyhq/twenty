@@ -44,9 +44,9 @@ export function HomeProblem() {
           <Trans>
             <HeadingPart fontFamily="serif">
               A custom CRM gives your org an edge,
-            </HeadingPart>{' '}
-            <HeadingPart fontFamily="sans">but building one</HeadingPart>{' '}
-            <HeadingPart fontFamily="serif">comes with</HeadingPart>{' '}
+            </HeadingPart>
+            <HeadingPart fontFamily="sans">but building one</HeadingPart>
+            <HeadingPart fontFamily="serif">comes with</HeadingPart>
             <HeadingPart fontFamily="sans">tradeoffs</HeadingPart>
           </Trans>
         </ProblemHeading>

@@ -29,7 +29,7 @@ export function PartnerThreeCards() {
           <Trans>
             <HeadingPart fontFamily="serif">
               Find the program that fits your business
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               and unlock new opportunities with Twenty
             </HeadingPart>

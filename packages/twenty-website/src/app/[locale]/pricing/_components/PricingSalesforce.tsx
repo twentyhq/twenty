@@ -12,7 +12,7 @@ export function PricingSalesforce() {
       pricing={SALESFORCE_DATA.pricing}
     >
       <Trans>
-        <HeadingPart fontFamily="serif">Trust the n°1 CRM,</HeadingPart>{' '}
+        <HeadingPart fontFamily="serif">Trust the n°1 CRM,</HeadingPart>
         <HeadingPart fontFamily="sans">or not!</HeadingPart>
       </Trans>
     </Salesforce>

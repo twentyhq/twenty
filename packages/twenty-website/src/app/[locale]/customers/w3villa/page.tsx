@@ -59,7 +59,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Scale without`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`breaking operations`)}
             </HeadingPart>
@@ -79,7 +79,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Focus on the use case, not the`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`plumbing`)}</HeadingPart>
           </Heading>
         ),
@@ -96,7 +96,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`A platform ready to`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`grow`)}</HeadingPart>
           </Heading>
         ),
@@ -113,7 +113,7 @@ export default async function W3villaCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="sans">
               {i18n._(msg`Zero manual work`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="serif">
               {i18n._(msg`at the core`)}
             </HeadingPart>

@@ -10,7 +10,7 @@ export function CustomersCatalogHero() {
         <Trans>
           <HeadingPart fontFamily="serif">See how teams</HeadingPart>
           <br />
-          <HeadingPart fontFamily="serif">build</HeadingPart>{' '}
+          <HeadingPart fontFamily="serif">build</HeadingPart>
           <HeadingPart fontFamily="sans">on Twenty</HeadingPart>
         </Trans>
       </HeroHeading>

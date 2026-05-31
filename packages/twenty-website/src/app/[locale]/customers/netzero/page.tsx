@@ -38,7 +38,7 @@ export default async function NetZeroCaseStudyPage({
             {i18n._(msg`A CRM that`)}
           </HeadingPart>
           <br />
-          <HeadingPart fontFamily="sans">{i18n._(msg`grows`)}</HeadingPart>{' '}
+          <HeadingPart fontFamily="sans">{i18n._(msg`grows`)}</HeadingPart>
           <HeadingPart fontFamily="serif">{i18n._(msg`with you`)}</HeadingPart>
         </Heading>
       ),
@@ -61,7 +61,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`The right`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`foundation`)}
             </HeadingPart>
@@ -80,7 +80,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`A business that does not fit a`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`template`)}</HeadingPart>
           </Heading>
         ),
@@ -98,7 +98,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`From simple to`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">{i18n._(msg`advanced`)}</HeadingPart>
           </Heading>
         ),
@@ -115,7 +115,7 @@ export default async function NetZeroCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`The bet is`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`paying off`)}
             </HeadingPart>

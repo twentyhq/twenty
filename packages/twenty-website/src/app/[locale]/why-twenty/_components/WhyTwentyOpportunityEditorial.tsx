@@ -23,7 +23,7 @@ export function WhyTwentyOpportunityEditorial() {
         <Trans>
           <HeadingPart fontFamily="serif">
             Build it in an afternoon.
-          </HeadingPart>{' '}
+          </HeadingPart>
           <HeadingPart fontFamily="sans">
             AI made the gap that small.
           </HeadingPart>

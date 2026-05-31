@@ -54,7 +54,7 @@ export function ProductStepperSection() {
       steps={steps}
     >
       <Trans>
-        <HeadingPart fontFamily="serif">Go the extra mile</HeadingPart>{' '}
+        <HeadingPart fontFamily="serif">Go the extra mile</HeadingPart>
         <HeadingPart fontFamily="sans">with no-code</HeadingPart>
       </Trans>
     </Flow>
