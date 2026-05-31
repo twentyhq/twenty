@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { type ConnectedAccountProvider } from 'twenty-shared/types';
 import { EntityManager, Repository } from 'typeorm';
 
+import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ConnectedAccountTokenEncryptionService } from 'src/engine/metadata-modules/connected-account/services/connected-account-token-encryption.service';
@@ -18,8 +19,8 @@ export type CreateConnectedAccountInput = {
   connectedAccountId: string;
   handle: string;
   provider: ConnectedAccountProvider;
-  accessToken: string;
-  refreshToken: string;
+  accessToken: PlaintextString;
+  refreshToken: PlaintextString;
   accountOwnerId: string;
   scopes: string[];
   transactionManager: EntityManager;
@@ -87,6 +88,9 @@ export class CreateConnectedAccountService {
 
       const userWorkspaceId = userWorkspace.id;
 
+      // Boundary: tokens entering here were just issued by the external
+      // OAuth provider (Google / Microsoft / app), so we brand them as
+      // plaintext before handing them to the encryption service.
       const { encryptedAccessToken, encryptedRefreshToken } =
         this.connectedAccountTokenEncryptionService.encryptTokenPair({
           accessToken,

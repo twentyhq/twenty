@@ -53,6 +53,10 @@ export default defineLogicFunction({
 可用的触发器类型：
 * **httpRoute**：在 **`/s/` 端点**下通过 HTTP 路径和方法公开你的函数：
 > 例如 `path: '/post-card/create'` 可在 `https://your-twenty-server.com/s/post-card/create` 调用
+
+<Note>
+要从（无头）前端组件调用由路由触发的逻辑函数，请参见[调用逻辑函数](/l/zh/developers/extend/apps/layout/front-components#calling-a-logic-function)。
+</Note>
 * **cron**：使用 CRON 表达式按计划运行你的函数。
 * **databaseEvent**：在工作区对象生命周期事件上运行。 当事件操作为 `updated` 时，可以在 `updatedFields` 数组中指定要监听的特定字段。 如果未定义或为空，任何更新都会触发该函数。
 > 例如 `person.updated`、`*.created`、`company.*`

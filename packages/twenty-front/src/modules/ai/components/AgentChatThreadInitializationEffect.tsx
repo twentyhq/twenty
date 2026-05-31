@@ -31,9 +31,7 @@ import {
 export const AgentChatThreadInitializationEffect = () => {
   const client = useApolloClient();
   const { replaceDraft, applyChanges } = useUpdateMetadataStoreDraft();
-  const hasAiSettingsPermission = useHasPermissionFlag(
-    PermissionFlagType.AI_SETTINGS,
-  );
+  const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const currentAiChatThread = useAtomStateValue(currentAiChatThreadState);
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
@@ -58,7 +56,7 @@ export const AgentChatThreadInitializationEffect = () => {
     useAtomState(hasInitializedAgentChatThreadsState);
 
   useEffect(() => {
-    if (storeEntry.status !== 'empty' || !hasAiSettingsPermission) {
+    if (storeEntry.status !== 'empty' || !hasAiPermission) {
       return;
     }
 
@@ -75,19 +73,13 @@ export const AgentChatThreadInitializationEffect = () => {
         replaceDraft('agentChatThreads', result.data.chatThreads);
         applyChanges();
       });
-  }, [
-    storeEntry.status,
-    hasAiSettingsPermission,
-    client,
-    replaceDraft,
-    applyChanges,
-  ]);
+  }, [storeEntry.status, hasAiPermission, client, replaceDraft, applyChanges]);
 
   useEffect(() => {
     setAgentChatThreadsLoading(
-      storeEntry.status === 'empty' && hasAiSettingsPermission,
+      storeEntry.status === 'empty' && hasAiPermission,
     );
-  }, [storeEntry.status, hasAiSettingsPermission, setAgentChatThreadsLoading]);
+  }, [storeEntry.status, hasAiPermission, setAgentChatThreadsLoading]);
 
   useEffect(() => {
     if (
@@ -97,7 +89,7 @@ export const AgentChatThreadInitializationEffect = () => {
       return;
     }
 
-    if (storeEntry.status === 'empty' && hasAiSettingsPermission) {
+    if (storeEntry.status === 'empty' && hasAiPermission) {
       return;
     }
 
@@ -152,7 +144,7 @@ export const AgentChatThreadInitializationEffect = () => {
   }, [
     agentChatVisibleThreads,
     currentAiChatThread,
-    hasAiSettingsPermission,
+    hasAiPermission,
     hasInitializedAgentChatThreads,
     setHasInitializedAgentChatThreads,
     storeEntry.status,

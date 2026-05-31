@@ -18,7 +18,7 @@ export const FEATURE_TILES: FeatureTileType[] = [
     bullets: [
       {
         icon: 'check',
-        text: msg`Aggregate, bar, line, pie, and gauge widgets`,
+        text: msg`Aggregate, bar, line, and pie widgets`,
       },
       { icon: 'search', text: msg`Filtered metrics from any object` },
       { icon: 'check', text: msg`Real-time data` },

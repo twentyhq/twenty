@@ -1,7 +1,12 @@
 import { isDefined } from 'twenty-shared/utils';
 import { DataSource, QueryRunner } from 'typeorm';
 
-import { type ImapSmtpCaldavParams } from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import {
+  type EncryptedImapSmtpCaldavParams,
+  type ImapSmtpCaldavParams,
+  type PlaintextImapSmtpCaldavParams,
+} from 'src/engine/core-modules/imap-smtp-caldav-connection/types/imap-smtp-caldav-connection.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { RegisteredInstanceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-instance-command.decorator';
 import { SlowInstanceCommand } from 'src/engine/core-modules/upgrade/interfaces/slow-instance-command.interface';
@@ -16,6 +21,9 @@ const CHECK_CONSTRAINT_NAME =
 type ConnectionParametersRow = {
   id: string;
   workspaceId: string;
+  // Pre-backfill rows can hold either plaintext or already-v2 passwords.
+  // Either form is structurally a `string` at the JSONB layer; the brand
+  // type is a phantom marker only.
   connectionParameters: ImapSmtpCaldavParams | null;
 };
 
@@ -67,7 +75,7 @@ export class EncryptConnectionParametersSlowInstanceCommand implements SlowInsta
           continue;
         }
 
-        const plaintextOnly: ImapSmtpCaldavParams = {};
+        const plaintextOnly: PlaintextImapSmtpCaldavParams = {};
 
         for (const protocol of ACCOUNT_TYPES) {
           const protocolParams = row.connectionParameters[protocol];
@@ -78,7 +86,13 @@ export class EncryptConnectionParametersSlowInstanceCommand implements SlowInsta
               SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX,
             )
           ) {
-            plaintextOnly[protocol] = protocolParams;
+            // Upstream filter guarantees this protocol's password is
+            // plaintext (no `enc:v2:` prefix); brand the leaf in-place so
+            // the encryption service can consume it.
+            plaintextOnly[protocol] = {
+              ...protocolParams,
+              password: protocolParams.password as PlaintextString,
+            };
           }
         }
 
@@ -90,8 +104,12 @@ export class EncryptConnectionParametersSlowInstanceCommand implements SlowInsta
             },
           );
 
-        const merged: ImapSmtpCaldavParams = {
-          ...row.connectionParameters,
+        // Pre-backfill row may already contain a mix of plaintext and
+        // already-encrypted protocols; we trust the entity-level brand on
+        // the post-merge result since each protocol is either freshly
+        // encrypted above or was already an `enc:v2:` envelope.
+        const merged: EncryptedImapSmtpCaldavParams = {
+          ...(row.connectionParameters as EncryptedImapSmtpCaldavParams),
           ...encrypted,
         };
 

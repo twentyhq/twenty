@@ -2,6 +2,8 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
 
 import { computeEncryptionKeyId } from './utils/compute-encryption-key-id.util';
@@ -27,6 +29,9 @@ export class SecretEncryptionService {
     private readonly environmentConfigDriver: EnvironmentConfigDriver,
   ) {}
 
+  // Legacy CTR pair (`encrypt` / `decrypt`) is intentionally left unbranded.
+  // Its callers predate the enc:v2 envelope and never went through the
+  // branded API; retrofitting them is tracked as a separate follow-up.
   public encrypt(value: string): string {
     if (!isDefined(value)) {
       return value;
@@ -73,7 +78,7 @@ export class SecretEncryptionService {
     mask,
     workspaceId,
   }: {
-    value: string;
+    value: EncryptedString;
     mask: string;
     workspaceId?: string;
   }): string {
@@ -98,7 +103,10 @@ export class SecretEncryptionService {
     return `${decryptedValue.slice(0, visibleCharsCount)}${mask}`;
   }
 
-  public encryptVersioned(value: string, opts: VersionedOptions = {}): string {
+  public encryptVersioned(
+    value: PlaintextString,
+    opts: VersionedOptions = {},
+  ): EncryptedString {
     if (!isDefined(value)) {
       return value;
     }
@@ -113,10 +121,16 @@ export class SecretEncryptionService {
     });
     const keyId = computeEncryptionKeyId({ rawKey: primary });
 
-    return formatSecretEncryptionEnvelopeV2({ keyId, payloadBase64 });
+    return formatSecretEncryptionEnvelopeV2({
+      keyId,
+      payloadBase64,
+    }) as EncryptedString;
   }
 
-  public decryptVersioned(value: string, opts: VersionedOptions = {}): string {
+  public decryptVersioned(
+    value: EncryptedString,
+    opts: VersionedOptions = {},
+  ): PlaintextString {
     if (!isDefined(value)) {
       return value;
     }
@@ -136,12 +150,12 @@ export class SecretEncryptionService {
         payloadBase64: parsed.payload,
         rawKey,
         workspaceId: opts.workspaceId,
-      });
+      }) as PlaintextString;
     }
 
     this.warnLegacyCtrDecryptionOnce();
 
-    return this.decrypt(value);
+    return this.decrypt(value) as PlaintextString;
   }
 
   private warnLegacyCtrDecryptionOnce(): void {

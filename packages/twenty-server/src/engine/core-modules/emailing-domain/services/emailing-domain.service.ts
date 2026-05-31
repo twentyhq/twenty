@@ -87,18 +87,30 @@ export class EmailingDomainService {
     });
   }
 
-  async cleanupAllEmailingDomainsForWorkspace(
+  async cleanupEmailingDomainsForWorkspace(
     workspaceId: string,
+    domains: string[],
   ): Promise<void> {
-    const emailingDomains =
-      await this.emailingDomainRepository.find(workspaceId);
+    const emailingDomainDriver =
+      this.emailingDomainDriverFactory.getCurrentDriver();
 
-    for (const emailingDomain of emailingDomains) {
-      await this.deleteRemoteEmailingDomain(emailingDomain);
+    if (domains.length === 0) {
+      return;
     }
 
-    await this.deprovisionRemoteWorkspace(workspaceId);
-    await this.emailingDomainRepository.delete(workspaceId, {});
+    const results = await Promise.allSettled(
+      domains.map((domain) =>
+        emailingDomainDriver.cleanupDomain({ domain, workspaceId }),
+      ),
+    );
+
+    await emailingDomainDriver.deprovisionWorkspace(workspaceId);
+
+    if (results.some((result) => result.status === 'rejected')) {
+      throw new Error(
+        `Failed to clean up one or more emailing domains for workspace ${workspaceId}`,
+      );
+    }
   }
 
   async getEmailingDomains(
@@ -217,18 +229,6 @@ export class EmailingDomainService {
     } catch (error) {
       this.logger.warn(
         `Remote cleanup for emailing domain ${emailingDomain.domain} (workspace ${emailingDomain.workspaceId}) failed: ${error}`,
-      );
-    }
-  }
-
-  private async deprovisionRemoteWorkspace(workspaceId: string): Promise<void> {
-    try {
-      await this.emailingDomainDriverFactory
-        .getCurrentDriver()
-        .deprovisionWorkspace(workspaceId);
-    } catch (error) {
-      this.logger.warn(
-        `Remote deprovision for emailing domain workspace ${workspaceId} failed: ${error}`,
       );
     }
   }

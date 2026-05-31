@@ -10,9 +10,9 @@ import {
   ApplicationVariableEntityExceptionCode,
 } from 'src/engine/core-modules/application/application-variable/application-variable.exception';
 import { SECRET_APPLICATION_VARIABLE_MASK } from 'src/engine/core-modules/application/application-variable/constants/secret-application-variable-mask.constant';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
-import { isNonEmptyString } from '@sniptt/guards';
 
 @Injectable()
 export class ApplicationVariableEntityService {
@@ -24,19 +24,22 @@ export class ApplicationVariableEntityService {
   ) {}
 
   getDisplayValue(applicationVariable: ApplicationVariableEntity): string {
-    if (!applicationVariable.isSecret) {
-      return applicationVariable.value;
-    }
-
-    if (!isNonEmptyString(applicationVariable.value)) {
+    if (applicationVariable.value === '') {
       return '';
     }
 
-    return this.secretEncryptionService.decryptAndMaskVersioned({
-      value: applicationVariable.value,
-      mask: SECRET_APPLICATION_VARIABLE_MASK,
-      workspaceId: applicationVariable.workspaceId,
-    });
+    if (applicationVariable.isSecret) {
+      return this.secretEncryptionService.decryptAndMaskVersioned({
+        value: applicationVariable.value,
+        mask: SECRET_APPLICATION_VARIABLE_MASK,
+        workspaceId: applicationVariable.workspaceId,
+      });
+    }
+
+    return this.secretEncryptionService.decryptVersioned(
+      applicationVariable.value,
+      { workspaceId: applicationVariable.workspaceId },
+    );
   }
 
   async update({
@@ -47,7 +50,7 @@ export class ApplicationVariableEntityService {
   }: Pick<ApplicationVariableEntity, 'key'> & {
     applicationId: string;
     workspaceId: string;
-    plainTextValue: string;
+    plainTextValue: PlaintextString;
   }) {
     const existingVariable = await this.applicationVariableRepository.findOne({
       where: { key, applicationId },
@@ -60,16 +63,12 @@ export class ApplicationVariableEntityService {
       );
     }
 
-    const encryptedValue = existingVariable.isSecret
-      ? this.secretEncryptionService.encryptVersioned(plainTextValue, {
-          workspaceId,
-        })
-      : plainTextValue;
-
     await this.applicationVariableRepository.update(
       { key, applicationId },
       {
-        value: encryptedValue,
+        value: this.secretEncryptionService.encryptVersioned(plainTextValue, {
+          workspaceId,
+        }),
       },
     );
 
