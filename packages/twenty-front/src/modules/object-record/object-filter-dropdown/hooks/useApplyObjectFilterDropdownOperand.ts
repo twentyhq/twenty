@@ -21,6 +21,16 @@ import {
   relativeDateFilterStringifiedSchema,
 } from 'twenty-shared/utils';
 
+const getBetweenFirstValue = (value: string): string | null => {
+  const commaIndex = value.indexOf(',');
+
+  if (commaIndex === -1) {
+    return null;
+  }
+
+  return value.slice(0, commaIndex).trim();
+};
+
 export const useApplyObjectFilterDropdownOperand = () => {
   const { userTimezone } = useUserTimezone();
   const objectFilterDropdownCurrentRecordFilter = useAtomComponentStateValue(
@@ -66,6 +76,22 @@ export const useApplyObjectFilterDropdownOperand = () => {
         ...objectFilterDropdownCurrentRecordFilter,
         operand: newOperand,
       } satisfies RecordFilter;
+
+      const previousOperand = objectFilterDropdownCurrentRecordFilter?.operand;
+      const isLeavingBetweenOperand =
+        previousOperand === RecordFilterOperand.IS_BETWEEN &&
+        newOperand !== RecordFilterOperand.IS_BETWEEN;
+
+      if (isLeavingBetweenOperand) {
+        const firstBetweenValue = getBetweenFirstValue(
+          objectFilterDropdownCurrentRecordFilter.value,
+        );
+
+        if (isDefined(firstBetweenValue)) {
+          recordFilterToUpsert.value = firstBetweenValue;
+          recordFilterToUpsert.displayValue = firstBetweenValue;
+        }
+      }
     } else if (isValuelessOperand) {
       if (!isDefined(fieldMetadataItemUsedInDropdown)) {
         throw new Error(

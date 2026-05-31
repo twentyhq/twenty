@@ -171,6 +171,19 @@ export const useGetRecordFilterDisplayValue = () => {
       return `${optionLabels.join(', ')}`;
     }
 
+    if (recordFilter.operand === RecordFilterOperand.IS_BETWEEN) {
+      const commaIndex = recordFilter.value.indexOf(',');
+
+      if (commaIndex === -1) {
+        return recordFilter.value;
+      }
+
+      const minValue = recordFilter.value.slice(0, commaIndex).trim();
+      const maxValue = recordFilter.value.slice(commaIndex + 1).trim();
+
+      return `${minValue} - ${maxValue}`;
+    }
+
     if (!operandIsEmptiness && !recordFilterIsEmpty) {
       return `${recordFilter.displayValue}`;
     }

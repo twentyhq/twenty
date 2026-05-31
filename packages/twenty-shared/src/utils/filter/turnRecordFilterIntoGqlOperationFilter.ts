@@ -697,6 +697,29 @@ const buildDirectFieldGqlOperationFilter = ({
                 } as CurrencyFilter,
               },
             };
+          case RecordFilterOperand.IS_BETWEEN: {
+            const commaIndex = recordFilter.value.indexOf(',');
+            if (commaIndex === -1) return undefined;
+            const minStr = recordFilter.value.slice(0, commaIndex);
+            const maxStr = recordFilter.value.slice(commaIndex + 1);
+            const minAmount = parseFloat(minStr);
+            const maxAmount = parseFloat(maxStr);
+            if (isNaN(minAmount) || isNaN(maxAmount)) return undefined;
+            return {
+              and: [
+                {
+                  [fieldMetadataItem.name]: {
+                    amountMicros: { gte: minAmount * 1000000 },
+                  } as CurrencyFilter,
+                },
+                {
+                  [fieldMetadataItem.name]: {
+                    amountMicros: { lte: maxAmount * 1000000 },
+                  } as CurrencyFilter,
+                },
+              ],
+            };
+          }
           default:
             throw new Error(
               `Unknown operand ${recordFilter.operand} for ${filterType} / ${subFieldName}  filter`,

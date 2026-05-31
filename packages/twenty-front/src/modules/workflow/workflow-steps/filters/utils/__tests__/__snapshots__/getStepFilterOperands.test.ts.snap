@@ -42,6 +42,7 @@ exports[`getStepFilterOperands CURRENCY returns amountMicros operands when subFi
   "LESS_THAN_OR_EQUAL",
   "IS",
   "IS_NOT",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]
@@ -53,6 +54,7 @@ exports[`getStepFilterOperands CURRENCY returns amountMicros operands when subFi
   "LESS_THAN_OR_EQUAL",
   "IS",
   "IS_NOT",
+  "IS_BETWEEN",
   "IS_EMPTY",
   "IS_NOT_EMPTY",
 ]

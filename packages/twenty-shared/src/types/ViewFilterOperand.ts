@@ -15,4 +15,5 @@ export enum ViewFilterOperand {
   IS_IN_FUTURE = 'IS_IN_FUTURE',
   IS_TODAY = 'IS_TODAY',
   VECTOR_SEARCH = 'VECTOR_SEARCH',
+  IS_BETWEEN = 'IS_BETWEEN',
 }

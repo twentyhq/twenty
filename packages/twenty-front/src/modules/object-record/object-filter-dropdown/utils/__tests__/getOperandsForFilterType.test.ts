@@ -27,6 +27,7 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
     RecordFilterOperand.IS,
     RecordFilterOperand.IS_NOT,
+    RecordFilterOperand.IS_BETWEEN,
   ];
 
   const currencyCurrencyCodeOperands = [

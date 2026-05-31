@@ -30,6 +30,7 @@ export const COMPOSITE_FIELD_FILTER_OPERANDS_MAP = {
       ViewFilterOperand.LESS_THAN_OR_EQUAL,
       ViewFilterOperand.IS,
       ViewFilterOperand.IS_NOT,
+      ViewFilterOperand.IS_BETWEEN,
       ...emptyOperands,
     ],
   },

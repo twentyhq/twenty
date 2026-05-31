@@ -36,6 +36,7 @@ const operandMapping: Record<string, ViewFilterOperand> = {
   [ViewFilterOperand.IS_IN_FUTURE]: ViewFilterOperand.IS_IN_FUTURE,
   [ViewFilterOperand.IS_TODAY]: ViewFilterOperand.IS_TODAY,
   [ViewFilterOperand.VECTOR_SEARCH]: ViewFilterOperand.VECTOR_SEARCH,
+  [ViewFilterOperand.IS_BETWEEN]: ViewFilterOperand.IS_BETWEEN,
 };
 
 export const convertViewFilterOperandToCoreOperand = (
