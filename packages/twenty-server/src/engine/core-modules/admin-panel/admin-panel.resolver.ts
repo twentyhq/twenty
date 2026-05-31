@@ -46,6 +46,7 @@ import { AdminPanelUserLookupService } from 'src/engine/core-modules/admin-panel
 import { AdminPanelVersionService } from 'src/engine/core-modules/admin-panel/services/admin-panel-version.service';
 import { ApplicationRegistrationVariableDTO } from 'src/engine/core-modules/application/application-registration-variable/dtos/application-registration-variable.dto';
 import { ApplicationRegistrationVariableService } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.service';
+import { UpdateApplicationRegistrationVariableInput } from 'src/engine/core-modules/application/application-registration-variable/dtos/update-application-registration-variable.input';
 import { ApplicationRegistrationEntity } from 'src/engine/core-modules/application/application-registration/application-registration.entity';
 import { ApplicationRegistrationService } from 'src/engine/core-modules/application/application-registration/application-registration.service';
 import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
@@ -722,6 +723,16 @@ export class AdminPanelResolver {
   ): Promise<ApplicationRegistrationVariableDTO[]> {
     return this.applicationRegistrationVariableService.findVariablesWithObfuscatedValuesGlobal(
       applicationRegistrationId,
+    );
+  }
+
+  @UseGuards(AdminPanelGuard)
+  @Mutation(() => ApplicationRegistrationVariableDTO)
+  async updateAdminApplicationRegistrationVariable(
+    @Args('input') input: UpdateApplicationRegistrationVariableInput,
+  ): Promise<ApplicationRegistrationVariableDTO> {
+    return this.applicationRegistrationVariableService.updateVariableGlobal(
+      input,
     );
   }
 

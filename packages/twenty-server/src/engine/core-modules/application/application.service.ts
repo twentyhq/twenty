@@ -43,8 +43,8 @@ export class ApplicationService {
     private readonly agentRepository: WorkspaceScopedRepository<AgentEntity>,
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectRepository(CommandMenuItemEntity)
-    private readonly commandMenuItemRepository: Repository<CommandMenuItemEntity>,
+    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
+    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationVariableEntity)
@@ -206,8 +206,8 @@ export class ApplicationService {
       this.frontComponentRepository.find({
         where: { applicationId: application.id, workspaceId },
       }),
-      this.commandMenuItemRepository.find({
-        where: { applicationId: application.id, workspaceId },
+      this.commandMenuItemRepository.find(workspaceId, {
+        where: { applicationId: application.id },
       }),
       this.objectMetadataRepository.find({
         where: { applicationId: application.id, workspaceId },

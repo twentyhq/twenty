@@ -63,6 +63,62 @@ describe('getParsedNameFromDisplayName', () => {
           expected: { firstName: 'John', lastName: 'Doe' },
         },
       },
+      {
+        title:
+          'should keep a multi-word first name intact when paired with a last name',
+        context: {
+          displayName: 'Smith, Mary Jane',
+          expected: { firstName: 'Mary Jane', lastName: 'Smith' },
+        },
+      },
+    ];
+
+    test.each(testCases)('$title', ({ context: { displayName, expected } }) => {
+      expect(getParsedNameFromDisplayName(displayName)).toEqual(expected);
+    });
+  });
+
+  describe('multi-comma comma-inverted forms', () => {
+    const testCases: TestCase[] = [
+      {
+        title:
+          'should treat the segment before the first comma as the last name and merge the rest into the first name',
+        context: {
+          displayName: 'Smith, Jane, Jr.',
+          expected: { firstName: 'Jane Jr.', lastName: 'Smith' },
+        },
+      },
+      {
+        title: 'should keep credential suffixes attached to the first name',
+        context: {
+          displayName: "O'Brien, Mary, MD",
+          expected: { firstName: 'Mary MD', lastName: "O'Brien" },
+        },
+      },
+      {
+        title:
+          'should fold a three-part "Last, First, Middle" form into a multi-word first name',
+        context: {
+          displayName: 'Doe, John, Patrick',
+          expected: { firstName: 'John Patrick', lastName: 'Doe' },
+        },
+      },
+      {
+        title:
+          'should collapse extra whitespace around the inner commas as it merges',
+        context: {
+          displayName: 'Smith ,  Jane  ,  Jr.',
+          expected: { firstName: 'Jane Jr.', lastName: 'Smith' },
+        },
+      },
+      {
+        title:
+          'should still strip a trailing :GROUP tag after a multi-comma swap',
+        context: {
+          displayName: 'Smith, Jane, Jr.:GROUP',
+          expected: { firstName: 'Jane Jr.', lastName: 'Smith' },
+        },
+      },
     ];
 
     test.each(testCases)('$title', ({ context: { displayName, expected } }) => {
