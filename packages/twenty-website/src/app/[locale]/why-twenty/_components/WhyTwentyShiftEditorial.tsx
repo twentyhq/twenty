@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
@@ -19,14 +20,12 @@ export function WhyTwentyShiftEditorial() {
       eyebrowColorScheme="secondary"
       eyebrow={i18n._(msg`The shift`)}
       heading={
-        <>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`CRM was a ledger.`)}
-          </HeadingPart>{' '}
+        <Trans>
+          <HeadingPart fontFamily="serif">CRM was a ledger.</HeadingPart>{' '}
           <HeadingPart fontFamily="sans">
-            {i18n._(msg`AI turned it into an operating system.`)}
+            AI turned it into an operating system.
           </HeadingPart>
-        </>
+        </Trans>
       }
       bodyLayout="two-column-left"
       bodyParagraphs={[

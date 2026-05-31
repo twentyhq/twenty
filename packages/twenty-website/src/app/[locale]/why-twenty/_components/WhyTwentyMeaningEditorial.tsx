@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
@@ -20,14 +21,12 @@ export function WhyTwentyMeaningEditorial() {
       eyebrowColorScheme="secondary"
       eyebrow={i18n._(msg`What this means`)}
       heading={
-        <>
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Differentiation now`)}
-          </HeadingPart>{' '}
+        <Trans>
+          <HeadingPart fontFamily="serif">Differentiation now</HeadingPart>{' '}
           <HeadingPart fontFamily="sans">
-            {i18n._(msg`lives in the code you own.`)}
+            lives in the code you own.
           </HeadingPart>
-        </>
+        </Trans>
       }
       bodyLayout="two-column-right"
       bodyParagraphs={[

@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { HeadingPart } from '@/design-system/components';
 import { getServerI18n } from '@/lib/i18n/server';
@@ -19,14 +20,14 @@ export function WhyTwentyOpportunityEditorial() {
       eyebrowColorScheme="secondary"
       eyebrow={i18n._(msg`The opportunity`)}
       heading={
-        <>
+        <Trans>
           <HeadingPart fontFamily="serif">
-            {i18n._(msg`Build it in an afternoon.`)}
+            Build it in an afternoon.
           </HeadingPart>{' '}
           <HeadingPart fontFamily="sans">
-            {i18n._(msg`AI made the gap that small.`)}
+            AI made the gap that small.
           </HeadingPart>
-        </>
+        </Trans>
       }
       bodyLayout="two-column-left"
       bodyParagraphs={[

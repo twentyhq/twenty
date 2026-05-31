@@ -1,4 +1,4 @@
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
@@ -9,7 +9,6 @@ import {
   Heading,
   HeadingPart,
 } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import { IllustrationCards } from '@/sections/ThreeCards';
 import { ThreeCardsIntro, ThreeCardsSection } from '@/templates/ThreeCards';
 import { theme } from '@/theme';
@@ -49,8 +48,6 @@ const bodyClassName = css`
 `;
 
 export function HomeIllustrationThreeCards() {
-  const i18n = getServerI18n();
-
   return (
     <ThreeCardsSection scheme="light">
       <ThreeCardsIntro align="left">
@@ -58,22 +55,25 @@ export function HomeIllustrationThreeCards() {
           <IntroHeader>
             <Eyebrow>
               <HeadingPart fontFamily="sans">
-                {i18n._(msg`Stop settling for trade-offs.`)}
+                <Trans>Stop settling for trade-offs.</Trans>
               </HeadingPart>
             </Eyebrow>
             <Heading className={headingClassName} size="lg" weight="light">
-              <HeadingPart fontFamily="serif">
-                {i18n._(msg`Assemble, iterate and adapt a robust CRM,`)}
-              </HeadingPart>{' '}
-              <HeadingPart fontFamily="sans">
-                {i18n._(msg`that's quick to flex`)}
-              </HeadingPart>
+              <Trans>
+                <HeadingPart fontFamily="serif">
+                  Assemble, iterate and adapt a robust CRM,
+                </HeadingPart>{' '}
+                <HeadingPart fontFamily="sans">
+                  that's quick to flex
+                </HeadingPart>
+              </Trans>
             </Heading>
           </IntroHeader>
           <Body className={bodyClassName} size="sm">
-            {i18n._(
-              msg`Compose your CRM and internal apps with a single extensibility toolkit.`,
-            )}
+            <Trans>
+              Compose your CRM and internal apps with a single extensibility
+              toolkit.
+            </Trans>
           </Body>
         </IntroContent>
       </ThreeCardsIntro>

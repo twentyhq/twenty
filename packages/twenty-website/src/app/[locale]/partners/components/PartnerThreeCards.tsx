@@ -1,8 +1,7 @@
-import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 
 import { PARTNER_ILLUSTRATION_CARDS } from '@/app/[locale]/partners/three-cards-illustration.data';
 import { Eyebrow, Heading, HeadingPart } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/server';
 import {
   IllustrationCards,
   type ThreeCardsScrollLayoutOptions,
@@ -18,23 +17,23 @@ const SCROLL_LAYOUT_OPTIONS: ThreeCardsScrollLayoutOptions = {
 };
 
 export function PartnerThreeCards() {
-  const i18n = getServerI18n();
-
   return (
     <ThreeCardsSection scheme="muted">
       <ThreeCardsIntro align="left">
         <Eyebrow>
           <HeadingPart fontFamily="sans">
-            {i18n._(msg`Which partner program is right for you?`)}
+            <Trans>Which partner program is right for you?</Trans>
           </HeadingPart>
         </Eyebrow>
         <Heading size="lg" weight="light">
-          <HeadingPart fontFamily="serif">
-            {i18n._(msg`Find the program that fits your business`)}
-          </HeadingPart>{' '}
-          <HeadingPart fontFamily="sans">
-            {i18n._(msg`and unlock new opportunities with Twenty`)}
-          </HeadingPart>
+          <Trans>
+            <HeadingPart fontFamily="serif">
+              Find the program that fits your business
+            </HeadingPart>{' '}
+            <HeadingPart fontFamily="sans">
+              and unlock new opportunities with Twenty
+            </HeadingPart>
+          </Trans>
         </Heading>
       </ThreeCardsIntro>
       <IllustrationCards
