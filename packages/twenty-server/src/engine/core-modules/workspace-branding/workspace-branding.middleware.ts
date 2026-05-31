@@ -1,5 +1,6 @@
 import { Injectable, type NestMiddleware } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type NextFunction, type Request, type Response } from 'express';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -10,6 +11,8 @@ import {
 } from './utils/is-static-asset-path.util';
 import { generateWorkspaceManifest } from './utils/generate-workspace-manifest.util';
 import { WorkspaceBrandingService } from './workspace-branding.service';
+
+const DEFAULT_FAVICON_PATH = '/branding/default-app-icon.svg';
 
 @Injectable()
 export class WorkspaceBrandingMiddleware implements NestMiddleware {
