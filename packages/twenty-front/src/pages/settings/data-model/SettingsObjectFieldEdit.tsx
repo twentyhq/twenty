@@ -50,7 +50,7 @@ import { getFieldMetadataItemInitialValues } from '~/pages/settings/data-model/u
 
 export type SettingsDataModelFieldEditFormValues = {
   icon: string;
-  type: SettingsFieldType;
+  type: FieldMetadataType;
   label: string;
   description?: string | null;
   isLabelSyncedWithName: boolean;
@@ -128,7 +128,7 @@ export const SettingsObjectFieldEdit = () => {
     resolver: zodResolver(settingsFieldFormSchema()),
     defaultValues: {
       icon: fieldMetadataItem?.icon ?? 'Icon',
-      type: fieldMetadataItem?.type as SettingsFieldType,
+      type: fieldMetadataItem?.type as FieldMetadataType,
       label: fieldMetadataItem?.label ?? '',
       description: fieldMetadataItem?.description,
       isLabelSyncedWithName: fieldMetadataItem?.isLabelSyncedWithName ?? true,
