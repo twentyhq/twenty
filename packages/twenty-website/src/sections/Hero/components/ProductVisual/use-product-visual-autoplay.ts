@@ -405,6 +405,7 @@ export function useProductVisualAutoplay(
 ) {
   const { externalScene, playbackEnabled = true } = options;
   const [streamedLength, setStreamedLength] = useState(0);
+  const [completedStepCount, setCompletedStepCount] = useState(0);
   const selectedOption =
     externalScene !== undefined
       ? Math.max(0, Math.min(externalScene, PRODUCT_VISUAL_SCENES.length - 1))
@@ -449,49 +450,93 @@ export function useProductVisualAutoplay(
 
   useEffect(() => {
     setStreamedLength(0);
+    setCompletedStepCount(0);
     selectPageItem(selectedScene.initialPageItemId);
 
     if (!playbackEnabled) {
       return undefined;
     }
 
-    if (fullTextVisibleLength === 0) {
-      return undefined;
-    }
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let streamInterval: ReturnType<typeof setInterval> | undefined;
+    let cancelled = false;
 
-    let index = 0;
-    let followUpPageSelected = false;
-
-    const interval = setInterval(() => {
-      index = Math.min(index + 1, fullTextVisibleLength);
-      setStreamedLength(index);
-
-      if (
-        playbackEnabled &&
-        !followUpPageSelected &&
-        selectedScene.followUpPageItemId &&
-        getStreamProgress(index, fullTextVisibleLength) >= 0.6
-      ) {
-        followUpPageSelected = true;
-        selectPageItem(selectedScene.followUpPageItemId);
+    const startStreaming = () => {
+      if (cancelled || fullTextVisibleLength === 0) {
+        return;
       }
 
-      if (index >= fullTextVisibleLength) {
-        clearInterval(interval);
-      }
-    }, 20);
+      let index = 0;
+      let followUpPageSelected = false;
 
-    return () => clearInterval(interval);
+      streamInterval = setInterval(() => {
+        index = Math.min(index + 1, fullTextVisibleLength);
+        setStreamedLength(index);
+
+        if (
+          !followUpPageSelected &&
+          selectedScene.followUpPageItemId &&
+          getStreamProgress(index, fullTextVisibleLength) >= 0.6
+        ) {
+          followUpPageSelected = true;
+          selectPageItem(selectedScene.followUpPageItemId);
+        }
+
+        if (index >= fullTextVisibleLength && streamInterval) {
+          clearInterval(streamInterval);
+        }
+      }, 20);
+    };
+
+    // Agentic preamble: play thinking + tool steps in sequence, then stream the answer.
+    const steps = selectedScene.steps ?? [];
+
+    const playStep = (stepIndex: number) => {
+      if (cancelled) {
+        return;
+      }
+
+      if (stepIndex >= steps.length) {
+        startStreaming();
+        return;
+      }
+
+      const timer = setTimeout(() => {
+        setCompletedStepCount(stepIndex + 1);
+        playStep(stepIndex + 1);
+      }, steps[stepIndex].durationMs);
+
+      timers.push(timer);
+    };
+
+    playStep(0);
+
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+
+      if (streamInterval) {
+        clearInterval(streamInterval);
+      }
+    };
   }, [fullTextVisibleLength, playbackEnabled, selectPageItem, selectedScene]);
+
+  const agentSteps = selectedScene.steps ?? [];
+  const preambleComplete = completedStepCount >= agentSteps.length;
+  const activeStepIndex = preambleComplete ? -1 : completedStepCount;
 
   return {
     activeItem,
     activeItemId,
     activeItemLabel,
+    activeStepIndex,
+    agentSteps,
+    completedStepCount,
     displayPage,
     favorites,
     highlightedItemId,
     openFolderIds,
+    preambleComplete,
     revealedObjectIds,
     selectPageItem,
     selectedScene,

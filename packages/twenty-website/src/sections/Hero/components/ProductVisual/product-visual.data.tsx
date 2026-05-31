@@ -330,6 +330,25 @@ export type ProductVisualSceneKind =
   | 'recordSummary'
   | 'workflowCreation';
 
+export type AgentToolIcon =
+  | 'search'
+  | 'filter'
+  | 'notes'
+  | 'tasks'
+  | 'record'
+  | 'workflow'
+  | 'mail';
+
+export type AgentStep =
+  | { kind: 'thinking'; durationMs: number }
+  | {
+      kind: 'tool';
+      icon: AgentToolIcon;
+      running: string;
+      done: string;
+      durationMs: number;
+    };
+
 export type ProductVisualSceneDefinition = {
   initialPageItemId: string;
   kind: ProductVisualSceneKind;
@@ -338,6 +357,7 @@ export type ProductVisualSceneDefinition = {
   responseText: string;
   sidebarMode?: 'collapsed' | 'expanded';
   followUpPageItemId?: string;
+  steps?: AgentStep[];
 };
 
 export const COMPANIES_PAGE_ITEM_ID = 'companies';
@@ -376,6 +396,23 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
       { name: 'Mailchimp', logoUrl: SHARED_COMPANY_LOGO_URLS.mailchimp },
     ],
     sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'filter',
+        running: 'Filtering deals by close date',
+        done: 'Filtered 7 deals',
+        durationMs: 1000,
+      },
+      {
+        kind: 'tool',
+        icon: 'record',
+        running: 'Saving the view',
+        done: 'Created the view',
+        durationMs: 800,
+      },
+    ],
   },
   {
     initialPageItemId: TASKS_PAGE_ITEM_ID,
@@ -397,6 +434,23 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
       { name: 'Google', logoUrl: SHARED_COMPANY_LOGO_URLS.google },
     ],
     sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'notes',
+        running: 'Reading notes on your top 10 accounts',
+        done: 'Read 10 accounts',
+        durationMs: 1100,
+      },
+      {
+        kind: 'tool',
+        icon: 'tasks',
+        running: 'Creating 10 follow-up tasks',
+        done: 'Created 10 tasks',
+        durationMs: 900,
+      },
+    ],
   },
   {
     initialPageItemId: COMPANIES_PAGE_ITEM_ID,
@@ -406,6 +460,23 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
       'Qonto has **3 notes** centered on a benefits-led pitch, **Q Global Holdings** as the parent account, and **1 active opportunity**. The latest follow-up is with **Alexandre Prot**, and the history points to customer-service and operations as the main buying angles.',
     responseChips: [{ name: 'Qonto', logoUrl: SHARED_COMPANY_LOGO_URLS.qonto }],
     sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'search',
+        running: 'Searching Qonto records',
+        done: 'Searched Qonto',
+        durationMs: 900,
+      },
+      {
+        kind: 'tool',
+        icon: 'notes',
+        running: 'Reading 3 notes',
+        done: 'Read 3 notes',
+        durationMs: 800,
+      },
+    ],
   },
   {
     initialPageItemId: WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID,
@@ -415,6 +486,23 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
       'Created and activated a sequence with a **Manual trigger**, an **Iterator**, and a **Send Email** step. It is ready to run now, and filters or email copy can be refined next.',
     responseChips: [],
     sidebarMode: 'collapsed',
+    steps: [
+      { kind: 'thinking', durationMs: 1200 },
+      {
+        kind: 'tool',
+        icon: 'workflow',
+        running: 'Designing the workflow',
+        done: 'Designed 3 steps',
+        durationMs: 1000,
+      },
+      {
+        kind: 'tool',
+        icon: 'mail',
+        running: 'Activating the sequence',
+        done: 'Activated sequence',
+        durationMs: 800,
+      },
+    ],
   },
 ];
 

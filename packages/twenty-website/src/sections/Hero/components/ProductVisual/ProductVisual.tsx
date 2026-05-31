@@ -1,6 +1,6 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useEffect, useRef, type ReactNode } from 'react';
 
 import { styled } from '@linaria/react';
 
@@ -16,6 +16,7 @@ import { WindowOrderProvider } from '@/sections/AppPreview/WindowOrder/WindowOrd
 import { theme } from '@/theme';
 
 import { ProductHeroCursor } from './ProductHeroCursor';
+import { ProductVisualAiSteps } from './ProductVisualAiSteps';
 import { ANTHROPIC_RECORD_PAGE } from './product-visual.data';
 import { useProductHeroCursorAutoplay } from './use-product-hero-cursor-autoplay';
 import { useProductVisualAutoplay } from './use-product-visual-autoplay';
@@ -325,6 +326,9 @@ export function ProductVisual({
     activeItem,
     activeItemId,
     activeItemLabel,
+    activeStepIndex,
+    agentSteps,
+    completedStepCount,
     displayPage,
     favorites,
     highlightedItemId,
@@ -340,6 +344,17 @@ export function ProductVisual({
     externalScene: activeScene,
     playbackEnabled,
   });
+
+  const aiMessagesRef = useRef<HTMLDivElement>(null);
+
+  // Keep the latest agent step / streamed text in view, like a real chat.
+  useEffect(() => {
+    const messages = aiMessagesRef.current;
+
+    if (messages) {
+      messages.scrollTop = messages.scrollHeight;
+    }
+  }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
   const heroCursor = useProductHeroCursorAutoplay(collaborative);
   const effectivePage =
@@ -415,8 +430,15 @@ export function ProductVisual({
                   </svg>
                 </AiHeaderBtn>
               </AiPanelHeader>
-              <AiMessages>
+              <AiMessages ref={aiMessagesRef}>
                 <UserMsg>{selectedScene.label}</UserMsg>
+                {agentSteps.length > 0 ? (
+                  <ProductVisualAiSteps
+                    activeStepIndex={activeStepIndex}
+                    completedStepCount={completedStepCount}
+                    steps={agentSteps}
+                  />
+                ) : null}
                 {streamedTextVisibleLength > 0 ? (
                   <>
                     <AiMsg>
@@ -444,9 +466,9 @@ export function ProductVisual({
                       </EntityChips>
                     ) : null}
                   </>
-                ) : (
+                ) : agentSteps.length === 0 ? (
                   <ThinkingText>Thinking...</ThinkingText>
-                )}
+                ) : null}
               </AiMessages>
               <AiInputArea>
                 <AiInputBox>
