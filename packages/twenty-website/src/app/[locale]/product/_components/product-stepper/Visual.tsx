@@ -71,7 +71,7 @@ export function Visual({
   activeStepIndex,
   stepVisuals,
 }: ProductStepperVisualProps) {
-  if (!stepVisuals || stepVisuals.length === 0) {
+  if (stepVisuals.length === 0) {
     return null;
   }
 
