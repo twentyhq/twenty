@@ -68,7 +68,6 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
           ? this.moduleRef.get(meta.customHandler)
           : new ColumnRotationSiteHandler(
               {
-                siteName: meta.siteName,
                 repository,
                 encryptedColumn,
                 isWorkspaceScoped: meta.isWorkspaceScoped,
@@ -140,6 +139,7 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
       );
 
       const { rotated, skipped, errors } = await handler.rotate({
+        siteName,
         currentEncryptionKeyId,
         batchSize: options.batchSize,
         dryRun: options.dryRun,

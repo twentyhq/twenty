@@ -5,7 +5,6 @@ import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
-import { SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-entries.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -29,9 +28,6 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ConnectionParametersRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName: string =
-    SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES.ConnectedAccountEntity
-      .columnSiteNames.connectionParameters.siteName;
   private readonly logger = new Logger(
     ConnectionParametersRotationHandler.name,
   );
@@ -53,6 +49,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
   }
 
   async rotate({
+    siteName,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -92,9 +89,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
               workspaceId: row.workspaceId,
             });
         } catch (error) {
-          this.logger.error(
-            buildRotationErrorMessage(this.siteName, row.id, error),
-          );
+          this.logger.error(buildRotationErrorMessage(siteName, row.id, error));
           outcome.errors += 1;
           continue;
         }
