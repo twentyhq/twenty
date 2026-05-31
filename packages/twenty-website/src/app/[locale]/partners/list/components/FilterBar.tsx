@@ -1,6 +1,7 @@
 'use client';
 
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { useLingui } from '@lingui/react';
 import { styled } from '@linaria/react';
 
@@ -94,13 +95,17 @@ export function FilterBar({
       />
       <Footer>
         <ResultCount aria-live="polite">
-          {hasAnyFilter
-            ? i18n._(msg`Showing ${visibleCount} of ${totalCount} partners`)
-            : i18n._(msg`Showing all ${totalCount} partners`)}
+          {hasAnyFilter ? (
+            <Trans>
+              Showing {visibleCount} of {totalCount} partners
+            </Trans>
+          ) : (
+            <Trans>Showing all {totalCount} partners</Trans>
+          )}
         </ResultCount>
         {hasAnyFilter && (
           <ClearFiltersButton onClick={onClearAll}>
-            {i18n._(msg`Clear filters`)}
+            <Trans>Clear filters</Trans>
           </ClearFiltersButton>
         )}
       </Footer>

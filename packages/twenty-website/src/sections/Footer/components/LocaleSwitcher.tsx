@@ -12,14 +12,14 @@ import {
 } from 'react';
 import { type AppLocale } from 'twenty-shared/translations';
 
-import { WEBSITE_LOCALE_LIST } from '@/lib/i18n/utils/app-locale-set';
-import { localizeHref } from '@/lib/i18n/utils/localize-href';
 import {
+  WEBSITE_LOCALE_LIST,
   getEnglishLocaleName,
   getNativeLocaleName,
-} from '@/lib/i18n/utils/locale-display-names';
-import { useLocale } from '@/lib/i18n/hooks/use-locale';
-import { useUnlocalizedPathname } from '@/lib/i18n/hooks/use-unlocalized-pathname';
+  localizeHref,
+  useLocale,
+  useUnlocalizedPathname,
+} from '@/lib/i18n';
 import { LocaleSwitcherDismissEffect } from '@/sections/Footer/effect-components/LocaleSwitcherDismissEffect';
 import { theme } from '@/theme';
 
