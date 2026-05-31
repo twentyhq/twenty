@@ -293,7 +293,10 @@ export const SettingsAdminWorkspaceDetail = () => {
                               e.stopPropagation();
                               handleImpersonate(userId, workspaceId!);
                             }}
-                            disabled={impersonatingUserId === userId}
+                            disabled={
+                              impersonatingUserId === userId ||
+                              currentUser?.id === userId
+                            }
                           />
                         )}
                       </TableCell>

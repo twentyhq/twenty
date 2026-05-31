@@ -63,6 +63,13 @@ export class ImpersonationService {
       );
     }
 
+    if (toImpersonateUserWorkspace.id === impersonatorUserWorkspace.id) {
+      throw new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      );
+    }
+
     const isServerLevelImpersonation =
       toImpersonateUserWorkspace.workspace.id !==
       impersonatorUserWorkspace.workspace.id;
