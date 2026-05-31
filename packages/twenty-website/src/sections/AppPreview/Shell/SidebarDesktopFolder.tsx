@@ -7,8 +7,11 @@ import type { SidebarFolderDef } from '../types';
 import { MiniIcon } from '../Shared/components/MiniIcon';
 import { renderPreviewIcon } from '../Shared/components/PreviewIcon';
 import { APP_FONT, COLORS } from '../Shared/utils/app-preview-theme';
-import { DesktopBranchLine, DesktopChildStack } from './SidebarDesktopItem';
-import { SidebarDesktopItem } from './SidebarDesktopItem';
+import {
+  DesktopBranchLine,
+  DesktopChildStack,
+  SidebarDesktopItem,
+} from './SidebarDesktopItem';
 
 const SIDEBAR_ACTIVE_BACKGROUND = 'rgba(0, 0, 0, 0.04)';
 

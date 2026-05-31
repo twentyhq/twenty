@@ -1,4 +1,3 @@
-import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
 import type { WorkflowBranchLabel as WorkflowBranchLabelDefinition } from './workflow-page-data';

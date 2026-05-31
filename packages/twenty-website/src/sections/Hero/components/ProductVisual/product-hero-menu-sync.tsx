@@ -9,11 +9,7 @@ import {
 } from 'react';
 
 import { Menu } from '@/sections/Menu/components';
-import type {
-  MenuNavItemType,
-  MenuScheme,
-  MenuSocialLinkType,
-} from '@/sections/Menu/types';
+import type { MenuScheme, MenuSocialLinkType } from '@/sections/Menu/types';
 
 type ProductHeroMenuContextValue = {
   setMorphProgress: (progress: number) => void;
@@ -43,39 +39,27 @@ const DARK_BG: [number, number, number] = [20, 20, 20];
 
 type ProductHeroMenuSyncProps = {
   children: ReactNode;
-  navItems: MenuNavItemType[];
   socialLinks: MenuSocialLinkType[];
 };
 
 export function ProductHeroMenuSync({
   children,
-  navItems,
   socialLinks,
 }: ProductHeroMenuSyncProps) {
   const [morphProgress, setMorphProgress] = useState(0);
 
   const menuBackgroundColor = lerpColor(LIGHT_BG, DARK_BG, morphProgress);
-  const menuScheme: MenuScheme =
-    morphProgress >= 0.5 ? 'secondary' : 'primary';
+  const menuScheme: MenuScheme = morphProgress >= 0.5 ? 'secondary' : 'primary';
 
-  const contextValue = useMemo(
-    () => ({ setMorphProgress }),
-    [],
-  );
+  const contextValue = useMemo(() => ({ setMorphProgress }), []);
 
   return (
     <ProductHeroMenuContext.Provider value={contextValue}>
-      <Menu.Root
+      <Menu
         backgroundColor={menuBackgroundColor}
-        navItems={navItems}
         scheme={menuScheme}
         socialLinks={socialLinks}
-      >
-        <Menu.Logo scheme={menuScheme} />
-        <Menu.Nav navItems={navItems} scheme={menuScheme} />
-        <Menu.Social scheme={menuScheme} socialLinks={socialLinks} />
-        <Menu.Cta scheme={menuScheme} />
-      </Menu.Root>
+      />
       {children}
     </ProductHeroMenuContext.Provider>
   );
