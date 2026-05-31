@@ -144,13 +144,11 @@ export function TileContent({ counter, spotlight, tile }: TileContentProps) {
           return (
             <BulletItem key={bulletIndex}>
               <BulletIconSlot aria-hidden>
-                {Icon ? (
-                  <Icon
-                    color="currentColor"
-                    size={16}
-                    strokeWidth={ICON_STROKE_WIDTH}
-                  />
-                ) : null}
+                <Icon
+                  color="currentColor"
+                  size={16}
+                  strokeWidth={ICON_STROKE_WIDTH}
+                />
               </BulletIconSlot>
               <Body
                 as="span"

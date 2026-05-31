@@ -104,7 +104,7 @@ export function TabButton({
     ? theme.colors.highlight[100]
     : theme.colors.secondary.text[100];
 
-  const Icon = INFORMATIVE_ICONS[tab.icon as keyof typeof INFORMATIVE_ICONS];
+  const Icon = INFORMATIVE_ICONS[tab.icon];
 
   return (
     <StyledButton
@@ -118,7 +118,7 @@ export function TabButton({
     >
       <Label>{i18n._(tab.body)}</Label>
       <TabIconBox data-active={String(isActive)}>
-        {Icon ? <Icon color={iconColor} size={16} /> : null}
+        <Icon color={iconColor} size={16} />
       </TabIconBox>
     </StyledButton>
   );

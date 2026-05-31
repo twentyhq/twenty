@@ -25,10 +25,7 @@ export type InformativeIconProps = {
   strokeWidth?: number;
 };
 
-export const INFORMATIVE_ICONS: Record<
-  string,
-  ComponentType<InformativeIconProps>
-> = {
+export const INFORMATIVE_ICONS = {
   book: BookIcon,
   check: CheckIcon,
   code: CodeIcon,
@@ -38,4 +35,6 @@ export const INFORMATIVE_ICONS: Record<
   search: SearchIcon,
   tag: TagIcon,
   users: UsersIcon,
-};
+} satisfies Record<string, ComponentType<InformativeIconProps>>;
+
+export type InformativeIconKey = keyof typeof INFORMATIVE_ICONS;

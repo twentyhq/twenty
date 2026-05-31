@@ -27,6 +27,7 @@ export {
   INFORMATIVE_ICONS,
   SearchIcon,
   UsersIcon,
+  type InformativeIconKey,
   type InformativeIconProps,
 } from './informative';
 export { Logo } from './logo/Logo';
