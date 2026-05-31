@@ -6,6 +6,7 @@ import { IconFolder, IconLink, useIcons } from 'twenty-ui/display';
 import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { ADD_TO_NAV_SOURCE_DROPPABLE_ID } from '@/navigation-menu-item/common/constants/AddToNavSourceDroppableId';
 import { addToNavPayloadRegistryState } from '@/navigation-menu-item/common/states/addToNavPayloadRegistryState';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/common/states/openNavigationMenuItemFolderIdsState';
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
@@ -52,6 +53,12 @@ export const useHandleAddToNavigationDrop = () => {
 
   const handleAddToNavigationDrop = useCallback(
     (result: NavigationMenuItemDropResult) => {
+      // Drag-to-add always targets the workspace sidebar; favorites are added
+      // by click only.
+      if (store.get(navigationMenuItemEditSectionState.atom) === 'favorite') {
+        return;
+      }
+
       const { source, destination, draggableId } = result;
       if (
         source.droppableId !== ADD_TO_NAV_SOURCE_DROPPABLE_ID ||
@@ -101,12 +108,7 @@ export const useHandleAddToNavigationDrop = () => {
 
       switch (payload.type) {
         case NavigationMenuItemType.FOLDER: {
-          const newFolderId = addFolderToDraft(
-            payload.name,
-            currentDraft,
-            null,
-            index,
-          );
+          const newFolderId = addFolderToDraft(payload.name, null, index);
           openEditForNewNavItem(newFolderId, {
             pageTitle: t`Edit folder`,
             pageIcon: IconFolder,
@@ -118,7 +120,6 @@ export const useHandleAddToNavigationDrop = () => {
           const newLinkId = addLinkToDraft(
             payload.name || t`Link label`,
             payload.link,
-            currentDraft,
             folderId,
             index,
           );
@@ -141,7 +142,6 @@ export const useHandleAddToNavigationDrop = () => {
           );
           const newItemId = addObjectToDraft({
             objectMetadataId: payload.objectMetadataId,
-            currentDraft,
             targetFolderId: folderId,
             targetIndex: index,
             color:
@@ -167,7 +167,6 @@ export const useHandleAddToNavigationDrop = () => {
             : undefined;
           const newItemId = addViewToDraft(
             payload.viewId,
-            currentDraft,
             folderId,
             index,
             viewObjectMetadataItem
@@ -189,7 +188,6 @@ export const useHandleAddToNavigationDrop = () => {
               label: payload.label,
               imageUrl: payload.imageUrl,
             },
-            currentDraft,
             folderId,
             index,
           );

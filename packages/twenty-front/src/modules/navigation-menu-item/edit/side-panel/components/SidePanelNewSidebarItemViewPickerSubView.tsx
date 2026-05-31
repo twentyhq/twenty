@@ -1,7 +1,7 @@
 import { ObjectIconWithViewOverlay } from '@/navigation-menu-item/display/view/components/ObjectIconWithViewOverlay';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { useAddViewToNavigationMenuDraft } from '@/navigation-menu-item/edit/view/hooks/useAddViewToNavigationMenuDraft';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { isViewDisplayableInNavigationMenu } from '@/navigation-menu-item/edit/side-panel/utils/isViewDisplayableInNavigationMenu';
@@ -33,7 +33,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const { getIcon } = useIcons();
   const [searchValue, setSearchValue] = useState('');
   const { addViewToDraft } = useAddViewToNavigationMenuDraft();
-  const { currentDraft } = useDraftNavigationMenuItems();
+  const { currentItems } = useNavigationMenuItemEditController();
   const [
     pendingInsertionNavigationMenuItem,
     setPendingInsertionNavigationMenuItem,
@@ -41,7 +41,7 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const { openNavigationMenuItemInSidePanel } =
     useOpenNavigationMenuItemInSidePanel();
   const { objectMetadataItems } = useObjectMetadataItems();
-  const { views } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  const { views } = useNavigationMenuObjectMetadataFromDraft(currentItems);
 
   const viewsForSelectedObject = views
     .filter(
@@ -76,7 +76,6 @@ export const SidePanelNewSidebarItemViewPickerSubView = ({
   const handleSelectView = (view: View) => {
     const itemId = addViewToDraft(
       view.id,
-      currentDraft,
       pendingInsertionNavigationMenuItem?.folderId ?? null,
       pendingInsertionNavigationMenuItem?.position,
       selectedObjectIconColor,

@@ -1,7 +1,6 @@
 import { Avatar, IconFolder, useIcons } from 'twenty-ui/display';
 
 import { useAddRecordToNavigationMenuDraft } from '@/navigation-menu-item/edit/record/hooks/useAddRecordToNavigationMenuDraft';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import type { AddToNavigationDragPayload } from '@/navigation-menu-item/common/types/add-to-navigation-drag-payload';
@@ -32,7 +31,6 @@ export const SidePanelNewSidebarItemRecordItem = ({
 }: SidePanelNewSidebarItemRecordItemProps) => {
   const { getIcon } = useIcons();
   const { addRecordToDraft } = useAddRecordToNavigationMenuDraft();
-  const { currentDraft } = useDraftNavigationMenuItems();
   const [
     pendingInsertionNavigationMenuItem,
     setPendingInsertionNavigationMenuItem,
@@ -60,7 +58,6 @@ export const SidePanelNewSidebarItemRecordItem = ({
         label: record.label,
         imageUrl: record.imageUrl,
       },
-      currentDraft,
       pendingInsertionNavigationMenuItem?.folderId ?? null,
       pendingInsertionNavigationMenuItem?.position,
     );

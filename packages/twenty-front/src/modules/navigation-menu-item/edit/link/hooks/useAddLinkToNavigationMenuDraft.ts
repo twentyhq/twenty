@@ -1,37 +1,32 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined, normalizeUrl } from 'twenty-shared/utils';
+import { normalizeUrl } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 export const useAddLinkToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
+  const { currentItems, targetUserWorkspaceId, applyCreate } =
+    useNavigationMenuItemEditController();
 
   const addLinkToDraft = (
     label: string,
     url: string,
-    currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
   ): string => {
     const normalizedUrl = normalizeUrl(url);
     const folderId = targetFolderId ?? null;
 
-    const itemsInFolder = currentDraft.filter(
-      (item) =>
-        (item.folderId ?? null) === folderId &&
-        !isDefined(item.userWorkspaceId),
+    const itemsInFolder = currentItems.filter(
+      (item) => (item.folderId ?? null) === folderId,
     );
     const index = targetIndex ?? itemsInFolder.length;
 
     const { flatIndex, position } = computeInsertIndexAndPosition(
-      currentDraft,
+      currentItems,
       folderId,
       index,
     );
@@ -46,7 +41,7 @@ export const useAddLinkToNavigationMenuDraft = () => {
       targetRecordId: undefined,
       folderId: folderId ?? undefined,
       position,
-      userWorkspaceId: undefined,
+      userWorkspaceId: targetUserWorkspaceId,
       name: label.trim() || 'Link',
       link: normalizedUrl,
       color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
@@ -55,12 +50,7 @@ export const useAddLinkToNavigationMenuDraft = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    const newDraft = [
-      ...currentDraft.slice(0, flatIndex),
-      newItem,
-      ...currentDraft.slice(flatIndex),
-    ];
-    setNavigationMenuItemsDraft(newDraft);
+    void applyCreate(newItem, flatIndex);
     return newItemId;
   };
 

@@ -1,35 +1,29 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorFolder';
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 export const useAddFolderToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
+  const { currentItems, targetUserWorkspaceId, applyCreate } =
+    useNavigationMenuItemEditController();
 
   const addFolderToDraft = (
     name: string,
-    currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
   ): string => {
     const folderId = targetFolderId ?? null;
 
-    const itemsInFolder = currentDraft.filter(
-      (item) =>
-        (item.folderId ?? null) === folderId &&
-        !isDefined(item.userWorkspaceId),
+    const itemsInFolder = currentItems.filter(
+      (item) => (item.folderId ?? null) === folderId,
     );
     const index = targetIndex ?? itemsInFolder.length;
 
     const { flatIndex, position } = computeInsertIndexAndPosition(
-      currentDraft,
+      currentItems,
       folderId,
       index,
     );
@@ -44,7 +38,7 @@ export const useAddFolderToNavigationMenuDraft = () => {
       targetRecordId: undefined,
       folderId: folderId ?? undefined,
       position,
-      userWorkspaceId: undefined,
+      userWorkspaceId: targetUserWorkspaceId,
       name: name.trim(),
       color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
       applicationId: undefined,
@@ -52,12 +46,7 @@ export const useAddFolderToNavigationMenuDraft = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    const newDraft = [
-      ...currentDraft.slice(0, flatIndex),
-      newItem,
-      ...currentDraft.slice(flatIndex),
-    ];
-    setNavigationMenuItemsDraft(newDraft);
+    void applyCreate(newItem, flatIndex);
     return newItemId;
   };
 

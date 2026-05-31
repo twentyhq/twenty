@@ -1,43 +1,36 @@
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 export type AddObjectToNavigationMenuDraftParams = {
   objectMetadataId: string;
-  currentDraft: NavigationMenuItem[];
   targetFolderId?: string | null;
   targetIndex?: number;
   color?: string | null;
 };
 
 export const useAddObjectToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
+  const { currentItems, targetUserWorkspaceId, applyCreate } =
+    useNavigationMenuItemEditController();
 
   const addObjectToDraft = ({
     objectMetadataId,
-    currentDraft,
     targetFolderId,
     targetIndex,
     color,
   }: AddObjectToNavigationMenuDraftParams): string => {
     const folderId = targetFolderId ?? null;
 
-    const itemsInFolder = currentDraft.filter(
-      (item) =>
-        (item.folderId ?? null) === folderId &&
-        !isDefined(item.userWorkspaceId),
+    const itemsInFolder = currentItems.filter(
+      (item) => (item.folderId ?? null) === folderId,
     );
     const index = targetIndex ?? itemsInFolder.length;
 
     const { flatIndex, position } = computeInsertIndexAndPosition(
-      currentDraft,
+      currentItems,
       folderId,
       index,
     );
@@ -50,7 +43,7 @@ export const useAddObjectToNavigationMenuDraft = () => {
       viewId: undefined,
       targetObjectMetadataId: objectMetadataId,
       position,
-      userWorkspaceId: undefined,
+      userWorkspaceId: targetUserWorkspaceId,
       targetRecordId: undefined,
       folderId: folderId ?? undefined,
       name: undefined,
@@ -60,12 +53,7 @@ export const useAddObjectToNavigationMenuDraft = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    const newDraft = [
-      ...currentDraft.slice(0, flatIndex),
-      newItem,
-      ...currentDraft.slice(flatIndex),
-    ];
-    setNavigationMenuItemsDraft(newDraft);
+    void applyCreate(newItem, flatIndex);
     return newItemId;
   };
 

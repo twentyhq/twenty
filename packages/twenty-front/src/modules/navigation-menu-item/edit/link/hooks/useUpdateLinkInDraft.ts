@@ -1,32 +1,22 @@
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { isNavigationMenuItemLink } from '@/navigation-menu-item/common/utils/isNavigationMenuItemLink';
+import { type NavigationMenuItem } from '~/generated-metadata/graphql';
+
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 export const useUpdateLinkInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
+  const { applyUpdate } = useNavigationMenuItemEditController();
 
   const updateLinkInDraft = (
     linkId: string,
     updates: { name?: string; link?: string },
   ) => {
-    setNavigationMenuItemsDraft((draft) => {
-      if (!draft) return draft;
-
-      return draft.map((item) => {
-        if (item.id !== linkId || !isNavigationMenuItemLink(item)) return item;
-
-        const updated = { ...item };
-        if (updates.name !== undefined) {
-          updated.name = updates.name.trim() || 'Link';
-        }
-        if (updates.link !== undefined && updates.link.trim() !== '') {
-          updated.link = updates.link.trim();
-        }
-        return updated;
-      });
-    });
+    const normalizedUpdates: Partial<NavigationMenuItem> = {};
+    if (updates.name !== undefined) {
+      normalizedUpdates.name = updates.name.trim() || 'Link';
+    }
+    if (updates.link !== undefined && updates.link.trim() !== '') {
+      normalizedUpdates.link = updates.link.trim();
+    }
+    void applyUpdate(linkId, normalizedUpdates);
   };
 
   return { updateLinkInDraft };

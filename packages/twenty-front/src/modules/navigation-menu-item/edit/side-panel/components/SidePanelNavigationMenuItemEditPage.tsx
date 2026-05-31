@@ -1,7 +1,7 @@
 import { CommandMenuItem } from '@/command-menu/components/CommandMenuItem';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
 import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsAllFolders';
-import { useNavigationMenuItemsDraftState } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemsDraftState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 
@@ -66,7 +66,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
   } = useNavigationMenuItemEditOrganizeActions();
 
   const { updateLinkInDraft } = useUpdateLinkInDraft();
-  const { workspaceNavigationMenuItems } = useNavigationMenuItemsDraftState();
+  const { currentItems } = useNavigationMenuItemEditController();
   const setPendingInsertionNavigationMenuItem = useSetAtomState(
     pendingInsertionNavigationMenuItemState,
   );
@@ -83,7 +83,7 @@ export const SidePanelNavigationMenuItemEditPage = () => {
     if (!selectedItem || selectedItem.type !== NavigationMenuItemType.FOLDER) {
       return;
     }
-    const folderItemCount = workspaceNavigationMenuItems.filter(
+    const folderItemCount = currentItems.filter(
       (item) => item.folderId === selectedItem.id,
     ).length;
     setPendingInsertionNavigationMenuItem({

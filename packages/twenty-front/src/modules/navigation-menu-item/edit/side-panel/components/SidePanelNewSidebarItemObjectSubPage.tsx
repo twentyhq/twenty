@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
-import { useDraftNavigationMenuItems } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItems';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useNavigationMenuObjectMetadataFromDraft } from '@/navigation-menu-item/edit/hooks/useNavigationMenuObjectMetadataFromDraft';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
@@ -22,7 +22,7 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
   const { getIcon } = useIcons();
   const [objectSearchInput, setObjectSearchInput] = useState('');
 
-  const { currentDraft } = useDraftNavigationMenuItems();
+  const { currentItems } = useNavigationMenuItemEditController();
   const { objectMetadataItems } = useObjectMetadataItems();
   const { addObjectToDraft } = useAddObjectToNavigationMenuDraft();
   const { openNavigationMenuItemInSidePanel } =
@@ -37,7 +37,7 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
     views,
     objectMetadataIdsWithIndexView,
     objectMetadataIdsInWorkspace,
-  } = useNavigationMenuObjectMetadataFromDraft(currentDraft);
+  } = useNavigationMenuObjectMetadataFromDraft(currentItems);
 
   const objectMetadataIdsWithDisplayableViews = new Set(
     views
@@ -61,7 +61,6 @@ export const SidePanelNewSidebarItemObjectSubPage = () => {
     }
     const itemId = addObjectToDraft({
       objectMetadataId: objectMetadataItem.id,
-      currentDraft,
       targetFolderId: pendingInsertionNavigationMenuItem?.folderId,
       targetIndex: pendingInsertionNavigationMenuItem?.position,
       color: getObjectColorWithFallback(objectMetadataItem),

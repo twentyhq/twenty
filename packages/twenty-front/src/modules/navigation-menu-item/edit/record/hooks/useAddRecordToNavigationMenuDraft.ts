@@ -1,13 +1,12 @@
-import { v4 } from 'uuid';
 import { NavigationMenuItemType } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 import type { NavigationMenuItem } from '~/generated-metadata/graphql';
 
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { computeInsertIndexAndPosition } from '@/navigation-menu-item/common/utils/computeInsertIndexAndPosition';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 type SearchRecord = {
   recordId: string;
@@ -21,14 +20,12 @@ type SearchRecordWithOptionalMetadataId = SearchRecord & {
 };
 
 export const useAddRecordToNavigationMenuDraft = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
+  const { currentItems, targetUserWorkspaceId, applyCreate } =
+    useNavigationMenuItemEditController();
   const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
 
   const addRecordToDraft = (
     searchRecord: SearchRecordWithOptionalMetadataId,
-    currentDraft: NavigationMenuItem[],
     targetFolderId?: string | null,
     targetIndex?: number,
   ): string | undefined => {
@@ -44,15 +41,13 @@ export const useAddRecordToNavigationMenuDraft = () => {
 
     const folderId = targetFolderId ?? null;
 
-    const itemsInFolder = currentDraft.filter(
-      (item) =>
-        (item.folderId ?? null) === folderId &&
-        !isDefined(item.userWorkspaceId),
+    const itemsInFolder = currentItems.filter(
+      (item) => (item.folderId ?? null) === folderId,
     );
     const index = targetIndex ?? itemsInFolder.length;
 
     const { flatIndex, position } = computeInsertIndexAndPosition(
-      currentDraft,
+      currentItems,
       folderId,
       index,
     );
@@ -71,7 +66,7 @@ export const useAddRecordToNavigationMenuDraft = () => {
         imageIdentifier: searchRecord.imageUrl ?? null,
       },
       position,
-      userWorkspaceId: undefined,
+      userWorkspaceId: targetUserWorkspaceId,
       folderId: folderId ?? undefined,
       name: undefined,
       applicationId: undefined,
@@ -79,12 +74,7 @@ export const useAddRecordToNavigationMenuDraft = () => {
       updatedAt: new Date().toISOString(),
     };
 
-    const newDraft = [
-      ...currentDraft.slice(0, flatIndex),
-      newItem,
-      ...currentDraft.slice(flatIndex),
-    ];
-    setNavigationMenuItemsDraft(newDraft);
+    void applyCreate(newItem, flatIndex);
     return newItemId;
   };
 

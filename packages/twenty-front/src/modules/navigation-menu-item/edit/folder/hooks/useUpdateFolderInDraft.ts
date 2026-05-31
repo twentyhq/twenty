@@ -1,6 +1,4 @@
-import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
-import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
-import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
 export type UpdateFolderInDraftUpdates = {
   name?: string;
@@ -8,24 +6,13 @@ export type UpdateFolderInDraftUpdates = {
 };
 
 export const useUpdateFolderInDraft = () => {
-  const setNavigationMenuItemsDraft = useSetAtomState(
-    navigationMenuItemsDraftState,
-  );
+  const { applyUpdate } = useNavigationMenuItemEditController();
 
   const updateFolderInDraft = (
     folderId: string,
     updates: UpdateFolderInDraftUpdates,
   ) => {
-    setNavigationMenuItemsDraft((draft) => {
-      if (!draft) return draft;
-
-      return draft.map((item) => {
-        if (!isNavigationMenuItemFolder(item) || item.id !== folderId) {
-          return item;
-        }
-        return { ...item, ...updates };
-      });
-    });
+    void applyUpdate(folderId, updates);
   };
 
   return { updateFolderInDraft };

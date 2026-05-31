@@ -1,9 +1,11 @@
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { isValidObjectNavigationMenuItem } from '@/navigation-menu-item/common/utils/isValidObjectNavigationMenuItem';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { useUpdateNavigationMenuItemInDraft } from '@/navigation-menu-item/edit/hooks/useUpdateNavigationMenuItemInDraft';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -37,6 +39,7 @@ export const SidePanelEditColorOption = ({
   const { closeDropdown } = useCloseDropdown();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
+  const section = useAtomStateValue(navigationMenuItemEditSectionState);
 
   const themeColor = color ?? 'gray';
   const colorLabel = DEFAULT_COLOR_LABELS[themeColor] ?? capitalize(themeColor);
@@ -46,7 +49,9 @@ export const SidePanelEditColorOption = ({
       color: selectedColor,
     });
 
-    if (isValidObjectNavigationMenuItem(selectedItem)) {
+    // A personal favorite's color is item-local; only workspace customization
+    // recolors the shared object metadata.
+    if (section === 'workspace' && isValidObjectNavigationMenuItem(selectedItem)) {
       updateInDraft('objectMetadataItems', [
         {
           id: selectedItem.targetObjectMetadataId,
