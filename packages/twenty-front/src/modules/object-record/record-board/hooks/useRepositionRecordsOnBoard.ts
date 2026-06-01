@@ -15,9 +15,6 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { sortByProperty } from '~/utils/array/sortByProperty';
 
-// Reorders loaded board columns in place for position/group changes. Returns
-// false when the event cannot be safely mapped to the currently loaded board
-// window, so the caller can fall back to a full re-query.
 export const useRepositionRecordsOnBoard = () => {
   const store = useStore();
   const { upsertRecordsInStore } = useUpsertRecordsInStore();
@@ -68,10 +65,7 @@ export const useRepositionRecordsOnBoard = () => {
           Object.assign(updatedFields, updatedField);
         }
 
-        // Source column is read from current column membership, not the record's
-        // group field. Own optimistic updates may already have changed the stored
-        // record to the target group by the time the SSE event is applied.
-        const sourceRecordGroup = recordGroupDefinitions.find(
+        const sourceRecordGroupFromBoard = recordGroupDefinitions.find(
           (recordGroupDefinition) =>
             store
               .get(
@@ -82,7 +76,7 @@ export const useRepositionRecordsOnBoard = () => {
               .includes(recordId),
         );
 
-        if (!isDefined(sourceRecordGroup)) {
+        if (!isDefined(sourceRecordGroupFromBoard)) {
           return false;
         }
 
@@ -92,7 +86,11 @@ export const useRepositionRecordsOnBoard = () => {
                 (recordGroupDefinition) =>
                   recordGroupDefinition.value === updatedFields[groupFieldName],
               )
-            : sourceRecordGroup;
+            : sourceRecordGroupFromBoard;
+
+        if (!isDefined(targetRecordGroup)) {
+          return false;
+        }
 
         upsertRecordsInStore({
           partialRecords: [
@@ -104,34 +102,36 @@ export const useRepositionRecordsOnBoard = () => {
           ],
         });
 
-        if (sourceRecordGroup.id !== targetRecordGroup?.id) {
+        if (sourceRecordGroupFromBoard.id !== targetRecordGroup.id) {
           const sourceRecordIds = store.get(
-            recordIndexRecordIdsByGroupCallbackState(sourceRecordGroup.id),
+            recordIndexRecordIdsByGroupCallbackState(
+              sourceRecordGroupFromBoard.id,
+            ),
           );
 
           store.set(
-            recordIndexRecordIdsByGroupCallbackState(sourceRecordGroup.id),
+            recordIndexRecordIdsByGroupCallbackState(
+              sourceRecordGroupFromBoard.id,
+            ),
             sourceRecordIds.filter((id) => id !== recordId),
           );
         }
 
-        if (isDefined(targetRecordGroup)) {
-          const targetRecordIdsWithoutRecord = store
-            .get(recordIndexRecordIdsByGroupCallbackState(targetRecordGroup.id))
-            .filter((id) => id !== recordId);
+        const targetRecordIdsWithoutRecord = store
+          .get(recordIndexRecordIdsByGroupCallbackState(targetRecordGroup.id))
+          .filter((id) => id !== recordId);
 
-          const targetRecordsWithPositions = extractRecordPositions(
-            [...targetRecordIdsWithoutRecord, recordId],
-            store,
-          );
+        const targetRecordsWithPositions = extractRecordPositions(
+          [...targetRecordIdsWithoutRecord, recordId],
+          store,
+        );
 
-          targetRecordsWithPositions.sort(sortByProperty('position', 'asc'));
+        targetRecordsWithPositions.sort(sortByProperty('position', 'asc'));
 
-          store.set(
-            recordIndexRecordIdsByGroupCallbackState(targetRecordGroup.id),
-            targetRecordsWithPositions.map((record) => record.id),
-          );
-        }
+        store.set(
+          recordIndexRecordIdsByGroupCallbackState(targetRecordGroup.id),
+          targetRecordsWithPositions.map((record) => record.id),
+        );
       }
 
       return true;

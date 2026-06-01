@@ -20,7 +20,7 @@ import { isDefined } from 'twenty-shared/utils';
 export const RecordBoardDataChangedEffect = () => {
   const store = useStore();
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
-  const { triggerRecordBoardInitialQuery } =
+  const { triggerRecordBoardInitialQueryWithoutScrollReset } =
     useTriggerRecordBoardInitialQuery();
   const { getRecordBoardEffectsForUpdateInputs } =
     useGetRecordBoardEffectsForUpdateInputs();
@@ -59,20 +59,20 @@ export const RecordBoardDataChangedEffect = () => {
               getRecordBoardEffectsForUpdateInputs(updateInputs);
 
             if (shouldTriggerInitialQuery) {
-              triggerRecordBoardInitialQuery({ preserveScroll: true });
+              triggerRecordBoardInitialQueryWithoutScrollReset();
             } else if (shouldRepositionRecords) {
               const allRecordsRepositioned =
                 repositionRecordsOnBoard(updateInputs);
 
               if (!allRecordsRepositioned) {
-                triggerRecordBoardInitialQuery({ preserveScroll: true });
+                triggerRecordBoardInitialQueryWithoutScrollReset();
               }
             }
           }
           break;
         case 'create-one': {
           if (objectRecordOperation.createdRecord.position === 'first') {
-            triggerRecordBoardInitialQuery({ preserveScroll: true });
+            triggerRecordBoardInitialQueryWithoutScrollReset();
           } else {
             const createdRecordPosition =
               objectRecordOperation.createdRecord.position;
@@ -115,7 +115,7 @@ export const RecordBoardDataChangedEffect = () => {
             const groupIsEmpty = recordIdsWithoutCreatedRecord.length === 0;
 
             if (groupIsEmpty) {
-              triggerRecordBoardInitialQuery({ preserveScroll: true });
+              triggerRecordBoardInitialQueryWithoutScrollReset();
               return;
             }
 
@@ -131,7 +131,7 @@ export const RecordBoardDataChangedEffect = () => {
             if (
               createdRecordPosition < (firstExistingRecordInGroup.position ?? 0)
             ) {
-              triggerRecordBoardInitialQuery({ preserveScroll: true });
+              triggerRecordBoardInitialQueryWithoutScrollReset();
             }
           }
           break;
@@ -157,13 +157,13 @@ export const RecordBoardDataChangedEffect = () => {
           return;
         }
         default: {
-          triggerRecordBoardInitialQuery({ preserveScroll: true });
+          triggerRecordBoardInitialQueryWithoutScrollReset();
         }
       }
     },
     [
       store,
-      triggerRecordBoardInitialQuery,
+      triggerRecordBoardInitialQueryWithoutScrollReset,
       getRecordBoardEffectsForUpdateInputs,
       repositionRecordsOnBoard,
       recordIndexGroupFieldMetadataItem,
