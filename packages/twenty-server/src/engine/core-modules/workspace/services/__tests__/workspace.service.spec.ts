@@ -30,6 +30,7 @@ import { CoreEntityCacheService } from 'src/engine/core-entity-cache/services/co
 import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage/workspace-cache-storage.service';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { SeedOnboardingPrivateViewService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/seed-onboarding-private-view.service';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreInstalledAppsService } from 'src/engine/core-modules/application/pre-installed-apps/pre-installed-apps.service';
 import { SdkClientGenerationService } from 'src/engine/core-modules/sdk-client/sdk-client-generation.service';
@@ -101,6 +102,7 @@ describe('WorkspaceService', () => {
           PreInstalledAppsService,
           SdkClientGenerationService,
           PrefillLogicFunctionService,
+          SeedOnboardingPrivateViewService,
           WorkspaceMigrationValidateBuildAndRunService,
           UpgradeMigrationService,
           UpgradeSequenceReaderService,

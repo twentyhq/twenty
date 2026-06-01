@@ -11,6 +11,15 @@ export const prefillCompanies = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
+  const workspaceMember = await entityManager
+    .createQueryBuilder()
+    .select('id')
+    .from(`${schemaName}.workspaceMember`, 'workspaceMember')
+    .limit(1)
+    .getRawOne();
+
+  const accountOwnerId = workspaceMember?.id ?? null;
+
   await entityManager
     .createQueryBuilder()
     .insert()
@@ -26,6 +35,7 @@ export const prefillCompanies = async (
       'addressAddressCountry',
       'employees',
       'position',
+      'accountOwnerId',
       'createdBySource',
       'createdByWorkspaceMemberId',
       'createdByName',
@@ -47,6 +57,7 @@ export const prefillCompanies = async (
         addressAddressCountry: 'United States',
         employees: 5000,
         position: 1,
+        accountOwnerId,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
@@ -66,6 +77,7 @@ export const prefillCompanies = async (
         addressAddressCountry: 'United States',
         employees: 1100,
         position: 2,
+        accountOwnerId,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
@@ -85,6 +97,7 @@ export const prefillCompanies = async (
         addressAddressCountry: 'Ireland',
         employees: 8000,
         position: 3,
+        accountOwnerId,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
@@ -104,6 +117,7 @@ export const prefillCompanies = async (
         addressAddressCountry: 'United States',
         employees: 800,
         position: 4,
+        accountOwnerId,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',
@@ -123,6 +137,7 @@ export const prefillCompanies = async (
         addressAddressCountry: 'United States',
         employees: 400,
         position: 5,
+        accountOwnerId,
         createdBySource: FieldActorSource.SYSTEM,
         createdByWorkspaceMemberId: null,
         createdByName: 'System',

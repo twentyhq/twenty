@@ -62,16 +62,13 @@ export const AdvancedFilterRelationTargetFieldSelectMenu = ({
       ? sourceFieldMetadataItem.relation.targetObjectMetadata.id
       : null;
 
-  const { filterableFieldMetadataItems: allTargetFields } =
+  // A many-to-one relation can be selected as a filter leaf: it filters by the
+  // relation's foreign key (e.g. company.accountOwnerId = X), a single-hop
+  // equality the backend resolves on the already-joined table. Selecting one
+  // does not drill further into the related object, so no multi-hop traversal
+  // is composed here.
+  const { filterableFieldMetadataItems: relationTargetFields } =
     useFilterableFieldMetadataItems(targetObjectMetadataId ?? '');
-
-  // The backend supports a single hop only. Exclude many-to-one relations
-  // from the target list so the user can't compose multi-hop traversals
-  // (e.g. Person → Company → ParentCompany) that the dispatcher would
-  // collapse back to a filter-by-id on the intermediate relation.
-  const relationTargetFields = allTargetFields.filter(
-    (field) => !isManyToOneRelationField(field),
-  );
 
   if (
     !isDefined(sourceFieldMetadataItem) ||

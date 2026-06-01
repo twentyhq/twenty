@@ -65,6 +65,7 @@ import { WorkspaceCacheStorageService } from 'src/engine/workspace-cache-storage
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
 import { WorkspaceDataSourceService } from 'src/engine/workspace-datasource/workspace-datasource.service';
 import { PrefillLogicFunctionService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/prefill-logic-function.service';
+import { SeedOnboardingPrivateViewService } from 'src/engine/workspace-manager/standard-objects-prefill-data/services/seed-onboarding-private-view.service';
 import { prefillCompanies } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-companies.util';
 import { prefillDashboards } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-dashboards.util';
 import { prefillOpportunities } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-opportunities.util';
@@ -122,6 +123,7 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
     private readonly userWorkspaceService: UserWorkspaceService,
     private readonly twentyConfigService: TwentyConfigService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
+    private readonly seedOnboardingPrivateViewService: SeedOnboardingPrivateViewService,
     private readonly permissionsService: PermissionsService,
     private readonly dnsManagerService: DnsManagerService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
@@ -370,6 +372,26 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       workspaceId: workspace.id,
       schemaName: getWorkspaceSchemaName(workspace.id),
     });
+
+    // Seed a private onboarding kanban for the workspace creator. Best-effort:
+    // a failure here must never block workspace activation.
+    try {
+      const userWorkspace = await this.userWorkspaceRepository.findOneByOrFail({
+        userId: user.id,
+        workspaceId: workspace.id,
+      });
+
+      await this.seedOnboardingPrivateViewService.seedForWorkspace({
+        workspaceId: workspace.id,
+        createdByUserWorkspaceId: userWorkspace.id,
+      });
+    } catch (error) {
+      this.logger.error(
+        `failed to seed onboarding private view for workspace ${workspace.id}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
+    }
 
     await this.activateAndInitializeUpgradeState({
       workspaceId: workspace.id,
