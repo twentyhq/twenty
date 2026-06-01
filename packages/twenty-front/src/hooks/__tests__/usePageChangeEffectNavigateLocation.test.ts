@@ -15,6 +15,11 @@ import { usePageChangeEffectNavigateLocation } from '~/hooks/usePageChangeEffect
 import { UNTESTED_APP_PATHS } from '~/testing/constants/UntestedAppPaths';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
+jest.mock('~/config', () => ({
+  __esModule: true,
+  REACT_APP_SHAHRYAR_MODE: false,
+}));
+
 jest.mock('@/onboarding/hooks/useOnboardingStatus');
 const setupMockOnboardingStatus = (
   onboardingStatus: OnboardingStatus | undefined,

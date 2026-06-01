@@ -6,6 +6,7 @@ import { motion } from 'framer-motion';
 import { Controller, useFormContext } from 'react-hook-form';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 const StyledFullWidthMotionDiv = styled(motion.div)`
   width: 100%;
@@ -45,10 +46,10 @@ export const SignInUpEmailField = ({
           <StyledInputContainer>
             <SettingsTextInput
               instanceId="sign-in-up-email"
-              autoComplete="email"
+              autoComplete={REACT_APP_SHAHRYAR_MODE ? 'username' : 'email'}
               autoFocus
               value={value}
-              placeholder={t`Email`}
+              placeholder={REACT_APP_SHAHRYAR_MODE ? t`Username` : t`Email`}
               onBlur={onBlur}
               onChange={(email: string) => {
                 if (isDefined(onInputChange)) onInputChange(email);

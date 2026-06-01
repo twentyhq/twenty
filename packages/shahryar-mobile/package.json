@@ -1,0 +1,29 @@
+{
+  "name": "shahryar-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "main": "App.tsx",
+  "scripts": {
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "start": "expo start",
+    "test": "tsx src/sync/__tests__/mobileSyncQueue.test.ts && tsx src/api/__tests__/shahryarMobileApi.test.ts && tsx src/services/__tests__/visitPhotoPath.test.ts",
+    "typecheck": "tsgo -p tsconfig.json"
+  },
+  "dependencies": {
+    "@expo/vector-icons": "^15.0.3",
+    "expo": "~54.0.0",
+    "expo-camera": "~17.0.9",
+    "expo-file-system": "~19.0.17",
+    "expo-location": "~19.0.7",
+    "expo-notifications": "~0.32.13",
+    "expo-sqlite": "~16.0.9",
+    "react": "19.1.0",
+    "react-native": "0.81.4",
+    "twenty-shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^18.2.39"
+  }
+}

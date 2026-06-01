@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Shahryar OPS",
+    "slug": "shahryar-ops",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "shahryar",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.shahryar.ops"
+    },
+    "android": {
+      "package": "com.shahryar.ops",
+      "permissions": [
+        "ACCESS_COARSE_LOCATION",
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "POST_NOTIFICATIONS"
+      ]
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Shahryar OPS needs camera access to attach market and visit photos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Shahryar OPS records supervisor check-in GPS for assigned visits."
+        }
+      ],
+      "expo-notifications",
+      "expo-sqlite"
+    ],
+    "extra": {
+      "apiBaseUrl": "http://localhost:3000"
+    }
+  }
+}

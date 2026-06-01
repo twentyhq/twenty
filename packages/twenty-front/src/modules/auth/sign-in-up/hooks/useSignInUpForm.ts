@@ -13,15 +13,21 @@ import { PASSWORD_REGEX } from '@/auth/utils/passwordRegex';
 import { isDeveloperDefaultSignInPrefilledState } from '@/client-config/states/isDeveloperDefaultSignInPrefilledState';
 import { isDefined } from 'twenty-shared/utils';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 const makeValidationSchema = (signInUpStep: SignInUpStep) =>
   z
     .object({
       exist: z.boolean(),
-      email: z
-        .string()
-        .trim()
-        .pipe(z.email({ error: t`Email must be a valid email` })),
+      email: REACT_APP_SHAHRYAR_MODE
+        ? z
+            .string()
+            .trim()
+            .min(1, t`Username is required`)
+        : z
+            .string()
+            .trim()
+            .pipe(z.email({ error: t`Email must be a valid email` })),
       password:
         signInUpStep === SignInUpStep.Password
           ? z

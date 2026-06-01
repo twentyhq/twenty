@@ -26,6 +26,8 @@
         "{projectRoot}/logic-function/dist",
         "{projectRoot}/metadata/package.json",
         "{projectRoot}/metadata/dist",
+        "{projectRoot}/shahryar/package.json",
+        "{projectRoot}/shahryar/dist",
         "{projectRoot}/testing/package.json",
         "{projectRoot}/testing/dist",
         "{projectRoot}/translations/package.json",

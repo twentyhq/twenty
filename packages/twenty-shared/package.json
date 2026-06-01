@@ -100,6 +100,11 @@
       "import": "./dist/metadata.mjs",
       "require": "./dist/metadata.cjs"
     },
+    "./shahryar": {
+      "types": "./dist/shahryar/index.d.ts",
+      "import": "./dist/shahryar.mjs",
+      "require": "./dist/shahryar.cjs"
+    },
     "./testing": {
       "types": "./dist/testing/index.d.ts",
       "import": "./dist/testing.mjs",
@@ -145,6 +150,7 @@
     "i18n",
     "logic-function",
     "metadata",
+    "shahryar",
     "testing",
     "translations",
     "types",
@@ -175,6 +181,9 @@
       ],
       "metadata": [
         "dist/metadata/index.d.ts"
+      ],
+      "shahryar": [
+        "dist/shahryar/index.d.ts"
       ],
       "testing": [
         "dist/testing/index.d.ts"

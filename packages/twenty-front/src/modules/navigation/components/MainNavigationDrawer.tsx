@@ -10,6 +10,7 @@ import { navigationDrawerActiveTabState } from '@/ui/navigation/states/navigatio
 import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerTabs';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const navigationDrawerActiveTab = useAtomStateValue(
@@ -19,16 +20,21 @@ export const MainNavigationDrawer = ({ className }: { className?: string }) => {
   const hasAiPermission = useHasPermissionFlag(PermissionFlagType.AI);
 
   const showAiChatContent =
+    !REACT_APP_SHAHRYAR_MODE &&
     hasAiPermission &&
     navigationDrawerActiveTab === NAVIGATION_DRAWER_TABS.AI_CHAT_HISTORY;
 
   return (
     <NavigationDrawer
       className={className}
-      title={currentWorkspace?.displayName ?? ''}
+      title={
+        REACT_APP_SHAHRYAR_MODE
+          ? 'Shahryar OPS'
+          : (currentWorkspace?.displayName ?? '')
+      }
     >
       <NavigationDrawerFixedContent>
-        <MainNavigationDrawerTabsRow />
+        {!REACT_APP_SHAHRYAR_MODE && <MainNavigationDrawerTabsRow />}
       </NavigationDrawerFixedContent>
 
       <NavigationDrawerScrollableContent>

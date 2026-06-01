@@ -37,6 +37,7 @@ import {
   IconUserCircle,
   IconUsers,
 } from 'twenty-ui/display';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 export type SettingsNavigationSection = {
@@ -77,6 +78,61 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
   const isEmailGroupFeatureEnabled = useIsFeatureEnabled(
     FeatureFlagKey.IS_EMAIL_GROUP_ENABLED,
   );
+
+  if (REACT_APP_SHAHRYAR_MODE) {
+    return [
+      {
+        label: t`User`,
+        items: [
+          {
+            label: t`Profile`,
+            path: SettingsPath.ProfilePage,
+            Icon: IconUserCircle,
+          },
+          {
+            label: t`Experience`,
+            path: SettingsPath.Experience,
+            Icon: IconColorSwatch,
+          },
+        ],
+      },
+      {
+        label: t`Workspace`,
+        items: [
+          {
+            label: t`General`,
+            path: SettingsPath.Workspace,
+            Icon: IconSettings,
+            isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          },
+          {
+            label: t`Members`,
+            path: SettingsPath.WorkspaceMembersPage,
+            Icon: IconUsers,
+            isHidden: !permissionMap[PermissionFlagType.WORKSPACE_MEMBERS],
+          },
+          {
+            label: t`Security`,
+            path: SettingsPath.Security,
+            Icon: IconKey,
+            isHidden: !permissionMap[PermissionFlagType.SECURITY],
+          },
+        ],
+      },
+      {
+        label: t`Other`,
+        items: [
+          {
+            label: t`Logout`,
+            onClick: signOut,
+            Icon: IconDoorEnter,
+            matchSubPages: false,
+          },
+        ],
+      },
+    ];
+  }
+
   return [
     {
       label: t`User`,

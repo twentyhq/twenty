@@ -12,6 +12,7 @@ import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomState
 import { useContext } from 'react';
 import { Avatar } from 'twenty-ui/display';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 type MultiWorkspaceDropdownClickableComponentProps = {
   disabled?: boolean;
@@ -26,6 +27,10 @@ export const MultiWorkspaceDropdownClickableComponent = ({
   const isNavigationDrawerExpanded = useAtomStateValue(
     isNavigationDrawerExpandedState,
   );
+  const workspaceLabel = REACT_APP_SHAHRYAR_MODE
+    ? 'Shahryar OPS'
+    : (currentWorkspace?.displayName ?? '');
+
   return (
     <StyledContainer
       data-testid="workspace-dropdown"
@@ -33,12 +38,16 @@ export const MultiWorkspaceDropdownClickableComponent = ({
       disabled={disabled}
     >
       <Avatar
-        placeholder={currentWorkspace?.displayName || ''}
-        avatarUrl={currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO}
+        placeholder={workspaceLabel}
+        avatarUrl={
+          REACT_APP_SHAHRYAR_MODE
+            ? undefined
+            : (currentWorkspace?.logo ?? DEFAULT_WORKSPACE_LOGO)
+        }
       />
       <StyledLabelWrapper>
         <NavigationDrawerAnimatedCollapseWrapper>
-          <StyledLabel>{currentWorkspace?.displayName ?? ''}</StyledLabel>
+          <StyledLabel>{workspaceLabel}</StyledLabel>
         </NavigationDrawerAnimatedCollapseWrapper>
       </StyledLabelWrapper>
       <NavigationDrawerAnimatedCollapseWrapper>

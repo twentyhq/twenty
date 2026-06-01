@@ -3,10 +3,13 @@ import { NavigationDrawerWorkspaceSectionSkeletonLoader } from '@/object-metadat
 
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
 import { NavigationDrawerOtherSection } from '@/navigation/components/NavigationDrawerOtherSection';
+import { ShahryarNavigationSection } from '@/shahryar/navigation/components/ShahryarNavigationSection';
+import { ShahryarOtherSection } from '@/shahryar/navigation/components/ShahryarOtherSection';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { lazy, Suspense } from 'react';
 
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const FavoritesSectionDispatcher = lazy(() =>
@@ -35,6 +38,15 @@ export const MainNavigationDrawerScrollableItems = () => {
   const isLayoutCustomizationModeEnabled = useAtomStateValue(
     isLayoutCustomizationModeEnabledState,
   );
+
+  if (REACT_APP_SHAHRYAR_MODE) {
+    return (
+      <StyledScrollableItemsContainer>
+        <ShahryarNavigationSection />
+        <ShahryarOtherSection />
+      </StyledScrollableItemsContainer>
+    );
+  }
 
   return (
     <StyledScrollableItemsContainer>

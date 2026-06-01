@@ -5,6 +5,7 @@ import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/f
 import { MainNavigationDrawerScrollableItems } from '@/navigation/components/MainNavigationDrawerScrollableItems';
 import { currentNavigationMenuItemFolderIdState } from '@/navigation-menu-item/common/states/currentNavigationMenuItemFolderIdState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 const StyledScrollableContent = styled.div`
   height: 100%;
@@ -12,6 +13,18 @@ const StyledScrollableContent = styled.div`
 `;
 
 export const MainNavigationDrawerNavigationContent = () => {
+  if (REACT_APP_SHAHRYAR_MODE) {
+    return (
+      <StyledScrollableContent>
+        <MainNavigationDrawerScrollableItems />
+      </StyledScrollableContent>
+    );
+  }
+
+  return <DefaultMainNavigationDrawerNavigationContent />;
+};
+
+const DefaultMainNavigationDrawerNavigationContent = () => {
   const currentNavigationMenuItemFolderId = useAtomStateValue(
     currentNavigationMenuItemFolderIdState,
   );

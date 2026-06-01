@@ -25,6 +25,10 @@ import { isMatchingLocation } from '~/utils/isMatchingLocation';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
+
+const isShahryarUsernameCredential = (credentialIdentifier: string) =>
+  REACT_APP_SHAHRYAR_MODE && !credentialIdentifier.includes('@');
 
 export const useSignInUp = (form: UseFormReturn<Form>) => {
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -68,11 +72,23 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
   const errorMsgUserAlreadyExist = t`An error occurred while checking user existence`;
   const continueWithCredentials = useCallback(async () => {
-    if (!form.getValues('email')) {
+    const credentialIdentifier = form.getValues('email').trim();
+
+    if (!credentialIdentifier) {
       return enqueueErrorSnackBar({
-        message: t`Email is required`,
+        message: REACT_APP_SHAHRYAR_MODE
+          ? t`Username is required`
+          : t`Email is required`,
       });
     }
+
+    if (isShahryarUsernameCredential(credentialIdentifier)) {
+      setSignInUpMode(SignInUpMode.SignIn);
+      setSignInUpStep(SignInUpStep.Password);
+
+      return;
+    }
+
     if (!isCaptchaReady) {
       return enqueueErrorSnackBar({
         message: t`Captcha (anti-bot check) is still loading, try again`,
@@ -83,7 +99,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
 
       const { data, error } = await checkUserExistsQuery({
         variables: {
-          email: form.getValues('email').toLowerCase().trim(),
+          email: credentialIdentifier.toLowerCase(),
           captchaToken: token,
         },
       });
@@ -116,7 +132,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
   const submitCredentials: SubmitHandler<Form> = useCallback(
     async (data) => {
       if (!data.email || !data.password) {
-        throw new Error('Email and password are required');
+        throw new Error('Credentials and password are required');
       }
 
       if (!isCaptchaReady) {
@@ -126,6 +142,8 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
       }
 
       const token = readCaptchaToken();
+      const credentialIdentifier = data.email.toLowerCase().trim();
+
       try {
         setLastAuthenticatedMethod(AuthenticatedMethod.EMAIL);
 
@@ -135,7 +153,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           isOnAWorkspace
         ) {
           return await signInWithCredentialsInWorkspace(
-            data.email.toLowerCase().trim(),
+            credentialIdentifier,
             data.password,
             token,
           );
@@ -147,7 +165,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           !isOnAWorkspace
         ) {
           return await signInWithCredentials(
-            data.email.toLowerCase().trim(),
+            credentialIdentifier,
             data.password,
             token,
           );
@@ -159,7 +177,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
           !isOnAWorkspace
         ) {
           return await signUpWithCredentials(
-            data.email.toLowerCase().trim(),
+            credentialIdentifier,
             data.password,
             token,
           );
@@ -171,7 +189,7 @@ export const useSignInUp = (form: UseFormReturn<Form>) => {
         );
 
         await signUpWithCredentialsInWorkspace({
-          email: data.email.toLowerCase().trim(),
+          email: credentialIdentifier,
           password: data.password,
           workspaceInviteHash,
           workspacePersonalInviteToken,

@@ -26,6 +26,7 @@ import { MainButton } from 'twenty-ui/input';
 import { InputHint } from '@/ui/input/components/InputHint';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 const StyledForm = styled.form`
   align-items: center;
@@ -96,7 +97,9 @@ export const SignInUpWithCredentials = ({
 
   const buttonTitle = useMemo(() => {
     if (signInUpStep === SignInUpStep.Init) {
-      return t`Continue with Email`;
+      return REACT_APP_SHAHRYAR_MODE
+        ? t`Continue with Username`
+        : t`Continue with Email`;
     }
 
     if (

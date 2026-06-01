@@ -1,0 +1,37 @@
+sandbox_mode = "danger-full-access"
+[mcp_servers.context7]
+command = "npx"
+args = [
+    "-y",
+    "@upstash/context7-mcp",
+]
+
+[mcp_servers.playwright]
+command = "npx"
+args = [
+    "@playwright/mcp@latest",
+    "--no-sandbox",
+    "--headless",
+]
+
+[mcp_servers.playwright.tools.browser_click]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_navigate]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_fill_form]
+approval_mode = "approve"
+
+[mcp_servers.playwright.tools.browser_evaluate]
+approval_mode = "approve"
+
+[mcp_servers.postgres]
+command = "bash"
+args = [
+    "-c",
+    'source packages/twenty-server/.env && npx -y @modelcontextprotocol/server-postgres "$PG_DATABASE_URL"',
+]
+
+[mcp_servers.postgres.tools.query]
+approval_mode = "approve"

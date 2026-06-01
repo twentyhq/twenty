@@ -1,8 +1,11 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectDataSource, InjectRepository } from '@nestjs/typeorm';
 
+import { RowLevelPermissionPredicateOperand } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { WorkspaceActivationStatus } from 'twenty-shared/workspace';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, In, Repository } from 'typeorm';
+import { v4 } from 'uuid';
 
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -13,13 +16,21 @@ import { RoleTargetService } from 'src/engine/metadata-modules/role-target/servi
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { RoleEntity } from 'src/engine/metadata-modules/role/role.entity';
 import { RoleService } from 'src/engine/metadata-modules/role/role.service';
+import { RowLevelPermissionPredicateEntity } from 'src/engine/metadata-modules/row-level-permission-predicate/entities/row-level-permission-predicate.entity';
 import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import {
   SEED_APPLE_WORKSPACE_ID,
   SEED_YCOMBINATOR_WORKSPACE_ID,
 } from 'src/engine/workspace-manager/dev-seeder/core/constants/seeder-workspaces.constant';
+import {
+  SHAHRYAR_ADMIN_ROLE_SEED,
+  SHAHRYAR_SUPERVISOR_OBJECT_PERMISSION_SEEDS,
+  SHAHRYAR_SUPERVISOR_ROLE_SEED,
+  SHAHRYAR_SUPERVISOR_ROW_LEVEL_PERMISSION_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/core/constants/shahryar-role-seeds.constant';
 import {
   RANDOM_USER_WORKSPACE_IDS,
   USER_WORKSPACE_DATA_SEED_IDS,
@@ -41,6 +52,7 @@ export class DevSeederPermissionsService {
     private readonly roleRepository: WorkspaceScopedRepository<RoleEntity>,
     private readonly fieldPermissionService: FieldPermissionService,
     private readonly roleTargetService: RoleTargetService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectDataSource()
     private readonly coreDataSource: DataSource,
   ) {}
@@ -160,6 +172,19 @@ export class DevSeederPermissionsService {
         roleId: memberRole.id,
       });
     }
+
+    if (!light) {
+      await this.initShahryarRoles({
+        workspaceId,
+        ownerFlatApplication: workspaceCustomFlatApplication,
+        adminUserWorkspaceId,
+        supervisorUserWorkspaceIds: [
+          ...memberUserWorkspaceIds,
+          limitedUserWorkspaceId,
+          guestUserWorkspaceId,
+        ].filter(isDefined),
+      });
+    }
   }
 
   public async initMinimalPermissionsAndActivateWorkspace({
@@ -182,6 +207,228 @@ export class DevSeederPermissionsService {
       });
 
     return memberRole;
+  }
+
+  private async initShahryarRoles({
+    adminUserWorkspaceId,
+    ownerFlatApplication,
+    supervisorUserWorkspaceIds,
+    workspaceId,
+  }: {
+    adminUserWorkspaceId: string;
+    supervisorUserWorkspaceIds: string[];
+    workspaceId: string;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<void> {
+    const adminRole = await this.roleService.createRole({
+      ownerFlatApplication,
+      workspaceId,
+      input: SHAHRYAR_ADMIN_ROLE_SEED,
+    });
+
+    const supervisorRole = await this.roleService.createRole({
+      ownerFlatApplication,
+      workspaceId,
+      input: SHAHRYAR_SUPERVISOR_ROLE_SEED,
+    });
+    const uniqueSupervisorUserWorkspaceIds = [
+      ...new Set(
+        supervisorUserWorkspaceIds.filter(
+          (userWorkspaceId) => userWorkspaceId !== adminUserWorkspaceId,
+        ),
+      ),
+    ];
+
+    await this.userRoleService.assignRoleToManyUserWorkspace({
+      workspaceId,
+      userWorkspaceIds: [adminUserWorkspaceId],
+      roleId: adminRole.id,
+    });
+
+    if (uniqueSupervisorUserWorkspaceIds.length > 0) {
+      await this.userRoleService.assignRoleToManyUserWorkspace({
+        workspaceId,
+        userWorkspaceIds: uniqueSupervisorUserWorkspaceIds,
+        roleId: supervisorRole.id,
+      });
+    }
+
+    await this.upsertShahryarSupervisorObjectPermissions({
+      workspaceId,
+      supervisorRoleId: supervisorRole.id,
+    });
+
+    await this.seedShahryarSupervisorRowLevelPermissionPredicates({
+      workspaceId,
+      supervisorRoleId: supervisorRole.id,
+      ownerFlatApplication,
+    });
+  }
+
+  private async upsertShahryarSupervisorObjectPermissions({
+    workspaceId,
+    supervisorRoleId,
+  }: {
+    workspaceId: string;
+    supervisorRoleId: string;
+  }): Promise<void> {
+    const objectMetadataByName = await this.findObjectMetadataByNames({
+      workspaceId,
+      objectNames: SHAHRYAR_SUPERVISOR_OBJECT_PERMISSION_SEEDS.map(
+        (seed) => seed.objectName,
+      ),
+    });
+
+    await this.objectPermissionService.upsertObjectPermissions({
+      workspaceId,
+      input: {
+        roleId: supervisorRoleId,
+        objectPermissions: SHAHRYAR_SUPERVISOR_OBJECT_PERMISSION_SEEDS.map(
+          (seed) => {
+            const objectMetadata = this.findObjectMetadataOrThrow({
+              objectMetadataByName,
+              objectName: seed.objectName,
+            });
+
+            return {
+              objectMetadataId: objectMetadata.id,
+              canReadObjectRecords: seed.canReadObjectRecords,
+              canUpdateObjectRecords: seed.canUpdateObjectRecords,
+              canSoftDeleteObjectRecords: seed.canSoftDeleteObjectRecords,
+              canDestroyObjectRecords: seed.canDestroyObjectRecords,
+            };
+          },
+        ),
+      },
+    });
+  }
+
+  private async seedShahryarSupervisorRowLevelPermissionPredicates({
+    workspaceId,
+    supervisorRoleId,
+    ownerFlatApplication,
+  }: {
+    workspaceId: string;
+    supervisorRoleId: string;
+    ownerFlatApplication: FlatApplication;
+  }): Promise<void> {
+    const objectMetadataByName = await this.findObjectMetadataByNames({
+      workspaceId,
+      objectNames: [
+        ...SHAHRYAR_SUPERVISOR_ROW_LEVEL_PERMISSION_SEEDS.map(
+          (seed) => seed.objectName,
+        ),
+        'workspaceMember',
+      ],
+    });
+    const workspaceMemberObjectMetadata = this.findObjectMetadataOrThrow({
+      objectMetadataByName,
+      objectName: 'workspaceMember',
+    });
+    const workspaceMemberIdFieldMetadata = this.findFieldMetadataOrThrow({
+      objectMetadata: workspaceMemberObjectMetadata,
+      fieldName: 'id',
+    });
+    const rowLevelPermissionPredicateRepository =
+      this.coreDataSource.getRepository(RowLevelPermissionPredicateEntity);
+
+    await rowLevelPermissionPredicateRepository.save(
+      SHAHRYAR_SUPERVISOR_ROW_LEVEL_PERMISSION_SEEDS.map((seed) => {
+        const objectMetadata = this.findObjectMetadataOrThrow({
+          objectMetadataByName,
+          objectName: seed.objectName,
+        });
+        const ownerFieldMetadata = this.findFieldMetadataOrThrow({
+          objectMetadata,
+          fieldName: seed.ownerFieldName,
+        });
+        const predicateId = v4();
+
+        return rowLevelPermissionPredicateRepository.create({
+          id: predicateId,
+          universalIdentifier: predicateId,
+          workspaceId,
+          applicationId: ownerFlatApplication.id,
+          fieldMetadataId: ownerFieldMetadata.id,
+          objectMetadataId: objectMetadata.id,
+          operand: RowLevelPermissionPredicateOperand.IS,
+          value: null,
+          subFieldName: null,
+          workspaceMemberFieldMetadataId: workspaceMemberIdFieldMetadata.id,
+          workspaceMemberSubFieldName: null,
+          rowLevelPermissionPredicateGroupId: null,
+          positionInRowLevelPermissionPredicateGroup: null,
+          roleId: supervisorRoleId,
+        });
+      }),
+    );
+
+    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
+      'flatRowLevelPermissionPredicateMaps',
+      'rolesPermissions',
+    ]);
+  }
+
+  private async findObjectMetadataByNames({
+    workspaceId,
+    objectNames,
+  }: {
+    workspaceId: string;
+    objectNames: string[];
+  }): Promise<Map<string, ObjectMetadataEntity>> {
+    const uniqueObjectNames = [...new Set(objectNames)];
+    const objectMetadatas = await this.objectMetadataRepository.find({
+      where: {
+        workspaceId,
+        nameSingular: In(uniqueObjectNames),
+      },
+      relations: {
+        fields: true,
+      },
+    });
+
+    return new Map(
+      objectMetadatas.map((objectMetadata) => [
+        objectMetadata.nameSingular,
+        objectMetadata,
+      ]),
+    );
+  }
+
+  private findObjectMetadataOrThrow({
+    objectMetadataByName,
+    objectName,
+  }: {
+    objectMetadataByName: Map<string, ObjectMetadataEntity>;
+    objectName: string;
+  }): ObjectMetadataEntity {
+    const objectMetadata = objectMetadataByName.get(objectName);
+
+    if (!isDefined(objectMetadata)) {
+      throw new Error(`Object metadata not found for: ${objectName}`);
+    }
+
+    return objectMetadata;
+  }
+
+  private findFieldMetadataOrThrow({
+    objectMetadata,
+    fieldName,
+  }: {
+    objectMetadata: ObjectMetadataEntity;
+    fieldName: string;
+  }) {
+    const fieldMetadata = objectMetadata.fields.find(
+      (field) => field.name === fieldName,
+    );
+
+    if (!isDefined(fieldMetadata)) {
+      throw new Error(
+        `Field metadata not found for: ${objectMetadata.nameSingular}.${fieldName}`,
+      );
+    }
+
+    return fieldMetadata;
   }
 
   private async createLimitedRoleForSeedWorkspace({

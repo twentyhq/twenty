@@ -23,6 +23,7 @@ import { EmailService } from 'src/engine/core-modules/email/email.service';
 import { GuardRedirectService } from 'src/engine/core-modules/guard-redirect/services/guard-redirect.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { type UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { UserWorkspaceService } from 'src/engine/core-modules/user-workspace/user-workspace.service';
 import { UserService } from 'src/engine/core-modules/user/services/user.service';
 import { UserEntity } from 'src/engine/core-modules/user/user.entity';
@@ -131,6 +132,7 @@ describe('AuthService', () => {
             checkUserWorkspaceExists: jest.fn(),
             addUserToWorkspaceIfUserNotInWorkspace: jest.fn(),
             findAvailableWorkspacesByEmail: jest.fn(),
+            findUserByWorkspaceMemberUsername: jest.fn(),
           },
         },
         {
@@ -220,6 +222,64 @@ describe('AuthService', () => {
 
   it('should be defined', async () => {
     expect(service).toBeDefined();
+  });
+
+  it('validates password login with a workspace member username', async () => {
+    const workspace = {
+      id: 'workspace-id',
+      isPasswordAuthEnabled: true,
+    } as WorkspaceEntity;
+    const userEntity = {
+      id: 'user-id',
+      email: 'tim@apple.dev',
+      passwordHash: 'passwordHash',
+      isEmailVerified: true,
+    } as UserEntity;
+
+    jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null);
+    const findUserByWorkspaceMemberUsernameSpy = jest
+      .spyOn(userWorkspaceService, 'findUserByWorkspaceMemberUsername')
+      .mockResolvedValueOnce(userEntity);
+    jest
+      .spyOn(userWorkspaceService, 'checkUserWorkspaceExists')
+      .mockResolvedValueOnce({
+        id: 'user-workspace-id',
+      } as UserWorkspaceEntity);
+    (bcrypt.compare as jest.Mock).mockResolvedValueOnce(true);
+
+    const response = await service.validateLoginWithPassword(
+      {
+        email: ' KARWAN ',
+        password: 'password',
+        captchaToken: 'captchaToken',
+      },
+      workspace,
+    );
+
+    expect(response).toBe(userEntity);
+    expect(findUserByWorkspaceMemberUsernameSpy).toHaveBeenCalledWith({
+      workspaceId: workspace.id,
+      username: 'karwan',
+    });
+  });
+
+  it('does not resolve username credentials without a target workspace', async () => {
+    jest.spyOn(userRepository, 'findOne').mockResolvedValueOnce(null);
+    const findUserByWorkspaceMemberUsernameSpy = jest.spyOn(
+      userWorkspaceService,
+      'findUserByWorkspaceMemberUsername',
+    );
+
+    await expect(
+      service.validateLoginWithPassword({
+        email: 'karwan',
+        password: 'password',
+        captchaToken: 'captchaToken',
+      }),
+    ).rejects.toThrow(
+      new AuthException('User not found', AuthExceptionCode.USER_NOT_FOUND),
+    );
+    expect(findUserByWorkspaceMemberUsernameSpy).not.toHaveBeenCalled();
   });
 
   it('challenge - user already member of workspace', async () => {

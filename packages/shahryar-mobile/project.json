@@ -1,0 +1,37 @@
+{
+  "name": "shahryar-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "packages/shahryar-mobile/src",
+  "targets": {
+    "start": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx expo start"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "cache": false,
+      "options": {
+        "cwd": "{projectRoot}",
+        "commands": [
+          "npx tsx src/sync/__tests__/mobileSyncQueue.test.ts",
+          "npx tsx src/api/__tests__/shahryarMobileApi.test.ts",
+          "npx tsx src/services/__tests__/visitPhotoPath.test.ts"
+        ],
+        "parallel": false
+      }
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "npx tsgo -p tsconfig.json"
+      }
+    }
+  }
+}

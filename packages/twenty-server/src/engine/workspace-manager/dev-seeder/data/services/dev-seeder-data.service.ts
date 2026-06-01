@@ -90,6 +90,20 @@ import {
   ROCKET_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/rocket-data-seeds.constant';
 import {
+  SHAHRYAR_ABSENCE_DATA_SEED_COLUMNS,
+  SHAHRYAR_ABSENCE_DATA_SEEDS,
+  SHAHRYAR_MARKET_DATA_SEED_COLUMNS,
+  SHAHRYAR_MARKET_DATA_SEEDS,
+  SHAHRYAR_PAYMENT_DATA_SEED_COLUMNS,
+  SHAHRYAR_PAYMENT_DATA_SEEDS,
+  SHAHRYAR_SUPERVISOR_PENALTY_DATA_SEED_COLUMNS,
+  SHAHRYAR_SUPERVISOR_PENALTY_DATA_SEEDS,
+  SHAHRYAR_SUPERVISOR_VISIT_DATA_SEED_COLUMNS,
+  SHAHRYAR_SUPERVISOR_VISIT_DATA_SEEDS,
+  SHAHRYAR_WORKING_TIME_DATA_SEED_COLUMNS,
+  SHAHRYAR_WORKING_TIME_DATA_SEEDS,
+} from 'src/engine/workspace-manager/dev-seeder/data/constants/shahryar-data-seeds.constant';
+import {
   SURVEY_RESULT_DATA_SEED_COLUMNS,
   SURVEY_RESULT_DATA_SEEDS,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/survey-result-data-seeds.constant';
@@ -104,6 +118,7 @@ import {
 import {
   getWorkspaceMemberDataSeeds,
   WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
+  WORKSPACE_MEMBER_DATA_SEED_COLUMNS_WITH_USERNAME,
 } from 'src/engine/workspace-manager/dev-seeder/data/constants/workspace-member-data-seeds.constant';
 import { TimelineActivitySeederService } from 'src/engine/workspace-manager/dev-seeder/data/services/timeline-activity-seeder.service';
 import { prefillFrontComponentCommandMenuItems } from 'src/engine/workspace-manager/standard-objects-prefill-data/utils/prefill-front-component-command-menu-items.util';
@@ -123,12 +138,15 @@ const getRecordSeedsBatches = (
   workspaceId: string,
   attachmentSeeds: RecordSeedConfig['recordSeeds'],
   _featureFlags?: Record<FeatureFlagKey, boolean>,
+  light = false,
 ): RecordSeedConfig[][] => {
   // Batch 1: No dependencies
   const batch1: RecordSeedConfig[] = [
     {
       tableName: 'workspaceMember',
-      pgColumns: WORKSPACE_MEMBER_DATA_SEED_COLUMNS,
+      pgColumns: light
+        ? WORKSPACE_MEMBER_DATA_SEED_COLUMNS
+        : WORKSPACE_MEMBER_DATA_SEED_COLUMNS_WITH_USERNAME,
       recordSeeds: getWorkspaceMemberDataSeeds(workspaceId),
     },
     {
@@ -140,6 +158,11 @@ const getRecordSeedsBatches = (
       tableName: '_rocket',
       pgColumns: ROCKET_DATA_SEED_COLUMNS,
       recordSeeds: ROCKET_DATA_SEEDS,
+    },
+    {
+      tableName: '_shahryarMarket',
+      pgColumns: SHAHRYAR_MARKET_DATA_SEED_COLUMNS,
+      recordSeeds: SHAHRYAR_MARKET_DATA_SEEDS,
     },
   ];
 
@@ -154,6 +177,31 @@ const getRecordSeedsBatches = (
       tableName: 'dashboard',
       pgColumns: DASHBOARD_DATA_SEED_COLUMNS,
       recordSeeds: getDashboardDataSeeds(workspaceId),
+    },
+    {
+      tableName: '_shahryarSupervisorVisit',
+      pgColumns: SHAHRYAR_SUPERVISOR_VISIT_DATA_SEED_COLUMNS,
+      recordSeeds: SHAHRYAR_SUPERVISOR_VISIT_DATA_SEEDS,
+    },
+    {
+      tableName: '_shahryarWorkingTime',
+      pgColumns: SHAHRYAR_WORKING_TIME_DATA_SEED_COLUMNS,
+      recordSeeds: SHAHRYAR_WORKING_TIME_DATA_SEEDS,
+    },
+    {
+      tableName: '_shahryarPayment',
+      pgColumns: SHAHRYAR_PAYMENT_DATA_SEED_COLUMNS,
+      recordSeeds: SHAHRYAR_PAYMENT_DATA_SEEDS,
+    },
+    {
+      tableName: '_shahryarSupervisorPenalty',
+      pgColumns: SHAHRYAR_SUPERVISOR_PENALTY_DATA_SEED_COLUMNS,
+      recordSeeds: SHAHRYAR_SUPERVISOR_PENALTY_DATA_SEEDS,
+    },
+    {
+      tableName: '_shahryarAbsence',
+      pgColumns: SHAHRYAR_ABSENCE_DATA_SEED_COLUMNS,
+      recordSeeds: SHAHRYAR_ABSENCE_DATA_SEEDS,
     },
   ];
 
@@ -374,6 +422,7 @@ export class DevSeederDataService {
       workspaceId,
       attachmentSeeds,
       featureFlags,
+      light,
     );
 
     // Process batches sequentially (respecting dependencies)

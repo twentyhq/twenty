@@ -4,7 +4,7 @@ import {
   jotaiStore,
   resetJotaiStore,
 } from '@/ui/utilities/state/jotai/jotaiStore';
-import { renderHook } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import { Provider as JotaiProvider } from 'jotai';
@@ -77,5 +77,18 @@ describe('useSignInUpForm', () => {
       password: 'tim@apple.dev',
       captchaToken: '',
     });
+  });
+
+  it('should accept a username as the credential identifier in Shahryar mode', async () => {
+    const { result } = renderHook(() => useSignInUpForm(), {
+      wrapper: ({ children }) => <TestWrapper>{children}</TestWrapper>,
+    });
+
+    await act(async () => {
+      result.current.form.setValue('email', 'karwan');
+      expect(await result.current.form.trigger('email')).toBe(true);
+    });
+
+    expect(result.current.form.formState.errors.email).toBeUndefined();
   });
 });

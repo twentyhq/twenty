@@ -152,11 +152,10 @@ export class AuthService {
     input: UserCredentialsInput,
     targetWorkspace?: WorkspaceEntity,
   ) {
-    const user = await this.userRepository.findOne({
-      where: {
-        email: input.email,
-      },
-      relations: { userWorkspaces: true },
+    const credentialIdentifier = input.email.trim().toLowerCase();
+    const user = await this.findUserByCredentialIdentifier({
+      credentialIdentifier,
+      targetWorkspace,
     });
 
     if (!user) {
@@ -210,6 +209,34 @@ export class AuthService {
     await this.checkIsEmailVerified(user.isEmailVerified);
 
     return user;
+  }
+
+  private async findUserByCredentialIdentifier({
+    credentialIdentifier,
+    targetWorkspace,
+  }: {
+    credentialIdentifier: string;
+    targetWorkspace?: WorkspaceEntity;
+  }) {
+    const user = await this.userRepository.findOne({
+      where: {
+        email: credentialIdentifier,
+      },
+      relations: { userWorkspaces: true },
+    });
+
+    if (isDefined(user)) {
+      return user;
+    }
+
+    if (isDefined(targetWorkspace)) {
+      return await this.userWorkspaceService.findUserByWorkspaceMemberUsername({
+        workspaceId: targetWorkspace.id,
+        username: credentialIdentifier,
+      });
+    }
+
+    return null;
   }
 
   async checkIsEmailVerified(isEmailVerified: boolean) {
