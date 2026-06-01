@@ -73,8 +73,8 @@ const OPPORTUNITY_KANBAN_PAGE: KanbanPageDefinition = {
   },
   lanes: [
     {
-      id: 'identified',
-      label: 'Identified',
+      id: 'new',
+      label: 'New',
       tone: 'pink',
       cards: [
         {
@@ -132,8 +132,8 @@ const OPPORTUNITY_KANBAN_PAGE: KanbanPageDefinition = {
       ],
     },
     {
-      id: 'qualified',
-      label: 'Qualified',
+      id: 'screening',
+      label: 'Screening',
       tone: 'purple',
       cards: [
         {
@@ -163,8 +163,8 @@ const OPPORTUNITY_KANBAN_PAGE: KanbanPageDefinition = {
       ],
     },
     {
-      id: 'engaged',
-      label: 'Engaged',
+      id: 'meeting',
+      label: 'Meeting',
       tone: 'blue',
       cards: [
         {
@@ -242,15 +242,15 @@ const OPPORTUNITY_KANBAN_PAGE: KanbanPageDefinition = {
       ],
     },
     {
-      id: 'proposed',
-      label: 'Proposed',
-      tone: 'green',
+      id: 'proposal',
+      label: 'Proposal',
+      tone: 'gray',
       cards: [],
     },
     {
-      id: 'no-value',
-      label: 'No Value',
-      tone: 'gray',
+      id: 'customer',
+      label: 'Customer',
+      tone: 'green',
       cards: [
         {
           id: 'mailchimp-lifecycle-campaigns',

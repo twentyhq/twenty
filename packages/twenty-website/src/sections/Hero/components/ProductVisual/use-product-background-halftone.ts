@@ -19,6 +19,7 @@ const HALFTONE_TILE_SIZE = 16;
 const HALFTONE_POWER = -0.08;
 const HALFTONE_WIDTH = 0.22;
 const HALFTONE_MAX_DASH_HALF_LENGTH = 0.36;
+const HALFTONE_HOVER_LIFT = 0.1;
 const HALFTONE_DASH_COLOR = '#ffffff';
 const HALFTONE_HOVER_COLOR = '#ffffff';
 const HALFTONE_HOVER_LIGHT_INTENSITY = 1.0;
@@ -117,16 +118,18 @@ const halftoneFragmentShader = `
     float mask = smoothstep(0.02, 0.08, glow);
     float localPower = clamp(s_3, -1.5, 1.5);
     float localWidth = clamp(s_4, 0.05, 1.4);
-    float lightLift = hoverLightStrength * hoverLightMask * 0.22;
+    float lightLift =
+      hoverLightStrength * hoverLightMask * ${HALFTONE_HOVER_LIFT.toFixed(2)};
 
     float toneValue = glow;
 
-    float bandRadius = clamp(
-      toneValue + localPower * length(vec2(0.5)) + lightLift,
+    float toneBand = clamp(
+      toneValue + localPower * length(vec2(0.5)),
       0.0,
       1.0
     ) * 1.86 * 0.5;
-    bandRadius = min(bandRadius, ${HALFTONE_MAX_DASH_HALF_LENGTH.toFixed(2)});
+    toneBand = min(toneBand, ${HALFTONE_MAX_DASH_HALF_LENGTH.toFixed(2)});
+    float bandRadius = min(toneBand + lightLift, 0.5);
 
     float alpha = 0.0;
     if (bandRadius > 0.0001) {
