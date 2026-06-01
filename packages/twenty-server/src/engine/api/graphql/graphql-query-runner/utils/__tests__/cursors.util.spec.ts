@@ -1,100 +1,179 @@
-import { OrderByDirection } from 'twenty-shared/types';
+import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
-import {
-  decodeCursor,
-  encodeCursor,
-} from 'src/engine/api/graphql/graphql-query-runner/utils/cursors.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
+import { decodeCursor, encodeCursor } from '../cursors.util';
 
-describe('cursors util', () => {
-  describe('encodeCursor', () => {
-    it('should encode scalar order by values', () => {
-      const cursor = encodeCursor(
-        {
-          id: 'record-id',
-          name: 'Workflow A',
-          createdAt: '2026-05-26T00:00:00.000Z',
-        } as any,
-        [
-          { name: OrderByDirection.AscNullsLast },
-          { createdAt: OrderByDirection.AscNullsLast },
-        ],
-      );
+const buildMockField = (
+  id: string,
+  name: string,
+  type: FieldMetadataType,
+): FlatFieldMetadata =>
+  ({
+    id,
+    universalIdentifier: id,
+    name,
+    type,
+    objectMetadataId: 'obj-id',
+    workspaceId: 'ws-id',
+    label: name,
+    isNullable: true,
+    isLabelSyncedWithName: true,
+    createdAt: new Date(),
+    updatedAt: new Date(),
+    viewFieldIds: [],
+    viewFilterIds: [],
+    kanbanAggregateOperationViewIds: [],
+    calendarViewIds: [],
+    applicationId: null,
+  }) as unknown as FlatFieldMetadata;
 
-      expect(decodeCursor(cursor)).toEqual({
-        name: 'Workflow A',
-        createdAt: '2026-05-26T00:00:00.000Z',
-        id: 'record-id',
-      });
+const nameField = buildMockField('name-id', 'name', FieldMetadataType.TEXT);
+const fullNameField = buildMockField(
+  'fullname-id',
+  'fullName',
+  FieldMetadataType.FULL_NAME,
+);
+
+const flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata> = {
+  byUniversalIdentifier: {
+    'name-id': nameField,
+    'fullname-id': fullNameField,
+  },
+  universalIdentifierById: {
+    'name-id': 'name-id',
+    'fullname-id': 'fullname-id',
+  },
+  universalIdentifiersByApplicationId: {},
+};
+
+const flatObjectMetadata: FlatObjectMetadata = {
+  id: 'obj-id',
+  universalIdentifier: 'obj-id',
+  workspaceId: 'ws-id',
+  nameSingular: 'person',
+  namePlural: 'people',
+  labelSingular: 'Person',
+  labelPlural: 'People',
+  targetTableName: 'person',
+  isCustom: false,
+  isRemote: false,
+  isActive: true,
+  isSystem: false,
+  isAuditLogged: false,
+  isSearchable: false,
+  icon: 'Icon123',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  fieldIds: ['name-id', 'fullname-id'],
+  indexMetadataIds: [],
+  viewIds: [],
+  applicationId: null,
+} as unknown as FlatObjectMetadata;
+
+const callEncodeCursor = (
+  record: Record<string, unknown>,
+  orderBy: Parameters<typeof encodeCursor>[0]['order'],
+) =>
+  encodeCursor({
+    objectRecord: record as never,
+    order: orderBy,
+    flatObjectMetadata,
+    flatFieldMetadataMaps,
+  });
+
+describe('encodeCursor', () => {
+  it('should encode scalar fields from the orderBy', () => {
+    const record = { id: 'abc', name: 'John', age: 30 };
+    const orderBy = [{ name: OrderByDirection.AscNullsLast }];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({ name: 'John', id: 'abc' });
+  });
+
+  it('should always include id even if not in orderBy', () => {
+    const record = { id: 'abc', name: 'John' };
+    const orderBy = [{ name: OrderByDirection.AscNullsLast }];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toHaveProperty('id', 'abc');
+  });
+
+  it('should only include ordered sub-fields for composite fields', () => {
+    const record = {
+      id: 'abc',
+      fullName: { firstName: 'Katherine', lastName: 'Abbott' },
+    };
+    const orderBy = [
+      { fullName: { firstName: OrderByDirection.AscNullsLast } },
+    ];
+
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({
+      fullName: { firstName: 'Katherine' },
+      id: 'abc',
     });
+    expect(decoded.fullName).not.toHaveProperty('lastName');
+  });
 
-    it('should encode nested order by leaf values with dotted keys', () => {
-      const cursor = encodeCursor(
-        {
-          id: 'record-id',
-          name: {
-            firstName: 'Ada',
-            lastName: 'Lovelace',
-          },
-        } as any,
-        [{ name: { firstName: OrderByDirection.AscNullsLast } }],
-      );
+  it('should include all sub-fields when all are in the orderBy', () => {
+    const record = {
+      id: 'abc',
+      fullName: { firstName: 'Katherine', lastName: 'Abbott' },
+    };
+    const orderBy = [
+      {
+        fullName: {
+          firstName: OrderByDirection.AscNullsLast,
+          lastName: OrderByDirection.AscNullsLast,
+        },
+      },
+    ];
 
-      expect(decodeCursor(cursor)).toEqual({
-        'name.firstName': 'Ada',
-        id: 'record-id',
-      });
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({
+      fullName: { firstName: 'Katherine', lastName: 'Abbott' },
+      id: 'abc',
     });
+  });
 
-    it('should preserve multiple nested order by leaf values for the same field', () => {
-      const cursor = encodeCursor(
-        {
-          id: 'record-id',
-          name: {
-            firstName: 'Ada',
-            lastName: 'Lovelace',
-          },
-        } as any,
-        [
-          { name: { firstName: OrderByDirection.AscNullsLast } },
-          { name: { lastName: OrderByDirection.AscNullsLast } },
-        ],
-      );
+  it('should deep-merge two separate entries for the same composite parent', () => {
+    const record = {
+      id: 'abc',
+      fullName: { firstName: 'Katherine', lastName: 'Watts' },
+    };
+    const orderBy = [
+      { fullName: { firstName: OrderByDirection.AscNullsFirst } },
+      { fullName: { lastName: OrderByDirection.DescNullsLast } },
+    ];
 
-      expect(decodeCursor(cursor)).toEqual({
-        'name.firstName': 'Ada',
-        'name.lastName': 'Lovelace',
-        id: 'record-id',
-      });
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
+
+    expect(decoded).toEqual({
+      fullName: { firstName: 'Katherine', lastName: 'Watts' },
+      id: 'abc',
     });
+  });
 
-    it('should encode null nested leaf values', () => {
-      const cursor = encodeCursor(
-        {
-          id: 'record-id',
-          name: {
-            firstName: null,
-          },
-        } as any,
-        [{ name: { firstName: OrderByDirection.AscNullsLast } }],
-      );
+  it('should not filter sub-fields for scalar fields', () => {
+    const record = { id: 'abc', name: 'John' };
+    const orderBy = [{ name: OrderByDirection.AscNullsLast }];
 
-      expect(decodeCursor(cursor)).toEqual({
-        'name.firstName': null,
-        id: 'record-id',
-      });
-    });
+    const decoded = decodeCursor(callEncodeCursor(record, orderBy));
 
-    it('should encode id when no order is provided', () => {
-      const cursor = encodeCursor(
-        {
-          id: 'record-id',
-        } as any,
-        undefined,
-      );
+    expect(decoded).toEqual({ name: 'John', id: 'abc' });
+  });
 
-      expect(decodeCursor(cursor)).toEqual({
-        id: 'record-id',
-      });
-    });
+  it('should handle undefined orderBy', () => {
+    const record = { id: 'abc', name: 'John' };
+
+    const decoded = decodeCursor(callEncodeCursor(record, undefined));
+
+    expect(decoded).toEqual({ id: 'abc' });
   });
 });

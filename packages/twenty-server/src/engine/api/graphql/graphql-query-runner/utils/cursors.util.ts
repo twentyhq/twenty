@@ -1,4 +1,5 @@
 import { type ObjectRecord } from 'twenty-shared/types';
+import { isDefined, isPlainObject } from 'twenty-shared/utils';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FindManyResolverArgs } from 'src/engine/api/graphql/workspace-resolver-builder/interfaces/workspace-resolvers-builder.interface';
@@ -8,41 +9,18 @@ import {
   CommonQueryRunnerExceptionCode,
 } from 'src/engine/api/common/common-query-runners/errors/common-query-runner.exception';
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
+import { isCompositeFieldMetadataType } from 'src/engine/metadata-modules/field-metadata/utils/is-composite-field-metadata-type.util';
+import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
+import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { buildFieldMapsFromFlatObjectMetadata } from 'src/engine/metadata-modules/flat-field-metadata/utils/build-field-maps-from-flat-object-metadata.util';
+import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 export interface CursorData {
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   [key: string]: any;
 }
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
-
-const getOrderByKeyPaths = (order: ObjectRecordOrderBy | undefined) => {
-  return (
-    order?.flatMap((orderBy) =>
-      Object.entries(orderBy).flatMap(([key, value]) => {
-        if (isObject(value)) {
-          return Object.keys(value).map((subKey) => `${key}.${subKey}`);
-        }
-
-        return [key];
-      }),
-    ) ?? []
-  );
-};
-
-const getByPath = <T extends ObjectRecord = ObjectRecord>(
-  objectRecord: T,
-  path: string,
-) => {
-  return path.split('.').reduce<unknown>((value, key) => {
-    if (!isObject(value)) {
-      return undefined;
-    }
-
-    return value[key];
-  }, objectRecord);
-};
 
 export const decodeCursor = <T = CursorData>(cursor: string): T => {
   try {
@@ -56,16 +34,62 @@ export const decodeCursor = <T = CursorData>(cursor: string): T => {
   }
 };
 
-export const encodeCursor = <T extends ObjectRecord = ObjectRecord>(
-  objectRecord: T,
-  order: ObjectRecordOrderBy | undefined,
-): string => {
+export const encodeCursor = <T extends ObjectRecord = ObjectRecord>({
+  objectRecord,
+  order,
+  flatObjectMetadata,
+  flatFieldMetadataMaps,
+}: {
+  objectRecord: T;
+  order: ObjectRecordOrderBy | undefined;
+  flatObjectMetadata: FlatObjectMetadata;
+  flatFieldMetadataMaps: FlatEntityMaps<FlatFieldMetadata>;
+}): string => {
+  const { fieldIdByName } = buildFieldMapsFromFlatObjectMetadata(
+    flatFieldMetadataMaps,
+    flatObjectMetadata,
+  );
+
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
   const orderByValues: Record<string, any> = {};
 
-  getOrderByKeyPaths(order).forEach((keyPath) => {
-    orderByValues[keyPath] = getByPath(objectRecord, keyPath);
-  });
+  for (const orderByEntry of order ?? []) {
+    for (const [key, value] of Object.entries(orderByEntry)) {
+      const fieldMetadataId = fieldIdByName[key];
+      const fieldMetadata = findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: fieldMetadataId,
+      });
+
+      if (!isDefined(fieldMetadata)) {
+        continue;
+      }
+
+      if (
+        isCompositeFieldMetadataType(fieldMetadata.type) &&
+        isPlainObject(value) &&
+        isDefined(value)
+      ) {
+        const compositeOrderByKeys = Object.keys(
+          value as Record<string, unknown>,
+        );
+        const existingCompositeValue: Record<string, unknown> =
+          orderByValues[key] ?? {};
+        const recordCompositeValue = objectRecord[key] as
+          | Record<string, unknown>
+          | null
+          | undefined;
+
+        for (const subKey of compositeOrderByKeys) {
+          existingCompositeValue[subKey] = recordCompositeValue?.[subKey];
+        }
+
+        orderByValues[key] = existingCompositeValue;
+      } else {
+        orderByValues[key] = objectRecord[key];
+      }
+    }
+  }
 
   const cursorData: CursorData = {
     ...orderByValues,

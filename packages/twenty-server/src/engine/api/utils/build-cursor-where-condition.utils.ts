@@ -61,7 +61,7 @@ export const buildCursorWhereCondition = ({
 
   if (!fieldMetadata) {
     throw new GraphqlQueryRunnerException(
-      `Field metadata not found for key: ${cursorKey}`,
+      `Field metadata not found for key: ${String(cursorKey)}`,
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
       { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
     );
