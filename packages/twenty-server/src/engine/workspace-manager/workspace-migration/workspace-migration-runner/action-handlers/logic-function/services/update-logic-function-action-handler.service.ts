@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -17,6 +16,7 @@ import {
   LogicFunctionExecutionMode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { lambdaShouldReInstallPrebuiltBundle } from 'src/engine/metadata-modules/logic-function/utils/lambda-should-re-install-prebuilt-bundle.util';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   FlatUpdateLogicFunctionAction,
@@ -126,26 +126,22 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     applicationUniversalIdentifier: string;
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>;
   }): Promise<void> {
-    const nextExecutionMode =
-      update.executionMode ?? existingLogicFunction.executionMode;
-    const nextChecksum = update.checksum ?? existingLogicFunction.checksum;
-    const nextIsBuildUpToDate =
-      update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate;
+    const newLogicFunction: FlatLogicFunction = {
+      ...existingLogicFunction,
+      ...update,
+      executionMode:
+        update.executionMode ?? existingLogicFunction.executionMode,
+      isBuildUpToDate:
+        update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate,
+      checksum: update.checksum ?? existingLogicFunction.checksum,
+    };
 
     if (
-      nextExecutionMode !== LogicFunctionExecutionMode.PREBUILT ||
-      !nextIsBuildUpToDate ||
-      !isNonEmptyString(nextChecksum)
+      !lambdaShouldReInstallPrebuiltBundle({
+        existingLogicFunction,
+        newLogicFunction,
+      })
     ) {
-      return;
-    }
-
-    const isAlreadyInstalled =
-      existingLogicFunction.executionMode ===
-        LogicFunctionExecutionMode.PREBUILT &&
-      existingLogicFunction.checksum === nextChecksum;
-
-    if (isAlreadyInstalled) {
       return;
     }
 
@@ -160,9 +156,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     try {
       await driver.installPrebuiltBundle({
         flatLogicFunction: {
-          ...existingLogicFunction,
-          ...update,
-          checksum: nextChecksum,
+          ...newLogicFunction,
           executionMode: LogicFunctionExecutionMode.PREBUILT,
           isBuildUpToDate: true,
         },
