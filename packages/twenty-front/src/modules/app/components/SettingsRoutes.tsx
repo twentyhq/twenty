@@ -24,20 +24,6 @@ const SettingsRestPlayground = lazy(() =>
   ),
 );
 
-const SettingsAccountsCalendars = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
-    (module) => ({
-      default: module.SettingsAccountsCalendars,
-    }),
-  ),
-);
-
-const SettingsAccountsEmails = lazy(() =>
-  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
-    default: module.SettingsAccountsEmails,
-  })),
-);
-
 const SettingsAccountsConfiguration = lazy(() =>
   import('~/pages/settings/accounts/SettingsAccountsConfiguration').then(
     (module) => ({
@@ -630,14 +616,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.AccountsConfiguration}
           element={<SettingsAccountsConfiguration />}
-        />
-        <Route
-          path={SettingsPath.AccountsCalendars}
-          element={<SettingsAccountsCalendars />}
-        />
-        <Route
-          path={SettingsPath.AccountsEmails}
-          element={<SettingsAccountsEmails />}
         />
         <Route
           path={SettingsPath.NewImapSmtpCaldavConnection}

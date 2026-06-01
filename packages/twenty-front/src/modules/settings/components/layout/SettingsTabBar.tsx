@@ -20,8 +20,8 @@ const StyledTabRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[4]};
   height: 100%;
-  max-width: 100%;
-  overflow: hidden;
+  justify-content: center;
+  width: 100%;
 `;
 
 export const SettingsTabBar = <TabId extends string = string>({

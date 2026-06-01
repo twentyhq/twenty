@@ -3,11 +3,11 @@ import { useParams } from 'react-router-dom';
 
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
-import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -149,38 +149,40 @@ export const SettingsObjectDetailPage = () => {
           },
         ]}
         actionButton={
-          !readonly &&
-          activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-            <UndecoratedLink to="./new-field/select">
-              <Button
-                title={t`New Field`}
-                variant="primary"
-                size="small"
-                accent="blue"
-                Icon={IconPlus}
-              />
-            </UndecoratedLink>
-          )
+          <>
+            <Button
+              Icon={IconArrowUpRight}
+              title={t`See records`}
+              variant="secondary"
+              size="small"
+              to={getAppPath(AppPath.RecordIndexPage, {
+                objectNamePlural: objectMetadataItem.namePlural,
+              })}
+            />
+            {!readonly &&
+              activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
+                <UndecoratedLink to="./new-field/select">
+                  <Button
+                    title={t`New Field`}
+                    variant="primary"
+                    size="small"
+                    accent="blue"
+                    Icon={IconPlus}
+                  />
+                </UndecoratedLink>
+              )}
+          </>
         }
-      >
-        <SettingsPageContainer>
-          <TabList
+        secondaryBar={
+          <SettingsTabBar
             tabs={tabs}
             componentInstanceId={
               SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
             }
-            rightComponent={
-              <Button
-                Icon={IconArrowUpRight}
-                title={t`See records`}
-                variant="tertiary"
-                size="small"
-                to={getAppPath(AppPath.RecordIndexPage, {
-                  objectNamePlural: objectMetadataItem.namePlural,
-                })}
-              />
-            }
           />
+        }
+      >
+        <SettingsPageContainer>
           <StyledContentContainer>
             {renderActiveTabContent()}
           </StyledContentContainer>
