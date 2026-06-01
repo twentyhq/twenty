@@ -1,0 +1,19 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/normalize-message-text.util.spec.ts
+  s_ccda17eaabba7a::t_ae02f264a3b5cf 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "07b9deed22c5cf00872159aa4a5c14a5c005d46d",
+  "prompts": {},
+  "sessions": {
+    "s_ccda17eaabba7a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b932cb9-a0b1-4bbb-9c58-8574d4b18520",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
