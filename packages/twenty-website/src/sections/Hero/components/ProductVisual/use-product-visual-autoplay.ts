@@ -11,11 +11,7 @@ import type {
 } from '@/sections/AppPreview/types/app-preview-data';
 
 import {
-  COMPANIES_PAGE_ITEM_ID,
-  NEW_COMPANY_ROW,
-  NEW_PERSON_ROW,
   NEW_TASK_ROWS,
-  PEOPLE_PAGE_ITEM_ID,
   PRODUCT_VISUAL_SCENES,
   QONTO_RECORD_PAGE,
   QONTO_RECORD_PAGE_INITIAL,
@@ -30,8 +26,6 @@ type AutoplayOptions = {
 
 type ProductVisualScenePhase =
   | 'base'
-  | 'company-added'
-  | 'person-added'
   | 'focused'
   | 'tasks-added'
   | 'record-initial'
@@ -77,14 +71,6 @@ function getScenePhase(
 ): ProductVisualScenePhase {
   switch (scene.kind) {
     case 'leadCreation':
-      if (streamProgress >= 0.6) {
-        return 'person-added';
-      }
-
-      if (streamProgress >= 0.2) {
-        return 'company-added';
-      }
-
       return 'base';
     case 'opportunityReview':
       return streamProgress >= 0.18 ? 'focused' : 'base';
@@ -321,32 +307,6 @@ function resolveDisplayPage(
 ): PageDefinition {
   if (scene.kind === 'recordSummary') {
     return buildRecordSummaryPage(phase);
-  }
-
-  if (scene.kind === 'leadCreation' && activePage.type === 'table') {
-    if (phase !== 'base' && activeItemId === COMPANIES_PAGE_ITEM_ID) {
-      return {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + 1,
-        },
-        rows: [NEW_COMPANY_ROW, ...activePage.rows],
-      };
-    }
-
-    if (phase === 'person-added' && activeItemId === PEOPLE_PAGE_ITEM_ID) {
-      return {
-        ...activePage,
-        header: {
-          ...activePage.header,
-          count: (activePage.header.count ?? 0) + 1,
-        },
-        rows: [NEW_PERSON_ROW, ...activePage.rows],
-      };
-    }
-
-    return activePage;
   }
 
   if (scene.kind === 'opportunityReview' && activePage.type === 'kanban') {

@@ -260,64 +260,6 @@ export const NEW_TASK_ROWS: RowDef[] = [
   },
 ];
 
-export const NEW_COMPANY_ROW: RowDef = {
-  id: 'openai',
-  cells: {
-    company: { type: 'entity', name: 'OpenAI', domain: 'openai.com' },
-    url: { type: 'link', kind: 'url', value: 'openai.com' },
-    createdBy: {
-      type: 'person',
-      name: 'AI Agent',
-      tone: 'gray',
-      kind: 'system',
-      shortLabel: 'AI',
-    },
-    address: { type: 'text', value: '3180 18th St' },
-    accountOwner: {
-      type: 'person',
-      name: 'Sam Altman',
-      tone: 'amber',
-      kind: 'person',
-      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
-    },
-    icp: { type: 'boolean', value: true },
-    arr: { type: 'currency', value: '$2,000,000' },
-    linkedin: { type: 'link', kind: 'social', value: 'openai' },
-    industry: { type: 'select', value: 'AI Research' },
-    mainContact: {
-      type: 'person',
-      name: 'Sam Altman',
-      shortLabel: 'S',
-      tone: 'amber',
-      kind: 'person',
-      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
-    },
-    employees: { type: 'number', value: '3,500' },
-    opportunities: { type: 'relation', items: [] },
-    added: { type: 'text', value: 'Just now' },
-  },
-};
-
-export const NEW_PERSON_ROW: RowDef = {
-  id: 'sam-altman',
-  cells: {
-    name: {
-      type: 'person',
-      name: 'Sam Altman',
-      tone: 'amber',
-      kind: 'person',
-      avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
-    },
-    company: { type: 'entity', name: 'OpenAI', domain: 'openai.com' },
-    email: { type: 'link', kind: 'email', value: 'sam@openai.com' },
-    phone: { type: 'link', kind: 'phone', value: '+1 415 555 0199' },
-    jobTitle: { type: 'text', value: 'CEO' },
-    city: { type: 'text', value: 'San Francisco' },
-    linkedin: { type: 'link', kind: 'social', value: 'sama' },
-    added: { type: 'text', value: 'Just now' },
-  },
-};
-
 export type ResponseChip = {
   logoUrl: string;
   name: string;
@@ -374,12 +316,8 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     initialPageItemId: COMPANIES_PAGE_ITEM_ID,
     kind: 'leadCreation',
     label: 'Add a new lead',
-    followUpPageItemId: PEOPLE_PAGE_ITEM_ID,
-    responseText:
-      '**OpenAI** is now in Companies with openai.com, AI Research, and **$2.0M ARR**. **Sam Altman** was added in People as CEO in San Francisco and linked back to OpenAI as the main contact.',
-    responseChips: [
-      { name: 'OpenAI', logoUrl: SHARED_COMPANY_LOGO_URLS.openai },
-    ],
+    responseText: '',
+    responseChips: [],
     sidebarMode: 'expanded',
   },
   {
@@ -901,8 +839,8 @@ export const ANTHROPIC_RECORD_PAGE: RecordPageDefinition = {
             },
             { name: 'Alice', tone: 'amber' },
             {
-              name: 'Sam Altman',
-              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.samAltman,
+              name: 'Marcus Lee',
+              avatarUrl: SHARED_PEOPLE_AVATAR_URLS.anonymousMike,
               tone: 'amber',
             },
           ],
