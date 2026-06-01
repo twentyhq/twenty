@@ -2,8 +2,12 @@ import { styled } from '@linaria/react';
 
 import { EventFieldDiffLabel } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffLabel';
 import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue';
-import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
-import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
+import {
+  EventFieldDiffValueEffect
+} from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
+import {
+  EventRelationFieldDiffValues
+} from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
 import { isRelationFieldChangeValue } from '@/activities/timeline-activities/utils/relationFieldChangeValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
@@ -34,6 +38,10 @@ const StyledEmptyValue = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
 `;
 
+const StyledArrowContainer = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+`;
+
 export const EventFieldDiff = ({
   fieldDiff,
   mainObjectMetadataItem,
@@ -52,7 +60,8 @@ export const EventFieldDiff = ({
   if (isRelationFieldDiff) {
     return (
       <StyledEventFieldDiffContainer>
-        <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
+        <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />
+        <StyledArrowContainer>→</StyledArrowContainer>
         <EventRelationFieldDiffValues
           fieldDiff={fieldDiff}
           fieldMetadataItem={fieldMetadataItem}
@@ -77,7 +86,8 @@ export const EventFieldDiff = ({
 
   return (
     <StyledEventFieldDiffContainer>
-      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />→
+      <EventFieldDiffLabel fieldMetadataItem={fieldMetadataItem} />
+      <StyledArrowContainer>→</StyledArrowContainer>
       {isUpdatedToEmpty ? (
         <StyledEmptyValue>
           <Trans>Empty</Trans>
