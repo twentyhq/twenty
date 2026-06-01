@@ -161,6 +161,7 @@ msgstr "{0, plural, one {Nu aveți permisiunea de a accesa câmpul {fieldsList}}
 #. js-lingui-id: pZCK0D
 #. placeholder {0}: registration.name
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 msgid "{0} - Config"
 msgstr ""
 
@@ -1384,6 +1385,7 @@ msgstr ""
 
 #. js-lingui-id: 2GX/U+
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 msgid "Admin Panel - Apps"
 msgstr ""
 
@@ -6245,6 +6247,11 @@ msgstr "Introduceți un număr"
 msgid "Enter a UUID"
 msgstr "Introduceți un UUID"
 
+#. js-lingui-id: 0AYT5C
+#: src/modules/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm.tsx
+msgid "Enter a value"
+msgstr ""
+
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Enter a value to store in database"
@@ -7724,12 +7731,6 @@ msgstr "Numele funcției"
 msgid "Functions - Settings"
 msgstr "Funcții - Setări"
 
-#. js-lingui-id: vYj1cC
-#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
-#: src/modules/page-layout/utils/getWidgetTitle.ts
-msgid "Gauge Chart"
-msgstr "Grafic tip ceas"
-
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -8696,10 +8697,11 @@ msgstr "Email sau domeniu invalid"
 msgid "Invalid email verification link."
 msgstr "Link de verificare a emailului invalid."
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
-msgstr "Fișier Invalid"
+msgid "Invalid file: {0}"
+msgstr ""
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -11729,6 +11731,7 @@ msgstr "Organizare"
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
@@ -14228,11 +14231,6 @@ msgstr ""
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
 msgstr "Setați variabilele de configurare a aplicației dumneavoastră"
-
-#. js-lingui-id: 9qcWSO
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-msgid "set-config-value"
-msgstr ""
 
 #. js-lingui-id: dQsqpC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -16882,8 +16880,6 @@ msgstr "Tokenul de validare a fost reîmprospătat cu succes"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Valoare"
 

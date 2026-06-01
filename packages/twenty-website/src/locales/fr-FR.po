@@ -418,10 +418,10 @@ msgstr "avancé"
 msgid "Africa"
 msgstr ""
 
-#. js-lingui-id: /C6Pwb
+#. js-lingui-id: vZKKhf
 #: src/app/[locale]/product/feature.data.ts
-msgid "Aggregate, bar, line, pie, and gauge widgets"
-msgstr "Widgets agrégat, barres, lignes, secteurs et jauges"
+msgid "Aggregate, bar, line, and pie widgets"
+msgstr ""
 
 #. js-lingui-id: rp2omj
 #: src/lib/customers/case-study-catalog.ts

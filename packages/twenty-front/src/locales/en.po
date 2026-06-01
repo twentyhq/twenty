@@ -156,6 +156,7 @@ msgstr "{0, plural, one {You do not have permission to access the {fieldsList} f
 #. js-lingui-id: pZCK0D
 #. placeholder {0}: registration.name
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 msgid "{0} - Config"
 msgstr "{0} - Config"
 
@@ -1379,6 +1380,7 @@ msgstr "Admin Panel - AI"
 
 #. js-lingui-id: 2GX/U+
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 msgid "Admin Panel - Apps"
 msgstr "Admin Panel - Apps"
 
@@ -6240,6 +6242,11 @@ msgstr "Enter a number"
 msgid "Enter a UUID"
 msgstr "Enter a UUID"
 
+#. js-lingui-id: 0AYT5C
+#: src/modules/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm.tsx
+msgid "Enter a value"
+msgstr "Enter a value"
+
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Enter a value to store in database"
@@ -7719,12 +7726,6 @@ msgstr "Function name"
 msgid "Functions - Settings"
 msgstr "Functions - Settings"
 
-#. js-lingui-id: vYj1cC
-#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
-#: src/modules/page-layout/utils/getWidgetTitle.ts
-msgid "Gauge Chart"
-msgstr "Gauge Chart"
-
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -8714,10 +8715,11 @@ msgstr "Invalid email or domain"
 msgid "Invalid email verification link."
 msgstr "Invalid email verification link."
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
-msgstr "Invalid File"
+msgid "Invalid file: {0}"
+msgstr "Invalid file: {0}"
 
 #. js-lingui-id: 04zLGG
 #: src/modules/workflow/workflow-trigger/components/WorkflowEditTriggerCronForm.tsx
@@ -11747,6 +11749,7 @@ msgstr "Organize"
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
@@ -14246,11 +14249,6 @@ msgstr "Set up forwarding from the source address to this destination."
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
 msgstr "Set your application configuration variables"
-
-#. js-lingui-id: 9qcWSO
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-msgid "set-config-value"
-msgstr "set-config-value"
 
 #. js-lingui-id: dQsqpC
 #: src/pages/onboarding/CreateWorkspace.tsx
@@ -16932,8 +16930,6 @@ msgstr "Validity token refreshed successfully"
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr "Value"
 

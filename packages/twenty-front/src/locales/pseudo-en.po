@@ -156,6 +156,7 @@ msgstr ""
 #. js-lingui-id: pZCK0D
 #. placeholder {0}: registration.name
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 msgid "{0} - Config"
 msgstr ""
 
@@ -1379,6 +1380,7 @@ msgstr ""
 
 #. js-lingui-id: 2GX/U+
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 msgid "Admin Panel - Apps"
 msgstr ""
 
@@ -6240,6 +6242,11 @@ msgstr ""
 msgid "Enter a UUID"
 msgstr ""
 
+#. js-lingui-id: 0AYT5C
+#: src/modules/settings/application-registrations/components/ApplicationRegistrationConfigVariableEditForm.tsx
+msgid "Enter a value"
+msgstr ""
+
 #. js-lingui-id: oiVP/+
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 msgid "Enter a value to store in database"
@@ -7719,12 +7726,6 @@ msgstr ""
 msgid "Functions - Settings"
 msgstr ""
 
-#. js-lingui-id: vYj1cC
-#: src/modules/side-panel/pages/page-layout/constants/GraphTypeInformation.ts
-#: src/modules/page-layout/utils/getWidgetTitle.ts
-msgid "Gauge Chart"
-msgstr ""
-
 #. js-lingui-id: Weq9zb
 #: src/pages/settings/SettingsWorkspace.tsx
 #: src/pages/settings/SettingsWorkspace.tsx
@@ -8691,9 +8692,10 @@ msgstr ""
 msgid "Invalid email verification link."
 msgstr ""
 
-#. js-lingui-id: uzxr9u
+#. js-lingui-id: 4D6/HO
+#. placeholder {0}: samlMetadataParsed.reason
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
-msgid "Invalid File"
+msgid "Invalid file: {0}"
 msgstr ""
 
 #. js-lingui-id: 04zLGG
@@ -11724,6 +11726,7 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdminIndicatorHealthStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminConfigVariableDetails.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
+#: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
@@ -14222,11 +14225,6 @@ msgstr ""
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
-msgstr ""
-
-#. js-lingui-id: 9qcWSO
-#: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
-msgid "set-config-value"
 msgstr ""
 
 #. js-lingui-id: dQsqpC
@@ -16877,8 +16875,6 @@ msgstr ""
 #: src/modules/settings/components/SettingsDnsRecordsTable.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
 #: src/modules/settings/admin-panel/config-variables/components/ConfigVariableValueInput.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
-#: src/modules/page-layout/widgets/graph/graph-widget-gauge-chart/components/GraphWidgetGaugeChart.tsx
 msgid "Value"
 msgstr ""
 
