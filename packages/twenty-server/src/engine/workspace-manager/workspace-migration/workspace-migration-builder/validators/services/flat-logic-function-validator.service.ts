@@ -83,10 +83,6 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    // Merge the partial update over the existing entity to get the resulting
-    // state. `checksum` is nullable, so an explicit `null` must be preserved
-    // (it can't fall back to the existing checksum and silently satisfy the
-    // PREBUILT invariant) — hence `!== undefined` rather than `??`.
     const prebuiltInvariantError = this.getPrebuiltInvariantError({
       executionMode:
         flatEntityUpdate.executionMode ??
@@ -107,8 +103,6 @@ export class FlatLogicFunctionValidatorService {
     return validationResult;
   }
 
-  // A logic function in PREBUILT mode must have a fresh build and a checksum,
-  // otherwise there is nothing installable to invoke.
   private getPrebuiltInvariantError({
     executionMode,
     isBuildUpToDate,

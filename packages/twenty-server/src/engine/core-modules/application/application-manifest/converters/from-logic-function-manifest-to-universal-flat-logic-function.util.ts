@@ -40,6 +40,10 @@ export const fromLogicFunctionManifestToUniversalFlatLogicFunction = ({
     workflowActionTriggerSettings:
       logicFunctionManifest.workflowActionTriggerSettings ?? null,
     isBuildUpToDate: true,
+    // App-installed logic functions land directly in PREBUILT mode: the
+    // bundle is delivered as part of the application manifest and the
+    // create-action handler installs it on the driver as part of the same
+    // migration apply.
     executionMode: LogicFunctionExecutionMode.PREBUILT,
     createdAt: now,
     updatedAt: now,

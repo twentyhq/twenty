@@ -98,10 +98,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       update as Parameters<typeof logicFunctionRepository.update>[1],
     );
 
-    // Install before deleting the old built bundle: if the install fails the
-    // action throws and the transaction rolls back, leaving the old artifact in
-    // storage so LIVE execution keeps working. Deleting first would leave the
-    // function pointing at a removed bundle on rollback.
     await this.installPrebuiltBundleIfNeeded({
       existingLogicFunction,
       update,
@@ -136,8 +132,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     const nextIsBuildUpToDate =
       update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate;
 
-    // Only a PREBUILT function with a fresh build and a checksum has an
-    // installable bundle.
     if (
       nextExecutionMode !== LogicFunctionExecutionMode.PREBUILT ||
       !nextIsBuildUpToDate ||
@@ -146,8 +140,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       return;
     }
 
-    // Nothing to do when the bundle for this exact checksum is already
-    // installed (already PREBUILT and the checksum did not change).
     const isAlreadyInstalled =
       existingLogicFunction.executionMode ===
         LogicFunctionExecutionMode.PREBUILT &&

@@ -1319,12 +1319,10 @@ export class LambdaDriver implements LogicFunctionDriver {
       handlerName: flatLogicFunction.handlerName,
     };
 
-    // PREBUILT: the bundle already lives on the Lambda, so we ship no code.
     if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
       return { executorPayload: basePayload, getBuiltCodeMs: 0 };
     }
 
-    // LIVE: fetch the compiled bundle and ship it in the invoke payload.
     const fetchStart = Date.now();
     const code = await this.logicFunctionResourceService.getBuiltCode({
       workspaceId: flatLogicFunction.workspaceId,
@@ -1430,9 +1428,6 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
-  // Read-only tag lookup: no install lock needed. A read that races an install
-  // simply returns the previous checksum, which the caller compares against the
-  // expected one and rebuilds on mismatch.
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
