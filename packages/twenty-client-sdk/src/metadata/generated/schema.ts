@@ -1118,6 +1118,13 @@ export type EmailingDomainDriver = 'AWS_SES'
 
 export type EmailingDomainStatus = 'PENDING' | 'VERIFIED' | 'FAILED' | 'TEMPORARY_FAILURE'
 
+export interface SendEmailCampaignOutputDTO {
+    campaignId: Scalars['String']
+    sentCount: Scalars['Int']
+    failedCount: Scalars['Int']
+    __typename: 'SendEmailCampaignOutputDTO'
+}
+
 export interface SendEmailViaDomainOutput {
     messageId: Scalars['String']
     __typename: 'SendEmailViaDomainOutput'
@@ -2731,6 +2738,7 @@ export interface Mutation {
     deleteEmailingDomain: Scalars['Boolean']
     verifyEmailingDomain: EmailingDomain
     sendEmailViaEmailingDomain: SendEmailViaDomainOutput
+    sendEmailCampaign: SendEmailCampaignOutputDTO
     updateOneApplicationVariable: Scalars['Boolean']
     createPageLayoutWidget: PageLayoutWidget
     updatePageLayoutWidget: PageLayoutWidget
@@ -4047,6 +4055,14 @@ export interface EmailingDomainGenqlSelection{
     status?: boolean | number
     verificationRecords?: VerificationRecordGenqlSelection
     verifiedAt?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
+export interface SendEmailCampaignOutputDTOGenqlSelection{
+    campaignId?: boolean | number
+    sentCount?: boolean | number
+    failedCount?: boolean | number
     __typename?: boolean | number
     __scalar?: boolean | number
 }
@@ -5790,6 +5806,7 @@ export interface MutationGenqlSelection{
     deleteEmailingDomain?: { __args: {id: Scalars['String']} }
     verifyEmailingDomain?: (EmailingDomainGenqlSelection & { __args: {id: Scalars['String']} })
     sendEmailViaEmailingDomain?: (SendEmailViaDomainOutputGenqlSelection & { __args: {input: SendEmailViaDomainInput} })
+    sendEmailCampaign?: (SendEmailCampaignOutputDTOGenqlSelection & { __args: {input: SendEmailCampaignInput} })
     updateOneApplicationVariable?: { __args: {key: Scalars['String'], value: Scalars['String'], applicationId: Scalars['UUID']} }
     createPageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {input: CreatePageLayoutWidgetInput} })
     updatePageLayoutWidget?: (PageLayoutWidgetGenqlSelection & { __args: {id: Scalars['String'], input: UpdatePageLayoutWidgetInput} })
@@ -6089,6 +6106,8 @@ export interface UpdatePageLayoutWidgetWithIdInput {id: Scalars['UUID'],pageLayo
 export interface GridPositionInput {row: Scalars['Float'],column: Scalars['Float'],rowSpan: Scalars['Float'],columnSpan: Scalars['Float']}
 
 export interface SendEmailViaDomainInput {emailingDomainId: Scalars['String'],to: Scalars['String'][],cc?: (Scalars['String'][] | null),bcc?: (Scalars['String'][] | null),subject: Scalars['String'],text: Scalars['String'],html?: (Scalars['String'] | null),from: Scalars['String'],replyTo?: (Scalars['String'][] | null)}
+
+export interface SendEmailCampaignInput {emailListId: Scalars['String'],subject: Scalars['String'],body: Scalars['String'],fromAddress: Scalars['String']}
 
 export interface CreatePageLayoutWidgetInput {pageLayoutTabId: Scalars['UUID'],title: Scalars['String'],type: WidgetType,objectMetadataId?: (Scalars['UUID'] | null),gridPosition: GridPositionInput,position?: (Scalars['JSON'] | null),configuration: Scalars['JSON']}
 
@@ -6967,6 +6986,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isEmailingDomain = (obj?: { __typename?: any } | null): obj is EmailingDomain => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isEmailingDomain"')
       return EmailingDomain_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const SendEmailCampaignOutputDTO_possibleTypes: string[] = ['SendEmailCampaignOutputDTO']
+    export const isSendEmailCampaignOutputDTO = (obj?: { __typename?: any } | null): obj is SendEmailCampaignOutputDTO => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isSendEmailCampaignOutputDTO"')
+      return SendEmailCampaignOutputDTO_possibleTypes.includes(obj.__typename)
     }
     
 
