@@ -1,81 +1,40 @@
 import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 
+import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER } from 'twenty-shared/application';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath, isDefined } from 'twenty-shared/utils';
+import { isDefined } from 'twenty-shared/utils';
 import { IconChevronRight } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
-
-import { type CurrentWorkspace } from '@/auth/states/currentWorkspaceState';
 import { SettingsToolIcon } from '~/pages/settings/ai/components/SettingsToolIcon';
 import {
   SettingsToolTableRow,
   TOOL_TABLE_ROW_GRID_TEMPLATE_COLUMNS,
 } from '~/pages/settings/ai/components/SettingsToolTableRow';
-
-export type SettingsAgentToolItem = {
-  identifier: string;
-  name: string;
-  description?: string | null;
-  category?: string;
-  objectName?: string | null;
-  icon?: string | null;
-  applicationId?: string | null;
-};
-
-type Application = {
-  id: string;
-  name: string;
-  universalIdentifier: string;
-  logo?: string | null;
-};
-
-type MarketplaceApp = {
-  id: string;
-  universalIdentifier: string;
-  icon: string;
-  logo?: string | null;
-};
+import { type SettingsAgentToolApplication } from '~/pages/settings/ai/types/SettingsAgentToolApplication';
+import { type SettingsAgentToolItem } from '~/pages/settings/ai/types/SettingsAgentToolItem';
+import { type SettingsAgentToolMarketplaceApp } from '~/pages/settings/ai/types/SettingsAgentToolMarketplaceApp';
+import { getToolApplicationId } from '~/pages/settings/ai/utils/getToolApplicationId';
+import { getToolLink } from '~/pages/settings/ai/utils/getToolLink';
 
 type SettingsAgentToolsTableProps = {
   tools: SettingsAgentToolItem[];
   isLoading: boolean;
-  applicationById: Map<string, Application>;
-  marketplaceAppByUniversalIdentifier: Map<string, MarketplaceApp>;
+  applicationById: Map<string, SettingsAgentToolApplication>;
+  marketplaceAppByUniversalIdentifier: Map<
+    string,
+    SettingsAgentToolMarketplaceApp
+  >;
   currentWorkspace: CurrentWorkspace | null;
 };
 
 const StyledTableHeaderRowContainer = styled.div`
   margin-bottom: ${themeCssVariables.spacing[2]};
 `;
-
-const getToolApplicationId = (
-  tool: SettingsAgentToolItem,
-  currentWorkspace: CurrentWorkspace | null,
-): string => {
-  if (isDefined(tool.applicationId)) {
-    return tool.applicationId;
-  }
-
-  return (
-    currentWorkspace?.installedApplications?.find(
-      (app) =>
-        app.universalIdentifier ===
-        TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
-    )?.id ?? ''
-  );
-};
-
-const getToolLink = (tool: SettingsAgentToolItem): string =>
-  getSettingsPath(SettingsPath.AiToolDetail, {
-    toolIdentifier: tool.identifier,
-  });
 
 export const SettingsAgentToolsTable = ({
   tools,

@@ -55,8 +55,8 @@ export class ApiKeyController {
     return this.apiKeyService.findById(id, workspace.id);
   }
 
-  // Minting/altering a long-lived API key requires a first-person session
-  // (ACCESS); a derived PLAYGROUND token or an API key cannot escalate here.
+  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
+  // and API keys must not escalate into a long-lived credential.
   @UseGuards(RequireAccessTokenGuard)
   @Post()
   async create(

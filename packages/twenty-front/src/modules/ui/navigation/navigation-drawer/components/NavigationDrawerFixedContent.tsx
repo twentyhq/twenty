@@ -5,8 +5,6 @@ import { styled } from '@linaria/react';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Mobile keeps the touch-friendly horizontal padding; on desktop the container
-// is edge-to-edge and the child supplies its own padding.
 const StyledFixedContainer = styled.div<{ isMobile?: boolean }>`
   padding-left: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[5] : '0'};

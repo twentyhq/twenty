@@ -3,12 +3,8 @@ import { styled } from '@linaria/react';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
 import React from 'react';
 
-// Column width used by the Applications data tables (Instances column).
 export const SETTINGS_OBJECT_TABLE_COLUMN_WIDTH = '98.7px';
 
-// Relative grid: Name takes all remaining space (with a floor); App / Fields /
-// Instances get fixed minimums so short text columns don't collapse; trailing
-// 36 px holds the chevron / action cell.
 export const SETTINGS_OBJECT_TABLE_ROW_GRID_TEMPLATE_COLUMNS = `minmax(180px, 1fr) 140px 80px 100px 36px`;
 
 export const SETTINGS_OBJECT_TABLE_ROW_MOBILE_MIN_WIDTH = '520px';

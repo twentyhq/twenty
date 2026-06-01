@@ -5,7 +5,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -31,29 +30,26 @@ export const SettingsObjects = () => {
   const { objectMetadataItems } = useFilteredObjectMetadataItems();
   const isDDLLocked = useAtomStateValue(isDDLLockedState);
 
-  const heroTabs = useMemo(
-    () => [
-      {
-        id: 'objects',
-        title: t`Objects`,
-        Icon: IconHierarchy2,
-        vimeoId: '926288174',
-      },
-      {
-        id: 'fields',
-        title: t`Fields`,
-        Icon: IconList,
-        vimeoId: '927628219',
-      },
-      {
-        id: 'relations',
-        title: t`Relations`,
-        Icon: IconLink,
-        vimeoId: '1185511827',
-      },
-    ],
-    [t],
-  );
+  const heroTabs = [
+    {
+      id: 'objects',
+      title: t`Objects`,
+      Icon: IconHierarchy2,
+      vimeoId: '926288174',
+    },
+    {
+      id: 'fields',
+      title: t`Fields`,
+      Icon: IconList,
+      vimeoId: '927628219',
+    },
+    {
+      id: 'relations',
+      title: t`Relations`,
+      Icon: IconLink,
+      vimeoId: '1185511827',
+    },
+  ];
 
   return (
     <SubMenuTopBarContainer
