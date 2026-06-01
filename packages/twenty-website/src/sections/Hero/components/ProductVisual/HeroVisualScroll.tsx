@@ -18,7 +18,6 @@ import { styled } from '@linaria/react';
 
 import { useProductHeroMenuSync } from './product-hero-menu-sync';
 import { ProductBackgroundHalftone } from './ProductBackgroundHalftone';
-import { ProductIntroHalftone } from './ProductIntroHalftone';
 import { ProductVisual } from './ProductVisual';
 import { useHeroScrollProgress } from './use-hero-scroll-progress';
 
@@ -40,6 +39,8 @@ type StackTargetMetric = {
 };
 
 const NAV_HEIGHT = 64;
+
+const INTRO_HALFTONE_COLOR = '#4A38F5';
 
 const ScrollTrack = styled.section`
   height: 200vh;
@@ -81,17 +82,6 @@ const PatternOverlay = styled.div`
   position: absolute;
   transform: translateX(-50%);
   width: 100%;
-  z-index: 0;
-`;
-
-const IntroBackground = styled.div`
-  bottom: 0;
-  left: -20%;
-  overflow: clip;
-  pointer-events: none;
-  position: absolute;
-  right: -20%;
-  top: 0;
   z-index: 0;
 `;
 
@@ -322,9 +312,6 @@ export function HeroVisualScroll({
         <FullLayer
           style={{ backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
         >
-          <IntroBackground>
-            <ProductIntroHalftone />
-          </IntroBackground>
           <StyledContainer>
             <HeadingGroup>
               <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
@@ -366,6 +353,12 @@ export function HeroVisualScroll({
           </StyledContainer>
 
           <VisualWrapper>
+            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+              <ProductBackgroundHalftone
+                dashColor={INTRO_HALFTONE_COLOR}
+                hoverColor={INTRO_HALFTONE_COLOR}
+              />
+            </PatternOverlay>
             <ProductVisual
               activeScene={0}
               collaborative
@@ -385,9 +378,6 @@ export function HeroVisualScroll({
             transform: 'translateZ(0)',
           }}
         >
-          <PatternOverlay style={{ opacity: 1.0 }}>
-            <ProductBackgroundHalftone />
-          </PatternOverlay>
           <StyledContainer>
             <HeadingGroup>
               <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
@@ -477,6 +467,9 @@ export function HeroVisualScroll({
           </StyledContainer>
 
           <VisualWrapper>
+            <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
+              <ProductBackgroundHalftone />
+            </PatternOverlay>
             <ProductVisual
               activeScene={activeTab + 1}
               playbackEnabled={aiPlaybackEnabled}
