@@ -1,8 +1,8 @@
 import { isDefined } from 'twenty-shared/utils';
 
 import { NavigationMenuItemType } from 'twenty-shared/types';
-import { useDraftNavigationMenuItemsAllFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsAllFolders';
-import { useDraftNavigationMenuItemsSectionFolders } from '@/navigation-menu-item/edit/hooks/useDraftNavigationMenuItemsSectionFolders';
+import { useNavigationMenuItemSectionAllFolders } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSectionAllFolders';
+import { useNavigationMenuItemSectionFolders } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemSectionFolders';
 import { useNavigationMenuItemMoveRemove } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemMoveRemove';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
 import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
@@ -46,8 +46,8 @@ export const useFolderPickerSelectionData = () => {
   );
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
   const selectedItemType = selectedItem?.type ?? null;
-  const { allFolders } = useDraftNavigationMenuItemsAllFolders();
-  const { sectionFolders } = useDraftNavigationMenuItemsSectionFolders();
+  const { allFolders } = useNavigationMenuItemSectionAllFolders();
+  const { sectionFolders } = useNavigationMenuItemSectionFolders();
 
   const selectedFolderId =
     selectedItemType === NavigationMenuItemType.FOLDER

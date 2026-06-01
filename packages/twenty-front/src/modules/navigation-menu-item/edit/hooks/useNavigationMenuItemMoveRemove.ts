@@ -6,7 +6,7 @@ import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 
 export const useNavigationMenuItemMoveRemove = () => {
-  const { currentItems, applyUpdate, applyDelete } =
+  const { currentItems, updateItem, deleteItems } =
     useNavigationMenuItemEditController();
   const items = useNavigationMenuItemEditSectionItems();
   const visibleItemIds = new Set(items.map((item) => item.id));
@@ -40,7 +40,7 @@ export const useNavigationMenuItemMoveRemove = () => {
     }
     const prev = siblings[currentIndex - 1];
     const prevPrev = siblings[currentIndex - 2];
-    await applyUpdate(navigationMenuItemId, {
+    await updateItem(navigationMenuItemId, {
       position: getPositionBetween(prevPrev?.position, prev.position),
     });
   };
@@ -58,7 +58,7 @@ export const useNavigationMenuItemMoveRemove = () => {
     }
     const next = siblings[currentIndex + 1];
     const nextNext = siblings[currentIndex + 2];
-    await applyUpdate(navigationMenuItemId, {
+    await updateItem(navigationMenuItemId, {
       position: getPositionBetween(next.position, nextNext?.position),
     });
   };
@@ -75,11 +75,11 @@ export const useNavigationMenuItemMoveRemove = () => {
       const childIds = currentItems
         .filter((item) => item.folderId === navigationMenuItemId)
         .map((item) => item.id);
-      await applyDelete([navigationMenuItemId, ...childIds]);
+      await deleteItems([navigationMenuItemId, ...childIds]);
       return;
     }
 
-    await applyDelete([navigationMenuItemId]);
+    await deleteItems([navigationMenuItemId]);
   };
 
   const moveToFolder = async (
@@ -128,7 +128,7 @@ export const useNavigationMenuItemMoveRemove = () => {
         ? Math.max(...itemsInTargetFolder.map((item) => item.position))
         : -1;
 
-    await applyUpdate(navigationMenuItemId, {
+    await updateItem(navigationMenuItemId, {
       folderId: targetFolderId ?? null,
       position: maxPositionInTarget + 1,
     });

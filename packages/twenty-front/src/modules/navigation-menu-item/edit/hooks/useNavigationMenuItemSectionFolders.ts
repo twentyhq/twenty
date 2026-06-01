@@ -2,7 +2,7 @@ import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/commo
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
-export const useDraftNavigationMenuItemsSectionFolders = () => {
+export const useNavigationMenuItemSectionFolders = () => {
   const navigationMenuItemEditSection = useAtomStateValue(
     navigationMenuItemEditSectionState,
   );

@@ -1,11 +1,9 @@
 import { CommandMenuItemDropdown } from '@/command-menu/components/CommandMenuItemDropdown';
 import { useUpdateMetadataStoreDraft } from '@/metadata-store/hooks/useUpdateMetadataStoreDraft';
 import { type FlatObjectMetadataItem } from '@/metadata-store/types/FlatObjectMetadataItem';
-import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { isValidObjectNavigationMenuItem } from '@/navigation-menu-item/common/utils/isValidObjectNavigationMenuItem';
+import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useSelectedNavigationMenuItemEditItem } from '@/navigation-menu-item/edit/hooks/useSelectedNavigationMenuItemEditItem';
-import { useUpdateNavigationMenuItemInDraft } from '@/navigation-menu-item/edit/hooks/useUpdateNavigationMenuItemInDraft';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { ThemeColorPickerMenu } from '@/ui/input/components/ThemeColorPickerMenu';
 import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
 import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
@@ -34,29 +32,20 @@ export const SidePanelEditColorOption = ({
   color,
 }: SidePanelEditColorOptionProps) => {
   const { t } = useLingui();
-  const { updateNavigationMenuItemInDraft } =
-    useUpdateNavigationMenuItemInDraft();
+  const { updateItem, isDraftMode } = useNavigationMenuItemEditController();
   const { closeDropdown } = useCloseDropdown();
   const { updateInDraft, applyChanges } = useUpdateMetadataStoreDraft();
   const { selectedItem } = useSelectedNavigationMenuItemEditItem();
-  const navigationMenuItemEditSection = useAtomStateValue(
-    navigationMenuItemEditSectionState,
-  );
 
   const themeColor = color ?? 'gray';
   const colorLabel = DEFAULT_COLOR_LABELS[themeColor] ?? capitalize(themeColor);
 
   const handleSelectColor = (selectedColor: ThemeColor) => {
-    updateNavigationMenuItemInDraft(navigationMenuItemId, {
-      color: selectedColor,
-    });
+    void updateItem(navigationMenuItemId, { color: selectedColor });
 
     // A personal favorite's color is item-local; only workspace customization
     // recolors the shared object metadata.
-    if (
-      navigationMenuItemEditSection === 'workspace' &&
-      isValidObjectNavigationMenuItem(selectedItem)
-    ) {
+    if (isDraftMode && isValidObjectNavigationMenuItem(selectedItem)) {
       updateInDraft('objectMetadataItems', [
         {
           id: selectedItem.targetObjectMetadataId,

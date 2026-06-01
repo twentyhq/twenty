@@ -1,7 +1,7 @@
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 
-export const useDraftNavigationMenuItemsAllFolders = () => {
+export const useNavigationMenuItemSectionAllFolders = () => {
   const { currentItems } = useNavigationMenuItemEditController();
 
   const allFolders = currentItems
