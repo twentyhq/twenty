@@ -8,6 +8,11 @@ import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/use
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, mapById } from 'twenty-shared/utils';
 
+export type RecordBoardUpdateEffect =
+  | 'trigger-initial-query'
+  | 'reposition-records'
+  | 'none';
+
 export const useGetRecordBoardEffectsForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
 
@@ -29,7 +34,7 @@ export const useGetRecordBoardEffectsForUpdateInputs = () => {
 
   const getRecordBoardEffectsForUpdateInputs = (
     updateInputs: ObjectRecordOperationUpdateInput[],
-  ) => {
+  ): RecordBoardUpdateEffect => {
     const updatedFieldNames = new Set<string>();
     let thereIsAnUpdateOnAFilteredField = false;
     let thereIsAnUpdateOnASortedField = false;
@@ -89,17 +94,15 @@ export const useGetRecordBoardEffectsForUpdateInputs = () => {
       }
     }
 
-    const shouldTriggerInitialQuery =
-      thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField;
+    if (thereIsAnUpdateOnAFilteredField || thereIsAnUpdateOnASortedField) {
+      return 'trigger-initial-query';
+    }
 
-    const shouldRepositionRecords =
-      !shouldTriggerInitialQuery &&
-      (updatedFieldNames.has('position') || thereIsAnUpdateOnAGroupField);
+    if (updatedFieldNames.has('position') || thereIsAnUpdateOnAGroupField) {
+      return 'reposition-records';
+    }
 
-    return {
-      shouldTriggerInitialQuery,
-      shouldRepositionRecords,
-    };
+    return 'none';
   };
 
   return {

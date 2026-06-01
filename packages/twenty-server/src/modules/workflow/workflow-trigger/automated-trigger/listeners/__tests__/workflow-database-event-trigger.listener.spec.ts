@@ -420,5 +420,35 @@ describe('WorkflowDatabaseEventTriggerListener', () => {
 
       expect(messageQueueService.add).toHaveBeenCalled();
     });
+
+    it('should not trigger workflow for position-only updates when fields are specified', async () => {
+      const positionOnlyPayload: WorkspaceEventBatch<any> = {
+        ...mockPayload,
+        events: [
+          {
+            ...mockPayload.events[0],
+            properties: {
+              updatedFields: ['position'],
+              before: { position: 1 },
+              after: { position: 2 },
+            },
+          },
+        ],
+      };
+
+      mockRepository.find.mockResolvedValue([
+        {
+          ...mockEventListeners[0],
+          settings: {
+            eventName: databaseEventName,
+            fields: ['field1'],
+          },
+        },
+      ]);
+
+      await listener.handleObjectRecordUpdateEvent(positionOnlyPayload);
+
+      expect(messageQueueService.add).not.toHaveBeenCalled();
+    });
   });
 });

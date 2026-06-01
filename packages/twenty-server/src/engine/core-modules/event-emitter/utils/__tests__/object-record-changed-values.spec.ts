@@ -199,4 +199,52 @@ describe('objectRecordChangedValues', () => {
       position: { before: 1, after: 5 },
     });
   });
+
+  it('returns a non-empty diff for a position-only change', () => {
+    const positionFieldId = 'position-field-id';
+    const positionUniversalId = 'position-universal-id';
+
+    const objectMetadataWithPosition: FlatObjectMetadata = {
+      ...mockObjectMetadata,
+      fieldIds: [positionFieldId],
+    };
+
+    const flatFieldMetadataMapsWithPosition: FlatEntityMaps<FlatFieldMetadata> =
+      {
+        byUniversalIdentifier: {
+          [positionUniversalId]: {
+            id: positionFieldId,
+            name: 'position',
+            type: FieldMetadataType.POSITION,
+            universalIdentifier: positionUniversalId,
+          } as FlatFieldMetadata,
+        },
+        universalIdentifierById: {
+          [positionFieldId]: positionUniversalId,
+        },
+        universalIdentifiersByApplicationId: {},
+      };
+
+    const oldRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516n',
+      position: 1,
+      name: 'Unchanged',
+    };
+    const newRecord = {
+      id: '74316f58-29b0-4a6a-b8fa-d2b506d5516n',
+      position: 5,
+      name: 'Unchanged',
+    };
+
+    const result = objectRecordChangedValues(
+      oldRecord,
+      newRecord,
+      objectMetadataWithPosition,
+      flatFieldMetadataMapsWithPosition,
+    );
+
+    expect(result).toEqual({
+      position: { before: 1, after: 5 },
+    });
+  });
 });

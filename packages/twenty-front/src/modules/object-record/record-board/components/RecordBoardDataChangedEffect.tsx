@@ -15,7 +15,7 @@ import { useAtomComponentFamilySelectorCallbackState } from '@/ui/utilities/stat
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { useCallback } from 'react';
-import { isDefined } from 'twenty-shared/utils';
+import { assertUnreachable, isDefined } from 'twenty-shared/utils';
 
 export const RecordBoardDataChangedEffect = () => {
   const store = useStore();
@@ -55,17 +55,28 @@ export const RecordBoardDataChangedEffect = () => {
                 ? [objectRecordOperation.result.updateInput]
                 : objectRecordOperation.result.updateInputs;
 
-            const { shouldTriggerInitialQuery, shouldRepositionRecords } =
+            const recordBoardUpdateEffect =
               getRecordBoardEffectsForUpdateInputs(updateInputs);
 
-            if (shouldTriggerInitialQuery) {
-              triggerRecordBoardInitialQueryWithoutScrollReset();
-            } else if (shouldRepositionRecords) {
-              const allRecordsRepositioned =
-                repositionRecordsOnBoard(updateInputs);
-
-              if (!allRecordsRepositioned) {
+            switch (recordBoardUpdateEffect) {
+              case 'trigger-initial-query': {
                 triggerRecordBoardInitialQueryWithoutScrollReset();
+                break;
+              }
+              case 'reposition-records': {
+                const allRecordsRepositioned =
+                  repositionRecordsOnBoard(updateInputs);
+
+                if (!allRecordsRepositioned) {
+                  triggerRecordBoardInitialQueryWithoutScrollReset();
+                }
+                break;
+              }
+              case 'none': {
+                break;
+              }
+              default: {
+                assertUnreachable(recordBoardUpdateEffect);
               }
             }
           }

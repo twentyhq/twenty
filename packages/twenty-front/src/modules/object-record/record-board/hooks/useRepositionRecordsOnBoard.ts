@@ -6,7 +6,6 @@ import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record
 import { recordIndexRecordIdsByGroupComponentFamilyState } from '@/object-record/record-index/states/recordIndexRecordIdsByGroupComponentFamilyState';
 import { useUpsertRecordsInStore } from '@/object-record/record-store/hooks/useUpsertRecordsInStore';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
-import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
 import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/ObjectRecordOperationUpdateInput';
 import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateCallbackState';
 import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
@@ -48,12 +47,21 @@ export const useRepositionRecordsOnBoard = () => {
         recordGroupDefinitionsCallbackState,
       );
 
+      // Column membership changes are accumulated here and committed only once
+      // the whole batch succeeds: a mid-batch bail-out leaves the columns
+      // untouched and the caller re-runs the board query.
+      const updatedRecordIdsByGroupId: Record<string, string[]> = {};
+
+      const getRecordIdsForGroup = (recordGroupId: string): string[] =>
+        updatedRecordIdsByGroupId[recordGroupId] ??
+        store.get(recordIndexRecordIdsByGroupCallbackState(recordGroupId));
+
       for (const updateInput of updateInputs) {
         const recordId = updateInput.recordId;
 
         const currentRecord = store.get(
           recordStoreFamilyState.atomFamily(recordId),
-        ) as ObjectRecord | null | undefined;
+        );
 
         if (!isDefined(currentRecord)) {
           return false;
@@ -62,21 +70,15 @@ export const useRepositionRecordsOnBoard = () => {
         const updatedFields: Record<string, unknown> = {};
 
         for (const updatedField of updateInput.updatedFields) {
-          Object.assign(updatedFields, updatedField);
+          Object.assign(updatedFields, updatedField ?? {});
         }
 
-        const sourceRecordGroupFromBoard = recordGroupDefinitions.find(
+        const sourceRecordGroup = recordGroupDefinitions.find(
           (recordGroupDefinition) =>
-            store
-              .get(
-                recordIndexRecordIdsByGroupCallbackState(
-                  recordGroupDefinition.id,
-                ),
-              )
-              .includes(recordId),
+            getRecordIdsForGroup(recordGroupDefinition.id).includes(recordId),
         );
 
-        if (!isDefined(sourceRecordGroupFromBoard)) {
+        if (!isDefined(sourceRecordGroup)) {
           return false;
         }
 
@@ -86,12 +88,14 @@ export const useRepositionRecordsOnBoard = () => {
                 (recordGroupDefinition) =>
                   recordGroupDefinition.value === updatedFields[groupFieldName],
               )
-            : sourceRecordGroupFromBoard;
+            : sourceRecordGroup;
 
         if (!isDefined(targetRecordGroup)) {
           return false;
         }
 
+        // Upsert in place so extractRecordPositions reads the new position when
+        // several records in the same batch land in the same column.
         upsertRecordsInStore({
           partialRecords: [
             {
@@ -102,24 +106,16 @@ export const useRepositionRecordsOnBoard = () => {
           ],
         });
 
-        if (sourceRecordGroupFromBoard.id !== targetRecordGroup.id) {
-          const sourceRecordIds = store.get(
-            recordIndexRecordIdsByGroupCallbackState(
-              sourceRecordGroupFromBoard.id,
-            ),
-          );
-
-          store.set(
-            recordIndexRecordIdsByGroupCallbackState(
-              sourceRecordGroupFromBoard.id,
-            ),
-            sourceRecordIds.filter((id) => id !== recordId),
-          );
+        if (sourceRecordGroup.id !== targetRecordGroup.id) {
+          updatedRecordIdsByGroupId[sourceRecordGroup.id] =
+            getRecordIdsForGroup(sourceRecordGroup.id).filter(
+              (id) => id !== recordId,
+            );
         }
 
-        const targetRecordIdsWithoutRecord = store
-          .get(recordIndexRecordIdsByGroupCallbackState(targetRecordGroup.id))
-          .filter((id) => id !== recordId);
+        const targetRecordIdsWithoutRecord = getRecordIdsForGroup(
+          targetRecordGroup.id,
+        ).filter((id) => id !== recordId);
 
         const targetRecordsWithPositions = extractRecordPositions(
           [...targetRecordIdsWithoutRecord, recordId],
@@ -128,9 +124,16 @@ export const useRepositionRecordsOnBoard = () => {
 
         targetRecordsWithPositions.sort(sortByProperty('position', 'asc'));
 
+        updatedRecordIdsByGroupId[targetRecordGroup.id] =
+          targetRecordsWithPositions.map((record) => record.id);
+      }
+
+      for (const [recordGroupId, recordIds] of Object.entries(
+        updatedRecordIdsByGroupId,
+      )) {
         store.set(
-          recordIndexRecordIdsByGroupCallbackState(targetRecordGroup.id),
-          targetRecordsWithPositions.map((record) => record.id),
+          recordIndexRecordIdsByGroupCallbackState(recordGroupId),
+          recordIds,
         );
       }
 
