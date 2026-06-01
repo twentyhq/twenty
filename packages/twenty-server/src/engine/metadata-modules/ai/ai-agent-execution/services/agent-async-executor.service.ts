@@ -87,6 +87,7 @@ export class AgentAsyncExecutorService {
   private async getAgentRoleId(
     agentId: string,
     workspaceId: string,
+    rolePermissionConfig?: RolePermissionConfig,
   ): Promise<string | undefined> {
     const roleTarget = await this.roleTargetRepository.findOne(workspaceId, {
       where: {
