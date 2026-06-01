@@ -18,6 +18,16 @@ interface QueryFailedErrorWithCode extends QueryFailedError {
   code?: string;
 }
 
+const POSTGRESQL_DATA_VALIDATION_ERROR_CODES = new Set([
+  POSTGRESQL_ERROR_CODES.NOT_NULL_VIOLATION,
+  POSTGRESQL_ERROR_CODES.FOREIGN_KEY_VIOLATION,
+  POSTGRESQL_ERROR_CODES.CHECK_VIOLATION,
+  POSTGRESQL_ERROR_CODES.STRING_DATA_RIGHT_TRUNCATION,
+  POSTGRESQL_ERROR_CODES.NUMERIC_VALUE_OUT_OF_RANGE,
+  POSTGRESQL_ERROR_CODES.INVALID_DATETIME_FORMAT,
+  POSTGRESQL_ERROR_CODES.INVALID_PARAMETER_VALUE,
+]);
+
 export const computeTwentyORMException = async (
   error: Error,
   objectMetadata?: FlatObjectMetadata,
@@ -62,7 +72,11 @@ export const computeTwentyORMException = async (
       isDefined(errorCode) &&
       Object.values(POSTGRESQL_ERROR_CODES).includes(errorCode)
     ) {
-      throw new PostgresException('Data validation error.', errorCode);
+      if (POSTGRESQL_DATA_VALIDATION_ERROR_CODES.has(errorCode)) {
+        throw new PostgresException('Data validation error.', errorCode);
+      }
+
+      throw new PostgresException(error.message, errorCode);
     }
     throw error;
   }

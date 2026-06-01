@@ -7,10 +7,17 @@ import {
 
 import { type ExceptionHandlerOptions } from 'src/engine/core-modules/exception-handler/interfaces/exception-handler-options.interface';
 
+import { POSTGRESQL_ERROR_CODES } from 'src/engine/api/graphql/workspace-query-runner/constants/postgres-error-codes.constants';
 import { PostgresException } from 'src/engine/api/graphql/workspace-query-runner/utils/postgres-exception';
 import { type ExceptionHandlerDriverInterface } from 'src/engine/core-modules/exception-handler/interfaces';
 import { MessageImportDriverException } from 'src/modules/messaging/message-import-manager/drivers/exceptions/message-import-driver.exception';
 import { CustomException } from 'src/utils/custom-exception';
+
+const RETRYABLE_POSTGRES_ERROR_CODES = new Set([
+  POSTGRESQL_ERROR_CODES.DEADLOCK_DETECTED,
+  POSTGRESQL_ERROR_CODES.SERIALIZATION_FAILURE,
+  POSTGRESQL_ERROR_CODES.LOCK_NOT_AVAILABLE,
+]);
 
 export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInterface {
   captureExceptions(
@@ -48,6 +55,8 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
       }
 
       for (const exception of exceptions) {
+        scope.setLevel('error');
+
         const errorPath = (exception.path ?? [])
           .map((v: string | number) => (typeof v === 'number' ? '$index' : v))
           .join(' > ');
@@ -84,7 +93,24 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
         }
 
         if (exception instanceof PostgresException) {
+          const isRetryablePostgresError = RETRYABLE_POSTGRES_ERROR_CODES.has(
+            exception.code,
+          );
+
           scope.setTag('postgresSqlErrorCode', exception.code);
+          scope.setTag(
+            'postgresSqlErrorType',
+            isRetryablePostgresError ? 'retryable' : 'non-retryable',
+          );
+          scope.setContext('postgres', {
+            code: exception.code,
+            isRetryable: isRetryablePostgresError,
+          });
+
+          if (isRetryablePostgresError) {
+            scope.setLevel('warning');
+          }
+
           const fingerPrint = [exception.code];
           const genericOperationName = getGenericOperationName(
             options?.operation?.name,
@@ -93,6 +119,7 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
           if (isDefined(genericOperationName)) {
             fingerPrint.push(genericOperationName);
           }
+
           scope.setFingerprint(fingerPrint);
           exception.name = exception.message;
         }
