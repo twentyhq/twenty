@@ -5,7 +5,6 @@ import { ACCOUNT_TYPES } from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { Repository, type SelectQueryBuilder } from 'typeorm';
 
-import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import {
   SecretEncryptionRotationHandler,
   type SecretEncryptionRotationContext,
@@ -29,8 +28,6 @@ const ZERO_UUID = '00000000-0000-0000-0000-000000000000';
 
 @Injectable()
 export class ConnectionParametersRotationHandler extends SecretEncryptionRotationHandler {
-  readonly siteName =
-    SECRET_ENCRYPTION_ROTATION_SITE_NAME.CONNECTED_ACCOUNT_CONNECTION_PARAMETERS;
   private readonly logger = new Logger(
     ConnectionParametersRotationHandler.name,
   );
@@ -45,13 +42,15 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     return this.buildRowToSelectQuery({ currentEncryptionKeyId }).getCount();
   }
 
   async rotate({
+    siteName,
     currentEncryptionKeyId,
     batchSize,
     dryRun,
@@ -91,9 +90,7 @@ export class ConnectionParametersRotationHandler extends SecretEncryptionRotatio
               workspaceId: row.workspaceId,
             });
         } catch (error) {
-          this.logger.error(
-            buildRotationErrorMessage(this.siteName, row.id, error),
-          );
+          this.logger.error(buildRotationErrorMessage(siteName, row.id, error));
           outcome.errors += 1;
           continue;
         }
