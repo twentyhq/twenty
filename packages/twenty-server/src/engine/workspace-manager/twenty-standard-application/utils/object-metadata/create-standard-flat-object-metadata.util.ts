@@ -209,6 +209,126 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  emailGroupSuppressionList: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'emailGroupSuppressionList'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'emailGroupSuppressionList',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.emailGroupSuppressionList.universalIdentifier,
+        nameSingular: 'emailGroupSuppressionList',
+        namePlural: 'emailGroupSuppressionLists',
+        labelSingular: i18nLabel(msg`Email Suppression`),
+        labelPlural: i18nLabel(msg`Email Suppressions`),
+        description: i18nLabel(
+          msg`Email addresses blocked from receiving emails after a bounce, complaint, or unsubscribe`,
+        ),
+        icon: 'IconMailOff',
+        isSystem: true,
+        isUIReadOnly: true,
+        labelIdentifierFieldMetadataName: 'emailAddress',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  emailList: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'emailList'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'emailList',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.emailList.universalIdentifier,
+        nameSingular: 'emailList',
+        namePlural: 'emailLists',
+        labelSingular: i18nLabel(msg`Email List`),
+        labelPlural: i18nLabel(msg`Email Lists`),
+        description: i18nLabel(msg`A list of people to send emails to`),
+        icon: 'IconMailbox',
+        isSystem: true,
+        isSearchable: true,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  emailCampaign: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<CreateStandardObjectArgs<'emailCampaign'>, 'context' | 'objectName'>) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'emailCampaign',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.emailCampaign.universalIdentifier,
+        nameSingular: 'emailCampaign',
+        namePlural: 'emailCampaigns',
+        labelSingular: i18nLabel(msg`Email Campaign`),
+        labelPlural: i18nLabel(msg`Email Campaigns`),
+        description: i18nLabel(
+          msg`A bulk email send to a list, with delivery stats`,
+        ),
+        icon: 'IconSend',
+        isSystem: true,
+        labelIdentifierFieldMetadataName: 'name',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  emailListSubscription: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'emailListSubscription'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'emailListSubscription',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.emailListSubscription.universalIdentifier,
+        nameSingular: 'emailListSubscription',
+        namePlural: 'emailListSubscriptions',
+        labelSingular: i18nLabel(msg`Email List Subscription`),
+        labelPlural: i18nLabel(msg`Email List Subscriptions`),
+        description: i18nLabel(
+          msg`A person's subscription status for an email list`,
+        ),
+        icon: 'IconMailShare',
+        isSystem: true,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   messageChannelMessageAssociation: ({
     now,
     workspaceId,

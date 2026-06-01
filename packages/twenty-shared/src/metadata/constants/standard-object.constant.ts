@@ -762,6 +762,195 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
+  emailGroupSuppressionList: {
+    universalIdentifier: 'cea7888b-2ad1-4ca8-839b-83702106b672',
+    fields: {
+      id: { universalIdentifier: '791385ed-9221-4631-b3c2-f4be27e8447d' },
+      createdAt: {
+        universalIdentifier: 'ef2892db-9ec7-42ea-93ae-b51f3c876c3e',
+      },
+      updatedAt: {
+        universalIdentifier: '96240a11-d0ac-4deb-9e01-eb91b3b02cfe',
+      },
+      deletedAt: {
+        universalIdentifier: 'fb06b296-0b9e-44f6-9347-e4c6bcea7459',
+      },
+      createdBy: {
+        universalIdentifier: '505ebad3-31d4-4e7e-bba1-56dbdbb8c431',
+      },
+      updatedBy: {
+        universalIdentifier: 'aa5c52c9-7500-498d-ac3c-02bae94661cc',
+      },
+      position: {
+        universalIdentifier: '69e4badf-d642-4ce1-bc4d-5c6cfbc866b6',
+      },
+      searchVector: {
+        universalIdentifier: '774b8d79-6f09-43b5-9afb-35e1ce2b3163',
+      },
+      emailAddress: {
+        universalIdentifier: '54455e77-7779-4399-8cdc-21c4790457d5',
+      },
+      reason: { universalIdentifier: 'e533b108-d406-4f29-a5c5-fa9063306ed7' },
+      source: { universalIdentifier: '29ba1dbc-d756-459c-833e-7cf22ca25a76' },
+      providerEventId: {
+        universalIdentifier: 'cc168a11-d6a4-46bc-9e2b-9fb925079761',
+      },
+    },
+    indexes: {
+      emailAddressUniqueIndex: {
+        universalIdentifier: '62397bbf-470d-466b-8a33-10bedc3f3ac3',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: 'cbf2f006-75ee-4868-8069-58d82188302a',
+      },
+    },
+  },
+  emailList: {
+    universalIdentifier: 'f8c9f0c1-335b-4c47-9291-4eaab9d0178c',
+    fields: {
+      id: { universalIdentifier: '0822eeff-a953-43db-a0e3-d8dd0e4d2d6d' },
+      createdAt: {
+        universalIdentifier: '918cb884-115e-45b0-a72b-71e4b7579684',
+      },
+      updatedAt: {
+        universalIdentifier: '67581ae7-7297-416e-8f55-b2fb1bb057bc',
+      },
+      deletedAt: {
+        universalIdentifier: '780d003c-ff47-4355-ac8d-4e65e3610396',
+      },
+      createdBy: {
+        universalIdentifier: '40c1373a-ef85-4f1b-a990-b1281b0c831c',
+      },
+      updatedBy: {
+        universalIdentifier: '83086212-f67c-4bd0-b56c-572ffa390864',
+      },
+      position: {
+        universalIdentifier: '7afaa059-cdb8-457f-ade1-970e17e7743e',
+      },
+      searchVector: {
+        universalIdentifier: '43324d01-0d5a-4d72-89ed-1d77eb9cbc5a',
+      },
+      name: { universalIdentifier: '67ed2d3c-4ba4-452c-bbbd-e038f4bfae7d' },
+      subscriptions: {
+        universalIdentifier: '1b581656-e00f-42b4-9c0e-97c2be32c215',
+      },
+      campaigns: {
+        universalIdentifier: 'ddb2a585-1a7f-4063-8aa6-7b9d1e5fc0bd',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '4bd721f1-cd95-4c74-b962-c5b1c50a32d9',
+      },
+    },
+  },
+  emailCampaign: {
+    universalIdentifier: '238acb94-dd4c-4036-bc55-19b99d821efd',
+    fields: {
+      id: { universalIdentifier: '819a9eb4-2738-49df-a302-76d2dc7d7114' },
+      createdAt: {
+        universalIdentifier: '2c7eb5f4-03f8-4101-9486-b2bdf69175d8',
+      },
+      updatedAt: {
+        universalIdentifier: '73c44e3a-9b67-4d1b-887b-d8820cfe6aa5',
+      },
+      deletedAt: {
+        universalIdentifier: 'f7ee084e-7a8e-4b60-a68a-0eb16230589d',
+      },
+      createdBy: {
+        universalIdentifier: 'a75b85d6-12da-4726-9568-3f32f3e3a249',
+      },
+      updatedBy: {
+        universalIdentifier: 'd85c0ce2-5971-4afb-a5b0-e542c7cfda9e',
+      },
+      position: {
+        universalIdentifier: 'ba053d00-e5ef-41ff-9cb1-c87fc9c85081',
+      },
+      searchVector: {
+        universalIdentifier: 'c51f1455-3c56-40b9-80ff-7ffcbdef9609',
+      },
+      name: { universalIdentifier: '6debcc42-3c0c-4b97-b3a5-b22758aaee6f' },
+      subject: { universalIdentifier: '7251544c-b07a-4f0d-9d0a-48514367f230' },
+      bodyTemplate: {
+        universalIdentifier: 'b3a69d08-31ca-4a8d-8359-5ca462899342',
+      },
+      fromAddress: {
+        universalIdentifier: '91e1a33c-c1ff-411a-b720-9085e13c05db',
+      },
+      replyTo: { universalIdentifier: '75e468b3-4da6-47d2-9f4a-92c9f5407950' },
+      status: { universalIdentifier: 'c7117256-3de6-48e1-87df-c99c32bad610' },
+      recipientSource: {
+        universalIdentifier: 'eb1f1a36-970d-4bbe-9eaf-798b4617492b',
+      },
+      scheduledAt: {
+        universalIdentifier: '0f704579-abf5-4f3d-bf08-a117bc87d5a3',
+      },
+      sentAt: { universalIdentifier: 'e2315b4f-9edf-4df2-96b9-961e76368671' },
+      sentCount: {
+        universalIdentifier: '2f333d2b-37b8-4ddc-ad0d-c07c6ce066ad',
+      },
+      bouncedCount: {
+        universalIdentifier: '20d884a9-34dd-4667-8ecb-ceec224258e2',
+      },
+      failedCount: {
+        universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
+      },
+      list: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
+    },
+    indexes: {
+      listIdIndex: {
+        universalIdentifier: 'efe8c20e-d12b-4475-969e-e86e0bbfe444',
+      },
+      searchVectorGinIndex: {
+        universalIdentifier: '975823ad-9b97-4f39-b2c7-fbd7d77f4bd1',
+      },
+    },
+  },
+  emailListSubscription: {
+    universalIdentifier: '71a8179f-9259-49cf-a4e6-9642b200d6aa',
+    fields: {
+      id: { universalIdentifier: '4bc69ce3-634a-482a-a9aa-73f3e3c66ed2' },
+      createdAt: {
+        universalIdentifier: '04d9edba-9ada-4c82-9f8d-d4b1aab88869',
+      },
+      updatedAt: {
+        universalIdentifier: 'a85b69c1-f9dc-4587-b57f-33bc0502d275',
+      },
+      deletedAt: {
+        universalIdentifier: 'defaa635-2b46-4f1f-9883-033167e75a02',
+      },
+      createdBy: {
+        universalIdentifier: '0157cef3-8414-4018-a40e-3bc447ae1e80',
+      },
+      updatedBy: {
+        universalIdentifier: '7523eedf-f0bc-48c5-97d5-0523bae415f2',
+      },
+      position: {
+        universalIdentifier: '1527e7a0-c397-4348-aab0-e04107ef1499',
+      },
+      status: { universalIdentifier: 'b1ab01fc-9109-4f46-bac8-baf18da939db' },
+      subscribedAt: {
+        universalIdentifier: '7345ff75-8931-4895-b7c5-2b09088704b7',
+      },
+      unsubscribedAt: {
+        universalIdentifier: '3614f2ff-c3d7-4c9a-a611-d2d15389f777',
+      },
+      source: { universalIdentifier: '40919ec6-e6e4-49ac-930a-22f42d2100d4' },
+      list: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
+      person: { universalIdentifier: '1de4167f-afc7-4153-a0e9-cae0758faaeb' },
+      searchVector: {
+        universalIdentifier: 'efaad9ba-6dc3-475d-9f37-44e6748c8943',
+      },
+    },
+    indexes: {
+      listIdIndex: {
+        universalIdentifier: 'fa3d25c6-5ebb-4cd2-b7bd-7f94026595cc',
+      },
+      personListUniqueIndex: {
+        universalIdentifier: 'f1911297-c434-486f-98d4-df1754295f4c',
+      },
+    },
+  },
   messageChannelMessageAssociation: {
     universalIdentifier: '20202020-ad1e-4127-bccb-d83ae04d2ccb',
     fields: {
@@ -1633,6 +1822,9 @@ export const STANDARD_OBJECTS = {
       },
       timelineActivities: {
         universalIdentifier: '20202020-a43e-4873-9c23-e522de906ce5',
+      },
+      emailListSubscriptions: {
+        universalIdentifier: '082d2fba-437c-4ec8-acde-6dbfda45d50c',
       },
       searchVector: {
         universalIdentifier: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
