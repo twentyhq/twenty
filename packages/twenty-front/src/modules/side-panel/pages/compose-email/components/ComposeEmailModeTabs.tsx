@@ -10,6 +10,7 @@ const StyledTabs = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   padding: 0 ${themeCssVariables.spacing[2]};
+  margin-top: ${themeCssVariables.spacing[1]};
 `;
 
 type ComposeEmailModeTabsProps = {

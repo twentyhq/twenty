@@ -2,33 +2,35 @@ import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import {
-  H2Title,
-  IconChevronRight,
-  IconForbid,
-  IconTrash,
-} from 'twenty-ui/display';
+import { H2Title, IconForbid, IconPlus, IconTrash } from 'twenty-ui/display';
 import { Button, IconButton } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { RecordChip } from '@/object-record/components/RecordChip';
 import { useCreateOneRecord } from '@/object-record/hooks/useCreateOneRecord';
 import { useDeleteOneRecord } from '@/object-record/hooks/useDeleteOneRecord';
 import { useFindManyRecords } from '@/object-record/hooks/useFindManyRecords';
 import { SingleRecordPicker } from '@/object-record/record-picker/single-record-picker/components/SingleRecordPicker';
 import { type RecordPickerPickableMorphItem } from '@/object-record/record-picker/types/RecordPickerPickableMorphItem';
 import { type ObjectRecord } from '@/object-record/types/ObjectRecord';
+import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
+const ADD_PERSON_DROPDOWN_ID = 'email-lists-add-person';
+
+const MEMBERS_GRID_COLUMNS = '1fr 1fr 120px 24px';
+
 type EmailListRecord = ObjectRecord & { name: string | null };
 
-type PersonRecord = ObjectRecord & {
-  name: { firstName: string | null; lastName: string | null } | null;
+type SubscriptionPersonRecord = ObjectRecord & {
   emails: { primaryEmail: string | null } | null;
 };
 
@@ -36,47 +38,33 @@ type SubscriptionRecord = ObjectRecord & {
   status: string;
   personId: string;
   listId: string;
-  person: PersonRecord | null;
+  person: SubscriptionPersonRecord | null;
 };
 
-const StyledRow = styled.div<{ active?: boolean }>`
-  align-items: center;
-  background: ${({ active }) =>
-    active ? themeCssVariables.background.transparent.light : 'transparent'};
-  border-radius: ${themeCssVariables.border.radius.sm};
-  cursor: pointer;
-  display: flex;
-  gap: ${themeCssVariables.spacing[2]};
-  padding: ${themeCssVariables.spacing[2]};
-  &:hover {
-    background: ${themeCssVariables.background.transparent.lighter};
-  }
-`;
-
-const StyledInputRow = styled.div`
+const StyledCreateRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
-const StyledFlex = styled.div`
+const StyledCreateInput = styled.div`
   flex: 1;
 `;
 
 const StyledMembers = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[4]};
   margin-top: ${themeCssVariables.spacing[4]};
 `;
 
-const personName = (person: PersonRecord | null): string => {
-  const first = person?.name?.firstName ?? '';
-  const last = person?.name?.lastName ?? '';
-  const full = `${first} ${last}`.trim();
-
-  return full.length > 0 ? full : (person?.emails?.primaryEmail ?? 'Unknown');
-};
+const StyledAddPersonRow = styled.div`
+  display: flex;
+`;
 
 export const SettingsWorkspaceEmailListsSection = () => {
   const { t } = useLingui();
+  const { closeDropdown } = useCloseDropdown();
 
   const [newListName, setNewListName] = useState('');
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
@@ -96,6 +84,7 @@ export const SettingsWorkspaceEmailListsSection = () => {
         id: true,
         name: { firstName: true, lastName: true },
         emails: { primaryEmail: true },
+        avatarUrl: true,
       },
     },
   });
@@ -118,34 +107,33 @@ export const SettingsWorkspaceEmailListsSection = () => {
       return;
     }
 
-    const created = await createList({ name });
+    const createdList = await createList({ name });
 
     setNewListName('');
 
-    if (isDefined(created)) {
-      setSelectedListId(created.id);
+    if (isDefined(createdList)) {
+      setSelectedListId(createdList.id);
     }
   };
 
-  const handleAddPerson = async (personId: string) => {
-    if (!isDefined(selectedListId)) {
-      return;
-    }
-
-    await createSubscription({
-      personId,
-      listId: selectedListId,
-      status: 'SUBSCRIBED',
-    });
-  };
-
-  const handleMorphItemSelected = (
-    item: RecordPickerPickableMorphItem | null | undefined,
+  const handlePersonSelected = (
+    pickedPerson: RecordPickerPickableMorphItem | null | undefined,
   ) => {
-    if (isDefined(item)) {
-      handleAddPerson(item.recordId);
+    if (isDefined(pickedPerson) && isDefined(selectedListId)) {
+      createSubscription({
+        personId: pickedPerson.recordId,
+        listId: selectedListId,
+        status: 'SUBSCRIBED',
+      });
     }
+
+    closeDropdown(ADD_PERSON_DROPDOWN_ID);
   };
+
+  const listOptions = emailLists.map((list) => ({
+    label: list.name ?? t`Untitled list`,
+    value: list.id,
+  }));
 
   return (
     <Section>
@@ -154,8 +142,8 @@ export const SettingsWorkspaceEmailListsSection = () => {
         description={t`Curate audiences for marketing emails. Add people to a list, then target the list in a campaign.`}
       />
 
-      <StyledInputRow>
-        <StyledFlex>
+      <StyledCreateRow>
+        <StyledCreateInput>
           <SettingsTextInput
             instanceId="email-lists-new-name"
             placeholder={t`New list name`}
@@ -163,39 +151,52 @@ export const SettingsWorkspaceEmailListsSection = () => {
             onChange={setNewListName}
             fullWidth
           />
-        </StyledFlex>
+        </StyledCreateInput>
         <Button title={t`Create list`} onClick={handleCreateList} />
-      </StyledInputRow>
+      </StyledCreateRow>
 
-      {emailLists.map((list) => (
-        <StyledRow
-          key={list.id}
-          active={list.id === selectedListId}
-          onClick={() =>
-            setSelectedListId(list.id === selectedListId ? null : list.id)
-          }
-        >
-          <IconChevronRight size={14} />
-          <StyledFlex>{list.name ?? t`Untitled list`}</StyledFlex>
-        </StyledRow>
-      ))}
+      <Select
+        dropdownId="email-lists-select"
+        label={t`List`}
+        fullWidth
+        value={selectedListId}
+        options={listOptions}
+        emptyOption={{ label: t`Select a list`, value: '' }}
+        onChange={setSelectedListId}
+      />
 
       {isDefined(selectedListId) && (
         <StyledMembers>
-          <SingleRecordPicker
-            componentInstanceId="email-lists-add-person"
-            focusId="email-lists-add-person"
-            objectNameSingulars={['person']}
-            onMorphItemSelected={handleMorphItemSelected}
-            onCancel={() => {}}
-            EmptyIcon={IconForbid}
-            emptyLabel={t`No people`}
-            layoutDirection="search-bar-on-top"
-          />
+          <StyledAddPersonRow>
+            <Dropdown
+              dropdownId={ADD_PERSON_DROPDOWN_ID}
+              dropdownPlacement="bottom-start"
+              clickableComponent={
+                <Button
+                  title={t`Add person`}
+                  Icon={IconPlus}
+                  variant="secondary"
+                  size="small"
+                />
+              }
+              dropdownComponents={
+                <SingleRecordPicker
+                  componentInstanceId={ADD_PERSON_DROPDOWN_ID}
+                  focusId={ADD_PERSON_DROPDOWN_ID}
+                  objectNameSingulars={['person']}
+                  onMorphItemSelected={handlePersonSelected}
+                  onCancel={() => closeDropdown(ADD_PERSON_DROPDOWN_ID)}
+                  EmptyIcon={IconForbid}
+                  emptyLabel={t`No people`}
+                  layoutDirection="search-bar-on-top"
+                />
+              }
+            />
+          </StyledAddPersonRow>
 
           {subscriptions.length > 0 && (
             <Table>
-              <TableRow gridAutoColumns="1fr 1fr 120px 24px">
+              <TableRow gridAutoColumns={MEMBERS_GRID_COLUMNS}>
                 <TableHeader>{t`Person`}</TableHeader>
                 <TableHeader>{t`Email`}</TableHeader>
                 <TableHeader>{t`Status`}</TableHeader>
@@ -205,9 +206,16 @@ export const SettingsWorkspaceEmailListsSection = () => {
                 {subscriptions.map((subscription) => (
                   <TableRow
                     key={subscription.id}
-                    gridAutoColumns="1fr 1fr 120px 24px"
+                    gridAutoColumns={MEMBERS_GRID_COLUMNS}
                   >
-                    <TableCell>{personName(subscription.person)}</TableCell>
+                    <TableCell>
+                      {isDefined(subscription.person) && (
+                        <RecordChip
+                          objectNameSingular="person"
+                          record={subscription.person}
+                        />
+                      )}
+                    </TableCell>
                     <TableCell>
                       {subscription.person?.emails?.primaryEmail ?? ''}
                     </TableCell>

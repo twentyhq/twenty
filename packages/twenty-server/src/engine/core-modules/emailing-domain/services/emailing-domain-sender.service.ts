@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 
 import { isNonEmptyString } from '@sniptt/guards';
+import { MessageChannelType } from 'twenty-shared/types';
+import { Repository } from 'typeorm';
 
 import { EMPTY_UNSUBSCRIBE_CONTENT } from 'src/engine/core-modules/emailing-domain/constants/empty-unsubscribe-content.constant';
 import {
@@ -20,6 +23,7 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
+import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { type DeliverableRecipients } from 'src/engine/core-modules/emailing-domain/types/deliverable-recipients.type';
 import { type UnsubscribeContent } from 'src/engine/core-modules/emailing-domain/types/unsubscribe-content.type';
@@ -40,6 +44,8 @@ export class EmailingDomainSenderService {
     private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
     private readonly emailListSubscriptionService: EmailListSubscriptionService,
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
+    @InjectRepository(MessageChannelEntity)
+    private readonly messageChannelRepository: Repository<MessageChannelEntity>,
   ) {}
 
   async sendEmail(
@@ -72,11 +78,13 @@ export class EmailingDomainSenderService {
       emailContent.emailListId,
     );
 
+    const replyTo = await this.resolveReplyTo(workspaceId, emailContent);
+
     const emailToSend = {
       workspaceId,
       domain: emailingDomain.domain,
       from: emailContent.from,
-      replyTo: emailContent.replyTo,
+      replyTo,
       to: recipients.to,
       cc: recipients.cc,
       bcc: recipients.bcc,
@@ -92,6 +100,30 @@ export class EmailingDomainSenderService {
     return this.emailingDomainDriverFactory
       .getCurrentDriver()
       .sendEmail(emailToSend);
+  }
+
+  private async resolveReplyTo(
+    workspaceId: string,
+    emailContent: EmailingDomainEmailContent,
+  ): Promise<string[] | undefined> {
+    if (isDefined(emailContent.replyTo) && emailContent.replyTo.length > 0) {
+      return emailContent.replyTo;
+    }
+
+    const emailGroupChannel = await this.messageChannelRepository.findOne({
+      where: {
+        workspaceId,
+        type: MessageChannelType.EMAIL_GROUP,
+        connectedAccount: { handle: emailContent.from },
+      },
+      relations: { connectedAccount: true },
+    });
+
+    const forwardingAddress = emailGroupChannel?.handle;
+
+    return isNonEmptyString(forwardingAddress)
+      ? [forwardingAddress]
+      : undefined;
   }
 
   private async findEmailingDomainByIdOrThrow(

@@ -275,7 +275,10 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
-  }: Omit<CreateStandardObjectArgs<'emailCampaign'>, 'context' | 'objectName'>) =>
+  }: Omit<
+    CreateStandardObjectArgs<'emailCampaign'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
       objectName: 'emailCampaign',
       dependencyFlatEntityMaps,

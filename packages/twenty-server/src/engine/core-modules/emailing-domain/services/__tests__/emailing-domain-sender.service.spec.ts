@@ -8,6 +8,8 @@ import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-do
 import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { type EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
+import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
+import { type Repository } from 'typeorm';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
 describe('EmailingDomainSenderService.sendEmail', () => {
@@ -53,7 +55,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
         ),
     } as unknown as EmailGroupSuppressionService;
     const subscriptionService = {
-      getUnsubscribedAddresses: jest
+      getAddressesUnsubscribedFromList: jest
         .fn()
         .mockResolvedValue(
           new Set(
@@ -64,12 +66,16 @@ describe('EmailingDomainSenderService.sendEmail', () => {
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;
+    const messageChannelRepository = {
+      findOne: jest.fn().mockResolvedValue(null),
+    } as unknown as Repository<MessageChannelEntity>;
     const service = new EmailingDomainSenderService(
       repository,
       factory,
       suppressionService,
       subscriptionService,
       unsubscribeTokenService,
+      messageChannelRepository,
     );
 
     return { service, sendEmail };
