@@ -244,6 +244,7 @@ const SendBtn = styled.span`
 type ProductVisualProps = {
   activeScene?: number;
   collaborative?: boolean;
+  cursorActive?: boolean;
   desktopSidebarMode?: DesktopSidebarMode;
   frameMode?: AppPreviewFrameMode;
   playbackEnabled?: boolean;
@@ -317,6 +318,7 @@ function renderAssistantText(text: string, visibleLength: number) {
 export function ProductVisual({
   activeScene,
   collaborative = false,
+  cursorActive = true,
   desktopSidebarMode = 'expanded',
   frameMode = 'static',
   playbackEnabled = true,
@@ -356,7 +358,9 @@ export function ProductVisual({
     }
   }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
-  const heroCursor = useProductHeroCursorAutoplay(collaborative);
+  const heroCursor = useProductHeroCursorAutoplay(
+    collaborative && cursorActive,
+  );
 
   useEffect(() => {
     if (collaborative) {

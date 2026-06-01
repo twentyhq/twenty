@@ -365,6 +365,7 @@ export function HeroVisualScroll({
             <ProductVisual
               activeScene={0}
               collaborative
+              cursorActive={morphProgress < 0.5}
               playbackEnabled={false}
               visual={visual}
             />

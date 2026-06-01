@@ -178,6 +178,7 @@ export function useProductHeroCursorAutoplay(
 
   useEffect(() => {
     if (!enabled) {
+      setPhaseIndex(0);
       return undefined;
     }
 
