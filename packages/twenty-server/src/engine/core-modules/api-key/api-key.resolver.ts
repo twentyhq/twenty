@@ -1,4 +1,4 @@
-import { UseGuards } from '@nestjs/common';
+import { UseFilters, UseGuards } from '@nestjs/common';
 import { Args, Mutation, Parent, Query, ResolveField } from '@nestjs/graphql';
 
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
@@ -12,6 +12,7 @@ import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key
 import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.input';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
+import { AuthGraphqlApiExceptionFilter } from 'src/engine/core-modules/auth/filters/auth-graphql-api-exception.filter';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
@@ -22,6 +23,7 @@ import { ApiKeyRoleService } from './services/api-key-role.service';
 import { ApiKeyService } from './services/api-key.service';
 
 @MetadataResolver(() => ApiKeyEntity)
+@UseFilters(AuthGraphqlApiExceptionFilter)
 @UseGuards(
   WorkspaceAuthGuard,
   SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
