@@ -104,6 +104,8 @@ function getScenePhase(
       }
 
       return 'record-initial';
+    case 'dashboardCreation':
+      return 'base';
     case 'workflowCreation':
       if (streamProgress >= 0.88) {
         return 'workflow-final';
@@ -151,10 +153,7 @@ function buildFocusedOpportunitiesPage(
 
     return {
       ...lane,
-      cards: lane.cards.slice(0, laneVisibleCount).map((card) => ({
-        ...card,
-        checked: true,
-      })),
+      cards: lane.cards.slice(0, laneVisibleCount),
     };
   });
 
@@ -163,7 +162,7 @@ function buildFocusedOpportunitiesPage(
     header: {
       ...page.header,
       count: visibleCardCount,
-      title: 'Closing this month',
+      title: 'Pipeline by stage',
     },
     lanes,
   };
@@ -313,19 +312,6 @@ function buildRecordSummaryPage(
   };
 }
 
-function getVisibleTaskRowCount(streamProgress: number) {
-  const revealProgress = clamp((streamProgress - 0.18) / 0.67);
-
-  if (revealProgress <= 0) {
-    return 0;
-  }
-
-  return Math.min(
-    NEW_TASK_ROWS.length,
-    Math.ceil(revealProgress * NEW_TASK_ROWS.length),
-  );
-}
-
 function resolveDisplayPage(
   activePage: PageDefinition,
   activeItemId: string,
@@ -364,7 +350,20 @@ function resolveDisplayPage(
   }
 
   if (scene.kind === 'opportunityReview' && activePage.type === 'kanban') {
-    return buildFocusedOpportunitiesPage(activePage, streamProgress);
+    return {
+      ...buildFocusedOpportunitiesPage(activePage, 1),
+      generating: streamProgress === 0,
+    };
+  }
+
+  if (scene.kind === 'dashboardCreation' && activePage.type === 'dashboard') {
+    return {
+      ...activePage,
+      dashboard: {
+        ...activePage.dashboard,
+        generating: streamProgress === 0,
+      },
+    };
   }
 
   if (
@@ -372,28 +371,22 @@ function resolveDisplayPage(
     activeItemId === TASKS_PAGE_ITEM_ID &&
     activePage.type === 'table'
   ) {
-    const visibleTaskRowCount =
-      phase === 'base' ? 0 : getVisibleTaskRowCount(streamProgress);
-
-    if (visibleTaskRowCount === 0) {
-      return activePage;
-    }
-
     return {
       ...activePage,
+      generating: streamProgress === 0,
       header: {
         ...activePage.header,
-        count: (activePage.header.count ?? 0) + visibleTaskRowCount,
+        count: (activePage.header.count ?? 0) + NEW_TASK_ROWS.length,
       },
-      rows: [
-        ...activePage.rows,
-        ...NEW_TASK_ROWS.slice(0, visibleTaskRowCount),
-      ],
+      rows: [...activePage.rows, ...NEW_TASK_ROWS],
     };
   }
 
   if (scene.kind === 'workflowCreation' && activePage.type === 'workflow') {
-    return buildWorkflowPageForPhase(activePage, phase);
+    return {
+      ...buildWorkflowPageForPhase(activePage, 'workflow-final'),
+      generating: streamProgress === 0,
+    };
   }
 
   return activePage;
@@ -406,6 +399,7 @@ export function useProductVisualAutoplay(
   const { externalScene, playbackEnabled = true } = options;
   const [streamedLength, setStreamedLength] = useState(0);
   const [completedStepCount, setCompletedStepCount] = useState(0);
+  const [revealProgress, setRevealProgress] = useState(0);
   const selectedOption =
     externalScene !== undefined
       ? Math.max(0, Math.min(externalScene, PRODUCT_VISUAL_SCENES.length - 1))
@@ -431,21 +425,20 @@ export function useProductVisualAutoplay(
     () => getVisibleTextLength(fullText),
     [fullText],
   );
-  const streamProgress = getStreamProgress(
-    streamedLength,
-    fullTextVisibleLength,
-  );
   const streamComplete = streamedLength >= fullTextVisibleLength;
+  // The CRM holds its base state while the answer streams; once the answer is
+  // done it reveals the changes as a finale (revealProgress ramps 0 -> 1), so
+  // attention isn't split.
   const scenePhase = useMemo(
-    () => getScenePhase(selectedScene, streamProgress),
-    [selectedScene, streamProgress],
+    () => getScenePhase(selectedScene, revealProgress),
+    [selectedScene, revealProgress],
   );
   const displayPage = resolveDisplayPage(
     activePage,
     activeItemId,
     scenePhase,
     selectedScene,
-    streamProgress,
+    revealProgress,
   );
 
   useEffect(() => {
@@ -520,6 +513,35 @@ export function useProductVisualAutoplay(
       }
     };
   }, [fullTextVisibleLength, playbackEnabled, selectPageItem, selectedScene]);
+
+  useEffect(() => {
+    if (!playbackEnabled || !streamComplete) {
+      setRevealProgress(0);
+      return undefined;
+    }
+
+    let progress = 0;
+    let interval: ReturnType<typeof setInterval> | undefined;
+
+    const startTimer = setTimeout(() => {
+      interval = setInterval(() => {
+        progress = Math.min(1, progress + 0.06);
+        setRevealProgress(progress);
+
+        if (progress >= 1 && interval) {
+          clearInterval(interval);
+        }
+      }, 45);
+    }, 300);
+
+    return () => {
+      clearTimeout(startTimer);
+
+      if (interval) {
+        clearInterval(interval);
+      }
+    };
+  }, [playbackEnabled, streamComplete]);
 
   const agentSteps = selectedScene.steps ?? [];
   const preambleComplete = completedStepCount >= agentSteps.length;

@@ -10,40 +10,51 @@ import { SHARED_PEOPLE_AVATAR_URLS } from '@/content/site/asset-paths';
 const PEOPLE_AVATAR_URLS = SHARED_PEOPLE_AVATAR_URLS;
 
 const SALES_DASHBOARD_DATA: DashboardData = {
-  metrics: [
+  kpis: [
     {
-      id: 'new-subscriptions',
-      title: 'New subscriptions',
-      value: '2,432',
+      id: 'pipeline',
+      title: 'Pipeline',
+      value: '$12.9M',
+      trend: { direction: 'up', value: '+8%' },
     },
     {
-      id: 'churn',
-      title: 'Churn',
-      value: '161',
+      id: 'won-this-quarter',
+      title: 'Won this quarter',
+      value: '$2.4M',
+      trend: { direction: 'up', value: '+12%' },
     },
     {
-      id: 'churn-rate',
-      title: 'Churn %',
-      value: '6.6%',
+      id: 'win-rate',
+      title: 'Win rate',
+      value: '38%',
+      trend: { direction: 'down', value: '-3%' },
     },
   ],
-  visitsChart: {
-    alt: 'Visits bar chart comparing this year and last year',
-    height: 1116,
-    src: '/images/home/hero/sales-dashboard/visits.webp',
-    width: 2316,
+  lineChart: {
+    title: 'ARR over time',
+    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'],
+    values: [3.1, 3.8, 3.5, 4.6, 5.4, 6.1, 7.2],
   },
-  revenueChart: {
-    alt: 'Revenue line chart by month',
-    height: 1116,
-    src: '/images/home/hero/sales-dashboard/revenue.webp',
-    width: 2316,
+  barChart: {
+    title: 'Deals by stage',
+    bars: [
+      { label: 'New', value: 12 },
+      { label: 'Screening', value: 9 },
+      { label: 'Meeting', value: 7 },
+      { label: 'Proposal', value: 5 },
+      { label: 'Customer', value: 4 },
+    ],
   },
-  distributionChart: {
-    alt: 'Ultra versus Plus donut chart distribution',
-    height: 1116,
-    src: '/images/home/hero/sales-dashboard/distribution.webp',
-    width: 756,
+  donutChart: {
+    title: 'By industry',
+    centerValue: '24',
+    centerLabel: 'deals',
+    slices: [
+      { label: 'AI', value: 8, color: '#8da4ef' },
+      { label: 'Fintech', value: 6, color: '#be93e4' },
+      { label: 'SaaS', value: 5, color: '#53b9ab' },
+      { label: 'Other', value: 5, color: '#ec9455' },
+    ],
   },
 };
 

@@ -328,6 +328,7 @@ export type ProductVisualSceneKind =
   | 'opportunityReview'
   | 'taskCreation'
   | 'recordSummary'
+  | 'dashboardCreation'
   | 'workflowCreation';
 
 export type AgentToolIcon =
@@ -366,6 +367,7 @@ export const OPPORTUNITIES_PAGE_ITEM_ID = 'opportunities';
 export const TASKS_PAGE_ITEM_ID = 'tasks';
 export const WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID =
   'workflow-send-email-sequence';
+export const SALES_DASHBOARD_PAGE_ITEM_ID = 'sales-dashboard';
 
 export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
   {
@@ -383,9 +385,9 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
   {
     initialPageItemId: OPPORTUNITIES_PAGE_ITEM_ID,
     kind: 'opportunityReview',
-    label: 'Set up a view for deals closing this month',
+    label: 'Build a pipeline board grouped by stage',
     responseText:
-      'Created a view for the **7 deals** closing this month, worth **$12.9M total**. Biggest are Host Ops at **$4.2M** and AI Prototyping at **$3.5M**, with the rest spread across Anthropic, Notion, Github, Stripe, and Mailchimp.',
+      'Organized your open deals into a **pipeline board** grouped by stage — **New**, **Screening**, **Meeting**, **Proposal**, and **Customer**. Drag a card to move a deal forward, or open one to see the full history.',
     responseChips: [
       { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
       { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
@@ -400,16 +402,16 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
       { kind: 'thinking', durationMs: 1200 },
       {
         kind: 'tool',
-        icon: 'filter',
-        running: 'Filtering deals by close date',
-        done: 'Filtered 7 deals',
+        icon: 'search',
+        running: 'Reading your open deals',
+        done: 'Read 24 deals',
         durationMs: 1000,
       },
       {
         kind: 'tool',
         icon: 'record',
-        running: 'Saving the view',
-        done: 'Created the view',
+        running: 'Building the pipeline board',
+        done: 'Built the board',
         durationMs: 800,
       },
     ],
@@ -453,28 +455,28 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     ],
   },
   {
-    initialPageItemId: COMPANIES_PAGE_ITEM_ID,
-    kind: 'recordSummary',
-    label: 'Summarize Qonto account history',
+    initialPageItemId: SALES_DASHBOARD_PAGE_ITEM_ID,
+    kind: 'dashboardCreation',
+    label: 'Build a dashboard of pipeline by stage and ARR',
     responseText:
-      'Qonto has **3 notes** centered on a benefits-led pitch, **Q Global Holdings** as the parent account, and **1 active opportunity**. The latest follow-up is with **Alexandre Prot**, and the history points to customer-service and operations as the main buying angles.',
-    responseChips: [{ name: 'Qonto', logoUrl: SHARED_COMPANY_LOGO_URLS.qonto }],
+      'Built a **Sales dashboard** with live KPIs — **$12.9M pipeline**, **$2.4M won this quarter**, and a **38% win rate** — plus charts for deals by stage and ARR over time. It refreshes automatically as your data changes.',
+    responseChips: [],
     sidebarMode: 'collapsed',
     steps: [
       { kind: 'thinking', durationMs: 1200 },
       {
         kind: 'tool',
         icon: 'search',
-        running: 'Searching Qonto records',
-        done: 'Searched Qonto',
-        durationMs: 900,
+        running: 'Aggregating pipeline and revenue',
+        done: 'Aggregated 24 deals',
+        durationMs: 1000,
       },
       {
         kind: 'tool',
-        icon: 'notes',
-        running: 'Reading 3 notes',
-        done: 'Read 3 notes',
-        durationMs: 800,
+        icon: 'record',
+        running: 'Assembling the dashboard',
+        done: 'Built the dashboard',
+        durationMs: 900,
       },
     ],
   },

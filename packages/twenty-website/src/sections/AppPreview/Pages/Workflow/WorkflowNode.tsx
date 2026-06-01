@@ -1,6 +1,10 @@
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 
+import {
+  SkeletonBar,
+  SkeletonBlock,
+} from '../../Shared/components/PreviewSkeleton';
 import type { WorkflowNodeDefinition } from './workflow-page-data';
 import {
   WORKFLOW_NODE_HEIGHT,
@@ -49,6 +53,12 @@ const NodeIconContainer = styled.div`
   width: 32px;
 `;
 
+const SkeletonIcon = styled(SkeletonBlock)`
+  flex: 0 0 auto;
+  height: 32px;
+  width: 32px;
+`;
+
 const NodeContent = styled.div`
   align-items: stretch;
   align-self: stretch;
@@ -89,21 +99,37 @@ export function WorkflowNode({
   width,
   x,
   y,
-}: Omit<WorkflowNodeDefinition, 'id'> & { index?: number }) {
+  generating = false,
+}: Omit<WorkflowNodeDefinition, 'id'> & {
+  generating?: boolean;
+  index?: number;
+}) {
   return (
     <Node $index={index} style={{ left: x, top: y, width }}>
-      <NodeIconContainer>
-        <Icon
-          aria-hidden
-          color={iconColor}
-          size={20}
-          stroke={WORKFLOW_PAGE_TABLER_STROKE}
-        />
-      </NodeIconContainer>
-      <NodeContent>
-        <NodeLabel>{label}</NodeLabel>
-        <NodeTitle>{title}</NodeTitle>
-      </NodeContent>
+      {generating ? (
+        <>
+          <SkeletonIcon />
+          <NodeContent>
+            <SkeletonBar $height={8} $width="38%" />
+            <SkeletonBar $height={9} $width="72%" />
+          </NodeContent>
+        </>
+      ) : (
+        <>
+          <NodeIconContainer>
+            <Icon
+              aria-hidden
+              color={iconColor}
+              size={20}
+              stroke={WORKFLOW_PAGE_TABLER_STROKE}
+            />
+          </NodeIconContainer>
+          <NodeContent>
+            <NodeLabel>{label}</NodeLabel>
+            <NodeTitle>{title}</NodeTitle>
+          </NodeContent>
+        </>
+      )}
     </Node>
   );
 }

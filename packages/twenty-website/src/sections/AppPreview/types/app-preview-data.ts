@@ -75,24 +75,53 @@ export type RowDef = {
   cells: Record<string, CellValue>;
 };
 
-export type DashboardMetric = {
-  id: string;
-  title: string;
+export type DashboardTrend = {
+  direction: 'up' | 'down';
   value: string;
 };
 
-export type DashboardChartImage = {
-  alt: string;
-  height: number;
-  src: string;
-  width: number;
+export type DashboardKpi = {
+  id: string;
+  title: string;
+  value: string;
+  trend?: DashboardTrend;
+};
+
+export type DashboardBar = {
+  label: string;
+  value: number;
+};
+
+export type DashboardBarChart = {
+  title: string;
+  bars: DashboardBar[];
+};
+
+export type DashboardLineChart = {
+  title: string;
+  labels: string[];
+  values: number[];
+};
+
+export type DashboardDonutSlice = {
+  color: string;
+  label: string;
+  value: number;
+};
+
+export type DashboardDonutChart = {
+  title: string;
+  centerLabel: string;
+  centerValue: string;
+  slices: DashboardDonutSlice[];
 };
 
 export type DashboardData = {
-  distributionChart: DashboardChartImage;
-  metrics: DashboardMetric[];
-  revenueChart: DashboardChartImage;
-  visitsChart: DashboardChartImage;
+  kpis: DashboardKpi[];
+  barChart?: DashboardBarChart;
+  donutChart?: DashboardDonutChart;
+  lineChart?: DashboardLineChart;
+  generating?: boolean;
 };
 
 export type NavbarAction = {
@@ -114,6 +143,7 @@ export type PageHeader = {
 
 export type TablePageDefinition = {
   columns: ColumnDef[];
+  generating?: boolean;
   header: PageHeader;
   rows: RowDef[];
   type: 'table';
@@ -158,6 +188,7 @@ export type WorkflowBranchLabelDef = {
 export type WorkflowPageDefinition = {
   branchLabels?: WorkflowBranchLabelDef[];
   edges?: WorkflowEdgeDef[];
+  generating?: boolean;
   header: PageHeader;
   nodes?: WorkflowNodeDef[];
   plusNode?: { x: number; y: number };
@@ -185,6 +216,7 @@ export type KanbanLane = {
 };
 
 export type KanbanPageDefinition = {
+  generating?: boolean;
   header: PageHeader;
   lanes: KanbanLane[];
   type: 'kanban';

@@ -7,6 +7,10 @@ import { useState } from 'react';
 import type { TablePageDefinition } from '../../types';
 import { IconChevronDown, IconPlus } from '@tabler/icons-react';
 import { MiniIcon } from '../../Shared/components/MiniIcon';
+import {
+  SkeletonBar,
+  SkeletonCircle,
+} from '../../Shared/components/PreviewSkeleton';
 import { TablePageCheckbox } from './TablePageCheckbox';
 import { renderTableCellValue } from './TablePageCellValue';
 import { renderTableHeaderIcon } from './render-table-header-icon';
@@ -205,6 +209,15 @@ const HeaderFillContent = styled.div`
   padding: 0 8px;
 `;
 
+const SKELETON_ROW_INDEXES = [0, 1, 2, 3, 4, 5, 6];
+
+const SkeletonRowLead = styled.div`
+  align-items: center;
+  display: flex;
+  gap: 6px;
+  width: 100%;
+`;
+
 export function TablePage({
   page,
   onNavigateToPageItemId,
@@ -288,48 +301,71 @@ export function TablePage({
             </EmptyFillCell>
           </HeaderRow>
 
-          {page.rows.map((row, rowIndex) => {
-            const hovered = hoveredRowId === row.id;
-
-            return (
-              <DataRow
-                key={row.id}
-                $rowIndex={rowIndex}
-                data-row-id={row.id}
-                onMouseEnter={() => setHoveredRowId(row.id)}
-                onMouseLeave={() =>
-                  setHoveredRowId((current) =>
-                    current === row.id ? null : current,
-                  )
-                }
-              >
-                {page.columns.map((column) => {
-                  const cell = row.cells[column.id];
-
-                  return (
+          {page.generating
+            ? SKELETON_ROW_INDEXES.map((rowIndex) => (
+                <DataRow key={`skeleton-${rowIndex}`} $rowIndex={rowIndex}>
+                  {page.columns.map((column) => (
                     <TableCell
-                      key={`${row.id}-${column.id}`}
+                      key={column.id}
                       $align={column.align}
-                      $hovered={hovered}
                       $sticky={column.isFirstColumn}
                       $width={column.width}
                     >
-                      {cell
-                        ? renderTableCellValue({
-                            cell,
-                            columnId: column.id,
-                            hovered,
-                            isFirstColumn: !!column.isFirstColumn,
-                            onNavigateToPageItemId,
-                          })
-                        : null}
+                      {column.isFirstColumn ? (
+                        <SkeletonRowLead>
+                          <SkeletonCircle $size={16} />
+                          <SkeletonBar $height={8} $width="58%" />
+                        </SkeletonRowLead>
+                      ) : (
+                        <SkeletonBar $height={8} $width="56%" />
+                      )}
                     </TableCell>
-                  );
-                })}
-                <EmptyFillCell $hovered={hovered} $width={fillerWidth} />
-              </DataRow>
-            );
-          })}
+                  ))}
+                  <EmptyFillCell $width={fillerWidth} />
+                </DataRow>
+              ))
+            : page.rows.map((row, rowIndex) => {
+                const hovered = hoveredRowId === row.id;
+
+                return (
+                  <DataRow
+                    key={row.id}
+                    $rowIndex={rowIndex}
+                    data-row-id={row.id}
+                    onMouseEnter={() => setHoveredRowId(row.id)}
+                    onMouseLeave={() =>
+                      setHoveredRowId((current) =>
+                        current === row.id ? null : current,
+                      )
+                    }
+                  >
+                    {page.columns.map((column) => {
+                      const cell = row.cells[column.id];
+
+                      return (
+                        <TableCell
+                          key={`${row.id}-${column.id}`}
+                          $align={column.align}
+                          $hovered={hovered}
+                          $sticky={column.isFirstColumn}
+                          $width={column.width}
+                        >
+                          {cell
+                            ? renderTableCellValue({
+                                cell,
+                                columnId: column.id,
+                                hovered,
+                                isFirstColumn: !!column.isFirstColumn,
+                                onNavigateToPageItemId,
+                              })
+                            : null}
+                        </TableCell>
+                      );
+                    })}
+                    <EmptyFillCell $hovered={hovered} $width={fillerWidth} />
+                  </DataRow>
+                );
+              })}
 
           <FooterRow>
             {page.columns.length > 0 ? (

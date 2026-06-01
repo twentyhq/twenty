@@ -273,6 +273,7 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
                 <WorkflowNode
                   key={`${node.title}-${node.x}-${node.y}`}
                   Icon={node.Icon}
+                  generating={page.generating}
                   iconColor={node.iconColor}
                   index={index}
                   label={node.label}
