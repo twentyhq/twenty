@@ -15,7 +15,7 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-9:backfill-fields-widget-new-field-default-visibility',
   description:
-    'Backfill newFieldDefaultVisibility to true on FIELDS page layout widgets where it is null',
+    'Backfill newFieldDefaultVisibility to true on standard FIELDS page layout widgets where it is null',
 })
 export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
@@ -33,6 +33,11 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
     const { flatPageLayoutWidgetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatPageLayoutWidgetMaps',
@@ -44,6 +49,8 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
       .filter(isDefined)
       .filter(
         (widget) =>
+          widget.applicationUniversalIdentifier ===
+            twentyStandardFlatApplication.universalIdentifier &&
           widget.configuration?.configurationType ===
             WidgetConfigurationType.FIELDS &&
           !isDefined(widget.configuration.newFieldDefaultVisibility),
@@ -51,7 +58,7 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
 
     if (widgetsToBackfill.length === 0) {
       this.logger.log(
-        `No FIELDS widgets to backfill in workspace ${workspaceId}`,
+        `No standard FIELDS widgets to backfill in workspace ${workspaceId}`,
       );
 
       return;
@@ -59,7 +66,7 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would backfill ${widgetsToBackfill.length} FIELDS widget(s) in workspace ${workspaceId}`,
+        `[DRY RUN] Would backfill ${widgetsToBackfill.length} standard FIELDS widget(s) in workspace ${workspaceId}`,
       );
 
       return;
@@ -80,11 +87,6 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
           : widget.universalConfiguration,
       }),
     );
-
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
 
     const result =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
@@ -112,7 +114,7 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
     }
 
     this.logger.log(
-      `Backfilled ${updatedWidgets.length} FIELDS widget(s) for workspace ${workspaceId}`,
+      `Backfilled ${updatedWidgets.length} standard FIELDS widget(s) for workspace ${workspaceId}`,
     );
   }
 }
