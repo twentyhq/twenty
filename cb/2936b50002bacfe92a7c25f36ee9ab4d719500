@@ -1,0 +1,21 @@
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000030000-backfill-email-suppression-and-list-objects.command.ts
+  s_4a10800c36ffe6::t_55b2d8bcdf9b59 1-45
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-upgrade-version-command.module.ts
+  s_4a10800c36ffe6::t_d0becf0cd06785 5,8,14-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "cb2936b50002bacfe92a7c25f36ee9ab4d719500",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
