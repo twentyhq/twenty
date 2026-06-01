@@ -16,17 +16,20 @@ const StyledMount = styled.div<{ $isReady: boolean }>`
 type ProductBackgroundHalftoneProps = {
   dashColor?: string;
   hoverColor?: string;
+  solidness?: number;
 };
 
 export function ProductBackgroundHalftone({
   dashColor,
   hoverColor,
+  solidness,
 }: ProductBackgroundHalftoneProps) {
   const mountReference = useRef<HTMLDivElement>(null);
   const isReady = useProductBackgroundHalftone({
     dashColor,
     hoverColor,
     mountRef: mountReference,
+    solidness,
   });
 
   return <StyledMount aria-hidden ref={mountReference} $isReady={isReady} />;

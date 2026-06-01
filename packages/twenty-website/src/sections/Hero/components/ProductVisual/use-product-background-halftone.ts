@@ -18,6 +18,7 @@ const HALFTONE_EDGE_FADE_Y = 0.2;
 const HALFTONE_TILE_SIZE = 16;
 const HALFTONE_POWER = -0.08;
 const HALFTONE_WIDTH = 0.22;
+const HALFTONE_MAX_DASH_HALF_LENGTH = 0.36;
 const HALFTONE_DASH_COLOR = '#ffffff';
 const HALFTONE_HOVER_COLOR = '#ffffff';
 const HALFTONE_HOVER_LIGHT_INTENSITY = 1.0;
@@ -52,6 +53,7 @@ const halftoneFragmentShader = `
   uniform float hoverLightRadius;
   uniform float hoverVerticalFade;
   uniform vec2 edgeFade;
+  uniform float solidness;
 
   varying vec2 vUv;
 
@@ -124,6 +126,7 @@ const halftoneFragmentShader = `
       0.0,
       1.0
     ) * 1.86 * 0.5;
+    bandRadius = min(bandRadius, ${HALFTONE_MAX_DASH_HALF_LENGTH.toFixed(2)});
 
     float alpha = 0.0;
     if (bandRadius > 0.0001) {
@@ -137,9 +140,10 @@ const halftoneFragmentShader = `
       smoothstep(0.0, max(edgeFade.x, 0.0001), 1.0 - vUv.x) *
       smoothstep(0.0, max(edgeFade.y, 0.0001), vUv.y) *
       smoothstep(0.0, max(edgeFade.y, 0.0001), 1.0 - vUv.y);
+    edgeFadeMask = mix(edgeFadeMask, 1.0, solidness);
     alpha *= edgeFadeMask;
 
-    alpha *= 0.7;
+    alpha *= mix(0.7, 1.0, solidness);
 
     vec3 activeDashColor = mix(dashColor, hoverDashColor, hoverLightMask);
     vec3 color = activeDashColor * alpha;
@@ -163,10 +167,12 @@ async function mountProductBackgroundCanvas({
   container,
   dashColor = HALFTONE_DASH_COLOR,
   hoverColor = HALFTONE_HOVER_COLOR,
+  solidness = 0,
 }: {
   container: HTMLDivElement;
   dashColor?: string;
   hoverColor?: string;
+  solidness?: number;
 }): Promise<() => void> {
   const getWidth = () => Math.max(container.clientWidth, 1);
   const getHeight = () => Math.max(container.clientHeight, 1);
@@ -228,6 +234,7 @@ async function mountProductBackgroundCanvas({
       },
       s_3: { value: HALFTONE_POWER },
       s_4: { value: HALFTONE_WIDTH },
+      solidness: { value: solidness },
       tile: { value: HALFTONE_TILE_SIZE },
     },
     vertexShader: passThroughVertexShader,
@@ -343,10 +350,12 @@ export function useProductBackgroundHalftone({
   dashColor,
   hoverColor,
   mountRef,
+  solidness,
 }: {
   dashColor?: string;
   hoverColor?: string;
   mountRef: RefObject<HTMLDivElement | null>;
+  solidness?: number;
 }) {
   const [isReady, setIsReady] = useState(false);
 
@@ -370,6 +379,7 @@ export function useProductBackgroundHalftone({
       container,
       dashColor,
       hoverColor,
+      solidness,
     })
       .then((dispose) => {
         if (disposed) {
@@ -388,7 +398,7 @@ export function useProductBackgroundHalftone({
       readyTask.stop();
       unmount?.();
     };
-  }, [mountRef, dashColor, hoverColor]);
+  }, [mountRef, dashColor, hoverColor, solidness]);
 
   return isReady;
 }

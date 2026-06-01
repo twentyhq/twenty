@@ -42,6 +42,8 @@ const NAV_HEIGHT = 64;
 
 const INTRO_HALFTONE_COLOR = '#4A38F5';
 
+const INTRO_HALFTONE_SOLIDNESS = 1;
+
 const ScrollTrack = styled.section`
   height: 200vh;
   margin-top: -${NAV_HEIGHT}px;
@@ -357,6 +359,7 @@ export function HeroVisualScroll({
               <ProductBackgroundHalftone
                 dashColor={INTRO_HALFTONE_COLOR}
                 hoverColor={INTRO_HALFTONE_COLOR}
+                solidness={INTRO_HALFTONE_SOLIDNESS}
               />
             </PatternOverlay>
             <ProductVisual
