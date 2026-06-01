@@ -1,14 +1,11 @@
-import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES } from '@/sdk/front-component/conditional-availability/conditional-availability-variable-names';
+import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES } from '@/sdk/define/conditional-availability/conditional-availability-variable-names';
 import { isDefined } from 'twenty-shared/utils';
 import ts from 'typescript';
 
 const CONDITIONAL_AVAILABILITY_EXPRESSION_PROPERTY =
   'conditionalAvailabilityExpression';
 
-const EXPRESSION_VARIABLE_MODULE_SPECIFIERS = [
-  'twenty-sdk/front-component',
-  'twenty-sdk',
-];
+const EXPRESSION_VARIABLE_MODULE_SPECIFIERS = ['twenty-sdk/define', 'twenty-sdk'];
 
 const EXPRESSION_VARIABLE_NAMES = new Set<string>(
   CONDITIONAL_AVAILABILITY_VARIABLE_NAMES,

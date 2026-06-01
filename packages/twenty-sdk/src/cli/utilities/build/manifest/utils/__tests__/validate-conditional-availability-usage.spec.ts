@@ -8,7 +8,7 @@ describe('validateConditionalAvailabilityUsage', () => {
     it('should allow a variable inside a bare conditionalAvailabilityExpression', () => {
       const source = `
         import { defineCommandMenuItem } from 'twenty-sdk/define';
-        import { objectMetadataItem } from 'twenty-sdk/front-component';
+        import { objectMetadataItem } from 'twenty-sdk/define';
 
         export default defineCommandMenuItem({
           universalIdentifier: 'x',
@@ -25,7 +25,7 @@ describe('validateConditionalAvailabilityUsage', () => {
     it('should allow a variable inside a nested command.conditionalAvailabilityExpression', () => {
       const source = `
         import { defineFrontComponent } from 'twenty-sdk/define';
-        import { objectMetadataItem } from 'twenty-sdk/front-component';
+        import { objectMetadataItem } from 'twenty-sdk/define';
 
         export default defineFrontComponent({
           universalIdentifier: 'x',
@@ -45,7 +45,7 @@ describe('validateConditionalAvailabilityUsage', () => {
     it('should allow operators inside the expression', () => {
       const source = `
         import { defineCommandMenuItem } from 'twenty-sdk/define';
-        import { objectPermissions, everyEquals } from 'twenty-sdk/front-component';
+        import { objectPermissions, everyEquals } from 'twenty-sdk/define';
 
         export default defineCommandMenuItem({
           conditionalAvailabilityExpression: everyEquals(
@@ -77,7 +77,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should not flag Array.prototype.includes property access', () => {
       const source = `
-        import { includes } from 'twenty-sdk/front-component';
+        import { includes } from 'twenty-sdk/define';
         import { defineCommandMenuItem } from 'twenty-sdk/define';
 
         const items: string[] = [];
@@ -94,7 +94,7 @@ describe('validateConditionalAvailabilityUsage', () => {
     it('should trust files that define an expression (runtime placeholder is the backstop for in-file misuse)', () => {
       const source = `
         import { defineCommandMenuItem } from 'twenty-sdk/define';
-        import { numberOfSelectedRecords } from 'twenty-sdk/front-component';
+        import { numberOfSelectedRecords } from 'twenty-sdk/define';
 
         export default defineCommandMenuItem({
           label: numberOfSelectedRecords,
@@ -108,7 +108,7 @@ describe('validateConditionalAvailabilityUsage', () => {
     it('should trust an expression declared with a string-literal property key', () => {
       const source = `
         import { defineCommandMenuItem } from 'twenty-sdk/define';
-        import { objectMetadataItem } from 'twenty-sdk/front-component';
+        import { objectMetadataItem } from 'twenty-sdk/define';
 
         export default defineCommandMenuItem({
           'conditionalAvailabilityExpression':
@@ -121,7 +121,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should not flag a type-only import declaration', () => {
       const source = `
-        import type { objectMetadataItem } from 'twenty-sdk/front-component';
+        import type { objectMetadataItem } from 'twenty-sdk/define';
 
         export type Thing = typeof objectMetadataItem;
       `;
@@ -131,7 +131,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should not flag an inline type-only import specifier', () => {
       const source = `
-        import { type objectMetadataItem } from 'twenty-sdk/front-component';
+        import { type objectMetadataItem } from 'twenty-sdk/define';
 
         export type Thing = typeof objectMetadataItem;
       `;
@@ -143,7 +143,7 @@ describe('validateConditionalAvailabilityUsage', () => {
   describe('invalid usage', () => {
     it('should flag a variable used in a component body', () => {
       const source = `
-        import { objectMetadataItem } from 'twenty-sdk/front-component';
+        import { objectMetadataItem } from 'twenty-sdk/define';
 
         export const Component = () => {
           const name = objectMetadataItem.nameSingular;
@@ -161,7 +161,7 @@ describe('validateConditionalAvailabilityUsage', () => {
     it('should flag a variable imported in a file with no expression', () => {
       const source = `
         import { defineCommandMenuItem } from 'twenty-sdk/define';
-        import { numberOfSelectedRecords } from 'twenty-sdk/front-component';
+        import { numberOfSelectedRecords } from 'twenty-sdk/define';
 
         export default defineCommandMenuItem({
           label: numberOfSelectedRecords,
@@ -176,7 +176,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should flag an operator called at runtime', () => {
       const source = `
-        import { isDefined } from 'twenty-sdk/front-component';
+        import { isDefined } from 'twenty-sdk/define';
 
         export const check = (value: unknown) => isDefined(value);
       `;
@@ -199,7 +199,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should flag misuse when conditionalAvailabilityExpression appears only in a comment', () => {
       const source = `
-        import { objectMetadataItem } from 'twenty-sdk/front-component';
+        import { objectMetadataItem } from 'twenty-sdk/define';
 
         // TODO: move this into a conditionalAvailabilityExpression later
         export const Component = () => objectMetadataItem.nameSingular;
@@ -213,7 +213,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should flag misuse when conditionalAvailabilityExpression appears only in a string literal', () => {
       const source = `
-        import { objectMetadataItem } from 'twenty-sdk/front-component';
+        import { objectMetadataItem } from 'twenty-sdk/define';
 
         export const doc = 'conditionalAvailabilityExpression';
         export const Component = () => objectMetadataItem.nameSingular;
@@ -227,7 +227,7 @@ describe('validateConditionalAvailabilityUsage', () => {
 
     it('should flag namespace-import runtime use with no expression', () => {
       const source = `
-        import * as sdk from 'twenty-sdk/front-component';
+        import * as sdk from 'twenty-sdk/define';
 
         export const label = sdk.objectMetadataItem.labelSingular;
       `;

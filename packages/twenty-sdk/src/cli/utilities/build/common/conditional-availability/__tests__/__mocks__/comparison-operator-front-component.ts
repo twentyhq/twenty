@@ -1,5 +1,7 @@
-import { defineCommandMenuItem } from '@/sdk/define';
-import { numberOfSelectedRecords } from '@/sdk/front-component';
+import {
+  defineCommandMenuItem,
+  numberOfSelectedRecords,
+} from '@/sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: 'comparison-operator-cmd',

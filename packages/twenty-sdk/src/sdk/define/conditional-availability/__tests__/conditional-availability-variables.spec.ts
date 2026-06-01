@@ -1,5 +1,5 @@
-import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES } from '@/sdk/front-component/conditional-availability/conditional-availability-variable-names';
-import * as conditionalAvailabilityVariables from '@/sdk/front-component/conditional-availability/conditional-availability-variables';
+import { CONDITIONAL_AVAILABILITY_VARIABLE_NAMES } from '@/sdk/define/conditional-availability/conditional-availability-variable-names';
+import * as conditionalAvailabilityVariables from '@/sdk/define/conditional-availability/conditional-availability-variables';
 
 describe('conditional-availability-variables', () => {
   it('should not throw when the module is imported', () => {
@@ -25,9 +25,9 @@ describe('conditional-availability-variables', () => {
   });
 
   it('should throw when an operator is called at runtime', () => {
-    expect(() =>
-      conditionalAvailabilityVariables.isDefined('value'),
-    ).toThrow('conditionalAvailabilityExpression');
+    expect(() => conditionalAvailabilityVariables.isDefined('value')).toThrow(
+      'conditionalAvailabilityExpression',
+    );
   });
 
   it('should mention the variable name in the error', () => {
