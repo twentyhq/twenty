@@ -16,6 +16,8 @@ import { AiAgentRoleService } from './ai-agent-role.service';
   providers: [
     AiAgentRoleService,
     provideWorkspaceScopedRepository(AgentEntity),
+    provideWorkspaceScopedRepository(RoleEntity),
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [AiAgentRoleService],
 })

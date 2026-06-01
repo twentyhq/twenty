@@ -1,5 +1,5 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getDataSourceToken, getRepositoryToken } from '@nestjs/typeorm';
+import { getDataSourceToken } from '@nestjs/typeorm';
 
 import { IsNull } from 'typeorm';
 
@@ -101,7 +101,7 @@ describe('ApiKeyService', () => {
           useValue: mockRoleTargetService,
         },
         {
-          provide: getRepositoryToken(RoleTargetEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           useValue: mockroleTargetRepository,
         },
         {

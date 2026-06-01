@@ -18,6 +18,8 @@ import { ViewFieldEntity } from 'src/engine/metadata-modules/view-field/entities
 import { ViewFilterEntity } from 'src/engine/metadata-modules/view-filter/entities/view-filter.entity';
 import { ViewGroupEntity } from 'src/engine/metadata-modules/view-group/entities/view-group.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
@@ -32,22 +34,22 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
   constructor(
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(IndexMetadataEntity)
-    private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
+    @InjectWorkspaceScopedRepository(IndexMetadataEntity)
+    private readonly indexMetadataRepository: WorkspaceScopedRepository<IndexMetadataEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
-    @InjectRepository(ViewFieldEntity)
-    private readonly viewFieldRepository: Repository<ViewFieldEntity>,
-    @InjectRepository(ViewFilterEntity)
-    private readonly viewFilterRepository: Repository<ViewFilterEntity>,
-    @InjectRepository(ViewGroupEntity)
-    private readonly viewGroupRepository: Repository<ViewGroupEntity>,
-    @InjectRepository(ViewSortEntity)
-    private readonly viewSortRepository: Repository<ViewSortEntity>,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewFieldEntity)
+    private readonly viewFieldRepository: WorkspaceScopedRepository<ViewFieldEntity>,
+    @InjectWorkspaceScopedRepository(ViewFilterEntity)
+    private readonly viewFilterRepository: WorkspaceScopedRepository<ViewFilterEntity>,
+    @InjectWorkspaceScopedRepository(ViewGroupEntity)
+    private readonly viewGroupRepository: WorkspaceScopedRepository<ViewGroupEntity>,
+    @InjectWorkspaceScopedRepository(ViewSortEntity)
+    private readonly viewSortRepository: WorkspaceScopedRepository<ViewSortEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
   ) {
     super();
   }
@@ -69,8 +71,8 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         where: { workspaceId },
         withDeleted: true,
       }),
-      this.indexMetadataRepository.find({
-        where: { workspaceId, isUnique: true },
+      this.indexMetadataRepository.find(workspaceId, {
+        where: { isUnique: true },
         relations: ['indexFieldMetadatas'],
         withDeleted: true,
       }),
@@ -84,23 +86,19 @@ export class WorkspaceFlatFieldMetadataMapCacheService extends WorkspaceCachePro
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
-      this.viewFieldRepository.find({
-        where: { workspaceId },
+      this.viewFieldRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'fieldMetadataId'],
         withDeleted: true,
       }),
-      this.viewFilterRepository.find({
-        where: { workspaceId },
+      this.viewFilterRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'fieldMetadataId'],
         withDeleted: true,
       }),
-      this.viewSortRepository.find({
-        where: { workspaceId },
+      this.viewSortRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'fieldMetadataId'],
         withDeleted: true,
       }),
-      this.viewRepository.find({
-        where: { workspaceId },
+      this.viewRepository.find(workspaceId, {
         select: [
           'id',
           'universalIdentifier',

@@ -1,5 +1,5 @@
 import { ArrowRightUpIcon, SOCIAL_ICONS } from '@/icons';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import type { MessageDescriptor } from '@lingui/core';
 import type { FooterSocialLinkType } from '@/sections/Footer/types';
 import { theme } from '@/theme';

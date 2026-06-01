@@ -306,9 +306,11 @@ export class LogicFunctionExecutorService {
     // use the instance-scoped versioned envelope (no workspaceId in the HKDF
     // info).
     for (const variable of serverVariables) {
-      envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
-        variable.encryptedValue,
-      );
+      if (variable.encryptedValue !== '') {
+        envMap[variable.key] = this.secretEncryptionService.decryptVersioned(
+          variable.encryptedValue,
+        );
+      }
     }
 
     return envMap;

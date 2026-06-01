@@ -38,6 +38,7 @@ export class SesInboundMailHandlerService {
         s3Key: receipt.action.objectKey,
         envelopeRecipients: receipt.recipients,
       },
+      { id: snsMessageId },
     );
   }
 }
