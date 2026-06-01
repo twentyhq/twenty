@@ -4,22 +4,16 @@ import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/con
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { styled } from '@linaria/react';
-import { useCallback, useEffect } from 'react';
+import { useEffect } from 'react';
 import { TabButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 type SettingsTabBarProps<TabId extends string = string> = {
   tabs: SingleTabProps<TabId>[];
   componentInstanceId: string;
-  behaveAsLinks?: boolean;
   loading?: boolean;
   onChangeTab?: (tabId: TabId) => void;
 };
-
-type SettingsTabBarContentProps<TabId extends string = string> = Omit<
-  SettingsTabBarProps<TabId>,
-  'componentInstanceId'
->;
 
 const StyledTabRow = styled.div`
   align-items: center;
@@ -30,16 +24,17 @@ const StyledTabRow = styled.div`
   overflow: hidden;
 `;
 
-const SettingsTabBarContent = <TabId extends string>({
+export const SettingsTabBar = <TabId extends string = string>({
   tabs,
-  behaveAsLinks = true,
+  componentInstanceId,
   loading,
   onChangeTab,
-}: SettingsTabBarContentProps<TabId>) => {
+}: SettingsTabBarProps<TabId>) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
   const [activeTabId, setActiveTabId] = useAtomComponentState(
     activeTabIdComponentState,
+    componentInstanceId,
   );
 
   const activeTabExists = visibleTabs.some((tab) => tab.id === activeTabId);
@@ -50,20 +45,14 @@ const SettingsTabBarContent = <TabId extends string>({
     onChangeTab?.((initialActiveTabId as TabId | null) ?? ('' as TabId));
   }, [initialActiveTabId, setActiveTabId, onChangeTab]);
 
-  const handleTabSelect = useCallback(
-    (tabId: TabId) => {
-      setActiveTabId(tabId);
-      onChangeTab?.(tabId);
-    },
-    [setActiveTabId, onChangeTab],
-  );
-
   if (visibleTabs.length === 0) {
     return null;
   }
 
   return (
-    <>
+    <TabListComponentInstanceContext.Provider
+      value={{ instanceId: componentInstanceId }}
+    >
       <TabListFromUrlOptionalEffect
         isInSidePanel={false}
         tabListIds={tabs.map((tab) => tab.id)}
@@ -79,35 +68,12 @@ const SettingsTabBarContent = <TabId extends string>({
             active={tab.id === activeTabId}
             disabled={tab.disabled ?? loading}
             pill={tab.pill}
-            to={behaveAsLinks ? `#${tab.id}` : undefined}
+            to={`#${tab.id}`}
             tooltipContent={tab.tooltipContent}
-            onClick={
-              behaveAsLinks
-                ? () => onChangeTab?.(tab.id)
-                : () => handleTabSelect(tab.id)
-            }
+            onClick={() => onChangeTab?.(tab.id)}
           />
         ))}
       </StyledTabRow>
-    </>
+    </TabListComponentInstanceContext.Provider>
   );
 };
-
-export const SettingsTabBar = <TabId extends string = string>({
-  tabs,
-  componentInstanceId,
-  behaveAsLinks,
-  loading,
-  onChangeTab,
-}: SettingsTabBarProps<TabId>) => (
-  <TabListComponentInstanceContext.Provider
-    value={{ instanceId: componentInstanceId }}
-  >
-    <SettingsTabBarContent
-      tabs={tabs}
-      behaveAsLinks={behaveAsLinks}
-      loading={loading}
-      onChangeTab={onChangeTab}
-    />
-  </TabListComponentInstanceContext.Provider>
-);

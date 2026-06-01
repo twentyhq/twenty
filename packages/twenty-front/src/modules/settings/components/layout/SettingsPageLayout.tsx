@@ -14,7 +14,6 @@ type SettingsPageLayoutProps = {
   actionButton?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
-  className?: string;
 };
 
 const SETTINGS_CONTENT_MAX_WIDTH = 760;
@@ -44,9 +43,8 @@ export const SettingsPageLayout = ({
   actionButton,
   secondaryBar,
   children,
-  className,
 }: SettingsPageLayoutProps) => (
-  <StyledContainer className={className}>
+  <StyledContainer>
     <SettingsPageHeader links={links} title={title} actions={actionButton} />
     {isDefined(secondaryBar) && (
       <SettingsSecondaryBar>{secondaryBar}</SettingsSecondaryBar>
