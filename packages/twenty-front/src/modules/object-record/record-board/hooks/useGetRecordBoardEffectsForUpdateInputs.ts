@@ -1,4 +1,5 @@
 import { useActiveFieldMetadataItems } from '@/object-metadata/hooks/useActiveFieldMetadataItems';
+import { type RecordBoardUpdateEffect } from '@/object-record/record-board/types/RecordBoardUpdateEffect';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
 import { recordIndexGroupFieldMetadataItemComponentState } from '@/object-record/record-index/states/recordIndexGroupFieldMetadataComponentState';
@@ -7,11 +8,6 @@ import { type ObjectRecordOperationUpdateInput } from '@/object-record/types/Obj
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { FieldMetadataType } from 'twenty-shared/types';
 import { isDefined, mapById } from 'twenty-shared/utils';
-
-export type RecordBoardUpdateEffect =
-  | 'trigger-initial-query'
-  | 'reposition-records'
-  | 'none';
 
 export const useGetRecordBoardEffectsForUpdateInputs = () => {
   const { objectMetadataItem } = useRecordIndexContextOrThrow();
