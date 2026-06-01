@@ -1,8 +1,10 @@
 'use client';
 
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 
 import { styled } from '@linaria/react';
+
+import { createAnimationFrameLoop } from '@/lib/animation';
 
 import type {
   DashboardBarChart,
@@ -71,41 +73,38 @@ const LineSvg = styled.svg`
   width: 100%;
   z-index: 1;
 
-  .line-area {
-    animation: lineAreaAppear 500ms ease 220ms both;
-  }
-
   .line-stroke {
-    animation: lineStrokeDraw 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    transition: opacity 420ms ease;
   }
 
-  @keyframes lineStrokeDraw {
-    from {
-      stroke-dashoffset: 1;
-    }
-    to {
-      stroke-dashoffset: 0;
-    }
-  }
-
-  @keyframes lineAreaAppear {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
+  .line-area {
+    transition: opacity 500ms ease 160ms;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .line-area,
     .line-stroke {
-      animation: none;
+      transition: none;
     }
   }
 `;
 
 export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
+  const [drawn, setDrawn] = useState(false);
+
+  useEffect(() => {
+    const task = createAnimationFrameLoop({
+      onFrame: () => {
+        setDrawn(true);
+        return false;
+      },
+    });
+
+    task.start();
+
+    return () => task.stop();
+  }, []);
+
   const max = Math.max(...data.values);
   const min = Math.min(...data.values);
   const range = max - min || 1;
@@ -157,6 +156,7 @@ export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
             className="line-area"
             d={areaPath}
             fill="url(#dashboard-line-fill)"
+            style={{ opacity: drawn ? 1 : 0 }}
           />
           <path
             className="line-stroke"
@@ -166,8 +166,7 @@ export function DashboardLineChart({ data }: { data: DashboardLineChart }) {
             strokeWidth="2"
             strokeLinecap="round"
             strokeLinejoin="round"
-            pathLength={1}
-            strokeDasharray={1}
+            style={{ opacity: drawn ? 1 : 0 }}
             vectorEffect="non-scaling-stroke"
           />
         </LineSvg>

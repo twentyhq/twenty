@@ -310,9 +310,16 @@ function resolveDisplayPage(
   }
 
   if (scene.kind === 'opportunityReview' && activePage.type === 'kanban') {
+    const generating = streamProgress === 0;
+    const focusedPage = buildFocusedOpportunitiesPage(activePage, 1);
+
     return {
-      ...buildFocusedOpportunitiesPage(activePage, 1),
-      generating: streamProgress === 0,
+      ...focusedPage,
+      generating,
+      header: {
+        ...focusedPage.header,
+        count: generating ? undefined : focusedPage.header.count,
+      },
     };
   }
 
@@ -331,14 +338,16 @@ function resolveDisplayPage(
     activeItemId === TASKS_PAGE_ITEM_ID &&
     activePage.type === 'table'
   ) {
+    const generating = streamProgress === 0;
+
     return {
       ...activePage,
-      generating: streamProgress === 0,
+      generating,
       header: {
         ...activePage.header,
-        count: (activePage.header.count ?? 0) + NEW_TASK_ROWS.length,
+        count: generating ? undefined : NEW_TASK_ROWS.length,
       },
-      rows: [...activePage.rows, ...NEW_TASK_ROWS],
+      rows: NEW_TASK_ROWS,
     };
   }
 
