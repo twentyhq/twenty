@@ -36,7 +36,7 @@ export class FileService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
-  async getFileResponseByPath({
+  async getFilePresignedUrlOrStreamByPath({
     workspaceId,
     applicationId,
     filepath,
@@ -69,7 +69,7 @@ export class FileService {
       return null;
     }
 
-    return this.buildFileResponse({
+    return this.getFilePresignedUrlOrStream({
       resourcePath: filepath,
       fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
@@ -137,7 +137,7 @@ export class FileService {
     }
   }
 
-  async getFileResponseById(params: {
+  async getFilePresignedUrlOrStreamById(params: {
     fileId: string;
     workspaceId: string;
     fileFolder: FileFolder;
@@ -168,7 +168,7 @@ export class FileService {
       return null;
     }
 
-    return this.buildFileResponse({
+    return this.getFilePresignedUrlOrStream({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: params.fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
@@ -177,7 +177,7 @@ export class FileService {
     });
   }
 
-  private async buildFileResponse({
+  private async getFilePresignedUrlOrStream({
     resourcePath,
     fileFolder,
     applicationUniversalIdentifier,

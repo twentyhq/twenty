@@ -61,14 +61,14 @@ export class FileController {
     }
 
     const fileResponse = await this.fileService
-      .getFileResponseByPath({
+      .getFilePresignedUrlOrStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
       })
       .catch((error) => {
-        this.logger.error('getFileResponseByPath failed unexpectedly', {
+        this.logger.error('getFilePresignedUrlOrStreamByPath failed unexpectedly', {
           error,
         });
 
@@ -119,13 +119,13 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     const fileResponse = await this.fileService
-      .getFileResponseById({
+      .getFilePresignedUrlOrStreamById({
         fileId,
         workspaceId,
         fileFolder,
       })
       .catch((error) => {
-        this.logger.error('getFileResponseById failed unexpectedly', {
+        this.logger.error('getFilePresignedUrlOrStreamById failed unexpectedly', {
           error,
         });
 
