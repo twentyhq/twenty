@@ -14,9 +14,9 @@ type DedicatedRotationHandlerClass = Type<SecretEncryptionRotationHandler>;
 
 type ColumnRotationSiteMetadata<E extends Type<unknown>> = {
   siteName: string;
-  customHandler?: DedicatedRotationHandlerClass;
-  isWorkspaceScoped?: boolean;
-  extraWhere?: Readonly<Partial<InstanceType<E>>>;
+  customHandler: DedicatedRotationHandlerClass | undefined;
+  isWorkspaceScoped: boolean;
+  extraWhere: Readonly<Partial<InstanceType<E>>> | undefined;
 };
 
 type SecretEncryptionRotationRegistryShape<R> = {
@@ -32,30 +32,11 @@ type SecretEncryptionRotationRegistryShape<R> = {
     : never;
 };
 
-// Intersects each column metadata value with the full
-// `ColumnRotationSiteMetadata<E>` so that optional fields
-// (`customHandler`, `isWorkspaceScoped`, `extraWhere`) are always
-// present in the type, while narrow literal types from `const R`
-// (e.g. siteName literals) are preserved.
-type NormalizedRegistry<R> = {
-  [N in keyof R]: R[N] extends {
-    entity: infer E extends Type<unknown>;
-    columnSiteNames: infer CSN;
-  }
-    ? {
-        entity: E;
-        columnSiteNames: {
-          [K in keyof CSN]: CSN[K] & ColumnRotationSiteMetadata<E>;
-        };
-      }
-    : never;
-};
-
 const defineRotationRegistry = <
   const R extends SecretEncryptionRotationRegistryShape<R>,
 >(
   registry: R,
-): NormalizedRegistry<R> => registry as unknown as NormalizedRegistry<R>;
+) => registry;
 
 export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
   ApplicationRegistrationVariableEntity: {
@@ -63,6 +44,9 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
     columnSiteNames: {
       encryptedValue: {
         siteName: 'application-registration-variable',
+        customHandler: undefined,
+        isWorkspaceScoped: false,
+        extraWhere: undefined,
       },
     },
   },
@@ -71,7 +55,9 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
     columnSiteNames: {
       value: {
         siteName: 'application-variable',
+        customHandler: undefined,
         isWorkspaceScoped: true,
+        extraWhere: undefined,
       },
     },
   },
@@ -80,15 +66,21 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
     columnSiteNames: {
       accessToken: {
         siteName: 'connected-account-access-token',
+        customHandler: undefined,
         isWorkspaceScoped: true,
+        extraWhere: undefined,
       },
       refreshToken: {
         siteName: 'connected-account-refresh-token',
+        customHandler: undefined,
         isWorkspaceScoped: true,
+        extraWhere: undefined,
       },
       connectionParameters: {
         siteName: 'connected-account-connection-parameters',
         customHandler: ConnectionParametersRotationHandler,
+        isWorkspaceScoped: false,
+        extraWhere: undefined,
       },
     },
   },
@@ -97,6 +89,9 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
     columnSiteNames: {
       privateKey: {
         siteName: 'signing-key-private-key',
+        customHandler: undefined,
+        isWorkspaceScoped: false,
+        extraWhere: undefined,
       },
     },
   },
@@ -105,7 +100,9 @@ export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
     columnSiteNames: {
       secret: {
         siteName: 'totp-secret',
+        customHandler: undefined,
         isWorkspaceScoped: true,
+        extraWhere: undefined,
       },
     },
   },
