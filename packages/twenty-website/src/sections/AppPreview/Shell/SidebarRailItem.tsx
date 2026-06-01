@@ -120,6 +120,7 @@ export function SidebarRailItem({
         $active={active}
         $child={child}
         aria-label={item.label}
+        data-rail-item-id={item.id}
         href={item.href}
         rel="noreferrer"
         target="_blank"
@@ -137,6 +138,7 @@ export function SidebarRailItem({
       $highlightRgb={highlighted ? highlightRgb : undefined}
       $highlighted={highlighted}
       aria-label={item.label}
+      data-rail-item-id={item.id}
       onClick={onSelect ? () => onSelect(item.id) : undefined}
       title={item.label}
       type="button"

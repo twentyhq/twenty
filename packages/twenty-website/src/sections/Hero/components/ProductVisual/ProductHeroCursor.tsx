@@ -6,14 +6,15 @@ import { styled } from '@linaria/react';
 
 import { MarkerCursor } from '@/sections/ThreeCards/components/FeatureCard/components/MarkerCursor';
 import { theme } from '@/theme';
+import type { CursorTarget } from './use-product-hero-cursor-autoplay';
 
 const CURSOR_COLOR = '#ffb08d';
 const CURSOR_NAME = 'Alice';
-const TARGET_ROW_ID = 'anthropic';
 const CURSOR_START = { left: 72, top: 78 };
-const TARGET_FALLBACK = { left: 24, top: 22 };
-const TARGET_X_OFFSET_PX = 80;
-const TARGET_Y_OFFSET_PX = -5;
+const ROW_X_OFFSET_PX = 80;
+const ROW_Y_OFFSET_PX = -5;
+const RAIL_X_OFFSET_PX = 4;
+const RAIL_Y_OFFSET_PX = 2;
 
 type Coordinate = { left: number; top: number };
 
@@ -70,19 +71,29 @@ type ProductHeroCursorProps = {
   clicking: boolean;
   hidden: boolean;
   moveMs: number;
-  position: 'start' | 'target';
+  target: CursorTarget;
 };
 
 export function ProductHeroCursor({
   clicking,
   hidden,
   moveMs,
-  position,
+  target,
 }: ProductHeroCursorProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [target, setTarget] = useState<Coordinate>(TARGET_FALLBACK);
+  const [coordinate, setCoordinate] = useState<Coordinate>(CURSOR_START);
 
   useEffect(() => {
+    if (target.kind === 'start') {
+      setCoordinate(CURSOR_START);
+      return undefined;
+    }
+
+    const selector =
+      target.kind === 'row'
+        ? `[data-row-id="${target.id}"]`
+        : `[data-rail-item-id="${target.id}"]`;
+
     const measure = () => {
       const overlay = overlayRef.current;
       const scene = overlay?.parentElement;
@@ -91,24 +102,38 @@ export function ProductHeroCursor({
         return;
       }
 
-      const row = scene.querySelector(`[data-row-id="${TARGET_ROW_ID}"]`);
+      const element = scene.querySelector(selector);
 
-      if (!(row instanceof HTMLElement)) {
+      if (!(element instanceof HTMLElement)) {
         return;
       }
 
       const overlayRect = overlay.getBoundingClientRect();
-      const rowRect = row.getBoundingClientRect();
+      const elementRect = element.getBoundingClientRect();
 
-      if (rowRect.height === 0 || overlayRect.width === 0) {
+      if (elementRect.height === 0 || overlayRect.width === 0) {
         return;
       }
 
-      const x = rowRect.left + TARGET_X_OFFSET_PX - overlayRect.left;
+      const x =
+        target.kind === 'row'
+          ? elementRect.left + ROW_X_OFFSET_PX - overlayRect.left
+          : elementRect.left +
+            elementRect.width / 2 +
+            RAIL_X_OFFSET_PX -
+            overlayRect.left;
       const y =
-        rowRect.top + rowRect.height / 2 + TARGET_Y_OFFSET_PX - overlayRect.top;
+        target.kind === 'row'
+          ? elementRect.top +
+            elementRect.height / 2 +
+            ROW_Y_OFFSET_PX -
+            overlayRect.top
+          : elementRect.top +
+            elementRect.height / 2 +
+            RAIL_Y_OFFSET_PX -
+            overlayRect.top;
 
-      setTarget({
+      setCoordinate({
         left: (x / overlayRect.width) * 100,
         top: (y / overlayRect.height) * 100,
       });
@@ -117,8 +142,7 @@ export function ProductHeroCursor({
     measure();
     window.addEventListener('resize', measure);
 
-    // Rows animate in with a stagger; re-measure once they have settled.
-    const settleTimers = [300, 700, 1200].map((delay) =>
+    const settleTimers = [120, 360, 720].map((delay) =>
       setTimeout(measure, delay),
     );
 
@@ -126,9 +150,7 @@ export function ProductHeroCursor({
       window.removeEventListener('resize', measure);
       settleTimers.forEach(clearTimeout);
     };
-  }, []);
-
-  const coordinate = position === 'target' ? target : CURSOR_START;
+  }, [target]);
 
   return (
     <Overlay aria-hidden="true" ref={overlayRef}>

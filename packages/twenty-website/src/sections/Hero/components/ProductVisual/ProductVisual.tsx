@@ -357,6 +357,13 @@ export function ProductVisual({
   }, [activeStepIndex, completedStepCount, streamedTextVisibleLength]);
 
   const heroCursor = useProductHeroCursorAutoplay(collaborative);
+
+  useEffect(() => {
+    if (collaborative) {
+      selectPageItem(heroCursor.pageItemId);
+    }
+  }, [collaborative, heroCursor.pageItemId, selectPageItem]);
+
   const effectivePage =
     collaborative && heroCursor.showRecord
       ? ANTHROPIC_RECORD_PAGE
@@ -550,9 +557,9 @@ export function ProductVisual({
         {collaborative ? (
           <ProductHeroCursor
             clicking={heroCursor.clicking}
-            hidden={heroCursor.showRecord}
+            hidden={heroCursor.hidden}
             moveMs={heroCursor.moveMs}
-            position={heroCursor.position}
+            target={heroCursor.target}
           />
         ) : null}
       </ShellScene>
