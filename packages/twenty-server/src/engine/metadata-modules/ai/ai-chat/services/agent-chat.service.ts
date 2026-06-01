@@ -28,6 +28,8 @@ import { AiChatFileAttachment } from 'src/engine/metadata-modules/ai/ai-chat/typ
 import { AgentTitleGenerationService } from './agent-title-generation.service';
 import { AgentChatThreadDTO } from '../dtos/agent-chat-thread.dto';
 
+const MESSAGE_PART_INSERT_BATCH_SIZE = 100;
+
 const serializeThreadForBroadcast = (
   thread: AgentChatThreadEntity,
   lastMessageAt: Date | null,
@@ -211,10 +213,26 @@ export class AgentChatService {
         uiMessage.parts,
         savedMessageId,
         workspaceId,
-      );
+      ) as QueryDeepPartialEntity<AgentMessagePartEntity>[];
 
-      await this.messagePartRepository.insert(
-        dbParts as QueryDeepPartialEntity<AgentMessagePartEntity>[],
+      await this.messagePartRepository.manager.transaction(
+        async (entityManager) => {
+          const transactionalMessagePartRepository =
+            entityManager.getRepository(AgentMessagePartEntity);
+
+          for (
+            let batchStartIndex = 0;
+            batchStartIndex < dbParts.length;
+            batchStartIndex += MESSAGE_PART_INSERT_BATCH_SIZE
+          ) {
+            const batch = dbParts.slice(
+              batchStartIndex,
+              batchStartIndex + MESSAGE_PART_INSERT_BATCH_SIZE,
+            );
+
+            await transactionalMessagePartRepository.insert(batch);
+          }
+        },
       );
     }
 
