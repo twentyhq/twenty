@@ -36,7 +36,7 @@ export class FileService {
     private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
-  async getFileStreamByPath({
+  async getFileResponseByPath({
     workspaceId,
     applicationId,
     filepath,
@@ -46,7 +46,7 @@ export class FileService {
     applicationId: string;
     filepath: string;
     fileFolder: FileFolder;
-  }): Promise<{ stream: Readable; mimeType: string } | null> {
+  }): Promise<FileResponse | null> {
     const application = await this.applicationRepository.findOne({
       where: {
         id: applicationId,
@@ -69,28 +69,13 @@ export class FileService {
       return null;
     }
 
-    try {
-      const stream = await this.fileStorageService.readFile({
-        resourcePath: filepath,
-        fileFolder,
-        applicationUniversalIdentifier: application.universalIdentifier,
-        workspaceId,
-      });
-
-      return {
-        stream,
-        mimeType: file.mimeType,
-      };
-    } catch (error) {
-      if (
-        error instanceof FileStorageException &&
-        error.code === FileStorageExceptionCode.FILE_NOT_FOUND
-      ) {
-        return null;
-      }
-
-      throw error;
-    }
+    return this.buildFileResponse({
+      resourcePath: filepath,
+      fileFolder,
+      applicationUniversalIdentifier: application.universalIdentifier,
+      workspaceId,
+      mimeType: file.mimeType,
+    });
   }
 
   async getFileStreamById({
@@ -183,12 +168,33 @@ export class FileService {
       return null;
     }
 
-    const mimeType = file.mimeType ?? 'application/octet-stream';
-    const resourceIdentifier = {
+    return this.buildFileResponse({
       resourcePath: removeFileFolderFromFileEntityPath(file.path),
       fileFolder: params.fileFolder,
       applicationUniversalIdentifier: application.universalIdentifier,
       workspaceId: params.workspaceId,
+      mimeType: file.mimeType,
+    });
+  }
+
+  private async buildFileResponse({
+    resourcePath,
+    fileFolder,
+    applicationUniversalIdentifier,
+    workspaceId,
+    mimeType,
+  }: {
+    resourcePath: string;
+    fileFolder: FileFolder;
+    applicationUniversalIdentifier: string;
+    workspaceId: string;
+    mimeType: string;
+  }): Promise<FileResponse | null> {
+    const resourceIdentifier = {
+      resourcePath,
+      fileFolder,
+      applicationUniversalIdentifier,
+      workspaceId,
     };
 
     const presignedUrl = await this.fileStorageService.getPresignedUrl({
@@ -267,7 +273,7 @@ export class FileService {
 
       return {
         buffer,
-        mimeType: file.mimeType ?? 'application/octet-stream',
+        mimeType: file.mimeType,
       };
     } catch (error) {
       if (

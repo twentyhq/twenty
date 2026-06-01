@@ -60,15 +60,15 @@ export class FileController {
       );
     }
 
-    const fileStream = await this.fileService
-      .getFileStreamByPath({
+    const fileResponse = await this.fileService
+      .getFileResponseByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
       })
       .catch((error) => {
-        this.logger.error('getFileStreamByPath failed unexpectedly', {
+        this.logger.error('getFileResponseByPath failed unexpectedly', {
           error,
         });
 
@@ -78,19 +78,21 @@ export class FileController {
         );
       });
 
-    if (fileStream === null) {
+    if (fileResponse === null) {
       throw new FileException(
         'File not found',
         FileExceptionCode.FILE_NOT_FOUND,
       );
     }
 
-    const { stream, mimeType } = fileStream;
+    if (fileResponse.type === 'redirect') {
+      return res.redirect(fileResponse.presignedUrl);
+    }
 
-    setFileResponseHeaders(res, mimeType);
+    setFileResponseHeaders(res, fileResponse.mimeType);
 
     try {
-      await pipeline(stream, res);
+      await pipeline(fileResponse.stream, res);
     } catch (error) {
       this.logger.error('Public asset stream failed mid-transfer', { error });
 
