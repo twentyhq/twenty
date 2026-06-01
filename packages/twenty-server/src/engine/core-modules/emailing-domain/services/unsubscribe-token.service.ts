@@ -9,6 +9,7 @@ import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twent
 export type UnsubscribeTokenPayload = {
   workspaceId: string;
   emailAddress: string;
+  emailListId?: string;
 };
 
 @Injectable()
@@ -51,6 +52,9 @@ export class UnsubscribeTokenService {
       return {
         workspaceId: decoded.workspaceId,
         emailAddress: decoded.emailAddress,
+        ...(typeof decoded?.emailListId === 'string'
+          ? { emailListId: decoded.emailListId }
+          : {}),
       };
     } catch {
       return null;

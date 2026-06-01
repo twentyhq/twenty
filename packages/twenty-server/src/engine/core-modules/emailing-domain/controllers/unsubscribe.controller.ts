@@ -9,12 +9,13 @@ import {
   UseGuards,
 } from '@nestjs/common';
 
-import { FieldActorSource } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
+import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -26,6 +27,7 @@ export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
+    private readonly emailListSubscriptionService: EmailListSubscriptionService,
   ) {}
 
   @Post()
@@ -54,11 +56,24 @@ export class UnsubscribeController {
       throw new BadRequestException('Invalid unsubscribe token');
     }
 
+    if (isNonEmptyString(payload.emailListId)) {
+      const unsubscribedFromList =
+        await this.emailListSubscriptionService.unsubscribeByEmail({
+          workspaceId: payload.workspaceId,
+          emailAddress: payload.emailAddress,
+          listId: payload.emailListId,
+        });
+
+      if (unsubscribedFromList) {
+        return;
+      }
+    }
+
     await this.emailGroupSuppressionService.suppress({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
       reason: EmailGroupSuppressionReason.UNSUBSCRIBE,
-      createdBySource: FieldActorSource.SYSTEM,
+      source: EmailGroupSuppressionSource.SYSTEM,
     });
   }
 }

@@ -6,6 +6,7 @@ import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailin
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { type EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 
@@ -35,6 +36,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
   const setUp = (
     emailingDomain: EmailingDomainEntity,
     suppressedAddresses: string[] = [],
+    listUnsubscribedAddresses: string[] = [],
   ) => {
     const sendEmail = jest.fn().mockResolvedValue({ messageId: 'msg-1' });
     const repository = {
@@ -50,6 +52,15 @@ describe('EmailingDomainSenderService.sendEmail', () => {
           new Set(suppressedAddresses.map((address) => address.toLowerCase())),
         ),
     } as unknown as EmailGroupSuppressionService;
+    const subscriptionService = {
+      getUnsubscribedAddresses: jest
+        .fn()
+        .mockResolvedValue(
+          new Set(
+            listUnsubscribedAddresses.map((address) => address.toLowerCase()),
+          ),
+        ),
+    } as unknown as EmailListSubscriptionService;
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;
@@ -57,6 +68,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
       repository,
       factory,
       suppressionService,
+      subscriptionService,
       unsubscribeTokenService,
     );
 

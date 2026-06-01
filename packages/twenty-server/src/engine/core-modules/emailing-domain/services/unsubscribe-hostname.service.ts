@@ -4,6 +4,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
+import {
+  DnsManagerException,
+  DnsManagerExceptionCode,
+} from 'src/engine/core-modules/dns-manager/exceptions/dns-manager.exception';
 import { UNSUBSCRIBE_HOSTNAME_PREFIX } from 'src/engine/core-modules/emailing-domain/constants/unsubscribe-hostname-prefix.constant';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { type VerificationRecord } from 'src/engine/core-modules/emailing-domain/drivers/types/verifications-record';
@@ -29,18 +33,40 @@ export class UnsubscribeHostnameService {
 
     const hostname = this.buildHostname(emailingDomain.domain);
 
-    const createdHostname =
-      await this.dnsManagerService.registerHostname(hostname);
+    const unsubscribeHostnameId = await this.registerOrAdoptHostname(hostname);
 
     await this.emailingDomainRepository.update(
       emailingDomain.workspaceId,
       { id: emailingDomain.id },
       {
         unsubscribeHostname: hostname,
-        unsubscribeHostnameId: createdHostname.id,
+        unsubscribeHostnameId,
         unsubscribeHostnameStatus: UnsubscribeHostnameStatus.PENDING,
       },
     );
+  }
+
+  private async registerOrAdoptHostname(hostname: string): Promise<string> {
+    try {
+      const createdHostname =
+        await this.dnsManagerService.registerHostname(hostname);
+
+      return createdHostname.id;
+    } catch (error) {
+      if (
+        error instanceof DnsManagerException &&
+        error.code === DnsManagerExceptionCode.HOSTNAME_ALREADY_REGISTERED
+      ) {
+        const existingHostnameId =
+          await this.dnsManagerService.getHostnameId(hostname);
+
+        if (isNonEmptyString(existingHostnameId)) {
+          return existingHostnameId;
+        }
+      }
+
+      throw error;
+    }
   }
 
   async refreshStatus(emailingDomain: EmailingDomainEntity): Promise<void> {
