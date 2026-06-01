@@ -44,8 +44,7 @@ const getMatchingFieldsWidgets = ({
         widget.objectMetadataUniversalIdentifier ===
           objectMetadataUniversalIdentifier &&
         isFieldsWidgetConfiguration(widget.configuration) &&
-        isDefined(widget.configuration.viewId) &&
-        isDefined(widget.configuration.newFieldDefaultVisibility),
+        isDefined(widget.configuration.viewId),
     );
 
 const findLastViewFieldGroupId = ({
@@ -151,7 +150,7 @@ export const computeFlatViewFieldsFromFieldsWidgets = ({
       const configuration = widget.configuration;
 
       const viewId = configuration.viewId!;
-      const isVisible = configuration.newFieldDefaultVisibility!;
+      const isVisible = configuration.newFieldDefaultVisibility ?? true;
 
       const viewUniversalIdentifier =
         flatViewMaps.universalIdentifierById[viewId] ?? null;
