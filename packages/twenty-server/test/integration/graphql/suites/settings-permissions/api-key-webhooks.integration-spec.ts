@@ -65,7 +65,7 @@ describe('api key and webhooks permissions', () => {
       const queryData = {
         query: `
         mutation createApiKey {
-          createApiKey(input: { name: "escalation", expiresAt: "2025-01-01T00:00:00Z" }) {
+          createApiKey(input: { name: "escalation", expiresAt: "2025-01-01T00:00:00Z", roleId: "20202020-0000-4000-8000-000000000000" }) {
             id
           }
         }
