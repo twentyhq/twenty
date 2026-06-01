@@ -1,6 +1,6 @@
 import { TalkToUsButton } from '@/sections/ContactCal';
 import { LinkButton } from '@/design-system/components';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import type { FooterCtaType } from '@/sections/Footer/types';
 
 type FooterNavCtaProps = {
