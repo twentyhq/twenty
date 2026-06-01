@@ -3,7 +3,6 @@ import { ModuleRef } from '@nestjs/core';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import { performance } from 'perf_hooks';
-import { isDefined } from 'twenty-shared/utils';
 import { DataSource } from 'typeorm';
 
 import {
@@ -20,7 +19,7 @@ import { SecretEncryptionService } from 'src/engine/core-modules/secret-encrypti
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
-import { typedObjectEntries } from 'twenty-shared/utils';
+import { isDefined, typedObjectEntries } from 'twenty-shared/utils';
 
 export type RotationRunOptions = {
   site?: SecretEncryptionRotationSiteName | string;
