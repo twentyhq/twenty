@@ -1195,28 +1195,19 @@ export class LambdaDriver implements LogicFunctionDriver {
       buildExecutorMs = Date.now() - buildStart;
 
       currentPhase = LambdaExecutionPhase.FETCH_CODE;
-      const fetchStart = Date.now();
+      const invokeFlowStart = Date.now();
 
-      const isPrebuilt =
-        effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT;
-
-      const compiledCode = isPrebuilt
-        ? undefined
-        : await this.logicFunctionResourceService.getBuiltCode({
-            workspaceId: flatLogicFunction.workspaceId,
-            applicationUniversalIdentifier,
-            builtHandlerPath: flatLogicFunction.builtHandlerPath,
-          });
-      getBuiltCodeMs = Date.now() - fetchStart;
+      const { executorPayload, getBuiltCodeMs: fetchedCodeMs } =
+        await this.buildExecutorPayload({
+          flatLogicFunction,
+          applicationUniversalIdentifier,
+          payload,
+          env,
+          effectiveExecutionMode,
+        });
+      getBuiltCodeMs = fetchedCodeMs;
 
       currentPhase = LambdaExecutionPhase.INVOKE;
-
-      const executorPayload: LambdaDriverExecutorPayload = {
-        params: payload,
-        env: env ?? {},
-        handlerName: flatLogicFunction.handlerName,
-        ...(isDefined(compiledCode) ? { code: compiledCode } : {}),
-      };
 
       const payloadString = JSON.stringify(executorPayload);
       const params: InvokeCommandInput = {
@@ -1246,7 +1237,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         coldStart,
       } = this.parseLambdaLogResult(result.LogResult);
 
-      const duration = Date.now() - fetchStart;
+      const duration = Date.now() - invokeFlowStart;
 
       this.logger.log(
         `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${effectiveExecutionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
@@ -1304,6 +1295,47 @@ export class LambdaDriver implements LogicFunctionDriver {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
       );
     }
+  }
+
+  private async buildExecutorPayload({
+    flatLogicFunction,
+    applicationUniversalIdentifier,
+    payload,
+    env,
+    effectiveExecutionMode,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    applicationUniversalIdentifier: string;
+    payload: object;
+    env?: Record<string, string>;
+    effectiveExecutionMode: LogicFunctionExecutionMode;
+  }): Promise<{
+    executorPayload: LambdaDriverExecutorPayload;
+    getBuiltCodeMs: number;
+  }> {
+    const basePayload: LambdaDriverExecutorPayload = {
+      params: payload,
+      env: env ?? {},
+      handlerName: flatLogicFunction.handlerName,
+    };
+
+    // PREBUILT: the bundle already lives on the Lambda, so we ship no code.
+    if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
+      return { executorPayload: basePayload, getBuiltCodeMs: 0 };
+    }
+
+    // LIVE: fetch the compiled bundle and ship it in the invoke payload.
+    const fetchStart = Date.now();
+    const code = await this.logicFunctionResourceService.getBuiltCode({
+      workspaceId: flatLogicFunction.workspaceId,
+      applicationUniversalIdentifier,
+      builtHandlerPath: flatLogicFunction.builtHandlerPath,
+    });
+
+    return {
+      executorPayload: { ...basePayload, code },
+      getBuiltCodeMs: Date.now() - fetchStart,
+    };
   }
 
   private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
@@ -1365,8 +1397,9 @@ export class LambdaDriver implements LogicFunctionDriver {
           const functionArn = updateResult.FunctionArn;
 
           if (!isNonEmptyString(functionArn)) {
-            throw new Error(
+            throw new LogicFunctionException(
               `UpdateFunctionCode did not return a FunctionArn for '${flatLogicFunction.id}'`,
+              LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
             );
           }
 
@@ -1397,27 +1430,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     );
   }
 
+  // Read-only tag lookup: no install lock needed. A read that races an install
+  // simply returns the previous checksum, which the caller compares against the
+  // expected one and rebuilds on mismatch.
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
-    return this.cacheLockService.withLock(
-      async () => {
-        const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
-        if (!isDefined(lambdaExecutor)) {
-          return null;
-        }
+    if (!isDefined(lambdaExecutor)) {
+      return null;
+    }
 
-        return (
-          lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null
-        );
-      },
-      this.getPrebuiltInstallLockKey(flatLogicFunction),
-      {
-        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
-        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
-        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
-      },
-    );
+    return lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null;
   }
 }

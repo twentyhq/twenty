@@ -4,16 +4,16 @@ import { SEED_WORKFLOW_ACTION_TRIGGER_SETTINGS } from 'twenty-shared/logic-funct
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
+import { type FlatApplicationCacheMaps } from 'src/engine/core-modules/application/types/flat-application-cache-maps.type';
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
-import {
-  WorkflowActionType,
-  type WorkflowAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { getCodeStepLogicFunctionIds } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-logic-function-ids.util';
+import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
 @Injectable()
 export class CodeStepBuildService {
@@ -64,21 +64,9 @@ export class CodeStepBuildService {
     workspaceId: string;
     steps: WorkflowAction[];
   }): Promise<void> {
-    const codeSteps = steps.filter(
-      (
-        step,
-      ): step is WorkflowAction & {
-        type: typeof WorkflowActionType.CODE;
-        settings: { input: { logicFunctionId: string } };
-      } =>
-        step.type === WorkflowActionType.CODE &&
-        isDefined(
-          (step.settings?.input as { logicFunctionId?: string })
-            ?.logicFunctionId,
-        ),
-    );
+    const logicFunctionIds = getCodeStepLogicFunctionIds(steps);
 
-    if (codeSteps.length === 0) {
+    if (logicFunctionIds.length === 0) {
       return;
     }
 
@@ -90,8 +78,7 @@ export class CodeStepBuildService {
         },
       );
 
-    for (const step of codeSteps) {
-      const logicFunctionId = step.settings.input.logicFunctionId;
+    for (const logicFunctionId of logicFunctionIds) {
       const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: logicFunctionId,
         flatEntityMaps: flatLogicFunctionMaps,
@@ -105,12 +92,11 @@ export class CodeStepBuildService {
         continue;
       }
 
-      const applicationUniversalIdentifier = isDefined(
-        flatLogicFunction.applicationId,
-      )
-        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-            ?.universalIdentifier
-        : undefined;
+      const applicationUniversalIdentifier =
+        this.resolveApplicationUniversalIdentifier({
+          flatLogicFunction,
+          flatApplicationMaps,
+        });
 
       if (!isDefined(applicationUniversalIdentifier)) {
         this.logger.warn(
@@ -145,21 +131,9 @@ export class CodeStepBuildService {
       return;
     }
 
-    const codeSteps = steps.filter(
-      (
-        step,
-      ): step is WorkflowAction & {
-        type: typeof WorkflowActionType.CODE;
-        settings: { input: { logicFunctionId: string } };
-      } =>
-        step.type === WorkflowActionType.CODE &&
-        isDefined(
-          (step.settings?.input as { logicFunctionId?: string })
-            ?.logicFunctionId,
-        ),
-    );
+    const logicFunctionIds = getCodeStepLogicFunctionIds(steps);
 
-    if (codeSteps.length === 0) {
+    if (logicFunctionIds.length === 0) {
       return;
     }
 
@@ -171,8 +145,7 @@ export class CodeStepBuildService {
         },
       );
 
-    for (const step of codeSteps) {
-      const logicFunctionId = step.settings.input.logicFunctionId;
+    for (const logicFunctionId of logicFunctionIds) {
       const flatLogicFunction = findFlatEntityByIdInFlatEntityMaps({
         flatEntityId: logicFunctionId,
         flatEntityMaps: flatLogicFunctionMaps,
@@ -188,12 +161,11 @@ export class CodeStepBuildService {
         continue;
       }
 
-      const applicationUniversalIdentifier = isDefined(
-        flatLogicFunction.applicationId,
-      )
-        ? flatApplicationMaps.byId[flatLogicFunction.applicationId]
-            ?.universalIdentifier
-        : undefined;
+      const applicationUniversalIdentifier =
+        this.resolveApplicationUniversalIdentifier({
+          flatLogicFunction,
+          flatApplicationMaps,
+        });
 
       if (!isDefined(applicationUniversalIdentifier)) {
         this.logger.warn(
@@ -214,5 +186,20 @@ export class CodeStepBuildService {
         applicationUniversalIdentifier,
       });
     }
+  }
+
+  private resolveApplicationUniversalIdentifier({
+    flatLogicFunction,
+    flatApplicationMaps,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    flatApplicationMaps: FlatApplicationCacheMaps;
+  }): string | undefined {
+    if (!isDefined(flatLogicFunction.applicationId)) {
+      return undefined;
+    }
+
+    return flatApplicationMaps.byId[flatLogicFunction.applicationId]
+      ?.universalIdentifier;
   }
 }

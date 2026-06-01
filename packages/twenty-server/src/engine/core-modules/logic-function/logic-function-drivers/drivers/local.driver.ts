@@ -680,28 +680,21 @@ export class LocalDriver implements LogicFunctionDriver {
     );
   }
 
+  // Read-only checksum lookup: no install lock needed. A read that races an
+  // install simply returns the previous checksum, which the caller compares
+  // against the expected one and rebuilds on mismatch.
   async getInstalledBundleChecksum(
     flatLogicFunction: FlatLogicFunction,
   ): Promise<string | null> {
-    return this.cacheLockService.withLock(
-      async () => {
-        try {
-          const checksum = await fs.readFile(
-            this.getInstalledChecksumPath(flatLogicFunction),
-            'utf8',
-          );
+    try {
+      const checksum = await fs.readFile(
+        this.getInstalledChecksumPath(flatLogicFunction),
+        'utf8',
+      );
 
-          return checksum.trim() || null;
-        } catch {
-          return null;
-        }
-      },
-      this.getPrebuiltInstallLockKey(flatLogicFunction),
-      {
-        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
-        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
-        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
-      },
-    );
+      return checksum.trim() || null;
+    } catch {
+      return null;
+    }
   }
 }

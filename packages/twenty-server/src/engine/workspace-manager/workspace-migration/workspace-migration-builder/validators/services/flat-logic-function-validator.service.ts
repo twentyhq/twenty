@@ -9,7 +9,10 @@ import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/val
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
+import {
+  type FailedFlatEntityValidation,
+  type FlatEntityValidationError,
+} from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
 import { type UniversalFlatEntityValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-validation-args.type';
@@ -80,31 +83,54 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    const postUpdateExecutionMode =
-      flatEntityUpdate.executionMode !== undefined
-        ? flatEntityUpdate.executionMode
-        : existingFlatLogicFunction.executionMode;
-    const postUpdateChecksum =
-      flatEntityUpdate.checksum !== undefined
-        ? flatEntityUpdate.checksum
-        : existingFlatLogicFunction.checksum;
-    const postUpdateIsBuildUpToDate =
-      flatEntityUpdate.isBuildUpToDate !== undefined
-        ? flatEntityUpdate.isBuildUpToDate
-        : existingFlatLogicFunction.isBuildUpToDate;
+    // Merge the partial update over the existing entity to get the resulting
+    // state. `checksum` is nullable, so an explicit `null` must be preserved
+    // (it can't fall back to the existing checksum and silently satisfy the
+    // PREBUILT invariant) — hence `!== undefined` rather than `??`.
+    const prebuiltInvariantError = this.getPrebuiltInvariantError({
+      executionMode:
+        flatEntityUpdate.executionMode ??
+        existingFlatLogicFunction.executionMode,
+      isBuildUpToDate:
+        flatEntityUpdate.isBuildUpToDate ??
+        existingFlatLogicFunction.isBuildUpToDate,
+      checksum:
+        flatEntityUpdate.checksum !== undefined
+          ? flatEntityUpdate.checksum
+          : existingFlatLogicFunction.checksum,
+    });
 
-    if (
-      postUpdateExecutionMode === LogicFunctionExecutionMode.PREBUILT &&
-      (!postUpdateIsBuildUpToDate || !isDefined(postUpdateChecksum))
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Logic function cannot be switched to PREBUILT mode without a fresh build and a checksum`,
-        userFriendlyMessage: msg`Logic function cannot be switched to PREBUILT mode without a fresh build and a checksum`,
-      });
+    if (isDefined(prebuiltInvariantError)) {
+      validationResult.errors.push(prebuiltInvariantError);
     }
 
     return validationResult;
+  }
+
+  // A logic function in PREBUILT mode must have a fresh build and a checksum,
+  // otherwise there is nothing installable to invoke.
+  private getPrebuiltInvariantError({
+    executionMode,
+    isBuildUpToDate,
+    checksum,
+  }: {
+    executionMode: LogicFunctionExecutionMode | null | undefined;
+    isBuildUpToDate: boolean | null | undefined;
+    checksum: string | null | undefined;
+  }): FlatEntityValidationError | undefined {
+    const isValid =
+      executionMode !== LogicFunctionExecutionMode.PREBUILT ||
+      (isBuildUpToDate === true && isDefined(checksum));
+
+    if (isValid) {
+      return undefined;
+    }
+
+    return {
+      code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+      message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+      userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+    };
   }
 
   public validateFlatLogicFunctionDeletion({
@@ -200,17 +226,14 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    if (
-      flatLogicFunctionToValidate.executionMode ===
-        LogicFunctionExecutionMode.PREBUILT &&
-      (!flatLogicFunctionToValidate.isBuildUpToDate ||
-        !isDefined(flatLogicFunctionToValidate.checksum))
-    ) {
-      validationResult.errors.push({
-        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
-        message: t`Logic function cannot be created in PREBUILT mode without a fresh build and a checksum`,
-        userFriendlyMessage: msg`Logic function cannot be created in PREBUILT mode without a fresh build and a checksum`,
-      });
+    const prebuiltInvariantError = this.getPrebuiltInvariantError({
+      executionMode: flatLogicFunctionToValidate.executionMode,
+      isBuildUpToDate: flatLogicFunctionToValidate.isBuildUpToDate,
+      checksum: flatLogicFunctionToValidate.checksum,
+    });
+
+    if (isDefined(prebuiltInvariantError)) {
+      validationResult.errors.push(prebuiltInvariantError);
     }
 
     return validationResult;

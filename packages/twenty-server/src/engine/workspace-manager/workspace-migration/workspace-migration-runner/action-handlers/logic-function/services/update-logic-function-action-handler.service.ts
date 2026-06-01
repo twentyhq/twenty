@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { FileFolder } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
@@ -97,6 +98,17 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       update as Parameters<typeof logicFunctionRepository.update>[1],
     );
 
+    // Install before deleting the old built bundle: if the install fails the
+    // action throws and the transaction rolls back, leaving the old artifact in
+    // storage so LIVE execution keeps working. Deleting first would leave the
+    // function pointing at a removed bundle on rollback.
+    await this.installPrebuiltBundleIfNeeded({
+      existingLogicFunction,
+      update,
+      applicationUniversalIdentifier,
+      context,
+    });
+
     if (builtPathChanged) {
       await this.fileStorageService.deleteFile({
         workspaceId,
@@ -105,13 +117,6 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         resourcePath: existingLogicFunction.builtHandlerPath,
       });
     }
-
-    await this.installPrebuiltBundleIfNeeded({
-      existingLogicFunction,
-      update,
-      applicationUniversalIdentifier,
-      context,
-    });
   }
 
   private async installPrebuiltBundleIfNeeded({
@@ -125,35 +130,36 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     applicationUniversalIdentifier: string;
     context: WorkspaceMigrationActionRunnerContext<FlatUpdateLogicFunctionAction>;
   }): Promise<void> {
-    const targetExecutionMode =
+    const nextExecutionMode =
       update.executionMode ?? existingLogicFunction.executionMode;
+    const nextChecksum = update.checksum ?? existingLogicFunction.checksum;
+    const nextIsBuildUpToDate =
+      update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate;
 
-    if (targetExecutionMode !== LogicFunctionExecutionMode.PREBUILT) {
+    // Only a PREBUILT function with a fresh build and a checksum has an
+    // installable bundle.
+    if (
+      nextExecutionMode !== LogicFunctionExecutionMode.PREBUILT ||
+      !nextIsBuildUpToDate ||
+      !isNonEmptyString(nextChecksum)
+    ) {
       return;
     }
 
-    const targetChecksum = update.checksum ?? existingLogicFunction.checksum;
-    const targetIsBuildUpToDate =
-      update.isBuildUpToDate ?? existingLogicFunction.isBuildUpToDate;
+    // Nothing to do when the bundle for this exact checksum is already
+    // installed (already PREBUILT and the checksum did not change).
+    const isAlreadyInstalled =
+      existingLogicFunction.executionMode ===
+        LogicFunctionExecutionMode.PREBUILT &&
+      existingLogicFunction.checksum === nextChecksum;
 
-    if (!targetIsBuildUpToDate || !isDefined(targetChecksum)) {
+    if (isAlreadyInstalled) {
       return;
     }
 
     const becamePrebuilt =
-      isDefined(update.executionMode) &&
-      update.executionMode === LogicFunctionExecutionMode.PREBUILT &&
       existingLogicFunction.executionMode !==
-        LogicFunctionExecutionMode.PREBUILT;
-    const checksumChangedWhilePrebuilt =
-      existingLogicFunction.executionMode ===
-        LogicFunctionExecutionMode.PREBUILT &&
-      isDefined(update.checksum) &&
-      update.checksum !== existingLogicFunction.checksum;
-
-    if (!becamePrebuilt && !checksumChangedWhilePrebuilt) {
-      return;
-    }
+      LogicFunctionExecutionMode.PREBUILT;
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
@@ -164,7 +170,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
         flatLogicFunction: {
           ...existingLogicFunction,
           ...update,
-          checksum: targetChecksum,
+          checksum: nextChecksum,
           executionMode: LogicFunctionExecutionMode.PREBUILT,
           isBuildUpToDate: true,
         },
