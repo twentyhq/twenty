@@ -45,17 +45,11 @@ export const useGetRecordBoardEffectsForUpdateInputs = () => {
         updatedFieldNames.add(fieldName);
       }
 
-      const fieldNamesForFilterAndSortChecks = fieldNamesForUpdateInput.filter(
-        (fieldName) => fieldName !== 'position',
-      );
-
       const updatedFieldMetadataItems = activeFieldMetadataItems.filter(
         (fieldMetadataItemToFilter) =>
-          fieldNamesForFilterAndSortChecks.includes(
-            fieldMetadataItemToFilter.name,
-          ) ||
+          fieldNamesForUpdateInput.includes(fieldMetadataItemToFilter.name) ||
           (fieldMetadataItemToFilter.type === FieldMetadataType.RELATION &&
-            fieldNamesForFilterAndSortChecks.includes(
+            fieldNamesForUpdateInput.includes(
               `${fieldMetadataItemToFilter.name}Id`,
             )),
       );
