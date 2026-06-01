@@ -11,14 +11,17 @@ export const prefillCompanies = async (
   entityManager: EntityManager,
   schemaName: string,
 ) => {
-  const workspaceMember = await entityManager
+  // The workspace creator is the first member created at activation time;
+  // order by creation so the seeded account owner is deterministically them.
+  const workspaceCreator = await entityManager
     .createQueryBuilder()
-    .select('id')
+    .select('id', 'id')
     .from(`${schemaName}.workspaceMember`, 'workspaceMember')
+    .orderBy('"createdAt"', 'ASC')
     .limit(1)
-    .getRawOne();
+    .getRawOne<{ id: string }>();
 
-  const accountOwnerId = workspaceMember?.id ?? null;
+  const accountOwnerId = workspaceCreator?.id ?? null;
 
   await entityManager
     .createQueryBuilder()

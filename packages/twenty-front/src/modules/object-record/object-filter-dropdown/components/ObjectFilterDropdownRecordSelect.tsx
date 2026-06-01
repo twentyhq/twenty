@@ -91,8 +91,9 @@ export const ObjectFilterDropdownRecordSelect = ({
 
   // For a nested relation filter (e.g. company → accountOwner) the records to
   // choose from belong to the leaf relation's target object (WorkspaceMember),
-  // not the source relation's object (Company). A direct relation filter has no
-  // leaf, so fall back to the source field.
+  // not the source relation's object (Company). Only a direct relation filter
+  // (no leaf) falls back to the source field; a leaf that is set but cannot be
+  // resolved must not load records from the source object.
   const relationTargetFieldMetadataItem = isDefined(
     relationTargetFieldMetadataIdUsedInDropdown,
   )
@@ -100,10 +101,17 @@ export const ObjectFilterDropdownRecordSelect = ({
         fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
         objectMetadataItems,
       }).fieldMetadataItem
-    : null;
+    : undefined;
 
-  const effectiveFieldMetadataItem =
-    relationTargetFieldMetadataItem ?? fieldMetadataItemUsedInFilterDropdown;
+  const effectiveFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? relationTargetFieldMetadataItem
+    : fieldMetadataItemUsedInFilterDropdown;
+
+  if (!isDefined(effectiveFieldMetadataItem)) {
+    throw new Error('effectiveFieldMetadataItem is not defined');
+  }
 
   const objectNameSingular = getRelationObjectMetadataNameSingular({
     field: effectiveFieldMetadataItem,

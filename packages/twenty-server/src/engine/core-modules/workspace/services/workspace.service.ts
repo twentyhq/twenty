@@ -368,30 +368,17 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
 
     await this.userWorkspaceService.createWorkspaceMember(workspace.id, user);
 
-    await this.prefillCreatedWorkspaceRecords({
-      workspaceId: workspace.id,
-      schemaName: getWorkspaceSchemaName(workspace.id),
-    });
-
-    // Seed a private onboarding kanban for the workspace creator. Best-effort:
-    // a failure here must never block workspace activation.
-    try {
-      const userWorkspace = await this.userWorkspaceRepository.findOneByOrFail({
+    const creatorUserWorkspace =
+      await this.userWorkspaceRepository.findOneByOrFail({
         userId: user.id,
         workspaceId: workspace.id,
       });
 
-      await this.seedOnboardingPrivateViewService.seedForWorkspace({
-        workspaceId: workspace.id,
-        createdByUserWorkspaceId: userWorkspace.id,
-      });
-    } catch (error) {
-      this.logger.error(
-        `failed to seed onboarding private view for workspace ${workspace.id}`,
-        error,
-      );
-      this.exceptionHandlerService.captureExceptions([error as Error]);
-    }
+    await this.prefillCreatedWorkspaceRecords({
+      workspaceId: workspace.id,
+      schemaName: getWorkspaceSchemaName(workspace.id),
+      createdByUserWorkspaceId: creatorUserWorkspace.id,
+    });
 
     await this.activateAndInitializeUpgradeState({
       workspaceId: workspace.id,
@@ -807,9 +794,11 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
   private async prefillCreatedWorkspaceRecords({
     workspaceId,
     schemaName,
+    createdByUserWorkspaceId,
   }: {
     workspaceId: string;
     schemaName: string;
+    createdByUserWorkspaceId: string;
   }): Promise<void> {
     const {
       flatObjectMetadataMaps,
@@ -871,6 +860,23 @@ export class WorkspaceService extends TypeOrmQueryService<WorkspaceEntity> {
       throw error;
     } finally {
       await queryRunner.release();
+    }
+
+    // Seed a private onboarding kanban for the workspace creator alongside the
+    // other workspace records. Best-effort: a failure must never block
+    // activation. Runs after the record transaction because views are metadata
+    // created through their own migrations.
+    try {
+      await this.seedOnboardingPrivateViewService.seedForWorkspace({
+        workspaceId,
+        createdByUserWorkspaceId,
+      });
+    } catch (error) {
+      this.logger.error(
+        `failed to seed onboarding private view for workspace ${workspaceId}`,
+        error,
+      );
+      this.exceptionHandlerService.captureExceptions([error as Error]);
     }
 
     try {
