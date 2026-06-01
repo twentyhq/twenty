@@ -1,6 +1,7 @@
-import { theme } from '@/theme';
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
+import { theme } from '@/theme';
 import {
   SkeletonBar,
   SkeletonBlock,
@@ -12,6 +13,24 @@ import {
   WORKFLOW_PAGE_FONT,
   WORKFLOW_PAGE_TABLER_STROKE,
 } from './workflow-page-theme';
+
+const nodeContentAppear = css`
+  animation: workflowNodeContentAppear 320ms ease both;
+  animation-delay: 80ms;
+
+  @keyframes workflowNodeContentAppear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
 
 const Node = styled.div<{ $index: number }>`
   align-items: center;
@@ -44,8 +63,6 @@ const Node = styled.div<{ $index: number }>`
 
 const NodeIconContainer = styled.div`
   align-items: center;
-  animation: workflowNodeContentAppear 320ms ease both;
-  animation-delay: 80ms;
   background: ${WORKFLOW_PAGE_COLORS.nodeIconSurface};
   border-radius: 4px;
   display: flex;
@@ -53,19 +70,6 @@ const NodeIconContainer = styled.div`
   height: 32px;
   justify-content: center;
   width: 32px;
-
-  @keyframes workflowNodeContentAppear {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 `;
 
 const SkeletonIcon = styled(SkeletonBlock)`
@@ -88,31 +92,14 @@ const NodeContent = styled.div`
 `;
 
 const NodeLabel = styled.div`
-  animation: workflowNodeLabelAppear 320ms ease both;
-  animation-delay: 80ms;
   color: ${WORKFLOW_PAGE_COLORS.textLight};
   font-family: ${WORKFLOW_PAGE_FONT};
   font-size: 11px;
   font-weight: 600;
   line-height: 1;
-
-  @keyframes workflowNodeLabelAppear {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 `;
 
 const NodeTitle = styled.div`
-  animation: workflowNodeTitleAppear 320ms ease both;
-  animation-delay: 80ms;
   color: ${WORKFLOW_PAGE_COLORS.textPrimary};
   font-family: ${WORKFLOW_PAGE_FONT};
   font-size: 13px;
@@ -121,19 +108,6 @@ const NodeTitle = styled.div`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-
-  @keyframes workflowNodeTitleAppear {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
 `;
 
 export function WorkflowNode({
@@ -162,7 +136,7 @@ export function WorkflowNode({
         </>
       ) : (
         <>
-          <NodeIconContainer>
+          <NodeIconContainer className={nodeContentAppear}>
             <Icon
               aria-hidden
               color={iconColor}
@@ -171,8 +145,8 @@ export function WorkflowNode({
             />
           </NodeIconContainer>
           <NodeContent>
-            <NodeLabel>{label}</NodeLabel>
-            <NodeTitle>{title}</NodeTitle>
+            <NodeLabel className={nodeContentAppear}>{label}</NodeLabel>
+            <NodeTitle className={nodeContentAppear}>{title}</NodeTitle>
           </NodeContent>
         </>
       )}
