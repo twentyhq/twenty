@@ -5,11 +5,11 @@ import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/Drop
 import { useSortedArray } from '@/ui/layout/table/hooks/useSortedArray';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useContext, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { H2Title, IconArchive } from 'twenty-ui/display';
 import { SearchInput } from 'twenty-ui/input';
 import { MenuItemToggle } from 'twenty-ui/navigation';
-import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { useMutation, useQuery } from '@apollo/client/react';
 import { Section } from 'twenty-ui/layout';
@@ -22,20 +22,12 @@ import { SETTINGS_SKILL_TABLE_METADATA } from '~/pages/settings/ai/constants/Set
 import { normalizeSearchText } from '~/utils/normalizeSearchText';
 import { SettingsAgentSkillsTable } from './SettingsAgentSkillsTable';
 
-const StyledCoverImage = styled.div`
-  background-position: center;
-  background-size: cover;
-  height: 160px;
-  overflow: hidden;
-`;
-
 const StyledSearchInput = styled(SearchInput)`
   margin-bottom: ${themeCssVariables.spacing[4]};
 `;
 
-export const SettingsAgentSkills = () => {
+export const SettingsAgentSkillsTab = () => {
   const { t } = useLingui();
-  const { colorScheme } = useContext(ThemeContext);
   const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
 
   const { data, loading, refetch } = useQuery(FindManySkillsDocument);
@@ -90,55 +82,45 @@ export const SettingsAgentSkills = () => {
     }
   };
 
-  const coverImage =
-    colorScheme === 'light'
-      ? '/images/ai/ai-skills-cover-light.png'
-      : '/images/ai/ai-skills-cover-dark.png';
-
   return (
-    <>
-      <StyledCoverImage style={{ backgroundImage: `url('${coverImage}')` }} />
-      <Section>
-        <H2Title
-          title={t`Skills`}
-          description={t`Use filter to see existing tools or create your own`}
-        />
+    <Section>
+      <H2Title
+        title={t`Skills`}
+        description={t`Use filter to see existing skills or create your own`}
+      />
 
-        <StyledSearchInput
-          placeholder={t`Search a skill...`}
-          value={searchTerm}
-          onChange={setSearchTerm}
-          filterDropdown={(filterButton) => (
-            <Dropdown
-              dropdownId="settings-skills-filter-dropdown"
-              dropdownPlacement="bottom-end"
-              dropdownOffset={{ x: 0, y: 8 }}
-              clickableComponent={filterButton}
-              dropdownComponents={
-                <DropdownContent>
-                  <DropdownMenuItemsContainer>
-                    <MenuItemToggle
-                      LeftIcon={IconArchive}
-                      onToggleChange={() =>
-                        setShowDeactivated(!showDeactivated)
-                      }
-                      toggled={showDeactivated}
-                      text={t`Deactivated`}
-                      toggleSize="small"
-                    />
-                  </DropdownMenuItemsContainer>
-                </DropdownContent>
-              }
-            />
-          )}
-        />
-        <SettingsAgentSkillsTable
-          skills={filteredSkills}
-          loading={loading}
-          onActivate={handleActivate}
-          onDelete={handleDelete}
-        />
-      </Section>
-    </>
+      <StyledSearchInput
+        placeholder={t`Search a skill...`}
+        value={searchTerm}
+        onChange={setSearchTerm}
+        filterDropdown={(filterButton) => (
+          <Dropdown
+            dropdownId="settings-skills-filter-dropdown"
+            dropdownPlacement="bottom-end"
+            dropdownOffset={{ x: 0, y: 8 }}
+            clickableComponent={filterButton}
+            dropdownComponents={
+              <DropdownContent>
+                <DropdownMenuItemsContainer>
+                  <MenuItemToggle
+                    LeftIcon={IconArchive}
+                    onToggleChange={() => setShowDeactivated(!showDeactivated)}
+                    toggled={showDeactivated}
+                    text={t`Deactivated`}
+                    toggleSize="small"
+                  />
+                </DropdownMenuItemsContainer>
+              </DropdownContent>
+            }
+          />
+        )}
+      />
+      <SettingsAgentSkillsTable
+        skills={filteredSkills}
+        loading={loading}
+        onActivate={handleActivate}
+        onDelete={handleDelete}
+      />
+    </Section>
   );
 };

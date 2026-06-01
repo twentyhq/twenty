@@ -9,12 +9,15 @@ import {
 import { SettingsGraphQLPlayground } from '~/pages/settings/developers/playground/SettingsGraphQLPlayground';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-const meta: Meta<any> = {
+const meta: Meta<typeof SettingsGraphQLPlayground> = {
   title: 'Pages/Settings/Playground/GraphQLPlayground',
   component: SettingsGraphQLPlayground,
   decorators: [
     (Story) => {
-      jotaiStore.set(playgroundApiKeyState.atom, 'test-api-key');
+      jotaiStore.set(playgroundApiKeyState.atom, {
+        token: 'test-api-key',
+        expiresAt: new Date(Date.now() + 60 * 60 * 1000).toISOString(),
+      });
       return <Story />;
     },
     ComponentDecorator,
@@ -32,7 +35,7 @@ const meta: Meta<any> = {
 };
 export default meta;
 
-type Story = StoryObj<any>;
+type Story = StoryObj<typeof SettingsGraphQLPlayground>;
 
 export const Default: Story = {
   args: {
