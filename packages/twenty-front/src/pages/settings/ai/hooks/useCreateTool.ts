@@ -10,7 +10,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 
 export const useCreateTool = () => {
   const navigate = useNavigate();
-  const { enqueueSuccessSnackBar, enqueueErrorSnackBar } = useSnackBar();
+  const { enqueueSuccessSnackBar } = useSnackBar();
   const { createLogicFunction } = usePersistLogicFunction();
   const [isCreatingTool, setIsCreatingTool] = useState(false);
 
@@ -26,27 +26,28 @@ export const useCreateTool = () => {
         },
       });
 
-      if (result.status === 'successful' && isDefined(result.response?.data)) {
-        const newLogicFunction = result.response.data.createOneLogicFunction;
-        enqueueSuccessSnackBar({ message: t`Tool created` });
+      // Failure path already surfaces its own snackbar from usePersistLogicFunction.
+      if (result.status !== 'successful' || !isDefined(result.response?.data)) {
+        return;
+      }
 
-        const applicationId = newLogicFunction.applicationId;
-        if (isDefined(applicationId)) {
-          navigate(
-            getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
-              applicationId,
-              logicFunctionId: newLogicFunction.id,
-            }),
-          );
-        } else {
-          navigate(
-            getSettingsPath(SettingsPath.LogicFunctionDetail, {
-              logicFunctionId: newLogicFunction.id,
-            }),
-          );
-        }
+      const newLogicFunction = result.response.data.createOneLogicFunction;
+      enqueueSuccessSnackBar({ message: t`Tool created` });
+
+      const applicationId = newLogicFunction.applicationId;
+      if (isDefined(applicationId)) {
+        navigate(
+          getSettingsPath(SettingsPath.ApplicationLogicFunctionDetail, {
+            applicationId,
+            logicFunctionId: newLogicFunction.id,
+          }),
+        );
       } else {
-        enqueueErrorSnackBar({ message: t`Failed to create tool` });
+        navigate(
+          getSettingsPath(SettingsPath.LogicFunctionDetail, {
+            logicFunctionId: newLogicFunction.id,
+          }),
+        );
       }
     } finally {
       setIsCreatingTool(false);
