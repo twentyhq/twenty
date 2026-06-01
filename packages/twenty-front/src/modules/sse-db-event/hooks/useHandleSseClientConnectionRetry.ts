@@ -1,5 +1,5 @@
-import { renewToken } from '@/auth/services/AuthService';
 import { tokenPairState } from '@/auth/states/tokenPairState';
+import { ensureTokenRenewed } from '@/auth/utils/ensureTokenRenewed';
 import { SSE_CONNECTION_RETRY_MAX_WAIT_TIME_IN_MS } from '@/sse-db-event/constants/SseConnectionRetryMaxWaitTimeInMs';
 import { SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_FOR_DEV_MODE } from '@/sse-db-event/constants/SseConnectionRetryWaitTimeInMsForDevMode';
 import { SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_TO_AVOID_RACE_CONDITIONS } from '@/sse-db-event/constants/SseConnectionRetryWaitTimeInMsToAvoidRaceConditions';
@@ -8,17 +8,8 @@ import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import { REACT_APP_SERVER_BASE_URL } from '~/config';
 import { getIsDevelopmentEnvironment } from '~/utils/getIsDevelopmentEnvironment';
-import { retryWithBackoff } from '~/utils/retryWithBackoff';
 import { sleep } from '~/utils/sleep';
-
-const TOKEN_RENEWAL_MAX_RETRIES = 3;
-const TOKEN_RENEWAL_RETRY_DELAY_MS = 1000;
-
-// module-level variable so concurrent retry calls deduplicate into a single
-// renewal request  mirrors the exact  pattern used in ApolloFactory.
-let renewalPromise: Promise<boolean> | null = null;
 
 export const useHandleSseClientConnectionRetry = () => {
   const store = useStore();
@@ -35,9 +26,9 @@ export const useHandleSseClientConnectionRetry = () => {
       }
 
       const tokenPair = store.get(tokenPairState.atom);
-      const currentAppToken = tokenPair?.accessOrWorkspaceAgnosticToken?.token;
+      const accessToken = tokenPair?.accessOrWorkspaceAgnosticToken;
 
-      if (!isDefined(currentAppToken)) {
+      if (!isDefined(accessToken) || retryCount > 10) {
         await sleep(
           SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_TO_AVOID_RACE_CONDITIONS,
         );
@@ -47,41 +38,20 @@ export const useHandleSseClientConnectionRetry = () => {
         return;
       }
 
-      // Attempt token renewal before each reconnect so the SSE client can
-      // reconnect with a fresh JWT instead of redirecting to the login page.
-      if (!renewalPromise) {
-        const metadataUri = `${REACT_APP_SERVER_BASE_URL}/metadata`;
+      const isTokenExpired = new Date(accessToken.expiresAt) <= new Date();
 
-        renewalPromise = retryWithBackoff(
-          () => renewToken(metadataUri, store.get(tokenPairState.atom)),
-          {
-            maxRetries: TOKEN_RENEWAL_MAX_RETRIES,
-            baseDelayMs: TOKEN_RENEWAL_RETRY_DELAY_MS,
-            shouldRetry: () => isDefined(store.get(tokenPairState.atom)),
-          },
-        )
-          .then((tokens) => {
-            if (isDefined(tokens)) {
-              store.set(tokenPairState.atom, tokens);
-            }
-            return true;
-          })
-          .catch(() => false)
-          .finally(() => {
-            renewalPromise = null;
-          });
-      }
+      if (isTokenExpired) {
+        const renewed = await ensureTokenRenewed(store);
 
-      const renewed = await renewalPromise;
-
-      if (!renewed || retryCount > 10) {
-        await sleep(
-          SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_TO_AVOID_RACE_CONDITIONS,
-        );
-        sseClient.dispose();
-        store.set(shouldDestroyEventStreamState.atom, true);
-        store.set(sseClientState.atom, null);
-        return;
+        if (!renewed) {
+          await sleep(
+            SSE_CONNECTION_RETRY_WAIT_TIME_IN_MS_TO_AVOID_RACE_CONDITIONS,
+          );
+          sseClient.dispose();
+          store.set(shouldDestroyEventStreamState.atom, true);
+          store.set(sseClientState.atom, null);
+          return;
+        }
       }
 
       const randomWaitTimeInMsToSpaceAllClientsReconnection = Math.round(
