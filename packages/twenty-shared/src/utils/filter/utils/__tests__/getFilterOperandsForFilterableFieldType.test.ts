@@ -51,6 +51,7 @@ describe('getFilterOperandsForFilterableFieldType', () => {
       ViewFilterOperand.LESS_THAN_OR_EQUAL,
       ViewFilterOperand.IS,
       ViewFilterOperand.IS_NOT,
+      ViewFilterOperand.IS_BETWEEN,
       ...emptyOperands,
     ]);
   });

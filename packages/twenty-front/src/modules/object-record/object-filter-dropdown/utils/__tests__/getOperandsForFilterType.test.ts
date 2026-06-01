@@ -20,6 +20,7 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.IS_NOT,
     RecordFilterOperand.GREATER_THAN_OR_EQUAL,
     RecordFilterOperand.LESS_THAN_OR_EQUAL,
+    RecordFilterOperand.IS_BETWEEN,
   ];
 
   const currencyAmountMicrosOperands = [

@@ -564,6 +564,29 @@ const buildDirectFieldGqlOperationFilter = ({
               } as FloatFilter,
             },
           };
+        case RecordFilterOperand.IS_BETWEEN: {
+          const commaIndex = recordFilter.value.indexOf(',');
+          if (commaIndex === -1) return undefined;
+          const minStr = recordFilter.value.slice(0, commaIndex);
+          const maxStr = recordFilter.value.slice(commaIndex + 1);
+          const minValue = parseFloat(minStr);
+          const maxValue = parseFloat(maxStr);
+          if (isNaN(minValue) || isNaN(maxValue)) return undefined;
+          return {
+            and: [
+              {
+                [fieldMetadataItem.name]: {
+                  lte: maxValue,
+                },
+              },
+              {
+                [fieldMetadataItem.name]: {
+                  gte: minValue,
+                },
+              },
+            ],
+          };
+        }
         default:
           throw new Error(
             `Unknown operand ${recordFilter.operand} for ${filterType} filter`,
