@@ -34099,6 +34099,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"email-reply-parser@npm:^2.3.5":
+  version: 2.3.5
+  resolution: "email-reply-parser@npm:2.3.5"
+  peerDependencies:
+    re2: 1.22.1
+  peerDependenciesMeta:
+    re2:
+      optional: true
+  checksum: 10c0/1ab770b3d90cfb917dc347001db92b01916b5ee47ca7029eae39c6588458cd93c5ebe26c354c47b1052f5b7d6966e196eb893d729bf7b7c92ce546b9e6df9430
+  languageName: node
+  linkType: hard
+
 "emittery@npm:^0.13.1":
   version: 0.13.1
   resolution: "emittery@npm:0.13.1"
@@ -56844,6 +56856,7 @@ __metadata:
     digest-fetch: "npm:^3.1.1"
     dompurify: "npm:3.3.3"
     dotenv: "npm:16.4.5"
+    email-reply-parser: "npm:^2.3.5"
     exa-js: "npm:^2.11.0"
     express: "npm:4.22.1"
     express-session: "npm:^1.18.2"

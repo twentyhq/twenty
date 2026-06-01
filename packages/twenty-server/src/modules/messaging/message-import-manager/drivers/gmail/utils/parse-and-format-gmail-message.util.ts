@@ -1,11 +1,12 @@
 import { type gmail_v1 as gmailV1 } from 'googleapis';
-import planer from 'planer';
 import { MessageParticipantRole } from 'twenty-shared/types';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { computeMessageDirection } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/compute-message-direction.util';
+import { extractTextWithoutReplyQuotations } from 'src/modules/messaging/message-import-manager/utils/extract-text-without-reply-quotations.util';
+import { normalizeMessageText } from 'src/modules/messaging/message-import-manager/utils/normalize-message-text.util';
 import { parseGmailMessage } from 'src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util';
 import { type MessageWithParticipants } from 'src/modules/messaging/message-import-manager/types/message';
 import { formatAddressObjectAsParticipants } from 'src/modules/messaging/message-import-manager/utils/format-address-object-as-participants.util';
@@ -60,7 +61,7 @@ export const parseAndFormatGmailMessage = (
   }
 
   const textWithoutReplyQuotations = text
-    ? planer.extractFrom(text, 'text/plain')
+    ? extractTextWithoutReplyQuotations(text)
     : '';
 
   return {
@@ -71,7 +72,7 @@ export const parseAndFormatGmailMessage = (
     receivedAt: new Date(parseInt(internalDate)),
     direction: computeMessageDirection(from.address || '', connectedAccount),
     participants,
-    text: sanitizeString(textWithoutReplyQuotations),
+    text: normalizeMessageText(sanitizeString(textWithoutReplyQuotations)),
     attachments,
     messageFolderExternalIds: labelIds,
     labelIds,
