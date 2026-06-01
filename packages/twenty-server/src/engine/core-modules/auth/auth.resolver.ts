@@ -2,6 +2,7 @@ import { UseFilters, UseGuards, UsePipes } from '@nestjs/common';
 import { Args, Context, Mutation, Query } from '@nestjs/graphql';
 import { InjectRepository } from '@nestjs/typeorm';
 
+import { isEmail } from 'class-validator';
 import omit from 'lodash.omit';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { SOURCE_LOCALE } from 'twenty-shared/translations';
@@ -386,6 +387,13 @@ export class AuthResolver {
   async signUp(
     @Args() signUpInput: UserCredentialsInput,
   ): Promise<AvailableWorkspacesAndAccessTokensDTO> {
+    if (!isEmail(signUpInput.email)) {
+      throw new AuthException(
+        'Email must be a valid email',
+        AuthExceptionCode.INVALID_INPUT,
+      );
+    }
+
     const user = await this.signInUpService.signUpWithoutWorkspace(
       {
         email: signUpInput.email,

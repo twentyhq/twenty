@@ -3,7 +3,7 @@ import { getNextPeriodStart } from '@/utils/filter/dates/utils/getNextPeriodStar
 import { getPeriodStart } from '@/utils/filter/dates/utils/getPeriodStart';
 import { type RelativeDateFilter } from '@/utils/filter/dates/utils/relativeDateFilterSchema';
 import { subUnitFromZonedDateTime } from '@/utils/filter/dates/utils/subUnitFromZonedDateTime';
-import { isDefined } from 'class-validator';
+import { isDefined } from '@/utils/validation/isDefined';
 import { type Temporal } from 'temporal-polyfill';
 
 // TODO: use this in workflows where there is duplicated logic

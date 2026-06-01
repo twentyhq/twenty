@@ -1,0 +1,151 @@
+import { type ShahryarReportSource } from 'src/modules/shahryar/types/shahryar-report-source.type';
+
+export const SHAHRYAR_REPORT_SOURCE = {
+  referenceDate: '2026-06-01',
+  supervisors: [
+    {
+      id: 'supervisor-1',
+      name: 'Karwan',
+      isActive: true,
+    },
+    {
+      id: 'supervisor-2',
+      name: 'Halo',
+      isActive: true,
+    },
+    {
+      id: 'supervisor-3',
+      name: 'Behroz',
+      isActive: true,
+    },
+  ],
+  markets: [
+    {
+      id: 'market-1',
+      name: 'Center Market',
+      assignedSupervisorId: 'supervisor-1',
+      isActive: true,
+      expectedVisitCadence: 'daily',
+    },
+    {
+      id: 'market-2',
+      name: 'North Kiosk',
+      assignedSupervisorId: 'supervisor-2',
+      isActive: true,
+      expectedVisitCadence: 'daily',
+    },
+    {
+      id: 'market-3',
+      name: 'East Market',
+      assignedSupervisorId: 'supervisor-3',
+      isActive: true,
+      expectedVisitCadence: 'weekly',
+    },
+    {
+      id: 'market-4',
+      name: 'New Market',
+      assignedSupervisorId: 'supervisor-3',
+      isActive: true,
+      expectedVisitCadence: 'daily',
+    },
+  ],
+  visits: [
+    {
+      id: 'visit-1',
+      marketId: 'market-1',
+      supervisorId: 'supervisor-1',
+      visitedAt: '2026-06-01T08:40:00.000Z',
+      soldCartons: 12,
+      requestedCartons: 4,
+      issue: 'Late payment follow-up',
+      decisionMaker: 'Store owner',
+      requestDetails: 'Requested four cartons for Tuesday',
+      report: 'Visit completed and shelf stock checked',
+    },
+    {
+      id: 'visit-2',
+      marketId: 'market-2',
+      supervisorId: 'supervisor-2',
+      visitedAt: '2026-06-01T09:20:00.000Z',
+      soldCartons: 0,
+      requestedCartons: 16,
+      issue: 'High demand and no delivery slot',
+      decisionMaker: 'Branch manager',
+      requestDetails: 'Needs sixteen cartons before evening',
+      report: 'Urgent stock request captured',
+    },
+    {
+      id: 'visit-3',
+      marketId: 'market-3',
+      supervisorId: 'supervisor-3',
+      visitedAt: '2026-05-31T13:10:00.000Z',
+      soldCartons: 8,
+      requestedCartons: 2,
+      issue: 'No blocker',
+      decisionMaker: 'Store owner',
+      requestDetails: 'Routine weekly refill',
+      report: 'Weekly visit completed',
+    },
+  ],
+  workingTimes: [
+    {
+      id: 'working-time-1',
+      supervisorId: 'supervisor-1',
+      workDate: '2026-06-01',
+      startedAt: '2026-06-01T08:00:00.000Z',
+      endedAt: '2026-06-01T16:00:00.000Z',
+      reportSubmittedAt: '2026-06-01T16:10:00.000Z',
+    },
+    {
+      id: 'working-time-2',
+      supervisorId: 'supervisor-2',
+      workDate: '2026-06-01',
+      startedAt: '2026-06-01T08:30:00.000Z',
+      endedAt: '2026-06-01T15:45:00.000Z',
+    },
+    {
+      id: 'working-time-3',
+      supervisorId: 'supervisor-3',
+      workDate: '2026-06-01',
+      startedAt: '2026-06-01T08:15:00.000Z',
+      endedAt: '2026-06-01T16:15:00.000Z',
+      reportSubmittedAt: '2026-06-01T16:20:00.000Z',
+    },
+  ],
+  payments: [
+    {
+      id: 'payment-1',
+      marketId: 'market-1',
+      collectedById: 'supervisor-1',
+      paidAt: '2026-06-01T10:30:00.000Z',
+      amount: 250000,
+    },
+    {
+      id: 'payment-2',
+      marketId: 'market-3',
+      collectedById: 'supervisor-3',
+      paidAt: '2026-05-28T11:30:00.000Z',
+      amount: 180000,
+    },
+  ],
+  penalties: [
+    {
+      id: 'penalty-1',
+      supervisorId: 'supervisor-2',
+      issuedAt: '2026-06-01T14:00:00.000Z',
+      amount: 10000,
+    },
+  ],
+  absences: [
+    {
+      id: 'absence-1',
+      supervisorId: 'supervisor-2',
+      absenceDate: '2026-05-30',
+      reason: 'Approved leave',
+    },
+  ],
+  backupStatus: {
+    label: 'Healthy',
+    lastRunLabel: '2026-06-01 02:15 UTC',
+  },
+} satisfies ShahryarReportSource;

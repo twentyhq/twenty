@@ -22,6 +22,7 @@ import {
   OnboardingStatus,
   PageLayoutType,
 } from '~/generated-metadata/graphql';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 import { isMatchingLocation } from '~/utils/isMatchingLocation';
 
 const readReturnToPathFromUrlSearchParams = (): string | null => {
@@ -73,15 +74,59 @@ export const usePageChangeEffectNavigateLocation = () => {
   const resolvedReturnToPath = isNonEmptyString(returnToPath)
     ? returnToPath
     : readReturnToPathFromUrlSearchParams();
+  const shouldRequireWorkspaceUrl =
+    hasAccessTokenPair && !isOnAWorkspace && !REACT_APP_SHAHRYAR_MODE;
 
   if (
-    (!hasAccessTokenPair || (hasAccessTokenPair && !isOnAWorkspace)) &&
+    (!hasAccessTokenPair || shouldRequireWorkspaceUrl) &&
     !someMatchingLocationOf([
       ...ONGOING_USER_CREATION_PATHS,
       AppPath.ResetPassword,
     ])
   ) {
     return AppPath.SignInUp;
+  }
+
+  if (REACT_APP_SHAHRYAR_MODE && isWorkspaceSuspended) {
+    if (!isMatchingLocation(location, AppPath.SettingsCatchAll)) {
+      return `${AppPath.SettingsCatchAll.replace('/*', '')}/${
+        SettingsPath.Billing
+      }`;
+    }
+
+    return;
+  }
+
+  if (REACT_APP_SHAHRYAR_MODE && hasAccessTokenPair) {
+    if (
+      onboardingStatus === OnboardingStatus.WORKSPACE_ACTIVATION &&
+      !someMatchingLocationOf([
+        AppPath.CreateWorkspace,
+        AppPath.BookCallDecision,
+        AppPath.BookCall,
+      ])
+    ) {
+      return AppPath.CreateWorkspace;
+    }
+
+    if (
+      onboardingStatus === OnboardingStatus.PROFILE_CREATION &&
+      !isMatchingLocation(location, AppPath.CreateProfile)
+    ) {
+      return AppPath.CreateProfile;
+    }
+
+    if (
+      isMatchingLocation(location, AppPath.Index) ||
+      someMatchingLocationOf([
+        ...ONBOARDING_PATHS,
+        ...ONGOING_USER_CREATION_PATHS,
+      ])
+    ) {
+      return resolvedReturnToPath ?? defaultHomePagePath;
+    }
+
+    return;
   }
 
   if (

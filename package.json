@@ -65,7 +65,8 @@
       "packages/create-twenty-app",
       "packages/twenty-oxlint-rules",
       "packages/twenty-companion",
-      "packages/twenty-claude-skills"
+      "packages/twenty-claude-skills",
+      "packages/shahryar-mobile"
     ]
   },
   "prettier": {

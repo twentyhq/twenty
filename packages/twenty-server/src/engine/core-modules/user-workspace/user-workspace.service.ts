@@ -43,6 +43,10 @@ import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-membe
 import { assert } from 'src/utils/assert';
 import { getDomainNameByEmail } from 'src/utils/get-domain-name-by-email';
 
+type WorkspaceMemberWithUsername = WorkspaceMemberWorkspaceEntity & {
+  username: string | null;
+};
+
 export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntity> {
   private readonly logger = new Logger(UserWorkspaceService.name);
 
@@ -279,6 +283,74 @@ export class UserWorkspaceService extends TypeOrmQueryService<UserWorkspaceEntit
         user: true,
       },
     });
+  }
+
+  async findUserByWorkspaceMemberUsername({
+    workspaceId,
+    username,
+  }: {
+    workspaceId: string;
+    username: string;
+  }): Promise<UserEntity | null> {
+    const normalizedUsername = username.trim().toLowerCase();
+
+    if (normalizedUsername.length === 0) {
+      return null;
+    }
+
+    const authContext = buildSystemAuthContext(workspaceId);
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const workspaceMemberRepository =
+          await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWithUsername>(
+            workspaceId,
+            'workspaceMember',
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const workspaceMemberObjectMetadataId =
+          workspaceMemberRepository.internalContext.objectIdByNameSingular
+            .workspaceMember;
+
+        if (!isDefined(workspaceMemberObjectMetadataId)) {
+          return null;
+        }
+
+        const hasUsernameField = Object.values(
+          workspaceMemberRepository.internalContext.flatFieldMetadataMaps
+            .byUniversalIdentifier,
+        ).some(
+          (fieldMetadata) =>
+            isDefined(fieldMetadata) &&
+            fieldMetadata.objectMetadataId ===
+              workspaceMemberObjectMetadataId &&
+            fieldMetadata.name === 'username',
+        );
+
+        if (!hasUsernameField) {
+          return null;
+        }
+
+        const workspaceMember = await workspaceMemberRepository.findOne({
+          where: {
+            username: normalizedUsername,
+          },
+        });
+
+        if (!isDefined(workspaceMember)) {
+          return null;
+        }
+
+        return this.userRepository.findOne({
+          where: {
+            id: workspaceMember.userId,
+          },
+          relations: { userWorkspaces: true },
+        });
+      },
+      authContext,
+    );
   }
 
   async findFirstWorkspaceByUserId(userId: string) {

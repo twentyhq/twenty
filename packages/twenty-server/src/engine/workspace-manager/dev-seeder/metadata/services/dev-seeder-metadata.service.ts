@@ -20,14 +20,18 @@ import { PERSON_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seed
 import { PET_CARE_AGREEMENT_CARETAKER_MORPH_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/pet-care-agreement-custom-relation-field-seeds.constant';
 import { PET_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/pet-custom-field-seeds.constant';
 import { PET_CUSTOM_RELATION_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/pet-custom-relation-field-seeds.constant';
+import { SHAHRYAR_CUSTOM_FIELD_SEED_CONFIGS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/shahryar-custom-field-seeds.constant';
+import { SHAHRYAR_RELATION_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/shahryar-relation-field-seeds.constant';
 import { SURVEY_RESULT_CUSTOM_FIELD_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-fields/constants/survey-results-field-seeds.constant';
 import { EMPLOYMENT_HISTORY_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/employment-history-custom-object-seed.constant';
 import { PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/pet-care-agreement-custom-object-seed.constant';
 import { PET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/pet-custom-object-seed.constant';
 import { ROCKET_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/rocket-custom-object-seed.constant';
+import { SHAHRYAR_CUSTOM_OBJECT_SEEDS } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/shahryar-custom-object-seeds.constant';
 import { SURVEY_RESULT_CUSTOM_OBJECT_SEED } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/survey-results-object-seed.constant';
 import { type FieldMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/field-metadata-seed.type';
 import { type ObjectMetadataSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/object-metadata-seed.type';
+import { type RelationFieldSeed } from 'src/engine/workspace-manager/dev-seeder/metadata/types/relation-field-seed.type';
 
 type MorphRelationSeed = FieldMetadataSeed & {
   targetObjectMetadataNames: string[];
@@ -54,6 +58,7 @@ type WorkspaceSeedConfig = {
   objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
   fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
   morphRelations?: { objectName: string; seeds: MorphRelationSeed[] }[];
+  relationFields?: RelationFieldSeed[];
   junctionFields?: JunctionFieldSeed[];
   junctionConfigs?: JunctionConfigSeed[];
 };
@@ -84,10 +89,14 @@ export class DevSeederMetadataService {
         // Junction objects (minimal pivots)
         { seed: EMPLOYMENT_HISTORY_CUSTOM_OBJECT_SEED },
         { seed: PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED },
+        ...SHAHRYAR_CUSTOM_OBJECT_SEEDS.map((seed) => ({
+          seed,
+        })),
       ],
       fields: [
         { objectName: 'company', seeds: COMPANY_CUSTOM_FIELD_SEEDS },
         { objectName: 'person', seeds: PERSON_CUSTOM_FIELD_SEEDS },
+        ...SHAHRYAR_CUSTOM_FIELD_SEED_CONFIGS,
       ],
       morphRelations: [
         {
@@ -99,6 +108,7 @@ export class DevSeederMetadataService {
           seeds: [PET_CARE_AGREEMENT_CARETAKER_MORPH_SEED],
         },
       ],
+      relationFields: SHAHRYAR_RELATION_FIELD_SEEDS,
       junctionFields: [
         // Employment History: Person <-> Company
         {
@@ -166,11 +176,16 @@ export class DevSeederMetadataService {
           seed: SURVEY_RESULT_CUSTOM_OBJECT_SEED,
           fields: SURVEY_RESULT_CUSTOM_FIELD_SEEDS,
         },
+        ...SHAHRYAR_CUSTOM_OBJECT_SEEDS.map((seed) => ({
+          seed,
+        })),
       ],
       fields: [
         { objectName: 'company', seeds: COMPANY_CUSTOM_FIELD_SEEDS },
         { objectName: 'person', seeds: PERSON_CUSTOM_FIELD_SEEDS },
+        ...SHAHRYAR_CUSTOM_FIELD_SEED_CONFIGS,
       ],
+      relationFields: SHAHRYAR_RELATION_FIELD_SEEDS,
     },
   };
 
@@ -289,14 +304,21 @@ export class DevSeederMetadataService {
       });
     }
 
-    // 2. Seed junction fields (creates relations + inverses on junction objects)
+    // 2. Seed direct relation fields (creates inverse fields on target objects)
+    maps = await this.getFreshFlatMaps(workspaceId);
+
+    for (const field of config.relationFields ?? []) {
+      await this.seedRelationField({ workspaceId, field, flatMaps: maps });
+    }
+
+    // 3. Seed junction fields (creates relations + inverses on junction objects)
     maps = await this.getFreshFlatMaps(workspaceId);
 
     for (const field of config.junctionFields ?? []) {
       await this.seedJunctionField({ workspaceId, field, flatMaps: maps });
     }
 
-    // 3. Configure junction settings (after all fields exist)
+    // 4. Configure junction settings (after all fields exist)
     if (config.junctionConfigs && config.junctionConfigs.length > 0) {
       maps = await this.getFreshFlatMaps(workspaceId);
 
@@ -460,6 +482,45 @@ export class DevSeederMetadataService {
           objectMetadataId: sourceObjectId,
           relationCreationPayload: {
             type: RelationType.ONE_TO_MANY,
+            targetFieldLabel: field.targetFieldLabel,
+            targetFieldIcon: field.targetFieldIcon,
+            targetObjectMetadataId: targetObjectId,
+          },
+        },
+      ],
+      workspaceId,
+    });
+  }
+
+  private async seedRelationField({
+    workspaceId,
+    field,
+    flatMaps,
+  }: {
+    workspaceId: string;
+    field: RelationFieldSeed;
+    flatMaps: FlatMaps;
+  }): Promise<void> {
+    const sourceObjectId = flatMaps.objectIdByName[field.sourceObjectName];
+    const targetObjectId = flatMaps.objectIdByName[field.targetObjectName];
+
+    if (!isDefined(sourceObjectId)) {
+      throw new Error(`Source object not found: ${field.sourceObjectName}`);
+    }
+    if (!isDefined(targetObjectId)) {
+      throw new Error(`Target object not found: ${field.targetObjectName}`);
+    }
+
+    await this.fieldMetadataService.createManyFields({
+      createFieldInputs: [
+        {
+          type: FieldMetadataType.RELATION,
+          name: field.name,
+          label: field.label,
+          icon: field.icon,
+          objectMetadataId: sourceObjectId,
+          relationCreationPayload: {
+            type: field.relationType,
             targetFieldLabel: field.targetFieldLabel,
             targetFieldIcon: field.targetFieldIcon,
             targetObjectMetadataId: targetObjectId,

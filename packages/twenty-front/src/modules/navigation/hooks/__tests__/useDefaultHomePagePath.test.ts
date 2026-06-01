@@ -3,6 +3,7 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
+import { SHAHRYAR_APP_PATHS } from '@/shahryar/constants/shahryar-routes';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook, waitFor } from '@testing-library/react';
@@ -125,7 +126,9 @@ describe('useDefaultHomePagePath', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.defaultHomePagePath).toEqual('/objects/companies');
+      expect(result.current.defaultHomePagePath).toEqual(
+        SHAHRYAR_APP_PATHS.Dashboard,
+      );
     });
   });
   it('should return proper path when currentUser is defined and view exists', async () => {
@@ -136,14 +139,11 @@ describe('useDefaultHomePagePath', () => {
 
     await waitFor(() => {
       expect(result.current.defaultHomePagePath).toEqual(
-        '/objects/companies?viewId=viewId',
+        SHAHRYAR_APP_PATHS.Dashboard,
       );
     });
   });
-  // Regression: during the post-login transition window object metadata may
-  // not yet be loaded. We must not redirect the user to /settings/profile
-  // (the genuine empty-fallback) until metadata has actually loaded.
-  it('should defer to AppPath.Index when currentUser is defined but object metadata is not loaded yet', async () => {
+  it('should return Shahryar dashboard when currentUser is defined but object metadata is not loaded yet', async () => {
     const { result } = renderHooks({
       withCurrentUser: true,
       withExistingView: false,
@@ -151,7 +151,9 @@ describe('useDefaultHomePagePath', () => {
     });
 
     await waitFor(() => {
-      expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
+      expect(result.current.defaultHomePagePath).toEqual(
+        SHAHRYAR_APP_PATHS.Dashboard,
+      );
     });
   });
 });

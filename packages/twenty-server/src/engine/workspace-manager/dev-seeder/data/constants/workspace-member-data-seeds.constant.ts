@@ -13,9 +13,12 @@ type WorkspaceMemberDataSeed = {
   colorScheme: string;
   userEmail: string;
   userId: string;
+  username: string;
 };
 
-export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)[] =
+type WorkspaceMemberBaseDataSeed = Omit<WorkspaceMemberDataSeed, 'username'>;
+
+export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberBaseDataSeed)[] =
   [
     'id',
     'nameFirstName',
@@ -25,6 +28,9 @@ export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS: (keyof WorkspaceMemberDataSeed)
     'userEmail',
     'userId',
   ];
+
+export const WORKSPACE_MEMBER_DATA_SEED_COLUMNS_WITH_USERNAME: (keyof WorkspaceMemberDataSeed)[] =
+  [...WORKSPACE_MEMBER_DATA_SEED_COLUMNS, 'username'];
 
 export const WORKSPACE_MEMBER_DATA_SEED_IDS = {
   TIM: '20202020-0687-4c41-b707-ed1bfca972a7',
@@ -49,6 +55,7 @@ const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'tim@apple.dev',
     userId: USER_DATA_SEED_IDS.TIM,
+    username: 'karwan',
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JONY,
@@ -58,6 +65,7 @@ const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'jony.ive@apple.dev',
     userId: USER_DATA_SEED_IDS.JONY,
+    username: 'halo',
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.PHIL,
@@ -67,6 +75,7 @@ const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'phil.schiler@apple.dev',
     userId: USER_DATA_SEED_IDS.PHIL,
+    username: 'behroz',
   },
   {
     id: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
@@ -76,12 +85,16 @@ const originalWorkspaceMembers: WorkspaceMemberDataSeed[] = [
     colorScheme: 'Light',
     userEmail: 'jane.austen@apple.dev',
     userId: USER_DATA_SEED_IDS.JANE,
+    username: 'tedmin',
   },
 ];
 
 export const WORKSPACE_MEMBER_DATA_SEEDS: WorkspaceMemberDataSeed[] = [
   ...originalWorkspaceMembers,
-  ...randomWorkspaceMembers,
+  ...randomWorkspaceMembers.map((workspaceMember, index) => ({
+    ...workspaceMember,
+    username: `supervisor-${index + 1}`,
+  })),
 ];
 
 export const getWorkspaceMemberDataSeeds = (

@@ -13,6 +13,8 @@ import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { useStore } from 'jotai';
+import { SHAHRYAR_APP_PATHS } from '@/shahryar/constants/shahryar-routes';
+import { REACT_APP_SHAHRYAR_MODE } from '~/config';
 
 export const useDefaultHomePagePath = () => {
   const store = useStore();
@@ -98,6 +100,10 @@ export const useDefaultHomePagePath = () => {
   const defaultHomePagePath = useMemo(() => {
     if (!isDefined(currentUser)) {
       return AppPath.SignInUp;
+    }
+
+    if (REACT_APP_SHAHRYAR_MODE) {
+      return SHAHRYAR_APP_PATHS.Dashboard;
     }
 
     if (isEmpty(readableNonSystemObjectMetadataItems)) {
