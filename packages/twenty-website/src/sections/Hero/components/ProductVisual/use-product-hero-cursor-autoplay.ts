@@ -106,7 +106,7 @@ const PHASES: TourPhase[] = [
     durationMs: 950,
   },
   {
-    pageItemId: COMPANIES,
+    pageItemId: PEOPLE,
     showRecord: true,
     recordTab: 'Calendar',
     target: { kind: 'rail', id: PEOPLE },
@@ -134,7 +134,7 @@ const PHASES: TourPhase[] = [
     durationMs: 900,
   },
   {
-    pageItemId: PEOPLE,
+    pageItemId: NOTES,
     showRecord: false,
     target: { kind: 'rail', id: NOTES },
     clicking: true,
@@ -161,7 +161,7 @@ const PHASES: TourPhase[] = [
     durationMs: 900,
   },
   {
-    pageItemId: NOTES,
+    pageItemId: COMPANIES,
     showRecord: false,
     target: { kind: 'rail', id: COMPANIES },
     clicking: true,
