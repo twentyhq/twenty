@@ -1,5 +1,5 @@
 import { type StoryObj } from '@storybook/react-vite';
-import { fireEvent, userEvent, within } from 'storybook/test';
+import { expect, fireEvent, userEvent, waitFor, within } from 'storybook/test';
 
 import { expectEventLogged } from '@/__stories__/shared/test-utils/matchers/expectEventLogged';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
@@ -47,6 +47,12 @@ export const createHtmlTagPointerStory = ({
       await expectEventLogged({
         canvas,
         matcher: { type: 'pointerdown', clientX: 123, clientY: 45 },
+      });
+
+      await waitFor(() => {
+        const coordinates = canvas.getByTestId('pointer-coordinates');
+
+        expect(coordinates.textContent).toBe('123,45');
       });
     },
   });

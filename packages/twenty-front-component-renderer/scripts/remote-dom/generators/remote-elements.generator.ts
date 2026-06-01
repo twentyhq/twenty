@@ -135,7 +135,14 @@ const generateCommonEventsType = (
               });
               writer.writeLine('}) as RemoteEvent<SerializedEventData>;');
               writer.blankLine();
-              writer.writeLine('Object.assign(event, eventData);');
+              writer.writeLine('applySerializedEventProperties(');
+              writer.indent(() => {
+                writer.writeLine(
+                  'event as unknown as Record<string, unknown>,',
+                );
+                writer.writeLine('eventData,');
+              });
+              writer.writeLine(');');
               writer.blankLine();
               writer.writeLine('return event;');
             });
@@ -404,11 +411,18 @@ export const generateRemoteElements = (
   });
 
   sourceFile.addImportDeclaration({
-    moduleSpecifier: '@/constants/SerializedEventData',
-    namedImports: [
-      'applySerializedEventTargetProperties',
-      { name: 'SerializedEventData', isTypeOnly: true },
-    ],
+    moduleSpecifier: '@/constants/applySerializedEventProperties',
+    namedImports: ['applySerializedEventProperties'],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@/constants/applySerializedEventTargetProperties',
+    namedImports: ['applySerializedEventTargetProperties'],
+  });
+
+  sourceFile.addImportDeclaration({
+    moduleSpecifier: '@/types/SerializedEventData',
+    namedImports: [{ name: 'SerializedEventData', isTypeOnly: true }],
   });
 
   const commonPropertyNames = new Set(Object.keys(commonProperties));

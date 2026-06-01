@@ -11,10 +11,8 @@ import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
-import {
-  type SerializedEventData,
-  type SerializedFileData,
-} from '@/constants/SerializedEventData';
+import { type SerializedEventData } from '@/types/SerializedEventData';
+import { type SerializedFileData } from '@/types/SerializedFileData';
 import {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
