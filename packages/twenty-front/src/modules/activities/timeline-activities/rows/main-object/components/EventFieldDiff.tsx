@@ -2,12 +2,8 @@ import { styled } from '@linaria/react';
 
 import { EventFieldDiffLabel } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffLabel';
 import { EventFieldDiffValue } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValue';
-import {
-  EventFieldDiffValueEffect
-} from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
-import {
-  EventRelationFieldDiffValues
-} from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
+import { EventFieldDiffValueEffect } from '@/activities/timeline-activities/rows/main-object/components/EventFieldDiffValueEffect';
+import { EventRelationFieldDiffValues } from '@/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues';
 import { isRelationFieldChangeValue } from '@/activities/timeline-activities/utils/relationFieldChangeValue';
 import { type FieldMetadataItem } from '@/object-metadata/types/FieldMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';

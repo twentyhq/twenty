@@ -106,7 +106,10 @@ export const objectRecordChangedValues = (
   );
 
   for (const field of objectFields) {
-    if (!isManyToOneRelationField(field) || isDefined(accumulator[field.name])) {
+    if (
+      !isManyToOneRelationField(field) ||
+      isDefined(accumulator[field.name])
+    ) {
       continue;
     }
 

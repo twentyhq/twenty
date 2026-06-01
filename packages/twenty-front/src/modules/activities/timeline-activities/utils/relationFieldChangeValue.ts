@@ -8,6 +8,9 @@ export const isRelationFieldChangeValue = (
   value: unknown,
 ): value is RelationFieldChangeValue => {
   return (
-    isDefined(value) && typeof value === 'object' && value !== null && 'id' in value
+    isDefined(value) &&
+    typeof value === 'object' &&
+    value !== null &&
+    'id' in value
   );
 };
