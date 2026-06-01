@@ -7,7 +7,6 @@ import {
   ObjectRecordUpsertEvent,
   type ObjectRecordDiff,
 } from 'twenty-shared/database-events';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   assertUnreachable,
   isDefined,
@@ -47,13 +46,6 @@ export const formatTwentyOrmEventToDatabaseBatchEvent = <
   recordsAfter?: T[];
   recordsBefore?: T[];
 }): DatabaseBatchEventInput<T, DatabaseEventAction> | undefined => {
-  if (
-    objectMetadataItem.universalIdentifier ===
-    STANDARD_OBJECTS.timelineActivity.universalIdentifier
-  ) {
-    return;
-  }
-
   const objectMetadataNameSingular = objectMetadataItem.nameSingular;
 
   let events: (
