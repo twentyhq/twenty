@@ -4,7 +4,7 @@ import { InjectDataSource } from '@nestjs/typeorm';
 
 import { performance } from 'perf_hooks';
 import { isDefined } from 'twenty-shared/utils';
-import { DataSource, type ObjectLiteral, type Repository } from 'typeorm';
+import { DataSource } from 'typeorm';
 
 import {
   SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
@@ -20,6 +20,7 @@ import { SecretEncryptionService } from 'src/engine/core-modules/secret-encrypti
 import { computeEncryptionKeyId } from 'src/engine/core-modules/secret-encryption/utils/compute-encryption-key-id.util';
 import { resolveEncryptionKeysOrThrow } from 'src/engine/core-modules/secret-encryption/utils/resolve-encryption-keys-or-throw.util';
 import { EnvironmentConfigDriver } from 'src/engine/core-modules/twenty-config/drivers/environment-config.driver';
+import { typedObjectEntries } from 'twenty-shared/utils';
 
 export type RotationRunOptions = {
   site?: SecretEncryptionRotationSiteName | string;
@@ -57,11 +58,9 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
     for (const entry of Object.values(
       SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES,
     )) {
-      const repository = this.coreDataSource.getRepository(
-        entry.entity,
-      ) as Repository<ObjectLiteral & { id: string }>;
+      const repository = this.coreDataSource.getRepository(entry.entity);
 
-      for (const [encryptedColumn, meta] of Object.entries(
+      for (const [encryptedColumn, meta] of typedObjectEntries(
         entry.columnSiteNames,
       )) {
         const handler = isDefined(meta.customHandler)
@@ -131,6 +130,7 @@ export class SecretEncryptionRotationRunnerService implements OnModuleInit {
       const siteStartedAt = performance.now();
 
       const remainingBefore = await handler.countRemaining({
+        siteName,
         currentEncryptionKeyId,
       });
 

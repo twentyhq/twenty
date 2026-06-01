@@ -39,9 +39,10 @@ export class SensitiveConfigStorageRotationHandler extends SecretEncryptionRotat
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     const sensitiveStringConfigKeys = this.collectSensitiveStringConfigKeys();
 
     if (sensitiveStringConfigKeys.length === 0) {

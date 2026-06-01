@@ -32,11 +32,30 @@ type SecretEncryptionRotationRegistryShape<R> = {
     : never;
 };
 
+// Intersects each column metadata value with the full
+// `ColumnRotationSiteMetadata<E>` so that optional fields
+// (`customHandler`, `isWorkspaceScoped`, `extraWhere`) are always
+// present in the type, while narrow literal types from `const R`
+// (e.g. siteName literals) are preserved.
+type NormalizedRegistry<R> = {
+  [N in keyof R]: R[N] extends {
+    entity: infer E extends Type<unknown>;
+    columnSiteNames: infer CSN;
+  }
+    ? {
+        entity: E;
+        columnSiteNames: {
+          [K in keyof CSN]: CSN[K] & ColumnRotationSiteMetadata<E>;
+        };
+      }
+    : never;
+};
+
 const defineRotationRegistry = <
   const R extends SecretEncryptionRotationRegistryShape<R>,
 >(
   registry: R,
-): R => registry;
+): NormalizedRegistry<R> => registry as unknown as NormalizedRegistry<R>;
 
 export const SECRET_ENCRYPTION_ROTATION_SITE_ENTRIES = defineRotationRegistry({
   ApplicationRegistrationVariableEntity: {

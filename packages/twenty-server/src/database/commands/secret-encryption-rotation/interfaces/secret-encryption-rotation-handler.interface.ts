@@ -21,9 +21,12 @@ export type SecretEncryptionRotationSiteResult =
   };
 
 export abstract class SecretEncryptionRotationHandler {
-  abstract countRemaining(args: {
-    currentEncryptionKeyId: string;
-  }): Promise<number>;
+  abstract countRemaining(
+    args: Pick<
+      SecretEncryptionRotationContext,
+      'siteName' | 'currentEncryptionKeyId'
+    >,
+  ): Promise<number>;
 
   abstract rotate(
     context: SecretEncryptionRotationContext,

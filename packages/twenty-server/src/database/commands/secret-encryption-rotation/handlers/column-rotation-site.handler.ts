@@ -23,7 +23,7 @@ type EntityWithId = ObjectLiteral & { id: string };
 
 export type ColumnRotationSiteConfig<Entity extends EntityWithId> = {
   repository: Repository<Entity>;
-  encryptedColumn: keyof Entity & string;
+  encryptedColumn: string;
   isWorkspaceScoped?: boolean;
   extraWhere?: Partial<Entity>;
 };
@@ -42,9 +42,10 @@ export class ColumnRotationSiteHandler<
 
   async countRemaining({
     currentEncryptionKeyId,
-  }: {
-    currentEncryptionKeyId: string;
-  }): Promise<number> {
+  }: Pick<
+    SecretEncryptionRotationContext,
+    'siteName' | 'currentEncryptionKeyId'
+  >): Promise<number> {
     const currentEnvelopePattern =
       buildCurrentEncryptionKeyIdEnvelopeLikePattern(currentEncryptionKeyId);
 
