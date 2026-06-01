@@ -1,9 +1,11 @@
+import { useEnterLayoutCustomizationMode } from '@/layout-customization/hooks/useEnterLayoutCustomizationMode';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLayoutItemsStats } from '@/settings/layout/components/SettingsLayoutItemsStats';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import {
@@ -17,7 +19,6 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import { UndecoratedLink } from 'twenty-ui/navigation';
 import customizeIllustrationDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
 import customizeIllustrationLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
 
@@ -25,6 +26,15 @@ const SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX = 'settings-layout-hero';
 
 export const SettingsLayout = () => {
   const { t } = useLingui();
+  const navigate = useNavigate();
+  const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
+
+  // Match the in-app customization entry points: arm customization mode before
+  // landing in the app, otherwise the user just drops into the app normally.
+  const handleCustomize = () => {
+    enterLayoutCustomizationMode();
+    navigate(AppPath.Index);
+  };
 
   // TODO: replace placeholder demo videos per tab
   const heroTabs = useMemo(
@@ -67,15 +77,14 @@ export const SettingsLayout = () => {
     <SubMenuTopBarContainer
       title={t`Layout`}
       actionButton={
-        <UndecoratedLink to={AppPath.Index}>
-          <Button
-            title={t`Customize`}
-            variant="primary"
-            accent="blue"
-            size="small"
-            Icon={IconPencil}
-          />
-        </UndecoratedLink>
+        <Button
+          title={t`Customize`}
+          variant="primary"
+          accent="blue"
+          size="small"
+          Icon={IconPencil}
+          onClick={handleCustomize}
+        />
       }
       links={[
         {

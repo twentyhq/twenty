@@ -174,7 +174,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.AI],
           modifier: 'new',
         },
         {
