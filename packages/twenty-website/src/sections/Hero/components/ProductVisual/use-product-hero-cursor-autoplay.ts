@@ -73,7 +73,7 @@ const PHASES: TourPhase[] = [
     clicking: true,
     hidden: false,
     moveMs: 0,
-    durationMs: 1900,
+    durationMs: 1300,
   },
   {
     pageItemId: COMPANIES,
@@ -83,7 +83,7 @@ const PHASES: TourPhase[] = [
     clicking: false,
     hidden: false,
     moveMs: 600,
-    durationMs: 1300,
+    durationMs: 880,
   },
   {
     pageItemId: COMPANIES,
@@ -93,7 +93,7 @@ const PHASES: TourPhase[] = [
     clicking: true,
     hidden: false,
     moveMs: 0,
-    durationMs: 2000,
+    durationMs: 1300,
   },
   {
     pageItemId: COMPANIES,
@@ -103,7 +103,7 @@ const PHASES: TourPhase[] = [
     clicking: false,
     hidden: false,
     moveMs: 900,
-    durationMs: 1200,
+    durationMs: 950,
   },
   {
     pageItemId: COMPANIES,
