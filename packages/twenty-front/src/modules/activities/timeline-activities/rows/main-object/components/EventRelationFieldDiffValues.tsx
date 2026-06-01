@@ -106,35 +106,22 @@ const EventRelationFieldDiffValuesWithFetch = ({
     return relationRecordId;
   };
 
-  const beforeDisplayName = resolveDisplayName(fieldDiff.before);
   const afterDisplayName = resolveDisplayName(fieldDiff.after);
-  const isRelationChangeEmpty =
-    beforeDisplayName === null && afterDisplayName === null;
 
-  if (isRelationChangeEmpty) {
-    return (
-      <StyledEmptyValue>
-        <Trans>Empty</Trans>
-      </StyledEmptyValue>
-    );
-  }
+  return <RelationFieldDiffValue afterDisplayName={afterDisplayName} />;
+};
 
-  return (
-    <>
-      {beforeDisplayName !== null && (
-        <StyledRelationValue>{beforeDisplayName}</StyledRelationValue>
-      )}
-      {beforeDisplayName !== null && afterDisplayName !== null && '→'}
-      {afterDisplayName !== null ? (
-        <StyledRelationValue>{afterDisplayName}</StyledRelationValue>
-      ) : (
-        beforeDisplayName === null && (
-          <StyledEmptyValue>
-            <Trans>Empty</Trans>
-          </StyledEmptyValue>
-        )
-      )}
-    </>
+const RelationFieldDiffValue = ({
+  afterDisplayName,
+}: {
+  afterDisplayName: string | null;
+}) => {
+  return afterDisplayName !== null ? (
+    <StyledRelationValue>{afterDisplayName}</StyledRelationValue>
+  ) : (
+    <StyledEmptyValue>
+      <Trans>Empty</Trans>
+    </StyledEmptyValue>
   );
 };
 
@@ -146,36 +133,9 @@ export const EventRelationFieldDiffValues = ({
     fieldMetadataItem.relation?.targetObjectMetadata.nameSingular;
 
   if (!isDefined(relationTargetObjectMetadataNameSingular)) {
-    const beforeDisplayName = getRelationRecordId(fieldDiff.before);
     const afterDisplayName = getRelationRecordId(fieldDiff.after);
-    const isRelationChangeEmpty =
-      beforeDisplayName === null && afterDisplayName === null;
 
-    if (isRelationChangeEmpty) {
-      return (
-        <StyledEmptyValue>
-          <Trans>Empty</Trans>
-        </StyledEmptyValue>
-      );
-    }
-
-    return (
-      <>
-        {beforeDisplayName !== null && (
-          <StyledRelationValue>{beforeDisplayName}</StyledRelationValue>
-        )}
-        {beforeDisplayName !== null && afterDisplayName !== null && '→'}
-        {afterDisplayName !== null ? (
-          <StyledRelationValue>{afterDisplayName}</StyledRelationValue>
-        ) : (
-          beforeDisplayName === null && (
-            <StyledEmptyValue>
-              <Trans>Empty</Trans>
-            </StyledEmptyValue>
-          )
-        )}
-      </>
-    );
+    return <RelationFieldDiffValue afterDisplayName={afterDisplayName} />;
   }
 
   return (
