@@ -11,7 +11,7 @@ import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-c
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
-import { pruneFilterToAllowedKeys } from 'src/engine/core-modules/record-crud/utils/prune-filter-to-allowed-keys.util';
+import { sanitizeFilterWithSchema } from 'src/engine/core-modules/record-crud/utils/sanitize-filter-with-schema.util';
 import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
@@ -49,32 +49,19 @@ export class FindRecordsService {
 
       // The AI find tool spreads field filters at the args root and is not
       // re-validated against its zod schema before execution, so a model can
-      // emit a bare operator where a field name belongs (e.g. `{ ilike: ... }`).
-      // Drop any key that isn't a real field or a logical operator, otherwise
-      // the query runner throws `Object <x> doesn't have any "ilike" field`.
-      const { filterShape } = generateRecordFilterSchema({
+      // emit invalid filter shapes — a bare operator where a field name belongs
+      // (`{ ilike: ... }`), or an operator on a relation/composite value
+      // (`{ targetPerson: { ilike: ... } }`). Validate against the same schema
+      // the tool advertised so these are stripped, otherwise the query runner
+      // throws `Object <x> doesn't have any "ilike" field`.
+      const { filterSchema } = generateRecordFilterSchema({
         ...flatObjectMetadata,
         fields: getFlatFieldsFromFlatObjectMetadata(
           flatObjectMetadata,
           flatFieldMetadataMaps,
         ),
       });
-      const allowedFilterKeys = new Set([
-        ...Object.keys(filterShape),
-        'and',
-        'or',
-        'not',
-      ]);
-      const { filter: sanitizedFilter, droppedKeys } = pruneFilterToAllowedKeys(
-        filter ?? {},
-        allowedFilterKeys,
-      );
-
-      if (droppedKeys.length > 0) {
-        this.logger.warn(
-          `Dropped invalid filter key(s) [${[...new Set(droppedKeys)].join(', ')}] for ${objectName} — not valid fields or logical operators`,
-        );
-      }
+      const sanitizedFilter = sanitizeFilterWithSchema(filterSchema, filter);
 
       // Add id to orderBy for consistent pagination
       const orderByWithIdCondition: ObjectRecordOrderBy = [
