@@ -1,0 +1,42 @@
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendEmailCampaign.ts
+  s_4a10800c36ffe6::t_0d01ae2104e758 1-11
+packages/twenty-front/src/modules/side-panel/pages/compose-email/components/ComposeEmailFooter.tsx
+  s_4a10800c36ffe6::t_58c7040b649247 1-61
+packages/twenty-front/src/modules/side-panel/pages/compose-email/components/SidePanelCampaignComposer.tsx
+  s_4a10800c36ffe6::t_a065f3e4a1d460 1-6,8,23-49
+  s_4a10800c36ffe6::t_c654c06a7f8ea0 7,9-22
+packages/twenty-front/src/modules/activities/emails/hooks/useEmailCampaignComposerState.ts
+  s_4a10800c36ffe6::t_1b3e847f8af226 1-61
+packages/twenty-front/src/modules/side-panel/pages/compose-email/components/SidePanelComposeEmailPage.tsx
+  s_4a10800c36ffe6::t_7df0900fa6e003 1,4-9,24,32-39
+packages/twenty-front/src/modules/side-panel/pages/compose-email/components/SidePanelTransactionalComposer.tsx
+  s_4a10800c36ffe6::t_bd58ee59d3653b 9,11-24
+  s_4a10800c36ffe6::t_f499e103e10653 1-8,10,25-66
+packages/twenty-front/src/modules/activities/emails/hooks/useSendEmailCampaign.ts
+  s_4a10800c36ffe6::t_0323647c1839d7 1-24,26-61
+  s_4a10800c36ffe6::t_c7b8b53da4e15d 25
+packages/twenty-front/src/modules/side-panel/pages/compose-email/components/ComposeEmailModeTabs.tsx
+  s_4a10800c36ffe6::t_0e5c653c9d99fd 1-38
+packages/twenty-front/src/modules/activities/emails/components/EmailCampaignComposerFields.tsx
+  s_4a10800c36ffe6::t_aa6e4eda7ff178 2-3,6-8,11-14,19,24-34,54-62,83-86,88-91,94,99-101,125-142
+  s_4a10800c36ffe6::t_bf76d07349075a 65-67,69-73
+  s_4a10800c36ffe6::t_04624dbeb7cba1 1,4-5,9-10,16-18,20-23,35-53,63-64,68,74-82,87,92-93,95-97,102-124
+  s_4a10800c36ffe6::t_017dbd13f48d2c 98
+  s_4a10800c36ffe6::t_ead62b1e638254 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "c0377486138c33168ed101725c453d3b4e87317b",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
