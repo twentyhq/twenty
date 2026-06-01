@@ -24,13 +24,16 @@ export const useEnterLayoutCustomizationMode = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
   const { enqueueWarningSnackBar } = useSnackBar();
 
-  const enterLayoutCustomizationMode = useCallback(() => {
+  // Returns whether customization mode is active afterward, so callers that
+  // navigate on entry can skip navigation when entry was blocked (e.g. a
+  // dashboard is mid-edit).
+  const enterLayoutCustomizationMode = useCallback((): boolean => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );
 
     if (isLayoutCustomizationModeAlreadyEnabled) {
-      return;
+      return true;
     }
 
     const dashboardPageLayoutIdInEditMode = store.get(
@@ -49,7 +52,7 @@ export const useEnterLayoutCustomizationMode = () => {
           message: t`Save or cancel dashboard changes before editing the layout.`,
         });
 
-        return;
+        return false;
       }
     }
 
@@ -82,6 +85,8 @@ export const useEnterLayoutCustomizationMode = () => {
         resetNavigationStack: true,
       });
     }
+
+    return true;
   }, [enqueueWarningSnackBar, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };

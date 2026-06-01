@@ -31,9 +31,12 @@ export const SettingsLayout = () => {
 
   // Match the in-app customization entry points: arm customization mode before
   // landing in the app, otherwise the user just drops into the app normally.
+  // Skip navigation when entry was blocked (e.g. a dashboard is mid-edit) so we
+  // don't yank the user away after the warning.
   const handleCustomize = () => {
-    enterLayoutCustomizationMode();
-    navigate(AppPath.Index);
+    if (enterLayoutCustomizationMode()) {
+      navigate(AppPath.Index);
+    }
   };
 
   // TODO: replace placeholder demo videos per tab
