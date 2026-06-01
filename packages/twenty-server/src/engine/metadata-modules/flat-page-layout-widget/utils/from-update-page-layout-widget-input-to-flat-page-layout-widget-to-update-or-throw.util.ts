@@ -18,6 +18,7 @@ import {
   PageLayoutWidgetExceptionCode,
 } from 'src/engine/metadata-modules/page-layout-widget/exceptions/page-layout-widget.exception';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
+import { validateWidgetTypePageLayoutCompatibilityOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-type-page-layout-compatibility-or-throw.util';
 import { isCallerOverridingEntity } from 'src/engine/metadata-modules/utils/is-caller-overriding-entity.util';
 import { sanitizeOverridableEntityInput } from 'src/engine/metadata-modules/utils/sanitize-overridable-entity-input.util';
 import { mergeUpdateInExistingRecord } from 'src/utils/merge-update-in-existing-record.util';
@@ -37,6 +38,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     flatViewFieldGroupMaps,
     flatViewMaps,
     flatPageLayoutTabMaps,
+    flatPageLayoutMaps,
     callerApplicationUniversalIdentifier,
     workspaceCustomApplicationUniversalIdentifier,
   }: {
@@ -52,6 +54,7 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
     | 'flatViewFieldGroupMaps'
     | 'flatViewMaps'
     | 'flatPageLayoutTabMaps'
+    | 'flatPageLayoutMaps'
   >): FlatPageLayoutWidget => {
     const { id: pageLayoutWidgetToUpdateId } =
       extractAndSanitizeObjectStringFields(rawUpdatePageLayoutWidgetInput, [
@@ -135,6 +138,13 @@ export const fromUpdatePageLayoutWidgetInputToFlatPageLayoutWidgetToUpdateOrThro
       flatPageLayoutWidgetToUpdate.objectMetadataUniversalIdentifier =
         objectMetadataUniversalIdentifier;
     }
+
+    validateWidgetTypePageLayoutCompatibilityOrThrow({
+      widgetType: flatPageLayoutWidgetToUpdate.type,
+      pageLayoutTabId: flatPageLayoutWidgetToUpdate.pageLayoutTabId,
+      flatPageLayoutTabMaps,
+      flatPageLayoutMaps,
+    });
 
     if (isDefined(updatedEditableProperties.configuration)) {
       flatPageLayoutWidgetToUpdate.universalConfiguration =

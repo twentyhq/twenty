@@ -225,6 +225,7 @@ export class PageLayoutWidgetService {
 
     const {
       flatPageLayoutTabMaps,
+      flatPageLayoutMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatFrontComponentMaps,
@@ -236,6 +237,7 @@ export class PageLayoutWidgetService {
           workspaceId,
           flatMapsKeys: [
             'flatPageLayoutTabMaps',
+            'flatPageLayoutMaps',
             'flatObjectMetadataMaps',
             'flatFieldMetadataMaps',
             'flatFrontComponentMaps',
@@ -251,6 +253,7 @@ export class PageLayoutWidgetService {
         workspaceId,
         flatApplication: workspaceCustomFlatApplication,
         flatPageLayoutTabMaps,
+        flatPageLayoutMaps,
         flatObjectMetadataMaps,
         flatFieldMetadataMaps,
         flatFrontComponentMaps,
@@ -319,6 +322,7 @@ export class PageLayoutWidgetService {
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
         flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
       },
       { workspaceCustomFlatApplication },
     ] = await Promise.all([
@@ -332,6 +336,7 @@ export class PageLayoutWidgetService {
             'flatViewFieldGroupMaps',
             'flatViewMaps',
             'flatPageLayoutTabMaps',
+            'flatPageLayoutMaps',
           ],
         },
       ),
@@ -372,6 +377,7 @@ export class PageLayoutWidgetService {
         flatViewFieldGroupMaps: existingFlatViewFieldGroupMaps,
         flatViewMaps: existingFlatViewMaps,
         flatPageLayoutTabMaps: existingFlatPageLayoutTabMaps,
+        flatPageLayoutMaps: existingFlatPageLayoutMaps,
         callerApplicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,
         workspaceCustomApplicationUniversalIdentifier:

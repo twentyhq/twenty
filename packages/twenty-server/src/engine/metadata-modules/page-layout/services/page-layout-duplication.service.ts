@@ -115,6 +115,7 @@ export class PageLayoutDuplicationService {
       workspaceId,
       flatApplication: workspaceCustomFlatApplication,
       flatPageLayoutTabMaps: optimisticFlatPageLayoutTabMaps,
+      flatPageLayoutMaps: optimisticFlatPageLayoutMaps,
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatFrontComponentMaps,
@@ -297,6 +298,7 @@ export class PageLayoutDuplicationService {
     workspaceId,
     flatApplication,
     flatPageLayoutTabMaps,
+    flatPageLayoutMaps,
     flatObjectMetadataMaps,
     flatFieldMetadataMaps,
     flatFrontComponentMaps,
@@ -311,6 +313,7 @@ export class PageLayoutDuplicationService {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatPageLayoutTabMaps: AllFlatEntityMaps['flatPageLayoutTabMaps'];
+    flatPageLayoutMaps: AllFlatEntityMaps['flatPageLayoutMaps'];
     flatObjectMetadataMaps: AllFlatEntityMaps['flatObjectMetadataMaps'];
     flatFieldMetadataMaps: AllFlatEntityMaps['flatFieldMetadataMaps'];
     flatFrontComponentMaps: AllFlatEntityMaps['flatFrontComponentMaps'];
@@ -334,6 +337,7 @@ export class PageLayoutDuplicationService {
           workspaceId,
           flatApplication,
           flatPageLayoutTabMaps,
+          flatPageLayoutMaps,
           flatObjectMetadataMaps,
           flatFieldMetadataMaps,
           flatFrontComponentMaps,

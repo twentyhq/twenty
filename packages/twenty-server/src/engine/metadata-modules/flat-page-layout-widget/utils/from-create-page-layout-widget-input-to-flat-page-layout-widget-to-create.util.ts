@@ -8,6 +8,7 @@ import { buildFlatPageLayoutWidgetCommonProperties } from 'src/engine/metadata-m
 import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/from-page-layout-widget-configuration-to-universal-configuration.util';
 import { type CreatePageLayoutWidgetInput } from 'src/engine/metadata-modules/page-layout-widget/dtos/inputs/create-page-layout-widget.input';
 import { validateWidgetConfigurationInput } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-configuration-input.util';
+import { validateWidgetTypePageLayoutCompatibilityOrThrow } from 'src/engine/metadata-modules/page-layout-widget/utils/validate-widget-type-page-layout-compatibility-or-throw.util';
 
 export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   {
@@ -17,6 +18,7 @@ export type FromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreateArgs =
   } & Pick<
     AllFlatEntityMaps,
     | 'flatPageLayoutTabMaps'
+    | 'flatPageLayoutMaps'
     | 'flatObjectMetadataMaps'
     | 'flatFieldMetadataMaps'
     | 'flatFrontComponentMaps'
@@ -29,6 +31,7 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
   workspaceId,
   flatApplication,
   flatPageLayoutTabMaps,
+  flatPageLayoutMaps,
   flatObjectMetadataMaps,
   flatFieldMetadataMaps,
   flatFrontComponentMaps,
@@ -43,6 +46,13 @@ export const fromCreatePageLayoutWidgetInputToFlatPageLayoutWidgetToCreate = ({
 
   validateWidgetConfigurationInput({
     configuration: createPageLayoutWidgetInput.configuration,
+  });
+
+  validateWidgetTypePageLayoutCompatibilityOrThrow({
+    widgetType: createPageLayoutWidgetInput.type,
+    pageLayoutTabId,
+    flatPageLayoutTabMaps,
+    flatPageLayoutMaps,
   });
 
   const createdAt = new Date().toISOString();
