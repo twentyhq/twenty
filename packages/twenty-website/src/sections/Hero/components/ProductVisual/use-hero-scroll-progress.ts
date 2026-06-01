@@ -7,8 +7,6 @@ const NAV_HEIGHT = 64;
 const MORPH_START = 0;
 const MORPH_END = 0.55;
 
-const NAV_EXIT_DISTANCE_PX = 120;
-
 function smoothstep(value: number): number {
   return value * value * (3 - 2 * value);
 }
@@ -23,12 +21,16 @@ function mapToMorphProgress(scrollProgress: number): number {
 }
 
 export type HeroScrollState = {
+  menuBackground: string;
+  menuElevated: boolean;
   morphProgress: number;
   navProgress: number;
   phase: 0 | 1;
 };
 
 const INITIAL_STATE: HeroScrollState = {
+  menuBackground: 'rgb(255, 255, 255)',
+  menuElevated: true,
   morphProgress: 0,
   navProgress: 0,
   phase: 0,
@@ -56,25 +58,31 @@ export function useHeroScrollProgress(
     let navProgress = 0;
 
     const wipeLineY = window.innerHeight * (1 - morphProgress);
-    const NAV_TRANSITION_WINDOW = window.innerHeight * 0.4;
-
-    if (wipeLineY <= NAV_HEIGHT) {
-      navProgress = 1;
-    } else if (wipeLineY <= NAV_HEIGHT + NAV_TRANSITION_WINDOW) {
-      const linear = 1 - (wipeLineY - NAV_HEIGHT) / NAV_TRANSITION_WINDOW;
-      navProgress = smoothstep(linear);
-    }
-
     const trackBottom = rect.bottom;
 
-    if (trackBottom < NAV_HEIGHT) {
-      navProgress = 0;
-    } else if (trackBottom < NAV_HEIGHT + NAV_EXIT_DISTANCE_PX) {
-      const exitFade = (trackBottom - NAV_HEIGHT) / NAV_EXIT_DISTANCE_PX;
-      navProgress = navProgress * exitFade;
+    if (wipeLineY <= 0) {
+      navProgress = 1;
+    } else if (wipeLineY < NAV_HEIGHT) {
+      navProgress = smoothstep(1 - wipeLineY / NAV_HEIGHT);
     }
 
+    if (trackBottom <= 0) {
+      navProgress = 0;
+    } else if (trackBottom < NAV_HEIGHT) {
+      navProgress *= smoothstep(trackBottom / NAV_HEIGHT);
+    }
+
+    const isCrossing =
+      morphProgress < 1 && wipeLineY <= NAV_HEIGHT && trackBottom > NAV_HEIGHT;
+
+    const channel = Math.round(255 + (20 - 255) * navProgress);
+    const menuBackground = isCrossing
+      ? 'transparent'
+      : `rgb(${channel}, ${channel}, ${channel})`;
+
     setState({
+      menuBackground,
+      menuElevated: navProgress < 0.02 && !isCrossing,
       morphProgress,
       navProgress,
       phase: morphProgress >= 0.5 ? 1 : 0,

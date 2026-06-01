@@ -43,16 +43,17 @@ const NAV_HEIGHT = 64;
 
 const ScrollTrack = styled.section`
   height: 200vh;
+  margin-top: -${NAV_HEIGHT}px;
   position: relative;
   width: 100%;
 `;
 
 const StickyFrame = styled.div`
-  height: calc(100vh - ${NAV_HEIGHT}px);
-  height: calc(100dvh - ${NAV_HEIGHT}px);
+  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   position: sticky;
-  top: ${NAV_HEIGHT}px;
+  top: 0;
   width: 100%;
 
   background-color: #ffffff;
@@ -64,11 +65,11 @@ const FullLayer = styled.div`
   flex-direction: column;
   inset: 0;
   justify-content: flex-start;
-  padding-top: ${theme.spacing(7.5)};
+  padding-top: 94px;
   position: absolute;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    padding-top: ${theme.spacing(12)};
+    padding-top: 112px;
   }
 `;
 
@@ -240,7 +241,8 @@ export function HeroVisualScroll({
 }: HeroScrollProps) {
   const trackRef = useRef<HTMLDivElement>(null);
   const rowButtonsRef = useRef<HTMLDivElement>(null);
-  const { morphProgress, navProgress } = useHeroScrollProgress(trackRef);
+  const { morphProgress, navProgress, menuBackground, menuElevated } =
+    useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
   const [activeTab, setActiveTab] = useState(0);
   const [stackTargetMetrics, setStackTargetMetrics] = useState<
@@ -268,8 +270,12 @@ export function HeroVisualScroll({
   const aiPlaybackEnabled = morphProgress >= 0.58;
 
   useEffect(() => {
-    menuSync?.setMorphProgress(navProgress);
-  }, [menuSync, navProgress]);
+    menuSync?.setMenuState({
+      backgroundColor: menuBackground,
+      disableElevation: !menuElevated,
+      scheme: navProgress >= 0.5 ? 'secondary' : 'primary',
+    });
+  }, [menuSync, navProgress, menuBackground, menuElevated]);
 
   useEffect(() => {
     const updateStackTargets = () => {

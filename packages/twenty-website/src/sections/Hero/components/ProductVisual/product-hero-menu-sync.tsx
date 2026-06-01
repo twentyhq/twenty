@@ -11,8 +11,14 @@ import {
 import { Menu } from '@/sections/Menu/components';
 import type { MenuScheme, MenuSocialLinkType } from '@/sections/Menu/types';
 
+type ProductHeroMenuState = {
+  backgroundColor: string;
+  disableElevation: boolean;
+  scheme: MenuScheme;
+};
+
 type ProductHeroMenuContextValue = {
-  setMorphProgress: (progress: number) => void;
+  setMenuState: (state: ProductHeroMenuState) => void;
 };
 
 const ProductHeroMenuContext =
@@ -22,20 +28,11 @@ export function useProductHeroMenuSync() {
   return useContext(ProductHeroMenuContext);
 }
 
-function lerpColor(
-  from: [number, number, number],
-  to: [number, number, number],
-  t: number,
-): string {
-  const r = Math.round(from[0] + (to[0] - from[0]) * t);
-  const g = Math.round(from[1] + (to[1] - from[1]) * t);
-  const b = Math.round(from[2] + (to[2] - from[2]) * t);
-
-  return `rgb(${r}, ${g}, ${b})`;
-}
-
-const LIGHT_BG: [number, number, number] = [255, 255, 255];
-const DARK_BG: [number, number, number] = [20, 20, 20];
+const INITIAL_MENU_STATE: ProductHeroMenuState = {
+  backgroundColor: 'rgba(255, 255, 255, 0)',
+  disableElevation: true,
+  scheme: 'primary',
+};
 
 type ProductHeroMenuSyncProps = {
   children: ReactNode;
@@ -46,18 +43,18 @@ export function ProductHeroMenuSync({
   children,
   socialLinks,
 }: ProductHeroMenuSyncProps) {
-  const [morphProgress, setMorphProgress] = useState(0);
+  const [menuState, setMenuState] =
+    useState<ProductHeroMenuState>(INITIAL_MENU_STATE);
 
-  const menuBackgroundColor = lerpColor(LIGHT_BG, DARK_BG, morphProgress);
-  const menuScheme: MenuScheme = morphProgress >= 0.5 ? 'secondary' : 'primary';
-
-  const contextValue = useMemo(() => ({ setMorphProgress }), []);
+  const contextValue = useMemo(() => ({ setMenuState }), []);
 
   return (
     <ProductHeroMenuContext.Provider value={contextValue}>
       <Menu
-        backgroundColor={menuBackgroundColor}
-        scheme={menuScheme}
+        backgroundColor={menuState.backgroundColor}
+        disableElevation={menuState.disableElevation}
+        enableBackdropBlur={false}
+        scheme={menuState.scheme}
         socialLinks={socialLinks}
       />
       {children}

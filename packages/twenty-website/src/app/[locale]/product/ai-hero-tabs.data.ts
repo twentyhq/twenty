@@ -8,15 +8,15 @@ export const AI_HERO_TABS: TabType[] = [
     icon: 'eye',
   },
   {
-    body: msg`Generate follow-up tasks for my top 10 accounts`,
+    body: msg`Generate tasks for my top 10 accounts`,
     icon: 'check',
   },
   {
-    body: msg`Build a dashboard of pipeline by stage and ARR`,
+    body: msg`Build a dashboard of pipeline by stage`,
     icon: 'lightbulb',
   },
   {
-    body: msg`Draft a workflow that sends an email sequence`,
+    body: msg`Draft a workflow for an email sequence`,
     icon: 'code',
   },
 ];
