@@ -69,6 +69,7 @@ const NodeIconContainer = styled.div`
 `;
 
 const SkeletonIcon = styled(SkeletonBlock)`
+  border-radius: 4px;
   flex: 0 0 auto;
   height: 32px;
   width: 32px;

@@ -61,7 +61,7 @@ const IndexSurface = styled.div<{ $compactWorkflowPage: boolean }>`
   min-width: 0;
   overflow: hidden;
 
-  [aria-label*='workflow'] > div > div {
+  [data-workflow-canvas] {
     left: ${({ $compactWorkflowPage }) =>
       $compactWorkflowPage ? '0' : 'auto'};
     transform: ${({ $compactWorkflowPage }) =>

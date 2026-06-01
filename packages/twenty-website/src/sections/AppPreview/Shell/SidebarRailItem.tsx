@@ -1,5 +1,6 @@
 'use client';
 
+import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 
 import type { SidebarItemDef } from '../types';
@@ -8,30 +9,14 @@ import { getSidebarIconToneRgb } from '../Shared/utils/get-sidebar-icon-tone-rgb
 
 const SIDEBAR_ACTIVE_BACKGROUND = 'rgba(0, 0, 0, 0.04)';
 
-const RailItemButton = styled.button<{
-  $active?: boolean;
-  $child?: boolean;
-  $highlightRgb?: string;
-  $highlighted?: boolean;
-}>`
-  --highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
+const railItemSharedStyles = css`
   align-items: center;
-  animation: ${({ $highlighted }) =>
-    $highlighted
-      ? 'sidebarRailItemAppear 1800ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
-      : 'none'};
-  appearance: none;
-  background: ${({ $active }) =>
-    $active ? SIDEBAR_ACTIVE_BACKGROUND : 'transparent'};
-  border: 0;
   border-radius: 10px;
   cursor: pointer;
   display: flex;
   flex: 0 0 auto;
-  height: ${({ $child }) => ($child ? '32px' : '36px')};
   justify-content: center;
   padding-bottom: 0;
-  padding-left: ${({ $child }) => ($child ? '8px' : '0')};
   padding-right: 0;
   padding-top: 0;
   transition: background-color 0.14s ease;
@@ -40,6 +25,25 @@ const RailItemButton = styled.button<{
   &:hover {
     background: ${SIDEBAR_ACTIVE_BACKGROUND};
   }
+`;
+
+const RailItemButton = styled.button<{
+  $active?: boolean;
+  $child?: boolean;
+  $highlightRgb?: string;
+  $highlighted?: boolean;
+}>`
+  --highlight-rgb: ${({ $highlightRgb }) => $highlightRgb ?? '237, 95, 0'};
+  animation: ${({ $highlighted }) =>
+    $highlighted
+      ? 'sidebarRailItemAppear 1800ms cubic-bezier(0.34, 1.56, 0.64, 1) both'
+      : 'none'};
+  appearance: none;
+  background: ${({ $active }) =>
+    $active ? SIDEBAR_ACTIVE_BACKGROUND : 'transparent'};
+  border: 0;
+  height: ${({ $child }) => ($child ? '32px' : '36px')};
+  padding-left: ${({ $child }) => ($child ? '8px' : '0')};
 
   @keyframes sidebarRailItemAppear {
     0% {
@@ -69,26 +73,11 @@ const RailItemButton = styled.button<{
 `;
 
 const RailItemLink = styled.a<{ $active?: boolean; $child?: boolean }>`
-  align-items: center;
   background: ${({ $active }) =>
     $active ? SIDEBAR_ACTIVE_BACKGROUND : 'transparent'};
-  border-radius: 10px;
-  cursor: pointer;
-  display: flex;
-  flex: 0 0 auto;
   height: ${({ $child }) => ($child ? '32px' : '36px')};
-  justify-content: center;
-  padding-bottom: 0;
   padding-left: ${({ $child }) => ($child ? '8px' : '0')};
-  padding-right: 0;
-  padding-top: 0;
   text-decoration: none;
-  transition: background-color 0.14s ease;
-  width: 100%;
-
-  &:hover {
-    background: ${SIDEBAR_ACTIVE_BACKGROUND};
-  }
 `;
 
 type SidebarRailDisplayItem = Pick<
@@ -120,6 +109,7 @@ export function SidebarRailItem({
         $active={active}
         $child={child}
         aria-label={item.label}
+        className={railItemSharedStyles}
         data-rail-item-id={item.id}
         href={item.href}
         rel="noreferrer"
@@ -138,6 +128,7 @@ export function SidebarRailItem({
       $highlightRgb={highlighted ? highlightRgb : undefined}
       $highlighted={highlighted}
       aria-label={item.label}
+      className={railItemSharedStyles}
       data-rail-item-id={item.id}
       onClick={onSelect ? () => onSelect(item.id) : undefined}
       title={item.label}

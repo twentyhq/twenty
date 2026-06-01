@@ -20,17 +20,10 @@ const ViewbarBar = styled.div`
   justify-content: space-between;
   min-width: 0;
   padding-bottom: 8px;
+  padding-left: 12px;
   padding-right: 8px;
   padding-top: 8px;
   width: 100%;
-`;
-
-const TableAlignedViewbarBar = styled(ViewbarBar)`
-  padding-left: 12px;
-`;
-
-const DefaultViewbarBar = styled(ViewbarBar)`
-  padding-left: 12px;
 `;
 
 const ViewSwitcher = styled.div<{ $tableAligned?: boolean }>`
@@ -116,14 +109,10 @@ export function AppPreviewViewbar({
   title,
 }: AppPreviewViewbarProps) {
   const showPageCount = count !== undefined;
-  const BarComponent =
-    pageType === 'table' && showListIcon
-      ? TableAlignedViewbarBar
-      : DefaultViewbarBar;
   const isTableAligned = pageType === 'table' && showListIcon;
 
   return (
-    <BarComponent>
+    <ViewbarBar>
       <ViewSwitcher $tableAligned={isTableAligned} aria-hidden="true">
         {showListIcon ? (
           <>
@@ -160,6 +149,6 @@ export function AppPreviewViewbar({
           ))}
         </ViewActions>
       ) : null}
-    </BarComponent>
+    </ViewbarBar>
   );
 }

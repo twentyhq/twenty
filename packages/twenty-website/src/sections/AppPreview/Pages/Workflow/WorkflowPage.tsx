@@ -277,6 +277,7 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
             <CanvasContent
               $height={layout.contentHeight}
               $width={layout.contentWidth}
+              data-workflow-canvas
             >
               {!page.generating && (
                 <WorkflowEdges
