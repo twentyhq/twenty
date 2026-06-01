@@ -6,7 +6,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -133,7 +133,7 @@ export const SettingsObjectDetailPage = () => {
 
   return (
     <>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={objectMetadataItem.labelPlural}
         links={[
           {
@@ -185,7 +185,7 @@ export const SettingsObjectDetailPage = () => {
             {renderActiveTabContent()}
           </StyledContentContainer>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </>
   );
 };

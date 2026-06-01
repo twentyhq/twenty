@@ -6,8 +6,8 @@ import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/display';
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Section } from 'twenty-ui/layout';
@@ -60,7 +60,7 @@ export const SettingsWorkspaceMembers = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Members`}
       links={[
         {
@@ -69,6 +69,9 @@ export const SettingsWorkspaceMembers = () => {
         },
         { children: <Trans>Members</Trans> },
       ]}
+      secondaryBar={
+        <SettingsTabBar tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
+      }
     >
       <SettingsPageContainer>
         <Section>
@@ -103,9 +106,8 @@ export const SettingsWorkspaceMembers = () => {
             playButtonAriaLabel={t`Watch members demo`}
           />
         </Section>
-        <TabList tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
         {renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

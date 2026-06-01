@@ -4,7 +4,7 @@ import { useInstallMarketplaceAppWithPermissionValidation } from '@/marketplace/
 import { useUpgradeApplication } from '@/marketplace/hooks/useUpgradeApplication';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -271,7 +271,7 @@ export const SettingsAvailableApplicationDetails = () => {
 
   return (
     <CurrentApplicationContext.Provider value={application?.id ?? null}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         links={[
           {
             children: t`Workspace`,
@@ -299,7 +299,7 @@ export const SettingsAvailableApplicationDetails = () => {
           />
           {renderActiveTabContent()}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
       <SettingsApplicationInstallPermissionValidationModal
         modalInstanceId={modalInstanceId}
         appDisplayName={displayName}

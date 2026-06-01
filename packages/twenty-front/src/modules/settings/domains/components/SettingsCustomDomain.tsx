@@ -7,7 +7,7 @@ import { SettingsDomainRecords } from '@/settings/domains/components/SettingsDom
 import { useSettingsCustomDomain } from '@/settings/domains/hooks/useSettingsCustomDomain';
 import { customDomainRecordsState } from '@/settings/domains/states/customDomainRecordsState';
 import { TextInput } from '@/ui/input/components/TextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -62,7 +62,7 @@ export const SettingsCustomDomain = () => {
   } = useSettingsCustomDomain();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Custom Domain`}
       links={[
         {
@@ -133,6 +133,6 @@ export const SettingsCustomDomain = () => {
           )}
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

@@ -6,10 +6,11 @@ import { SettingsRolePermissionsObjectLevelObjectFieldPermissionTable } from '@/
 import { SettingsRolePermissionsObjectLevelObjectFormObjectLevel } from '@/settings/roles/role-permissions/object-level-permissions/object-form/components/SettingsRolePermissionsObjectLevelObjectFormObjectLevel';
 import { SettingsRolePermissionsObjectLevelRecordLevelSection } from '@/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import {
@@ -36,6 +37,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 }: SettingsRolePermissionsObjectLevelObjectFormProps) => {
   const [searchParams] = useSearchParams();
   const fromAgentId = searchParams.get('fromAgent');
+  const navigate = useNavigate();
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
 
@@ -119,6 +121,11 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
       ? getSettingsPath(SettingsPath.AiAgentDetail, { agentId: agent.id })
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
+  const backToObjectPickerPath =
+    fromAgentId && isDefined(agent)
+      ? `${getSettingsPath(SettingsPath.RoleAddObjectLevel, { roleId })}?fromAgent=${agent.id}`
+      : getSettingsPath(SettingsPath.RoleAddObjectLevel, { roleId });
+
   const objectPredicates =
     settingsDraftRole.rowLevelPermissionPredicates?.filter(
       (predicate) => predicate.objectMetadataId === objectMetadataItem.id,
@@ -138,17 +145,28 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
   const isFinishDisabled = hasInvalidPredicate;
 
   return (
-    <SubMenuTopBarContainer
-      title={t`2. Set ${objectLabelPlural} permissions`}
+    <SettingsPageLayout
+      title={
+        fromAgentId && isDefined(agent)
+          ? agent.label
+          : (settingsDraftRole.label ?? '')
+      }
       links={breadcrumbLinks}
-      actionButton={
-        <Button
-          title={t`Finish`}
-          variant="secondary"
-          size="small"
-          accent="blue"
-          to={isFinishDisabled ? undefined : finishButtonPath}
-          disabled={isFinishDisabled}
+      secondaryBar={
+        <SettingsWizardStepBar
+          stepNumber={2}
+          label={t`Set ${objectLabelPlural} permissions`}
+          onBack={() => navigate(backToObjectPickerPath)}
+          trailing={
+            <Button
+              title={t`Finish`}
+              variant="secondary"
+              size="small"
+              accent="blue"
+              to={isFinishDisabled ? undefined : finishButtonPath}
+              disabled={isFinishDisabled}
+            />
+          }
         />
       }
     >
@@ -167,6 +185,6 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           hasOrganizationPlan={isRLSBillingEntitlementEnabled}
         />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

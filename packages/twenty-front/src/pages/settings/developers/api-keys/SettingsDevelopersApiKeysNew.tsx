@@ -9,7 +9,7 @@ import { EXPIRATION_DATES } from '@/settings/developers/constants/ExpirationDate
 import { apiKeyTokenFamilyState } from '@/settings/developers/states/apiKeyTokenFamilyState';
 import { Select } from '@/ui/input/components/Select';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { useLingui } from '@lingui/react/macro';
 import { useStore } from 'jotai';
@@ -128,7 +128,7 @@ export const SettingsDevelopersApiKeysNew = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`New key`}
       links={[
         {
@@ -209,6 +209,6 @@ export const SettingsDevelopersApiKeysNew = () => {
           />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

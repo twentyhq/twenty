@@ -1,7 +1,7 @@
 import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { SettingsPath } from 'twenty-shared/types';
@@ -76,7 +76,7 @@ export const SettingsAI = () => {
   const isUsageTab = resolvedTabId === SETTINGS_AI_TABS.TABS_IDS.USAGE;
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`AI`}
       actionButton={
         isSkillsTab ? (
@@ -106,6 +106,12 @@ export const SettingsAI = () => {
         },
         { children: t`AI` },
       ]}
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
+        />
+      }
     >
       <SettingsPageContainer>
         <Section>
@@ -136,16 +142,12 @@ export const SettingsAI = () => {
             playButtonAriaLabel={t`Watch AI demo`}
           />
         </Section>
-        <TabList
-          tabs={tabs}
-          componentInstanceId={SETTINGS_AI_TABS.COMPONENT_INSTANCE_ID}
-        />
         {isOverviewTab && <SettingsAiOverviewTab />}
         {isModelsTab && <SettingsAiModelsTab />}
         {isSkillsTab && <SettingsAgentSkillsTab />}
         {isToolsTab && <SettingsAgentToolsTab />}
         {isUsageTab && <SettingsAiUsageTab />}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

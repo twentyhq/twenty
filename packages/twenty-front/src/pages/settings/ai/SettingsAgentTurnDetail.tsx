@@ -1,7 +1,7 @@
 import { AiChatAssistantMessageRenderer } from '@/ai/components/AiChatAssistantMessageRenderer';
 import { mapDBMessagesToUIMessages } from '@/ai/utils/mapDBMessagesToUIMessages';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
@@ -74,7 +74,7 @@ export const SettingsAgentTurnDetail = () => {
 
   if (loading) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Details`}
         links={[
           {
@@ -95,13 +95,13 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <Skeleton height={200} />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   if (!turn) {
     return (
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Turn Not Found`}
         links={[
           {
@@ -115,12 +115,12 @@ export const SettingsAgentTurnDetail = () => {
         <SettingsPageContainer>
           <div>{t`Turn not found`}</div>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Turn Details`}
       links={[
         {
@@ -241,6 +241,6 @@ export const SettingsAgentTurnDetail = () => {
           )}
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

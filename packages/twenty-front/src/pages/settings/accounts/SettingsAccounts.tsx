@@ -5,7 +5,7 @@ import { SettingsAccountsConnectedAccountsListCard } from '@/settings/accounts/c
 import { SettingsAccountsSettingsSection } from '@/settings/accounts/components/SettingsAccountsSettingsSection';
 import { useMyConnectedAccounts } from '@/settings/accounts/hooks/useMyConnectedAccounts';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -17,7 +17,7 @@ export const SettingsAccounts = () => {
   const { accounts: allAccounts, loading } = useMyConnectedAccounts();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Account`}
       links={[
         {
@@ -46,6 +46,6 @@ export const SettingsAccounts = () => {
           </>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

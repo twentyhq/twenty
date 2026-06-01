@@ -8,7 +8,7 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsObjectIndexFieldsForm } from '@/settings/data-model/indexes/forms/components/SettingsObjectIndexFieldsForm';
 import { SettingsObjectIndexOptionsForm } from '@/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLingui } from '@lingui/react/macro';
@@ -114,7 +114,7 @@ export const SettingsObjectNewIndex = () => {
     <FormProvider // oxlint-disable-next-line react/jsx-props-no-spreading
       {...formConfig}
     >
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Index`}
         links={[
           {
@@ -169,7 +169,7 @@ export const SettingsObjectNewIndex = () => {
             <SettingsObjectIndexOptionsForm />
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 };

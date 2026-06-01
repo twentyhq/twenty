@@ -23,7 +23,7 @@ import { SettingsSecurityEditableProfileFields } from '@/settings/security/compo
 import { SSOIdentitiesProvidersState } from '@/settings/security/states/SSOIdentitiesProvidersState';
 import { ToggleImpersonate } from '@/settings/workspace/components/ToggleImpersonate';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
@@ -198,7 +198,7 @@ export const SettingsSecurity = () => {
   const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Security`}
       links={[
         {
@@ -361,6 +361,6 @@ export const SettingsSecurity = () => {
           </Section>
         </StyledMainContent>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };
