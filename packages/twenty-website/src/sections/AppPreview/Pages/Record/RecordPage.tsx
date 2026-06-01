@@ -1520,13 +1520,13 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
     Calendar: (calendar?.length ?? 0) > 0,
   };
   const availableTabs = RECORD_TABS.filter((tab) => tabHasContent[tab.label]);
+  const controlledTabLabel = page.activeTabLabel;
+  const isControlled = controlledTabLabel !== undefined;
   const [activeTabIndex, setActiveTabIndex] = useState(0);
-  // Once the autoplay tour reaches the last tab, hand control to the user: stop
-  // advancing and let the tab bar be clicked.
   const [isInteractive, setIsInteractive] = useState(false);
 
   useEffect(() => {
-    if (isInteractive) {
+    if (isControlled || isInteractive) {
       return undefined;
     }
 
@@ -1540,9 +1540,10 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
     }, TAB_DWELL_MS);
 
     return () => clearTimeout(timer);
-  }, [availableTabs.length, activeTabIndex, isInteractive]);
+  }, [availableTabs.length, activeTabIndex, isControlled, isInteractive]);
 
-  const activeTabLabel = availableTabs[activeTabIndex]?.label ?? 'Notes';
+  const activeTabLabel =
+    controlledTabLabel ?? availableTabs[activeTabIndex]?.label ?? 'Notes';
 
   const handleTabClick = (label: string) => {
     if (!isInteractive) {
@@ -1637,6 +1638,7 @@ export function RecordPage({ page }: { page: RecordPageDefinition }) {
                 key={tab.label}
                 $active={isActive}
                 $clickable={isInteractive}
+                data-record-tab={tab.label}
                 onClick={() => handleTabClick(tab.label)}
               >
                 <TabInner $active={isActive}>

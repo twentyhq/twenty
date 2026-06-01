@@ -366,7 +366,7 @@ export function ProductVisual({
 
   const effectivePage =
     collaborative && heroCursor.showRecord
-      ? ANTHROPIC_RECORD_PAGE
+      ? { ...ANTHROPIC_RECORD_PAGE, activeTabLabel: heroCursor.recordTab }
       : displayPage;
   const navbarLabel =
     effectivePage.type === 'record'

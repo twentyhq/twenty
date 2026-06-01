@@ -334,6 +334,7 @@ export type RecordCalendarDay = {
 
 export type RecordPageDefinition = {
   type: 'record';
+  activeTabLabel?: string;
   header: PageHeader;
   record: {
     logoDomain?: string;

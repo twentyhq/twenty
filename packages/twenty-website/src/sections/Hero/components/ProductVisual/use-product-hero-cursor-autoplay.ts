@@ -5,13 +5,15 @@ import { useEffect, useState } from 'react';
 export type CursorTarget =
   | { kind: 'start' }
   | { kind: 'row'; id: string }
-  | { kind: 'rail'; id: string };
+  | { kind: 'rail'; id: string }
+  | { kind: 'tab'; id: string };
 
 export type ProductHeroTourState = {
   clicking: boolean;
   hidden: boolean;
   moveMs: number;
   pageItemId: string;
+  recordTab?: string;
   showRecord: boolean;
   target: CursorTarget;
 };
@@ -24,8 +26,6 @@ const NOTES = 'notes';
 const RECORD_ROW_ID = 'anthropic';
 
 const LOOP_START_INDEX = 1;
-
-const RECORD_DWELL_MS = 12800;
 
 const PHASES: TourPhase[] = [
   {
@@ -53,29 +53,62 @@ const PHASES: TourPhase[] = [
     clicking: true,
     hidden: false,
     moveMs: 0,
-    durationMs: 480,
+    durationMs: 520,
   },
   {
     pageItemId: COMPANIES,
     showRecord: true,
-    target: { kind: 'row', id: RECORD_ROW_ID },
+    recordTab: 'Timeline',
+    target: { kind: 'tab', id: 'Notes' },
     clicking: false,
-    hidden: true,
-    moveMs: 0,
-    durationMs: RECORD_DWELL_MS,
+    hidden: false,
+    moveMs: 1400,
+    durationMs: 1700,
   },
   {
     pageItemId: COMPANIES,
     showRecord: true,
+    recordTab: 'Notes',
+    target: { kind: 'tab', id: 'Notes' },
+    clicking: true,
+    hidden: false,
+    moveMs: 0,
+    durationMs: 1900,
+  },
+  {
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Notes',
+    target: { kind: 'tab', id: 'Calendar' },
+    clicking: false,
+    hidden: false,
+    moveMs: 600,
+    durationMs: 1300,
+  },
+  {
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Calendar',
+    target: { kind: 'tab', id: 'Calendar' },
+    clicking: true,
+    hidden: false,
+    moveMs: 0,
+    durationMs: 2000,
+  },
+  {
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Calendar',
     target: { kind: 'rail', id: PEOPLE },
     clicking: false,
     hidden: false,
-    moveMs: 0,
-    durationMs: 700,
+    moveMs: 900,
+    durationMs: 1200,
   },
   {
     pageItemId: COMPANIES,
     showRecord: true,
+    recordTab: 'Calendar',
     target: { kind: 'rail', id: PEOPLE },
     clicking: true,
     hidden: false,
@@ -157,8 +190,23 @@ export function useProductHeroCursorAutoplay(
     return () => clearTimeout(timer);
   }, [enabled, phaseIndex]);
 
-  const { clicking, hidden, moveMs, pageItemId, showRecord, target } =
-    PHASES[phaseIndex];
+  const {
+    clicking,
+    hidden,
+    moveMs,
+    pageItemId,
+    recordTab,
+    showRecord,
+    target,
+  } = PHASES[phaseIndex];
 
-  return { clicking, hidden, moveMs, pageItemId, showRecord, target };
+  return {
+    clicking,
+    hidden,
+    moveMs,
+    pageItemId,
+    recordTab,
+    showRecord,
+    target,
+  };
 }

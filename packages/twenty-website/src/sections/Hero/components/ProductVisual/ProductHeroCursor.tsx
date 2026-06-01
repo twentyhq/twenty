@@ -13,8 +13,10 @@ const CURSOR_NAME = 'Alice';
 const CURSOR_START = { left: 72, top: 78 };
 const ROW_X_OFFSET_PX = 80;
 const ROW_Y_OFFSET_PX = -5;
-const RAIL_X_OFFSET_PX = 4;
-const RAIL_Y_OFFSET_PX = 2;
+const RAIL_X_OFFSET_PX = -4;
+const RAIL_Y_OFFSET_PX = -4;
+const TAB_X_OFFSET_PX = 2;
+const TAB_Y_OFFSET_PX = -6;
 
 type Coordinate = { left: number; top: number };
 
@@ -92,7 +94,9 @@ export function ProductHeroCursor({
     const selector =
       target.kind === 'row'
         ? `[data-row-id="${target.id}"]`
-        : `[data-rail-item-id="${target.id}"]`;
+        : target.kind === 'rail'
+          ? `[data-rail-item-id="${target.id}"]`
+          : `[data-record-tab="${target.id}"]`;
 
     const measure = () => {
       const overlay = overlayRef.current;
@@ -115,23 +119,27 @@ export function ProductHeroCursor({
         return;
       }
 
+      const xOffset =
+        target.kind === 'row'
+          ? ROW_X_OFFSET_PX
+          : target.kind === 'rail'
+            ? RAIL_X_OFFSET_PX
+            : TAB_X_OFFSET_PX;
+      const yOffset =
+        target.kind === 'row'
+          ? ROW_Y_OFFSET_PX
+          : target.kind === 'rail'
+            ? RAIL_Y_OFFSET_PX
+            : TAB_Y_OFFSET_PX;
       const x =
         target.kind === 'row'
-          ? elementRect.left + ROW_X_OFFSET_PX - overlayRect.left
+          ? elementRect.left + xOffset - overlayRect.left
           : elementRect.left +
             elementRect.width / 2 +
-            RAIL_X_OFFSET_PX -
+            xOffset -
             overlayRect.left;
       const y =
-        target.kind === 'row'
-          ? elementRect.top +
-            elementRect.height / 2 +
-            ROW_Y_OFFSET_PX -
-            overlayRect.top
-          : elementRect.top +
-            elementRect.height / 2 +
-            RAIL_Y_OFFSET_PX -
-            overlayRect.top;
+        elementRect.top + elementRect.height / 2 + yOffset - overlayRect.top;
 
       setCoordinate({
         left: (x / overlayRect.width) * 100,
