@@ -1,10 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
+import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
 import { type SesEventBridgeNotification } from 'src/engine/core-modules/messaging-webhooks/types/ses-event-bridge-notification.type';
 import { resolveWorkspaceIdFromAwsSesResources } from 'src/engine/core-modules/messaging-webhooks/utils/resolve-workspace-id-from-aws-ses-resources.util';
 
@@ -41,7 +41,7 @@ export class SesOutboundSuppressionHandlerService {
           workspaceId,
           emailAddress,
           reason: suppression.reason,
-          createdBySource: FieldActorSource.WEBHOOK,
+          source: EmailGroupSuppressionSource.WEBHOOK,
           providerEventId: suppression.providerEventId,
         }),
       ),
@@ -75,7 +75,7 @@ export class SesOutboundSuppressionHandlerService {
       }
 
       return {
-        reason: EmailGroupSuppressionReason.HARD_BOUNCE,
+        reason: EmailGroupSuppressionReason.BOUNCE,
         emailAddresses,
         providerEventId: bounce.feedbackId ?? null,
       };

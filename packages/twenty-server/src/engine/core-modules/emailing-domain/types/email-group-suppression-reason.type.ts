@@ -1,5 +1,5 @@
 export enum EmailGroupSuppressionReason {
-  HARD_BOUNCE = 'HARD_BOUNCE',
+  BOUNCE = 'BOUNCE',
   COMPLAINT = 'COMPLAINT',
   UNSUBSCRIBE = 'UNSUBSCRIBE',
 }

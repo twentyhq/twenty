@@ -1,31 +1,34 @@
 import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldActorSource } from 'twenty-shared/types';
-import { isNonEmptyArray } from 'twenty-shared/utils';
+import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { BLOCKED_SCOPES_BY_MESSAGE_CATEGORY } from 'src/engine/core-modules/emailing-domain/constants/blocked-scopes-by-message-category.constant';
-import { SUPPRESSION_SCOPE_BY_REASON } from 'src/engine/core-modules/emailing-domain/constants/suppression-scope-by-reason.constant';
-import { EmailGroupSuppressedRecipientEntity } from 'src/engine/core-modules/emailing-domain/email-group-suppressed-recipient.entity';
+import { BLOCKING_REASONS_BY_MESSAGE_CATEGORY } from 'src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
 import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
-import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
-import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
+import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
+import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
+import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
+import { EmailGroupSuppressionListWorkspaceEntity } from 'src/modules/emailing/standard-objects/email-group-suppression-list.workspace-entity';
 
-type SuppressRecipientArgs = {
+type SuppressArgs = {
   workspaceId: string;
   emailAddress: string;
   reason: EmailGroupSuppressionReason;
-  createdBySource: FieldActorSource;
+  source: EmailGroupSuppressionSource;
   providerEventId?: string | null;
 };
+
+const HARD_SUPPRESSION_REASONS = [
+  EmailGroupSuppressionReason.BOUNCE,
+  EmailGroupSuppressionReason.COMPLAINT,
+];
 
 @Injectable()
 export class EmailGroupSuppressionService {
   constructor(
-    @InjectWorkspaceScopedRepository(EmailGroupSuppressedRecipientEntity)
-    private readonly suppressedRecipientRepository: WorkspaceScopedRepository<EmailGroupSuppressedRecipientEntity>,
+    private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
 
   async getSuppressedAddresses(
@@ -43,16 +46,25 @@ export class EmailGroupSuppressionService {
       return new Set();
     }
 
-    const suppressedRecipients = await this.suppressedRecipientRepository.find(
-      workspaceId,
-      {
-        where: {
-          emailAddress: In(normalizedAddresses),
-          scope: In(BLOCKED_SCOPES_BY_MESSAGE_CATEGORY[messageCategory]),
-          isSuppressed: true,
+    const suppressedRecipients =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const suppressionRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              EmailGroupSuppressionListWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return suppressionRepository.find({
+            where: {
+              emailAddress: In(normalizedAddresses),
+              reason: In(BLOCKING_REASONS_BY_MESSAGE_CATEGORY[messageCategory]),
+            },
+          });
         },
-      },
-    );
+        buildSystemAuthContext(workspaceId),
+      );
 
     return new Set(
       suppressedRecipients.map((recipient) => recipient.emailAddress),
@@ -63,26 +75,57 @@ export class EmailGroupSuppressionService {
     workspaceId,
     emailAddress,
     reason,
-    createdBySource,
+    source,
     providerEventId = null,
-  }: SuppressRecipientArgs): Promise<void> {
+  }: SuppressArgs): Promise<void> {
     const normalizedEmailAddress = emailAddress.trim().toLowerCase();
 
     if (!isNonEmptyString(normalizedEmailAddress)) {
       return;
     }
 
-    await this.suppressedRecipientRepository.upsert(
-      workspaceId,
-      {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          EmailGroupSuppressionListWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const existingSuppression = await suppressionRepository.findOneBy({
         emailAddress: normalizedEmailAddress,
-        scope: SUPPRESSION_SCOPE_BY_REASON[reason],
-        reason,
-        isSuppressed: true,
-        createdBySource,
-        providerEventId,
-      },
-      ['workspaceId', 'emailAddress', 'scope'],
+      });
+
+      if (!isDefined(existingSuppression)) {
+        await suppressionRepository.insert({
+          emailAddress: normalizedEmailAddress,
+          reason,
+          source,
+          providerEventId,
+        });
+
+        return;
+      }
+
+      if (this.shouldEscalate(existingSuppression.reason, reason)) {
+        await suppressionRepository.update(existingSuppression.id, {
+          reason,
+          source,
+          providerEventId,
+        });
+      }
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  private shouldEscalate(
+    existingReason: string,
+    incomingReason: EmailGroupSuppressionReason,
+  ): boolean {
+    const existingIsHard = HARD_SUPPRESSION_REASONS.some(
+      (hardReason) => hardReason === existingReason,
     );
+    const incomingIsHard = HARD_SUPPRESSION_REASONS.includes(incomingReason);
+
+    return !existingIsHard && incomingIsHard;
   }
 }

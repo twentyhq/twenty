@@ -1,12 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
-import { FieldActorSource } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
+import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
 import { type SesInboundNotification } from 'src/engine/core-modules/messaging-webhooks/types/sns-message.type';
 
 @Injectable()
@@ -41,7 +41,7 @@ export class SesInboundUnsubscribeHandlerService {
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
       reason: EmailGroupSuppressionReason.UNSUBSCRIBE,
-      createdBySource: FieldActorSource.SYSTEM,
+      source: EmailGroupSuppressionSource.SYSTEM,
     });
   }
 }
