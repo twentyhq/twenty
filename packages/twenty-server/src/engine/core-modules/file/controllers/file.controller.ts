@@ -68,9 +68,12 @@ export class FileController {
         filepath,
       })
       .catch((error) => {
-        this.logger.error('getFilePresignedUrlOrStreamByPath failed unexpectedly', {
-          error,
-        });
+        this.logger.error(
+          'getFilePresignedUrlOrStreamByPath failed unexpectedly',
+          {
+            error,
+          },
+        );
 
         throw new FileException(
           'Error retrieving file',
@@ -125,9 +128,12 @@ export class FileController {
         fileFolder,
       })
       .catch((error) => {
-        this.logger.error('getFilePresignedUrlOrStreamById failed unexpectedly', {
-          error,
-        });
+        this.logger.error(
+          'getFilePresignedUrlOrStreamById failed unexpectedly',
+          {
+            error,
+          },
+        );
 
         throw new FileException(
           'Error retrieving file',
