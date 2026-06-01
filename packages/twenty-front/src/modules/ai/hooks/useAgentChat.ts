@@ -33,6 +33,8 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
+const AGENT_CHAT_SSE_FALLBACK_REFETCH_DELAYS_MS = [2000, 5000, 12000];
+
 export const useAgentChat = (
   ensureThreadIdForSend: () => Promise<string | null>,
 ) => {
@@ -184,6 +186,12 @@ export const useAgentChat = (
       }
 
       dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+
+      AGENT_CHAT_SSE_FALLBACK_REFETCH_DELAYS_MS.forEach((delayInMs) => {
+        window.setTimeout(() => {
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+        }, delayInMs);
+      });
 
       setPendingThreadIdAfterFirstSend((pendingId) => {
         if (isDefined(pendingId)) {

@@ -1,3 +1,4 @@
+import { captureException, withScope } from '@sentry/react';
 import { useEffect } from 'react';
 
 import { readUIMessageStream, type UIMessageChunk } from 'ai';
@@ -26,6 +27,7 @@ import { useAtomComponentFamilyStateCallbackState } from '@/ui/utilities/state/j
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 
 const THROTTLE_MS = 100;
+const MIN_SSE_ERROR_CAPTURE_INTERVAL_MS = 30000;
 
 // readUIMessageStream requires initialization chunks (start, start-step,
 // text-start) before content chunks. When reconnecting to a thread mid-stream,
@@ -93,6 +95,9 @@ type AgentChatEventPayload = {
   };
 };
 
+const isExpectedSseSubscriptionError = (error: unknown) =>
+  error instanceof Error && error.name === 'AbortError';
+
 export const useAgentChatSubscription = (threadId: string | null) => {
   const store = useStore();
   const sseClient = useAtomStateValue(sseClientState);
@@ -141,6 +146,7 @@ export const useAgentChatSubscription = (threadId: string | null) => {
     let latestMessage: ExtendedUIMessage | null = null;
     let writer: WritableStreamDefaultWriter<UIMessageChunk> | null = null;
     let disposed = false;
+    let lastCapturedSseErrorAt = 0;
 
     store.set(firstLiveSeqAtom, null);
 
@@ -260,6 +266,37 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       }
     };
 
+    const captureSseSubscriptionError = (
+      error: unknown,
+      source: 'next' | 'error',
+    ) => {
+      if (isExpectedSseSubscriptionError(error)) {
+        return;
+      }
+
+      const now = Date.now();
+
+      if (now - lastCapturedSseErrorAt < MIN_SSE_ERROR_CAPTURE_INTERVAL_MS) {
+        return;
+      }
+
+      lastCapturedSseErrorAt = now;
+
+      const normalizedError =
+        error instanceof Error
+          ? error
+          : new Error('Unexpected AI chat SSE subscription error', {
+              cause: error,
+            });
+
+      withScope((scope) => {
+        scope.setTag('area', 'ai-chat');
+        scope.setTag('source', source);
+        scope.setExtra('threadId', threadId);
+        captureException(normalizedError);
+      });
+    };
+
     const handleEvent = (event: AgentChatSubscriptionEvent) => {
       switch (event.type) {
         case 'stream-chunk': {
@@ -340,14 +377,21 @@ export const useAgentChatSubscription = (threadId: string | null) => {
       },
       {
         next: (value: ExecutionResult<AgentChatEventPayload>) => {
+          if (isDefined(value.errors) && value.errors.length > 0) {
+            captureSseSubscriptionError(value.errors[0], 'next');
+            dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
+            return;
+          }
+
           if (isDefined(value.data?.onAgentChatEvent?.event)) {
             handleEvent(
               value.data.onAgentChatEvent.event as AgentChatSubscriptionEvent,
             );
           }
         },
-        error: () => {
-          // graphql-sse handles reconnection automatically
+        error: (error) => {
+          captureSseSubscriptionError(error, 'error');
+          dispatchBrowserEvent(AGENT_CHAT_REFETCH_MESSAGES_EVENT_NAME);
         },
         complete: () => {
           if (!disposed) {
