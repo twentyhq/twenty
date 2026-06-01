@@ -1197,15 +1197,21 @@ export class LambdaDriver implements LogicFunctionDriver {
       currentPhase = LambdaExecutionPhase.FETCH_CODE;
       const invokeFlowStart = Date.now();
 
-      const { executorPayload, getBuiltCodeMs: fetchedCodeMs } =
-        await this.buildExecutorPayload({
+      const executorPayload: LambdaDriverExecutorPayload = {
+        params: payload,
+        env: env ?? {},
+        handlerName: flatLogicFunction.handlerName,
+      };
+
+      if (effectiveExecutionMode === LogicFunctionExecutionMode.LIVE) {
+        const fetchStart = Date.now();
+
+        executorPayload.code = await this.fetchLiveBundleCode({
           flatLogicFunction,
           applicationUniversalIdentifier,
-          payload,
-          env,
-          effectiveExecutionMode,
         });
-      getBuiltCodeMs = fetchedCodeMs;
+        getBuiltCodeMs = Date.now() - fetchStart;
+      }
 
       currentPhase = LambdaExecutionPhase.INVOKE;
 
@@ -1297,43 +1303,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     }
   }
 
-  private async buildExecutorPayload({
+  private async fetchLiveBundleCode({
     flatLogicFunction,
     applicationUniversalIdentifier,
-    payload,
-    env,
-    effectiveExecutionMode,
   }: {
     flatLogicFunction: FlatLogicFunction;
     applicationUniversalIdentifier: string;
-    payload: object;
-    env?: Record<string, string>;
-    effectiveExecutionMode: LogicFunctionExecutionMode;
-  }): Promise<{
-    executorPayload: LambdaDriverExecutorPayload;
-    getBuiltCodeMs: number;
-  }> {
-    const basePayload: LambdaDriverExecutorPayload = {
-      params: payload,
-      env: env ?? {},
-      handlerName: flatLogicFunction.handlerName,
-    };
-
-    if (effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT) {
-      return { executorPayload: basePayload, getBuiltCodeMs: 0 };
-    }
-
-    const fetchStart = Date.now();
-    const code = await this.logicFunctionResourceService.getBuiltCode({
+  }): Promise<string> {
+    return this.logicFunctionResourceService.getBuiltCode({
       workspaceId: flatLogicFunction.workspaceId,
       applicationUniversalIdentifier,
       builtHandlerPath: flatLogicFunction.builtHandlerPath,
     });
-
-    return {
-      executorPayload: { ...basePayload, code },
-      getBuiltCodeMs: Date.now() - fetchStart,
-    };
   }
 
   private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
