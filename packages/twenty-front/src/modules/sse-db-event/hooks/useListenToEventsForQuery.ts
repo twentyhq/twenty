@@ -59,7 +59,11 @@ export const useListenToEventsForQuery = ({
   );
 
   useEffect(() => {
-    changeQueryIdListenState(!skip, queryId, operationSignature);
+    if (skip) {
+      return;
+    }
+
+    changeQueryIdListenState(true, queryId, operationSignature);
 
     return () => {
       changeQueryIdListenState(false, queryId, operationSignature);

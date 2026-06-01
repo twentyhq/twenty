@@ -235,8 +235,9 @@ export class ObjectRecordEventPublisher {
       } catch (error) {
         this.logger.warn(
           `Failed to enrich nested relations for ${workspaceEventBatch.name} subscription event, broadcasting without them: ${
-            (error as Error)?.message
+            error instanceof Error ? error.message : String(error)
           }`,
+          error instanceof Error ? error.stack : undefined,
         );
       }
 

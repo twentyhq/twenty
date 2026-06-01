@@ -85,8 +85,12 @@ export const useTimelineActivities = (
   });
 
   const handleTimelineActivityOperation = useCallback(() => {
+    if (!hasTimelineActivityField) {
+      return;
+    }
+
     refetch();
-  }, [refetch]);
+  }, [hasTimelineActivityField, refetch]);
 
   useListenToObjectRecordOperationBrowserEvent({
     onObjectRecordOperationBrowserEvent: handleTimelineActivityOperation,
