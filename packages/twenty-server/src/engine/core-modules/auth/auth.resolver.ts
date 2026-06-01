@@ -807,6 +807,7 @@ export class AuthResolver {
 
   @UseGuards(
     WorkspaceAuthGuard,
+    RequireAccessTokenGuard,
     SettingsPermissionGuard(PermissionFlagType.API_KEYS_AND_WEBHOOKS),
   )
   @Mutation(() => ApiKeyToken)
