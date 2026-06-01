@@ -30,63 +30,83 @@ export const canImpersonate =
 export const canAccessFullAdminPanel =
   null as unknown as CommandMenuContextApi['canAccessFullAdminPanel'];
 
+import { isDefined as realIsDefined, safeGetNestedProperty } from 'twenty-shared/utils';
+import { isNonEmptyString as realIsNonEmptyString, isNonEmptyArray } from '@sniptt/guards';
+
 export const objectMetadataItem =
   null as unknown as CommandMenuContextApi['objectMetadataItem'];
 
 export const objectMetadataLabel =
   null as unknown as CommandMenuContextApi['objectMetadataLabel'];
 
-export const isDefined = null as unknown as (value: unknown) => boolean;
-export const isNonEmptyString = null as unknown as (value: unknown) => boolean;
-export const includes = null as unknown as (
-  array: unknown,
-  value: unknown,
-) => boolean;
-export const every = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const everyDefined = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const everyEquals = null as unknown as (
-  array: unknown,
-  prop: string,
-  value: unknown,
-) => boolean;
-export const some = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const someDefined = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const someEquals = null as unknown as (
-  array: unknown,
-  prop: string,
-  value: unknown,
-) => boolean;
-export const none = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const noneDefined = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const noneEquals = null as unknown as (
-  array: unknown,
-  prop: string,
-  value: unknown,
-) => boolean;
-export const someNonEmptyString = null as unknown as (
-  array: unknown,
-  prop: string,
-) => boolean;
-export const includesEvery = null as unknown as (
-  array: unknown,
-  prop: string,
-  value: unknown,
-) => boolean;
+export const isDefined = realIsDefined;
+export const isNonEmptyString = realIsNonEmptyString;
+
+export const includes = (array: unknown, value: unknown): boolean =>
+  Array.isArray(array) && array.includes(value);
+
+type ArrayMethod = 'every' | 'some';
+
+const createArrayPropCheck = (
+  method: ArrayMethod,
+  predicate: (value: unknown) => boolean,
+) => {
+  return (array: unknown, prop: string): boolean => {
+    if (!isNonEmptyArray(array)) {
+      return false;
+    }
+
+    return array[method]((item) =>
+      predicate(safeGetNestedProperty(item, prop)),
+    );
+  };
+};
+
+const createArrayPropValueCheck = (
+  method: ArrayMethod,
+  predicate: (value: unknown, target: unknown) => boolean,
+) => {
+  return (array: unknown, prop: string, value: unknown): boolean => {
+    if (!isNonEmptyArray(array)) {
+      return false;
+    }
+
+    return array[method]((item) =>
+      predicate(safeGetNestedProperty(item, prop), value),
+    );
+  };
+};
+
+export const every = createArrayPropCheck('every', Boolean);
+
+export const everyDefined = createArrayPropCheck('every', isDefined);
+
+export const everyEquals = createArrayPropValueCheck(
+  'every',
+  (a, b) => a === b,
+);
+
+export const some = createArrayPropCheck('some', Boolean);
+
+export const someDefined = createArrayPropCheck('some', isDefined);
+
+export const someEquals = createArrayPropValueCheck(
+  'some',
+  (a, b) => a === b,
+);
+
+export const none = createArrayPropCheck('every', (value) => !Boolean(value));
+
+export const noneDefined = createArrayPropCheck('every', (value) => !isDefined(value));
+
+export const noneEquals = createArrayPropValueCheck(
+  'every',
+  (a, b) => a !== b,
+);
+
+export const someNonEmptyString = createArrayPropCheck('some', isNonEmptyString);
+
+export const includesEvery = createArrayPropValueCheck(
+  'every',
+  (array, value) => Array.isArray(array) && array.includes(value),
+);
