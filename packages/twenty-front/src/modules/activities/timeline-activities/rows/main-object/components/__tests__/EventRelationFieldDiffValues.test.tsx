@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { type ReactNode } from 'react';
 import { FieldMetadataType } from 'twenty-shared/types';
 
@@ -48,7 +48,20 @@ const relationFieldMetadataItem = {
 const renderWithI18n = (node: ReactNode) =>
   render(<I18nProvider i18n={i18n}>{node}</I18nProvider>);
 
+// react-tooltip relies on floating-ui, which needs ResizeObserver; jsdom does
+// not provide one, so we stub it for the hover-tooltip assertions.
+class ResizeObserverMock {
+  observe(): void {}
+  unobserve(): void {}
+  disconnect(): void {}
+}
+
 describe('EventRelationFieldDiffValues', () => {
+  beforeAll(() => {
+    global.ResizeObserver =
+      ResizeObserverMock as unknown as typeof ResizeObserver;
+  });
+
   beforeEach(() => {
     useObjectMetadataItem.mockReturnValue({
       objectMetadataItem: { nameSingular: 'workspaceMember' },
@@ -105,6 +118,60 @@ describe('EventRelationFieldDiffValues', () => {
     expect(screen.getByText('Tim Apple')).toBeInTheDocument();
     expect(screen.queryByText('Tim A')).not.toBeInTheDocument();
     expect(screen.queryByText('Empty')).not.toBeInTheDocument();
+  });
+
+  // Hovering the value reveals a tooltip with the full before -> after change,
+  // even though only the after value is shown inline.
+  describe('before -> after tooltip on hover', () => {
+    it('does not render the tooltip until the value is hovered', () => {
+      renderWithI18n(
+        <EventRelationFieldDiffValues
+          fieldDiff={{ before: { id: 'before-id' }, after: { id: null } }}
+          fieldMetadataItem={relationFieldMetadataItem}
+        />,
+      );
+
+      expect(screen.queryByText('Tim A → Empty')).not.toBeInTheDocument();
+    });
+
+    it('shows "before → Empty" when a relation is cleared', async () => {
+      renderWithI18n(
+        <EventRelationFieldDiffValues
+          fieldDiff={{ before: { id: 'before-id' }, after: { id: null } }}
+          fieldMetadataItem={relationFieldMetadataItem}
+        />,
+      );
+
+      fireEvent.mouseEnter(screen.getByText('Empty'));
+
+      expect(await screen.findByText('Tim A → Empty')).toBeInTheDocument();
+    });
+
+    it('shows "Empty → after" when a relation is set from null', async () => {
+      renderWithI18n(
+        <EventRelationFieldDiffValues
+          fieldDiff={{ before: { id: null }, after: { id: 'after-id' } }}
+          fieldMetadataItem={relationFieldMetadataItem}
+        />,
+      );
+
+      fireEvent.mouseEnter(screen.getByText('Tim Apple'));
+
+      expect(await screen.findByText('Empty → Tim Apple')).toBeInTheDocument();
+    });
+
+    it('shows "before → after" when a relation changes between two values', async () => {
+      renderWithI18n(
+        <EventRelationFieldDiffValues
+          fieldDiff={{ before: { id: 'before-id' }, after: { id: 'after-id' } }}
+          fieldMetadataItem={relationFieldMetadataItem}
+        />,
+      );
+
+      fireEvent.mouseEnter(screen.getByText('Tim Apple'));
+
+      expect(await screen.findByText('Tim A → Tim Apple')).toBeInTheDocument();
+    });
   });
 
   // Fallback branch: when the relation has no target object metadata, the
