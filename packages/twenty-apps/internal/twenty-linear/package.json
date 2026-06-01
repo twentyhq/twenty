@@ -1,0 +1,32 @@
+{
+  "name": "twenty-linear",
+  "version": "0.1.6",
+  "description": "Linear integration for Twenty. Connect a user's Linear account and create issues from logic functions.",
+  "license": "MIT",
+  "engines": {
+    "node": "^24.5.0",
+    "npm": "please-use-yarn",
+    "yarn": ">=4.0.2"
+  },
+  "keywords": [
+    "twenty-app"
+  ],
+  "packageManager": "yarn@4.9.2",
+  "scripts": {
+    "twenty": "twenty",
+    "lint": "oxlint -c .oxlintrc.json .",
+    "lint:fix": "oxlint --fix -c .oxlintrc.json .",
+    "test": "vitest run --config vitest.unit.config.ts",
+    "test:watch": "vitest --config vitest.unit.config.ts"
+  },
+  "dependencies": {
+    "twenty-sdk": "2.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.2",
+    "oxlint": "^0.16.0",
+    "typescript": "^5.9.3",
+    "vite-tsconfig-paths": "^4.3.2",
+    "vitest": "^3.1.1"
+  }
+}

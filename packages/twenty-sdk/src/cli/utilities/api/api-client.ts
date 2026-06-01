@@ -1,6 +1,8 @@
 import { ConfigService } from '@/cli/utilities/config/config-service';
+import { isNonEmptyString } from '@sniptt/guards';
 import axios, { type AxiosInstance } from 'axios';
 import chalk from 'chalk';
+import { isDefined } from 'twenty-shared/utils';
 
 export class ApiClient {
   readonly client: AxiosInstance;
@@ -51,7 +53,7 @@ export class ApiClient {
         if (error.response?.status === 401) {
           console.error(
             chalk.red(
-              'Authentication failed. Run `yarn twenty remote add` to authenticate.',
+              'Authentication failed. Run `yarn twenty remote:add` to authenticate.',
             ),
           );
         } else if (error.response?.status === 403) {
@@ -68,6 +70,74 @@ export class ApiClient {
         throw error;
       },
     );
+  }
+
+  async getFrontendUrl(): Promise<string | null> {
+    try {
+      const response = await this.client.get(
+        '/.well-known/oauth-authorization-server',
+        { headers: { Accept: 'application/json' } },
+      );
+      const authorizationEndpoint = response.data?.authorization_endpoint;
+
+      if (!isNonEmptyString(authorizationEndpoint)) {
+        return null;
+      }
+
+      return new URL(authorizationEndpoint).origin;
+    } catch {
+      return null;
+    }
+  }
+
+  async getWorkspaceFrontendUrl(): Promise<string | null> {
+    const workspaceFrontendUrl = await this.getCurrentWorkspaceFrontendUrl();
+
+    if (isDefined(workspaceFrontendUrl)) {
+      return workspaceFrontendUrl;
+    }
+
+    return this.getFrontendUrl();
+  }
+
+  private async getCurrentWorkspaceFrontendUrl(): Promise<string | null> {
+    try {
+      const query = `
+        query CurrentWorkspaceForFrontendUrl {
+          currentWorkspace {
+            workspaceUrls {
+              subdomainUrl
+              customUrl
+            }
+          }
+        }
+      `;
+
+      const response = await this.client.post(
+        '/metadata',
+        { query },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: '*/*',
+          },
+        },
+      );
+
+      const workspaceUrls =
+        response.data?.data?.currentWorkspace?.workspaceUrls;
+      const workspaceFrontendUrl = isNonEmptyString(workspaceUrls?.customUrl)
+        ? workspaceUrls.customUrl
+        : workspaceUrls?.subdomainUrl;
+
+      if (!isNonEmptyString(workspaceFrontendUrl)) {
+        return null;
+      }
+
+      return new URL(workspaceFrontendUrl).origin;
+    } catch {
+      return null;
+    }
   }
 
   async validateAuth(): Promise<{ authValid: boolean; serverUp: boolean }> {

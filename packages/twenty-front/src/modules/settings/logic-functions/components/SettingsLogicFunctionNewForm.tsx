@@ -48,6 +48,7 @@ export const SettingsLogicFunctionNewForm = ({
           textAreaId={descriptionTextAreaId}
           placeholder={t`Description`}
           minRows={4}
+          maxRows={5}
           value={formValues.description}
           onChange={onChange('description')}
           readOnly={readonly}

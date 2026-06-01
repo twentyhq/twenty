@@ -93,8 +93,12 @@ export const generateRecordPropertiesZodSchema = (
       return;
     }
 
+    const isRelationOrMorphRelation =
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
+
     if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      isRelationOrMorphRelation &&
       field.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
       const uuidSchema = z.uuidv4();
@@ -107,7 +111,7 @@ export const generateRecordPropertiesZodSchema = (
     }
 
     if (
-      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
+      isRelationOrMorphRelation &&
       field.settings?.relationType === RelationType.ONE_TO_MANY
     ) {
       return;

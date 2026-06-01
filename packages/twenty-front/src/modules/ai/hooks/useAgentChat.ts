@@ -13,22 +13,24 @@ import { AGENT_CHAT_SEND_MESSAGE_EVENT_NAME } from '@/ai/constants/AgentChatSend
 import { AGENT_CHAT_STOP_EVENT_NAME } from '@/ai/constants/AgentChatStopEventName';
 import { SEND_CHAT_MESSAGE } from '@/ai/graphql/mutations/sendChatMessage';
 import { STOP_AGENT_CHAT_STREAM } from '@/ai/graphql/mutations/stopAgentChatStream';
+import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
+import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
+import { useOptimisticallyUnarchiveOnSend } from '@/ai/hooks/useOptimisticallyUnarchiveOnSend';
 import {
   AGENT_CHAT_NEW_THREAD_DRAFT_KEY,
   agentChatDraftsByThreadIdState,
 } from '@/ai/states/agentChatDraftsByThreadIdState';
 import { agentChatErrorComponentFamilyState } from '@/ai/states/agentChatErrorComponentFamilyState';
 import { agentChatInputState } from '@/ai/states/agentChatInputState';
+import { agentChatLastSentBrowsingContextFamilyState } from '@/ai/states/agentChatLastSentBrowsingContextFamilyState';
+import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { agentChatSelectedFilesState } from '@/ai/states/agentChatSelectedFilesState';
 import { agentChatUploadedFilesState } from '@/ai/states/agentChatUploadedFilesState';
-import { agentChatMessagesComponentFamilyState } from '@/ai/states/agentChatMessagesComponentFamilyState';
 import { currentAiChatThreadState } from '@/ai/states/currentAiChatThreadState';
-import { useGetBrowsingContext } from '@/ai/hooks/useBrowsingContext';
-import { useAgentChatModelId } from '@/ai/hooks/useAgentChatModelId';
 import { useListenToBrowserEvent } from '@/browser-event/hooks/useListenToBrowserEvent';
 import { dispatchBrowserEvent } from '@/browser-event/utils/dispatchBrowserEvent';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 export const useAgentChat = (
@@ -36,15 +38,15 @@ export const useAgentChat = (
 ) => {
   const { modelIdForRequest } = useAgentChatModelId();
   const { getBrowsingContext } = useGetBrowsingContext();
+  const { applyOptimisticUnarchive } = useOptimisticallyUnarchiveOnSend();
   const apolloClient = useApolloClient();
+  const { enqueueErrorSnackBar } = useSnackBar();
   const setCurrentAiChatThread = useSetAtomState(currentAiChatThreadState);
   const store = useStore();
 
-  const agentChatSelectedFiles = useAtomStateValue(agentChatSelectedFilesState);
-
   const [, setPendingThreadIdAfterFirstSend] = useState<string | null>(null);
 
-  const [agentChatUploadedFiles, setAgentChatUploadedFiles] = useAtomState(
+  const setAgentChatUploadedFiles = useSetAtomState(
     agentChatUploadedFilesState,
   );
 
@@ -70,11 +72,13 @@ export const useAgentChat = (
       return;
     }
 
-    const isLoading = agentChatSelectedFiles.length > 0;
+    const agentChatSelectedFiles = store.get(agentChatSelectedFilesState.atom);
 
-    if (isLoading) {
+    if (agentChatSelectedFiles.length > 0) {
       return;
     }
+
+    const agentChatUploadedFiles = store.get(agentChatUploadedFilesState.atom);
 
     const threadId = await ensureThreadIdForSend();
 
@@ -93,7 +97,23 @@ export const useAgentChat = (
     }));
 
     const browsingContext = getBrowsingContext();
+    const lastSentBrowsingContextAtom =
+      agentChatLastSentBrowsingContextFamilyState.atomFamily(threadId);
+    const lastSentBrowsingContext = store.get(lastSentBrowsingContextAtom);
+    const isBrowsingContextChanged =
+      lastSentBrowsingContext === undefined
+        ? browsingContext !== null
+        : JSON.stringify(browsingContext) !==
+          JSON.stringify(lastSentBrowsingContext);
+    const browsingContextToSend = isBrowsingContextChanged
+      ? browsingContext
+      : null;
     const messageId = v4();
+    const optimisticMessageCreatedAt = new Date().toISOString();
+    const rollbackOptimisticUnarchive = applyOptimisticUnarchive(
+      threadId,
+      optimisticMessageCreatedAt,
+    );
 
     const optimisticUserMessage: ExtendedUIMessage = {
       id: messageId,
@@ -103,7 +123,7 @@ export const useAgentChat = (
         ...agentChatUploadedFiles,
       ],
       metadata: {
-        createdAt: new Date().toISOString(),
+        createdAt: optimisticMessageCreatedAt,
       },
       status: 'sent',
     };
@@ -122,7 +142,11 @@ export const useAgentChat = (
     store.set(messagesAtom, [...currentMessages, optimisticUserMessage]);
     store.set(errorAtom, null);
 
-    const fileIds = agentChatUploadedFiles.map((file) => file.fileId);
+    const fileAttachments = agentChatUploadedFiles.map((file) => ({
+      id: file.fileId,
+      filename: file.filename,
+    }));
+    const uploadedFilesSnapshot = agentChatUploadedFiles;
 
     setAgentChatUploadedFiles([]);
 
@@ -139,11 +163,16 @@ export const useAgentChat = (
           threadId,
           text: contentToSend,
           messageId,
-          browsingContext: browsingContext ?? null,
+          browsingContext: browsingContextToSend,
           modelId: modelIdForRequest ?? undefined,
-          fileIds: fileIds.length > 0 ? fileIds : undefined,
+          fileAttachments:
+            fileAttachments.length > 0 ? fileAttachments : undefined,
         },
       });
+
+      if (isBrowsingContextChanged) {
+        store.set(lastSentBrowsingContextAtom, browsingContext);
+      }
 
       if (data?.sendChatMessage?.queued) {
         const latestMessages = store.get(messagesAtom);
@@ -167,6 +196,8 @@ export const useAgentChat = (
       const restoredDraftKey =
         draftKey === AGENT_CHAT_NEW_THREAD_DRAFT_KEY ? threadId : draftKey;
 
+      rollbackOptimisticUnarchive?.();
+
       setAgentChatInput(contentToSend);
       setAgentChatDraftsByThreadId((prev) => ({
         ...prev,
@@ -175,6 +206,7 @@ export const useAgentChat = (
           ? { [AGENT_CHAT_NEW_THREAD_DRAFT_KEY]: '' }
           : {}),
       }));
+      setAgentChatUploadedFiles(uploadedFilesSnapshot);
 
       const latestMessages = store.get(messagesAtom);
 
@@ -203,16 +235,15 @@ export const useAgentChat = (
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     store,
-    agentChatSelectedFiles,
     ensureThreadIdForSend,
     setAgentChatInput,
     getBrowsingContext,
-    agentChatUploadedFiles,
     setAgentChatUploadedFiles,
     setAgentChatDraftsByThreadId,
     modelIdForRequest,
     setCurrentAiChatThread,
     apolloClient,
+    applyOptimisticUnarchive,
   ]);
 
   useListenToBrowserEvent({
@@ -227,13 +258,17 @@ export const useAgentChat = (
       return;
     }
 
-    apolloClient
-      .mutate({
+    try {
+      await apolloClient.mutate({
         mutation: STOP_AGENT_CHAT_STREAM,
         variables: { threadId },
-      })
-      .catch(() => {});
-  }, [store, apolloClient]);
+      });
+    } catch (error) {
+      enqueueErrorSnackBar({
+        apolloError: CombinedGraphQLErrors.is(error) ? error : undefined,
+      });
+    }
+  }, [store, apolloClient, enqueueErrorSnackBar]);
 
   useListenToBrowserEvent({
     eventName: AGENT_CHAT_STOP_EVENT_NAME,

@@ -9,6 +9,7 @@ import { contextStoreFilterGroupsComponentState } from '@/context-store/states/c
 import { contextStoreFiltersComponentState } from '@/context-store/states/contextStoreFiltersComponentState';
 import { contextStoreTargetedRecordsRuleComponentState } from '@/context-store/states/contextStoreTargetedRecordsRuleComponentState';
 import { computeContextStoreFilters } from '@/context-store/utils/computeContextStoreFilters';
+import { flattenedFieldMetadataItemsSelector } from '@/object-metadata/states/flattenedFieldMetadataItemsSelector';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { recordStoreFamilyState } from '@/object-record/record-store/states/recordStoreFamilyState';
@@ -89,12 +90,17 @@ export const buildHeadlessCommandContextApi = ({
       ? (currentWorkspaceMember?.timeZone ?? systemTimeZone)
       : systemTimeZone;
 
+  const flattenedFieldMetadataItems = store.get(
+    flattenedFieldMetadataItemsSelector.atom,
+  );
+
   const graphqlFilter = isDefined(objectMetadataItem)
     ? computeContextStoreFilters({
         contextStoreTargetedRecordsRule: targetedRecordsRule,
         contextStoreFilters: filters,
         contextStoreFilterGroups: filterGroups,
         objectMetadataItem,
+        fieldMetadataItems: flattenedFieldMetadataItems,
         filterValueDependencies: {
           currentWorkspaceMemberId: currentWorkspaceMember?.id,
           timeZone: userTimezone,

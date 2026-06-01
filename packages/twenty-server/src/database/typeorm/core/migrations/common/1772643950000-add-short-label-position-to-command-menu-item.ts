@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddShortLabelPositionToCommandMenuItem1772643950000
-  implements MigrationInterface
-{
+export class AddShortLabelPositionToCommandMenuItem1772643950000 implements MigrationInterface {
   name = 'AddShortLabelPositionToCommandMenuItem1772643950000';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

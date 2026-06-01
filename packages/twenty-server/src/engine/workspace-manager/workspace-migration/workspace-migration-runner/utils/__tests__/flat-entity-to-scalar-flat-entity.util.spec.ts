@@ -1,5 +1,6 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { type FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { getFlatFieldMetadataMock } from 'src/engine/metadata-modules/flat-field-metadata/__mocks__/get-flat-field-metadata.mock';
 import { flatEntityToScalarFlatEntity } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/utils/flat-entity-to-scalar-flat-entity.util';
 
@@ -76,5 +77,55 @@ describe('flatEntityToScalarFlatEntity', () => {
   "workspaceId": "workspace-id",
 }
 `);
+  });
+
+  it('should preserve secret application variable value instead of masking it', () => {
+    const encryptedValue = 'dGVzdC1lbmNyeXB0ZWQtdmFsdWUtd2l0aC1pdi1wcmVmaXg=';
+
+    const flatEntity = {
+      id: 'app-var-id',
+      workspaceId: 'workspace-id',
+      applicationId: 'application-id',
+      universalIdentifier: 'app-var-universal-id',
+      applicationUniversalIdentifier: 'app-universal-id',
+      key: 'API_SECRET',
+      value: encryptedValue,
+      description: 'An API secret key',
+      isSecret: true,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+    } as unknown as FlatApplicationVariable;
+
+    const result = flatEntityToScalarFlatEntity({
+      metadataName: 'applicationVariable',
+      flatEntity,
+    });
+
+    expect(result.value).toBe(encryptedValue);
+  });
+
+  it('should preserve non-secret application variable value', () => {
+    const plainValue = 'https://example.com';
+
+    const flatEntity = {
+      id: 'app-var-id',
+      workspaceId: 'workspace-id',
+      applicationId: 'application-id',
+      universalIdentifier: 'app-var-universal-id',
+      applicationUniversalIdentifier: 'app-universal-id',
+      key: 'PUBLIC_URL',
+      value: plainValue,
+      description: 'A public URL',
+      isSecret: false,
+      createdAt: '2025-01-01T00:00:00.000Z',
+      updatedAt: '2025-01-01T00:00:00.000Z',
+    } as unknown as FlatApplicationVariable;
+
+    const result = flatEntityToScalarFlatEntity({
+      metadataName: 'applicationVariable',
+      flatEntity,
+    });
+
+    expect(result.value).toBe(plainValue);
   });
 });

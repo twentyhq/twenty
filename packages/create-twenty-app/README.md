@@ -1,7 +1,7 @@
 <div align="center">
   <a href="https://twenty.com">
     <picture>
-      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/2f25922f4cd5bd61e1427c57c4f8ea224e1d552c/packages/twenty-website/public/images/core/logo.svg" height="128">
+      <img alt="Twenty logo" src="https://raw.githubusercontent.com/twentyhq/twenty/main/packages/twenty-website/public/images/core/logo.svg" height="128">
     </picture>
   </a>
   <h1>Create Twenty App</h1>
@@ -25,39 +25,31 @@ yarn twenty dev
 The scaffolder will:
 
 1. Create a new project with TypeScript, linting, tests, and a preconfigured `twenty` CLI
-2. Optionally start a local Twenty server (Docker)
-3. Open the browser for OAuth authentication
+2. Start a local Twenty server via Docker (pulls the latest image automatically)
+3. Authenticate with the development API key
 
 ## Options
 
-| Flag                           | Description                             |
-| ------------------------------ | --------------------------------------- |
-| `--example <name>`             | Initialize from an example              |
-| `--name <name>`                | Set the app name (skips the prompt)     |
-| `--display-name <displayName>` | Set the display name (skips the prompt) |
-| `--description <description>`  | Set the description (skips the prompt)  |
-| `--skip-local-instance`        | Skip the local server setup prompt      |
-
-By default (no flags), a minimal app is generated with core files and an integration test. Use `--example` to start from a richer example:
-
-```bash
-npx create-twenty-app@latest my-twenty-app --example hello-world
-```
-
-Examples are sourced from [twentyhq/twenty/packages/twenty-apps/examples](https://github.com/twentyhq/twenty/tree/main/packages/twenty-apps/examples).
+| Flag                               | Description                                                           |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `--name <name>`                    | Set the app name                                                      |
+| `--display-name <displayName>`     | Set the display name                                                  |
+| `--description <description>`      | Set the description                                                   |
+| `--url <url>`                      | Twenty workspace URL (default: `http://localhost:2020`)               |
+| `--authentication-method <method>` | `oauth` or `apiKey` (default: `apiKey` for local, `oauth` for remote) |
 
 ## Documentation
 
-Full documentation is available at **[docs.twenty.com/developers/extend/apps](https://docs.twenty.com/developers/extend/apps/getting-started)**:
+Full documentation is available at **[docs.twenty.com/developers/extend/apps](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start)**:
 
-- [Getting Started](https://docs.twenty.com/developers/extend/apps/getting-started) — step-by-step setup, project structure, server management, CI
-- [Building Apps](https://docs.twenty.com/developers/extend/apps/building) — entity definitions, API clients, testing
-- [Publishing](https://docs.twenty.com/developers/extend/apps/publishing) — deploy, npm publish, marketplace
+- [Quick Start](https://docs.twenty.com/developers/extend/apps/getting-started/quick-start) — scaffold, run a local server, sync your code
+- [Concepts](https://docs.twenty.com/developers/extend/apps/getting-started/concepts) — how apps work: entity model, sandboxing, lifecycle
+- [Operations](https://docs.twenty.com/developers/extend/apps/operations/overview) — CLI, testing, CI, deploy and publish
 
 ## Troubleshooting
 
-- Server not starting: check Docker is running (`docker info`), then try `yarn twenty server logs`.
-- Auth not working: make sure you are logged in to Twenty in the browser, then run `yarn twenty remote add`.
+- Server not starting: check Docker is running (`docker info`), then try `yarn twenty docker:logs`.
+- Auth not working: run `yarn twenty remote:add --local` to re-authenticate.
 - Types not generated: ensure `yarn twenty dev` is running — it auto-generates the typed client.
 
 ## Contributing

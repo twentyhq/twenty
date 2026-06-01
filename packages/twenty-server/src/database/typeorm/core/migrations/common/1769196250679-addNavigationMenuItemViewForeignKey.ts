@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddNavigationMenuItemViewForeignKey1769196250679
-  implements MigrationInterface
-{
+export class AddNavigationMenuItemViewForeignKey1769196250679 implements MigrationInterface {
   name = 'AddNavigationMenuItemViewForeignKey1769196250679';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

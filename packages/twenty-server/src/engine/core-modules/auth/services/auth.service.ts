@@ -10,6 +10,7 @@ import ms from 'ms';
 import { PasswordUpdateNotifyEmail } from 'twenty-emails';
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { AppPath, ConnectedAccountProvider } from 'twenty-shared/types';
+import { isNonEmptyString } from '@sniptt/guards';
 import { assertIsDefinedOrThrow, isDefined } from 'twenty-shared/utils';
 import { IsNull, Repository } from 'typeorm';
 
@@ -44,10 +45,8 @@ import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/
 import { LoginTokenService } from 'src/engine/core-modules/auth/token/services/login-token.service';
 import { RefreshTokenService } from 'src/engine/core-modules/auth/token/services/refresh-token.service';
 import { WorkspaceAgnosticTokenService } from 'src/engine/core-modules/auth/token/services/workspace-agnostic-token.service';
-import {
-  AuthContextUser,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { AuthContextUser } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   type AuthProviderWithPasswordType,
   type ExistingUserOrNewUser,
@@ -432,7 +431,7 @@ export class AuthService {
       userId: _impersonatorUserId,
     });
 
-    analytics.insertWorkspaceEvent('Monitoring', {
+    await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.attempted',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -458,7 +457,7 @@ export class AuthService {
       true,
     );
 
-    analytics.insertWorkspaceEvent('Monitoring', {
+    await analytics.insertWorkspaceEvent('Monitoring', {
       eventName: 'workspace.impersonation.issued',
       message: `correlationId=${correlationId}; impersonatorUserWorkspaceId=${impersonatorUserWorkspaceId}; targetUserWorkspaceId=${impersonatedUserWorkspaceId}; workspaceId=${workspaceId}`,
     });
@@ -761,10 +760,12 @@ export class AuthService {
     loginToken,
     workspace,
     billingCheckoutSessionState,
+    returnToPath,
   }: {
     loginToken: string;
     workspace: WorkspaceDomainConfig;
     billingCheckoutSessionState?: string;
+    returnToPath?: string;
   }) {
     const url = this.workspaceDomainsService.buildWorkspaceURL({
       workspace,
@@ -772,6 +773,9 @@ export class AuthService {
       searchParams: {
         loginToken,
         ...(billingCheckoutSessionState ? { billingCheckoutSessionState } : {}),
+        ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
+          ? { returnToPath }
+          : {}),
       },
     });
 
@@ -944,6 +948,7 @@ export class AuthService {
       billingCheckoutSessionState,
       action,
       locale,
+      returnToPath,
     }: MicrosoftRequest['user'] | GoogleRequest['user'],
     authProvider: AuthProviderEnum.Google | AuthProviderEnum.Microsoft,
   ): Promise<string> {
@@ -995,6 +1000,9 @@ export class AuthService {
               targetedTokenType: JwtTokenTypeEnum.WORKSPACE_AGNOSTIC,
             }),
           }),
+          ...(isNonEmptyString(returnToPath) && returnToPath.startsWith('/')
+            ? { returnToPath }
+            : {}),
         },
       });
 
@@ -1066,6 +1074,7 @@ export class AuthService {
         loginToken: loginToken.token,
         workspace,
         billingCheckoutSessionState,
+        returnToPath,
       });
     } catch (error) {
       return this.guardRedirectService.getRedirectErrorUrlAndCaptureExceptions({
@@ -1139,6 +1148,9 @@ export class AuthService {
       case ConnectedAccountProvider.SAML:
         return [];
       case ConnectedAccountProvider.IMAP_SMTP_CALDAV:
+        return [];
+      case ConnectedAccountProvider.EMAIL_GROUP:
+      case ConnectedAccountProvider.APP:
         return [];
       default:
         throw new Error(

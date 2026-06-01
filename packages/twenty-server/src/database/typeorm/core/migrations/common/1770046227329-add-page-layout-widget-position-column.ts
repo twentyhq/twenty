@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddPageLayoutWidgetPositionColumn1770046227329
-  implements MigrationInterface
-{
+export class AddPageLayoutWidgetPositionColumn1770046227329 implements MigrationInterface {
   name = 'AddPageLayoutWidgetPositionColumn1770046227329';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

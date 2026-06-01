@@ -2,19 +2,22 @@ import { Injectable } from '@nestjs/common';
 
 import { ConfidentialClientApplication } from '@azure/msal-node';
 
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import {
   ConnectedAccountRefreshAccessTokenException,
   ConnectedAccountRefreshAccessTokenExceptionCode,
-} from 'src/modules/connected-account/refresh-tokens-manager/exceptions/connected-account-refresh-tokens.exception';
-import type { ConnectedAccountTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import { parseMsalError } from 'src/modules/connected-account/refresh-tokens-manager/drivers/microsoft/utils/parse-msal-error.util';
+import type { ConnectedAccountPlaintextTokens } from 'src/modules/connected-account/refresh-tokens-manager/services/connected-account-refresh-tokens.service';
 
 @Injectable()
 export class MicrosoftAPIRefreshAccessTokenService {
   constructor(private readonly config: TwentyConfigService) {}
 
-  async refreshTokens(refreshToken: string): Promise<ConnectedAccountTokens> {
+  async refreshTokens(
+    refreshToken: PlaintextString,
+  ): Promise<ConnectedAccountPlaintextTokens> {
     const msalClient = new ConfidentialClientApplication({
       auth: {
         clientId: this.config.get('AUTH_MICROSOFT_CLIENT_ID'),
@@ -38,7 +41,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
       }
 
       return {
-        accessToken: response.accessToken,
+        accessToken: response.accessToken as PlaintextString,
         refreshToken: this.extractRefreshTokenFromCache(msalClient),
       };
     } catch (error) {
@@ -52,7 +55,7 @@ export class MicrosoftAPIRefreshAccessTokenService {
 
   private extractRefreshTokenFromCache(
     msalClient: ConfidentialClientApplication,
-  ): string {
+  ): PlaintextString {
     const tokenCache = JSON.parse(msalClient.getTokenCache().serialize());
     const refreshTokenKey = Object.keys(tokenCache.RefreshToken)[0];
 

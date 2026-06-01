@@ -6,7 +6,6 @@ import { TypeORMModule } from 'src/database/typeorm/typeorm.module';
 import { AuditJobModule } from 'src/engine/core-modules/audit/jobs/audit-job.module';
 import { AuthModule } from 'src/engine/core-modules/auth/auth.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
-import { EnforceUsageCapJob } from 'src/engine/core-modules/billing/crons/enforce-usage-cap.job';
 import { BillingProductEntity } from 'src/engine/core-modules/billing/entities/billing-product.entity';
 import { BillingSubscriptionItemEntity } from 'src/engine/core-modules/billing/entities/billing-subscription-item.entity';
 import { BillingSubscriptionEntity } from 'src/engine/core-modules/billing/entities/billing-subscription.entity';
@@ -14,7 +13,9 @@ import { UpdateSubscriptionQuantityJob } from 'src/engine/core-modules/billing/j
 import { StripeModule } from 'src/engine/core-modules/billing/stripe/stripe.module';
 import { EmailSenderJob } from 'src/engine/core-modules/email/email-sender.job';
 import { EmailModule } from 'src/engine/core-modules/email/email.module';
+import { EmailingDomainModule } from 'src/engine/core-modules/emailing-domain/emailing-domain.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
+import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { GenerateSdkClientJob } from 'src/engine/core-modules/sdk-client/jobs/generate-sdk-client.job';
 import { SdkClientModule } from 'src/engine/core-modules/sdk-client/sdk-client.module';
 import { UserWorkspaceModule } from 'src/engine/core-modules/user-workspace/user-workspace.module';
@@ -65,6 +66,7 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     CalendarEventParticipantManagerModule,
     TimelineActivityModule,
     StripeModule,
+    FeatureFlagModule,
     AutoCompaniesAndContactsCreationJobModule,
     TimelineJobModule,
     WebhookJobModule,
@@ -78,12 +80,12 @@ import { WorkflowModule } from 'src/modules/workflow/workflow.module';
     AiChatModule,
     LogicFunctionModule,
     EnterpriseModule,
+    EmailingDomainModule,
   ],
   providers: [
     CleanSuspendedWorkspacesJob,
     CleanOnboardingWorkspacesJob,
     EmailSenderJob,
-    EnforceUsageCapJob,
     UpdateSubscriptionQuantityJob,
     HandleWorkspaceMemberDeletedJob,
     CleanWorkspaceDeletionWarningUserVarsJob,

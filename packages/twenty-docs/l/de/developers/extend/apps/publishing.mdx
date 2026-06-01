@@ -77,6 +77,39 @@ Pre-Release-Tags funktionieren wie erwartet: Das Erhöhen von `1.0.0-rc.1` → `
 
 {/* TODO: add screenshot of the Upgrade button */}
 
+### Kompatibilität der Serverversionen
+
+Wenn Ihre App eine Funktion verwendet, die in einer bestimmten Twenty-Serverversion eingeführt wurde (z. B. OAuth-Anbieter, die in v2.3.0 hinzugefügt wurden), sollten Sie die minimale Serverversion, die Ihre App benötigt, mithilfe des Felds `engines.twenty` in `package.json` angeben:
+
+```json filename="package.json"
+{
+  "name": "twenty-my-app",
+  "version": "1.0.0",
+  "engines": {
+    "node": "^24.5.0",
+    "twenty": ">=2.3.0"
+  }
+}
+```
+
+Der Wert ist ein standardmäßiger [semver-Bereich](https://github.com/npm/node-semver#ranges). Häufige Muster:
+
+| Bereich                            | Bedeutung                                              |
+| ---------------------------------- | ------------------------------------------------------ |
+| `>=2.3.0`                          | Jeder Server ab 2.3.0                                  |
+| `>=2.3.0 \<3.0.0` | 2.3.0 oder höher, aber unter der nächsten Hauptversion |
+| `^2.3.0`                           | Entspricht `>=2.3.0 \<3.0.0`          |
+
+**Was bei Bereitstellung und Installation passiert:**
+
+* Wenn `engines.twenty` gesetzt ist und die Version des Zielservers den Bereich nicht erfüllt, wird die Bereitstellung (Tarball-Upload) oder Installation mit dem Fehler `SERVER_VERSION_INCOMPATIBLE` abgelehnt, zusammen mit einer Meldung, die sowohl den erforderlichen Bereich als auch die tatsächliche Serverversion angibt.
+* Wenn `engines.twenty` nicht gesetzt ist, wird die App auf jeder Serverversion akzeptiert (abwärtskompatibel mit bestehenden Apps).
+* Wenn auf dem Server keine `APP_VERSION` konfiguriert ist, wird die Prüfung übersprungen.
+
+<Note>
+Der Server ist die maßgebliche Prüfinstanz — er validiert `engines.twenty` sowohl beim Tarball-Upload als auch bei der Workspace-Installation. Auch wenn Sie ein Tarball außerhalb des regulären Prozesses bereitstellen oder aus dem Marketplace installieren, erzwingt der Server weiterhin die Kompatibilität.
+</Note>
+
 ## Automatisiertes CI/CD (vorgefertigte Workflows)
 
 Apps, die mit `create-twenty-app` erzeugt wurden, enthalten von Haus aus zwei GitHub-Actions-Workflows unter `.github/workflows/`. Sie sind einsatzbereit, sobald Sie das Repository zu GitHub pushen — für CI ist keine zusätzliche Einrichtung erforderlich, und für CD ist nur ein einziges Secret nötig.
@@ -165,6 +198,14 @@ export default defineApplication({
 
 Siehe das [defineApplication-Akkordeon](/l/de/developers/extend/apps/building#defineentity-functions) auf der Seite Building Apps für die vollständige Liste der Marktplatzfelder (`author`, `category`, `aboutDescription`, `websiteUrl`, `termsUrl` usw.).
 
+#### Empfohlene Abmessungen für Screenshots
+
+Der Marktplatz stellt `screenshots` in einem festen `8:5`-Container dar (zum Beispiel `1600×1000 px`).
+
+<Note>
+Screenshots mit beliebigem Seitenverhältnis werden vollständig angezeigt und niemals beschnitten, aber alles, was deutlich höher oder schmaler als `8:5` ist, zeigt an den Seiten leere Balken.
+</Note>
+
 ### Veröffentlichen
 
 ```bash filename="Terminal"
@@ -184,9 +225,9 @@ Der Twenty-Server synchronisiert seinen Marktplatzkatalog **stündlich** aus der
 Sie können die Synchronisierung sofort auslösen, anstatt zu warten:
 
 ```bash filename="Terminal"
-yarn twenty catalog-sync
+yarn twenty server catalog-sync
 # To target a specific remote:
-# yarn twenty catalog-sync --remote production
+# yarn twenty server catalog-sync --remote production
 ```
 
 Die im Marktplatz angezeigten Metadaten stammen aus Ihrer `defineApplication()`-Konfiguration — Felder wie `displayName`, `description`, `author`, `category`, `logoUrl`, `screenshots`, `aboutDescription`, `websiteUrl` und `termsUrl`.

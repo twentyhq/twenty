@@ -11,13 +11,10 @@ import { CreateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/create-a
 import { GetApiKeyInput } from 'src/engine/core-modules/api-key/dtos/get-api-key.input';
 import { RevokeApiKeyInput } from 'src/engine/core-modules/api-key/dtos/revoke-api-key.input';
 import { UpdateApiKeyInput } from 'src/engine/core-modules/api-key/dtos/update-api-key.input';
-import {
-  ApiKeyException,
-  ApiKeyExceptionCode,
-} from 'src/engine/core-modules/api-key/exceptions/api-key.exception';
 import { apiKeyGraphqlApiExceptionHandler } from 'src/engine/core-modules/api-key/utils/api-key-graphql-api-exception-handler.util';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
@@ -62,6 +59,10 @@ export class ApiKeyResolver {
     }
   }
 
+  // A long-lived API key is durable credential management: only a first-person
+  // session (ACCESS) may mint or alter one, so a short-lived derived token
+  // (PLAYGROUND) or an API key itself cannot escalate into another.
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity)
   async createApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -76,6 +77,7 @@ export class ApiKeyResolver {
     });
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async updateApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -93,6 +95,7 @@ export class ApiKeyResolver {
     return this.apiKeyService.update(input.id, workspace.id, updateData);
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity, { nullable: true })
   async revokeApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,
@@ -101,6 +104,7 @@ export class ApiKeyResolver {
     return this.apiKeyService.revoke(input.id, workspace.id);
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => Boolean)
   async assignRoleToApiKey(
     @AuthWorkspace() workspace: WorkspaceEntity,

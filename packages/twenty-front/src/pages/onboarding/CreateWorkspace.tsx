@@ -141,6 +141,9 @@ export const CreateWorkspace = () => {
   );
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.nativeEvent.isComposing || event.keyCode === 229) {
+      return;
+    }
     if (event.key === Key.Enter) {
       event.preventDefault();
       handleSubmit(onSubmit)();

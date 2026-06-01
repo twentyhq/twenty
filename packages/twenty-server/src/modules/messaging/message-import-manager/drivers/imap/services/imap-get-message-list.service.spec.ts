@@ -8,6 +8,7 @@ import {
 
 import { type MessageFolder } from 'src/modules/messaging/message-folder-manager/interfaces/message-folder-driver.interface';
 
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type ConnectedAccountEntity } from 'src/engine/metadata-modules/connected-account/entities/connected-account.entity';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapGetMessageListService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-message-list.service';
@@ -38,13 +39,15 @@ describe('ImapGetMessageListService', () => {
     | 'id'
     | 'handle'
     | 'connectionParameters'
+    | 'workspaceId'
   > = {
     id: 'connected-account-id',
     provider: ConnectedAccountProvider.IMAP_SMTP_CALDAV,
-    accessToken: 'access-token',
-    refreshToken: 'refresh-token',
+    accessToken: 'access-token' as EncryptedString,
+    refreshToken: 'refresh-token' as EncryptedString,
     handle: 'test@example.com',
     connectionParameters: {},
+    workspaceId: 'workspace-id',
   };
 
   const mockImapClient = {

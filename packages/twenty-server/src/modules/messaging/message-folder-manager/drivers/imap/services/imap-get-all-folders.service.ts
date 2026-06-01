@@ -14,6 +14,7 @@ import { shouldCreateFolderByDefault } from 'src/modules/messaging/message-folde
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
 import { ImapClientProvider } from 'src/modules/messaging/message-import-manager/drivers/imap/providers/imap-client.provider';
 import { ImapFindSentFolderService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-find-sent-folder.service';
+import { getImapFolderPath } from 'src/modules/messaging/message-import-manager/drivers/imap/utils/get-imap-folder-path.util';
 import { getStandardFolderByRegex } from 'src/modules/messaging/message-import-manager/drivers/utils/get-standard-folder-by-regex';
 
 @Injectable()
@@ -28,12 +29,14 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
   public async getAllMessageFolders(
     connectedAccount: Pick<
       ConnectedAccountEntity,
-      'id' | 'provider' | 'connectionParameters' | 'handle'
+      'id' | 'provider' | 'connectionParameters' | 'handle' | 'workspaceId'
     >,
     messageChannel: Pick<MessageChannelEntity, 'messageFolderImportPolicy'>,
   ): Promise<DiscoveredMessageFolder[]> {
     try {
-      const client = await this.imapClientProvider.getClient(connectedAccount);
+      const client = await this.imapClientProvider.getClient(
+        connectedAccount.id,
+      );
 
       const mailboxList = await client.list();
 
@@ -163,15 +166,9 @@ export class ImapGetAllFoldersService implements MessageFolderDriver {
       return false;
     }
 
-    const isDuplicate = existingFolders.some((folder) => {
-      const folderPath = folder?.externalId?.split(':')[0];
-
-      if (!isDefined(folderPath)) {
-        return false;
-      }
-
-      return folderPath === mailbox.path;
-    });
+    const isDuplicate = existingFolders.some(
+      (folder) => getImapFolderPath(folder?.externalId) === mailbox.path,
+    );
 
     return !isDuplicate;
   }

@@ -206,6 +206,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -236,6 +237,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -562,6 +564,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -592,6 +595,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,

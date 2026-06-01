@@ -8,10 +8,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type LoginTokenJwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type LoginTokenJwtPayload } from 'src/engine/core-modules/auth/types/login-token-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { type AuthProviderEnum } from 'src/engine/core-modules/workspace/types/workspace.type';
@@ -37,18 +35,12 @@ export class LoginTokenService {
       impersonatorUserWorkspaceId: options?.impersonatorUserWorkspaceId,
     };
 
-    const secret = this.jwtWrapperService.generateAppSecret(
-      jwtPayload.type,
-      workspaceId,
-    );
-
     const expiresIn = this.twentyConfigService.get('LOGIN_TOKEN_EXPIRES_IN');
 
     const expiresAt = addMilliseconds(new Date().getTime(), ms(expiresIn));
 
     return {
-      token: this.jwtWrapperService.sign(jwtPayload, {
-        secret,
+      token: await this.jwtWrapperService.signAsyncOrThrow(jwtPayload, {
         expiresIn,
       }),
       expiresAt,

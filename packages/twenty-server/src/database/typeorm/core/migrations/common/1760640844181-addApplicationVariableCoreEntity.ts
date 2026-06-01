@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddApplicationVariableEntityCoreEntity1760640844181
-  implements MigrationInterface
-{
+export class AddApplicationVariableEntityCoreEntity1760640844181 implements MigrationInterface {
   name = 'AddApplicationVariableCoreEntity1760640844181';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

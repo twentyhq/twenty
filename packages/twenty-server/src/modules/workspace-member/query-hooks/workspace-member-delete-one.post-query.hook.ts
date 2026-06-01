@@ -22,9 +22,7 @@ import { WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/sta
   key: `workspaceMember.deleteOne`,
   type: WorkspaceQueryHookType.POST_HOOK,
 })
-export class WorkspaceMemberDeleteOnePostQueryHook
-  implements WorkspacePostQueryHookInstance
-{
+export class WorkspaceMemberDeleteOnePostQueryHook implements WorkspacePostQueryHookInstance {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
     @InjectRepository(UserWorkspaceEntity)

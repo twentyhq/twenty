@@ -37,7 +37,7 @@ describe('AccessTokenService', () => {
         {
           provide: JwtWrapperService,
           useValue: {
-            sign: jest.fn(),
+            signAsyncOrThrow: jest.fn(),
             verifyJwtToken: jest.fn(),
             decode: jest.fn(),
             generateAppSecret: jest.fn(),
@@ -137,7 +137,9 @@ describe('AccessTokenService', () => {
       jest.spyOn(globalWorkspaceOrmManager, 'getRepository').mockResolvedValue({
         findOne: jest.fn().mockResolvedValue(mockWorkspaceMember),
       } as any);
-      jest.spyOn(jwtWrapperService, 'sign').mockReturnValue(mockToken);
+      jest
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
 
       const result = await service.generateAccessToken({
         userId,
@@ -149,7 +151,7 @@ describe('AccessTokenService', () => {
         token: mockToken,
         expiresAt: expect.any(Date),
       });
-      expect(jwtWrapperService.sign).toHaveBeenCalledWith(
+      expect(jwtWrapperService.signAsyncOrThrow).toHaveBeenCalledWith(
         expect.objectContaining({
           sub: userId,
           workspaceId: workspaceId,
@@ -197,8 +199,8 @@ describe('AccessTokenService', () => {
         findOne: jest.fn().mockResolvedValue(mockWorkspaceMember),
       } as any);
       const signSpy = jest
-        .spyOn(jwtWrapperService, 'sign')
-        .mockReturnValue(mockToken);
+        .spyOn(jwtWrapperService, 'signAsyncOrThrow')
+        .mockResolvedValue(mockToken);
 
       await service.generateAccessToken({
         userId,
@@ -222,6 +224,12 @@ describe('AccessTokenService', () => {
     it('should throw an error if user is not found', async () => {
       jest.spyOn(twentyConfigService, 'get').mockReturnValue('1h');
       jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
+      jest
+        .spyOn(workspaceRepository, 'findOne')
+        .mockResolvedValue({} as WorkspaceEntity);
+      jest
+        .spyOn(userWorkspaceRepository, 'findOne')
+        .mockResolvedValue({} as UserWorkspaceEntity);
 
       await expect(
         service.generateAccessToken({

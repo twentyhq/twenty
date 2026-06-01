@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`Sync application should fail when creating permissions on a standard role from another app should fail when adding a field permission under the standard admin role 1`] = `
 {
@@ -63,7 +63,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
       "role": 1,
       "totalErrors": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
@@ -75,29 +75,6 @@ exports[`Sync application should fail when creating permissions on a standard ro
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
     "errors": {
-      "permissionFlag": [
-        {
-          "errors": [
-            {
-              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
-              "message": "Cannot target a role owned by another application",
-              "userFriendlyMessage": "Cannot target a role owned by another application.",
-            },
-            {
-              "code": "ROLE_NOT_EDITABLE",
-              "message": "Role is not editable",
-              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
-            },
-          ],
-          "flatEntityMinimalInformation": {
-            "roleUniversalIdentifier": Any<String>,
-            "universalIdentifier": Any<String>,
-          },
-          "metadataName": "permissionFlag",
-          "status": "fail",
-          "type": "create",
-        },
-      ],
       "role": [
         {
           "errors": [
@@ -114,14 +91,38 @@ exports[`Sync application should fail when creating permissions on a standard ro
           "type": "create",
         },
       ],
+      "rolePermissionFlag": [
+        {
+          "errors": [
+            {
+              "code": "ROLE_BELONGS_TO_ANOTHER_APPLICATION",
+              "message": "Cannot target a role owned by another application",
+              "userFriendlyMessage": "Cannot target a role owned by another application.",
+            },
+            {
+              "code": "ROLE_NOT_EDITABLE",
+              "message": "Role is not editable",
+              "userFriendlyMessage": "This role cannot be modified because it is a system role. Only custom roles can be edited.",
+            },
+          ],
+          "flatEntityMinimalInformation": {
+            "permissionFlagUniversalIdentifier": Any<String>,
+            "roleUniversalIdentifier": Any<String>,
+            "universalIdentifier": Any<String>,
+          },
+          "metadataName": "rolePermissionFlag",
+          "status": "fail",
+          "type": "create",
+        },
+      ],
     },
-    "message": "Validation failed for 1 role, 1 permissionFlag",
+    "message": "Validation failed for 1 role, 1 rolePermissionFlag",
     "summary": {
-      "permissionFlag": 1,
       "role": 1,
+      "rolePermissionFlag": 1,
       "totalErrors": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",
@@ -185,7 +186,7 @@ exports[`Sync application should fail when creating permissions on a standard ro
       "role": 1,
       "totalErrors": 2,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Many validation errors",
   },
   "message": "Validation errors occurred while syncing application manifest metadata",
   "name": "GraphQLError",

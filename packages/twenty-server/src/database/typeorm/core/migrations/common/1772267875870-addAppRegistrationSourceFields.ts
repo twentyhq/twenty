@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddAppRegistrationSourceFields1772267875870
-  implements MigrationInterface
-{
+export class AddAppRegistrationSourceFields1772267875870 implements MigrationInterface {
   name = 'AddAppRegistrationSourceFields1772267875870';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

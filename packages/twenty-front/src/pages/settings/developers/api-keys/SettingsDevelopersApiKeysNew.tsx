@@ -21,6 +21,7 @@ import { Section } from 'twenty-ui/layout';
 import {
   CreateApiKeyDocument,
   GenerateApiKeyTokenDocument,
+  GetApiKeysDocument,
   GetRolesDocument,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -58,7 +59,10 @@ export const SettingsDevelopersApiKeysNew = () => {
     }
   }, [rolesData]);
 
-  const [createApiKey] = useMutation(CreateApiKeyDocument);
+  const [createApiKey] = useMutation(CreateApiKeyDocument, {
+    refetchQueries: [GetApiKeysDocument],
+    awaitRefetchQueries: true,
+  });
 
   const jotaiStore = useStore();
 
@@ -155,6 +159,9 @@ export const SettingsDevelopersApiKeysNew = () => {
             placeholder={t`E.g. backoffice integration`}
             value={formValues.name}
             onKeyDown={(e) => {
+              if (e.nativeEvent.isComposing || e.keyCode === 229) {
+                return;
+              }
               if (e.key === Key.Enter) {
                 handleSave();
               }

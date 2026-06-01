@@ -1,5 +1,6 @@
-import { signEnterpriseKey } from '@/shared/enterprise/enterprise-jwt';
-import { getStripeClient } from '@/shared/enterprise/stripe-client';
+import { signEnterpriseKey } from '@/lib/enterprise/enterprise-jwt';
+import { getStripeClient } from '@/lib/enterprise/stripe-client';
+import { NextResponse } from 'next/server';
 
 export const dynamic = 'force-dynamic';
 
@@ -9,9 +10,9 @@ export async function GET(request: Request) {
     const sessionId = url.searchParams.get('session_id');
 
     if (!sessionId) {
-      return new Response(
-        JSON.stringify({ error: 'Missing session_id parameter' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      return NextResponse.json(
+        { error: 'Missing session_id parameter' },
+        { status: 400 },
       );
     }
 
@@ -21,19 +22,40 @@ export async function GET(request: Request) {
       expand: ['subscription', 'customer'],
     });
 
-    if (session.payment_status !== 'paid') {
-      return new Response(
-        JSON.stringify({ error: 'Payment not completed' }),
-        { status: 402, headers: { 'Content-Type': 'application/json' } },
+    const SUCCESSFUL_PAYMENT_STATUSES: Array<typeof session.payment_status> = [
+      'paid',
+      'no_payment_required',
+    ];
+
+    if (
+      session.status !== 'complete' ||
+      !SUCCESSFUL_PAYMENT_STATUSES.includes(session.payment_status)
+    ) {
+      return NextResponse.json(
+        { error: 'Checkout session is not completed' },
+        { status: 402 },
       );
     }
 
     const subscription = session.subscription;
 
     if (!subscription || typeof subscription === 'string') {
-      return new Response(
-        JSON.stringify({ error: 'Subscription not found' }),
-        { status: 400, headers: { 'Content-Type': 'application/json' } },
+      return NextResponse.json(
+        { error: 'Subscription not found' },
+        { status: 400 },
+      );
+    }
+
+    const ACTIVATABLE_SUBSCRIPTION_STATUSES: Array<typeof subscription.status> =
+      ['active', 'trialing'];
+
+    if (!ACTIVATABLE_SUBSCRIPTION_STATUSES.includes(subscription.status)) {
+      return NextResponse.json(
+        {
+          error: 'Subscription is not active',
+          status: subscription.status,
+        },
+        { status: 402 },
       );
     }
 
@@ -45,18 +67,17 @@ export async function GET(request: Request) {
 
     const enterpriseKey = signEnterpriseKey(subscription.id, licensee);
 
-    return Response.json({
+    return NextResponse.json({
       enterpriseKey,
       licensee,
       subscriptionId: subscription.id,
     });
   } catch (error: unknown) {
-    const message =
-      error instanceof Error ? error.message : 'Unknown error';
+    const message = error instanceof Error ? error.message : 'Unknown error';
 
-    return new Response(
-      JSON.stringify({ error: `Activation error: ${message}` }),
-      { status: 500, headers: { 'Content-Type': 'application/json' } },
+    return NextResponse.json(
+      { error: `Activation error: ${message}` },
+      { status: 500 },
     );
   }
 }

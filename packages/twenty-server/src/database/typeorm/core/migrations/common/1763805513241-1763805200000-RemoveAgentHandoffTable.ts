@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class RemoveAgentHandoffTable1763805513241
-  implements MigrationInterface
-{
+export class RemoveAgentHandoffTable1763805513241 implements MigrationInterface {
   name = 'RemoveAgentHandoffTable1763805513241';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

@@ -1,13 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-
-import { Repository } from 'typeorm';
 
 import { ExceptionHandlerService } from 'src/engine/core-modules/exception-handler/exception-handler.service';
+import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
+import {
+  ConnectedAccountRefreshAccessTokenException,
+  ConnectedAccountRefreshAccessTokenExceptionCode,
+} from 'src/engine/metadata-modules/connected-account/exceptions/connected-account-refresh-tokens.exception';
 import {
   type TwentyORMException,
   TwentyORMExceptionCode,
 } from 'src/engine/twenty-orm/exceptions/twenty-orm.exception';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { CALENDAR_THROTTLE_MAX_ATTEMPTS } from 'src/modules/calendar/calendar-event-import-manager/constants/calendar-throttle-max-attempts';
 import {
   type CalendarEventImportDriverException,
@@ -18,7 +22,6 @@ import {
   CalendarEventImportExceptionCode,
 } from 'src/modules/calendar/calendar-event-import-manager/exceptions/calendar-event-import.exception';
 import { CalendarChannelSyncStatusService } from 'src/modules/calendar/common/services/calendar-channel-sync-status.service';
-import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 export enum CalendarEventImportSyncStep {
   CALENDAR_EVENT_LIST_FETCH = 'CALENDAR_EVENT_LIST_FETCH',
   CALENDAR_EVENTS_IMPORT = 'CALENDAR_EVENTS_IMPORT',
@@ -30,14 +33,17 @@ export class CalendarEventImportErrorHandlerService {
     CalendarEventImportErrorHandlerService.name,
   );
   constructor(
-    @InjectRepository(CalendarChannelEntity)
-    private readonly calendarChannelRepository: Repository<CalendarChannelEntity>,
+    @InjectWorkspaceScopedRepository(CalendarChannelEntity)
+    private readonly calendarChannelRepository: WorkspaceScopedRepository<CalendarChannelEntity>,
     private readonly calendarChannelSyncStatusService: CalendarChannelSyncStatusService,
     private readonly exceptionHandlerService: ExceptionHandlerService,
   ) {}
 
   public async handleDriverException(
-    exception: CalendarEventImportDriverException | TwentyORMException,
+    exception:
+      | CalendarEventImportDriverException
+      | TwentyORMException
+      | ConnectedAccountRefreshAccessTokenException,
     syncStep: CalendarEventImportSyncStep,
     calendarChannel: Pick<CalendarChannelEntity, 'id' | 'throttleFailureCount'>,
     workspaceId: string,
@@ -52,6 +58,7 @@ export class CalendarEventImportErrorHandlerService {
         break;
       case TwentyORMExceptionCode.QUERY_READ_TIMEOUT:
       case CalendarEventImportDriverExceptionCode.TEMPORARY_ERROR:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.TEMPORARY_NETWORK_ERROR:
         await this.handleTemporaryException(
           syncStep,
           calendarChannel,
@@ -59,6 +66,8 @@ export class CalendarEventImportErrorHandlerService {
         );
         break;
       case CalendarEventImportDriverExceptionCode.INSUFFICIENT_PERMISSIONS:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.REFRESH_TOKEN_NOT_FOUND:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.INVALID_REFRESH_TOKEN:
         await this.handleInsufficientPermissionsException(
           calendarChannel,
           workspaceId,
@@ -70,6 +79,8 @@ export class CalendarEventImportErrorHandlerService {
       case CalendarEventImportDriverExceptionCode.CHANNEL_MISCONFIGURED:
       case CalendarEventImportDriverExceptionCode.UNKNOWN:
       case CalendarEventImportDriverExceptionCode.UNKNOWN_NETWORK_ERROR:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.ACCESS_TOKEN_NOT_FOUND:
+      case ConnectedAccountRefreshAccessTokenExceptionCode.PROVIDER_NOT_SUPPORTED:
       default:
         await this.handleUnknownException(
           exception,
@@ -130,7 +141,8 @@ export class CalendarEventImportErrorHandlerService {
     }
 
     await this.calendarChannelRepository.increment(
-      { id: calendarChannel.id, workspaceId },
+      workspaceId,
+      { id: calendarChannel.id },
       'throttleFailureCount',
       1,
     );

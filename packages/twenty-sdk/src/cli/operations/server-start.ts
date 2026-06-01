@@ -9,6 +9,7 @@ import {
   DEFAULT_PORT,
   DEFAULT_TEST_PORT,
   getContainerPort,
+  getDockerNotRunningMessage,
   IMAGE,
   isContainerRunning,
   TEST_CONTAINER_NAME,
@@ -17,6 +18,7 @@ import {
   checkServerHealth,
   detectLocalServer,
 } from '@/cli/utilities/server/detect-local-server';
+import { checkServerVersionCompatibility } from '@/cli/utilities/version/check-server-version-compatibility';
 import { execSync, spawn, spawnSync } from 'node:child_process';
 import chalk from 'chalk';
 
@@ -148,11 +150,15 @@ const innerServerStart = async (
   }
 
   if (!checkDockerRunning()) {
+    const retryCommand = isTest
+      ? 'yarn twenty docker:start --test'
+      : 'yarn twenty docker:start';
+
     return {
       success: false,
       error: {
         code: SERVER_ERROR_CODES.DOCKER_NOT_RUNNING,
-        message: 'Docker is not running. Please start Docker and try again.',
+        message: getDockerNotRunningMessage(retryCommand),
       },
     };
   }
@@ -171,7 +177,7 @@ const innerServerStart = async (
           code: SERVER_ERROR_CODES.HEALTH_TIMEOUT,
           message:
             'Twenty server did not become healthy in time.\n' +
-            "Check: 'yarn twenty server logs'",
+            "Check: 'yarn twenty docker:logs'",
         },
       };
     }
@@ -196,7 +202,7 @@ const innerServerStart = async (
 
     if (existingPort !== port) {
       onProgress?.(
-        `Existing container uses port ${existingPort}. Run 'yarn twenty server reset${isTest ? ' --test' : ''}' first to change ports.`,
+        `Existing container uses port ${existingPort}. Run 'yarn twenty docker:reset${isTest ? ' --test' : ''}' first to change ports.`,
       );
     }
 
@@ -205,7 +211,7 @@ const innerServerStart = async (
     onProgress?.('Starting existing container...');
     execSync(`docker start ${containerName}`, { stdio: 'ignore' });
   } else {
-    onProgress?.('Starting Twenty container...');
+    onProgress?.('Pulling Docker image and starting Twenty container...');
 
     const runResult = spawnSync(
       'docker',
@@ -251,7 +257,7 @@ const innerServerStart = async (
         code: SERVER_ERROR_CODES.HEALTH_TIMEOUT,
         message:
           'Twenty server did not become healthy in time.\n' +
-          "Check: 'yarn twenty server logs'",
+          "Check: 'yarn twenty docker:logs'",
       },
     };
   }
@@ -269,10 +275,19 @@ const innerServerStart = async (
   return { success: true, data: { port, url } };
 };
 
-export const serverStart = (
+export const serverStart = async (
   options?: ServerStartOptions,
-): Promise<CommandResult<ServerStartResult>> =>
-  runSafe(
+): Promise<CommandResult<ServerStartResult>> => {
+  const result = await runSafe(
     () => innerServerStart(options),
     SERVER_ERROR_CODES.CONTAINER_START_FAILED,
   );
+
+  if (result.success) {
+    const containerName = options?.test ? TEST_CONTAINER_NAME : CONTAINER_NAME;
+
+    await checkServerVersionCompatibility(containerName);
+  }
+
+  return result;
+};

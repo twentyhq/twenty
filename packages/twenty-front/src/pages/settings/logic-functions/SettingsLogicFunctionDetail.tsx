@@ -44,6 +44,11 @@ export const SettingsLogicFunctionDetail = () => {
 
   const applicationName = data?.findOneApplication?.name;
 
+  const applicationVariableKeys =
+    data?.findOneApplication?.applicationVariables?.map(
+      (variable) => variable.key,
+    ) ?? [];
+
   const workspaceCustomApplicationId =
     currentWorkspace?.workspaceCustomApplication?.id;
 
@@ -152,6 +157,7 @@ export const SettingsLogicFunctionDetail = () => {
               handleExecute={handleTestFunction}
               onChange={onChange('sourceHandlerCode')}
               isTesting={isExecuting}
+              applicationVariableKeys={applicationVariableKeys}
             />
           )}
           {isTriggersTab && (

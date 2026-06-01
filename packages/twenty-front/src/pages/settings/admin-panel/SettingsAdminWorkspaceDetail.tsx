@@ -16,19 +16,19 @@ import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
-import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
+import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
+import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
 import { TableBody } from '@/ui/layout/table/components/TableBody';
 import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import {
@@ -49,6 +49,7 @@ import {
   type FeatureFlagKey,
   type GetAdminWorkspaceChatThreadsQuery,
   type WorkspaceLookupAdminPanelQuery,
+  GetUpgradeStatusDocument,
   UpdateWorkspaceFeatureFlagDocument,
 } from '~/generated-admin/graphql';
 
@@ -77,10 +78,13 @@ export const SettingsAdminWorkspaceDetail = () => {
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateFeatureFlagState } = useFeatureFlagState();
+  const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
     client: apolloAdminClient,
+    refetchQueries: [
+      { query: WORKSPACE_LOOKUP_ADMIN_PANEL, variables: { workspaceId } },
+    ],
   });
 
   const { data: workspaceData, loading: isLoadingWorkspace } =
@@ -106,6 +110,15 @@ export const SettingsAdminWorkspaceDetail = () => {
           effectiveTabId !== WORKSPACE_DETAIL_TAB_IDS.CHATS,
       },
     );
+  const { data: workspaceUpgradeStatusData } = useQuery(
+    GetUpgradeStatusDocument,
+    {
+      client: apolloAdminClient,
+      variables: { workspaceIds: workspaceId ? [workspaceId] : [] },
+      skip: !workspaceId,
+      fetchPolicy: 'network-only',
+    },
+  );
 
   const threads = threadsData?.getAdminWorkspaceChatThreads ?? [];
 
@@ -211,7 +224,12 @@ export const SettingsAdminWorkspaceDetail = () => {
         />
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.INFO && workspace && (
-          <SettingsAdminWorkspaceContent activeWorkspace={workspace} />
+          <SettingsAdminWorkspaceContent
+            activeWorkspace={workspace}
+            workspaceUpgradeStatus={workspaceUpgradeStatusData?.getUpgradeStatus?.find(
+              (status) => status?.workspaceId === workspaceId,
+            )}
+          />
         )}
 
         {effectiveTabId === WORKSPACE_DETAIL_TAB_IDS.BILLING &&

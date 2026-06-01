@@ -24,6 +24,8 @@ export class CustomDomainManagerService {
   constructor(
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    // Enforces global uniqueness of a custom domain across all workspaces.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(PublicDomainEntity)
     private readonly publicDomainRepository: Repository<PublicDomainEntity>,
     private readonly billingService: BillingService,
@@ -114,7 +116,7 @@ export class CustomDomainManagerService {
         workspaceId: workspace.id,
       });
 
-      analytics.insertWorkspaceEvent(
+      void analytics.insertWorkspaceEvent(
         workspace.isCustomDomainEnabled
           ? CUSTOM_DOMAIN_ACTIVATED_EVENT
           : CUSTOM_DOMAIN_DEACTIVATED_EVENT,

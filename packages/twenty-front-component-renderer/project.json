@@ -66,10 +66,16 @@
       ],
       "inputs": [
         "{projectRoot}/scripts/front-component-stories/**/*",
-        "{projectRoot}/src/__stories__/example-sources/*",
+        "{projectRoot}/src/__stories__/html-tag/**/*",
+        "{projectRoot}/src/__stories__/host-api/**/*",
+        "{projectRoot}/src/__stories__/showcase/**/*",
+        "{projectRoot}/src/__stories__/shared/front-components/**/*",
         "{workspaceRoot}/packages/twenty-sdk/src/cli/utilities/build/**/*"
       ],
-      "outputs": ["{projectRoot}/src/__stories__/example-sources-built/*"],
+      "outputs": [
+        "{projectRoot}/src/__stories__/example-sources-built/*",
+        "{projectRoot}/src/__stories__/example-sources-built-preact/*"
+      ],
       "options": {
         "command": "tsx {projectRoot}/scripts/front-component-stories/build-source-examples.ts"
       }

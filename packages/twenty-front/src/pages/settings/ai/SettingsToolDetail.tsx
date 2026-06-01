@@ -92,7 +92,7 @@ export const SettingsToolDetail = () => {
     : systemTool?.description;
 
   const inputSchema = isCustomTool
-    ? logicFunction?.toolInputSchema
+    ? logicFunction?.toolTriggerSettings?.inputSchema
     : schemaData?.getToolInputSchema;
 
   const functionLink = isCustomTool
@@ -229,6 +229,7 @@ export const SettingsToolDetail = () => {
                 textAreaId="tool-description-textarea"
                 placeholder={t`Write a description`}
                 minRows={3}
+                maxRows={5}
                 value={editedDescription ?? description ?? ''}
                 onChange={handleDescriptionChange}
                 disabled={isReadOnly}

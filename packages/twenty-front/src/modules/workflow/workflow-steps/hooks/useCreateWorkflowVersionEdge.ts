@@ -1,4 +1,5 @@
 import { useApolloCoreClient } from '@/object-metadata/hooks/useApolloCoreClient';
+import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { useMutation } from '@apollo/client/react';
 import {
   type CreateWorkflowVersionEdgeMutation,
@@ -12,6 +13,7 @@ export const useCreateWorkflowVersionEdge = () => {
   const apolloCoreClient = useApolloCoreClient();
 
   const { updateWorkflowVersionCache } = useUpdateWorkflowVersionCache();
+  const { enqueueErrorSnackBar } = useSnackBar();
 
   const [mutate] = useMutation<
     CreateWorkflowVersionEdgeMutation,
@@ -21,7 +23,12 @@ export const useCreateWorkflowVersionEdge = () => {
   const createWorkflowVersionEdge = async (
     input: CreateWorkflowVersionEdgeInput,
   ) => {
-    const result = await mutate({ variables: { input } });
+    const result = await mutate({
+      variables: { input },
+      onError: (error) => {
+        enqueueErrorSnackBar({ apolloError: error });
+      },
+    });
 
     const workflowVersionStepChanges = result?.data?.createWorkflowVersionEdge;
 

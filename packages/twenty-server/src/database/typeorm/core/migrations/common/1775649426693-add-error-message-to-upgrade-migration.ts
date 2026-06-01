@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddErrorMessageToUpgradeMigration1775649426693
-  implements MigrationInterface
-{
+export class AddErrorMessageToUpgradeMigration1775649426693 implements MigrationInterface {
   name = 'AddErrorMessageToUpgradeMigration1775649426693';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

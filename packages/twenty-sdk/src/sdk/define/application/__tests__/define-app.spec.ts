@@ -6,7 +6,6 @@ describe('defineApplication', () => {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
-      icon: 'IconWorld',
       defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     };
 
@@ -22,7 +21,6 @@ describe('defineApplication', () => {
       universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
       displayName: 'My App',
       description: 'My app description',
-      icon: 'IconWorld',
       applicationVariables: {
         API_KEY: {
           universalIdentifier: '3a327392-3a0f-4605-9223-0633f063eaf6',
@@ -41,6 +39,38 @@ describe('defineApplication', () => {
     expect(result.config?.defaultRoleUniversalIdentifier).toBe(
       '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
     );
+  });
+
+  it('should accept config without defaultRoleUniversalIdentifier (auto-wired by defineApplicationRole)', () => {
+    const config = {
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+    };
+
+    const result = defineApplication(config);
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(result.warnings).toEqual([]);
+    expect(result.config?.defaultRoleUniversalIdentifier).toBeUndefined();
+  });
+
+  it('should warn that defaultRoleUniversalIdentifier is deprecated when provided', () => {
+    const result = defineApplication({
+      universalIdentifier: 'a9faf5f8-cf7e-4f24-9d37-fd523c30febe',
+      displayName: 'My App',
+      description: 'My app description',
+      defaultRoleUniversalIdentifier: '68bb56f3-8300-4cb5-8cc3-8da9ee66f1b2',
+    });
+
+    const warnings = result.warnings ?? [];
+
+    expect(result.success).toBe(true);
+    expect(result.errors).toEqual([]);
+    expect(warnings).toHaveLength(1);
+    expect(warnings[0]).toMatch(/deprecated/i);
+    expect(warnings[0]).toMatch(/defineApplicationRole/);
   });
 
   it('should return error when universalIdentifier is missing', () => {

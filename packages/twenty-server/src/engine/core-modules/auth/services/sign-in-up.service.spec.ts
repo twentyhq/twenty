@@ -86,7 +86,7 @@ const createSignInUpServiceForTests = () => {
       markEmailAsVerified: jest.fn(),
     } as any,
     {
-      incrementCounter: jest.fn(),
+      incrementCounterForEvent: jest.fn(),
     } as any,
     {
       invalidateAndRecompute: jest.fn(),
@@ -99,6 +99,11 @@ const createSignInUpServiceForTests = () => {
     } as any,
     {
       isValid: jest.fn().mockReturnValue(false),
+    } as any,
+    {
+      createContext: jest.fn().mockReturnValue({
+        insertWorkspaceEvent: jest.fn(),
+      }),
     } as any,
     {
       createQueryRunner: jest.fn(() => queryRunnerMock),
@@ -123,8 +128,7 @@ describe('SignInUpService workspace-creation policy', () => {
     } = createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      false;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
     mockWorkspaceRepository.count.mockResolvedValue(0);
     mockUserRepository.count.mockResolvedValue(0);
     jest
@@ -152,8 +156,7 @@ describe('SignInUpService workspace-creation policy', () => {
     } = createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = true;
     mockWorkspaceRepository.count.mockResolvedValue(0);
     mockUserRepository.count.mockResolvedValue(0);
     jest
@@ -181,8 +184,7 @@ describe('SignInUpService workspace-creation policy', () => {
     } = createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      false;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
     mockWorkspaceRepository.count.mockResolvedValue(1);
     mockUserRepository.count.mockResolvedValue(1);
     jest
@@ -210,8 +212,7 @@ describe('SignInUpService workspace-creation policy', () => {
     } = createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      false;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
     mockWorkspaceRepository.count.mockResolvedValue(0);
     mockUserRepository.count.mockResolvedValue(1);
     jest
@@ -235,8 +236,7 @@ describe('SignInUpService workspace-creation policy', () => {
       createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = true;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      true;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = true;
     mockWorkspaceRepository.count.mockResolvedValue(1);
 
     const nonAdminExistingUser = {
@@ -260,8 +260,7 @@ describe('SignInUpService workspace-creation policy', () => {
       createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = false;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      false;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
     mockWorkspaceRepository.count.mockResolvedValue(1);
 
     await expect(
@@ -283,8 +282,7 @@ describe('SignInUpService workspace-creation policy', () => {
       createSignInUpServiceForTests();
 
     mockConfigurationValues.IS_MULTIWORKSPACE_ENABLED = false;
-    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS =
-      false;
+    mockConfigurationValues.IS_WORKSPACE_CREATION_LIMITED_TO_SERVER_ADMINS = false;
     mockWorkspaceRepository.count.mockResolvedValue(1);
     jest
       .spyOn((service as any).userService, 'findUserByEmail')

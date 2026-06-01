@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 
 import { FieldMetadataType, type ObjectRecord } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 import { type FindOptionsRelations, type ObjectLiteral } from 'typeorm';
 
+import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { STANDARD_ERROR_MESSAGE } from 'src/engine/api/common/common-query-runners/errors/standard-error-message.constant';
@@ -173,7 +175,7 @@ export class ProcessNestedRelationsV2Helper {
       targetObjectNameSingular,
     );
 
-    const columnsToSelect = buildColumnsToSelect({
+    const columnsToSelect: Record<string, boolean> = buildColumnsToSelect({
       select: selectedFields,
       relations: nestedRelations,
       flatObjectMetadata: targetObjectMetadata,
@@ -181,27 +183,47 @@ export class ProcessNestedRelationsV2Helper {
       flatFieldMetadataMaps,
     });
 
+    if (relationType === RelationType.MANY_TO_ONE) {
+      columnsToSelect.deletedAt = true;
+      targetObjectQueryBuilder = targetObjectQueryBuilder.withDeleted();
+    }
+
     targetObjectQueryBuilder = targetObjectQueryBuilder.setFindOptions({
       select: columnsToSelect,
+    });
+
+    const joinColumnName = computeMorphOrRelationFieldJoinColumnName({
+      name: sourceFieldName,
     });
 
     const relationIds = this.getUniqueIds({
       records: parentObjectRecords,
       idField:
-        relationType === RelationType.ONE_TO_MANY
-          ? 'id'
-          : (sourceFieldMetadata.settings.joinColumnName ??
-            `${sourceFieldName}Id`),
+        relationType === RelationType.ONE_TO_MANY ? 'id' : joinColumnName,
     });
 
+    if (
+      relationType === RelationType.ONE_TO_MANY &&
+      !isDefined(targetRelationName)
+    ) {
+      throw new GraphqlQueryRunnerException(
+        `Could not resolve target relation for one-to-many field ${sourceFieldName}`,
+        GraphqlQueryRunnerExceptionCode.RELATION_TARGET_OBJECT_METADATA_NOT_FOUND,
+        { userFriendlyMessage: STANDARD_ERROR_MESSAGE },
+      );
+    }
+
     const fieldMetadataTargetRelationColumnName =
-      targetRelation &&
-      isFieldMetadataEntityOfType(
-        targetRelation,
-        FieldMetadataType.MORPH_RELATION,
-      )
-        ? `${targetRelation.settings?.joinColumnName}`
-        : `${targetRelationName}Id`;
+      computeMorphOrRelationFieldJoinColumnName({
+        name:
+          targetRelation &&
+          isFieldMetadataEntityOfType(
+            targetRelation,
+            FieldMetadataType.MORPH_RELATION,
+          )
+            ? targetRelation.name
+            : (targetRelationName as string),
+      });
 
     const { relationResults, relationAggregatedFieldsResult } =
       await this.findRelations({
@@ -227,7 +249,9 @@ export class ProcessNestedRelationsV2Helper {
         relationType === RelationType.ONE_TO_MANY
           ? `${fieldMetadataTargetRelationColumnName}`
           : 'id',
+      joinColumnName,
       relationType,
+      selectedFields,
     });
 
     if (Object.keys(nestedRelations).length > 0) {
@@ -398,7 +422,9 @@ export class ProcessNestedRelationsV2Helper {
     relationAggregatedFieldsResult,
     sourceFieldName,
     joinField,
+    joinColumnName,
     relationType,
+    selectedFields,
   }: {
     parentRecords: ObjectRecord[];
     // oxlint-disable-next-line @typescripttypescript/no-explicit-any
@@ -409,7 +435,9 @@ export class ProcessNestedRelationsV2Helper {
     relationAggregatedFieldsResult: Record<string, any>;
     sourceFieldName: string;
     joinField: string;
+    joinColumnName: string;
     relationType: RelationType;
+    selectedFields: Record<string, unknown>;
   }): void {
     parentRecords.forEach((item) => {
       if (relationType === RelationType.ONE_TO_MANY) {
@@ -417,10 +445,24 @@ export class ProcessNestedRelationsV2Helper {
           (rel) => rel[joinField] === item.id,
         );
       } else {
-        item[sourceFieldName] =
-          relationResults.find(
-            (rel) => rel.id === item[`${sourceFieldName}Id`],
-          ) ?? null;
+        const matchedRelation = relationResults.find(
+          (rel) => rel.id === item[joinColumnName],
+        );
+
+        if (isDefined(matchedRelation?.deletedAt)) {
+          item[sourceFieldName] = null;
+          item[joinColumnName] = null;
+        } else if (isDefined(matchedRelation)) {
+          if (selectedFields?.deletedAt !== true) {
+            const { deletedAt: _, ...rest } = matchedRelation;
+
+            item[sourceFieldName] = rest;
+          } else {
+            item[sourceFieldName] = matchedRelation;
+          }
+        } else {
+          item[sourceFieldName] = null;
+        }
       }
     });
 

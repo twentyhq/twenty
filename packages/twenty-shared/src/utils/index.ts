@@ -29,6 +29,7 @@ export { interpolateCommandMenuItemTemplate } from './command-menu-items/interpo
 export { resolveObjectMetadataLabel } from './command-menu-items/resolveObjectMetadataLabel';
 export { safeGetNestedProperty } from './command-menu-items/safeGetNestedProperty';
 export { computeDiffBetweenObjects } from './compute-diff-between-objects';
+export { isDateWithoutTime } from './date/isDateWithoutTime';
 export { isPlainDateAfter } from './date/isPlainDateAfter';
 export { isPlainDateBefore } from './date/isPlainDateBefore';
 export { isPlainDateBeforeOrEqual } from './date/isPlainDateBeforeOrEqual';
@@ -44,7 +45,11 @@ export { deepMerge } from './deepMerge';
 export { CustomError } from './errors/CustomError';
 export { evalFromContext } from './evalFromContext';
 export { extractAndSanitizeObjectStringFields } from './extractAndSanitizeObjectStringFields';
-export { computeMorphRelationFieldName } from './fieldMetadata/compute-morph-relation-field-name';
+export { computeMorphRelationGqlFieldName } from './fieldMetadata/compute-morph-relation-gql-field-name';
+export {
+  computeRelationGqlFieldJoinColumnName,
+  computeMorphRelationGqlFieldJoinColumnName,
+} from './fieldMetadata/compute-relation-gql-field-join-column-name';
 export { isFieldMetadataArrayKind } from './fieldMetadata/isFieldMetadataArrayKind';
 export { isFieldMetadataDateKind } from './fieldMetadata/isFieldMetadataDateKind';
 export { isFieldMetadataEligibleForFieldsWidget } from './fieldMetadata/isFieldMetadataEligibleForFieldsWidget';
@@ -100,8 +105,10 @@ export type {
   RecordFilterGroup,
 } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
 export { turnRecordFilterGroupsIntoGqlOperationFilter } from './filter/turnRecordFilterGroupIntoGqlOperationFilter';
+export type { FieldShared } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { turnRecordFilterIntoRecordGqlOperationFilter } from './filter/turnRecordFilterIntoGqlOperationFilter';
 export { combineFilters } from './filter/utils/combineFilters';
+export { COMPOSITE_FIELD_FILTER_OPERANDS_MAP } from './filter/utils/compositeFieldFilterOperandsMap';
 export { convertViewFilterOperandToCoreOperand } from './filter/utils/convert-view-filter-operand-to-core-operand.util';
 export { convertViewFilterValueToString } from './filter/utils/convertViewFilterValueToString';
 export { createAnyFieldRecordFilterBaseProperties } from './filter/utils/createAnyFieldRecordFilterBaseProperties';
@@ -110,9 +117,11 @@ export {
   convertLessThanOrEqualRatingToArrayOfRatingValues,
   convertRatingToRatingValue,
 } from './filter/utils/fieldRatingConvertors';
+export { FILTER_OPERANDS_MAP } from './filter/utils/filterOperandsMap';
 export { filterSelectOptionsOfFieldMetadataItem } from './filter/utils/filterSelectOptionsOfFieldMetadataItem';
 export { generateILikeFiltersForCompositeFields } from './filter/utils/generateILikeFiltersForCompositeFields';
 export { getEmptyRecordGqlOperationFilter } from './filter/utils/getEmptyRecordGqlOperationFilter';
+export { getFilterOperandsForFilterableFieldType } from './filter/utils/getFilterOperandsForFilterableFieldType';
 export { getFilterTypeFromFieldType } from './filter/utils/getFilterTypeFromFieldType';
 export { isExpectedSubFieldName } from './filter/utils/isExpectedSubFieldName';
 export { isMatchingArrayFilter } from './filter/utils/isMatchingArrayFilter';
@@ -189,6 +198,7 @@ export { isMetadataGqlOperationSignature } from './typeguard/isMetadataGqlOperat
 export { isPlainObject } from './typeguard/isPlainObject';
 export { isRecordGqlOperationSignature } from './typeguard/isRecordGqlOperationSignature';
 export { throwIfNotDefined } from './typeguard/throwIfNotDefined';
+export { formatUpgradeCommandName } from './upgrade/formatUpgradeCommandName';
 export { absoluteUrlSchema } from './url/absoluteUrlSchema';
 export { buildSignedPath } from './url/buildSignedPath';
 export { ensureAbsoluteUrl } from './url/ensureAbsoluteUrl';

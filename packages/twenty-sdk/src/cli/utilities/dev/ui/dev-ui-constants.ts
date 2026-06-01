@@ -7,6 +7,7 @@ import {
   type OrchestratorStateEntityInfo,
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { SyncableEntity } from 'twenty-shared/application';
+import { isDefined } from 'twenty-shared/utils';
 
 export type DevUiStatus =
   | 'idle'
@@ -97,6 +98,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.Field]: 'Fields',
   [SyncableEntity.LogicFunction]: 'Logic functions',
   [SyncableEntity.FrontComponent]: 'Front components',
+  [SyncableEntity.CommandMenuItem]: 'Command menu items',
   [SyncableEntity.Role]: 'Roles',
   [SyncableEntity.Skill]: 'Skills',
   [SyncableEntity.View]: 'Views',
@@ -104,6 +106,7 @@ export const ENTITY_LABELS: Record<SyncableEntity, string> = {
   [SyncableEntity.PageLayout]: 'Page layouts',
   [SyncableEntity.PageLayoutTab]: 'Page layout tabs',
   [SyncableEntity.Agent]: 'Agents',
+  [SyncableEntity.ConnectionProvider]: 'Connection providers',
 };
 
 export const ENTITY_ORDER = Object.keys(ENTITY_LABELS) as SyncableEntity[];
@@ -155,14 +158,13 @@ export const groupEntitiesByType = (
 };
 
 export const getApplicationUrl = (state: OrchestratorState): string | null => {
-  if (
-    !state.frontendUrl ||
-    !state.steps.resolveApplication.output.universalIdentifier
-  ) {
+  const applicationId = state.steps.resolveApplication.output.applicationId;
+
+  if (!isDefined(state.frontendUrl) || !isDefined(applicationId)) {
     return null;
   }
 
-  return `${state.frontendUrl}/settings/applications`;
+  return `${state.frontendUrl}/settings/applications/${applicationId}`;
 };
 
 export const mergeStepStatuses = (

@@ -25,8 +25,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
     it('should return object rows for installed application objects', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -53,8 +55,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
     it('should return empty object rows when application has no objects', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -79,8 +83,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
 
       const installedApplication = {
         id: fieldBelongingToApp.applicationId ?? APP_ID,
+        universalIdentifier: fieldBelongingToApp.applicationId ?? APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -106,8 +112,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
     it('should exclude deny-listed objects from field rows', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],
@@ -261,8 +269,10 @@ describe('useComputeObjectAndFieldsContentForApplication', () => {
     it('should use installed application data when both sources are provided', () => {
       const installedApplication = {
         id: APP_ID,
+        universalIdentifier: APP_ID,
         objects: [{ id: personObject.id }],
         name: 'Test App',
+        logo: null,
         canBeUninstalled: true,
         availablePackages: {},
         applicationVariables: [],

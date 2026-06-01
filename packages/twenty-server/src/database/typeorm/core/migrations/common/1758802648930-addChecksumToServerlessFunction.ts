@@ -1,8 +1,6 @@
 import { type MigrationInterface, type QueryRunner } from 'typeorm';
 
-export class AddChecksumToServerlessFunction1758802648930
-  implements MigrationInterface
-{
+export class AddChecksumToServerlessFunction1758802648930 implements MigrationInterface {
   name = 'AddChecksumToServerlessFunction1758802648930';
 
   public async up(queryRunner: QueryRunner): Promise<void> {
