@@ -5,14 +5,11 @@ import { OrderByDirection, type ObjectRecord } from 'twenty-shared/types';
 
 import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
-import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { CommonFindManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-find-many-query-runner.service';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
-import { sanitizeFilterWithSchema } from 'src/engine/core-modules/record-crud/utils/sanitize-filter-with-schema.util';
-import { generateRecordFilterSchema } from 'src/engine/core-modules/record-crud/zod-schemas/record-filter.zod-schema';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 
 @Injectable()
@@ -47,22 +44,6 @@ export class FindRecordsService {
         objectName,
       });
 
-      // The AI find tool spreads field filters at the args root and is not
-      // re-validated against its zod schema before execution, so a model can
-      // emit invalid filter shapes — a bare operator where a field name belongs
-      // (`{ ilike: ... }`), or an operator on a relation/composite value
-      // (`{ targetPerson: { ilike: ... } }`). Validate against the same schema
-      // the tool advertised so these are stripped, otherwise the query runner
-      // throws `Object <x> doesn't have any "ilike" field`.
-      const { filterSchema } = generateRecordFilterSchema({
-        ...flatObjectMetadata,
-        fields: getFlatFieldsFromFlatObjectMetadata(
-          flatObjectMetadata,
-          flatFieldMetadataMaps,
-        ),
-      });
-      const sanitizedFilter = sanitizeFilterWithSchema(filterSchema, filter);
-
       // Add id to orderBy for consistent pagination
       const orderByWithIdCondition: ObjectRecordOrderBy = [
         ...(orderBy ?? []).filter((item) => item !== undefined),
@@ -73,7 +54,7 @@ export class FindRecordsService {
         results: { records, totalCount },
       } = await this.commonFindManyRunner.execute(
         {
-          filter: sanitizedFilter,
+          filter,
           orderBy: orderByWithIdCondition,
           first: limit ? Math.min(limit, QUERY_MAX_RECORDS) : QUERY_MAX_RECORDS,
           offset,
