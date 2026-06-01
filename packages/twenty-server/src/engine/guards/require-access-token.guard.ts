@@ -11,9 +11,6 @@ import {
 import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { getRequest } from 'src/utils/extract-request';
 
-// Rejects requests whose JWT type is not ACCESS. Use on endpoints that mint
-// derived credentials so short-lived derived tokens (PLAYGROUND, etc.) cannot
-// renew themselves indefinitely.
 @Injectable()
 export class RequireAccessTokenGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {

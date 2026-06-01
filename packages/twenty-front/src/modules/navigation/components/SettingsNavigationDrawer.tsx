@@ -17,9 +17,6 @@ import { AdvancedSettingsToggle } from 'twenty-ui/navigation';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 
-// On mobile NavigationDrawerFixedContent already adds horizontal padding, so
-// the wrapper is flush. On desktop the FixedContent is edge-to-edge and the
-// wrapper supplies the indent (asymmetric — extra room on the right).
 const StyledAdvancedToggleWrapper = styled.div<{ isMobile: boolean }>`
   padding-left: ${({ isMobile }) =>
     isMobile ? '0' : themeCssVariables.spacing[5]};
