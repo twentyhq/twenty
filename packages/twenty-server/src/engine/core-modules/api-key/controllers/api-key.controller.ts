@@ -21,6 +21,7 @@ import { ApiKeyService } from 'src/engine/core-modules/api-key/services/api-key.
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
+import { RequireAccessTokenGuard } from 'src/engine/guards/require-access-token.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { PermissionsRestApiExceptionFilter } from 'src/engine/metadata-modules/permissions/utils/permissions-rest-api-exception.filter';
@@ -54,6 +55,9 @@ export class ApiKeyController {
     return this.apiKeyService.findById(id, workspace.id);
   }
 
+  // Minting/altering a long-lived API key requires a first-person session
+  // (ACCESS); a derived PLAYGROUND token or an API key cannot escalate here.
+  @UseGuards(RequireAccessTokenGuard)
   @Post()
   async create(
     @Body() createApiKeyDto: CreateApiKeyInput,
@@ -70,6 +74,7 @@ export class ApiKeyController {
     });
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Patch(':id')
   async update(
     @Param('id') id: string,
@@ -91,6 +96,7 @@ export class ApiKeyController {
     return this.apiKeyService.update(id, workspace.id, updateData);
   }
 
+  @UseGuards(RequireAccessTokenGuard)
   @Delete(':id')
   async remove(
     @Param('id') id: string,

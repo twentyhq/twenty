@@ -32,5 +32,56 @@ describe('api key and webhooks permissions', () => {
           expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
         });
     });
+
+    // A non-session token (here API_KEY; PLAYGROUND shares the same access path)
+    // must not mint a durable API key, otherwise a short-lived token could
+    // escalate into a long-lived one. RequireAccessTokenGuard enforces this.
+    it('should reject a non-ACCESS token even with API key permission', async () => {
+      const queryData = {
+        query: `
+        mutation generateApiKeyToken {
+          generateApiKeyToken(apiKeyId: "test-api-key-id", expiresAt: "2025-01-01T00:00:00Z") {
+            token
+          }
+        }
+      `,
+      };
+
+      await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+        .send(queryData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toBeNull();
+          expect(res.body.errors).toBeDefined();
+          expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+        });
+    });
+  });
+
+  describe('createApiKey', () => {
+    it('should reject a non-ACCESS token even with API key permission', async () => {
+      const queryData = {
+        query: `
+        mutation createApiKey {
+          createApiKey(input: { name: "escalation", expiresAt: "2025-01-01T00:00:00Z" }) {
+            id
+          }
+        }
+      `,
+      };
+
+      await client
+        .post('/metadata')
+        .set('Authorization', `Bearer ${API_KEY_ACCESS_TOKEN}`)
+        .send(queryData)
+        .expect(200)
+        .expect((res) => {
+          expect(res.body.data).toBeNull();
+          expect(res.body.errors).toBeDefined();
+          expect(res.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
+        });
+    });
   });
 });

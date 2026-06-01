@@ -2410,6 +2410,13 @@ export interface AgentTurn {
     __typename: 'AgentTurn'
 }
 
+export interface WorkspaceAiStats {
+    conversationsCount: Scalars['Int']
+    skillsCount: Scalars['Int']
+    toolsCount: Scalars['Int']
+    __typename: 'WorkspaceAiStats'
+}
+
 export interface CalendarChannel {
     id: Scalars['UUID']
     handle: Scalars['String']
@@ -2597,6 +2604,7 @@ export interface Query {
     myConnectedAccounts: ConnectedAccountPublicDTO[]
     myCalendarChannels: CalendarChannel[]
     minimalMetadata: MinimalMetadata
+    findWorkspaceAiStats: WorkspaceAiStats
     chatThreads: AgentChatThread[]
     chatThread: AgentChatThread
     chatMessages: AgentMessage[]
@@ -2803,6 +2811,7 @@ export interface Mutation {
     authorizeApp: AuthorizeApp
     renewToken: AuthTokens
     generateApiKeyToken: ApiKeyToken
+    generatePlaygroundToken: AuthToken
     emailPasswordResetLink: EmailPasswordResetLink
     updatePasswordViaResetToken: InvalidatePassword
     createApplicationRegistration: CreateApplicationRegistration
@@ -5438,6 +5447,14 @@ export interface AgentTurnGenqlSelection{
     __scalar?: boolean | number
 }
 
+export interface WorkspaceAiStatsGenqlSelection{
+    conversationsCount?: boolean | number
+    skillsCount?: boolean | number
+    toolsCount?: boolean | number
+    __typename?: boolean | number
+    __scalar?: boolean | number
+}
+
 export interface CalendarChannelGenqlSelection{
     id?: boolean | number
     handle?: boolean | number
@@ -5625,6 +5642,7 @@ export interface QueryGenqlSelection{
     myConnectedAccounts?: ConnectedAccountPublicDTOGenqlSelection
     myCalendarChannels?: (CalendarChannelGenqlSelection & { __args?: {connectedAccountId?: (Scalars['UUID'] | null)} })
     minimalMetadata?: MinimalMetadataGenqlSelection
+    findWorkspaceAiStats?: WorkspaceAiStatsGenqlSelection
     chatThreads?: AgentChatThreadGenqlSelection
     chatThread?: (AgentChatThreadGenqlSelection & { __args: {id: Scalars['UUID']} })
     chatMessages?: (AgentMessageGenqlSelection & { __args: {threadId: Scalars['UUID']} })
@@ -5852,6 +5870,7 @@ export interface MutationGenqlSelection{
     authorizeApp?: (AuthorizeAppGenqlSelection & { __args: {clientId: Scalars['String'], codeChallenge?: (Scalars['String'] | null), redirectUrl: Scalars['String'], state?: (Scalars['String'] | null), scope?: (Scalars['String'] | null)} })
     renewToken?: (AuthTokensGenqlSelection & { __args: {appToken: Scalars['String']} })
     generateApiKeyToken?: (ApiKeyTokenGenqlSelection & { __args: {apiKeyId: Scalars['UUID'], expiresAt: Scalars['String']} })
+    generatePlaygroundToken?: AuthTokenGenqlSelection
     emailPasswordResetLink?: (EmailPasswordResetLinkGenqlSelection & { __args: {email: Scalars['String'], workspaceId?: (Scalars['UUID'] | null)} })
     updatePasswordViaResetToken?: (InvalidatePasswordGenqlSelection & { __args: {passwordResetToken: Scalars['String'], newPassword: Scalars['String']} })
     createApplicationRegistration?: (CreateApplicationRegistrationGenqlSelection & { __args: {input: CreateApplicationRegistrationInput} })
@@ -8148,6 +8167,14 @@ export interface LogicFunctionLogsInput {applicationId?: (Scalars['UUID'] | null
     export const isAgentTurn = (obj?: { __typename?: any } | null): obj is AgentTurn => {
       if (!obj?.__typename) throw new Error('__typename is missing in "isAgentTurn"')
       return AgentTurn_possibleTypes.includes(obj.__typename)
+    }
+    
+
+
+    const WorkspaceAiStats_possibleTypes: string[] = ['WorkspaceAiStats']
+    export const isWorkspaceAiStats = (obj?: { __typename?: any } | null): obj is WorkspaceAiStats => {
+      if (!obj?.__typename) throw new Error('__typename is missing in "isWorkspaceAiStats"')
+      return WorkspaceAiStats_possibleTypes.includes(obj.__typename)
     }
     
 

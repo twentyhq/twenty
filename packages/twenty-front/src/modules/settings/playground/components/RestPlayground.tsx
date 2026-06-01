@@ -1,5 +1,8 @@
 import { RestPlaygroundSchemaFetchEffect } from '@/settings/playground/components/RestPlaygroundSchemaFetchEffect';
-import { playgroundApiKeyState } from '@/settings/playground/states/playgroundApiKeyState';
+import {
+  isPlaygroundApiKeyFresh,
+  playgroundApiKeyState,
+} from '@/settings/playground/states/playgroundApiKeyState';
 import { type PlaygroundSchemas } from '@/settings/playground/types/PlaygroundSchemas';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useContext, useState, lazy, Suspense } from 'react';
@@ -55,7 +58,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
   const playgroundApiKey = useAtomStateValue(playgroundApiKeyState);
   const [specContent, setSpecContent] = useState<object | null>(null);
 
-  if (!playgroundApiKey) {
+  if (!isPlaygroundApiKeyFresh(playgroundApiKey)) {
     onError();
     return null;
   }
@@ -74,7 +77,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
     <StyledContainer>
       <RestPlaygroundSchemaFetchEffect
         schema={schema}
-        apiKey={playgroundApiKey}
+        apiKey={playgroundApiKey.token}
         onSchemaLoaded={setSpecContent}
         onError={onError}
       />
@@ -89,7 +92,7 @@ export const RestPlayground = ({ onError, schema }: RestPlaygroundProps) => {
               },
               authentication: {
                 http: {
-                  bearer: { token: playgroundApiKey },
+                  bearer: { token: playgroundApiKey.token },
                 },
               },
               baseServerURL: REACT_APP_SERVER_BASE_URL + '/' + schema,

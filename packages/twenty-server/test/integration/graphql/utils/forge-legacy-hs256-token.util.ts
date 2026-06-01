@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 
 import * as jwt from 'jsonwebtoken';
 
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 
 // Mirrors JwtWrapperService.generateAppSecret + extractAppSecretBody so tests
 // can hand-craft tokens that match what a pre-2.5 server would have signed.
