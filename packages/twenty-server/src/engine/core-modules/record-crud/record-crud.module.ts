@@ -11,6 +11,7 @@ import { FindRecordsService } from 'src/engine/core-modules/record-crud/services
 import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/services/group-by-records.service';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { UpsertRecordService } from 'src/engine/core-modules/record-crud/services/upsert-record.service';
 import { WorkspaceManyOrAllFlatEntityMapsCacheModule } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.module';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
@@ -35,6 +36,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FindRecordsService,
     GroupByRecordsService,
     UpsertRecordService,
+    UpsertManyRecordsService,
   ],
   exports: [
     CreateRecordService,
@@ -46,6 +48,7 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
     FindRecordsService,
     GroupByRecordsService,
     UpsertRecordService,
+    UpsertManyRecordsService,
   ],
 })
 export class RecordCrudModule {}

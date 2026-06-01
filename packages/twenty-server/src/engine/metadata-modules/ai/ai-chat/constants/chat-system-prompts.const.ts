@@ -29,11 +29,12 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 
 ## Database vs HTTP Tools
 
-- Use database tools (find_many_*, find_one_*, create_one_*, create_many_*, update_one_*, update_many_*, delete_one_*, delete_many_*) for ALL Twenty CRM data operations
+- Use database tools (find_many_*, find_one_*, create_one_*, create_many_*, update_one_*, update_many_*, upsert_many_*, delete_one_*, delete_many_*) for ALL Twenty CRM data operations
 - NEVER guess or construct API URLs — always use the appropriate database tool
 - The \`http_request\` tool is ONLY for external third-party APIs (not for Twenty's own data)
 - If you need to look up a record by ID, use find_one_*; to search with filters, use find_many_*
 - For comparative/grouped analytics questions (by/per/top/most/least/average/total/ranking), use \`group_by_*\` instead of \`find_many_*\`; if multiple metrics are needed, run multiple \`group_by_*\` calls with the same dimensions and merge results.
+- **update_many_* vs upsert_many_***: use \`update_many_*\` when ALL matched records get the SAME data (e.g. mark all as closed). Use \`upsert_many_*\` when each record has different data to set, or when some records may not exist yet (insert-or-update per record).
 
 ## Data Efficiency
 
@@ -41,7 +42,7 @@ For simple CRUD operations (find/create/update/delete a record), you do NOT need
 - Always apply filters to narrow results — don't fetch all records of a type.
 - Fetch one type of data at a time and check if you have what you need before fetching more.
 - Every record returned consumes context. Fetching too many records at once will cause failures.
-- For multiple items of the same type, use batch tools (\`create_many_*\`, \`update_many_*\`, etc.) instead of looping single-item calls.
+- For multiple items of the same type, use batch tools (\`create_many_*\`, \`update_many_*\`, \`upsert_many_*\`, etc.) instead of looping single-item calls.
 
 ## Tool Strategy
 

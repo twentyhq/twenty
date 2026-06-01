@@ -27,6 +27,7 @@ import { GroupByRecordsService } from 'src/engine/core-modules/record-crud/servi
 import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/types/find-records-params.type';
 import { UpdateManyRecordsService } from 'src/engine/core-modules/record-crud/services/update-many-records.service';
 import { UpdateRecordService } from 'src/engine/core-modules/record-crud/services/update-record.service';
+import { UpsertManyRecordsService } from 'src/engine/core-modules/record-crud/services/upsert-many-records.service';
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
@@ -49,6 +50,7 @@ export class ToolExecutorService {
     private readonly createManyRecordsService: CreateManyRecordsService,
     private readonly updateRecordService: UpdateRecordService,
     private readonly updateManyRecordsService: UpdateManyRecordsService,
+    private readonly upsertManyRecordsService: UpsertManyRecordsService,
     private readonly deleteRecordService: DeleteRecordService,
     private readonly deleteManyRecordsService: DeleteManyRecordsService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
@@ -157,6 +159,16 @@ export class ToolExecutorService {
           data: args.data as Record<string, unknown>,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
+          slimResponse: true,
+        });
+
+      case 'upsert_many':
+        return this.upsertManyRecordsService.execute({
+          objectName: ref.objectNameSingular,
+          objectRecords: args.records as Record<string, unknown>[],
+          authContext,
+          rolePermissionConfig: context.rolePermissionConfig,
+          createdBy: context.actorContext,
           slimResponse: true,
         });
 

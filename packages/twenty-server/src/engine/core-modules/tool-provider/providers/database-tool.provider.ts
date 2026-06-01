@@ -246,7 +246,7 @@ export class DatabaseToolProvider implements ToolProvider {
 
         descriptors.push({
           name: `update_many_${snakePlural}`,
-          description: `Update multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. All matching records will receive the same field values. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first. Returns the updated records.`,
+          description: `Apply the SAME field values to all ${objectMetadata.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
             inputSchema: toToolJsonSchema(
@@ -264,6 +264,28 @@ export class DatabaseToolProvider implements ToolProvider {
           objectName: objectMetadata.nameSingular,
           icon: flatObject.icon ?? undefined,
           operation: 'update_many',
+        });
+
+        descriptors.push({
+          name: `upsert_many_${snakePlural}`,
+          description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
+          category: ToolCategory.DATABASE_CRUD,
+          ...(includeSchemas && {
+            inputSchema: toToolJsonSchema(
+              generateCreateManyRecordInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
+          }),
+          executionRef: {
+            kind: 'database_crud',
+            objectNameSingular: objectMetadata.nameSingular,
+            operation: 'upsert_many',
+          },
+          objectName: objectMetadata.nameSingular,
+          icon: flatObject.icon ?? undefined,
+          operation: 'upsert_many',
         });
       }
 
