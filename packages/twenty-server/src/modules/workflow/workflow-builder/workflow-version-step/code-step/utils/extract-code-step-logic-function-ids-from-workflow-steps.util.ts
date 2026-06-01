@@ -3,7 +3,7 @@ import { isNonEmptyString } from '@sniptt/guards';
 import { isWorkflowCodeAction } from 'src/modules/workflow/workflow-executor/workflow-actions/code/guards/is-workflow-code-action.guard';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-export const getCodeStepLogicFunctionIds = (
+export const extractCodeStepLogicFunctionIdsFromWorkflowSteps = (
   steps: WorkflowAction[],
 ): string[] =>
   steps

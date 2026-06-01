@@ -1,4 +1,4 @@
-import { getCodeStepLogicFunctionIds } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-logic-function-ids.util';
+import { extractCodeStepLogicFunctionIdsFromWorkflowSteps } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/extract-code-step-logic-function-ids-from-workflow-steps.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
@@ -29,14 +29,14 @@ const buildNonCodeStep = (): WorkflowAction =>
     },
   }) as unknown as WorkflowAction;
 
-describe('getCodeStepLogicFunctionIds', () => {
+describe('extractCodeStepLogicFunctionIdsFromWorkflowSteps', () => {
   it('should return logic function ids of CODE steps', () => {
     const steps = [
       buildCodeStep('logic-function-1'),
       buildCodeStep('logic-function-2'),
     ];
 
-    expect(getCodeStepLogicFunctionIds(steps)).toEqual([
+    expect(extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps)).toEqual([
       'logic-function-1',
       'logic-function-2',
     ]);
@@ -49,7 +49,7 @@ describe('getCodeStepLogicFunctionIds', () => {
       buildCodeStep('logic-function-2'),
     ];
 
-    expect(getCodeStepLogicFunctionIds(steps)).toEqual([
+    expect(extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps)).toEqual([
       'logic-function-1',
       'logic-function-2',
     ]);
@@ -58,14 +58,18 @@ describe('getCodeStepLogicFunctionIds', () => {
   it('should filter out CODE steps with an empty logic function id', () => {
     const steps = [buildCodeStep(''), buildCodeStep('logic-function-1')];
 
-    expect(getCodeStepLogicFunctionIds(steps)).toEqual(['logic-function-1']);
+    expect(extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps)).toEqual([
+      'logic-function-1',
+    ]);
   });
 
   it('should return an empty array when there are no CODE steps', () => {
-    expect(getCodeStepLogicFunctionIds([buildNonCodeStep()])).toEqual([]);
+    expect(
+      extractCodeStepLogicFunctionIdsFromWorkflowSteps([buildNonCodeStep()]),
+    ).toEqual([]);
   });
 
   it('should return an empty array for an empty list of steps', () => {
-    expect(getCodeStepLogicFunctionIds([])).toEqual([]);
+    expect(extractCodeStepLogicFunctionIdsFromWorkflowSteps([])).toEqual([]);
   });
 });

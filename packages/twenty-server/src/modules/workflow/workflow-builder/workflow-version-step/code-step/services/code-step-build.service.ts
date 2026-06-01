@@ -12,8 +12,12 @@ import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-fu
 import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source-helper.service';
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { getCodeStepLogicFunctionIds } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/get-code-step-logic-function-ids.util';
+import { extractCodeStepLogicFunctionIdsFromWorkflowSteps } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/extract-code-step-logic-function-ids-from-workflow-steps.util';
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import {
+  WorkflowTriggerException,
+  WorkflowTriggerExceptionCode,
+} from 'src/modules/workflow/workflow-trigger/exceptions/workflow-trigger.exception';
 
 @Injectable()
 export class CodeStepBuildService {
@@ -64,7 +68,8 @@ export class CodeStepBuildService {
     workspaceId: string;
     steps: WorkflowAction[];
   }): Promise<void> {
-    const logicFunctionIds = getCodeStepLogicFunctionIds(steps);
+    const logicFunctionIds =
+      extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps);
 
     if (logicFunctionIds.length === 0) {
       return;
@@ -131,7 +136,8 @@ export class CodeStepBuildService {
       return;
     }
 
-    const logicFunctionIds = getCodeStepLogicFunctionIds(steps);
+    const logicFunctionIds =
+      extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps);
 
     if (logicFunctionIds.length === 0) {
       return;
@@ -153,9 +159,25 @@ export class CodeStepBuildService {
 
       if (
         !isDefined(flatLogicFunction) ||
-        flatLogicFunction.deletedAt ||
+        isDefined(flatLogicFunction.deletedAt)
+      ) {
+        throw new WorkflowTriggerException(
+          `CODE step references logic function '${logicFunctionId}' that is missing or deleted`,
+          WorkflowTriggerExceptionCode.INVALID_WORKFLOW_VERSION,
+        );
+      }
+
+      if (
         !flatLogicFunction.isBuildUpToDate ||
-        !isDefined(flatLogicFunction.checksum) ||
+        !isDefined(flatLogicFunction.checksum)
+      ) {
+        throw new WorkflowTriggerException(
+          `Logic function '${logicFunctionId}' has no fresh build or checksum after the build step`,
+          WorkflowTriggerExceptionCode.INTERNAL_ERROR,
+        );
+      }
+
+      if (
         flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT
       ) {
         continue;
