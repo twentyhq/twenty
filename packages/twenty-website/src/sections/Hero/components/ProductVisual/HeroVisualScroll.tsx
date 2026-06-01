@@ -269,6 +269,14 @@ export function HeroVisualScroll({
     });
   }, [menuSync, navProgress, menuBackground, menuElevated]);
 
+  const heroAtStart = morphProgress <= 0;
+
+  useEffect(() => {
+    if (heroAtStart) {
+      setActiveTab(0);
+    }
+  }, [heroAtStart]);
+
   useEffect(() => {
     const updateStackTargets = () => {
       const rowContainer = rowButtonsRef.current;
