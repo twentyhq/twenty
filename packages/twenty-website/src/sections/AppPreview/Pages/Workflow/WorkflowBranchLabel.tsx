@@ -8,6 +8,8 @@ import {
 
 const BranchLabel = styled.div<{ $centered?: boolean }>`
   align-items: center;
+  animation: workflowBranchLabelAppear 320ms ease both;
+  animation-delay: 700ms;
   background: ${WORKFLOW_PAGE_COLORS.nodeSurface};
   border: 1px solid ${WORKFLOW_PAGE_COLORS.nodeBorder};
   border-radius: 4px;
@@ -24,6 +26,19 @@ const BranchLabel = styled.div<{ $centered?: boolean }>`
   transform: ${({ $centered }) =>
     $centered ? 'translate(-50%, -50%)' : 'none'};
   z-index: 2;
+
+  @keyframes workflowBranchLabelAppear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 export function WorkflowBranchLabel({

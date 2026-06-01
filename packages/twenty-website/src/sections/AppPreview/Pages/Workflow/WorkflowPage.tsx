@@ -104,6 +104,8 @@ const PLUS_NODE_SIZE = 24;
 
 const PlusNodeSquare = styled.div`
   align-items: center;
+  animation: workflowPlusAppear 320ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 820ms;
   background: ${WORKFLOW_PAGE_COLORS.nodeSurface};
   border: 1px solid ${WORKFLOW_PAGE_COLORS.nodeBorder};
   border-radius: 4px;
@@ -115,6 +117,21 @@ const PlusNodeSquare = styled.div`
   justify-content: center;
   position: absolute;
   width: ${PLUS_NODE_SIZE}px;
+
+  @keyframes workflowPlusAppear {
+    from {
+      opacity: 0;
+      transform: scale(0.8);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
 `;
 
 type WorkflowLayout = {
@@ -261,13 +278,15 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
               $height={layout.contentHeight}
               $width={layout.contentWidth}
             >
-              <WorkflowEdges
-                canvasHeight={layout.contentHeight}
-                canvasWidth={layout.contentWidth}
-                edges={edges}
-                nodes={layout.nodes}
-                plusNode={layout.plusNode}
-              />
+              {!page.generating && (
+                <WorkflowEdges
+                  canvasHeight={layout.contentHeight}
+                  canvasWidth={layout.contentWidth}
+                  edges={edges}
+                  nodes={layout.nodes}
+                  plusNode={layout.plusNode}
+                />
+              )}
 
               {layout.nodes.map((node, index) => (
                 <WorkflowNode
@@ -284,16 +303,17 @@ export function WorkflowPage({ page }: { page: WorkflowPageDefinition }) {
                 />
               ))}
 
-              {layout.branchLabels.map((label) => (
-                <WorkflowBranchLabel
-                  key={`${label.text}-${label.x}-${label.y}`}
-                  text={label.text}
-                  x={label.x}
-                  y={label.y}
-                />
-              ))}
+              {!page.generating &&
+                layout.branchLabels.map((label) => (
+                  <WorkflowBranchLabel
+                    key={`${label.text}-${label.x}-${label.y}`}
+                    text={label.text}
+                    x={label.x}
+                    y={label.y}
+                  />
+                ))}
 
-              {layout.plusNode && (
+              {!page.generating && layout.plusNode && (
                 <PlusNodeSquare
                   style={{
                     left: layout.plusNode.x - PLUS_NODE_SIZE / 2,

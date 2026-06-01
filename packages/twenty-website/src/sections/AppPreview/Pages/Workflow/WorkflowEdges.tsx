@@ -18,6 +18,65 @@ const CanvasOverlay = styled.svg`
   position: absolute;
 `;
 
+const EdgePath = styled.path`
+  animation: workflowEdgeDraw 620ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  stroke-dasharray: 1;
+
+  @keyframes workflowEdgeDraw {
+    from {
+      opacity: 0;
+      stroke-dashoffset: 1;
+    }
+    25% {
+      opacity: 1;
+    }
+    to {
+      opacity: 1;
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+const ConnectorPath = styled.path`
+  animation: workflowConnectorAppear 360ms ease both;
+  animation-delay: 620ms;
+
+  @keyframes workflowConnectorAppear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
+const PortsLayer = styled.g`
+  animation: workflowPortsAppear 360ms ease both;
+  animation-delay: 520ms;
+
+  @keyframes workflowPortsAppear {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    animation: none;
+  }
+`;
+
 export function WorkflowEdges({
   canvasHeight,
   canvasWidth,
@@ -100,22 +159,24 @@ export function WorkflowEdges({
           />
         </marker>
       </defs>
-      {edges.map((edge) => (
-        <path
+      {edges.map((edge, index) => (
+        <EdgePath
           key={`${edge.from}-${edge.to}-${edge.type}`}
           d={getWorkflowEdgePath({ edge, nodes })}
           fill="none"
           markerEnd={
             edge.type === 'loopBack' ? undefined : 'url(#workflow-arrow)'
           }
+          pathLength={1}
           stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
           strokeLinecap="round"
           strokeLinejoin="round"
           strokeWidth="1"
+          style={{ animationDelay: `${140 + index * 150}ms` }}
         />
       ))}
       {completedConnectorPath ? (
-        <path
+        <ConnectorPath
           d={completedConnectorPath}
           fill="none"
           stroke={WORKFLOW_PAGE_COLORS.arrowStroke}
@@ -125,47 +186,49 @@ export function WorkflowEdges({
           strokeWidth="1"
         />
       ) : null}
-      {nodes.map((node) => {
-        const cx = node.x + node.width / 2;
-        const bottomY = node.y + WORKFLOW_NODE_HEIGHT + 1;
-        const rightX = node.x + node.width;
-        const midY = node.y + WORKFLOW_NODE_HEIGHT / 2;
+      <PortsLayer>
+        {nodes.map((node) => {
+          const cx = node.x + node.width / 2;
+          const bottomY = node.y + WORKFLOW_NODE_HEIGHT + 1;
+          const rightX = node.x + node.width;
+          const midY = node.y + WORKFLOW_NODE_HEIGHT / 2;
 
-        return (
-          <g key={`ports-${node.id}`}>
-            {topPortNodeIds.has(node.id) ? (
-              <circle
-                cx={cx}
-                cy={node.y}
-                fill={WORKFLOW_PAGE_COLORS.nodeSurface}
-                r="4"
-                stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
-                strokeWidth="1"
-              />
-            ) : null}
-            {bottomPortNodeIds.has(node.id) ? (
-              <circle
-                cx={cx}
-                cy={bottomY}
-                fill={WORKFLOW_PAGE_COLORS.nodeSurface}
-                r="4"
-                stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
-                strokeWidth="1"
-              />
-            ) : null}
-            {rightPortNodeIds.has(node.id) ? (
-              <circle
-                cx={rightX}
-                cy={midY}
-                fill={WORKFLOW_PAGE_COLORS.nodeSurface}
-                r="4"
-                stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
-                strokeWidth="1"
-              />
-            ) : null}
-          </g>
-        );
-      })}
+          return (
+            <g key={`ports-${node.id}`}>
+              {topPortNodeIds.has(node.id) ? (
+                <circle
+                  cx={cx}
+                  cy={node.y}
+                  fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+                  r="4"
+                  stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+                  strokeWidth="1"
+                />
+              ) : null}
+              {bottomPortNodeIds.has(node.id) ? (
+                <circle
+                  cx={cx}
+                  cy={bottomY}
+                  fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+                  r="4"
+                  stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+                  strokeWidth="1"
+                />
+              ) : null}
+              {rightPortNodeIds.has(node.id) ? (
+                <circle
+                  cx={rightX}
+                  cy={midY}
+                  fill={WORKFLOW_PAGE_COLORS.nodeSurface}
+                  r="4"
+                  stroke={WORKFLOW_PAGE_COLORS.nodeBorder}
+                  strokeWidth="1"
+                />
+              ) : null}
+            </g>
+          );
+        })}
+      </PortsLayer>
     </CanvasOverlay>
   );
 }
