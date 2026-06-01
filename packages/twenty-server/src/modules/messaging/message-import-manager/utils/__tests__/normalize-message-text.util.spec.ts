@@ -8,7 +8,7 @@ describe('normalizeMessageText', () => {
   });
 
   it('should replace non-breaking spaces with regular spaces', () => {
-    expect(normalizeMessageText('Hello world')).toBe('Hello world');
+    expect(normalizeMessageText('Hello\u00A0world')).toBe('Hello world');
   });
 
   it('should strip trailing whitespace on each line', () => {
