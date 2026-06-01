@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
 import { act, renderHook } from '@testing-library/react';
 
 import { useFrontComponentExecutionContext } from '@/front-components/hooks/useFrontComponentExecutionContext';
@@ -15,6 +17,7 @@ const mockEnqueueInfoSnackBar = jest.fn();
 const mockEnqueueWarningSnackBar = jest.fn();
 const mockCloseSidePanelMenu = jest.fn();
 const mockSetCommandMenuItemProgress = jest.fn();
+const mockCopyToClipboard = jest.fn();
 
 let mockCurrentUser: { id: string } | null = { id: 'user-123' };
 
@@ -83,6 +86,19 @@ jest.mock('@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState', () => ({
   useSetAtomFamilyState: () => mockSetCommandMenuItemProgress,
 }));
 
+jest.mock('~/hooks/useCopyToClipboard', () => ({
+  useCopyToClipboard: () => ({
+    copyToClipboard: mockCopyToClipboard,
+  }),
+}));
+
+const renderUseFrontComponentExecutionContext = (
+  params: Parameters<typeof useFrontComponentExecutionContext>[0],
+) =>
+  renderHook(() => useFrontComponentExecutionContext(params), {
+    wrapper: ({ children }) => I18nProvider({ i18n, children }),
+  });
+
 const FRONT_COMPONENT_ID = 'fc-test-id';
 const COMMAND_MENU_ITEM_ID = 'cmd-item-1';
 
@@ -94,12 +110,10 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('executionContext', () => {
     it('should return frontComponentId, userId, recordId, and selectedRecordIds with single record', () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          selectedRecordIds: ['record-456'],
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        selectedRecordIds: ['record-456'],
+      });
 
       expect(result.current.executionContext).toEqual({
         frontComponentId: FRONT_COMPONENT_ID,
@@ -110,12 +124,10 @@ describe('useFrontComponentExecutionContext', () => {
     });
 
     it('should return null recordId when multiple selectedRecordIds provided', () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          selectedRecordIds: ['record-1', 'record-2', 'record-3'],
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        selectedRecordIds: ['record-1', 'record-2', 'record-3'],
+      });
 
       expect(result.current.executionContext).toEqual({
         frontComponentId: FRONT_COMPONENT_ID,
@@ -128,33 +140,27 @@ describe('useFrontComponentExecutionContext', () => {
     it('should return null userId when no current user', () => {
       mockCurrentUser = null;
 
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       expect(result.current.executionContext.userId).toBeNull();
     });
 
     it('should return null recordId and empty selectedRecordIds when no selectedRecordIds provided', () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       expect(result.current.executionContext.recordId).toBeNull();
       expect(result.current.executionContext.selectedRecordIds).toEqual([]);
     });
 
     it('should return null recordId and empty selectedRecordIds when empty array provided', () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          selectedRecordIds: [],
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        selectedRecordIds: [],
+      });
 
       expect(result.current.executionContext.recordId).toBeNull();
       expect(result.current.executionContext.selectedRecordIds).toEqual([]);
@@ -163,11 +169,9 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('navigate', () => {
     it('should call navigateApp with the provided arguments', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.navigate(
@@ -189,11 +193,9 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('openSidePanelPage', () => {
     it('should call navigateSidePanel with resolved icon', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
@@ -216,11 +218,9 @@ describe('useFrontComponentExecutionContext', () => {
     });
 
     it('should reset side panel search state when shouldResetSearchState is true', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.openSidePanelPage(
@@ -239,11 +239,9 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('openCommandConfirmationModal', () => {
     it('should call openConfirmationModal with frontComponent caller', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.openCommandConfirmationModal(
@@ -278,11 +276,9 @@ describe('useFrontComponentExecutionContext', () => {
     ])(
       'should route $variant snackbar to the correct handler',
       async ({ variant, mock }) => {
-        const { result } = renderHook(() =>
-          useFrontComponentExecutionContext({
-            frontComponentId: FRONT_COMPONENT_ID,
-          }),
-        );
+        const { result } = renderUseFrontComponentExecutionContext({
+          frontComponentId: FRONT_COMPONENT_ID,
+        });
 
         await act(async () => {
           await result.current.frontComponentHostCommunicationApi.enqueueSnackbar(
@@ -310,12 +306,10 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('unmountFrontComponent', () => {
     it('should call unmountEngineCommand when commandMenuItemId is provided', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          commandMenuItemId: COMMAND_MENU_ITEM_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        commandMenuItemId: COMMAND_MENU_ITEM_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.unmountFrontComponent();
@@ -327,11 +321,9 @@ describe('useFrontComponentExecutionContext', () => {
     });
 
     it('should not call unmountEngineCommand when commandMenuItemId is undefined', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.unmountFrontComponent();
@@ -343,11 +335,9 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('closeSidePanel', () => {
     it('should call closeSidePanelMenu', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.closeSidePanel();
@@ -359,12 +349,10 @@ describe('useFrontComponentExecutionContext', () => {
 
   describe('updateProgress', () => {
     it('should set clamped progress when commandMenuItemId is provided', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          commandMenuItemId: COMMAND_MENU_ITEM_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        commandMenuItemId: COMMAND_MENU_ITEM_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.updateProgress(
@@ -376,12 +364,10 @@ describe('useFrontComponentExecutionContext', () => {
     });
 
     it('should clamp progress to 0 when negative value is provided', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          commandMenuItemId: COMMAND_MENU_ITEM_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        commandMenuItemId: COMMAND_MENU_ITEM_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.updateProgress(
@@ -393,12 +379,10 @@ describe('useFrontComponentExecutionContext', () => {
     });
 
     it('should clamp progress to 100 when value exceeds 100', async () => {
-      const { result } = renderHook(() =>
-        useFrontComponentExecutionContext({
-          frontComponentId: FRONT_COMPONENT_ID,
-          commandMenuItemId: COMMAND_MENU_ITEM_ID,
-        }),
-      );
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+        commandMenuItemId: COMMAND_MENU_ITEM_ID,
+      });
 
       await act(async () => {
         await result.current.frontComponentHostCommunicationApi.updateProgress(
@@ -407,6 +391,140 @@ describe('useFrontComponentExecutionContext', () => {
       });
 
       expect(mockSetCommandMenuItemProgress).toHaveBeenCalledWith(100);
+    });
+  });
+
+  describe('copyToClipboard', () => {
+    it('should call useCopyToClipboard with the provided text and a preview message', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          'hello clipboard',
+        );
+      });
+
+      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+        'hello clipboard',
+        'Application copied "hello clipboard" to your clipboard',
+      );
+    });
+
+    it('should truncate the preview when the text is longer than the preview length', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const longText = 'a'.repeat(50);
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          longText,
+        );
+      });
+
+      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+        longText,
+        `Application copied "${'a'.repeat(30)}…" to your clipboard`,
+      );
+    });
+
+    it.each([
+      ['empty string', ''],
+      ['number', 123],
+      ['object', { malicious: true }],
+      ['undefined', undefined],
+      ['null', null],
+    ])('should silently drop non-string payloads (%s)', async (_, value) => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          value as never,
+        );
+      });
+
+      expect(mockCopyToClipboard).not.toHaveBeenCalled();
+    });
+
+    it('should silently drop payloads exceeding the maximum length', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      const oversizedPayload = 'a'.repeat(64 * 1024 + 1);
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          oversizedPayload,
+        );
+      });
+
+      expect(mockCopyToClipboard).not.toHaveBeenCalled();
+    });
+
+    it('should rate-limit consecutive calls within one second', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          'first',
+        );
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          'second',
+        );
+      });
+
+      expect(mockCopyToClipboard).toHaveBeenCalledTimes(1);
+      expect(mockCopyToClipboard).toHaveBeenCalledWith(
+        'first',
+        expect.stringContaining('first'),
+      );
+    });
+
+    it('should allow a follow-up call once the rate-limit window has passed', async () => {
+      const { result } = renderUseFrontComponentExecutionContext({
+        frontComponentId: FRONT_COMPONENT_ID,
+      });
+
+      let currentTimeMs = 0;
+      const dateNowSpy = jest
+        .spyOn(Date, 'now')
+        .mockImplementation(() => currentTimeMs);
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          'first',
+        );
+      });
+
+      currentTimeMs = 1500;
+
+      await act(async () => {
+        await result.current.frontComponentHostCommunicationApi.copyToClipboard(
+          'second',
+        );
+      });
+
+      expect(mockCopyToClipboard).toHaveBeenCalledTimes(2);
+      expect(mockCopyToClipboard).toHaveBeenNthCalledWith(
+        1,
+        'first',
+        expect.stringContaining('first'),
+      );
+      expect(mockCopyToClipboard).toHaveBeenNthCalledWith(
+        2,
+        'second',
+        expect.stringContaining('second'),
+      );
+
+      dateNowSpy.mockRestore();
     });
   });
 });

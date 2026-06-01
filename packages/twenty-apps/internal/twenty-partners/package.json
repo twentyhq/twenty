@@ -1,6 +1,6 @@
 {
   "name": "twenty-partners",
-  "version": "0.1.0",
+  "version": "0.3.1",
   "license": "MIT",
   "engines": {
     "node": "^24.5.0",
@@ -16,8 +16,13 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "seed": "tsx src/scripts/seed.ts",
+    "seed:prod": "ENV_FILE=.env.prod tsx src/scripts/seed.ts",
+    "purge": "tsx src/scripts/purge-soft-deleted.ts",
+    "purge:prod": "ENV_FILE=.env.prod tsx src/scripts/purge-soft-deleted.ts",
     "import:dryrun": "tsx src/scripts/import-from-tft.ts",
-    "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts"
+    "import:dryrun:prod": "ENV_FILE=.env.prod tsx src/scripts/import-from-tft.ts",
+    "import:apply": "IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts",
+    "import:apply:prod": "ENV_FILE=.env.prod IMPORT_APPLY=1 tsx src/scripts/import-from-tft.ts"
   },
   "dependencies": {
     "twenty-client-sdk": "2.4.0",

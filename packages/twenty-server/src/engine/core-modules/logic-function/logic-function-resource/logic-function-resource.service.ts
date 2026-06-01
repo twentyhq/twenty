@@ -94,7 +94,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.Source,
       resourcePath: sourceHandlerPath,
       sourceFile: sourceFile.content,
-      mimeType: 'application/typescript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -107,7 +106,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: builtHandlerPath,
       sourceFile: builtFile.content,
-      mimeType: 'application/javascript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,
@@ -139,7 +137,6 @@ export class LogicFunctionResourceService {
       resourcePath: sourceHandlerPath,
       sourceFile: sourceHandlerCode,
       settings: { isTemporaryFile: false, toDelete: false },
-      mimeType: 'application/typescript',
       queryRunner,
     });
   }
@@ -149,7 +146,7 @@ export class LogicFunctionResourceService {
     workspaceId,
     applicationUniversalIdentifier,
   }: GetSourceCodeParams): Promise<void> {
-    await this.fileStorageService.delete({
+    await this.fileStorageService.deleteFile({
       workspaceId,
       applicationUniversalIdentifier,
       fileFolder: FileFolder.Source,
@@ -172,7 +169,6 @@ export class LogicFunctionResourceService {
       fileFolder: FileFolder.BuiltLogicFunction,
       resourcePath: builtHandlerPath,
       sourceFile: builtCode,
-      mimeType: 'application/javascript',
       settings: {
         isTemporaryFile: false,
         toDelete: false,

@@ -236,7 +236,7 @@ export class RunWorkflowJob {
         throw new Error('Invalid trigger type');
     }
 
-    await this.metricsService.incrementCounter({
+    await this.metricsService.incrementCounterForEvent({
       key,
       eventId: workflowRunId,
     });

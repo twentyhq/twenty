@@ -43,6 +43,8 @@ export default defineField({
 
 * Der Speicherort der Datei liegt bei Ihnen. Die Konvention ist `src/fields/\<name>.field.ts`, aber das SDK erkennt Felder überall in `src/`.
 
+* Um eine Registerkarte zu einem Standard-Seitenlayout hinzuzufügen (z. B. der Aufgaben- oder Unternehmensdetailseite), verwenden Sie [`definePageLayoutTab`](/l/de/developers/extend/apps/layout/page-layouts#definepagelayouttab) mit `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` aus `twenty-sdk/define`.
+
 ## Hinzufügen einer Relation zu einem bestehenden Objekt
 
 Um ein Relationsfeld hinzuzufügen (z. B. zur Verknüpfung Ihres benutzerdefinierten Objekts mit einer Standard-`Person`), verwenden Sie `defineField()` mit `FieldType.RELATION`. Das Muster ist dasselbe wie bei Inline-Relationen, jedoch mit explizit gesetztem `objectUniversalIdentifier`. Siehe [Relations](/l/de/developers/extend/apps/data/relations) für das bidirektionale Muster.

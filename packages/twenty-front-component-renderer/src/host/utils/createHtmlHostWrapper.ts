@@ -7,7 +7,7 @@ import {
   isString,
   isUndefined,
 } from '@sniptt/guards';
-import React from 'react';
+import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
@@ -15,6 +15,10 @@ import {
   type SerializedEventData,
   type SerializedFileData,
 } from '@/constants/SerializedEventData';
+import {
+  FrontComponentInputFocusContext,
+  type SetEditableFocused,
+} from '@/host/contexts/FrontComponentInputFocusContext';
 
 const INTERNAL_PROPS = new Set(['element', 'receiver', 'components']);
 
@@ -171,6 +175,37 @@ const serializeEvent = (event: unknown): SerializedEventData => {
     serialized.buttons = domEvent.buttons;
   }
 
+  if (isNumber(domEvent.pointerId)) {
+    serialized.pointerId = domEvent.pointerId;
+  }
+  if (isString(domEvent.pointerType)) {
+    serialized.pointerType = domEvent.pointerType;
+  }
+  if (isNumber(domEvent.pressure)) {
+    serialized.pressure = domEvent.pressure;
+  }
+  if (isNumber(domEvent.tangentialPressure)) {
+    serialized.tangentialPressure = domEvent.tangentialPressure;
+  }
+  if (isNumber(domEvent.tiltX)) {
+    serialized.tiltX = domEvent.tiltX;
+  }
+  if (isNumber(domEvent.tiltY)) {
+    serialized.tiltY = domEvent.tiltY;
+  }
+  if (isNumber(domEvent.twist)) {
+    serialized.twist = domEvent.twist;
+  }
+  if (isNumber(domEvent.width)) {
+    serialized.width = domEvent.width;
+  }
+  if (isNumber(domEvent.height)) {
+    serialized.height = domEvent.height;
+  }
+  if (isBoolean(domEvent.isPrimary)) {
+    serialized.isPrimary = domEvent.isPrimary;
+  }
+
   if (isString(domEvent.key)) {
     serialized.key = domEvent.key;
   }
@@ -321,18 +356,41 @@ const createCaretPreservingElement = (
   htmlTag: 'input' | 'textarea',
   reactProps: Record<string, unknown>,
   forcedProps: Record<string, unknown> | undefined,
+  setEditableFocused: SetEditableFocused | null,
 ) => {
-  const { value, defaultValue, ...rest } = reactProps;
+  const {
+    value,
+    defaultValue,
+    onFocus: forwardedOnFocus,
+    onBlur: forwardedOnBlur,
+    ...rest
+  } = reactProps;
   const initialValue = isNonEmptyString(defaultValue)
     ? defaultValue
     : isNonEmptyString(value)
       ? value
       : undefined;
 
+  const handleFocus = (event: React.FocusEvent<CaretPreservingElement>) => {
+    setEditableFocused?.(true);
+    if (isFunction(forwardedOnFocus)) {
+      forwardedOnFocus(event);
+    }
+  };
+
+  const handleBlur = (event: React.FocusEvent<CaretPreservingElement>) => {
+    setEditableFocused?.(false);
+    if (isFunction(forwardedOnBlur)) {
+      forwardedOnBlur(event);
+    }
+  };
+
   return React.createElement(htmlTag, {
     ...rest,
     ...forcedProps,
     defaultValue: initialValue,
+    onFocus: handleFocus,
+    onBlur: handleBlur,
     ref: (node: CaretPreservingElement | null) => {
       if (!isDefined(node)) {
         return;
@@ -349,13 +407,19 @@ export const createHtmlHostWrapper = (htmlTag: string) => {
   const isVoid = VOID_ELEMENTS.has(htmlTag);
 
   return ({ children, ...props }: WrapperProps) => {
+    const setEditableFocused = useContext(FrontComponentInputFocusContext);
     const reactProps = filterProps(props);
 
     if (
       htmlTag === 'textarea' ||
       (htmlTag === 'input' && isTextLikeInputType(reactProps.type))
     ) {
-      return createCaretPreservingElement(htmlTag, reactProps, forcedProps);
+      return createCaretPreservingElement(
+        htmlTag,
+        reactProps,
+        forcedProps,
+        setEditableFocused,
+      );
     }
 
     return React.createElement(

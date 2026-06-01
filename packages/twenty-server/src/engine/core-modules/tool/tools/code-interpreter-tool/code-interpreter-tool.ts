@@ -16,10 +16,8 @@ import {
 } from 'src/engine/core-modules/code-interpreter/drivers/interfaces/code-interpreter-driver.interface';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
-import {
-  type AccessTokenJwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type AccessTokenJwtPayload } from 'src/engine/core-modules/auth/types/access-token-jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { CodeInterpreterService } from 'src/engine/core-modules/code-interpreter/code-interpreter.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { FileUrlService } from 'src/engine/core-modules/file/file-url/file-url.service';
@@ -274,16 +272,23 @@ export class CodeInterpreterTool implements Tool {
           continue;
         }
 
-        const { buffer, mimeType } = await this.fileService.getFileContentById({
+        const fileContent = await this.fileService.getFileContentById({
           fileId: file.fileId,
           workspaceId,
           fileFolder: FileFolder.AgentChat,
         });
 
+        if (fileContent === null) {
+          this.logger.warn(
+            `File ${file.filename} no longer available (id=${file.fileId})`,
+          );
+          continue;
+        }
+
         inputFiles.push({
           filename: file.filename,
-          content: buffer,
-          mimeType,
+          content: fileContent.buffer,
+          mimeType: fileContent.mimeType,
         });
       } catch (error) {
         this.logger.warn(`Failed to resolve file ${file.filename}`, error);
@@ -330,7 +335,6 @@ export class CodeInterpreterTool implements Tool {
 
       const savedFile = await this.fileStorageService.writeFile({
         sourceFile: file.content,
-        mimeType: file.mimeType,
         fileFolder: FileFolder.AgentChat,
         applicationUniversalIdentifier:
           workspaceCustomFlatApplication.universalIdentifier,

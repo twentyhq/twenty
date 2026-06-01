@@ -128,6 +128,12 @@ const SettingsWorkspace = lazy(() =>
   })),
 );
 
+const SettingsWorkspaceEmail = lazy(() =>
+  import('~/pages/settings/SettingsWorkspaceEmail').then((module) => ({
+    default: module.SettingsWorkspaceEmail,
+  })),
+);
+
 const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
   import('~/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail').then(
     (module) => ({
@@ -214,6 +220,12 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   ),
 );
 
+const SettingsLayout = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayout').then((module) => ({
+    default: module.SettingsLayout,
+  })),
+);
+
 const SettingsLayoutViewDetail = lazy(() =>
   import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
     default: module.SettingsLayoutViewDetail,
@@ -232,6 +244,14 @@ const SettingsAdminApplicationRegistrationDetail = lazy(() =>
   import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail').then(
     (module) => ({
       default: module.SettingsAdminApplicationRegistrationDetail,
+    }),
+  ),
+);
+
+const SettingsAdminApplicationRegistrationConfigVariableDetail = lazy(() =>
+  import('~/pages/settings/admin-panel/SettingsAdminApplicationRegistrationConfigVariableDetail').then(
+    (module) => ({
+      default: module.SettingsAdminApplicationRegistrationConfigVariableDetail,
     }),
   ),
 );
@@ -378,6 +398,14 @@ const SettingsObjectNewFieldConfigure = lazy(() =>
   import('~/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure').then(
     (module) => ({
       default: module.SettingsObjectNewFieldConfigure,
+    }),
+  ),
+);
+
+const SettingsObjectNewIndex = lazy(() =>
+  import('~/pages/settings/data-model/new-index/SettingsObjectNewIndex').then(
+    (module) => ({
+      default: module.SettingsObjectNewIndex,
     }),
   ),
 );
@@ -629,6 +657,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       >
         <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
         <Route
+          path={SettingsPath.WorkspaceEmail}
+          element={<SettingsWorkspaceEmail />}
+        />
+        <Route
           path={SettingsPath.NewEmailGroupChannel}
           element={<SettingsNewEmailGroupChannel />}
         />
@@ -640,6 +672,40 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
         />
+        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
+        <Route
+          path={SettingsPath.UsageUserDetail}
+          element={<SettingsUsageUserDetail />}
+        />
+        <Route
+          path={SettingsPath.Subdomain}
+          element={<SettingsSubdomainPage />}
+        />
+        <Route
+          path={SettingsPath.CustomDomain}
+          element={<SettingsCustomDomainPage />}
+        />
+        <Route
+          path={SettingsPath.NewEmailingDomain}
+          element={<SettingsNewEmailingDomain />}
+        />
+        <Route
+          path={SettingsPath.EmailingDomainDetail}
+          element={<SettingsEmailingDomainDetail />}
+        />
+        <Route
+          path={SettingsPath.PublicDomain}
+          element={<SettingPublicDomain />}
+        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.AI}
+          />
+        }
+      >
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
         <Route
@@ -674,32 +740,15 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.LogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
         />
-        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-        <Route
-          path={SettingsPath.UsageUserDetail}
-          element={<SettingsUsageUserDetail />}
-        />
-        <Route
-          path={SettingsPath.Subdomain}
-          element={<SettingsSubdomainPage />}
-        />
-        <Route
-          path={SettingsPath.CustomDomain}
-          element={<SettingsCustomDomainPage />}
-        />
-        <Route
-          path={SettingsPath.NewEmailingDomain}
-          element={<SettingsNewEmailingDomain />}
-        />
-        <Route
-          path={SettingsPath.EmailingDomainDetail}
-          element={<SettingsEmailingDomainDetail />}
-        />
-        <Route
-          path={SettingsPath.PublicDomain}
-          element={<SettingPublicDomain />}
-        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.LAYOUTS}
+          />
+        }
+      >
+        <Route path={SettingsPath.Layout} element={<SettingsLayout />} />
       </Route>
       <Route
         element={
@@ -741,6 +790,10 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         <Route
           path={SettingsPath.ObjectNewFieldConfigure}
           element={<SettingsObjectNewFieldConfigure />}
+        />
+        <Route
+          path={SettingsPath.ObjectNewIndex}
+          element={<SettingsObjectNewIndex />}
         />
         <Route
           path={SettingsPath.ObjectFieldEdit}
@@ -942,6 +995,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           <Route
             path={SettingsPath.AdminPanelApplicationRegistrationDetail}
             element={<SettingsAdminApplicationRegistrationDetail />}
+          />
+          <Route
+            path={
+              SettingsPath.AdminPanelApplicationRegistrationConfigVariableDetails
+            }
+            element={
+              <SettingsAdminApplicationRegistrationConfigVariableDetail />
+            }
           />
           <Route
             path={SettingsPath.AdminPanelWorkspaceChatThread}

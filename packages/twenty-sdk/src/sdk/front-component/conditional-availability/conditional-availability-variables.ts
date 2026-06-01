@@ -25,6 +25,10 @@ export const targetObjectReadPermissions =
   null as unknown as CommandMenuContextApi['targetObjectReadPermissions'];
 export const targetObjectWritePermissions =
   null as unknown as CommandMenuContextApi['targetObjectWritePermissions'];
+export const canImpersonate =
+  null as unknown as CommandMenuContextApi['canImpersonate'];
+export const canAccessFullAdminPanel =
+  null as unknown as CommandMenuContextApi['canAccessFullAdminPanel'];
 
 export const objectMetadataItem =
   null as unknown as CommandMenuContextApi['objectMetadataItem'];

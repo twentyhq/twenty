@@ -33,6 +33,8 @@ export class BillingWebhookInvoiceService {
   constructor(
     @InjectRepository(BillingSubscriptionItemEntity)
     private readonly billingSubscriptionItemRepository: Repository<BillingSubscriptionItemEntity>,
+    // Stripe webhook: workspace discovered from BillingCustomer by stripeCustomerId.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(BillingCustomerEntity)
     private readonly billingCustomerRepository: Repository<BillingCustomerEntity>,
     @InjectRepository(WorkspaceEntity)
@@ -120,6 +122,7 @@ export class BillingWebhookInvoiceService {
   ): Promise<void> {
     const params =
       await this.resourceCreditService.getResourceCreditRolloverParameters(
+        subscription.workspaceId,
         subscription.id,
       );
 

@@ -23,7 +23,7 @@ export const getPieChartTooltipData = ({
   tooltipItem: GraphWidgetTooltipItem;
 } | null => {
   const item = enrichedData.find(
-    (enrichedDataItem) => enrichedDataItem.id === datum.id,
+    (enrichedDataItem) => enrichedDataItem.id === datum.data.id,
   );
   if (!isDefined(item)) return null;
 

@@ -1,28 +1,219 @@
+import { gql } from '@apollo/client';
+import { useQuery } from '@apollo/client/react';
 import { styled } from '@linaria/react';
-import { useContext } from 'react';
-import { Section } from 'twenty-ui/layout';
-import { ThemeContext } from 'twenty-ui/theme-constants';
-import { SettingsToolsTable } from '~/pages/settings/ai/components/SettingsToolsTable';
+import { useLingui } from '@lingui/react/macro';
+import { type ReactNode, useMemo, useState } from 'react';
 
-const StyledCoverImage = styled.div`
-  background-position: center;
-  background-size: cover;
-  height: 160px;
-  overflow: hidden;
+import { useGetToolIndex } from '@/ai/hooks/useGetToolIndex';
+import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { logicFunctionsSelector } from '@/logic-functions/states/logicFunctionsSelector';
+import { Dropdown } from '@/ui/layout/dropdown/components/Dropdown';
+import { DropdownContent } from '@/ui/layout/dropdown/components/DropdownContent';
+import { DropdownMenuItemsContainer } from '@/ui/layout/dropdown/components/DropdownMenuItemsContainer';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { ToolCategory } from 'twenty-shared/ai';
+import { isDefined } from 'twenty-shared/utils';
+import { H2Title, IconLock, IconPuzzle, IconTool } from 'twenty-ui/display';
+import { SearchInput } from 'twenty-ui/input';
+import { Section } from 'twenty-ui/layout';
+import { MenuItemToggle } from 'twenty-ui/navigation';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
+import {
+  type SettingsAgentToolItem,
+  SettingsAgentToolsTable,
+} from '~/pages/settings/ai/components/SettingsAgentToolsTable';
+import { normalizeSearchText } from '~/utils/normalizeSearchText';
+
+const FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE = gql`
+  query FindManyApplicationsForToolTable {
+    findManyApplications {
+      id
+      name
+      universalIdentifier
+      logo
+    }
+  }
+`;
+
+const FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE = gql`
+  query FindManyMarketplaceAppsForToolTable {
+    findManyMarketplaceApps {
+      id
+      universalIdentifier
+      icon
+      logo
+    }
+  }
+`;
+
+const StyledSearchContainer = styled.div`
+  padding-bottom: ${themeCssVariables.spacing[2]};
 `;
 
 export const SettingsAgentToolsTab = () => {
-  const { colorScheme } = useContext(ThemeContext);
-  const coverImage =
-    colorScheme === 'light'
-      ? '/images/ai/ai-tools-cover-light.png'
-      : '/images/ai/ai-tools-cover-dark.png';
+  const logicFunctions = useAtomStateValue(logicFunctionsSelector);
+  const currentWorkspace = useAtomStateValue(currentWorkspaceState);
+  const {
+    toolIndex,
+    loading: toolIndexLoading,
+    error: toolIndexError,
+  } = useGetToolIndex();
+  const { data: applicationsData } = useQuery<{
+    findManyApplications: Array<{
+      id: string;
+      name: string;
+      universalIdentifier: string;
+      logo?: string | null;
+    }>;
+  }>(FIND_MANY_APPLICATIONS_FOR_TOOL_TABLE);
+  const { data: marketplaceAppsData } = useQuery<{
+    findManyMarketplaceApps: Array<{
+      id: string;
+      universalIdentifier: string;
+      icon: string;
+      logo?: string | null;
+    }>;
+  }>(FIND_MANY_MARKETPLACE_APPS_FOR_TOOL_TABLE);
+  const { t } = useLingui();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [showCustomTools, setShowCustomTools] = useState(true);
+  const [showManagedTools, setShowManagedTools] = useState(true);
+  const [showStandardTools, setShowStandardTools] = useState(true);
+
+  const workspaceCustomApplicationId =
+    currentWorkspace?.workspaceCustomApplication?.id;
+
+  const isManaged = (applicationId?: string | null) =>
+    isDefined(applicationId) && applicationId !== workspaceCustomApplicationId;
+
+  const isCustom = (tool: SettingsAgentToolItem) =>
+    isDefined(tool.applicationId);
+
+  const allTools: SettingsAgentToolItem[] = useMemo(
+    () => [
+      ...logicFunctions
+        .filter((fn) => isDefined(fn.toolTriggerSettings))
+        .map((fn) => ({
+          identifier: fn.id,
+          name: fn.name,
+          description: fn.description,
+          applicationId: fn.applicationId,
+        })),
+      ...toolIndex
+        .filter((tool) => tool.category !== ToolCategory.LOGIC_FUNCTION)
+        .map((tool) => ({
+          identifier: tool.name,
+          name: tool.name,
+          description: tool.description,
+          category: tool.category,
+          objectName: tool.objectName,
+          icon: tool.icon,
+        })),
+    ],
+    [logicFunctions, toolIndex],
+  );
+
+  const applicationById = new Map(
+    (applicationsData?.findManyApplications ?? []).map((application) => [
+      application.id,
+      application,
+    ]),
+  );
+  const marketplaceAppByUniversalIdentifier = new Map(
+    (marketplaceAppsData?.findManyMarketplaceApps ?? []).map(
+      (marketplaceApp) => [marketplaceApp.universalIdentifier, marketplaceApp],
+    ),
+  );
+
+  const filteredTools = allTools
+    .filter((tool) => {
+      const searchNormalized = normalizeSearchText(searchTerm);
+
+      const matchesSearch =
+        normalizeSearchText(tool.name).includes(searchNormalized) ||
+        normalizeSearchText(tool.description ?? '').includes(searchNormalized);
+
+      if (!matchesSearch) {
+        return false;
+      }
+
+      if (!isCustom(tool)) {
+        return showStandardTools;
+      }
+
+      if (isManaged(tool.applicationId)) {
+        return showManagedTools;
+      }
+
+      return showCustomTools;
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
+
+  const isLoading = toolIndexLoading && !toolIndexError;
+
   return (
-    <>
-      <Section>
-        <StyledCoverImage style={{ backgroundImage: `url('${coverImage}')` }} />
-      </Section>
-      <SettingsToolsTable />
-    </>
+    <Section>
+      <H2Title
+        title={t`Tools`}
+        description={t`Use filter to see existing tools or create your own`}
+      />
+      <StyledSearchContainer>
+        <SearchInput
+          placeholder={t`Search a tool...`}
+          value={searchTerm}
+          onChange={setSearchTerm}
+          filterDropdown={(filterButton: ReactNode) => (
+            <Dropdown
+              dropdownId="settings-tools-filter-dropdown"
+              dropdownPlacement="bottom-end"
+              dropdownOffset={{ x: 0, y: 8 }}
+              clickableComponent={filterButton}
+              dropdownComponents={
+                <DropdownContent>
+                  <DropdownMenuItemsContainer>
+                    <MenuItemToggle
+                      LeftIcon={IconTool}
+                      onToggleChange={() =>
+                        setShowCustomTools(!showCustomTools)
+                      }
+                      toggled={showCustomTools}
+                      text={t`Custom`}
+                      toggleSize="small"
+                    />
+                    <MenuItemToggle
+                      LeftIcon={IconLock}
+                      onToggleChange={() =>
+                        setShowManagedTools(!showManagedTools)
+                      }
+                      toggled={showManagedTools}
+                      text={t`Managed`}
+                      toggleSize="small"
+                    />
+                    <MenuItemToggle
+                      LeftIcon={IconPuzzle}
+                      onToggleChange={() =>
+                        setShowStandardTools(!showStandardTools)
+                      }
+                      toggled={showStandardTools}
+                      text={t`Standard`}
+                      toggleSize="small"
+                    />
+                  </DropdownMenuItemsContainer>
+                </DropdownContent>
+              }
+            />
+          )}
+        />
+      </StyledSearchContainer>
+      <SettingsAgentToolsTable
+        tools={filteredTools}
+        isLoading={isLoading}
+        applicationById={applicationById}
+        marketplaceAppByUniversalIdentifier={
+          marketplaceAppByUniversalIdentifier
+        }
+        currentWorkspace={currentWorkspace}
+      />
+    </Section>
   );
 };
