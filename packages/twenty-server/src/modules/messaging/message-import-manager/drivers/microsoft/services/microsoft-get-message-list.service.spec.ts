@@ -42,10 +42,21 @@ describe('MicrosoftGetMessageListService', () => {
     api: jest.fn().mockReturnThis(),
     version: jest.fn().mockReturnThis(),
     headers: jest.fn().mockReturnThis(),
-    get: jest.fn().mockResolvedValue({
-      value: [{ id: 'msg-1' }, { id: 'msg-2' }],
-      '@odata.deltaLink': 'https://graph.microsoft.com/delta?token=abc',
-    }),
+    post: jest
+      .fn()
+      .mockImplementation((batchRequestBody: { requests: { id: string }[] }) =>
+        Promise.resolve({
+          responses: batchRequestBody.requests.map((request) => ({
+            id: request.id,
+            status: 200,
+            body: {
+              value: [{ id: 'msg-1' }, { id: 'msg-2' }],
+              '@odata.deltaLink':
+                'https://graph.microsoft.com/beta/delta?token=abc',
+            },
+          })),
+        }),
+      ),
   });
 
   beforeEach(async () => {
