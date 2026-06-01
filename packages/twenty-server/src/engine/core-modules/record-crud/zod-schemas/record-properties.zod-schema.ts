@@ -11,6 +11,24 @@ import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfa
 
 import { filesFieldSchema } from 'src/engine/api/common/common-args-processors/data-arg-processor/validator-utils/validate-files-field-or-throw.util';
 import { type ObjectMetadataForToolSchema } from 'src/engine/core-modules/record-crud/types/object-metadata-for-tool-schema.type';
+import {
+  AddressValueOptionalSchema,
+  AddressValueSchema,
+  CurrencyValueOptionalSchema,
+  CurrencyValueSchema,
+  EmailsValueOptionalSchema,
+  EmailsValueSchema,
+  FullNameValueOptionalSchema,
+  FullNameValueSchema,
+  LinksValueOptionalSchema,
+  LinksValueSchema,
+  PhonesValueOptionalSchema,
+  PhonesValueSchema,
+  RichTextValueOptionalSchema,
+  RichTextValueSchema,
+  UuidValueOptionalSchema,
+  UuidValueSchema,
+} from 'src/engine/core-modules/record-crud/zod-schemas/shared-value-defs.zod-schema';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { isFieldMetadataEntityOfType } from 'src/engine/utils/is-field-metadata-of-type.util';
 
@@ -34,7 +52,7 @@ const isFieldAvailable = (field: FlatFieldMetadata, forResponse: boolean) => {
 const getFieldZodType = (field: FlatFieldMetadata): z.ZodTypeAny => {
   switch (field.type) {
     case FieldMetadataType.UUID:
-      return z.string().uuidv4();
+      return UuidValueSchema;
 
     case FieldMetadataType.TEXT:
       return z.string();
@@ -97,11 +115,9 @@ export const generateRecordPropertiesZodSchema = (
       isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) &&
       field.settings?.relationType === RelationType.MANY_TO_ONE
     ) {
-      const uuidSchema = z.uuidv4();
-
       shape[`${field.name}Id`] = field.isNullable
-        ? uuidSchema.optional()
-        : uuidSchema;
+        ? UuidValueOptionalSchema
+        : UuidValueSchema;
 
       return;
     }
@@ -157,46 +173,28 @@ export const generateRecordPropertiesZodSchema = (
       }
 
       case FieldMetadataType.LINKS:
-        fieldSchema = z.object({
-          primaryLinkLabel: z.string().optional(),
-          primaryLinkUrl: z.string().url().optional(),
-          secondaryLinks: z
-            .array(
-              z.object({
-                url: z.string().url(),
-                label: z.string(),
-              }),
-            )
-            .optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? LinksValueOptionalSchema
+          : LinksValueSchema;
+        return;
 
       case FieldMetadataType.CURRENCY:
-        fieldSchema = z.object({
-          amountMicros: z.number().optional(),
-          currencyCode: z.string().optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? CurrencyValueOptionalSchema
+          : CurrencyValueSchema;
+        return;
 
       case FieldMetadataType.FULL_NAME:
-        fieldSchema = z.object({
-          firstName: z.string().optional(),
-          lastName: z.string().optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? FullNameValueOptionalSchema
+          : FullNameValueSchema;
+        return;
 
       case FieldMetadataType.ADDRESS:
-        fieldSchema = z.object({
-          addressStreet1: z.string().optional(),
-          addressStreet2: z.string().optional(),
-          addressCity: z.string().optional(),
-          addressPostcode: z.string().optional(),
-          addressState: z.string().optional(),
-          addressCountry: z.string().optional(),
-          addressLat: z.number().optional(),
-          addressLng: z.number().optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? AddressValueOptionalSchema
+          : AddressValueSchema;
+        return;
 
       case FieldMetadataType.ACTOR:
         fieldSchema = z.object({
@@ -223,27 +221,22 @@ export const generateRecordPropertiesZodSchema = (
         break;
 
       case FieldMetadataType.EMAILS:
-        fieldSchema = z.object({
-          primaryEmail: z.string().email().optional(),
-          additionalEmails: z.array(z.string().email()).optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? EmailsValueOptionalSchema
+          : EmailsValueSchema;
+        return;
 
       case FieldMetadataType.PHONES:
-        fieldSchema = z.object({
-          primaryPhoneNumber: z.string().optional(),
-          primaryPhoneCountryCode: z.string().optional(),
-          primaryPhoneCallingCode: z.string().optional(),
-          additionalPhones: z.array(z.string()).optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? PhonesValueOptionalSchema
+          : PhonesValueSchema;
+        return;
 
       case FieldMetadataType.RICH_TEXT:
-        fieldSchema = z.object({
-          markdown: z.string().optional(),
-          blocknote: z.string().optional(),
-        });
-        break;
+        shape[field.name] = field.isNullable
+          ? RichTextValueOptionalSchema
+          : RichTextValueSchema;
+        return;
 
       case FieldMetadataType.FILES:
         fieldSchema = filesFieldSchema;
