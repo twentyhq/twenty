@@ -7,7 +7,6 @@ import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-i
 import { LinkIconWithLinkOverlay } from '@/navigation-menu-item/display/link/components/LinkIconWithLinkOverlay';
 import { useNavigationMenuItemEditSectionItems } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditSectionItems';
 import { useNavigationMenuItemTitleEdit } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemTitleEdit';
-import { buildNavigationMenuLinkUpdate } from '@/navigation-menu-item/common/utils/buildNavigationMenuLinkUpdate';
 import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { SidePanelPageInfoLayout } from '@/side-panel/components/SidePanelPageInfoLayout';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -47,10 +46,7 @@ export const SidePanelLinkInfo = () => {
     defaultLabel,
     persistName: (name) => {
       if (isDefined(selectedItem)) {
-        void updateItem(
-          selectedItem.id,
-          buildNavigationMenuLinkUpdate({ name }),
-        );
+        void updateItem(selectedItem.id, { name });
       }
     },
   });

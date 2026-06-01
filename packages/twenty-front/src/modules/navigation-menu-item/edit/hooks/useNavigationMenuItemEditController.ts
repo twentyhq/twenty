@@ -101,7 +101,7 @@ export const useNavigationMenuItemEditController = () => {
 
     if (isDraftMode) {
       setNavigationMenuItemsDraft((draft) => {
-        const current = draft ?? [];
+        const current = draft ?? currentItems;
         return [
           ...current.slice(0, flatIndex),
           newItem,
@@ -120,6 +120,8 @@ export const useNavigationMenuItemEditController = () => {
       ]).catch(() =>
         enqueueErrorSnackBar({ message: t`Couldn't add to favorites` }),
       );
+    } else {
+      enqueueErrorSnackBar({ message: t`Couldn't add to favorites` });
     }
 
     return id;

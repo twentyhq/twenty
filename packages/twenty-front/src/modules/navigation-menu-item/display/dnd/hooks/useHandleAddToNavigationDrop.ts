@@ -15,7 +15,10 @@ import { openNavigationMenuItemFolderIdsState } from '@/navigation-menu-item/com
 import { canNavigationMenuItemBeDroppedIn } from '@/navigation-menu-item/common/utils/canNavigationMenuItemBeDroppedIn';
 import { getObjectMetadataIdsInDraft } from '@/navigation-menu-item/common/utils/getObjectMetadataIdsInDraft';
 import { validateAndExtractWorkspaceFolderId } from '@/navigation-menu-item/common/utils/validateAndExtractWorkspaceFolderId';
-import { useNavigationMenuItemEditController } from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
+import {
+  type NewNavigationMenuItemInput,
+  useNavigationMenuItemEditController,
+} from '@/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController';
 import { useOpenNavigationMenuItemInSidePanel } from '@/navigation-menu-item/edit/hooks/useOpenNavigationMenuItemInSidePanel';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
 import { getObjectColorWithFallback } from '@/object-metadata/utils/getObjectColorWithFallback';
@@ -79,36 +82,44 @@ export const useHandleAddToNavigationDrop = () => {
         );
       }
 
-      const openEditForNewNavItem = (
-        newItemId: string,
-        options: Omit<
+      // Enter customization mode before creating: it reseeds the workspace
+      // draft from the live items, so an item created beforehand would be
+      // overwritten and lost.
+      const addToWorkspaceAndOpenEdit = (
+        input: NewNavigationMenuItemInput,
+        position: { targetFolderId: string | null; targetIndex: number },
+        openOptions: Omit<
           Parameters<typeof openNavigationMenuItemInSidePanel>[0],
           'itemId'
         >,
       ) => {
         enterLayoutCustomizationMode();
-        openNavigationMenuItemInSidePanel({ ...options, itemId: newItemId });
+        const newItemId = createItem(input, position);
+        openNavigationMenuItemInSidePanel({
+          ...openOptions,
+          itemId: newItemId,
+        });
       };
 
       switch (payload.type) {
         case NavigationMenuItemType.FOLDER: {
-          const newFolderId = createItem(
+          addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.FOLDER,
               name: payload.name,
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_FOLDER,
             },
             { targetFolderId: null, targetIndex: index },
+            {
+              pageTitle: t`Edit folder`,
+              pageIcon: IconFolder,
+              focusTitleInput: true,
+            },
           );
-          openEditForNewNavItem(newFolderId, {
-            pageTitle: t`Edit folder`,
-            pageIcon: IconFolder,
-            focusTitleInput: true,
-          });
           return;
         }
         case NavigationMenuItemType.LINK: {
-          const newLinkId = createItem(
+          addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.LINK,
               name: payload.name || t`Link label`,
@@ -116,12 +127,12 @@ export const useHandleAddToNavigationDrop = () => {
               color: DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
             },
             { targetFolderId: folderId, targetIndex: index },
+            {
+              pageTitle: t`Edit link`,
+              pageIcon: IconLink,
+              focusTitleInput: true,
+            },
           );
-          openEditForNewNavItem(newLinkId, {
-            pageTitle: t`Edit link`,
-            pageIcon: IconLink,
-            focusTitleInput: true,
-          });
           return;
         }
         case NavigationMenuItemType.OBJECT: {
@@ -135,7 +146,7 @@ export const useHandleAddToNavigationDrop = () => {
           const objectMetadataItem = objectMetadataItems.find(
             (item) => item.id === payload.objectMetadataId,
           );
-          const newItemId = createItem(
+          addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.OBJECT,
               targetObjectMetadataId: payload.objectMetadataId,
@@ -146,13 +157,13 @@ export const useHandleAddToNavigationDrop = () => {
                   : undefined),
             },
             { targetFolderId: folderId, targetIndex: index },
+            {
+              pageTitle: objectMetadataItem?.labelPlural ?? payload.label,
+              pageIcon: objectMetadataItem
+                ? getIcon(objectMetadataItem.icon)
+                : IconFolder,
+            },
           );
-          openEditForNewNavItem(newItemId, {
-            pageTitle: objectMetadataItem?.labelPlural ?? payload.label,
-            pageIcon: objectMetadataItem
-              ? getIcon(objectMetadataItem.icon)
-              : IconFolder,
-          });
           return;
         }
         case NavigationMenuItemType.VIEW: {
@@ -162,7 +173,7 @@ export const useHandleAddToNavigationDrop = () => {
                 (item) => item.id === view.objectMetadataId,
               )
             : undefined;
-          const newItemId = createItem(
+          addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.VIEW,
               viewId: payload.viewId,
@@ -171,18 +182,21 @@ export const useHandleAddToNavigationDrop = () => {
                 : undefined,
             },
             { targetFolderId: folderId, targetIndex: index },
+            {
+              pageTitle: view?.name ?? payload.label,
+              pageIcon: view ? getIcon(view.icon) : IconFolder,
+            },
           );
-          openEditForNewNavItem(newItemId, {
-            pageTitle: view?.name ?? payload.label,
-            pageIcon: view ? getIcon(view.icon) : IconFolder,
-          });
           return;
         }
         case NavigationMenuItemType.RECORD: {
           if (!isDefined(payload.objectMetadataId)) {
             return;
           }
-          const newItemId = createItem(
+          const objectMetadataItem = objectMetadataItems.find(
+            (item) => item.id === payload.objectMetadataId,
+          );
+          addToWorkspaceAndOpenEdit(
             {
               type: NavigationMenuItemType.RECORD,
               targetObjectMetadataId: payload.objectMetadataId,
@@ -194,16 +208,13 @@ export const useHandleAddToNavigationDrop = () => {
               },
             },
             { targetFolderId: folderId, targetIndex: index },
+            {
+              pageTitle: payload.label,
+              pageIcon: objectMetadataItem
+                ? getIcon(objectMetadataItem.icon)
+                : IconFolder,
+            },
           );
-          const objectMetadataItem = objectMetadataItems.find(
-            (item) => item.id === payload.objectMetadataId,
-          );
-          openEditForNewNavItem(newItemId, {
-            pageTitle: payload.label,
-            pageIcon: objectMetadataItem
-              ? getIcon(objectMetadataItem.icon)
-              : IconFolder,
-          });
           return;
         }
       }
