@@ -1,5 +1,7 @@
 import { FieldMetadataType, OrderByDirection } from 'twenty-shared/types';
 
+import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
+
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -147,7 +149,7 @@ describe('encodeCursor', () => {
       id: 'abc',
       fullName: { firstName: 'Katherine', lastName: 'Watts' },
     };
-    const orderBy = [
+    const orderBy: ObjectRecordOrderBy = [
       { fullName: { firstName: OrderByDirection.AscNullsFirst } },
       { fullName: { lastName: OrderByDirection.DescNullsLast } },
     ];
