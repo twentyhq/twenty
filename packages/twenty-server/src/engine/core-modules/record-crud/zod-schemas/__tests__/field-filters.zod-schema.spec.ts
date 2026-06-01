@@ -47,4 +47,23 @@ describe('generateFieldFilterZodSchema', () => {
       expect(schema!.parse({ ilike: '%hello%' })).toEqual({});
     });
   });
+
+  describe('MORPH_RELATION', () => {
+    // Regression: morph relations (e.g. noteTarget.targetPerson) are filtered
+    // by their join column (`${name}Id`). Without a dedicated case they hit the
+    // text default and advertise like/ilike, which the runner rejects when it
+    // resolves the relation (`Object person doesn't have any "ilike" field`).
+    const uuid = '7def8b6a-ec89-48f1-9835-ec2f7c726ef0';
+
+    it('filters by the related record id and rejects text operators', () => {
+      const schema = generateFieldFilterZodSchema(
+        fieldOfType(FieldMetadataType.MORPH_RELATION, 'targetPerson'),
+      );
+
+      expect(schema).not.toBeNull();
+      expect(schema!.parse({ eq: uuid })).toEqual({ eq: uuid });
+      // `ilike` is not a valid operator for a relation id — stripped.
+      expect(schema!.parse({ ilike: '%Tom%' })).toEqual({});
+    });
+  });
 });

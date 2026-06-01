@@ -536,6 +536,34 @@ export const generateFieldFilterZodSchema = (
 
       return null;
 
+    case FieldMetadataType.MORPH_RELATION: {
+      // Morph relations expose a join column per target (`${name}Id`) and are
+      // filtered by it, like a MANY_TO_ONE relation. Without this case they
+      // fall through to the text default below and wrongly advertise
+      // like/ilike, which the query runner rejects when it resolves the
+      // relation (`Object <target> doesn't have any "ilike" field`).
+      const fieldName = `${field.name}Id`;
+
+      return z
+        .object({
+          eq: z.string().uuid().optional().describe('Related record ID equals'),
+          neq: z
+            .string()
+            .uuid()
+            .optional()
+            .describe('Related record ID not equals'),
+          in: z
+            .array(z.string().uuid())
+            .optional()
+            .describe('Related record ID in array of values'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty related record. Use "NULL" to find records with no relation, "NOT_NULL" for records with a relation',
+          ),
+        })
+        .optional()
+        .describe(`Filter by ${fieldName} (morph relation field)`);
+    }
+
     case FieldMetadataType.RAW_JSON:
     case FieldMetadataType.FILES:
       return z
