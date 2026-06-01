@@ -29,6 +29,7 @@ export {
   someNonEmptyString,
   includesEvery,
   objectMetadataItem,
+  objectMetadataLabel,
 } from './conditional-availability/conditional-availability-variables';
 export { closeSidePanel } from './functions/closeSidePanel';
 export { copyToClipboard } from './functions/copyToClipboard';
