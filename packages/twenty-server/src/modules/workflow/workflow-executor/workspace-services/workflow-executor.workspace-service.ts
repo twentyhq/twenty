@@ -517,6 +517,11 @@ export class WorkflowExecutorWorkspaceService {
       if (!isUserError) {
         this.exceptionHandlerService.captureExceptions([error], {
           workspace: { id: workspaceId },
+          additionalData: {
+            workflowRunId,
+            stepId,
+            stepType: step.type,
+          },
         });
 
         await this.metricsService.incrementCounterForEvent({

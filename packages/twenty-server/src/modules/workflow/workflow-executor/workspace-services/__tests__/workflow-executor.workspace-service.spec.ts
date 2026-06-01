@@ -13,6 +13,10 @@ import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-res
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
+import {
+  WorkflowStepExecutorException,
+  WorkflowStepExecutorExceptionCode,
+} from 'src/modules/workflow/workflow-executor/exceptions/workflow-step-executor.exception';
 import { WorkflowActionFactory } from 'src/modules/workflow/workflow-executor/factories/workflow-action.factory';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import { shouldFailSafely } from 'src/modules/workflow/workflow-executor/utils/should-fail-safely.util';
@@ -702,6 +706,70 @@ describe('WorkflowExecutorWorkspaceService', () => {
         nextStepIdsToExecute: ['step-b'],
         nextStepIdsToSkip: ['step-a', 'step-c'],
       });
+    });
+  });
+
+  describe('executeStep', () => {
+    const mockWorkflowRunId = 'workflow-run-id';
+    const mockWorkspaceId = 'workspace-id';
+
+    it('should capture system errors with workflow context', async () => {
+      const systemError = new Error('system failure');
+
+      (workflowActionFactory.get as jest.Mock).mockReturnValue({
+        execute: jest.fn().mockRejectedValue(systemError),
+      });
+
+      await service['executeStep']({
+        step: {
+          id: 'step-1',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {},
+          nextStepIds: [],
+        } as unknown as WorkflowAction,
+        steps: [],
+        stepInfos: {},
+        workflowRunId: mockWorkflowRunId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockExceptionHandlerService.captureExceptions).toHaveBeenCalledWith(
+        [systemError],
+        {
+          workspace: { id: mockWorkspaceId },
+          additionalData: {
+            workflowRunId: mockWorkflowRunId,
+            stepId: 'step-1',
+            stepType: WorkflowActionType.IF_ELSE,
+          },
+        },
+      );
+    });
+
+    it('should not capture user errors', async () => {
+      const userError = new WorkflowStepExecutorException(
+        'Invalid input',
+        WorkflowStepExecutorExceptionCode.INVALID_STEP_INPUT,
+      );
+
+      (workflowActionFactory.get as jest.Mock).mockReturnValue({
+        execute: jest.fn().mockRejectedValue(userError),
+      });
+
+      await service['executeStep']({
+        step: {
+          id: 'step-1',
+          type: WorkflowActionType.IF_ELSE,
+          settings: {},
+          nextStepIds: [],
+        } as unknown as WorkflowAction,
+        steps: [],
+        stepInfos: {},
+        workflowRunId: mockWorkflowRunId,
+        workspaceId: mockWorkspaceId,
+      });
+
+      expect(mockExceptionHandlerService.captureExceptions).not.toHaveBeenCalled();
     });
   });
 

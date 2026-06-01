@@ -1042,6 +1042,27 @@ describe('evaluateFilterConditions', () => {
           true,
         );
       });
+
+      it('should handle date IsNotNull operand', () => {
+        const notNullFilter = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          now,
+          null,
+          'DATE',
+        );
+
+        const nullFilter = createFilter(
+          ViewFilterOperand.IS_NOT_NULL,
+          null,
+          null,
+          'DATE',
+        );
+
+        expect(evaluateFilterConditions({ filters: [notNullFilter] })).toBe(
+          true,
+        );
+        expect(evaluateFilterConditions({ filters: [nullFilter] })).toBe(false);
+      });
     });
 
     describe('currency operands', () => {

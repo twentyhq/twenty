@@ -248,6 +248,7 @@ function evaluateDateFilter(filter: ResolvedFilter): boolean {
     case ViewFilterOperand.IS_EMPTY:
       return !isDefined(filter.leftOperand) || filter.leftOperand === '';
 
+    case ViewFilterOperand.IS_NOT_NULL:
     case ViewFilterOperand.IS_NOT_EMPTY:
       return isDefined(filter.leftOperand) && filter.leftOperand !== '';
 
