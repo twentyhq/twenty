@@ -30,7 +30,6 @@ export const generateFieldFilterZodSchema = (
         .describe(`Filter by ${field.name} (UUID field)`);
 
     case FieldMetadataType.TEXT:
-    case FieldMetadataType.RICH_TEXT:
       return z
         .object({
           eq: z.string().optional().describe('Equals'),
@@ -52,6 +51,45 @@ export const generateFieldFilterZodSchema = (
         })
         .optional()
         .describe(`Filter by ${field.name} (text field)`);
+
+    case FieldMetadataType.RICH_TEXT: {
+      // RICH_TEXT is a composite (sub-fields `markdown` and `blocknote`, both
+      // TEXT). Scalar operators must target a sub-field — applying e.g. `ilike`
+      // to the composite root throws `Sub field "ilike" not found for composite
+      // type: RICH_TEXT`. Mirror the EMAILS/PHONES composite pattern so the
+      // agent filters the human-readable `markdown` text instead.
+      const richTextSubFieldFilter = z
+        .object({
+          eq: z.string().optional().describe('Equals'),
+          neq: z.string().optional().describe('Not equals'),
+          like: z
+            .string()
+            .optional()
+            .describe('Case-sensitive pattern match (use % for wildcards)'),
+          ilike: z
+            .string()
+            .optional()
+            .describe('Case-insensitive pattern match (use % for wildcards)'),
+          startsWith: z.string().optional().describe('Starts with'),
+          endsWith: z.string().optional().describe('Ends with'),
+          is: NullCheckEnum.optional().describe(
+            'Check for missing or empty values. Use "NULL" to find records with no value, "NOT_NULL" for records with a value',
+          ),
+        })
+        .optional();
+
+      return z
+        .object({
+          markdown: richTextSubFieldFilter.describe(
+            'Filter by the markdown text content (use this to search rich-text body text)',
+          ),
+          blocknote: richTextSubFieldFilter.describe(
+            'Filter by the raw BlockNote JSON representation',
+          ),
+        })
+        .optional()
+        .describe(`Filter by ${field.name} (rich text field)`);
+    }
 
     case FieldMetadataType.NUMBER:
     case FieldMetadataType.NUMERIC:
