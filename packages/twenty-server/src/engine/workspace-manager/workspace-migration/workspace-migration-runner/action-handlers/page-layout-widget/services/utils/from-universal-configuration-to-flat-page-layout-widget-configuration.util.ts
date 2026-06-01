@@ -255,20 +255,30 @@ export const fromUniversalConfigurationToFlatPageLayoutWidgetConfiguration = ({
     }
 
     case WidgetConfigurationType.FIELDS: {
-      const { viewUniversalIdentifier, newFieldDefaultVisibility, ...rest } =
-        universalConfiguration;
+      const {
+        viewUniversalIdentifier,
+        viewId: legacyViewUniversalIdentifier,
+        newFieldDefaultVisibility,
+        ...rest
+      } = universalConfiguration as typeof universalConfiguration & {
+        viewId?: string | null;
+      };
+
+      const resolvedViewUniversalIdentifier = isDefined(viewUniversalIdentifier)
+        ? viewUniversalIdentifier
+        : legacyViewUniversalIdentifier;
 
       let viewId: string | null = null;
 
-      if (isDefined(viewUniversalIdentifier)) {
+      if (isDefined(resolvedViewUniversalIdentifier)) {
         const flatView = findFlatEntityByUniversalIdentifier({
           flatEntityMaps: flatViewMaps,
-          universalIdentifier: viewUniversalIdentifier,
+          universalIdentifier: resolvedViewUniversalIdentifier,
         });
 
         if (!isDefined(flatView)) {
           throw new FlatEntityMapsException(
-            `View not found for universal identifier: ${viewUniversalIdentifier}`,
+            `View not found for universal identifier: ${resolvedViewUniversalIdentifier}`,
             FlatEntityMapsExceptionCode.ENTITY_NOT_FOUND,
           );
         }

@@ -40,23 +40,32 @@ export const validateFieldsFlatPageLayoutWidgetForCreation = (
     return errors;
   }
 
-  const viewUniversalIdentifier = (
-    universalConfiguration as {
-      configurationType: string;
-      viewUniversalIdentifier?: unknown;
-    }
-  ).viewUniversalIdentifier;
+  const {
+    viewUniversalIdentifier,
+    viewId: legacyViewUniversalIdentifier,
+  } = universalConfiguration as {
+    configurationType: string;
+    viewUniversalIdentifier?: unknown;
+    viewId?: unknown;
+  };
 
-  if (isDefined(viewUniversalIdentifier) && viewUniversalIdentifier !== null) {
+  const resolvedViewUniversalIdentifier = isDefined(viewUniversalIdentifier)
+    ? viewUniversalIdentifier
+    : legacyViewUniversalIdentifier;
+
+  if (
+    isDefined(resolvedViewUniversalIdentifier) &&
+    resolvedViewUniversalIdentifier !== null
+  ) {
     if (
-      typeof viewUniversalIdentifier !== 'string' ||
-      !uuidValidate(viewUniversalIdentifier)
+      typeof resolvedViewUniversalIdentifier !== 'string' ||
+      !uuidValidate(resolvedViewUniversalIdentifier)
     ) {
       errors.push({
         code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
         message: t`Invalid viewUniversalIdentifier for fields widget "${widgetTitle}". Expected a valid UUID`,
         userFriendlyMessage: msg`Invalid viewUniversalIdentifier for fields widget`,
-        value: viewUniversalIdentifier,
+        value: resolvedViewUniversalIdentifier,
       });
     }
   }
