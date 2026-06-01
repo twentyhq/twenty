@@ -160,6 +160,9 @@ describe('WorkspaceService', () => {
                 delete: jest.fn().mockResolvedValue({ affected: 0 }),
               },
             }),
+            getRepository: jest.fn().mockReturnValue({
+              find: jest.fn().mockResolvedValue([]),
+            }),
           },
         },
       ],

@@ -24,7 +24,6 @@ import {
   TooltipDelay,
   TooltipPosition,
 } from 'twenty-ui/display';
-import { MenuItemIconBoxContainer } from 'twenty-ui/navigation';
 import {
   MOBILE_VIEWPORT,
   ThemeContext,
@@ -53,6 +52,10 @@ export type NavigationDrawerItemProps = {
   onClick?: () => void;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   iconColor?: string | null;
+  // Wrap the plain icon in a soft grey tile (no border) — used by the
+  // settings drawer so its icons read as a uniform group without picking
+  // up TintedIconTile's bordered colored treatment.
+  withIconBackground?: boolean;
   active?: boolean;
   modifier?: NavigationDrawerItemModifier;
   rightOptions?: ReactNode;
@@ -162,7 +165,7 @@ const StyledLabelParent = styled.div`
 `;
 
 const StyledItemLabel = styled.span`
-  font-weight: ${themeCssVariables.font.weight.regular};
+  font-weight: ${themeCssVariables.font.weight.medium};
 `;
 
 const StyledItemSecondaryLabel = styled.span`
@@ -201,6 +204,21 @@ const StyledIcon = styled.div`
   flex-shrink: 0;
   justify-content: center;
   margin-right: ${themeCssVariables.spacing[2]};
+`;
+
+// Soft grey background-only tile (no border) used by the settings drawer.
+// Sized one step larger than the icon so the icon sits with a couple of
+// pixels of breathing room on every side. radius.md matches the rest of
+// the App's small-card / tile language; radius.sm read as sharp squares.
+const StyledIconBackgroundTile = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
 `;
 
 const StyledRightOptionsContainer = styled.div`
@@ -244,6 +262,7 @@ export const NavigationDrawerItem = ({
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   iconColor,
+  withIconBackground = false,
   to,
   onClick,
   active,
@@ -348,13 +367,10 @@ export const NavigationDrawerItem = ({
               <StyledIcon>
                 <TintedIconTile Icon={Icon} color={iconColor} />
               </StyledIcon>
-            ) : (
+            ) : withIconBackground ? (
               <StyledIcon>
-                <MenuItemIconBoxContainer>
+                <StyledIconBackgroundTile>
                   <Icon
-                    style={{
-                      minWidth: theme.icon.size.md,
-                    }}
                     size={theme.icon.size.md}
                     stroke={theme.icon.stroke.md}
                     color={
@@ -363,7 +379,22 @@ export const NavigationDrawerItem = ({
                         : 'currentColor'
                     }
                   />
-                </MenuItemIconBoxContainer>
+                </StyledIconBackgroundTile>
+              </StyledIcon>
+            ) : (
+              <StyledIcon>
+                <Icon
+                  style={{
+                    minWidth: theme.icon.size.md,
+                  }}
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.md}
+                  color={
+                    showBreadcrumb && !isExpanded
+                      ? theme.font.color.light
+                      : 'currentColor'
+                  }
+                />
               </StyledIcon>
             ))}
 

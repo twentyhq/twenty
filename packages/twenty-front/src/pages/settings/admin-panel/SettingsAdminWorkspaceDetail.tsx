@@ -16,7 +16,7 @@ import { SettingsAdminWorkspaceContent } from '@/settings/admin-panel/components
 import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSectionSkeletonLoader';
 import { GET_ADMIN_WORKSPACE_CHAT_THREADS } from '@/settings/admin-panel/graphql/queries/getAdminWorkspaceChatThreads';
 import { WORKSPACE_LOOKUP_ADMIN_PANEL } from '@/settings/admin-panel/graphql/queries/workspaceLookupAdminPanel';
-import { useFeatureFlagState } from '@/settings/admin-panel/hooks/useFeatureFlagState';
+import { useAdminUpdateFeatureFlag } from '@/settings/admin-panel/hooks/useAdminUpdateFeatureFlag';
 import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpersonate';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
@@ -78,10 +78,13 @@ export const SettingsAdminWorkspaceDetail = () => {
   const isBillingEnabled = billing?.isBillingEnabled ?? false;
   const canManageFeatureFlags = useAtomStateValue(canManageFeatureFlagsState);
   const { enqueueErrorSnackBar } = useSnackBar();
-  const { updateFeatureFlagState } = useFeatureFlagState();
+  const { updateFeatureFlagState } = useAdminUpdateFeatureFlag();
   const { handleImpersonate, impersonatingUserId } = useHandleImpersonate();
   const [updateFeatureFlag] = useMutation(UpdateWorkspaceFeatureFlagDocument, {
     client: apolloAdminClient,
+    refetchQueries: [
+      { query: WORKSPACE_LOOKUP_ADMIN_PANEL, variables: { workspaceId } },
+    ],
   });
 
   const { data: workspaceData, loading: isLoadingWorkspace } =

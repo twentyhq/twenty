@@ -4,12 +4,11 @@ import { SOURCE_LOCALE } from 'twenty-shared/translations';
 
 import { getPublishedArticle, getPublishedArticles } from '@/lib/articles';
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import { type LocaleRouteParams } from '@/lib/i18n/utils/get-route-i18n';
-import { localeToUrlSegment } from '@/lib/i18n/utils/website-locale-segments';
-import { resolveLocaleParam } from '@/lib/i18n';
+import { type LocaleRouteParams } from '@/lib/i18n/server';
+import { localeToUrlSegment, resolveLocaleParam } from '@/lib/i18n';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { buildArticleJsonLd, buildPageMetadata, JsonLd } from '@/lib/seo';
-import { Articles } from '@/sections/Articles';
+import { ArticlesArticle } from '@/sections/Articles';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 
@@ -68,18 +67,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
   return (
     <>
       <JsonLd data={buildArticleJsonLd(post)} />
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.primary.background[100]}
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
-      <Articles.Article post={post} />
+      />
+      <ArticlesArticle post={post} />
     </>
   );
 }

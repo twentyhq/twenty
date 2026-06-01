@@ -52,7 +52,9 @@ export class DeployCommand {
 
     await checkSdkVersionCompatibility(appPath);
 
-    console.log(chalk.blue('Deploying application...'));
+    const remoteName = options.remote ?? ConfigService.getActiveRemote();
+
+    console.log(chalk.blue(`Deploying application on ${remoteName}...`));
     console.log(chalk.gray(`App path: ${appPath}\n`));
 
     const onProgress = (message: string) => console.log(chalk.gray(message));
@@ -85,7 +87,6 @@ export class DeployCommand {
 
     const appName = packageJson?.name ?? result.data.name;
     const appVersion = packageJson?.version ?? 'unknown';
-    const remoteName = ConfigService.getActiveRemote();
 
     console.log(
       chalk.green(`\n✓ Published ${appName} v${appVersion} to ${remoteName}\n`),
