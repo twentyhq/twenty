@@ -1,3 +1,4 @@
+import { WorkflowVersionStepException } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
 import { extractCodeStepLogicFunctionIdsFromWorkflowSteps } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/extract-code-step-logic-function-ids-from-workflow-steps.util';
 import {
   WorkflowActionType,
@@ -55,12 +56,12 @@ describe('extractCodeStepLogicFunctionIdsFromWorkflowSteps', () => {
     ]);
   });
 
-  it('should filter out CODE steps with an empty logic function id', () => {
+  it('should throw when a CODE step has an empty logic function id', () => {
     const steps = [buildCodeStep(''), buildCodeStep('logic-function-1')];
 
-    expect(extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps)).toEqual([
-      'logic-function-1',
-    ]);
+    expect(() =>
+      extractCodeStepLogicFunctionIdsFromWorkflowSteps(steps),
+    ).toThrow(WorkflowVersionStepException);
   });
 
   it('should return an empty array when there are no CODE steps', () => {
