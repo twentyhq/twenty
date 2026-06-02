@@ -190,7 +190,7 @@ msgstr ""
 
 #. js-lingui-id: r4l/MK
 #. placeholder {0}: formatUsageValue(totalCredits)
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "{0} used"
 msgstr ""
 
@@ -913,12 +913,12 @@ msgid "Actions users can perform on this object"
 msgstr ""
 
 #. js-lingui-id: FQBaXG
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/components/SettingsSkillInactiveMenuDropDown.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/security/components/SSO/SettingsSecuritySSORowDropdownMenu.tsx
 #: src/modules/settings/data-model/objects/components/SettingsObjectInactiveMenuDropDown.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldDisabledActionDropdown.tsx
@@ -937,7 +937,7 @@ msgid "Activating..."
 msgstr ""
 
 #. js-lingui-id: F6pfE9
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/modules/settings/domains/components/SettingsWorkspaceDomainCard.tsx
@@ -948,7 +948,7 @@ msgid "Active"
 msgstr ""
 
 #. js-lingui-id: Mue4oc
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Active API keys created by you or your team."
 msgstr ""
 
@@ -2010,7 +2010,7 @@ msgid "Anyone with an email address at these domains is allowed to sign up for t
 msgstr ""
 
 #. js-lingui-id: OZtEcz
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
 msgstr ""
@@ -2062,7 +2062,7 @@ msgid "API keys"
 msgstr ""
 
 #. js-lingui-id: FfSJ1Y
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "API Keys"
 msgstr ""
 
@@ -2098,12 +2098,12 @@ msgid "API values"
 msgstr ""
 
 #. js-lingui-id: ZZAOwb
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/settings/developers/components/SettingsDevelopersWebhookForm.tsx
 msgid "APIs & Webhooks"
@@ -2275,7 +2275,7 @@ msgid "Are you sure you want to delete {0}? Outbound mail through this domain wi
 msgstr ""
 
 #. js-lingui-id: Faev6R
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Are you sure you want to delete {sourceHandle}? Inbound mail forwarded to this address and outbound replies from it will stop working."
 msgstr ""
 
@@ -2525,8 +2525,8 @@ msgid "Audit logs"
 msgstr ""
 
 #. js-lingui-id: EPEFrH
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Audit Logs"
 msgstr ""
 
@@ -2551,7 +2551,7 @@ msgid "Auth failed at"
 msgstr ""
 
 #. js-lingui-id: P8fBlG
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Authentication"
 msgstr ""
 
@@ -2561,17 +2561,17 @@ msgid "Authentication failed"
 msgstr ""
 
 #. js-lingui-id: H7qgYQ
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Authenticator app"
 msgstr ""
 
 #. js-lingui-id: YZWcQL
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 msgid "Authenticator App"
 msgstr ""
 
 #. js-lingui-id: 9aB4Rs
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Authenticator apps and browser extensions like 1Password, Authy, Microsoft Authenticator, etc. generate one-time passwords that are used as a second factor to verify your identity when prompted during sign-in."
 msgstr ""
 
@@ -2768,10 +2768,10 @@ msgid "between the {startOrdinal} and {endOrdinal} of the month"
 msgstr ""
 
 #. js-lingui-id: R+w/Va
-#: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/pages/settings/SettingsUsage.tsx
-#: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/SettingsBilling.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsage.tsx
+#: src/pages/settings/billing/SettingsBilling.tsx
+#: src/pages/settings/billing/SettingsBilling.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
@@ -2864,6 +2864,11 @@ msgstr ""
 #. js-lingui-id: O2UpM1
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Browse"
+msgstr ""
+
+#. js-lingui-id: hKAV/O
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Browse partners"
 msgstr ""
 
 #. js-lingui-id: GsXRxc
@@ -3047,7 +3052,7 @@ msgid "Can't change API names for standard objects"
 msgstr ""
 
 #. js-lingui-id: YXzPl1
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Can't scan? Copy the"
 msgstr ""
 
@@ -3314,7 +3319,7 @@ msgid "Chats"
 msgstr ""
 
 #. js-lingui-id: xK2nU3
-#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Check out our latest releases"
 msgstr ""
 
@@ -3394,7 +3399,7 @@ msgid "Choose what happens when you click an email"
 msgstr ""
 
 #. js-lingui-id: 02EFne
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Choose which profile fields users with the Edit Profile permission can modify"
 msgstr ""
 
@@ -3465,7 +3470,7 @@ msgid "Click to select icon {iconAriaLabel}"
 msgstr ""
 
 #. js-lingui-id: ZwIUeU
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "ClickHouse is required for audit logs. Contact your administrator."
 msgstr ""
 
@@ -3668,6 +3673,18 @@ msgstr ""
 msgid "Comment"
 msgstr ""
 
+#. js-lingui-id: chL5IG
+#: src/pages/settings/community/SettingsCommunity.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
+msgid "Community"
+msgstr ""
+
+#. js-lingui-id: myLjjN
+#: src/utils/title-utils.ts
+msgid "Community - Settings"
+msgstr ""
+
 #. js-lingui-id: NM9bMd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 msgid "Compact view"
@@ -3760,7 +3777,7 @@ msgid "Configure"
 msgstr ""
 
 #. js-lingui-id: +zUMwJ
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Configure an SSO connection"
 msgstr ""
 
@@ -3780,7 +3797,7 @@ msgid "Configure date, time, number, timezone, and calendar start day"
 msgstr ""
 
 #. js-lingui-id: utsXG8
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Configure fallback login methods for users with SSO bypass permissions"
 msgstr ""
 
@@ -4100,7 +4117,7 @@ msgid "Copied to clipboard"
 msgstr ""
 
 #. js-lingui-id: he3ygx
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOSAMLForm.tsx
 #: src/modules/settings/security/components/SSO/SettingsSSOOIDCForm.tsx
@@ -4156,7 +4173,7 @@ msgid "Copy output"
 msgstr ""
 
 #. js-lingui-id: HvB+os
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Copy paste the code below"
 msgstr ""
 
@@ -4252,9 +4269,25 @@ msgstr ""
 msgid "Could not refresh validity token. Please contact support."
 msgstr ""
 
+#. js-lingui-id: PiYvMl
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
+msgid "Couldn't add to favorites"
+msgstr ""
+
 #. js-lingui-id: s8lFtq
 #: src/hooks/useCopyToClipboard.tsx
 msgid "Couldn't copy to clipboard"
+msgstr ""
+
+#. js-lingui-id: kjbTwZ
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
+msgid "Couldn't remove favorite"
+msgstr ""
+
+#. js-lingui-id: WSmI/y
+#: src/modules/navigation-menu-item/edit/hooks/useNavigationMenuItemEditController.ts
+msgid "Couldn't update favorite"
 msgstr ""
 
 #. js-lingui-id: S2XvS+
@@ -4370,7 +4403,7 @@ msgid "Create and configure AI agents"
 msgstr ""
 
 #. js-lingui-id: uXGLuq
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Create API key"
 msgstr ""
 
@@ -4422,7 +4455,7 @@ msgid "Create view"
 msgstr ""
 
 #. js-lingui-id: SiPp29
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Create webhook"
 msgstr ""
 
@@ -4532,7 +4565,7 @@ msgid "credits"
 msgstr ""
 
 #. js-lingui-id: lDIOek
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Credits"
 msgstr ""
@@ -4766,7 +4799,7 @@ msgid "Customize what this user can view and perform"
 msgstr ""
 
 #. js-lingui-id: bCJa9l
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Customize your workspace security"
 msgstr ""
 
@@ -4787,7 +4820,7 @@ msgid "Daily AI Usage"
 msgstr ""
 
 #. js-lingui-id: KXQkvT
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Daily Usage"
 msgstr ""
@@ -5027,7 +5060,7 @@ msgid "Deactivate this field"
 msgstr ""
 
 #. js-lingui-id: yAT3be
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
 #: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
@@ -5167,10 +5200,10 @@ msgid "delete"
 msgstr ""
 
 #. js-lingui-id: cnGeoo
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -5276,7 +5309,7 @@ msgid "Delete chat"
 msgstr ""
 
 #. js-lingui-id: cC09EO
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Delete email handle"
 msgstr ""
 
@@ -5554,6 +5587,11 @@ msgstr ""
 msgid "Disconnect connection?"
 msgstr ""
 
+#. js-lingui-id: OdPOhy
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Discord"
+msgstr ""
+
 #. js-lingui-id: Xm/s+u
 #: src/modules/settings/accounts/components/SettingsAccountsCalendarChannelsGeneral.tsx
 msgid "Display"
@@ -5613,7 +5651,7 @@ msgid "Do not import"
 msgstr ""
 
 #. js-lingui-id: TvY/XA
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 msgid "Documentation"
@@ -5847,7 +5885,7 @@ msgid "Earliest date"
 msgstr ""
 
 #. js-lingui-id: VR9WbL
-#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Early access"
 msgstr ""
 
@@ -5962,12 +6000,12 @@ msgid "Edit view"
 msgstr ""
 
 #. js-lingui-id: 6o1M/Q
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Edit your subdomain name or set a custom domain."
 msgstr ""
 
 #. js-lingui-id: xMkLkW
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Editable Profile Fields"
 msgstr ""
 
@@ -5994,14 +6032,14 @@ msgid "else if"
 msgstr ""
 
 #. js-lingui-id: O3oNi5
-#: src/pages/settings/SettingsWorkspaceEmail.tsx
-#: src/pages/settings/SettingsWorkspaceEmail.tsx
-#: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/auth/PasswordReset.tsx
@@ -6263,7 +6301,7 @@ msgid "English"
 msgstr ""
 
 #. js-lingui-id: UXZry7
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 msgid "Enhances security by requiring a code along with your password"
 msgstr ""
 
@@ -6480,11 +6518,11 @@ msgid "Enter values, comma-separated"
 msgstr ""
 
 #. js-lingui-id: GpB8YV
-#: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/admin-panel/components/SettingsAdminContent.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -6492,8 +6530,8 @@ msgid "Enterprise"
 msgstr ""
 
 #. js-lingui-id: rmZVdg
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/ai/components/SettingsAiUsageTab.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Enterprise feature"
 msgstr ""
@@ -6540,7 +6578,7 @@ msgid "Environment variable"
 msgstr ""
 
 #. js-lingui-id: BlLvRP
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Erasure of soft-deleted records"
 msgstr ""
 
@@ -6705,8 +6743,8 @@ msgid "Error while switching subscription."
 msgstr ""
 
 #. js-lingui-id: JLxMta
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Establish Webhook endpoints for notifications on asynchronous events."
 msgstr ""
 
@@ -7054,7 +7092,7 @@ msgid "Failed to create email handle. Email handles may not be configured on thi
 msgstr ""
 
 #. js-lingui-id: lWoewm
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Failed to delete email handle."
 msgstr ""
 
@@ -7677,13 +7715,13 @@ msgid "Formats"
 msgstr ""
 
 #. js-lingui-id: nm91BR
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 #: src/modules/settings/workspace/components/SettingsWorkspaceEmailGroupSection.tsx
 msgid "Forwarding address"
 msgstr ""
 
 #. js-lingui-id: TFf85Z
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Forwarding address copied to clipboard"
 msgstr ""
 
@@ -7774,8 +7812,9 @@ msgid "Functions - Settings"
 msgstr ""
 
 #. js-lingui-id: Weq9zb
-#: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationGeneralInfo.tsx
 #: src/pages/settings/admin-panel/SettingsAdminApplicationRegistrationDetail.tsx
@@ -7910,7 +7949,7 @@ msgid "Grants permission to perform all available actions without restriction"
 msgstr ""
 
 #. js-lingui-id: gBiL6J
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
 msgstr ""
@@ -8124,6 +8163,11 @@ msgstr ""
 #. js-lingui-id: y9sG4l
 #: src/modules/settings/data-model/object-details/components/tabs/SettingsObjectIndexesSection.tsx
 msgid "Hide system indexes"
+msgstr ""
+
+#. js-lingui-id: 1ETc0T
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Hire a partner to help you implement and customize Twenty."
 msgstr ""
 
 #. js-lingui-id: i0qMbr
@@ -8488,7 +8532,7 @@ msgid "Inbox"
 msgstr ""
 
 #. js-lingui-id: j8Bj7e
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Include emails where all participants share the same domain."
 msgstr ""
 
@@ -9003,6 +9047,16 @@ msgstr ""
 #. js-lingui-id: fSPjtl
 #: src/pages/auth/SignInUp.tsx
 msgid "Join {workspaceName} team"
+msgstr ""
+
+#. js-lingui-id: pZZg+N
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Join our community to get help and share feedback."
+msgstr ""
+
+#. js-lingui-id: 31TuIx
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Join our Discord"
 msgstr ""
 
 #. js-lingui-id: B2Zb/F
@@ -9605,7 +9659,7 @@ msgid "Log out"
 msgstr ""
 
 #. js-lingui-id: qakNlV
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Log retention"
 msgstr ""
 
@@ -9747,7 +9801,7 @@ msgid "Manage security policies"
 msgstr ""
 
 #. js-lingui-id: 49MfD1
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Manage support access settings"
 msgstr ""
 
@@ -9856,7 +9910,7 @@ msgid "Maximum values"
 msgstr ""
 
 #. js-lingui-id: nA8kxD
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "MCP"
 msgstr ""
 
@@ -10281,9 +10335,9 @@ msgstr ""
 
 #. js-lingui-id: 6YtxFj
 #: src/testing/mock-data/tableData.ts
-#: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
@@ -10350,7 +10404,7 @@ msgid "Name of your API key"
 msgstr ""
 
 #. js-lingui-id: J7w8lI
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Name of your workspace"
 msgstr ""
 
@@ -10462,6 +10516,11 @@ msgstr ""
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 msgid "New Emailing Domain"
+msgstr ""
+
+#. js-lingui-id: k6B3QD
+#: src/modules/navigation-menu-item/display/sections/favorites/components/FavoritesSection.tsx
+msgid "New favorite"
 msgstr ""
 
 #. js-lingui-id: 8YPqRx
@@ -10766,7 +10825,7 @@ msgid "No credentials"
 msgstr ""
 
 #. js-lingui-id: FoID5n
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "No credit consumption recorded for this user."
 msgstr ""
 
@@ -11148,7 +11207,7 @@ msgid "No trigger is enabled. Toggle one of the options above to choose how this
 msgstr ""
 
 #. js-lingui-id: WwlPOG
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
 msgid "No usage data"
 msgstr ""
@@ -11343,7 +11402,7 @@ msgid "Number format"
 msgstr ""
 
 #. js-lingui-id: +cbzNC
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Number of days to retain audit logs (30-1095 days)"
 msgstr ""
 
@@ -11779,8 +11838,7 @@ msgid "Organize"
 msgstr ""
 
 #. js-lingui-id: /IX/7x
-#: src/pages/settings/updates/SettingsUpdates.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspacesStatus.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceChatThread.tsx
@@ -11796,6 +11854,7 @@ msgstr ""
 #: src/pages/settings/admin-panel/SettingsAdmin.tsx
 #: src/modules/sign-in-background-mock/components/BackgroundMockNavigationDrawer.tsx
 #: src/modules/side-panel/pages/workflow/action/components/SidePanelWorkflowSelectAction.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemMainMenu.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
@@ -11810,7 +11869,7 @@ msgid "Other objects"
 msgstr ""
 
 #. js-lingui-id: 9LV44m
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Other security settings"
 msgstr ""
 
@@ -11962,6 +12021,11 @@ msgstr ""
 msgid "Parameters"
 msgstr ""
 
+#. js-lingui-id: mPkInZ
+#: src/pages/settings/community/SettingsCommunity.tsx
+msgid "Partners"
+msgstr ""
+
 #. js-lingui-id: 8ZsakT
 #: src/modules/settings/security/components/SettingsSecurityAuthProvidersOptionsList.tsx
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -12043,7 +12107,7 @@ msgid "Per-day AI consumption."
 msgstr ""
 
 #. js-lingui-id: i9iYjM
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "Per-day credit consumption."
 msgstr ""
 
@@ -12077,7 +12141,7 @@ msgid "Perform administrative actions or permanently delete this user"
 msgstr ""
 
 #. js-lingui-id: wSpwGR
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Permanent deletion. Enter the number of days."
 msgstr ""
 
@@ -12155,8 +12219,8 @@ msgid "Pick the index type. BTREE covers most queries; GIN is for full-text and 
 msgstr ""
 
 #. js-lingui-id: N0+GsR
-#: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/members/components/MemberInfosTab.tsx
 msgid "Picture"
@@ -12449,9 +12513,9 @@ msgid "Processing..."
 msgstr ""
 
 #. js-lingui-id: vERlcd
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-#: src/pages/settings/SettingsProfile.tsx
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Profile"
 msgstr ""
@@ -12649,7 +12713,7 @@ msgid "Raw JSON"
 msgstr ""
 
 #. js-lingui-id: 549d7o
-#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Read changelog"
 msgstr ""
 
@@ -12939,7 +13003,7 @@ msgid "Relative"
 msgstr ""
 
 #. js-lingui-id: 5icoS1
-#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Releases"
 msgstr ""
 
@@ -13235,8 +13299,8 @@ msgid "Response Format"
 msgstr ""
 
 #. js-lingui-id: WHiaOl
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
 msgstr ""
@@ -13894,11 +13958,9 @@ msgstr ""
 
 #. js-lingui-id: a3LDKx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Security"
 msgstr ""
 
@@ -14303,7 +14365,7 @@ msgid "Set up a Select field on {objectLabel} to create a Kanban"
 msgstr ""
 
 #. js-lingui-id: l6W1lM
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Set up forwarding from the source address to this destination."
 msgstr ""
 
@@ -14356,12 +14418,12 @@ msgid "Setup incomplete"
 msgstr ""
 
 #. js-lingui-id: J2TlKG
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "setup key"
 msgstr ""
 
 #. js-lingui-id: i5CJAR
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 #: src/modules/auth/sign-in-up/components/internal/SignInUpTwoFactorAuthenticationProvision.tsx
 msgid "Setup key copied to clipboard"
 msgstr ""
@@ -14751,7 +14813,7 @@ msgid "Source"
 msgstr ""
 
 #. js-lingui-id: Pp9DbE
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Source address"
 msgstr ""
 
@@ -14784,7 +14846,7 @@ msgid "Split multiple values"
 msgstr ""
 
 #. js-lingui-id: vnS6Rf
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "SSO"
 msgstr ""
 
@@ -14795,7 +14857,7 @@ msgid "SSO (SAML / OIDC)"
 msgstr ""
 
 #. js-lingui-id: qBpBSc
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "SSO Bypass"
 msgstr ""
@@ -15106,8 +15168,8 @@ msgid "Sunday"
 msgstr ""
 
 #. js-lingui-id: XYLcNv
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/modules/ui/navigation/navigation-drawer/components/MultiWorkspaceDropdown/internal/MultiWorkspaceDropdownDefaultComponents.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 msgid "Support"
 msgstr ""
@@ -15163,7 +15225,7 @@ msgid "Sync failed"
 msgstr ""
 
 #. js-lingui-id: tVKt7G
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Sync Internal Emails"
 msgstr ""
 
@@ -15382,7 +15444,7 @@ msgid "Text Editor"
 msgstr ""
 
 #. js-lingui-id: KJjmr/
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "The address your workspace sends and receives email from."
 msgstr ""
 
@@ -15467,7 +15529,7 @@ msgid "The email associated to this account"
 msgstr ""
 
 #. js-lingui-id: VGZYbZ
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 msgid "The email associated to your account"
 msgstr ""
 
@@ -16173,12 +16235,12 @@ msgid "True"
 msgstr ""
 
 #. js-lingui-id: 64tOpZ
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Try our REST or GraphQL API playgrounds"
 msgstr ""
 
 #. js-lingui-id: 3WWUB9
-#: src/pages/settings/updates/SettingsUpdates.tsx
+#: src/pages/settings/community/SettingsCommunity.tsx
 msgid "Try our upcoming features. Note they are still in beta. Please bear with us and report any issues you find."
 msgstr ""
 
@@ -16241,8 +16303,8 @@ msgid "Twitter/X Search"
 msgstr ""
 
 #. js-lingui-id: tuvLv1
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/modules/settings/security/components/Toggle2FA.tsx
 msgid "Two Factor Authentication"
 msgstr ""
@@ -16254,7 +16316,7 @@ msgid "Two factor authentication provisioning failed."
 msgstr ""
 
 #. js-lingui-id: C4pKXW
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Two-Factor Authentication"
 msgstr ""
 
@@ -16629,13 +16691,6 @@ msgstr ""
 msgid "Updated (on specific fields)"
 msgstr ""
 
-#. js-lingui-id: qIrtcK
-#: src/pages/settings/updates/SettingsUpdates.tsx
-#: src/pages/settings/updates/SettingsUpdates.tsx
-#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
-msgid "Updates"
-msgstr ""
-
 #. js-lingui-id: kwkhPe
 #: src/modules/settings/roles/role-permissions/object-level-permissions/record-level-permissions/components/SettingsRolePermissionsObjectLevelRecordLevelSection.tsx
 #: src/modules/settings/billing/components/internal/ResourceCreditPriceSelector.tsx
@@ -16695,7 +16750,7 @@ msgid "Upgrade to access"
 msgstr ""
 
 #. js-lingui-id: Wurpq2
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Upgrade to Enterprise to access audit logs."
 msgstr ""
 
@@ -16786,9 +16841,9 @@ msgid "us-east-1"
 msgstr ""
 
 #. js-lingui-id: 7FaY4u
-#: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/pages/settings/SettingsUsage.tsx
-#: src/pages/settings/SettingsUsage.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsage.tsx
+#: src/pages/settings/billing/SettingsUsage.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/settings/usage/components/UsageByUserTableSection.tsx
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -16817,7 +16872,7 @@ msgid "Usage analytics will appear here once you start using credits."
 msgstr ""
 
 #. js-lingui-id: 7vRxpC
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 #: src/modules/settings/usage/components/SettingsUsageAnalyticsSection.tsx
 msgid "Usage by Type"
 msgstr ""
@@ -16883,11 +16938,11 @@ msgid "Useful for pivot/junction tables"
 msgstr ""
 
 #. js-lingui-id: 7PzzBU
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
-#: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
 #: src/pages/settings/security/event-logs/utils/getColumnsForEventLogTable.ts
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 #: src/pages/settings/profile/appearance/components/SettingsExperience.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAgentTurnDetail.tsx
@@ -16927,8 +16982,8 @@ msgid "User is not logged in"
 msgstr ""
 
 #. js-lingui-id: 5r/Ozr
-#: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/pages/settings/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
 msgid "User Usage"
 msgstr ""
 
@@ -17043,7 +17098,7 @@ msgid "Verify domains so the workspace can send outbound email through them."
 msgstr ""
 
 #. js-lingui-id: zS/rMV
-#: src/pages/settings/SettingsTwoFactorAuthenticationMethod.tsx
+#: src/pages/settings/profile/SettingsTwoFactorAuthenticationMethod.tsx
 msgid "Verify the code from the app"
 msgstr ""
 
@@ -17102,7 +17157,7 @@ msgid "View all evaluations"
 msgstr ""
 
 #. js-lingui-id: XVf/G7
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "View and filter events, page views, object changes"
 msgstr ""
 
@@ -17164,7 +17219,7 @@ msgid "View Jobs"
 msgstr ""
 
 #. js-lingui-id: 923YyC
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "View Logs"
 msgstr ""
 
@@ -17204,7 +17259,7 @@ msgid "View usage"
 msgstr ""
 
 #. js-lingui-id: rWiqJF
-#: src/pages/settings/security/SettingsSecurity.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "View workspace activity logs"
 msgstr ""
 
@@ -17315,7 +17370,7 @@ msgid "Watch AI demo"
 msgstr ""
 
 #. js-lingui-id: 5qU4Mu
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Watch API demo"
 msgstr ""
 
@@ -17428,11 +17483,11 @@ msgid "Webhook ID is required for updates"
 msgstr ""
 
 #. js-lingui-id: v1kQyJ
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 msgid "Webhooks"
 msgstr ""
 
@@ -17606,16 +17661,8 @@ msgid "Workflows"
 msgstr ""
 
 #. js-lingui-id: pmUArF
-#: src/pages/settings/SettingsWorkspaceEmail.tsx
-#: src/pages/settings/SettingsWorkspace.tsx
-#: src/pages/settings/SettingsUsageUserDetail.tsx
-#: src/pages/settings/SettingsUsage.tsx
-#: src/pages/settings/SettingsBilling.tsx
-#: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
-#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/security/SettingsSecuritySSOIdentifyProvider.tsx
 #: src/pages/settings/security/SettingsSecurityApprovedAccessDomain.tsx
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMember.tsx
@@ -17625,9 +17672,12 @@ msgstr ""
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
 #: src/pages/settings/emailing-domains/SettingsEmailingDomainDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail.tsx
+#: src/pages/settings/email/SettingsWorkspaceEmail.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
@@ -17641,6 +17691,9 @@ msgstr ""
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldSelect.tsx
 #: src/pages/settings/data-model/new-field/SettingsObjectNewFieldConfigure.tsx
+#: src/pages/settings/billing/SettingsUsageUserDetail.tsx
+#: src/pages/settings/billing/SettingsUsage.tsx
+#: src/pages/settings/billing/SettingsBilling.tsx
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 #: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/SettingsApplicationRegistrationDetails.tsx
@@ -17649,6 +17702,7 @@ msgstr ""
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
 #: src/pages/settings/applications/SettingsApplicationCommandMenuItemDetail.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationConfigVariableDetail.tsx
+#: src/pages/settings/api-webhooks/SettingsApiWebhooks.tsx
 #: src/pages/settings/ai/SettingsToolDetail.tsx
 #: src/pages/settings/ai/SettingsSkillForm.tsx
 #: src/pages/settings/ai/SettingsAiUsageUserDetail.tsx
@@ -17696,13 +17750,13 @@ msgid "Workspace Deletion"
 msgstr ""
 
 #. js-lingui-id: i1AiTd
-#: src/pages/settings/SettingsWorkspace.tsx
+#: src/pages/settings/general/SettingsGeneral.tsx
 msgid "Workspace Domain"
 msgstr ""
 
 #. js-lingui-id: J2q6WC
-#: src/pages/settings/security/SettingsSecurity.tsx
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
+#: src/modules/settings/security/components/SettingsSecuritySettings.tsx
 msgid "Workspace Events"
 msgstr ""
 
@@ -18042,7 +18096,7 @@ msgid "Your handler receives this object. The body is empty because GET requests
 msgstr ""
 
 #. js-lingui-id: 9ivpwk
-#: src/pages/settings/SettingsProfile.tsx
+#: src/pages/settings/profile/SettingsProfile.tsx
 msgid "Your name as it will be displayed"
 msgstr ""
 
