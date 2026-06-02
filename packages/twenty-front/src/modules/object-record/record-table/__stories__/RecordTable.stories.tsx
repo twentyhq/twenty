@@ -72,15 +72,12 @@ export const HeaderMenuStaysOpenAfterMoveRight: Story = {
 
     await canvas.findAllByText('Linkedin', {}, { timeout: 3000 });
 
-    // Open the column header dropdown
     const headerMenuButton = await canvas.findByText('Domain Name');
     await userEvent.click(headerMenuButton);
 
-    // Confirm menu is open and click "Move right"
     const moveRightButton = await body.findByText('Move right');
     await userEvent.click(moveRightButton);
 
-    // Menu must still be visible — regression guard for the close-on-move bug
     await body.findByText('Move right');
   },
 };
