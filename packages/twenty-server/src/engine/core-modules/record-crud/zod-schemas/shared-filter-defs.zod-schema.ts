@@ -58,9 +58,9 @@ export const BooleanFilterSchema = z
 
 export const UuidFilterSchema = z
   .object({
-    eq: z.string().uuid().optional().describe('Equals'),
-    neq: z.string().uuid().optional().describe('Not equals'),
-    in: z.array(z.string().uuid()).optional().describe('In array of values'),
+    eq: z.string().uuidv4().optional().describe('Equals'),
+    neq: z.string().uuidv4().optional().describe('Not equals'),
+    in: z.array(z.string().uuidv4()).optional().describe('In array of values'),
     is: NullCheckEnum.optional(),
   })
   .optional();

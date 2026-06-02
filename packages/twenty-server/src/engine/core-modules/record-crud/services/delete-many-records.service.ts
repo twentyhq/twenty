@@ -10,6 +10,7 @@ import {
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type DeleteManyRecordsParams } from 'src/engine/core-modules/record-crud/types/delete-many-records-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { isDefined, isEmptyObject } from 'twenty-shared/utils';
 
 @Injectable()
 export class DeleteManyRecordsService {
@@ -23,7 +24,7 @@ export class DeleteManyRecordsService {
   async execute(params: DeleteManyRecordsParams): Promise<ToolOutput> {
     const { objectName, filter, authContext } = params;
 
-    if (Object.keys(filter).length === 0) {
+    if (!isDefined(filter) || isEmptyObject(filter)) {
       return {
         success: false,
         message: `Failed to delete records from ${objectName}`,
