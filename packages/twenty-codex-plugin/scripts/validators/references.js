@@ -32,6 +32,12 @@ const assertReferences = (fail) => {
 
 const assertHowAppsWork = (fail) => {
   const howAppsWorkPath = path.join(PLUGIN_ROOT, 'references/concepts/how-apps-work.md');
+
+  if (!fs.existsSync(howAppsWorkPath)) {
+    fail('required reference is missing: references/concepts/how-apps-work.md');
+    return;
+  }
+
   const howAppsWork = readText(howAppsWorkPath);
 
   const requiredFragments = [
@@ -60,6 +66,9 @@ const assertHowAppsWork = (fail) => {
     }
   }
 
+  // use-twenty-mcp is intentionally excluded: it covers consuming the Twenty MCP
+  // server to retrieve and present workspace records, not building apps, so the
+  // app-foundations doc (how-apps-work.md) is not a relevant prerequisite for it.
   const skillsToCheck = [
     'skills/create-app/SKILL.md',
     'skills/develop-app/SKILL.md',
@@ -68,7 +77,14 @@ const assertHowAppsWork = (fail) => {
   ];
 
   for (const skillRelPath of skillsToCheck) {
-    const skill = readText(path.join(PLUGIN_ROOT, skillRelPath));
+    const skillPath = path.join(PLUGIN_ROOT, skillRelPath);
+
+    if (!fs.existsSync(skillPath)) {
+      fail(`required skill is missing: ${skillRelPath}`);
+      continue;
+    }
+
+    const skill = readText(skillPath);
 
     if (!skill.includes('references/concepts/how-apps-work.md')) {
       fail(`${skillRelPath} must reference how-apps-work.md`);

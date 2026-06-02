@@ -103,6 +103,17 @@ while [[ $# -gt 0 ]]; do
       usage
       exit 0
       ;;
+    --)
+      shift
+      url="${1:-$url}"
+      break
+      ;;
+    -*)
+      echo "Unknown option: $1" >&2
+      echo >&2
+      usage >&2
+      exit 1
+      ;;
     *)
       url="$1"
       shift

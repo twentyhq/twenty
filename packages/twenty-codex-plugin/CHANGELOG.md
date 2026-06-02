@@ -6,7 +6,7 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and
 
 Entries reference the canonical skills (`create-app`, `develop-app`, `manage-app`, `publish-app`, `use-twenty-mcp`) and the validation script (`scripts/validate.js`).
 
-## [0.1.0]
+## [0.1.0] - Unreleased
 
 The first version of the Twenty Codex plugin.
 

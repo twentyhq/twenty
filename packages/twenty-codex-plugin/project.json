@@ -41,7 +41,6 @@
         "command": "bash ./scripts/setup-mcp.sh"
       }
     },
-    "lint": {},
     "fmt": {
       "executor": "nx:run-commands",
       "cache": true,

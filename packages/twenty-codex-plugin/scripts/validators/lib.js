@@ -146,7 +146,15 @@ const createInterfacePathResolver = (fail) => (relativePath) => {
     return undefined;
   }
 
-  return path.join(PLUGIN_ROOT, relativePath.slice(2));
+  const resolvedPath = path.resolve(PLUGIN_ROOT, relativePath.slice(2));
+
+  // Reject ../ traversal that escapes the plugin directory after normalization
+  if (resolvedPath !== PLUGIN_ROOT && !resolvedPath.startsWith(PLUGIN_ROOT + path.sep)) {
+    fail(`interface path must stay within the plugin directory (got: ${relativePath})`);
+    return undefined;
+  }
+
+  return resolvedPath;
 };
 
 module.exports = {
