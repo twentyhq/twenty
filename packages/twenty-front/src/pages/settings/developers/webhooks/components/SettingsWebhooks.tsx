@@ -1,6 +1,6 @@
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -32,12 +32,12 @@ export const SettingsWebhooks = () => {
   const { t } = useLingui();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Webhooks`}
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: <Trans>Webhooks</Trans> },
       ]}
@@ -62,6 +62,6 @@ export const SettingsWebhooks = () => {
           </Section>
         </StyledContainer>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

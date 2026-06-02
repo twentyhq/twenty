@@ -1,6 +1,6 @@
 import { SettingsAdminContent } from '@/settings/admin-panel/components/SettingsAdminContent';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -9,7 +9,7 @@ export const SettingsAdmin = () => {
   const { t } = useLingui();
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Admin Panel`}
       links={[
         {
@@ -22,6 +22,6 @@ export const SettingsAdmin = () => {
       <SettingsPageContainer>
         <SettingsAdminContent />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

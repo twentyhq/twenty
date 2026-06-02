@@ -10,7 +10,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -167,12 +167,12 @@ export const SettingsWorkspaceMember = () => {
     <>
       <SettingsRolesQueryEffect />
       {isLoading ? null : (
-        <SubMenuTopBarContainer
+        <SettingsPageLayout
           title={`${member.name.firstName} ${member.name.lastName}`}
           links={[
             {
               children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: t`Members`,
@@ -227,7 +227,7 @@ export const SettingsWorkspaceMember = () => {
             confirmButtonText={t`Remove member`}
             loading={isDeleting}
           />
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       )}
     </>
   );

@@ -21,7 +21,7 @@ import { useHandleImpersonate } from '@/settings/admin-panel/hooks/useHandleImpe
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { Table } from '@/ui/layout/table/components/Table';
@@ -201,7 +201,7 @@ export const SettingsAdminWorkspaceDetail = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -411,6 +411,6 @@ export const SettingsAdminWorkspaceDetail = () => {
           </Section>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

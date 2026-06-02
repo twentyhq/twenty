@@ -22,6 +22,7 @@
     "@lingui/core": "^5.1.2",
     "@lingui/react": "^5.1.2",
     "@lottiefiles/dotlottie-react": "^0.18.10",
+    "@radix-ui/react-popover": "^1.1.15",
     "@tabler/icons-react": "^3.41.1",
     "@wyw-in-js/babel-preset": "^0.8.1",
     "framer-motion": "^11.18.0",
