@@ -14,18 +14,21 @@ const StyledMount = styled.div<{ $isReady: boolean }>`
 `;
 
 type ProductBackgroundHalftoneProps = {
+  imageUrl: string;
   dashColor?: string;
   hoverColor?: string;
   solidness?: number;
 };
 
 export function ProductBackgroundHalftone({
+  imageUrl,
   dashColor,
   hoverColor,
   solidness,
 }: ProductBackgroundHalftoneProps) {
   const mountReference = useRef<HTMLDivElement>(null);
   const isReady = useProductBackgroundHalftone({
+    imageUrl,
     dashColor,
     hoverColor,
     mountRef: mountReference,

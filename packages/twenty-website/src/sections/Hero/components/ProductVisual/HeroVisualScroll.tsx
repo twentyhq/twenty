@@ -42,7 +42,19 @@ const NAV_HEIGHT = 64;
 
 const INTRO_HALFTONE_COLOR = '#4A38F5';
 
-const INTRO_HALFTONE_SOLIDNESS = 1;
+const PRODUCT_HERO_BACKGROUND_IMAGE =
+  '/illustrations/generated/ai-bg-1-mapped.png';
+
+const PatternOverlay = styled.div`
+  bottom: -100px;
+  height: 800px;
+  left: 50%;
+  pointer-events: none;
+  position: absolute;
+  transform: translateX(-50%);
+  width: 100vw;
+  z-index: 0;
+`;
 
 const ScrollTrack = styled.section`
   height: 200vh;
@@ -74,17 +86,6 @@ const FullLayer = styled.div`
   @media (min-width: ${theme.breakpoints.md}px) {
     padding-top: 112px;
   }
-`;
-
-const PatternOverlay = styled.div`
-  bottom: 0;
-  height: 575px;
-  left: 50%;
-  pointer-events: none;
-  position: absolute;
-  transform: translateX(-50%);
-  width: 100%;
-  z-index: 0;
 `;
 
 const StyledContainer = styled(Container)`
@@ -367,7 +368,7 @@ export function HeroVisualScroll({
               <ProductBackgroundHalftone
                 dashColor={INTRO_HALFTONE_COLOR}
                 hoverColor={INTRO_HALFTONE_COLOR}
-                solidness={INTRO_HALFTONE_SOLIDNESS}
+                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
               />
             </PatternOverlay>
             <ProductVisual
@@ -480,7 +481,9 @@ export function HeroVisualScroll({
 
           <VisualWrapper>
             <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
-              <ProductBackgroundHalftone />
+              <ProductBackgroundHalftone
+                imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
+              />
             </PatternOverlay>
             <ProductVisual
               activeScene={activeTab + 1}
