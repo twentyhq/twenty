@@ -1,12 +1,9 @@
 import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { TabListFromUrlOptionalEffect } from '@/ui/layout/tab-list/components/TabListFromUrlOptionalEffect';
 import { TAB_LIST_GAP } from '@/ui/layout/tab-list/constants/TabListGap';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { TabListComponentInstanceContext } from '@/ui/layout/tab-list/states/contexts/TabListComponentInstanceContext';
 import { type SingleTabProps } from '@/ui/layout/tab-list/types/SingleTabProps';
-import { useSetAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useSetAtomComponentState';
 import { styled } from '@linaria/react';
-import { useEffect } from 'react';
 import { TabButton } from 'twenty-ui/input';
 
 type SettingsTabBarProps = {
@@ -29,19 +26,10 @@ export const SettingsTabBar = ({
   const visibleTabs = tabs.filter((tab) => !tab.hide);
   const visibleTabIds = visibleTabs.map((tab) => tab.id);
 
-  const setActiveTabId = useSetAtomComponentState(
-    activeTabIdComponentState,
-    componentInstanceId,
-  );
-
   const activeTabId = useSettingsActiveTabId(
     componentInstanceId,
     visibleTabIds,
   );
-
-  useEffect(() => {
-    setActiveTabId(activeTabId);
-  }, [activeTabId, setActiveTabId]);
 
   if (visibleTabs.length === 0) {
     return null;
