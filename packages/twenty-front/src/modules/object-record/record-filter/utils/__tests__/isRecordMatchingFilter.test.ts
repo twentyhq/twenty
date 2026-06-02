@@ -1,4 +1,4 @@
-import { type RecordGqlOperationFilter } from 'twenty-shared/types';
+import { FieldMetadataType, type RecordGqlOperationFilter } from 'twenty-shared/types';
 import { mockedCompanyRecords } from '~/testing/mock-data/generated/data/companies/mock-companies-data';
 import { getTestEnrichedObjectMetadataItemsMock } from '~/testing/utils/getTestEnrichedObjectMetadataItemsMock';
 
@@ -93,6 +93,42 @@ describe('isRecordMatchingFilter', () => {
   });
 
   describe('Simple Filters', () => {
+    it('returns false instead of throwing when actor source filter field is missing on a partial record', () => {
+      const actorField = companyMockObjectMetadataItem.fields.find(
+        (field) => field.type === FieldMetadataType.ACTOR,
+      );
+
+      expect(actorField).toBeDefined();
+
+      const filter = {
+        [actorField?.name ?? 'createdBy']: {
+          source: {
+            eq: 'WORKSPACE_MEMBER',
+          },
+        },
+      };
+
+      const partialRecord = {
+        id: companiesMock[0].id,
+      };
+
+      expect(() =>
+        isRecordMatchingFilter({
+          record: partialRecord,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).not.toThrow();
+
+      expect(
+        isRecordMatchingFilter({
+          record: partialRecord,
+          filter,
+          objectMetadataItem: companyMockObjectMetadataItem,
+        }),
+      ).toBe(false);
+    });
+
     it('matches a record with a simple equality filter on name', () => {
       const companyMockInFilter = {
         ...companiesMock[0],

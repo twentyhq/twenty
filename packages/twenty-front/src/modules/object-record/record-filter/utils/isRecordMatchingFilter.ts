@@ -373,7 +373,7 @@ export const isRecordMatchingFilter = ({
         if (isDefined(actorFilter.source)) {
           return isMatchingSelectFilter({
             selectFilter: actorFilter.source,
-            value: record[filterKey].source,
+            value: record[filterKey]?.source,
           });
         }
 
