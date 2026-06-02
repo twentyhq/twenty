@@ -8,8 +8,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
@@ -31,11 +30,6 @@ export const SettingsWorkspaceMembers = () => {
 
   const hasRolesPermission = useHasPermissionFlag(PermissionFlagType.ROLES);
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    MEMBERS_TAB_LIST_ID,
-  );
-
   const tabs = [
     { id: MEMBERS_TAB_TEAM_ID, title: t`Team`, Icon: IconUsers },
     { id: MEMBERS_TAB_INVITE_ID, title: t`Invite`, Icon: IconUserPlus },
@@ -43,6 +37,11 @@ export const SettingsWorkspaceMembers = () => {
       ? [{ id: MEMBERS_TAB_ROLES_ID, title: t`Roles`, Icon: IconLock }]
       : []),
   ];
+
+  const activeTabId = useSettingsActiveTabId(
+    MEMBERS_TAB_LIST_ID,
+    tabs.map((tab) => tab.id),
+  );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {

@@ -8,9 +8,8 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import PlaygroundCoverDark from '@/settings/playground/assets/cover-dark.png';
 import PlaygroundCoverLight from '@/settings/playground/assets/cover-light.png';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -60,13 +59,6 @@ export const SettingsApiWebhooks = () => {
   const isMobile = useIsMobile();
   const { t } = useLingui();
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID,
-  );
-  const activeTab: TabKey =
-    (activeTabId as TabKey) ?? SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API;
-
   const tabs = [
     {
       id: SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API,
@@ -84,6 +76,12 @@ export const SettingsApiWebhooks = () => {
       Icon: IconWebhook,
     },
   ];
+
+  const activeTab: TabKey =
+    (useSettingsActiveTabId(
+      SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID,
+      tabs.map((tab) => tab.id),
+    ) as TabKey) ?? SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API;
 
   return (
     <SettingsPageLayout

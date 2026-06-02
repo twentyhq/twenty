@@ -3,8 +3,7 @@ import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFla
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -35,11 +34,6 @@ export const SettingsApplications = () => {
     FeatureFlagKey.IS_MARKETPLACE_SETTING_TAB_VISIBLE,
   );
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    APPLICATIONS_TAB_LIST_ID,
-  );
-
   const tabs = [
     ...(isMarketplaceSettingTabVisible
       ? [{ id: 'marketplace', title: t`Marketplace`, Icon: IconDownload }]
@@ -49,6 +43,11 @@ export const SettingsApplications = () => {
       ? [{ id: 'developer', title: t`Developer`, Icon: IconCode }]
       : []),
   ];
+
+  const activeTabId = useSettingsActiveTabId(
+    APPLICATIONS_TAB_LIST_ID,
+    tabs.map((tab) => tab.id),
+  );
 
   const renderActiveTabContent = () => {
     switch (activeTabId) {
