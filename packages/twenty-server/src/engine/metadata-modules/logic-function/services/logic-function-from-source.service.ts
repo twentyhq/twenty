@@ -14,6 +14,7 @@ import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-m
 import { CreateLogicFunctionFromSourceInput } from 'src/engine/metadata-modules/logic-function/dtos/create-logic-function-from-source.input';
 import { LogicFunctionExecutionResultDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionDTO } from 'src/engine/metadata-modules/logic-function/dtos/logic-function.dto';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
@@ -169,6 +170,7 @@ export class LogicFunctionFromSourceService {
         timeoutSeconds: existingLogicFunction.timeoutSeconds,
         isBuildUpToDate: existingLogicFunction.isBuildUpToDate,
         checksum: existingLogicFunction.checksum,
+        executionMode: LogicFunctionExecutionMode.LIVE,
         handlerName: existingLogicFunction.handlerName,
         sourceHandlerPath: toSourceHandlerPath,
         builtHandlerPath: toBuiltHandlerPath,
@@ -365,6 +367,7 @@ export class LogicFunctionFromSourceService {
       logicFunctionId: id,
       workspaceId,
       payload,
+      executionMode: LogicFunctionExecutionMode.LIVE,
     });
 
     return {
