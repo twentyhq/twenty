@@ -19,8 +19,7 @@ type SettingsPageLayoutProps = {
   actionButton?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
-  // className styles the root; tag renders beside the centered title.
-  className?: string;
+  // tag renders beside the centered title.
   tag?: JSX.Element;
 };
 
@@ -75,14 +74,13 @@ export const SettingsPageLayout = ({
   secondaryBar,
   children,
   tag,
-  className,
 }: SettingsPageLayoutProps) => {
   const isMobile = useIsMobile();
 
   useCommandMenuHotKeys();
 
   return (
-    <StyledRoot isMobile={isMobile} className={className}>
+    <StyledRoot isMobile={isMobile}>
       <StyledMainCardWrapper>
         <StyledCard>
           <SettingsPageHeader

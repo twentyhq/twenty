@@ -11,7 +11,6 @@ import { TabButton } from 'twenty-ui/input';
 type SettingsTabBarProps = {
   tabs: SingleTabProps[];
   componentInstanceId: string;
-  loading?: boolean;
 };
 
 const StyledTabBar = styled.div`
@@ -28,7 +27,6 @@ const StyledTabBar = styled.div`
 export const SettingsTabBar = ({
   tabs,
   componentInstanceId,
-  loading,
 }: SettingsTabBarProps) => {
   const visibleTabs = tabs.filter((tab) => !tab.hide);
 
@@ -65,7 +63,7 @@ export const SettingsTabBar = ({
             LeftIcon={tab.Icon}
             logo={tab.logo}
             active={tab.id === activeTabId}
-            disabled={tab.disabled ?? loading}
+            disabled={tab.disabled}
             pill={tab.pill}
             to={`#${tab.id}`}
             tooltipContent={tab.tooltipContent}

@@ -132,62 +132,60 @@ export const SettingsObjectDetailPage = () => {
   };
 
   return (
-    <>
-      <SettingsPageLayout
-        title={objectMetadataItem.labelPlural}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.General),
-          },
-          {
-            children: t`Objects`,
-            href: getSettingsPath(SettingsPath.Objects),
-          },
-          {
-            children: objectMetadataItem.labelPlural,
-          },
-        ]}
-        actionButton={
-          <>
-            <Button
-              Icon={IconArrowUpRight}
-              title={t`See records`}
-              variant="tertiary"
-              size="small"
-              to={getAppPath(AppPath.RecordIndexPage, {
-                objectNamePlural: objectMetadataItem.namePlural,
-              })}
-            />
-            {!readonly &&
-              activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-                <UndecoratedLink to="./new-field/select">
-                  <Button
-                    title={t`New Field`}
-                    variant="primary"
-                    size="small"
-                    accent="blue"
-                    Icon={IconPlus}
-                  />
-                </UndecoratedLink>
-              )}
-          </>
-        }
-        secondaryBar={
-          <SettingsTabBar
-            tabs={tabs}
-            componentInstanceId={
-              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-            }
+    <SettingsPageLayout
+      title={objectMetadataItem.labelPlural}
+      links={[
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.General),
+        },
+        {
+          children: t`Objects`,
+          href: getSettingsPath(SettingsPath.Objects),
+        },
+        {
+          children: objectMetadataItem.labelPlural,
+        },
+      ]}
+      actionButton={
+        <>
+          <Button
+            Icon={IconArrowUpRight}
+            title={t`See records`}
+            variant="tertiary"
+            size="small"
+            to={getAppPath(AppPath.RecordIndexPage, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
           />
-        }
-      >
-        <SettingsPageContainer>
-          <StyledContentContainer>
-            {renderActiveTabContent()}
-          </StyledContentContainer>
-        </SettingsPageContainer>
-      </SettingsPageLayout>
-    </>
+          {!readonly &&
+            activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
+              <UndecoratedLink to="./new-field/select">
+                <Button
+                  title={t`New Field`}
+                  variant="primary"
+                  size="small"
+                  accent="blue"
+                  Icon={IconPlus}
+                />
+              </UndecoratedLink>
+            )}
+        </>
+      }
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={
+            SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+          }
+        />
+      }
+    >
+      <SettingsPageContainer>
+        <StyledContentContainer>
+          {renderActiveTabContent()}
+        </StyledContentContainer>
+      </SettingsPageContainer>
+    </SettingsPageLayout>
   );
 };
