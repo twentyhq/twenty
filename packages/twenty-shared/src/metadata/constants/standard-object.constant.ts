@@ -697,6 +697,28 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'dc7eb900-4742-4ce9-8fa1-0acd3e5771cb',
       },
     },
+    views: {
+      allCallRecordingCalendarEventAssociations: {
+        universalIdentifier: 'f364d937-2dcb-4233-b271-f55d8ee0a587',
+        viewFields: {
+          id: {
+            universalIdentifier: '3bef85a9-36f0-4460-8974-e467ee58a2d1',
+          },
+          callRecording: {
+            universalIdentifier: 'ddc45e66-9284-419e-81c1-7d5fe2a502d9',
+          },
+          calendarEvent: {
+            universalIdentifier: 'd73fab91-f214-4fc1-a5a6-518ac623fe4d',
+          },
+          eventExternalId: {
+            universalIdentifier: 'd55b80cb-4e1d-40d5-96f9-03da34995cc6',
+          },
+          createdAt: {
+            universalIdentifier: '05c83806-7157-4317-b25b-4aa51fc31118',
+          },
+        },
+      },
+    },
   },
   company: {
     universalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',
