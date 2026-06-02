@@ -3,8 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
+import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
 import { MessageSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/message-subscription-source.type';
 import { MessageSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/message-subscription-status.type';
+import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
+import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type SubscribedTopic } from 'src/engine/core-modules/emailing-domain/types/subscribed-topic.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
@@ -56,6 +59,7 @@ type UpsertSubscriptionStatusArgs = {
 export class MessageSubscriptionService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
   async subscribe({
@@ -71,6 +75,19 @@ export class MessageSubscriptionService {
       status: MessageSubscriptionStatus.SUBSCRIBED,
       source,
     });
+
+    const emailAddress = await this.resolvePrimaryEmailByPersonId(
+      workspaceId,
+      personId,
+    );
+
+    if (isDefined(emailAddress)) {
+      await this.messageSuppressionService.removeTopicSuppression(
+        workspaceId,
+        emailAddress,
+        topicId,
+      );
+    }
   }
 
   async unsubscribe({
@@ -78,13 +95,22 @@ export class MessageSubscriptionService {
     personId,
     topicId,
   }: UnsubscribeArgs): Promise<void> {
-    await this.upsertSubscriptionStatus({
+    const emailAddress = await this.resolvePrimaryEmailByPersonId(
       workspaceId,
       personId,
-      topicId,
-      status: MessageSubscriptionStatus.UNSUBSCRIBED,
-      source: MessageSubscriptionSource.MANUAL,
-    });
+    );
+
+    await this.deleteSubscription({ workspaceId, personId, topicId });
+
+    if (isDefined(emailAddress)) {
+      await this.messageSuppressionService.suppress({
+        workspaceId,
+        emailAddress,
+        reason: MessageSuppressionReason.UNSUBSCRIBE,
+        source: MessageSuppressionSource.SYSTEM,
+        topicId,
+      });
+    }
   }
 
   async unsubscribeByEmail({
@@ -231,16 +257,41 @@ export class MessageSubscriptionService {
     emailAddresses: string[],
     topicId: string,
   ): Promise<Set<string>> {
-    const normalizedAddresses = [
-      ...new Set(
-        emailAddresses.map((emailAddress) => emailAddress.trim().toLowerCase()),
-      ),
-    ];
+    return this.messageSuppressionService.getTopicSuppressedAddresses(
+      workspaceId,
+      emailAddresses,
+      topicId,
+    );
+  }
 
-    if (!isNonEmptyArray(normalizedAddresses)) {
-      return new Set();
-    }
+  private async deleteSubscription({
+    workspaceId,
+    personId,
+    topicId,
+  }: UnsubscribeArgs): Promise<void> {
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const subscriptionRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          MessageSubscriptionWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
 
+      const existingSubscription = await subscriptionRepository.findOneBy({
+        personId,
+        topicId,
+      });
+
+      if (isDefined(existingSubscription)) {
+        await subscriptionRepository.delete(existingSubscription.id);
+      }
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  private async resolvePrimaryEmailByPersonId(
+    workspaceId: string,
+    personId: string,
+  ): Promise<string | undefined> {
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
         const personRepository =
@@ -250,53 +301,9 @@ export class MessageSubscriptionService {
             { shouldBypassPermissionChecks: true },
           );
 
-        const matchedPeople = await addPersonEmailFiltersToQueryBuilder({
-          queryBuilder: personRepository.createQueryBuilder('person'),
-          emails: normalizedAddresses,
-        }).getMany();
+        const person = await personRepository.findOneBy({ id: personId });
 
-        if (!isNonEmptyArray(matchedPeople)) {
-          return new Set();
-        }
-
-        const subscriptionRepository =
-          await this.globalWorkspaceOrmManager.getRepository(
-            workspaceId,
-            MessageSubscriptionWorkspaceEntity,
-            { shouldBypassPermissionChecks: true },
-          );
-
-        const unsubscribedSubscriptions = await subscriptionRepository.find({
-          where: {
-            topicId,
-            personId: In(matchedPeople.map((person) => person.id)),
-            status: MessageSubscriptionStatus.UNSUBSCRIBED,
-          },
-        });
-
-        const unsubscribedPersonIds = new Set(
-          unsubscribedSubscriptions.map(
-            (subscription) => subscription.personId,
-          ),
-        );
-
-        const unsubscribedAddresses = new Set<string>();
-
-        for (const emailAddress of normalizedAddresses) {
-          const matchedPerson = findPersonByPrimaryOrAdditionalEmail({
-            people: matchedPeople,
-            email: emailAddress,
-          });
-
-          if (
-            isDefined(matchedPerson) &&
-            unsubscribedPersonIds.has(matchedPerson.id)
-          ) {
-            unsubscribedAddresses.add(emailAddress);
-          }
-        }
-
-        return unsubscribedAddresses;
+        return person?.emails?.primaryEmail ?? undefined;
       },
       buildSystemAuthContext(workspaceId),
     );

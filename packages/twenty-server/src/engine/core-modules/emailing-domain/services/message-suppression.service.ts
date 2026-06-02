@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { In } from 'typeorm';
+import { In, IsNull } from 'typeorm';
 
 import { BLOCKING_REASONS_BY_MESSAGE_CATEGORY } from 'src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
@@ -18,6 +18,7 @@ type SuppressArgs = {
   reason: MessageSuppressionReason;
   source: MessageSuppressionSource;
   providerEventId?: string | null;
+  topicId?: string | null;
 };
 
 const HARD_SUPPRESSION_REASONS = [
@@ -60,6 +61,48 @@ export class MessageSuppressionService {
             where: {
               emailAddress: In(normalizedAddresses),
               reason: In(BLOCKING_REASONS_BY_MESSAGE_CATEGORY[messageCategory]),
+              topicId: IsNull(),
+            },
+          });
+        },
+        buildSystemAuthContext(workspaceId),
+      );
+
+    return new Set(
+      suppressedRecipients.map((recipient) => recipient.emailAddress),
+    );
+  }
+
+  async getTopicSuppressedAddresses(
+    workspaceId: string,
+    emailAddresses: string[],
+    topicId: string,
+  ): Promise<Set<string>> {
+    const normalizedAddresses = [
+      ...new Set(
+        emailAddresses.map((emailAddress) => emailAddress.trim().toLowerCase()),
+      ),
+    ];
+
+    if (!isNonEmptyArray(normalizedAddresses)) {
+      return new Set();
+    }
+
+    const suppressedRecipients =
+      await this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+        async () => {
+          const suppressionRepository =
+            await this.globalWorkspaceOrmManager.getRepository(
+              workspaceId,
+              MessageSuppressionWorkspaceEntity,
+              { shouldBypassPermissionChecks: true },
+            );
+
+          return suppressionRepository.find({
+            where: {
+              emailAddress: In(normalizedAddresses),
+              reason: MessageSuppressionReason.UNSUBSCRIBE,
+              topicId,
             },
           });
         },
@@ -77,6 +120,7 @@ export class MessageSuppressionService {
     reason,
     source,
     providerEventId = null,
+    topicId = null,
   }: SuppressArgs): Promise<void> {
     const normalizedEmailAddress = emailAddress.trim().toLowerCase();
 
@@ -94,6 +138,7 @@ export class MessageSuppressionService {
 
       const existingSuppression = await suppressionRepository.findOneBy({
         emailAddress: normalizedEmailAddress,
+        topicId: isDefined(topicId) ? topicId : IsNull(),
       });
 
       if (!isDefined(existingSuppression)) {
@@ -102,6 +147,7 @@ export class MessageSuppressionService {
           reason,
           source,
           providerEventId,
+          topicId,
         });
 
         return;
@@ -113,6 +159,37 @@ export class MessageSuppressionService {
           source,
           providerEventId,
         });
+      }
+    }, buildSystemAuthContext(workspaceId));
+  }
+
+  async removeTopicSuppression(
+    workspaceId: string,
+    emailAddress: string,
+    topicId: string,
+  ): Promise<void> {
+    const normalizedEmailAddress = emailAddress.trim().toLowerCase();
+
+    if (!isNonEmptyString(normalizedEmailAddress)) {
+      return;
+    }
+
+    await this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
+      const suppressionRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          MessageSuppressionWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
+
+      const existingSuppression = await suppressionRepository.findOneBy({
+        emailAddress: normalizedEmailAddress,
+        reason: MessageSuppressionReason.UNSUBSCRIBE,
+        topicId,
+      });
+
+      if (isDefined(existingSuppression)) {
+        await suppressionRepository.delete(existingSuppression.id);
       }
     }, buildSystemAuthContext(workspaceId));
   }

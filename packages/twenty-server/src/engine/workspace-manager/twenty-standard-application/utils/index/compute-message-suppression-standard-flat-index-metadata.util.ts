@@ -17,12 +17,12 @@ export const buildMessageSuppressionStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'messageSuppression'>,
   FlatIndexMetadata
 > => ({
-  emailAddressUniqueIndex: createStandardIndexFlatMetadata({
+  emailAddressTopicUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'emailAddressUniqueIndex',
-      relatedFieldNames: ['emailAddress'],
+      indexName: 'emailAddressTopicUniqueIndex',
+      relatedFieldNames: ['emailAddress', 'topic'],
       isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,

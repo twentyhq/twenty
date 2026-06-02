@@ -1,6 +1,11 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import { DateDisplayFormat, FieldMetadataType } from 'twenty-shared/types';
+import {
+  DateDisplayFormat,
+  FieldMetadataType,
+  RelationOnDeleteAction,
+  RelationType,
+} from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -8,6 +13,7 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
+import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { SEARCH_FIELDS_FOR_MESSAGE_SUPPRESSION } from 'src/modules/emailing/standard-objects/message-suppression.workspace-entity';
 
@@ -310,6 +316,33 @@ export const buildMessageSuppressionStandardFlatFieldMetadatas = ({
       icon: 'IconHash',
       isNullable: true,
       isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  topic: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'topic',
+      label: i18nLabel(msg`Topic`),
+      description: i18nLabel(
+        msg`The topic this suppression applies to, or empty for a global suppression`,
+      ),
+      icon: 'IconMailbox',
+      isNullable: true,
+      isUIReadOnly: true,
+      targetObjectName: 'messageTopic',
+      targetFieldName: 'suppressions',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'topicId',
+      },
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
