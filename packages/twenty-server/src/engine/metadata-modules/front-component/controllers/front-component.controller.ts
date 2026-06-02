@@ -78,10 +78,9 @@ export class FrontComponentController {
     try {
       await pipeline(fileResponse.stream, res);
     } catch (error) {
-      this.logger.error(
-        'Front component stream failed mid-transfer',
-        { error },
-      );
+      this.logger.error('Front component stream failed mid-transfer', {
+        error,
+      });
 
       if (!res.headersSent) {
         throw new FrontComponentException(
