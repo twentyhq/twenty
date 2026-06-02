@@ -14,7 +14,7 @@ export class MicrosoftMessageListFetchErrorHandler {
   ) {}
 
   // oxlint-disable-next-line @typescripttypescript/no-explicit-any
-  public handleError(error: any): never {
+  public handleError(error: any): void {
     this.logger.error(`Error fetching message list: ${JSON.stringify(error)}`);
 
     const networkError = this.microsoftNetworkErrorHandler.handleError(error);
