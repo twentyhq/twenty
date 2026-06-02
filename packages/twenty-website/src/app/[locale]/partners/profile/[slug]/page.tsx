@@ -272,6 +272,7 @@ export default async function PartnerProfilePage({
                 profilePictureUrl={partner.profilePictureUrl}
               />
               <PartnerProfileCtas
+                partnerName={partner.name}
                 calendarLink={partner.calendarLink}
                 linkedinUrl={partner.linkedinUrl}
               />
