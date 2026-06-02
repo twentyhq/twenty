@@ -6,7 +6,7 @@ import { UsageDailyChartSection } from '@/settings/usage/components/UsageDailyCh
 import { UsageSectionSkeleton } from '@/settings/usage/components/UsageSectionSkeleton';
 import { useUsageAnalyticsData } from '@/settings/usage/hooks/useUsageAnalyticsData';
 import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -74,7 +74,7 @@ export const SettingsUsageUserDetail = () => {
   const breadcrumbLinks = [
     {
       children: <Trans>Workspace</Trans>,
-      href: getSettingsPath(SettingsPath.Workspace),
+      href: getSettingsPath(SettingsPath.General),
     },
     {
       children: <Trans>Billing</Trans>,
@@ -89,10 +89,7 @@ export const SettingsUsageUserDetail = () => {
 
   if (isInitialLoading) {
     return (
-      <SubMenuTopBarContainer
-        title={tLingui`User Usage`}
-        links={breadcrumbLinks}
-      >
+      <SettingsPageLayout title={tLingui`User Usage`} links={breadcrumbLinks}>
         <SettingsPageContainer>
           <SkeletonTheme
             baseColor={theme.background.tertiary}
@@ -110,12 +107,12 @@ export const SettingsUsageUserDetail = () => {
             <UsageSectionSkeleton />
           </SkeletonTheme>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     );
   }
 
   return (
-    <SubMenuTopBarContainer title={tLingui`User Usage`} links={breadcrumbLinks}>
+    <SettingsPageLayout title={tLingui`User Usage`} links={breadcrumbLinks}>
       <SettingsPageContainer>
         <StyledUserHeader>
           <Avatar
@@ -159,6 +156,6 @@ export const SettingsUsageUserDetail = () => {
           sectionId="user-type"
         />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

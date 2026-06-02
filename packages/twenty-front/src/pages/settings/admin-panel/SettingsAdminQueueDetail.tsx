@@ -1,6 +1,6 @@
 import { SettingsAdminQueueJobsTable } from '@/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { plural, t } from '@lingui/core/macro';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -52,7 +52,7 @@ export const SettingsAdminQueueDetail = () => {
     : t`Loading retention configuration...`;
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Queue: ${queueName}`}
       links={[
         {
@@ -83,6 +83,6 @@ export const SettingsAdminQueueDetail = () => {
           />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };
