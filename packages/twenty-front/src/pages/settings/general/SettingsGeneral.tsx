@@ -21,8 +21,6 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 
 const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
 
-// The Security tab id doubles as a URL hash, so SettingsPath.Security
-// (general#security) deep-links straight to it via hash sync.
 const GENERAL_TAB_GENERAL = 'general';
 const GENERAL_TAB_SECURITY = 'security';
 

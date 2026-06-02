@@ -41,7 +41,6 @@ const StyledRight = styled.div`
   min-width: 0;
 `;
 
-// Wizard step row: back arrow left, "N. Label" centered, optional trailing button right.
 export const SettingsWizardStepBar = ({
   label,
   onBack,

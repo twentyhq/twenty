@@ -2,12 +2,8 @@ import { styled } from '@linaria/react';
 import { type ReactNode } from 'react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-// The secondary row between the header and the body. The top separator is a
-// border; the bottom separator is an ::after pinned to the bottom edge (not a
-// border, which box-sizing would keep 1px inside) so the active tab's underline
-// — its own ::after at bottom: 0 of a full-height tab — lands exactly on this
-// line. align-items stays at its default (stretch) so the tab fills the bar
-// height and its underline reaches the bottom instead of floating mid-bar.
+// Bottom separator is an ::after (not border-bottom), and the bar keeps full
+// height (default align-items) so the active tab's underline lands exactly on it.
 const StyledSecondaryBar = styled.div`
   border-top: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;

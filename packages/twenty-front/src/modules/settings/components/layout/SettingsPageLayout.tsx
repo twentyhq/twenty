@@ -19,7 +19,6 @@ type SettingsPageLayoutProps = {
   actionButton?: ReactNode;
   secondaryBar?: ReactNode;
   children: ReactNode;
-  // tag renders beside the centered title.
   tag?: JSX.Element;
 };
 
@@ -40,8 +39,6 @@ const StyledMainCardWrapper = styled.div`
   width: 0;
 `;
 
-// The single rounded card that bounds the whole settings chrome: header, secondary
-// bar and body all live inside it, against the noisy background that shows in the gap.
 const StyledCard = styled.div`
   background: ${themeCssVariables.background.primary};
   border: 1px solid ${themeCssVariables.border.color.medium};
@@ -55,8 +52,6 @@ const StyledCard = styled.div`
   width: 100%;
 `;
 
-// flex: 1 + min-height: 0 keep this in the card's overflow chain so the scroll
-// happens inside the body rather than collapsing to content height.
 const StyledBodyContent = styled.div`
   display: flex;
   flex: 1;

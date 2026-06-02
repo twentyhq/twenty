@@ -21,9 +21,6 @@ const StyledTabBar = styled.div`
   min-width: 0;
 `;
 
-// Centered settings tab row. Shares the same component-scoped activeTabId atom +
-// URL hash sync as the shared TabList, so pages keep reading activeTabId by their
-// existing componentInstanceId while the bar lives in the header instead of the body.
 export const SettingsTabBar = ({
   tabs,
   componentInstanceId,
