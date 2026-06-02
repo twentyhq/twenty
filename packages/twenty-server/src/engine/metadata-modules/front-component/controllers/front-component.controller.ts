@@ -12,6 +12,10 @@ import { pipeline } from 'stream/promises';
 
 import { Response } from 'express';
 
+import {
+  FileStorageException,
+  FileStorageExceptionCode,
+} from 'src/engine/core-modules/file-storage/interfaces/file-storage-exception';
 import { setFileResponseHeaders } from 'src/engine/core-modules/file/utils/set-file-response-headers.utils';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
@@ -56,6 +60,16 @@ export class FrontComponentController {
       .catch((error) => {
         if (error instanceof FrontComponentException) {
           throw error;
+        }
+
+        if (
+          error instanceof FileStorageException &&
+          error.code === FileStorageExceptionCode.FILE_NOT_FOUND
+        ) {
+          throw new FrontComponentException(
+            'Front component built file not found',
+            FrontComponentExceptionCode.FRONT_COMPONENT_NOT_FOUND,
+          );
         }
 
         this.logger.error(
