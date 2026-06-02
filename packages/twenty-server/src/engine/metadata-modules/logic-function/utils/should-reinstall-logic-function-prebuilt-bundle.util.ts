@@ -11,17 +11,21 @@ export const shouldReinstallLogicFunctionPrebuiltBundle = ({
   existingLogicFunction: LogicFunctionPrebuiltStateFields;
   newLogicFunction: LogicFunctionPrebuiltStateFields;
 }): boolean => {
+  if (newLogicFunction.executionMode !== LogicFunctionExecutionMode.PREBUILT) {
+    return false;
+  }
+
+  if (!isLogicFunctionPrebuiltStateValid(newLogicFunction)) {
+    return false;
+  }
+
   if (
-    newLogicFunction.executionMode !== LogicFunctionExecutionMode.PREBUILT ||
-    !isLogicFunctionPrebuiltStateValid(newLogicFunction)
+    existingLogicFunction.executionMode ===
+      LogicFunctionExecutionMode.PREBUILT &&
+    existingLogicFunction.checksum === newLogicFunction.checksum
   ) {
     return false;
   }
 
-  const isSameChecksumAlreadyInstalled =
-    existingLogicFunction.executionMode ===
-      LogicFunctionExecutionMode.PREBUILT &&
-    existingLogicFunction.checksum === newLogicFunction.checksum;
-
-  return !isSameChecksumAlreadyInstalled;
+  return true;
 };
