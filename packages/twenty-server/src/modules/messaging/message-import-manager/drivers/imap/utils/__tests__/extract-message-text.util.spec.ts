@@ -105,17 +105,17 @@ Developer Support
 
     expect(result).toBe(`Hi John,
 
-Thank you for contacting Developer Support, this is Erica again. I hope you are having a good day. 
+Thank you for contacting Developer Support, this is Erica again. I hope you are having a good day.
 
-I understand that you are unable to contact finance. Despite your account being expired, you should still be able to contact our finance team. 
+I understand that you are unable to contact finance. Despite your account being expired, you should still be able to contact our finance team.
 
-Follow the link below the link for contacting our finance team. 
+Follow the link below the link for contacting our finance team.
 
 https://idmsa.apple.com/IDMSWebAuth/signin.html?path=/contact/finance/
 
 Best Regards,
 
-Erica 
+Erica
 Developer Support`);
   });
 
@@ -301,7 +301,7 @@ Developer Support`);
     const result = service.extractTextWithoutReplyQuotations(parsed);
 
     expect(result).toEqual(
-      `Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.  \nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.  \n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.  \nWould Monday 10 AM work for you?\n\nBest regards,  \nJohn`,
+      `Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.\nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.\n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.\nWould Monday 10 AM work for you?\n\nBest regards,\nJohn`,
     );
   });
 
