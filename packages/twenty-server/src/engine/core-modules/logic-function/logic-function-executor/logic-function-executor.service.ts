@@ -144,7 +144,7 @@ export class LogicFunctionExecutorService {
         payload,
         env: envVariables,
         timeoutMs: flatLogicFunction.timeoutSeconds * 1_000,
-        effectiveExecutionMode,
+        forceExecutionMode: effectiveExecutionMode,
       });
     } catch (error) {
       this.logger.error(

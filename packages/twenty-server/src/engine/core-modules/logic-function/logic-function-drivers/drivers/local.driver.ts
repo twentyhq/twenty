@@ -298,7 +298,7 @@ export class LocalDriver implements LogicFunctionDriver {
     payload,
     env,
     timeoutMs = 900_000,
-    effectiveExecutionMode,
+    forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     await this.createLayerIfNotExist({
       flatApplication,
@@ -317,7 +317,7 @@ export class LocalDriver implements LogicFunctionDriver {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
       const isPrebuilt =
-        effectiveExecutionMode === LogicFunctionExecutionMode.PREBUILT;
+        forceExecutionMode === LogicFunctionExecutionMode.PREBUILT;
 
       await this.assembleNodeModules({
         sourceTemporaryDir,

@@ -1178,7 +1178,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     payload,
     env,
     timeoutMs = 900_000,
-    effectiveExecutionMode,
+    forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     let currentPhase: LambdaExecutionPhase = LambdaExecutionPhase.BUILD;
     let buildExecutorMs = 0;
@@ -1203,13 +1203,15 @@ export class LambdaDriver implements LogicFunctionDriver {
         handlerName: flatLogicFunction.handlerName,
       };
 
-      if (effectiveExecutionMode === LogicFunctionExecutionMode.LIVE) {
+      if (forceExecutionMode === LogicFunctionExecutionMode.LIVE) {
         const fetchStart = Date.now();
 
-        executorPayload.code = await this.fetchLiveBundleCode({
-          flatLogicFunction,
-          applicationUniversalIdentifier,
-        });
+        executorPayload.code =
+          await this.logicFunctionResourceService.getBuiltCode({
+            workspaceId: flatLogicFunction.workspaceId,
+            applicationUniversalIdentifier,
+            builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          });
         getBuiltCodeMs = Date.now() - fetchStart;
       }
 
@@ -1246,7 +1248,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       const duration = Date.now() - invokeFlowStart;
 
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${effectiveExecutionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${forceExecutionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {
@@ -1301,20 +1303,6 @@ export class LambdaDriver implements LogicFunctionDriver {
         LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
       );
     }
-  }
-
-  private async fetchLiveBundleCode({
-    flatLogicFunction,
-    applicationUniversalIdentifier,
-  }: {
-    flatLogicFunction: FlatLogicFunction;
-    applicationUniversalIdentifier: string;
-  }): Promise<string> {
-    return this.logicFunctionResourceService.getBuiltCode({
-      workspaceId: flatLogicFunction.workspaceId,
-      applicationUniversalIdentifier,
-      builtHandlerPath: flatLogicFunction.builtHandlerPath,
-    });
   }
 
   private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
