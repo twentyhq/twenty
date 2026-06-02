@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { styled } from '@linaria/react';
 
@@ -8,9 +8,26 @@ import { MarkerCursor } from '@/sections/ThreeCards/components/FeatureCard/compo
 import { theme } from '@/theme';
 import type { CursorTarget } from './use-product-hero-cursor-autoplay';
 
-const CURSOR_COLOR = '#ffb08d';
-const CURSOR_NAME = 'Alice';
-const CURSOR_START = { left: 72, top: 78 };
+type Coordinate = { left: number; top: number };
+
+export type HeroCursorConfig = {
+  color: string;
+  home: Coordinate;
+  name: string;
+};
+
+export const HERO_CURSORS: HeroCursorConfig[] = [
+  { name: 'Alice', color: '#ffb08d', home: { left: 15, top: -6.75 } },
+  { name: 'Ben', color: '#8db4ff', home: { left: 9, top: 34 } },
+  { name: 'Cara', color: '#9ee7c5', home: { left: 90, top: 46 } },
+];
+
+const GLIDE_BASE_MS = 500;
+const GLIDE_MS_PER_PX = 0.55;
+const GLIDE_MIN_MS = 620;
+const GLIDE_MAX_MS = 960;
+const GLIDE_SKIP_PX = 6;
+
 const ROW_X_OFFSET_PX = 80;
 const ROW_Y_OFFSET_PX = -5;
 const RAIL_X_OFFSET_PX = -4;
@@ -18,7 +35,19 @@ const RAIL_Y_OFFSET_PX = -4;
 const TAB_X_OFFSET_PX = 2;
 const TAB_Y_OFFSET_PX = -6;
 
-type Coordinate = { left: number; top: number };
+function pixelDistance(from: Coordinate, to: Coordinate, rect: DOMRect) {
+  const dx = ((to.left - from.left) / 100) * rect.width;
+  const dy = ((to.top - from.top) / 100) * rect.height;
+
+  return Math.hypot(dx, dy);
+}
+
+function glideForDistance(distance: number) {
+  return Math.max(
+    GLIDE_MIN_MS,
+    Math.min(GLIDE_MAX_MS, GLIDE_BASE_MS + distance * GLIDE_MS_PER_PX),
+  );
+}
 
 const Overlay = styled.div`
   inset: 0;
@@ -29,9 +58,9 @@ const Overlay = styled.div`
 
 const Marker = styled.div<{
   $clicking: boolean;
+  $glideMs: number;
   $hidden: boolean;
   $left: number;
-  $moveMs: number;
   $top: number;
 }>`
   align-items: flex-start;
@@ -45,8 +74,8 @@ const Marker = styled.div<{
   transform: ${({ $clicking }) => ($clicking ? 'scale(0.86)' : 'scale(1)')};
   transform-origin: top left;
   transition:
-    left ${({ $moveMs }) => `${$moveMs}ms`} cubic-bezier(0.22, 1, 0.36, 1),
-    top ${({ $moveMs }) => `${$moveMs}ms`} cubic-bezier(0.22, 1, 0.36, 1),
+    left ${({ $glideMs }) => `${$glideMs}ms`} cubic-bezier(0.22, 1, 0.36, 1),
+    top ${({ $glideMs }) => `${$glideMs}ms`} cubic-bezier(0.22, 1, 0.36, 1),
     opacity 180ms ease,
     transform 150ms ease;
 
@@ -55,39 +84,67 @@ const Marker = styled.div<{
   }
 `;
 
-const Label = styled.span`
-  background: ${CURSOR_COLOR};
+const Label = styled.span<{ $color: string }>`
+  background: ${({ $color }) => $color};
   border-radius: 4px;
   color: #1f1f1f;
   font-family: ${theme.font.family.mono};
-  font-size: 12px;
+  font-size: 10px;
   font-weight: ${theme.font.weight.medium};
   letter-spacing: 0.02em;
   line-height: 1;
-  padding: 5px 8px;
+  padding: 4px 8px;
   text-transform: uppercase;
   width: fit-content;
 `;
 
 type ProductHeroCursorProps = {
   clicking: boolean;
+  color: string;
+  glideMs?: number;
   hidden: boolean;
-  moveMs: number;
+  home: Coordinate;
+  name: string;
   target: CursorTarget;
 };
 
 export function ProductHeroCursor({
   clicking,
+  color,
+  glideMs: glideMsOverride,
   hidden,
-  moveMs,
+  home,
+  name,
   target,
 }: ProductHeroCursorProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
-  const [coordinate, setCoordinate] = useState<Coordinate>(CURSOR_START);
+  const [coordinate, setCoordinate] = useState<Coordinate>(home);
+  const [glideMs, setGlideMs] = useState(0);
+  const coordinateRef = useRef<Coordinate>(home);
+
+  const moveTo = useCallback((next: Coordinate, explicitMs?: number) => {
+    const overlayRect = overlayRef.current?.getBoundingClientRect();
+
+    if (!overlayRect) {
+      coordinateRef.current = next;
+      setCoordinate(next);
+      return;
+    }
+
+    const distance = pixelDistance(coordinateRef.current, next, overlayRect);
+
+    if (distance < GLIDE_SKIP_PX) {
+      return;
+    }
+
+    coordinateRef.current = next;
+    setGlideMs(explicitMs ?? glideForDistance(distance));
+    setCoordinate(next);
+  }, []);
 
   useEffect(() => {
-    if (target.kind === 'start') {
-      setCoordinate(CURSOR_START);
+    if (target.kind === 'home') {
+      moveTo(home);
       return undefined;
     }
 
@@ -141,10 +198,13 @@ export function ProductHeroCursor({
       const y =
         elementRect.top + elementRect.height / 2 + yOffset - overlayRect.top;
 
-      setCoordinate({
-        left: (x / overlayRect.width) * 100,
-        top: (y / overlayRect.height) * 100,
-      });
+      moveTo(
+        {
+          left: (x / overlayRect.width) * 100,
+          top: (y / overlayRect.height) * 100,
+        },
+        glideMsOverride,
+      );
     };
 
     measure();
@@ -158,19 +218,19 @@ export function ProductHeroCursor({
       window.removeEventListener('resize', measure);
       settleTimers.forEach(clearTimeout);
     };
-  }, [target]);
+  }, [target, home, moveTo, glideMsOverride]);
 
   return (
     <Overlay aria-hidden="true" ref={overlayRef}>
       <Marker
         $clicking={clicking}
+        $glideMs={glideMs}
         $hidden={hidden}
         $left={coordinate.left}
-        $moveMs={moveMs}
         $top={coordinate.top}
       >
-        <MarkerCursor color={CURSOR_COLOR} rotation={132} />
-        <Label>{CURSOR_NAME}</Label>
+        <MarkerCursor color={color} rotation={132} />
+        <Label $color={color}>{name}</Label>
       </Marker>
     </Overlay>
   );

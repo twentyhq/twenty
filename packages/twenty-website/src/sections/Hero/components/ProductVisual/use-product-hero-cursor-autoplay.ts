@@ -3,171 +3,187 @@
 import { useEffect, useState } from 'react';
 
 export type CursorTarget =
-  | { kind: 'start' }
+  | { kind: 'home' }
   | { kind: 'row'; id: string }
   | { kind: 'rail'; id: string }
   | { kind: 'tab'; id: string };
 
-export type ProductHeroTourState = {
+export type CursorState = {
   clicking: boolean;
+  glideMs?: number;
   hidden: boolean;
-  moveMs: number;
+  target: CursorTarget;
+};
+
+export type ProductHeroTourState = {
+  cursors: CursorState[];
+  pageItemId: string;
+  recordTab?: string;
+  showRecord: boolean;
+};
+
+type TourPhase = {
+  activeCursor: number;
+  clicking: boolean;
+  durationMs: number;
+  glideMs?: number;
+  hidden: boolean;
   pageItemId: string;
   recordTab?: string;
   showRecord: boolean;
   target: CursorTarget;
 };
 
-type TourPhase = ProductHeroTourState & { durationMs: number };
-
 const COMPANIES = 'companies';
 const PEOPLE = 'people';
 const NOTES = 'notes';
 const RECORD_ROW_ID = 'anthropic';
 
+export const CURSOR_COUNT = 3;
 const LOOP_START_INDEX = 1;
 
 const PHASES: TourPhase[] = [
   {
+    activeCursor: 0,
     pageItemId: COMPANIES,
     showRecord: false,
-    target: { kind: 'start' },
+    target: { kind: 'home' },
     clicking: false,
     hidden: false,
-    moveMs: 0,
     durationMs: 1000,
   },
   {
+    activeCursor: 0,
     pageItemId: COMPANIES,
     showRecord: false,
     target: { kind: 'row', id: RECORD_ROW_ID },
     clicking: false,
     hidden: false,
-    moveMs: 1500,
-    durationMs: 1700,
+    glideMs: 950,
+    durationMs: 1000,
   },
   {
+    activeCursor: 0,
     pageItemId: COMPANIES,
     showRecord: false,
     target: { kind: 'row', id: RECORD_ROW_ID },
     clicking: true,
     hidden: false,
-    moveMs: 0,
-    durationMs: 520,
+    durationMs: 400,
   },
   {
+    activeCursor: 1,
     pageItemId: COMPANIES,
     showRecord: true,
     recordTab: 'Timeline',
     target: { kind: 'tab', id: 'Notes' },
     clicking: false,
     hidden: false,
-    moveMs: 1400,
     durationMs: 1700,
   },
   {
+    activeCursor: 1,
     pageItemId: COMPANIES,
     showRecord: true,
     recordTab: 'Notes',
     target: { kind: 'tab', id: 'Notes' },
     clicking: true,
     hidden: false,
-    moveMs: 0,
-    durationMs: 1300,
+    durationMs: 900,
   },
   {
+    activeCursor: 2,
     pageItemId: COMPANIES,
     showRecord: true,
     recordTab: 'Notes',
     target: { kind: 'tab', id: 'Calendar' },
     clicking: false,
     hidden: false,
-    moveMs: 600,
-    durationMs: 880,
+    durationMs: 800,
   },
   {
+    activeCursor: 2,
     pageItemId: COMPANIES,
     showRecord: true,
     recordTab: 'Calendar',
     target: { kind: 'tab', id: 'Calendar' },
     clicking: true,
     hidden: false,
-    moveMs: 0,
-    durationMs: 1300,
+    durationMs: 700,
   },
   {
+    activeCursor: 0,
     pageItemId: COMPANIES,
     showRecord: true,
     recordTab: 'Calendar',
     target: { kind: 'rail', id: PEOPLE },
     clicking: false,
     hidden: false,
-    moveMs: 900,
-    durationMs: 950,
+    durationMs: 700,
   },
   {
+    activeCursor: 0,
     pageItemId: PEOPLE,
     showRecord: true,
     recordTab: 'Calendar',
     target: { kind: 'rail', id: PEOPLE },
     clicking: true,
     hidden: false,
-    moveMs: 0,
-    durationMs: 480,
+    durationMs: 300,
   },
   {
+    activeCursor: 0,
     pageItemId: PEOPLE,
     showRecord: false,
     target: { kind: 'rail', id: PEOPLE },
     clicking: false,
     hidden: false,
-    moveMs: 0,
-    durationMs: 2200,
+    durationMs: 900,
   },
   {
+    activeCursor: 1,
     pageItemId: PEOPLE,
     showRecord: false,
     target: { kind: 'rail', id: NOTES },
     clicking: false,
     hidden: false,
-    moveMs: 700,
-    durationMs: 900,
+    durationMs: 800,
   },
   {
+    activeCursor: 1,
     pageItemId: NOTES,
     showRecord: false,
     target: { kind: 'rail', id: NOTES },
     clicking: true,
     hidden: false,
-    moveMs: 0,
-    durationMs: 480,
+    durationMs: 300,
   },
   {
+    activeCursor: 1,
     pageItemId: NOTES,
     showRecord: false,
     target: { kind: 'rail', id: NOTES },
     clicking: false,
     hidden: false,
-    moveMs: 0,
-    durationMs: 2400,
+    durationMs: 600,
   },
   {
+    activeCursor: 2,
     pageItemId: NOTES,
     showRecord: false,
     target: { kind: 'rail', id: COMPANIES },
     clicking: false,
     hidden: false,
-    moveMs: 700,
-    durationMs: 900,
+    durationMs: 800,
   },
   {
+    activeCursor: 2,
     pageItemId: COMPANIES,
     showRecord: false,
     target: { kind: 'rail', id: COMPANIES },
     clicking: true,
     hidden: false,
-    moveMs: 0,
-    durationMs: 480,
+    durationMs: 300,
   },
 ];
 
@@ -191,23 +207,29 @@ export function useProductHeroCursorAutoplay(
     return () => clearTimeout(timer);
   }, [enabled, phaseIndex]);
 
-  const {
-    clicking,
-    hidden,
-    moveMs,
-    pageItemId,
-    recordTab,
-    showRecord,
-    target,
-  } = PHASES[phaseIndex];
+  const phase = PHASES[phaseIndex];
+
+  const cursors: CursorState[] = Array.from(
+    { length: CURSOR_COUNT },
+    (_, index) =>
+      index === phase.activeCursor
+        ? {
+            clicking: phase.clicking,
+            glideMs: phase.glideMs,
+            hidden: phase.hidden,
+            target: phase.target,
+          }
+        : {
+            clicking: false,
+            hidden: false,
+            target: { kind: 'home' },
+          },
+  );
 
   return {
-    clicking,
-    hidden,
-    moveMs,
-    pageItemId,
-    recordTab,
-    showRecord,
-    target,
+    cursors,
+    pageItemId: phase.pageItemId,
+    recordTab: phase.recordTab,
+    showRecord: phase.showRecord,
   };
 }

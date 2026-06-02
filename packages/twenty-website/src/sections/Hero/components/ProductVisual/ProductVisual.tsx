@@ -22,7 +22,7 @@ import { type DesktopSidebarMode } from '@/sections/AppPreview/Shell/AppPreviewS
 import { WindowOrderProvider } from '@/sections/AppPreview/WindowOrder/WindowOrderProvider';
 import { theme } from '@/theme';
 
-import { ProductHeroCursor } from './ProductHeroCursor';
+import { HERO_CURSORS, ProductHeroCursor } from './ProductHeroCursor';
 import { ProductVisualAiSteps } from './ProductVisualAiSteps';
 import { ANTHROPIC_RECORD_PAGE } from './product-visual.data';
 import { useProductHeroCursorAutoplay } from './use-product-hero-cursor-autoplay';
@@ -576,14 +576,28 @@ export function ProductVisual({
         ) : (
           previewShell
         )}
-        {collaborative ? (
-          <ProductHeroCursor
-            clicking={heroCursor.clicking}
-            hidden={heroCursor.hidden}
-            moveMs={heroCursor.moveMs}
-            target={heroCursor.target}
-          />
-        ) : null}
+        {collaborative
+          ? HERO_CURSORS.map((cursorConfig, index) => {
+              const cursorState = heroCursor.cursors[index];
+
+              if (cursorState === undefined) {
+                return null;
+              }
+
+              return (
+                <ProductHeroCursor
+                  key={cursorConfig.name}
+                  clicking={cursorState.clicking}
+                  color={cursorConfig.color}
+                  glideMs={cursorState.glideMs}
+                  hidden={cursorState.hidden}
+                  home={cursorConfig.home}
+                  name={cursorConfig.name}
+                  target={cursorState.target}
+                />
+              );
+            })
+          : null}
       </ShellScene>
     </StyledRoot>
   );
