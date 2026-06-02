@@ -46,10 +46,10 @@ export const SettingsPageLayout = ({
 }: SettingsPageLayoutProps) => (
   <StyledContainer>
     <SettingsPageHeader links={links} title={title} actions={actionButton} />
-    {isDefined(secondaryBar) && (
-      <SettingsSecondaryBar>{secondaryBar}</SettingsSecondaryBar>
-    )}
     <MainContainerLayoutWithSidePanel>
+      {isDefined(secondaryBar) && (
+        <SettingsSecondaryBar>{secondaryBar}</SettingsSecondaryBar>
+      )}
       <StyledBodyContentWrapper>
         <InformationBannerWrapper />
         {children}

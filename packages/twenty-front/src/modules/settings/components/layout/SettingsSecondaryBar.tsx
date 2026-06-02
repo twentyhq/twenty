@@ -8,19 +8,18 @@ type SettingsSecondaryBarProps = {
 
 const SECONDARY_BAR_HEIGHT = 48;
 
-// Mirror SettingsPageHeader's grid + asymmetric padding so the centered slot
-// here lands at the exact same horizontal center as the title above.
+// Lives inside PagePanel (the white rounded card), so no background of its own
+// and no top border — the panel's rounded edge above is the visual top.
+// A single bottom border separates the tabs from the body content underneath.
 const StyledBar = styled.div`
   align-items: center;
-  background: ${themeCssVariables.background.primary};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
-  border-top: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: grid;
+  flex-shrink: 0;
   grid-template-columns: 1fr auto 1fr;
   height: ${SECONDARY_BAR_HEIGHT}px;
-  padding: 0 ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]};
-  position: relative;
+  padding: 0 ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
