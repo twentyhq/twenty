@@ -13,10 +13,8 @@ import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { MicrosoftOAuth2ClientProvider } from 'src/modules/connected-account/oauth2-client-manager/drivers/microsoft/microsoft-oauth2-client.provider';
 import { type MessageFolderEntity } from 'src/engine/metadata-modules/message-folder/entities/message-folder.entity';
 import { MicrosoftMessageListFetchErrorHandler } from 'src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-message-list-fetch-error-handler.service';
-import {
-  type MicrosoftGraphBatchResponse,
-  type MicrosoftGraphDeltaListResponseBody,
-} from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/microsoft-graph-batch.type';
+import { type MicrosoftGraphBatchResponse } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/microsoft-graph-batch-response.type';
+import { type MicrosoftGraphDeltaListResponseBody } from 'src/modules/messaging/message-import-manager/drivers/microsoft/types/microsoft-graph-delta-list-response-body.type';
 import { toRelativeGraphUrl } from 'src/modules/messaging/message-import-manager/drivers/microsoft/utils/to-relative-graph-url.util';
 import { type GetMessageListsArgs } from 'src/modules/messaging/message-import-manager/types/get-message-lists-args.type';
 import {

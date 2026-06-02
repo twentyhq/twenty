@@ -11377,13 +11377,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@microsoft/microsoft-graph-types-beta@npm:^0.44.0-preview":
-  version: 0.44.0-preview
-  resolution: "@microsoft/microsoft-graph-types-beta@npm:0.44.0-preview"
-  checksum: 10c0/0a75dbf18da2d9755102c1e12a57bf1899b4ea0a3338bc5f6a36711503171a0ebf6cd5f67784bf99871828c202f564ec259793a11b2e1e2735236f474034718e
-  languageName: node
-  linkType: hard
-
 "@microsoft/microsoft-graph-types@npm:^2.40.0":
   version: 2.43.1
   resolution: "@microsoft/microsoft-graph-types@npm:2.43.1"
@@ -56747,7 +56740,6 @@ __metadata:
     "@lingui/vite-plugin": "npm:5.1.2"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
-    "@microsoft/microsoft-graph-types-beta": "npm:^0.44.0-preview"
     "@nestjs/axios": "npm:3.1.2"
     "@nestjs/cache-manager": "npm:^2.3.0"
     "@nestjs/cli": "npm:^11.0.16"
