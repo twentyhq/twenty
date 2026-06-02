@@ -5,7 +5,7 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/default-relation-field-appearance.constant';
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
@@ -101,8 +101,8 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
           ] || 'IconBuildingSkyscraper';
 
-        const sourceFieldAppearance =
-          DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT[
+        const standardFieldProperties =
+          STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT[
             objectMetadataNameSingular
           ];
 
@@ -129,10 +129,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             morphId,
             targetFieldName: fieldName,
             createFieldInput: {
-              icon: sourceFieldAppearance.icon,
+              icon: standardFieldProperties.icon,
               type: FieldMetadataType.RELATION,
               name: targetFlatObjectMetadata.namePlural,
-              label: i18nLabel(sourceFieldAppearance.label),
+              label: i18nLabel(standardFieldProperties.label),
               isSystem: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,

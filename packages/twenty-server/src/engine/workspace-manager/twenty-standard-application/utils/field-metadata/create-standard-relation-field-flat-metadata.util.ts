@@ -9,7 +9,7 @@ import {
 } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 
-import { DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/default-relation-field-appearance.constant';
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -91,8 +91,8 @@ export const createStandardRelationFieldFlatMetadata = <
   const targetFieldDefinition =
     targetObjectFields[targetFieldName as keyof typeof targetObjectFields];
 
-  const defaultAppearance = (
-    DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT as Record<
+  const defaultProperties = (
+    STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT as Record<
       string,
       { label: MessageDescriptor; icon: string } | undefined
     >
@@ -100,10 +100,10 @@ export const createStandardRelationFieldFlatMetadata = <
 
   const resolvedLabel =
     label ??
-    (isDefined(defaultAppearance)
-      ? i18nLabel(defaultAppearance.label)
+    (isDefined(defaultProperties)
+      ? i18nLabel(defaultProperties.label)
       : undefined);
-  const resolvedIcon = icon ?? defaultAppearance?.icon;
+  const resolvedIcon = icon ?? defaultProperties?.icon;
 
   if (!isDefined(resolvedLabel) || !isDefined(resolvedIcon)) {
     throw new Error(
