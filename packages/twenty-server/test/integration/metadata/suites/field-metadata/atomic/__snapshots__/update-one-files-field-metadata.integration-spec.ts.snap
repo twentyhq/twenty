@@ -10,8 +10,8 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
-              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -30,14 +30,14 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
   },
   "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",
 }
 `;
 
-exports[`updateOne FILES field metadata - failing should fail to update files field settings with maxNumberOfValues = 11 (exceeds max) 1`] = `
+exports[`updateOne FILES field metadata - failing should fail to update files field settings with maxNumberOfValues = 61 (exceeds max) 1`] = `
 {
   "extensions": {
     "code": "METADATA_VALIDATION_FAILED",
@@ -47,8 +47,8 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
           "errors": [
             {
               "code": "INVALID_FIELD_INPUT",
-              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
-              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 10",
+              "message": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
+              "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
             },
           ],
           "flatEntityMinimalInformation": {
@@ -67,7 +67,7 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "maxNumberOfValues must be defined in settings and be a number greater than 0 and less than or equal to 60",
   },
   "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",
@@ -104,7 +104,7 @@ exports[`updateOne FILES field metadata - failing should fail to update files fi
       "fieldMetadata": 1,
       "totalErrors": 1,
     },
-    "userFriendlyMessage": "Metadata validation failed",
+    "userFriendlyMessage": "Files field is not supported for unique fields",
   },
   "message": "Multiple validation errors occurred while updating field",
   "name": "GraphQLError",

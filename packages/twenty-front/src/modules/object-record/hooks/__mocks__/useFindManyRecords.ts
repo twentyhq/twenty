@@ -100,20 +100,6 @@ export const query = gql`
           city
           email
           jobTitle
-          favorites {
-            edges {
-              node {
-                __typename
-                id
-                companyId
-                createdAt
-                forWorkspaceMemberId
-                personId
-                position
-                updatedAt
-              }
-            }
-          }
           attachments {
             edges {
               node {

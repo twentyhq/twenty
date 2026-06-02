@@ -1,0 +1,97 @@
+---
+title: Vizualizări
+description: Livrați vizualizări salvate preconfigurate — ordinea coloanelor, filtre, grupuri — pentru obiectele din aplicația dvs.
+icon: listă
+---
+
+O **vizualizare** este o configurație salvată pentru modul în care sunt afișate înregistrările unui obiect: ce câmpuri apar, ordinea lor, dacă sunt vizibile și ce filtre sau grupuri sunt aplicate. Folosiți `defineView()` pentru a livra vizualizări preconfigurate împreună cu aplicația dvs. — de obicei o vizualizare index implicită pentru fiecare obiect personalizat pe care îl creați.
+
+```ts src/views/example-view.ts
+import { defineView, ViewKey } from 'twenty-sdk/define';
+import { EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+import { NAME_FIELD_UNIVERSAL_IDENTIFIER } from '../objects/example-object';
+
+export default defineView({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'All example items',
+  objectUniversalIdentifier: EXAMPLE_OBJECT_UNIVERSAL_IDENTIFIER,
+  icon: 'IconList',
+  key: ViewKey.INDEX,
+  position: 0,
+  fields: [
+    {
+      universalIdentifier: 'f926bdb7-6af7-4683-9a09-adbca56c29f0',
+      fieldMetadataUniversalIdentifier: NAME_FIELD_UNIVERSAL_IDENTIFIER,
+      position: 0,
+      isVisible: true,
+      size: 200,
+    },
+  ],
+});
+```
+
+## Puncte cheie
+
+* `objectUniversalIdentifier` specifică la ce obiect se aplică această vizualizare. Poate fi un obiect personalizat pe care l-ați definit sau un obiect standard Twenty.
+* `key` determină tipul vizualizării — `ViewKey.INDEX` este principala vizualizare de listă pentru obiect.
+* `fields` controlează ce coloane apar și ordinea acestora. Fiecare câmp face referire la un `fieldMetadataUniversalIdentifier`.
+* Puteți declara, de asemenea, `filters`, `filterGroups`, `groups` și `fieldGroups` pentru configurații avansate.
+* `position` controlează ordonarea atunci când există mai multe vizualizări pentru același obiect.
+
+## Filtre
+
+O vizualizare poate include filtre aplicate în prealabil. Fiecare filtru are trei coordonate: **câmpul** care este filtrat, **operandul** (cum se compară) și **valoarea** (față de ce se compară). Toate cele trei trebuie să se potrivească — folosirea unui operand care nu se aplică unui tip de câmp va fi respinsă în timpul sincronizării.
+
+```ts
+import { ViewFilterOperand } from 'twenty-shared/types';
+
+filters: [
+  {
+    universalIdentifier: '...',
+    fieldMetadataUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    operand: ViewFilterOperand.IS,
+    value: ['ACTIVE'],
+  },
+],
+```
+
+### Operanzi acceptați pentru fiecare tip de câmp
+
+| Tipul câmpului                                                                                     | Operanzi acceptați                                                                                                 |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| `TEXT`, `EMAILS`, `FULL_NAME`, `ADDRESS`, `LINKS`, `PHONES`, `RAW_JSON`, `FILES`, `ACTOR`, `ARRAY` | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `ACTOR.source`, `ACTOR.workspaceMemberId`                                                          | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `SELECT`                                                                                           | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `MULTI_SELECT`                                                                                     | `CONTAINS`, `DOES_NOT_CONTAIN`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                         |
+| `RELATION`                                                                                         | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `NUMBER`                                                                                           | `IS`, `IS_NOT`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `RATING`                                                                                           | `IS`, `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS_EMPTY`, `IS_NOT_EMPTY`                                    |
+| `CURRENCY`, `CURRENCY.amountMicros`                                                                | `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`, `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                          |
+| `CURRENCY.currencyCode`                                                                            | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `DATE`, `DATE_TIME`                                                                                | `IS`, `IS_RELATIVE`, `IS_IN_PAST`, `IS_IN_FUTURE`, `IS_TODAY`, `IS_BEFORE`, `IS_AFTER`, `IS_EMPTY`, `IS_NOT_EMPTY` |
+| `BOOLEAN`                                                                                          | `IS`                                                                                                               |
+| `UUID`                                                                                             | `IS`, `IS_NOT`, `IS_EMPTY`, `IS_NOT_EMPTY`                                                                         |
+| `TS_VECTOR`                                                                                        | `VECTOR_SEARCH`                                                                                                    |
+
+> Tipurile de câmp cu nume similare pot folosi operanzi complet diferiți — `SELECT` și `MULTI_SELECT` fiind un caz comun.
+
+### Formă de valoare per operand
+
+Câmpul `value` este întotdeauna o valoare serializabilă JSON, dar forma sa așteptată depinde de operand:
+
+| Familie de operanzi                                   | Formă de valoare                               | Exemplu                  |
+| ----------------------------------------------------- | ---------------------------------------------- | ------------------------ |
+| `IS`, `IS_NOT` pe `SELECT`                            | array de chei de opțiune (șiruri de caractere) | `['ACTIVE', 'PENDING']`  |
+| `CONTAINS`, `DOES_NOT_CONTAIN` pe `MULTI_SELECT`      | array de chei de opțiune (șiruri de caractere) | `['TAG_A']`              |
+| `IS`, `IS_NOT` pe `RELATION`                          | array de ID-uri de înregistrare (uuid-uri)     | `['c5a1...']`            |
+| `CONTAINS`, `DOES_NOT_CONTAIN` pe câmpuri de tip text | șir                                            | `'acme'`                 |
+| `IS`, `IS_NOT` pe `NUMBER`                            | șir de caractere (valoarea)                    | `'5'`                    |
+| `IS` pe `RATING` / `UUID`                             | șir de caractere (valoarea)                    | `'5'`                    |
+| `GREATER_THAN_OR_EQUAL`, `LESS_THAN_OR_EQUAL`         | șir de caractere (limita)                      | `'10'`                   |
+| `IS`, `IS_BEFORE`, `IS_AFTER` pe `DATE` / `DATE_TIME` | șir în format ISO 8601                         | `'2025-01-01T00:00:00Z'` |
+| `IS_EMPTY`, `IS_NOT_EMPTY`                            | șir gol                                        | `''`                     |
+| `IS` pe `BOOLEAN`                                     | `'true'` sau `'false'`                         | `'true'`                 |
+
+## Cum apar vizualizările în interfața utilizatorului
+
+O vizualizare, de una singură, nu este accesibilă din bara laterală. Pentru a o face să apară acolo, asociați-o cu un [element de meniu de navigare](/l/ro/developers/extend/apps/layout/navigation-menu-items) de tip `VIEW` care indică către `universalIdentifier` al vizualizării. Acesta este modelul canonic: fiecare obiect personalizat livrează, de obicei, o vizualizare implicită + o intrare în bara laterală care o deschide.

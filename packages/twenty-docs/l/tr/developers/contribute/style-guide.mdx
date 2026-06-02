@@ -1,0 +1,176 @@
+---
+title: Stil Rehberi
+icon: Boya fırçası
+description: Twenty'ye katkıda bulunmak için kod kuralları ve en iyi uygulamalar.
+---
+
+## React
+
+### Yalnızca fonksiyonel bileşenler
+
+Her zaman named export'larla TSX fonksiyonel bileşenlerini kullanın.
+
+```tsx
+// ❌ Bad
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+export default MyComponent;
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Özellikler
+
+`{ComponentName}Props` adında bir type oluşturun. Destructuring kullanın. `React.FC` kullanmayın.
+
+```tsx
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+### Tek değişken için prop spread kullanmayın
+
+```tsx
+// ❌ Bad
+const MyComponent = (props: MyComponentProps) => <Other {...props} />;
+
+// ✅ Good
+const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, prop2 }} />;
+```
+
+## Durum Yönetimi
+
+### Global durum için Jotai atomları
+
+```tsx
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
+  key: 'myAtomState',
+  defaultValue: 'default value',
+});
+```
+
+* Prop drilling yerine atomları tercih edin
+* Durum için `useRef` kullanmayın — `useState` veya atomları kullanın
+* Listeler için atom ailelerini ve seçicileri kullanın
+
+### Gereksiz yeniden render'ları önleyin
+
+* `useEffect` ve veri çekmeyi kardeş sidecar bileşenlere ayırın
+* `useEffect` yerine olay işleyicilerini (`handleClick`, `handleChange`) tercih edin
+* `React.memo()` kullanmayın — bunun yerine kök nedeni düzeltin
+* `useCallback` / `useMemo` kullanımını sınırlayın
+
+```tsx
+// ❌ Bad — useEffect in the same component causes re-renders
+export const Page = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <div>{data}</div>;
+};
+
+// ✅ Good — extract into sibling
+export const PageData = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <></>;
+};
+export const Page = () => {
+  const [data] = useAtomState(dataState);
+  return <div>{data}</div>;
+};
+```
+
+## TypeScript
+
+* **`interface` yerine `type`** — daha esnek, birleştirmesi daha kolay
+* **enum yerine string literal'lar** — GraphQL codegen enum'ları ve dahili kütüphane API'leri hariç
+* **`any` yok** — katı TypeScript zorunludur
+* **Type import'ları yok** — normal import'lar kullanın (Oxlint `typescript/consistent-type-imports` tarafından uygulanır)
+* **[Zod](https://github.com/colinhacks/zod) kullanın** tiplenmemiş nesnelerin çalışma zamanı doğrulaması için
+
+## JavaScript
+
+```tsx
+// Use nullish-coalescing (??) instead of ||
+const value = process.env.MY_VALUE ?? 'default';
+
+// Use optional chaining
+onClick?.();
+```
+
+## İsimlendirme
+
+* **Değişkenler**: camelCase, açıklayıcı (`email` değil `value`, `fieldMetadata` değil `fm`)
+* **Sabitler**: SCREAMING_SNAKE_CASE
+* **Tipler/Sınıflar**: PascalCase
+* **Dosyalar/dizinler**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **Olay işleyicileri**: `handleClick` (işleyici fonksiyon için `onClick` değil)
+* **Bileşen prop'ları**: önek olarak bileşen adını kullanın (`ButtonProps`)
+* **Styled bileşenler**: `Styled` öneğini kullanın (`StyledTitle`)
+
+## Stil
+
+[Linaria](https://github.com/callstack/linaria) ile stillendirilmiş bileşenleri kullanın. Tema değerlerini kullanın — kodda sabit tanımlanmış `px`, `rem` veya renklerden kaçının.
+
+```tsx
+// ❌ Bad
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  margin-left: 4px;
+`;
+
+// ✅ Good
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+```
+
+## İçe Aktarımlar
+
+Göreli yollar yerine alias kullanın:
+
+```tsx
+// ❌ Bad
+import { Foo } from '../../../../../testing/decorators/Foo';
+
+// ✅ Good
+import { Foo } from '~/testing/decorators/Foo';
+import { Bar } from '@/modules/bar/components/Bar';
+```
+
+## Klasör Yapısı
+
+```
+front
+└── modules/         # Feature modules
+│   └── module1/
+│       ├── components/
+│       ├── constants/
+│       ├── contexts/
+│       ├── graphql/  (fragments, queries, mutations)
+│       ├── hooks/
+│       ├── states/   (atoms, selectors)
+│       ├── types/
+│       └── utils/
+└── pages/           # Route-level components
+└── ui/              # Reusable UI components (display, input, feedback, ...)
+```
+
+* Modüller diğer modüllerden import edebilir, ancak `ui/` bağımlılıksız kalmalıdır
+* `internal/` alt klasörlerini modüle özel kod için kullanın
+* Bileşenler 300 satırın altında, servisler 500 satırın altında

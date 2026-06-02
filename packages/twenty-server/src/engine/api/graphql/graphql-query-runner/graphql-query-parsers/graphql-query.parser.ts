@@ -8,6 +8,7 @@ import {
   type ObjectRecordOrderBy,
 } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 
+import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
 import { GraphqlQueryFilterConditionParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-filter/graphql-query-filter-condition.parser';
 import { GraphqlQueryOrderGroupByParser } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-order/graphql-query-order-group-by.parser';
 import {
@@ -19,7 +20,7 @@ import {
   GraphqlQuerySelectedFieldsParser,
   type GraphqlQuerySelectedFieldsResult,
 } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/graphql-query-selected-fields/graphql-selected-fields.parser';
-import { type GroupByField } from 'src/engine/api/common/common-query-runners/types/group-by-field.types';
+import { addRelationJoinAliasToQueryBuilder } from 'src/engine/api/graphql/graphql-query-runner/graphql-query-parsers/utils/add-relation-join-alias.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -45,6 +46,7 @@ export class GraphqlQueryParser {
     this.filterConditionParser = new GraphqlQueryFilterConditionParser(
       this.flatObjectMetadata,
       this.flatFieldMetadataMaps,
+      this.flatObjectMetadataMaps,
     );
     this.orderFieldParser = new GraphqlQueryOrderFieldParser(
       this.flatObjectMetadata,
@@ -99,12 +101,17 @@ export class GraphqlQueryParser {
         return true;
       }
 
-      if (typeof value === 'object' && value !== null) {
-        if (
-          this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
-        ) {
-          return true;
-        }
+      // Only recurse into boolean-operator wrappers (and / or / not) — those
+      // are transparent w.r.t. which entity owns a deletedAt. Composite
+      // sub-field and relation-traversal nesting refers to a different
+      // entity's deletedAt, which must not widen the root query.
+      if (
+        (key === 'and' || key === 'or' || key === 'not') &&
+        typeof value === 'object' &&
+        value !== null &&
+        this.checkForDeletedAtFilter(value as FindOptionsWhere<ObjectLiteral>)
+      ) {
+        return true;
       }
     }
 
@@ -124,12 +131,12 @@ export class GraphqlQueryParser {
       isForwardPagination,
     );
 
-    // Add LEFT JOINs for relation ordering
     for (const joinInfo of parseResult.relationJoins) {
-      queryBuilder.leftJoin(
-        `${objectNameSingular}.${joinInfo.joinAlias}`,
-        joinInfo.joinAlias,
-      );
+      addRelationJoinAliasToQueryBuilder({
+        queryBuilder,
+        parentAlias: objectNameSingular,
+        relationName: joinInfo.joinAlias,
+      });
     }
 
     queryBuilder.orderBy(parseResult.orderBy);

@@ -13,7 +13,7 @@ describe('getFieldBaseFile', () => {
     });
 
     expect(result).toContain(
-      "import { defineField, FieldType } from 'twenty-sdk'",
+      "import { defineField, FieldType } from 'twenty-sdk/define';",
     );
     expect(result).toContain('export default defineField({');
     expect(result).toContain("name: 'email'");

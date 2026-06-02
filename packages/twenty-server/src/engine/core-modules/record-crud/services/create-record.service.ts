@@ -1,7 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { FieldActorSource } from 'twenty-shared/types';
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { CommonCreateOneQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-one-query-runner.service';
 import {
@@ -38,13 +38,12 @@ export class CreateRecordService {
       });
 
       if (
-        !canObjectBeManagedByWorkflow({
+        !canObjectBeManagedByAutomation({
           nameSingular: flatObjectMetadata.nameSingular,
-          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
-          'Failed to create: Object cannot be created by workflow',
+          'Failed to create: Object cannot be created by automation',
           RecordCrudExceptionCode.INVALID_REQUEST,
         );
       }
@@ -61,13 +60,14 @@ export class CreateRecordService {
       const cleanedRecord = removeUndefinedFromRecord(objectRecord);
       const dataWithActor = { ...cleanedRecord, createdBy: actorMetadata };
 
-      const createdRecord = await this.commonCreateOneRunner.execute(
-        {
-          data: dataWithActor,
-          selectedFields,
-        },
-        queryRunnerContext,
-      );
+      const { results: createdRecord } =
+        await this.commonCreateOneRunner.execute(
+          {
+            data: dataWithActor,
+            selectedFields,
+          },
+          queryRunnerContext,
+        );
 
       this.logger.log(`Record created successfully in ${objectName}`);
 

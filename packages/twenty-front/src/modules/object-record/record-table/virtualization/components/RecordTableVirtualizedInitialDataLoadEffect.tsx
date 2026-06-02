@@ -14,7 +14,7 @@ import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomC
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useGetCurrentViewOnly } from '@/views/hooks/useGetCurrentViewOnly';
 import isEmpty from 'lodash.isempty';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 // TODO: see if we can merge the initial and load more processes, to have only one load at scroll index effect
 export const RecordTableVirtualizedInitialDataLoadEffect = () => {
@@ -24,6 +24,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
 
   const [lastRecordTableQueryIdentifier, setLastRecordTableQueryIdentifier] =
     useAtomComponentState(lastRecordTableQueryIdentifierComponentState);
+
+  const [isInitializedOnMount, setIsInitializedOnMount] = useState(false);
 
   const visibleRecordFields = useAtomComponentSelectorValue(
     visibleRecordFieldsComponentSelector,
@@ -64,15 +66,17 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
       return;
     }
 
+    // Wait for the atomic batch from loadRecordIndexStates to populate
+    // visibleRecordFields before triggering any fetch. This guard must apply
+    // to every branch: when the current view is a draft (e.g. an unsaved
+    // record-table widget view), it is not in the persisted views store, so
+    // currentView is undefined and the view-change branch below never runs.
+    if (isEmpty(visibleRecordFields)) {
+      return;
+    }
+
     (async () => {
       if ((currentView?.id ?? null) !== lastContextStoreVirtualizedViewId) {
-        // Wait for the atomic batch from loadRecordIndexStates to populate
-        // visibleRecordFields before triggering a fetch. On the next render
-        // after the batch, fields will be populated and we'll proceed.
-        if (isEmpty(visibleRecordFields)) {
-          return;
-        }
-
         setLastContextStoreVirtualizedViewId(currentView?.id ?? null);
         setLastRecordTableQueryIdentifier(queryIdentifier);
         setLastContextStoreVirtualizedVisibleRecordFields(visibleRecordFields);
@@ -105,6 +109,9 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
             shouldScrollToStart: isEmpty(lastFields),
           });
         }
+      } else if (!isInitializedOnMount) {
+        setIsInitializedOnMount(true);
+        await triggerInitialRecordTableDataLoad();
       }
     })();
   }, [
@@ -122,6 +129,8 @@ export const RecordTableVirtualizedInitialDataLoadEffect = () => {
     lastContextStoreVirtualizedVisibleRecordFields,
     setLastContextStoreVirtualizedVisibleRecordFields,
     visibleRecordFields,
+    isInitializedOnMount,
+    setIsInitializedOnMount,
   ]);
 
   return <></>;

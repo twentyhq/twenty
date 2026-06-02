@@ -5,10 +5,12 @@ import { useTriggerOptimisticEffectFromSseEvents } from '@/sse-db-event/hooks/us
 import { disposeFunctionForEventStreamState } from '@/sse-db-event/states/disposeFunctionByEventStreamMapState';
 import { isCreatingSseEventStreamState } from '@/sse-db-event/states/isCreatingSseEventStreamState';
 import { isDestroyingEventStreamState } from '@/sse-db-event/states/isDestroyingEventStreamState';
+import { lastSseEventReceivedTimestampState } from '@/sse-db-event/states/lastSseEventReceivedTimestampState';
 import { shouldDestroyEventStreamState } from '@/sse-db-event/states/shouldDestroyEventStreamState';
 import { sseClientState } from '@/sse-db-event/states/sseClientState';
 import { sseEventStreamIdState } from '@/sse-db-event/states/sseEventStreamIdState';
 import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamReadyState';
+import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
 import { isNonEmptyString } from '@sniptt/guards';
@@ -19,6 +21,7 @@ import { useCallback } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 } from 'uuid';
 import { type EventSubscription } from '~/generated-metadata/graphql';
+import { getGraphqlErrorExtensionsFromError } from '~/utils/get-graphql-error-extensions-from-error.util';
 
 export const useTriggerEventStreamCreation = () => {
   const store = useStore();
@@ -79,10 +82,26 @@ export const useTriggerEventStreamCreation = () => {
             onEventSubscription: EventSubscription;
           }>,
         ) => {
+          store.set(lastSseEventReceivedTimestampState.atom, Date.now());
+
           if (isDefined(value?.errors) && Array.isArray(value.errors)) {
-            captureException(
-              new Error(`SSE subscription error: ${value.errors[0]?.message}`),
+            const extensions = getGraphqlErrorExtensionsFromError(
+              value.errors[0],
             );
+
+            if (
+              !isGracefullyHandledEventStreamError({
+                subCode: extensions?.subCode,
+                code: extensions?.code,
+              })
+            ) {
+              captureException(
+                new Error(
+                  `SSE subscription error: ${value.errors[0]?.message}`,
+                ),
+              );
+            }
+
             store.set(shouldDestroyEventStreamState.atom, true);
 
             return;
@@ -116,8 +135,11 @@ export const useTriggerEventStreamCreation = () => {
         },
         error: (error) => {
           captureException(error);
+          store.set(shouldDestroyEventStreamState.atom, true);
         },
-        complete: () => {},
+        complete: () => {
+          store.set(shouldDestroyEventStreamState.atom, true);
+        },
       },
       {
         message: ({ data, event }) => {
@@ -127,18 +149,21 @@ export const useTriggerEventStreamCreation = () => {
 
           try {
             if (event === 'next') {
-              if (isDefined(result?.errors)) {
-                const subCode = result.errors[0]?.extensions?.subCode;
+              store.set(lastSseEventReceivedTimestampState.atom, Date.now());
 
-                switch (subCode) {
-                  case 'EVENT_STREAM_ALREADY_EXISTS': {
-                    store.set(shouldDestroyEventStreamState.atom, true);
-                    break;
-                  }
-                  default: {
-                    for (const error of result.errors) {
-                      captureException(error);
-                    }
+              if (isDefined(result?.errors)) {
+                const extensions = getGraphqlErrorExtensionsFromError(
+                  result.errors[0],
+                );
+
+                if (
+                  !isGracefullyHandledEventStreamError({
+                    subCode: extensions?.subCode,
+                    code: extensions?.code,
+                  })
+                ) {
+                  for (const error of result.errors) {
+                    captureException(error);
                   }
                 }
 

@@ -26,15 +26,17 @@ import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceSta
 import { CommandMenuComponentInstanceContext } from '@/command-menu/states/contexts/CommandMenuComponentInstanceContext';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentObjectMetadataItemIdComponentState } from '@/context-store/states/contextStoreCurrentObjectMetadataItemIdComponentState';
+import { contextStoreCurrentPageTypeComponentState } from '@/context-store/states/contextStoreCurrentPageTypeComponentState';
 import { contextStoreCurrentViewTypeComponentState } from '@/context-store/states/contextStoreCurrentViewTypeComponentState';
 import { ContextStoreComponentInstanceContext } from '@/context-store/states/contexts/ContextStoreComponentInstanceContext';
+import { ContextStorePageType } from 'twenty-shared/types';
 import { ContextStoreViewType } from '@/context-store/types/ContextStoreViewType';
 import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { RecordComponentInstanceContextsWrapper } from '@/object-record/components/RecordComponentInstanceContextsWrapper';
 import { SidePanelRouter } from '@/side-panel/components/SidePanelRouter';
 import { SIDE_PANEL_COMPONENT_INSTANCE_ID } from '@/side-panel/constants/SidePanelComponentInstanceId';
 import { SIDE_PANEL_FOCUS_ID } from '@/side-panel/constants/SidePanelFocusId';
-import { type SidePanelRootPage } from '@/side-panel/pages/root/components/SidePanelRootPage';
+import { type SidePanelCommandMenuItemDisplayPage } from '@/command-menu-item/display/components/SidePanelCommandMenuItemDisplayPage';
 import { isSidePanelOpenedState } from '@/side-panel/states/isSidePanelOpenedState';
 import { sidePanelNavigationStackState } from '@/side-panel/states/sidePanelNavigationStackState';
 import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
@@ -75,7 +77,7 @@ const ContextStoreDecorator: Decorator = (Story) => {
   );
 };
 
-const meta: Meta<typeof SidePanelRootPage> = {
+const meta: Meta<typeof SidePanelCommandMenuItemDisplayPage> = {
   title: 'Modules/CommandMenu/CommandMenu',
   component: SidePanelRouter,
   decorators: [
@@ -131,6 +133,12 @@ const meta: Meta<typeof SidePanelRootPage> = {
         }),
         ContextStoreViewType.Table,
       );
+      jotaiStore.set(
+        contextStoreCurrentPageTypeComponentState.atomFamily({
+          instanceId: MAIN_CONTEXT_STORE_INSTANCE_ID,
+        }),
+        ContextStorePageType.Index,
+      );
 
       return <Story />;
     },
@@ -145,7 +153,7 @@ const meta: Meta<typeof SidePanelRootPage> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof SidePanelRootPage>;
+type Story = StoryObj<typeof SidePanelCommandMenuItemDisplayPage>;
 
 export const DefaultWithoutSearch: Story = {
   play: async ({ canvasElement }) => {

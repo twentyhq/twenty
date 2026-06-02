@@ -1,98 +1,81 @@
-import { msg } from '@lingui/core/macro';
-import { CommandMenuItemViewType, AppPath } from 'twenty-shared/types';
 import {
-  IconFileExport,
-  IconHeart,
-  IconTrash,
-  IconUser,
-} from 'twenty-ui/display';
+  CommandMenuItemAvailabilityType,
+  EngineComponentKey,
+  type CommandMenuItemFieldsFragment,
+} from '~/generated-metadata/graphql';
 
-import { Command } from '@/command-menu-item/display/components/Command';
-import { CommandLink } from '@/command-menu-item/display/components/CommandLink';
-import { type CommandMenuItemConfig } from '@/command-menu-item/types/CommandMenuItemConfig';
-import { CommandMenuItemScope } from '@/command-menu-item/types/CommandMenuItemScope';
-import { CommandMenuItemType } from '@/command-menu-item/types/CommandMenuItemType';
-import { CoreObjectNamePlural } from '@/object-metadata/types/CoreObjectNamePlural';
-import { EngineComponentKey } from '~/generated-metadata/graphql';
-
-export const createMockCommandMenuItems = ({
-  deleteMock = () => {},
-  addToFavoritesMock = () => {},
-  exportMock = () => {},
-}: {
-  deleteMock?: () => void;
-  addToFavoritesMock?: () => void;
-  exportMock?: () => void;
-}): CommandMenuItemConfig[] => [
-  {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: EngineComponentKey.ADD_TO_FAVORITES,
-    label: msg`Add to favorites`,
-    shortLabel: msg`Add to favorites`,
-    position: 2,
-    isPinned: true,
-    Icon: IconHeart,
-    shouldBeRegistered: () => true,
-    availableOn: [
-      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      CommandMenuItemViewType.SHOW_PAGE,
-    ],
-    component: <Command onClick={addToFavoritesMock} />,
-  },
-  {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
-    label: msg`Export`,
-    shortLabel: msg`Export`,
-    position: 4,
-    Icon: IconFileExport,
-    accent: 'default',
-    isPinned: false,
-    shouldBeRegistered: () => true,
-    availableOn: [CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION],
-    component: <Command onClick={exportMock} />,
-  },
-  {
-    type: CommandMenuItemType.Standard,
-    scope: CommandMenuItemScope.RecordSelection,
-    key: EngineComponentKey.DELETE_SINGLE_RECORD,
-    label: msg`Delete`,
-    shortLabel: msg`Delete`,
-    position: 7,
-    Icon: IconTrash,
-    accent: 'default',
-    isPinned: true,
-    shouldBeRegistered: () => true,
-    availableOn: [
-      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      CommandMenuItemViewType.SHOW_PAGE,
-    ],
-    component: <Command onClick={deleteMock} />,
-  },
-  {
-    type: CommandMenuItemType.Navigation,
-    scope: CommandMenuItemScope.Global,
-    key: EngineComponentKey.GO_TO_PEOPLE,
-    label: msg`Go to People`,
-    shortLabel: msg`People`,
-    position: 19,
-    Icon: IconUser,
-    isPinned: false,
-    availableOn: [
-      CommandMenuItemViewType.INDEX_PAGE_NO_SELECTION,
-      CommandMenuItemViewType.INDEX_PAGE_SINGLE_RECORD_SELECTION,
-      CommandMenuItemViewType.INDEX_PAGE_BULK_SELECTION,
-      CommandMenuItemViewType.SHOW_PAGE,
-    ],
-    shouldBeRegistered: () => true,
-    component: (
-      <CommandLink
-        to={AppPath.RecordIndexPage}
-        params={{ objectNamePlural: CoreObjectNamePlural.Person }}
-      />
-    ),
-    hotKeys: ['G', 'P'],
-  },
-];
+export const createMockCommandMenuItems =
+  (): CommandMenuItemFieldsFragment[] => [
+    {
+      __typename: 'CommandMenuItem',
+      id: 'mock-add-to-favorites',
+      workflowVersionId: null,
+      frontComponentId: null,
+      frontComponent: null,
+      engineComponentKey: EngineComponentKey.ADD_TO_FAVORITES,
+      label: 'Add to favorites',
+      icon: 'IconHeart',
+      shortLabel: 'Add to favorites',
+      position: 2,
+      isPinned: true,
+      hotKeys: null,
+      conditionalAvailabilityExpression: null,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      availabilityObjectMetadataId: null,
+      payload: null,
+    },
+    {
+      __typename: 'CommandMenuItem',
+      id: 'mock-export',
+      workflowVersionId: null,
+      frontComponentId: null,
+      frontComponent: null,
+      engineComponentKey: EngineComponentKey.EXPORT_FROM_RECORD_INDEX,
+      label: 'Export',
+      icon: 'IconFileExport',
+      shortLabel: 'Export',
+      position: 4,
+      isPinned: false,
+      hotKeys: null,
+      conditionalAvailabilityExpression: null,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      availabilityObjectMetadataId: null,
+      payload: null,
+    },
+    {
+      __typename: 'CommandMenuItem',
+      id: 'mock-delete',
+      workflowVersionId: null,
+      frontComponentId: null,
+      frontComponent: null,
+      engineComponentKey: EngineComponentKey.DELETE_SINGLE_RECORD,
+      label: 'Delete',
+      icon: 'IconTrash',
+      shortLabel: 'Delete',
+      position: 7,
+      isPinned: true,
+      hotKeys: null,
+      conditionalAvailabilityExpression: null,
+      availabilityType: CommandMenuItemAvailabilityType.RECORD_SELECTION,
+      availabilityObjectMetadataId: null,
+      payload: null,
+    },
+    {
+      __typename: 'CommandMenuItem',
+      id: 'mock-go-to-people',
+      workflowVersionId: null,
+      frontComponentId: null,
+      frontComponent: null,
+      engineComponentKey: EngineComponentKey.GO_TO_PEOPLE,
+      label: 'Go to People',
+      icon: 'IconUser',
+      shortLabel: 'People',
+      position: 19,
+      isPinned: false,
+      hotKeys: ['G', 'P'],
+      conditionalAvailabilityExpression: null,
+      availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
+      availabilityObjectMetadataId: null,
+      payload: null,
+    },
+  ];

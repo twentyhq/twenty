@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
 
 import { APP_LOCALES, SOURCE_LOCALE } from 'twenty-shared/translations';
 import { ViewType, ViewVisibility } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { Repository } from 'typeorm';
 
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -31,18 +29,17 @@ import { DestroyViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/d
 import { UpdateViewInput } from 'src/engine/metadata-modules/view/dtos/inputs/update-view.input';
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
-import { computeFieldsWidgetViewFieldsAndGroupsToCreate } from 'src/engine/metadata-modules/view/utils/compute-fields-widget-view-fields-and-groups-to-create.util';
 import { fromFlatViewToViewDto } from 'src/engine/metadata-modules/view/utils/from-flat-view-to-view-dto.util';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
-import { type UniversalFlatViewFieldGroup } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field-group.type';
-import { type UniversalFlatViewField } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-view-field.type';
 
 @Injectable()
 export class ViewService {
   constructor(
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly applicationService: ApplicationService,
@@ -85,39 +82,6 @@ export class ViewService {
         flatObjectMetadataMaps: existingFlatObjectMetadataMaps,
       });
 
-    let flatViewFieldGroupsToCreate: UniversalFlatViewFieldGroup[] = [];
-    let flatViewFieldsToCreate: UniversalFlatViewField[] = [];
-
-    if (flatViewToCreate.type === ViewType.FIELDS_WIDGET) {
-      const objectFlatFieldMetadatas = Object.values(
-        existingFlatFieldMetadataMaps.byUniversalIdentifier,
-      ).filter(
-        (field): field is NonNullable<typeof field> =>
-          field !== undefined &&
-          field.objectMetadataUniversalIdentifier ===
-            flatViewToCreate.objectMetadataUniversalIdentifier,
-      );
-
-      const objectFlatMetadata = findFlatEntityByUniversalIdentifierOrThrow({
-        flatEntityMaps: existingFlatObjectMetadataMaps,
-        universalIdentifier: flatViewToCreate.objectMetadataUniversalIdentifier,
-      });
-
-      const fieldsWidgetResult = computeFieldsWidgetViewFieldsAndGroupsToCreate(
-        {
-          objectFlatFieldMetadatas,
-          viewUniversalIdentifier: flatViewToCreate.universalIdentifier,
-          flatApplication: workspaceCustomFlatApplication,
-          labelIdentifierFieldMetadataUniversalIdentifier:
-            objectFlatMetadata.labelIdentifierFieldMetadataUniversalIdentifier,
-        },
-      );
-
-      flatViewFieldGroupsToCreate =
-        fieldsWidgetResult.flatViewFieldGroupsToCreate;
-      flatViewFieldsToCreate = fieldsWidgetResult.flatViewFieldsToCreate;
-    }
-
     const validateAndBuildResult =
       await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
         {
@@ -130,18 +94,6 @@ export class ViewService {
 
             viewGroup: {
               flatEntityToCreate: flatViewGroupsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-
-            viewFieldGroup: {
-              flatEntityToCreate: flatViewFieldGroupsToCreate,
-              flatEntityToDelete: [],
-              flatEntityToUpdate: [],
-            },
-
-            viewField: {
-              flatEntityToCreate: flatViewFieldsToCreate,
               flatEntityToDelete: [],
               flatEntityToUpdate: [],
             },
@@ -673,10 +625,9 @@ export class ViewService {
     id: string,
     workspaceId: string,
   ): Promise<ViewEntity | null> {
-    const view = await this.viewRepository.findOne({
+    const view = await this.viewRepository.findOne(workspaceId, {
       where: {
         id,
-        workspaceId,
       },
       relations: [
         'workspace',

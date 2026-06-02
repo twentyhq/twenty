@@ -53,6 +53,10 @@ import {
   RULE_NAME as noStateUserefName,
 } from './rules/no-state-useref';
 import {
+  rule as preferWorkspaceScopedRepository,
+  RULE_NAME as preferWorkspaceScopedRepositoryName,
+} from './rules/prefer-workspace-scoped-repository';
+import {
   rule as restApiMethodsShouldBeGuarded,
   RULE_NAME as restApiMethodsShouldBeGuardedName,
 } from './rules/rest-api-methods-should-be-guarded';
@@ -64,6 +68,10 @@ import {
   rule as styledComponentsPrefixedWithStyled,
   RULE_NAME as styledComponentsPrefixedWithStyledName,
 } from './rules/styled-components-prefixed-with-styled';
+import {
+  rule as upgradeCommandFilename,
+  RULE_NAME as upgradeCommandFilenameName,
+} from './rules/upgrade-command-filename';
 
 export default definePlugin({
   meta: { name: 'twenty' },
@@ -81,9 +89,11 @@ export default definePlugin({
     [noJotaiStoreInSelectorName]: noJotaiStoreInSelector,
     [noNavigatePreferLinkName]: noNavigatePreferLink,
     [noStateUserefName]: noStateUseref,
+    [preferWorkspaceScopedRepositoryName]: preferWorkspaceScopedRepository,
     [restApiMethodsShouldBeGuardedName]: restApiMethodsShouldBeGuarded,
     [sortCssPropertiesAlphabeticallyName]: sortCssPropertiesAlphabetically,
     [styledComponentsPrefixedWithStyledName]:
       styledComponentsPrefixedWithStyled,
+    [upgradeCommandFilenameName]: upgradeCommandFilename,
   },
 });

@@ -18,6 +18,10 @@ export const pageLayoutsWithRelationsSelector = createAtomSelector<
     const allFlatWidgets = get(metadataStoreState, 'pageLayoutWidgets')
       .current as FlatPageLayoutWidget[];
 
+    const activeFlatWidgets = allFlatWidgets.filter(
+      (widget) => widget.isActive,
+    );
+
     const tabsByPageLayoutId = new Map<string, FlatPageLayoutTab[]>();
     const widgetsByTabId = new Map<string, FlatPageLayoutWidget[]>();
 
@@ -31,7 +35,7 @@ export const pageLayoutsWithRelationsSelector = createAtomSelector<
       }
     }
 
-    for (const widget of allFlatWidgets) {
+    for (const widget of activeFlatWidgets) {
       const existing = widgetsByTabId.get(widget.pageLayoutTabId);
 
       if (isDefined(existing)) {

@@ -86,6 +86,25 @@ describe('getToolDisplayMessage', () => {
     });
   });
 
+  describe('app_exa_web_search', () => {
+    it('should show the same searching-the-web message as native web_search', () => {
+      const message = getToolDisplayMessage(
+        { query: 'CRM tools' },
+        'app_exa_web_search',
+        false,
+      );
+
+      expect(message).toContain('Searching');
+      expect(message).toContain('CRM tools');
+    });
+
+    it('should handle missing query', () => {
+      const message = getToolDisplayMessage({}, 'app_exa_web_search', true);
+
+      expect(message).toContain('Searched the web');
+    });
+  });
+
   describe('learn_tools', () => {
     it('should show tool names when provided', () => {
       const message = getToolDisplayMessage(

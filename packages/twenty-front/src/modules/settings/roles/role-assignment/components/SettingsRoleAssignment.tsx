@@ -13,14 +13,12 @@ import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { isModalOpenedComponentState } from '@/ui/layout/modal/states/isModalOpenedComponentState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useState } from 'react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { useQuery } from '@apollo/client/react';
 import {
   type Agent,
-  FeatureFlagKey,
   type ApiKeyForRole,
   FindManyAgentsDocument,
   GetApiKeysDocument,
@@ -40,8 +38,6 @@ export const SettingsRoleAssignment = ({
   roleId,
   isCreateMode,
 }: SettingsRoleAssignmentProps) => {
-  const isAiEnabled = useIsFeatureEnabled(FeatureFlagKey.IS_AI_ENABLED);
-
   const settingsDraftRole = useAtomFamilyStateValue(
     settingsDraftRoleFamilyState,
     roleId,
@@ -59,9 +55,7 @@ export const SettingsRoleAssignment = ({
   const { addApiKeyToRoleAndUpdateState, updateApiKeyRoleDraftState } =
     useUpdateApiKeyRole(roleId);
 
-  const { data: agentsData } = useQuery(FindManyAgentsDocument, {
-    skip: !isAiEnabled,
-  });
+  const { data: agentsData } = useQuery(FindManyAgentsDocument);
   const { data: apiKeysData } = useQuery(GetApiKeysDocument);
 
   const { openModal, closeModal } = useModal();
@@ -204,28 +198,25 @@ export const SettingsRoleAssignment = ({
 
   return (
     <>
-      {Object.keys(ROLE_TARGET_CONFIG).map(
-        (roleTargetType) =>
-          (isAiEnabled || roleTargetType !== 'agent') && (
-            <RoleAssignmentSection
-              key={roleTargetType}
-              roleTargetType={roleTargetType as keyof typeof ROLE_TARGET_CONFIG}
-              roleId={roleId}
-              settingsDraftRole={settingsDraftRole}
-              currentWorkspaceMember={
-                roleTargetType === 'member'
-                  ? currentWorkspaceMember || undefined
-                  : undefined
-              }
-              onSelect={handleSelectEntity}
-              allWorkspaceMembersHaveThisRole={
-                roleTargetType === 'member'
-                  ? allWorkspaceMembersHaveThisRole
-                  : false
-              }
-            />
-          ),
-      )}
+      {Object.keys(ROLE_TARGET_CONFIG).map((roleTargetType) => (
+        <RoleAssignmentSection
+          key={roleTargetType}
+          roleTargetType={roleTargetType as keyof typeof ROLE_TARGET_CONFIG}
+          roleId={roleId}
+          settingsDraftRole={settingsDraftRole}
+          currentWorkspaceMember={
+            roleTargetType === 'member'
+              ? currentWorkspaceMember || undefined
+              : undefined
+          }
+          onSelect={handleSelectEntity}
+          allWorkspaceMembersHaveThisRole={
+            roleTargetType === 'member'
+              ? allWorkspaceMembersHaveThisRole
+              : false
+          }
+        />
+      ))}
 
       {selectedRoleTarget && (
         <SettingsRoleAssignmentConfirmationModal

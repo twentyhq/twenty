@@ -3,6 +3,7 @@ import { type DynamicModule, Global, Module } from '@nestjs/common';
 import { ConfigVariables } from 'src/engine/core-modules/twenty-config/config-variables';
 import { CONFIG_VARIABLES_INSTANCE_TOKEN } from 'src/engine/core-modules/twenty-config/constants/config-variables-instance-tokens.constants';
 import { DatabaseConfigModule } from 'src/engine/core-modules/twenty-config/drivers/database-config.module';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { ConfigurableModuleClass } from 'src/engine/core-modules/twenty-config/twenty-config.module-definition';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 
@@ -22,12 +23,13 @@ export class TwentyConfigModule extends ConfigurableModuleClass {
       imports,
       providers: [
         TwentyConfigService,
+        ConfigGroupHashService,
         {
           provide: CONFIG_VARIABLES_INSTANCE_TOKEN,
           useValue: new ConfigVariables(),
         },
       ],
-      exports: [TwentyConfigService],
+      exports: [TwentyConfigService, ConfigGroupHashService],
     };
   }
 }

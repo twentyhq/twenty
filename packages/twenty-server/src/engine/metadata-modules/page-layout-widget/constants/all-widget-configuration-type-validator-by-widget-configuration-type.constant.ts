@@ -1,4 +1,5 @@
 import { AggregateChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/aggregate-chart-configuration.dto';
+import { EmailThreadConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/email-thread-configuration.dto';
 import { BarChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/bar-chart-configuration.dto';
 import { CalendarConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/calendar-configuration.dto';
 import { EmailsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/emails-configuration.dto';
@@ -7,7 +8,6 @@ import { FieldRichTextConfigurationDTO } from 'src/engine/metadata-modules/page-
 import { FieldsConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/fields-configuration.dto';
 import { FilesConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/files-configuration.dto';
 import { FrontComponentConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/front-component-configuration.dto';
-import { GaugeChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/gauge-chart-configuration.dto';
 import { IframeConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/iframe-configuration.dto';
 import { LineChartConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/line-chart-configuration.dto';
 import { NotesConfigurationDTO } from 'src/engine/metadata-modules/page-layout-widget/dtos/notes-configuration.dto';
@@ -30,11 +30,11 @@ export const ALL_WIDGET_CONFIGURATION_TYPE_VALIDATOR_BY_WIDGET_CONFIGURATION_TYP
     PIE_CHART: PieChartConfigurationDTO,
     LINE_CHART: LineChartConfigurationDTO,
     IFRAME: IframeConfigurationDTO,
-    GAUGE_CHART: GaugeChartConfigurationDTO,
     BAR_CHART: BarChartConfigurationDTO,
     CALENDAR: CalendarConfigurationDTO,
     FRONT_COMPONENT: FrontComponentConfigurationDTO,
     EMAILS: EmailsConfigurationDTO,
+    EMAIL_THREAD: EmailThreadConfigurationDTO,
     FIELD: FieldConfigurationDTO,
     FIELD_RICH_TEXT: FieldRichTextConfigurationDTO,
     FIELDS: FieldsConfigurationDTO,

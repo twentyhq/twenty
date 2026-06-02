@@ -1,10 +1,11 @@
 import { FrontComponentErrorEffect } from '@/remote/components/FrontComponentErrorEffect';
-import { FrontComponentHostCommunicationApiEffect } from '@/remote/components/FrontComponentHostCommunicationApiEffect';
+import { FrontComponentInitializeHostCommunicationApiEffect } from '@/remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 import { FrontComponentUpdateContextEffect } from '@/remote/components/FrontComponentUpdateContextEffect';
+import { FrontComponentUpdateHostCommunicationApiEffect } from '@/remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type SdkClientUrls } from '@/types/HostToWorkerRenderContext';
 import { type WorkerExports } from '@/types/WorkerExports';
-import { type FrontComponentExecutionContext } from 'twenty-sdk';
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { type ThreadWebWorker } from '@quilted/threads';
 import {
   type RemoteReceiver,
@@ -22,6 +23,7 @@ type FrontComponentContentProps = {
   applicationAccessToken?: string;
   apiUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  applicationVariables?: Record<string, string>;
   executionContext: FrontComponentExecutionContext;
   frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   onError: (error?: Error) => void;
@@ -33,6 +35,7 @@ export const FrontComponentRenderer = ({
   applicationAccessToken,
   apiUrl,
   sdkClientUrls,
+  applicationVariables,
   executionContext,
   frontComponentHostCommunicationApi,
   onError,
@@ -54,8 +57,8 @@ export const FrontComponentRenderer = ({
         applicationAccessToken={applicationAccessToken}
         apiUrl={apiUrl}
         sdkClientUrls={sdkClientUrls}
+        applicationVariables={applicationVariables}
         frontComponentId={executionContext.frontComponentId}
-        frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
         setReceiver={setReceiver}
         setThread={setThread}
         setError={setError}
@@ -63,13 +66,13 @@ export const FrontComponentRenderer = ({
     );
   }, [
     componentUrl,
-    frontComponentHostCommunicationApi,
     setError,
     setReceiver,
     setThread,
     applicationAccessToken,
     apiUrl,
     sdkClientUrls,
+    applicationVariables,
     executionContext.frontComponentId,
   ]);
 
@@ -102,7 +105,13 @@ export const FrontComponentRenderer = ({
 
       {isDefined(thread) && (
         <>
-          <FrontComponentHostCommunicationApiEffect thread={thread} />
+          <FrontComponentUpdateHostCommunicationApiEffect
+            thread={thread}
+            frontComponentHostCommunicationApi={
+              frontComponentHostCommunicationApi
+            }
+          />
+          <FrontComponentInitializeHostCommunicationApiEffect thread={thread} />
           <FrontComponentUpdateContextEffect
             thread={thread}
             executionContext={executionContext}

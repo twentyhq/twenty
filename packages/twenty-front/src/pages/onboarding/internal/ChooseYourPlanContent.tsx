@@ -3,18 +3,18 @@ import { SubTitle } from '@/auth/components/SubTitle';
 import { Title } from '@/auth/components/Title';
 import { useAuth } from '@/auth/hooks/useAuth';
 import { billingCheckoutSessionState } from '@/auth/states/billingCheckoutSessionState';
+import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
 import { SubscriptionBenefit } from '@/settings/billing/components/SubscriptionBenefit';
 import { SubscriptionPrice } from '@/settings/billing/components/SubscriptionPrice';
 import { TrialCard } from '@/settings/billing/components/TrialCard';
 import { useBaseLicensedPriceByPlanKeyAndInterval } from '@/settings/billing/hooks/useBaseLicensedPriceByPlanKeyAndInterval';
 import { useBaseProductByPlanKey } from '@/settings/billing/hooks/useBaseProductByPlanKey';
 import { useHandleCheckoutSession } from '@/settings/billing/hooks/useHandleCheckoutSession';
-import { calendarBookingPageIdState } from '@/client-config/states/calendarBookingPageIdState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
 import { Trans, useLingui } from '@lingui/react/macro';
-import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { AppPath } from 'twenty-shared/types';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { isDefined } from 'twenty-shared/utils';
 import { Loader } from 'twenty-ui/feedback';
 import { CardPicker, MainButton } from 'twenty-ui/input';
@@ -140,7 +140,7 @@ export const ChooseYourPlanContent = ({ billing }: { billing: Billing }) => {
         t`Email integration`,
         t`Custom objects`,
         t`API & Webhooks`,
-        t`10,000 workflow node executions`,
+        t`50,000 workflow node executions`,
       ],
     };
   };

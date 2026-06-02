@@ -4,6 +4,7 @@ import { executeLogicFunction } from 'test/integration/metadata/suites/logic-fun
 import { updateLogicFunctionSource } from 'test/integration/metadata/suites/logic-function/utils/update-logic-function-source.util';
 
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 
 // Default template function code that matches the expected behavior
 const DEFAULT_TEMPLATE_FUNCTION_CODE = `export const main = async (params: { a: string; b: number }): Promise<object> => {
@@ -58,6 +59,9 @@ describe('Logic Function Execution', () => {
     const functionId = createData?.createOneLogicFunction?.id;
 
     expect(functionId).toBeDefined();
+    expect(createData?.createOneLogicFunction?.executionMode).toBe(
+      LogicFunctionExecutionMode.LIVE,
+    );
     createdFunctionIds.push(functionId);
 
     await updateLogicFunctionSource({
@@ -65,10 +69,6 @@ describe('Logic Function Execution', () => {
         id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: DEFAULT_TEMPLATE_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
         },
       },
       expectToFail: false,
@@ -115,10 +115,6 @@ describe('Logic Function Execution', () => {
         id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: EXTERNAL_PACKAGES_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
         },
       },
       expectToFail: false,
@@ -207,10 +203,6 @@ describe('Logic Function Execution', () => {
         name: 'Test Default Function',
         source: {
           sourceHandlerCode: DEFAULT_TEMPLATE_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
           handlerName: 'main',
         },
       },
@@ -263,10 +255,6 @@ describe('Logic Function Execution', () => {
         id: createData.createOneLogicFunction.id,
         update: {
           sourceHandlerCode: ERROR_FUNCTION_CODE,
-          toolInputSchema: {
-            type: 'object',
-            properties: { message: { type: 'string' } },
-          },
         },
       },
       expectToFail: false,
@@ -306,4 +294,5 @@ describe('Logic Function Execution', () => {
     });
     expect(errorResult?.data).toBeNull();
   });
+
 });

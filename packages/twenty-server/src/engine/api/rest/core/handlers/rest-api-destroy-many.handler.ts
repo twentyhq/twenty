@@ -40,16 +40,17 @@ export class RestApiDestroyManyHandler extends RestApiBaseHandler {
     } = await this.buildCommonOptions(request);
 
     try {
-      const records = await this.commonDestroyManyQueryRunnerService.execute(
-        { filter, selectedFields: { id: true } },
-        {
-          authContext,
-          flatObjectMetadata,
-          flatObjectMetadataMaps,
-          flatFieldMetadataMaps,
-          objectIdByNameSingular,
-        },
-      );
+      const { results: records } =
+        await this.commonDestroyManyQueryRunnerService.execute(
+          { filter, selectedFields: { id: true } },
+          {
+            authContext,
+            flatObjectMetadata,
+            flatObjectMetadataMaps,
+            flatFieldMetadataMaps,
+            objectIdByNameSingular,
+          },
+        );
 
       return this.formatRestResponse(records, flatObjectMetadata.namePlural);
     } catch (error) {

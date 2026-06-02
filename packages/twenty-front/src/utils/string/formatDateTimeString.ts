@@ -32,7 +32,8 @@ export const formatDateTimeString = ({
     case FieldDateDisplayFormat.RELATIVE:
       return formatDateISOStringToRelativeDate({
         isoDate: value,
-        localeCatalog: localeCatalog,
+        localeCatalog,
+        timeZone,
       });
     case FieldDateDisplayFormat.USER_SETTINGS:
       return formatDateISOStringToDateTime({

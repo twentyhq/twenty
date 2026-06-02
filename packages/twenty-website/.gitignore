@@ -13,6 +13,9 @@
 /.next/
 /out/
 
+# generated (e.g. Playwright screenshots)
+/output/
+
 # production
 /build
 
@@ -26,10 +29,17 @@ yarn-debug.log*
 yarn-error.log*
 
 # local env files
-.env*.local
+.env
+.env*
 
 # vercel
 .vercel
+
+# cloudflare / opennext
+.open-next/
+.wrangler/
+.dev.vars
+cloudflare-env.d.ts
 
 # typescript
 *.tsbuildinfo
@@ -37,3 +47,7 @@ next-env.d.ts
 
 # DB
 *.sqlite
+
+# local-only memory files (not for commit)
+/Documentation.md
+/Todo.md

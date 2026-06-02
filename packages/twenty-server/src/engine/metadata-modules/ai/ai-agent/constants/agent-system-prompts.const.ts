@@ -7,6 +7,7 @@ export const WORKFLOW_SYSTEM_PROMPTS = {
 
 Tool usage strategy:
 - Chain multiple tools to solve complex tasks
+- Prefer batch tools (\`create_many_*\`, \`update_many_*\`, etc.) over looping single-item calls
 - If a tool fails, try alternative approaches
 - Use results from one tool to inform the next
 - Don't give up after first failure - be persistent

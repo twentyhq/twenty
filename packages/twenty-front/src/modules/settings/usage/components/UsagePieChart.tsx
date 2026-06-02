@@ -1,7 +1,6 @@
 import { CHART_MOTION_CONFIG } from '@/page-layout/widgets/graph/constants/ChartMotionConfig';
 import { GraphWidgetLegendDot } from '@/page-layout/widgets/graph/components/GraphWidgetLegendDot';
-import { useNumberFormat } from '@/localization/hooks/useNumberFormat';
-import { t } from '@lingui/core/macro';
+import { useUsageValueFormatter } from '@/settings/usage/hooks/useUsageValueFormatter';
 import { styled } from '@linaria/react';
 import { ResponsivePie } from '@nivo/pie';
 import { useContext } from 'react';
@@ -53,7 +52,7 @@ const StyledTooltipValue = styled.span`
 
 export const UsagePieChart = ({ data }: UsagePieChartProps) => {
   const { theme } = useContext(ThemeContext);
-  const { formatNumber } = useNumberFormat();
+  const { formatUsageValue } = useUsageValueFormatter();
 
   return (
     <StyledContainer>
@@ -79,7 +78,7 @@ export const UsagePieChart = ({ data }: UsagePieChartProps) => {
               <GraphWidgetLegendDot color={datum.color} />
               <StyledTooltipLabel>{String(datum.id)}</StyledTooltipLabel>
               <StyledTooltipValue>
-                {t`${formatNumber(datum.value)} credits`}
+                {formatUsageValue(datum.value)}
               </StyledTooltipValue>
             </StyledTooltipRow>
           </StyledTooltip>

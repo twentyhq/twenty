@@ -1,8 +1,13 @@
 export { FrontComponentRenderer } from './host/components/FrontComponentRenderer';
+export {
+  FrontComponentInputFocusContext,
+  type SetEditableFocused,
+} from './host/contexts/FrontComponentInputFocusContext';
 export { componentRegistry } from './host/generated/host-component-registry';
 export { FrontComponentErrorEffect } from './remote/components/FrontComponentErrorEffect';
-export { FrontComponentHostCommunicationApiEffect } from './remote/components/FrontComponentHostCommunicationApiEffect';
+export { FrontComponentInitializeHostCommunicationApiEffect } from './remote/components/FrontComponentInitializeHostCommunicationApiEffect';
 export { FrontComponentUpdateContextEffect } from './remote/components/FrontComponentUpdateContextEffect';
+export { FrontComponentUpdateHostCommunicationApiEffect } from './remote/components/FrontComponentUpdateHostCommunicationApiEffect';
 export { FrontComponentWorkerEffect } from './remote/components/FrontComponentWorkerEffect';
 export {
   HtmlA,
@@ -126,7 +131,7 @@ export type {
 export { createRemoteWorker } from './remote/worker/utils/createRemoteWorker';
 export { installStyleBridge } from './polyfills/installStyleBridge';
 export { exposeGlobals } from './remote/utils/exposeGlobals';
-export type { FrontComponentExecutionContext } from 'twenty-sdk';
+export type { FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 export type { FrontComponentHostCommunicationApi } from './types/FrontComponentHostCommunicationApi';
 export type {
   HostToWorkerRenderContext,

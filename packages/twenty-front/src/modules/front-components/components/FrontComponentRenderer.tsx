@@ -18,11 +18,13 @@ import { FindOneFrontComponentDocument } from '~/generated-metadata/graphql';
 type FrontComponentRendererProps = {
   frontComponentId: string;
   commandMenuItemId?: string;
+  selectedRecordIds?: string[];
 };
 
 export const FrontComponentRenderer = ({
   frontComponentId,
   commandMenuItemId,
+  selectedRecordIds,
 }: FrontComponentRendererProps) => {
   const { colorScheme } = useContext(ThemeContext);
   const { enqueueErrorSnackBar } = useSnackBar();
@@ -33,7 +35,11 @@ export const FrontComponentRenderer = ({
   );
 
   const { executionContext, frontComponentHostCommunicationApi } =
-    useFrontComponentExecutionContext({ frontComponentId, commandMenuItemId });
+    useFrontComponentExecutionContext({
+      frontComponentId,
+      commandMenuItemId,
+      selectedRecordIds,
+    });
 
   const handleError = useCallback(
     (error?: Error) => {
@@ -94,6 +100,9 @@ export const FrontComponentRenderer = ({
 
   const accessToken = applicationTokenPair.applicationAccessToken.token;
 
+  const applicationVariables =
+    data.frontComponent.applicationVariables ?? undefined;
+
   if (usesSdkClient) {
     return (
       <FrontComponentRendererProvider frontComponentId={frontComponentId}>
@@ -106,6 +115,7 @@ export const FrontComponentRenderer = ({
           frontComponentHostCommunicationApi={
             frontComponentHostCommunicationApi
           }
+          applicationVariables={applicationVariables}
           onError={handleError}
         />
       </FrontComponentRendererProvider>
@@ -121,6 +131,7 @@ export const FrontComponentRenderer = ({
         apiUrl={REACT_APP_SERVER_BASE_URL}
         executionContext={executionContext}
         frontComponentHostCommunicationApi={frontComponentHostCommunicationApi}
+        applicationVariables={applicationVariables}
         onError={handleError}
       />
     </FrontComponentRendererProvider>

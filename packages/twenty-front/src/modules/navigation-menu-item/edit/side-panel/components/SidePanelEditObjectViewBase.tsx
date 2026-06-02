@@ -1,6 +1,5 @@
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { getNavigationMenuItemColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemColor';
-import { parseThemeColor } from '@/navigation-menu-item/common/utils/parseThemeColor';
 import { getNavigationMenuItemObjectNameSingular } from '@/navigation-menu-item/display/object/utils/getNavigationMenuItemObjectNameSingular';
 import { SidePanelEditColorOption } from '@/navigation-menu-item/edit/side-panel/components/SidePanelEditColorOption';
 import {
@@ -16,6 +15,7 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { useLingui } from '@lingui/react/macro';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
 type SidePanelEditObjectViewBaseProps = OrganizeActionsProps & {
@@ -72,7 +72,7 @@ export const SidePanelEditObjectViewBase = ({
     : effectiveColor;
 
   return (
-    <SidePanelList commandGroups={[]} selectableItemIds={selectableItemIds}>
+    <SidePanelList selectableItemIds={selectableItemIds}>
       {showColorOption &&
         isDefined(selectedItem) &&
         objectMetadataItem?.isSystem !== true && (

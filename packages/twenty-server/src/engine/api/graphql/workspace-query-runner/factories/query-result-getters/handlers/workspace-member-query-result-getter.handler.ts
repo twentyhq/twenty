@@ -7,9 +7,7 @@ import { type FileUrlService } from 'src/engine/core-modules/file/file-url/file-
 import { extractFileIdFromUrl } from 'src/engine/core-modules/file/files-field/utils/extract-file-id-from-url.util';
 import { type WorkspaceMemberWorkspaceEntity } from 'src/modules/workspace-member/standard-objects/workspace-member.workspace-entity';
 
-export class WorkspaceMemberQueryResultGetterHandler
-  implements QueryResultGetterHandlerInterface
-{
+export class WorkspaceMemberQueryResultGetterHandler implements QueryResultGetterHandlerInterface {
   constructor(private readonly fileUrlService: FileUrlService) {}
 
   async handle(
@@ -26,10 +24,13 @@ export class WorkspaceMemberQueryResultGetterHandler
     );
 
     if (!isDefined(fileId)) {
-      return workspaceMember;
+      return {
+        ...workspaceMember,
+        avatarUrl: '',
+      };
     }
 
-    const signedUrl = this.fileUrlService.signFileByIdUrl({
+    const signedUrl = await this.fileUrlService.signFileByIdUrl({
       fileId,
       workspaceId,
       fileFolder: FileFolder.CorePicture,

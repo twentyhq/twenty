@@ -1,6 +1,6 @@
 import { type FrontComponentHostCommunicationApi } from '@/types/FrontComponentHostCommunicationApi';
 import { type WorkerExports } from '@/types/WorkerExports';
-import { type FrontComponentExecutionContext } from 'twenty-sdk';
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { type ThreadWebWorker } from '@quilted/threads';
 import { useEffect } from 'react';
 

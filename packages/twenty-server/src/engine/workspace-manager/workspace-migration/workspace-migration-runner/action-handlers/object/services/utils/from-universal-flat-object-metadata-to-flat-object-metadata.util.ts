@@ -20,7 +20,6 @@ export type FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs = {
     WorkspaceMigrationActionRunnerArgs<AllUniversalWorkspaceMigrationAction>,
     'workspaceId' | 'flatApplication'
   >;
-  dataSourceId: string;
 };
 
 const findFieldMetadataIdInCreateObjectContext = ({
@@ -49,7 +48,6 @@ const findFieldMetadataIdInCreateObjectContext = ({
 
 export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
   universalFlatObjectMetadata,
-  dataSourceId,
   generatedId,
   allFlatEntityMaps,
   allFieldIdToBeCreatedInActionByUniversalIdentifierMap,
@@ -57,9 +55,7 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
     flatApplication: { id: applicationId },
     workspaceId,
   },
-}: FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs): FlatObjectMetadata & {
-  dataSourceId: string;
-} => {
+}: FromUniversalFlatObjectMetadataToFlatObjectMetadataArgs): FlatObjectMetadata => {
   const {
     universalIdentifier,
     applicationUniversalIdentifier,
@@ -107,7 +103,6 @@ export const fromUniversalFlatObjectMetadataToFlatObjectMetadata = ({
 
   return {
     ...restProperties,
-    dataSourceId,
     id: generatedId,
     workspaceId,
     applicationId,

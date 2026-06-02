@@ -27,7 +27,7 @@ import {
 import {
   isDefined,
   parseJson,
-  safeParseRelativeDateFilterJSONStringified,
+  safeParseRelativeDateFilterJsonStringified,
   type RelativeDateFilter,
 } from 'twenty-shared/utils';
 import { parseBooleanFromStringValue } from 'twenty-shared/workflow';
@@ -151,7 +151,7 @@ export const WorkflowStepFilterValueInput = ({
   const isRelativeDateFilter =
     isDateField && stepFilter.operand === ViewFilterOperand.IS_RELATIVE;
 
-  const relativeDateFilter = safeParseRelativeDateFilterJSONStringified(
+  const relativeDateFilter = safeParseRelativeDateFilterJsonStringified(
     stepFilter.value,
   );
 

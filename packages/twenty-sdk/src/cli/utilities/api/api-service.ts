@@ -32,6 +32,10 @@ export class ApiService {
     return this.apiClient.validateAuth();
   }
 
+  getWorkspaceFrontendUrl(): Promise<string | null> {
+    return this.apiClient.getWorkspaceFrontendUrl();
+  }
+
   refreshToken(): Promise<string | null> {
     return this.apiClient.refreshToken();
   }
@@ -52,6 +56,16 @@ export class ApiService {
     return this.applicationApi.createApplicationRegistration(...args);
   }
 
+  rotateApplicationRegistrationClientSecret(
+    ...args: Parameters<
+      ApplicationApi['rotateApplicationRegistrationClientSecret']
+    >
+  ) {
+    return this.applicationApi.rotateApplicationRegistrationClientSecret(
+      ...args,
+    );
+  }
+
   createDevelopmentApplication(
     ...args: Parameters<ApplicationApi['createDevelopmentApplication']>
   ) {
@@ -70,12 +84,14 @@ export class ApiService {
     return this.applicationApi.syncMarketplaceCatalog();
   }
 
-  getSchema(options?: { authToken?: string }): Promise<ApiResponse<string>> {
+  getSchema(options?: {
+    appAccessToken?: string;
+  }): Promise<ApiResponse<string>> {
     return this.schemaApi.getSchema(options);
   }
 
   getMetadataSchema(options?: {
-    authToken?: string;
+    appAccessToken?: string;
   }): Promise<ApiResponse<string>> {
     return this.schemaApi.getMetadataSchema(options);
   }

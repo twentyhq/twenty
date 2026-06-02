@@ -8,10 +8,8 @@ import { workflowVisualizerWorkflowIdComponentState } from '@/workflow/states/wo
 import { type WorkflowCodeAction } from '@/workflow/types/Workflow';
 import { setNestedValue } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/setNestedValue';
 
-import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { LogicFunctionExecutionResult } from '@/logic-functions/components/LogicFunctionExecutionResult';
 import { LogicFunctionLogs } from '@/logic-functions/components/LogicFunctionLogs';
-import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { InputLabel } from '@/ui/input/components/InputLabel';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
@@ -19,15 +17,19 @@ import { useHotkeysOnFocusedElement } from '@/ui/utilities/hotkey/hooks/useHotke
 import { useListenClickOutside } from '@/ui/utilities/pointer-event/hooks/useListenClickOutside';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { WorkflowStepBody } from '@/workflow/workflow-steps/components/WorkflowStepBody';
+import { WorkflowStepCmdEnterButton } from '@/workflow/workflow-steps/components/WorkflowStepCmdEnterButton';
 import { WorkflowCodeEditor } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowCodeEditor';
 import { WorkflowEditActionCodeFields } from '@/workflow/workflow-steps/workflow-actions/code-action/components/WorkflowEditActionCodeFields';
 import { WORKFLOW_LOGIC_FUNCTION_TAB_LIST_COMPONENT_ID } from '@/workflow/workflow-steps/workflow-actions/code-action/constants/WorkflowLogicFunctionTabListComponentId';
 import { WorkflowLogicFunctionTabId } from '@/workflow/workflow-steps/workflow-actions/code-action/types/WorkflowLogicFunctionTabId';
 import { getWrongExportedFunctionMarkers } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/getWrongExportedFunctionMarkers';
+import { mergeDefaultFunctionInputAndFunctionInput } from '@/workflow/workflow-steps/workflow-actions/code-action/utils/mergeDefaultFunctionInputAndFunctionInput';
 import { WorkflowVariablePicker } from '@/workflow/workflow-variables/components/WorkflowVariablePicker';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 
+import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
+import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 import { WorkflowStepFooter } from '@/workflow/workflow-steps/components/WorkflowStepFooter';
 import { CODE_ACTION } from '@/workflow/workflow-steps/workflow-actions/constants/actions/CodeAction';
 import { type Monaco } from '@monaco-editor/react';
@@ -35,19 +37,18 @@ import { type editor } from 'monaco-editor';
 import { AutoTypings } from 'monaco-editor-auto-typings';
 import { useState } from 'react';
 import { Key } from 'ts-key-enum';
-import { isDefined } from 'twenty-shared/utils';
 import {
   getOutputSchemaFromValue,
+  jsonSchemaToInputSchema,
   type InputJsonSchema,
 } from 'twenty-shared/logic-function';
+import { isDefined } from 'twenty-shared/utils';
+import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
 import { IconCode, IconPlayerPlay } from 'twenty-ui/display';
 import { CodeEditor } from 'twenty-ui/input';
+import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { useIsMobile } from 'twenty-ui/utilities';
 import { useDebouncedCallback } from 'use-debounce';
-import { getFunctionInputFromInputSchema } from 'twenty-shared/workflow';
-import { themeCssVariables } from 'twenty-ui/theme-constants';
-import { LogicFunctionTestInputInitEffect } from '@/logic-functions/components/LogicFunctionTestInputInitEffect';
-import { useExecuteLogicFunction } from '@/logic-functions/hooks/useExecuteLogicFunction';
 
 const StyledCodeEditorContainer = styled.div`
   display: flex;
@@ -137,7 +138,7 @@ export const WorkflowEditActionCode = ({
     );
 
   const handleUpdateFunctionInputSchema = useDebouncedCallback(
-    async (sourceCode: string, toolInputSchema: InputJsonSchema) => {
+    async (sourceCode: string, inferredJsonSchema: InputJsonSchema) => {
       if (actionOptions.readonly === true) {
         return;
       }
@@ -146,11 +147,9 @@ export const WorkflowEditActionCode = ({
         return;
       }
 
-      const schemaArray = Array.isArray(toolInputSchema)
-        ? toolInputSchema
-        : [toolInputSchema];
+      const inputSchema = jsonSchemaToInputSchema(inferredJsonSchema);
 
-      const newFunctionInput = getFunctionInputFromInputSchema(schemaArray)[0];
+      const newFunctionInput = getFunctionInputFromInputSchema(inputSchema)[0];
 
       const newMergedInput = mergeDefaultFunctionInputAndFunctionInput({
         newInput: newFunctionInput,
@@ -260,12 +259,12 @@ export const WorkflowEditActionCode = ({
       return;
     }
 
-    const toolInputSchema = await onChange('sourceHandlerCode')(newCode);
+    const inferredJsonSchema = await onChange('sourceHandlerCode')(newCode);
 
     await getUpdatableWorkflowVersion();
 
-    if (isDefined(toolInputSchema)) {
-      await handleUpdateFunctionInputSchema(newCode, toolInputSchema);
+    if (isDefined(inferredJsonSchema)) {
+      await handleUpdateFunctionInputSchema(newCode, inferredJsonSchema);
     }
   };
 
@@ -342,6 +341,7 @@ export const WorkflowEditActionCode = ({
     <div data-globally-prevent-click-outside="true">
       <WorkflowEditActionCodeFields
         functionInput={functionInput}
+        inputSchema={formValues.workflowActionTriggerSettings?.inputSchema}
         VariablePicker={WorkflowVariablePicker}
         onInputChange={handleInputChange}
         readonly={actionOptions.readonly}
@@ -382,6 +382,9 @@ export const WorkflowEditActionCode = ({
             <>
               <WorkflowEditActionCodeFields
                 functionInput={functionInput}
+                inputSchema={
+                  formValues.workflowActionTriggerSettings?.inputSchema
+                }
                 VariablePicker={WorkflowVariablePicker}
                 onInputChange={handleInputChange}
                 readonly={actionOptions.readonly}
@@ -407,6 +410,9 @@ export const WorkflowEditActionCode = ({
             <>
               <WorkflowEditActionCodeFields
                 functionInput={logicFunctionTestData.input}
+                inputSchema={
+                  formValues.workflowActionTriggerSettings?.inputSchema
+                }
                 onInputChange={handleTestInputChange}
                 readonly={actionOptions.readonly}
               />

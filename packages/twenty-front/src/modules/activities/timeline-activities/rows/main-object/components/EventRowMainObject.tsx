@@ -1,8 +1,5 @@
-import {
-  type EventRowDynamicComponentProps,
-  StyledEventRowItemAction,
-  StyledEventRowItemColumn,
-} from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent';
+import { type EventRowDynamicComponentProps } from '@/activities/timeline-activities/rows/components/EventRowDynamicComponent.types';
+import { EventRowItem } from '@/activities/timeline-activities/rows/components/EventRowItem';
 import { EventRowMainObjectUpdated } from '@/activities/timeline-activities/rows/main-object/components/EventRowMainObjectUpdated';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
@@ -54,15 +51,9 @@ export const EventRowMainObject = ({
         <StyledMainContainer>
           <StyledRowContainer>
             <StyledRow>
-              <StyledEventRowItemColumn>
-                {labelIdentifierValue}
-              </StyledEventRowItemColumn>
-              <StyledEventRowItemAction>
-                {t`was created by`}
-              </StyledEventRowItemAction>
-              <StyledEventRowItemColumn>
-                {authorFullName}
-              </StyledEventRowItemColumn>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+              <EventRowItem variant="action">{t`was created by`}</EventRowItem>
+              <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>
@@ -85,15 +76,9 @@ export const EventRowMainObject = ({
         <StyledMainContainer>
           <StyledRowContainer>
             <StyledRow>
-              <StyledEventRowItemColumn>
-                {labelIdentifierValue}
-              </StyledEventRowItemColumn>
-              <StyledEventRowItemAction>
-                {t`was deleted by`}
-              </StyledEventRowItemAction>
-              <StyledEventRowItemColumn>
-                {authorFullName}
-              </StyledEventRowItemColumn>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+              <EventRowItem variant="action">{t`was deleted by`}</EventRowItem>
+              <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>
@@ -105,15 +90,9 @@ export const EventRowMainObject = ({
         <StyledMainContainer>
           <StyledRowContainer>
             <StyledRow>
-              <StyledEventRowItemColumn>
-                {labelIdentifierValue}
-              </StyledEventRowItemColumn>
-              <StyledEventRowItemAction>
-                {t`was restored by`}
-              </StyledEventRowItemAction>
-              <StyledEventRowItemColumn>
-                {authorFullName}
-              </StyledEventRowItemColumn>
+              <EventRowItem>{labelIdentifierValue}</EventRowItem>
+              <EventRowItem variant="action">{t`was restored by`}</EventRowItem>
+              <EventRowItem>{authorFullName}</EventRowItem>
             </StyledRow>
             <StyledItemTitleDate>{createdAt}</StyledItemTitleDate>
           </StyledRowContainer>

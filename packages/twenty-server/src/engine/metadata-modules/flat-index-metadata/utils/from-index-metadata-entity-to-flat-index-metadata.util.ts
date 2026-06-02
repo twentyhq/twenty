@@ -59,6 +59,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
         ]),
         createdAt: indexFieldMetadata.createdAt.toISOString(),
         updatedAt: indexFieldMetadata.updatedAt.toISOString(),
+        workspaceId: indexFieldMetadata.workspaceId,
       }),
     ),
     universalFlatIndexFieldMetadatas:
@@ -77,6 +78,7 @@ export const fromIndexMetadataEntityToFlatIndexMetadata = ({
 
         return {
           order: indexFieldMetadata.order,
+          subFieldName: indexFieldMetadata.subFieldName,
           createdAt: indexFieldMetadata.createdAt.toISOString(),
           updatedAt: indexFieldMetadata.updatedAt.toISOString(),
           indexMetadataUniversalIdentifier:

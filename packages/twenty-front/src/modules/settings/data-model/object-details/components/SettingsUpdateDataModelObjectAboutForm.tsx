@@ -1,3 +1,4 @@
+import { isDDLLockedState } from '@/client-config/states/isDDLLockedState';
 import { useUpdateOneObjectMetadataItem } from '@/object-metadata/hooks/useUpdateOneObjectMetadataItem';
 import { type EnrichedObjectMetadataItem } from '@/object-metadata/types/EnrichedObjectMetadataItem';
 import { isObjectMetadataReadOnly } from '@/object-record/read-only/utils/isObjectMetadataReadOnly';
@@ -8,11 +9,13 @@ import {
   settingsDataModelObjectAboutFormSchema,
 } from '@/settings/data-model/validation-schemas/settingsDataModelObjectAboutFormSchema';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
+import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, useForm } from 'react-hook-form';
 import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
+import { parseThemeColor } from 'twenty-ui/utilities';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 import { updatedObjectNamePluralState } from '~/pages/settings/data-model/states/updatedObjectNamePluralState';
 
@@ -23,9 +26,12 @@ type SettingsUpdateDataModelObjectAboutFormProps = {
 export const SettingsUpdateDataModelObjectAboutForm = ({
   objectMetadataItem,
 }: SettingsUpdateDataModelObjectAboutFormProps) => {
-  const readonly = isObjectMetadataReadOnly({
-    objectMetadataItem,
-  });
+  const isDDLLocked = useAtomStateValue(isDDLLockedState);
+
+  const readonly =
+    isObjectMetadataReadOnly({
+      objectMetadataItem,
+    }) || isDDLLocked;
   const navigate = useNavigateSettings();
   const setUpdatedObjectNamePlural = useSetAtomState(
     updatedObjectNamePluralState,
@@ -55,6 +61,9 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
       labelSingular,
       namePlural,
       nameSingular,
+      ...(objectMetadataItem.isCustom
+        ? { color: parseThemeColor(objectMetadataItem.color) }
+        : {}),
     },
   });
 
@@ -94,6 +103,14 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         labelSingular: updatedObject?.data?.updateOneObject.labelSingular,
         namePlural: updatedObject?.data?.updateOneObject.namePlural,
         nameSingular: updatedObject?.data?.updateOneObject.nameSingular,
+        ...(objectMetadataItem.isCustom
+          ? {
+              color: parseThemeColor(
+                updatedObject?.data?.updateOneObject.color ??
+                  objectMetadataItem.color,
+              ),
+            }
+          : {}),
       });
     } else {
       formConfig.reset(formValues);
@@ -129,6 +146,7 @@ export const SettingsUpdateDataModelObjectAboutForm = ({
         nameSingular: _nameSingular,
         namePlural: _namePlural,
         isLabelSyncedWithName: _isLabelSyncedWithName,
+        color: _color,
         ...payloadWithoutNames
       } = updatePayload;
 

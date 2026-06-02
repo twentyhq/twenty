@@ -21,12 +21,14 @@ export class ClientService {
 
   async generateCoreClient({
     appPath,
-    authToken,
+    appAccessToken,
   }: {
     appPath: string;
-    authToken?: string;
+    appAccessToken?: string;
   }): Promise<void> {
-    const coreSchemaResponse = await this.apiService.getSchema({ authToken });
+    const coreSchemaResponse = await this.apiService.getSchema({
+      appAccessToken,
+    });
 
     if (!coreSchemaResponse.success) {
       throw new Error(

@@ -1,4 +1,4 @@
-import { defineLogicFunction } from 'twenty-sdk';
+import { defineLogicFunction } from 'twenty-sdk/define';
 
 const myHandler = () => {
   return 'my-function-result';

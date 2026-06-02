@@ -1,18 +1,4 @@
-import { type FeatureFlag } from '@/settings/admin-panel/types/FeatureFlag';
-import { type WorkspaceUrls } from '~/generated-metadata/graphql';
+import { type WorkspaceLookupAdminPanelQuery } from '~/generated-admin/graphql';
 
-export type WorkspaceInfo = {
-  id: string;
-  name: string;
-  logo?: string | null;
-  totalUsers: number;
-  workspaceUrls: WorkspaceUrls;
-  users: {
-    id: string;
-    email: string;
-    firstName?: string | null;
-    lastName?: string | null;
-  }[];
-  featureFlags: FeatureFlag[];
-  allowImpersonation: boolean;
-};
+export type WorkspaceInfo =
+  WorkspaceLookupAdminPanelQuery['workspaceLookupAdminPanel']['workspaces'][number];

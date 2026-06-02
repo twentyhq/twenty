@@ -9,32 +9,71 @@ import {
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
   type LogicFunctionDriver,
+  type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
+import { isNonEmptyString } from '@sniptt/guards';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-executor-tmpdir-folder';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
+import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionException,
+  LogicFunctionExceptionCode,
+} from 'src/engine/metadata-modules/logic-function/logic-function.exception';
+import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
+import type { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+
+const LAYER_BUILD_LOCK_TTL_MS = 120_000;
+const LAYER_BUILD_LOCK_RETRY_MS = 500;
+const LAYER_BUILD_LOCK_MAX_RETRIES = 240;
+const LAYER_BUILD_READY_SENTINEL = '.twenty-layer-ready';
+
+const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
+const PREBUILT_CHECKSUM_FILE_NAME = 'prebuilt-bundle.checksum';
+
+const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
+const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
+const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
 
 export interface LocalDriverOptions {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
+  cacheLockService: CacheLockService;
+  workspaceCacheService: WorkspaceCacheService;
 }
+
+const pathExists = async (targetPath: string): Promise<boolean> => {
+  try {
+    await fs.access(targetPath);
+
+    return true;
+  } catch {
+    return false;
+  }
+};
 
 export class LocalDriver implements LogicFunctionDriver {
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
   private readonly sdkClientArchiveService: SdkClientArchiveService;
+  private readonly cacheLockService: CacheLockService;
+  private readonly workspaceCacheService: WorkspaceCacheService;
 
   constructor(options: LocalDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
     this.sdkClientArchiveService = options.sdkClientArchiveService;
+    this.cacheLockService = options.cacheLockService;
+    this.workspaceCacheService = options.workspaceCacheService;
   }
 
   private getDepsLayerPath(flatApplication: FlatApplication): string {
@@ -65,21 +104,40 @@ export class LocalDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier: string;
   }): Promise<void> {
     const depsLayerPath = this.getDepsLayerPath(flatApplication);
+    const depsReadySentinelPath = join(
+      depsLayerPath,
+      LAYER_BUILD_READY_SENTINEL,
+    );
 
-    try {
-      await fs.access(depsLayerPath);
-
+    if (await pathExists(depsReadySentinelPath)) {
       return;
-    } catch {
-      // Layer doesn't exist yet
     }
 
-    await this.logicFunctionResourceService.copyDependenciesInMemory({
-      applicationUniversalIdentifier,
-      workspaceId: flatApplication.workspaceId,
-      inMemoryFolderPath: depsLayerPath,
-    });
-    await copyYarnEngineAndBuildDependencies(depsLayerPath);
+    const lockKey = `local-driver-deps-layer:${flatApplication.yarnLockChecksum ?? 'default'}`;
+
+    await this.cacheLockService.withLock(
+      async () => {
+        if (await pathExists(depsReadySentinelPath)) {
+          return;
+        }
+
+        await fs.rm(depsLayerPath, { recursive: true, force: true });
+
+        await this.logicFunctionResourceService.copyDependenciesInMemory({
+          applicationUniversalIdentifier,
+          workspaceId: flatApplication.workspaceId,
+          inMemoryFolderPath: depsLayerPath,
+        });
+        await copyYarnEngineAndBuildDependencies(depsLayerPath);
+        await fs.writeFile(depsReadySentinelPath, '');
+      },
+      lockKey,
+      {
+        ttl: LAYER_BUILD_LOCK_TTL_MS,
+        ms: LAYER_BUILD_LOCK_RETRY_MS,
+        maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
+      },
+    );
   }
 
   private async ensureSdkLayer({
@@ -93,35 +151,58 @@ export class LocalDriver implements LogicFunctionDriver {
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });
+    const sdkNodeModulesPath = join(sdkLayerPath, 'node_modules');
+    const sdkReadySentinelPath = join(sdkLayerPath, LAYER_BUILD_READY_SENTINEL);
 
-    const layerExists = await fs
-      .access(sdkLayerPath)
-      .then(() => true)
-      .catch(() => false);
-
-    if (layerExists && !flatApplication.isSdkLayerStale) {
+    if (
+      (await pathExists(sdkReadySentinelPath)) &&
+      !flatApplication.isSdkLayerStale
+    ) {
       return;
     }
 
-    await fs.rm(sdkLayerPath, { recursive: true, force: true });
+    const lockKey = `local-driver-sdk-layer:${flatApplication.workspaceId}:${applicationUniversalIdentifier}`;
 
-    const sdkPackagePath = join(
-      sdkLayerPath,
-      'node_modules',
-      'twenty-client-sdk',
+    await this.cacheLockService.withLock(
+      async () => {
+        const { flatApplicationMaps } =
+          await this.workspaceCacheService.getOrRecompute(
+            flatApplication.workspaceId,
+            ['flatApplicationMaps'],
+          );
+        const freshFlatApplication =
+          flatApplicationMaps.byId[flatApplication.id];
+        const isStale = freshFlatApplication?.isSdkLayerStale ?? true;
+
+        if ((await pathExists(sdkReadySentinelPath)) && !isStale) {
+          return;
+        }
+
+        await fs.rm(sdkLayerPath, { recursive: true, force: true });
+
+        const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
+
+        await this.sdkClientArchiveService.downloadAndExtractToPackage({
+          workspaceId: flatApplication.workspaceId,
+          applicationId: flatApplication.id,
+          applicationUniversalIdentifier,
+          targetPackagePath: sdkPackagePath,
+        });
+
+        await this.sdkClientArchiveService.markSdkLayerFresh({
+          applicationId: flatApplication.id,
+          workspaceId: flatApplication.workspaceId,
+        });
+
+        await fs.writeFile(sdkReadySentinelPath, '');
+      },
+      lockKey,
+      {
+        ttl: LAYER_BUILD_LOCK_TTL_MS,
+        ms: LAYER_BUILD_LOCK_RETRY_MS,
+        maxRetries: LAYER_BUILD_LOCK_MAX_RETRIES,
+      },
     );
-
-    await this.sdkClientArchiveService.downloadAndExtractToPackage({
-      workspaceId: flatApplication.workspaceId,
-      applicationId: flatApplication.id,
-      applicationUniversalIdentifier,
-      targetPackagePath: sdkPackagePath,
-    });
-
-    await this.sdkClientArchiveService.markSdkLayerFresh({
-      applicationId: flatApplication.id,
-      workspaceId: flatApplication.workspaceId,
-    });
   }
 
   async transpile({
@@ -145,7 +226,7 @@ export class LocalDriver implements LogicFunctionDriver {
         outfile: builtBundleFilePath,
         platform: 'node',
         format: 'esm',
-        target: 'es2017',
+        target: 'esnext',
         bundle: true,
         sourcemap: true,
         packages: 'external',
@@ -161,23 +242,6 @@ export class LocalDriver implements LogicFunctionDriver {
   }
 
   async delete() {}
-
-  async build({
-    flatApplication,
-    applicationUniversalIdentifier,
-  }: {
-    flatApplication: FlatApplication;
-    applicationUniversalIdentifier: string;
-  }) {
-    await this.createLayerIfNotExist({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-    await this.ensureSdkLayer({
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-  }
 
   // Symlinks everything from the deps layer except twenty-client-sdk,
   // which comes from the SDK layer (workspace-specific generated client).
@@ -235,7 +299,20 @@ export class LocalDriver implements LogicFunctionDriver {
     payload,
     env,
     timeoutMs = 900_000,
+    forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
+    const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
+
+    if (
+      executionMode === LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
+    ) {
+      throw new LogicFunctionException(
+        `Cannot run logic function '${flatLogicFunction.id}' in PREBUILT mode: bundle is not installed`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
     await this.createLayerIfNotExist({
       flatApplication,
       applicationUniversalIdentifier,
@@ -252,19 +329,24 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const inMemoryBuiltHandlerPath =
-        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
-          workspaceId: flatLogicFunction.workspaceId,
-          applicationUniversalIdentifier,
-          builtHandlerPath: flatLogicFunction.builtHandlerPath,
-          inMemoryDestinationPath: sourceTemporaryDir,
-        });
-
       await this.assembleNodeModules({
         sourceTemporaryDir,
         flatApplication,
         applicationUniversalIdentifier,
       });
+
+      const inMemoryBuiltHandlerPath =
+        executionMode === LogicFunctionExecutionMode.PREBUILT
+          ? await this.copyPrebuiltBundleIntoExecutionDir({
+              flatLogicFunction,
+              sourceTemporaryDir,
+            })
+          : await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+              workspaceId: flatLogicFunction.workspaceId,
+              applicationUniversalIdentifier,
+              builtHandlerPath: flatLogicFunction.builtHandlerPath,
+              inMemoryDestinationPath: sourceTemporaryDir,
+            });
 
       let logs = '';
 
@@ -512,5 +594,115 @@ export class LocalDriver implements LogicFunctionDriver {
 
       child.on('close', () => clearTimeout(t));
     });
+  }
+
+  private getPrebuiltBundleDir(flatLogicFunction: FlatLogicFunction): string {
+    return join(
+      LOGIC_FUNCTION_EXECUTOR_TMPDIR_FOLDER,
+      'prebuilt',
+      flatLogicFunction.id,
+    );
+  }
+
+  private getInstalledBundlePath(flatLogicFunction: FlatLogicFunction): string {
+    return join(
+      this.getPrebuiltBundleDir(flatLogicFunction),
+      PREBUILT_BUNDLE_FILE_NAME,
+    );
+  }
+
+  private async copyPrebuiltBundleIntoExecutionDir({
+    flatLogicFunction,
+    sourceTemporaryDir,
+  }: {
+    flatLogicFunction: FlatLogicFunction;
+    sourceTemporaryDir: string;
+  }): Promise<string> {
+    const installedBundlePath = this.getInstalledBundlePath(flatLogicFunction);
+    const localBundlePath = join(sourceTemporaryDir, PREBUILT_BUNDLE_FILE_NAME);
+
+    await fs.copyFile(installedBundlePath, localBundlePath);
+
+    return localBundlePath;
+  }
+
+  private getInstalledChecksumPath(
+    flatLogicFunction: FlatLogicFunction,
+  ): string {
+    return join(
+      this.getPrebuiltBundleDir(flatLogicFunction),
+      PREBUILT_CHECKSUM_FILE_NAME,
+    );
+  }
+
+  private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
+    return `local-install:${flatLogicFunction.id}`;
+  }
+
+  async installPrebuiltBundle({
+    flatLogicFunction,
+    applicationUniversalIdentifier,
+  }: LogicFunctionInstallPrebuiltBundleParams): Promise<void> {
+    if (!isNonEmptyString(flatLogicFunction.checksum)) {
+      throw new LogicFunctionException(
+        `Cannot install prebuilt bundle for function '${flatLogicFunction.id}' without a checksum`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
+    const checksum = flatLogicFunction.checksum;
+
+    await this.cacheLockService.withLock(
+      async () => {
+        const prebuiltDir = this.getPrebuiltBundleDir(flatLogicFunction);
+
+        await fs.mkdir(prebuiltDir, { recursive: true });
+
+        await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+          workspaceId: flatLogicFunction.workspaceId,
+          applicationUniversalIdentifier,
+          builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          inMemoryDestinationPath: prebuiltDir,
+        });
+
+        const downloadedPath = join(
+          prebuiltDir,
+          flatLogicFunction.builtHandlerPath,
+        );
+        const targetPath = this.getInstalledBundlePath(flatLogicFunction);
+
+        if (downloadedPath !== targetPath) {
+          await fs.mkdir(dirname(targetPath), { recursive: true });
+          await fs.rename(downloadedPath, targetPath);
+        }
+
+        await fs.writeFile(
+          this.getInstalledChecksumPath(flatLogicFunction),
+          checksum,
+          'utf8',
+        );
+      },
+      this.getPrebuiltInstallLockKey(flatLogicFunction),
+      {
+        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
+        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
+        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
+      },
+    );
+  }
+
+  async getInstalledBundleChecksum(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<string | null> {
+    try {
+      const checksum = await fs.readFile(
+        this.getInstalledChecksumPath(flatLogicFunction),
+        'utf8',
+      );
+
+      return checksum.trim() || null;
+    } catch {
+      return null;
+    }
   }
 }

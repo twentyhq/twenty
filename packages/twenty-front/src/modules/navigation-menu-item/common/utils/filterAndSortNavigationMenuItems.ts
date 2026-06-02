@@ -7,8 +7,12 @@ import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 export const filterAndSortNavigationMenuItems = (
   navigationMenuItems: NavigationMenuItem[],
   views: Pick<View, 'id' | 'objectMetadataId' | 'key'>[],
-  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id'>[],
+  objectMetadataItems: Pick<EnrichedObjectMetadataItem, 'id' | 'isActive'>[],
 ): NavigationMenuItem[] => {
+  const activeObjectMetadataItems = objectMetadataItems.filter(
+    (meta) => meta.isActive,
+  );
+
   return navigationMenuItems
     .filter((item) => {
       if (item.type === NavigationMenuItemType.FOLDER) {
@@ -17,10 +21,13 @@ export const filterAndSortNavigationMenuItems = (
       if (item.type === NavigationMenuItemType.LINK) {
         return true;
       }
+      if (item.type === NavigationMenuItemType.PAGE_LAYOUT) {
+        return isDefined(item.pageLayoutId);
+      }
       if (item.type === NavigationMenuItemType.OBJECT) {
         return (
           isDefined(item.targetObjectMetadataId) &&
-          objectMetadataItems.some(
+          activeObjectMetadataItems.some(
             (meta) => meta.id === item.targetObjectMetadataId,
           )
         );
@@ -32,7 +39,9 @@ export const filterAndSortNavigationMenuItems = (
         const view = views.find((view) => view.id === item.viewId);
         return (
           isDefined(view) &&
-          objectMetadataItems.some((meta) => meta.id === view.objectMetadataId)
+          activeObjectMetadataItems.some(
+            (meta) => meta.id === view.objectMetadataId,
+          )
         );
       }
       if (item.type === NavigationMenuItemType.RECORD) {
@@ -40,7 +49,7 @@ export const filterAndSortNavigationMenuItems = (
           isDefined(item.targetRecordId) &&
           isDefined(item.targetObjectMetadataId) &&
           isDefined(item.targetRecordIdentifier) &&
-          objectMetadataItems.some(
+          activeObjectMetadataItems.some(
             (meta) => meta.id === item.targetObjectMetadataId,
           )
         );

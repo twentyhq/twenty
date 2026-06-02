@@ -1,5 +1,5 @@
 import { RecordIndexCommandMenu } from '@/command-menu-item/components/RecordIndexCommandMenu';
-import { CommandMenuItemMoreActionsButton } from '@/command-menu-item/server-items/display/components/CommandMenuItemMoreActionsButton';
+import { SidePanelToggleButton } from '@/side-panel/components/SidePanelToggleButton';
 import { MAIN_CONTEXT_STORE_INSTANCE_ID } from '@/context-store/constants/MainContextStoreInstanceId';
 import { contextStoreCurrentViewIdComponentState } from '@/context-store/states/contextStoreCurrentViewIdComponentState';
 import { contextStoreNumberOfSelectedRecordsComponentState } from '@/context-store/states/contextStoreNumberOfSelectedRecordsComponentState';
@@ -7,7 +7,6 @@ import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/st
 import { useFilteredObjectMetadataItems } from '@/object-metadata/hooks/useFilteredObjectMetadataItems';
 import { RecordIndexPageHeaderIcon } from '@/object-record/record-index/components/RecordIndexPageHeaderIcon';
 import { useRecordIndexContextOrThrow } from '@/object-record/record-index/contexts/RecordIndexContext';
-import { PageHeaderToggleSidePanelButton } from '@/ui/layout/page-header/components/PageHeaderToggleSidePanelButton';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -78,11 +77,7 @@ export const RecordIndexPageHeader = () => {
       {isDefined(contextStoreCurrentViewId) && (
         <>
           <RecordIndexCommandMenu />
-          {!isLayoutCustomizationModeEnabled ? (
-            <CommandMenuItemMoreActionsButton />
-          ) : (
-            <PageHeaderToggleSidePanelButton />
-          )}
+          {!isLayoutCustomizationModeEnabled && <SidePanelToggleButton />}
         </>
       )}
     </PageHeader>

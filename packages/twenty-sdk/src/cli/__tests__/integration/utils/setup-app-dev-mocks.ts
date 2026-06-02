@@ -2,6 +2,7 @@ import { vi } from 'vitest';
 
 const mockApiService = {
   validateAuth: vi.fn().mockResolvedValue({ authValid: true, serverUp: true }),
+  getWorkspaceFrontendUrl: vi.fn().mockResolvedValue('http://localhost:3000'),
   generateApplicationToken: vi.fn().mockResolvedValue({
     success: true,
     data: {
@@ -29,11 +30,15 @@ const mockApiService = {
   }),
   syncApplication: vi.fn().mockResolvedValue({ success: true, data: true }),
   uploadFile: vi.fn().mockResolvedValue({ success: true, data: true }),
+  getSchema: vi
+    .fn()
+    .mockResolvedValue({ success: true, data: 'mock-core-schema' }),
 };
 
 vi.mock('@/cli/utilities/api/api-service', () => ({
   ApiService: class {
     validateAuth = mockApiService.validateAuth;
+    getWorkspaceFrontendUrl = mockApiService.getWorkspaceFrontendUrl;
     generateApplicationToken = mockApiService.generateApplicationToken;
     refreshToken = mockApiService.refreshToken;
     findApplicationRegistrationByUniversalIdentifier =
@@ -43,12 +48,34 @@ vi.mock('@/cli/utilities/api/api-service', () => ({
     createDevelopmentApplication = mockApiService.createDevelopmentApplication;
     syncApplication = mockApiService.syncApplication;
     uploadFile = mockApiService.uploadFile;
+    getSchema = mockApiService.getSchema;
   },
 }));
 
 vi.mock('@/cli/utilities/file/file-uploader', () => ({
   FileUploader: class {
     uploadFile = vi.fn().mockResolvedValue({ success: true, data: true });
+  },
+}));
+
+vi.mock('@/cli/utilities/auth', () => ({
+  ensureAppAccessTokenIsValidOrRefresh: vi
+    .fn()
+    .mockResolvedValue('mock-app-access-token'),
+  exchangeCredentialsForTokens: vi.fn().mockResolvedValue({
+    accessToken: 'mock-app-access-token',
+    refreshToken: 'mock-app-refresh-token',
+  }),
+  ensureAppRegistration: vi.fn().mockResolvedValue({
+    clientId: 'mock-client-id',
+    clientSecret: 'mock-client-secret',
+    isNewRegistration: true,
+  }),
+}));
+
+vi.mock('@/cli/utilities/client/client-service', () => ({
+  ClientService: class {
+    generateCoreClient = vi.fn().mockResolvedValue(undefined);
   },
 }));
 

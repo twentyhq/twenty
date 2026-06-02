@@ -1,9 +1,8 @@
 import { type Meta, type StoryObj } from '@storybook/react-vite';
 import { expect, fn, userEvent, within } from 'storybook/test';
 
-import { FrontComponentRenderer } from '../host/components/FrontComponentRenderer';
-
-import { getBuiltStoryComponentPathForRender } from './utils/getBuiltStoryComponentPathForRender';
+import { FrontComponentRenderer } from '@/host/components/FrontComponentRenderer';
+import { getBuiltStoryComponentPathForRender } from '@/__stories__/utils/getBuiltStoryComponentPathForRender';
 
 const errorHandler = fn();
 
@@ -16,7 +15,12 @@ const meta: Meta<typeof FrontComponentRenderer> = {
   args: {
     onError: errorHandler,
     applicationAccessToken: 'fake-token',
-    executionContext: { frontComponentId: 'storybook-test', userId: null },
+    executionContext: {
+      frontComponentId: 'storybook-test',
+      userId: null,
+      recordId: null,
+      selectedRecordIds: [],
+    },
   },
   beforeEach: () => {
     errorHandler.mockClear();

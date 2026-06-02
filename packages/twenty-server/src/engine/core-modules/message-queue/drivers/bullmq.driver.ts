@@ -4,6 +4,7 @@ import {
   type OnModuleInit,
 } from '@nestjs/common';
 
+import * as Sentry from '@sentry/node';
 import {
   type JobsOptions,
   MetricsTime,
@@ -28,6 +29,7 @@ import { type MessageQueue } from 'src/engine/core-modules/message-queue/message
 import { getJobKey } from 'src/engine/core-modules/message-queue/utils/get-job-key.util';
 import { type MetricsService } from 'src/engine/core-modules/metrics/metrics.service';
 import { MetricsKeys } from 'src/engine/core-modules/metrics/types/metrics-keys.type';
+import { applyWorkspaceSentryContextFromJobData } from 'src/engine/core-modules/sentry/utils/apply-workspace-sentry-context-from-job-data.util';
 
 export type BullMQDriverOptions = QueueOptions;
 
@@ -90,7 +92,7 @@ export class BullMQDriver
     ]);
   }
 
-  async work<T>(
+  work<T>(
     queueName: MessageQueue,
     handler: (job: MessageQueueJob<T>) => Promise<void>,
     options?: MessageQueueWorkerOptions,
@@ -108,26 +110,33 @@ export class BullMQDriver
 
     this.workerMap[queueName] = new Worker(
       queueName,
-      async (job) => {
-        // TODO: Correctly support for job.id
-        const timeStart = performance.now();
+      async (job) =>
+        Sentry.withIsolationScope(async () => {
+          applyWorkspaceSentryContextFromJobData(job.data);
 
-        this.logger.log(
-          `Processing job ${job.id} with name ${job.name} on queue ${queueName}`,
-        );
-        await handler({ data: job.data, id: job.id ?? '', name: job.name });
-        const timeEnd = performance.now();
-        const executionTime = timeEnd - timeStart;
+          // TODO: Correctly support for job.id
+          const timeStart = performance.now();
+          const workspaceId = job.data?.workspaceId;
+          const workspaceSuffix = workspaceId
+            ? ` [workspace=${workspaceId}]`
+            : '';
 
-        this.logger.log(
-          `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms`,
-        );
-      },
+          this.logger.log(
+            `Processing job ${job.id} with name ${job.name} on queue ${queueName}${workspaceSuffix}`,
+          );
+          await handler({ data: job.data, id: job.id ?? '', name: job.name });
+          const timeEnd = performance.now();
+          const executionTime = timeEnd - timeStart;
+
+          this.logger.log(
+            `Job ${job.id} with name ${job.name} processed on queue ${queueName} in ${executionTime.toFixed(2)}ms${workspaceSuffix}`,
+          );
+        }),
       workerOptions,
     );
 
     this.workerMap[queueName].on('completed', (job) => {
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobCompleted,
         attributes: { queue: queueName, job_name: job?.name ?? '' },
         shouldStoreInCache: false,
@@ -139,7 +148,7 @@ export class BullMQDriver
         return;
       }
 
-      this.metricsService.incrementCounter({
+      void this.metricsService.incrementCounterForEvent({
         key: MetricsKeys.JobFailed,
         attributes: {
           queue: queueName,

@@ -5,6 +5,7 @@ import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRo
 import { SettingsRolePermissions } from '@/settings/roles/role-permissions/components/SettingsRolePermissions';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
 import { type RoleWithPartialMembers } from '@/settings/roles/types/RoleWithPartialMembers';
+import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { useSetAtomFamilyState } from '@/ui/utilities/state/jotai/hooks/useSetAtomFamilyState';
 import { t } from '@lingui/core/macro';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -14,15 +15,20 @@ import {
   type ObjectManifest,
   type RoleManifest,
 } from 'twenty-shared/application';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import {
+  type PermissionFlagType,
+  SystemPermissionFlag,
+} from 'twenty-shared/constants';
 import { isDefined } from 'twenty-shared/utils';
 import { v4 as uuidv4 } from 'uuid';
-import {
-  FieldMetadataType,
-  type PermissionFlagType,
-} from '~/generated-metadata/graphql';
+import { FieldMetadataType } from '~/generated-metadata/graphql';
 
-import { findObjectNameByUniversalIdentifier } from '~/pages/settings/applications/utils/findObjectNameByUniversalIdentifier';
+const SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER = Object.fromEntries(
+  Object.entries(SystemPermissionFlag).map(([key, uuid]) => [
+    uuid,
+    key as PermissionFlagType,
+  ]),
+);
 
 type SettingsApplicationPermissionsTabProps = {
   defaultRoleId?: string | null;
@@ -40,8 +46,16 @@ const resolvePermissionIds = (
   const objectUniversalIdToIdMap: Record<string, string> = {};
   const fieldUniversalIdToIdMap: Record<string, string> = {};
 
-  const allObjectUniversalIds = new Set<string>();
+  const objectsByUid = new Map(
+    objectMetadataItems.map((item) => [item.universalIdentifier, item]),
+  );
+  const fieldsByUid = new Map(
+    objectMetadataItems.flatMap((item) =>
+      item.fields.map((field) => [field.universalIdentifier, field] as const),
+    ),
+  );
 
+  const allObjectUniversalIds = new Set<string>();
   for (const permission of defaultRole.objectPermissions ?? []) {
     allObjectUniversalIds.add(permission.objectUniversalIdentifier);
   }
@@ -50,51 +64,17 @@ const resolvePermissionIds = (
   }
 
   for (const universalId of allObjectUniversalIds) {
-    const standardObjectName = findObjectNameByUniversalIdentifier(universalId);
-
-    if (isDefined(standardObjectName)) {
-      const workspaceObject = objectMetadataItems.find(
-        (item) => item.nameSingular === standardObjectName,
-      );
-
-      if (isDefined(workspaceObject)) {
-        objectUniversalIdToIdMap[universalId] = workspaceObject.id;
-      }
+    const workspaceObject = objectsByUid.get(universalId);
+    if (isDefined(workspaceObject)) {
+      objectUniversalIdToIdMap[universalId] = workspaceObject.id;
     }
   }
 
   for (const permission of defaultRole.fieldPermissions ?? []) {
-    const objectName = findObjectNameByUniversalIdentifier(
-      permission.objectUniversalIdentifier,
-    );
-
-    if (isDefined(objectName)) {
-      const standardObject =
-        STANDARD_OBJECTS[objectName as keyof typeof STANDARD_OBJECTS];
-
-      if (isDefined(standardObject)) {
-        for (const [fieldName, fieldDef] of Object.entries(
-          standardObject.fields,
-        )) {
-          if (
-            (fieldDef as { universalIdentifier: string })
-              .universalIdentifier === permission.fieldUniversalIdentifier
-          ) {
-            const workspaceObject = objectMetadataItems.find(
-              (item) => item.nameSingular === objectName,
-            );
-            const workspaceField = workspaceObject?.fields.find(
-              (field) => field.name === fieldName,
-            );
-
-            if (isDefined(workspaceField)) {
-              fieldUniversalIdToIdMap[permission.fieldUniversalIdentifier] =
-                workspaceField.id;
-            }
-            break;
-          }
-        }
-      }
+    const workspaceField = fieldsByUid.get(permission.fieldUniversalIdentifier);
+    if (isDefined(workspaceField)) {
+      fieldUniversalIdToIdMap[permission.fieldUniversalIdentifier] =
+        workspaceField.id;
     }
   }
 
@@ -152,22 +132,27 @@ const buildSyntheticRole = (
     canReadFieldValue: permission.canReadFieldValue,
     canUpdateFieldValue: permission.canUpdateFieldValue,
   })),
-  permissionFlags: (defaultRole.permissionFlags ?? []).map((flag) => ({
-    __typename: 'PermissionFlag' as const,
-    id: uuidv4(),
-    roleId: defaultRole.universalIdentifier,
-    flag: flag as PermissionFlagType,
-  })),
+  permissionFlags: (defaultRole.permissionFlagUniversalIdentifiers ?? []).map(
+    (permissionFlagUniversalIdentifier) => ({
+      __typename: 'RolePermissionFlag' as const,
+      id: uuidv4(),
+      roleId: defaultRole.universalIdentifier,
+      flag: SYSTEM_PERMISSION_FLAG_BY_UNIVERSAL_IDENTIFIER[
+        permissionFlagUniversalIdentifier
+      ],
+    }),
+  ),
 });
 
 const buildFieldMetadataItemFromMarketplaceField = (
   field: ObjectFieldManifest,
 ): FieldMetadataItem => {
   const now = new Date().toISOString();
+  const universalIdentifier = field.universalIdentifier ?? uuidv4();
 
   return {
-    id: field.universalIdentifier ?? uuidv4(),
-    universalIdentifier: field.universalIdentifier ?? uuidv4(),
+    id: universalIdentifier,
+    universalIdentifier,
     name: field.name,
     label: field.label,
     type: (field.type as FieldMetadataType) ?? FieldMetadataType.TEXT,
@@ -188,7 +173,7 @@ const buildFieldMetadataItemFromMarketplaceField = (
   };
 };
 
-const buildobjectMetadataItemsFromMarketplaceApp = (
+const buildObjectMetadataItemsFromMarketplaceApp = (
   defaultRole: RoleManifest,
   objectUniversalIdToIdMap: Record<string, string>,
   marketplaceAppObjects: ObjectManifest[],
@@ -308,7 +293,7 @@ const MarketplaceRoleEffect = ({
           fieldUniversalIdToIdMap,
         ),
         objectMetadataItemsFromMarketplaceApp:
-          buildobjectMetadataItemsFromMarketplaceApp(
+          buildObjectMetadataItemsFromMarketplaceApp(
             defaultRole,
             objectUniversalIdToIdMap,
             marketplaceAppObjects,
@@ -393,5 +378,9 @@ export const SettingsApplicationPermissionsTab = ({
     );
   }
 
-  return <div>{t`No permissions configured for this application.`}</div>;
+  return (
+    <SettingsEmptyPlaceholder padding="0">
+      {t`No permissions configured for this application.`}
+    </SettingsEmptyPlaceholder>
+  );
 };

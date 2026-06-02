@@ -13,6 +13,7 @@ import {
 import { AgentMessagePartEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-message-part.entity';
 import { AgentTurnEntity } from 'src/engine/metadata-modules/ai/ai-agent-execution/entities/agent-turn.entity';
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
+import type { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 
 export enum AgentMessageRole {
   SYSTEM = 'system',
@@ -25,10 +26,18 @@ export enum AgentMessageStatus {
   SENT = 'sent',
 }
 
-@Entity('agentMessage')
+@Entity({ name: 'agentMessage', schema: 'core' })
 export class AgentMessageEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column({ nullable: false, type: 'uuid' })
+  @Index()
+  workspaceId: string;
+
+  @ManyToOne('WorkspaceEntity', { onDelete: 'CASCADE' })
+  @JoinColumn({ name: 'workspaceId' })
+  workspace: Relation<WorkspaceEntity>;
 
   @Column('uuid')
   @Index()

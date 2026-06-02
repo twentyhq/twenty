@@ -1,5 +1,6 @@
 ---
 title: Backend Befehle
+icon: terminal
 ---
 
 ## Nützliche Befehle
@@ -47,25 +48,8 @@ npx nx run twenty-server:database:reset
 #### Für Objekte in Core/Metadata-Schemas (TypeORM)
 
 ```bash
-npx nx run twenty-server:typeorm migration:generate src/database/typeorm/core/migrations/nameOfYourMigration -d src/database/typeorm/core/core.datasource.ts
+npx nx run twenty-server:database:migrate:generate
 ```
-
-#### Für Arbeitsbereichsobjekte
-
-Es gibt keine Migrationsdateien, Migrationen werden automatisch für jeden Arbeitsbereich generiert,
-in der Datenbank gespeichert und mit diesem Befehl angewendet
-
-```bash
-npx nx run twenty-server:command workspace:sync-metadata -f
-```
-
-<Warning>
-
-Dadurch wird die Datenbank gelöscht und die Migrationen sowie das Seeding erneut ausgeführt.
-
-Stellen Sie sicher, dass Sie alle Daten sichern, die Sie aufbewahren möchten, bevor Sie diesen Befehl ausführen.
-
-</Warning>
 
 ## Technologie-Stack
 

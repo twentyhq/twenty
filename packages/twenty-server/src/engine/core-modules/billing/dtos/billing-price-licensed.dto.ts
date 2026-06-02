@@ -18,4 +18,7 @@ export class BillingPriceLicensedDTO {
 
   @Field(() => BillingUsageType)
   priceUsageType: BillingUsageType.LICENSED;
+
+  @Field(() => Number, { nullable: true })
+  creditAmount: number | null;
 }

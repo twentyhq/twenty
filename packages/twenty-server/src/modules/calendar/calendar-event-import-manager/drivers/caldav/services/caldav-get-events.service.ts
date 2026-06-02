@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav.provider';
+import { CalDavClientProvider } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/providers/caldav-client.provider';
+import { CalDavFetchEventsService } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/services/caldav-fetch-events.service';
+import { type CalDavSyncCursor } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/types/caldav-sync-cursor';
 import { parseCalDAVError } from 'src/modules/calendar/calendar-event-import-manager/drivers/caldav/utils/parse-caldav-error.util';
 import { type GetCalendarEventsResponse } from 'src/modules/calendar/calendar-event-import-manager/services/calendar-get-events.service';
-import { type ConnectedAccountWorkspaceEntity } from 'src/modules/connected-account/standard-objects/connected-account.workspace-entity';
 
 @Injectable()
 export class CalDavGetEventsService {
@@ -13,23 +14,19 @@ export class CalDavGetEventsService {
   private static readonly FUTURE_DAYS_WINDOW = 365;
 
   constructor(
-    private readonly caldavCalendarClientProvider: CalDavClientProvider,
+    private readonly calDavClientProvider: CalDavClientProvider,
+    private readonly fetchEventsService: CalDavFetchEventsService,
   ) {}
 
-  public async getCalendarEvents(
-    connectedAccount: Pick<
-      ConnectedAccountWorkspaceEntity,
-      'provider' | 'id' | 'connectionParameters' | 'handle'
-    >,
+  async getCalendarEvents(
+    connectedAccountId: string,
     syncCursor?: string,
   ): Promise<GetCalendarEventsResponse> {
-    this.logger.debug(`Getting calendar events for ${connectedAccount.handle}`);
+    this.logger.debug(`Getting calendar events for ${connectedAccountId}`);
 
     try {
-      const caldavCalendarClient =
-        await this.caldavCalendarClientProvider.getCalDavCalendarClient(
-          connectedAccount,
-        );
+      const client =
+        await this.calDavClientProvider.getClient(connectedAccountId);
 
       const startDate = new Date(
         Date.now() -
@@ -40,14 +37,16 @@ export class CalDavGetEventsService {
           CalDavGetEventsService.FUTURE_DAYS_WINDOW * 24 * 60 * 60 * 1000,
       );
 
-      const result = await caldavCalendarClient.getEvents({
+      const result = await this.fetchEventsService.fetchEvents(client, {
         startDate,
         endDate,
-        syncCursor: syncCursor ? JSON.parse(syncCursor) : undefined,
+        syncCursor: syncCursor
+          ? (JSON.parse(syncCursor) as CalDavSyncCursor)
+          : undefined,
       });
 
       this.logger.debug(
-        `Found ${result.events.length} calendar events for ${connectedAccount.handle}`,
+        `Found ${result.events.length} calendar events for ${connectedAccountId}`,
       );
 
       return {
@@ -56,17 +55,12 @@ export class CalDavGetEventsService {
         nextSyncCursor: JSON.stringify(result.syncCursor),
       };
     } catch (error) {
-      this.handleError(error as Error);
-      throw error;
+      this.logger.error(
+        `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
+        error,
+      );
+
+      throw parseCalDAVError(error as Error);
     }
-  }
-
-  private handleError(error: Error) {
-    this.logger.error(
-      `Error in ${CalDavGetEventsService.name} - getCalendarEvents`,
-      error,
-    );
-
-    throw parseCalDAVError(error);
   }
 }

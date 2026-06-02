@@ -17,8 +17,10 @@ export const createDefaultIframeWidget = (
   return {
     __typename: 'PageLayoutWidget',
     id,
+    applicationId: '',
     pageLayoutTabId,
     title,
+    isActive: true,
     type: WidgetType.IFRAME,
     configuration: {
       configurationType: WidgetConfigurationType.IFRAME,
@@ -34,7 +36,6 @@ export const createDefaultIframeWidget = (
       columnSpan: gridPosition.columnSpan,
     },
     objectMetadataId: objectMetadataId ?? null,
-    isOverridden: false,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     deletedAt: null,

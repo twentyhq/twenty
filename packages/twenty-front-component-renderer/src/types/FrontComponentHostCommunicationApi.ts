@@ -1,5 +1,6 @@
 import {
   type CloseSidePanelFunction,
+  type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalHostFunction,
@@ -7,7 +8,7 @@ import {
   type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 export type FrontComponentHostCommunicationApi = {
   navigate: NavigateFunction;
@@ -18,4 +19,5 @@ export type FrontComponentHostCommunicationApi = {
   enqueueSnackbar: EnqueueSnackbarFunction;
   closeSidePanel: CloseSidePanelFunction;
   updateProgress: UpdateProgressFunction;
+  copyToClipboard: CopyToClipboardFunction;
 };

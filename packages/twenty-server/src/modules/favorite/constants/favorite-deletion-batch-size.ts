@@ -1,1 +1,0 @@
-export const FAVORITE_DELETION_BATCH_SIZE = 100;

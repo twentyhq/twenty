@@ -1,11 +1,12 @@
 ---
 title: Webhooky
-description: Dostávejte oznámení v reálném čase, když ve vašem CRM dojde k událostem.
+icon: satellite-dish
+description: Dostávejte upozornění při změnách záznamů — HTTP POST na váš koncový bod při každém vytvoření, aktualizaci nebo smazání.
 ---
 
 import { VimeoEmbed } from '/snippets/vimeo-embed.mdx';
 
-Webhooky posílají data do vašich systémů v reálném čase, když v Twenty dojde k událostem — bez potřeby průběžného dotazování. Použijte je k udržování externích systémů v synchronizaci, spouštění automatizací nebo zasílání upozornění.
+Twenty odešle HTTP POST na vaši adresu URL pokaždé, když je záznam vytvořen, aktualizován nebo smazán. Všechny typy objektů jsou podporovány, včetně vlastních objektů.
 
 ## Vytvořit Webhook
 

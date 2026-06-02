@@ -1,8 +1,8 @@
 import { ThreadWebWorker, release, retain } from '@quilted/threads';
 import { RemoteReceiver } from '@remote-dom/core/receivers';
 import { useEffect, useRef } from 'react';
+import { type CommandConfirmationModalResult } from 'twenty-sdk/front-component';
 import { type ConfirmationModalCaller } from 'twenty-shared/types';
-import { type CommandConfirmationModalResult } from 'twenty-sdk';
 import { type FrontComponentHostCommunicationApi } from '../../types/FrontComponentHostCommunicationApi';
 import { type SdkClientUrls } from '../../types/HostToWorkerRenderContext';
 import { type WorkerExports } from '../../types/WorkerExports';
@@ -17,13 +17,28 @@ type CommandMenuItemConfirmationModalResultBrowserEventDetail = {
   confirmationResult: CommandConfirmationModalResult;
 };
 
+const noopAsync = async () => {};
+
+const HOST_COMMUNICATION_API_NOOP_INITIALIZATION: FrontComponentHostCommunicationApi =
+  {
+    navigate: noopAsync,
+    requestAccessTokenRefresh: async () => '',
+    openSidePanelPage: noopAsync,
+    openCommandConfirmationModal: noopAsync,
+    unmountFrontComponent: noopAsync,
+    enqueueSnackbar: noopAsync,
+    closeSidePanel: noopAsync,
+    updateProgress: noopAsync,
+    copyToClipboard: noopAsync,
+  };
+
 type FrontComponentWorkerEffectProps = {
   componentUrl: string;
   applicationAccessToken?: string;
   apiUrl?: string;
   sdkClientUrls?: SdkClientUrls;
+  applicationVariables?: Record<string, string>;
   frontComponentId: string;
-  frontComponentHostCommunicationApi: FrontComponentHostCommunicationApi;
   setReceiver: React.Dispatch<React.SetStateAction<RemoteReceiver | null>>;
   setThread: React.Dispatch<
     React.SetStateAction<ThreadWebWorker<
@@ -39,8 +54,8 @@ export const FrontComponentWorkerEffect = ({
   applicationAccessToken,
   apiUrl,
   sdkClientUrls,
+  applicationVariables,
   frontComponentId,
-  frontComponentHostCommunicationApi,
   setReceiver,
   setThread,
   setError,
@@ -68,7 +83,7 @@ export const FrontComponentWorkerEffect = ({
       WorkerExports,
       FrontComponentHostCommunicationApi
     >(worker, {
-      exports: frontComponentHostCommunicationApi,
+      exports: { ...HOST_COMMUNICATION_API_NOOP_INITIALIZATION },
     });
 
     const handleCommandMenuItemConfirmationModalResultBrowserEvent = (
@@ -109,6 +124,7 @@ export const FrontComponentWorkerEffect = ({
         applicationAccessToken,
         apiUrl,
         sdkClientUrls,
+        applicationVariables,
       })
       .catch((error: Error) => {
         setError(error);
@@ -131,11 +147,11 @@ export const FrontComponentWorkerEffect = ({
     applicationAccessToken,
     apiUrl,
     sdkClientUrls,
+    applicationVariables,
     frontComponentId,
     setError,
     setReceiver,
     setThread,
-    frontComponentHostCommunicationApi,
   ]);
 
   return null;

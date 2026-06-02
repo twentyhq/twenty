@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 
 import { NestjsQueryTypeOrmModule } from '@ptc-org/nestjs-query-typeorm';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { PublicDomainService } from 'src/engine/core-modules/public-domain/public-domain.service';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { PublicDomainResolver } from 'src/engine/core-modules/public-domain/public-domain.resolver';
@@ -10,10 +11,14 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { CheckPublicDomainsValidRecordsCronCommand } from 'src/engine/core-modules/public-domain/crons/commands/check-public-domains-valid-records.cron.command';
 import { CheckPublicDomainsValidRecordsCronJob } from 'src/engine/core-modules/public-domain/crons/jobs/check-public-domains-valid-records.cron.job';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
-    NestjsQueryTypeOrmModule.forFeature([PublicDomainEntity, WorkspaceEntity]),
+    NestjsQueryTypeOrmModule.forFeature([
+      PublicDomainEntity,
+      WorkspaceEntity,
+      ApplicationEntity,
+    ]),
     DnsManagerModule,
     PermissionsModule,
   ],
@@ -23,6 +28,7 @@ import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permi
     PublicDomainResolver,
     CheckPublicDomainsValidRecordsCronCommand,
     CheckPublicDomainsValidRecordsCronJob,
+    provideWorkspaceScopedRepository(PublicDomainEntity),
   ],
 })
 export class PublicDomainModule {}

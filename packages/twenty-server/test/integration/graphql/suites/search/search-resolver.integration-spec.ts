@@ -173,7 +173,6 @@ describe('SearchResolver', () => {
     await deleteAllRecords('noteTarget');
     await deleteAllRecords('taskTarget');
     await deleteAllRecords('dashboard');
-    await deleteAllRecords('workflow');
     await deleteAllRecords('_pet');
     await deleteAllRecords('_surveyResult');
     await deleteAllRecords('_rocket');
@@ -221,6 +220,7 @@ describe('SearchResolver', () => {
             'workspaceMember',
             'employmentHistory',
             'petCareAgreement',
+            'workflow',
           ],
           limit: 50,
         },
@@ -327,6 +327,7 @@ describe('SearchResolver', () => {
             'person',
             'employmentHistory',
             'petCareAgreement',
+            'workflow',
           ],
           limit: 50,
         },

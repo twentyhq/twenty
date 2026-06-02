@@ -1,3 +1,5 @@
+import { registerEnumType } from '@nestjs/graphql';
+
 import {
   Column,
   CreateDateColumn,
@@ -13,6 +15,10 @@ import { MessageFolderPendingSyncAction } from 'twenty-shared/types';
 
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { WorkspaceRelatedEntity } from 'src/engine/workspace-manager/types/workspace-related-entity';
+
+registerEnumType(MessageFolderPendingSyncAction, {
+  name: 'MessageFolderPendingSyncAction',
+});
 
 @Entity({ name: 'messageFolder', schema: 'core' })
 export class MessageFolderEntity extends WorkspaceRelatedEntity {
@@ -31,7 +37,7 @@ export class MessageFolderEntity extends WorkspaceRelatedEntity {
   @Column({ type: 'boolean', nullable: false })
   isSynced: boolean;
 
-  @Column({ type: 'uuid', nullable: true })
+  @Column({ type: 'varchar', nullable: true })
   parentFolderId: string | null;
 
   @Column({ type: 'varchar', nullable: true })

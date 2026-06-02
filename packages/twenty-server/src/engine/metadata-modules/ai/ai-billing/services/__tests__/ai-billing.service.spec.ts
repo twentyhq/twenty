@@ -4,9 +4,12 @@ import { USAGE_RECORDED } from 'src/engine/core-modules/usage/constants/usage-re
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { UsageResourceType } from 'src/engine/core-modules/usage/enums/usage-resource-type.enum';
 import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
+import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
+import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { ModelFamily } from 'src/engine/metadata-modules/ai/ai-models/types/model-family.enum';
 import { AiModelRegistryService } from 'src/engine/metadata-modules/ai/ai-models/services/ai-model-registry.service';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 
 describe('AiBillingService', () => {
@@ -72,6 +75,30 @@ describe('AiBillingService', () => {
         {
           provide: AiModelRegistryService,
           useValue: mockAiModelRegistryMethods,
+        },
+        {
+          provide: BillingService,
+          useValue: {
+            isBillingEnabled: jest.fn().mockReturnValue(false),
+          },
+        },
+        {
+          provide: BillingUsageService,
+          useValue: {
+            decrementAvailableCreditsInCache: jest
+              .fn()
+              .mockResolvedValue(undefined),
+          },
+        },
+        {
+          provide: WorkspaceCacheService,
+          useValue: {
+            getOrRecompute: jest.fn().mockResolvedValue({
+              billingSubscription: {
+                currentPeriodStart: new Date('2026-04-01T00:00:00Z'),
+              },
+            }),
+          },
         },
       ],
     }).compile();
@@ -325,8 +352,8 @@ describe('AiBillingService', () => {
   });
 
   describe('calculateAndBillUsage', () => {
-    it('should calculate cost and emit billing event when model exists', () => {
-      service.calculateAndBillUsage(
+    it('should calculate cost and emit billing event when model exists', async () => {
+      await service.calculateAndBillUsage(
         'gpt-4o',
         { usage: mockTokenUsage },
         'workspace-1',

@@ -14,7 +14,6 @@ export class EventStreamExceptionFilter implements GqlExceptionFilter {
   catch(exception: EventStreamException) {
     switch (exception.code) {
       case EventStreamExceptionCode.EVENT_STREAM_ALREADY_EXISTS:
-      case EventStreamExceptionCode.EVENT_STREAM_DOES_NOT_EXIST:
       case EventStreamExceptionCode.NOT_AUTHORIZED:
         throw new InternalServerError(exception.message, {
           subCode: exception.code,

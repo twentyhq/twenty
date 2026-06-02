@@ -3,9 +3,11 @@ title: Alan Adı Ayarları
 description: Çalışma alanı alan adını, onaylanmış erişim alan adlarını ve herkese açık alan adlarını yapılandırın.
 ---
 
-Alan adı ayarlarını **Ayarlar → Alan Adları** bölümünde yapılandırın.
+Alan adı ayarları, neyi yapılandırdığınıza bağlı olarak üç yerde bulunur.
 
 ## İş Alanı Alan Adı
+
+**Ayarlar → Genel → Çalışma Alanı Alan Adı** altında yapılandırın.
 
 Alt alan adınızı düzenleyin veya çalışma alanınız için özel bir alan adı ayarlayın.
 
@@ -18,6 +20,8 @@ Alt alan adınızı düzenleyin veya çalışma alanınız için özel bir alan 
 Özel alan adları için, DNS ayarlarını alan adı sağlayıcınız üzerinden yapılandırmanız gerekir.
 
 ## Onaylanmış Alan Adları
+
+**Ayarlar → Üyeler → Davet** altında yapılandırın.
 
 Bu alan adlarındaki bir e-posta adresine sahip olan herkes bu çalışma alanına otomatik olarak kaydolabilir.
 
@@ -35,13 +39,16 @@ Bu, çalışma alanını kuruluşunuzla sınırlı tutarken tüm ekibinizin kend
 
 ## Herkese Açık Alan Adları
 
-Bu alan adları üzerinde eksiksiz ve güvenli bir barındırma ortamı sağlayın.
+**Ayarlar → Uygulamalar → Geliştirici** altında yapılandırın.
+
+Bu alan adları üzerinde eksiksiz ve güvenli bir barındırma ortamı sağlayın. Genel bir alan adı belirli bir uygulamaya bağlanabilir — bağlandığında, yalnızca o uygulamanın HTTP üzerinden yönlendirilen mantık işlevlerine bu alan adı üzerinden erişilebilir. Çalışma alanındaki tüm HTTP rotalarını dışa açmak için ilişkilendirmeyi boş bırakın.
 
 ### Kamusal Alan Ekle
 
 1. **Herkese Açık Alan Adı Ekle**'ye tıklayın
 2. Kullanmak istediğiniz alan adını girin
-3. DNS ayarlarını talimatlara uygun şekilde yapılandırın
-4. Alan adını doğrulayın
+3. İsteğe bağlı olarak bir uygulamaya bağlayın
+4. DNS ayarlarını talimatlara uygun şekilde yapılandırın
+5. Alan adını doğrulayın
 
 Herkese açık alan adları için SSL sertifikaları otomatik olarak sağlanır.

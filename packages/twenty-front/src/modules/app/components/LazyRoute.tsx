@@ -4,6 +4,7 @@ import { PageContentSkeletonLoader } from '~/loading/components/PageContentSkele
 
 type LazyRouteProps = {
   children: ReactNode;
+  fallback?: ReactNode;
 };
 
 const LazyRouteFallback = () => (
@@ -12,6 +13,7 @@ const LazyRouteFallback = () => (
   </PageContainer>
 );
 
-export const LazyRoute = ({ children }: LazyRouteProps) => (
-  <Suspense fallback={<LazyRouteFallback />}>{children}</Suspense>
-);
+export const LazyRoute = ({
+  children,
+  fallback = <LazyRouteFallback />,
+}: LazyRouteProps) => <Suspense fallback={fallback}>{children}</Suspense>;

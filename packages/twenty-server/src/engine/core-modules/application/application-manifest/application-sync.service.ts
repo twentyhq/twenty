@@ -16,7 +16,6 @@ import { ApplicationService } from 'src/engine/core-modules/application/applicat
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { buildFromToAllUniversalFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/build-from-to-all-universal-flat-entity-maps.util';
 import { getApplicationSubAllFlatEntityMaps } from 'src/engine/core-modules/application/application-manifest/utils/get-application-sub-all-flat-entity-maps.util';
-import { ApplicationVariableEntityService } from 'src/engine/core-modules/application/application-variable/application-variable.service';
 import { FileStorageService } from 'src/engine/core-modules/file-storage/file-storage.service';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
@@ -32,7 +31,6 @@ export class ApplicationSyncService {
 
   constructor(
     private readonly applicationService: ApplicationService,
-    private readonly applicationVariableService: ApplicationVariableEntityService,
     private readonly applicationManifestMigrationService: ApplicationManifestMigrationService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
     private readonly workspaceCacheService: WorkspaceCacheService,
@@ -69,6 +67,42 @@ export class ApplicationSyncService {
     this.logger.log('Application sync from manifest completed');
 
     return syncResult;
+  }
+
+  // Registers the application + only the pre-install logic function in
+  // workspace metadata so the pre-install hook can resolve and execute it
+  // before the main synchronizeFromManifest runs the full migrations.
+  // No-op when the manifest does not declare a pre-install logic function.
+  public async preInstallSynchronizeFromManifest({
+    workspaceId,
+    manifest,
+    applicationRegistrationId,
+  }: {
+    workspaceId: string;
+    manifest: Manifest;
+    applicationRegistrationId?: string;
+  }): Promise<void> {
+    if (!isDefined(manifest.application.preInstallLogicFunction)) {
+      return;
+    }
+
+    const application = await this.syncApplication({
+      workspaceId,
+      manifest,
+      applicationRegistrationId,
+    });
+
+    const ownerFlatApplication: FlatApplication = application;
+
+    await this.applicationManifestMigrationService.syncPreInstallLogicFunctionFromManifest(
+      {
+        manifest,
+        workspaceId,
+        ownerFlatApplication,
+      },
+    );
+
+    this.logger.log('Pre-install sync from manifest completed');
   }
 
   private async syncApplication({
@@ -109,20 +143,13 @@ export class ApplicationSyncService {
       );
     }
 
-    await this.applicationVariableService.upsertManyApplicationVariableEntities(
-      {
-        applicationVariables: manifest.application.applicationVariables,
-        applicationId: application.id,
-        workspaceId,
-      },
-    );
-
     const resolvedRegistrationId =
       applicationRegistrationId ?? application.applicationRegistrationId;
 
     return await this.applicationService.update(application.id, {
       name,
       description: manifest.application.description,
+      logo: manifest.application.logoUrl ?? null,
       version: packageJson.version,
       packageJsonChecksum: manifest.application.packageJsonChecksum,
       yarnLockChecksum: manifest.application.yarnLockChecksum,

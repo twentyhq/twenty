@@ -5,8 +5,26 @@ describe('isThrottled', () => {
     expect(isThrottled(null, 3)).toBe(false);
   });
 
+  it('should throttle until retryAfter even when no sync stage is active', () => {
+    const fiveMinutesFromNow = new Date(
+      Date.now() + 5 * 60 * 1000,
+    ).toISOString();
+
+    expect(isThrottled(null, 3, fiveMinutesFromNow)).toBe(true);
+  });
+
   it('should not throttle when there have been no failures', () => {
     expect(isThrottled(new Date().toISOString(), 0)).toBe(false);
+  });
+
+  it('should throttle until retryAfter even when there have been no failures', () => {
+    const fiveMinutesFromNow = new Date(
+      Date.now() + 5 * 60 * 1000,
+    ).toISOString();
+
+    expect(isThrottled(new Date().toISOString(), 0, fiveMinutesFromNow)).toBe(
+      true,
+    );
   });
 
   it('should keep throttling when retryAfter is in the future even though exponential backoff has expired', () => {

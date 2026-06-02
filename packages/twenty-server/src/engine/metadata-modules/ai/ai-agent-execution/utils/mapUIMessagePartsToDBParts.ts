@@ -13,6 +13,7 @@ const isToolPart = (part: ExtendedUIMessagePart): part is ToolUIPart => {
 export const mapUIMessagePartsToDBParts = (
   uiMessageParts: ExtendedUIMessagePart[],
   messageId: string,
+  workspaceId: string,
 ): Partial<AgentMessagePartEntity>[] => {
   return uiMessageParts
     .map((part, index) => {
@@ -20,6 +21,7 @@ export const mapUIMessagePartsToDBParts = (
         messageId,
         orderIndex: index,
         type: part.type,
+        workspaceId,
       };
 
       switch (part.type) {
@@ -63,6 +65,8 @@ export const mapUIMessagePartsToDBParts = (
           };
         case 'step-start':
           return basePart;
+        case 'data-compaction':
+          return null;
         case 'data-routing-status':
           return {
             ...basePart,
@@ -88,6 +92,7 @@ export const mapUIMessagePartsToDBParts = (
                 toolOutput: output,
                 errorMessage: errorText,
                 state,
+                providerExecuted: part.providerExecuted ?? null,
               };
             }
           }

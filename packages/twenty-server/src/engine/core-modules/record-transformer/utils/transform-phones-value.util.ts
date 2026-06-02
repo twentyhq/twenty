@@ -5,10 +5,7 @@ import {
   parsePhoneNumberWithError,
 } from 'libphonenumber-js';
 import isEmpty from 'lodash.isempty';
-import {
-  type AdditionalPhoneMetadata,
-  type PhonesMetadata,
-} from 'twenty-shared/types';
+import { type AdditionalPhoneMetadata } from 'twenty-shared/types';
 import {
   getCountryCodesForCallingCode,
   isDefined,
@@ -23,11 +20,12 @@ import {
 } from 'src/engine/core-modules/record-transformer/record-transformer.exception';
 
 export type PhonesFieldGraphQLInput =
-  | Partial<
-      Omit<PhonesMetadata, 'additionalPhones'> & {
-        additionalPhones: string | null;
-      }
-    >
+  | {
+      primaryPhoneNumber?: string | null;
+      primaryPhoneCountryCode?: string | null;
+      primaryPhoneCallingCode?: string | null;
+      additionalPhones?: string | Partial<AdditionalPhoneMetadata>[] | null;
+    }
   | null
   | undefined;
 
@@ -36,10 +34,16 @@ type AdditionalPhoneMetadataWithNumber = Partial<AdditionalPhoneMetadata> &
 
 const removePlusFromString = (str: string) => str.replace(/\+/g, '');
 
+const nullIfEmptyString = (value: string | null | undefined) =>
+  !isDefined(value) ? value : isNonEmptyString(value) ? value : null;
+
 const validatePrimaryPhoneCountryCodeAndCallingCode = ({
   callingCode,
   countryCode,
-}: Partial<Omit<AdditionalPhoneMetadata, 'number'>>) => {
+}: {
+  callingCode?: string | null;
+  countryCode?: string | null;
+}) => {
   if (isNonEmptyString(countryCode) && !isValidCountryCode(countryCode)) {
     throw new RecordTransformerException(
       `Invalid country code ${countryCode}`,
@@ -154,24 +158,28 @@ const validateAndInferPhoneInput = ({
   callingCode,
   countryCode,
   number,
-}: Partial<AdditionalPhoneMetadata>) => {
-  validatePrimaryPhoneCountryCodeAndCallingCode({
-    callingCode,
-    countryCode,
-  });
+}: {
+  callingCode?: string | null;
+  countryCode?: string | null;
+  number?: string | null;
+}) => {
+  validatePrimaryPhoneCountryCodeAndCallingCode({ callingCode, countryCode });
 
-  if (isDefined(number) && isNonEmptyString(number)) {
+  if (isNonEmptyString(number)) {
     return validateAndInferMetadataFromPrimaryPhoneNumber({
       number,
-      callingCode,
-      countryCode,
+      callingCode: isNonEmptyString(callingCode) ? callingCode : undefined,
+      countryCode:
+        isNonEmptyString(countryCode) && isValidCountryCode(countryCode)
+          ? countryCode
+          : undefined,
     });
   }
 
   return {
-    callingCode,
-    countryCode,
-    number,
+    callingCode: nullIfEmptyString(callingCode),
+    countryCode: nullIfEmptyString(countryCode),
+    number: nullIfEmptyString(number),
   };
 };
 

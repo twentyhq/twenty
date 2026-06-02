@@ -1,0 +1,69 @@
+---
+title: Skill e agenti
+description: Definisci skill e agenti di IA per la tua app.
+icon: robot
+---
+
+<Warning>
+  Skills and agents are currently in alpha. La funzionalità funziona ma è ancora in evoluzione.
+</Warning>
+
+Le app possono definire capacità di IA che risiedono all'interno dello spazio di lavoro — istruzioni di skill riutilizzabili e agenti con prompt di sistema personalizzati.
+
+<AccordionGroup>
+<Accordion title="defineSkill" description="Definisci le skill degli agenti IA">
+
+Le skill definiscono istruzioni e capacità riutilizzabili che gli agenti IA possono utilizzare all'interno del tuo spazio di lavoro. Usa `defineSkill()` per definire skill con convalida integrata:
+
+```ts src/skills/example-skill.ts
+import { defineSkill } from 'twenty-sdk/define';
+
+export default defineSkill({
+  universalIdentifier: 'a1b2c3d4-e5f6-7890-abcd-ef1234567890',
+  name: 'sales-outreach',
+  label: 'Sales Outreach',
+  description: 'Guides the AI agent through a structured sales outreach process',
+  icon: 'IconBrain',
+  content: `You are a sales outreach assistant. When reaching out to a prospect:
+1. Research the company and recent news
+2. Identify the prospect's role and likely pain points
+3. Draft a personalized message referencing specific details
+4. Keep the tone professional but conversational`,
+});
+```
+
+Punti chiave:
+* `name` è una stringa identificativa univoca per la skill (kebab-case consigliato).
+* `label` è il nome di visualizzazione leggibile mostrato nell'UI.
+* `content` contiene le istruzioni della skill — questo è il testo che l'agente IA utilizza.
+* `icon` (opzionale) imposta l'icona visualizzata nell'UI.
+* `description` (opzionale) fornisce contesto aggiuntivo sullo scopo della skill.
+
+</Accordion>
+<Accordion title="defineAgent" description="Definisci agenti IA con prompt personalizzati">
+
+Gli agenti sono assistenti IA che vivono all'interno del tuo spazio di lavoro. Usa `defineAgent()` per creare agenti con un prompt di sistema personalizzato:
+
+```ts src/agents/example-agent.ts
+import { defineAgent } from 'twenty-sdk/define';
+
+export default defineAgent({
+  universalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  name: 'sales-assistant',
+  label: 'Sales Assistant',
+  description: 'Helps the sales team draft outreach emails and research prospects',
+  icon: 'IconRobot',
+  prompt: 'You are a helpful sales assistant. Help users with their questions and tasks.',
+});
+```
+
+Punti chiave:
+* `name` è la stringa identificativa univoca dell'agente (kebab-case consigliato).
+* `label` è il nome visualizzato nell'UI.
+* `prompt` è il prompt di sistema che definisce il comportamento dell'agente.
+* `description` (opzionale) fornisce contesto su ciò che fa l'agente.
+* `icon` (opzionale) imposta l'icona visualizzata nell'UI.
+* `modelId` (opzionale) sostituisce il modello di IA predefinito utilizzato dall'agente.
+
+</Accordion>
+</AccordionGroup>

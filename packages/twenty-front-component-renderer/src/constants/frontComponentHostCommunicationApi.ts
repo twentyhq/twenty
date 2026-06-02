@@ -1,5 +1,6 @@
 import {
   type CloseSidePanelFunction,
+  type CopyToClipboardFunction,
   type EnqueueSnackbarFunction,
   type NavigateFunction,
   type OpenCommandConfirmationModalFunction,
@@ -7,7 +8,7 @@ import {
   type RequestAccessTokenRefreshFunction,
   type UnmountFrontComponentFunction,
   type UpdateProgressFunction,
-} from 'twenty-sdk';
+} from 'twenty-sdk/front-component';
 
 import { FRONT_COMPONENT_HOST_COMMUNICATION_API_KEY } from 'twenty-sdk/front-component-renderer';
 
@@ -20,6 +21,7 @@ type FrontComponentHostCommunicationApiStore = {
   enqueueSnackbar?: EnqueueSnackbarFunction;
   closeSidePanel?: CloseSidePanelFunction;
   updateProgress?: UpdateProgressFunction;
+  copyToClipboard?: CopyToClipboardFunction;
 };
 
 (globalThis as Record<string, unknown>)[

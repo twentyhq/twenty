@@ -10,13 +10,17 @@ import { S3Driver } from 'src/engine/core-modules/file-storage/drivers/s3.driver
 import { ValidatedStorageDriver } from 'src/engine/core-modules/file-storage/drivers/validated-storage.driver';
 import { DriverFactoryBase } from 'src/engine/core-modules/twenty-config/dynamic-factory.base';
 import { ConfigVariablesGroup } from 'src/engine/core-modules/twenty-config/enums/config-variables-group.enum';
+import { ConfigGroupHashService } from 'src/engine/core-modules/twenty-config/services/config-group-hash.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { resolveAbsolutePath } from 'src/utils/resolve-absolute-path';
 
 @Injectable()
 export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
-  constructor(twentyConfigService: TwentyConfigService) {
-    super(twentyConfigService);
+  constructor(
+    twentyConfigService: TwentyConfigService,
+    configGroupHashService: ConfigGroupHashService,
+  ) {
+    super(twentyConfigService, configGroupHashService);
   }
 
   protected buildConfigKey(): string {
@@ -29,7 +33,7 @@ export class FileStorageDriverFactory extends DriverFactoryBase<StorageDriver> {
     }
 
     if (storageType === StorageDriverType.S_3) {
-      const storageConfigHash = this.getConfigGroupHash(
+      const storageConfigHash = this.configGroupHashService.computeHash(
         ConfigVariablesGroup.STORAGE_CONFIG,
       );
 

@@ -65,4 +65,9 @@ export class UpdateCommandMenuItemInput {
   @IsOptional()
   @Field(() => [String], { nullable: true })
   hotKeys?: string[];
+
+  @IsUUID()
+  @IsOptional()
+  @Field(() => UUIDScalarType, { nullable: true })
+  pageLayoutId?: string;
 }

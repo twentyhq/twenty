@@ -4,9 +4,9 @@ import { OnCustomBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/
 import { USER_SIGNUP_EVENT_NAME } from 'src/engine/api/graphql/workspace-query-runner/constants/user-signup-event-name.constants';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
 import { USER_SIGNUP_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/user/user-signup';
+import { TelemetryEventType } from 'src/engine/core-modules/telemetry/telemetry-event.type';
 import { TelemetryService } from 'src/engine/core-modules/telemetry/telemetry.service';
 import { CustomWorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/custom-workspace-batch-event.type';
-import { TelemetryEventType } from 'src/engine/core-modules/telemetry/telemetry-event.type';
 
 @Injectable()
 export class TelemetryListener {
@@ -20,14 +20,14 @@ export class TelemetryListener {
     payload: CustomWorkspaceEventBatch<TelemetryEventType>,
   ) {
     await Promise.all(
-      payload.events.map(async (eventPayload) => {
+      payload.events.map(async (eventPayload) =>
         this.auditService
           .createContext({
             userId: eventPayload.userId,
             workspaceId: payload.workspaceId,
           })
-          .insertWorkspaceEvent(USER_SIGNUP_EVENT, {});
-      }),
+          .insertWorkspaceEvent(USER_SIGNUP_EVENT, {}),
+      ),
     );
 
     await this.telemetryService.publish({

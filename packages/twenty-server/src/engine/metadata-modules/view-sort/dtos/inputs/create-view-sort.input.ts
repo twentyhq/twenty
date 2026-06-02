@@ -1,9 +1,9 @@
 import { Field, HideField, InputType } from '@nestjs/graphql';
 
-import { IsEnum, IsOptional, IsUUID } from 'class-validator';
+import { IsEnum, IsOptional, IsString, IsUUID } from 'class-validator';
 
 import { UUIDScalarType } from 'src/engine/api/graphql/workspace-schema-builder/graphql-types/scalars';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
+import { ViewSortDirection } from 'twenty-shared/types';
 
 @InputType()
 export class CreateViewSortInput {
@@ -23,6 +23,11 @@ export class CreateViewSortInput {
     defaultValue: ViewSortDirection.ASC,
   })
   direction?: ViewSortDirection;
+
+  @IsOptional()
+  @IsString()
+  @Field(() => String, { nullable: true })
+  subFieldName?: string | null;
 
   @IsUUID()
   @Field(() => UUIDScalarType, { nullable: false })

@@ -17,7 +17,7 @@ const traverseSteps = ({
   allStepIdsInLoop: Set<string>;
 }) => {
   for (const stepId of stepIds) {
-    if (visitedStepIds.has(stepId)) {
+    if (visitedStepIds.has(stepId) || stepId === iteratorStepId) {
       continue;
     }
 

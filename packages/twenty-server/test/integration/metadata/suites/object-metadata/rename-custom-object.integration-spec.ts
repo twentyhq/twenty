@@ -14,7 +14,6 @@ describe('Custom object renaming', () => {
   const STANDARD_OBJECT_RELATIONS = [
     'noteTarget',
     'attachment',
-    'favorite',
     'taskTarget',
     'timelineActivity',
   ];

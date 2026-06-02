@@ -1,8 +1,6 @@
 import { MigrationInterface, QueryRunner } from 'typeorm';
 
-export class AddActiveStreamIdToAgentChatThread1774003611071
-  implements MigrationInterface
-{
+export class AddActiveStreamIdToAgentChatThread1774003611071 implements MigrationInterface {
   name = 'AddActiveStreamIdToAgentChatThread1774003611071';
 
   public async up(queryRunner: QueryRunner): Promise<void> {

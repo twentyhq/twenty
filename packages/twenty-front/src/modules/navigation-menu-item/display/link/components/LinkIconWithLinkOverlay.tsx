@@ -1,12 +1,11 @@
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
 import { isDefined } from 'twenty-shared/utils';
-import type { IconComponent } from 'twenty-ui/display';
+import { type IconComponent, getIconTileColorShades } from 'twenty-ui/display';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK } from '@/navigation-menu-item/common/constants/NavigationMenuItemDefaultColorLink';
 import { getLinkFaviconUrl } from '@/navigation-menu-item/display/link/utils/getLinkFaviconUrl';
-import { getNavigationMenuItemIconStyleFromColor } from '@/navigation-menu-item/common/utils/getNavigationMenuItemIconStyleFromColor';
 
 const failedFaviconUrls = new Set<string>();
 
@@ -83,7 +82,7 @@ export const LinkIconWithLinkOverlay = ({
   const showFavicon =
     isDefined(faviconUrl) && !isKnownFailed && localFailedLink !== linkKey;
 
-  const linkStyle = getNavigationMenuItemIconStyleFromColor(
+  const linkStyle = getIconTileColorShades(
     navItemColor ?? DEFAULT_NAVIGATION_MENU_ITEM_COLOR_LINK,
   );
 

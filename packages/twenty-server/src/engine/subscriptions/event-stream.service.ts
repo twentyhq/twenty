@@ -2,7 +2,7 @@ import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
-import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type SerializableAuthContext } from 'src/engine/core-modules/auth/types/serializable-auth-context.type';
 import { CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import { WithLock } from 'src/engine/core-modules/cache-lock/with-lock.decorator';
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
@@ -37,6 +37,7 @@ export class EventStreamService implements OnModuleInit {
       callback: async () => {
         return this.getTotalActiveStreamCount();
       },
+      cacheValue: true,
     });
   }
 

@@ -42,7 +42,7 @@ export const useProcessUIToolCallMessage = () => {
         continue;
       }
 
-      if (toolExecutionPart.output.result.success !== true) {
+      if (toolExecutionPart.output.success !== true) {
         continue;
       }
 
@@ -51,7 +51,11 @@ export const useProcessUIToolCallMessage = () => {
         toolExecutionPart.toolCallId,
       ]);
 
-      const navigateAppOutput = toolExecutionPart.output.result.result;
+      const navigateAppOutput = toolExecutionPart.output.result;
+
+      if (!isDefined(navigateAppOutput)) {
+        continue;
+      }
 
       switch (navigateAppOutput.action) {
         case 'navigateToObject': {

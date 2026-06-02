@@ -51,7 +51,7 @@ export const mapDBPartToUIMessagePart = (
       };
     case 'step-start':
       return {
-        type: 'step-start',
+        type: part.type,
       };
     case 'data-routing-status':
       return {
@@ -71,6 +71,9 @@ export const mapDBPartToUIMessagePart = (
             output: part.toolOutput,
             errorText: part.errorMessage!,
             state: part.state,
+            ...(part.providerExecuted != null && {
+              providerExecuted: part.providerExecuted,
+            }),
           } as ToolUIPart;
         }
       }

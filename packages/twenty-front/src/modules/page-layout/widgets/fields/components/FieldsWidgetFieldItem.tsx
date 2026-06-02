@@ -55,6 +55,14 @@ export const FieldsWidgetFieldItem = ({
     targetObjectNameSingular,
   );
 
+  const fieldDefinition = formatFieldMetadataItemAsColumnDefinition({
+    field: fieldMetadataItem,
+    position: globalIndex,
+    objectMetadataItem,
+    showLabel: true,
+    labelWidth: 90,
+  });
+
   return (
     <FieldContext.Provider
       key={recordId + fieldMetadataItem.id}
@@ -62,13 +70,7 @@ export const FieldsWidgetFieldItem = ({
         recordId,
         maxWidth: 200,
         isLabelIdentifier: false,
-        fieldDefinition: formatFieldMetadataItemAsColumnDefinition({
-          field: fieldMetadataItem,
-          position: globalIndex,
-          objectMetadataItem,
-          showLabel: true,
-          labelWidth: 90,
-        }),
+        fieldDefinition,
         useUpdateRecord,
         isDisplayModeFixHeight: true,
         isRecordFieldReadOnly: isRecordFieldReadOnly({
@@ -83,6 +85,8 @@ export const FieldsWidgetFieldItem = ({
             isUIReadOnly: fieldMetadataItem.isUIReadOnly ?? false,
             isCustom: fieldMetadataItem.isCustom ?? false,
           },
+          fieldDefinition,
+          objectPermissionsByObjectMetadataId,
         }),
         onMouseEnter,
         anchorId: `${getRecordFieldInputInstanceId({

@@ -59,10 +59,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 894,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a000-4485-94de-70c2a98daef2",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -267,10 +263,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 1415,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a018-492d-89de-f9cd4ee80437",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -467,10 +459,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 1001,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a023-4180-9da1-6b417beacf0e",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -676,10 +664,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 8891,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a026-43c0-b042-0123f72f6cf9",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -885,10 +869,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 3875,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a026-47d2-9474-75fb625f5eb1",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -1101,10 +1081,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 874,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a02e-4e28-b4a9-6096b36e26df",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -1301,10 +1277,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 691,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a043-441a-b269-a2378afed31c",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -1517,10 +1489,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 1261,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a045-4266-b9e4-0e7a0697322b",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -1733,10 +1701,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 978,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a045-4b32-8484-a6807e9e0d22",
     "idealCustomerProfile": false,
     "introVideo": {
@@ -1990,10 +1954,6 @@ export const mockedCompanyRecords: ObjectRecord[] =
       "secondaryLinks": []
     },
     "employees": 3774,
-    "favorites": {
-      "__typename": "FavoriteConnection",
-      "edges": []
-    },
     "id": "20202020-a048-4007-9024-3ac47b8484d5",
     "idealCustomerProfile": false,
     "introVideo": {

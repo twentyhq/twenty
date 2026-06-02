@@ -1,0 +1,176 @@
+---
+title: Stylová příručka
+icon: paintbrush
+description: Konvence kódu a osvědčené postupy pro přispívání do Twenty.
+---
+
+## React
+
+### Pouze funkcionální komponenty
+
+Vždy používejte funkcionální komponenty TSX s pojmenovanými exporty.
+
+```tsx
+// ❌ Bad
+const MyComponent = () => {
+  return <div>Hello World</div>;
+};
+export default MyComponent;
+
+// ✅ Good
+export function MyComponent() {
+  return <div>Hello World</div>;
+};
+```
+
+### Vlastnosti
+
+Vytvořte typ s názvem `{ComponentName}Props`. Používejte destrukturalizaci. Nepoužívejte `React.FC`.
+
+```tsx
+type MyComponentProps = {
+  name: string;
+};
+
+export const MyComponent = ({ name }: MyComponentProps) => <div>Hello {name}</div>;
+```
+
+### Nepoužívejte prop spreading jediné proměnné
+
+```tsx
+// ❌ Bad
+const MyComponent = (props: MyComponentProps) => <Other {...props} />;
+
+// ✅ Good
+const MyComponent = ({ prop1, prop2 }: MyComponentProps) => <Other {...{ prop1, prop2 }} />;
+```
+
+## Správa stavu
+
+### Atomy Jotai pro globální stav
+
+```tsx
+import { createAtomState } from '@/ui/utilities/state/jotai/utils/createAtomState';
+import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+
+export const myAtomState = createAtomState<string>({
+  key: 'myAtomState',
+  defaultValue: 'default value',
+});
+```
+
+* Upřednostňujte atomy před prop drillingem
+* Nepoužívejte `useRef` pro stav — použijte `useState` nebo atomy
+* Používejte rodiny atomů a selektory pro seznamy
+
+### Vyhněte se zbytečnému opakovanému vykreslování
+
+* Přesuňte `useEffect` a načítání dat do sesterských sidecar komponent
+* Upřednostňujte obslužné funkce událostí (`handleClick`, `handleChange`) před `useEffect`
+* Nepoužívejte `React.memo()` — místo toho opravte kořenovou příčinu
+* Omezte používání `useCallback` / `useMemo`
+
+```tsx
+// ❌ Bad — useEffect in the same component causes re-renders
+export const Page = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <div>{data}</div>;
+};
+
+// ✅ Good — extract into sibling
+export const PageData = () => {
+  const [data, setData] = useAtomState(dataState);
+  const [dep] = useAtomState(depState);
+  useEffect(() => { setData(dep); }, [dep]);
+  return <></>;
+};
+export const Page = () => {
+  const [data] = useAtomState(dataState);
+  return <div>{data}</div>;
+};
+```
+
+## TypeScript
+
+* **`type` místo `interface`** — flexibilnější, lépe kombinovatelný
+* **Řetězcové literály místo výčtů** — s výjimkou enumů GraphQL codegenu a interních API knihoven
+* **Žádné `any`** — vynucený přísný TypeScript
+* **Žádné importy typů** — používejte běžné importy (vynuceno nástrojem Oxlint `typescript/consistent-type-imports`)
+* **Používejte [Zod](https://github.com/colinhacks/zod)** pro runtime validaci netypovaných objektů
+
+## JavaScript
+
+```tsx
+// Use nullish-coalescing (??) instead of ||
+const value = process.env.MY_VALUE ?? 'default';
+
+// Use optional chaining
+onClick?.();
+```
+
+## Pojmenovávání
+
+* **Proměnné**: camelCase, popisné (`email` nikoli `value`, `fieldMetadata` nikoli `fm`)
+* **Konstanty**: SCREAMING_SNAKE_CASE
+* **Typy/Třídy**: PascalCase
+* **Soubory/adresáře**: kebab-case (`.component.tsx`, `.service.ts`, `.entity.ts`)
+* **Obslužné funkce událostí**: `handleClick` (nikoli `onClick` pro obslužnou funkci)
+* **Vlastnosti komponenty (props)**: předponu tvoří název komponenty (`ButtonProps`)
+* **Stylované komponenty**: předpona `Styled` (`StyledTitle`)
+
+## Styling
+
+Používejte stylované komponenty [Linaria](https://github.com/callstack/linaria). Používejte hodnoty z tématu — vyhněte se napevno zadaným `px`, `rem` nebo barvám.
+
+```tsx
+// ❌ Bad
+const StyledButton = styled.button`
+  color: #333333;
+  font-size: 1rem;
+  margin-left: 4px;
+`;
+
+// ✅ Good
+const StyledButton = styled.button`
+  color: ${({ theme }) => theme.font.color.primary};
+  font-size: ${({ theme }) => theme.font.size.md};
+  margin-left: ${({ theme }) => theme.spacing(1)};
+`;
+```
+
+## Importy
+
+Používejte aliasy místo relativních cest:
+
+```tsx
+// ❌ Bad
+import { Foo } from '../../../../../testing/decorators/Foo';
+
+// ✅ Good
+import { Foo } from '~/testing/decorators/Foo';
+import { Bar } from '@/modules/bar/components/Bar';
+```
+
+## Struktura složek
+
+```
+front
+└── modules/         # Feature modules
+│   └── module1/
+│       ├── components/
+│       ├── constants/
+│       ├── contexts/
+│       ├── graphql/  (fragments, queries, mutations)
+│       ├── hooks/
+│       ├── states/   (atoms, selectors)
+│       ├── types/
+│       └── utils/
+└── pages/           # Route-level components
+└── ui/              # Reusable UI components (display, input, feedback, ...)
+```
+
+* Moduly mohou importovat z jiných modulů, ale `ui/` by mělo zůstat bez závislostí
+* Používejte podadresáře `internal/` pro interní kód modulu
+* Komponenty do 300 řádků, služby do 500 řádků

@@ -1,1 +1,0 @@
-export const COLOR_SHADE_BACKGROUND = 5;

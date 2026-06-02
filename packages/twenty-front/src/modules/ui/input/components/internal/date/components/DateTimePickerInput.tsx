@@ -138,6 +138,7 @@ export const DateTimePickerInput = ({
       setInternalDate(date);
 
       if (!isDefined(date)) {
+        setValue('');
         return;
       }
 

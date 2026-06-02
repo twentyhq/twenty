@@ -29,10 +29,17 @@ export class ApplicationExceptionFilter implements ExceptionFilter {
         throw new ForbiddenError(exception);
       case ApplicationExceptionCode.INVALID_INPUT:
       case ApplicationExceptionCode.SOURCE_CHANNEL_MISMATCH:
+      case ApplicationExceptionCode.APP_ALREADY_INSTALLED:
+      case ApplicationExceptionCode.CANNOT_DOWNGRADE_APPLICATION:
+      case ApplicationExceptionCode.SERVER_VERSION_INCOMPATIBLE:
+      case ApplicationExceptionCode.INVALID_APP_ENGINE_REQUIREMENT:
         throw new UserInputError(exception);
       case ApplicationExceptionCode.PACKAGE_RESOLUTION_FAILED:
+      case ApplicationExceptionCode.POST_INSTALL_ERROR:
+      case ApplicationExceptionCode.PRE_INSTALL_ERROR:
       case ApplicationExceptionCode.TARBALL_EXTRACTION_FAILED:
       case ApplicationExceptionCode.UPGRADE_FAILED:
+      case ApplicationExceptionCode.INVALID_SERVER_VERSION:
         throw new InternalServerError(exception);
       default: {
         assertUnreachable(exception.code);

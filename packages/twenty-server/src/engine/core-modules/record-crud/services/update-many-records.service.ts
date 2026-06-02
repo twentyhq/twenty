@@ -1,6 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 import { CommonUpdateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-update-many-query-runner.service';
 import {
@@ -37,23 +37,23 @@ export class UpdateManyRecordsService {
       });
 
       if (
-        !canObjectBeManagedByWorkflow({
+        !canObjectBeManagedByAutomation({
           nameSingular: flatObjectMetadata.nameSingular,
-          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(
-          'Failed to update: Object cannot be updated by workflow',
+          'Failed to update: Object cannot be updated by automation',
           RecordCrudExceptionCode.INVALID_REQUEST,
         );
       }
 
       const cleanedData = removeUndefinedFromRecord(data);
 
-      const updatedRecords = await this.commonUpdateManyRunner.execute(
-        { filter, data: cleanedData, selectedFields },
-        queryRunnerContext,
-      );
+      const { results: updatedRecords } =
+        await this.commonUpdateManyRunner.execute(
+          { filter, data: cleanedData, selectedFields },
+          queryRunnerContext,
+        );
 
       this.logger.log(
         `Updated ${updatedRecords.length} records in ${objectName}`,

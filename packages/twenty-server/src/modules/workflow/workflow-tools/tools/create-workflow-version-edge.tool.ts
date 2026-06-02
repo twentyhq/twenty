@@ -7,9 +7,14 @@ import {
 } from 'src/modules/workflow/workflow-tools/types/workflow-tool-dependencies.type';
 
 const createWorkflowVersionEdgeSchema = z.object({
-  workflowVersionId: z.string().describe('The ID of the workflow version'),
-  source: z.string().describe('The ID of the source step'),
-  target: z.string().describe('The ID of the target step'),
+  workflowVersionId: z
+    .string()
+    .uuid()
+    .describe('The UUID of the workflow version'),
+  source: z
+    .union([z.literal('trigger'), z.string().uuid()])
+    .describe('The source step: "trigger" or a step UUID'),
+  target: z.string().uuid().describe('The UUID of the target step'),
   sourceConnectionOptions: z
     .object({
       connectedStepType: z.literal(WorkflowActionType.ITERATOR),

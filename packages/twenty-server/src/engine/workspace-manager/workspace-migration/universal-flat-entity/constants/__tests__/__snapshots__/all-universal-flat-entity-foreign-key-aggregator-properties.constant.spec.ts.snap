@@ -3,7 +3,9 @@
 exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should match snapshot 1`] = `
 {
   "agent": [],
+  "applicationVariable": [],
   "commandMenuItem": [],
+  "connectionProvider": [],
   "fieldMetadata": [
     "viewSortUniversalIdentifiers",
     "fieldPermissionUniversalIdentifiers",
@@ -33,15 +35,18 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "widgetUniversalIdentifiers",
   ],
   "pageLayoutWidget": [],
-  "permissionFlag": [],
+  "permissionFlag": [
+    "rolePermissionFlagUniversalIdentifiers",
+  ],
   "role": [
     "roleTargetUniversalIdentifiers",
     "objectPermissionUniversalIdentifiers",
-    "permissionFlagUniversalIdentifiers",
+    "rolePermissionFlagUniversalIdentifiers",
     "fieldPermissionUniversalIdentifiers",
     "rowLevelPermissionPredicateUniversalIdentifiers",
     "rowLevelPermissionPredicateGroupUniversalIdentifiers",
   ],
+  "rolePermissionFlag": [],
   "roleTarget": [],
   "rowLevelPermissionPredicate": [],
   "rowLevelPermissionPredicateGroup": [
@@ -55,6 +60,7 @@ exports[`ALL_UNIVERSAL_FLAT_ENTITY_FOREIGN_KEY_AGGREGATOR_PROPERTIES should matc
     "viewFilterGroupUniversalIdentifiers",
     "viewGroupUniversalIdentifiers",
     "viewFieldGroupUniversalIdentifiers",
+    "viewSortUniversalIdentifiers",
   ],
   "viewField": [],
   "viewFieldGroup": [

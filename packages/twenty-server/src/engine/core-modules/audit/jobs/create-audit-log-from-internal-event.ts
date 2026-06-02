@@ -35,25 +35,25 @@ export class CreateAuditLogFromInternalEvent {
 
       // Since these are object record events, we use createObjectEvent
       if (workspaceEventBatch.name.endsWith('.updated')) {
-        auditService.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
+        await auditService.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.created')) {
-        auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
+        await auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.deleted')) {
-        auditService.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
+        await auditService.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: workspaceEventBatch.objectMetadata.id,
         });
       } else if (workspaceEventBatch.name.endsWith('.upserted')) {
-        auditService.createObjectEvent(OBJECT_RECORD_UPSERTED_EVENT, {
+        await auditService.createObjectEvent(OBJECT_RECORD_UPSERTED_EVENT, {
           ...eventProperties,
           recordId: eventData.recordId,
           objectMetadataId: workspaceEventBatch.objectMetadata.id,

@@ -57,11 +57,13 @@ export const TableSection = ({
           <IconChevronUp
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
+            color={theme.font.color.light}
           />
         ) : (
           <IconChevronDown
             size={theme.icon.size.md}
             stroke={theme.icon.stroke.sm}
+            color={theme.font.color.light}
           />
         )}
       </StyledSectionHeader>

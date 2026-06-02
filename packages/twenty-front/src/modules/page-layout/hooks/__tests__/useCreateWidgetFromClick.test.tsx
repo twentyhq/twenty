@@ -1,7 +1,7 @@
-import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useCreateWidgetFromClick } from '@/page-layout/hooks/useCreateWidgetFromClick';
 import { pageLayoutDraggedAreaComponentState } from '@/page-layout/states/pageLayoutDraggedAreaComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
+import { useNavigatePageLayoutSidePanel } from '@/side-panel/pages/page-layout/hooks/useNavigatePageLayoutSidePanel';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { act, renderHook } from '@testing-library/react';
 import { type ReactNode } from 'react';
@@ -28,7 +28,7 @@ describe('useCreateWidgetFromClick', () => {
   it('should set dragged area and navigate to widget selection when called with a cellId', () => {
     const { result } = renderHook(
       () => ({
-        createWidget: useCreateWidgetFromClick(),
+        createWidget: useCreateWidgetFromClick(PAGE_LAYOUT_TEST_INSTANCE_ID),
         draggedArea: useAtomComponentStateValue(
           pageLayoutDraggedAreaComponentState,
           PAGE_LAYOUT_TEST_INSTANCE_ID,
@@ -52,7 +52,7 @@ describe('useCreateWidgetFromClick', () => {
     expect(result.current.draggedArea).toEqual({ x: 2, y: 3, w: 1, h: 1 });
     expect(result.current.editingWidgetId).toBeNull();
     expect(mockNavigatePageLayoutSidePanel).toHaveBeenCalledWith({
-      sidePanelPage: SidePanelPages.PageLayoutWidgetTypeSelect,
+      sidePanelPage: SidePanelPages.PageLayoutDashboardWidgetTypeSelect,
       resetNavigationStack: true,
     });
   });

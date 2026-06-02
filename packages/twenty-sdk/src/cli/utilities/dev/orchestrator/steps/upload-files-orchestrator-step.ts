@@ -4,6 +4,7 @@ import {
 } from '@/cli/utilities/dev/orchestrator/dev-mode-orchestrator-state';
 import { FileUploader } from '@/cli/utilities/file/file-uploader';
 import { type FileFolder } from 'twenty-shared/types';
+import { isDefined } from 'twenty-shared/utils';
 
 export type UploadFilesOrchestratorStepOutput = {
   fileUploader: FileUploader | null;
@@ -34,7 +35,7 @@ export class UploadFilesOrchestratorStep {
   }
 
   get isInitialized(): boolean {
-    return this.state.steps.uploadFiles.output.fileUploader !== null;
+    return isDefined(this.state.steps.uploadFiles.output.fileUploader);
   }
 
   initialize(input: { appPath: string; universalIdentifier: string }): void {

@@ -74,6 +74,9 @@ export const SettingsAccountsBlocklistInput = ({
   });
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.nativeEvent.isComposing || e.keyCode === 229) {
+      return;
+    }
     if (e.key === Key.Enter) {
       submit();
     }

@@ -1,6 +1,7 @@
 import { forwardRef, Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
+import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
 import { WorkspaceDomainsModule } from 'src/engine/core-modules/domain/workspace-domains/workspace-domains.module';
 import { FileUrlModule } from 'src/engine/core-modules/file/file-url/file-url.module';
 import { ToolProviderModule } from 'src/engine/core-modules/tool-provider/tool-provider.module';
@@ -13,6 +14,7 @@ import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-mode
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 import { RoleTargetEntity } from 'src/engine/metadata-modules/role-target/role-target.entity';
 import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
 import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
@@ -27,6 +29,7 @@ import { AgentAsyncExecutorService } from './services/agent-async-executor.servi
     AiBillingModule,
     AiModelsModule,
     AiAgentModule,
+    BillingModule,
     FileUrlModule,
     WorkspaceDomainsModule,
     UserWorkspaceModule,
@@ -47,6 +50,7 @@ import { AgentAsyncExecutorService } from './services/agent-async-executor.servi
     AgentAsyncExecutorService,
     AgentActorContextService,
     AgentMessagePartResolver,
+    provideWorkspaceScopedRepository(RoleTargetEntity),
   ],
   exports: [
     AgentAsyncExecutorService,

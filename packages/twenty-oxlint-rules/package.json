@@ -1,5 +1,8 @@
 {
   "name": "twenty-oxlint-rules",
   "private": true,
-  "type": "module"
+  "type": "module",
+  "devDependencies": {
+    "@oxlint/plugins": "^1.51.0"
+  }
 }

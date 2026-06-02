@@ -1,5 +1,6 @@
 ---
 title: Configurare
+icon: gear
 ---
 
 # Gestionarea configurației
@@ -42,10 +43,25 @@ IS_CONFIG_VARIABLES_IN_DB_ENABLED=true  # implicit
 
 <Warning>
 Fiecare variabilă este documentată cu descrieri în panoul dvs. de administrare la **Setări → Panou Admin → Variabile de Configurare**.
-Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`), și secretele aplicației (`APP_SECRET`) pot fi configurate doar prin fișierul `.env`.
+Unele setări de infrastructură, cum ar fi conexiunile la baze de date (`PG_DATABASE_URL`), URL-urile serverului (`SERVER_URL`) și secretele (`ENCRYPTION_KEY`, `FALLBACK_ENCRYPTION_KEY`) pot fi configurate doar prin fișierul `.env`.
 
 [Referință tehnică completă →](https://github.com/twentyhq/twenty/blob/main/packages/twenty-server/src/engine/core-modules/twenty-config/config-variables.ts)
 </Warning>
+
+## Chei de criptare
+
+Twenty folosește două chei de criptare disponibile doar prin variabile de mediu:
+
+| Variabilă                 | Scop                                                                                                                                                                             | Obligatoriu                                                                                         |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `ENCRYPTION_KEY`          | Cheia principală folosită pentru a cripta secretele în repaus (token-uri OAuth, variabile de aplicație, chei private de semnare, secrete TOTP, valori de configurare sensibile). | Da, pentru instalările noi (instalările vechi se pot baza în schimb pe `APP_SECRET` — vezi mai jos) |
+| `FALLBACK_ENCRYPTION_KEY` | Cheie folosită doar pentru verificare. Setată în timpul unei rotații la *precedenta* `ENCRYPTION_KEY` astfel încât rândurile existente să rămână decriptabile.                   | Doar în timpul rotației                                                                             |
+
+Pentru compatibilitate cu versiunile anterioare, dacă `ENCRYPTION_KEY` nu este setată, Twenty revine la `APP_SECRET` pentru criptarea în repaus — respectând comportamentul moștenit pentru implementările mai vechi. Instalările noi ar trebui să seteze întotdeauna o `ENCRYPTION_KEY` dedicată.
+
+Generează valori cu `openssl rand -base64 32` și stochează-le într-un loc sigur (un manager de secrete, configurație sigilată etc.). Pierderea `ENCRYPTION_KEY` înseamnă pierderea accesului la fiecare secret stocat în baza de date.
+
+Pentru a roti `ENCRYPTION_KEY` fără timp de nefuncționare, vezi [Ghidul de rotație a cheilor](/l/ro/developers/self-host/capabilities/key-rotation).
 
 ## 2. Configurare Doar Mediu
 

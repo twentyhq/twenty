@@ -212,4 +212,4 @@ const generateTests = async (force = false) => {
 const forceArg = process.argv.includes('--force');
 
 // Call the function with the parsed argument
-generateTests(forceArg);
+void generateTests(forceArg);

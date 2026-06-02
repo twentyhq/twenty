@@ -3,15 +3,10 @@ import { Args, Mutation, Query } from '@nestjs/graphql';
 
 import { PermissionFlagType } from 'twenty-shared/constants';
 import { isNonEmptyString } from '@sniptt/guards';
-import { FeatureFlagKey } from 'twenty-shared/types';
 
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorator';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
-import {
-  FeatureFlagGuard,
-  RequireFeatureFlag,
-} from 'src/engine/guards/feature-flag.guard';
 import { SettingsPermissionGuard } from 'src/engine/guards/settings-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import { fromFlatAgentWithRoleIdToAgentDto } from 'src/engine/metadata-modules/flat-agent/utils/from-agent-entity-to-agent-dto.util';
@@ -24,16 +19,12 @@ import { AgentIdInput } from './dtos/agent-id.input';
 import { AgentDTO } from './dtos/agent.dto';
 import { CreateAgentInput } from './dtos/create-agent.input';
 import { UpdateAgentInput } from './dtos/update-agent.input';
-import { AgentGraphqlApiExceptionInterceptor } from './interceptors/agent-graphql-api-exception.interceptor';
+import { AiGraphqlApiExceptionInterceptor } from 'src/engine/metadata-modules/ai/interceptors/ai-graphql-api-exception.interceptor';
 
-@UseGuards(
-  WorkspaceAuthGuard,
-  FeatureFlagGuard,
-  SettingsPermissionGuard(PermissionFlagType.AI),
-)
+@UseGuards(WorkspaceAuthGuard, SettingsPermissionGuard(PermissionFlagType.AI))
 @UseInterceptors(
   WorkspaceMigrationGraphqlApiExceptionInterceptor,
-  AgentGraphqlApiExceptionInterceptor,
+  AiGraphqlApiExceptionInterceptor,
 )
 @MetadataResolver()
 export class AgentResolver {
@@ -43,7 +34,6 @@ export class AgentResolver {
   ) {}
 
   @Query(() => [AgentDTO])
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async findManyAgents(
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
   ): Promise<AgentDTO[]> {
@@ -54,7 +44,6 @@ export class AgentResolver {
   }
 
   @Query(() => AgentDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   async findOneAgent(
     @Args('input') { id }: AgentIdInput,
     @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
@@ -68,7 +57,6 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async createOneAgent(
     @Args('input') input: CreateAgentInput,
@@ -90,7 +78,6 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async updateOneAgent(
     @Args('input') input: UpdateAgentInput,
@@ -112,7 +99,6 @@ export class AgentResolver {
   }
 
   @Mutation(() => AgentDTO)
-  @RequireFeatureFlag(FeatureFlagKey.IS_AI_ENABLED)
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.AI_SETTINGS))
   async deleteOneAgent(
     @Args('input') { id }: AgentIdInput,

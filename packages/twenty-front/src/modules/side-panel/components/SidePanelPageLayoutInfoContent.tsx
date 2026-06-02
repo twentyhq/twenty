@@ -1,24 +1,38 @@
-import { usePageLayoutHeaderInfo } from '@/side-panel/components/hooks/usePageLayoutHeaderInfo';
-import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
-import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
-import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
-import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
 import { useUpdatePageLayoutTab } from '@/page-layout/hooks/useUpdatePageLayoutTab';
 import { useUpdatePageLayoutWidget } from '@/page-layout/hooks/useUpdatePageLayoutWidget';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutEditingWidgetIdComponentState } from '@/page-layout/states/pageLayoutEditingWidgetIdComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
+import { usePageLayoutHeaderInfo } from '@/side-panel/components/hooks/usePageLayoutHeaderInfo';
+import { useUpdateSidePanelPageInfo } from '@/side-panel/hooks/useUpdateSidePanelPageInfo';
+import { sidePanelPageInfoState } from '@/side-panel/states/sidePanelPageInfoState';
+import { sidePanelPageState } from '@/side-panel/states/sidePanelPageState';
+import { sidePanelShouldFocusTitleInputComponentState } from '@/side-panel/states/sidePanelShouldFocusTitleInputComponentState';
+import { IconPicker } from '@/ui/input/components/IconPicker';
 import { TitleInput } from '@/ui/input/components/TitleInput';
 import { useAtomComponentState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { isNonEmptyString } from '@sniptt/guards';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { css } from '@linaria/core';
+import { styled } from '@linaria/react';
+import { isNonEmptyString } from '@sniptt/guards';
 import { useContext, useState } from 'react';
 import { SidePanelPages } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { useIcons } from 'twenty-ui/display';
-import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+import { SidePanelPageInfoLayout } from './SidePanelPageInfoLayout';
+
+const StyledClickableIconWrapper = styled.div`
+  cursor: pointer;
+  display: flex;
+  line-height: 0;
+`;
+
+const iconPickerContainerStyles = css`
+  display: flex;
+  line-height: 0;
+`;
 
 export const SidePanelPageLayoutInfoContent = ({
   pageLayoutId,
@@ -81,6 +95,8 @@ export const SidePanelPageLayoutInfoContent = ({
     isReadonly,
     tab,
     widgetInEditMode,
+    isIconEditable,
+    selectedIconKey,
   } = headerInfo;
 
   const Icon = headerIcon ?? getIcon('IconDefault');
@@ -115,13 +131,38 @@ export const SidePanelPageLayoutInfoContent = ({
     setEditedTitle(null);
   };
 
+  const renderedIcon = isDefined(headerIcon) ? (
+    <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
+  ) : undefined;
+
+  const handleIconChange = ({ iconKey }: { iconKey: string }) => {
+    if (!isDefined(tab)) {
+      return;
+    }
+
+    updatePageLayoutTab(tab.id, { icon: iconKey });
+  };
+
+  const iconElement =
+    isIconEditable && isDefined(tab) ? (
+      <IconPicker
+        dropdownId={`page-layout-tab-icon-picker-${tab.id}`}
+        selectedIconKey={selectedIconKey ?? undefined}
+        onChange={handleIconChange}
+        className={iconPickerContainerStyles}
+        clickableComponent={
+          <StyledClickableIconWrapper>
+            {renderedIcon}
+          </StyledClickableIconWrapper>
+        }
+      />
+    ) : (
+      renderedIcon
+    );
+
   return (
     <SidePanelPageInfoLayout
-      icon={
-        isDefined(headerIcon) ? (
-          <Icon size={theme.icon.size.md} stroke={theme.icon.stroke.sm} />
-        ) : undefined
-      }
+      icon={iconElement}
       iconColor={headerIconColor}
       title={
         <TitleInput

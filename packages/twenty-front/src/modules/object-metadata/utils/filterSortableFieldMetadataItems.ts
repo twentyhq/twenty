@@ -1,6 +1,10 @@
 import { SORTABLE_FIELD_METADATA_TYPES } from '@/object-metadata/constants/SortableFieldMetadataTypes';
 import { isHiddenSystemField } from '@/object-metadata/utils/isHiddenSystemField';
-import { FieldMetadataType, RelationType } from '~/generated-metadata/graphql';
+import { isManyToOneRelationField } from '@/object-metadata/utils/isManyToOneRelationField';
+import {
+  type FieldMetadataType,
+  type RelationType,
+} from '~/generated-metadata/graphql';
 
 type SortableFieldInput = {
   isSystem?: boolean | null;
@@ -17,13 +21,9 @@ export const filterSortableFieldMetadataItems = (field: SortableFieldInput) => {
     field.type,
   );
 
-  const isRelationFieldSortable =
-    field.type === FieldMetadataType.RELATION &&
-    field.relation?.type === RelationType.MANY_TO_ONE;
-
   return (
     !isHiddenSystemField(field) &&
     isFieldActive &&
-    (isFieldTypeSortable || isRelationFieldSortable)
+    (isFieldTypeSortable || isManyToOneRelationField(field))
   );
 };

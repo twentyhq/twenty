@@ -44,9 +44,17 @@ export class NavigationMenuItemService {
   async findAll({
     workspaceId,
     userWorkspaceId,
+    scope = 'all',
+    folderId,
+    type,
+    limit,
   }: {
     workspaceId: string;
     userWorkspaceId?: string;
+    scope?: 'all' | 'workspace' | 'user';
+    folderId?: string;
+    type?: NavigationMenuItemType;
+    limit?: number;
   }): Promise<NavigationMenuItemDTO[]> {
     const { flatNavigationMenuItemMaps } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
@@ -56,15 +64,33 @@ export class NavigationMenuItemService {
         },
       );
 
-    return Object.values(flatNavigationMenuItemMaps.byUniversalIdentifier)
-      .filter(
-        (item): item is NonNullable<typeof item> =>
-          isDefined(item) &&
-          (!isDefined(item.userWorkspaceId) ||
-            item.userWorkspaceId === userWorkspaceId),
-      )
-      .sort((a, b) => a.position - b.position)
-      .map(fromFlatNavigationMenuItemToNavigationMenuItemDto);
+    const filtered = Object.values(
+      flatNavigationMenuItemMaps.byUniversalIdentifier,
+    )
+      .filter((item): item is NonNullable<typeof item> => {
+        if (!isDefined(item)) return false;
+
+        const itemIsUserScoped = isDefined(item.userWorkspaceId);
+
+        // Default scope returns workspace items + the caller's own user items.
+        if (scope === 'all') {
+          return !itemIsUserScoped || item.userWorkspaceId === userWorkspaceId;
+        }
+
+        if (scope === 'workspace') {
+          return !itemIsUserScoped;
+        }
+
+        // scope === 'user'
+        return itemIsUserScoped && item.userWorkspaceId === userWorkspaceId;
+      })
+      .filter((item) => !isDefined(folderId) || item.folderId === folderId)
+      .filter((item) => !isDefined(type) || item.type === type)
+      .sort((a, b) => a.position - b.position);
+
+    const bounded = isDefined(limit) ? filtered.slice(0, limit) : filtered;
+
+    return bounded.map(fromFlatNavigationMenuItemToNavigationMenuItemDto);
   }
 
   async findById({
@@ -186,6 +212,7 @@ export class NavigationMenuItemService {
       flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
       flatObjectMetadataMaps,
       flatViewMaps,
+      flatPageLayoutMaps,
     } = await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
       {
         workspaceId,
@@ -193,6 +220,7 @@ export class NavigationMenuItemService {
           'flatNavigationMenuItemMaps',
           'flatObjectMetadataMaps',
           'flatViewMaps',
+          'flatPageLayoutMaps',
         ],
       },
     );
@@ -230,6 +258,7 @@ export class NavigationMenuItemService {
           flatNavigationMenuItemMaps: optimisticFlatNavigationMenuItemMaps,
           flatObjectMetadataMaps,
           flatViewMaps,
+          flatPageLayoutMaps,
         });
 
       addFlatNavigationMenuItemToMapsAndUpdateIndex({
@@ -341,11 +370,14 @@ export class NavigationMenuItemService {
         { workspaceId },
       );
 
-    const { flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps } =
+    const {
+      flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+      flatPageLayoutMaps,
+    } =
       await this.workspaceManyOrAllFlatEntityMapsCacheService.getOrRecomputeManyOrAllFlatEntityMaps(
         {
           workspaceId,
-          flatMapsKeys: ['flatNavigationMenuItemMaps'],
+          flatMapsKeys: ['flatNavigationMenuItemMaps', 'flatPageLayoutMaps'],
         },
       );
 
@@ -378,6 +410,7 @@ export class NavigationMenuItemService {
         fromUpdateNavigationMenuItemInputToFlatNavigationMenuItemToUpdateOrThrow(
           {
             flatNavigationMenuItemMaps: existingFlatNavigationMenuItemMaps,
+            flatPageLayoutMaps,
             updateNavigationMenuItemInput: updateInput,
           },
         ),

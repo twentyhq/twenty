@@ -82,7 +82,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           },
           {
             children: agent.label,
-            href: getSettingsPath(SettingsPath.AIAgentDetail, {
+            href: getSettingsPath(SettingsPath.AiAgentDetail, {
               agentId: agent.id,
             }),
           },
@@ -94,6 +94,10 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
           {
             children: t`Workspace`,
             href: getSettingsPath(SettingsPath.Workspace),
+          },
+          {
+            children: t`Members`,
+            href: getSettingsPath(SettingsPath.WorkspaceMembersPage),
           },
           {
             children: t`Roles`,
@@ -112,7 +116,7 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
 
   const finishButtonPath =
     fromAgentId && isDefined(agent)
-      ? getSettingsPath(SettingsPath.AIAgentDetail, { agentId: agent.id })
+      ? getSettingsPath(SettingsPath.AiAgentDetail, { agentId: agent.id })
       : getSettingsPath(SettingsPath.RoleDetail, { roleId });
 
   const objectPredicates =

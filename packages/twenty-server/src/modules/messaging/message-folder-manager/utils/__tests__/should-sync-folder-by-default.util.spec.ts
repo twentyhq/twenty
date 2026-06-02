@@ -1,4 +1,4 @@
-import { MessageFolderImportPolicy } from 'src/modules/messaging/common/standard-objects/message-channel.workspace-entity';
+import { MessageFolderImportPolicy } from 'twenty-shared/types';
 import { shouldSyncFolderByDefault } from 'src/modules/messaging/message-folder-manager/utils/should-sync-folder-by-default.util';
 
 describe('shouldSyncFolderByDefault', () => {

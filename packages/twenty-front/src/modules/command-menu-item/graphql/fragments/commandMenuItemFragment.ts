@@ -3,6 +3,7 @@ import { gql } from '@apollo/client';
 export const COMMAND_MENU_ITEM_FRAGMENT = gql`
   fragment CommandMenuItemFields on CommandMenuItem {
     id
+    applicationId
     workflowVersionId
     frontComponentId
     frontComponent {
@@ -16,9 +17,18 @@ export const COMMAND_MENU_ITEM_FRAGMENT = gql`
     shortLabel
     position
     isPinned
+    payload {
+      ... on PathCommandMenuItemPayload {
+        path
+      }
+      ... on ObjectMetadataCommandMenuItemPayload {
+        objectMetadataItemId
+      }
+    }
     hotKeys
     conditionalAvailabilityExpression
     availabilityType
     availabilityObjectMetadataId
+    pageLayoutId
   }
 `;

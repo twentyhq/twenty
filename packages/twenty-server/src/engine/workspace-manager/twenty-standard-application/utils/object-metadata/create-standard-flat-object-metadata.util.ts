@@ -93,37 +93,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  calendarChannel: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'calendarChannel'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'calendarChannel',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.calendarChannel.universalIdentifier,
-        nameSingular: 'calendarChannel',
-        namePlural: 'calendarChannels',
-        labelSingular: i18nLabel(msg`Calendar Channel`),
-        labelPlural: i18nLabel(msg`Calendar Channels`),
-        description: i18nLabel(msg`Calendar Channels`),
-        icon: 'IconCalendar',
-        isSystem: true,
-        isAuditLogged: false,
-        labelIdentifierFieldMetadataName: 'handle',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   calendarEventParticipant: ({
     now,
     workspaceId,
@@ -213,36 +182,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  connectedAccount: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'connectedAccount'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'connectedAccount',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.connectedAccount.universalIdentifier,
-        nameSingular: 'connectedAccount',
-        namePlural: 'connectedAccounts',
-        labelSingular: i18nLabel(msg`Connected Account`),
-        labelPlural: i18nLabel(msg`Connected Accounts`),
-        description: i18nLabel(msg`A connected account`),
-        icon: 'IconAt',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'handle',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
   dashboard: ({
     now,
     workspaceId,
@@ -264,62 +203,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         isSearchable: true,
         shortcut: 'D',
         labelIdentifierFieldMetadataName: 'title',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  favorite: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<CreateStandardObjectArgs<'favorite'>, 'context' | 'objectName'>) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'favorite',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier: STANDARD_OBJECTS.favorite.universalIdentifier,
-        nameSingular: 'favorite',
-        namePlural: 'favorites',
-        labelSingular: i18nLabel(msg`Favorite`),
-        labelPlural: i18nLabel(msg`Favorites`),
-        description: i18nLabel(msg`A favorite`),
-        icon: 'IconHeart',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  favoriteFolder: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'favoriteFolder'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'favoriteFolder',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.favoriteFolder.universalIdentifier,
-        nameSingular: 'favoriteFolder',
-        namePlural: 'favoriteFolders',
-        labelSingular: i18nLabel(msg`Favorite Folder`),
-        labelPlural: i18nLabel(msg`Favorite Folders`),
-        description: i18nLabel(msg`A favorite folder`),
-        icon: 'IconFolder',
-        isSystem: true,
-        labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,
@@ -348,67 +231,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelPlural: i18nLabel(msg`Message Channel Message Associations`),
         description: i18nLabel(msg`Message Synced with a Message Channel`),
         icon: 'IconMessage',
-        isSystem: true,
-        isAuditLogged: false,
-        labelIdentifierFieldMetadataName: 'id',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  messageChannel: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'messageChannel'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'messageChannel',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.messageChannel.universalIdentifier,
-        nameSingular: 'messageChannel',
-        namePlural: 'messageChannels',
-        labelSingular: i18nLabel(msg`Message Channel`),
-        labelPlural: i18nLabel(msg`Message Channels`),
-        description: i18nLabel(msg`Message Channels`),
-        icon: 'IconMessage',
-        isSystem: true,
-        isAuditLogged: false,
-        labelIdentifierFieldMetadataName: 'handle',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  messageFolder: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'messageFolder'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'messageFolder',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier: STANDARD_OBJECTS.messageFolder.universalIdentifier,
-        nameSingular: 'messageFolder',
-        namePlural: 'messageFolders',
-        labelSingular: i18nLabel(msg`Message Folder`),
-        labelPlural: i18nLabel(msg`Message Folders`),
-        description: i18nLabel(msg`Message Folders`),
-        icon: 'IconFolder',
         isSystem: true,
         isAuditLogged: false,
         labelIdentifierFieldMetadataName: 'id',
@@ -510,7 +332,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconMessage',
         isSystem: true,
         isAuditLogged: false,
-        labelIdentifierFieldMetadataName: 'id',
+        labelIdentifierFieldMetadataName: 'subject',
       },
       workspaceId,
       standardObjectMetadataRelatedEntityIds,

@@ -21,20 +21,19 @@ describe('mergeFieldValues', () => {
       expect(result).toBe('value2');
     });
 
-    it('should throw error when priority record is not found', () => {
-      const recordsWithoutPriorityValue = [
+    it('should fall back to first record with value when priority record is not found', () => {
+      const recordsWithValues = [
         { value: 'value1', recordId: 'record1' },
-        { value: null, recordId: PRIORITY_RECORD_ID },
         { value: 'value3', recordId: 'record3' },
       ];
 
-      expect(() =>
-        mergeFieldValues(
-          FieldMetadataType.TEXT,
-          recordsWithoutPriorityValue,
-          'non-existent-id',
-        ),
-      ).toThrow('Priority record with ID non-existent-id not found');
+      const result = mergeFieldValues(
+        FieldMetadataType.TEXT,
+        recordsWithValues,
+        'non-existent-id',
+      );
+
+      expect(result).toBe('value1');
     });
   });
 

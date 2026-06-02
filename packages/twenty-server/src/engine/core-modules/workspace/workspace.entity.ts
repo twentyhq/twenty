@@ -29,15 +29,10 @@ import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/em
 import { FeatureFlagEntity } from 'src/engine/core-modules/feature-flag/feature-flag.entity';
 import { FileEntity } from 'src/engine/core-modules/file/entities/file.entity';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
-import { PostgresCredentialsEntity } from 'src/engine/core-modules/postgres-credentials/postgres-credentials.entity';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
 import { WorkspaceSSOIdentityProviderEntity } from 'src/engine/core-modules/sso/workspace-sso-identity-provider.entity';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
-import {
-  AUTO_SELECT_FAST_MODEL_ID,
-  AUTO_SELECT_SMART_MODEL_ID,
-} from 'twenty-shared/constants';
 import { type ModelId } from 'src/engine/metadata-modules/ai/ai-models/types/model-id.type';
 import { RoleDTO } from 'src/engine/metadata-modules/role/dtos/role.dto';
 import { ViewFieldDTO } from 'src/engine/metadata-modules/view-field/dtos/view-field.dto';
@@ -53,6 +48,10 @@ import { ViewSortEntity } from 'src/engine/metadata-modules/view-sort/entities/v
 import { ViewDTO } from 'src/engine/metadata-modules/view/dtos/view.dto';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
 import { WebhookEntity } from 'src/engine/metadata-modules/webhook/entities/webhook.entity';
+import {
+  AUTO_SELECT_FAST_MODEL_ID,
+  AUTO_SELECT_SMART_MODEL_ID,
+} from 'twenty-shared/constants';
 
 registerEnumType(WorkspaceActivationStatus, {
   name: 'WorkspaceActivationStatus',
@@ -181,12 +180,6 @@ export class WorkspaceEntity {
   suspendedAt: Date | null;
 
   @OneToMany(
-    () => PostgresCredentialsEntity,
-    (postgresCredentials) => postgresCredentials.workspace,
-  )
-  allPostgresCredentials: Relation<PostgresCredentialsEntity[]>;
-
-  @OneToMany(
     () => WorkspaceSSOIdentityProviderEntity,
     (workspaceSSOIdentityProviders) => workspaceSSOIdentityProviders.workspace,
   )
@@ -278,6 +271,10 @@ export class WorkspaceEntity {
   @Column({ default: false })
   isCustomDomainEnabled: boolean;
 
+  @Field()
+  @Column({ default: false })
+  isInternalMessagesImportEnabled: boolean;
+
   @Field(() => [String], { nullable: true })
   @Column({
     type: 'varchar',
@@ -293,10 +290,6 @@ export class WorkspaceEntity {
 
   @Field(() => RoleDTO, { nullable: true })
   defaultRole: RoleDTO | null;
-
-  @Field(() => String, { nullable: true })
-  @Column({ type: 'varchar', nullable: true })
-  version: string | null;
 
   @Field(() => String, { nullable: false })
   @Column({

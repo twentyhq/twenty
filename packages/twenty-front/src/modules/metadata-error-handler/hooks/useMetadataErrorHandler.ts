@@ -30,6 +30,7 @@ export const useMetadataErrorHandler = () => {
     viewFilter: t`view filter`,
     index: t`index`,
     logicFunction: t`logic function`,
+    rolePermissionFlag: t`role permission flag`,
     permissionFlag: t`permission flag`,
     objectPermission: t`object permission`,
     fieldPermission: t`field permission`,
@@ -48,6 +49,8 @@ export const useMetadataErrorHandler = () => {
     navigationMenuItem: t`navigation menu item`,
     webhook: t`webhook`,
     viewSort: t`view sort`,
+    applicationVariable: t`application variable`,
+    connectionProvider: t`connection provider`,
   } as const satisfies Record<AllMetadataName, string>;
 
   const handleMetadataError = (

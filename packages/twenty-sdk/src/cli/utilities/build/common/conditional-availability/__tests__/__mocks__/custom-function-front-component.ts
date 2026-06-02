@@ -1,16 +1,12 @@
-import { defineFrontComponent, someDefined, selectedRecords } from '@/sdk';
+import {
+  defineCommandMenuItem,
+  selectedRecords,
+  someDefined,
+} from '@/sdk/define';
 
-const MyComponent = () => null;
-
-export default defineFrontComponent({
-  universalIdentifier: 'custom-function',
-  component: MyComponent,
-  command: {
-    universalIdentifier: 'custom-function-cmd',
-    label: 'Custom Function',
-    conditionalAvailabilityExpression: someDefined(
-      selectedRecords,
-      'deletedAt',
-    ),
-  },
+export default defineCommandMenuItem({
+  universalIdentifier: 'custom-function-cmd',
+  label: 'Custom Function',
+  frontComponentUniversalIdentifier: 'custom-function',
+  conditionalAvailabilityExpression: someDefined(selectedRecords, 'deletedAt'),
 });

@@ -5,6 +5,7 @@ import {
   RecordFilterGroupLogicalOperator,
   type RecordGqlOperationFilter,
   ViewFilterGroupLogicalOperator,
+  ViewSortDirection,
   ViewType,
 } from 'twenty-shared/types';
 import {
@@ -19,7 +20,6 @@ import { type ObjectRecordOrderBy } from 'src/engine/api/graphql/workspace-query
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { findFlatEntityByIdInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps-or-throw.util';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
-import { ViewSortDirection } from 'src/engine/metadata-modules/view-sort/enums/view-sort-direction';
 import { DEFAULT_TIMEZONE } from 'src/engine/metadata-modules/view/constants/default-timezone.constant';
 import { ViewService } from 'src/engine/metadata-modules/view/services/view.service';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -90,6 +90,8 @@ export class ViewQueryParamsService {
           recordFilterGroupId: viewFilter.viewFilterGroupId,
           operand: viewFilter.operand,
           subFieldName: viewFilter.subFieldName,
+          relationTargetFieldMetadataId:
+            viewFilter.relationTargetFieldMetadataId ?? null,
         } as RecordFilter;
       })
       .filter(isDefined);
@@ -105,33 +107,10 @@ export class ViewQueryParamsService {
           : RecordFilterGroupLogicalOperator.AND,
     }));
 
-    const fields = recordFilters
-      .map((filter) => {
-        const field = findFlatEntityByIdInFlatEntityMaps({
-          flatEntityId: filter.fieldMetadataId,
-          flatEntityMaps: flatFieldMetadataMaps,
-        });
-
-        if (!field) return null;
-
-        return {
-          id: field.id,
-          name: field.name,
-          type: field.type,
-          label: field.label,
-          options: field.options?.map((opt) => ({
-            id: opt.id ?? '',
-            label: opt.label,
-            value: opt.value,
-            color: 'color' in opt ? opt.color : undefined,
-            position: opt.position,
-          })),
-        };
-      })
-      .filter(isDefined);
-
     const filter = computeRecordGqlOperationFilter({
-      fields,
+      fieldMetadataItems: Object.values(
+        flatFieldMetadataMaps.byUniversalIdentifier,
+      ).filter(isDefined),
       recordFilters,
       recordFilterGroups,
       filterValueDependencies: { currentWorkspaceMemberId, timeZone },
@@ -177,6 +156,7 @@ export class ViewQueryParamsService {
         await this.globalWorkspaceOrmManager.getRepository<WorkspaceMemberWorkspaceEntity>(
           workspaceId,
           'workspaceMember',
+          { shouldBypassPermissionChecks: true },
         );
 
       const workspaceMember = await workspaceMemberRepository.findOne({

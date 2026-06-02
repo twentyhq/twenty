@@ -1,0 +1,97 @@
+---
+title: Overview
+description: Shape the data your app adds to a workspace — objects, fields, and relations.
+icon: "database"
+---
+
+A Twenty app's **data layer** is the data your app *adds* to a workspace — the new record types it declares, the columns it adds to existing objects, and how those records connect to each other.
+
+```text
+┌──────────────────────────────────────────────────┐
+│ Object — a record type, e.g. PostCard            │
+│    ├─ Field     (name, type, label)              │
+│    ├─ Field                                      │
+│    └─ Relation  (link to another object)         │
+└──────────────────────────────────────────────────┘
+            │
+            ├── lives in your app, OR
+            │
+            ▼
+┌──────────────────────────────────────────────────┐
+│ Standard / other apps' objects                   │
+│    └─ Field added by your app via defineField    │
+└──────────────────────────────────────────────────┘
+```
+
+## In this section
+
+<CardGroup cols={2}>
+  <Card title="Objects" icon="table" href="/developers/extend/apps/data/objects">
+    `defineObject` — declare new record types with their own fields.
+  </Card>
+  <Card title="Extending Objects" icon="wand-magic-sparkles" href="/developers/extend/apps/data/extending-objects">
+    `defineField` — add fields to standard or other apps' objects.
+  </Card>
+  <Card title="Relations" icon="diagram-project" href="/developers/extend/apps/data/relations">
+    Bidirectional `MANY_TO_ONE` / `ONE_TO_MANY` connections between objects.
+  </Card>
+</CardGroup>
+
+## Entities at a glance
+
+| Entity | Purpose | Defined with |
+|--------|---------|--------------|
+| **Object** | A new custom record type (e.g. PostCard, Invoice) with its own fields | `defineObject()` |
+| **Field** | A column on an object. Standalone fields can extend objects you didn't create (e.g. add `loyaltyTier` to Company) | `defineField()` |
+| **Relation** | A bidirectional link between two objects — both sides declared as fields | `defineField()` with `FieldType.RELATION` |
+| **Index** | A database index to speed up a recurring query on one of your objects | `defineIndex()` |
+
+The SDK detects these via AST analysis at build time, so file organization is up to you — the convention is `src/objects/`, `src/fields/`, and `src/indexes/`. Stable `universalIdentifier` UUIDs tie everything together across deploys.
+
+## Indexes (optional)
+
+Apps can ship indexes alongside their objects to keep recurring queries fast. The most common case is a status or foreign-key column that you read frequently.
+
+```ts src/indexes/post-card-status.index.ts
+import { defineIndex } from 'twenty-sdk/define';
+
+import {
+  POST_CARD_UNIVERSAL_IDENTIFIER,
+  STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+} from '../objects/post-card.object';
+
+export default defineIndex({
+  universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff0',
+  objectUniversalIdentifier: POST_CARD_UNIVERSAL_IDENTIFIER,
+  fields: [
+    {
+      universalIdentifier: 'b6e9d2a1-5a4c-46ca-9d52-42c8f02d1ff1',
+      fieldUniversalIdentifier: STATUS_FIELD_UNIVERSAL_IDENTIFIER,
+    },
+  ],
+});
+```
+
+### Unique indexes
+
+`defineIndex` accepts `isUnique: true` for both single- and multi-column uniqueness. This is the recommended primitive — `defineField({ isUnique: true })` is deprecated and will be removed in a future release.
+
+```ts
+defineIndex({
+  universalIdentifier: '…',
+  objectUniversalIdentifier: PERSON_UNIVERSAL_IDENTIFIER,
+  isUnique: true,
+  fields: [{ universalIdentifier: '…', fieldUniversalIdentifier: EMAIL_FIELD_UNIVERSAL_IDENTIFIER }],
+});
+```
+
+### Other constraints
+
+- Partial `WHERE` clauses stay under admin control — apps can't declare them.
+- Each object is capped at 10 custom indexes (the framework's own indexes don't count).
+
+Order the `fields` array the way Postgres should use it — leftmost column first, like a phone book. Indexes are not free: every write to the table updates them. Add one only when you have a query that needs it.
+
+<Note>
+Looking for **Application Config** or **Roles & Permissions**? Those describe the app itself rather than the data it adds — they live under [Config](/developers/extend/apps/config/overview). Looking for **Connections** (Linear, GitHub, Slack OAuth)? Those exist to be called *from* logic functions and live under [Logic](/developers/extend/apps/logic/connections).
+</Note>

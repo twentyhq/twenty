@@ -3,7 +3,7 @@ import { type SubscriptionInterval } from 'src/engine/core-modules/billing/enums
 
 export enum SubscriptionUpdateType {
   PLAN = 'PLAN',
-  METERED_PRICE = 'METERED_PRICE',
+  RESOURCE_CREDIT_PRICE = 'RESOURCE_CREDIT_PRICE',
   SEATS = 'SEATS',
   INTERVAL = 'INTERVAL',
 }
@@ -14,8 +14,8 @@ export type SubscriptionUpdate =
       newPlan: BillingPlanKey;
     }
   | {
-      type: SubscriptionUpdateType.METERED_PRICE;
-      newMeteredPriceId: string;
+      type: SubscriptionUpdateType.RESOURCE_CREDIT_PRICE;
+      newResourceCreditPriceId: string;
     }
   | {
       type: SubscriptionUpdateType.SEATS;

@@ -81,7 +81,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
           "isCustom": true,
           "isLabelSyncedWithName": false,
           "isRemote": false,
-          "isSearchable": false,
+          "isSearchable": true,
           "isSystem": false,
           "isUIReadOnly": false,
           "labelIdentifierFieldMetadataUniversalIdentifier": Any<String>,
@@ -206,6 +206,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -236,6 +237,7 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -311,7 +313,10 @@ exports[`syncApplication should delete old field and create equivalent one when 
             "standardOverrides": null,
             "type": "TS_VECTOR",
             "universalIdentifier": Any<String>,
-            "universalSettings": null,
+            "universalSettings": {
+              "asExpression": "to_tsvector('simple', COALESCE("id"::text, ''))",
+              "generatedType": "STORED",
+            },
             "updatedAt": Any<String>,
           },
           {
@@ -434,7 +439,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
           "isCustom": true,
           "isLabelSyncedWithName": false,
           "isRemote": false,
-          "isSearchable": false,
+          "isSearchable": true,
           "isSystem": false,
           "isUIReadOnly": false,
           "labelIdentifierFieldMetadataUniversalIdentifier": Any<String>,
@@ -559,6 +564,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -589,6 +595,7 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "applicationUniversalIdentifier": Any<String>,
             "createdAt": Any<String>,
             "defaultValue": {
+              "context": null,
               "name": "'System'",
               "source": "'MANUAL'",
               "workspaceMemberId": null,
@@ -664,7 +671,10 @@ exports[`syncApplication should return workspace migration actions on initial sy
             "standardOverrides": null,
             "type": "TS_VECTOR",
             "universalIdentifier": Any<String>,
-            "universalSettings": null,
+            "universalSettings": {
+              "asExpression": "to_tsvector('simple', COALESCE("id"::text, ''))",
+              "generatedType": "STORED",
+            },
             "updatedAt": Any<String>,
           },
           {

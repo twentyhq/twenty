@@ -8,11 +8,11 @@ export type ViewField = {
   viewId?: string;
   fieldMetadataId: string;
   position: number;
+  isActive: boolean;
   isVisible: boolean;
   size: number;
   aggregateOperation?: AggregateOperations | null;
   viewFieldGroupId?: string | null;
-  isOverridden: boolean;
   definition?:
     | ColumnDefinition<FieldMetadata>
     | RecordBoardFieldDefinition<FieldMetadata>;

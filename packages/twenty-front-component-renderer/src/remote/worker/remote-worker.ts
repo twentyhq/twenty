@@ -15,7 +15,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { installStyleBridge } from '@/polyfills/installStyleBridge';
 import { installStylePropertyOnRemoteElements } from '@/remote/utils/installStylePropertyOnRemoteElements';
 import { patchRemoteElementSetAttribute } from '@/remote/utils/patchRemoteElementSetAttribute';
-import { type FrontComponentExecutionContext } from 'twenty-sdk';
+import { type FrontComponentExecutionContext } from 'twenty-sdk/front-component';
 import { frontComponentHostCommunicationApi } from '@/constants/frontComponentHostCommunicationApi';
 import { HTML_TAG_TO_CUSTOM_ELEMENT_TAG } from '@/constants/HtmlTagToRemoteComponent';
 import { setFrontComponentExecutionContext } from './utils/setFrontComponentExecutionContext';
@@ -91,6 +91,13 @@ const render: WorkerExports['render'] = async (
   document.body.append(root);
   installStyleBridge(root);
 
+  if (isDefined(renderContext.applicationVariables)) {
+    setWorkerEnv({
+      applicationVariables: JSON.stringify(renderContext.applicationVariables),
+    });
+  }
+
+  // System variables are set after application variables so they cannot be overridden
   if (isDefined(renderContext.apiUrl)) {
     setWorkerEnv({
       TWENTY_API_URL: renderContext.apiUrl,
@@ -156,6 +163,8 @@ const initializeHostCommunicationApi: WorkerExports['initializeHostCommunication
       hostApi.enqueueSnackbar;
     frontComponentHostCommunicationApi.closeSidePanel = hostApi.closeSidePanel;
     frontComponentHostCommunicationApi.updateProgress = hostApi.updateProgress;
+    frontComponentHostCommunicationApi.copyToClipboard =
+      hostApi.copyToClipboard;
   };
 
 const onConfirmationModalResult: WorkerExports['onConfirmationModalResult'] =

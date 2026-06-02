@@ -15,10 +15,10 @@ type IsUniversalMappedProperty<
 
 export type FlatEntityUpdate<
   T extends AllMetadataName,
-  MetadataPropertyConfig = (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
-  TComparedKeys extends
-    keyof MetadataPropertyConfig = MetadataEntityComparablePropertyName<T> &
-    keyof MetadataPropertyConfig,
+  MetadataPropertyConfig =
+    (typeof ALL_ENTITY_PROPERTIES_CONFIGURATION_BY_METADATA_NAME)[T],
+  TComparedKeys extends keyof MetadataPropertyConfig =
+    MetadataEntityComparablePropertyName<T> & keyof MetadataPropertyConfig,
 > = Partial<
   Pick<
     MetadataFlatEntity<T>,

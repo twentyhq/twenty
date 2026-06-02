@@ -16,6 +16,7 @@ const innerAppUninstall = async (
     ConfigService.setActiveRemote(options.remote);
   }
 
+  const configService = new ConfigService();
   const apiService = new ApiService();
   const manifest = await readManifestFromFile(options.appPath);
 
@@ -47,6 +48,13 @@ const innerAppUninstall = async (
       },
     };
   }
+
+  await configService.setConfig({
+    appRegistrationId: undefined,
+    appRegistrationClientId: undefined,
+    appAccessToken: undefined,
+    appRefreshToken: undefined,
+  });
 
   return { success: true, data: undefined };
 };

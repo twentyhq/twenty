@@ -1,6 +1,10 @@
+import { validate as uuidValidate, version as uuidVersion } from 'uuid';
+
 import { type FieldManifest, type Manifest } from 'twenty-shared/application';
 import { FieldMetadataType, RelationType } from 'twenty-shared/types';
 import { isNonEmptyArray } from 'twenty-shared/utils';
+
+const MIN_UUID_VERSION = 4;
 
 const RELATION_FIELD_TYPES: string[] = [
   FieldMetadataType.RELATION,
@@ -38,6 +42,14 @@ const findUniversalIdentifiers = (obj: object): string[] => {
     if (key === 'universalIdentifier' && typeof val === 'string') {
       universalIdentifiers.push(val);
     }
+
+    if (
+      key === 'postInstallLogicFunction' ||
+      key === 'preInstallLogicFunction'
+    ) {
+      continue;
+    }
+
     if (typeof val === 'object') {
       universalIdentifiers.push(...findUniversalIdentifiers(val));
     }
@@ -91,14 +103,55 @@ const validateRelationFields = (
   return errors;
 };
 
+const invalidUniversalIdentifierVersions = (
+  identifiers: string[],
+): string[] => {
+  const errors: string[] = [];
+  const seen = new Set<string>();
+
+  for (const identifier of identifiers) {
+    if (seen.has(identifier)) {
+      continue;
+    }
+    seen.add(identifier);
+
+    if (!uuidValidate(identifier)) {
+      errors.push(`Universal identifier "${identifier}" is not a valid UUID.`);
+      continue;
+    }
+
+    const version = uuidVersion(identifier);
+
+    if (version < MIN_UUID_VERSION) {
+      errors.push(
+        `Universal identifier "${identifier}" is UUID version ${version}. ` +
+          `Only UUID version ${MIN_UUID_VERSION} or higher is allowed.`,
+      );
+    }
+  }
+
+  return errors;
+};
+
 export const manifestValidate = (manifest: Manifest) => {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  const duplicates = extractDuplicates(findUniversalIdentifiers(manifest));
+  const universalIdentifiers = findUniversalIdentifiers(manifest);
+
+  const duplicates = extractDuplicates(universalIdentifiers);
 
   if (duplicates.length > 0) {
     errors.push(`Duplicate universal identifiers: ${duplicates.join(', ')}`);
+  }
+
+  const invalidUniversalIdentifiers =
+    invalidUniversalIdentifierVersions(universalIdentifiers);
+
+  if (invalidUniversalIdentifiers.length > 0) {
+    errors.push(
+      `Duplicate universal identifiers: ${invalidUniversalIdentifiers.join(', ')}`,
+    );
   }
 
   if (!isNonEmptyArray(manifest.objects)) {

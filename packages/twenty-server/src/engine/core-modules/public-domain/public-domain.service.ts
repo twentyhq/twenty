@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { isDefined } from 'twenty-shared/utils';
 import { Repository } from 'typeorm';
 import { type QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
+import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import { DnsManagerService } from 'src/engine/core-modules/dns-manager/services/dns-manager.service';
 import { PublicDomainDTO } from 'src/engine/core-modules/public-domain/dtos/public-domain.dto';
 import { PublicDomainEntity } from 'src/engine/core-modules/public-domain/public-domain.entity';
@@ -14,15 +16,22 @@ import {
 } from 'src/engine/core-modules/public-domain/public-domain.exception';
 import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.entity';
 import { DomainValidRecords } from 'src/engine/core-modules/dns-manager/dtos/domain-valid-records';
-
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 @Injectable()
 export class PublicDomainService {
   constructor(
     private readonly dnsManagerService: DnsManagerService,
+    @InjectWorkspaceScopedRepository(PublicDomainEntity)
+    private readonly publicDomainRepository: WorkspaceScopedRepository<PublicDomainEntity>,
+    // Hostname-to-workspace resolution at request-routing time, before workspace context exists.
+    // eslint-disable-next-line twenty/prefer-workspace-scoped-repository
     @InjectRepository(PublicDomainEntity)
-    private readonly publicDomainRepository: Repository<PublicDomainEntity>,
+    private readonly publicDomainRepositoryUnscoped: Repository<PublicDomainEntity>,
     @InjectRepository(WorkspaceEntity)
     private readonly workspaceRepository: Repository<WorkspaceEntity>,
+    @InjectRepository(ApplicationEntity)
+    private readonly applicationRepository: Repository<ApplicationEntity>,
   ) {}
 
   async deletePublicDomain({
@@ -38,26 +47,37 @@ export class PublicDomainService {
       isPublicDomain: true,
     });
 
-    await this.publicDomainRepository.delete({
+    await this.publicDomainRepository.delete(workspace.id, {
       domain: formattedDomain,
-      workspaceId: workspace.id,
     });
   }
 
   async createPublicDomain({
     domain,
     workspace,
+    applicationId,
   }: {
     domain: string;
     workspace: WorkspaceEntity;
+    applicationId: string | null;
   }): Promise<PublicDomainDTO> {
     const formattedDomain = domain.trim().toLowerCase();
 
-    if (
-      await this.workspaceRepository.findOneBy({
-        customDomain: formattedDomain,
-      })
-    ) {
+    const [workspaceWithCustomDomain, existingPublicDomain, application] =
+      await Promise.all([
+        this.workspaceRepository.findOneBy({ customDomain: formattedDomain }),
+        this.publicDomainRepository.findOne(workspace.id, {
+          where: { domain: formattedDomain },
+        }),
+        isDefined(applicationId)
+          ? this.applicationRepository.findOneBy({
+              id: applicationId,
+              workspaceId: workspace.id,
+            })
+          : Promise.resolve(null),
+      ]);
+
+    if (isDefined(workspaceWithCustomDomain)) {
       throw new PublicDomainException(
         'Domain already used for workspace custom domain',
         PublicDomainExceptionCode.DOMAIN_ALREADY_REGISTERED_AS_CUSTOM_DOMAIN,
@@ -67,12 +87,7 @@ export class PublicDomainService {
       );
     }
 
-    if (
-      await this.publicDomainRepository.findOneBy({
-        domain: formattedDomain,
-        workspaceId: workspace.id,
-      })
-    ) {
+    if (isDefined(existingPublicDomain)) {
       throw new PublicDomainException(
         'Public domain already registered',
         PublicDomainExceptionCode.PUBLIC_DOMAIN_ALREADY_REGISTERED,
@@ -82,10 +97,18 @@ export class PublicDomainService {
       );
     }
 
-    const publicDomain = this.publicDomainRepository.create({
+    if (isDefined(applicationId) && !isDefined(application)) {
+      throw new PublicDomainException(
+        'Application not found in this workspace',
+        PublicDomainExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    const publicDomain = {
       domain: formattedDomain,
       workspaceId: workspace.id,
-    });
+      applicationId,
+    } as PublicDomainEntity;
 
     await this.dnsManagerService.registerHostname(formattedDomain, {
       isPublicDomain: true,
@@ -93,9 +116,8 @@ export class PublicDomainService {
 
     try {
       await this.publicDomainRepository.insert(
-        publicDomain as QueryDeepPartialEntity<
-          Omit<PublicDomainEntity, 'workspace'>
-        >,
+        workspace.id,
+        publicDomain as QueryDeepPartialEntity<PublicDomainEntity>,
       );
     } catch (error) {
       await this.dnsManagerService.deleteHostnameSilently(formattedDomain, {
@@ -106,6 +128,48 @@ export class PublicDomainService {
     }
 
     return publicDomain;
+  }
+
+  async updatePublicDomainApplication({
+    domain,
+    workspace,
+    applicationId,
+  }: {
+    domain: string;
+    workspace: WorkspaceEntity;
+    applicationId: string | null;
+  }): Promise<PublicDomainDTO> {
+    const formattedDomain = domain.trim().toLowerCase();
+
+    const [publicDomain, application] = await Promise.all([
+      this.publicDomainRepository.findOne(workspace.id, {
+        where: { domain: formattedDomain },
+      }),
+      isDefined(applicationId)
+        ? this.applicationRepository.findOneBy({
+            id: applicationId,
+            workspaceId: workspace.id,
+          })
+        : Promise.resolve(null),
+    ]);
+
+    if (!isDefined(publicDomain)) {
+      throw new PublicDomainException(
+        `Public domain ${domain} not found`,
+        PublicDomainExceptionCode.PUBLIC_DOMAIN_NOT_FOUND,
+      );
+    }
+
+    if (isDefined(applicationId) && !isDefined(application)) {
+      throw new PublicDomainException(
+        'Application not found in this workspace',
+        PublicDomainExceptionCode.APPLICATION_NOT_FOUND,
+      );
+    }
+
+    publicDomain.applicationId = applicationId;
+
+    return this.publicDomainRepository.save(workspace.id, publicDomain);
   }
 
   async checkPublicDomainValidRecords(
@@ -131,13 +195,16 @@ export class PublicDomainService {
     if (publicDomain.isValidated !== isCustomDomainWorking) {
       publicDomain.isValidated = isCustomDomainWorking;
 
-      await this.publicDomainRepository.save(publicDomain);
+      await this.publicDomainRepository.save(
+        publicDomain.workspaceId,
+        publicDomain,
+      );
     }
 
     return publicDomainWithRecords;
   }
 
   async findByDomain(domain: string) {
-    return this.publicDomainRepository.findOne({ where: { domain } });
+    return this.publicDomainRepositoryUnscoped.findOne({ where: { domain } });
   }
 }

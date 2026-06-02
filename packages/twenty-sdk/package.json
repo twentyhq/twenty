@@ -1,9 +1,7 @@
 {
   "name": "twenty-sdk",
-  "version": "0.8.0-canary.8",
-  "main": "dist/index.cjs",
-  "module": "dist/index.mjs",
-  "types": "dist/sdk/index.d.ts",
+  "version": "2.9.0",
+  "sideEffects": false,
   "bin": {
     "twenty": "dist/cli.cjs"
   },
@@ -24,10 +22,30 @@
     "development"
   ],
   "exports": {
-    ".": {
-      "types": "./dist/sdk/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
+    "./billing": {
+      "types": "./dist/billing/index.d.ts",
+      "import": "./dist/billing/index.mjs",
+      "require": "./dist/billing/index.cjs"
+    },
+    "./define": {
+      "types": "./dist/define/index.d.ts",
+      "import": "./dist/define/index.mjs",
+      "require": "./dist/define/index.cjs"
+    },
+    "./front-component": {
+      "types": "./dist/front-component/index.d.ts",
+      "import": "./dist/front-component/index.mjs",
+      "require": "./dist/front-component/index.cjs"
+    },
+    "./logic-function": {
+      "types": "./dist/logic-function/index.d.ts",
+      "import": "./dist/logic-function/index.mjs",
+      "require": "./dist/logic-function/index.cjs"
+    },
+    "./utils": {
+      "types": "./dist/utils/index.d.ts",
+      "import": "./dist/utils/index.mjs",
+      "require": "./dist/utils/index.cjs"
     },
     "./ui": {
       "types": "./dist/ui/index.d.ts",
@@ -71,7 +89,7 @@
     "react-dom": "^19.0.0",
     "tinyglobby": "^0.2.15",
     "twenty-client-sdk": "workspace:*",
-    "typescript": "^5.9.2",
+    "typescript": "^5.9.3",
     "uuid": "^13.0.0",
     "vite": "^7.0.0",
     "vite-tsconfig-paths": "^4.2.1",
@@ -83,7 +101,12 @@
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "@typescript/native-preview": "^7.0.0-dev.20260116.1",
+    "@vitest/coverage-v8": "^4.0.18",
+    "prettier": "^3.1.1",
+    "rollup-plugin-dts": "^6.4.1",
     "ts-morph": "^25.0.0",
+    "tsc-alias": "^1.8.16",
     "tsx": "^4.7.0",
     "twenty-shared": "workspace:*",
     "twenty-ui": "workspace:*",
@@ -96,6 +119,21 @@
   },
   "typesVersions": {
     "*": {
+      "billing": [
+        "dist/billing/index.d.ts"
+      ],
+      "define": [
+        "dist/define/index.d.ts"
+      ],
+      "front-component": [
+        "dist/front-component/index.d.ts"
+      ],
+      "logic-function": [
+        "dist/logic-function/index.d.ts"
+      ],
+      "utils": [
+        "dist/utils/index.d.ts"
+      ],
       "cli": [
         "dist/cli/operations/index.d.ts"
       ],

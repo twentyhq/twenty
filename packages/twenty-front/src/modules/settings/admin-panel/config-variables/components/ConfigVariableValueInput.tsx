@@ -5,7 +5,7 @@ import { TextInput } from '@/ui/input/components/TextInput';
 import { styled } from '@linaria/react';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { type ConfigVariableValue } from 'twenty-shared/types';
-import { type ConfigVariable } from '~/generated-metadata/graphql';
+import { type ConfigVariable } from '~/generated-admin/graphql';
 import { ConfigVariableDatabaseInput } from './ConfigVariableDatabaseInput';
 
 type ConfigVariableValueInputProps = {
@@ -41,7 +41,11 @@ export const ConfigVariableValueInput = ({
           options={variable.options}
           disabled={disabled}
           placeholder={
-            disabled ? t`Undefined` : t`Enter a value to store in database`
+            disabled
+              ? t`Undefined`
+              : variable.isSensitive
+                ? t`Enter a new secret value`
+                : t`Enter a value to store in database`
           }
         />
       ) : (

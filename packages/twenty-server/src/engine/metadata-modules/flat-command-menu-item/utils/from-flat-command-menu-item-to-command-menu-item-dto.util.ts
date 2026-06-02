@@ -13,12 +13,14 @@ export const fromFlatCommandMenuItemToCommandMenuItemDto = (
   shortLabel: flatCommandMenuItem.shortLabel ?? undefined,
   position: flatCommandMenuItem.position,
   isPinned: flatCommandMenuItem.isPinned,
+  payload: flatCommandMenuItem.payload ?? undefined,
   hotKeys: flatCommandMenuItem.hotKeys ?? undefined,
   availabilityType: flatCommandMenuItem.availabilityType,
   conditionalAvailabilityExpression:
     flatCommandMenuItem.conditionalAvailabilityExpression ?? undefined,
   availabilityObjectMetadataId:
     flatCommandMenuItem.availabilityObjectMetadataId ?? undefined,
+  pageLayoutId: flatCommandMenuItem.pageLayoutId ?? undefined,
   workspaceId: flatCommandMenuItem.workspaceId,
   applicationId: flatCommandMenuItem.applicationId ?? undefined,
   createdAt: new Date(flatCommandMenuItem.createdAt),

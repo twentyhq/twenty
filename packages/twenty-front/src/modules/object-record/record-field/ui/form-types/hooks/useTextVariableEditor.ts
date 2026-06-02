@@ -6,7 +6,8 @@ import Paragraph from '@tiptap/extension-paragraph';
 import Text from '@tiptap/extension-text';
 import { Placeholder } from '@tiptap/extensions/placeholder';
 import { UndoRedo } from '@tiptap/extensions/undo-redo';
-import { AllSelection, TextSelection } from '@tiptap/pm/state';
+import { Slice } from '@tiptap/pm/model';
+
 import { type Editor, useEditor } from '@tiptap/react';
 import { isDefined, parseJson } from 'twenty-shared/utils';
 import { type JsonValue } from 'type-fest';
@@ -83,40 +84,46 @@ export const useTextVariableEditor = ({
         }
         return false;
       },
-      handlePaste: (view, _, slice) => {
-        try {
-          const {
-            state: { schema, tr },
-          } = view;
-          const originalPos = tr.selection.from;
-          const pastedText = slice.content.firstChild?.textContent ?? '';
+      handlePaste: (view, event) => {
+        const plainText = event.clipboardData?.getData('text/plain') ?? '';
+        const {
+          state: { schema, tr },
+        } = view;
 
-          // Apply the clipboard text to the document without formatting
-          tr.replaceSelection(slice);
-
-          const newPos = tr.selection.from;
-
-          // Parse the entire document content as JSON and create formatted document node
-          const parsedJson = parseJson<JsonValue>(tr.doc.textContent);
-          const formattedJson = JSON.stringify(parsedJson, null, 2);
-          const formattedDocNode = schema.nodeFromJSON(
+        // Format pasted JSON content with pretty-printing
+        if (isJsonObject(plainText)) {
+          const parsedJson = parseJson<JsonValue>(plainText);
+          const formattedJson = multiline
+            ? JSON.stringify(parsedJson, null, 2)
+            : JSON.stringify(parsedJson);
+          const docNode = schema.nodeFromJSON(
             getInitialEditorContent(formattedJson),
           );
+          const inlineContent = docNode.firstChild?.content;
 
-          // Replace entire document with formatted JSON
-          const rootDocSelection = new AllSelection(tr.doc);
-          tr.setSelection(rootDocSelection);
-          tr.replaceSelectionWith(formattedDocNode);
-
-          // Restore cursor position based on pasted content type
-          const finalPos = isJsonObject(pastedText) ? originalPos : newPos;
-          tr.setSelection(TextSelection.create(tr.doc, finalPos));
-
-          view.dispatch(tr);
+          if (inlineContent && inlineContent.size > 0) {
+            tr.replaceSelection(new Slice(inlineContent, 0, 0));
+            view.dispatch(tr);
+          }
           return true;
-        } catch {
+        }
+
+        // In multiline mode, convert newlines to hardBreak nodes
+        if (multiline && plainText.includes('\n')) {
+          const docNode = schema.nodeFromJSON(
+            getInitialEditorContent(plainText),
+          );
+          const inlineContent = docNode.firstChild?.content;
+
+          if (inlineContent && inlineContent.size > 0) {
+            tr.replaceSelection(new Slice(inlineContent, 0, 0));
+            view.dispatch(tr);
+            return true;
+          }
           return false;
         }
+
+        return false;
       },
     },
     enableInputRules: false,

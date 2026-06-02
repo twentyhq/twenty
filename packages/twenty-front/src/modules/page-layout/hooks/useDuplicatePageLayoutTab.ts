@@ -1,8 +1,10 @@
+import { useDuplicateFieldsWidgetForPageLayout } from '@/page-layout/hooks/useDuplicateFieldsWidgetForPageLayout';
 import { PageLayoutComponentInstanceContext } from '@/page-layout/states/contexts/PageLayoutComponentInstanceContext';
 import { pageLayoutCurrentLayoutsComponentState } from '@/page-layout/states/pageLayoutCurrentLayoutsComponentState';
 import { pageLayoutDraftComponentState } from '@/page-layout/states/pageLayoutDraftComponentState';
 import { pageLayoutTabSettingsOpenTabIdComponentState } from '@/page-layout/states/pageLayoutTabSettingsOpenTabIdComponentState';
 import { type PageLayoutTab } from '@/page-layout/types/PageLayoutTab';
+import { type PageLayoutWidget } from '@/page-layout/types/PageLayoutWidget';
 import { generateDuplicatedTimestamps } from '@/page-layout/utils/generateDuplicatedTimestamps';
 import { sortTabsByPosition } from '@/page-layout/utils/sortTabsByPosition';
 import { useSidePanelMenu } from '@/side-panel/hooks/useSidePanelMenu';
@@ -56,13 +58,19 @@ export const useDuplicatePageLayoutTab = ({
 
   const { closeSidePanelMenu } = useSidePanelMenu();
 
+  const { duplicateFieldsWidget } = useDuplicateFieldsWidgetForPageLayout({
+    pageLayoutId,
+  });
+
   const duplicateTab = useCallback(
     (tabId: string): string => {
       const currentPageLayoutDraft = store.get(pageLayoutDraft);
 
       const allTabLayouts = store.get(pageLayoutCurrentLayouts);
 
-      const sourceTab = currentPageLayoutDraft.tabs.find((t) => t.id === tabId);
+      const sourceTab = currentPageLayoutDraft.tabs.find(
+        (tab) => tab.id === tabId,
+      );
 
       if (!isDefined(sourceTab)) {
         throw new Error(`Tab with id ${tabId} not found`);
@@ -71,17 +79,32 @@ export const useDuplicatePageLayoutTab = ({
       const newTabId = uuidv4();
       const widgetOldIdNewIdMap = new Map<string, string>();
 
-      const clonedWidgets = sourceTab.widgets.map((widget) => {
-        const newWidgetId = uuidv4();
-        widgetOldIdNewIdMap.set(widget.id, newWidgetId);
+      const clonedWidgets: PageLayoutWidget[] = sourceTab.widgets.map(
+        (widget) => {
+          const newWidgetId = uuidv4();
+          widgetOldIdNewIdMap.set(widget.id, newWidgetId);
 
-        return {
-          ...widget,
-          id: newWidgetId,
-          pageLayoutTabId: newTabId,
-          ...generateDuplicatedTimestamps(),
-        };
-      });
+          const fieldsWidgetCopyResult = duplicateFieldsWidget({
+            sourceWidget: widget,
+            newWidgetId,
+          });
+
+          const clonedConfiguration = isDefined(fieldsWidgetCopyResult)
+            ? {
+                ...widget.configuration,
+                viewId: fieldsWidgetCopyResult.newViewId,
+              }
+            : widget.configuration;
+
+          return {
+            ...widget,
+            id: newWidgetId,
+            pageLayoutTabId: newTabId,
+            configuration: clonedConfiguration,
+            ...generateDuplicatedTimestamps(),
+          };
+        },
+      );
 
       const sortedTabs = sortTabsByPosition(currentPageLayoutDraft.tabs);
       const sourceIndex = sortedTabs.findIndex((t) => t.id === tabId);
@@ -144,6 +167,7 @@ export const useDuplicatePageLayoutTab = ({
     },
     [
       closeSidePanelMenu,
+      duplicateFieldsWidget,
       navigatePageLayoutSidePanel,
       pageLayoutCurrentLayouts,
       pageLayoutDraft,

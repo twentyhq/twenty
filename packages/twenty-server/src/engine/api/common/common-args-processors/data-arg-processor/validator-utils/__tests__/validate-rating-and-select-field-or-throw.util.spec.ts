@@ -32,14 +32,16 @@ describe('validateRatingAndSelectFieldOrThrow', () => {
       ).toThrow('Invalid options for field "testField"');
     });
 
-    it('should throw when value is not in the options list', () => {
+    it('should throw when value is not in the options list and include valid options in error', () => {
       expect(() =>
         validateRatingAndSelectFieldOrThrow(
           'invalidOption',
           'testField',
           validOptions,
         ),
-      ).toThrow('Invalid value \'invalidOption\' for field "testField"');
+      ).toThrow(
+        'Invalid value "invalidOption" for field "testField". Valid values are: option1, option2, option3',
+      );
     });
 
     it('should throw when value is a number', () => {

@@ -37,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
         with:
           token: ${{ github.token }}
           repository: ${{ github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name || github.repository }}
@@ -153,8 +153,7 @@ jobs:
 
       - name: Trigger i18n automerge
         if: github.event_name != 'pull_request' && steps.check_changes.outputs.changes_detected == 'true'
-        uses: peter-evans/repository-dispatch@v2
-        with:
-          token: ${{ secrets.TWENTY_INFRA_TOKEN }}
-          repository: twentyhq/twenty-infra
-          event-type: i18n-pr-ready
+        env:
+          GH_TOKEN: ${{ secrets.TWENTY_INFRA_TOKEN }}
+        run: |
+          gh api repos/twentyhq/twenty-infra/dispatches -f event_type=i18n-pr-ready

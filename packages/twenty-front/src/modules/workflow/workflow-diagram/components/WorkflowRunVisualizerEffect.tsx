@@ -20,6 +20,7 @@ import { useStepsOutputSchema } from '@/workflow/workflow-variables/hooks/useSte
 import { useStore } from 'jotai';
 import { useCallback, useContext, useEffect } from 'react';
 import { isDefined } from 'twenty-shared/utils';
+
 import { useIcons } from 'twenty-ui/display';
 
 export const WorkflowRunVisualizerEffect = ({
@@ -68,7 +69,8 @@ export const WorkflowRunVisualizerEffect = ({
 
   const { populateStepsOutputSchema } = useStepsOutputSchema();
 
-  const { isInSidePanel } = useContext(CommandMenuContext);
+  const { commandMenuContextApi } = useContext(CommandMenuContext);
+  const isInSidePanel = commandMenuContextApi.isInSidePanel;
 
   const store = useStore();
 

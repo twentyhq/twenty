@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { ApplicationRegistrationModule } from 'src/engine/core-modules/application/application-registration/application-registration.module';
 import { ApplicationInstallModule } from 'src/engine/core-modules/application/application-install/application-install.module';
 import { MarketplaceCatalogSyncCronCommand } from 'src/engine/core-modules/application/application-marketplace/crons/commands/marketplace-catalog-sync.cron.command';
@@ -15,6 +16,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
 
 @Module({
   imports: [
+    ApplicationModule,
     ApplicationRegistrationModule,
     ApplicationInstallModule,
     FeatureFlagModule,
@@ -34,6 +36,7 @@ import { MarketplaceCatalogSyncCommand } from 'src/engine/core-modules/applicati
     MarketplaceCatalogSyncService,
     MarketplaceQueryService,
     MarketplaceCatalogSyncCronCommand,
+    MarketplaceService,
   ],
 })
 export class MarketplaceModule {}

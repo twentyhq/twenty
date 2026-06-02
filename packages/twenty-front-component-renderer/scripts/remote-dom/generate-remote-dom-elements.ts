@@ -45,7 +45,7 @@ const getHtmlElementSchemas = (): ComponentSchema[] => {
     events: element.events
       ? [...COMMON_HTML_EVENTS, ...element.events]
       : COMMON_HTML_EVENTS,
-    htmlTag: extractHtmlTag(element.tag),
+    htmlTag: element.htmlTag ?? extractHtmlTag(element.tag),
   }));
 };
 
