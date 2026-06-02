@@ -1,0 +1,50 @@
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-preferences-page.util.ts
+  s_f8abe41f952d82::t_5854546f5306a9 2-10,12-34,36
+  s_f8abe41f952d82::t_db743055babf16 35
+  s_f8abe41f952d82::t_fb36c02b2cb0ad 1
+  s_f8abe41f952d82::t_8a056047246eed 11
+packages/twenty-server/src/engine/core-modules/emailing-domain/controllers/unsubscribe.controller.ts
+  s_4a10800c36ffe6::t_ed120dd44f676d 143
+  s_f8abe41f952d82::t_d23183875a8b9b 3,17-20,23-24,30-39,54-56,60-62,64-74,77-121,132-137,151-154
+  s_f8abe41f952d82::t_0f02985debae46 49-50
+packages/twenty-server/src/engine/core-modules/emailing-domain/types/subscribed-topic.type.ts
+  s_f8abe41f952d82::t_457476bd252fb0 1-4
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/escape-html.util.ts
+  s_f8abe41f952d82::t_c731bce72d94eb 1-10
+packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-result-page.util.ts
+  s_f8abe41f952d82::t_48c57e7cccba22 1-13
+packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-subscription.service.ts
+  s_4a10800c36ffe6::t_e99118add7e0fa 34-35,105-108
+  s_4a10800c36ffe6::t_ed120dd44f676d 20,27,33,50,64,70,79,84,93,104,232,271,308,322,350
+  s_4a10800c36ffe6::t_45efb1f6cbca83 12
+  s_f8abe41f952d82::t_9d96a1653bbc65 166-167
+  s_f8abe41f952d82::t_760af9f6f0ba20 36-44
+  s_f8abe41f952d82::t_c853ce5156df5f 8
+  s_4a10800c36ffe6::t_77a1c07039f36f 340-347,351
+  s_f8abe41f952d82::t_02b9475b8bd3cc 109-146,150-165,168-195
+  s_f8abe41f952d82::t_ff7c843a9909d6 147-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "fcab418fbaca6aba0a1603fea1e9a957aaf09241",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
+    "s_f8abe41f952d82": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "aa3d5197-fa51-4465-a27d-ec943910b4a5",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
