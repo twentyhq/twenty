@@ -1,3 +1,5 @@
+import { type MessageDescriptor } from '@lingui/core';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   type FieldMetadataComplexOption,
   type FieldMetadataDefaultOption,
@@ -5,9 +7,11 @@ import {
   type FieldMetadataSettings,
   type FieldMetadataType,
 } from 'twenty-shared/types';
-import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
+import { isDefined } from 'twenty-shared/utils';
 
+import { DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/default-relation-field-appearance.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-name.type';
 import { type StandardBuilderArgs } from 'src/engine/workspace-manager/twenty-standard-application/types/metadata-standard-buillder-args.type';
@@ -28,9 +32,11 @@ export type CreateStandardMorphOrRelationFieldContext<
 > = {
   type: F;
   fieldName: AllStandardObjectFieldName<O>;
-  label: string;
+  // label/icon are optional for default relation targets (note/task/attachment/
+  // timeline): when omitted they fall back to the shared canonical appearance.
+  label?: string;
   description: string;
-  icon: string;
+  icon?: string;
   targetObjectName: T;
   targetFieldName: AllStandardObjectFieldName<T>;
   isNullable?: boolean;
@@ -85,6 +91,26 @@ export const createStandardRelationFieldFlatMetadata = <
   const targetFieldDefinition =
     targetObjectFields[targetFieldName as keyof typeof targetObjectFields];
 
+  const defaultAppearance = (
+    DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT as Record<
+      string,
+      { label: MessageDescriptor; icon: string } | undefined
+    >
+  )[targetObjectName];
+
+  const resolvedLabel =
+    label ??
+    (isDefined(defaultAppearance)
+      ? i18nLabel(defaultAppearance.label)
+      : undefined);
+  const resolvedIcon = icon ?? defaultAppearance?.icon;
+
+  if (!isDefined(resolvedLabel) || !isDefined(resolvedIcon)) {
+    throw new Error(
+      `Relation field "${objectName}.${fieldName.toString()}" must define a label and icon (no canonical default for target "${targetObjectName}")`,
+    );
+  }
+
   return {
     id: fieldIds[fieldName as keyof typeof fieldIds].id,
     universalIdentifier: fieldDefinition.universalIdentifier,
@@ -93,9 +119,9 @@ export const createStandardRelationFieldFlatMetadata = <
     objectMetadataId: standardObjectMetadataRelatedEntityIds[objectName].id,
     type,
     name: fieldName.toString(),
-    label,
+    label: resolvedLabel,
     description,
-    icon,
+    icon: resolvedIcon,
     isCustom: false,
     isActive: true,
     isSystem: false,
