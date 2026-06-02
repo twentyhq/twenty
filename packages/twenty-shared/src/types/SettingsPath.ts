@@ -66,7 +66,7 @@ export enum SettingsPath {
   NewWebhook = 'api-webhooks/webhooks/new',
   WebhookDetail = 'api-webhooks/webhooks/:webhookId',
   Integrations = 'integrations',
-  Security = 'security',
+  Security = 'general#security',
   NewSSOIdentityProvider = 'security/sso/new',
   EventLogs = 'security/event-logs',
 

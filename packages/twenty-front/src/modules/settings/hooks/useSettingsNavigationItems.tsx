@@ -124,6 +124,16 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Workspace,
           Icon: IconSettings,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          subItems: [
+            {
+              label: t`Security`,
+              path: SettingsPath.Security,
+              Icon: IconKey,
+              isAdvanced: true,
+              isHidden: !permissionMap[PermissionFlagType.SECURITY],
+              indentationLevel: 2,
+            },
+          ],
         },
         {
           label: t`Data model`,
@@ -184,13 +194,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden:
             !isEmailGroupFeatureEnabled ||
             !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
-          label: t`Security`,
-          path: SettingsPath.Security,
-          Icon: IconKey,
-          isAdvanced: true,
-          isHidden: !permissionMap[PermissionFlagType.SECURITY],
         },
       ],
     },

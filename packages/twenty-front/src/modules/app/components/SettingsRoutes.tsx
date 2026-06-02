@@ -403,12 +403,6 @@ const SettingsObjectFieldEdit = lazy(() =>
   ),
 );
 
-const SettingsSecurity = lazy(() =>
-  import('~/pages/settings/security/SettingsSecurity').then((module) => ({
-    default: module.SettingsSecurity,
-  })),
-);
-
 const SettingsSecuritySSOIdentifyProvider = lazy(() =>
   import('~/pages/settings/security/SettingsSecuritySSOIdentifyProvider').then(
     (module) => ({
@@ -901,7 +895,6 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Security} element={<SettingsSecurity />} />
         <Route
           path={SettingsPath.NewSSOIdentityProvider}
           element={<SettingsSecuritySSOIdentifyProvider />}
