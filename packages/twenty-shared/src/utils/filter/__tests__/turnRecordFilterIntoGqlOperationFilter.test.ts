@@ -1045,10 +1045,8 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       expect(result).toHaveProperty('companyId.in');
     });
 
-    // A relation target field compiles to a single-hop foreign-key compare on
-    // the already-joined table (company.accountOwnerId), never a second
-    // relation block — the backend rejects deeper `company.accountOwner.<field>`
-    // traversals.
+    // A relation leaf compiles to a single-hop FK compare on the joined table
+    // (company.accountOwnerId), not a second-hop `company.accountOwner.<field>`.
     it('should resolve a relation target field to its foreign key', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies,
@@ -1071,8 +1069,7 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
     });
 
-    // The seeded "My Pipeline" onboarding view (company.accountOwner = me)
-    // resolves the current workspace member into that same FK compare.
+    // "= me" (the current workspace member) resolves into that same FK compare.
     it('should resolve a relation target field set to the current workspace member', () => {
       const result = turnRecordFilterIntoRecordGqlOperationFilter({
         filterValueDependencies: {

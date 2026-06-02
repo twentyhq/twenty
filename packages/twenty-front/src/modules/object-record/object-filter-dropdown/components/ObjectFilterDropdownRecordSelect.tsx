@@ -39,10 +39,19 @@ type ObjectFilterDropdownRecordSelectProps = {
   dropdownId: string;
 };
 
-export const ObjectFilterDropdownRecordSelect = ({
+type ObjectFilterDropdownRecordSelectContentProps = {
+  objectNameSingular: string;
+  recordFilterId?: string;
+  dropdownId: string;
+};
+
+// Owns the record-picker hooks. Rendered only once an object to pick from has
+// been resolved, so its hooks always run in the same order.
+const ObjectFilterDropdownRecordSelectContent = ({
+  objectNameSingular,
   recordFilterId,
   dropdownId,
-}: ObjectFilterDropdownRecordSelectProps) => {
+}: ObjectFilterDropdownRecordSelectContentProps) => {
   const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
     fieldMetadataItemUsedInDropdownComponentSelector,
   );
@@ -69,13 +78,6 @@ export const ObjectFilterDropdownRecordSelect = ({
     currentRecordFiltersComponentState,
   );
 
-  const relationTargetFieldMetadataIdUsedInDropdown =
-    useAtomComponentStateValue(
-      relationTargetFieldMetadataIdUsedInDropdownComponentState,
-    );
-
-  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
-
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
       isCurrentWorkspaceMemberSelected: false,
@@ -85,51 +87,11 @@ export const ObjectFilterDropdownRecordSelect = ({
     })
     .parse(objectFilterDropdownFilterValue);
 
-  if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
-    throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
-  }
-
-  // For a nested relation filter (e.g. company → accountOwner) the records to
-  // choose from belong to the leaf relation's target object (WorkspaceMember),
-  // not the source relation's object (Company). Only a direct relation filter
-  // (no leaf) falls back to the source field; a leaf that is set but cannot be
-  // resolved must not load records from the source object.
-  const relationTargetFieldMetadataItem = isDefined(
-    relationTargetFieldMetadataIdUsedInDropdown,
-  )
-    ? getFieldMetadataItemById({
-        fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
-        objectMetadataItems,
-      }).fieldMetadataItem
-    : undefined;
-
-  const effectiveFieldMetadataItem = isDefined(
-    relationTargetFieldMetadataIdUsedInDropdown,
-  )
-    ? relationTargetFieldMetadataItem
-    : fieldMetadataItemUsedInFilterDropdown;
-
-  if (!isDefined(effectiveFieldMetadataItem)) {
-    throw new Error('effectiveFieldMetadataItem is not defined');
-  }
-
-  const objectNameSingular = getRelationObjectMetadataNameSingular({
-    field: effectiveFieldMetadataItem,
-  });
-
-  if (!isDefined(objectNameSingular)) {
-    throw new Error('relationObjectMetadataNameSingular is not defined');
-  }
-
   const { objectMetadataItem } = useObjectMetadataItem({
     objectNameSingular,
   });
 
   const objectLabelPlural = objectMetadataItem?.labelPlural;
-
-  if (!isDefined(objectNameSingular)) {
-    throw new Error('objectNameSingular is not defined');
-  }
 
   const firstSimpleRecordFilterForFieldMetadataItemUsedInDropdown =
     currentRecordFilters.find(
@@ -274,5 +236,62 @@ export const ObjectFilterDropdownRecordSelect = ({
         loadingItems={loading}
       />
     </>
+  );
+};
+
+export const ObjectFilterDropdownRecordSelect = ({
+  recordFilterId,
+  dropdownId,
+}: ObjectFilterDropdownRecordSelectProps) => {
+  const fieldMetadataItemUsedInFilterDropdown = useAtomComponentSelectorValue(
+    fieldMetadataItemUsedInDropdownComponentSelector,
+  );
+
+  const relationTargetFieldMetadataIdUsedInDropdown =
+    useAtomComponentStateValue(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
+  if (!isDefined(fieldMetadataItemUsedInFilterDropdown)) {
+    throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
+  }
+
+  // Nested relation filters pick records from the leaf relation's target object
+  // (company → accountOwner ⇒ WorkspaceMember); direct filters use the source.
+  const relationTargetFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? getFieldMetadataItemById({
+        fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
+        objectMetadataItems,
+      }).fieldMetadataItem
+    : undefined;
+
+  const effectiveFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? relationTargetFieldMetadataItem
+    : fieldMetadataItemUsedInFilterDropdown;
+
+  const objectNameSingular = isDefined(effectiveFieldMetadataItem)
+    ? getRelationObjectMetadataNameSingular({
+        field: effectiveFieldMetadataItem,
+      })
+    : undefined;
+
+  // A stale filter whose relation-target field was deleted can't resolve an
+  // object to pick records from — render nothing rather than crash.
+  if (!isDefined(objectNameSingular)) {
+    return null;
+  }
+
+  return (
+    <ObjectFilterDropdownRecordSelectContent
+      objectNameSingular={objectNameSingular}
+      recordFilterId={recordFilterId}
+      dropdownId={dropdownId}
+    />
   );
 };
