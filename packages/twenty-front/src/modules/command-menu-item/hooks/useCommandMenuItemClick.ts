@@ -56,7 +56,7 @@ export const useCommandMenuItemClick = ({
   const closeBehavior = shouldMountCommand
     ? ({
         closeSidePanelOnShowPageOptionsExecution: false,
-        closeSidePanelOnCommandMenuListExecution: false,
+        closeSidePanelOnCommandMenuListExecution: !item.isPinned,
       } as const)
     : ({} as const);
 
