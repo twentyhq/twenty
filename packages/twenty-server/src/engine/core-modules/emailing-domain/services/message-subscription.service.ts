@@ -5,9 +5,11 @@ import { In } from 'typeorm';
 
 import { MessageSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/message-subscription-source.type';
 import { MessageSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/message-subscription-status.type';
+import { type SubscribedTopic } from 'src/engine/core-modules/emailing-domain/types/subscribed-topic.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-subscription.workspace-entity';
+import { MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -15,26 +17,37 @@ import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/perso
 type SubscribeArgs = {
   workspaceId: string;
   personId: string;
-  listId: string;
+  topicId: string;
   source?: MessageSubscriptionSource;
 };
 
 type UnsubscribeArgs = {
   workspaceId: string;
   personId: string;
-  listId: string;
+  topicId: string;
 };
 
 type UnsubscribeByEmailArgs = {
   workspaceId: string;
   emailAddress: string;
-  listId: string;
+  topicId: string;
+};
+
+type SubscribedTopicsArgs = {
+  workspaceId: string;
+  emailAddress: string;
+};
+
+type SetSubscribedTopicsArgs = {
+  workspaceId: string;
+  emailAddress: string;
+  subscribedTopicIds: string[];
 };
 
 type UpsertSubscriptionStatusArgs = {
   workspaceId: string;
   personId: string;
-  listId: string;
+  topicId: string;
   status: MessageSubscriptionStatus;
   source: MessageSubscriptionSource;
 };
@@ -48,13 +61,13 @@ export class MessageSubscriptionService {
   async subscribe({
     workspaceId,
     personId,
-    listId,
+    topicId,
     source = MessageSubscriptionSource.MANUAL,
   }: SubscribeArgs): Promise<void> {
     await this.upsertSubscriptionStatus({
       workspaceId,
       personId,
-      listId,
+      topicId,
       status: MessageSubscriptionStatus.SUBSCRIBED,
       source,
     });
@@ -63,12 +76,12 @@ export class MessageSubscriptionService {
   async unsubscribe({
     workspaceId,
     personId,
-    listId,
+    topicId,
   }: UnsubscribeArgs): Promise<void> {
     await this.upsertSubscriptionStatus({
       workspaceId,
       personId,
-      listId,
+      topicId,
       status: MessageSubscriptionStatus.UNSUBSCRIBED,
       source: MessageSubscriptionSource.MANUAL,
     });
@@ -77,7 +90,7 @@ export class MessageSubscriptionService {
   async unsubscribeByEmail({
     workspaceId,
     emailAddress,
-    listId,
+    topicId,
   }: UnsubscribeByEmailArgs): Promise<boolean> {
     const personId = await this.resolvePersonIdByEmail(
       workspaceId,
@@ -88,7 +101,98 @@ export class MessageSubscriptionService {
       return false;
     }
 
-    await this.unsubscribe({ workspaceId, personId, listId });
+    await this.unsubscribe({ workspaceId, personId, topicId });
+
+    return true;
+  }
+
+  async getSubscribedTopics({
+    workspaceId,
+    emailAddress,
+  }: SubscribedTopicsArgs): Promise<SubscribedTopic[]> {
+    const personId = await this.resolvePersonIdByEmail(
+      workspaceId,
+      emailAddress,
+    );
+
+    if (!isDefined(personId)) {
+      return [];
+    }
+
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const subscriptionRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            MessageSubscriptionWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const subscriptions = await subscriptionRepository.find({
+          where: { personId, status: MessageSubscriptionStatus.SUBSCRIBED },
+        });
+
+        if (!isNonEmptyArray(subscriptions)) {
+          return [];
+        }
+
+        const topicRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
+            workspaceId,
+            MessageTopicWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
+          );
+
+        const topics = await topicRepository.find({
+          where: {
+            id: In(subscriptions.map((subscription) => subscription.topicId)),
+          },
+        });
+
+        const topicNameById = new Map(
+          topics.map((topic) => [topic.id, topic.name]),
+        );
+
+        return subscriptions.map((subscription) => ({
+          topicId: subscription.topicId,
+          topicName:
+            topicNameById.get(subscription.topicId) ?? subscription.topicName,
+        }));
+      },
+      buildSystemAuthContext(workspaceId),
+    );
+  }
+
+  // Public preference page can only narrow delivery: topics outside the
+  // current subscribed set are ignored, never newly subscribed.
+  async setSubscribedTopics({
+    workspaceId,
+    emailAddress,
+    subscribedTopicIds,
+  }: SetSubscribedTopicsArgs): Promise<boolean> {
+    const personId = await this.resolvePersonIdByEmail(
+      workspaceId,
+      emailAddress,
+    );
+
+    if (!isDefined(personId)) {
+      return false;
+    }
+
+    const keptTopicIds = new Set(subscribedTopicIds);
+
+    const currentlySubscribedTopics = await this.getSubscribedTopics({
+      workspaceId,
+      emailAddress,
+    });
+
+    const topicIdsToUnsubscribe = currentlySubscribedTopics
+      .map((topic) => topic.topicId)
+      .filter((topicId) => !keptTopicIds.has(topicId));
+
+    for (const topicId of topicIdsToUnsubscribe) {
+      await this.unsubscribe({ workspaceId, personId, topicId });
+    }
 
     return true;
   }
@@ -125,7 +229,7 @@ export class MessageSubscriptionService {
   async getAddressesUnsubscribedFromList(
     workspaceId: string,
     emailAddresses: string[],
-    listId: string,
+    topicId: string,
   ): Promise<Set<string>> {
     const normalizedAddresses = [
       ...new Set(
@@ -164,7 +268,7 @@ export class MessageSubscriptionService {
 
         const unsubscribedSubscriptions = await subscriptionRepository.find({
           where: {
-            listId,
+            topicId,
             personId: In(matchedPeople.map((person) => person.id)),
             status: MessageSubscriptionStatus.UNSUBSCRIBED,
           },
@@ -201,7 +305,7 @@ export class MessageSubscriptionService {
   private async upsertSubscriptionStatus({
     workspaceId,
     personId,
-    listId,
+    topicId,
     status,
     source,
   }: UpsertSubscriptionStatusArgs): Promise<void> {
@@ -215,7 +319,7 @@ export class MessageSubscriptionService {
 
       const existingSubscription = await subscriptionRepository.findOneBy({
         personId,
-        listId,
+        topicId,
       });
 
       const now = new Date();
@@ -233,9 +337,18 @@ export class MessageSubscriptionService {
         return;
       }
 
+      const topicRepository =
+        await this.globalWorkspaceOrmManager.getRepository(
+          workspaceId,
+          MessageTopicWorkspaceEntity,
+          { shouldBypassPermissionChecks: true },
+        );
+      const topic = await topicRepository.findOneBy({ id: topicId });
+
       await subscriptionRepository.insert({
         personId,
-        listId,
+        topicId,
+        topicName: topic?.name ?? null,
         status,
         source,
         ...statusChangeTimestamp,
