@@ -11,8 +11,6 @@ import { type JSX, type ReactNode } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-const SETTINGS_CONTENT_MAX_WIDTH = 760;
-
 type SettingsPageLayoutProps = {
   links: BreadcrumbProps['links'];
   title?: ReactNode;
@@ -56,8 +54,6 @@ const StyledBodyContent = styled.div`
   display: flex;
   flex: 1;
   flex-direction: column;
-  margin: 0 auto;
-  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
   min-height: 0;
   width: 100%;
 `;
