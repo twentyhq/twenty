@@ -12,15 +12,15 @@ const SANDBOX_DENYLIST = [
   'allow-popups-to-escape-sandbox',
 ];
 
-type ExpectSandboxSanitizedParams = {
+type ExpectStorybookIframeSandboxSanitizedParams = {
   canvas: Canvas;
   timeout?: number;
 };
 
-export const expectSandboxSanitized = async ({
+export const expectStorybookIframeSandboxSanitized = async ({
   canvas,
   timeout = INTERACTION_TIMEOUT,
-}: ExpectSandboxSanitizedParams): Promise<void> => {
+}: ExpectStorybookIframeSandboxSanitizedParams): Promise<void> => {
   await waitFor(
     () => {
       const subject = canvas.queryByTestId('subject');

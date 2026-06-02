@@ -7,7 +7,7 @@ import {
   resetFrontComponentStoryMocks,
 } from '@/__stories__/shared/test-utils/createFrontComponentStoryMeta';
 import { expectFrontComponentMounted } from '@/__stories__/shared/test-utils/matchers/expectFrontComponentMounted';
-import { expectSandboxSanitized } from '@/__stories__/shared/test-utils/matchers/expectSandboxSanitized';
+import { expectStorybookIframeSandboxSanitized } from '@/__stories__/shared/test-utils/matchers/expectStorybookIframeSandboxSanitized';
 import { runFrontComponentStory } from '@/__stories__/shared/test-utils/runFrontComponentStory';
 
 const meta: Meta<typeof FrontComponentRenderer> = {
@@ -27,7 +27,7 @@ export const Dangerous = runFrontComponentStory({
 
     await expectFrontComponentMounted(canvas);
 
-    await expectSandboxSanitized({ canvas });
+    await expectStorybookIframeSandboxSanitized({ canvas });
   },
 });
 
@@ -38,6 +38,6 @@ export const Default = runFrontComponentStory({
 
     await expectFrontComponentMounted(canvas);
 
-    await expectSandboxSanitized({ canvas });
+    await expectStorybookIframeSandboxSanitized({ canvas });
   },
 });
