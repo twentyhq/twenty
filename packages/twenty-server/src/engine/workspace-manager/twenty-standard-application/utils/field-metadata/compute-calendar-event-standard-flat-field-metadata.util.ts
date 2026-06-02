@@ -447,4 +447,28 @@ export const buildCalendarEventStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  callRecordingCalendarEventAssociations:
+    createStandardRelationFieldFlatMetadata({
+      objectName,
+      workspaceId,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'callRecordingCalendarEventAssociations',
+        label: i18nLabel(msg`Call Recording Calendar Event Associations`),
+        description: i18nLabel(msg`Call Recording Calendar Event Associations`),
+        icon: 'IconPhone',
+        isNullable: false,
+        isUIReadOnly: true,
+        targetObjectName: 'callRecordingCalendarEventAssociation',
+        targetFieldName: 'calendarEvent',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+      standardObjectMetadataRelatedEntityIds,
+      dependencyFlatEntityMaps,
+      twentyStandardApplicationId,
+      now,
+    }),
 });

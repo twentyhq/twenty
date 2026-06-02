@@ -480,6 +480,9 @@ export const STANDARD_OBJECTS = {
       calendarEventParticipants: {
         universalIdentifier: '20202020-e07e-4ccb-88f5-6f3d00458eec',
       },
+      callRecordingCalendarEventAssociations: {
+        universalIdentifier: 'fd3e9941-202e-45bb-9c17-6ece1e625862',
+      },
       createdBy: {
         universalIdentifier: '664a9500-2641-4caa-8d95-069807bb2eb4',
       },
@@ -521,6 +524,222 @@ export const STANDARD_OBJECTS = {
           },
           createdAt: {
             universalIdentifier: '20202020-cf01-4c01-8c01-ca1ebe0caf08',
+          },
+        },
+      },
+    },
+  },
+  callRecording: {
+    universalIdentifier: 'ce19efb9-710f-45b2-b141-473abbeea60b',
+    fields: {
+      id: {
+        universalIdentifier: '9767180b-76c2-47d5-b7b9-5dc60f14391d',
+      },
+      createdAt: {
+        universalIdentifier: 'd1adb2a9-9da3-4656-93b7-db79780b77eb',
+      },
+      updatedAt: {
+        universalIdentifier: '5db0a477-5715-4ffd-bdbe-854dfaccfe22',
+      },
+      deletedAt: {
+        universalIdentifier: 'cf22a652-390a-4f55-b3a0-615c8fd8c7ed',
+      },
+      meetingOccurrenceKey: {
+        universalIdentifier: 'd6ab3ba3-2e5c-479f-87f7-ac1f856144b6',
+      },
+      status: {
+        universalIdentifier: '3e617680-d93e-4309-a54f-90f69528bfd7',
+      },
+      recordingPolicy: {
+        universalIdentifier: '562e2610-415d-418d-acd6-756252fafab4',
+      },
+      sourceApplicationId: {
+        universalIdentifier: '24ec1239-1240-42cb-8a2d-302632378e09',
+      },
+      externalBotId: {
+        universalIdentifier: '0a2da128-9bcc-488b-bc31-65318c41bdf9',
+      },
+      externalRecordingId: {
+        universalIdentifier: '6d17fb71-324b-4625-a5be-b3580607e2c7',
+      },
+      startedAt: {
+        universalIdentifier: '6c56c23f-1987-410a-860a-df3b2b3f9a33',
+      },
+      endedAt: {
+        universalIdentifier: '7a38a9cf-8424-4d6e-b80a-6883d3c662ef',
+      },
+      video: {
+        universalIdentifier: 'bb9523d3-457e-4f4b-8c79-27a77afb87da',
+      },
+      audio: {
+        universalIdentifier: '2eafc2d0-8fec-430c-a939-65ca5fbc0f08',
+      },
+      transcript: {
+        universalIdentifier: '27b86d68-57d1-4607-aca0-191896b1ad43',
+      },
+      failureReason: {
+        universalIdentifier: '3a87018e-33c3-4825-9ec3-391feafef982',
+      },
+      callRecordingCalendarEventAssociations: {
+        universalIdentifier: '87c6dd72-00e4-4a41-b2d9-991975233c6e',
+      },
+      createdBy: {
+        universalIdentifier: 'cb84ce87-ccd4-4901-9b9e-25e3cbfce3ba',
+      },
+      updatedBy: {
+        universalIdentifier: '02309262-b6dc-4cbd-936b-d851a7deec79',
+      },
+      position: {
+        universalIdentifier: 'eeae3145-3696-41ae-b0ed-1370ad35b33c',
+      },
+      searchVector: {
+        universalIdentifier: 'd6fd4ad0-4aec-4969-bdb5-945fda0fcf45',
+      },
+    },
+    indexes: {
+      meetingOccurrenceKeyIndex: {
+        universalIdentifier: '152150cd-1578-4a1a-bfff-3e5faf70b9bb',
+      },
+    },
+    views: {
+      allCallRecordings: {
+        universalIdentifier: 'c395b55e-88f0-4d5b-a1fb-0d38b50e0b19',
+        viewFields: {
+          status: {
+            universalIdentifier: '6c4a81a2-d9c1-4f82-984c-f97e083ca710',
+          },
+          meetingOccurrenceKey: {
+            universalIdentifier: 'c2a66bbe-7332-416a-a288-146d4628fa62',
+          },
+          startedAt: {
+            universalIdentifier: '3b96351f-66ed-4fa6-acb6-698647573af7',
+          },
+          createdAt: {
+            universalIdentifier: 'e6615903-559f-4e07-bf24-968e2f5b9201',
+          },
+        },
+      },
+      callRecordingRecordPageFields: {
+        universalIdentifier: '99fa8b47-3b11-4f9b-8fbc-e67a9e1da682',
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: '068426eb-dd20-49b0-ae9c-68727f3be2fb',
+          },
+          system: {
+            universalIdentifier: '605b519e-966f-4c68-9eae-c982890b53a9',
+          },
+        },
+        viewFields: {
+          meetingOccurrenceKey: {
+            universalIdentifier: '29960151-6252-4c8d-b6ec-86d63b32c7fd',
+          },
+          status: {
+            universalIdentifier: '93483569-fcd2-46cf-b576-9f0318ad2b3b',
+          },
+          startedAt: {
+            universalIdentifier: '3fd00fbb-c153-45e3-b6e6-43d18d34052a',
+          },
+          createdAt: {
+            universalIdentifier: '9f6ed763-3534-4056-bc8a-7232de052a77',
+          },
+          createdBy: {
+            universalIdentifier: '9a2f8c3b-cd79-4da0-863c-f9b6c27e8de5',
+          },
+        },
+      },
+    },
+  },
+  callRecordingCalendarEventAssociation: {
+    universalIdentifier: 'a8d62c7c-84b5-4ed7-b820-682fd2efec56',
+    fields: {
+      id: {
+        universalIdentifier: 'c1c8ea00-67cc-4deb-ba7b-429d2e605234',
+      },
+      createdAt: {
+        universalIdentifier: 'd130f30b-ec1b-4c2e-a55d-332abd77ea50',
+      },
+      updatedAt: {
+        universalIdentifier: '7366bc6c-a1db-4311-b0a7-3843a7b33618',
+      },
+      deletedAt: {
+        universalIdentifier: '5ab4ba88-dd3a-4386-b2b2-530f21366931',
+      },
+      callRecording: {
+        universalIdentifier: 'd5b8dc26-0425-47d6-9a74-7b2b317adfb8',
+      },
+      calendarEvent: {
+        universalIdentifier: 'ccc5b2fc-fb30-4aaf-a011-c9a8e89f2327',
+      },
+      calendarChannelId: {
+        universalIdentifier: 'ce85054c-d0ff-4cf1-a2c9-a8e89af4a16e',
+      },
+      eventExternalId: {
+        universalIdentifier: '419df5e9-dbfb-4065-ae39-7288d8c96460',
+      },
+      createdBy: {
+        universalIdentifier: '4c065435-28da-41f1-bfe4-abbadd666fa3',
+      },
+      updatedBy: {
+        universalIdentifier: '31e0e55e-c4e3-4908-b8cb-78178b095912',
+      },
+      position: {
+        universalIdentifier: 'f70bb4d9-137c-468d-b025-88927df952d3',
+      },
+      searchVector: {
+        universalIdentifier: '18ccefe6-0897-4954-ba35-cf2b3ff8cbfa',
+      },
+    },
+    indexes: {
+      callRecordingIdIndex: {
+        universalIdentifier: '298bed08-244b-467c-bfa8-8583c0df09fc',
+      },
+      calendarEventIdIndex: {
+        universalIdentifier: 'dc7eb900-4742-4ce9-8fa1-0acd3e5771cb',
+      },
+    },
+    views: {
+      allCallRecordingCalendarEventAssociations: {
+        universalIdentifier: 'f364d937-2dcb-4233-b271-f55d8ee0a587',
+        viewFields: {
+          callRecording: {
+            universalIdentifier: 'ddc45e66-9284-419e-81c1-7d5fe2a502d9',
+          },
+          calendarEvent: {
+            universalIdentifier: 'd73fab91-f214-4fc1-a5a6-518ac623fe4d',
+          },
+          eventExternalId: {
+            universalIdentifier: 'd55b80cb-4e1d-40d5-96f9-03da34995cc6',
+          },
+          createdAt: {
+            universalIdentifier: '05c83806-7157-4317-b25b-4aa51fc31118',
+          },
+        },
+      },
+      callRecordingCalendarEventAssociationRecordPageFields: {
+        universalIdentifier: '61ef145c-bf0f-4633-bcfe-71d55ee4dfc7',
+        viewFieldGroups: {
+          general: {
+            universalIdentifier: '21db037d-7d13-4939-834e-aac015e702ae',
+          },
+          system: {
+            universalIdentifier: '7d65517e-47f8-40c7-94dd-a4522a797570',
+          },
+        },
+        viewFields: {
+          callRecording: {
+            universalIdentifier: 'bc9f4b98-d7b3-4c20-8ad0-3023d7dfc6fd',
+          },
+          calendarEvent: {
+            universalIdentifier: '9f119924-5781-44a0-be01-918850a416c2',
+          },
+          eventExternalId: {
+            universalIdentifier: 'b0505290-f75f-41e9-831a-ac6d9b7538b1',
+          },
+          createdAt: {
+            universalIdentifier: 'd02f9b19-eabc-4569-9b83-a068f5cf0386',
+          },
+          createdBy: {
+            universalIdentifier: 'c97e0824-bb45-4eb0-b424-5baa3c16fd5d',
           },
         },
       },

@@ -154,6 +154,70 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
+  callRecording: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'callRecording'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'callRecording',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+        nameSingular: 'callRecording',
+        namePlural: 'callRecordings',
+        labelSingular: i18nLabel(msg`Call Recording`),
+        labelPlural: i18nLabel(msg`Call Recordings`),
+        description: i18nLabel(msg`A recording of a meeting`),
+        icon: 'IconPhone',
+        isSystem: true,
+        isAuditLogged: false,
+        labelIdentifierFieldMetadataName: 'meetingOccurrenceKey',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
+  callRecordingCalendarEventAssociation: ({
+    now,
+    workspaceId,
+    standardObjectMetadataRelatedEntityIds,
+    twentyStandardApplicationId,
+    dependencyFlatEntityMaps,
+  }: Omit<
+    CreateStandardObjectArgs<'callRecordingCalendarEventAssociation'>,
+    'context' | 'objectName'
+  >) =>
+    createStandardObjectFlatMetadata({
+      objectName: 'callRecordingCalendarEventAssociation',
+      dependencyFlatEntityMaps,
+      context: {
+        universalIdentifier:
+          STANDARD_OBJECTS.callRecordingCalendarEventAssociation
+            .universalIdentifier,
+        nameSingular: 'callRecordingCalendarEventAssociation',
+        namePlural: 'callRecordingCalendarEventAssociations',
+        labelSingular: i18nLabel(
+          msg`Call Recording Calendar Event Association`,
+        ),
+        labelPlural: i18nLabel(msg`Call Recording Calendar Event Associations`),
+        description: i18nLabel(msg`Call Recording Calendar Event Associations`),
+        icon: 'IconCalendar',
+        isSystem: true,
+        isAuditLogged: false,
+        labelIdentifierFieldMetadataName: 'id',
+      },
+      workspaceId,
+      standardObjectMetadataRelatedEntityIds,
+      twentyStandardApplicationId,
+      now,
+    }),
   company: ({
     now,
     workspaceId,

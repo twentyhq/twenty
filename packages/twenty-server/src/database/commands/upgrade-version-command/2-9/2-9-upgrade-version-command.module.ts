@@ -3,13 +3,25 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { MigrateAiModelPreferencesCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000000000-migrate-ai-model-preferences.command';
+import { SyncCallRecordingStandardObjectsCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000030000-sync-call-recording-standard-objects.command';
+import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
 import { KeyValuePairEntity } from 'src/engine/core-modules/key-value-pair/key-value-pair.entity';
+import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadata/object-metadata.module';
+import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
+import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([KeyValuePairEntity]),
     WorkspaceIteratorModule,
+    ApplicationModule,
+    ObjectMetadataModule,
+    WorkspaceCacheModule,
+    WorkspaceMigrationModule,
   ],
-  providers: [MigrateAiModelPreferencesCommand],
+  providers: [
+    MigrateAiModelPreferencesCommand,
+    SyncCallRecordingStandardObjectsCommand,
+  ],
 })
 export class V2_9_UpgradeVersionCommandModule {}

@@ -444,6 +444,48 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
+  callRecordingRecordPage: {
+    universalIdentifier: 'fa475fb3-3fe4-4ab8-8320-495eba5b2e58',
+    tabs: {
+      home: {
+        universalIdentifier: 'f61be659-f6f1-4f1f-b3f9-113370740f1b',
+        widgets: {
+          fields: {
+            universalIdentifier: 'e490d2dd-5b69-4518-b867-9dde815f9cb6',
+          },
+        },
+      },
+      timeline: {
+        universalIdentifier: '9fb360fa-bc10-430c-8425-25d4e9da4386',
+        widgets: {
+          timeline: {
+            universalIdentifier: '9347305a-73de-4651-a116-c67b2706beda',
+          },
+        },
+      },
+    },
+  },
+  callRecordingCalendarEventAssociationRecordPage: {
+    universalIdentifier: '428c6214-b86c-42ac-9265-680f862362b6',
+    tabs: {
+      home: {
+        universalIdentifier: 'fb2ed8ce-46be-44c5-9b6f-a256f6cede95',
+        widgets: {
+          fields: {
+            universalIdentifier: '77384121-8d69-41cc-8661-ad80d20134a4',
+          },
+        },
+      },
+      timeline: {
+        universalIdentifier: '42f9474a-435b-42a0-88aa-efba7a5348d8',
+        widgets: {
+          timeline: {
+            universalIdentifier: '7dbab6ed-cb47-4389-9bf8-ad42a31bc457',
+          },
+        },
+      },
+    },
+  },
   messageChannelMessageAssociationRecordPage: {
     universalIdentifier: '20202020-a111-4011-8011-a5c4a5110001',
     tabs: {
