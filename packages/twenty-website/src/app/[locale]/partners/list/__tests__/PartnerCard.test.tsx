@@ -66,29 +66,27 @@ describe('PartnerCard', () => {
     expect(liMatches.length).toBe(expectedChipCount);
   });
 
-  it('renders the Calendly CTA pointing at the partner link in a new tab', () => {
+  it('renders a View profile CTA pointing at the partner profile page', () => {
     const html = renderCard();
-    expect(html).toContain(`href="${FIXTURE.calendarLink}"`);
-    expect(html).toContain('target="_blank"');
-    expect(html).toContain('noopener');
+    expect(html).toContain('View profile');
+    expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
   });
 
   it.each([
-    'javascript:alert(document.cookie)',
-    'data:text/html,<script>alert(1)</script>',
-    'vbscript:msgbox(1)',
+    'https://calendly.com/test-partner',
     '',
     'not-a-url',
-  ])('suppresses the CTA when calendarLink is %s', (unsafeLink) => {
+  ])('renders the View profile CTA regardless of calendarLink (%s)', (link) => {
     const html = renderToStaticMarkup(
       <I18nProvider i18n={i18n}>
         <PartnerCard
-          partner={{ ...FIXTURE, calendarLink: unsafeLink }}
+          partner={{ ...FIXTURE, calendarLink: link }}
           index={0}
           locale="en"
         />
       </I18nProvider>,
     );
-    expect(html).not.toContain(`href="${unsafeLink}"`);
+    expect(html).toContain('View profile');
+    expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
   });
 });

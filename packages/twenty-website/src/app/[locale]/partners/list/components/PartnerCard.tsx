@@ -3,7 +3,10 @@
 import { IconBrandLinkedin } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { LinkButton } from '@/design-system/components';
+import {
+  BaseButton,
+  buttonBaseStyles,
+} from '@/design-system/components/Button/BaseButton';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
 import NextLink from 'next/link';
@@ -176,6 +179,13 @@ const CtaWrapper = styled.div`
   z-index: 1;
 `;
 
+// Internal, same-tab navigation to the partner profile. Mirrors NameLink's
+// explicit locale-prefixed href (rather than LocalizedLink's context lookup)
+// so the card stays self-contained and testable with just the lingui provider.
+const ProfileCtaLink = styled(NextLink)`
+  ${buttonBaseStyles}
+`;
+
 const isSafeHttpUrl = (raw: string) => {
   try {
     return ['https:', 'http:'].includes(new URL(raw).protocol);
@@ -201,7 +211,6 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
     : '';
 
   const linkedinSafe = isSafeHttpUrl(partner.linkedinUrl);
-  const calendarSafe = isSafeHttpUrl(partner.calendarLink);
 
   return (
     <CardArticle aria-labelledby={headingId} style={style}>
@@ -256,16 +265,20 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
         projectBudgetMinUsd={partner.projectBudgetMinUsd}
       />
 
-      {calendarSafe && (
-        <CtaWrapper>
-          <LinkButton
+      <CtaWrapper>
+        <ProfileCtaLink
+          data-color="secondary"
+          data-size="regular"
+          data-variant="contained"
+          href={`/${locale}/partners/profile/${partner.slug}`}
+        >
+          <BaseButton
             color="secondary"
-            href={partner.calendarLink}
-            label={i18n._(msg`Book a call`)}
+            label={i18n._(msg`View profile`)}
             variant="contained"
           />
-        </CtaWrapper>
-      )}
+        </ProfileCtaLink>
+      </CtaWrapper>
     </CardArticle>
   );
 }
