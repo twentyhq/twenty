@@ -7,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -323,7 +324,12 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
       description: i18nLabel(msg`Task attachments`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetTask',
@@ -367,7 +373,13 @@ export const buildTaskStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
+          .label,
+      ),
       description: i18nLabel(msg`Timeline Activities linked to the task.`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+        .timelineActivity.icon,
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetTask',

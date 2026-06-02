@@ -7,6 +7,7 @@ import {
   RelationType,
 } from 'twenty-shared/types';
 
+import { STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/standard-relation-field-properties.constant';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
 import {
@@ -400,7 +401,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'taskTargets',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget.label,
+      ),
       description: i18nLabel(msg`Tasks tied to the company`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.taskTarget
+        .icon,
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'taskTarget',
@@ -421,7 +427,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'noteTargets',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget.label,
+      ),
       description: i18nLabel(msg`Notes tied to the company`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.noteTarget
+        .icon,
       isUIReadOnly: true,
       isNullable: true,
       targetObjectName: 'noteTarget',
@@ -464,7 +475,12 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'attachments',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment.label,
+      ),
       description: i18nLabel(msg`Attachments linked to the company`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.attachment
+        .icon,
       isNullable: true,
       targetObjectName: 'attachment',
       targetFieldName: 'targetCompany',
@@ -484,7 +500,13 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'timelineActivities',
+      label: i18nLabel(
+        STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT.timelineActivity
+          .label,
+      ),
       description: i18nLabel(msg`Timeline Activities linked to the company`),
+      icon: STANDARD_RELATION_FIELD_PROPERTIES_BY_RELATION_OBJECT
+        .timelineActivity.icon,
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetCompany',
