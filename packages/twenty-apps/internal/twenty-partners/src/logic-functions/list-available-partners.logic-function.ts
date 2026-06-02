@@ -15,6 +15,7 @@ const queryAvailablePartners = (client: CoreApiClient) =>
         filter: {
           validationStage: { eq: 'VALIDATED' },
           availability: { eq: 'AVAILABLE' },
+          slug: { neq: '' },
         },
         orderBy: [{ name: 'AscNullsLast' }],
         first: 100,
