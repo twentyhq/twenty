@@ -27,7 +27,11 @@ describe('PartnerAvatar', () => {
     'falls back to initials for an unsafe or empty URL (%s)',
     (url) => {
       const html = renderToStaticMarkup(
-        <PartnerAvatar name="Jane Doe" slug="jane-doe" profilePictureUrl={url} />,
+        <PartnerAvatar
+          name="Jane Doe"
+          slug="jane-doe"
+          profilePictureUrl={url}
+        />,
       );
       expect(html).not.toContain('<img');
       expect(html).toContain('JD');

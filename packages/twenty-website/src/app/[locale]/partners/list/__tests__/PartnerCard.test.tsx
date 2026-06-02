@@ -72,21 +72,20 @@ describe('PartnerCard', () => {
     expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
   });
 
-  it.each([
-    'https://calendly.com/test-partner',
-    '',
-    'not-a-url',
-  ])('renders the View profile CTA regardless of calendarLink (%s)', (link) => {
-    const html = renderToStaticMarkup(
-      <I18nProvider i18n={i18n}>
-        <PartnerCard
-          partner={{ ...FIXTURE, calendarLink: link }}
-          index={0}
-          locale="en"
-        />
-      </I18nProvider>,
-    );
-    expect(html).toContain('View profile');
-    expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
-  });
+  it.each(['https://calendly.com/test-partner', '', 'not-a-url'])(
+    'renders the View profile CTA regardless of calendarLink (%s)',
+    (link) => {
+      const html = renderToStaticMarkup(
+        <I18nProvider i18n={i18n}>
+          <PartnerCard
+            partner={{ ...FIXTURE, calendarLink: link }}
+            index={0}
+            locale="en"
+          />
+        </I18nProvider>,
+      );
+      expect(html).toContain('View profile');
+      expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
+    },
+  );
 });

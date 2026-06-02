@@ -18,7 +18,11 @@ const render = (props: {
 }) =>
   renderToStaticMarkup(
     <I18nProvider i18n={i18n}>
-      <PartnerProfileCtas {...props} />
+      <PartnerProfileCtas
+        partnerName={props.partnerName}
+        calendarLink={props.calendarLink}
+        linkedinUrl={props.linkedinUrl}
+      />
     </I18nProvider>,
   );
 
