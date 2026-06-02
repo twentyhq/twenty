@@ -3,13 +3,9 @@ import { type NativeModelToolKey } from 'src/engine/metadata-modules/ai/ai-model
 export type NativeModelTools = Partial<
   Record<
     NativeModelToolKey,
-    | {
-        kind: 'sdk-tool';
-        directToolName: string;
-      }
-    | {
-        kind: 'provider-option';
-        providerOptionKey: string;
-      }
+    {
+      kind: 'sdk-tool';
+      directToolName: string;
+    }
   >
 >;

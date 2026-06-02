@@ -58,7 +58,10 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    enterLayoutCustomizationMode();
+    // Skip navigation when entry was blocked (e.g. a dashboard is mid-edit).
+    if (!enterLayoutCustomizationMode()) {
+      return;
+    }
 
     navigateApp(AppPath.RecordShowPage, {
       objectNameSingular: objectMetadataItem.nameSingular,

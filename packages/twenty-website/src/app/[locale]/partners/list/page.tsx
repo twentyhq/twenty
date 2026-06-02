@@ -1,10 +1,7 @@
 import { Suspense } from 'react';
 
 import { fetchCommunityStats } from '@/lib/community/fetch-community-stats';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { mergeSocialLinkLabels } from '@/lib/community/merge-social-link-labels';
 import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
@@ -32,17 +29,10 @@ export default async function PartnersMarketplacePage({
 
   return (
     <>
-      <Menu.Root
+      <Menu
         backgroundColor={theme.colors.primary.background[100]}
-        scheme="primary"
-        navItems={MENU_DATA.navItems}
         socialLinks={menuSocialLinks}
-      >
-        <Menu.Logo scheme="primary" />
-        <Menu.Nav scheme="primary" navItems={MENU_DATA.navItems} />
-        <Menu.Social scheme="primary" socialLinks={menuSocialLinks} />
-        <Menu.Cta scheme="primary" />
-      </Menu.Root>
+      />
 
       <MarketplaceHeader />
 

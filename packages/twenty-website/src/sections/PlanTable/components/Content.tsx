@@ -6,6 +6,7 @@ import {
 } from '@/design-system/components/Button/BaseButton';
 import { CheckIcon } from '@/icons';
 import { useLingui } from '@lingui/react';
+import { Trans } from '@lingui/react/macro';
 import type { MessageDescriptor } from '@lingui/core';
 import { usePricingState } from '@/sections/Plans';
 import type {
@@ -141,7 +142,11 @@ type CellValueProps = {
 function CellValue({ cell }: CellValueProps) {
   const { i18n } = useLingui();
   if (cell.kind === 'dash') {
-    return <TierText>{i18n._(msg`No`)}</TierText>;
+    return (
+      <TierText>
+        <Trans>No</Trans>
+      </TierText>
+    );
   }
 
   if (cell.kind === 'text') {
