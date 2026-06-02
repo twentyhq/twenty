@@ -172,29 +172,49 @@ export const generateRecordPropertiesZodSchema = (
         break;
       }
 
-      case FieldMetadataType.LINKS:
-        shape[field.name] = field.isNullable
+      case FieldMetadataType.LINKS: {
+        const baseSchema = field.isNullable
           ? LinksValueOptionalSchema
           : LinksValueSchema;
-        return;
 
-      case FieldMetadataType.CURRENCY:
-        shape[field.name] = field.isNullable
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
+        return;
+      }
+
+      case FieldMetadataType.CURRENCY: {
+        const baseSchema = field.isNullable
           ? CurrencyValueOptionalSchema
           : CurrencyValueSchema;
-        return;
 
-      case FieldMetadataType.FULL_NAME:
-        shape[field.name] = field.isNullable
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
+        return;
+      }
+
+      case FieldMetadataType.FULL_NAME: {
+        const baseSchema = field.isNullable
           ? FullNameValueOptionalSchema
           : FullNameValueSchema;
-        return;
 
-      case FieldMetadataType.ADDRESS:
-        shape[field.name] = field.isNullable
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
+        return;
+      }
+
+      case FieldMetadataType.ADDRESS: {
+        const baseSchema = field.isNullable
           ? AddressValueOptionalSchema
           : AddressValueSchema;
+
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
         return;
+      }
 
       case FieldMetadataType.ACTOR:
         fieldSchema = z.object({
@@ -220,23 +240,38 @@ export const generateRecordPropertiesZodSchema = (
         });
         break;
 
-      case FieldMetadataType.EMAILS:
-        shape[field.name] = field.isNullable
+      case FieldMetadataType.EMAILS: {
+        const baseSchema = field.isNullable
           ? EmailsValueOptionalSchema
           : EmailsValueSchema;
-        return;
 
-      case FieldMetadataType.PHONES:
-        shape[field.name] = field.isNullable
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
+        return;
+      }
+
+      case FieldMetadataType.PHONES: {
+        const baseSchema = field.isNullable
           ? PhonesValueOptionalSchema
           : PhonesValueSchema;
-        return;
 
-      case FieldMetadataType.RICH_TEXT:
-        shape[field.name] = field.isNullable
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
+        return;
+      }
+
+      case FieldMetadataType.RICH_TEXT: {
+        const baseSchema = field.isNullable
           ? RichTextValueOptionalSchema
           : RichTextValueSchema;
+
+        shape[field.name] = field.description
+          ? baseSchema.describe(field.description)
+          : baseSchema;
         return;
+      }
 
       case FieldMetadataType.FILES:
         fieldSchema = filesFieldSchema;
