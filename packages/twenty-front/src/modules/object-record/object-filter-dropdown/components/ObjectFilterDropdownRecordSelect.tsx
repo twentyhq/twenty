@@ -1,11 +1,14 @@
 import { useObjectMetadataItem } from '@/object-metadata/hooks/useObjectMetadataItem';
+import { objectMetadataItemsSelector } from '@/object-metadata/states/objectMetadataItemsSelector';
 import { getRelationObjectMetadataNameSingular } from '@/object-metadata/utils/formatFieldMetadataItemsAsFilterDefinitions';
+import { getFieldMetadataItemById } from '@/object-metadata/utils/getFieldMetadataItemById';
 import { ObjectFilterDropdownRecordPinnedItems } from '@/object-record/object-filter-dropdown/components/ObjectFilterDropdownRecordPinnedItems';
 import { CURRENT_WORKSPACE_MEMBER_SELECTABLE_ITEM_ID } from '@/object-record/object-filter-dropdown/constants/CurrentWorkspaceMemberSelectableItemId';
 import { useApplyObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useApplyObjectFilterDropdownFilterValue';
 import { useObjectFilterDropdownFilterValue } from '@/object-record/object-filter-dropdown/hooks/useObjectFilterDropdownFilterValue';
 import { fieldMetadataItemUsedInDropdownComponentSelector } from '@/object-record/object-filter-dropdown/states/fieldMetadataItemUsedInDropdownComponentSelector';
 import { objectFilterDropdownSearchInputComponentState } from '@/object-record/object-filter-dropdown/states/objectFilterDropdownSearchInputComponentState';
+import { relationTargetFieldMetadataIdUsedInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/relationTargetFieldMetadataIdUsedInDropdownComponentState';
 import { selectedOperandInDropdownComponentState } from '@/object-record/object-filter-dropdown/states/selectedOperandInDropdownComponentState';
 import { currentRecordFiltersComponentState } from '@/object-record/record-filter/states/currentRecordFiltersComponentState';
 import { MultipleSelectDropdown } from '@/object-record/select/components/MultipleSelectDropdown';
@@ -66,6 +69,13 @@ export const ObjectFilterDropdownRecordSelect = ({
     currentRecordFiltersComponentState,
   );
 
+  const relationTargetFieldMetadataIdUsedInDropdown =
+    useAtomComponentStateValue(
+      relationTargetFieldMetadataIdUsedInDropdownComponentState,
+    );
+
+  const objectMetadataItems = useAtomStateValue(objectMetadataItemsSelector);
+
   const { isCurrentWorkspaceMemberSelected } = jsonRelationFilterValueSchema
     .catch({
       isCurrentWorkspaceMemberSelected: false,
@@ -79,8 +89,32 @@ export const ObjectFilterDropdownRecordSelect = ({
     throw new Error('fieldMetadataItemUsedInFilterDropdown is not defined');
   }
 
+  // For a nested relation filter (e.g. company → accountOwner) the records to
+  // choose from belong to the leaf relation's target object (WorkspaceMember),
+  // not the source relation's object (Company). Only a direct relation filter
+  // (no leaf) falls back to the source field; a leaf that is set but cannot be
+  // resolved must not load records from the source object.
+  const relationTargetFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? getFieldMetadataItemById({
+        fieldMetadataId: relationTargetFieldMetadataIdUsedInDropdown,
+        objectMetadataItems,
+      }).fieldMetadataItem
+    : undefined;
+
+  const effectiveFieldMetadataItem = isDefined(
+    relationTargetFieldMetadataIdUsedInDropdown,
+  )
+    ? relationTargetFieldMetadataItem
+    : fieldMetadataItemUsedInFilterDropdown;
+
+  if (!isDefined(effectiveFieldMetadataItem)) {
+    throw new Error('effectiveFieldMetadataItem is not defined');
+  }
+
   const objectNameSingular = getRelationObjectMetadataNameSingular({
-    field: fieldMetadataItemUsedInFilterDropdown,
+    field: effectiveFieldMetadataItem,
   });
 
   if (!isDefined(objectNameSingular)) {

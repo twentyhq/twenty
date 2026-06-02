@@ -50,6 +50,12 @@ const fields = [
     label: 'Company',
   },
   {
+    id: 'f-relation-account-owner',
+    name: 'accountOwner',
+    type: FieldMetadataType.RELATION,
+    label: 'Account Owner',
+  },
+  {
     id: 'f-bool',
     name: 'isActive',
     type: FieldMetadataType.BOOLEAN,
@@ -1037,6 +1043,62 @@ describe('turnRecordFilterIntoRecordGqlOperationFilter', () => {
       });
 
       expect(result).toHaveProperty('companyId.in');
+    });
+
+    // A relation target field compiles to a single-hop foreign-key compare on
+    // the already-joined table (company.accountOwnerId), never a second
+    // relation block — the backend rejects deeper `company.accountOwner.<field>`
+    // traversals.
+    it('should resolve a relation target field to its foreign key', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies,
+        recordFilter: {
+          ...makeFilter(
+            'f-relation',
+            RecordFilterOperand.IS,
+            '["550e8400-e29b-41d4-a716-446655440000"]',
+            'RELATION',
+          ),
+          relationTargetFieldMetadataId: 'f-relation-account-owner',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        company: {
+          accountOwnerId: { in: ['550e8400-e29b-41d4-a716-446655440000'] },
+        },
+      });
+    });
+
+    // The seeded "My Pipeline" onboarding view (company.accountOwner = me)
+    // resolves the current workspace member into that same FK compare.
+    it('should resolve a relation target field set to the current workspace member', () => {
+      const result = turnRecordFilterIntoRecordGqlOperationFilter({
+        filterValueDependencies: {
+          ...filterValueDependencies,
+          currentWorkspaceMemberId: '11111111-1111-4111-8111-111111111111',
+        },
+        recordFilter: {
+          ...makeFilter(
+            'f-relation',
+            RecordFilterOperand.IS,
+            JSON.stringify({
+              isCurrentWorkspaceMemberSelected: true,
+              selectedRecordIds: [],
+            }),
+            'RELATION',
+          ),
+          relationTargetFieldMetadataId: 'f-relation-account-owner',
+        } as RecordFilter,
+        fieldMetadataItemById,
+      });
+
+      expect(result).toEqual({
+        company: {
+          accountOwnerId: { in: ['11111111-1111-4111-8111-111111111111'] },
+        },
+      });
     });
   });
 });
