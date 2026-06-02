@@ -492,7 +492,7 @@ export const buildCompanyStandardFlatFieldMetadatas = ({
       fieldName: 'timelineActivities',
       label: i18nLabel(msg`Timeline Activities`),
       description: i18nLabel(msg`Timeline Activities linked to the company`),
-      icon: 'IconIconTimelineEvent',
+      icon: 'IconTimelineEvent',
       isNullable: true,
       targetObjectName: 'timelineActivity',
       targetFieldName: 'targetCompany',

@@ -5,7 +5,9 @@ import {
 import { FieldMetadataType } from 'twenty-shared/types';
 import { capitalize, isDefined } from 'twenty-shared/utils';
 
+import { DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT } from 'src/engine/metadata-modules/object-metadata/constants/default-relation-field-appearance.constant';
 import { computeMorphOrRelationFieldJoinColumnName } from 'src/engine/metadata-modules/field-metadata/utils/compute-morph-or-relation-field-join-column-name.util';
+import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
 import { RelationType } from 'src/engine/metadata-modules/field-metadata/interfaces/relation-type.interface';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -31,21 +33,6 @@ const morphIdByRelationObjectNameSingular = {
 } satisfies Record<
   (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
   string | null
->;
-
-// Human-friendly labels and icons for each default relation as shown on
-// standard objects (Company, Person, etc.). These override the raw target
-// object metadata values (e.g. "Note Targets" / IconBuildingSkyscraper)
-// that would otherwise be used for custom objects.
-const sourceFieldOverridesByRelationObjectNameSingular = {
-  noteTarget: { label: 'Notes', icon: 'IconNotes' },
-  taskTarget: { label: 'Tasks', icon: 'IconCheckbox' },
-  attachment: { label: 'Attachments', icon: 'IconFileImport' },
-  timelineActivity: { label: 'Timeline Activities', icon: 'IconTimelineEvent' },
-  favorite: { label: 'Favorites', icon: 'IconHeart' },
-} satisfies Record<
-  (typeof DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS)[number],
-  { label: string; icon: string }
 >;
 
 export type BuildDefaultRelationFieldsForCustomObjectArgs = {
@@ -114,8 +101,8 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             targetFlatObjectMetadata.nameSingular as keyof typeof STANDARD_OBJECT_ICONS
           ] || 'IconBuildingSkyscraper';
 
-        const sourceFieldOverride =
-          sourceFieldOverridesByRelationObjectNameSingular[
+        const sourceFieldAppearance =
+          DEFAULT_RELATION_FIELD_APPEARANCE_BY_RELATION_OBJECT[
             objectMetadataNameSingular
           ];
 
@@ -142,10 +129,10 @@ export const buildDefaultRelationFlatFieldMetadatasForCustomObject = ({
             morphId,
             targetFieldName: fieldName,
             createFieldInput: {
-              icon: sourceFieldOverride.icon,
+              icon: sourceFieldAppearance.icon,
               type: FieldMetadataType.RELATION,
               name: targetFlatObjectMetadata.namePlural,
-              label: sourceFieldOverride.label,
+              label: i18nLabel(sourceFieldAppearance.label),
               isSystem: false,
               relationCreationPayload: {
                 type: RelationType.ONE_TO_MANY,
