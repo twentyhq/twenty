@@ -5,7 +5,6 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 // Bottom separator is an ::after (not border-bottom), and the bar keeps full
 // height (default align-items) so the active tab's underline lands exactly on it.
 const StyledSecondaryBar = styled.div`
-  border-top: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   flex-shrink: 0;

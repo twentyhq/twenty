@@ -1,4 +1,5 @@
 import { useNavigationDrawerExpanded } from '@/navigation/hooks/useNavigationDrawerExpanded';
+import { SIDE_PANEL_TOP_BAR_HEIGHT } from '@/side-panel/constants/SidePanelTopBarHeight';
 import {
   Breadcrumb,
   type BreadcrumbProps,
@@ -21,11 +22,14 @@ type SettingsPageHeaderProps = {
 // pushing the centered title off its shared axis with the tabs and body.
 const StyledHeader = styled.div`
   align-items: center;
+  background-color: ${themeCssVariables.background.secondary};
+  border-bottom: 1px solid ${themeCssVariables.border.color.medium};
   box-sizing: border-box;
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
-  padding: ${themeCssVariables.spacing[3]};
+  min-height: ${SIDE_PANEL_TOP_BAR_HEIGHT}px;
+  padding: 0 ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
 
