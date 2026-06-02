@@ -43,13 +43,7 @@ export const useHandleImpersonate = () => {
         const isCurrentWorkspace = workspace.id === currentWorkspace?.id;
 
         if (isCurrentWorkspace) {
-          try {
-            await startImpersonating(loginToken.token);
-          } catch {
-            enqueueErrorSnackBar({
-              message: t`Failed to impersonate user`,
-            });
-          }
+          await startImpersonating(loginToken.token);
 
           return;
         }

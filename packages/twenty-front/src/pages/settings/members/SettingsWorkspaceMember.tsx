@@ -1,9 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useDebouncedCallback } from 'use-debounce';
 
-import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
-import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { useImpersonationSession } from '@/auth/hooks/useImpersonationSession';
+import { useFindOneRecord } from '@/object-record/hooks/useFindOneRecord';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
@@ -14,8 +13,9 @@ import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBa
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
-import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { t } from '@lingui/core/macro';
+import { CoreObjectNameSingular, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconLockOpen } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
@@ -30,9 +30,9 @@ import { useWorkspaceMemberRoles } from '@/settings/members/hooks/useWorkspaceMe
 import { type WorkspaceMember } from '@/workspace-member/types/WorkspaceMember';
 import { useMutation } from '@apollo/client/react';
 import {
-  PermissionFlagType,
   DeleteUserWorkspaceDocument,
   ImpersonateDocument,
+  PermissionFlagType,
 } from '~/generated-metadata/graphql';
 
 const SETTINGS_WORKSPACE_MEMBER_TABS = {
@@ -145,10 +145,7 @@ export const SettingsWorkspaceMember = () => {
       return;
     }
 
-    if (
-      !isDefined(currentUser?.id) ||
-      member.userId === currentUser.id
-    ) {
+    if (!isDefined(currentUser?.id) || member.userId === currentUser.id) {
       enqueueErrorSnackBar({
         message: t`You cannot impersonate your own account`,
         options: { duration: 2000 },
@@ -165,14 +162,7 @@ export const SettingsWorkspaceMember = () => {
       onCompleted: async (data) => {
         const { loginToken } = data.impersonate;
 
-        try {
-          await startImpersonating(loginToken.token);
-        } catch {
-          enqueueErrorSnackBar({
-            message: t`Cannot impersonate selected user`,
-            options: { duration: 2000 },
-          });
-        }
+        await startImpersonating(loginToken.token);
       },
       onError: () => {
         enqueueErrorSnackBar({
