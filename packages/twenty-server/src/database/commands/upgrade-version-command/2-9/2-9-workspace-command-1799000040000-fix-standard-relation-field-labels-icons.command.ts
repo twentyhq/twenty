@@ -1,4 +1,8 @@
 import { Command } from 'nest-commander';
+import {
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS,
+  STANDARD_OBJECTS,
+} from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
@@ -10,17 +14,17 @@ import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/works
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
-// The default relation fields every object gets (note/task/attachment/timeline).
-// On standard objects these labels/icons are system-owned, so we re-sync any
-// drift against the source-of-truth definition (e.g. the Company
-// timelineActivities IconIconTimelineEvent typo). Custom objects are left
-// untouched on purpose: their relation fields are user-editable.
-const DEFAULT_RELATION_FIELD_NAMES = new Set([
-  'noteTargets',
-  'taskTargets',
-  'attachments',
-  'timelineActivities',
-]);
+// The default relation fields every object gets point to one of the default
+// relation objects (note/task/attachment/timeline). On standard objects their
+// labels/icons are system-owned, so we re-sync any drift against the
+// source-of-truth definition (e.g. the Company timelineActivities
+// IconIconTimelineEvent typo). Custom objects are left untouched on purpose:
+// their relation fields are user-editable.
+const DEFAULT_RELATION_TARGET_UNIVERSAL_IDENTIFIERS = new Set<string>(
+  DEFAULT_RELATIONS_OBJECTS_STANDARD_IDS.map(
+    (objectName) => STANDARD_OBJECTS[objectName].universalIdentifier,
+  ),
+);
 
 @RegisteredWorkspaceCommand('2.9.0', 1799000040000)
 @Command({
@@ -67,8 +71,14 @@ export class FixStandardRelationFieldLabelsIconsCommand extends ActiveOrSuspende
       standardAllFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier,
     )
       .filter(isDefined)
-      .filter((standardField) =>
-        DEFAULT_RELATION_FIELD_NAMES.has(standardField.name),
+      .filter(
+        (standardField) =>
+          isDefined(
+            standardField.relationTargetObjectMetadataUniversalIdentifier,
+          ) &&
+          DEFAULT_RELATION_TARGET_UNIVERSAL_IDENTIFIERS.has(
+            standardField.relationTargetObjectMetadataUniversalIdentifier,
+          ),
       )
       .map((standardField) => {
         const existingField =
