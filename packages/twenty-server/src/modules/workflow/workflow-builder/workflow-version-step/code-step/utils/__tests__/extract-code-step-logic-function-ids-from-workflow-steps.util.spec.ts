@@ -1,34 +1,27 @@
 import { WorkflowVersionStepException } from 'src/modules/workflow/common/exceptions/workflow-version-step.exception';
-import { extractCodeStepLogicFunctionIdsFromWorkflowSteps } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/extract-code-step-logic-function-ids-from-workflow-steps.util';
 import {
-  WorkflowActionType,
-  type WorkflowAction,
-} from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+  type CodeStepForLogicFunctionIdExtraction,
+  extractCodeStepLogicFunctionIdsFromWorkflowSteps,
+  type NonCodeStepForLogicFunctionIdExtraction,
+} from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/utils/extract-code-step-logic-function-ids-from-workflow-steps.util';
+import { WorkflowActionType } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 
-const buildCodeStep = (logicFunctionId: string): WorkflowAction =>
-  ({
-    id: 'step-id',
-    name: 'A Code Step',
-    type: WorkflowActionType.CODE,
-    valid: true,
-    settings: {
-      input: {
-        logicFunctionId,
-        logicFunctionInput: {},
-      },
+const buildCodeStep = (
+  logicFunctionId: string,
+): CodeStepForLogicFunctionIdExtraction => ({
+  id: 'step-id',
+  type: WorkflowActionType.CODE,
+  settings: {
+    input: {
+      logicFunctionId,
     },
-  }) as WorkflowAction;
+  },
+});
 
-const buildNonCodeStep = (): WorkflowAction =>
-  ({
-    id: 'send-email-id',
-    name: 'Send Email',
-    type: WorkflowActionType.SEND_EMAIL,
-    valid: true,
-    settings: {
-      input: {},
-    },
-  }) as unknown as WorkflowAction;
+const buildNonCodeStep = (): NonCodeStepForLogicFunctionIdExtraction => ({
+  id: 'send-email-id',
+  type: WorkflowActionType.SEND_EMAIL,
+});
 
 describe('extractCodeStepLogicFunctionIdsFromWorkflowSteps', () => {
   it('should return logic function ids of CODE steps', () => {
