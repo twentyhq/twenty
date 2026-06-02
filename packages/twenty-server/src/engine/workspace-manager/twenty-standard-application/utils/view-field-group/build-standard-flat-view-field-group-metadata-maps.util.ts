@@ -6,7 +6,6 @@ import { type AllStandardObjectName } from 'src/engine/workspace-manager/twenty-
 import { computeStandardBlocklistViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-blocklist-view-field-groups.util';
 import { computeStandardCalendarChannelEventAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-channel-event-association-view-field-groups.util';
 import { computeStandardCalendarEventParticipantViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-calendar-event-participant-view-field-groups.util';
-import { computeStandardCallRecordingCalendarEventAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-call-recording-calendar-event-association-view-field-groups.util';
 import { computeStandardCallRecordingViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-call-recording-view-field-groups.util';
 import { computeStandardCompanyViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-company-view-field-groups.util';
 import { computeStandardMessageChannelMessageAssociationViewFieldGroups } from 'src/engine/workspace-manager/twenty-standard-application/utils/view-field-group/compute-standard-message-channel-message-association-view-field-groups.util';
@@ -32,8 +31,6 @@ const STANDARD_FLAT_VIEW_FIELD_GROUP_METADATA_BUILDERS_BY_OBJECT_NAME = {
   calendarEventParticipant:
     computeStandardCalendarEventParticipantViewFieldGroups,
   callRecording: computeStandardCallRecordingViewFieldGroups,
-  callRecordingCalendarEventAssociation:
-    computeStandardCallRecordingCalendarEventAssociationViewFieldGroups,
   company: computeStandardCompanyViewFieldGroups,
   messageChannelMessageAssociation:
     computeStandardMessageChannelMessageAssociationViewFieldGroups,

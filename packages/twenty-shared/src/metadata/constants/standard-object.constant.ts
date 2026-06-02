@@ -697,53 +697,6 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'dc7eb900-4742-4ce9-8fa1-0acd3e5771cb',
       },
     },
-    views: {
-      allCallRecordingCalendarEventAssociations: {
-        universalIdentifier: 'f364d937-2dcb-4233-b271-f55d8ee0a587',
-        viewFields: {
-          callRecording: {
-            universalIdentifier: 'ddc45e66-9284-419e-81c1-7d5fe2a502d9',
-          },
-          calendarEvent: {
-            universalIdentifier: 'd73fab91-f214-4fc1-a5a6-518ac623fe4d',
-          },
-          eventExternalId: {
-            universalIdentifier: 'd55b80cb-4e1d-40d5-96f9-03da34995cc6',
-          },
-          createdAt: {
-            universalIdentifier: '05c83806-7157-4317-b25b-4aa51fc31118',
-          },
-        },
-      },
-      callRecordingCalendarEventAssociationRecordPageFields: {
-        universalIdentifier: '61ef145c-bf0f-4633-bcfe-71d55ee4dfc7',
-        viewFieldGroups: {
-          general: {
-            universalIdentifier: '21db037d-7d13-4939-834e-aac015e702ae',
-          },
-          system: {
-            universalIdentifier: '7d65517e-47f8-40c7-94dd-a4522a797570',
-          },
-        },
-        viewFields: {
-          callRecording: {
-            universalIdentifier: 'bc9f4b98-d7b3-4c20-8ad0-3023d7dfc6fd',
-          },
-          calendarEvent: {
-            universalIdentifier: '9f119924-5781-44a0-be01-918850a416c2',
-          },
-          eventExternalId: {
-            universalIdentifier: 'b0505290-f75f-41e9-831a-ac6d9b7538b1',
-          },
-          createdAt: {
-            universalIdentifier: 'd02f9b19-eabc-4569-9b83-a068f5cf0386',
-          },
-          createdBy: {
-            universalIdentifier: 'c97e0824-bb45-4eb0-b424-5baa3c16fd5d',
-          },
-        },
-      },
-    },
   },
   company: {
     universalIdentifier: '20202020-b374-4779-a561-80086cb2e17f',

@@ -465,27 +465,6 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
       },
     },
   },
-  callRecordingCalendarEventAssociationRecordPage: {
-    universalIdentifier: '428c6214-b86c-42ac-9265-680f862362b6',
-    tabs: {
-      home: {
-        universalIdentifier: 'fb2ed8ce-46be-44c5-9b6f-a256f6cede95',
-        widgets: {
-          fields: {
-            universalIdentifier: '77384121-8d69-41cc-8661-ad80d20134a4',
-          },
-        },
-      },
-      timeline: {
-        universalIdentifier: '42f9474a-435b-42a0-88aa-efba7a5348d8',
-        widgets: {
-          timeline: {
-            universalIdentifier: '7dbab6ed-cb47-4389-9bf8-ad42a31bc457',
-          },
-        },
-      },
-    },
-  },
   messageChannelMessageAssociationRecordPage: {
     universalIdentifier: '20202020-a111-4011-8011-a5c4a5110001',
     tabs: {
