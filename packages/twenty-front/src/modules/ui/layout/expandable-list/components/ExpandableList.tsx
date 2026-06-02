@@ -12,8 +12,8 @@ import { isFirstOverflowingChildElement } from '@/ui/layout/expandable-list/util
 import { isDefined } from 'twenty-shared/utils';
 import { ChipSize } from 'twenty-ui/components';
 import { OverflowingTextWithTooltip } from 'twenty-ui/display';
-import { AnimatedContainer } from 'twenty-ui/utilities';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
+import { AnimatedContainer } from 'twenty-ui/utilities';
 
 const StyledContainer = styled.div`
   align-items: center;
@@ -109,6 +109,42 @@ export const ExpandableList = ({
   useEffect(() => {
     resetFirstHiddenChildIndex();
   }, [isChipCountDisplayed, children.length, resetFirstHiddenChildIndex]);
+
+  // Recompute the first hidden child when the available width changes.
+  // The overflow detection is only performed during the children ref pass, so
+  // without this the list would stay stuck on the number of items that fit at
+  // first measurement, even when the cell later grows wider (see #12039).
+  // We observe the outer container because its width tracks the available width
+  // independently of how many children are currently rendered, which avoids a
+  // measure -> trim -> shrink -> re-measure feedback loop.
+  useEffect(() => {
+    const outerContainerElement = containerRef.current;
+
+    if (!isDefined(outerContainerElement)) {
+      return;
+    }
+
+    let previousWidth = outerContainerElement.clientWidth;
+
+    const resizeObserver = new ResizeObserver((entries) => {
+      const entry = entries[0];
+
+      if (!isDefined(entry)) {
+        return;
+      }
+
+      const newWidth = entry.contentRect.width;
+
+      if (newWidth !== previousWidth) {
+        previousWidth = newWidth;
+        resetFirstHiddenChildIndex();
+      }
+    });
+
+    resizeObserver.observe(outerContainerElement);
+
+    return () => resizeObserver.disconnect();
+  }, [resetFirstHiddenChildIndex]);
 
   const handleClickOutside = () => {
     setIsListExpanded(false);
