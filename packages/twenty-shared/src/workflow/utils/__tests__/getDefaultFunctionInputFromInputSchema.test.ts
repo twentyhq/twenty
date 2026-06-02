@@ -1,3 +1,4 @@
+import { type InputJsonSchema } from '@/logic-function';
 import { getFunctionInputFromInputSchema, type InputSchema } from '@/workflow';
 
 describe('getDefaultFunctionInputFromInputSchema', () => {
@@ -39,5 +40,20 @@ describe('getDefaultFunctionInputFromInputSchema', () => {
     expect(getFunctionInputFromInputSchema(inputSchema)).toEqual(
       expectedResult,
     );
+  });
+
+  it('should init arrays with unknown items (e.g. any[]) as empty arrays', () => {
+    const inputSchema: InputJsonSchema[] = [
+      {
+        type: 'object',
+        properties: {
+          briefs: { type: 'array', items: {} },
+        },
+      },
+    ];
+
+    expect(getFunctionInputFromInputSchema(inputSchema)).toEqual([
+      { briefs: [] },
+    ]);
   });
 });

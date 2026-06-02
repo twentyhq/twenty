@@ -954,7 +954,6 @@ msgstr "Активни"
 
 #. js-lingui-id: Mue4oc
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Active API keys created by you or your team."
 msgstr "Активни API кључеви које сте креирали ви или ваш тим."
 
@@ -1050,11 +1049,6 @@ msgstr ""
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
 msgid "Add custom endpoints, private gateways, or additional regions."
 msgstr "Додајте прилагођене крајње тачке, приватне гејтвеје или додатне регионе."
-
-#. js-lingui-id: GuJvBr
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
-msgid "Add custom instructions specific to your workspace (appended to system prompt)"
-msgstr "Додајте прилагођена упутства специфична за ваш радни простор (биће придодата системском промпту)"
 
 #. js-lingui-id: 4JviOV
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAiProviderListCard.tsx
@@ -1292,6 +1286,11 @@ msgstr "Додајте на црну листу"
 #: src/modules/views/view-picker/components/ViewPickerOptionDropdown.tsx
 msgid "Add to Favorite"
 msgstr "Додајте у омиљене"
+
+#. js-lingui-id: VbareD
+#: src/modules/settings/playground/components/SettingsMcpSetup.tsx
+msgid "Add Twenty as a Model Context Protocol (MCP) server. Paste this config into Claude Desktop, Cursor, Cline, Continue, Zed, or any other MCP-aware client."
+msgstr ""
 
 #. js-lingui-id: XnwceV
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationRedirectURIsInput.tsx
@@ -1775,6 +1774,11 @@ msgstr "Сви задаци су решени. Одржите замах."
 msgid "All the applications currently installed on this workspace"
 msgstr ""
 
+#. js-lingui-id: xP6s/m
+#: src/pages/settings/layout/SettingsLayout.tsx
+msgid "All the layout items declared on your workspace"
+msgstr ""
+
 #. js-lingui-id: XuuWVF
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 msgid "All the standard objects"
@@ -1967,11 +1971,6 @@ msgstr "Дошло је до унутрашње грешке приликом в
 msgid "An object with this name already exists"
 msgstr "Објекат са овим називом већ постоји"
 
-#. js-lingui-id: lxentK
-#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "An unexpected error occurred"
-msgstr "Дошло је до неочекиване грешке"
-
 #. js-lingui-id: byKna+
 #: src/pages/settings/security/event-logs/SettingsEventLogs.tsx
 msgid "An unexpected error occurred. Please try again."
@@ -2016,6 +2015,7 @@ msgid "Anyone with an email address at these domains is allowed to sign up for t
 msgstr "Свако са имејл адресом на овим доменима може се пријавити за овај радни простор."
 
 #. js-lingui-id: OZtEcz
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API"
 msgstr "АПИ"
@@ -2033,7 +2033,6 @@ msgstr "API и Вебхукси"
 #: src/pages/settings/admin-panel/SettingsAdminNewAiProvider.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
-#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "API Key"
 msgstr "API кључ"
 
@@ -2063,7 +2062,6 @@ msgid "API key roles"
 msgstr ""
 
 #. js-lingui-id: 5h8ooz
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/roles/role-assignment/components/SettingsRoleAssignmentTable.tsx
 msgid "API keys"
 msgstr "API кључеви"
@@ -2104,12 +2102,6 @@ msgstr "Назив API-а (једнина)"
 msgid "API values"
 msgstr "АПИ вредности"
 
-#. js-lingui-id: JR6nY7
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "APIs"
-msgstr "АПИ-и"
-
 #. js-lingui-id: ZZAOwb
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
@@ -2131,7 +2123,7 @@ msgstr ""
 #: src/pages/settings/data-model/SettingsObjectFieldTable.tsx
 #: src/pages/settings/data-model/constants/SettingsObjectTableMetadata.ts
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationsTable.tsx
 msgid "App"
 msgstr "Апликација"
@@ -2481,6 +2473,11 @@ msgstr "у {remainingTimes} и {lastTime}"
 msgid "at 1 minute past the hour"
 msgstr "у 1 минута после сата"
 
+#. js-lingui-id: ooA+hm
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+msgid "At a glance"
+msgstr ""
+
 #. js-lingui-id: vyXyF0
 #: src/modules/workflow/workflow-steps/workflow-actions/delay-actions/components/WorkflowEditActionDelay.tsx
 msgid "At a specific date or time"
@@ -2645,10 +2642,14 @@ msgid "Availability"
 msgstr "Доступност"
 
 #. js-lingui-id: csDS2L
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/new-object/components/SettingsAvailableStandardObjectsSection.tsx
 msgid "Available"
 msgstr "Доступно"
+
+#. js-lingui-id: STA+22
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Available models"
+msgstr ""
 
 #. js-lingui-id: oD38t2
 #: src/modules/ai/components/RoutingDebugDisplay.tsx
@@ -2864,6 +2865,11 @@ msgstr "Бронзана"
 #: src/modules/settings/data-model/fields/forms/select/components/SettingsDataModelFieldSelectFormOptionRow.tsx
 msgid "Brown"
 msgstr "Браон"
+
+#. js-lingui-id: O2UpM1
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Browse"
+msgstr ""
 
 #. js-lingui-id: GsXRxc
 #: src/modules/settings/data-model/indexes/forms/components/SettingsObjectIndexOptionsForm.tsx
@@ -3615,6 +3621,11 @@ msgstr "Команда копирана у клипборд"
 msgid "Command Icon"
 msgstr "Икона команде"
 
+#. js-lingui-id: V1zWD4
+#: src/pages/settings/layout/SettingsLayout.tsx
+msgid "Command menu"
+msgstr ""
+
 #. js-lingui-id: PUMdxH
 #: src/modules/side-panel/hooks/useSidePanelMenu.ts
 msgid "Command Menu"
@@ -3640,6 +3651,11 @@ msgstr ""
 #. js-lingui-id: 9HKBNN
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "commands"
+msgstr ""
+
+#. js-lingui-id: 45MZFs
+#: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+msgid "Commands"
 msgstr ""
 
 #. js-lingui-id: 4XlFx/
@@ -3808,11 +3824,6 @@ msgstr "Конфигуришите ове DNS записе код вашег п�
 msgid "Configure this widget to display fields"
 msgstr "Подесите овај виџет за приказ поља"
 
-#. js-lingui-id: hzDiM0
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-msgid "Configure your default AI model"
-msgstr ""
-
 #. js-lingui-id: Bh4GBD
 #: src/modules/settings/accounts/components/SettingsAccountsSettingsSection.tsx
 msgid "Configure your emails and calendar settings."
@@ -3886,6 +3897,11 @@ msgstr ""
 msgid "Connect a new account to your workspace"
 msgstr "Повежите нови налог са својим простором за рад"
 
+#. js-lingui-id: vPCRNy
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+msgid "Connect AI assistants like Claude or Cursor to your workspace via the Model Context Protocol"
+msgstr ""
+
 #. js-lingui-id: YLx3sC
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect via IMAP/SMTP"
@@ -3900,6 +3916,11 @@ msgstr "Повежите се са Google"
 #: src/modules/settings/accounts/components/SettingsAccountsListEmptyStateCard.tsx
 msgid "Connect with Microsoft"
 msgstr "Повежите се са Microsoft"
+
+#. js-lingui-id: iZWbGJ
+#: src/modules/settings/playground/components/SettingsMcpSetup.tsx
+msgid "Connect your AI assistant"
+msgstr ""
 
 #. js-lingui-id: QHcLEN
 #: src/pages/settings/applications/SettingsApplicationConnectionDetail.tsx
@@ -4066,6 +4087,11 @@ msgstr "Контролишете које врсте ентитета могу �
 msgid "Conversation"
 msgstr "Разговор"
 
+#. js-lingui-id: EnJuK0
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+msgid "Conversations"
+msgstr ""
+
 #. js-lingui-id: HRGl1X
 #: src/pages/onboarding/CreateProfile.tsx
 #: src/modules/settings/profile/components/NameFields.tsx
@@ -4103,6 +4129,11 @@ msgstr "Копирај команду"
 #: src/pages/settings/applications/tabs/SettingsApplicationsDeveloperTab.tsx
 msgid "Copy commands"
 msgstr "Копирај команде"
+
+#. js-lingui-id: eaZgIQ
+#: src/modules/settings/playground/components/SettingsMcpSetup.tsx
+msgid "Copy config"
+msgstr ""
 
 #. js-lingui-id: 7eVkEH
 #: src/pages/onboarding/InviteTeam.tsx
@@ -4215,6 +4246,11 @@ msgstr "Није могуће отворити портал за наплату.
 #: src/modules/settings/enterprise/components/EnterprisePlanModal.tsx
 msgid "Could not open Stripe. Please contact support."
 msgstr "Није могуће отворити Stripe. Контактирајте подршку."
+
+#. js-lingui-id: 6wi9Nf
+#: src/modules/settings/playground/hooks/useOpenPlayground.ts
+msgid "Could not open the API playground"
+msgstr ""
 
 #. js-lingui-id: wVw4Am
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
@@ -4340,7 +4376,6 @@ msgstr "Направите и конфигуришите AI агенте"
 
 #. js-lingui-id: uXGLuq
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 msgid "Create API key"
 msgstr "Креирај API кључ"
 
@@ -4625,7 +4660,7 @@ msgstr "Тренутни члан радног простора није про�
 
 #. js-lingui-id: 8Tg/JR
 #: src/pages/settings/applications/SettingsApplicationDetails.tsx
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/applications/hooks/useApplicationChipData.ts
@@ -4649,6 +4684,11 @@ msgstr "Кориснички домен"
 #: src/modules/settings/domains/hooks/useSettingsCustomDomain.ts
 msgid "Custom domain updated"
 msgstr "Прилагођени домен ажуриран"
+
+#. js-lingui-id: c6P+Xe
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+msgid "Custom instructions appended to every system prompt"
+msgstr ""
 
 #. js-lingui-id: 87ZNeX
 #: src/pages/settings/admin-panel/SettingsAdminNewAiModel.tsx
@@ -4692,6 +4732,7 @@ msgid "Customization"
 msgstr "Прилагођавање"
 
 #. js-lingui-id: srRMnJ
+#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectLayout.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNavigationMenuItemEditPage.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelEditObjectViewBase.tsx
@@ -4787,6 +4828,11 @@ msgstr "Тамни"
 #: src/modules/command-menu-item/engine-command/record/single-record/dashboard/components/DuplicateDashboardSingleRecordCommand.tsx
 msgid "Dashboard duplicated successfully"
 msgstr "Контролна табла је успешно дуплирана"
+
+#. js-lingui-id: w6iIMm
+#: src/pages/settings/layout/SettingsLayout.tsx
+msgid "Dashboards"
+msgstr ""
 
 #. js-lingui-id: HKH+W+
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -4988,7 +5034,7 @@ msgstr "Деактивирај ово поље"
 #. js-lingui-id: yAT3be
 #: src/pages/settings/SettingsProfile.tsx
 #: src/pages/settings/data-model/SettingsObjectTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectRelationItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectItemTableRow.tsx
 #: src/modules/settings/data-model/object-details/components/SettingsObjectFieldItemTableRow.tsx
@@ -5015,7 +5061,6 @@ msgstr ""
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
 #: src/pages/settings/layout/SettingsLayoutPageLayoutDetail.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/modules/settings/data-model/fields/forms/date/utils/getDisplayFormatLabel.ts
 #: src/modules/settings/data-model/fields/forms/address/components/MultiSelectAddressFields.tsx
 msgid "Default"
@@ -5030,6 +5075,11 @@ msgstr "Подразумевана земља"
 #: src/modules/settings/data-model/fields/forms/phones/components/SettingsDataModelFieldPhonesForm.tsx
 msgid "Default Country Code"
 msgstr "Подразумевани код земље"
+
+#. js-lingui-id: OtTlfU
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "Default model"
+msgstr ""
 
 #. js-lingui-id: hUWaAk
 #: src/modules/settings/admin-panel/ai/components/SettingsAdminAI.tsx
@@ -5473,6 +5523,11 @@ msgstr "Детаљи"
 msgid "Detected application version running on this instance"
 msgstr ""
 
+#. js-lingui-id: QYXe1O
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Develop"
+msgstr ""
+
 #. js-lingui-id: 7aDnUb
 #: src/pages/settings/applications/SettingsApplications.tsx
 msgid "Developer"
@@ -5564,7 +5619,6 @@ msgstr "Не увози"
 
 #. js-lingui-id: TvY/XA
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/navigation/components/NavigationDrawerOtherSection.tsx
 msgid "Documentation"
@@ -5768,7 +5822,7 @@ msgid "e.g. OpenAI EU"
 msgstr "нпр. OpenAI EU"
 
 #. js-lingui-id: p5P8NB
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "E.g., \"We are a B2B SaaS company. Always use formal language...\""
 msgstr "На пример, \"Ми смо B2B SaaS компанија. Увек користите формалан језик...\""
 
@@ -6114,6 +6168,8 @@ msgstr "Запослени"
 #. js-lingui-id: N2S1rs
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "Празно"
@@ -6427,11 +6483,6 @@ msgstr "Унесите вредност"
 #: src/modules/object-record/record-field/ui/form-types/components/FormMultiTextFieldInput.tsx
 msgid "Enter values, comma-separated"
 msgstr ""
-
-#. js-lingui-id: OjkRLQ
-#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "Enter your API key"
-msgstr "Унесите свој API кључ"
 
 #. js-lingui-id: GpB8YV
 #: src/pages/settings/security/SettingsSecurity.tsx
@@ -6988,7 +7039,7 @@ msgid "Failed to activate enterprise license. Please check your key or contact s
 msgstr "Неуспело активирање Enterprise лиценце. Проверите свој кључ или контактирајте подршку."
 
 #. js-lingui-id: vJiM7T
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Failed to activate skill"
 msgstr "Није успело активирање вештине"
 
@@ -7007,11 +7058,6 @@ msgstr "Није успело додавање провајдера"
 msgid "Failed to create email handle. Email handles may not be configured on this server."
 msgstr ""
 
-#. js-lingui-id: WM7GKt
-#: src/pages/settings/ai/SettingsAI.tsx
-msgid "Failed to create tool"
-msgstr "Није успело креирање алата"
-
 #. js-lingui-id: lWoewm
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Failed to delete email handle."
@@ -7023,7 +7069,7 @@ msgid "Failed to delete jobs. Please try again later."
 msgstr "Није успело брисање послова. Покушајте поново касније."
 
 #. js-lingui-id: bmwWKk
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Failed to delete skill"
 msgstr "Није успело брисање вештине"
 
@@ -7126,7 +7172,7 @@ msgid "Failed to save role permissions: {errorMessage}"
 msgstr ""
 
 #. js-lingui-id: 9ryUyP
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Failed to save workspace instructions"
 msgstr "Није успело чување упутстава за радни простор"
 
@@ -7152,13 +7198,13 @@ msgid "Failed to update default model"
 msgstr "Није успело ажурирање подразумеваног модела"
 
 #. js-lingui-id: 1R13Ov
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model"
 msgstr "Није успело ажурирање модела"
 
 #. js-lingui-id: W7Ff/4
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to update model availability"
@@ -7175,7 +7221,7 @@ msgid "Failed to update model recommendations"
 msgstr ""
 
 #. js-lingui-id: rCUG3c
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model selection mode"
 msgstr "Није успело ажурирање режима избора модела"
 
@@ -7334,6 +7380,7 @@ msgstr "поља"
 
 #. js-lingui-id: vF68cg
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectIndexTable.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/data-model/new-index/SettingsObjectNewIndex.tsx
@@ -7868,6 +7915,7 @@ msgid "Grants permission to perform all available actions without restriction"
 msgstr "Дозвољава извршавање свих доступних радњи без ограничења"
 
 #. js-lingui-id: gBiL6J
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "GraphQL"
 msgstr "ГрафКуЕл"
@@ -8550,6 +8598,7 @@ msgid "Insert a JSON input, then press \"Run Function\"."
 msgstr ""
 
 #. js-lingui-id: TKQ7K+
+#: src/pages/settings/applications/SettingsApplications.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailAboutTab.tsx
 #: src/pages/settings/applications/components/SettingsApplicationRegistrationShareLinkButtons.tsx
 msgid "Install"
@@ -8629,11 +8678,6 @@ msgstr "Промена интервала је отказана."
 #: src/modules/settings/two-factor-authentication/components/DeleteTwoFactorAuthenticationMethod.tsx
 msgid "Invalid 2FA information."
 msgstr "Неправилна 2FA информација."
-
-#. js-lingui-id: GNRDhm
-#: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
-msgid "Invalid API key"
-msgstr "Неважећи API кључ"
 
 #. js-lingui-id: 9TgH9p
 #: src/modules/settings/security/components/SettingsSecurityAuthBypassOptionsList.tsx
@@ -8753,6 +8797,7 @@ msgstr "Позивнице"
 
 #. js-lingui-id: MFKlMB
 #: src/utils/title-utils.ts
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/modules/workspace/components/WorkspaceInviteTeam.tsx
 msgid "Invite"
@@ -9232,12 +9277,15 @@ msgid "Launch manually"
 msgstr "Покрени ручно"
 
 #. js-lingui-id: rdU729
+#: src/pages/settings/layout/SettingsLayout.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/modules/side-panel/utils/getSidePanelSubPageTitle.ts
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldsSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/record-page/SidePanelRecordPageFieldSettings.tsx
 #: src/modules/side-panel/pages/page-layout/components/dashboard/SidePanelDashboardRecordTableSettings.tsx
+#: src/modules/settings/hooks/useSettingsNavigationItems.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownCustomView.tsx
 msgid "Layout"
@@ -9693,6 +9741,11 @@ msgstr ""
 msgid "Manage Members"
 msgstr "Управљање члановима"
 
+#. js-lingui-id: LNz5UW
+#: src/pages/settings/data-model/SettingsObjects.tsx
+msgid "Manage objects, fields and relationships"
+msgstr ""
+
 #. js-lingui-id: eGGH1l
 #: src/modules/settings/roles/role-permissions/permission-flags/hooks/useSettingsRolePermissionFlagConfig.ts
 msgid "Manage security policies"
@@ -9729,7 +9782,7 @@ msgid "Manage your internet accounts."
 msgstr "Управљање вашим интернетским налозима."
 
 #. js-lingui-id: waFx9W
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Managed"
 msgstr ""
 
@@ -9807,12 +9860,23 @@ msgstr "Максималан број URL-ова"
 msgid "Maximum values"
 msgstr "Максималне вредности"
 
+#. js-lingui-id: nA8kxD
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "MCP"
+msgstr ""
+
+#. js-lingui-id: 2jj0eo
+#: src/modules/settings/playground/components/SettingsMcpSetup.tsx
+msgid "MCP config copied to clipboard"
+msgstr ""
+
 #. js-lingui-id: NvQoNb
 #: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "MCP Configuration copied to clipboard"
 msgstr "MCP Конфигурација је копирана у клипборд"
 
 #. js-lingui-id: 8CWirf
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 #: src/pages/settings/ai/components/SettingsAiMCP.tsx
 msgid "MCP Server"
 msgstr "MCP сервер"
@@ -10019,6 +10083,7 @@ msgstr "ID модела је обавезан"
 
 #. js-lingui-id: //nm2/
 #: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Models"
 msgstr "Модели"
@@ -10086,7 +10151,6 @@ msgid "months"
 msgstr ""
 
 #. js-lingui-id: 2FYpfJ
-#: src/pages/settings/ai/SettingsAI.tsx
 #: src/modules/ui/layout/tab-list/components/TabMoreButton.tsx
 msgid "More"
 msgstr "Још"
@@ -10235,8 +10299,8 @@ msgstr ""
 #: src/pages/settings/applications/components/SettingsApplicationDataTable.tsx
 #: src/pages/settings/ai/constants/SettingsSkillTableMetadata.ts
 #: src/pages/settings/ai/constants/SettingsAiAgentTableMetadata.ts
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
 #: src/pages/settings/ai/components/SettingsToolParameterTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTable.tsx
 #: src/pages/settings/admin-panel/SettingsAdminWorkspaceDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminUserDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
@@ -11417,6 +11481,7 @@ msgstr "објекти"
 
 #. js-lingui-id: B3toQF
 #: src/pages/settings/data-model/SettingsObjects.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
 #: src/pages/settings/data-model/SettingsObjectDetailPage.tsx
@@ -11805,7 +11870,9 @@ msgid "Override Draft"
 msgstr "Замени нацрт"
 
 #. js-lingui-id: 6/dCYd
+#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
 msgid "Overview"
 msgstr "Преглед"
 
@@ -11878,6 +11945,11 @@ msgstr "Страница није пронађена | Twenty"
 #: src/pages/settings/security/event-logs/components/EventLogTableSelector.tsx
 msgid "Page Views"
 msgstr "Прегледи страница"
+
+#. js-lingui-id: wRR604
+#: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+msgid "Pages"
+msgstr ""
 
 #. js-lingui-id: ijBN4V
 #: src/modules/advanced-text-editor/extensions/slash-command/DefaultSlashCommands.ts
@@ -12592,18 +12664,18 @@ msgid "Read documentation"
 msgstr "Прочитајте документацију"
 
 #. js-lingui-id: U26cMX
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Read system prompts"
 msgstr ""
 
 #. js-lingui-id: EKsFda
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Read the system prompts to understand how the AI works"
 msgstr ""
 
 #. js-lingui-id: 0URVx8
-#. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1, }, )
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#. placeholder {0}: formatNumber( systemPromptTokenCount, { abbreviate: true, decimals: 1 }, )
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 msgid "Read the system prompts to understand how the AI works (~{0} tokens)"
 msgstr ""
 
@@ -12732,6 +12804,11 @@ msgstr "Сними слику"
 msgid "Record label"
 msgstr "Сними етикету"
 
+#. js-lingui-id: XueM/X
+#: src/pages/settings/layout/SettingsLayout.tsx
+msgid "Record page"
+msgstr ""
+
 #. js-lingui-id: mAHjRd
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutOpenInContent.tsx
 #: src/modules/object-record/object-options-dropdown/components/ObjectOptionsDropdownLayoutContent.tsx
@@ -12850,6 +12927,7 @@ msgid "Relation type"
 msgstr "Тип релације"
 
 #. js-lingui-id: g87L9j
+#: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/modules/settings/data-model/object-details/components/tabs/ObjectFields.tsx
 #: src/modules/activities/inline-cell/components/ActivityTargetsInlineCell.tsx
 msgid "Relations"
@@ -13162,6 +13240,7 @@ msgid "Response Format"
 msgstr ""
 
 #. js-lingui-id: WHiaOl
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/playground/SettingsRestPlayground.tsx
 #: src/modules/settings/playground/components/PlaygroundSetupForm.tsx
 msgid "REST"
@@ -13331,6 +13410,7 @@ msgid "roles"
 msgstr ""
 
 #. js-lingui-id: 5dJK4M
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
@@ -13551,7 +13631,7 @@ msgid "Search a role..."
 msgstr "Претражите улогу..."
 
 #. js-lingui-id: lJNEce
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Search a skill..."
 msgstr "Претражите вештину..."
 
@@ -13567,7 +13647,7 @@ msgid "Search a team member..."
 msgstr "Претражите члана тима..."
 
 #. js-lingui-id: VNmPqQ
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Search a tool..."
 msgstr ""
 
@@ -13882,6 +13962,11 @@ msgstr ""
 #: src/modules/settings/roles/role-permissions/objects-permissions/components/SettingsRolePermissionsObjectsSection.tsx
 msgid "See Records on All Objects"
 msgstr "Погледај записе на свим објектима"
+
+#. js-lingui-id: eQ3co2
+#: src/pages/settings/data-model/SettingsObjects.tsx
+msgid "See your data structure as an interactive diagram"
+msgstr ""
 
 #. js-lingui-id: Hhnssf
 #: src/pages/settings/applications/components/SettingsApplicationTableRow.tsx
@@ -14227,6 +14312,11 @@ msgstr "Подесите поље Избор на {objectLabel} да бисте 
 msgid "Set up forwarding from the source address to this destination."
 msgstr ""
 
+#. js-lingui-id: dq5Wx1
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+msgid "Set up MCP"
+msgstr ""
+
 #. js-lingui-id: 9HNKkV
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailEnvironmentVariablesTable.tsx
 msgid "Set your application configuration variables"
@@ -14387,6 +14477,16 @@ msgstr ""
 msgid "Side Panel"
 msgstr "Странични панел"
 
+#. js-lingui-id: uWi2Q+
+#: src/pages/settings/layout/SettingsLayout.tsx
+msgid "Sidebar"
+msgstr ""
+
+#. js-lingui-id: 9k9PMD
+#: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+msgid "Sidebar items"
+msgstr ""
+
 #. js-lingui-id: 5lWFkC
 #: src/modules/auth/sign-in-up/components/internal/SignInUpWithCredentials.tsx
 msgid "Sign in"
@@ -14471,12 +14571,12 @@ msgid "Skill"
 msgstr "Вештина"
 
 #. js-lingui-id: h4t38o
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Skill activated"
 msgstr "Вештина је активирана"
 
 #. js-lingui-id: /IoK74
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Skill deleted"
 msgstr "Вештина је обрисана"
 
@@ -14499,7 +14599,9 @@ msgstr ""
 #. js-lingui-id: PCSkw2
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
 msgid "Skills"
 msgstr "Вештине"
 
@@ -14724,7 +14826,7 @@ msgid "Stages"
 msgstr "Фазе"
 
 #. js-lingui-id: TJBHlP
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 #: src/modules/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker.tsx
 #: src/modules/applications/hooks/useApplicationChipData.ts
 msgid "Standard"
@@ -15137,8 +15239,8 @@ msgstr ""
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/SettingsAiPrompts.tsx
 #: src/pages/settings/ai/forms/components/SettingsAiAgentForm.tsx
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
 #: src/pages/settings/ai/components/SettingsAgentSettingsTab.tsx
 msgid "System Prompt"
 msgstr "Системски упит"
@@ -15219,6 +15321,7 @@ msgid "Task Title"
 msgstr "Наслов задатка"
 
 #. js-lingui-id: KM6m8p
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 #: src/pages/settings/members/SettingsWorkspaceMembers.tsx
 msgid "Team"
 msgstr ""
@@ -15336,6 +15439,11 @@ msgid ""
 "```\n"
 "\n"
 "See the [Getting Started guide](https://twenty.com/developers/extend/apps/getting-started) for the full walkthrough, and [Building Apps](https://twenty.com/developers/extend/apps/building) for the `defineApplication` / `defineEntity` APIs."
+msgstr ""
+
+#. js-lingui-id: n+CCXl
+#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+msgid "The default AI model used for chats, agents, and workflows"
 msgstr ""
 
 #. js-lingui-id: 1xQkU9
@@ -15900,7 +16008,7 @@ msgid "Tool calls made"
 msgstr "Остварени позиви алата"
 
 #. js-lingui-id: SrWh42
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/hooks/useCreateTool.ts
 msgid "Tool created"
 msgstr "Алат је креиран"
 
@@ -15921,7 +16029,9 @@ msgstr "Генерисање алата"
 
 #. js-lingui-id: xdA/+p
 #: src/pages/settings/ai/SettingsAI.tsx
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
+#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Tools"
 msgstr "Алатке"
 
@@ -16067,11 +16177,10 @@ msgstr ""
 msgid "True"
 msgstr "Истина"
 
-#. js-lingui-id: haaL9N
+#. js-lingui-id: 64tOpZ
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
-msgid "Try our REST or GraphQL API playgrounds."
-msgstr "Испробајте наше РЕСТ или GraphQL АПИ плејграундове."
+msgid "Try our REST or GraphQL API playgrounds"
+msgstr ""
 
 #. js-lingui-id: 3WWUB9
 #: src/pages/settings/updates/SettingsUpdates.tsx
@@ -16738,9 +16847,13 @@ msgstr "Користите апликације за аутентификаци�
 msgid "Use best models only"
 msgstr "Користите само најбоље моделе"
 
+#. js-lingui-id: 5ZehS/
+#: src/pages/settings/ai/components/SettingsAgentSkillsTab.tsx
+msgid "Use filter to see existing skills or create your own"
+msgstr ""
+
 #. js-lingui-id: cVOIgV
-#: src/pages/settings/ai/components/SettingsToolsTable.tsx
-#: src/pages/settings/ai/components/SettingsAgentSkills.tsx
+#: src/pages/settings/ai/components/SettingsAgentToolsTab.tsx
 msgid "Use filter to see existing tools or create your own"
 msgstr ""
 
@@ -17102,7 +17215,9 @@ msgstr "Прегледајте дневнике активности радно�
 
 #. js-lingui-id: 1I6UoR
 #: src/pages/settings/layout/SettingsLayoutViewDetail.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/applications/tabs/SettingsApplicationDetailContentTab.tsx
+#: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
 #: src/modules/navigation-menu-item/edit/side-panel/components/SidePanelNewSidebarItemViewPickerSubView.tsx
 msgid "Views"
 msgstr "Прикази"
@@ -17155,9 +17270,14 @@ msgid "Visible to you"
 msgstr "Видљиво вама"
 
 #. js-lingui-id: 6n7jtr
-#: src/modules/settings/data-model/objects/components/SettingsObjectCoverImage.tsx
+#: src/pages/settings/data-model/SettingsObjects.tsx
 msgid "Visualize"
 msgstr "Визуализуј"
+
+#. js-lingui-id: VvM/Ty
+#: src/pages/settings/data-model/SettingsObjects.tsx
+msgid "Visualize data model"
+msgstr ""
 
 #. js-lingui-id: uUehLT
 #: src/modules/settings/admin-panel/health-status/components/SettingsAdminQueueJobsTable.tsx
@@ -17193,6 +17313,41 @@ msgstr "је обрисан од стране"
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventRowMainObject.tsx
 msgid "was restored by"
 msgstr "је враћен од стране"
+
+#. js-lingui-id: 0WPnTI
+#: src/pages/settings/ai/SettingsAI.tsx
+msgid "Watch AI demo"
+msgstr ""
+
+#. js-lingui-id: 5qU4Mu
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+msgid "Watch API demo"
+msgstr ""
+
+#. js-lingui-id: inpQ46
+#: src/pages/settings/applications/SettingsApplications.tsx
+msgid "Watch apps demo"
+msgstr ""
+
+#. js-lingui-id: uIrZTC
+#: src/pages/settings/layout/SettingsLayout.tsx
+msgid "Watch customization demo"
+msgstr ""
+
+#. js-lingui-id: syeoTg
+#: src/pages/settings/data-model/SettingsObjects.tsx
+msgid "Watch data model demo"
+msgstr ""
+
+#. js-lingui-id: egkNh9
+#: src/modules/settings/components/SettingsDiscoveryHeroCard.tsx
+msgid "Watch demo"
+msgstr ""
+
+#. js-lingui-id: 6ZDYQy
+#: src/pages/settings/members/SettingsWorkspaceMembers.tsx
+msgid "Watch members demo"
+msgstr ""
 
 #. js-lingui-id: 6eMAkI
 #: src/modules/auth/sign-in-up/components/EmailVerificationSent.tsx
@@ -17281,6 +17436,7 @@ msgstr "Webhook ID је обавезан за ажурирање"
 
 #. js-lingui-id: v1kQyJ
 #: src/pages/settings/workspace/SettingsApiWebhooks.tsx
+#: src/pages/settings/workspace/SettingsApiWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
 #: src/pages/settings/developers/webhooks/components/SettingsWebhooks.tsx
@@ -17335,6 +17491,11 @@ msgstr "Чиме могу да вам помогнем?"
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
 msgid "What this API can do: Select a user role to define its permissions."
 msgstr "Шта овај АПИ може: Изаберите корисничку улогу да дефинишете њене дозволе."
+
+#. js-lingui-id: drC+Tq
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+msgid "What's installed and being used in your workspace"
+msgstr ""
 
 #. js-lingui-id: m7GziZ
 #: src/modules/ai/components/suggested-prompts/default-suggested-prompts.ts
@@ -17393,6 +17554,11 @@ msgstr "Тип виджета"
 #. js-lingui-id: YR3K7M
 #: src/pages/settings/applications/SettingsAvailableApplicationDetails.tsx
 msgid "widgets"
+msgstr ""
+
+#. js-lingui-id: tL6W2K
+#: src/modules/settings/layout/components/SettingsLayoutItemsStats.tsx
+msgid "Widgets"
 msgstr ""
 
 #. js-lingui-id: j6ncOZ
@@ -17464,6 +17630,7 @@ msgstr "Токови Рада"
 #: src/pages/settings/members/roles/SettingsRoleAddObjectLevel.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
 #: src/pages/settings/logic-functions/SettingsLogicFunctionDetail.tsx
+#: src/pages/settings/layout/SettingsLayout.tsx
 #: src/pages/settings/layout/components/SettingsLayoutDetailScaffold.tsx
 #: src/pages/settings/enterprise/SettingsEnterprise.tsx
 #: src/pages/settings/emailing-domains/SettingsNewEmailingDomain.tsx
@@ -17473,7 +17640,6 @@ msgstr "Токови Рада"
 #: src/pages/settings/developers/playground/SettingsGraphQLPlayground.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeysNew.tsx
 #: src/pages/settings/developers/api-keys/SettingsDevelopersApiKeyDetail.tsx
-#: src/pages/settings/developers/api-keys/SettingsApiKeys.tsx
 #: src/pages/settings/data-model/SettingsObjects.tsx
 #: src/pages/settings/data-model/SettingsObjectOverview.tsx
 #: src/pages/settings/data-model/SettingsObjectFieldEdit.tsx
@@ -17553,8 +17719,8 @@ msgid "Workspace Info"
 msgstr "Информације о радном простору"
 
 #. js-lingui-id: BYrMT0
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
-#: src/pages/settings/ai/components/SettingsAiMoreTab.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
+#: src/pages/settings/ai/components/SettingsAiOverviewTab.tsx
 msgid "Workspace Instructions"
 msgstr "Упутства за радни простор"
 

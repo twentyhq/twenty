@@ -1,5 +1,5 @@
 import type { CaseStudyCatalogEntry } from '@/lib/customers';
-import { getServerI18n } from '@/lib/i18n/utils/get-server-i18n';
+import { getServerI18n } from '@/lib/i18n/server';
 import { LocalizedLink } from '@/lib/i18n';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';

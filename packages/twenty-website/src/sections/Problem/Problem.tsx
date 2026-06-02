@@ -8,8 +8,8 @@ import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
 import type { ReactNode } from 'react';
 
-import { Points } from './ProblemPoints';
-import { Visual } from './components/Visual/Visual';
+export { Visual as ProblemVisual } from './components/Visual/Visual';
+export { Points as ProblemPoints } from './ProblemPoints';
 
 const StyledSection = styled.section`
   width: 100%;
@@ -57,9 +57,7 @@ const problemHeadingClassName = css`
   }
 `;
 
-type RootProps = { children: ReactNode };
-
-function Root({ children }: RootProps) {
+export function ProblemSection({ children }: { children: ReactNode }) {
   return (
     <StyledSection>
       <StyledContainer>{children}</StyledContainer>
@@ -67,13 +65,11 @@ function Root({ children }: RootProps) {
   );
 }
 
-type ContentProps = { children: ReactNode };
-
-function Content({ children }: ContentProps) {
+export function ProblemContent({ children }: { children: ReactNode }) {
   return <StyledContent>{children}</StyledContent>;
 }
 
-function Heading({
+export function ProblemHeading({
   as = 'h2',
   children,
   className,
@@ -91,11 +87,3 @@ function Heading({
     </BaseHeading>
   );
 }
-
-export const Problem = {
-  Root,
-  Visual,
-  Content,
-  Heading,
-  Points,
-};

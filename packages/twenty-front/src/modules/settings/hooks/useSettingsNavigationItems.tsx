@@ -27,6 +27,7 @@ import {
   IconHelpCircle,
   IconHierarchy2,
   IconKey,
+  IconLayout,
   IconMail,
   IconMessage,
   IconPlug,
@@ -125,18 +126,16 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
-          label: t`Email`,
-          path: SettingsPath.WorkspaceEmail,
-          Icon: IconMail,
-          isHidden:
-            !isEmailGroupFeatureEnabled ||
-            !permissionMap[PermissionFlagType.WORKSPACE],
-        },
-        {
           label: t`Data model`,
           path: SettingsPath.Objects,
           Icon: IconHierarchy2,
           isHidden: !permissionMap[PermissionFlagType.DATA_MODEL],
+        },
+        {
+          label: t`Layout`,
+          path: SettingsPath.Layout,
+          Icon: IconLayout,
+          isHidden: !permissionMap[PermissionFlagType.LAYOUTS],
         },
         {
           label: t`Members`,
@@ -175,8 +174,16 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
-          isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
+          isHidden: !permissionMap[PermissionFlagType.AI],
           modifier: 'new',
+        },
+        {
+          label: t`Email`,
+          path: SettingsPath.WorkspaceEmail,
+          Icon: IconMail,
+          isHidden:
+            !isEmailGroupFeatureEnabled ||
+            !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {
           label: t`Security`,
