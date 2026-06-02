@@ -241,9 +241,9 @@ export function HeroVisualScroll({
     StackTargetMetric[]
   >([]);
   const clamp = (value: number) => Math.max(0, Math.min(1, value));
-  const stackAppearProgress = clamp((morphProgress - 0.14) / 0.12);
-  const stackAlignProgress = clamp((morphProgress - 0.5) / 0.16);
-  const stackSpreadProgress = clamp((morphProgress - 0.64) / 0.2);
+  const stackAppearProgress = clamp((morphProgress - 0.4) / 0.16);
+  const stackAlignProgress = clamp((morphProgress - 0.62) / 0.04);
+  const stackSpreadProgress = clamp((morphProgress - 0.66) / 0.27);
   const stackSpreadEasedProgress = 1 - Math.pow(1 - stackSpreadProgress, 2.6);
   const selectorRevealProgress = clamp((morphProgress - 0.94) / 0.06);
   const selectorRevealReady = selectorRevealProgress > 0.96;
@@ -251,11 +251,11 @@ export function HeroVisualScroll({
 
   const stackStyle = {
     '--hero-stack-opacity': String(stackAppearProgress),
-    '--hero-stack-shift-y': `${(1 - stackAppearProgress) * 24}px`,
+    '--hero-stack-shift-y': `${(1 - stackAppearProgress) * 16}px`,
   } as CSSProperties;
 
-  const stackBaseOffsets = [0, 8, 16, 24];
-  const stackBaseScales = [1, 0.985, 0.97, 0.955];
+  const stackBaseOffsets = [0, 4, 8, 12];
+  const stackBaseScales = [1, 0.99, 0.98, 0.97];
   const stackSpreadMetrics =
     stackTargetMetrics.length === tabs.length ? stackTargetMetrics : null;
   const stackWidth = stackSpreadMetrics?.[0]?.width ?? null;
