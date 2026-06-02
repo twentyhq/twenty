@@ -8,7 +8,6 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
-import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { createEmptyOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-actions-report.constant';
 import { EMPTY_ORCHESTRATOR_FAILURE_REPORT } from 'src/engine/workspace-manager/workspace-migration/constant/empty-orchestrator-failure-report.constant';
 import {
@@ -19,6 +18,7 @@ import {
   type WorkspaceMigrationOrchestratorSuccessfulResult,
 } from 'src/engine/workspace-manager/workspace-migration/types/workspace-migration-orchestrator.type';
 import { AllUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/all-universal-flat-entity-maps.type';
+import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
 import { aggregateOrchestratorActionsReport } from 'src/engine/workspace-manager/workspace-migration/utils/aggregate-orchestrator-actions-report.util';
 import { computeOrderedMigrationActions } from 'src/engine/workspace-manager/workspace-migration/utils/compute-ordered-migration-actions.util';
 import { crossEntityTransversalValidation } from 'src/engine/workspace-manager/workspace-migration/utils/cross-entity-transversal-validation.util';
@@ -55,6 +55,11 @@ import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspac
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 
+type FromToMetadataUniversalFlatEntityMaps<T extends AllMetadataName> = {
+  from: MetadataUniversalFlatEntityMaps<T>;
+  to: MetadataUniversalFlatEntityMaps<T>;
+};
+
 type EntityActionsBuilderTask = {
   metadataName: AllMetadataName;
   run: (context: EntityActionsBuilderRunContext) => Promise<void>;
@@ -85,7 +90,9 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
     workspaceId,
   }) => {
     const flatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
-    const fromToFlatEntityMaps = fromToAllFlatEntityMaps[flatEntityMapsKey];
+    const fromToFlatEntityMaps = fromToAllFlatEntityMaps[flatEntityMapsKey] as
+      | FromToMetadataUniversalFlatEntityMaps<T>
+      | undefined;
 
     if (!isDefined(fromToFlatEntityMaps)) {
       return;
@@ -95,16 +102,15 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
       additionalCacheDataMaps,
       buildOptions,
       dependencyOptimisticFlatEntityMaps: optimisticAllFlatEntityMaps,
-      from: fromToFlatEntityMaps.from as MetadataUniversalFlatEntityMaps<T>,
-      to: fromToFlatEntityMaps.to as MetadataUniversalFlatEntityMaps<T>,
+      from: fromToFlatEntityMaps.from,
+      to: fromToFlatEntityMaps.to,
       workspaceId,
     });
 
     if (result.status === 'fail') {
       orchestratorFailureReport[metadataName].push(...result.errors);
     } else {
-      orchestratorActionsReport[metadataName] =
-        result.actions as OrchestratorActionsReport[T];
+      orchestratorActionsReport[metadataName] = result.actions;
     }
   },
 });
@@ -145,6 +151,12 @@ export class WorkspaceMigrationBuildOrchestratorService {
     workspaceMigrationApplicationVariableActionsBuilderService: WorkspaceMigrationApplicationVariableActionsBuilderService,
     workspaceMigrationConnectionProviderActionsBuilderService: WorkspaceMigrationConnectionProviderActionsBuilderService,
   ) {
+    // The order of this array defines the execution order of the per-entity
+    // builders. Each builder may mutate `optimisticAllFlatEntityMaps`, so
+    // subsequent builders see those mutations and downstream entities depend
+    // on upstream ones being processed first. Do not reorder casually.
+    // The constructor parameter order above is irrelevant: NestJS DI resolves
+    // dependencies by type, not by position.
     this.entityActionsBuilderTasksInExecutionOrder = [
       createEntityActionsBuilderTask(
         ALL_METADATA_NAME.objectMetadata,
