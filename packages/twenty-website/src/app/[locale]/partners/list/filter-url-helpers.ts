@@ -1,5 +1,5 @@
 import {
-  DEPLOYMENT_EXPERTISES,
+  PARTNER_SCOPES,
   SERVED_GEOS,
   SPOKEN_LANGUAGES,
 } from '@/lib/partners-api';
@@ -24,7 +24,7 @@ export const parseCriteriaFromParams = (
 ): FilterCriteria => ({
   regions: parseFacet(params.get('regions'), SERVED_GEOS),
   languages: parseFacet(params.get('languages'), SPOKEN_LANGUAGES),
-  deployments: parseFacet(params.get('deployments'), DEPLOYMENT_EXPERTISES),
+  categories: parseFacet(params.get('categories'), PARTNER_SCOPES),
 });
 
 const encodeFacet = (set: ReadonlySet<string>): string | null =>
@@ -34,10 +34,10 @@ export const buildQueryString = (criteria: FilterCriteria): string => {
   const params = new URLSearchParams();
   const r = encodeFacet(criteria.regions);
   const l = encodeFacet(criteria.languages);
-  const d = encodeFacet(criteria.deployments);
+  const c = encodeFacet(criteria.categories);
   if (r) params.set('regions', r);
   if (l) params.set('languages', l);
-  if (d) params.set('deployments', d);
+  if (c) params.set('categories', c);
   return params.toString();
 };
 

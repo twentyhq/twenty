@@ -1,6 +1,6 @@
 import type {
-  DeploymentExpertise,
   MarketplacePartner,
+  PartnerScope,
   ServedGeo,
   SpokenLanguage,
 } from '@/lib/partners-api';
@@ -8,13 +8,13 @@ import type {
 export type FilterCriteria = {
   regions: ReadonlySet<ServedGeo>;
   languages: ReadonlySet<SpokenLanguage>;
-  deployments: ReadonlySet<DeploymentExpertise>;
+  categories: ReadonlySet<PartnerScope>;
 };
 
 export const EMPTY_CRITERIA: FilterCriteria = {
   regions: new Set(),
   languages: new Set(),
-  deployments: new Set(),
+  categories: new Set(),
 };
 
 const facetMatches = <T>(
@@ -30,10 +30,10 @@ export const filterPartners = (
     (p) =>
       facetMatches(p.region, criteria.regions) &&
       facetMatches(p.languagesSpoken, criteria.languages) &&
-      facetMatches(p.deploymentExpertise, criteria.deployments),
+      facetMatches(p.partnerScope, criteria.categories),
   );
 
 export const hasAnyFilter = (criteria: FilterCriteria): boolean =>
   criteria.regions.size > 0 ||
   criteria.languages.size > 0 ||
-  criteria.deployments.size > 0;
+  criteria.categories.size > 0;

@@ -306,14 +306,14 @@ export default defineFrontComponent({
 يتيح لك الحقل `conditionalAvailabilityExpression` التحكّم في وقت ظهور الأمر بناءً على سياق الصفحة الحالي. استورد متغيّرات ومشغّلات مضبوطة الأنواع من `twenty-sdk` لبناء التعابير:
 
 ```tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
 import {
+  defineFrontComponent,
   pageType,
   numberOfSelectedRecords,
   objectPermissions,
   everyEquals,
   isDefined,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineFrontComponent({
   universalIdentifier: '...',

@@ -19,9 +19,6 @@ const playgroundSetupFormSchema = z.object({
 
 type PlaygroundSetupFormValues = z.infer<typeof playgroundSetupFormSchema>;
 
-// Last column shrinks to the Launch button's content width so its right
-// edge sits at the form's right edge. The two select columns share the
-// remaining space equally.
 const StyledForm = styled.form`
   align-items: end;
   display: grid;
