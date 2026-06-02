@@ -329,25 +329,24 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const isPrebuilt = executionMode === LogicFunctionExecutionMode.PREBUILT;
-
       await this.assembleNodeModules({
         sourceTemporaryDir,
         flatApplication,
         applicationUniversalIdentifier,
       });
 
-      const inMemoryBuiltHandlerPath = isPrebuilt
-        ? await this.copyPrebuiltBundleIntoExecutionDir({
-            flatLogicFunction,
-            sourceTemporaryDir,
-          })
-        : await this.logicFunctionResourceService.copyBuiltCodeInMemory({
-            workspaceId: flatLogicFunction.workspaceId,
-            applicationUniversalIdentifier,
-            builtHandlerPath: flatLogicFunction.builtHandlerPath,
-            inMemoryDestinationPath: sourceTemporaryDir,
-          });
+      const inMemoryBuiltHandlerPath =
+        executionMode === LogicFunctionExecutionMode.PREBUILT
+          ? await this.copyPrebuiltBundleIntoExecutionDir({
+              flatLogicFunction,
+              sourceTemporaryDir,
+            })
+          : await this.logicFunctionResourceService.copyBuiltCodeInMemory({
+              workspaceId: flatLogicFunction.workspaceId,
+              applicationUniversalIdentifier,
+              builtHandlerPath: flatLogicFunction.builtHandlerPath,
+              inMemoryDestinationPath: sourceTemporaryDir,
+            });
 
       let logs = '';
 
