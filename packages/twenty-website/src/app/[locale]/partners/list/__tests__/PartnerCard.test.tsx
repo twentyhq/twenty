@@ -17,22 +17,33 @@ const FIXTURE: MarketplacePartner = {
   name: 'Test Partner',
   introduction: 'A reliable partner for testing purposes.',
   calendarLink: 'https://calendly.com/test-partner',
-  deploymentExpertise: ['CLOUD', 'SELF_HOST'],
+  partnerScope: ['HOSTING', 'DEVELOPMENT'],
   region: ['EUROPE', 'US'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
+  hourlyRateUsd: null,
+  projectBudgetMinUsd: null,
+  projectBudgetTypicalUsd: null,
+  linkedinUrl: '',
+  profilePictureUrl: '',
+  city: '',
+  country: '',
+  skills: [],
 };
 
 const renderCard = () =>
   renderToStaticMarkup(
     <I18nProvider i18n={i18n}>
-      <PartnerCard partner={FIXTURE} index={0} />
+      <PartnerCard partner={FIXTURE} index={0} locale="en" />
     </I18nProvider>,
   );
 
 describe('PartnerCard', () => {
-  it('renders the partner name as the article heading', () => {
+  it('renders the partner name inside the detail-page link in the heading', () => {
     const html = renderCard();
-    expect(html).toMatch(new RegExp(`<h3[^>]*>${FIXTURE.name}</h3>`, 'i'));
+    expect(html).toMatch(
+      new RegExp(`<h3[^>]*>\\s*<a[^>]*>${FIXTURE.name}</a>\\s*</h3>`, 'i'),
+    );
+    expect(html).toContain(`href="/en/partners/profile/${FIXTURE.slug}"`);
   });
 
   it('renders the geo eyebrow with the first served region', () => {
@@ -50,7 +61,7 @@ describe('PartnerCard', () => {
     const expectedChipCount =
       FIXTURE.region.length +
       FIXTURE.languagesSpoken.length +
-      FIXTURE.deploymentExpertise.length;
+      FIXTURE.partnerScope.length;
     const liMatches = html.match(/<li[^>]*>/g) ?? [];
     expect(liMatches.length).toBe(expectedChipCount);
   });
@@ -74,9 +85,10 @@ describe('PartnerCard', () => {
         <PartnerCard
           partner={{ ...FIXTURE, calendarLink: unsafeLink }}
           index={0}
+          locale="en"
         />
       </I18nProvider>,
     );
-    expect(html).not.toContain('href=');
+    expect(html).not.toContain(`href="${unsafeLink}"`);
   });
 });

@@ -69,6 +69,12 @@ export class ObjectRecordsToGraphqlConnectionHelper {
     hasPreviousPage: boolean;
     depth?: number;
   }): IConnection<T> {
+    const objectMetadataId = this.objectIdByNameSingular[objectName];
+    const flatObjectMetadata = findFlatEntityByIdInFlatEntityMapsOrThrow({
+      flatEntityId: objectMetadataId,
+      flatEntityMaps: this.flatObjectMetadataMaps,
+    });
+
     const edges = (objectRecords ?? []).map((objectRecord) => ({
       node: this.processRecord({
         objectRecord,
@@ -80,7 +86,12 @@ export class ObjectRecordsToGraphqlConnectionHelper {
         order,
         depth,
       }),
-      cursor: encodeCursor(objectRecord, order),
+      cursor: encodeCursor({
+        objectRecord,
+        order,
+        flatObjectMetadata,
+        flatFieldMetadataMaps: this.flatFieldMetadataMaps,
+      }),
     }));
 
     const aggregatedFieldsValues = this.extractAggregatedFieldsValues({

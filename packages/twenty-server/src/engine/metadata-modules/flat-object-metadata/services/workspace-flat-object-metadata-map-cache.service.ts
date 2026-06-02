@@ -15,6 +15,8 @@ import { IndexMetadataEntity } from 'src/engine/metadata-modules/index-metadata/
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { ObjectPermissionEntity } from 'src/engine/metadata-modules/object-permission/object-permission.entity';
 import { ViewEntity } from 'src/engine/metadata-modules/view/entities/view.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { regroupEntitiesByRelatedEntityId } from 'src/engine/workspace-cache/utils/regroup-entities-by-related-entity-id';
@@ -32,12 +34,12 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(FieldMetadataEntity)
     private readonly fieldMetadataRepository: Repository<FieldMetadataEntity>,
-    @InjectRepository(IndexMetadataEntity)
-    private readonly indexMetadataRepository: Repository<IndexMetadataEntity>,
-    @InjectRepository(ViewEntity)
-    private readonly viewRepository: Repository<ViewEntity>,
-    @InjectRepository(ObjectPermissionEntity)
-    private readonly objectPermissionRepository: Repository<ObjectPermissionEntity>,
+    @InjectWorkspaceScopedRepository(IndexMetadataEntity)
+    private readonly indexMetadataRepository: WorkspaceScopedRepository<IndexMetadataEntity>,
+    @InjectWorkspaceScopedRepository(ViewEntity)
+    private readonly viewRepository: WorkspaceScopedRepository<ViewEntity>,
+    @InjectWorkspaceScopedRepository(ObjectPermissionEntity)
+    private readonly objectPermissionRepository: WorkspaceScopedRepository<ObjectPermissionEntity>,
   ) {
     super();
   }
@@ -67,18 +69,15 @@ export class WorkspaceFlatObjectMetadataMapCacheService extends WorkspaceCachePr
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
         withDeleted: true,
       }),
-      this.indexMetadataRepository.find({
-        where: { workspaceId },
+      this.indexMetadataRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
         withDeleted: true,
       }),
-      this.viewRepository.find({
-        where: { workspaceId },
+      this.viewRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
         withDeleted: true,
       }),
-      this.objectPermissionRepository.find({
-        where: { workspaceId },
+      this.objectPermissionRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier', 'objectMetadataId'],
         withDeleted: true,
       }),

@@ -459,6 +459,11 @@ msgstr "Wystąpił błąd podczas importu wiadomości"
 msgid "An error occurred during workspace migration."
 msgstr "Wystąpił błąd podczas migracji przestrzeni roboczej."
 
+#. js-lingui-id: X3mSup
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "An error occurred while processing the webhook."
+msgstr ""
+
 #. js-lingui-id: S7yZl9
 #: src/engine/core-modules/two-factor-authentication/two-factor-authentication.exception.ts
 msgid "An error occurred with two-factor authentication data."
@@ -4157,6 +4162,14 @@ msgstr ""
 msgid "Logic function already exists"
 msgstr "Funkcja logiczna już istnieje"
 
+#. js-lingui-id: MovvuJ
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+#: src/engine/workspace-manager/workspace-migration/workspace-migration-builder/validators/services/flat-logic-function-validator.service.ts
+msgid "Logic function cannot be in PREBUILT mode without a fresh build and a checksum"
+msgstr ""
+
 #. js-lingui-id: mZvaAV
 #: src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/exceptions/route-trigger.exception.ts
 msgid "Logic function execution failed."
@@ -5590,6 +5603,11 @@ msgstr "Parametr layoutMode pozycji \"{layoutMode}\" nie jest zgodny z parametre
 msgid "Position must be a finite number"
 msgstr "Pozycja musi być skończoną liczbą"
 
+#. js-lingui-id: YzUxdC
+#: src/engine/metadata-modules/logic-function/logic-function.exception.ts
+msgid "Prebuilt bundle is not installed on the function. Rebuild and try again."
+msgstr ""
+
 #. js-lingui-id: TTHIbk
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workspace-member-standard-flat-field-metadata.util.ts
 msgid "Preferred color scheme"
@@ -6157,6 +6175,11 @@ msgstr "Nie znaleziono archiwum klienta SDK. Klient SDK mógł nie zostać wygen
 #: src/engine/metadata-modules/search-field-metadata/constants/search-vector-field.constants.ts
 msgid "Search vector"
 msgstr "Wektor wyszukiwania"
+
+#. js-lingui-id: CTcVpP
+#: src/engine/core-modules/emailing-domain/drivers/exceptions/emailing-domain-driver.exception.ts
+msgid "Sending is currently suspended for this email domain."
+msgstr ""
 
 #. js-lingui-id: hgvbYY
 #: src/engine/api/graphql/graphql-query-runner/group-by/resolvers/utils/format-result-with-group-by-dimension-values.util.ts
@@ -6854,6 +6877,16 @@ msgstr ""
 #: src/engine/metadata-modules/flat-object-metadata/validators/utils/validate-flat-object-metadata-name.util.ts
 msgid "The singular and plural names cannot be the same for an object"
 msgstr "Nazwy jednostkowe i mnogie nie mogą być takie same dla obiektu"
+
+#. js-lingui-id: 9bYo5E
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be authenticated."
+msgstr ""
+
+#. js-lingui-id: 3nHyuH
+#: src/engine/core-modules/messaging-webhooks/messaging-webhook.exception.ts
+msgid "The webhook request could not be processed."
+msgstr ""
 
 #. js-lingui-id: 5N6QtE
 #: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-automated-trigger-standard-flat-field-metadata.util.ts

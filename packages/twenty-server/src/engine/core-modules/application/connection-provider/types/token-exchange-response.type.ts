@@ -1,5 +1,7 @@
+import { PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings';
+
 export type TokenExchangeResponse = {
-  accessToken: string;
-  refreshToken: string | null;
+  accessToken: PlaintextString;
+  refreshToken: PlaintextString | null;
   scopes: string[] | null;
 };

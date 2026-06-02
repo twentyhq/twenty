@@ -1,4 +1,4 @@
-import { localizeHref, stripLocale } from '../utils/localize-href';
+import { localizeHref, stripLocale } from '../locales';
 
 describe('localizeHref', () => {
   it('does not emit locale prefixes for locales the website does not publish yet', () => {

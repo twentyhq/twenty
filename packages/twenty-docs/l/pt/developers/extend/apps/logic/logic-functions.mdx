@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Tipos de gatilho disponíveis:
 * **httpRoute**: Expõe sua função em um caminho e método HTTP **no endpoint `/s/`**:
 > por exemplo, `path: '/post-card/create'` é acessível em `https://your-twenty-server.com/s/post-card/create`
+
+<Note>
+Para invocar uma função de lógica acionada por rota a partir de um componente de front-end (headless), consulte [Chamando uma função de lógica](/l/pt/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 * **cron**: Executa sua função em um agendamento usando uma expressão CRON.
 * **databaseEvent**: Executa em eventos do ciclo de vida de objetos do espaço de trabalho. Quando a operação do evento é `updated`, campos específicos a serem observados podem ser especificados no array `updatedFields`. Se deixar indefinido ou vazio, qualquer atualização acionará a função.
 > por exemplo, `person.updated`, `*.created`, `company.*`

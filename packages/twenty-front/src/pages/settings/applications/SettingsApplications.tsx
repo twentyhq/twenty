@@ -1,3 +1,4 @@
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
@@ -8,7 +9,10 @@ import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { IconApps, IconCode, IconDownload } from 'twenty-ui/display';
+import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/display';
+import { Section } from 'twenty-ui/layout';
+import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
+import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -18,6 +22,7 @@ import { SettingsApplicationsDeveloperTab } from '~/pages/settings/applications/
 import { SettingsApplicationsInstalledTab } from '~/pages/settings/applications/tabs/SettingsApplicationsInstalledTab';
 
 const APPLICATIONS_TAB_LIST_ID = 'applications-tab-list';
+const APPLICATIONS_HERO_INSTANCE_ID_PREFIX = 'settings-applications-hero';
 
 export const SettingsApplications = () => {
   const { t } = useLingui();
@@ -74,6 +79,34 @@ export const SettingsApplications = () => {
       ]}
     >
       <SettingsPageContainer>
+        <Section>
+          <SettingsDiscoveryHeroCard
+            lightSrc={coverLight}
+            darkSrc={coverDark}
+            instanceIdPrefix={APPLICATIONS_HERO_INSTANCE_ID_PREFIX}
+            tabs={[
+              {
+                id: 'browse',
+                title: t`Browse`,
+                Icon: IconDownload,
+                vimeoId: '1185416793',
+              },
+              {
+                id: 'install',
+                title: t`Install`,
+                Icon: IconApps,
+                vimeoId: '1185416793',
+              },
+              {
+                id: 'develop',
+                title: t`Develop`,
+                Icon: IconPlug,
+                vimeoId: '1185416793',
+              },
+            ]}
+            playButtonAriaLabel={t`Watch apps demo`}
+          />
+        </Section>
         <TabList tabs={tabs} componentInstanceId={APPLICATIONS_TAB_LIST_ID} />
         {renderActiveTabContent()}
       </SettingsPageContainer>

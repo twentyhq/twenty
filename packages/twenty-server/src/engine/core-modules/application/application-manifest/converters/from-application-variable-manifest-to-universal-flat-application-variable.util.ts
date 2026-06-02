@@ -1,3 +1,4 @@
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
 import { type UniversalFlatApplicationVariable } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/universal-flat-application-variable.type';
 
 export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
@@ -5,7 +6,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     key,
     universalIdentifier,
     description,
-    value,
+    encryptedValue,
     isSecret,
     applicationUniversalIdentifier,
     now,
@@ -13,7 +14,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
     key: string;
     universalIdentifier: string;
     description?: string;
-    value?: string;
+    encryptedValue: EncryptedString | '';
     isSecret?: boolean;
     applicationUniversalIdentifier: string;
     now: string;
@@ -22,7 +23,7 @@ export const fromApplicationVariableManifestToUniversalFlatApplicationVariable =
       universalIdentifier,
       applicationUniversalIdentifier,
       key,
-      value: isSecret ? '' : (value ?? ''), // We protect secret variable by not syncing its value at all
+      value: encryptedValue,
       description: description ?? '',
       isSecret: isSecret ?? false,
       createdAt: now,

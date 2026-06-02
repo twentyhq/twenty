@@ -1,5 +1,5 @@
 import type {
-  DeploymentExpertise,
+  PartnerScope,
   ServedGeo,
   SpokenLanguage,
 } from './partner-facets';
@@ -9,7 +9,15 @@ export type MarketplacePartner = {
   name: string;
   introduction: string;
   calendarLink: string;
-  deploymentExpertise: readonly DeploymentExpertise[];
+  partnerScope: readonly PartnerScope[];
   region: readonly ServedGeo[];
   languagesSpoken: readonly SpokenLanguage[];
+  hourlyRateUsd: number | null;
+  projectBudgetMinUsd: number | null;
+  projectBudgetTypicalUsd: number | null;
+  linkedinUrl: string;
+  profilePictureUrl: string;
+  city: string;
+  country: string;
+  skills: readonly string[];
 };

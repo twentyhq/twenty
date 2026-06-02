@@ -84,11 +84,11 @@ export default defineCommandMenuItem({
 Câmpul `conditionalAvailabilityExpression` vă permite să controlați când este vizibilă o comandă în funcție de contextul paginii curente. Importați variabile tipizate și operatori din `twenty-sdk` pentru a construi expresii:
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -102,6 +102,10 @@ export default defineCommandMenuItem({
   ),
 });
 ```
+
+<Note>
+  `RECORD_SELECTION` implică deja o selecție care nu este goală — folosește `numberOfSelectedRecords` doar pentru valori specifice (de ex. `>= 2`).
+</Note>
 
 ### Variabile de context
 

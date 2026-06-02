@@ -3,9 +3,17 @@ import { initOpenNextCloudflareForDev } from '@opennextjs/cloudflare';
 import withLinaria, { type LinariaConfig } from 'next-with-linaria';
 import { APP_LOCALES } from 'twenty-shared/translations';
 
-// Locale URL segments that are actually served (others are normalised away).
-// Mirrors LOCALE_BY_URL_SEGMENT keys in src/lib/i18n/utils/website-locale-segments.ts.
-const DEPLOYED_LOCALE_URL_SEGMENTS = ['en', 'fr'] as const;
+import {
+  WEBSITE_LOCALE_LIST,
+  localeToUrlSegment,
+} from './src/lib/i18n/locales';
+
+// Locale URL segments that are actually served (others are normalised away),
+// derived from the single WEBSITE_LOCALE_LIST source of truth so adding a
+// locale never requires editing this config. These are exactly the keys of
+// LOCALE_BY_URL_SEGMENT in src/lib/i18n/locales.ts.
+const DEPLOYED_LOCALE_URL_SEGMENTS =
+  WEBSITE_LOCALE_LIST.map(localeToUrlSegment);
 
 // Raw locale codes (e.g. fr-FR, de-DE) that should redirect to the un-prefixed
 // path. Excludes pseudo-* locales and the deployed URL segments themselves.
