@@ -5,8 +5,7 @@ import { v4 } from 'uuid';
 import { WorkspaceMigrationRunnerActionHandler } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/interfaces/workspace-migration-runner-action-handler-service.interface';
 
 import { LOGIC_FUNCTION_DRIVER_FACTORY_TOKEN } from 'src/engine/core-modules/logic-function/logic-function-drivers/constants/logic-function-driver-factory.token';
-import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
-import { isLogicFunctionPrebuiltStateValid } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-prebuilt-state-valid.util';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 
 import type { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { getUniversalFlatEntityEmptyForeignKeyAggregators } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/reset-universal-flat-entity-foreign-key-aggregators.util';
@@ -64,10 +63,7 @@ export class CreateLogicFunctionActionHandlerService extends WorkspaceMigrationR
       flatEntities: [logicFunction],
     });
 
-    if (
-      logicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
-      isLogicFunctionPrebuiltStateValid(logicFunction)
-    ) {
+    if (isLogicFunctionReadyForPrebuiltInstall(logicFunction)) {
       const driver = this.logicFunctionDriverFactory.getCurrentDriver();
 
       const installStart = Date.now();

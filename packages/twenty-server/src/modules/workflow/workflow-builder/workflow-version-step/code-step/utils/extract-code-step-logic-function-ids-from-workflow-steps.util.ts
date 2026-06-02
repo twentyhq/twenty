@@ -29,7 +29,7 @@ type WorkflowStepForLogicFunctionIdExtraction =
   | CodeStepForLogicFunctionIdExtraction
   | NonCodeStepForLogicFunctionIdExtraction;
 
-const isCodeStepForLogicFunctionIdExtraction = (
+const isCodeStepForLogicFunction = (
   step: WorkflowStepForLogicFunctionIdExtraction,
 ): step is CodeStepForLogicFunctionIdExtraction =>
   step.type === WorkflowActionType.CODE;
@@ -37,7 +37,7 @@ const isCodeStepForLogicFunctionIdExtraction = (
 export const extractCodeStepLogicFunctionIdsFromWorkflowSteps = (
   steps: WorkflowStepForLogicFunctionIdExtraction[],
 ): string[] =>
-  steps.filter(isCodeStepForLogicFunctionIdExtraction).map((step) => {
+  steps.filter(isCodeStepForLogicFunction).map((step) => {
     const logicFunctionId = step.settings.input.logicFunctionId;
 
     if (!isNonEmptyString(logicFunctionId)) {

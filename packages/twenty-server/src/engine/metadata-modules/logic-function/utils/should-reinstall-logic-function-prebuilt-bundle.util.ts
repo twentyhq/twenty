@@ -1,8 +1,8 @@
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
-  isLogicFunctionPrebuiltStateValid,
+  isLogicFunctionReadyForPrebuiltInstall,
   type LogicFunctionPrebuiltStateFields,
-} from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-prebuilt-state-valid.util';
+} from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 
 export const shouldReinstallLogicFunctionPrebuiltBundle = ({
   existingLogicFunction,
@@ -11,11 +11,7 @@ export const shouldReinstallLogicFunctionPrebuiltBundle = ({
   existingLogicFunction: LogicFunctionPrebuiltStateFields;
   newLogicFunction: LogicFunctionPrebuiltStateFields;
 }): boolean => {
-  if (newLogicFunction.executionMode !== LogicFunctionExecutionMode.PREBUILT) {
-    return false;
-  }
-
-  if (!isLogicFunctionPrebuiltStateValid(newLogicFunction)) {
+  if (!isLogicFunctionReadyForPrebuiltInstall(newLogicFunction)) {
     return false;
   }
 

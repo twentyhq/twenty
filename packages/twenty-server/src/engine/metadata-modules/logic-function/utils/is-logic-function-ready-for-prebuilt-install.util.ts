@@ -8,9 +8,9 @@ export type LogicFunctionPrebuiltStateFields = Pick<
   'executionMode' | 'isBuildUpToDate' | 'checksum'
 >;
 
-export const isLogicFunctionPrebuiltStateValid = (
+export const isLogicFunctionReadyForPrebuiltInstall = (
   flatLogicFunction: LogicFunctionPrebuiltStateFields,
 ): boolean =>
-  flatLogicFunction.executionMode !== LogicFunctionExecutionMode.PREBUILT ||
-  (flatLogicFunction.isBuildUpToDate === true &&
-    isNonEmptyString(flatLogicFunction.checksum));
+  flatLogicFunction.executionMode === LogicFunctionExecutionMode.PREBUILT &&
+  flatLogicFunction.isBuildUpToDate === true &&
+  isNonEmptyString(flatLogicFunction.checksum);
