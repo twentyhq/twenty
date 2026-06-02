@@ -58,7 +58,6 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    // Skip navigation when entry was blocked (e.g. a dashboard is mid-edit).
     if (!enterLayoutCustomizationMode()) {
       return;
     }
