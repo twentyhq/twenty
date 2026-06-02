@@ -398,6 +398,7 @@ enum EngineComponentKey {
   FRONT_COMPONENT_RENDERER
   REPLY_TO_EMAIL_THREAD
   COMPOSE_EMAIL
+  COMPOSE_CAMPAIGN
   GO_TO_PEOPLE
   GO_TO_COMPANIES
   GO_TO_DASHBOARDS
@@ -1463,7 +1464,7 @@ enum EmailingDomainStatus {
 }
 
 type SendMessageBroadcastOutputDTO {
-  campaignId: String!
+  broadcastId: String!
   sentCount: Int!
   failedCount: Int!
 }
@@ -3782,6 +3783,7 @@ input SendEmailViaDomainInput {
 
 input SendMessageBroadcastInput {
   messageTopicId: String!
+  recipientViewId: String
   subject: String!
   body: String!
   fromAddress: String!

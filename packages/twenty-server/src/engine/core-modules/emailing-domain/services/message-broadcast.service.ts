@@ -1,4 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 
 import { isNonEmptyString } from '@sniptt/guards';
 import { In } from 'typeorm';
@@ -7,6 +8,8 @@ import { EmailingDomainStatus } from 'src/engine/core-modules/emailing-domain/dr
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
+import { FindRecordsService } from 'src/engine/core-modules/record-crud/services/find-records.service';
+import { ViewQueryParamsService } from 'src/engine/metadata-modules/view/services/view-query-params.service';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
@@ -16,21 +19,25 @@ import { MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standar
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 
-type SendCampaignArgs = {
+type SendBroadcastArgs = {
   workspaceId: string;
   messageTopicId: string;
   subject: string;
   html: string;
   fromAddress: string;
+  // When set, recipients come from this Person view's filters (a segment).
+  // Otherwise recipients are the people subscribed to the topic.
+  recipientViewId?: string;
 };
 
-type SendCampaignResult = {
-  campaignId: string;
+type SendBroadcastResult = {
+  broadcastId: string;
   sentCount: number;
   failedCount: number;
 };
 
 const SUBSCRIBED_STATUS = 'SUBSCRIBED';
+const PERSON_OBJECT_NAME = 'person';
 
 @Injectable()
 export class MessageBroadcastService {
@@ -42,15 +49,20 @@ export class MessageBroadcastService {
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    // Resolved lazily to avoid a module-load cycle: the record-crud/view
+    // graph (CoreCommonApiModule) cannot be eagerly imported from this
+    // early-loaded core module without a require-time TDZ.
+    private readonly moduleRef: ModuleRef,
   ) {}
 
-  async sendToList({
+  async send({
     workspaceId,
     messageTopicId,
     subject,
     html,
     fromAddress,
-  }: SendCampaignArgs): Promise<SendCampaignResult> {
+    recipientViewId,
+  }: SendBroadcastArgs): Promise<SendBroadcastResult> {
     const fromDomain = fromAddress.split('@')[1]?.toLowerCase();
 
     const emailingDomain = await this.emailingDomainRepository.findOne(
@@ -68,28 +80,30 @@ export class MessageBroadcastService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const recipientEmails = await this.resolveSubscribedEmails(
-          workspaceId,
-          messageTopicId,
-        );
+        const recipientEmails = isNonEmptyString(recipientViewId)
+          ? await this.resolveRecipientsFromView(workspaceId, recipientViewId)
+          : await this.resolveSubscribedEmails(workspaceId, messageTopicId);
 
-        const campaignRepository =
+        const broadcastRepository =
           await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
             MessageBroadcastWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
-        const { identifiers } = await campaignRepository.insert({
+        const { identifiers } = await broadcastRepository.insert({
           name: subject,
           subject,
           bodyTemplate: html,
           fromAddress,
           status: 'SENDING',
-          recipientSource: 'LIST',
-          listId: messageTopicId,
+          recipientSource: isNonEmptyString(recipientViewId)
+            ? 'FILTER'
+            : 'LIST',
+          recipientViewId: recipientViewId ?? null,
+          topicId: messageTopicId,
         });
-        const campaignId = identifiers[0].id;
+        const broadcastId = identifiers[0].id;
 
         let sentCount = 0;
         let failedCount = 0;
@@ -113,24 +127,67 @@ export class MessageBroadcastService {
           } catch (error) {
             failedCount += 1;
             this.logger.warn(
-              `Campaign ${campaignId} skipped ${recipientEmail}: ${
+              `Broadcast ${broadcastId} skipped ${recipientEmail}: ${
                 error instanceof Error ? error.message : String(error)
               }`,
             );
           }
         }
 
-        await campaignRepository.update(campaignId, {
+        await broadcastRepository.update(broadcastId, {
           status: 'SENT',
           sentAt: new Date(),
           sentCount,
           failedCount,
         });
 
-        return { campaignId, sentCount, failedCount };
+        return { broadcastId, sentCount, failedCount };
       },
       buildSystemAuthContext(workspaceId),
     );
+  }
+
+  // Resolves the recipients of a broadcast from a saved Person view (segment):
+  // the view's filters are run server-side to produce the list of people.
+  private async resolveRecipientsFromView(
+    workspaceId: string,
+    recipientViewId: string,
+  ): Promise<string[]> {
+    const viewQueryParamsService = this.moduleRef.get(ViewQueryParamsService, {
+      strict: false,
+    });
+    const findRecordsService = this.moduleRef.get(FindRecordsService, {
+      strict: false,
+    });
+
+    const viewParams = await viewQueryParamsService.resolveViewToQueryParams(
+      recipientViewId,
+      workspaceId,
+    );
+
+    if (viewParams.objectNameSingular !== PERSON_OBJECT_NAME) {
+      throw new Error(
+        `Recipient view must target ${PERSON_OBJECT_NAME} records, got ${viewParams.objectNameSingular}`,
+      );
+    }
+
+    const output = await findRecordsService.execute({
+      objectName: PERSON_OBJECT_NAME,
+      filter: viewParams.filter,
+      authContext: buildSystemAuthContext(workspaceId),
+    });
+
+    if (!output.success || !output.result) {
+      return [];
+    }
+
+    const records = output.result.records as Array<{
+      emails?: { primaryEmail?: string | null };
+    }>;
+
+    return records
+      .map((record) => record.emails?.primaryEmail)
+      .filter((email): email is string => isNonEmptyString(email));
   }
 
   private async resolveSubscribedEmails(
@@ -145,7 +202,7 @@ export class MessageBroadcastService {
       );
 
     const subscriptions = await subscriptionRepository.find({
-      where: { listId: messageTopicId, status: SUBSCRIBED_STATUS },
+      where: { topicId: messageTopicId, status: SUBSCRIBED_STATUS },
     });
 
     const personIds = subscriptions.map(

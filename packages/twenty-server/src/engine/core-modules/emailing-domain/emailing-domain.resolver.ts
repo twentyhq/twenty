@@ -103,9 +103,10 @@ export class EmailingDomainResolver {
     @Args('input') input: SendMessageBroadcastInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
   ): Promise<SendMessageBroadcastOutputDTO> {
-    return this.messageBroadcastService.sendToList({
+    return this.messageBroadcastService.send({
       workspaceId: currentWorkspace.id,
       messageTopicId: input.messageTopicId,
+      recipientViewId: input.recipientViewId,
       subject: input.subject,
       html: input.body,
       fromAddress: input.fromAddress,

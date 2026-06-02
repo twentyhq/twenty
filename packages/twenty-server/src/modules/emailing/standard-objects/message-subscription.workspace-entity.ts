@@ -4,12 +4,15 @@ import { type MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-
 import { type PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 
 export class MessageSubscriptionWorkspaceEntity extends BaseWorkspaceEntity {
+  // Denormalized copy of the topic name so the subscription is identifiable
+  // (its labelIdentifier) — a relation can't be a labelIdentifier in Twenty.
+  topicName: string | null;
   status: string;
   subscribedAt: Date | null;
   unsubscribedAt: Date | null;
   source: string;
-  list: EntityRelation<MessageTopicWorkspaceEntity>;
-  listId: string;
+  topic: EntityRelation<MessageTopicWorkspaceEntity>;
+  topicId: string;
   person: EntityRelation<PersonWorkspaceEntity>;
   personId: string;
   searchVector: string;

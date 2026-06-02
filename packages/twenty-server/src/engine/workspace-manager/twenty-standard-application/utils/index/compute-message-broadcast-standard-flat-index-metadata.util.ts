@@ -17,12 +17,12 @@ export const buildMessageBroadcastStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'messageBroadcast'>,
   FlatIndexMetadata
 > => ({
-  listIdIndex: createStandardIndexFlatMetadata({
+  topicIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'listIdIndex',
-      relatedFieldNames: ['list'],
+      indexName: 'topicIdIndex',
+      relatedFieldNames: ['topic'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

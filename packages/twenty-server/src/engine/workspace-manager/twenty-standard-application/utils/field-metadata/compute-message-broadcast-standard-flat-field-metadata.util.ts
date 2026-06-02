@@ -286,7 +286,7 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
           {
             id: '89f0301d-b168-4da3-b435-4bd5e969b604',
             value: 'LIST',
-            label: i18nLabel(msg`List`),
+            label: i18nLabel(msg`Topic`),
             position: 0,
             color: 'blue',
           },
@@ -298,6 +298,19 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
             color: 'purple',
           },
         ],
+      },
+    }),
+    recipientViewId: createStandardFieldFlatMetadata({
+      ...base,
+      context: {
+        fieldName: 'recipientViewId',
+        type: FieldMetadataType.UUID,
+        label: i18nLabel(msg`Recipient view`),
+        description: i18nLabel(
+          msg`The Person view whose filters resolve the recipients`,
+        ),
+        icon: 'IconFilter',
+        isNullable: true,
       },
     }),
     scheduledAt: createStandardFieldFlatMetadata({
@@ -360,22 +373,22 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
         defaultValue: 0,
       },
     }),
-    list: createStandardRelationFieldFlatMetadata({
+    topic: createStandardRelationFieldFlatMetadata({
       ...base,
       context: {
         type: FieldMetadataType.RELATION,
         morphId: null,
-        fieldName: 'list',
-        label: i18nLabel(msg`List`),
+        fieldName: 'topic',
+        label: i18nLabel(msg`Topic`),
         description: i18nLabel(msg`The audience this campaign was sent to`),
         icon: 'IconMailbox',
         isNullable: true,
         targetObjectName: 'messageTopic',
-        targetFieldName: 'campaigns',
+        targetFieldName: 'broadcasts',
         settings: {
           relationType: RelationType.MANY_TO_ONE,
           onDelete: RelationOnDeleteAction.SET_NULL,
-          joinColumnName: 'listId',
+          joinColumnName: 'topicId',
         },
       },
     }),

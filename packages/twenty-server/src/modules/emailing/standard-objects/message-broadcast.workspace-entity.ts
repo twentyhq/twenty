@@ -21,12 +21,13 @@ export class MessageBroadcastWorkspaceEntity extends BaseWorkspaceEntity {
   replyTo: string | null;
   status: string;
   recipientSource: string;
+  recipientViewId: string | null;
   scheduledAt: Date | null;
   sentAt: Date | null;
   sentCount: number;
   bouncedCount: number;
   failedCount: number;
-  list: EntityRelation<MessageTopicWorkspaceEntity> | null;
-  listId: string | null;
+  topic: EntityRelation<MessageTopicWorkspaceEntity> | null;
+  topicId: string | null;
   searchVector: string;
 }

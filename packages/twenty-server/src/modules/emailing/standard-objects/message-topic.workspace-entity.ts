@@ -14,7 +14,10 @@ export const SEARCH_FIELDS_FOR_MESSAGE_TOPIC: FieldTypeAndNameMetadata[] = [
 
 export class MessageTopicWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
+  description: string | null;
+  subscriptionDefault: string;
+  visibility: string;
   subscriptions: EntityRelation<MessageSubscriptionWorkspaceEntity[]>;
-  campaigns: EntityRelation<MessageBroadcastWorkspaceEntity[]>;
+  broadcasts: EntityRelation<MessageBroadcastWorkspaceEntity[]>;
   searchVector: string;
 }

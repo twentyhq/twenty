@@ -16,24 +16,24 @@ export const buildMessageSubscriptionStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'messageSubscription'>,
   FlatIndexMetadata
 > => ({
-  listIdIndex: createStandardIndexFlatMetadata({
+  topicIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'listIdIndex',
-      relatedFieldNames: ['list'],
+      indexName: 'topicIdIndex',
+      relatedFieldNames: ['topic'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
     twentyStandardApplicationId,
     now,
   }),
-  personListUniqueIndex: createStandardIndexFlatMetadata({
+  personTopicUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'personListUniqueIndex',
-      relatedFieldNames: ['person', 'list'],
+      indexName: 'personTopicUniqueIndex',
+      relatedFieldNames: ['person', 'topic'],
       isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,
