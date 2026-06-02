@@ -113,6 +113,7 @@ export class AgentChatStreamingService {
       threadId,
       userWorkspaceId,
       workspace.id,
+      savedUserMessage.id,
     );
 
     const streamId = generateId();
@@ -209,7 +210,12 @@ export class AgentChatStreamingService {
     });
 
     const [uiMessages, thread] = await Promise.all([
-      this.loadMessagesFromDB(threadId, userWorkspaceId, workspaceId),
+      this.loadMessagesFromDB(
+        threadId,
+        userWorkspaceId,
+        workspaceId,
+        nextQueued.id,
+      ),
       this.threadRepository.findOneByOrFail({ id: threadId }),
     ]);
 
@@ -248,6 +254,7 @@ export class AgentChatStreamingService {
     threadId: string,
     userWorkspaceId: string,
     workspaceId: string,
+    currentMessageId: string,
   ) {
     const allMessages = await this.agentChatService.getMessagesForThread(
       threadId,
@@ -264,9 +271,13 @@ export class AgentChatStreamingService {
         role: message.role as 'user' | 'assistant' | 'system',
         parts: await Promise.all(
           mapDBPartsToUIMessageParts(message.parts ?? []).map(async (part) => {
-            if (isExtendedFileUIPart(part as Record<string, unknown>)) {
-              const filePart = part as ExtendedFileUIPart;
+            if (!isExtendedFileUIPart(part as Record<string, unknown>)) {
+              return part;
+            }
 
+            const filePart = part as ExtendedFileUIPart;
+
+            if (message.id === currentMessageId) {
               return {
                 ...filePart,
                 url: await this.fileUrlService.signFileByIdUrl({
@@ -277,7 +288,10 @@ export class AgentChatStreamingService {
               } as ExtendedFileUIPart;
             }
 
-            return part;
+            return {
+              type: 'text' as const,
+              text: `[attached: ${filePart.filename || filePart.fileId}]`,
+            };
           }),
         ),
         createdAt: message.createdAt,
