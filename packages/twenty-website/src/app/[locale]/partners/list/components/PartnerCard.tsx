@@ -1,17 +1,20 @@
 'use client';
 
+import { IconBrandLinkedin } from '@tabler/icons-react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { LinkButton } from '@/design-system/components';
 import { theme } from '@/theme';
 import { styled } from '@linaria/react';
+import NextLink from 'next/link';
 import type { CSSProperties } from 'react';
 
 import type { MarketplacePartner } from '@/lib/partners-api';
 import { PartnerAvatar } from './PartnerAvatar';
 import { PartnerChipRow } from './PartnerChipRow';
+import { PartnerMoneyRow } from './PartnerMoneyRow';
 import {
-  DEPLOYMENT_EXPERTISE_LABELS,
+  PARTNER_SCOPE_LABELS,
   SERVED_GEO_LABELS,
   SPOKEN_LANGUAGE_LABELS,
 } from './chip-labels';
@@ -40,7 +43,9 @@ const CardArticle = styled.article`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(5)};
+  isolation: isolate;
   padding: ${theme.spacing(6)};
+  position: relative;
   transition:
     border-color 0.25s ease,
     box-shadow 0.25s ease,
@@ -76,6 +81,12 @@ const HeaderText = styled.div`
   min-width: 0;
 `;
 
+const NameRow = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${theme.spacing(2)};
+`;
+
 const PartnerName = styled.h3`
   color: ${theme.colors.primary.text[100]};
   font-family: ${theme.font.family.serif};
@@ -84,6 +95,42 @@ const PartnerName = styled.h3`
   letter-spacing: -0.02em;
   line-height: ${theme.lineHeight(7)};
   margin: 0;
+`;
+
+// The card's whole-surface link uses the "stretched link" pattern: an inline
+// <a> on the name with an absolutely-positioned ::after that covers the
+// entire <article>. Other anchors inside the card (LinkedIn icon, Book-a-call)
+// sit above this overlay via z-index, so each remains an independent click
+// target without illegal nested <a> elements.
+const NameLink = styled(NextLink)`
+  color: inherit;
+  text-decoration: none;
+
+  &::after {
+    border-radius: ${theme.radius(2)};
+    content: '';
+    inset: 0;
+    position: absolute;
+    z-index: 0;
+  }
+
+  &:focus-visible::after {
+    outline: 2px solid ${theme.colors.primary.text[100]};
+    outline-offset: 4px;
+  }
+`;
+
+const LinkedinIconLink = styled.a`
+  align-items: center;
+  color: ${theme.colors.primary.text[60]};
+  display: inline-flex;
+  position: relative;
+  transition: color 0.2s ease;
+  z-index: 1;
+
+  &:hover {
+    color: ${theme.colors.primary.text[100]};
+  }
 `;
 
 const CountryEyebrow = styled.span`
@@ -125,6 +172,8 @@ const ChipRows = styled.div`
 const CtaWrapper = styled.div`
   display: flex;
   margin-top: auto;
+  position: relative;
+  z-index: 1;
 `;
 
 const isSafeHttpUrl = (raw: string) => {
@@ -138,9 +187,10 @@ const isSafeHttpUrl = (raw: string) => {
 type PartnerCardProps = {
   partner: MarketplacePartner;
   index: number;
+  locale: string;
 };
 
-export function PartnerCard({ partner, index }: PartnerCardProps) {
+export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
   const { i18n } = useLingui();
   const headingId = `partner-card-heading-${partner.slug}`;
   const style: PartnerCardStyle = { '--partner-card-index': index };
@@ -150,12 +200,31 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
     ? i18n._(SERVED_GEO_LABELS[firstGeo]).toUpperCase()
     : '';
 
+  const linkedinSafe = isSafeHttpUrl(partner.linkedinUrl);
+  const calendarSafe = isSafeHttpUrl(partner.calendarLink);
+
   return (
     <CardArticle aria-labelledby={headingId} style={style}>
       <CardHeader>
         <PartnerAvatar name={partner.name} slug={partner.slug} />
         <HeaderText>
-          <PartnerName id={headingId}>{partner.name}</PartnerName>
+          <NameRow>
+            <PartnerName id={headingId}>
+              <NameLink href={`/${locale}/partners/profile/${partner.slug}`}>
+                {partner.name}
+              </NameLink>
+            </PartnerName>
+            {linkedinSafe && (
+              <LinkedinIconLink
+                href={partner.linkedinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={i18n._(msg`View ${partner.name} on LinkedIn`)}
+              >
+                <IconBrandLinkedin size={16} aria-hidden="true" />
+              </LinkedinIconLink>
+            )}
+          </NameRow>
           <CountryEyebrow>{countryLine}</CountryEyebrow>
         </HeaderText>
       </CardHeader>
@@ -176,13 +245,18 @@ export function PartnerCard({ partner, index }: PartnerCardProps) {
           valueLabels={SPOKEN_LANGUAGE_LABELS}
         />
         <PartnerChipRow
-          label={msg`Deploys`}
-          values={partner.deploymentExpertise}
-          valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
+          label={msg`Categories`}
+          values={partner.partnerScope}
+          valueLabels={PARTNER_SCOPE_LABELS}
         />
       </ChipRows>
 
-      {isSafeHttpUrl(partner.calendarLink) && (
+      <PartnerMoneyRow
+        hourlyRateUsd={partner.hourlyRateUsd}
+        projectBudgetMinUsd={partner.projectBudgetMinUsd}
+      />
+
+      {calendarSafe && (
         <CtaWrapper>
           <LinkButton
             color="secondary"

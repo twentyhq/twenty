@@ -76,7 +76,6 @@ const TEST_PERSON_RECORD_ID = 'test-person-456';
 
 // Widget ID constants for stories
 const WIDGET_ID_NUMBER_CHART = 'widget-number-chart';
-const WIDGET_ID_GAUGE_CHART = 'widget-gauge-chart';
 const WIDGET_ID_BAR_CHART = 'widget-bar-chart';
 const WIDGET_ID_SMALL = 'widget-small';
 const WIDGET_ID_MEDIUM = 'widget-medium';
@@ -324,94 +323,6 @@ export const WithNumberChart: Story = {
                   <WidgetComponentInstanceContext.Provider
                     value={{
                       instanceId: WIDGET_ID_NUMBER_CHART,
-                    }}
-                  >
-                    <WidgetRenderer widget={widget} />
-                  </WidgetComponentInstanceContext.Provider>
-                </PageLayoutContentProvider>
-              </LayoutRenderingProvider>
-            </PageLayoutTestWrapper>
-          </CoreClientProviderWrapper>
-        </JestMetadataAndApolloMocksWrapper>
-      </div>
-    );
-  },
-};
-
-export const WithGaugeChart: Story = {
-  render: () => {
-    const widget: PageLayoutWidget = {
-      __typename: 'PageLayoutWidget',
-      applicationId: '',
-      isActive: true,
-      id: WIDGET_ID_GAUGE_CHART,
-      pageLayoutTabId: TAB_ID_OVERVIEW,
-      type: WidgetType.GRAPH,
-      title: 'Conversion Rate',
-      objectMetadataId: companyObjectMetadataItem.id,
-      gridPosition: {
-        __typename: 'GridPosition',
-        row: 0,
-        column: 0,
-        rowSpan: 5,
-        columnSpan: 3,
-      },
-      configuration: {
-        __typename: 'GaugeChartConfiguration',
-        configurationType: WidgetConfigurationType.GAUGE_CHART,
-        aggregateOperation: AggregateOperations.COUNT,
-        aggregateFieldMetadataId: idField.id,
-        displayDataLabel: false,
-      },
-      createdAt: '2024-01-01T00:00:00Z',
-      updatedAt: '2024-01-01T00:00:00Z',
-      deletedAt: null,
-    };
-
-    setTestObjectMetadataItemsInMetadataStore(
-      jotaiStore,
-      getTestEnrichedObjectMetadataItemsMock(),
-    );
-    jotaiStore.set(isMinimalMetadataReadyState.atom, true);
-    const pageLayoutData = createPageLayoutWithWidget(widget);
-    jotaiStore.set(
-      pageLayoutPersistedComponentState.atomFamily({
-        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      }),
-      pageLayoutData,
-    );
-    jotaiStore.set(
-      pageLayoutDraftComponentState.atomFamily({
-        instanceId: PAGE_LAYOUT_TEST_INSTANCE_ID,
-      }),
-      pageLayoutData,
-    );
-
-    return (
-      <div style={{ width: '300px', height: '400px' }}>
-        <JestMetadataAndApolloMocksWrapper>
-          <CoreClientProviderWrapper>
-            <PageLayoutTestWrapper store={jotaiStore}>
-              <LayoutRenderingProvider
-                value={{
-                  isInSidePanel: false,
-                  layoutType: PageLayoutType.DASHBOARD,
-                  targetRecordIdentifier: {
-                    id: companyObjectMetadataItem.id,
-                    targetObjectNameSingular:
-                      companyObjectMetadataItem.nameSingular,
-                  },
-                }}
-              >
-                <PageLayoutContentProvider
-                  value={{
-                    layoutMode: PageLayoutTabLayoutMode.GRID,
-                    tabId: TAB_ID_OVERVIEW,
-                  }}
-                >
-                  <WidgetComponentInstanceContext.Provider
-                    value={{
-                      instanceId: WIDGET_ID_GAUGE_CHART,
                     }}
                   >
                     <WidgetRenderer widget={widget} />

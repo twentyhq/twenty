@@ -5,6 +5,7 @@ import {
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
@@ -116,11 +117,14 @@ export class DatabaseToolProvider implements ToolProvider {
       const restrictedFields = permission.restrictedFields;
       const snakePlural = camelToSnakeCase(objectMetadata.namePlural);
       const snakeSingular = camelToSnakeCase(objectMetadata.nameSingular);
+      const canBeManagedByAutomation = canObjectBeManagedByAutomation({
+        nameSingular: objectMetadata.nameSingular,
+      });
 
       if (permission.canReadObjectRecords) {
         descriptors.push({
           name: `find_${snakePlural}`,
-          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. To find by ID, use filter: { id: { eq: "record-id" } }. Returns an array of matching records with their full data.`,
+          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
             inputSchema: z.toJSONSchema(
@@ -182,7 +186,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords) {
+      if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
@@ -266,7 +270,7 @@ export class DatabaseToolProvider implements ToolProvider {
         });
       }
 
-      if (permission.canSoftDeleteObjectRecords) {
+      if (permission.canSoftDeleteObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `delete_${snakeSingular}`,
           description: `Delete a ${objectMetadata.labelSingular} record by marking it as deleted. The record is hidden from normal queries. This is reversible. Use this to remove records.`,

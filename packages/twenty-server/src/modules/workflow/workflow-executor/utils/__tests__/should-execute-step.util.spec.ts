@@ -1,6 +1,10 @@
 import { StepStatus } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import {
+  createMockCodeStep,
+  createMockIfElseStep,
+} from 'src/modules/workflow/workflow-executor/utils/create-mock-workflow-steps.util';
 import { shouldExecuteStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-step.util';
 import {
   type WorkflowAction,
@@ -461,6 +465,48 @@ describe('shouldExecuteStep', () => {
       },
       steps,
       step: steps[2],
+      workflowRunStatus: WorkflowRunStatus.RUNNING,
+    });
+
+    expect(result).toBe(false);
+  });
+
+  it('should return true when IF-ELSE parent succeeded and step is a branch child', () => {
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['step-a'] },
+      { id: 'false-branch', nextStepIds: ['step-b'] },
+    ]);
+    const stepA = createMockCodeStep('step-a');
+    const allSteps: WorkflowAction[] = [ifElseStep, stepA];
+
+    const result = shouldExecuteStep({
+      step: stepA,
+      steps: allSteps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SUCCESS },
+        'step-a': { status: StepStatus.NOT_STARTED },
+      },
+      workflowRunStatus: WorkflowRunStatus.RUNNING,
+    });
+
+    expect(result).toBe(true);
+  });
+
+  it('should return false when IF-ELSE parent is skipped and step is a branch child', () => {
+    const ifElseStep = createMockIfElseStep('if-else', [
+      { id: 'true-branch', nextStepIds: ['step-a'] },
+      { id: 'false-branch', nextStepIds: ['step-b'] },
+    ]);
+    const stepA = createMockCodeStep('step-a');
+    const allSteps: WorkflowAction[] = [ifElseStep, stepA];
+
+    const result = shouldExecuteStep({
+      step: stepA,
+      steps: allSteps,
+      stepInfos: {
+        'if-else': { status: StepStatus.SKIPPED },
+        'step-a': { status: StepStatus.NOT_STARTED },
+      },
       workflowRunStatus: WorkflowRunStatus.RUNNING,
     });
 

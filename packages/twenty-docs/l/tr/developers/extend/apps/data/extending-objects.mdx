@@ -43,6 +43,8 @@ export default defineField({
 
 * Dosya konumu size bağlıdır. Genel kabul gören yapı `src/fields/\<name>.field.ts` şeklindedir, ancak SDK `src/` içinde herhangi bir yerdeki alanları algılar.
 
+* Standart bir sayfa yerleşimine (örneğin, Görev veya Şirket detay sayfası) bir sekme eklemek için, `twenty-sdk/define` içindeki `STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS` ile birlikte [`definePageLayoutTab`](/l/tr/developers/extend/apps/layout/page-layouts#definepagelayouttab) kullanın.
+
 ## Mevcut bir nesneye ilişki ekleme
 
 Bir ilişki alanı eklemek için (örneğin özel nesnenizi standart bir `Person` nesnesine bağlamak), `FieldType.RELATION` ile `defineField()` kullanın. Desen, satır içi ilişkilerle aynıdır ancak `objectUniversalIdentifier` açıkça ayarlanır. Çift yönlü desen için [Relations](/l/tr/developers/extend/apps/data/relations) bölümüne bakın.

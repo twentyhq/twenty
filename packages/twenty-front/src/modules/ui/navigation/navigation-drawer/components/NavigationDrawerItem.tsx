@@ -52,6 +52,7 @@ export type NavigationDrawerItemProps = {
   onClick?: () => void;
   Icon?: IconComponent | ((props: TablerIconsProps) => JSX.Element);
   iconColor?: string | null;
+  withIconBackground?: boolean;
   active?: boolean;
   modifier?: NavigationDrawerItemModifier;
   rightOptions?: ReactNode;
@@ -202,6 +203,17 @@ const StyledIcon = styled.div`
   margin-right: ${themeCssVariables.spacing[2]};
 `;
 
+const StyledIconBackgroundTile = styled.div`
+  align-items: center;
+  background-color: ${themeCssVariables.background.tertiary};
+  border-radius: ${themeCssVariables.border.radius.md};
+  display: flex;
+  flex-shrink: 0;
+  height: ${themeCssVariables.spacing[6]};
+  justify-content: center;
+  width: ${themeCssVariables.spacing[6]};
+`;
+
 const StyledRightOptionsContainer = styled.div`
   align-items: center;
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -243,6 +255,7 @@ export const NavigationDrawerItem = ({
   indentationLevel = DEFAULT_INDENTATION_LEVEL,
   Icon,
   iconColor,
+  withIconBackground = false,
   to,
   onClick,
   active,
@@ -346,6 +359,20 @@ export const NavigationDrawerItem = ({
             (isNonEmptyString(iconColor) ? (
               <StyledIcon>
                 <TintedIconTile Icon={Icon} color={iconColor} />
+              </StyledIcon>
+            ) : withIconBackground ? (
+              <StyledIcon>
+                <StyledIconBackgroundTile>
+                  <Icon
+                    size={theme.icon.size.md}
+                    stroke={theme.icon.stroke.md}
+                    color={
+                      showBreadcrumb && !isExpanded
+                        ? theme.font.color.light
+                        : 'currentColor'
+                    }
+                  />
+                </StyledIconBackgroundTile>
               </StyledIcon>
             ) : (
               <StyledIcon>

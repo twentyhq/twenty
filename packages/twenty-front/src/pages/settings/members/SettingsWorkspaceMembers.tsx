@@ -3,22 +3,28 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconLock, IconUserPlus, IconUsers } from 'twenty-ui/display';
 
+import { SettingsDiscoveryHeroCard } from '@/settings/components/SettingsDiscoveryHeroCard';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { TabList } from '@/ui/layout/tab-list/components/TabList';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { Section } from 'twenty-ui/layout';
 import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 import { SettingsWorkspaceMembersRolesTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersRolesTab';
 import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab';
+import coverDark from '~/pages/settings/members/assets/cover-dark.png';
+import coverLight from '~/pages/settings/members/assets/cover-light.png';
 
 const MEMBERS_TAB_LIST_ID = 'members-tab-list';
 
 const MEMBERS_TAB_TEAM_ID = 'team';
 const MEMBERS_TAB_INVITE_ID = 'invite';
 const MEMBERS_TAB_ROLES_ID = 'roles';
+
+const SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX = 'settings-members-hero';
 
 export const SettingsWorkspaceMembers = () => {
   const { t } = useLingui();
@@ -65,6 +71,38 @@ export const SettingsWorkspaceMembers = () => {
       ]}
     >
       <SettingsPageContainer>
+        <Section>
+          <SettingsDiscoveryHeroCard
+            lightSrc={coverLight}
+            darkSrc={coverDark}
+            instanceIdPrefix={SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX}
+            tabs={[
+              {
+                id: 'team',
+                title: t`Team`,
+                Icon: IconUsers,
+                vimeoId: '1185227242',
+              },
+              {
+                id: 'invite',
+                title: t`Invite`,
+                Icon: IconUserPlus,
+                vimeoId: '1185227242',
+              },
+              ...(hasRolesPermission
+                ? [
+                    {
+                      id: 'roles',
+                      title: t`Roles`,
+                      Icon: IconLock,
+                      vimeoId: '1185227242',
+                    },
+                  ]
+                : []),
+            ]}
+            playButtonAriaLabel={t`Watch members demo`}
+          />
+        </Section>
         <TabList tabs={tabs} componentInstanceId={MEMBERS_TAB_LIST_ID} />
         {renderActiveTabContent()}
       </SettingsPageContainer>

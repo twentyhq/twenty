@@ -1,7 +1,4 @@
 import { Test, type TestingModule } from '@nestjs/testing';
-import { getRepositoryToken } from '@nestjs/typeorm';
-
-import { type Repository } from 'typeorm';
 
 import {
   AiException,
@@ -20,8 +17,8 @@ import { AiAgentRoleService } from './ai-agent-role.service';
 describe('AiAgentRoleService', () => {
   let service: AiAgentRoleService;
   let agentRepository: WorkspaceScopedRepository<AgentEntity>;
-  let roleRepository: Repository<RoleEntity>;
-  let roleTargetRepository: Repository<RoleTargetEntity>;
+  let roleRepository: WorkspaceScopedRepository<RoleEntity>;
+  let roleTargetRepository: WorkspaceScopedRepository<RoleTargetEntity>;
   let roleTargetService: RoleTargetService;
 
   const testWorkspaceId = 'test-workspace-id';
@@ -42,19 +39,20 @@ describe('AiAgentRoleService', () => {
           },
         },
         {
-          provide: getRepositoryToken(RoleEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
           },
         },
         {
-          provide: getRepositoryToken(RoleTargetEntity),
+          provide: getWorkspaceScopedRepositoryToken(RoleTargetEntity),
           useValue: {
             findOne: jest.fn(),
             save: jest.fn(),
             delete: jest.fn(),
             find: jest.fn(),
+            count: jest.fn(),
           },
         },
         {
@@ -71,12 +69,12 @@ describe('AiAgentRoleService', () => {
     agentRepository = module.get<WorkspaceScopedRepository<AgentEntity>>(
       getWorkspaceScopedRepositoryToken(AgentEntity),
     );
-    roleRepository = module.get<Repository<RoleEntity>>(
-      getRepositoryToken(RoleEntity),
+    roleRepository = module.get<WorkspaceScopedRepository<RoleEntity>>(
+      getWorkspaceScopedRepositoryToken(RoleEntity),
     );
-    roleTargetRepository = module.get<Repository<RoleTargetEntity>>(
-      getRepositoryToken(RoleTargetEntity),
-    );
+    roleTargetRepository = module.get<
+      WorkspaceScopedRepository<RoleTargetEntity>
+    >(getWorkspaceScopedRepositoryToken(RoleTargetEntity));
     roleTargetService = module.get<RoleTargetService>(RoleTargetService);
 
     // Setup test data
@@ -153,16 +151,18 @@ describe('AiAgentRoleService', () => {
       expect(agentRepository.findOne).toHaveBeenCalledWith(testWorkspaceId, {
         where: { id: testAgent.id },
       });
-      expect(roleRepository.findOne).toHaveBeenCalledWith({
-        where: { id: testRole.id, workspaceId: testWorkspaceId },
+      expect(roleRepository.findOne).toHaveBeenCalledWith(testWorkspaceId, {
+        where: { id: testRole.id },
       });
-      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          agentId: testAgent.id,
-          roleId: testRole.id,
-          workspaceId: testWorkspaceId,
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith(
+        testWorkspaceId,
+        {
+          where: {
+            agentId: testAgent.id,
+            roleId: testRole.id,
+          },
         },
-      });
+      );
       expect(roleTargetService.create).toHaveBeenCalledWith({
         createRoleTargetInput: {
           roleId: testRole.id,
@@ -335,12 +335,14 @@ describe('AiAgentRoleService', () => {
       });
 
       // Assert
-      expect(roleTargetRepository.findOne).toHaveBeenCalledWith({
-        where: {
-          agentId: testAgent.id,
-          workspaceId: testWorkspaceId,
+      expect(roleTargetRepository.findOne).toHaveBeenCalledWith(
+        testWorkspaceId,
+        {
+          where: {
+            agentId: testAgent.id,
+          },
         },
-      });
+      );
       expect(roleTargetService.delete).toHaveBeenCalledWith({
         id: existingRoleTarget.id,
         workspaceId: testWorkspaceId,

@@ -24,13 +24,13 @@ export const useEnterLayoutCustomizationMode = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
   const { enqueueWarningSnackBar } = useSnackBar();
 
-  const enterLayoutCustomizationMode = useCallback(() => {
+  const enterLayoutCustomizationMode = useCallback((): boolean => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,
     );
 
     if (isLayoutCustomizationModeAlreadyEnabled) {
-      return;
+      return true;
     }
 
     const dashboardPageLayoutIdInEditMode = store.get(
@@ -49,7 +49,7 @@ export const useEnterLayoutCustomizationMode = () => {
           message: t`Save or cancel dashboard changes before editing the layout.`,
         });
 
-        return;
+        return false;
       }
     }
 
@@ -82,6 +82,8 @@ export const useEnterLayoutCustomizationMode = () => {
         resetNavigationStack: true,
       });
     }
+
+    return true;
   }, [enqueueWarningSnackBar, navigateSidePanel, store]);
 
   return { enterLayoutCustomizationMode };

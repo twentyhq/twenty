@@ -1,15 +1,10 @@
 import { Command, CommandRunner, Option } from 'nest-commander';
 
 import { CommandLogger } from 'src/database/commands/logger';
-import { SECRET_ENCRYPTION_ROTATION_SITE_NAME } from 'src/database/commands/secret-encryption-rotation/constants/secret-encryption-rotation-site-name.constant';
 import { SecretEncryptionRotationRunnerService } from 'src/database/commands/secret-encryption-rotation/services/secret-encryption-rotation-runner.service';
 
 const DEFAULT_BATCH_SIZE = 200;
 const MAX_BATCH_SIZE = 5000;
-
-const KNOWN_SITE_NAMES = Object.values(
-  SECRET_ENCRYPTION_ROTATION_SITE_NAME,
-).join(', ');
 
 type RotateSecretEncryptionCommandOptions = {
   site?: string;
@@ -20,7 +15,7 @@ type RotateSecretEncryptionCommandOptions = {
 @Command({
   name: 'secret-encryption:rotate',
   description:
-    'Re-encrypts every at-rest secret stored in an enc:v2 envelope using the current ENCRYPTION_KEY. Idempotent: rows already on the current key are skipped via a SQL filter, so the command is safe to interrupt and re-run. Requires FALLBACK_ENCRYPTION_KEY to be set to the previous key when rotating to a fresh ENCRYPTION_KEY.',
+    'Re-encrypts every at-rest secret stored in an enc:v2 envelope using the current ENCRYPTION_KEY. Idempotent: rows already on the current key are skipped via a SQL filter, so the command is safe to interrupt and re-run. Requires FALLBACK_ENCRYPTION_KEY to be set to the previous key when rotating to a fresh ENCRYPTION_KEY. Pass --site=<name> to scope to a single site; an invalid value lists all available sites.',
 })
 export class RotateSecretEncryptionCommand extends CommandRunner {
   protected logger: CommandLogger;
@@ -37,7 +32,8 @@ export class RotateSecretEncryptionCommand extends CommandRunner {
 
   @Option({
     flags: '-s, --site <site>',
-    description: `Limit rotation to a single site. Omit to run all sites. Known sites: ${KNOWN_SITE_NAMES}.`,
+    description:
+      'Limit rotation to a single site. Omit to run all sites. An invalid value lists all available sites.',
     required: false,
   })
   parseSite(value: string): string {

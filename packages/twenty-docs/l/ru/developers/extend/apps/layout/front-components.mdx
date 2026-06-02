@@ -196,6 +196,94 @@ export default defineFrontComponent({
 });
 ```
 
+## Вызов логической функции
+
+Front-компоненты выполняются в браузере в изолированном Web Worker, в то время как [логические функции](/l/ru/developers/extend/apps/logic/logic-functions) выполняются на стороне сервера. Между ними нет прямого внутрипроцессного вызова — вместо этого front-компонент обращается к логической функции по HTTP.
+
+Логическая функция, объявленная с `httpRouteTriggerSettings`, доступна по эндпоинту `/s/` по адресу `${TWENTY_API_URL}/s\<path>`. Ваш front-компонент вызывает этот маршрут с помощью `fetch`, аутентифицируясь с использованием `TWENTY_APP_ACCESS_TOKEN`, который Twenty внедряет в worker.
+
+Небольшой переиспользуемый хелпер делает места вызова чище:
+
+```ts src/shared/call-app-route.ts
+export async function callAppRoute(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<unknown> {
+  const apiUrl = process.env.TWENTY_API_URL ?? '';
+  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
+
+  const res = await fetch(`${apiUrl}/s${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Logic function failed (${res.status})`);
+  }
+
+  return res.json();
+}
+```
+
+Безголовый front-компонент может выполнить вызов при монтировании через компонент `Command`, а затем автоматически размонтироваться:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { callAppRoute } from 'src/shared/call-app-route';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await callAppRoute('/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+`path`, переданный в `callAppRoute`, должен совпадать с `httpRouteTriggerSettings.path` логической функции (префикс `/s` добавляется хелпером):
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_API_URL` и `TWENTY_APP_ACCESS_TOKEN` внедряются автоматически — см. [переменные приложения](#application-variables). Поскольку секретные переменные приложения никогда не раскрываются front-компонентам, храните ключи API и другую конфиденциальную логику в логической функции, а не во front-компоненте.
+</Note>
+
 ## Доступ к контексту времени выполнения
 
 Внутри вашего компонента используйте хуки SDK для доступа к текущему пользователю, записи и экземпляру компонента:
@@ -335,8 +423,8 @@ export default defineFrontComponent({
 Используйте `useSelectedRecordIds()` для обработки нескольких выбранных записей. Это полезно для массовых операций:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

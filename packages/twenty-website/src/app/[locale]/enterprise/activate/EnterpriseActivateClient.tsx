@@ -1,6 +1,7 @@
 'use client';
 
 import { msg } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import {
   BaseButton,
   buttonBaseStyles,
@@ -159,7 +160,7 @@ export function EnterpriseActivateClient() {
     <ContentStack>
       {loading && (
         <Body size="sm" variant="body-paragraph">
-          {i18n._(msg`Activating your enterprise license…`)}
+          <Trans>Activating your enterprise license…</Trans>
         </Body>
       )}
 
@@ -168,14 +169,14 @@ export function EnterpriseActivateClient() {
       {result !== null && (
         <>
           <Body className={successLeadClassName} size="md" weight="medium">
-            {i18n._(
-              msg`Your enterprise license has been activated successfully.`,
-            )}
+            <Trans>
+              Your enterprise license has been activated successfully.
+            </Trans>
           </Body>
 
           <LicenseeRow>
             <Body as="span" size="sm" weight="medium">
-              {i18n._(msg`Licensee:`)}
+              <Trans>Licensee:</Trans>
             </Body>{' '}
             <LicenseeValue>{result.licensee}</LicenseeValue>
           </LicenseeRow>
@@ -183,13 +184,14 @@ export function EnterpriseActivateClient() {
           <KeySection>
             <Heading as="h2" size="xs" weight="medium">
               <HeadingPart fontFamily="sans">
-                {i18n._(msg`Your enterprise key`)}
+                <Trans>Your enterprise key</Trans>
               </HeadingPart>
             </Heading>
             <Body size="sm" variant="body-paragraph">
-              {i18n._(
-                msg`Copy this key and paste it into your Twenty self-hosted instance settings.`,
-              )}
+              <Trans>
+                Copy this key and paste it into your Twenty self-hosted instance
+                settings.
+              </Trans>
             </Body>
 
             <KeyBlock>
@@ -215,25 +217,25 @@ export function EnterpriseActivateClient() {
           <NextStepsBox>
             <Heading as="h3" size="xs" weight="medium">
               <HeadingPart fontFamily="sans">
-                {i18n._(msg`Next steps`)}
+                <Trans>Next steps</Trans>
               </HeadingPart>
             </Heading>
             <NextStepsList>
               <li className={nextStepItemClassName}>
                 <Body size="sm">
-                  {i18n._(msg`Copy the enterprise key above.`)}
+                  <Trans>Copy the enterprise key above.</Trans>
                 </Body>
               </li>
               <li className={nextStepItemClassName}>
                 <Body size="sm">
-                  {i18n._(
-                    msg`Open your Twenty self-hosted instance Settings → Enterprise.`,
-                  )}
+                  <Trans>
+                    Open your Twenty self-hosted instance Settings → Enterprise.
+                  </Trans>
                 </Body>
               </li>
               <li className={nextStepItemClassName}>
                 <Body size="sm">
-                  {i18n._(msg`Paste the key and click Activate.`)}
+                  <Trans>Paste the key and click Activate.</Trans>
                 </Body>
               </li>
             </NextStepsList>

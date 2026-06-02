@@ -18,6 +18,8 @@ import {
   LogType,
   PublishLayerVersionCommand,
   ResourceNotFoundException,
+  TagResourceCommand,
+  UpdateFunctionCodeCommand,
   UpdateFunctionConfigurationCommand,
   waitUntilFunctionActiveV2,
   waitUntilFunctionUpdatedV2,
@@ -32,6 +34,7 @@ import {
   type LogicFunctionDriver,
   type LogicFunctionExecuteParams,
   type LogicFunctionExecuteResult,
+  type LogicFunctionInstallPrebuiltBundleParams,
   type LogicFunctionTranspileParams,
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
@@ -50,12 +53,22 @@ import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logi
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
-import { LogicFunctionRuntime } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
+import {
+  LogicFunctionExecutionMode,
+  LogicFunctionRuntime,
+} from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
   LogicFunctionException,
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
+
+enum LambdaExecutionPhase {
+  BUILD = 'build',
+  FETCH_CODE = 'fetch-code',
+  INVOKE = 'invoke',
+}
 
 const UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS = 60;
 const CREDENTIALS_DURATION_IN_SECONDS = 60 * 60; // 1h
@@ -82,8 +95,16 @@ const BUILDER_HANDLER_PATH = resolve(
   ),
 );
 
+const LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG = 'twenty:bundle-checksum';
+
+const PREBUILT_BUNDLE_FILE_NAME = 'prebuilt-logic-function.mjs';
+
+const PREBUILT_INSTALL_LOCK_TTL_MS = 180_000;
+const PREBUILT_INSTALL_LOCK_RETRY_MS = 1_000;
+const PREBUILT_INSTALL_LOCK_MAX_RETRIES = 180;
+
 type LambdaDriverExecutorPayload = {
-  code: string;
+  code?: string;
   params: object;
   env: Record<string, string>;
   handlerName: string;
@@ -982,8 +1003,11 @@ export class LambdaDriver implements LogicFunctionDriver {
   }> {
     const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
 
+    const isActive = lambdaExecutor?.Configuration?.State === 'Active';
+
     const canSkip =
       isDefined(lambdaExecutor) &&
+      isActive &&
       !flatApplication.isSdkLayerStale &&
       this.hasExpectedLayers({
         lambdaExecutor,
@@ -1155,42 +1179,65 @@ export class LambdaDriver implements LogicFunctionDriver {
     payload,
     env,
     timeoutMs = 900_000,
+    forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
-    const buildStart = Date.now();
+    const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
 
-    await this.buildLambdaExecutor({
-      flatLogicFunction,
-      flatApplication,
-      applicationUniversalIdentifier,
-    });
-    const buildExecutorMs = Date.now() - buildStart;
+    if (
+      executionMode === LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
+    ) {
+      throw new LogicFunctionException(
+        `Cannot run logic function '${flatLogicFunction.id}' in PREBUILT mode: bundle is not installed`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
 
-    const startTime = Date.now();
-
-    const compiledCode = await this.logicFunctionResourceService.getBuiltCode({
-      workspaceId: flatLogicFunction.workspaceId,
-      applicationUniversalIdentifier,
-      builtHandlerPath: flatLogicFunction.builtHandlerPath,
-    });
-    const getBuiltCodeMs = Date.now() - startTime;
-
-    const executorPayload: LambdaDriverExecutorPayload = {
-      params: payload,
-      code: compiledCode,
-      env: env ?? {},
-      handlerName: flatLogicFunction.handlerName,
-    };
-
-    const payloadString = JSON.stringify(executorPayload);
-    const params: InvokeCommandInput = {
-      FunctionName: flatLogicFunction.id,
-      Payload: payloadString,
-      LogType: LogType.Tail,
-    };
-
-    const command = new InvokeCommand(params);
+    let currentPhase: LambdaExecutionPhase = LambdaExecutionPhase.BUILD;
+    let buildExecutorMs = 0;
+    let getBuiltCodeMs = 0;
 
     try {
+      const buildStart = Date.now();
+
+      await this.buildLambdaExecutor({
+        flatLogicFunction,
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+      buildExecutorMs = Date.now() - buildStart;
+
+      currentPhase = LambdaExecutionPhase.FETCH_CODE;
+      const invokeFlowStart = Date.now();
+
+      const executorPayload: LambdaDriverExecutorPayload = {
+        params: payload,
+        env: env ?? {},
+        handlerName: flatLogicFunction.handlerName,
+      };
+
+      if (executionMode === LogicFunctionExecutionMode.LIVE) {
+        const fetchStart = Date.now();
+
+        executorPayload.code =
+          await this.logicFunctionResourceService.getBuiltCode({
+            workspaceId: flatLogicFunction.workspaceId,
+            applicationUniversalIdentifier,
+            builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          });
+        getBuiltCodeMs = Date.now() - fetchStart;
+      }
+
+      currentPhase = LambdaExecutionPhase.INVOKE;
+
+      const payloadString = JSON.stringify(executorPayload);
+      const params: InvokeCommandInput = {
+        FunctionName: flatLogicFunction.id,
+        Payload: payloadString,
+        LogType: LogType.Tail,
+      };
+
+      const command = new InvokeCommand(params);
       const lambdaClient = await this.getLambdaClient();
 
       const invokeStart = Date.now();
@@ -1211,10 +1258,10 @@ export class LambdaDriver implements LogicFunctionDriver {
         coldStart,
       } = this.parseLambdaLogResult(result.LogResult);
 
-      const duration = Date.now() - startTime;
+      const duration = Date.now() - invokeFlowStart;
 
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {
@@ -1234,8 +1281,10 @@ export class LambdaDriver implements LogicFunctionDriver {
         status: LogicFunctionExecutionStatus.SUCCESS,
       };
     } catch (error) {
+      const phaseTiming = `phase=${currentPhase} buildMs=${buildExecutorMs} fetchCodeMs=${getBuiltCodeMs}`;
+
       this.logger.error(
-        `Lambda invocation failed for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        `Lambda invocation failed for function ${flatLogicFunction.id} [${phaseTiming}]: ${error instanceof Error ? error.message : String(error)}`,
         error instanceof Error ? error.stack : undefined,
       );
 
@@ -1247,8 +1296,13 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
 
       if (error instanceof Error && error.name === 'TimeoutError') {
+        const executor = await this.getLambdaExecutor(flatLogicFunction).catch(
+          () => undefined,
+        );
+        const functionState = executor?.Configuration?.State ?? 'unknown';
+
         throw new LogicFunctionException(
-          `Lambda invocation timed out for function '${flatLogicFunction.id}': ${error.message}`,
+          `Lambda timed out for function '${flatLogicFunction.id}' during ${currentPhase} (functionState=${functionState}, ${phaseTiming})`,
           LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_TIMEOUT,
         );
       }
@@ -1258,9 +1312,114 @@ export class LambdaDriver implements LogicFunctionDriver {
       }
 
       throw new LogicFunctionException(
-        `Lambda invocation failed for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        `Lambda invocation failed for function '${flatLogicFunction.id}' during ${currentPhase}: ${error instanceof Error ? error.message : 'Unknown error'}`,
         LogicFunctionExceptionCode.LOGIC_FUNCTION_EXECUTION_FAILED,
       );
     }
+  }
+
+  private getPrebuiltInstallLockKey(flatLogicFunction: FlatLogicFunction) {
+    return `lambda-install:${flatLogicFunction.id}`;
+  }
+
+  async installPrebuiltBundle({
+    flatLogicFunction,
+    flatApplication,
+    applicationUniversalIdentifier,
+  }: LogicFunctionInstallPrebuiltBundleParams): Promise<void> {
+    if (!isNonEmptyString(flatLogicFunction.checksum)) {
+      throw new LogicFunctionException(
+        `Cannot install prebuilt bundle for function '${flatLogicFunction.id}' without a checksum`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
+    const checksum = flatLogicFunction.checksum;
+
+    await this.buildLambdaExecutor({
+      flatLogicFunction,
+      flatApplication,
+      applicationUniversalIdentifier,
+    });
+
+    await this.cacheLockService.withLock(
+      async () => {
+        const compiledCode =
+          await this.logicFunctionResourceService.getBuiltCode({
+            workspaceId: flatLogicFunction.workspaceId,
+            applicationUniversalIdentifier,
+            builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          });
+
+        const temporaryDirManager = new TemporaryDirManager();
+        const { sourceTemporaryDir, lambdaZipPath } =
+          await temporaryDirManager.init();
+
+        try {
+          await copyExecutor(sourceTemporaryDir);
+          await fs.writeFile(
+            join(sourceTemporaryDir, PREBUILT_BUNDLE_FILE_NAME),
+            compiledCode,
+            'utf8',
+          );
+          await createZipFile(sourceTemporaryDir, lambdaZipPath);
+
+          const lambdaClient = await this.getLambdaClient();
+
+          const updateResult = await lambdaClient.send(
+            new UpdateFunctionCodeCommand({
+              FunctionName: flatLogicFunction.id,
+              ZipFile: await fs.readFile(lambdaZipPath),
+            }),
+          );
+
+          await this.waitFunctionUpdated(flatLogicFunction.id);
+
+          const functionArn = updateResult.FunctionArn;
+
+          if (!isNonEmptyString(functionArn)) {
+            throw new LogicFunctionException(
+              `UpdateFunctionCode did not return a FunctionArn for '${flatLogicFunction.id}'`,
+              LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+            );
+          }
+
+          await lambdaClient.send(
+            new TagResourceCommand({
+              Resource: functionArn,
+              Tags: {
+                [LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG]: checksum,
+              },
+            }),
+          );
+        } catch (error) {
+          this.logger.error(
+            `Failed to install prebuilt bundle for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+            error instanceof Error ? error.stack : undefined,
+          );
+          throw error;
+        } finally {
+          await temporaryDirManager.clean();
+        }
+      },
+      this.getPrebuiltInstallLockKey(flatLogicFunction),
+      {
+        ttl: PREBUILT_INSTALL_LOCK_TTL_MS,
+        ms: PREBUILT_INSTALL_LOCK_RETRY_MS,
+        maxRetries: PREBUILT_INSTALL_LOCK_MAX_RETRIES,
+      },
+    );
+  }
+
+  async getInstalledBundleChecksum(
+    flatLogicFunction: FlatLogicFunction,
+  ): Promise<string | null> {
+    const lambdaExecutor = await this.getLambdaExecutor(flatLogicFunction);
+
+    if (!isDefined(lambdaExecutor)) {
+      return null;
+    }
+
+    return lambdaExecutor.Tags?.[LAMBDA_PREBUILT_BUNDLE_CHECKSUM_TAG] ?? null;
   }
 }

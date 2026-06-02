@@ -13,6 +13,8 @@ import {
   JwtKeyManagerException,
   JwtKeyManagerExceptionCode,
 } from 'src/engine/core-modules/jwt/jwt-key-manager.exception';
+import { type EncryptedString } from 'src/engine/core-modules/secret-encryption/branded-strings/encrypted-string.type';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 
 export type CurrentSigningKey = {
@@ -179,7 +181,7 @@ export class JwtKeyManagerService {
   }
 
   private decryptPrivateKey(
-    encryptedPrivateKey: string | null,
+    encryptedPrivateKey: EncryptedString | null,
     id: string,
   ): string {
     if (!isDefined(encryptedPrivateKey)) {
@@ -230,7 +232,7 @@ export class JwtKeyManagerService {
   }
 
   private generateEcP256KeyPair(): {
-    privateKeyPem: string;
+    privateKeyPem: PlaintextString;
     publicKeyPem: string;
   } {
     const { privateKey, publicKey } = generateKeyPairSync('ec', {
@@ -239,7 +241,7 @@ export class JwtKeyManagerService {
 
     const privateKeyPem = privateKey
       .export({ format: 'pem', type: 'pkcs8' })
-      .toString();
+      .toString() as PlaintextString;
     const publicKeyPem = publicKey
       .export({ format: 'pem', type: 'spki' })
       .toString();
