@@ -8,18 +8,7 @@ export const computeStandardCallRecordingViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'callRecording'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    allCallRecordingsStatus: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'callRecording',
-      context: {
-        viewName: 'allCallRecordings',
-        viewFieldName: 'status',
-        fieldName: 'status',
-        position: 0,
-        isVisible: true,
-        size: 150,
-      },
-    }),
+    // meetingOccurrenceKey is the label identifier; it must hold the lowest position in non-widget views.
     allCallRecordingsMeetingOccurrenceKey: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'callRecording',
@@ -27,9 +16,21 @@ export const computeStandardCallRecordingViewFields = (
         viewName: 'allCallRecordings',
         viewFieldName: 'meetingOccurrenceKey',
         fieldName: 'meetingOccurrenceKey',
-        position: 1,
+        position: 0,
         isVisible: true,
         size: 200,
+      },
+    }),
+    allCallRecordingsStatus: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'callRecording',
+      context: {
+        viewName: 'allCallRecordings',
+        viewFieldName: 'status',
+        fieldName: 'status',
+        position: 1,
+        isVisible: true,
+        size: 150,
       },
     }),
     allCallRecordingsStartedAt: createStandardViewFieldFlatMetadata({
