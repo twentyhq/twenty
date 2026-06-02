@@ -77,7 +77,7 @@ export const SettingsDevelopersWebhookForm = ({
         links={[
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`APIs & Webhooks`,

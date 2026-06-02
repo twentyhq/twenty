@@ -10,7 +10,7 @@ enum SettingsPathPrefixes {
   ApiWebhooks = `${AppBasePath.Settings}/${SettingsPath.ApiWebhooks}`,
   LogicFunctions = `${AppBasePath.Settings}/${SettingsPath.LogicFunctions}`,
   Integration = `${AppBasePath.Settings}/${SettingsPath.Integrations}`,
-  General = `${AppBasePath.Settings}/${SettingsPath.Workspace}`,
+  General = `${AppBasePath.Settings}/${SettingsPath.General}`,
 }
 
 const getPathnameOrPrefix = (pathname: string) => {

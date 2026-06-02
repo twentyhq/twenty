@@ -438,7 +438,7 @@ export const SettingsSkillForm = ({ mode }: { mode: 'create' | 'edit' }) => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`AI`, href: getSettingsPath(SettingsPath.AI) },
         { children: breadcrumbText },

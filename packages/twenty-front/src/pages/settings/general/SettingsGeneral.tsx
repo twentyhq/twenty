@@ -26,7 +26,7 @@ const SETTINGS_GENERAL_TABS_INSTANCE_ID = 'settings-general-tabs';
 const GENERAL_TAB_GENERAL = 'general';
 const GENERAL_TAB_SECURITY = 'security';
 
-export const SettingsWorkspace = () => {
+export const SettingsGeneral = () => {
   const { t } = useLingui();
 
   const isMultiWorkspaceEnabled = useAtomStateValue(
@@ -94,7 +94,7 @@ export const SettingsWorkspace = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`General` },
       ]}

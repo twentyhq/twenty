@@ -26,7 +26,7 @@ import {
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
-import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/workspace/constants/SettingsApiWebhooksTabs';
+import { SETTINGS_API_WEBHOOKS_TABS } from '~/pages/settings/api-webhooks/constants/SettingsApiWebhooksTabs';
 
 type TabKey =
   (typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS)[keyof typeof SETTINGS_API_WEBHOOKS_TABS.TABS_IDS];
@@ -97,7 +97,7 @@ export const SettingsApiWebhooks = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: t`APIs & Webhooks` },
       ]}

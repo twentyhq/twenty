@@ -108,20 +108,20 @@ const SettingsLogicFunctionDetail = lazy(() =>
   ),
 );
 
-const SettingsWorkspace = lazy(() =>
-  import('~/pages/settings/SettingsWorkspace').then((module) => ({
-    default: module.SettingsWorkspace,
+const SettingsGeneral = lazy(() =>
+  import('~/pages/settings/general/SettingsGeneral').then((module) => ({
+    default: module.SettingsGeneral,
   })),
 );
 
 const SettingsWorkspaceEmail = lazy(() =>
-  import('~/pages/settings/SettingsWorkspaceEmail').then((module) => ({
+  import('~/pages/settings/email/SettingsWorkspaceEmail').then((module) => ({
     default: module.SettingsWorkspaceEmail,
   })),
 );
 
 const SettingsWorkspaceEmailGroupChannelDetail = lazy(() =>
-  import('~/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail').then(
+  import('~/pages/settings/email/SettingsWorkspaceEmailGroupChannelDetail').then(
     (module) => ({
       default: module.SettingsWorkspaceEmailGroupChannelDetail,
     }),
@@ -143,9 +143,11 @@ const SettingsCustomDomainPage = lazy(() =>
 );
 
 const SettingsApiWebhooks = lazy(() =>
-  import('~/pages/settings/workspace/SettingsApiWebhooks').then((module) => ({
-    default: module.SettingsApiWebhooks,
-  })),
+  import('~/pages/settings/api-webhooks/SettingsApiWebhooks').then(
+    (module) => ({
+      default: module.SettingsApiWebhooks,
+    }),
+  ),
 );
 
 const SettingsAI = lazy(() =>
@@ -305,13 +307,13 @@ const SettingsWorkspaceMember = lazy(() =>
 );
 
 const SettingsProfile = lazy(() =>
-  import('~/pages/settings/SettingsProfile').then((module) => ({
+  import('~/pages/settings/profile/SettingsProfile').then((module) => ({
     default: module.SettingsProfile,
   })),
 );
 
 const SettingsTwoFactorAuthenticationMethod = lazy(() =>
-  import('~/pages/settings/SettingsTwoFactorAuthenticationMethod').then(
+  import('~/pages/settings/profile/SettingsTwoFactorAuthenticationMethod').then(
     (module) => ({
       default: module.SettingsTwoFactorAuthenticationMethod,
     }),
@@ -333,19 +335,19 @@ const SettingsAccounts = lazy(() =>
 );
 
 const SettingsBilling = lazy(() =>
-  import('~/pages/settings/SettingsBilling').then((module) => ({
+  import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
   })),
 );
 
 const SettingsUsage = lazy(() =>
-  import('~/pages/settings/SettingsUsage').then((module) => ({
+  import('~/pages/settings/billing/SettingsUsage').then((module) => ({
     default: module.SettingsUsage,
   })),
 );
 
 const SettingsUsageUserDetail = lazy(() =>
-  import('~/pages/settings/SettingsUsageUserDetail').then((module) => ({
+  import('~/pages/settings/billing/SettingsUsageUserDetail').then((module) => ({
     default: module.SettingsUsageUserDetail,
   })),
 );
@@ -627,7 +629,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Workspace} element={<SettingsWorkspace />} />
+        <Route path={SettingsPath.General} element={<SettingsGeneral />} />
         <Route
           path={SettingsPath.WorkspaceEmail}
           element={<SettingsWorkspaceEmail />}

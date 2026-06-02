@@ -67,17 +67,17 @@ export const SettingsCustomDomain = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>General</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         { children: <Trans>Custom Domain</Trans> },
       ]}
       actionButton={
         <SaveAndCancelButtons
-          onCancel={() => navigate(SettingsPath.Workspace)}
+          onCancel={() => navigate(SettingsPath.General)}
           isSaveDisabled={isSaveDisabled}
           isLoading={isSubmitting}
           onSave={handleSave}

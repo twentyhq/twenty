@@ -80,7 +80,7 @@ export const SettingsEmailingDomainDetail = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>Email</Trans>,

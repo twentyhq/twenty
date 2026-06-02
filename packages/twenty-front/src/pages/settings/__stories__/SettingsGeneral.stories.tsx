@@ -6,11 +6,11 @@ import {
 } from '~/testing/decorators/PageDecorator';
 import { graphqlMocks } from '~/testing/graphqlMocks';
 
-import { SettingsWorkspace } from '~/pages/settings/SettingsWorkspace';
+import { SettingsGeneral } from '~/pages/settings/general/SettingsGeneral';
 
 const meta: Meta<PageDecoratorArgs> = {
-  title: 'Pages/Settings/SettingsWorkspace',
-  component: SettingsWorkspace,
+  title: 'Pages/Settings/SettingsGeneral',
+  component: SettingsGeneral,
   decorators: [PageDecorator],
   args: { routePath: '/settings/general' },
   parameters: {
@@ -20,6 +20,6 @@ const meta: Meta<PageDecoratorArgs> = {
 
 export default meta;
 
-export type Story = StoryObj<typeof SettingsWorkspace>;
+export type Story = StoryObj<typeof SettingsGeneral>;
 
 export const Default: Story = {};

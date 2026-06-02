@@ -104,7 +104,7 @@ export const SettingsLogicFunctionDetail = () => {
         return [
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Applications`,
@@ -118,7 +118,7 @@ export const SettingsLogicFunctionDetail = () => {
     : [
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`AI`,

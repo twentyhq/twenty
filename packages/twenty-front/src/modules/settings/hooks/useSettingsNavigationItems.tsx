@@ -121,7 +121,7 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
       items: [
         {
           label: t`General`,
-          path: SettingsPath.Workspace,
+          path: SettingsPath.General,
           Icon: IconSettings,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
           subItems: [

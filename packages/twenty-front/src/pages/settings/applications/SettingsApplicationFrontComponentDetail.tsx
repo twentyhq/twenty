@@ -52,7 +52,7 @@ export const SettingsApplicationFrontComponentDetail = () => {
   const breadcrumbLinks = [
     {
       children: t`Workspace`,
-      href: getSettingsPath(SettingsPath.Workspace),
+      href: getSettingsPath(SettingsPath.General),
     },
     {
       children: t`Applications`,
