@@ -9696,6 +9696,9 @@ export default {
             "recipientViewId": [
                 1
             ],
+            "segmentId": [
+                1
+            ],
             "subject": [
                 1
             ],

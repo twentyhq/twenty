@@ -3784,6 +3784,7 @@ input SendEmailViaDomainInput {
 input SendMessageBroadcastInput {
   messageTopicId: String!
   recipientViewId: String
+  segmentId: String
   subject: String!
   body: String!
   fromAddress: String!

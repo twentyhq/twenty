@@ -4817,6 +4817,7 @@ export type SendMessageBroadcastInput = {
   fromAddress: Scalars['String'];
   messageTopicId: Scalars['String'];
   recipientViewId?: InputMaybe<Scalars['String']>;
+  segmentId?: InputMaybe<Scalars['String']>;
   subject: Scalars['String'];
 };
 

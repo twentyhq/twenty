@@ -15,6 +15,7 @@ import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scope
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
 import { MessageBroadcastWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-broadcast.workspace-entity';
+import { MessageSegmentMemberWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-segment-member.workspace-entity';
 import { MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-subscription.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
@@ -25,9 +26,12 @@ type SendBroadcastArgs = {
   subject: string;
   html: string;
   fromAddress: string;
-  // When set, recipients come from this Person view's filters (a segment).
+  // When set, recipients come from this Person view's filters (dynamic audience).
   // Otherwise recipients are the people subscribed to the topic.
   recipientViewId?: string;
+  // When set, recipients are the segment's hand-picked members (static audience).
+  // Takes precedence over recipientViewId and topic subscribers.
+  segmentId?: string;
 };
 
 type SendBroadcastResult = {
@@ -62,6 +66,7 @@ export class MessageBroadcastService {
     html,
     fromAddress,
     recipientViewId,
+    segmentId,
   }: SendBroadcastArgs): Promise<SendBroadcastResult> {
     const fromDomain = fromAddress.split('@')[1]?.toLowerCase();
 
@@ -80,9 +85,11 @@ export class MessageBroadcastService {
 
     return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
       async () => {
-        const recipientEmails = isNonEmptyString(recipientViewId)
-          ? await this.resolveRecipientsFromView(workspaceId, recipientViewId)
-          : await this.resolveSubscribedEmails(workspaceId, messageTopicId);
+        const recipientEmails = isNonEmptyString(segmentId)
+          ? await this.resolveRecipientsFromSegment(workspaceId, segmentId)
+          : isNonEmptyString(recipientViewId)
+            ? await this.resolveRecipientsFromView(workspaceId, recipientViewId)
+            : await this.resolveSubscribedEmails(workspaceId, messageTopicId);
 
         const broadcastRepository =
           await this.globalWorkspaceOrmManager.getRepository(
@@ -97,9 +104,10 @@ export class MessageBroadcastService {
           bodyTemplate: html,
           fromAddress,
           status: 'SENDING',
-          recipientSource: isNonEmptyString(recipientViewId)
-            ? 'FILTER'
-            : 'LIST',
+          recipientSource:
+            isNonEmptyString(segmentId) || isNonEmptyString(recipientViewId)
+              ? 'FILTER'
+              : 'LIST',
           recipientViewId: recipientViewId ?? null,
           topicId: messageTopicId,
         });
@@ -187,6 +195,43 @@ export class MessageBroadcastService {
 
     return records
       .map((record) => record.emails?.primaryEmail)
+      .filter((email): email is string => isNonEmptyString(email));
+  }
+
+  // Resolves the recipients of a broadcast from a segment's hand-picked members.
+  private async resolveRecipientsFromSegment(
+    workspaceId: string,
+    segmentId: string,
+  ): Promise<string[]> {
+    const segmentMemberRepository =
+      await this.globalWorkspaceOrmManager.getRepository(
+        workspaceId,
+        MessageSegmentMemberWorkspaceEntity,
+        { shouldBypassPermissionChecks: true },
+      );
+
+    const members = await segmentMemberRepository.find({
+      where: { segmentId },
+    });
+
+    const personIds = members.map((member) => member.personId);
+
+    if (personIds.length === 0) {
+      return [];
+    }
+
+    const personRepository = await this.globalWorkspaceOrmManager.getRepository(
+      workspaceId,
+      PersonWorkspaceEntity,
+      { shouldBypassPermissionChecks: true },
+    );
+
+    const people = await personRepository.find({
+      where: { id: In(personIds) },
+    });
+
+    return people
+      .map((person) => person.emails?.primaryEmail)
       .filter((email): email is string => isNonEmptyString(email));
   }
 

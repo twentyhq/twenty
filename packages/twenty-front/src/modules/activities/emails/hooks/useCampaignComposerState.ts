@@ -12,6 +12,7 @@ export const useCampaignComposerState = ({
   onSent,
 }: UseCampaignComposerStateArgs) => {
   const [messageTopicId, setMessageTopicId] = useState<string | null>(null);
+  const [segmentId, setSegmentId] = useState<string | null>(null);
   const [fromAddress, setFromAddress] = useState('');
   const [subject, setSubject] = useState(defaultSubject);
   const [body, setBody] = useState('');
@@ -35,6 +36,7 @@ export const useCampaignComposerState = ({
 
     const success = await sendMessageBroadcast({
       messageTopicId,
+      segmentId: segmentId ?? undefined,
       subject,
       body,
       fromAddress: fromAddress.trim(),
@@ -45,6 +47,7 @@ export const useCampaignComposerState = ({
     }
   }, [
     messageTopicId,
+    segmentId,
     fromAddress,
     subject,
     body,
@@ -55,6 +58,8 @@ export const useCampaignComposerState = ({
   return {
     messageTopicId,
     setMessageTopicId,
+    segmentId,
+    setSegmentId,
     fromAddress,
     setFromAddress,
     subject,

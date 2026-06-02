@@ -15,12 +15,19 @@ export class SendMessageBroadcastInput {
   @IsUUID('4')
   messageTopicId: string;
 
-  // Optional Person view (segment) whose filters resolve the recipients.
+  // Optional Person view whose filters resolve the recipients (dynamic audience).
   // When omitted, recipients are the people subscribed to the topic.
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsUUID('4')
   recipientViewId?: string;
+
+  // Optional segment whose hand-picked members are the recipients (static audience).
+  // Takes precedence over recipientViewId and topic subscribers when set.
+  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @IsUUID('4')
+  segmentId?: string;
 
   @Field(() => String)
   @IsString()

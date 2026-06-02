@@ -11,6 +11,7 @@ import {
 
 type SendMessageBroadcastParams = {
   messageTopicId: string;
+  segmentId?: string;
   subject: string;
   body: string;
   fromAddress: string;
