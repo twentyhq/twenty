@@ -36,6 +36,8 @@ export const useActivityTargetsForTargetableObjects = ({
   );
   const activityTargetsFilter = getActivityTargetsFilter({
     targetableObjects,
+    activityObjectNameSingular: objectNameSingular,
+    objectMetadataItems,
   });
 
   const FIND_ACTIVITY_TARGETS_OPERATION_SIGNATURE =
