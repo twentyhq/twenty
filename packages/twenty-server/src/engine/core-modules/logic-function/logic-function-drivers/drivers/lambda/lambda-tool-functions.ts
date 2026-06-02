@@ -33,7 +33,7 @@ import {
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
-import { computeHashedResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-resource-name';
+import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name';
 import { type LambdaAwsClient } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-aws-client';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
@@ -172,9 +172,8 @@ export class LambdaToolFunctions {
 
   async ensureCommonLayerExists(): Promise<string> {
     const commonLayerName = await this.getCommonLayerName();
-    const existingArn = await this.awsClient.getExistingLayerArn(
-      commonLayerName,
-    );
+    const existingArn =
+      await this.awsClient.getExistingLayerArn(commonLayerName);
 
     if (isDefined(existingArn)) {
       return existingArn;
@@ -316,7 +315,7 @@ export class LambdaToolFunctions {
       ),
     ]);
 
-    this.commonLayerName = computeHashedResourceName({
+    this.commonLayerName = computeHashedLambdaResourceName({
       prefix: COMMON_LAYER_NAME_PREFIX,
       contents: [packageJson, yarnLock],
     });
@@ -334,7 +333,7 @@ export class LambdaToolFunctions {
       'utf-8',
     );
 
-    this.yarnInstallFunctionName = computeHashedResourceName({
+    this.yarnInstallFunctionName = computeHashedLambdaResourceName({
       prefix: YARN_INSTALL_FUNCTION_NAME_PREFIX,
       contents: [handlerContent],
     });
@@ -349,7 +348,7 @@ export class LambdaToolFunctions {
 
     const handlerContent = await fs.readFile(BUILDER_HANDLER_PATH, 'utf-8');
 
-    this.builderFunctionName = computeHashedResourceName({
+    this.builderFunctionName = computeHashedLambdaResourceName({
       prefix: BUILDER_FUNCTION_NAME_PREFIX,
       contents: [handlerContent],
     });

@@ -1,4 +1,4 @@
-export const getSdkLayerName = ({
+export const getLambdaSdkLayerName = ({
   workspaceId,
   applicationUniversalIdentifier,
 }: {

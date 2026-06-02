@@ -1,4 +1,4 @@
-export const reprefixZipEntries = async ({
+export const reprefixLambdaZipEntries = async ({
   sourceBuffer,
   prefix,
 }: {

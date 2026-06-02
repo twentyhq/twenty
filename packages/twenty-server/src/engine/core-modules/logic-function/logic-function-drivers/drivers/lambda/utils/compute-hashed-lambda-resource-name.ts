@@ -2,7 +2,7 @@ import { createHash } from 'crypto';
 
 const RESOURCE_NAME_CHECKSUM_LENGTH = 12;
 
-export const computeHashedResourceName = ({
+export const computeHashedLambdaResourceName = ({
   prefix,
   contents,
 }: {

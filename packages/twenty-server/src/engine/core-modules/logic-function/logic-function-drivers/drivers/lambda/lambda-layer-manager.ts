@@ -16,9 +16,9 @@ import {
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
 import { type LambdaAwsClient } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-aws-client';
 import { type LambdaToolFunctions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-tool-functions';
-import { getDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-deps-layer-name';
-import { getSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-sdk-layer-name';
-import { reprefixZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-zip-entries';
+import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name';
+import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name';
+import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -39,7 +39,7 @@ export class LambdaLayerManager {
   ) {}
 
   async ensureDepsLayer(context: LayerAppContext): Promise<string> {
-    const layerName = getDepsLayerName(context.flatApplication);
+    const layerName = getLambdaDepsLayerName(context.flatApplication);
 
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
@@ -62,7 +62,7 @@ export class LambdaLayerManager {
 
   async ensureSdkLayer(context: LayerAppContext): Promise<string> {
     const { flatApplication, applicationUniversalIdentifier } = context;
-    const layerName = getSdkLayerName({
+    const layerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });
@@ -84,7 +84,7 @@ export class LambdaLayerManager {
         applicationUniversalIdentifier,
       });
 
-    const zipBuffer = await reprefixZipEntries({
+    const zipBuffer = await reprefixLambdaZipEntries({
       sourceBuffer: sdkArchiveBuffer,
       prefix: SDK_LAYER_PREFIX_IN_ZIP,
     });
@@ -112,8 +112,8 @@ export class LambdaLayerManager {
       return false;
     }
 
-    const depsLayerName = getDepsLayerName(flatApplication);
-    const sdkLayerName = getSdkLayerName({
+    const depsLayerName = getLambdaDepsLayerName(flatApplication);
+    const sdkLayerName = getLambdaSdkLayerName({
       workspaceId: flatApplication.workspaceId,
       applicationUniversalIdentifier,
     });

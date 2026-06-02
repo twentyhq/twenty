@@ -1,5 +1,5 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-deps-layer-name';
+import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name';
 
 const buildFlatApplication = (
   overrides: Partial<FlatApplication> = {},
@@ -9,20 +9,22 @@ const buildFlatApplication = (
     ...overrides,
   }) as FlatApplication;
 
-describe('getDepsLayerName', () => {
+describe('getLambdaDepsLayerName', () => {
   it('returns deps-<checksum> when yarnLockChecksum is set', () => {
-    expect(getDepsLayerName(buildFlatApplication())).toBe('deps-abc123');
+    expect(getLambdaDepsLayerName(buildFlatApplication())).toBe('deps-abc123');
   });
 
   it('falls back to deps-default when yarnLockChecksum is undefined', () => {
     expect(
-      getDepsLayerName(buildFlatApplication({ yarnLockChecksum: undefined })),
+      getLambdaDepsLayerName(
+        buildFlatApplication({ yarnLockChecksum: undefined }),
+      ),
     ).toBe('deps-default');
   });
 
   it('falls back to deps-default when yarnLockChecksum is null', () => {
     expect(
-      getDepsLayerName(
+      getLambdaDepsLayerName(
         buildFlatApplication({
           yarnLockChecksum: null as unknown as string,
         }),

@@ -1,9 +1,9 @@
-import { getSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-sdk-layer-name';
+import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name';
 
-describe('getSdkLayerName', () => {
+describe('getLambdaSdkLayerName', () => {
   it('joins prefix with workspaceId and applicationUniversalIdentifier', () => {
     expect(
-      getSdkLayerName({
+      getLambdaSdkLayerName({
         workspaceId: 'ws-1',
         applicationUniversalIdentifier: 'app-2',
       }),
@@ -11,11 +11,11 @@ describe('getSdkLayerName', () => {
   });
 
   it('produces distinct names for distinct identifiers', () => {
-    const a = getSdkLayerName({
+    const a = getLambdaSdkLayerName({
       workspaceId: 'a',
       applicationUniversalIdentifier: 'x',
     });
-    const b = getSdkLayerName({
+    const b = getLambdaSdkLayerName({
       workspaceId: 'b',
       applicationUniversalIdentifier: 'x',
     });
