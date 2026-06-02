@@ -135,7 +135,9 @@ export const ExpandableList = ({
 
       const newWidth = entry.contentRect.width;
 
-      if (newWidth !== previousWidth) {
+      // Ignore sub-pixel fluctuations to avoid unnecessary recomputations
+      // and re-renders while a column is being resized.
+      if (Math.abs(newWidth - previousWidth) > 1) {
         previousWidth = newWidth;
         resetFirstHiddenChildIndex();
       }
