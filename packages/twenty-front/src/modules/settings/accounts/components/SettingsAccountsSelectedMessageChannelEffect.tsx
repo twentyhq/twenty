@@ -27,13 +27,13 @@ export const SettingsAccountsSelectedMessageChannelEffect = ({
       return;
     }
 
-    const currentSelectionStillExists = activeTabId
-      ? messageChannels.some((channel) => channel.id === activeTabId)
-      : false;
+    const activeChannel = messageChannels.find(
+      (channel) => channel.id === activeTabId,
+    );
 
-    if (!currentSelectionStillExists) {
-      setSettingsAccountsSelectedMessageChannel(messageChannels[0]);
-    }
+    setSettingsAccountsSelectedMessageChannel(
+      activeChannel ?? messageChannels[0],
+    );
   }, [messageChannels, activeTabId, setSettingsAccountsSelectedMessageChannel]);
 
   return null;

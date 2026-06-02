@@ -334,6 +334,20 @@ const SettingsAccounts = lazy(() =>
   })),
 );
 
+const SettingsAccountsEmails = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountsEmails').then((module) => ({
+    default: module.SettingsAccountsEmails,
+  })),
+);
+
+const SettingsAccountsCalendars = lazy(() =>
+  import('~/pages/settings/accounts/SettingsAccountsCalendars').then(
+    (module) => ({
+      default: module.SettingsAccountsCalendars,
+    }),
+  ),
+);
+
 const SettingsBilling = lazy(() =>
   import('~/pages/settings/billing/SettingsBilling').then((module) => ({
     default: module.SettingsBilling,
@@ -605,6 +619,14 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
         }
       >
         <Route path={SettingsPath.Accounts} element={<SettingsAccounts />} />
+        <Route
+          path={SettingsPath.AccountsEmails}
+          element={<SettingsAccountsEmails />}
+        />
+        <Route
+          path={SettingsPath.AccountsCalendars}
+          element={<SettingsAccountsCalendars />}
+        />
         <Route
           path={SettingsPath.NewAccount}
           element={<SettingsNewAccount />}
