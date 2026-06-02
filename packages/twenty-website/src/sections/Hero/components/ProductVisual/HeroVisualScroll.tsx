@@ -242,8 +242,8 @@ export function HeroVisualScroll({
   >([]);
   const clamp = (value: number) => Math.max(0, Math.min(1, value));
   const stackAppearProgress = clamp((morphProgress - 0.14) / 0.12);
-  const stackAlignProgress = clamp((morphProgress - 0.69) / 0.16);
-  const stackSpreadProgress = clamp((morphProgress - 0.83) / 0.18);
+  const stackAlignProgress = clamp((morphProgress - 0.5) / 0.16);
+  const stackSpreadProgress = clamp((morphProgress - 0.64) / 0.2);
   const stackSpreadEasedProgress = 1 - Math.pow(1 - stackSpreadProgress, 2.6);
   const selectorRevealProgress = clamp((morphProgress - 0.94) / 0.06);
   const selectorRevealReady = selectorRevealProgress > 0.96;
