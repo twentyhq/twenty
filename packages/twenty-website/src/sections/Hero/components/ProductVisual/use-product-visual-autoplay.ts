@@ -65,6 +65,13 @@ function getVisibleTextLength(text: string) {
   return length;
 }
 
+function getParagraphsVisibleLength(paragraphs: string[]) {
+  return paragraphs.reduce(
+    (total, paragraph) => total + getVisibleTextLength(paragraph),
+    0,
+  );
+}
+
 function getScenePhase(
   scene: ProductVisualSceneDefinition,
   streamProgress: number,
@@ -391,7 +398,7 @@ export function useProductVisualAutoplay(
   const selectedScene = PRODUCT_VISUAL_SCENES[selectedOption];
   const fullText = selectedScene.responseText;
   const fullTextVisibleLength = useMemo(
-    () => getVisibleTextLength(fullText),
+    () => getParagraphsVisibleLength(fullText),
     [fullText],
   );
   const streamComplete = streamedLength >= fullTextVisibleLength;

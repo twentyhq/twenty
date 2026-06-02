@@ -3,6 +3,13 @@
 import { useEffect, useRef, type ReactNode } from 'react';
 
 import { styled } from '@linaria/react';
+import {
+  IconArrowUp,
+  IconChevronDown,
+  IconEdit,
+  IconPaperclip,
+  IconX,
+} from '@tabler/icons-react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import {
@@ -74,11 +81,11 @@ const AiPanelHeader = styled.div`
 const AiHeaderBtn = styled.span`
   align-items: center;
   border-radius: 4px;
-  color: ${VISUAL_TOKENS.font.color.secondary};
+  color: ${VISUAL_TOKENS.font.color.tertiary};
   display: flex;
-  height: 28px;
+  height: 20px;
   justify-content: center;
-  width: 28px;
+  width: 20px;
 `;
 
 const AiPanelTitle = styled.span`
@@ -86,7 +93,7 @@ const AiPanelTitle = styled.span`
   flex: 1;
   font-size: 13px;
   font-weight: 600;
-  text-align: center;
+  text-align: left;
 `;
 
 const AiMessages = styled.div`
@@ -105,7 +112,7 @@ const UserMsg = styled.div`
   color: ${VISUAL_TOKENS.font.color.secondary};
   font-size: 13px;
   font-weight: 500;
-  line-height: 1.4em;
+  line-height: 1.5;
   padding: 4px 8px;
   width: fit-content;
 `;
@@ -114,13 +121,26 @@ const AiMsg = styled.div`
   color: ${VISUAL_TOKENS.font.color.primary};
   font-size: 13px;
   font-weight: 400;
-  line-height: 1.4em;
+  line-height: 1.5;
   width: 100%;
 `;
 
 const AiMsgStrong = styled.strong`
   color: ${VISUAL_TOKENS.font.color.primary};
-  font-weight: 600;
+  font-weight: 500;
+`;
+
+const AiMsgParagraph = styled.div`
+  line-height: inherit;
+  margin-block: 8px;
+
+  &:first-child {
+    margin-block-start: 0;
+  }
+
+  &:last-child {
+    margin-block-end: 0;
+  }
 `;
 
 const EntityChips = styled.div`
@@ -170,14 +190,15 @@ const EntityOverflowChip = styled.div`
 
 const ThinkingText = styled.span`
   color: ${VISUAL_TOKENS.font.color.tertiary};
-  font-size: 13px;
+  font-size: 12px;
+  font-weight: 500;
 `;
 
 const AiInputArea = styled.div`
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  padding: 8px;
+  padding: 12px;
 `;
 
 const AiInputBox = styled.div`
@@ -196,7 +217,7 @@ const AiInputBox = styled.div`
 const AiInputPlaceholder = styled.span`
   color: ${VISUAL_TOKENS.font.color.light};
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 400;
   padding: 4px 0;
 `;
 
@@ -222,12 +243,18 @@ const AiInputRightBtns = styled.div`
 const ModelChip = styled.span`
   align-items: center;
   border: 1px solid ${VISUAL_TOKENS.border.color.medium};
-  border-radius: 6px;
-  color: ${VISUAL_TOKENS.font.color.secondary};
+  border-radius: 4px;
+  color: ${VISUAL_TOKENS.font.color.primary};
   display: flex;
   font-size: 12px;
   gap: 4px;
   padding: 4px 8px;
+`;
+
+const ModelChipChevron = styled.span`
+  align-items: center;
+  color: ${VISUAL_TOKENS.font.color.tertiary};
+  display: flex;
 `;
 
 const SendBtn = styled.span`
@@ -236,9 +263,9 @@ const SendBtn = styled.span`
   border-radius: 50%;
   color: ${VISUAL_TOKENS.font.color.tertiary};
   display: flex;
-  height: 24px;
+  height: 20px;
   justify-content: center;
-  width: 24px;
+  width: 20px;
 `;
 
 type ProductVisualProps = {
@@ -251,7 +278,11 @@ type ProductVisualProps = {
   visual: AppPreviewConfig;
 };
 
-function renderAssistantText(text: string, visibleLength: number) {
+function renderParagraphInline(
+  text: string,
+  visibleLength: number,
+  keyPrefix: string,
+) {
   const parts: ReactNode[] = [];
   let visibleRemaining = visibleLength;
   let cursor = 0;
@@ -261,7 +292,9 @@ function renderAssistantText(text: string, visibleLength: number) {
     const openIndex = text.indexOf('**', cursor);
 
     if (openIndex === -1) {
-      parts.push(text.slice(cursor, cursor + visibleRemaining));
+      const segment = text.slice(cursor, cursor + visibleRemaining);
+      parts.push(segment);
+      visibleRemaining -= segment.length;
       break;
     }
 
@@ -288,7 +321,12 @@ function renderAssistantText(text: string, visibleLength: number) {
       );
 
       if (trailingSegment.length > 0) {
-        parts.push(trailingSegment);
+        parts.push(
+          <AiMsgStrong key={`${keyPrefix}-strong-${partIndex}`}>
+            {trailingSegment}
+          </AiMsgStrong>,
+        );
+        visibleRemaining -= trailingSegment.length;
       }
 
       break;
@@ -298,7 +336,7 @@ function renderAssistantText(text: string, visibleLength: number) {
     const visibleBoldSegment = boldSegment.slice(0, visibleRemaining);
 
     parts.push(
-      <AiMsgStrong key={`strong-${partIndex}`}>
+      <AiMsgStrong key={`${keyPrefix}-strong-${partIndex}`}>
         {visibleBoldSegment}
       </AiMsgStrong>,
     );
@@ -312,7 +350,32 @@ function renderAssistantText(text: string, visibleLength: number) {
     cursor = closeIndex + 2;
   }
 
-  return parts;
+  return { nodes: parts, consumed: visibleLength - visibleRemaining };
+}
+
+function renderAssistantText(paragraphs: string[], visibleLength: number) {
+  const blocks: ReactNode[] = [];
+  let visibleRemaining = visibleLength;
+
+  for (let index = 0; index < paragraphs.length; index += 1) {
+    if (visibleRemaining <= 0) {
+      break;
+    }
+
+    const { nodes, consumed } = renderParagraphInline(
+      paragraphs[index],
+      visibleRemaining,
+      `p-${index}`,
+    );
+
+    if (nodes.length > 0) {
+      blocks.push(<AiMsgParagraph key={`p-${index}`}>{nodes}</AiMsgParagraph>);
+    }
+
+    visibleRemaining -= consumed;
+  }
+
+  return blocks;
 }
 
 export function ProductVisual({
@@ -414,31 +477,11 @@ export function ProductVisual({
             <AiPanel>
               <AiPanelHeader>
                 <AiHeaderBtn>
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
+                  <IconX size={13} stroke={2} />
                 </AiHeaderBtn>
                 <AiPanelTitle>Ask AI</AiPanelTitle>
                 <AiHeaderBtn>
-                  <svg
-                    width="14"
-                    height="14"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
-                    <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
-                  </svg>
+                  <IconEdit size={13} stroke={2} />
                 </AiHeaderBtn>
               </AiPanelHeader>
               <AiMessages ref={aiMessagesRef}>
@@ -446,6 +489,7 @@ export function ProductVisual({
                 {agentSteps.length > 0 ? (
                   <ProductVisualAiSteps
                     activeStepIndex={activeStepIndex}
+                    answerStarted={streamedTextVisibleLength > 0}
                     completedStepCount={completedStepCount}
                     steps={agentSteps}
                   />
@@ -488,16 +532,7 @@ export function ProductVisual({
                   </AiInputPlaceholder>
                   <AiInputBtnRow>
                     <AiInputLeftBtns>
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="1.5"
-                      >
-                        <path d="M21.44 11.05l-9.19 9.19a6 6 0 01-8.49-8.49l9.19-9.19a4 4 0 015.66 5.66l-9.2 9.19a2 2 0 01-2.83-2.83l8.49-8.48" />
-                      </svg>
+                      <IconPaperclip size={13} stroke={2} />
                     </AiInputLeftBtns>
                     <AiInputRightBtns>
                       <ModelChip>
@@ -514,29 +549,12 @@ export function ProductVisual({
                           />
                         </svg>
                         Claude Opus 4.6
-                        <svg
-                          width="8"
-                          height="8"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2.5"
-                        >
-                          <polyline points="6 9 12 15 18 9" />
-                        </svg>
+                        <ModelChipChevron>
+                          <IconChevronDown size={13} stroke={2} />
+                        </ModelChipChevron>
                       </ModelChip>
                       <SendBtn>
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <line x1="12" y1="19" x2="12" y2="5" />
-                          <polyline points="5 12 12 5 19 12" />
-                        </svg>
+                        <IconArrowUp size={13} stroke={2} />
                       </SendBtn>
                     </AiInputRightBtns>
                   </AiInputBtnRow>

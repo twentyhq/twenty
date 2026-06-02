@@ -1,9 +1,12 @@
 'use client';
 
+import { useState } from 'react';
+
 import { styled } from '@linaria/react';
 import {
   IconChecklist,
-  IconCheck,
+  IconChevronRight,
+  IconCpu,
   IconFilter,
   IconHierarchy3,
   IconLayoutList,
@@ -26,17 +29,23 @@ const TOOL_ICONS: Record<AgentToolIcon, typeof IconSearch> = {
   mail: IconMail,
 };
 
-const StepList = styled.div`
+const StepsContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
 `;
 
+const StepList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+`;
+
 const StepRow = styled.div`
-  align-items: flex-start;
+  align-items: center;
   animation: aiStepAppear 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
   display: flex;
-  gap: 6px;
+  gap: 8px;
   min-height: 20px;
 
   @keyframes aiStepAppear {
@@ -51,145 +60,193 @@ const StepRow = styled.div`
   }
 `;
 
+const SummaryButton = styled.button`
+  align-items: center;
+  animation: aiSummaryAppear 240ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  background: none;
+  border: none;
+  border-radius: 4px;
+  color: ${VISUAL_TOKENS.font.color.tertiary};
+  cursor: pointer;
+  display: flex;
+  font-family: ${VISUAL_TOKENS.font.family};
+  gap: 8px;
+  min-height: 18px;
+  padding: 0;
+  width: fit-content;
+
+  @keyframes aiSummaryAppear {
+    from {
+      opacity: 0;
+      transform: translateY(-2px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+const SummaryChevron = styled.span`
+  align-items: center;
+  color: ${VISUAL_TOKENS.font.color.light};
+  display: flex;
+  justify-content: center;
+  transition: transform 150ms ease-in-out;
+`;
+
+const SummaryText = styled.span`
+  color: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 18px;
+`;
+
 const StepIcon = styled.span`
   align-items: center;
-  color: ${VISUAL_TOKENS.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-  height: 18px;
-`;
-
-const Spinner = styled.span`
-  align-items: center;
-  animation: aiSpin 0.85s linear infinite;
-  color: ${VISUAL_TOKENS.font.color.tertiary};
-  display: flex;
-  flex-shrink: 0;
-
-  @keyframes aiSpin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
-`;
-
-const ShimmerText = styled.span`
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: aiShimmer 1.1s linear infinite;
-  background-clip: text;
-  background-color: ${VISUAL_TOKENS.font.color.light};
-  background-image: linear-gradient(
-    90deg,
-    ${VISUAL_TOKENS.font.color.light} 0%,
-    ${VISUAL_TOKENS.font.color.primary} 50%,
-    ${VISUAL_TOKENS.font.color.light} 100%
-  );
-  background-size: 200% 100%;
   color: ${VISUAL_TOKENS.font.color.light};
-  font-family: ${VISUAL_TOKENS.font.family};
-  font-size: 13px;
-  font-weight: 500;
-  line-height: 18px;
-
-  @keyframes aiShimmer {
-    0% {
-      background-position: 200% center;
-    }
-    100% {
-      background-position: -200% center;
-    }
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    animation: none;
-  }
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  min-width: 14px;
 `;
 
-const DoneText = styled.span`
-  color: ${VISUAL_TOKENS.font.color.secondary};
+const StepLoaderIcon = styled.span`
+  align-items: center;
+  color: ${VISUAL_TOKENS.font.color.tertiary};
+  display: flex;
+  flex-shrink: 0;
+  justify-content: center;
+  min-width: 14px;
+`;
+
+const StepLabel = styled.span`
+  color: ${VISUAL_TOKENS.font.color.tertiary};
   font-family: ${VISUAL_TOKENS.font.family};
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 12px;
+  font-weight: 400;
   line-height: 18px;
 `;
 
-function ThinkingSpinner() {
+function ThinkingOrbitLoader() {
   return (
-    <Spinner>
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-        <circle
-          cx="7"
-          cy="7"
-          r="5.5"
+    <StepLoaderIcon>
+      <svg
+        width="14"
+        height="14"
+        viewBox="0 0 14 14"
+        aria-hidden="true"
+        focusable="false"
+      >
+        <path
+          d="M3.1 7 C3.1 4.4 6.0 4.4 7.0 7 C8.0 9.6 10.9 9.6 10.9 7 C10.9 4.4 8.0 4.4 7.0 7 C6.0 9.6 3.1 9.6 3.1 7"
+          fill="none"
           stroke="currentColor"
-          strokeWidth="1.6"
+          strokeWidth="1.4"
           strokeLinecap="round"
-          strokeDasharray="20 14"
-        />
+          strokeLinejoin="round"
+          shapeRendering="geometricPrecision"
+          pathLength={100}
+          strokeDasharray="14 86"
+          strokeDashoffset="0"
+        >
+          <animate
+            attributeName="stroke-dashoffset"
+            values="0;-100"
+            dur="1.05s"
+            repeatCount="indefinite"
+          />
+          <animate
+            attributeName="stroke-dasharray"
+            values="10 90;16 84;10 90"
+            dur="1.05s"
+            repeatCount="indefinite"
+          />
+        </path>
       </svg>
-    </Spinner>
+    </StepLoaderIcon>
   );
 }
 
 type ProductVisualAiStepsProps = {
   activeStepIndex: number;
+  answerStarted: boolean;
   completedStepCount: number;
   steps: AgentStep[];
 };
 
 export function ProductVisualAiSteps({
   activeStepIndex,
+  answerStarted,
   completedStepCount,
   steps,
 }: ProductVisualAiStepsProps) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const isThinking = activeStepIndex >= 0;
+  const shouldKeepExpandedBeforeAnswer = !answerStarted;
+  const shouldShowSummaryButton =
+    !isThinking && !shouldKeepExpandedBeforeAnswer;
+  const shouldRenderRows =
+    isThinking || isExpanded || shouldKeepExpandedBeforeAnswer;
+
+  const stepCount = steps.length;
   const visibleCount =
     activeStepIndex >= 0 ? activeStepIndex + 1 : completedStepCount;
   const visibleSteps = steps.slice(0, visibleCount);
 
   return (
-    <StepList>
-      {visibleSteps.map((step, index) => {
-        const isRunning = index === activeStepIndex;
+    <StepsContainer>
+      {shouldShowSummaryButton ? (
+        <SummaryButton
+          type="button"
+          aria-expanded={isExpanded}
+          onClick={() => setIsExpanded((previousValue) => !previousValue)}
+        >
+          <SummaryChevron
+            style={{ transform: isExpanded ? 'rotate(90deg)' : 'rotate(0deg)' }}
+          >
+            <IconChevronRight size={14} stroke={2} />
+          </SummaryChevron>
+          <SummaryText>
+            {stepCount === 1 ? '1 step' : `${stepCount} steps`}
+          </SummaryText>
+        </SummaryButton>
+      ) : null}
 
-        if (step.kind === 'thinking') {
-          return (
-            <StepRow key={`thinking-${index}`}>
-              <StepIcon>
-                {isRunning ? (
-                  <ThinkingSpinner />
-                ) : (
-                  <IconCheck size={14} stroke={2} />
-                )}
-              </StepIcon>
-              {isRunning ? (
-                <ShimmerText>Thinking</ShimmerText>
-              ) : (
-                <DoneText>Thought</DoneText>
-              )}
-            </StepRow>
-          );
-        }
+      {shouldRenderRows ? (
+        <StepList>
+          {visibleSteps.map((step, index) => {
+            const isRunning = index === activeStepIndex;
 
-        const ToolIcon = TOOL_ICONS[step.icon];
+            if (step.kind === 'thinking') {
+              return (
+                <StepRow key={`thinking-${index}`}>
+                  {isRunning ? (
+                    <ThinkingOrbitLoader />
+                  ) : (
+                    <StepIcon>
+                      <IconCpu size={14} stroke={2} />
+                    </StepIcon>
+                  )}
+                  <StepLabel>{isRunning ? 'Thinking' : 'Thought'}</StepLabel>
+                </StepRow>
+              );
+            }
 
-        return (
-          <StepRow key={`tool-${index}`}>
-            <StepIcon>
-              <ToolIcon size={14} stroke={1.8} />
-            </StepIcon>
-            {isRunning ? (
-              <ShimmerText>{step.running}</ShimmerText>
-            ) : (
-              <DoneText>{step.done}</DoneText>
-            )}
-          </StepRow>
-        );
-      })}
-    </StepList>
+            const ToolIcon = TOOL_ICONS[step.icon];
+
+            return (
+              <StepRow key={`tool-${index}`}>
+                <StepIcon>
+                  <ToolIcon size={14} stroke={1.8} />
+                </StepIcon>
+                <StepLabel>{isRunning ? step.running : step.done}</StepLabel>
+              </StepRow>
+            );
+          })}
+        </StepList>
+      ) : null}
+    </StepsContainer>
   );
 }

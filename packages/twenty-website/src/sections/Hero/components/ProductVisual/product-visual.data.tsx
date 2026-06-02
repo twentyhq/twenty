@@ -297,7 +297,7 @@ export type ProductVisualSceneDefinition = {
   kind: ProductVisualSceneKind;
   label: string;
   responseChips: ResponseChip[];
-  responseText: string;
+  responseText: string[];
   sidebarMode?: 'collapsed' | 'expanded';
   followUpPageItemId?: string;
   steps?: AgentStep[];
@@ -316,7 +316,7 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     initialPageItemId: COMPANIES_PAGE_ITEM_ID,
     kind: 'leadCreation',
     label: 'Add a new lead',
-    responseText: '',
+    responseText: [],
     responseChips: [],
     sidebarMode: 'expanded',
   },
@@ -324,8 +324,10 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     initialPageItemId: OPPORTUNITIES_PAGE_ITEM_ID,
     kind: 'opportunityReview',
     label: 'Build a pipeline board grouped by stage',
-    responseText:
-      'Organized your open deals into a **pipeline board** grouped by stage — **New**, **Screening**, **Meeting**, **Proposal**, and **Customer**. Drag a card to move a deal forward, or open one to see the full history.',
+    responseText: [
+      'Organized your open deals into a **pipeline board** grouped by stage — **New**, **Screening**, **Meeting**, **Proposal**, and **Customer**.',
+      'Drag a card to move a deal forward, or open one to see the full history.',
+    ],
     responseChips: [
       { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
       { name: 'Notion', logoUrl: SHARED_COMPANY_LOGO_URLS.notion },
@@ -359,8 +361,10 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     kind: 'taskCreation',
     label:
       'Generate follow-up tasks for my top 10 accounts using notes to gather context',
-    responseText:
-      'Created **10 follow-up tasks** dated **Nov 1 through Nov 8**. The first rows cover Anthropic, Slack, Figma, Notion, and Github, followed by Airbnb, Stripe, Sequoia, Accel, and Google.',
+    responseText: [
+      'Created **10 follow-up tasks** dated **Nov 1 through Nov 8**.',
+      'The first rows cover Anthropic, Slack, Figma, Notion, and Github, followed by Airbnb, Stripe, Sequoia, Accel, and Google.',
+    ],
     responseChips: [
       { name: 'Anthropic', logoUrl: SHARED_COMPANY_LOGO_URLS.anthropic },
       { name: 'Slack', logoUrl: SHARED_COMPANY_LOGO_URLS.slack },
@@ -396,8 +400,10 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     initialPageItemId: SALES_DASHBOARD_PAGE_ITEM_ID,
     kind: 'dashboardCreation',
     label: 'Build a dashboard of pipeline by stage and ARR',
-    responseText:
-      'Built a **Sales dashboard** with live KPIs — **$12.9M pipeline**, **$2.4M won this quarter**, and a **38% win rate** — plus charts for deals by stage and ARR over time. It refreshes automatically as your data changes.',
+    responseText: [
+      'Built a **Sales dashboard** with live KPIs — **$12.9M pipeline**, **$2.4M won this quarter**, and a **38% win rate** — plus charts for deals by stage and ARR over time.',
+      'It refreshes automatically as your data changes.',
+    ],
     responseChips: [],
     sidebarMode: 'collapsed',
     steps: [
@@ -422,8 +428,10 @@ export const PRODUCT_VISUAL_SCENES: ProductVisualSceneDefinition[] = [
     initialPageItemId: WORKFLOW_EMAIL_SEQUENCE_PAGE_ITEM_ID,
     kind: 'workflowCreation',
     label: 'Draft a workflow that sends an email sequence',
-    responseText:
-      'Created and activated a sequence with a **Manual trigger**, an **Iterator**, and a **Send Email** step. It is ready to run now, and filters or email copy can be refined next.',
+    responseText: [
+      'Created and activated a sequence with a **Manual trigger**, an **Iterator**, and a **Send Email** step.',
+      'It is ready to run now, and filters or email copy can be refined next.',
+    ],
     responseChips: [],
     sidebarMode: 'collapsed',
     steps: [
