@@ -8,7 +8,7 @@ import {
 } from '@/settings/domains/hooks/useSettingsSubdomain';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { styled } from '@linaria/react';
@@ -41,7 +41,7 @@ export const SettingsSubdomain = () => {
 
   return (
     <>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Subdomain`}
         links={[
           {
@@ -86,7 +86,7 @@ export const SettingsSubdomain = () => {
             </StyledDomainFormWrapper>
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
       <ConfirmationModal
         modalInstanceId={SUBDOMAIN_CHANGE_CONFIRMATION_MODAL_ID}
         title={t`Change subdomain?`}

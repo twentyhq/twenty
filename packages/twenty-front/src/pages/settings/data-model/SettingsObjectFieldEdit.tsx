@@ -25,7 +25,7 @@ import { type SettingsFieldType } from '@/settings/data-model/types/SettingsFiel
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { navigationMemorizedUrlState } from '@/ui/navigation/states/navigationMemorizedUrlState';
 import { shouldNavigateBackToMemorizedUrlOnSaveState } from '@/ui/navigation/states/shouldNavigateBackToMemorizedUrlOnSaveState';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
@@ -311,7 +311,7 @@ export const SettingsObjectFieldEdit = () => {
     <>
       {/* oxlint-disable-next-line react/jsx-props-no-spreading */}
       <FormProvider {...formConfig}>
-        <SubMenuTopBarContainer
+        <SettingsPageLayout
           title={fieldMetadataItem?.label}
           links={[
             {
@@ -429,7 +429,7 @@ export const SettingsObjectFieldEdit = () => {
               </Section>
             )}
           </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       </FormProvider>
       {fieldMetadataItem?.isCustom && (
         <ConfirmationModal

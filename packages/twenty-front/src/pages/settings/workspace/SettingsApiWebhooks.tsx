@@ -4,10 +4,10 @@ import { SettingsApiKeysTable } from '@/settings/developers/components/SettingsA
 import { SettingsWebhooksTable } from '@/settings/developers/components/SettingsWebhooksTable';
 import { PlaygroundSetupForm } from '@/settings/playground/components/PlaygroundSetupForm';
 import { SettingsMcpSetup } from '@/settings/playground/components/SettingsMcpSetup';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import PlaygroundCoverDark from '@/settings/playground/assets/cover-dark.png';
 import PlaygroundCoverLight from '@/settings/playground/assets/cover-light.png';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
 import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
@@ -86,8 +86,14 @@ export const SettingsApiWebhooks = () => {
   ];
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`APIs & Webhooks`}
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
+        />
+      }
       links={[
         {
           children: t`Workspace`,
@@ -119,11 +125,6 @@ export const SettingsApiWebhooks = () => {
             playButtonAriaLabel={t`Watch API demo`}
           />
         </Section>
-
-        <TabList
-          tabs={tabs}
-          componentInstanceId={SETTINGS_API_WEBHOOKS_TABS.COMPONENT_INSTANCE_ID}
-        />
 
         {activeTab === SETTINGS_API_WEBHOOKS_TABS.TABS_IDS.API && (
           <StyledTabContent>
@@ -185,6 +186,6 @@ export const SettingsApiWebhooks = () => {
           </StyledTabContent>
         )}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

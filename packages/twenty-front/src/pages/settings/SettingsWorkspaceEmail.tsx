@@ -4,7 +4,7 @@ import { isEmailGroupEnabledState } from '@/client-config/states/isEmailGroupEna
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsWorkspaceEmailGroupSection } from '@/settings/workspace/components/SettingsWorkspaceEmailGroupSection';
 import { SettingsWorkspaceEmailingDomainsSection } from '@/settings/workspace/components/SettingsWorkspaceEmailingDomainsSection';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { FeatureFlagKey, SettingsPath } from 'twenty-shared/types';
@@ -25,7 +25,7 @@ export const SettingsWorkspaceEmail = () => {
   const showEmailGroupSection = isEmailGroupEnabled;
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Email`}
       links={[
         {
@@ -39,6 +39,6 @@ export const SettingsWorkspaceEmail = () => {
         {showEmailGroupSection && <SettingsWorkspaceEmailGroupSection />}
         <SettingsWorkspaceEmailingDomainsSection />
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

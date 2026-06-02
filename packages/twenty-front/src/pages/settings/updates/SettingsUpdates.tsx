@@ -1,7 +1,7 @@
 import { SettingsCard } from '@/settings/components/SettingsCard';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { SettingsPath } from 'twenty-shared/types';
@@ -17,7 +17,7 @@ const StyledCardLink = styled.a`
 export const SettingsUpdates = () => {
   const { theme } = useContext(ThemeContext);
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={t`Updates`}
       links={[
         {
@@ -58,6 +58,6 @@ export const SettingsUpdates = () => {
           <SettingsLabContent />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

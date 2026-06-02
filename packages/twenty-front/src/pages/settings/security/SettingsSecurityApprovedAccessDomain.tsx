@@ -2,7 +2,7 @@ import { SaveAndCancelButtons } from '@/settings/components/SaveAndCancelButtons
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Trans, useLingui } from '@lingui/react/macro';
@@ -83,7 +83,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
 
   return (
     <form onSubmit={form.handleSubmit(handleSave)}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`New Approved Access Domain`}
         actionButton={
           <SaveAndCancelButtons
@@ -154,7 +154,7 @@ export const SettingsSecurityApprovedAccessDomain = () => {
             />
           </Section>
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </form>
   );
 };

@@ -8,7 +8,7 @@ import { useMyMessageChannels } from '@/settings/accounts/hooks/useMyMessageChan
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
 import { MessageChannelType, SettingsPath } from 'twenty-shared/types';
@@ -85,7 +85,7 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={sourceHandle}
       links={[
         {
@@ -160,6 +160,6 @@ export const SettingsWorkspaceEmailGroupChannelDetail = () => {
         confirmButtonAccent="danger"
         loading={deleting}
       />
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

@@ -12,7 +12,7 @@ import { TwoFactorAuthenticationVerificationForSettings } from '@/settings/two-f
 import { useCurrentUserWorkspaceTwoFactorAuthentication } from '@/settings/two-factor-authentication/hooks/useCurrentUserWorkspaceTwoFactorAuthentication';
 import { useTwoFactorVerificationForSettings } from '@/settings/two-factor-authentication/hooks/useTwoFactorVerificationForSettings';
 import { extractSecretFromOtpUri } from '@/settings/two-factor-authentication/utils/extractSecretFromOtpUri';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { H2Title } from 'twenty-ui/display';
@@ -110,7 +110,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
   return (
     // oxlint-disable-next-line react/jsx-props-no-spreading
     <FormProvider {...verificationForm.formConfig}>
-      <SubMenuTopBarContainer
+      <SettingsPageLayout
         title={t`Two Factor Authentication`}
         links={[
           {
@@ -183,7 +183,7 @@ export const SettingsTwoFactorAuthenticationMethod = () => {
             </Section>
           )}
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </FormProvider>
   );
 };
