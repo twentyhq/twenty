@@ -94,7 +94,7 @@ export class ToolExecutorService {
 
     switch (ref.operation) {
       case 'find_many': {
-        const { limit, offset, orderBy, ...filter } = args;
+        const { limit, offset, orderBy, select, ...filter } = args;
 
         return this.findRecordsService.execute({
           objectName: ref.objectNameSingular,
@@ -102,19 +102,24 @@ export class ToolExecutorService {
           orderBy: orderBy as FindRecordsParams['orderBy'],
           limit: limit as number | undefined,
           offset: offset as number | undefined,
+          select: select as string[] | undefined,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });
       }
 
-      case 'find_one':
+      case 'find_one': {
+        const { select, id } = args;
+
         return this.findRecordsService.execute({
           objectName: ref.objectNameSingular,
-          filter: { id: { eq: args.id } },
+          filter: { id: { eq: id } },
           limit: 1,
+          select: select as string[] | undefined,
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
         });
+      }
 
       case 'create_one':
         return this.createRecordService.execute({

@@ -11,6 +11,7 @@ import { type FindRecordsParams } from 'src/engine/core-modules/record-crud/type
 import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/types/find-records-result.type';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
+import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-selected-field.util';
 
 @Injectable()
 export class FindRecordsService {
@@ -44,6 +45,16 @@ export class FindRecordsService {
         objectName,
       });
 
+      const { effectiveSelectedFields } = buildEffectiveSelectedFields({
+        select: params.select,
+        filter,
+        orderBy,
+        objectName,
+        flatObjectMetadata,
+        flatFieldMetadataMaps,
+        selectedFields,
+      });
+
       // Add id to orderBy for consistent pagination
       const orderByWithIdCondition: ObjectRecordOrderBy = [
         ...(orderBy ?? []).filter((item) => item !== undefined),
@@ -58,7 +69,7 @@ export class FindRecordsService {
           orderBy: orderByWithIdCondition,
           first: limit ? Math.min(limit, QUERY_MAX_RECORDS) : QUERY_MAX_RECORDS,
           offset,
-          selectedFields: { ...selectedFields, totalCount: true },
+          selectedFields: { ...effectiveSelectedFields, totalCount: true },
         },
         queryRunnerContext,
       );

@@ -13,7 +13,6 @@ export const generateFindToolInputSchema = (
     objectMetadata,
     restrictedFields,
   );
-
   return z.object({
     limit: z
       .number()
@@ -31,8 +30,17 @@ export const generateFindToolInputSchema = (
       .default(0)
       .describe('Number of records to skip (default: 0)'),
     orderBy: ObjectRecordOrderBySchema.describe(
-      'Sort records by field(s). CRITICAL for "top N", "largest", "smallest" queries. Each item is an object with exactly ONE property: field name as key, sort direction as value. Example: [{"employees": "DescNullsLast"}] sorts employees descending. Use "DescNullsLast" for top/largest, "AscNullsFirst" for bottom/smallest.',
+      'Sort by field(s). Each entry: {fieldName: "DescNullsLast"|"AscNullsFirst"|...}. Ex: [{"employees":"DescNullsLast"}]. Use DescNullsLast for top/largest, AscNullsFirst for bottom/smallest.',
     ),
+    select: z
+      .array(z.string())
+      .optional()
+      .describe(
+        `Fields to include in the response. ` +
+          `Defaults to id + display name + any fields used in filters or sorting. ` +
+          `Use '*' to return all fields. ` +
+          `id is always included. MANY_TO_ONE relations are referenced by their FK column (e.g. 'companyId'). `,
+      ),
     ...filterShape,
     or: z
       .array(filterSchema)
