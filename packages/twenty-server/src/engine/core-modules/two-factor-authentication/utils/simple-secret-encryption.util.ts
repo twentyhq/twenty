@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 import { createDecipheriv, createHash } from 'crypto';
 
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 
 // TODO: delete this util once the 2.5 cross-upgrade window closes and every
 // `core.twoFactorAuthenticationMethod.secret` row is known to be in the
@@ -26,7 +27,7 @@ export class SimpleSecretEncryptionUtil {
   async decryptSecret(
     encryptedSecret: string,
     purpose: string,
-  ): Promise<string> {
+  ): Promise<PlaintextString> {
     const appSecret = this.jwtWrapperService.generateAppSecret(
       JwtTokenTypeEnum.KEY_ENCRYPTION_KEY,
       purpose,
@@ -45,6 +46,6 @@ export class SimpleSecretEncryptionUtil {
 
     decrypted += decipher.final('utf8');
 
-    return decrypted;
+    return decrypted as PlaintextString;
   }
 }

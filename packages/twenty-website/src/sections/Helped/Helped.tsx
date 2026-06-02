@@ -1,9 +1,11 @@
 import type { Scheme } from '@/theme';
 import { styled } from '@linaria/react';
-import type { ReactNode } from 'react';
+
+import { Scene } from './components/HelpedScene';
+import type { HeadingCardType } from './types/heading-card-type';
+
 export type { HeadingCardType } from './types/heading-card-type';
 export type { HelpedVisualId } from './types/helped-visual-id';
-import { Scene } from './components/HelpedScene';
 
 const StyledSection = styled.section`
   width: 100%;
@@ -21,21 +23,15 @@ const StyledSection = styled.section`
   }
 `;
 
-type RootProps = {
-  backgroundColor?: string;
-  children: ReactNode;
-  scheme?: Scheme;
+type HelpedProps = {
+  cards: HeadingCardType[];
+  scheme: Scheme;
 };
 
-function Root({ backgroundColor, children, scheme }: RootProps) {
+export function Helped({ cards, scheme }: HelpedProps) {
   return (
-    <StyledSection
-      data-scheme={scheme}
-      style={scheme ? undefined : { backgroundColor }}
-    >
-      {children}
+    <StyledSection data-scheme={scheme}>
+      <Scene cards={cards} />
     </StyledSection>
   );
 }
-
-export const Helped = { Root, Scene };

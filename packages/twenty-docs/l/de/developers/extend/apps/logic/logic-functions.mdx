@@ -53,6 +53,10 @@ export default defineLogicFunction({
 Verfügbare Trigger-Typen:
 * **httpRoute**: Stellt Ihre Funktion unter einem HTTP-Pfad und einer Methode **unter dem Endpunkt `/s/`** bereit:
 > z. B. `path: '/post-card/create'` ist unter `https://your-twenty-server.com/s/post-card/create` aufrufbar
+
+<Note>
+Um eine routenausgelöste Logikfunktion von einer (headless) Front-Komponente aus aufzurufen, siehe [Aufrufen einer Logikfunktion](/l/de/developers/extend/apps/layout/front-components#calling-a-logic-function).
+</Note>
 * **cron**: Führt Ihre Funktion nach Zeitplan mithilfe eines CRON-Ausdrucks aus.
 * **databaseEvent**: Wird bei Lebenszyklusereignissen von Workspace-Objekten ausgeführt. Wenn die Ereignisoperation `updated` ist, können bestimmte zu überwachende Felder im Array `updatedFields` angegeben werden. Wenn das Array undefiniert oder leer ist, löst jede Aktualisierung die Funktion aus.
 > z. B. `person.updated`, `*.created`, `company.*`

@@ -48,15 +48,7 @@ export class ApplicationRegistrationVariableService {
       order: { key: 'ASC' },
     });
 
-    return variables.map((variable) => ({
-      ...variable,
-      isFilled: variable.isFilled,
-      value: variable.isFilled
-        ? variable.isSecret
-          ? '•••••••••••••'
-          : this.encryptionService.decryptVersioned(variable.encryptedValue)
-        : null,
-    }));
+    return variables.map((variable) => this.toObfuscatedDTO(variable));
   }
 
   async createVariable(
@@ -85,58 +77,28 @@ export class ApplicationRegistrationVariableService {
     input: UpdateApplicationRegistrationVariableInput,
     workspaceId: string,
   ): Promise<ApplicationRegistrationVariableEntity> {
-    const { id, update } = input;
-
-    const variable = await this.variableRepository.findOne({
-      where: { id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
+    const variable = await this.findVariableOrThrow(input.id);
 
     await this.assertRegistrationOwnedByWorkspace(
       variable.applicationRegistrationId,
       workspaceId,
     );
 
-    const updateData: Record<string, unknown> = {};
+    return this.applyVariableUpdate(input);
+  }
 
-    if (isDefined(update.value)) {
-      updateData.encryptedValue = this.encryptionService.encryptVersioned(
-        update.value,
-      );
-    }
+  async updateVariableGlobal(
+    input: UpdateApplicationRegistrationVariableInput,
+  ): Promise<ApplicationRegistrationVariableDTO> {
+    await this.findVariableOrThrow(input.id);
 
-    if (isDefined(update.resetValue) && update.resetValue) {
-      updateData.encryptedValue = '';
-    }
+    const entity = await this.applyVariableUpdate(input);
 
-    if (isDefined(update.description)) {
-      updateData.description = update.description;
-    }
-
-    if (Object.keys(updateData).length > 0) {
-      await this.variableRepository.update(id, updateData);
-    }
-
-    return this.variableRepository.findOneOrFail({ where: { id } });
+    return this.toObfuscatedDTO(entity);
   }
 
   async deleteVariable(id: string, workspaceId: string): Promise<boolean> {
-    const variable = await this.variableRepository.findOne({
-      where: { id },
-    });
-
-    if (!variable) {
-      throw new ApplicationRegistrationException(
-        `Variable with id ${id} not found`,
-        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
-      );
-    }
+    const variable = await this.findVariableOrThrow(id);
 
     await this.assertRegistrationOwnedByWorkspace(
       variable.applicationRegistrationId,
@@ -234,6 +196,68 @@ export class ApplicationRegistrationVariableService {
     }
 
     return result;
+  }
+
+  private async findVariableOrThrow(
+    id: string,
+  ): Promise<ApplicationRegistrationVariableEntity> {
+    const variable = await this.variableRepository.findOne({
+      where: { id },
+    });
+
+    if (!variable) {
+      throw new ApplicationRegistrationException(
+        `Variable with id ${id} not found`,
+        ApplicationRegistrationExceptionCode.VARIABLE_NOT_FOUND,
+      );
+    }
+
+    return variable;
+  }
+
+  private async applyVariableUpdate(
+    input: UpdateApplicationRegistrationVariableInput,
+  ): Promise<ApplicationRegistrationVariableEntity> {
+    const { id, update } = input;
+
+    const updateData: Record<string, unknown> = {};
+
+    if (isDefined(update.value)) {
+      updateData.encryptedValue = this.encryptionService.encryptVersioned(
+        update.value,
+      );
+    }
+
+    if (isDefined(update.resetValue) && update.resetValue) {
+      updateData.encryptedValue = '';
+    }
+
+    if (isDefined(update.description)) {
+      updateData.description = update.description;
+    }
+
+    if (Object.keys(updateData).length > 0) {
+      await this.variableRepository.update(id, updateData);
+    }
+
+    return this.variableRepository.findOneOrFail({ where: { id } });
+  }
+
+  private toObfuscatedDTO(
+    variable: ApplicationRegistrationVariableEntity,
+  ): ApplicationRegistrationVariableDTO {
+    const { encryptedValue } = variable;
+
+    return {
+      ...variable,
+      isFilled: variable.isFilled,
+      value:
+        encryptedValue !== ''
+          ? variable.isSecret
+            ? '•••••••••••••'
+            : this.encryptionService.decryptVersioned(encryptedValue)
+          : null,
+    };
   }
 
   private async assertRegistrationOwnedByWorkspace(

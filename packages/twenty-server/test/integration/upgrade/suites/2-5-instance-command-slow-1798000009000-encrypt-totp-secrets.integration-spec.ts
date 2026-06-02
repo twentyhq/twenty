@@ -6,8 +6,9 @@ import { DataSource } from 'typeorm';
 
 import { buildSecretEncryptionServiceFromEnv } from 'test/integration/upgrade/utils/build-secret-encryption-service.util';
 
-import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import { type JwtWrapperService } from 'src/engine/core-modules/jwt/services/jwt-wrapper.service';
+import { type PlaintextString } from 'src/engine/core-modules/secret-encryption/branded-strings/plaintext-string.type';
 import { SECRET_ENCRYPTION_ENVELOPE_V2_PREFIX } from 'src/engine/core-modules/secret-encryption/constants/secret-encryption.constant';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { SimpleSecretEncryptionUtil } from 'src/engine/core-modules/two-factor-authentication/utils/simple-secret-encryption.util';
@@ -195,7 +196,7 @@ describe('2-5 slow instance command 1798000009000 - EncryptTotpSecretsSlowInstan
 
   it('leaves enc:v2 rows untouched and is idempotent across re-runs', async () => {
     const plaintext = 'already-v2-totp-secret';
-    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext, {
+    const preexistingV2 = secretEncryptionService.encryptVersioned(plaintext as PlaintextString, {
       workspaceId,
     });
     const id = await seedRow({ secret: preexistingV2 });

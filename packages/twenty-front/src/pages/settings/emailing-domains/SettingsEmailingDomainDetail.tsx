@@ -64,7 +64,7 @@ export const SettingsEmailingDomainDetail = () => {
       enqueueSuccessSnackBar({
         message: t`Emailing domain deleted successfully`,
       });
-      navigateSettings(SettingsPath.Workspace);
+      navigateSettings(SettingsPath.WorkspaceEmail);
     } catch (deleteError) {
       enqueueErrorSnackBar({
         ...(CombinedGraphQLErrors.is(deleteError)
@@ -83,8 +83,8 @@ export const SettingsEmailingDomainDetail = () => {
           href: getSettingsPath(SettingsPath.Workspace),
         },
         {
-          children: <Trans>Emailing Domains</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          children: <Trans>Email</Trans>,
+          href: getSettingsPath(SettingsPath.WorkspaceEmail),
         },
         { children: emailingDomain.domain },
       ]}

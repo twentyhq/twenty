@@ -13,6 +13,8 @@ import { createEmptyFlatEntityMaps } from 'src/engine/metadata-modules/flat-enti
 import { FrontComponentEntity } from 'src/engine/metadata-modules/front-component/entities/front-component.entity';
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { PageLayoutEntity } from 'src/engine/metadata-modules/page-layout/entities/page-layout.entity';
+import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
+import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { WorkspaceCache } from 'src/engine/workspace-cache/decorators/workspace-cache.decorator';
 import { createIdToUniversalIdentifierMap } from 'src/engine/workspace-cache/utils/create-id-to-universal-identifier-map.util';
 import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/workspace-manager/workspace-migration/utils/add-flat-entity-to-flat-entity-maps-through-mutation-or-throw.util';
@@ -21,16 +23,16 @@ import { addFlatEntityToFlatEntityMapsThroughMutationOrThrow } from 'src/engine/
 @WorkspaceCache('flatCommandMenuItemMaps')
 export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheProvider<FlatCommandMenuItemMaps> {
   constructor(
-    @InjectRepository(CommandMenuItemEntity)
-    private readonly commandMenuItemRepository: Repository<CommandMenuItemEntity>,
+    @InjectWorkspaceScopedRepository(CommandMenuItemEntity)
+    private readonly commandMenuItemRepository: WorkspaceScopedRepository<CommandMenuItemEntity>,
     @InjectRepository(ApplicationEntity)
     private readonly applicationRepository: Repository<ApplicationEntity>,
     @InjectRepository(ObjectMetadataEntity)
     private readonly objectMetadataRepository: Repository<ObjectMetadataEntity>,
     @InjectRepository(FrontComponentEntity)
     private readonly frontComponentRepository: Repository<FrontComponentEntity>,
-    @InjectRepository(PageLayoutEntity)
-    private readonly pageLayoutRepository: Repository<PageLayoutEntity>,
+    @InjectWorkspaceScopedRepository(PageLayoutEntity)
+    private readonly pageLayoutRepository: WorkspaceScopedRepository<PageLayoutEntity>,
   ) {
     super();
   }
@@ -43,8 +45,7 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
       frontComponents,
       pageLayouts,
     ] = await Promise.all([
-      this.commandMenuItemRepository.find({
-        where: { workspaceId },
+      this.commandMenuItemRepository.find(workspaceId, {
         withDeleted: true,
       }),
       this.applicationRepository.find({
@@ -62,8 +63,7 @@ export class WorkspaceFlatCommandMenuItemMapCacheService extends WorkspaceCacheP
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
-      this.pageLayoutRepository.find({
-        where: { workspaceId },
+      this.pageLayoutRepository.find(workspaceId, {
         select: ['id', 'universalIdentifier'],
         withDeleted: true,
       }),
