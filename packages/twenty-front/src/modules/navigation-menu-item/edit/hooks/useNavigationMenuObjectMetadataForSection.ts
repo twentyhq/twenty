@@ -6,18 +6,20 @@ import { viewsSelector } from '@/views/states/selectors/viewsSelector';
 import { ViewKey } from '@/views/types/ViewKey';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
 
-type NavigationMenuItemDraft = Pick<
+type NavigationMenuItemForDedup = Pick<
   NavigationMenuItem,
   'id' | 'type' | 'viewId' | 'targetObjectMetadataId'
 >;
 
-export const useNavigationMenuObjectMetadataFromDraft = (
-  currentDraft: NavigationMenuItemDraft[],
+// Derives which objects/views are already present in the given section's items,
+// so the add pickers can hide or disable what's already there.
+export const useNavigationMenuObjectMetadataForSection = (
+  sectionItems: NavigationMenuItemForDedup[],
 ) => {
   const views = useAtomStateValue(viewsSelector);
 
-  const objectMetadataIdsInWorkspace =
-    getObjectMetadataIdsInDraft(currentDraft);
+  const objectMetadataIdsAlreadyAdded =
+    getObjectMetadataIdsInDraft(sectionItems);
 
   const objectMetadataIdsWithIndexView = new Set(
     views
@@ -29,17 +31,17 @@ export const useNavigationMenuObjectMetadataFromDraft = (
     views.map((view) => view.objectMetadataId),
   );
 
-  const viewIdsInWorkspace = new Set(
-    currentDraft.flatMap((item) =>
+  const viewIdsAlreadyAdded = new Set(
+    sectionItems.flatMap((item) =>
       isDefined(item.viewId) ? [item.viewId] : [],
     ),
   );
 
   return {
     views,
-    objectMetadataIdsInWorkspace,
+    objectMetadataIdsAlreadyAdded,
     objectMetadataIdsWithIndexView,
     objectMetadataIdsWithAnyView,
-    viewIdsInWorkspace,
+    viewIdsAlreadyAdded,
   };
 };
