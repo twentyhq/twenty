@@ -123,6 +123,7 @@ export const FavoritesSection = () => {
     <NavigationMenuItemSection
       title={t`Favorites`}
       isOpen={topLevelItems.length > 0 && isNavigationSectionOpen}
+      isToggleable={topLevelItems.length > 0}
       onToggle={toggleNavigationSection}
       rightIcon={
         <LightIconButton

@@ -9,6 +9,7 @@ type NavigationMenuItemSectionProps = {
   title: string;
   isOpen: boolean;
   onToggle: () => void;
+  isToggleable?: boolean;
   rightIcon?: ReactNode;
   alwaysShowRightIcon?: boolean;
   forceExpanded?: boolean;
@@ -20,6 +21,7 @@ export const NavigationMenuItemSection = ({
   title,
   isOpen,
   onToggle,
+  isToggleable = true,
   rightIcon,
   alwaysShowRightIcon,
   forceExpanded = false,
@@ -28,7 +30,7 @@ export const NavigationMenuItemSection = ({
 }: NavigationMenuItemSectionProps) => {
   const content = (
     <AnimatedExpandableContainer
-      isExpanded={isOpen || forceExpanded}
+      isExpanded={(isToggleable && isOpen) || forceExpanded}
       dimension="height"
       mode="fit-content"
       containAnimation
@@ -43,10 +45,10 @@ export const NavigationMenuItemSection = ({
       <NavigationDrawerAnimatedCollapseWrapper>
         <NavigationDrawerSectionTitle
           label={title}
-          onClick={onToggle}
+          onClick={isToggleable ? onToggle : undefined}
           rightIcon={rightIcon}
           alwaysShowRightIcon={alwaysShowRightIcon}
-          isOpen={isOpen}
+          isOpen={isToggleable ? isOpen : undefined}
         />
       </NavigationDrawerAnimatedCollapseWrapper>
       {contentWrapper ? contentWrapper(content) : content}
