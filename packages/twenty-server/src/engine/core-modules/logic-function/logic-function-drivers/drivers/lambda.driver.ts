@@ -1342,14 +1342,15 @@ export class LambdaDriver implements LogicFunctionDriver {
       applicationUniversalIdentifier,
     });
 
-    const compiledCode = await this.logicFunctionResourceService.getBuiltCode({
-      workspaceId: flatLogicFunction.workspaceId,
-      applicationUniversalIdentifier,
-      builtHandlerPath: flatLogicFunction.builtHandlerPath,
-    });
-
     await this.cacheLockService.withLock(
       async () => {
+        const compiledCode =
+          await this.logicFunctionResourceService.getBuiltCode({
+            workspaceId: flatLogicFunction.workspaceId,
+            applicationUniversalIdentifier,
+            builtHandlerPath: flatLogicFunction.builtHandlerPath,
+          });
+
         const temporaryDirManager = new TemporaryDirManager();
         const { sourceTemporaryDir, lambdaZipPath } =
           await temporaryDirManager.init();

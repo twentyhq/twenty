@@ -36,16 +36,19 @@ const isCodeStepForLogicFunction = (
 
 export const extractCodeStepLogicFunctionIdsFromWorkflowSteps = (
   steps: WorkflowStepForLogicFunctionIdExtraction[],
-): string[] =>
-  steps.filter(isCodeStepForLogicFunction).map((step) => {
-    const logicFunctionId = step.settings.input.logicFunctionId;
+): string[] => [
+  ...new Set(
+    steps.filter(isCodeStepForLogicFunction).map((step) => {
+      const logicFunctionId = step.settings.input.logicFunctionId;
 
-    if (!isNonEmptyString(logicFunctionId)) {
-      throw new WorkflowVersionStepException(
-        `CODE step '${step.id}' has no logic function id`,
-        WorkflowVersionStepExceptionCode.INVALID_REQUEST,
-      );
-    }
+      if (!isNonEmptyString(logicFunctionId)) {
+        throw new WorkflowVersionStepException(
+          `CODE step '${step.id}' has no logic function id`,
+          WorkflowVersionStepExceptionCode.INVALID_REQUEST,
+        );
+      }
 
-    return logicFunctionId;
-  });
+      return logicFunctionId;
+    }),
+  ),
+];

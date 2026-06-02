@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
-import { FeatureFlagModule } from 'src/engine/core-modules/feature-flag/feature-flag.module';
 import { SecretEncryptionModule } from 'src/engine/core-modules/secret-encryption/secret-encryption.module';
 import { WorkspaceSchemaManagerModule } from 'src/engine/twenty-orm/workspace-schema-manager/workspace-schema-manager.module';
 import { CreateAgentActionHandlerService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/agent/services/create-agent-action-handler.service';
@@ -101,7 +100,6 @@ import { UpdateConnectionProviderActionHandlerService } from 'src/engine/workspa
     TypeOrmModule.forFeature([ApplicationEntity]),
     WorkspaceSchemaManagerModule,
     SecretEncryptionModule,
-    FeatureFlagModule,
   ],
   providers: [
     CreateFieldActionHandlerService,
