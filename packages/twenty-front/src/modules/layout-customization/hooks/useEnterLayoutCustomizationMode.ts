@@ -9,6 +9,7 @@ import { commandMenuItemsDraftState } from '@/command-menu-item/edit/states/comm
 import { commandMenuItemsSelector } from '@/command-menu-item/states/commandMenuItemsSelector';
 import { activeCustomizationPageLayoutIdsState } from '@/layout-customization/states/activeCustomizationPageLayoutIdsState';
 import { isLayoutCustomizationModeEnabledState } from '@/layout-customization/states/isLayoutCustomizationModeEnabledState';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
 import { navigationMenuItemsDraftState } from '@/navigation-menu-item/common/states/navigationMenuItemsDraftState';
 import { navigationMenuItemsSelector } from '@/navigation-menu-item/common/states/navigationMenuItemsSelector';
 import { filterWorkspaceNavigationMenuItems } from '@/navigation-menu-item/common/utils/filterWorkspaceNavigationMenuItems';
@@ -60,6 +61,7 @@ export const useEnterLayoutCustomizationMode = () => {
       prefetchNavigationMenuItems,
     );
     store.set(navigationMenuItemsDraftState.atom, workspaceNavigationMenuItems);
+    store.set(navigationMenuItemEditSectionState.atom, 'workspace');
 
     const persistedCommandMenuItems = store.get(commandMenuItemsSelector.atom);
     store.set(commandMenuItemsDraftState.atom, persistedCommandMenuItems);

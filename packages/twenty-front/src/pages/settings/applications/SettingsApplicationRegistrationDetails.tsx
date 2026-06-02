@@ -1,4 +1,4 @@
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { useQuery } from '@apollo/client/react';
 import { useParams } from 'react-router-dom';
 import { SettingsPath } from 'twenty-shared/types';
@@ -94,7 +94,7 @@ export const SettingsApplicationRegistrationDetails = () => {
   };
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       title={
         <StyledTitleContainer>
           <Avatar
@@ -111,7 +111,7 @@ export const SettingsApplicationRegistrationDetails = () => {
       links={[
         {
           children: t`Workspace`,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: t`Applications - Developer`,
@@ -132,6 +132,6 @@ export const SettingsApplicationRegistrationDetails = () => {
         />
         {renderActiveTabContent()}
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };
