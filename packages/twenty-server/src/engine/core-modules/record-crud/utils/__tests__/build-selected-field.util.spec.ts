@@ -96,6 +96,78 @@ describe('buildEffectiveSelectedFields', () => {
       });
     });
 
+    it('should include fields nested inside an "and" logical operator', () => {
+      const { effectiveSelectedFields } = buildEffectiveSelectedFields({
+        select: undefined,
+        filter: {
+          and: [
+            { name: { eq: 'John' } },
+            { email: { eq: 'john@example.com' } },
+          ],
+        },
+        orderBy: undefined,
+        objectName: 'person',
+        flatObjectMetadata: defaultFlatObjectMetadata,
+        flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
+        selectedFields: defaultSelectedFields,
+      });
+
+      expect(effectiveSelectedFields).toHaveProperty('name');
+      expect(effectiveSelectedFields).toHaveProperty('email');
+    });
+
+    it('should include fields nested inside an "or" logical operator', () => {
+      const { effectiveSelectedFields } = buildEffectiveSelectedFields({
+        select: undefined,
+        filter: {
+          or: [{ name: { eq: 'Alice' } }, { name: { eq: 'Bob' } }],
+        },
+        orderBy: undefined,
+        objectName: 'person',
+        flatObjectMetadata: defaultFlatObjectMetadata,
+        flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
+        selectedFields: defaultSelectedFields,
+      });
+
+      expect(effectiveSelectedFields).toHaveProperty('name');
+    });
+
+    it('should include fields nested inside a "not" logical operator', () => {
+      const { effectiveSelectedFields } = buildEffectiveSelectedFields({
+        select: undefined,
+        filter: {
+          not: { email: { like: '%@example.com' } },
+        },
+        orderBy: undefined,
+        objectName: 'person',
+        flatObjectMetadata: defaultFlatObjectMetadata,
+        flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
+        selectedFields: defaultSelectedFields,
+      });
+
+      expect(effectiveSelectedFields).toHaveProperty('email');
+    });
+
+    it('should include fields from deeply nested logical operators', () => {
+      const { effectiveSelectedFields } = buildEffectiveSelectedFields({
+        select: undefined,
+        filter: {
+          and: [
+            { or: [{ name: { eq: 'Alice' } }, { name: { eq: 'Bob' } }] },
+            { not: { email: { like: '%@blocked.com' } } },
+          ],
+        },
+        orderBy: undefined,
+        objectName: 'person',
+        flatObjectMetadata: defaultFlatObjectMetadata,
+        flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
+        selectedFields: defaultSelectedFields,
+      });
+
+      expect(effectiveSelectedFields).toHaveProperty('name');
+      expect(effectiveSelectedFields).toHaveProperty('email');
+    });
+
     it('should exclude searchVector even in default mode', () => {
       const { effectiveSelectedFields } = buildEffectiveSelectedFields({
         select: undefined,

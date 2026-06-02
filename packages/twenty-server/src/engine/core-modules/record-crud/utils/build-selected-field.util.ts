@@ -83,14 +83,22 @@ const extractFilterFieldNames = (
     | undefined,
 ): string[] => {
   if (Array.isArray(filter)) {
-    return filter.flatMap((filterItem) =>
-      Object.keys(filterItem).filter((key) => !LOGICAL_OPERATORS.has(key)),
-    );
+    return filter.flatMap((filterItem) => extractFilterFieldNames(filterItem));
   }
 
-  return isDefined(filter)
-    ? Object.keys(filter).filter((key) => !LOGICAL_OPERATORS.has(key))
-    : [];
+  if (!isDefined(filter)) {
+    return [];
+  }
+
+  return Object.entries(filter).flatMap(([key, value]) => {
+    if (LOGICAL_OPERATORS.has(key)) {
+      return extractFilterFieldNames(
+        value as Record<string, unknown> | Record<string, unknown>[],
+      );
+    }
+
+    return [key];
+  });
 };
 
 const extractOrderByFieldNames = (orderBy: unknown): string[] => {
