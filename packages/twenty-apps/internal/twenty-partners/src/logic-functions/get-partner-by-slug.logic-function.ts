@@ -14,6 +14,7 @@ type Partner = {
   introduction: string | null;
   languagesSpoken: string[] | null;
   deploymentExpertise: string[] | null;
+  partnerScope: string[] | null;
   region: string[] | null;
   calendarLink: LinkValue;
   hourlyRate: CurrencyValue;
@@ -59,6 +60,7 @@ const handler = async (input: {
             introduction: true,
             languagesSpoken: true,
             deploymentExpertise: true,
+            partnerScope: true,
             region: true,
             calendarLink: { primaryLinkUrl: true },
             hourlyRate: { amountMicros: true, currencyCode: true },
