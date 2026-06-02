@@ -83,16 +83,12 @@ export const RecordTableColumnHeadDropdownMenu = ({
   };
 
   const handleColumnMoveLeft = () => {
-    closeDropdownAndToggleScroll();
-
     if (!canMoveLeft) return;
 
     moveTableColumn('left', recordField.fieldMetadataItemId);
   };
 
   const handleColumnMoveRight = () => {
-    closeDropdownAndToggleScroll();
-
     if (!canMoveRight) return;
 
     moveTableColumn('right', recordField.fieldMetadataItemId);
