@@ -1,4 +1,4 @@
-import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name';
+import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
 
 describe('getLambdaSdkLayerName', () => {
   it('joins prefix with workspaceId and applicationUniversalIdentifier', () => {

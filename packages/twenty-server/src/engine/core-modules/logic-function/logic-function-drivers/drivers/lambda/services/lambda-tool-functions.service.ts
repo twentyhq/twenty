@@ -25,16 +25,16 @@ import {
   YARN_INSTALL_HANDLER_PATH,
   YARN_INSTALL_LAMBDA_MEMORY_MB,
   YARN_INSTALL_LAMBDA_TIMEOUT_SECONDS,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.constants';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type BuilderLambdaPayload,
   type BuilderLambdaResult,
   type LambdaDriverOptions,
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
-import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name';
-import { type LambdaAwsClient } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-aws-client';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { computeHashedLambdaResourceName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/compute-hashed-lambda-resource-name.util';
+import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { copyBuilder } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-builder';
 import { copyCommonLayerDependencies } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-common-layer-dependencies';
 import { copyYarnInstall } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-yarn-install';
@@ -54,14 +54,14 @@ type ToolLambdaSpec = {
   memoryMb: number;
 };
 
-export class LambdaToolFunctions {
+export class LambdaToolFunctionsService {
   private commonLayerName: string | undefined;
   private yarnInstallFunctionName: string | undefined;
   private builderFunctionName: string | undefined;
 
   constructor(
     private readonly options: Pick<LambdaDriverOptions, 'lambdaRole'>,
-    private readonly awsClient: LambdaAwsClient,
+    private readonly awsClient: LambdaAwsClientService,
   ) {}
 
   async transpile(

@@ -14,13 +14,13 @@ import {
   CREDENTIALS_EXPIRY_SAFETY_MARGIN_SECONDS,
   DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS,
   UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.constants';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import {
   type AssumeRoleCredentials,
   type LambdaDriverOptions,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 
-export class LambdaAwsClient {
+export class LambdaAwsClientService {
   private lambdaClient: Lambda | undefined;
   private assumeRoleCredentials: AssumeRoleCredentials | undefined;
   private credentialsExpiry: Date | null = null;

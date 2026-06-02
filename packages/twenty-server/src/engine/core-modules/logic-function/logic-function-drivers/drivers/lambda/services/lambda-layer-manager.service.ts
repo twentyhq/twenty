@@ -12,13 +12,13 @@ import { type FlatApplication } from 'src/engine/core-modules/application/types/
 import {
   LIST_LAYER_VERSIONS_PAGE_SIZE,
   SDK_LAYER_PREFIX_IN_ZIP,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.constants';
-import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
-import { type LambdaAwsClient } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-aws-client';
-import { type LambdaToolFunctions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-tool-functions';
-import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name';
-import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name';
-import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
+import { getLambdaSdkLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-sdk-layer-name.util';
+import { reprefixLambdaZipEntries } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/reprefix-lambda-zip-entries.util';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import { type SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -29,11 +29,11 @@ type LayerAppContext = {
   applicationUniversalIdentifier: string;
 };
 
-export class LambdaLayerManager {
+export class LambdaLayerManagerService {
   constructor(
     private readonly options: Pick<LambdaDriverOptions, 'layerBucket'>,
-    private readonly awsClient: LambdaAwsClient,
-    private readonly toolFunctions: LambdaToolFunctions,
+    private readonly awsClient: LambdaAwsClientService,
+    private readonly toolFunctions: LambdaToolFunctionsService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
     private readonly sdkClientArchiveService: SdkClientArchiveService,
   ) {}

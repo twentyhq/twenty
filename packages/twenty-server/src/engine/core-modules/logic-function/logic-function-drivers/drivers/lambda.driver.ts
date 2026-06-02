@@ -16,16 +16,16 @@ import {
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
-import { LambdaAwsClient } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-aws-client';
 import {
   type LambdaDriverExecutorPayload,
   type LambdaDriverOptions,
   LambdaExecutionPhase,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
-import { LambdaExecutorManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-executor-manager';
-import { LambdaLayerManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-layer-manager';
-import { LambdaToolFunctions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-tool-functions';
-import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { LambdaExecutorManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-executor-manager.service';
+import { LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
+import { LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
+import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 import { LogicFunctionExecutionStatus } from 'src/engine/metadata-modules/logic-function/dtos/logic-function-execution-result.dto';
 import { LogicFunctionExecutionMode } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import {
@@ -43,29 +43,32 @@ export {
   type BuilderLambdaResult,
   type YarnInstallLambdaPayload,
   type YarnInstallLambdaResult,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 
 export class LambdaDriver implements LogicFunctionDriver {
   private readonly logger = new Logger(LambdaDriver.name);
 
-  private readonly awsClient: LambdaAwsClient;
-  private readonly toolFunctions: LambdaToolFunctions;
-  private readonly layerManager: LambdaLayerManager;
-  private readonly executorManager: LambdaExecutorManager;
+  private readonly awsClient: LambdaAwsClientService;
+  private readonly toolFunctions: LambdaToolFunctionsService;
+  private readonly layerManager: LambdaLayerManagerService;
+  private readonly executorManager: LambdaExecutorManagerService;
   private readonly logicFunctionResourceService: LogicFunctionResourceService;
 
   constructor(options: LambdaDriverOptions) {
     this.logicFunctionResourceService = options.logicFunctionResourceService;
-    this.awsClient = new LambdaAwsClient(options);
-    this.toolFunctions = new LambdaToolFunctions(options, this.awsClient);
-    this.layerManager = new LambdaLayerManager(
+    this.awsClient = new LambdaAwsClientService(options);
+    this.toolFunctions = new LambdaToolFunctionsService(
+      options,
+      this.awsClient,
+    );
+    this.layerManager = new LambdaLayerManagerService(
       options,
       this.awsClient,
       this.toolFunctions,
       options.logicFunctionResourceService,
       options.sdkClientArchiveService,
     );
-    this.executorManager = new LambdaExecutorManager(
+    this.executorManager = new LambdaExecutorManagerService(
       options,
       this.awsClient,
       this.layerManager,

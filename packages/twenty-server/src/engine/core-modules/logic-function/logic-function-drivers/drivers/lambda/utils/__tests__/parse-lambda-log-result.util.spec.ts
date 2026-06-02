@@ -1,4 +1,4 @@
-import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result';
+import { parseLambdaLogResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/parse-lambda-log-result.util';
 
 const toBase64 = (input: string): string =>
   Buffer.from(input, 'utf8').toString('base64');

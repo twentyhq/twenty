@@ -1,5 +1,5 @@
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name';
+import { getLambdaDepsLayerName } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/utils/get-lambda-deps-layer-name.util';
 
 const buildFlatApplication = (
   overrides: Partial<FlatApplication> = {},

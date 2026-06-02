@@ -30,10 +30,10 @@ import {
   PREBUILT_INSTALL_LOCK_MAX_RETRIES,
   PREBUILT_INSTALL_LOCK_RETRY_MS,
   PREBUILT_INSTALL_LOCK_TTL_MS,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.constants';
-import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-driver.types';
-import { type LambdaAwsClient } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-aws-client';
-import { type LambdaLayerManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/lambda-layer-manager';
+} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
+import { type LambdaLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-layer-manager.service';
 import { copyExecutor } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/copy-executor';
 import { createZipFile } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/create-zip-file';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
@@ -50,13 +50,13 @@ type ExecutorBuildContext = {
   applicationUniversalIdentifier: string;
 };
 
-export class LambdaExecutorManager {
-  private readonly logger = new Logger(LambdaExecutorManager.name);
+export class LambdaExecutorManagerService {
+  private readonly logger = new Logger(LambdaExecutorManagerService.name);
 
   constructor(
     private readonly options: Pick<LambdaDriverOptions, 'lambdaRole'>,
-    private readonly awsClient: LambdaAwsClient,
-    private readonly layerManager: LambdaLayerManager,
+    private readonly awsClient: LambdaAwsClientService,
+    private readonly layerManager: LambdaLayerManagerService,
     private readonly cacheLockService: CacheLockService,
     private readonly logicFunctionResourceService: LogicFunctionResourceService,
   ) {}
