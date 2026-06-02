@@ -19,9 +19,9 @@ type BuildStepLogArgs<TInput> = {
   durationMs: number;
 };
 
-export abstract class ToolBackedWorkflowAction<TInput extends ToolInput>
-  implements WorkflowActionContract
-{
+export abstract class ToolBackedWorkflowAction<
+  TInput extends ToolInput,
+> implements WorkflowActionContract {
   protected readonly logger: Logger;
 
   protected constructor(

@@ -112,7 +112,10 @@ describe('HttpRequestWorkflowAction', () => {
         currentStepId: 'step-1',
         steps: [
           {
-            ...buildHttpRequestStep({ url: 'https://example.com', method: 'GET' }),
+            ...buildHttpRequestStep({
+              url: 'https://example.com',
+              method: 'GET',
+            }),
             type: WorkflowActionType.SEND_EMAIL,
           } as WorkflowAction,
         ],
