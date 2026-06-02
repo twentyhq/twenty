@@ -62,9 +62,8 @@ export class ApiKeyResolver {
     }
   }
 
-  // A long-lived API key is durable credential management: only a first-person
-  // session (ACCESS) may mint or alter one, so a short-lived derived token
-  // (PLAYGROUND) or an API key itself cannot escalate into another.
+  // Minting an API key requires an ACCESS token — derived PLAYGROUND tokens
+  // and API keys must not escalate into a long-lived credential.
   @UseGuards(RequireAccessTokenGuard)
   @Mutation(() => ApiKeyEntity)
   async createApiKey(

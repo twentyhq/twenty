@@ -4,11 +4,13 @@ import {
 } from '@/settings/components/SettingsCustomizeVideoModal';
 import { HeroPlayButton } from '@/ui/layout/hero/components/HeroPlayButton';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { useContext } from 'react';
 import { Card } from 'twenty-ui/layout';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
+import { FeatureFlagKey } from '~/generated-metadata/graphql';
 
 const COVER_HEIGHT = 150;
 
@@ -56,6 +58,9 @@ export const SettingsDiscoveryHeroCard = ({
   const { t } = useLingui();
   const { colorScheme } = useContext(ThemeContext);
   const { openModal } = useModal();
+  const isDiscoveryVideoEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_SETTINGS_DISCOVERY_HERO_ENABLED,
+  );
 
   const modalInstanceId = `${instanceIdPrefix}-modal`;
   const tabsInstanceId = `${instanceIdPrefix}-tabs`;
@@ -67,19 +72,23 @@ export const SettingsDiscoveryHeroCard = ({
       <Card rounded>
         <StyledCoverContainer>
           <StyledImage src={src} alt="" aria-hidden />
-          <StyledOverlay>
-            <HeroPlayButton
-              onClick={() => openModal(modalInstanceId)}
-              ariaLabel={playButtonAriaLabel ?? t`Watch demo`}
-            />
-          </StyledOverlay>
+          {isDiscoveryVideoEnabled && (
+            <StyledOverlay>
+              <HeroPlayButton
+                onClick={() => openModal(modalInstanceId)}
+                ariaLabel={playButtonAriaLabel ?? t`Watch demo`}
+              />
+            </StyledOverlay>
+          )}
         </StyledCoverContainer>
       </Card>
-      <SettingsCustomizeVideoModal
-        modalInstanceId={modalInstanceId}
-        tabsInstanceId={tabsInstanceId}
-        tabs={tabs}
-      />
+      {isDiscoveryVideoEnabled && (
+        <SettingsCustomizeVideoModal
+          modalInstanceId={modalInstanceId}
+          tabsInstanceId={tabsInstanceId}
+          tabs={tabs}
+        />
+      )}
     </>
   );
 };
