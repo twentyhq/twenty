@@ -220,6 +220,12 @@ const SettingsApplicationCommandMenuItemDetail = lazy(() =>
   ),
 );
 
+const SettingsLayout = lazy(() =>
+  import('~/pages/settings/layout/SettingsLayout').then((module) => ({
+    default: module.SettingsLayout,
+  })),
+);
+
 const SettingsLayoutViewDetail = lazy(() =>
   import('~/pages/settings/layout/SettingsLayoutViewDetail').then((module) => ({
     default: module.SettingsLayoutViewDetail,
@@ -666,6 +672,40 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.ApiWebhooks}
           element={<SettingsApiWebhooks />}
         />
+        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
+        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
+        <Route
+          path={SettingsPath.UsageUserDetail}
+          element={<SettingsUsageUserDetail />}
+        />
+        <Route
+          path={SettingsPath.Subdomain}
+          element={<SettingsSubdomainPage />}
+        />
+        <Route
+          path={SettingsPath.CustomDomain}
+          element={<SettingsCustomDomainPage />}
+        />
+        <Route
+          path={SettingsPath.NewEmailingDomain}
+          element={<SettingsNewEmailingDomain />}
+        />
+        <Route
+          path={SettingsPath.EmailingDomainDetail}
+          element={<SettingsEmailingDomainDetail />}
+        />
+        <Route
+          path={SettingsPath.PublicDomain}
+          element={<SettingPublicDomain />}
+        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.AI}
+          />
+        }
+      >
         <Route path={SettingsPath.AI} element={<SettingsAI />} />
         <Route path={SettingsPath.AiPrompts} element={<SettingsAiPrompts />} />
         <Route
@@ -700,32 +740,15 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           path={SettingsPath.LogicFunctionDetail}
           element={<SettingsLogicFunctionDetail />}
         />
-        <Route path={SettingsPath.Billing} element={<SettingsBilling />} />
-        <Route path={SettingsPath.Usage} element={<SettingsUsage />} />
-        <Route
-          path={SettingsPath.UsageUserDetail}
-          element={<SettingsUsageUserDetail />}
-        />
-        <Route
-          path={SettingsPath.Subdomain}
-          element={<SettingsSubdomainPage />}
-        />
-        <Route
-          path={SettingsPath.CustomDomain}
-          element={<SettingsCustomDomainPage />}
-        />
-        <Route
-          path={SettingsPath.NewEmailingDomain}
-          element={<SettingsNewEmailingDomain />}
-        />
-        <Route
-          path={SettingsPath.EmailingDomainDetail}
-          element={<SettingsEmailingDomainDetail />}
-        />
-        <Route
-          path={SettingsPath.PublicDomain}
-          element={<SettingPublicDomain />}
-        />
+      </Route>
+      <Route
+        element={
+          <SettingsProtectedRouteWrapper
+            settingsPermission={PermissionFlagType.LAYOUTS}
+          />
+        }
+      >
+        <Route path={SettingsPath.Layout} element={<SettingsLayout />} />
       </Route>
       <Route
         element={

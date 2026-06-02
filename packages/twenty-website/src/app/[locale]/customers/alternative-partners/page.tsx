@@ -1,12 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { Heading, HeadingPart } from '@/design-system/components';
 import { CASE_STUDY_HERO_IMAGES, type CaseStudyData } from '@/lib/customers';
-import {
-  getRouteI18n,
-  type LocaleRouteParams,
-} from '@/lib/i18n/utils/get-route-i18n';
+import { getRouteI18n, type LocaleRouteParams } from '@/lib/i18n/server';
 import { buildLocalizedMetadata } from '@/lib/seo';
-import { CaseStudyPageLayout } from '@/app/[locale]/customers/_components/CaseStudyPageLayout';
+import { CustomersCaseStudyPageLayout } from '@/app/[locale]/customers/_components/CustomersCaseStudyPageLayout';
 
 const HERO_IMAGE = CASE_STUDY_HERO_IMAGES.alternativePartners;
 
@@ -65,7 +62,7 @@ export default async function AlternativePartnersCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`AI in the`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`migration workflow`)}
             </HeadingPart>
@@ -84,7 +81,7 @@ export default async function AlternativePartnersCaseStudyPage({
           <Heading size="md" weight="light">
             <HeadingPart fontFamily="serif">
               {i18n._(msg`Self-hosted`)}
-            </HeadingPart>{' '}
+            </HeadingPart>
             <HeadingPart fontFamily="sans">
               {i18n._(msg`means control`)}
             </HeadingPart>
@@ -106,7 +103,7 @@ export default async function AlternativePartnersCaseStudyPage({
   };
 
   return (
-    <CaseStudyPageLayout
+    <CustomersCaseStudyPageLayout
       caseStudy={caseStudy}
       path="/customers/alternative-partners"
     />

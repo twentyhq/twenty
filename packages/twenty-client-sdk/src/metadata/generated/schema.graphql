@@ -2699,6 +2699,12 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type WorkspaceAiStats {
+  conversationsCount: Int!
+  skillsCount: Int!
+  toolsCount: Int!
+}
+
 type CalendarChannel {
   id: UUID!
   handle: String!
@@ -2996,6 +3002,7 @@ type Query {
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
+  findWorkspaceAiStats: WorkspaceAiStats!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -3269,6 +3276,7 @@ type Mutation {
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
+  generatePlaygroundToken: AuthToken!
   emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!
