@@ -56,9 +56,6 @@ import { WorkspaceMigrationViewActionsBuilderService } from 'src/engine/workspac
 import { WorkspaceMigrationWebhookActionsBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/webhook/workspace-migration-webhook-actions-builder.service';
 import { WorkspaceEntityMigrationBuilderService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/services/workspace-entity-migration-builder.service';
 
-// One step of the orchestrator pipeline. Each task is bound at construction
-// time to a specific (metadataName, builderService) pair so its generic type
-// parameter is preserved. The orchestrator just runs them sequentially.
 type EntityActionsBuilderTask = {
   metadataName: AllMetadataName;
   run: (context: EntityActionsBuilderRunContext) => Promise<void>;
@@ -95,10 +92,6 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
       return;
     }
 
-    // Dynamic lookup of `fromToAllFlatEntityMaps[flatEntityMapsKey]` returns
-    // the union over all metadata names; the cast narrows it back to the
-    // bound `T` of this task. This is sound because the registration tied
-    // `metadataName` and `builderService` together at construction time.
     const result = await builderService.validateAndBuild({
       additionalCacheDataMaps,
       buildOptions,
@@ -111,11 +104,6 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
     if (result.status === 'fail') {
       orchestratorFailureReport[metadataName].push(...result.errors);
     } else {
-      // TS sees `orchestratorActionsReport[T]` as the intersection of all
-      // per-metadata-name action records (since indexing a mapped type by a
-      // generic union is invariant) and rejects an assignment from a single
-      // concrete value. Narrowing the report once to the bound `T` makes the
-      // write type-safe under the per-task generic.
       const reportForCurrentMetadata = orchestratorActionsReport as Record<
         T,
         MetadataUniversalWorkspaceMigrationActionsRecord<T>
@@ -128,10 +116,6 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
 
 @Injectable()
 export class WorkspaceMigrationBuildOrchestratorService {
-  // The execution order matters: builders mutate the shared optimistic
-  // flat-entity maps as they run, and later builders depend on those
-  // mutations (e.g. role-bound entities expect roles to already be in the
-  // maps, view children expect their parent view to exist, ...).
   private readonly entityActionsBuilderTasksInExecutionOrder: ReadonlyArray<EntityActionsBuilderTask>;
 
   constructor(
