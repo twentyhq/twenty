@@ -6,7 +6,6 @@ import {
 } from 'twenty-shared/metadata';
 import { isDefined } from 'twenty-shared/utils';
 
-import { type MetadataUniversalWorkspaceMigrationActionsRecord } from 'src/engine/metadata-modules/flat-entity/types/metadata-workspace-migration-action.type';
 import { createEmptyAllFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/constant/create-empty-all-flat-entity-maps.constant';
 import { getMetadataFlatEntityMapsKey } from 'src/engine/metadata-modules/flat-entity/utils/get-metadata-flat-entity-maps-key.util';
 import { type MetadataUniversalFlatEntityMaps } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/types/metadata-universal-flat-entity-maps.type';
@@ -104,12 +103,8 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
     if (result.status === 'fail') {
       orchestratorFailureReport[metadataName].push(...result.errors);
     } else {
-      const reportForCurrentMetadata = orchestratorActionsReport as Record<
-        T,
-        MetadataUniversalWorkspaceMigrationActionsRecord<T>
-      >;
-
-      reportForCurrentMetadata[metadataName] = result.actions;
+      orchestratorActionsReport[metadataName] =
+        result.actions as OrchestratorActionsReport[T];
     }
   },
 });
