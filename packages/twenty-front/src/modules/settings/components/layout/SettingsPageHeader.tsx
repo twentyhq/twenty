@@ -26,12 +26,10 @@ const StyledBar = styled.div`
   gap: ${themeCssVariables.spacing[2]};
   grid-template-columns: 1fr auto 1fr;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[3]}
-    ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  padding: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     grid-template-columns: auto 1fr auto;
-    padding-left: ${themeCssVariables.spacing[3]};
   }
 `;
 

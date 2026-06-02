@@ -19,6 +19,7 @@ const StyledBar = styled.div`
   flex-shrink: 0;
   height: ${SECONDARY_BAR_HEIGHT}px;
   justify-content: center;
+  padding: 0 ${themeCssVariables.spacing[4]};
   width: 100%;
 `;
 
