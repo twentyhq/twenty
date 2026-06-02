@@ -45,6 +45,7 @@ const StyledValueContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   min-width: 0;
   position: relative;
+  user-select: text;
   width: 100%;
 `;
 
@@ -61,7 +62,7 @@ const StyledInlineCellBaseContainer = styled.div<{ readonly: boolean }>`
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
   height: fit-content;
-  user-select: text;
+  user-select: none;
   width: 100%;
 `;
 
