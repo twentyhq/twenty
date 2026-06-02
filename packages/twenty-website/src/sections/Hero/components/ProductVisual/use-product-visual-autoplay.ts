@@ -402,9 +402,10 @@ export function useProductVisualAutoplay(
     [fullText],
   );
   const streamComplete = streamedLength >= fullTextVisibleLength;
-  // The CRM holds its base state while the answer streams; once the answer is
-  // done it reveals the changes as a finale (revealProgress ramps 0 -> 1), so
-  // attention isn't split.
+  const streamProgress = getStreamProgress(
+    streamedLength,
+    fullTextVisibleLength,
+  );
   const scenePhase = useMemo(
     () => getScenePhase(selectedScene, revealProgress),
     [selectedScene, revealProgress],
@@ -414,7 +415,7 @@ export function useProductVisualAutoplay(
     activeItemId,
     scenePhase,
     selectedScene,
-    revealProgress,
+    streamProgress,
   );
 
   useEffect(() => {

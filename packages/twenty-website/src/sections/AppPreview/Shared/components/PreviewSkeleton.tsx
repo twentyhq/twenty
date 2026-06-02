@@ -4,7 +4,7 @@ import { styled } from '@linaria/react';
 
 const SkeletonBase = styled.div`
   animation: previewSkeletonShimmer 1.4s ease infinite;
-  background: linear-gradient(90deg, #eef0f2 25%, #f6f7f8 37%, #eef0f2 63%);
+  background: linear-gradient(90deg, #f1f1f1 25%, #fafafa 37%, #f1f1f1 63%);
   background-size: 400% 100%;
 
   @keyframes previewSkeletonShimmer {

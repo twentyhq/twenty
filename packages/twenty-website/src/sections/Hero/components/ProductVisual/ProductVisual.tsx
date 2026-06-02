@@ -157,7 +157,7 @@ const EntityChip = styled.div`
   display: flex;
   gap: 4px;
   max-width: 100%;
-  padding: 3px 4px;
+  padding: 3px 6px;
   width: fit-content;
 `;
 
