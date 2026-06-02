@@ -285,20 +285,22 @@ export const SettingsAdminWorkspaceDetail = () => {
                       </TableCell>
                       <TableCell>{user.email}</TableCell>
                       <TableCell align="right">
-                        {workspace.allowImpersonation && (
-                          <Button
-                            Icon={IconEyeShare}
-                            variant="secondary"
-                            size="small"
-                            title={t`Impersonate`}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              handleImpersonate(userId, workspaceId!);
-                            }}
-                            disabled={impersonatingUserId === userId}
-                          />
-                        )}
+                        {workspace.allowImpersonation &&
+                          isDefined(currentUser?.id) &&
+                          userId !== currentUser.id && (
+                            <Button
+                              Icon={IconEyeShare}
+                              variant="secondary"
+                              size="small"
+                              title={t`Impersonate`}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                handleImpersonate(userId, workspaceId!);
+                              }}
+                              disabled={impersonatingUserId === userId}
+                            />
+                          )}
                       </TableCell>
                     </TableRow>
                   );

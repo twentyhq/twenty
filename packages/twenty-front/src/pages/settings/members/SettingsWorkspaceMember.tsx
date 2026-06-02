@@ -16,10 +16,11 @@ import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTab
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { t } from '@lingui/core/macro';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
-import { getSettingsPath } from 'twenty-shared/utils';
+import { getSettingsPath, isDefined } from 'twenty-shared/utils';
 import { IconInfoCircle, IconLockOpen } from 'twenty-ui/display';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
+import { currentUserState } from '@/auth/states/currentUserState';
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isImpersonatingState } from '@/auth/states/isImpersonatingState';
 import { useUpdateOneRecord } from '@/object-record/hooks/useUpdateOneRecord';
@@ -49,6 +50,7 @@ export const SettingsWorkspaceMember = () => {
   const navigateSettings = useNavigateSettings();
   const { enqueueErrorSnackBar, enqueueSuccessSnackBar } = useSnackBar();
   const { openModal, closeModal } = useModal();
+  const currentUser = useAtomStateValue(currentUserState);
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const { startImpersonating } = useImpersonationSession();
   const [impersonate] = useMutation(ImpersonateDocument);
@@ -143,6 +145,18 @@ export const SettingsWorkspaceMember = () => {
       return;
     }
 
+    if (
+      !isDefined(currentUser?.id) ||
+      member.userId === currentUser.id
+    ) {
+      enqueueErrorSnackBar({
+        message: t`You cannot impersonate your own account`,
+        options: { duration: 2000 },
+      });
+
+      return;
+    }
+
     await impersonate({
       variables: {
         userId: member.userId,
@@ -150,7 +164,15 @@ export const SettingsWorkspaceMember = () => {
       },
       onCompleted: async (data) => {
         const { loginToken } = data.impersonate;
-        await startImpersonating(loginToken.token);
+
+        try {
+          await startImpersonating(loginToken.token);
+        } catch {
+          enqueueErrorSnackBar({
+            message: t`Cannot impersonate selected user`,
+            options: { duration: 2000 },
+          });
+        }
       },
       onError: () => {
         enqueueErrorSnackBar({
@@ -203,7 +225,14 @@ export const SettingsWorkspaceMember = () => {
             {activeTabId === SETTINGS_WORKSPACE_MEMBER_TABS.TABS_IDS.INFOS && (
               <MemberInfosTab
                 member={member}
-                onImpersonate={canImpersonate ? handleImpersonate : undefined}
+                onImpersonate={
+                  canImpersonate &&
+                  isDefined(member.userId) &&
+                  isDefined(currentUser?.id) &&
+                  member.userId !== currentUser.id
+                    ? handleImpersonate
+                    : undefined
+                }
                 onNameChange={debouncedUpdateName}
                 onDelete={() => openModal(DELETE_MEMBER_MODAL_ID)}
               />

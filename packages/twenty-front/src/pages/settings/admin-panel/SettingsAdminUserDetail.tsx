@@ -166,7 +166,8 @@ export const SettingsAdminUserDetail = () => {
               />
               {currentUser?.canImpersonate &&
                 activeWorkspace &&
-                isDefined(user) && (
+                isDefined(user) &&
+                user.id !== currentUser.id && (
                   <StyledButtonContainer>
                     <Button
                       Icon={IconEyeShare}

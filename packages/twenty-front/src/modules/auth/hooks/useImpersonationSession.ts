@@ -40,7 +40,13 @@ export const useImpersonationSession = () => {
         );
       }
 
-      await getAuthTokensFromLoginToken(loginToken);
+      try {
+        await getAuthTokensFromLoginToken(loginToken);
+      } catch {
+        sessionStorage.removeItem(IMPERSONATION_SESSION_KEY);
+        throw new Error('Failed to start impersonation session');
+      }
+
       reloadWithSession(targetPath);
     },
     [store, getAuthTokensFromLoginToken],
