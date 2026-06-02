@@ -215,7 +215,11 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
   return (
     <CardArticle aria-labelledby={headingId} style={style}>
       <CardHeader>
-        <PartnerAvatar name={partner.name} slug={partner.slug} />
+        <PartnerAvatar
+          name={partner.name}
+          slug={partner.slug}
+          profilePictureUrl={partner.profilePictureUrl}
+        />
         <HeaderText>
           <NameRow>
             <PartnerName id={headingId}>
