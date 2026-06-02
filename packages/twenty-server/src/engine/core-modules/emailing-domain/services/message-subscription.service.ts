@@ -3,11 +3,11 @@ import { Injectable } from '@nestjs/common';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 import { In } from 'typeorm';
 
-import { EmailListSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/email-list-subscription-source.type';
-import { EmailListSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/email-list-subscription-status.type';
+import { MessageSubscriptionSource } from 'src/engine/core-modules/emailing-domain/types/message-subscription-source.type';
+import { MessageSubscriptionStatus } from 'src/engine/core-modules/emailing-domain/types/message-subscription-status.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { EmailListSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/email-list-subscription.workspace-entity';
+import { MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-subscription.workspace-entity';
 import { addPersonEmailFiltersToQueryBuilder } from 'src/modules/match-participant/utils/add-person-email-filters-to-query-builder';
 import { findPersonByPrimaryOrAdditionalEmail } from 'src/modules/match-participant/utils/find-person-by-primary-or-additional-email';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
@@ -16,7 +16,7 @@ type SubscribeArgs = {
   workspaceId: string;
   personId: string;
   listId: string;
-  source?: EmailListSubscriptionSource;
+  source?: MessageSubscriptionSource;
 };
 
 type UnsubscribeArgs = {
@@ -35,12 +35,12 @@ type UpsertSubscriptionStatusArgs = {
   workspaceId: string;
   personId: string;
   listId: string;
-  status: EmailListSubscriptionStatus;
-  source: EmailListSubscriptionSource;
+  status: MessageSubscriptionStatus;
+  source: MessageSubscriptionSource;
 };
 
 @Injectable()
-export class EmailListSubscriptionService {
+export class MessageSubscriptionService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
@@ -49,13 +49,13 @@ export class EmailListSubscriptionService {
     workspaceId,
     personId,
     listId,
-    source = EmailListSubscriptionSource.MANUAL,
+    source = MessageSubscriptionSource.MANUAL,
   }: SubscribeArgs): Promise<void> {
     await this.upsertSubscriptionStatus({
       workspaceId,
       personId,
       listId,
-      status: EmailListSubscriptionStatus.SUBSCRIBED,
+      status: MessageSubscriptionStatus.SUBSCRIBED,
       source,
     });
   }
@@ -69,8 +69,8 @@ export class EmailListSubscriptionService {
       workspaceId,
       personId,
       listId,
-      status: EmailListSubscriptionStatus.UNSUBSCRIBED,
-      source: EmailListSubscriptionSource.MANUAL,
+      status: MessageSubscriptionStatus.UNSUBSCRIBED,
+      source: MessageSubscriptionSource.MANUAL,
     });
   }
 
@@ -158,7 +158,7 @@ export class EmailListSubscriptionService {
         const subscriptionRepository =
           await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
-            EmailListSubscriptionWorkspaceEntity,
+            MessageSubscriptionWorkspaceEntity,
             { shouldBypassPermissionChecks: true },
           );
 
@@ -166,7 +166,7 @@ export class EmailListSubscriptionService {
           where: {
             listId,
             personId: In(matchedPeople.map((person) => person.id)),
-            status: EmailListSubscriptionStatus.UNSUBSCRIBED,
+            status: MessageSubscriptionStatus.UNSUBSCRIBED,
           },
         });
 
@@ -209,7 +209,7 @@ export class EmailListSubscriptionService {
       const subscriptionRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          EmailListSubscriptionWorkspaceEntity,
+          MessageSubscriptionWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );
 
@@ -220,7 +220,7 @@ export class EmailListSubscriptionService {
 
       const now = new Date();
       const statusChangeTimestamp =
-        status === EmailListSubscriptionStatus.SUBSCRIBED
+        status === MessageSubscriptionStatus.SUBSCRIBED
           ? { subscribedAt: now }
           : { unsubscribedAt: now };
 

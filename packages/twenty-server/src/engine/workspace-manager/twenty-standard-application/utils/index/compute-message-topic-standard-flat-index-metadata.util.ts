@@ -6,33 +6,17 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildEmailGroupSuppressionListStandardFlatIndexMetadatas = ({
+export const buildMessageTopicStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<
-  CreateStandardIndexArgs<'emailGroupSuppressionList'>,
-  'context'
->): Record<
-  AllStandardObjectIndexName<'emailGroupSuppressionList'>,
+}: Omit<CreateStandardIndexArgs<'messageTopic'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageTopic'>,
   FlatIndexMetadata
 > => ({
-  emailAddressUniqueIndex: createStandardIndexFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      indexName: 'emailAddressUniqueIndex',
-      relatedFieldNames: ['emailAddress'],
-      isUnique: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   searchVectorGinIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,

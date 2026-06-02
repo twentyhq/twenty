@@ -6,23 +6,24 @@ import {
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildEmailCampaignStandardFlatIndexMetadatas = ({
+export const buildMessageSuppressionStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'emailCampaign'>, 'context'>): Record<
-  AllStandardObjectIndexName<'emailCampaign'>,
+}: Omit<CreateStandardIndexArgs<'messageSuppression'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageSuppression'>,
   FlatIndexMetadata
 > => ({
-  listIdIndex: createStandardIndexFlatMetadata({
+  emailAddressUniqueIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'listIdIndex',
-      relatedFieldNames: ['list'],
+      indexName: 'emailAddressUniqueIndex',
+      relatedFieldNames: ['emailAddress'],
+      isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

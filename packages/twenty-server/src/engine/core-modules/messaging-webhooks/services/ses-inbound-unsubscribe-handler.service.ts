@@ -3,10 +3,10 @@ import { Injectable, Logger } from '@nestjs/common';
 import { isNonEmptyString } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 
-import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
+import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
-import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
-import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
+import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
+import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type SesInboundNotification } from 'src/engine/core-modules/messaging-webhooks/types/sns-message.type';
 
 @Injectable()
@@ -17,7 +17,7 @@ export class SesInboundUnsubscribeHandlerService {
 
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
-    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
+    private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
   async handle(notification: SesInboundNotification): Promise<void> {
@@ -37,11 +37,11 @@ export class SesInboundUnsubscribeHandlerService {
       return;
     }
 
-    await this.emailGroupSuppressionService.suppress({
+    await this.messageSuppressionService.suppress({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      reason: EmailGroupSuppressionReason.UNSUBSCRIBE,
-      source: EmailGroupSuppressionSource.SYSTEM,
+      reason: MessageSuppressionReason.UNSUBSCRIBE,
+      source: MessageSuppressionSource.SYSTEM,
     });
   }
 }

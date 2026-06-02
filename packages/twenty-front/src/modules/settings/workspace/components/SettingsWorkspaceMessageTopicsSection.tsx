@@ -24,11 +24,11 @@ import { TableCell } from '@/ui/layout/table/components/TableCell';
 import { TableHeader } from '@/ui/layout/table/components/TableHeader';
 import { TableRow } from '@/ui/layout/table/components/TableRow';
 
-const ADD_PERSON_DROPDOWN_ID = 'email-lists-add-person';
+const ADD_PERSON_DROPDOWN_ID = 'message-topics-add-person';
 
 const MEMBERS_GRID_COLUMNS = '1fr 1fr 120px 24px';
 
-type EmailListRecord = ObjectRecord & { name: string | null };
+type MessageTopicRecord = ObjectRecord & { name: string | null };
 
 type SubscriptionPersonRecord = ObjectRecord & {
   emails: { primaryEmail: string | null } | null;
@@ -62,19 +62,19 @@ const StyledAddPersonRow = styled.div`
   display: flex;
 `;
 
-export const SettingsWorkspaceEmailListsSection = () => {
+export const SettingsWorkspaceMessageTopicsSection = () => {
   const { t } = useLingui();
   const { closeDropdown } = useCloseDropdown();
 
   const [newListName, setNewListName] = useState('');
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
 
-  const { records: emailLists } = useFindManyRecords<EmailListRecord>({
-    objectNameSingular: 'emailList',
+  const { records: messageTopics } = useFindManyRecords<MessageTopicRecord>({
+    objectNameSingular: 'messageTopic',
   });
 
   const { records: subscriptions } = useFindManyRecords<SubscriptionRecord>({
-    objectNameSingular: 'emailListSubscription',
+    objectNameSingular: 'messageSubscription',
     skip: !isDefined(selectedListId),
     filter: { listId: { eq: selectedListId ?? '' } },
     recordGqlFields: {
@@ -89,15 +89,16 @@ export const SettingsWorkspaceEmailListsSection = () => {
     },
   });
 
-  const { createOneRecord: createList } = useCreateOneRecord<EmailListRecord>({
-    objectNameSingular: 'emailList',
-  });
+  const { createOneRecord: createList } =
+    useCreateOneRecord<MessageTopicRecord>({
+      objectNameSingular: 'messageTopic',
+    });
   const { createOneRecord: createSubscription } =
     useCreateOneRecord<SubscriptionRecord>({
-      objectNameSingular: 'emailListSubscription',
+      objectNameSingular: 'messageSubscription',
     });
   const { deleteOneRecord: deleteSubscription } = useDeleteOneRecord({
-    objectNameSingular: 'emailListSubscription',
+    objectNameSingular: 'messageSubscription',
   });
 
   const handleCreateList = async () => {
@@ -130,7 +131,7 @@ export const SettingsWorkspaceEmailListsSection = () => {
     closeDropdown(ADD_PERSON_DROPDOWN_ID);
   };
 
-  const listOptions = emailLists.map((list) => ({
+  const listOptions = messageTopics.map((list) => ({
     label: list.name ?? t`Untitled list`,
     value: list.id,
   }));
@@ -145,7 +146,7 @@ export const SettingsWorkspaceEmailListsSection = () => {
       <StyledCreateRow>
         <StyledCreateInput>
           <SettingsTextInput
-            instanceId="email-lists-new-name"
+            instanceId="message-topics-new-name"
             placeholder={t`New list name`}
             value={newListName}
             onChange={setNewListName}
@@ -156,7 +157,7 @@ export const SettingsWorkspaceEmailListsSection = () => {
       </StyledCreateRow>
 
       <Select
-        dropdownId="email-lists-select"
+        dropdownId="message-topics-select"
         label={t`List`}
         fullWidth
         value={selectedListId}

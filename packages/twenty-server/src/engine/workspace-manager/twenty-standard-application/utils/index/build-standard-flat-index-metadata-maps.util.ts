@@ -9,10 +9,10 @@ import { buildCalendarChannelEventAssociationStandardFlatIndexMetadatas } from '
 import { buildCalendarEventParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-calendar-event-participant-standard-flat-index-metadata.util';
 import { buildCompanyStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-company-standard-flat-index-metadata.util';
 import { buildDashboardStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-dashboard-standard-flat-index-metadata.util';
-import { buildEmailCampaignStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-email-campaign-standard-flat-index-metadata.util';
-import { buildEmailGroupSuppressionListStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-email-group-suppression-list-standard-flat-index-metadata.util';
-import { buildEmailListStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-email-list-standard-flat-index-metadata.util';
-import { buildEmailListSubscriptionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-email-list-subscription-standard-flat-index-metadata.util';
+import { buildMessageBroadcastStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-broadcast-standard-flat-index-metadata.util';
+import { buildMessageSuppressionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util';
+import { buildMessageTopicStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-standard-flat-index-metadata.util';
+import { buildMessageSubscriptionStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-subscription-standard-flat-index-metadata.util';
 import { buildMessageChannelMessageAssociationMessageFolderStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-message-folder-standard-flat-index-metadata.util';
 import { buildMessageChannelMessageAssociationStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-channel-message-association-standard-flat-index-metadata.util';
 import { buildMessageParticipantStandardFlatIndexMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-participant-standard-flat-index-metadata.util';
@@ -44,11 +44,10 @@ const STANDARD_FLAT_INDEX_METADATA_BUILDERS_BY_OBJECT_NAME = {
     buildCalendarEventParticipantStandardFlatIndexMetadatas,
   company: buildCompanyStandardFlatIndexMetadatas,
   dashboard: buildDashboardStandardFlatIndexMetadatas,
-  emailCampaign: buildEmailCampaignStandardFlatIndexMetadatas,
-  emailGroupSuppressionList:
-    buildEmailGroupSuppressionListStandardFlatIndexMetadatas,
-  emailList: buildEmailListStandardFlatIndexMetadatas,
-  emailListSubscription: buildEmailListSubscriptionStandardFlatIndexMetadatas,
+  messageBroadcast: buildMessageBroadcastStandardFlatIndexMetadatas,
+  messageSuppression: buildMessageSuppressionStandardFlatIndexMetadatas,
+  messageTopic: buildMessageTopicStandardFlatIndexMetadatas,
+  messageSubscription: buildMessageSubscriptionStandardFlatIndexMetadatas,
   message: buildMessageStandardFlatIndexMetadatas,
   messageChannelMessageAssociation:
     buildMessageChannelMessageAssociationStandardFlatIndexMetadatas,

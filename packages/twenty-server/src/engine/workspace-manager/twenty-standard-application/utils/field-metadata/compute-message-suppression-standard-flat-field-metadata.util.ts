@@ -1,10 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-application/utils/i18n-label.util';
-import {
-  DateDisplayFormat,
-  FieldMetadataType,
-  RelationType,
-} from 'twenty-shared/types';
+import { DateDisplayFormat, FieldMetadataType } from 'twenty-shared/types';
 
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type AllStandardObjectFieldName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-field-name.type';
@@ -12,11 +8,10 @@ import {
   type CreateStandardFieldArgs,
   createStandardFieldFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
-import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_EMAIL_LIST } from 'src/modules/emailing/standard-objects/email-list.workspace-entity';
+import { SEARCH_FIELDS_FOR_MESSAGE_SUPPRESSION } from 'src/modules/emailing/standard-objects/message-suppression.workspace-entity';
 
-export const buildEmailListStandardFlatFieldMetadatas = ({
+export const buildMessageSuppressionStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -24,9 +19,12 @@ export const buildEmailListStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'emailList', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageSuppression', FieldMetadataType>,
   'context'
->): Record<AllStandardObjectFieldName<'emailList'>, FlatFieldMetadata> => ({
+>): Record<
+  AllStandardObjectFieldName<'messageSuppression'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -160,7 +158,7 @@ export const buildEmailListStandardFlatFieldMetadatas = ({
       fieldName: 'position',
       type: FieldMetadataType.POSITION,
       label: i18nLabel(msg`Position`),
-      description: i18nLabel(msg`Email list record position`),
+      description: i18nLabel(msg`Email suppression record position`),
       icon: 'IconHierarchy2',
       isSystem: true,
       isNullable: false,
@@ -179,13 +177,13 @@ export const buildEmailListStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.TS_VECTOR,
       label: i18nLabel(msg`Search vector`),
       description: i18nLabel(msg`Field used for full-text search`),
-      icon: 'IconMailbox',
+      icon: 'IconMailOff',
       isSystem: true,
       isNullable: true,
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_EMAIL_LIST,
+          SEARCH_FIELDS_FOR_MESSAGE_SUPPRESSION,
         ),
       },
     },
@@ -194,61 +192,124 @@ export const buildEmailListStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  name: createStandardFieldFlatMetadata({
+  emailAddress: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'name',
+      fieldName: 'emailAddress',
       type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Name`),
-      description: i18nLabel(msg`The email list name`),
-      icon: 'IconMailbox',
-      isNullable: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  subscriptions: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'subscriptions',
-      label: i18nLabel(msg`Subscriptions`),
-      description: i18nLabel(msg`People subscribed to this list`),
-      icon: 'IconMailShare',
-      isNullable: true,
-      targetObjectName: 'emailListSubscription',
-      targetFieldName: 'list',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  campaigns: createStandardRelationFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      type: FieldMetadataType.RELATION,
-      morphId: null,
-      fieldName: 'campaigns',
-      label: i18nLabel(msg`Campaigns`),
-      description: i18nLabel(msg`Campaigns sent to this list`),
-      icon: 'IconSend',
+      label: i18nLabel(msg`Email address`),
+      description: i18nLabel(msg`The suppressed email address`),
+      icon: 'IconMail',
+      isNullable: false,
       isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  reason: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'reason',
+      type: FieldMetadataType.SELECT,
+      label: i18nLabel(msg`Reason`),
+      description: i18nLabel(msg`Why the address was suppressed`),
+      icon: 'IconAlertTriangle',
+      isNullable: false,
+      isUIReadOnly: true,
+      options: [
+        {
+          id: 'c23c60de-207c-4cde-8e5b-f8fdaea1224c',
+          value: 'BOUNCE',
+          label: i18nLabel(msg`Bounce`),
+          position: 0,
+          color: 'red',
+        },
+        {
+          id: '5b206d86-ccef-4727-bdca-9e5ae6c36cd3',
+          value: 'COMPLAINT',
+          label: i18nLabel(msg`Complaint`),
+          position: 1,
+          color: 'orange',
+        },
+        {
+          id: '4c4bb767-03f0-43b9-845e-ba5805093418',
+          value: 'UNSUBSCRIBE',
+          label: i18nLabel(msg`Unsubscribe`),
+          position: 2,
+          color: 'gray',
+        },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  source: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'source',
+      type: FieldMetadataType.SELECT,
+      label: i18nLabel(msg`Source`),
+      description: i18nLabel(msg`How the suppression was recorded`),
+      icon: 'IconPlugConnected',
+      isNullable: false,
+      isUIReadOnly: true,
+      defaultValue: "'WEBHOOK'",
+      options: [
+        {
+          id: '9fc65756-7048-46fb-9ad9-94c322fd1934',
+          value: 'WEBHOOK',
+          label: i18nLabel(msg`Webhook`),
+          position: 0,
+          color: 'blue',
+        },
+        {
+          id: '73a27181-cecf-4387-95bd-401ab5a00e9e',
+          value: 'SYSTEM',
+          label: i18nLabel(msg`System`),
+          position: 1,
+          color: 'sky',
+        },
+        {
+          id: '7388e245-3c29-416c-bb07-df4305d9fc21',
+          value: 'MANUAL',
+          label: i18nLabel(msg`Manual`),
+          position: 2,
+          color: 'green',
+        },
+        {
+          id: 'a9a62a41-bc13-41f3-8bea-c92118635765',
+          value: 'IMPORT',
+          label: i18nLabel(msg`Import`),
+          position: 3,
+          color: 'purple',
+        },
+      ],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  providerEventId: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'providerEventId',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Provider event ID`),
+      description: i18nLabel(
+        msg`Identifier of the provider event that triggered the suppression`,
+      ),
+      icon: 'IconHash',
       isNullable: true,
-      targetObjectName: 'emailCampaign',
-      targetFieldName: 'list',
-      settings: {
-        relationType: RelationType.ONE_TO_MANY,
-      },
+      isUIReadOnly: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

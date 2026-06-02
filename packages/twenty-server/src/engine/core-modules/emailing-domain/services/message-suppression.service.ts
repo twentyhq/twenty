@@ -6,27 +6,27 @@ import { In } from 'typeorm';
 
 import { BLOCKING_REASONS_BY_MESSAGE_CATEGORY } from 'src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
-import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
-import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
+import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
+import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { EmailGroupSuppressionListWorkspaceEntity } from 'src/modules/emailing/standard-objects/email-group-suppression-list.workspace-entity';
+import { MessageSuppressionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-suppression.workspace-entity';
 
 type SuppressArgs = {
   workspaceId: string;
   emailAddress: string;
-  reason: EmailGroupSuppressionReason;
-  source: EmailGroupSuppressionSource;
+  reason: MessageSuppressionReason;
+  source: MessageSuppressionSource;
   providerEventId?: string | null;
 };
 
 const HARD_SUPPRESSION_REASONS = [
-  EmailGroupSuppressionReason.BOUNCE,
-  EmailGroupSuppressionReason.COMPLAINT,
+  MessageSuppressionReason.BOUNCE,
+  MessageSuppressionReason.COMPLAINT,
 ];
 
 @Injectable()
-export class EmailGroupSuppressionService {
+export class MessageSuppressionService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
   ) {}
@@ -52,7 +52,7 @@ export class EmailGroupSuppressionService {
           const suppressionRepository =
             await this.globalWorkspaceOrmManager.getRepository(
               workspaceId,
-              EmailGroupSuppressionListWorkspaceEntity,
+              MessageSuppressionWorkspaceEntity,
               { shouldBypassPermissionChecks: true },
             );
 
@@ -88,7 +88,7 @@ export class EmailGroupSuppressionService {
       const suppressionRepository =
         await this.globalWorkspaceOrmManager.getRepository(
           workspaceId,
-          EmailGroupSuppressionListWorkspaceEntity,
+          MessageSuppressionWorkspaceEntity,
           { shouldBypassPermissionChecks: true },
         );
 
@@ -119,7 +119,7 @@ export class EmailGroupSuppressionService {
 
   private shouldEscalate(
     existingReason: string,
-    incomingReason: EmailGroupSuppressionReason,
+    incomingReason: MessageSuppressionReason,
   ): boolean {
     const existingIsHard = HARD_SUPPRESSION_REASONS.some(
       (hardReason) => hardReason === existingReason,

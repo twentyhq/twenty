@@ -2,9 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
 
-import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
-import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
-import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
+import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
+import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
+import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { type SesEventBridgeNotification } from 'src/engine/core-modules/messaging-webhooks/types/ses-event-bridge-notification.type';
 import { resolveWorkspaceIdFromAwsSesResources } from 'src/engine/core-modules/messaging-webhooks/utils/resolve-workspace-id-from-aws-ses-resources.util';
 
@@ -15,7 +15,7 @@ export class SesOutboundSuppressionHandlerService {
   );
 
   constructor(
-    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
+    private readonly messageSuppressionService: MessageSuppressionService,
   ) {}
 
   async handle(event: SesEventBridgeNotification): Promise<void> {
@@ -37,11 +37,11 @@ export class SesOutboundSuppressionHandlerService {
 
     const results = await Promise.allSettled(
       suppression.emailAddresses.map((emailAddress) =>
-        this.emailGroupSuppressionService.suppress({
+        this.messageSuppressionService.suppress({
           workspaceId,
           emailAddress,
           reason: suppression.reason,
-          source: EmailGroupSuppressionSource.WEBHOOK,
+          source: MessageSuppressionSource.WEBHOOK,
           providerEventId: suppression.providerEventId,
         }),
       ),
@@ -55,7 +55,7 @@ export class SesOutboundSuppressionHandlerService {
   }
 
   private resolveSuppression(event: SesEventBridgeNotification): {
-    reason: EmailGroupSuppressionReason;
+    reason: MessageSuppressionReason;
     emailAddresses: string[];
     providerEventId: string | null;
   } | null {
@@ -75,7 +75,7 @@ export class SesOutboundSuppressionHandlerService {
       }
 
       return {
-        reason: EmailGroupSuppressionReason.BOUNCE,
+        reason: MessageSuppressionReason.BOUNCE,
         emailAddresses,
         providerEventId: bounce.feedbackId ?? null,
       };
@@ -92,7 +92,7 @@ export class SesOutboundSuppressionHandlerService {
       }
 
       return {
-        reason: EmailGroupSuppressionReason.COMPLAINT,
+        reason: MessageSuppressionReason.COMPLAINT,
         emailAddresses,
         providerEventId: complaint?.feedbackId ?? null,
       };

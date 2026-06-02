@@ -1,4 +1,4 @@
-export enum EmailGroupSuppressionSource {
+export enum MessageSuppressionSource {
   WEBHOOK = 'WEBHOOK',
   SYSTEM = 'SYSTEM',
   MANUAL = 'MANUAL',

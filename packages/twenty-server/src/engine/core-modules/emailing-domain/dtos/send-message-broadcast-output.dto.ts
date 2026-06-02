@@ -1,7 +1,7 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql';
 
 @ObjectType()
-export class SendEmailCampaignOutputDTO {
+export class SendMessageBroadcastOutputDTO {
   @Field(() => String)
   campaignId: string;
 

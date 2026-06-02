@@ -522,19 +522,19 @@ export const buildPersonStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  emailListSubscriptions: createStandardRelationFieldFlatMetadata({
+  messageSubscriptions: createStandardRelationFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
       type: FieldMetadataType.RELATION,
       morphId: null,
-      fieldName: 'emailListSubscriptions',
+      fieldName: 'messageSubscriptions',
       label: i18nLabel(msg`Email List Subscriptions`),
       description: i18nLabel(msg`Email list subscriptions for the contact`),
       icon: 'IconMailShare',
       isUIReadOnly: true,
       isNullable: true,
-      targetObjectName: 'emailListSubscription',
+      targetObjectName: 'messageSubscription',
       targetFieldName: 'person',
       settings: {
         relationType: RelationType.ONE_TO_MANY,

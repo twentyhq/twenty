@@ -20,8 +20,8 @@ import {
 } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { UnsubscribeHostnameStatus } from 'src/engine/core-modules/emailing-domain/drivers/types/unsubscribe-hostname-status.type';
 import { EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
-import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
-import { EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
+import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
+import { MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { EmailGroupMessageCategory } from 'src/engine/core-modules/emailing-domain/types/email-group-message-category.type';
@@ -41,8 +41,8 @@ export class EmailingDomainSenderService {
     @InjectWorkspaceScopedRepository(EmailingDomainEntity)
     private readonly emailingDomainRepository: WorkspaceScopedRepository<EmailingDomainEntity>,
     private readonly emailingDomainDriverFactory: EmailingDomainDriverFactory,
-    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
-    private readonly emailListSubscriptionService: EmailListSubscriptionService,
+    private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageSubscriptionService: MessageSubscriptionService,
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
     @InjectRepository(MessageChannelEntity)
     private readonly messageChannelRepository: Repository<MessageChannelEntity>,
@@ -75,7 +75,7 @@ export class EmailingDomainSenderService {
       emailingDomain,
       messageCategory,
       recipients.to[0],
-      emailContent.emailListId,
+      emailContent.messageTopicId,
     );
 
     const replyTo = await this.resolveReplyTo(workspaceId, emailContent);
@@ -186,7 +186,7 @@ export class EmailingDomainSenderService {
     ];
 
     const suppressedAddresses =
-      await this.emailGroupSuppressionService.getSuppressedAddresses(
+      await this.messageSuppressionService.getSuppressedAddresses(
         workspaceId,
         allRecipients,
         messageCategory,
@@ -196,7 +196,7 @@ export class EmailingDomainSenderService {
       workspaceId,
       allRecipients,
       messageCategory,
-      emailContent.emailListId,
+      emailContent.messageTopicId,
     );
 
     const isDeliverable = (address: string): boolean => {
@@ -228,19 +228,19 @@ export class EmailingDomainSenderService {
     workspaceId: string,
     recipients: string[],
     messageCategory: EmailGroupMessageCategory,
-    emailListId: string | undefined,
+    messageTopicId: string | undefined,
   ): Promise<Set<string>> {
     if (
       messageCategory !== EmailGroupMessageCategory.CAMPAIGN ||
-      !isNonEmptyString(emailListId)
+      !isNonEmptyString(messageTopicId)
     ) {
       return new Set();
     }
 
-    return this.emailListSubscriptionService.getAddressesUnsubscribedFromList(
+    return this.messageSubscriptionService.getAddressesUnsubscribedFromList(
       workspaceId,
       recipients,
-      emailListId,
+      messageTopicId,
     );
   }
 
@@ -249,7 +249,7 @@ export class EmailingDomainSenderService {
     emailingDomain: EmailingDomainEntity,
     messageCategory: EmailGroupMessageCategory,
     primaryRecipient: string,
-    emailListId: string | undefined,
+    messageTopicId: string | undefined,
   ): UnsubscribeContent {
     if (messageCategory !== EmailGroupMessageCategory.CAMPAIGN) {
       return EMPTY_UNSUBSCRIBE_CONTENT;
@@ -269,7 +269,7 @@ export class EmailingDomainSenderService {
     const token = this.unsubscribeTokenService.sign({
       workspaceId,
       emailAddress: primaryRecipient,
-      ...(isNonEmptyString(emailListId) ? { emailListId } : {}),
+      ...(isNonEmptyString(messageTopicId) ? { messageTopicId } : {}),
     });
 
     const unsubscribeUrls = buildUnsubscribeUrls({

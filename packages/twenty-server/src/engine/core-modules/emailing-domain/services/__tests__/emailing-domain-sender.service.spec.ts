@@ -5,8 +5,8 @@ import { EmailingDomainTenantStatus } from 'src/engine/core-modules/emailing-dom
 import { type EmailingDomainEmailContent } from 'src/engine/core-modules/emailing-domain/drivers/types/send-email';
 import { type EmailingDomainEntity } from 'src/engine/core-modules/emailing-domain/emailing-domain.entity';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
-import { type EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
-import { type EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
+import { type MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
+import { type MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
 import { type UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
 import { type MessageChannelEntity } from 'src/engine/metadata-modules/message-channel/entities/message-channel.entity';
 import { type Repository } from 'typeorm';
@@ -53,7 +53,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
         .mockResolvedValue(
           new Set(suppressedAddresses.map((address) => address.toLowerCase())),
         ),
-    } as unknown as EmailGroupSuppressionService;
+    } as unknown as MessageSuppressionService;
     const subscriptionService = {
       getAddressesUnsubscribedFromList: jest
         .fn()
@@ -62,7 +62,7 @@ describe('EmailingDomainSenderService.sendEmail', () => {
             listUnsubscribedAddresses.map((address) => address.toLowerCase()),
           ),
         ),
-    } as unknown as EmailListSubscriptionService;
+    } as unknown as MessageSubscriptionService;
     const unsubscribeTokenService = {
       sign: jest.fn().mockReturnValue('signed-token'),
     } as unknown as UnsubscribeTokenService;

@@ -209,24 +209,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  emailGroupSuppressionList: ({
+  messageSuppression: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'emailGroupSuppressionList'>,
+    CreateStandardObjectArgs<'messageSuppression'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'emailGroupSuppressionList',
+      objectName: 'messageSuppression',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.emailGroupSuppressionList.universalIdentifier,
-        nameSingular: 'emailGroupSuppressionList',
-        namePlural: 'emailGroupSuppressionLists',
+          STANDARD_OBJECTS.messageSuppression.universalIdentifier,
+        nameSingular: 'messageSuppression',
+        namePlural: 'messageSuppressions',
         labelSingular: i18nLabel(msg`Email Suppression`),
         labelPlural: i18nLabel(msg`Email Suppressions`),
         description: i18nLabel(
@@ -242,20 +242,23 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  emailList: ({
+  messageTopic: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
-  }: Omit<CreateStandardObjectArgs<'emailList'>, 'context' | 'objectName'>) =>
+  }: Omit<
+    CreateStandardObjectArgs<'messageTopic'>,
+    'context' | 'objectName'
+  >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'emailList',
+      objectName: 'messageTopic',
       dependencyFlatEntityMaps,
       context: {
-        universalIdentifier: STANDARD_OBJECTS.emailList.universalIdentifier,
-        nameSingular: 'emailList',
-        namePlural: 'emailLists',
+        universalIdentifier: STANDARD_OBJECTS.messageTopic.universalIdentifier,
+        nameSingular: 'messageTopic',
+        namePlural: 'messageTopics',
         labelSingular: i18nLabel(msg`Email List`),
         labelPlural: i18nLabel(msg`Email Lists`),
         description: i18nLabel(msg`A list of people to send emails to`),
@@ -269,23 +272,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  emailCampaign: ({
+  messageBroadcast: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'emailCampaign'>,
+    CreateStandardObjectArgs<'messageBroadcast'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'emailCampaign',
+      objectName: 'messageBroadcast',
       dependencyFlatEntityMaps,
       context: {
-        universalIdentifier: STANDARD_OBJECTS.emailCampaign.universalIdentifier,
-        nameSingular: 'emailCampaign',
-        namePlural: 'emailCampaigns',
+        universalIdentifier:
+          STANDARD_OBJECTS.messageBroadcast.universalIdentifier,
+        nameSingular: 'messageBroadcast',
+        namePlural: 'messageBroadcasts',
         labelSingular: i18nLabel(msg`Email Campaign`),
         labelPlural: i18nLabel(msg`Email Campaigns`),
         description: i18nLabel(
@@ -300,24 +304,24 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
       twentyStandardApplicationId,
       now,
     }),
-  emailListSubscription: ({
+  messageSubscription: ({
     now,
     workspaceId,
     standardObjectMetadataRelatedEntityIds,
     twentyStandardApplicationId,
     dependencyFlatEntityMaps,
   }: Omit<
-    CreateStandardObjectArgs<'emailListSubscription'>,
+    CreateStandardObjectArgs<'messageSubscription'>,
     'context' | 'objectName'
   >) =>
     createStandardObjectFlatMetadata({
-      objectName: 'emailListSubscription',
+      objectName: 'messageSubscription',
       dependencyFlatEntityMaps,
       context: {
         universalIdentifier:
-          STANDARD_OBJECTS.emailListSubscription.universalIdentifier,
-        nameSingular: 'emailListSubscription',
-        namePlural: 'emailListSubscriptions',
+          STANDARD_OBJECTS.messageSubscription.universalIdentifier,
+        nameSingular: 'messageSubscription',
+        namePlural: 'messageSubscriptions',
         labelSingular: i18nLabel(msg`Email List Subscription`),
         labelPlural: i18nLabel(msg`Email List Subscriptions`),
         description: i18nLabel(

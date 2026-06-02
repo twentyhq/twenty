@@ -15,9 +15,9 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_EMAIL_CAMPAIGN } from 'src/modules/emailing/standard-objects/email-campaign.workspace-entity';
+import { SEARCH_FIELDS_FOR_MESSAGE_BROADCAST } from 'src/modules/emailing/standard-objects/message-broadcast.workspace-entity';
 
-export const buildEmailCampaignStandardFlatFieldMetadatas = ({
+export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -25,9 +25,12 @@ export const buildEmailCampaignStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'emailCampaign', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageBroadcast', FieldMetadataType>,
   'context'
->): Record<AllStandardObjectFieldName<'emailCampaign'>, FlatFieldMetadata> => {
+>): Record<
+  AllStandardObjectFieldName<'messageBroadcast'>,
+  FlatFieldMetadata
+> => {
   const base = {
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
@@ -160,7 +163,7 @@ export const buildEmailCampaignStandardFlatFieldMetadatas = ({
         settings: {
           generatedType: 'STORED',
           asExpression: getTsVectorColumnExpressionFromFields(
-            SEARCH_FIELDS_FOR_EMAIL_CAMPAIGN,
+            SEARCH_FIELDS_FOR_MESSAGE_BROADCAST,
           ),
         },
       },
@@ -367,7 +370,7 @@ export const buildEmailCampaignStandardFlatFieldMetadatas = ({
         description: i18nLabel(msg`The audience this campaign was sent to`),
         icon: 'IconMailbox',
         isNullable: true,
-        targetObjectName: 'emailList',
+        targetObjectName: 'messageTopic',
         targetFieldName: 'campaigns',
         settings: {
           relationType: RelationType.MANY_TO_ONE,

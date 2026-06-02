@@ -25,7 +25,7 @@ export type EmailingDomainEmailContent = {
   messageCategory?: EmailGroupMessageCategory;
   // When a marketing email targets a specific list, recipients who unsubscribed
   // from that list are dropped in addition to the globally suppressed ones.
-  emailListId?: string;
+  messageTopicId?: string;
 };
 
 export type EmailingDomainSendEmailInput = EmailingDomainEmailContent & {

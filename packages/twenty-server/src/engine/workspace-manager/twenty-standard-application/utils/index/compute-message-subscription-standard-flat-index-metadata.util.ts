@@ -1,29 +1,40 @@
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
-import { IndexType } from 'src/engine/metadata-modules/index-metadata/types/indexType.types';
 import { type AllStandardObjectIndexName } from 'src/engine/workspace-manager/twenty-standard-application/types/all-standard-object-index-name.type';
 import {
   type CreateStandardIndexArgs,
   createStandardIndexFlatMetadata,
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/index/create-standard-index-flat-metadata.util';
 
-export const buildEmailListStandardFlatIndexMetadatas = ({
+export const buildMessageSubscriptionStandardFlatIndexMetadatas = ({
   now,
   objectName,
   workspaceId,
   standardObjectMetadataRelatedEntityIds,
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
-}: Omit<CreateStandardIndexArgs<'emailList'>, 'context'>): Record<
-  AllStandardObjectIndexName<'emailList'>,
+}: Omit<CreateStandardIndexArgs<'messageSubscription'>, 'context'>): Record<
+  AllStandardObjectIndexName<'messageSubscription'>,
   FlatIndexMetadata
 > => ({
-  searchVectorGinIndex: createStandardIndexFlatMetadata({
+  listIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'searchVectorGinIndex',
-      relatedFieldNames: ['searchVector'],
-      indexType: IndexType.GIN,
+      indexName: 'listIdIndex',
+      relatedFieldNames: ['list'],
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  personListUniqueIndex: createStandardIndexFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      indexName: 'personListUniqueIndex',
+      relatedFieldNames: ['person', 'list'],
+      isUnique: true,
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

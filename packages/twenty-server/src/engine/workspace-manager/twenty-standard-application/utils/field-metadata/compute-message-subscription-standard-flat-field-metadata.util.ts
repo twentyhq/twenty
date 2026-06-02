@@ -16,7 +16,7 @@ import {
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 
-export const buildEmailListSubscriptionStandardFlatFieldMetadatas = ({
+export const buildMessageSubscriptionStandardFlatFieldMetadatas = ({
   now,
   objectName,
   workspaceId,
@@ -24,10 +24,10 @@ export const buildEmailListSubscriptionStandardFlatFieldMetadatas = ({
   dependencyFlatEntityMaps,
   twentyStandardApplicationId,
 }: Omit<
-  CreateStandardFieldArgs<'emailListSubscription', FieldMetadataType>,
+  CreateStandardFieldArgs<'messageSubscription', FieldMetadataType>,
   'context'
 >): Record<
-  AllStandardObjectFieldName<'emailListSubscription'>,
+  AllStandardObjectFieldName<'messageSubscription'>,
   FlatFieldMetadata
 > => ({
   id: createStandardFieldFlatMetadata({
@@ -303,7 +303,7 @@ export const buildEmailListSubscriptionStandardFlatFieldMetadatas = ({
       description: i18nLabel(msg`The list the person is subscribed to`),
       icon: 'IconMailbox',
       isNullable: false,
-      targetObjectName: 'emailList',
+      targetObjectName: 'messageTopic',
       targetFieldName: 'subscriptions',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
@@ -328,7 +328,7 @@ export const buildEmailListSubscriptionStandardFlatFieldMetadatas = ({
       icon: 'IconUser',
       isNullable: false,
       targetObjectName: 'person',
-      targetFieldName: 'emailListSubscriptions',
+      targetFieldName: 'messageSubscriptions',
       settings: {
         relationType: RelationType.MANY_TO_ONE,
         onDelete: RelationOnDeleteAction.CASCADE,

@@ -1,4 +1,4 @@
-export enum EmailGroupSuppressionReason {
+export enum MessageSuppressionReason {
   BOUNCE = 'BOUNCE',
   COMPLAINT = 'COMPLAINT',
   UNSUBSCRIBE = 'UNSUBSCRIBE',

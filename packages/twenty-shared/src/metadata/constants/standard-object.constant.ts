@@ -762,7 +762,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  emailGroupSuppressionList: {
+  messageSuppression: {
     universalIdentifier: 'cea7888b-2ad1-4ca8-839b-83702106b672',
     fields: {
       id: { universalIdentifier: '791385ed-9221-4631-b3c2-f4be27e8447d' },
@@ -805,7 +805,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  emailList: {
+  messageTopic: {
     universalIdentifier: 'f8c9f0c1-335b-4c47-9291-4eaab9d0178c',
     fields: {
       id: { universalIdentifier: '0822eeff-a953-43db-a0e3-d8dd0e4d2d6d' },
@@ -844,7 +844,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  emailCampaign: {
+  messageBroadcast: {
     universalIdentifier: '238acb94-dd4c-4036-bc55-19b99d821efd',
     fields: {
       id: { universalIdentifier: '819a9eb4-2738-49df-a302-76d2dc7d7114' },
@@ -906,7 +906,7 @@ export const STANDARD_OBJECTS = {
       },
     },
   },
-  emailListSubscription: {
+  messageSubscription: {
     universalIdentifier: '71a8179f-9259-49cf-a4e6-9642b200d6aa',
     fields: {
       id: { universalIdentifier: '4bc69ce3-634a-482a-a9aa-73f3e3c66ed2' },
@@ -1823,7 +1823,7 @@ export const STANDARD_OBJECTS = {
       timelineActivities: {
         universalIdentifier: '20202020-a43e-4873-9c23-e522de906ce5',
       },
-      emailListSubscriptions: {
+      messageSubscriptions: {
         universalIdentifier: '082d2fba-437c-4ec8-acde-6dbfda45d50c',
       },
       searchVector: {

@@ -7,11 +7,11 @@ import { FeatureFlagKey } from 'twenty-shared/types';
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
 import { EmailingDomainDriver } from 'src/engine/core-modules/emailing-domain/drivers/types/emailing-domain-driver.type';
 import { EmailingDomainDTO } from 'src/engine/core-modules/emailing-domain/dtos/emailing-domain.dto';
-import { SendEmailCampaignInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-campaign.input';
-import { SendEmailCampaignOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-campaign-output.dto';
+import { SendMessageBroadcastInput } from 'src/engine/core-modules/emailing-domain/dtos/send-message-broadcast.input';
+import { SendMessageBroadcastOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-message-broadcast-output.dto';
 import { SendEmailViaDomainOutputDTO } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain-output.dto';
 import { SendEmailViaDomainInput } from 'src/engine/core-modules/emailing-domain/dtos/send-email-via-domain.input';
-import { EmailCampaignService } from 'src/engine/core-modules/emailing-domain/services/email-campaign.service';
+import { MessageBroadcastService } from 'src/engine/core-modules/emailing-domain/services/message-broadcast.service';
 import { EmailingDomainSenderService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service';
 import { EmailingDomainService } from 'src/engine/core-modules/emailing-domain/services/emailing-domain.service';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
@@ -35,7 +35,7 @@ export class EmailingDomainResolver {
   constructor(
     private readonly emailingDomainService: EmailingDomainService,
     private readonly emailingDomainSenderService: EmailingDomainSenderService,
-    private readonly emailCampaignService: EmailCampaignService,
+    private readonly messageBroadcastService: MessageBroadcastService,
   ) {}
 
   @Mutation(() => EmailingDomainDTO)
@@ -97,15 +97,15 @@ export class EmailingDomainResolver {
     return { messageId: result.messageId };
   }
 
-  @Mutation(() => SendEmailCampaignOutputDTO)
+  @Mutation(() => SendMessageBroadcastOutputDTO)
   @RequireFeatureFlag(FeatureFlagKey.IS_EMAIL_GROUP_ENABLED)
-  async sendEmailCampaign(
-    @Args('input') input: SendEmailCampaignInput,
+  async sendMessageBroadcast(
+    @Args('input') input: SendMessageBroadcastInput,
     @AuthWorkspace() currentWorkspace: WorkspaceEntity,
-  ): Promise<SendEmailCampaignOutputDTO> {
-    return this.emailCampaignService.sendToList({
+  ): Promise<SendMessageBroadcastOutputDTO> {
+    return this.messageBroadcastService.sendToList({
       workspaceId: currentWorkspace.id,
-      emailListId: input.emailListId,
+      messageTopicId: input.messageTopicId,
       subject: input.subject,
       html: input.body,
       fromAddress: input.fromAddress,

@@ -1,4 +1,4 @@
-export enum EmailListSubscriptionStatus {
+export enum MessageSubscriptionStatus {
   SUBSCRIBED = 'SUBSCRIBED',
   UNSUBSCRIBED = 'UNSUBSCRIBED',
 }

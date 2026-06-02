@@ -11,14 +11,14 @@ import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
 import { GlobalWorkspaceOrmManager } from 'src/engine/twenty-orm/global-workspace-datasource/global-workspace-orm.manager';
 import { buildSystemAuthContext } from 'src/engine/twenty-orm/utils/build-system-auth-context.util';
-import { EmailCampaignWorkspaceEntity } from 'src/modules/emailing/standard-objects/email-campaign.workspace-entity';
-import { EmailListSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/email-list-subscription.workspace-entity';
+import { MessageBroadcastWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-broadcast.workspace-entity';
+import { MessageSubscriptionWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-subscription.workspace-entity';
 import { PersonWorkspaceEntity } from 'src/modules/person/standard-objects/person.workspace-entity';
 import { createHtmlToTextConverter } from 'src/modules/messaging/message-import-manager/utils/create-html-to-text-converter.util';
 
 type SendCampaignArgs = {
   workspaceId: string;
-  emailListId: string;
+  messageTopicId: string;
   subject: string;
   html: string;
   fromAddress: string;
@@ -33,8 +33,8 @@ type SendCampaignResult = {
 const SUBSCRIBED_STATUS = 'SUBSCRIBED';
 
 @Injectable()
-export class EmailCampaignService {
-  private readonly logger = new Logger(EmailCampaignService.name);
+export class MessageBroadcastService {
+  private readonly logger = new Logger(MessageBroadcastService.name);
   private readonly htmlToText = createHtmlToTextConverter();
 
   constructor(
@@ -46,7 +46,7 @@ export class EmailCampaignService {
 
   async sendToList({
     workspaceId,
-    emailListId,
+    messageTopicId,
     subject,
     html,
     fromAddress,
@@ -66,86 +66,91 @@ export class EmailCampaignService {
 
     const text = this.htmlToText(html);
 
-    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(async () => {
-      const recipientEmails = await this.resolveSubscribedEmails(
-        workspaceId,
-        emailListId,
-      );
-
-      const campaignRepository =
-        await this.globalWorkspaceOrmManager.getRepository(
+    return this.globalWorkspaceOrmManager.executeInWorkspaceContext(
+      async () => {
+        const recipientEmails = await this.resolveSubscribedEmails(
           workspaceId,
-          EmailCampaignWorkspaceEntity,
-          { shouldBypassPermissionChecks: true },
+          messageTopicId,
         );
 
-      const { identifiers } = await campaignRepository.insert({
-        name: subject,
-        subject,
-        bodyTemplate: html,
-        fromAddress,
-        status: 'SENDING',
-        recipientSource: 'LIST',
-        listId: emailListId,
-      });
-      const campaignId = identifiers[0].id;
-
-      let sentCount = 0;
-      let failedCount = 0;
-
-      for (const recipientEmail of recipientEmails) {
-        try {
-          await this.emailingDomainSenderService.sendEmail(
+        const campaignRepository =
+          await this.globalWorkspaceOrmManager.getRepository(
             workspaceId,
-            emailingDomain.id,
-            {
-              from: fromAddress,
-              to: [recipientEmail],
-              subject,
-              text,
-              html,
-              messageCategory: EmailGroupMessageCategory.CAMPAIGN,
-              emailListId,
-            },
+            MessageBroadcastWorkspaceEntity,
+            { shouldBypassPermissionChecks: true },
           );
-          sentCount += 1;
-        } catch (error) {
-          failedCount += 1;
-          this.logger.warn(
-            `Campaign ${campaignId} skipped ${recipientEmail}: ${
-              error instanceof Error ? error.message : String(error)
-            }`,
-          );
+
+        const { identifiers } = await campaignRepository.insert({
+          name: subject,
+          subject,
+          bodyTemplate: html,
+          fromAddress,
+          status: 'SENDING',
+          recipientSource: 'LIST',
+          listId: messageTopicId,
+        });
+        const campaignId = identifiers[0].id;
+
+        let sentCount = 0;
+        let failedCount = 0;
+
+        for (const recipientEmail of recipientEmails) {
+          try {
+            await this.emailingDomainSenderService.sendEmail(
+              workspaceId,
+              emailingDomain.id,
+              {
+                from: fromAddress,
+                to: [recipientEmail],
+                subject,
+                text,
+                html,
+                messageCategory: EmailGroupMessageCategory.CAMPAIGN,
+                messageTopicId,
+              },
+            );
+            sentCount += 1;
+          } catch (error) {
+            failedCount += 1;
+            this.logger.warn(
+              `Campaign ${campaignId} skipped ${recipientEmail}: ${
+                error instanceof Error ? error.message : String(error)
+              }`,
+            );
+          }
         }
-      }
 
-      await campaignRepository.update(campaignId, {
-        status: 'SENT',
-        sentAt: new Date(),
-        sentCount,
-        failedCount,
-      });
+        await campaignRepository.update(campaignId, {
+          status: 'SENT',
+          sentAt: new Date(),
+          sentCount,
+          failedCount,
+        });
 
-      return { campaignId, sentCount, failedCount };
-    }, buildSystemAuthContext(workspaceId));
+        return { campaignId, sentCount, failedCount };
+      },
+      buildSystemAuthContext(workspaceId),
+    );
   }
 
   private async resolveSubscribedEmails(
     workspaceId: string,
-    emailListId: string,
+    messageTopicId: string,
   ): Promise<string[]> {
     const subscriptionRepository =
       await this.globalWorkspaceOrmManager.getRepository(
         workspaceId,
-        EmailListSubscriptionWorkspaceEntity,
+        MessageSubscriptionWorkspaceEntity,
         { shouldBypassPermissionChecks: true },
       );
 
     const subscriptions = await subscriptionRepository.find({
-      where: { listId: emailListId, status: SUBSCRIBED_STATUS },
+      where: { listId: messageTopicId, status: SUBSCRIBED_STATUS },
     });
 
-    const personIds = subscriptions.map((subscription) => subscription.personId);
+    const personIds = subscriptions.map(
+      (subscription) => subscription.personId,
+    );
 
     if (personIds.length === 0) {
       return [];

@@ -3,10 +3,10 @@ import { Field, InputType } from '@nestjs/graphql';
 import { IsEmail, IsString, IsUUID, Length, MinLength } from 'class-validator';
 
 @InputType()
-export class SendEmailCampaignInput {
+export class SendMessageBroadcastInput {
   @Field(() => String)
   @IsUUID('4')
-  emailListId: string;
+  messageTopicId: string;
 
   @Field(() => String)
   @IsString()

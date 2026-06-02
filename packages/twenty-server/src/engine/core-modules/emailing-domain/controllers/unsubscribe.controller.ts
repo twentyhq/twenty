@@ -11,11 +11,11 @@ import {
 
 import { isNonEmptyString } from '@sniptt/guards';
 
-import { EmailGroupSuppressionService } from 'src/engine/core-modules/emailing-domain/services/email-group-suppression.service';
-import { EmailListSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/email-list-subscription.service';
+import { MessageSuppressionService } from 'src/engine/core-modules/emailing-domain/services/message-suppression.service';
+import { MessageSubscriptionService } from 'src/engine/core-modules/emailing-domain/services/message-subscription.service';
 import { UnsubscribeTokenService } from 'src/engine/core-modules/emailing-domain/services/unsubscribe-token.service';
-import { EmailGroupSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-reason.type';
-import { EmailGroupSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/email-group-suppression-source.type';
+import { MessageSuppressionReason } from 'src/engine/core-modules/emailing-domain/types/message-suppression-reason.type';
+import { MessageSuppressionSource } from 'src/engine/core-modules/emailing-domain/types/message-suppression-source.type';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { PublicEndpointGuard } from 'src/engine/guards/public-endpoint.guard';
 
@@ -26,8 +26,8 @@ const UNSUBSCRIBE_TOKEN_FORMAT = /^[A-Za-z0-9_-]{1,512}\.[A-Za-z0-9_-]{1,86}$/;
 export class UnsubscribeController {
   constructor(
     private readonly unsubscribeTokenService: UnsubscribeTokenService,
-    private readonly emailGroupSuppressionService: EmailGroupSuppressionService,
-    private readonly emailListSubscriptionService: EmailListSubscriptionService,
+    private readonly messageSuppressionService: MessageSuppressionService,
+    private readonly messageSubscriptionService: MessageSubscriptionService,
   ) {}
 
   @Post()
@@ -56,12 +56,12 @@ export class UnsubscribeController {
       throw new BadRequestException('Invalid unsubscribe token');
     }
 
-    if (isNonEmptyString(payload.emailListId)) {
+    if (isNonEmptyString(payload.messageTopicId)) {
       const unsubscribedFromList =
-        await this.emailListSubscriptionService.unsubscribeByEmail({
+        await this.messageSubscriptionService.unsubscribeByEmail({
           workspaceId: payload.workspaceId,
           emailAddress: payload.emailAddress,
-          listId: payload.emailListId,
+          listId: payload.messageTopicId,
         });
 
       if (unsubscribedFromList) {
@@ -69,11 +69,11 @@ export class UnsubscribeController {
       }
     }
 
-    await this.emailGroupSuppressionService.suppress({
+    await this.messageSuppressionService.suppress({
       workspaceId: payload.workspaceId,
       emailAddress: payload.emailAddress,
-      reason: EmailGroupSuppressionReason.UNSUBSCRIBE,
-      source: EmailGroupSuppressionSource.SYSTEM,
+      reason: MessageSuppressionReason.UNSUBSCRIBE,
+      source: MessageSuppressionSource.SYSTEM,
     });
   }
 }

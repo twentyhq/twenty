@@ -3,17 +3,17 @@ import { FieldMetadataType } from 'twenty-shared/types';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
 import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
-import { type EmailListWorkspaceEntity } from 'src/modules/emailing/standard-objects/email-list.workspace-entity';
+import { type MessageTopicWorkspaceEntity } from 'src/modules/emailing/standard-objects/message-topic.workspace-entity';
 
 const NAME_FIELD_NAME = 'name';
 const SUBJECT_FIELD_NAME = 'subject';
 
-export const SEARCH_FIELDS_FOR_EMAIL_CAMPAIGN: FieldTypeAndNameMetadata[] = [
+export const SEARCH_FIELDS_FOR_MESSAGE_BROADCAST: FieldTypeAndNameMetadata[] = [
   { name: NAME_FIELD_NAME, type: FieldMetadataType.TEXT },
   { name: SUBJECT_FIELD_NAME, type: FieldMetadataType.TEXT },
 ];
 
-export class EmailCampaignWorkspaceEntity extends BaseWorkspaceEntity {
+export class MessageBroadcastWorkspaceEntity extends BaseWorkspaceEntity {
   name: string | null;
   subject: string | null;
   bodyTemplate: string | null;
@@ -26,7 +26,7 @@ export class EmailCampaignWorkspaceEntity extends BaseWorkspaceEntity {
   sentCount: number;
   bouncedCount: number;
   failedCount: number;
-  list: EntityRelation<EmailListWorkspaceEntity> | null;
+  list: EntityRelation<MessageTopicWorkspaceEntity> | null;
   listId: string | null;
   searchVector: string;
 }
