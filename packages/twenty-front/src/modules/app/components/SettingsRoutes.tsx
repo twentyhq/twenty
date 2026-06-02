@@ -913,6 +913,13 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
       </Route>
 
       <Route
+        path="security"
+        element={
+          <Navigate to={getSettingsPath(SettingsPath.Security)} replace />
+        }
+      />
+
+      <Route
         element={
           <SettingsProtectedRouteWrapper
             settingsPermission={PermissionFlagType.SECURITY}

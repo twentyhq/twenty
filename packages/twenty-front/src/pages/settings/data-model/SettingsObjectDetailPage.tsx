@@ -64,10 +64,11 @@ export const SettingsObjectDetailPage = () => {
       objectMetadataItem,
     }) || isDDLLocked;
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-  );
+  const activeTabId =
+    useAtomComponentStateValue(
+      activeTabIdComponentState,
+      SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
 

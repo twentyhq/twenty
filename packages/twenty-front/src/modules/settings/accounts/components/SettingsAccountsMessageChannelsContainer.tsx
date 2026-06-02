@@ -2,8 +2,7 @@ import { type MessageChannel } from '@/accounts/types/MessageChannel';
 import { SettingsAccountsMessageChannelDetails } from '@/settings/accounts/components/SettingsAccountsMessageChannelDetails';
 import { SettingsAccountsSelectedMessageChannelEffect } from '@/settings/accounts/components/SettingsAccountsSelectedMessageChannelEffect';
 import { SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID } from '@/settings/accounts/constants/SettingsAccountMessageChannelsTabListComponentId';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import React from 'react';
 
 type SettingsAccountsMessageChannelsContainerProps = {
@@ -13,9 +12,9 @@ type SettingsAccountsMessageChannelsContainerProps = {
 export const SettingsAccountsMessageChannelsContainer = ({
   messageChannels,
 }: SettingsAccountsMessageChannelsContainerProps) => {
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
+  const activeTabId = useSettingsActiveTabId(
     SETTINGS_ACCOUNT_MESSAGE_CHANNELS_TAB_LIST_COMPONENT_ID,
+    messageChannels.map((channel) => channel.id),
   );
 
   return (
@@ -25,8 +24,7 @@ export const SettingsAccountsMessageChannelsContainer = ({
       />
       {messageChannels.map((messageChannel) => (
         <React.Fragment key={messageChannel.id}>
-          {(messageChannels.length === 1 ||
-            messageChannel.id === activeTabId) && (
+          {messageChannel.id === activeTabId && (
             <SettingsAccountsMessageChannelDetails
               messageChannel={messageChannel}
             />

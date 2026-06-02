@@ -916,7 +916,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/general#security' },
+    payload: { path: '/settings/security' },
   },
   goToSettingsAdminPanel: {
     universalIdentifier: 'dd22798b-fca6-42af-ba3b-0d48f263afbd',

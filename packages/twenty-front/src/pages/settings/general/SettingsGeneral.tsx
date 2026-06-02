@@ -4,14 +4,13 @@ import { isMultiWorkspaceEnabledState } from '@/client-config/states/isMultiWork
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
+import { useSettingsActiveTabId } from '@/settings/components/layout/useSettingsActiveTabId';
 import { SettingsWorkspaceDomainCard } from '@/settings/domains/components/SettingsWorkspaceDomainCard';
 import { DeleteWorkspace } from '@/settings/profile/components/DeleteWorkspace';
 import { useHasPermissionFlag } from '@/settings/roles/hooks/useHasPermissionFlag';
 import { SettingsSecuritySettings } from '@/settings/security/components/SettingsSecuritySettings';
 import { NameField } from '@/settings/workspace/components/NameField';
 import { WorkspaceLogoUploader } from '@/settings/workspace/components/WorkspaceLogoUploader';
-import { activeTabIdComponentState } from '@/ui/layout/tab-list/states/activeTabIdComponentState';
-import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -35,17 +34,17 @@ export const SettingsGeneral = () => {
     PermissionFlagType.SECURITY,
   );
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    SETTINGS_GENERAL_TABS_INSTANCE_ID,
-  );
-
   const tabs = [
     { id: GENERAL_TAB_GENERAL, title: t`General`, Icon: IconSettings },
     ...(hasSecurityPermission
       ? [{ id: GENERAL_TAB_SECURITY, title: t`Security`, Icon: IconKey }]
       : []),
   ];
+
+  const activeTabId = useSettingsActiveTabId(
+    SETTINGS_GENERAL_TABS_INSTANCE_ID,
+    tabs.map((tab) => tab.id),
+  );
 
   const renderActiveTabContent = () => {
     if (hasSecurityPermission && activeTabId === GENERAL_TAB_SECURITY) {

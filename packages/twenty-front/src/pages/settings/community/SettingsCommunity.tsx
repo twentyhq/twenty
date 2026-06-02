@@ -5,8 +5,6 @@ import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLay
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { useContext } from 'react';
-import { SettingsPath } from 'twenty-shared/types';
-import { getSettingsPath } from 'twenty-shared/utils';
 import {
   H2Title,
   IconBriefcase,
@@ -59,13 +57,7 @@ export const SettingsCommunity = () => {
   return (
     <SettingsPageLayout
       title={t`Community`}
-      links={[
-        {
-          children: t`Other`,
-          href: getSettingsPath(SettingsPath.Community),
-        },
-        { children: t`Community` },
-      ]}
+      links={[{ children: t`Other` }, { children: t`Community` }]}
     >
       <SettingsPageContainer>
         {communityLinks.map(({ title, description, href, Icon, cardTitle }) => (
