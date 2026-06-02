@@ -16,7 +16,7 @@ import {
   LogicFunctionExecutionMode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.entity';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
-import { lambdaShouldReInstallPrebuiltBundle } from 'src/engine/metadata-modules/logic-function/utils/lambda-should-re-install-prebuilt-bundle.util';
+import { shouldReinstallLogicFunctionPrebuiltBundle } from 'src/engine/metadata-modules/logic-function/utils/should-reinstall-logic-function-prebuilt-bundle.util';
 import { resolveUniversalUpdateRelationIdentifiersToIds } from 'src/engine/workspace-manager/workspace-migration/universal-flat-entity/utils/resolve-universal-update-relation-identifiers-to-ids.util';
 import {
   FlatUpdateLogicFunctionAction,
@@ -137,7 +137,7 @@ export class UpdateLogicFunctionActionHandlerService extends WorkspaceMigrationR
     };
 
     if (
-      !lambdaShouldReInstallPrebuiltBundle({
+      !shouldReinstallLogicFunctionPrebuiltBundle({
         existingLogicFunction,
         newLogicFunction,
       })

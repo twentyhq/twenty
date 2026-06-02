@@ -8,7 +8,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { validateFilePath } from 'src/engine/core-modules/file-storage/utils/validate-file-path.util';
 import { findFlatEntityByUniversalIdentifier } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-universal-identifier.util';
 import { LogicFunctionExceptionCode } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
-import { validateIfPrebuiltIsValid } from 'src/engine/metadata-modules/logic-function/utils/validate-if-prebuilt-is-valid.util';
+import { isLogicFunctionPrebuiltStateValid } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-prebuilt-state-valid.util';
 import { type FailedFlatEntityValidation } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/types/failed-flat-entity-validation.type';
 import { getEmptyFlatEntityValidationError } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/utils/get-flat-entity-validation-error.util';
 import { type FlatEntityUpdateValidationArgs } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/types/universal-flat-entity-update-validation-args.type';
@@ -80,7 +80,7 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    const prebuiltInvariantError = validateIfPrebuiltIsValid({
+    const isPrebuiltStateValid = isLogicFunctionPrebuiltStateValid({
       executionMode:
         flatEntityUpdate.executionMode ??
         existingFlatLogicFunction.executionMode,
@@ -93,8 +93,12 @@ export class FlatLogicFunctionValidatorService {
           : existingFlatLogicFunction.checksum,
     });
 
-    if (isDefined(prebuiltInvariantError)) {
-      validationResult.errors.push(prebuiltInvariantError);
+    if (!isPrebuiltStateValid) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+      });
     }
 
     return validationResult;
@@ -193,14 +197,12 @@ export class FlatLogicFunctionValidatorService {
       }
     }
 
-    const prebuiltInvariantError = validateIfPrebuiltIsValid({
-      executionMode: flatLogicFunctionToValidate.executionMode,
-      isBuildUpToDate: flatLogicFunctionToValidate.isBuildUpToDate,
-      checksum: flatLogicFunctionToValidate.checksum,
-    });
-
-    if (isDefined(prebuiltInvariantError)) {
-      validationResult.errors.push(prebuiltInvariantError);
+    if (!isLogicFunctionPrebuiltStateValid(flatLogicFunctionToValidate)) {
+      validationResult.errors.push({
+        code: LogicFunctionExceptionCode.INVALID_LOGIC_FUNCTION_INPUT,
+        message: t`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+        userFriendlyMessage: msg`Logic function cannot be in PREBUILT mode without a fresh build and a checksum`,
+      });
     }
 
     return validationResult;
