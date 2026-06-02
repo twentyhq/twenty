@@ -30,7 +30,11 @@ export const generateFindToolInputSchema = (
       .default(0)
       .describe('Number of records to skip (default: 0)'),
     orderBy: ObjectRecordOrderBySchema.describe(
-      'Sort by field(s). Each entry: {fieldName: "DescNullsLast"|"AscNullsFirst"|...}. Ex: [{"employees":"DescNullsLast"}]. Use DescNullsLast for top/largest, AscNullsFirst for bottom/smallest.',
+      'Sort by field(s). ' +
+        'Scalar fields: [{fieldName: "DescNullsLast"}]. ' +
+        'Composite fields (name, address, currency, …): [{fieldName: {subFieldName: "AscNullsFirst"}}] — e.g. [{"name": {"firstName": "AscNullsFirst"}}]. ' +
+        'Never use dot-notation keys like "name.firstName". ' +
+        'Use DescNullsLast for top/largest, AscNullsFirst for bottom/smallest.',
     ),
     select: z
       .array(z.string())
