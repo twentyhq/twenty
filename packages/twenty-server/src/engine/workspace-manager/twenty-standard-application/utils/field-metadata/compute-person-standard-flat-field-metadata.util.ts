@@ -538,10 +538,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       targetFieldName: 'person',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
-        // Render as a native junction (many-to-many) card hopping to the topic.
-        junctionTargetFieldId:
-          standardObjectMetadataRelatedEntityIds.messageSubscription.fields
-            .topic.id,
       },
     },
     standardObjectMetadataRelatedEntityIds,
@@ -565,10 +561,6 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       targetFieldName: 'person',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
-        // Render as a native junction (many-to-many) card hopping to the segment.
-        junctionTargetFieldId:
-          standardObjectMetadataRelatedEntityIds.messageSegmentMember.fields
-            .segment.id,
       },
     },
     standardObjectMetadataRelatedEntityIds,
