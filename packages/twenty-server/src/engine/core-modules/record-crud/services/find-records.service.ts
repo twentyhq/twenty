@@ -12,6 +12,7 @@ import { type FindRecordsResult } from 'src/engine/core-modules/record-crud/type
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-selected-field.util';
+import { isNonEmptyArray } from '@sniptt/guards';
 
 @Injectable()
 export class FindRecordsService {
@@ -45,15 +46,16 @@ export class FindRecordsService {
         objectName,
       });
 
-      const { effectiveSelectedFields } = buildEffectiveSelectedFields({
-        select: params.select,
-        filter,
-        orderBy,
-        objectName,
-        flatObjectMetadata,
-        flatFieldMetadataMaps,
-        selectedFields,
-      });
+      const { effectiveSelectedFields, warnings } =
+        buildEffectiveSelectedFields({
+          select: params.select,
+          filter,
+          orderBy,
+          objectName,
+          flatObjectMetadata,
+          flatFieldMetadataMaps,
+          selectedFields,
+        });
 
       // Add id to orderBy for consistent pagination
       const orderByWithIdCondition: ObjectRecordOrderBy = [
@@ -93,6 +95,7 @@ export class FindRecordsService {
           records,
           count: totalCount,
         },
+        ...(isNonEmptyArray(warnings) ? { warnings: warnings } : {}),
         recordReferences,
       };
     } catch (error) {

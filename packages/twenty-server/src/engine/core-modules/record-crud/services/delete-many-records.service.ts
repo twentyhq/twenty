@@ -27,7 +27,8 @@ export class DeleteManyRecordsService {
       return {
         success: false,
         message: `Failed to delete records from ${objectName}`,
-        error: 'Filter must not be empty — deleting without a filter is not allowed',
+        error:
+          'Filter must not be empty — deleting without a filter is not allowed',
       };
     }
 
