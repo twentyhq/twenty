@@ -1,8 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
 
 import { CommonCreateManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-create-many-query-runner/common-create-many-query-runner.service';
+import {
+  RecordCrudException,
+  RecordCrudExceptionCode,
+} from 'src/engine/core-modules/record-crud/exceptions/record-crud.exception';
 import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-crud/services/common-api-context-builder.service';
 import { type UpsertManyRecordsParams } from 'src/engine/core-modules/record-crud/types/upsert-many-records-params.type';
 import { getRecordDisplayName } from 'src/engine/core-modules/record-crud/utils/get-record-display-name.util';
@@ -31,6 +36,18 @@ export class UpsertManyRecordsService {
         authContext,
         objectName,
       });
+
+      if (
+        !canObjectBeManagedByWorkflow({
+          nameSingular: flatObjectMetadata.nameSingular,
+          isSystem: flatObjectMetadata.isSystem,
+        })
+      ) {
+        throw new RecordCrudException(
+          'Failed to upsert: Object cannot be upserted by workflow',
+          RecordCrudExceptionCode.INVALID_REQUEST,
+        );
+      }
 
       const cleanedRecords = objectRecords.map((record) => ({
         ...removeUndefinedFromRecord(record),
@@ -68,6 +85,14 @@ export class UpsertManyRecordsService {
         })),
       };
     } catch (error) {
+      if (error instanceof RecordCrudException) {
+        return {
+          success: false,
+          message: `Failed to upsert records in ${objectName}`,
+          error: error.message,
+        };
+      }
+
       this.logger.error(`Failed to upsert records: ${error}`);
 
       return {

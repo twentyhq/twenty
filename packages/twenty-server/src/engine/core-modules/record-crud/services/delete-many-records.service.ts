@@ -23,6 +23,14 @@ export class DeleteManyRecordsService {
   async execute(params: DeleteManyRecordsParams): Promise<ToolOutput> {
     const { objectName, filter, authContext } = params;
 
+    if (Object.keys(filter).length === 0) {
+      return {
+        success: false,
+        message: `Failed to delete records from ${objectName}`,
+        error: 'Filter must not be empty — deleting without a filter is not allowed',
+      };
+    }
+
     try {
       const { queryRunnerContext, selectedFields, flatObjectMetadata } =
         await this.commonApiContextBuilder.build({
