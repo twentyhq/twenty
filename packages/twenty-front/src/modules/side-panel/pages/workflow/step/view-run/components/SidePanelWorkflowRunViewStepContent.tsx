@@ -14,6 +14,7 @@ import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThro
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
+import { WorkflowRunStepLogsDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
 import {
@@ -26,7 +27,12 @@ import { styled } from '@linaria/react';
 import { isNull } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
 import { isDefined } from 'twenty-shared/utils';
-import { IconLogin2, IconLogout, IconStepInto } from 'twenty-ui/display';
+import {
+  IconLogin2,
+  IconLogout,
+  IconStepInto,
+  IconTerminal,
+} from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 const StyledContainer = styled.div`
@@ -94,6 +100,9 @@ export const SidePanelWorkflowRunViewStepContent = () => {
   const isOutputTabDisabled = getIsOutputTabDisabled({
     stepExecutionStatus,
   });
+  const hasStepLog = isDefined(
+    workflowRun.stepLogs?.[workflowSelectedNode],
+  );
 
   const tabs: SingleTabProps<TabId>[] = [
     {
@@ -112,6 +121,12 @@ export const SidePanelWorkflowRunViewStepContent = () => {
       title: t`Input`,
       Icon: IconLogin2,
       disabled: isInputTabDisabled,
+    },
+    {
+      id: WorkflowRunTabId.LOGS,
+      title: t`Logs`,
+      Icon: IconTerminal,
+      disabled: !hasStepLog,
     },
   ];
 
@@ -157,6 +172,13 @@ export const SidePanelWorkflowRunViewStepContent = () => {
 
             {activeTabId === WorkflowRunTabId.INPUT ? (
               <WorkflowRunStepInputDetail
+                key={workflowSelectedNode}
+                stepId={workflowSelectedNode}
+              />
+            ) : null}
+
+            {activeTabId === WorkflowRunTabId.LOGS ? (
+              <WorkflowRunStepLogsDetail
                 key={workflowSelectedNode}
                 stepId={workflowSelectedNode}
               />

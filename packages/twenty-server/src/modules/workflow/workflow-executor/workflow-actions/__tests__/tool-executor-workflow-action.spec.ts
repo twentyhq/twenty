@@ -4,6 +4,7 @@ import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/dr
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
 import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
 import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
+import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   type WorkflowAction,
@@ -70,6 +71,10 @@ describe('ToolExecutorWorkflowAction', () => {
         { provide: HttpTool, useValue: { execute: jest.fn() } },
         { provide: SendEmailTool, useValue: mockSendEmailTool },
         { provide: DraftEmailTool, useValue: mockDraftEmailTool },
+        {
+          provide: WorkflowRunStepLogWorkspaceService,
+          useValue: { setStepLog: jest.fn() },
+        },
       ],
     }).compile();
 

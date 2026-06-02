@@ -10,6 +10,7 @@ import { WorkspaceEntity } from 'src/engine/core-modules/workspace/workspace.ent
 import { ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { WorkflowCommonModule } from 'src/modules/workflow/common/workflow-common.module';
 import { DeleteWorkflowRunsCommand } from 'src/modules/workflow/workflow-runner/workflow-run/command/delete-workflow-runs.command';
+import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run.workspace-service';
 
 @Module({
@@ -24,7 +25,15 @@ import { WorkflowRunWorkspaceService } from 'src/modules/workflow/workflow-runne
     MetricsModule,
     WorkspaceIteratorModule,
   ],
-  providers: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
-  exports: [WorkflowRunWorkspaceService, DeleteWorkflowRunsCommand],
+  providers: [
+    WorkflowRunWorkspaceService,
+    WorkflowRunStepLogWorkspaceService,
+    DeleteWorkflowRunsCommand,
+  ],
+  exports: [
+    WorkflowRunWorkspaceService,
+    WorkflowRunStepLogWorkspaceService,
+    DeleteWorkflowRunsCommand,
+  ],
 })
 export class WorkflowRunModule {}

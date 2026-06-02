@@ -7,6 +7,7 @@ import {
   type LanguageModelUsage,
   Output,
   stepCountIs,
+  type StepResult,
   type ToolSet,
 } from 'ai';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
@@ -27,6 +28,7 @@ import { AGENT_CONFIG } from 'src/engine/metadata-modules/ai/ai-agent/constants/
 import { WORKFLOW_SYSTEM_PROMPTS } from 'src/engine/metadata-modules/ai/ai-agent/constants/agent-system-prompts.const';
 import { type AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { repairToolCall } from 'src/engine/metadata-modules/ai/ai-agent/utils/repair-tool-call.util';
+import { NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS } from 'src/engine/metadata-modules/ai/ai-billing/constants/native-web-search-cost-per-call-dollars';
 import { AiBillingService } from 'src/engine/metadata-modules/ai/ai-billing/services/ai-billing.service';
 import { convertDollarsToBillingCredits } from 'src/engine/metadata-modules/ai/ai-billing/utils/convert-dollars-to-billing-credits.util';
 import { countNativeWebSearchCallsFromSteps } from 'src/engine/metadata-modules/ai/ai-billing/utils/count-native-web-search-calls-from-steps.util';
@@ -120,6 +122,7 @@ export class AgentAsyncExecutorService {
     let accumulatedUsage: LanguageModelUsage = EMPTY_USAGE;
     let cacheCreationTokens = 0;
     let nativeWebSearchCallCount = 0;
+    let executionSteps: StepResult<ToolSet>[] = [];
 
     try {
       if (agent) {
@@ -257,6 +260,7 @@ export class AgentAsyncExecutorService {
       nativeWebSearchCallCount = countNativeWebSearchCallsFromSteps(
         textResponse.steps,
       );
+      executionSteps = textResponse.steps;
 
       const agentSchema =
         agent?.responseFormat?.type === 'json'
@@ -264,12 +268,28 @@ export class AgentAsyncExecutorService {
           : undefined;
 
       if (!agentSchema) {
+        const resolvedModelId = registeredModel.modelId;
+        const tokenCostInDollars = this.aiBillingService.calculateCost(
+          resolvedModelId,
+          { usage: textResponse.usage, cacheCreationTokens },
+        );
+        const totalCostInDollars =
+          tokenCostInDollars +
+          nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
+        const creditsUsedMicro = Math.round(
+          convertDollarsToBillingCredits(totalCostInDollars),
+        );
+
         return {
           result: { response: textResponse.text },
           usage: textResponse.usage,
           cacheCreationTokens,
           nativeWebSearchCallCount,
           hasNoMoreAvailableCredits,
+          steps: executionSteps,
+          modelId: resolvedModelId,
+          totalCostInDollars,
+          creditsUsedMicro,
         };
       }
 
@@ -306,6 +326,7 @@ export class AgentAsyncExecutorService {
         textResponse.usage,
         structuredResult.usage,
       );
+      executionSteps = [...textResponse.steps, ...structuredResult.steps];
 
       if (structuredResult.output == null) {
         throw new AiException(
@@ -314,12 +335,28 @@ export class AgentAsyncExecutorService {
         );
       }
 
+      const resolvedModelId = registeredModel.modelId;
+      const tokenCostInDollars = this.aiBillingService.calculateCost(
+        resolvedModelId,
+        { usage: accumulatedUsage, cacheCreationTokens },
+      );
+      const totalCostInDollars =
+        tokenCostInDollars +
+        nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
+      const creditsUsedMicro = Math.round(
+        convertDollarsToBillingCredits(totalCostInDollars),
+      );
+
       return {
         result: structuredResult.output as object,
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,
         hasNoMoreAvailableCredits,
+        steps: executionSteps,
+        modelId: resolvedModelId,
+        totalCostInDollars,
+        creditsUsedMicro,
       };
     } catch (error) {
       if (error instanceof AiException) {
