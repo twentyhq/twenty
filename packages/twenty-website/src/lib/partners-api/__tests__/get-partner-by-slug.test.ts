@@ -17,7 +17,7 @@ const apiPartner = (overrides: Record<string, unknown> = {}) => ({
   slug: 'acme',
   introduction: 'We do CRM things.',
   languagesSpoken: ['ENGLISH'],
-  deploymentExpertise: ['CLOUD'],
+  partnerScope: ['HOSTING'],
   region: ['EUROPE'],
   calendarLink: { primaryLinkUrl: 'https://calendly.com/acme' },
   hourlyRate: { amountMicros: 150_000_000, currencyCode: 'USD' },
@@ -52,6 +52,7 @@ describe('getPartnerBySlug', () => {
     expect(partner?.slug).toBe('acme');
     expect(partner?.hourlyRateUsd).toBe(150);
     expect(partner?.linkedinUrl).toBe('https://linkedin.com/in/acme');
+    expect(partner?.partnerScope).toEqual(['HOSTING']);
   });
 
   it('returns null on NOT_FOUND', async () => {

@@ -45,7 +45,7 @@ export function MarketplaceClient({
     criteria,
     toggleRegion,
     toggleLanguage,
-    toggleDeployment,
+    toggleCategory,
     clearAll,
     hasAnyFilter,
   } = useFilterState();
@@ -66,7 +66,7 @@ export function MarketplaceClient({
             hasAnyFilter={hasAnyFilter}
             onToggleRegion={toggleRegion}
             onToggleLanguage={toggleLanguage}
-            onToggleDeployment={toggleDeployment}
+            onToggleCategory={toggleCategory}
             onClearAll={clearAll}
           />
         </FilterBarInner>

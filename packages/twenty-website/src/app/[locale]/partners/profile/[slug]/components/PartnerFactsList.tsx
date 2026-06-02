@@ -6,12 +6,12 @@ import { styled } from '@linaria/react';
 
 import type { MessageDescriptor } from '@lingui/core';
 import {
-  DEPLOYMENT_EXPERTISE_LABELS,
+  PARTNER_SCOPE_LABELS,
   SPOKEN_LANGUAGE_LABELS,
 } from '@/app/[locale]/partners/list/components/chip-labels';
 import type {
-  DeploymentExpertise,
   MarketplacePartner,
+  PartnerScope,
   SpokenLanguage,
 } from '@/lib/partners-api';
 import { theme } from '@/theme';
@@ -73,14 +73,14 @@ type PartnerFactsListProps = {
   city: MarketplacePartner['city'];
   country: MarketplacePartner['country'];
   languagesSpoken: MarketplacePartner['languagesSpoken'];
-  deploymentExpertise: MarketplacePartner['deploymentExpertise'];
+  partnerScope: MarketplacePartner['partnerScope'];
 };
 
 export function PartnerFactsList({
   city,
   country,
   languagesSpoken,
-  deploymentExpertise,
+  partnerScope,
 }: PartnerFactsListProps) {
   const { i18n } = useLingui();
   const translate = (d: MessageDescriptor) => i18n._(d);
@@ -94,9 +94,9 @@ export function PartnerFactsList({
     SPOKEN_LANGUAGE_LABELS,
     translate,
   );
-  const deployText = resolveLabels(
-    deploymentExpertise as readonly DeploymentExpertise[],
-    DEPLOYMENT_EXPERTISE_LABELS,
+  const categoryText = resolveLabels(
+    partnerScope as readonly PartnerScope[],
+    PARTNER_SCOPE_LABELS,
     translate,
   );
 
@@ -114,10 +114,10 @@ export function PartnerFactsList({
           <FactValue>{languageText}</FactValue>
         </FactRow>
       )}
-      {deployText && (
+      {categoryText && (
         <FactRow>
-          <FactLabel>{i18n._(msg`Deploys`)}</FactLabel>
-          <FactValue>{deployText}</FactValue>
+          <FactLabel>{i18n._(msg`Categories`)}</FactLabel>
+          <FactValue>{categoryText}</FactValue>
         </FactRow>
       )}
     </FactsDl>

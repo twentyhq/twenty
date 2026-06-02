@@ -1,10 +1,10 @@
 export {
-  DEPLOYMENT_EXPERTISES,
+  PARTNER_SCOPES,
   SERVED_GEOS,
   SPOKEN_LANGUAGES,
 } from '@/lib/partners-api/partner-facets';
 export type {
-  DeploymentExpertise,
+  PartnerScope,
   ServedGeo,
   SpokenLanguage,
 } from '@/lib/partners-api/partner-facets';

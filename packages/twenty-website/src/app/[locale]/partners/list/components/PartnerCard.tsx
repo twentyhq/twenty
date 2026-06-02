@@ -14,7 +14,7 @@ import { PartnerAvatar } from './PartnerAvatar';
 import { PartnerChipRow } from './PartnerChipRow';
 import { PartnerMoneyRow } from './PartnerMoneyRow';
 import {
-  DEPLOYMENT_EXPERTISE_LABELS,
+  PARTNER_SCOPE_LABELS,
   SERVED_GEO_LABELS,
   SPOKEN_LANGUAGE_LABELS,
 } from './chip-labels';
@@ -245,9 +245,9 @@ export function PartnerCard({ partner, index, locale }: PartnerCardProps) {
           valueLabels={SPOKEN_LANGUAGE_LABELS}
         />
         <PartnerChipRow
-          label={msg`Deploys`}
-          values={partner.deploymentExpertise}
-          valueLabels={DEPLOYMENT_EXPERTISE_LABELS}
+          label={msg`Categories`}
+          values={partner.partnerScope}
+          valueLabels={PARTNER_SCOPE_LABELS}
         />
       </ChipRows>
 

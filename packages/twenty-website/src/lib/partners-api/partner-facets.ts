@@ -56,5 +56,16 @@ export const SPOKEN_LANGUAGES = [
 ] as const;
 export type SpokenLanguage = (typeof SPOKEN_LANGUAGES)[number];
 
-export const DEPLOYMENT_EXPERTISES = ['CLOUD', 'SELF_HOST'] as const;
-export type DeploymentExpertise = (typeof DEPLOYMENT_EXPERTISES)[number];
+// Mirrors the MULTI_SELECT options on the Partner.partnerScope field (labelled
+// "Categories" in the CRM) in the twenty-partners SDK app. These are the macro
+// categories a partner operates in. Keep in sync with the app's partner.object
+// options — the CRM is the source of truth. Unknown values still render via
+// PartnerChipRow's title-case fallback.
+export const PARTNER_SCOPES = [
+  'ADVISORY',
+  'SOLUTIONING',
+  'DEVELOPMENT',
+  'HOSTING',
+  'SUPPORT',
+] as const;
+export type PartnerScope = (typeof PARTNER_SCOPES)[number];

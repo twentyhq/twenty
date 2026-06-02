@@ -17,7 +17,7 @@ const FIXTURE: MarketplacePartner = {
   name: 'Test Partner',
   introduction: 'A reliable partner for testing purposes.',
   calendarLink: 'https://calendly.com/test-partner',
-  deploymentExpertise: ['CLOUD', 'SELF_HOST'],
+  partnerScope: ['HOSTING', 'DEVELOPMENT'],
   region: ['EUROPE', 'US'],
   languagesSpoken: ['ENGLISH', 'FRENCH'],
   hourlyRateUsd: null,
@@ -61,7 +61,7 @@ describe('PartnerCard', () => {
     const expectedChipCount =
       FIXTURE.region.length +
       FIXTURE.languagesSpoken.length +
-      FIXTURE.deploymentExpertise.length;
+      FIXTURE.partnerScope.length;
     const liMatches = html.match(/<li[^>]*>/g) ?? [];
     expect(liMatches.length).toBe(expectedChipCount);
   });

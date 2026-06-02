@@ -16,7 +16,7 @@ const apiPartner = (overrides: Record<string, unknown> = {}) => ({
   slug: 'acme',
   introduction: 'We do CRM things.',
   languagesSpoken: ['ENGLISH'],
-  deploymentExpertise: ['CLOUD'],
+  partnerScope: ['HOSTING'],
   region: ['EUROPE'],
   calendarLink: { primaryLinkUrl: 'calendly.com/acme' },
   hourlyRate: { amountMicros: 150_000_000, currencyCode: 'USD' },
@@ -87,6 +87,20 @@ describe('getPartners boundary normalization', () => {
     expect(partners[0].skills).toEqual([]);
     expect(partners[0].city).toBe('');
     expect(partners[0].country).toBe('');
+  });
+
+  it('passes through partnerScope categories', async () => {
+    mockApi([apiPartner({ partnerScope: ['HOSTING', 'SUPPORT'] })]);
+    const getPartners = await importGetPartners();
+    const partners = await getPartners();
+    expect(partners[0].partnerScope).toEqual(['HOSTING', 'SUPPORT']);
+  });
+
+  it('falls back to an empty array when partnerScope is null', async () => {
+    mockApi([apiPartner({ partnerScope: null })]);
+    const getPartners = await importGetPartners();
+    const partners = await getPartners();
+    expect(partners[0].partnerScope).toEqual([]);
   });
 });
 export {};

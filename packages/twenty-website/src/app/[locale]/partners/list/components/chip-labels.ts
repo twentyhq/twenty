@@ -2,7 +2,7 @@ import { msg } from '@lingui/core/macro';
 import type { MessageDescriptor } from '@lingui/core';
 
 import type {
-  DeploymentExpertise,
+  PartnerScope,
   ServedGeo,
   SpokenLanguage,
 } from '@/lib/partners-api';
@@ -55,10 +55,12 @@ export const SPOKEN_LANGUAGE_LABELS: Record<SpokenLanguage, MessageDescriptor> =
     VIETNAMESE: msg`Vietnamese`,
   };
 
-export const DEPLOYMENT_EXPERTISE_LABELS: Record<
-  DeploymentExpertise,
-  MessageDescriptor
-> = {
-  CLOUD: msg`Cloud`,
-  SELF_HOST: msg`Self-host`,
+// Mirrors the Partner.partnerScope ("Categories") option labels in the
+// twenty-partners SDK app.
+export const PARTNER_SCOPE_LABELS: Record<PartnerScope, MessageDescriptor> = {
+  ADVISORY: msg`Advisory & Discovery`,
+  SOLUTIONING: msg`Solutioning`,
+  DEVELOPMENT: msg`Custom Development`,
+  HOSTING: msg`Hosting & Infrastructure`,
+  SUPPORT: msg`Training & Adoption`,
 };

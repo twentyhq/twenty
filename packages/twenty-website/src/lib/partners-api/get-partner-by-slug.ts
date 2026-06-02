@@ -12,7 +12,7 @@ type ApiPartner = {
   slug: string;
   introduction: string;
   languagesSpoken: MarketplacePartner['languagesSpoken'][number][];
-  deploymentExpertise: MarketplacePartner['deploymentExpertise'][number][];
+  partnerScope: MarketplacePartner['partnerScope'][number][] | null;
   region: MarketplacePartner['region'][number][];
   calendarLink: LinkValue;
   hourlyRate: CurrencyValue;
@@ -47,7 +47,7 @@ const toMarketplacePartner = (p: ApiPartner): MarketplacePartner => ({
   name: p.name,
   introduction: p.introduction,
   languagesSpoken: p.languagesSpoken,
-  deploymentExpertise: p.deploymentExpertise,
+  partnerScope: p.partnerScope ?? [],
   region: p.region,
   calendarLink: linkUrl(p.calendarLink),
   hourlyRateUsd: microsToUsd(p.hourlyRate),

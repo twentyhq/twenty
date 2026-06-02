@@ -258,7 +258,7 @@ export default async function PartnerProfilePage({
                   city={partner.city}
                   country={partner.country}
                   languagesSpoken={partner.languagesSpoken}
-                  deploymentExpertise={partner.deploymentExpertise}
+                  partnerScope={partner.partnerScope}
                 />
               </WhereSection>
             </MainColumn>
