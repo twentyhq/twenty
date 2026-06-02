@@ -14,14 +14,13 @@ const StyledStepBar = styled.div`
   align-items: center;
   display: grid;
   flex: 1;
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   min-width: 0;
 `;
 
 const StyledLeft = styled.div`
   align-items: center;
   display: flex;
-  justify-self: start;
   min-width: 0;
 `;
 
@@ -39,7 +38,6 @@ const StyledRight = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-  justify-self: end;
   min-width: 0;
 `;
 

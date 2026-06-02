@@ -17,14 +17,17 @@ type SettingsPageHeaderProps = {
   actionButton?: ReactNode;
 };
 
-// Header row inside the settings card. Symmetric padding + 1fr / auto / 1fr grid
-// keep the title centered on the same vertical axis as the tabs and body content.
+// Header row inside the settings card. The side cells fill equal minmax(0, 1fr)
+// tracks and clip overflow, so the centered title stays on the same vertical axis
+// as the tabs and body even when the breadcrumb is long — the breadcrumb truncates
+// instead of pushing or overlapping the title. Plain `1fr` (= minmax(auto, 1fr))
+// would let a long breadcrumb grow its track and shove the title off-center.
 const StyledHeader = styled.div`
   align-items: center;
   box-sizing: border-box;
   display: grid;
   gap: ${themeCssVariables.spacing[2]};
-  grid-template-columns: 1fr auto 1fr;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   padding: ${themeCssVariables.spacing[3]};
   width: 100%;
 `;
@@ -33,7 +36,6 @@ const StyledLeft = styled.div`
   align-items: center;
   display: flex;
   gap: ${themeCssVariables.spacing[1]};
-  justify-self: start;
   min-width: 0;
   overflow: hidden;
 `;
@@ -54,7 +56,6 @@ const StyledRight = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
   justify-content: flex-end;
-  justify-self: end;
   min-width: 0;
 `;
 

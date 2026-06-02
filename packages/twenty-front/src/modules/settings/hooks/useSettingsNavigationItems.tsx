@@ -26,7 +26,6 @@ import {
   IconDoorEnter,
   IconHelpCircle,
   IconHierarchy2,
-  IconKey,
   IconLayout,
   IconMail,
   IconMessage,
@@ -124,16 +123,6 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.General,
           Icon: IconSettings,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
-          subItems: [
-            {
-              label: t`Security`,
-              path: SettingsPath.Security,
-              Icon: IconKey,
-              isAdvanced: true,
-              isHidden: !permissionMap[PermissionFlagType.SECURITY],
-              indentationLevel: 2,
-            },
-          ],
         },
         {
           label: t`Data model`,
@@ -178,14 +167,12 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           path: SettingsPath.Applications,
           Icon: IconPlug,
           isHidden: !permissionMap[PermissionFlagType.APPLICATIONS],
-          modifier: 'new',
         },
         {
           label: t`AI`,
           path: SettingsPath.AI,
           Icon: IconSparkles,
           isHidden: !permissionMap[PermissionFlagType.AI],
-          modifier: 'new',
         },
         {
           label: t`Email`,

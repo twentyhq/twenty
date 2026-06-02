@@ -150,20 +150,20 @@ export const SettingsRolePermissionsObjectLevelObjectForm = ({
     <SettingsPageLayout
       title={headerTitle}
       links={breadcrumbLinks}
-      actionButton={
-        <Button
-          title={t`Finish`}
-          variant="secondary"
-          size="small"
-          accent="blue"
-          to={isFinishDisabled ? undefined : finishButtonPath}
-          disabled={isFinishDisabled}
-        />
-      }
       secondaryBar={
         <SettingsWizardStepBar
           label={t`2. Set ${objectLabelPlural} permissions`}
           onBack={() => navigate(previousStepPath)}
+          trailing={
+            <Button
+              title={t`Finish`}
+              variant="primary"
+              size="small"
+              accent="blue"
+              to={isFinishDisabled ? undefined : finishButtonPath}
+              disabled={isFinishDisabled}
+            />
+          }
         />
       }
     >
