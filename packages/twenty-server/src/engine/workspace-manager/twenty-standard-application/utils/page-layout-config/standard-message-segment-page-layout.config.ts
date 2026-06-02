@@ -89,7 +89,8 @@ const MESSAGE_SEGMENT_PAGE_TABS = {
 export const STANDARD_MESSAGE_SEGMENT_PAGE_LAYOUT_CONFIG = {
   name: 'Default Segment Layout',
   type: PageLayoutType.RECORD_PAGE,
-  objectUniversalIdentifier: STANDARD_OBJECTS.messageSegment.universalIdentifier,
+  objectUniversalIdentifier:
+    STANDARD_OBJECTS.messageSegment.universalIdentifier,
   universalIdentifier:
     STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS.messageSegmentRecordPage
       .universalIdentifier,

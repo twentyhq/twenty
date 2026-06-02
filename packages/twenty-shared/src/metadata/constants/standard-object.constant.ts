@@ -795,9 +795,10 @@ export const STANDARD_OBJECTS = {
       providerEventId: {
         universalIdentifier: 'cc168a11-d6a4-46bc-9e2b-9fb925079761',
       },
+      topic: { universalIdentifier: 'b7d2e90a-1f4c-4d8e-9a6b-2c3d4e5f6071' },
     },
     indexes: {
-      emailAddressUniqueIndex: {
+      emailAddressTopicUniqueIndex: {
         universalIdentifier: '62397bbf-470d-466b-8a33-10bedc3f3ac3',
       },
       searchVectorGinIndex: {
@@ -843,8 +844,14 @@ export const STANDARD_OBJECTS = {
       subscriptions: {
         universalIdentifier: '1b581656-e00f-42b4-9c0e-97c2be32c215',
       },
+      suppressions: {
+        universalIdentifier: 'c8e3f01b-2a5d-4e9f-8b7c-3d4e5f607182',
+      },
       broadcasts: {
         universalIdentifier: 'ddb2a585-1a7f-4063-8aa6-7b9d1e5fc0bd',
+      },
+      timelineActivities: {
+        universalIdentifier: 'c3d4e5f6-7081-4c92-8da3-14e5f6071829',
       },
     },
     indexes: {
@@ -908,6 +915,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
       },
       topic: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
+      timelineActivities: {
+        universalIdentifier: 'd4e5f607-1829-4da3-8eb4-25f607182930',
+      },
     },
     indexes: {
       topicIdIndex: {
@@ -994,6 +1004,9 @@ export const STANDARD_OBJECTS = {
       name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
       members: {
         universalIdentifier: '92df3493-91cf-4665-8587-1b08917d299b',
+      },
+      timelineActivities: {
+        universalIdentifier: 'e0a5b2c3-4d6f-4e81-9a02-1b3c4d5e6f70',
       },
     },
     indexes: {
@@ -2376,6 +2389,15 @@ export const STANDARD_OBJECTS = {
       },
       targetDashboard: {
         universalIdentifier: '20202020-7864-48f5-af7c-9e4b60140948',
+      },
+      targetMessageSegment: {
+        universalIdentifier: 'd9f4a1b2-3c5e-4d70-8e91-0a2b3c4d5e6f',
+      },
+      targetMessageTopic: {
+        universalIdentifier: 'a1b2c3d4-5e6f-4a70-8b81-92c3d4e5f607',
+      },
+      targetMessageBroadcast: {
+        universalIdentifier: 'b2c3d4e5-6f70-4b81-8c92-03d4e5f60718',
       },
       linkedRecordCachedName: {
         universalIdentifier: '20202020-cfdb-4bef-bbce-a29f41230934',

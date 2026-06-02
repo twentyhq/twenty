@@ -328,7 +328,7 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         labelPlural: i18nLabel(msg`Subscriptions`),
         description: i18nLabel(msg`A person's subscription status for a topic`),
         icon: 'IconMailShare',
-        isSystem: false,
+        isSystem: true,
         labelIdentifierFieldMetadataName: 'topicName',
       },
       workspaceId,

@@ -26,7 +26,10 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
 }: Omit<
   CreateStandardFieldArgs<'messageSegment', FieldMetadataType>,
   'context'
->): Record<AllStandardObjectFieldName<'messageSegment'>, FlatFieldMetadata> => ({
+>): Record<
+  AllStandardObjectFieldName<'messageSegment'>,
+  FlatFieldMetadata
+> => ({
   id: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -202,9 +205,28 @@ export const buildMessageSegmentStandardFlatFieldMetadatas = ({
       targetFieldName: 'segment',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
-        junctionTargetFieldId:
-          standardObjectMetadataRelatedEntityIds.messageSegmentMember.fields
-            .person.id,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  timelineActivities: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'timelineActivities',
+      label: i18nLabel(msg`Events`),
+      description: i18nLabel(msg`Events linked to the segment`),
+      icon: 'IconTimelineEvent',
+      isNullable: true,
+      targetObjectName: 'timelineActivity',
+      targetFieldName: 'targetMessageSegment',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
       },
     },
     standardObjectMetadataRelatedEntityIds,

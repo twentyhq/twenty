@@ -392,5 +392,22 @@ export const buildMessageBroadcastStandardFlatFieldMetadatas = ({
         },
       },
     }),
+    timelineActivities: createStandardRelationFieldFlatMetadata({
+      ...base,
+      context: {
+        type: FieldMetadataType.RELATION,
+        morphId: null,
+        fieldName: 'timelineActivities',
+        label: i18nLabel(msg`Events`),
+        description: i18nLabel(msg`Events linked to the campaign`),
+        icon: 'IconTimelineEvent',
+        isNullable: true,
+        targetObjectName: 'timelineActivity',
+        targetFieldName: 'targetMessageBroadcast',
+        settings: {
+          relationType: RelationType.ONE_TO_MANY,
+        },
+      },
+    }),
   };
 };
