@@ -33,7 +33,6 @@ const queryAvailablePartners = (client: CoreApiClient) =>
           calendarLink: { primaryLinkUrl: true },
           hourlyRate: { amountMicros: true, currencyCode: true },
           projectBudgetMin: { amountMicros: true, currencyCode: true },
-          projectBudgetTypical: { amountMicros: true, currencyCode: true },
           linkedin: { primaryLinkUrl: true },
           profilePicture: { primaryLinkUrl: true },
           skills: true,
