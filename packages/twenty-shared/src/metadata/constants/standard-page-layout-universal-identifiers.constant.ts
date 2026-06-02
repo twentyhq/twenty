@@ -118,6 +118,12 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
           pointOfContactForOpportunities: {
             universalIdentifier: '20202020-ac02-4002-8002-ae0a1ea11213',
           },
+          messageSubscriptions: {
+            universalIdentifier: 'd168d7fd-e52a-4b60-b54a-29a7308979cd',
+          },
+          segmentMemberships: {
+            universalIdentifier: 'f344eb7d-23c1-457a-a29b-32fd548b6aba',
+          },
         },
       },
       timeline: {
@@ -536,6 +542,46 @@ export const STANDARD_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS = {
         widgets: {
           emailThread: {
             universalIdentifier: '20202020-d57e-44cb-b220-69a881feb9c3',
+          },
+        },
+      },
+    },
+  },
+  messageSegmentRecordPage: {
+    universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f60',
+    tabs: {
+      home: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f61',
+        widgets: {
+          fields: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f62',
+          },
+          members: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f63',
+          },
+        },
+      },
+      tasks: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f64',
+        widgets: {
+          tasks: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f65',
+          },
+        },
+      },
+      notes: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f66',
+        widgets: {
+          notes: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f67',
+          },
+        },
+      },
+      files: {
+        universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f68',
+        widgets: {
+          files: {
+            universalIdentifier: 'c1f0a2b3-4d5e-4f60-8a71-9b2c3d4e5f69',
           },
         },
       },

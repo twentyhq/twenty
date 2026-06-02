@@ -16,6 +16,8 @@ import { buildMessageBroadcastStandardFlatFieldMetadatas } from 'src/engine/work
 import { buildMessageSuppressionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util';
 import { buildMessageTopicStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util';
 import { buildMessageSubscriptionStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-subscription-standard-flat-field-metadata.util';
+import { buildMessageSegmentStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-segment-standard-flat-field-metadata.util';
+import { buildMessageSegmentMemberStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-segment-member-standard-flat-field-metadata.util';
 import { buildMessageChannelMessageAssociationMessageFolderStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-message-folder-standard-flat-field-metadata.util';
 import { buildMessageChannelMessageAssociationStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-channel-message-association-standard-flat-field-metadata.util';
 import { buildMessageParticipantStandardFlatFieldMetadatas } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-participant-standard-flat-field-metadata.util';
@@ -53,6 +55,8 @@ const STANDARD_FLAT_FIELD_METADATA_BUILDERS_BY_OBJECT_NAME = {
   messageSuppression: buildMessageSuppressionStandardFlatFieldMetadatas,
   messageTopic: buildMessageTopicStandardFlatFieldMetadatas,
   messageSubscription: buildMessageSubscriptionStandardFlatFieldMetadatas,
+  messageSegment: buildMessageSegmentStandardFlatFieldMetadatas,
+  messageSegmentMember: buildMessageSegmentMemberStandardFlatFieldMetadatas,
   message: buildMessageStandardFlatFieldMetadatas,
   messageChannelMessageAssociation:
     buildMessageChannelMessageAssociationStandardFlatFieldMetadatas,

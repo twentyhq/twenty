@@ -529,15 +529,46 @@ export const buildPersonStandardFlatFieldMetadatas = ({
       type: FieldMetadataType.RELATION,
       morphId: null,
       fieldName: 'messageSubscriptions',
-      label: i18nLabel(msg`Email List Subscriptions`),
-      description: i18nLabel(msg`Email list subscriptions for the contact`),
+      label: i18nLabel(msg`Topics`),
+      description: i18nLabel(msg`Topics the contact is subscribed to`),
       icon: 'IconMailShare',
-      isUIReadOnly: true,
+      isUIReadOnly: false,
       isNullable: true,
       targetObjectName: 'messageSubscription',
       targetFieldName: 'person',
       settings: {
         relationType: RelationType.ONE_TO_MANY,
+        // Render as a native junction (many-to-many) card hopping to the topic.
+        junctionTargetFieldId:
+          standardObjectMetadataRelatedEntityIds.messageSubscription.fields
+            .topic.id,
+      },
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
+  segmentMemberships: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'segmentMemberships',
+      label: i18nLabel(msg`Segments`),
+      description: i18nLabel(msg`Segments the contact belongs to`),
+      icon: 'IconUsersGroup',
+      isUIReadOnly: false,
+      isNullable: true,
+      targetObjectName: 'messageSegmentMember',
+      targetFieldName: 'person',
+      settings: {
+        relationType: RelationType.ONE_TO_MANY,
+        // Render as a native junction (many-to-many) card hopping to the segment.
+        junctionTargetFieldId:
+          standardObjectMetadataRelatedEntityIds.messageSegmentMember.fields
+            .segment.id,
       },
     },
     standardObjectMetadataRelatedEntityIds,

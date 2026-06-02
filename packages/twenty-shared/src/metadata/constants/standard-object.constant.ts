@@ -831,10 +831,19 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '43324d01-0d5a-4d72-89ed-1d77eb9cbc5a',
       },
       name: { universalIdentifier: '67ed2d3c-4ba4-452c-bbbd-e038f4bfae7d' },
+      description: {
+        universalIdentifier: '67ce362d-b50b-4cfb-87da-786bd1074ac4',
+      },
+      subscriptionDefault: {
+        universalIdentifier: '6735433a-376c-4588-89ad-e493a4d6e615',
+      },
+      visibility: {
+        universalIdentifier: 'f654eb52-2ccc-4bc4-9f3d-6f04c45fec7b',
+      },
       subscriptions: {
         universalIdentifier: '1b581656-e00f-42b4-9c0e-97c2be32c215',
       },
-      campaigns: {
+      broadcasts: {
         universalIdentifier: 'ddb2a585-1a7f-4063-8aa6-7b9d1e5fc0bd',
       },
     },
@@ -882,6 +891,9 @@ export const STANDARD_OBJECTS = {
       recipientSource: {
         universalIdentifier: 'eb1f1a36-970d-4bbe-9eaf-798b4617492b',
       },
+      recipientViewId: {
+        universalIdentifier: 'bdf3434e-b9da-41fc-a4a2-e31c705bd0a3',
+      },
       scheduledAt: {
         universalIdentifier: '0f704579-abf5-4f3d-bf08-a117bc87d5a3',
       },
@@ -895,10 +907,10 @@ export const STANDARD_OBJECTS = {
       failedCount: {
         universalIdentifier: 'd373fcd7-b1ce-4c77-8031-a5785c475028',
       },
-      list: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
+      topic: { universalIdentifier: '0648e7ad-1769-4ff6-a4d5-72da79ef169c' },
     },
     indexes: {
-      listIdIndex: {
+      topicIdIndex: {
         universalIdentifier: 'efe8c20e-d12b-4475-969e-e86e0bbfe444',
       },
       searchVectorGinIndex: {
@@ -928,6 +940,9 @@ export const STANDARD_OBJECTS = {
       position: {
         universalIdentifier: '1527e7a0-c397-4348-aab0-e04107ef1499',
       },
+      topicName: {
+        universalIdentifier: 'aefbc961-deee-44fb-a90b-faee5dc22c16',
+      },
       status: { universalIdentifier: 'b1ab01fc-9109-4f46-bac8-baf18da939db' },
       subscribedAt: {
         universalIdentifier: '7345ff75-8931-4895-b7c5-2b09088704b7',
@@ -936,18 +951,93 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '3614f2ff-c3d7-4c9a-a611-d2d15389f777',
       },
       source: { universalIdentifier: '40919ec6-e6e4-49ac-930a-22f42d2100d4' },
-      list: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
+      topic: { universalIdentifier: '12f0282b-a9ea-4d49-833b-0f111e7299ca' },
       person: { universalIdentifier: '1de4167f-afc7-4153-a0e9-cae0758faaeb' },
       searchVector: {
         universalIdentifier: 'efaad9ba-6dc3-475d-9f37-44e6748c8943',
       },
     },
     indexes: {
-      listIdIndex: {
+      topicIdIndex: {
         universalIdentifier: 'fa3d25c6-5ebb-4cd2-b7bd-7f94026595cc',
       },
-      personListUniqueIndex: {
+      personTopicUniqueIndex: {
         universalIdentifier: 'f1911297-c434-486f-98d4-df1754295f4c',
+      },
+    },
+  },
+  messageSegment: {
+    universalIdentifier: '826561ea-4816-411c-baa0-eec5e6ca8866',
+    fields: {
+      id: { universalIdentifier: 'd91c62db-28d1-4e96-83f9-2639dcdcc443' },
+      createdAt: {
+        universalIdentifier: '8cf4126b-135c-4f73-a0c1-a59709274e97',
+      },
+      updatedAt: {
+        universalIdentifier: '78f06ca3-7a5e-4b42-8a18-c8011ae49933',
+      },
+      deletedAt: {
+        universalIdentifier: 'a52447c9-69de-4598-80a7-88fdec58d7f2',
+      },
+      createdBy: {
+        universalIdentifier: '7efc932e-d245-49ef-802a-8f7177278d9a',
+      },
+      updatedBy: {
+        universalIdentifier: '184589db-8fee-4262-b4ee-2ba771a8cdbe',
+      },
+      position: {
+        universalIdentifier: 'e2d4e45d-e510-466f-92e6-d7cea80ea256',
+      },
+      searchVector: {
+        universalIdentifier: '1c6f5064-6e99-4ac9-ac1f-1b8060edf9bc',
+      },
+      name: { universalIdentifier: '69b9ed8b-7b26-4108-894f-05700ef7e8ee' },
+      members: {
+        universalIdentifier: '92df3493-91cf-4665-8587-1b08917d299b',
+      },
+    },
+    indexes: {
+      searchVectorGinIndex: {
+        universalIdentifier: '8e205171-ed74-4620-b7d2-674aab85033a',
+      },
+    },
+  },
+  messageSegmentMember: {
+    universalIdentifier: '27773d24-8ce3-40f8-aa6c-1f590f2c08d2',
+    fields: {
+      id: { universalIdentifier: '606769a6-1783-4c2b-9e44-1d8389647f7c' },
+      createdAt: {
+        universalIdentifier: '7ae090b9-a48f-435c-aa89-9882f17950a1',
+      },
+      updatedAt: {
+        universalIdentifier: '959473a9-37d6-4708-a0a6-d6b7c6b11907',
+      },
+      deletedAt: {
+        universalIdentifier: '804e56f4-ab42-40dd-bcf5-754d25051daf',
+      },
+      createdBy: {
+        universalIdentifier: '12772bfa-8f0e-411e-a526-b66ef83b34ca',
+      },
+      updatedBy: {
+        universalIdentifier: 'd4586b18-7dd1-43b7-8d26-e58fc8f169f7',
+      },
+      position: {
+        universalIdentifier: '3e169614-c440-4603-bec6-08bbda7c849d',
+      },
+      searchVector: {
+        universalIdentifier: '37f86c8d-6097-4ccd-9f08-027c1d40e9d6',
+      },
+      person: { universalIdentifier: '34288425-8805-42fb-8b98-ee13d09be3d3' },
+      segment: {
+        universalIdentifier: 'd5402005-e8f9-4fbe-8696-b6723cd85018',
+      },
+    },
+    indexes: {
+      segmentIdIndex: {
+        universalIdentifier: '61188470-6dcb-4b2a-b1a9-baeb688bccae',
+      },
+      personSegmentUniqueIndex: {
+        universalIdentifier: 'e5497dc2-1d72-418c-a389-a0645ca0195a',
       },
     },
   },
@@ -1825,6 +1915,9 @@ export const STANDARD_OBJECTS = {
       },
       messageSubscriptions: {
         universalIdentifier: '082d2fba-437c-4ec8-acde-6dbfda45d50c',
+      },
+      segmentMemberships: {
+        universalIdentifier: '8b8d1be0-4c94-4413-a2c9-c7ede205a81d',
       },
       searchVector: {
         universalIdentifier: '57d1d7ad-fa10-44fc-82f3-ad0959ec2534',
