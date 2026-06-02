@@ -547,9 +547,9 @@ const SettingsAdminWorkspaceChatThread = lazy(() =>
   ),
 );
 
-const SettingsUpdates = lazy(() =>
-  import('~/pages/settings/updates/SettingsUpdates').then((module) => ({
-    default: module.SettingsUpdates,
+const SettingsCommunity = lazy(() =>
+  import('~/pages/settings/community/SettingsCommunity').then((module) => ({
+    default: module.SettingsCommunity,
   })),
 );
 
@@ -991,7 +991,7 @@ export const SettingsRoutes = ({ isAdminPageEnabled }: SettingsRoutesProps) => (
           />
         }
       >
-        <Route path={SettingsPath.Updates} element={<SettingsUpdates />} />
+        <Route path={SettingsPath.Community} element={<SettingsCommunity />} />
       </Route>
     </Routes>
   </Suspense>

@@ -30,7 +30,6 @@ import {
   IconMail,
   IconMessage,
   IconPlug,
-  IconRocket,
   IconServer,
   IconSettings,
   IconSparkles,
@@ -194,9 +193,9 @@ const useSettingsNavigationItems = (): SettingsNavigationSection[] => {
           isHidden: !isAdminEnabled,
         },
         {
-          label: t`Updates`,
-          path: SettingsPath.Updates,
-          Icon: IconRocket,
+          label: t`Community`,
+          path: SettingsPath.Community,
+          Icon: IconUsers,
           isHidden: !permissionMap[PermissionFlagType.WORKSPACE],
         },
         {

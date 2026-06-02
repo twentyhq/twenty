@@ -4,30 +4,80 @@ import { SettingsLabContent } from '@/settings/lab/components/SettingsLabContent
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
+import { useContext } from 'react';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
-import { H2Title, IconTransform } from 'twenty-ui/display';
+import {
+  H2Title,
+  IconBriefcase,
+  IconMessage,
+  IconTransform,
+} from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-import { useContext } from 'react';
 import { ThemeContext } from 'twenty-ui/theme-constants';
+
 const StyledCardLink = styled.a`
   text-decoration: none;
 `;
 
-export const SettingsUpdates = () => {
+export const SettingsCommunity = () => {
   const { theme } = useContext(ThemeContext);
   return (
     <SettingsPageLayout
-      title={t`Updates`}
+      title={t`Community`}
       links={[
         {
           children: t`Other`,
-          href: getSettingsPath(SettingsPath.Updates),
+          href: getSettingsPath(SettingsPath.Community),
         },
-        { children: t`Updates` },
+        { children: t`Community` },
       ]}
     >
       <SettingsPageContainer>
+        <Section>
+          <H2Title
+            title={t`Partners`}
+            description={t`Hire a partner to help you implement and customize Twenty.`}
+          />
+          <StyledCardLink
+            href="https://twenty.com/partners/list"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <SettingsCard
+              Icon={
+                <IconBriefcase
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              }
+              title={t`Browse partners`}
+            />
+          </StyledCardLink>
+        </Section>
+
+        <Section>
+          <H2Title
+            title={t`Discord`}
+            description={t`Join our community to get help and share feedback.`}
+          />
+          <StyledCardLink
+            href="https://discord.com/invite/cx5n4Jzs57"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <SettingsCard
+              Icon={
+                <IconMessage
+                  size={theme.icon.size.md}
+                  stroke={theme.icon.stroke.sm}
+                />
+              }
+              title={t`Join our Discord`}
+            />
+          </StyledCardLink>
+        </Section>
+
         <Section>
           <H2Title
             title={t`Releases`}
