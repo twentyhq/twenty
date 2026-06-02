@@ -4,7 +4,6 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsLayoutItemsStats } from '@/settings/layout/components/SettingsLayoutItemsStats';
 import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
 import { useLingui } from '@lingui/react/macro';
-import { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
@@ -19,8 +18,8 @@ import {
 } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { Section } from 'twenty-ui/layout';
-import customizeIllustrationDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
-import customizeIllustrationLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
+import coverDark from '~/pages/settings/layout/assets/cover-dark.png';
+import coverLight from '~/pages/settings/layout/assets/cover-light.png';
 
 const SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX = 'settings-layout-hero';
 
@@ -29,52 +28,44 @@ export const SettingsLayout = () => {
   const navigate = useNavigate();
   const { enterLayoutCustomizationMode } = useEnterLayoutCustomizationMode();
 
-  // Match the in-app customization entry points: arm customization mode before
-  // landing in the app, otherwise the user just drops into the app normally.
-  // Skip navigation when entry was blocked (e.g. a dashboard is mid-edit) so we
-  // don't yank the user away after the warning.
   const handleCustomize = () => {
     if (enterLayoutCustomizationMode()) {
       navigate(AppPath.Index);
     }
   };
 
-  // TODO: replace placeholder demo videos per tab
-  const heroTabs = useMemo(
-    () => [
-      {
-        id: 'sidebar',
-        title: t`Sidebar`,
-        Icon: IconLayoutSidebarLeftExpand,
-        vimeoId: '1185511790',
-      },
-      {
-        id: 'record-page',
-        title: t`Record page`,
-        Icon: IconAppWindow,
-        vimeoId: '1185511790',
-      },
-      {
-        id: 'command-menu',
-        title: t`Command menu`,
-        Icon: IconCommand,
-        vimeoId: '1185416775',
-      },
-      {
-        id: 'views',
-        title: t`Views`,
-        Icon: IconTable,
-        vimeoId: '1145648745',
-      },
-      {
-        id: 'dashboards',
-        title: t`Dashboards`,
-        Icon: IconLayoutDashboard,
-        vimeoId: '1185511768',
-      },
-    ],
-    [t],
-  );
+  const heroTabs = [
+    {
+      id: 'sidebar',
+      title: t`Sidebar`,
+      Icon: IconLayoutSidebarLeftExpand,
+      vimeoId: '1185511790',
+    },
+    {
+      id: 'record-page',
+      title: t`Record page`,
+      Icon: IconAppWindow,
+      vimeoId: '1185511790',
+    },
+    {
+      id: 'command-menu',
+      title: t`Command menu`,
+      Icon: IconCommand,
+      vimeoId: '1185416775',
+    },
+    {
+      id: 'views',
+      title: t`Views`,
+      Icon: IconTable,
+      vimeoId: '1145648745',
+    },
+    {
+      id: 'dashboards',
+      title: t`Dashboards`,
+      Icon: IconLayoutDashboard,
+      vimeoId: '1185511768',
+    },
+  ];
 
   return (
     <SubMenuTopBarContainer
@@ -100,8 +91,8 @@ export const SettingsLayout = () => {
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={customizeIllustrationLight}
-            darkSrc={customizeIllustrationDark}
+            lightSrc={coverLight}
+            darkSrc={coverDark}
             instanceIdPrefix={SETTINGS_LAYOUT_HERO_INSTANCE_ID_PREFIX}
             tabs={heroTabs}
             playButtonAriaLabel={t`Watch customization demo`}

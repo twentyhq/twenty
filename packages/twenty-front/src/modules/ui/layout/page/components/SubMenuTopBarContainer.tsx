@@ -20,9 +20,6 @@ type SubMenuTopBarContainerProps = {
   tag?: JSX.Element;
 };
 
-// Cards, forms, and tables inside the white panel are centered in a fixed
-// max-width column so they don't sprawl on large displays. The white panel
-// itself spans edge-to-edge; only the content is constrained.
 const SETTINGS_CONTENT_MAX_WIDTH = 760;
 
 const StyledContainer = styled.div`
@@ -31,10 +28,8 @@ const StyledContainer = styled.div`
   width: 100%;
 `;
 
-// flex: 1 + min-height: 0 keep the vertical-scroll chain intact: PagePanel's
-// own overflow handling sits one level up and depends on its children
-// participating in the flex height calculation rather than collapsing to
-// content height.
+// flex: 1 + min-height: 0 are required for PagePanel's overflow chain — the
+// child must participate in the flex height calc rather than collapse to content.
 const StyledBodyContentWrapper = styled.div`
   display: flex;
   flex: 1;
@@ -72,12 +67,6 @@ export const SubMenuTopBarContainer = ({
       <PageHeader title={<Breadcrumb links={links} />}>
         {actionButton}
       </PageHeader>
-      {/*
-        MainContainerLayoutWithSidePanel is the same wrapper the App's record
-        pages use: it renders the page body on the left and SidePanelForDesktop
-        on the right. Hosting it here lets the AI chat side panel (and any
-        other side-panel page) open in settings exactly as it does in the App.
-      */}
       <MainContainerLayoutWithSidePanel>
         <StyledBodyContentWrapper>
           <InformationBannerWrapper />
