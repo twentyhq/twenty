@@ -3,30 +3,9 @@ import { spawn } from 'node:child_process';
 import { join } from 'path';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import { SDK_PACKAGE_NAME } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/constants/local-driver.constant';
-import { type ChildProcessRunnerResult } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
 import { HANDLER_NAME_REGEX } from 'src/engine/metadata-modules/logic-function/constants/handler.contant';
-
-type AssembleNodeModulesParams = {
-  sourceTemporaryDir: string;
-  flatApplication: FlatApplication;
-  applicationUniversalIdentifier: string;
-};
-
-type WriteBootstrapRunnerParams = {
-  dir: string;
-  builtFileAbsPath: string;
-  handlerName: string;
-};
-
-type RunChildParams = {
-  runnerPath: string;
-  env: Record<string, string>;
-  payload: unknown;
-  timeoutMs: number;
-};
 
 export class LocalChildProcessRunnerService {
   // Symlinks everything from the deps layer except twenty-client-sdk,
@@ -35,7 +14,11 @@ export class LocalChildProcessRunnerService {
     sourceTemporaryDir,
     flatApplication,
     applicationUniversalIdentifier,
-  }: AssembleNodeModulesParams): Promise<void> {
+  }: {
+    sourceTemporaryDir: string;
+    flatApplication: FlatApplication;
+    applicationUniversalIdentifier: string;
+  }): Promise<void> {
     const depsNodeModules = join(
       getLocalDepsLayerPath(flatApplication),
       'node_modules',
@@ -56,7 +39,7 @@ export class LocalChildProcessRunnerService {
     });
 
     const symlinkPromises = entries
-      .filter((entry) => entry.name !== SDK_PACKAGE_NAME)
+      .filter((entry) => entry.name !== 'twenty-client-sdk')
       .map((entry) =>
         fs.symlink(
           join(depsNodeModules, entry.name),
@@ -68,8 +51,8 @@ export class LocalChildProcessRunnerService {
     await Promise.all(symlinkPromises);
 
     await fs.symlink(
-      join(sdkNodeModules, SDK_PACKAGE_NAME),
-      join(execNodeModules, SDK_PACKAGE_NAME),
+      join(sdkNodeModules, 'twenty-client-sdk'),
+      join(execNodeModules, 'twenty-client-sdk'),
       'dir',
     );
   }
@@ -78,7 +61,11 @@ export class LocalChildProcessRunnerService {
     dir,
     builtFileAbsPath,
     handlerName,
-  }: WriteBootstrapRunnerParams): Promise<string> {
+  }: {
+    dir: string;
+    builtFileAbsPath: string;
+    handlerName: string;
+  }) {
     if (!HANDLER_NAME_REGEX.test(handlerName)) {
       throw new Error(
         `Invalid handlerName "${handlerName}": must be a valid JavaScript identifier or dotted path`,
@@ -136,13 +123,22 @@ export class LocalChildProcessRunnerService {
     return runnerPath;
   }
 
-  runChildWithEnv({
-    runnerPath,
-    env,
-    payload,
-    timeoutMs,
-  }: RunChildParams): Promise<ChildProcessRunnerResult> {
-    return new Promise<ChildProcessRunnerResult>((resolve) => {
+  runChildWithEnv(options: {
+    runnerPath: string;
+    env: Record<string, string>;
+    payload: unknown;
+    timeoutMs: number;
+  }) {
+    const { runnerPath, env, payload, timeoutMs } = options;
+
+    return new Promise<{
+      ok: boolean;
+      result?: unknown;
+      error?: string;
+      stack?: string;
+      stdout: string;
+      stderr: string;
+    }>((resolve) => {
       // Strip NODE_OPTIONS to prevent tsx loader from being inherited
       const { NODE_OPTIONS: _n1, ...cleanProcessEnv } = process.env;
       const { NODE_OPTIONS: _n2, ...cleanUserEnv } = env;

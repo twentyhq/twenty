@@ -1,3 +1,4 @@
+// Re-wraps zip entries under a new prefix path without extracting to disk.
 export const reprefixLambdaZipEntries = async ({
   sourceBuffer,
   prefix,

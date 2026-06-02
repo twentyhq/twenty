@@ -9,10 +9,7 @@ import {
 import { isDefined } from 'twenty-shared/utils';
 
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
-import {
-  LIST_LAYER_VERSIONS_PAGE_SIZE,
-  SDK_LAYER_PREFIX_IN_ZIP,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
+import { SDK_LAYER_PREFIX_IN_ZIP } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
 import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 import { type LambdaAwsClientService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-aws-client.service';
 import { type LambdaToolFunctionsService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/services/lambda-tool-functions.service';
@@ -129,8 +126,6 @@ export class LambdaLayerManagerService {
     applicationUniversalIdentifier,
     layerName,
   }: LayerAppContext & { layerName: string }): Promise<void> {
-    // Re-check inside this method in case a concurrent caller created the
-    // layer between ensureDepsLayer's initial check and this point.
     const existingArn = await this.awsClient.getExistingLayerArn(layerName);
 
     if (isDefined(existingArn)) {
@@ -234,7 +229,7 @@ export class LambdaLayerManagerService {
       const listResult = await lambdaClient.send(
         new ListLayerVersionsCommand({
           LayerName: layerName,
-          MaxItems: LIST_LAYER_VERSIONS_PAGE_SIZE,
+          MaxItems: 50,
           Marker: marker,
         }),
       );

@@ -33,13 +33,7 @@ export type BuilderLambdaResult = {
   builtCode: string;
 };
 
-export type AssumeRoleCredentials = {
-  accessKeyId: string;
-  secretAccessKey: string;
-  sessionToken: string;
-};
-
-export type LambdaDriverOptions = LambdaClientConfig & {
+export interface LambdaDriverOptions extends LambdaClientConfig {
   logicFunctionResourceService: LogicFunctionResourceService;
   sdkClientArchiveService: SdkClientArchiveService;
   cacheLockService: CacheLockService;
@@ -48,7 +42,7 @@ export type LambdaDriverOptions = LambdaClientConfig & {
   subhostingRole?: string;
   layerBucket: string;
   layerBucketRegion: string;
-};
+}
 
 export enum LambdaExecutionPhase {
   BUILD = 'build',

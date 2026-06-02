@@ -13,12 +13,10 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { DEFAULT_EXECUTE_TIMEOUT_MS } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/constants/local-driver.constant';
 import { LocalChildProcessRunnerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-child-process-runner.service';
 import { LocalLayerManagerService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-layer-manager.service';
 import { LocalPrebuiltBundleService } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/services/local-prebuilt-bundle.service';
 import { type LocalDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/types/local-driver.type';
-import { formatConsoleArg } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/format-console-arg.util';
 import { ConsoleListener } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/intercept-console';
 import { TemporaryDirManager } from 'src/engine/core-modules/logic-function/logic-function-drivers/utils/temporary-dir-manager';
 import { type LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
@@ -110,7 +108,7 @@ export class LocalDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier,
     payload,
     env,
-    timeoutMs = DEFAULT_EXECUTE_TIMEOUT_MS,
+    timeoutMs = 900_000,
     forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
@@ -163,7 +161,29 @@ export class LocalDriver implements LogicFunctionDriver {
       const consoleListener = new ConsoleListener();
 
       consoleListener.intercept((type, args) => {
-        const formattedArgs = args.map(formatConsoleArg);
+        const formattedArgs = args.map((arg) => {
+          if (typeof arg === 'object' && arg !== null) {
+            const seen = new WeakSet();
+
+            return JSON.stringify(
+              arg,
+              (_key, value) => {
+                if (typeof value === 'object' && value !== null) {
+                  if (seen.has(value)) {
+                    return '[Circular]';
+                  }
+                  seen.add(value);
+                }
+
+                return value;
+              },
+              2,
+            );
+          }
+
+          return arg;
+        });
+
         const formattedType = type === 'log' ? 'info' : type;
 
         logs += `${new Date().toISOString()} ${formattedType.toUpperCase()} ${formattedArgs.join(' ')}\n`;

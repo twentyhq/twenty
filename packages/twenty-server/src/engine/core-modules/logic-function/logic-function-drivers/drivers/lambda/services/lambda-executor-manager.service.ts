@@ -19,9 +19,6 @@ import { isDefined } from 'twenty-shared/utils';
 import { type FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
 import { type CacheLockService } from 'src/engine/core-modules/cache-lock/cache-lock.service';
 import {
-  BUILD_LOCK_MAX_RETRIES,
-  BUILD_LOCK_RETRY_MS,
-  BUILD_LOCK_TTL_MS,
   EXECUTOR_LAMBDA_MEMORY_MB,
   EXECUTOR_LAMBDA_TIMEOUT_SECONDS,
   LAMBDA_EPHEMERAL_STORAGE_MB,
@@ -100,9 +97,13 @@ export class LambdaExecutorManagerService {
       return;
     }
 
+    const buildLockTtlMs = 120_000;
+    const buildLockRetryMs = 500;
+    const buildLockMaxRetries = 240;
+
     await this.cacheLockService.withLock(
       async () => {
-        // Re-check inside the lock in case it wasn't acquired immediately.
+        // Need to check again inside the lock in case lock was not acquired immediately.
         const { canSkip: canSkipAfterLock, lambdaExecutor } =
           await this.checkBuildStatus(context);
 
@@ -114,9 +115,9 @@ export class LambdaExecutorManagerService {
       },
       `lambda-build:${context.flatLogicFunction.id}`,
       {
-        ttl: BUILD_LOCK_TTL_MS,
-        ms: BUILD_LOCK_RETRY_MS,
-        maxRetries: BUILD_LOCK_MAX_RETRIES,
+        ttl: buildLockTtlMs,
+        ms: buildLockRetryMs,
+        maxRetries: buildLockMaxRetries,
       },
     );
   }
@@ -248,25 +249,41 @@ export class LambdaExecutorManagerService {
   }: ExecutorBuildContext & {
     lambdaExecutor: GetFunctionCommandOutput | undefined;
   }): Promise<void> {
-    const depsLayerArn = await this.resolveLayerArnOrThrow(
-      flatLogicFunction,
-      () =>
-        this.layerManager.ensureDepsLayer({
-          flatApplication,
-          applicationUniversalIdentifier,
-        }),
-      'dependency',
-    );
+    let depsLayerArn: string;
 
-    const sdkLayerArn = await this.resolveLayerArnOrThrow(
-      flatLogicFunction,
-      () =>
-        this.layerManager.ensureSdkLayer({
-          flatApplication,
-          applicationUniversalIdentifier,
-        }),
-      'SDK',
-    );
+    try {
+      depsLayerArn = await this.layerManager.ensureDepsLayer({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get dependency layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new LogicFunctionException(
+        `Failed to get dependency layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
+
+    let sdkLayerArn: string;
+
+    try {
+      sdkLayerArn = await this.layerManager.ensureSdkLayer({
+        flatApplication,
+        applicationUniversalIdentifier,
+      });
+    } catch (error) {
+      this.logger.error(
+        `Failed to get SDK layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
+        error instanceof Error ? error.stack : undefined,
+      );
+      throw new LogicFunctionException(
+        `Failed to get SDK layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
+      );
+    }
 
     if (!isDefined(lambdaExecutor)) {
       await this.createExecutor({
@@ -285,25 +302,6 @@ export class LambdaExecutorManagerService {
       sdkLayerArn,
     });
     await this.awsClient.waitFunctionUpdated(flatLogicFunction.id);
-  }
-
-  private async resolveLayerArnOrThrow(
-    flatLogicFunction: FlatLogicFunction,
-    resolveArn: () => Promise<string>,
-    layerLabel: 'dependency' | 'SDK',
-  ): Promise<string> {
-    try {
-      return await resolveArn();
-    } catch (error) {
-      this.logger.error(
-        `Failed to get ${layerLabel} layer for function ${flatLogicFunction.id}: ${error instanceof Error ? error.message : String(error)}`,
-        error instanceof Error ? error.stack : undefined,
-      );
-      throw new LogicFunctionException(
-        `Failed to get ${layerLabel} layer for function '${flatLogicFunction.id}': ${error instanceof Error ? error.message : 'Unknown error'}`,
-        LogicFunctionExceptionCode.LOGIC_FUNCTION_LAYER_BUILD_FAILED,
-      );
-    }
   }
 
   private async updateExecutorConfiguration({

@@ -9,7 +9,6 @@ import {
   LAYER_BUILD_LOCK_RETRY_MS,
   LAYER_BUILD_LOCK_TTL_MS,
   LAYER_BUILD_READY_SENTINEL,
-  SDK_PACKAGE_NAME,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/constants/local-driver.constant';
 import { getLocalDepsLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-deps-layer-path.util';
 import { getLocalSdkLayerPath } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/local/utils/get-local-sdk-layer-path.util';
@@ -94,8 +93,6 @@ export class LocalLayerManagerService {
 
     await this.cacheLockService.withLock(
       async () => {
-        // Re-check staleness from a fresh cache read in case another caller
-        // marked the SDK layer fresh while we were waiting for the lock.
         const { flatApplicationMaps } =
           await this.workspaceCacheService.getOrRecompute(
             flatApplication.workspaceId,
@@ -111,7 +108,7 @@ export class LocalLayerManagerService {
 
         await fs.rm(sdkLayerPath, { recursive: true, force: true });
 
-        const sdkPackagePath = join(sdkNodeModulesPath, SDK_PACKAGE_NAME);
+        const sdkPackagePath = join(sdkNodeModulesPath, 'twenty-client-sdk');
 
         await this.sdkClientArchiveService.downloadAndExtractToPackage({
           workspaceId: flatApplication.workspaceId,

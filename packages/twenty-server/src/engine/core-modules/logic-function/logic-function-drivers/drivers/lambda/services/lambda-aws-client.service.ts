@@ -11,23 +11,20 @@ import { isDefined } from 'twenty-shared/utils';
 
 import {
   CREDENTIALS_DURATION_IN_SECONDS,
-  CREDENTIALS_EXPIRY_SAFETY_MARGIN_SECONDS,
-  DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS,
   UPDATE_FUNCTION_DURATION_TIMEOUT_IN_SECONDS,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/constants/lambda-driver.constant';
-import {
-  type AssumeRoleCredentials,
-  type LambdaDriverOptions,
-} from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
+import { type LambdaDriverOptions } from 'src/engine/core-modules/logic-function/logic-function-drivers/drivers/lambda/types/lambda-driver.type';
 
 export class LambdaAwsClientService {
   private lambdaClient: Lambda | undefined;
-  private assumeRoleCredentials: AssumeRoleCredentials | undefined;
+  private assumeRoleCredentials:
+    | { accessKeyId: string; secretAccessKey: string; sessionToken: string }
+    | undefined;
   private credentialsExpiry: Date | null = null;
 
   constructor(private readonly options: LambdaDriverOptions) {}
 
-  async getLambdaClient(): Promise<Lambda> {
+  async getLambdaClient() {
     if (
       !isDefined(this.lambdaClient) ||
       (isDefined(this.options.subhostingRole) &&
@@ -46,7 +43,7 @@ export class LambdaAwsClientService {
 
   async generatePresignedUploadUrl(
     s3Key: string,
-    expiresIn: number = DEFAULT_PRESIGNED_URL_EXPIRES_IN_SECONDS,
+    expiresIn: number = 300,
   ): Promise<string> {
     const s3Client = new S3Client({
       region: this.options.layerBucketRegion,
@@ -105,28 +102,16 @@ export class LambdaAwsClientService {
     );
   }
 
-  private async getAssumeRoleCredentials(): Promise<AssumeRoleCredentials> {
-    if (this.areAssumeRoleCredentialsExpired()) {
-      await this.refreshAssumeRoleCredentials();
-    }
-
-    if (!isDefined(this.assumeRoleCredentials)) {
-      throw new Error('Assume role credentials are not available');
-    }
-
-    return this.assumeRoleCredentials;
-  }
-
-  private async refreshAssumeRoleCredentials(): Promise<void> {
+  private async refreshAssumeRoleCredentials() {
     const stsClient = new STSClient({ region: this.options.region });
 
-    const { Credentials } = await stsClient.send(
-      new AssumeRoleCommand({
-        RoleArn: this.options.subhostingRole,
-        RoleSessionName: 'LambdaSession',
-        DurationSeconds: CREDENTIALS_DURATION_IN_SECONDS,
-      }),
-    );
+    const assumeRoleCommand = new AssumeRoleCommand({
+      RoleArn: this.options.subhostingRole,
+      RoleSessionName: 'LambdaSession',
+      DurationSeconds: CREDENTIALS_DURATION_IN_SECONDS,
+    });
+
+    const { Credentials } = await stsClient.send(assumeRoleCommand);
 
     if (
       !isDefined(Credentials) ||
@@ -144,13 +129,17 @@ export class LambdaAwsClientService {
     };
 
     this.credentialsExpiry = new Date(
-      Date.now() +
-        (CREDENTIALS_DURATION_IN_SECONDS -
-          CREDENTIALS_EXPIRY_SAFETY_MARGIN_SECONDS) *
-          1000,
+      Date.now() + (CREDENTIALS_DURATION_IN_SECONDS - 60 * 5) * 1000,
     );
 
-    // Invalidate the cached lambda client so it picks up the refreshed creds.
     this.lambdaClient = undefined;
+  }
+
+  private async getAssumeRoleCredentials() {
+    if (this.areAssumeRoleCredentialsExpired()) {
+      await this.refreshAssumeRoleCredentials();
+    }
+
+    return this.assumeRoleCredentials!;
   }
 }

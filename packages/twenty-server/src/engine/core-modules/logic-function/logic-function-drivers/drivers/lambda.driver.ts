@@ -35,8 +35,6 @@ import {
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 
-const DEFAULT_EXECUTE_TIMEOUT_MS = 900_000;
-
 export {
   type LambdaDriverOptions,
   type BuilderLambdaPayload,
@@ -113,7 +111,7 @@ export class LambdaDriver implements LogicFunctionDriver {
     applicationUniversalIdentifier,
     payload,
     env,
-    timeoutMs = DEFAULT_EXECUTE_TIMEOUT_MS,
+    timeoutMs = 900_000,
     forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
     const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
