@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { defineFrontComponent } from 'twenty-sdk/define';
 import {
   enqueueSnackbar,
-  objectMetadataItem,
   unmountFrontComponent,
   updateProgress,
 } from 'twenty-sdk/front-component';
@@ -101,12 +100,4 @@ export default defineFrontComponent({
   description: 'Fetches pull requests and reviews from GitHub repos',
   isHeadless: true,
   component: FetchPrs,
-  command: {
-    universalIdentifier: '0b24e6d6-da0c-4c0e-8d88-5bfd7f3cd75a',
-    label: 'Fetch Pull Requests',
-    icon: 'IconGitPullRequest',
-    isPinned: false,
-    conditionalAvailabilityExpression:
-      objectMetadataItem.nameSingular === 'pullRequest',
-  },
 });
