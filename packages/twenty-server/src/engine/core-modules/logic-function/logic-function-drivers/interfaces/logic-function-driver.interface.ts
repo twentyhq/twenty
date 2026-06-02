@@ -24,7 +24,7 @@ export type LogicFunctionExecuteParams = {
   payload: object;
   env?: Record<string, string>;
   timeoutMs?: number;
-  forceExecutionMode: LogicFunctionExecutionMode;
+  forceExecutionMode?: LogicFunctionExecutionMode;
 };
 
 export type LogicFunctionInstallPrebuiltBundleParams = {

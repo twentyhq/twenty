@@ -62,6 +62,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 
 enum LambdaExecutionPhase {
   BUILD = 'build',
@@ -1180,6 +1181,18 @@ export class LambdaDriver implements LogicFunctionDriver {
     timeoutMs = 900_000,
     forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
+    const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
+
+    if (
+      executionMode === LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
+    ) {
+      throw new LogicFunctionException(
+        `Cannot run logic function '${flatLogicFunction.id}' in PREBUILT mode: bundle is not installed`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
     let currentPhase: LambdaExecutionPhase = LambdaExecutionPhase.BUILD;
     let buildExecutorMs = 0;
     let getBuiltCodeMs = 0;
@@ -1203,7 +1216,7 @@ export class LambdaDriver implements LogicFunctionDriver {
         handlerName: flatLogicFunction.handlerName,
       };
 
-      if (forceExecutionMode === LogicFunctionExecutionMode.LIVE) {
+      if (executionMode === LogicFunctionExecutionMode.LIVE) {
         const fetchStart = Date.now();
 
         executorPayload.code =
@@ -1248,7 +1261,7 @@ export class LambdaDriver implements LogicFunctionDriver {
       const duration = Date.now() - invokeFlowStart;
 
       this.logger.log(
-        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${forceExecutionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
+        `[lambda-timing] fnId=${flatLogicFunction.id} executionMode=${executionMode} totalMs=${Date.now() - buildStart} buildExecutorMs=${buildExecutorMs} getBuiltCodeMs=${getBuiltCodeMs} payloadBytes=${Buffer.byteLength(payloadString, 'utf8')} invokeSendMs=${invokeSendMs} reportDurationMs=${reportDurationMs ?? 'n/a'} billedMs=${billedDurationMs ?? 'n/a'} initDurationMs=${initDurationMs ?? 'n/a'} coldStart=${coldStart}`,
       );
 
       if (result.FunctionError) {

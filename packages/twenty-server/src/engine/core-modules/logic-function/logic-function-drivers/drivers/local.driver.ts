@@ -28,6 +28,7 @@ import {
   LogicFunctionExceptionCode,
 } from 'src/engine/metadata-modules/logic-function/logic-function.exception';
 import { type FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { isLogicFunctionReadyForPrebuiltInstall } from 'src/engine/metadata-modules/logic-function/utils/is-logic-function-ready-for-prebuilt-install.util';
 import { copyYarnEngineAndBuildDependencies } from 'src/engine/core-modules/application/application-package/utils/copy-yarn-engine-and-build-dependencies';
 import type { LogicFunctionResourceService } from 'src/engine/core-modules/logic-function/logic-function-resource/logic-function-resource.service';
 import type { SdkClientArchiveService } from 'src/engine/core-modules/sdk-client/sdk-client-archive.service';
@@ -300,6 +301,18 @@ export class LocalDriver implements LogicFunctionDriver {
     timeoutMs = 900_000,
     forceExecutionMode,
   }: LogicFunctionExecuteParams): Promise<LogicFunctionExecuteResult> {
+    const executionMode = forceExecutionMode ?? flatLogicFunction.executionMode;
+
+    if (
+      executionMode === LogicFunctionExecutionMode.PREBUILT &&
+      !isLogicFunctionReadyForPrebuiltInstall(flatLogicFunction)
+    ) {
+      throw new LogicFunctionException(
+        `Cannot run logic function '${flatLogicFunction.id}' in PREBUILT mode: bundle is not installed`,
+        LogicFunctionExceptionCode.LOGIC_FUNCTION_PREBUILT_BUNDLE_NOT_INSTALLED,
+      );
+    }
+
     await this.createLayerIfNotExist({
       flatApplication,
       applicationUniversalIdentifier,
@@ -316,8 +329,7 @@ export class LocalDriver implements LogicFunctionDriver {
     try {
       const { sourceTemporaryDir } = await temporaryDirManager.init();
 
-      const isPrebuilt =
-        forceExecutionMode === LogicFunctionExecutionMode.PREBUILT;
+      const isPrebuilt = executionMode === LogicFunctionExecutionMode.PREBUILT;
 
       await this.assembleNodeModules({
         sourceTemporaryDir,
