@@ -1,42 +1,51 @@
 import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
+import { z } from 'zod';
 
 import { slugify } from '../scripts/slugify';
 
 export const SUBMIT_PARTNER_APPLICATION_LOGIC_FUNCTION_ID =
   '7b1e2c5f-3a14-4f7d-8e91-0b5e2a3c4d76';
 
-const PARTNER_COUNTRY_VALUES = new Set([
+const PARTNER_COUNTRY_VALUES = [
   'AFGHANISTAN','ALBANIA','ALGERIA','ANDORRA','ANGOLA','ANTIGUA_AND_BARBUDA','ARGENTINA','ARMENIA','AUSTRALIA','AUSTRIA','AZERBAIJAN','BAHAMAS','BAHRAIN','BANGLADESH','BARBADOS','BELARUS','BELGIUM','BELIZE','BENIN','BHUTAN','BOLIVIA','BOSNIA_AND_HERZEGOVINA','BOTSWANA','BRAZIL','BRUNEI','BULGARIA','BURKINA_FASO','BURUNDI','CAMBODIA','CAMEROON','CANADA','CAPE_VERDE','CENTRAL_AFRICAN_REPUBLIC','CHAD','CHILE','CHINA','COLOMBIA','COMOROS','CONGO','DR_CONGO','COSTA_RICA','CROATIA','CUBA','CYPRUS','CZECH_REPUBLIC','DENMARK','DJIBOUTI','DOMINICA','DOMINICAN_REPUBLIC','ECUADOR','EGYPT','EL_SALVADOR','EQUATORIAL_GUINEA','ERITREA','ESTONIA','ESWATINI','ETHIOPIA','FIJI','FINLAND','FRANCE','GABON','GAMBIA','GEORGIA','GERMANY','GHANA','GREECE','GRENADA','GUATEMALA','GUINEA','GUINEA_BISSAU','GUYANA','HAITI','HONDURAS','HUNGARY','ICELAND','INDIA','INDONESIA','IRAN','IRAQ','IRELAND','ISRAEL','ITALY','IVORY_COAST','JAMAICA','JAPAN','JORDAN','KAZAKHSTAN','KENYA','KIRIBATI','KOSOVO','KUWAIT','KYRGYZSTAN','LAOS','LATVIA','LEBANON','LESOTHO','LIBERIA','LIBYA','LIECHTENSTEIN','LITHUANIA','LUXEMBOURG','MADAGASCAR','MALAWI','MALAYSIA','MALDIVES','MALI','MALTA','MARSHALL_ISLANDS','MAURITANIA','MAURITIUS','MEXICO','MICRONESIA','MOLDOVA','MONACO','MONGOLIA','MONTENEGRO','MOROCCO','MOZAMBIQUE','MYANMAR','NAMIBIA','NAURU','NEPAL','NETHERLANDS','NEW_ZEALAND','NICARAGUA','NIGER','NIGERIA','NORTH_KOREA','NORTH_MACEDONIA','NORWAY','OMAN','PAKISTAN','PALAU','PALESTINE','PANAMA','PAPUA_NEW_GUINEA','PARAGUAY','PERU','PHILIPPINES','POLAND','PORTUGAL','QATAR','ROMANIA','RUSSIA','RWANDA','SAINT_KITTS_AND_NEVIS','SAINT_LUCIA','SAINT_VINCENT','SAMOA','SAN_MARINO','SAO_TOME_AND_PRINCIPE','SAUDI_ARABIA','SENEGAL','SERBIA','SEYCHELLES','SIERRA_LEONE','SINGAPORE','SLOVAKIA','SLOVENIA','SOLOMON_ISLANDS','SOMALIA','SOUTH_AFRICA','SOUTH_KOREA','SOUTH_SUDAN','SPAIN','SRI_LANKA','SUDAN','SURINAME','SWEDEN','SWITZERLAND','SYRIA','TAIWAN','TAJIKISTAN','TANZANIA','THAILAND','TIMOR_LESTE','TOGO','TONGA','TRINIDAD_AND_TOBAGO','TUNISIA','TURKEY','TURKMENISTAN','TUVALU','UGANDA','UKRAINE','UNITED_ARAB_EMIRATES','UNITED_KINGDOM','UNITED_STATES','URUGUAY','UZBEKISTAN','VANUATU','VATICAN','VENEZUELA','VIETNAM','YEMEN','ZAMBIA','ZIMBABWE',
-] as const);
+] as const;
 
-const PARTNER_LANGUAGE_VALUES = new Set([
+const PARTNER_LANGUAGE_VALUES = [
   'ENGLISH','FRENCH','GERMAN','SPANISH','PORTUGUESE','ITALIAN','DUTCH','ARABIC','CHINESE','JAPANESE','RUSSIAN','HINDI',
-] as const);
+] as const;
 
-const PARTNER_SCOPE_VALUES = new Set([
+const PARTNER_SCOPE_VALUES = [
   'ADVISORY','SOLUTIONING','DEVELOPMENT','HOSTING','SUPPORT',
-] as const);
-const PARTNER_TYPE_OF_TEAM_VALUES = new Set(['SOLO','AGENCY'] as const);
+] as const;
+const PARTNER_TYPE_OF_TEAM_VALUES = ['SOLO','AGENCY'] as const;
 
-export type SubmitPartnerApplicationInput = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  companyName: string;
-  domainName?: string;
-  linkedin?: string;
-  city?: string;
-  country?: string;
-  languages?: string[];
-  typeOfTeam?: string;
-  partnerScope?: string[];
-  skills?: string[];
-  applicationNotes?: string;
-  hourlyRate?: number;
-  projectBudgetMin?: number;
-  calendarLink?: string;
-};
+// The request contract. zod is the single source of truth: it validates the
+// incoming body at runtime and the input type is inferred from it, so the two
+// can never drift. Enum-valued fields are constrained to the same option sets
+// the Partner object accepts.
+export const submitPartnerApplicationSchema = z.object({
+  firstName: z.string().trim().min(1),
+  lastName: z.string(),
+  email: z.string().trim().min(1),
+  companyName: z.string().trim().min(1),
+  domainName: z.string().optional(),
+  linkedin: z.string().optional(),
+  city: z.string().optional(),
+  country: z.enum(PARTNER_COUNTRY_VALUES).optional(),
+  languages: z.array(z.enum(PARTNER_LANGUAGE_VALUES)).optional(),
+  typeOfTeam: z.enum(PARTNER_TYPE_OF_TEAM_VALUES).optional(),
+  partnerScope: z.array(z.enum(PARTNER_SCOPE_VALUES)).optional(),
+  skills: z.array(z.string()).optional(),
+  applicationNotes: z.string().optional(),
+  hourlyRate: z.number().optional(),
+  projectBudgetMin: z.number().optional(),
+  calendarLink: z.string().optional(),
+});
+
+export type SubmitPartnerApplicationInput = z.infer<
+  typeof submitPartnerApplicationSchema
+>;
 
 export type SubmitPartnerApplicationResult =
   | { ok: true; created: boolean; partnerId: string }
@@ -44,24 +53,6 @@ export type SubmitPartnerApplicationResult =
 
 function isNonEmptyString(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0;
-}
-
-function validate(input: SubmitPartnerApplicationInput): string | null {
-  if (!isNonEmptyString(input.firstName)) return 'invalid_input';
-  if (typeof input.lastName !== 'string') return 'invalid_input';
-  if (!isNonEmptyString(input.email)) return 'invalid_input';
-  if (!isNonEmptyString(input.companyName)) return 'invalid_input';
-  if (input.country !== undefined && !PARTNER_COUNTRY_VALUES.has(input.country as never)) return 'invalid_input';
-  if (input.languages !== undefined) {
-    if (!Array.isArray(input.languages)) return 'invalid_input';
-    if (!input.languages.every((l) => PARTNER_LANGUAGE_VALUES.has(l as never))) return 'invalid_input';
-  }
-  if (input.partnerScope !== undefined) {
-    if (!Array.isArray(input.partnerScope)) return 'invalid_input';
-    if (!input.partnerScope.every((s) => PARTNER_SCOPE_VALUES.has(s as never))) return 'invalid_input';
-  }
-  if (input.typeOfTeam !== undefined && !PARTNER_TYPE_OF_TEAM_VALUES.has(input.typeOfTeam as never)) return 'invalid_input';
-  return null;
 }
 
 function toMicros(usd: number | undefined): { amountMicros: number; currencyCode: 'USD' } | undefined {
@@ -141,7 +132,7 @@ export const handler = async (
   // Shared-secret guard. The Twenty SDK's isAuthRequired flag only accepts
   // user-session JWTs, not workspace API keys, so we authenticate at the
   // handler level via a custom header allowlisted in forwardedRequestHeaders.
-  const expectedSecret = process.env.PARTNER_APPLICATION_SECRET?.trim();
+  const expectedSecret = process.env.PARTNER_APPLICATION_SECRET;
   if (!isNonEmptyString(expectedSecret)) {
     return { ok: false, reason: 'unauthorized' };
   }
@@ -150,13 +141,11 @@ export const handler = async (
     return { ok: false, reason: 'unauthorized' };
   }
 
-  if (typeof rawInput !== 'object' || rawInput === null) {
+  const parsed = submitPartnerApplicationSchema.safeParse(rawInput);
+  if (!parsed.success) {
     return { ok: false, reason: 'invalid_input' };
   }
-  const input = rawInput as SubmitPartnerApplicationInput;
-
-  const validationError = validate(input);
-  if (validationError !== null) return { ok: false, reason: validationError };
+  const input = parsed.data;
 
   try {
     const client = new CoreApiClient();
