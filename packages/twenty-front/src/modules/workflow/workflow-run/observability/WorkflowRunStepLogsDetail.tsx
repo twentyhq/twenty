@@ -9,11 +9,11 @@ import { type JsonValue } from 'type-fest';
 
 import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
-import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsAiAgentDetail';
-import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsCodeDetail';
-import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsEmailDetail';
-import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsEntries';
-import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsHttpRequestDetail';
+import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail';
+import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail';
+import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail';
+import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEntries';
+import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledRoot = styled.div`

@@ -84,6 +84,36 @@ describe('buildHttpRequestStepLog', () => {
     expect(stepLog.details.request.bodyBytes).toBeGreaterThan(100_000);
   });
 
+  it('truncates non-ASCII bodies by UTF-8 bytes, not UTF-16 code units', () => {
+    // CJK characters take 3 UTF-8 bytes each but 1 UTF-16 code unit.
+    // Before the byte-aware fix, `redacted.slice(0, 32_000)` on this payload
+    // would emit ~96 KB of UTF-8 (three times the intended cap). After the
+    // fix the truncated payload stays within the cap, plus at most one
+    // U+FFFD replacement char (~3 bytes) for a multi-byte sequence cut at
+    // the boundary.
+    const longCjkPayload = '日'.repeat(40_000);
+
+    const stepLog = buildHttpRequestStepLog({
+      input: { ...baseInput, body: { payload: longCjkPayload } },
+      output: baseOutput,
+      durationMs: 10,
+    });
+
+    if (stepLog.details.type !== 'HTTP_REQUEST') {
+      throw new Error('Expected HTTP_REQUEST details');
+    }
+
+    expect(stepLog.details.request.bodyTruncated).toBe(true);
+
+    const truncatedBody = stepLog.details.request.body ?? '';
+    const truncatedByteLength = Buffer.byteLength(
+      truncatedBody.replace('…[truncated]', ''),
+      'utf8',
+    );
+
+    expect(truncatedByteLength).toBeLessThanOrEqual(32_000 + 3);
+  });
+
   it('omits response when the request never received one (transport error)', () => {
     const stepLog = buildHttpRequestStepLog({
       input: baseInput,
@@ -164,6 +194,56 @@ describe('buildHttpRequestStepLog', () => {
     expect(stepLog.details.request.url).toBe(
       'https://api.example.com/widgets?page=2',
     );
+  });
+
+  it('redacts sensitive query params even when the URL is unparseable (regression)', () => {
+    // Whitespace in the host trips up the WHATWG URL parser, so this URL
+    // is rejected by `new URL()`. Before the fallback was added, the catch
+    // branch returned the raw URL with secrets intact.
+    const unparseableUrl =
+      'https://api example.com/data?page=1&api_key=AKIA-leaked&token=oauth-leaked&safe=ok';
+
+    expect(() => new URL(unparseableUrl)).toThrow();
+
+    const stepLog = buildHttpRequestStepLog({
+      input: { ...baseInput, url: unparseableUrl },
+      output: baseOutput,
+      durationMs: 1,
+    });
+
+    if (stepLog.details.type !== 'HTTP_REQUEST') {
+      throw new Error('Expected HTTP_REQUEST details');
+    }
+
+    const redactedUrl = stepLog.details.request.url;
+
+    expect(redactedUrl).not.toContain('AKIA-leaked');
+    expect(redactedUrl).not.toContain('oauth-leaked');
+    expect(redactedUrl).toContain('api_key=[redacted]');
+    expect(redactedUrl).toContain('token=[redacted]');
+    expect(redactedUrl).toContain('page=1');
+    expect(redactedUrl).toContain('safe=ok');
+  });
+
+  it('redacts percent-encoded sensitive param names in unparseable URLs', () => {
+    // `api%5Fkey` decodes to `api_key` — the fallback must decode before
+    // matching against the sensitive-name set.
+    const unparseableUrl = 'https://api example.com/x?api%5Fkey=leaked';
+
+    expect(() => new URL(unparseableUrl)).toThrow();
+
+    const stepLog = buildHttpRequestStepLog({
+      input: { ...baseInput, url: unparseableUrl },
+      output: baseOutput,
+      durationMs: 1,
+    });
+
+    if (stepLog.details.type !== 'HTTP_REQUEST') {
+      throw new Error('Expected HTTP_REQUEST details');
+    }
+
+    expect(stepLog.details.request.url).not.toContain('leaked');
+    expect(stepLog.details.request.url).toContain('api%5Fkey=[redacted]');
   });
 
   it('redacts sensitive keys in JSON request bodies (deep)', () => {

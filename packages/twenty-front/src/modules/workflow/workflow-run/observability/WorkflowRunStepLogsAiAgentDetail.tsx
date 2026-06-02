@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
-import { type AiAgentStepLogDetails } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
+import { type AiAgentStepLogDetails } from 'twenty-shared/workflow';
 import {
   IconBrain,
   IconClock,
@@ -13,9 +13,7 @@ import {
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { formatNumber } from '~/utils/format/formatNumber';
-import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsToolCallRow';
-import { formatDuration } from '@/workflow/workflow-steps/components/workflowRunStepLogsFormatters';
+import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
 import {
   StyledBadgeGroup,
   StyledEmptyHint,
@@ -29,7 +27,9 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
+import { WorkflowRunStepLogsToolCallRow } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsToolCallRow';
+import { formatNumber } from '~/utils/format/formatNumber';
 
 const StyledModelBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};

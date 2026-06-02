@@ -1,8 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
 import { Fragment } from 'react';
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import { isDefined } from 'twenty-shared/utils';
+import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import {
   IconAlertTriangle,
   IconArrowDown,
@@ -12,10 +12,11 @@ import {
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 import {
   formatBytes,
   formatDuration,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsFormatters';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
 import {
   StyledBadgeGroup,
   StyledBodyMeta,
@@ -33,7 +34,7 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
 
 // HTTP-specific badges and containers — kept local because none of them are
 // reused outside the HTTP step log view.
@@ -62,7 +63,7 @@ const StyledNetworkErrorBadge = styled.span`
 
 const StyledUrl = styled.div`
   color: ${themeCssVariables.font.color.tertiary};
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.sm};
   overflow-wrap: anywhere;
 `;
@@ -79,13 +80,13 @@ const StyledHeaderTable = styled.div`
 
 const StyledHeaderName = styled.span`
   color: ${themeCssVariables.font.color.tertiary};
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.xs};
 `;
 
 const StyledHeaderValue = styled.span`
   color: ${themeCssVariables.font.color.primary};
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.xs};
   overflow-wrap: anywhere;
 `;
@@ -94,7 +95,7 @@ const StyledBodyPre = styled.pre`
   background: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.sm};
   color: ${themeCssVariables.font.color.primary};
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.sm};
   margin: 0;
   max-height: 300px;

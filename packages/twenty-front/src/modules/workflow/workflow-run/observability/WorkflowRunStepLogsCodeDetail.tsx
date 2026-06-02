@@ -10,10 +10,8 @@ import {
 } from 'twenty-ui/display';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import {
-  formatDuration,
-  MONOSPACE_FONT_FAMILY,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsFormatters';
+import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
+import { formatDuration } from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
 import {
   StyledErrorCard,
   StyledErrorMessageText,
@@ -28,7 +26,7 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
 
 const StyledErrorHeader = styled.div`
   align-items: center;

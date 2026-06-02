@@ -1,14 +1,12 @@
 import { Injectable, Logger } from '@nestjs/common';
 
 import { resolveInput } from 'twenty-shared/utils';
-import { type AiAgentStepLogDetails } from 'twenty-shared/workflow';
 
 import { type WorkflowAction } from 'src/modules/workflow/workflow-executor/interfaces/workflow-action.interface';
 
 import { UsageOperationType } from 'src/engine/core-modules/usage/enums/usage-operation-type.enum';
 import { AgentAsyncExecutorService } from 'src/engine/metadata-modules/ai/ai-agent-execution/services/agent-async-executor.service';
 import { type AgentExecutionResult } from 'src/engine/metadata-modules/ai/ai-agent-execution/types/agent-execution-result.type';
-import { mapAiStepsToToolCallLogs } from 'src/engine/metadata-modules/ai/ai-agent-execution/utils/map-ai-steps-to-tool-call-logs.util';
 import { AgentEntity } from 'src/engine/metadata-modules/ai/ai-agent/entities/agent.entity';
 import { InjectWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/inject-workspace-scoped-repository.decorator';
 import { WorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/workspace-scoped-repository';
@@ -20,6 +18,7 @@ import { WorkflowExecutionContextService } from 'src/modules/workflow/workflow-e
 import { type WorkflowActionInput } from 'src/modules/workflow/workflow-executor/types/workflow-action-input';
 import { type WorkflowActionOutput } from 'src/modules/workflow/workflow-executor/types/workflow-action-output.type';
 import { findStepOrThrow } from 'src/modules/workflow/workflow-executor/utils/find-step-or-throw.util';
+import { buildAiAgentStepLog } from 'src/modules/workflow/workflow-executor/workflow-actions/ai-agent/utils/build-ai-agent-step-log.util';
 import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 import { isWorkflowAiAgentAction } from './guards/is-workflow-ai-agent-action.guard';
@@ -128,48 +127,18 @@ export class AiAgentWorkflowAction implements WorkflowAction {
     executionResult: AgentExecutionResult;
     durationMs: number;
   }): Promise<void> {
-    if (!executionResult.modelId) {
+    const stepLog = buildAiAgentStepLog({ executionResult, durationMs });
+
+    if (!stepLog) {
       return;
     }
-
-    const toolCalls = executionResult.steps
-      ? mapAiStepsToToolCallLogs(executionResult.steps)
-      : [];
-
-    const details: AiAgentStepLogDetails = {
-      type: 'AI_AGENT',
-      modelId: executionResult.modelId,
-      usage: {
-        inputTokens: executionResult.usage.inputTokens ?? 0,
-        outputTokens: executionResult.usage.outputTokens ?? 0,
-        reasoningTokens:
-          executionResult.usage.outputTokenDetails?.reasoningTokens,
-        cacheReadTokens:
-          executionResult.usage.inputTokenDetails?.cacheReadTokens,
-        cacheCreationTokens: executionResult.cacheCreationTokens,
-        totalTokens:
-          (executionResult.usage.totalTokens ?? 0) +
-          executionResult.cacheCreationTokens,
-      },
-      cost: {
-        totalCostInDollars: executionResult.totalCostInDollars ?? 0,
-        creditsUsedMicro: executionResult.creditsUsedMicro ?? 0,
-      },
-      nativeWebSearchCallCount: executionResult.nativeWebSearchCallCount,
-      toolCalls,
-      durationMs,
-    };
 
     try {
       await this.workflowRunStepLogService.setStepLog({
         workflowRunId,
         workspaceId,
         stepId,
-        stepLog: {
-          details,
-          entries: [],
-          sizeBytes: 0,
-        },
+        stepLog,
       });
     } catch (error) {
       this.logger.warn(

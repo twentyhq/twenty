@@ -1,15 +1,13 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 
-import { DraftEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/draft-email-tool';
 import { SendEmailTool } from 'src/engine/core-modules/tool/tools/email-tool/send-email-tool';
-import { HttpTool } from 'src/engine/core-modules/tool/tools/http-tool/http-tool';
-import { ToolExecutorWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/tool-executor-workflow-action';
-import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
+import { SendEmailWorkflowAction } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/send-email.workflow-action';
 import { type WorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
 import {
   type WorkflowAction,
   WorkflowActionType,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
+import { WorkflowRunStepLogWorkspaceService } from 'src/modules/workflow/workflow-runner/workflow-run/workflow-run-step-log.workspace-service';
 
 jest.mock(
   'src/engine/core-modules/tool/tools/email-tool/utils/render-rich-text-to-html.util',
@@ -37,40 +35,33 @@ const emailInput = {
   subject: 'Test',
 };
 
-const buildEmailStep = (
-  type: 'SEND_EMAIL' | 'DRAFT_EMAIL',
-  input: Record<string, unknown>,
-): WorkflowAction =>
+const buildSendEmailStep = (input: Record<string, unknown>): WorkflowAction =>
   ({
     id: 'step-1',
-    type: WorkflowActionType[type],
-    name: type === 'SEND_EMAIL' ? 'Send Email' : 'Draft Email',
+    type: WorkflowActionType.SEND_EMAIL,
+    name: 'Send Email',
     valid: true,
     settings: { ...baseSettings, input },
   }) as WorkflowAction;
 
-describe('ToolExecutorWorkflowAction', () => {
-  let action: ToolExecutorWorkflowAction;
+describe('SendEmailWorkflowAction', () => {
+  let action: SendEmailWorkflowAction;
   let mockSendEmailTool: jest.Mocked<Pick<SendEmailTool, 'execute'>>;
-  let mockDraftEmailTool: jest.Mocked<Pick<DraftEmailTool, 'execute'>>;
 
   beforeEach(async () => {
     jest.clearAllMocks();
 
-    const toolResult = {
-      result: { success: true },
-      error: undefined,
+    mockSendEmailTool = {
+      execute: jest.fn().mockResolvedValue({
+        result: { success: true },
+        error: undefined,
+      }),
     };
-
-    mockSendEmailTool = { execute: jest.fn().mockResolvedValue(toolResult) };
-    mockDraftEmailTool = { execute: jest.fn().mockResolvedValue(toolResult) };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
-        ToolExecutorWorkflowAction,
-        { provide: HttpTool, useValue: { execute: jest.fn() } },
+        SendEmailWorkflowAction,
         { provide: SendEmailTool, useValue: mockSendEmailTool },
-        { provide: DraftEmailTool, useValue: mockDraftEmailTool },
         {
           provide: WorkflowRunStepLogWorkspaceService,
           useValue: { setStepLog: jest.fn() },
@@ -78,16 +69,13 @@ describe('ToolExecutorWorkflowAction', () => {
       ],
     }).compile();
 
-    action = module.get(ToolExecutorWorkflowAction);
+    action = module.get(SendEmailWorkflowAction);
   });
 
-  const executeWithBody = (
-    body: string | undefined,
-    type: 'SEND_EMAIL' | 'DRAFT_EMAIL' = 'SEND_EMAIL',
-  ) =>
+  const executeWithBody = (body: string | undefined) =>
     action.execute({
       currentStepId: 'step-1',
-      steps: [buildEmailStep(type, { ...emailInput, body })],
+      steps: [buildSendEmailStep({ ...emailInput, body })],
       context: {
         trigger: {
           name: 'John',
@@ -183,15 +171,25 @@ describe('ToolExecutorWorkflowAction', () => {
       expect(renderRichTextToHtml).not.toHaveBeenCalled();
       expect(mockSendEmailTool.execute).toHaveBeenCalled();
     });
+  });
 
-    it('should apply the same body handling for DRAFT_EMAIL', async () => {
-      await executeWithBody('{{trigger.name}}', 'DRAFT_EMAIL');
+  describe('step type guard', () => {
+    it('throws when the current step is not a send-email action', async () => {
+      await expect(
+        action.execute({
+          currentStepId: 'step-1',
+          steps: [
+            {
+              ...buildSendEmailStep({ ...emailInput, body: 'hi' }),
+              type: WorkflowActionType.DRAFT_EMAIL,
+            } as WorkflowAction,
+          ],
+          context: {},
+          runInfo: { workspaceId: 'workspace-1', workflowRunId: 'run-1' },
+        }),
+      ).rejects.toThrow('Step is not a send-email action');
 
-      expect(renderRichTextToHtml).not.toHaveBeenCalled();
-      expect(mockDraftEmailTool.execute).toHaveBeenCalledWith(
-        expect.objectContaining({ body: 'John' }),
-        expect.any(Object),
-      );
+      expect(mockSendEmailTool.execute).not.toHaveBeenCalled();
     });
   });
 });

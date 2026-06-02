@@ -3,17 +3,18 @@ import { useLingui } from '@lingui/react/macro';
 import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 import {
   StyledSection,
   StyledSectionTitle,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
 
 const StyledEntriesList = styled.div`
   background: ${themeCssVariables.background.tertiary};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: flex;
   flex-direction: column;
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: ${MONOSPACE_FONT_FAMILY};
   font-size: ${themeCssVariables.font.size.sm};
   max-height: 300px;
   overflow-y: auto;

@@ -1,7 +1,7 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
+import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 import {
   IconAlertTriangle,
   IconCheck,
@@ -14,7 +14,7 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 import {
   formatBytes,
   formatDuration,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsFormatters';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsFormatters';
 import {
   StyledBadgeGroup,
   StyledBodyMeta,
@@ -32,7 +32,7 @@ import {
   StyledSummaryCard,
   StyledSummaryHeader,
   StyledTitle,
-} from '@/workflow/workflow-steps/components/workflowRunStepLogsStyles';
+} from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
 
 const StyledModeBadge = styled.span`
   background: ${themeCssVariables.background.transparent.light};
@@ -84,13 +84,13 @@ const StyledBodyContainer = styled.div`
   word-break: break-word;
 `;
 
-type EmailDetails = Extract<WorkflowRunStepLog['details'], { type: 'EMAIL' }>;
+const StyledBodyPre = styled.pre`
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+`;
 
-// HTML detection is intentionally permissive — the body is sanitized
-// upstream by `composeEmail`, so the trade-off is "render as HTML when it
-// looks like HTML, otherwise show the raw text". Body content lives in the
-// same trust boundary as workflow inputs.
-const looksLikeHtml = (body: string): boolean => /<\/?[a-z][^>]*>/i.test(body);
+type EmailDetails = Extract<WorkflowRunStepLog['details'], { type: 'EMAIL' }>;
 
 export const WorkflowRunStepLogsEmailDetail = ({
   details,
@@ -184,15 +184,7 @@ export const WorkflowRunStepLogsEmailDetail = ({
         {isDefined(details.bodyPreview) && details.bodyPreview.length > 0 ? (
           <>
             <StyledBodyContainer>
-              {looksLikeHtml(details.bodyPreview) ? (
-                <div
-                  dangerouslySetInnerHTML={{ __html: details.bodyPreview }}
-                />
-              ) : (
-                <pre style={{ margin: 0, whiteSpace: 'pre-wrap' }}>
-                  {details.bodyPreview}
-                </pre>
-              )}
+              <StyledBodyPre>{details.bodyPreview}</StyledBodyPre>
             </StyledBodyContainer>
             {(isDefined(details.bodyBytes) || details.bodyTruncated) && (
               <StyledBodyMeta>

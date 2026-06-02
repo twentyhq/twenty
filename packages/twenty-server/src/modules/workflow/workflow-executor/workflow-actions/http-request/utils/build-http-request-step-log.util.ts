@@ -2,9 +2,9 @@ import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type WorkflowHttpRequestActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/http-request/types/workflow-http-request-action-input.type';
+import { truncateStringToUtf8ByteBudget } from 'src/utils/truncate-string-to-utf8-byte-budget.util';
 
 const MAX_BODY_BYTES = 32_000;
-const TRUNCATION_SENTINEL = '…[truncated]';
 const REDACTION_SENTINEL = '[redacted]';
 
 const SENSITIVE_HEADER_NAMES = new Set([
@@ -69,11 +69,35 @@ const redactHeaders = (
       continue;
     }
 
-    redacted[name] = typeof value === 'string' ? value : JSON.stringify(value);
+    redacted[name] =
+      typeof value === 'string' ? value : (JSON.stringify(value) ?? '');
   }
 
   return redacted;
 };
+
+// Captures `?key=value` and `&key=value` pairs. Used as the fallback path
+// when `new URL()` rejects the input (workflow URLs frequently contain
+// unresolved template placeholders like `{{baseUrl}}`, which break URL
+// parsing but must still have their query secrets redacted).
+const URL_QUERY_PARAM_REGEX = /([?&])([^=&#]+)=([^&#]*)/g;
+
+const safeDecodeUriComponent = (value: string): string => {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+};
+
+const redactUrlQueryStringFallback = (rawUrl: string): string =>
+  rawUrl.replace(URL_QUERY_PARAM_REGEX, (match, prefix, name) => {
+    if (isSensitiveUrlParam(safeDecodeUriComponent(name))) {
+      return `${prefix}${name}=${REDACTION_SENTINEL}`;
+    }
+
+    return match;
+  });
 
 const redactUrl = (rawUrl: string): string => {
   let parsed: URL;
@@ -81,7 +105,7 @@ const redactUrl = (rawUrl: string): string => {
   try {
     parsed = new URL(rawUrl);
   } catch {
-    return rawUrl;
+    return redactUrlQueryStringFallback(rawUrl);
   }
 
   let didRedact = false;
@@ -199,17 +223,12 @@ const serializeBody = (body: unknown): SerializedBody => {
   const redacted =
     typeof body === 'string' ? redactJsonBodyString(serialized) : serialized;
 
-  const bodyBytes = Buffer.byteLength(redacted, 'utf8');
+  const { value, originalBytes, truncated } = truncateStringToUtf8ByteBudget(
+    redacted,
+    MAX_BODY_BYTES,
+  );
 
-  if (bodyBytes <= MAX_BODY_BYTES) {
-    return { body: redacted, bodyBytes, bodyTruncated: false };
-  }
-
-  return {
-    body: `${redacted.slice(0, MAX_BODY_BYTES)}${TRUNCATION_SENTINEL}`,
-    bodyBytes,
-    bodyTruncated: true,
-  };
+  return { body: value, bodyBytes: originalBytes, bodyTruncated: truncated };
 };
 
 export const buildHttpRequestStepLog = ({

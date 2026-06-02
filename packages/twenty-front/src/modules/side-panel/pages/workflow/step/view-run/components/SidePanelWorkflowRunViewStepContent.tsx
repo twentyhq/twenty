@@ -13,8 +13,8 @@ import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
 import { getStepDefinitionOrThrow } from '@/workflow/utils/getStepDefinitionOrThrow';
 import { workflowSelectedNodeComponentState } from '@/workflow/workflow-diagram/states/workflowSelectedNodeComponentState';
+import { WorkflowRunStepLogsDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsDetail';
 import { WorkflowRunStepInputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepInputDetail';
-import { WorkflowRunStepLogsDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepLogsDetail';
 import { WorkflowRunStepNodeDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepNodeDetail';
 import { WorkflowRunStepOutputDetail } from '@/workflow/workflow-steps/components/WorkflowRunStepOutputDetail';
 import {
@@ -24,8 +24,8 @@ import {
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher';
 import { styled } from '@linaria/react';
-import { isNull } from '@sniptt/guards';
 import { t } from '@lingui/core/macro';
+import { isNull } from '@sniptt/guards';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconLogin2,
@@ -100,9 +100,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
   const isOutputTabDisabled = getIsOutputTabDisabled({
     stepExecutionStatus,
   });
-  const hasStepLog = isDefined(
-    workflowRun.stepLogs?.[workflowSelectedNode],
-  );
+  const hasStepLog = isDefined(workflowRun.stepLogs?.[workflowSelectedNode]);
 
   const tabs: SingleTabProps<TabId>[] = [
     {

@@ -2,16 +2,12 @@ import { type WorkflowRunStepLog } from 'twenty-shared/workflow';
 
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { type WorkflowSendEmailActionInput } from 'src/modules/workflow/workflow-executor/workflow-actions/mail-sender/types/workflow-send-email-action-input.type';
+import { truncateStringToUtf8ByteBudget } from 'src/utils/truncate-string-to-utf8-byte-budget.util';
 
 const MAX_BODY_PREVIEW_BYTES = 8_000;
-const TRUNCATION_SENTINEL = '…[truncated]';
 
 export type EmailStepLogMode = 'SEND' | 'DRAFT';
 
-// Recipients on the WorkflowSendEmailActionInput are stored as comma- or
-// semicolon-separated strings; the tool output (when composition succeeds)
-// already has them parsed. Normalize to string[] at the boundary so the log
-// shape stays consistent.
 const splitRecipients = (raw: string | undefined): string[] => {
   if (raw === undefined || raw === null) {
     return [];
@@ -46,16 +42,15 @@ const truncateBody = (body: string | undefined) => {
     };
   }
 
-  const bodyBytes = Buffer.byteLength(body, 'utf8');
-
-  if (bodyBytes <= MAX_BODY_PREVIEW_BYTES) {
-    return { bodyPreview: body, bodyBytes, bodyTruncated: false };
-  }
+  const { value, originalBytes, truncated } = truncateStringToUtf8ByteBudget(
+    body,
+    MAX_BODY_PREVIEW_BYTES,
+  );
 
   return {
-    bodyPreview: `${body.slice(0, MAX_BODY_PREVIEW_BYTES)}${TRUNCATION_SENTINEL}`,
-    bodyBytes,
-    bodyTruncated: true,
+    bodyPreview: value,
+    bodyBytes: originalBytes,
+    bodyTruncated: truncated,
   };
 };
 
@@ -116,9 +111,11 @@ export const buildEmailStepLog = ({
     extractString(output, 'connectedAccountId') ?? input.connectedAccountId;
   const attachmentCount = extractNumber(output, 'attachmentCount');
 
-  // Prefer the upstream-sanitized body so the front-end can safely render
-  // it with `dangerouslySetInnerHTML`. Falls back to the raw input body only
-  // when the tool failed before composing (no sanitized body available).
+  // Prefer the upstream-sanitized body — even though the side panel renders
+  // bodyPreview as escaped text (never HTML), the sanitized version is
+  // usually cleaner and avoids exposing raw scripted markup to reviewers.
+  // Falls back to the raw input body when the tool failed before composing
+  // (no sanitized body available).
   const bodyForLog =
     extractString(output, 'sanitizedHtmlBody') ??
     extractString(output, 'plainTextBody') ??

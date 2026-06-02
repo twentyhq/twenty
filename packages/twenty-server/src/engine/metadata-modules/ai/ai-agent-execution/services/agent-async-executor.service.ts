@@ -267,72 +267,52 @@ export class AgentAsyncExecutorService {
           ? agent.responseFormat.schema
           : undefined;
 
-      if (!agentSchema) {
-        const resolvedModelId = registeredModel.modelId;
-        const tokenCostInDollars = this.aiBillingService.calculateCost(
-          resolvedModelId,
-          { usage: textResponse.usage, cacheCreationTokens },
-        );
-        const totalCostInDollars =
-          tokenCostInDollars +
-          nativeWebSearchCallCount * NATIVE_WEB_SEARCH_COST_PER_CALL_DOLLARS;
-        const creditsUsedMicro = Math.round(
-          convertDollarsToBillingCredits(totalCostInDollars),
-        );
+      let result: object = { response: textResponse.text };
 
-        return {
-          result: { response: textResponse.text },
-          usage: textResponse.usage,
-          cacheCreationTokens,
-          nativeWebSearchCallCount,
-          hasNoMoreAvailableCredits,
-          steps: executionSteps,
-          modelId: resolvedModelId,
-          totalCostInDollars,
-          creditsUsedMicro,
-        };
-      }
-
-      const structuredResult = await generateText({
-        system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
-        model: registeredModel.model,
-        prompt: `Based on the following execution results, generate the structured output according to the schema:
+      if (agentSchema) {
+        const structuredResult = await generateText({
+          system: WORKFLOW_SYSTEM_PROMPTS.OUTPUT_GENERATOR,
+          model: registeredModel.model,
+          prompt: `Based on the following execution results, generate the structured output according to the schema:
 
                  Execution Results: ${textResponse.text}
 
                  Please generate the structured output based on the execution results and context above.`,
-        output: Output.object({ schema: jsonSchema(agentSchema) }),
-        experimental_telemetry: AI_TELEMETRY_CONFIG,
-        onStepFinish: async (step) => {
-          const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
-            await this.aiBillingService.decrementAndCheckAvailableCredits(
-              registeredModel.modelId,
-              {
-                usage: step.usage,
-                cacheCreationTokens: extractCacheCreationTokens(
-                  step.providerMetadata,
-                ),
-              },
-              workspaceId,
-            );
+          output: Output.object({ schema: jsonSchema(agentSchema) }),
+          experimental_telemetry: AI_TELEMETRY_CONFIG,
+          onStepFinish: async (step) => {
+            const { hasNoMoreAvailableCredits: stepHasNoMoreAvailableCredits } =
+              await this.aiBillingService.decrementAndCheckAvailableCredits(
+                registeredModel.modelId,
+                {
+                  usage: step.usage,
+                  cacheCreationTokens: extractCacheCreationTokens(
+                    step.providerMetadata,
+                  ),
+                },
+                workspaceId,
+              );
 
-          if (stepHasNoMoreAvailableCredits) {
-            hasNoMoreAvailableCredits = true;
-          }
-        },
-      });
+            if (stepHasNoMoreAvailableCredits) {
+              hasNoMoreAvailableCredits = true;
+            }
+          },
+        });
 
-      accumulatedUsage = mergeLanguageModelUsage(
-        textResponse.usage,
-        structuredResult.usage,
-      );
-      executionSteps = [...textResponse.steps, ...structuredResult.steps];
-
-      if (structuredResult.output == null) {
-        throw new AiException(
-          'Failed to generate structured output from execution results',
-          AiExceptionCode.AGENT_EXECUTION_FAILED,
+        accumulatedUsage = mergeLanguageModelUsage(
+          textResponse.usage,
+          structuredResult.usage,
         );
+        executionSteps = [...textResponse.steps, ...structuredResult.steps];
+
+        if (structuredResult.output == null) {
+          throw new AiException(
+            'Failed to generate structured output from execution results',
+            AiExceptionCode.AGENT_EXECUTION_FAILED,
+          );
+        }
+
+        result = structuredResult.output as object;
       }
 
       const resolvedModelId = registeredModel.modelId;
@@ -348,7 +328,7 @@ export class AgentAsyncExecutorService {
       );
 
       return {
-        result: structuredResult.output as object,
+        result,
         usage: accumulatedUsage,
         cacheCreationTokens,
         nativeWebSearchCallCount,

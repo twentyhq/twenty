@@ -1,17 +1,7 @@
 import { styled } from '@linaria/react';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { MONOSPACE_FONT_FAMILY } from '@/workflow/workflow-steps/components/workflowRunStepLogsFormatters';
-
-// Shared visual primitives for the `WorkflowRunStepLogs*` detail components
-// (`AI_AGENT`, `CODE`, `HTTP_REQUEST`, `EMAIL`, …). The goal is to keep the
-// log surface visually consistent across step types while leaving each
-// component free to layer on type-specific styling (model badge, recipient
-// table, header table, etc.).
-
-// ---------------------------------------------------------------------------
-// Summary card (icon + title on the left, badges on the right)
-// ---------------------------------------------------------------------------
+import { MONOSPACE_FONT_FAMILY } from '@/ui/theme/constants/MonospaceFontFamily';
 
 export const StyledSummaryCard = styled.div`
   background: ${themeCssVariables.background.transparent.lighter};
@@ -30,8 +20,6 @@ export const StyledSummaryHeader = styled.div`
   justify-content: space-between;
 `;
 
-// `min-width: 0` lets the title truncate inside flex layouts instead of
-// pushing the right-side badge group off-screen.
 export const StyledHeaderLeft = styled.div`
   align-items: center;
   display: flex;
@@ -51,9 +39,6 @@ export const StyledBadgeGroup = styled.div`
   gap: ${themeCssVariables.spacing[1]};
 `;
 
-// `isSuccess` toggles green / red surfaces. Used by step types that have a
-// binary outcome (CODE, EMAIL, HTTP_REQUEST). `inline-flex` is so callers
-// can put an icon next to the label without extra wrappers.
 export const StyledStatusBadge = styled.span<{ isSuccess: boolean }>`
   align-items: center;
   background: ${({ isSuccess }) =>
@@ -69,10 +54,6 @@ export const StyledStatusBadge = styled.span<{ isSuccess: boolean }>`
   gap: ${themeCssVariables.spacing[1]};
   padding: ${themeCssVariables.spacing['0.5']} ${themeCssVariables.spacing[1]};
 `;
-
-// ---------------------------------------------------------------------------
-// Metrics row (small icon + label above a large value, grid of cells)
-// ---------------------------------------------------------------------------
 
 export const StyledMetricsRow = styled.div`
   align-items: stretch;
@@ -103,19 +84,12 @@ export const StyledMetricValue = styled.div`
   font-weight: ${themeCssVariables.font.weight.semiBold};
 `;
 
-// ---------------------------------------------------------------------------
-// Section (label + content vertical stack). Used for "Request", "Response",
-// "Recipients", "Entries", "Error", …
-// ---------------------------------------------------------------------------
-
 export const StyledSection = styled.section`
   display: flex;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
 `;
 
-// `display: flex` lets section titles optionally include a leading icon
-// (e.g. ↑ Request, ↓ Response). Text-only titles render identically.
 export const StyledSectionTitle = styled.h3`
   align-items: center;
   color: ${themeCssVariables.font.color.tertiary};
@@ -127,14 +101,6 @@ export const StyledSectionTitle = styled.h3`
   text-transform: uppercase;
 `;
 
-// ---------------------------------------------------------------------------
-// Shared content blocks
-// ---------------------------------------------------------------------------
-
-// Outer error chrome: red surface + border. Layout-agnostic so it can host
-// either a single text node (HTTP_REQUEST / EMAIL: `<StyledErrorCard>
-// <StyledErrorMessageText>…</StyledErrorMessageText></StyledErrorCard>`) or
-// a multi-child stack (CODE: header + message + stack trace).
 export const StyledErrorCard = styled.div`
   background: ${themeCssVariables.background.transparent.danger};
   border: 1px solid ${themeCssVariables.color.red};
@@ -145,9 +111,6 @@ export const StyledErrorCard = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
-// Monospace, wrap-friendly text node intended to live inside
-// `StyledErrorCard` (or any equivalent container) when the error payload is
-// a plain string.
 export const StyledErrorMessageText = styled.div`
   color: ${themeCssVariables.font.color.primary};
   font-family: ${MONOSPACE_FONT_FAMILY};
