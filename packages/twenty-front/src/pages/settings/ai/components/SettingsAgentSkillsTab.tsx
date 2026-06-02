@@ -104,7 +104,7 @@ export const SettingsAgentSkillsTab = () => {
                 <DropdownMenuItemsContainer>
                   <MenuItemToggle
                     LeftIcon={IconArchive}
-                    onToggleChange={() => setShowDeactivated(!showDeactivated)}
+                    onToggleChange={setShowDeactivated}
                     toggled={showDeactivated}
                     text={t`Deactivated`}
                     toggleSize="small"

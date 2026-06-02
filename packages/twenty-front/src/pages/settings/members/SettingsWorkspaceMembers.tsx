@@ -15,9 +15,8 @@ import { PermissionFlagType } from '~/generated-metadata/graphql';
 import { SettingsWorkspaceMembersInviteTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersInviteTab';
 import { SettingsWorkspaceMembersRolesTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersRolesTab';
 import { SettingsWorkspaceMembersTeamTab } from '~/pages/settings/members/tabs/SettingsWorkspaceMembersTeamTab';
-// TODO: replace with members-specific illustrations + recordings when designed.
-import placeholderHeroDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
-import placeholderHeroLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
+import coverDark from '~/pages/settings/members/assets/cover-dark.png';
+import coverLight from '~/pages/settings/members/assets/cover-light.png';
 
 const MEMBERS_TAB_LIST_ID = 'members-tab-list';
 
@@ -74,8 +73,8 @@ export const SettingsWorkspaceMembers = () => {
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={placeholderHeroLight}
-            darkSrc={placeholderHeroDark}
+            lightSrc={coverLight}
+            darkSrc={coverDark}
             instanceIdPrefix={SETTINGS_MEMBERS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {

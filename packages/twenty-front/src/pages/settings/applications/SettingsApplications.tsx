@@ -11,9 +11,8 @@ import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath } from 'twenty-shared/utils';
 import { IconApps, IconCode, IconDownload, IconPlug } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
-// TODO: replace with apps-specific illustrations + recordings when designed.
-import placeholderHeroDark from '~/pages/settings/layout/assets/customize-illustration-dark.png';
-import placeholderHeroLight from '~/pages/settings/layout/assets/customize-illustration-light.png';
+import coverDark from '~/pages/settings/applications/assets/cover-dark.png';
+import coverLight from '~/pages/settings/applications/assets/cover-light.png';
 import {
   FeatureFlagKey,
   PermissionFlagType,
@@ -82,8 +81,8 @@ export const SettingsApplications = () => {
       <SettingsPageContainer>
         <Section>
           <SettingsDiscoveryHeroCard
-            lightSrc={placeholderHeroLight}
-            darkSrc={placeholderHeroDark}
+            lightSrc={coverLight}
+            darkSrc={coverDark}
             instanceIdPrefix={APPLICATIONS_HERO_INSTANCE_ID_PREFIX}
             tabs={[
               {

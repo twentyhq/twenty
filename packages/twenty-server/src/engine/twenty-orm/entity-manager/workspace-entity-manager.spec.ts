@@ -238,6 +238,7 @@ describe('WorkspaceEntityManager', () => {
         IS_JUNCTION_RELATIONS_ENABLED: false,
         IS_REST_METADATA_API_NEW_FORMAT_DIRECT: false,
         IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED: false,
+        IS_SETTINGS_DISCOVERY_HERO_ENABLED: false,
       },
       userWorkspaceRoleMap: {},
       eventEmitterService: {
