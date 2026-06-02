@@ -56,7 +56,9 @@ type FormCurrencyProps = {
   ariaLabel?: string;
 };
 
-const ALLOWED_CHARS = /^[0-9]*\.?[0-9]*$/;
+// Allow either decimal separator: mobile `inputMode="decimal"` keyboards emit
+// ',' in many locales (EU, SA). The value is normalized to '.' on change.
+const ALLOWED_CHARS = /^[0-9]*[.,]?[0-9]*$/;
 
 export function FormCurrency({
   value,
@@ -69,7 +71,7 @@ export function FormCurrency({
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     const next = event.target.value;
     if (next === '' || ALLOWED_CHARS.test(next)) {
-      onValueChange(next);
+      onValueChange(next.replace(',', '.'));
     }
   };
 

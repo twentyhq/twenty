@@ -173,7 +173,6 @@ type PopupPosition = {
 const POPUP_GAP_PX = 4;
 const VIEWPORT_MARGIN_PX = 8;
 const POPUP_MAX_HEIGHT_PX = 320;
-const POPUP_MIN_HEIGHT_PX = 160;
 
 function labelMatches(label: ReactNode, query: string): boolean {
   if (query === '') return true;
@@ -208,11 +207,10 @@ export function FormSelect<TValue extends string>({
     const openUp =
       spaceBelow < Math.min(POPUP_MAX_HEIGHT_PX, 220) &&
       spaceAbove > spaceBelow;
-    const available = openUp ? spaceAbove : spaceBelow;
-    const maxHeight = Math.max(
-      POPUP_MIN_HEIGHT_PX,
-      Math.min(POPUP_MAX_HEIGHT_PX, available),
-    );
+    // Clamp to the room actually available so the dropdown can't overflow a
+    // short viewport; only grow toward POPUP_MAX_HEIGHT_PX when there's space.
+    const available = Math.max(0, openUp ? spaceAbove : spaceBelow);
+    const maxHeight = Math.min(POPUP_MAX_HEIGHT_PX, available);
     setPosition({
       left: rect.left,
       width: rect.width,

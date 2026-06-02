@@ -177,7 +177,8 @@ export function FormTagInput({
     }
     if (menuOpen && event.key === 'ArrowUp') {
       event.preventDefault();
-      setActiveIndex((i) => (i - 1 + menuMatches.length) % menuMatches.length);
+      // From no selection (-1) or the first option (0), wrap up to the last one.
+      setActiveIndex((i) => (i <= 0 ? menuMatches.length - 1 : i - 1));
       return;
     }
     if (event.key === 'Enter' || event.key === ',') {
