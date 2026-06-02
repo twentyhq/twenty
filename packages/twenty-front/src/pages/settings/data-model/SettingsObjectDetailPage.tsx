@@ -6,8 +6,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { ObjectFields } from '@/settings/data-model/object-details/components/tabs/ObjectFields';
 import { ObjectLayout } from '@/settings/data-model/object-details/components/tabs/ObjectLayout';
 import { ObjectSettings } from '@/settings/data-model/object-details/components/tabs/ObjectSettings';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
-import { TabList } from '@/ui/layout/tab-list/components/TabList';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { styled } from '@linaria/react';
@@ -64,10 +64,11 @@ export const SettingsObjectDetailPage = () => {
       objectMetadataItem,
     }) || isDDLLocked;
 
-  const activeTabId = useAtomComponentStateValue(
-    activeTabIdComponentState,
-    SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
-  );
+  const activeTabId =
+    useAtomComponentStateValue(
+      activeTabIdComponentState,
+      SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID,
+    ) ?? SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS;
 
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -132,60 +133,60 @@ export const SettingsObjectDetailPage = () => {
   };
 
   return (
-    <>
-      <SubMenuTopBarContainer
-        title={objectMetadataItem.labelPlural}
-        links={[
-          {
-            children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
-          },
-          {
-            children: t`Objects`,
-            href: getSettingsPath(SettingsPath.Objects),
-          },
-          {
-            children: objectMetadataItem.labelPlural,
-          },
-        ]}
-        actionButton={
-          !readonly &&
-          activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
-            <UndecoratedLink to="./new-field/select">
-              <Button
-                title={t`New Field`}
-                variant="primary"
-                size="small"
-                accent="blue"
-                Icon={IconPlus}
-              />
-            </UndecoratedLink>
-          )
-        }
-      >
-        <SettingsPageContainer>
-          <TabList
-            tabs={tabs}
-            componentInstanceId={
-              SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
-            }
-            rightComponent={
-              <Button
-                Icon={IconArrowUpRight}
-                title={t`See records`}
-                variant="tertiary"
-                size="small"
-                to={getAppPath(AppPath.RecordIndexPage, {
-                  objectNamePlural: objectMetadataItem.namePlural,
-                })}
-              />
-            }
+    <SettingsPageLayout
+      title={objectMetadataItem.labelPlural}
+      links={[
+        {
+          children: t`Workspace`,
+          href: getSettingsPath(SettingsPath.General),
+        },
+        {
+          children: t`Objects`,
+          href: getSettingsPath(SettingsPath.Objects),
+        },
+        {
+          children: objectMetadataItem.labelPlural,
+        },
+      ]}
+      actionButton={
+        <>
+          <Button
+            Icon={IconArrowUpRight}
+            title={t`See records`}
+            variant="tertiary"
+            size="small"
+            to={getAppPath(AppPath.RecordIndexPage, {
+              objectNamePlural: objectMetadataItem.namePlural,
+            })}
           />
-          <StyledContentContainer>
-            {renderActiveTabContent()}
-          </StyledContentContainer>
-        </SettingsPageContainer>
-      </SubMenuTopBarContainer>
-    </>
+          {!readonly &&
+            activeTabId === SETTINGS_OBJECT_DETAIL_TABS.TABS_IDS.FIELDS && (
+              <UndecoratedLink to="./new-field/select">
+                <Button
+                  title={t`New Field`}
+                  variant="primary"
+                  size="small"
+                  accent="blue"
+                  Icon={IconPlus}
+                />
+              </UndecoratedLink>
+            )}
+        </>
+      }
+      secondaryBar={
+        <SettingsTabBar
+          tabs={tabs}
+          componentInstanceId={
+            SETTINGS_OBJECT_DETAIL_TABS.COMPONENT_INSTANCE_ID
+          }
+        />
+      }
+    >
+      <SettingsPageContainer>
+        <StyledContentContainer>
+          {renderActiveTabContent()}
+        </StyledContentContainer>
+      </SettingsPageContainer>
+    </SettingsPageLayout>
   );
 };
