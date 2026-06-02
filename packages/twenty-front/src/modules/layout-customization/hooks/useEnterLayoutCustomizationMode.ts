@@ -24,9 +24,6 @@ export const useEnterLayoutCustomizationMode = () => {
   const { navigateSidePanel } = useNavigateSidePanel();
   const { enqueueWarningSnackBar } = useSnackBar();
 
-  // Returns whether customization mode is active afterward, so callers that
-  // navigate on entry can skip navigation when entry was blocked (e.g. a
-  // dashboard is mid-edit).
   const enterLayoutCustomizationMode = useCallback((): boolean => {
     const isLayoutCustomizationModeAlreadyEnabled = store.get(
       isLayoutCustomizationModeEnabledState.atom,

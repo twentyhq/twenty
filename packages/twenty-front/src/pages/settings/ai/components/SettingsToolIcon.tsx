@@ -22,7 +22,6 @@ type ApplicationInfo = {
 };
 
 type MarketplaceAppInfo = {
-  icon: string;
   logo?: string | null;
 };
 
@@ -107,11 +106,6 @@ export const SettingsToolIcon = ({
         size="xs"
       />
     );
-  }
-
-  if (isDefined(marketplaceApp)) {
-    const MarketplaceIcon = getIcon(marketplaceApp.icon);
-    return <MarketplaceIcon size={16} />;
   }
 
   if (isDefined(application)) {
