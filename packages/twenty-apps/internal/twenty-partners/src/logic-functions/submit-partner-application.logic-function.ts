@@ -1,4 +1,4 @@
-import { CoreApiClient } from 'twenty-client-sdk/core';
+import { CoreApiClient, type CoreSchema } from 'twenty-client-sdk/core';
 import { defineLogicFunction } from 'twenty-sdk/define';
 
 import { slugify } from '../scripts/slugify';
@@ -73,14 +73,16 @@ function buildApplicationNotes(input: SubmitPartnerApplicationInput): string | n
   return isNonEmptyString(input.applicationNotes) ? input.applicationNotes.trim() : null;
 }
 
+// Mirrors the subset of Partner{Create,Update}Input this handler writes. The
+// enum-typed columns are narrowed from the validated string inputs below.
 type PartnerFieldsForUpsert = {
   name: string;
   linkedin?: { primaryLinkUrl: string };
   city?: string;
-  country?: string;
-  languagesSpoken?: string[];
-  typeOfTeam?: string;
-  partnerScope?: string[];
+  country?: CoreSchema.PartnerCountryEnum;
+  languagesSpoken?: CoreSchema.PartnerLanguagesSpokenEnum[];
+  typeOfTeam?: CoreSchema.PartnerTypeOfTeamEnum;
+  partnerScope?: CoreSchema.PartnerPartnerScopeEnum[];
   skills?: string[];
   hourlyRate?: { amountMicros: number; currencyCode: 'USD' };
   projectBudgetMin?: { amountMicros: number; currencyCode: 'USD' };
@@ -94,10 +96,14 @@ function buildPartnerFields(input: SubmitPartnerApplicationInput): PartnerFields
   };
   if (isNonEmptyString(input.linkedin)) fields.linkedin = { primaryLinkUrl: input.linkedin.trim() };
   if (isNonEmptyString(input.city)) fields.city = input.city.trim();
-  if (input.country !== undefined) fields.country = input.country;
-  if (input.languages !== undefined && input.languages.length > 0) fields.languagesSpoken = input.languages;
-  if (input.typeOfTeam !== undefined) fields.typeOfTeam = input.typeOfTeam;
-  if (input.partnerScope !== undefined && input.partnerScope.length > 0) fields.partnerScope = input.partnerScope;
+  // validate() has already checked these against the allowed value sets, so
+  // narrowing the validated strings to their enum types here is sound.
+  if (input.country !== undefined) fields.country = input.country as CoreSchema.PartnerCountryEnum;
+  if (input.languages !== undefined && input.languages.length > 0)
+    fields.languagesSpoken = input.languages as CoreSchema.PartnerLanguagesSpokenEnum[];
+  if (input.typeOfTeam !== undefined) fields.typeOfTeam = input.typeOfTeam as CoreSchema.PartnerTypeOfTeamEnum;
+  if (input.partnerScope !== undefined && input.partnerScope.length > 0)
+    fields.partnerScope = input.partnerScope as CoreSchema.PartnerPartnerScopeEnum[];
   if (input.skills !== undefined && input.skills.length > 0) fields.skills = input.skills.filter(isNonEmptyString);
   const hourly = toMicros(input.hourlyRate);
   if (hourly) fields.hourlyRate = hourly;
@@ -170,11 +176,9 @@ export const handler = async (
           },
         },
       },
-    } as any);
+    });
 
-    const existingEdge = (personLookup as any)?.people?.edges?.[0]?.node as
-      | { id: string; partner: { id: string; company: { id: string } | null } | null }
-      | undefined;
+    const existingEdge = personLookup.people?.edges?.[0]?.node;
 
     if (existingEdge && existingEdge.partner) {
       const partnerId = existingEdge.partner.id;
@@ -183,7 +187,7 @@ export const handler = async (
           __args: { id: partnerId, data: partnerFields },
           id: true,
         },
-      } as any);
+      });
       await client.mutation({
         updatePerson: {
           __args: {
@@ -194,18 +198,21 @@ export const handler = async (
           },
           id: true,
         },
-      } as any);
+      });
       return { ok: true, created: false, partnerId };
     }
 
-    const companyData: Record<string, unknown> = { name: input.companyName.trim() };
+    const companyData: CoreSchema.CompanyCreateInput = { name: input.companyName.trim() };
     if (isNonEmptyString(input.domainName)) {
       companyData.domainName = { primaryLinkUrl: input.domainName.trim() };
     }
     const companyResult = await client.mutation({
       createCompany: { __args: { data: companyData }, id: true },
-    } as any);
-    const companyId = (companyResult as any).createCompany.id as string;
+    });
+    const companyId = companyResult.createCompany?.id;
+    if (companyId === undefined) {
+      throw new Error('createCompany did not return an id');
+    }
 
     const partnerResult = await client.mutation({
       createPartner: {
@@ -221,8 +228,11 @@ export const handler = async (
         },
         id: true,
       },
-    } as any);
-    const partnerId = (partnerResult as any).createPartner.id as string;
+    });
+    const partnerId = partnerResult.createPartner?.id;
+    if (partnerId === undefined) {
+      throw new Error('createPartner did not return an id');
+    }
 
     if (existingEdge) {
       await client.mutation({
@@ -236,7 +246,7 @@ export const handler = async (
           },
           id: true,
         },
-      } as any);
+      });
     } else {
       await client.mutation({
         createPerson: {
@@ -250,7 +260,7 @@ export const handler = async (
           },
           id: true,
         },
-      } as any);
+      });
     }
 
     return { ok: true, created: true, partnerId };

@@ -31,13 +31,13 @@ const createdCompanyIds: string[] = [];
 
 async function cleanup(): Promise<void> {
   for (const id of createdPartnerIds.splice(0)) {
-    await client.mutation({ destroyPartner: { __args: { id }, id: true } } as any).catch(() => {});
+    await client.mutation({ destroyPartner: { __args: { id }, id: true } }).catch(() => {});
   }
   for (const id of createdPersonIds.splice(0)) {
-    await client.mutation({ destroyPerson: { __args: { id }, id: true } } as any).catch(() => {});
+    await client.mutation({ destroyPerson: { __args: { id }, id: true } }).catch(() => {});
   }
   for (const id of createdCompanyIds.splice(0)) {
-    await client.mutation({ destroyCompany: { __args: { id }, id: true } } as any).catch(() => {});
+    await client.mutation({ destroyCompany: { __args: { id }, id: true } }).catch(() => {});
   }
 }
 
@@ -51,17 +51,15 @@ async function trackCreated(result: SubmitPartnerApplicationResult): Promise<voi
       company: { id: true },
       persons: { edges: { node: { id: true } } },
     },
-  } as any);
-  const node = (fetched as any).partner as
-    | { id: string; company: { id: string } | null; persons: { edges: Array<{ node: { id: string } }> } }
-    | null;
+  });
+  const node = fetched.partner;
   if (!node) return;
   if (node.company) createdCompanyIds.push(node.company.id);
   for (const edge of node.persons?.edges ?? []) createdPersonIds.push(edge.node.id);
 }
 
 beforeAll(async () => {
-  await client.query({ partners: { __args: { first: 1 }, edges: { node: { id: true } } } } as any);
+  await client.query({ partners: { __args: { first: 1 }, edges: { node: { id: true } } } });
 });
 
 afterEach(async () => {
@@ -109,18 +107,19 @@ describe('submit-partner-application handler — upsert', () => {
         company: { id: true, name: true },
         persons: { edges: { node: { id: true, name: { firstName: true, lastName: true }, emails: { primaryEmail: true } } } },
       },
-    } as any);
-    const node = (partner as any).partner;
-    expect(node.name).toBe('YC Agency');
-    expect(node.slug).toBe('yc-agency');
-    expect(node.validationStage).toBe('APPLICATION');
-    expect(node.reviewed).toBe(false);
-    expect(node.partnerTier).toBe('NEW');
-    expect(node.company?.name).toBe('YC Agency');
-    expect(node.persons.edges).toHaveLength(1);
-    expect(node.persons.edges[0].node.emails.primaryEmail).toBe('create.case@example.com');
-    expect(node.persons.edges[0].node.name.firstName).toBe('Ada');
-    expect(node.persons.edges[0].node.name.lastName).toBe('Lovelace');
+    });
+    const node = partner.partner;
+    expect(node?.name).toBe('YC Agency');
+    expect(node?.slug).toBe('yc-agency');
+    expect(node?.validationStage).toBe('APPLICATION');
+    expect(node?.reviewed).toBe(false);
+    expect(node?.partnerTier).toBe('NEW');
+    expect(node?.company?.name).toBe('YC Agency');
+    expect(node?.persons?.edges).toHaveLength(1);
+    const personNode = node?.persons?.edges?.[0]?.node;
+    expect(personNode?.emails?.primaryEmail).toBe('create.case@example.com');
+    expect(personNode?.name?.firstName).toBe('Ada');
+    expect(personNode?.name?.lastName).toBe('Lovelace');
   });
 
   it('returns created: false and updates fields on resubmission for the same email', async () => {
@@ -154,12 +153,12 @@ describe('submit-partner-application handler — upsert', () => {
         typeOfTeam: true,
         hourlyRate: { amountMicros: true, currencyCode: true },
       },
-    } as any);
-    const node = (partner as any).partner;
-    expect(node.city).toBe('Paris');
-    expect(node.partnerScope).toEqual(['ADVISORY', 'SOLUTIONING']);
-    expect(node.typeOfTeam).toBe('SOLO');
-    expect(node.hourlyRate).toEqual({ amountMicros: 175_000_000, currencyCode: 'USD' });
+    });
+    const node = partner.partner;
+    expect(node?.city).toBe('Paris');
+    expect(node?.partnerScope).toEqual(['ADVISORY', 'SOLUTIONING']);
+    expect(node?.typeOfTeam).toBe('SOLO');
+    expect(node?.hourlyRate).toEqual({ amountMicros: 175_000_000, currencyCode: 'USD' });
   });
 
   it('preserves staff-owned columns (validationStage, ranking, reviewed) on resubmission', async () => {
@@ -176,7 +175,7 @@ describe('submit-partner-application handler — upsert', () => {
         },
         id: true,
       },
-    } as any);
+    });
 
     const second = await handler(authedEvent(baseInput({ email: 'staff.preserve@example.com', city: 'Berlin' })));
     expect(second.ok).toBe(true);
@@ -190,12 +189,12 @@ describe('submit-partner-application handler — upsert', () => {
         ranking: true,
         city: true,
       },
-    } as any);
-    const node = (partner as any).partner;
-    expect(node.validationStage).toBe('VALIDATED');
-    expect(node.reviewed).toBe(true);
-    expect(node.ranking).toBe('RATING_4');
-    expect(node.city).toBe('Berlin');
+    });
+    const node = partner.partner;
+    expect(node?.validationStage).toBe('VALIDATED');
+    expect(node?.reviewed).toBe(true);
+    expect(node?.ranking).toBe('RATING_4');
+    expect(node?.city).toBe('Berlin');
   });
 
   it('accepts new category values and stores applicationNotes', async () => {
@@ -218,12 +217,12 @@ describe('submit-partner-application handler — upsert', () => {
         partnerScope: true,
         applicationNotes: true,
       },
-    } as any);
-    const node = (fetched as any).partner;
-    expect(node.partnerScope).toEqual(
+    });
+    const node = fetched.partner;
+    expect(node?.partnerScope).toEqual(
       expect.arrayContaining(['ADVISORY', 'SOLUTIONING']),
     );
-    expect(node.applicationNotes).toContain('Acme');
+    expect(node?.applicationNotes).toContain('Acme');
   });
 
   it('rejects a legacy scope value as invalid_input', async () => {
