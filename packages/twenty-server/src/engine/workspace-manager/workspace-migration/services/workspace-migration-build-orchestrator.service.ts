@@ -110,7 +110,13 @@ const createEntityActionsBuilderTask = <T extends AllMetadataName>(
     if (result.status === 'fail') {
       orchestratorFailureReport[metadataName].push(...result.errors);
     } else {
-      orchestratorActionsReport[metadataName] = result.actions;
+      // TS mapped-type invariance: writing into a generic key of a mapped
+      // type widens the expected value to the intersection of all variants.
+      // The runtime value is correctly typed as
+      // MetadataUniversalWorkspaceMigrationActionsRecord<T>, but TS cannot
+      // narrow OrchestratorActionsReport[T] on the assignment side.
+      orchestratorActionsReport[metadataName] =
+        result.actions as OrchestratorActionsReport[T];
     }
   },
 });
