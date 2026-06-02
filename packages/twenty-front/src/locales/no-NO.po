@@ -17973,6 +17973,12 @@ msgstr "Du kan se funksjonslogikken i applikasjonsinnstillingene dine."
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Du kan sette opp en hvilken som helst kombinasjon av IMAP (motta e-post), SMTP (sende e-post) og CalDAV (kalendersynkronisering)."
 
+#. js-lingui-id: hiLxmN
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/modules/settings/admin-panel/hooks/useHandleImpersonate.ts
+msgid "You cannot impersonate your own account"
+msgstr ""
+
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to access the {objectName} object"

@@ -17977,6 +17977,12 @@ msgstr "Μπορείτε να δείτε τη λογική της συνάρτη
 msgid "You can set up any combination of IMAP (receiving emails), SMTP (sending emails), and CalDAV (calendar sync)."
 msgstr "Μπορείτε να ρυθμίσετε οποιονδήποτε συνδυασμό IMAP (λήψη email), SMTP (αποστολή email) και CalDAV (συγχρονισμός ημερολογίου)."
 
+#. js-lingui-id: hiLxmN
+#: src/pages/settings/members/SettingsWorkspaceMember.tsx
+#: src/modules/settings/admin-panel/hooks/useHandleImpersonate.ts
+msgid "You cannot impersonate your own account"
+msgstr ""
+
 #. js-lingui-id: eqUj2Z
 #: src/modules/page-layout/widgets/components/PageLayoutWidgetForbiddenDisplay.tsx
 msgid "You do not have permission to access the {objectName} object"
