@@ -6168,6 +6168,8 @@ msgstr "Zaměstnanci"
 #. js-lingui-id: N2S1rs
 #: src/modules/object-record/record-inline-cell/components/RecordInlineCellDisplayMode.tsx
 #: src/modules/object-record/record-board/record-board-column/utils/getAggregateOperationShortLabel.ts
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
+#: src/modules/activities/timeline-activities/rows/main-object/components/EventRelationFieldDiffValues.tsx
 #: src/modules/activities/timeline-activities/rows/main-object/components/EventFieldDiff.tsx
 msgid "Empty"
 msgstr "Prázdné"
@@ -7056,11 +7058,6 @@ msgstr "Nepodařilo se přidat poskytovatele"
 msgid "Failed to create email handle. Email handles may not be configured on this server."
 msgstr ""
 
-#. js-lingui-id: WM7GKt
-#: src/pages/settings/ai/SettingsAI.tsx
-msgid "Failed to create tool"
-msgstr "Nepodařilo se vytvořit nástroj"
-
 #. js-lingui-id: lWoewm
 #: src/pages/settings/workspace/SettingsWorkspaceEmailGroupChannelDetail.tsx
 msgid "Failed to delete email handle."
@@ -7201,13 +7198,13 @@ msgid "Failed to update default model"
 msgstr "Nepodařilo se aktualizovat výchozí model"
 
 #. js-lingui-id: 1R13Ov
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model"
 msgstr "Nepodařilo se aktualizovat model"
 
 #. js-lingui-id: W7Ff/4
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 #: src/pages/settings/admin-panel/SettingsAdminAiProviderDetail.tsx
 msgid "Failed to update model availability"
@@ -7224,7 +7221,7 @@ msgid "Failed to update model recommendations"
 msgstr ""
 
 #. js-lingui-id: rCUG3c
-#: src/pages/settings/ai/components/SettingsAiModelsTab.tsx
+#: src/pages/settings/ai/hooks/useSettingsAiModelsActions.ts
 msgid "Failed to update model selection mode"
 msgstr "Nepodařilo se aktualizovat režim výběru modelu"
 
@@ -16011,7 +16008,7 @@ msgid "Tool calls made"
 msgstr "Provedená volání nástrojů"
 
 #. js-lingui-id: SrWh42
-#: src/pages/settings/ai/SettingsAI.tsx
+#: src/pages/settings/ai/hooks/useCreateTool.ts
 msgid "Tool created"
 msgstr "Nástroj byl vytvořen"
 

@@ -5,24 +5,13 @@ import { type ReactNode } from 'react';
 import { AnimatedExpandableContainer } from 'twenty-ui/layout';
 
 type CollapsibleNavigationDrawerSectionProps = {
-  // Unique id used to persist the open/closed state in localStorage. Pass
-  // a namespaced value (e.g. 'settings/User') so unrelated sections in
-  // different drawers don't share state.
+  // Namespaced id (e.g. 'settings/User') used to persist open/closed state.
   sectionId: string;
   label: string;
   children: ReactNode;
-  // Optional wrapper around the section title (e.g. AdvancedSettingsWrapper
-  // for advanced-mode-only sections). Receives the title node and returns
-  // the wrapped node.
   wrapTitle?: (titleNode: ReactNode) => ReactNode;
 };
 
-// One-stop section component for any drawer that wants the main-app's
-// collapsible section behavior: click the title to collapse / expand,
-// animated height transition, persisted open state, chevron-on-hover.
-// Use this instead of stitching together NavigationDrawerSection +
-// NavigationDrawerSectionTitle + AnimatedExpandableContainer by hand at
-// every call site.
 export const CollapsibleNavigationDrawerSection = ({
   sectionId,
   label,

@@ -944,11 +944,7 @@ describe('JwtAuthStrategy', () => {
   });
 
   describe('PLAYGROUND token validation', () => {
-    // A PLAYGROUND token is access-shaped but must never impersonate. This is the
-    // same payload that, as an ACCESS token with isImpersonating set but without
-    // impersonation ids, throws 'Invalid or missing user workspace ID in
-    // impersonation token' above; as a PLAYGROUND token it must skip the
-    // impersonation path entirely and resolve to the first-person context.
+    // PLAYGROUND tokens are access-shaped but must never impersonate.
     it('ignores isImpersonating and resolves first-person', async () => {
       const validUserId = 'valid-user-id';
       const validUserWorkspaceId = randomUUID();
