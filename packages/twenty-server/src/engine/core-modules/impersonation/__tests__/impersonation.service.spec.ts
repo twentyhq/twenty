@@ -297,6 +297,43 @@ describe('ImpersonationService', () => {
     );
   });
 
+  it('should throw an error when impersonating the same user', async () => {
+    const sameUserWorkspace = {
+      id: 'same-user-workspace-id',
+      userId: 'same-user-id',
+      workspaceId: 'workspace-id',
+      user: {
+        id: 'same-user-id',
+        email: 'same@example.com',
+        canImpersonate: true,
+        canAccessFullAdminPanel: false,
+      },
+      workspace: {
+        id: 'workspace-id',
+        allowImpersonation: true,
+      },
+      twoFactorAuthenticationMethods: [],
+    };
+
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(sameUserWorkspace);
+    UserWorkspaceFindOneMock.mockResolvedValueOnce(sameUserWorkspace);
+
+    await expect(
+      service.impersonate(
+        'same-user-id',
+        'workspace-id',
+        'same-user-workspace-id',
+      ),
+    ).rejects.toThrow(
+      new AuthException(
+        'User cannot impersonate themselves',
+        AuthExceptionCode.FORBIDDEN_EXCEPTION,
+      ),
+    );
+
+    expect(LoginTokenServiceGenerateLoginTokenMock).not.toHaveBeenCalled();
+  });
+
   it('should throw an error when impersonation is not enabled for the workspace', async () => {
     const mockToImpersonateUserWorkspace = {
       userId: 'target-user-id',
