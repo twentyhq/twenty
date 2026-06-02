@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { useAppPreviewExperience } from '@/sections/AppPreview/Shell/use-app-preview-experience';
@@ -397,19 +397,13 @@ export function useProductVisualAutoplay(
 
   const selectedScene = PRODUCT_VISUAL_SCENES[selectedOption];
   const fullText = selectedScene.responseText;
-  const fullTextVisibleLength = useMemo(
-    () => getParagraphsVisibleLength(fullText),
-    [fullText],
-  );
+  const fullTextVisibleLength = getParagraphsVisibleLength(fullText);
   const streamComplete = streamedLength >= fullTextVisibleLength;
   const streamProgress = getStreamProgress(
     streamedLength,
     fullTextVisibleLength,
   );
-  const scenePhase = useMemo(
-    () => getScenePhase(selectedScene, revealProgress),
-    [selectedScene, revealProgress],
-  );
+  const scenePhase = getScenePhase(selectedScene, revealProgress);
   const displayPage = resolveDisplayPage(
     activePage,
     activeItemId,
@@ -535,7 +529,6 @@ export function useProductVisualAutoplay(
     favorites,
     highlightedItemId,
     openFolderIds,
-    preambleComplete,
     revealedObjectIds,
     selectPageItem,
     selectedScene,
