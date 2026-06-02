@@ -6,12 +6,13 @@ type SettingsSecondaryBarProps = {
   children: ReactNode;
 };
 
-const SECONDARY_BAR_HEIGHT = 40;
+const SECONDARY_BAR_HEIGHT = 48;
 
 const StyledBar = styled.div`
   align-items: center;
   background: ${themeCssVariables.background.noisy};
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  border-top: 1px solid ${themeCssVariables.border.color.light};
   box-sizing: border-box;
   display: flex;
   height: ${SECONDARY_BAR_HEIGHT}px;
