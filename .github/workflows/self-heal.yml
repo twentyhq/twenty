@@ -1,0 +1,116 @@
+name: CI + Self-Heal
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: write          # push the autoheal/* branch
+  pull-requests: write     # open the draft PR / comment on the original PR
+  issues: write            # file flaky-test issues
+
+concurrency:               # don't pile up runs on rapid pushes to the same PR
+  group: ci-self-heal-${{ github.head_ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─── CI. No toolchain needed: Node 22 ships its own test runner. ───
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Run tests
+        shell: bash
+        run: |
+          set -o pipefail                                   # so tee can't mask a failure
+          node --test selfheal-demo/ 2>&1 | tee failed.log
+      - name: Save failure log for the healer
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: failed-log
+          path: failed.log
+          retention-days: 1
+
+  # ─── Wakes ONLY when `test` failed. This is the self-healing loop. ───
+  heal:
+    needs: test
+    if: >
+      failure() &&
+      !startsWith(github.head_ref, 'autoheal/') &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.AUTOHEAL_PAT }}   # so the agent's fix PR re-triggers this workflow
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Get the failure log from the test job
+        uses: actions/download-artifact@v4
+        with:
+          name: failed-log
+      - name: Install the Cursor CLI
+        run: curl https://cursor.com/install -fsSL | bash
+      - name: Diagnose and heal
+        shell: bash
+        env:
+          CURSOR_API_KEY: ${{ secrets.CURSOR_API_KEY }}
+          GH_TOKEN: ${{ secrets.AUTOHEAL_PAT }}
+          HEAD_BRANCH: ${{ github.head_ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          INSTRUCTION: |
+            You are a CI self-healing agent. A CI run has just failed. Diagnose the
+            failure, decide whether it is a real regression or a flaky test, and respond
+            appropriately. Never weaken the test suite to make a failure go away.
+
+            1. READ THE FAILURE
+               Open the file ./failed.log and identify the failing test and the error.
+
+            2. REPRODUCE
+               Run the failing test the same way CI does (the command is in the context
+               below). Run it 2-3 times to see whether the failure is consistent.
+
+            3. BRANCH ON THE RESULT
+               If it passes on retry or is intermittent -> FLAKY:
+                 - Quarantine only that test using the project's skip convention, with a
+                   TODO comment linking the issue you file.
+                 - File a GitHub issue titled "Flaky test: <name>" containing the relevant
+                   log excerpt, and apply a flaky-test label.
+                 - Open a DRAFT pull request containing ONLY the quarantine change, with
+                   head branch autoheal/<slug> and base set to the source branch. Do not
+                   attempt a code fix.
+
+               If it reproduces deterministically -> REAL FAILURE:
+                 - Find the root cause in the SOURCE code, not in the test.
+                 - Make the minimal source change that fixes it. Do NOT edit, skip, or
+                   weaken the failing test to make it pass.
+                 - Re-run the failing test until it is green.
+                 - Open a DRAFT pull request with head branch autoheal/<slug>, base set to
+                   the source branch, and title "fix: auto-heal <short summary>".
+
+            4. ALWAYS
+               - The PR or issue body must include: the failing test, your root-cause
+                 diagnosis, exactly what you changed, and the commands you ran to verify.
+               - Leave the PR as a DRAFT. Never merge it. Never push directly to the source
+                 branch. Never force-push.
+               - Touch only what the task requires.
+
+            5. IF YOU CANNOT CONFIDENTLY DIAGNOSE OR FIX
+               Do not guess. Post your diagnosis and the relevant log excerpt as a comment
+               on the original PR (its number is in the context below) and stop.
+        run: |
+          cursor-agent -p --force --output-format text \
+            "$INSTRUCTION
+
+          ---
+          Context for this run:
+          - The failing CI logs are in ./failed.log
+          - Reproduce the failing test with: node --test selfheal-demo/
+          - Source branch: $HEAD_BRANCH
+          - Original PR number: $PR_NUMBER"
