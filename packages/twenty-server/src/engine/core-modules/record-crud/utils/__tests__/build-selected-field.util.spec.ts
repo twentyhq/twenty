@@ -10,7 +10,9 @@ const buildFlatFieldMetadataMaps = (
   fields: Array<{ id: string; name: string; type: FieldMetadataType }>,
 ): FlatEntityMaps<FlatFieldMetadata> => {
   const universalIdentifierById: Partial<Record<string, string>> = {};
-  const byUniversalIdentifier: Partial<Record<string, Partial<FlatFieldMetadata>>> = {};
+  const byUniversalIdentifier: Partial<
+    Record<string, Partial<FlatFieldMetadata>>
+  > = {};
 
   for (const field of fields) {
     const uid = `uid-${field.id}`;
@@ -50,7 +52,11 @@ const defaultFlatFieldMetadataMaps = buildFlatFieldMetadataMaps([
     name: 'searchVector',
     type: FieldMetadataType.TS_VECTOR,
   },
-  { id: FIELD_IDS.richText, name: 'richText', type: FieldMetadataType.RICH_TEXT },
+  {
+    id: FIELD_IDS.richText,
+    name: 'richText',
+    type: FieldMetadataType.RICH_TEXT,
+  },
 ]);
 
 const defaultFlatObjectMetadata = buildFlatObjectMetadata(FIELD_IDS.name, [
@@ -71,8 +77,8 @@ const defaultSelectedFields: CommonSelectedFields = {
 describe('buildEffectiveSelectedFields', () => {
   describe('when select is undefined (default case)', () => {
     it('should return id, label identifier, and filter/orderBy fields', () => {
-      const { effectiveSelectedFields, warnings } = buildEffectiveSelectedFields(
-        {
+      const { effectiveSelectedFields, warnings } =
+        buildEffectiveSelectedFields({
           select: undefined,
           filter: { email: { eq: 'test@example.com' } },
           orderBy: [{ name: 'AscNullsFirst' }],
@@ -80,8 +86,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: defaultFlatObjectMetadata,
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
-        },
-      );
+        });
 
       expect(warnings).toEqual([]);
       expect(effectiveSelectedFields).toMatchObject({
@@ -108,8 +113,8 @@ describe('buildEffectiveSelectedFields', () => {
 
   describe('when select is ["*"] (wildcard case)', () => {
     it('should return all selectable fields excluding searchVector', () => {
-      const { effectiveSelectedFields, warnings } = buildEffectiveSelectedFields(
-        {
+      const { effectiveSelectedFields, warnings } =
+        buildEffectiveSelectedFields({
           select: ['*'],
           filter: undefined,
           orderBy: undefined,
@@ -117,8 +122,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: defaultFlatObjectMetadata,
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
-        },
-      );
+        });
 
       expect(warnings).toEqual([]);
       expect(effectiveSelectedFields).toHaveProperty('id');
@@ -130,8 +134,8 @@ describe('buildEffectiveSelectedFields', () => {
 
   describe('when select lists specific fields', () => {
     it('should return only the requested fields plus id', () => {
-      const { effectiveSelectedFields, warnings } = buildEffectiveSelectedFields(
-        {
+      const { effectiveSelectedFields, warnings } =
+        buildEffectiveSelectedFields({
           select: ['name'],
           filter: undefined,
           orderBy: undefined,
@@ -139,8 +143,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: defaultFlatObjectMetadata,
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
-        },
-      );
+        });
 
       expect(warnings).toEqual([]);
       expect(effectiveSelectedFields).toHaveProperty('id');
@@ -193,7 +196,9 @@ describe('buildEffectiveSelectedFields', () => {
       });
 
       expect(warnings).toHaveLength(1);
-      expect(warnings[0]).toContain("Field 'zzz_totally_unknown' not found on person");
+      expect(warnings[0]).toContain(
+        "Field 'zzz_totally_unknown' not found on person",
+      );
       expect(warnings[0]).not.toContain('Did you mean');
     });
 
@@ -228,8 +233,8 @@ describe('buildEffectiveSelectedFields', () => {
     });
 
     it('should emit a warning when searchVector is explicitly requested', () => {
-      const { warnings, effectiveSelectedFields } = buildEffectiveSelectedFields(
-        {
+      const { warnings, effectiveSelectedFields } =
+        buildEffectiveSelectedFields({
           select: ['searchVector'],
           filter: undefined,
           orderBy: undefined,
@@ -237,8 +242,7 @@ describe('buildEffectiveSelectedFields', () => {
           flatObjectMetadata: defaultFlatObjectMetadata,
           flatFieldMetadataMaps: defaultFlatFieldMetadataMaps,
           selectedFields: defaultSelectedFields,
-        },
-      );
+        });
 
       expect(warnings).toHaveLength(1);
       expect(warnings[0]).toContain('searchVector');
@@ -261,7 +265,8 @@ describe('buildEffectiveSelectedFields', () => {
         },
       });
 
-      const richTextFields = effectiveSelectedFields.richText as CommonSelectedFields;
+      const richTextFields =
+        effectiveSelectedFields.richText as CommonSelectedFields;
 
       expect(richTextFields).not.toHaveProperty('blocknote');
       expect(richTextFields).toHaveProperty('markdown');
@@ -270,12 +275,16 @@ describe('buildEffectiveSelectedFields', () => {
     it('should keep blocknote when the field type is not RICH_TEXT', () => {
       const nonRichTextMaps = buildFlatFieldMetadataMaps([
         { id: FIELD_IDS.name, name: 'name', type: FieldMetadataType.TEXT },
-        { id: FIELD_IDS.richText, name: 'richText', type: FieldMetadataType.TEXT },
+        {
+          id: FIELD_IDS.richText,
+          name: 'richText',
+          type: FieldMetadataType.TEXT,
+        },
       ]);
-      const nonRichTextObjectMetadata = buildFlatObjectMetadata(FIELD_IDS.name, [
+      const nonRichTextObjectMetadata = buildFlatObjectMetadata(
         FIELD_IDS.name,
-        FIELD_IDS.richText,
-      ]);
+        [FIELD_IDS.name, FIELD_IDS.richText],
+      );
 
       const { effectiveSelectedFields } = buildEffectiveSelectedFields({
         select: ['*'],
@@ -291,7 +300,8 @@ describe('buildEffectiveSelectedFields', () => {
         },
       });
 
-      const richTextFields = effectiveSelectedFields.richText as CommonSelectedFields;
+      const richTextFields =
+        effectiveSelectedFields.richText as CommonSelectedFields;
 
       expect(richTextFields).toHaveProperty('blocknote');
       expect(richTextFields).toHaveProperty('markdown');

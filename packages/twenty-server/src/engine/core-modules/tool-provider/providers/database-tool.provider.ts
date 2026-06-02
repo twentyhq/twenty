@@ -16,7 +16,7 @@ import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-
 import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
-import { BulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
+import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
 import { generateFindToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-tool.zod-schema';
@@ -312,7 +312,12 @@ export class DatabaseToolProvider implements ToolProvider {
           description: `Soft-delete multiple ${objectMetadata.labelPlural} records matching a filter in a single operation. Deleted records are hidden from normal queries and the operation is reversible. WARNING: Use specific filters to avoid unintended mass deletions.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(BulkDeleteToolInputSchema),
+            inputSchema: toToolJsonSchema(
+              generateBulkDeleteToolInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
           }),
           executionRef: {
             kind: 'database_crud',

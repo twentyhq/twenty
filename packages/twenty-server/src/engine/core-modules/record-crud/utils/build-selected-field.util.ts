@@ -74,14 +74,13 @@ const buildSelectedField = (
   return { select: [...new Set(validFields)], warnings };
 };
 
-
 const extractFilterFieldNames = (
   filter:
-  | Record<string, unknown>
-  | Record<string, unknown>[]
-  | Partial<ObjectRecordFilter>
-  | Partial<ObjectRecordFilter>[]
-  | undefined
+    | Record<string, unknown>
+    | Record<string, unknown>[]
+    | Partial<ObjectRecordFilter>
+    | Partial<ObjectRecordFilter>[]
+    | undefined,
 ): string[] => {
   if (Array.isArray(filter)) {
     return filter.flatMap((filterItem) =>
@@ -89,7 +88,9 @@ const extractFilterFieldNames = (
     );
   }
 
-  return isDefined(filter) ? Object.keys(filter).filter((key) => !LOGICAL_OPERATORS.has(key)) : [];
+  return isDefined(filter)
+    ? Object.keys(filter).filter((key) => !LOGICAL_OPERATORS.has(key))
+    : [];
 };
 
 const extractOrderByFieldNames = (orderBy: unknown): string[] => {
@@ -97,9 +98,7 @@ const extractOrderByFieldNames = (orderBy: unknown): string[] => {
     return [];
   }
 
-  return orderBy.flatMap((item) =>
-    isObject(item) ? Object.keys(item) : [],
-  );
+  return orderBy.flatMap((item) => (isObject(item) ? Object.keys(item) : []));
 };
 
 const buildSelectedFieldsOverride = (
@@ -111,14 +110,13 @@ const buildSelectedFieldsOverride = (
     ? new Set([...select, 'id'])
     : null;
 
-  const fieldsToProcess =
-    isDefined(fieldsToInclude)
-      ? Object.fromEntries(
-          Object.entries(allSelectableFields).filter(([fieldName]) =>
-            fieldsToInclude.has(fieldName),
-          ),
-        )
-      : allSelectableFields;
+  const fieldsToProcess = isDefined(fieldsToInclude)
+    ? Object.fromEntries(
+        Object.entries(allSelectableFields).filter(([fieldName]) =>
+          fieldsToInclude.has(fieldName),
+        ),
+      )
+    : allSelectableFields;
 
   return stripSubFieldsByType(fieldsToProcess, fieldNameToType);
 };
@@ -147,13 +145,12 @@ export const buildEffectiveSelectedFields = ({
   const filterFieldNames = extractFilterFieldNames(filter);
   const orderByFieldNames = extractOrderByFieldNames(orderBy);
 
-  const labelIdentifierField =
-    flatObjectMetadata.labelIdentifierFieldMetadataId
-      ? findFlatEntityByIdInFlatEntityMaps({
-          flatEntityMaps: flatFieldMetadataMaps,
-          flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
-        })
-      : undefined;
+  const labelIdentifierField = flatObjectMetadata.labelIdentifierFieldMetadataId
+    ? findFlatEntityByIdInFlatEntityMaps({
+        flatEntityMaps: flatFieldMetadataMaps,
+        flatEntityId: flatObjectMetadata.labelIdentifierFieldMetadataId,
+      })
+    : undefined;
 
   const labelIdentifierFieldName = labelIdentifierField?.name ?? 'id';
 
@@ -246,7 +243,6 @@ const stripFieldSubFieldsByType = (
 
   return stripped;
 };
-
 
 const findSimilarFieldNames = (
   name: string,

@@ -282,7 +282,13 @@ ${preloadedList}
       const categoryLabel = this.getCategoryLabel(category);
 
       if (category === ToolCategory.DATABASE_CRUD) {
-        sections.push(this.buildDatabaseCrudCatalogSection(tools, preloadedSet, categoryLabel));
+        sections.push(
+          this.buildDatabaseCrudCatalogSection(
+            tools,
+            preloadedSet,
+            categoryLabel,
+          ),
+        );
       } else {
         sections.push(`
 #### ${categoryLabel} (${tools.length} tools)
@@ -331,9 +337,7 @@ ${tools
       }
     }
 
-    const lines: string[] = [
-      `\n#### ${categoryLabel} (${tools.length} tools)`,
-    ];
+    const lines: string[] = [`\n#### ${categoryLabel} (${tools.length} tools)`];
 
     if (objectToolsMap.size > 0) {
       const objectNames = [...objectToolsMap.keys()].sort();

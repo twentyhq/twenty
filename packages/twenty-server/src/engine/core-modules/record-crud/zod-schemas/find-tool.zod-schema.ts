@@ -9,10 +9,10 @@ export const generateFindToolInputSchema = (
   objectMetadata: ObjectMetadataForToolSchema,
   restrictedFields?: RestrictedFieldsPermissions,
 ) => {
-  const { filterShape, filterSchema } = generateRecordFilterSchema(
+  const { filterShape, filterSchema } = generateRecordFilterSchema({
     objectMetadata,
     restrictedFields,
-  );
+  });
   return z.object({
     limit: z
       .number()

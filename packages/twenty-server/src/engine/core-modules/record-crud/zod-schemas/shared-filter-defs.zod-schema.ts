@@ -4,14 +4,16 @@ export const NullCheckEnum = z
   .enum(['NULL', 'NOT_NULL'])
   .describe('Is null or not null');
 
-
 export const TextFilterSchema = z
   .object({
     eq: z.string().optional().describe('Equals'),
     neq: z.string().optional().describe('Not equals'),
     in: z.array(z.string()).optional().describe('In array'),
     like: z.string().optional().describe('LIKE (% wildcard)'),
-    ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+    ilike: z
+      .string()
+      .optional()
+      .describe('ILIKE (% wildcard, case-insensitive)'),
     startsWith: z.string().optional().describe('Starts with'),
     endsWith: z.string().optional().describe('Ends with'),
     is: NullCheckEnum.optional(),
@@ -39,7 +41,10 @@ export const DateFilterSchema = z
     gte: z.string().datetime().optional().describe('>= ISO datetime'),
     lt: z.string().datetime().optional().describe('< ISO datetime'),
     lte: z.string().datetime().optional().describe('<= ISO datetime'),
-    in: z.array(z.string().datetime()).optional().describe('In array (ISO datetimes)'),
+    in: z
+      .array(z.string().datetime())
+      .optional()
+      .describe('In array (ISO datetimes)'),
     is: NullCheckEnum.optional(),
   })
   .optional();
@@ -65,7 +70,10 @@ export const DefaultFilterSchema = z
     eq: z.string().optional().describe('Equals'),
     neq: z.string().optional().describe('Not equals'),
     like: z.string().optional().describe('LIKE (% wildcard)'),
-    ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+    ilike: z
+      .string()
+      .optional()
+      .describe('ILIKE (% wildcard, case-insensitive)'),
     is: NullCheckEnum.optional(),
   })
   .optional();
@@ -91,7 +99,10 @@ export const LinksFilterSchema = z
         eq: z.string().url().optional().describe('Equals'),
         neq: z.string().url().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         is: NullCheckEnum.optional(),
       })
       .optional(),
@@ -105,7 +116,10 @@ export const AddressFilterSchema = z
         eq: z.string().optional().describe('Equals'),
         neq: z.string().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         is: NullCheckEnum.optional(),
       })
       .optional(),
@@ -114,7 +128,10 @@ export const AddressFilterSchema = z
         eq: z.string().optional().describe('Equals'),
         neq: z.string().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         is: NullCheckEnum.optional(),
       })
       .optional(),
@@ -123,7 +140,10 @@ export const AddressFilterSchema = z
         eq: z.string().optional().describe('Equals'),
         neq: z.string().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         is: NullCheckEnum.optional(),
       })
       .optional(),
@@ -137,7 +157,10 @@ export const FullNameFilterSchema = z
         eq: z.string().optional().describe('Equals'),
         neq: z.string().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         startsWith: z.string().optional().describe('Starts with'),
         endsWith: z.string().optional().describe('Ends with'),
         is: NullCheckEnum.optional(),
@@ -148,7 +171,10 @@ export const FullNameFilterSchema = z
         eq: z.string().optional().describe('Equals'),
         neq: z.string().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         startsWith: z.string().optional().describe('Starts with'),
         endsWith: z.string().optional().describe('Ends with'),
         is: NullCheckEnum.optional(),
@@ -164,7 +190,10 @@ export const EmailsFilterSchema = z
         eq: z.string().email().optional().describe('Equals'),
         neq: z.string().email().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         is: NullCheckEnum.optional(),
       })
       .optional(),
@@ -178,7 +207,10 @@ export const PhonesFilterSchema = z
         eq: z.string().optional().describe('Equals'),
         neq: z.string().optional().describe('Not equals'),
         like: z.string().optional().describe('LIKE (% wildcard)'),
-        ilike: z.string().optional().describe('ILIKE (% wildcard, case-insensitive)'),
+        ilike: z
+          .string()
+          .optional()
+          .describe('ILIKE (% wildcard, case-insensitive)'),
         is: NullCheckEnum.optional(),
       })
       .optional(),
