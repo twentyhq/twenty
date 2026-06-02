@@ -429,14 +429,6 @@ export default defineObject({
       isNullable: true,
     },
     {
-      universalIdentifier: 'ced87a97-cb2a-43cb-a6fc-4a1eff2892ba',
-      type: FieldType.CURRENCY,
-      name: 'projectBudgetTypical',
-      label: 'Project Budget Typical',
-      icon: 'IconCoins',
-      isNullable: true,
-    },
-    {
       universalIdentifier: '6a095709-7620-495f-b6e0-790743e412d5',
       type: FieldType.CURRENCY,
       name: 'hourlyRate',
