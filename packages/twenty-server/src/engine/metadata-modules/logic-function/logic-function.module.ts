@@ -20,6 +20,7 @@ import { LogicFunctionFromSourceHelperService } from 'src/engine/metadata-module
 import { LogicFunctionFromSourceService } from 'src/engine/metadata-modules/logic-function/services/logic-function-from-source.service';
 import { WorkspaceFlatLogicFunctionMapCacheService } from 'src/engine/metadata-modules/logic-function/services/workspace-flat-logic-function-map-cache.service';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
+import { UserRoleModule } from 'src/engine/metadata-modules/user-role/user-role.module';
 import { SubscriptionsModule } from 'src/engine/subscriptions/subscriptions.module';
 import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace-migration/workspace-migration.module';
 
@@ -32,6 +33,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     AuditModule,
     FeatureFlagModule,
     PermissionsModule,
+    UserRoleModule,
     WorkspaceManyOrAllFlatEntityMapsCacheModule,
     WorkspaceMigrationModule,
     LogicFunctionLayerModule,

@@ -11,6 +11,7 @@ export type LogicFunctionTriggerJobData = {
   payload?: object;
   userId?: string;
   userWorkspaceId?: string;
+  roleId?: string;
 };
 
 @Processor({
@@ -33,6 +34,7 @@ export class LogicFunctionTriggerJob {
             payload: logicFunctionPayload.payload ?? {},
             userId: logicFunctionPayload.userId,
             userWorkspaceId: logicFunctionPayload.userWorkspaceId,
+            roleId: logicFunctionPayload.roleId,
           }),
       ),
     );

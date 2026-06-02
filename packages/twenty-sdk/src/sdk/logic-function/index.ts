@@ -44,3 +44,11 @@ export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/lis
 export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+
+export { getPermissionContext } from '@/sdk/logic-function/permission-context/get-permission-context';
+export type { PermissionContext } from '@/sdk/logic-function/permission-context/get-permission-context';
+export {
+  ObjectPermissionLevel,
+  FieldPermissionLevel,
+} from 'twenty-shared/application';
+export type { LogicFunctionPermissionContext } from 'twenty-shared/application';

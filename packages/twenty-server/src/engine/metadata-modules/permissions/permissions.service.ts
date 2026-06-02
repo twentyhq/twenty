@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
 import { msg } from '@lingui/core/macro';
+import { type LogicFunctionPermissionContext } from 'twenty-shared/application';
 import {
   PermissionFlagType,
   SystemPermissionFlag,
@@ -10,6 +11,7 @@ import { isDefined } from 'twenty-shared/utils';
 import { In, Repository } from 'typeorm';
 
 import { ApiKeyRoleService } from 'src/engine/core-modules/api-key/services/api-key-role.service';
+import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { ApplicationEntity } from 'src/engine/core-modules/application/application.entity';
 import {
   ApplicationException,
@@ -95,6 +97,138 @@ export class PermissionsService {
     const objectsPermissions = rolesPermissions[roleOfUserWorkspace.id] ?? {};
 
     return {
+      permissionFlags,
+      objectsPermissions,
+    };
+  }
+
+  public async buildLogicFunctionPermissionContext({
+    roleId,
+    workspaceId,
+  }: {
+    roleId?: string;
+    workspaceId: string;
+  }): Promise<LogicFunctionPermissionContext> {
+    if (!isDefined(roleId)) {
+      return {
+        canReadAllObjectRecords: false,
+        canUpdateAllObjectRecords: false,
+        canSoftDeleteAllObjectRecords: false,
+        canDestroyAllObjectRecords: false,
+        canUpdateAllSettings: false,
+        canAccessAllTools: false,
+        permissionFlags: {},
+        objectsPermissions: {},
+      };
+    }
+
+    const {
+      rolesPermissions,
+      flatRoleMaps,
+      flatRolePermissionFlagMaps,
+      flatPermissionFlagMaps,
+      flatObjectMetadataMaps,
+      flatFieldMetadataMaps,
+    } = await this.workspaceCacheService.getOrRecompute(workspaceId, [
+      'rolesPermissions',
+      'flatRoleMaps',
+      'flatRolePermissionFlagMaps',
+      'flatPermissionFlagMaps',
+      'flatObjectMetadataMaps',
+      'flatFieldMetadataMaps',
+    ]);
+
+    const flatRole = findFlatEntityByIdInFlatEntityMaps({
+      flatEntityId: roleId,
+      flatEntityMaps: flatRoleMaps,
+    });
+
+    if (!isDefined(flatRole)) {
+      throw new PermissionsException(
+        PermissionsExceptionMessage.ROLE_NOT_FOUND,
+        PermissionsExceptionCode.ROLE_NOT_FOUND,
+      );
+    }
+
+    const grantedPermissionFlagIds = new Set(
+      flatRole.rolePermissionFlagIds
+        .map(
+          (rolePermissionFlagId) =>
+            findFlatEntityByIdInFlatEntityMaps({
+              flatEntityId: rolePermissionFlagId,
+              flatEntityMaps: flatRolePermissionFlagMaps,
+            })?.permissionFlagId,
+        )
+        .filter(isDefined),
+    );
+
+    const permissionFlags: Record<string, boolean> = {};
+
+    for (const flatPermissionFlag of Object.values(
+      flatPermissionFlagMaps.byUniversalIdentifier,
+    )) {
+      if (!isDefined(flatPermissionFlag)) {
+        continue;
+      }
+
+      const hasBasePermission =
+        flatPermissionFlag.permissionType === 'tool'
+          ? flatRole.canAccessAllTools
+          : flatRole.canUpdateAllSettings;
+
+      permissionFlags[flatPermissionFlag.universalIdentifier] =
+        hasBasePermission ||
+        grantedPermissionFlagIds.has(flatPermissionFlag.id);
+    }
+
+    const objectsPermissions: LogicFunctionPermissionContext['objectsPermissions'] =
+      {};
+
+    for (const [objectMetadataId, objectPermissions] of Object.entries(
+      rolesPermissions[roleId] ?? {},
+    )) {
+      const objectUniversalIdentifier =
+        flatObjectMetadataMaps.universalIdentifierById[objectMetadataId];
+
+      if (!isDefined(objectUniversalIdentifier)) {
+        continue;
+      }
+
+      const restrictedFields: LogicFunctionPermissionContext['objectsPermissions'][string]['restrictedFields'] =
+        {};
+
+      for (const [fieldMetadataId, fieldPermissions] of Object.entries(
+        objectPermissions.restrictedFields,
+      )) {
+        const fieldUniversalIdentifier =
+          flatFieldMetadataMaps.universalIdentifierById[fieldMetadataId];
+
+        if (!isDefined(fieldUniversalIdentifier)) {
+          continue;
+        }
+
+        restrictedFields[fieldUniversalIdentifier] = {
+          canRead: fieldPermissions.canRead,
+          canUpdate: fieldPermissions.canUpdate,
+        };
+      }
+
+      objectsPermissions[objectUniversalIdentifier] = {
+        canRead: objectPermissions.canReadObjectRecords,
+        canUpdate: objectPermissions.canUpdateObjectRecords,
+        canSoftDelete: objectPermissions.canSoftDeleteObjectRecords,
+        canDestroy: objectPermissions.canDestroyObjectRecords,
+        restrictedFields,
+      };
+    }
+
+    return {
+      canReadAllObjectRecords: flatRole.canReadAllObjectRecords,
+      canUpdateAllObjectRecords: flatRole.canUpdateAllObjectRecords,
+      canSoftDeleteAllObjectRecords: flatRole.canSoftDeleteAllObjectRecords,
+      canDestroyAllObjectRecords: flatRole.canDestroyAllObjectRecords,
+      canUpdateAllSettings: flatRole.canUpdateAllSettings,
+      canAccessAllTools: flatRole.canAccessAllTools,
       permissionFlags,
       objectsPermissions,
     };

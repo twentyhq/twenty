@@ -21,6 +21,7 @@ export { ASSETS_DIR } from './constants/AssetDirectory';
 export { DEFAULT_API_KEY_NAME } from './constants/DefaultApiKeyName';
 export { DEFAULT_API_URL_NAME } from './constants/DefaultApiUrlName';
 export { DEFAULT_APP_ACCESS_TOKEN_NAME } from './constants/DefaultAppAccessTokenName';
+export { DEFAULT_PERMISSION_CONTEXT_NAME } from './constants/DefaultPermissionContextName';
 export { GENERATED_DIR } from './constants/GeneratedDirectory';
 export { NODE_ESM_CJS_BANNER } from './constants/NodeEsmCjsBanner';
 export { OUTPUT_DIR } from './constants/OutputDirectory';
@@ -44,6 +45,14 @@ export type {
   DatabaseEventTriggerSettings,
   HttpRouteTriggerSettings,
 } from './logicFunctionManifestType';
+export type {
+  LogicFunctionObjectPermissions,
+  LogicFunctionPermissionContext,
+} from './logicFunctionPermissionContextType';
+export {
+  ObjectPermissionLevel,
+  FieldPermissionLevel,
+} from './logicFunctionPermissionContextType';
 export type { Manifest } from './manifestType';
 export type { NavigationMenuItemManifest } from './navigationMenuItemManifestType';
 export type { OAuthConnectionProviderConfig } from './oauthConnectionProviderConfigType';

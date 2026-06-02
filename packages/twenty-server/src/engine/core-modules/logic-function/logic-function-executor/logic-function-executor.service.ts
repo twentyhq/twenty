@@ -5,6 +5,7 @@ import {
   DEFAULT_API_KEY_NAME,
   DEFAULT_API_URL_NAME,
   DEFAULT_APP_ACCESS_TOKEN_NAME,
+  DEFAULT_PERMISSION_CONTEXT_NAME,
 } from 'twenty-shared/application';
 import { isDefined } from 'twenty-shared/utils';
 import { Not, Repository } from 'typeorm';
@@ -38,6 +39,7 @@ import { UsageUnit } from 'src/engine/core-modules/usage/enums/usage-unit.enum';
 import { type UsageEvent } from 'src/engine/core-modules/usage/types/usage-event.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
+import { PermissionsService } from 'src/engine/metadata-modules/permissions/permissions.service';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -76,6 +78,7 @@ export class LogicFunctionExecutorService {
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
+    private readonly permissionsService: PermissionsService,
     @InjectRepository(ApplicationRegistrationVariableEntity)
     private readonly applicationRegistrationVariableRepository: Repository<ApplicationRegistrationVariableEntity>,
   ) {}
@@ -86,12 +89,14 @@ export class LogicFunctionExecutorService {
     payload,
     userId,
     userWorkspaceId,
+    roleId,
   }: {
     logicFunctionId: string;
     workspaceId: string;
     payload: object;
     userId?: string;
     userWorkspaceId?: string;
+    roleId?: string;
   }): Promise<LogicFunctionExecuteResult> {
     await this.throttleExecution(workspaceId);
 
@@ -107,6 +112,7 @@ export class LogicFunctionExecutorService {
       flatApplicationVariables,
       userId,
       userWorkspaceId,
+      roleId,
     });
 
     const driver = this.logicFunctionDriverFactory.getCurrentDriver();
@@ -232,12 +238,14 @@ export class LogicFunctionExecutorService {
     flatApplicationVariables,
     userId,
     userWorkspaceId,
+    roleId,
   }: {
     workspaceId: string;
     flatApplication: FlatApplication;
     flatApplicationVariables: FlatApplicationVariable[];
     userId?: string;
     userWorkspaceId?: string;
+    roleId?: string;
   }) {
     const applicationAccessToken =
       await this.applicationTokenService.generateApplicationAccessToken({
@@ -257,10 +265,17 @@ export class LogicFunctionExecutorService {
       this.secretEncryptionService,
     );
 
+    const permissionContext =
+      await this.permissionsService.buildLogicFunctionPermissionContext({
+        workspaceId,
+        roleId,
+      });
+
     return {
       [DEFAULT_API_URL_NAME]: baseUrl ?? '',
       [DEFAULT_APP_ACCESS_TOKEN_NAME]: applicationAccessToken.token,
       [DEFAULT_API_KEY_NAME]: applicationAccessToken.token,
+      [DEFAULT_PERMISSION_CONTEXT_NAME]: JSON.stringify(permissionContext),
       APPLICATION_ID: flatApplication.id,
       // Server variables first, workspace variables override. Workspace-level
       // values let a specific tenant customize a server default.

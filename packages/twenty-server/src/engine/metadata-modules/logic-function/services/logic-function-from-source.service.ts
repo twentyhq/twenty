@@ -24,6 +24,7 @@ import { buildUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-mod
 import { fromCreateLogicFunctionFromSourceInputToUniversalFlatLogicFunctionToCreate } from 'src/engine/metadata-modules/logic-function/utils/from-create-logic-function-from-source-input-to-universal-flat-logic-function-to-create.util';
 import { fromFlatLogicFunctionToLogicFunctionDto } from 'src/engine/metadata-modules/logic-function/utils/from-flat-logic-function-to-logic-function-dto.util';
 import { fromUpdateLogicFunctionFromSourceInputToFlatLogicFunctionToUpdate } from 'src/engine/metadata-modules/logic-function/utils/from-update-logic-function-from-source-input-to-flat-logic-function-to-update.util';
+import { UserRoleService } from 'src/engine/metadata-modules/user-role/user-role.service';
 import { WorkspaceMigrationBuilderException } from 'src/engine/workspace-manager/workspace-migration/exceptions/workspace-migration-builder-exception';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
@@ -36,6 +37,7 @@ export class LogicFunctionFromSourceService {
     private readonly helperService: LogicFunctionFromSourceHelperService,
     private readonly flatEntityMapsCacheService: WorkspaceManyOrAllFlatEntityMapsCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
+    private readonly userRoleService: UserRoleService,
   ) {}
 
   async createOneFromSource({
@@ -346,10 +348,12 @@ export class LogicFunctionFromSourceService {
     id,
     payload,
     workspaceId,
+    userWorkspaceId,
   }: {
     id: string;
     payload: object;
     workspaceId: string;
+    userWorkspaceId?: string;
   }): Promise<LogicFunctionExecutionResultDTO> {
     const { flatLogicFunction } =
       await this.helperService.findLogicFunctionAndApplicationOrThrow({
@@ -361,10 +365,19 @@ export class LogicFunctionFromSourceService {
       await this.buildOneFromSource({ workspaceId, id });
     }
 
+    const roleId = isDefined(userWorkspaceId)
+      ? await this.userRoleService.getRoleIdForUserWorkspace({
+          workspaceId,
+          userWorkspaceId,
+        })
+      : undefined;
+
     const result = await this.logicFunctionExecutorService.execute({
       logicFunctionId: id,
       workspaceId,
       payload,
+      ...(isDefined(userWorkspaceId) ? { userWorkspaceId } : {}),
+      ...(isDefined(roleId) ? { roleId } : {}),
     });
 
     return {

@@ -8,6 +8,8 @@ import { IsNull, Not, Repository } from 'typeorm';
 import { HTTPMethod } from 'twenty-shared/types';
 
 import { AccessTokenService } from 'src/engine/core-modules/auth/token/services/access-token.service';
+import { type AuthContext } from 'src/engine/core-modules/auth/types/auth-context.type';
+import { buildWorkspaceAuthContext } from 'src/engine/core-modules/auth/utils/build-workspace-auth-context.util';
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import {
   RouteTriggerException,
@@ -24,6 +26,9 @@ import {
   LogicFunctionExecutionExceptionCode,
   LogicFunctionExecutorService,
 } from 'src/engine/core-modules/logic-function/logic-function-executor/logic-function-executor.service';
+import { getRoleIdFromRolePermissionConfig } from 'src/engine/twenty-orm/utils/get-role-id-from-role-permission-config.util';
+import { resolveRolePermissionConfig } from 'src/engine/twenty-orm/utils/resolve-role-permission-config.util';
+import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { CustomException } from 'src/utils/custom-exception';
 
 @Injectable()
@@ -34,9 +39,38 @@ export class RouteTriggerService {
     private readonly accessTokenService: AccessTokenService,
     private readonly logicFunctionExecutorService: LogicFunctionExecutorService,
     private readonly workspaceDomainsService: WorkspaceDomainsService,
+    private readonly workspaceCacheService: WorkspaceCacheService,
     @InjectRepository(LogicFunctionEntity)
     private readonly logicFunctionRepository: Repository<LogicFunctionEntity>,
   ) {}
+
+  private async resolveCallerRoleId({
+    authContext,
+    workspaceId,
+  }: {
+    authContext: AuthContext;
+    workspaceId: string;
+  }): Promise<string | undefined> {
+    const workspaceAuthContext = buildWorkspaceAuthContext(authContext);
+
+    if (!isDefined(workspaceAuthContext)) {
+      return undefined;
+    }
+
+    const { userWorkspaceRoleMap, apiKeyRoleMap } =
+      await this.workspaceCacheService.getOrRecompute(workspaceId, [
+        'userWorkspaceRoleMap',
+        'apiKeyRoleMap',
+      ]);
+
+    const rolePermissionConfig = resolveRolePermissionConfig({
+      authContext: workspaceAuthContext,
+      userWorkspaceRoleMap,
+      apiKeyRoleMap,
+    });
+
+    return getRoleIdFromRolePermissionConfig(rolePermissionConfig);
+  }
 
   private async getLogicFunctionWithPathParamsOrFail({
     request,
@@ -170,6 +204,7 @@ export class RouteTriggerService {
 
     let userWorkspaceId: string | null = null;
     let userId: string | null = null;
+    let roleId: string | undefined;
 
     if (httpRouteSettings?.isAuthRequired) {
       const authContext = await this.validateWorkspaceFromRequest({
@@ -179,6 +214,10 @@ export class RouteTriggerService {
 
       userWorkspaceId = authContext.userWorkspaceId ?? null;
       userId = authContext.user?.id ?? null;
+      roleId = await this.resolveCallerRoleId({
+        authContext,
+        workspaceId: logicFunction.workspaceId,
+      });
     }
 
     const event = buildLogicFunctionEvent({
@@ -197,6 +236,7 @@ export class RouteTriggerService {
         payload: event,
         ...(userId ? { userId } : {}),
         ...(userWorkspaceId ? { userWorkspaceId } : {}),
+        ...(roleId ? { roleId } : {}),
       });
     } catch (error) {
       if (error instanceof RouteTriggerException) {
