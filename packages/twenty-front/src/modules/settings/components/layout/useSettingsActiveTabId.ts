@@ -4,8 +4,8 @@ import { useLocation } from 'react-router-dom';
 import { isDefined } from 'twenty-shared/utils';
 
 // Resolves the active tab synchronously so the content never renders a null/blank
-// frame before the effects settle: the stored tab if still valid, else the URL hash,
-// else the first tab.
+// frame before the effects settle: the URL hash if it points to a tab (so deep-links
+// win), else the stored tab if still valid, else the first tab.
 export const useSettingsActiveTabId = (
   componentInstanceId: string,
   tabIds: string[],
@@ -16,13 +16,13 @@ export const useSettingsActiveTabId = (
   );
   const { hash } = useLocation();
 
-  if (isDefined(activeTabId) && tabIds.includes(activeTabId)) {
-    return activeTabId;
-  }
-
   const hashTabId = hash.replace('#', '');
   if (tabIds.includes(hashTabId)) {
     return hashTabId;
+  }
+
+  if (isDefined(activeTabId) && tabIds.includes(activeTabId)) {
+    return activeTabId;
   }
 
   return tabIds[0] ?? null;

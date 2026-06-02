@@ -7,6 +7,7 @@ import { SettingsSectionSkeletonLoader } from '@/settings/components/SettingsSec
 import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { SettingsTabBar } from '@/settings/components/layout/SettingsTabBar';
 import { useLingui } from '@lingui/react/macro';
+import { useMemo } from 'react';
 import {
   MessageChannelSyncStage,
   MessageChannelType,
@@ -20,11 +21,15 @@ export const SettingsAccountsEmails = () => {
 
   const { channels: allMessageChannels, loading } = useMyMessageChannels();
 
-  const messageChannels = allMessageChannels.filter(
-    (channel) =>
-      channel.isSyncEnabled &&
-      channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION &&
-      channel.type !== MessageChannelType.EMAIL_GROUP,
+  const messageChannels = useMemo(
+    () =>
+      allMessageChannels.filter(
+        (channel) =>
+          channel.isSyncEnabled &&
+          channel.syncStage !== MessageChannelSyncStage.PENDING_CONFIGURATION &&
+          channel.type !== MessageChannelType.EMAIL_GROUP,
+      ),
+    [allMessageChannels],
   );
 
   const tabs = messageChannels.map((messageChannel) => ({
