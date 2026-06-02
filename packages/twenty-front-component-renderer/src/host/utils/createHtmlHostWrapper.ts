@@ -11,10 +11,8 @@ import React, { useContext } from 'react';
 import { isDefined } from 'twenty-shared/utils';
 
 import { EVENT_TO_REACT } from '@/constants/EventToReact';
-import {
-  type SerializedEventData,
-  type SerializedFileData,
-} from '@/constants/SerializedEventData';
+import { type SerializedEventData } from '@/types/SerializedEventData';
+import { type SerializedFileData } from '@/types/SerializedFileData';
 import {
   FrontComponentInputFocusContext,
   type SetEditableFocused,
@@ -144,6 +142,12 @@ const serializeEvent = (event: unknown): SerializedEventData => {
   }
   if (isNumber(domEvent.clientY)) {
     serialized.clientY = domEvent.clientY;
+  }
+  if (isNumber(domEvent.x)) {
+    serialized.x = domEvent.x;
+  }
+  if (isNumber(domEvent.y)) {
+    serialized.y = domEvent.y;
   }
   if (isNumber(domEvent.pageX)) {
     serialized.pageX = domEvent.pageX;
