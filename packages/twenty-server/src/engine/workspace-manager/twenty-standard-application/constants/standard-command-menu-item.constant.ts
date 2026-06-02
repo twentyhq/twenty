@@ -751,7 +751,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/accounts/emails' },
+    payload: { path: '/settings/accounts#emails' },
   },
   goToSettingsAccountsCalendars: {
     universalIdentifier: '3267ec0e-9dee-4d9b-8f1b-6005bfd90202',
@@ -766,7 +766,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/accounts/calendars' },
+    payload: { path: '/settings/accounts#calendars' },
   },
   goToSettingsGeneral: {
     universalIdentifier: 'ad68e516-96ea-455a-a838-c59788e88c23',
@@ -916,7 +916,7 @@ export const STANDARD_COMMAND_MENU_ITEMS = {
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
     hotKeys: null,
-    payload: { path: '/settings/security' },
+    payload: { path: '/settings/general#security' },
   },
   goToSettingsAdminPanel: {
     universalIdentifier: 'dd22798b-fca6-42af-ba3b-0d48f263afbd',
