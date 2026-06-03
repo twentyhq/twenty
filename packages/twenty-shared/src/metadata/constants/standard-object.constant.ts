@@ -614,9 +614,6 @@ export const STANDARD_OBJECTS = {
           startedAt: {
             universalIdentifier: '3b96351f-66ed-4fa6-acb6-698647573af7',
           },
-          createdAt: {
-            universalIdentifier: 'e6615903-559f-4e07-bf24-968e2f5b9201',
-          },
         },
       },
       callRecordingRecordPageFields: {
@@ -624,9 +621,6 @@ export const STANDARD_OBJECTS = {
         viewFieldGroups: {
           general: {
             universalIdentifier: '068426eb-dd20-49b0-ae9c-68727f3be2fb',
-          },
-          system: {
-            universalIdentifier: '605b519e-966f-4c68-9eae-c982890b53a9',
           },
         },
         viewFields: {
@@ -639,11 +633,20 @@ export const STANDARD_OBJECTS = {
           startedAt: {
             universalIdentifier: '3fd00fbb-c153-45e3-b6e6-43d18d34052a',
           },
-          createdAt: {
-            universalIdentifier: '9f6ed763-3534-4056-bc8a-7232de052a77',
+          endedAt: {
+            universalIdentifier: 'ba8c8d41-c112-4173-b927-5b5c5a5c047b',
           },
-          createdBy: {
-            universalIdentifier: '9a2f8c3b-cd79-4da0-863c-f9b6c27e8de5',
+          video: {
+            universalIdentifier: 'acc54ade-cd26-4be2-9391-a42715ad1523',
+          },
+          audio: {
+            universalIdentifier: '9445a547-1d1e-4da3-916b-2c2269c951c9',
+          },
+          transcript: {
+            universalIdentifier: '782c97f6-e6b1-472b-8992-bbb60d25791b',
+          },
+          failureReason: {
+            universalIdentifier: '6382e7f5-7dcd-4dee-9bdd-ffd174c5e72f',
           },
         },
       },
@@ -712,9 +715,6 @@ export const STANDARD_OBJECTS = {
           },
           eventExternalId: {
             universalIdentifier: 'd55b80cb-4e1d-40d5-96f9-03da34995cc6',
-          },
-          createdAt: {
-            universalIdentifier: '05c83806-7157-4317-b25b-4aa51fc31118',
           },
         },
       },

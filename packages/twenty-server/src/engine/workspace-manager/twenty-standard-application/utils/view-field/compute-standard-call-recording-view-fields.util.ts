@@ -45,19 +45,6 @@ export const computeStandardCallRecordingViewFields = (
         size: 150,
       },
     }),
-    allCallRecordingsCreatedAt: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'callRecording',
-      context: {
-        viewName: 'allCallRecordings',
-        viewFieldName: 'createdAt',
-        fieldName: 'createdAt',
-        position: 3,
-        isVisible: true,
-        size: 150,
-      },
-    }),
-
     callRecordingRecordPageFieldsMeetingOccurrenceKey:
       createStandardViewFieldFlatMetadata({
         ...args,
@@ -100,35 +87,72 @@ export const computeStandardCallRecordingViewFields = (
         },
       },
     ),
-    callRecordingRecordPageFieldsCreatedAt: createStandardViewFieldFlatMetadata(
-      {
+    callRecordingRecordPageFieldsEndedAt: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'callRecording',
+      context: {
+        viewName: 'callRecordingRecordPageFields',
+        viewFieldName: 'endedAt',
+        fieldName: 'endedAt',
+        position: 3,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    callRecordingRecordPageFieldsVideo: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'callRecording',
+      context: {
+        viewName: 'callRecordingRecordPageFields',
+        viewFieldName: 'video',
+        fieldName: 'video',
+        position: 4,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    callRecordingRecordPageFieldsAudio: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'callRecording',
+      context: {
+        viewName: 'callRecordingRecordPageFields',
+        viewFieldName: 'audio',
+        fieldName: 'audio',
+        position: 5,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    callRecordingRecordPageFieldsTranscript:
+      createStandardViewFieldFlatMetadata({
         ...args,
         objectName: 'callRecording',
         context: {
           viewName: 'callRecordingRecordPageFields',
-          viewFieldName: 'createdAt',
-          fieldName: 'createdAt',
-          position: 0,
+          viewFieldName: 'transcript',
+          fieldName: 'transcript',
+          position: 6,
           isVisible: true,
           size: 150,
-          viewFieldGroupName: 'system',
+          viewFieldGroupName: 'general',
         },
-      },
-    ),
-    callRecordingRecordPageFieldsCreatedBy: createStandardViewFieldFlatMetadata(
-      {
+      }),
+    callRecordingRecordPageFieldsFailureReason:
+      createStandardViewFieldFlatMetadata({
         ...args,
         objectName: 'callRecording',
         context: {
           viewName: 'callRecordingRecordPageFields',
-          viewFieldName: 'createdBy',
-          fieldName: 'createdBy',
-          position: 1,
+          viewFieldName: 'failureReason',
+          fieldName: 'failureReason',
+          position: 7,
           isVisible: true,
-          size: 150,
-          viewFieldGroupName: 'system',
+          size: 200,
+          viewFieldGroupName: 'general',
         },
-      },
-    ),
+      }),
   };
 };

@@ -31,6 +31,7 @@ export class CalendarEventWorkspaceEntity extends BaseWorkspaceEntity {
   calendarEventParticipants: EntityRelation<
     CalendarEventParticipantWorkspaceEntity[]
   >;
-  // `callRecordingCalendarEventAssociations` reverse is metadata-only: declaring it here pulls
-  // CallRecording into Person's nested-insert type and exceeds TypeScript's instantiation-depth limit.
+  // Intentionally omitted from the TypeScript workspace entity. The reverse relation
+  // exists in standard metadata, but adding it here expands recursive nested insert
+  // types through CalendarEventParticipant and Person.
 }

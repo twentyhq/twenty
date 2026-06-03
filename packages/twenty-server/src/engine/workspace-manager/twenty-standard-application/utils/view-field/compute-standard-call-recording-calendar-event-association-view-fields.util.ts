@@ -64,18 +64,5 @@ export const computeStandardCallRecordingCalendarEventAssociationViewFields = (
           size: 150,
         },
       }),
-    allCallRecordingCalendarEventAssociationsCreatedAt:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'callRecordingCalendarEventAssociation',
-        context: {
-          viewName: 'allCallRecordingCalendarEventAssociations',
-          viewFieldName: 'createdAt',
-          fieldName: 'createdAt',
-          position: 4,
-          isVisible: true,
-          size: 150,
-        },
-      }),
   };
 };

@@ -20,17 +20,5 @@ export const computeStandardCallRecordingViewFieldGroups = (
           isVisible: true,
         },
       }),
-    callRecordingRecordPageFieldsSystem:
-      createStandardViewFieldGroupFlatMetadata({
-        ...args,
-        objectName: 'callRecording',
-        context: {
-          viewName: 'callRecordingRecordPageFields',
-          viewFieldGroupName: 'system',
-          name: 'System',
-          position: 1,
-          isVisible: true,
-        },
-      }),
   };
 };
