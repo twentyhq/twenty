@@ -27,7 +27,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      # Best-effort: if the DockerHub credentials are unavailable, fall back to
+      # anonymous pulls instead of failing the whole job at login.
       - name: Login to Docker Hub
+        continue-on-error: true
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
@@ -102,7 +105,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
+      # Best-effort: if the DockerHub credentials are unavailable, fall back to
+      # anonymous pulls instead of failing the whole job at login.
       - name: Login to Docker Hub
+        continue-on-error: true
         uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
         with:
           username: ${{ vars.DOCKERHUB_USERNAME }}
