@@ -19,7 +19,6 @@ type Partner = {
   calendarLink: LinkValue;
   hourlyRate: CurrencyValue;
   projectBudgetMin: CurrencyValue;
-  projectBudgetTypical: CurrencyValue;
   linkedin: LinkValue;
   profilePicture: LinkValue;
   skills: string[] | null;
@@ -65,7 +64,6 @@ const handler = async (input: {
             calendarLink: { primaryLinkUrl: true },
             hourlyRate: { amountMicros: true, currencyCode: true },
             projectBudgetMin: { amountMicros: true, currencyCode: true },
-            projectBudgetTypical: { amountMicros: true, currencyCode: true },
             linkedin: { primaryLinkUrl: true },
             profilePicture: { primaryLinkUrl: true },
             skills: true,
