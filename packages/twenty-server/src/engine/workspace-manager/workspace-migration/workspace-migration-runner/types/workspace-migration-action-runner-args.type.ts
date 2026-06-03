@@ -15,6 +15,7 @@ export type WorkspaceMigrationActionRunnerArgs<
   allFlatEntityMaps: AllFlatEntityMaps;
   workspaceId: string;
   flatApplication: FlatApplication;
+  allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap?: Map<string, string>;
 };
 
 export type WorkspaceMigrationActionRunnerContext<

@@ -47,19 +47,34 @@ export class CreateFieldActionHandlerService extends WorkspaceMigrationRunnerAct
   override async transpileUniversalActionToFlatAction(
     context: WorkspaceMigrationActionRunnerArgs<UniversalCreateFieldAction>,
   ): Promise<FlatCreateFieldAction> {
-    const { action, allFlatEntityMaps } = context;
+    const {
+      action,
+      allFlatEntityMaps,
+      allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
+    } = context;
 
     const allFieldIdToBeCreatedInActionByUniversalIdentifierMap = new Map<
       string,
       string
-    >();
+    >(allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap ?? []);
 
-    allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
-      action.flatEntity.universalIdentifier,
-      action.id ?? v4(),
-    );
+    if (
+      !allFieldIdToBeCreatedInActionByUniversalIdentifierMap.has(
+        action.flatEntity.universalIdentifier,
+      )
+    ) {
+      allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
+        action.flatEntity.universalIdentifier,
+        action.id ?? v4(),
+      );
+    }
 
-    if (isDefined(action.relatedUniversalFlatFieldMetadata)) {
+    if (
+      isDefined(action.relatedUniversalFlatFieldMetadata) &&
+      !allFieldIdToBeCreatedInActionByUniversalIdentifierMap.has(
+        action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+      )
+    ) {
       allFieldIdToBeCreatedInActionByUniversalIdentifierMap.set(
         action.relatedUniversalFlatFieldMetadata.universalIdentifier,
         action.relatedFieldId ?? v4(),
