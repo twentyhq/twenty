@@ -160,7 +160,6 @@ async function main() {
           linkedinLink { primaryLinkUrl }
           partnerStage partnerTier partnerScope partnerTypeOfTeam partnerTimezone partnerIsAvailable partnerSkills
           partnerBudgetMinimum { amountMicros currencyCode }
-          partnerBudgetAverage { amountMicros currencyCode }
           company { id name domainName { primaryLinkUrl } }
         } }
       }
@@ -394,7 +393,6 @@ async function main() {
       ...(Array.isArray(p.partnerSkills) && p.partnerSkills.length ? { skills: p.partnerSkills } : {}),
       ...(p.city ? { city: p.city } : {}),
       ...(budgetCurrency(p.partnerBudgetMinimum) ? { projectBudgetMin: budgetCurrency(p.partnerBudgetMinimum) } : {}),
-      ...(budgetCurrency(p.partnerBudgetAverage) ? { projectBudgetTypical: budgetCurrency(p.partnerBudgetAverage) } : {}),
       ...(p.linkedinLink?.primaryLinkUrl ? { linkedin: { primaryLinkUrl: p.linkedinLink.primaryLinkUrl } } : {}),
       ...(companyId && APPLY ? { companyId } : {}),
     };
