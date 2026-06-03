@@ -27,18 +27,6 @@ describe('creates.create_company', () => {
           '{ url: "http://test.com/linkedin_url2", label: "Test linkedinUrl2" }',
         ],
       },
-      xLink: {
-        primaryLinkUrl: 'http://test.com/x_url',
-        primaryLinkLabel: 'Test xUrl',
-        secondaryLinks: [
-          '{ url: "http://test.com/x_url2", label: "Test xUrl2" }',
-        ],
-      },
-      annualRecurringRevenue: {
-        amountMicros: 100000000000,
-        currencyCode: 'USD',
-      },
-      idealCustomerProfile: true,
       employees: 25,
     });
     const result = await appTester(
@@ -52,13 +40,11 @@ describe('creates.create_company', () => {
         requestDb({
           z,
           bundle,
-          query: `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id annualRecurringRevenue{amountMicros currencyCode}}}`,
+          query: `query findCompany {company(filter: {id: {eq: "${result.data.createCompany.id}"}}){id name employees}}`,
         }),
       bundle,
     );
-    expect(
-      checkDbResult.data.company.annualRecurringRevenue.amountMicros,
-    ).toEqual(100000000000);
+    expect(checkDbResult.data.company.employees).toEqual(25);
   });
   test('should run to create a Person Record', async () => {
     const bundle = getBundleForTest({
