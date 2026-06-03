@@ -1,17 +1,15 @@
-packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 12-13,18,46,124,126
-packages/twenty-front/src/generated-metadata/graphql.ts
-  s_38bb929660d2b3::t_ecd5ab7b20e89e 1485
-  s_4a10800c36ffe6::t_d57dfd83c9717b 2490,3228-3233,4813-4814,4830-4839,6092-6093,6095
 packages/twenty-client-sdk/src/metadata/generated/schema.graphql
-  s_4a10800c36ffe6::t_4e7acb830614c5 1460,3205,3791-3792
+  s_4a10800c36ffe6::t_4e7acb830614c5 1459,3204,3789-3790
 packages/twenty-client-sdk/src/metadata/generated/schema.ts
   s_4a10800c36ffe6::t_4e7acb830614c5 1118,1129,2746,4074,5822,6125,7016-7019
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_38bb929660d2b3::t_ecd5ab7b20e89e 1484
+  s_4a10800c36ffe6::t_d57dfd83c9717b 2489,3232-3237,4826-4837
 ---
 {
   "schema_version": "authorship/3.0.0",
   "git_ai_version": "1.5.2",
-  "base_commit_sha": "74e12df09c0ab07533eab032657f8ea584ada1f9",
+  "base_commit_sha": "925bb9596c49a496a1b0a5f9da5045b6e5aeba58",
   "prompts": {},
   "sessions": {
     "s_38bb929660d2b3": {

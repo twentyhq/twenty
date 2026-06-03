@@ -1,21 +1,12 @@
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-broadcast.service.ts
-  s_4a10800c36ffe6::t_7aad8e3dc80626 107-110
-  s_4a10800c36ffe6::t_7d986bf54ecdad 18
-  s_4a10800c36ffe6::t_25484a3b71bd87 29,32-34
-  s_4a10800c36ffe6::t_ab705cdc3a885e 69
-  s_4a10800c36ffe6::t_66daff62358532 88-92
-  s_4a10800c36ffe6::t_c640a6afbd2eac 201-237
-packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
-  s_38bb929660d2b3::t_5326941843b166 39,50,61-62
-  s_38bb929660d2b3::t_a5f439b33a7b6a 15
-packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-broadcast.input.ts
-  s_4a10800c36ffe6::t_b6703492340cae 18,25-30
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_4a10800c36ffe6::t_4e7acb830614c5 1118,1129,2746,4074,5822,6125,7016-7019
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_38bb929660d2b3::t_ecd5ab7b20e89e 1485
+  s_4a10800c36ffe6::t_d57dfd83c9717b 2490,3228-3233,4813-4814,4831-4840,6093-6094,6096
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_4a10800c36ffe6::t_4e7acb830614c5 1460,3205,3792-3793
 packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
-  s_4a10800c36ffe6::t_484285b0df9af1 110
-packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageBroadcast.ts
-  s_38bb929660d2b3::t_62d3124fb3f229 14
-packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
-  ai_agent 50-56
+  s_4a10800c36ffe6::t_e99118add7e0fa 12-13,18,46,125,127
 ---
 {
   "schema_version": "authorship/3.0.0",

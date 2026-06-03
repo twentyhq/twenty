@@ -1,31 +1,34 @@
-packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
-  s_4a10800c36ffe6::t_472b0e7b1e9c17 56-59
-  s_4a10800c36ffe6::t_15968c556bb12a 54-55
-  s_4a10800c36ffe6::t_081bc828fa897f 9,11
-  s_4a10800c36ffe6::t_5979e98e6053e2 10
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-broadcast-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_fb93008ada0f74 395-411
 packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_eabc375ba0e3af 539-563
-  s_4a10800c36ffe6::t_9c328e0a77dd06 564-613
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-segment-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_e87c768cfe7db8 29-32
-  s_4a10800c36ffe6::t_df62296f8e711a 215-229
+  s_4a10800c36ffe6::t_eabc375ba0e3af 614-637
 packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
-  s_4a10800c36ffe6::t_29b90005ba1a41 798,801
-  s_4a10800c36ffe6::t_cc32ed589b5701 1008-1010
-  s_4a10800c36ffe6::t_7e6604f41429d7 2393-2395
-  s_4a10800c36ffe6::t_cd70d9f4b26cd0 2396-2401
-  s_4a10800c36ffe6::t_d78ed5b2667ad9 918-920
-  s_4a10800c36ffe6::t_aad6a0aaf2535d 847-849
-  s_4a10800c36ffe6::t_f4e8fce0abfae8 853-855
+  s_4a10800c36ffe6::t_e99118add7e0fa 1057,1100,1201,2124
+  s_4a10800c36ffe6::t_29b90005ba1a41 1090,1093
+  s_4a10800c36ffe6::t_6b27a4e1f3dd2c 1126-1134
+  s_4a10800c36ffe6::t_c1f5c2f729ddf6 1138
+  s_4a10800c36ffe6::t_aad6a0aaf2535d 1139-1141
+  s_4a10800c36ffe6::t_f4e8fce0abfae8 1145-1147
+  s_4a10800c36ffe6::t_c5befa09a11b7d 1186-1188
+  s_4a10800c36ffe6::t_1d36fa87e1d3ea 1202,1205
+  s_4a10800c36ffe6::t_d78ed5b2667ad9 1210-1212
+  s_4a10800c36ffe6::t_701cb3d71967c7 1235-1237
+  s_4a10800c36ffe6::t_cdecca27b610ce 1246
+  s_4a10800c36ffe6::t_da9c7793471468 1253,1256
+  s_4a10800c36ffe6::t_0282db4f7ec9d8 1261-1299,1303-1335,983,986,989,992,995,998,1011,1016,1022,1025,1028,1031,1034,1037,1047,1055
+  s_4a10800c36ffe6::t_cc32ed589b5701 1300-1302,1012,1048
+  s_4a10800c36ffe6::t_8eacfcbd4df881 2217-2219
+  s_4a10800c36ffe6::t_7e6604f41429d7 2700-2701
+  s_4a10800c36ffe6::t_cd70d9f4b26cd0 2702-2705,985,988,991,994,997,1000-1001,1003,1007,1015,1024,1027,1030,1033,1036,1039-1040,1042,1046,1051,1054,1934,2395,2398,2401
 packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-  s_4a10800c36ffe6::t_50bf6c6a35914b 331
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_dbdcb360f98e05 323-345
-  s_4a10800c36ffe6::t_4a6277351a9077 369-390
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-segment-page-layout.config.ts
-  s_4a10800c36ffe6::t_e87c768cfe7db8 92-93
+  s_4a10800c36ffe6::t_e99118add7e0fa 400,407,411,415-417,433,439-442,444,447-449,463,470,474,477-480,495,502,506,510-512,283,285-286,345,347-348,376,378-379
+  s_4a10800c36ffe6::t_14c10b38863dc5 452-454,266
+  s_4a10800c36ffe6::t_ab47d0cd741d9b 483-484,486,489,291,353,384
+  s_4a10800c36ffe6::t_2023bc0cc3afa4 515-517,520
+  s_4a10800c36ffe6::t_50bf6c6a35914b 519
+  s_4a10800c36ffe6::t_280bd7ac605b63 527-579,333-334,336-338,340-344,349,351-352,362,364-365,367-369,371-375,380,382-383,392
+  s_4a10800c36ffe6::t_4e87f9c00cc8e7 580,335,366
+packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+  s_4a10800c36ffe6::t_081bc828fa897f 12,14
+  s_4a10800c36ffe6::t_5979e98e6053e2 13
 ---
 {
   "schema_version": "authorship/3.0.0",

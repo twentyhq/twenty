@@ -1,87 +1,56 @@
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/unsubscribe-token.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 12,55-56
-packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-broadcast-output.dto.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 4
-packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-suppression-source.type.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 1
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 17,19,27,29,188,224,247
-packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-inbound-unsubscribe-handler.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 6,8-9,20,40,43-44
-packages/twenty-server/src/modules/emailing/standard-objects/message-topic.workspace-entity.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 6-7,11,15,17-18
-packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-subscription-status.type.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 1
-packages/twenty-server/src/engine/core-modules/messaging-webhooks/services/ses-outbound-suppression-handler.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 5-7,18,40,44,58,78,95
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-suppression.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 9-10,13,18-19,24-25,29,55,91,122
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-subscription-standard-flat-index-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 8,15-16
-packages/twenty-server/src/engine/core-modules/emailing-domain/drivers/types/send-email.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 28
-packages/twenty-client-sdk/src/metadata/generated/schema.ts
-  s_4a10800c36ffe6::t_4e7acb830614c5 1121,1125,2741,4062,5809,6110,6993-6996
-packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-subscription-source.type.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 1
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-subscription-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 19,27,30,306,331
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-broadcast-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 18,20,28,30-33,166,373
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 15-18,52-55
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 9,16-17
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-topic-standard-flat-index-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 9,16-17
 packages/twenty-server/src/modules/person/standard-objects/person.workspace-entity.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 17,63
-packages/twenty-server/src/modules/emailing/standard-objects/message-broadcast.workspace-entity.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 6,11,16,29
-packages/twenty-server/src/modules/emailing/standard-objects/message-subscription.workspace-entity.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 3,6,11
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/__tests__/emailing-domain-sender.service.spec.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 8-9,56,65
-packages/twenty-front/src/modules/settings/workspace/components/SettingsWorkspaceMessageTopicsSection.tsx
-  s_4a10800c36ffe6::t_e99118add7e0fa 27,31,65,72-73,77,92-95,98,101,134,149,160
-packages/twenty-front/src/generated-metadata/graphql.ts
-  s_4a10800c36ffe6::t_d57dfd83c9717b 2497,3234-3238,4814-4825
-packages/twenty-server/src/engine/core-modules/emailing-domain/controllers/unsubscribe.controller.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 14-15,17-18,29-30,59,61,64,72,75-76
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/emailing-domain-sender.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 23-24,44-45,78,189,199,231,235,240,243,252,272
-packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 765,808,847,909,1826
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-subscription.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 6-7,10,19,38-39,43,52,58,72-73,161,169,212,223
-packages/twenty-front/src/pages/settings/SettingsWorkspaceEmail.tsx
-  s_4a10800c36ffe6::t_e99118add7e0fa 7,42
-packages/twenty-server/src/engine/core-modules/emailing-domain/dtos/send-message-broadcast.input.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 6,9
-packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 10-11,14,38,100,102-103,105-106,108
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 12-15,47-50
-packages/twenty-client-sdk/src/metadata/generated/schema.graphql
-  s_4a10800c36ffe6::t_4e7acb830614c5 1465,3206,3783-3784
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 525,531,537
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 12,14,22,25,186
-packages/twenty-server/src/modules/emailing/standard-objects/message-suppression.workspace-entity.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 8,11
+  s_4a10800c36ffe6::t_7e117abc620a0a 18
+  s_4a10800c36ffe6::t_e99118add7e0fa 65
 packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.module.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 18-20,43-45,52-54
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-broadcast.service.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 14-15,21,36-37,49,69-70,83-120,123-128,130-131,133,138,143,148,151,153
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-broadcast-standard-flat-index-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 9,16-17
-packages/twenty-server/src/engine/core-modules/emailing-domain/types/message-suppression-reason.type.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 1
+  s_4a10800c36ffe6::t_e99118add7e0fa 28-30
 packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 212,219,223,227-229,245,251-254,256,259-261,275,282,286,289-292,307,314,318,322-324
-packages/twenty-server/src/engine/core-modules/emailing-domain/constants/blocking-reasons-by-message-category.constant.ts
-  s_4a10800c36ffe6::t_e99118add7e0fa 2,8,11-12,15-17
+  s_4a10800c36ffe6::t_e99118add7e0fa 339,346,350,354-356,372,378-381,383,386-388,402,409,413,416-419,434,441,445,449-451,281,283-284
+  s_4a10800c36ffe6::t_14c10b38863dc5 391-393
+  s_4a10800c36ffe6::t_ab47d0cd741d9b 422-423,425,428,289
+  s_4a10800c36ffe6::t_2023bc0cc3afa4 454-456,459
+  s_4a10800c36ffe6::t_50bf6c6a35914b 458
+  s_4a10800c36ffe6::t_280bd7ac605b63 466-518
+  s_4a10800c36ffe6::t_4e87f9c00cc8e7 519
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util.ts
+  s_4a10800c36ffe6::t_e99118add7e0fa 19-22,60-63
+  s_4a10800c36ffe6::t_52b0c9c90ed94d 23-24
+  s_4a10800c36ffe6::t_5a5382a31137af 66-67
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_4a10800c36ffe6::t_e99118add7e0fa 954,997,1098,2018
+  s_4a10800c36ffe6::t_29b90005ba1a41 987,990
+  s_4a10800c36ffe6::t_6b27a4e1f3dd2c 1023-1031
+  s_4a10800c36ffe6::t_c1f5c2f729ddf6 1035
+  s_4a10800c36ffe6::t_aad6a0aaf2535d 1036-1038
+  s_4a10800c36ffe6::t_f4e8fce0abfae8 1042-1044
+  s_4a10800c36ffe6::t_c5befa09a11b7d 1083-1085
+  s_4a10800c36ffe6::t_1d36fa87e1d3ea 1099,1102
+  s_4a10800c36ffe6::t_d78ed5b2667ad9 1107-1109
+  s_4a10800c36ffe6::t_701cb3d71967c7 1132-1134
+  s_4a10800c36ffe6::t_cdecca27b610ce 1143
+  s_4a10800c36ffe6::t_da9c7793471468 1150,1153
+  s_4a10800c36ffe6::t_0282db4f7ec9d8 1158-1196,1200-1232
+  s_4a10800c36ffe6::t_cc32ed589b5701 1197-1199
+  s_4a10800c36ffe6::t_8eacfcbd4df881 2111-2113
+  s_4a10800c36ffe6::t_7e6604f41429d7 2585-2586
+  s_4a10800c36ffe6::t_cd70d9f4b26cd0 2587-2590
+packages/twenty-client-sdk/src/metadata/generated/schema.ts
+  s_4a10800c36ffe6::t_4e7acb830614c5 1118,1129,2746,4074,5822,6125,7016-7019
+packages/twenty-server/src/engine/core-modules/emailing-domain/emailing-domain.resolver.ts
+  s_4a10800c36ffe6::t_e99118add7e0fa 12-13,18,46,123,125
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util.ts
+  s_4a10800c36ffe6::t_e99118add7e0fa 16-19,55-58
+  s_4a10800c36ffe6::t_a268bfc5e92ff8 20-21
+  s_4a10800c36ffe6::t_d01563f90a4628 61-62
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_e99118add7e0fa 548,554,560
+  s_4a10800c36ffe6::t_cdc0ebb23458e1 555-556
+  s_4a10800c36ffe6::t_a2e0757dbe778d 558
+  s_4a10800c36ffe6::t_1dccfad31e0b23 564-567
+packages/twenty-front/src/generated-metadata/graphql.ts
+  s_38bb929660d2b3::t_ecd5ab7b20e89e 1484
+  s_4a10800c36ffe6::t_d57dfd83c9717b 2489,3227-3232,4812-4813,4828-4837
+packages/twenty-client-sdk/src/metadata/generated/schema.graphql
+  s_4a10800c36ffe6::t_4e7acb830614c5 1459,3204,3789-3790
 ---
 {
   "schema_version": "authorship/3.0.0",
@@ -89,6 +58,14 @@ packages/twenty-server/src/engine/core-modules/emailing-domain/constants/blockin
   "base_commit_sha": "3980094e027b2ef9a4b63ac3370047b55e705725",
   "prompts": {},
   "sessions": {
+    "s_38bb929660d2b3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "106db34b-c9ad-439b-ac1a-e26d1b7f32fc",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    },
     "s_4a10800c36ffe6": {
       "agent_id": {
         "tool": "claude",

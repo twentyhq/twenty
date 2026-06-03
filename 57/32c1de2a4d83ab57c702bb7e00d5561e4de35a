@@ -1,5 +1,11 @@
 packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
-  s_4a10800c36ffe6::t_4e87f9c00cc8e7 392
+  s_4a10800c36ffe6::t_e99118add7e0fa 400,407,411,415-417,433,439-442,444,447-449,463,470,474,477-480,495,502,506,510-512,283,285-286,345,347-348,376,378-379
+  s_4a10800c36ffe6::t_14c10b38863dc5 452-454,266
+  s_4a10800c36ffe6::t_ab47d0cd741d9b 483-484,486,489,291,353,384
+  s_4a10800c36ffe6::t_2023bc0cc3afa4 515-517,520
+  s_4a10800c36ffe6::t_50bf6c6a35914b 519
+  s_4a10800c36ffe6::t_280bd7ac605b63 527-579,333-334,336-338,340-344,349,351-352,362,364-365,367-369,371-375,380,382-383,392
+  s_4a10800c36ffe6::t_4e87f9c00cc8e7 580,335,366
 ---
 {
   "schema_version": "authorship/3.0.0",
