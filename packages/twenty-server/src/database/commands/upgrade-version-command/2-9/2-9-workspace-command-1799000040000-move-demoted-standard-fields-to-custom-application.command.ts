@@ -146,11 +146,7 @@ export class MoveDemotedStandardFieldsToCustomApplicationCommand extends ActiveO
       ...new Set(fieldMetadataRelatedNames.map(getMetadataFlatEntityMapsKey)),
     ];
 
-    await this.workspaceCacheService.flush(workspaceId, [
-      ...cacheKeysToFlush,
-      'ORMEntityMetadatas',
-      'graphQLResolverNameMap',
-    ]);
+    await this.workspaceCacheService.flush(workspaceId, cacheKeysToFlush);
 
     await this.workspaceMetadataVersionService.incrementMetadataVersion(
       workspaceId,

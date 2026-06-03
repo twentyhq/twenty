@@ -189,10 +189,6 @@ export class RenameConflictingCustomFieldsCommand extends ActiveOrSuspendedWorks
       }
     }
 
-    await this.workspaceCacheService.invalidateAndRecompute(workspaceId, [
-      'flatFieldMetadataMaps',
-    ]);
-
     this.logger.log(
       `Renamed ${fieldsToRename.length} conflicting custom field(s) for workspace ${workspaceId}`,
     );
