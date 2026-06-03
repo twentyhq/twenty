@@ -15,7 +15,11 @@ const Row = styled.dl`
   margin: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    align-items: center;
+    // Align the label to the first chip's baseline rather than the row's
+    // center: when chips wrap to multiple lines in a narrow card, centering
+    // floats the label to the middle and visually lifts the first chip into
+    // the row above. Baseline keeps the label pinned beside the first chip.
+    align-items: baseline;
     flex-direction: row;
     gap: ${theme.spacing(4)};
   }
