@@ -24,8 +24,12 @@ const eventSinksProvider = {
     clickHouseEventSink: ClickHouseEventSink,
     consoleEventSink: ConsoleEventSink,
   ): EventSink[] => {
-    const registry: Record<string, EventSink> = {
-      clickhouse: clickHouseEventSink,
+    const registry: Record<string, EventSink | undefined> = {
+      // ClickHouse counts as a live destination only when it is configured, so
+      // isEnabled() reflects reality and producers can skip work when absent.
+      clickhouse: twentyConfigService.get('CLICKHOUSE_URL')
+        ? clickHouseEventSink
+        : undefined,
       console: consoleEventSink,
     };
 

@@ -8,8 +8,8 @@
 // event-logs/event-logs.service.ts.
 
 type EventContextFields = {
-  workspaceId?: string;
-  userId?: string;
+  workspaceId?: string | null;
+  userId?: string | null;
 };
 
 type AnalyticsEventRow = EventContextFields & {
@@ -68,3 +68,8 @@ export type WorkspaceEventEnvelope =
   | { table: 'applicationLog'; row: ApplicationLogRow };
 
 export type WorkspaceEventTable = WorkspaceEventEnvelope['table'];
+
+// Payload of a job on MessageQueue.workspaceEventsQueue.
+export type WorkspaceEventsJobData = {
+  events: WorkspaceEventEnvelope[];
+};

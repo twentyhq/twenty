@@ -1,46 +1,50 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
-import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
+import { WorkspaceEventsConsumer } from 'src/engine/core-modules/audit/jobs/workspace-events.consumer';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
 import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
 import {
-  makePageview,
-  makeTrackEvent,
-} from 'src/engine/core-modules/audit/utils/analytics.utils';
+  type WorkspaceEventEnvelope,
+  type WorkspaceEventsJobData,
+} from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
+import {
+  buildObjectEventEnvelope,
+  buildPageviewEnvelope,
+  buildWorkspaceEventEnvelope,
+  computeEventContextFields,
+} from 'src/engine/core-modules/audit/utils/build-event-envelope';
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
-import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
+// Typed emit facade for analytics events. Builds an envelope and enqueues it
+// onto the unified workspace-events pipeline; the ClickHouse write lives in the
+// sinks.
 @Injectable()
 export class AuditService {
-  private readonly logger = new Logger(AuditService.name);
-
   constructor(
-    private readonly twentyConfigService: TwentyConfigService,
-    private readonly clickHouseService: ClickHouseService,
+    @InjectMessageQueue(MessageQueue.workspaceEventsQueue)
+    private readonly workspaceEventsQueueService: MessageQueueService,
+    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
   createContext(context?: {
     workspaceId?: string | null | undefined;
     userId?: string | null | undefined;
   }) {
-    const contextFields = context
-      ? {
-          ...(context.workspaceId ? { workspaceId: context.workspaceId } : {}),
-          ...(context.userId ? { userId: context.userId } : {}),
-        }
-      : {};
+    const contextFields = computeEventContextFields(context);
 
     return {
       insertWorkspaceEvent: <T extends TrackEventName>(
         event: T,
         properties: TrackEventProperties<T>,
       ) =>
-        this.preventIfDisabled(() =>
-          this.clickHouseService.insert('workspaceEvent', [
-            { ...contextFields, ...makeTrackEvent(event, properties) },
-          ]),
+        this.enqueue(
+          buildWorkspaceEventEnvelope(contextFields, event, properties),
         ),
       createObjectEvent: <T extends TrackEventName>(
         event: T,
@@ -49,50 +53,29 @@ export class AuditService {
           objectMetadataId: string;
           isCustom?: boolean;
         },
-      ) => {
-        const { recordId, objectMetadataId, isCustom, ...restProperties } =
-          properties;
-
-        return this.preventIfDisabled(() =>
-          this.clickHouseService.insert('objectEvent', [
-            {
-              ...contextFields,
-              ...makeTrackEvent(
-                event,
-                restProperties as unknown as TrackEventProperties<T>,
-              ),
-              recordId,
-              objectMetadataId,
-              isCustom,
-            },
-          ]),
-        );
-      },
+      ) =>
+        this.enqueue(
+          buildObjectEventEnvelope(contextFields, event, properties),
+        ),
       createPageviewEvent: (
         name: string,
         properties: Partial<PageviewProperties>,
-      ) =>
-        this.preventIfDisabled(() =>
-          this.clickHouseService.insert('pageview', [
-            { ...contextFields, ...makePageview(name, properties) },
-          ]),
-        ),
+      ) => this.enqueue(buildPageviewEnvelope(contextFields, name, properties)),
     };
   }
 
-  private async preventIfDisabled(
-    sendEventOrPageviewFunction: () => Promise<{ success: boolean }>,
+  private async enqueue(
+    envelope: WorkspaceEventEnvelope,
   ): Promise<{ success: boolean }> {
-    if (!this.twentyConfigService.get('CLICKHOUSE_URL')) {
+    if (!this.workspaceEventSinkService.isEnabled()) {
       return { success: true };
     }
 
-    try {
-      return await sendEventOrPageviewFunction();
-    } catch (error) {
-      this.logger.error('Failed to persist audit event to ClickHouse', error);
+    await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
+      WorkspaceEventsConsumer.name,
+      { events: [envelope] },
+    );
 
-      return { success: false };
-    }
+    return { success: true };
   }
 }

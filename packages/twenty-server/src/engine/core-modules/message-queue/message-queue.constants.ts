@@ -13,6 +13,7 @@ export enum MessageQueue {
   billingQueue = 'billing-queue',
   workspaceQueue = 'workspace-queue',
   entityEventsToDbQueue = 'entity-events-to-db-queue',
+  workspaceEventsQueue = 'workspace-events-queue',
   workflowQueue = 'workflow-queue',
   delayedJobsQueue = 'delayed-jobs-queue',
   deleteCascadeQueue = 'delete-cascade-queue',

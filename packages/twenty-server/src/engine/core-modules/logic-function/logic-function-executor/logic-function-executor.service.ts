@@ -17,12 +17,15 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { ApplicationLogsService } from 'src/engine/core-modules/application-logs/application-logs.service';
+import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/application-logs/utils/build-application-log-envelopes';
 import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
+import { WorkspaceEventsConsumer } from 'src/engine/core-modules/audit/jobs/workspace-events.consumer';
 import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
+import { type WorkspaceEventsJobData } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
 import { LOGIC_FUNCTION_EXECUTED_EVENT } from 'src/engine/core-modules/audit/utils/events/workspace-event/logic-function/logic-function-executed';
 import { ApplicationTokenService } from 'src/engine/core-modules/auth/token/services/application-token.service';
 import { BillingUsageService } from 'src/engine/core-modules/billing/services/billing-usage.service';
@@ -30,6 +33,9 @@ import { BillingService } from 'src/engine/core-modules/billing/services/billing
 import { FeatureFlagService } from 'src/engine/core-modules/feature-flag/services/feature-flag.service';
 import { LogicFunctionDriverFactory } from 'src/engine/core-modules/logic-function/logic-function-drivers/logic-function-driver.factory';
 import { buildEnvVar } from 'src/engine/core-modules/logic-function/logic-function-executor/utils/build-env-var';
+import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
+import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 import { SecretEncryptionService } from 'src/engine/core-modules/secret-encryption/secret-encryption.service';
 import { ThrottlerService } from 'src/engine/core-modules/throttler/throttler.service';
 import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
@@ -79,7 +85,9 @@ export class LogicFunctionExecutorService {
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
     private readonly auditService: AuditService,
-    private readonly applicationLogsService: ApplicationLogsService,
+    @InjectMessageQueue(MessageQueue.workspaceEventsQueue)
+    private readonly workspaceEventsQueueService: MessageQueueService,
+    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
     private readonly billingService: BillingService,
     private readonly billingUsageService: BillingUsageService,
@@ -410,9 +418,15 @@ export class LogicFunctionExecutorService {
       executionId,
     }));
 
-    void this.applicationLogsService.writeLogs(logEntries).catch((error) => {
-      this.logger.error('Failed to persist application logs', error);
-    });
+    if (this.workspaceEventSinkService.isEnabled()) {
+      void this.workspaceEventsQueueService
+        .add<WorkspaceEventsJobData>(WorkspaceEventsConsumer.name, {
+          events: buildApplicationLogEnvelopes(logEntries),
+        })
+        .catch((error) => {
+          this.logger.error('Failed to enqueue application logs', error);
+        });
+    }
 
     await this.subscriptionService.publish({
       channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,

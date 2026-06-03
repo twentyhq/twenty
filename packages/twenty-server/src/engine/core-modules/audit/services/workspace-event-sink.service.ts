@@ -18,4 +18,10 @@ export class WorkspaceEventSinkService {
   async write(events: WorkspaceEventEnvelope[]): Promise<void> {
     await Promise.all(this.sinks.map((sink) => sink.write(events)));
   }
+
+  // Whether any sink is configured. Producers skip building/enqueuing events
+  // when nothing is listening.
+  isEnabled(): boolean {
+    return this.sinks.length > 0;
+  }
 }

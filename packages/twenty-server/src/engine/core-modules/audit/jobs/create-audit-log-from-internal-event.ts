@@ -1,6 +1,11 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
 
-import { AuditService } from 'src/engine/core-modules/audit/services/audit.service';
+import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
+import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
+import {
+  buildObjectEventEnvelope,
+  computeEventContextFields,
+} from 'src/engine/core-modules/audit/utils/build-event-envelope';
 import { OBJECT_RECORD_CREATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-created';
 import { OBJECT_RECORD_DELETED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-delete';
 import { OBJECT_RECORD_UPDATED_EVENT } from 'src/engine/core-modules/audit/utils/events/object-event/object-record-updated';
@@ -10,55 +15,104 @@ import { Processor } from 'src/engine/core-modules/message-queue/decorators/proc
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
+// Turns object-record mutations (the highest-volume event source) into
+// objectEvent envelopes and writes them straight to the sinks — it already runs
+// in a durable queue worker, so no second hop is needed.
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
-  constructor(private readonly auditService: AuditService) {}
+  constructor(
+    private readonly workspaceEventSinkService: WorkspaceEventSinkService,
+  ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
   async handle(
     workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): Promise<void> {
-    for (const eventData of workspaceEventBatch.events) {
-      // We remove "before" and "after" property for a cleaner/slimmer event payload
-      const eventProperties =
-        'diff' in eventData.properties
-          ? {
-              ...eventData.properties,
-              diff: eventData.properties.diff,
-            }
-          : eventData.properties;
-
-      const auditService = this.auditService.createContext({
-        workspaceId: workspaceEventBatch.workspaceId,
-        userId: eventData.userId,
-      });
-
-      // Since these are object record events, we use createObjectEvent
-      if (workspaceEventBatch.name.endsWith('.updated')) {
-        await auditService.createObjectEvent(OBJECT_RECORD_UPDATED_EVENT, {
-          ...eventProperties,
-          recordId: eventData.recordId,
-          objectMetadataId: workspaceEventBatch.objectMetadata.id,
-        });
-      } else if (workspaceEventBatch.name.endsWith('.created')) {
-        await auditService.createObjectEvent(OBJECT_RECORD_CREATED_EVENT, {
-          ...eventProperties,
-          recordId: eventData.recordId,
-          objectMetadataId: workspaceEventBatch.objectMetadata.id,
-        });
-      } else if (workspaceEventBatch.name.endsWith('.deleted')) {
-        await auditService.createObjectEvent(OBJECT_RECORD_DELETED_EVENT, {
-          ...eventProperties,
-          recordId: eventData.recordId,
-          objectMetadataId: workspaceEventBatch.objectMetadata.id,
-        });
-      } else if (workspaceEventBatch.name.endsWith('.upserted')) {
-        await auditService.createObjectEvent(OBJECT_RECORD_UPSERTED_EVENT, {
-          ...eventProperties,
-          recordId: eventData.recordId,
-          objectMetadataId: workspaceEventBatch.objectMetadata.id,
-        });
-      }
+    if (!this.workspaceEventSinkService.isEnabled()) {
+      return;
     }
+
+    const envelopes = this.toEnvelopes(workspaceEventBatch);
+
+    if (envelopes.length === 0) {
+      return;
+    }
+
+    await this.workspaceEventSinkService.write(envelopes);
+  }
+
+  private toEnvelopes(
+    batch: WorkspaceEventBatch<ObjectRecordEvent>,
+  ): WorkspaceEventEnvelope[] {
+    const { name } = batch;
+
+    if (name.endsWith('.updated')) {
+      return batch.events.map((eventData) =>
+        buildObjectEventEnvelope(
+          this.contextFields(batch, eventData),
+          OBJECT_RECORD_UPDATED_EVENT,
+          this.objectProperties(batch, eventData),
+        ),
+      );
+    }
+
+    if (name.endsWith('.created')) {
+      return batch.events.map((eventData) =>
+        buildObjectEventEnvelope(
+          this.contextFields(batch, eventData),
+          OBJECT_RECORD_CREATED_EVENT,
+          this.objectProperties(batch, eventData),
+        ),
+      );
+    }
+
+    if (name.endsWith('.deleted')) {
+      return batch.events.map((eventData) =>
+        buildObjectEventEnvelope(
+          this.contextFields(batch, eventData),
+          OBJECT_RECORD_DELETED_EVENT,
+          this.objectProperties(batch, eventData),
+        ),
+      );
+    }
+
+    if (name.endsWith('.upserted')) {
+      return batch.events.map((eventData) =>
+        buildObjectEventEnvelope(
+          this.contextFields(batch, eventData),
+          OBJECT_RECORD_UPSERTED_EVENT,
+          this.objectProperties(batch, eventData),
+        ),
+      );
+    }
+
+    return [];
+  }
+
+  private contextFields(
+    batch: WorkspaceEventBatch<ObjectRecordEvent>,
+    eventData: ObjectRecordEvent,
+  ) {
+    return computeEventContextFields({
+      workspaceId: batch.workspaceId,
+      userId: eventData.userId,
+    });
+  }
+
+  private objectProperties(
+    batch: WorkspaceEventBatch<ObjectRecordEvent>,
+    eventData: ObjectRecordEvent,
+  ) {
+    // Slim the payload: keep diff among the before/after fields.
+    const eventProperties =
+      'diff' in eventData.properties
+        ? { ...eventData.properties, diff: eventData.properties.diff }
+        : eventData.properties;
+
+    return {
+      ...eventProperties,
+      recordId: eventData.recordId,
+      objectMetadataId: batch.objectMetadata.id,
+    };
   }
 }
