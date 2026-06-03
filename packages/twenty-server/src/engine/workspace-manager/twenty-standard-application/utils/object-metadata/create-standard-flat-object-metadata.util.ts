@@ -177,40 +177,6 @@ export const STANDARD_FLAT_OBJECT_METADATA_BUILDERS_BY_OBJECT_NAME = {
         icon: 'IconPhone',
         isSystem: true,
         isAuditLogged: false,
-        labelIdentifierFieldMetadataName: 'meetingOccurrenceKey',
-      },
-      workspaceId,
-      standardObjectMetadataRelatedEntityIds,
-      twentyStandardApplicationId,
-      now,
-    }),
-  callRecordingCalendarEventAssociation: ({
-    now,
-    workspaceId,
-    standardObjectMetadataRelatedEntityIds,
-    twentyStandardApplicationId,
-    dependencyFlatEntityMaps,
-  }: Omit<
-    CreateStandardObjectArgs<'callRecordingCalendarEventAssociation'>,
-    'context' | 'objectName'
-  >) =>
-    createStandardObjectFlatMetadata({
-      objectName: 'callRecordingCalendarEventAssociation',
-      dependencyFlatEntityMaps,
-      context: {
-        universalIdentifier:
-          STANDARD_OBJECTS.callRecordingCalendarEventAssociation
-            .universalIdentifier,
-        nameSingular: 'callRecordingCalendarEventAssociation',
-        namePlural: 'callRecordingCalendarEventAssociations',
-        labelSingular: i18nLabel(
-          msg`Call Recording Calendar Event Association`,
-        ),
-        labelPlural: i18nLabel(msg`Call Recording Calendar Event Associations`),
-        description: i18nLabel(msg`Call Recording Calendar Event Associations`),
-        icon: 'IconCalendar',
-        isSystem: true,
-        isAuditLogged: false,
         labelIdentifierFieldMetadataName: 'id',
       },
       workspaceId,

@@ -8,14 +8,14 @@ export const computeStandardCallRecordingViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'callRecording'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // meetingOccurrenceKey is the label identifier; it must hold the lowest position in non-widget views.
-    allCallRecordingsMeetingOccurrenceKey: createStandardViewFieldFlatMetadata({
+    // id is the label identifier; it must hold the lowest position in non-widget views.
+    allCallRecordingsId: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'callRecording',
       context: {
         viewName: 'allCallRecordings',
-        viewFieldName: 'meetingOccurrenceKey',
-        fieldName: 'meetingOccurrenceKey',
+        viewFieldName: 'id',
+        fieldName: 'id',
         position: 0,
         isVisible: true,
         size: 200,
@@ -45,20 +45,19 @@ export const computeStandardCallRecordingViewFields = (
         size: 150,
       },
     }),
-    callRecordingRecordPageFieldsMeetingOccurrenceKey:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'callRecording',
-        context: {
-          viewName: 'callRecordingRecordPageFields',
-          viewFieldName: 'meetingOccurrenceKey',
-          fieldName: 'meetingOccurrenceKey',
-          position: 0,
-          isVisible: true,
-          size: 200,
-          viewFieldGroupName: 'general',
-        },
-      }),
+    callRecordingRecordPageFieldsId: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'callRecording',
+      context: {
+        viewName: 'callRecordingRecordPageFields',
+        viewFieldName: 'id',
+        fieldName: 'id',
+        position: 0,
+        isVisible: true,
+        size: 200,
+        viewFieldGroupName: 'general',
+      },
+    }),
     callRecordingRecordPageFieldsStatus: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'callRecording',
@@ -140,6 +139,19 @@ export const computeStandardCallRecordingViewFields = (
           viewFieldGroupName: 'general',
         },
       }),
+    callRecordingRecordPageFieldsSummary: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'callRecording',
+      context: {
+        viewName: 'callRecordingRecordPageFields',
+        viewFieldName: 'summary',
+        fieldName: 'summary',
+        position: 7,
+        isVisible: true,
+        size: 200,
+        viewFieldGroupName: 'general',
+      },
+    }),
     callRecordingRecordPageFieldsFailureReason:
       createStandardViewFieldFlatMetadata({
         ...args,
@@ -148,7 +160,7 @@ export const computeStandardCallRecordingViewFields = (
           viewName: 'callRecordingRecordPageFields',
           viewFieldName: 'failureReason',
           fieldName: 'failureReason',
-          position: 7,
+          position: 8,
           isVisible: true,
           size: 200,
           viewFieldGroupName: 'general',

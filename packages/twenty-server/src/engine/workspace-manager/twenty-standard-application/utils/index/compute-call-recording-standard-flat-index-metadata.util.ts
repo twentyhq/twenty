@@ -16,13 +16,12 @@ export const buildCallRecordingStandardFlatIndexMetadatas = ({
   AllStandardObjectIndexName<'callRecording'>,
   FlatIndexMetadata
 > => ({
-  meetingOccurrenceKeyIndex: createStandardIndexFlatMetadata({
+  calendarEventIdIndex: createStandardIndexFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      indexName: 'meetingOccurrenceKeyIndex',
-      relatedFieldNames: ['meetingOccurrenceKey'],
-      isUnique: true,
+      indexName: 'calendarEventIdIndex',
+      relatedFieldNames: ['calendarEvent'],
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

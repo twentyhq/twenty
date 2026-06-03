@@ -47,31 +47,22 @@ const getUniversalIdentifiers = (
 
 const CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.universalIdentifier,
-  STANDARD_OBJECTS.callRecordingCalendarEventAssociation.universalIdentifier,
 ];
 
 const CALL_RECORDING_FIELD_METADATA_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(STANDARD_OBJECTS.callRecording.fields),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.callRecordingCalendarEventAssociation.fields,
-  ),
-  STANDARD_OBJECTS.calendarEvent.fields.callRecordingCalendarEventAssociations
-    .universalIdentifier,
+  STANDARD_OBJECTS.calendarEvent.fields.recordingPreference.universalIdentifier,
+  STANDARD_OBJECTS.calendarEvent.fields.callRecordings.universalIdentifier,
 ];
 
-const CALL_RECORDING_INDEX_UNIVERSAL_IDENTIFIERS = [
-  ...getUniversalIdentifiers(STANDARD_OBJECTS.callRecording.indexes),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.callRecordingCalendarEventAssociation.indexes,
-  ),
-];
+const CALL_RECORDING_INDEX_UNIVERSAL_IDENTIFIERS = getUniversalIdentifiers(
+  STANDARD_OBJECTS.callRecording.indexes,
+);
 
 const CALL_RECORDING_VIEW_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.callRecording.views.allCallRecordings.universalIdentifier,
   STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
     .universalIdentifier,
-  STANDARD_OBJECTS.callRecordingCalendarEventAssociation.views
-    .allCallRecordingCalendarEventAssociations.universalIdentifier,
 ];
 
 const CALL_RECORDING_VIEW_FIELD_GROUP_UNIVERSAL_IDENTIFIERS =
@@ -87,10 +78,6 @@ const CALL_RECORDING_VIEW_FIELD_UNIVERSAL_IDENTIFIERS = [
   ...getUniversalIdentifiers(
     STANDARD_OBJECTS.callRecording.views.callRecordingRecordPageFields
       .viewFields,
-  ),
-  ...getUniversalIdentifiers(
-    STANDARD_OBJECTS.callRecordingCalendarEventAssociation.views
-      .allCallRecordingCalendarEventAssociations.viewFields,
   ),
 ];
 
@@ -117,7 +104,7 @@ const CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
 @Command({
   name: 'upgrade:2-9:sync-call-recording-standard-objects',
   description:
-    'Create the CallRecording and CallRecordingCalendarEventAssociation standard metadata in existing workspaces',
+    'Create the CallRecording standard metadata in existing workspaces',
 })
 export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

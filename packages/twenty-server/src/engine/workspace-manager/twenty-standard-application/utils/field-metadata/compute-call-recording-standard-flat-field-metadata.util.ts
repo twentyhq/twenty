@@ -3,6 +3,7 @@ import { i18nLabel } from 'src/engine/workspace-manager/twenty-standard-applicat
 import {
   DateDisplayFormat,
   FieldMetadataType,
+  RelationOnDeleteAction,
   RelationType,
 } from 'twenty-shared/types';
 
@@ -14,7 +15,6 @@ import {
 } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-field-flat-metadata.util';
 import { createStandardRelationFieldFlatMetadata } from 'src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/create-standard-relation-field-flat-metadata.util';
 import { getTsVectorColumnExpressionFromFields } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
-import { SEARCH_FIELDS_FOR_CALL_RECORDING } from 'src/modules/call-recording/standard-objects/call-recording.workspace-entity';
 
 export const buildCallRecordingStandardFlatFieldMetadatas = ({
   now,
@@ -105,25 +105,6 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  meetingOccurrenceKey: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'meetingOccurrenceKey',
-      type: FieldMetadataType.TEXT,
-      label: i18nLabel(msg`Meeting Occurrence Key`),
-      description: i18nLabel(
-        msg`Stable per-workspace identity of the recorded meeting occurrence`,
-      ),
-      icon: 'IconKey',
-      isNullable: false,
-      isUIReadOnly: true,
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
   status: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -177,49 +158,6 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
           value: 'FAILED',
           label: i18nLabel(msg`Failed`),
           position: 5,
-          color: 'gray',
-        },
-      ],
-    },
-    standardObjectMetadataRelatedEntityIds,
-    dependencyFlatEntityMaps,
-    twentyStandardApplicationId,
-    now,
-  }),
-  recordingPolicy: createStandardFieldFlatMetadata({
-    objectName,
-    workspaceId,
-    context: {
-      fieldName: 'recordingPolicy',
-      type: FieldMetadataType.SELECT,
-      label: i18nLabel(msg`Recording Policy`),
-      description: i18nLabel(
-        msg`Per-meeting recording override applied on top of workspace policy`,
-      ),
-      icon: 'IconSettingsAutomation',
-      isNullable: false,
-      isUIReadOnly: true,
-      defaultValue: "'AUTO'",
-      options: [
-        {
-          id: '0b93750f-f5b4-406b-9e18-7640167861e6',
-          value: 'AUTO',
-          label: i18nLabel(msg`Auto`),
-          position: 0,
-          color: 'blue',
-        },
-        {
-          id: 'c480f2aa-b602-4f72-89a3-169ce6e7965b',
-          value: 'ON',
-          label: i18nLabel(msg`On`),
-          position: 1,
-          color: 'green',
-        },
-        {
-          id: '09a19839-6c89-49c1-abcb-f92a80056901',
-          value: 'OFF',
-          label: i18nLabel(msg`Off`),
-          position: 2,
           color: 'gray',
         },
       ],
@@ -375,6 +313,23 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  summary: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'summary',
+      type: FieldMetadataType.RICH_TEXT,
+      label: i18nLabel(msg`Summary`),
+      description: i18nLabel(msg`Recording summary`),
+      icon: 'IconFileText',
+      isNullable: true,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   failureReason: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -392,30 +347,31 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  callRecordingCalendarEventAssociations:
-    createStandardRelationFieldFlatMetadata({
-      objectName,
-      workspaceId,
-      context: {
-        type: FieldMetadataType.RELATION,
-        morphId: null,
-        fieldName: 'callRecordingCalendarEventAssociations',
-        label: i18nLabel(msg`Calendar Event Associations`),
-        description: i18nLabel(msg`Calendar Event Associations`),
-        icon: 'IconCalendar',
-        isNullable: false,
-        isUIReadOnly: true,
-        targetObjectName: 'callRecordingCalendarEventAssociation',
-        targetFieldName: 'callRecording',
-        settings: {
-          relationType: RelationType.ONE_TO_MANY,
-        },
+  calendarEvent: createStandardRelationFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      type: FieldMetadataType.RELATION,
+      morphId: null,
+      fieldName: 'calendarEvent',
+      label: i18nLabel(msg`Calendar Event`),
+      description: i18nLabel(msg`Calendar Event`),
+      icon: 'IconCalendar',
+      isNullable: false,
+      isUIReadOnly: true,
+      targetObjectName: 'calendarEvent',
+      targetFieldName: 'callRecordings',
+      settings: {
+        relationType: RelationType.MANY_TO_ONE,
+        onDelete: RelationOnDeleteAction.CASCADE,
+        joinColumnName: 'calendarEventId',
       },
-      standardObjectMetadataRelatedEntityIds,
-      dependencyFlatEntityMaps,
-      twentyStandardApplicationId,
-      now,
-    }),
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   createdBy: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -495,9 +451,9 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
       isNullable: true,
       settings: {
         generatedType: 'STORED',
-        asExpression: getTsVectorColumnExpressionFromFields(
-          SEARCH_FIELDS_FOR_CALL_RECORDING,
-        ),
+        asExpression: getTsVectorColumnExpressionFromFields([
+          { name: 'id', type: FieldMetadataType.UUID },
+        ]),
       },
     },
     standardObjectMetadataRelatedEntityIds,

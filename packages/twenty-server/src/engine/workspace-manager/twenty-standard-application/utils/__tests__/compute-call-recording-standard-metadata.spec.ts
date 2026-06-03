@@ -19,17 +19,11 @@ describe('CallRecording standard metadata build', () => {
       twentyStandardApplicationId: TWENTY_STANDARD_APPLICATION_ID,
     });
 
-  it('builds the callRecording and association objects', () => {
+  it('builds the callRecording object', () => {
     const { byUniversalIdentifier } = allFlatEntityMaps.flatObjectMetadataMaps;
 
     expect(
       byUniversalIdentifier[STANDARD_OBJECTS.callRecording.universalIdentifier],
-    ).toBeDefined();
-    expect(
-      byUniversalIdentifier[
-        STANDARD_OBJECTS.callRecordingCalendarEventAssociation
-          .universalIdentifier
-      ],
     ).toBeDefined();
   });
 
@@ -42,18 +36,36 @@ describe('CallRecording standard metadata build', () => {
     expect(callRecording?.isSystem).toBe(true);
   });
 
-  it('enforces a unique index on meetingOccurrenceKey', () => {
-    const meetingOccurrenceKeyIndex =
+  it('links callRecording to a calendarEvent through a direct relation', () => {
+    const calendarEventField =
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.callRecording.fields.calendarEvent.universalIdentifier
+      ];
+
+    expect(calendarEventField).toBeDefined();
+  });
+
+  it('indexes the calendarEvent foreign key', () => {
+    const calendarEventIdIndex =
       allFlatEntityMaps.flatIndexMaps.byUniversalIdentifier[
-        STANDARD_OBJECTS.callRecording.indexes.meetingOccurrenceKeyIndex
+        STANDARD_OBJECTS.callRecording.indexes.calendarEventIdIndex
           .universalIdentifier
       ];
 
-    expect(meetingOccurrenceKeyIndex).toBeDefined();
-    expect(meetingOccurrenceKeyIndex?.isUnique).toBe(true);
+    expect(calendarEventIdIndex).toBeDefined();
   });
 
-  it('keeps the callRecording table view focused on recording identifiers and status', () => {
+  it('stores the per-event recording preference on calendarEvent', () => {
+    const recordingPreferenceField =
+      allFlatEntityMaps.flatFieldMetadataMaps.byUniversalIdentifier[
+        STANDARD_OBJECTS.calendarEvent.fields.recordingPreference
+          .universalIdentifier
+      ];
+
+    expect(recordingPreferenceField).toBeDefined();
+  });
+
+  it('keeps the callRecording table view focused on its label identifier and status', () => {
     const viewFieldFieldUniversalIdentifiers = Object.values(
       allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
     )
@@ -69,14 +81,10 @@ describe('CallRecording standard metadata build', () => {
     expect(viewFieldFieldUniversalIdentifiers).toHaveLength(3);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
-        STANDARD_OBJECTS.callRecording.fields.meetingOccurrenceKey
-          .universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.id.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.startedAt.universalIdentifier,
       ]),
-    );
-    expect(viewFieldFieldUniversalIdentifiers).not.toContain(
-      STANDARD_OBJECTS.callRecording.fields.createdAt.universalIdentifier,
     );
   });
 
@@ -93,17 +101,17 @@ describe('CallRecording standard metadata build', () => {
       )
       .map((viewField) => viewField.fieldMetadataUniversalIdentifier);
 
-    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(8);
+    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(9);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
-        STANDARD_OBJECTS.callRecording.fields.meetingOccurrenceKey
-          .universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.id.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.startedAt.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.endedAt.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.video.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.audio.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.transcript.universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.summary.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.failureReason.universalIdentifier,
       ]),
     );
@@ -112,38 +120,6 @@ describe('CallRecording standard metadata build', () => {
     );
     expect(viewFieldFieldUniversalIdentifiers).not.toContain(
       STANDARD_OBJECTS.callRecording.fields.createdBy.universalIdentifier,
-    );
-  });
-
-  it('keeps the association table view focused on its label identifier and linked records', () => {
-    const viewFieldFieldUniversalIdentifiers = Object.values(
-      allFlatEntityMaps.flatViewFieldMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter(
-        (viewField) =>
-          viewField.viewUniversalIdentifier ===
-          STANDARD_OBJECTS.callRecordingCalendarEventAssociation.views
-            .allCallRecordingCalendarEventAssociations.universalIdentifier,
-      )
-      .map((viewField) => viewField.fieldMetadataUniversalIdentifier);
-
-    expect(viewFieldFieldUniversalIdentifiers).toHaveLength(4);
-    expect(viewFieldFieldUniversalIdentifiers).toEqual(
-      expect.arrayContaining([
-        STANDARD_OBJECTS.callRecordingCalendarEventAssociation.fields.id
-          .universalIdentifier,
-        STANDARD_OBJECTS.callRecordingCalendarEventAssociation.fields
-          .callRecording.universalIdentifier,
-        STANDARD_OBJECTS.callRecordingCalendarEventAssociation.fields
-          .calendarEvent.universalIdentifier,
-        STANDARD_OBJECTS.callRecordingCalendarEventAssociation.fields
-          .eventExternalId.universalIdentifier,
-      ]),
-    );
-    expect(viewFieldFieldUniversalIdentifiers).not.toContain(
-      STANDARD_OBJECTS.callRecordingCalendarEventAssociation.fields.createdAt
-        .universalIdentifier,
     );
   });
 

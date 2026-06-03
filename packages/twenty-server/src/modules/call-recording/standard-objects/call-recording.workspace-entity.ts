@@ -1,21 +1,12 @@
-import { FieldMetadataType } from 'twenty-shared/types';
+import { type RichTextMetadata } from 'twenty-shared/types';
 
 import { type FileOutput } from 'src/engine/api/common/common-args-processors/data-arg-processor/types/file-item.type';
 import { BaseWorkspaceEntity } from 'src/engine/twenty-orm/base.workspace-entity';
-import { type FieldTypeAndNameMetadata } from 'src/engine/workspace-manager/utils/get-ts-vector-column-expression.util';
 import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migration/types/entity-relation.interface';
-import { type CallRecordingCalendarEventAssociationWorkspaceEntity } from 'src/modules/call-recording/standard-objects/call-recording-calendar-event-association.workspace-entity';
-
-const MEETING_OCCURRENCE_KEY_FIELD_NAME = 'meetingOccurrenceKey';
-
-export const SEARCH_FIELDS_FOR_CALL_RECORDING: FieldTypeAndNameMetadata[] = [
-  { name: MEETING_OCCURRENCE_KEY_FIELD_NAME, type: FieldMetadataType.TEXT },
-];
+import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
-  meetingOccurrenceKey: string;
   status: string;
-  recordingPolicy: string;
   sourceApplicationId: string | null;
   externalBotId: string | null;
   externalRecordingId: string | null;
@@ -24,8 +15,8 @@ export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
   video: FileOutput[] | null;
   audio: FileOutput[] | null;
   transcript: Record<string, unknown> | null;
+  summary: RichTextMetadata | null;
   failureReason: string | null;
-  callRecordingCalendarEventAssociations: EntityRelation<
-    CallRecordingCalendarEventAssociationWorkspaceEntity[]
-  >;
+  calendarEvent: EntityRelation<CalendarEventWorkspaceEntity>;
+  calendarEventId: string;
 }
