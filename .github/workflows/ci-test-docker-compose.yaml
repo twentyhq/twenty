@@ -154,39 +154,6 @@ jobs:
             echo "Still waiting... (${count}/300s) [HTTP ${status}]"
             sleep 1
           done
-      - name: Verify ClickHouse and application-log schema
-        run: |
-          echo "=== ClickHouse binary check (Alpine/musl) ==="
-          docker exec twenty-app-dev sh -c 'clickhouse --version 2>&1' \
-            || echo ">>> clickhouse binary failed to run on this image"
-          echo "=== ClickHouse-related container logs ==="
-          docker logs twenty-app-dev 2>&1 \
-            | grep -iaE 'clickhouse|init-clickhouse|loading shared|not found|illegal|segmentation|cannot execute|<Error>|DB::Exception' \
-            | head -80 || true
-
-          echo "=== Waiting for ClickHouse on :8123 ==="
-          count=0
-          until docker exec twenty-app-dev sh -c 'curl -sf http://localhost:8123/ping' >/dev/null 2>&1; do
-            count=$((count+1))
-            if [ $count -gt 90 ]; then
-              echo "ClickHouse did not become reachable"
-              exit 1
-            fi
-            sleep 1
-          done
-          echo "ClickHouse is up."
-
-          echo "=== Waiting for the applicationLog table (migrations) ==="
-          count=0
-          until [ "$(docker exec twenty-app-dev sh -c "curl -s 'http://localhost:8123/?database=twenty' --data-binary 'EXISTS TABLE applicationLog'" | tr -d '[:space:]')" = "1" ]; do
-            count=$((count+1))
-            if [ $count -gt 60 ]; then
-              echo "applicationLog table not found in ClickHouse"
-              exit 1
-            fi
-            sleep 1
-          done
-          echo "ClickHouse applicationLog table present — migrations OK."
   ci-test-docker-status-check:
     if: always() && !cancelled()
     timeout-minutes: 5

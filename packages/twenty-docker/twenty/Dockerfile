@@ -2,8 +2,6 @@
 # Dependency stages
 # ===========================================================================
 
-ARG CLICKHOUSE_VERSION=25.8.24.21
-
 FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS front-deps
 
 WORKDIR /app
@@ -193,8 +191,6 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-FROM clickhouse/clickhouse-server:${CLICKHOUSE_VERSION}-alpine AS clickhouse-bin
-
 FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-app-dev
 
 # s6-overlay
@@ -208,8 +204,6 @@ RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
     curl jq su-exec
-
-COPY --from=clickhouse-bin /usr/bin/clickhouse /usr/local/bin/clickhouse
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
@@ -239,9 +233,9 @@ RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete
 # s6 service definitions
 COPY packages/twenty-docker/twenty-app-dev/rootfs/ /
 
-RUN mkdir -p /data/postgres /data/redis /data/clickhouse /app/packages/twenty-server/.local-storage \
+RUN mkdir -p /data/postgres /data/redis /app/packages/twenty-server/.local-storage \
  && chown -R postgres:postgres /data/postgres \
- && chown 1000:1000 /data/redis /data/clickhouse /app/packages/twenty-server/.local-storage
+ && chown 1000:1000 /data/redis /app/packages/twenty-server/.local-storage
 
 ARG APP_VERSION=0.0.0
 
@@ -258,11 +252,10 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     DISABLE_CRON_JOBS_REGISTRATION=true \
     IS_BILLING_ENABLED=false \
     SIGN_IN_PREFILLED=true \
-    CLICKHOUSE_URL=http://localhost:8123/twenty \
-    APPLICATION_LOG_DRIVER=CLICKHOUSE
+    APPLICATION_LOG_DRIVER=CONSOLE
 
 EXPOSE 2020
-VOLUME ["/data/postgres", "/data/clickhouse", "/app/packages/twenty-server/.local-storage"]
+VOLUME ["/data/postgres", "/app/packages/twenty-server/.local-storage"]
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, server, and worker."

@@ -1,5 +1,0 @@
-#!/bin/sh
-# ClickHouse backs application logs (and the other event-log tables). Runs as
-# uid 1000 (owns /data/clickhouse) since ClickHouse refuses to run as root.
-exec su-exec 1000:1000 clickhouse server \
-  --config-file=/etc/clickhouse-server/config.xml
