@@ -35,6 +35,7 @@ export const buildMessageSubscriptionStandardFlatIndexMetadatas = ({
       indexName: 'personTopicUniqueIndex',
       relatedFieldNames: ['person', 'topic'],
       isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,

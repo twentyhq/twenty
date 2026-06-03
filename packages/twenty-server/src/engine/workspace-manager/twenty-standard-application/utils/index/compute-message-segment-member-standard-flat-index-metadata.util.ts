@@ -35,6 +35,7 @@ export const buildMessageSegmentMemberStandardFlatIndexMetadatas = ({
       indexName: 'personSegmentUniqueIndex',
       relatedFieldNames: ['person', 'segment'],
       isUnique: true,
+      indexWhereClause: '"deletedAt" IS NULL',
     },
     standardObjectMetadataRelatedEntityIds,
     dependencyFlatEntityMaps,
