@@ -38,12 +38,10 @@ export const generateFindToolInputSchema = (
     ),
     select: z
       .array(z.string())
-      .optional()
       .describe(
-        `Fields to include in the response. ` +
-          `Defaults to id + display name + any fields used in filters or sorting. ` +
-          `Use '*' to return all fields. ` +
-          `id is always included. MANY_TO_ONE relations are referenced by their FK column (e.g. 'companyId'). `,
+        `Fields to include in the response. Required. ` +
+          `Use '*' to return all fields, or list specific field names. ` +
+          `MANY_TO_ONE relations are referenced by their FK column (e.g. 'companyId'). `,
       ),
     ...filterShape,
     or: z

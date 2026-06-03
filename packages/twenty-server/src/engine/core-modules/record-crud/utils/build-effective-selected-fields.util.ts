@@ -1,14 +1,14 @@
 import Fuse from 'fuse.js';
 import { FieldMetadataType } from 'twenty-shared/types';
 
+import { isNull, isObject } from '@sniptt/guards';
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
 import { ObjectRecordFilter } from 'src/engine/api/graphql/workspace-query-builder/interfaces/object-record.interface';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { findFlatEntityByIdInFlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/utils/find-flat-entity-by-id-in-flat-entity-maps.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { isDefined, isNonEmptyArray } from 'twenty-shared/utils';
-import { isNull, isObject } from '@sniptt/guards';
+import { isDefined } from 'twenty-shared/utils';
 
 const SEARCH_VECTOR_FIELD = 'searchVector';
 const LOGICAL_OPERATORS = new Set(['and', 'or', 'not']);
@@ -20,39 +20,33 @@ const SUB_FIELDS_TO_EXCLUDE_BY_FIELD_TYPE: Partial<
 };
 
 const buildSelectedField = (
-  rawSelect: string[] | undefined,
+  rawSelect: string[],
   filterFieldNames: string[],
   orderByFieldNames: string[],
   allSelectableFieldNames: string[],
   labelIdentifierFieldName: string,
   objectName: string,
-): { select: string[] | undefined; warnings: string[] } => {
+): { select: string[]; warnings: string[] } => {
   const cleanFieldNames = allSelectableFieldNames.filter(
     (name) => name !== SEARCH_VECTOR_FIELD,
   );
 
-  if (rawSelect === undefined) {
-    const filterAndOrderFields = [
-      ...filterFieldNames.filter((name) => cleanFieldNames.includes(name)),
-      ...orderByFieldNames.filter((name) => cleanFieldNames.includes(name)),
-    ];
-
-    const defaultFields = [
-      ...new Set(['id', labelIdentifierFieldName, ...filterAndOrderFields]),
-    ].filter((name) => cleanFieldNames.includes(name));
-
-    return { select: defaultFields, warnings: [] };
-  }
+  const implicitFields = [
+    'id',
+    labelIdentifierFieldName,
+    ...filterFieldNames,
+    ...orderByFieldNames,
+  ].filter((name) => cleanFieldNames.includes(name));
 
   if (rawSelect.includes('*')) {
     return { select: cleanFieldNames, warnings: [] };
   }
 
   const warnings: string[] = [];
-  const validFields: string[] = ['id'];
+  const validFields: string[] = [...implicitFields];
 
   for (const requestedName of rawSelect) {
-    if (requestedName === 'id') {
+    if (implicitFields.includes(requestedName)) {
       continue;
     }
 
@@ -110,21 +104,17 @@ const extractOrderByFieldNames = (orderBy: unknown): string[] => {
 };
 
 const buildSelectedFieldsOverride = (
-  select: string[] | undefined,
+  select: string[],
   allSelectableFields: CommonSelectedFields,
   fieldNameToType: Map<string, FieldMetadataType>,
 ): CommonSelectedFields => {
-  const fieldsToInclude = isNonEmptyArray(select)
-    ? new Set([...select, 'id'])
-    : null;
+  const fieldsToInclude = new Set([...select, 'id']);
 
-  const fieldsToProcess = isDefined(fieldsToInclude)
-    ? Object.fromEntries(
-        Object.entries(allSelectableFields).filter(([fieldName]) =>
-          fieldsToInclude.has(fieldName),
-        ),
-      )
-    : allSelectableFields;
+  const fieldsToProcess = Object.fromEntries(
+    Object.entries(allSelectableFields).filter(([fieldName]) =>
+      fieldsToInclude.has(fieldName),
+    ),
+  );
 
   return stripSubFieldsByType(fieldsToProcess, fieldNameToType);
 };
@@ -138,7 +128,7 @@ export const buildEffectiveSelectedFields = ({
   flatFieldMetadataMaps,
   selectedFields,
 }: {
-  select: string[] | undefined;
+  select: string[];
   filter?:
     | Record<string, unknown>
     | Record<string, unknown>[]

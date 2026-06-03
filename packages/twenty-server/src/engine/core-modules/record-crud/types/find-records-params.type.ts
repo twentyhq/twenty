@@ -16,4 +16,5 @@ export type FindRecordsParams = FindRecordsInput &
     orderBy?: Partial<ObjectRecordOrderBy>;
     offset?: number;
     select?: string[];
+    shouldBuildEffectiveSelectFields: boolean;
   };

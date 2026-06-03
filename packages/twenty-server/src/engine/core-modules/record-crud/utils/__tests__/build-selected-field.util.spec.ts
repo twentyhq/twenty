@@ -1,10 +1,10 @@
 import { FieldMetadataType } from 'twenty-shared/types';
 
 import { type CommonSelectedFields } from 'src/engine/api/common/types/common-selected-fields-result.type';
+import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-effective-selected-fields.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
-import { buildEffectiveSelectedFields } from 'src/engine/core-modules/record-crud/utils/build-selected-field.util';
 
 const buildFlatFieldMetadataMaps = (
   fields: Array<{ id: string; name: string; type: FieldMetadataType }>,
