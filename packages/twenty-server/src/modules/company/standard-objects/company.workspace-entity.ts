@@ -36,10 +36,9 @@ export class CompanyWorkspaceEntity {
   domainName: LinksMetadata;
   employees: number | null;
   linkedinLink: LinksMetadata | null;
-  xLink: LinksMetadata | null;
-  annualRecurringRevenue: CurrencyMetadata | null;
+  industry: string | null;
+  annualRevenue: CurrencyMetadata | null;
   address: AddressMetadata;
-  idealCustomerProfile: boolean;
   position: number;
   createdBy: ActorMetadata;
   updatedBy: ActorMetadata;

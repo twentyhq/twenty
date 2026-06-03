@@ -134,7 +134,7 @@ export const getPageLayoutWidgetDataSeeds = (
 
   const companyIdFieldId = getFieldId(companyObject, 'id');
   const companyEmployeesFieldId = getFieldId(companyObject, 'employees');
-  const companyArrFieldId = getFieldId(companyObject, 'annualRecurringRevenue');
+  const companyAnnualRevenueFieldId = getFieldId(companyObject, 'annualRevenue');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
   const companyAddressFieldId = getFieldId(companyObject, 'address');
 
@@ -404,7 +404,7 @@ export const getPageLayoutWidgetDataSeeds = (
       : null,
 
     // Customer Analytics Tab Widgets
-    isDefined(companyArrFieldId)
+    isDefined(companyAnnualRevenueFieldId)
       ? ({
           id: generateSeedId(
             workspaceId,
@@ -414,7 +414,7 @@ export const getPageLayoutWidgetDataSeeds = (
             workspaceId,
             PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_ANALYTICS,
           ),
-          title: 'Annual Recurring Revenue',
+          title: 'Annual Revenue',
           type: WidgetType.GRAPH,
           gridPosition: { row: 0, column: 0, rowSpan: 4, columnSpan: 4 },
           position: {
@@ -426,7 +426,7 @@ export const getPageLayoutWidgetDataSeeds = (
           },
           configuration: {
             configurationType: WidgetConfigurationType.AGGREGATE_CHART,
-            aggregateFieldMetadataId: companyArrFieldId,
+            aggregateFieldMetadataId: companyAnnualRevenueFieldId,
             aggregateOperation: AggregateOperations.SUM,
             displayDataLabel: true,
             timezone: 'UTC',

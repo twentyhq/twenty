@@ -16,12 +16,9 @@ export type Person = {
     primaryLinkUrl: string;
     primaryLinkLabel: string;
   };
-  xLink: {
-    __typename?: 'Links';
-    primaryLinkUrl: string;
-    primaryLinkLabel: string;
-  };
   city: string;
+  country?: string | null;
+  region?: string | null;
   email: string;
   /** @deprecated */
   phone: string;

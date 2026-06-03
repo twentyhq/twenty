@@ -31,16 +31,11 @@ export type Company = {
     primaryLinkUrl: string;
     primaryLinkLabel: string;
   };
-  xLink?: {
-    __typename?: 'Links';
-    primaryLinkUrl: string;
-    primaryLinkLabel: string;
-  };
-  annualRecurringRevenue: {
+  industry?: string | null;
+  annualRevenue?: {
     __typename?: 'Currency';
     amountMicros: number | null;
     currencyCode: string;
-  };
+  } | null;
   employees: number | null;
-  idealCustomerProfile?: boolean;
 };

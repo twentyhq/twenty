@@ -122,18 +122,6 @@ export const computeStandardPersonViewFields = (
         size: 150,
       },
     }),
-    allPeopleXLink: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'person',
-      context: {
-        viewName: 'allPeople',
-        viewFieldName: 'xLink',
-        fieldName: 'xLink',
-        position: 9,
-        isVisible: true,
-        size: 150,
-      },
-    }),
 
     // personRecordPageFields view fields
     // General group
@@ -171,6 +159,32 @@ export const computeStandardPersonViewFields = (
         viewFieldName: 'city',
         fieldName: 'city',
         position: 2,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    personRecordPageFieldsCountry: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'country',
+        fieldName: 'country',
+        position: 13,
+        isVisible: true,
+        size: 150,
+        viewFieldGroupName: 'general',
+      },
+    }),
+    personRecordPageFieldsRegion: createStandardViewFieldFlatMetadata({
+      ...args,
+      objectName: 'person',
+      context: {
+        viewName: 'personRecordPageFields',
+        viewFieldName: 'region',
+        fieldName: 'region',
+        position: 14,
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'general',
@@ -333,19 +347,6 @@ export const computeStandardPersonViewFields = (
         viewFieldName: 'linkedinLink',
         fieldName: 'linkedinLink',
         position: 0,
-        isVisible: true,
-        size: 150,
-        viewFieldGroupName: 'social',
-      },
-    }),
-    personRecordPageFieldsXLink: createStandardViewFieldFlatMetadata({
-      ...args,
-      objectName: 'person',
-      context: {
-        viewName: 'personRecordPageFields',
-        viewFieldName: 'xLink',
-        fieldName: 'xLink',
-        position: 1,
         isVisible: true,
         size: 150,
         viewFieldGroupName: 'social',
