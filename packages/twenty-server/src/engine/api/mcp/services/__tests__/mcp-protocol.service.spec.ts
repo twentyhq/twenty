@@ -273,7 +273,7 @@ describe('McpProtocolService', () => {
         method: 'tools/call',
         params: {
           name: 'execute_tool',
-          arguments: { toolName: 'find_companies', arguments: {} },
+          arguments: { toolName: 'find_many_companies', arguments: {} },
         },
         id: '123',
       };
