@@ -17,13 +17,10 @@ export type DisconnectObject = {
   [RELATION_NESTED_QUERY_KEYWORDS.DISCONNECT]: true;
 };
 
-// Captures both to-one (BaseWorkspaceEntity | null) and to-many
-// (BaseWorkspaceEntity[]) relation fields. To-many fields must be included so
-// they are stripped from TypeORM's QueryDeepPartialEntity half below; otherwise
-// they get intersected with TypeORM's `() => string` raw-SQL escape hatch,
-// producing an unsatisfiable type for plain relation arrays.
 export type EntityRelationFields<T> = {
-  [K in keyof T]: NonNullable<T[K]> extends BaseWorkspaceEntity | BaseWorkspaceEntity[]
+  [K in keyof T]: NonNullable<T[K]> extends
+    | BaseWorkspaceEntity
+    | BaseWorkspaceEntity[]
     ? K
     : never;
 }[keyof T];
