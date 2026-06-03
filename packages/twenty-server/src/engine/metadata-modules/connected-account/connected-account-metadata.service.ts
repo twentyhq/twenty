@@ -1,7 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import {
+  type FindOptionsRelations,
+  type FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -59,6 +65,72 @@ export class ConnectedAccountMetadataService {
   }): Promise<ConnectedAccountEntity | null> {
     return this.repository.findOne({
       where: { id, userWorkspaceId, workspaceId },
+    });
+  }
+
+  private getUserWorkspaceVisibleConditions({
+    workspaceId,
+    userWorkspaceId,
+    id,
+  }: {
+    workspaceId: string;
+    userWorkspaceId: string | undefined;
+    id?: string;
+  }): FindOptionsWhere<ConnectedAccountEntity>[] {
+    const idCondition: FindOptionsWhere<ConnectedAccountEntity> = isDefined(id)
+      ? { id }
+      : {};
+
+    const workspaceVisibilityCondition: FindOptionsWhere<ConnectedAccountEntity> =
+      {
+        ...idCondition,
+        workspaceId,
+        visibility: 'workspace',
+      };
+
+    if (!isDefined(userWorkspaceId)) {
+      return [workspaceVisibilityCondition];
+    }
+
+    return [
+      { ...idCondition, workspaceId, userWorkspaceId },
+      workspaceVisibilityCondition,
+    ];
+  }
+
+  async findUserWorkspaceVisibleConnectedAccounts({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    return this.repository.find({
+      where: this.getUserWorkspaceVisibleConditions({
+        workspaceId,
+        userWorkspaceId,
+      }),
+    });
+  }
+
+  async findUserWorkspaceVisibleConnectedAccountById({
+    id,
+    userWorkspaceId,
+    workspaceId,
+    relations,
+  }: {
+    id: string;
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+    relations?: FindOptionsRelations<ConnectedAccountEntity>;
+  }): Promise<ConnectedAccountEntity | null> {
+    return this.repository.findOne({
+      where: this.getUserWorkspaceVisibleConditions({
+        workspaceId,
+        userWorkspaceId,
+        id,
+      }),
+      relations,
     });
   }
 
