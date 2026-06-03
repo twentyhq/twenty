@@ -16,7 +16,9 @@ describe('stripAnsiEscapes', () => {
 
   it('strips 256-color and truecolor SGR sequences', () => {
     expect(stripAnsiEscapes('\u001B[38;5;208mwarn\u001B[39m')).toBe('warn');
-    expect(stripAnsiEscapes('\u001B[38;2;0;128;255mblue\u001B[0m')).toBe('blue');
+    expect(stripAnsiEscapes('\u001B[38;2;0;128;255mblue\u001B[0m')).toBe(
+      'blue',
+    );
   });
 
   it('strips cursor-movement CSI sequences', () => {
