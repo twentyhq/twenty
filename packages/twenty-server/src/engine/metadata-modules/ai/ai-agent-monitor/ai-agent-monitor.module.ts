@@ -9,7 +9,7 @@ import { AiChatModule } from 'src/engine/metadata-modules/ai/ai-chat/ai-chat.mod
 import { AgentChatThreadEntity } from 'src/engine/metadata-modules/ai/ai-chat/entities/agent-chat-thread.entity';
 import { AiModelsModule } from 'src/engine/metadata-modules/ai/ai-models/ai-models.module';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 import { AgentTurnEvaluationEntity } from './entities/agent-turn-evaluation.entity';
 import { EvaluateAgentTurnJob } from './jobs/evaluate-agent-turn.job';
 import { RunEvaluationInputJob } from './jobs/run-evaluation-input.job';
@@ -35,6 +35,10 @@ import { AgentTurnGraderService } from './services/agent-turn-grader.service';
     AgentTurnResolver,
     EvaluateAgentTurnJob,
     RunEvaluationInputJob,
+    provideWorkspaceScopedRepository(AgentTurnEvaluationEntity),
+    provideWorkspaceScopedRepository(AgentTurnEntity),
+    provideWorkspaceScopedRepository(AgentChatThreadEntity),
+    provideWorkspaceScopedRepository(AgentEntity),
   ],
   exports: [AgentTurnGraderService],
 })

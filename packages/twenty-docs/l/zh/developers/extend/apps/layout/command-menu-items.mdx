@@ -84,11 +84,11 @@ export default defineCommandMenuItem({
 通过 `conditionalAvailabilityExpression` 字段，您可以基于当前页面上下文控制命令何时可见。 从 `twenty-sdk` 导入带类型的变量和运算符来构建表达式：
 
 ```ts src/command-menu-items/bulk-update.command-menu-item.ts
-import { defineCommandMenuItem } from 'twenty-sdk/define';
 import {
+  defineCommandMenuItem,
   objectPermissions,
   everyEquals,
-} from 'twenty-sdk/front-component';
+} from 'twenty-sdk/define';
 
 export default defineCommandMenuItem({
   universalIdentifier: '...',
@@ -102,6 +102,10 @@ export default defineCommandMenuItem({
   ),
 });
 ```
+
+<Note>
+  `RECORD_SELECTION` 已经意味着非空选择 — 仅在需要表达具体数量时使用 `numberOfSelectedRecords`（例如 `>= 2`）。
+</Note>
 
 ### 上下文变量
 

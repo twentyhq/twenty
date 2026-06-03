@@ -66,7 +66,11 @@ const buildGroupByEntriesAndDescriptions = (
       continue;
     }
 
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION)) {
+    const isRelationOrMorphRelation =
+      isFieldMetadataEntityOfType(field, FieldMetadataType.RELATION) ||
+      isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION);
+
+    if (isRelationOrMorphRelation) {
       if (field.settings?.relationType === RelationType.MANY_TO_ONE) {
         const relationFieldName = `${field.name}Id`;
 
@@ -76,10 +80,6 @@ const buildGroupByEntriesAndDescriptions = (
         fieldNameDescriptions.push(relationFieldName);
       }
 
-      continue;
-    }
-
-    if (isFieldMetadataEntityOfType(field, FieldMetadataType.MORPH_RELATION)) {
       continue;
     }
 

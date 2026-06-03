@@ -1,7 +1,8 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useCallback, useContext, useMemo, useState } from 'react';
-import { IconFolder, IconFolderPlus, IconHeartOff } from 'twenty-ui/display';
+import { useCallback, useContext, useMemo } from 'react';
+import { SidePanelPages } from 'twenty-shared/types';
+import { IconHeart, IconHeartOff, IconPlus } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type NavigationMenuItem } from '~/generated-metadata/graphql';
@@ -10,23 +11,23 @@ import { NavigationMenuItemDroppableIds } from '@/navigation-menu-item/common/co
 import { NavigationSections } from '@/navigation-menu-item/common/constants/NavigationSections.constants';
 import { NavigationMenuItemDragContext } from '@/navigation-menu-item/common/contexts/NavigationMenuItemDragContext';
 import { useDeleteManyNavigationMenuItems } from '@/navigation-menu-item/common/hooks/useDeleteManyNavigationMenuItems';
-import { isNavigationMenuItemFolderCreatingState } from '@/navigation-menu-item/common/states/isNavigationMenuItemFolderCreatingState';
+import { navigationMenuItemEditSectionState } from '@/navigation-menu-item/common/states/navigationMenuItemEditSectionState';
+import { pendingInsertionNavigationMenuItemState } from '@/navigation-menu-item/common/states/pendingInsertionNavigationMenuItemState';
+import { selectedNavigationMenuItemIdInEditModeState } from '@/navigation-menu-item/common/states/selectedNavigationMenuItemIdInEditModeState';
 import { isNavigationMenuItemFolder } from '@/navigation-menu-item/common/utils/isNavigationMenuItemFolder';
 import { NavigationMenuItemDisplay } from '@/navigation-menu-item/display/components/NavigationMenuItemDisplay';
 import { NavigationMenuItemDroppableSlot } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemDroppableSlot';
 import { NavigationMenuItemSortableItem } from '@/navigation-menu-item/display/dnd/components/NavigationMenuItemSortableItem';
 import { useIsDropDisabledForSection } from '@/navigation-menu-item/display/dnd/hooks/useIsDropDisabledForSection';
-import { useCreateNavigationMenuItemFolder } from '@/navigation-menu-item/display/folder/hooks/useCreateNavigationMenuItemFolder';
 import { useNavigationMenuItemsByFolder } from '@/navigation-menu-item/display/folder/hooks/useNavigationMenuItemsByFolder';
 import { useSortedNavigationMenuItems } from '@/navigation-menu-item/display/hooks/useSortedNavigationMenuItems';
 import { NavigationMenuItemOrphanDropTarget } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemOrphanDropTarget';
 import { NavigationMenuItemSection } from '@/navigation-menu-item/display/sections/components/NavigationMenuItemSection';
-import { NavigationDrawerAnimatedCollapseWrapper } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerAnimatedCollapseWrapper';
-import { NavigationDrawerInput } from '@/ui/navigation/navigation-drawer/components/NavigationDrawerInput';
+import { useNavigateSidePanel } from '@/side-panel/hooks/useNavigateSidePanel';
 import { useNavigationSection } from '@/ui/navigation/navigation-drawer/hooks/useNavigationSection';
 import { isNavigationSectionOpenFamilyState } from '@/ui/navigation/navigation-drawer/states/isNavigationSectionOpenFamilyState';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
-import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
+import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 
 const StyledList = styled.div`
   display: flex;
@@ -40,10 +41,6 @@ const StyledListItemRow = styled.div`
   gap: 0;
 `;
 
-const StyledEmptyContainer = styled.div`
-  width: 100%;
-`;
-
 const ORPHAN_DROPPABLE_ID =
   NavigationMenuItemDroppableIds.FAVORITE_ORPHAN_NAVIGATION_MENU_ITEMS;
 
@@ -54,14 +51,16 @@ export const FavoritesSection = () => {
   const { isDragging } = useContext(NavigationMenuItemDragContext);
   const favoritesDropDisabled = useIsDropDisabledForSection(false);
 
-  const [newFolderName, setNewFolderName] = useState('');
-  const { createNewNavigationMenuItemFolder } =
-    useCreateNavigationMenuItemFolder();
-
-  const [
-    isNavigationMenuItemFolderCreating,
-    setIsNavigationMenuItemFolderCreating,
-  ] = useAtomState(isNavigationMenuItemFolderCreatingState);
+  const { navigateSidePanel } = useNavigateSidePanel();
+  const setNavigationMenuItemEditSection = useSetAtomState(
+    navigationMenuItemEditSectionState,
+  );
+  const setPendingInsertionNavigationMenuItem = useSetAtomState(
+    pendingInsertionNavigationMenuItemState,
+  );
+  const setSelectedNavigationMenuItemIdInEditMode = useSetAtomState(
+    selectedNavigationMenuItemIdInEditModeState,
+  );
 
   const { t } = useLingui();
 
@@ -90,35 +89,20 @@ export const FavoritesSection = () => {
     [topLevelItems],
   );
 
-  const toggleNewFolder = () => {
+  const handleAddFavorite = (event?: React.MouseEvent) => {
+    event?.stopPropagation();
+    // Expansion is gated on items existing, so this stays collapsed if the user
+    // cancels and reveals the favorite as soon as it is added.
     openNavigationSection();
-    setIsNavigationMenuItemFolderCreating((current) => !current);
-  };
-
-  const handleSubmitFolderCreation = async (value: string) => {
-    if (value === '') return;
-    setIsNavigationMenuItemFolderCreating(false);
-    setNewFolderName('');
-    await createNewNavigationMenuItemFolder(value);
-    return true;
-  };
-
-  const handleClickOutside = async (
-    _event: MouseEvent | TouchEvent,
-    value: string,
-  ) => {
-    if (!value) {
-      setIsNavigationMenuItemFolderCreating(false);
-      return;
-    }
-    setIsNavigationMenuItemFolderCreating(false);
-    setNewFolderName('');
-    await createNewNavigationMenuItemFolder(value);
-  };
-
-  const handleCancelFolderCreation = () => {
-    setNewFolderName('');
-    setIsNavigationMenuItemFolderCreating(false);
+    setNavigationMenuItemEditSection('favorite');
+    setPendingInsertionNavigationMenuItem(null);
+    setSelectedNavigationMenuItemIdInEditMode(null);
+    navigateSidePanel({
+      page: SidePanelPages.NavigationMenuAddItem,
+      pageTitle: t`New favorite`,
+      pageIcon: IconHeart,
+      resetNavigationStack: true,
+    });
   };
 
   const makeRightOptions = useCallback(
@@ -135,40 +119,20 @@ export const FavoritesSection = () => {
     [deleteManyNavigationMenuItems],
   );
 
-  if (
-    topLevelItems.length === 0 &&
-    !isNavigationMenuItemFolderCreating &&
-    userNavigationMenuItemsByFolder.length === 0
-  ) {
-    return null;
-  }
-
   return (
     <NavigationMenuItemSection
       title={t`Favorites`}
-      isOpen={isNavigationSectionOpen}
+      isOpen={topLevelItems.length > 0 && isNavigationSectionOpen}
       onToggle={toggleNavigationSection}
       rightIcon={
         <LightIconButton
-          Icon={IconFolderPlus}
-          onClick={toggleNewFolder}
+          Icon={IconPlus}
+          onClick={handleAddFavorite}
           accent="tertiary"
         />
       }
     >
-      {isNavigationMenuItemFolderCreating && (
-        <NavigationDrawerAnimatedCollapseWrapper>
-          <NavigationDrawerInput
-            Icon={IconFolder}
-            value={newFolderName}
-            onChange={setNewFolderName}
-            onSubmit={handleSubmitFolderCreation}
-            onCancel={handleCancelFolderCreation}
-            onClickOutside={handleClickOutside}
-          />
-        </NavigationDrawerAnimatedCollapseWrapper>
-      )}
-      {topLevelItems.length > 0 ? (
+      {topLevelItems.length > 0 && (
         <StyledList>
           {topLevelItems.map((item, index) => (
             <StyledListItemRow key={item.id}>
@@ -227,8 +191,6 @@ export const FavoritesSection = () => {
             />
           </NavigationMenuItemDroppableSlot>
         </StyledList>
-      ) : (
-        <StyledEmptyContainer style={{ height: isDragging ? '24px' : '1px' }} />
       )}
     </NavigationMenuItemSection>
   );

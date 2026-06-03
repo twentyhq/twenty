@@ -12,10 +12,8 @@ import {
   AuthException,
   AuthExceptionCode,
 } from 'src/engine/core-modules/auth/auth.exception';
-import {
-  type JwtPayload,
-  JwtTokenTypeEnum,
-} from 'src/engine/core-modules/auth/types/auth-context.type';
+import { type JwtPayload } from 'src/engine/core-modules/auth/types/jwt-payload.type';
+import { JwtTokenTypeEnum } from 'src/engine/core-modules/auth/types/jwt-token-type.enum';
 import {
   JWT_ASYMMETRIC_ALGORITHM,
   JWT_LEGACY_ALGORITHM,
@@ -137,7 +135,10 @@ export class JwtWrapperService {
     const payload = this.decode<JwtPayload>(token, { json: true });
 
     if (!isDefined(payload)) {
-      throw new AuthException('No payload', AuthExceptionCode.UNAUTHENTICATED);
+      throw new AuthException(
+        'Token invalid.',
+        AuthExceptionCode.UNAUTHENTICATED,
+      );
     }
 
     const { key, algorithm } = await this.resolveVerificationKey(token);

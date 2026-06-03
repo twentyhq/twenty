@@ -41,15 +41,21 @@ const CardGrid = styled.div`
 
 type MarketplaceGridProps = {
   partners: readonly MarketplacePartner[];
+  locale: string;
 };
 
-export function MarketplaceGrid({ partners }: MarketplaceGridProps) {
+export function MarketplaceGrid({ partners, locale }: MarketplaceGridProps) {
   return (
     <Section>
       <StyledContainer>
         <CardGrid>
           {partners.map((partner, index) => (
-            <PartnerCard key={partner.slug} partner={partner} index={index} />
+            <PartnerCard
+              key={partner.slug}
+              partner={partner}
+              index={index}
+              locale={locale}
+            />
           ))}
         </CardGrid>
       </StyledContainer>

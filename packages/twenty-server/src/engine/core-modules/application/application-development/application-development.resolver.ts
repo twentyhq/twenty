@@ -302,10 +302,11 @@ export class ApplicationDevelopmentResolver {
         `${serverUrl}/public-assets/${workspaceId}/${applicationId}/${filePath}`,
     );
 
-    await this.applicationRegistrationService.updateFromManifest(
+    await this.applicationRegistrationService.updateFromManifest({
       applicationRegistrationId,
-      manifestWithResolvedUrls,
-    );
+      manifest: manifestWithResolvedUrls,
+      sourceType: ApplicationRegistrationSourceType.LOCAL,
+    });
 
     if (manifest.application.serverVariables) {
       await this.applicationRegistrationVariableService.syncVariableSchemas(

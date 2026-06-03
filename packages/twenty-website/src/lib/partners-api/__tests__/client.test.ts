@@ -50,7 +50,7 @@ describe('partnersApiFetch', () => {
       Authorization: 'Bearer test-key-123',
       Accept: 'application/json',
     });
-    expect((init as RequestInit).cache).toBe('no-store');
+    expect((init as RequestInit).cache).toBeUndefined();
   });
 
   it('throws on non-2xx with status, path, and body snippet', async () => {

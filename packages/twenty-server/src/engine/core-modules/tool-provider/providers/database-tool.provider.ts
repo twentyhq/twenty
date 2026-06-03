@@ -5,6 +5,8 @@ import {
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
+import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
 import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
@@ -117,11 +119,14 @@ export class DatabaseToolProvider implements ToolProvider {
       const restrictedFields = permission.restrictedFields;
       const snakePlural = camelToSnakeCase(objectMetadata.namePlural);
       const snakeSingular = camelToSnakeCase(objectMetadata.nameSingular);
+      const canBeManagedByAutomation = canObjectBeManagedByAutomation({
+        nameSingular: objectMetadata.nameSingular,
+      });
 
       if (permission.canReadObjectRecords) {
         descriptors.push({
           name: `find_many_${snakePlural}`,
-          description: `Search ${objectMetadata.labelPlural} records. Filter by any field, sort (orderBy), paginate (limit/offset). Find by ID: filter.id.eq = "record-id".`,
+          description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
           ...(includeSchemas && {
             inputSchema: toToolJsonSchema(
@@ -183,7 +188,7 @@ export class DatabaseToolProvider implements ToolProvider {
         }
       }
 
-      if (permission.canUpdateObjectRecords) {
+      if (permission.canUpdateObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `create_one_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
@@ -266,6 +271,7 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'update_many',
         });
 
+      if (permission.canSoftDeleteObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `upsert_many_${snakePlural}`,
           description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,

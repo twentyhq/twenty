@@ -196,6 +196,94 @@ export default defineFrontComponent({
 });
 ```
 
+## Bir mantık işlevini çağırma
+
+Ön bileşenler, tarayıcı tarafında izole bir Web Worker içinde çalışırken, [mantık işlevleri](/l/tr/developers/extend/apps/logic/logic-functions) sunucu tarafında çalışır. İkisi arasında doğrudan, işlem içi bir çağrı yoktur — bunun yerine, bir ön bileşen bir mantık işlevine HTTP üzerinden erişir.
+
+`httpRouteTriggerSettings` ile bildirilen bir mantık işlevi, `${TWENTY_API_URL}/s\<path>` altındaki `/s/` uç noktasında sunulur. Ön bileşeniniz bu rotayı, Twenty tarafından Worker'a enjekte edilen `TWENTY_APP_ACCESS_TOKEN` ile kimlik doğrulayarak `fetch` ile çağırır.
+
+Küçük, yeniden kullanılabilir bir yardımcı işlev çağrı noktalarını sade tutar:
+
+```ts src/shared/call-app-route.ts
+export async function callAppRoute(
+  path: string,
+  body: Record<string, unknown>,
+): Promise<unknown> {
+  const apiUrl = process.env.TWENTY_API_URL ?? '';
+  const token = process.env.TWENTY_APP_ACCESS_TOKEN;
+
+  const res = await fetch(`${apiUrl}/s${path}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    throw new Error(`Logic function failed (${res.status})`);
+  }
+
+  return res.json();
+}
+```
+
+Başsız bir ön bileşen, çağrıyı `Command` bileşeni aracılığıyla mount sırasında çalıştırabilir ve ardından otomatik olarak unmount olabilir:
+
+```tsx src/front-components/sync-prs.tsx
+import { defineFrontComponent } from 'twenty-sdk/define';
+import { Command } from 'twenty-sdk/command';
+import { callAppRoute } from 'src/shared/call-app-route';
+
+const SyncPrs = () => {
+  const execute = async () => {
+    await callAppRoute('/github/fetch-prs', {
+      owner: 'twentyhq',
+      repo: 'twenty',
+    });
+  };
+
+  return <Command execute={execute} />;
+};
+
+export default defineFrontComponent({
+  universalIdentifier: '...',
+  name: 'sync-prs',
+  description: 'Triggers the fetch-prs logic function',
+  isHeadless: true,
+  component: SyncPrs,
+});
+```
+
+`callAppRoute` fonksiyonuna geçirilen `path`, mantık işlevinin `httpRouteTriggerSettings.path` değeriyle eşleşmelidir (`/s` öneki yardımcı işlev tarafından eklenir):
+
+```ts src/logic-functions/fetch-prs.logic-function.ts
+import { defineLogicFunction } from 'twenty-sdk/define';
+import type { RoutePayload } from 'twenty-sdk/logic-function';
+
+const handler = async (event: RoutePayload) => {
+  const { owner, repo } = (event.body ?? {}) as { owner: string; repo: string };
+  // ...fetch from GitHub and persist records...
+  return { ok: true };
+};
+
+export default defineLogicFunction({
+  universalIdentifier: '...',
+  name: 'fetch-prs',
+  handler,
+  httpRouteTriggerSettings: {
+    path: '/github/fetch-prs',
+    httpMethod: 'POST',
+    isAuthRequired: true,
+  },
+});
+```
+
+<Note>
+`TWENTY_API_URL` ve `TWENTY_APP_ACCESS_TOKEN` otomatik olarak enjekte edilir — bkz. [Uygulama değişkenleri](#application-variables). Gizli uygulama değişkenleri asla ön bileşenlere açığa çıkarılmadığından, API anahtarlarını ve diğer hassas mantığı ön bileşende değil, mantık işlevinin içinde tutun.
+</Note>
+
 ## Çalışma zamanı bağlamına erişme
 
 Bileşeninizin içinde, geçerli kullanıcıya, kayda ve bileşen örneğine erişmek için SDK hook'larını kullanın:
@@ -335,8 +423,8 @@ export default defineFrontComponent({
 Birden çok seçili kaydı yönetmek için `useSelectedRecordIds()` kullanın. Bu, toplu işlemler için kullanışlıdır:
 
 ```tsx src/front-components/bulk-export.tsx
-import { defineFrontComponent } from 'twenty-sdk/define';
-import { useSelectedRecordIds, numberOfSelectedRecords } from 'twenty-sdk/front-component';
+import { defineFrontComponent, numberOfSelectedRecords } from 'twenty-sdk/define';
+import { useSelectedRecordIds } from 'twenty-sdk/front-component';
 import { enqueueSnackbar, closeSidePanel } from 'twenty-sdk/front-component';
 import { CoreApiClient } from 'twenty-sdk/clients';
 

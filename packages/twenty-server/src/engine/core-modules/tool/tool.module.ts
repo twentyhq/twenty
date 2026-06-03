@@ -21,7 +21,7 @@ import { ObjectMetadataModule } from 'src/engine/metadata-modules/object-metadat
 import { ViewModule } from 'src/engine/metadata-modules/view/view.module';
 import { MessagingImportManagerModule } from 'src/modules/messaging/message-import-manager/messaging-import-manager.module';
 import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbound-manager/messaging-send-manager.module';
-
+import { provideWorkspaceScopedRepository } from 'src/engine/twenty-orm/workspace-scoped-repository/provide-workspace-scoped-repository';
 @Module({
   imports: [
     MessagingImportManagerModule,
@@ -45,6 +45,7 @@ import { MessagingSendManagerModule } from 'src/modules/messaging/message-outbou
     SearchHelpCenterTool,
     CodeInterpreterTool,
     NavigateAppTool,
+    provideWorkspaceScopedRepository(FileEntity),
   ],
   exports: [
     HttpTool,
