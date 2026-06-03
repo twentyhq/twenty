@@ -23,9 +23,11 @@ import {
 } from '@/workflow/workflow-steps/types/WorkflowRunTabId';
 import { getWorkflowRunStepExecutionStatus } from '@/workflow/workflow-steps/utils/getWorkflowRunStepExecutionStatus';
 import { WorkflowIteratorSubStepSwitcher } from '@/workflow/workflow-steps/workflow-actions/iterator-action/components/WorkflowIteratorSubStepSwitcher';
+import { useIsFeatureEnabled } from '@/workspace/hooks/useIsFeatureEnabled';
 import { styled } from '@linaria/react';
 import { t } from '@lingui/core/macro';
 import { isNull } from '@sniptt/guards';
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import {
   IconLogin2,
@@ -56,6 +58,10 @@ export const SidePanelWorkflowRunViewStepContent = () => {
   const workflowRunId = useWorkflowRunIdOrThrow();
 
   const workflowRun = useWorkflowRun({ workflowRunId });
+
+  const isStepLogsEnabled = useIsFeatureEnabled(
+    FeatureFlagKey.IS_WORKFLOW_RUN_STEP_LOGS_ENABLED,
+  );
 
   const sidePanelPageComponentInstance = useComponentInstanceStateContext(
     SidePanelPageComponentInstanceContext,
@@ -120,12 +126,16 @@ export const SidePanelWorkflowRunViewStepContent = () => {
       Icon: IconLogin2,
       disabled: isInputTabDisabled,
     },
-    {
-      id: WorkflowRunTabId.LOGS,
-      title: t`Logs`,
-      Icon: IconTerminal,
-      disabled: !hasStepLog,
-    },
+    ...(isStepLogsEnabled
+      ? [
+          {
+            id: WorkflowRunTabId.LOGS,
+            title: t`Logs`,
+            Icon: IconTerminal,
+            disabled: !hasStepLog,
+          } satisfies SingleTabProps<TabId>,
+        ]
+      : []),
   ];
 
   return (
@@ -175,7 +185,7 @@ export const SidePanelWorkflowRunViewStepContent = () => {
               />
             ) : null}
 
-            {activeTabId === WorkflowRunTabId.LOGS ? (
+            {isStepLogsEnabled && activeTabId === WorkflowRunTabId.LOGS ? (
               <WorkflowRunStepLogsDetail
                 key={workflowSelectedNode}
                 stepId={workflowSelectedNode}
