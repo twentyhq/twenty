@@ -11,7 +11,7 @@ export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 const executeToolInputZodSchema = z.object({
   toolName: z
     .string()
-    .describe('Exact tool name from get_tool_catalog. Do not guess.'),
+    .describe('Exact tool name. Do not guess.'),
   arguments: z
     .record(z.string(), z.unknown())
     .describe('Arguments matching the schema returned by learn_tools.'),
@@ -53,7 +53,7 @@ export const createExecuteToolTool = (
   },
 ) => ({
   description:
-    'STEP 3: Execute a tool by name with arguments. You MUST call get_tool_catalog (step 1) and learn_tools (step 2) first to discover the tool name and its required input schema.',
+    'Execute a tool by name with arguments. Call learn_tools first to discover the required input schema.',
   inputSchema: executeToolInputSchema,
   execute: async (parameters: ExecuteToolInput): Promise<ToolOutput> => {
     const { toolName, arguments: args = {} } = parameters;
@@ -62,7 +62,7 @@ export const createExecuteToolTool = (
       return {
         success: false,
         message: `Tool "${toolName}" is not available`,
-        error: `Tool "${toolName}" is not available in this context. Use get_tool_catalog to see which tools are available.`,
+        error: `Tool "${toolName}" is not available in this context. Use learn_tools to discover available tools.`,
       };
     }
 

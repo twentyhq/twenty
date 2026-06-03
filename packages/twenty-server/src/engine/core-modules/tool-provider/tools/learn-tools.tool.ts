@@ -13,7 +13,7 @@ export const learnToolsInputSchema = z.object({
   toolNames: z
     .array(z.string())
     .describe(
-      'Exact tool names from get_tool_catalog. Do not guess tool names.',
+      'Exact tool names. Do not guess tool names.',
     ),
   aspects: z
     .array(learnToolsAspectSchema)
@@ -42,7 +42,7 @@ export const createLearnToolsTool = (
   excludeTools?: Set<string>,
 ) => ({
   description:
-    'STEP 2: Get input schemas for tools discovered via get_tool_catalog. Call this with exact tool names to learn the required arguments before calling execute_tool.',
+    'Get input schemas for tools. Call this with exact tool names to learn the required arguments before calling execute_tool.',
   inputSchema: learnToolsInputSchema,
   execute: async (parameters: LearnToolsInput): Promise<LearnToolsResult> => {
     const { toolNames, aspects } = parameters;
