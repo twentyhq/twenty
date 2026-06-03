@@ -3,4 +3,6 @@ export interface ExceptionHandlerWorkspace {
   displayName?: string;
   activationStatus?: string;
   createdAt?: string;
+  metadataVersion?: number;
+  version?: string;
 }

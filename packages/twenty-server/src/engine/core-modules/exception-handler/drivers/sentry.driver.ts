@@ -32,6 +32,28 @@ export class ExceptionHandlerSentryDriver implements ExceptionHandlerDriverInter
 
       if (options?.workspace) {
         scope.setExtra('workspace', options.workspace);
+
+        if (isDefined(options.workspace.id)) {
+          scope.setTag('workspaceId', options.workspace.id);
+        }
+
+        if (isDefined(options.workspace.activationStatus)) {
+          scope.setTag(
+            'workspaceActivationStatus',
+            options.workspace.activationStatus,
+          );
+        }
+
+        if (isDefined(options.workspace.version)) {
+          scope.setTag('workspaceVersion', options.workspace.version);
+        }
+
+        if (isDefined(options.workspace.metadataVersion)) {
+          scope.setTag(
+            'workspaceMetadataVersion',
+            `${options.workspace.metadataVersion}`,
+          );
+        }
       }
 
       if (options?.additionalData) {

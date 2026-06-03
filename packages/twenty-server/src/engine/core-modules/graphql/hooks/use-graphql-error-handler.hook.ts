@@ -37,6 +37,7 @@ import { translateUserFriendlyMessageDescriptors } from 'src/engine/core-modules
 const DEFAULT_EVENT_ID_KEY = 'exceptionEventId';
 const SCHEMA_VERSION_HEADER = 'x-schema-version';
 const SCHEMA_MISMATCH_ERROR = 'Schema version mismatch.';
+const SCHEMA_MISMATCH_CODE = 'SCHEMA_VERSION_MISMATCH';
 const APP_VERSION_HEADER = 'x-app-version';
 const APP_VERSION_MISMATCH_ERROR = 'App version mismatch.';
 const APP_VERSION_MISMATCH_CODE = 'APP_VERSION_MISMATCH';
@@ -76,6 +77,8 @@ export const useGraphQLErrorHandlerHook = <
       displayName: req.workspace.displayName,
       createdAt: req.workspace.createdAt ?? null,
       activationStatus: req.workspace.activationStatus,
+      metadataVersion: req.workspace.metadataVersion,
+      version: req.workspace.version,
     };
   }
 
@@ -204,6 +207,14 @@ export const useGraphQLErrorHandlerHook = <
                   document,
                   user,
                   workspace: workspaceInfo,
+                  additionalData: {
+                    requestSchemaVersion:
+                      args.contextValue.req.headers[SCHEMA_VERSION_HEADER],
+                    workspaceSchemaVersion:
+                      args.contextValue.req.workspaceMetadataVersion,
+                    requestAppVersion:
+                      args.contextValue.req.headers[APP_VERSION_HEADER],
+                  },
                 },
               );
 
@@ -288,6 +299,7 @@ export const useGraphQLErrorHandlerHook = <
 
           throw new GraphQLError(SCHEMA_MISMATCH_ERROR, {
             extensions: {
+              code: SCHEMA_MISMATCH_CODE,
               userFriendlyMessage: i18n._(
                 msg`Your workspace has been updated with a new data model. Please refresh the page.`,
               ),
