@@ -31,11 +31,9 @@ export type Company = {
     primaryLinkUrl: string;
     primaryLinkLabel: string;
   };
-  industry?: string | null;
   annualRevenue?: {
     __typename?: 'Currency';
     amountMicros: number | null;
     currencyCode: string;
   } | null;
-  employees: number | null;
 };

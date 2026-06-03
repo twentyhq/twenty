@@ -3,7 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
 import { MigrateAiModelPreferencesCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000000000-migrate-ai-model-preferences.command';
-import { MoveArrIcpXLinksToCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000040000-move-arr-icp-xlinks-to-custom-application.command';
+import { MoveDemotedStandardFieldsToCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000040000-move-demoted-standard-fields-to-custom-application.command';
 import { RenameConflictingCustomFieldsCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000045000-rename-conflicting-custom-fields.command';
 import { AddInactiveGenericStandardFieldsCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000050000-add-inactive-generic-standard-fields.command';
 import { ApplicationModule } from 'src/engine/core-modules/application/application.module';
@@ -24,7 +24,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
   ],
   providers: [
     MigrateAiModelPreferencesCommand,
-    MoveArrIcpXLinksToCustomApplicationCommand,
+    MoveDemotedStandardFieldsToCustomApplicationCommand,
     RenameConflictingCustomFieldsCommand,
     AddInactiveGenericStandardFieldsCommand,
   ],

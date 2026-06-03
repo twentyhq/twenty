@@ -16,17 +16,14 @@ import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/wo
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
 
 const NEW_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS = [
-  STANDARD_OBJECTS.company.fields.industry.universalIdentifier,
   STANDARD_OBJECTS.company.fields.annualRevenue.universalIdentifier,
-  STANDARD_OBJECTS.person.fields.country.universalIdentifier,
-  STANDARD_OBJECTS.person.fields.region.universalIdentifier,
 ];
 
 @RegisteredWorkspaceCommand('2.9.0', 1799000050000)
 @Command({
   name: 'upgrade:2-9:add-inactive-generic-standard-fields',
   description:
-    'Create the new generic standard fields (Company industry/annualRevenue, Person country/region) on existing workspaces as inactive (opt-in), with their columns ready for activation',
+    'Create the new generic standard field (Company annualRevenue) on existing workspaces as inactive (opt-in), with its column ready for activation',
 })
 export class AddInactiveGenericStandardFieldsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

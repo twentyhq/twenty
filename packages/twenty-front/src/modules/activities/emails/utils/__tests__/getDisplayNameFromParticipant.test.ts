@@ -27,7 +27,6 @@ describe('getDisplayNameFromParticipant', () => {
         primaryLinkUrl: '',
         primaryLinkLabel: '',
       },
-      city: '',
       email: '',
       phone: '',
       companyId: '',

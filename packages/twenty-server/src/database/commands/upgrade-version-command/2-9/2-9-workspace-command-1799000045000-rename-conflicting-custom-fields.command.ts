@@ -16,20 +16,8 @@ const NEW_STANDARD_FIELDS: {
   objectUniversalIdentifier: string;
 }[] = [
   {
-    fieldName: 'industry',
-    objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
-  },
-  {
     fieldName: 'annualRevenue',
     objectUniversalIdentifier: STANDARD_OBJECTS.company.universalIdentifier,
-  },
-  {
-    fieldName: 'country',
-    objectUniversalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
-  },
-  {
-    fieldName: 'region',
-    objectUniversalIdentifier: STANDARD_OBJECTS.person.universalIdentifier,
   },
 ];
 
@@ -52,7 +40,7 @@ const computeAvailableFieldName = (
 @Command({
   name: 'upgrade:2-9:rename-conflicting-custom-fields',
   description:
-    'Rename pre-existing custom fields whose name collides with the new generic standard fields (Company industry/annualRevenue, Person country/region), preserving their data, so the standard fields can be added',
+    'Rename a pre-existing custom field whose name collides with the new generic standard field (Company annualRevenue), preserving its data, so the standard field can be added',
 })
 export class RenameConflictingCustomFieldsCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(

@@ -40,9 +40,6 @@ export class PersonWorkspaceEntity extends BaseWorkspaceEntity {
   /** @deprecated Use `phones` field instead */
   phone: string | null;
   phones: PhonesMetadata;
-  city: string | null;
-  country: string | null;
-  region: string | null;
   /** @deprecated Use `avatarFile` field instead */
   avatarUrl: string | null;
   avatarFile: FileOutput[] | null;

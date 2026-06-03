@@ -12,7 +12,6 @@ import { fromPageLayoutWidgetConfigurationToUniversalConfiguration } from 'src/e
 import { type ObjectMetadataEntity } from 'src/engine/metadata-modules/object-metadata/object-metadata.entity';
 import { AxisNameDisplay } from 'src/engine/metadata-modules/page-layout-widget/enums/axis-name-display.enum';
 import { BarChartLayout } from 'src/engine/metadata-modules/page-layout-widget/enums/bar-chart-layout.enum';
-import { ObjectRecordGroupByDateGranularity } from 'src/engine/metadata-modules/page-layout-widget/enums/date-granularity.enum';
 import { GraphOrderBy } from 'src/engine/metadata-modules/page-layout-widget/enums/graph-order-by.enum';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WidgetType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-type.enum';
@@ -133,13 +132,11 @@ export const getPageLayoutWidgetDataSeeds = (
   const opportunityStageFieldId = getFieldId(opportunityObject, 'stage');
 
   const companyIdFieldId = getFieldId(companyObject, 'id');
-  const companyEmployeesFieldId = getFieldId(companyObject, 'employees');
   const companyAnnualRevenueFieldId = getFieldId(
     companyObject,
     'annualRevenue',
   );
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
-  const companyAddressFieldId = getFieldId(companyObject, 'address');
 
   const personIdFieldId = getFieldId(personObject, 'id');
   const personCityFieldId = getFieldId(personObject, 'city');
@@ -362,50 +359,6 @@ export const getPageLayoutWidgetDataSeeds = (
           overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
-    isDefined(companyIdFieldId) &&
-    isDefined(companyEmployeesFieldId) &&
-    isDefined(companyAddressFieldId)
-      ? ({
-          id: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_WIDGET_SEEDS.CUSTOMER_COMPANIES_BY_SIZE,
-          ),
-          pageLayoutTabId: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_TAB_SEEDS.CUSTOMER_OVERVIEW,
-          ),
-          title: 'Companies by Size (Stacked by City)',
-          type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 6, rowSpan: 10, columnSpan: 6 },
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
-            row: 0,
-            column: 6,
-            rowSpan: 10,
-            columnSpan: 6,
-          },
-          configuration: {
-            configurationType: WidgetConfigurationType.BAR_CHART,
-            aggregateFieldMetadataId: companyIdFieldId,
-            aggregateOperation: AggregateOperations.COUNT,
-            primaryAxisGroupByFieldMetadataId: companyEmployeesFieldId,
-            secondaryAxisGroupByFieldMetadataId: companyAddressFieldId,
-            secondaryAxisGroupBySubFieldName: 'addressCity',
-            secondaryAxisGroupByDateGranularity:
-              ObjectRecordGroupByDateGranularity.DAY,
-            primaryAxisOrderBy: GraphOrderBy.FIELD_ASC,
-            axisNameDisplay: AxisNameDisplay.NONE,
-            displayDataLabel: false,
-            color: 'auto',
-            layout: BarChartLayout.VERTICAL,
-            timezone: 'UTC',
-            firstDayOfTheWeek: CalendarStartDay.MONDAY,
-          },
-          objectMetadataId: companyObject?.id ?? null,
-          overrides: null,
-        } satisfies SeederFlatPageLayoutWidget)
-      : null,
-
     // Customer Analytics Tab Widgets
     isDefined(companyAnnualRevenueFieldId)
       ? ({

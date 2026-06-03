@@ -34,9 +34,7 @@ export class CompanyWorkspaceEntity {
   // Company-specific fields
   name: string | null;
   domainName: LinksMetadata;
-  employees: number | null;
   linkedinLink: LinksMetadata | null;
-  industry: string | null;
   annualRevenue: CurrencyMetadata | null;
   address: AddressMetadata;
   position: number;

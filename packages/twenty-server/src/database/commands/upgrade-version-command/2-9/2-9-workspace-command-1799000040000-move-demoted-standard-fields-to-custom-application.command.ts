@@ -28,6 +28,10 @@ const DEMOTED_STANDARD_FIELDS: {
     label: 'Company.annualRecurringRevenue',
   },
   {
+    universalIdentifier: '20202020-8965-464a-8a75-74bafc152a0b',
+    label: 'Company.employees',
+  },
+  {
     universalIdentifier: '20202020-ba6b-438a-8213-2c5ba28d76a2',
     label: 'Company.idealCustomerProfile',
   },
@@ -39,15 +43,19 @@ const DEMOTED_STANDARD_FIELDS: {
     universalIdentifier: '20202020-8fc2-487c-b84a-55a99b145cfd',
     label: 'Person.xLink',
   },
+  {
+    universalIdentifier: '20202020-5243-4ffb-afc5-2c675da41346',
+    label: 'Person.city',
+  },
 ];
 
 @RegisteredWorkspaceCommand('2.9.0', 1799000040000)
 @Command({
-  name: 'upgrade:2-9:move-arr-icp-xlinks-to-custom-application',
+  name: 'upgrade:2-9:move-demoted-standard-fields-to-custom-application',
   description:
-    'Re-own the demoted Company ARR / ICP and Company/Person X (Twitter) standard fields to the workspace custom application, preserving their data and keeping them active',
+    'Re-own the demoted Company ARR / ICP / Employees, Company/Person X (Twitter) and Person City standard fields to the workspace custom application, preserving their data and keeping them active',
 })
-export class MoveArrIcpXLinksToCustomApplicationCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
+export class MoveDemotedStandardFieldsToCustomApplicationCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,

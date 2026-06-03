@@ -12,7 +12,6 @@ describe('companiesResolver (e2e)', () => {
               node {
                 name
                 employees
-                industry
                 position
                 searchVector
                 id
@@ -52,7 +51,6 @@ describe('companiesResolver (e2e)', () => {
 
           expect(companies).toHaveProperty('name');
           expect(companies).toHaveProperty('employees');
-          expect(companies).toHaveProperty('industry');
           expect(companies).toHaveProperty('position');
           expect(companies).toHaveProperty('searchVector');
           expect(companies).toHaveProperty('id');
