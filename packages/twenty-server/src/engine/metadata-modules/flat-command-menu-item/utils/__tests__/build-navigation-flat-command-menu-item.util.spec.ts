@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { v5 } from 'uuid';
 
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
@@ -118,7 +119,11 @@ describe('buildNavigationFlatCommandMenuItem', () => {
   it('should additionally gate conditionalAvailabilityExpression behind the feature flag for feature-flagged objects', () => {
     const result = buildNavigationFlatCommandMenuItem({
       ...baseArgs,
-      objectMetadata: { ...baseObjectMetadata, nameSingular: 'callRecording' },
+      objectMetadata: {
+        ...baseObjectMetadata,
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+        nameSingular: 'callRecording',
+      },
     });
 
     expect(result.conditionalAvailabilityExpression).toBe(
@@ -151,23 +156,32 @@ describe('buildNavigationFlatCommandMenuItem', () => {
 });
 
 describe('buildNavigationConditionalAvailabilityExpression', () => {
-  it('gates feature-flagged objects behind both the flag and read permission', () => {
+  it('gates the standard call recording object behind both the flag and read permission', () => {
     expect(
-      buildNavigationConditionalAvailabilityExpression('callRecording'),
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+        nameSingular: 'callRecording',
+      }),
     ).toBe(
       'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
     );
   });
 
   it('returns only the read-permission expression for non-gated objects', () => {
-    expect(buildNavigationConditionalAvailabilityExpression('person')).toBe(
-      'targetObjectReadPermissions.person',
-    );
+    expect(
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: 'obj-universal-1',
+        nameSingular: 'person',
+      }),
+    ).toBe('targetObjectReadPermissions.person');
   });
 
-  it('does not gate a collision-renamed callRecordingOld object', () => {
+  it('does not gate a custom object that reuses the callRecording name', () => {
     expect(
-      buildNavigationConditionalAvailabilityExpression('callRecordingOld2'),
-    ).toBe('targetObjectReadPermissions.callRecordingOld2');
+      buildNavigationConditionalAvailabilityExpression({
+        universalIdentifier: 'custom-object-universal-id',
+        nameSingular: 'callRecording',
+      }),
+    ).toBe('targetObjectReadPermissions.callRecording');
   });
 });

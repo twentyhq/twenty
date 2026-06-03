@@ -1,3 +1,4 @@
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
@@ -17,20 +18,27 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
 export const NAVIGATION_INTERPOLATED_ICON =
   '${navigateToObjectMetadataItem.icon}';
 
-const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR: Partial<
+const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER: Partial<
   Record<string, FeatureFlagKey>
 > = {
-  callRecording: FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
-  callRecordingCalendarEventAssociation:
+  [STANDARD_OBJECTS.callRecording.universalIdentifier]:
+    FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+  [STANDARD_OBJECTS.callRecordingCalendarEventAssociation.universalIdentifier]:
     FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
 };
 
-export const buildNavigationConditionalAvailabilityExpression = (
-  nameSingular: string,
-): string => {
+export const buildNavigationConditionalAvailabilityExpression = ({
+  universalIdentifier,
+  nameSingular,
+}: {
+  universalIdentifier: string;
+  nameSingular: string;
+}): string => {
   const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${nameSingular}`;
   const featureFlagGate =
-    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR[nameSingular];
+    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_UNIVERSAL_IDENTIFIER[
+      universalIdentifier
+    ];
 
   return isDefined(featureFlagGate)
     ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
@@ -63,9 +71,10 @@ export const buildNavigationFlatCommandMenuItem = ({
   );
 
   const conditionalAvailabilityExpression =
-    buildNavigationConditionalAvailabilityExpression(
-      objectMetadata.nameSingular,
-    );
+    buildNavigationConditionalAvailabilityExpression({
+      universalIdentifier: objectMetadata.universalIdentifier,
+      nameSingular: objectMetadata.nameSingular,
+    });
 
   return {
     id: commandMenuItemId,

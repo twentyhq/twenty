@@ -246,9 +246,11 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
           flatEntity: {
             ...staleNavigationCommandMenuItem,
             conditionalAvailabilityExpression:
-              buildNavigationConditionalAvailabilityExpression(
-                renamedCollisionObjectMetadata.nameSingular,
-              ),
+              buildNavigationConditionalAvailabilityExpression({
+                universalIdentifier:
+                  renamedCollisionObjectMetadata.universalIdentifier,
+                nameSingular: renamedCollisionObjectMetadata.nameSingular,
+              }),
             updatedAt: now,
           },
           flatEntityMaps: toMaps,
