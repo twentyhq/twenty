@@ -111,11 +111,6 @@ export const buildEmailStepLog = ({
     extractString(output, 'connectedAccountId') ?? input.connectedAccountId;
   const attachmentCount = extractNumber(output, 'attachmentCount');
 
-  // Prefer the upstream-sanitized body — even though the side panel renders
-  // bodyPreview as escaped text (never HTML), the sanitized version is
-  // usually cleaner and avoids exposing raw scripted markup to reviewers.
-  // Falls back to the raw input body when the tool failed before composing
-  // (no sanitized body available).
   const bodyForLog =
     extractString(output, 'sanitizedHtmlBody') ??
     extractString(output, 'plainTextBody') ??
@@ -143,8 +138,6 @@ export const buildEmailStepLog = ({
       durationMs,
     },
     entries: [],
-    // `sizeBytes` is filled in by `WorkflowRunStepLogWorkspaceService.setStepLog`
-    // before persistence. We set 0 here to satisfy the type at the call site.
     sizeBytes: 0,
   };
 };

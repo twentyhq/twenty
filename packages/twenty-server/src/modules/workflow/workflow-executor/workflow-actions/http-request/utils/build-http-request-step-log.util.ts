@@ -76,10 +76,6 @@ const redactHeaders = (
   return redacted;
 };
 
-// Captures `?key=value` and `&key=value` pairs. Used as the fallback path
-// when `new URL()` rejects the input (workflow URLs frequently contain
-// unresolved template placeholders like `{{baseUrl}}`, which break URL
-// parsing but must still have their query secrets redacted).
 const URL_QUERY_PARAM_REGEX = /([?&])([^=&#]+)=([^&#]*)/g;
 
 const safeDecodeUriComponent = (value: string): string => {

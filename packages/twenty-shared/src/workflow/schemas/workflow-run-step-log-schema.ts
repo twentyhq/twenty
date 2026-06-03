@@ -6,11 +6,6 @@ const stepLogEntrySchema = z.object({
   message: z.string(),
 });
 
-// Per-tool-call timing intentionally omitted: the AI SDK does not surface
-// per-call timestamps and any post-hoc reconstruction would be effectively
-// zero (the mapper runs synchronously after the run finishes). Wall-clock
-// time for the whole AI step is captured at `aiAgentStepLogDetailsSchema.
-// durationMs` instead.
 const aiToolCallLogSchema = z.object({
   toolName: z.string(),
   toolCallId: z.string(),

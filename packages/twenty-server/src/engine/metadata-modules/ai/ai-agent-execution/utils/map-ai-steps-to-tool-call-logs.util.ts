@@ -36,11 +36,6 @@ const stripNoisyKeysDeep = (value: unknown): unknown => {
   return value;
 };
 
-// Truncates a tool input/output for log persistence. Strings are byte-cut
-// in place; objects are JSON-serialized first, then either returned
-// untouched (if they fit) or byte-cut as a serialized string. Either way
-// the budget is interpreted as UTF-8 bytes via
-// `truncateStringToUtf8ByteBudget`.
 const truncateUnknownForLog = (value: unknown, maxBytes: number): unknown => {
   if (value === undefined || value === null) {
     return value;
@@ -60,8 +55,6 @@ const truncateUnknownForLog = (value: unknown, maxBytes: number): unknown => {
   try {
     serialized = JSON.stringify(value);
   } catch {
-    // Unrepresentable values (circular refs, BigInts, …) fall back to a
-    // sentinel string rather than crashing the log builder.
     return TRUNCATION_SENTINEL;
   }
 
