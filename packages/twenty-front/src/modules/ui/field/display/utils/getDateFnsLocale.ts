@@ -51,6 +51,8 @@ export const getDateFnsLocaleImport = (locale: AppLocale) => {
       return import('date-fns/locale/ru');
     case 'sr-Cyrl':
       return import('date-fns/locale/sr');
+    case 'sr-Latn':
+      return import('date-fns/locale/sr-Latn');
     case 'sv-SE':
       return import('date-fns/locale/sv');
     case 'tr-TR':
