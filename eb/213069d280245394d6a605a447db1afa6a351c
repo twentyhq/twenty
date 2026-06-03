@@ -1,24 +1,39 @@
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-suppression-standard-flat-index-metadata.util.ts
-  s_4a10800c36ffe6::t_9bac8fc9ff559a 25
-  s_4a10800c36ffe6::t_90059a85dbdaa6 20,24
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-suppression.service.ts
-  s_4a10800c36ffe6::t_54a235bf44029c 64-105
-  s_4a10800c36ffe6::t_c18b95ef021fc8 21
-  s_4a10800c36ffe6::t_5a19ee1a2e8e93 5
-  s_4a10800c36ffe6::t_d2a9854b4e55d6 123,141,150,166-192
-  s_4a10800c36ffe6::t_e99118add7e0fa 193-196
-packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-suppression-standard-flat-field-metadata.util.ts
-  s_4a10800c36ffe6::t_1e4a0c42f5c290 3-8,16
-  s_4a10800c36ffe6::t_549f5e26dcc4ed 325-351
-packages/twenty-server/src/engine/core-modules/emailing-domain/utils/build-unsubscribe-preferences-page.util.ts
-  s_4a10800c36ffe6::t_e87c768cfe7db8 32-34
-packages/twenty-server/src/modules/emailing/standard-objects/message-suppression.workspace-entity.ts
-  s_4a10800c36ffe6::t_a371f11e17db0d 4,6,18-19
-packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-subscription.service.ts
-  s_4a10800c36ffe6::t_99fe0c4f751956 6,9-10
-  s_4a10800c36ffe6::t_209b75f0e11e85 260-263
-  s_4a10800c36ffe6::t_05409258ff8747 267-294,304,306
-  s_4a10800c36ffe6::t_599b317774b5d3 62,78-90,98,101-113
+packages/twenty-front/src/modules/activities/emails/hooks/useCampaignComposerState.ts
+  s_38bb929660d2b3::t_3244b90b514e36 46-53
+  s_38bb929660d2b3::t_eb19c33fe47e22 1-45,54-68
+packages/twenty-front/src/modules/side-panel/constants/SidePanelPagesConfig.tsx
+  s_38bb929660d2b3::t_3b2fe878cb3272 8
+  s_38bb929660d2b3::t_326e674f7138c0 92
+packages/twenty-front/src/modules/activities/emails/hooks/useSendMessageBroadcast.ts
+  s_38bb929660d2b3::t_095648cf145ac3 1-6,11-19,24-54,60-63
+  s_38bb929660d2b3::t_0020f6931aeb3a 55-59
+  s_38bb929660d2b3::t_4d4a0058dfbfce 7-10,20-23
+packages/twenty-server/src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum.ts
+  s_38bb929660d2b3::t_e3c95ccadaea7a 52
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000040000-add-compose-campaign-command-menu-item.command.ts
+  s_38bb929660d2b3::t_73af6444c5d021 1-124
+packages/twenty-front/src/modules/side-panel/hooks/useOpenCampaignComposerInSidePanel.ts
+  s_38bb929660d2b3::t_76bef14c9cc2e7 1-23
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-command-menu-item.constant.ts
+  s_38bb929660d2b3::t_caef75d56be667 696-709
+packages/twenty-front/src/modules/activities/emails/graphql/mutations/sendMessageBroadcast.ts
+  s_38bb929660d2b3::t_c5a80dbcf71a2b 6
+  s_38bb929660d2b3::t_1e7837a50aea51 1-5,7-11
+packages/twenty-front/src/modules/command-menu-item/engine-command/global/components/ComposeCampaignCommand.tsx
+  s_38bb929660d2b3::t_3050856a496be1 1-13
+packages/twenty-front/src/modules/command-menu-item/engine-command/constants/EngineComponentKeyHeadlessComponentMap.tsx
+  s_38bb929660d2b3::t_1457f8934021df 252
+  s_38bb929660d2b3::t_ccb6ef7f61e992 5
+packages/twenty-server/src/database/commands/upgrade-version-command/2-9/2-9-upgrade-version-command.module.ts
+  s_38bb929660d2b3::t_2afa98fdab4240 5,8,10,12,19-21,26
+packages/twenty-front/src/modules/side-panel/pages/compose-campaign/components/SidePanelCampaignComposerPage.tsx
+  s_38bb929660d2b3::t_75d1f428f2e3c0 1-77
+packages/twenty-front/src/modules/activities/emails/components/CampaignComposerFields.tsx
+  s_38bb929660d2b3::t_d612e338c1aa7a 6,10-12,17,32,41,45,49-52
+  s_38bb929660d2b3::t_6b4871fa8d4ab6 1-5,7-9,13-16,18-31,33-40,42-44,46-48,54-71
+  s_38bb929660d2b3::t_be78a70b93a2df 53
+packages/twenty-shared/src/types/SidePanelPages.ts
+  s_38bb929660d2b3::t_91ff59bdafd1b2 31
 ---
 {
   "schema_version": "authorship/3.0.0",
@@ -26,10 +41,10 @@ packages/twenty-server/src/engine/core-modules/emailing-domain/services/message-
   "base_commit_sha": "eb213069d280245394d6a605a447db1afa6a351c",
   "prompts": {},
   "sessions": {
-    "s_4a10800c36ffe6": {
+    "s_38bb929660d2b3": {
       "agent_id": {
         "tool": "claude",
-        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "id": "106db34b-c9ad-439b-ac1a-e26d1b7f32fc",
         "model": "claude-opus-4-8"
       },
       "human_author": "neo773 <neo773@protonmail.com>"
