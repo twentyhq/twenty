@@ -14,12 +14,21 @@ export const buildFieldIdToBeCreatedInMigrationByUniversalIdentifierMap = (
       continue;
     }
 
-    fieldIdByUniversalIdentifier.set(
-      action.flatEntity.universalIdentifier,
-      action.id ?? v4(),
-    );
+    if (
+      !fieldIdByUniversalIdentifier.has(action.flatEntity.universalIdentifier)
+    ) {
+      fieldIdByUniversalIdentifier.set(
+        action.flatEntity.universalIdentifier,
+        action.id ?? v4(),
+      );
+    }
 
-    if (isDefined(action.relatedUniversalFlatFieldMetadata)) {
+    if (
+      isDefined(action.relatedUniversalFlatFieldMetadata) &&
+      !fieldIdByUniversalIdentifier.has(
+        action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+      )
+    ) {
       fieldIdByUniversalIdentifier.set(
         action.relatedUniversalFlatFieldMetadata.universalIdentifier,
         action.relatedFieldId ?? v4(),
