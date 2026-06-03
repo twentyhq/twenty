@@ -122,4 +122,24 @@ describe('parseApplicationLogLines', () => {
       },
     ]);
   });
+
+  it('strips ANSI color escapes from structured messages (chalk-style)', () => {
+    const raw = '2024-01-01T00:00:00.000Z INFO \u001B[33m4 \u001B[39m';
+
+    expect(parseApplicationLogLines(raw)).toEqual([
+      {
+        timestamp: new Date('2024-01-01T00:00:00.000Z'),
+        level: 'INFO',
+        message: '4 ',
+      },
+    ]);
+  });
+
+  it('strips ANSI color escapes from unstructured lines too', () => {
+    const raw = '\u001B[1;31mfatal\u001B[0m something bad';
+    const result = parseApplicationLogLines(raw);
+
+    expect(result).toHaveLength(1);
+    expect(result[0].message).toBe('fatal something bad');
+  });
 });
