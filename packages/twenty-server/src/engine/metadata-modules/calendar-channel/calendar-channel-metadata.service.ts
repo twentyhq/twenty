@@ -36,7 +36,7 @@ export class CalendarChannelMetadataService {
     workspaceId: string;
   }): Promise<CalendarChannelDTO[]> {
     const userAccountIds =
-      await this.connectedAccountMetadataService.getOwnConnectedAccountIds({
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
       });
@@ -124,7 +124,7 @@ export class CalendarChannelMetadataService {
     }
 
     const userAccountIds =
-      await this.connectedAccountMetadataService.getOwnConnectedAccountIds({
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
       });

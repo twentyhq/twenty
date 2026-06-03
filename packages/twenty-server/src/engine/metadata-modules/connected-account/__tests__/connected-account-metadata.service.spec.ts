@@ -197,9 +197,9 @@ describe('ConnectedAccountMetadataService - user-workspace visibility scoping', 
     });
   });
 
-  describe('findOwnConnectedAccounts', () => {
+  describe('findUserConnectedAccounts', () => {
     it('should return only the caller own accounts, including their shared ones', async () => {
-      const result = await service.findOwnConnectedAccounts({
+      const result = await service.findUserConnectedAccounts({
         userWorkspaceId: ALICE_USER_WORKSPACE_ID,
         workspaceId: WORKSPACE_ID,
       });
@@ -212,7 +212,7 @@ describe('ConnectedAccountMetadataService - user-workspace visibility scoping', 
     });
 
     it('should not return another member workspace-shared account', async () => {
-      const result = await service.findOwnConnectedAccounts({
+      const result = await service.findUserConnectedAccounts({
         userWorkspaceId: BOB_USER_WORKSPACE_ID,
         workspaceId: WORKSPACE_ID,
       });

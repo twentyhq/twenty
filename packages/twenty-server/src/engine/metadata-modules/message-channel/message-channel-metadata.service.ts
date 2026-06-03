@@ -50,7 +50,7 @@ export class MessageChannelMetadataService {
     workspaceId: string;
   }): Promise<MessageChannelDTO[]> {
     const userAccountIds =
-      await this.connectedAccountMetadataService.getOwnConnectedAccountIds({
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
       });
@@ -155,7 +155,7 @@ export class MessageChannelMetadataService {
     }
 
     const userAccountIds =
-      await this.connectedAccountMetadataService.getOwnConnectedAccountIds({
+      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
       });

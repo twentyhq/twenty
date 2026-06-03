@@ -40,7 +40,7 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
-    return this.findOwnConnectedAccounts({ userWorkspaceId, workspaceId });
+    return this.findUserConnectedAccounts({ userWorkspaceId, workspaceId });
   }
 
   async findById({
@@ -67,7 +67,7 @@ export class ConnectedAccountMetadataService {
     });
   }
 
-  private getOwnConditions({
+  private getUserConditions({
     id,
     userWorkspaceId,
     workspaceId,
@@ -102,9 +102,6 @@ export class ConnectedAccountMetadataService {
     };
   }
 
-  // Everything the caller can access: their own accounts plus accounts shared
-  // with the whole workspace. Expressed as an OR so a single query naturally
-  // de-duplicates an account that is both owned by the caller and shared.
   private getAccessibleConditions({
     id,
     userWorkspaceId,
@@ -124,13 +121,12 @@ export class ConnectedAccountMetadataService {
     }
 
     return [
-      this.getOwnConditions({ id, userWorkspaceId, workspaceId }),
+      this.getUserConditions({ id, userWorkspaceId, workspaceId }),
       workspaceSharedConditions,
     ];
   }
 
-  // Accounts owned by the caller, regardless of their visibility.
-  async findOwnConnectedAccounts({
+  async findUserConnectedAccounts({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -138,13 +134,10 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
-      where: this.getOwnConditions({ userWorkspaceId, workspaceId }),
+      where: this.getUserConditions({ userWorkspaceId, workspaceId }),
     });
   }
 
-  // Accounts shared with the whole workspace by other members. The caller's
-  // own accounts are intentionally excluded here — retrieve those through
-  // findOwnConnectedAccounts (or both at once via findAccessibleConnectedAccounts).
   async findWorkspaceSharedConnectedAccounts({
     userWorkspaceId,
     workspaceId,
@@ -225,7 +218,7 @@ export class ConnectedAccountMetadataService {
     return connectedAccount;
   }
 
-  async getOwnConnectedAccountIds({
+  async getUserConnectedAccountIds({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -233,7 +226,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: this.getOwnConditions({ userWorkspaceId, workspaceId }),
+      where: this.getUserConditions({ userWorkspaceId, workspaceId }),
       select: ['id'],
     });
 
