@@ -13,10 +13,10 @@ export default defineField({
   universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlSeniority,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  type: FieldType.SELECT,
+  type: FieldType.MULTI_SELECT,
   name: 'pdlSeniority',
   label: 'Seniority',
-  description: 'Highest People Data Labs canonical job title level.',
+  description: 'People Data Labs canonical job title levels.',
   isNullable: true,
   options: [
     {
