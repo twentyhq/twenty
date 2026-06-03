@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const UuidValueSchema = z.string().uuidv4();
+export const UuidValueSchema = z.uuidv4();
 export const UuidValueOptionalSchema = UuidValueSchema.optional();
 
 export const LinksValueSchema = z.object({
