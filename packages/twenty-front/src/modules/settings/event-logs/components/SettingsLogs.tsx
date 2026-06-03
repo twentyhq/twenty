@@ -36,6 +36,7 @@ const StyledContent = styled.div`
 // Filter card keeps the standard settings content width; the results table
 // below is full-width.
 const StyledFilterCard = styled.div`
+  align-self: center;
   max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
   width: 100%;
 `;
