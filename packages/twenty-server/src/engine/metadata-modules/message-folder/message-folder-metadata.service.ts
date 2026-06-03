@@ -35,7 +35,7 @@ export class MessageFolderMetadataService {
     workspaceId: string;
   }): Promise<MessageFolderDTO[]> {
     const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+      await this.connectedAccountMetadataService.getOwnConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
       });
@@ -131,7 +131,7 @@ export class MessageFolderMetadataService {
     }
 
     const userAccountIds =
-      await this.connectedAccountMetadataService.getUserConnectedAccountIds({
+      await this.connectedAccountMetadataService.getOwnConnectedAccountIds({
         userWorkspaceId,
         workspaceId,
       });

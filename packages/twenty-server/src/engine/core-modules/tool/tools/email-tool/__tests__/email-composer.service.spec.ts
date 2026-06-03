@@ -93,7 +93,7 @@ describe('EmailComposerService - connected account authorization', () => {
     ];
 
     const mockConnectedAccountMetadataService = {
-      findUserWorkspaceVisibleConnectedAccountById: jest.fn(
+      findAccessibleConnectedAccountById: jest.fn(
         ({ id, userWorkspaceId, workspaceId }) =>
           Promise.resolve(
             accounts.find(
@@ -104,7 +104,7 @@ describe('EmailComposerService - connected account authorization', () => {
             ) ?? null,
           ),
       ),
-      findUserWorkspaceVisibleConnectedAccounts: jest.fn(
+      findAccessibleConnectedAccounts: jest.fn(
         ({ userWorkspaceId, workspaceId }) =>
           Promise.resolve(
             accounts.filter(

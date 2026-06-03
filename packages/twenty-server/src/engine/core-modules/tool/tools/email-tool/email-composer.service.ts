@@ -67,7 +67,7 @@ export class EmailComposerService {
     }
 
     const connectedAccount =
-      await this.connectedAccountMetadataService.findUserWorkspaceVisibleConnectedAccountById(
+      await this.connectedAccountMetadataService.findAccessibleConnectedAccountById(
         {
           id: connectedAccountId,
           userWorkspaceId,
@@ -90,18 +90,23 @@ export class EmailComposerService {
     return connectedAccount;
   }
 
-  private async getOrThrowFirstConnectedAccountId({
+  private async getDefaultConnectedAccountOrThrow({
     workspaceId,
     userWorkspaceId,
   }: {
     workspaceId: string;
     userWorkspaceId: string | undefined;
-  }): Promise<string> {
+  }) {
     const accessibleAccounts =
-      await this.connectedAccountMetadataService.findUserWorkspaceVisibleConnectedAccounts(
+      await this.connectedAccountMetadataService.findAccessibleConnectedAccounts(
         {
           userWorkspaceId,
           workspaceId,
+          relations: {
+            messageChannels: {
+              messageFolders: true,
+            },
+          },
         },
       );
 
@@ -120,7 +125,7 @@ export class EmailComposerService {
         )
       : undefined;
 
-    return (ownAccount ?? accessibleAccounts[0]).id;
+    return ownAccount ?? accessibleAccounts[0];
   }
 
   private normalizeRecipients(parameters: ComposeEmailParams): {
@@ -325,8 +330,7 @@ export class EmailComposerService {
     options: { attachmentsFileFolder: FileFolder },
   ): Promise<EmailComposerResult> {
     const { workspaceId, userWorkspaceId } = context;
-    const { subject, body, files, inReplyTo } = parameters;
-    let { connectedAccountId } = parameters;
+    const { subject, body, files, inReplyTo, connectedAccountId } = parameters;
 
     let recipients: { to: string[]; cc: string[]; bcc: string[] };
 
@@ -362,18 +366,16 @@ export class EmailComposerService {
 
     const toRecipientsDisplay = recipients.to.join(', ');
 
-    if (!connectedAccountId) {
-      connectedAccountId = await this.getOrThrowFirstConnectedAccountId({
-        workspaceId,
-        userWorkspaceId,
-      });
-    }
-
-    const connectedAccount = await this.getConnectedAccount({
-      connectedAccountId,
-      workspaceId,
-      userWorkspaceId,
-    });
+    const connectedAccount = isNonEmptyString(connectedAccountId)
+      ? await this.getConnectedAccount({
+          connectedAccountId,
+          workspaceId,
+          userWorkspaceId,
+        })
+      : await this.getDefaultConnectedAccountOrThrow({
+          workspaceId,
+          userWorkspaceId,
+        });
 
     const messageChannel = connectedAccount.messageChannels.find(
       (channel) => channel.handle === connectedAccount.handle,
@@ -388,14 +390,14 @@ export class EmailComposerService {
       !isDefined(connectedAccount.connectionParameters?.SMTP)
     ) {
       throw new EmailToolException(
-        `SMTP is not configured for connected account '${connectedAccountId}'`,
+        `SMTP is not configured for connected account '${connectedAccount.id}'`,
         EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
 
     if (!isSmtpOnlyAccount && !isDefined(messageChannel)) {
       throw new EmailToolException(
-        `No message channel found for connected account '${connectedAccountId}'`,
+        `No message channel found for connected account '${connectedAccount.id}'`,
         EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }

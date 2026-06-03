@@ -4,6 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   type FindOptionsRelations,
   type FindOptionsWhere,
+  Not,
   Repository,
 } from 'typeorm';
 
@@ -39,9 +40,7 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
-    return this.repository.find({
-      where: { userWorkspaceId, workspaceId },
-    });
+    return this.findOwnConnectedAccounts({ userWorkspaceId, workspaceId });
   }
 
   async findById({
@@ -68,37 +67,85 @@ export class ConnectedAccountMetadataService {
     });
   }
 
-  private getUserWorkspaceVisibleConditions({
-    workspaceId,
-    userWorkspaceId,
+  private getOwnConditions({
     id,
+    userWorkspaceId,
+    workspaceId,
   }: {
-    workspaceId: string;
-    userWorkspaceId: string | undefined;
     id?: string;
-  }): FindOptionsWhere<ConnectedAccountEntity>[] {
-    const idCondition: FindOptionsWhere<ConnectedAccountEntity> = isDefined(id)
-      ? { id }
-      : {};
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): FindOptionsWhere<ConnectedAccountEntity> {
+    return {
+      ...(isDefined(id) ? { id } : {}),
+      workspaceId,
+      userWorkspaceId,
+    };
+  }
 
-    const workspaceVisibilityCondition: FindOptionsWhere<ConnectedAccountEntity> =
-      {
-        ...idCondition,
-        workspaceId,
-        visibility: 'workspace',
-      };
+  private getWorkspaceSharedConditions({
+    id,
+    workspaceId,
+    excludeUserWorkspaceId,
+  }: {
+    id?: string;
+    workspaceId: string;
+    excludeUserWorkspaceId?: string;
+  }): FindOptionsWhere<ConnectedAccountEntity> {
+    return {
+      ...(isDefined(id) ? { id } : {}),
+      workspaceId,
+      visibility: 'workspace',
+      ...(isDefined(excludeUserWorkspaceId)
+        ? { userWorkspaceId: Not(excludeUserWorkspaceId) }
+        : {}),
+    };
+  }
+
+  // Everything the caller can access: their own accounts plus accounts shared
+  // with the whole workspace. Expressed as an OR so a single query naturally
+  // de-duplicates an account that is both owned by the caller and shared.
+  private getAccessibleConditions({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id?: string;
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+  }): FindOptionsWhere<ConnectedAccountEntity>[] {
+    const workspaceSharedConditions = this.getWorkspaceSharedConditions({
+      id,
+      workspaceId,
+    });
 
     if (!isDefined(userWorkspaceId)) {
-      return [workspaceVisibilityCondition];
+      return [workspaceSharedConditions];
     }
 
     return [
-      { ...idCondition, workspaceId, userWorkspaceId },
-      workspaceVisibilityCondition,
+      this.getOwnConditions({ id, userWorkspaceId, workspaceId }),
+      workspaceSharedConditions,
     ];
   }
 
-  async findUserWorkspaceVisibleConnectedAccounts({
+  // Accounts owned by the caller, regardless of their visibility.
+  async findOwnConnectedAccounts({
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): Promise<ConnectedAccountEntity[]> {
+    return this.repository.find({
+      where: this.getOwnConditions({ userWorkspaceId, workspaceId }),
+    });
+  }
+
+  // Accounts shared with the whole workspace by other members. The caller's
+  // own accounts are intentionally excluded here — retrieve those through
+  // findOwnConnectedAccounts (or both at once via findAccessibleConnectedAccounts).
+  async findWorkspaceSharedConnectedAccounts({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -106,14 +153,29 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
-      where: this.getUserWorkspaceVisibleConditions({
+      where: this.getWorkspaceSharedConditions({
         workspaceId,
-        userWorkspaceId,
+        excludeUserWorkspaceId: userWorkspaceId,
       }),
     });
   }
 
-  async findUserWorkspaceVisibleConnectedAccountById({
+  async findAccessibleConnectedAccounts({
+    userWorkspaceId,
+    workspaceId,
+    relations,
+  }: {
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+    relations?: FindOptionsRelations<ConnectedAccountEntity>;
+  }): Promise<ConnectedAccountEntity[]> {
+    return this.repository.find({
+      where: this.getAccessibleConditions({ workspaceId, userWorkspaceId }),
+      relations,
+    });
+  }
+
+  async findAccessibleConnectedAccountById({
     id,
     userWorkspaceId,
     workspaceId,
@@ -125,11 +187,7 @@ export class ConnectedAccountMetadataService {
     relations?: FindOptionsRelations<ConnectedAccountEntity>;
   }): Promise<ConnectedAccountEntity | null> {
     return this.repository.findOne({
-      where: this.getUserWorkspaceVisibleConditions({
-        workspaceId,
-        userWorkspaceId,
-        id,
-      }),
+      where: this.getAccessibleConditions({ workspaceId, userWorkspaceId, id }),
       relations,
     });
   }
@@ -167,7 +225,7 @@ export class ConnectedAccountMetadataService {
     return connectedAccount;
   }
 
-  async getUserConnectedAccountIds({
+  async getOwnConnectedAccountIds({
     userWorkspaceId,
     workspaceId,
   }: {
@@ -175,7 +233,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: { userWorkspaceId, workspaceId },
+      where: this.getOwnConditions({ userWorkspaceId, workspaceId }),
       select: ['id'],
     });
 
@@ -188,7 +246,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: { workspaceId, visibility: 'workspace' },
+      where: this.getWorkspaceSharedConditions({ workspaceId }),
       select: ['id'],
     });
 
