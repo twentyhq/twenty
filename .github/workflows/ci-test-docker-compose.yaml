@@ -27,14 +27,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-      # Best-effort: if the DockerHub credentials are unavailable, fall back to
-      # anonymous pulls instead of failing the whole job at login.
-      - name: Login to Docker Hub
-        continue-on-error: true
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      # Pull base images through Google's Docker Hub mirror — avoids Docker Hub
+      # rate limits and needs no credentials (this repo is public).
+      - name: Configure Docker Hub mirror
+        run: |
+          echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
       - name: Run compose
         run: |
           echo "Patching docker-compose.yml..."
@@ -105,14 +103,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
-      # Best-effort: if the DockerHub credentials are unavailable, fall back to
-      # anonymous pulls instead of failing the whole job at login.
-      - name: Login to Docker Hub
-        continue-on-error: true
-        uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3.7.0
-        with:
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_PASSWORD }}
+      # Pull base images through Google's Docker Hub mirror — avoids Docker Hub
+      # rate limits and needs no credentials (this repo is public).
+      - name: Configure Docker Hub mirror
+        run: |
+          echo '{"registry-mirrors":["https://mirror.gcr.io"]}' | sudo tee /etc/docker/daemon.json
+          sudo systemctl restart docker
       - name: Create frontend placeholder
         run: |
           mkdir -p packages/twenty-front/build
@@ -160,26 +156,32 @@ jobs:
           done
       - name: Verify ClickHouse and application-log schema
         run: |
-          echo "Waiting for ClickHouse to be reachable inside the container..."
+          echo "=== ClickHouse binary check (Alpine/musl) ==="
+          docker exec twenty-app-dev sh -c 'clickhouse --version 2>&1' \
+            || echo ">>> clickhouse binary failed to run on this image"
+          echo "=== ClickHouse-related container logs ==="
+          docker logs twenty-app-dev 2>&1 \
+            | grep -iaE 'clickhouse|init-clickhouse|loading shared|not found|illegal|segmentation|cannot execute|<Error>|DB::Exception' \
+            | head -80 || true
+
+          echo "=== Waiting for ClickHouse on :8123 ==="
           count=0
           until docker exec twenty-app-dev sh -c 'curl -sf http://localhost:8123/ping' >/dev/null 2>&1; do
             count=$((count+1))
-            if [ $count -gt 120 ]; then
+            if [ $count -gt 90 ]; then
               echo "ClickHouse did not become reachable"
-              docker logs twenty-app-dev | tail -200
               exit 1
             fi
             sleep 1
           done
           echo "ClickHouse is up."
 
-          echo "Waiting for the applicationLog table (migrations to run)..."
+          echo "=== Waiting for the applicationLog table (migrations) ==="
           count=0
           until [ "$(docker exec twenty-app-dev sh -c "curl -s 'http://localhost:8123/?database=twenty' --data-binary 'EXISTS TABLE applicationLog'" | tr -d '[:space:]')" = "1" ]; do
             count=$((count+1))
-            if [ $count -gt 120 ]; then
+            if [ $count -gt 60 ]; then
               echo "applicationLog table not found in ClickHouse"
-              docker logs twenty-app-dev | tail -200
               exit 1
             fi
             sleep 1
