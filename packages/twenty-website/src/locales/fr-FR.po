@@ -971,7 +971,6 @@ msgstr ""
 
 #. js-lingui-id: MkvsWx
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
-#: src/app/[locale]/partners/list/components/PartnerCard.tsx
 msgid "Book a call"
 msgstr ""
 
@@ -1257,6 +1256,11 @@ msgstr "Connecté via API"
 #: src/app/[locale]/customers/alternative-partners/page.tsx
 msgid "Consulting"
 msgstr "Conseil"
+
+#. js-lingui-id: GsUBlG
+#: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
+msgid "Contact {partnerName}"
+msgstr ""
 
 #. js-lingui-id: Oii3vg
 #: src/app/[locale]/product/_components/feature/feature-tiles.data.ts
@@ -1887,6 +1891,7 @@ msgstr "Trouvez un partenaire Twenty certifié pour migrer, personnaliser et exp
 
 #. js-lingui-id: TJ7HQl
 #: src/app/[locale]/pricing/_components/PricingEngagementBand.tsx
+#: src/app/[locale]/partners/components/PartnerApplication/PartnerSignoffCtas.tsx
 #: src/app/[locale]/partners/components/PartnerApplication/PartnerHeroCtas.tsx
 msgid "Find a partner"
 msgstr "Trouver un partenaire"
@@ -2193,6 +2198,11 @@ msgstr "Aide"
 msgid "Help center"
 msgstr "Centre d’aide"
 
+#. js-lingui-id: LiWOgh
+#: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
+msgid "Hey, I'm interested in meeting. Here's my project:"
+msgstr ""
+
 #. js-lingui-id: tGjibo
 #: src/sections/PartnerApplication/wizard/partner-fields.data.ts
 #: src/app/[locale]/partners/list/components/chip-labels.ts
@@ -2396,6 +2406,11 @@ msgstr "Intégration"
 #: src/lib/website-routing/static-website-routes.ts
 msgid "Interactive halftone generator exported from Twenty."
 msgstr "Générateur de trames interactif exporté depuis Twenty."
+
+#. js-lingui-id: +83cJG
+#: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
+msgid "Interested in meeting {partnerName}"
+msgstr ""
 
 #. js-lingui-id: mdsMtj
 #: src/app/[locale]/customers/elevate-consulting/page.tsx
@@ -4041,7 +4056,6 @@ msgstr ""
 #. js-lingui-id: JAKtcG
 #: src/sections/Footer/data.ts
 #: src/sections/Faq/Faq.tsx
-#: src/app/[locale]/partners/components/PartnerApplication/PartnerSignoffCtas.tsx
 #: src/app/[locale]/customers/_components/CustomersCatalogSignoff.tsx
 #: src/app/[locale]/customers/_components/CustomersCaseStudySignoff.tsx
 #: src/app/[locale]/(home)/_components/HomeHero.tsx
@@ -4666,6 +4680,11 @@ msgstr ""
 #. js-lingui-id: ITdNGt
 #: src/app/[locale]/partners/profile/[slug]/components/PartnerProfileCtas.tsx
 msgid "View on LinkedIn"
+msgstr ""
+
+#. js-lingui-id: 73lp8c
+#: src/app/[locale]/partners/list/components/PartnerCard.tsx
+msgid "View profile"
 msgstr ""
 
 #. js-lingui-id: BAzC1v
