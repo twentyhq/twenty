@@ -41,7 +41,7 @@ type StackTargetMetric = {
 const NAV_HEIGHT = 64;
 
 const PRODUCT_HERO_BACKGROUND_IMAGE =
-  '/illustrations/generated/max-bottinger-msdl-jbff-plm-unsplash.jpg';
+  '/illustrations/generated/home-background-wheat.jpg';
 
 const INTRO_DASH_COLOR = '#4A38F5';
 const AI_DASH_COLOR = '#ffffff';
