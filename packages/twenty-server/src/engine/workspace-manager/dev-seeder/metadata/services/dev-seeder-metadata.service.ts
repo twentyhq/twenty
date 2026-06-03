@@ -50,27 +50,6 @@ type JunctionConfigSeed = {
   label?: string;
 };
 
-// Emailing standard objects exist in every workspace, so their junction config
-// (person -> topics/segments, segment -> members) is applied to each seeded
-// workspace after build, the same way the demo junction objects are.
-const EMAILING_JUNCTION_CONFIGS: JunctionConfigSeed[] = [
-  {
-    objectName: 'person',
-    fieldName: 'messageSubscriptions',
-    junctionTargetFieldRef: 'messageSubscription.topic',
-  },
-  {
-    objectName: 'person',
-    fieldName: 'segmentMemberships',
-    junctionTargetFieldRef: 'messageSegmentMember.segment',
-  },
-  {
-    objectName: 'messageSegment',
-    fieldName: 'members',
-    junctionTargetFieldRef: 'messageSegmentMember.person',
-  },
-];
-
 type WorkspaceSeedConfig = {
   objects: { seed: ObjectMetadataSeed; fields?: FieldMetadataSeed[] }[];
   fields: { objectName: string; seeds: FieldMetadataSeed[] }[];
@@ -179,7 +158,6 @@ export class DevSeederMetadataService {
           fieldName: 'caredForPets',
           junctionTargetFieldRef: `${PET_CARE_AGREEMENT_CUSTOM_OBJECT_SEED.nameSingular}.pet`,
         },
-        ...EMAILING_JUNCTION_CONFIGS,
       ],
     },
     [SEED_YCOMBINATOR_WORKSPACE_ID]: {
@@ -193,7 +171,6 @@ export class DevSeederMetadataService {
         { objectName: 'company', seeds: COMPANY_CUSTOM_FIELD_SEEDS },
         { objectName: 'person', seeds: PERSON_CUSTOM_FIELD_SEEDS },
       ],
-      junctionConfigs: EMAILING_JUNCTION_CONFIGS,
     },
   };
 
