@@ -137,6 +137,7 @@ export class ConnectedAccountMetadataService {
     const accounts = await this.repository.find({
       where: this.getAccessibleConditions({ workspaceId, userWorkspaceId }),
       relations,
+      order: { createdAt: 'ASC' },
     });
 
     return {
