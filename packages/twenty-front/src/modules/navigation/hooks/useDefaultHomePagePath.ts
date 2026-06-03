@@ -12,11 +12,12 @@ import isEmpty from 'lodash.isempty';
 import { useCallback, useMemo } from 'react';
 import { AppPath, SettingsPath } from 'twenty-shared/types';
 import { getAppPath, getSettingsPath, isDefined } from 'twenty-shared/utils';
-import { useStore } from 'jotai';
 
 export const useDefaultHomePagePath = () => {
-  const store = useStore();
   const currentUser = useAtomStateValue(currentUserState);
+  const lastVisitedObjectMetadataItemId = useAtomStateValue(
+    lastVisitedObjectMetadataItemIdState,
+  );
   const { objectPermissionsByObjectMetadataId } = useObjectPermissions();
   const metadataStore = useAtomFamilyStateValue(
     metadataStoreState,
@@ -69,11 +70,7 @@ export const useDefaultHomePagePath = () => {
     return { objectMetadataItem: firstObjectMetadataItem, view };
   }, [getFirstView, readableNonSystemObjectMetadataItems]);
 
-  const getDefaultObjectPathInfo = useCallback(() => {
-    const lastVisitedObjectMetadataItemId = store.get(
-      lastVisitedObjectMetadataItemIdState.atom,
-    );
-
+  const defaultObjectPathInfo = useMemo<ObjectPathInfo | null>(() => {
     const lastVisitedObjectMetadataItem = isDefined(
       lastVisitedObjectMetadataItemId,
     )
@@ -92,7 +89,7 @@ export const useDefaultHomePagePath = () => {
     firstObjectPathInfo,
     getActiveObjectMetadataItemMatchingId,
     getFirstView,
-    store,
+    lastVisitedObjectMetadataItemId,
   ]);
 
   const defaultHomePagePath = useMemo(() => {
@@ -113,8 +110,6 @@ export const useDefaultHomePagePath = () => {
       return getSettingsPath(SettingsPath.ProfilePage);
     }
 
-    const defaultObjectPathInfo = getDefaultObjectPathInfo();
-
     if (!isDefined(defaultObjectPathInfo)) {
       return AppPath.NotFound;
     }
@@ -129,7 +124,7 @@ export const useDefaultHomePagePath = () => {
     );
   }, [
     currentUser,
-    getDefaultObjectPathInfo,
+    defaultObjectPathInfo,
     readableNonSystemObjectMetadataItems,
     areObjectMetadataItemsLoaded,
   ]);

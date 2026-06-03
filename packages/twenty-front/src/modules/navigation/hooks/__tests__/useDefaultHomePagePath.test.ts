@@ -2,9 +2,10 @@ import { currentUserState } from '@/auth/states/currentUserState';
 import { currentUserWorkspaceState } from '@/auth/states/currentUserWorkspaceState';
 import { metadataStoreState } from '@/metadata-store/states/metadataStoreState';
 import { useDefaultHomePagePath } from '@/navigation/hooks/useDefaultHomePagePath';
+import { lastVisitedObjectMetadataItemIdState } from '@/navigation/states/lastVisitedObjectMetadataItemIdState';
 import { AggregateOperations } from '@/object-record/record-table/constants/AggregateOperations';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
-import { jotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
+import { jotaiStore, resetJotaiStore } from '@/ui/utilities/state/jotai/jotaiStore';
 import { renderHook, waitFor } from '@testing-library/react';
 import { Provider as JotaiProvider } from 'jotai';
 import { createElement, useEffect, type ReactNode } from 'react';
@@ -98,6 +99,11 @@ const renderHooks = ({
 };
 
 describe('useDefaultHomePagePath', () => {
+  beforeEach(() => {
+    jotaiStore.set(lastVisitedObjectMetadataItemIdState.atom, null);
+    localStorage.removeItem(lastVisitedObjectMetadataItemIdState.key);
+  });
+
   it('should return proper path when no currentUser', async () => {
     const { result } = renderHooks({
       withCurrentUser: false,
@@ -152,6 +158,43 @@ describe('useDefaultHomePagePath', () => {
 
     await waitFor(() => {
       expect(result.current.defaultHomePagePath).toEqual(AppPath.Index);
+    });
+  });
+
+  it('should return last visited object path when lastVisitedObjectMetadataItemId is set', async () => {
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+    jotaiStore.set(
+      lastVisitedObjectMetadataItemIdState.atom,
+      personObjectMetadataItem.id,
+    );
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
+    });
+  });
+
+  it('should hydrate last visited object path from localStorage on init', async () => {
+    const personObjectMetadataItem = getMockObjectMetadataItemOrThrow('person');
+
+    resetJotaiStore();
+    localStorage.setItem(
+      lastVisitedObjectMetadataItemIdState.key,
+      JSON.stringify(personObjectMetadataItem.id),
+    );
+
+    const { result } = renderHooks({
+      withCurrentUser: true,
+      withExistingView: false,
+    });
+
+    await waitFor(() => {
+      expect(result.current.defaultHomePagePath).toEqual('/objects/people');
     });
   });
 });

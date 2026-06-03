@@ -63,7 +63,7 @@ export const createAtomState = <ValueType>({
       key,
       defaultValue,
       undefined,
-      localStorageOptions ?? undefined,
+      { getOnInit: true, ...localStorageOptions },
     ) as StateAtom<ValueType>;
   } else {
     baseAtom = atom(defaultValue);
