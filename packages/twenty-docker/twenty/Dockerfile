@@ -191,6 +191,11 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
+# ClickHouse binary source — the official Alpine (musl-native) image, so the
+# binary runs on our alpine base (the glibc static build does not).
+ARG CLICKHOUSE_VERSION=25.8.24.21
+FROM clickhouse/clickhouse-server:${CLICKHOUSE_VERSION}-alpine AS clickhouse-bin
+
 FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-app-dev
 
 # s6-overlay
@@ -203,24 +208,11 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
 RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
-    curl jq su-exec gcompat
+    curl jq su-exec
 
-# ClickHouse single static binary — backs application logs (and the other
-# event-log tables). ClickHouse targets glibc, so gcompat (above) provides the
-# shim on Alpine/musl. Pinned via CLICKHOUSE_VERSION.
-ARG TARGETARCH
-ARG CLICKHOUSE_VERSION=24.8.14.39
-RUN set -eux; \
-    case "$TARGETARCH" in \
-      arm64) CH_ARCH=aarch64 ;; \
-      *) CH_ARCH=amd64 ;; \
-    esac; \
-    curl -fsSL -o /tmp/clickhouse.tgz \
-      "https://packages.clickhouse.com/tgz/lts/clickhouse-common-static-${CLICKHOUSE_VERSION}-${CH_ARCH}.tgz"; \
-    tar -xzf /tmp/clickhouse.tgz -C /tmp; \
-    cp "$(find /tmp -type f -path '*/usr/bin/clickhouse' | head -n1)" /usr/local/bin/clickhouse; \
-    chmod +x /usr/local/bin/clickhouse; \
-    rm -rf /tmp/clickhouse.tgz /tmp/clickhouse-common-static-*
+# ClickHouse (musl-native binary from the clickhouse-bin stage) — backs
+# application logs and the other event-log tables.
+COPY --from=clickhouse-bin /usr/bin/clickhouse /usr/local/bin/clickhouse
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
