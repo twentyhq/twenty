@@ -38,7 +38,10 @@ export class FindRecordsService {
       shouldBuildEffectiveSelectFields,
     } = params;
 
-    if (shouldBuildEffectiveSelectFields && !isDefined(select)) {
+    if (
+      shouldBuildEffectiveSelectFields &&
+      (!isDefined(select) || isNonEmptyArray(select))
+    ) {
       return {
         success: false,
         message: 'Select at least one field in select parameter',
