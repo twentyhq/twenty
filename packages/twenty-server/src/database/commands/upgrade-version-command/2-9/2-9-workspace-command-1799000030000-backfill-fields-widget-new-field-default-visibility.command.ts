@@ -4,9 +4,9 @@ import { isDefined } from 'twenty-shared/utils';
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatPageLayoutWidget } from 'src/engine/metadata-modules/flat-page-layout-widget/types/flat-page-layout-widget.type';
+import { isFlatPageLayoutWidgetConfigurationOfType } from 'src/engine/metadata-modules/flat-page-layout-widget/utils/is-flat-page-layout-widget-configuration-of-type.util';
 import { WidgetConfigurationType } from 'src/engine/metadata-modules/page-layout-widget/enums/widget-configuration-type.type';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -15,12 +15,11 @@ import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspa
 @Command({
   name: 'upgrade:2-9:backfill-fields-widget-new-field-default-visibility',
   description:
-    'Backfill newFieldDefaultVisibility to true on standard FIELDS page layout widgets where it is null',
+    'Backfill newFieldDefaultVisibility to true on FIELDS page layout widgets where it is null',
 })
 export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends ActiveOrSuspendedWorkspaceCommandRunner {
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
-    private readonly applicationService: ApplicationService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
@@ -33,11 +32,6 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    const { twentyStandardFlatApplication } =
-      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
-        { workspaceId },
-      );
-
     const { flatPageLayoutWidgetMaps } =
       await this.workspaceCacheService.getOrRecompute(workspaceId, [
         'flatPageLayoutWidgetMaps',
@@ -48,17 +42,18 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
     )
       .filter(isDefined)
       .filter(
-        (widget) =>
-          widget.applicationUniversalIdentifier ===
-            twentyStandardFlatApplication.universalIdentifier &&
-          widget.configuration?.configurationType ===
-            WidgetConfigurationType.FIELDS &&
-          !isDefined(widget.configuration.newFieldDefaultVisibility),
+        (
+          widget,
+        ): widget is FlatPageLayoutWidget<WidgetConfigurationType.FIELDS> =>
+          isFlatPageLayoutWidgetConfigurationOfType(
+            widget,
+            WidgetConfigurationType.FIELDS,
+          ) && !isDefined(widget.configuration.newFieldDefaultVisibility),
       );
 
     if (widgetsToBackfill.length === 0) {
       this.logger.log(
-        `No standard FIELDS widgets to backfill in workspace ${workspaceId}`,
+        `No FIELDS widgets to backfill in workspace ${workspaceId}`,
       );
 
       return;
@@ -66,14 +61,19 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
 
     if (isDryRun) {
       this.logger.log(
-        `[DRY RUN] Would backfill ${widgetsToBackfill.length} standard FIELDS widget(s) in workspace ${workspaceId}`,
+        `[DRY RUN] Would backfill ${widgetsToBackfill.length} FIELDS widget(s) in workspace ${workspaceId}`,
       );
 
       return;
     }
 
-    const updatedWidgets: FlatPageLayoutWidget[] = widgetsToBackfill.map(
-      (widget) => ({
+    const widgetsToBackfillByApplicationUniversalIdentifier = new Map<
+      string,
+      FlatPageLayoutWidget[]
+    >();
+
+    for (const widget of widgetsToBackfill) {
+      const updatedWidget: FlatPageLayoutWidget = {
         ...widget,
         configuration: {
           ...widget.configuration,
@@ -85,36 +85,50 @@ export class BackfillFieldsWidgetNewFieldDefaultVisibilityCommand extends Active
               newFieldDefaultVisibility: true,
             }
           : widget.universalConfiguration,
-      }),
-    );
+      };
 
-    const result =
-      await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
-        {
-          allFlatEntityOperationByMetadataName: {
-            pageLayoutWidget: {
-              flatEntityToCreate: [],
-              flatEntityToDelete: [],
-              flatEntityToUpdate: updatedWidgets,
-            },
-          },
-          workspaceId,
-          applicationUniversalIdentifier:
-            twentyStandardFlatApplication.universalIdentifier,
-        },
-      );
+      const existingWidgets =
+        widgetsToBackfillByApplicationUniversalIdentifier.get(
+          widget.applicationUniversalIdentifier,
+        ) ?? [];
 
-    if (result.status === 'fail') {
-      this.logger.error(
-        `Failed to backfill FIELDS widgets in workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
-      );
-      throw new Error(
-        `Failed to backfill FIELDS widgets for workspace ${workspaceId}`,
+      widgetsToBackfillByApplicationUniversalIdentifier.set(
+        widget.applicationUniversalIdentifier,
+        [...existingWidgets, updatedWidget],
       );
     }
 
-    this.logger.log(
-      `Backfilled ${updatedWidgets.length} standard FIELDS widget(s) for workspace ${workspaceId}`,
-    );
+    for (const [
+      applicationUniversalIdentifier,
+      updatedWidgets,
+    ] of widgetsToBackfillByApplicationUniversalIdentifier) {
+      const result =
+        await this.workspaceMigrationValidateBuildAndRunService.validateBuildAndRunWorkspaceMigration(
+          {
+            allFlatEntityOperationByMetadataName: {
+              pageLayoutWidget: {
+                flatEntityToCreate: [],
+                flatEntityToDelete: [],
+                flatEntityToUpdate: updatedWidgets,
+              },
+            },
+            workspaceId,
+            applicationUniversalIdentifier,
+          },
+        );
+
+      if (result.status === 'fail') {
+        this.logger.error(
+          `Failed to backfill FIELDS widgets for application ${applicationUniversalIdentifier} in workspace ${workspaceId}:\n${JSON.stringify(result, null, 2)}`,
+        );
+        throw new Error(
+          `Failed to backfill FIELDS widgets for workspace ${workspaceId}`,
+        );
+      }
+
+      this.logger.log(
+        `Backfilled ${updatedWidgets.length} FIELDS widget(s) for application ${applicationUniversalIdentifier} in workspace ${workspaceId}`,
+      );
+    }
   }
 }
