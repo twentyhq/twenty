@@ -1,0 +1,243 @@
+# twenty-new-ui
+
+> **Status:** Planning. This is a design document; no implementation has started.
+
+`twenty-new-ui` is the next generation of Twenty's UI library, replacing [`twenty-ui`](../twenty-ui).
+It is built on a headless component library and a zero-runtime, CSS-variable styling layer.
+
+## Goals
+
+1. Publish as a standalone, versioned **npm package**.
+2. Replace `twenty-ui` in `twenty-front` with **no visual change** (same design, token for token).
+3. **Migrate every component** currently exported by `twenty-ui`.
+4. Enforce a **quality bar in CI**: bundle size, render/load time, and accessibility, measured against the old library.
+
+## Current state (`twenty-ui`)
+
+| Aspect | Today |
+| --- | --- |
+| Exports | ~180 components across 13 subpath entry points (`display`, `input`, `layout`, `navigation`, `feedback`, `components`, `theme`, `theme-constants`, `utilities`, `accessibility`, `assets`, `json-visualizer`, `testing`) + 3 CSS files |
+| Styling | Linaria (`@linaria/react`) compiled via `@wyw-in-js/vite`; theming via generated `--t-*` CSS variables |
+| Behavior | Hand-rolled (modals, menus, tooltips, selects, etc.); `react-tooltip` for tooltips |
+| Build | Vite library mode, dual ESM/CJS, `vite-plugin-dts`, auto-generated barrels |
+| Icons | `@tabler/icons-react` re-exports + custom icons + Jotai-backed `IconsProvider` |
+| Consumption | ~1,721 files in `twenty-front` import it (mostly `display` and `theme-constants`); imported by package name |
+| Published | No (`private: true`) |
+
+`twenty-front/src/modules/ui/` (application-level UI) consumes `twenty-ui` and is **out of scope**.
+
+## Decision 1 — Headless library: Base UI
+
+Adopt **Base UI** (`@base-ui-components/react`, MIT) as the behavioral foundation; build Twenty's
+visual design on top of it.
+
+| | Base UI | shadcn/ui | Radix |
+| --- | --- | --- | --- |
+| Distribution | npm package | copy-paste source | npm package |
+| Styling | bring your own | Tailwind | bring your own |
+| State styling | `data-*` + `className`-as-function | (underlying primitive) | `data-*` |
+| Maintenance | MUI team, full-time; frequent stable releases | community | WorkOS; slower cadence, creators departed |
+
+**Rationale**
+
+- **Publishable and unstyled** — Base UI ships as an npm dependency and imposes no styling, so consumers apply their own tokens. shadcn is copy-paste source (not installable) and Tailwind-coupled; it is suitable only as a scaffolding/reference tool, not the foundation.
+- **Active long-term investment** — Base UI is maintained by the team behind Radix, Floating UI, and Material UI. Radix is a viable, still-maintained fallback, but its core authors now work on Base UI and its stable-release cadence has slowed.
+- **Modern, broad primitives** — Combobox/Autocomplete with built-in search, Select, Number Field, Navigation Menu, Toast, etc., several of which replace hand-rolled or single-purpose dependencies in `twenty-ui`.
+- **`className`-as-function-of-state** pairs cleanly with CSS/SCSS Modules.
+- **Small, tree-shakeable dependency tree**; peer-compatible with the repo's React 18.
+
+Pin the latest **stable** release at implementation time; isolate Base UI behind the package's own
+component APIs so upgrades stay localized.
+
+## Decision 2 — Styling: SCSS Modules (drop Linaria)
+
+Use **SCSS Modules** (`*.module.scss`) over the existing CSS-variable theme. Drop Linaria.
+
+| Approach | Runtime | Build complexity | Scoping | Verdict |
+| --- | --- | --- | --- | --- |
+| Linaria (today) | zero | high (Babel + wyw-in-js) | auto | overkill |
+| Plain global CSS | zero | none | none (collision risk) | unsafe for a library |
+| CSS Modules | zero | none (native Vite) | auto | strong baseline |
+| **SCSS Modules** | zero | low (`sass` only) | auto | **recommended** |
+| vanilla-extract | zero | medium (TS compile) | auto | viable alternative (typed tokens) |
+
+**Rationale**
+
+- Theming is already CSS variables and component state comes from Base UI as `data-*` attributes, so the two features Linaria provides (JS theming and prop interpolation) are not needed.
+- SCSS Modules are zero-runtime and auto-scoped, native to Vite (no Babel/`wyw-in-js`), and faster to build.
+- Sass mixins, maps, and `@each` cover variant/size generation and responsive breakpoints.
+- Type-safe class names via generated `*.module.scss.d.ts` (`vite-plugin-sass-dts`).
+
+**Conventions:** one `Component.module.scss` per component; tokens only via `var(--t-*)`; state via
+`data-*` selectors; multi-variant composition via `clsx` (or `cva` for a typed variants API);
+shared `mixins.scss` / `breakpoints.scss`; global unscoped CSS only for theme variables, reset, and keyframes.
+
+## Architecture
+
+```
+packages/twenty-new-ui/
+├── package.json            # public exports mirror twenty-ui's subpath map
+├── project.json            # Nx targets: build, lint, test, storybook, size
+├── vite.config.ts          # library mode, no wyw-in-js
+├── vitest.config.ts        # storybook component tests
+├── .storybook/
+├── .size-limit.json        # per-entry bundle budgets
+├── scripts/                # generateBarrels.ts, generateTheme.ts
+└── src/
+    ├── styles/             # global: reset, theme vars, mixins, breakpoints
+    ├── theme/ theme-constants/
+    ├── display/ input/ layout/ navigation/ feedback/ components/
+    ├── accessibility/ utilities/ json-visualizer/ assets/ testing/
+```
+
+**Public API parity.** Keep the same subpath exports, component names, and prop signatures as
+`twenty-ui` so the final swap is a codemod + dependency rename, not a rewrite of 1,721 files.
+Keep auto-generated barrels and dual ESM/CJS + `dts` output.
+
+**Internal changes vs `twenty-ui`:** Linaria → SCSS Modules; hand-rolled behavior + `react-tooltip`
+→ Base UI; prefer Base UI/CSS transitions over `framer-motion` where possible; keep the icon system
+as-is.
+
+## Theming
+
+`theme-constants` has ~943 importers and must be a drop-in replacement.
+
+- Keep the public API identical: `ThemeProvider`, `ThemeContext`, `useTheme`, the `themeCssVariables` shape, `ThemeType`, color helpers, and the `theme-light.css` / `theme-dark.css` exports.
+- Reuse `twenty-ui`'s token values verbatim to guarantee identical design.
+- Tokens are authored in `src/theme/` and generated into CSS variables + a typed accessor.
+- A generated-output diff test asserts the new theme CSS produces the same `--t-*` values as `twenty-ui`.
+
+## Component migration map
+
+A full component-by-component inventory with prop signatures is a Phase 0 deliverable. Components
+split into two buckets.
+
+**Backed by a Base UI primitive (behavioral):**
+
+| `twenty-ui` | Base UI |
+| --- | --- |
+| `Modal` | `Dialog` / `AlertDialog` |
+| `AppTooltip`, `OverflowingTextWithTooltip` | `Tooltip` (removes `react-tooltip`) |
+| `Toggle` | `Switch` |
+| `Checkbox` / `Radio` | `Checkbox` / `Radio` (+ groups) |
+| `Menu`, `MenuItem` | `Menu` / `ContextMenu` / `Menubar` |
+| `TabButton` | `Tabs` |
+| `SearchInput`, text inputs | `Input` + `Field` |
+| `CardPicker` | `RadioGroup` / `ToggleGroup` |
+| `ColorPicker` | `Popover` + custom |
+| `ProgressBar` | `Progress` |
+| `Avatar`, `AvatarGroup` | `Avatar` |
+| `AnimatedExpandableContainer` | `Collapsible` / `Accordion` |
+
+**Pure presentation, built in-house (SCSS Modules):** button family, typography, `Chip`/`Pill`/`Tag`/`LinkChip`,
+`Banner`/`Callout`/`Info`/`Status`, `Card`/`Section`/`Separator`, `Loader`, `TintedIconTile`,
+`ColorSample`, `Checkmark`, placeholders, the icon system, `CodeEditor` (Monaco), `json-visualizer`,
+and the `utilities` / `theme` / `testing` / `accessibility` helpers.
+
+## Test, benchmark & parity strategy
+
+- **Workbench** — Storybook (`@storybook/react-vite`). Every component has stories covering variants, sizes, and states (via `storybook-addon-pseudo-states`), in light and dark, with `autodocs`.
+- **Functional** — component/interaction tests via `@storybook/addon-vitest` (real browser); unit tests (Jest) for hooks/utilities; coverage gate via `@storybook/addon-coverage`.
+- **Accessibility** — Storybook a11y addon (axe-core) with `parameters.a11y.test = 'error'` so violations fail CI.
+- **Visual parity** — visual regression (Chromatic or test-runner image snapshots) plus side-by-side stories rendering the old and new component with identical props; a pixel-diff threshold is the per-component acceptance gate.
+- **Performance & size** — `size-limit` per entry point with budgets; tree-shaking fixtures (importing one component must not pull the library); build-time tracking; render benchmarks via React Profiler; load-time via Lighthouse/Playwright on the built Storybook.
+
+CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-new-ui`) for size, a11y, and visual changes.
+
+## Build & publishing
+
+- Vite library mode, dual ESM/CJS, `vite-plugin-dts`, `vite-plugin-svgr`; SCSS via Vite's built-in `sass`; no Babel.
+- `sideEffects: ["**/*.css", "**/*.scss"]`; emit per-entry CSS plus `style.css` / `theme-light.css` / `theme-dark.css`.
+- Public package (remove `private`); scoped name (e.g. `@twenty/ui`).
+- **Changesets** for semver + changelog; GitHub Actions release with `npm publish --provenance`.
+- Declare `react` / `react-dom` as peer dependencies; validate the `exports`/types map with `publint` + `@arethetypeswrong/cli`.
+- Publish the Storybook as living documentation.
+
+## Migration & rollout
+
+1. Build `twenty-new-ui` to parity with the same API surface and design, validated by the parity, a11y, and size suites.
+2. Dogfood on a few non-critical `twenty-front` screens behind a temporary alias.
+3. Codemod imports `twenty-ui` → `twenty-new-ui` across `twenty-front` (subpaths preserved); handle any changed APIs explicitly.
+4. Swap the dependency, run the full test suite + visual diffs, ship.
+5. Deprecate and remove `twenty-ui` after a soak period.
+
+## Roadmap
+
+- **Phase 0 — Foundations:** scaffold package + tooling; port the theme layer with parity test; stand up the benchmark/parity/a11y CI harness first; complete the component inventory.
+- **Phase 1 — Primitives:** icons, typography, button family, status/tag/chip/pill; establish the canonical component pattern.
+- **Phase 2 — Behavioral:** Modal, Tooltip, Menu, Tabs, Checkbox, Radio, Switch, inputs/Field, Progress, Avatar, Collapsible.
+- **Phase 3 — Long tail:** banners/callout/info, card/section/separator, loader, color/card pickers, code editor, json-visualizer, placeholders, utilities/testing/accessibility.
+- **Phase 4 — Hardening & publish:** close gaps; finalize release pipeline; cut `1.0.0`; publish docs.
+- **Phase 5 — Cut-over:** dogfood → codemod → swap → remove `twenty-ui`.
+
+A component is done only with: stories (all states, light/dark), passing interaction + a11y tests,
+a passing visual-parity diff, and a within-budget size entry.
+
+## Risks
+
+| Risk | Mitigation |
+| --- | --- |
+| Base UI pre-1.0 API churn | Pin exact version; gate GA on stable release; isolate behind component APIs |
+| Visual drift | Reuse exact tokens; visual-parity snapshots as the per-component gate |
+| Theme API mismatch (~943 consumers) | Freeze `theme-constants` contract; generated-CSS diff test |
+| 1,721 import sites | Preserve subpaths/names; automate with a codemod |
+| No Base UI primitive for some components | Build in-house; use Base UI utilities where helpful |
+| Bundle regressions | `size-limit` budgets + PR diff; prefer CSS transitions over `framer-motion` |
+
+## Open questions
+
+1. Published package name/scope (proposed `@twenty/ui`).
+2. Styling: confirm SCSS Modules vs vanilla-extract vs plain CSS Modules.
+3. Variants helper: `clsx` + `data-*` vs `cva`.
+4. Visual regression tooling: Chromatic vs self-hosted image snapshots.
+5. How aggressively to drop `framer-motion` in favor of CSS/Base UI transitions.
+6. Scope of `assets` / `testing` / `json-visualizer`: port verbatim or modernize.
+
+## Appendix — example component pattern
+
+`src/input/components/Toggle.tsx`
+
+```tsx
+import { Switch } from '@base-ui-components/react/switch';
+import { clsx } from 'clsx';
+import styles from './Toggle.module.scss';
+
+type ToggleProps = {
+  value?: boolean;
+  onChange?: (value: boolean) => void;
+  disabled?: boolean;
+  size?: 'small' | 'medium';
+};
+
+export const Toggle = ({ value, onChange, disabled, size = 'medium' }: ToggleProps) => (
+  <Switch.Root
+    checked={value}
+    onCheckedChange={onChange}
+    disabled={disabled}
+    className={clsx(styles.root, styles[size])}
+  >
+    <Switch.Thumb className={styles.thumb} />
+  </Switch.Root>
+);
+```
+
+`src/input/components/Toggle.module.scss`
+
+```scss
+.root {
+  background: var(--t-background-quaternary);
+  border-radius: var(--t-border-radius-pill);
+  transition: background var(--t-animation-duration-fast) ease;
+
+  &[data-checked] { background: var(--t-color-blue); }
+  &[data-disabled] { opacity: 0.32; cursor: not-allowed; }
+}
+
+.thumb {
+  background: var(--t-background-primary);
+  border-radius: 50%;
+  transition: translate var(--t-animation-duration-fast) ease;
+
+  .root[data-checked] & { translate: 100% 0; }
+}
+```
