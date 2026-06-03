@@ -239,9 +239,9 @@ describe('syncApplication', () => {
         {
           universalIdentifier: companyFieldId,
           type: FieldMetadataType.TEXT,
-          name: 'industry',
-          label: 'Industry',
-          description: 'The industry of the company',
+          name: 'sector',
+          label: 'Sector',
+          description: 'The sector of the company',
           icon: 'IconBuildingFactory2',
           objectUniversalIdentifier:
             STANDARD_OBJECTS.company.universalIdentifier,
