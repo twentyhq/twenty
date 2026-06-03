@@ -25,7 +25,7 @@ const parseHandles = (value: string): string[] =>
   value
     .split(',')
     .map((handle) => handle.trim())
-    .filter((handle) => !!handle);
+    .filter((handle) => isNonEmptyString(handle));
 
 type SettingsAccountsBlocklistInputProps = {
   updateBlockedEmailList: (emails: string[]) => void;
