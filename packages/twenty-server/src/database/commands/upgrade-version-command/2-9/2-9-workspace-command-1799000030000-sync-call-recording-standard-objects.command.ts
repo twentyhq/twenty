@@ -19,6 +19,7 @@ import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
+import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -30,6 +31,7 @@ import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
 import { type FlatCommandMenuItem } from 'src/engine/metadata-modules/flat-command-menu-item/types/flat-command-menu-item.type';
 import {
+  buildNavigationConditionalAvailabilityExpression,
   buildNavigationFlatCommandMenuItem,
   NAVIGATION_COMMAND_UUID_NAMESPACE,
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
@@ -168,12 +170,17 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
     applicationId,
     workspaceId,
     now,
+    renamedCollisionObjectMetadata,
   }: {
     fromMaps: FlatEntityMaps<FlatCommandMenuItem>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     applicationId: string;
     workspaceId: string;
     now: string;
+    renamedCollisionObjectMetadata?: {
+      universalIdentifier: string;
+      nameSingular: string;
+    };
   }): FlatEntityMaps<FlatCommandMenuItem> {
     let toMaps = fromMaps;
     let nextPosition =
@@ -222,6 +229,31 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
         }),
         flatEntityMaps: toMaps,
       });
+    }
+
+    if (isDefined(renamedCollisionObjectMetadata)) {
+      const renamedNavigationCommandMenuItemUniversalIdentifier = v5(
+        renamedCollisionObjectMetadata.universalIdentifier,
+        NAVIGATION_COMMAND_UUID_NAMESPACE,
+      );
+      const staleNavigationCommandMenuItem =
+        toMaps.byUniversalIdentifier[
+          renamedNavigationCommandMenuItemUniversalIdentifier
+        ];
+
+      if (isDefined(staleNavigationCommandMenuItem)) {
+        toMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
+          flatEntity: {
+            ...staleNavigationCommandMenuItem,
+            conditionalAvailabilityExpression:
+              buildNavigationConditionalAvailabilityExpression(
+                renamedCollisionObjectMetadata.nameSingular,
+              ),
+            updatedAt: now,
+          },
+          flatEntityMaps: toMaps,
+        });
+      }
     }
 
     return toMaps;
@@ -273,6 +305,10 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       'featureFlagsMap',
     ]);
 
+    let renamedCollisionObjectMetadata:
+      | { universalIdentifier: string; nameSingular: string }
+      | undefined;
+
     const collidingCustomObject = findCollidingCustomCallRecordingObject(
       flatObjectMetadataMaps,
     );
@@ -303,6 +339,11 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
         this.logger.log(
           `Renamed colliding custom object to '${nameSingular}' for workspace ${workspaceId}`,
         );
+
+        renamedCollisionObjectMetadata = {
+          universalIdentifier: collidingCustomObject.universalIdentifier,
+          nameSingular,
+        };
 
         ({ flatObjectMetadataMaps } =
           await this.workspaceCacheService.getOrRecompute(workspaceId, [
@@ -461,6 +502,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
         applicationId: twentyStandardFlatApplication.id,
         workspaceId,
         now,
+        renamedCollisionObjectMetadata,
       });
 
     const newEntityCount = [

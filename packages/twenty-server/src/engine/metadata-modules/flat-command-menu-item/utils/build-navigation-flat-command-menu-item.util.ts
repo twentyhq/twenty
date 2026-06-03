@@ -25,6 +25,18 @@ const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR: Partial<
     FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
 };
 
+export const buildNavigationConditionalAvailabilityExpression = (
+  nameSingular: string,
+): string => {
+  const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${nameSingular}`;
+  const featureFlagGate =
+    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR[nameSingular];
+
+  return isDefined(featureFlagGate)
+    ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
+    : targetObjectReadPermissionExpression;
+};
+
 export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata,
   commandMenuItemId,
@@ -50,14 +62,10 @@ export const buildNavigationFlatCommandMenuItem = ({
     NAVIGATION_COMMAND_UUID_NAMESPACE,
   );
 
-  const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${objectMetadata.nameSingular}`;
-  const featureFlagGate =
-    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR[
-      objectMetadata.nameSingular
-    ];
-  const conditionalAvailabilityExpression = isDefined(featureFlagGate)
-    ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
-    : targetObjectReadPermissionExpression;
+  const conditionalAvailabilityExpression =
+    buildNavigationConditionalAvailabilityExpression(
+      objectMetadata.nameSingular,
+    );
 
   return {
     id: commandMenuItemId,

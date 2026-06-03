@@ -3,6 +3,7 @@ import { v5 } from 'uuid';
 import { CommandMenuItemAvailabilityType } from 'src/engine/metadata-modules/command-menu-item/enums/command-menu-item-availability-type.enum';
 import { EngineComponentKey } from 'src/engine/metadata-modules/command-menu-item/enums/engine-component-key.enum';
 import {
+  buildNavigationConditionalAvailabilityExpression,
   buildNavigationFlatCommandMenuItem,
   NAVIGATION_INTERPOLATED_ICON,
   NAVIGATION_INTERPOLATED_LABEL,
@@ -146,5 +147,27 @@ describe('buildNavigationFlatCommandMenuItem', () => {
 
     expect(result.createdAt).toBe('2026-01-01T00:00:00.000Z');
     expect(result.updatedAt).toBe('2026-01-01T00:00:00.000Z');
+  });
+});
+
+describe('buildNavigationConditionalAvailabilityExpression', () => {
+  it('gates feature-flagged objects behind both the flag and read permission', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression('callRecording'),
+    ).toBe(
+      'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
+    );
+  });
+
+  it('returns only the read-permission expression for non-gated objects', () => {
+    expect(buildNavigationConditionalAvailabilityExpression('person')).toBe(
+      'targetObjectReadPermissions.person',
+    );
+  });
+
+  it('does not gate a collision-renamed callRecordingOld object', () => {
+    expect(
+      buildNavigationConditionalAvailabilityExpression('callRecordingOld2'),
+    ).toBe('targetObjectReadPermissions.callRecordingOld2');
   });
 });
