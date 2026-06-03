@@ -8863,7 +8863,6 @@ msgstr "Недійсна електронна адреса"
 
 #. js-lingui-id: /m52AE
 #: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
-#: src/modules/settings/accounts/components/SettingsAccountsBlocklistInput.tsx
 msgid "Invalid email or domain"
 msgstr "Недійсна електронна адреса або домен"
 
