@@ -4,7 +4,7 @@ import {
   type ObjectsPermissions,
   type ObjectsPermissionsByRoleId,
 } from 'twenty-shared/types';
-import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 import { z } from 'zod';
 
@@ -28,7 +28,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
+import { getActiveNonWorkflowFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-active-non-workflow-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -89,17 +89,11 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const allFlatObjects = Object.values(
+    const allFlatObjects = getActiveNonWorkflowFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((obj) => obj.isActive);
+    );
 
     for (const flatObject of allFlatObjects) {
-      if (isWorkflowRelatedObject(flatObject)) {
-        continue;
-      }
-
       const permission = objectPermissions[flatObject.id];
 
       if (!permission) {

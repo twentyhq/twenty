@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
-import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 
 import { buildMcpServerInstructions } from 'src/engine/api/mcp/utils/build-mcp-server-instructions.util';
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
+import { getActiveNonWorkflowFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-active-non-workflow-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -23,11 +23,9 @@ export class McpInstructionBuilderService {
       this.skillService.findAllFlatSkills(workspaceId),
     ]);
 
-    const objectNames = Object.values(
+    const objectNames = getActiveNonWorkflowFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
-      .filter((obj) => obj.isActive && !isWorkflowRelatedObject(obj))
       .map((obj) => camelToSnakeCase(obj.namePlural))
       .sort()
       .join(', ');

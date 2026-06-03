@@ -1,8 +1,8 @@
 import { z } from 'zod';
 
-import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
+import { camelToSnakeCase } from 'twenty-shared/utils';
 
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
+import { getActiveNonWorkflowFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-active-non-workflow-flat-objects.util';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 export const LIST_OBJECT_METADATA_NAMES_TOOL_NAME =
@@ -29,11 +29,9 @@ export const createListObjectMetadataNamesTool = (
         flatMapsKeys: ['flatObjectMetadataMaps'],
       });
 
-    const objectNames = Object.values(
+    const objectNames = getActiveNonWorkflowFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
-      .filter(isDefined)
-      .filter((obj) => obj.isActive && !isWorkflowRelatedObject(obj))
       .map((obj) => camelToSnakeCase(obj.namePlural))
       .sort();
 
