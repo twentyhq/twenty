@@ -55462,6 +55462,7 @@ __metadata:
     ts-node: "npm:10.9.1"
     tsconfig-paths: "npm:^4.2.0"
     tsdav: "npm:^2.2.0"
+    tslib: "npm:2.8.1"
     twenty-client-sdk: "workspace:*"
     twenty-emails: "workspace:*"
     twenty-shared: "workspace:*"
