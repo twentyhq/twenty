@@ -70,6 +70,7 @@
   },
   "license": "AGPL-3.0",
   "dependencies": {
+    "@genql/runtime": "^2.10.0",
     "@sniptt/guards": "^0.2.0",
     "axios": "^1.13.5",
     "chalk": "^5.3.0",
@@ -91,7 +92,6 @@
   },
   "devDependencies": {
     "@genql/cli": "^3.0.3",
-    "@genql/runtime": "^2.10.0",
     "@prettier/sync": "^0.5.2",
     "@types/inquirer": "^9.0.0",
     "@types/node": "^24.0.0",
