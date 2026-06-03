@@ -25,7 +25,7 @@ export const HERO_CURSORS: HeroCursorConfig[] = [
 const GLIDE_BASE_MS = 500;
 const GLIDE_MS_PER_PX = 0.55;
 const GLIDE_MIN_MS = 620;
-const GLIDE_MAX_MS = 960;
+const GLIDE_MAX_MS = 1000;
 const GLIDE_SKIP_PX = 6;
 
 const ROW_X_OFFSET_PX = 80;
@@ -98,6 +98,8 @@ const Label = styled.span<{ $color: string }>`
   width: fit-content;
 `;
 
+const HOME_TARGET: CursorTarget = { kind: 'home' };
+
 type ProductHeroCursorProps = {
   clicking: boolean;
   color: string;
@@ -105,7 +107,7 @@ type ProductHeroCursorProps = {
   hidden: boolean;
   home: Coordinate;
   name: string;
-  target: CursorTarget;
+  target?: CursorTarget;
 };
 
 export function ProductHeroCursor({
@@ -115,7 +117,7 @@ export function ProductHeroCursor({
   hidden,
   home,
   name,
-  target,
+  target = HOME_TARGET,
 }: ProductHeroCursorProps) {
   const overlayRef = useRef<HTMLDivElement>(null);
   const [coordinate, setCoordinate] = useState<Coordinate>(home);

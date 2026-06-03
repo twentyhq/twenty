@@ -8,18 +8,15 @@ export type CursorTarget =
   | { kind: 'rail'; id: string }
   | { kind: 'tab'; id: string };
 
-export type CursorState = {
+export type ProductHeroTourState = {
+  activeCursor: number;
   clicking: boolean;
   glideMs?: number;
   hidden: boolean;
-  target: CursorTarget;
-};
-
-export type ProductHeroTourState = {
-  cursors: CursorState[];
   pageItemId: string;
   recordTab?: string;
   showRecord: boolean;
+  target: CursorTarget;
 };
 
 type TourPhase = {
@@ -39,8 +36,7 @@ const PEOPLE = 'people';
 const NOTES = 'notes';
 const RECORD_ROW_ID = 'anthropic';
 
-export const CURSOR_COUNT = 3;
-const LOOP_START_INDEX = 1;
+const LOOP_START_INDEX = 0;
 
 const PHASES: TourPhase[] = [
   {
@@ -50,7 +46,7 @@ const PHASES: TourPhase[] = [
     target: { kind: 'home' },
     clicking: false,
     hidden: false,
-    durationMs: 1000,
+    durationMs: 1400,
   },
   {
     activeCursor: 0,
@@ -59,7 +55,6 @@ const PHASES: TourPhase[] = [
     target: { kind: 'row', id: RECORD_ROW_ID },
     clicking: false,
     hidden: false,
-    glideMs: 950,
     durationMs: 1000,
   },
   {
@@ -76,10 +71,20 @@ const PHASES: TourPhase[] = [
     pageItemId: COMPANIES,
     showRecord: true,
     recordTab: 'Timeline',
+    target: { kind: 'home' },
+    clicking: false,
+    hidden: false,
+    durationMs: 800,
+  },
+  {
+    activeCursor: 1,
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Timeline',
     target: { kind: 'tab', id: 'Notes' },
     clicking: false,
     hidden: false,
-    durationMs: 1700,
+    durationMs: 900,
   },
   {
     activeCursor: 1,
@@ -89,7 +94,17 @@ const PHASES: TourPhase[] = [
     target: { kind: 'tab', id: 'Notes' },
     clicking: true,
     hidden: false,
-    durationMs: 900,
+    durationMs: 450,
+  },
+  {
+    activeCursor: 2,
+    pageItemId: COMPANIES,
+    showRecord: true,
+    recordTab: 'Notes',
+    target: { kind: 'home' },
+    clicking: false,
+    hidden: false,
+    durationMs: 800,
   },
   {
     activeCursor: 2,
@@ -99,7 +114,7 @@ const PHASES: TourPhase[] = [
     target: { kind: 'tab', id: 'Calendar' },
     clicking: false,
     hidden: false,
-    durationMs: 800,
+    durationMs: 750,
   },
   {
     activeCursor: 2,
@@ -174,7 +189,7 @@ const PHASES: TourPhase[] = [
     target: { kind: 'rail', id: COMPANIES },
     clicking: false,
     hidden: false,
-    durationMs: 800,
+    durationMs: 1100,
   },
   {
     activeCursor: 2,
@@ -209,27 +224,14 @@ export function useProductHeroCursorAutoplay(
 
   const phase = PHASES[phaseIndex];
 
-  const cursors: CursorState[] = Array.from(
-    { length: CURSOR_COUNT },
-    (_, index) =>
-      index === phase.activeCursor
-        ? {
-            clicking: phase.clicking,
-            glideMs: phase.glideMs,
-            hidden: phase.hidden,
-            target: phase.target,
-          }
-        : {
-            clicking: false,
-            hidden: false,
-            target: { kind: 'home' },
-          },
-  );
-
   return {
-    cursors,
+    activeCursor: phase.activeCursor,
+    clicking: phase.clicking,
+    glideMs: phase.glideMs,
+    hidden: phase.hidden,
     pageItemId: phase.pageItemId,
     recordTab: phase.recordTab,
     showRecord: phase.showRecord,
+    target: phase.target,
   };
 }

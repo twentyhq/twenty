@@ -575,22 +575,18 @@ export function ProductVisual({
     collaborative && cursorLayer
       ? createPortal(
           HERO_CURSORS.map((cursorConfig, index) => {
-            const cursorState = heroCursor.cursors[index];
-
-            if (cursorState === undefined) {
-              return null;
-            }
+            const isActive = index === heroCursor.activeCursor;
 
             return (
               <ProductHeroCursor
                 key={cursorConfig.name}
-                clicking={cursorState.clicking}
+                clicking={isActive && heroCursor.clicking}
                 color={cursorConfig.color}
-                glideMs={cursorState.glideMs}
-                hidden={cursorState.hidden}
+                glideMs={isActive ? heroCursor.glideMs : undefined}
+                hidden={isActive && heroCursor.hidden}
                 home={cursorConfig.home}
                 name={cursorConfig.name}
-                target={cursorState.target}
+                target={isActive ? heroCursor.target : undefined}
               />
             );
           }),
