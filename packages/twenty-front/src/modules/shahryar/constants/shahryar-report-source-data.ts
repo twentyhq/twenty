@@ -12,7 +12,7 @@ export const SHAHRYAR_REPORT_INPUT: ShahryarReportInput = {
       { id: '20202020-0687-4c41-b707-ed1bfca972a7', name: 'کاروان' },
       { id: '20202020-77d5-4cb6-b60a-f4a835a85d61', name: 'هەڵۆ' },
       { id: '20202020-1553-45c6-a028-5a9064cce07f', name: 'بەهروز' },
-      { id: '20202020-463f-435b-828c-107e007a2711', name: 'تەدمین' },
+      { id: '20202020-463f-435b-828c-107e007a2711', name: 'ئەدمین' },
     ],
     markets: [
       {

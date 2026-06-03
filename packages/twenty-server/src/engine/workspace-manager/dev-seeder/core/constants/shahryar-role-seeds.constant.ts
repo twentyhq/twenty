@@ -2,6 +2,7 @@ import {
   SHAHRYAR_ABSENCE_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MARKET_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED,
+  SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_PAYMENT_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_PENALTY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_VISIT_CUSTOM_OBJECT_SEED,
@@ -9,7 +10,7 @@ import {
 } from 'src/engine/workspace-manager/dev-seeder/metadata/custom-objects/constants/shahryar-custom-object-seeds.constant';
 
 export const SHAHRYAR_ADMIN_ROLE_SEED = {
-  label: 'تەدمین',
+  label: 'ئەدمین',
   description: 'Shahryar administrator with full operational access',
   icon: 'IconUserCog',
   canUpdateAllSettings: true,
@@ -88,6 +89,13 @@ export const SHAHRYAR_SUPERVISOR_OBJECT_PERMISSION_SEEDS = [
     canSoftDeleteObjectRecords: false,
     canDestroyObjectRecords: false,
   },
+  {
+    objectName: SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED.nameSingular,
+    canReadObjectRecords: true,
+    canUpdateObjectRecords: false,
+    canSoftDeleteObjectRecords: false,
+    canDestroyObjectRecords: false,
+  },
 ] as const;
 
 export const SHAHRYAR_SUPERVISOR_ROW_LEVEL_PERMISSION_SEEDS = [
@@ -118,5 +126,9 @@ export const SHAHRYAR_SUPERVISOR_ROW_LEVEL_PERMISSION_SEEDS = [
   {
     objectName: SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED.nameSingular,
     ownerFieldName: 'registeredBy',
+  },
+  {
+    objectName: SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED.nameSingular,
+    ownerFieldName: 'supervisor',
   },
 ] as const;

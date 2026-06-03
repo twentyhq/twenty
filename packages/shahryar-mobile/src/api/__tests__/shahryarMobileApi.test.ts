@@ -39,10 +39,29 @@ const pendingQueueItem = {
   }),
   lastSyncedAt: '2026-06-01T09:10:00.000Z',
 };
+const paymentQueueItem = {
+  localId: 'local-payment-1',
+  recordKind: 'payment',
+  status: 'pending',
+  draft: {
+    recordKind: 'payment',
+    localId: 'local-payment-1',
+    marketId: 'market-1',
+    collectedById: 'supervisor-1',
+    amount: 250,
+    paidAt: '2026-06-01',
+    status: 'PARTIAL',
+    notes: 'Partial payment',
+    updatedAt: '2026-06-01T09:35:00.000Z',
+  },
+  createdAt: '2026-06-01T09:35:00.000Z',
+  updatedAt: '2026-06-01T09:35:00.000Z',
+} as const;
 
 const syncChange = buildVisitSyncChangeFromQueueItem(pendingQueueItem);
 
 assert.deepEqual(syncChange, {
+  recordKind: 'visit',
   localId: 'local-visit-1',
   serverId: 'server-visit-1',
   operation: 'update',
@@ -68,6 +87,7 @@ const request = buildMobileSyncRequest({
   deviceId: 'ios-device-1',
   queue: [
     pendingQueueItem,
+    paymentQueueItem,
     {
       ...pendingQueueItem,
       localId: 'synced-local-visit',
@@ -77,8 +97,23 @@ const request = buildMobileSyncRequest({
 });
 
 assert.equal(request.deviceId, 'ios-device-1');
-assert.equal(request.changes.length, 1);
+assert.equal(request.changes.length, 2);
 assert.equal(request.changes[0].localId, 'local-visit-1');
+assert.deepEqual(request.changes[1], {
+  recordKind: 'payment',
+  localId: 'local-payment-1',
+  serverId: undefined,
+  operation: 'create',
+  marketId: 'market-1',
+  collectedById: 'supervisor-1',
+  amount: 250,
+  dueDate: undefined,
+  paidAt: '2026-06-01',
+  status: 'PARTIAL',
+  notes: 'Partial payment',
+  baseServerUpdatedAt: undefined,
+  clientUpdatedAt: '2026-06-01T09:35:00.000Z',
+});
 
 const calls: Array<{ url: string; init?: RequestInit }> = [];
 
@@ -120,8 +155,6 @@ globalThis.fetch = (async (url, init) => {
   }
 
   if (String(url).endsWith('/graphql')) {
-    const body = getRequestBody(init);
-
     if (typeof init?.body !== 'string') {
       return new Response(
         JSON.stringify({
@@ -134,31 +167,14 @@ globalThis.fetch = (async (url, init) => {
         { status: 200 },
       );
     }
+  }
 
-    if (body.query?.includes('GetLoginTokenFromCredentials') === true) {
-      return new Response(
-        JSON.stringify({
-          data: {
-            getLoginTokenFromCredentials: {
-              loginToken: {
-                token: 'login-token',
-              },
-            },
-          },
-        }),
-        { status: 200 },
-      );
-    }
-
+  if (String(url).endsWith('/rest/shahryar/mobile/auth/login')) {
     return new Response(
       JSON.stringify({
-        data: {
-          getAuthTokensFromLoginToken: {
-            tokens: {
-              accessOrWorkspaceAgnosticToken: {
-                token: 'access-token-from-login',
-              },
-            },
+        tokens: {
+          accessOrWorkspaceAgnosticToken: {
+            token: 'access-token-from-login',
           },
         },
       }),
@@ -174,6 +190,7 @@ globalThis.fetch = (async (url, init) => {
         currentSupervisorId: 'supervisor-1',
         assignedMarkets: [],
         serverVisits: [],
+        serverRecords: [],
       }),
       { status: 200 },
     );
@@ -210,6 +227,7 @@ globalThis.fetch = (async (url, init) => {
       acceptedChanges: [
         {
           localId: 'local-visit-1',
+          recordKind: 'visit',
           serverId: 'server-visit-1',
           operation: 'update',
           acceptedAt: '2026-06-01T10:00:00.000Z',
@@ -230,16 +248,14 @@ const runApiTests = async () => {
   });
 
   assert.equal(accessToken, 'access-token-from-login');
-  assert.equal(calls[0].url, 'https://api.example.test/graphql');
-  assert.deepEqual(getRequestBody(calls[0].init).variables, {
-    email: 'karwan',
+  assert.equal(
+    calls[0].url,
+    'https://api.example.test/rest/shahryar/mobile/auth/login',
+  );
+  assert.deepEqual(JSON.parse(String(calls[0].init?.body)), {
+    origin: 'https://api.example.test',
     password: 'password',
-    origin: 'https://api.example.test',
-  });
-  assert.equal(calls[1].url, 'https://api.example.test/graphql');
-  assert.deepEqual(getRequestBody(calls[1].init).variables, {
-    loginToken: 'login-token',
-    origin: 'https://api.example.test',
+    username: 'karwan',
   });
   calls.length = 0;
 
@@ -254,6 +270,7 @@ const runApiTests = async () => {
     deviceId: 'ios-device-1',
     changes: [
       {
+        recordKind: 'visit',
         localId: 'local-visit-1',
         serverId: 'server-visit-1',
         operation: 'update',

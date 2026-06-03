@@ -239,7 +239,7 @@ export const SHAHRYAR_SUPERVISOR_VISIT_DATA_SEEDS: ShahryarSupervisorVisitDataSe
       soldCartons: 18,
       requestedCartons: 4,
       issue: 'هیچ کێشەیەکی گرنگ نییە.',
-      decisionMaker: 'تەدمین',
+      decisionMaker: 'ئەدمین',
       requestDetails: '4 کارتۆنی تر بۆ سبەی.',
       report: 'سەردان تەواو بوو، پارەدان کرا.',
       notes: 'پارەدان کرا و داواکاری نوێ تۆمار کرا.',
@@ -255,7 +255,7 @@ export const SHAHRYAR_SUPERVISOR_VISIT_DATA_SEEDS: ShahryarSupervisorVisitDataSe
       soldCartons: 11,
       requestedCartons: 8,
       issue: 'قەرز ماوە.',
-      decisionMaker: 'تەدمین',
+      decisionMaker: 'ئەدمین',
       requestDetails: 'بەدواداچوونی پارەدان و 8 کارتۆنی نوێ.',
       report: 'فرۆشتن مامناوەندە و قەرز پێویستی بە چارەسەر هەیە.',
       notes: 'قەرز ماوە و پێویستی بە بەدواداچوون هەیە.',
@@ -314,7 +314,7 @@ export const SHAHRYAR_WORKING_TIME_DATA_SEEDS: ShahryarWorkingTimeDataSeed[] = [
   },
   {
     id: '20202020-0301-4000-8000-000000000004',
-    name: 'تەدمین - 2026-06-01',
+    name: 'ئەدمین - 2026-06-01',
     supervisorId: WORKSPACE_MEMBER_DATA_SEED_IDS.JANE,
     workDate: new Date('2026-06-01').toISOString(),
     checkInAt: new Date('2026-06-01T08:50:00.000Z').toISOString(),
@@ -359,7 +359,7 @@ export const SHAHRYAR_SUPERVISOR_PENALTY_DATA_SEEDS: ShahryarSupervisorPenaltyDa
       reason: 'ڕاپۆرت نەهات',
       amount: 25000,
       penaltyDate: new Date('2026-06-01').toISOString(),
-      decidedBy: 'تەدمین',
+      decidedBy: 'ئەدمین',
     },
     {
       id: '20202020-0501-4000-8000-000000000002',
@@ -368,7 +368,7 @@ export const SHAHRYAR_SUPERVISOR_PENALTY_DATA_SEEDS: ShahryarSupervisorPenaltyDa
       reason: 'سەردان نەکرا',
       amount: 40000,
       penaltyDate: new Date('2026-05-30').toISOString(),
-      decidedBy: 'تەدمین',
+      decidedBy: 'ئەدمین',
     },
   ];
 

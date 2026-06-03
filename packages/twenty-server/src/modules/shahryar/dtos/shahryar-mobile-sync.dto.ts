@@ -13,6 +13,7 @@ import {
 
 import {
   type ShahryarGeoLocation,
+  type ShahryarMobileRecordKind,
   type ShahryarMobileNotificationRegistrationRequest,
   type ShahryarMobileNotificationRegistrationResponse,
   type ShahryarMobilePhotoAssociationRequest,
@@ -23,7 +24,7 @@ import {
   type ShahryarMobileSyncRejectedChange,
   type ShahryarMobileSyncRequest,
   type ShahryarMobileSyncResponse,
-  type ShahryarMobileVisitSyncChange,
+  type ShahryarServerRecordSnapshot,
   type ShahryarServerVisitSnapshot,
   type ShahryarVisitSyncOperation,
 } from 'twenty-shared/shahryar';
@@ -40,7 +41,11 @@ export class ShahryarGeoLocationDTO implements ShahryarGeoLocation {
   longitude: number;
 }
 
-export class ShahryarMobileVisitSyncChangeDTO implements ShahryarMobileVisitSyncChange {
+export class ShahryarMobileSyncChangeDTO {
+  @IsOptional()
+  @IsIn(['visit', 'working-time', 'payment', 'absence'])
+  recordKind?: ShahryarMobileRecordKind;
+
   @IsString()
   localId: string;
 
@@ -51,28 +56,35 @@ export class ShahryarMobileVisitSyncChangeDTO implements ShahryarMobileVisitSync
   @IsIn(['create', 'update'])
   operation: ShahryarVisitSyncOperation;
 
+  @IsOptional()
   @IsString()
-  assignedMarketId: string;
+  assignedMarketId?: string;
 
+  @IsOptional()
   @IsString()
-  supervisorId: string;
+  supervisorId?: string;
 
+  @IsOptional()
   @IsString()
-  checkInAt: string;
+  checkInAt?: string;
 
+  @IsOptional()
   @ValidateNested()
   @Type(() => ShahryarGeoLocationDTO)
-  gpsLocation: ShahryarGeoLocationDTO;
+  gpsLocation?: ShahryarGeoLocationDTO;
 
+  @IsOptional()
   @IsArray()
   @IsUUID('4', { each: true })
-  photoFileIds: string[];
+  photoFileIds?: string[];
 
+  @IsOptional()
   @IsNumber()
-  soldCartons: number;
+  soldCartons?: number;
 
+  @IsOptional()
   @IsNumber()
-  requestedCartons: number;
+  requestedCartons?: number;
 
   @IsOptional()
   @IsString()
@@ -86,8 +98,61 @@ export class ShahryarMobileVisitSyncChangeDTO implements ShahryarMobileVisitSync
   @IsString()
   requestDetails?: string;
 
+  @IsOptional()
   @IsString()
-  report: string;
+  report?: string;
+
+  @IsOptional()
+  @IsString()
+  workDate?: string;
+
+  @IsOptional()
+  @IsString()
+  checkOutAt?: string;
+
+  @IsOptional()
+  @IsNumber()
+  totalMinutes?: number;
+
+  @IsOptional()
+  @IsString()
+  marketId?: string;
+
+  @IsOptional()
+  @IsString()
+  collectedById?: string;
+
+  @IsOptional()
+  @IsNumber()
+  amount?: number;
+
+  @IsOptional()
+  @IsString()
+  dueDate?: string;
+
+  @IsOptional()
+  @IsString()
+  paidAt?: string;
+
+  @IsOptional()
+  @IsIn(['PRESENT', 'LATE', 'ABSENT', 'CLOSED', 'OPEN', 'PARTIAL'])
+  status?: 'PRESENT' | 'LATE' | 'ABSENT' | 'CLOSED' | 'OPEN' | 'PARTIAL';
+
+  @IsOptional()
+  @IsString()
+  notes?: string;
+
+  @IsOptional()
+  @IsString()
+  absenceDate?: string;
+
+  @IsOptional()
+  @IsString()
+  workingTime?: string;
+
+  @IsOptional()
+  @IsIn(['ABSENT', 'LATE', 'NO_WORK'])
+  reason?: 'ABSENT' | 'LATE' | 'NO_WORK';
 
   @IsOptional()
   @IsString()
@@ -97,12 +162,23 @@ export class ShahryarMobileVisitSyncChangeDTO implements ShahryarMobileVisitSync
   clientUpdatedAt: string;
 }
 
+export class ShahryarMobileVisitSyncChangeDTO extends ShahryarMobileSyncChangeDTO {}
+
 export class ShahryarServerVisitSnapshotDTO implements ShahryarServerVisitSnapshot {
   id: string;
   updatedAt: string;
 }
 
-export class ShahryarMobileSyncRequestDTO implements ShahryarMobileSyncRequest {
+export class ShahryarServerRecordSnapshotDTO implements ShahryarServerRecordSnapshot {
+  id: string;
+  recordKind: ShahryarMobileRecordKind;
+  updatedAt: string;
+}
+
+export class ShahryarMobileSyncRequestDTO implements Omit<
+  ShahryarMobileSyncRequest,
+  'changes'
+> {
   @IsString()
   deviceId: string;
 
@@ -112,12 +188,13 @@ export class ShahryarMobileSyncRequestDTO implements ShahryarMobileSyncRequest {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ShahryarMobileVisitSyncChangeDTO)
-  changes: ShahryarMobileVisitSyncChangeDTO[];
+  @Type(() => ShahryarMobileSyncChangeDTO)
+  changes: ShahryarMobileSyncChangeDTO[];
 }
 
 export class ShahryarMobileSyncAcceptedChangeDTO implements ShahryarMobileSyncAcceptedChange {
   localId: string;
+  recordKind: ShahryarMobileRecordKind;
   serverId?: string;
   operation: ShahryarVisitSyncOperation;
   acceptedAt: string;
@@ -126,6 +203,7 @@ export class ShahryarMobileSyncAcceptedChangeDTO implements ShahryarMobileSyncAc
 export class ShahryarMobileSyncConflictDTO implements ShahryarMobileServerSyncConflict {
   localId: string;
   serverId: string;
+  recordKind: ShahryarMobileRecordKind;
   reason: 'server-newer';
   clientUpdatedAt: string;
   serverUpdatedAt: string;
@@ -133,10 +211,14 @@ export class ShahryarMobileSyncConflictDTO implements ShahryarMobileServerSyncCo
 
 export class ShahryarMobileSyncRejectedChangeDTO implements ShahryarMobileSyncRejectedChange {
   localId: string;
+  recordKind?: ShahryarMobileRecordKind;
   reason:
+    | 'invalid-amount'
     | 'invalid-carton-count'
+    | 'invalid-duration'
     | 'invalid-timestamp'
     | 'missing-server-id'
+    | 'missing-required-field'
     | 'unauthorized-supervisor';
 }
 
@@ -154,6 +236,7 @@ export class ShahryarMobileSyncPullResponseDTO implements ShahryarMobileSyncPull
   currentSupervisorId?: string;
   assignedMarkets: ShahryarMobileSyncPullResponse['assignedMarkets'];
   serverVisits: ShahryarServerVisitSnapshotDTO[];
+  serverRecords: ShahryarServerRecordSnapshotDTO[];
 }
 
 export class ShahryarMobilePhotoAssociationRequestDTO implements ShahryarMobilePhotoAssociationRequest {

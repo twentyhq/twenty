@@ -33,6 +33,7 @@ import {
   type TriggerEventType,
   useMouseDownNavigation,
 } from 'twenty-ui/utilities';
+import { useIsRtl } from '~/utils/i18n/useIsRtl';
 const DEFAULT_INDENTATION_LEVEL = 1;
 
 export type NavigationDrawerItemIndentationLevel = 1 | 2;
@@ -117,11 +118,11 @@ const StyledItem = styled.button<StyledItemProps>`
     indentationLevel === 2 ? '2px' : '0'};
   min-width: 0;
   padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${({ hasRightOptions }) =>
+  padding-inline-end: ${({ hasRightOptions }) =>
     hasRightOptions
       ? themeCssVariables.spacing['0.5']
       : themeCssVariables.spacing[1]};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
   padding-top: ${themeCssVariables.spacing[1]};
   pointer-events: ${({ isSoon }) => (isSoon ? 'none' : 'auto')};
   text-decoration: none;
@@ -203,7 +204,7 @@ const StyledIcon = styled.div`
   flex-grow: 0;
   flex-shrink: 0;
   justify-content: center;
-  margin-right: ${themeCssVariables.spacing[2]};
+  margin-inline-end: ${themeCssVariables.spacing[2]};
 `;
 
 // Soft grey background-only tile (no border) used by the settings drawer.
@@ -237,7 +238,7 @@ const StyledRightOptionsVisbility = styled.div`
   height: 1px;
   opacity: 0;
   overflow: hidden;
-  padding-left: ${themeCssVariables.spacing[2]};
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   position: absolute;
   transition: opacity 150ms;
   white-space: nowrap;
@@ -280,6 +281,7 @@ export const NavigationDrawerItem = ({
   const { theme } = useContext(ThemeContext);
   const isMobile = useIsMobile();
   const isExpanded = useNavigationDrawerExpanded();
+  const isRtl = useIsRtl();
   const setIsNavigationDrawerExpanded = useSetAtomState(
     isNavigationDrawerExpandedState,
   );
@@ -471,7 +473,7 @@ export const NavigationDrawerItem = ({
         <AppTooltip
           anchorSelect={`#${navigationItemId}`}
           content={label}
-          place={TooltipPosition.Right}
+          place={isRtl ? TooltipPosition.Left : TooltipPosition.Right}
           delay={TooltipDelay.noDelay}
           positionStrategy="fixed"
         />

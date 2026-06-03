@@ -15,10 +15,9 @@ const StyledTitle = styled.div`
   display: flex;
   height: ${themeCssVariables.spacing[5]};
   justify-content: space-between;
-  padding-bottom: ${themeCssVariables.spacing[1]};
-  padding-left: ${themeCssVariables.spacing[1]};
-  padding-right: ${themeCssVariables.spacing['0.5']};
-  padding-top: ${themeCssVariables.spacing[1]};
+  padding-block: ${themeCssVariables.spacing[1]};
+  padding-inline-end: ${themeCssVariables.spacing['0.5']};
+  padding-inline-start: ${themeCssVariables.spacing[1]};
 
   &:hover {
     background-color: ${themeCssVariables.background.transparent.light};
@@ -86,12 +85,18 @@ export const NavigationDrawerSectionTitle = ({
     isNavigationDrawerExpandedState,
   );
   const isSettingsPage = useIsSettingsPage();
+  const shouldHideCollapsedTitle =
+    !isMobile && !isSettingsPage && !isNavigationDrawerExpanded;
   const handleTitleClick = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation();
     if (isDefined(onClick) && (isNavigationDrawerExpanded || isSettingsPage)) {
       onClick();
     }
   };
+
+  if (shouldHideCollapsedTitle) {
+    return null;
+  }
 
   return (
     <StyledTitle className="section-title-container">

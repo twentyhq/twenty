@@ -7,6 +7,7 @@ import {
   buildShahryarRecordRow,
   buildShahryarRowsByPath,
   getDefaultShahryarRecordFormValues,
+  toShahryarPhotoCountLabel,
 } from '@/shahryar/utils/shahryarRecordSectionUtils';
 
 const findSectionOrThrow = (path: string) => {
@@ -67,7 +68,7 @@ describe('shahryarRecordSectionUtils', () => {
           visitPhoto: 'visit.jpg',
           soldCartons: '12',
           issue: 'قەرز ماوە',
-          decisionMaker: 'تەدمین',
+          decisionMaker: 'ئەدمین',
           requestDetails: '4 کارتۆن',
           report: 'سەردان تەواو بوو',
         },
@@ -80,10 +81,49 @@ describe('shahryarRecordSectionUtils', () => {
       'visit.jpg',
       '12',
       'قەرز ماوە',
-      'تەدمین',
+      'ئەدمین',
       '4 کارتۆن',
       'سەردان تەواو بوو',
     ]);
+  });
+
+  it('uses uploaded photo counts when building rows after file association', () => {
+    const visitSection = findSectionOrThrow(
+      SHAHRYAR_APP_PATHS.SupervisorVisits,
+    );
+
+    expect(
+      buildShahryarRecordRow({
+        photoCounts: {
+          visitPhoto: 2,
+        },
+        section: visitSection,
+        values: {
+          supervisor: 'کاروان',
+          market: 'مارکێتی ئارام',
+          checkInAt: '11:15',
+          gpsLocation: '36.191, 44.009',
+          visitPhoto: 'visit.jpg',
+          soldCartons: '12',
+          issue: 'قەرز ماوە',
+          decisionMaker: 'ئەدمین',
+          requestDetails: '4 کارتۆن',
+          report: 'سەردان تەواو بوو',
+        },
+      }),
+    ).toEqual([
+      'کاروان',
+      'مارکێتی ئارام',
+      '11:15',
+      '36.191, 44.009',
+      '2 وێنە',
+      '12',
+      'قەرز ماوە',
+      'ئەدمین',
+      '4 کارتۆن',
+      'سەردان تەواو بوو',
+    ]);
+    expect(toShahryarPhotoCountLabel(0)).toBe('-');
   });
 
   it('keeps initial rows isolated by section path', () => {
@@ -155,7 +195,7 @@ describe('shahryarRecordSectionUtils', () => {
       market: 'مارکێتی ئارام',
       checkInAt: '09:00',
       gpsLocation: '36.191, 44.009',
-      decisionMaker: 'تەدمین',
+      decisionMaker: 'ئەدمین',
     });
   });
 });

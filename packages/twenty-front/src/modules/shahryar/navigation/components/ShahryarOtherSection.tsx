@@ -11,14 +11,14 @@ export const ShahryarOtherSection = () => {
 
   return (
     <NavigationDrawerSection>
-      <NavigationDrawerSectionTitle label="Settings" />
+      <NavigationDrawerSectionTitle label="ڕێکخستنەکان" />
       <NavigationDrawerItem
-        label="Settings"
+        label="ڕێکخستنەکان"
         Icon={IconSettings}
         to={getSettingsPath(SettingsPath.ProfilePage)}
       />
       <NavigationDrawerItem
-        label="Logout"
+        label="چوونەدەرەوە"
         Icon={IconDoorEnter}
         onClick={signOut}
       />

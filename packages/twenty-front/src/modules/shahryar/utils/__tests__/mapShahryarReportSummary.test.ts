@@ -1,5 +1,6 @@
 import { type ShahryarReportApiSummary } from '@/shahryar/types/shahryarReportApi';
 import {
+  mapShahryarReportSummaryToAnalytics,
   mapShahryarReportSummaryToDashboardMetrics,
   mapShahryarReportSummaryToNotifications,
   mapShahryarReportSummaryToRows,
@@ -80,6 +81,61 @@ const summary: ShahryarReportApiSummary = {
       message: 'Missed visit',
     },
   ],
+  analytics: {
+    bestMarkets: [
+      {
+        id: 'market-1',
+        label: 'مارکێتی ئارام',
+        value: 12,
+        secondaryLabel: 'visits',
+        secondaryValue: 2,
+      },
+    ],
+    mostActiveSupervisors: [
+      {
+        id: 'supervisor-1',
+        label: 'Karwan',
+        value: 2,
+        secondaryLabel: 'sold cartons',
+        secondaryValue: 12,
+      },
+    ],
+    districtComparisons: [
+      {
+        district: 'Erbil',
+        activeMarketCount: 2,
+        visitCount: 2,
+        salesCartons: 12,
+        paidAmount: 250000,
+      },
+    ],
+    salesPaymentTrend: [
+      {
+        date: '2026-05',
+        label: '2026-05',
+        visits: 1,
+        salesCartons: 6,
+        requestedCartons: 8,
+        paidAmount: 100000,
+      },
+      {
+        date: '2026-06',
+        label: '2026-06',
+        visits: 2,
+        salesCartons: 12,
+        requestedCartons: 20,
+        paidAmount: 250000,
+      },
+    ],
+    monthlyGrowth: {
+      currentMonthSalesCartons: 12,
+      previousMonthSalesCartons: 6,
+      salesGrowthPercent: 100,
+      currentMonthPaidAmount: 250000,
+      previousMonthPaidAmount: 100000,
+      paymentGrowthPercent: 150,
+    },
+  },
 };
 
 describe('mapShahryarReportSummary', () => {
@@ -162,5 +218,11 @@ describe('mapShahryarReportSummary', () => {
         unit: 'مارکێت',
       }),
     ]);
+  });
+
+  it('maps backend analytics for charts', () => {
+    expect(mapShahryarReportSummaryToAnalytics(summary)).toBe(
+      summary.analytics,
+    );
   });
 });

@@ -9,7 +9,12 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { type ShahryarMobileAssignedMarket } from 'twenty-shared/shahryar';
+import {
+  type ShahryarMobileAssignedMarket,
+  type ShahryarMobileRecordDraft,
+  type ShahryarMobileRecordKind,
+  type ShahryarMobileSyncQueueItem,
+} from 'twenty-shared/shahryar';
 
 import {
   pullShahryarMobileSyncData,
@@ -25,11 +30,14 @@ import {
 } from './src/services/deviceCapabilities';
 import {
   applyOfflineVisitSyncResponse,
-  loadOfflineVisitQueue,
-  saveOfflineVisitDraft,
+  discardOfflineSyncQueueItem,
+  loadOfflineSyncQueue,
+  retryOfflineSyncQueueItem,
+  saveOfflineRecordDraft,
 } from './src/storage/offlineVisitStore';
 import { VisitPhotoCapture } from './src/components/VisitPhotoCapture';
 import { type ShahryarMobileVisitDraft } from './src/sync/mobileSyncQueue';
+import { getOrCreateShahryarMobileDeviceId } from './src/services/deviceIdentity';
 import { shahryarColors } from './src/theme';
 
 const fallbackAssignedMarkets: ShahryarMobileAssignedMarket[] = [
@@ -62,16 +70,38 @@ const fallbackAssignedMarkets: ShahryarMobileAssignedMarket[] = [
 ];
 
 const fallbackSupervisorId = '20202020-0687-4c41-b707-ed1bfca972a7';
-const deviceId = 'shahryar-mobile-dev';
 const defaultApiBaseUrl = 'http://localhost:3000';
+
+const marketDebtStatusLabels: Record<
+  ShahryarMobileAssignedMarket['debtStatus'],
+  string
+> = {
+  open: 'قەرز ماوە',
+  paid: 'پارەدان کراوە',
+  partial: 'بەشێک دراوە',
+};
+
+const recordKindLabels: Record<ShahryarMobileRecordKind, string> = {
+  absence: 'غیاب',
+  payment: 'پارەدان',
+  visit: 'سەردان',
+  'working-time': 'کاتی کار',
+};
 
 const formatMarketGps = (market: ShahryarMobileAssignedMarket): string =>
   `${market.gpsLocation.latitude.toFixed(3)}, ${market.gpsLocation.longitude.toFixed(3)}`;
 
-const countQueueItemsNeedingAttention = async (): Promise<number> => {
-  const queue = await loadOfflineVisitQueue();
+const isQueueItemNeedingAttention = (
+  item: ShahryarMobileSyncQueueItem,
+): boolean =>
+  item.status === 'pending' ||
+  item.status === 'conflict' ||
+  item.status === 'rejected';
 
-  return queue.filter((item) => item.status !== 'synced').length;
+const countQueueItemsNeedingAttention = (
+  queue: ShahryarMobileSyncQueueItem[],
+): number => {
+  return queue.filter(isQueueItemNeedingAttention).length;
 };
 
 export default function App() {
@@ -79,6 +109,7 @@ export default function App() {
   const [password, setPassword] = useState('');
   const [apiBaseUrl, setApiBaseUrl] = useState(defaultApiBaseUrl);
   const [accessToken, setAccessToken] = useState('');
+  const [deviceId, setDeviceId] = useState('');
   const [assignedMarkets, setAssignedMarkets] = useState<
     ShahryarMobileAssignedMarket[]
   >(fallbackAssignedMarkets);
@@ -87,17 +118,36 @@ export default function App() {
   >(fallbackAssignedMarkets[0]);
   const [currentSupervisorId, setCurrentSupervisorId] =
     useState(fallbackSupervisorId);
+  const [marketSearchTerm, setMarketSearchTerm] = useState('');
   const [soldCartons, setSoldCartons] = useState('0');
   const [requestedCartons, setRequestedCartons] = useState('0');
   const [report, setReport] = useState('');
   const [photoLocalUris, setPhotoLocalUris] = useState<string[]>([]);
+  const [workingTimeMinutes, setWorkingTimeMinutes] = useState('480');
+  const [paymentAmount, setPaymentAmount] = useState('0');
+  const [paymentNotes, setPaymentNotes] = useState('');
+  const [absenceReason, setAbsenceReason] = useState<
+    'ABSENT' | 'LATE' | 'NO_WORK'
+  >('ABSENT');
+  const [absenceNotes, setAbsenceNotes] = useState('');
+  const [offlineQueueItems, setOfflineQueueItems] = useState<
+    ShahryarMobileSyncQueueItem[]
+  >([]);
   const [offlineQueueCount, setOfflineQueueCount] = useState(0);
   const [syncStatusMessage, setSyncStatusMessage] = useState(
     'ئامادەیە بۆ کارکردنی ئۆفلاین.',
   );
 
+  const refreshOfflineQueue = async () => {
+    const queue = await loadOfflineSyncQueue();
+
+    setOfflineQueueItems(queue);
+    setOfflineQueueCount(countQueueItemsNeedingAttention(queue));
+  };
+
   useEffect(() => {
-    void countQueueItemsNeedingAttention().then(setOfflineQueueCount);
+    void getOrCreateShahryarMobileDeviceId().then(setDeviceId);
+    void refreshOfflineQueue();
   }, []);
 
   const canSaveVisit = useMemo(
@@ -108,6 +158,24 @@ export default function App() {
     [photoLocalUris.length, report, selectedMarket],
   );
   const isAuthenticated = accessToken.trim().length > 0;
+  const filteredAssignedMarkets = useMemo(() => {
+    const normalizedSearch = marketSearchTerm.trim().toLowerCase();
+
+    if (normalizedSearch.length === 0) {
+      return assignedMarkets;
+    }
+
+    return assignedMarkets.filter((market) =>
+      [
+        market.name,
+        market.ownerName,
+        market.phone,
+        market.address,
+        market.district,
+        marketDebtStatusLabels[market.debtStatus],
+      ].some((value) => value.toLowerCase().includes(normalizedSearch)),
+    );
+  }, [assignedMarkets, marketSearchTerm]);
 
   const refreshAssignedMarkets = async (token: string) => {
     const pullResponse = await pullShahryarMobileSyncData({
@@ -129,7 +197,13 @@ export default function App() {
     );
   };
 
-  const registerNotifications = async (token: string) => {
+  const registerNotifications = async ({
+    token,
+    targetDeviceId,
+  }: {
+    token: string;
+    targetDeviceId: string;
+  }) => {
     const platform = getShahryarNotificationPlatform();
 
     if (platform === undefined) {
@@ -146,7 +220,7 @@ export default function App() {
       accessToken: token,
       apiBaseUrl: apiBaseUrl.trim(),
       request: {
-        deviceId,
+        deviceId: targetDeviceId,
         expoPushToken,
         platform,
       },
@@ -181,10 +255,20 @@ export default function App() {
     setAccessToken(token);
 
     try {
+      const currentDeviceId =
+        deviceId.trim().length > 0
+          ? deviceId
+          : await getOrCreateShahryarMobileDeviceId();
+
+      setDeviceId(currentDeviceId);
+
       const permissions = await requestShahryarDevicePermissions();
 
       if (permissions.notificationsGranted) {
-        await registerNotifications(token).catch(() => undefined);
+        await registerNotifications({
+          token,
+          targetDeviceId: currentDeviceId,
+        }).catch(() => undefined);
       }
 
       await refreshAssignedMarkets(token);
@@ -221,18 +305,101 @@ export default function App() {
       soldCartons: Number(soldCartons),
       requestedCartons: Number(requestedCartons),
       issue: '',
-      decisionMaker: 'تەدمین',
+      decisionMaker: 'ئەدمین',
       requestDetails: '',
       report,
       updatedAt: now,
     };
 
-    await saveOfflineVisitDraft({ draft, now });
-    setOfflineQueueCount(await countQueueItemsNeedingAttention());
+    await saveOfflineRecordDraft({ draft, now });
+    await refreshOfflineQueue();
     setSyncStatusMessage('سەردانەکە لە ڕیزی ئۆفلاینە.');
     setReport('');
     setPhotoLocalUris([]);
     Alert.alert('پاشەکەوت کرا', 'سەردانەکە لە ڕیزی ئۆفلاین پاشەکەوت کرا.');
+  };
+
+  const handleSaveOfflineRecord = async ({
+    draft,
+    successMessage,
+  }: {
+    draft: ShahryarMobileRecordDraft;
+    successMessage: string;
+  }) => {
+    await saveOfflineRecordDraft({
+      draft,
+      now: draft.updatedAt,
+    });
+    await refreshOfflineQueue();
+    setSyncStatusMessage(successMessage);
+  };
+
+  const handleSaveWorkingTime = async () => {
+    const now = new Date().toISOString();
+    const gpsLocation = await getCurrentGpsLocation();
+
+    await handleSaveOfflineRecord({
+      draft: {
+        recordKind: 'working-time',
+        localId: `working-time-${now}`,
+        supervisorId: currentSupervisorId,
+        workDate: now.slice(0, 10),
+        checkInAt: now,
+        checkOutAt: now,
+        gpsLocation,
+        totalMinutes: Number(workingTimeMinutes),
+        status: 'PRESENT',
+        updatedAt: now,
+      },
+      successMessage: 'کاتی کار لە ڕیزی ئۆفلاین پاشەکەوت کرا.',
+    });
+  };
+
+  const handleSavePayment = async () => {
+    if (selectedMarket === undefined) {
+      Alert.alert('مارکێت نییە', 'پێش پارەدان مارکێتێک هەڵبژێرە.');
+
+      return;
+    }
+
+    const now = new Date().toISOString();
+
+    await handleSaveOfflineRecord({
+      draft: {
+        recordKind: 'payment',
+        localId: `payment-${now}`,
+        marketId: selectedMarket.id,
+        collectedById: currentSupervisorId,
+        amount: Number(paymentAmount),
+        paidAt: now.slice(0, 10),
+        status: 'PARTIAL',
+        notes: paymentNotes,
+        updatedAt: now,
+      },
+      successMessage: 'پارەدان لە ڕیزی ئۆفلاین پاشەکەوت کرا.',
+    });
+    setPaymentNotes('');
+  };
+
+  const handleSaveAbsence = async () => {
+    const now = new Date().toISOString();
+    const gpsLocation = await getCurrentGpsLocation();
+
+    await handleSaveOfflineRecord({
+      draft: {
+        recordKind: 'absence',
+        localId: `absence-${now}`,
+        supervisorId: currentSupervisorId,
+        absenceDate: now.slice(0, 10),
+        workingTime: `${workingTimeMinutes} خولەک`,
+        gpsLocation,
+        reason: absenceReason,
+        notes: absenceNotes,
+        updatedAt: now,
+      },
+      successMessage: 'غیاب لە ڕیزی ئۆفلاین پاشەکەوت کرا.',
+    });
+    setAbsenceNotes('');
   };
 
   const handleSyncQueue = async () => {
@@ -242,25 +409,33 @@ export default function App() {
       return;
     }
 
-    const queue = await loadOfflineVisitQueue();
+    const queue = await loadOfflineSyncQueue();
 
-    if (queue.length === 0) {
-      setSyncStatusMessage('هیچ سەردانێکی ئۆفلاین بۆ Sync نییە.');
+    if (queue.filter(isQueueItemNeedingAttention).length === 0) {
+      setSyncStatusMessage('هیچ تۆمارێکی ئۆفلاین بۆ Sync نییە.');
 
       return;
     }
+
+    const currentDeviceId =
+      deviceId.trim().length > 0
+        ? deviceId
+        : await getOrCreateShahryarMobileDeviceId();
+
+    setDeviceId(currentDeviceId);
 
     try {
       const response = await syncOfflineVisitQueue({
         accessToken,
         apiBaseUrl: apiBaseUrl.trim(),
-        deviceId,
+        deviceId: currentDeviceId,
         queue,
       });
       const reconciliation = await applyOfflineVisitSyncResponse({ response });
 
+      setOfflineQueueItems(reconciliation.queue);
       setOfflineQueueCount(
-        reconciliation.queue.filter((item) => item.status !== 'synced').length,
+        countQueueItemsNeedingAttention(reconciliation.queue),
       );
       setSyncStatusMessage(
         `${reconciliation.acceptedLocalIds.length} قبوڵ کرا، ${reconciliation.conflictedLocalIds.length} conflict، ${reconciliation.rejectedLocalIds.length} ڕەتکرایەوە.`,
@@ -270,6 +445,28 @@ export default function App() {
         'Sync سەرکەوتوو نەبوو؛ ڕیزی ئۆفلاین لە مۆبایلەکە دەمێنێتەوە.',
       );
     }
+  };
+
+  const handleRetryQueueItem = async (localId: string) => {
+    const queue = await retryOfflineSyncQueueItem({
+      localId,
+      now: new Date().toISOString(),
+    });
+
+    setOfflineQueueItems(queue);
+    setOfflineQueueCount(countQueueItemsNeedingAttention(queue));
+    setSyncStatusMessage('تۆمارەکە گەڕایەوە بۆ ڕیزی Sync.');
+  };
+
+  const handleDiscardQueueItem = async (localId: string) => {
+    const queue = await discardOfflineSyncQueueItem({
+      localId,
+      now: new Date().toISOString(),
+    });
+
+    setOfflineQueueItems(queue);
+    setOfflineQueueCount(countQueueItemsNeedingAttention(queue));
+    setSyncStatusMessage('تۆمارەکە لە ڕیزی Sync لابرا.');
   };
 
   return (
@@ -317,7 +514,14 @@ export default function App() {
 
         <View style={styles.panel}>
           <Text style={styles.sectionTitle}>مارکێتەکانی ئەمڕۆ</Text>
-          {assignedMarkets.map((market) => (
+          <TextInput
+            autoCorrect={false}
+            onChangeText={setMarketSearchTerm}
+            placeholder="گەڕان بە ناو، خاوەن، تەلەفۆن، ناونیشان"
+            style={styles.input}
+            value={marketSearchTerm}
+          />
+          {filteredAssignedMarkets.map((market) => (
             <Pressable
               key={market.id}
               onPress={() => setSelectedMarket(market)}
@@ -328,8 +532,13 @@ export default function App() {
             >
               <Text style={styles.marketName}>{market.name}</Text>
               <Text style={styles.marketMeta}>
-                {market.ownerName} | {market.district} |{' '}
-                {formatMarketGps(market)}
+                {market.ownerName} | {market.phone} | {market.district}
+              </Text>
+              <Text style={styles.marketMeta}>
+                {market.address} | {marketDebtStatusLabels[market.debtStatus]}
+              </Text>
+              <Text style={styles.marketMeta}>
+                GPS {formatMarketGps(market)}
               </Text>
             </Pressable>
           ))}
@@ -391,10 +600,109 @@ export default function App() {
           </Pressable>
         </View>
 
+        <View style={styles.panel}>
+          <Text style={styles.sectionTitle}>تۆمارەکانی دیکە</Text>
+          <View style={styles.inlineInputs}>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={setWorkingTimeMinutes}
+              placeholder="خولەکی کار"
+              style={[styles.input, styles.inlineInput]}
+              value={workingTimeMinutes}
+            />
+            <Pressable
+              onPress={() => void handleSaveWorkingTime()}
+              style={[styles.secondaryButton, styles.inlineButton]}
+            >
+              <Text style={styles.secondaryButtonText}>کاتی کار</Text>
+            </Pressable>
+          </View>
+          <View style={styles.inlineInputs}>
+            <TextInput
+              keyboardType="number-pad"
+              onChangeText={setPaymentAmount}
+              placeholder="بڕی پارەدان"
+              style={[styles.input, styles.inlineInput]}
+              value={paymentAmount}
+            />
+            <Pressable
+              onPress={() => void handleSavePayment()}
+              style={[styles.secondaryButton, styles.inlineButton]}
+            >
+              <Text style={styles.secondaryButtonText}>پارەدان</Text>
+            </Pressable>
+          </View>
+          <TextInput
+            onChangeText={setPaymentNotes}
+            placeholder="تێبینی پارەدان"
+            style={styles.input}
+            value={paymentNotes}
+          />
+          <View style={styles.segmentedRow}>
+            {(['ABSENT', 'LATE', 'NO_WORK'] as const).map((reason) => (
+              <Pressable
+                key={reason}
+                onPress={() => setAbsenceReason(reason)}
+                style={[
+                  styles.segmentedButton,
+                  absenceReason === reason && styles.segmentedButtonSelected,
+                ]}
+              >
+                <Text style={styles.segmentedButtonText}>{reason}</Text>
+              </Pressable>
+            ))}
+          </View>
+          <TextInput
+            onChangeText={setAbsenceNotes}
+            placeholder="تێبینی غیاب"
+            style={styles.input}
+            value={absenceNotes}
+          />
+          <Pressable
+            onPress={() => void handleSaveAbsence()}
+            style={styles.secondaryButton}
+          >
+            <Text style={styles.secondaryButtonText}>پاشەکەوتی غیاب</Text>
+          </Pressable>
+        </View>
+
         <Pressable onPress={handleSyncQueue} style={styles.syncPanel}>
           <Text style={styles.syncValue}>{offlineQueueCount}</Text>
           <Text style={styles.syncLabel}>ڕیزی Sync</Text>
         </Pressable>
+        {offlineQueueItems.filter(isQueueItemNeedingAttention).map((item) => (
+          <View key={item.localId} style={styles.queueRow}>
+            <View style={styles.queueText}>
+              <Text style={styles.queueTitle}>
+                {recordKindLabels[item.recordKind]} | {item.status}
+              </Text>
+              <Text style={styles.queueMeta}>{item.localId}</Text>
+              {item.conflict !== undefined ? (
+                <Text style={styles.queueMeta}>
+                  server-newer {item.conflict.serverUpdatedAt}
+                </Text>
+              ) : item.rejection !== undefined ? (
+                <Text style={styles.queueMeta}>{item.rejection.reason}</Text>
+              ) : null}
+            </View>
+            {(item.status === 'conflict' || item.status === 'rejected') && (
+              <View style={styles.queueActions}>
+                <Pressable
+                  onPress={() => void handleRetryQueueItem(item.localId)}
+                  style={styles.queueActionButton}
+                >
+                  <Text style={styles.queueActionText}>Retry</Text>
+                </Pressable>
+                <Pressable
+                  onPress={() => void handleDiscardQueueItem(item.localId)}
+                  style={styles.queueActionButton}
+                >
+                  <Text style={styles.queueActionText}>Discard</Text>
+                </Pressable>
+              </View>
+            )}
+          </View>
+        ))}
         <Text style={styles.statusText}>{syncStatusMessage}</Text>
       </ScrollView>
     </SafeAreaView>
@@ -470,6 +778,22 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
   },
+  secondaryButton: {
+    alignItems: 'center',
+    backgroundColor: shahryarColors.navy,
+    borderRadius: 8,
+    minHeight: 46,
+    justifyContent: 'center',
+    paddingHorizontal: 12,
+  },
+  secondaryButtonText: {
+    color: shahryarColors.white,
+    fontSize: 15,
+    fontWeight: '700',
+  },
+  inlineButton: {
+    minWidth: 112,
+  },
   marketRow: {
     borderColor: shahryarColors.border,
     borderRadius: 8,
@@ -499,6 +823,28 @@ const styles = StyleSheet.create({
   inlineInput: {
     flex: 1,
   },
+  segmentedRow: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  segmentedButton: {
+    alignItems: 'center',
+    borderColor: shahryarColors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    flex: 1,
+    minHeight: 40,
+    justifyContent: 'center',
+  },
+  segmentedButtonSelected: {
+    borderColor: shahryarColors.blue,
+    borderWidth: 2,
+  },
+  segmentedButtonText: {
+    color: shahryarColors.navy,
+    fontSize: 12,
+    fontWeight: '700',
+  },
   reportInput: {
     minHeight: 96,
     paddingTop: 12,
@@ -521,6 +867,49 @@ const styles = StyleSheet.create({
   syncLabel: {
     color: shahryarColors.white,
     fontSize: 16,
+    fontWeight: '700',
+  },
+  queueRow: {
+    alignItems: 'center',
+    backgroundColor: shahryarColors.white,
+    borderColor: shahryarColors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    flexDirection: 'row',
+    gap: 8,
+    justifyContent: 'space-between',
+    padding: 12,
+  },
+  queueText: {
+    flex: 1,
+    gap: 4,
+  },
+  queueTitle: {
+    color: shahryarColors.navy,
+    fontSize: 14,
+    fontWeight: '700',
+    textAlign: 'right',
+  },
+  queueMeta: {
+    color: shahryarColors.textMuted,
+    fontSize: 12,
+    textAlign: 'right',
+  },
+  queueActions: {
+    gap: 6,
+  },
+  queueActionButton: {
+    alignItems: 'center',
+    borderColor: shahryarColors.blue,
+    borderRadius: 8,
+    borderWidth: 1,
+    minHeight: 32,
+    justifyContent: 'center',
+    paddingHorizontal: 10,
+  },
+  queueActionText: {
+    color: shahryarColors.blue,
+    fontSize: 12,
     fontWeight: '700',
   },
 });

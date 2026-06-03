@@ -17,6 +17,7 @@ export type ShahryarReportMarketRecord = {
   gpsLocation?: string;
   paymentStatus?: string;
   balanceAmount?: number;
+  photoCount?: number;
   notes?: string;
 };
 
@@ -30,6 +31,7 @@ export type ShahryarReportVisitRecord = {
   requestedCartons: number;
   issue: string;
   decisionMaker: string;
+  photoCount?: number;
   requestDetails: string;
   report: string;
 };

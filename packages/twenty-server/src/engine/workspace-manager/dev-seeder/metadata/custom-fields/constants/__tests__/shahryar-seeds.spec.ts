@@ -150,7 +150,7 @@ describe('Shahryar dev seeder metadata', () => {
   });
 
   it('defines Shahryar roles with supervisor-only object and row-level permissions', () => {
-    expect(SHAHRYAR_ADMIN_ROLE_SEED.label).toBe('تەدمین');
+    expect(SHAHRYAR_ADMIN_ROLE_SEED.label).toBe('ئەدمین');
     expect(SHAHRYAR_ADMIN_ROLE_SEED.canUpdateAllSettings).toBe(true);
     expect(SHAHRYAR_ADMIN_ROLE_SEED.canReadAllObjectRecords).toBe(true);
 
@@ -231,6 +231,24 @@ describe('Shahryar dev seeder metadata', () => {
         'platform',
         'enabledNotificationKinds',
         'lastRegisteredAt',
+      ]),
+    );
+  });
+
+  it('defines delivery audit fields for Shahryar push notifications', () => {
+    expect(getFieldNamesForObject('shahryarNotificationDelivery')).toEqual(
+      expect.arrayContaining([
+        'notificationDeliveryId',
+        'notificationId',
+        'kind',
+        'severity',
+        'supervisorName',
+        'deviceId',
+        'expoPushToken',
+        'status',
+        'attemptCount',
+        'lastAttemptAt',
+        'failureReason',
       ]),
     );
   });

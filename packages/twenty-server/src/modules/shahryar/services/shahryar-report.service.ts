@@ -49,6 +49,7 @@ type ShahryarMarketReportRow = {
   gpsLocation?: string | null;
   paymentStatus?: string | null;
   balanceAmount?: number | string | null;
+  shopPhotos?: unknown;
   notes?: string | null;
 };
 
@@ -62,6 +63,7 @@ type ShahryarVisitReportRow = {
   requestedCartons?: number | string | null;
   issue?: string | null;
   decisionMaker?: string | null;
+  photos?: unknown;
   requestDetails?: string | null;
   report?: string | null;
 };
@@ -113,6 +115,12 @@ type ShahryarWorkspaceRecordIdRow = {
 
 type ShahryarReportAccessOptions = {
   authorizedSupervisorId?: string;
+  referenceDate?: string;
+};
+
+type ShahryarFilesFieldItemLike = {
+  fileId: string;
+  label: string;
 };
 
 const SHAHRYAR_RECORD_SECTION_PATHS = {
@@ -134,7 +142,7 @@ const SHAHRYAR_SUPERVISOR_ALIAS_USERNAMES: Record<string, string> = {
   کاروان: 'karwan',
   هەڵۆ: 'halo',
   بەهروز: 'behroz',
-  تەدمین: 'tedmin',
+  ئەدمین: 'tedmin',
 };
 
 const quotePostgresIdentifier = (identifier: string): string =>
@@ -190,6 +198,36 @@ const toDisplayTime = (value: string | undefined): string =>
 
 const toDisplayAmount = (value: number | undefined): string =>
   (value ?? 0).toLocaleString('en-US');
+
+const isFilesFieldItemLike = (
+  value: unknown,
+): value is ShahryarFilesFieldItemLike =>
+  value !== null &&
+  typeof value === 'object' &&
+  'fileId' in value &&
+  typeof value.fileId === 'string' &&
+  'label' in value &&
+  typeof value.label === 'string';
+
+const toFilesFieldItemCount = (value: unknown): number => {
+  try {
+    const parsedValue = typeof value === 'string' ? JSON.parse(value) : value;
+
+    return Array.isArray(parsedValue)
+      ? parsedValue.filter(isFilesFieldItemLike).length
+      : 0;
+  } catch {
+    return 0;
+  }
+};
+
+const toDisplayPhotoCount = (value: number | undefined): string => {
+  if (value === undefined || value === 0) {
+    return '-';
+  }
+
+  return `${value} وێنە`;
+};
 
 const toMarketPaymentStatusLabel = (
   paymentStatus: string | undefined,
@@ -348,7 +386,9 @@ export class ShahryarReportService {
     workspaceId?: string,
     options: ShahryarReportAccessOptions = {},
   ): Promise<Buffer> {
-    return buildShahryarReportPdf(await this.getSummary(workspaceId, options));
+    return await buildShahryarReportPdf(
+      await this.getSummary(workspaceId, options),
+    );
   }
 
   async getRecordSections(
@@ -376,7 +416,7 @@ export class ShahryarReportService {
           toDisplayText(market.phoneNumber),
           toDisplayText(market.address),
           toDisplayText(market.gpsLocation),
-          '-',
+          toDisplayPhotoCount(market.photoCount),
           toMarketPaymentStatusLabel(market.paymentStatus),
           toDisplayText(market.notes),
         ]),
@@ -388,7 +428,7 @@ export class ShahryarReportService {
           getMarketName(visit.marketId),
           toDisplayTime(visit.visitedAt),
           toDisplayText(visit.gpsLocation),
-          '-',
+          toDisplayPhotoCount(visit.photoCount),
           toDisplayAmount(visit.soldCartons),
           toDisplayText(visit.issue),
           toDisplayText(visit.decisionMaker),
@@ -577,6 +617,7 @@ export class ShahryarReportService {
       label: getFormValue(values, 'assignedSupervisor'),
       workspaceId,
     });
+    const id = randomUUID();
 
     await this.coreDataSource.query(
       `INSERT INTO ${tableName} (
@@ -596,7 +637,7 @@ export class ShahryarReportService {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, '', $8, 0, $9, TRUE, $10)`,
       [
-        randomUUID(),
+        id,
         name,
         ownerName,
         phoneNumber,
@@ -610,6 +651,7 @@ export class ShahryarReportService {
     );
 
     return {
+      id,
       path: SHAHRYAR_RECORD_SECTION_PATHS.Markets,
       row: [
         toDisplayText(name),
@@ -664,6 +706,7 @@ export class ShahryarReportService {
       tableName: '_shahryarMarket',
       workspaceId,
     });
+    const id = randomUUID();
 
     if (authorizedSupervisorId !== undefined) {
       await this.assertMarketAssignedToSupervisor({
@@ -693,7 +736,7 @@ export class ShahryarReportService {
       )
       VALUES ($1, $2, $3, $4, $5, NULL, $6, $7, 0, $8, $9, $10, $11, $11, $12)`,
       [
-        randomUUID(),
+        id,
         `سەردانی ${marketLabel}`,
         marketId,
         supervisorId,
@@ -709,6 +752,7 @@ export class ShahryarReportService {
     );
 
     return {
+      id,
       path: SHAHRYAR_RECORD_SECTION_PATHS.SupervisorVisits,
       row: [
         toDisplayText(supervisorLabel),
@@ -765,6 +809,7 @@ export class ShahryarReportService {
       label: supervisorLabel,
       workspaceId,
     });
+    const id = randomUUID();
 
     await this.coreDataSource.query(
       `INSERT INTO ${tableName} (
@@ -781,7 +826,7 @@ export class ShahryarReportService {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)`,
       [
-        randomUUID(),
+        id,
         `${supervisorLabel} - ${workDate.slice(0, 10)}`,
         supervisorId,
         workDate,
@@ -795,6 +840,7 @@ export class ShahryarReportService {
     );
 
     return {
+      id,
       path: SHAHRYAR_RECORD_SECTION_PATHS.WorkingTimes,
       row: [
         toDisplayText(supervisorLabel),
@@ -844,6 +890,7 @@ export class ShahryarReportService {
       label: getFormValue(values, 'collectedBy'),
       workspaceId,
     });
+    const id = randomUUID();
 
     if (authorizedSupervisorId !== undefined) {
       await this.assertMarketAssignedToSupervisor({
@@ -868,7 +915,7 @@ export class ShahryarReportService {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $6, $7, $8, $9)`,
       [
-        randomUUID(),
+        id,
         `${marketLabel} - ${amount}`,
         marketId,
         collectedById,
@@ -881,6 +928,7 @@ export class ShahryarReportService {
     );
 
     return {
+      id,
       path: SHAHRYAR_RECORD_SECTION_PATHS.Payments,
       row: [
         toDisplayText(marketLabel),
@@ -920,6 +968,7 @@ export class ShahryarReportService {
       label: supervisorLabel,
       workspaceId,
     });
+    const id = randomUUID();
 
     await this.coreDataSource.query(
       `INSERT INTO ${tableName} (
@@ -934,7 +983,7 @@ export class ShahryarReportService {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
       [
-        randomUUID(),
+        id,
         `${supervisorLabel} - ${reason}`,
         supervisorId,
         reason,
@@ -946,6 +995,7 @@ export class ShahryarReportService {
     );
 
     return {
+      id,
       path: SHAHRYAR_RECORD_SECTION_PATHS.SupervisorPenalties,
       row: [
         toDisplayText(supervisorLabel),
@@ -986,6 +1036,7 @@ export class ShahryarReportService {
       label: supervisorLabel,
       workspaceId,
     });
+    const id = randomUUID();
 
     await this.coreDataSource.query(
       `INSERT INTO ${tableName} (
@@ -1001,7 +1052,7 @@ export class ShahryarReportService {
       )
       VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
-        randomUUID(),
+        id,
         `${supervisorLabel} - ${absenceDate.slice(0, 10)}`,
         supervisorId,
         absenceDate,
@@ -1014,6 +1065,7 @@ export class ShahryarReportService {
     );
 
     return {
+      id,
       path: SHAHRYAR_RECORD_SECTION_PATHS.Absences,
       row: [
         toDisplayText(supervisorLabel),
@@ -1149,12 +1201,20 @@ export class ShahryarReportService {
     const source =
       workspaceId === undefined
         ? SHAHRYAR_REPORT_SOURCE
-        : await this.getWorkspaceReportSource(workspaceId).catch(
-            () => SHAHRYAR_REPORT_SOURCE,
+        : await this.getWorkspaceReportSource(
+            workspaceId,
+            options.referenceDate,
           );
+    const sourceWithReferenceDate =
+      options.referenceDate === undefined
+        ? source
+        : {
+            ...source,
+            referenceDate: options.referenceDate,
+          };
 
     return this.filterReportSourceForSupervisor(
-      source,
+      sourceWithReferenceDate,
       options.authorizedSupervisorId,
     );
   }
@@ -1205,6 +1265,7 @@ export class ShahryarReportService {
 
   private async getWorkspaceReportSource(
     workspaceId: string,
+    referenceDate = new Date().toISOString().slice(0, 10),
   ): Promise<ShahryarReportSource> {
     const [
       supervisorRows,
@@ -1225,13 +1286,13 @@ export class ShahryarReportService {
         tableName: '_shahryarMarket',
         workspaceId,
         select:
-          'SELECT "id", "name", "ownerName", "phoneNumber", "marketAddress", "district", "gpsLocation", "paymentStatus", "balanceAmount", "notes", "assignedSupervisorId", "isActiveMarket" FROM {tableName} ORDER BY "name" ASC',
+          'SELECT "id", "name", "ownerName", "phoneNumber", "marketAddress", "district", "gpsLocation", "paymentStatus", "balanceAmount", "shopPhotos", "notes", "assignedSupervisorId", "isActiveMarket" FROM {tableName} ORDER BY "name" ASC',
       }),
       this.getWorkspaceRows<ShahryarVisitReportRow>({
         tableName: '_shahryarSupervisorVisit',
         workspaceId,
         select:
-          'SELECT "id", "marketId", "supervisorId", "checkInAt", "gpsLocation", "soldCartons", "requestedCartons", "issue", "decisionMaker", "requestDetails", "report" FROM {tableName} ORDER BY "checkInAt" DESC',
+          'SELECT "id", "marketId", "supervisorId", "checkInAt", "gpsLocation", "soldCartons", "requestedCartons", "photos", "issue", "decisionMaker", "requestDetails", "report" FROM {tableName} ORDER BY "checkInAt" DESC',
       }),
       this.getWorkspaceRows<ShahryarWorkingTimeReportRow>({
         tableName: '_shahryarWorkingTime',
@@ -1262,7 +1323,7 @@ export class ShahryarReportService {
     const visits = this.toVisitRecords(visitRows);
 
     return {
-      referenceDate: new Date().toISOString().slice(0, 10),
+      referenceDate,
       supervisors: this.toSupervisorRecords(supervisorRows),
       markets: this.toMarketRecords(marketRows),
       visits,
@@ -1323,6 +1384,7 @@ export class ShahryarReportService {
       gpsLocation: row.gpsLocation ?? undefined,
       paymentStatus: row.paymentStatus ?? undefined,
       balanceAmount: toNumber(row.balanceAmount),
+      photoCount: toFilesFieldItemCount(row.shopPhotos),
       notes: row.notes ?? undefined,
     }));
   }
@@ -1340,6 +1402,7 @@ export class ShahryarReportService {
       requestedCartons: toNumber(row.requestedCartons),
       issue: row.issue ?? 'No blocker',
       decisionMaker: row.decisionMaker ?? '',
+      photoCount: toFilesFieldItemCount(row.photos),
       requestDetails: row.requestDetails ?? '',
       report: row.report ?? '',
     }));

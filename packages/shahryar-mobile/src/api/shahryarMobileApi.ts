@@ -4,11 +4,13 @@ import {
   type ShahryarMobileNotificationRegistrationResponse,
   type ShahryarMobilePhotoAssociationRequest,
   type ShahryarMobilePhotoAssociationResponse,
+  type ShahryarMobileRecordSyncChange,
   type ShahryarMobileSyncQueueItem,
   type ShahryarMobileSyncPullResponse,
   type ShahryarMobileSyncRequest,
   type ShahryarMobileSyncResponse,
   type ShahryarMobileVisitSyncChange,
+  type ShahryarMobileVisitSyncQueueItem,
 } from 'twenty-shared/shahryar';
 
 export type ShahryarMobileApiConfig = {
@@ -43,22 +45,10 @@ type ShahryarMobileGraphQLResponse<TData> = {
   }>;
 };
 
-type ShahryarMobileGraphQLVariables = Record<string, unknown>;
-
-type ShahryarMobileLoginTokenResponse = {
-  getLoginTokenFromCredentials: {
-    loginToken: {
-      token: string;
-    };
-  };
-};
-
 type ShahryarMobileAuthTokensResponse = {
-  getAuthTokensFromLoginToken: {
-    tokens: {
-      accessOrWorkspaceAgnosticToken: {
-        token: string;
-      };
+  tokens: {
+    accessOrWorkspaceAgnosticToken: {
+      token: string;
     };
   };
 };
@@ -68,36 +58,6 @@ type ShahryarMobilePhotoFileUploadResponse = {
     id: string;
   };
 };
-
-const GET_LOGIN_TOKEN_FROM_CREDENTIALS = `
-  mutation GetLoginTokenFromCredentials(
-    $email: String!
-    $password: String!
-    $origin: String!
-  ) {
-    getLoginTokenFromCredentials(
-      email: $email
-      password: $password
-      origin: $origin
-    ) {
-      loginToken {
-        token
-      }
-    }
-  }
-`;
-
-const GET_AUTH_TOKENS_FROM_LOGIN_TOKEN = `
-  mutation GetAuthTokensFromLoginToken($loginToken: String!, $origin: String!) {
-    getAuthTokensFromLoginToken(loginToken: $loginToken, origin: $origin) {
-      tokens {
-        accessOrWorkspaceAgnosticToken {
-          token
-        }
-      }
-    }
-  }
-`;
 
 const UPLOAD_FILES_FIELD_FILE_BY_UNIVERSAL_IDENTIFIER = `
   mutation UploadFilesFieldFileByUniversalIdentifier(
@@ -116,6 +76,11 @@ const UPLOAD_FILES_FIELD_FILE_BY_UNIVERSAL_IDENTIFIER = `
 const isPendingQueueItem = (item: ShahryarMobileSyncQueueItem): boolean =>
   item.status === 'pending';
 
+const isPendingVisitQueueItem = (
+  item: ShahryarMobileSyncQueueItem,
+): item is ShahryarMobileVisitSyncQueueItem =>
+  item.status === 'pending' && item.recordKind === 'visit';
+
 const getFileNameFromUri = (uri: string): string => {
   const path = uri.split('?')[0];
   const fileName = path.split('/').pop();
@@ -126,9 +91,10 @@ const getFileNameFromUri = (uri: string): string => {
 };
 
 export const buildVisitSyncChangeFromQueueItem = (
-  item: ShahryarMobileSyncQueueItem,
+  item: ShahryarMobileVisitSyncQueueItem,
   photoFileIds: string[] = item.draft.photoFileIds,
 ): ShahryarMobileVisitSyncChange => ({
+  recordKind: 'visit',
   localId: item.localId,
   serverId: item.draft.serverId,
   operation: item.draft.serverId === undefined ? 'create' : 'update',
@@ -147,6 +113,69 @@ export const buildVisitSyncChangeFromQueueItem = (
   clientUpdatedAt: item.draft.updatedAt,
 });
 
+export const buildMobileRecordSyncChangeFromQueueItem = (
+  item: ShahryarMobileSyncQueueItem,
+  photoFileIds: string[] | undefined = undefined,
+): ShahryarMobileRecordSyncChange => {
+  if (item.recordKind === 'visit') {
+    return buildVisitSyncChangeFromQueueItem(
+      item,
+      photoFileIds ?? item.draft.photoFileIds,
+    );
+  }
+
+  if (item.recordKind === 'working-time') {
+    return {
+      recordKind: 'working-time',
+      localId: item.localId,
+      serverId: item.draft.serverId,
+      operation: item.draft.serverId === undefined ? 'create' : 'update',
+      supervisorId: item.draft.supervisorId,
+      workDate: item.draft.workDate,
+      checkInAt: item.draft.checkInAt,
+      checkOutAt: item.draft.checkOutAt,
+      gpsLocation: item.draft.gpsLocation,
+      totalMinutes: item.draft.totalMinutes,
+      status: item.draft.status,
+      baseServerUpdatedAt: item.lastSyncedAt,
+      clientUpdatedAt: item.draft.updatedAt,
+    };
+  }
+
+  if (item.recordKind === 'payment') {
+    return {
+      recordKind: 'payment',
+      localId: item.localId,
+      serverId: item.draft.serverId,
+      operation: item.draft.serverId === undefined ? 'create' : 'update',
+      marketId: item.draft.marketId,
+      collectedById: item.draft.collectedById,
+      amount: item.draft.amount,
+      dueDate: item.draft.dueDate,
+      paidAt: item.draft.paidAt,
+      status: item.draft.status,
+      notes: item.draft.notes,
+      baseServerUpdatedAt: item.lastSyncedAt,
+      clientUpdatedAt: item.draft.updatedAt,
+    };
+  }
+
+  return {
+    recordKind: 'absence',
+    localId: item.localId,
+    serverId: item.draft.serverId,
+    operation: item.draft.serverId === undefined ? 'create' : 'update',
+    supervisorId: item.draft.supervisorId,
+    absenceDate: item.draft.absenceDate,
+    workingTime: item.draft.workingTime,
+    gpsLocation: item.draft.gpsLocation,
+    reason: item.draft.reason,
+    notes: item.draft.notes,
+    baseServerUpdatedAt: item.lastSyncedAt,
+    clientUpdatedAt: item.draft.updatedAt,
+  };
+};
+
 export const buildMobileSyncRequest = ({
   deviceId,
   photoFileIdsByLocalId = new Map<string, string[]>(),
@@ -157,49 +186,15 @@ export const buildMobileSyncRequest = ({
   queue: ShahryarMobileSyncQueueItem[];
 }): ShahryarMobileSyncRequest => ({
   deviceId,
-  changes: queue
-    .filter(isPendingQueueItem)
-    .map((item) =>
-      buildVisitSyncChangeFromQueueItem(
-        item,
-        photoFileIdsByLocalId.get(item.localId) ?? item.draft.photoFileIds,
-      ),
-    ),
+  changes: queue.filter(isPendingQueueItem).map((item) => {
+    const photoFileIds =
+      item.recordKind === 'visit'
+        ? (photoFileIdsByLocalId.get(item.localId) ?? item.draft.photoFileIds)
+        : undefined;
+
+    return buildMobileRecordSyncChangeFromQueueItem(item, photoFileIds);
+  }),
 });
-
-const postShahryarMobileGraphQL = async <TData>({
-  apiBaseUrl,
-  query,
-  variables,
-}: {
-  apiBaseUrl: string;
-  query: string;
-  variables: ShahryarMobileGraphQLVariables;
-}): Promise<TData> => {
-  const response = await fetch(`${apiBaseUrl}/graphql`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Shahryar mobile GraphQL failed with ${response.status}`);
-  }
-
-  const result =
-    (await response.json()) as ShahryarMobileGraphQLResponse<TData>;
-
-  if (result.data === undefined || (result.errors?.length ?? 0) > 0) {
-    throw new Error('Shahryar mobile GraphQL returned errors');
-  }
-
-  return result.data;
-};
 
 export const signInShahryarMobile = async ({
   apiBaseUrl,
@@ -207,30 +202,29 @@ export const signInShahryarMobile = async ({
   password,
   username,
 }: ShahryarMobileSignInConfig): Promise<string> => {
-  const loginTokenData =
-    await postShahryarMobileGraphQL<ShahryarMobileLoginTokenResponse>({
-      apiBaseUrl,
-      query: GET_LOGIN_TOKEN_FROM_CREDENTIALS,
-      variables: {
-        email: username,
-        password,
-        origin,
+  const response = await fetch(
+    `${apiBaseUrl}/rest/shahryar/mobile/auth/login`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    });
+      body: JSON.stringify({
+        origin,
+        password,
+        username,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Shahryar mobile sign in failed with ${response.status}`);
+  }
 
   const authTokenData =
-    await postShahryarMobileGraphQL<ShahryarMobileAuthTokensResponse>({
-      apiBaseUrl,
-      query: GET_AUTH_TOKENS_FROM_LOGIN_TOKEN,
-      variables: {
-        loginToken:
-          loginTokenData.getLoginTokenFromCredentials.loginToken.token,
-        origin,
-      },
-    });
+    (await response.json()) as ShahryarMobileAuthTokensResponse;
 
-  return authTokenData.getAuthTokensFromLoginToken.tokens
-    .accessOrWorkspaceAgnosticToken.token;
+  return authTokenData.tokens.accessOrWorkspaceAgnosticToken.token;
 };
 
 const buildGraphQLUploadFormData = ({
@@ -329,7 +323,7 @@ const uploadPendingVisitPhotos = async ({
     ShahryarMobilePhotoUploadResult[]
   >();
 
-  for (const item of queue.filter(isPendingQueueItem)) {
+  for (const item of queue.filter(isPendingVisitQueueItem)) {
     const uploadResults = item.draft.photoFileIds.map((fileId) => ({
       localPhotoId: fileId,
       sourceUri: fileId,

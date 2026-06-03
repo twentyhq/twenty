@@ -15,6 +15,7 @@
     "expo": "~54.0.0",
     "expo-camera": "~17.0.9",
     "expo-file-system": "~19.0.17",
+    "expo-font": "~14.0.7",
     "expo-location": "~19.0.7",
     "expo-notifications": "~0.32.13",
     "expo-sqlite": "~16.0.9",

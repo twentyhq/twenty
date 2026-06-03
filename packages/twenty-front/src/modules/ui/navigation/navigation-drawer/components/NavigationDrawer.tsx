@@ -20,6 +20,7 @@ import { useIsMobile } from '@/ui/utilities/responsive/hooks/useIsMobile';
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { MOBILE_VIEWPORT, themeCssVariables } from 'twenty-ui/theme-constants';
+import { useIsRtl } from '~/utils/i18n/useIsRtl';
 import { NavigationDrawerBackButton } from './NavigationDrawerBackButton';
 import { NavigationDrawerHeader } from './NavigationDrawerHeader';
 
@@ -59,15 +60,16 @@ const StyledContainer = styled.div<{
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   height: 100%;
-  padding: ${themeCssVariables.spacing[3]} 0 ${themeCssVariables.spacing[4]}
-    ${themeCssVariables.spacing[2]};
+  padding-block: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  padding-inline-end: 0;
+  padding-inline-start: ${themeCssVariables.spacing[2]};
   width: ${({ isExpanded }) =>
     isExpanded ? `var(${NAVIGATION_DRAWER_WIDTH_VAR})` : '100%'};
   @media (max-width: ${MOBILE_VIEWPORT}px) {
     gap: ${themeCssVariables.spacing[4]};
     width: 100%;
-    padding-left: ${themeCssVariables.spacing[2]};
-    padding-right: ${themeCssVariables.spacing[2]};
+    padding-inline-end: ${themeCssVariables.spacing[2]};
+    padding-inline-start: ${themeCssVariables.spacing[2]};
   }
 `;
 
@@ -80,6 +82,9 @@ export const NavigationDrawer = ({
   const isMobile = useIsMobile();
   const isSettingsDrawer = useIsSettingsDrawer();
   const isExpanded = useNavigationDrawerExpanded();
+  const isRtl = useIsRtl();
+  const drawerPosition = isRtl ? 'right' : 'left';
+  const resizeSide = isRtl ? 'left' : 'right';
 
   const [isNavigationDrawerExpanded, setIsNavigationDrawerExpanded] =
     useAtomState(isNavigationDrawerExpandedState);
@@ -124,14 +129,17 @@ export const NavigationDrawer = ({
           {!isMobile && isSettingsDrawer && title ? (
             <NavigationDrawerBackButton title={title} />
           ) : (
-            <NavigationDrawerHeader showCollapseButton />
+            <NavigationDrawerHeader
+              showCollapseButton
+              drawerPosition={drawerPosition}
+            />
           )}
           {children}
         </StyledContainer>
 
         {isNavigationDrawerExpanded && !isMobile && !isSettingsDrawer && (
           <ResizablePanelEdge
-            side="right"
+            side={resizeSide}
             constraints={NAVIGATION_DRAWER_CONSTRAINTS}
             currentWidth={navigationDrawerWidth}
             onWidthChange={handleWidthChange}

@@ -29,6 +29,48 @@ export class ShahryarReportNotificationDTO {
   message: string;
 }
 
+export class ShahryarReportRankedMetricDTO {
+  id: string;
+  label: string;
+  value: number;
+  secondaryLabel: string;
+  secondaryValue: number;
+}
+
+export class ShahryarReportDistrictComparisonDTO {
+  district: string;
+  activeMarketCount: number;
+  visitCount: number;
+  salesCartons: number;
+  paidAmount: number;
+}
+
+export class ShahryarReportTrendPointDTO {
+  date: string;
+  label: string;
+  visits: number;
+  salesCartons: number;
+  requestedCartons: number;
+  paidAmount: number;
+}
+
+export class ShahryarReportMonthlyGrowthDTO {
+  currentMonthSalesCartons: number;
+  previousMonthSalesCartons: number;
+  salesGrowthPercent: number;
+  currentMonthPaidAmount: number;
+  previousMonthPaidAmount: number;
+  paymentGrowthPercent: number;
+}
+
+export class ShahryarReportAnalyticsDTO {
+  bestMarkets: ShahryarReportRankedMetricDTO[];
+  mostActiveSupervisors: ShahryarReportRankedMetricDTO[];
+  districtComparisons: ShahryarReportDistrictComparisonDTO[];
+  salesPaymentTrend: ShahryarReportTrendPointDTO[];
+  monthlyGrowth: ShahryarReportMonthlyGrowthDTO;
+}
+
 export class ShahryarReportSummaryDTO {
   referenceDate: string;
   activeMarketCount: number;
@@ -45,4 +87,5 @@ export class ShahryarReportSummaryDTO {
   };
   rows: ShahryarReportRowDTO[];
   notifications: ShahryarReportNotificationDTO[];
+  analytics: ShahryarReportAnalyticsDTO;
 }

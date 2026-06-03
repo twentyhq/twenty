@@ -1,5 +1,8 @@
 import { SHAHRYAR_APP_PATHS } from '@/shahryar/constants/shahryar-routes';
-import { type ShahryarRecordApiSection } from '@/shahryar/types/shahryarRecordApi';
+import {
+  type ShahryarPhotoUploadTargetType,
+  type ShahryarRecordApiSection,
+} from '@/shahryar/types/shahryarRecordApi';
 import {
   type IconComponent,
   IconCalendarX,
@@ -29,6 +32,26 @@ export type ShahryarRecordSection = {
   columns: string[];
   rows: string[][];
   formFields: ShahryarRecordFormField[];
+};
+
+export type ShahryarRecordPhotoFieldConfig = {
+  fieldName: string;
+  targetType: ShahryarPhotoUploadTargetType;
+};
+
+export type ShahryarRecordPhotoCounts = Record<string, number>;
+
+export const SHAHRYAR_RECORD_PHOTO_FIELD_CONFIG_BY_PATH: Partial<
+  Record<string, ShahryarRecordPhotoFieldConfig>
+> = {
+  [SHAHRYAR_APP_PATHS.Markets]: {
+    fieldName: 'shopPhoto',
+    targetType: 'market',
+  },
+  [SHAHRYAR_APP_PATHS.SupervisorVisits]: {
+    fieldName: 'visitPhoto',
+    targetType: 'visit',
+  },
 };
 
 const marketFormFields: ShahryarRecordFormField[] = [
@@ -129,7 +152,7 @@ const supervisorVisitFormFields: ShahryarRecordFormField[] = [
     name: 'decisionMaker',
     label: 'کێ بڕیاری دا',
     type: 'text',
-    defaultValue: 'تەدمین',
+    defaultValue: 'ئەدمین',
   },
   {
     name: 'requestDetails',
@@ -221,7 +244,7 @@ export const SHAHRYAR_RECORD_SECTIONS: ShahryarRecordSection[] = [
         '-',
         '18',
         'هیچ کێشەیەکی گرنگ نییە',
-        'تەدمین',
+        'ئەدمین',
         '4 کارتۆنی تر',
         'سەردان تەواو بوو',
       ],
@@ -233,7 +256,7 @@ export const SHAHRYAR_RECORD_SECTIONS: ShahryarRecordSection[] = [
         '-',
         '11',
         'قەرز ماوە',
-        'تەدمین',
+        'ئەدمین',
         '8 کارتۆنی نوێ',
         'پێویستی بە بەدواداچوونی پارەدان هەیە',
       ],
@@ -340,8 +363,8 @@ export const SHAHRYAR_RECORD_SECTIONS: ShahryarRecordSection[] = [
     canCreate: true,
     columns: ['موشریف', 'هۆکار', 'بڕ', 'ڕێکەوت', 'بڕیاری دا'],
     rows: [
-      ['کاروان', 'ڕاپۆرت نەهات', '25,000', '2026-06-01', 'تەدمین'],
-      ['هەڵۆ', 'سەردان نەکرا', '40,000', '2026-05-30', 'تەدمین'],
+      ['کاروان', 'ڕاپۆرت نەهات', '25,000', '2026-06-01', 'ئەدمین'],
+      ['هەڵۆ', 'سەردان نەکرا', '40,000', '2026-05-30', 'ئەدمین'],
     ],
     formFields: [
       { name: 'supervisor', label: 'موشریف', type: 'text', defaultValue: '' },
@@ -357,7 +380,7 @@ export const SHAHRYAR_RECORD_SECTIONS: ShahryarRecordSection[] = [
         name: 'decidedBy',
         label: 'بڕیاری دا',
         type: 'text',
-        defaultValue: 'تەدمین',
+        defaultValue: 'ئەدمین',
       },
     ],
   },
@@ -403,14 +426,27 @@ export const getDefaultShahryarRecordFormValues = (
     section.formFields.map((field) => [field.name, field.defaultValue]),
   );
 
+export const toShahryarPhotoCountLabel = (photoCount: number): string =>
+  photoCount === 0 ? '-' : `${photoCount} وێنە`;
+
 export const buildShahryarRecordRow = ({
+  photoCounts,
   section,
   values,
 }: {
+  photoCounts?: ShahryarRecordPhotoCounts;
   section: ShahryarRecordSection;
   values: ShahryarRecordFormValues;
 }): string[] =>
   section.formFields.map((field) => {
+    if (field.type === 'file') {
+      const photoCount = photoCounts?.[field.name];
+
+      if (photoCount !== undefined) {
+        return toShahryarPhotoCountLabel(photoCount);
+      }
+    }
+
     const value = values[field.name]?.trim();
 
     return value === undefined || value.length === 0 ? '-' : value;

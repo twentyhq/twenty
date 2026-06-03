@@ -2,8 +2,10 @@ import assert from 'node:assert/strict';
 
 import {
   createVisitSyncQueueItem,
+  discardMobileSyncQueueItem,
   markVisitSyncQueueItemPending,
   reconcileVisitSyncQueueWithServerResponse,
+  retryMobileSyncQueueItem,
   resolveVisitSyncQueue,
   type ShahryarMobileVisitDraft,
 } from '../mobileSyncQueue';
@@ -23,7 +25,7 @@ const baseDraft: ShahryarMobileVisitDraft = {
   soldCartons: 12,
   requestedCartons: 4,
   issue: 'قەرز ماوە',
-  decisionMaker: 'تەدمین',
+  decisionMaker: 'ئەدمین',
   requestDetails: '4 کارتۆن',
   report: 'سەردان تۆمار کرا',
   updatedAt: '2026-06-01T09:30:00.000Z',
@@ -45,6 +47,7 @@ const updatedQueueItem = markVisitSyncQueueItemPending({
     conflict: {
       localId: queueItem.localId,
       serverId: 'server-visit-1',
+      recordKind: 'visit',
       reason: 'server-newer',
       localUpdatedAt: '2026-06-01T09:30:00.000Z',
       serverUpdatedAt: '2026-06-01T09:40:00.000Z',
@@ -90,6 +93,7 @@ assert.equal(conflictResolution.conflicts.length, 1);
 assert.deepEqual(conflictResolution.conflicts[0], {
   localId: 'local-visit-1',
   serverId: 'server-visit-1',
+  recordKind: 'visit',
   reason: 'server-newer',
   localUpdatedAt: '2026-06-01T09:30:00.000Z',
   serverUpdatedAt: '2026-06-01T09:40:00.000Z',
@@ -119,6 +123,7 @@ const reconciliation = reconcileVisitSyncQueueWithServerResponse({
     acceptedChanges: [
       {
         localId: updatedQueueItem.localId,
+        recordKind: 'visit',
         serverId: 'server-visit-1',
         operation: 'update',
         acceptedAt: '2026-06-01T10:00:00.000Z',
@@ -128,6 +133,7 @@ const reconciliation = reconcileVisitSyncQueueWithServerResponse({
       {
         localId: conflictQueueItem.localId,
         serverId: 'server-visit-1',
+        recordKind: 'visit',
         reason: 'server-newer',
         clientUpdatedAt: '2026-06-01T09:30:00.000Z',
         serverUpdatedAt: '2026-06-01T09:40:00.000Z',
@@ -136,6 +142,7 @@ const reconciliation = reconcileVisitSyncQueueWithServerResponse({
     rejectedChanges: [
       {
         localId: rejectedQueueItem.localId,
+        recordKind: 'visit',
         reason: 'invalid-carton-count',
       },
     ],
@@ -154,5 +161,21 @@ assert.equal(
 );
 assert.equal(reconciliation.queue[2].status, 'rejected');
 assert.equal(reconciliation.queue[2].rejection?.reason, 'invalid-carton-count');
+
+const retriedQueueItem = retryMobileSyncQueueItem({
+  item: reconciliation.queue[1],
+  now: '2026-06-01T10:05:00.000Z',
+});
+
+assert.equal(retriedQueueItem.status, 'pending');
+assert.equal(retriedQueueItem.conflict, undefined);
+
+const discardedQueueItem = discardMobileSyncQueueItem({
+  item: reconciliation.queue[2],
+  now: '2026-06-01T10:06:00.000Z',
+});
+
+assert.equal(discardedQueueItem.status, 'discarded');
+assert.equal(discardedQueueItem.rejection, undefined);
 
 console.log('mobileSyncQueue tests passed');

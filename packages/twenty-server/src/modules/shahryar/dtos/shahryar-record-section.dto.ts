@@ -1,4 +1,10 @@
-import { IsBoolean, IsObject, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsIn,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class ShahryarRecordSectionDTO {
   path: string;
@@ -16,7 +22,32 @@ export class ShahryarCreateRecordRequestDTO {
 }
 
 export class ShahryarCreateRecordResponseDTO {
+  id: string;
   path: string;
   row: string[];
   createdAt: string;
+}
+
+export class ShahryarPhotoUploadRequestDTO {
+  @IsIn(['market', 'visit'])
+  targetType: 'market' | 'visit';
+
+  @IsString()
+  targetId: string;
+
+  @IsOptional()
+  @IsString()
+  localPhotoId?: string;
+
+  @IsString()
+  capturedAt: string;
+}
+
+export class ShahryarPhotoUploadResponseDTO {
+  fileId: string;
+  filename: string;
+  targetType: 'market' | 'visit';
+  targetId: string;
+  associatedAt: string;
+  url: string;
 }

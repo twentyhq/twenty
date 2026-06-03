@@ -2,7 +2,14 @@ import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
 import { PageHeader } from '@/ui/layout/page/components/PageHeader';
 import { styled } from '@linaria/react';
-import { IconDatabaseExport, IconRefresh, IconShield } from 'twenty-ui/display';
+import {
+  IconAlertTriangle,
+  IconClock,
+  IconDatabaseExport,
+  IconDownload,
+  IconRefresh,
+  IconShield,
+} from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -33,6 +40,11 @@ const StyledStatusLine = styled.div`
   padding: ${themeCssVariables.spacing[3]};
 `;
 
+const StyledFailureLine = styled(StyledStatusLine)`
+  border-color: ${SHAHRYAR_COLORS.red};
+  color: ${SHAHRYAR_COLORS.red};
+`;
+
 const StyledBackupPanel = styled.section`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
@@ -40,6 +52,10 @@ const StyledBackupPanel = styled.section`
   flex-direction: column;
   gap: ${themeCssVariables.spacing[3]};
   padding: ${themeCssVariables.spacing[4]};
+`;
+
+const StyledBackupPanelWarning = styled(StyledBackupPanel)`
+  border-color: ${SHAHRYAR_COLORS.red};
 `;
 
 const StyledPanelHeader = styled.div`
@@ -52,8 +68,9 @@ const StyledPanelHeader = styled.div`
 
 const StyledPanelValue = styled.strong`
   color: ${SHAHRYAR_COLORS.blue};
-  font-size: 24px;
+  font-size: 20px;
   font-weight: ${themeCssVariables.font.weight.semiBold};
+  overflow-wrap: anywhere;
 `;
 
 const StyledPanelMeta = styled.span`
@@ -62,9 +79,56 @@ const StyledPanelMeta = styled.span`
   line-height: 1.5;
 `;
 
+const StyledHistoryHeader = styled.div`
+  color: ${SHAHRYAR_COLORS.navy};
+  font-size: ${themeCssVariables.font.size.md};
+  font-weight: ${themeCssVariables.font.weight.semiBold};
+`;
+
+const StyledHistoryList = styled.div`
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  display: flex;
+  flex-direction: column;
+`;
+
+const StyledHistoryItem = styled.div`
+  align-items: flex-start;
+  border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  display: grid;
+  gap: ${themeCssVariables.spacing[2]};
+  grid-template-columns: minmax(120px, 180px) 1fr minmax(120px, 160px);
+  padding: ${themeCssVariables.spacing[3]};
+
+  &:last-child {
+    border-bottom: 0;
+  }
+`;
+
+const StyledHistoryStatus = styled.strong`
+  color: ${SHAHRYAR_COLORS.blue};
+`;
+
+const StyledHistoryFailure = styled.span`
+  color: ${SHAHRYAR_COLORS.red};
+  display: block;
+  font-size: ${themeCssVariables.font.size.sm};
+  margin-top: ${themeCssVariables.spacing[1]};
+`;
+
+const StyledManualExportAction = styled.div`
+  display: flex;
+`;
+
 export const ShahryarBackupsPage = () => {
   const { backupStatus, errorMessage, isLoading, refresh } =
     useShahryarBackupStatus();
+  const hasBackupStatus = backupStatus !== undefined;
+  const isBackupFailure =
+    backupStatus?.status === 'failed' || backupStatus?.status === 'warning';
+  const BackupStatusPanel = isBackupFailure
+    ? StyledBackupPanelWarning
+    : StyledBackupPanel;
 
   return (
     <PageContainer dir="rtl">
@@ -81,44 +145,125 @@ export const ShahryarBackupsPage = () => {
       <PageBody>
         <StyledContent>
           {errorMessage !== undefined && (
+            <StyledFailureLine>
+              نەتوانرا دۆخی باک ئەپ لە سێرڤەرەوە وەربگیرێت.
+            </StyledFailureLine>
+          )}
+
+          {!hasBackupStatus && (
             <StyledStatusLine>
-              نەتوانرا دۆخی باک ئەپ لە سێرڤەرەوە وەربگیرێت؛ داتای نموونە پیشان
-              دەدرێت.
+              {isLoading
+                ? 'دۆخی باک ئەپ بار دەکرێت...'
+                : 'هیچ دۆخێکی باک ئەپ بەردەست نییە.'}
             </StyledStatusLine>
           )}
 
-          <StyledBackupGrid>
-            <StyledBackupPanel>
-              <StyledPanelHeader>
-                <IconShield size={18} />
-                <span>دۆخی باک ئەپ</span>
-              </StyledPanelHeader>
-              <StyledPanelValue>{backupStatus.label}</StyledPanelValue>
-              <StyledPanelMeta>
-                دوایین جار: {backupStatus.lastRunLabel}
-              </StyledPanelMeta>
-            </StyledBackupPanel>
-            <StyledBackupPanel>
-              <StyledPanelHeader>
-                <IconRefresh size={18} />
-                <span>دووبارەکردنەوە</span>
-              </StyledPanelHeader>
-              <StyledPanelValue>{backupStatus.intervalHours}h</StyledPanelValue>
-              <StyledPanelMeta>
-                {backupStatus.operationModeLabel}
-              </StyledPanelMeta>
-            </StyledBackupPanel>
-            <StyledBackupPanel>
-              <StyledPanelHeader>
-                <IconDatabaseExport size={18} />
-                <span>قەبارەی داتا</span>
-              </StyledPanelHeader>
-              <StyledPanelValue>{backupStatus.dataSizeLabel}</StyledPanelValue>
-              <StyledPanelMeta>
-                {backupStatus.storageScopeLabel}
-              </StyledPanelMeta>
-            </StyledBackupPanel>
-          </StyledBackupGrid>
+          {backupStatus !== undefined && (
+            <>
+              {backupStatus.failureReason !== undefined && (
+                <StyledFailureLine>
+                  <IconAlertTriangle size={16} /> {backupStatus.failureReason}
+                </StyledFailureLine>
+              )}
+
+              <StyledBackupGrid>
+                <BackupStatusPanel>
+                  <StyledPanelHeader>
+                    <IconShield size={18} />
+                    <span>دۆخی باک ئەپ</span>
+                  </StyledPanelHeader>
+                  <StyledPanelValue>{backupStatus.label}</StyledPanelValue>
+                  <StyledPanelMeta>
+                    دوایین سەرکەوتوو: {backupStatus.lastSuccessfulBackupLabel}
+                  </StyledPanelMeta>
+                </BackupStatusPanel>
+                <StyledBackupPanel>
+                  <StyledPanelHeader>
+                    <IconClock size={18} />
+                    <span>کاتی داهاتوو</span>
+                  </StyledPanelHeader>
+                  <StyledPanelValue>
+                    {backupStatus.nextScheduledBackupLabel}
+                  </StyledPanelValue>
+                  <StyledPanelMeta>
+                    هەر {backupStatus.intervalHours} کاتژمێر -{' '}
+                    {backupStatus.operationModeLabel}
+                  </StyledPanelMeta>
+                </StyledBackupPanel>
+                <StyledBackupPanel>
+                  <StyledPanelHeader>
+                    <IconDatabaseExport size={18} />
+                    <span>قەبارە و شوێن</span>
+                  </StyledPanelHeader>
+                  <StyledPanelValue>
+                    {backupStatus.dataSizeLabel}
+                  </StyledPanelValue>
+                  <StyledPanelMeta>
+                    {backupStatus.storageScopeLabel}
+                  </StyledPanelMeta>
+                </StyledBackupPanel>
+                <StyledBackupPanel>
+                  <StyledPanelHeader>
+                    <IconDownload size={18} />
+                    <span>دابەزاندنی دەستی</span>
+                  </StyledPanelHeader>
+                  <StyledPanelValue>
+                    {backupStatus.manualExport.isAvailable
+                      ? 'Available'
+                      : 'Unavailable'}
+                  </StyledPanelValue>
+                  <StyledPanelMeta>
+                    {backupStatus.manualExport.label}
+                  </StyledPanelMeta>
+                  {backupStatus.manualExport.isAvailable &&
+                    backupStatus.manualExport.downloadUrl !== undefined && (
+                      <StyledManualExportAction>
+                        <Button
+                          title="دابەزاندن"
+                          Icon={IconDownload}
+                          size="small"
+                          variant="secondary"
+                          onClick={() =>
+                            window.open(
+                              backupStatus.manualExport.downloadUrl,
+                              '_blank',
+                            )
+                          }
+                        />
+                      </StyledManualExportAction>
+                    )}
+                </StyledBackupPanel>
+              </StyledBackupGrid>
+
+              <StyledHistoryHeader>مێژووی باک ئەپ</StyledHistoryHeader>
+              {backupStatus.history.length === 0 ? (
+                <StyledStatusLine>
+                  هیچ باک ئەپێکی سەرکەوتوو لە مێژووی سێرڤەرەکەدا نەدۆزرایەوە.
+                </StyledStatusLine>
+              ) : (
+                <StyledHistoryList>
+                  {backupStatus.history.map((historyEntry) => (
+                    <StyledHistoryItem key={historyEntry.id}>
+                      <StyledHistoryStatus>
+                        {historyEntry.label}
+                      </StyledHistoryStatus>
+                      <StyledPanelMeta>
+                        {historyEntry.completedAtLabel}
+                        {historyEntry.failureReason !== undefined && (
+                          <StyledHistoryFailure>
+                            {historyEntry.failureReason}
+                          </StyledHistoryFailure>
+                        )}
+                      </StyledPanelMeta>
+                      <StyledPanelMeta>
+                        {historyEntry.dataSizeLabel}
+                      </StyledPanelMeta>
+                    </StyledHistoryItem>
+                  ))}
+                </StyledHistoryList>
+              )}
+            </>
+          )}
         </StyledContent>
       </PageBody>
     </PageContainer>

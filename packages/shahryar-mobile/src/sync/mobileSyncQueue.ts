@@ -1,16 +1,32 @@
 export {
+  createMobileSyncQueueItem,
   createVisitSyncQueueItem,
+  discardMobileSyncQueueItem,
+  getShahryarMobileRecordKind,
   markVisitSyncQueueItemPending,
+  resolveMobileSyncQueue,
   reconcileVisitSyncQueueWithServerResponse,
+  retryMobileSyncQueueItem,
   resolveVisitSyncQueue,
 } from 'twenty-shared/shahryar';
 
 export type {
+  ShahryarMobileAbsenceDraft,
+  ShahryarMobileAbsenceSyncQueueItem,
+  ShahryarMobilePaymentDraft,
+  ShahryarMobilePaymentSyncQueueItem,
+  ShahryarMobileRecordDraft,
+  ShahryarMobileRecordKind,
+  ShahryarMobileRecordSyncChange,
   ShahryarMobileSyncConflict,
   ShahryarMobileSyncQueueItem,
   ShahryarMobileSyncQueueReconciliation,
   ShahryarMobileSyncResponse,
   ShahryarMobileVisitDraft,
+  ShahryarMobileVisitSyncQueueItem,
+  ShahryarMobileWorkingTimeDraft,
+  ShahryarMobileWorkingTimeSyncQueueItem,
+  ShahryarServerRecordSnapshot,
   ShahryarServerVisitSnapshot,
   ShahryarSyncResolution,
 } from 'twenty-shared/shahryar';

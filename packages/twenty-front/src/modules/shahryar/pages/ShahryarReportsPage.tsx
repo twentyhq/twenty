@@ -7,6 +7,7 @@ import { IconChartBar, IconDownload, IconRefresh } from 'twenty-ui/display';
 import { Button } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
+import { ShahryarAnalyticsSection } from '@/shahryar/components/ShahryarAnalyticsSection';
 import { SHAHRYAR_COLORS } from '@/shahryar/constants/shahryar-colors';
 import { useShahryarReportSummary } from '@/shahryar/hooks/useShahryarReportSummary';
 import {
@@ -74,17 +75,24 @@ const StyledLineValue = styled.strong`
   font-size: ${themeCssVariables.font.size.md};
 `;
 
+const StyledReportTableScroller = styled.div`
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  scrollbar-gutter: stable;
+`;
+
 const StyledReportTable = styled.div`
   border: 1px solid ${themeCssVariables.border.color.medium};
   border-radius: ${themeCssVariables.border.radius.sm};
   display: grid;
   grid-template-columns:
-    minmax(112px, 1fr) repeat(3, minmax(112px, 0.5fr))
-    repeat(3, minmax(112px, 0.5fr))
-    repeat(2, minmax(136px, 1fr))
-    minmax(180px, 2fr);
-  min-width: 1180px;
+    minmax(88px, 0.8fr) repeat(6, minmax(80px, 0.55fr))
+    repeat(2, minmax(120px, 1fr))
+    minmax(160px, 1.4fr);
+  min-width: 968px;
   overflow: hidden;
+  width: 100%;
 `;
 
 const StyledReportCell = styled.div<{ isHeader?: boolean }>`
@@ -110,7 +118,7 @@ const formatOptionalNumber = (value: number | undefined) =>
   value === undefined ? '-' : value;
 
 export const ShahryarReportsPage = () => {
-  const { reportRows, isLoading, errorMessage, refresh } =
+  const { analytics, reportRows, isLoading, errorMessage, refresh } =
     useShahryarReportSummary();
   const [exportErrorMessage, setExportErrorMessage] = useState<
     string | undefined
@@ -180,7 +188,8 @@ export const ShahryarReportsPage = () => {
             <StyledStatusLine>ڕاپۆرتەکان نوێ دەکرێنەوە...</StyledStatusLine>
           ) : errorMessage !== undefined ? (
             <StyledStatusLine>
-              نەتوانرا داتای سێرڤەر وەربگیرێت؛ داتای نموونە پیشان دەدرێت.
+              نەتوانرا داتای سێرڤەر وەربگیرێت؛ تکایە پەیوەندی بە بەکئەندەوە
+              بپشکنە.
             </StyledStatusLine>
           ) : exportErrorMessage !== undefined ? (
             <StyledStatusLine>{exportErrorMessage}</StyledStatusLine>
@@ -214,38 +223,42 @@ export const ShahryarReportsPage = () => {
             ))}
           </StyledPeriodGrid>
 
-          <StyledReportTable>
-            <StyledReportCell isHeader>ماوە</StyledReportCell>
-            <StyledReportCell isHeader>سەردان</StyledReportCell>
-            <StyledReportCell isHeader>فرۆشتن</StyledReportCell>
-            <StyledReportCell isHeader>داواکاری</StyledReportCell>
-            <StyledReportCell isHeader>پارەدان</StyledReportCell>
-            <StyledReportCell isHeader>غرامە</StyledReportCell>
-            <StyledReportCell isHeader>غیابات</StyledReportCell>
-            <StyledReportCell isHeader>پوختەی 1</StyledReportCell>
-            <StyledReportCell isHeader>پوختەی 2</StyledReportCell>
-            <StyledReportCell isHeader>تێبینی</StyledReportCell>
-            {reportRows.map((row) => (
-              <Fragment key={row.period}>
-                <StyledReportCell>{row.period}</StyledReportCell>
-                <StyledReportCell>{row.visits}</StyledReportCell>
-                <StyledReportCell>{row.salesCartons}</StyledReportCell>
-                <StyledReportCell>{row.requests}</StyledReportCell>
-                <StyledReportCell>
-                  {formatOptionalNumber(row.paidAmount)}
-                </StyledReportCell>
-                <StyledReportCell>
-                  {formatOptionalNumber(row.penaltyAmount)}
-                </StyledReportCell>
-                <StyledReportCell>
-                  {formatOptionalNumber(row.absenceCount)}
-                </StyledReportCell>
-                <StyledReportCell>{row.primaryInsight}</StyledReportCell>
-                <StyledReportCell>{row.secondaryInsight}</StyledReportCell>
-                <StyledReportCell>{row.notes}</StyledReportCell>
-              </Fragment>
-            ))}
-          </StyledReportTable>
+          <ShahryarAnalyticsSection analytics={analytics} />
+
+          <StyledReportTableScroller>
+            <StyledReportTable>
+              <StyledReportCell isHeader>ماوە</StyledReportCell>
+              <StyledReportCell isHeader>سەردان</StyledReportCell>
+              <StyledReportCell isHeader>فرۆشتن</StyledReportCell>
+              <StyledReportCell isHeader>داواکاری</StyledReportCell>
+              <StyledReportCell isHeader>پارەدان</StyledReportCell>
+              <StyledReportCell isHeader>غرامە</StyledReportCell>
+              <StyledReportCell isHeader>غیابات</StyledReportCell>
+              <StyledReportCell isHeader>پوختەی 1</StyledReportCell>
+              <StyledReportCell isHeader>پوختەی 2</StyledReportCell>
+              <StyledReportCell isHeader>تێبینی</StyledReportCell>
+              {reportRows.map((row) => (
+                <Fragment key={row.period}>
+                  <StyledReportCell>{row.period}</StyledReportCell>
+                  <StyledReportCell>{row.visits}</StyledReportCell>
+                  <StyledReportCell>{row.salesCartons}</StyledReportCell>
+                  <StyledReportCell>{row.requests}</StyledReportCell>
+                  <StyledReportCell>
+                    {formatOptionalNumber(row.paidAmount)}
+                  </StyledReportCell>
+                  <StyledReportCell>
+                    {formatOptionalNumber(row.penaltyAmount)}
+                  </StyledReportCell>
+                  <StyledReportCell>
+                    {formatOptionalNumber(row.absenceCount)}
+                  </StyledReportCell>
+                  <StyledReportCell>{row.primaryInsight}</StyledReportCell>
+                  <StyledReportCell>{row.secondaryInsight}</StyledReportCell>
+                  <StyledReportCell>{row.notes}</StyledReportCell>
+                </Fragment>
+              ))}
+            </StyledReportTable>
+          </StyledReportTableScroller>
         </StyledContent>
       </PageBody>
     </PageContainer>

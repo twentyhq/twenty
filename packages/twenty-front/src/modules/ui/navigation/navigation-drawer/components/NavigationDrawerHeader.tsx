@@ -18,13 +18,13 @@ const StyledContainer = styled.div<{ isExpanded: boolean }>`
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[4])};
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  padding-right: ${themeCssVariables.spacing[2]};
+  padding-inline-end: ${themeCssVariables.spacing[2]};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
   user-select: none;
 
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${themeCssVariables.spacing[5]};
-    padding-right: ${themeCssVariables.spacing[5]};
+    padding-inline-end: ${themeCssVariables.spacing[5]};
+    padding-inline-start: ${themeCssVariables.spacing[5]};
   }
 `;
 
@@ -35,14 +35,14 @@ const StyledRightActions = styled.div<{ isExpanded: boolean }>`
   flex-direction: ${({ isExpanded }) => (isExpanded ? 'row' : 'column')};
   flex-shrink: 0;
   gap: ${({ isExpanded }) => (isExpanded ? '0' : themeCssVariables.spacing[1])};
-  margin-left: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
+  margin-inline-start: ${({ isExpanded }) => (isExpanded ? 'auto' : '0')};
   transition: gap calc(${themeCssVariables.animation.duration.normal} * 1s) ease;
 `;
 
 const StyledNavigationDrawerCollapseButtonContainer = styled.div`
   > * {
     height: ${themeCssVariables.spacing[6]};
-    padding-right: ${themeCssVariables.spacing[1]};
+    padding-inline-end: ${themeCssVariables.spacing[1]};
     width: ${themeCssVariables.spacing[6]};
   }
 
@@ -64,10 +64,12 @@ const StyledWorkspaceDropdownContainer = styled.div`
 `;
 
 type NavigationDrawerHeaderProps = {
+  drawerPosition: 'left' | 'right';
   showCollapseButton: boolean;
 };
 
 export const NavigationDrawerHeader = ({
+  drawerPosition,
   showCollapseButton,
 }: NavigationDrawerHeaderProps) => {
   const isMobile = useIsMobile();
@@ -93,7 +95,7 @@ export const NavigationDrawerHeader = ({
         )}
         {isNavigationDrawerExpanded && showCollapseButton && (
           <StyledNavigationDrawerCollapseButtonContainer>
-            <NavigationDrawerCollapseButton direction="left" />
+            <NavigationDrawerCollapseButton direction={drawerPosition} />
           </StyledNavigationDrawerCollapseButtonContainer>
         )}
       </StyledRightActions>

@@ -12,6 +12,7 @@ import { Provider as JotaiProvider } from 'jotai';
 import { HelmetProvider } from 'react-helmet-async';
 import { IconsProvider } from 'twenty-ui/display';
 import { initialI18nActivate } from '~/utils/i18n/initialI18nActivate';
+import { DocumentLocaleDirectionEffect } from '~/utils/i18n/DocumentLocaleDirectionEffect';
 
 initialI18nActivate();
 
@@ -23,6 +24,7 @@ export const App = () => {
         FallbackComponent={AppRootErrorFallback}
       >
         <I18nProvider i18n={i18n}>
+          <DocumentLocaleDirectionEffect />
           <ApolloDevLogEffect />
           <SnackBarComponentInstanceContext.Provider
             value={{ instanceId: 'snack-bar-manager' }}

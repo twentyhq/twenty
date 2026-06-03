@@ -15,7 +15,7 @@ Planned backend wiring:
 - Authenticate through the existing Shahryar username/password endpoint.
 - Pull assigned markets for the signed-in supervisor.
 - Upload queued visits, GPS coordinates, and photo file URIs.
-- Surface unresolved conflicts to `تەدمین` in the web app.
+- Surface unresolved conflicts to `ئەدمین` in the web app.
 
 Run locally after installing the Expo workspace dependencies:
 

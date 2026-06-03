@@ -3,14 +3,20 @@ import { basename, extname } from 'node:path';
 
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 import {
+  type ShahryarGeoLocation,
   type ShahryarMobileAssignedMarket,
+  type ShahryarMobileRecordKind,
+  type ShahryarMobileRecordSyncChange,
+  type ShahryarServerRecordSnapshot,
   type ShahryarServerVisitSnapshot,
+  getShahryarMobileRecordKind,
 } from 'twenty-shared/shahryar';
 import { type DataSource } from 'typeorm';
 
@@ -22,7 +28,7 @@ import {
   type ShahryarMobileSyncPullResponseDTO,
   type ShahryarMobileSyncRequestDTO,
   type ShahryarMobileSyncResponseDTO,
-  type ShahryarMobileVisitSyncChangeDTO,
+  type ShahryarMobileSyncChangeDTO,
 } from 'src/modules/shahryar/dtos/shahryar-mobile-sync.dto';
 import { resolveShahryarMobileSyncChanges } from 'src/modules/shahryar/utils/resolve-shahryar-mobile-sync-changes.util';
 import { getWorkspaceSchemaName } from 'src/engine/workspace-datasource/utils/get-workspace-schema-name.util';
@@ -119,6 +125,16 @@ type ShahryarWorkspaceVisitSnapshotRow = {
   updatedAt: Date | string;
 };
 
+type ShahryarWorkspaceRecordSnapshotConfig = {
+  ownerFieldName?: 'collectedById' | 'supervisorId';
+  recordKind: ShahryarMobileRecordKind;
+  tableName:
+    | '_shahryarAbsence'
+    | '_shahryarPayment'
+    | '_shahryarSupervisorVisit'
+    | '_shahryarWorkingTime';
+};
+
 type ShahryarFilesFieldItem = {
   fileId: string;
   label: string;
@@ -135,11 +151,13 @@ type ShahryarWorkspacePhotoTargetType =
 type ShahryarWorkspacePhotoTargetConfig = {
   fieldName: 'photos' | 'shopPhotos';
   maxNumberOfValues: number;
+  ownerFieldName: 'assignedSupervisorId' | 'supervisorId';
   tableName: '_shahryarMarket' | '_shahryarSupervisorVisit';
 };
 
 type ShahryarWorkspacePhotoTargetRow = {
   files: unknown;
+  ownerId: string | null;
 };
 
 type ShahryarWorkspaceFileRow = {
@@ -168,16 +186,42 @@ const SHAHRYAR_WORKSPACE_PHOTO_TARGET_CONFIGS: Record<
   market: {
     fieldName: 'shopPhotos',
     maxNumberOfValues: 4,
+    ownerFieldName: 'assignedSupervisorId',
     tableName: '_shahryarMarket',
   },
   visit: {
     fieldName: 'photos',
     maxNumberOfValues: 8,
+    ownerFieldName: 'supervisorId',
     tableName: '_shahryarSupervisorVisit',
   },
 };
 
 const SHAHRYAR_MOBILE_DEVICE_TABLE_NAME = '_shahryarMobileDevice';
+
+const SHAHRYAR_WORKSPACE_RECORD_SNAPSHOT_CONFIGS: ShahryarWorkspaceRecordSnapshotConfig[] =
+  [
+    {
+      ownerFieldName: 'supervisorId',
+      recordKind: 'visit',
+      tableName: '_shahryarSupervisorVisit',
+    },
+    {
+      ownerFieldName: 'supervisorId',
+      recordKind: 'working-time',
+      tableName: '_shahryarWorkingTime',
+    },
+    {
+      ownerFieldName: 'collectedById',
+      recordKind: 'payment',
+      tableName: '_shahryarPayment',
+    },
+    {
+      ownerFieldName: 'supervisorId',
+      recordKind: 'absence',
+      tableName: '_shahryarAbsence',
+    },
+  ];
 
 const SHAHRYAR_ENABLED_NOTIFICATION_KINDS: ShahryarMobileNotificationKind[] = [
   'missing-report',
@@ -233,9 +277,64 @@ const toMobileDebtStatus = (
   return 'open';
 };
 
-const toGpsLocationValue = (
-  gpsLocation: ShahryarMobileVisitSyncChangeDTO['gpsLocation'],
-): string => `${gpsLocation.latitude}, ${gpsLocation.longitude}`;
+const toGpsLocationValue = (gpsLocation: ShahryarGeoLocation): string =>
+  `${gpsLocation.latitude}, ${gpsLocation.longitude}`;
+
+const toServerRecordSnapshotsFromVisits = (
+  serverVisits: ShahryarServerVisitSnapshot[],
+): ShahryarServerRecordSnapshot[] =>
+  serverVisits.map((serverVisit) => ({
+    id: serverVisit.id,
+    recordKind: 'visit',
+    updatedAt: serverVisit.updatedAt,
+  }));
+
+const toServerVisitSnapshots = (
+  serverRecords: ShahryarServerRecordSnapshot[],
+): ShahryarServerVisitSnapshot[] =>
+  serverRecords
+    .filter((serverRecord) => serverRecord.recordKind === 'visit')
+    .map((serverRecord) => ({
+      id: serverRecord.id,
+      updatedAt: serverRecord.updatedAt,
+    }));
+
+const toMobileRecordSyncChange = (
+  change: ShahryarMobileSyncChangeDTO,
+): ShahryarMobileRecordSyncChange => change as ShahryarMobileRecordSyncChange;
+
+const requireString = (
+  value: string | undefined,
+  fieldName: string,
+): string => {
+  if (value === undefined || value.trim().length === 0) {
+    throw new BadRequestException(`Missing mobile sync field: ${fieldName}`);
+  }
+
+  return value;
+};
+
+const requireNumber = (
+  value: number | undefined,
+  fieldName: string,
+): number => {
+  if (value === undefined || !Number.isFinite(value)) {
+    throw new BadRequestException(`Missing mobile sync field: ${fieldName}`);
+  }
+
+  return value;
+};
+
+const requireGpsLocation = (
+  value: ShahryarGeoLocation | undefined,
+  fieldName: string,
+): ShahryarGeoLocation => {
+  if (value === undefined) {
+    throw new BadRequestException(`Missing mobile sync field: ${fieldName}`);
+  }
+
+  return value;
+};
 
 const isFilesFieldItemLike = (
   value: unknown,
@@ -316,34 +415,36 @@ export class ShahryarMobileSyncService {
   async resolveSyncRequest({
     authorizedSupervisorId,
     request,
+    serverRecords,
     serverVisits = [],
     syncedAt = new Date().toISOString(),
     workspaceId,
   }: {
     authorizedSupervisorId?: string;
     request: ShahryarMobileSyncRequestDTO;
+    serverRecords?: ShahryarServerRecordSnapshot[];
     serverVisits?: ShahryarServerVisitSnapshot[];
     syncedAt?: string;
     workspaceId?: string;
   }): Promise<ShahryarMobileSyncResponseDTO> {
-    const changes = this.assignServerIdsToNewVisits(request.changes);
-    const workspaceServerVisits =
+    const changes = this.assignServerIdsToNewRecords(request.changes);
+    const workspaceServerRecords =
       workspaceId === undefined
-        ? serverVisits
-        : await this.getWorkspaceVisitSnapshots({
+        ? (serverRecords ?? toServerRecordSnapshotsFromVisits(serverVisits))
+        : await this.getWorkspaceRecordSnapshots({
             authorizedSupervisorId,
             workspaceId,
           });
     const response = resolveShahryarMobileSyncChanges({
       authorizedSupervisorId,
-      changes,
+      changes: changes.map(toMobileRecordSyncChange),
       deviceId: request.deviceId,
-      serverVisits: workspaceServerVisits,
+      serverRecords: workspaceServerRecords,
       syncedAt,
     });
 
     if (workspaceId !== undefined) {
-      await this.persistAcceptedVisitChanges({
+      await this.persistAcceptedSyncChanges({
         changes,
         response,
         syncedAt,
@@ -385,21 +486,29 @@ export class ShahryarMobileSyncService {
       nextPullCursor: syncedAt,
       currentSupervisorId: assignedSupervisorId,
       assignedMarkets,
-      serverVisits: workspaceData?.serverVisits ?? serverVisits,
+      serverRecords:
+        workspaceData?.serverRecords ??
+        toServerRecordSnapshotsFromVisits(serverVisits),
+      serverVisits:
+        workspaceData?.serverVisits ??
+        toServerVisitSnapshots(toServerRecordSnapshotsFromVisits(serverVisits)),
     };
   }
 
   async associatePhoto({
+    authorizedSupervisorId,
     request,
     associatedAt = new Date().toISOString(),
     workspaceId,
   }: {
+    authorizedSupervisorId?: string;
     request: ShahryarMobilePhotoAssociationRequestDTO;
     associatedAt?: string;
     workspaceId?: string;
   }): Promise<ShahryarMobilePhotoAssociationResponseDTO> {
     if (workspaceId !== undefined) {
       await this.persistPhotoAssociation({
+        authorizedSupervisorId,
         associatedAt,
         request,
         workspaceId,
@@ -442,9 +551,9 @@ export class ShahryarMobileSyncService {
     };
   }
 
-  private assignServerIdsToNewVisits(
-    changes: ShahryarMobileVisitSyncChangeDTO[],
-  ): ShahryarMobileVisitSyncChangeDTO[] {
+  private assignServerIdsToNewRecords(
+    changes: ShahryarMobileSyncChangeDTO[],
+  ): ShahryarMobileSyncChangeDTO[] {
     return changes.map((change) =>
       change.operation === 'create' && change.serverId === undefined
         ? {
@@ -463,20 +572,22 @@ export class ShahryarMobileSyncService {
     workspaceId: string;
   }): Promise<{
     assignedMarkets: ShahryarMobileAssignedMarket[];
+    serverRecords: ShahryarServerRecordSnapshot[];
     serverVisits: ShahryarServerVisitSnapshot[];
   }> {
     const assignedMarkets = await this.getWorkspaceAssignedMarkets({
       assignedSupervisorId,
       workspaceId,
     });
-    const serverVisits = await this.getWorkspaceVisitSnapshots({
+    const serverRecords = await this.getWorkspaceRecordSnapshots({
       authorizedSupervisorId: assignedSupervisorId,
       workspaceId,
     });
 
     return {
       assignedMarkets,
-      serverVisits,
+      serverRecords,
+      serverVisits: toServerVisitSnapshots(serverRecords),
     };
   }
 
@@ -515,43 +626,58 @@ export class ShahryarMobileSyncService {
     }));
   }
 
-  private async getWorkspaceVisitSnapshots({
+  private async getWorkspaceRecordSnapshots({
     authorizedSupervisorId,
     workspaceId,
   }: {
     authorizedSupervisorId?: string;
     workspaceId: string;
-  }): Promise<ShahryarServerVisitSnapshot[]> {
-    const tableName = toWorkspaceTableName({
-      tableName: '_shahryarSupervisorVisit',
-      workspaceId,
-    });
-    const supervisorFilter =
-      authorizedSupervisorId === undefined ? '' : 'WHERE "supervisorId" = $1';
-    const rows = (await this.coreDataSource.query(
-      `SELECT "id", "updatedAt"
-       FROM ${tableName}
-       ${supervisorFilter}
-       ORDER BY "updatedAt" DESC`,
-      authorizedSupervisorId === undefined ? [] : [authorizedSupervisorId],
-    )) as ShahryarWorkspaceVisitSnapshotRow[];
+  }): Promise<ShahryarServerRecordSnapshot[]> {
+    const snapshots: ShahryarServerRecordSnapshot[] = [];
 
-    return rows.map((row) => ({
-      id: row.id,
-      updatedAt:
-        row.updatedAt instanceof Date
-          ? row.updatedAt.toISOString()
-          : row.updatedAt,
-    }));
+    for (const config of SHAHRYAR_WORKSPACE_RECORD_SNAPSHOT_CONFIGS) {
+      const tableName = toWorkspaceTableName({
+        tableName: config.tableName,
+        workspaceId,
+      });
+      const supervisorFilter =
+        authorizedSupervisorId === undefined ||
+        config.ownerFieldName === undefined
+          ? ''
+          : `WHERE "${config.ownerFieldName}" = $1`;
+      const rows = (await this.coreDataSource.query(
+        `SELECT "id", "updatedAt"
+         FROM ${tableName}
+         ${supervisorFilter}
+         ORDER BY "updatedAt" DESC`,
+        authorizedSupervisorId === undefined ||
+          config.ownerFieldName === undefined
+          ? []
+          : [authorizedSupervisorId],
+      )) as ShahryarWorkspaceVisitSnapshotRow[];
+
+      snapshots.push(
+        ...rows.map((row) => ({
+          id: row.id,
+          recordKind: config.recordKind,
+          updatedAt:
+            row.updatedAt instanceof Date
+              ? row.updatedAt.toISOString()
+              : row.updatedAt,
+        })),
+      );
+    }
+
+    return snapshots;
   }
 
-  private async persistAcceptedVisitChanges({
+  private async persistAcceptedSyncChanges({
     changes,
     response,
     syncedAt,
     workspaceId,
   }: {
-    changes: ShahryarMobileVisitSyncChangeDTO[];
+    changes: ShahryarMobileSyncChangeDTO[];
     response: ShahryarMobileSyncResponseDTO;
     syncedAt: string;
     workspaceId: string;
@@ -559,10 +685,6 @@ export class ShahryarMobileSyncService {
     const changeByLocalId = new Map(
       changes.map((change) => [change.localId, change]),
     );
-    const tableName = toWorkspaceTableName({
-      tableName: '_shahryarSupervisorVisit',
-      workspaceId,
-    });
 
     for (const acceptedChange of response.acceptedChanges) {
       const change = changeByLocalId.get(acceptedChange.localId);
@@ -571,64 +693,301 @@ export class ShahryarMobileSyncService {
         continue;
       }
 
-      await this.coreDataSource.query(
-        `INSERT INTO ${tableName} (
-          "id",
-          "name",
-          "marketId",
-          "supervisorId",
-          "checkInAt",
-          "checkOutAt",
-          "gpsLocation",
-          "soldCartons",
-          "requestedCartons",
-          "issue",
-          "decisionMaker",
-          "requestDetails",
-          "report",
-          "notes",
-          "updatedAt"
-        )
-        VALUES ($1, $2, $3, $4, $5, NULL, $6, $7, $8, $9, $10, $11, $12, $13, $14)
-        ON CONFLICT ("id") DO UPDATE SET
-          "name" = EXCLUDED."name",
-          "marketId" = EXCLUDED."marketId",
-          "supervisorId" = EXCLUDED."supervisorId",
-          "checkInAt" = EXCLUDED."checkInAt",
-          "gpsLocation" = EXCLUDED."gpsLocation",
-          "soldCartons" = EXCLUDED."soldCartons",
-          "requestedCartons" = EXCLUDED."requestedCartons",
-          "issue" = EXCLUDED."issue",
-          "decisionMaker" = EXCLUDED."decisionMaker",
-          "requestDetails" = EXCLUDED."requestDetails",
-          "report" = EXCLUDED."report",
-          "notes" = EXCLUDED."notes",
-          "updatedAt" = EXCLUDED."updatedAt"`,
-        [
-          acceptedChange.serverId,
-          `Mobile visit ${change.checkInAt}`,
-          change.assignedMarketId,
-          change.supervisorId,
-          change.checkInAt,
-          toGpsLocationValue(change.gpsLocation),
-          change.soldCartons,
-          change.requestedCartons,
-          change.issue ?? '',
-          change.decisionMaker ?? '',
-          change.requestDetails ?? '',
-          change.report,
-          change.report,
-          syncedAt,
-        ],
+      const recordKind = getShahryarMobileRecordKind(
+        toMobileRecordSyncChange(change),
       );
+
+      if (recordKind === 'visit') {
+        await this.persistAcceptedVisitChange({
+          change,
+          serverId: acceptedChange.serverId,
+          syncedAt,
+          workspaceId,
+        });
+
+        continue;
+      }
+
+      if (recordKind === 'working-time') {
+        await this.persistAcceptedWorkingTimeChange({
+          change,
+          serverId: acceptedChange.serverId,
+          syncedAt,
+          workspaceId,
+        });
+
+        continue;
+      }
+
+      if (recordKind === 'payment') {
+        await this.persistAcceptedPaymentChange({
+          change,
+          serverId: acceptedChange.serverId,
+          syncedAt,
+          workspaceId,
+        });
+
+        continue;
+      }
+
+      await this.persistAcceptedAbsenceChange({
+        change,
+        serverId: acceptedChange.serverId,
+        syncedAt,
+        workspaceId,
+      });
     }
   }
 
+  private async persistAcceptedVisitChange({
+    change,
+    serverId,
+    syncedAt,
+    workspaceId,
+  }: {
+    change: ShahryarMobileSyncChangeDTO;
+    serverId: string;
+    syncedAt: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const tableName = toWorkspaceTableName({
+      tableName: '_shahryarSupervisorVisit',
+      workspaceId,
+    });
+    const checkInAt = requireString(change.checkInAt, 'checkInAt');
+    const report = requireString(change.report, 'report');
+
+    await this.coreDataSource.query(
+      `INSERT INTO ${tableName} (
+        "id",
+        "name",
+        "marketId",
+        "supervisorId",
+        "checkInAt",
+        "checkOutAt",
+        "gpsLocation",
+        "soldCartons",
+        "requestedCartons",
+        "issue",
+        "decisionMaker",
+        "requestDetails",
+        "report",
+        "notes",
+        "updatedAt"
+      )
+      VALUES ($1, $2, $3, $4, $5, NULL, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+      ON CONFLICT ("id") DO UPDATE SET
+        "name" = EXCLUDED."name",
+        "marketId" = EXCLUDED."marketId",
+        "supervisorId" = EXCLUDED."supervisorId",
+        "checkInAt" = EXCLUDED."checkInAt",
+        "gpsLocation" = EXCLUDED."gpsLocation",
+        "soldCartons" = EXCLUDED."soldCartons",
+        "requestedCartons" = EXCLUDED."requestedCartons",
+        "issue" = EXCLUDED."issue",
+        "decisionMaker" = EXCLUDED."decisionMaker",
+        "requestDetails" = EXCLUDED."requestDetails",
+        "report" = EXCLUDED."report",
+        "notes" = EXCLUDED."notes",
+        "updatedAt" = EXCLUDED."updatedAt"`,
+      [
+        serverId,
+        `Mobile visit ${checkInAt}`,
+        requireString(change.assignedMarketId, 'assignedMarketId'),
+        requireString(change.supervisorId, 'supervisorId'),
+        checkInAt,
+        toGpsLocationValue(
+          requireGpsLocation(change.gpsLocation, 'gpsLocation'),
+        ),
+        requireNumber(change.soldCartons, 'soldCartons'),
+        requireNumber(change.requestedCartons, 'requestedCartons'),
+        change.issue ?? '',
+        change.decisionMaker ?? '',
+        change.requestDetails ?? '',
+        report,
+        report,
+        syncedAt,
+      ],
+    );
+  }
+
+  private async persistAcceptedWorkingTimeChange({
+    change,
+    serverId,
+    syncedAt,
+    workspaceId,
+  }: {
+    change: ShahryarMobileSyncChangeDTO;
+    serverId: string;
+    syncedAt: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const tableName = toWorkspaceTableName({
+      tableName: '_shahryarWorkingTime',
+      workspaceId,
+    });
+    const workDate = requireString(change.workDate, 'workDate');
+
+    await this.coreDataSource.query(
+      `INSERT INTO ${tableName} (
+        "id",
+        "name",
+        "supervisorId",
+        "workDate",
+        "checkInAt",
+        "checkOutAt",
+        "gpsLocation",
+        "totalMinutes",
+        "status",
+        "updatedAt"
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      ON CONFLICT ("id") DO UPDATE SET
+        "name" = EXCLUDED."name",
+        "supervisorId" = EXCLUDED."supervisorId",
+        "workDate" = EXCLUDED."workDate",
+        "checkInAt" = EXCLUDED."checkInAt",
+        "checkOutAt" = EXCLUDED."checkOutAt",
+        "gpsLocation" = EXCLUDED."gpsLocation",
+        "totalMinutes" = EXCLUDED."totalMinutes",
+        "status" = EXCLUDED."status",
+        "updatedAt" = EXCLUDED."updatedAt"`,
+      [
+        serverId,
+        `Mobile working time ${workDate}`,
+        requireString(change.supervisorId, 'supervisorId'),
+        workDate,
+        requireString(change.checkInAt, 'checkInAt'),
+        change.checkOutAt ?? null,
+        toGpsLocationValue(
+          requireGpsLocation(change.gpsLocation, 'gpsLocation'),
+        ),
+        requireNumber(change.totalMinutes, 'totalMinutes'),
+        requireString(change.status, 'status'),
+        syncedAt,
+      ],
+    );
+  }
+
+  private async persistAcceptedPaymentChange({
+    change,
+    serverId,
+    syncedAt,
+    workspaceId,
+  }: {
+    change: ShahryarMobileSyncChangeDTO;
+    serverId: string;
+    syncedAt: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const tableName = toWorkspaceTableName({
+      tableName: '_shahryarPayment',
+      workspaceId,
+    });
+    const paidAt = change.paidAt ?? null;
+    const dueDate = change.dueDate ?? paidAt ?? syncedAt.slice(0, 10);
+
+    await this.coreDataSource.query(
+      `INSERT INTO ${tableName} (
+        "id",
+        "name",
+        "marketId",
+        "collectedById",
+        "amount",
+        "dueDate",
+        "paidAt",
+        "status",
+        "notes",
+        "updatedAt"
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+      ON CONFLICT ("id") DO UPDATE SET
+        "name" = EXCLUDED."name",
+        "marketId" = EXCLUDED."marketId",
+        "collectedById" = EXCLUDED."collectedById",
+        "amount" = EXCLUDED."amount",
+        "dueDate" = EXCLUDED."dueDate",
+        "paidAt" = EXCLUDED."paidAt",
+        "status" = EXCLUDED."status",
+        "notes" = EXCLUDED."notes",
+        "updatedAt" = EXCLUDED."updatedAt"`,
+      [
+        serverId,
+        `Mobile payment ${dueDate}`,
+        requireString(change.marketId, 'marketId'),
+        requireString(change.collectedById, 'collectedById'),
+        requireNumber(change.amount, 'amount'),
+        dueDate,
+        paidAt,
+        requireString(change.status, 'status'),
+        change.notes ?? '',
+        syncedAt,
+      ],
+    );
+  }
+
+  private async persistAcceptedAbsenceChange({
+    change,
+    serverId,
+    syncedAt,
+    workspaceId,
+  }: {
+    change: ShahryarMobileSyncChangeDTO;
+    serverId: string;
+    syncedAt: string;
+    workspaceId: string;
+  }): Promise<void> {
+    const tableName = toWorkspaceTableName({
+      tableName: '_shahryarAbsence',
+      workspaceId,
+    });
+    const absenceDate = requireString(change.absenceDate, 'absenceDate');
+
+    await this.coreDataSource.query(
+      `INSERT INTO ${tableName} (
+        "id",
+        "name",
+        "supervisorId",
+        "absenceDate",
+        "workingTime",
+        "gpsLocation",
+        "reason",
+        "notes",
+        "updatedAt"
+      )
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+      ON CONFLICT ("id") DO UPDATE SET
+        "name" = EXCLUDED."name",
+        "supervisorId" = EXCLUDED."supervisorId",
+        "absenceDate" = EXCLUDED."absenceDate",
+        "workingTime" = EXCLUDED."workingTime",
+        "gpsLocation" = EXCLUDED."gpsLocation",
+        "reason" = EXCLUDED."reason",
+        "notes" = EXCLUDED."notes",
+        "updatedAt" = EXCLUDED."updatedAt"`,
+      [
+        serverId,
+        `Mobile absence ${absenceDate}`,
+        requireString(change.supervisorId, 'supervisorId'),
+        absenceDate,
+        change.workingTime ?? '',
+        toGpsLocationValue(
+          requireGpsLocation(change.gpsLocation, 'gpsLocation'),
+        ),
+        requireString(change.reason, 'reason'),
+        change.notes ?? '',
+        syncedAt,
+      ],
+    );
+  }
+
   private async persistPhotoAssociation({
+    authorizedSupervisorId,
     associatedAt,
     request,
     workspaceId,
   }: {
+    authorizedSupervisorId?: string;
     associatedAt: string;
     request: ShahryarMobilePhotoAssociationRequestDTO;
     workspaceId: string;
@@ -640,6 +999,7 @@ export class ShahryarMobileSyncService {
       workspaceId,
     });
     const fieldName = quotePostgresIdentifier(targetConfig.fieldName);
+    const ownerFieldName = quotePostgresIdentifier(targetConfig.ownerFieldName);
     const [file] = (await this.coreDataSource.query(
       `SELECT "path"
        FROM "core"."file"
@@ -654,14 +1014,24 @@ export class ShahryarMobileSyncService {
     }
 
     const [targetRow] = (await this.coreDataSource.query(
-      `SELECT ${fieldName} AS "files"
+      `SELECT ${fieldName} AS "files", ${ownerFieldName} AS "ownerId"
        FROM ${targetTableName}
-       WHERE "id" = $1`,
+       WHERE "id" = $1
+       AND "deletedAt" IS NULL`,
       [request.targetId],
     )) as ShahryarWorkspacePhotoTargetRow[];
 
     if (targetRow === undefined) {
       throw new NotFoundException('Photo association target was not found');
+    }
+
+    if (
+      authorizedSupervisorId !== undefined &&
+      targetRow.ownerId !== authorizedSupervisorId
+    ) {
+      throw new ForbiddenException(
+        'Supervisors can only associate photos with their assigned records.',
+      );
     }
 
     const existingFiles = toFilesFieldItems(targetRow.files);

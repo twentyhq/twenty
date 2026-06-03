@@ -5,6 +5,7 @@ import {
   SHAHRYAR_ABSENCE_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MARKET_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED,
+  SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_PAYMENT_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_PENALTY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_VISIT_CUSTOM_OBJECT_SEED,
@@ -102,5 +103,16 @@ export const SHAHRYAR_RELATION_FIELD_SEEDS: RelationFieldSeed[] = [
     relationType: RelationType.MANY_TO_ONE,
     targetFieldLabel: 'Mobile devices',
     targetFieldIcon: 'IconDeviceMobile',
+  },
+  {
+    sourceObjectName:
+      SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED.nameSingular,
+    name: 'supervisor',
+    label: 'موشریف',
+    icon: 'IconUser',
+    targetObjectName: 'workspaceMember',
+    relationType: RelationType.MANY_TO_ONE,
+    targetFieldLabel: 'Notification deliveries',
+    targetFieldIcon: 'IconBellCheck',
   },
 ];

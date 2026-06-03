@@ -2,19 +2,10 @@ import { fetchShahryarBackupStatus } from '@/shahryar/services/shahryarReportApi
 import { type ShahryarBackupApiStatusResponse } from '@/shahryar/types/shahryarBackupApi';
 import { useCallback, useEffect, useState } from 'react';
 
-const FALLBACK_SHAHRYAR_BACKUP_STATUS: ShahryarBackupApiStatusResponse = {
-  status: 'healthy',
-  label: 'Healthy',
-  lastRunLabel: '2026-06-01 02:15 UTC',
-  intervalHours: 24,
-  dataSizeLabel: '1.8 GB',
-  storageScopeLabel: 'Postgres + فایلە پەیوەندیدارەکان',
-  operationModeLabel: 'Existing database backup operations',
-};
-
 export const useShahryarBackupStatus = () => {
-  const [backupStatus, setBackupStatus] =
-    useState<ShahryarBackupApiStatusResponse>(FALLBACK_SHAHRYAR_BACKUP_STATUS);
+  const [backupStatus, setBackupStatus] = useState<
+    ShahryarBackupApiStatusResponse | undefined
+  >();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
 
@@ -30,7 +21,6 @@ export const useShahryarBackupStatus = () => {
           return;
         }
 
-        setBackupStatus(FALLBACK_SHAHRYAR_BACKUP_STATUS);
         setErrorMessage('backup-status-unavailable');
       } finally {
         setIsLoading(false);

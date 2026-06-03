@@ -1,4 +1,5 @@
 import {
+  SHAHRYAR_RECORD_PHOTO_FIELD_CONFIG_BY_PATH,
   SHAHRYAR_RECORD_SECTIONS,
   buildInitialShahryarCanCreateByPath,
   buildInitialShahryarRowsByPath,
@@ -6,12 +7,14 @@ import {
   buildShahryarRecordRow,
   buildShahryarRowsByPath,
   getDefaultShahryarRecordFormValues,
+  toShahryarPhotoCountLabel,
   type ShahryarRecordFormField,
   type ShahryarRecordFormValues,
 } from '@/shahryar/utils/shahryarRecordSectionUtils';
 import {
   createShahryarRecord,
   fetchShahryarRecordSections,
+  uploadShahryarRecordPhoto,
 } from '@/shahryar/services/shahryarReportApi';
 import { PageBody } from '@/ui/layout/page/components/PageBody';
 import { PageContainer } from '@/ui/layout/page/components/PageContainer';
@@ -69,6 +72,28 @@ const StyledInput = styled.input`
   font-size: ${themeCssVariables.font.size.sm};
   min-height: 32px;
   padding: 0 ${themeCssVariables.spacing[3]};
+`;
+
+const StyledFileSummary = styled.div`
+  color: ${themeCssVariables.font.color.secondary};
+  display: flex;
+  flex-direction: column;
+  font-size: ${themeCssVariables.font.size.xs};
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledFilePreviewGrid = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[2]};
+  grid-template-columns: repeat(auto-fill, minmax(56px, 1fr));
+`;
+
+const StyledFilePreviewImage = styled.img`
+  aspect-ratio: 1;
+  border: 1px solid ${themeCssVariables.border.color.light};
+  border-radius: ${themeCssVariables.border.radius.sm};
+  object-fit: cover;
+  width: 100%;
 `;
 
 const StyledTextarea = styled.textarea`
@@ -154,6 +179,47 @@ const resolveBrowserGpsLocation = async (): Promise<string> => {
 const isSupervisorVisitSection = (path: string) =>
   path === '/shahryar/supervisor-visits';
 
+type ShahryarSelectedPhotoPreview = {
+  name: string;
+  url: string;
+};
+
+const ShahryarSelectedPhotoPreviews = ({ files }: { files: File[] }) => {
+  const [previews, setPreviews] = useState<ShahryarSelectedPhotoPreview[]>([]);
+
+  useEffect(() => {
+    const nextPreviews = files.map((file) => ({
+      name: file.name,
+      url: URL.createObjectURL(file),
+    }));
+
+    setPreviews(nextPreviews);
+
+    return () => {
+      nextPreviews.forEach((preview) => URL.revokeObjectURL(preview.url));
+    };
+  }, [files]);
+
+  if (files.length === 0) {
+    return null;
+  }
+
+  return (
+    <StyledFileSummary>
+      <span>{toShahryarPhotoCountLabel(files.length)} هەڵبژێردرا</span>
+      <StyledFilePreviewGrid>
+        {previews.map((preview) => (
+          <StyledFilePreviewImage
+            key={preview.url}
+            src={preview.url}
+            alt={preview.name}
+          />
+        ))}
+      </StyledFilePreviewGrid>
+    </StyledFileSummary>
+  );
+};
+
 export const ShahryarRecordSectionPage = () => {
   const location = useLocation();
   const section =
@@ -177,6 +243,9 @@ export const ShahryarRecordSectionPage = () => {
       ]),
     ),
   );
+  const [formFilesByPath, setFormFilesByPath] = useState<
+    Record<string, Record<string, File[]>>
+  >({});
   const [statusMessage, setStatusMessage] = useState<string | undefined>();
   const [isRecordRowsLoading, setIsRecordRowsLoading] = useState(true);
   const [recordRowsErrorMessage, setRecordRowsErrorMessage] = useState<
@@ -184,6 +253,7 @@ export const ShahryarRecordSectionPage = () => {
   >();
   const [isSavingRecord, setIsSavingRecord] = useState(false);
   const formValues = formValuesByPath[section.path];
+  const formFiles = formFilesByPath[section.path] ?? {};
   const rows = rowsByPath[section.path] ?? section.rows;
   const canCreateSection = canCreateByPath[section.path] ?? section.canCreate;
 
@@ -241,15 +311,46 @@ export const ShahryarRecordSectionPage = () => {
     }));
   };
 
+  const updateFormFiles = ({
+    fieldName,
+    files,
+  }: {
+    fieldName: string;
+    files: File[];
+  }) => {
+    setFormFilesByPath((currentFormFilesByPath) => ({
+      ...currentFormFilesByPath,
+      [section.path]: {
+        ...(currentFormFilesByPath[section.path] ?? {}),
+        [fieldName]: files,
+      },
+    }));
+  };
+
   const handleFieldChange =
     (field: ShahryarRecordFormField) =>
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      if (field.type === 'file') {
+        const files = Array.from(
+          (event.currentTarget as HTMLInputElement).files ?? [],
+        );
+
+        updateFormFiles({
+          fieldName: field.name,
+          files,
+        });
+        updateFormValue({
+          fieldName: field.name,
+          value:
+            files.length === 0 ? '' : toShahryarPhotoCountLabel(files.length),
+        });
+
+        return;
+      }
+
       updateFormValue({
         fieldName: field.name,
-        value:
-          field.type === 'file'
-            ? ((event.currentTarget as HTMLInputElement).files?.[0]?.name ?? '')
-            : event.currentTarget.value,
+        value: event.currentTarget.value,
       });
     };
 
@@ -278,17 +379,62 @@ export const ShahryarRecordSectionPage = () => {
 
     let nextRow: string[];
     let nextStatusMessage: string;
+    const photoFieldConfig =
+      SHAHRYAR_RECORD_PHOTO_FIELD_CONFIG_BY_PATH[section.path];
+    const selectedPhotoFiles =
+      photoFieldConfig === undefined
+        ? []
+        : (formFiles[photoFieldConfig.fieldName] ?? []);
 
     try {
       const response = await createShahryarRecord({
         path: section.path,
         values: formValues,
       });
+      let uploadedPhotoCount = 0;
+      let didPhotoUploadFail = false;
 
-      nextRow = response.row;
-      nextStatusMessage = `${section.title} لە سێرڤەر زیاد کرا.`;
+      if (photoFieldConfig !== undefined && selectedPhotoFiles.length > 0) {
+        for (const file of selectedPhotoFiles) {
+          try {
+            await uploadShahryarRecordPhoto({
+              capturedAt: new Date().toISOString(),
+              file,
+              targetId: response.id,
+              targetType: photoFieldConfig.targetType,
+            });
+            uploadedPhotoCount += 1;
+          } catch {
+            didPhotoUploadFail = true;
+            break;
+          }
+        }
+      }
+
+      nextRow =
+        photoFieldConfig !== undefined && uploadedPhotoCount > 0
+          ? buildShahryarRecordRow({
+              photoCounts: {
+                [photoFieldConfig.fieldName]: uploadedPhotoCount,
+              },
+              section,
+              values: formValues,
+            })
+          : response.row;
+      nextStatusMessage = didPhotoUploadFail
+        ? `${section.title} لە سێرڤەر زیاد کرا؛ ${uploadedPhotoCount}/${selectedPhotoFiles.length} وێنە بار کرا.`
+        : `${section.title} لە سێرڤەر زیاد کرا.`;
     } catch {
-      nextRow = buildShahryarRecordRow({ section, values: formValues });
+      nextRow = buildShahryarRecordRow({
+        photoCounts:
+          photoFieldConfig === undefined
+            ? undefined
+            : {
+                [photoFieldConfig.fieldName]: selectedPhotoFiles.length,
+              },
+        section,
+        values: formValues,
+      });
       nextStatusMessage = `${section.title} لە ناوخۆ زیاد کرا؛ سێرڤەر بەردەست نییە.`;
     }
 
@@ -302,6 +448,10 @@ export const ShahryarRecordSectionPage = () => {
     setFormValuesByPath((currentFormValuesByPath) => ({
       ...currentFormValuesByPath,
       [section.path]: getDefaultShahryarRecordFormValues(section),
+    }));
+    setFormFilesByPath((currentFormFilesByPath) => ({
+      ...currentFormFilesByPath,
+      [section.path]: {},
     }));
     setStatusMessage(nextStatusMessage);
     setIsCreatePanelOpen(false);
@@ -346,15 +496,24 @@ export const ShahryarRecordSectionPage = () => {
                         onChange={handleFieldChange(field)}
                       />
                     ) : (
-                      <StyledInput
-                        type={field.type === 'file' ? 'file' : field.type}
-                        value={
-                          field.type === 'file'
-                            ? undefined
-                            : (formValues[field.name] ?? '')
-                        }
-                        onChange={handleFieldChange(field)}
-                      />
+                      <>
+                        <StyledInput
+                          type={field.type === 'file' ? 'file' : field.type}
+                          accept={field.type === 'file' ? 'image/*' : undefined}
+                          multiple={field.type === 'file' ? true : undefined}
+                          value={
+                            field.type === 'file'
+                              ? undefined
+                              : (formValues[field.name] ?? '')
+                          }
+                          onChange={handleFieldChange(field)}
+                        />
+                        {field.type === 'file' && (
+                          <ShahryarSelectedPhotoPreviews
+                            files={formFiles[field.name] ?? []}
+                          />
+                        )}
+                      </>
                     )}
                   </StyledField>
                 ))}

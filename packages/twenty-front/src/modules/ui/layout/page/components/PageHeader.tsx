@@ -21,6 +21,7 @@ import {
   ThemeContext,
   themeCssVariables,
 } from 'twenty-ui/theme-constants';
+import { useIsRtl } from '~/utils/i18n/useIsRtl';
 
 const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   align-items: center;
@@ -28,15 +29,15 @@ const StyledTopBarContainer = styled.div<{ isMobile: boolean }>`
   color: ${themeCssVariables.font.color.primary};
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   font-size: ${themeCssVariables.font.size.lg};
   gap: ${themeCssVariables.spacing[2]};
   justify-content: space-between;
   min-height: ${PAGE_BAR_MIN_HEIGHT}px;
-  padding-bottom: ${themeCssVariables.spacing[3]};
-  padding-left: ${({ isMobile }) =>
+  padding-block: ${themeCssVariables.spacing[3]};
+  padding-inline-end: ${themeCssVariables.spacing[3]};
+  padding-inline-start: ${({ isMobile }) =>
     isMobile ? themeCssVariables.spacing[3] : themeCssVariables.spacing[4]};
-  padding-right: ${themeCssVariables.spacing[3]};
-  padding-top: ${themeCssVariables.spacing[3]};
 `;
 
 const StyledLeftContainer = styled.div`
@@ -48,7 +49,7 @@ const StyledLeftContainer = styled.div`
   min-width: 0;
   overflow-x: hidden;
   @media (max-width: ${MOBILE_VIEWPORT}px) {
-    padding-left: ${themeCssVariables.spacing[1]};
+    padding-inline-start: ${themeCssVariables.spacing[1]};
   }
 `;
 
@@ -57,7 +58,7 @@ const StyledTitleContainer = styled.div`
   display: flex;
   font-size: ${themeCssVariables.font.size.md};
   font-weight: ${themeCssVariables.font.weight.medium};
-  margin-right: ${themeCssVariables.spacing[1]};
+  margin-inline-end: ${themeCssVariables.spacing[1]};
   overflow: hidden;
   width: 100%;
 `;
@@ -75,10 +76,16 @@ const StyledPageActionContainer = styled.div`
   align-items: center;
   display: flex;
   flex: 1 1 0;
+  flex-wrap: wrap;
   gap: ${themeCssVariables.spacing[2]};
 
   justify-content: flex-end;
   min-width: 0;
+
+  @media (max-width: ${MOBILE_VIEWPORT}px) {
+    flex-basis: 100%;
+    justify-content: flex-start;
+  }
 `;
 
 const StyledIconContainer = styled.div`
@@ -108,13 +115,16 @@ export const PageHeader = ({
   const isSettingsPage = useIsSettingsPage();
   const { theme } = useContext(ThemeContext);
   const isNavigationDrawerExpanded = useNavigationDrawerExpanded();
+  const isRtl = useIsRtl();
 
   return (
     <AnimatePresence initial={false}>
       <StyledTopBarContainer className={className} isMobile={isMobile}>
         <StyledLeftContainer>
           {!isNavigationDrawerExpanded && (!isMobile || isSettingsPage) && (
-            <NavigationDrawerCollapseButton direction="right" />
+            <NavigationDrawerCollapseButton
+              direction={isRtl ? 'right' : 'left'}
+            />
           )}
           {hasClosePageButton && (
             <LightIconButton

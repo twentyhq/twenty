@@ -6,6 +6,7 @@ import {
   SHAHRYAR_ABSENCE_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MARKET_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED,
+  SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_PAYMENT_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_PENALTY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_VISIT_CUSTOM_OBJECT_SEED,
@@ -387,6 +388,114 @@ export const SHAHRYAR_MOBILE_DEVICE_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] = [
   },
 ];
 
+export const SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_FIELD_SEEDS: FieldMetadataSeed[] =
+  [
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'ناسنامەی ناردن',
+      name: 'notificationDeliveryId',
+      icon: 'IconBellCheck',
+      isUnique: true,
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'ناسنامەی ئاگادارکردنەوە',
+      name: 'notificationId',
+      icon: 'IconBell',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'جۆر',
+      name: 'kind',
+      icon: 'IconBellRinging',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'گرنگی',
+      name: 'severity',
+      icon: 'IconAlertTriangle',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'ناوی موشریف',
+      name: 'supervisorName',
+      icon: 'IconUser',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'ناسنامەی مارکێت',
+      name: 'marketId',
+      icon: 'IconMapPin',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'ناوی مارکێت',
+      name: 'marketName',
+      icon: 'IconMapPin',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'ناسنامەی ئامێر',
+      name: 'deviceId',
+      icon: 'IconDeviceMobile',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'Expo Push Token',
+      name: 'expoPushToken',
+      icon: 'IconBellRinging',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'سەردێڕ',
+      name: 'title',
+      icon: 'IconTextCaption',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'دەق',
+      name: 'body',
+      icon: 'IconMessage',
+      settings: {
+        displayedMaxRows: 4,
+      },
+    },
+    {
+      type: FieldMetadataType.SELECT,
+      label: 'دۆخ',
+      name: 'status',
+      icon: 'IconCircleCheck',
+      options: [
+        { label: 'چاوەڕوان', value: 'PENDING', position: 0, color: 'yellow' },
+        { label: 'نێردرا', value: 'SENT', position: 1, color: 'green' },
+        { label: 'شکستی هێنا', value: 'FAILED', position: 2, color: 'red' },
+      ],
+    },
+    {
+      type: FieldMetadataType.NUMBER,
+      label: 'ژمارەی هەوڵەکان',
+      name: 'attemptCount',
+      icon: 'IconRefresh',
+      settings: SHAHRYAR_INT_NUMBER_SETTINGS,
+      defaultValue: 0,
+    },
+    {
+      type: FieldMetadataType.DATE_TIME,
+      label: 'دوایین هەوڵ',
+      name: 'lastAttemptAt',
+      icon: 'IconClockHour4',
+    },
+    {
+      type: FieldMetadataType.TEXT,
+      label: 'هۆکاری شکست',
+      name: 'failureReason',
+      icon: 'IconAlertCircle',
+      settings: {
+        displayedMaxRows: 3,
+      },
+    },
+  ];
+
 export const SHAHRYAR_CUSTOM_FIELD_SEED_CONFIGS: ShahryarFieldSeedConfig[] = [
   {
     objectName: 'workspaceMember',
@@ -419,5 +528,9 @@ export const SHAHRYAR_CUSTOM_FIELD_SEED_CONFIGS: ShahryarFieldSeedConfig[] = [
   {
     objectName: SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED.nameSingular,
     seeds: SHAHRYAR_MOBILE_DEVICE_CUSTOM_FIELD_SEEDS,
+  },
+  {
+    objectName: SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED.nameSingular,
+    seeds: SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_FIELD_SEEDS,
   },
 ];

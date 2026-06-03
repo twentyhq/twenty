@@ -19,7 +19,7 @@ import {
 
 const SHAHRYAR_NAV_ITEMS = [
   {
-    label: 'Dashboard',
+    label: 'داشبۆرد',
     path: SHAHRYAR_APP_PATHS.Dashboard,
     Icon: IconHome,
   },
@@ -44,7 +44,7 @@ const SHAHRYAR_NAV_ITEMS = [
     Icon: IconChartBar,
   },
   {
-    label: 'تەدمین',
+    label: 'ئەدمین',
     path: SHAHRYAR_APP_PATHS.Admin,
     Icon: IconUserCog,
   },

@@ -1,14 +1,19 @@
 import * as SQLite from 'expo-sqlite';
 
 import {
+  type ShahryarMobileRecordDraft,
   type ShahryarMobileSyncQueueItem,
   type ShahryarMobileSyncResponse,
   type ShahryarMobileVisitDraft,
+  createMobileSyncQueueItem,
   createVisitSyncQueueItem,
+  discardMobileSyncQueueItem,
   reconcileVisitSyncQueueWithServerResponse,
+  retryMobileSyncQueueItem,
 } from '../sync/mobileSyncQueue';
 
 const DATABASE_NAME = 'shahryar-ops.db';
+const OFFLINE_SYNC_QUEUE_TABLE_NAME = 'offline_sync_queue';
 
 type OfflineVisitRow = {
   localId: string;
@@ -19,13 +24,33 @@ export const openOfflineVisitDatabase = async () => {
   const database = await SQLite.openDatabaseAsync(DATABASE_NAME);
 
   await database.execAsync(`
-    CREATE TABLE IF NOT EXISTS offline_visit_queue (
+    CREATE TABLE IF NOT EXISTS ${OFFLINE_SYNC_QUEUE_TABLE_NAME} (
       localId TEXT PRIMARY KEY NOT NULL,
       payload TEXT NOT NULL
     );
   `);
 
   return database;
+};
+
+export const saveOfflineRecordDraft = async ({
+  draft,
+  now,
+}: {
+  draft: ShahryarMobileRecordDraft;
+  now: string;
+}) => {
+  const database = await openOfflineVisitDatabase();
+  const queueItem = createMobileSyncQueueItem({ draft, now });
+
+  await database.runAsync(
+    `INSERT OR REPLACE INTO ${OFFLINE_SYNC_QUEUE_TABLE_NAME} (localId, payload)
+     VALUES (?, ?);`,
+    queueItem.localId,
+    JSON.stringify(queueItem),
+  );
+
+  return queueItem;
 };
 
 export const saveOfflineVisitDraft = async ({
@@ -39,7 +64,7 @@ export const saveOfflineVisitDraft = async ({
   const queueItem = createVisitSyncQueueItem({ draft, now });
 
   await database.runAsync(
-    `INSERT OR REPLACE INTO offline_visit_queue (localId, payload)
+    `INSERT OR REPLACE INTO ${OFFLINE_SYNC_QUEUE_TABLE_NAME} (localId, payload)
      VALUES (?, ?);`,
     queueItem.localId,
     JSON.stringify(queueItem),
@@ -48,12 +73,12 @@ export const saveOfflineVisitDraft = async ({
   return queueItem;
 };
 
-export const loadOfflineVisitQueue = async (): Promise<
+export const loadOfflineSyncQueue = async (): Promise<
   ShahryarMobileSyncQueueItem[]
 > => {
   const database = await openOfflineVisitDatabase();
   const rows = await database.getAllAsync<OfflineVisitRow>(
-    'SELECT localId, payload FROM offline_visit_queue ORDER BY localId;',
+    `SELECT localId, payload FROM ${OFFLINE_SYNC_QUEUE_TABLE_NAME} ORDER BY localId;`,
   );
 
   return rows.map(
@@ -62,7 +87,9 @@ export const loadOfflineVisitQueue = async (): Promise<
   );
 };
 
-export const replaceOfflineVisitQueue = async ({
+export const loadOfflineVisitQueue = loadOfflineSyncQueue;
+
+export const replaceOfflineSyncQueue = async ({
   queue,
 }: {
   queue: ShahryarMobileSyncQueueItem[];
@@ -70,11 +97,11 @@ export const replaceOfflineVisitQueue = async ({
   const database = await openOfflineVisitDatabase();
 
   await database.withTransactionAsync(async () => {
-    await database.runAsync('DELETE FROM offline_visit_queue;');
+    await database.runAsync(`DELETE FROM ${OFFLINE_SYNC_QUEUE_TABLE_NAME};`);
 
     for (const item of queue) {
       await database.runAsync(
-        `INSERT INTO offline_visit_queue (localId, payload)
+        `INSERT INTO ${OFFLINE_SYNC_QUEUE_TABLE_NAME} (localId, payload)
          VALUES (?, ?);`,
         item.localId,
         JSON.stringify(item),
@@ -83,18 +110,54 @@ export const replaceOfflineVisitQueue = async ({
   });
 };
 
+export const replaceOfflineVisitQueue = replaceOfflineSyncQueue;
+
 export const applyOfflineVisitSyncResponse = async ({
   response,
 }: {
   response: ShahryarMobileSyncResponse;
 }) => {
-  const queue = await loadOfflineVisitQueue();
+  const queue = await loadOfflineSyncQueue();
   const reconciliation = reconcileVisitSyncQueueWithServerResponse({
     queue,
     response,
   });
 
-  await replaceOfflineVisitQueue({ queue: reconciliation.queue });
+  await replaceOfflineSyncQueue({ queue: reconciliation.queue });
 
   return reconciliation;
+};
+
+export const retryOfflineSyncQueueItem = async ({
+  localId,
+  now,
+}: {
+  localId: string;
+  now: string;
+}) => {
+  const queue = await loadOfflineSyncQueue();
+  const nextQueue = queue.map((item) =>
+    item.localId === localId ? retryMobileSyncQueueItem({ item, now }) : item,
+  );
+
+  await replaceOfflineSyncQueue({ queue: nextQueue });
+
+  return nextQueue;
+};
+
+export const discardOfflineSyncQueueItem = async ({
+  localId,
+  now,
+}: {
+  localId: string;
+  now: string;
+}) => {
+  const queue = await loadOfflineSyncQueue();
+  const nextQueue = queue.map((item) =>
+    item.localId === localId ? discardMobileSyncQueueItem({ item, now }) : item,
+  );
+
+  await replaceOfflineSyncQueue({ queue: nextQueue });
+
+  return nextQueue;
 };

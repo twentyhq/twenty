@@ -1,4 +1,5 @@
 import {
+  type ShahryarReportApiAnalytics,
   type ShahryarReportApiPeriod,
   type ShahryarReportApiSummary,
 } from '@/shahryar/types/shahryarReportApi';
@@ -118,3 +119,7 @@ export const mapShahryarReportSummaryToNotifications = (
       ...NOTIFICATION_DISPLAY[kind],
     }),
   );
+
+export const mapShahryarReportSummaryToAnalytics = (
+  summary: ShahryarReportApiSummary,
+): ShahryarReportApiAnalytics => summary.analytics;

@@ -4,9 +4,12 @@ import { NAVIGATION_DRAWER_TABS } from '@/ui/navigation/states/navigationDrawerT
 import { useAtomState } from '@/ui/utilities/state/jotai/hooks/useAtomState';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { styled } from '@linaria/react';
+import { t } from '@lingui/core/macro';
 import {
   IconLayoutSidebarLeftCollapse,
+  IconLayoutSidebarLeftExpand,
   IconLayoutSidebarRightCollapse,
+  IconLayoutSidebarRightExpand,
 } from 'twenty-ui/display';
 import { LightIconButton } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
@@ -43,15 +46,24 @@ export const NavigationDrawerCollapseButton = ({
     setIsNavigationDrawerExpanded((previousIsExpanded) => !previousIsExpanded);
   };
 
+  const Icon =
+    direction === 'left'
+      ? isNavigationDrawerExpanded
+        ? IconLayoutSidebarLeftCollapse
+        : IconLayoutSidebarLeftExpand
+      : isNavigationDrawerExpanded
+        ? IconLayoutSidebarRightCollapse
+        : IconLayoutSidebarRightExpand;
+
   return (
-    <StyledCollapseButton className={className} onClick={handleClick}>
+    <StyledCollapseButton className={className}>
       <LightIconButton
-        Icon={
-          direction === 'left'
-            ? IconLayoutSidebarLeftCollapse
-            : IconLayoutSidebarRightCollapse
-        }
+        Icon={Icon}
         accent="secondary"
+        aria-label={
+          isNavigationDrawerExpanded ? t`Collapse sidebar` : t`Expand sidebar`
+        }
+        onClick={handleClick}
         size="small"
       />
     </StyledCollapseButton>

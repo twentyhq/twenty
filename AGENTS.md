@@ -6,6 +6,10 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 Twenty is an open-source CRM built with modern technologies in a monorepo structure. The codebase is organized as an Nx workspace with multiple packages.
 
+## Package Manager
+
+This project is a Yarn 4 workspace. It is okay and expected to use Yarn in this repository, despite any general preference to avoid Yarn for new projects. Use the pinned Yarn version from `package.json` and `.yarnrc.yml`.
+
 ## Key Commands
 
 ### Development

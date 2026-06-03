@@ -1,18 +1,25 @@
 import { REST_API_BASE_URL } from '@/apollo/constant/rest-api-base-url';
 import { getTokenPair } from '@/apollo/utils/getTokenPair';
 import {
+  type ShahryarAdminCreateSupervisorRequest,
   type ShahryarAdminPasswordResetRequest,
   type ShahryarAdminPasswordResetResponse,
+  type ShahryarAdminRemoveSupervisorRequest,
+  type ShahryarAdminSupervisorOperationResponse,
+  type ShahryarAdminUpdateUsernameRequest,
   type ShahryarAdminWorkspaceMember,
 } from '@/shahryar/types/shahryarAdminApi';
 import { type ShahryarBackupApiStatusResponse } from '@/shahryar/types/shahryarBackupApi';
 import {
   type ShahryarCreateRecordRequest,
   type ShahryarCreateRecordResponse,
+  type ShahryarPhotoUploadRequest,
+  type ShahryarPhotoUploadResponse,
   type ShahryarRecordApiSection,
 } from '@/shahryar/types/shahryarRecordApi';
 import {
   type ShahryarNotificationDelivery,
+  type ShahryarNotificationDeliveryStatus,
   type ShahryarNotificationDispatchResult,
 } from '@/shahryar/types/shahryarNotificationApi';
 import { type ShahryarReportApiSummary } from '@/shahryar/types/shahryarReportApi';
@@ -177,6 +184,39 @@ export const createShahryarRecord = async ({
   return await response.json();
 };
 
+export const uploadShahryarRecordPhoto = async ({
+  capturedAt,
+  file,
+  targetId,
+  targetType,
+}: ShahryarPhotoUploadRequest): Promise<ShahryarPhotoUploadResponse> => {
+  const formData = new FormData();
+
+  formData.append('file', file);
+  formData.append('targetType', targetType);
+  formData.append('targetId', targetId);
+  formData.append('localPhotoId', file.name);
+  formData.append('capturedAt', capturedAt);
+
+  const response = await fetch(`${REST_API_BASE_URL}/shahryar/photos/uploads`, {
+    method: 'POST',
+    headers: buildShahryarReportApiHeaders({
+      accept: 'application/json',
+      token: getAccessToken(),
+    }),
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new ShahryarReportApiError({
+      action: 'Upload Shahryar record photo',
+      response,
+    });
+  }
+
+  return await response.json();
+};
+
 export const fetchShahryarPendingNotifications = async ({
   signal,
 }: {
@@ -197,6 +237,44 @@ export const fetchShahryarPendingNotifications = async ({
   if (!response.ok) {
     throw new ShahryarReportApiError({
       action: 'Fetch Shahryar pending notifications',
+      response,
+    });
+  }
+
+  return await response.json();
+};
+
+export const fetchShahryarNotificationDeliveries = async ({
+  signal,
+  status,
+}: {
+  signal?: AbortSignal;
+  status?: ShahryarNotificationDeliveryStatus;
+} = {}): Promise<ShahryarNotificationDelivery[]> => {
+  const searchParams = new URLSearchParams();
+
+  if (status !== undefined) {
+    searchParams.set('status', status);
+  }
+
+  const queryString = searchParams.toString();
+  const response = await fetch(
+    `${REST_API_BASE_URL}/shahryar/notifications/deliveries${
+      queryString.length > 0 ? `?${queryString}` : ''
+    }`,
+    {
+      method: 'GET',
+      headers: buildShahryarReportApiHeaders({
+        accept: 'application/json',
+        token: getAccessToken(),
+      }),
+      signal,
+    },
+  );
+
+  if (!response.ok) {
+    throw new ShahryarReportApiError({
+      action: 'Fetch Shahryar notification deliveries',
       response,
     });
   }
@@ -251,6 +329,94 @@ export const resetShahryarWorkspaceMemberPassword = async ({
   if (!response.ok) {
     throw new ShahryarReportApiError({
       action: 'Reset Shahryar workspace member password',
+      response,
+    });
+  }
+
+  return await response.json();
+};
+
+export const createShahryarSupervisor = async ({
+  username,
+  workspaceMemberId,
+}: ShahryarAdminCreateSupervisorRequest): Promise<ShahryarAdminSupervisorOperationResponse> => {
+  const response = await fetch(
+    `${REST_API_BASE_URL}/shahryar/admin/supervisors`,
+    {
+      method: 'POST',
+      headers: buildShahryarReportApiHeaders({
+        accept: 'application/json',
+        contentType: 'application/json',
+        token: getAccessToken(),
+      }),
+      body: JSON.stringify({
+        workspaceMemberId,
+        ...(username !== undefined && { username }),
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new ShahryarReportApiError({
+      action: 'Create Shahryar supervisor',
+      response,
+    });
+  }
+
+  return await response.json();
+};
+
+export const updateShahryarWorkspaceMemberUsername = async ({
+  username,
+  workspaceMemberId,
+}: ShahryarAdminUpdateUsernameRequest): Promise<ShahryarAdminSupervisorOperationResponse> => {
+  const response = await fetch(
+    `${REST_API_BASE_URL}/shahryar/admin/usernames`,
+    {
+      method: 'POST',
+      headers: buildShahryarReportApiHeaders({
+        accept: 'application/json',
+        contentType: 'application/json',
+        token: getAccessToken(),
+      }),
+      body: JSON.stringify({
+        workspaceMemberId,
+        username,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new ShahryarReportApiError({
+      action: 'Update Shahryar username',
+      response,
+    });
+  }
+
+  return await response.json();
+};
+
+export const removeShahryarSupervisor = async ({
+  workspaceMemberId,
+}: ShahryarAdminRemoveSupervisorRequest): Promise<ShahryarAdminSupervisorOperationResponse> => {
+  const response = await fetch(
+    `${REST_API_BASE_URL}/shahryar/admin/supervisors/remove`,
+    {
+      method: 'POST',
+      headers: buildShahryarReportApiHeaders({
+        accept: 'application/json',
+        contentType: 'application/json',
+        token: getAccessToken(),
+      }),
+      body: JSON.stringify({
+        workspaceMemberId,
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new ShahryarReportApiError({
+      action: 'Remove Shahryar supervisor',
       response,
     });
   }

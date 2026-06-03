@@ -4,11 +4,15 @@ import {
   Get,
   Header,
   Post,
+  Query,
   StreamableFile,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 import { AuthUserWorkspaceId } from 'src/engine/decorators/auth/auth-user-workspace-id.decorator';
 import { AuthWorkspaceMemberId } from 'src/engine/decorators/auth/auth-workspace-member-id.decorator';
@@ -18,16 +22,23 @@ import { JwtAuthGuard } from 'src/engine/guards/jwt-auth.guard';
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
 import {
+  ShahryarAdminCreateSupervisorRequestDTO,
   ShahryarAdminPasswordResetRequestDTO,
   type ShahryarAdminPasswordResetResponseDTO,
+  ShahryarAdminRemoveSupervisorRequestDTO,
+  type ShahryarAdminSupervisorOperationResponseDTO,
+  ShahryarAdminUpdateUsernameRequestDTO,
   type ShahryarAdminWorkspaceMemberDTO,
 } from 'src/modules/shahryar/dtos/shahryar-admin.dto';
 import {
   ShahryarCreateRecordRequestDTO,
   type ShahryarCreateRecordResponseDTO,
+  ShahryarPhotoUploadRequestDTO,
+  type ShahryarPhotoUploadResponseDTO,
   type ShahryarRecordSectionDTO,
 } from 'src/modules/shahryar/dtos/shahryar-record-section.dto';
 import {
+  ShahryarNotificationDeliveryQueryDTO,
   type ShahryarNotificationDeliveryDTO,
   type ShahryarNotificationDispatchResultDTO,
 } from 'src/modules/shahryar/dtos/shahryar-notification.dto';
@@ -46,6 +57,10 @@ import { ShahryarAdminWorkspaceService } from 'src/modules/shahryar/services/sha
 import { ShahryarBackupService } from 'src/modules/shahryar/services/shahryar-backup.service';
 import { ShahryarMobileSyncService } from 'src/modules/shahryar/services/shahryar-mobile-sync.service';
 import { ShahryarNotificationService } from 'src/modules/shahryar/services/shahryar-notification.service';
+import {
+  ShahryarPhotoService,
+  type ShahryarUploadedPhotoFile,
+} from 'src/modules/shahryar/services/shahryar-photo.service';
 import { ShahryarReportService } from 'src/modules/shahryar/services/shahryar-report.service';
 
 @Controller('rest/shahryar')
@@ -58,6 +73,7 @@ export class ShahryarController {
     private readonly shahryarReportService: ShahryarReportService,
     private readonly shahryarMobileSyncService: ShahryarMobileSyncService,
     private readonly shahryarNotificationService: ShahryarNotificationService,
+    private readonly shahryarPhotoService: ShahryarPhotoService,
     private readonly userRoleService: UserRoleService,
   ) {}
 
@@ -135,6 +151,37 @@ export class ShahryarController {
     });
   }
 
+  @Post('photos/uploads')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      limits: {
+        fileSize: 10 * 1024 * 1024,
+        files: 1,
+      },
+    }),
+  )
+  async uploadPhoto(
+    @AuthWorkspace() workspace: { id: string },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+    @Body() request: ShahryarPhotoUploadRequestDTO,
+    @UploadedFile() file: ShahryarUploadedPhotoFile | undefined,
+  ): Promise<ShahryarPhotoUploadResponseDTO> {
+    const assignedSupervisorId = await this.resolveAssignedSupervisorId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+    });
+
+    return await this.shahryarPhotoService.uploadAndAssociatePhoto({
+      authorizedSupervisorId: assignedSupervisorId,
+      file,
+      request,
+      workspaceId: workspace.id,
+    });
+  }
+
   @Get('notifications/pending')
   async getPendingNotifications(
     @AuthWorkspace() workspace: { id: string },
@@ -150,6 +197,27 @@ export class ShahryarController {
 
     return await this.shahryarNotificationService.getPendingDeliveries({
       authorizedSupervisorId: assignedSupervisorId,
+      workspaceId: workspace.id,
+    });
+  }
+
+  @Get('notifications/deliveries')
+  async getNotificationDeliveries(
+    @AuthWorkspace() workspace: { id: string },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
+    @Query() query: ShahryarNotificationDeliveryQueryDTO,
+  ): Promise<ShahryarNotificationDeliveryDTO[]> {
+    const assignedSupervisorId = await this.resolveAssignedSupervisorId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+    });
+
+    return await this.shahryarNotificationService.getDeliveryLog({
+      authorizedSupervisorId: assignedSupervisorId,
+      status: query.status,
       workspaceId: workspace.id,
     });
   }
@@ -185,6 +253,50 @@ export class ShahryarController {
       adminUserWorkspaceId: userWorkspaceId,
       workspaceMemberId: request.workspaceMemberId,
       newPassword: request.newPassword,
+    });
+  }
+
+  @Post('admin/supervisors')
+  async createSupervisor(
+    @AuthWorkspace() workspace: { id: string },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @Body() request: ShahryarAdminCreateSupervisorRequestDTO,
+  ): Promise<ShahryarAdminSupervisorOperationResponseDTO> {
+    return this.shahryarAdminWorkspaceService.createSupervisor({
+      workspaceId: workspace.id,
+      adminUserWorkspaceId: userWorkspaceId,
+      workspaceMemberId: request.workspaceMemberId,
+      username: request.username,
+    });
+  }
+
+  @Post('admin/usernames')
+  async updateSupervisorUsername(
+    @AuthWorkspace() workspace: { id: string },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @Body() request: ShahryarAdminUpdateUsernameRequestDTO,
+  ): Promise<ShahryarAdminSupervisorOperationResponseDTO> {
+    return this.shahryarAdminWorkspaceService.updateSupervisorUsername({
+      workspaceId: workspace.id,
+      adminUserWorkspaceId: userWorkspaceId,
+      workspaceMemberId: request.workspaceMemberId,
+      username: request.username,
+    });
+  }
+
+  @Post('admin/supervisors/remove')
+  async removeSupervisor(
+    @AuthWorkspace() workspace: { id: string },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @Body() request: ShahryarAdminRemoveSupervisorRequestDTO,
+  ): Promise<ShahryarAdminSupervisorOperationResponseDTO> {
+    return this.shahryarAdminWorkspaceService.removeSupervisor({
+      workspaceId: workspace.id,
+      adminUserWorkspaceId: userWorkspaceId,
+      workspaceMemberId: request.workspaceMemberId,
     });
   }
 
@@ -294,9 +406,19 @@ export class ShahryarController {
   @Post('mobile/photo-associations')
   async associateMobilePhoto(
     @AuthWorkspace() workspace: { id: string },
+    @AuthUserWorkspaceId({ allowUndefined: true })
+    userWorkspaceId: string | undefined,
+    @AuthWorkspaceMemberId() workspaceMemberId: string | undefined,
     @Body() request: ShahryarMobilePhotoAssociationRequestDTO,
   ): Promise<ShahryarMobilePhotoAssociationResponseDTO> {
+    const assignedSupervisorId = await this.resolveAssignedSupervisorId({
+      workspaceId: workspace.id,
+      userWorkspaceId,
+      workspaceMemberId,
+    });
+
     return await this.shahryarMobileSyncService.associatePhoto({
+      authorizedSupervisorId: assignedSupervisorId,
       request,
       workspaceId: workspace.id,
     });

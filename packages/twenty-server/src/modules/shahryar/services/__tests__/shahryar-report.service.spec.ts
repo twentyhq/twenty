@@ -94,6 +94,7 @@ describe('ShahryarReportService', () => {
 
     const summary = await service.getSummary(
       '20202020-0000-4000-8000-000000000001',
+      { referenceDate: '2026-06-01' },
     );
 
     expect(summary.activeMarketCount).toBe(1);
@@ -102,7 +103,207 @@ describe('ShahryarReportService', () => {
     expect(summary.totalSalesCartons).toBe(12);
     expect(summary.totalPaidAmount).toBe(250000);
     expect(summary.notifications).toHaveLength(0);
+    expect(summary.analytics.bestMarkets).toEqual([
+      expect.objectContaining({
+        id: 'market-1',
+        label: 'Center Market',
+        value: 12,
+      }),
+    ]);
     expect(query).toHaveBeenCalledTimes(7);
+  });
+
+  it('should display stored photo counts in Shahryar record sections', async () => {
+    const query = jest
+      .fn<Promise<unknown>, [string, unknown[]?]>()
+      .mockImplementation(async (sql) => {
+        if (sql.includes('"workspaceMember"')) {
+          return [
+            {
+              id: 'supervisor-1',
+              nameFirstName: 'Karwan',
+              nameLastName: 'Shahryar',
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarMarket"')) {
+          return [
+            {
+              id: 'market-1',
+              name: 'Center Market',
+              assignedSupervisorId: 'supervisor-1',
+              isActiveMarket: true,
+              shopPhotos: [
+                {
+                  fileId: 'photo-1',
+                  label: 'shop.jpg',
+                },
+              ],
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarSupervisorVisit"')) {
+          return [
+            {
+              id: 'visit-1',
+              marketId: 'market-1',
+              supervisorId: 'supervisor-1',
+              checkInAt: '2026-06-01T09:00:00.000Z',
+              photos: JSON.stringify([
+                {
+                  fileId: 'photo-2',
+                  label: 'visit-1.jpg',
+                },
+                {
+                  fileId: 'photo-3',
+                  label: 'visit-2.jpg',
+                },
+              ]),
+              soldCartons: 12,
+              requestedCartons: 4,
+              issue: 'No blocker',
+              decisionMaker: 'Store owner',
+              requestDetails: 'Four cartons requested',
+              report: 'Visit completed',
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarWorkingTime"')) {
+          return [];
+        }
+
+        if (sql.includes('"_shahryarPayment"')) {
+          return [];
+        }
+
+        if (sql.includes('"_shahryarSupervisorPenalty"')) {
+          return [];
+        }
+
+        if (sql.includes('"_shahryarAbsence"')) {
+          return [];
+        }
+
+        return [];
+      });
+    const service = new ShahryarReportService(createMockDataSource(query));
+
+    const sections = await service.getRecordSections(
+      '20202020-0000-4000-8000-000000000001',
+      { referenceDate: '2026-06-01' },
+    );
+
+    expect(sections[0].rows[0][5]).toBe('1 وێنە');
+    expect(sections[1].rows[0][4]).toBe('2 وێنە');
+  });
+
+  it('should generate deterministic missed visit and missing report notifications', async () => {
+    const query = jest
+      .fn<Promise<unknown>, [string, unknown[]?]>()
+      .mockImplementation(async (sql) => {
+        if (sql.includes('"workspaceMember"')) {
+          return [
+            {
+              id: 'supervisor-1',
+              nameFirstName: 'Karwan',
+              nameLastName: 'Shahryar',
+            },
+            {
+              id: 'supervisor-2',
+              nameFirstName: 'Halo',
+              nameLastName: 'Shahryar',
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarMarket"')) {
+          return [
+            {
+              id: 'market-1',
+              name: 'Center Market',
+              assignedSupervisorId: 'supervisor-1',
+              isActiveMarket: true,
+            },
+            {
+              id: 'market-2',
+              name: 'North Market',
+              assignedSupervisorId: 'supervisor-2',
+              isActiveMarket: true,
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarSupervisorVisit"')) {
+          return [
+            {
+              id: 'visit-1',
+              marketId: 'market-1',
+              supervisorId: 'supervisor-1',
+              checkInAt: '2026-06-01T09:00:00.000Z',
+              soldCartons: 12,
+              requestedCartons: 4,
+              issue: 'No blocker',
+              decisionMaker: 'Store owner',
+              requestDetails: 'Four cartons requested',
+              report: '',
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarWorkingTime"')) {
+          return [
+            {
+              id: 'working-time-1',
+              supervisorId: 'supervisor-1',
+              workDate: '2026-06-01T00:00:00.000Z',
+              checkInAt: '2026-06-01T08:00:00.000Z',
+              checkOutAt: '2026-06-01T16:00:00.000Z',
+              totalMinutes: 480,
+              status: 'PRESENT',
+            },
+          ];
+        }
+
+        if (sql.includes('"_shahryarPayment"')) {
+          return [];
+        }
+
+        if (sql.includes('"_shahryarSupervisorPenalty"')) {
+          return [];
+        }
+
+        if (sql.includes('"_shahryarAbsence"')) {
+          return [];
+        }
+
+        return [];
+      });
+    const service = new ShahryarReportService(createMockDataSource(query));
+
+    const summary = await service.getSummary(
+      '20202020-0000-4000-8000-000000000001',
+      { referenceDate: '2026-06-01' },
+    );
+
+    expect(summary.referenceDate).toBe('2026-06-01');
+    expect(summary.notifications).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          id: 'missing-report-supervisor-1-2026-06-01',
+          kind: 'missing-report',
+          supervisorId: 'supervisor-1',
+        }),
+        expect.objectContaining({
+          id: 'missed-visit-market-2-2026-06-01',
+          kind: 'missed-visit',
+          marketId: 'market-2',
+          supervisorId: 'supervisor-2',
+        }),
+      ]),
+    );
   });
 
   it('should scope report summaries to the authorized supervisor', async () => {
@@ -241,7 +442,7 @@ describe('ShahryarReportService', () => {
 
     const summary = await service.getSummary(
       '20202020-0000-4000-8000-000000000001',
-      { authorizedSupervisorId: 'supervisor-1' },
+      { authorizedSupervisorId: 'supervisor-1', referenceDate: '2026-06-01' },
     );
 
     expect(summary.activeMarketCount).toBe(1);
@@ -253,18 +454,28 @@ describe('ShahryarReportService', () => {
     expect(summary.totalAbsences).toBe(1);
   });
 
-  it('should fall back to the seed report source when workspace tables are unavailable', async () => {
+  it('should expose the seed report source when no workspace is provided', async () => {
+    const query = jest.fn<Promise<unknown>, [string, unknown[]?]>();
+    const service = new ShahryarReportService(createMockDataSource(query));
+
+    const summary = await service.getSummary(undefined, {
+      referenceDate: '2026-06-01',
+    });
+
+    expect(summary.activeMarketCount).toBeGreaterThan(0);
+    expect(summary.totalVisits).toBeGreaterThan(0);
+    expect(query).not.toHaveBeenCalled();
+  });
+
+  it('should surface workspace table failures instead of falling back to seeds', async () => {
     const query = jest
       .fn<Promise<unknown>, [string, unknown[]?]>()
       .mockRejectedValue(new Error('workspace tables unavailable'));
     const service = new ShahryarReportService(createMockDataSource(query));
 
-    const summary = await service.getSummary(
-      '20202020-0000-4000-8000-000000000001',
-    );
-
-    expect(summary.activeMarketCount).toBeGreaterThan(0);
-    expect(summary.totalVisits).toBeGreaterThan(0);
+    await expect(
+      service.getSummary('20202020-0000-4000-8000-000000000001'),
+    ).rejects.toThrow('workspace tables unavailable');
   });
 
   it('should expose record section rows from Shahryar workspace tables', async () => {
@@ -439,15 +650,12 @@ describe('ShahryarReportService', () => {
   });
 
   it('should expose supervisor write permissions for record sections', async () => {
-    const query = jest
-      .fn<Promise<unknown>, [string, unknown[]?]>()
-      .mockRejectedValue(new Error('workspace tables unavailable'));
+    const query = jest.fn<Promise<unknown>, [string, unknown[]?]>();
     const service = new ShahryarReportService(createMockDataSource(query));
 
-    const sections = await service.getRecordSections(
-      '20202020-0000-4000-8000-000000000001',
-      { authorizedSupervisorId: 'supervisor-1' },
-    );
+    const sections = await service.getRecordSections(undefined, {
+      authorizedSupervisorId: 'supervisor-1',
+    });
     const canCreateByPath = Object.fromEntries(
       sections.map((section) => [section.path, section.canCreate]),
     );
@@ -486,6 +694,13 @@ describe('ShahryarReportService', () => {
     });
 
     expect(response.path).toBe('/shahryar/markets');
+    const marketInsertParameters = query.mock.calls[1][1];
+
+    if (marketInsertParameters === undefined) {
+      throw new Error('Expected market insert parameters');
+    }
+
+    expect(response.id).toEqual(marketInsertParameters[0]);
     expect(response.row).toEqual([
       'مارکێتی نوێ',
       'ڕێباز عەلی',
@@ -564,6 +779,13 @@ describe('ShahryarReportService', () => {
     });
 
     expect(response.path).toBe('/shahryar/supervisor-visits');
+    const visitInsertParameters = query.mock.calls[3][1];
+
+    if (visitInsertParameters === undefined) {
+      throw new Error('Expected supervisor visit insert parameters');
+    }
+
+    expect(response.id).toEqual(visitInsertParameters[0]);
     expect(query).toHaveBeenCalledTimes(4);
     expect(query.mock.calls[2][0]).toContain('"assignedSupervisorId" = $2');
     expect(query.mock.calls[3][0]).toContain('INSERT INTO "workspace_');

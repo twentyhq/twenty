@@ -1,9 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { SHAHRYAR_REPORT_DATA } from '@/shahryar/constants/shahryar-report-data';
 import { fetchShahryarReportSummary } from '@/shahryar/services/shahryarReportApi';
-import { type ShahryarReportApiSummary } from '@/shahryar/types/shahryarReportApi';
 import {
+  type ShahryarReportApiAnalytics,
+  type ShahryarReportApiSummary,
+} from '@/shahryar/types/shahryarReportApi';
+import {
+  mapShahryarReportSummaryToAnalytics,
   mapShahryarReportSummaryToDashboardMetrics,
   mapShahryarReportSummaryToNotifications,
   mapShahryarReportSummaryToRows,
@@ -16,6 +19,7 @@ import {
 
 type ShahryarReportSummaryState = {
   summary?: ShahryarReportApiSummary;
+  analytics?: ShahryarReportApiAnalytics;
   dashboardMetrics: ShahryarMetric[];
   reportRows: ShahryarReportRow[];
   notifications: ShahryarNotification[];
@@ -30,9 +34,9 @@ const getReportSummaryErrorMessage = (error: unknown) =>
 
 export const useShahryarReportSummary = () => {
   const [state, setState] = useState<ShahryarReportSummaryState>({
-    dashboardMetrics: SHAHRYAR_REPORT_DATA.dashboardMetrics,
-    reportRows: SHAHRYAR_REPORT_DATA.reportRows,
-    notifications: SHAHRYAR_REPORT_DATA.notifications,
+    dashboardMetrics: [],
+    reportRows: [],
+    notifications: [],
     isLoading: true,
   });
 
@@ -53,6 +57,7 @@ export const useShahryarReportSummary = () => {
 
         setState({
           summary,
+          analytics: mapShahryarReportSummaryToAnalytics(summary),
           dashboardMetrics: mapShahryarReportSummaryToDashboardMetrics(summary),
           reportRows: mapShahryarReportSummaryToRows(summary),
           notifications: mapShahryarReportSummaryToNotifications(summary),
@@ -63,11 +68,15 @@ export const useShahryarReportSummary = () => {
           return;
         }
 
-        setState((previousState) => ({
-          ...previousState,
+        setState({
+          dashboardMetrics: [],
+          reportRows: [],
+          notifications: [],
           isLoading: false,
+          summary: undefined,
+          analytics: undefined,
           errorMessage: getReportSummaryErrorMessage(error),
-        }));
+        });
       }
     },
     [],

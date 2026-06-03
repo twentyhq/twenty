@@ -1,11 +1,20 @@
 export type ShahryarVisitSyncOperation = 'create' | 'update';
 
+export type ShahryarMobileRecordKind =
+  | 'visit'
+  | 'working-time'
+  | 'payment'
+  | 'absence';
+
 export type ShahryarMobileSyncConflictReason = 'server-newer';
 
 export type ShahryarMobileSyncRejectedReason =
   | 'invalid-carton-count'
+  | 'invalid-amount'
+  | 'invalid-duration'
   | 'invalid-timestamp'
   | 'missing-server-id'
+  | 'missing-required-field'
   | 'unauthorized-supervisor';
 
 export type ShahryarGeoLocation = {
@@ -17,6 +26,7 @@ export const SHAHRYAR_SUPERVISOR_VISIT_PHOTOS_FIELD_METADATA_UNIVERSAL_IDENTIFIE
   '20202020-147c-4d5f-9c13-000000000001';
 
 export type ShahryarMobileVisitDraft = {
+  recordKind?: 'visit';
   localId: string;
   serverId?: string;
   assignedMarketId: string;
@@ -34,10 +44,61 @@ export type ShahryarMobileVisitDraft = {
   updatedAt: string;
 };
 
-export type ShahryarMobileSyncQueueItem = {
+export type ShahryarMobileWorkingTimeDraft = {
+  recordKind: 'working-time';
   localId: string;
-  status: 'pending' | 'synced' | 'conflict' | 'rejected';
-  draft: ShahryarMobileVisitDraft;
+  serverId?: string;
+  supervisorId: string;
+  workDate: string;
+  checkInAt: string;
+  checkOutAt?: string;
+  gpsLocation: ShahryarGeoLocation;
+  totalMinutes: number;
+  status: 'PRESENT' | 'LATE' | 'ABSENT';
+  updatedAt: string;
+};
+
+export type ShahryarMobilePaymentDraft = {
+  recordKind: 'payment';
+  localId: string;
+  serverId?: string;
+  marketId: string;
+  collectedById: string;
+  amount: number;
+  dueDate?: string;
+  paidAt?: string;
+  status: 'CLOSED' | 'OPEN' | 'PARTIAL';
+  notes?: string;
+  updatedAt: string;
+};
+
+export type ShahryarMobileAbsenceDraft = {
+  recordKind: 'absence';
+  localId: string;
+  serverId?: string;
+  supervisorId: string;
+  absenceDate: string;
+  workingTime?: string;
+  gpsLocation: ShahryarGeoLocation;
+  reason: 'ABSENT' | 'LATE' | 'NO_WORK';
+  notes?: string;
+  updatedAt: string;
+};
+
+export type ShahryarMobileRecordDraft =
+  | ShahryarMobileVisitDraft
+  | ShahryarMobileWorkingTimeDraft
+  | ShahryarMobilePaymentDraft
+  | ShahryarMobileAbsenceDraft;
+
+export type ShahryarMobileSyncQueueItemBase<
+  TRecordKind extends ShahryarMobileRecordKind,
+  TDraft extends ShahryarMobileRecordDraft,
+> = {
+  localId: string;
+  recordKind: TRecordKind;
+  status: 'pending' | 'synced' | 'conflict' | 'rejected' | 'discarded';
+  draft: TDraft;
   createdAt: string;
   updatedAt: string;
   lastSyncedAt?: string;
@@ -45,14 +106,46 @@ export type ShahryarMobileSyncQueueItem = {
   rejection?: ShahryarMobileSyncRejectedChange;
 };
 
-export type ShahryarServerVisitSnapshot = {
+export type ShahryarMobileVisitSyncQueueItem = ShahryarMobileSyncQueueItemBase<
+  'visit',
+  ShahryarMobileVisitDraft
+>;
+
+export type ShahryarMobileWorkingTimeSyncQueueItem =
+  ShahryarMobileSyncQueueItemBase<
+    'working-time',
+    ShahryarMobileWorkingTimeDraft
+  >;
+
+export type ShahryarMobilePaymentSyncQueueItem =
+  ShahryarMobileSyncQueueItemBase<'payment', ShahryarMobilePaymentDraft>;
+
+export type ShahryarMobileAbsenceSyncQueueItem =
+  ShahryarMobileSyncQueueItemBase<'absence', ShahryarMobileAbsenceDraft>;
+
+export type ShahryarMobileSyncQueueItem =
+  | ShahryarMobileVisitSyncQueueItem
+  | ShahryarMobileWorkingTimeSyncQueueItem
+  | ShahryarMobilePaymentSyncQueueItem
+  | ShahryarMobileAbsenceSyncQueueItem;
+
+export type ShahryarServerRecordSnapshot = {
   id: string;
+  recordKind: ShahryarMobileRecordKind;
   updatedAt: string;
+};
+
+export type ShahryarServerVisitSnapshot = Omit<
+  ShahryarServerRecordSnapshot,
+  'recordKind'
+> & {
+  recordKind?: 'visit';
 };
 
 export type ShahryarMobileSyncConflict = {
   localId: string;
   serverId: string;
+  recordKind: ShahryarMobileRecordKind;
   reason: ShahryarMobileSyncConflictReason;
   localUpdatedAt: string;
   serverUpdatedAt: string;
@@ -65,6 +158,7 @@ export type ShahryarSyncResolution = {
 };
 
 export type ShahryarMobileVisitSyncChange = {
+  recordKind?: 'visit';
   localId: string;
   serverId?: string;
   operation: ShahryarVisitSyncOperation;
@@ -83,14 +177,68 @@ export type ShahryarMobileVisitSyncChange = {
   clientUpdatedAt: string;
 };
 
+export type ShahryarMobileWorkingTimeSyncChange = {
+  recordKind: 'working-time';
+  localId: string;
+  serverId?: string;
+  operation: ShahryarVisitSyncOperation;
+  supervisorId: string;
+  workDate: string;
+  checkInAt: string;
+  checkOutAt?: string;
+  gpsLocation: ShahryarGeoLocation;
+  totalMinutes: number;
+  status: 'PRESENT' | 'LATE' | 'ABSENT';
+  baseServerUpdatedAt?: string;
+  clientUpdatedAt: string;
+};
+
+export type ShahryarMobilePaymentSyncChange = {
+  recordKind: 'payment';
+  localId: string;
+  serverId?: string;
+  operation: ShahryarVisitSyncOperation;
+  marketId: string;
+  collectedById: string;
+  amount: number;
+  dueDate?: string;
+  paidAt?: string;
+  status: 'CLOSED' | 'OPEN' | 'PARTIAL';
+  notes?: string;
+  baseServerUpdatedAt?: string;
+  clientUpdatedAt: string;
+};
+
+export type ShahryarMobileAbsenceSyncChange = {
+  recordKind: 'absence';
+  localId: string;
+  serverId?: string;
+  operation: ShahryarVisitSyncOperation;
+  supervisorId: string;
+  absenceDate: string;
+  workingTime?: string;
+  gpsLocation: ShahryarGeoLocation;
+  reason: 'ABSENT' | 'LATE' | 'NO_WORK';
+  notes?: string;
+  baseServerUpdatedAt?: string;
+  clientUpdatedAt: string;
+};
+
+export type ShahryarMobileRecordSyncChange =
+  | ShahryarMobileVisitSyncChange
+  | ShahryarMobileWorkingTimeSyncChange
+  | ShahryarMobilePaymentSyncChange
+  | ShahryarMobileAbsenceSyncChange;
+
 export type ShahryarMobileSyncRequest = {
   deviceId: string;
   lastPulledAt?: string;
-  changes: ShahryarMobileVisitSyncChange[];
+  changes: ShahryarMobileRecordSyncChange[];
 };
 
 export type ShahryarMobileSyncAcceptedChange = {
   localId: string;
+  recordKind: ShahryarMobileRecordKind;
   serverId?: string;
   operation: ShahryarVisitSyncOperation;
   acceptedAt: string;
@@ -98,12 +246,14 @@ export type ShahryarMobileSyncAcceptedChange = {
 
 export type ShahryarMobileSyncRejectedChange = {
   localId: string;
+  recordKind?: ShahryarMobileRecordKind;
   reason: ShahryarMobileSyncRejectedReason;
 };
 
 export type ShahryarMobileServerSyncConflict = {
   localId: string;
   serverId: string;
+  recordKind: ShahryarMobileRecordKind;
   reason: ShahryarMobileSyncConflictReason;
   clientUpdatedAt: string;
   serverUpdatedAt: string;
@@ -141,6 +291,7 @@ export type ShahryarMobileSyncPullResponse = {
   currentSupervisorId?: string;
   assignedMarkets: ShahryarMobileAssignedMarket[];
   serverVisits: ShahryarServerVisitSnapshot[];
+  serverRecords: ShahryarServerRecordSnapshot[];
 };
 
 export type ShahryarMobilePhotoAssociationTargetType = 'market' | 'visit';
@@ -174,71 +325,156 @@ export type ShahryarMobileNotificationRegistrationResponse = {
   enabledNotificationKinds: Array<'missing-report' | 'missed-visit'>;
 };
 
+export const getShahryarMobileRecordKind = (
+  draftOrChange: ShahryarMobileRecordDraft | ShahryarMobileRecordSyncChange,
+): ShahryarMobileRecordKind => draftOrChange.recordKind ?? 'visit';
+
+export const createMobileSyncQueueItem = ({
+  draft,
+  now,
+}: {
+  draft: ShahryarMobileRecordDraft;
+  now: string;
+}): ShahryarMobileSyncQueueItem =>
+  ({
+    localId: draft.localId,
+    recordKind: getShahryarMobileRecordKind(draft),
+    status: 'pending',
+    draft,
+    createdAt: now,
+    updatedAt: now,
+  }) as ShahryarMobileSyncQueueItem;
+
 export const createVisitSyncQueueItem = ({
   draft,
   now,
 }: {
   draft: ShahryarMobileVisitDraft;
   now: string;
-}): ShahryarMobileSyncQueueItem => ({
-  localId: draft.localId,
-  status: 'pending',
+}): ShahryarMobileVisitSyncQueueItem =>
+  createMobileSyncQueueItem({ draft, now }) as ShahryarMobileVisitSyncQueueItem;
+
+export const markMobileSyncQueueItemPending = ({
+  item,
   draft,
-  createdAt: now,
-  updatedAt: now,
-});
+  now,
+}: {
+  item: ShahryarMobileSyncQueueItem;
+  draft: ShahryarMobileRecordDraft;
+  now: string;
+}): ShahryarMobileSyncQueueItem =>
+  ({
+    ...item,
+    recordKind: getShahryarMobileRecordKind(draft),
+    status: 'pending',
+    draft,
+    updatedAt: now,
+    conflict: undefined,
+    rejection: undefined,
+  }) as ShahryarMobileSyncQueueItem;
 
 export const markVisitSyncQueueItemPending = ({
   item,
   draft,
   now,
 }: {
-  item: ShahryarMobileSyncQueueItem;
+  item: ShahryarMobileVisitSyncQueueItem;
   draft: ShahryarMobileVisitDraft;
+  now: string;
+}): ShahryarMobileVisitSyncQueueItem =>
+  markMobileSyncQueueItemPending({
+    item,
+    draft,
+    now,
+  }) as ShahryarMobileVisitSyncQueueItem;
+
+export const retryMobileSyncQueueItem = ({
+  item,
+  now,
+}: {
+  item: ShahryarMobileSyncQueueItem;
   now: string;
 }): ShahryarMobileSyncQueueItem => ({
   ...item,
   status: 'pending',
-  draft,
   updatedAt: now,
   conflict: undefined,
   rejection: undefined,
 });
 
-export const resolveVisitSyncQueue = ({
+export const discardMobileSyncQueueItem = ({
+  item,
+  now,
+}: {
+  item: ShahryarMobileSyncQueueItem;
+  now: string;
+}): ShahryarMobileSyncQueueItem => ({
+  ...item,
+  status: 'discarded',
+  updatedAt: now,
+  conflict: undefined,
+  rejection: undefined,
+});
+
+const toServerRecordSnapshots = ({
+  serverRecords,
+  serverVisits,
+}: {
+  serverRecords?: ShahryarServerRecordSnapshot[];
+  serverVisits?: ShahryarServerVisitSnapshot[];
+}): ShahryarServerRecordSnapshot[] => [
+  ...(serverRecords ?? []),
+  ...(serverVisits ?? []).map((serverVisit) => ({
+    id: serverVisit.id,
+    recordKind: 'visit' as const,
+    updatedAt: serverVisit.updatedAt,
+  })),
+];
+
+export const resolveMobileSyncQueue = ({
   queue,
+  serverRecords,
   serverVisits,
 }: {
   queue: ShahryarMobileSyncQueueItem[];
-  serverVisits: ShahryarServerVisitSnapshot[];
+  serverRecords?: ShahryarServerRecordSnapshot[];
+  serverVisits?: ShahryarServerVisitSnapshot[];
 }): ShahryarSyncResolution => {
-  const serverVisitById = new Map(
-    serverVisits.map((serverVisit) => [serverVisit.id, serverVisit]),
+  const serverRecordByKindAndId = new Map(
+    toServerRecordSnapshots({ serverRecords, serverVisits }).map(
+      (serverRecord) => [
+        `${serverRecord.recordKind}:${serverRecord.id}`,
+        serverRecord,
+      ],
+    ),
   );
 
   return queue.reduce<ShahryarSyncResolution>(
     (resolution, item) => {
-      if (item.status === 'synced') {
+      if (item.status === 'synced' || item.status === 'discarded') {
         resolution.itemsToKeepLocal.push(item);
 
         return resolution;
       }
 
-      const serverVisit =
+      const serverRecord =
         item.draft.serverId === undefined
           ? undefined
-          : serverVisitById.get(item.draft.serverId);
+          : serverRecordByKindAndId.get(
+              `${item.recordKind}:${item.draft.serverId}`,
+            );
 
       if (
-        serverVisit !== undefined &&
-        new Date(serverVisit.updatedAt) > new Date(item.draft.updatedAt)
+        serverRecord !== undefined &&
+        new Date(serverRecord.updatedAt) > new Date(item.draft.updatedAt)
       ) {
         const conflict: ShahryarMobileSyncConflict = {
           localId: item.localId,
-          serverId: serverVisit.id,
+          serverId: serverRecord.id,
+          recordKind: item.recordKind,
           reason: 'server-newer',
           localUpdatedAt: item.draft.updatedAt,
-          serverUpdatedAt: serverVisit.updatedAt,
+          serverUpdatedAt: serverRecord.updatedAt,
         };
 
         resolution.conflicts.push(conflict);
@@ -263,59 +499,188 @@ export const resolveVisitSyncQueue = ({
   );
 };
 
+export const resolveVisitSyncQueue = ({
+  queue,
+  serverVisits,
+}: {
+  queue: ShahryarMobileVisitSyncQueueItem[];
+  serverVisits: ShahryarServerVisitSnapshot[];
+}): ShahryarSyncResolution =>
+  resolveMobileSyncQueue({
+    queue,
+    serverVisits,
+  });
+
 const isValidDate = (isoDate: string): boolean =>
   Number.isFinite(Date.parse(isoDate));
+
+const isVisitSyncChange = (
+  change: ShahryarMobileRecordSyncChange,
+): change is ShahryarMobileVisitSyncChange =>
+  getShahryarMobileRecordKind(change) === 'visit';
 
 const hasInvalidCartonCount = (
   change: ShahryarMobileVisitSyncChange,
 ): boolean => change.soldCartons < 0 || change.requestedCartons < 0;
 
+const hasInvalidAmount = (change: ShahryarMobileRecordSyncChange): boolean =>
+  change.recordKind === 'payment' &&
+  (!Number.isFinite(change.amount) || change.amount < 0);
+
+const hasInvalidDuration = (change: ShahryarMobileRecordSyncChange): boolean =>
+  change.recordKind === 'working-time' &&
+  (!Number.isFinite(change.totalMinutes) || change.totalMinutes < 0);
+
+const getChangeOwnerId = (
+  change: ShahryarMobileRecordSyncChange,
+): string | undefined => {
+  if (change.recordKind === 'payment') {
+    return change.collectedById;
+  }
+
+  return change.supervisorId;
+};
+
+const getChangePrimaryDate = (
+  change: ShahryarMobileRecordSyncChange,
+): string | undefined => {
+  if (change.recordKind === 'payment') {
+    return change.paidAt ?? change.dueDate;
+  }
+
+  if (change.recordKind === 'absence') {
+    return change.absenceDate;
+  }
+
+  if (change.recordKind === 'working-time') {
+    return change.checkInAt;
+  }
+
+  return change.checkInAt;
+};
+
+const hasMissingRequiredField = (
+  change: ShahryarMobileRecordSyncChange,
+): boolean => {
+  if (change.recordKind === 'payment') {
+    return (
+      change.marketId.trim().length === 0 ||
+      change.collectedById.trim().length === 0
+    );
+  }
+
+  if (change.recordKind === 'absence') {
+    return change.supervisorId.trim().length === 0;
+  }
+
+  if (change.recordKind === 'working-time') {
+    return change.supervisorId.trim().length === 0;
+  }
+
+  return (
+    change.assignedMarketId.trim().length === 0 ||
+    change.supervisorId.trim().length === 0 ||
+    change.report.trim().length === 0
+  );
+};
+
+const isValidChangeTimestamp = (
+  change: ShahryarMobileRecordSyncChange,
+): boolean => {
+  const primaryDate = getChangePrimaryDate(change);
+
+  if (primaryDate === undefined) {
+    return false;
+  }
+
+  return isValidDate(primaryDate) && isValidDate(change.clientUpdatedAt);
+};
+
 export const resolveShahryarMobileSyncChanges = ({
   authorizedSupervisorId,
   changes,
   deviceId,
+  serverRecords,
   serverVisits,
   syncedAt,
 }: {
   authorizedSupervisorId?: string;
-  changes: ShahryarMobileVisitSyncChange[];
+  changes: ShahryarMobileRecordSyncChange[];
   deviceId: string;
-  serverVisits: ShahryarServerVisitSnapshot[];
+  serverRecords?: ShahryarServerRecordSnapshot[];
+  serverVisits?: ShahryarServerVisitSnapshot[];
   syncedAt: string;
 }): ShahryarMobileSyncResponse => {
-  const serverVisitById = new Map(
-    serverVisits.map((serverVisit) => [serverVisit.id, serverVisit]),
+  const serverRecordByKindAndId = new Map(
+    toServerRecordSnapshots({ serverRecords, serverVisits }).map(
+      (serverRecord) => [
+        `${serverRecord.recordKind}:${serverRecord.id}`,
+        serverRecord,
+      ],
+    ),
   );
 
   return changes.reduce<ShahryarMobileSyncResponse>(
     (response, change) => {
+      const recordKind = getShahryarMobileRecordKind(change);
+
       if (
         authorizedSupervisorId !== undefined &&
-        change.supervisorId !== authorizedSupervisorId
+        getChangeOwnerId(change) !== authorizedSupervisorId
       ) {
         response.rejectedChanges.push({
           localId: change.localId,
+          recordKind,
           reason: 'unauthorized-supervisor',
         });
 
         return response;
       }
 
-      if (hasInvalidCartonCount(change)) {
+      if (hasMissingRequiredField(change)) {
         response.rejectedChanges.push({
           localId: change.localId,
+          recordKind,
+          reason: 'missing-required-field',
+        });
+
+        return response;
+      }
+
+      if (isVisitSyncChange(change) && hasInvalidCartonCount(change)) {
+        response.rejectedChanges.push({
+          localId: change.localId,
+          recordKind,
           reason: 'invalid-carton-count',
         });
 
         return response;
       }
 
-      if (
-        !isValidDate(change.checkInAt) ||
-        !isValidDate(change.clientUpdatedAt)
-      ) {
+      if (hasInvalidAmount(change)) {
         response.rejectedChanges.push({
           localId: change.localId,
+          recordKind,
+          reason: 'invalid-amount',
+        });
+
+        return response;
+      }
+
+      if (hasInvalidDuration(change)) {
+        response.rejectedChanges.push({
+          localId: change.localId,
+          recordKind,
+          reason: 'invalid-duration',
+        });
+
+        return response;
+      }
+
+      if (!isValidChangeTimestamp(change)) {
+        response.rejectedChanges.push({
+          localId: change.localId,
+          recordKind,
           reason: 'invalid-timestamp',
         });
 
@@ -325,29 +690,31 @@ export const resolveShahryarMobileSyncChanges = ({
       if (change.operation === 'update' && change.serverId === undefined) {
         response.rejectedChanges.push({
           localId: change.localId,
+          recordKind,
           reason: 'missing-server-id',
         });
 
         return response;
       }
 
-      const serverVisit =
+      const serverRecord =
         change.serverId === undefined
           ? undefined
-          : serverVisitById.get(change.serverId);
+          : serverRecordByKindAndId.get(`${recordKind}:${change.serverId}`);
       const conflictReferenceUpdatedAt =
         change.baseServerUpdatedAt ?? change.clientUpdatedAt;
 
       if (
-        serverVisit !== undefined &&
-        new Date(serverVisit.updatedAt) > new Date(conflictReferenceUpdatedAt)
+        serverRecord !== undefined &&
+        new Date(serverRecord.updatedAt) > new Date(conflictReferenceUpdatedAt)
       ) {
         response.conflicts.push({
           localId: change.localId,
-          serverId: serverVisit.id,
+          serverId: serverRecord.id,
+          recordKind,
           reason: 'server-newer',
           clientUpdatedAt: change.clientUpdatedAt,
-          serverUpdatedAt: serverVisit.updatedAt,
+          serverUpdatedAt: serverRecord.updatedAt,
         });
 
         return response;
@@ -355,6 +722,7 @@ export const resolveShahryarMobileSyncChanges = ({
 
       response.acceptedChanges.push({
         localId: change.localId,
+        recordKind,
         serverId: change.serverId ?? `server-${change.localId}`,
         operation: change.operation,
         acceptedAt: syncedAt,
@@ -370,6 +738,62 @@ export const resolveShahryarMobileSyncChanges = ({
       rejectedChanges: [],
     },
   );
+};
+
+const reconcileAcceptedQueueItem = ({
+  item,
+  acceptedChange,
+}: {
+  item: ShahryarMobileSyncQueueItem;
+  acceptedChange: ShahryarMobileSyncAcceptedChange;
+}): ShahryarMobileSyncQueueItem => {
+  const serverId = acceptedChange.serverId ?? item.draft.serverId;
+  const syncedQueueItem = {
+    status: 'synced' as const,
+    updatedAt: acceptedChange.acceptedAt,
+    lastSyncedAt: acceptedChange.acceptedAt,
+    conflict: undefined,
+    rejection: undefined,
+  };
+
+  switch (item.recordKind) {
+    case 'visit':
+      return {
+        ...item,
+        ...syncedQueueItem,
+        draft: {
+          ...item.draft,
+          serverId,
+        },
+      };
+    case 'working-time':
+      return {
+        ...item,
+        ...syncedQueueItem,
+        draft: {
+          ...item.draft,
+          serverId,
+        },
+      };
+    case 'payment':
+      return {
+        ...item,
+        ...syncedQueueItem,
+        draft: {
+          ...item.draft,
+          serverId,
+        },
+      };
+    case 'absence':
+      return {
+        ...item,
+        ...syncedQueueItem,
+        draft: {
+          ...item.draft,
+          serverId,
+        },
+      };
+  }
 };
 
 export const reconcileVisitSyncQueueWithServerResponse = ({
@@ -394,18 +818,7 @@ export const reconcileVisitSyncQueueWithServerResponse = ({
       const acceptedChange = acceptedChangeByLocalId.get(item.localId);
 
       if (acceptedChange !== undefined) {
-        return {
-          ...item,
-          status: 'synced',
-          draft: {
-            ...item.draft,
-            serverId: acceptedChange.serverId ?? item.draft.serverId,
-          },
-          updatedAt: acceptedChange.acceptedAt,
-          lastSyncedAt: acceptedChange.acceptedAt,
-          conflict: undefined,
-          rejection: undefined,
-        };
+        return reconcileAcceptedQueueItem({ item, acceptedChange });
       }
 
       const conflict = conflictByLocalId.get(item.localId);
@@ -418,6 +831,7 @@ export const reconcileVisitSyncQueueWithServerResponse = ({
           conflict: {
             localId: conflict.localId,
             serverId: conflict.serverId,
+            recordKind: conflict.recordKind,
             reason: conflict.reason,
             localUpdatedAt: conflict.clientUpdatedAt,
             serverUpdatedAt: conflict.serverUpdatedAt,

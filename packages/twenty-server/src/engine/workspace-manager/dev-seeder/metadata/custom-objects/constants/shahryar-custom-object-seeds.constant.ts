@@ -72,6 +72,17 @@ export const SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED: ObjectMetadataSeed = {
   isRemote: false,
 };
 
+export const SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED: ObjectMetadataSeed =
+  {
+    labelPlural: 'ناردنی ئاگادارکردنەوەکان',
+    labelSingular: 'ناردنی ئاگادارکردنەوە',
+    namePlural: 'shahryarNotificationDeliveries',
+    nameSingular: 'shahryarNotificationDelivery',
+    icon: 'IconBellCheck',
+    description: 'Audit log for Shahryar mobile notification delivery attempts',
+    isRemote: false,
+  };
+
 export const SHAHRYAR_CUSTOM_OBJECT_SEEDS: ObjectMetadataSeed[] = [
   SHAHRYAR_MARKET_CUSTOM_OBJECT_SEED,
   SHAHRYAR_SUPERVISOR_VISIT_CUSTOM_OBJECT_SEED,
@@ -80,4 +91,5 @@ export const SHAHRYAR_CUSTOM_OBJECT_SEEDS: ObjectMetadataSeed[] = [
   SHAHRYAR_SUPERVISOR_PENALTY_CUSTOM_OBJECT_SEED,
   SHAHRYAR_ABSENCE_CUSTOM_OBJECT_SEED,
   SHAHRYAR_MOBILE_DEVICE_CUSTOM_OBJECT_SEED,
+  SHAHRYAR_NOTIFICATION_DELIVERY_CUSTOM_OBJECT_SEED,
 ];

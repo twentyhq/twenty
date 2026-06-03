@@ -1,3 +1,5 @@
+import { ForbiddenException } from '@nestjs/common';
+
 import {
   type ShahryarMobileSyncRequestDTO,
   type ShahryarMobileVisitSyncChangeDTO,
@@ -61,12 +63,14 @@ describe('resolveShahryarMobileSyncChanges', () => {
     expect(response.acceptedChanges).toEqual([
       {
         localId: 'local-visit-1',
+        recordKind: 'visit',
         serverId: 'server-visit-1',
         operation: 'update',
         acceptedAt: '2026-06-01T10:00:00.000Z',
       },
       {
         localId: 'local-visit-2',
+        recordKind: 'visit',
         serverId: 'server-local-visit-2',
         operation: 'create',
         acceptedAt: '2026-06-01T10:00:00.000Z',
@@ -94,6 +98,7 @@ describe('resolveShahryarMobileSyncChanges', () => {
       {
         localId: 'local-visit-1',
         serverId: 'server-visit-1',
+        recordKind: 'visit',
         reason: 'server-newer',
         clientUpdatedAt: '2026-06-01T09:30:00.000Z',
         serverUpdatedAt: '2026-06-01T09:40:00.000Z',
@@ -128,14 +133,17 @@ describe('resolveShahryarMobileSyncChanges', () => {
     expect(response.rejectedChanges).toEqual([
       {
         localId: 'local-negative',
+        recordKind: 'visit',
         reason: 'invalid-carton-count',
       },
       {
         localId: 'local-invalid-date',
+        recordKind: 'visit',
         reason: 'invalid-timestamp',
       },
       {
         localId: 'local-missing-server-id',
+        recordKind: 'visit',
         reason: 'missing-server-id',
       },
     ]);
@@ -154,9 +162,64 @@ describe('resolveShahryarMobileSyncChanges', () => {
     expect(response.rejectedChanges).toEqual([
       {
         localId: 'local-visit-1',
+        recordKind: 'visit',
         reason: 'unauthorized-supervisor',
       },
     ]);
+  });
+
+  it('should accept typed non-visit mobile records', () => {
+    const response = resolveShahryarMobileSyncChanges({
+      deviceId: 'device-1',
+      syncedAt: '2026-06-01T10:00:00.000Z',
+      changes: [
+        {
+          recordKind: 'working-time',
+          localId: 'local-working-time-1',
+          operation: 'create',
+          supervisorId: 'supervisor-1',
+          workDate: '2026-06-01',
+          checkInAt: '2026-06-01T08:00:00.000Z',
+          gpsLocation: {
+            latitude: 36.191,
+            longitude: 44.009,
+          },
+          totalMinutes: 480,
+          status: 'PRESENT',
+          clientUpdatedAt: '2026-06-01T08:01:00.000Z',
+        },
+        {
+          recordKind: 'payment',
+          localId: 'local-payment-1',
+          operation: 'create',
+          marketId: 'market-1',
+          collectedById: 'supervisor-1',
+          amount: 250,
+          paidAt: '2026-06-01',
+          status: 'PARTIAL',
+          clientUpdatedAt: '2026-06-01T09:00:00.000Z',
+        },
+        {
+          recordKind: 'absence',
+          localId: 'local-absence-1',
+          operation: 'create',
+          supervisorId: 'supervisor-1',
+          absenceDate: '2026-06-01',
+          gpsLocation: {
+            latitude: 36.191,
+            longitude: 44.009,
+          },
+          reason: 'ABSENT',
+          clientUpdatedAt: '2026-06-01T09:30:00.000Z',
+        },
+      ],
+      serverRecords: [],
+    });
+
+    expect(response.acceptedChanges.map((change) => change.recordKind)).toEqual(
+      ['working-time', 'payment', 'absence'],
+    );
+    expect(response.rejectedChanges).toHaveLength(0);
   });
 });
 
@@ -180,6 +243,7 @@ describe('ShahryarMobileSyncService', () => {
       acceptedChanges: [
         {
           localId: 'local-visit-1',
+          recordKind: 'visit',
           serverId: 'server-visit-1',
           operation: 'update',
         },
@@ -215,10 +279,80 @@ describe('ShahryarMobileSyncService', () => {
     expect(response.acceptedChanges[0].serverId).toMatch(
       /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
     );
-    expect(query).toHaveBeenCalledTimes(2);
-    expect(query.mock.calls[1][0]).toContain('INSERT INTO "workspace_');
-    expect(query.mock.calls[1][1][0]).toBe(
+    expect(query).toHaveBeenCalledTimes(5);
+    expect(query.mock.calls[4][0]).toContain('INSERT INTO "workspace_');
+    expect(query.mock.calls[4][0]).toContain('"."_shahryarSupervisorVisit"');
+    expect(query.mock.calls[4][1][0]).toBe(
       response.acceptedChanges[0].serverId,
+    );
+  });
+
+  it('should persist accepted non-visit sync changes to workspace tables', async () => {
+    const query = jest.fn<Promise<unknown>, [string, unknown[]]>();
+    const service = new ShahryarMobileSyncService(createMockDataSource(query));
+    const request = {
+      deviceId: 'device-1',
+      changes: [
+        {
+          recordKind: 'working-time',
+          localId: 'local-working-time-1',
+          operation: 'create',
+          supervisorId: 'supervisor-1',
+          workDate: '2026-06-01',
+          checkInAt: '2026-06-01T08:00:00.000Z',
+          gpsLocation: {
+            latitude: 36.191,
+            longitude: 44.009,
+          },
+          totalMinutes: 480,
+          status: 'PRESENT',
+          clientUpdatedAt: '2026-06-01T08:01:00.000Z',
+        },
+        {
+          recordKind: 'payment',
+          localId: 'local-payment-1',
+          operation: 'create',
+          marketId: 'market-1',
+          collectedById: 'supervisor-1',
+          amount: 250,
+          paidAt: '2026-06-01',
+          status: 'PARTIAL',
+          clientUpdatedAt: '2026-06-01T09:00:00.000Z',
+        },
+        {
+          recordKind: 'absence',
+          localId: 'local-absence-1',
+          operation: 'create',
+          supervisorId: 'supervisor-1',
+          absenceDate: '2026-06-01',
+          gpsLocation: {
+            latitude: 36.191,
+            longitude: 44.009,
+          },
+          reason: 'ABSENT',
+          clientUpdatedAt: '2026-06-01T09:30:00.000Z',
+        },
+      ],
+    } satisfies ShahryarMobileSyncRequestDTO;
+
+    query.mockResolvedValue([]);
+
+    const response = await service.resolveSyncRequest({
+      authorizedSupervisorId: 'supervisor-1',
+      request,
+      syncedAt: '2026-06-01T10:00:00.000Z',
+      workspaceId: '20202020-0000-4000-8000-000000000001',
+    });
+
+    expect(response.acceptedChanges).toHaveLength(3);
+    expect(query.mock.calls.map((call) => call[0]).join('\n')).toContain(
+      '"."_shahryarWorkingTime"',
+    );
+    expect(query.mock.calls.map((call) => call[0]).join('\n')).toContain(
+      '"."_shahryarPayment"',
+    );
+    expect(query.mock.calls.map((call) => call[0]).join('\n')).toContain(
+      '"."_shahryarAbsence"',
     );
   });
 
@@ -251,6 +385,13 @@ describe('ShahryarMobileSyncService', () => {
       serverVisits: [
         {
           id: 'server-visit-1',
+          updatedAt: '2026-06-01T09:30:00.000Z',
+        },
+      ],
+      serverRecords: [
+        {
+          id: 'server-visit-1',
+          recordKind: 'visit',
           updatedAt: '2026-06-01T09:30:00.000Z',
         },
       ],
@@ -381,6 +522,43 @@ describe('ShahryarMobileSyncService', () => {
       uploadedPhotoFileId,
       '20202020-0000-4000-8000-000000000001',
     ]);
+  });
+
+  it('should reject supervisor photo associations for records owned by another supervisor', async () => {
+    const query = jest.fn<Promise<unknown>, [string, unknown[]]>();
+    const service = new ShahryarMobileSyncService(createMockDataSource(query));
+
+    query
+      .mockResolvedValueOnce([
+        {
+          path: 'files/photo.jpg',
+        },
+      ])
+      .mockResolvedValueOnce([
+        {
+          files: [],
+          ownerId: 'supervisor-2',
+        },
+      ]);
+
+    await expect(
+      service.associatePhoto({
+        associatedAt: '2026-06-01T10:00:00.000Z',
+        authorizedSupervisorId: 'supervisor-1',
+        request: {
+          localPhotoId: 'photo.jpg',
+          fileId: uploadedPhotoFileId,
+          targetType: 'market',
+          targetId: 'market-1',
+          capturedAt: '2026-06-01T09:10:00.000Z',
+        },
+        workspaceId: '20202020-0000-4000-8000-000000000001',
+      }),
+    ).rejects.toBeInstanceOf(ForbiddenException);
+    expect(query).toHaveBeenCalledTimes(2);
+    expect(query.mock.calls[1][0]).toContain(
+      '"assignedSupervisorId" AS "ownerId"',
+    );
   });
 
   it('should persist mobile notification registrations to the workspace device table', async () => {
