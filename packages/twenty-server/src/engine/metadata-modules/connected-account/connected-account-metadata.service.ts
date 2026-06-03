@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   type FindOptionsRelations,
   type FindOptionsWhere,
-  Not,
   Repository,
 } from 'typeorm';
 
@@ -40,7 +39,9 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string;
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
-    return this.findUserConnectedAccounts({ userWorkspaceId, workspaceId });
+    return this.repository.find({
+      where: this.getUserConditions({ userWorkspaceId, workspaceId }),
+    });
   }
 
   async findById({
@@ -86,19 +87,14 @@ export class ConnectedAccountMetadataService {
   private getWorkspaceSharedConditions({
     id,
     workspaceId,
-    excludeUserWorkspaceId,
   }: {
     id?: string;
     workspaceId: string;
-    excludeUserWorkspaceId?: string;
   }): FindOptionsWhere<ConnectedAccountEntity> {
     return {
       ...(isDefined(id) ? { id } : {}),
       workspaceId,
       visibility: 'workspace',
-      ...(isDefined(excludeUserWorkspaceId)
-        ? { userWorkspaceId: Not(excludeUserWorkspaceId) }
-        : {}),
     };
   }
 
@@ -124,33 +120,6 @@ export class ConnectedAccountMetadataService {
       this.getUserConditions({ id, userWorkspaceId, workspaceId }),
       workspaceSharedConditions,
     ];
-  }
-
-  async findUserConnectedAccounts({
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userWorkspaceId: string;
-    workspaceId: string;
-  }): Promise<ConnectedAccountEntity[]> {
-    return this.repository.find({
-      where: this.getUserConditions({ userWorkspaceId, workspaceId }),
-    });
-  }
-
-  async findWorkspaceSharedConnectedAccounts({
-    userWorkspaceId,
-    workspaceId,
-  }: {
-    userWorkspaceId: string | undefined;
-    workspaceId: string;
-  }): Promise<ConnectedAccountEntity[]> {
-    return this.repository.find({
-      where: this.getWorkspaceSharedConditions({
-        workspaceId,
-        excludeUserWorkspaceId: userWorkspaceId,
-      }),
-    });
   }
 
   async findAccessibleConnectedAccounts({

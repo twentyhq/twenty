@@ -3,8 +3,6 @@ import { randomUUID } from 'node:crypto';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 
-import { FindOperator } from 'typeorm';
-
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
 import { ConnectedAccountMetadataService } from 'src/engine/metadata-modules/connected-account/connected-account-metadata.service';
@@ -42,19 +40,6 @@ const sharedWorkspaceAccount: FakeAccount = {
   visibility: 'workspace',
 };
 
-const matchesCondition = (accountValue: unknown, conditionValue: unknown) => {
-  if (conditionValue instanceof FindOperator) {
-    // The service only uses Not() in these scoping conditions.
-    if (conditionValue.type === 'not') {
-      return accountValue !== conditionValue.value;
-    }
-
-    throw new Error(`Unsupported find operator '${conditionValue.type}'`);
-  }
-
-  return accountValue === conditionValue;
-};
-
 const matchesWhere = (
   account: FakeAccount,
   where: Record<string, unknown> | Record<string, unknown>[],
@@ -62,8 +47,8 @@ const matchesWhere = (
   const conditions = Array.isArray(where) ? where : [where];
 
   return conditions.some((condition) =>
-    Object.entries(condition).every(([key, value]) =>
-      matchesCondition(account[key as keyof FakeAccount], value),
+    Object.entries(condition).every(
+      ([key, value]) => account[key as keyof FakeAccount] === value,
     ),
   );
 };
@@ -197,9 +182,9 @@ describe('ConnectedAccountMetadataService - user-workspace visibility scoping', 
     });
   });
 
-  describe('findUserConnectedAccounts', () => {
+  describe('findByUserWorkspaceId', () => {
     it('should return only the caller own accounts, including their shared ones', async () => {
-      const result = await service.findUserConnectedAccounts({
+      const result = await service.findByUserWorkspaceId({
         userWorkspaceId: ALICE_USER_WORKSPACE_ID,
         workspaceId: WORKSPACE_ID,
       });
@@ -212,7 +197,7 @@ describe('ConnectedAccountMetadataService - user-workspace visibility scoping', 
     });
 
     it('should not return another member workspace-shared account', async () => {
-      const result = await service.findUserConnectedAccounts({
+      const result = await service.findByUserWorkspaceId({
         userWorkspaceId: BOB_USER_WORKSPACE_ID,
         workspaceId: WORKSPACE_ID,
       });
@@ -220,39 +205,6 @@ describe('ConnectedAccountMetadataService - user-workspace visibility scoping', 
       const ids = result.map((account) => account.id);
 
       expect(ids).toEqual([BOB_ACCOUNT_ID]);
-    });
-  });
-
-  describe('findWorkspaceSharedConnectedAccounts', () => {
-    it("should return workspace-shared accounts owned by others, excluding the caller's own", async () => {
-      const result = await service.findWorkspaceSharedConnectedAccounts({
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-        workspaceId: WORKSPACE_ID,
-      });
-
-      const ids = result.map((account) => account.id);
-
-      expect(ids).toEqual([SHARED_ACCOUNT_ID]);
-    });
-
-    it("should exclude the caller's own account even when it is workspace-shared", async () => {
-      const result = await service.findWorkspaceSharedConnectedAccounts({
-        userWorkspaceId: ALICE_USER_WORKSPACE_ID,
-        workspaceId: WORKSPACE_ID,
-      });
-
-      expect(result).toEqual([]);
-    });
-
-    it('should return all workspace-shared accounts when no userWorkspaceId is present', async () => {
-      const result = await service.findWorkspaceSharedConnectedAccounts({
-        userWorkspaceId: undefined,
-        workspaceId: WORKSPACE_ID,
-      });
-
-      const ids = result.map((account) => account.id);
-
-      expect(ids).toEqual([SHARED_ACCOUNT_ID]);
     });
   });
 });
