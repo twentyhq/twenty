@@ -114,6 +114,17 @@ describe('buildNavigationFlatCommandMenuItem', () => {
     );
   });
 
+  it('should additionally gate conditionalAvailabilityExpression behind the feature flag for feature-flagged objects', () => {
+    const result = buildNavigationFlatCommandMenuItem({
+      ...baseArgs,
+      objectMetadata: { ...baseObjectMetadata, nameSingular: 'callRecording' },
+    });
+
+    expect(result.conditionalAvailabilityExpression).toBe(
+      'featureFlags.IS_CALL_RECORDING_ENABLED and targetObjectReadPermissions.callRecording',
+    );
+  });
+
   it('should set isPinned to false', () => {
     const result = buildNavigationFlatCommandMenuItem(baseArgs);
 

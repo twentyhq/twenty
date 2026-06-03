@@ -1,3 +1,4 @@
+import { FeatureFlagKey } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
 import { v5 } from 'uuid';
 
@@ -15,6 +16,14 @@ export const NAVIGATION_INTERPOLATED_SHORT_LABEL =
   '${navigateToObjectMetadataItem.labelPlural}';
 export const NAVIGATION_INTERPOLATED_ICON =
   '${navigateToObjectMetadataItem.icon}';
+
+const NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR: Partial<
+  Record<string, FeatureFlagKey>
+> = {
+  callRecording: FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+  callRecordingCalendarEventAssociation:
+    FeatureFlagKey.IS_CALL_RECORDING_ENABLED,
+};
 
 export const buildNavigationFlatCommandMenuItem = ({
   objectMetadata,
@@ -41,6 +50,15 @@ export const buildNavigationFlatCommandMenuItem = ({
     NAVIGATION_COMMAND_UUID_NAMESPACE,
   );
 
+  const targetObjectReadPermissionExpression = `targetObjectReadPermissions.${objectMetadata.nameSingular}`;
+  const featureFlagGate =
+    NAVIGATION_FEATURE_FLAG_GATE_BY_OBJECT_NAME_SINGULAR[
+      objectMetadata.nameSingular
+    ];
+  const conditionalAvailabilityExpression = isDefined(featureFlagGate)
+    ? `featureFlags.${featureFlagGate} and ${targetObjectReadPermissionExpression}`
+    : targetObjectReadPermissionExpression;
+
   return {
     id: commandMenuItemId,
     universalIdentifier,
@@ -54,7 +72,7 @@ export const buildNavigationFlatCommandMenuItem = ({
     position,
     isPinned: false,
     availabilityType: CommandMenuItemAvailabilityType.GLOBAL,
-    conditionalAvailabilityExpression: `targetObjectReadPermissions.${objectMetadata.nameSingular}`,
+    conditionalAvailabilityExpression,
     frontComponentId: null,
     frontComponentUniversalIdentifier: null,
     engineComponentKey: EngineComponentKey.NAVIGATION,
