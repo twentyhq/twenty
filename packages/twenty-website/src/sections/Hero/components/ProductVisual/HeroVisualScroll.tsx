@@ -40,10 +40,11 @@ type StackTargetMetric = {
 
 const NAV_HEIGHT = 64;
 
-const INTRO_HALFTONE_COLOR = '#4A38F5';
-
 const PRODUCT_HERO_BACKGROUND_IMAGE =
-  '/illustrations/generated/ai-bg-1-mapped.png';
+  '/illustrations/generated/max-bottinger-msdl-jbff-plm-unsplash.jpg';
+
+const INTRO_DASH_COLOR = '#4A38F5';
+const AI_DASH_COLOR = '#ffffff';
 
 const PatternOverlay = styled.div`
   bottom: -100px;
@@ -366,8 +367,8 @@ export function HeroVisualScroll({
           <VisualWrapper>
             <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
               <ProductBackgroundHalftone
-                dashColor={INTRO_HALFTONE_COLOR}
-                hoverColor={INTRO_HALFTONE_COLOR}
+                dashColor={INTRO_DASH_COLOR}
+                hoverColor={INTRO_DASH_COLOR}
                 imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
               />
             </PatternOverlay>
@@ -482,6 +483,8 @@ export function HeroVisualScroll({
           <VisualWrapper>
             <PatternOverlay style={{ opacity: 1.0, zIndex: -1 }}>
               <ProductBackgroundHalftone
+                dashColor={AI_DASH_COLOR}
+                hoverColor={AI_DASH_COLOR}
                 imageUrl={PRODUCT_HERO_BACKGROUND_IMAGE}
               />
             </PatternOverlay>

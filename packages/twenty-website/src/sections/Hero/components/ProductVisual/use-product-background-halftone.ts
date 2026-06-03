@@ -1,28 +1,29 @@
 'use client';
 
 import { createAnimationFrameLoop } from '@/lib/animation';
+import { observeElementSize } from '@/lib/dom/observe-element-size';
 import {
   createVisualRenderLoop,
   loadVisualImage,
   tryCreateSiteWebGlRenderer,
-  type VisualRenderLoopFrame,
   type VisualRenderLoop,
+  type VisualRenderLoopFrame,
 } from '@/lib/visual-runtime';
-import { observeElementSize } from '@/lib/dom/observe-element-size';
 import { useEffect, useState, type RefObject } from 'react';
 import * as THREE from 'three';
 
 const VIRTUAL_RENDER_HEIGHT = 800;
 const MIN_FOOTPRINT_SCALE = 0.001;
 const REFERENCE_PREVIEW_DISTANCE = 4;
+const HALFTONE_PREVIEW_DISTANCE = 4;
 
 const HALFTONE_EDGE_FADE_X = 0;
 const HALFTONE_EDGE_FADE_Y = 0;
-const HALFTONE_TILE_SIZE = 12;
-const HALFTONE_POWER = -0.07;
-const HALFTONE_WIDTH = 0.34;
+const HALFTONE_TILE_SIZE = 8;
+const HALFTONE_POWER = 0.1;
+const HALFTONE_WIDTH = 0.52;
 
-const HALFTONE_CONTRAST = 1;
+const HALFTONE_CONTRAST = 0.95;
 const HALFTONE_DASH_COLOR = '#ffffff';
 const HALFTONE_HOVER_COLOR = '#ffffff';
 const HALFTONE_HOVER_LIGHT_INTENSITY = 0.8;
@@ -168,7 +169,7 @@ const halftoneFragmentShader = `
       toneValue = 1.0 - toneValue;
     }
     float bandRadius = clamp(
-      toneValue + localPower * length(vec2(0.5)) + lightLift,
+      toneValue + localPower * length(vec2(0.5)) * (1.0 / 3.0) + lightLift,
       0.0,
       1.0
     ) * 1.86 * 0.5;
@@ -412,7 +413,7 @@ async function mountProductBackgroundCanvas({
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
       zoom: {
-        value: getImagePreviewZoom(3.2),
+        value: getImagePreviewZoom(HALFTONE_PREVIEW_DISTANCE),
       },
     },
     vertexShader: passThroughVertexShader,
@@ -523,7 +524,7 @@ async function mountProductBackgroundCanvas({
     getImageFootprintScale({
       imageHeight: image.height,
       imageWidth: image.width,
-      previewDistance: 3.2,
+      previewDistance: HALFTONE_PREVIEW_DISTANCE,
       viewportHeight: getVirtualHeight(),
       viewportWidth: getVirtualWidth(),
     });
@@ -555,7 +556,9 @@ async function mountProductBackgroundCanvas({
     halftoneMaterial.uniforms.hoverLightStrength.value =
       HALFTONE_HOVER_LIGHT_INTENSITY * pointer.hoverStrength;
 
-    imageMaterial.uniforms.zoom.value = getImagePreviewZoom(3.2);
+    imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
+      HALFTONE_PREVIEW_DISTANCE,
+    );
     halftoneMaterial.uniforms.footprintScale.value =
       getHalftoneFootprintScale();
 
