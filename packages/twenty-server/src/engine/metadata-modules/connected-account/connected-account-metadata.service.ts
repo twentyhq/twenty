@@ -1,7 +1,13 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 
-import { Repository } from 'typeorm';
+import {
+  type FindOptionsRelations,
+  type FindOptionsWhere,
+  Repository,
+} from 'typeorm';
+
+import { isDefined } from 'twenty-shared/utils';
 
 import { AppOAuthRevokeService } from 'src/engine/core-modules/application/connection-provider/refresh/services/app-oauth-revoke.service';
 import { CalendarChannelEntity } from 'src/engine/metadata-modules/calendar-channel/entities/calendar-channel.entity';
@@ -34,7 +40,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<ConnectedAccountEntity[]> {
     return this.repository.find({
-      where: { userWorkspaceId, workspaceId },
+      where: this.getUserConditions({ userWorkspaceId, workspaceId }),
     });
   }
 
@@ -59,6 +65,105 @@ export class ConnectedAccountMetadataService {
   }): Promise<ConnectedAccountEntity | null> {
     return this.repository.findOne({
       where: { id, userWorkspaceId, workspaceId },
+    });
+  }
+
+  private getUserConditions({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id?: string;
+    userWorkspaceId: string;
+    workspaceId: string;
+  }): FindOptionsWhere<ConnectedAccountEntity> {
+    return {
+      ...(isDefined(id) ? { id } : {}),
+      workspaceId,
+      userWorkspaceId,
+    };
+  }
+
+  private getWorkspaceSharedConditions({
+    id,
+    workspaceId,
+  }: {
+    id?: string;
+    workspaceId: string;
+  }): FindOptionsWhere<ConnectedAccountEntity> {
+    return {
+      ...(isDefined(id) ? { id } : {}),
+      workspaceId,
+      visibility: 'workspace',
+    };
+  }
+
+  private getAccessibleConditions({
+    id,
+    userWorkspaceId,
+    workspaceId,
+  }: {
+    id?: string;
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+  }): FindOptionsWhere<ConnectedAccountEntity>[] {
+    const workspaceSharedConditions = this.getWorkspaceSharedConditions({
+      id,
+      workspaceId,
+    });
+
+    if (!isDefined(userWorkspaceId)) {
+      return [workspaceSharedConditions];
+    }
+
+    return [
+      this.getUserConditions({ id, userWorkspaceId, workspaceId }),
+      workspaceSharedConditions,
+    ];
+  }
+
+  async findAccessibleConnectedAccounts({
+    userWorkspaceId,
+    workspaceId,
+    relations,
+  }: {
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+    relations?: FindOptionsRelations<ConnectedAccountEntity>;
+  }): Promise<{
+    userConnectedAccounts: ConnectedAccountEntity[];
+    workspaceSharedConnectedAccounts: ConnectedAccountEntity[];
+  }> {
+    const accounts = await this.repository.find({
+      where: this.getAccessibleConditions({ workspaceId, userWorkspaceId }),
+      relations,
+      order: { createdAt: 'ASC' },
+    });
+
+    return {
+      userConnectedAccounts: accounts.filter(
+        (account) => account.userWorkspaceId === userWorkspaceId,
+      ),
+      workspaceSharedConnectedAccounts: accounts.filter(
+        (account) => account.userWorkspaceId !== userWorkspaceId,
+      ),
+    };
+  }
+
+  async findAccessibleConnectedAccountById({
+    id,
+    userWorkspaceId,
+    workspaceId,
+    relations,
+  }: {
+    id: string;
+    userWorkspaceId: string | undefined;
+    workspaceId: string;
+    relations?: FindOptionsRelations<ConnectedAccountEntity>;
+  }): Promise<ConnectedAccountEntity | null> {
+    return this.repository.findOne({
+      where: this.getAccessibleConditions({ workspaceId, userWorkspaceId, id }),
+      relations,
     });
   }
 
@@ -103,7 +208,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: { userWorkspaceId, workspaceId },
+      where: this.getUserConditions({ userWorkspaceId, workspaceId }),
       select: ['id'],
     });
 
@@ -116,7 +221,7 @@ export class ConnectedAccountMetadataService {
     workspaceId: string;
   }): Promise<string[]> {
     const accounts = await this.repository.find({
-      where: { workspaceId, visibility: 'workspace' },
+      where: this.getWorkspaceSharedConditions({ workspaceId }),
       select: ['id'],
     });
 
