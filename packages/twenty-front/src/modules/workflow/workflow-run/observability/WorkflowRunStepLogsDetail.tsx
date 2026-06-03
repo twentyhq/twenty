@@ -7,8 +7,9 @@ import { isTwoFirstDepths, JsonTree } from 'twenty-ui/json-visualizer';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 import { type JsonValue } from 'type-fest';
 
-import { useWorkflowRun } from '@/workflow/hooks/useWorkflowRun';
+import { useFlowOrThrow } from '@/workflow/hooks/useFlowOrThrow';
 import { useWorkflowRunIdOrThrow } from '@/workflow/hooks/useWorkflowRunIdOrThrow';
+import { useWorkflowRunStepLog } from '@/workflow/hooks/useWorkflowRunStepLog';
 import { WorkflowRunStepLogsAiAgentDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsAiAgentDetail';
 import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsCodeDetail';
 import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail';
@@ -50,9 +51,9 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
   const { copyToClipboard } = useCopyToClipboard();
 
   const workflowRunId = useWorkflowRunIdOrThrow();
-  const workflowRun = useWorkflowRun({ workflowRunId });
+  const flow = useFlowOrThrow();
 
-  const rawStepLog = workflowRun?.stepLogs?.[stepId];
+  const rawStepLog = useWorkflowRunStepLog({ workflowRunId, stepId });
 
   if (!isDefined(rawStepLog)) {
     return (
@@ -86,9 +87,8 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
 
   const stepLog = parseResult.data;
 
-  const flowSteps = workflowRun?.state?.flow.steps;
-  const isInsideIteratorLoop = isDefined(flowSteps)
-    ? getIsDescendantOfIterator({ stepId, steps: flowSteps })
+  const isInsideIteratorLoop = isDefined(flow.steps)
+    ? getIsDescendantOfIterator({ stepId, steps: flow.steps })
     : false;
 
   const renderDetails = () => {
