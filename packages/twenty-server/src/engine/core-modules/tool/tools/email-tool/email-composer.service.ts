@@ -97,7 +97,7 @@ export class EmailComposerService {
     workspaceId: string;
     userWorkspaceId: string | undefined;
   }) {
-    const accessibleAccounts =
+    const { userConnectedAccounts, workspaceSharedConnectedAccounts } =
       await this.connectedAccountMetadataService.findAccessibleConnectedAccounts(
         {
           userWorkspaceId,
@@ -110,22 +110,19 @@ export class EmailComposerService {
         },
       );
 
-    if (accessibleAccounts.length === 0) {
+    // Prefer the caller's own account; fall back to a workspace-shared one, but
+    // never silently default to another member's private account.
+    const connectedAccount =
+      userConnectedAccounts[0] ?? workspaceSharedConnectedAccounts[0];
+
+    if (!isDefined(connectedAccount)) {
       throw new EmailToolException(
         'No connected accounts found for this workspace',
         EmailToolExceptionCode.CONNECTED_ACCOUNT_NOT_FOUND,
       );
     }
 
-    // Prefer the caller's own account; fall back to a workspace-visibility
-    // account, but never silently default to another member's account.
-    const ownAccount = isDefined(userWorkspaceId)
-      ? accessibleAccounts.find(
-          (account) => account.userWorkspaceId === userWorkspaceId,
-        )
-      : undefined;
-
-    return ownAccount ?? accessibleAccounts[0];
+    return connectedAccount;
   }
 
   private normalizeRecipients(parameters: ComposeEmailParams): {

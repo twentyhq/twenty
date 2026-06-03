@@ -105,14 +105,22 @@ describe('EmailComposerService - connected account authorization', () => {
           ),
       ),
       findAccessibleConnectedAccounts: jest.fn(
-        ({ userWorkspaceId, workspaceId }) =>
-          Promise.resolve(
-            accounts.filter(
-              (account) =>
-                account.workspaceId === workspaceId &&
-                isVisibleToCaller(account, userWorkspaceId),
+        ({ userWorkspaceId, workspaceId }) => {
+          const accessibleAccounts = accounts.filter(
+            (account) =>
+              account.workspaceId === workspaceId &&
+              isVisibleToCaller(account, userWorkspaceId),
+          );
+
+          return Promise.resolve({
+            userConnectedAccounts: accessibleAccounts.filter(
+              (account) => account.userWorkspaceId === userWorkspaceId,
             ),
-          ),
+            workspaceSharedConnectedAccounts: accessibleAccounts.filter(
+              (account) => account.userWorkspaceId !== userWorkspaceId,
+            ),
+          });
+        },
       ),
     };
 

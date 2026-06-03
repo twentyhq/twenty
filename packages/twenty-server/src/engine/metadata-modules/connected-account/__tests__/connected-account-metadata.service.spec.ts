@@ -157,28 +157,32 @@ describe('ConnectedAccountMetadataService - user-workspace visibility scoping', 
   });
 
   describe('findAccessibleConnectedAccounts', () => {
-    it("should return the caller own and workspace-shared accounts, never another member's private account", async () => {
-      const result = await service.findAccessibleConnectedAccounts({
-        userWorkspaceId: BOB_USER_WORKSPACE_ID,
-        workspaceId: WORKSPACE_ID,
-      });
+    it("should split the caller own accounts from workspace-shared ones, never exposing another member's private account", async () => {
+      const { userConnectedAccounts, workspaceSharedConnectedAccounts } =
+        await service.findAccessibleConnectedAccounts({
+          userWorkspaceId: BOB_USER_WORKSPACE_ID,
+          workspaceId: WORKSPACE_ID,
+        });
 
-      const ids = result.map((account) => account.id);
-
-      expect(ids).toContain(BOB_ACCOUNT_ID);
-      expect(ids).toContain(SHARED_ACCOUNT_ID);
-      expect(ids).not.toContain(ALICE_ACCOUNT_ID);
+      expect(userConnectedAccounts.map((account) => account.id)).toEqual([
+        BOB_ACCOUNT_ID,
+      ]);
+      expect(
+        workspaceSharedConnectedAccounts.map((account) => account.id),
+      ).toEqual([SHARED_ACCOUNT_ID]);
     });
 
-    it('should return only workspace-visibility accounts when no userWorkspaceId is present', async () => {
-      const result = await service.findAccessibleConnectedAccounts({
-        userWorkspaceId: undefined,
-        workspaceId: WORKSPACE_ID,
-      });
+    it('should return only workspace-shared accounts when no userWorkspaceId is present', async () => {
+      const { userConnectedAccounts, workspaceSharedConnectedAccounts } =
+        await service.findAccessibleConnectedAccounts({
+          userWorkspaceId: undefined,
+          workspaceId: WORKSPACE_ID,
+        });
 
-      const ids = result.map((account) => account.id);
-
-      expect(ids).toEqual([SHARED_ACCOUNT_ID]);
+      expect(userConnectedAccounts).toEqual([]);
+      expect(
+        workspaceSharedConnectedAccounts.map((account) => account.id),
+      ).toEqual([SHARED_ACCOUNT_ID]);
     });
   });
 

@@ -130,11 +130,23 @@ export class ConnectedAccountMetadataService {
     userWorkspaceId: string | undefined;
     workspaceId: string;
     relations?: FindOptionsRelations<ConnectedAccountEntity>;
-  }): Promise<ConnectedAccountEntity[]> {
-    return this.repository.find({
+  }): Promise<{
+    userConnectedAccounts: ConnectedAccountEntity[];
+    workspaceSharedConnectedAccounts: ConnectedAccountEntity[];
+  }> {
+    const accounts = await this.repository.find({
       where: this.getAccessibleConditions({ workspaceId, userWorkspaceId }),
       relations,
     });
+
+    return {
+      userConnectedAccounts: accounts.filter(
+        (account) => account.userWorkspaceId === userWorkspaceId,
+      ),
+      workspaceSharedConnectedAccounts: accounts.filter(
+        (account) => account.userWorkspaceId !== userWorkspaceId,
+      ),
+    };
   }
 
   async findAccessibleConnectedAccountById({
