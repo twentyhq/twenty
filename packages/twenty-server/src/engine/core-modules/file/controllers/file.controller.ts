@@ -60,17 +60,20 @@ export class FileController {
       );
     }
 
-    const fileStream = await this.fileService
-      .getFileStreamByPath({
+    const fileResponse = await this.fileService
+      .getFilePresignedUrlOrStreamByPath({
         workspaceId,
         applicationId,
         fileFolder: FileFolder.PublicAsset,
         filepath,
       })
       .catch((error) => {
-        this.logger.error('getFileStreamByPath failed unexpectedly', {
-          error,
-        });
+        this.logger.error(
+          'getFilePresignedUrlOrStreamByPath failed unexpectedly',
+          {
+            error,
+          },
+        );
 
         throw new FileException(
           'Error retrieving file',
@@ -78,19 +81,21 @@ export class FileController {
         );
       });
 
-    if (fileStream === null) {
+    if (fileResponse === null) {
       throw new FileException(
         'File not found',
         FileExceptionCode.FILE_NOT_FOUND,
       );
     }
 
-    const { stream, mimeType } = fileStream;
+    if (fileResponse.type === 'redirect') {
+      return res.redirect(fileResponse.presignedUrl);
+    }
 
-    setFileResponseHeaders(res, mimeType);
+    setFileResponseHeaders(res, fileResponse.mimeType);
 
     try {
-      await pipeline(stream, res);
+      await pipeline(fileResponse.stream, res);
     } catch (error) {
       this.logger.error('Public asset stream failed mid-transfer', { error });
 
@@ -117,15 +122,18 @@ export class FileController {
     const workspaceId = (req as any)?.workspaceId;
 
     const fileResponse = await this.fileService
-      .getFileResponseById({
+      .getFilePresignedUrlOrStreamById({
         fileId,
         workspaceId,
         fileFolder,
       })
       .catch((error) => {
-        this.logger.error('getFileResponseById failed unexpectedly', {
-          error,
-        });
+        this.logger.error(
+          'getFilePresignedUrlOrStreamById failed unexpectedly',
+          {
+            error,
+          },
+        );
 
         throw new FileException(
           'Error retrieving file',

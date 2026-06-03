@@ -441,6 +441,7 @@ type LogicFunction {
   description: String
   runtime: String!
   timeoutSeconds: Float!
+  executionMode: LogicFunctionExecutionMode!
   sourceHandlerPath: String!
   handlerName: String!
   cronTriggerSettings: JSON
@@ -452,6 +453,11 @@ type LogicFunction {
   universalIdentifier: UUID
   createdAt: DateTime!
   updatedAt: DateTime!
+}
+
+enum LogicFunctionExecutionMode {
+  LIVE
+  PREBUILT
 }
 
 type StandardOverrides {
@@ -1779,6 +1785,8 @@ enum FeatureFlagKey {
   IS_EMAIL_GROUP_ENABLED
   IS_JUNCTION_RELATIONS_ENABLED
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT
+  IS_LOGIC_FUNCTION_PREBUILT_MODE_ENABLED
+  IS_SETTINGS_DISCOVERY_HERO_ENABLED
 }
 
 type WorkspaceUrls {
@@ -2699,6 +2707,12 @@ type AgentTurn {
   createdAt: DateTime!
 }
 
+type WorkspaceAiStats {
+  conversationsCount: Int!
+  skillsCount: Int!
+  toolsCount: Int!
+}
+
 type CalendarChannel {
   id: UUID!
   handle: String!
@@ -2996,6 +3010,7 @@ type Query {
   myConnectedAccounts: [ConnectedAccountPublicDTO!]!
   myCalendarChannels(connectedAccountId: UUID): [CalendarChannel!]!
   minimalMetadata: MinimalMetadata!
+  findWorkspaceAiStats: WorkspaceAiStats!
   chatThreads: [AgentChatThread!]!
   chatThread(id: UUID!): AgentChatThread!
   chatMessages(threadId: UUID!): [AgentMessage!]!
@@ -3269,6 +3284,7 @@ type Mutation {
   authorizeApp(clientId: String!, codeChallenge: String, redirectUrl: String!, state: String, scope: String): AuthorizeApp!
   renewToken(appToken: String!): AuthTokens!
   generateApiKeyToken(apiKeyId: UUID!, expiresAt: String!): ApiKeyToken!
+  generatePlaygroundToken: AuthToken!
   emailPasswordResetLink(email: String!, workspaceId: UUID): EmailPasswordResetLink!
   updatePasswordViaResetToken(passwordResetToken: String!, newPassword: String!): InvalidatePassword!
   createApplicationRegistration(input: CreateApplicationRegistrationInput!): CreateApplicationRegistration!

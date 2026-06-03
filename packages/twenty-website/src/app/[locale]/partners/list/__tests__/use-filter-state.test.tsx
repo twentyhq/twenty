@@ -42,7 +42,7 @@ describe('useFilterState', () => {
     expect(state.hasAnyFilter).toBe(false);
     expect(state.criteria.regions.size).toBe(0);
     expect(state.criteria.languages.size).toBe(0);
-    expect(state.criteria.deployments.size).toBe(0);
+    expect(state.criteria.categories.size).toBe(0);
   });
 
   it('parses regions=EUROPE,US into Set {EUROPE, US}', () => {

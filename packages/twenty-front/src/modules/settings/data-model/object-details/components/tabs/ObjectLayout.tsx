@@ -58,7 +58,9 @@ export const ObjectLayout = ({ objectMetadataItem }: ObjectLayoutProps) => {
       return;
     }
 
-    enterLayoutCustomizationMode();
+    if (!enterLayoutCustomizationMode()) {
+      return;
+    }
 
     navigateApp(AppPath.RecordShowPage, {
       objectNameSingular: objectMetadataItem.nameSingular,
