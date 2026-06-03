@@ -6,18 +6,17 @@ import {
 } from 'twenty-shared/types';
 import { camelToSnakeCase, isDefined } from 'twenty-shared/utils';
 import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
-import { z } from 'zod';
 
 import { type GenerateDescriptorOptions } from 'src/engine/core-modules/tool-provider/interfaces/generate-descriptor-options.type';
-import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 
 import { getFlatFieldsFromFlatObjectMetadata } from 'src/engine/api/graphql/workspace-schema-builder/utils/get-flat-fields-for-flat-object-metadata.util';
 import { generateCreateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-many-record-input-schema.util';
 import { generateCreateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-create-record-input-schema.util';
-import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { generateUpdateManyRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-many-record-input-schema.util';
 import { generateUpdateRecordInputSchema } from 'src/engine/core-modules/record-crud/utils/generate-update-record-input-schema.util';
+import { toToolJsonSchema } from 'src/engine/core-modules/record-crud/utils/to-tool-json-schema.util';
 import { generateBulkDeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/bulk-delete-tool.zod-schema';
 import { DeleteToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/delete-tool.zod-schema';
 import { FindOneToolInputSchema } from 'src/engine/core-modules/record-crud/zod-schemas/find-one-tool.zod-schema';
@@ -26,7 +25,6 @@ import {
   generateGroupByToolInputSchema,
   hasGroupByToolInputSchema,
 } from 'src/engine/core-modules/record-crud/zod-schemas/group-by-tool.zod-schema';
-import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
@@ -34,6 +32,7 @@ import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
+import { ToolCategory } from 'twenty-shared/ai';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -271,7 +270,6 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'update_many',
         });
 
-      if (permission.canSoftDeleteObjectRecords && canBeManagedByAutomation) {
         descriptors.push({
           name: `upsert_many_${snakePlural}`,
           description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,

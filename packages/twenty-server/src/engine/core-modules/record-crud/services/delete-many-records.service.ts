@@ -1,7 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
 
-import { canObjectBeManagedByWorkflow } from 'twenty-shared/workflow';
-
 import { CommonDeleteManyQueryRunnerService } from 'src/engine/api/common/common-query-runners/common-delete-many-query-runner.service';
 import {
   RecordCrudException,
@@ -11,6 +9,7 @@ import { CommonApiContextBuilderService } from 'src/engine/core-modules/record-c
 import { type DeleteManyRecordsParams } from 'src/engine/core-modules/record-crud/types/delete-many-records-params.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
 import { isDefined, isEmptyObject } from 'twenty-shared/utils';
+import { canObjectBeManagedByAutomation } from 'twenty-shared/workflow';
 
 @Injectable()
 export class DeleteManyRecordsService {
@@ -41,9 +40,8 @@ export class DeleteManyRecordsService {
         });
 
       if (
-        !canObjectBeManagedByWorkflow({
+        !canObjectBeManagedByAutomation({
           nameSingular: flatObjectMetadata.nameSingular,
-          isSystem: flatObjectMetadata.isSystem,
         })
       ) {
         throw new RecordCrudException(

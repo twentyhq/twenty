@@ -38,6 +38,7 @@ export const generateFindToolInputSchema = (
     ),
     select: z
       .array(z.string())
+      .nonempty()
       .describe(
         `Fields to include in the response. Required. ` +
           `Use '*' to return all fields, or list specific field names. ` +

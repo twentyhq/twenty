@@ -116,7 +116,7 @@ export class ToolExecutorService {
           objectName: ref.objectNameSingular,
           filter: { id: { eq: id } },
           limit: 1,
-          select: select as string[] | undefined,
+          select: select as string[],
           shouldBuildEffectiveSelectFields: isDefined(select),
           authContext,
           rolePermissionConfig: context.rolePermissionConfig,
