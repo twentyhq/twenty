@@ -9,6 +9,7 @@ import {
 } from 'react';
 
 import { Container, LinkButton } from '@/design-system/components';
+import { useMediaQuery } from '@/lib/motion';
 import type { AppPreviewConfig } from '@/sections/AppPreview';
 import { TabButton } from '@/sections/Tabs/components/TabButton';
 import { TabButtons } from '@/sections/Tabs/components/TabButtons';
@@ -39,6 +40,8 @@ type StackTargetMetric = {
 };
 
 const NAV_HEIGHT = 64;
+
+const MD_UP_QUERY = `(min-width: ${theme.breakpoints.md}px)`;
 
 const PRODUCT_HERO_BACKGROUND_IMAGE =
   '/illustrations/generated/home-background-wheat.jpg';
@@ -222,6 +225,25 @@ const VisualWrapper = styled.div`
   z-index: 1;
 `;
 
+const MobileSection = styled.section`
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding-bottom: ${theme.spacing(16)};
+  padding-top: 96px;
+  position: relative;
+  width: 100%;
+`;
+
+const MobileVisualWrapper = styled.div`
+  overflow: hidden;
+  padding-left: ${theme.spacing(4)};
+  padding-right: ${theme.spacing(4)};
+  position: relative;
+  width: 100%;
+`;
+
 export function HeroVisualScroll({
   aiBody,
   aiHeading,
@@ -238,6 +260,7 @@ export function HeroVisualScroll({
   const { morphProgress, navProgress, menuBackground, menuElevated } =
     useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
+  const isDesktop = useMediaQuery(MD_UP_QUERY, { serverFallback: true });
   const [activeTab, setActiveTab] = useState(0);
   const [introLayerEl, setIntroLayerEl] = useState<HTMLDivElement | null>(null);
   const [stackTargetMetrics, setStackTargetMetrics] = useState<
@@ -265,12 +288,25 @@ export function HeroVisualScroll({
   const aiPlaybackEnabled = morphProgress >= 0.58;
 
   useEffect(() => {
-    menuSync?.setMenuState({
+    if (!menuSync) {
+      return;
+    }
+
+    if (!isDesktop) {
+      menuSync.setMenuState({
+        backgroundColor: 'rgb(255, 255, 255)',
+        disableElevation: false,
+        scheme: 'primary',
+      });
+      return;
+    }
+
+    menuSync.setMenuState({
       backgroundColor: menuBackground,
       disableElevation: !menuElevated,
       scheme: navProgress >= 0.5 ? 'secondary' : 'primary',
     });
-  }, [menuSync, navProgress, menuBackground, menuElevated]);
+  }, [menuSync, isDesktop, navProgress, menuBackground, menuElevated]);
 
   const heroAtStart = morphProgress <= 0;
 
@@ -317,6 +353,77 @@ export function HeroVisualScroll({
       window.removeEventListener('resize', updateStackTargets);
     };
   }, [tabs]);
+
+  if (!isDesktop) {
+    return (
+      <div>
+        <MobileSection style={{ backgroundColor: '#ffffff' }}>
+          <StyledContainer>
+            <HeadingGroup>
+              <HeadingSlot style={{ color: theme.colors.primary.text[100] }}>
+                <ContentLayer data-active={true}>{introHeading}</ContentLayer>
+              </HeadingSlot>
+              <BodyText style={{ color: theme.colors.primary.text[60] }}>
+                <ContentLayer data-active={true}>{introBody}</ContentLayer>
+              </BodyText>
+            </HeadingGroup>
+
+            <ActionSlot>
+              <CtaLayer data-active={true}>
+                <LinkButton
+                  color="secondary"
+                  href={ctaHref}
+                  label={ctaLabel}
+                  variant="contained"
+                />
+                {introSecondaryCta}
+              </CtaLayer>
+            </ActionSlot>
+          </StyledContainer>
+
+          <MobileVisualWrapper>
+            <ProductVisual
+              activeScene={0}
+              playbackEnabled={false}
+              visual={visual}
+            />
+          </MobileVisualWrapper>
+        </MobileSection>
+
+        <MobileSection style={{ backgroundColor: '#141414' }}>
+          <StyledContainer>
+            <HeadingGroup>
+              <HeadingSlot style={{ color: theme.colors.secondary.text[100] }}>
+                <ContentLayer data-active={true}>{aiHeading}</ContentLayer>
+              </HeadingSlot>
+              <BodyText style={{ color: 'rgba(255, 255, 255, 0.7)' }}>
+                <ContentLayer data-active={true}>{aiBody}</ContentLayer>
+              </BodyText>
+            </HeadingGroup>
+
+            <ActionSlot>
+              <CtaLayer data-active={true}>
+                <TabButtons
+                  activeIndex={activeTab}
+                  idPrefix="product-hero-mobile"
+                  onSelect={setActiveTab}
+                  tabs={tabs}
+                />
+              </CtaLayer>
+            </ActionSlot>
+          </StyledContainer>
+
+          <MobileVisualWrapper>
+            <ProductVisual
+              activeScene={activeTab + 1}
+              playbackEnabled
+              visual={visual}
+            />
+          </MobileVisualWrapper>
+        </MobileSection>
+      </div>
+    );
+  }
 
   return (
     <ScrollTrack ref={trackRef}>
