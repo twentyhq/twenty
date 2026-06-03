@@ -3,20 +3,20 @@ import { type GroupByResolverArgs } from 'src/engine/api/graphql/workspace-resol
 
 import { WorkspaceQueryHook } from 'src/engine/api/graphql/workspace-query-runner/workspace-query-hook/decorators/workspace-query-hook.decorator';
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-import {
-  buildTierFilter,
-  composeFilter,
-} from 'src/modules/propel-rls/build-tier-filter.util';
+import { composeFilter } from 'src/modules/propel-rls/build-tier-filter.util';
+import { PropelTierService } from 'src/modules/propel-rls/propel-tier.service';
 
-// Propel clean-room RLS — portalSync.groupBy. Tier logic in build-tier-filter.util.ts.
+// Propel clean-room RLS — portalSync.groupBy. Tier resolved from Twenty role in propel-tier.service.ts.
 @WorkspaceQueryHook(`portalSync.groupBy`)
 export class PortalSyncGroupByRlsPreQueryHook implements WorkspacePreQueryHookInstance {
+  constructor(private readonly propelTierService: PropelTierService) {}
+
   async execute(
     authContext: WorkspaceAuthContext,
     _objectName: string,
     payload: GroupByResolverArgs,
   ): Promise<GroupByResolverArgs> {
-    const tierFilter = buildTierFilter(authContext);
+    const tierFilter = await this.propelTierService.buildTierFilter(authContext);
 
     return {
       ...payload,

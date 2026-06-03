@@ -10,9 +10,9 @@ import {
 import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
 import {
   type LaneGateConfig,
-  gateBypasses,
   isGatedForwardMove,
 } from 'src/modules/propel-rls/stage-gate.util';
+import { PropelTierService } from 'src/modules/propel-rls/propel-tier.service';
 
 // §8.3 — "move when the work is done." Shared logic for the per-lane updateOne
 // stage-gate hooks. Looks up the record's current stage and the status of the
@@ -22,6 +22,7 @@ import {
 export class StageGateService {
   constructor(
     private readonly globalWorkspaceOrmManager: GlobalWorkspaceOrmManager,
+    private readonly propelTierService: PropelTierService,
   ) {}
 
   // Throws CommonQueryRunnerException to block; returns void to allow.
@@ -34,7 +35,7 @@ export class StageGateService {
     cfg: LaneGateConfig,
   ): Promise<void> {
     if (nextStage === undefined) return; // not a stage change
-    if (gateBypasses(authContext)) return; // manager / non-user → no gate
+    if (await this.propelTierService.gateBypasses(authContext)) return; // manager / non-user → no gate
 
     const workspaceId = authContext.workspace.id;
     const systemAuthContext = buildSystemAuthContext(workspaceId);

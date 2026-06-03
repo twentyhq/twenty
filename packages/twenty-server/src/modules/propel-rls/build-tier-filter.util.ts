@@ -1,47 +1,21 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-
-// ── Propel clean-room RLS — shared tier filter ───────────────────────────────
-// Single source of truth for the per-tier row filter, used by every per-object
-// pre-query hook. NOT derived from Twenty's @license Enterprise RLS.
+// ── Propel clean-room RLS — shared filter helpers ────────────────────────────
+// The per-tier row filter is now built by PropelTierService.buildTierFilter
+// (tier is resolved from the user's Twenty ROLE, see propel-tier.service.ts).
+// This file keeps only the pure, DI-free helpers shared by every hook.
+// NOT derived from Twenty's @license Enterprise RLS.
 //
-//   MANAGER → null (no filter, sees all)
-//   AGENT   → ownerId == requesting member  (sees own)
-//   CITERRA → businessUnit == 'CITERRA'      (separate-company wall)
+//   MANAGER (Admin / custom "Manager" role) → null (no filter, sees all)
+//   AGENT   (everything else, fail-closed)   → ownerId == requesting member (own)
 //   non-user contexts (apiKey/application/system) → null (integrations unfiltered)
 //
-// `options` lets objects opt out of an axis they don't carry (e.g. an object with
-// no businessUnit, though all our isolated objects have both).
+// CITERRA has been removed: RCBI merged into the normal pipelines, so there is
+// no separate Citerra role / businessUnit wall anymore.
+//
+// `options` lets objects opt out of the owner axis if they don't carry ownerId
+// (all our isolated objects currently do).
 
 export type TierFilterOptions = {
   hasOwner?: boolean; // object carries ownerId (default true)
-  hasBusinessUnit?: boolean; // object carries businessUnit (default true)
-};
-
-export const buildTierFilter = (
-  authContext: WorkspaceAuthContext,
-  options: TierFilterOptions = {},
-): Record<string, unknown> | null => {
-  const hasOwner = options.hasOwner ?? true;
-  const hasBusinessUnit = options.hasBusinessUnit ?? true;
-
-  if (authContext.type !== 'user') return null;
-
-  const member = authContext.workspaceMember as
-    | (Record<string, unknown> & { id?: string })
-    | undefined;
-  const tier = (member?.propelTier as string | undefined) ?? 'AGENT';
-
-  if (tier === 'MANAGER') return null;
-
-  if (tier === 'CITERRA') {
-    return hasBusinessUnit ? { businessUnit: { eq: 'CITERRA' } } : null;
-  }
-
-  // AGENT (default)
-  if (!hasOwner) return null;
-  const memberId = authContext.workspaceMemberId;
-  if (!memberId) return null;
-  return { ownerId: { eq: memberId } };
 };
 
 // Compose the tier filter with any user-supplied filter via AND so scoping can't
@@ -62,5 +36,5 @@ export const composeFilter = (
 // define none and (b) the app SDK's ObjectManifest has no way to set duplicateCriteria.
 // So there is no reachable leak to scope. If Twenty ever lets the SDK set
 // duplicateCriteria on custom objects, revisit: patch the core runner to fold
-// buildTierFilter(authContext) into duplicateConditions via { and: [...] } for the
+// the tier filter into duplicateConditions via { and: [...] } for the
 // RLS-scoped objects only.

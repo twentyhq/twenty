@@ -1,5 +1,3 @@
-import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/workspace-auth-context.type';
-
 // ── Propel §8.3 stage gating ─────────────────────────────────────────────────
 // "Move a deal only when the work is actually done." A forward stage move is
 // blocked unless the current stage's task (created by the §8.3 stage-entry emitter)
@@ -9,7 +7,8 @@ import { type WorkspaceAuthContext } from 'src/engine/core-modules/auth/types/wo
 //   - Only FORWARD moves to a non-terminal stage are gated.
 //   - Backward moves (corrections), same-stage edits, and moves TO a terminal/parked
 //     stage (LOST/PARKED/etc.) always pass — you can always abandon or park.
-//   - non-user contexts (apiKey/app/system) bypass; MANAGER tier bypasses (override).
+//   - non-user contexts (apiKey/app/system) bypass; MANAGER tier (Admin / custom
+//     "Manager" role) bypasses (override) — see PropelTierService.gateBypasses.
 //   - If NO task exists for the current stage, allow (don't deadlock records created
 //     before the engine, via import, or via API without a task).
 //
@@ -47,12 +46,6 @@ export const isGatedForwardMove = (
   return ni > ci;
 };
 
-// Whether RLS-style bypass applies (non-user or manager → no gate).
-export const gateBypasses = (authContext: WorkspaceAuthContext): boolean => {
-  if (authContext.type !== 'user') return true;
-  const member = authContext.workspaceMember as
-    | (Record<string, unknown> & { id?: string })
-    | undefined;
-  const tier = (member?.propelTier as string | undefined) ?? 'AGENT';
-  return tier === 'MANAGER';
-};
+// NOTE: bypass logic (non-user / MANAGER tier → no gate) now lives in
+// PropelTierService.gateBypasses, since the tier is resolved from the user's
+// Twenty role (async). StageGateService calls it before running the gate.

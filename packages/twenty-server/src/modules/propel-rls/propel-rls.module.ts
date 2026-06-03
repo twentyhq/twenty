@@ -1,5 +1,7 @@
 import { Module } from '@nestjs/common';
 
+import { RoleModule } from 'src/engine/metadata-modules/role/role.module';
+import { PropelTierService } from 'src/modules/propel-rls/propel-tier.service';
 import { SecondaryOpportunityRlsPreQueryHook } from 'src/modules/propel-rls/secondary-opportunity-rls.pre-query.hook';
 import { SecondaryOpportunityFindOneRlsPreQueryHook } from 'src/modules/propel-rls/secondary-opportunity-find-one-rls.pre-query.hook';
 import { SecondaryOpportunityGroupByRlsPreQueryHook } from 'src/modules/propel-rls/secondary-opportunity-group-by-rls.pre-query.hook';
@@ -53,9 +55,14 @@ import { DealStageGatePreQueryHook } from 'src/modules/propel-rls/deal-stage-gat
 //  - §8.3 stage-gate hooks (updateOne) block forward stage moves until the current
 //    stage's task is DONE. StageGateService does the lookup (GlobalWorkspaceOrmManager
 //    is @Global-exported, so no module import needed).
+//  - PropelTierService resolves the per-request tier (MANAGER/AGENT) from the
+//    user's Twenty role (via RoleModule's RoleService); used by both the RLS
+//    read-path hooks (buildTierFilter) and the stage gate (gateBypasses).
 // None derived from @license Enterprise code.
 @Module({
+  imports: [RoleModule],
   providers: [
+    PropelTierService,
     SecondaryOpportunityRlsPreQueryHook,
     SecondaryOpportunityFindOneRlsPreQueryHook,
     SecondaryOpportunityGroupByRlsPreQueryHook,
