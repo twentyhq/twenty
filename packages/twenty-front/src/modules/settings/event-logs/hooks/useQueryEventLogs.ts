@@ -6,7 +6,7 @@ import {
   type EventLogQueryResult,
   type EventLogRecord,
 } from '~/generated-metadata/graphql';
-import { GET_EVENT_LOGS } from '~/pages/settings/security/event-logs/graphql/queries/getEventLogs';
+import { GET_EVENT_LOGS } from '@/settings/event-logs/graphql/queries/getEventLogs';
 
 type EventLogsData = {
   eventLogs: EventLogQueryResult;
@@ -16,13 +16,17 @@ type EventLogsVariables = {
   input: EventLogQueryInput;
 };
 
-export const useEventLogs = (input: EventLogQueryInput) => {
+export const useEventLogs = (
+  input: EventLogQueryInput,
+  options?: { skip?: boolean },
+) => {
   const { data, loading, error, refetch, fetchMore } = useQuery<
     EventLogsData,
     EventLogsVariables
   >(GET_EVENT_LOGS, {
     variables: { input },
     fetchPolicy: 'network-only',
+    skip: options?.skip,
   });
 
   const records = data?.eventLogs.records ?? ([] as EventLogRecord[]);

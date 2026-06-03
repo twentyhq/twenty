@@ -1,5 +1,7 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,7 +12,6 @@ import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
-import { type EventLogFiltersState } from '~/pages/settings/security/event-logs/SettingsEventLogs';
 
 import { EventLogDatePickerInput } from './EventLogDatePickerInput';
 
@@ -31,6 +32,21 @@ const StyledFilterItem = styled.div`
   flex: 1;
   max-width: 300px;
   min-width: 200px;
+`;
+
+const StyledPeriodItem = styled.div`
+  flex: 1.5;
+  min-width: 280px;
+`;
+
+const StyledPeriodRow = styled.div`
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+
+  > * {
+    flex: 1;
+    min-width: 0;
+  }
 `;
 
 export const EventLogFilters = ({
@@ -82,7 +98,7 @@ export const EventLogFilters = ({
   };
 
   const eventLabel =
-    table === EventLogTable.PAGEVIEW ? t`Page Name` : t`Event Type`;
+    table === EventLogTable.PAGEVIEW ? t`Page name` : t`Event type`;
 
   const userWorkspaceOptions: SelectOption<string | null>[] = [
     { label: t`All Members`, value: null, Icon: IconUser },
@@ -120,7 +136,7 @@ export const EventLogFilters = ({
       <StyledFilterItem>
         <Select
           dropdownId="event-log-user-workspace-filter"
-          label={t`Workspace Member`}
+          label={t`Workspace members`}
           value={value.userWorkspaceId ?? null}
           options={userWorkspaceOptions}
           onChange={handleUserWorkspaceChange}
@@ -129,28 +145,30 @@ export const EventLogFilters = ({
         />
       </StyledFilterItem>
 
-      <StyledFilterItem>
-        <EventLogDatePickerInput
-          label={t`Start Date`}
-          value={value.dateRange?.start}
-          onChange={handleStartDateChange}
-        />
-      </StyledFilterItem>
-
-      <StyledFilterItem>
-        <EventLogDatePickerInput
-          label={t`End Date`}
-          value={value.dateRange?.end}
-          onChange={handleEndDateChange}
-        />
-      </StyledFilterItem>
+      <StyledPeriodItem>
+        <InputLabel>{t`Period`}</InputLabel>
+        <StyledPeriodRow>
+          <EventLogDatePickerInput
+            instanceId="event-log-start-date"
+            value={value.dateRange?.start}
+            onChange={handleStartDateChange}
+            placeholder={t`Start date`}
+          />
+          <EventLogDatePickerInput
+            instanceId="event-log-end-date"
+            value={value.dateRange?.end}
+            onChange={handleEndDateChange}
+            placeholder={t`End date`}
+          />
+        </StyledPeriodRow>
+      </StyledPeriodItem>
 
       {table === EventLogTable.OBJECT_EVENT && (
         <>
           <StyledFilterItem>
             <Select
               dropdownId="event-log-object-type-filter"
-              label={t`Object Type`}
+              label={t`Object type`}
               value={value.objectMetadataId ?? null}
               options={objectMetadataOptions}
               onChange={handleObjectMetadataIdChange}
