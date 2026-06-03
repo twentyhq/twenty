@@ -203,7 +203,24 @@ RUN tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz \
 RUN apk add --no-cache \
     postgresql18 postgresql18-contrib \
     redis \
-    curl jq su-exec
+    curl jq su-exec gcompat
+
+# ClickHouse single static binary — backs application logs (and the other
+# event-log tables). ClickHouse targets glibc, so gcompat (above) provides the
+# shim on Alpine/musl. Pinned via CLICKHOUSE_VERSION.
+ARG TARGETARCH
+ARG CLICKHOUSE_VERSION=24.8.14.39
+RUN set -eux; \
+    case "$TARGETARCH" in \
+      arm64) CH_ARCH=aarch64 ;; \
+      *) CH_ARCH=amd64 ;; \
+    esac; \
+    curl -fsSL -o /tmp/clickhouse.tgz \
+      "https://packages.clickhouse.com/tgz/lts/clickhouse-common-static-${CLICKHOUSE_VERSION}-${CH_ARCH}.tgz"; \
+    tar -xzf /tmp/clickhouse.tgz -C /tmp; \
+    cp "$(find /tmp -type f -path '*/usr/bin/clickhouse' | head -n1)" /usr/local/bin/clickhouse; \
+    chmod +x /usr/local/bin/clickhouse; \
+    rm -rf /tmp/clickhouse.tgz /tmp/clickhouse-common-static-*
 
 # Workspace root config
 COPY --from=twenty-server-build /app/package.json /app/yarn.lock /app/.yarnrc.yml /app/
@@ -233,9 +250,9 @@ RUN find /app/packages/twenty-server/dist -name '*.js.map' -delete
 # s6 service definitions
 COPY packages/twenty-docker/twenty-app-dev/rootfs/ /
 
-RUN mkdir -p /data/postgres /data/redis /app/packages/twenty-server/.local-storage \
+RUN mkdir -p /data/postgres /data/redis /data/clickhouse /app/packages/twenty-server/.local-storage \
  && chown -R postgres:postgres /data/postgres \
- && chown 1000:1000 /data/redis /app/packages/twenty-server/.local-storage
+ && chown 1000:1000 /data/redis /data/clickhouse /app/packages/twenty-server/.local-storage
 
 ARG APP_VERSION=0.0.0
 
@@ -252,10 +269,11 @@ ENV PG_DATABASE_URL=postgres://twenty:twenty@localhost:5432/default \
     DISABLE_CRON_JOBS_REGISTRATION=true \
     IS_BILLING_ENABLED=false \
     SIGN_IN_PREFILLED=true \
-    APPLICATION_LOG_DRIVER=CONSOLE
+    CLICKHOUSE_URL=http://localhost:8123/twenty \
+    APPLICATION_LOG_DRIVER=CLICKHOUSE
 
 EXPOSE 2020
-VOLUME ["/data/postgres", "/app/packages/twenty-server/.local-storage"]
+VOLUME ["/data/postgres", "/data/clickhouse", "/app/packages/twenty-server/.local-storage"]
 
 LABEL org.opencontainers.image.source=https://github.com/twentyhq/twenty
 LABEL org.opencontainers.image.description="All-in-one Twenty image for local development and SDK usage. Includes PostgreSQL, Redis, server, and worker."

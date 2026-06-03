@@ -76,10 +76,6 @@ const StyledTableWrapper = styled.div`
   overflow: hidden;
 `;
 
-const StyledGateContainer = styled.div`
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]};
-`;
-
 const RECORDS_PER_PAGE = 100;
 
 export const SettingsLogs = () => {
@@ -90,12 +86,16 @@ export const SettingsLogs = () => {
 
   const hasEnterpriseAccess =
     currentWorkspace?.hasValidSignedEnterpriseKey === true;
-  const isEventLogsEnabled = hasEnterpriseAccess && isClickHouseConfigured;
 
   const [selectedTable, setSelectedTable] = useState<EventLogTable>(
     EventLogTable.PAGEVIEW,
   );
   const [filters, setFilters] = useState<EventLogFiltersState>({});
+
+  // Application logs are free; every other table requires Enterprise.
+  const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
+  const canQuery =
+    isClickHouseConfigured && (isApplicationLog || hasEnterpriseAccess);
 
   const {
     records,
@@ -122,7 +122,7 @@ export const SettingsLogs = () => {
       },
       first: RECORDS_PER_PAGE,
     },
-    { skip: !isEventLogsEnabled },
+    { skip: !canQuery },
   );
 
   const handleTableChange = (table: EventLogTable) => {
@@ -134,25 +134,48 @@ export const SettingsLogs = () => {
     setFilters(newFilters);
   };
 
-  if (!hasEnterpriseAccess) {
-    return (
-      <StyledGateContainer>
+  const renderBelowCard = () => {
+    if (!isApplicationLog && !hasEnterpriseAccess) {
+      return (
         <SettingsEnterpriseFeatureGateCard
           title={t`Enterprise feature`}
-          description={t`Upgrade to Enterprise to access audit logs.`}
+          description={t`Upgrade to Enterprise to access this log type.`}
           buttonTitle={t`Activate`}
         />
-      </StyledGateContainer>
-    );
-  }
+      );
+    }
 
-  if (!isClickHouseConfigured) {
+    if (!isClickHouseConfigured) {
+      return (
+        <SettingsEmptyPlaceholder>
+          {t`Audit logs require ClickHouse to be configured. Please contact your administrator.`}
+        </SettingsEmptyPlaceholder>
+      );
+    }
+
+    if (isDefined(error)) {
+      return (
+        <SettingsEmptyPlaceholder>
+          {t`Something went wrong while loading audit logs. Please try again.`}
+        </SettingsEmptyPlaceholder>
+      );
+    }
+
     return (
-      <SettingsEmptyPlaceholder>
-        {t`Audit logs require ClickHouse to be configured. Please contact your administrator.`}
-      </SettingsEmptyPlaceholder>
+      <StyledTableSection>
+        <StyledRecordCount>{t`${records.length} of ${totalCount}`}</StyledRecordCount>
+        <StyledTableWrapper>
+          <EventLogResultsTable
+            records={records}
+            loading={loading}
+            hasNextPage={hasNextPage}
+            onLoadMore={loadMore}
+            selectedTable={selectedTable}
+          />
+        </StyledTableWrapper>
+      </StyledTableSection>
     );
-  }
+  };
 
   return (
     <StyledBoxedColumn>
@@ -181,24 +204,7 @@ export const SettingsLogs = () => {
         </StyledCardContent>
       </Card>
 
-      {isDefined(error) ? (
-        <SettingsEmptyPlaceholder>
-          {t`Something went wrong while loading audit logs. Please try again.`}
-        </SettingsEmptyPlaceholder>
-      ) : (
-        <StyledTableSection>
-          <StyledRecordCount>{t`${records.length} of ${totalCount}`}</StyledRecordCount>
-          <StyledTableWrapper>
-            <EventLogResultsTable
-              records={records}
-              loading={loading}
-              hasNextPage={hasNextPage}
-              onLoadMore={loadMore}
-              selectedTable={selectedTable}
-            />
-          </StyledTableWrapper>
-        </StyledTableSection>
-      )}
+      {renderBelowCard()}
     </StyledBoxedColumn>
   );
 };

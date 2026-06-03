@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+  Minimal single-node ClickHouse config for the all-in-one dev image.
+  Listens on localhost only; the `default` user has no password (dev only).
+-->
+<clickhouse>
+    <logger>
+        <level>warning</level>
+        <console>1</console>
+    </logger>
+
+    <http_port>8123</http_port>
+    <listen_host>127.0.0.1</listen_host>
+
+    <path>/data/clickhouse/</path>
+    <tmp_path>/data/clickhouse/tmp/</tmp_path>
+    <user_files_path>/data/clickhouse/user_files/</user_files_path>
+
+    <mark_cache_size>536870912</mark_cache_size>
+
+    <profiles>
+        <default/>
+    </profiles>
+
+    <users>
+        <default>
+            <password></password>
+            <networks>
+                <ip>127.0.0.1</ip>
+                <ip>::1</ip>
+            </networks>
+            <profile>default</profile>
+            <quota>default</quota>
+        </default>
+    </users>
+
+    <quotas>
+        <default/>
+    </quotas>
+</clickhouse>
