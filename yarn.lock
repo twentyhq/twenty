@@ -21424,6 +21424,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/aws-lambda@npm:^8.10.147":
+  version: 8.10.161
+  resolution: "@types/aws-lambda@npm:8.10.161"
+  checksum: 10c0/5a779901bb29a1989fe0ef30e4a515522af8fc66c237e0eedc954ab650651920540196b4629df25068c130a05a2a6142f661db7e26c7fbacc17ce11338367eb1
+  languageName: node
+  linkType: hard
+
 "@types/babel__core@npm:^7.1.14, @types/babel__core@npm:^7.20.5":
   version: 7.20.5
   resolution: "@types/babel__core@npm:7.20.5"
@@ -22787,6 +22794,13 @@ __metadata:
   version: 15.7.15
   resolution: "@types/prop-types@npm:15.7.15"
   checksum: 10c0/b59aad1ad19bf1733cf524fd4e618196c6c7690f48ee70a327eb450a42aab8e8a063fbe59ca0a5701aebe2d92d582292c0fb845ea57474f6a15f6994b0e260b2
+  languageName: node
+  linkType: hard
+
+"@types/psl@npm:^1.1.3":
+  version: 1.1.3
+  resolution: "@types/psl@npm:1.1.3"
+  checksum: 10c0/8719bac618613a2f47d4d2088742c2c01c00fd8d6fe92a3ed474aad83f7199ff53c813d8eee678768d816b02fc94c6e1f0cb4bce2e512efd0bcb3af2524ae5a6
   languageName: node
   linkType: hard
 
@@ -55279,7 +55293,9 @@ __metadata:
     "@jrmdayn/googleapis-batcher": "npm:^0.10.1"
     "@lifeomic/axios-fetch": "npm:^3.1.0"
     "@lingui/cli": "npm:^5.1.2"
+    "@lingui/conf": "npm:5.1.2"
     "@lingui/core": "npm:^5.1.2"
+    "@lingui/format-po": "npm:5.1.2"
     "@microsoft/microsoft-graph-client": "npm:3.0.7"
     "@microsoft/microsoft-graph-types": "npm:^2.40.0"
     "@nestjs/axios": "npm:3.1.2"
@@ -55318,6 +55334,7 @@ __metadata:
     "@swc/jest": "npm:^0.2.39"
     "@types/addressparser": "npm:^1.0.3"
     "@types/archiver": "npm:^6.0.0"
+    "@types/aws-lambda": "npm:^8.10.147"
     "@types/bcrypt": "npm:^5.0.0"
     "@types/bytes": "npm:^3.1.1"
     "@types/express": "npm:^4.17.13"
@@ -55345,6 +55362,7 @@ __metadata:
     "@types/passport-jwt": "npm:^3.0.8"
     "@types/passport-microsoft": "npm:^2.1.0"
     "@types/pluralize": "npm:^0.0.33"
+    "@types/psl": "npm:^1.1.3"
     "@types/react": "npm:^18.2.39"
     "@types/supertest": "npm:^2.0.11"
     "@types/unzipper": "npm:^0"
