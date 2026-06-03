@@ -47,11 +47,14 @@ export const validateFieldsFlatPageLayoutWidgetForCreation = (
     }
   ).newFieldDefaultVisibility;
 
-  if (typeof newFieldDefaultVisibility !== 'boolean') {
+  if (
+    isDefined(newFieldDefaultVisibility) &&
+    typeof newFieldDefaultVisibility !== 'boolean'
+  ) {
     errors.push({
       code: PageLayoutWidgetExceptionCode.INVALID_PAGE_LAYOUT_WIDGET_DATA,
-      message: t`newFieldDefaultVisibility is required for fields widget "${widgetTitle}". Expected a boolean`,
-      userFriendlyMessage: msg`newFieldDefaultVisibility is required for fields widget`,
+      message: t`Invalid newFieldDefaultVisibility for fields widget "${widgetTitle}". Expected a boolean`,
+      userFriendlyMessage: msg`Invalid newFieldDefaultVisibility for fields widget`,
       value: newFieldDefaultVisibility,
     });
   }
