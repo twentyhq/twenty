@@ -7,9 +7,9 @@ import { deleteRecordsByIds } from 'test/integration/utils/delete-records-by-ids
 const TEST_WORKSPACE_SCHEMA = 'workspace_1wgvd1injqtife6y4rvfbu3h5';
 
 const TOOL_NAMES = {
-  createCompany: 'create_company',
-  createNote: 'create_note',
-  createNoteTarget: 'create_note_target',
+  createCompany: 'create_one_company',
+  createNote: 'create_one_note',
+  createNoteTarget: 'create_one_note_target',
   groupByNoteTargets: 'group_by_note_targets',
 } as const;
 
