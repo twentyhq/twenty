@@ -52,7 +52,7 @@ export const getImageBufferFromUrl = async (
 
     const contentType = response.headers['content-type'];
 
-    if (contentType && !contentType.startsWith('image/')) {
+    if (typeof contentType === 'string' && !contentType.startsWith('image/')) {
       throw new Error(
         `Invalid content type: expected image/*, got ${contentType}`,
       );
