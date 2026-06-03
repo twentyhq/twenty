@@ -239,6 +239,7 @@ export function HeroVisualScroll({
     useHeroScrollProgress(trackRef);
   const menuSync = useProductHeroMenuSync();
   const [activeTab, setActiveTab] = useState(0);
+  const [introLayerEl, setIntroLayerEl] = useState<HTMLDivElement | null>(null);
   const [stackTargetMetrics, setStackTargetMetrics] = useState<
     StackTargetMetric[]
   >([]);
@@ -322,6 +323,7 @@ export function HeroVisualScroll({
       <StickyFrame>
         {/* BASE LAYER: INTRO */}
         <FullLayer
+          ref={setIntroLayerEl}
           style={{ backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
         >
           <StyledContainer>
@@ -376,6 +378,7 @@ export function HeroVisualScroll({
               activeScene={0}
               collaborative
               cursorActive={morphProgress < 0.5}
+              cursorLayer={introLayerEl}
               playbackEnabled={false}
               visual={visual}
             />

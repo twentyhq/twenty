@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 
 import { styled } from '@linaria/react';
 import {
@@ -272,6 +273,7 @@ type ProductVisualProps = {
   activeScene?: number;
   collaborative?: boolean;
   cursorActive?: boolean;
+  cursorLayer?: HTMLElement | null;
   desktopSidebarMode?: DesktopSidebarMode;
   frameMode?: AppPreviewFrameMode;
   playbackEnabled?: boolean;
@@ -382,6 +384,7 @@ export function ProductVisual({
   activeScene,
   collaborative = false,
   cursorActive = true,
+  cursorLayer,
   desktopSidebarMode = 'expanded',
   frameMode = 'static',
   playbackEnabled = true,
@@ -568,6 +571,33 @@ export function ProductVisual({
     </AppPreviewFrame>
   );
 
+  const cursors =
+    collaborative && cursorLayer
+      ? createPortal(
+          HERO_CURSORS.map((cursorConfig, index) => {
+            const cursorState = heroCursor.cursors[index];
+
+            if (cursorState === undefined) {
+              return null;
+            }
+
+            return (
+              <ProductHeroCursor
+                key={cursorConfig.name}
+                clicking={cursorState.clicking}
+                color={cursorConfig.color}
+                glideMs={cursorState.glideMs}
+                hidden={cursorState.hidden}
+                home={cursorConfig.home}
+                name={cursorConfig.name}
+                target={cursorState.target}
+              />
+            );
+          }),
+          cursorLayer,
+        )
+      : null;
+
   return (
     <StyledRoot>
       <ShellScene>
@@ -576,29 +606,8 @@ export function ProductVisual({
         ) : (
           previewShell
         )}
-        {collaborative
-          ? HERO_CURSORS.map((cursorConfig, index) => {
-              const cursorState = heroCursor.cursors[index];
-
-              if (cursorState === undefined) {
-                return null;
-              }
-
-              return (
-                <ProductHeroCursor
-                  key={cursorConfig.name}
-                  clicking={cursorState.clicking}
-                  color={cursorConfig.color}
-                  glideMs={cursorState.glideMs}
-                  hidden={cursorState.hidden}
-                  home={cursorConfig.home}
-                  name={cursorConfig.name}
-                  target={cursorState.target}
-                />
-              );
-            })
-          : null}
       </ShellScene>
+      {cursors}
     </StyledRoot>
   );
 }

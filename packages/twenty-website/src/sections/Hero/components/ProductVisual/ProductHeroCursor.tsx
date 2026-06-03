@@ -17,9 +17,9 @@ export type HeroCursorConfig = {
 };
 
 export const HERO_CURSORS: HeroCursorConfig[] = [
-  { name: 'Alice', color: '#ffb08d', home: { left: 15, top: -6.75 } },
-  { name: 'Ben', color: '#8db4ff', home: { left: 9, top: 34 } },
-  { name: 'Cara', color: '#9ee7c5', home: { left: 90, top: 46 } },
+  { name: 'Alice', color: '#ffb08d', home: { left: 13, top: 34 } },
+  { name: 'Ben', color: '#8db4ff', home: { left: 36, top: 90 } },
+  { name: 'Cara', color: '#9ee7c5', home: { left: 90, top: 51 } },
 ];
 
 const GLIDE_BASE_MS = 500;
