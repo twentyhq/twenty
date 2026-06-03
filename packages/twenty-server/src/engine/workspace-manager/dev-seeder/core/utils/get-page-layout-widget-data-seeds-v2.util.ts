@@ -49,7 +49,10 @@ export const getPageLayoutWidgetDataSeedsV2 = (
 
   const companyIdFieldId = getFieldId(companyObject, 'id');
   const companyCreatedAtFieldId = getFieldId(companyObject, 'createdAt');
-  const companyAnnualRevenueFieldId = getFieldId(companyObject, 'annualRevenue');
+  const companyAnnualRevenueFieldId = getFieldId(
+    companyObject,
+    'annualRevenue',
+  );
   const companyNameFieldId = getFieldId(companyObject, 'name');
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
 
