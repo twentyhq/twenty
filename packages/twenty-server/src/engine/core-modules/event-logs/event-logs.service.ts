@@ -184,8 +184,6 @@ export class EventLogsService {
       );
     }
 
-    // Application logs are available without an Enterprise license; every other
-    // table stays Enterprise-gated.
     if (table === EventLogTable.APPLICATION_LOG) {
       return;
     }

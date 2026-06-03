@@ -2,6 +2,8 @@
 # Dependency stages
 # ===========================================================================
 
+ARG CLICKHOUSE_VERSION=25.8.24.21
+
 FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS front-deps
 
 WORKDIR /app
@@ -191,9 +193,6 @@ RUN S6_ARCH=$(cat /tmp/s6arch) && \
     echo "$NOARCH_SUM  s6-overlay-noarch.tar.xz" | sha256sum -c - && \
     echo "$ARCH_SUM  s6-overlay-arch.tar.xz" | sha256sum -c -
 
-# ClickHouse binary source — the official Alpine (musl-native) image, so the
-# binary runs on our alpine base (the glibc static build does not).
-ARG CLICKHOUSE_VERSION=25.8.24.21
 FROM clickhouse/clickhouse-server:${CLICKHOUSE_VERSION}-alpine AS clickhouse-bin
 
 FROM node:24.15.0-alpine3.23@sha256:d1b3b4da11eefd5941e7f0b9cf17783fc99d9c6fc34884a665f40a06dbdfc94f AS twenty-app-dev
@@ -210,8 +209,6 @@ RUN apk add --no-cache \
     redis \
     curl jq su-exec
 
-# ClickHouse (musl-native binary from the clickhouse-bin stage) — backs
-# application logs and the other event-log tables.
 COPY --from=clickhouse-bin /usr/bin/clickhouse /usr/local/bin/clickhouse
 
 # Workspace root config

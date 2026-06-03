@@ -49,23 +49,21 @@ export const SettingsGeneral = () => {
     tabs.map((tab) => tab.id),
   );
 
-  // The Logs tab renders full-bleed (the logs table fills the card and scrolls
-  // internally), whereas the other tabs use the standard narrow content column.
-  // The Logs tab renders full-bleed (its table fills the card and scrolls
-  // internally); the other tabs use the standard boxed content column.
-  const isFullBleedTab = activeTabId === GENERAL_TAB_LOGS;
-
   const renderActiveTabContent = () => {
     if (activeTabId === GENERAL_TAB_LOGS) {
       return <SettingsLogs />;
     }
 
     if (activeTabId === GENERAL_TAB_SECURITY) {
-      return <SettingsSecuritySettings />;
+      return (
+        <SettingsPageContainer>
+          <SettingsSecuritySettings />
+        </SettingsPageContainer>
+      );
     }
 
     return (
-      <>
+      <SettingsPageContainer>
         <Section>
           <H2Title title={t`Picture`} />
           <WorkspaceLogoUploader />
@@ -86,11 +84,9 @@ export const SettingsGeneral = () => {
         <Section>
           <DeleteWorkspace />
         </Section>
-      </>
+      </SettingsPageContainer>
     );
   };
-
-  const activeTabContent = renderActiveTabContent();
 
   return (
     <SettingsPageLayout
@@ -105,11 +101,7 @@ export const SettingsGeneral = () => {
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >
-      {isFullBleedTab ? (
-        activeTabContent
-      ) : (
-        <SettingsPageContainer>{activeTabContent}</SettingsPageContainer>
-      )}
+      {renderActiveTabContent()}
     </SettingsPageLayout>
   );
 };

@@ -42,11 +42,11 @@ const StyledPeriodItem = styled.div`
 const StyledPeriodRow = styled.div`
   display: flex;
   gap: ${themeCssVariables.spacing[2]};
+`;
 
-  > * {
-    flex: 1;
-    min-width: 0;
-  }
+const StyledPeriodField = styled.div`
+  flex: 1;
+  min-width: 0;
 `;
 
 export const EventLogFilters = ({
@@ -148,18 +148,22 @@ export const EventLogFilters = ({
       <StyledPeriodItem>
         <InputLabel>{t`Period`}</InputLabel>
         <StyledPeriodRow>
-          <EventLogDatePickerInput
-            instanceId="event-log-start-date"
-            value={value.dateRange?.start}
-            onChange={handleStartDateChange}
-            placeholder={t`Start date`}
-          />
-          <EventLogDatePickerInput
-            instanceId="event-log-end-date"
-            value={value.dateRange?.end}
-            onChange={handleEndDateChange}
-            placeholder={t`End date`}
-          />
+          <StyledPeriodField>
+            <EventLogDatePickerInput
+              instanceId="event-log-start-date"
+              value={value.dateRange?.start}
+              onChange={handleStartDateChange}
+              placeholder={t`Start date`}
+            />
+          </StyledPeriodField>
+          <StyledPeriodField>
+            <EventLogDatePickerInput
+              instanceId="event-log-end-date"
+              value={value.dateRange?.end}
+              onChange={handleEndDateChange}
+              placeholder={t`End date`}
+            />
+          </StyledPeriodField>
         </StyledPeriodRow>
       </StyledPeriodItem>
 

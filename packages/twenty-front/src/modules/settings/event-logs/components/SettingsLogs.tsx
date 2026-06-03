@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
+import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/components/SettingsPageContainer';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { EventLogFilters } from '@/settings/event-logs/components/EventLogFilters';
@@ -20,21 +21,22 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
 
-const SETTINGS_LOGS_MAX_WIDTH = 900;
-
-// Boxed content column (consistent insets with other settings tabs) that still
-// fills the card height, so the results table keeps its bounded-height scroll.
-const StyledBoxedColumn = styled.div`
+const StyledContent = styled.div`
   box-sizing: border-box;
   display: flex;
   flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[6]};
-  margin: 0 auto;
-  max-width: ${SETTINGS_LOGS_MAX_WIDTH}px;
   min-height: 0;
   padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
     ${themeCssVariables.spacing[8]};
+  width: 100%;
+`;
+
+// Filter card keeps the standard settings content width; the results table
+// below is full-width.
+const StyledFilterCard = styled.div`
+  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
   width: 100%;
 `;
 
@@ -92,7 +94,6 @@ export const SettingsLogs = () => {
   );
   const [filters, setFilters] = useState<EventLogFiltersState>({});
 
-  // Application logs are free; every other table requires Enterprise.
   const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
   const canQuery =
     isClickHouseConfigured && (isApplicationLog || hasEnterpriseAccess);
@@ -137,11 +138,13 @@ export const SettingsLogs = () => {
   const renderBelowCard = () => {
     if (!isApplicationLog && !hasEnterpriseAccess) {
       return (
-        <SettingsEnterpriseFeatureGateCard
-          title={t`Enterprise feature`}
-          description={t`Upgrade to Enterprise to access this log type.`}
-          buttonTitle={t`Activate`}
-        />
+        <StyledFilterCard>
+          <SettingsEnterpriseFeatureGateCard
+            title={t`Enterprise feature`}
+            description={t`Upgrade to Enterprise to access this log type.`}
+            buttonTitle={t`Activate`}
+          />
+        </StyledFilterCard>
       );
     }
 
@@ -178,33 +181,35 @@ export const SettingsLogs = () => {
   };
 
   return (
-    <StyledBoxedColumn>
-      <Card rounded fullWidth>
-        <StyledCardContent>
-          <StyledSelectorRow>
-            <StyledSelectorGrow>
-              <EventLogTableSelector
-                value={selectedTable}
-                onChange={handleTableChange}
+    <StyledContent>
+      <StyledFilterCard>
+        <Card rounded fullWidth>
+          <StyledCardContent>
+            <StyledSelectorRow>
+              <StyledSelectorGrow>
+                <EventLogTableSelector
+                  value={selectedTable}
+                  onChange={handleTableChange}
+                />
+              </StyledSelectorGrow>
+              <IconButton
+                Icon={IconRefresh}
+                variant="secondary"
+                size="medium"
+                ariaLabel={t`Refresh`}
+                onClick={() => refetch()}
               />
-            </StyledSelectorGrow>
-            <IconButton
-              Icon={IconRefresh}
-              variant="secondary"
-              size="medium"
-              ariaLabel={t`Refresh`}
-              onClick={() => refetch()}
+            </StyledSelectorRow>
+            <EventLogFilters
+              table={selectedTable}
+              value={filters}
+              onChange={handleFiltersChange}
             />
-          </StyledSelectorRow>
-          <EventLogFilters
-            table={selectedTable}
-            value={filters}
-            onChange={handleFiltersChange}
-          />
-        </StyledCardContent>
-      </Card>
+          </StyledCardContent>
+        </Card>
+      </StyledFilterCard>
 
       {renderBelowCard()}
-    </StyledBoxedColumn>
+    </StyledContent>
   );
 };
