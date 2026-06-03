@@ -55408,6 +55408,7 @@ __metadata:
     imapflow: "npm:1.2.1"
     ioredis: "npm:5.6.0"
     jest: "npm:29.7.0"
+    jest-environment-node: "npm:^29.4.1"
     jsdom: "npm:^26.1.0"
     json-schema: "npm:0.4.0"
     jsonwebtoken: "npm:9.0.2"
