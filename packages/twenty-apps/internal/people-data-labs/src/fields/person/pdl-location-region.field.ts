@@ -7,13 +7,12 @@ import {
 import { PDL_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier:
-    PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlInferredRevenue,
+  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlLocationRegion,
   objectUniversalIdentifier:
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
   type: FieldType.TEXT,
-  name: 'pdlInferredRevenue',
-  label: 'Inferred Revenue (range)',
-  description: 'People Data Labs inferred revenue range.',
+  name: 'pdlLocationRegion',
+  label: 'Region / State',
+  description: 'Region or state returned by People Data Labs.',
   isNullable: true,
 });

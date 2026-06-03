@@ -8,12 +8,12 @@ import { PDL_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identif
 
 export default defineField({
   universalIdentifier:
-    PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlEmployeeGrowth12mo,
+    PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlAlternativeDomains,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-  type: FieldType.NUMBER,
-  name: 'pdlEmployeeGrowth12mo',
-  label: 'Employee Growth 12mo (%)',
-  description: 'People Data Labs employee growth rate over the last 12 months.',
+  type: FieldType.ARRAY,
+  name: 'pdlAlternativeDomains',
+  label: 'Alternative Domains',
+  description: 'Alternative domains returned by People Data Labs.',
   isNullable: true,
 });

@@ -8,12 +8,12 @@ import { PDL_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identif
 
 export default defineField({
   universalIdentifier:
-    PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlLinkedinFollowers,
+    PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlLocationCountry,
   objectUniversalIdentifier:
-    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
-  type: FieldType.NUMBER,
-  name: 'pdlLinkedinFollowers',
-  label: 'LinkedIn Followers',
-  description: 'LinkedIn follower count returned by People Data Labs.',
+    STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
+  type: FieldType.TEXT,
+  name: 'pdlLocationCountry',
+  label: 'Country',
+  description: 'Country returned by People Data Labs.',
   isNullable: true,
 });
