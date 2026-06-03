@@ -348,14 +348,16 @@ export class DatabaseToolProvider implements ToolProvider {
     snakePlural: string,
   ): boolean {
     return (
-      toolNames.has(`find_${snakePlural}`) ||
+      toolNames.has(`find_many_${snakePlural}`) ||
       toolNames.has(`find_one_${snakeSingular}`) ||
       toolNames.has(`group_by_${snakePlural}`) ||
-      toolNames.has(`create_${snakeSingular}`) ||
+      toolNames.has(`create_one_${snakeSingular}`) ||
       toolNames.has(`create_many_${snakePlural}`) ||
-      toolNames.has(`update_${snakeSingular}`) ||
+      toolNames.has(`update_one_${snakeSingular}`) ||
       toolNames.has(`update_many_${snakePlural}`) ||
-      toolNames.has(`delete_${snakeSingular}`)
+      toolNames.has(`delete_one_${snakeSingular}`) ||
+      toolNames.has(`delete_many_${snakePlural}`) ||
+      toolNames.has(`upsert_many_${snakePlural}`)
     );
   }
 
