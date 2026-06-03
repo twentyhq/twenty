@@ -78,6 +78,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       ? {
           configurationType: WidgetConfigurationType.FIELDS,
           viewId: recordPageFieldsView.id,
+          newFieldDefaultVisibility: true,
         }
       : {
           configurationType:
@@ -90,6 +91,7 @@ export const computeFlatDefaultRecordPageLayoutToCreate = ({
       ? {
           configurationType: WidgetConfigurationType.FIELDS,
           viewUniversalIdentifier: recordPageFieldsView.universalIdentifier,
+          newFieldDefaultVisibility: true,
         }
       : {
           configurationType:

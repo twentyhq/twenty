@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { WorkspaceIteratorModule } from 'src/database/commands/command-runners/workspace-iterator.module';
+import { BackfillFieldsWidgetNewFieldDefaultVisibilityCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000030000-backfill-fields-widget-new-field-default-visibility.command';
 import { MigrateAiModelPreferencesCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000000000-migrate-ai-model-preferences.command';
 import { MoveDemotedStandardFieldsToCustomApplicationCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000040000-move-demoted-standard-fields-to-custom-application.command';
 import { RenameConflictingCustomFieldsCommand } from 'src/database/commands/upgrade-version-command/2-9/2-9-workspace-command-1799000045000-rename-conflicting-custom-fields.command';
@@ -27,6 +28,7 @@ import { WorkspaceMigrationModule } from 'src/engine/workspace-manager/workspace
     MoveDemotedStandardFieldsToCustomApplicationCommand,
     RenameConflictingCustomFieldsCommand,
     AddInactiveGenericStandardFieldsCommand,
+    BackfillFieldsWidgetNewFieldDefaultVisibilityCommand,
   ],
 })
 export class V2_9_UpgradeVersionCommandModule {}
