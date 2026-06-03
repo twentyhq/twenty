@@ -125,7 +125,6 @@ export const StyledEmptyHint = styled.div`
   font-style: italic;
 `;
 
-// Caption shown under a body block describing its byte size / truncation.
 export const StyledBodyMeta = styled.div`
   color: ${themeCssVariables.font.color.light};
   font-size: ${themeCssVariables.font.size.xs};

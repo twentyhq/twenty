@@ -14,6 +14,7 @@ import { WorkflowRunStepLogsCodeDetail } from '@/workflow/workflow-run/observabi
 import { WorkflowRunStepLogsEmailDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEmailDetail';
 import { WorkflowRunStepLogsEntries } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsEntries';
 import { WorkflowRunStepLogsHttpRequestDetail } from '@/workflow/workflow-run/observability/WorkflowRunStepLogsHttpRequestDetail';
+import { getIsDescendantOfIterator } from '@/workflow/workflow-steps/utils/getIsDescendantOfIterator';
 import { useCopyToClipboard } from '~/hooks/useCopyToClipboard';
 
 const StyledRoot = styled.div`
@@ -85,6 +86,11 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
 
   const stepLog = parseResult.data;
 
+  const flowSteps = workflowRun?.state?.flow.steps;
+  const isInsideIteratorLoop = isDefined(flowSteps)
+    ? getIsDescendantOfIterator({ stepId, steps: flowSteps })
+    : false;
+
   const renderDetails = () => {
     switch (stepLog.details.type) {
       case 'AI_AGENT':
@@ -117,7 +123,10 @@ export const WorkflowRunStepLogsDetail = ({ stepId }: { stepId: string }) => {
     <StyledRoot>
       {renderDetails()}
 
-      <WorkflowRunStepLogsEntries entries={stepLog.entries} />
+      <WorkflowRunStepLogsEntries
+        entries={stepLog.entries}
+        onlyLatestIteration={isInsideIteratorLoop}
+      />
 
       {isDefined(stepLog.truncated) && (
         <StyledTruncatedNotice>

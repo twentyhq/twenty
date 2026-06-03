@@ -74,8 +74,13 @@ const formatTimestamp = (timestamp: string): string => {
 
 export const WorkflowRunStepLogsEntries = ({
   entries,
+  onlyLatestIteration = false,
 }: {
   entries: WorkflowRunStepLog['entries'];
+  // Set when the parent step lives inside an iterator loop: each iteration
+  // overwrites the same `stepLogs[stepId]` key, so what we render here is
+  // only the latest iteration's entries — not a cumulative view.
+  onlyLatestIteration?: boolean;
 }) => {
   const { t } = useLingui();
 
@@ -83,9 +88,13 @@ export const WorkflowRunStepLogsEntries = ({
     return null;
   }
 
+  const sectionTitle = onlyLatestIteration
+    ? t`Entries (${entries.length}, latest iteration only)`
+    : t`Entries (${entries.length})`;
+
   return (
     <StyledSection>
-      <StyledSectionTitle>{t`Entries (${entries.length})`}</StyledSectionTitle>
+      <StyledSectionTitle>{sectionTitle}</StyledSectionTitle>
       <StyledEntriesList>
         {entries.map((entry, index) => (
           <StyledEntryRow key={`${entry.timestamp}-${index}`}>

@@ -36,8 +36,6 @@ import {
   StyledTitle,
 } from '@/workflow/workflow-run/observability/workflowRunStepLogsStyles';
 
-// HTTP-specific badges and containers — kept local because none of them are
-// reused outside the HTTP step log view.
 const StyledMethodBadge = styled.span<{ method: string }>`
   background: ${themeCssVariables.background.transparent.light};
   border-radius: ${themeCssVariables.border.radius.xs};
