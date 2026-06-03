@@ -13,16 +13,10 @@ import { useEffect, useState, type RefObject } from 'react';
 import * as THREE from 'three';
 
 const VIRTUAL_RENDER_HEIGHT = 800;
-const MIN_FOOTPRINT_SCALE = 0.001;
-const REFERENCE_PREVIEW_DISTANCE = 4;
-const HALFTONE_PREVIEW_DISTANCE = 4;
 
-const HALFTONE_EDGE_FADE_X = 0;
-const HALFTONE_EDGE_FADE_Y = 0;
 const HALFTONE_TILE_SIZE = 8;
 const HALFTONE_POWER = 0.1;
 const HALFTONE_WIDTH = 0.52;
-
 const HALFTONE_CONTRAST = 0.95;
 const HALFTONE_DASH_COLOR = '#ffffff';
 const HALFTONE_HOVER_COLOR = '#ffffff';
@@ -49,11 +43,7 @@ const imagePassthroughFragmentShader = `
   uniform sampler2D tImage;
   uniform vec2 imageSize;
   uniform vec2 viewportSize;
-  uniform float zoom;
   uniform float contrast;
-  uniform float verticalPixelOffset;
-  uniform float horizontalPixelOffset;
-  uniform float verticalAnchor;
 
   varying vec2 vUv;
 
@@ -61,16 +51,10 @@ const imagePassthroughFragmentShader = `
     float imageAspect = imageSize.x / imageSize.y;
     float viewAspect = viewportSize.x / viewportSize.y;
 
+    // Cover by width: the full image width fills the viewport, cropping
+    // height as needed.
     vec2 uv = vUv;
-
-    // Always fit by width
-    uv.y = (uv.y - verticalAnchor) * (imageAspect / viewAspect) + verticalAnchor;
-
-    uv = (uv - 0.5) / zoom + 0.5;
-
-    // Shift sampled image content on the canvas by the pixel offsets.
-    uv.y += verticalPixelOffset / max(viewportSize.y, 1.0);
-    uv.x -= horizontalPixelOffset / max(viewportSize.x, 1.0);
+    uv.y = (uv.y - 0.5) * (imageAspect / viewAspect) + 0.5;
 
     float inBounds = step(0.0, uv.x) * step(uv.x, 1.0)
                    * step(0.0, uv.y) * step(uv.y, 1.0);
@@ -91,17 +75,12 @@ const halftoneFragmentShader = `
   uniform float tile;
   uniform float s_3;
   uniform float s_4;
-  uniform float applyToDarkAreas;
   uniform vec3 dashColor;
   uniform vec3 hoverDashColor;
-  uniform float footprintScale;
   uniform vec2 interactionUv;
   uniform float hoverLightStrength;
   uniform float hoverLightRadius;
   uniform float hoverVerticalFade;
-  uniform float cropToBounds;
-  uniform vec2 edgeFade;
-  uniform float solidness;
 
   varying vec2 vUv;
 
@@ -122,17 +101,16 @@ const halftoneFragmentShader = `
   }
 
   void main() {
-    if (cropToBounds > 0.5) {
-      vec4 boundsCheck = texture2D(tScene, vUv);
-      if (boundsCheck.a < 0.01) {
-        gl_FragColor = vec4(0.0);
-        return;
-      }
+    // Only draw within the image footprint.
+    vec4 boundsCheck = texture2D(tScene, vUv);
+    if (boundsCheck.a < 0.01) {
+      gl_FragColor = vec4(0.0);
+      return;
     }
 
     vec2 fragCoord =
       (gl_FragCoord.xy / max(effectResolution, vec2(1.0))) * logicalResolution;
-    float halftoneSize = max(tile * max(footprintScale, 0.001), 1.0);
+    float halftoneSize = max(tile, 1.0);
     vec2 pointerPx = interactionUv * logicalResolution;
     vec2 fragDelta = fragCoord - pointerPx;
     float fragDist = length(fragDelta);
@@ -148,15 +126,13 @@ const halftoneFragmentShader = `
       hoverLightMask *= verticalHoverFade;
     }
 
-    vec2 effectCoord = fragCoord;
-
-    vec2 cellIndex = floor(effectCoord / halftoneSize);
+    vec2 cellIndex = floor(fragCoord / halftoneSize);
     vec2 sampleUv = clamp(
       (cellIndex + 0.5) * halftoneSize / logicalResolution,
       vec2(0.0),
       vec2(1.0)
     );
-    vec2 cellUv = fract(effectCoord / halftoneSize);
+    vec2 cellUv = fract(fragCoord / halftoneSize);
 
     vec4 sceneSample = texture2D(tScene, sampleUv);
     float mask = smoothstep(0.02, 0.08, sceneSample.a);
@@ -165,9 +141,6 @@ const halftoneFragmentShader = `
     float lightLift = hoverLightStrength * hoverLightMask * 0.22;
     float toneValue =
       (sceneSample.r + sceneSample.g + sceneSample.b) * (1.0 / 3.0);
-    if (applyToDarkAreas > 0.5) {
-      toneValue = 1.0 - toneValue;
-    }
     float bandRadius = clamp(
       toneValue + localPower * length(vec2(0.5)) * (1.0 / 3.0) + lightLift,
       0.0,
@@ -181,14 +154,6 @@ const halftoneFragmentShader = `
       alpha = (1.0 - smoothstep(0.0, edge, signedDistance)) * mask;
     }
 
-    float edgeFadeMask =
-      smoothstep(0.0, max(edgeFade.x, 0.0001), vUv.x) *
-      smoothstep(0.0, max(edgeFade.x, 0.0001), 1.0 - vUv.x) *
-      smoothstep(0.0, max(edgeFade.y, 0.0001), vUv.y) *
-      smoothstep(0.0, max(edgeFade.y, 0.0001), 1.0 - vUv.y);
-    edgeFadeMask = mix(edgeFadeMask, 1.0, solidness);
-    alpha *= edgeFadeMask;
-
     vec3 activeDashColor = mix(dashColor, hoverDashColor, hoverLightMask);
     vec3 color = activeDashColor * alpha;
     gl_FragColor = vec4(color, alpha);
@@ -197,127 +162,6 @@ const halftoneFragmentShader = `
     #include <colorspace_fragment>
   }
 `;
-
-type Rect = { height: number; width: number; x: number; y: number };
-
-function clampRectToViewport(
-  rect: Rect,
-  viewportWidth: number,
-  viewportHeight: number,
-): Rect | null {
-  const minX = Math.max(rect.x, 0);
-  const minY = Math.max(rect.y, 0);
-  const maxX = Math.min(rect.x + rect.width, viewportWidth);
-  const maxY = Math.min(rect.y + rect.height, viewportHeight);
-
-  if (maxX <= minX || maxY <= minY) {
-    return null;
-  }
-
-  return {
-    height: maxY - minY,
-    width: maxX - minX,
-    x: minX,
-    y: minY,
-  };
-}
-
-function getRectArea(rect: Rect | null) {
-  if (!rect) {
-    return 0;
-  }
-  return Math.max(rect.width, 0) * Math.max(rect.height, 0);
-}
-
-function getImagePreviewZoom(previewDistance: number) {
-  return REFERENCE_PREVIEW_DISTANCE / Math.max(previewDistance, 0.001);
-}
-
-function getContainedImageRect({
-  imageHeight,
-  imageWidth,
-  viewportHeight,
-  viewportWidth,
-  zoom,
-}: {
-  imageHeight: number;
-  imageWidth: number;
-  viewportHeight: number;
-  viewportWidth: number;
-  zoom: number;
-}): Rect | null {
-  if (
-    imageWidth <= 0 ||
-    imageHeight <= 0 ||
-    viewportWidth <= 0 ||
-    viewportHeight <= 0
-  ) {
-    return null;
-  }
-
-  const imageAspect = imageWidth / imageHeight;
-  const fittedWidth = viewportWidth;
-  const fittedHeight = viewportWidth / imageAspect;
-
-  const scaledWidth = fittedWidth * zoom;
-  const scaledHeight = fittedHeight * zoom;
-
-  return clampRectToViewport(
-    {
-      height: scaledHeight,
-      width: scaledWidth,
-      x: (viewportWidth - scaledWidth) * 0.5,
-      y: (viewportHeight - scaledHeight) * 0.5,
-    },
-    viewportWidth,
-    viewportHeight,
-  );
-}
-
-function getFootprintScaleFromRects(
-  currentRect: Rect | null,
-  referenceRect: Rect | null,
-) {
-  const currentArea = getRectArea(currentRect);
-  const referenceArea = getRectArea(referenceRect);
-
-  if (currentArea <= 0 || referenceArea <= 0) {
-    return 1;
-  }
-
-  return Math.max(Math.sqrt(currentArea / referenceArea), MIN_FOOTPRINT_SCALE);
-}
-
-function getImageFootprintScale({
-  imageHeight,
-  imageWidth,
-  previewDistance,
-  viewportHeight,
-  viewportWidth,
-}: {
-  imageHeight: number;
-  imageWidth: number;
-  previewDistance: number;
-  viewportHeight: number;
-  viewportWidth: number;
-}) {
-  const currentRect = getContainedImageRect({
-    imageHeight,
-    imageWidth,
-    viewportHeight,
-    viewportWidth,
-    zoom: getImagePreviewZoom(previewDistance),
-  });
-  const referenceRect = getContainedImageRect({
-    imageHeight,
-    imageWidth,
-    viewportHeight,
-    viewportWidth,
-    zoom: 1,
-  });
-
-  return getFootprintScaleFromRects(currentRect, referenceRect);
-}
 
 function createRenderTarget(width: number, height: number) {
   return new THREE.WebGLRenderTarget(width, height, {
@@ -341,13 +185,11 @@ async function mountProductBackgroundCanvas({
   imageUrl,
   dashColor = HALFTONE_DASH_COLOR,
   hoverColor = HALFTONE_HOVER_COLOR,
-  solidness = 0,
 }: {
   container: HTMLDivElement;
   imageUrl: string;
   dashColor?: string;
   hoverColor?: string;
-  solidness?: number;
 }): Promise<() => void> {
   const image = await loadVisualImage(imageUrl, {
     label: 'product background image',
@@ -404,16 +246,10 @@ async function mountProductBackgroundCanvas({
     fragmentShader: imagePassthroughFragmentShader,
     uniforms: {
       contrast: { value: HALFTONE_CONTRAST },
-      horizontalPixelOffset: { value: 0 },
       imageSize: { value: new THREE.Vector2(image.width, image.height) },
       tImage: { value: imageTexture },
-      verticalAnchor: { value: 0.5 },
-      verticalPixelOffset: { value: 0 },
       viewportSize: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
-      },
-      zoom: {
-        value: getImagePreviewZoom(HALFTONE_PREVIEW_DISTANCE),
       },
     },
     vertexShader: passThroughVertexShader,
@@ -426,16 +262,10 @@ async function mountProductBackgroundCanvas({
     fragmentShader: halftoneFragmentShader,
     transparent: true,
     uniforms: {
-      applyToDarkAreas: { value: 0 }, // We want light dashes on dark areas
-      cropToBounds: { value: 1 },
       dashColor: { value: new THREE.Color(dashColor) },
-      edgeFade: {
-        value: new THREE.Vector2(HALFTONE_EDGE_FADE_X, HALFTONE_EDGE_FADE_Y),
-      },
       effectResolution: {
         value: new THREE.Vector2(getVirtualWidth(), getVirtualHeight()),
       },
-      footprintScale: { value: 1 },
       hoverDashColor: { value: new THREE.Color(hoverColor) },
       hoverLightRadius: { value: HALFTONE_HOVER_LIGHT_RADIUS },
       hoverLightStrength: { value: 0 },
@@ -446,7 +276,6 @@ async function mountProductBackgroundCanvas({
       },
       s_3: { value: HALFTONE_POWER },
       s_4: { value: HALFTONE_WIDTH },
-      solidness: { value: solidness },
       tScene: { value: sceneTarget.texture },
       tile: { value: HALFTONE_TILE_SIZE },
     },
@@ -456,35 +285,21 @@ async function mountProductBackgroundCanvas({
   const postScene = new THREE.Scene();
   postScene.add(new THREE.Mesh(fullScreenGeometry, halftoneMaterial));
 
-  const updateViewportUniforms = (
-    logicalWidth: number,
-    logicalHeight: number,
-    effectWidth: number,
-    effectHeight: number,
-  ) => {
-    halftoneMaterial.uniforms.effectResolution.value.set(
-      effectWidth,
-      effectHeight,
-    );
-    halftoneMaterial.uniforms.logicalResolution.value.set(
-      logicalWidth,
-      logicalHeight,
-    );
-    imageMaterial.uniforms.viewportSize.value.set(logicalWidth, logicalHeight);
-  };
-
   const syncSize = () => {
     const virtualWidth = getVirtualWidth();
     const virtualHeight = getVirtualHeight();
 
     renderer.setSize(virtualWidth, virtualHeight, false);
     sceneTarget.setSize(virtualWidth, virtualHeight);
-    updateViewportUniforms(
-      virtualWidth,
-      virtualHeight,
+    halftoneMaterial.uniforms.effectResolution.value.set(
       virtualWidth,
       virtualHeight,
     );
+    halftoneMaterial.uniforms.logicalResolution.value.set(
+      virtualWidth,
+      virtualHeight,
+    );
+    imageMaterial.uniforms.viewportSize.value.set(virtualWidth, virtualHeight);
   };
 
   const stopObservingSize = observeElementSize(container, syncSize);
@@ -520,15 +335,6 @@ async function mountProductBackgroundCanvas({
   window.addEventListener('pointerleave', handlePointerLeave);
   window.addEventListener('blur', handlePointerLeave);
 
-  const getHalftoneFootprintScale = () =>
-    getImageFootprintScale({
-      imageHeight: image.height,
-      imageWidth: image.width,
-      previewDistance: HALFTONE_PREVIEW_DISTANCE,
-      viewportHeight: getVirtualHeight(),
-      viewportWidth: getVirtualWidth(),
-    });
-
   const renderFrame = (
     _timestamp: DOMHighResTimeStamp,
     { deltaSeconds }: VisualRenderLoopFrame,
@@ -555,12 +361,6 @@ async function mountProductBackgroundCanvas({
     );
     halftoneMaterial.uniforms.hoverLightStrength.value =
       HALFTONE_HOVER_LIGHT_INTENSITY * pointer.hoverStrength;
-
-    imageMaterial.uniforms.zoom.value = getImagePreviewZoom(
-      HALFTONE_PREVIEW_DISTANCE,
-    );
-    halftoneMaterial.uniforms.footprintScale.value =
-      getHalftoneFootprintScale();
 
     renderer.setRenderTarget(sceneTarget);
     renderer.render(imageScene, orthographicCamera);
@@ -601,13 +401,11 @@ export function useProductBackgroundHalftone({
   dashColor,
   hoverColor,
   mountRef,
-  solidness,
 }: {
   imageUrl: string;
   dashColor?: string;
   hoverColor?: string;
   mountRef: RefObject<HTMLDivElement | null>;
-  solidness?: number;
 }) {
   const [isReady, setIsReady] = useState(false);
 
@@ -632,7 +430,6 @@ export function useProductBackgroundHalftone({
       imageUrl,
       dashColor,
       hoverColor,
-      solidness,
     })
       .then((dispose) => {
         if (disposed) {
@@ -651,7 +448,7 @@ export function useProductBackgroundHalftone({
       readyTask.stop();
       unmount?.();
     };
-  }, [mountRef, imageUrl, dashColor, hoverColor, solidness]);
+  }, [mountRef, imageUrl, dashColor, hoverColor]);
 
   return isReady;
 }
