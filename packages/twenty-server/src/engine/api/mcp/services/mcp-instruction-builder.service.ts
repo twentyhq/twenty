@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { camelToSnakeCase } from 'twenty-shared/utils';
 
 import { buildMcpServerInstructions } from 'src/engine/api/mcp/utils/build-mcp-server-instructions.util';
-import { getActiveNonWorkflowFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-active-non-workflow-flat-objects.util';
+import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { SkillService } from 'src/engine/metadata-modules/skill/skill.service';
 
@@ -23,7 +23,7 @@ export class McpInstructionBuilderService {
       this.skillService.findAllFlatSkills(workspaceId),
     ]);
 
-    const objectNames = getActiveNonWorkflowFlatObjects(
+    const objectNames = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .map((obj) => camelToSnakeCase(obj.namePlural))

@@ -12,9 +12,7 @@ export type LearnToolsAspect = z.infer<typeof learnToolsAspectSchema>;
 export const learnToolsInputSchema = z.object({
   toolNames: z
     .array(z.string())
-    .describe(
-      'Exact tool names. Do not guess tool names.',
-    ),
+    .describe('Exact tool names. Do not guess tool names.'),
   aspects: z
     .array(learnToolsAspectSchema)
     .optional()

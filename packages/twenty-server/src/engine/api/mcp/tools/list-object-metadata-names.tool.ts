@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 import { camelToSnakeCase } from 'twenty-shared/utils';
 
-import { getActiveNonWorkflowFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-active-non-workflow-flat-objects.util';
+import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { type WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 
 export const LIST_OBJECT_METADATA_NAMES_TOOL_NAME =
@@ -29,7 +29,7 @@ export const createListObjectMetadataNamesTool = (
         flatMapsKeys: ['flatObjectMetadataMaps'],
       });
 
-    const objectNames = getActiveNonWorkflowFlatObjects(
+    const objectNames = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
     )
       .map((obj) => camelToSnakeCase(obj.namePlural))

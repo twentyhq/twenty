@@ -111,19 +111,15 @@ describe('McpProtocolService', () => {
         {
           provide: McpInstructionBuilderService,
           useValue: {
-            buildInstructions: jest
-              .fn()
-              .mockResolvedValue('mock instructions'),
+            buildInstructions: jest.fn().mockResolvedValue('mock instructions'),
           },
         },
         {
           provide: WorkspaceManyOrAllFlatEntityMapsCacheService,
           useValue: {
-            getOrRecomputeManyOrAllFlatEntityMaps: jest
-              .fn()
-              .mockResolvedValue({
-                flatObjectMetadataMaps: { byUniversalIdentifier: {} },
-              }),
+            getOrRecomputeManyOrAllFlatEntityMaps: jest.fn().mockResolvedValue({
+              flatObjectMetadataMaps: { byUniversalIdentifier: {} },
+            }),
           },
         },
       ],
@@ -143,7 +139,10 @@ describe('McpProtocolService', () => {
   describe('handleInitialize', () => {
     it('should return spec-compliant initialization response', async () => {
       const requestId = '123';
-      const result = await service.handleInitialize(requestId, mockWorkspace.id);
+      const result = await service.handleInitialize(
+        requestId,
+        mockWorkspace.id,
+      );
 
       expect(result).toEqual({
         id: requestId,

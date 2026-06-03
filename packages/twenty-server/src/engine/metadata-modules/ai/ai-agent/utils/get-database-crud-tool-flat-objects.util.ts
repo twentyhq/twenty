@@ -7,7 +7,7 @@ type FlatObjectWithActivityAndIdentifier = {
   universalIdentifier: string;
 };
 
-export const getActiveNonWorkflowFlatObjects = <
+export const getDatabaseCrudToolFlatObjects = <
   T extends FlatObjectWithActivityAndIdentifier,
 >(
   byUniversalIdentifier: Partial<Record<string, T>>,

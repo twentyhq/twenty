@@ -28,7 +28,7 @@ import { ToolCategory } from 'twenty-shared/ai';
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { getActiveNonWorkflowFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-active-non-workflow-flat-objects.util';
+import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
@@ -89,7 +89,7 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const allFlatObjects = getActiveNonWorkflowFlatObjects(
+    const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
     );
 

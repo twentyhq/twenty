@@ -9,9 +9,7 @@ import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.
 export const EXECUTE_TOOL_TOOL_NAME = 'execute_tool';
 
 const executeToolInputZodSchema = z.object({
-  toolName: z
-    .string()
-    .describe('Exact tool name. Do not guess.'),
+  toolName: z.string().describe('Exact tool name. Do not guess.'),
   arguments: z
     .record(z.string(), z.unknown())
     .describe('Arguments matching the schema returned by learn_tools.'),
