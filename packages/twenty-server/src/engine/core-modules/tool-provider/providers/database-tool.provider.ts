@@ -28,11 +28,12 @@ import {
 import { type ToolDescriptor } from 'src/engine/core-modules/tool-provider/types/tool-descriptor.type';
 import { type ToolIndexEntry } from 'src/engine/core-modules/tool-provider/types/tool-index-entry.type';
 import { type ToolOutput } from 'src/engine/core-modules/tool/types/tool-output.type';
-import { isWorkflowRelatedObject } from 'src/engine/metadata-modules/ai/ai-agent/utils/is-workflow-related-object.util';
+import { getDatabaseCrudToolFlatObjects } from 'src/engine/metadata-modules/ai/ai-agent/utils/get-database-crud-tool-flat-objects.util';
 import { WorkspaceManyOrAllFlatEntityMapsCacheService } from 'src/engine/metadata-modules/flat-entity/services/workspace-many-or-all-flat-entity-maps-cache.service';
 import { computePermissionIntersection } from 'src/engine/twenty-orm/utils/compute-permission-intersection.util';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { ToolCategory } from 'twenty-shared/ai';
+import z from 'zod';
 
 @Injectable()
 export class DatabaseToolProvider implements ToolProvider {
@@ -66,6 +67,7 @@ export class DatabaseToolProvider implements ToolProvider {
     options?: GenerateDescriptorOptions,
   ): Promise<(ToolIndexEntry | ToolDescriptor)[]> {
     const includeSchemas = options?.includeSchemas ?? true;
+    const toolNames = options?.toolNames;
     const descriptors: (ToolIndexEntry | ToolDescriptor)[] = [];
 
     const { rolesPermissions } =
@@ -90,20 +92,24 @@ export class DatabaseToolProvider implements ToolProvider {
         },
       );
 
-    const allFlatObjects = Object.values(
+    const allFlatObjects = getDatabaseCrudToolFlatObjects(
       flatObjectMetadataMaps.byUniversalIdentifier,
-    )
-      .filter(isDefined)
-      .filter((obj) => obj.isActive);
+    );
 
     for (const flatObject of allFlatObjects) {
-      if (isWorkflowRelatedObject(flatObject)) {
-        continue;
-      }
-
       const permission = objectPermissions[flatObject.id];
 
       if (!permission) {
+        continue;
+      }
+
+      const snakePlural = camelToSnakeCase(flatObject.namePlural);
+      const snakeSingular = camelToSnakeCase(flatObject.nameSingular);
+
+      if (
+        isDefined(toolNames) &&
+        !this.hasMatchingTool(toolNames, snakeSingular, snakePlural)
+      ) {
         continue;
       }
 
@@ -116,19 +122,20 @@ export class DatabaseToolProvider implements ToolProvider {
       };
 
       const restrictedFields = permission.restrictedFields;
-      const snakePlural = camelToSnakeCase(objectMetadata.namePlural);
-      const snakeSingular = camelToSnakeCase(objectMetadata.nameSingular);
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
         nameSingular: objectMetadata.nameSingular,
       });
+
+      const shouldIncludeSchema = (name: string) =>
+        includeSchemas && (!toolNames || toolNames.has(name));
 
       if (permission.canReadObjectRecords) {
         descriptors.push({
           name: `find_many_${snakePlural}`,
           description: `Search for ${objectMetadata.labelPlural} records using flexible filtering criteria. Supports exact matches, pattern matching, ranges, and null checks. Use limit/offset for pagination and orderBy for sorting. Filter fields are top-level arguments — pass each field as its own key (e.g. { id: { eq: "record-id" } }, or { name: { firstName: { ilike: "%ada%" } } }); do NOT wrap them in a "filter" object and do NOT place a bare operator like "ilike"/"eq" at the top level. Combine conditions with and/or/not. Returns an array of matching records with their full data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
+          ...(shouldIncludeSchema(`find_many_${snakePlural}`) && {
+            inputSchema: z.toJSONSchema(
               generateFindToolInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -146,8 +153,8 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `find_one_${snakeSingular}`,
           description: `Retrieve a single ${objectMetadata.labelSingular} by ID.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(FindOneToolInputSchema),
+          ...(shouldIncludeSchema(`find_one_${snakeSingular}`) && {
+            inputSchema: z.toJSONSchema(FindOneToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -159,7 +166,9 @@ export class DatabaseToolProvider implements ToolProvider {
           operation: 'find_one',
         });
 
-        const groupBySchema = includeSchemas
+        const groupByName = `group_by_${snakePlural}`;
+        const shouldGenerateGroupBy = shouldIncludeSchema(groupByName);
+        const groupBySchema = shouldGenerateGroupBy
           ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
           : null;
         const hasGroupBySchema =
@@ -168,10 +177,10 @@ export class DatabaseToolProvider implements ToolProvider {
 
         if (hasGroupBySchema) {
           descriptors.push({
-            name: `group_by_${snakePlural}`,
+            name: groupByName,
             description: `Group ${objectMetadata.labelPlural} records by one or two fields and compute an aggregate (COUNT, SUM, AVG, MIN, MAX, etc.). Use for questions like "how many deals per stage?" or "total revenue by company". Returns groups with dimension values and aggregate results, ordered by the aggregate value.`,
             category: ToolCategory.DATABASE_CRUD,
-            ...(includeSchemas &&
+            ...(shouldGenerateGroupBy &&
               groupBySchema && {
                 inputSchema: toToolJsonSchema(groupBySchema),
               }),
@@ -192,8 +201,8 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `create_one_${snakeSingular}`,
           description: `Create a new ${objectMetadata.labelSingular} record. Provide all required fields and any optional fields you want to set. The system will automatically handle timestamps and IDs. Returns the created record with all its data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
+          ...(shouldIncludeSchema(`create_one_${snakeSingular}`) && {
+            inputSchema: z.toJSONSchema(
               generateCreateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -211,8 +220,8 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `create_many_${snakePlural}`,
           description: `Create multiple ${objectMetadata.labelPlural} records in a single call. Provide an array of records, each containing the required fields. Maximum 20 records per call. Returns the created records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
+          ...(shouldIncludeSchema(`create_many_${snakePlural}`) && {
+            inputSchema: z.toJSONSchema(
               generateCreateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -233,8 +242,8 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `update_one_${snakeSingular}`,
           description: `Update an existing ${objectMetadata.labelSingular} record. Provide the record ID and only the fields you want to change. Unspecified fields will remain unchanged. Returns the updated record with all current data.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
+          ...(shouldIncludeSchema(`update_one_${snakeSingular}`) && {
+            inputSchema: z.toJSONSchema(
               generateUpdateRecordInputSchema(objectMetadata, restrictedFields),
             ),
           }),
@@ -252,8 +261,8 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `update_many_${snakePlural}`,
           description: `Apply the SAME field values to all ${objectMetadata.labelPlural} records matching a filter. Use when every matched record gets identical changes (e.g. bulk status change). For records that each have different data to update, use upsert_many_${snakePlural} instead. WARNING: Use specific filters to avoid unintended mass updates. Always verify the filter scope with a find query first.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
+          ...(shouldIncludeSchema(`update_many_${snakePlural}`) && {
+            inputSchema: z.toJSONSchema(
               generateUpdateManyRecordInputSchema(
                 objectMetadata,
                 restrictedFields,
@@ -274,13 +283,8 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `upsert_many_${snakePlural}`,
           description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(includeSchemas && {
-            inputSchema: toToolJsonSchema(
-              generateCreateManyRecordInputSchema(
-                objectMetadata,
-                restrictedFields,
-              ),
-            ),
+          ...(shouldIncludeSchema(`upsert_many_${snakeSingular}`) && {
+            inputSchema: z.toJSONSchema(DeleteToolInputSchema),
           }),
           executionRef: {
             kind: 'database_crud',
@@ -336,6 +340,23 @@ export class DatabaseToolProvider implements ToolProvider {
     }
 
     return descriptors;
+  }
+
+  private hasMatchingTool(
+    toolNames: Set<string>,
+    snakeSingular: string,
+    snakePlural: string,
+  ): boolean {
+    return (
+      toolNames.has(`find_${snakePlural}`) ||
+      toolNames.has(`find_one_${snakeSingular}`) ||
+      toolNames.has(`group_by_${snakePlural}`) ||
+      toolNames.has(`create_${snakeSingular}`) ||
+      toolNames.has(`create_many_${snakePlural}`) ||
+      toolNames.has(`update_${snakeSingular}`) ||
+      toolNames.has(`update_many_${snakePlural}`) ||
+      toolNames.has(`delete_${snakeSingular}`)
+    );
   }
 
   private getObjectPermissions(
