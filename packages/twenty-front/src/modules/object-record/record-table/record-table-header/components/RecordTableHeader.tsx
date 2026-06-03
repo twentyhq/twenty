@@ -56,11 +56,12 @@ export const RecordTableHeader = () => {
 
   return (
     <RecordTableHeaderDragDropContext>
-      <Droppable droppableId="droppable-header" direction='horizontal' ignoreContainerClipping>
-        {(droppableProvied) => (
-          <StyledHeaderContainer 
-          ref={droppableProvied.innerRef} 
-          {...droppableProvied.droppableProps}
+      <Droppable droppableId="droppable-header" direction="horizontal" ignoreContainerClipping>
+        {(droppableProvided) => (
+          <StyledHeaderContainer
+          ref={droppableProvided.innerRef}
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...droppableProvided.droppableProps}
           >
             {!isRecordTableDragColumnHidden && (
               <RecordTableHeaderDragDropColumn />
@@ -75,6 +76,7 @@ export const RecordTableHeader = () => {
                 <RecordTableHeaderCell
                   key={recordField.fieldMetadataItemId}
                   recordField={recordField}
+                  draggableIndex={index + 1}
                   recordFieldIndex={index + 2}
                 />
               ),
@@ -85,6 +87,7 @@ export const RecordTableHeader = () => {
               <RecordTableHeaderAddColumnButton />
             )}
             <RecordTableHeaderLastEmptyColumn />
+            {droppableProvided.placeholder}
           </StyledHeaderContainer>
         )}
       </Droppable>

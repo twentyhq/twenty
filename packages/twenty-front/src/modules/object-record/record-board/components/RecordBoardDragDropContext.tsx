@@ -28,13 +28,11 @@ export const RecordBoardDragDropContext = ({
     currentRecordSortsComponentState,
     recordBoardId,
   );
-  console.log(currentRecordSorts);
 
   const recordBoardSelectedRecordIds = useAtomComponentSelectorCallbackState(
     recordBoardSelectedRecordIdsComponentSelector,
     recordBoardId,
   );
-  console.log(recordBoardSelectedRecordIds);
 
   const store = useStore();
 

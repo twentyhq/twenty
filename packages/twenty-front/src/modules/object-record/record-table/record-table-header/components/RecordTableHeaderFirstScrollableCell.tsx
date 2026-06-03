@@ -9,6 +9,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
+import { isRecordTableHeaderProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderProcessingComponentState';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -20,8 +21,15 @@ import { getRecordTableColumnFieldWidthClassName } from '@/object-record/record-
 import { useAtomComponentFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentFamilyStateValue';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
+import { Draggable } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { filterOutByProperty, isDefined } from 'twenty-shared/utils';
+
+const StyledDragHandle = styled.div`
+  height: 100%;
+  width: 100%;
+`;
 
 export const RecordTableHeaderFirstScrollableCell = () => {
   const { objectMetadataItem, visibleRecordFields } =
@@ -81,33 +89,65 @@ export const RecordTableHeaderFirstScrollableCell = () => {
 
   const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
 
+  const isRecordTableHeaderDropProcessing = useAtomComponentStateValue(
+    isRecordTableHeaderProcessingComponentState,
+  );
+
   if (!recordField) {
     return <></>;
   }
 
   return (
-    <RecordTableHeaderCellContainer
-      className={cx('header-cell', getRecordTableColumnFieldWidthClassName(1))}
+    <Draggable
       key={recordField.fieldMetadataItemId}
-      shouldDisplayBorderBottom={shouldDisplayBorderBottom}
-      zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
-      isResizing={isResizingAnyColumn}
-      isReadOnly={isRecordTableColumnHeadersReadOnly}
+      draggableId={recordField.fieldMetadataItemId}
+      index={0}
+      isDragDisabled={
+        isRecordTableHeaderDropProcessing || isRecordTableColumnHeadersReadOnly
+      }
     >
-      {isRecordTableColumnResizable && (
-        <RecordTableHeaderResizeHandler recordFieldIndex={1} position="left" />
+      {(draggableProvided) => (
+        <RecordTableHeaderCellContainer
+          ref={draggableProvided.innerRef}
+          className={cx(
+            'header-cell',
+            getRecordTableColumnFieldWidthClassName(1),
+          )}
+          key={recordField.fieldMetadataItemId}
+          shouldDisplayBorderBottom={shouldDisplayBorderBottom}
+          zIndex={TABLE_Z_INDEX.headerColumns.headerColumnsNormal}
+          isResizing={isResizingAnyColumn}
+          isReadOnly={isRecordTableColumnHeadersReadOnly}
+          // oxlint-disable-next-line react/jsx-props-no-spreading
+          {...draggableProvided.draggableProps}
+        >
+          {isRecordTableColumnResizable && (
+            <RecordTableHeaderResizeHandler
+              recordFieldIndex={1}
+              position="left"
+            />
+          )}
+          <StyledDragHandle
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided.dragHandleProps}
+          >
+            {isRecordTableColumnHeadersReadOnly ? (
+              <RecordTableColumnHead recordField={recordField} />
+            ) : (
+              <RecordTableColumnHeadWithDropdown
+                recordField={recordField}
+                objectMetadataId={objectMetadataItem.id}
+              />
+            )}
+          </StyledDragHandle>
+          {isRecordTableColumnResizable && (
+            <RecordTableHeaderResizeHandler
+              recordFieldIndex={1}
+              position="right"
+            />
+          )}
+        </RecordTableHeaderCellContainer>
       )}
-      {isRecordTableColumnHeadersReadOnly ? (
-        <RecordTableColumnHead recordField={recordField} />
-      ) : (
-        <RecordTableColumnHeadWithDropdown
-          recordField={recordField}
-          objectMetadataId={objectMetadataItem.id}
-        />
-      )}
-      {isRecordTableColumnResizable && (
-        <RecordTableHeaderResizeHandler recordFieldIndex={1} position="right" />
-      )}
-    </RecordTableHeaderCellContainer>
+    </Draggable>
   );
 };

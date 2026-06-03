@@ -6,6 +6,7 @@ import { RecordTableColumnHead } from '@/object-record/record-table/record-table
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
+import { isRecordTableHeaderProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderProcessingComponentState';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -19,15 +20,23 @@ import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { Draggable } from '@hello-pangea/dnd';
 import { cx } from '@linaria/core';
+import { styled } from '@linaria/react';
 import { isDefined } from 'twenty-shared/utils';
+
+const StyledDragHandle = styled.div`
+  height: 100%;
+  width: 100%;
+`;
 
 type RecordTableHeaderCellProps = {
   recordField: RecordField;
+  draggableIndex: number;
   recordFieldIndex: number;
 };
 
 export const RecordTableHeaderCell = ({
   recordField,
+  draggableIndex,
   recordFieldIndex,
 }: RecordTableHeaderCellProps) => {
   const { objectMetadataItem } = useRecordTableContextOrThrow();
@@ -70,6 +79,10 @@ export const RecordTableHeaderCell = ({
     resizedFieldMetadataIdComponentState,
   );
 
+  const isRecordTableHeaderDropProcessing = useAtomComponentStateValue(
+    isRecordTableHeaderProcessingComponentState,
+  );
+
   const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
 
   const shouldDisplayBorderBottom =
@@ -81,13 +94,15 @@ export const RecordTableHeaderCell = ({
     <Draggable
       key={recordField.fieldMetadataItemId}
       draggableId={recordField.fieldMetadataItemId}
-      index={recordFieldIndex}
-      // isDragDisabled={isRecordBoardDropProcessing}
+      index={draggableIndex}
+      isDragDisabled={
+        isRecordTableHeaderDropProcessing || isRecordTableColumnHeadersReadOnly
+      }
     >
       {(draggableProvided) => (
         <RecordTableHeaderCellContainer
-          ref={draggableProvided.innerRef}
           id={`record-table-head-${recordFieldIndex}`}
+          ref={draggableProvided.innerRef}
           className={cx(
             'header-cell',
             getRecordTableColumnFieldWidthClassName(recordFieldIndex),
@@ -96,9 +111,8 @@ export const RecordTableHeaderCell = ({
           shouldDisplayBorderBottom={shouldDisplayBorderBottom}
           isResizing={isResizingAnyColumn}
           isReadOnly={isRecordTableColumnHeadersReadOnly}
-          {...draggableProvided?.dragHandleProps}
           // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...draggableProvided?.draggableProps}
+          {...draggableProvided.draggableProps}
         >
           {isRecordTableColumnResizable && (
             <RecordTableHeaderResizeHandler
@@ -106,14 +120,19 @@ export const RecordTableHeaderCell = ({
               position="left"
             />
           )}
-          {isRecordTableColumnHeadersReadOnly ? (
-            <RecordTableColumnHead recordField={recordField} />
-          ) : (
-            <RecordTableColumnHeadWithDropdown
-              recordField={recordField}
-              objectMetadataId={objectMetadataItem.id}
-            />
-          )}
+          <StyledDragHandle
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...draggableProvided.dragHandleProps}
+          >
+            {isRecordTableColumnHeadersReadOnly ? (
+              <RecordTableColumnHead recordField={recordField} />
+            ) : (
+              <RecordTableColumnHeadWithDropdown
+                recordField={recordField}
+                objectMetadataId={objectMetadataItem.id}
+              />
+            )}
+          </StyledDragHandle>
           {isRecordTableColumnResizable && (
             <RecordTableHeaderResizeHandler
               recordFieldIndex={recordFieldIndex}

@@ -1,115 +1,45 @@
-import { isRecordBoardDropProcessingComponentState } from '@/object-record/record-board/states/isRecordBoardDropProcessingComponentState';
-import { recordBoardSelectedRecordIdsComponentSelector } from '@/object-record/record-board/states/selectors/recordBoardSelectedRecordIdsComponentSelector';
-import { useEndRecordDrag } from '@/object-record/record-drag/hooks/useEndRecordDrag';
-import { useProcessBoardCardDrop } from '@/object-record/record-drag/hooks/useProcessBoardCardDrop';
-import { useStartRecordDrag } from '@/object-record/record-drag/hooks/useStartRecordDrag';
-import { originalDragSelectionComponentState } from '@/object-record/record-drag/states/originalDragSelectionComponentState';
-
-import { RECORD_INDEX_REMOVE_SORTING_MODAL_ID } from '@/object-record/record-index/constants/RecordIndexRemoveSortingModalId';
-import { currentRecordSortsComponentState } from '@/object-record/record-sort/states/currentRecordSortsComponentState';
-import { useRecordTableContextOrThrow } from '@/object-record/record-table/contexts/RecordTableContext';
-import { isRecordTableDragColumnHiddenComponentState } from '@/object-record/record-table/states/isRecordTableDragColumnHiddenComponentState';
-import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { useAtomComponentSelectorCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorCallbackState';
+import { useProcessTableColumnDrop } from '@/object-record/record-table/record-table-header/hooks/useProcessTableColumnDrop';
+import { isRecordTableHeaderProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderProcessingComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
-import {
-  DragDropContext,
-  type DragStart,
-  type OnDragEndResponder,
-} from '@hello-pangea/dnd';
+import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
 import { useCallback } from 'react';
 
 export const RecordTableHeaderDragDropContext = ({
   children,
 }: React.PropsWithChildren) => {
-  const { recordTableId } = useRecordTableContextOrThrow();
-
-  // const currentRecordSorts = useAtomComponentStateCallbackState(
-  //   currentRecordSortsComponentState,
-  //   recordTableId,
-  // );
-
   const store = useStore();
 
-  const originalDragSelectionCallbackState = useAtomComponentStateCallbackState(
-    originalDragSelectionComponentState,
-    recordTableId,
-  );
+  const { processTableColumnDrop } = useProcessTableColumnDrop();
 
-  const { startRecordDrag } = useStartRecordDrag(recordTableId);
-  const { endRecordDrag } = useEndRecordDrag(recordTableId);
+  const isRecordTableHeaderProcessingCallbackState =
+    useAtomComponentStateCallbackState(
+      isRecordTableHeaderProcessingComponentState,
+    );
 
-  // const { processBoardCardDrop } = useProcessBoardCardDrop();
-
-  // const isRecordBoardDropProcessingCallbackState =
-  //   useAtomComponentStateCallbackState(
-  //     isRecordBoardDropProcessingComponentState,
-  //   );
-
-  const { openModal } = useModal();
-
-  // const handleDragStart = useCallback(
-  //   (start: DragStart) => {
-  //
-  //     // store.set(isRecordBoardDropProcessingCallbackState, true);
-  //
-  //     // startRecordDrag(start, currentSelectedRecordIds);
-  //   },
-  //   [
-  //     // recordBoardSelectedRecordIds,
-  //     startRecordDrag,
-  //     store,
-  //     // isRecordBoardDropProcessingCallbackState,
-  //   ],
-  // );
+  const handleDragStart = useCallback(() => {
+    store.set(isRecordTableHeaderProcessingCallbackState, true);
+  }, [store, isRecordTableHeaderProcessingCallbackState]);
 
   const handleDragEnd: OnDragEndResponder = useCallback(
     (result) => {
-      const originalDragSelection = store.get(
-        originalDragSelectionCallbackState,
-      );
-
       if (!result.destination) {
-        // store.set(isRecordBoardDropProcessingCallbackState, false);
-        endRecordDrag();
+        store.set(isRecordTableHeaderProcessingCallbackState, false);
         return;
       }
 
-      // const existingRecordSorts = store.get(currentRecordSorts);
-
-      // if (existingRecordSorts.length > 0) {
-      //   // store.set(isRecordBoardDropProcessingCallbackState, false);
-      //   endRecordDrag();
-      //   openModal(RECORD_INDEX_REMOVE_SORTING_MODAL_ID);
-      //   return;
-      // }
-
       try {
-        // processBoardCardDrop(result, originalDragSelection);
+        processTableColumnDrop(result);
       } catch (error) {
-        // store.set(isRecordBoardDropProcessingCallbackState, false);
-        endRecordDrag();
-
+        store.set(isRecordTableHeaderProcessingCallbackState, false);
         throw error;
       }
-
-      // store.set(isRecordBoardDropProcessingCallbackState, false);
-      endRecordDrag();
     },
-    [
-      // processBoardCardDrop,
-      endRecordDrag,
-      // currentRecordSorts,
-      openModal,
-      store,
-      originalDragSelectionCallbackState,
-      // isRecordBoardDropProcessingCallbackState,
-    ],
+    [processTableColumnDrop, store, isRecordTableHeaderProcessingCallbackState],
   );
 
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       {children}
     </DragDropContext>
   );
