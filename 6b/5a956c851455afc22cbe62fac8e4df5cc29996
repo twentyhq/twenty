@@ -1,0 +1,45 @@
+packages/twenty-server/src/modules/timeline/standard-objects/timeline-activity.workspace-entity.ts
+  s_4a10800c36ffe6::t_472b0e7b1e9c17 56-59
+  s_4a10800c36ffe6::t_15968c556bb12a 54-55
+  s_4a10800c36ffe6::t_081bc828fa897f 9,11
+  s_4a10800c36ffe6::t_5979e98e6053e2 10
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-broadcast-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_fb93008ada0f74 395-411
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-timeline-activity-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_eabc375ba0e3af 539-563
+  s_4a10800c36ffe6::t_9c328e0a77dd06 564-613
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-segment-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_e87c768cfe7db8 29-32
+  s_4a10800c36ffe6::t_df62296f8e711a 215-229
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_4a10800c36ffe6::t_29b90005ba1a41 798,801
+  s_4a10800c36ffe6::t_cc32ed589b5701 1008-1010
+  s_4a10800c36ffe6::t_7e6604f41429d7 2393-2395
+  s_4a10800c36ffe6::t_cd70d9f4b26cd0 2396-2401
+  s_4a10800c36ffe6::t_d78ed5b2667ad9 918-920
+  s_4a10800c36ffe6::t_aad6a0aaf2535d 847-849
+  s_4a10800c36ffe6::t_f4e8fce0abfae8 853-855
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+  s_4a10800c36ffe6::t_50bf6c6a35914b 331
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-topic-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_dbdcb360f98e05 323-345
+  s_4a10800c36ffe6::t_4a6277351a9077 369-390
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-segment-page-layout.config.ts
+  s_4a10800c36ffe6::t_e87c768cfe7db8 92-93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "6b5a956c851455afc22cbe62fac8e4df5cc29996",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}

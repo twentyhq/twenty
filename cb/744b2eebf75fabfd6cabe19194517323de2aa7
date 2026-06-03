@@ -1,0 +1,74 @@
+packages/twenty-shared/src/metadata/constants/standard-object.constant.ts
+  s_4a10800c36ffe6::t_da9c7793471468 961,964
+  s_4a10800c36ffe6::t_6b27a4e1f3dd2c 834-842
+  s_4a10800c36ffe6::t_c5befa09a11b7d 894-896
+  s_4a10800c36ffe6::t_0282db4f7ec9d8 969-1043
+  s_4a10800c36ffe6::t_8eacfcbd4df881 1919-1921
+  s_4a10800c36ffe6::t_1d36fa87e1d3ea 910,913
+  s_4a10800c36ffe6::t_c1f5c2f729ddf6 846
+  s_4a10800c36ffe6::t_cdecca27b610ce 954
+  s_4a10800c36ffe6::t_701cb3d71967c7 943-945
+packages/twenty-server/src/modules/person/standard-objects/person.workspace-entity.ts
+  s_4a10800c36ffe6::t_d071ec619bc5d7 65
+  s_4a10800c36ffe6::t_7e117abc620a0a 17
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-person-page-layout.config.ts
+  s_4a10800c36ffe6::t_df47e1441d7b91 55-77
+packages/twenty-shared/src/metadata/constants/standard-page-layout-universal-identifiers.constant.ts
+  s_4a10800c36ffe6::t_c18bff5a6e3ca5 121-126
+  s_4a10800c36ffe6::t_002e1951585794 550-589
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout-tabs.template.ts
+  s_4a10800c36ffe6::t_fd7a7e88d5230e 88-91
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/object-metadata/create-standard-flat-object-metadata.util.ts
+  s_4a10800c36ffe6::t_2023bc0cc3afa4 327-329,331-332
+  s_4a10800c36ffe6::t_14c10b38863dc5 264-266
+  s_4a10800c36ffe6::t_ab47d0cd741d9b 295-296,298,301
+  s_4a10800c36ffe6::t_280bd7ac605b63 339-392
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-segment-member-standard-flat-index-metadata.util.ts
+  s_4a10800c36ffe6::t_33fbdc03da7c2b 1-44
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/standard-message-segment-page-layout.config.ts
+  s_4a10800c36ffe6::t_cae2254ee18ff7 1-98
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/build-standard-flat-index-metadata-maps.util.ts
+  s_4a10800c36ffe6::t_a268bfc5e92ff8 16-17
+  s_4a10800c36ffe6::t_d01563f90a4628 53-54
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-segment-member-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_402953907080d4 1-248
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/index/compute-message-segment-standard-flat-index-metadata.util.ts
+  s_4a10800c36ffe6::t_c5b1904299d778 1-33
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/constants/standard-page-layout.constant.ts
+  s_4a10800c36ffe6::t_5bc041743a3e9e 10
+  s_4a10800c36ffe6::t_30c536d2ea5c22 36
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/build-standard-flat-field-metadata-maps.util.ts
+  s_4a10800c36ffe6::t_5a5382a31137af 58-59
+  s_4a10800c36ffe6::t_52b0c9c90ed94d 19-20
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/page-layout-config/index.ts
+  s_4a10800c36ffe6::t_42d5788cd9f378 9
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-person-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_cdc0ebb23458e1 532-533
+  s_4a10800c36ffe6::t_1dccfad31e0b23 541-544
+  s_4a10800c36ffe6::t_c0165c9e13f895 568-571
+  s_4a10800c36ffe6::t_a2e0757dbe778d 535
+  s_4a10800c36ffe6::t_697271245097d9 552-567
+packages/twenty-server/src/modules/emailing/standard-objects/message-segment-member.workspace-entity.ts
+  s_4a10800c36ffe6::t_a72a5f3e78faf8 1-14
+packages/twenty-server/src/modules/emailing/standard-objects/message-segment.workspace-entity.ts
+  s_4a10800c36ffe6::t_d8f50bbb4e73c4 1-18
+packages/twenty-server/src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-message-segment-standard-flat-field-metadata.util.ts
+  s_4a10800c36ffe6::t_e7a287ba2f3321 1-204,208-238
+  s_4a10800c36ffe6::t_63cb6936ad0385 205-207
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "cb744b2eebf75fabfd6cabe19194517323de2aa7",
+  "prompts": {},
+  "sessions": {
+    "s_4a10800c36ffe6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9ecf403e-4e07-4937-9eb1-7db20c4f4c5f",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
