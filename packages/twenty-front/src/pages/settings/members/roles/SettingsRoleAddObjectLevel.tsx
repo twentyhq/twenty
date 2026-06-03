@@ -2,7 +2,8 @@ import { SettingsPageContainer } from '@/settings/components/SettingsPageContain
 import { SettingsRolesQueryEffect } from '@/settings/roles/components/SettingsRolesQueryEffect';
 import { SettingsRolePermissionsObjectLevelObjectPicker } from '@/settings/roles/role-permissions/object-level-permissions/components/SettingsRolePermissionsObjectLevelObjectPicker';
 import { settingsDraftRoleFamilyState } from '@/settings/roles/states/settingsDraftRoleFamilyState';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
+import { SettingsWizardStepBar } from '@/settings/components/layout/SettingsWizardStepBar';
 import { useAtomFamilyStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomFamilyStateValue';
 import { t } from '@lingui/core/macro';
 import { Navigate, useParams, useSearchParams } from 'react-router-dom';
@@ -37,7 +38,7 @@ export const SettingsRoleAddObjectLevel = () => {
       ? [
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`AI`,
@@ -56,7 +57,7 @@ export const SettingsRoleAddObjectLevel = () => {
       : [
           {
             children: t`Workspace`,
-            href: getSettingsPath(SettingsPath.Workspace),
+            href: getSettingsPath(SettingsPath.General),
           },
           {
             children: t`Members`,
@@ -73,17 +74,23 @@ export const SettingsRoleAddObjectLevel = () => {
           },
         ];
 
+  const headerTitle =
+    fromAgentId && isDefined(agent)
+      ? agent.label
+      : (settingsDraftRole.label ?? '');
+
   return (
     <>
       <SettingsRolesQueryEffect />
-      <SubMenuTopBarContainer
-        title={t`1. Select an object`}
+      <SettingsPageLayout
+        title={headerTitle}
         links={breadcrumbLinks}
+        secondaryBar={<SettingsWizardStepBar label={t`1. Select an object`} />}
       >
         <SettingsPageContainer>
           <SettingsRolePermissionsObjectLevelObjectPicker roleId={roleId} />
         </SettingsPageContainer>
-      </SubMenuTopBarContainer>
+      </SettingsPageLayout>
     </>
   );
 };

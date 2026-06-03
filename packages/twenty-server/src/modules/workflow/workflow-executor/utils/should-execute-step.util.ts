@@ -1,7 +1,7 @@
-import { isDefined } from 'twenty-shared/utils';
 import { type WorkflowRunStepInfos } from 'twenty-shared/workflow';
 
 import { WorkflowRunStatus } from 'src/modules/workflow/common/standard-objects/workflow-run.workspace-entity';
+import { findParentSteps } from 'src/modules/workflow/workflow-executor/utils/find-parent-steps.util';
 import { shouldExecuteChildStep } from 'src/modules/workflow/workflow-executor/utils/should-execute-child-step.util';
 import { stepHasBeenStarted } from 'src/modules/workflow/workflow-executor/utils/step-has-been-started.util';
 import { isWorkflowIteratorAction } from 'src/modules/workflow/workflow-executor/workflow-actions/iterator/guards/is-workflow-iterator-action.guard';
@@ -35,10 +35,7 @@ export const shouldExecuteStep = ({
     return false;
   }
 
-  const parentSteps = steps.filter(
-    (parentStep) =>
-      isDefined(parentStep) && parentStep.nextStepIds?.includes(step.id),
-  );
+  const parentSteps = findParentSteps({ step, steps });
 
   return shouldExecuteChildStep({
     parentSteps,

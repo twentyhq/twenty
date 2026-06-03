@@ -181,7 +181,7 @@ export const SettingsEventLogs = () => {
       links={[
         {
           children: <Trans>Workspace</Trans>,
-          href: getSettingsPath(SettingsPath.Workspace),
+          href: getSettingsPath(SettingsPath.General),
         },
         {
           children: <Trans>Security</Trans>,

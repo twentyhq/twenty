@@ -11,7 +11,7 @@ import { SettingsAdminChatThreadMessageList } from '@/settings/admin-panel/compo
 import { GET_ADMIN_CHAT_THREAD_MESSAGES } from '@/settings/admin-panel/graphql/queries/getAdminChatThreadMessages';
 import { SettingsPageContainer } from '@/settings/components/SettingsPageContainer';
 import { SettingsSkeletonLoader } from '@/settings/components/SettingsSkeletonLoader';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { H2Title } from 'twenty-ui/display';
 import { Section } from 'twenty-ui/layout';
 import { type GetAdminChatThreadMessagesQuery } from '~/generated-admin/graphql';
@@ -40,7 +40,7 @@ export const SettingsAdminWorkspaceChatThread = () => {
   }
 
   return (
-    <SubMenuTopBarContainer
+    <SettingsPageLayout
       links={[
         {
           children: t`Other`,
@@ -67,6 +67,6 @@ export const SettingsAdminWorkspaceChatThread = () => {
           <SettingsAdminChatThreadMessageList messages={messages} />
         </Section>
       </SettingsPageContainer>
-    </SubMenuTopBarContainer>
+    </SettingsPageLayout>
   );
 };

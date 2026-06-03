@@ -9,6 +9,7 @@ import {
   type ObjectRecordRestoreEvent,
   type ObjectRecordUpdateEvent,
 } from 'twenty-shared/database-events';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import { OnDatabaseBatchEvent } from 'src/engine/api/graphql/graphql-query-runner/decorators/on-database-batch-event.decorator';
 import { DatabaseEventAction } from 'src/engine/api/graphql/graphql-query-runner/enums/database-event-action';
@@ -68,6 +69,15 @@ export class EntityEventsToDbListener {
     batchEvent: WorkspaceEventBatch<T>,
     action: DatabaseEventAction,
   ) {
+    if (
+      batchEvent.objectMetadata.universalIdentifier ===
+      STANDARD_OBJECTS.timelineActivity.universalIdentifier
+    ) {
+      await this.objectRecordEventPublisher.publish(batchEvent);
+
+      return;
+    }
+
     const isAuditLogBatchEvent = batchEvent.objectMetadata?.isAuditLogged;
 
     const batchEventForWebhook = {
