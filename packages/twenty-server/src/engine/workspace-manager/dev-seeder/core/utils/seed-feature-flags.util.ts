@@ -50,6 +50,11 @@ export const seedFeatureFlags = async ({
         workspaceId: workspaceId,
         value: false,
       },
+      {
+        key: FeatureFlagKey.IS_EMAIL_SIGNATURE_ENABLED,
+        workspaceId: workspaceId,
+        value: false,
+      },
     ])
     .execute();
 };
