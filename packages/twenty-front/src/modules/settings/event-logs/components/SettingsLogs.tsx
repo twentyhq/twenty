@@ -4,7 +4,6 @@ import { useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
-import { SETTINGS_CONTENT_MAX_WIDTH } from '@/settings/components/SettingsPageContainer';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
 import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
 import { EventLogFilters } from '@/settings/event-logs/components/EventLogFilters';
@@ -20,26 +19,6 @@ import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
-
-const StyledContent = styled.div`
-  box-sizing: border-box;
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: ${themeCssVariables.spacing[6]};
-  min-height: 0;
-  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
-    ${themeCssVariables.spacing[8]};
-  width: 100%;
-`;
-
-// Filter card keeps the standard settings content width; the results table
-// below is full-width.
-const StyledFilterCard = styled.div`
-  align-self: center;
-  max-width: ${SETTINGS_CONTENT_MAX_WIDTH}px;
-  width: 100%;
-`;
 
 const StyledCardContent = styled.div`
   display: flex;
@@ -59,12 +38,10 @@ const StyledSelectorGrow = styled.div`
   min-width: 0;
 `;
 
-const StyledTableSection = styled.div`
+const StyledResults = styled.div`
   display: flex;
-  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
-  min-height: 0;
 `;
 
 const StyledRecordCount = styled.span`
@@ -73,9 +50,10 @@ const StyledRecordCount = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
+// The results table scrolls internally and loads more as you reach the bottom,
+// so it needs a bounded height.
 const StyledTableWrapper = styled.div`
-  flex: 1;
-  min-height: 0;
+  height: 480px;
   overflow: hidden;
 `;
 
@@ -136,16 +114,14 @@ export const SettingsLogs = () => {
     setFilters(newFilters);
   };
 
-  const renderBelowCard = () => {
+  const renderResults = () => {
     if (!isApplicationLog && !hasEnterpriseAccess) {
       return (
-        <StyledFilterCard>
-          <SettingsEnterpriseFeatureGateCard
-            title={t`Enterprise feature`}
-            description={t`Upgrade to Enterprise to access this log type.`}
-            buttonTitle={t`Activate`}
-          />
-        </StyledFilterCard>
+        <SettingsEnterpriseFeatureGateCard
+          title={t`Enterprise feature`}
+          description={t`Upgrade to Enterprise to access this log type.`}
+          buttonTitle={t`Activate`}
+        />
       );
     }
 
@@ -166,7 +142,7 @@ export const SettingsLogs = () => {
     }
 
     return (
-      <StyledTableSection>
+      <StyledResults>
         <StyledRecordCount>{t`${records.length} of ${totalCount}`}</StyledRecordCount>
         <StyledTableWrapper>
           <EventLogResultsTable
@@ -177,40 +153,38 @@ export const SettingsLogs = () => {
             selectedTable={selectedTable}
           />
         </StyledTableWrapper>
-      </StyledTableSection>
+      </StyledResults>
     );
   };
 
   return (
-    <StyledContent>
-      <StyledFilterCard>
-        <Card rounded fullWidth>
-          <StyledCardContent>
-            <StyledSelectorRow>
-              <StyledSelectorGrow>
-                <EventLogTableSelector
-                  value={selectedTable}
-                  onChange={handleTableChange}
-                />
-              </StyledSelectorGrow>
-              <IconButton
-                Icon={IconRefresh}
-                variant="secondary"
-                size="medium"
-                ariaLabel={t`Refresh`}
-                onClick={() => refetch()}
+    <>
+      <Card rounded fullWidth>
+        <StyledCardContent>
+          <StyledSelectorRow>
+            <StyledSelectorGrow>
+              <EventLogTableSelector
+                value={selectedTable}
+                onChange={handleTableChange}
               />
-            </StyledSelectorRow>
-            <EventLogFilters
-              table={selectedTable}
-              value={filters}
-              onChange={handleFiltersChange}
+            </StyledSelectorGrow>
+            <IconButton
+              Icon={IconRefresh}
+              variant="secondary"
+              size="medium"
+              ariaLabel={t`Refresh`}
+              onClick={() => refetch()}
             />
-          </StyledCardContent>
-        </Card>
-      </StyledFilterCard>
+          </StyledSelectorRow>
+          <EventLogFilters
+            table={selectedTable}
+            value={filters}
+            onChange={handleFiltersChange}
+          />
+        </StyledCardContent>
+      </Card>
 
-      {renderBelowCard()}
-    </StyledContent>
+      {renderResults()}
+    </>
   );
 };

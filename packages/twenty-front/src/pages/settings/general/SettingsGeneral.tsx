@@ -55,15 +55,11 @@ export const SettingsGeneral = () => {
     }
 
     if (activeTabId === GENERAL_TAB_SECURITY) {
-      return (
-        <SettingsPageContainer>
-          <SettingsSecuritySettings />
-        </SettingsPageContainer>
-      );
+      return <SettingsSecuritySettings />;
     }
 
     return (
-      <SettingsPageContainer>
+      <>
         <Section>
           <H2Title title={t`Picture`} />
           <WorkspaceLogoUploader />
@@ -84,7 +80,7 @@ export const SettingsGeneral = () => {
         <Section>
           <DeleteWorkspace />
         </Section>
-      </SettingsPageContainer>
+      </>
     );
   };
 
@@ -101,7 +97,7 @@ export const SettingsGeneral = () => {
       }
       links={[{ children: t`Workspace` }, { children: t`General` }]}
     >
-      {renderActiveTabContent()}
+      <SettingsPageContainer>{renderActiveTabContent()}</SettingsPageContainer>
     </SettingsPageLayout>
   );
 };
