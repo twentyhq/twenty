@@ -58,7 +58,7 @@ export class FindRecordsService {
       });
 
       const { effectiveSelectedFields, warnings } =
-        shouldBuildEffectiveSelectFields
+        shouldBuildEffectiveSelectFields && isDefined(select)
           ? buildEffectiveSelectedFields({
               select,
               filter,
