@@ -283,8 +283,13 @@ export class DatabaseToolProvider implements ToolProvider {
           name: `upsert_many_${snakePlural}`,
           description: `Insert or update multiple ${objectMetadata.labelPlural} records in a single call, where each record has its own individual data. Use this instead of update_many_${snakePlural} when records need different field values. Existing records are matched by unique fields and updated; records with no match are created. Maximum 20 records per call. Returns the upserted records.`,
           category: ToolCategory.DATABASE_CRUD,
-          ...(shouldIncludeSchema(`upsert_many_${snakeSingular}`) && {
-            inputSchema: z.toJSONSchema(DeleteToolInputSchema),
+          ...(shouldIncludeSchema(`upsert_many_${snakePlural}`) && {
+            inputSchema: z.toJSONSchema(
+              generateCreateManyRecordInputSchema(
+                objectMetadata,
+                restrictedFields,
+              ),
+            ),
           }),
           executionRef: {
             kind: 'database_crud',
