@@ -5375,6 +5375,11 @@ msgstr ""
 msgid "People linked to the company."
 msgstr ""
 
+#. js-lingui-id: XDAwzW
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgid "Per-step observability payload (token usage, tool calls, log entries)"
+msgstr ""
+
 #. js-lingui-id: 3zRddX
 #: src/engine/metadata-modules/permission-flag/permission-flag.exception.ts
 msgid "Permission flag already exists."
@@ -6362,6 +6367,11 @@ msgstr "Los estados no se pueden establecer manualmente."
 #: src/modules/workflow/workflow-runner/workspace-services/workflow-runner.workspace-service.ts
 msgid "Step is not a form"
 msgstr "El paso no es un formulario"
+
+#. js-lingui-id: nLBQ0Y
+#: src/engine/workspace-manager/twenty-standard-application/utils/field-metadata/compute-workflow-run-standard-flat-field-metadata.util.ts
+msgid "Step logs"
+msgstr ""
 
 #. js-lingui-id: 1D+4NY
 #: src/engine/metadata-modules/page-layout-widget/constants/standard-page-layout-widget-titles.ts
