@@ -492,7 +492,7 @@ describe('Field permissions restrictions', () => {
 
       expectNoGraphQLErrors(response);
       expect(
-        response.body.data.companies.edges[0].node.people.percentageEmptyCity,
+        response.body.data.companies.edges[0].node.people.percentageEmptyJobTitle,
       ).toBeDefined();
     });
   });
