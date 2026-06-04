@@ -19,9 +19,9 @@ const NEW_STANDARD_FIELD_UNIVERSAL_IDENTIFIERS = [
   STANDARD_OBJECTS.company.fields.annualRevenue.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000050000)
+@RegisteredWorkspaceCommand('2.10.0', 1799000050000)
 @Command({
-  name: 'upgrade:2-9:add-inactive-generic-standard-fields',
+  name: 'upgrade:2-10:add-inactive-generic-standard-fields',
   description:
     'Create the new generic standard field (Company annualRevenue) on existing workspaces as inactive (opt-in), with its column ready for activation',
 })
@@ -119,7 +119,7 @@ export class AddInactiveGenericStandardFieldsCommand extends ActiveOrSuspendedWo
 
       if (fieldNameIsTaken) {
         this.logger.warn(
-          `Field name "${standardFlatFieldMetadata.name}" is already taken on its object for workspace ${workspaceId}; skipping (run upgrade:2-9:rename-conflicting-custom-fields first)`,
+          `Field name "${standardFlatFieldMetadata.name}" is already taken on its object for workspace ${workspaceId}; skipping (run upgrade:2-10:rename-conflicting-custom-fields first)`,
         );
 
         continue;

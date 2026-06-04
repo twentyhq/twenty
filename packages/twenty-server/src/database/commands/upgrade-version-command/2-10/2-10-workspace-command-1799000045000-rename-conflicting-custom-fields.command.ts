@@ -36,9 +36,9 @@ const computeAvailableFieldName = (
   return candidateFieldName;
 };
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000045000)
+@RegisteredWorkspaceCommand('2.10.0', 1799000045000)
 @Command({
-  name: 'upgrade:2-9:rename-conflicting-custom-fields',
+  name: 'upgrade:2-10:rename-conflicting-custom-fields',
   description:
     'Rename a pre-existing custom field whose name collides with the new generic standard field (Company annualRevenue), preserving its data, so the standard field can be added',
 })

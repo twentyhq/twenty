@@ -49,9 +49,9 @@ const DEMOTED_STANDARD_FIELDS: {
   },
 ];
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000040000)
+@RegisteredWorkspaceCommand('2.10.0', 1799000040000)
 @Command({
-  name: 'upgrade:2-9:move-demoted-standard-fields-to-custom-application',
+  name: 'upgrade:2-10:move-demoted-standard-fields-to-custom-application',
   description:
     'Re-own the demoted Company ARR / ICP / Employees, Company/Person X (Twitter) and Person City standard fields to the workspace custom application, preserving their data and keeping them active',
 })
