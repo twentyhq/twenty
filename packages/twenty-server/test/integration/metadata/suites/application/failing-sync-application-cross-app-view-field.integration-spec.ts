@@ -1,47 +1,33 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import { buildDefaultObjectManifest } from 'test/integration/metadata/suites/application/utils/build-default-object-manifest.util';
 import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
 import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
+import type { FieldManifest } from 'twenty-shared/application';
+import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import { FieldMetadataType, ViewType } from 'twenty-shared/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const APP_A_ID = uuidv4();
 const APP_A_ROLE_ID = uuidv4();
-const APP_A_OBJECT_ID = uuidv4();
 const APP_A_VIEW_ID = uuidv4();
 
 const APP_B_ID = uuidv4();
 const APP_B_ROLE_ID = uuidv4();
-const APP_B_OBJECT_ID = uuidv4();
 const APP_B_FIELD_ID = uuidv4();
 const APP_B_VIEW_FIELD_ID = uuidv4();
 
-const buildAppAObject = () =>
-  buildDefaultObjectManifest({
-    nameSingular: 'appAResource',
-    namePlural: 'appAResources',
-    labelSingular: 'App A Resource',
-    labelPlural: 'App A Resources',
-    universalIdentifier: APP_A_OBJECT_ID,
-  });
+const PERSON_OBJECT_UNIVERSAL_IDENTIFIER =
+  STANDARD_OBJECTS.person.universalIdentifier;
 
-const buildAppBObject = () =>
-  buildDefaultObjectManifest({
-    nameSingular: 'appBResource',
-    namePlural: 'appBResources',
-    labelSingular: 'App B Resource',
-    labelPlural: 'App B Resources',
-    universalIdentifier: APP_B_OBJECT_ID,
-    additionalFields: [
-      {
-        universalIdentifier: APP_B_FIELD_ID,
-        type: FieldMetadataType.TEXT,
-        name: 'appBField',
-        label: 'App B Field',
-      },
-    ],
-  });
+const appBPersonField: FieldManifest = {
+  universalIdentifier: APP_B_FIELD_ID,
+  type: FieldMetadataType.TEXT,
+  name: 'appBContributedColumn',
+  label: 'App B Contributed Column',
+  description: 'Custom field App B owns on the standard Person object',
+  icon: 'IconStar',
+  objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
+};
 
 describe('Sync application should fail when creating a view field on a view owned by another app', () => {
   beforeAll(async () => {
@@ -64,12 +50,11 @@ describe('Sync application should fail when creating a view field on a view owne
         appId: APP_A_ID,
         roleId: APP_A_ROLE_ID,
         overrides: {
-          objects: [buildAppAObject()],
           views: [
             {
               universalIdentifier: APP_A_VIEW_ID,
               name: 'App A View',
-              objectUniversalIdentifier: APP_A_OBJECT_ID,
+              objectUniversalIdentifier: PERSON_OBJECT_UNIVERSAL_IDENTIFIER,
               type: ViewType.TABLE,
               icon: 'IconList',
             },
@@ -95,7 +80,7 @@ describe('Sync application should fail when creating a view field on a view owne
         appId: APP_B_ID,
         roleId: APP_B_ROLE_ID,
         overrides: {
-          objects: [buildAppBObject()],
+          fields: [appBPersonField],
           viewFields: [
             {
               universalIdentifier: APP_B_VIEW_FIELD_ID,
@@ -113,6 +98,12 @@ describe('Sync application should fail when creating a view field on a view owne
 
     expect(errors).toBeDefined();
     expect(errors.length).toBeGreaterThan(0);
-    expect(errors[0].extensions.code).toBe('METADATA_VALIDATION_FAILED');
+
+    const [error] = errors;
+
+    expect(error.extensions.code).toBe('METADATA_VALIDATION_FAILED');
+    expect(error.extensions.summary.totalErrors).toBe(1);
+    expect(error.extensions.summary.viewField).toBe(1);
+    expect(error.extensions.message).toMatch(/viewField/);
   }, 60000);
 });
