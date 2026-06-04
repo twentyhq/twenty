@@ -1,14 +1,8 @@
 import { type Email as ParsedMail } from 'postal-mime';
 
-import { ImapMessageTextExtractorService } from 'src/modules/messaging/message-import-manager/drivers/imap/services/imap-message-text-extractor.service';
+import { extractMessageBodyText } from 'src/modules/messaging/message-import-manager/utils/extract-message-body-text.util';
 
-describe('ImapMessageTextExtractorService', () => {
-  let service: ImapMessageTextExtractorService;
-
-  beforeEach(() => {
-    service = new ImapMessageTextExtractorService();
-  });
-
+describe('extractMessageBodyText', () => {
   it('should extract text from plain text emails with lot of reply quotations', () => {
     const parsed: ParsedMail = {
       text: `Hi John,
@@ -101,21 +95,24 @@ Developer Support
       headerLines: [],
     };
 
-    const result = service.extractTextWithoutReplyQuotations(parsed);
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     expect(result).toBe(`Hi John,
 
-Thank you for contacting Developer Support, this is Erica again. I hope you are having a good day. 
+Thank you for contacting Developer Support, this is Erica again. I hope you are having a good day.
 
-I understand that you are unable to contact finance. Despite your account being expired, you should still be able to contact our finance team. 
+I understand that you are unable to contact finance. Despite your account being expired, you should still be able to contact our finance team.
 
-Follow the link below the link for contacting our finance team. 
+Follow the link below the link for contacting our finance team.
 
 https://idmsa.apple.com/IDMSWebAuth/signin.html?path=/contact/finance/
 
 Best Regards,
 
-Erica 
+Erica
 Developer Support`);
   });
 
@@ -136,7 +133,10 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = service.extractTextWithoutReplyQuotations(parsed);
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     expect(result).toBe('just a follow up');
   });
@@ -158,7 +158,10 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = service.extractTextWithoutReplyQuotations(parsed);
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     expect(result).toBe('just a follow up');
   });
@@ -170,7 +173,10 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = service.extractTextWithoutReplyQuotations(parsed);
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     expect(result).toBe('');
   });
@@ -298,10 +304,13 @@ Developer Support`);
   </style></head><body><div id="inbox-html-wrapper"><div id="isPasted" fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Hi Sarah,</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">I wanted to quickly follow up regarding the Q3 marketing campaign results. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">We’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Let’s schedule a short call early next week to discuss adjustments before the Q4 push. &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Would Monday 10 AM work for you?</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">Best regards, &nbsp;</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;">John</div><div fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"><br fr-original-style="" style="user-select: inherit; scrollbar-color: var(--scrollbar-active-color) #0000; box-sizing: border-box;"></div><img class="flm-open" width="0" height="0" style="border: 0px; width: 0px; height: 0px; max-width: 100vw;" data-open-tracking-src="{{track-read-receipt}}"></div></body></html>`,
     };
 
-    const result = service.extractTextWithoutReplyQuotations(parsed);
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     expect(result).toEqual(
-      `Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.  \nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.  \n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.  \nWould Monday 10 AM work for you?\n\nBest regards,  \nJohn`,
+      `Hi Sarah,\n\nI wanted to quickly follow up regarding the Q3 marketing campaign results.\nWe’ve seen a 14% increase in engagement compared to last quarter, but conversions are still slightly below target.\n\nLet’s schedule a short call early next week to discuss adjustments before the Q4 push.\nWould Monday 10 AM work for you?\n\nBest regards,\nJohn`,
     );
   });
 
@@ -314,8 +323,29 @@ Developer Support`);
       headerLines: [],
     };
 
-    const result = service.extractTextWithoutReplyQuotations(parsed);
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
 
     expect(result).toBe('Plain text content');
+  });
+
+  it('should preserve percent sequences instead of URI-decoding the body', () => {
+    const parsed: ParsedMail = {
+      text: 'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
+      attachments: [],
+      headers: [],
+      headerLines: [],
+    };
+
+    const result = extractMessageBodyText({
+      text: parsed.text,
+      html: parsed.html,
+    });
+
+    expect(result).toBe(
+      'See https://example.com/path%2Fto%2Ffile and a 100%20 budget cut',
+    );
   });
 });
