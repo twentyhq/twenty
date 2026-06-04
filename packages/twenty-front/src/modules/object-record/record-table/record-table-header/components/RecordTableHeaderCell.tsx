@@ -6,7 +6,7 @@ import { RecordTableColumnHead } from '@/object-record/record-table/record-table
 import { RecordTableColumnHeadWithDropdown } from '@/object-record/record-table/record-table-header/components/RecordTableColumnHeadWithDropdown';
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderResizeHandler';
-import { isRecordTableHeaderProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderProcessingComponentState';
+import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -80,7 +80,7 @@ export const RecordTableHeaderCell = ({
   );
 
   const isRecordTableHeaderDropProcessing = useAtomComponentStateValue(
-    isRecordTableHeaderProcessingComponentState,
+    isRecordTableHeaderDropProcessingComponentState,
   );
 
   const isResizingAnyColumn = isDefined(resizedFieldMetadataId);

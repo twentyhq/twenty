@@ -58,9 +58,8 @@ export const useReorderColumns = (recordTableId?: string) => {
       const [movedField] = reorderedFields.splice(source.index, 1);
       reorderedFields.splice(destination.index, 0, movedField);
 
-
       const orderedPositions = draggableFields.map((field) => field.position);
-    
+
       const updatedViewFields = reorderedFields
         .map((field, index) => {
           const newPosition = orderedPositions[index];

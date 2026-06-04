@@ -1,5 +1,5 @@
 import { useProcessTableColumnDrop } from '@/object-record/record-table/record-table-header/hooks/useProcessTableColumnDrop';
-import { isRecordTableHeaderProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderProcessingComponentState';
+import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { useAtomComponentStateCallbackState } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateCallbackState';
 import { DragDropContext, type OnDragEndResponder } from '@hello-pangea/dnd';
 import { useStore } from 'jotai';
@@ -12,30 +12,34 @@ export const RecordTableHeaderDragDropContext = ({
 
   const { processTableColumnDrop } = useProcessTableColumnDrop();
 
-  const isRecordTableHeaderProcessingCallbackState =
+  const isRecordTableHeaderDropProcessingCallbackState =
     useAtomComponentStateCallbackState(
-      isRecordTableHeaderProcessingComponentState,
+      isRecordTableHeaderDropProcessingComponentState,
     );
 
   const handleDragStart = useCallback(() => {
-    store.set(isRecordTableHeaderProcessingCallbackState, true);
-  }, [store, isRecordTableHeaderProcessingCallbackState]);
+    store.set(isRecordTableHeaderDropProcessingCallbackState, true);
+  }, [store, isRecordTableHeaderDropProcessingCallbackState]);
 
   const handleDragEnd: OnDragEndResponder = useCallback(
     (result) => {
       if (!result.destination) {
-        store.set(isRecordTableHeaderProcessingCallbackState, false);
+        store.set(isRecordTableHeaderDropProcessingCallbackState, false);
         return;
       }
 
       try {
         processTableColumnDrop(result);
       } catch (error) {
-        store.set(isRecordTableHeaderProcessingCallbackState, false);
+        store.set(isRecordTableHeaderDropProcessingCallbackState, false);
         throw error;
       }
     },
-    [processTableColumnDrop, store, isRecordTableHeaderProcessingCallbackState],
+    [
+      processTableColumnDrop,
+      store,
+      isRecordTableHeaderDropProcessingCallbackState,
+    ],
   );
 
   return (

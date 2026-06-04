@@ -9,7 +9,7 @@ import { RecordTableHeaderResizeHandler } from '@/object-record/record-table/rec
 import { RecordTableHeaderCellContainer } from '@/object-record/record-table/record-table-header/components/RecordTableHeaderCellContainer';
 
 import { hasRecordGroupsComponentSelector } from '@/object-record/record-group/states/selectors/hasRecordGroupsComponentSelector';
-import { isRecordTableHeaderProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderProcessingComponentState';
+import { isRecordTableHeaderDropProcessingComponentState } from '@/object-record/record-table/record-table-header/states/isRecordTableHeaderDropProcessingComponentState';
 import { isRecordTableColumnHeadersReadOnlyComponentState } from '@/object-record/record-table/states/isRecordTableColumnHeadersReadOnlyComponentState';
 import { isRecordTableColumnResizableComponentState } from '@/object-record/record-table/states/isRecordTableColumnResizableComponentState';
 import { isRecordTableRowActiveComponentFamilyState } from '@/object-record/record-table/states/isRecordTableRowActiveComponentFamilyState';
@@ -90,7 +90,7 @@ export const RecordTableHeaderFirstScrollableCell = () => {
   const isResizingAnyColumn = isDefined(resizedFieldMetadataId);
 
   const isRecordTableHeaderDropProcessing = useAtomComponentStateValue(
-    isRecordTableHeaderProcessingComponentState,
+    isRecordTableHeaderDropProcessingComponentState,
   );
 
   if (!recordField) {

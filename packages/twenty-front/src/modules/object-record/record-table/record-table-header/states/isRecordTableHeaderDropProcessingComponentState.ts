@@ -1,9 +1,9 @@
 import { RecordTableComponentInstanceContext } from '@/object-record/record-table/states/context/RecordTableComponentInstanceContext';
 import { createAtomComponentState } from '@/ui/utilities/state/jotai/utils/createAtomComponentState';
 
-export const isRecordTableHeaderProcessingComponentState =
+export const isRecordTableHeaderDropProcessingComponentState =
   createAtomComponentState<boolean>({
-    key: 'isRecordTableHeaderProcessingComponentState',
+    key: 'isRecordTableHeaderDropProcessingComponentState',
     defaultValue: false,
     componentInstanceContext: RecordTableComponentInstanceContext,
   });

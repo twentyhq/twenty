@@ -56,12 +56,16 @@ export const RecordTableHeader = () => {
 
   return (
     <RecordTableHeaderDragDropContext>
-      <Droppable droppableId="droppable-header" direction="horizontal" ignoreContainerClipping>
+      <Droppable
+        droppableId="droppable-header"
+        direction="horizontal"
+        ignoreContainerClipping
+      >
         {(droppableProvided) => (
           <StyledHeaderContainer
-          ref={droppableProvided.innerRef}
-          // oxlint-disable-next-line react/jsx-props-no-spreading
-          {...droppableProvided.droppableProps}
+            ref={droppableProvided.innerRef}
+            // oxlint-disable-next-line react/jsx-props-no-spreading
+            {...droppableProvided.droppableProps}
           >
             {!isRecordTableDragColumnHidden && (
               <RecordTableHeaderDragDropColumn />
