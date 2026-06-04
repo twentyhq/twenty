@@ -36,8 +36,8 @@ const StyledBetweenContainer = styled.div`
 `;
 
 const StyledTabRow = styled.div`
-  display: flex;
   border-bottom: 1px solid ${themeCssVariables.border.color.light};
+  display: flex;
   margin-bottom: ${themeCssVariables.spacing[1]};
 `;
 
@@ -59,7 +59,9 @@ const StyledTab = styled.button<{ isActive: boolean }>`
       ? themeCssVariables.font.weight.medium
       : themeCssVariables.font.weight.regular};
   padding: ${themeCssVariables.spacing[2]} ${themeCssVariables.spacing[3]};
-  transition: color 0.15s ease, border-color 0.15s ease;
+  transition:
+    color 0.15s ease,
+    border-color 0.15s ease;
 
   &:hover {
     color: ${themeCssVariables.font.color.primary};
@@ -142,9 +144,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     return '';
   };
 
-  const handleBetweenStartChange = (
-    newDate: Temporal.ZonedDateTime | null,
-  ) => {
+  const handleBetweenStartChange = (newDate: Temporal.ZonedDateTime | null) => {
     const newStart = newDate?.toInstant().toString() ?? '';
     const newValue = `${newStart},${endStr}`;
     const displayValue = buildBetweenDisplayValue(newStart, endStr);

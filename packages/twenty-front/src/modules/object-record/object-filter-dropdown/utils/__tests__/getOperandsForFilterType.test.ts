@@ -51,10 +51,7 @@ describe('getOperandsForFilterType', () => {
     RecordFilterOperand.IS_AFTER,
   ];
 
-  const dateTimeOperands = [
-    ...dateOperands,
-    RecordFilterOperand.IS_BETWEEN,
-  ]
+  const dateTimeOperands = [...dateOperands, RecordFilterOperand.IS_BETWEEN];
 
   const relationOperand = [RecordFilterOperand.IS, RecordFilterOperand.IS_NOT];
 
