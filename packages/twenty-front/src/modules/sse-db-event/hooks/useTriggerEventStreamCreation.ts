@@ -12,6 +12,7 @@ import { sseEventStreamReadyState } from '@/sse-db-event/states/sseEventStreamRe
 import { isGracefullyHandledEventStreamError } from '@/sse-db-event/utils/isGracefullyHandledEventStreamError';
 import { useSetAtomState } from '@/ui/utilities/state/jotai/hooks/useSetAtomState';
 import { captureException } from '@sentry/react';
+import { CombinedGraphQLErrors } from '@apollo/client/errors';
 import { isNonEmptyString } from '@sniptt/guards';
 import { print, type ExecutionResult } from 'graphql';
 
@@ -116,6 +117,8 @@ export const useTriggerEventStreamCreation = () => {
 
           const metadataEvents = eventSubscription?.metadataEvents ?? [];
 
+          dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
+
           const objectRecordEvents = objectRecordEventsWithQueryIds.map(
             (item) => item.objectRecordEvent,
           );
@@ -127,10 +130,21 @@ export const useTriggerEventStreamCreation = () => {
           dispatchObjectRecordEventsFromSseToBrowserEvents(
             objectRecordEventsWithQueryIds,
           );
-
-          dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
         },
         error: (error) => {
+          if (CombinedGraphQLErrors.is(error)) {
+            const extensions = getGraphqlErrorExtensionsFromError(error);
+
+            if (
+              isGracefullyHandledEventStreamError({
+                subCode: extensions?.subCode,
+                code: extensions?.code,
+              })
+            ) {
+              return;
+            }
+          }
+
           captureException(error);
         },
         complete: () => {},
@@ -170,6 +184,11 @@ export const useTriggerEventStreamCreation = () => {
                   result?.data?.onEventSubscription
                     ?.objectRecordEventsWithQueryIds ?? [];
 
+                const metadataEvents =
+                  result?.data?.onEventSubscription?.metadataEvents ?? [];
+
+                dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
+
                 const objectRecordEvents = objectRecordEventsWithQueryIds.map(
                   (objectRecordEventWithQueryIds) => {
                     return objectRecordEventWithQueryIds.objectRecordEvent;
@@ -183,11 +202,6 @@ export const useTriggerEventStreamCreation = () => {
                 dispatchObjectRecordEventsFromSseToBrowserEvents(
                   objectRecordEventsWithQueryIds,
                 );
-
-                const metadataEvents =
-                  result?.data?.onEventSubscription?.metadataEvents ?? [];
-
-                dispatchMetadataEventsFromSseToBrowserEvents(metadataEvents);
               }
             }
           } catch (error) {
