@@ -4465,6 +4465,7 @@ type Subscription {
   onEventSubscription(eventStreamId: String!): EventSubscription
   logicFunctionLogs(input: LogicFunctionLogsInput!): LogicFunctionLogs!
   onAgentChatEvent(threadId: UUID!): AgentChatEvent!
+  eventLogsLive(table: EventLogTable!): [EventLogRecord!]
 }
 
 input LogicFunctionLogsInput {

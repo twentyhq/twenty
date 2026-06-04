@@ -60,4 +60,10 @@ describe('ClickHouseEventSink', () => {
 
     expect(insert).not.toHaveBeenCalled();
   });
+
+  it('throws when a ClickHouse insert fails so the consumer retries', async () => {
+    insert.mockResolvedValue({ success: false });
+
+    await expect(sink.write([makePageview('a')])).rejects.toThrow();
+  });
 });

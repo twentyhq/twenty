@@ -1,16 +1,15 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { type EventSink } from 'src/engine/core-modules/audit/sinks/event-sink';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
 
-// Writes every event type to its ClickHouse table. The only per-type logic is
-// the table name carried by the envelope — rows are inserted as-is. This is the
-// single place that gates on ClickHouse being configured.
+// Writes every event type to its ClickHouse table — the only per-type logic is
+// the table name carried by the envelope. Throws on insert failure so the queue
+// consumer fails and BullMQ retries (at-least-once); no-ops when ClickHouse is
+// not configured.
 @Injectable()
 export class ClickHouseEventSink implements EventSink {
-  private readonly logger = new Logger(ClickHouseEventSink.name);
-
   constructor(private readonly clickHouseService: ClickHouseService) {}
 
   async write(events: WorkspaceEventEnvelope[]): Promise<void> {
@@ -32,7 +31,9 @@ export class ClickHouseEventSink implements EventSink {
         const result = await this.clickHouseService.insert(table, rows);
 
         if (!result.success) {
-          this.logger.error(`Failed to insert ${rows.length} ${table} rows`);
+          throw new Error(
+            `Failed to insert ${rows.length} ${table} row(s) into ClickHouse`,
+          );
         }
       }),
     );

@@ -11250,6 +11250,15 @@ export default {
                     ]
                 }
             ],
+            "eventLogsLive": [
+                288,
+                {
+                    "table": [
+                        329,
+                        "EventLogTable!"
+                    ]
+                }
+            ],
             "__typename": [
                 1
             ]

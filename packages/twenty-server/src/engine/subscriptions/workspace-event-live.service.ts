@@ -10,6 +10,12 @@ import { WORKSPACE_EVENT_LIVE_TTL_MS } from 'src/engine/subscriptions/constants/
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
+type WatchedGroup = {
+  workspaceId: string;
+  table: string;
+  rows: Record<string, unknown>[];
+};
+
 // Presence-gated live fan-out for the unified event stream. A subscriber marks
 // its (workspace, table) watched with a TTL refreshed by the subscription
 // heartbeat; the consumer only publishes events for tables that are currently
@@ -49,23 +55,33 @@ export class WorkspaceEventLiveService {
 
   async publishWatched(events: WorkspaceEventEnvelope[]): Promise<void> {
     try {
-      const workspaceId = events[0]?.row.workspaceId;
+      // Group by (workspaceId, table) so a batch is published to the right
+      // workspace channel even if it ever spans more than one workspace.
+      const groups = new Map<string, WatchedGroup>();
 
-      if (!isDefined(workspaceId)) {
-        return;
+      for (const event of events) {
+        const workspaceId = event.row.workspaceId;
+
+        if (!isDefined(workspaceId)) {
+          continue;
+        }
+
+        const key = `${workspaceId}:${event.table}`;
+        const group = groups.get(key) ?? {
+          workspaceId,
+          table: event.table,
+          rows: [],
+        };
+
+        group.rows.push(event.row);
+        groups.set(key, group);
       }
 
-      const tables = [...new Set(events.map((event) => event.table))];
-
       await Promise.all(
-        tables.map(async (table) => {
+        [...groups.values()].map(async ({ workspaceId, table, rows }) => {
           if (!(await this.isWatched(workspaceId, table))) {
             return;
           }
-
-          const rows = events
-            .filter((event) => event.table === table)
-            .map((event) => event.row);
 
           await this.subscriptionService.publish({
             channel: SubscriptionChannel.WORKSPACE_EVENTS_CHANNEL,

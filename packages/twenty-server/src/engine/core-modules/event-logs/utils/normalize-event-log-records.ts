@@ -50,13 +50,13 @@ export const normalizeEventLogRecords = (
       timestamp: new Date(record.timestamp),
       userId: record.userWorkspaceId,
       properties: {
+        ...(record.metadata ?? {}),
         operationType: record.operationType,
         quantity: record.quantity,
         unit: record.unit,
         creditsUsedMicro: record.creditsUsedMicro,
         resourceId: record.resourceId,
         resourceContext: record.resourceContext,
-        ...(record.metadata ?? {}),
       },
     }));
   }
@@ -66,12 +66,12 @@ export const normalizeEventLogRecords = (
       event: record.logicFunctionName ?? '',
       timestamp: new Date(record.timestamp),
       properties: {
+        ...(record.properties ?? {}),
         level: record.level,
         message: record.message,
         executionId: record.executionId,
         logicFunctionId: record.logicFunctionId,
         applicationId: record.applicationId,
-        ...(record.properties ?? {}),
       },
     }));
   }

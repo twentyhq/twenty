@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Logger, Module } from '@nestjs/common';
 
 import { isDefined } from 'twenty-shared/utils';
 
@@ -33,8 +33,18 @@ const eventSinksProvider = {
       console: consoleEventSink,
     };
 
-    return twentyConfigService
-      .get('EVENT_SINKS')
+    const configuredSinkNames = twentyConfigService.get('EVENT_SINKS');
+    const unknownSinkNames = configuredSinkNames.filter(
+      (name) => !(name.toLowerCase() in registry),
+    );
+
+    if (unknownSinkNames.length > 0) {
+      new Logger('WorkspaceEventSinks').warn(
+        `Ignoring unknown EVENT_SINKS: ${unknownSinkNames.join(', ')}`,
+      );
+    }
+
+    return configuredSinkNames
       .map((name) => registry[name.toLowerCase()])
       .filter(isDefined);
   },

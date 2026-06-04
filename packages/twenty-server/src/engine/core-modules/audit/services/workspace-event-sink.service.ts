@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import {
   EVENT_SINKS,
@@ -19,6 +19,8 @@ import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-ev
 // every configured sink and fanning out to live subscribers in one place.
 @Injectable()
 export class WorkspaceEventSinkService {
+  private readonly logger = new Logger(WorkspaceEventSinkService.name);
+
   constructor(
     @Inject(EVENT_SINKS)
     private readonly sinks: EventSink[],
@@ -38,15 +40,22 @@ export class WorkspaceEventSinkService {
       return;
     }
 
-    await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
-      WORKSPACE_EVENTS_JOB_NAME,
-      { events },
-    );
+    try {
+      await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
+        WORKSPACE_EVENTS_JOB_NAME,
+        { events },
+      );
+    } catch (error) {
+      // Emitting analytics is best-effort and fire-and-forget from request
+      // paths; a queue failure must never surface to the caller.
+      this.logger.error('Failed to enqueue workspace events', error);
+    }
   }
 
   async ingest(events: WorkspaceEventEnvelope[]): Promise<void> {
+    // Persistence must throw on failure so the consumer job retries; the live
+    // fan-out is best-effort and deliberately not awaited.
     await this.persist(events);
-    // Live fan-out is best-effort — don't block the durable write on it.
     void this.workspaceEventLiveService.publishWatched(events);
   }
 
