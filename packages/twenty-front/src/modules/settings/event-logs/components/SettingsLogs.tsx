@@ -162,7 +162,7 @@ export const SettingsLogs = () => {
     setFilters(newFilters);
   };
 
-  const renderEnterpriseUpgradeCard = () => (
+  const renderUpgradeCard = () => (
     <Card rounded>
       <SettingsOptionCardContentButton
         Icon={IconLock}
@@ -190,7 +190,7 @@ export const SettingsLogs = () => {
 
   const renderResults = () => {
     if (!isApplicationLog && !hasAuditLogsEntitlement) {
-      return renderEnterpriseUpgradeCard();
+      return renderUpgradeCard();
     }
 
     if (!isClickHouseConfigured) {
@@ -203,7 +203,7 @@ export const SettingsLogs = () => {
 
     if (isDefined(error)) {
       if (isGraphqlErrorOfType(error, 'NO_ENTITLEMENT')) {
-        return renderEnterpriseUpgradeCard();
+        return renderUpgradeCard();
       }
 
       return (
