@@ -1,0 +1,21 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/extract-message-body-text.util.spec.ts
+  s_f4e1722761d227::t_1f07ffe7ec8259 333-350
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/extract-message-body-text.util.ts
+  s_f4e1722761d227::t_4167684e6dd0dc 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "402d61cfe30982fb4ede62bbca6e8eba18c40fdc",
+  "prompts": {},
+  "sessions": {
+    "s_f4e1722761d227": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5ba08872-77dc-4b24-be55-0bd446f3b562",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
