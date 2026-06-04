@@ -127,7 +127,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     if (!isNonEmptyString(instantStr)) return '';
     return formatDateTimeString({
       value: instantStr,
-      timeZone,
+      timeZone: resolvedTimeZone,
       dateFormat,
       timeFormat,
       localeCatalog: dateLocale.localeCatalog,
@@ -199,7 +199,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
 
     const formattedDateTime = formatDateTimeString({
       value: newFilterValue,
-      timeZone,
+      timeZone: resolvedTimeZone,
       dateFormat,
       timeFormat,
       localeCatalog: dateLocale.localeCatalog,
@@ -228,7 +228,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
     const newFilterValue = relativeDate
       ? stringifyRelativeDateFilter({
           ...relativeDate,
-          timezone: timeZone,
+          timezone: resolvedTimeZone,
           firstDayOfTheWeek: resolvedCalendarStartDay,
         })
       : '';
