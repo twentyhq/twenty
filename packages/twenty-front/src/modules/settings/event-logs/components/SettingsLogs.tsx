@@ -3,9 +3,10 @@ import { useLingui } from '@lingui/react/macro';
 import { useMemo, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
+import { billingState } from '@/client-config/states/billingState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
 import { SettingsEmptyPlaceholder } from '@/settings/components/SettingsEmptyPlaceholder';
-import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/SettingsEnterpriseFeatureGateCard';
+import { SettingsOptionCardContentButton } from '@/settings/components/SettingsOptions/SettingsOptionCardContentButton';
 import { EventLogFilters } from '@/settings/event-logs/components/EventLogFilters';
 import { EventLogResultsTable } from '@/settings/event-logs/components/EventLogResultsTable';
 import { EventLogTableSelector } from '@/settings/event-logs/components/EventLogTableSelector';
@@ -13,13 +14,23 @@ import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogs
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
+import { SettingsPath } from 'twenty-shared/types';
 import { isDefined } from 'twenty-shared/utils';
-import { IconPlayerPause, IconPlayerPlay } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import {
+  IconArrowUp,
+  IconLock,
+  IconPlayerPause,
+  IconPlayerPlay,
+} from 'twenty-ui/display';
+import { Button, IconButton } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
-import { EventLogTable } from '~/generated-metadata/graphql';
+import {
+  BillingEntitlementKey,
+  EventLogTable,
+} from '~/generated-metadata/graphql';
+import { useNavigateSettings } from '~/hooks/useNavigateSettings';
 
 // Fills the settings body height so the tab itself never scrolls; only the
 // results table (below) scrolls, with the filter card pinned above it.
@@ -84,9 +95,20 @@ export const SettingsLogs = () => {
 
   const currentWorkspace = useAtomStateValue(currentWorkspaceState);
   const isClickHouseConfigured = useAtomStateValue(isClickHouseConfiguredState);
+  const billing = useAtomStateValue(billingState);
+  const navigateSettings = useNavigateSettings();
 
-  const hasEnterpriseAccess =
-    currentWorkspace?.hasValidSignedEnterpriseKey === true;
+  // Access mirrors the backend: application logs are free; every other table
+  // needs the AUDIT_LOGS entitlement (granted by an Enterprise plan on Cloud, or
+  // a valid Enterprise key when self-hosted). Gating on the entitlement — rather
+  // than the signed-key flag — keeps the UI in sync with what the API will allow.
+  const isBillingEnabled = billing?.isBillingEnabled ?? false;
+  const hasAuditLogsEntitlement =
+    currentWorkspace?.billingEntitlements?.some(
+      (entitlement) =>
+        entitlement.key === BillingEntitlementKey.AUDIT_LOGS &&
+        entitlement.value,
+    ) === true;
 
   const [selectedTable, setSelectedTable] = useState<EventLogTable>(
     EventLogTable.PAGEVIEW,
@@ -96,7 +118,7 @@ export const SettingsLogs = () => {
 
   const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
   const canQuery =
-    isClickHouseConfigured && (isApplicationLog || hasEnterpriseAccess);
+    isClickHouseConfigured && (isApplicationLog || hasAuditLogsEntitlement);
 
   const { records, totalCount, hasNextPage, loading, error, loadMore } =
     useEventLogs(
@@ -149,13 +171,31 @@ export const SettingsLogs = () => {
   };
 
   const renderResults = () => {
-    if (!isApplicationLog && !hasEnterpriseAccess) {
+    if (!isApplicationLog && !hasAuditLogsEntitlement) {
       return (
-        <SettingsEnterpriseFeatureGateCard
-          title={t`Enterprise feature`}
-          description={t`Upgrade to Enterprise to access this log type.`}
-          buttonTitle={t`Activate`}
-        />
+        <Card rounded>
+          <SettingsOptionCardContentButton
+            Icon={IconLock}
+            title={t`Upgrade to access audit logs`}
+            description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
+            Button={
+              <Button
+                title={t`Upgrade`}
+                variant="primary"
+                accent="blue"
+                size="small"
+                Icon={IconArrowUp}
+                onClick={() =>
+                  navigateSettings(
+                    isBillingEnabled
+                      ? SettingsPath.Billing
+                      : SettingsPath.AdminPanelEnterprise,
+                  )
+                }
+              />
+            }
+          />
+        </Card>
       );
     }
 
