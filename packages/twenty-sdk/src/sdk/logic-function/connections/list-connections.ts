@@ -1,5 +1,5 @@
 import { type AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
-import { postConnectionsEndpoint } from '@/sdk/logic-function/connections/utils/post-connections-endpoint.util';
+import { postAppEndpoint } from '@/sdk/logic-function/utils/post-app-endpoint.util';
 
 export type ListConnectionsFilter = {
   // Provider name as declared on `defineConnectionProvider({ name })`.
@@ -20,7 +20,8 @@ export type ListConnectionsFilter = {
 export const listConnections = async (
   filter: ListConnectionsFilter = {},
 ): Promise<AppConnection[]> =>
-  postConnectionsEndpoint<ListConnectionsFilter, AppConnection[]>(
-    'list',
-    filter,
-  );
+  postAppEndpoint<ListConnectionsFilter, AppConnection[]>({
+    path: 'connections/list',
+    body: filter,
+    caller: 'listConnections',
+  });

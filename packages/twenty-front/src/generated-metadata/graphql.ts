@@ -2494,6 +2494,7 @@ export type Mutation = {
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
   revokeApiKey?: Maybe<ApiKey>;
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
+  runAgent: RunAgentResult;
   runEvaluationInput: AgentTurn;
   runWorkspaceMigration: Scalars['Boolean'];
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -3190,6 +3191,11 @@ export type MutationRevokeApiKeyArgs = {
 
 export type MutationRotateApplicationRegistrationClientSecretArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationRunAgentArgs = {
+  input: RunAgentInput;
 };
 
 
@@ -4733,6 +4739,17 @@ export enum RowLevelPermissionPredicateOperand {
   LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
+
+export type RunAgentInput = {
+  agentUniversalIdentifier: Scalars['String'];
+  prompt: Scalars['String'];
+};
+
+export type RunAgentResult = {
+  __typename?: 'RunAgentResult';
+  hasNoMoreAvailableCredits: Scalars['Boolean'];
+  result: Scalars['JSON'];
+};
 
 export type SsoConnection = {
   __typename?: 'SSOConnection';

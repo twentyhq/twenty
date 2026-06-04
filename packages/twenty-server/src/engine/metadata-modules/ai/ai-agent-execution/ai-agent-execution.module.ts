@@ -21,8 +21,10 @@ import { AgentMessagePartEntity } from './entities/agent-message-part.entity';
 import { AgentMessageEntity } from './entities/agent-message.entity';
 import { AgentTurnEntity } from './entities/agent-turn.entity';
 import { AgentMessagePartResolver } from './resolvers/agent-message-part.resolver';
+import { AgentRunResolver } from './resolvers/agent-run.resolver';
 import { AgentActorContextService } from './services/agent-actor-context.service';
 import { AgentAsyncExecutorService } from './services/agent-async-executor.service';
+import { AgentRunService } from './services/agent-run.service';
 
 @Module({
   imports: [
@@ -50,7 +52,10 @@ import { AgentAsyncExecutorService } from './services/agent-async-executor.servi
     AgentAsyncExecutorService,
     AgentActorContextService,
     AgentMessagePartResolver,
+    AgentRunResolver,
+    AgentRunService,
     provideWorkspaceScopedRepository(RoleTargetEntity),
+    provideWorkspaceScopedRepository(AgentEntity),
   ],
   exports: [
     AgentAsyncExecutorService,

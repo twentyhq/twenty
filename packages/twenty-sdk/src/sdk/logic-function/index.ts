@@ -44,3 +44,6 @@ export type { ListConnectionsFilter } from '@/sdk/logic-function/connections/lis
 export { findConnectionForRequest } from '@/sdk/logic-function/connections/find-connection-for-request';
 export { AppConnectionAuthFailedError } from '@/sdk/logic-function/connections/errors/app-connection-auth-failed.error';
 export type { AppConnection } from '@/sdk/logic-function/connections/types/app-connection.type';
+
+export { runAgent } from '@/sdk/logic-function/agents/run-agent';
+export type { RunAgentInput, RunAgentResult } from 'twenty-shared/application';

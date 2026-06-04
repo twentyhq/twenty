@@ -2528,6 +2528,11 @@ type AgentMessagePart {
   createdAt: DateTime!
 }
 
+type RunAgentResult {
+  result: JSON!
+  hasNoMoreAvailableCredits: Boolean!
+}
+
 type ChannelSyncSuccess {
   success: Boolean!
 }
@@ -3237,6 +3242,7 @@ type Mutation {
   upsertRowLevelPermissionPredicates(input: UpsertRowLevelPermissionPredicatesInput!): UpsertRowLevelPermissionPredicatesResult!
   assignRoleToAgent(agentId: UUID!, roleId: UUID!): Boolean!
   removeRoleFromAgent(agentId: UUID!): Boolean!
+  runAgent(input: RunAgentInput!): RunAgentResult!
   createWebhook(input: CreateWebhookInput!): Webhook!
   updateWebhook(input: UpdateWebhookInput!): Webhook!
   deleteWebhook(id: UUID!): Webhook!
@@ -4090,6 +4096,11 @@ input RowLevelPermissionPredicateGroupInput {
   parentRowLevelPermissionPredicateGroupId: UUID
   logicalOperator: RowLevelPermissionPredicateGroupLogicalOperator!
   positionInRowLevelPermissionPredicateGroup: Float
+}
+
+input RunAgentInput {
+  agentUniversalIdentifier: String!
+  prompt: String!
 }
 
 input CreateWebhookInput {

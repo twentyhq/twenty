@@ -66,4 +66,36 @@ Key points:
 - `modelId` (optional) overrides the default AI model used by the agent.
 
 </Accordion>
+<Accordion title="runAgent" description="Run an agent from a logic function">
+
+`runAgent()` lets a logic function run one of your app's agents (with its
+skills and tools). Identify the agent by the `universalIdentifier` you passed
+to `defineAgent()`:
+
+```ts src/logic-functions/run-enricher.ts
+import { runAgent } from 'twenty-sdk/logic-function';
+
+const { result, hasNoMoreAvailableCredits } = await runAgent({
+  agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
+  prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
+});
+```
+
+Key points:
+- The agent runs **synchronously** and can read/update records itself via its
+  own tools — `runAgent()` resolves once the run completes.
+- An app can only run its own agents.
+- Set a generous `timeoutSeconds` on the logic function — agent runs can take
+  several seconds.
+- `hasNoMoreAvailableCredits` is `true` when the workspace ran out of AI
+  credits mid-run; in that case `result` may be empty.
+
+<Warning>
+  **Avoid loops:** if you call `runAgent()` from a `*.updated` database-event
+  trigger and the agent updates the same record, scope the trigger with
+  `updatedFields` to a field the agent never writes (e.g. the source URL), or
+  guard on whether any target field is still empty before calling `runAgent()`.
+</Warning>
+
+</Accordion>
 </AccordionGroup>
