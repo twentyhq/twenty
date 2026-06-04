@@ -7,10 +7,12 @@ import { isDefined } from 'twenty-shared/utils';
 
 import { ClickHouseModule } from 'src/database/clickHouse/clickHouse.module';
 import { BillingModule } from 'src/engine/core-modules/billing/billing.module';
+import { CacheStorageModule } from 'src/engine/core-modules/cache-storage/cache-storage.module';
 import { EnterpriseModule } from 'src/engine/core-modules/enterprise/enterprise.module';
 import { EventLogEmitterResolver } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.resolver';
 import { EventLogEmitterService } from 'src/engine/core-modules/event-logs/emit/event-log-emitter.service';
 import { ClickHouseEventSink } from 'src/engine/core-modules/event-logs/ingest/clickhouse-event.sink';
+import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { ConsoleEventSink } from 'src/engine/core-modules/event-logs/ingest/console-event.sink';
 import { CreateAuditLogFromInternalEvent } from 'src/engine/core-modules/event-logs/ingest/create-audit-log-from-internal-event';
 import {
@@ -74,6 +76,7 @@ const eventSinksProvider = {
     EnterpriseModule,
     GuardRedirectModule,
     JwtModule,
+    CacheStorageModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
   providers: [
@@ -88,11 +91,13 @@ const eventSinksProvider = {
     WorkspaceEventSinkService,
     WorkspaceEventsConsumer,
     CreateAuditLogFromInternalEvent,
+    EventLogLiveService,
   ],
   exports: [
     EventLogsService,
     EventLogEmitterService,
     WorkspaceEventSinkService,
+    EventLogLiveService,
   ],
 })
 export class EventLogsModule {}

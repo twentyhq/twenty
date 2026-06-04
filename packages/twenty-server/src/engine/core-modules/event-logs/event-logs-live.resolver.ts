@@ -19,7 +19,7 @@ import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/cons
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
-import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
+import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 
 import { EventLogsService } from './event-logs.service';
 
@@ -45,7 +45,7 @@ export class EventLogsLiveResolver {
   constructor(
     private readonly eventLogsService: EventLogsService,
     private readonly subscriptionService: SubscriptionService,
-    private readonly workspaceEventLiveService: WorkspaceEventLiveService,
+    private readonly workspaceEventLiveService: EventLogLiveService,
   ) {}
 
   @UseGuards(

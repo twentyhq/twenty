@@ -1,5 +1,5 @@
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { type ApplicationLogEntry } from 'src/engine/core-modules/application-logs/interfaces/application-log-entry.interface';
+import { type ApplicationLogEntry } from 'src/engine/core-modules/event-logs/producers/application-log/application-log-entry.interface';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/types/workspace-event-envelope.type';
 
 export const buildApplicationLogEnvelopes = (

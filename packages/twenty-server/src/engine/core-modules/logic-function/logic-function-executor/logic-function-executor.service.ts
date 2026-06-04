@@ -17,8 +17,8 @@ import {
   type LogicFunctionTranspileResult,
 } from 'src/engine/core-modules/logic-function/logic-function-drivers/interfaces/logic-function-driver.interface';
 
-import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/application-logs/utils/build-application-log-envelopes';
-import { parseApplicationLogLines } from 'src/engine/core-modules/application-logs/utils/parse-application-log-lines';
+import { buildApplicationLogEnvelopes } from 'src/engine/core-modules/event-logs/producers/application-log/build-application-log-envelopes';
+import { parseApplicationLogLines } from 'src/engine/core-modules/event-logs/producers/application-log/parse-application-log-lines';
 import { ApplicationRegistrationVariableEntity } from 'src/engine/core-modules/application/application-registration-variable/application-registration-variable.entity';
 import type { FlatApplicationVariable } from 'src/engine/metadata-modules/flat-application-variable/types/flat-application-variable.type';
 import { FlatApplication } from 'src/engine/core-modules/application/types/flat-application.type';
@@ -48,7 +48,7 @@ import {
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
+import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
@@ -80,7 +80,7 @@ export class LogicFunctionExecutorService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
-    private readonly workspaceEventLiveService: WorkspaceEventLiveService,
+    private readonly workspaceEventLiveService: EventLogLiveService,
     private readonly auditService: EventLogEmitterService,
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,

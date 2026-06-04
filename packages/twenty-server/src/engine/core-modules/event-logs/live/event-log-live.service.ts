@@ -6,7 +6,7 @@ import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/event-logs/
 import { InjectCacheStorage } from 'src/engine/core-modules/cache-storage/decorators/cache-storage.decorator';
 import { CacheStorageService } from 'src/engine/core-modules/cache-storage/services/cache-storage.service';
 import { CacheStorageNamespace } from 'src/engine/core-modules/cache-storage/types/cache-storage-namespace.enum';
-import { WORKSPACE_EVENT_LIVE_TTL_MS } from 'src/engine/subscriptions/constants/workspace-event-live-ttl.constant';
+import { EVENT_LOG_LIVE_TTL_MS } from 'src/engine/core-modules/event-logs/live/event-log-live-ttl.constant';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
 
@@ -19,8 +19,8 @@ type WatchedGroup = {
 // Presence-gated live fan-out: a subscriber marks (workspace, table) watched with a heartbeat-
 // refreshed TTL, and the consumer only publishes to watched tables — so unwatched types cost nothing.
 @Injectable()
-export class WorkspaceEventLiveService {
-  private readonly logger = new Logger(WorkspaceEventLiveService.name);
+export class EventLogLiveService {
+  private readonly logger = new Logger(EventLogLiveService.name);
 
   constructor(
     @InjectCacheStorage(CacheStorageNamespace.EngineSubscriptions)
@@ -37,7 +37,7 @@ export class WorkspaceEventLiveService {
     await this.cacheStorageService.set<boolean>(
       this.getPresenceKey(workspaceId, key),
       true,
-      WORKSPACE_EVENT_LIVE_TTL_MS,
+      EVENT_LOG_LIVE_TTL_MS,
     );
   }
 

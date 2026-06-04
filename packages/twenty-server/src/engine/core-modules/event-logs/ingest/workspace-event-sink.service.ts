@@ -12,7 +12,7 @@ import {
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
 import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
-import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
+import { EventLogLiveService } from 'src/engine/core-modules/event-logs/live/event-log-live.service';
 
 // The unified event pipeline. enqueue() propagates queue errors so producers decide how to
 // handle them; ingest() throws on persistence failure so the consumer job retries.
@@ -23,7 +23,7 @@ export class WorkspaceEventSinkService {
     private readonly sinks: EventSink[],
     @InjectMessageQueue(MessageQueue.workspaceEventsQueue)
     private readonly workspaceEventsQueueService: MessageQueueService,
-    private readonly workspaceEventLiveService: WorkspaceEventLiveService,
+    private readonly workspaceEventLiveService: EventLogLiveService,
   ) {}
 
   isEnabled(): boolean {

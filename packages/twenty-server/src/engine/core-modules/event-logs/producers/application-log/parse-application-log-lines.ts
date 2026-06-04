@@ -1,5 +1,5 @@
-import { type ParsedLogLine } from 'src/engine/core-modules/application-logs/types/parsed-log-line.type';
-import { stripAnsiEscapes } from 'src/engine/core-modules/application-logs/utils/strip-ansi-escapes.util';
+import { type ParsedLogLine } from 'src/engine/core-modules/event-logs/producers/application-log/parsed-log-line.type';
+import { stripAnsiEscapes } from 'src/engine/core-modules/event-logs/producers/application-log/strip-ansi-escapes.util';
 
 // Matches: 2024-01-01T00:00:00.000Z INFO some message
 const LOG_LINE_REGEX =

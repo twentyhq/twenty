@@ -19,7 +19,6 @@ import { MetadataEventPublisher } from 'src/engine/subscriptions/metadata-event/
 import { MetadataEventsToDbListener } from 'src/engine/subscriptions/metadata-event/metadata-events-to-db.listener';
 import { ObjectRecordEventPublisher } from 'src/engine/subscriptions/object-record-event/object-record-event-publisher';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
-import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
 import { WorkspaceEventBroadcaster } from 'src/engine/subscriptions/workspace-event-broadcaster/workspace-event-broadcaster.service';
 import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache.module';
 
@@ -38,7 +37,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   providers: [
     SubscriptionService,
-    WorkspaceEventLiveService,
     EventStreamService,
     EventStreamResolver,
     ObjectRecordEventPublisher,
@@ -52,7 +50,6 @@ import { WorkspaceCacheModule } from 'src/engine/workspace-cache/workspace-cache
   ],
   exports: [
     SubscriptionService,
-    WorkspaceEventLiveService,
     ObjectRecordEventPublisher,
     MetadataEventEmitter,
     WorkspaceEventBroadcaster,
