@@ -1,8 +1,15 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+if [[ -f "$SCRIPT_DIR/.env" ]]; then
+  set -a
+  source "$SCRIPT_DIR/.env"
+  set +a
+fi
+
 ARGOS_API_BASE_URL="${ARGOS_API_BASE_URL:-http://127.0.0.1:4002/v2/}"
-ARGOS_TOKEN="${ARGOS_TOKEN:?ARGOS_TOKEN is required}"
+ARGOS_TOKEN="${ARGOS_TOKEN:?ARGOS_TOKEN is required – set it in packages/twenty-ui/.env}"
 
 USERNAME=$(whoami)
 BRANCH="${ARGOS_BRANCH:-$(git rev-parse --abbrev-ref HEAD 2>/dev/null || echo "main")}"
