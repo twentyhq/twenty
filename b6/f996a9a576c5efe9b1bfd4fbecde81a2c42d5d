@@ -1,0 +1,42 @@
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/__tests__/extract-message-body-text.util.spec.ts
+  s_f4e1722761d227::t_df0943c630ad0f 98-101,136-139,161-164,176-179,307-310,326-329
+  s_f4e1722761d227::t_6ec395812f935f 3,5
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.spec.ts
+  s_f4e1722761d227::t_6da14b4c4c53be 155
+  s_f4e1722761d227::t_0f3d43d7169729 179
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/microsoft/services/microsoft-get-messages.service.ts
+  s_f4e1722761d227::t_f37a41517bce75 134,136-137
+  s_f4e1722761d227::t_8d31044a3790d1 138
+  s_f4e1722761d227::t_45a19b598ef60d 13
+  s_f4e1722761d227::t_f27489b2856541 135,139,144
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-and-format-gmail-message.util.ts
+  s_f4e1722761d227::t_e7573c47418b25 70
+  s_f4e1722761d227::t_53c0855945220a 10
+  s_f4e1722761d227::t_f97ecb881a5aa9 27-28
+packages/twenty-server/src/modules/messaging/message-import-manager/utils/extract-message-body-text.util.ts
+  s_f4e1722761d227::t_53d987f915c71a 19
+  s_f4e1722761d227::t_57755278639ea3 9
+  s_f4e1722761d227::t_c60a0e93b571b8 25,27
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/gmail/utils/parse-gmail-message.util.ts
+  s_f4e1722761d227::t_05a3be39acab91 51-52
+  s_f4e1722761d227::t_b4d35c0a21f4a2 33
+packages/twenty-server/src/modules/messaging/message-import-manager/drivers/imap/services/imap-get-messages.service.ts
+  s_f4e1722761d227::t_cad465bc091580 14
+  s_f4e1722761d227::t_fb7431fc2e3c4f 169-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "b6f996a9a576c5efe9b1bfd4fbecde81a2c42d5d",
+  "prompts": {},
+  "sessions": {
+    "s_f4e1722761d227": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5ba08872-77dc-4b24-be55-0bd446f3b562",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
