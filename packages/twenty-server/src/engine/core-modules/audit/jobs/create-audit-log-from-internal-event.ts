@@ -13,15 +13,18 @@ import { OBJECT_RECORD_UPSERTED_EVENT } from 'src/engine/core-modules/audit/util
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
+import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
 // Turns object-record mutations (the highest-volume event source) into
-// objectEvent envelopes and writes them straight to the sinks — it already runs
-// in a durable queue worker, so no second hop is needed.
+// objectEvent envelopes, then persists and live-publishes them straight from
+// this worker — it is already durable, so it doesn't re-enqueue onto the
+// unified queue (same persist + fan-out as WorkspaceEventsConsumer).
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
+    private readonly workspaceEventLiveService: WorkspaceEventLiveService,
   ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
@@ -39,6 +42,7 @@ export class CreateAuditLogFromInternalEvent {
     }
 
     await this.workspaceEventSinkService.write(envelopes);
+    await this.workspaceEventLiveService.publishWatched(envelopes);
   }
 
   private toEnvelopes(
