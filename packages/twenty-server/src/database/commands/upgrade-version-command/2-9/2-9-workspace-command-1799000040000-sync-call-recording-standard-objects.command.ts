@@ -19,7 +19,6 @@ import { type SyncableFlatEntity } from 'src/engine/metadata-modules/flat-entity
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { addFlatEntityToFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/add-flat-entity-to-flat-entity-maps-or-throw.util';
 import { getSubFlatEntityMapsByApplicationIdsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/get-sub-flat-entity-maps-by-application-ids-or-throw.util';
-import { replaceFlatEntityInFlatEntityMapsOrThrow } from 'src/engine/metadata-modules/flat-entity/utils/replace-flat-entity-in-flat-entity-maps-or-throw.util';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
 import { type FlatIndexMetadata } from 'src/engine/metadata-modules/flat-index-metadata/types/flat-index-metadata.type';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
@@ -229,19 +228,25 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
         ];
 
       if (isDefined(staleNavigationCommandMenuItem)) {
-        toMaps = replaceFlatEntityInFlatEntityMapsOrThrow({
-          flatEntity: {
-            ...staleNavigationCommandMenuItem,
-            conditionalAvailabilityExpression:
-              buildNavigationConditionalAvailabilityExpression({
-                universalIdentifier:
-                  renamedCollisionObjectMetadata.universalIdentifier,
-                nameSingular: renamedCollisionObjectMetadata.nameSingular,
-              }),
-            updatedAt: now,
+        const updatedNavigationCommandMenuItem = {
+          ...staleNavigationCommandMenuItem,
+          conditionalAvailabilityExpression:
+            buildNavigationConditionalAvailabilityExpression({
+              universalIdentifier:
+                renamedCollisionObjectMetadata.universalIdentifier,
+              nameSingular: renamedCollisionObjectMetadata.nameSingular,
+            }),
+          updatedAt: now,
+        };
+
+        toMaps = {
+          ...toMaps,
+          byUniversalIdentifier: {
+            ...toMaps.byUniversalIdentifier,
+            [renamedNavigationCommandMenuItemUniversalIdentifier]:
+              updatedNavigationCommandMenuItem,
           },
-          flatEntityMaps: toMaps,
-        });
+        };
       }
     }
 
