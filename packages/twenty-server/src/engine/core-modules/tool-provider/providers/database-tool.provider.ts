@@ -171,6 +171,7 @@ export class DatabaseToolProvider implements ToolProvider {
           : null;
 
         const hasGroupBySchema =
+          !includeSchemas ||
           groupBySchema !== null ||
           hasGroupByToolInputSchema(objectMetadata, restrictedFields);
 
