@@ -2,8 +2,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 
 import { type ToolSet, jsonSchema } from 'ai';
 
-import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolProviderContext } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider-context.type';
+import { type ToolProvider } from 'src/engine/core-modules/tool-provider/interfaces/tool-provider.interface';
 import { type ToolRetrievalOptions } from 'src/engine/core-modules/tool-provider/interfaces/tool-retrieval-options.type';
 
 import { TOOL_PROVIDERS } from 'src/engine/core-modules/tool-provider/constants/tool-providers.token';
@@ -47,11 +47,15 @@ export class ToolRegistryService {
     return results.flat();
   }
 
-  async resolveSchemas(
-    toolNames: string[],
-    context: ToolProviderContext,
-    precomputedCatalog?: ToolIndexEntry[],
-  ): Promise<Map<string, object>> {
+  async resolveSchemas({
+    toolNames,
+    context,
+    precomputedCatalog,
+  }: {
+    toolNames: string[];
+    context: ToolProviderContext;
+    precomputedCatalog?: ToolIndexEntry[];
+  }): Promise<Map<string, object>> {
     const index = precomputedCatalog ?? (await this.getCatalog(context));
     const nameSet = new Set(toolNames);
     const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
@@ -172,11 +176,15 @@ export class ToolRegistryService {
   ): Promise<ToolSet> {
     const fullContext = this.buildContextFromToolContext(context);
 
-    const index = await this.getCatalog(fullContext);
+    const catalog = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
-    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
+    const matchingEntries = catalog.filter((entry) => nameSet.has(entry.name));
 
-    const schemas = await this.resolveSchemas(names, fullContext, index);
+    const schemas = await this.resolveSchemas({
+      toolNames: names,
+      context: fullContext,
+      precomputedCatalog: catalog,
+    });
 
     const descriptors: ToolDescriptor[] = matchingEntries
       .filter((entry) => schemas.has(entry.name))
@@ -200,14 +208,18 @@ export class ToolRegistryService {
   > {
     const fullContext = this.buildContextFromToolContext(context);
 
-    const index = await this.getCatalog(fullContext);
+    const catalog = await this.getCatalog(fullContext);
     const nameSet = new Set(names);
-    const matchingEntries = index.filter((entry) => nameSet.has(entry.name));
+    const matchingEntries = catalog.filter((entry) => nameSet.has(entry.name));
 
     let schemas: Map<string, object> | undefined;
 
     if (aspects.includes('schema')) {
-      schemas = await this.resolveSchemas(names, fullContext, index);
+      schemas = await this.resolveSchemas({
+        toolNames: names,
+        context: fullContext,
+        precomputedCatalog: catalog,
+      });
     }
 
     return matchingEntries.map((entry) => {
