@@ -10,7 +10,8 @@ It is built on a headless component library and a zero-runtime, CSS-variable sty
 1. Publish as a standalone, versioned **npm package**.
 2. Replace `twenty-ui` in `twenty-front` with **no visual change** (same design, token for token).
 3. **Migrate every component** currently exported by `twenty-ui`.
-4. Enforce a **quality bar in CI**: bundle size, render/load time, and accessibility, measured against the old library.
+4. **Absorb the generic, reusable UI** currently living in `twenty-front/src/modules/ui` (dropdowns, modals, tab lists, side panels, navigation, field inputs/displays, etc.), decoupling it from application concerns so it ships from the library.
+5. Enforce a **quality bar in CI**: bundle size, render/load time, and accessibility, measured against the old library.
 
 ## Current state (`twenty-ui`)
 
@@ -24,7 +25,8 @@ It is built on a headless component library and a zero-runtime, CSS-variable sty
 | Consumption | ~1,721 files in `twenty-front` import it (mostly `display` and `theme-constants`); imported by package name |
 | Published | No (`private: true`) |
 
-`twenty-front/src/modules/ui/` (application-level UI) consumes `twenty-ui` and is **out of scope**.
+`twenty-front/src/modules/ui/` (application-level UI) consumes `twenty-ui` today. Its **generic, reusable**
+components are now **in scope** — they migrate into `twenty-new-ui` (see [Application-level UI migration](#application-level-ui-migration-twenty-frontsrcmodulesui)).
 
 ## Decision 1 — Headless library: Base UI
 
@@ -134,6 +136,32 @@ split into two buckets.
 `ColorSample`, `Checkmark`, placeholders, the icon system, `CodeEditor` (Monaco), `json-visualizer`,
 and the `utilities` / `theme` / `testing` / `accessibility` helpers.
 
+## Application-level UI migration (`twenty-front/src/modules/ui`)
+
+`twenty-front/src/modules/ui` holds ~250 application-level UI building blocks that consume `twenty-ui`
+today: `display`, `feedback` (snackbar/dialog managers), `field` (input + display), `input`
+(incl. relation picker), `layout` (dropdown, modal, tab-list, side-panel, page, table, resizable-panel,
+expandable-list, selectable-list, top-bar, …), `navigation` (drawer, breadcrumb, step-bar, menu-item),
+`drag-and-drop`, `suggestion`, `theme`, and `utilities` (hotkey, scroll, focus, responsive, drag-select, …).
+
+These are a **different kind of migration** than the `twenty-ui` swap: they are stateful and
+app-coupled — Jotai atoms, hooks, contexts, and (in places) GraphQL/router/Recoil-style state — rather
+than pure presentation. The goal is to extract the **generic, reusable** parts into `twenty-new-ui`
+while leaving genuinely app-specific wiring in `twenty-front`.
+
+**Approach**
+
+- **Triage, don't lift-and-shift.** Per component, classify as: (a) **generic** → migrate to `twenty-new-ui`; (b) **app-specific** → keep in `twenty-front`; (c) **hybrid** → split a presentational/headless core (library) from an app-wired wrapper (front).
+- **Decouple state.** Replace internal Jotai/global state with controlled props (`props down, events up`); where a component needs local state, keep it self-contained. The library must not import app stores, GraphQL, or routing.
+- **Prefer Base UI primitives** for behavior already covered there — Dropdown→`Menu`/`Popover`, modal/side-panel→`Dialog`, tab-list→`Tabs`, expandable/selectable lists→`Collapsible`/list patterns, drag-and-drop stays on the existing dnd lib but exposed generically.
+- **Same parity bar** as the rest of the package: stories (all states, light/dark), interaction + a11y tests, visual-parity diff, within-budget size entry.
+
+**Out of scope (stays in `twenty-front`):** components bound to domain entities, record/table data fetching,
+workspace/router/permission logic, and anything whose only consumer is a single feature screen.
+
+A component-by-component triage of `modules/ui` (generic / app-specific / hybrid, with target subpath
+and state-decoupling notes) is a **Phase 0 deliverable**, alongside the `twenty-ui` inventory.
+
 ## Test, benchmark & parity strategy
 
 - **Workbench** — Storybook (`@storybook/react-vite`). Every component has stories covering variants, sizes, and states (via `storybook-addon-pseudo-states`), in light and dark, with `autodocs`.
@@ -163,12 +191,13 @@ CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-new-ui`) for size, a11y,
 
 ## Roadmap
 
-- **Phase 0 — Foundations:** scaffold package + tooling; port the theme layer with parity test; stand up the benchmark/parity/a11y CI harness first; complete the component inventory.
+- **Phase 0 — Foundations:** scaffold package + tooling; port the theme layer with parity test; stand up the benchmark/parity/a11y CI harness first; complete the component inventory **and the `modules/ui` triage** (generic / app-specific / hybrid).
 - **Phase 1 — Primitives:** icons, typography, button family, status/tag/chip/pill; establish the canonical component pattern.
 - **Phase 2 — Behavioral:** Modal, Tooltip, Menu, Tabs, Checkbox, Radio, Switch, inputs/Field, Progress, Avatar, Collapsible.
 - **Phase 3 — Long tail:** banners/callout/info, card/section/separator, loader, color/card pickers, code editor, json-visualizer, placeholders, utilities/testing/accessibility.
-- **Phase 4 — Hardening & publish:** close gaps; finalize release pipeline; cut `1.0.0`; publish docs.
-- **Phase 5 — Cut-over:** dogfood → codemod → swap → remove `twenty-ui`.
+- **Phase 4 — Application-level UI:** migrate the generic/hybrid components from `twenty-front/src/modules/ui` per the triage — decouple state, split headless cores, swap each behind its existing `@/ui/...` import path.
+- **Phase 5 — Hardening & publish:** close gaps; finalize release pipeline; cut `1.0.0`; publish docs.
+- **Phase 6 — Cut-over:** dogfood → codemod → swap → remove `twenty-ui`.
 
 A component is done only with: stories (all states, light/dark), passing interaction + a11y tests,
 a passing visual-parity diff, and a within-budget size entry.
@@ -183,6 +212,7 @@ a passing visual-parity diff, and a within-budget size entry.
 | 1,721 import sites | Preserve subpaths/names; automate with a codemod |
 | No Base UI primitive for some components | Build in-house; use Base UI utilities where helpful |
 | Bundle regressions | `size-limit` budgets + PR diff; prefer CSS transitions over `framer-motion` |
+| `modules/ui` components entangled with app state (Jotai/GraphQL/router) | Triage first; split headless core from app wrapper; controlled props only — no app imports in the library |
 
 ## Open questions
 
@@ -192,6 +222,7 @@ a passing visual-parity diff, and a within-budget size entry.
 4. Visual regression tooling: Chromatic vs self-hosted image snapshots.
 5. How aggressively to drop `framer-motion` in favor of CSS/Base UI transitions.
 6. Scope of `assets` / `testing` / `json-visualizer`: port verbatim or modernize.
+7. Where to draw the generic-vs-app-specific line for `modules/ui`, and whether hybrid components live as a headless core in `twenty-new-ui` with a thin app wrapper in `twenty-front`.
 
 ## Appendix — example component pattern
 
