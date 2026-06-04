@@ -7,7 +7,7 @@
 // write-side counterpart of the read-side records in
 // event-logs/event-logs.service.ts.
 
-type EventContextFields = {
+export type EventContextFields = {
   workspaceId?: string | null;
   userId?: string | null;
 };
@@ -73,3 +73,7 @@ export type WorkspaceEventTable = WorkspaceEventEnvelope['table'];
 export type WorkspaceEventsJobData = {
   events: WorkspaceEventEnvelope[];
 };
+
+// Job name on MessageQueue.workspaceEventsQueue, kept here (not on the consumer
+// class) so producers can enqueue without importing the consumer.
+export const WORKSPACE_EVENTS_JOB_NAME = 'WorkspaceEventsConsumer';

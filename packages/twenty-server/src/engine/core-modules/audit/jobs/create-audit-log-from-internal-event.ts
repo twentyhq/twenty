@@ -1,4 +1,5 @@
 import { type ObjectRecordEvent } from 'twenty-shared/database-events';
+import { isDefined } from 'twenty-shared/utils';
 
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
 import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
@@ -13,94 +14,64 @@ import { OBJECT_RECORD_UPSERTED_EVENT } from 'src/engine/core-modules/audit/util
 import { Process } from 'src/engine/core-modules/message-queue/decorators/process.decorator';
 import { Processor } from 'src/engine/core-modules/message-queue/decorators/processor.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
 import { WorkspaceEventBatch } from 'src/engine/workspace-event-emitter/types/workspace-event-batch.type';
 
+const OBJECT_EVENT_BY_SUFFIX = {
+  '.created': OBJECT_RECORD_CREATED_EVENT,
+  '.updated': OBJECT_RECORD_UPDATED_EVENT,
+  '.deleted': OBJECT_RECORD_DELETED_EVENT,
+  '.upserted': OBJECT_RECORD_UPSERTED_EVENT,
+} as const;
+
 // Turns object-record mutations (the highest-volume event source) into
-// objectEvent envelopes, then persists and live-publishes them straight from
-// this worker — it is already durable, so it doesn't re-enqueue onto the
-// unified queue (same persist + fan-out as WorkspaceEventsConsumer).
+// objectEvent envelopes and ingests them straight from this worker — it is
+// already durable, so it doesn't re-enqueue onto the unified queue.
 @Processor(MessageQueue.entityEventsToDbQueue)
 export class CreateAuditLogFromInternalEvent {
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
-    private readonly workspaceEventLiveService: WorkspaceEventLiveService,
   ) {}
 
   @Process(CreateAuditLogFromInternalEvent.name)
-  async handle(
-    workspaceEventBatch: WorkspaceEventBatch<ObjectRecordEvent>,
-  ): Promise<void> {
+  async handle(batch: WorkspaceEventBatch<ObjectRecordEvent>): Promise<void> {
     if (!this.workspaceEventSinkService.isEnabled()) {
       return;
     }
 
-    const envelopes = this.toEnvelopes(workspaceEventBatch);
+    const envelopes = this.toEnvelopes(batch);
 
     if (envelopes.length === 0) {
       return;
     }
 
-    await this.workspaceEventSinkService.write(envelopes);
-    await this.workspaceEventLiveService.publishWatched(envelopes);
+    await this.workspaceEventSinkService.ingest(envelopes);
   }
 
   private toEnvelopes(
     batch: WorkspaceEventBatch<ObjectRecordEvent>,
   ): WorkspaceEventEnvelope[] {
-    const { name } = batch;
+    const suffix = (
+      Object.keys(
+        OBJECT_EVENT_BY_SUFFIX,
+      ) as (keyof typeof OBJECT_EVENT_BY_SUFFIX)[]
+    ).find((candidate) => batch.name.endsWith(candidate));
 
-    if (name.endsWith('.updated')) {
-      return batch.events.map((eventData) =>
-        buildObjectEventEnvelope(
-          this.contextFields(batch, eventData),
-          OBJECT_RECORD_UPDATED_EVENT,
-          this.objectProperties(batch, eventData),
-        ),
-      );
+    if (!isDefined(suffix)) {
+      return [];
     }
 
-    if (name.endsWith('.created')) {
-      return batch.events.map((eventData) =>
-        buildObjectEventEnvelope(
-          this.contextFields(batch, eventData),
-          OBJECT_RECORD_CREATED_EVENT,
-          this.objectProperties(batch, eventData),
-        ),
-      );
-    }
+    const event = OBJECT_EVENT_BY_SUFFIX[suffix];
 
-    if (name.endsWith('.deleted')) {
-      return batch.events.map((eventData) =>
-        buildObjectEventEnvelope(
-          this.contextFields(batch, eventData),
-          OBJECT_RECORD_DELETED_EVENT,
-          this.objectProperties(batch, eventData),
-        ),
-      );
-    }
-
-    if (name.endsWith('.upserted')) {
-      return batch.events.map((eventData) =>
-        buildObjectEventEnvelope(
-          this.contextFields(batch, eventData),
-          OBJECT_RECORD_UPSERTED_EVENT,
-          this.objectProperties(batch, eventData),
-        ),
-      );
-    }
-
-    return [];
-  }
-
-  private contextFields(
-    batch: WorkspaceEventBatch<ObjectRecordEvent>,
-    eventData: ObjectRecordEvent,
-  ) {
-    return computeEventContextFields({
-      workspaceId: batch.workspaceId,
-      userId: eventData.userId,
-    });
+    return batch.events.map((eventData) =>
+      buildObjectEventEnvelope(
+        computeEventContextFields({
+          workspaceId: batch.workspaceId,
+          userId: eventData.userId,
+        }),
+        event,
+        this.objectProperties(batch, eventData),
+      ),
+    );
   }
 
   private objectProperties(

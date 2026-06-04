@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 
-import { WorkspaceEventsConsumer } from 'src/engine/core-modules/audit/jobs/workspace-events.consumer';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
 import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
-import {
-  type WorkspaceEventEnvelope,
-  type WorkspaceEventsJobData,
-} from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
+import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
 import {
   buildObjectEventEnvelope,
   buildPageviewEnvelope,
@@ -17,18 +13,12 @@ import {
   computeEventContextFields,
 } from 'src/engine/core-modules/audit/utils/build-event-envelope';
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
-import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
-import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
-import { MessageQueueService } from 'src/engine/core-modules/message-queue/services/message-queue.service';
 
-// Typed emit facade for analytics events. Builds an envelope and enqueues it
-// onto the unified workspace-events pipeline; the ClickHouse write lives in the
-// sinks.
+// Typed emit facade for analytics events. Builds an envelope and hands it to the
+// unified pipeline; the ClickHouse write lives in the sinks.
 @Injectable()
 export class AuditService {
   constructor(
-    @InjectMessageQueue(MessageQueue.workspaceEventsQueue)
-    private readonly workspaceEventsQueueService: MessageQueueService,
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
 
@@ -67,14 +57,7 @@ export class AuditService {
   private async enqueue(
     envelope: WorkspaceEventEnvelope,
   ): Promise<{ success: boolean }> {
-    if (!this.workspaceEventSinkService.isEnabled()) {
-      return { success: true };
-    }
-
-    await this.workspaceEventsQueueService.add<WorkspaceEventsJobData>(
-      WorkspaceEventsConsumer.name,
-      { events: [envelope] },
-    );
+    await this.workspaceEventSinkService.enqueue([envelope]);
 
     return { success: true };
   }

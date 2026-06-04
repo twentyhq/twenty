@@ -15,6 +15,9 @@ type EventLogsLivePayload = {
   eventLogsLive: EventLogRecord[] | null;
 };
 
+// print() the static document once, not on every subscribe.
+const EVENT_LOGS_LIVE_SUBSCRIPTION_QUERY = print(EVENT_LOGS_LIVE_SUBSCRIPTION);
+
 // Tails the unified live event stream over the shared graphql-sse client. New
 // records are prepended; the list resets each time the subscription (re)opens.
 export const useEventLogsLiveStream = ({
@@ -39,7 +42,7 @@ export const useEventLogsLiveStream = ({
 
     const dispose = sseClient.subscribe<EventLogsLivePayload>(
       {
-        query: print(EVENT_LOGS_LIVE_SUBSCRIPTION),
+        query: EVENT_LOGS_LIVE_SUBSCRIPTION_QUERY,
         variables: { table },
       },
       {

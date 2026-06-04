@@ -2,17 +2,15 @@ import {
   type TrackEventName,
   type TrackEventProperties,
 } from 'src/engine/core-modules/audit/types/events.type';
-import { type WorkspaceEventEnvelope } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
+import {
+  type EventContextFields,
+  type WorkspaceEventEnvelope,
+} from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
 import {
   makePageview,
   makeTrackEvent,
 } from 'src/engine/core-modules/audit/utils/analytics.utils';
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
-
-export type EventContextFields = {
-  workspaceId?: string;
-  userId?: string;
-};
 
 export const computeEventContextFields = (context?: {
   workspaceId?: string | null;

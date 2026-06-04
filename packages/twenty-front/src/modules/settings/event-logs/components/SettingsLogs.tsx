@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { currentWorkspaceState } from '@/auth/states/currentWorkspaceState';
 import { isClickHouseConfiguredState } from '@/client-config/states/isClickHouseConfiguredState';
@@ -105,7 +105,10 @@ export const SettingsLogs = () => {
     enabled: !isPaused && canQuery,
   });
 
-  const displayedRecords = [...liveRecords, ...records];
+  const displayedRecords = useMemo(
+    () => [...liveRecords, ...records],
+    [liveRecords, records],
+  );
 
   const handleTableChange = (table: EventLogTable) => {
     setSelectedTable(table);
