@@ -11259,11 +11259,11 @@ __metadata:
   linkType: hard
 
 "@mantine/hooks@npm:^8.3.11":
-  version: 8.3.15
-  resolution: "@mantine/hooks@npm:8.3.15"
+  version: 8.3.18
+  resolution: "@mantine/hooks@npm:8.3.18"
   peerDependencies:
     react: ^18.x || ^19.x
-  checksum: 10c0/e4b8af33243fbf5a09385874b8c0349acd8992b3b1d19551e22d5574b09f8871ec62c2254a48529c81e84b25a48888b38f98c1aec4d3ec0cfc47600c689e9327
+  checksum: 10c0/3767cb33a3e1c4469f18f12536c4c6e42d714ebf5f6da032c8b38ebb24db9ad399978437c69e263c5689a61ea97f17f145719dfe2cdcfa1aa70270711d993b19
   languageName: node
   linkType: hard
 
@@ -24322,11 +24322,11 @@ __metadata:
   linkType: hard
 
 "@types/passport-microsoft@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@types/passport-microsoft@npm:2.1.0"
+  version: 2.1.1
+  resolution: "@types/passport-microsoft@npm:2.1.1"
   dependencies:
     "@types/passport-oauth2": "npm:*"
-  checksum: 10c0/449b605a9790fcaac9b6fa971ebf80d2d8b75261f1f4748416daa530dfea2ca13ad0d42b65e567088486ab0f6e11323fb0f6d4d5e471bd72cf758e70d18637b4
+  checksum: 10c0/05f23ae5a83767e7c22b6c85b91da5758b4fc8a9b94c567b509efc876f5a9c9f967690c7686039c9bedab7ce2157ddf199d9632f4bb596fc3f8a1c7623100560
   languageName: node
   linkType: hard
 
@@ -49773,30 +49773,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:^3.1.1, prettier@npm:^3.2.5":
-  version: 3.4.2
-  resolution: "prettier@npm:3.4.2"
+"prettier@npm:^3.1.1, prettier@npm:^3.2.5, prettier@npm:^3.4.2, prettier@npm:^3.5.3":
+  version: 3.8.3
+  resolution: "prettier@npm:3.8.3"
   bin:
     prettier: bin/prettier.cjs
-  checksum: 10c0/99e076a26ed0aba4ebc043880d0f08bbb8c59a4c6641cdee6cdadf2205bdd87aa1d7823f50c3aea41e015e99878d37c58d7b5f0e663bba0ef047f94e36b96446
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^3.4.2":
-  version: 3.8.1
-  resolution: "prettier@npm:3.8.1"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: 10c0/33169b594009e48f570471271be7eac7cdcf88a209eed39ac3b8d6d78984039bfa9132f82b7e6ba3b06711f3bfe0222a62a1bfb87c43f50c25a83df1b78a2c42
-  languageName: node
-  linkType: hard
-
-"prettier@npm:^3.5.3":
-  version: 3.6.2
-  resolution: "prettier@npm:3.6.2"
-  bin:
-    prettier: bin/prettier.cjs
-  checksum: 10c0/488cb2f2b99ec13da1e50074912870217c11edaddedeadc649b1244c749d15ba94e846423d062e2c4c9ae683e2d65f754de28889ba06e697ac4f988d44f45812
+  checksum: 10c0/754816fd7593eb80f6376d7476d463e832c38a12f32775a82683adb6e35b772b1f484d65f19401507b983a8c8a7cd5a4a9f12006bd56491e8f35503473f77473
   languageName: node
   linkType: hard
 
