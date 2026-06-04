@@ -67,6 +67,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     needs: ui-sb-build
+    if: always() && needs.ui-sb-build.result == 'success'
     steps:
       - name: Fetch custom Github Actions and base branch history
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
