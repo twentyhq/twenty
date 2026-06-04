@@ -22,13 +22,13 @@ import { WORKSPACE_MEMBER_DATA_SEED_IDS } from 'src/engine/workspace-manager/dev
 
 const client = request(`http://localhost:${APP_PORT}`);
 
-const COMPANY_GQL_FIELDS_WITH_EMPLOYEES = `
+const COMPANY_GQL_FIELDS_WITH_POSITION = `
       id
       name
-      employees
+      position
 `;
 
-const COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES = `
+const COMPANY_GQL_FIELDS_WITHOUT_POSITION = `
       id
       name
 `;
@@ -41,14 +41,14 @@ const expectPermissionDeniedError = (response: any) => {
   expect(response.body.errors[0].extensions.code).toBe(ErrorCode.FORBIDDEN);
 };
 
-const expectEmployeesIsAccessible = ({
+const expectPositionIsAccessible = ({
   response,
   operationName,
-  expectedEmployees,
+  expectedPosition,
 }: {
   response: any;
   operationName: 'createCompanies' | 'createCompany';
-  expectedEmployees: number;
+  expectedPosition: number;
 }) => {
   expect(response.body.errors).toBeUndefined();
   expect(response.body.data).toBeDefined();
@@ -59,7 +59,7 @@ const expectEmployeesIsAccessible = ({
       : response.body.data[operationName]?.[0];
 
   expect(result).toBeDefined();
-  expect(result.employees).toBe(expectedEmployees);
+  expect(result.position).toBe(expectedPosition);
 };
 
 describe('Field update permissions restrictions', () => {
@@ -130,15 +130,15 @@ describe('Field update permissions restrictions', () => {
     personId = randomUUID();
     const createCompanyOp = createOneOperationFactory({
       objectMetadataSingularName: 'company',
-      gqlFields: 'id name employees',
-      data: { id: companyId, name: 'TestCompany', employees: 10 },
+      gqlFields: 'id name position',
+      data: { id: companyId, name: 'TestCompany', position: 10 },
     });
 
     await makeGraphqlAPIRequest(createCompanyOp);
     const createPersonOperation = createOneOperationFactory({
       objectMetadataSingularName: 'person',
-      gqlFields: 'id city',
-      data: { id: personId, city: 'Paris', companyId },
+      gqlFields: 'id jobTitle',
+      data: { id: personId, jobTitle: 'Paris', companyId },
     });
 
     await makeGraphqlAPIRequest(createPersonOperation);
@@ -189,7 +189,7 @@ describe('Field update permissions restrictions', () => {
 
     restrictedCompanyFieldId = fields.find(
       (field: any) =>
-        field.node.name === 'employees' &&
+        field.node.name === 'position' &&
         field.node.object.nameSingular === 'company',
     ).node.id;
   });
@@ -319,7 +319,7 @@ describe('Field update permissions restrictions', () => {
   //   });
   // });
 
-  describe('should allow employees field when creating if field is in RLS predicate', () => {
+  describe('should allow position field when creating if field is in RLS predicate', () => {
     beforeEach(async () => {
       await restrictUpdateAccessToCompanyEmployee(
         customRoleId,
@@ -357,37 +357,37 @@ describe('Field update permissions restrictions', () => {
       const graphqlOperation = createManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
-        gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
+        gqlFields: COMPANY_GQL_FIELDS_WITH_POSITION,
         data: [
-          { id: randomUUID(), name: 'NewCompany1', employees: 15 },
-          { id: randomUUID(), name: 'NewCompany2', employees: 20 },
+          { id: randomUUID(), name: 'NewCompany1', position: 15 },
+          { id: randomUUID(), name: 'NewCompany2', position: 20 },
         ],
       });
 
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectEmployeesIsAccessible({
+      expectPositionIsAccessible({
         response,
         operationName: 'createCompanies',
-        expectedEmployees: 15,
+        expectedPosition: 15,
       });
     });
 
     it('2. createOne with restricted field in RLS predicate', async () => {
       const graphqlOperation = createOneOperationFactory({
         objectMetadataSingularName: 'company',
-        gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
-        data: { id: randomUUID(), name: 'NewCompany3', employees: 25 },
+        gqlFields: COMPANY_GQL_FIELDS_WITH_POSITION,
+        data: { id: randomUUID(), name: 'NewCompany3', position: 25 },
       });
 
       const response =
         await makeGraphqlAPIRequestWithMemberRole(graphqlOperation);
 
-      expectEmployeesIsAccessible({
+      expectPositionIsAccessible({
         response,
         operationName: 'createCompany',
-        expectedEmployees: 25,
+        expectedPosition: 25,
       });
     });
   });
@@ -404,7 +404,7 @@ describe('Field update permissions restrictions', () => {
       const graphqlOperation = updateManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
-        gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
+        gqlFields: COMPANY_GQL_FIELDS_WITH_POSITION,
         data: { name: 'UpdatedCompany' },
         filter: { id: { eq: companyId } },
       });
@@ -418,7 +418,7 @@ describe('Field update permissions restrictions', () => {
     it('2. updateOne requesting restricted field in response', async () => {
       const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'company',
-        gqlFields: COMPANY_GQL_FIELDS_WITH_EMPLOYEES,
+        gqlFields: COMPANY_GQL_FIELDS_WITH_POSITION,
         recordId: companyId,
         data: { name: 'UpdatedCompany' },
       });
@@ -443,7 +443,7 @@ describe('Field update permissions restrictions', () => {
       const graphqlOperation = updateManyOperationFactory({
         objectMetadataSingularName: 'company',
         objectMetadataPluralName: 'companies',
-        gqlFields: COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES,
+        gqlFields: COMPANY_GQL_FIELDS_WITHOUT_POSITION,
         data: { name: 'UpdatedCompany' },
         filter: { id: { eq: companyId } },
       });
@@ -459,7 +459,7 @@ describe('Field update permissions restrictions', () => {
     it('2. updateOne not requesting restricted field in response', async () => {
       const graphqlOperation = updateOneOperationFactory({
         objectMetadataSingularName: 'company',
-        gqlFields: COMPANY_GQL_FIELDS_WITHOUT_EMPLOYEES,
+        gqlFields: COMPANY_GQL_FIELDS_WITHOUT_POSITION,
         recordId: companyId,
         data: { name: 'UpdatedCompany2' },
       });

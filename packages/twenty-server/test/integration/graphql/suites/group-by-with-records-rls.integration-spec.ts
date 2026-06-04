@@ -120,7 +120,7 @@ describe('group-by with records respects row-level permission predicates', () =>
         data: {
           id: testCompanyId1,
           name: 'RLS Visible Company',
-          employees: 99,
+          position: 99,
           createdAt: '2020-02-05T08:00:00.000Z',
         },
       }),
@@ -133,7 +133,7 @@ describe('group-by with records respects row-level permission predicates', () =>
         data: {
           id: testCompanyId2,
           name: 'RLS Hidden Company',
-          employees: 99,
+          position: 99,
           createdAt: '2020-02-05T08:00:00.000Z',
         },
       }),
@@ -185,14 +185,14 @@ describe('group-by with records respects row-level permission predicates', () =>
               edges {
                 node {
                   name
-                  employees
+                  position
                 }
               }
             }
           }
         `,
         variables: {
-          groupBy: [{ employees: true }],
+          groupBy: [{ position: true }],
           filter: FILTER_2020,
           limit: 10,
         },
