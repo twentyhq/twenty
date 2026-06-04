@@ -2,6 +2,7 @@ import { styled } from '@linaria/react';
 import { isNonEmptyString, isNull, isUndefined } from '@sniptt/guards';
 import { useAtom } from 'jotai';
 import { useContext } from 'react';
+// Visual regression CI trigger test
 
 import { invalidAvatarUrlsAtomV2 } from '@ui/display/avatar/components/states/invalidAvatarUrlsAtomV2';
 import { AVATAR_PROPERTIES_BY_SIZE } from '@ui/display/avatar/constants/AvatarPropertiesBySize';
