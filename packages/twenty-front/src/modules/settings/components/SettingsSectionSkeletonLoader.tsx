@@ -16,6 +16,11 @@ const StyledRows = styled.div`
   width: 100%;
 `;
 
+// Body-only settings loading state: the rows that fill a settings page body
+// while its data loads. Render this directly when the settings chrome is
+// already on screen (e.g. a tab inside an already-rendered page). For a whole
+// page with no chrome yet, use SettingsSkeletonLoader, which wraps this in the
+// page chrome.
 export const SettingsSectionSkeletonLoader = ({
   rowCount = 4,
 }: SettingsSectionSkeletonLoaderProps) => {
