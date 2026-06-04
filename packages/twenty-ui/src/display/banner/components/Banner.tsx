@@ -35,7 +35,7 @@ const StyledBanner = styled.div<{
   gap: ${themeCssVariables.spacing[3]};
   justify-content: center;
   line-height: 150%;
-  min-height: 40px;
+  min-height: 42px;
   padding: ${themeCssVariables.spacing[2]};
   width: 100%;
 `;
