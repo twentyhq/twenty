@@ -20,7 +20,7 @@ describe('Core REST API Find Many endpoint', () => {
     TEST_PERSON_3_ID,
     TEST_PERSON_4_ID,
   ];
-  const testPersonCities: Record<string, string> = {};
+  const testPersonJobTitles: Record<string, string> = {};
 
   beforeAll(async () => {
     await deleteAllRecords('person');
@@ -39,16 +39,16 @@ describe('Core REST API Find Many endpoint', () => {
     let index = 0;
 
     for (const personId of testPersonIds) {
-      const city = generateRecordName(personId);
+      const jobTitle = generateRecordName(personId);
 
-      testPersonCities[personId] = city;
+      testPersonJobTitles[personId] = jobTitle;
 
       await makeRestAPIRequest({
         method: 'post',
         path: '/people',
         body: {
           id: personId,
-          city: city,
+          jobTitle: jobTitle,
           position: index,
           companyId: TEST_COMPANY_1_ID,
         },
@@ -80,7 +80,7 @@ describe('Core REST API Find Many endpoint', () => {
       const person = people.find((p) => p.id === personId);
 
       expect(person).toBeDefined();
-      expect(person.city).toBe(testPersonCities[personId]);
+      expect(person.jobTitle).toBe(testPersonJobTitles[personId]);
     }
 
     // Check pagination metadata
@@ -282,7 +282,7 @@ describe('Core REST API Find Many endpoint', () => {
   it('should combine filtering, ordering, and pagination', async () => {
     const response = await makeRestAPIRequest({
       method: 'get',
-      path: '/people?filter=position[gt]:0&order_by=city[AscNullsFirst]&limit=2',
+      path: '/people?filter=position[gt]:0&order_by=jobTitle[AscNullsFirst]&limit=2',
     }).expect(200);
 
     const people = response.body.data.people;
@@ -293,7 +293,9 @@ describe('Core REST API Find Many endpoint', () => {
     expect(people.length).toBeLessThanOrEqual(2);
     expect(pageInfo).toBeDefined();
 
-    expect(people).toEqual([...people].sort((a, b) => a.city - b.city));
+    expect(people).toEqual(
+      [...people].sort((a, b) => a.jobTitle.localeCompare(b.jobTitle)),
+    );
   });
 
   it('should should throw an error when trying to order by a composite field', async () => {
