@@ -29,4 +29,4 @@ trap "kill $HTTP_PID 2>/dev/null || true" EXIT
 timeout 30 bash -c 'until curl -sf http://localhost:6007 > /dev/null 2>&1; do sleep 1; done'
 
 export STORYBOOK_URL="http://localhost:6007"
-exec npx vitest run
+npx vitest run
