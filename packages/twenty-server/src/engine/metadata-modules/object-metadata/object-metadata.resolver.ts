@@ -11,6 +11,7 @@ import {
 import { PermissionFlagType } from 'twenty-shared/constants';
 
 import { MetadataResolver } from 'src/engine/api/graphql/graphql-config/decorators/metadata-resolver.decorator';
+import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { PreventNestToAutoLogGraphqlErrorsFilter } from 'src/engine/core-modules/graphql/filters/prevent-nest-to-auto-log-graphql-errors.filter';
 import { ResolverValidationPipe } from 'src/engine/core-modules/graphql/pipes/resolver-validation.pipe';
 import { I18nService } from 'src/engine/core-modules/i18n/i18n.service';
@@ -46,7 +47,21 @@ export class ObjectMetadataResolver {
     private readonly objectMetadataService: ObjectMetadataService,
     private readonly objectRecordCountService: ObjectRecordCountService,
     private readonly i18nService: I18nService,
+    private readonly applicationService: ApplicationService,
   ) {}
+
+  @ResolveField(() => Boolean)
+  async isCustom(
+    @Parent() objectMetadata: ObjectMetadataDTO,
+    @AuthWorkspace() { id: workspaceId }: WorkspaceEntity,
+  ): Promise<boolean> {
+    const { twentyStandardFlatApplication } =
+      await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
+        { workspaceId },
+      );
+
+    return objectMetadata.applicationId !== twentyStandardFlatApplication.id;
+  }
 
   @UseGuards(SettingsPermissionGuard(PermissionFlagType.DATA_MODEL))
   @Query(() => [ObjectRecordCountDTO])

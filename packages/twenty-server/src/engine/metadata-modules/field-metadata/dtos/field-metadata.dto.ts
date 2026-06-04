@@ -100,7 +100,7 @@ export class FieldMetadataDTO<T extends FieldMetadataType = FieldMetadataType> {
 
   @IsBoolean()
   @IsOptional()
-  @FilterableField({ nullable: true })
+  @Field({ nullable: true })
   isCustom?: boolean;
 
   @IsBoolean()

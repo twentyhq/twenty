@@ -12,19 +12,19 @@ export class DropIsCustomFromObjectAndFieldMetadataFastInstanceCommand
 {
   public async up(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadata" DROP COLUMN "isCustom"',
+      'ALTER TABLE "core"."fieldMetadata" DROP COLUMN IF EXISTS "isCustom"',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" DROP COLUMN "isCustom"',
+      'ALTER TABLE "core"."objectMetadata" DROP COLUMN IF EXISTS "isCustom"',
     );
   }
 
   public async down(queryRunner: QueryRunner): Promise<void> {
     await queryRunner.query(
-      'ALTER TABLE "core"."objectMetadata" ADD "isCustom" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."objectMetadata" ADD COLUMN IF NOT EXISTS "isCustom" boolean NOT NULL DEFAULT false',
     );
     await queryRunner.query(
-      'ALTER TABLE "core"."fieldMetadata" ADD "isCustom" boolean NOT NULL DEFAULT false',
+      'ALTER TABLE "core"."fieldMetadata" ADD COLUMN IF NOT EXISTS "isCustom" boolean NOT NULL DEFAULT false',
     );
     await queryRunner.query(
       `UPDATE "core"."objectMetadata" "objectMetadata"

@@ -62,7 +62,7 @@ export class ObjectMetadataDTO {
   @Field({ nullable: true })
   color?: string;
 
-  @FilterableField()
+  @Field()
   isCustom: boolean;
 
   @FilterableField()
