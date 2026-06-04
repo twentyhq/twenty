@@ -33,4 +33,56 @@ describe('isLogicFunctionHttpResponse', () => {
       }),
     ).toBe(false);
   });
+
+  it('returns true when status and headers are absent', () => {
+    expect(
+      isLogicFunctionHttpResponse({
+        [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+        body: { ok: true },
+      }),
+    ).toBe(true);
+  });
+
+  it('returns true for valid status and headers', () => {
+    expect(
+      isLogicFunctionHttpResponse({
+        [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+        body: 'ok',
+        status: 204,
+        headers: { 'Content-Type': 'text/plain', 'X-Custom': 'foo' },
+      }),
+    ).toBe(true);
+  });
+
+  it.each([
+    ['a string', 'oops'],
+    ['NaN', Number.NaN],
+    ['Infinity', Number.POSITIVE_INFINITY],
+    ['a non-integer', 200.5],
+    ['below the http range', 99],
+    ['above the http range', 600],
+  ])('returns false when status is %s', (_label, status) => {
+    expect(
+      isLogicFunctionHttpResponse({
+        [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+        body: null,
+        status,
+      }),
+    ).toBe(false);
+  });
+
+  it.each([
+    ['a string', 'oops'],
+    ['an array', ['a', 'b']],
+    ['null', null],
+    ['a record with a non-string value', { 'Content-Length': 42 }],
+  ])('returns false when headers is %s', (_label, headers) => {
+    expect(
+      isLogicFunctionHttpResponse({
+        [LOGIC_FUNCTION_HTTP_RESPONSE_MARKER]: true,
+        body: null,
+        headers,
+      }),
+    ).toBe(false);
+  });
 });

@@ -7,10 +7,31 @@ export type LogicFunctionHttpResponse = {
   headers?: Record<string, string>;
 };
 
-export const isLogicFunctionHttpResponse = (
-  value: unknown,
-): value is LogicFunctionHttpResponse =>
+const isValidHttpStatusCode = (value: unknown): value is number =>
+  typeof value === 'number' &&
+  Number.isInteger(value) &&
+  value >= 100 &&
+  value <= 599;
+
+const isStringRecord = (value: unknown): value is Record<string, string> =>
   typeof value === 'object' &&
   value !== null &&
-  (value as Record<string, unknown>)[LOGIC_FUNCTION_HTTP_RESPONSE_MARKER] ===
-    true;
+  !Array.isArray(value) &&
+  Object.values(value).every((entry) => typeof entry === 'string');
+
+export const isLogicFunctionHttpResponse = (
+  value: unknown,
+): value is LogicFunctionHttpResponse => {
+  if (typeof value !== 'object' || value === null) {
+    return false;
+  }
+
+  const candidate = value as Record<string, unknown>;
+
+  return (
+    candidate[LOGIC_FUNCTION_HTTP_RESPONSE_MARKER] === true &&
+    (candidate.status === undefined ||
+      isValidHttpStatusCode(candidate.status)) &&
+    (candidate.headers === undefined || isStringRecord(candidate.headers))
+  );
+};
