@@ -162,6 +162,49 @@ workspace/router/permission logic, and anything whose only consumer is a single 
 A component-by-component triage of `modules/ui` (generic / app-specific / hybrid, with target subpath
 and state-decoupling notes) is a **Phase 0 deliverable**, alongside the `twenty-ui` inventory.
 
+## Hardest components to migrate (risk hotspots)
+
+A predicted ranking of where the effort and risk concentrate, to inform sequencing and staffing. This
+is a hypothesis to validate during the Phase 0 inventory/triage, not a final list.
+
+### In `twenty-ui`
+
+| Component | Why it's hard | Migration shape |
+| --- | --- | --- |
+| `CodeEditor` (`input/code-editor`) | Hard dependency on Monaco; Linaria theme defined via `defineTheme()` bound to Monaco lifecycle | Port Monaco integration ~verbatim; only re-skin via CSS vars — Base UI doesn't apply |
+| Button family — `Button` (~560 LOC), `IconButton` (~330), `AnimatedButton` (~520) | Huge Linaria style matrix (variant × accent × inverted × disabled × position, 140+ branches each); router `Link`; framer-motion on the animated one | Establish the canonical "computed class / `cva` + `data-*`" pattern here first; this trio is the project's key inflection point (~30–40% of library effort) |
+| `Modal` + `ModalBackdrop` (`layout/modal`) | framer-motion `AnimatePresence`, portal + z-index layering, responsive Linaria sizing | Base UI `Dialog` + CSS transitions; backdrop animation has no direct Base UI equivalent |
+| `AnimatedExpandableContainer` | scroll-height measurement + framer-motion height/opacity animation | Base UI `Collapsible` + CSS grid-rows / JS height fallback |
+| `AppTooltip`, `OverflowingTextWithTooltip` | `react-tooltip` dependency + overflow detection; Linaria `css` template | Swap to Base UI `Tooltip` (+ Floating UI); behavioral divergence is likely and needs parity tests |
+| `JsonNestedNode` (`json-visualizer`) | recursive tree with per-node framer-motion expand/collapse | Recursion is fine; replace animation, keep structure |
+| `MenuItem`, `ProgressBar`/`CircularProgressBar`, `Avatar`/`AvatarGroup` | framer-motion micro-animations; `Avatar` uses a Jotai atom for broken-image fallback | CSS transitions; `Avatar` → Base UI `Avatar`, Jotai → local state/props |
+| `IconsProvider`, `ThemeProvider` | Jotai-backed icon registry; runtime CSS-var parsing — **every** component depends on them | Low per-unit effort but high blast radius; freeze the public API, swap internals carefully |
+
+Cross-cutting: **~120 files use Linaria prop interpolation** and **~26 use framer-motion** — the two
+systemic conversions (→ SCSS Modules, → CSS/Base UI transitions) dominate, not any single component.
+
+### In `twenty-front/src/modules/ui`
+
+Here difficulty is **decoupling from app state**, not visuals. Ranked hardest:
+
+| Area | Why it's hard | Decoupling needed |
+| --- | --- | --- |
+| `layout/dropdown` | Floating UI positioning + open-state atoms + hotkey scoping; foundational to many features | Generic positioning wrapper; controlled open state; injectable keyboard handling |
+| `utilities/hotkey` + `utilities/focus` | Hand-rolled global hotkey **scope stack** and focus stack as shared runtime state | Extract as an injectable system; the rest of the library must not assume the global stack |
+| `navigation/navigation-drawer` (~40 files) | Deeply bound to `currentWorkspaceState`, auth, Apollo error handling, multi-workspace switching | Mostly **app-specific** — migrate only the generic drawer shell, leave workspace logic in `twenty-front` |
+| `layout/selectable-list` | 2D arrow-key navigation state machine over atom families | Pure grid-position functions + a controlled selection API |
+| `layout/expandable-list` | Floating UI + DOM overflow measurement | Layout-agnostic overflow API, drop Floating UI coupling |
+| `layout/table` | Generic types but heavy sorting/metadata atoms | Make field-agnostic; lift state out |
+| `layout/modal` | `ModalComponentInstanceContext`, click-outside + escape via hotkeys, stacking indices | Injectable container; remove context coupling |
+| `layout/resizable-panel`, `utilities/drag-select`, `utilities/scroll` | Direct DOM/pointer manipulation, set CSS vars on `documentElement`, scroll-wrapper atom coupling | Callback/controlled APIs; pure geometry utils; optional scroll coupling |
+| `feedback` (snackbar + dialog managers) | Snackbar formats **Apollo** errors; dialog uses framer-motion | Generic error objects; CSS animations |
+| `layout/tab-list` | Router `useNavigate`, measurement system, dropdown coupling | Callback-based navigation; extract measurement |
+| `input` date pickers (`internal/date`, ~47 files) | `temporal-polyfill`, reads `currentWorkspaceMemberState` for tz/locale | Parameterize locale/timezone via props |
+
+**Probably should NOT migrate (too app-coupled, keep in `twenty-front`):** `field/input` & `field/display`
+(bound to `FieldMetadata` / `object-record`), the full navigation-drawer workspace/auth UI, snackbar
+Apollo error formatting, and the icon/theme-color pickers tied to Twenty's icon set and theme system.
+
 ## Test, benchmark & parity strategy
 
 - **Workbench** — Storybook (`@storybook/react-vite`). Every component has stories covering variants, sizes, and states (via `storybook-addon-pseudo-states`), in light and dark, with `autodocs`.
