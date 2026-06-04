@@ -550,7 +550,7 @@ export const STANDARD_OBJECTS = {
       status: {
         universalIdentifier: '3e617680-d93e-4309-a54f-90f69528bfd7',
       },
-      sourceApplicationId: {
+      applicationId: {
         universalIdentifier: '24ec1239-1240-42cb-8a2d-302632378e09',
       },
       externalBotId: {

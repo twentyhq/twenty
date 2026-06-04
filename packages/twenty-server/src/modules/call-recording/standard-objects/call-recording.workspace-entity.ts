@@ -7,7 +7,7 @@ import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/s
 
 export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
   status: string;
-  sourceApplicationId: string | null;
+  applicationId: string | null;
   externalBotId: string | null;
   externalRecordingId: string | null;
   startedAt: string | null;

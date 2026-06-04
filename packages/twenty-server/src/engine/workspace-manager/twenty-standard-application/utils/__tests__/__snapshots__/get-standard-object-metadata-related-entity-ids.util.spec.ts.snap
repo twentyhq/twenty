@@ -509,6 +509,9 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
   },
   "callRecording": {
     "fields": {
+      "applicationId": {
+        "id": "00000000-0000-0000-0000-000000000156",
+      },
       "audio": {
         "id": "00000000-0000-0000-0000-000000000162",
       },
@@ -541,9 +544,6 @@ exports[`getStandardObjectMetadataRelatedEntityIds should return standard object
       },
       "searchVector": {
         "id": "00000000-0000-0000-0000-000000000169",
-      },
-      "sourceApplicationId": {
-        "id": "00000000-0000-0000-0000-000000000156",
       },
       "startedAt": {
         "id": "00000000-0000-0000-0000-000000000159",

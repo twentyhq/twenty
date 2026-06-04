@@ -167,13 +167,13 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
-  sourceApplicationId: createStandardFieldFlatMetadata({
+  applicationId: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
     context: {
-      fieldName: 'sourceApplicationId',
+      fieldName: 'applicationId',
       type: FieldMetadataType.UUID,
-      label: i18nLabel(msg`Source Application ID`),
+      label: i18nLabel(msg`Application ID`),
       description: i18nLabel(
         msg`Installed source app that manages or ingested this recording`,
       ),
