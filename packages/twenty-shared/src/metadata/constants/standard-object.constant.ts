@@ -544,18 +544,11 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '20202020-0c28-43d8-8ba5-3659924d3489',
       },
       address: { universalIdentifier: '20202020-c5ce-4adc-b7b6-9c0979fc55e7' },
-      employees: {
-        universalIdentifier: '20202020-8965-464a-8a75-74bafc152a0b',
-      },
       linkedinLink: {
         universalIdentifier: '20202020-ebeb-4beb-b9ad-6848036fb451',
       },
-      xLink: { universalIdentifier: '20202020-6f64-4fd9-9580-9c1991c7d8c3' },
-      annualRecurringRevenue: {
-        universalIdentifier: '20202020-602a-495c-9776-f5d5b11d227b',
-      },
-      idealCustomerProfile: {
-        universalIdentifier: '20202020-ba6b-438a-8213-2c5ba28d76a2',
+      annualRevenue: {
+        universalIdentifier: '60f533b7-2166-4071-a767-ceb0286822fd',
       },
       position: { universalIdentifier: '20202020-9b4e-462b-991d-a0ee33326454' },
       createdBy: {
@@ -617,9 +610,6 @@ export const STANDARD_OBJECTS = {
           createdAt: {
             universalIdentifier: '20202020-af01-4a01-8a01-c0aba11cf005',
           },
-          employees: {
-            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11cf006',
-          },
           linkedinLink: {
             universalIdentifier: '20202020-af01-4a01-8a01-c0aba11cf007',
           },
@@ -651,20 +641,11 @@ export const STANDARD_OBJECTS = {
           accountOwner: {
             universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1202',
           },
-          annualRecurringRevenue: {
-            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1203',
-          },
-          idealCustomerProfile: {
-            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1204',
-          },
-          employees: {
-            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1205',
+          annualRevenue: {
+            universalIdentifier: '2a35f734-dea2-4de9-8395-acbce8df0f97',
           },
           linkedinLink: {
             universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1206',
-          },
-          xLink: {
-            universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1207',
           },
           address: {
             universalIdentifier: '20202020-af01-4a01-8a01-c0aba11c1208',
@@ -1595,10 +1576,8 @@ export const STANDARD_OBJECTS = {
       linkedinLink: {
         universalIdentifier: '20202020-f1af-48f7-893b-2007a73dd508',
       },
-      xLink: { universalIdentifier: '20202020-8fc2-487c-b84a-55a99b145cfd' },
       jobTitle: { universalIdentifier: '20202020-b0d0-415a-bef9-640a26dacd9b' },
       phones: { universalIdentifier: '20202020-0638-448e-8825-439134618022' },
-      city: { universalIdentifier: '20202020-5243-4ffb-afc5-2c675da41346' },
       avatarUrl: {
         universalIdentifier: '20202020-b8a6-40df-961c-373dc5d2ec21',
       },
@@ -1671,17 +1650,11 @@ export const STANDARD_OBJECTS = {
           createdAt: {
             universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea11af5',
           },
-          city: {
-            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea11af6',
-          },
           jobTitle: {
             universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea11af7',
           },
           linkedinLink: {
             universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea11af8',
-          },
-          xLink: {
-            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea11af9',
           },
         },
       },
@@ -1716,12 +1689,6 @@ export const STANDARD_OBJECTS = {
           },
           linkedinLink: {
             universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12205',
-          },
-          xLink: {
-            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12206',
-          },
-          city: {
-            universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12207',
           },
           avatarUrl: {
             universalIdentifier: '20202020-af02-4a02-8a02-ae0a1ea12208',
