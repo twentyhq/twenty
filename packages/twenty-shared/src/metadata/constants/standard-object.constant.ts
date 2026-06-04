@@ -547,6 +547,9 @@ export const STANDARD_OBJECTS = {
       deletedAt: {
         universalIdentifier: 'cf22a652-390a-4f55-b3a0-615c8fd8c7ed',
       },
+      title: {
+        universalIdentifier: '4cff8863-a1d1-45fd-a370-4eb6aa1f2a5b',
+      },
       status: {
         universalIdentifier: '3e617680-d93e-4309-a54f-90f69528bfd7',
       },
@@ -605,7 +608,7 @@ export const STANDARD_OBJECTS = {
           status: {
             universalIdentifier: '6c4a81a2-d9c1-4f82-984c-f97e083ca710',
           },
-          id: {
+          title: {
             universalIdentifier: 'b1d5051b-071d-4514-93cf-704724cdc8f6',
           },
           startedAt: {
@@ -621,7 +624,7 @@ export const STANDARD_OBJECTS = {
           },
         },
         viewFields: {
-          id: {
+          title: {
             universalIdentifier: '6308d574-8579-4cf2-a020-c208df97cf3e',
           },
           status: {

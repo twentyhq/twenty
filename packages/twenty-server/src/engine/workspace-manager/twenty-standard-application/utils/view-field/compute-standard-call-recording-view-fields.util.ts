@@ -8,14 +8,14 @@ export const computeStandardCallRecordingViewFields = (
   args: Omit<CreateStandardViewFieldArgs<'callRecording'>, 'context'>,
 ): Record<string, FlatViewField> => {
   return {
-    // id is the label identifier; it must hold the lowest position in non-widget views.
-    allCallRecordingsId: createStandardViewFieldFlatMetadata({
+    // title is the label identifier; it must hold the lowest position in non-widget views.
+    allCallRecordingsTitle: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'callRecording',
       context: {
         viewName: 'allCallRecordings',
-        viewFieldName: 'id',
-        fieldName: 'id',
+        viewFieldName: 'title',
+        fieldName: 'title',
         position: 0,
         isVisible: true,
         size: 200,
@@ -45,13 +45,13 @@ export const computeStandardCallRecordingViewFields = (
         size: 150,
       },
     }),
-    callRecordingRecordPageFieldsId: createStandardViewFieldFlatMetadata({
+    callRecordingRecordPageFieldsTitle: createStandardViewFieldFlatMetadata({
       ...args,
       objectName: 'callRecording',
       context: {
         viewName: 'callRecordingRecordPageFields',
-        viewFieldName: 'id',
-        fieldName: 'id',
+        viewFieldName: 'title',
+        fieldName: 'title',
         position: 0,
         isVisible: true,
         size: 200,

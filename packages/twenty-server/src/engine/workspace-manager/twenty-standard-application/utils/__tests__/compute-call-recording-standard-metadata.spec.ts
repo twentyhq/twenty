@@ -81,7 +81,7 @@ describe('CallRecording standard metadata build', () => {
     expect(viewFieldFieldUniversalIdentifiers).toHaveLength(3);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
-        STANDARD_OBJECTS.callRecording.fields.id.universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.title.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.startedAt.universalIdentifier,
       ]),
@@ -104,7 +104,7 @@ describe('CallRecording standard metadata build', () => {
     expect(viewFieldFieldUniversalIdentifiers).toHaveLength(8);
     expect(viewFieldFieldUniversalIdentifiers).toEqual(
       expect.arrayContaining([
-        STANDARD_OBJECTS.callRecording.fields.id.universalIdentifier,
+        STANDARD_OBJECTS.callRecording.fields.title.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.status.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.startedAt.universalIdentifier,
         STANDARD_OBJECTS.callRecording.fields.endedAt.universalIdentifier,

@@ -6,6 +6,7 @@ import { type EntityRelation } from 'src/engine/workspace-manager/workspace-migr
 import { type CalendarEventWorkspaceEntity } from 'src/modules/calendar/common/standard-objects/calendar-event.workspace-entity';
 
 export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
+  title: string | null;
   status: string;
   applicationId: string | null;
   externalBotId: string | null;

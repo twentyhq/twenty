@@ -105,6 +105,23 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
     twentyStandardApplicationId,
     now,
   }),
+  title: createStandardFieldFlatMetadata({
+    objectName,
+    workspaceId,
+    context: {
+      fieldName: 'title',
+      type: FieldMetadataType.TEXT,
+      label: i18nLabel(msg`Title`),
+      description: i18nLabel(msg`Meeting title from the calendar event`),
+      icon: 'IconNotes',
+      isNullable: true,
+      isUIReadOnly: true,
+    },
+    standardObjectMetadataRelatedEntityIds,
+    dependencyFlatEntityMaps,
+    twentyStandardApplicationId,
+    now,
+  }),
   status: createStandardFieldFlatMetadata({
     objectName,
     workspaceId,
@@ -435,7 +452,7 @@ export const buildCallRecordingStandardFlatFieldMetadatas = ({
       settings: {
         generatedType: 'STORED',
         asExpression: getTsVectorColumnExpressionFromFields([
-          { name: 'id', type: FieldMetadataType.UUID },
+          { name: 'title', type: FieldMetadataType.TEXT },
         ]),
       },
     },
