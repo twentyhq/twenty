@@ -62,6 +62,14 @@ export class AgentRunService {
         operationType: UsageOperationType.AI_WORKFLOW_TOKEN,
       });
 
-    return { result, hasNoMoreAvailableCredits };
+    if (hasNoMoreAvailableCredits) {
+      return {
+        result: null,
+        error: 'AI agent stopped: no more available credits.',
+        success: false,
+      };
+    }
+
+    return { result, error: null, success: true };
   }
 }

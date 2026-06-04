@@ -107,7 +107,7 @@ to `defineAgent()`:
 ```ts src/logic-functions/run-enricher.ts
 import { runAgent } from 'twenty-sdk/logic-function';
 
-const { result, hasNoMoreAvailableCredits } = await runAgent({
+const { result, error, success } = await runAgent({
   agentUniversalIdentifier: 'b3c4d5e6-f7a8-9012-bcde-f34567890123',
   prompt: 'Enrich House Ad <recordId>: fill empty fields from its listing URL.',
 });
@@ -123,8 +123,9 @@ Key points:
   Without it, `runAgent()` fails with a permission error.
 - Set a generous `timeoutSeconds` on the logic function — agent runs can take
   several seconds.
-- `hasNoMoreAvailableCredits` is `true` when the workspace ran out of AI
-  credits mid-run; in that case `result` may be empty.
+- `success` is `true` and `result` is non-null when the run completes; on
+  failure `success` is `false`, `result` is `null`, and `error` holds the
+  reason (for example, when the workspace ran out of AI credits mid-run).
 
 ```ts src/roles/default-role.ts
 import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';

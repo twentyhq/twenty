@@ -9,7 +9,8 @@ const RUN_AGENT_MUTATION = `
   mutation RunAgent($input: RunAgentInput!) {
     runAgent(input: $input) {
       result
-      hasNoMoreAvailableCredits
+      error
+      success
     }
   }
 `;

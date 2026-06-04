@@ -86,7 +86,32 @@ describe('AgentRunService', () => {
     });
     expect(result).toEqual({
       result: { response: 'done' },
-      hasNoMoreAvailableCredits: false,
+      error: null,
+      success: true,
+    });
+  });
+
+  it('returns an error result when the workspace ran out of credits', async () => {
+    applicationRepository.findOne.mockResolvedValue({
+      id: standardApplicationId,
+    });
+    agentRepository.findOne.mockResolvedValue({ id: 'agent-1' } as AgentEntity);
+    agentAsyncExecutorService.executeAgent.mockResolvedValue({
+      result: { response: 'partial' },
+      hasNoMoreAvailableCredits: true,
+    });
+
+    const result = await service.run({
+      workspace,
+      application,
+      requestUserWorkspaceId: 'user-workspace-1',
+      input,
+    });
+
+    expect(result).toEqual({
+      result: null,
+      error: 'AI agent stopped: no more available credits.',
+      success: false,
     });
   });
 

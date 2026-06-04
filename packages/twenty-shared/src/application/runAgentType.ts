@@ -4,6 +4,7 @@ export type RunAgentInput = {
 };
 
 export type RunAgentResult = {
-  result: object;
-  hasNoMoreAvailableCredits: boolean;
+  result: object | null;
+  error: string | null;
+  success: boolean;
 };

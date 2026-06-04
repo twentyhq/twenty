@@ -28,7 +28,8 @@ describe('runAgent', () => {
   it('POSTs the runAgent mutation to /metadata and returns the result', async () => {
     const payload = {
       result: { response: 'done' },
-      hasNoMoreAvailableCredits: false,
+      error: null,
+      success: true,
     };
 
     fetchSpy.mockResolvedValue(
