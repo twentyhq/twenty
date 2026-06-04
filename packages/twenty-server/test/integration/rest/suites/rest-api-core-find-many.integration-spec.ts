@@ -293,7 +293,9 @@ describe('Core REST API Find Many endpoint', () => {
     expect(people.length).toBeLessThanOrEqual(2);
     expect(pageInfo).toBeDefined();
 
-    expect(people).toEqual([...people].sort((a, b) => a.jobTitle - b.jobTitle));
+    expect(people).toEqual(
+      [...people].sort((a, b) => a.jobTitle.localeCompare(b.jobTitle)),
+    );
   });
 
   it('should should throw an error when trying to order by a composite field', async () => {

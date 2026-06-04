@@ -139,7 +139,6 @@ export const getPageLayoutWidgetDataSeeds = (
   const companyLinkedinLinkFieldId = getFieldId(companyObject, 'linkedinLink');
 
   const personIdFieldId = getFieldId(personObject, 'id');
-  const personCityFieldId = getFieldId(personObject, 'city');
 
   const opportunityIdFieldId = getFieldId(opportunityObject, 'id');
 
@@ -455,44 +454,6 @@ export const getPageLayoutWidgetDataSeeds = (
           overrides: null,
         } satisfies SeederFlatPageLayoutWidget)
       : null,
-    isDefined(personIdFieldId) && isDefined(personCityFieldId)
-      ? ({
-          id: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_WIDGET_SEEDS.TEAM_GEOGRAPHIC_DISTRIBUTION,
-          ),
-          pageLayoutTabId: generateSeedId(
-            workspaceId,
-            PAGE_LAYOUT_TAB_SEEDS.TEAM_OVERVIEW,
-          ),
-          title: 'Geographic Distribution',
-          type: WidgetType.GRAPH,
-          gridPosition: { row: 0, column: 6, rowSpan: 5, columnSpan: 6 },
-          position: {
-            layoutMode: PageLayoutTabLayoutMode.GRID,
-            row: 0,
-            column: 6,
-            rowSpan: 5,
-            columnSpan: 6,
-          },
-          configuration: {
-            configurationType: WidgetConfigurationType.BAR_CHART,
-            aggregateFieldMetadataId: personIdFieldId,
-            aggregateOperation: AggregateOperations.COUNT,
-            primaryAxisGroupByFieldMetadataId: personCityFieldId,
-            primaryAxisOrderBy: GraphOrderBy.VALUE_DESC,
-            axisNameDisplay: AxisNameDisplay.NONE,
-            displayDataLabel: false,
-            color: 'auto',
-            layout: BarChartLayout.VERTICAL,
-            timezone: 'UTC',
-            firstDayOfTheWeek: CalendarStartDay.MONDAY,
-          },
-          objectMetadataId: personObject?.id ?? null,
-          overrides: null,
-        } satisfies SeederFlatPageLayoutWidget)
-      : null,
-
     // Team Metrics Tab Widgets
     isDefined(taskIdFieldId)
       ? ({
