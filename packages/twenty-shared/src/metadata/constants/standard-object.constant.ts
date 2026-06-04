@@ -577,9 +577,6 @@ export const STANDARD_OBJECTS = {
       summary: {
         universalIdentifier: 'adb0f472-756b-4d3f-b21e-ea32bf73a5e4',
       },
-      failureReason: {
-        universalIdentifier: '3a87018e-33c3-4825-9ec3-391feafef982',
-      },
       calendarEvent: {
         universalIdentifier: '49e64b28-bd98-4775-80ea-4781bdd45e35',
       },
@@ -647,9 +644,6 @@ export const STANDARD_OBJECTS = {
           },
           summary: {
             universalIdentifier: 'a0ace064-cc72-4631-ade3-07cdded86b0e',
-          },
-          failureReason: {
-            universalIdentifier: '6382e7f5-7dcd-4dee-9bdd-ffd174c5e72f',
           },
         },
       },

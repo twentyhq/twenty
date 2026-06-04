@@ -16,7 +16,6 @@ export class CallRecordingWorkspaceEntity extends BaseWorkspaceEntity {
   audio: FileOutput[] | null;
   transcript: Record<string, unknown> | null;
   summary: RichTextMetadata | null;
-  failureReason: string | null;
-  calendarEvent: EntityRelation<CalendarEventWorkspaceEntity>;
-  calendarEventId: string;
+  calendarEvent: EntityRelation<CalendarEventWorkspaceEntity> | null;
+  calendarEventId: string | null;
 }

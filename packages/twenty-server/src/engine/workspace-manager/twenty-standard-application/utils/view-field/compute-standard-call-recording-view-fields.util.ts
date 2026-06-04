@@ -152,19 +152,5 @@ export const computeStandardCallRecordingViewFields = (
         viewFieldGroupName: 'general',
       },
     }),
-    callRecordingRecordPageFieldsFailureReason:
-      createStandardViewFieldFlatMetadata({
-        ...args,
-        objectName: 'callRecording',
-        context: {
-          viewName: 'callRecordingRecordPageFields',
-          viewFieldName: 'failureReason',
-          fieldName: 'failureReason',
-          position: 8,
-          isVisible: true,
-          size: 200,
-          viewFieldGroupName: 'general',
-        },
-      }),
   };
 };
