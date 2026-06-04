@@ -17,7 +17,7 @@ import { useSnackBar } from '@/ui/feedback/snack-bar-manager/hooks/useSnackBar';
 import { SettingsTextInput } from '@/ui/input/components/SettingsTextInput';
 import { ConfirmationModal } from '@/ui/layout/modal/components/ConfirmationModal';
 import { useModal } from '@/ui/layout/modal/hooks/useModal';
-import { SubMenuTopBarContainer } from '@/ui/layout/page/components/SubMenuTopBarContainer';
+import { SettingsPageLayout } from '@/settings/components/layout/SettingsPageLayout';
 import { Trans, useLingui } from '@lingui/react/macro';
 import { SettingsPath } from 'twenty-shared/types';
 import { getSettingsPath, isDefined } from 'twenty-shared/utils';
@@ -240,12 +240,12 @@ export const SettingsDevelopersApiKeyDetail = () => {
   return (
     <>
       {isDefined(apiKey) && (
-        <SubMenuTopBarContainer
+        <SettingsPageLayout
           title={apiKey.name || t`Unnamed API Key`}
           links={[
             {
               children: t`Workspace`,
-              href: getSettingsPath(SettingsPath.Workspace),
+              href: getSettingsPath(SettingsPath.General),
             },
             {
               children: t`APIs & Webhooks`,
@@ -330,7 +330,7 @@ export const SettingsDevelopersApiKeyDetail = () => {
               />
             </Section>
           </SettingsPageContainer>
-        </SubMenuTopBarContainer>
+        </SettingsPageLayout>
       )}
       <ConfirmationModal
         confirmationPlaceholder={confirmationValue}

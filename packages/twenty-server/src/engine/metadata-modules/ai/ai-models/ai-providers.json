@@ -1037,7 +1037,8 @@
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "mistral-small-2603",
@@ -1106,7 +1107,8 @@
         "outputCostPerMillionTokens": 0,
         "contextWindowTokens": 256000,
         "maxOutputTokens": 256000,
-        "modalities": ["image"]
+        "modalities": ["image"],
+        "isDeprecated": true
       },
       {
         "name": "mistral-large-latest",
@@ -1137,6 +1139,16 @@
         "contextWindowTokens": 128000,
         "maxOutputTokens": 128000,
         "supportsReasoning": true
+      },
+      {
+        "name": "devstral-latest",
+        "label": "Devstral 2",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.4,
+        "outputCostPerMillionTokens": 2,
+        "contextWindowTokens": 262144,
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "open-mixtral-8x22b",
@@ -1174,7 +1186,8 @@
         "inputCostPerMillionTokens": 0.1,
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
       },
       {
         "name": "devstral-2512",
@@ -1183,7 +1196,8 @@
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 262144,
-        "maxOutputTokens": 262144
+        "maxOutputTokens": 262144,
+        "isDeprecated": true
       },
       {
         "name": "codestral-latest",
@@ -1205,6 +1219,16 @@
         "modalities": ["image"]
       },
       {
+        "name": "open-mistral-nemo",
+        "label": "Open Mistral Nemo",
+        "modelFamily": "MISTRAL",
+        "inputCostPerMillionTokens": 0.15,
+        "outputCostPerMillionTokens": 0.15,
+        "contextWindowTokens": 128000,
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
+      },
+      {
         "name": "ministral-3b-latest",
         "label": "Ministral 3B (latest)",
         "modelFamily": "MISTRAL",
@@ -1220,7 +1244,8 @@
         "inputCostPerMillionTokens": 0.1,
         "outputCostPerMillionTokens": 0.3,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
       },
       {
         "name": "open-mixtral-8x7b",
@@ -1259,7 +1284,8 @@
         "inputCostPerMillionTokens": 0.4,
         "outputCostPerMillionTokens": 2,
         "contextWindowTokens": 128000,
-        "maxOutputTokens": 128000
+        "maxOutputTokens": 128000,
+        "isDeprecated": true
       },
       {
         "name": "mistral-medium-latest",

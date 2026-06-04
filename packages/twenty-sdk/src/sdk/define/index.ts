@@ -31,6 +31,40 @@ export { defineCommandMenuItem } from '@/sdk/define/command-menu-items/define-co
 export type { CommandMenuItemConfig } from '@/sdk/define/command-menu-items/command-menu-item-config';
 export type { CommandMenuItemManifest } from 'twenty-shared/application';
 
+export {
+  pageType,
+  isInSidePanel,
+  isDashboardPageLayoutInEditMode,
+  isLayoutCustomizationModeEnabled,
+  favoriteRecordIds,
+  isSelectAll,
+  hasAnySoftDeleteFilterOnView,
+  numberOfSelectedRecords,
+  objectPermissions,
+  selectedRecords,
+  featureFlags,
+  targetObjectReadPermissions,
+  targetObjectWritePermissions,
+  canImpersonate,
+  canAccessFullAdminPanel,
+  isDefined,
+  isNonEmptyString,
+  includes,
+  every,
+  everyDefined,
+  everyEquals,
+  some,
+  someDefined,
+  someEquals,
+  none,
+  noneDefined,
+  noneEquals,
+  someNonEmptyString,
+  includesEvery,
+  objectMetadataItem,
+  objectMetadataLabel,
+} from '@/sdk/define/conditional-availability/conditional-availability-variables';
+
 export { defineFrontComponent } from '@/sdk/define/front-component/define-front-component';
 export type {
   FrontComponentConfig,
