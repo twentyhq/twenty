@@ -14,40 +14,19 @@ permissions:
   pull-requests: read
 
 jobs:
-  dispatch:
+  dispatch-pr:
     if: >-
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Determine project
-        id: project
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
-        with:
-          script: |
-            const workflowName = context.payload.workflow_run.name;
-            const projects = {
-              'CI UI': { project: 'twenty-ui', artifact: 'argos-screenshots-twenty-ui' },
-              // Add more projects here when ready:
-              // 'CI Front': { project: 'twenty-front', artifact: 'argos-screenshots-twenty-front' },
-            };
-
-            const config = projects[workflowName];
-            if (!config) {
-              core.setFailed(`Unexpected workflow: ${workflowName}`);
-              return;
-            }
-
-            core.setOutput('project', config.project);
-            core.setOutput('artifact_name', config.artifact);
-
       - name: Check if screenshots artifact exists
         id: check-artifact
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
-            const artifactName = '${{ steps.project.outputs.artifact_name }}';
+            const artifactName = 'argos-screenshots-twenty-ui';
             const runId = context.payload.workflow_run.id;
 
             const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
@@ -111,7 +90,6 @@ jobs:
           PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
           WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
           REPOSITORY: ${{ github.repository }}
-          PROJECT: ${{ steps.project.outputs.project }}
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           COMMIT: ${{ github.event.workflow_run.head_sha }}
         run: |
@@ -121,6 +99,49 @@ jobs:
             -f "client_payload[pr_number]=$PR_NUMBER" \
             -f "client_payload[run_id]=$WORKFLOW_RUN_ID" \
             -f "client_payload[repo]=$REPOSITORY" \
-            -f "client_payload[project]=$PROJECT" \
+            -f "client_payload[branch]=$BRANCH" \
+            -f "client_payload[commit]=$COMMIT"
+
+  dispatch-main:
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check if screenshots artifact exists
+        id: check-artifact
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const runId = context.payload.workflow_run.id;
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: runId,
+            });
+
+            const found = artifacts.artifacts.some(a => a.name === 'argos-screenshots-twenty-ui');
+            core.setOutput('exists', found ? 'true' : 'false');
+
+            if (!found) {
+              core.info(`Artifact not found in run ${runId} — skipping`);
+            }
+
+      - name: Dispatch to ci-privileged
+        if: steps.check-artifact.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            --method POST \
+            -f event_type=visual-regression \
+            -f "client_payload[run_id]=$WORKFLOW_RUN_ID" \
+            -f "client_payload[repo]=$REPOSITORY" \
             -f "client_payload[branch]=$BRANCH" \
             -f "client_payload[commit]=$COMMIT"
