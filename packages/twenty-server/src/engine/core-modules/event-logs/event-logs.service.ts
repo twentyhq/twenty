@@ -9,7 +9,6 @@ import { Repository } from 'typeorm';
 
 import { ClickHouseService } from 'src/database/clickHouse/clickHouse.service';
 import { formatDateTimeForClickHouse } from 'src/database/clickHouse/clickHouse.util';
-import { BillingEntitlementKey } from 'src/engine/core-modules/billing/enums/billing-entitlement-key.enum';
 import { BillingService } from 'src/engine/core-modules/billing/services/billing.service';
 import { EnterprisePlanService } from 'src/engine/core-modules/enterprise/services/enterprise-plan.service';
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
@@ -23,20 +22,13 @@ import { EventLogFiltersInput } from './dtos/event-log-filters.input';
 import { EventLogQueryInput } from './dtos/event-log-query.input';
 import { EventLogQueryResult } from './dtos/event-log-result.dto';
 import {
-  type ClickHouseEventRecord,
-  normalizeEventLogRecords,
-} from './utils/normalize-event-log-records';
+  EVENT_LOG_TYPES,
+  getClickHouseTableName,
+} from './registry/event-log-registry';
+import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 
 const ALLOWED_TABLES = Object.values(EventLogTable);
 const MAX_LIMIT = 10000;
-
-export const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
-  [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
-  [EventLogTable.PAGEVIEW]: 'pageview',
-  [EventLogTable.OBJECT_EVENT]: 'objectEvent',
-  [EventLogTable.USAGE_EVENT]: 'usageEvent',
-  [EventLogTable.APPLICATION_LOG]: 'applicationLog',
-};
 
 @Injectable()
 export class EventLogsService {
@@ -59,15 +51,8 @@ export class EventLogsService {
     }
 
     const limit = Math.min(input.first ?? 100, MAX_LIMIT);
-    const tableName = CLICKHOUSE_TABLE_NAMES[input.table];
-    const eventFieldName =
-      input.table === EventLogTable.USAGE_EVENT
-        ? 'resourceType'
-        : input.table === EventLogTable.PAGEVIEW
-          ? 'name'
-          : input.table === EventLogTable.APPLICATION_LOG
-            ? 'logicFunctionName'
-            : 'event';
+    const tableName = getClickHouseTableName(input.table);
+    const eventFieldName = EVENT_LOG_TYPES[input.table].eventFieldName;
 
     const whereClauses: string[] = ['"workspaceId" = {workspaceId:String}'];
     const params: Record<string, unknown> = { workspaceId };
@@ -111,7 +96,7 @@ export class EventLogsService {
     params.limit = limit + 1;
 
     const [records, countResult] = await Promise.all([
-      this.clickHouseService.select<ClickHouseEventRecord>(query, params),
+      this.clickHouseService.select<Record<string, unknown>>(query, params),
       this.clickHouseService.select<{ totalCount: number }>(countQuery, params),
     ]);
 
@@ -150,7 +135,9 @@ export class EventLogsService {
       );
     }
 
-    if (table === EventLogTable.APPLICATION_LOG) {
+    const requiredEntitlement = EVENT_LOG_TYPES[table].requiresEntitlement;
+
+    if (requiredEntitlement === null) {
       return;
     }
 
@@ -163,7 +150,7 @@ export class EventLogsService {
 
     const hasEntitlement = await this.billingService.hasEntitlement(
       workspaceId,
-      BillingEntitlementKey.AUDIT_LOGS,
+      requiredEntitlement,
     );
 
     if (!hasEntitlement) {

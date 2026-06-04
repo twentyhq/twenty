@@ -21,9 +21,10 @@ import { SubscriptionService } from 'src/engine/subscriptions/subscription.servi
 import { wrapAsyncIteratorWithLifecycle } from 'src/engine/subscriptions/utils/wrap-async-iterator-with-lifecycle';
 import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
 
-import { CLICKHOUSE_TABLE_NAMES, EventLogsService } from './event-logs.service';
+import { EventLogsService } from './event-logs.service';
 
 import { EventLogRecord } from './dtos/event-log-result.dto';
+import { getClickHouseTableName } from './registry/event-log-registry';
 import { normalizeEventLogRecords } from './utils/normalize-event-log-records';
 
 type WorkspaceEventLivePayload = {
@@ -56,7 +57,7 @@ export class EventLogsLiveResolver {
     filter: (
       payload: WorkspaceEventLivePayload,
       variables: { table: EventLogTable },
-    ) => CLICKHOUSE_TABLE_NAMES[variables.table] === payload.table,
+    ) => getClickHouseTableName(variables.table) === payload.table,
     resolve: (
       payload: WorkspaceEventLivePayload,
       variables: { table: EventLogTable },
@@ -69,7 +70,7 @@ export class EventLogsLiveResolver {
     // Same access rules as the query.
     await this.eventLogsService.validateAccess(workspace.id, table);
 
-    const clickHouseTable = CLICKHOUSE_TABLE_NAMES[table];
+    const clickHouseTable = getClickHouseTableName(table);
 
     await this.workspaceEventLiveService.markWatched(
       workspace.id,
