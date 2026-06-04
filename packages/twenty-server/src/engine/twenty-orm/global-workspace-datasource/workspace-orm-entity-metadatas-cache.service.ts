@@ -49,7 +49,8 @@ export class WorkspaceORMEntityMetadatasCacheService extends WorkspaceCacheProvi
         this.applicationRepository.findOne({
           where: {
             workspaceId,
-            universalIdentifier: TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
+            universalIdentifier:
+              TWENTY_STANDARD_APPLICATION_UNIVERSAL_IDENTIFIER,
           },
         }),
       ]);

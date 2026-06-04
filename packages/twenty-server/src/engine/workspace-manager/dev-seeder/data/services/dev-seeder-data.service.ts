@@ -386,7 +386,8 @@ export class DevSeederDataService {
           }
 
           const objectMetadata = objectMetadataItems.find(
-            (item) => computeObjectTargetTable(item) === recordSeedsConfig.tableName,
+            (item) =>
+              computeObjectTargetTable(item) === recordSeedsConfig.tableName,
           );
 
           if (!objectMetadata) {
