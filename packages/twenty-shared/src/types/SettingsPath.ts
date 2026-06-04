@@ -67,8 +67,8 @@ export enum SettingsPath {
   WebhookDetail = 'api-webhooks/webhooks/:webhookId',
   Integrations = 'integrations',
   Security = 'general#security',
+  Logs = 'general#logs',
   NewSSOIdentityProvider = 'security/sso/new',
-  EventLogs = 'security/event-logs',
 
   AdminPanel = 'admin-panel',
   AdminPanelEnterprise = 'admin-panel#enterprise',
