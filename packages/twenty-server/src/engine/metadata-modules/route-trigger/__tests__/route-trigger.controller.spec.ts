@@ -56,12 +56,12 @@ describe('RouteTriggerController', () => {
     expect(response.json).toHaveBeenCalledWith({ ok: true });
   });
 
-  it('applies the status code and headers from the service result', async () => {
+  it('applies the status code and allow-listed headers from the service result', async () => {
     const response = createResponseMock();
 
     handle.mockResolvedValue({
       statusCode: 201,
-      headers: { 'Content-Type': 'text/html', 'X-Custom': 'foo' },
+      headers: { 'Content-Type': 'text/html', 'Cache-Control': 'no-store' },
       body: '<h1>Hi</h1>',
     });
 
@@ -72,8 +72,42 @@ describe('RouteTriggerController', () => {
       'Content-Type',
       'text/html',
     );
-    expect(response.setHeader).toHaveBeenCalledWith('X-Custom', 'foo');
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Cache-Control',
+      'no-store',
+    );
     expect(response.send).toHaveBeenCalledWith('<h1>Hi</h1>');
+  });
+
+  it('drops headers that are not in the allow-list', async () => {
+    const response = createResponseMock();
+
+    handle.mockResolvedValue({
+      statusCode: 200,
+      headers: {
+        'Content-Type': 'text/html',
+        'Set-Cookie': 'session=abc',
+        'Access-Control-Allow-Origin': '*',
+        'X-Custom': 'foo',
+      },
+      body: '<h1>Hi</h1>',
+    });
+
+    await controller.get({} as never, response);
+
+    expect(response.setHeader).toHaveBeenCalledWith(
+      'Content-Type',
+      'text/html',
+    );
+    expect(response.setHeader).not.toHaveBeenCalledWith(
+      'Set-Cookie',
+      'session=abc',
+    );
+    expect(response.setHeader).not.toHaveBeenCalledWith(
+      'Access-Control-Allow-Origin',
+      '*',
+    );
+    expect(response.setHeader).not.toHaveBeenCalledWith('X-Custom', 'foo');
   });
 
   it('sends an empty response when the body is nil', async () => {

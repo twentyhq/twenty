@@ -23,6 +23,14 @@ import {
   RouteTriggerService,
 } from 'src/engine/core-modules/logic-function/logic-function-trigger/triggers/route/route-trigger.service';
 
+const ALLOWED_RESPONSE_HEADERS = new Set([
+  'content-type',
+  'content-language',
+  'content-disposition',
+  'cache-control',
+  'retry-after',
+]);
+
 @Controller('s')
 @UseGuards(PublicEndpointGuard, NoPermissionGuard)
 @UseFilters(RouteTriggerRestApiExceptionFilter)
@@ -91,7 +99,9 @@ export class RouteTriggerController {
     response.status(statusCode);
 
     for (const [key, value] of Object.entries(headers)) {
-      response.setHeader(key, value);
+      if (ALLOWED_RESPONSE_HEADERS.has(key.toLowerCase())) {
+        response.setHeader(key, value);
+      }
     }
 
     if (!isDefined(body)) {
