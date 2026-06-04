@@ -3,7 +3,7 @@ import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 import {
   findCollidingCustomCallRecordingObjects,
   resolveAvailableOldNames,
-} from 'src/database/commands/upgrade-version-command/2-9/utils/call-recording-name-collision.util';
+} from 'src/database/commands/upgrade-version-command/2-10/utils/call-recording-name-collision.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
 import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';

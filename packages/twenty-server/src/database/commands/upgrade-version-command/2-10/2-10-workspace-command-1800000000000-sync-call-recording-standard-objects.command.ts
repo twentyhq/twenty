@@ -7,12 +7,12 @@ import {
 import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/command-runners/active-or-suspended-workspace.command-runner';
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
-import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-9/utils/build-navigation-command-menu-item-operations-or-throw.util';
+import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
 import {
   findCollidingCustomCallRecordingObjects,
   resolveAvailableOldNames,
-} from 'src/database/commands/upgrade-version-command/2-9/utils/call-recording-name-collision.util';
-import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-9/utils/get-standard-flat-entities-to-create-or-throw.util';
+} from 'src/database/commands/upgrade-version-command/2-10/utils/call-recording-name-collision.util';
+import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -89,9 +89,9 @@ const CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
     .timeline.widgets.timeline.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000040000)
+@RegisteredWorkspaceCommand('2.10.0', 1800000000000)
 @Command({
-  name: 'upgrade:2-9:sync-call-recording-standard-objects',
+  name: 'upgrade:2-10:sync-call-recording-standard-objects',
   description:
     'Create the CallRecording standard metadata in existing workspaces',
 })
