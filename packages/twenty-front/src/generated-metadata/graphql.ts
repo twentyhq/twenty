@@ -256,6 +256,19 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
+export type AppConnection = {
+  __typename?: 'AppConnection';
+  accessToken: Scalars['String'];
+  authFailedAt?: Maybe<Scalars['String']>;
+  handle: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  providerName: Scalars['String'];
+  scopes: Array<Scalars['String']>;
+  userWorkspaceId: Scalars['String'];
+  visibility: Scalars['String'];
+};
+
 export type AppToken = {
   __typename?: 'AppToken';
   createdAt: Scalars['DateTime'];
@@ -1643,7 +1656,8 @@ export enum FeatureFlagKey {
   IS_PUBLIC_DOMAIN_ENABLED = 'IS_PUBLIC_DOMAIN_ENABLED',
   IS_REST_METADATA_API_NEW_FORMAT_DIRECT = 'IS_REST_METADATA_API_NEW_FORMAT_DIRECT',
   IS_SETTINGS_DISCOVERY_HERO_ENABLED = 'IS_SETTINGS_DISCOVERY_HERO_ENABLED',
-  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED'
+  IS_UNIQUE_INDEXES_ENABLED = 'IS_UNIQUE_INDEXES_ENABLED',
+  IS_WORKFLOW_RUN_STEP_LOGS_ENABLED = 'IS_WORKFLOW_RUN_STEP_LOGS_ENABLED'
 }
 
 export type Field = {
@@ -2113,6 +2127,12 @@ export type LineChartSeries = {
   data: Array<LineChartDataPoint>;
   id: Scalars['String'];
   label: Scalars['String'];
+};
+
+export type ListAppConnectionsInput = {
+  providerName?: InputMaybe<Scalars['String']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Scalars['String']>;
 };
 
 export type Location = {
@@ -4119,6 +4139,8 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
+  appConnection: AppConnection;
+  appConnections: Array<AppConnection>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   barChartData: BarChartData;
@@ -4225,6 +4247,16 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
+};
+
+
+export type QueryAppConnectionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAppConnectionsArgs = {
+  filter?: InputMaybe<ListAppConnectionsInput>;
 };
 
 
