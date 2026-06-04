@@ -1,5 +1,5 @@
-// This file is generated from packages/twenty-ui/src/theme/constants/.
-// Do not edit manually — regenerate by running the generation script.
+// This file is generated from src/theme/tokens/themeTokens.ts.
+// Do not edit manually — regenerate with: npx nx generateTheme twenty-new-ui.
 export const themeCssVariables = {
   icon: {
     size: {

@@ -47,6 +47,23 @@
       ],
       "options": { "command": "tsx {projectRoot}/scripts/generateBarrels.ts" }
     },
+    "generateTheme": {
+      "executor": "nx:run-commands",
+      "cache": true,
+      "inputs": [
+        "{projectRoot}/src/theme/tokens/themeTokens.ts",
+        "{projectRoot}/scripts/generateTheme.ts"
+      ],
+      "outputs": [
+        "{projectRoot}/src/theme-constants/themeCssVariables.ts",
+        "{projectRoot}/src/theme-constants/theme-light.css",
+        "{projectRoot}/src/theme-constants/theme-dark.css"
+      ],
+      "options": {
+        "cwd": "{projectRoot}",
+        "command": "tsx scripts/generateTheme.ts && npx oxfmt src/theme-constants/themeCssVariables.ts"
+      }
+    },
     "build:individual": {
       "executor": "nx:run-commands",
       "cache": true,
