@@ -259,6 +259,55 @@ describe('IteratorWorkflowAction', () => {
       });
     });
 
+    it('should not append history snapshot when previous status is undefined', async () => {
+      const items = ['item1', 'item2'];
+      const stepInLoopId = 'step-1';
+      const input = {
+        currentStepId: mockIteratorStepId,
+        steps: [createIteratorAction(items)],
+        context: {},
+        runInfo: {
+          workflowRunId: mockWorkflowRunId,
+          workspaceId: mockWorkspaceId,
+        },
+      };
+
+      workflowRunWorkspaceService.getWorkflowRunOrFail.mockResolvedValueOnce({
+        state: {
+          stepInfos: {
+            [mockIteratorStepId]: {
+              result: {
+                currentItemIndex: 0,
+                currentItem: 'item1',
+                hasProcessedAllItems: false,
+              },
+              status: StepStatus.SUCCESS,
+              history: [],
+            },
+            [stepInLoopId]: {
+              result: { foo: 'bar' },
+              error: undefined,
+              history: [],
+            },
+          },
+        },
+      } as any);
+
+      await service.execute(input);
+
+      expect(
+        workflowRunWorkspaceService.updateWorkflowRunStepInfos,
+      ).toHaveBeenCalledWith({
+        stepInfos: expect.objectContaining({
+          [stepInLoopId]: expect.objectContaining({
+            history: [],
+          }),
+        }),
+        workflowRunId: mockWorkflowRunId,
+        workspaceId: mockWorkspaceId,
+      });
+    });
+
     it('should throw error when max iterations is reached', async () => {
       const items = Array(10001).fill('item');
       const input = {

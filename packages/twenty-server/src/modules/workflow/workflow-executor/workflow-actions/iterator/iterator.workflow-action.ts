@@ -192,18 +192,22 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
 
     return stepIdsToReset.reduce(
       (acc, stepId) => {
+        const stepInfo = stepInfos[stepId];
+
         acc[stepId] = {
           status: StepStatus.NOT_STARTED,
           result: undefined,
           error: undefined,
-          history: [
-            ...(stepInfos[stepId]?.history ?? []),
-            {
-              result: stepInfos[stepId]?.result,
-              error: stepInfos[stepId]?.error,
-              status: stepInfos[stepId]?.status,
-            },
-          ],
+          history: isDefined(stepInfo?.status)
+            ? [
+                ...(stepInfo?.history ?? []),
+                {
+                  result: stepInfo?.result,
+                  error: stepInfo?.error,
+                  status: stepInfo.status,
+                },
+              ]
+            : (stepInfo?.history ?? []),
         };
 
         return acc;
@@ -224,14 +228,16 @@ export class IteratorWorkflowAction implements WorkflowActionInterface {
         ...iteratorStepInfo,
         result: undefined,
         error: undefined,
-        history: [
-          ...(iteratorStepInfo?.history ?? []),
-          {
-            result: iteratorStepInfo?.result,
-            error: iteratorStepInfo?.error,
-            status: iteratorStepInfo?.status,
-          },
-        ],
+        history: isDefined(iteratorStepInfo?.status)
+          ? [
+              ...(iteratorStepInfo?.history ?? []),
+              {
+                result: iteratorStepInfo?.result,
+                error: iteratorStepInfo?.error,
+                status: iteratorStepInfo.status,
+              },
+            ]
+          : (iteratorStepInfo?.history ?? []),
       },
     };
   }
