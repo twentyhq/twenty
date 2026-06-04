@@ -54,7 +54,6 @@ const HUMAN_OBJECT = buildDefaultObjectManifest({
   ],
 });
 
-// First sync: object Human (arm, leg, head) and view Body listing only arm + head
 const buildInitialManifest = (): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -83,7 +82,6 @@ const buildInitialManifest = (): Manifest =>
     },
   });
 
-// Re-sync: add a brand new "tail" field on the object and a new view field for it
 const buildResyncManifest = (): Manifest =>
   buildBaseManifest({
     appId: TEST_APP_ID,
@@ -158,7 +156,6 @@ describe('Successful re-sync of an application whose app-owned view references a
   });
 
   it('should re-sync successfully when the app-owned Body view carries a view field owned by another application', async () => {
-    // 1. Initial sync: object Human + view Body (only arm + head view fields)
     await syncApplication({
       manifest: buildInitialManifest(),
       expectToFail: false,
@@ -183,9 +180,6 @@ describe('Successful re-sync of an application whose app-owned view references a
 
     expect(bodyView).toBeDefined();
 
-    // 2. Create a view field for `leg` inside the Body view through the metadata API.
-    // The metadata API always assigns the view field to the workspace custom application,
-    // so this view field is NOT owned by the Human app even though the Body view is.
     const { data: createViewFieldData } = await createOneViewField({
       input: {
         fieldMetadataId: legField?.id ?? '',
@@ -199,10 +193,6 @@ describe('Successful re-sync of an application whose app-owned view references a
 
     expect(isDefined(legViewFieldId)).toBe(true);
 
-    // 3. Re-sync the app with a new field (tail) and a new view field for it.
-    // The Body view now also carries an API-owned view field (leg) that does not
-    // belong to the syncing app. The app slice must stay internally consistent so
-    // this re-sync succeeds instead of failing on the dangling reference.
     const { errors } = await syncApplication({
       manifest: buildResyncManifest(),
       expectToFail: false,
@@ -210,7 +200,6 @@ describe('Successful re-sync of an application whose app-owned view references a
 
     expect(isDefined(errors)).toBe(false);
 
-    // The new app-owned field is created
     const humanObjectAfterResync = await findHumanObject();
     const tailField = humanObjectAfterResync?.fieldsList.find(
       (field) => field.name === 'tail',
@@ -218,7 +207,6 @@ describe('Successful re-sync of an application whose app-owned view references a
 
     expect(tailField).toBeDefined();
 
-    // The Body view keeps the API-owned `leg` view field and gains the app-owned `tail` one
     const { data: viewFieldsData } = await findViewFields({
       viewId: bodyView?.id ?? '',
       expectToFail: false,
