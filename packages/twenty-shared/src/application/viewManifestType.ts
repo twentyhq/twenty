@@ -1,10 +1,10 @@
 import { type SyncableEntityOptions } from '@/application/syncableEntityOptionsType';
 import {
-  type ViewKey,
   type AggregateOperations,
   type ViewCalendarLayout,
   type ViewFilterGroupLogicalOperator,
   type ViewFilterOperand,
+  type ViewKey,
   type ViewOpenRecordIn,
   type ViewSortDirection,
   type ViewType,
@@ -27,10 +27,6 @@ export type ViewFieldManifest = SyncableEntityOptions & {
   viewFieldGroupUniversalIdentifier?: string;
 };
 
-// A view field declared at the top level of the manifest, targeting an EXISTING
-// view (standard or from another application) by universalIdentifier. Mirrors
-// how FieldManifest carries objectUniversalIdentifier to attach a field to an
-// existing object, so an app can add columns to a view it does not own.
 export type StandaloneViewFieldManifest = ViewFieldManifest & {
   viewUniversalIdentifier: string;
 };

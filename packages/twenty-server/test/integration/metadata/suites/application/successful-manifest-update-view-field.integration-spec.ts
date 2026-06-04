@@ -1,15 +1,9 @@
 import { buildBaseManifest } from 'test/integration/metadata/suites/application/utils/build-base-manifest.util';
-import {
-  cleanupApplicationAndAppRegistration
-} from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
-import {
-  setupApplicationForSync
-} from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
+import { cleanupApplicationAndAppRegistration } from 'test/integration/metadata/suites/application/utils/cleanup-application-and-app-registration.util';
+import { setupApplicationForSync } from 'test/integration/metadata/suites/application/utils/setup-application-for-sync.util';
 import { syncApplication } from 'test/integration/metadata/suites/application/utils/sync-application.util';
 import { uninstallApplication } from 'test/integration/metadata/suites/application/utils/uninstall-application.util';
-import {
-  findManyObjectMetadataWithIndexes
-} from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
+import { findManyObjectMetadataWithIndexes } from 'test/integration/metadata/suites/object-metadata/utils/find-many-object-metadata-with-indexes.util';
 import { findViewFields } from 'test/integration/metadata/suites/view-field/utils/find-view-fields.util';
 import { findViews } from 'test/integration/metadata/suites/view/utils/find-views.util';
 import { VIEW_FIELD_GQL_FIELDS } from 'test/integration/constants/view-gql-fields.constants';
@@ -163,8 +157,6 @@ describe('Manifest update - standalone view fields on existing views', () => {
       size: 150,
     });
 
-    // The standard view is untouched: every standard column is still present
-    // and exactly one column (ours) was added.
     expect(viewFieldsAfterSync.length).toBe(standardViewFields.length + 1);
     for (const standardViewFieldId of standardViewFieldIds) {
       expect(
@@ -217,7 +209,6 @@ describe('Manifest update - standalone view fields on existing views', () => {
       expectToFail: false,
     });
 
-    // The standard view still exists after uninstall.
     const allPeopleViewIdAfterUninstall = await findAllPeopleViewId(person.id);
 
     expect(allPeopleViewIdAfterUninstall).toBe(allPeopleViewId);
@@ -225,7 +216,6 @@ describe('Manifest update - standalone view fields on existing views', () => {
     const viewFieldsAfterUninstall =
       await findAllPeopleViewFields(allPeopleViewId);
 
-    // Our contributed column is gone, the standard columns remain.
     expect(
       viewFieldsAfterUninstall.some(
         (viewField) => viewField.fieldMetadataId === customFieldId,

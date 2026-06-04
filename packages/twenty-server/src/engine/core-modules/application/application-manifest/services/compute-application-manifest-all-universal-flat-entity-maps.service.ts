@@ -468,10 +468,6 @@ export class ComputeApplicationManifestAllUniversalFlatEntityMapsService {
       }
     }
 
-    // Standalone view fields target an EXISTING view (standard or owned by
-    // another application) carried on the manifest entry itself, mirroring how
-    // top-level fields target an existing object. The parent view is resolved
-    // later from the optimistic/dependency maps, so no view is created here.
     for (const standaloneViewFieldManifest of manifest.viewFields ?? []) {
       addUniversalFlatEntityToUniversalFlatEntityMapsThroughMutationOrThrow({
         universalFlatEntity: fromViewFieldManifestToUniversalFlatViewField({
