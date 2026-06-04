@@ -13,6 +13,7 @@ import { UserContext } from '@/users/contexts/UserContext';
 import { stringifyRelativeDateFilter } from '@/views/view-filter-value/utils/stringifyRelativeDateFilter';
 import { styled } from '@linaria/react';
 import { useContext, useState } from 'react';
+import { Trans } from '@lingui/react/macro';
 import { ViewFilterOperand, type FirstDayOfTheWeek } from 'twenty-shared/types';
 import {
   isDefined,
@@ -161,18 +162,26 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   if (isBetween) {
     return (
       <StyledBetweenContainer>
-        <StyledTabRow>
+        <StyledTabRow role="tablist">
           <StyledTab
+            role="tab"
+            type="button"
+            aria-selected={activeTab === 'start'}
+            aria-controls="object-filter-dropdown-date-time-between-start"
             isActive={activeTab === 'start'}
             onClick={() => setActiveTab('start')}
           >
-            From
+            <Trans>From</Trans>
           </StyledTab>
           <StyledTab
+            role="tab"
+            type="button"
+            aria-selected={activeTab === 'end'}
+            aria-controls="object-filter-dropdown-date-time-between-end"
             isActive={activeTab === 'end'}
             onClick={() => setActiveTab('end')}
           >
-            To
+            <Trans>To</Trans>
           </StyledTab>
         </StyledTabRow>
         {activeTab === 'start' ? (
