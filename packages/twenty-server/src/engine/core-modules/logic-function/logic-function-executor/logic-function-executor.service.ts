@@ -48,6 +48,7 @@ import {
 import { FlatLogicFunction } from 'src/engine/metadata-modules/logic-function/types/flat-logic-function.type';
 import { SubscriptionChannel } from 'src/engine/subscriptions/enums/subscription-channel.enum';
 import { SubscriptionService } from 'src/engine/subscriptions/subscription.service';
+import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { WorkspaceEventEmitter } from 'src/engine/workspace-event-emitter/workspace-event-emitter';
 import { cleanServerUrl } from 'src/utils/clean-server-url';
@@ -79,6 +80,7 @@ export class LogicFunctionExecutorService {
     private readonly applicationTokenService: ApplicationTokenService,
     private readonly secretEncryptionService: SecretEncryptionService,
     private readonly subscriptionService: SubscriptionService,
+    private readonly workspaceEventLiveService: WorkspaceEventLiveService,
     private readonly auditService: AuditService,
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
     private readonly workspaceEventEmitter: WorkspaceEventEmitter,
@@ -388,6 +390,48 @@ export class LogicFunctionExecutorService {
     return envMap;
   }
 
+  // Best-effort CLI log tail: gated on presence (skip serialize + publish when no
+  // `dev:function:logs` client is attached) and never throws into the executor.
+  private async publishLogicFunctionLogsToCli({
+    result,
+    flatApplication,
+    flatLogicFunction,
+    workspaceId,
+  }: {
+    result: LogicFunctionExecuteResult;
+    workspaceId: string;
+    flatLogicFunction: FlatLogicFunction;
+    flatApplication: FlatApplication;
+  }): Promise<void> {
+    try {
+      const isWatched = await this.workspaceEventLiveService.isWatched(
+        workspaceId,
+        SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
+      );
+
+      if (!isWatched) {
+        return;
+      }
+
+      await this.subscriptionService.publish({
+        channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
+        workspaceId,
+        payload: {
+          logicFunctionLogs: {
+            logs: result.logs,
+            id: flatLogicFunction.id,
+            name: flatLogicFunction.name,
+            universalIdentifier: flatLogicFunction.universalIdentifier,
+            applicationId: flatApplication.id,
+            applicationUniversalIdentifier: flatApplication.universalIdentifier,
+          },
+        },
+      });
+    } catch (error) {
+      this.logger.error('Failed to publish logic function logs', error);
+    }
+  }
+
   private async handleExecutionResult({
     result,
     flatApplication,
@@ -419,19 +463,14 @@ export class LogicFunctionExecutorService {
         });
     }
 
-    await this.subscriptionService.publish({
-      channel: SubscriptionChannel.LOGIC_FUNCTION_LOGS_CHANNEL,
+    // The CLI live tail (twenty dev:function:logs) is a separate low-latency
+    // channel from the durable applicationLog stream; publish off the hot path,
+    // only while a CLI is attached, and never let pub/sub disrupt execution.
+    void this.publishLogicFunctionLogsToCli({
+      result,
+      flatApplication,
+      flatLogicFunction,
       workspaceId,
-      payload: {
-        logicFunctionLogs: {
-          logs: result.logs,
-          id: flatLogicFunction.id,
-          name: flatLogicFunction.name,
-          universalIdentifier: flatLogicFunction.universalIdentifier,
-          applicationId: flatApplication.id,
-          applicationUniversalIdentifier: flatApplication.universalIdentifier,
-        },
-      },
     });
 
     void this.auditService

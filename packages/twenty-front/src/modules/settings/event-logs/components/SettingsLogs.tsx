@@ -21,6 +21,22 @@ import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
 
+// Fills the settings body height so the tab itself never scrolls; only the
+// results table (below) scrolls, with the filter card pinned above it.
+const StyledRoot = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: ${themeCssVariables.spacing[6]};
+  margin: 0 auto;
+  max-width: 760px;
+  min-height: 0;
+  padding: ${themeCssVariables.spacing[6]} ${themeCssVariables.spacing[8]}
+    ${themeCssVariables.spacing[8]};
+  width: 100%;
+`;
+
 const StyledCardContent = styled.div`
   display: flex;
   flex-direction: column;
@@ -41,8 +57,10 @@ const StyledSelectorGrow = styled.div`
 
 const StyledResults = styled.div`
   display: flex;
+  flex: 1;
   flex-direction: column;
   gap: ${themeCssVariables.spacing[2]};
+  min-height: 0;
 `;
 
 const StyledRecordCount = styled.span`
@@ -51,10 +69,11 @@ const StyledRecordCount = styled.span`
   font-size: ${themeCssVariables.font.size.sm};
 `;
 
-// The results table scrolls internally and loads more as you reach the bottom,
-// so it needs a bounded height.
+// The results table scrolls internally and loads more as you reach the bottom;
+// it fills the height left by the filter card so the tab has a single scrollbar.
 const StyledTableWrapper = styled.div`
-  height: 480px;
+  flex: 1;
+  min-height: 0;
   overflow: hidden;
 `;
 
@@ -173,7 +192,7 @@ export const SettingsLogs = () => {
   };
 
   return (
-    <>
+    <StyledRoot>
       <Card rounded fullWidth>
         <StyledCardContent>
           <StyledSelectorRow>
@@ -202,6 +221,6 @@ export const SettingsLogs = () => {
       </Card>
 
       {renderResults()}
-    </>
+    </StyledRoot>
   );
 };

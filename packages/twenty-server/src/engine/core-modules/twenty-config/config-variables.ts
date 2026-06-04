@@ -568,15 +568,6 @@ export class ConfigVariables {
 
   @ConfigVariablesMetadata({
     group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
-    description:
-      'Configure whether console logs from logic functions are displayed in the terminal',
-    type: ConfigVariableType.BOOLEAN,
-  })
-  @IsOptional()
-  LOGIC_FUNCTION_LOGS_ENABLED: false;
-
-  @ConfigVariablesMetadata({
-    group: ConfigVariablesGroup.LOGIC_FUNCTION_CONFIG,
     description: 'Throttle limit for logic function execution',
     type: ConfigVariableType.NUMBER,
   })

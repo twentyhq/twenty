@@ -30,24 +30,24 @@ export class WorkspaceEventLiveService {
     private readonly subscriptionService: SubscriptionService,
   ) {}
 
-  private getPresenceKey(workspaceId: string, table: string): string {
-    return `workspaceEventLive:${workspaceId}:${table}`;
+  private getPresenceKey(workspaceId: string, key: string): string {
+    return `workspaceEventLive:${workspaceId}:${key}`;
   }
 
-  async markWatched(workspaceId: string, table: string): Promise<void> {
+  // Presence is keyed by an arbitrary live-stream key — a ClickHouse table for
+  // the unified event stream, or a subscription channel for the CLI logic
+  // function tail — so any presence-gated publisher can reuse it.
+  async markWatched(workspaceId: string, key: string): Promise<void> {
     await this.cacheStorageService.set<boolean>(
-      this.getPresenceKey(workspaceId, table),
+      this.getPresenceKey(workspaceId, key),
       true,
       WORKSPACE_EVENT_LIVE_TTL_MS,
     );
   }
 
-  private async isWatched(
-    workspaceId: string,
-    table: string,
-  ): Promise<boolean> {
+  async isWatched(workspaceId: string, key: string): Promise<boolean> {
     const value = await this.cacheStorageService.get<boolean>(
-      this.getPresenceKey(workspaceId, table),
+      this.getPresenceKey(workspaceId, key),
     );
 
     return isDefined(value);
