@@ -427,27 +427,14 @@ export class AgentAsyncExecutorService {
       categorySet.has(entry.category),
     );
 
-    const toolContext = {
-      workspaceId,
-      roleId: agentRoleId,
-      userId:
-        isDefined(authContext) && isUserAuthContext(authContext)
-          ? authContext.user.id
-          : undefined,
-      userWorkspaceId:
-        isDefined(authContext) && isUserAuthContext(authContext)
-          ? authContext.userWorkspaceId
-          : undefined,
-    };
-
     const tools: ToolSet = {
       [LEARN_TOOLS_TOOL_NAME]: createLearnToolsTool(
         this.toolRegistry,
-        toolContext,
+        toolProviderContext,
       ),
       [EXECUTE_TOOL_TOOL_NAME]: createExecuteToolTool(
         this.toolRegistry,
-        toolContext,
+        toolProviderContext,
         { compactOutput: true },
       ),
     };

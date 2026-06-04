@@ -24,17 +24,14 @@ export const buildAgentSystemPrompt = (
 };
 
 const buildToolCatalogSection = (toolCatalog: ToolIndexEntry[]): string => {
-  const objectToolsMap = new Map<string, string[]>();
+  const objectNames = new Set<string>();
   const actionTools: ToolIndexEntry[] = [];
   const operationOrder: string[] = [];
   const seenOps = new Set<string>();
 
   for (const tool of toolCatalog) {
     if (tool.objectName && tool.operation) {
-      const ops = objectToolsMap.get(tool.objectName) ?? [];
-
-      ops.push(tool.operation);
-      objectToolsMap.set(tool.objectName, ops);
+      objectNames.add(tool.objectName);
 
       if (!seenOps.has(tool.operation)) {
         seenOps.add(tool.operation);
@@ -51,16 +48,16 @@ const buildToolCatalogSection = (toolCatalog: ToolIndexEntry[]): string => {
     `Use \`${LEARN_TOOLS_TOOL_NAME}\` to get the schema, then \`${EXECUTE_TOOL_TOOL_NAME}\` to call any tool below.`,
   ];
 
-  if (objectToolsMap.size > 0) {
-    const objectNames = [...objectToolsMap.keys()].sort();
+  if (objectNames.size > 0) {
+    const sortedObjectNames = [...objectNames].sort();
 
     lines.push('');
     lines.push('### Database CRUD');
     lines.push('Operations per object:');
     lines.push(...operationOrder.map((op) => `- \`${op}_{object}\``));
     lines.push('');
-    lines.push(`Objects (${objectNames.length}):`);
-    lines.push(...objectNames.map((name) => `- \`${name}\``));
+    lines.push(`Objects (${sortedObjectNames.length}):`);
+    lines.push(...sortedObjectNames.map((name) => `- \`${name}\``));
   }
 
   if (actionTools.length > 0) {
