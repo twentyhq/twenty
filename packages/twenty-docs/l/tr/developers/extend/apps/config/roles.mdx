@@ -9,8 +9,8 @@ Bir **rol**, bir izin kümesidir: bir uygulamanın hangi nesneleri okuyup yazabi
 ```ts src/roles/restricted-company-role.ts
 import {
   defineRole,
-  PermissionFlag,
   STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS,
+  SystemPermissionFlag,
 } from 'twenty-sdk/define';
 
 export default defineRole({
@@ -46,7 +46,7 @@ export default defineRole({
       canUpdateFieldValue: false,
     },
   ],
-  permissionFlags: [PermissionFlag.APPLICATIONS],
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.APPLICATIONS],
 });
 ```
 
@@ -55,7 +55,7 @@ export default defineRole({
 Yeni bir uygulama iskeleti oluşturduğunuzda, CLI `defineApplicationRole()` ile bildirilen varsayılan bir rol dosyası oluşturur:
 
 ```ts src/roles/default-role.ts
-import { defineApplicationRole, PermissionFlag } from 'twenty-sdk/define';
+import { defineApplicationRole } from 'twenty-sdk/define';
 
 export const DEFAULT_ROLE_UNIVERSAL_IDENTIFIER =
   'b648f87b-1d26-4961-b974-0908fd991061';
@@ -74,7 +74,7 @@ export default defineApplicationRole({
   canBeAssignedToApiKeys: false,
   objectPermissions: [],
   fieldPermissions: [],
-  permissionFlags: [],
+  permissionFlagUniversalIdentifiers: [],
 });
 ```
 
@@ -90,5 +90,5 @@ Notlar:
 
 * Oluşturulmuş (scaffolded) rolden başlayın ve ardından giderek kısıtlayın — varsayılan rol geniş okuma erişimi verir; bu ise üretim ortamında nadiren isteyeceğiniz bir şeydir.
 * `objectPermissions` ve `fieldPermissions` değerlerini, fonksiyonlarınızın gerçekten ihtiyaç duyduğu nesne ve alanlarla değiştirin.
-* `permissionFlags`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
+* `permissionFlagUniversalIdentifiers`, platform düzeyindeki yeteneklere erişimi kontrol eder. Bunları asgari düzeyde tutun.
 * Çalışan bir örnek için bkz.: [`hello-world/src/roles/function-role.ts`](https://github.com/twentyhq/twenty/blob/main/packages/twenty-apps/hello-world/src/roles/function-role.ts).

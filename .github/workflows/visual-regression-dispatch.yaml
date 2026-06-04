@@ -1,12 +1,12 @@
 name: Visual Regression Dispatch
 
-# Uses workflow_run to dispatch visual regression to ci-privileged.
-# This runs in the context of the base repo (not the fork), so it has
-# access to secrets — making it work for external contributor PRs.
+# Dispatches visual regression processing to ci-privileged after CI completes.
+# Runs in the context of the base repo (not the fork) so it has access to secrets,
+# making it work for external contributor PRs.
 
 on:
   workflow_run:
-    workflows: ['CI Front', 'CI UI']
+    workflows: ['CI UI']
     types: [completed]
 
 permissions:
@@ -14,41 +14,19 @@ permissions:
   pull-requests: read
 
 jobs:
-  dispatch:
+  dispatch-pr:
     if: >-
       github.event.workflow_run.event == 'pull_request' &&
       github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Determine project and artifact name
-        id: project
-        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
-        with:
-          script: |
-            const workflowName = context.payload.workflow_run.name;
-            if (workflowName === 'CI Front') {
-              core.setOutput('project', 'twenty-front');
-              core.setOutput('artifact_name', 'storybook-static');
-              core.setOutput('tarball_name', 'storybook-twenty-front-tarball');
-              core.setOutput('tarball_file', 'storybook-twenty-front.tar.gz');
-              core.setOutput('mode', 'storybook-tarball');
-            } else if (workflowName === 'CI UI') {
-              core.setOutput('project', 'twenty-ui');
-              core.setOutput('artifact_name', 'argos-screenshots-twenty-ui');
-              core.setOutput('tarball_name', 'argos-screenshots-twenty-ui-tarball');
-              core.setOutput('tarball_file', 'argos-screenshots-twenty-ui.tar.gz');
-              core.setOutput('mode', 'argos-screenshots');
-            } else {
-              core.setFailed(`Unexpected workflow: ${workflowName}`);
-            }
-
-      - name: Check if artifact exists
+      - name: Check if screenshots artifact exists
         id: check-artifact
         uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
         with:
           script: |
-            const artifactName = '${{ steps.project.outputs.artifact_name }}';
+            const artifactName = 'argos-screenshots-twenty-ui';
             const runId = context.payload.workflow_run.id;
 
             const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
@@ -61,7 +39,7 @@ jobs:
             core.setOutput('exists', found ? 'true' : 'false');
 
             if (!found) {
-              core.info(`Artifact "${artifactName}" not found in run ${runId} — build was likely skipped`);
+              core.info(`Artifact "${artifactName}" not found in run ${runId} — skipping`);
             }
 
       - name: Get PR number
@@ -73,8 +51,6 @@ jobs:
             const headBranch = context.payload.workflow_run.head_branch;
             const headRepo = context.payload.workflow_run.head_repository;
 
-            // workflow_run.pull_requests is empty for fork PRs,
-            // so fall back to searching by head label (owner:branch)
             let pullRequests = context.payload.workflow_run.pull_requests;
             let prNumber;
 
@@ -82,7 +58,7 @@ jobs:
               prNumber = pullRequests[0].number;
             } else {
               const headLabel = `${headRepo.owner.login}:${headBranch}`;
-              core.info(`pull_requests is empty (likely a fork PR), searching by head label: ${headLabel}`);
+              core.info(`Searching for PR by head label: ${headLabel}`);
 
               const { data: prs } = await github.rest.pulls.list({
                 owner: context.repo.owner,
@@ -98,7 +74,7 @@ jobs:
             }
 
             if (!prNumber) {
-              core.info('No pull request found for this workflow run — skipping');
+              core.info('No pull request found — skipping');
               core.setOutput('has_pr', 'false');
               return;
             }
@@ -107,45 +83,65 @@ jobs:
             core.setOutput('has_pr', 'true');
             core.info(`PR #${prNumber}`);
 
-      - name: Download artifact from triggering run
-        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: ${{ steps.project.outputs.artifact_name }}
-          path: artifact-content
-          run-id: ${{ github.event.workflow_run.id }}
-          github-token: ${{ github.token }}
-
-      - name: Package artifact as tarball
-        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        run: tar -czf /tmp/${{ steps.project.outputs.tarball_file }} -C artifact-content .
-
-      - name: Upload tarball
-        if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: ${{ steps.project.outputs.tarball_name }}
-          path: /tmp/${{ steps.project.outputs.tarball_file }}
-          retention-days: 1
-
       - name: Dispatch to ci-privileged
         if: steps.check-artifact.outputs.exists == 'true' && steps.pr-info.outputs.has_pr == 'true'
         env:
           GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
           PR_NUMBER: ${{ steps.pr-info.outputs.pr_number }}
-          RUN_ID: ${{ github.run_id }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
           REPOSITORY: ${{ github.repository }}
-          PROJECT: ${{ steps.project.outputs.project }}
           BRANCH: ${{ github.event.workflow_run.head_branch }}
           COMMIT: ${{ github.event.workflow_run.head_sha }}
-          MODE: ${{ steps.project.outputs.mode }}
         run: |
           gh api repos/twentyhq/ci-privileged/dispatches \
+            --method POST \
             -f event_type=visual-regression \
             -f "client_payload[pr_number]=$PR_NUMBER" \
-            -f "client_payload[run_id]=$RUN_ID" \
+            -f "client_payload[run_id]=$WORKFLOW_RUN_ID" \
             -f "client_payload[repo]=$REPOSITORY" \
-            -f "client_payload[project]=$PROJECT" \
             -f "client_payload[branch]=$BRANCH" \
-            -f "client_payload[commit]=$COMMIT" \
-            -f "client_payload[mode]=$MODE"
+            -f "client_payload[commit]=$COMMIT"
+
+  dispatch-main:
+    if: >-
+      github.event.workflow_run.event == 'push' &&
+      github.event.workflow_run.head_branch == 'main' &&
+      github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check if screenshots artifact exists
+        id: check-artifact
+        uses: actions/github-script@f28e40c7f34bde8b3046d885e986cb6290c5673b # v7.1.0
+        with:
+          script: |
+            const runId = context.payload.workflow_run.id;
+            const { data: artifacts } = await github.rest.actions.listWorkflowRunArtifacts({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              run_id: runId,
+            });
+
+            const found = artifacts.artifacts.some(a => a.name === 'argos-screenshots-twenty-ui');
+            core.setOutput('exists', found ? 'true' : 'false');
+
+            if (!found) {
+              core.info(`Artifact not found in run ${runId} — skipping`);
+            }
+
+      - name: Dispatch to ci-privileged
+        if: steps.check-artifact.outputs.exists == 'true'
+        env:
+          GH_TOKEN: ${{ secrets.CI_PRIVILEGED_DISPATCH_TOKEN }}
+          WORKFLOW_RUN_ID: ${{ github.event.workflow_run.id }}
+          REPOSITORY: ${{ github.repository }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          COMMIT: ${{ github.event.workflow_run.head_sha }}
+        run: |
+          gh api repos/twentyhq/ci-privileged/dispatches \
+            --method POST \
+            -f event_type=visual-regression \
+            -f "client_payload[run_id]=$WORKFLOW_RUN_ID" \
+            -f "client_payload[repo]=$REPOSITORY" \
+            -f "client_payload[branch]=$BRANCH" \
+            -f "client_payload[commit]=$COMMIT"

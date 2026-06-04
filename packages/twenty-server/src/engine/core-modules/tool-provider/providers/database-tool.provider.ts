@@ -113,13 +113,11 @@ export class DatabaseToolProvider implements ToolProvider {
         continue;
       }
 
-      const objectMetadata = {
-        ...flatObject,
-        fields: getFlatFieldsFromFlatObjectMetadata(
-          flatObject,
-          flatFieldMetadataMaps,
-        ),
-      };
+      const fields = includeSchemas
+        ? getFlatFieldsFromFlatObjectMetadata(flatObject, flatFieldMetadataMaps)
+        : [];
+
+      const objectMetadata = { ...flatObject, fields };
 
       const restrictedFields = permission.restrictedFields;
       const canBeManagedByAutomation = canObjectBeManagedByAutomation({
@@ -171,7 +169,9 @@ export class DatabaseToolProvider implements ToolProvider {
         const groupBySchema = shouldGenerateGroupBy
           ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
           : null;
+
         const hasGroupBySchema =
+          !includeSchemas ||
           groupBySchema !== null ||
           hasGroupByToolInputSchema(objectMetadata, restrictedFields);
 

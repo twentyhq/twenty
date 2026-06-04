@@ -256,6 +256,19 @@ export type ApiKeyToken = {
   token: Scalars['String'];
 };
 
+export type AppConnection = {
+  __typename?: 'AppConnection';
+  accessToken: Scalars['String'];
+  authFailedAt?: Maybe<Scalars['String']>;
+  handle: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  providerName: Scalars['String'];
+  scopes: Array<Scalars['String']>;
+  userWorkspaceId: Scalars['String'];
+  visibility: Scalars['String'];
+};
+
 export type AppToken = {
   __typename?: 'AppToken';
   createdAt: Scalars['DateTime'];
@@ -2116,6 +2129,12 @@ export type LineChartSeries = {
   label: Scalars['String'];
 };
 
+export type ListAppConnectionsInput = {
+  providerName?: InputMaybe<Scalars['String']>;
+  userWorkspaceId?: InputMaybe<Scalars['String']>;
+  visibility?: InputMaybe<Scalars['String']>;
+};
+
 export type Location = {
   __typename?: 'Location';
   lat?: Maybe<Scalars['Float']>;
@@ -2495,6 +2514,7 @@ export type Mutation = {
   resetPageLayoutWidgetToDefault: PageLayoutWidget;
   revokeApiKey?: Maybe<ApiKey>;
   rotateApplicationRegistrationClientSecret: RotateClientSecret;
+  runAgent: RunAgentResult;
   runEvaluationInput: AgentTurn;
   runWorkspaceMigration: Scalars['Boolean'];
   saveImapSmtpCaldavAccount: ImapSmtpCaldavConnectionSuccess;
@@ -3191,6 +3211,11 @@ export type MutationRevokeApiKeyArgs = {
 
 export type MutationRotateApplicationRegistrationClientSecretArgs = {
   id: Scalars['String'];
+};
+
+
+export type MutationRunAgentArgs = {
+  input: RunAgentInput;
 };
 
 
@@ -4114,6 +4139,8 @@ export type Query = {
   agentTurns: Array<AgentTurn>;
   apiKey?: Maybe<ApiKey>;
   apiKeys: Array<ApiKey>;
+  appConnection: AppConnection;
+  appConnections: Array<AppConnection>;
   applicationConnectionProviders: Array<ApplicationConnectionProvider>;
   applicationRegistrationTarballUrl?: Maybe<Scalars['String']>;
   barChartData: BarChartData;
@@ -4220,6 +4247,16 @@ export type QueryAgentTurnsArgs = {
 
 export type QueryApiKeyArgs = {
   input: GetApiKeyInput;
+};
+
+
+export type QueryAppConnectionArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryAppConnectionsArgs = {
+  filter?: InputMaybe<ListAppConnectionsInput>;
 };
 
 
@@ -4734,6 +4771,18 @@ export enum RowLevelPermissionPredicateOperand {
   LESS_THAN_OR_EQUAL = 'LESS_THAN_OR_EQUAL',
   VECTOR_SEARCH = 'VECTOR_SEARCH'
 }
+
+export type RunAgentInput = {
+  agentUniversalIdentifier: Scalars['String'];
+  prompt: Scalars['String'];
+};
+
+export type RunAgentResult = {
+  __typename?: 'RunAgentResult';
+  error?: Maybe<Scalars['String']>;
+  result?: Maybe<Scalars['JSON']>;
+  success: Scalars['Boolean'];
+};
 
 export type SsoConnection = {
   __typename?: 'SSOConnection';
