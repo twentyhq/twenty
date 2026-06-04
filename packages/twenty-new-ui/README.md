@@ -168,7 +168,7 @@ and state-decoupling notes) is a **Phase 0 deliverable**, alongside the `twenty-
 - **Functional** — component/interaction tests via `@storybook/addon-vitest` (real browser); unit tests (Jest) for hooks/utilities; coverage gate via `@storybook/addon-coverage`.
 - **Accessibility** — Storybook a11y addon (axe-core) with `parameters.a11y.test = 'error'` so violations fail CI.
 - **Visual parity** — visual regression (Chromatic or test-runner image snapshots) plus side-by-side stories rendering the old and new component with identical props; a pixel-diff threshold is the per-component acceptance gate.
-- **Performance & size** — `size-limit` per entry point with budgets; tree-shaking fixtures (importing one component must not pull the library); build-time tracking; render benchmarks via React Profiler; load-time via Lighthouse/Playwright on the built Storybook.
+- **Performance & size** — `size-limit` per entry point with budgets; tree-shaking fixtures (importing one component must not pull the library); build-time tracking; render benchmarks via React Profiler; load-time via Lighthouse/Playwright on the built Storybook. As one concrete benchmark, a dedicated **stress story** renders a very large number of a single component (e.g. 10,000 buttons) and measures total render time — compared against the `twenty-ui` equivalent and gated against a budget to catch per-instance overhead regressions.
 
 CI surfaces a per-PR diff table (`twenty-ui` vs `twenty-new-ui`) for size, a11y, and visual changes.
 
