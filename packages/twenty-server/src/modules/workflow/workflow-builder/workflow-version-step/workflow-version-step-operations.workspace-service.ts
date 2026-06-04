@@ -38,7 +38,12 @@ import { type WorkflowVersionWorkspaceEntity } from 'src/modules/workflow/common
 import { WorkflowCommonWorkspaceService } from 'src/modules/workflow/common/workspace-services/workflow-common.workspace-service';
 import { type OutputSchema } from 'src/modules/workflow/workflow-builder/workflow-schema/types/output-schema.type';
 import { CodeStepBuildService } from 'src/modules/workflow/workflow-builder/workflow-version-step/code-step/services/code-step-build.service';
-import { type BaseWorkflowActionSettings } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action-settings.type';
+import {
+  BASE_STEP_DEFINITION,
+  DUPLICATED_STEP_POSITION_OFFSET,
+  ITERATOR_EMPTY_STEP_POSITION_OFFSET,
+} from 'src/modules/workflow/workflow-builder/workflow-version-step/constants/workflow-step.constants';
+import { buildStaticWorkflowStep } from 'src/modules/workflow/workflow-builder/workflow-version-step/utils/build-static-workflow-step.util';
 import {
   WorkflowActionType,
   type WorkflowAction,
@@ -46,24 +51,6 @@ import {
   type WorkflowFormAction,
 } from 'src/modules/workflow/workflow-executor/workflow-actions/types/workflow-action.type';
 import { AUTO_SELECT_SMART_MODEL_ID } from 'twenty-shared/constants';
-const BASE_STEP_DEFINITION: BaseWorkflowActionSettings = {
-  outputSchema: {},
-  errorHandlingOptions: {
-    continueOnFailure: {
-      value: false,
-    },
-    retryOnFailure: {
-      value: false,
-    },
-  },
-};
-
-const DUPLICATED_STEP_POSITION_OFFSET = 50;
-
-const ITERATOR_EMPTY_STEP_POSITION_OFFSET = {
-  x: 174,
-  y: 83,
-};
 
 @Injectable()
 export class WorkflowVersionStepOperationsWorkspaceService {
@@ -152,6 +139,30 @@ export class WorkflowVersionStepOperationsWorkspaceService {
       valid: false,
       nextStepIds: [],
     };
+
+    const recordRelatedTypes = new Set([
+      WorkflowActionType.CREATE_RECORD,
+      WorkflowActionType.UPDATE_RECORD,
+      WorkflowActionType.DELETE_RECORD,
+      WorkflowActionType.UPSERT_RECORD,
+      WorkflowActionType.FIND_RECORDS,
+    ]);
+
+    const activeObjectMetadataItem = recordRelatedTypes.has(type)
+      ? await this.objectMetadataRepository.findOne({
+          where: { workspaceId, isActive: true, isSystem: false },
+        })
+      : undefined;
+
+    const staticResult = buildStaticWorkflowStep({
+      baseStep,
+      type,
+      activeObjectMetadataItem,
+    });
+
+    if (isDefined(staticResult)) {
+      return staticResult;
+    }
 
     switch (type) {
       case WorkflowActionType.CODE: {
@@ -268,205 +279,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
           },
         };
       }
-      case WorkflowActionType.SEND_EMAIL: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Send Email',
-            type: WorkflowActionType.SEND_EMAIL,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                connectedAccountId: '',
-                recipients: {
-                  to: '',
-                  cc: '',
-                  bcc: '',
-                },
-                subject: '',
-                body: '',
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.DRAFT_EMAIL: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Draft Email',
-            type: WorkflowActionType.DRAFT_EMAIL,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                connectedAccountId: '',
-                recipients: {
-                  to: '',
-                  cc: '',
-                  bcc: '',
-                },
-                subject: '',
-                body: '',
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.CREATE_RECORD: {
-        const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
-
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Create Record',
-            type: WorkflowActionType.CREATE_RECORD,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                objectName: activeObjectMetadataItem?.nameSingular || '',
-                objectRecord: {},
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.UPDATE_RECORD: {
-        const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
-
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Update Record',
-            type: WorkflowActionType.UPDATE_RECORD,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                objectName: activeObjectMetadataItem?.nameSingular || '',
-                objectRecord: {},
-                objectRecordId: '',
-                fieldsToUpdate: [],
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.DELETE_RECORD: {
-        const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
-
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Delete Record',
-            type: WorkflowActionType.DELETE_RECORD,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                objectName: activeObjectMetadataItem?.nameSingular || '',
-                objectRecordId: '',
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.UPSERT_RECORD: {
-        const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
-
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Create or Update Record',
-            type: WorkflowActionType.UPSERT_RECORD,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                objectName: activeObjectMetadataItem?.nameSingular || '',
-                objectRecord: {},
-                fieldsToUpdate: [],
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.FIND_RECORDS: {
-        const activeObjectMetadataItem =
-          await this.objectMetadataRepository.findOne({
-            where: { workspaceId, isActive: true, isSystem: false },
-          });
-
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Search Records',
-            type: WorkflowActionType.FIND_RECORDS,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                objectName: activeObjectMetadataItem?.nameSingular || '',
-                limit: 1,
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.FORM: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Form',
-            type: WorkflowActionType.FORM,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: [],
-            },
-          },
-        };
-      }
-      case WorkflowActionType.FILTER: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Filter',
-            type: WorkflowActionType.FILTER,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                stepFilterGroups: [],
-                stepFilters: [],
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.HTTP_REQUEST: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'HTTP Request',
-            type: WorkflowActionType.HTTP_REQUEST,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                url: '',
-                method: 'GET',
-                headers: {},
-                body: {},
-              },
-            },
-          },
-        };
-      }
       case WorkflowActionType.AI_AGENT: {
         const newAgent = await this.agentService.createOneAgent(
           {
@@ -562,41 +374,6 @@ export class WorkflowVersionStepOperationsWorkspaceService {
             },
           },
           additionalCreatedSteps: [ifEmptyNode, elseEmptyNode],
-        };
-      }
-      case WorkflowActionType.DELAY: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Delay',
-            type: WorkflowActionType.DELAY,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {
-                delayType: 'DURATION',
-                duration: {
-                  days: 0,
-                  hours: 0,
-                  minutes: 0,
-                  seconds: 0,
-                },
-              },
-            },
-          },
-        };
-      }
-      case WorkflowActionType.EMPTY: {
-        return {
-          builtStep: {
-            ...baseStep,
-            name: 'Add an Action',
-            type: WorkflowActionType.EMPTY,
-            valid: true,
-            settings: {
-              ...BASE_STEP_DEFINITION,
-              input: {},
-            },
-          },
         };
       }
       default:
