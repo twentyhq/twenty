@@ -24322,11 +24322,11 @@ __metadata:
   linkType: hard
 
 "@types/passport-microsoft@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "@types/passport-microsoft@npm:2.1.0"
+  version: 2.1.1
+  resolution: "@types/passport-microsoft@npm:2.1.1"
   dependencies:
     "@types/passport-oauth2": "npm:*"
-  checksum: 10c0/449b605a9790fcaac9b6fa971ebf80d2d8b75261f1f4748416daa530dfea2ca13ad0d42b65e567088486ab0f6e11323fb0f6d4d5e471bd72cf758e70d18637b4
+  checksum: 10c0/05f23ae5a83767e7c22b6c85b91da5758b4fc8a9b94c567b509efc876f5a9c9f967690c7686039c9bedab7ce2157ddf199d9632f4bb596fc3f8a1c7623100560
   languageName: node
   linkType: hard
 
