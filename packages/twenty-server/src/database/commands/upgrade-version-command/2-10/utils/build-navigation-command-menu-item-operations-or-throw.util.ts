@@ -13,16 +13,14 @@ import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object
 
 export const buildNavigationCommandMenuItemOperationsOrThrow = ({
   existingFlatCommandMenuItemMaps,
-  flatObjectMetadataMaps,
-  objectMetadataUniversalIdentifiers,
+  objectMetadatasForNavigation,
   applicationId,
   workspaceId,
   now,
   renamedCollisionObjectMetadatas,
 }: {
   existingFlatCommandMenuItemMaps: FlatEntityMaps<FlatCommandMenuItem>;
-  flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
-  objectMetadataUniversalIdentifiers: string[];
+  objectMetadatasForNavigation: FlatObjectMetadata[];
   applicationId: string;
   workspaceId: string;
   now: string;
@@ -43,18 +41,7 @@ export const buildNavigationCommandMenuItemOperationsOrThrow = ({
         -1,
       ) + 1;
 
-  for (const objectMetadataUniversalIdentifier of objectMetadataUniversalIdentifiers) {
-    const objectMetadata =
-      flatObjectMetadataMaps.byUniversalIdentifier[
-        objectMetadataUniversalIdentifier
-      ];
-
-    if (!isDefined(objectMetadata)) {
-      throw new Error(
-        `Could not find object metadata ${objectMetadataUniversalIdentifier}`,
-      );
-    }
-
+  for (const objectMetadata of objectMetadatasForNavigation) {
     const commandMenuItemUniversalIdentifier = v5(
       objectMetadata.universalIdentifier,
       NAVIGATION_COMMAND_UUID_NAMESPACE,

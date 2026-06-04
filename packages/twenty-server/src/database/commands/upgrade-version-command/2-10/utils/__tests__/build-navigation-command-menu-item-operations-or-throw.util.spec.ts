@@ -8,29 +8,10 @@ import {
 } from 'src/engine/metadata-modules/flat-command-menu-item/utils/build-navigation-flat-command-menu-item.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
 import { getFlatObjectMetadataMock } from 'src/engine/metadata-modules/flat-object-metadata/__mocks__/get-flat-object-metadata.mock';
-import { type FlatObjectMetadata } from 'src/engine/metadata-modules/flat-object-metadata/types/flat-object-metadata.type';
 
 const APPLICATION_ID = 'application-id';
 const WORKSPACE_ID = 'workspace-id';
 const NOW = '2026-06-04T00:00:00.000Z';
-
-const buildFlatObjectMetadataMaps = (
-  flatObjectMetadatas: FlatObjectMetadata[],
-): FlatEntityMaps<FlatObjectMetadata> => ({
-  byUniversalIdentifier: Object.fromEntries(
-    flatObjectMetadatas.map((flatObjectMetadata) => [
-      flatObjectMetadata.universalIdentifier,
-      flatObjectMetadata,
-    ]),
-  ),
-  universalIdentifierById: Object.fromEntries(
-    flatObjectMetadatas.map((flatObjectMetadata) => [
-      flatObjectMetadata.id,
-      flatObjectMetadata.universalIdentifier,
-    ]),
-  ),
-  universalIdentifiersByApplicationId: {},
-});
 
 const buildFlatCommandMenuItemMaps = (
   flatCommandMenuItems: FlatCommandMenuItem[],
@@ -85,8 +66,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
 
     const result = buildNavigationCommandMenuItemOperationsOrThrow({
       existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([objectMetadata]),
-      objectMetadataUniversalIdentifiers: ['call-recording'],
+      objectMetadatasForNavigation: [objectMetadata],
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       now: NOW,
@@ -105,6 +85,28 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
     expect(result.flatEntityToDelete).toHaveLength(0);
   });
 
+  it('uses the provided object id in the navigation payload', () => {
+    const objectMetadata = getFlatObjectMetadataMock({
+      id: 'existing-call-recording-object-id',
+      universalIdentifier: 'call-recording',
+      nameSingular: 'callRecording',
+      namePlural: 'callRecordings',
+    });
+
+    const result = buildNavigationCommandMenuItemOperationsOrThrow({
+      existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
+      objectMetadatasForNavigation: [objectMetadata],
+      applicationId: APPLICATION_ID,
+      workspaceId: WORKSPACE_ID,
+      now: NOW,
+      renamedCollisionObjectMetadatas: [],
+    });
+
+    expect(result.flatEntityToCreate[0].payload).toEqual({
+      objectMetadataItemId: 'existing-call-recording-object-id',
+    });
+  });
+
   it('does not create a navigation item for an inactive object', () => {
     const objectMetadata = getFlatObjectMetadataMock({
       universalIdentifier: 'call-recording',
@@ -115,8 +117,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
 
     const result = buildNavigationCommandMenuItemOperationsOrThrow({
       existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([objectMetadata]),
-      objectMetadataUniversalIdentifiers: ['call-recording'],
+      objectMetadatasForNavigation: [objectMetadata],
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       now: NOW,
@@ -143,8 +144,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         existingNavigationItem,
       ]),
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([objectMetadata]),
-      objectMetadataUniversalIdentifiers: ['call-recording'],
+      objectMetadatasForNavigation: [objectMetadata],
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       now: NOW,
@@ -179,8 +179,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps(
         existingNavigationItems,
       ),
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([objectMetadata]),
-      objectMetadataUniversalIdentifiers: ['call-recording'],
+      objectMetadatasForNavigation: [objectMetadata],
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       now: NOW,
@@ -188,20 +187,6 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
     });
 
     expect(result.flatEntityToCreate[0].position).toBe(6);
-  });
-
-  it('throws when the object metadata is absent from the provided maps', () => {
-    expect(() =>
-      buildNavigationCommandMenuItemOperationsOrThrow({
-        existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
-        flatObjectMetadataMaps: buildFlatObjectMetadataMaps([]),
-        objectMetadataUniversalIdentifiers: ['call-recording'],
-        applicationId: APPLICATION_ID,
-        workspaceId: WORKSPACE_ID,
-        now: NOW,
-        renamedCollisionObjectMetadatas: [],
-      }),
-    ).toThrow('Could not find object metadata call-recording');
   });
 
   it('rewrites the stale availability expression of a renamed object navigation item', () => {
@@ -216,8 +201,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
       existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([
         existingNavigationItem,
       ]),
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([]),
-      objectMetadataUniversalIdentifiers: [],
+      objectMetadatasForNavigation: [],
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       now: NOW,
@@ -240,8 +224,7 @@ describe('buildNavigationCommandMenuItemOperationsOrThrow', () => {
   it('does not produce an update when a renamed object has no existing navigation item', () => {
     const result = buildNavigationCommandMenuItemOperationsOrThrow({
       existingFlatCommandMenuItemMaps: buildFlatCommandMenuItemMaps([]),
-      flatObjectMetadataMaps: buildFlatObjectMetadataMaps([]),
-      objectMetadataUniversalIdentifiers: [],
+      objectMetadatasForNavigation: [],
       applicationId: APPLICATION_ID,
       workspaceId: WORKSPACE_ID,
       now: NOW,

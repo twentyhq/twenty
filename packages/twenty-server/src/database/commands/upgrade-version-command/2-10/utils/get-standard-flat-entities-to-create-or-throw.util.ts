@@ -22,9 +22,41 @@ export const getStandardFlatEntitiesToCreateOrThrow = <
       throw new Error(`Could not find standard entity ${universalIdentifier}`);
     }
 
-    if (isDefined(existingFlatEntityMaps.byUniversalIdentifier[universalIdentifier])) {
+    if (
+      isDefined(
+        existingFlatEntityMaps.byUniversalIdentifier[universalIdentifier],
+      )
+    ) {
       return [];
     }
 
     return [standardFlatEntity];
   });
+
+export const getExistingOrStandardFlatEntityOrThrow = <
+  T extends SyncableFlatEntity,
+>({
+  standardFlatEntityMaps,
+  existingFlatEntityMaps,
+  universalIdentifier,
+}: {
+  standardFlatEntityMaps: FlatEntityMaps<T>;
+  existingFlatEntityMaps: FlatEntityMaps<T>;
+  universalIdentifier: string;
+}): T => {
+  const existingFlatEntity =
+    existingFlatEntityMaps.byUniversalIdentifier[universalIdentifier];
+
+  if (isDefined(existingFlatEntity)) {
+    return existingFlatEntity;
+  }
+
+  const standardFlatEntity =
+    standardFlatEntityMaps.byUniversalIdentifier[universalIdentifier];
+
+  if (!isDefined(standardFlatEntity)) {
+    throw new Error(`Could not find standard entity ${universalIdentifier}`);
+  }
+
+  return standardFlatEntity;
+};

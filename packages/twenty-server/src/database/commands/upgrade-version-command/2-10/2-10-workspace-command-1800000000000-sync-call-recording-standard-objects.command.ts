@@ -9,10 +9,13 @@ import { WorkspaceIteratorService } from 'src/database/commands/command-runners/
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import { buildNavigationCommandMenuItemOperationsOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/build-navigation-command-menu-item-operations-or-throw.util';
 import {
-  findCollidingCustomCallRecordingObjects,
-  resolveAvailableOldNames,
+  buildCalendarEventFieldRenameUpdates,
+  buildCallRecordingObjectRenameUpdates,
 } from 'src/database/commands/upgrade-version-command/2-10/utils/call-recording-name-collision.util';
-import { getStandardFlatEntitiesToCreateOrThrow } from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
+import {
+  getExistingOrStandardFlatEntityOrThrow,
+  getStandardFlatEntitiesToCreateOrThrow,
+} from 'src/database/commands/upgrade-version-command/2-10/utils/get-standard-flat-entities-to-create-or-throw.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
 import { RegisteredWorkspaceCommand } from 'src/engine/core-modules/upgrade/decorators/registered-workspace-command.decorator';
 import { type FlatFieldMetadata } from 'src/engine/metadata-modules/flat-field-metadata/types/flat-field-metadata.type';
@@ -24,7 +27,6 @@ import { type FlatPageLayout } from 'src/engine/metadata-modules/flat-page-layou
 import { type FlatViewFieldGroup } from 'src/engine/metadata-modules/flat-view-field-group/types/flat-view-field-group.type';
 import { type FlatViewField } from 'src/engine/metadata-modules/flat-view-field/types/flat-view-field.type';
 import { type FlatView } from 'src/engine/metadata-modules/flat-view/types/flat-view.type';
-import { ObjectMetadataService } from 'src/engine/metadata-modules/object-metadata/object-metadata.service';
 import { WorkspaceCacheService } from 'src/engine/workspace-cache/services/workspace-cache.service';
 import { computeTwentyStandardApplicationAllFlatEntityMaps } from 'src/engine/workspace-manager/twenty-standard-application/utils/twenty-standard-application-all-flat-entity-maps.constant';
 import { WorkspaceMigrationValidateBuildAndRunService } from 'src/engine/workspace-manager/workspace-migration/services/workspace-migration-validate-build-and-run-service';
@@ -99,7 +101,6 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
   constructor(
     protected readonly workspaceIteratorService: WorkspaceIteratorService,
     private readonly applicationService: ApplicationService,
-    private readonly objectMetadataService: ObjectMetadataService,
     private readonly workspaceCacheService: WorkspaceCacheService,
     private readonly workspaceMigrationValidateBuildAndRunService: WorkspaceMigrationValidateBuildAndRunService,
   ) {
@@ -112,7 +113,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
   }: RunOnWorkspaceArgs): Promise<void> {
     const isDryRun = options.dryRun ?? false;
 
-    let {
+    const {
       flatObjectMetadataMaps,
       flatFieldMetadataMaps,
       flatIndexMaps,
@@ -136,64 +137,6 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       'flatCommandMenuItemMaps',
     ]);
 
-    const renamedCollisionObjectMetadatas: {
-      universalIdentifier: string;
-      nameSingular: string;
-    }[] = [];
-
-    const collidingCustomObjects = findCollidingCustomCallRecordingObjects(
-      flatObjectMetadataMaps,
-    );
-
-    // Each rename consumes a callRecordingOld name; reserve assigned names so the
-    // next colliding object falls back to callRecordingOld2, callRecordingOld3, etc.
-    const reservedOldNames = new Set<string>();
-
-    for (const collidingCustomObject of collidingCustomObjects) {
-      const { nameSingular, namePlural, labelSingular, labelPlural } =
-        resolveAvailableOldNames(flatObjectMetadataMaps, reservedOldNames);
-
-      reservedOldNames.add(nameSingular);
-      reservedOldNames.add(namePlural);
-
-      if (isDryRun) {
-        this.logger.log(
-          `[DRY RUN] Would rename colliding custom object (${collidingCustomObject.nameSingular}) to '${nameSingular}' for workspace ${workspaceId}`,
-        );
-        continue;
-      }
-
-      await this.objectMetadataService.updateOneObject({
-        workspaceId,
-        updateObjectInput: {
-          id: collidingCustomObject.id,
-          update: {
-            nameSingular,
-            namePlural,
-            labelSingular,
-            labelPlural,
-            isLabelSyncedWithName: false,
-          },
-        },
-      });
-
-      this.logger.log(
-        `Renamed colliding custom object to '${nameSingular}' for workspace ${workspaceId}`,
-      );
-
-      renamedCollisionObjectMetadatas.push({
-        universalIdentifier: collidingCustomObject.universalIdentifier,
-        nameSingular,
-      });
-    }
-
-    if (renamedCollisionObjectMetadatas.length > 0) {
-      ({ flatObjectMetadataMaps } =
-        await this.workspaceCacheService.getOrRecompute(workspaceId, [
-          'flatObjectMetadataMaps',
-        ]));
-    }
-
     const { twentyStandardFlatApplication } =
       await this.applicationService.findWorkspaceTwentyStandardAndCustomApplicationOrThrow(
         { workspaceId },
@@ -208,13 +151,35 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
         twentyStandardApplicationId: twentyStandardFlatApplication.id,
       });
 
-    // CallRecording is not in the workspace yet — navigation reads it from the standard maps it will be created from.
+    const objectMetadataRenameUpdates = buildCallRecordingObjectRenameUpdates({
+      flatObjectMetadataMaps,
+      now,
+    });
+    const fieldMetadataRenameUpdates = buildCalendarEventFieldRenameUpdates({
+      flatFieldMetadataMaps,
+      now,
+    });
+    const renamedCollisionObjectMetadatas = objectMetadataRenameUpdates.map(
+      (objectMetadata) => ({
+        universalIdentifier: objectMetadata.universalIdentifier,
+        nameSingular: objectMetadata.nameSingular,
+      }),
+    );
+
+    const callRecordingObjectMetadataForNavigation =
+      getExistingOrStandardFlatEntityOrThrow<FlatObjectMetadata>({
+        standardFlatEntityMaps:
+          standardAllFlatEntityMaps.flatObjectMetadataMaps,
+        existingFlatEntityMaps: flatObjectMetadataMaps,
+        universalIdentifier: STANDARD_OBJECTS.callRecording.universalIdentifier,
+      });
+
     const navigationCommandMenuItemOperations =
       buildNavigationCommandMenuItemOperationsOrThrow({
         existingFlatCommandMenuItemMaps: flatCommandMenuItemMaps,
-        flatObjectMetadataMaps: standardAllFlatEntityMaps.flatObjectMetadataMaps,
-        objectMetadataUniversalIdentifiers:
-          CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS,
+        objectMetadatasForNavigation: [
+          callRecordingObjectMetadataForNavigation,
+        ],
         applicationId: twentyStandardFlatApplication.id,
         workspaceId,
         now,
@@ -232,7 +197,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
               CALL_RECORDING_OBJECT_METADATA_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
-        flatEntityToUpdate: [],
+        flatEntityToUpdate: objectMetadataRenameUpdates,
       },
       fieldMetadata: {
         flatEntityToCreate:
@@ -244,7 +209,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
               CALL_RECORDING_FIELD_METADATA_UNIVERSAL_IDENTIFIERS,
           }),
         flatEntityToDelete: [],
-        flatEntityToUpdate: [],
+        flatEntityToUpdate: fieldMetadataRenameUpdates,
       },
       index: {
         flatEntityToCreate:
@@ -291,7 +256,8 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       pageLayout: {
         flatEntityToCreate:
           getStandardFlatEntitiesToCreateOrThrow<FlatPageLayout>({
-            standardFlatEntityMaps: standardAllFlatEntityMaps.flatPageLayoutMaps,
+            standardFlatEntityMaps:
+              standardAllFlatEntityMaps.flatPageLayoutMaps,
             existingFlatEntityMaps: flatPageLayoutMaps,
             universalIdentifiers:
               CALL_RECORDING_PAGE_LAYOUT_UNIVERSAL_IDENTIFIERS,
@@ -345,6 +311,18 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
     }
 
     if (isDryRun) {
+      if (objectMetadataRenameUpdates.length > 0) {
+        this.logger.log(
+          `[DRY RUN] Would rename ${objectMetadataRenameUpdates.length} CallRecording object name collision(s) for workspace ${workspaceId}`,
+        );
+      }
+
+      if (fieldMetadataRenameUpdates.length > 0) {
+        this.logger.log(
+          `[DRY RUN] Would rename ${fieldMetadataRenameUpdates.length} calendarEvent field name collision(s) for workspace ${workspaceId}`,
+        );
+      }
+
       this.logger.log(
         `[DRY RUN] Would apply ${totalOperationCount} CallRecording standard metadata operations for workspace ${workspaceId}`,
       );
