@@ -1,0 +1,21 @@
+packages/twenty-server/package.json
+  s_f4e1722761d227::t_242bab44f63705 185
+yarn.lock
+  ai_agent 4090,5021,7188,8175,11061,11094,15192,15265-15267,15272-15273,15303,21860-21863,21889,23190,23568,28048,32269,32559,32985,36731,37740,37960,41973,46343,48886,49038,50406,52688,54351,54418-54430,54995,55774,55823,57537,57941,59350,59789
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.3",
+  "base_commit_sha": "c55da5b3b82ce3256db2289fe6500cb2d222bc89",
+  "prompts": {},
+  "sessions": {
+    "s_f4e1722761d227": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5ba08872-77dc-4b24-be55-0bd446f3b562",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "neo773 <neo773@protonmail.com>"
+    }
+  }
+}
