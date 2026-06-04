@@ -80,13 +80,14 @@ export class ToolRegistryService {
         continue;
       }
 
-      const fullDescriptors = await provider.generateDescriptors(context, {
-        includeSchemas: true,
-      });
-
       const entryNameSet = new Set(entries.map((entry) => entry.name));
 
-      for (const descriptor of fullDescriptors) {
+      const descriptors = await provider.generateDescriptors(context, {
+        includeSchemas: true,
+        toolNames: entryNameSet,
+      });
+
+      for (const descriptor of descriptors) {
         if (
           entryNameSet.has(descriptor.name) &&
           'inputSchema' in descriptor &&

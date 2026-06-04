@@ -75,9 +75,9 @@ export const validateAndGetOrderByForCompositeField = (
   key: keyof ObjectRecord,
   orderBy: ObjectRecordOrderBy,
 ): ObjectRecordOrderByForCompositeField => {
-  const keyOrderBy = orderBy.find((order) => key in order);
+  const matchingOrderBys = orderBy.filter((order) => key in order);
 
-  if (!isDefined(keyOrderBy)) {
+  if (matchingOrderBys.length === 0) {
     throw new GraphqlQueryRunnerException(
       'Invalid cursor',
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
@@ -85,7 +85,20 @@ export const validateAndGetOrderByForCompositeField = (
     );
   }
 
-  if (!isOrderByForCompositeField(keyOrderBy, key)) {
+  // Merge all orderBy entries for the same composite field key so that
+  // separate { fullName: { firstName } } and { fullName: { lastName } } entries
+  // are treated as a single composite orderBy
+  const mergedValue = matchingOrderBys.reduce(
+    (acc, orderByEntry) => ({
+      ...acc,
+      ...(orderByEntry[key as string] as Record<string, OrderByDirection>),
+    }),
+    {} as Record<string, OrderByDirection>,
+  );
+
+  const mergedOrderBy = { [key as string]: mergedValue };
+
+  if (!isOrderByForCompositeField(mergedOrderBy, key)) {
     throw new GraphqlQueryRunnerException(
       'Expected composite field order by',
       GraphqlQueryRunnerExceptionCode.INVALID_CURSOR,
@@ -93,7 +106,7 @@ export const validateAndGetOrderByForCompositeField = (
     );
   }
 
-  return keyOrderBy;
+  return mergedOrderBy;
 };
 
 export const countRelationFieldsInOrderBy = (

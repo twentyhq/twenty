@@ -2,6 +2,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Patch,
   Post,
   Put,
@@ -25,6 +27,7 @@ export class RouteTriggerController {
   constructor(private readonly routeTriggerService: RouteTriggerService) {}
 
   @Get('*path')
+  @HttpCode(HttpStatus.OK)
   async get(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -33,6 +36,7 @@ export class RouteTriggerController {
   }
 
   @Post('*path')
+  @HttpCode(HttpStatus.OK)
   async post(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -41,6 +45,7 @@ export class RouteTriggerController {
   }
 
   @Put('*path')
+  @HttpCode(HttpStatus.OK)
   async put(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -49,6 +54,7 @@ export class RouteTriggerController {
   }
 
   @Patch('*path')
+  @HttpCode(HttpStatus.OK)
   async patch(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,
@@ -57,6 +63,7 @@ export class RouteTriggerController {
   }
 
   @Delete('*path')
+  @HttpCode(HttpStatus.OK)
   async delete(@Req() request: Request) {
     return await this.routeTriggerService.handle({
       request,

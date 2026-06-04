@@ -5,12 +5,10 @@ import { Body, Heading, HeadingPart } from '@/design-system/components';
 import { ArrowRightIcon } from '@/icons';
 import { INFORMATIVE_ICONS } from '@/icons/informative';
 import { LocalizedLink } from '@/lib/i18n';
-import { usePartnerApplicationModal } from '@/sections/PartnerApplication';
 import { WebGlMount } from '@/lib/visual-runtime';
 import type { ThreeCardsIllustrationCardType } from '@/sections/ThreeCards/types';
 import { THREE_CARDS_VISUALS } from '@/sections/ThreeCards/visuals';
 import { theme } from '@/theme';
-import type { MessageDescriptor } from '@lingui/core';
 import { useLingui } from '@lingui/react';
 import { css } from '@linaria/core';
 import { styled } from '@linaria/react';
@@ -122,97 +120,6 @@ const simpleCardBodyClassName = css`
   }
 `;
 
-const PartnerActionRow = styled.div`
-  align-items: center;
-  column-gap: ${theme.spacing(3)};
-  display: flex;
-  justify-content: flex-end;
-  margin-top: auto;
-`;
-
-const PartnerActionButton = styled.button`
-  align-items: center;
-  appearance: none;
-  background: transparent;
-  border: none;
-  color: ${theme.colors.primary.text[80]};
-  cursor: pointer;
-  display: inline-flex;
-  flex: 1;
-  font-family: ${theme.font.family.mono};
-  font-size: ${theme.font.size(3)};
-  font-weight: ${theme.font.weight.regular};
-  justify-content: flex-end;
-  letter-spacing: 0.04em;
-  line-height: ${theme.lineHeight(4)};
-  margin: 0;
-  min-height: ${PARTNER_ACTION_ICON_BUTTON_SIZE}px;
-  padding: 0;
-  text-align: right;
-  text-transform: uppercase;
-  transition: color 0.2s ease;
-
-  &:is(:hover, :focus-visible),
-  ${PartnerActionRow}:hover &,
-  ${PartnerActionRow}:focus-within & {
-    color: ${theme.colors.primary.text[100]};
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${theme.colors.highlight[100]};
-    outline-offset: 2px;
-  }
-`;
-
-const PartnerActionIconButton = styled.button`
-  align-items: center;
-  appearance: none;
-  background: transparent;
-  border: none;
-  color: ${theme.colors.primary.text[80]};
-  cursor: pointer;
-  display: inline-flex;
-  flex-shrink: 0;
-  height: ${PARTNER_ACTION_ICON_BUTTON_SIZE}px;
-  justify-content: center;
-  overflow: hidden;
-  padding: 0;
-  position: relative;
-  transition:
-    color 0.2s ease,
-    transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
-  width: ${PARTNER_ACTION_ICON_BUTTON_SIZE}px;
-
-  &:is(:hover, :focus-visible),
-  ${PartnerActionRow}:hover &,
-  ${PartnerActionRow}:focus-within & {
-    color: ${theme.colors.primary.text[100]};
-  }
-
-  &:is(:hover, :focus-visible) [data-slot='partner-action-icon-hover-fill'],
-  ${PartnerActionRow}:hover & [data-slot='partner-action-icon-hover-fill'],
-  ${PartnerActionRow}:focus-within
-    &
-    [data-slot='partner-action-icon-hover-fill'] {
-    transform: translateX(0);
-  }
-
-  &:hover,
-  ${PartnerActionRow}:hover &,
-  ${PartnerActionRow}:focus-within & {
-    transform: scale(1.05);
-  }
-
-  &:active {
-    transform: scale(0.96);
-  }
-
-  &:focus-visible {
-    outline: 1px solid ${theme.colors.highlight[100]};
-    outline-offset: 1px;
-  }
-`;
-
 const PartnerActionIconLink = styled(LocalizedLink)`
   align-items: center;
   appearance: none;
@@ -233,23 +140,15 @@ const PartnerActionIconLink = styled(LocalizedLink)`
   width: ${PARTNER_ACTION_ICON_BUTTON_SIZE}px;
   text-decoration: none;
 
-  &:is(:hover, :focus-visible),
-  ${PartnerActionRow}:hover &,
-  ${PartnerActionRow}:focus-within & {
+  &:is(:hover, :focus-visible) {
     color: ${theme.colors.primary.text[100]};
   }
 
-  &:is(:hover, :focus-visible) [data-slot='partner-action-icon-hover-fill'],
-  ${PartnerActionRow}:hover & [data-slot='partner-action-icon-hover-fill'],
-  ${PartnerActionRow}:focus-within
-    &
-    [data-slot='partner-action-icon-hover-fill'] {
+  &:is(:hover, :focus-visible) [data-slot='partner-action-icon-hover-fill'] {
     transform: translateX(0);
   }
 
-  &:hover,
-  ${PartnerActionRow}:hover &,
-  ${PartnerActionRow}:focus-within & {
+  &:hover {
     transform: scale(1.05);
   }
 
@@ -318,54 +217,6 @@ type IllustrationCardProps = {
   variant?: 'shaped' | 'simple';
 };
 
-function PartnerProgramAction({
-  label,
-  programId,
-}: {
-  label: MessageDescriptor;
-  programId: 'technology' | 'content' | 'solutions';
-}) {
-  const { i18n } = useLingui();
-  const { openPartnerApplicationModal } = usePartnerApplicationModal();
-  const translatedLabel = i18n._(label);
-
-  const openModal = () => {
-    openPartnerApplicationModal(programId);
-  };
-
-  return (
-    <PartnerActionRow>
-      <PartnerActionButton type="button" onClick={openModal}>
-        {translatedLabel}
-      </PartnerActionButton>
-      <PartnerActionIconButton
-        aria-label={translatedLabel}
-        type="button"
-        onClick={openModal}
-      >
-        <ButtonShape
-          fillColor="none"
-          height={PARTNER_ACTION_ICON_BUTTON_SIZE}
-          strokeColor={CARD_OUTLINE_COLOR}
-        />
-        <PartnerActionIconHoverFill data-slot="partner-action-icon-hover-fill">
-          <ButtonShape
-            fillColor={theme.colors.primary.text[100]}
-            height={PARTNER_ACTION_ICON_BUTTON_SIZE}
-            strokeColor="none"
-          />
-        </PartnerActionIconHoverFill>
-        <PartnerActionIconGlyph>
-          <ArrowRightIcon
-            size={PARTNER_ACTION_ICON_SIZE}
-            strokeColor="currentColor"
-          />
-        </PartnerActionIconGlyph>
-      </PartnerActionIconButton>
-    </PartnerActionRow>
-  );
-}
-
 export function IllustrationCard({
   illustrationCard,
   variant = 'shaped',
@@ -432,14 +283,6 @@ export function IllustrationCard({
               );
             })}
           </BenefitList>
-        ) : null}
-
-        {variant === 'simple' &&
-        illustrationCard.action?.kind === 'partnerApplication' ? (
-          <PartnerProgramAction
-            label={illustrationCard.action.label}
-            programId={illustrationCard.action.programId}
-          />
         ) : null}
 
         {illustrationCard.attribution && (

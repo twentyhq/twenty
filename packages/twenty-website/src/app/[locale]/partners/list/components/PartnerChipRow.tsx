@@ -15,7 +15,11 @@ const Row = styled.dl`
   margin: 0;
 
   @media (min-width: ${theme.breakpoints.md}px) {
-    align-items: center;
+    // Align the label to the first chip's baseline rather than the row's
+    // center: when chips wrap to multiple lines in a narrow card, centering
+    // floats the label to the middle and visually lifts the first chip into
+    // the row above. Baseline keeps the label pinned beside the first chip.
+    align-items: baseline;
     flex-direction: row;
     gap: ${theme.spacing(4)};
   }
@@ -56,6 +60,16 @@ type PartnerChipRowProps<TValue extends string> = {
   valueLabels: Record<TValue, MessageDescriptor>;
 };
 
+// Falls back when the CRM stores a value the website doesn't yet know about
+// (e.g. a new language). Turns "TAMIL" → "Tamil", "SELF_HOST" → "Self host".
+const titleCaseFallback = (raw: string): string =>
+  raw
+    .toLowerCase()
+    .split(/[_\s]+/)
+    .filter(Boolean)
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
 export function PartnerChipRow<TValue extends string>({
   label,
   values,
@@ -68,11 +82,17 @@ export function PartnerChipRow<TValue extends string>({
       <RowLabel>{i18n._(label)}</RowLabel>
       <ChipListWrapper>
         <ChipList>
-          {values.map((value) => (
-            <li key={value} className={chipBaseStyles}>
-              {i18n._(valueLabels[value])}
-            </li>
-          ))}
+          {values.map((value) => {
+            const descriptor = valueLabels[value];
+            const text = descriptor
+              ? i18n._(descriptor)
+              : titleCaseFallback(value);
+            return (
+              <li key={value} className={chipBaseStyles}>
+                {text}
+              </li>
+            );
+          })}
         </ChipList>
       </ChipListWrapper>
     </Row>

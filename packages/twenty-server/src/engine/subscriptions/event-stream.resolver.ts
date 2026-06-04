@@ -16,6 +16,7 @@ import { AuthWorkspace } from 'src/engine/decorators/auth/auth-workspace.decorat
 import { NoPermissionGuard } from 'src/engine/guards/no-permission.guard';
 import { UserAuthGuard } from 'src/engine/guards/user-auth.guard';
 import { WorkspaceAuthGuard } from 'src/engine/guards/workspace-auth.guard';
+import { APPLICATION_KEEPALIVE_INTERVAL_MS } from 'src/engine/subscriptions/constants/application-keepalive-interval-ms.constant';
 import { EVENT_STREAM_TTL_MS } from 'src/engine/subscriptions/constants/event-stream-ttl.constant';
 import { AddQuerySubscriptionInput } from 'src/engine/subscriptions/dtos/add-query-subscription.input';
 import { EventSubscriptionDTO } from 'src/engine/subscriptions/dtos/event-subscription.dto';
@@ -116,17 +117,36 @@ export class EventStreamResolver {
       throw error;
     }
 
+    let lastTtlRefreshAt = 0;
+
     return wrapAsyncIteratorWithLifecycle(iterator, {
       initialValue: {
         objectRecordEventsWithQueryIds: [],
         metadataEvents: [],
       },
-      onHeartbeat: () =>
-        this.eventStreamService.refreshEventStreamTTL({
+      onHeartbeat: async () => {
+        const now = Date.now();
+
+        if (now - lastTtlRefreshAt > EVENT_STREAM_TTL_MS / 5) {
+          lastTtlRefreshAt = now;
+          await this.eventStreamService.refreshEventStreamTTL({
+            workspaceId: workspace.id,
+            eventStreamChannelId,
+          });
+        }
+
+        await this.subscriptionService.publishToEventStream({
           workspaceId: workspace.id,
           eventStreamChannelId,
-        }),
-      heartbeatIntervalMs: EVENT_STREAM_TTL_MS / 5,
+          payload: {
+            objectRecordEventsWithQueryIds: [],
+            metadataEvents: [],
+          },
+        });
+
+        return true;
+      },
+      heartbeatIntervalMs: APPLICATION_KEEPALIVE_INTERVAL_MS,
       onCleanup: () =>
         this.eventStreamService.destroyEventStream({
           workspaceId: workspace.id,

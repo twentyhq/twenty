@@ -1,6 +1,6 @@
 import { styled } from '@linaria/react';
 import { useLingui } from '@lingui/react/macro';
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import { Temporal } from 'temporal-polyfill';
 import {
   autoUpdate,
@@ -67,7 +67,8 @@ const StyledFloatingContainer = styled.div`
 `;
 
 export type SettingsDatePickerInputProps = {
-  label: string;
+  label?: string;
+  instanceId?: string;
   value: Date | undefined;
   onChange: (date: Date | undefined) => void;
   placeholder?: string;
@@ -75,6 +76,7 @@ export type SettingsDatePickerInputProps = {
 
 export const SettingsDatePickerInput = ({
   label,
+  instanceId,
   value,
   onChange,
   placeholder,
@@ -83,6 +85,9 @@ export const SettingsDatePickerInput = ({
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const { userTimezone } = useUserTimezone();
+  const generatedId = useId();
+
+  const pickerInstanceId = instanceId ?? label ?? generatedId;
 
   const { refs, floatingStyles } = useFloating({
     open: isOpen,
@@ -97,7 +102,7 @@ export const SettingsDatePickerInput = ({
 
   useListenClickOutside({
     refs: [containerRef],
-    listenerId: `settings-date-picker-${label}`,
+    listenerId: `settings-date-picker-${pickerInstanceId}`,
     callback: handleClose,
     enabled: isOpen,
     excludedClickOutsideIds: [
@@ -145,7 +150,7 @@ export const SettingsDatePickerInput = ({
 
   return (
     <StyledInputContainer ref={containerRef}>
-      <StyledLabel>{label}</StyledLabel>
+      {label && <StyledLabel>{label}</StyledLabel>}
       <StyledInput
         ref={refs.setReference}
         hasValue={isDefined(value)}
@@ -165,7 +170,7 @@ export const SettingsDatePickerInput = ({
           >
             <OverlayContainer>
               <DateTimePicker
-                instanceId={`settings-date-picker-${label}`}
+                instanceId={`settings-date-picker-${pickerInstanceId}`}
                 date={zonedDateTime}
                 onChange={handleDateTimeChange}
                 onClose={handleDateTimeClose}
