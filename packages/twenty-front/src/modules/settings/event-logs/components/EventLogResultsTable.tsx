@@ -22,8 +22,8 @@ import {
 import {
   type ColumnConfig,
   getColumnsForEventLogTable,
-} from '~/pages/settings/security/event-logs/utils/getColumnsForEventLogTable';
-import { EventLogJsonCell } from '~/pages/settings/security/event-logs/components/EventLogJsonCell';
+} from '@/settings/event-logs/utils/getColumnsForEventLogTable';
+import { EventLogJsonCell } from '@/settings/event-logs/components/EventLogJsonCell';
 
 type EventLogResultsTableProps = {
   records: EventLogRecord[];

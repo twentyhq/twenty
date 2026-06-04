@@ -91,8 +91,6 @@ export const FavoritesSection = () => {
 
   const handleAddFavorite = (event?: React.MouseEvent) => {
     event?.stopPropagation();
-    // Expansion is gated on items existing, so this stays collapsed if the user
-    // cancels and reveals the favorite as soon as it is added.
     openNavigationSection();
     setNavigationMenuItemEditSection('favorite');
     setPendingInsertionNavigationMenuItem(null);
@@ -119,10 +117,14 @@ export const FavoritesSection = () => {
     [deleteManyNavigationMenuItems],
   );
 
+  if (topLevelItems.length === 0) {
+    return null;
+  }
+
   return (
     <NavigationMenuItemSection
       title={t`Favorites`}
-      isOpen={topLevelItems.length > 0 && isNavigationSectionOpen}
+      isOpen={isNavigationSectionOpen}
       onToggle={toggleNavigationSection}
       rightIcon={
         <LightIconButton
@@ -132,66 +134,64 @@ export const FavoritesSection = () => {
         />
       }
     >
-      {topLevelItems.length > 0 && (
-        <StyledList>
-          {topLevelItems.map((item, index) => (
-            <StyledListItemRow key={item.id}>
-              {index === 0 ? (
-                <NavigationMenuItemDroppableSlot
-                  droppableId={ORPHAN_DROPPABLE_ID}
-                  index={0}
-                  disabled={favoritesDropDisabled}
-                >
-                  <NavigationMenuItemOrphanDropTarget
-                    index={0}
-                    compact
-                    sectionId={NavigationSections.FAVORITES}
-                    droppableId={ORPHAN_DROPPABLE_ID}
-                  />
-                </NavigationMenuItemDroppableSlot>
-              ) : (
+      <StyledList>
+        {topLevelItems.map((item, index) => (
+          <StyledListItemRow key={item.id}>
+            {index === 0 ? (
+              <NavigationMenuItemDroppableSlot
+                droppableId={ORPHAN_DROPPABLE_ID}
+                index={0}
+                disabled={favoritesDropDisabled}
+              >
                 <NavigationMenuItemOrphanDropTarget
-                  index={index}
+                  index={0}
                   compact
                   sectionId={NavigationSections.FAVORITES}
                   droppableId={ORPHAN_DROPPABLE_ID}
                 />
-              )}
-              <NavigationMenuItemSortableItem
-                id={item.id}
+              </NavigationMenuItemDroppableSlot>
+            ) : (
+              <NavigationMenuItemOrphanDropTarget
                 index={index}
-                group={ORPHAN_DROPPABLE_ID}
-                disabled={favoritesDropDisabled}
-              >
-                <NavigationMenuItemDisplay
-                  item={item}
-                  isEditInPlace={isNavigationMenuItemFolder(item)}
-                  isDragging={isDragging}
-                  folderChildrenById={folderChildrenById}
-                  folderCount={folderCount}
-                  rightOptions={
-                    isNavigationMenuItemFolder(item)
-                      ? undefined
-                      : makeRightOptions(item)
-                  }
-                />
-              </NavigationMenuItemSortableItem>
-            </StyledListItemRow>
-          ))}
-          <NavigationMenuItemDroppableSlot
-            droppableId={ORPHAN_DROPPABLE_ID}
+                compact
+                sectionId={NavigationSections.FAVORITES}
+                droppableId={ORPHAN_DROPPABLE_ID}
+              />
+            )}
+            <NavigationMenuItemSortableItem
+              id={item.id}
+              index={index}
+              group={ORPHAN_DROPPABLE_ID}
+              disabled={favoritesDropDisabled}
+            >
+              <NavigationMenuItemDisplay
+                item={item}
+                isEditInPlace={isNavigationMenuItemFolder(item)}
+                isDragging={isDragging}
+                folderChildrenById={folderChildrenById}
+                folderCount={folderCount}
+                rightOptions={
+                  isNavigationMenuItemFolder(item)
+                    ? undefined
+                    : makeRightOptions(item)
+                }
+              />
+            </NavigationMenuItemSortableItem>
+          </StyledListItemRow>
+        ))}
+        <NavigationMenuItemDroppableSlot
+          droppableId={ORPHAN_DROPPABLE_ID}
+          index={topLevelItems.length}
+          disabled={favoritesDropDisabled}
+        >
+          <NavigationMenuItemOrphanDropTarget
             index={topLevelItems.length}
-            disabled={favoritesDropDisabled}
-          >
-            <NavigationMenuItemOrphanDropTarget
-              index={topLevelItems.length}
-              compact
-              sectionId={NavigationSections.FAVORITES}
-              droppableId={ORPHAN_DROPPABLE_ID}
-            />
-          </NavigationMenuItemDroppableSlot>
-        </StyledList>
-      )}
+            compact
+            sectionId={NavigationSections.FAVORITES}
+            droppableId={ORPHAN_DROPPABLE_ID}
+          />
+        </NavigationMenuItemDroppableSlot>
+      </StyledList>
     </NavigationMenuItemSection>
   );
 };
