@@ -25,92 +25,97 @@ type OneToManyAggregatorWithChildIdentifiers = {
   childUniversalIdentifiers: Set<string>;
 };
 
+const pruneFlatEntityForeignKeyAggregators = ({
+  flatEntity,
+  aggregatorsWithChildIdentifiers,
+}: {
+  flatEntity: SyncableFlatEntity;
+  aggregatorsWithChildIdentifiers: OneToManyAggregatorWithChildIdentifiers[];
+}): SyncableFlatEntity =>
+  aggregatorsWithChildIdentifiers.reduce(
+    (prunedFlatEntity, { aggregatorProperty, childUniversalIdentifiers }) => {
+      const aggregatedUniversalIdentifiers = (
+        prunedFlatEntity as Record<string, unknown>
+      )[aggregatorProperty];
+
+      if (
+        !isDefined(aggregatedUniversalIdentifiers) ||
+        !Array.isArray(aggregatedUniversalIdentifiers)
+      ) {
+        return prunedFlatEntity;
+      }
+
+      const prunedUniversalIdentifiers = aggregatedUniversalIdentifiers.filter(
+        (childUniversalIdentifier: string) =>
+          childUniversalIdentifiers.has(childUniversalIdentifier),
+      );
+
+      if (
+        prunedUniversalIdentifiers.length ===
+        aggregatedUniversalIdentifiers.length
+      ) {
+        return prunedFlatEntity;
+      }
+
+      return {
+        ...prunedFlatEntity,
+        [aggregatorProperty]: prunedUniversalIdentifiers,
+      };
+    },
+    flatEntity,
+  );
+
 // Drops one-to-many aggregator references to children absent from the slice
 // (e.g. an app-owned view referencing a view field owned by another
 // application), keeping the slice a closed, internally consistent graph.
-export const pruneDanglingForeignKeyAggregatorsInAllFlatEntityMaps = ({
-  allFlatEntityMaps,
-}: {
-  allFlatEntityMaps: AllFlatEntityMaps;
-}): AllFlatEntityMaps => {
-  const looseAllFlatEntityMaps =
-    allFlatEntityMaps as unknown as LooseAllFlatEntityMaps;
+// Mutates the passed maps in place: the parent entry is replaced by a new
+// pruned entity object, never mutating the shared entity referenced elsewhere.
+export const pruneDanglingForeignKeyAggregatorsInAllFlatEntityMapsThroughMutation =
+  ({
+    allFlatEntityMapsToMutate,
+  }: {
+    allFlatEntityMapsToMutate: AllFlatEntityMaps;
+  }): void => {
+    const looseAllFlatEntityMaps =
+      allFlatEntityMapsToMutate as unknown as LooseAllFlatEntityMaps;
 
-  const prunedAllFlatEntityMaps: LooseAllFlatEntityMaps = {
-    ...looseAllFlatEntityMaps,
-  };
+    for (const metadataName of Object.values(ALL_METADATA_NAME)) {
+      const oneToManyRelations = Object.values(
+        ALL_ONE_TO_MANY_METADATA_RELATIONS[metadataName],
+      ) as OneToManyRelation[];
 
-  for (const metadataName of Object.values(ALL_METADATA_NAME)) {
-    const oneToManyRelations = Object.values(
-      ALL_ONE_TO_MANY_METADATA_RELATIONS[metadataName],
-    ) as OneToManyRelation[];
-
-    const aggregatorsWithChildIdentifiers: OneToManyAggregatorWithChildIdentifiers[] =
-      oneToManyRelations.filter(isDefined).map((relation) => ({
-        aggregatorProperty: relation.universalFlatEntityForeignKeyAggregator,
-        childUniversalIdentifiers: new Set(
-          Object.keys(
-            looseAllFlatEntityMaps[
-              getMetadataFlatEntityMapsKey(relation.metadataName)
-            ].byUniversalIdentifier,
+      const aggregatorsWithChildIdentifiers: OneToManyAggregatorWithChildIdentifiers[] =
+        oneToManyRelations.filter(isDefined).map((relation) => ({
+          aggregatorProperty: relation.universalFlatEntityForeignKeyAggregator,
+          childUniversalIdentifiers: new Set(
+            Object.keys(
+              looseAllFlatEntityMaps[
+                getMetadataFlatEntityMapsKey(relation.metadataName)
+              ].byUniversalIdentifier,
+            ),
           ),
-        ),
-      }));
+        }));
 
-    if (aggregatorsWithChildIdentifiers.length === 0) {
-      continue;
-    }
-
-    const parentFlatEntityMapsKey = getMetadataFlatEntityMapsKey(metadataName);
-    const parentFlatEntityMaps =
-      looseAllFlatEntityMaps[parentFlatEntityMapsKey];
-
-    const prunedByUniversalIdentifier: Record<string, SyncableFlatEntity> = {};
-
-    for (const [universalIdentifier, parentFlatEntity] of Object.entries(
-      parentFlatEntityMaps.byUniversalIdentifier,
-    )) {
-      if (!isDefined(parentFlatEntity)) {
+      if (aggregatorsWithChildIdentifiers.length === 0) {
         continue;
       }
 
-      let prunedFlatEntity = parentFlatEntity;
+      const flatEntityByUniversalIdentifier =
+        looseAllFlatEntityMaps[getMetadataFlatEntityMapsKey(metadataName)]
+          .byUniversalIdentifier;
 
-      for (const {
-        aggregatorProperty,
-        childUniversalIdentifiers,
-      } of aggregatorsWithChildIdentifiers) {
-        const currentReferences = (prunedFlatEntity as Record<string, unknown>)[
-          aggregatorProperty
-        ];
-
-        if (!Array.isArray(currentReferences)) {
+      for (const [universalIdentifier, parentFlatEntity] of Object.entries(
+        flatEntityByUniversalIdentifier,
+      )) {
+        if (!isDefined(parentFlatEntity)) {
           continue;
         }
 
-        const prunedReferences = currentReferences.filter(
-          (childUniversalIdentifier: string) =>
-            childUniversalIdentifiers.has(childUniversalIdentifier),
-        );
-
-        if (prunedReferences.length === currentReferences.length) {
-          continue;
-        }
-
-        prunedFlatEntity = {
-          ...(prunedFlatEntity as Record<string, unknown>),
-          [aggregatorProperty]: prunedReferences,
-        } as SyncableFlatEntity;
+        flatEntityByUniversalIdentifier[universalIdentifier] =
+          pruneFlatEntityForeignKeyAggregators({
+            flatEntity: parentFlatEntity,
+            aggregatorsWithChildIdentifiers,
+          });
       }
-
-      prunedByUniversalIdentifier[universalIdentifier] = prunedFlatEntity;
     }
-
-    prunedAllFlatEntityMaps[parentFlatEntityMapsKey] = {
-      ...parentFlatEntityMaps,
-      byUniversalIdentifier: prunedByUniversalIdentifier,
-    };
-  }
-
-  return prunedAllFlatEntityMaps as unknown as AllFlatEntityMaps;
-};
+  };
