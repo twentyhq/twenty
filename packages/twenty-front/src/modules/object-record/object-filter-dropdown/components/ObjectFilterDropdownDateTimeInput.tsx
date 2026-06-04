@@ -19,6 +19,7 @@ import {
   isDefined,
   resolveDateTimeFilter,
   type RelativeDateFilter,
+  parseRecordFilterBetweenValue,
 } from 'twenty-shared/utils';
 
 import { useUserTimezone } from '@/ui/input/components/internal/date/hooks/useUserTimezone';
@@ -69,16 +70,7 @@ const StyledTab = styled.button<{ isActive: boolean }>`
   }
 `;
 
-const parseBetweenInstants = (
-  value: string,
-): { startStr: string; endStr: string } => {
-  const commaIndex = value.indexOf(',');
-  if (commaIndex === -1) return { startStr: '', endStr: '' };
-  return {
-    startStr: value.slice(0, commaIndex),
-    endStr: value.slice(commaIndex + 1),
-  };
-};
+
 
 const safeInstantToZonedDateTime = (
   instantStr: string,
@@ -116,7 +108,7 @@ export const ObjectFilterDropdownDateTimeInput = () => {
   const isBetween = selectedOperandInDropdown === ViewFilterOperand.IS_BETWEEN;
 
   const currentValue = objectFilterDropdownCurrentRecordFilter?.value || '';
-  const { startStr, endStr } = parseBetweenInstants(currentValue);
+  const { startValue: startStr, endValue: endStr } = parseRecordFilterBetweenValue(currentValue);
 
   const startZonedDateTime = safeInstantToZonedDateTime(
     startStr,

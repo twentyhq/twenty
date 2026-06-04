@@ -49,6 +49,7 @@ import {
   resolveDateFilter,
   resolveDateTimeFilter,
   resolveRelativeDateFilterStringified,
+  parseRecordFilterBetweenValue,
   type RecordFilter,
 } from '@/utils';
 import { arrayOfStringsOrVariablesSchema } from '@/utils/filter/utils/validation-schemas/arrayOfStringsOrVariablesSchema';
@@ -476,10 +477,9 @@ const buildDirectFieldGqlOperationFilter = ({
         }
 
         if (recordFilter.operand === RecordFilterOperand.IS_BETWEEN) {
-          const commaIndex = recordFilter.value.indexOf(',');
-          if (commaIndex === -1) return undefined;
-          const startStr = recordFilter.value.slice(0, commaIndex).trim();
-          const endStr = recordFilter.value.slice(commaIndex + 1).trim();
+          const { startValue: startStr, endValue: endStr } = parseRecordFilterBetweenValue(
+            recordFilter.value
+          );
           if (!startStr || !endStr) return undefined;
 
           try {
@@ -595,10 +595,9 @@ const buildDirectFieldGqlOperationFilter = ({
             },
           };
         case RecordFilterOperand.IS_BETWEEN: {
-          const commaIndex = recordFilter.value.indexOf(',');
-          if (commaIndex === -1) return undefined;
-          const minStr = recordFilter.value.slice(0, commaIndex);
-          const maxStr = recordFilter.value.slice(commaIndex + 1);
+          const { startValue: minStr, endValue: maxStr } = parseRecordFilterBetweenValue(
+            recordFilter.value
+          );
           const minValue = parseFloat(minStr);
           const maxValue = parseFloat(maxStr);
           if (isNaN(minValue) || isNaN(maxValue)) return undefined;
@@ -751,10 +750,9 @@ const buildDirectFieldGqlOperationFilter = ({
               },
             };
           case RecordFilterOperand.IS_BETWEEN: {
-            const commaIndex = recordFilter.value.indexOf(',');
-            if (commaIndex === -1) return undefined;
-            const minStr = recordFilter.value.slice(0, commaIndex).trim();
-            const maxStr = recordFilter.value.slice(commaIndex + 1).trim();
+            const { startValue: minStr, endValue: maxStr } = parseRecordFilterBetweenValue(
+              recordFilter.value
+            );
             const minAmount = parseFloat(minStr);
             const maxAmount = parseFloat(maxStr);
             if (isNaN(minAmount) || isNaN(maxAmount)) return undefined;

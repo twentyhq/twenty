@@ -19,17 +19,8 @@ import { DEFAULT_RELATIVE_DATE_FILTER_VALUE } from 'twenty-shared/constants';
 import {
   isDefined,
   relativeDateFilterStringifiedSchema,
+  parseRecordFilterBetweenValue,
 } from 'twenty-shared/utils';
-
-const getBetweenFirstValue = (value: string): string | null => {
-  const commaIndex = value.indexOf(',');
-
-  if (commaIndex === -1) {
-    return null;
-  }
-
-  return value.slice(0, commaIndex).trim();
-};
 
 export const useApplyObjectFilterDropdownOperand = () => {
   const { userTimezone } = useUserTimezone();
@@ -83,9 +74,11 @@ export const useApplyObjectFilterDropdownOperand = () => {
         newOperand !== RecordFilterOperand.IS_BETWEEN;
 
       if (isLeavingBetweenOperand) {
-        const firstBetweenValue = getBetweenFirstValue(
+        const { startValue } = parseRecordFilterBetweenValue(
           objectFilterDropdownCurrentRecordFilter.value,
         );
+
+        const firstBetweenValue = startValue !== '' ? startValue : null;
 
         if (isNonEmptyString(firstBetweenValue)) {
           recordFilterToUpsert.value = firstBetweenValue;

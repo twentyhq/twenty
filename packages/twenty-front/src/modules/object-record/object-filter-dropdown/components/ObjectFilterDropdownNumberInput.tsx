@@ -11,17 +11,12 @@ import { useCloseDropdown } from '@/ui/layout/dropdown/hooks/useCloseDropdown';
 import { useAtomComponentSelectorValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentSelectorValue';
 import { useAtomComponentStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomComponentStateValue';
 import { ViewFilterOperand } from 'twenty-shared/types';
+import { parseRecordFilterBetweenValue } from 'twenty-shared/utils';
 
 type ObjectFilterDropdownNumberInputProps = {
   filterDropdownId: string;
 };
 
-const parseBetweenValue = (value: string | undefined): [string, string] => {
-  if (!value) return ['', ''];
-  const commaIndex = value.indexOf(',');
-  if (commaIndex === -1) return [value, ''];
-  return [value.slice(0, commaIndex), value.slice(commaIndex + 1)];
-};
 
 export const ObjectFilterDropdownNumberInput = ({
   filterDropdownId,
@@ -57,7 +52,7 @@ export const ObjectFilterDropdownNumberInput = ({
 
   const isBetween = selectedOperandInDropdown === ViewFilterOperand.IS_BETWEEN;
 
-  const [minValue, maxValue] = parseBetweenValue(
+  const { startValue: minValue, endValue: maxValue } = parseRecordFilterBetweenValue(
     objectFilterDropdownFilterValue,
   );
 

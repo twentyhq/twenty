@@ -3,6 +3,8 @@ import { isDefined } from '@/utils';
 
 import { isRecordFilterOperandExpectingValue } from './isRecordFilterOperandExpectingValue';
 
+import { parseRecordFilterBetweenValue } from './parseRecordFilterBetweenValue';
+
 export const isRecordFilterValueValid = (recordFilter: {
   operand: ViewFilterOperand;
   value: string;
@@ -15,11 +17,10 @@ export const isRecordFilterValueValid = (recordFilter: {
     if (!isDefined(recordFilter.value) || recordFilter.value === '') {
       return false;
     }
-    const commaIndex = recordFilter.value.indexOf(',');
-    if (commaIndex === -1) return false;
-    const minPart = recordFilter.value.slice(0, commaIndex);
-    const maxPart = recordFilter.value.slice(commaIndex + 1);
-    return minPart !== '' && maxPart !== '';
+    const { startValue, endValue } = parseRecordFilterBetweenValue(
+      recordFilter.value,
+    );
+    return startValue !== '' && endValue !== '';
   }
 
   return (
