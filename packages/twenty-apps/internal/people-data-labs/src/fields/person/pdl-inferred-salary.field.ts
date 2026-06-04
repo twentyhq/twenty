@@ -24,7 +24,7 @@ export default defineField({
         .under20000,
       value: 'UNDER_20000',
       label: '<20,000',
-      color: 'green',
+      color: 'blue',
       position: 0,
     },
     {
@@ -32,7 +32,7 @@ export default defineField({
         .from20000To25000,
       value: 'FROM_20000_TO_25000',
       label: '20,000-25,000',
-      color: 'turquoise',
+      color: 'red',
       position: 1,
     },
     {
@@ -40,7 +40,7 @@ export default defineField({
         .from25000To35000,
       value: 'FROM_25000_TO_35000',
       label: '25,000-35,000',
-      color: 'sky',
+      color: 'green',
       position: 2,
     },
     {
@@ -48,7 +48,7 @@ export default defineField({
         .from35000To45000,
       value: 'FROM_35000_TO_45000',
       label: '35,000-45,000',
-      color: 'blue',
+      color: 'orange',
       position: 3,
     },
     {
@@ -64,7 +64,7 @@ export default defineField({
         .from55000To70000,
       value: 'FROM_55000_TO_70000',
       label: '55,000-70,000',
-      color: 'pink',
+      color: 'yellow',
       position: 5,
     },
     {
@@ -72,7 +72,7 @@ export default defineField({
         .from70000To85000,
       value: 'FROM_70000_TO_85000',
       label: '70,000-85,000',
-      color: 'red',
+      color: 'pink',
       position: 6,
     },
     {
@@ -80,7 +80,7 @@ export default defineField({
         .from85000To100000,
       value: 'FROM_85000_TO_100000',
       label: '85,000-100,000',
-      color: 'orange',
+      color: 'cyan',
       position: 7,
     },
     {
@@ -88,7 +88,7 @@ export default defineField({
         .from100000To150000,
       value: 'FROM_100000_TO_150000',
       label: '100,000-150,000',
-      color: 'yellow',
+      color: 'brown',
       position: 8,
     },
     {
@@ -96,7 +96,7 @@ export default defineField({
         .from150000To250000,
       value: 'FROM_150000_TO_250000',
       label: '150,000-250,000',
-      color: 'gray',
+      color: 'lime',
       position: 9,
     },
     {
@@ -104,7 +104,7 @@ export default defineField({
         .over250000,
       value: 'OVER_250000',
       label: '>250,000',
-      color: 'green',
+      color: 'violet',
       position: 10,
     },
   ],

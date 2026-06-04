@@ -23,31 +23,31 @@ export default defineField({
       id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personJobClass
         .generalAndAdministrative,
       value: 'GENERAL_AND_ADMINISTRATIVE',
-      label: 'General And Administrative',
-      color: 'green',
+      label: 'General and Administrative',
+      color: 'blue',
       position: 0,
     },
     {
       id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personJobClass
         .researchAndDevelopment,
       value: 'RESEARCH_AND_DEVELOPMENT',
-      label: 'Research And Development',
-      color: 'turquoise',
+      label: 'Research and Development',
+      color: 'red',
       position: 1,
     },
     {
       id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personJobClass
         .salesAndMarketing,
       value: 'SALES_AND_MARKETING',
-      label: 'Sales And Marketing',
-      color: 'sky',
+      label: 'Sales and Marketing',
+      color: 'green',
       position: 2,
     },
     {
       id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.personJobClass.services,
       value: 'SERVICES',
       label: 'Services',
-      color: 'blue',
+      color: 'orange',
       position: 3,
     },
     {

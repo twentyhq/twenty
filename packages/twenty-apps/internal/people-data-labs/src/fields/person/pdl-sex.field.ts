@@ -30,7 +30,7 @@ export default defineField({
       id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.sex.female,
       value: 'FEMALE',
       label: 'Female',
-      color: 'pink',
+      color: 'red',
       position: 1,
     },
   ],

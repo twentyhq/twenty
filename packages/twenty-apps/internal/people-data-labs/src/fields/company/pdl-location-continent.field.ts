@@ -25,7 +25,7 @@ export default defineField({
         .africa,
       value: 'AFRICA',
       label: 'Africa',
-      color: 'green',
+      color: 'blue',
       position: 0,
     },
     {
@@ -33,14 +33,14 @@ export default defineField({
         .antarctica,
       value: 'ANTARCTICA',
       label: 'Antarctica',
-      color: 'turquoise',
+      color: 'red',
       position: 1,
     },
     {
       id: PDL_SELECT_OPTION_UNIVERSAL_IDENTIFIERS.companyLocationContinent.asia,
       value: 'ASIA',
       label: 'Asia',
-      color: 'sky',
+      color: 'green',
       position: 2,
     },
     {
@@ -48,7 +48,7 @@ export default defineField({
         .europe,
       value: 'EUROPE',
       label: 'Europe',
-      color: 'blue',
+      color: 'orange',
       position: 3,
     },
     {
@@ -64,7 +64,7 @@ export default defineField({
         .oceania,
       value: 'OCEANIA',
       label: 'Oceania',
-      color: 'pink',
+      color: 'yellow',
       position: 5,
     },
     {
@@ -72,7 +72,7 @@ export default defineField({
         .southAmerica,
       value: 'SOUTH_AMERICA',
       label: 'South America',
-      color: 'red',
+      color: 'pink',
       position: 6,
     },
   ],
