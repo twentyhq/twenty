@@ -386,12 +386,14 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       return validateAndBuildResult;
     }
 
-    const workspaceMigration = isDefined(idByUniversalIdentifierByMetadataName)
-      ? enrichCreateWorkspaceMigrationActionsWithIds({
-          idByUniversalIdentifierByMetadataName,
-          workspaceMigration: validateAndBuildResult.workspaceMigration,
-        })
-      : validateAndBuildResult.workspaceMigration;
+    const {
+      workspaceMigration,
+      fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
+    } = enrichCreateWorkspaceMigrationActionsWithIds({
+      idByUniversalIdentifierByMetadataName:
+        idByUniversalIdentifierByMetadataName ?? {},
+      workspaceMigration: validateAndBuildResult.workspaceMigration,
+    });
 
     if (workspaceMigration.actions.length === 0) {
       return {
@@ -405,6 +407,8 @@ export class WorkspaceMigrationValidateBuildAndRunService {
       await this.workspaceMigrationRunnerService.run({
         workspaceId: args.workspaceId,
         workspaceMigration,
+        allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap:
+          fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
       });
 
     this.metadataEventEmitter.emitMetadataEvents({

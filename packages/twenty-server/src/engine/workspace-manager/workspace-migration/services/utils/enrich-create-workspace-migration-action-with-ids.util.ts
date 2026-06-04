@@ -1,5 +1,6 @@
 import { type AllMetadataName } from 'twenty-shared/metadata';
 import { assertUnreachable, isDefined } from 'twenty-shared/utils';
+import { v4 } from 'uuid';
 
 import { type UniversalCreateObjectAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/object/types/workspace-migration-object-action';
 import { type UniversalCreatePageLayoutAction } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-builder/builders/page-layout/types/workspace-migration-page-layout-action.type';
@@ -65,11 +66,19 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
 }: {
   workspaceMigration: WorkspaceMigration;
   idByUniversalIdentifierByMetadataName: IdByUniversalIdentifierByMetadataName;
-}): WorkspaceMigration => {
+}): {
+  workspaceMigration: WorkspaceMigration;
+  fieldIdToBeCreatedInMigrationByUniversalIdentifierMap: Map<string, string>;
+} => {
   const fieldMetadataIdByUniversalIdentifier =
     idByUniversalIdentifierByMetadataName.fieldMetadata;
   const pageLayoutTabIdByUniversalIdentifier =
     idByUniversalIdentifierByMetadataName.pageLayoutTab;
+
+  const fieldIdToBeCreatedInMigrationByUniversalIdentifierMap = new Map<
+    string,
+    string
+  >();
 
   const enrichedActions = workspaceMigration.actions.map((action) => {
     if (action.type !== 'create') {
@@ -80,6 +89,7 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
       idByUniversalIdentifierByMetadataName[action.metadataName];
 
     if (
+      action.metadataName !== 'fieldMetadata' &&
       !isDefined(idByUniversalIdentifier) &&
       !isDefined(fieldMetadataIdByUniversalIdentifier) &&
       !isDefined(pageLayoutTabIdByUniversalIdentifier)
@@ -108,23 +118,50 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
         };
       }
       case 'fieldMetadata': {
-        if (!isDefined(fieldMetadataIdByUniversalIdentifier)) {
-          return action;
-        }
+        const id =
+          fieldMetadataIdByUniversalIdentifier?.[
+            action.flatEntity.universalIdentifier
+          ] ??
+          action.id ??
+          v4();
 
         const relatedFieldId = isDefined(
           action.relatedUniversalFlatFieldMetadata,
         )
-          ? fieldMetadataIdByUniversalIdentifier[
+          ? (fieldMetadataIdByUniversalIdentifier?.[
               action.relatedUniversalFlatFieldMetadata.universalIdentifier
-            ]
-          : undefined;
+            ] ??
+            action.relatedFieldId ??
+            v4())
+          : action.relatedFieldId;
+
+        if (
+          !fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.has(
+            action.flatEntity.universalIdentifier,
+          )
+        ) {
+          fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.set(
+            action.flatEntity.universalIdentifier,
+            id,
+          );
+        }
+
+        if (
+          isDefined(action.relatedUniversalFlatFieldMetadata) &&
+          isDefined(relatedFieldId) &&
+          !fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.has(
+            action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+          )
+        ) {
+          fieldIdToBeCreatedInMigrationByUniversalIdentifierMap.set(
+            action.relatedUniversalFlatFieldMetadata.universalIdentifier,
+            relatedFieldId,
+          );
+        }
 
         return {
           ...action,
-          id: fieldMetadataIdByUniversalIdentifier[
-            action.flatEntity.universalIdentifier
-          ],
+          id,
           relatedFieldId,
         };
       }
@@ -189,8 +226,13 @@ export const enrichCreateWorkspaceMigrationActionsWithIds = ({
     }
   });
 
-  return {
+  const enrichedWorkspaceMigration = {
     ...workspaceMigration,
     actions: enrichedActions,
+  };
+
+  return {
+    workspaceMigration: enrichedWorkspaceMigration,
+    fieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
   };
 };

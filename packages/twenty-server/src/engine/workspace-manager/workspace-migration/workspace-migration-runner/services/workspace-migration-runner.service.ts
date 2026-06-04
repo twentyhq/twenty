@@ -24,7 +24,6 @@ import {
 } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/exceptions/workspace-migration-runner.exception';
 import { WorkspaceMigrationRunnerActionHandlerRegistryService } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/registry/workspace-migration-runner-action-handler-registry.service';
 import { type MetadataEvent } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/types/metadata-event';
-import { buildFieldIdToBeCreatedInMigrationByUniversalIdentifierMap } from 'src/engine/workspace-manager/workspace-migration/workspace-migration-runner/action-handlers/field/services/utils/build-field-id-to-be-created-in-migration-map.util';
 
 @Injectable()
 export class WorkspaceMigrationRunnerService {
@@ -171,9 +170,14 @@ export class WorkspaceMigrationRunnerService {
   run = async ({
     workspaceMigration: { actions, applicationUniversalIdentifier },
     workspaceId,
+    allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap,
   }: {
     workspaceMigration: WorkspaceMigration;
     workspaceId: string;
+    allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap: Map<
+      string,
+      string
+    >;
   }): Promise<{
     allFlatEntityMaps: AllFlatEntityMaps;
     metadataEvents: MetadataEvent[];
@@ -245,9 +249,6 @@ export class WorkspaceMigrationRunnerService {
     await queryRunner.startTransaction();
 
     const allMetadataEvents: MetadataEvent[] = [];
-
-    const allFieldIdToBeCreatedInMigrationByUniversalIdentifierMap =
-      buildFieldIdToBeCreatedInMigrationByUniversalIdentifierMap(actions);
 
     try {
       for (const action of actions) {
