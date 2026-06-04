@@ -10,10 +10,10 @@ const CALL_RECORDING_OLD_NAME_SINGULAR = 'callRecordingOld';
 const CALL_RECORDING_OLD_NAME_PLURAL = 'callRecordingsOld';
 const MAX_OLD_NAME_ATTEMPTS = 100;
 
-export const findCollidingCustomCallRecordingObject = (
+export const findCollidingCustomCallRecordingObjects = (
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
-): FlatObjectMetadata | undefined =>
-  Object.values(flatObjectMetadataMaps.byUniversalIdentifier).find(
+): FlatObjectMetadata[] =>
+  Object.values(flatObjectMetadataMaps.byUniversalIdentifier).filter(
     (flatObjectMetadata): flatObjectMetadata is FlatObjectMetadata =>
       isDefined(flatObjectMetadata) &&
       flatObjectMetadata.universalIdentifier !==
@@ -27,20 +27,22 @@ export const findCollidingCustomCallRecordingObject = (
 
 export const resolveAvailableOldNames = (
   flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>,
+  additionalTakenNames: ReadonlySet<string> = new Set(),
 ): {
   nameSingular: string;
   namePlural: string;
   labelSingular: string;
   labelPlural: string;
 } => {
-  const takenNames = new Set(
-    Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
+  const takenNames = new Set([
+    ...Object.values(flatObjectMetadataMaps.byUniversalIdentifier)
       .filter(isDefined)
       .flatMap((flatObjectMetadata) => [
         flatObjectMetadata.nameSingular,
         flatObjectMetadata.namePlural,
       ]),
-  );
+    ...additionalTakenNames,
+  ]);
 
   for (let attempt = 0; attempt < MAX_OLD_NAME_ATTEMPTS; attempt++) {
     const discriminator = attempt === 0 ? '' : `${attempt + 1}`;

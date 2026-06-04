@@ -10,7 +10,7 @@ import { ActiveOrSuspendedWorkspaceCommandRunner } from 'src/database/commands/c
 import { WorkspaceIteratorService } from 'src/database/commands/command-runners/workspace-iterator.service';
 import { type RunOnWorkspaceArgs } from 'src/database/commands/command-runners/workspace.command-runner';
 import {
-  findCollidingCustomCallRecordingObject,
+  findCollidingCustomCallRecordingObjects,
   resolveAvailableOldNames,
 } from 'src/database/commands/upgrade-version-command/2-9/utils/call-recording-name-collision.util';
 import { ApplicationService } from 'src/engine/core-modules/application/application.service';
@@ -157,17 +157,17 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
     applicationId,
     workspaceId,
     now,
-    renamedCollisionObjectMetadata,
+    renamedCollisionObjectMetadatas,
   }: {
     fromMaps: FlatEntityMaps<FlatCommandMenuItem>;
     flatObjectMetadataMaps: FlatEntityMaps<FlatObjectMetadata>;
     applicationId: string;
     workspaceId: string;
     now: string;
-    renamedCollisionObjectMetadata?: {
+    renamedCollisionObjectMetadatas: {
       universalIdentifier: string;
       nameSingular: string;
-    };
+    }[];
   }): FlatEntityMaps<FlatCommandMenuItem> {
     let toMaps = fromMaps;
     let nextPosition =
@@ -218,7 +218,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       });
     }
 
-    if (isDefined(renamedCollisionObjectMetadata)) {
+    for (const renamedCollisionObjectMetadata of renamedCollisionObjectMetadatas) {
       const renamedNavigationCommandMenuItemUniversalIdentifier = v5(
         renamedCollisionObjectMetadata.universalIdentifier,
         NAVIGATION_COMMAND_UUID_NAMESPACE,
@@ -294,51 +294,62 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
       'featureFlagsMap',
     ]);
 
-    let renamedCollisionObjectMetadata:
-      | { universalIdentifier: string; nameSingular: string }
-      | undefined;
+    const renamedCollisionObjectMetadatas: {
+      universalIdentifier: string;
+      nameSingular: string;
+    }[] = [];
 
-    const collidingCustomObject = findCollidingCustomCallRecordingObject(
+    const collidingCustomObjects = findCollidingCustomCallRecordingObjects(
       flatObjectMetadataMaps,
     );
 
-    if (isDefined(collidingCustomObject)) {
+    // Each rename consumes a callRecordingOld name; reserve assigned names so the
+    // next colliding object falls back to callRecordingOld2, callRecordingOld3, etc.
+    const reservedOldNames = new Set<string>();
+
+    for (const collidingCustomObject of collidingCustomObjects) {
       const { nameSingular, namePlural, labelSingular, labelPlural } =
-        resolveAvailableOldNames(flatObjectMetadataMaps);
+        resolveAvailableOldNames(flatObjectMetadataMaps, reservedOldNames);
+
+      reservedOldNames.add(nameSingular);
+      reservedOldNames.add(namePlural);
 
       if (isDryRun) {
         this.logger.log(
           `[DRY RUN] Would rename colliding custom object (${collidingCustomObject.nameSingular}) to '${nameSingular}' for workspace ${workspaceId}`,
         );
-      } else {
-        await this.objectMetadataService.updateOneObject({
-          workspaceId,
-          updateObjectInput: {
-            id: collidingCustomObject.id,
-            update: {
-              nameSingular,
-              namePlural,
-              labelSingular,
-              labelPlural,
-              isLabelSyncedWithName: false,
-            },
-          },
-        });
-
-        this.logger.log(
-          `Renamed colliding custom object to '${nameSingular}' for workspace ${workspaceId}`,
-        );
-
-        renamedCollisionObjectMetadata = {
-          universalIdentifier: collidingCustomObject.universalIdentifier,
-          nameSingular,
-        };
-
-        ({ flatObjectMetadataMaps } =
-          await this.workspaceCacheService.getOrRecompute(workspaceId, [
-            'flatObjectMetadataMaps',
-          ]));
+        continue;
       }
+
+      await this.objectMetadataService.updateOneObject({
+        workspaceId,
+        updateObjectInput: {
+          id: collidingCustomObject.id,
+          update: {
+            nameSingular,
+            namePlural,
+            labelSingular,
+            labelPlural,
+            isLabelSyncedWithName: false,
+          },
+        },
+      });
+
+      this.logger.log(
+        `Renamed colliding custom object to '${nameSingular}' for workspace ${workspaceId}`,
+      );
+
+      renamedCollisionObjectMetadatas.push({
+        universalIdentifier: collidingCustomObject.universalIdentifier,
+        nameSingular,
+      });
+    }
+
+    if (renamedCollisionObjectMetadatas.length > 0) {
+      ({ flatObjectMetadataMaps } =
+        await this.workspaceCacheService.getOrRecompute(workspaceId, [
+          'flatObjectMetadataMaps',
+        ]));
     }
 
     const { twentyStandardFlatApplication } =
@@ -491,7 +502,7 @@ export class SyncCallRecordingStandardObjectsCommand extends ActiveOrSuspendedWo
         applicationId: twentyStandardFlatApplication.id,
         workspaceId,
         now,
-        renamedCollisionObjectMetadata,
+        renamedCollisionObjectMetadatas,
       });
 
     const newEntityCount = [

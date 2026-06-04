@@ -1,7 +1,7 @@
 import { STANDARD_OBJECTS } from 'twenty-shared/metadata';
 
 import {
-  findCollidingCustomCallRecordingObject,
+  findCollidingCustomCallRecordingObjects,
   resolveAvailableOldNames,
 } from 'src/database/commands/upgrade-version-command/2-9/utils/call-recording-name-collision.util';
 import { type FlatEntityMaps } from 'src/engine/metadata-modules/flat-entity/types/flat-entity-maps.type';
@@ -26,8 +26,8 @@ const buildFlatObjectMetadataMaps = (
   universalIdentifiersByApplicationId: {},
 });
 
-describe('findCollidingCustomCallRecordingObject', () => {
-  it('returns undefined when no object uses the callRecording name', () => {
+describe('findCollidingCustomCallRecordingObjects', () => {
+  it('returns an empty array when no object uses the callRecording name', () => {
     const maps = buildFlatObjectMetadataMaps([
       getFlatObjectMetadataMock({
         universalIdentifier: 'unrelated-object',
@@ -36,7 +36,7 @@ describe('findCollidingCustomCallRecordingObject', () => {
       }),
     ]);
 
-    expect(findCollidingCustomCallRecordingObject(maps)).toBeUndefined();
+    expect(findCollidingCustomCallRecordingObjects(maps)).toEqual([]);
   });
 
   it('returns the custom object whose singular name collides', () => {
@@ -49,8 +49,10 @@ describe('findCollidingCustomCallRecordingObject', () => {
     ]);
 
     expect(
-      findCollidingCustomCallRecordingObject(maps)?.universalIdentifier,
-    ).toBe('colliding-singular');
+      findCollidingCustomCallRecordingObjects(maps).map(
+        (object) => object.universalIdentifier,
+      ),
+    ).toEqual(['colliding-singular']);
   });
 
   it('returns the custom object whose plural name collides', () => {
@@ -63,8 +65,31 @@ describe('findCollidingCustomCallRecordingObject', () => {
     ]);
 
     expect(
-      findCollidingCustomCallRecordingObject(maps)?.universalIdentifier,
-    ).toBe('colliding-plural');
+      findCollidingCustomCallRecordingObjects(maps).map(
+        (object) => object.universalIdentifier,
+      ),
+    ).toEqual(['colliding-plural']);
+  });
+
+  it('returns every colliding object when singular and plural collide on different objects', () => {
+    const maps = buildFlatObjectMetadataMaps([
+      getFlatObjectMetadataMock({
+        universalIdentifier: 'colliding-singular',
+        nameSingular: 'callRecording',
+        namePlural: 'myRecordings',
+      }),
+      getFlatObjectMetadataMock({
+        universalIdentifier: 'colliding-plural',
+        nameSingular: 'myRecording',
+        namePlural: 'callRecordings',
+      }),
+    ]);
+
+    expect(
+      findCollidingCustomCallRecordingObjects(maps)
+        .map((object) => object.universalIdentifier)
+        .sort(),
+    ).toEqual(['colliding-plural', 'colliding-singular']);
   });
 
   it('excludes the standard callRecording object itself', () => {
@@ -78,7 +103,7 @@ describe('findCollidingCustomCallRecordingObject', () => {
       }),
     ]);
 
-    expect(findCollidingCustomCallRecordingObject(maps)).toBeUndefined();
+    expect(findCollidingCustomCallRecordingObjects(maps)).toEqual([]);
   });
 });
 
@@ -115,6 +140,28 @@ describe('resolveAvailableOldNames', () => {
     ]);
 
     expect(resolveAvailableOldNames(maps)).toEqual({
+      nameSingular: 'callRecordingOld2',
+      namePlural: 'callRecordingsOld2',
+      labelSingular: 'Call Recording (Old) 2',
+      labelPlural: 'Call Recordings (Old) 2',
+    });
+  });
+
+  it('skips Old names provided as already reserved', () => {
+    const maps = buildFlatObjectMetadataMaps([
+      getFlatObjectMetadataMock({
+        universalIdentifier: 'colliding',
+        nameSingular: 'callRecording',
+        namePlural: 'callRecordings',
+      }),
+    ]);
+
+    expect(
+      resolveAvailableOldNames(
+        maps,
+        new Set(['callRecordingOld', 'callRecordingsOld']),
+      ),
+    ).toEqual({
       nameSingular: 'callRecordingOld2',
       namePlural: 'callRecordingsOld2',
       labelSingular: 'Call Recording (Old) 2',
