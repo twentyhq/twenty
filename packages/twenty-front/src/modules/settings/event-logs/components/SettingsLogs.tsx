@@ -31,6 +31,7 @@ import {
   EventLogTable,
 } from '~/generated-metadata/graphql';
 import { useNavigateSettings } from '~/hooks/useNavigateSettings';
+import { isGraphqlErrorOfType } from '~/utils/is-graphql-error-of-type.util';
 
 // Fills the settings body height so the tab itself never scrolls; only the
 // results table (below) scrolls, with the filter card pinned above it.
@@ -170,33 +171,38 @@ export const SettingsLogs = () => {
     setFilters(newFilters);
   };
 
-  const renderResults = () => {
-    if (!isApplicationLog && !hasAuditLogsEntitlement) {
-      return (
-        <Card rounded>
-          <SettingsOptionCardContentButton
-            Icon={IconLock}
-            title={t`Upgrade to access audit logs`}
-            description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
-            Button={
-              <Button
-                title={t`Upgrade`}
-                variant="primary"
-                accent="blue"
-                size="small"
-                Icon={IconArrowUp}
-                onClick={() =>
-                  navigateSettings(
-                    isBillingEnabled
-                      ? SettingsPath.Billing
-                      : SettingsPath.AdminPanelEnterprise,
-                  )
-                }
-              />
+  // Application logs are free; every other table needs the AUDIT_LOGS entitlement.
+  // The API stays the source of truth (see the NO_ENTITLEMENT branch below), so an
+  // entitlement gap always lands on this upgrade path rather than a generic error.
+  const renderEnterpriseUpgradeCard = () => (
+    <Card rounded>
+      <SettingsOptionCardContentButton
+        Icon={IconLock}
+        title={t`Upgrade to access audit logs`}
+        description={t`Only application logs are available on your current plan. Other log types require an Enterprise subscription.`}
+        Button={
+          <Button
+            title={t`Upgrade`}
+            variant="primary"
+            accent="blue"
+            size="small"
+            Icon={IconArrowUp}
+            onClick={() =>
+              navigateSettings(
+                isBillingEnabled
+                  ? SettingsPath.Billing
+                  : SettingsPath.AdminPanelEnterprise,
+              )
             }
           />
-        </Card>
-      );
+        }
+      />
+    </Card>
+  );
+
+  const renderResults = () => {
+    if (!isApplicationLog && !hasAuditLogsEntitlement) {
+      return renderEnterpriseUpgradeCard();
     }
 
     if (!isClickHouseConfigured) {
@@ -208,6 +214,10 @@ export const SettingsLogs = () => {
     }
 
     if (isDefined(error)) {
+      if (isGraphqlErrorOfType(error, 'NO_ENTITLEMENT')) {
+        return renderEnterpriseUpgradeCard();
+      }
+
       return (
         <SettingsEmptyPlaceholder>
           {t`Something went wrong while loading audit logs. Please try again.`}
