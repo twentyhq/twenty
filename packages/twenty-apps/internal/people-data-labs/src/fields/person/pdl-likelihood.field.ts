@@ -7,12 +7,12 @@ import {
 import { PDL_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlMobilePhone,
+  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlLikelihood,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  type: FieldType.PHONES,
-  name: 'pdlMobilePhone',
-  label: 'Mobile Phone',
-  description: 'Mobile phone returned by People Data Labs.',
+  type: FieldType.NUMBER,
+  name: 'pdlLikelihood',
+  label: 'Match Likelihood',
+  description: 'People Data Labs match confidence score (1-10).',
   isNullable: true,
 });

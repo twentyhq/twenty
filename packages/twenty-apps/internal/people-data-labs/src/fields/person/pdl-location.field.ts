@@ -7,12 +7,12 @@ import {
 import { PDL_FIELD_UNIVERSAL_IDENTIFIERS } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlLocationRegion,
+  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.person.pdlLocation,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.person.universalIdentifier,
-  type: FieldType.TEXT,
-  name: 'pdlLocationRegion',
-  label: 'Region / State',
-  description: 'Region or state returned by People Data Labs.',
+  type: FieldType.ADDRESS,
+  name: 'pdlLocation',
+  label: 'Location',
+  description: 'Location returned by People Data Labs.',
   isNullable: true,
 });

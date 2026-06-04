@@ -10,12 +10,11 @@ import {
 } from 'src/constants/universal-identifiers';
 
 export default defineField({
-  universalIdentifier:
-    PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlFundingHistory,
+  universalIdentifier: PDL_FIELD_UNIVERSAL_IDENTIFIERS.company.pdlFundingStages,
   objectUniversalIdentifier:
     STANDARD_OBJECT_UNIVERSAL_IDENTIFIERS.company.universalIdentifier,
   type: FieldType.MULTI_SELECT,
-  name: 'pdlFundingHistory',
+  name: 'pdlFundingStages',
   label: 'Funding Stages',
   description: 'People Data Labs canonical funding stages.',
   isNullable: true,
