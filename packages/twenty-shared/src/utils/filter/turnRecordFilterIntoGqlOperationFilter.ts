@@ -481,11 +481,11 @@ const buildDirectFieldGqlOperationFilter = ({
           const startStr = recordFilter.value.slice(0, commaIndex).trim();
           const endStr = recordFilter.value.slice(commaIndex + 1).trim();
           if (!startStr || !endStr) return undefined;
-          
+
           try {
             const startInstant = Temporal.Instant.from(startStr).toString();
             const endInstant = Temporal.Instant.from(endStr).toString();
-            
+
             return {
               and: [
                 {
@@ -753,8 +753,8 @@ const buildDirectFieldGqlOperationFilter = ({
           case RecordFilterOperand.IS_BETWEEN: {
             const commaIndex = recordFilter.value.indexOf(',');
             if (commaIndex === -1) return undefined;
-            const minStr = recordFilter.value.slice(0, commaIndex);
-            const maxStr = recordFilter.value.slice(commaIndex + 1);
+            const minStr = recordFilter.value.slice(0, commaIndex).trim();
+            const maxStr = recordFilter.value.slice(commaIndex + 1).trim();
             const minAmount = parseFloat(minStr);
             const maxAmount = parseFloat(maxStr);
             if (isNaN(minAmount) || isNaN(maxAmount)) return undefined;
@@ -762,12 +762,12 @@ const buildDirectFieldGqlOperationFilter = ({
               and: [
                 {
                   [fieldMetadataItem.name]: {
-                    amountMicros: { gte: minAmount * 1000000 },
+                    amountMicros: { gte: Math.round(minAmount) * 1000000 },
                   } as CurrencyFilter,
                 },
                 {
                   [fieldMetadataItem.name]: {
-                    amountMicros: { lte: maxAmount * 1000000 },
+                    amountMicros: { lte: Math.round(maxAmount) * 1000000 },
                   } as CurrencyFilter,
                 },
               ],
