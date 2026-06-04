@@ -54,44 +54,52 @@ export class WorkspaceEventLiveService {
   }
 
   async publishWatched(events: WorkspaceEventEnvelope[]): Promise<void> {
-    try {
-      // Group by (workspaceId, table) so a batch is published to the right
-      // workspace channel even if it ever spans more than one workspace.
-      const groups = new Map<string, WatchedGroup>();
+    // Group by (workspaceId, table) so a batch is published to the right
+    // workspace channel even if it ever spans more than one workspace.
+    const groups = new Map<string, WatchedGroup>();
 
-      for (const event of events) {
-        const workspaceId = event.row.workspaceId;
+    for (const event of events) {
+      const workspaceId = event.row.workspaceId;
 
-        if (!isDefined(workspaceId)) {
-          continue;
-        }
-
-        const key = `${workspaceId}:${event.table}`;
-        const group = groups.get(key) ?? {
-          workspaceId,
-          table: event.table,
-          rows: [],
-        };
-
-        group.rows.push(event.row);
-        groups.set(key, group);
+      if (!isDefined(workspaceId)) {
+        continue;
       }
 
-      await Promise.all(
-        [...groups.values()].map(async ({ workspaceId, table, rows }) => {
-          if (!(await this.isWatched(workspaceId, table))) {
-            return;
-          }
+      const key = `${workspaceId}:${event.table}`;
+      const group = groups.get(key) ?? {
+        workspaceId,
+        table: event.table,
+        rows: [],
+      };
 
-          await this.subscriptionService.publish({
-            channel: SubscriptionChannel.WORKSPACE_EVENTS_CHANNEL,
-            workspaceId,
-            payload: { table, rows },
-          });
-        }),
-      );
-    } catch (error) {
-      this.logger.error('Failed to publish live workspace events', error);
+      group.rows.push(event.row);
+      groups.set(key, group);
+    }
+
+    // Independent best-effort fan-out per group: allSettled so one workspace's
+    // failure neither aborts the others nor hides their own errors, and never
+    // rejects into the caller (a live-publish failure must not retry the job).
+    const results = await Promise.allSettled(
+      [...groups.values()].map(async ({ workspaceId, table, rows }) => {
+        if (!(await this.isWatched(workspaceId, table))) {
+          return;
+        }
+
+        await this.subscriptionService.publish({
+          channel: SubscriptionChannel.WORKSPACE_EVENTS_CHANNEL,
+          workspaceId,
+          payload: { table, rows },
+        });
+      }),
+    );
+
+    for (const result of results) {
+      if (result.status === 'rejected') {
+        this.logger.error(
+          'Failed to publish live workspace events',
+          result.reason,
+        );
+      }
     }
   }
 }
