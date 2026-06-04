@@ -8,7 +8,7 @@ export const IconMicrosoftCalendar = ({
   className,
   size: sizeFromProps,
   style,
-}: IconComponentProps) => {
+}: Pick<IconComponentProps, 'className' | 'size' | 'style'>) => {
   const { theme } = useContext(ThemeContext);
   const size = sizeFromProps ?? theme.icon.size.lg;
 
