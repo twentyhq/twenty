@@ -44,7 +44,7 @@ const NAV_HEIGHT = 64;
 const MD_UP_QUERY = `(min-width: ${theme.breakpoints.md}px)`;
 
 const PRODUCT_HERO_BACKGROUND_IMAGE =
-  '/illustrations/generated/home-background-wheat.jpg';
+  '/illustrations/generated/home-background-wheat.webp';
 
 const INTRO_DASH_COLOR = '#4A38F5';
 const AI_DASH_COLOR = '#ffffff';
