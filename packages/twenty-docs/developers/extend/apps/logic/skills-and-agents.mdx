@@ -85,10 +85,25 @@ Key points:
 - The agent runs **synchronously** and can read/update records itself via its
   own tools — `runAgent()` resolves once the run completes.
 - An app can only run its own agents.
+- The app's [default role](/developers/extend/apps/config/roles) must grant the
+  `AI` permission flag — add `SystemPermissionFlag.AI` to its
+  `permissionFlagUniversalIdentifiers` (or set `canAccessAllTools: true`).
+  Without it, `runAgent()` fails with a permission error.
 - Set a generous `timeoutSeconds` on the logic function — agent runs can take
   several seconds.
 - `hasNoMoreAvailableCredits` is `true` when the workspace ran out of AI
   credits mid-run; in that case `result` may be empty.
+
+```ts src/roles/default-role.ts
+import { defineApplicationRole, SystemPermissionFlag } from 'twenty-sdk/define';
+
+export default defineApplicationRole({
+  universalIdentifier: 'b648f87b-1d26-4961-b974-0908fd991061',
+  label: 'Default function role',
+  // runAgent() requires the AI permission flag on the app's default role.
+  permissionFlagUniversalIdentifiers: [SystemPermissionFlag.AI],
+});
+```
 
 <Warning>
   **Avoid loops:** if you call `runAgent()` from a `*.updated` database-event
