@@ -19,6 +19,7 @@ import { type AuthContextUser } from 'src/engine/core-modules/auth/types/auth-co
 import { WorkspaceDomainsService } from 'src/engine/core-modules/domain/workspace-domains/services/workspace-domains.service';
 import { EmailVerificationTrigger } from 'src/engine/core-modules/email-verification/email-verification.constants';
 import { EmailVerificationService } from 'src/engine/core-modules/email-verification/services/email-verification.service';
+import { TwentyConfigService } from 'src/engine/core-modules/twenty-config/twenty-config.service';
 import { UserInputError } from 'src/engine/core-modules/graphql/utils/graphql-errors.util';
 import { InjectMessageQueue } from 'src/engine/core-modules/message-queue/decorators/message-queue.decorator';
 import { MessageQueue } from 'src/engine/core-modules/message-queue/message-queue.constants';
@@ -60,6 +61,7 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
     private readonly workspaceQueueService: MessageQueueService,
     private readonly coreEntityCacheService: CoreEntityCacheService,
     private readonly workspaceMemberTranspiler: WorkspaceMemberTranspiler,
+    private readonly twentyConfigService: TwentyConfigService,
   ) {
     super(userRepository);
   }
@@ -510,6 +512,12 @@ export class UserService extends TypeOrmQueryService<UserEntity> {
         subCode: UserExceptionCode.EMAIL_ALREADY_IN_USE,
         userFriendlyMessage: msg`Email already in use`,
       });
+    }
+
+    if (!this.twentyConfigService.get('IS_EMAIL_VERIFICATION_REQUIRED')) {
+      await this.updateEmailFromVerificationToken(user.id, normalizedEmail);
+
+      return;
     }
 
     const workspaceDomainConfig =
