@@ -6,7 +6,9 @@ import { Menu, MENU_DATA } from '@/sections/Menu';
 import { theme } from '@/theme';
 import { PartnerApplicationPageContent } from './PartnerApplicationPageContent';
 
-export const generateMetadata = buildRouteMetadata('partnersApply');
+export const generateMetadata = buildRouteMetadata('partnersApply', {
+  extend: { robots: { index: false, follow: false } },
+});
 
 type ApplyPageProps = {
   params: Promise<LocaleRouteParams>;
