@@ -1,13 +1,18 @@
-import { WorkspaceEventsConsumer } from 'src/engine/core-modules/audit/jobs/workspace-events.consumer';
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
 import { type WorkspaceEventsJobData } from 'src/engine/core-modules/audit/types/workspace-event-envelope.type';
+import { WorkspaceEventLiveService } from 'src/engine/subscriptions/workspace-event-live.service';
+
+import { WorkspaceEventsConsumer } from './workspace-events.consumer';
 
 describe('WorkspaceEventsConsumer', () => {
-  it('writes the job events to the sink service', async () => {
+  it('writes events to the sinks and fans them out to live subscribers', async () => {
     const write = jest.fn().mockResolvedValue(undefined);
-    const consumer = new WorkspaceEventsConsumer({
-      write,
-    } as unknown as WorkspaceEventSinkService);
+    const publishWatched = jest.fn().mockResolvedValue(undefined);
+
+    const consumer = new WorkspaceEventsConsumer(
+      { write } as unknown as WorkspaceEventSinkService,
+      { publishWatched } as unknown as WorkspaceEventLiveService,
+    );
 
     const data: WorkspaceEventsJobData = {
       events: [
@@ -26,7 +31,7 @@ describe('WorkspaceEventsConsumer', () => {
 
     await consumer.handle(data);
 
-    expect(write).toHaveBeenCalledTimes(1);
     expect(write).toHaveBeenCalledWith(data.events);
+    expect(publishWatched).toHaveBeenCalledWith(data.events);
   });
 });

@@ -9,12 +9,13 @@ import { SettingsEnterpriseFeatureGateCard } from '@/settings/components/Setting
 import { EventLogFilters } from '@/settings/event-logs/components/EventLogFilters';
 import { EventLogResultsTable } from '@/settings/event-logs/components/EventLogResultsTable';
 import { EventLogTableSelector } from '@/settings/event-logs/components/EventLogTableSelector';
+import { useEventLogsLiveStream } from '@/settings/event-logs/hooks/useEventLogsLiveStream';
 import { useEventLogs } from '@/settings/event-logs/hooks/useQueryEventLogs';
 import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
 import { isDefined } from 'twenty-shared/utils';
 import { IconRefresh } from 'twenty-ui/display';
-import { IconButton } from 'twenty-ui/input';
+import { IconButton, Toggle } from 'twenty-ui/input';
 import { Card } from 'twenty-ui/layout';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
@@ -36,6 +37,17 @@ const StyledSelectorRow = styled.div`
 const StyledSelectorGrow = styled.div`
   flex: 1;
   min-width: 0;
+`;
+
+const StyledLiveToggle = styled.div`
+  align-items: center;
+  display: flex;
+  gap: ${themeCssVariables.spacing[2]};
+`;
+
+const StyledLiveLabel = styled.span`
+  color: ${themeCssVariables.font.color.secondary};
+  font-size: ${themeCssVariables.font.size.sm};
 `;
 
 const StyledResults = styled.div`
@@ -72,6 +84,7 @@ export const SettingsLogs = () => {
     EventLogTable.PAGEVIEW,
   );
   const [filters, setFilters] = useState<EventLogFiltersState>({});
+  const [isLive, setIsLive] = useState(false);
 
   const isApplicationLog = selectedTable === EventLogTable.APPLICATION_LOG;
   const canQuery =
@@ -104,6 +117,13 @@ export const SettingsLogs = () => {
     },
     { skip: !canQuery },
   );
+
+  const liveRecords = useEventLogsLiveStream({
+    table: selectedTable,
+    enabled: isLive && canQuery,
+  });
+
+  const displayedRecords = isLive ? [...liveRecords, ...records] : records;
 
   const handleTableChange = (table: EventLogTable) => {
     setSelectedTable(table);
@@ -143,10 +163,10 @@ export const SettingsLogs = () => {
 
     return (
       <StyledResults>
-        <StyledRecordCount>{t`${records.length} of ${totalCount}`}</StyledRecordCount>
+        <StyledRecordCount>{t`${displayedRecords.length} of ${totalCount}`}</StyledRecordCount>
         <StyledTableWrapper>
           <EventLogResultsTable
-            records={records}
+            records={displayedRecords}
             loading={loading}
             hasNextPage={hasNextPage}
             onLoadMore={loadMore}
@@ -168,6 +188,16 @@ export const SettingsLogs = () => {
                 onChange={handleTableChange}
               />
             </StyledSelectorGrow>
+            {canQuery && (
+              <StyledLiveToggle>
+                <StyledLiveLabel>{t`Live`}</StyledLiveLabel>
+                <Toggle
+                  value={isLive}
+                  onChange={setIsLive}
+                  toggleSize="small"
+                />
+              </StyledLiveToggle>
+            )}
             <IconButton
               Icon={IconRefresh}
               variant="secondary"

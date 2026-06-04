@@ -21,50 +21,16 @@ import {
 
 import { EventLogFiltersInput } from './dtos/event-log-filters.input';
 import { EventLogQueryInput } from './dtos/event-log-query.input';
+import { EventLogQueryResult } from './dtos/event-log-result.dto';
 import {
-  EventLogQueryResult,
-  EventLogRecord,
-} from './dtos/event-log-result.dto';
-
-type ClickHouseEventRecord = {
-  event?: string;
-  name?: string;
-  timestamp: string;
-  userId?: string;
-  properties?: Record<string, unknown>;
-  recordId?: string;
-  objectMetadataId?: string;
-  isCustom?: boolean;
-};
-
-type ClickHouseUsageEventRecord = {
-  timestamp: string;
-  userWorkspaceId?: string;
-  resourceType?: string;
-  operationType?: string;
-  quantity?: number;
-  unit?: string;
-  creditsUsedMicro?: number;
-  resourceId?: string;
-  resourceContext?: string;
-  metadata?: Record<string, unknown>;
-};
-
-type ClickHouseApplicationLogRecord = {
-  timestamp: string;
-  applicationId?: string;
-  logicFunctionId?: string;
-  logicFunctionName?: string;
-  executionId?: string;
-  level?: string;
-  message?: string;
-  properties?: Record<string, unknown>;
-};
+  type ClickHouseEventRecord,
+  normalizeEventLogRecords,
+} from './utils/normalize-event-log-records';
 
 const ALLOWED_TABLES = Object.values(EventLogTable);
 const MAX_LIMIT = 10000;
 
-const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
+export const CLICKHOUSE_TABLE_NAMES: Record<EventLogTable, string> = {
   [EventLogTable.WORKSPACE_EVENT]: 'workspaceEvent',
   [EventLogTable.PAGEVIEW]: 'pageview',
   [EventLogTable.OBJECT_EVENT]: 'objectEvent',
@@ -156,7 +122,7 @@ export class EventLogsService {
       records.pop();
     }
 
-    const normalizedRecords = this.normalizeRecords(records, input.table);
+    const normalizedRecords = normalizeEventLogRecords(records, input.table);
     const lastRecord = normalizedRecords[normalizedRecords.length - 1];
     const endCursor =
       hasNextPage && lastRecord
@@ -173,7 +139,7 @@ export class EventLogsService {
     };
   }
 
-  private async validateAccess(
+  async validateAccess(
     workspaceId: string,
     table: EventLogTable,
   ): Promise<void> {
@@ -278,62 +244,5 @@ export class EventLogsService {
 
   private decodeCursor(cursor: string): number {
     return parseInt(Buffer.from(cursor, 'base64').toString('utf-8'), 10);
-  }
-
-  private normalizeRecords(
-    records:
-      | ClickHouseEventRecord[]
-      | ClickHouseUsageEventRecord[]
-      | ClickHouseApplicationLogRecord[],
-    table: EventLogTable,
-  ): EventLogRecord[] {
-    if (table === EventLogTable.USAGE_EVENT) {
-      return (records as ClickHouseUsageEventRecord[]).map((record) => ({
-        event: record.resourceType ?? '',
-        timestamp: new Date(record.timestamp),
-        userId: record.userWorkspaceId,
-        properties: {
-          operationType: record.operationType,
-          quantity: record.quantity,
-          unit: record.unit,
-          creditsUsedMicro: record.creditsUsedMicro,
-          resourceId: record.resourceId,
-          resourceContext: record.resourceContext,
-          ...(record.metadata ?? {}),
-        },
-      }));
-    }
-
-    if (table === EventLogTable.APPLICATION_LOG) {
-      return (records as ClickHouseApplicationLogRecord[]).map((record) => ({
-        event: record.logicFunctionName ?? '',
-        timestamp: new Date(record.timestamp),
-        properties: {
-          level: record.level,
-          message: record.message,
-          executionId: record.executionId,
-          logicFunctionId: record.logicFunctionId,
-          applicationId: record.applicationId,
-          ...(record.properties ?? {}),
-        },
-      }));
-    }
-
-    return (records as ClickHouseEventRecord[]).map((record) => {
-      const eventName =
-        table === EventLogTable.PAGEVIEW
-          ? (record.name ?? '')
-          : (record.event ?? '');
-
-      return {
-        event: eventName,
-        timestamp: new Date(record.timestamp),
-        userId: record.userId,
-        properties: record.properties,
-        recordId: record.recordId,
-        objectMetadataId: record.objectMetadataId,
-        isCustom: record.isCustom,
-      };
-    });
   }
 }

@@ -10,6 +10,7 @@ import { GuardRedirectModule } from 'src/engine/core-modules/guard-redirect/guar
 import { UserWorkspaceEntity } from 'src/engine/core-modules/user-workspace/user-workspace.entity';
 import { PermissionsModule } from 'src/engine/metadata-modules/permissions/permissions.module';
 
+import { EventLogsLiveResolver } from './event-logs-live.resolver';
 import { EventLogsResolver } from './event-logs.resolver';
 import { EventLogsService } from './event-logs.service';
 
@@ -22,7 +23,7 @@ import { EventLogsService } from './event-logs.service';
     GuardRedirectModule,
     TypeOrmModule.forFeature([UserWorkspaceEntity]),
   ],
-  providers: [EventLogsResolver, EventLogsService],
+  providers: [EventLogsResolver, EventLogsLiveResolver, EventLogsService],
   exports: [EventLogsService],
 })
 export class EventLogsModule {}
