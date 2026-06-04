@@ -22,9 +22,6 @@ const ApplyPageContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(4)};
-  margin-left: auto;
-  margin-right: auto;
-  max-width: min(720px, 100%);
   min-height: 100vh;
   padding: ${theme.spacing(5)} ${theme.spacing(4)};
 
