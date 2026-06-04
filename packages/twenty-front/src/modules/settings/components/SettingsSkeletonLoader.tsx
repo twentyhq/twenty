@@ -8,19 +8,6 @@ import { useContext } from 'react';
 import Skeleton, { SkeletonTheme } from 'react-loading-skeleton';
 import { ThemeContext, themeCssVariables } from 'twenty-ui/theme-constants';
 
-// Full-page settings loading state: the rounded-card chrome (header + body)
-// wrapped around the shared SettingsSectionSkeletonLoader.
-//
-// Use this only when no settings chrome is on screen yet — the route-level
-// Suspense fallback, or a page that must load its data (and its data-dependent
-// title/breadcrumb) before it can render SettingsPageLayout. When the chrome is
-// already rendered above (e.g. a tab inside an already-rendered page), render
-// SettingsSectionSkeletonLoader directly so the body matches without nesting a
-// second card.
-//
-// The card is re-created here rather than reusing SettingsPageLayout to keep the
-// skeleton free of the layout's page-level side effects (command-menu hotkeys,
-// the desktop side panel and the information banner).
 const StyledRoot = styled.div<{ isMobile: boolean }>`
   display: flex;
   flex: 1;
