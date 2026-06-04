@@ -100,9 +100,19 @@ export const SettingsLogs = () => {
       { skip: !canQuery },
     );
 
+  // Live tailing shows every event for the table; suppress it while filters are
+  // active so the view never mixes filtered history with unfiltered live rows.
+  const hasActiveFilters =
+    isDefined(filters.eventType) ||
+    isDefined(filters.userWorkspaceId) ||
+    isDefined(filters.recordId) ||
+    isDefined(filters.objectMetadataId) ||
+    isDefined(filters.dateRange?.start) ||
+    isDefined(filters.dateRange?.end);
+
   const liveRecords = useEventLogsLiveStream({
     table: selectedTable,
-    enabled: !isPaused && canQuery,
+    enabled: !isPaused && !hasActiveFilters && canQuery,
   });
 
   const displayedRecords = useMemo(

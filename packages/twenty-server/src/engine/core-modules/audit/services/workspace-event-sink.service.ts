@@ -53,10 +53,12 @@ export class WorkspaceEventSinkService {
   }
 
   async ingest(events: WorkspaceEventEnvelope[]): Promise<void> {
-    // Persistence must throw on failure so the consumer job retries; the live
-    // fan-out is best-effort and deliberately not awaited.
+    // Persistence must throw on failure so the consumer job retries. The live
+    // fan-out is awaited so the job isn't acked before it completes, but it
+    // swallows its own errors internally and so can never trigger a retry (which
+    // would double-write to ClickHouse).
     await this.persist(events);
-    void this.workspaceEventLiveService.publishWatched(events);
+    await this.workspaceEventLiveService.publishWatched(events);
   }
 
   private async persist(events: WorkspaceEventEnvelope[]): Promise<void> {

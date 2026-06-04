@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 
 import { WorkspaceEventSinkService } from 'src/engine/core-modules/audit/services/workspace-event-sink.service';
 import {
@@ -15,9 +15,12 @@ import {
 import { type PageviewProperties } from 'src/engine/core-modules/audit/utils/events/pageview/pageview';
 
 // Typed emit facade for analytics events. Builds an envelope and hands it to the
-// unified pipeline; the ClickHouse write lives in the sinks.
+// unified pipeline; building (schema validation) and enqueuing are best-effort
+// and never crash the caller (auth, billing, impersonation, ...).
 @Injectable()
 export class AuditService {
+  private readonly logger = new Logger(AuditService.name);
+
   constructor(
     private readonly workspaceEventSinkService: WorkspaceEventSinkService,
   ) {}
@@ -33,7 +36,7 @@ export class AuditService {
         event: T,
         properties: TrackEventProperties<T>,
       ) =>
-        this.enqueue(
+        this.emit(() =>
           buildWorkspaceEventEnvelope(contextFields, event, properties),
         ),
       createObjectEvent: <T extends TrackEventName>(
@@ -44,21 +47,30 @@ export class AuditService {
           isCustom?: boolean;
         },
       ) =>
-        this.enqueue(
+        this.emit(() =>
           buildObjectEventEnvelope(contextFields, event, properties),
         ),
       createPageviewEvent: (
         name: string,
         properties: Partial<PageviewProperties>,
-      ) => this.enqueue(buildPageviewEnvelope(contextFields, name, properties)),
+      ) =>
+        this.emit(() => buildPageviewEnvelope(contextFields, name, properties)),
     };
   }
 
-  private async enqueue(
-    envelope: WorkspaceEventEnvelope,
+  private async emit(
+    buildEnvelope: () => WorkspaceEventEnvelope,
   ): Promise<{ success: boolean }> {
-    await this.workspaceEventSinkService.enqueue([envelope]);
+    try {
+      await this.workspaceEventSinkService.enqueue([buildEnvelope()]);
 
-    return { success: true };
+      return { success: true };
+    } catch (error) {
+      // Best-effort: a build (schema validation) or enqueue failure must never
+      // propagate to the calling flow.
+      this.logger.error('Failed to emit workspace event', error);
+
+      return { success: false };
+    }
   }
 }
