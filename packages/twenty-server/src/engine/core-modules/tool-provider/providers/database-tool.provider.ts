@@ -170,10 +170,9 @@ export class DatabaseToolProvider implements ToolProvider {
           ? generateGroupByToolInputSchema(objectMetadata, restrictedFields)
           : null;
 
-        const hasGroupBySchema = includeSchemas
-          ? groupBySchema !== null ||
-            hasGroupByToolInputSchema(objectMetadata, restrictedFields)
-          : true;
+        const hasGroupBySchema =
+          groupBySchema !== null ||
+          hasGroupByToolInputSchema(objectMetadata, restrictedFields);
 
         if (hasGroupBySchema) {
           descriptors.push({
