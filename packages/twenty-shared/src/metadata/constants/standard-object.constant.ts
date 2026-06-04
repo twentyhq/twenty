@@ -2521,6 +2521,9 @@ export const STANDARD_OBJECTS = {
         universalIdentifier: '730dc1c9-34f5-4c22-84a6-bcb55b7604e2',
       },
       state: { universalIdentifier: '20202020-611f-45f3-9cde-d64927e8ec57' },
+      stepLogs: {
+        universalIdentifier: '20202020-7c4e-4e1a-8fc1-1e3a55d6c2a1',
+      },
       timelineActivities: {
         universalIdentifier: '20202020-af4d-4eb0-babc-eb960a45b356',
       },

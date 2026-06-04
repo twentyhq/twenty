@@ -110,7 +110,7 @@ codex mcp get <server-name>
 When connected, use the Twenty MCP discovery flow:
 
 ```text
-get_tool_catalog -> learn_tools -> execute_tool
+learn_tools -> execute_tool
 ```
 
 ## Troubleshooting
