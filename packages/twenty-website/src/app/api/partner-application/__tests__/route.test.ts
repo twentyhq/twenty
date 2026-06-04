@@ -142,7 +142,12 @@ describe('POST /api/partner-application', () => {
   it('forwards a valid submission to the webhook with camelCase payload + header auth and returns 200', async () => {
     const fetchSpy = jest
       .fn()
-      .mockResolvedValue(new Response(JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }), { status: 200 }));
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }),
+          { status: 200 },
+        ),
+      );
     global.fetch = fetchSpy;
 
     const { POST } = await loadRoute();
@@ -170,7 +175,12 @@ describe('POST /api/partner-application', () => {
   it('forwards rich optional wizard fields with camelCase keys', async () => {
     const fetchSpy = jest
       .fn()
-      .mockResolvedValue(new Response(JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }), { status: 200 }));
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }),
+          { status: 200 },
+        ),
+      );
     global.fetch = fetchSpy;
 
     const { POST } = await loadRoute();
@@ -202,7 +212,12 @@ describe('POST /api/partner-application', () => {
   it('omits optional rich fields when not provided', async () => {
     const fetchSpy = jest
       .fn()
-      .mockResolvedValue(new Response(JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }), { status: 200 }));
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }),
+          { status: 200 },
+        ),
+      );
     global.fetch = fetchSpy;
 
     const { POST } = await loadRoute();
@@ -247,7 +262,12 @@ describe('POST /api/partner-application', () => {
     global.fetch = jest
       .fn()
       .mockImplementation(() =>
-        Promise.resolve(new Response(JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }), { status: 200 })),
+        Promise.resolve(
+          new Response(
+            JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }),
+            { status: 200 },
+          ),
+        ),
       );
     const { POST } = await loadRoute();
     const ip = '203.0.113.99';
@@ -263,7 +283,12 @@ describe('POST /api/partner-application', () => {
   it('attaches a Retry-After header on 429 responses', async () => {
     global.fetch = jest
       .fn()
-      .mockResolvedValue(new Response(JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }), { status: 200 }));
+      .mockResolvedValue(
+        new Response(
+          JSON.stringify({ ok: true, created: true, partnerId: 'test-id' }),
+          { status: 200 },
+        ),
+      );
     const { POST } = await loadRoute();
     const ip = '203.0.113.100';
     for (let i = 0; i < 5; i++) await POST(buildRequest({ ip }));

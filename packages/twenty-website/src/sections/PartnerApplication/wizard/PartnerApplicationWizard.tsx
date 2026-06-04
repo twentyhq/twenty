@@ -169,7 +169,10 @@ export function PartnerApplicationWizard({
   slots,
 }: WizardProps) {
   const { i18n } = useLingui();
-  const { Title = Modal.Title as DialogPrimitive, Description = Modal.Description as DialogPrimitive } = slots ?? {};
+  const {
+    Title = Modal.Title as DialogPrimitive,
+    Description = Modal.Description as DialogPrimitive,
+  } = slots ?? {};
   const controller = usePartnerApplicationState();
   const {
     state,
