@@ -16,13 +16,19 @@ function PassDescription({ render }: { render?: ReactElement }) {
 
 const PAGE_SLOTS = { Title: PassTitle, Description: PassDescription };
 
-const ApplyPageContainer = styled.div`
+const ApplyPageBackground = styled.div`
   background: #0c0c0c;
+  min-height: 100vh;
+`;
+
+const ApplyPageContainer = styled.div`
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
   gap: ${theme.spacing(4)};
-  min-height: 100vh;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: min(720px, 100%);
   padding: ${theme.spacing(5)} ${theme.spacing(4)};
 
   @media (min-width: ${theme.breakpoints.md}px) {
@@ -34,12 +40,14 @@ export function PartnerApplicationPageContent() {
   const router = useRouter();
 
   return (
-    <ApplyPageContainer>
-      <PartnerApplicationWizard
-        resetSignal={0}
-        onSuccess={() => router.push('/partners/list')}
-        slots={PAGE_SLOTS}
-      />
-    </ApplyPageContainer>
+    <ApplyPageBackground>
+      <ApplyPageContainer>
+        <PartnerApplicationWizard
+          resetSignal={0}
+          onSuccess={() => router.push('/partners/list')}
+          slots={PAGE_SLOTS}
+        />
+      </ApplyPageContainer>
+    </ApplyPageBackground>
   );
 }
