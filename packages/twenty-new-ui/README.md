@@ -1,6 +1,10 @@
 # twenty-new-ui
 
-> **Status:** Planning. This is a design document; no implementation has started.
+> **Status:** Phase 0 — Foundations in progress. The package is scaffolded and builds
+> on SCSS Modules + Base UI; the theme layer is ported from `twenty-ui` with a parity
+> test, and the size/Storybook/a11y harnesses are wired up. Remaining Phase 0 work: the
+> CI diff-table workflow, the `twenty-ui` component inventory, and the `modules/ui` triage.
+> The sections below remain the design document for the full effort.
 
 `twenty-new-ui` is the next generation of Twenty's UI library, replacing [`twenty-ui`](../twenty-ui).
 It is built on a headless component library and a zero-runtime, CSS-variable styling layer.

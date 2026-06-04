@@ -1,0 +1,43 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  padding: 2px;
+  background: token(background-quaternary);
+  border-radius: token(border-radius-pill);
+  transition: background duration(fast) ease;
+
+  @include focus-ring;
+
+  &[data-checked] {
+    background: token(color-blue);
+  }
+
+  &[data-disabled] {
+    opacity: 0.32;
+    cursor: not-allowed;
+  }
+}
+
+.small {
+  width: 24px;
+  height: 14px;
+}
+
+.medium {
+  width: 32px;
+  height: 18px;
+}
+
+.thumb {
+  display: block;
+  width: 50%;
+  height: 100%;
+  background: token(background-primary);
+  border-radius: 50%;
+  transition: translate duration(fast) ease;
+
+  .root[data-checked] & {
+    translate: 100% 0;
+  }
+}
