@@ -1,5 +1,7 @@
 import { currentWorkspaceMembersState } from '@/auth/states/currentWorkspaceMembersState';
 import { useObjectMetadataItems } from '@/object-metadata/hooks/useObjectMetadataItems';
+import { type EventLogFiltersState } from '@/settings/event-logs/types/EventLogFiltersState';
+import { InputLabel } from '@/ui/input/components/InputLabel';
 import { Select } from '@/ui/input/components/Select';
 import { TextInput } from '@/ui/input/components/TextInput';
 import { useAtomStateValue } from '@/ui/utilities/state/jotai/hooks/useAtomStateValue';
@@ -10,7 +12,6 @@ import { type SelectOption } from 'twenty-ui/input';
 import { themeCssVariables } from 'twenty-ui/theme-constants';
 
 import { EventLogTable } from '~/generated-metadata/graphql';
-import { type EventLogFiltersState } from '~/pages/settings/security/event-logs/SettingsEventLogs';
 
 import { EventLogDatePickerInput } from './EventLogDatePickerInput';
 
@@ -20,17 +21,20 @@ type EventLogFiltersProps = {
   onChange: (filters: EventLogFiltersState) => void;
 };
 
-const StyledFiltersContainer = styled.div`
-  align-items: flex-end;
-  display: flex;
-  flex-wrap: wrap;
-  gap: ${themeCssVariables.spacing[2]};
+const StyledFiltersGrid = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[3]} ${themeCssVariables.spacing[4]};
+  grid-template-columns: 1fr 1fr;
 `;
 
-const StyledFilterItem = styled.div`
-  flex: 1;
-  max-width: 300px;
-  min-width: 200px;
+const StyledFullWidthField = styled.div`
+  grid-column: 1 / -1;
+`;
+
+const StyledPeriodRow = styled.div`
+  display: grid;
+  gap: ${themeCssVariables.spacing[4]};
+  grid-template-columns: 1fr 1fr;
 `;
 
 export const EventLogFilters = ({
@@ -82,7 +86,7 @@ export const EventLogFilters = ({
   };
 
   const eventLabel =
-    table === EventLogTable.PAGEVIEW ? t`Page Name` : t`Event Type`;
+    table === EventLogTable.PAGEVIEW ? t`Page name` : t`Event type`;
 
   const userWorkspaceOptions: SelectOption<string | null>[] = [
     { label: t`All Members`, value: null, Icon: IconUser },
@@ -106,70 +110,64 @@ export const EventLogFilters = ({
   ];
 
   return (
-    <StyledFiltersContainer>
-      <StyledFilterItem>
-        <TextInput
-          label={eventLabel}
-          value={value.eventType ?? ''}
-          onChange={handleEventTypeChange}
-          placeholder={t`Filter by event`}
-          fullWidth
-        />
-      </StyledFilterItem>
+    <StyledFiltersGrid>
+      <TextInput
+        label={eventLabel}
+        value={value.eventType ?? ''}
+        onChange={handleEventTypeChange}
+        placeholder={t`Filter by event`}
+        fullWidth
+      />
 
-      <StyledFilterItem>
-        <Select
-          dropdownId="event-log-user-workspace-filter"
-          label={t`Workspace Member`}
-          value={value.userWorkspaceId ?? null}
-          options={userWorkspaceOptions}
-          onChange={handleUserWorkspaceChange}
-          fullWidth
-          withSearchInput
-        />
-      </StyledFilterItem>
+      <Select
+        dropdownId="event-log-user-workspace-filter"
+        label={t`Workspace members`}
+        value={value.userWorkspaceId ?? null}
+        options={userWorkspaceOptions}
+        onChange={handleUserWorkspaceChange}
+        fullWidth
+        withSearchInput
+      />
 
-      <StyledFilterItem>
-        <EventLogDatePickerInput
-          label={t`Start Date`}
-          value={value.dateRange?.start}
-          onChange={handleStartDateChange}
-        />
-      </StyledFilterItem>
-
-      <StyledFilterItem>
-        <EventLogDatePickerInput
-          label={t`End Date`}
-          value={value.dateRange?.end}
-          onChange={handleEndDateChange}
-        />
-      </StyledFilterItem>
+      <StyledFullWidthField>
+        <InputLabel>{t`Period`}</InputLabel>
+        <StyledPeriodRow>
+          <EventLogDatePickerInput
+            instanceId="event-log-start-date"
+            value={value.dateRange?.start}
+            onChange={handleStartDateChange}
+            placeholder={t`Start date`}
+          />
+          <EventLogDatePickerInput
+            instanceId="event-log-end-date"
+            value={value.dateRange?.end}
+            onChange={handleEndDateChange}
+            placeholder={t`End date`}
+          />
+        </StyledPeriodRow>
+      </StyledFullWidthField>
 
       {table === EventLogTable.OBJECT_EVENT && (
         <>
-          <StyledFilterItem>
-            <Select
-              dropdownId="event-log-object-type-filter"
-              label={t`Object Type`}
-              value={value.objectMetadataId ?? null}
-              options={objectMetadataOptions}
-              onChange={handleObjectMetadataIdChange}
-              fullWidth
-              withSearchInput
-            />
-          </StyledFilterItem>
+          <Select
+            dropdownId="event-log-object-type-filter"
+            label={t`Object type`}
+            value={value.objectMetadataId ?? null}
+            options={objectMetadataOptions}
+            onChange={handleObjectMetadataIdChange}
+            fullWidth
+            withSearchInput
+          />
 
-          <StyledFilterItem>
-            <TextInput
-              label={t`Record ID`}
-              value={value.recordId ?? ''}
-              onChange={handleRecordIdChange}
-              placeholder={t`Filter by record ID`}
-              fullWidth
-            />
-          </StyledFilterItem>
+          <TextInput
+            label={t`Record ID`}
+            value={value.recordId ?? ''}
+            onChange={handleRecordIdChange}
+            placeholder={t`Filter by record ID`}
+            fullWidth
+          />
         </>
       )}
-    </StyledFiltersContainer>
+    </StyledFiltersGrid>
   );
 };
