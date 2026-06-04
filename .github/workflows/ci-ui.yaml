@@ -43,8 +43,9 @@ jobs:
   ui-sb-build:
     needs: changed-files-check
     if: >-
-      github.event_name == 'push' ||
-      needs.changed-files-check.outputs.any_changed == 'true'
+      always() &&
+      (github.event_name == 'push' ||
+      needs.changed-files-check.outputs.any_changed == 'true')
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
