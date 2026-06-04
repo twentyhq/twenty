@@ -274,6 +274,14 @@ export class ClickHouseService implements OnModuleInit, OnModuleDestroy {
         table,
         values: chunk,
         format: 'JSONEachRow',
+        // Coalesce many small inserts (e.g. per-pageview rows from the event
+        // pipeline) into larger parts server-side. wait_for_async_insert keeps
+        // the call blocking until the batch is durably flushed, so a failure
+        // still throws and the queue (BullMQ) retries — at-least-once holds.
+        clickhouse_settings: {
+          async_insert: 1,
+          wait_for_async_insert: 1,
+        },
       });
       chunk = [];
       currentSizeBytes = 0;
