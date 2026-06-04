@@ -100,7 +100,7 @@ const CALL_RECORDING_PAGE_LAYOUT_WIDGET_UNIVERSAL_IDENTIFIERS = [
     .timeline.widgets.timeline.universalIdentifier,
 ];
 
-@RegisteredWorkspaceCommand('2.9.0', 1799000030000)
+@RegisteredWorkspaceCommand('2.9.0', 1799000040000)
 @Command({
   name: 'upgrade:2-9:sync-call-recording-standard-objects',
   description:
